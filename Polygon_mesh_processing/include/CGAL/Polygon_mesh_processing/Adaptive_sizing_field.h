@@ -71,31 +71,50 @@ public:
   *
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
   *         model of `Range`. Its iterator type is `ForwardIterator`.
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tol the error tolerance, used together with curvature to derive target edge length.
-   *       Lower tolerance values will result in shorter mesh edges.
+  *        Lower tolerance values will result in shorter mesh edges.
   * @param edge_len_min_max is the stopping criterion for minimum and maximum allowed
   *        edge length.
   * @param face_range the range of triangular faces defining one or several surface patches
   *        to be remeshed. It should be the same as the range of faces used for `isotropic_remeshing()`.
   * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. It should be the
   *              same mesh as the one used in `isotropic_remeshing()`.
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{ball_radius}
+  *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
+  *                           by summing measures of faces inside a ball of this radius centered at the
+  *                           vertex expanded from. The summed face measures are weighted by their
+  *                           inclusion ratio inside this ball.}
+  *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures.
+  *                           It can effectively smooth the curvature field and consequently the sizing field.}
+  *     \cgalParamType{`Base::FT`}
+  *     \cgalParamDefault{`-1`}
+  *     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
+  *                     measures on faces around the vertex.}
+  *   \cgalParamNEnd
   */
-  template <typename FaceRange>
+  template <typename FaceRange
+          , typename NamedParameters = parameters::Default_named_parameters>
   Adaptive_sizing_field(const double tol
                       , const std::pair<FT, FT>& edge_len_min_max
                       , const FaceRange& face_range
-                      , PolygonMesh& pmesh)
+                      , PolygonMesh& pmesh
+                      , const NamedParameters& np = parameters::default_values())
     : tol(tol)
     , m_short(edge_len_min_max.first)
     , m_long(edge_len_min_max.second)
     , m_vpmap(get(CGAL::vertex_point, pmesh))
     , m_vertex_sizing_map(get(Vertex_property_tag(), pmesh))
   {
+
     if (face_range.size() == faces(pmesh).size())
     {
       // calculate curvature from the whole mesh
-      calc_sizing_map(pmesh);
+      calc_sizing_map(pmesh, np);
     }
     else
     {
@@ -108,20 +127,26 @@ public:
                             is_selected, std::back_inserter(selection));
       Face_filtered_graph<PolygonMesh> ffg(pmesh, selection);
 
-      calc_sizing_map(ffg);
+      calc_sizing_map(ffg, np);
     }
   }
   ///@}
 
 private:
-  template <typename FaceGraph>
-  void calc_sizing_map(FaceGraph& face_graph)
+  template <typename FaceGraph
+          , typename NamedParameters = parameters::Default_named_parameters>
+  void calc_sizing_map(FaceGraph& face_graph
+                     , const NamedParameters& np)
   {
     //todo ip: please check if this is good enough to store curvature
     typedef Principal_curvatures_and_directions<K> Principal_curvatures;
     typedef typename CGAL::dynamic_vertex_property_t<Principal_curvatures> Vertex_curvature_tag;
     typedef typename boost::property_map<FaceGraph,
       Vertex_curvature_tag>::type Vertex_curvature_map;
+
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    typename Base::FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     int oversize  = 0;
@@ -132,7 +157,8 @@ private:
 
     Vertex_curvature_map vertex_curvature_map = get(Vertex_curvature_tag(), face_graph);
     interpolated_corrected_principal_curvatures_and_directions(face_graph
-                                                             , vertex_curvature_map);
+                                                             , vertex_curvature_map
+                                                             , parameters::ball_radius(radius));
     // calculate vertex sizing field L(x_i) from the curvature field
     for(vertex_descriptor v : vertices(face_graph))
     {
