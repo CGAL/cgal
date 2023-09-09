@@ -32,6 +32,9 @@ namespace Polygon_mesh_processing
 * provides a set of instructions for isotropic remeshing to achieve variable
 * mesh edge lengths as a function of local discrete curvatures.
 *
+* The local discrete curvatures are calculated using the
+* `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()` function.
+*
 * Edges longer than the local target edge length are split in half, while
 * edges shorter than the local target edge length are collapsed.
 *

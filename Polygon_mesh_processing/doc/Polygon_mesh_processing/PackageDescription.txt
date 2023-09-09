@@ -115,8 +115,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::split()`
 
 \cgalCRPSection{Meshing Functions}
-- \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
-- \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
 - `CGAL::Polygon_mesh_processing::remesh_planar_patches()`
 - `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`
 - `CGAL::Polygon_mesh_processing::refine()`
@@ -131,8 +129,13 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::smooth_mesh()` (deprecated)
 - `CGAL::Polygon_mesh_processing::angle_and_area_smoothing()`
 - `CGAL::Polygon_mesh_processing::tangential_relaxation()`
+- `CGAL::Polygon_mesh_processing::tangential_relaxation_with_sizing()`
 - `CGAL::Polygon_mesh_processing::smooth_shape()`
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
+
+\cgalCRPSection{Sizing Fields}
+- `CGAL::Polygon_mesh_processing::Uniform_sizing_field()`
+- `CGAL::Polygon_mesh_processing::Adaptive_sizing_field()`
 
 \cgalCRPSection{Orientation Functions}
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
