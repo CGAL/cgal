@@ -1948,10 +1948,10 @@ void MainWindow::on_actionSaveAs_triggered()
           return;
     }
 
-    Q_FOREACH(QString string, filters)
+    for(QString string: filters)
     {
       QStringList sl = string.split(";;");
-      Q_FOREACH(QString s, sl){
+      for(QString s: sl){
         QRegularExpressionMatch match = extensions.match(s);
         if(match.hasMatch())
           filter_exts.append(match.capturedTexts());
@@ -1987,9 +1987,9 @@ void MainWindow::on_actionSaveAs_triggered()
     if(filename.isEmpty())
       return;
     last_saved_dir = QFileInfo(filename).absoluteDir().path();
-    // AF  extensions.indexIn(sf.split(";;").first());
+    auto match = extensions.match(sf.split(";;").first());
     QString filter_ext, filename_ext;
-    // AF filter_ext = extensions.cap().split(" ").first();// in case of syntax like (*.a *.b)
+    filter_ext = match.captured().split(" ").first();// in case of syntax like (*.a *.b)
 
     filter_ext.remove(")");
     filter_ext.remove("(");
