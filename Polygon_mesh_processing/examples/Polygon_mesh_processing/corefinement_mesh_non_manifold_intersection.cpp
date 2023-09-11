@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
   }
 
 
-  PMP::Corefinement::Visitor_for_non_manifold_output<K, Mesh> visitor;
+  PMP::Corefinement::Visitor_for_non_manifold_output<K, Mesh> visitor(mesh1, mesh2);
 
   Mesh out;
   bool valid_inter = PMP::corefine_and_compute_intersection(mesh1, mesh2, out, CGAL::parameters::visitor(visitor));

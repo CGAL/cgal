@@ -67,10 +67,12 @@ struct Visitor_for_non_manifold_output
   typedef boost::container::flat_map<const TriangleMesh*, Vertex_id_map> Vertex_id_maps;
   std::shared_ptr<Vertex_id_maps> vertex_id_maps;
 
-  Visitor_for_non_manifold_output()
+  Visitor_for_non_manifold_output(const TriangleMesh& tm1, const TriangleMesh& tm2)
     : vertex_id_maps( new Vertex_id_maps() )
   {
     vertex_id_maps->reserve(2);
+    vertex_id_maps->emplace(&tm1, Vertex_id_map());
+    vertex_id_maps->emplace(&tm2, Vertex_id_map());
   }
 
   // only used for intersection on already existing vertices
@@ -170,7 +172,6 @@ struct Visitor_for_non_manifold_output
         tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set").first;
 
     ///
-    // TODO : handle if mesh is not in the map
     std::size_t vertex_offset = vertex_id_maps->begin()->second.size();
     points.resize(vertex_offset);
 
@@ -229,20 +230,6 @@ struct Visitor_for_non_manifold_output
       }
     }
   }
-/*
-  void register_halfedge_pair(halfedge_descriptor h1, halfedge_descriptor h2,
-                              bool q1_is_between_p1p2, bool q2_is_between_p1p2,
-                              bool p1_is_between_q1q2, bool p2_is_between_q1q2,
-                              bool p1_is_coplanar=false, bool p2_is_coplanar=false,
-                              bool q1_is_coplanar=false, bool q2_is_coplanar=false)
-  {
-    hedge_inter_infos_ptr->push_back( Inter_info<halfedge_descriptor>
-      (h1, h2, q1_is_between_p1p2, q2_is_between_p1p2,
-       p1_is_between_q1q2, p2_is_between_q1q2,
-       p1_is_coplanar, p2_is_coplanar,
-       q1_is_coplanar, q2_is_coplanar) );
-  }
-*/
 };
 
 // extra functions for handling non-documented functions for user visitors
@@ -762,9 +749,6 @@ public:
 
 
     user_visitor.filter_coplanar_edges();
-
-    std::vector<typename An_edge_per_polyline_map::iterator> polylines_to_unconstrained;
-
 
     for (;epp_it!=epp_it_end;)
     {
@@ -1516,7 +1500,6 @@ public:
               std::cout << "  Non-manifold edge case 4\n";
 #endif
                 impossible_operation.set(TM1_MINUS_TM2); // tm1-tm2 is non-manifold
-                if (has_soup_visitor) polylines_to_unconstrained.push_back(it);
               }
               else{
                 register_halfedge_pair(user_visitor, VUNDF(), h1, h2, true, true, true, true);
@@ -1533,7 +1516,6 @@ public:
               std::cout << "  Non-manifold edge case 5\n";
 #endif
                   impossible_operation.set(INTERSECTION); // tm1 n tm2 is non-manifold
-                  if (has_soup_visitor) polylines_to_unconstrained.push_back(it);
                 }
               }
             }
@@ -1604,7 +1586,6 @@ public:
               std::cout << "  Non-manifold edge case 8\n";
 #endif
                 impossible_operation.set(UNION); // tm1 U tm2 is non-manifold
-                if (has_soup_visitor) polylines_to_unconstrained.push_back(it);
               }
               else{
                 register_halfedge_pair(user_visitor, VUNDF(), h1, h2, false, false, true, true);
@@ -1619,7 +1600,6 @@ public:
               std::cout << "  Non-manifold edge case 9\n";
 #endif
                 impossible_operation.set(TM2_MINUS_TM1); // tm2 - tm1 is non-manifold
-                if (has_soup_visitor) polylines_to_unconstrained.push_back(it);
               }
             }
           }
@@ -1658,70 +1638,6 @@ public:
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
     #warning stop using next_marked_halfedge_around_target_vertex and create lists of halfedges instead?
 #endif
-
-    // TODO: merge patches
-    // TODO: only one operation could be allowed
-    //~ CGAL_assertion(requested_output[0]+requested_output[1]+requested_output[2]+requested_output[3]==1);
-    std::cout << "polylines_to_unconstrained.size() " << polylines_to_unconstrained.size() << "\n";
-
-
-    //std::vector<std::pair<std::size_t, std::size_t> > ccs_to_merge_1;
-    //std::vector<std::pair<std::size_t, std::size_t> > ccs_to_merge_2;
-
-    for (typename An_edge_per_polyline_map::iterator it : polylines_to_unconstrained)
-    {
-      const std::pair<bool, std::size_t>& polyline_info=it->second.second;
-
-      std::cout << "it->second.first.size() " << it->second.first.size() << " \n";
-      assert(it->second.first.count(&tm2));
-      assert(it->second.first.count(&tm1));
-
-      halfedge_descriptor h1 = it->second.first.find(&tm1)->second;
-      halfedge_descriptor h2 = it->second.first.find(&tm2)->second;
-
-      //ccs_to_merge_1.push_back({get(fids1,face(h1, tm1)), get(fids1,face(opposite(h1, tm1), tm1))});
-      //ccs_to_merge_2.push_back({get(fids2,face(h2, tm2)), get(fids2,face(opposite(h2, tm2), tm2))});
-
-      if( polyline_info.first ){
-        h1=opposite(h1,tm1);
-        h2=opposite(h2,tm2);
-      }
-
-      std::size_t i=0;
-      std::vector<edge_descriptor> edges1, edges2;
-      edges1.reserve(polyline_info.second+1);
-      edges2.reserve(polyline_info.second+1);
-
-      std::cout << "polyline_info.second " << polyline_info.second << "\n";
-
-      while(true)
-      {
-        edges1.push_back(edge(h1, tm1));
-        edges2.push_back(edge(h2, tm2));
-
-        if (++i == polyline_info.second+1) break;
-
-        h1 = next_marked_halfedge_around_target_vertex(h1, tm1, intersection_edges1);
-        h2 = next_marked_halfedge_around_target_vertex(h2, tm2, intersection_edges2);
-      }
-
-      for (i=0; i<edges1.size(); ++i)
-      {
-        put(marks_on_input_edges.ecm1, edges1[i], false);
-        intersection_edges1.erase(edges1[i]);
-
-        put(marks_on_input_edges.ecm2, edges2[i], false);
-        intersection_edges2.erase(edges2[i]);
-      }
-
-      an_edge_per_polyline.erase(it);
-    }
-
-
-    //TODO: update patch ids
-
-
-    std::cout << "done erasing\n";
 
     if ( patch_status_not_set_tm1.any() )
     {
@@ -1875,8 +1791,7 @@ public:
     CGAL_assertion(patch_status_not_set_tm1.none());
     CGAL_assertion(patch_status_not_set_tm2.none());
 
-
-    if (!polylines_to_unconstrained.empty()  && has_soup_visitor)
+    if (has_soup_visitor)
     {
       export_flags( user_visitor, HSV(),
                     fids1, tm1_patch_ids,
@@ -1892,10 +1807,14 @@ public:
                     coplanar_patches_of_tm2_for_union_and_intersection,
                     patch_status_not_set_tm2,
                     tm2);
-      return; // TODO: continue if you want to get the mesh operations
+
+      bool nothing_possible = true;
+      for (int i=0;i<4; ++i)
+        if ( !impossible_operation.test(i) && requested_output[i] )
+          nothing_possible = false;
+      if (nothing_possible)
+        return;
     }
-
-
 
     //to maintain a halfedge on each polyline + pair<bool,int>
     //with first = "is the key (pair<Node_id,Node_id>) was reversed?"
