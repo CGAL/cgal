@@ -57,7 +57,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS T3_demo)
 
   target_link_libraries(T3_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6)
-  target_link_libraries(T3_demo PRIVATE Qt6::OpenGLWidgets Qt6::OpenGL)
+  target_link_libraries(T3_demo PRIVATE Qt6::OpenGL)
   if(TARGET CGAL::TBB_support)
     target_link_libraries(T3_demo PUBLIC CGAL::TBB_support)
   endif()

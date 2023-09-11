@@ -13,7 +13,7 @@ include(${CGAL_USE_FILE})
 
 find_package(LEDA QUIET)
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 if((CGAL_Core_FOUND OR LEDA_FOUND)
    AND Qt6_FOUND
    AND CGAL_Qt6_FOUND)

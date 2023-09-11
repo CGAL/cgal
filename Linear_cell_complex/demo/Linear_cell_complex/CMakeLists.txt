@@ -5,18 +5,8 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Linear_cell_complex_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
 
 ## To add expensive tests
 # add_definitions("-DCGAL_CHECK_EXPENSIVE")
@@ -42,7 +32,7 @@ add_definitions(-DCMAP_WITH_INDEX) # to use cc with index (handle otherwise)
 ##################
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 COMPONENTS Widgets OpenGL OpenGLWidgets)
+find_package(Qt6 COMPONENTS Widgets OpenGL)
 
 if(NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND)
 
@@ -51,17 +41,14 @@ if(NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND)
 else()
 
   add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-  # ui file, created with Qt Designer
-  qt6_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
-              CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
-
-  # qrc files (resources files, that contain icons, at least)
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Linear_cell_complex_3.qrc)
-
-  add_executable(
+  qt_add_executable(
     Linear_cell_complex_3_demo
     Linear_cell_complex_3_demo.cpp
+    Linear_cell_complex_3.qrc
     MainWindow.cpp
     Viewer.cpp
     Linear_cell_complex_3_subdivision.cpp
@@ -69,15 +56,12 @@ else()
     typedefs.h
     import_moka.h
     MainWindow.h
-    Viewer.h
-    ${uis}
-    ${CGAL_Qt6_RESOURCE_FILES}
-    ${CGAL_Qt6_MOC_FILES})
+    Viewer.h)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
   target_link_libraries(Linear_cell_complex_3_demo
-                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::OpenGL)
+                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Linear_cell_complex_3_demo)

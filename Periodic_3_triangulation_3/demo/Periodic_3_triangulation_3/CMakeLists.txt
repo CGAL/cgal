@@ -55,7 +55,7 @@ if(CGAL_Qt6_FOUND
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 
   target_link_libraries(periodic_3_triangulation_3_demo
-                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::OpenGL)
+                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(periodic_3_triangulation_3_demo)
