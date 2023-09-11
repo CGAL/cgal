@@ -67,25 +67,42 @@ struct Visitor_for_non_manifold_output
   typedef boost::container::flat_map<const TriangleMesh*, Vertex_id_map> Vertex_id_maps;
   std::shared_ptr<Vertex_id_maps> vertex_id_maps;
 
-/*
-  boost::shared_ptr< std::vector< Inter_info<halfedge_descriptor> > > hedge_inter_infos_ptr;
-
-  Visitor_for_non_manifold_output()
-    : hedge_inter_infos_ptr( new std::vector< Inter_info<halfedge_descriptor> >() )
-  {}
-*/
-
   Visitor_for_non_manifold_output()
     : vertex_id_maps( new Vertex_id_maps() )
   {
     vertex_id_maps->reserve(2);
   }
 
+  // only used for intersection on already existing vertices
+  void intersection_point_detected(std::size_t node_id,
+                                   int sdim,
+                                   halfedge_descriptor h_e,
+                                   halfedge_descriptor h_f,
+                                   const TriangleMesh& tm_e,
+                                   const TriangleMesh& tm_f,
+                                   bool is_target_coplanar,
+                                   bool is_source_coplanar)
+  {
+    if (sdim==0)
+    {
+      (*vertex_id_maps)[&tm_f].emplace(target(h_f,tm_f), node_id);
+    }
+    if (is_target_coplanar)
+    {
+      CGAL_assertion(!is_source_coplanar);
+      (*vertex_id_maps)[&tm_e].emplace(target(h_e,tm_e), node_id);
+    }
+    if (is_source_coplanar)
+    {
+      (*vertex_id_maps)[&tm_e].emplace(source(h_e,tm_e), node_id);
+    }
+  }
+
+  // existing vertices are not listed here
   void new_vertex_added(std::size_t node_id,
                         vertex_descriptor vh,
                         TriangleMesh& tm)
   {
-    //TODO: what about existing vertices!!!!!!!!!!!!
     (*vertex_id_maps)[&tm].emplace(vh, node_id);
   }
 
@@ -134,12 +151,6 @@ struct Visitor_for_non_manifold_output
                             std::vector<Point_3>& points,
                             std::vector< std::array<std::size_t, 3> >& triangles)
   {
-    std::cout << "size " << vertex_id_maps->size() << "\n";
-    std::cout << "k1 " << vertex_id_maps->begin()->first << "\n";
-    std::cout << "k2 " << std::next(vertex_id_maps->begin())->first << "\n";
-    std::cout << "tm1 " << &tm1 << "\n";
-    std::cout << "tm2 " << &tm2 << "\n";
-
     auto is_patch_inside_tm2 =
         tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm").first,
       coplanar_patches_of_tm1 =
