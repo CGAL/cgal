@@ -904,13 +904,9 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
     colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
   }
 
-  const size_type nb_visible_patch_indices = visible_surface_patch_to_subdomain.size();
-  i = 0;
   for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
-       end = visible_surface_patch_to_subdomain.end(); it != end; ++it, i += 1.)
+       end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
   {
-    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
-    if (hue > 1) { hue -= 1.; }
     colors[it->first] = colors_subdomains[it->second];
   }
 }
