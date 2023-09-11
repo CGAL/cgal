@@ -69,10 +69,10 @@ public:
   /// \param tm_e mesh containing `h_e`
   void intersection_point_detected(std::size_t i_id,
                                    int sdim,
-                                   halfedge_descriptor h_f,
                                    halfedge_descriptor h_e,
-                                   const Triangle_mesh& tm_f,
+                                   halfedge_descriptor h_f,
                                    const Triangle_mesh& tm_e,
+                                   const Triangle_mesh& tm_f,
                                    bool is_target_coplanar,
                                    bool is_source_coplanar);
 
