@@ -56,6 +56,7 @@
 #include <vtkNew.h>
 #include <vtkStringArray.h>
 #include <vtkImageData.h>
+#include <vtkXMLImageDataReader.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkBMPReader.h>
 #include <vtkNIFTIImageReader.h>
@@ -1089,6 +1090,7 @@ QString Io_image_plugin::nameFilters() const
   return QString("Inrimage files (*.inr *.inr.gz) ;; "
                  "Analyze files (*.hdr *.img *.img.gz) ;; "
                  "Stanford Exploration Project files (*.H *.HH) ;; "
+                 "VTK image files (*.vti) ;; "
                  "NRRD image files (*.nrrd) ;; "
                  "NIFTI image files (*.nii *.nii.gz)");
 }
@@ -1128,8 +1130,25 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
 
+  // read a vti file
+  if(fileinfo.suffix() == "vti")
+  {
+#ifdef CGAL_USE_VTK
+    vtkNew<vtkXMLImageDataReader> reader;
+    reader->SetFileName(fileinfo.filePath().toUtf8());
+    reader->Update();
+    auto vtk_image = reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+#else
+    CGAL::Three::Three::warning("VTK is required to read VTI files");
+    delete image;
+    return QList<Scene_item*>();
+#endif
+  }
+
   // read a nrrd file
-  if(fileinfo.suffix() == "nrrd")
+  else if(fileinfo.suffix() == "nrrd")
   {
 #ifdef CGAL_USE_VTK
     vtkNew<vtkNrrdReader> reader;
@@ -1146,7 +1165,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   }
 
   // read a NIFTI file
-  if(fileinfo.suffix() == "nii"
+  else if(fileinfo.suffix() == "nii"
     || (   fileinfo.suffix() == "gz"
         && fileinfo.fileName().endsWith(QString(".nii.gz"), Qt::CaseInsensitive)))
   {
