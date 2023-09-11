@@ -5,7 +5,7 @@ project(Generator_Demo)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
