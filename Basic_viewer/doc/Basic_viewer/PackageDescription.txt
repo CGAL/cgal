@@ -35,20 +35,20 @@
 
 \cgalCRPSubsection{Draw for Different Packages}
 
-- Constrained_triangulation_2 \link PkgDrawTriangulation2 CGAL::draw<CT2>() \endlink
-- Linear_cell_complex \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
-- Nef_polyhedron_3 \link PkgDrawNef3 CGAL::draw<Nef3>() \endlink
-- Periodic_2_Triangulation_2 \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
-- Point_set_3 \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink
-- Polygon_2 \link PkgDrawPolygon2 CGAL::draw<P2>() \endlink
-- Polygon_set_2 \link PkgDrawPolygonSet2 CGAL::draw<PS>() \endlink
-- Polygon_with_holes_2 \link PkgDrawPolygonWithHoles2 CGAL::draw<PH2>() \endlink
-- Polyhedron_3 \link PkgDrawPolyhedron CGAL::draw<POLY>() \endlink
-- Surface_mesh \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
-- Surface_mesh_topology \link PkgDrawFaceGraphWithPaths CGAL::draw<SMT>() \endlink
-- Triangulation_2 \link PkgDrawTriangulation2 CGAL::draw<T2>() \endlink
-- Triangulation_3 \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
-- Voronoi_diagram_2 \link PkgDrawVoronoiDiagram2 CGAL::draw<V2>() \endlink
+- `Constrained_triangulation_2` \link PkgDrawTriangulation2 CGAL::draw<CT2>() \endlink
+- `Linear_cell_complex` \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
+- `Nef_polyhedron_3` \link PkgDrawNef3 CGAL::draw<Nef3>() \endlink
+- `Periodic_2_Triangulation_2` \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
+- `Point_set_3` \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink
+- `Polygon_2` \link PkgDrawPolygon2 CGAL::draw<P2>() \endlink
+- `Polygon_set_2` \link PkgDrawPolygonSet2 CGAL::draw<PS>() \endlink
+- `Polygon_with_holes_2` \link PkgDrawPolygonWithHoles2 CGAL::draw<PH2>() \endlink
+- `Polyhedron_3` \link PkgDrawPolyhedron CGAL::draw<POLY>() \endlink
+- `Surface_mesh` \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
+- `Surface_mesh_topology` \link PkgDrawFaceGraphWithPaths CGAL::draw<SMT>() \endlink
+- `Triangulation_2` \link PkgDrawTriangulation2 CGAL::draw<T2>() \endlink
+- `Triangulation_3` \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
+- `Voronoi_diagram_2` \link PkgDrawVoronoiDiagram2 CGAL::draw<V2>() \endlink
 
 \cgalCRPSubsection{Fill Graphic Storage for Different Packages}
 

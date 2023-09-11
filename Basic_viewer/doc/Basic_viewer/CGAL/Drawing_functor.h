@@ -84,7 +84,7 @@ The different `std::function` can be modified to change for example the behavior
 
 */
 
-// Cell parameters for a 3D data structure (with vertices, edges, faces and volumes)
+// Cell parameters for a volumic data structure (with vertices, edges, faces and volumes)
 template <typename DS,
           typename VertexDescriptor,
           typename EdgeDescriptor,
