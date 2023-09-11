@@ -11,20 +11,12 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
 
 # Find CGAL and CGAL Qt6
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets OpenGL)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL)
 
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
@@ -33,12 +25,9 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND AND TARGET CGAL::Eigen3_support)
   # Include this package's headers first
   include_directories(BEFORE ./ ./include)
 
-  # ui file, created with Qt Designer
-  qt6_wrap_ui( uis Mainwindow.ui )
+  set(CMAKE_AUTOUIC ON)
 
-  #qt6_generate_moc( main.cpp Mainwindow.moc)
-
-  add_executable  ( Triangulation_on_sphere_2_Demo main.cpp Viewer.cpp ${uis})
+  qt_add_executable  ( Triangulation_on_sphere_2_Demo main.cpp Viewer.cpp)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Triangulation_on_sphere_2_Demo )
 

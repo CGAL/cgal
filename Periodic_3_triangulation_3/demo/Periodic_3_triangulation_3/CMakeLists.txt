@@ -4,20 +4,11 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Periodic_3_triangulation_3_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 # Find CGAL
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGL OpenGLWidgets Help ToolsTools)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL Help ToolsTools)
 
 if(Qt6_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
@@ -30,11 +21,9 @@ if(CGAL_Qt6_FOUND
    AND Qt6_FOUND
    AND TARGET ${CGAL_QCOLLECTIONGENERATOR_TARGET})
 
-  # UI files (Qt Designer files)
-  qt6_wrap_ui(UI_FILES MainWindow.ui)
-
-  # qrc files (resource files)
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Periodic_3_triangulation_3.qrc)
+   set(CMAKE_AUTOMOC ON)
+   set(CMAKE_AUTOUIC ON)
+   set(CMAKE_AUTORCC ON)
 
   # use the Qt MOC preprocessor on classes that derive from QObject
   qt6_generate_moc("Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Scene.cpp")
@@ -52,7 +41,7 @@ if(CGAL_Qt6_FOUND
       ${CMAKE_CURRENT_BINARY_DIR}/Periodic_3_triangulation_3.qhc)
 
   # The executable itself
-  add_executable(
+  qt_add_executable(
     periodic_3_triangulation_3_demo
     Scene.cpp
     moc_Scene.cpp
@@ -61,9 +50,6 @@ if(CGAL_Qt6_FOUND
     periodic_3_triangulation_3_demo.cpp
     MainWindow.ui
     moc_MainWindow.cpp
-    ${UI_FILES}
-    ${CGAL_Qt6_RESOURCE_FILES}
-    ${CGAL_Qt6_MOC_FILES}
     Periodic_3_triangulation_3.qhc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)

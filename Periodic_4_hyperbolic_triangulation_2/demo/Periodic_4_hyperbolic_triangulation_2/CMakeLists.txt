@@ -20,14 +20,11 @@ if((CGAL_Core_FOUND OR LEDA_FOUND)
 
   include_directories(BEFORE include)
 
-  # ui files, created with Qt Designer
-  qt6_wrap_ui(UIS P4HDT2.ui)
-
-  # qrc files (resources files, that contain icons, at least)
-  qt6_add_resources(RESOURCE_FILES Main_resources.qrc)
+   set(CMAKE_AUTOUIC ON)
+   set(CMAKE_AUTORCC ON)
 
   # cpp files
-  add_executable(P4HDT2 P4HDT2.cpp ${RESOURCE_FILES} ${UIS})
+  qt_add_executable(P4HDT2 P4HDT2.cpp P4HDT2.ui)
 
   target_link_libraries(P4HDT2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
   if(TARGET CGAL::CGAL_Core)

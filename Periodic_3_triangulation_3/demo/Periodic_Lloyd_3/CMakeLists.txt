@@ -4,14 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Periodic_Lloyd_3_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
@@ -19,7 +11,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGL OpenGLWidgets Help ToolsTools)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL Help ToolsTools)
 
 set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt6::qhelpgenerator)
 
@@ -29,11 +21,8 @@ if(CGAL_Qt6_FOUND
 
   include_directories(BEFORE ./)
 
-  # ui file, created with Qt Designer
-  qt6_wrap_ui(uis MainWindow.ui)
-
-  # qrc files (resources files, that contain icons, at least)
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES ./Periodic_Lloyd_3.qrc)
+   set(CMAKE_AUTOUIC ON)
+   set(CMAKE_AUTORCC ON)
 
   if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
 
@@ -51,15 +40,13 @@ if(CGAL_Qt6_FOUND
       ${CMAKE_CURRENT_BINARY_DIR}/Periodic_Lloyd_3.qhc
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-  add_executable(
+  qt_add_executable(
     Periodic_Lloyd_3
     Periodic_Lloyd_3.qhc
     Periodic_Lloyd_3.cpp
     MainWindow.cpp
     Viewer.cpp
-    ${uis}
-    ${CGAL_Qt6_RESOURCE_FILES}
-    ${CGAL_Qt6_MOC_FILES})
+    Periodic_Lloyd_3.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3)
 
