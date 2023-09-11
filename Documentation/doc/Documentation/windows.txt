@@ -114,7 +114,7 @@ not depend on `Qt`. However, one of the examples in the Triangulation_2 package 
 for visualization purposes. If you already have `Qt` installed, you can simply fill in the requested
 CMake variables and paths. Otherwise, you can also install it using `vcpkg`:
 
-    C:\dev\vcpkg> .\vcpkg.exe install qt5
+    C:\dev\vcpkg> .\vcpkg.exe install qt6
 
 Remember to specify `--triplet` or the related environment variable in case you target 64-bit applications.
 

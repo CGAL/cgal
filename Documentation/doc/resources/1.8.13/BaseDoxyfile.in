@@ -78,7 +78,7 @@ ALIASES                = "cgal=%CGAL" \
                          "gnu=GNU" \
                          "ms=MS" \
                          "qt=Qt" \
-                         "qt5=Qt5" \
+                         "qt6=Qt6" \
                          "eigen=Eigen" \
                          "opengr=OpenGR" \
                          "libpointmatcher=libpointmatcher" \

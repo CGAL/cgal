@@ -54,7 +54,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   std::cout.precision(17);
   std::clog.precision(17);
 
-  // Import resources from libCGAL (Qt5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   this->setOrganizationDomain("geometryfactory.com");

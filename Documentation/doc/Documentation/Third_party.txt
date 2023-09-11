@@ -107,8 +107,8 @@ the location of third-party software during configuration.
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGAL_Qt5 is essential to run the \cgal demos and basic viewers.
-It requires \qt5 installed on your system.
+The component libCGAL_Qt6 is essential to run the \cgal demos and basic viewers.
+It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
 it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
 
