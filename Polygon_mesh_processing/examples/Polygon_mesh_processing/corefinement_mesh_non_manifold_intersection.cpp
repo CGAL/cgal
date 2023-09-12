@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     std::vector<K::Point_3> points;
     std::vector< std::array<std::size_t, 3> > polygons;
 
-    visitor.extract_intersection(mesh1, mesh2, points, polygons);
+    visitor.extract_intersection(points, polygons);
     CGAL::IO::write_polygon_soup("inter.off", points, polygons, CGAL::parameters::stream_precision(17));
   }
 

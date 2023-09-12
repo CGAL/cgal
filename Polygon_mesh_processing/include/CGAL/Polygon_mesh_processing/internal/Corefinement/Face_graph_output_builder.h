@@ -63,12 +63,16 @@ struct Visitor_for_non_manifold_output
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef std::unordered_map<vertex_descriptor, std::size_t> Vertex_id_map;
+  typedef std::unordered_map<vertex_descriptor, std::size_t> Vertex_id_map; // TODO use a dynamic property map?
   typedef boost::container::flat_map<const TriangleMesh*, Vertex_id_map> Vertex_id_maps;
   std::shared_ptr<Vertex_id_maps> vertex_id_maps;
+  const TriangleMesh& m_tm1;
+  const TriangleMesh& m_tm2;
 
   Visitor_for_non_manifold_output(const TriangleMesh& tm1, const TriangleMesh& tm2)
     : vertex_id_maps( new Vertex_id_maps() )
+    , m_tm1(tm1)
+    , m_tm2(tm2)
   {
     vertex_id_maps->reserve(2);
     vertex_id_maps->emplace(&tm1, Vertex_id_map());
@@ -113,122 +117,180 @@ struct Visitor_for_non_manifold_output
                     const boost::dynamic_bitset<>&  is_patch_inside_other_tm,
                     const boost::dynamic_bitset<>& coplanar_patches,
                     const boost::dynamic_bitset<>& coplanar_patches_of_tm_for_union_and_intersection,
-                    const boost::dynamic_bitset<>& patch_status_not_set,
+                    const boost::dynamic_bitset<>& /* patch_status_not_set */,
                     TriangleMesh& tm)
   {
-    typename TriangleMesh::template Property_map<typename TriangleMesh::Face_index, bool>
-      is_patch_inside_other_tm_map =
-        tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm", false).first,
-      coplanar_patches_of_tm_map =
-        tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm", false).first,
-      coplanar_patches_of_tm_for_union_and_intersection_map =
-        tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm_for_union_and_intersection", false).first,
-      patch_status_not_set_map =
-        tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set", false).first;
+  // BO bitsets
+    std::array<boost::dynamic_bitset<>, 4> patches_used;
+
+    if (&tm == &m_tm1)
+    {
+      // UNION
+      patches_used[UNION] = ~is_patch_inside_other_tm;
+      if (coplanar_patches.any())
+      {
+        patches_used[UNION] -= coplanar_patches;
+        patches_used[UNION] |= coplanar_patches_of_tm_for_union_and_intersection;
+      }
+      // INTERSECTION
+      patches_used[INTERSECTION] = is_patch_inside_other_tm;
+      if (coplanar_patches.any())
+        patches_used[INTERSECTION] |= coplanar_patches_of_tm_for_union_and_intersection;
+      // TM1_MINUS_TM2
+      patches_used[TM1_MINUS_TM2] = ~is_patch_inside_other_tm;
+      if (coplanar_patches.any())
+      {
+        patches_used[TM1_MINUS_TM2] -= coplanar_patches;
+        patches_used[TM1_MINUS_TM2] |= ~coplanar_patches_of_tm_for_union_and_intersection & coplanar_patches;
+      }
+      //TM2_MINUS_TM1
+      patches_used[TM2_MINUS_TM1] = is_patch_inside_other_tm;
+    }
+    else
+    {
+      // UNION
+      patches_used[UNION] = ~is_patch_inside_other_tm;
+      if (coplanar_patches.any())
+      {
+        patches_used[UNION] -= coplanar_patches;
+      }
+      // INTERSECTION
+      patches_used[INTERSECTION] = is_patch_inside_other_tm;
+      // TM1_MINUS_TM2
+      patches_used[TM1_MINUS_TM2] = is_patch_inside_other_tm;
+      //TM2_MINUS_TM1
+      patches_used[TM2_MINUS_TM1] = ~is_patch_inside_other_tm;
+      if (coplanar_patches.any())
+      {
+        patches_used[TM2_MINUS_TM1] -= coplanar_patches;
+        patches_used[TM2_MINUS_TM1] |= ~coplanar_patches_of_tm_for_union_and_intersection & coplanar_patches;
+      }
+    }
+
+    // now store the face classification
+    // TODO: replace by dynamics!
+    std::array< typename TriangleMesh::template Property_map<typename TriangleMesh::Face_index, bool>, 4> face_classifications;
+    face_classifications[UNION] = tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:union", false).first,
+    face_classifications[INTERSECTION] = tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:intersection", false).first,
+    face_classifications[TM1_MINUS_TM2] = tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:tm1_minus_tm2", false).first,
+    face_classifications[TM2_MINUS_TM1] = tm.template add_property_map<typename TriangleMesh::Face_index, bool>("f:tm2_minus_tm1", false).first;
 
     for(typename TriangleMesh::Face_index f : faces(tm))
     {
-      const std::size_t patch_id = tm_patch_ids[ fim[f] ];
-      patch_status_not_set_map[f] = patch_status_not_set.test(patch_id);
-      is_patch_inside_other_tm_map[f] = is_patch_inside_other_tm.test(patch_id);
-      coplanar_patches_of_tm_map[f] = coplanar_patches.test(patch_id);
-      coplanar_patches_of_tm_for_union_and_intersection_map[f] = coplanar_patches_of_tm_for_union_and_intersection.test(patch_id);
+      std::size_t pid = tm_patch_ids[get(fim, f)];
+      for (int i=0; i<4; ++i)
+      {
+        if (patches_used[i].test(pid))
+          face_classifications[i][f]=true;
+      }
     }
   }
 
-  static void remove_added_property_maps(TriangleMesh& tm)
-  {
-    auto is_patch_inside_other_tm_map =
-        tm.template property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm"),
-      coplanar_patches_of_tm_map =
-        tm.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm"),
-      coplanar_patches_of_tm_for_union_and_intersection_map =
-        tm.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm_for_union_and_intersection"),
-      patch_status_not_set_map =
-        tm.template property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set");
-  }
 
-  template <class Point_3>
-  void extract_intersection(TriangleMesh& tm1, TriangleMesh& tm2,
-                            std::vector<Point_3>& points,
-                            std::vector< std::array<std::size_t, 3> >& triangles)
-  {
-    auto is_patch_inside_tm2 =
-        tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm").first,
-      coplanar_patches_of_tm1 =
-        tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm").first,
-      coplanar_patches_of_tm1_for_union_and_intersection =
-        tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm_for_union_and_intersection").first,
-      tm1_patch_status_not_set =
-        tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set").first;
-    ///
-    auto is_patch_inside_tm1 =
-        tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:is_patch_inside_other_tm").first,
-      coplanar_patches_of_tm2 =
-        tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm").first,
-      coplanar_patches_of_tm2_for_union_and_intersection =
-        tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:coplanar_patches_of_tm_for_union_and_intersection").first,
-      tm2_patch_status_not_set =
-        tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:patch_status_not_set").first;
 
-    ///
+  template <bool inverse_tm1_faces, bool inverse_tm2_faces, class Point_3, class FCM>
+  void extract_soup(std::vector<Point_3>& points,
+                    std::vector< std::array<std::size_t, 3> >& triangles,
+                    FCM tm1_face_classification,
+                    FCM tm2_face_classification)
+  {
     std::size_t vertex_offset = vertex_id_maps->begin()->second.size();
     points.resize(vertex_offset);
 
-    Vertex_id_map& vid1 = vertex_id_maps->find(&tm1)->second;
-    auto get_vertex_id1 = [&vid1, &vertex_offset, &tm1, &points](vertex_descriptor v)
+    Vertex_id_map vid1 = vertex_id_maps->find(&m_tm1)->second; // copy on purpose
+    auto get_vertex_id1 = [&vid1, &vertex_offset, this, &points](vertex_descriptor v)
     {
       auto it_and_b = vid1.emplace(v, vertex_offset);
       if (!it_and_b.second)
       {
-        points[it_and_b.first->second]=tm1.point(v);
+        points[it_and_b.first->second]=m_tm1.point(v);
       }
       else
       {
-        points.push_back(tm1.point(v));
+        points.push_back(m_tm1.point(v));
         ++vertex_offset;
       }
       return it_and_b.first->second;
     };
-    Vertex_id_map& vid2 = vertex_id_maps->find(&tm2)->second;
-    auto get_vertex_id2 = [&vid2, &vertex_offset, &tm2, &points](vertex_descriptor v)
+    Vertex_id_map vid2 = vertex_id_maps->find(&m_tm2)->second; // copy on purpose
+    auto get_vertex_id2 = [&vid2, &vertex_offset, this, &points](vertex_descriptor v)
     {
       auto it_and_b = vid2.emplace(v, vertex_offset);
       if (!it_and_b.second)
       {
-        points[it_and_b.first->second]=tm2.point(v);
+        points[it_and_b.first->second]=m_tm2.point(v);
       }
       else
       {
-        points.push_back(tm2.point(v));
+        points.push_back(m_tm2.point(v));
         ++vertex_offset;
       }
       return it_and_b.first->second;
     };
 
     // import faces from tm1
-    for (face_descriptor f : faces(tm1))
+    for (face_descriptor f : faces(m_tm1))
     {
-      if (is_patch_inside_tm2[f] || coplanar_patches_of_tm1_for_union_and_intersection[f])
+      if (tm1_face_classification[f])
       {
-        halfedge_descriptor h=halfedge(f, tm1);
-        triangles.push_back( make_array(get_vertex_id1(source(h, tm1)),
-                                        get_vertex_id1(target(h, tm1)),
-                                        get_vertex_id1(target(next(h, tm1), tm1))) );
+        halfedge_descriptor h=halfedge(f, m_tm1);
+        triangles.push_back( make_array(get_vertex_id1(source(h, m_tm1)),
+                                        get_vertex_id1(target(h, m_tm1)),
+                                        get_vertex_id1(target(next(h, m_tm1), m_tm1))) );
+        if (inverse_tm1_faces)
+          std::swap(triangles.back()[0],triangles.back()[1]);
       }
     }
 
     // import faces from tm2
-    for (face_descriptor f : faces(tm2))
+    for (face_descriptor f : faces(m_tm2))
     {
-      if (is_patch_inside_tm1[f])
+      if (tm2_face_classification[f])
       {
-        halfedge_descriptor h=halfedge(f, tm2);
-        triangles.push_back( make_array(get_vertex_id2(source(h, tm2)),
-                                        get_vertex_id2(target(h, tm2)),
-                                        get_vertex_id2(target(next(h, tm2), tm2))) );
+        halfedge_descriptor h=halfedge(f, m_tm2);
+        triangles.push_back( make_array(get_vertex_id2(source(h, m_tm2)),
+                                        get_vertex_id2(target(h, m_tm2)),
+                                        get_vertex_id2(target(next(h, m_tm2), m_tm2))) );
+        if (inverse_tm2_faces)
+          std::swap(triangles.back()[0],triangles.back()[1]);
       }
     }
+  }
+
+  template <class Point_3>
+  void extract_intersection(std::vector<Point_3>& points,
+                            std::vector< std::array<std::size_t, 3> >& triangles)
+  {
+    auto tm1_face_classification = m_tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:intersection").first;
+    auto tm2_face_classification = m_tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:intersection").first;
+    extract_soup<false, false>(points, triangles, tm1_face_classification, tm2_face_classification);
+  }
+
+  template <class Point_3>
+  void extract_union(std::vector<Point_3>& points,
+                            std::vector< std::array<std::size_t, 3> >& triangles)
+  {
+    auto tm1_face_classification = m_tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:union").first;
+    auto tm2_face_classification = m_tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:union").first;
+    extract_soup<false, false>(points, triangles, tm1_face_classification, tm2_face_classification);
+  }
+
+  template <class Point_3>
+  void extract_tm1_minus_tm2(std::vector<Point_3>& points,
+                             std::vector< std::array<std::size_t, 3> >& triangles)
+  {
+    auto tm1_face_classification = m_tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:tm1_minus_tm2").first;
+    auto tm2_face_classification = m_tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:tm1_minus_tm2").first;
+    extract_soup<false, true>(points, triangles, tm1_face_classification, tm2_face_classification);
+  }
+
+  template <class Point_3>
+  void extract_tm2_minus_tm1(std::vector<Point_3>& points,
+                            std::vector< std::array<std::size_t, 3> >& triangles)
+  {
+    auto tm1_face_classification = m_tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:tm2_minus_tm1").first;
+    auto tm2_face_classification = m_tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:tm2_minus_tm1").first;
+    extract_soup<true, false>(points, triangles, tm1_face_classification, tm2_face_classification);
   }
 };
 
