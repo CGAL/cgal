@@ -38,7 +38,7 @@ namespace Polygon_mesh_processing
 * Edges longer than the local target edge length are split in half, while
 * edges shorter than the local target edge length are collapsed.
 *
-* \cgalModels PMPSizingField
+* \cgalModels{PMPSizingField}
 *
 * \sa `isotropic_remeshing`
 * \sa `Uniform_sizing_field`

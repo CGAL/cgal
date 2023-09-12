@@ -29,7 +29,7 @@ namespace Polygon_mesh_processing
 * pure virtual class serving as a base for sizing field classes utilized in isotropic
 * remeshing.
 *
-* \cgalModels PMPSizingField
+* \cgalModels{PMPSizingField}
 *
 * \sa `isotropic_remeshing()`
 * \sa `Uniform_sizing_field`
