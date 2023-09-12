@@ -95,6 +95,7 @@ public:
   *     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
   *                     measures on faces around the vertex.}
   *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
   */
   template <typename FaceRange
           , typename NamedParameters = parameters::Default_named_parameters>
