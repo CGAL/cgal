@@ -45,12 +45,47 @@ using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 
 int go(Mesh, std::string);
 
+bool merge_facets = false;
+double ratio = 0.;
+std::string filename = CGAL::data_file_path("meshes/mpi.off");
+std::string output_filename{"dump.off"};
+
 int main(int argc, char* argv[])
 {
   std::cerr.precision(17);
   std::cout.precision(17);
 
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
+  int positional = 0;
+
+  for(int i = 1; i < argc; ++i) {
+    std::string arg = argv[i];
+    if(arg == "--merge-facets") {
+      merge_facets = true;
+    } else if(arg == "--ratio") {
+      assert(i + 1 < argc);
+      ratio = std::stod(argv[++i]);
+    }
+    else {
+      switch(positional) {
+        case 0:
+          filename = arg;
+          ++positional;
+          break;
+        case 1:
+          output_filename = arg;
+          ++positional;
+          break;
+        case 2:
+          ratio = std::stod(arg);
+          ++positional;
+          break;
+        default:
+          std::cerr << "Too many arguments\n";
+          return 1;
+      }
+    }
+  }
+
   std::ifstream input(filename);
   Mesh mesh;
   if (!input || !(input >> mesh))
@@ -59,10 +94,6 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const std::string output_filename = (argc > 2) ? argv[2] : "dump.off";
-
-
-  const double ratio = (argc > 3) ? std::stod(argv[3]) : 0.;
   if(ratio == 0.) {
     return go(std::move(mesh), output_filename);
   }
