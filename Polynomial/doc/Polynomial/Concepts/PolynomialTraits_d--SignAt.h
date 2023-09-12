@@ -4,7 +4,7 @@
 \cgalConcept
 
 This `AdaptableFunctor` returns the sign of a
-`PolynomialTraits_d::Polynomial_d` \f$ p\f$ at given Cartesian point represented
+`PolynomialTraits_d::Polynomial_d` \f$ p\f$ at given %Cartesian point represented
 as an iterator range.
 
 This functor is well defined if `PolynomialTraits_d::Innermost_coefficient_type` is
@@ -35,7 +35,7 @@ typedef CGAL::Sign result_type;
 
 /*!
 
-Returns the sign of \f$ p\f$ at the given Cartesian point, where `begin` is referring
+Returns the sign of \f$ p\f$ at the given %Cartesian point, where `begin` is referring
 to the innermost variable.
 \pre (`end-begin` == `PolynomialTraits_d::d`)
 \pre `std::iterator_traits< InputIterator >::%value_type` is `ExplicitInteroperable` with `PolynomialTraits_d::Innermost_coefficient_type`.
@@ -49,4 +49,3 @@ InputIterator end );
 /// @}
 
 }; /* end PolynomialTraits_d::SignAt */
-

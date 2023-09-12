@@ -27,9 +27,9 @@ The class template `Triangulation_full_cell` accepts that no third parameter be 
 It also accepts the tag `CGAL::Default` as third parameter. In both
 cases, `TriangulationDSFullCell_` defaults to `CGAL::Triangulation_ds_full_cell<>`.
 
-\cgalModels `TriangulationFullCell` Additionally, the class
+\cgalModels{TriangulationFullCell Additionally, the class
 `Triangulation_full_cell` provides the following types,
-constructors and methods:
+constructors and methods:}
 
 \sa `Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
 \sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`

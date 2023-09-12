@@ -91,7 +91,7 @@ the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
 with a model of the concept `IntersectionGeometricTraits_3`.
 
-\cgalModels `MeshDomainWithFeatures_3`
+\cgalModels{MeshDomainWithFeatures_3}
 
 \sa `CGAL::make_mesh_3()`
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`

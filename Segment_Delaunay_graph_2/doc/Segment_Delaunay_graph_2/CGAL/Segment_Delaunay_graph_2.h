@@ -35,7 +35,7 @@ A segment Delaunay graph can be seen as a container of faces and
 vertices. Therefore the `Segment_Delaunay_graph_2` class provides several iterators
 and circulators that allow to traverse it (completely or partially).
 
-\cgalModels `DelaunayGraph_2`
+\cgalModels{DelaunayGraph_2}
 
 \sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`

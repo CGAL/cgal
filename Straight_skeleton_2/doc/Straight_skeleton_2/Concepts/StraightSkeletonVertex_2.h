@@ -9,7 +9,9 @@ The concept `StraightSkeletonVertex_2` describes the requirements for the vertex
 with support for storage of the incident halfedge. The `StraightSkeletonVertex_2` concept
 requires the geometric embedding to be a 2D point.
 
-\cgalHasModel `CGAL::Straight_skeleton_vertex_base_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Straight_skeleton_vertex_base_2}
+\cgalHasModelsEnd
 
 \sa `StraightSkeletonHalfedge_2`
 \sa `StraightSkeletonFace_2`

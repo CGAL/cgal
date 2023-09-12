@@ -3802,7 +3802,7 @@ inline constexpr Cube convert_to_cube(unsigned int n) {
 // User-defined literal operator.  Given an integer in octal notation, like
 // 01234567, gives the cube with the same colors. For example, `01234567_c`
 // is `Cube{0, 1, 2, 3, 4, 5, 6, 7}`.
-inline constexpr Cube operator"" _c(unsigned long long n)
+inline constexpr Cube operator""_c(unsigned long long n)
 {
   #if !defined(_MSC_VER) ||  (_MSC_VER > 1900)
   assert(n < (1 << 24));
