@@ -525,7 +525,7 @@ public:
     }
 #define CGAL_USE_ALL_INTERSECTIONS 0
 #if CGAL_USE_ALL_INTERSECTIONS
-    boost::optional<AABB_primitive_id> shoot_a_ray_2(const Ray_3 ray) const {
+    boost::optional<AABB_primitive_id> shoot_a_ray_2(const Ray_3& ray) const {
       const Point_3& p = ray.source();
       typedef typename AABB_tree::
         template Intersection_and_primitive_id<Ray_3>::Type Inter_and_prim;
