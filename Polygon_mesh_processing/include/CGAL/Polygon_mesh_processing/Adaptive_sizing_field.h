@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
-#include <CGAL/Polygon_mesh_processing/Isotropic_remeshing/Sizing_field_base.h>
+#include <CGAL/Polygon_mesh_processing/Sizing_field_base.h>
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <CGAL/boost/graph/selection.h>

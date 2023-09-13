@@ -49,9 +49,6 @@ private:
   typedef PolygonMesh                     PM;
   typedef typename boost::property_traits<VPMap>::value_type Point;
 
-protected:
-  typedef typename boost::property_map<PM, boost::vertex_point_t>::const_type DefaultVPMap;
-
 public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;
   typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
