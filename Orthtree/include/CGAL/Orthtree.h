@@ -259,7 +259,7 @@ public:
 
   // Non-necessary but just to be clear on the rule of 5:
 
-  // assignment operators deleted (PointRange is a ref)
+  // assignment operators deleted
   Orthtree& operator=(const Orthtree& other) = delete;
 
   Orthtree& operator=(Orthtree&& other) = delete;
@@ -489,26 +489,36 @@ public:
   /// \name Custom Properties
   /// @{
 
+  /*!
+   * \brief pass-through to `get_or_add_property` for node properties.
+   */
   template <typename T>
   std::pair<std::reference_wrapper<Node_property_container::Array < T>>, bool>
-
   get_or_add_node_property(const std::string& name, const T default_value = T()) {
     return m_node_properties.get_or_add_property(name, default_value);
   }
 
+  /*!
+   * \brief pass-through to `add_property` for node properties.
+   */
   template <typename T>
   Node_property_container::Array <T>& add_node_property(const std::string& name, const T default_value = T()) {
     return m_node_properties.add_property(name, default_value);
   }
 
+  /*!
+   * \brief pass-through to `get_property` for node properties.
+   */
   template <typename T>
   Node_property_container::Array <T>& get_node_property(const std::string& name) {
     return m_node_properties.get_property<T>(name);
   }
 
+  /*!
+   * \brief pass-through to `get_property_if_exists` for node properties.
+   */
   template <typename T>
   std::optional<std::reference_wrapper<Node_property_container::Array < T>>>
-
   get_node_property_if_exists(const std::string& name) {
     return m_node_properties.get_property_if_exists<T>(name);
   }
@@ -521,14 +531,14 @@ public:
   /// @{
 
   /*!
-    \brief finds the leaf node which contains the point `p`.
+    \brief finds the leaf node which contains a particular point in space.
 
     Traverses the orthtree and finds the deepest cell that has a
     domain enclosing the point passed. The point passed must be within
     the region enclosed by the orthtree (bbox of the root node).
 
     \param point query point.
-    \return the node which contains the point.
+    \return the index of the node which contains the point.
    */
   const Node_index locate(const Point& point) const {
 
@@ -564,7 +574,7 @@ public:
     \note this function requires the function
     `bool CGAL::do_intersect(QueryType, Traits::Bbox_d)` to be defined.
 
-    This function finds all the intersecting nodes and returns them as const pointers.
+    This function finds all the intersecting nodes and writes their indices to the ouput iterator.
 
     \tparam Query the primitive class (e.g. sphere, ray)
     \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
@@ -584,8 +594,8 @@ public:
   /*!
     \brief compares the topology of the orthtree with that of `rhs`.
 
-    Trees may be considered equivalent even if they contain different points.
-    Equivalent trees must have the same bounding box and the same node structure.
+    Trees may be considered equivalent even if they have different contents.
+    Equivalent trees must have the same root bounding box and the same node structure.
    */
   bool operator==(const Self& rhs) const {
 
@@ -613,33 +623,65 @@ public:
   /// \name Node Access
   /// @{
 
+  /*!
+   * \brief Determines whether the node specified by index `n` is a leaf node.
+   *
+   * @param n index of the node to check.
+   * @return true of the node is a leaf, false otherwise.
+   */
   bool is_leaf(Node_index n) const {
     return !m_node_children[n].has_value();
   }
 
+  /*!
+   * \brief Determines whether the node specified by index `n` is a root node.
+   *
+   * @param n index of the node to check.
+   * @return true of the node is a root, false otherwise.
+   */
   bool is_root(Node_index n) const {
     return n == 0;
   }
 
+  /*!
+   * \brief Determines the depth of the node specified.
+   *
+   * The root node has depth 0, its children have depth 1, and so on.
+   *
+   * @param n index of the node to check.
+   * @return the depth of the node within its tree.
+   */
   std::size_t depth(Node_index n) const {
-//    std::cerr << n
-//              << " " << m_node_depths.size()
-//              << std::endl;
     return m_node_depths[n];
   }
 
+  /*!
+   * \brief Retrieves a reference to the Node_data associated with the node specified by `n`.
+   *
+   * @param n index of the node to retrieve data for.
+   * @return the data associated with the node.
+   */
   Node_data& data(Node_index n) {
     return m_node_points[n];
   }
 
+  /*!
+   * \brief const version of `data()`
+   */
   const Node_data& data(Node_index n) const {
     return m_node_points[n];
   }
 
+  /*!
+   * \brief Retrieves the global coordinates of the node.
+   */
   Global_coordinates global_coordinates(Node_index n) const {
     return m_node_coordinates[n];
   }
 
+  /*!
+   * \brief Retrieves the local coordinates of the node.
+   */
   Local_coordinates local_coordinates(Node_index n) const {
     Local_coordinates result;
     for (std::size_t i = 0; i < Dimension::value; ++i)
@@ -656,30 +698,56 @@ public:
     return *m_node_parents[node];
   }
 
+  /*!
+    \brief returns this node's `i`th child.
+    \pre `!is_leaf()`
+   */
   Node_index child(Node_index node, std::size_t i) const {
     CGAL_precondition (!is_leaf(node));
     return *m_node_children[node] + i;
   }
 
-  Node_index descendant(Node_index node, std::size_t i) { return child(node, i); }
-
+  /*!
+   * \brief Retrieves an arbitrary descendant of the node specified by `node`.
+   *
+   * Convenience function to avoid the need to call `orthtree.child(orthtree.child(node, 0), 1)`.
+   *
+   * Each index in `indices` specifies which child to enter as descending the tree from `node` down.
+   * Indices are evaluated in the order they appear as parameters, so
+   * `descendant(root, 0, 1)` returns the second child of the first child of the root.
+   *
+   * @param node the node to descend
+   * @param indices the descent to perform
+   * @return the index of the specified descendant node.
+   */
   template <typename... Indices>
-  Node_index descendant(Node_index node, std::size_t i, Indices... remaining_indices) {
-    return descendant(child(node, i), remaining_indices...);
+  Node_index descendant(Node_index node, Indices... indices) {
+    return recursive_descendant(node, indices...);
   }
 
+  /*!
+   * \brief Convenience function for retrieving arbitrary nodes, equivalent to `tree.descendant(tree.root(), indices...)`.
+   */
   template <typename... Indices>
   Node_index node(Indices... indices) {
     return descendant(root(), indices...);
   }
 
+  /*!
+   * \brief Finds the next sibling in the parent of the node specified by the index `n`.
+   *
+   * Traverses the tree in increasing order of local index (e.g. 000, 001, 010, etc.)
+   *
+   * @param n the node to find the sibling of.
+   * @return the next sibling of `n` if `n` is not the last node in its parent, otherwise nothing.
+   */
   const Maybe_node_index next_sibling(Node_index n) const {
 
     // Root node has no siblings
     if (is_root(n)) return {};
 
     // Find out which child this is
-    std::size_t local_coords = local_coordinates(n).to_ulong(); // todo: add local_coordinates(n) helper
+    std::size_t local_coords = local_coordinates(n).to_ulong();
 
     // The last child has no more siblings
     if (int(local_coords) == Degree::value - 1)
@@ -689,6 +757,12 @@ public:
     return child(parent(n), local_coords + 1);
   }
 
+  /*!
+   * \brief Finds the next sibling of the parent of the node specified by `n` if it exists.
+   *
+   * @param n the node to find the sibling up of.
+   * @return The next sibling of the parent of `n` if `n` is not the root and its parent has a sibling, otherwise nothing.
+   */
   const Maybe_node_index next_sibling_up(Node_index n) const {
 
     // the root node has no next sibling up
@@ -705,6 +779,14 @@ public:
     return {};
   }
 
+  /*!
+   * \brief Finds the leaf node reached when descending the tree and always choosing child 0.
+   *
+   * This is the starting point of a depth-first traversal.
+   *
+   * @param n the node to find the deepest first child of.
+   * @return the index of the deepest first child.
+   */
   Node_index deepest_first_child(Node_index n) const {
 
     auto first = n;
@@ -714,6 +796,15 @@ public:
     return first;
   }
 
+  /*!
+   * \brief Finds node reached when descending the tree to a depth `d` and always choosing child 0.
+   *
+   * Similar to `deepest_first_child`, but does not go to a fixed depth.
+   *
+   * @param n the node to find the `d`th first child of.
+   * @param d the depth to descend to.
+   * @return the index of the `d`th first child, nothing if the tree is not deep enough.
+   */
   Maybe_node_index first_child_at_depth(Node_index n, std::size_t d) const {
 
     std::queue<Node_index> todo;
@@ -791,8 +882,15 @@ public:
    */
   void unsplit(Node_index n) {
     // todo: the child nodes should be de-allocated!
+    // This may need to be done recursively
   }
 
+  /*!
+   * \brief Finds the center point of the node specified by `n`.
+   *
+   * @param n The node to find the center point for.
+   * @return the center point of node `n`.
+   */
   Point barycenter(Node_index n) const {
 
     // Determine the side length of this node
@@ -810,6 +908,15 @@ public:
     return std::apply(m_traits.construct_point_d_object(), bary);
   }
 
+  /*!
+   * \brief Determines whether a pair of subtrees have the same topology.
+   *
+   * @param lhsNode a node in lhsTree
+   * @param lhsTree an Orthtree
+   * @param rhsNode a node in rhsTree
+   * @param rhsTree another Orthtree
+   * @return true if lhsNode and rhsNode have the same topology, false otherwise
+   */
   static bool is_topology_equal(Node_index lhsNode, const Self& lhsTree, Node_index rhsNode, const Self& rhsTree) {
 
     // If one node is a leaf, and the other isn't, they're not the same
@@ -831,6 +938,9 @@ public:
     return (lhsTree.global_coordinates(lhsNode) == rhsTree.global_coordinates(rhsNode));
   }
 
+  /*!
+   * \brief Helper function for calling `is_topology_equal` on the root nodes of two trees.
+   */
   static bool is_topology_equal(const Self& lhs, const Self& rhs) {
     return is_topology_equal(lhs.root(), lhs, rhs.root(), rhs);
   }
@@ -939,6 +1049,13 @@ public:
   /// @}
 
 private: // functions :
+
+  Node_index recursive_descendant(Node_index node, std::size_t i) { return child(node, i); }
+
+  template <typename... Indices>
+  Node_index recursive_descendant(Node_index node, std::size_t i, Indices... remaining_indices) {
+    return recursive_descendant(child(node, i), remaining_indices...);
+  }
 
   bool do_intersect(Node_index n, const Sphere& sphere) const {
 
