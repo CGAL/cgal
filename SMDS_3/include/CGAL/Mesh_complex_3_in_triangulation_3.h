@@ -151,7 +151,7 @@ namespace CGAL {
   vertex and cell base class are models of the concepts
   `SimplicialMeshVertexBase_3` and `SimplicialMeshCellBase_3`, respectively.
 
-  \tparam  CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
+  \tparam CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
   of the discretized geometric domain.
   It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
   `LessThanComparable`.
