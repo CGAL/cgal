@@ -67,7 +67,7 @@ of the underlying Euclidean space \f$ \mathbb{R}^d\f$.
 The neighbors of a full cell are also
 indexed  in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
---->
+-->
 
 \cgalClassifedRefPages
 

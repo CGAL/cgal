@@ -41,7 +41,7 @@ that is pure, connected and without boundaries nor singularities. The
 <i>dimension</i> of the triangulation is the dimension of its maximal
 simplices.
 
-<!--- cardinality, i.e., they have the same number of vertices.--->
+<!--- cardinality, i.e., they have the same number of vertices. -->
 In the sequel, we will call these maximal simplices <I>full cells</I>.
 A <I>face</I> of a simplex is a subset of this simplex.
 A <I>proper face</I> of a simplex is a strict subset of this simplex.
@@ -136,12 +136,12 @@ Possible values of \f$d\f$ (the <I>current dimension</I> of the triangulation) i
 triangulation data structure.
 <DT><B>\f$d=-1\f$</B><DD> This corresponds to an abstract simplicial
 complex reduced to a single vertex.
- <!---  and a single full cell. In a geometric triangulation, this vertex corresponds to the vertex at infinity.--->
+ <!---  and a single full cell. In a geometric triangulation, this vertex corresponds to the vertex at infinity. -->
 <DT><B>\f$d=0\f$</B><DD> This corresponds to an abstract simplicial
 complex including two vertices, each corresponding to a full cell;
 the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
-<!--- (geometrically, the finite vertex and the infinite vertex),--->
+<!--- (geometrically, the finite vertex and the infinite vertex), -->
 <DT><B>\f$ 0< d \le D\f$</B><DD> This corresponds to a triangulation of
 the sphere \f$ \mathbb{S}^d\f$.
 </DL>
@@ -259,7 +259,7 @@ Therefore, the reader will make
 the best use of this example by reading it slowly, together with the reference
 manual documentation of the methods that are called (see here:
 `TriangulationDataStructure`) and by trying to understand the various
-`assert(...)` statements.--->
+`assert(...)` statements. -->
 
 \cgalExample{triangulation_data_structure_static.cpp}
 
