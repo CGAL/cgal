@@ -139,13 +139,13 @@ get(PropertyTag p,CGAL_HDS_CLASS const& g, const Key& key)
 
 
 
-#define DECLARE_HDS_DYNAMIC_PM(TAG, DESCRIPTOR)                             \
+#define DECLARE_HDS_DYNAMIC_PM(TAG, DESCRIPTOR)                                  \
 template <typename CGAL_HDS_TMPLT, class T>                                      \
 typename boost::property_map<CGAL_HDS_CLASS, TAG >::const_type                   \
-get(const TAG&, const CGAL_HDS_CLASS&)                                           \
-{                                                                           \
+get(const TAG&, const CGAL_HDS_CLASS&, const T& dv = T())                        \
+{                                                                                \
   typedef typename boost::graph_traits< CGAL_HDS_CLASS >::DESCRIPTOR descriptor; \
-  return internal::Dynamic_property_map<descriptor,T>();                    \
+  return internal::Dynamic_property_map<descriptor,T>(dv);                       \
 }
 
 DECLARE_HDS_DYNAMIC_PM(dynamic_vertex_property_t<T>, vertex_descriptor)
