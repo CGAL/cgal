@@ -55,9 +55,6 @@
 #include <unordered_set>
 #include <optional>
 
-//todo ip: temp
-#define CGAL_PMP_REMESHING_VERBOSE
-
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #define CGAL_DUMP_REMESHING_STEPS
@@ -1120,7 +1117,6 @@ namespace internal {
 
         Point proj = trees[patch_id_to_index_map[get_patch_id(face(halfedge(v, mesh_), mesh_))]]->closest_point(get(vpmap_, v));
         put(vpmap_, v, proj);
-        //todo ip - also update sizing field here?
       }
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -1149,7 +1145,6 @@ namespace internal {
           continue;
         //note if v is constrained, it has not moved
         put(vpmap_, v,  proj(v));
-        //todo ip: also update sizing field here?
       }
       CGAL_assertion(is_valid(mesh_));
 #ifdef CGAL_PMP_REMESHING_DEBUG

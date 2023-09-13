@@ -564,7 +564,7 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
 
         barycenters.emplace_back(v, vn, get(vpm, v) + move);
       }
-      else //todo ip: do border edges need to be handled with the sizing field?
+      else
       {
         if (!relax_constraints) continue;
         Vector_3 vn(NULL_VECTOR);
