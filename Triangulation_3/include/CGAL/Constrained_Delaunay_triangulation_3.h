@@ -46,7 +46,6 @@
 
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
-#include <boost/optional.hpp>
 #include <boost/dynamic_bitset.hpp>
 
 #include <boost/container/flat_set.hpp>
@@ -54,6 +53,7 @@
 #include <boost/container/small_vector.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
+#include <optional>
 #include <unordered_map>
 #include <ranges>
 #if __has_include(<format>)
@@ -70,6 +70,9 @@ template <typename Polygon, typename Kernel>
 concept Polygon_3 = std::ranges::common_range<Polygon>
       && (std::is_convertible_v<std::ranges::range_value_t<Polygon>,
                                 typename Kernel::Point_3>);
+template <typename Polygons, typename Kernel>
+concept Range_of_polygon_3 = std::ranges::common_range<Polygons>
+      && Polygon_3<std::ranges::range_value_t<Polygons>, Kernel>;
 #endif // concepts
 
 using CDT_3_face_index = int; // must be signed
@@ -477,29 +480,32 @@ public:
   }
 
   template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
-  boost::optional<Face_index> register_new_constrained_polygon(Polygon&& polygon) {
+  std::optional<Face_index> register_new_constrained_polygon(Polygon&& polygon) {
     return insert_constrained_polygon(std::forward<Polygon>(polygon), false);
   }
 
-
-template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
-  boost::optional<Face_index> insert_constrained_polygon(Polygon&& polygon, bool restore_Delaunay = true) {
+  template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
+  std::optional<Face_index>
+  insert_constrained_polygon(const Polygon& polygon, bool restore_Delaunay = true, Face_index face_index = -1)
+  {
     std::vector<Vertex_handle> handles;
     handles.reserve(polygon.size());
-    boost::optional<Cell_handle> hint;
+    std::optional<Cell_handle> hint;
     for(const auto& p : polygon) {
       const auto v = this->insert(p, hint.value_or(Cell_handle{}), restore_Delaunay);
       handles.push_back(v);
       hint = v->cell();
     }
-    return insert_constrained_face(std::move(handles), restore_Delaunay);
+    return insert_constrained_face(std::move(handles), restore_Delaunay, face_index);
   }
 
   template <typename Vertex_handles>
-  CGAL_CPP20_REQUIRE_CLAUSE(
-      std::ranges::common_range<Vertex_handles>
-      && (std::is_convertible_v<std::ranges::range_value_t<Vertex_handles>, Vertex_handle>))
-  boost::optional<Face_index> insert_constrained_face(Vertex_handles&& vertex_handles, bool restore_Delaunay = true) {
+  CGAL_CPP20_REQUIRE_CLAUSE(std::ranges::common_range<Vertex_handles> &&
+                            (std::is_convertible_v<std::ranges::range_value_t<Vertex_handles>, Vertex_handle>))
+  std::optional<Face_index> insert_constrained_face(Vertex_handles&& vertex_handles,
+                                                      bool restore_Delaunay = true,
+                                                      Face_index face_index = -1)
+  {
 #if CGAL_DEBUG_CDT_3 & 2
     std::cerr << "insert_constrained_face (" << std::size(vertex_handles) << " vertices):\n";
     for(auto v: vertex_handles) {
@@ -518,9 +524,10 @@ template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
     }
     CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>> circ{&vertex_handles};
     const auto circ_end{circ};
-    auto& borders = this->face_borders.emplace_back();
+    auto& borders = face_index < 0 ? this->face_borders.emplace_back() : this->face_borders[face_index];
     auto& border = borders.emplace_back();
-    const auto polygon_contraint_id = static_cast<CDT_3_face_index>(this->face_borders.size() - 1);
+    const auto polygon_contraint_id =
+        face_index < 0 ? static_cast<CDT_3_face_index>(this->face_borders.size() - 1) : face_index;
     do {
       const auto va = *circ;
       ++circ;
@@ -538,36 +545,38 @@ template <CGAL_TYPE_CONSTRAINT(Polygon_3<Geom_traits>) Polygon>
       }
     } while(circ != circ_end);
 
-    const auto accumulated_normal = [&] {
-      const auto last_it = std::next(first_it, size - 1);
-      const auto &last_point = tr.point(*last_it);
+    if(face_index < 0) {
+      const auto accumulated_normal = [&] {
+        const auto last_it = std::next(first_it, size - 1);
+        const auto &last_point = tr.point(*last_it);
 
-      auto &&traits = tr.geom_traits();
-      auto &&cross_product = traits.construct_cross_product_vector_3_object();
-      auto &&vector = traits.construct_vector_3_object();
-      auto &&sum_vector = traits.construct_sum_of_vectors_3_object();
+        auto &&traits = tr.geom_traits();
+        auto &&cross_product = traits.construct_cross_product_vector_3_object();
+        auto &&vector = traits.construct_vector_3_object();
+        auto &&sum_vector = traits.construct_sum_of_vectors_3_object();
 
-      Vector_3 accumulated_normal = vector(CGAL::NULL_VECTOR);
-      for (auto vit = first_it, next_it = std::next(first_it);
-           next_it != last_it; ++vit, ++next_it) {
-        accumulated_normal =
-            sum_vector(accumulated_normal,
-                       cross_product(vector(last_point, tr.point(*vit)),
-                                     vector(last_point, tr.point(*next_it))));
-      }
-      if (accumulated_normal.x() < 0 ||
-          (accumulated_normal.x() == 0 && accumulated_normal.y() < 0) ||
-          (accumulated_normal.x() == 0 && accumulated_normal.y() == 0 &&
-           accumulated_normal.z() < 0)
-          )
-      {
-        accumulated_normal = - accumulated_normal;
-      }
-      return accumulated_normal;
-    }();
+        Vector_3 accumulated_normal = vector(CGAL::NULL_VECTOR);
+        for (auto vit = first_it, next_it = std::next(first_it);
+            next_it != last_it; ++vit, ++next_it) {
+          accumulated_normal =
+              sum_vector(accumulated_normal,
+                        cross_product(vector(last_point, tr.point(*vit)),
+                                      vector(last_point, tr.point(*next_it))));
+        }
+        if (accumulated_normal.x() < 0 ||
+            (accumulated_normal.x() == 0 && accumulated_normal.y() < 0) ||
+            (accumulated_normal.x() == 0 && accumulated_normal.y() == 0 &&
+            accumulated_normal.z() < 0)
+            )
+        {
+          accumulated_normal = - accumulated_normal;
+        }
+        return accumulated_normal;
+      }();
 
-    face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
-    face_constraint_misses_subfaces.resize(face_cdt_2.size());
+      face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
+      face_constraint_misses_subfaces.resize(face_cdt_2.size());
+    }
 
     return polygon_contraint_id;
   }

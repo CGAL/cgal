@@ -17,9 +17,10 @@
 #include <cassert>
 #include <fstream>
 #include <string>
+#include <ranges>
+#include <optional>
 
 #if NO_TRY_CATCH
-// Iff -fno-exceptions, transform error handling code to work without it.
 # define CDT_3_try      if (true)
 # define CDT_3_catch(X) if (false)
 # define CDT_3_throw_exception_again
@@ -40,8 +41,9 @@ using Point = Delaunay::Point;
 using Point_3 = K::Point_3;
 
 using Mesh = CGAL::Surface_mesh<Point>;
-using edge_descriptor = boost::graph_traits<Mesh>::edge_descriptor;
-using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
+using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
+using edge_descriptor   = boost::graph_traits<Mesh>::edge_descriptor;
+using face_descriptor   = boost::graph_traits<Mesh>::face_descriptor;
 
 int go(Mesh, std::string);
 
@@ -151,6 +153,44 @@ int main(int argc, char* argv[])
   }
 }
 
+template <typename Range_of_segments>
+auto segment_soup_to_polylines(Range_of_segments&& segment_soup) {
+  using Segment = typename std::ranges::range_value_t<Range_of_segments>;
+  using Point = std::decay_t<decltype([](){ auto [a, b] = std::declval<Segment>(); return a; } ())>;
+  std::vector<std::vector<Point>> polylines;
+
+  using Graph = boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, Point>;
+  using Map2v = std::map<Point, typename Graph::vertex_descriptor>;
+  Graph graph;
+  Map2v map2v;
+  auto get_v = [&](const Point& p) {
+    auto it = map2v.find(p);
+    if(it != map2v.end()) return it->second;
+    auto v = boost::add_vertex(p, graph);
+    map2v.emplace(p, v);
+    return v;
+  };
+  for(auto [a, b]: segment_soup) {
+    auto va = get_v(a);
+    auto vb = get_v(b);
+    boost::add_edge(va, vb, graph);
+  }
+
+  struct Polylines_visitor
+  {
+    Graph& graph;
+    std::vector<std::vector<Point>>& polylines;
+
+    void start_new_polyline() { polylines.emplace_back(); }
+    void add_node(typename Graph::vertex_descriptor vd) { polylines.back().push_back(graph[vd]); }
+    void end_polyline() {}
+  };
+  Polylines_visitor visitor{graph, polylines};
+  CGAL::split_graph_into_polylines(graph, visitor);
+
+  return polylines;
+}
+
 int go(Mesh mesh, std::string output_filename) {
   CDT cdt;
   auto pmap = get(CGAL::vertex_point, mesh);
@@ -160,43 +200,43 @@ int go(Mesh mesh, std::string output_filename) {
   for(auto f: faces(mesh)) {
     put(patch_id_map, f, -1);
   }
-  auto [edge_mark_pmap, ok2] = mesh.add_property_map<edge_descriptor, bool>("e:mark", false);
-  assert(ok2);
-  for(auto e: edges(mesh)) {
-    put(edge_mark_pmap, e, false);
-  }
-  int patch_id = 0;
-  for(auto f: faces(mesh)) {
-    if(get(patch_id_map, f) >= 0) continue;
-    std::stack<face_descriptor> f_stack;
-    f_stack.push(f);
-    while(!f_stack.empty()) {
-      auto f = f_stack.top();
-      f_stack.pop();
+  int nb_patches = 0;
+  std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
+  if(merge_facets) {
+    for(auto f: faces(mesh))
+    {
       if(get(patch_id_map, f) >= 0) continue;
-      put(patch_id_map, f, patch_id);
-      for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
-        auto opp = opposite(h, mesh);
-        if(is_border_edge(opp, mesh)) {
-          put(edge_mark_pmap, edge(h, mesh), true);
-          continue;
+      patch_edges.emplace_back();
+      auto& edges = patch_edges.back();
+      std::stack<face_descriptor> f_stack;
+      f_stack.push(f);
+      while(!f_stack.empty()) {
+        auto f = f_stack.top();
+        f_stack.pop();
+        if(get(patch_id_map, f) >= 0) continue;
+        put(patch_id_map, f, nb_patches);
+        for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
+          auto e = edge(h, mesh);
+          auto opp = opposite(h, mesh);
+          if(is_border_edge(opp, mesh)) {
+            edges.emplace_back(source(e, mesh), target(e, mesh));
+            continue;
+          }
+          auto n = face(opp, mesh);
+          auto a = get(pmap, source(h, mesh));
+          auto b = get(pmap, target(h, mesh));
+          auto c = get(pmap, target(next(h, mesh), mesh));
+          auto d = get(pmap, target(next(opp, mesh), mesh));
+          if(CGAL::orientation(a, b, c, d) != CGAL::COPLANAR) {
+            edges.emplace_back(source(e, mesh), target(e, mesh));
+            continue;
+          }
+          if(get(patch_id_map, n) >= 0) continue;
+          f_stack.push(n);
         }
-        auto n = face(opp, mesh);
-        if(get(patch_id_map, n) >= 0) continue;
-        auto a = get(pmap, source(h, mesh));
-        auto b = get(pmap, target(h, mesh));
-        auto c = get(pmap, target(next(h, mesh), mesh));
-        auto d = get(pmap, target(next(opp, mesh), mesh));
-        if(CGAL::orientation(a, b, c, d) != CGAL::COPLANAR) {
-          put(edge_mark_pmap, edge(h, mesh), true);
-          continue;
-        }
-        f_stack.push(n);
       }
+      ++nb_patches;
     }
-    ++patch_id;
-  }
-  {
     std::ofstream out("dump_patches.ply");
     CGAL::IO::write_PLY(out, mesh);
   }
@@ -256,52 +296,74 @@ int go(Mesh mesh, std::string output_filename) {
   }
   int poly_id = 0;
   CDT_3_try {
-    for(auto face_descriptor : faces(mesh)) {
-      std::vector<Point_3> polygon;
-      const auto he = halfedge(face_descriptor, mesh);
-      for(auto vertex_it : CGAL::vertices_around_face(he, mesh)) {
-        polygon.push_back(get(pmap, vertex_it));
+    if(merge_facets) {
+      for(int i = 0; i < nb_patches; ++i) {
+        const auto& edges = patch_edges[i];
+        auto polylines = segment_soup_to_polylines(edges);
+        std::optional<int> face_index;
+        for(auto& polyline: polylines) {
+          assert(polyline.front() == polyline.back());
+          polyline.pop_back();
+          if(face_index) {
+            cdt.insert_constrained_polygon(
+              polyline | std::views::transform([&](vertex_descriptor v) { return get(pmap, v); }),
+              false,
+              *face_index);
+          } else {
+            face_index = cdt.insert_constrained_polygon(
+              polyline | std::views::transform([&](vertex_descriptor v) { return get(pmap, v); }),
+              false);
+          }
+        }
       }
-#if CGAL_DEBUG_CDT_3
-      std::cerr << "NEW POLYGON #" << poly_id << '\n';
-#endif // CGAL_DEBUG_CDT_3
-      const auto coplanar = polygon.size() < 3 ||
-          std::all_of(polygon.begin(), polygon.end(),
-                      [p1 = polygon[0], p2 = polygon[1], p3 = polygon[2]](auto p) {
-                        const auto coplanar =
-                            CGAL::orientation(p1, p2, p3, p) == CGAL::COPLANAR;
-                        if(!coplanar) {
-                          std::cerr << "Non coplanar points: " << p1 << ", " << p2
-                                    << ", " << p3 << ", " << p << '\n'
-                                    << "  volume: " << volume(p1, p2, p3, p) << '\n';
+    } else {
+      for(auto face_descriptor : faces(mesh)) {
+        std::vector<Point_3> polygon;
+        const auto he = halfedge(face_descriptor, mesh);
+        for(auto vertex_it : CGAL::vertices_around_face(he, mesh)) {
+          polygon.push_back(get(pmap, vertex_it));
+        }
+  #if CGAL_DEBUG_CDT_3
+        std::cerr << "NEW POLYGON #" << poly_id << '\n';
+  #endif // CGAL_DEBUG_CDT_3
+        const auto coplanar = polygon.size() < 3 ||
+            std::all_of(polygon.begin(), polygon.end(),
+                        [p1 = polygon[0], p2 = polygon[1], p3 = polygon[2]](auto p) {
+                          const auto coplanar =
+                              CGAL::orientation(p1, p2, p3, p) == CGAL::COPLANAR;
+                          if(!coplanar) {
+                            std::cerr << "Non coplanar points: " << p1 << ", " << p2
+                                      << ", " << p3 << ", " << p << '\n'
+                                      << "  volume: " << volume(p1, p2, p3, p) << '\n';
 
-                        }
-                        return coplanar;
-                      });
-      if(!coplanar) {
-        std::ofstream out(std::string("dump_noncoplanar_polygon_") + std::to_string(poly_id) + ".off");
-        out.precision(17);
-        out << "OFF\n" << polygon.size() << " 1 0\n";
-        for(auto p : polygon) {
-          out << p << '\n';
+                          }
+                          return coplanar;
+                        });
+        if(!coplanar) {
+          std::ofstream out(std::string("dump_noncoplanar_polygon_") + std::to_string(poly_id) + ".off");
+          out.precision(17);
+          out << "OFF\n" << polygon.size() << " 1 0\n";
+          for(auto p : polygon) {
+            out << p << '\n';
+          }
+          out << polygon.size() << ' ';
+          for(std::size_t i = 0u, end = polygon.size(); i < end; ++i) {
+            out << ' ' << i;
+          }
+          out << '\n';
+          std::cerr << "Polygon is not coplanar\n";
         }
-        out << polygon.size() << ' ';
-        for(std::size_t i = 0u, end = polygon.size(); i < end; ++i) {
-          out << ' ' << i;
+        try {
+          [[maybe_unused]] auto id = cdt.insert_constrained_polygon(polygon, false);
+          assert(id == poly_id);
+          ++poly_id;
+        } catch(int error) {
+          exit_code = error;
         }
-        out << '\n';
-        std::cerr << "Polygon is not coplanar\n";
+        // std::ofstream dump("dump.binary.cgal");
+        // CGAL::Mesh_3::save_binary_file(dump, cdt);
       }
-      try {
-        [[maybe_unused]] auto id = cdt.insert_constrained_polygon(polygon, true);
-        assert(id == poly_id);
-        ++poly_id;
-      } catch(int error) {
-        exit_code = error;
-      }
-      // std::ofstream dump("dump.binary.cgal");
-      // CGAL::Mesh_3::save_binary_file(dump, cdt);
-    }
+    } // not merge_facets
     cdt.restore_Delaunay();
     // for(auto e: edges(mesh)) {
     //   auto he = halfedge(e, mesh);
