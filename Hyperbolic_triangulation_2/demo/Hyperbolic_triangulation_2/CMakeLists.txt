@@ -20,7 +20,7 @@ if(CGAL_Qt6_FOUND
    set(CMAKE_AUTOUIC ON)
    set(CMAKE_AUTORCC ON)
 
-  qt_add_executable ( HDT2 HDT2.cpp)
+  qt_add_executable ( HDT2 HDT2.cpp resources/Delaunay_triangulation_2.qrc)
   target_include_directories(HDT2 PRIVATE ./ ./include)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS HDT2 )
   target_link_libraries ( HDT2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)

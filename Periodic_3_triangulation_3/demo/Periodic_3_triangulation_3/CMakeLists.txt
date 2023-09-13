@@ -50,7 +50,8 @@ if(CGAL_Qt6_FOUND
     periodic_3_triangulation_3_demo.cpp
     MainWindow.ui
     moc_MainWindow.cpp
-    Periodic_3_triangulation_3.qhc)
+    Periodic_3_triangulation_3.qhc
+    Periodic_3_triangulation_3.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS periodic_3_triangulation_3_demo)
 

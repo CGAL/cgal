@@ -24,7 +24,7 @@ if((CGAL_Core_FOUND OR LEDA_FOUND)
    set(CMAKE_AUTORCC ON)
 
   # cpp files
-  qt_add_executable(P4HDT2 P4HDT2.cpp P4HDT2.ui)
+  qt_add_executable(P4HDT2 P4HDT2.cpp P4HDT2.ui Main_resources.qrc)
 
   target_link_libraries(P4HDT2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
   if(TARGET CGAL::CGAL_Core)

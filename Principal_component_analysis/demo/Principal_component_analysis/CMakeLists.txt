@@ -3,15 +3,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Principal_component_analysis_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
 include_directories(./)
 
 # Find CGAL and CGAL Qt6
@@ -25,30 +16,16 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets OpenGL)
+find_package(Qt6 QUIET COMPONENTS Widgets OpenGL)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  qt6_wrap_ui(UI_FILES MainWindow.ui)
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-  include(AddFileDependencies)
-
-  qt6_generate_moc("MainWindow.h"
-                   "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp")
-  add_file_dependencies(MainWindow_moc.cpp
-                        "${CMAKE_CURRENT_SOURCE_DIR}/MainWindow.h")
-
-  qt6_generate_moc("Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
-  add_file_dependencies(Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h")
-
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES PCA_demo.qrc)
-
-  add_file_dependencies(
-    PCA_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
-    "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp")
-  add_executable(PCA_demo PCA_demo.cpp ${UI_FILES} ${CGAL_Qt6_RESOURCE_FILES}
-                          ${CGAL_Qt6_MOC_FILES})
+  qt_add_executable(PCA_demo PCA_demo.cpp MainWindow.ui MainWindow.cpp Viewer.cpp Scene.cpp)
 
   target_link_libraries(PCA_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
                                          CGAL::Eigen3_support Qt6::Widgets Qt6::OpenGL)
