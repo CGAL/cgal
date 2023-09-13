@@ -13,7 +13,7 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   include(${CGAL_USE_FILE})

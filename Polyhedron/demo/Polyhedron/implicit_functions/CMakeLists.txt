@@ -23,11 +23,7 @@ include_directories(BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-set(QT_USE_QTXML TRUE)
-set(QT_USE_QTMAIN TRUE)
-set(QT_USE_QTSCRIPT TRUE)
-set(QT_USE_QTOPENGL TRUE)
-find_package(Qt6 QUIET COMPONENTS OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Core)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   # put plugins (which are shared libraries) at the same location as

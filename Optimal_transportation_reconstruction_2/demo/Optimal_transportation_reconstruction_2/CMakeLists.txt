@@ -7,7 +7,7 @@ project(Optimal_transportation_reconstruction_2_Demo)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
 # Find CImg
 find_path(
@@ -34,7 +34,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_executable(Otr2_demo glviewer.cpp scene.cpp Otr2_demo.cpp window.cpp render.cpp dialog_options.cpp
                            pwsrec.ui options.ui pwsrec.qrc)
 
-  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGLWidgets)
+  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6)
 
   # Link with pthread if necessary
   if(CIMG_INCLUDE_DIR)
