@@ -46,8 +46,12 @@ namespace Polygon_mesh_processing
 * @tparam PolygonMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
 */
-template <class PolygonMesh>
-class Adaptive_sizing_field : public Sizing_field_base<PolygonMesh>
+template <class PolygonMesh,
+          class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
+class Adaptive_sizing_field
+#ifndef DOXYGEN_RUNNING
+  : public Sizing_field_base<PolygonMesh, VPMap>
+#endif
 {
 private:
   typedef Sizing_field_base<PolygonMesh> Base;
@@ -62,7 +66,6 @@ public:
   typedef typename Base::face_descriptor     face_descriptor;
   typedef typename Base::halfedge_descriptor halfedge_descriptor;
   typedef typename Base::vertex_descriptor   vertex_descriptor;
-  typedef typename Base::DefaultVPMap DefaultVPMap;
 
   /// \name Creation
   /// @{
@@ -79,6 +82,8 @@ public:
   *        edge length.
   * @param face_range the range of triangular faces defining one or several surface patches
   *        to be remeshed. It should be the same as the range of faces used for `isotropic_remeshing()`.
+  * \param vpmap is the input vertex point map that associates points to the vertices of
+  *        an input mesh.
   * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. It should be the
   *              same mesh as the one used in `isotropic_remeshing()`.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -102,15 +107,15 @@ public:
   Adaptive_sizing_field(const double tol
                       , const std::pair<FT, FT>& edge_len_min_max
                       , const FaceRange& face_range
+                      , const VPMap& vpmap
                       , PolygonMesh& pmesh
                       , const NamedParameters& np = parameters::default_values())
     : tol(tol)
     , m_short(edge_len_min_max.first)
     , m_long(edge_len_min_max.second)
-    , m_vpmap(get(CGAL::vertex_point, pmesh))
+    , m_vpmap(vpmap)
     , m_vertex_sizing_map(get(Vertex_property_tag(), pmesh))
   {
-
     if (face_range.size() == faces(pmesh).size())
     {
       // calculate curvature from the whole mesh
@@ -130,6 +135,51 @@ public:
       calc_sizing_map(ffg, np);
     }
   }
+
+  /*!
+  * returns an object to serve as criteria for adaptive curvature-based edge lengths. It calls
+  * the first constructor using default values for the vertex point map of the input polygon mesh.
+  *
+  * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+  *         model of `Range`. Its iterator type is `ForwardIterator`.
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param tol the error tolerance, used together with curvature to derive target edge length.
+  *        Lower tolerance values will result in shorter mesh edges.
+  * @param edge_len_min_max is the stopping criterion for minimum and maximum allowed
+  *        edge length.
+  * @param face_range the range of triangular faces defining one or several surface patches
+  *        to be remeshed. It should be the same as the range of faces used for `isotropic_remeshing()`.
+  * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. It should be the
+  *              same mesh as the one used in `isotropic_remeshing()`. Additionally, the default vertex point
+  *              map of pmesh is used to construct the class.
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{ball_radius}
+  *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures.
+  *                           It can potentially smooth the curvature and consequently the sizing field in the
+   *                          case of noisy input.}
+  *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures.
+  *                           It can effectively smooth the curvature field and consequently the sizing field.}
+  *     \cgalParamType{`Base::FT`}
+  *     \cgalParamDefault{`-1`}
+  *     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
+  *                     measures on faces around the vertex.}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
+  */
+  template <typename FaceRange
+          , typename NamedParameters = parameters::Default_named_parameters>
+  Adaptive_sizing_field(const double tol
+                      , const std::pair<FT, FT>& edge_len_min_max
+                      , const FaceRange& face_range
+                      , PolygonMesh& pmesh
+                      , const NamedParameters& np = parameters::default_values())
+    : Adaptive_sizing_field(tol, edge_len_min_max, face_range,
+                            get(CGAL::vertex_point, pmesh), pmesh, np)
+  {}
+
   ///@}
 
 private:
@@ -277,7 +327,7 @@ private:
   const FT tol;
   const FT m_short;
   const FT m_long;
-  const DefaultVPMap m_vpmap;
+  const VPMap m_vpmap;
   VertexSizingMap m_vertex_sizing_map;
 };
 
