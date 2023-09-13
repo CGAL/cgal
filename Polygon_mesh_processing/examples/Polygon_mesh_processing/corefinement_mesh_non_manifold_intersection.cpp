@@ -43,7 +43,12 @@ int main(int argc, char* argv[])
     std::vector< std::array<std::size_t, 3> > polygons;
 
     visitor.extract_intersection(points, polygons);
-    CGAL::IO::write_polygon_soup("inter.off", points, polygons, CGAL::parameters::stream_precision(17));
+    CGAL::IO::write_polygon_soup("inter_soup.off", points, polygons, CGAL::parameters::stream_precision(17));
+    // make the soup topologically manifold (but geometrically self-intersecting)
+    PMP::orient_polygon_soup(points, polygons);
+    // fill a mesh with the intersection
+    PMP::polygon_soup_to_polygon_mesh(points, polygons, out);
+    CGAL::IO::write_polygon_mesh("inter.off", out, CGAL::parameters::stream_precision(17));
   }
 
   return 0;
