@@ -13,9 +13,7 @@
 /// \ingroup PkgVoronoiDiagram2Ref
 
 /*!
-  \code
-  #include <CGAL/draw_voronoi_diagram_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_voronoi_diagram_2.h}
 */
 /// \defgroup PkgDrawVoronoiDiagram2 Draw a 2D Voronoi Diagram
 /// \ingroup PkgVoronoiDiagram2Ref

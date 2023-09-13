@@ -42,7 +42,7 @@ namespace CGAL {
     /// AABB tree is built should not be deleted while the AABB tree
     /// is in use.
     ///
-    /// \cgalModels `AABBPrimitive`
+    /// \cgalModels{AABBPrimitive}
     /// \tparam GeomTraits must provide a \c %Point_3
     /// type, used as \c Point, and a \c %Segment_3 type, used as \c
     /// Datum and constructible from two arguments of type \c

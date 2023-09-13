@@ -296,7 +296,7 @@ also inserts a small set of auxiliary vertices that belong to the triangulation
 but are isolated from the complex at the end of the meshing process.
 
 These so-called \em isolated vertices belong to the triangulation but not to any cell
-of the `C3T3`. They can be removed using the function `remove_isolated_vertices()`.
+of the `C3T3`. They can be removed using the function `remove_isolated_vertices()` of `CGAL::Mesh_complex_3_in_triangulation_3`.
 
 
 \section Mesh_3_section_interface Interface
@@ -494,7 +494,7 @@ protecting ball centers that are consecutive on a 1-feature. This parameter has 
 
 The four additional parameters are optimization parameters.
 They control which optimization processes are performed
-and allow the user to tune the parameters of the activated optimization processes.
+and enable the user to tune the parameters of the activated optimization processes.
 These parameters have internal types which are not described
 but the library provides global functions to generate
 appropriate values of these types:
@@ -679,7 +679,7 @@ View of 3D meshes produced from a polyhedral domain with a nested surface.
 
 The following code creates a polyhedral domain, with only one polyhedron,
 and no "bounding polyhedron", so the volumetric part of the domain will be empty.
-This allows to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
+This enables to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
 
@@ -725,7 +725,7 @@ to the voxels surface, causing an aliasing effect.
 A solution to generate a smooth and accurate output surface was described by Stalling et al in
 \cgalCite{stalling1998weighted}. It consists in generating a second input image, made
 of integer coefficients called *weights*, and use those weights to define smoother domain boundaries.
-The 3D image of weights can be generated using `CGAL::Mesh_3::generate_weights()` as shown in
+The 3D image of weights can be generated using `CGAL::Mesh_3::generate_label_weights()` as shown in
 the following example.
 
 \cgalExample{Mesh_3/mesh_3D_weighted_image.cpp}
@@ -1428,6 +1428,6 @@ and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 
 In 2013, Clément Jamin made the meshing and optimization algorithms parallel
 on multi-core shared-memory architectures.
-\todo Add reference to paper or research report when it is available.
+
 */
 } /* namespace CGAL */

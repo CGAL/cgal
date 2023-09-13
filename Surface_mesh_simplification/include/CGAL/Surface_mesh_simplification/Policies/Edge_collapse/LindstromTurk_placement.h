@@ -31,7 +31,7 @@ public:
   {}
 
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
+  std::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
     return internal::LindstromTurkCore<TM,Profile>(m_LT_params, profile).compute_placement();
   }

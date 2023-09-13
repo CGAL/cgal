@@ -31,7 +31,7 @@
 #include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 
 #include <boost/container/deque.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -137,7 +137,7 @@ private:
   mutable CGAL_MUTEX building_mutex;//mutex used to protect const calls inducing build()
   #endif
   bool built_;
-  bool removed_;
+  std::size_t removed_=0;
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
@@ -278,13 +278,13 @@ private:
 public:
 
   Kd_tree(Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false), removed_(false)
+    : traits_(traits),split(s), built_(false)
   {}
 
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
           Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits), split(s), pts(first, beyond), built_(false), removed_(false)
+    : traits_(traits), split(s), pts(first, beyond), built_(false)
   { }
 
   bool empty() const {
@@ -324,7 +324,7 @@ public:
     // must call invalidate_build() first.
     CGAL_assertion(!is_built());
     CGAL_assertion(!pts.empty());
-    CGAL_assertion(!removed_);
+    CGAL_assertion(removed_==0);
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     dim_ = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
@@ -432,14 +432,14 @@ public:
 
   void invalidate_build()
   {
-    if(removed_){
+    if(removed_!=0){
       // Walk the tree to collect the remaining points.
       // Writing directly to pts would likely work, but better be safe.
       std::vector<Point_d> ptstmp;
       //ptstmp.resize(root()->num_items());
       root()->tree_items(std::back_inserter(ptstmp));
       pts.swap(ptstmp);
-      removed_=false;
+      removed_=0;
       CGAL_assertion(is_built()); // the rest of the cleanup must happen
     }
     if(is_built()){
@@ -455,7 +455,7 @@ public:
   {
     invalidate_build();
     pts.clear();
-    removed_ = false;
+    removed_ = 0;
   }
 
   void
@@ -512,8 +512,8 @@ public:
     CGAL_assertion(success);
 
     // Do not set the flag is the tree has been cleared.
-    if(is_built())
-      removed_ |= success;
+    if(is_built() && success)
+      ++removed_;
   }
 private:
   template<class Equal>
@@ -594,7 +594,7 @@ public:
 
 
   template <class FuzzyQueryItem>
-  boost::optional<Point_d>
+  std::optional<Point_d>
   search_any_point(const FuzzyQueryItem& q) const
   {
     if(! pts.empty()){
@@ -605,7 +605,7 @@ public:
       Kd_tree_rectangle<FT,D> b(*bbox);
       return tree_root->search_any_point(q,b,begin(),cache_begin(),dim_);
     }
-    return boost::none;
+    return std::nullopt;
   }
 
 
@@ -684,7 +684,7 @@ public:
   size_type
   size() const
   {
-    return pts.size();
+    return pts.size()-removed_;
   }
 
   // Print statistics of the tree.

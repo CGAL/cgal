@@ -117,8 +117,8 @@ special type of objects. They must, however, supply the relevant
 traits class, which mainly involves algebraic computations. A traits
 class also encapsulates the number types used to represent coordinates
 of geometric objects and to carry out algebraic operations on them. It
-encapsulates the type of coordinate system used (e.g., Cartesian and
-Homogeneous), and the geometric or algebraic computation methods
+encapsulates the type of coordinate system used (e.g., %Cartesian and
+homogeneous), and the geometric or algebraic computation methods
 themselves. The precise minimal sets of requirements the actual traits
 classes must conform to are organized as a hierarchy of concepts; see
 Section \ref aos_sec-geom_traits.
@@ -1320,7 +1320,7 @@ Arrangement_on_surface_2::Face_const_handle
 `Face_const_handle`\endlink. Depending on whether the query point is
 located inside a face, lies on an edge, or coincides with a vertex,
 the appropriate handle can be obtained with <em>value retrieval</em>
-by `boost::get` as demonstrated in the example below.
+by `std::get` as demonstrated in the example below.
 
 Note that the handles returned by the \link
 ArrangementPointLocation_2::locate() `locate()`\endlink functions are
@@ -1361,7 +1361,7 @@ The function template `locate_point()` calls an instance of the
 function template `print_point_location()`, which inserts the
 result of the query into the standard output-stream. It is listed
 below, and defined in the header file `point_location_utils.h`.
-Observe how the function `boost::get()` is used to cast the
+Observe how the function `std::get()` is used to cast the
 resulting object into a handle to an arrangement feature. The
 point-location object `pl` is assumed to be already attached
 to an arrangement.
@@ -1383,13 +1383,13 @@ void print_point_location
   const Face_const_handle*     f;
 
   std::cout << "The point (" << q << ") is located ";
-  if (f = boost::get<Face_const_handle>(&obj)) // located inside a face
+  if (f = std::get_if<Face_const_handle>(&obj)) // located inside a face
     std::cout << "inside "
               << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
               << " face.\n";
-  else if (e = boost::get<Halfedge_const_handle>(&obj)) // located on an edge
+  else if (e = std::get_if<Halfedge_const_handle>(&obj)) // located on an edge
     std::cout << "on an edge: " << (*e)->curve() << std::endl;
-  else if (v = boost::get<Vertex_const_handle>(&obj)) // located on a vertex
+  else if (v = std::get_if<Vertex_const_handle>(&obj)) // located on a vertex
     std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
   else CGAL_error_msg("Invalid object.");
@@ -1603,12 +1603,12 @@ void shoot_vertical_ray(const RayShoot& vrs,
   const Face_const_handle* f;
 
   std::cout << "Shooting up from (" << q << ") : ";
-  if (v = boost::get<Vertex_const_handle>(&obj))         // we hit a vertex
+  if (v = std::get_if<Vertex_const_handle>(&obj))         // we hit a vertex
     std::cout << "hit " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
-  else if (e = boost::get<Halfedge_const_handle>(&obj))  // we hit an edge
+  else if (e = std::get_if<Halfedge_const_handle>(&obj))  // we hit an edge
     std::cout << "hit an edge: " << (*e)->curve() << std::endl;
-  else if (f = boost::get<Face_const_handle>(&obj)) {    // we hit nothing
+  else if (f = std::get_if<Face_const_handle>(&obj)) {    // we hit nothing
     CGAL_assertion((*f)->is_unbounded());
     std::cout << "hit nothing.\n";
   }
@@ -4780,7 +4780,7 @@ or line segments. The \link Arr_conic_traits_2::Curve_2
 `Curve_2`\endlink and the derived \link
 Arr_conic_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
 classes also support basic access functions such as `source()`,
-`target()`, and `orientation()`.
+`target()`, and `%orientation()`.
 
 <!-- ------------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-conics,conics.png}
@@ -5067,7 +5067,7 @@ substitute the template parameters `RatKernel`, `AlgKernel`, and
 the same requirements of the corresponding types used to instantiate
 the `Arr_conic_traits_2` class template. Here, the use of the
 `CORE_algebraic_number_traits` class is also recommended with
-Cartesian kernels instantiated with the `Rational` and `Algebraic`
+%Cartesian kernels instantiated with the `Rational` and `Algebraic`
 number types defined by this class. The examples given in this manual
 use the type definitions listed below. These types are defined in the
 header file `arr_Bezier.h`.

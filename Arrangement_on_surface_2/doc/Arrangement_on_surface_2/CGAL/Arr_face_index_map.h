@@ -19,10 +19,7 @@ existing faces might be removed, the notification mechanism is used
 to dynamically maintain the mapping of face handles to indices.
 
 
-\cgalModels DefaultConstructible
-\cgalModels CopyConstructible
-\cgalModels Assignable
-\cgalModels `ReadablePropertyMap`
+\cgalModels{DefaultConstructible,CopyConstructible,Assignable,ReadablePropertyMap}
 
 \sa `Arr_observer<Arrangement>`
 \sa `Arr_vertex_index_map<Arrangement>`

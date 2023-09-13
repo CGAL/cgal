@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Simplicial_mesh_cell_base_3.h>
+#include <CGAL/Compact_simplicial_mesh_cell_base_3.h>
 
 #include <CGAL/assertions.h>
 
@@ -35,11 +35,11 @@ It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 \tparam Cb is a cell base class from which `Remeshing_cell_base_3` derives.
 It must be a model of the `SimplicialMeshCellBase_3` concept.
 
-\cgalModels `RemeshingCellBase_3`
+\cgalModels{RemeshingCellBase_3}
 
 */
 template<typename Gt,
-         typename Cb = CGAL::Simplicial_mesh_cell_base_3<Gt,
+         typename Cb = CGAL::Compact_simplicial_mesh_cell_base_3<
                          int /*Subdomain_index*/,
                          int /*Surface_patch_index*/> >
 class Remeshing_cell_base_3

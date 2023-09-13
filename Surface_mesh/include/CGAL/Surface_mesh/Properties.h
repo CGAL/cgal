@@ -67,7 +67,7 @@ public:
     /// Return a deep copy of self.
     virtual Base_property_array* clone () const = 0;
 
-    /// Return a empty copy of self.
+    /// Return an empty copy of self.
     virtual Base_property_array* empty_clone () const = 0;
 
     /// Return the type_info of the property
@@ -528,7 +528,7 @@ private:
 /// @tparam Key The key type of the property map. It must be a model of `Index`.
 /// @tparam Value The value type of the property.
 ///
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 ///
 template <class I, class T, class CRTP_derived_class>
 class Property_map_base

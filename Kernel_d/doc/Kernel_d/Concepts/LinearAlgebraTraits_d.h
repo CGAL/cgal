@@ -13,8 +13,10 @@ correct. For example, if the linear system solver declares a linear
 system \f$ A x = b\f$ unsolvable it also returns a vector \f$ c\f$ such that
 \f$ c^T A = 0\f$ and \f$ c^T b \neq 0\f$.
 
-\cgalHasModel `CGAL::Linear_algebraHd<RT>`
-\cgalHasModel `CGAL::Linear_algebraCd<FT>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Linear_algebraHd<RT>}
+\cgalHasModels{CGAL::Linear_algebraCd<FT>}
+\cgalHasModelsEnd
 
 */
 

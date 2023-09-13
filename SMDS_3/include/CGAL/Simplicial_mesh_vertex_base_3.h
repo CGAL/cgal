@@ -26,9 +26,9 @@
 
 #include <CGAL/SMDS_3/internal/indices_management.h>
 #include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/variant.h>
 #include <CGAL/Has_timestamp.h>
 
-#include <boost/variant.hpp>
 
 #include <tuple>
 
@@ -77,7 +77,7 @@ It must match `MeshDomainWithFeatures_3::Corner_index` when used for mesh genera
 \tparam Vb is the vertex base class from which `Simplicial_mesh_vertex_base_3` derives.
 It must be a model of the concept `TriangulationVertexBase_3`.
 
-\cgalModels `SimplicialMeshVertexBase_3`
+\cgalModels{SimplicialMeshVertexBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3`
 \sa \link Mesh_vertex_base_3 `CGAL::Mesh_vertex_base_3`\endlink
@@ -105,7 +105,7 @@ public:
   using Curve_index = CurveIndex;
   using Corner_index = CornerIndex;
 
-  using Index = boost::variant<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
+  using Index = Variant_with_no_duplicate_t<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
 
   using FT = typename Gt::FT;
 

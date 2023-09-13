@@ -7,4 +7,5 @@
 \example Generalized_map/gmap_3_with_colored_facets.cpp
 \example Generalized_map/gmap_3_dynamic_onmerge.cpp
 \example Generalized_map/gmap_3_index.cpp
+\example Generalized_map/gmap_3_insert.cpp
 */

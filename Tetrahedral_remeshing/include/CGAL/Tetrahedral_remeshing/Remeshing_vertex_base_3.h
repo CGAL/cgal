@@ -33,7 +33,7 @@ It must be a model of the concept `RemeshingTriangulationTraits_3`.
 \tparam Vb is a vertex base class from which `Remeshing_vertex_base_3` derives.
 It must be a model of the concept `SimplicialMeshVertexBase_3`.
 
-\cgalModels `RemeshingVertexBase_3`
+\cgalModels{RemeshingVertexBase_3,SimplicialMeshVertexBase_3}
 */
 template<typename Gt,
          typename Vb = CGAL::Simplicial_mesh_vertex_base_3<Gt,

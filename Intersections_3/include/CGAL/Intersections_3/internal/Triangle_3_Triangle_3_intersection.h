@@ -207,7 +207,7 @@ intersection(const typename K::Triangle_3& t1,
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
     }
 
-    return boost::apply_visitor(Triangle_Line_visitor<K>(), *inter1, *inter2);
+    return std::visit(Triangle_Line_visitor<K>(), *inter1, *inter2);
   }
 
   return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();

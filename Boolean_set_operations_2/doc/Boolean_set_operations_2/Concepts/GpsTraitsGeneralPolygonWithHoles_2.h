@@ -9,7 +9,9 @@ A model of this concept represents a general polygon with holes.
 
 \cgalGeneralizes `GeneralPolygonWithHoles_2`
 
-\cgalHasModel `GeneralPolygonSetTraits_2::Polygon_with_holes2`
+\cgalHasModelsBegin
+\cgalHasModels{GeneralPolygonSetTraits_2::Polygon_with_holes2}
+\cgalHasModelsEnd
 
 \sa `GeneralPolygonWithHoles_2`
 

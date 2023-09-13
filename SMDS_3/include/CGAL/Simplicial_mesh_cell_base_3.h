@@ -60,7 +60,7 @@ It must match `MeshDomain_3::Surface_patch_index` when used for mesh generation.
 \tparam Cb is the cell base class from which `Simplicial_mesh_cell_base_3` derives.
 It must be a model of the concept `TriangulationCellBase_3`.
 
-\cgalModels `SimplicialMeshCellBase_3`
+\cgalModels{SimplicialMeshCellBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 \sa \link Mesh_cell_base_3 `CGAL::Mesh_cell_base_3`\endlink

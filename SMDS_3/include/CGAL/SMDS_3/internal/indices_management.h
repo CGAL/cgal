@@ -23,7 +23,6 @@
 
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
-#include <boost/variant/apply_visitor.hpp>
 #include <CGAL/STL_Extension/internal/Has_features.h>
 #include <CGAL/IO/io.h>
 
@@ -36,12 +35,12 @@ namespace internal {
 
 // -----------------------------------
 // Index_generator
-// Don't use boost::variant if types are the same type
+// Don't use std::variant if types are the same type
 // -----------------------------------
 template < typename Subdomain_index, typename Surface_patch_index >
 struct Index_generator
 {
-  typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
+  typedef std::variant<Subdomain_index,Surface_patch_index> Index;
   typedef Index                                               type;
 };
 
@@ -72,19 +71,19 @@ struct Indices_tuple_generator<MD, false>
 template <typename MD>
 using Indices_tuple_t = typename Indices_tuple_generator<MD>::type;
 
-// Nasty meta-programming to get a boost::variant of four types that
+// Nasty meta-programming to get a std::variant of four types that
 // may not be all different.
 template <typename T0> struct seq1 {
   typedef T0 type;
 };
 template <typename T0, typename T1> struct seq2 {
-  typedef boost::variant<T0, T1> type;
+  typedef std::variant<T0, T1> type;
 };
 template <typename T0, typename T1, typename T2> struct seq3 {
-  typedef boost::variant<T0, T1, T2> type;
+  typedef std::variant<T0, T1, T2> type;
 };
 template <typename T0, typename T1, typename T2, typename T3> struct seq4 {
-  typedef boost::variant<T0, T1, T2, T3> type;
+  typedef std::variant<T0, T1, T2, T3> type;
 };
 
 template <typename T, typename U> struct insert;
@@ -142,10 +141,10 @@ struct Index_generator_with_features<T, T, T, T>
   typedef Index                                         type;
 };
 
-template <typename T, typename Boost_variant>
-const T& get_index(const Boost_variant& x,
-                   std::enable_if_t<!std::is_same<T, Boost_variant>::value > * = 0)
-{ return boost::get<T>(x); }
+template <typename T, typename Variant>
+const T& get_index(const Variant& x,
+                   std::enable_if_t<!std::is_same<T, Variant>::value > * = 0)
+{ return std::get<T>(x); }
 
 template <typename T>
 const T& get_index(const T& x) { return x; }
@@ -305,8 +304,8 @@ struct Variant_read_visitor {
 };
 
 template <typename Indices_types, typename... Args>
-struct Read_write_index<Indices_types, boost::variant<Args...>> {
-  using Index = boost::variant<Args...>;
+struct Read_write_index<Indices_types, std::variant<Args...>> {
+  using Index = std::variant<Args...>;
   using index_seq = std::make_index_sequence<std::tuple_size<Indices_types>::value>;
 
   template <std::size_t... Is>
@@ -317,12 +316,12 @@ struct Read_write_index<Indices_types, boost::variant<Args...>> {
 
   void operator()(std::ostream& os, int, Index index) const {
     Variant_write_visitor visitor{os};
-    apply_visitor(visitor, index);
+    std::visit(visitor, index);
   }
   Index operator()(std::istream& is, int dimension) const {
     Index index = get_index(dimension, index_seq{});
     Variant_read_visitor<Index> visitor{is, index};
-    apply_visitor(visitor, index);
+    std::visit(visitor, index);
     return index;
   }
 };

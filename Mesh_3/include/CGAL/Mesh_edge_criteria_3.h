@@ -85,27 +85,28 @@ namespace internal {
 } // end namespace internal
 } // end namespace Mesh_3
 
+
 /*!
 \ingroup PkgMesh3MeshClasses
 
 The function object class `Mesh_edge_criteria_3` is a model of `MeshEdgeCriteria_3`. It
 provides a bound for the size criterion.
 
-\cgalModels `MeshEdgeCriteria_3`
+\cgalModels{MeshEdgeCriteria_3}
 
 \sa `MeshCriteria_3`
 \sa `CGAL::Mesh_criteria_3<Tr>`
 \sa `MeshDomainField_3`
-
 */
 template < typename Tr >
 class Mesh_edge_criteria_3
 {
 private:
   typedef Mesh_edge_criteria_3 Self;
-  typedef typename Tr::Geom_traits Gt;
+  typedef typename Tr::Geom_traits GT;
 
 public:
+
   /// \name Types
   /// @{
   /*!
@@ -121,7 +122,8 @@ public:
   /// \name Creation
   /// @{
   /*!
-  * Returns an object to serve as criteria for edges.
+  * returns an object to serve as criteria for edges.
+  *
   * \param length_bound is an upper bound
   * for the length of the edges which are used to discretize the curves.
   * \param min_length_bound is a desired lower bound
@@ -131,12 +133,13 @@ public:
   * break all the surface topology guarantees of the meshing algorithm.
   * It is not guaranteed to be exactly respected in the output mesh.
   *
-  * Note that if one parameter is set to 0, then its corresponding criterion is ignored.
+  * \note If one parameter is set to 0, then its corresponding criterion is ignored.
   */
   Mesh_edge_criteria_3(const FT& length_bound,
                        const FT& min_length_bound = 0)
+
     : p_size_(new Mesh_3::internal::Sizing_field_container<
-                Mesh_constant_domain_field_3<Gt,Index> ,
+                Mesh_constant_domain_field_3<GT,Index> ,
                 FT,
                 Point_3,
                 Index>(length_bound))
@@ -145,17 +148,19 @@ public:
 
   // Nb: SFINAE to avoid wrong matches with built-in numerical types
   // as int.
+
   /*!
-  * @tparam SizingField a model of `MeshDomainField_3`
-  *
-  * Returns an object to serve as criteria for edges.
+  * returns an object to serve as criteria for edges.
   * The behavior and semantic of the argument are the same
   * as above, except that the `length_bound`
   * parameter is a functional instead of a constant.
+  *
+  * @tparam SizingField a model of `MeshDomainField_3`
   */
   template < typename SizingField >
   Mesh_edge_criteria_3
   (
+
    const SizingField& length_bound,
    const FT& min_length_bound = 0
 #ifndef DOXYGEN_RUNNING
