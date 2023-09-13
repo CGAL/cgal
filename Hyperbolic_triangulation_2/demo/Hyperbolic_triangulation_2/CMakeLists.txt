@@ -4,9 +4,6 @@ project(Hyperbolic_triangulation_2_Demo)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt6)
 find_package(LEDA QUIET)
 
@@ -17,10 +14,11 @@ if(CGAL_Qt6_FOUND
    AND Qt6_FOUND
    AND (CGAL_Core_FOUND OR LEDA_FOUND))
 
+   set(CMAKE_AUTOMOC ON)
    set(CMAKE_AUTOUIC ON)
    set(CMAKE_AUTORCC ON)
 
-  qt_add_executable ( HDT2 HDT2.cpp resources/Delaunay_triangulation_2.qrc)
+  qt_add_executable ( HDT2 HDT2.cpp HDT2.ui resources/Delaunay_triangulation_2.qrc )
   target_include_directories(HDT2 PRIVATE ./ ./include)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS HDT2 )
   target_link_libraries ( HDT2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets)
