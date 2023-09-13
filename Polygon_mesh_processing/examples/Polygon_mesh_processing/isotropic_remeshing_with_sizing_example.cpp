@@ -13,10 +13,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-//  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/lion-head.off");
-//  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/hand.off");
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/nefertiti.off");
-//  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
 
   Mesh mesh;
   if (!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh)) {
@@ -37,6 +34,7 @@ int main(int argc, char* argv[])
       sizing_field,
       mesh,
       PMP::parameters::number_of_iterations(nb_iter)
+                      .number_of_relaxation_steps(3)
       );
 
   CGAL::IO::write_polygon_mesh("out.off", mesh, CGAL::parameters::stream_precision(17));
