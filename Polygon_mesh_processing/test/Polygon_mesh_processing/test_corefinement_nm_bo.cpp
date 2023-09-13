@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     test("data-coref/nm/tm1.off", "data-coref/nm/tm_inter.off");
     test("data-coref/nm/tm1.off", "data-coref/nm/tm_minus.off");
     test("data-coref/nm/tm_minus.off", "data-coref/nm/tm1.off");
-    test("data-coref/nm/tm_1.off", "data-coref/nm/tm_multi.off");
+    test("data-coref/nm/tm1.off", "data-coref/nm/tm_multi.off");
     test("data-coref/nm/tm_multi.off", "data-coref/nm/tm1.off");
     test("data-coref/sphere.off", "data-coref/elephant.off");
   }
