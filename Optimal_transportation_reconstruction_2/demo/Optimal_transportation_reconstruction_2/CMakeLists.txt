@@ -3,27 +3,11 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Optimal_transportation_reconstruction_2_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
-# Include this package's headers first
-include_directories(BEFORE ./ ./include)
-
 # Find CGAL and CGAL Qt6
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # Find Qt6 itself
 find_package(Qt6 QUIET COMPONENTS Widgets OpenGLWidgets)
-if(Qt6_FOUND)
-  add_definitions(-DQT_NO_KEYWORDS)
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-endif(Qt6_FOUND)
 
 # Find CImg
 find_path(
@@ -40,33 +24,15 @@ else()
 endif()
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
-  set(SRCS glviewer.cpp scene.cpp Otr2_demo.cpp window.cpp render.cpp)
+  add_definitions(-DQT_NO_KEYWORDS)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  set(CGAL_Qt6_MOC_FILES moc_dialog_options.cxx moc_glviewer.cxx moc_window.cxx)
-
-  set(UIS pwsrec.ui options.ui)
-
-  qt6_wrap_ui(UI_FILES ${UIS})
-
-  include(AddFileDependencies)
-
-  qt6_generate_moc("window.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_window.cxx")
-  add_file_dependencies(moc_window.cxx "${CMAKE_CURRENT_SOURCE_DIR}/window.h")
-
-  qt6_generate_moc("glviewer.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_glviewer.cxx")
-  add_file_dependencies(moc_glviewer.cxx
-                        "${CMAKE_CURRENT_SOURCE_DIR}/glviewer.h")
-
-  qt6_generate_moc("dialog_options.h"
-                   "${CMAKE_CURRENT_BINARY_DIR}/moc_dialog_options.cxx")
-  add_file_dependencies(moc_dialog_options.cxx
-                        "${CMAKE_CURRENT_SOURCE_DIR}/dialog_options.h")
-
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES pwsrec.qrc)
-
-  add_executable(Otr2_demo ${SRCS} ${CGAL_Qt6_MOC_FILES} ${UI_FILES}
-                           ${CGAL_Qt6_RESOURCE_FILES})
+  add_executable(Otr2_demo glviewer.cpp scene.cpp Otr2_demo.cpp window.cpp render.cpp dialog_options.cpp
+                           pwsrec.ui options.ui pwsrec.qrc)
 
   target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGLWidgets)
 
@@ -86,9 +52,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Otr2_demo)
-else(
-  CGAL_Qt6_FOUND
-  AND Qt6_FOUND)
+else()
 
   set(OTR2_MISSING_DEPS "")
 
@@ -102,6 +66,4 @@ else(
 
   message("NOTICE: This demo requires ${OTR2_MISSING_DEPS} and will not be compiled.")
 
-endif(
-  CGAL_Qt6_FOUND
-  AND Qt6_FOUND)
+endif()
