@@ -195,9 +195,63 @@ struct Visitor_for_non_manifold_output
                     FCM tm2_face_classification)
   {
     std::size_t vertex_offset = vertex_id_maps->begin()->second.size();
+    Vertex_id_map vid1 = vertex_id_maps->find(&m_tm1)->second; // copy on purpose
+    Vertex_id_map vid2 = vertex_id_maps->find(&m_tm2)->second; // copy on purpose
+
+    // first check if some intersection vertices are not used
+    // (TODO: only if there are some coplanar-->could be optimized)
+    boost::dynamic_bitset<> vid_not_used(vertex_offset);
+    vid_not_used.set();
+    for (auto p : vid1)
+    {
+      if (!vid_not_used.test(p.second)) continue;
+      for (auto f : faces_around_target(halfedge(p.first, m_tm1), m_tm1))
+      {
+        if (tm1_face_classification[f])
+        {
+          vid_not_used.reset(p.second);
+          break;
+        }
+      }
+    }
+    for (auto p : vid2)
+    {
+      if (!vid_not_used.test(p.second)) continue;
+      for (auto f : faces_around_target(halfedge(p.first, m_tm2), m_tm2))
+      {
+        if (tm2_face_classification[f])
+        {
+          vid_not_used.reset(p.second);
+          break;
+        }
+      }
+    }
+
+    if (vid_not_used.any()){
+      std::vector<std::size_t> free_vids;
+      for (std::size_t i = vid_not_used.find_first();
+                       i < vid_not_used.npos;
+                       i = vid_not_used.find_next(i))
+      {
+        free_vids.push_back(i);
+      }
+      // now reindex the vertices
+      for (auto& p : vid1)
+      {
+        auto it = std::upper_bound(free_vids.begin(), free_vids.end(), p.second);
+        p.second -= std::distance(free_vids.begin(), it);
+      }
+      for (auto& p : vid2)
+      {
+        auto it = std::upper_bound(free_vids.begin(), free_vids.end(), p.second);
+        p.second -= std::distance(free_vids.begin(), it);
+      }
+
+      vertex_offset-=free_vids.size();
+
+    }
     points.resize(vertex_offset);
 
-    Vertex_id_map vid1 = vertex_id_maps->find(&m_tm1)->second; // copy on purpose
     auto get_vertex_id1 = [&vid1, &vertex_offset, this, &points](vertex_descriptor v)
     {
       auto it_and_b = vid1.emplace(v, vertex_offset);
@@ -212,7 +266,7 @@ struct Visitor_for_non_manifold_output
       }
       return it_and_b.first->second;
     };
-    Vertex_id_map vid2 = vertex_id_maps->find(&m_tm2)->second; // copy on purpose
+
     auto get_vertex_id2 = [&vid2, &vertex_offset, this, &points](vertex_descriptor v)
     {
       auto it_and_b = vid2.emplace(v, vertex_offset);
