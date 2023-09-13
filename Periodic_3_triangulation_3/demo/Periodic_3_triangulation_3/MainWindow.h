@@ -102,12 +102,7 @@ public:
             this, SLOT(about()));
   }
 
-  ~MainWindow() {
-    process->close();
-    delete(process);
-    delete(s);
-    delete(ui);
-  }
+  ~MainWindow();
 
 public Q_SLOTS:
   void help() {

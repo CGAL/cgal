@@ -25,12 +25,6 @@ if(CGAL_Qt6_FOUND
    set(CMAKE_AUTOUIC ON)
    set(CMAKE_AUTORCC ON)
 
-  # use the Qt MOC preprocessor on classes that derive from QObject
-  qt6_generate_moc("Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Scene.cpp")
-  qt6_generate_moc("MainWindow.h"
-                   "${CMAKE_CURRENT_BINARY_DIR}/moc_MainWindow.cpp")
-  qt6_generate_moc("Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_Viewer.cpp")
-
   # generate QtAssistant collection file
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Periodic_3_triangulation_3.qhc
@@ -44,12 +38,10 @@ if(CGAL_Qt6_FOUND
   qt_add_executable(
     periodic_3_triangulation_3_demo
     Scene.cpp
-    moc_Scene.cpp
     Viewer.cpp
-    moc_Viewer.cpp
+    MainWindow.cpp
     periodic_3_triangulation_3_demo.cpp
     MainWindow.ui
-    moc_MainWindow.cpp
     Periodic_3_triangulation_3.qhc
     Periodic_3_triangulation_3.qrc)
 
