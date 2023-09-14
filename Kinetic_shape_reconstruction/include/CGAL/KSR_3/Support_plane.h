@@ -73,6 +73,7 @@ public:
   using E_iedge_map    = typename Mesh::template Property_map<Edge_index, IEdge>;
   using F_index_map    = typename Mesh::template Property_map<Face_index, std::vector<std::size_t> >;
   using F_uint_map     = typename Mesh::template Property_map<Face_index, unsigned int>;
+  using F_bool_map     = typename Mesh::template Property_map<Face_index, bool>;
   using V_original_map = typename Mesh::template Property_map<Vertex_index, bool>;
   using V_time_map     = typename Mesh::template Property_map<Vertex_index, std::vector<FT> >;
 
@@ -97,9 +98,12 @@ public:
     V_iedge_map v_iedge_map;
     E_iedge_map e_iedge_map;
     F_index_map input_map;
+    F_bool_map f_initial_map;
     V_original_map v_original_map;
     std::map<IEdge, std::pair<IFace, IFace> > iedge2ifaces;
-    std::set<IFace> ifaces;
+    std::set<IFace> ifaces; // All ifaces in the support plane
+    std::vector<IFace> initial_ifaces; // IFaces which intersect with the input polygon and are thus part of the mesh before the propagation starts.
+    std::vector<Face_index> initial_pfaces;
     std::map<IVertex, Vertex_index> ivertex2pvertex;
     IEdge_set unique_iedges;
     std::set<std::size_t> crossed_lines;
@@ -112,6 +116,8 @@ public:
 
     FT distance_tolerance;
     FT angle_tolerance;
+
+    std::size_t actual_input_plane;
 
     int k;
   };
@@ -127,9 +133,60 @@ public:
   }
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox, const FT distance_tolerance, const FT angle_tolerance, std::size_t idx) :
-  m_data(std::make_shared<Data>()) {
+  Support_plane(const PointRange& polygon, const bool is_bbox, typename Intersection_kernel::Plane_3 plane, std::size_t idx) :
+    m_data(std::make_shared<Data>()) {
     To_exact to_EK;
+
+    std::vector<Point_3> points;
+    points.reserve(polygon.size());
+    for (const auto& point : polygon) {
+      points.push_back(Point_3(
+        static_cast<FT>(point.x()),
+        static_cast<FT>(point.y()),
+        static_cast<FT>(point.z())));
+    }
+    const std::size_t n = points.size();
+    CGAL_assertion(n == polygon.size());
+
+
+    /*
+        Vector_3 normal = CGAL::NULL_VECTOR;
+        for (std::size_t i = 0; i < n; ++i) {
+          const std::size_t ip = (i + 1) % n;
+          const auto& pa = points[i];
+          const auto& pb = points[ip];
+          const FT x = normal.x() + (pa.y() - pb.y()) * (pa.z() + pb.z());
+          const FT y = normal.y() + (pa.z() - pb.z()) * (pa.x() + pb.x());
+          const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
+          normal = Vector_3(x, y, z);
+        }
+        CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: BBOX IS FLAT!");
+        CGAL_assertion(n != 0);*/
+
+    From_exact from_exact;
+
+    m_data->k = 0;
+    m_data->plane = from_exact(plane);
+    m_data->exact_plane = plane;
+    m_data->is_bbox = is_bbox;
+    m_data->distance_tolerance = 0;
+    m_data->angle_tolerance = 0;
+    m_data->actual_input_plane = -1;
+
+    std::vector<Triangle_2> tris(points.size() - 2);
+    for (std::size_t i = 2; i < points.size(); i++) {
+      tris[i - 2] = Triangle_2(to_2d(points[0]), to_2d(points[i - 1]), to_2d(points[i]));
+    }
+
+    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
+
+    add_property_maps();
+  }
+
+  template<typename PointRange>
+  Support_plane(const PointRange& polygon, const bool is_bbox, std::size_t idx) :
+    m_data(std::make_shared<Data>()) {
+    To_exact to_exact;
 
     std::vector<Point_3> points;
     points.reserve(polygon.size());
@@ -157,10 +214,44 @@ public:
 
     m_data->k = 0;
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
-    m_data->exact_plane = to_EK(m_data->plane);
+    m_data->exact_plane = to_exact(m_data->plane);
     m_data->is_bbox = is_bbox;
-    m_data->distance_tolerance = distance_tolerance;
-    m_data->angle_tolerance = angle_tolerance;
+    m_data->distance_tolerance = 0;
+    m_data->angle_tolerance = 0;
+
+    std::vector<Triangle_2> tris(points.size() - 2);
+    for (std::size_t i = 2; i < points.size(); i++) {
+      tris[i - 2] = Triangle_2(to_2d(points[0]), to_2d(points[i - 1]), to_2d(points[i]));
+    }
+
+    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
+
+    add_property_maps();
+  }
+
+  template<>
+  Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox, std::size_t idx) :
+    m_data(std::make_shared<Data>()) {
+    From_exact from_exact;
+
+    std::vector<Point_3> points;
+    points.reserve(polygon.size());
+    for (const auto& point : polygon) {
+      points.push_back(Point_3(
+        from_exact(point.x()),
+        from_exact(point.y()),
+        from_exact(point.z())));
+    }
+    const std::size_t n = points.size();
+    CGAL_assertion(n == polygon.size());
+    CGAL_assertion(n != 0);
+
+    m_data->k = 0;
+    m_data->exact_plane = typename Intersection_kernel::Plane_3(polygon[0], polygon[1], polygon[2]);
+    m_data->plane = from_exact(m_data->exact_plane);
+    m_data->is_bbox = is_bbox;
+    m_data->distance_tolerance = 0;
+    m_data->angle_tolerance = 0;
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -175,26 +266,20 @@ public:
   void add_property_maps() {
 
     m_data->v_ivertex_map  = m_data->mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first;
-
     m_data->v_iedge_map    = m_data->mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first;
-
     m_data->e_iedge_map    = m_data->mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first;
-
     m_data->input_map      = m_data->mesh.template add_property_map<Face_index, std::vector<std::size_t> >("f:input", std::vector<std::size_t>()).first;
-
     m_data->v_original_map = m_data->mesh.template add_property_map<Vertex_index, bool>("v:original", false).first;
+    m_data->f_initial_map  = m_data->mesh.template add_property_map<Face_index, bool >("f:initial", false).first;
   }
 
   void link_property_maps() {
     m_data->v_ivertex_map = m_data->mesh.template property_map<Vertex_index, IVertex>("v:ivertex").first;
-
     m_data->v_iedge_map = m_data->mesh.template property_map<Vertex_index, IEdge>("v:iedge").first;
-
     m_data->e_iedge_map = m_data->mesh.template property_map<Edge_index, IEdge>("e:iedge").first;
-
     m_data->input_map = m_data->mesh.template property_map<Face_index, std::vector<std::size_t> >("f:input").first;
-
     m_data->v_original_map = m_data->mesh.template property_map<Vertex_index, bool>("v:original").first;
+    m_data->f_initial_map = m_data->mesh.template property_map<Face_index, bool >("f:initial").first;
   }
 
   void centroid(Point_2& c) {
@@ -394,6 +479,10 @@ public:
 
   void set_crossed_line(std::size_t line) {
     m_data->crossed_lines.insert(line);
+  }
+
+  void set_input_plane(std::size_t input_plane_idx) {
+    m_data->actual_input_plane = input_plane_idx;
   }
 
   template<typename Pair>
@@ -617,6 +706,10 @@ public:
   std::vector<std::size_t>& input(const Face_index& fi) { return m_data->input_map[fi]; }
 
   bool is_original(const Vertex_index& vi) const { return m_data->v_original_map[vi]; }
+
+  bool is_initial(const Face_index& fi) const { return m_data->f_initial_map[fi]; }
+
+  void set_initial(const Face_index& fi) { m_data->f_initial_map[fi] = true; }
 
   const int& k() const { return m_data->k; }
   int& k() { return m_data->k; }

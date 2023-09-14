@@ -1,19 +1,18 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
-#include <CGAL/Kinetic_shape_partitioning_Traits.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/PLY.h>
+#include <CGAL/pca_estimate_normals.h>
+#include <CGAL/mst_orient_normals.h>
 #include <sstream>
-
-#ifdef DISABLED
 
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"
 
 using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
-using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+using EPECK     = CGAL::Exact_predicates_exact_constructions_kernel;
 using FT        = typename Kernel::FT;
 using Point_3   = typename Kernel::Point_3;
 using Vector_3  = typename Kernel::Vector_3;
@@ -23,16 +22,17 @@ using Point_set    = CGAL::Point_set_3<Point_3>;
 using Point_map    = typename Point_set::Point_map;
 using Normal_map   = typename Point_set::Vector_map;
 using Label_map    = typename Point_set:: template Property_map<int>;
-using Semantic_map = CGAL::KSR::Semantic_from_label_map<Label_map>;
-using Region_map = typename Point_set:: template Property_map<int>;
+using Region_map   = typename Point_set:: template Property_map<int>;
 
-using Traits = typename CGAL::Kinetic_shape_partitioning_traits_3<Kernel, EPECK, Point_set, Point_map>;
 
-using KSR = CGAL::Kinetic_shape_reconstruction_3<Traits, Normal_map>;
+using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel, Point_set, Point_map, Normal_map>;
 
 using Parameters      = CGAL::KSR::All_parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
 using Timer = CGAL::Real_timer;
+
+
+double add_polys = 0, intersections = 0, iedges = 0, ifaces = 0, mapping = 0;
 
 template <typename T>
 std::string to_stringp(const T a_value, const int n = 6)
@@ -121,6 +121,12 @@ int main(const int argc, const char** argv) {
     input_file.close();
   }
 
+  if (!point_set.has_normal_map()) {
+    point_set.add_normal_map();
+    CGAL::pca_estimate_normals<CGAL::Parallel_if_available_tag>(point_set, 9);
+    CGAL::mst_orient_normals(point_set, 9);
+  }
+
   for (std::size_t i = 0; i < point_set.size(); i++) {
     Vector_3 n = point_set.normal(i);
     if (abs(n * n) < 0.05)
@@ -134,76 +140,102 @@ int main(const int argc, const char** argv) {
   std::cout << "verbose " << parameters.verbose << std::endl;
   std::cout << "debug " << parameters.debug << std::endl;
 
+  auto param = CGAL::parameters::maximum_distance(parameters.distance_threshold)
+    .maximum_angle(parameters.angle_threshold)
+    .k_neighbors(parameters.k_neighbors)
+    .minimum_region_size(parameters.min_region_size)
+    .distance_tolerance(parameters.distance_threshold * 0.025)
+    .debug(parameters.debug)
+    .verbose(parameters.verbose)
+    .regularize_parallelism(true)
+    .regularize_coplanarity(true)
+    .regularize_orthogonality(false)
+    .regularize_axis_symmetry(false)
+    .angle_tolerance(10)
+    .maximum_offset(0.01);
+
   // Algorithm.
-  KSR ksr(point_set, parameters.verbose, parameters.debug);
+  KSR ksr(point_set, param);
 
   const Region_map region_map = point_set. template property_map<int>("region").first;
   const bool is_segmented = point_set. template property_map<int>("region").second;
 
   Timer timer;
   timer.start();
-  std::size_t num_shapes = ksr.detect_planar_shapes(point_set,
-    CGAL::parameters::distance_threshold(parameters.distance_threshold)
-    .angle_threshold(parameters.angle_threshold)
-    .k_neighbors(parameters.k_neighbors)
-    .min_region_size(parameters.min_region_size));
+  std::size_t num_shapes = ksr.detect_planar_shapes(param);
 
   std::cout << num_shapes << " detected planar shapes" << std::endl;
 
-  num_shapes = ksr.regularize_shapes(CGAL::parameters::regularize_parallelism(true).regularize_coplanarity(true).regularize_axis_symmetry(false).regularize_orthogonality(false));
+  FT after_shape_detection = timer.time();
 
-  std::cout << num_shapes << " detected planar shapes after regularization" << std::endl;
+  //num_shapes = ksr.regularize_shapes(CGAL::parameters::regularize_parallelism(true).regularize_coplanarity(true).regularize_axis_symmetry(false).regularize_orthogonality(false));
 
-  bool is_ksr_success = ksr.initialize_partitioning();
+  //std::cout << num_shapes << " detected planar shapes after regularization" << std::endl;
 
-  if (!is_ksr_success) {
-    std::cout << "Initializing kinetic partitioning failed!" << std::endl;
-    return 1;
-  }
+  ksr.initialize_partition(param);
 
-  is_ksr_success = ksr.partition(parameters.k_intersections);
+  std::cout << add_polys << " add polys" << std::endl;
+  std::cout << intersections << " intersections" << std::endl;
+  std::cout << iedges << " iedges" << std::endl;
+  std::cout << ifaces << " ifaces" << std::endl;
+  std::cout << mapping << " mapping" << std::endl;
 
-  if (!is_ksr_success) {
-    std::cout << "Initializing kinetic partitioning failed!" << std::endl;
-    return 2;
-  }
+  FT after_init = timer.time();
+
+  FT partition_time, finalization_time, conformal_time;
+
+  ksr.partition(parameters.k_intersections, partition_time, finalization_time, conformal_time);
+
+  FT after_partition = timer.time();
 
   ksr.setup_energyterms();
 
+  FT after_energyterms = timer.time();
+
   ksr.reconstruct(parameters.graphcut_beta);
-/*
-  if (is_segmented)
-    is_ksr_success = ksr.reconstruct(
-      region_map,
-      CGAL::parameters::
-      k_neighbors(parameters.k_neighbors).
-      distance_threshold(parameters.distance_threshold).
-      angle_threshold(parameters.angle_threshold).
-      min_region_size(parameters.min_region_size).
-      regularize(parameters.regularize).
-      k_intersections(parameters.k_intersections).
-      graphcut_beta(parameters.graphcut_beta));
-  else
-    is_ksr_success = ksr.reconstruct(
-    base,
-    CGAL::parameters::
-    k_neighbors(parameters.k_neighbors).
-    distance_threshold(parameters.distance_threshold).
-    angle_threshold(parameters.angle_threshold).
-    min_region_size(parameters.min_region_size).
-    regularize(parameters.regularize).
-    k_intersections(parameters.k_intersections).
-    graphcut_beta(parameters.graphcut_beta));*/
-  assert(is_ksr_success);
-  const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
+  FT after_reconstruction = timer.time();
+
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
 
-  const KSR::KSP& ksp = ksr.partitioning();
+  std::vector<Point_3> vtx;
+  std::vector<std::vector<std::size_t> > polylist;
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist");
+
+  ksr.reconstruct(0.3);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.3");
+  ksr.reconstruct(0.5);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.5");
+  ksr.reconstruct(0.7);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.7");
+  ksr.reconstruct(0.95);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.95");
 
   // Output.
   CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
-  ksp.get_linear_cell_complex(lcc);
+  ksr.partition().get_linear_cell_complex(lcc);
 /*
 
   // Vertices.
@@ -270,9 +302,14 @@ int main(const int argc, const char** argv) {
   output_file_model.close();
   std::cout << "* the reconstructed model exported successfully" << std::endl;*/
 
-  std::cout << std::endl << "3D KINETIC RECONSTRUCTION " << success <<
-  " in " << time << " seconds!" << std::endl << std::endl;
+  std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;
+  std::cout << "Kinetic partition:      " << (after_partition - after_shape_detection) << " seconds!" << std::endl;
+  std::cout << " initialization:        " << (after_init - after_shape_detection) << " seconds!" << std::endl;
+  std::cout << " partition:             " << (partition_time) << " seconds!" << std::endl;
+  std::cout << " finalization:          " << (finalization_time) << " seconds!" << std::endl;
+  std::cout << " making conformal:      " << (conformal_time) << " seconds!" << std::endl;
+  std::cout << "Kinetic reconstruction: " << (after_reconstruction - after_partition) << " seconds!" << std::endl;
+  std::cout << "Total time:             " << time << " seconds!" << std::endl << std::endl;
+
   return EXIT_SUCCESS;
 }
-
-#endif

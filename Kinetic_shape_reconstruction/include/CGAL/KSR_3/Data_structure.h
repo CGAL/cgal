@@ -180,6 +180,8 @@ public:
 
   using Visibility_label = KSR::Visibility_label;
 
+  using Index = std::pair<std::size_t, std::size_t>; // first is partition index, second is volume index. Partition -1 indicates outside. 0-5 indicate which side of the bbox
+
   struct Volume_cell {
     std::vector<PFace> pfaces;// index compatible to faces and neighbors
     std::vector<size_t> faces;// Indices into m_face2vertices in m_data.
@@ -216,7 +218,6 @@ public:
     }
   };
 
-
 private:
   std::vector<Support_plane> m_support_planes;
   std::vector<typename Support_plane::Data> m_initial_support_planes;
@@ -239,10 +240,11 @@ private:
 
   std::map<PFace, std::size_t> m_face2index;
   std::vector<std::vector<std::size_t> > m_face2vertices;
+  std::vector<bool> m_part_of_initial;
   std::map<PFace, std::pair<int, int> > m_pface_neighbors;
   std::vector<std::size_t> m_face2sp;
   std::vector<std::set<std::size_t> > m_sp2input_polygon;
-  std::map<std::size_t, std::size_t> m_input_polygon_map; // Maps index of input polygon onto support plane indices. Todo: This should not be a map.
+  std::map<std::size_t, std::size_t> m_input_polygon_map; // Maps index of input polygon onto support plane indices.
   Reconstructed_model m_reconstructed_model;
 
 public:
@@ -309,7 +311,7 @@ public:
       auto& unique_iedges = support_plane(i).unique_iedges();
       CGAL_assertion(unique_iedges.size() > 0);
 
-      auto& iedges    = this->iedges(i);
+      auto& iedges = this->iedges(i);
 
       iedges.clear();
       iedges.reserve(unique_iedges.size());
@@ -337,6 +339,7 @@ public:
 
     m_volumes.clear();
     m_vertices.clear();
+    m_exact_vertices.clear();
     m_ivertex2vertex.clear();
     m_face2index.clear();
     m_face2vertices.clear();
@@ -357,7 +360,6 @@ public:
   }
 
   int support_plane_index(const std::size_t polygon_index) const {
-
     CGAL_assertion(m_input_polygon_map.find(polygon_index) != m_input_polygon_map.end());
     const std::size_t sp_idx = m_input_polygon_map.at(polygon_index);
     return static_cast<int>(sp_idx);
@@ -389,6 +391,9 @@ public:
   std::vector<std::vector<std::size_t> >& face_to_vertices() { return m_face2vertices; }
   const std::vector<std::vector<std::size_t> >& face_to_vertices() const { return m_face2vertices; }
 
+  std::vector<bool>& face_is_part_of_input_polygon() { return m_part_of_initial; }
+  const std::vector<bool>& face_is_part_of_input_polygon() const { return m_part_of_initial; }
+
   std::vector<std::size_t>& face_to_support_plane() { return m_face2sp; }
   std::vector<std::set<std::size_t> >& support_plane_to_input_polygon() { return m_sp2input_polygon; }
 
@@ -414,6 +419,11 @@ public:
     Point_2 centroid = sp.data().centroid;
 
     typename Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
+
+    if (kinetic_interval.size() != 0) {
+      int a;
+      a = 3;
+    }
 
     Point_2 s = sp.to_2d(from_exact(point_3(m_intersection_graph.source(edge))));
     Point_2 t = sp.to_2d(from_exact(point_3(m_intersection_graph.target(edge))));
@@ -449,10 +459,27 @@ public:
     source_idx = (source_idx == -1) ? 0 : source_idx;
     target_idx = (target_idx == -1) ? 0 : target_idx;
 
-    std::size_t lower = ((std::min<std::size_t>)(source_idx, target_idx) + sp.data().original_directions.size() - 1) % sp.data().original_directions.size();
-    std::size_t upper = (std::max<std::size_t>)(source_idx, target_idx);
+    std::size_t num;
 
-    std::size_t num = ((upper - lower + sp.data().original_directions.size()) % sp.data().original_directions.size()) + 1;
+    Vector_2 tt = to_target.vector(), ts = to_source.vector();
+    bool ccw = (tt.x() * ts.y() - tt.y() * ts.x()) < 0;
+
+    // Check whether the segment is cw or ccw oriented.
+    if (!ccw) {
+      std::size_t tmp = source_idx;
+      source_idx = target_idx;
+      target_idx = tmp;
+
+      Point_2 tmp_p = s;
+      s = t;
+      t = tmp_p;
+    }
+
+    if (source_idx <= target_idx)
+      num = target_idx - source_idx;
+    else
+      num = (sp.data().original_directions.size() + target_idx - source_idx);
+
     std::vector<FT> time(num);
     std::vector<Point_2> intersections(num);
     std::vector<FT> intersections_bary(num);
@@ -460,7 +487,7 @@ public:
     // Shooting rays to find intersection with line of IEdge
     typename Intersection_kernel::Line_2 l = sp.to_2d(m_intersection_graph.line_3(edge));
     for (std::size_t i = 0; i < num; i++) {
-      std::size_t idx = (i + lower) % sp.data().original_directions.size();
+      std::size_t idx = (i + source_idx) % sp.data().original_directions.size();
       const auto result = CGAL::intersection(l, sp.data().original_rays[idx]);
       if (!result) {
         time[i] = (std::numeric_limits<double>::max)();
@@ -474,8 +501,9 @@ public:
         time[i] = l2 / l;
         CGAL_assertion(0 <= time[i]);
         intersections[i] = from_exact(*p);
-        intersections_bary[i] = ((from_exact(*p) - s) * segment) / segment_length;
-
+        intersections_bary[i] = abs(((from_exact(*p) - s) * segment)) / segment_length;
+        if (!ccw)
+          intersections_bary[i] = 1.0 - intersections_bary[i];
       }
       // If the intersection is a segment, it can be safely ignored as there are also two intersections with the adjacent edges.
     }
@@ -483,125 +511,77 @@ public:
     // Calculate pedge vs ivertex collision
     FT edge_time[2];
 
-    // Select endpoints of iedge for distance calculation and direction of pedges
-    if (source_idx == upper) {
-      // Moving direction of pedges is orthogonal to their direction
-      // Direction of pedge 1
+    // Source edge time
+    std::size_t adjacent = (source_idx + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size();
+    Vector_2 dir = sp.data().original_vertices[source_idx] - sp.data().original_vertices[adjacent];
+    dir = dir / CGAL::sqrt(dir * dir);
 
-      Vector_2 dir = sp.data().original_vertices[lower] - sp.data().original_vertices[(lower + 1) % sp.data().original_vertices.size()];
-      // Normalize
-      dir = dir / CGAL::sqrt(dir * dir);
-      // Orthogonal direction matching the direction of the adjacent vertices
-      dir = Vector_2(-dir.y(), dir.x());
-      dir = (dir * sp.data().original_vectors[lower] < 0) ? -dir : dir;
+    // Orthogonal direction matching the direction of the adjacent vertices
+    dir = Vector_2(dir.y(), -dir.x());
 
-      // Moving speed matches the speed of adjacent vertices
-      FT speed = (dir * sp.data().original_vectors[lower]);
-      CGAL_assertion(speed > 0);
+    // Moving speed matches the speed of adjacent vertices
+    FT speed = (dir * sp.data().original_vectors[source_idx]);
 
-      // Distance from edge to endpoint of iedge
-      FT dist = (t - sp.data().original_vertices[lower]) * dir;
-      Point_3 vis = sp.to_3d(t - (dist * dir));
+    if (speed < 0)
+      speed = -speed;
 
-      edge_time[0] = dist / speed;
-      CGAL_assertion(0 <= edge_time[0]);
+    // Distance from edge to endpoint of iedge
+    FT dist = (s - sp.data().original_vertices[source_idx]) * dir;
+    Point_3 viss = sp.to_3d(s - (dist * dir));
 
-      // Same for the upper boundary edge.
-      dir = sp.data().original_vertices[(upper + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size()] - sp.data().original_vertices[upper];
-      // Normalize
-      dir = dir / CGAL::sqrt(dir * dir);
-      // Orthogonal direction matching the direction of the adjacent vertices
-      dir = Vector_2(-dir.y(), dir.x());
-      dir = (dir * sp.data().original_vectors[upper] < 0) ? -dir : dir;
+    edge_time[0] = dist / speed;
 
-      // Moving speed matches the speed of adjacent vertices
-      speed = (dir * sp.data().original_vectors[upper]);
-      CGAL_assertion(speed > 0);
+    // Target edge time
+    adjacent = (target_idx + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size();
+    dir = sp.data().original_vertices[target_idx] - sp.data().original_vertices[adjacent];
+    dir = dir / CGAL::sqrt(dir * dir);
 
-      // Distance from edge to endpoint of iedge
-      dist = (s - sp.data().original_vertices[upper]) * dir;
-      vis = sp.to_3d(s - (dist * dir));
+    // Orthogonal direction matching the direction of the adjacent vertices
+    dir = Vector_2(dir.y(), -dir.x());
 
-      edge_time[1] = dist / speed;
-      CGAL_assertion(0 <= edge_time[1]);
+    // Moving speed matches the speed of adjacent vertices
+    speed = (dir * sp.data().original_vectors[target_idx]);
 
-      event.time = edge_time[1];
-      event.intersection_bary = 0;
+    if (speed < 0)
+      speed = -speed;
 
+    // Distance from edge to endpoint of iedge
+    dist = (t - sp.data().original_vertices[target_idx]) * dir;
+    Point_3 vist = sp.to_3d(t - (dist * dir));
+
+    edge_time[1] = dist / speed;
+
+    // Fill event structure and kinetic intervals.
+    if (ccw)
+      kinetic_interval.push_back(std::pair<FT, FT>(0, edge_time[0]));
+    else
       kinetic_interval.push_back(std::pair<FT, FT>(0, edge_time[1]));
-      for (std::size_t i = upper; i >= lower && i <= upper; i--) {
-        if (0 <= intersections_bary[i - lower] && intersections_bary[i - lower] <= 1) {
-          kinetic_interval.push_back(std::pair<FT, FT>(intersections_bary[i - lower], time[i - lower]));
-          if (event.time > time[i - lower]) {
-            event.time = time[i - lower];
-            event.intersection_bary = intersections_bary[i - lower];
-          }
-        }
-      }
 
-      kinetic_interval.push_back(std::pair<FT, FT>(1, edge_time[0]));
-      if (event.time > edge_time[0]) {
-        event.time = edge_time[0];
-        event.intersection_bary = 1;
+    event.time = kinetic_interval.back().second;
+    event.intersection_bary = 0;
+
+    for (std::size_t i = 0; i < num; i++) {
+      kinetic_interval.push_back(std::pair<FT, FT>(intersections_bary[i], time[i]));
+      if (event.time > time[i]) {
+        event.time = time[i];
+        event.intersection_bary = intersections_bary[i];
       }
     }
-    else {
-      // Moving direction of pedges is orthogonal to their direction
-      Vector_2 dir = sp.data().original_vertices[lower] - sp.data().original_vertices[(lower + 1) % sp.data().original_directions.size()];
-      // Normalize
-      dir = dir / CGAL::sqrt(dir * dir);
-      // Orthogonal direction matching the direction of the adjacent vertices
-      dir = Vector_2(-dir.y(), dir.x());
-      dir = (dir * sp.data().original_vectors[lower] < 0) ? -dir : dir;
 
-      // Moving speed matches the speed of adjacent vertices
-      FT speed = (dir * sp.data().original_vectors[lower]);
-      CGAL_assertion(speed > 0);
-
-      // Distance from edge to endpoint of iedge
-      FT dist = (s - sp.data().original_vertices[lower]) * dir;
-      Point_3 vis = sp.to_3d(s - (dist * dir));
-
-      edge_time[0] = dist / speed;
-      CGAL_assertion(0 <= edge_time[0]);
-
-      // Same for the upper boundary edge.
-      dir = sp.data().original_vertices[(upper + sp.data().original_directions.size() - 1) % sp.data().original_directions.size()] - sp.data().original_vertices[upper];
-      // Normalize
-      dir = dir / CGAL::sqrt(dir * dir);
-      // Orthogonal direction matching the direction of the adjacent vertices
-      dir = Vector_2(-dir.y(), dir.x());
-      dir = (dir * sp.data().original_vectors[upper] < 0) ? -dir : dir;
-
-      // Moving speed matches the speed of adjacent vertices
-      speed = (dir * sp.data().original_vectors[upper]);
-      CGAL_assertion(speed > 0);
-
-      // Distance from edge to endpoint of iedge
-      dist = (t - sp.data().original_vertices[upper]) * dir;
-      vis = sp.to_3d(t - (dist * dir));
-
-      edge_time[1] = dist / speed;
-      CGAL_assertion(0 <= edge_time[1]);
-
-      event.time = edge_time[0];
-      event.intersection_bary = 0;
-
-      kinetic_interval.push_back(std::pair<FT, FT>(0, edge_time[0]));
-      for (std::size_t i = lower; i <= upper; i++) {
-        if (0 <= intersections_bary[i - lower] && intersections_bary[i - lower] <= 1) {
-          kinetic_interval.push_back(std::pair<FT, FT>(intersections_bary[i - lower], time[i - lower]));
-          if (event.time > time[i - lower] && 0 <= intersections_bary[i - lower] && intersections_bary[i - lower] <= 1) {
-            event.time = time[i - lower];
-            event.intersection_bary = intersections_bary[i - lower];
-          }
-        }
-      }
-
+    if (ccw)
       kinetic_interval.push_back(std::pair<FT, FT>(1, edge_time[1]));
-      if (event.time > edge_time[1]) {
-        event.time = edge_time[1];
-        event.intersection_bary = 1;
+    else
+      kinetic_interval.push_back(std::pair<FT, FT>(1, edge_time[0]));
+
+    if (event.time > kinetic_interval.back().second) {
+      event.time = kinetic_interval.back().second;
+      event.intersection_bary = 1;
+    }
+
+    if (kinetic_interval.size() > 4) {
+      if (kinetic_interval[2].first > kinetic_interval[1].first) {
+        int a;
+        a = 2;
       }
     }
 
@@ -671,10 +651,38 @@ public:
 
   template<typename PointRange>
   std::pair<std::size_t, bool> add_support_plane(
+    const PointRange& polygon, const bool is_bbox, const typename Intersection_kernel::Plane_3& plane) {
+
+    const Support_plane new_support_plane(
+      polygon, is_bbox, plane, number_of_support_planes());
+    std::size_t support_plane_idx = KSR::no_element();
+
+    for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
+      if (new_support_plane == support_plane(i)) {
+        support_plane_idx = i;
+        return std::make_pair(support_plane_idx, false);
+      }
+    }
+
+    if (support_plane_idx == KSR::no_element()) {
+      support_plane_idx = number_of_support_planes();
+      m_support_planes.push_back(new_support_plane);
+    }
+
+    intersect_with_bbox(support_plane_idx);
+
+    if (m_sp2input_polygon.size() <= number_of_support_planes())
+      m_sp2input_polygon.resize(number_of_support_planes());
+
+    return std::make_pair(support_plane_idx, true);
+  }
+
+  template<typename PointRange>
+  std::pair<std::size_t, bool> add_support_plane(
     const PointRange& polygon, const bool is_bbox) {
 
     const Support_plane new_support_plane(
-      polygon, is_bbox, m_parameters.distance_tolerance, m_parameters.angle_tolerance, number_of_support_planes());
+      polygon, is_bbox, number_of_support_planes());
     std::size_t support_plane_idx = KSR::no_element();
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
@@ -709,12 +717,14 @@ public:
     }
 
     IkPoint_3 bbox_center(bbox_center_x * 0.125, bbox_center_y * 0.125, bbox_center_z * 0.125);
+    Point_3 bc = from_exact(bbox_center);
 
     // Intersect current plane with all bbox iedges.
     IkPoint_3 point;
     Point_3 p1;
     const auto& sp = support_plane(sp_idx);
     const auto& plane = sp.exact_plane();
+    const auto plane_inexact = from_exact(plane);
 
     using IEdge_vec = std::vector<IEdge>;
     using IPair = std::pair<IVertex, IEdge_vec>;
@@ -808,7 +818,7 @@ public:
         const auto& planes = m_intersection_graph.intersected_planes(iedge);
         iplanes.insert(planes.begin(), planes.end());
       }
-      // std::cout << "num iplanes: " << iplanes.size() << std::endl;
+
       CGAL_assertion(iplanes.size() >= 2);
       all_iplanes.push_back(iplanes);
     }
@@ -822,10 +832,13 @@ public:
       const auto& iplanes1 = all_iplanes[ip];
 
       std::size_t common_bbox_plane_idx = KSR::no_element();
+      bool dump = false;
       const std::function<void(const std::size_t& idx)> lambda =
         [&](const std::size_t& idx) {
-          if (idx < 6) {
-            CGAL_assertion(common_bbox_plane_idx == KSR::no_element());
+        if (idx < 6) {
+
+          if (common_bbox_plane_idx != KSR::no_element())
+            dump = true;
             common_bbox_plane_idx = idx;
           }
         };
@@ -836,7 +849,18 @@ public:
         boost::make_function_output_iterator(lambda)
       );
 
-      // std::cout << "cpi: " << common_plane_idx << std::endl;
+      if (dump) {
+        From_exact from_exact;
+
+        std::ofstream vout("bug.polylines.txt");
+        vout.precision(20);
+        vout << "2 ";
+        vout << " " << from_exact(polygon[i].first);
+        vout << " " << from_exact(polygon[ip].first);
+        vout << std::endl;
+        vout.close();
+      }
+
       CGAL_assertion(common_bbox_plane_idx != KSR::no_element());
       common_bbox_planes_idx.push_back(common_bbox_plane_idx);
 
@@ -844,7 +868,6 @@ public:
         std::make_pair(common_bbox_plane_idx, KSR::no_element()));
       const bool is_inserted = pair.second;
       if (is_inserted) {
-        // to sp & bbox sp intersection to get line
         typename Intersection_kernel::Line_3 line;
         bool intersect = intersection(plane, m_support_planes[common_bbox_plane_idx].exact_plane(), line);
         CGAL_assertion(intersect);
@@ -861,11 +884,6 @@ public:
     }
     CGAL_assertion(common_bbox_planes_idx.size() == n);
     CGAL_assertion(vertices.size() == n);
-
-    // std::cout << "vertices: " << std::endl;
-    // for (const auto& vertex : vertices) {
-    //   std::cout << point_3(vertex) << std::endl;
-    // }
 
     // Insert, split iedges.
     for (std::size_t i = 0; i < n; ++i) {
@@ -907,11 +925,11 @@ public:
   }
 
   template<typename PointRange>
-  void add_bbox_polygon(const PointRange& polygon) {
+  void add_bbox_polygon(const PointRange& polygon, const typename Intersection_kernel::Plane_3& plane) {
 
     bool is_added = true;
     std::size_t support_plane_idx = KSR::no_element();
-    std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true);
+    std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true, plane);
     CGAL_assertion(is_added);
     CGAL_assertion(support_plane_idx != KSR::no_element());
 
@@ -940,13 +958,8 @@ public:
   }
 
   template<typename PointRange>
-  void add_sub_partition_polygon(const PointRange& polygon) {
-    // The partition into subpartitions should not cut the space completely. Thus, if an octree is constructed, it needs to be build top-down. Inserting sub-bbox planes that split completely first.
+  void add_bbox_polygon(const PointRange& polygon) {
 
-    // Create data structure for partition. Implement functions to split it (for now simply by a plane)
-    // Maybe an octree is not the best choice? Will not work well if there are many large shapes. May even go infinitely deep.
-    // Difficult example -> star configuration as input
-    // -> Only leaf nodes are used for the kinetic partition. But the tree is interesting for construction and merging in the end.
     bool is_added = true;
     std::size_t support_plane_idx = KSR::no_element();
     std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true);
@@ -956,8 +969,8 @@ public:
     std::array<IVertex, 4> ivertices;
     std::array<Point_2, 4> points;
     for (std::size_t i = 0; i < 4; ++i) {
-      points[i] = support_plane(support_plane_idx).to_2d(polygon[i]);
-      ivertices[i] = m_intersection_graph.add_vertex(to_exact(polygon[i])).first;
+      points[i] = from_exact(support_plane(support_plane_idx).to_2d(polygon[i]));
+      ivertices[i] = m_intersection_graph.add_vertex(polygon[i]).first;
     }
 
     const auto vertices =
@@ -968,7 +981,7 @@ public:
       const auto& iedge = pair.first;
       const bool is_inserted = pair.second;
       if (is_inserted) {
-        typename Intersection_kernel::Line_3 line(to_exact(polygon[i]), to_exact(polygon[(i + 1) % 4]));
+        typename Intersection_kernel::Line_3 line(polygon[i], polygon[(i + 1) % 4]);
         m_intersection_graph.set_line(iedge, m_intersection_graph.add_line(line));
       }
 
@@ -1007,24 +1020,12 @@ public:
 
     remove_equal_points(points, min_dist);
 
-    // std::cout << "after 1: " << points.size() << std::endl;
-    // for (const auto& pair : points) {
-    //   std::cout << pair.first << " 0 " << std::endl;
-    // }
-
     remove_collinear_points(points, min_angle);
-
-    // std::cout << "after 2: " << points.size() << std::endl;
-    // for (const auto& pair : points) {
-    //   std::cout << pair.first << " 0 " << std::endl;
-    // }
-    // exit(EXIT_SUCCESS);
   }
 
   template<typename Pair>
   void remove_equal_points(std::vector<Pair>& points, const FT min_dist) const {
 
-    // std::cout << std::endl;
     std::vector<Pair> polygon;
     const std::size_t n = points.size();
     for (std::size_t i = 0; i < n; ++i) {
@@ -1036,7 +1037,7 @@ public:
         const std::size_t ip = (i + 1) % n;
         const auto& q = points[ip].first;
         const FT distance = from_exact(KSR::distance(p, q));
-        const bool is_small = (distance < min_dist);
+        const bool is_small = (distance <= min_dist);
         if (ip == 0 && is_small) break;
         if (is_small) {
           CGAL_assertion(ip != 0);
@@ -1048,13 +1049,11 @@ public:
     }
     CGAL_assertion(polygon.size() >= 3);
     points = polygon;
-    // CGAL_assertion_msg(false, "TODO: REMOVE EQUAL POINTS!");
   }
 
   template<typename Pair>
   void remove_collinear_points(std::vector<Pair>& points, const FT min_angle) const {
 
-    // std::cout << std::endl;
     std::vector<Pair> polygon;
     const std::size_t n = points.size();
     for (std::size_t i = 0; i < n; ++i) {
@@ -1074,12 +1073,10 @@ public:
       const Direction_2 dir2(vec2);
       const FT angle = KSR::angle_2(dir1, dir2);
 
-      // std::cout << "- angle: " << angle << " : " << min_angle << std::endl;
       if (angle > min_angle) polygon.push_back(points[i]);
     }
     if (polygon.size() >= 3) points = polygon;
     else remove_collinear_points(points, min_angle / FT(2));
-    // CGAL_assertion_msg(false, "TODO: REMOVE COLLINEAR POINTS!");
   }
 
   template<typename Pair>
@@ -1214,6 +1211,7 @@ public:
 
   const PFace add_iface_to_mesh(std::size_t support_plane, IFace f_idx) {
     typename Intersection_graph::Face_property &f = m_intersection_graph.face(f_idx);
+
     std::vector<Vertex_index> vertices;
     vertices.reserve(f.vertices.size());
     Support_plane& sp = m_support_planes[support_plane];
@@ -1847,6 +1845,7 @@ public:
   }
 
   bool check_vertices() const {
+    bool success = true;
 
     for (const auto vertex : m_intersection_graph.vertices()) {
       const auto nedges = m_intersection_graph.incident_edges(vertex);
@@ -1854,13 +1853,14 @@ public:
         std::cout << "ERROR: CURRENT NUMBER OF EDGES = " << nedges.size() << std::endl;
         CGAL_assertion_msg(nedges.size() > 2,
         "ERROR: VERTEX MUST HAVE AT LEAST 3 NEIGHBORS!");
-        return false;
+        success = false;
       }
     }
-    return true;
+    return success;
   }
 
   bool check_edges() const {
+    bool success = true;
 
     std::vector<PFace> nfaces;
     for (const auto edge : m_intersection_graph.edges()) {
@@ -1871,13 +1871,14 @@ public:
         std::cout << "PFace(" << nfaces[0].first << " " << nfaces[0].second << ")" << std::endl;
         CGAL_assertion_msg(nfaces.size() != 1,
         "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
-        return false;
+        success = false;
       }
     }
-    return true;
+    return success;
   }
 
   bool check_faces() const {
+    bool success = true;
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
@@ -1886,15 +1887,17 @@ public:
         if (nvolumes.size() == 0 || nvolumes.size() > 2) {
           std::cout << "ERROR: CURRENT NUMBER OF VOLUMES = " << nvolumes.size() << std::endl;
           CGAL_assertion_msg(nvolumes.size() == 1 || nvolumes.size() == 2,
-          "ERROR: FACE MUST HAVE 1 OR 2 NEIGHBORS!");
-          return false;
+            "ERROR: FACE MUST HAVE 1 OR 2 NEIGHBORS!");
+          success = false;
         }
       }
     }
-    return true;
+
+    return success;
   }
 
   bool check_intersection_graph() const {
+    bool success = true;
 
     std::cout.precision(20);
     const FT ptol = KSR::point_tolerance<FT>();
@@ -1910,10 +1913,11 @@ public:
         << str(iedge) << ", " << distance << ", " << segment_3(iedge) << std::endl;
         CGAL_assertion_msg(distance >= ptol,
         "ERROR: INTERSECTION GRAPH HAS ZERO-LENGTH IEDGES!");
-        return false;
+        success = false;
       }
     }
-    return true;
+
+    return success;
   }
 
   bool check_volume(
@@ -1934,10 +1938,13 @@ public:
     if (is_broken_volume) {
       dump_volume(*this, pfaces, "volumes/degenerate");
     }
+
     CGAL_assertion(!is_broken_volume);
     if (is_broken_volume) return false;
+
     CGAL_assertion(pfaces.size() == volume_size);
     if (pfaces.size() != volume_size) return false;
+
     return true;
   }
 

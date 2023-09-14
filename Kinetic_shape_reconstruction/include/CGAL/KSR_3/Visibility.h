@@ -10,8 +10,6 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-// Disable file for now
-#define CGAL_KSR_3_VISIBILITY_H
 #ifndef CGAL_KSR_3_VISIBILITY_H
 #define CGAL_KSR_3_VISIBILITY_H
 
@@ -30,7 +28,7 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/property_map.h>
-#include <CGAL/KSR_3/Data_structure.h>
+#include <CGAL/Kinetic_shape_partition_3.h>
 
 namespace CGAL {
 namespace KSR_3 {
@@ -44,17 +42,17 @@ namespace KSR_3 {
   public:
     using Kernel       = typename GeomTraits;
     using Intersection_kernel = typename IntersectionKernel;
-    using Point_map_3  = PointMap;
-    using Vector_map_3 = NormalMap;
+    using KSP = Kinetic_shape_partition_3<Kernel, Intersection_kernel>;
+    using Point_map  = PointMap;
+    using Vector_map = NormalMap;
 
     using FT       = typename Kernel::FT;
     using Point_3  = typename Kernel::Point_3;
     using Vector_3 = typename Kernel::Vector_3;
     using Indices  = std::vector<std::size_t>;
 
-    using Data_structure = KSR_3::Data_structure<Kernel, Intersection_kernel>;
-    using PFace          = typename Data_structure::PFace;
-    using Volume_cell    = typename Data_structure::Volume_cell;
+    //using Data_structure = KSR_3::Data_structure<Kernel, Intersection_kernel>;
+    //using Volume_cell    = typename Data_structure::Volume_cell;
 
     using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
     using Generator  = CGAL::Random_points_in_tetrahedron_3<Point_3>;
@@ -63,26 +61,29 @@ namespace KSR_3 {
 
     using Visibility_label = KSR::Visibility_label;
 
+    using Index = typename KSP::Index;
+
     Visibility(
-      const Data_structure& data,
-      const std::map<std::size_t, Indices>& face2points,
-      const Point_map_3& point_map_3,
-      const Vector_map_3& normal_map_3) :
-    m_data(data),
+      //const Data_structure& data,
+      const std::map<Index, Indices>& face2points,
+      const Point_map& point_map,
+      const Vector_map& normal_map) :
+    //m_data(data),
     m_face2points(face2points),
-    m_point_map_3(point_map_3),
-    m_normal_map_3(normal_map_3),
+    m_point_map(point_map),
+    m_normal_map(normal_map),
     m_num_samples(0) {
       CGAL_assertion(m_face2points.size() > 0);
       m_inliers = 0;
-      for (const auto pair : m_pface_points) {
+      for (const auto pair : face2points) {
         m_inliers += pair.second.size();
       }
       std::cout << "inliers: " << m_inliers << std::endl;
     }
 
-    void compute(std::vector<Volume_cell>& volumes) const {
+    void compute(/*std::vector<Volume_cell>& volumes*/) const {
 
+/*
       CGAL_assertion(volumes.size() > 0);
       if (volumes.size() == 0) return;
       std::size_t i = 0;
@@ -104,7 +105,7 @@ namespace KSR_3 {
       std::cout << "Sampled " << m_num_samples << " for data term" << std::endl;
       std::cout << "x: " << xmin << " " << xmax << std::endl;
       std::cout << "y: " << ymin << " " << ymax << std::endl;
-      std::cout << "z: " << zmin << " " << zmax << std::endl;
+      std::cout << "z: " << zmin << " " << zmax << std::endl;*/
     }
 
     std::size_t inliers() const {
@@ -112,14 +113,14 @@ namespace KSR_3 {
     }
 
   private:
-    const Data_structure& m_data;
-    const std::map<std::size_t, Indices>& m_face2points;
-    const Point_map_3& m_point_map_3;
-    const Vector_map_3& m_normal_map_3;
+    const std::map<Index, Indices>& m_face2points;
+    const Point_map& m_point_map;
+    const Vector_map& m_normal_map;
     mutable std::size_t m_num_samples;
     mutable std::size_t m_inliers;
+    /*
 
-    void estimate_volume_label(Volume_cell& volume) const {
+    void estimate_volume_label(/ *Volume_cell& volume* /) const {
 
       const auto stats = estimate_in_out_values(volume);
       CGAL_assertion(stats.first  >= FT(0) && stats.first  <= FT(1));
@@ -253,7 +254,7 @@ namespace KSR_3 {
         }
       }
 
-/*
+/ *
       if (volume.index != -1) {
         std::ofstream vout("visibility/" + std::to_string(volume.index) + "-query.xyz");
         vout.precision(20);
@@ -263,9 +264,9 @@ namespace KSR_3 {
         Saver<Kernel> saver;
         saver.export_points_3(inside, insideN, "visibility/" + std::to_string(volume.index) + "-inside.ply");
         saver.export_points_3(outside, outsideN, "visibility/" + std::to_string(volume.index) + "-outside.ply");
-      }*/
+      }* /
       return true;
-    }
+    }*/
   };
 
 #endif //DOXYGEN_RUNNING

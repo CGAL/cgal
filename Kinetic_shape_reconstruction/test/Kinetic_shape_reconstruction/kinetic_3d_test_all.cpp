@@ -36,7 +36,9 @@ bool run_test(
     return false;
   }
 
-  KSP ksp(CGAL::parameters::verbose(false).debug(true));
+  std::cout << input_filename << std::endl;
+
+  KSP ksp(CGAL::parameters::verbose(true).debug(true));
 
   ksp.insert(input_vertices, input_faces);
 
@@ -52,6 +54,8 @@ bool run_test(
     std::vector<unsigned int> cells = { 0, 2, 3 }, count;
     count = lcc.count_cells(cells);
 
+    std::cout << ksp.number_of_volumes() << std::endl;
+
     if (results[i][0] != count[0] || results[i][1] != count[2] || results[i][2] != count[3]) {
       std::cout << "TEST FAILED: Partitioning has not expected number of vertices, faces or volumes for k = " << ks[i] << std::endl;
 
@@ -60,6 +64,19 @@ bool run_test(
       std::cout << "Result k = " << " vertices : " << count[0] << " faces : " << count[2] << " volumes : " << count[3] << std::endl;
       //assert(false);
     }
+  }
+
+
+  for (std::size_t i = 0; i < ksp.number_of_volumes(); i++) {
+    std::vector<typename KSP::Index> faces;
+    ksp.faces(i, std::back_inserter(faces));
+    std::cout << i << "," << faces[0].first << " (" << faces.size() << ") : ";
+    for (const typename KSP::Index& f : faces) {
+      std::vector<Point_3> pts;
+      ksp.vertices(f, std::back_inserter(pts));
+      std::cout << pts.size() << " ";
+    }
+    std::cout << std::endl;
   }
 
   return true;
@@ -71,26 +88,15 @@ void run_all_tests() {
   std::vector< std::vector<double> > all_times;
 
   // All results are precomputed for k = 1!
-  std::vector<std::vector<unsigned int> > results(3);
-/*
-  results[0] = { 333, 497, 133 };
-  results[1] = { 339, 529, 143 };
-  results[2] = { 345, 575, 158 };
-  run_test<Kernel>("data/real-data-test/test-15-polygons.off", { 1, 2, 3 }, results);
-  results[0] = { 2225, 1360, 347 };
-  results[1] = { 2336, 1540, 403 };
-  results[2] = { 2527, 2018, 550 };
-  run_test<Kernel>("data/real-data-test/test-40-polygons.ply", { 1, 2, 3 }, results);*/
+  std::vector<std::vector<unsigned int> > results(3); //
 
+  //run_test<Kernel>("20-inserted-polygons.ply", { 3 }, results);
 
   results[0] = { 837, 855, 228 };
   results[1] = { 919, 1043, 285 };
   results[2] = { 955, 1279, 360 };
-  run_test<Kernel>("data/stress-test-5/test-2-rnd-polygons-20-4.off", { 1 }, results);/*
-  results[0] = { 128, 162, 38 };
-  results[1] = { 133, 220, 56 };
-  results[2] = { 133, 241, 62 };
-  run_test<Kernel>("data/real-data-test/test-10-polygons.off", { 1, 2, 3 }, results);
+  run_test<Kernel>("data/stress-test-5/test-2-rnd-polygons-20-4.off", { 1, 2, 3 }, results);
+
   results[0] = { 333, 497, 133 };
   results[1] = { 339, 529, 143 };
   results[2] = { 345, 575, 158 };
@@ -210,8 +216,8 @@ void run_all_tests() {
   results[0] = { 19, 17, 3 };
   results[1] = { 19, 21, 4 };
   run_test<Kernel>("data/stress-test-3/test-4-rnd-polygons-2-4.off", { 1, 2 }, results);
-  results[0] = { 12, 11, 2 };
-  run_test<Kernel>("data/stress-test-3/test-5-rnd-polygons-1-3.off", { 1 }, results);
+  //results[0] = { 12, 11, 2 };
+  //run_test<Kernel>("data/stress-test-3/test-5-rnd-polygons-1-3.off", { 1 }, results);
   results[0] = { 19, 18, 3 };
   results[1] = { 19, 21, 4 };
   run_test<Kernel>("data/stress-test-3/test-6-rnd-polygons-2-3.off", { 1, 2 }, results);
@@ -277,12 +283,15 @@ void run_all_tests() {
 
   // Real data tests.
 
-
+  results[0] = { 128, 162, 38 };
+  results[1] = { 133, 220, 56 };
+  results[2] = { 133, 241, 62 };
+  run_test<Kernel>("data/real-data-test/test-10-polygons.off", { 1, 2, 3 }, results);
 
   results[0] = { 2225, 1360, 347 };
   results[1] = { 2336, 1540, 403 };
   results[2] = { 2527, 2018, 550 };
-  run_test<Kernel>("data/real-data-test/test-40-polygons.ply", { 1, 2, 3 }, results);*/
+  run_test<Kernel>("data/real-data-test/test-40-polygons.ply", { 1, 2, 3 }, results);
 
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
   std::cout << std::endl << kernel_name << " TESTS SUCCESS!" << std::endl << std::endl;

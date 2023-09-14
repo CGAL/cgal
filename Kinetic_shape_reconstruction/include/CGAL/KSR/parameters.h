@@ -22,7 +22,10 @@ template<typename FT>
 struct Parameters_3 {
 
   unsigned int k = 1; // k intersections
-  unsigned int n = 0; // n subdivisions, not implemented yet
+
+  // Octree parameters for subdivison of input data into kinetic subpartitions
+  unsigned int max_octree_depth = 3;
+  unsigned int max_octree_node_size = 40;
 
   FT bbox_dilation_ratio = FT(11) / FT(10); // ratio to enlarge bbox
   FT angle_tolerance = FT(5);

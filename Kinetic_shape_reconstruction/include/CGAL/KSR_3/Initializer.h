@@ -33,6 +33,8 @@
 
 #include <CGAL/Real_timer.h>
 
+extern double add_polys, intersections, iedges, ifaces, mapping;
+
 namespace CGAL {
 namespace KSR_3 {
 
@@ -78,41 +80,50 @@ private:
   using Timer = CGAL::Real_timer;
 
 public:
-  Initializer(const std::vector<std::vector<Point_3> > &input_polygons, Data_structure &data, const Parameters& parameters) :
+  Initializer(std::vector<std::vector<Point_3> >& input_polygons, Data_structure& data, const Parameters& parameters) :
     m_input_polygons(input_polygons), m_data(data), m_parameters(parameters)
   { }
 
-  void initialize(const std::array<Point_3, 8> &bbox) {
+  Initializer(std::vector<std::vector<Point_3> > &input_polygons, std::vector<typename Intersection_kernel::Plane_3> &input_planes, Data_structure & data, const Parameters & parameters) :
+    m_input_polygons(input_polygons), m_data(data), m_parameters(parameters), m_input_planes(input_planes)
+  { }
 
+  void initialize(const std::array<typename Intersection_kernel::Point_3, 8> &bbox, std::vector<std::size_t> &input_polygons) {
     Timer timer;
     timer.reset();
     timer.start();
 
-    std::vector< std::vector<Point_3> > bbox_faces;
+    std::vector< std::vector<typename Intersection_kernel::Point_3> > bbox_faces;
     bounding_box_to_polygons(bbox, bbox_faces);
     const double time_to_bbox_poly = timer.time();
-    add_polygons(bbox, bbox_faces);
-    const double time_to_add_polys = timer.time();
+    add_polygons(bbox_faces, input_polygons);
+    add_polys += timer.time();
 
     m_data.igraph().finished_bbox();
 
     if (m_parameters.verbose)
       std::cout << "* intersecting input polygons ... ";
 
+    timer.reset();
+
     // Fills in the ivertices on support plane intersections inside the bbox.
     make_polygons_intersection_free();
-    const double time_to_intersection = timer.time();
+    intersections += timer.time();
+    timer.reset();
 
     // Generation of ifaces
     create_ifaces();
-    const double time_to_ifaces = timer.time();
+    ifaces += timer.time();
+    timer.reset();
 
     // Splitting the input polygons along intersection lines.
     initial_polygon_iedge_intersections();
-    const double time_to_initial_intersections = timer.time();
+    iedges += timer.time();
+    timer.reset();
 
-    map_polygon_to_ifaces();
-    const double time_to_map_ifaces = timer.time();
+    //map_polygon_to_ifaces(faces);
+    mapping += timer.time();
+    timer.reset();
 
     create_bbox_meshes();
 
@@ -131,17 +142,6 @@ public:
     const double time_to_precompute = timer.time();
     CGAL_assertion(m_data.check_intersection_graph());
 
-    if (m_parameters.verbose) {
-      std::cout << (time_to_bbox_poly) << "s for bbox poly" << std::endl;
-      std::cout << (time_to_add_polys - time_to_bbox_poly) << "s for add poly" << std::endl;
-      std::cout << (time_to_intersection - time_to_add_polys) << "s for intersection free" << std::endl;
-      std::cout << (time_to_ifaces - time_to_intersection) << "s for ifaces" << std::endl;
-      std::cout << (time_to_initial_intersections - time_to_ifaces) << "s for initial intersections" << std::endl;
-      std::cout << (time_to_map_ifaces - time_to_initial_intersections) << "s for map ifaces" << std::endl;
-      std::cout << (time_to_set_k - time_to_map_ifaces) << "s for set k" << std::endl;
-      std::cout << (time_to_precompute - time_to_set_k) << "s for precompute iedge data" << std::endl;
-    }
-
     m_data.initialization_done();
   }
 
@@ -150,7 +150,8 @@ public:
   }
 
 private:
-  const std::vector<std::vector<Point_3> >& m_input_polygons;
+  std::vector<std::vector<Point_3> >& m_input_polygons;
+  std::vector<typename Intersection_kernel::Plane_3> &m_input_planes;
   Data_structure& m_data;
   const Parameters& m_parameters;
 
@@ -381,21 +382,24 @@ private:
   void initial_polygon_iedge_intersections() {
     To_exact to_exact;
     From_exact to_inexact;
-    //std::cout << "initial_polygon_iedge_intersections" << std::endl;
-    std::size_t idx = 5;
-    for (Support_plane& sp : m_data.support_planes()) {
+
+    for (std::size_t sp_idx = 0; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
+      bool polygons_assigned = false;
+      Support_plane& sp = m_data.support_plane(sp_idx);
       if (sp.is_bbox())
         continue;
 
-      idx++;
+      sp.mesh().clear_without_removing_property_maps();
 
       std::map<std::size_t, std::vector<IEdge> > line2edges;
       // Get all iedges, sort into lines and test intersection per line?
       for (const IEdge& edge : sp.unique_iedges()) {
+
         if (m_data.is_bbox_iedge(edge))
           continue;
 
         std::size_t line = m_data.igraph().line(edge);
+
         line2edges[line].push_back(edge);
       }
 
@@ -407,16 +411,22 @@ private:
         typename Intersection_kernel::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
         typename Intersection_kernel::Line_2 exact_line(a, b);
         Line_2 l = to_inexact(exact_line);
-        Vector_2 dir = l.to_vector();
-        dir = (1.0 / CGAL::sqrt(dir * dir)) * dir;
+        Point_2 origin = l.point();
+        typename Intersection_kernel::Vector_2 ldir = exact_line.to_vector();
+        ldir = (typename Intersection_kernel::FT(1.0) / CGAL::approximate_sqrt(ldir * ldir)) * ldir;
+        Vector_2 dir = to_inexact(ldir);
 
         std::vector<typename Intersection_kernel::Segment_2> crossing_polygon_segments;
         std::vector<IEdge> crossing_iedges;
+        typename Intersection_kernel::FT emin = (std::numeric_limits<double>::max)();;
+        typename Intersection_kernel::FT emax = -(std::numeric_limits<double>::max)();;
         FT min = (std::numeric_limits<double>::max)();
         FT max = -(std::numeric_limits<double>::max)();
         FT min_speed = (std::numeric_limits<double>::max)(), max_speed = -(std::numeric_limits<double>::max)();
 
         CGAL::Oriented_side last_side = l.oriented_side(sp.data().original_vertices.back());
+        Point_2 minp, maxp;
+        typename Intersection_kernel::Point_2 eminp, emaxp;
 
         // Map polygon to line and get min&max projection
         for (std::size_t v = 0; v < sp.data().original_vertices.size(); v++) {
@@ -432,14 +442,25 @@ private:
             if (result) {
               const typename Intersection_kernel::Point_2* intersection = boost::get<typename Intersection_kernel::Point_2>(&*result);
               if (intersection) {
-                FT proj = to_inexact((*intersection - exact_line.point()) * exact_line.to_vector());
-                if (proj < min) {
+                typename Intersection_kernel::FT eproj = (*intersection - exact_line.point()) * ldir;
+                FT proj = to_inexact(eproj);
+                if (eproj < emin) {
+                  eminp = *intersection;
+                  emin = eproj;
+                  minp = to_inexact(*intersection);
                   min = proj;
-                  min_speed = dir * edge_dir;
+                  typename Intersection_kernel::FT p = dir * edge_dir;
+                  assert(p != 0);
+                  min_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
                 }
-                if (max < proj) {
+                if (emax < eproj) {
+                  emaxp = *intersection;
+                  emax = eproj;
+                  maxp = to_inexact(*intersection);
                   max = proj;
-                  max_speed = dir * edge_dir;
+                  typename Intersection_kernel::FT p = dir * edge_dir;
+                  assert(p != 0);
+                  max_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
                 }
               }
             }
@@ -452,10 +473,12 @@ private:
 
         // Is there any intersection?
         // As the polygon is convex there can only be one line segment on the inside of the polygon
-        if (min < max) {
-          m_data.support_plane(idx).set_crossed_line(pair.first);
+        if (emin < emax) {
+          m_data.support_plane(sp_idx).set_crossed_line(pair.first);
           // Collect crossing edges by overlapping min/max barycentric coordinates on line
           for (IEdge e : pair.second) {
+            std::pair<IFace, IFace> faces;
+            m_data.igraph().get_faces(sp_idx, e, faces);
             IVertex lower = m_data.source(e);
             IVertex upper = m_data.target(e);
             if (lower > upper) {
@@ -463,17 +486,35 @@ private:
               upper = lower;
               lower = tmp;
             }
-            FT s = (sp.to_2d(to_inexact(m_data.point_3(lower))) - l.point()) * l.to_vector();
-            FT t = (sp.to_2d(to_inexact(m_data.point_3(upper))) - l.point()) * l.to_vector();
+            typename Intersection_kernel::FT s = (sp.to_2d(m_data.point_3(lower)) - exact_line.point()) * ldir;
+            typename Intersection_kernel::FT t = (sp.to_2d(m_data.point_3(upper)) - exact_line.point()) * ldir;
 
             if (s < t) {
-              if (s < max && min < t) {
-                typename Intersection_graph::Kinetic_interval &kinetic_interval = m_data.igraph().kinetic_interval(e, idx);
+              if (s < emax && emin < t) {
+                std::pair<IFace, IFace> faces;
+                m_data.igraph().get_faces(sp_idx, e, faces);
+
+                polygons_assigned = true;
+
+                if (!m_data.igraph().face(faces.first).part_of_partition) {
+                  auto pface = m_data.add_iface_to_mesh(sp_idx, faces.first);
+                  sp.data().initial_ifaces.push_back(faces.first);
+                  sp.set_initial(pface.second);
+                }
+
+                if (!m_data.igraph().face(faces.second).part_of_partition) {
+                  auto pface = m_data.add_iface_to_mesh(sp_idx, faces.second);
+                  sp.data().initial_ifaces.push_back(faces.second);
+                  sp.set_initial(pface.second);
+                }
+
+                typename Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, sp_idx);
                 crossing_iedges.push_back(e);
-                if (min > s) {
-                  FT bary_edge = (min - s) / (t - s);
-                  CGAL_assertion(bary_edge >= 0);
-                  FT time = CGAL::abs((s - min) / min_speed);
+                if (emin > s) {
+                  typename Intersection_kernel::FT bary_edge_exact = (emin - s) / (t - s);
+                  FT bary_edge = to_inexact((emin - s) / (t - s));
+                  CGAL_assertion(bary_edge_exact >= 0);
+                  FT time = CGAL::abs(to_inexact(s - emin) / min_speed);
                   kinetic_interval.push_back(std::pair<FT, FT>(0, time)); // border barycentric coordinate
                   kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
                 }
@@ -481,10 +522,11 @@ private:
                   kinetic_interval.push_back(std::pair<FT, FT>(0, 0));
                 }
 
-                if (t > max) {
-                  FT bary_edge = (max - s) / (t - s);
-                  CGAL_assertion(0 <= bary_edge && bary_edge <= 1);
-                  FT time = CGAL::abs((max - t) / max_speed);
+                if (t > emax) {
+                  typename Intersection_kernel::FT bary_edge_exact = (emax - s) / (t - s);
+                  FT bary_edge = to_inexact((emax - s) / (t - s));
+                  CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
+                  FT time = CGAL::abs(to_inexact(emax - t) / max_speed);
                   kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
                   kinetic_interval.push_back(std::pair<FT, FT>(1, time)); // border barycentric coordinate
                 }
@@ -492,23 +534,42 @@ private:
                   kinetic_interval.push_back(std::pair<FT, FT>(1, 0));
               }
             }
-            else if (t < max && min < s) {
-              typename Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, idx);
+            else if (t < emax && emin < s) {
+              std::pair<IFace, IFace> faces;
+              m_data.igraph().get_faces(sp_idx, e, faces);
+
+              polygons_assigned = true;
+
+              if (!m_data.igraph().face(faces.first).part_of_partition) {
+                auto pface = m_data.add_iface_to_mesh(sp_idx, faces.first);
+                sp.data().initial_ifaces.push_back(faces.first);
+                sp.set_initial(pface.second);
+              }
+
+              if (!m_data.igraph().face(faces.second).part_of_partition) {
+                auto pface = m_data.add_iface_to_mesh(sp_idx, faces.second);
+                sp.data().initial_ifaces.push_back(faces.second);
+                sp.set_initial(pface.second);
+              }
+
+              typename Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, sp_idx);
               crossing_iedges.push_back(e);
-              if (s > max) {
-                FT bary_edge = (s - max) / (s - t);
-                CGAL_assertion(0 <= bary_edge && bary_edge <= 1);
-                FT time = CGAL::abs((max - s) / max_speed);
+              if (s > emax) {
+                typename Intersection_kernel::FT bary_edge_exact = (s - emax) / (s - t);
+                FT bary_edge = to_inexact((s - emax) / (s - t));
+                CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
+                FT time = CGAL::abs(to_inexact(emax - s) / max_speed);
                 kinetic_interval.push_back(std::pair<FT, FT>(0, time)); // border barycentric coordinate
                 kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
               }
               else
                 kinetic_interval.push_back(std::pair<FT, FT>(0, 0));
 
-              if (min > t) {
-                FT bary_edge = (s - min) / (s - t);
-                CGAL_assertion(0 <= bary_edge && bary_edge <= 1);
-                FT time = CGAL::abs((t - min) / min_speed);
+              if (emin > t) {
+                typename Intersection_kernel::FT bary_edge_exact = (s - emin) / (s - t);
+                FT bary_edge = to_inexact(bary_edge_exact);
+                CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
+                FT time = CGAL::abs(to_inexact(t - emin) / min_speed);
                 kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
                 kinetic_interval.push_back(std::pair<FT, FT>(1, time)); // border barycentric coordinate
               }
@@ -518,12 +579,55 @@ private:
           }
         }
       }
+
+      // If no faces have been assigned, the input polygon lies completely inside a face.
+      // Every IFace is checked whether the polygon, or just a single vertex, lies inside.
+      // The implementation takes advantage of the IFace being convex.
+      if (!polygons_assigned) {
+        IFace face = IFace(-1);
+        for (auto& f : sp.ifaces()) {
+          Face_property& fp = m_data.igraph().face(f);
+
+          typename Intersection_kernel::Point_2& p = to_exact(sp.data().centroid);
+          bool outside = false;
+
+          // poly, vertices and edges in IFace are oriented ccw
+          std::size_t idx = 0;
+          for (std::size_t i = 0; i < fp.pts.size(); i++) {
+            typename Intersection_kernel::Vector_2 ts = fp.pts[(i + fp.pts.size()  - 1) % fp.pts.size()] - p;
+            typename Intersection_kernel::Vector_2 tt = fp.pts[i] - p;
+
+            bool ccw = (tt.x() * ts.y() - tt.y() * ts.x()) <= 0;
+            if (!ccw) {
+              outside = true;
+              break;
+            }
+          }
+          if (!outside) {
+            if (face == -1)
+              face = f;
+            else {
+              std::cout << "Two faces found for " << sp_idx << " sp, f1 " << face << " f2 " << f << std::endl;
+            }
+          }
+        }
+        if (face != -1) {
+
+          if (!m_data.igraph().face(face).part_of_partition) {
+            auto pface = m_data.add_iface_to_mesh(sp_idx, face);
+            sp.data().initial_ifaces.push_back(face);
+            sp.set_initial(pface.second);
+          }
+        }
+        else
+          std::cout << "No IFace found for sp " << sp_idx << std::endl;
+      }
     }
   }
 
   void bounding_box_to_polygons(
-    const std::array<Point_3, 8>& bbox,
-    std::vector< std::vector<Point_3> >& bbox_faces) const {
+    const std::array<typename Intersection_kernel::Point_3, 8>& bbox,
+    std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces) const {
 
     bbox_faces.clear();
     bbox_faces.reserve(6);
@@ -538,15 +642,39 @@ private:
   }
 
   void add_polygons(
-    const std::array<Point_3, 8>& bbox,
-    const std::vector< std::vector<Point_3> >& bbox_faces) {
+    const std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces,
+    std::vector<std::size_t> &input_polygons) {
 
     add_bbox_faces(bbox_faces);
+
+    From_exact from_exact;
+
+    // Filter input polygons
+    std::vector<bool> remove(input_polygons.size(), false);
+    for (std::size_t i = 0; i < 6; i++)
+      for (std::size_t j = 0; j < m_input_planes.size(); j++)
+          if (m_data.support_plane(i).exact_plane() == m_input_planes[j] || m_data.support_plane(i).exact_plane() == m_input_planes[j].opposite()) {
+            m_data.support_plane(i).set_input_plane(j);
+            m_data.input_polygon_map()[j] = i;
+            remove[j] = true;
+          }
+
+    std::size_t write = 0;
+    for (std::size_t i = 0; i < input_polygons.size(); i++)
+      if (!remove[i]) {
+        m_input_polygons[write] = m_input_polygons[i];
+        m_input_planes[write] = m_input_planes[i];
+        input_polygons[write] = input_polygons[i];
+        write++;
+      }
+    m_input_polygons.resize(write);
+    m_input_planes.resize(write);
+    input_polygons.resize(write);
     add_input_polygons();
   }
 
   void add_bbox_faces(
-    const std::vector< std::vector<Point_3> >& bbox_faces) {
+    const std::vector< std::vector<typename Intersection_kernel::Point_3> >& bbox_faces) {
 
     for (const auto& bbox_face : bbox_faces)
       m_data.add_bbox_polygon(bbox_face);
@@ -567,7 +695,6 @@ private:
 
     std::map< std::size_t, std::pair<Polygon_2, Indices> > polygons;
     preprocess_polygons(polygons);
-    CGAL_assertion(polygons.size() > 0);
 
     for (const auto& item : polygons) {
       const std::size_t support_plane_idx = item.first;
@@ -575,10 +702,11 @@ private:
       const Polygon_2& polygon = pair.first;
       const Indices& input_indices = pair.second;
       m_data.add_input_polygon(support_plane_idx, input_indices, polygon);
-      dump_polygons(m_data, polygons, m_data.prefix() + "inserted-polygons");
+      if (m_parameters.debug)
+        dump_polygons(m_data, polygons, m_data.prefix() + "inserted-polygons");
     }
 
-    CGAL_assertion(m_data.number_of_support_planes() > 6);
+    CGAL_assertion(m_data.number_of_support_planes() >= 6);
     if (m_parameters.verbose) {
       std::cout << "* provided input polygons: " << m_data.input_polygons().size() << std::endl;
       std::cout << "* inserted input polygons: " << polygons.size() << std::endl;
@@ -612,13 +740,13 @@ private:
     std::size_t input_index = 0;
     std::vector<Point_2> polygon_2;
     std::vector<std::size_t> input_indices;
-    for (const auto& poly : m_input_polygons) {
+    for (std::size_t i = 0;i<m_input_polygons.size();i++) {
 
       bool is_added = true;
       std::size_t support_plane_idx = KSR::no_element();
-      std::tie(support_plane_idx, is_added) = m_data.add_support_plane(poly, false);
+      std::tie(support_plane_idx, is_added) = m_data.add_support_plane(m_input_polygons[i], false, m_input_planes[i]);
       CGAL_assertion(support_plane_idx != KSR::no_element());
-      convert_polygon(support_plane_idx, poly, polygon_2);
+      convert_polygon(support_plane_idx, m_input_polygons[i], polygon_2);
 
       if (is_added) {
         input_indices.clear();
@@ -868,8 +996,6 @@ private:
 
       sp.mesh().clear_without_removing_property_maps();
 
-      std::set<IFace> faces;
-
       for (auto f : sp.ifaces()) {
         Face_property& face = m_data.igraph().face(f);
 
@@ -878,10 +1004,12 @@ private:
         CGAL_assertion(face.poly.is_simple());
 
         if (CGAL::do_intersect(p, face.poly)) {
-          m_data.add_iface_to_mesh(i, f);
-          faces.insert(f);
+          if (!face.part_of_partition)
+            m_data.add_iface_to_mesh(i, f);
         }
       }
+
+      //std::cout << std::endl;
     }
   }
 

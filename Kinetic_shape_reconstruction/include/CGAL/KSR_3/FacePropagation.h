@@ -129,10 +129,6 @@ private:
   std::size_t run(
     const std::size_t initial_iteration) {
 
-    if (m_parameters.debug) {
-      std::cout << "* unstacking queue, current size: " << m_face_queue.size() << std::endl;
-    }
-
     std::size_t iteration = initial_iteration;
     while (!m_face_queue.empty()) {
       // m_queue.print();
@@ -155,6 +151,7 @@ private:
     if (m_parameters.verbose)
       std::cout << "support plane: " << event.support_plane << " edge: " << event.crossed_edge << " t: " << event.time << std::endl;
     if (m_data.igraph().face(event.face).part_of_partition) {
+
       if (m_parameters.verbose)
         std::cout << " face already crossed, skipping event" << std::endl;
       return;
@@ -190,8 +187,9 @@ private:
         for (std::size_t i = 0; i < ki->second.size(); i++) {
           // Exactly on one
           if (ki->second[i].first == event.intersection_bary) {
-            if (ki->second[i].second < event.time)
+            if (ki->second[i].second < event.time) {
               crossing++;
+            }
 
             break;
           }
@@ -201,8 +199,9 @@ private:
             FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
             FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
 
-            if (event.time > interval_time)
+            if (event.time > interval_time) {
               crossing++;
+            }
 
             break;
           }

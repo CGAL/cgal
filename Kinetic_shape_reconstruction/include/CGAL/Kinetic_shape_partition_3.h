@@ -33,7 +33,6 @@
 
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_incremental_builder_3.h>
-//#include <CGAL/draw_linear_cell_complex.h>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -41,15 +40,14 @@
 #include <CGAL/KSR/parameters.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
-//#include <CGAL/KSR_3/Reconstruction.h>
 #include <CGAL/KSR_3/Initializer.h>
 #include <CGAL/KSR_3/FacePropagation.h>
 #include <CGAL/KSR_3/Finalizer.h>
 
+#include <../../../../../orthtree/Orthtree/include/CGAL/Octree.h>
+
 //#define OVERLAY_2_DEBUG
 #define OVERLAY_2_CHECK
-
-#include "cdtLower.h"
 
 namespace CGAL {
 
@@ -72,12 +70,16 @@ public:
 
   using Point_3 = typename Kernel::Point_3;
 
+  using Index = std::pair<std::size_t, std::size_t>;
+
 private:
-  using FT      = typename Kernel::FT;
+  using FT = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
+  using Vector_2 = typename Kernel::Vector_2;
   using Plane_3 = typename Kernel::Plane_3;
   using Line_3 = typename Kernel::Line_3;
   using Line_2 = typename Kernel::Line_2;
+  using Triangle_2 = typename Kernel::Triangle_2;
   using Transform_3 = CGAL::Aff_transformation_3<Kernel>;
 
   using Data_structure = KSR_3::Data_structure<Kernel, Intersection_kernel>;
@@ -94,12 +96,15 @@ private:
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Timer        = CGAL::Real_timer;
-  using Parameters   = KSR::Parameters_3<FT>;
+  using Parameters = KSR::Parameters_3<FT>;
+
+  using Octree = CGAL::Octree<Kernel, std::vector<Point_3> >;
+  using Octree_node = typename Octree::Node_index;
 
   struct VI
   {
     VI()
-      : input(false), idx(-1)
+      : input(false), idx(-1), idx2(-1, -1), idA2(-1, -1), idB2(-1, -1)
     {}
 
     void set_index(std::size_t i) {
@@ -113,7 +118,10 @@ private:
     }
 
     typename Intersection_kernel::Point_3 point_3;
-    std::size_t idx;
+    std::size_t idx;  // ivertex?
+    std::set<Index> adjacent;
+    std::set<Index> ids;
+    Index idx2, idA2, idB2;
     bool input;
   };
 
@@ -121,11 +129,11 @@ private:
   // The overlay face gets also the id from A and B
   struct ID {
     ID()
-      : id(-1), idA(-1), idB(-1)
+      : id(-1), idA(-1), idB(-1), id2(std::size_t(-1), std::size_t(-1)), idA2(std::size_t(-1), std::size_t(-1)), idB2(std::size_t(-1), std::size_t(-1))
     {}
 
     ID(const ID& other)
-      :id(other.id), idA(other.idA), idB(other.idB)
+      :id(other.id), idA(other.idA), idB(other.idB), id2(other.id2), idA2(other.idA2), idB2(other.idB2)
     {}
 
     ID& operator=(const ID& other)
@@ -133,9 +141,16 @@ private:
       id = other.id;
       idA = other.idA;
       idB = other.idB;
+      id2 = other.id2;
+      idA2 = other.idA2;
+      idB2 = other.idB2;
+      volA = other.volA;
+      volB = other.volB;
       return *this;
     }
 
+    int volA, volB;
+    Index id2, idA2, idB2;
     int id, idA, idB;
   };
 
@@ -146,26 +161,33 @@ private:
   typedef CGAL::Exact_intersections_tag                     Itag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<Intersection_kernel, TDS, Itag> CDT;
   typedef CGAL::Constrained_triangulation_plus_2<CDT>       CDTplus;
-  typedef typename CDTplus::Vertex_handle                            Vertex_handle;
-  typedef typename CDTplus::Finite_vertices_iterator                 Finite_vertices_iterator;
-  typedef typename CDTplus::Finite_faces_iterator                    Finite_faces_iterator;
+  typedef typename CDTplus::Vertex_handle            Vertex_handle;
+  typedef typename CDTplus::Face_handle              Face_handle;
+  typedef typename CDTplus::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename CDTplus::Finite_faces_iterator    Finite_faces_iterator;
 
 private:
   struct Sub_partition {
     Sub_partition() : parent(-1) {}
     std::shared_ptr<Data_structure> m_data;
-    std::array<Point_3, 8> bbox;
+    std::array<typename Intersection_kernel::Point_3, 8> bbox;
+    std::vector<typename Intersection_kernel::Plane_3> m_bbox_planes;
     std::vector<std::size_t> input_polygons;
+    std::vector<std::vector<Point_3> > clipped_polygons;
+    std::vector<typename Intersection_kernel::Plane_3> m_input_planes;
     std::size_t parent;
     std::vector<std::size_t> children;
     std::size_t split_plane;
+    std::size_t index;
+
+    std::vector<std::pair<Index, Index> > face_neighbors;
+    std::vector<std::vector<Index> > face2vertices;
 
     std::vector<typename Data_structure::Volume_cell> volumes;
-    std::vector<std::vector<std::size_t> > face2vertices;
-    std::vector<Point_3> exact_vertices;
+    //std::vector<std::vector<std::size_t> > face2vertices;
+    //std::vector<Point_3> exact_vertices;
 
-
-    // Merged data from children
+    typename Octree::Node_index node;
   };
 
   Parameters m_parameters;
@@ -173,7 +195,18 @@ private:
   std::vector<Sub_partition> m_partition_nodes; // Tree of partitions.
   std::vector<std::size_t> m_partitions; // Contains the indices of the leaf nodes, the actual partitions to be calculated.
   std::size_t m_num_events;
+  std::vector<Point_3> m_points;
+  std::vector<std::vector<std::size_t> > m_polygons;
   std::vector<std::vector<Point_3> > m_input_polygons;
+  std::vector<typename Intersection_kernel::Plane_3> m_input_planes;
+  std::vector<Point_2> m_input_centroids;
+  std::vector<std::size_t> m_input2regularized; // Mapping from actual input planes to regularized input planes.
+  std::vector<std::vector<std::size_t> > m_regularized2input; // Mapping from partitioning planes to original input polygons.
+  std::unique_ptr<Octree> m_octree;
+  std::vector<std::size_t> m_node2partition;
+
+  std::vector<Index> m_volumes;
+  std::map<Index, std::size_t> m_index2volume;
 
 public:
   /// \name Initialization
@@ -207,8 +240,12 @@ public:
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
-    m_num_events(0)
-  { }
+    m_num_events(0),
+    m_input2regularized()
+  {
+    m_parameters.angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 5);
+    m_parameters.distance_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::distance_tolerance), 0.05);
+  }
 
   /*!
   \brief constructs a kinetic shape partition object and initializes it.
@@ -278,8 +315,11 @@ public:
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
     m_data(m_parameters),
-    m_num_events(0)
+    m_num_events(0),
+    m_input2regularized()
   {
+    m_parameters.angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 5);
+    m_parameters.distance_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::distance_tolerance), 0.05);
     insert(input_range, polygon_range, np);
     initialize(np);
   }
@@ -319,26 +359,59 @@ public:
     const InputRange& input_range,
     const PolygonRange polygon_range,
     const NamedParameters& np = CGAL::parameters::default_values()) {
-    for (auto poly : polygon_range) {
+    To_exact to_exact;
+    From_exact from_exact;
+    std::size_t offset = m_input2regularized.size();
+    for (std::size_t p = 0; p < polygon_range.size();p++) {
+      auto& poly = polygon_range[p];
+
       std::vector<Point_3> pts;
       pts.reserve(poly.size());
       for (auto it : poly)
         pts.push_back(*(input_range.begin() + it));
-
       Plane_3 pl;
-      CGAL::linear_least_squares_fitting_3(pts.begin(), pts.end(), pl, CGAL::Dimension_tag<0>());
-
-      std::vector<Point_2> pts2d(pts.size());
-      for (std::size_t i = 0; i < pts.size(); i++)
-        pts2d[i] = pl.to_2d(pts[i]);
-
+      Point_2 c;
       std::vector<Point_2> ch;
-      CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
+      process_input_polygon(pts, pl, c, ch);
+      typename Intersection_kernel::Plane_3 exact_pl = to_exact(pl);
 
-      m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
+      bool merge = false;
+      std::size_t i;
+      for (i = 0;i<m_input_planes.size();i++)
+        if (within_tolerance(from_exact(m_input_planes[i]), m_input_centroids[i], pl, c)) {
+          merge = true;
+          break;
+        }
 
-      for (std::size_t i = 0; i < ch.size(); i++)
-        m_input_polygons.back()[i] = pl.to_3d(ch[i]);
+      if (merge) {
+        m_input2regularized.push_back(i);
+        m_regularized2input[i].push_back(p);
+        // How to merge? Just do a linear least squares fitting on the full set of points?
+        m_input_polygons[i].reserve(m_input_polygons[i].size() + ch.size());
+
+        for (std::size_t j = 0; j < ch.size(); j++)
+          m_input_polygons[i].push_back(pl.to_3d(ch[j]));
+
+        process_input_polygon(m_input_polygons[i], pl, m_input_centroids[i], ch);
+        m_input_planes[i] = to_exact(pl);
+
+        m_input_polygons[i].resize(ch.size());
+
+        // update centroid of merged plane
+        for (std::size_t j = 0; j < ch.size(); j++)
+          m_input_polygons[i][j] = pl.to_3d(ch[j]);
+      }
+      else {
+        m_input2regularized.push_back(m_input_planes.size());
+        m_regularized2input.push_back(std::vector<std::size_t>());
+        m_regularized2input.back().push_back(p);
+        m_input_planes.push_back(to_exact(pl));
+        m_input_centroids.push_back(c);
+        m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
+
+        for (std::size_t i = 0; i < ch.size(); i++)
+          m_input_polygons.back()[i] = pl.to_3d(ch[i]);
+      }
     }
   }
 
@@ -387,17 +460,31 @@ public:
     m_parameters.bbox_dilation_ratio = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::bbox_dilation_ratio), FT(11) / FT(10));
     m_parameters.angle_tolerance = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::angle_tolerance), FT(5) / FT(10));
+      parameters::get_parameter(np, internal_np::angle_tolerance), FT(0) / FT(10));
     m_parameters.distance_tolerance = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::distance_tolerance), FT(5) / FT(10));
+      parameters::get_parameter(np, internal_np::distance_tolerance), FT(0) / FT(10));
     m_parameters.reorient_bbox = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::reorient_bbox), false);
+
+
+    //CGAL_add_named_parameter(max_octree_depth_t, max_octree_depth, max_octree_depth)
+    //CGAL_add_named_parameter(max_octree_node_size_t, max_octree_node_size, max_octree_node_size)
 
     std::cout.precision(20);
     if (m_input_polygons.size() == 0) {
       std::cout << "Warning: Your input is empty!";
       return;
     }
+
+    std::set<std::size_t> n;
+    for (auto p : m_input2regularized)
+      n.insert(p);
+
+    assert(m_regularized2input.size() == m_input_polygons.size());
+    assert(m_regularized2input.size() == n.size());
+
+    //if (m_parameters.verbose)
+      std::cout << m_input2regularized.size() << " input polygons regularized into " << m_input_polygons.size() << " input planes" << std::endl;
 
     if (m_parameters.bbox_dilation_ratio < FT(1)) {
       CGAL_warning_msg(m_parameters.bbox_dilation_ratio >= FT(1),
@@ -420,33 +507,42 @@ public:
       timer.start();
     }
 
-    m_partition_nodes.resize(1);
-    create_bounding_box(m_parameters.bbox_dilation_ratio, m_parameters.reorient_bbox, m_partition_nodes[0].bbox);
+    if (m_parameters.debug) {
+      for (std::size_t i = 0; i < m_input_polygons.size(); i++)
+        KSR_3::dump_polygon(m_input_polygons[i], std::to_string(i) + "-input_polygon");
+    }
 
-    m_partition_nodes[0].input_polygons.resize(m_input_polygons.size());
-    std::iota(m_partition_nodes[0].input_polygons.begin(), m_partition_nodes[0].input_polygons.end(), 0);
-
-    split_partition(0);
+    split_octree();
+    m_partitions.resize(m_partition_nodes.size());
+    std::iota(m_partitions.begin(), m_partitions.end(), 0);
 
     for (std::size_t idx : m_partitions) {
       Sub_partition& partition = m_partition_nodes[idx];
+      std::cout << idx << ". " << partition.input_polygons.size() << " polygons " << std::flush;
+      partition.index = idx;
 
       partition.m_data = std::make_shared<Data_structure>(m_parameters, std::to_string(idx) + "-");
 
+/*
       std::vector<std::vector<Point_3> > input_polygons(partition.input_polygons.size());
       for (std::size_t i = 0; i < partition.input_polygons.size(); i++)
-        input_polygons[i] = m_input_polygons[partition.input_polygons[i]];
+        input_polygons[i] = m_input_polygons[partition.input_polygons[i]];*/
 
-      Initializer initializer(input_polygons, *partition.m_data, m_parameters);
-      initializer.initialize(partition.bbox);
+      Initializer initializer(partition.clipped_polygons, partition.m_input_planes, *partition.m_data, m_parameters);
+      initializer.initialize(partition.bbox, partition.input_polygons);
+      std::cout << std::endl;
     }
 
     // Timing.
     if (m_parameters.verbose) {
-      timer.stop();
       const double time_to_initialize = timer.time();
       std::cout << "* initialization time: " << time_to_initialize << std::endl;
     }
+  }
+
+  void partition(std::size_t k) {
+    FT a, b, c;
+    partition(k, a, b, c);
   }
 
   /*!
@@ -457,11 +553,17 @@ public:
 
   \pre successful initialization and k != 0
   */
-  void partition(std::size_t k) {
+  void partition(std::size_t k, FT &partition_time, FT &finalization_time, FT &conformal_time) {
+    m_volumes.clear();
+    Timer timer;
+    timer.start();
+    partition_time = 0;
+    finalization_time = 0;
+    conformal_time = 0;
 
     for (std::size_t idx : m_partitions) {
       Sub_partition& partition = m_partition_nodes[idx];
-      Timer timer;
+      timer.reset();
       std::cout.precision(20);
 
       // Already initialized?
@@ -483,15 +585,12 @@ public:
       }
 
       // Propagation.
-      timer.reset();
-      timer.start();
       std::size_t num_queue_calls = 0;
 
       Propagation propagation(*partition.m_data, m_parameters);
       std::tie(num_queue_calls, m_num_events) = propagation.propagate(k);
 
-      timer.stop();
-      const double time_to_propagate = timer.time();
+      partition_time += timer.time();
 
       if (m_parameters.verbose) {
         std::cout << "* propagation finished" << std::endl;
@@ -504,8 +603,24 @@ public:
       }
 
       // Finalization.
-      timer.reset();
-      timer.start();
+
+      for (std::size_t i = 0; i < partition.m_data->number_of_support_planes(); i++)
+        if (!partition.m_data->support_plane(i).mesh().is_valid(true))
+          std::cout << i << ". support has an invalid mesh!" << std::endl;
+
+      for (std::size_t i = 6; i < partition.m_data->number_of_support_planes(); i++) {
+        bool initial = false;
+        typename Data_structure::Support_plane& sp = partition.m_data->support_plane(i);
+
+        for (const auto &f : sp.mesh().faces())
+          if (sp.is_initial(f)) {
+            initial = true;
+            break;
+          }
+
+        if (!initial)
+          std::cout << i << " sp has no initial face before" << std::endl;
+      }
 
       Finalizer finalizer(*partition.m_data, m_parameters);
 
@@ -513,26 +628,65 @@ public:
         std::cout << "* getting volumes ..." << std::endl;
 
       finalizer.create_polyhedra();
-      timer.stop();
-      const double time_to_finalize = timer.time();
+      finalization_time += timer.time();
+
+      for (std::size_t i = 6; i < partition.m_data->number_of_support_planes(); i++) {
+        bool initial = false;
+        typename Data_structure::Support_plane& sp = partition.m_data->support_plane(i);
+
+        for (const auto& f : sp.mesh().faces())
+          if (sp.is_initial(f)) {
+            initial = true;
+            break;
+          }
+
+        if (!initial)
+          std::cout << i << " sp has no initial face" << std::endl;
+      }
 
       if (m_parameters.verbose)
-        std::cout << "* found all together " << partition.m_data->number_of_volumes() << " volumes" << std::endl;
+        std::cout << idx << ". partition with " << partition.input_polygons.size() << " input polygons split into " << partition.m_data->number_of_volumes() << " volumes" << std::endl;
 
+/*
       if (m_parameters.debug)
         for (std::size_t i = 0; i < partition.m_data->number_of_support_planes(); i++)
-          dump_2d_surface_mesh(*partition.m_data, i, partition.m_data->prefix() + "final-surface-mesh-" + std::to_string(i));
+          dump_2d_surface_mesh(*partition.m_data, i, partition.m_data->prefix() + "final-surface-mesh-" + std::to_string(i));*/
+    }
 
-      // Timing.
-      if (m_parameters.verbose) {
-        std::cout << std::endl << "--- TIMING (sec.):" << std::endl;
+    //for (std::size_t i = 0;i<m_partition_nodes.size();i++)
+    //  std::cout << i << ". partition with " << m_partition_nodes[i].input_polygons.size() << " input polygons split into " << m_partition_nodes[i].m_data->number_of_volumes() << " volumes" << std::endl;
 
-        std::cout << "* propagation: " << time_to_propagate << std::endl;
-        std::cout << "* finalization: " << time_to_finalize << std::endl;
+    // Convert face_neighbors to pair<Index, Index>
+    for (std::size_t i = 0; i < m_partitions.size(); i++) {
+      Sub_partition& partition = m_partition_nodes[m_partitions[i]];
+
+      for (std::size_t j = 0; j < partition.m_data->number_of_volumes(); j++) {
+        m_volumes.push_back(std::make_pair(m_partitions[i], j));
+      }
+
+      partition.face_neighbors.resize(partition.m_data->face_to_volumes().size());
+      for (std::size_t j = 0; j < partition.m_data->face_to_volumes().size(); j++) {
+        auto& p = partition.m_data->face_to_volumes()[j];
+        partition.face_neighbors[j] = std::make_pair(Index(m_partitions[i], p.first), Index(m_partitions[i], p.second));
+      }
+
+      partition.face2vertices.resize(partition.m_data->face_to_vertices().size());
+
+      for (std::size_t j = 0; j < partition.m_data->face_to_vertices().size(); j++) {
+        partition.face2vertices[j].resize(partition.m_data->face_to_vertices()[j].size());
+        for (std::size_t k = 0; k < partition.m_data->face_to_vertices()[j].size(); k++)
+          partition.face2vertices[j][k] = std::make_pair(m_partitions[i], partition.m_data->face_to_vertices()[j][k]);
       }
     }
 
-    merge_partitions(0);
+    for (std::size_t i = 0; i < m_volumes.size(); i++)
+      m_index2volume[m_volumes[i]] = i;
+
+    timer.stop();
+    timer.reset();
+    timer.start();
+    make_conformal(0);
+    conformal_time = timer.time();
 
     return;
   }
@@ -545,16 +699,6 @@ public:
 
   /// \name Access
   /// @{
-  /*!
-  \brief returns the number of support planes in the kinetic partition. They originate from the planes of the input polygons and the bounding box.
-
-  \pre successful partition
-  */
-
-  int number_of_support_planes() const {
-    return static_cast<int>(m_data.number_of_support_planes());
-  }
-
   /*!
   \brief returns the number of vertices in the kinetic partition.
 
@@ -579,20 +723,332 @@ public:
   \pre successful partition
   */
   std::size_t number_of_volumes() const {
-    return m_data.volumes().size();
+    return m_volumes.size();
+  }
+
+  const Point_3 &volume_centroid(std::size_t volume_index) const {
+    assert(volume_index < m_volumes.size());
+    auto p = m_volumes[volume_index];
+    return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
+  }
+  /*
+
+  template<class OutputIterator>
+  void faces_of_input_polygon(const std::size_t input_polygon_index, OutputIterator it) const {
+    if (input_polygon_index >= m_input2regularized.size()) {
+      assert(false);
+    }
+
+    std::cout << "switch to hjk Data_structure::m_face2sp" << std::endl;
+
+    std::size_t mapped_input = m_input2regularized[input_polygon_index];
+    for (std::size_t idx : m_partitions) {
+      const Sub_partition& p = m_partition_nodes[idx];
+      // Check if it contains this input polygon and get support plane index
+      int sp_idx = -1;
+      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
+        if (p.input_polygons[i] == mapped_input) {
+          sp_idx = p.m_data->support_plane_index(i);
+          break;
+        }
+      }
+
+      // Continue if the partition does not contain this input polygon.
+      if (sp_idx == -1)
+        continue;
+
+      auto pfaces = p.m_data->pfaces(sp_idx);
+      auto f2i = p.m_data->face_to_index();
+
+      for (const auto& f : pfaces) {
+        assert(f.first == sp_idx);
+        auto fit = f2i.find(f);
+        assert(fit != f2i.end());
+
+        *it++ = std::make_pair(idx, fit->second);
+      }
+    }
+  }
+*/
+
+  template<class OutputIterator>
+  void faces_of_regularized_polygon(const std::size_t polygon_index, OutputIterator it) const {
+    if (polygon_index >= m_input_planes.size()) {
+      assert(false);
+    }
+
+    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
+
+    for (std::size_t idx : m_partitions) {
+      const Sub_partition& p = m_partition_nodes[idx];
+      // Check if it contains this input polygon and get support plane index
+      int sp_idx = -1;
+      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
+        if (p.input_polygons[i] == polygon_index) {
+          sp_idx = p.m_data->support_plane_index(i);
+          break;
+        }
+      }
+
+      // Continue if the partition does not contain this input polygon.
+      if (sp_idx == -1)
+        continue;
+
+      auto pfaces = p.m_data->pfaces(sp_idx);
+      auto f2i = p.m_data->face_to_index();
+
+      for (const auto& f : pfaces) {
+        assert(f.first == sp_idx);
+        auto fit = f2i.find(f);
+        assert(fit != f2i.end());
+
+        *it++ = std::make_pair(idx, fit->second);
+      }
+    }
+  }
+
+  void map_points_to_regularized_polygons(const std::size_t polygon_index, std::vector<Point_3>& pts, std::vector<std::pair<Index, std::vector<std::size_t> > > &mapping) {
+    std::vector<Index> faces;
+
+    if (polygon_index >= m_input_planes.size()) {
+      assert(false);
+    }
+
+    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
+    //ToDo I need to check whether the current way provides all faces as some faces may have been added during the make_conformal step
+
+    for (std::size_t idx : m_partitions) {
+      const Sub_partition& p = m_partition_nodes[idx];
+      // Check if it contains this input polygon and get support plane index
+      std::size_t sp_idx = -1;
+      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
+        if (p.input_polygons[i] == polygon_index) {
+          sp_idx = p.m_data->support_plane_index(i);
+          break;
+        }
+      }
+
+      // Continue if the partition does not contain this input polygon.
+      if (sp_idx == -1)
+        continue;
+
+      // Filter points
+      From_exact from_exact;
+      std::array<FT, 3> bbmin = { from_exact(p.bbox[0][0]), from_exact(p.bbox[0][1]), from_exact(p.bbox[0][2]) };
+      std::array<FT, 3> bbmax = { from_exact(p.bbox[7][0]), from_exact(p.bbox[7][1]), from_exact(p.bbox[7][2]) };
+      assert(bbmin[0] < bbmax[0]);
+      assert(bbmin[1] < bbmax[1]);
+      assert(bbmin[2] < bbmax[2]);
+
+      std::vector<Point_2> pts2d;
+      std::vector<std::size_t> idx2d;
+      auto sp = p.m_data->support_plane(sp_idx);
+
+      for (std::size_t i = 0; i < pts.size(); i++) {
+        if (bbmin[0] <= pts[i][0] && pts[i][0] <= bbmax[0]
+          && bbmin[1] <= pts[i][1] && pts[i][1] <= bbmax[1]
+          && bbmin[2] <= pts[i][2] && pts[i][2] <= bbmax[2]) {
+          pts2d.push_back(sp.to_2d(pts[i]));
+          idx2d.push_back(i);
+        }
+      }
+
+      /*auto writer = pts.end()--;
+      auto reader = pts.begin();
+      while (reader < writer) {
+        while ((*reader[0] < bbmin[0] || bbmax[0] < *reader[0]
+          || *reader[1] < bbmin[1] || bbmax[1] < *reader[1]
+          || *reader[2] < bbmin[2] || bbmax[2] < *reader[2]) && reader < writer)
+          reader++;
+
+        while ((*bbmin[0] <= *writer[0] && *writer[0] <= bbmax[0]
+          && *bbmin[1] <= *writer[1] && *writer[0] <= bbmax[1]
+          && *bbmin[2] <= *writer[2] && *writer[0] <= bbmax[2]) && reader < writer)
+          writer--;
+
+        if (writer >= reader)
+          break;
+
+        auto tmp = *writer;
+        *writer = *reader;
+        *reader = tmp;
+
+        reader++;
+        writer--;
+      };*/
+
+      const auto& initial = p.m_data->face_is_part_of_input_polygon();
+      for (std::size_t f = 0; f < p.m_data->face_to_support_plane().size();f++) {
+        if (p.m_data->face_to_support_plane()[f] != sp_idx || !initial[f])
+          continue;
+
+        mapping.resize(mapping.size() + 1);
+        auto& m = mapping.back();
+        m.first = Index(idx, f);
+
+        std::vector<Point_3> vts;
+        std::vector<Point_2> vts2d;
+
+        vertices(m.first, std::back_inserter(vts));
+        vts2d.reserve(vts.size());
+
+        for (const auto& v : vts)
+          vts2d.push_back(sp.to_2d(v));
+
+        // Todo: Remove check if vts are ccw
+        Polygon_2<Kernel> poly(vts2d.begin(), vts2d.end());
+        if (poly.is_clockwise_oriented())
+          std::reverse(vts2d.begin(), vts2d.end());
+
+        for (std::size_t i = 0;i<pts2d.size();i++) {
+          const auto& pt = pts2d[i];
+          bool outside = false;
+
+          // poly, vertices and edges in IFace are oriented ccw
+          std::size_t idx = 0;
+          for (std::size_t i = 0; i < vts2d.size(); i++) {
+            Vector_2 ts = (vts2d[(i + vts2d.size() - 1) % vts2d.size()]) - pt;
+            Vector_2 tt = (vts2d[i]) - pt;
+
+            bool ccw = (tt.x() * ts.y() - tt.y() * ts.x()) <= 0;
+            if (!ccw) {
+              outside = true;
+              break;
+            }
+          }
+
+          if (outside)
+            continue;
+
+          m.second.push_back(idx2d[i]);
+        }
+      }
+
+      // Order of the vertices should be ccw
+      /*IFace face = IFace(-1);
+      for (auto& f : initial_faces) {
+        Face_property& fp = m_data.igraph().face(f);
+
+        for (const auto& p : pts) {
+
+          typename Intersection_kernel::Point_2& p = to_exact(sp.data().centroid);
+          bool outside = false;
+
+          // poly, vertices and edges in IFace are oriented ccw
+          std::size_t idx = 0;
+          for (std::size_t i = 0; i < fp.pts.size(); i++) {
+            typename Intersection_kernel::Vector_2 ts = fp.pts[(i + fp.pts.size() - 1) % fp.pts.size()] - p;
+            typename Intersection_kernel::Vector_2 tt = fp.pts[i] - p;
+
+            bool ccw = (tt.x() * ts.y() - tt.y() * ts.x()) <= 0;
+            if (!ccw) {
+              outside = true;
+              break;
+            }
+          }
+          if (!outside) {
+            if (face == -1)
+              face = f;
+            else {
+              std::cout << "Two faces found for " << sp_idx << " sp, f1 " << face << " f2 " << f << std::endl;
+            }
+          }
+        }
+      }
+      if (face != -1) {
+
+        if (!m_data.igraph().face(face).part_of_partition) {
+          m_data.add_iface_to_mesh(sp_idx, face);
+          sp.data().initial_ifaces.push_back(face);
+        }
+      }
+      else
+        std::cout << "No IFace found for sp " << sp_idx << std::endl;*/
+
+
+      /*auto pfaces = p.m_data->pfaces(sp_idx);
+      auto f2i = p.m_data->face_to_index();
+
+      for (const auto& f : pfaces) {
+        assert(f.first == sp_idx);
+        auto fit = f2i.find(f);
+        assert(fit != f2i.end());
+
+        *it++ = std::make_pair(idx, fit->second);
+      }*/
+    }
+  }
+
+  const typename Intersection_kernel::Plane_3 &regularized_plane(std::size_t polygon_index) const {
+    return m_input_planes[polygon_index];
+  }
+
+  const std::vector<std::vector<std::size_t> > &regularized_input_mapping() const {
+    return m_regularized2input;
   }
 
 #ifndef DOXYGEN_RUNNING
   /*!
-  \brief Point vector for mapping vertex indices to positions.
+  \brief Mapping of a vertex index to its position.
 
   @return
    vector of points.
 
     \pre successful partition
   */
-  const std::vector<Point_3>& vertices() const {
-    return m_data.vertices();
+  const Point_3& vertex(const Index& vertex_index) const {
+    return m_partition_nodes[vertex_index.first].m_data->vertices()[vertex_index.second];
+  }
+
+  /*!
+  \brief Mapping of a vertex index to its exact position.
+
+  @return
+   vector of points.
+
+    \pre successful partition
+  */
+  const typename Intersection_kernel::Point_3& exact_vertex(const Index& vertex_index) const {
+    return m_partition_nodes[vertex_index.first].m_data->exact_vertices()[vertex_index.second];
+  }
+
+  /*!
+  \brief Vertices of a face.
+
+  \param volume_index
+   index of the query volume.
+
+  @return
+   vector of face indices.
+
+  \pre successful partition
+  */
+  template<class OutputIterator>
+  void vertices(const Index& face_index, OutputIterator it) const {
+    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second])
+      *it++ = m_partition_nodes[p.first].m_data->vertices()[p.second];
+  }
+
+  template<class OutputIterator>
+  void vertex_indices(const Index& face_index, OutputIterator it) const {
+  for (auto& i : m_partition_nodes[face_index.first].m_data->face_to_vertices()[face_index.second])
+    *it++ = std::make_pair(face_index.first, i);
+  }
+
+  template<class OutputIterator>
+  void exact_vertices(const Index& face_index, OutputIterator it) const {
+
+    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second])
+      *it++ = m_partition_nodes[p.first].m_data->exact_vertices()[p.second];
+  }
+
+  template<class OutputIterator, class IndexOutputIterator>
+  void exact_vertices(const Index& face_index, OutputIterator pit, IndexOutputIterator iit) const {
+    const auto& v = m_partition_nodes[face_index.first].m_data->exact_vertices();
+    for (auto& i : m_partition_nodes[face_index.first].m_data->face_to_vertices()[face_index.second]) {
+      *iit++ = std::make_pair(face_index.first, i);
+      *pit++ = v[i];
+    }
   }
 
   /*!
@@ -606,9 +1062,9 @@ public:
 
   \pre successful partition
   */
-  const std::vector<std::size_t>& vertices(std::size_t face_index) const {
+  /*const std::vector<Index>& vertices(const Index &face_index) const {
     return m_data.face_to_vertices()[face_index];
-  }
+  }*/
 
   /*!
   \brief Face indices of the volume.
@@ -621,9 +1077,26 @@ public:
 
   \pre successful partition
   */
-  const std::vector<std::size_t>& faces(std::size_t volume_index) const {
-    CGAL_assertion(m_data.number_of_volumes() > volume_index);
-    return m_data.volumes()[volume_index].faces;
+  template<class OutputIterator>
+  void faces(std::size_t volume_index, OutputIterator it) const {
+    CGAL_assertion(m_volumes.size() > volume_index);
+    auto p = m_volumes[volume_index];
+
+    for (std::size_t i : m_partition_nodes[p.first].m_data->volumes()[p.second].faces)
+      *it++ = std::make_pair(p.first, i);
+  }
+
+  template<class OutputIterator>
+  void unique_faces(OutputIterator it) const {
+    for (std::size_t i = 0; i < m_partition_nodes.size(); i++) {
+      const Sub_partition& p = m_partition_nodes[i];
+      for (std::size_t j = 0; j < p.face_neighbors.size(); j++) {
+        if (p.face_neighbors[j].second.first == i)
+          *it++ = Index(i, j);
+        else if (i < p.face_neighbors[j].second.first)
+          *it++ = Index(i, j);
+      }
+    }
   }
 
   /*!
@@ -644,8 +1117,22 @@ public:
 
     \pre successful partition
   */
-  const std::pair<int, int>& neighbors(std::size_t face_index) const {
-    return m_data.face_to_volumes()[face_index];
+  const std::pair<int, int> neighbors(const Index &face_index) const {
+    const auto &p = m_partition_nodes[face_index.first].face_neighbors[face_index.second];
+    if (p.second.second >= std::size_t(-6)) { // Faces on the boundary box are neighbors with an infinite outside volume
+      auto it = m_index2volume.find(p.first);
+      assert(it != m_index2volume.end());
+      return std::pair<int, int>(static_cast<int>(it->second), static_cast<int>(p.second.second));
+    }
+    else {
+      auto it1 = m_index2volume.find(p.first);
+      assert(it1 != m_index2volume.end());
+      auto it2 = m_index2volume.find(p.second);
+      assert(it2 != m_index2volume.end());
+      return std::pair<int, int>(static_cast<int>(it1->second), static_cast<int>(it2->second));
+    }
+    //const auto& p = m_partition_nodes[face_index.first].m_data->face_to_volumes()[face_index.second];
+    //return std::pair<Index, Index>(std::make_pair(face_index.first, p.first), std::make_pair(face_index.first, p.second));// m_data.face_to_volumes()[face_index];
   }
 
   /*!
@@ -1189,16 +1676,240 @@ private:
       point = translate.transform(point);
   }
 
+  void process_input_polygon(const std::vector<Point_3> poly, Plane_3& pl, Point_2& c, std::vector<Point_2>& ch) const {
+    CGAL::linear_least_squares_fitting_3(poly.begin(), poly.end(), pl, CGAL::Dimension_tag<0>());
+
+    std::vector<Point_2> pts2d(poly.size());
+    for (std::size_t i = 0; i < poly.size(); i++)
+      pts2d[i] = pl.to_2d(poly[i]);
+
+    ch.clear();
+    CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
+
+    // Centroid
+    FT x = 0, y = 0, w = 0;
+    for (std::size_t i = 2; i < ch.size(); i++) {
+      Triangle_2 tri(ch[0], ch[i - 1], ch[i]);
+      w += CGAL::area(ch[0], ch[i - 1], ch[i]);
+      Point_2 c = CGAL::centroid(ch[0], ch[i - 1], ch[i]);
+      x += c.x() * w;
+      y += c.y() * w;
+    }
+
+    c = Point_2(x / w, y / w);
+  }
+
   std::pair<int, int> make_canonical_pair(int i, int j)
   {
     if (i > j) return std::make_pair(j, i);
     return std::make_pair(i, j);
   }
 
-  double build_cdt(CDTplus& cdt, const std::vector<typename Intersection_kernel::Point_3>& points, std::vector<std::vector<std::size_t> > &faces, const typename Intersection_kernel::Plane_3& plane) {
+  double build_cdt(CDTplus& cdt, std::vector<Index>& faces, const typename Intersection_kernel::Plane_3& plane) {
+    double area = 0;
+    From_exact from_exact;
+    //To_exact to_exact;
+
+    cdt.clear();
+
+    //check orientation of faces so that they are ccw oriented
+    std::vector<std::vector<Index> > pts_idx(faces.size());
+    std::vector<std::vector<typename Intersection_kernel::Point_3> > pts(faces.size());
+    for (std::size_t i = 0; i < faces.size(); ++i) {
+      exact_vertices(faces[i], std::back_inserter(pts[i]), std::back_inserter(pts_idx[i]));
+      //auto& v = faces[i];
+
+      std::size_t j = 0;
+
+      CGAL::Orientation res = CGAL::COLLINEAR;
+      bool pos = false;
+      bool neg = false;
+
+      for (std::size_t j = 0; j < pts[i].size(); j++) {
+        std::size_t k = (j + 1) % pts[i].size();
+        std::size_t l = (k + 1) % pts[i].size();
+
+        Point_2 pj = from_exact(plane.to_2d(pts[i][j]));
+        Point_2 pk = from_exact(plane.to_2d(pts[i][k]));
+        Point_2 pl = from_exact(plane.to_2d(pts[i][l]));
+
+        res = orientation(plane.to_2d(pts[i][j]), plane.to_2d(pts[i][k]), plane.to_2d(pts[i][l]));
+        if (res == CGAL::LEFT_TURN)
+          pos = true;
+        if (res == CGAL::RIGHT_TURN)
+          neg = true;
+      }
+
+      if (pos && neg) {
+        std::cout << "face is not convex" << std::endl;
+        exit(1);
+      }
+
+      if (!pos && !neg) {
+        std::cout << "face is degenerated" << std::endl;
+        exit(1);
+      }
+
+      if (neg) {
+        std::reverse(pts[i].begin(), pts[i].end());
+        std::reverse(pts_idx[i].begin(), pts_idx[i].end());
+      }
+    }
+
+    std::map<Index, std::size_t> face2vtx;
+    std::map<std::size_t, Index> vtx2face;
+    std::vector<Vertex_handle> vertices;
+    for (std::size_t f = 0; f < faces.size(); f++)
+      for (std::size_t v = 0; v < pts_idx[f].size(); v++) {
+        //vertices.push_back(cdt.insert(to_exact(from_exact(plane.to_2d(pts[f][v])))));
+        vertices.push_back(cdt.insert(plane.to_2d(pts[f][v])));
+        vertices.back()->info().idA2 = pts_idx[f][v];
+        assert(pts_idx[f][v].first != -1);
+        assert(pts_idx[f][v].second != -1);
+        vertices.back()->info().adjacent.insert(faces[f]);
+        vertices.back()->info().set_point(pts[f][v]);
+        face2vtx[pts_idx[f][v]] = vertices.size() - 1;
+        vtx2face[vertices.size() - 1] = pts_idx[f][v];
+      }
+
+    typedef std::set<std::pair<int, int> > Edges;
+    Edges edges;
+
+    for (std::size_t i = 0; i < pts_idx.size(); ++i) {
+      auto& v = pts_idx[i];
+      for (std::size_t j = 0; j < v.size(); ++j) {
+        int vj = face2vtx[v[j]];
+        int vjj = face2vtx[v[(j + 1) % v.size()]];
+        std::pair<Edges::iterator, bool> res = edges.insert(make_canonical_pair(vj, vjj));
+#ifdef OVERLAY_2_DEBUG
+        int vjjj = face2vtx[v[(j + 2) % v.size()]];
+        if (orientation(vertices[vj]->point(), vertices[vjj]->point(), vertices[vjjj]->point()) != CGAL::LEFT_TURN) {
+          std::cerr << "orientation( " << vertices[vj]->point() << ", " << vertices[vjj]->point() << ", " << vertices[vjjj]->point() << std::endl;
+          std::cerr << orientation(vertices[vj]->point(), vertices[vjj]->point(), vertices[vjjj]->point()) << std::endl;
+        }
+#endif
+        if (res.second) {
+          cdt.insert_constraint(vertices[vj], vertices[vjj]);
+        }
+      }
+    }
+
+    for (CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+#ifdef OVERLAY_2_CHECK
+      Point_2 p = from_exact(fit->vertex(0)->point());
+      Point_2 q = from_exact(fit->vertex(1)->point());
+      Point_2 r = from_exact(fit->vertex(2)->point());
+      area += CGAL::area(p, q, r);
+#endif
+
+      std::set<Index>& a(fit->vertex(0)->info().adjacent), & b(fit->vertex(1)->info().adjacent), & c(fit->vertex(2)->info().adjacent);
+
+      std::set<Index> res, res2;
+      Index common(std::size_t(-1), std::size_t(-1));
+      std::set_intersection(a.begin(), a.end(), b.begin(), b.end(), std::inserter(res, res.begin()));
+      std::set_intersection(res.begin(), res.end(), c.begin(), c.end(), std::inserter(res2, res2.begin()));
+
+      if (res2.size() != 1) {
+        std::cout << "build_cdt: face assignment not unique!" << std::endl;
+        const std::string vfilename = "no-face.polylines.txt";
+        std::ofstream vout(vfilename);
+        vout.precision(20);
+        vout << 4;
+        vout << " " << from_exact(plane.to_3d(fit->vertex(0)->point()));
+        vout << " " << from_exact(plane.to_3d(fit->vertex(1)->point()));
+        vout << " " << from_exact(plane.to_3d(fit->vertex(2)->point()));
+        vout << " " << from_exact(plane.to_3d(fit->vertex(0)->point()));
+        vout << std::endl;
+        vout.close();
+      }
+      else fit->info().id2 = *res2.begin();
+    }
+
+    return area;
+  }
+
+  double build_cdt(CDTplus& cdt, std::vector<CDTplus>& partitions, const typename Intersection_kernel::Plane_3& plane) {
+    if (partitions.size() == 0)
+      return 0;
+
+    double area = 0;
+
+    From_exact from_exact;
+    //To_exact to_exact;
+    cdt = partitions[0];
+
+    for (std::size_t i = 1; i < partitions.size(); i++) {
+      std::vector<Vertex_handle> vertices;
+      vertices.reserve(6);
+
+      for (typename CDTplus::Constraint_iterator ci = partitions[i].constraints_begin(); ci != partitions[i].constraints_end(); ++ci) {
+        for (typename CDTplus::Vertices_in_constraint_iterator vi = partitions[i].vertices_in_constraint_begin(*ci); vi != partitions[i].vertices_in_constraint_end(*ci); vi++) {
+          vertices.push_back(*vi);
+        }
+
+        // Insert constraints and replacing vertex handles in vector while copying data.
+        for (std::size_t i = 0;i<vertices.size();i++) {
+          VI tmp = vertices[i]->info();
+          vertices[i] = cdt.insert(vertices[i]->point());
+          vertices[i]->info() = tmp;
+        }
+
+        for (std::size_t i = 1; i < vertices.size(); i++)
+          cdt.insert_constraint(vertices[i - 1], vertices[i]);
+
+        vertices.clear();
+      }
+    }
+
+    // Generate 3D points corresponding to the intersections
+    std::size_t newpts = 0;
+    for (typename CDTplus::Finite_vertices_iterator vit = cdt.finite_vertices_begin(); vit != cdt.finite_vertices_end(); ++vit) {
+      if (!vit->info().input) {
+        vit->info().point_3 = plane.to_3d(vit->point());
+        vit->info().idA2 = vit->info().idB2 = vit->info().idx2 = Index(-1, -1);
+        newpts++;
+      }
+    }
+
+    //std::cout << newpts << " new vertices added in build_cdt from cdts" << std::endl;
+
+    for (CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+#ifdef OVERLAY_2_CHECK
+      Point_2 p = from_exact(fit->vertex(0)->point());
+      Point_2 q = from_exact(fit->vertex(1)->point());
+      Point_2 r = from_exact(fit->vertex(2)->point());
+      area += CGAL::area(p, q, r);
+#endif
+
+      Index idx(std::size_t(-1), std::size_t(-1));
+
+      typename Intersection_kernel::Point_2 pt = CGAL::centroid(fit->vertex(0)->point(), fit->vertex(1)->point(), fit->vertex(2)->point());
+      for (std::size_t i = 0; i < partitions.size(); i++) {
+        typename CDTplus::Face_handle fh = partitions[i].locate(pt);
+
+        if (!partitions[i].is_infinite(fh)) {
+          if (fh->info().id2 != std::make_pair(std::size_t(-1), std::size_t(-1)))
+            idx = fit->info().id2 = fh->info().id2;
+          else
+            std::cout << "Face id is missing " << std::endl;
+        }
+      }
+
+      if (fit->info().id2.first == std::size_t(-1))
+        std::cout << "cdt fusion: no id found" << std::endl;
+    }
+
+    return area;
+  }
+
+  /*
+
+  double build_cdt(CDTplus& cdt, const std::vector<typename Intersection_kernel::Point_3>& points, const std::vector<std::size_t> &volumes, std::vector<std::vector<std::size_t> >& faces, const typename Intersection_kernel::Plane_3& plane) {
     double area = 0;
     From_exact from_exact;
     To_exact to_exact;
+
+    cdt.clear();
 
     //check orientation of faces so that they are ccw oriented
     for (std::size_t i = 0; i < faces.size(); ++i) {
@@ -1236,11 +1947,15 @@ private:
           neg = true;
       }
 
-      if (pos && neg)
+      if (pos && neg) {
         std::cout << "face is not convex" << std::endl;
+        exit(1);
+      }
 
-      if (!pos && !neg)
+      if (!pos && !neg) {
         std::cout << "face is degenerated" << std::endl;
+        exit(1);
+      }
 
       if (neg)
         std::reverse(v.begin(), v.end());
@@ -1281,7 +1996,7 @@ private:
         }
       }
     }
-    for (CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end();++fit) {
+    for (CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
 #ifdef OVERLAY_2_CHECK
       Point_2 p = from_exact(fit->vertex(0)->point());
       Point_2 q = from_exact(fit->vertex(1)->point());
@@ -1299,13 +2014,13 @@ private:
 
     return area;
   }
+*/
 
   std::pair<double, double> overlay(CDTplus& cdtC, const CDTplus& cdtA, const CDTplus& cdtB, const typename Intersection_kernel::Plane_3& plane) {
     From_exact from_exact;
-    To_exact to_exact;
+    //To_exact to_exact;
     std::pair<double, double> result;
     cdtC = cdtA;
-    typename CDTplus::Constraint_iterator ci = cdtB.constraints_begin();
 
     std::vector<Vertex_handle> vertices;
     vertices.reserve(2);
@@ -1314,38 +2029,63 @@ private:
       for (typename CDTplus::Vertices_in_constraint_iterator vi = cdtB.vertices_in_constraint_begin(*ci); vi != cdtB.vertices_in_constraint_end(*ci); vi++) {
         vertices.push_back(*vi);
       }
-/*
-      const std::string vfilename = std::to_string(idx) + "-constraint.polylines.txt";
-      std::ofstream vout(vfilename);
-      vout.precision(20);
-      vout << 2;
-      vout << " " << from_exact(plane.to_3d(vertices[0]->point()));
-      vout << " " << from_exact(plane.to_3d(vertices[1]->point()));
-      vout << std::endl;
-      vout.close();
 
-      idx++;*/
+//       if (vertices.size() > 2) {
+//         const std::string vfilename = std::to_string(idx) + "-constraint.polylines.txt";
+//         std::ofstream vout(vfilename);
+//         vout.precision(20);
+//         vout << vertices.size();
+//         for (std::size_t i = 0;i<vertices.size();i++)
+//           vout << " " << from_exact(plane.to_3d(vertices[i]->point()));
+//         vout << std::endl;
+//         vout.close();
+//       }
 
-      if (vertices.size() > 2)
-        std::cout << "constraint contains more than 2 vertices!" << std::endl;
+      //idx++;
+
+//       if (vertices.size() > 2
+//         std::cout << "constraint contains more than 2 vertices!" << std::endl;
+
+        // Insert constraints and replacing vertex handles in vector while copying data.
+      for (std::size_t i = 0;i<vertices.size();i++) {
+        VI tmp = vertices[i]->info();
+        vertices[i] = cdtC.insert(vertices[i]->point());
+        vertices[i]->info().idB2 = tmp.idA2;
+      }
 
       for (std::size_t i = 1; i < vertices.size(); i++) {
-        cdtC.insert_constraint(to_exact(from_exact(vertices[i - 1]->point())), to_exact(from_exact(vertices[i]->point())));
+        cdtC.insert_constraint(((vertices[i - 1])), ((vertices[i])));
       }
       vertices.clear();
     }
 
+    std::size_t newpts = 0;
     // Generate 3D points corresponding to the intersections
+    //std::ofstream vout3("newpts.xyz");
+    //vout3.precision(20);
     for (typename CDTplus::Finite_vertices_iterator vit = cdtC.finite_vertices_begin(); vit != cdtC.finite_vertices_end(); ++vit) {
       if (!vit->info().input) {
         vit->info().point_3 = plane.to_3d(vit->point());
+        vit->info().idA2 = vit->info().idB2 = vit->info().idx2 = Index(-1, -1);
+        //vout3 << " " << from_exact(vit->info().point_3) << std::endl;
+        newpts++;
       }
     }
+    //vout3 << std::endl;
+    //vout3.close();
+
+    //std::cout << newpts << " new vertices added in cdt" << std::endl;
+
+/*
+    const std::string vfilename = "location_failures.xyz";
+    std::ofstream vout(vfilename);
+    vout.precision(20);*/
 
     // TODO: collect the centroids, perform Hilbert sort and locate
     // with the previous location as hint where to start
     for (typename CDTplus::Finite_faces_iterator cit = cdtC.finite_faces_begin(); cit != cdtC.finite_faces_end(); ++cit) {
       double a = 0;
+      cit->info().id2 = std::make_pair(-1, -1);
 #ifdef OVERLAY_2_CHECK
       Point_2 ap = from_exact(cit->vertex(0)->point());
       Point_2 aq = from_exact(cit->vertex(1)->point());
@@ -1355,22 +2095,86 @@ private:
       typename Intersection_kernel::Point_2 p = CGAL::centroid(cit->vertex(0)->point(), cit->vertex(1)->point(), cit->vertex(2)->point());
       typename CDTplus::Face_handle fhA = cdtA.locate(p);
 
-      // if(! cdtA.is_infinite(fhA)){
-      if (fhA->info().id != -1) {
-        cit->info().idA = fhA->info().id;
+      if (cdtA.is_infinite(fhA)) {
+        std::cout << "No face located in A: " << from_exact(plane.to_3d(p)) << std::endl;
+        //vout << " " << from_exact(plane.to_3d(p)) << std::endl;
+      }
+      if (fhA->info().id2 != std::make_pair(std::size_t(-1), std::size_t(-1))) {
+        cit->info().idA2 = fhA->info().id2;
         // std::cerr << "A: " << fhA->info().id << std::endl;
         result.first += a;
       }
+      else {
+        std::cout << "Face in A is missing ID " << from_exact(plane.to_3d(p)) << std::endl;
+        //vout << " " << from_exact(plane.to_3d(p)) << std::endl;
+      }
       typename CDTplus::Face_handle fhB = cdtB.locate(p);
-      //    if(! cdtB.is_infinite(fhB)){
-      if (fhB->info().id != -1) {
-        cit->info().idB = fhB->info().id;
+      if (cdtB.is_infinite(fhB)) {
+        std::cout << "No face located in B: " << from_exact(plane.to_3d(p)) << std::endl;
+        //vout << " " << from_exact(plane.to_3d(p)) << std::endl;
+      }
+      if (fhB->info().id2 != std::make_pair(std::size_t(-1), std::size_t(-1))) {
+        cit->info().idB2 = fhB->info().id2;
         // std::cerr << "B: " << fhB->info().id << std::endl;
         result.second += a;
       }
+      else {
+        std::cout << "Face in B is missing ID " << from_exact(plane.to_3d(p)) << std::endl;
+        //vout << " " << from_exact(plane.to_3d(p)) << std::endl;
+      }
     }
 
+    //vout.close();
+
     return result;
+  }
+
+  std::size_t check_cdt(CDTplus& cdt, const typename Intersection_kernel::Plane_3& plane) {
+    std::size_t missing = 0;
+    for (typename CDTplus::Finite_faces_iterator cit = cdt.finite_faces_begin(); cit != cdt.finite_faces_end(); ++cit) {
+      if (cit->info().id2 == std::make_pair(std::size_t(-1), std::size_t(-1))) {
+        std::cout << missing << ":";
+        const std::string vfilename = std::to_string(missing) + "-missing-id.polylines.txt";
+        std::ofstream vout(vfilename);
+        vout.precision(20);
+        vout << 4;
+        for (std::size_t i = 0; i < 3; i++) {
+          std::cout << " v(" << cit->vertex(i)->info().idx2.first << ", " << cit->vertex(i)->info().idx2.second << ")";
+          vout << " " << plane.to_3d(cit->vertex(i)->point());
+        }
+        vout << " " << plane.to_3d(cit->vertex(0)->point()) << std::endl;
+        std::cout << std::endl;
+        vout << std::endl;
+        vout.close();
+        missing++;
+      }
+    }
+
+    return missing;
+  }
+
+  std::size_t check_fusioned_cdt(CDTplus& cdt, const typename Intersection_kernel::Plane_3& plane) {
+    std::size_t missing = 0;
+    for (typename CDTplus::Finite_faces_iterator cit = cdt.finite_faces_begin(); cit != cdt.finite_faces_end(); ++cit) {
+      if (cit->info().idA2 == std::make_pair(std::size_t(-1), std::size_t(-1)) || cit->info().idB2 == std::make_pair(std::size_t(-1), std::size_t(-1))) {
+        std::cout << missing << ":";
+        const std::string vfilename = std::to_string(missing) + "-missing-id.polylines.txt";
+        std::ofstream vout(vfilename);
+        vout.precision(20);
+        vout << 4;
+        for (std::size_t i = 0; i < 3; i++) {
+          std::cout << " v(" << cit->vertex(i)->info().idx2.first << ", " << cit->vertex(i)->info().idx2.second << ")";
+          vout << " " << plane.to_3d(cit->vertex(i)->point());
+        }
+        vout << " " << plane.to_3d(cit->vertex(0)->point()) << std::endl;
+        std::cout << std::endl;
+        vout << std::endl;
+        vout.close();
+        missing++;
+      }
+    }
+
+    return missing;
   }
 
   void collect_faces(std::size_t partition_idx, std::size_t sp_idx, std::vector<std::pair<std::size_t, std::size_t> >& face_idx, std::vector<std::vector<size_t> >& faces) {
@@ -1387,6 +2191,28 @@ private:
     }
   }
 
+  void collect_faces(std::size_t partition_idx, std::size_t sp_idx, std::vector<Index>& faces, typename Intersection_kernel::Plane_3& plane) {
+    Sub_partition& p = m_partition_nodes[partition_idx];
+
+    plane = p.m_data->support_plane(sp_idx).data().exact_plane;
+
+    const std::vector<std::size_t>& f2sp = p.m_data->face_to_support_plane();
+
+    for (std::size_t i = 0; i < f2sp.size(); i++)
+      if (f2sp[i] == sp_idx)
+        faces.push_back(std::make_pair(partition_idx, i));
+
+/*
+    for (std::size_t i = 0; i < p.m_data->volumes().size(); i++) {
+      typename Data_structure::Volume_cell& v = p.m_data->volumes()[i];
+      for (std::size_t j = 0; j < v.faces.size(); j++) {
+        if (v.pfaces[j].first == sp_idx) {
+          faces.push_back(std::make_pair(partition_idx, v.faces[j]));
+        }
+      }
+    }*/
+  }
+
   void check_faces(std::size_t partition_idx, std::size_t sp_idx) {
     Sub_partition& p = m_partition_nodes[partition_idx];
 
@@ -1397,7 +2223,7 @@ private:
           if (v.neighbors[j] == -1)
             std::cout << "neighbor not set partition: " << partition_idx << " volume: " << i << " face: " << j << std::endl;
           else
-            std::cout << "neighbor is set partition: " << partition_idx << " volume: " << i << " face: " << j << std::endl;
+            std::cout << "neighbor is set partition: " << partition_idx << " volume: " << i << " face: " << j <<  " " << v.neighbors[j] << std::endl;
         }
       }
     }
@@ -1419,6 +2245,174 @@ private:
     }
 
     std::copy(pl.begin(), pl.end(), std::back_inserter(planes));
+  }
+
+  void collect_faces(Octree_node node, std::size_t dimension, bool lower, std::vector<Index>& faces, typename Intersection_kernel::Plane_3 &plane) {
+    // Collects boundary faces of node from its children.
+    // dimension specifies the axis of the boundary face and lower determines if it is the lower of upper face of the cube on the axis.
+
+    // Support plane indices:
+    // xmin 4, xmax 2
+    // ymin 1, ymax 3
+    // zmin 0, zmax 5
+
+    if ((*m_octree)[node].is_leaf()) {
+      // Mapping to partition is needed.
+      std::size_t idx = m_node2partition[node];
+      Sub_partition& partition = m_partition_nodes[m_node2partition[node]];
+      From_exact from_exact;
+
+      if (lower)
+        switch (dimension) {
+        case 0:
+          collect_faces(idx, 4, faces, plane);
+          break;
+        case 1:
+          collect_faces(idx, 1, faces, plane);
+          break;
+        case 2:
+          collect_faces(idx, 0, faces, plane);
+          break;
+        }
+      else
+        switch (dimension) {
+        case 0:
+          collect_faces(idx, 2, faces, plane);
+          break;
+        case 1:
+          collect_faces(idx, 3, faces, plane);
+          break;
+        case 2:
+          collect_faces(idx, 5, faces, plane);
+          break;
+        }
+
+
+      // Is Index as type for faces sufficient?
+      // Partition/face id
+      // Access to volumes via Data_structure->face_to_volumes()
+      // However, the Data_structure::m_face2volumes needs to have std::pair<Index, Index> type to reference two volumes (pair<int, Index> would also be possible as only one volume can lie outside
+      return;
+    }
+    else {
+      typename Intersection_kernel::Plane_3 pl2, pl3, pl4;
+      if (lower)
+        switch (dimension) {
+        case 0://0246
+          collect_faces(m_octree->child(node, 0), dimension, true, faces, plane);
+          collect_faces(m_octree->child(node, 2), dimension, true, faces, pl2);
+          collect_faces(m_octree->child(node, 4), dimension, true, faces, pl3);
+          collect_faces(m_octree->child(node, 6), dimension, true, faces, pl4);
+          break;
+        case 1://0145
+          collect_faces(m_octree->child(node, 0), dimension, true, faces, plane);
+          collect_faces(m_octree->child(node, 1), dimension, true, faces, pl2);
+          collect_faces(m_octree->child(node, 4), dimension, true, faces, pl3);
+          collect_faces(m_octree->child(node, 5), dimension, true, faces, pl4);
+          break;
+        case 2://0123
+          collect_faces(m_octree->child(node, 0), dimension, true, faces, plane);
+          collect_faces(m_octree->child(node, 1), dimension, true, faces, pl2);
+          collect_faces(m_octree->child(node, 2), dimension, true, faces, pl3);
+          collect_faces(m_octree->child(node, 3), dimension, true, faces, pl4);
+          break;
+        }
+      else
+        switch (dimension) {
+        case 0://1357
+          collect_faces(m_octree->child(node, 1), dimension, false, faces, plane);
+          collect_faces(m_octree->child(node, 3), dimension, false, faces, pl2);
+          collect_faces(m_octree->child(node, 5), dimension, false, faces, pl3);
+          collect_faces(m_octree->child(node, 7), dimension, false, faces, pl4);
+          break;
+        case 1://3467
+          collect_faces(m_octree->child(node, 2), dimension, false, faces, plane);
+          collect_faces(m_octree->child(node, 3), dimension, false, faces, pl2);
+          collect_faces(m_octree->child(node, 6), dimension, false, faces, pl3);
+          collect_faces(m_octree->child(node, 7), dimension, false, faces, pl4);
+          break;
+        case 2://4567
+          collect_faces(m_octree->child(node, 4), dimension, false, faces, plane);
+          collect_faces(m_octree->child(node, 5), dimension, false, faces, pl2);
+          collect_faces(m_octree->child(node, 6), dimension, false, faces, pl3);
+          collect_faces(m_octree->child(node, 7), dimension, false, faces, pl4);
+          break;
+        }
+
+      bool same = plane == pl2;
+      same = (same && plane == pl3);
+      same = (same && plane == pl4);
+      if (!same) {
+        std::cout << "collect_faces: different plane, node: " << node << " lower: " << lower << std::endl;
+        From_exact from_exact;
+        std::cout << from_exact(plane) << std::endl;
+        std::cout << from_exact(pl2) << " child: " << m_octree->child(node, 4) << std::endl;
+        std::cout << from_exact(pl3) << " child: " << m_octree->child(node, 6) << std::endl;
+        std::cout << from_exact(pl4) << " child: " << m_octree->child(node, 7) << std::endl << std::endl;
+      }
+    }
+  }
+
+  void collect_opposing_faces(Octree_node node, std::size_t dimension, std::vector<Index>& lower, std::vector<Index>& upper, typename Intersection_kernel::Plane_3 &plane) {
+    // Nothing to do for a leaf node.
+    if ((*m_octree)[node].is_leaf())
+      return;
+
+    typename Intersection_kernel::Plane_3 pl[7];
+    switch (dimension) {
+    case 0:
+      collect_faces(m_octree->child(node, 0), dimension, false, lower, plane);
+      collect_faces(m_octree->child(node, 2), dimension, false, lower, pl[0]);
+      collect_faces(m_octree->child(node, 4), dimension, false, lower, pl[1]);
+      collect_faces(m_octree->child(node, 6), dimension, false, lower, pl[2]);
+      collect_faces(m_octree->child(node, 1), dimension, true, upper, pl[3]);
+      collect_faces(m_octree->child(node, 3), dimension, true, upper, pl[4]);
+      collect_faces(m_octree->child(node, 5), dimension, true, upper, pl[5]);
+      collect_faces(m_octree->child(node, 7), dimension, true, upper, pl[6]);
+      break;
+    case 1:
+      collect_faces(m_octree->child(node, 0), dimension, false, lower, plane);
+      collect_faces(m_octree->child(node, 1), dimension, false, lower, pl[0]);
+      collect_faces(m_octree->child(node, 4), dimension, false, lower, pl[1]);
+      collect_faces(m_octree->child(node, 5), dimension, false, lower, pl[2]);
+      collect_faces(m_octree->child(node, 3), dimension, true, upper, pl[3]);
+      collect_faces(m_octree->child(node, 2), dimension, true, upper, pl[4]);
+      collect_faces(m_octree->child(node, 6), dimension, true, upper, pl[5]);
+      collect_faces(m_octree->child(node, 7), dimension, true, upper, pl[6]);
+      break;
+    case 2:
+      collect_faces(m_octree->child(node, 0), dimension, false, lower, plane);
+      collect_faces(m_octree->child(node, 1), dimension, false, lower, pl[0]);
+      collect_faces(m_octree->child(node, 2), dimension, false, lower, pl[1]);
+      collect_faces(m_octree->child(node, 3), dimension, false, lower, pl[2]);
+      collect_faces(m_octree->child(node, 4), dimension, true, upper, pl[3]);
+      collect_faces(m_octree->child(node, 5), dimension, true, upper, pl[4]);
+      collect_faces(m_octree->child(node, 6), dimension, true, upper, pl[5]);
+      collect_faces(m_octree->child(node, 7), dimension, true, upper, pl[6]);
+      break;
+    }
+
+    From_exact from_exact;
+    //std::cout << from_exact(plane) << std::endl;
+
+    bool same = true;
+    for (std::size_t i = 0; i < 3; i++)
+      same = (same && plane == pl[i]);
+
+    for (std::size_t i = 3; i < 7; i++)
+      same = (same && plane.opposite() == pl[i]);
+
+    if (!same) {
+      std::cout << "collect_opposing_faces: different plane, node: " << node << std::endl;
+      std::cout << from_exact(plane) << std::endl;
+      for (std::size_t i = 0; i < 3; i++)
+        std::cout << from_exact(pl[i]) << std::endl;
+      for (std::size_t i = 3; i < 7; i++)
+        std::cout << from_exact(pl[i].opposite()) << std::endl;
+      bool diff = (plane.b() == pl[6].opposite().b());
+      std::cout << diff << std::endl;
+      std::cout << std::endl;
+    }
   }
 
   void merge_partitions(std::size_t idx) {
@@ -1464,6 +2458,10 @@ private:
 
       typename Intersection_kernel::Plane_3 plane = lower.m_data->support_plane(lower_sp).exact_plane();
 
+      CDTplus lowerCDT, upperCDT;
+      double lower_area = build_cdt(lowerCDT, vertices_lower, faces_lower, plane);
+      double upper_area = build_cdt(upperCDT, vertices_upper, faces_upper, plane);
+
       // Collect Plane_3 from support planes (two vectors, one for each other)
       std::vector<std::size_t> planes_lower, planes_upper;
       collect_planes(lower_idx, lower_sp, planes_lower);
@@ -1472,7 +2470,7 @@ private:
       // Remove common planes
       auto lower_it = planes_lower.begin();
       auto upper_it = planes_upper.begin();
-      while (lower_it != planes_lower.end()) {
+      while (lower_it != planes_lower.end() && upper_it != planes_upper.end()) {
         if (*lower_it == *upper_it) {
           lower_it = planes_lower.erase(lower_it);
           upper_it = planes_upper.erase(upper_it);
@@ -1501,9 +2499,9 @@ private:
       // Identification of common vertices
       // using support planes to check whether I need to check for common vertices? Seems difficult as every vertex is at the intersection of at least three support planes?
 
-      CDTplus lowerCDT, upperCDT;
-      double lower_area = build_cdt(lowerCDT, vertices_lower, faces_lower, plane);
-      double upper_area = build_cdt(upperCDT, vertices_upper, faces_upper, plane);
+      //CDTplus lowerCDT, upperCDT;
+      lower_area = build_cdt(lowerCDT, vertices_lower, faces_lower, plane);
+      upper_area = build_cdt(upperCDT, vertices_upper, faces_upper, plane);
 
       CDTplus combined;
       std::pair<double, double> areas = overlay(combined, lowerCDT, upperCDT, plane);
@@ -1517,16 +2515,17 @@ private:
           pts.push_back(vertices_lower[idx]);
 
         typename Intersection_kernel::Point_3 c = CGAL::centroid(pts.begin(), pts.end(), CGAL::Dimension_tag<0>());
+        Point_3 c_inexact = from_exact(c);
 
         typename CDTplus::Face_handle neighbor = upperCDT.locate(plane.to_2d(c));
         if (neighbor->info().id < faces_upper.size()) {
-          std::cout << "index " << i << " of lower set to " << face_idx_upper[neighbor->info().id].first << std::endl;
+          //std::cout << "index " << i << " of lower set to " << face_idx_upper[neighbor->info().id].first << std::endl;
           v.neighbors[face_idx_lower[i].second] = face_idx_upper[neighbor->info().id].first;
         }
         else std::cout << "neighbor of face " << i << " of lower has neighbor " << face_idx_upper[neighbor->info().id].first << " in upper" << std::endl;
       }
 
-      check_faces(lower_idx, lower_sp);
+      //check_faces(lower_idx, lower_sp);
 
       for (std::size_t i = 0; i < faces_upper.size(); i++) {
         typename Data_structure::Volume_cell& v = upper.m_data->volumes()[face_idx_upper[i].first];
@@ -1539,14 +2538,396 @@ private:
         typename Intersection_kernel::Point_3 c = CGAL::centroid(pts.begin(), pts.end(), CGAL::Dimension_tag<0>());
 
         typename CDTplus::Face_handle neighbor = lowerCDT.locate(plane.to_2d(c));
-        if (neighbor->info().id < faces_upper.size()) {
-          std::cout << "index " << i << " of upper set to " << face_idx_lower[neighbor->info().id].first << std::endl;
+        if (neighbor->info().id < faces_lower.size()) {
+          //std::cout << "index " << i << " of upper set to " << face_idx_lower[neighbor->info().id].first << std::endl;
           v.neighbors[face_idx_upper[i].second] = face_idx_lower[neighbor->info().id].first;
         }
         else std::cout << "neighbor of face " << i << " of upper has neighbor " << face_idx_lower[neighbor->info().id].first << " in upper" << std::endl;
       }
 
-      check_faces(upper_idx, upper_sp);
+      //check_faces(upper_idx, upper_sp);
+    }
+  }
+
+  bool same_face(const Face_handle& a, const Face_handle& b) const {
+    return (b->info().idA2 == a->info().idA2 && b->info().idB2 == a->info().idB2);
+  }
+
+  void dump_face(const Face_handle& f, const std::string& filename) {
+    From_exact from_exact;
+    std::ofstream vout(filename);
+    vout.precision(20);
+    vout << "4 ";
+    vout << " " << from_exact(f->vertex(0)->info().point_3);
+    vout << " " << from_exact(f->vertex(1)->info().point_3);
+    vout << " " << from_exact(f->vertex(2)->info().point_3);
+    vout << " " << from_exact(f->vertex(0)->info().point_3);
+    vout << std::endl;
+    vout.close();
+  }
+
+  void dump_point(const Vertex_handle& v, const std::string& filename) {
+    From_exact from_exact;
+    std::ofstream vout3(filename);
+    vout3.precision(20);
+    vout3 << " " << from_exact(v->info().point_3);
+    vout3 << std::endl;
+    vout3.close();
+  }
+
+  void set_face(const Index& f, const Index& other, std::set<Index>& replaced, const std::vector<Vertex_handle>& polygon) {
+    From_exact from_exact;
+    auto pair = replaced.insert(f);
+    std::size_t idx;
+    assert(m_partition_nodes[f.first].face_neighbors[f.second].first.first == f.first);
+    std::size_t vol_idx = m_partition_nodes[f.first].face_neighbors[f.second].first.second;
+    if (!pair.second) {
+      // New face has a new index
+      idx = m_partition_nodes[f.first].face2vertices.size();
+      // Add face into vector
+      m_partition_nodes[f.first].face2vertices.push_back(std::vector<Index>());
+      m_partition_nodes[f.first].m_data->face_is_part_of_input_polygon().push_back(m_partition_nodes[f.first].m_data->face_is_part_of_input_polygon()[f.second]);
+      // Add face index into volume
+      m_partition_nodes[f.first].m_data->volumes()[vol_idx].faces.push_back(idx);
+      // Copy neighbor from already existing face
+      m_partition_nodes[f.first].face_neighbors.push_back(m_partition_nodes[f.first].face_neighbors[f.second]);
+      m_partition_nodes[f.first].m_data->face_to_support_plane().push_back(m_partition_nodes[f.first].m_data->face_to_support_plane()[f.second]);
+    }
+    else {
+      idx = f.second;
+      // All boundary faces should have a negative second neighbor.
+      assert(m_partition_nodes[f.first].face_neighbors[idx].second.second >= std::size_t(-6));
+    }
+    std::vector<Index>& vertices = m_partition_nodes[f.first].face2vertices[idx];
+    // First neighbor of other face should point to the inside volume in the other partition and thus cannot be negative
+    assert(m_partition_nodes[other.first].face_neighbors[other.second].first.second < std::size_t(-6));
+    m_partition_nodes[f.first].face_neighbors[idx].second = m_partition_nodes[other.first].face_neighbors[other.second].first;
+    vertices.resize(polygon.size());
+    for (std::size_t i = 0; i < polygon.size(); i++) {
+      VI& vi = polygon[i]->info();
+      // Is this check actually meaningless as partition indices now start at 0?
+      // Check whether they are initialized as 0 and where it is used as indicator for something.
+/*
+      if (vi.idA2.first == 0 || vi.idB2.first == 0) {
+        std::cout << "invalid vertex id" << std::endl;
+      }*/
+
+      if (vi.idA2.first != std::size_t(-1))
+        vertices[i] = vi.idA2;
+      else if (vi.idB2.first != std::size_t(-1))
+        vertices[i] = vi.idB2;
+      else {
+        std::size_t vidx = m_partition_nodes[f.first].m_data->vertices().size();
+        m_partition_nodes[f.first].m_data->vertices().push_back(from_exact(vi.point_3));
+        m_partition_nodes[f.first].m_data->exact_vertices().push_back(vi.point_3);
+        vertices[i] = vi.idA2 = std::make_pair(f.first, vidx);
+        // Prevent T-junctions here!
+        // Check adjacent volumes, adjacent partitions
+        // There is no edge connectivity information
+      }
+    }
+  }
+
+  void adapt_faces(const CDTplus& cdt, std::vector<Index>& a, std::vector<Index>& b, typename Intersection_kernel::Plane_3& plane) {
+    std::set<Index> replacedA, replacedB;
+    From_exact from_exact;
+
+    std::size_t extracted = 0;
+    for (typename CDTplus::Face_handle fh : cdt.finite_face_handles()) {
+      // when extracting each face, I only need to insert vertices, that don't exist on either side. Otherwise, I can just reference the vertex in the other partition.
+      // using cit->info().id2.first as visited flag. -1 means not visited
+      if (fh->info().id2.first != -1)
+        continue;
+
+      // 4 different cases: no border edge, 1, 2 or 3
+      // Check 1, 2, 3
+      // if first is not, continue
+      // if first move in other direction? search start
+
+      // Easier approach, don't make a list of edges, but a list of vertices
+      // Find first pair of vertices, then just loop around last vertex using Face_circulator
+      // -> Triangulation only has vertices and faces, no easy way to loop over edges
+
+      std::vector<Vertex_handle> face;
+
+      for (std::size_t i = 0; i < 3; i++)
+        if (cdt.is_infinite(fh->neighbor(i)) || !same_face(fh, fh->neighbor(i))) {
+          face.push_back(fh->vertex((i + 2) % 3));
+          face.push_back(fh->vertex((i + 1) % 3));
+          break;
+        }
+
+      // No border edge?
+      if (face.empty())
+        continue;
+      else {
+        //dump_point(face.back(), "last.xyz");
+        Face_handle last = fh;
+
+        // Mark seed face as segmented
+        fh->info().id2.first = extracted;
+
+        // edge is pair<Face_handle, int (vertex)>
+        while (face.front() != face.back()) {
+          auto eit = cdt.incident_edges(face.back(), last);
+          // Skip the first edge as it always starts with the edge itself.
+          //eit++;
+/*
+          auto eit2 = eit;
+          for (std::size_t i = 0; i < 10; i++) {
+            dump_point(eit2->first->vertex(eit2->second), std::to_string(i) + "p.xyz");
+            dump_face(eit2->first, std::to_string(i) + "tri.polylines.txt");
+            std::cout << i << " same: " << same_face(last, eit2->first->neighbor((eit2->second + 1) % 3)) << std::endl;
+            eit2++;
+          }*/
+          auto first = eit;
+          Point_3 p = from_exact(eit->first->vertex(eit->second)->info().point_3);
+
+          assert(!cdt.is_infinite(eit->first));
+          do {
+            // Export tri
+
+            //dump_point(eit->first->vertex(eit->second), "p.xyz");
+            //dump_face(eit->first, "tri.polylines.txt");
+
+            // Is the current edge to the infinite vertex?
+            if (cdt.is_infinite(eit->first->neighbor((eit->second + 1) % 3))) {
+              eit++;
+              continue;
+            }
+
+            bool infinite = cdt.is_infinite(eit->first);
+
+            /*            if (!infinite)
+                          dump_face(eit->first, "neighbor.polylines.txt");*/
+
+            if (infinite || !same_face(last, eit->first)) {
+              last = eit->first->neighbor((eit->second + 1) % 3);
+              last->info().id2.first = extracted;
+              face.push_back(eit->first->vertex(eit->second));
+
+              break;
+            }
+            eit++;
+            assert(eit != first);
+          } while (eit != first);
+          // If last vertex is equal to first vertex, stop
+          // Take last vertex and face
+          // First find index of vertex in that face
+          // Check if opposite face of next edge, if not same, add next vertex and reloop
+          // if not, check next face
+
+          assert(face.size() < 100);
+        }
+
+        // The last vertex is equal to the first one, so it should be removed.
+        face.pop_back();
+
+        // face ids in partitions are stored in fh->info
+        ID& id = fh->info();
+        set_face(id.idA2, id.idB2, replacedA, face);
+        set_face(id.idB2, id.idA2, replacedB, face);
+      }
+
+      // Checking for border edges. If opposite faces do not exist or don't have the same indices, the edge belongs to a new face.
+      // cit->neighbor(i) is the face opposite of vertex(i), meaning on the other side of the edge between vertex((i+1)%3) and vertex((i+2)%3)
+    }
+  }
+
+  void make_conformal(std::vector<Index>& a, std::vector<Index>& b, typename Intersection_kernel::Plane_3 &plane) {
+    // partition ids are in a[0].first and b[0].first
+    // volume and face in volume ids are not available
+    // there is face2volume and one of those volume indices will be an outside volume, e.g. std::size_t(-1) to std::size_t(-6)
+
+    // Indices in a and b come from different partitions. Each face only has vertices from the same partition
+    // Constraints in the cdt should have matching vertices and edges from different partitions -> opportunity to match vertices and faces between partitions
+
+    // buildCDT needs only Index and exact_vertices for the points and Index for faces
+
+    std::unordered_map<std::size_t, std::vector<Index> > a_sets, b_sets;
+    for (const Index& i : a) {
+      a_sets[i.first].push_back(i);
+      if (m_partition_nodes[i.first].m_data->face_is_part_of_input_polygon()[i.second])
+        std::cout << "(" << i.first << ", " << i.second << ") is part of input polygon" << std::endl;
+    }
+    for (const Index& i : b) {
+      b_sets[i.first].push_back(i);
+      if (m_partition_nodes[i.first].m_data->face_is_part_of_input_polygon()[i.second])
+        std::cout << "(" << i.first << ", " << i.second << ") is part of input polygon" << std::endl;
+    }
+
+    std::vector<CDTplus> a_cdts(a_sets.size()), b_cdts(b_sets.size());
+
+    Index g(-1, -1);
+    std::size_t newpts = 0;
+    From_exact from_exact;
+    Plane_3 pl = from_exact(plane);
+
+    std::size_t idx = 0;
+    for (auto& p : a_sets) {
+      build_cdt(a_cdts[idx], p.second, plane);
+      newpts = 0;
+      for (Vertex_handle v : a_cdts[idx].finite_vertex_handles()) {
+        if (v->info().idA2 == g)
+          newpts++;
+      }
+
+      if (newpts > 0)
+        std::cout << newpts << " vertices without references found in a_cdts" << idx << std::endl;
+
+      if (check_cdt(a_cdts[idx], plane) != 0)
+        std::cout << "lower " << p.first << ": " << p.second.size() << " " << a_cdts[idx].number_of_faces() << " with " << check_cdt(a_cdts[idx], plane) << " missing ids" << std::endl;
+      idx++;
+    }
+
+    idx = 0;
+    for (auto& p : b_sets) {
+      build_cdt(b_cdts[idx], p.second, plane);
+
+      newpts = 0;
+      for (Vertex_handle v : b_cdts[idx].finite_vertex_handles()) {
+        if (v->info().idA2 == g)
+          newpts++;
+      }
+
+      if (newpts > 0)
+        std::cout << newpts << " vertices without references found in b_cdts" << idx << std::endl;
+
+      if (check_cdt(b_cdts[idx], plane) != 0)
+        std::cout << "upper " << p.first << ": " << p.second.size() << " " << b_cdts[idx].number_of_faces() << " with " << check_cdt(b_cdts[idx], plane) << " missing ids" << std::endl;
+      idx++;
+    }
+
+    CDTplus cdtA, cdtB, cdtC;
+    build_cdt(cdtA, a_cdts, plane);
+    std::size_t missing = check_cdt(cdtA, plane);
+    if (missing > 0)
+      std::cout << "lower: " << a.size() << " " << cdtA.number_of_faces() << " faces " << cdtA.number_of_vertices() << " vertices with " << missing << " missing ids" << std::endl;
+
+/*
+    std::ofstream vout("cdtA.polylines.txt");
+    vout.precision(20);
+    for (typename CDTplus::Face_handle fh : cdtA.finite_face_handles()) {
+      vout << "4 ";
+      vout << " " << from_exact(fh->vertex(0)->info().point_3);
+      vout << " " << from_exact(fh->vertex(1)->info().point_3);
+      vout << " " << from_exact(fh->vertex(2)->info().point_3);
+      vout << " " << from_exact(fh->vertex(0)->info().point_3);
+      vout << std::endl;
+    }
+    vout << std::endl;
+    vout.close();*/
+
+/*
+    for (Vertex_handle v : cdtA.finite_vertex_handles()) {
+      if (v->info().idA2 == g && v->info().idB2 == g)
+        newpts++;
+    }
+
+    std::cout << newpts << " vertices without references found in cdtA" << std::endl;*/
+
+    build_cdt(cdtB, b_cdts, plane);
+    missing = check_cdt(cdtB, plane);
+    if (missing > 0)
+      std::cout << "upper: " << b.size() << " " << cdtB.number_of_faces() << " faces " << cdtB.number_of_vertices() << " vertices with " << missing << " missing ids" << std::endl;
+
+/*
+    std::ofstream vout2("cdtB.polylines.txt");
+    vout2.precision(20);
+    for (typename CDTplus::Face_handle fh : cdtB.finite_face_handles()) {
+      vout2 << "4 ";
+      vout2 << " " << from_exact(fh->vertex(0)->info().point_3);
+      vout2 << " " << from_exact(fh->vertex(1)->info().point_3);
+      vout2 << " " << from_exact(fh->vertex(2)->info().point_3);
+      vout2 << " " << from_exact(fh->vertex(0)->info().point_3);
+      vout2 << std::endl;
+    }
+    vout2 << std::endl;
+    vout2.close();*/
+
+/*
+    newpts = 0;
+    for (Vertex_handle v : cdtB.finite_vertex_handles()) {
+      if (v->info().idA2 == g && v->info().idB2 == g)
+        newpts++;
+    }
+
+    std::cout << newpts << " vertices without references found in cdtB" << std::endl;*/
+
+    overlay(cdtC, cdtA, cdtB, plane);
+    //std::cout << "overlay: " << cdtC.number_of_faces() << " faces " << cdtC.number_of_vertices() << " vertices" << std::endl;
+
+    adapt_faces(cdtC, a, b, plane);
+
+    // Is there linkage between the cdts? I could create a map of vertex Index to cdt vertices
+    // I can create an unordered map from face Index to vector of cdt_face iterator
+
+    // Each input face can be split into several faces
+    // Updating the neighbor volumes does not seem difficult but not completely trivial either as it has to be done after the face extraction (due to the neighbors array in volumes)
+    // -> each face extracted has the same volume ids (or the same face ids on both sides)
+
+    // Walk around the edges to identify faces
+    // - segment by identical face ids on both sides
+    // How to keep track of the face vector in volumes? I can change the first face in place
+
+    // How to identify edges that are split? Can I add a property on edges to mark that they have been added? Seems difficult, because the vertex can be part of plenty new edges.
+    // Can it? The overlay is a fusion of 2 cdts, so if there are more than two edges intersecting in a vertex, there were already two edges intersecting in one of the cdts
+    // So no, each new vertex can only be part of 2 edges
+
+    // Adjusting edges part of faces that are not part of the splitting plane is basically a function of split_edge(Index_head, Index_tail, new_mid_vertex)
+    // Identifying the faces based on the vertices seems costly. PEdge to PFaces exists, check for PFace to volume
+    // // -> does not work for newly inserted edges! Newly inserted edges do not have PEdge!
+    // Otherwise it is possible to find adjacent volumes based on the participating faces. However, an edge on the boundary can be part of many faces/volumes
+
+    // Approach:
+    // Loop over finite faces of fusioned cdt
+    // check if face was already handled (-> reuse field in face info?)
+    // check if face is on border to face of another index pair
+    //  start face extraction
+    //   follow border and build up polygon vector
+    //   check if there is a vertex index in the vertex info, if not insert vertex into partition.data_structure and update
+    //   create map for boundary vertices correspondences
+    //  check if replace face in data structure or create new one (set which contains replaced ones?)
+  }
+
+  void make_conformal(Octree_node node) {
+    // Nothing to do for a leaf node.
+    if ((*m_octree)[node].is_leaf())
+      return;
+
+    // Make childs conformal
+    for (std::size_t i = 0; i < 8; i++) {
+      make_conformal(m_octree->child(node, i));
+    }
+
+    // Make itself conformal
+    // Get faces between child nodes
+    // do in inverse dimension order (like inverse splitting order, start by 2 or 1 and walk down to 0)
+    // follow cdt approach in split_octree
+
+    // Order of children?
+    // x, y, z planes can be merged independently
+    for (std::size_t dim = 0; dim < 3; dim++) {
+      std::vector<Index> lower, upper;
+      typename Intersection_kernel::Plane_3 plane;
+
+      collect_opposing_faces(node, dim, lower, upper, plane);
+
+      make_conformal(lower, upper, plane);
+
+      lower.clear();
+      upper.clear();
+      collect_opposing_faces(node, dim, lower, upper, plane);
+
+      for (std::size_t i = 0; i < lower.size(); i++) {
+        auto n = neighbors(lower[i]);
+        assert(n.first >= 0 && n.second >= 0);
+      }
+
+      for (std::size_t i = 0; i < upper.size(); i++) {
+        auto n = neighbors(upper[i]);
+        assert(n.first >= 0 && n.second >= 0);
+      }
     }
   }
 
@@ -1784,6 +3165,179 @@ private:
 
     split_partition(lower_y);
     split_partition(upper_y);
+  }
+
+  void split_octree() {
+    // Octree creation for sub partition
+    std::size_t count = 0;
+    for (const auto& p : m_input_polygons)
+      count += p.size();
+
+    m_points.clear();
+    m_points.reserve(count);
+    m_polygons.reserve(m_input_polygons.size());
+
+    for (const auto& p : m_input_polygons) {
+      std::size_t idx = m_points.size();
+      std::copy(p.begin(), p.end(), std::back_inserter(m_points));
+      m_polygons.push_back(std::vector<std::size_t>(p.size()));
+      std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
+    }
+
+    m_octree = std::make_unique<Octree>(m_points, m_polygons);
+    m_octree->refine(0, 3, 40);
+
+    /*
+    // Collect all the leaf nodes
+    std::queue<Node_index> leaf_nodes;
+    for (Node_index leaf: traverse(Orthtrees::Leaves_traversal<Self>(*this))) {
+      leaf_nodes.push(leaf);
+    }
+    */
+
+    std::size_t leaf_count = 0;
+    for (std::size_t i = 0; i < m_octree->num_nodes(); i++) {
+      auto gc = m_octree->global_coordinates(i);
+
+      if ((*m_octree)[i].is_leaf())
+        leaf_count++;
+    }
+
+    m_partition_nodes.resize(leaf_count);
+
+    m_node2partition.resize(m_octree->num_nodes(), std::size_t(-1));
+
+    std::size_t idx = 0;
+    for (std::size_t i = 0; i < m_octree->num_nodes(); i++)
+      if ((*m_octree)[i].is_leaf()) {
+        // Creating bounding box
+        std::array<typename Intersection_kernel::FT, 6> array = m_octree->bbox_exact(i);
+        m_partition_nodes[idx].bbox[0] = typename Intersection_kernel::Point_3(array[0], array[1], array[2]);
+        m_partition_nodes[idx].bbox[1] = typename Intersection_kernel::Point_3(array[3], array[1], array[2]);
+        m_partition_nodes[idx].bbox[2] = typename Intersection_kernel::Point_3(array[3], array[4], array[2]);
+        m_partition_nodes[idx].bbox[3] = typename Intersection_kernel::Point_3(array[0], array[4], array[2]);
+        m_partition_nodes[idx].bbox[4] = typename Intersection_kernel::Point_3(array[0], array[4], array[5]);
+        m_partition_nodes[idx].bbox[5] = typename Intersection_kernel::Point_3(array[0], array[1], array[5]);
+        m_partition_nodes[idx].bbox[6] = typename Intersection_kernel::Point_3(array[3], array[1], array[5]);
+        m_partition_nodes[idx].bbox[7] = typename Intersection_kernel::Point_3(array[3], array[4], array[5]);
+
+/*
+        auto bbox = m_octree->bbox(i);
+        m_partition_nodes[idx].bbox[0] = Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin());
+        m_partition_nodes[idx].bbox[1] = Point_3(bbox.xmax(), bbox.ymin(), bbox.zmin());
+        m_partition_nodes[idx].bbox[2] = Point_3(bbox.xmax(), bbox.ymax(), bbox.zmin());
+        m_partition_nodes[idx].bbox[3] = Point_3(bbox.xmin(), bbox.ymax(), bbox.zmin());
+        m_partition_nodes[idx].bbox[4] = Point_3(bbox.xmin(), bbox.ymax(), bbox.zmax());
+        m_partition_nodes[idx].bbox[5] = Point_3(bbox.xmin(), bbox.ymin(), bbox.zmax());
+        m_partition_nodes[idx].bbox[6] = Point_3(bbox.xmax(), bbox.ymin(), bbox.zmax());
+        m_partition_nodes[idx].bbox[7] = Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax());*/
+
+        // Get consistent Plane_3 from Octree to generate exact planes
+
+/*
+        if (!(*m_octree)[i].is_root())
+          std::cout << "parent: " << m_octree->parent(i) << " current: " << i << std::endl;
+        std::cout << "local: " << m_octree->local_coordinates(i) << std::endl;
+        std::array<uint32_t, 3> gc = m_octree->global_coordinates(i);
+        std::cout << "global: " << gc[0] << " " << gc[1] << " " << gc[2] << std::endl;
+        std::cout << "center: " << m_octree->barycenter(i) << std::endl;*/
+
+        auto polys = (*m_octree)[i].polygons();
+        std::copy(polys.begin(), polys.end(), std::back_inserter(m_partition_nodes[idx].input_polygons));
+        for (std::size_t j = 0; j < polys.size(); j++)
+          m_partition_nodes[idx].m_input_planes.push_back(m_input_planes[polys[j]]);
+        auto &cp = (*m_octree)[i].clipped_polygons();
+        m_partition_nodes[idx].clipped_polygons.resize(cp.size());
+        for (std::size_t i = 0; i < cp.size(); i++) {
+          m_partition_nodes[idx].clipped_polygons[i].resize(cp[i].size());
+          for (std::size_t j = 0; j < cp[i].size(); j++)
+            m_partition_nodes[idx].clipped_polygons[i][j] = cp[i][j].second;
+        }
+
+        // set node index
+        m_partition_nodes[idx].node = i;
+        m_node2partition[i] = idx;
+
+        if (m_parameters.debug) {
+          const std::string vfilename = std::to_string(idx) + "-box.polylines.txt";
+          std::ofstream vout(vfilename);
+          vout.precision(20);
+          // zmin side
+          vout << 5;
+          vout << " " << m_partition_nodes[idx].bbox[0];
+          vout << " " << m_partition_nodes[idx].bbox[1];
+          vout << " " << m_partition_nodes[idx].bbox[2];
+          vout << " " << m_partition_nodes[idx].bbox[3];
+          vout << " " << m_partition_nodes[idx].bbox[0];
+          // zmax side
+          vout << std::endl << 5;
+          vout << " " << m_partition_nodes[idx].bbox[4];
+          vout << " " << m_partition_nodes[idx].bbox[5];
+          vout << " " << m_partition_nodes[idx].bbox[6];
+          vout << " " << m_partition_nodes[idx].bbox[7];
+          vout << " " << m_partition_nodes[idx].bbox[4];
+          // 4 edges between zmin and zmax
+          vout << std::endl << 2;
+          vout << " " << m_partition_nodes[idx].bbox[0];
+          vout << " " << m_partition_nodes[idx].bbox[5];
+          vout << std::endl << 2;
+          vout << " " << m_partition_nodes[idx].bbox[1];
+          vout << " " << m_partition_nodes[idx].bbox[6];
+          vout << std::endl << 2;
+          vout << " " << m_partition_nodes[idx].bbox[2];
+          vout << " " << m_partition_nodes[idx].bbox[7];
+          vout << std::endl << 2;
+          vout << " " << m_partition_nodes[idx].bbox[3];
+          vout << " " << m_partition_nodes[idx].bbox[4];
+          vout << std::endl;
+          vout.close();
+
+          KSR_3::dump_polygons(m_partition_nodes[idx].clipped_polygons, std::to_string(idx) + "-polys.ply");
+        }
+        idx++;
+      }
+
+    std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
+  }
+
+  bool within_tolerance(const Plane_3& p1, const Point_2 &c1, const Plane_3& p2, const Point_2& c2) const {
+    using FT = typename GeomTraits::FT;
+
+    const auto va = p1.orthogonal_vector();
+    const auto vb = p2.orthogonal_vector();
+
+    // Are the planes parallel?
+    // const FT vtol = KSR::vector_tolerance<FT>();
+    // const FT aval = CGAL::abs(va * vb);
+
+    // std::cout << "aval: " << aval << " : " << vtol << std::endl;
+    // if (aval < vtol) {
+    //   return false;
+    // }
+
+    FT aval = approximate_angle(va, vb);
+    CGAL_assertion(aval >= FT(0) && aval <= FT(180));
+    if (aval >= FT(90))
+      aval = FT(180) - aval;
+
+    if (aval >= m_parameters.angle_tolerance) {
+      return false;
+    }
+
+    const auto pa1 = p1.to_3d(c1);
+    const auto pb1 = p2.projection(pa1);
+    const auto pb2 = p2.to_3d(c2);
+    const auto pa2 = p1.projection(pb2);
+
+    const FT bval1 = KSR::distance(pa1, pb1);
+    const FT bval2 = KSR::distance(pa2, pb2);
+    const FT bval = (CGAL::max)(bval1, bval2);
+    CGAL_assertion(bval >= FT(0));
+
+    if (bval >= m_parameters.distance_tolerance)
+      return false;
+
+    return true;
   }
 
   /*

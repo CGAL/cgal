@@ -425,6 +425,28 @@ public:
     save(stream, file_name);
   }
 
+  void export_points_3(
+    const std::vector<Point_3>& points,
+    const std::vector<Vector_3>& normals,
+    const std::vector<Color>& colors,
+    const std::string file_name) const {
+
+    if (points.size() != normals.size() && points.size() != colors.size()) {
+      std::cout << "export_regions_3: number of points and normals or colors are not equal" << std::endl;
+      return;
+    }
+
+    std::stringstream stream;
+    initialize(stream);
+
+    add_ply_header_normals_colors(stream, points.size());
+
+    for (std::size_t i = 0; i < points.size(); ++i) {
+      stream << points[i] << " " << normals[i] << " " << colors[i] << std::endl;
+    }
+    save(stream, file_name);
+  }
+
   void export_segments_2(
     const std::vector<Segment_2>& segments,
     const std::string file_name) const {
@@ -474,6 +496,49 @@ public:
       stream << get_idx_color(polygon_id) << std::endl;
       ++polygon_id;
     }
+    save(stream, file_name + ".ply");
+  }
+
+  void export_indexed_triangles_3(
+    const std::vector<Point_3>& vertices,
+    const std::vector<std::size_t>& tris,
+    const std::string file_name) const {
+    assert((tris.size() % 3) == 0);
+
+    std::stringstream stream;
+    initialize(stream);
+
+    add_ply_header_mesh_no_color(stream, vertices.size(), tris.size() / 3);
+
+    for (const auto& v : vertices)
+      stream << v << std::endl;
+
+    for (std::size_t i = 0; i < (tris.size() - 2); i += 3)
+      stream << "3 " << tris[i] << " " << tris[i + 1] << " " << tris[i + 2] << std::endl;
+
+    save(stream, file_name + ".ply");
+  }
+
+  void export_indexed_polygons_3(
+    const std::vector<Point_3>& vertices,
+    const std::vector<std::vector<std::size_t> >& polys,
+    const std::string file_name) const {
+
+    std::stringstream stream;
+    initialize(stream);
+
+    add_ply_header_mesh_no_color(stream, vertices.size(), polys.size());
+
+    for (const auto& v : vertices)
+      stream << v << std::endl;
+
+    for (const auto& poly : polys) {
+      stream << poly.size();
+      for (std::size_t i = 0; i < poly.size(); i++)
+        stream << " " << poly[i];
+      stream << std::endl;
+    }
+
     save(stream, file_name + ".ply");
   }
 
@@ -629,6 +694,27 @@ private:
       "end_header" + std::string(_NL_) + "";
   }
 
+  void add_ply_header_normals_colors(
+    std::stringstream& stream,
+    const std::size_t size) const {
+
+    stream <<
+      "ply" + std::string(_NL_) + "" <<
+      "format ascii 1.0" + std::string(_NL_) + "" <<
+      "element vertex " << size << "" + std::string(_NL_) + "" <<
+      "property double x" + std::string(_NL_) + "" <<
+      "property double y" + std::string(_NL_) + "" <<
+      "property double z" + std::string(_NL_) + "" <<
+      "property double nx" + std::string(_NL_) + "" <<
+      "property double ny" + std::string(_NL_) + "" <<
+      "property double nz" + std::string(_NL_) + "" <<
+      "property uchar red" + std::string(_NL_) + "" <<
+      "property uchar green" + std::string(_NL_) + "" <<
+      "property uchar blue" + std::string(_NL_) + "" <<
+      "property uchar alpha" + std::string(_NL_) + "" <<
+      "end_header" + std::string(_NL_) + "";
+  }
+
   void add_ply_header_regions(
     std::stringstream& stream,
     const std::size_t size) const {
@@ -653,19 +739,36 @@ private:
     const std::size_t num_faces) const {
 
     stream <<
-    "ply"                  +  std::string(_NL_) + ""                     <<
-    "format ascii 1.0"     +  std::string(_NL_) + ""                     <<
-    "element vertex "      << num_vertices     << "" + std::string(_NL_) + "" <<
-    "property double x"    +  std::string(_NL_) + ""                    <<
-    "property double y"    +  std::string(_NL_) + ""                    <<
-    "property double z"    +  std::string(_NL_) + ""                     <<
-    "element face "        << num_faces        << "" + std::string(_NL_) + "" <<
-    "property list uchar int vertex_indices"         + std::string(_NL_) + "" <<
-    "property uchar red"   +  std::string(_NL_) + ""                     <<
-    "property uchar green" +  std::string(_NL_) + ""                     <<
-    "property uchar blue"  +  std::string(_NL_) + ""                     <<
-    "property uchar alpha" +  std::string(_NL_) + ""                      <<
-    "end_header"           +  std::string(_NL_) + "";
+      "ply" + std::string(_NL_) + "" <<
+      "format ascii 1.0" + std::string(_NL_) + "" <<
+      "element vertex " << num_vertices << "" + std::string(_NL_) + "" <<
+      "property double x" + std::string(_NL_) + "" <<
+      "property double y" + std::string(_NL_) + "" <<
+      "property double z" + std::string(_NL_) + "" <<
+      "element face " << num_faces << "" + std::string(_NL_) + "" <<
+      "property list uchar int vertex_indices" + std::string(_NL_) + "" <<
+      "property uchar red" + std::string(_NL_) + "" <<
+      "property uchar green" + std::string(_NL_) + "" <<
+      "property uchar blue" + std::string(_NL_) + "" <<
+      "property uchar alpha" + std::string(_NL_) + "" <<
+      "end_header" + std::string(_NL_) + "";
+  }
+
+  void add_ply_header_mesh_no_color(
+    std::stringstream& stream,
+    const std::size_t num_vertices,
+    const std::size_t num_faces) const {
+
+    stream <<
+      "ply" + std::string(_NL_) + "" <<
+      "format ascii 1.0" + std::string(_NL_) + "" <<
+      "element vertex " << num_vertices << "" + std::string(_NL_) + "" <<
+      "property double x" + std::string(_NL_) + "" <<
+      "property double y" + std::string(_NL_) + "" <<
+      "property double z" + std::string(_NL_) + "" <<
+      "element face " << num_faces << "" + std::string(_NL_) + "" <<
+      "property list uchar int vertex_indices" + std::string(_NL_) + "" <<
+      "end_header" + std::string(_NL_) + "";
   }
 };
 
@@ -776,12 +879,43 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
   }
 }
 
-void dump_polygon(const std::vector<CGAL::Epick::Point_3> &pts, const std::string &filename) {
+void dump_polygon(const std::vector<CGAL::Epick::Point_3>& pts, const std::string& filename) {
   Saver<CGAL::Epick> saver;
   std::vector<std::vector<CGAL::Epick::Point_3> > pts2;
   pts2.push_back(pts);
 
   saver.export_polygon_soup_3(pts2, filename);
+}
+void dump_polygona(const std::vector<CGAL::Epick::Point_3>& pts, const std::string& filename) {
+  Saver<CGAL::Epick> saver;
+  std::vector<std::vector<CGAL::Epick::Point_3> > pts2;
+  pts2.push_back(pts);
+
+  saver.export_polygon_soup_3(pts2, filename);
+}
+
+void dump_polygons(const std::vector<std::vector<CGAL::Epick::Point_3> >& pts, const std::string& filename) {
+  Saver<CGAL::Epick> saver;
+
+  saver.export_polygon_soup_3(pts, filename);
+}
+
+void dump_indexed_triangles(const std::vector<CGAL::Epick::Point_3>& pts, const std::vector<std::size_t>& tris, const std::string& filename) {
+  Saver<CGAL::Epick> saver;
+
+  saver.export_indexed_triangles_3(pts, tris, filename);
+}
+
+void dump_indexed_polygons(const std::vector<CGAL::Epick::Point_3>& pts, const std::vector<std::vector<std::size_t> >& polys, const std::string& filename) {
+  Saver<CGAL::Epick> saver;
+
+  saver.export_indexed_polygons_3(pts, polys, filename);
+}
+
+void dump_polygons(const std::vector<std::vector<CGAL::Epick::Point_3> >& pts, const std::vector<Color>& colors, const std::string& filename) {
+  Saver<CGAL::Epick> saver;
+
+  saver.export_polygon_soup_3(pts, colors, filename);
 }
 
 template<typename DS, typename Polygon_2>
@@ -823,6 +957,11 @@ void dump_polygons(
   saver.export_polygon_soup_3(polygons, name);
 }
 
+void dump_points(const std::vector<CGAL::Epick::Point_3>& pts, const std::vector<CGAL::Epick::Vector_3>& normals, const std::vector<Color>& colors, const std::string& filename) {
+  Saver<CGAL::Epick> saver;
+  saver.export_points_3(pts, normals, colors, filename);
+}
+
 template<typename DS>
 void dump_ifaces(const DS& data, const std::string tag = std::string()) {
   // write all polygons into a separate ply with support plane index and iface index
@@ -836,13 +975,14 @@ void dump_ifaces(const DS& data, const std::string tag = std::string()) {
     }
   }
 }
+/*
 
 template<typename DS, typename PTS>
 void dump_polygon(const DS& data, PTS pts, std::string tag = std::string()) {
   // write all polygons into a separate ply with support plane index and iface index
   Saver<typename DS::Kernel> saver;
   saver.export_polygon_soup_3(pts, tag);
-}
+}*/
 
 template<typename DS, typename PFace>
 void dump_pface(
