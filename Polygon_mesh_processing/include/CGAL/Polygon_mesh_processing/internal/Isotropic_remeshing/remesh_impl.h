@@ -230,7 +230,6 @@ namespace internal {
 
   template<typename PM,
            typename EdgeConstraintMap,
-           typename VertexPointMap,
            typename FacePatchMap,
            typename SizingFunction>
   bool constraints_are_short_enough(const PM& pmesh,

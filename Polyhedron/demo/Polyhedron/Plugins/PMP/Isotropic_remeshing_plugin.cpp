@@ -438,7 +438,6 @@ public Q_SLOTS:
                !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                  *selection_item->polyhedron(),
                  selection_item->constrained_edges_pmap(),
-                 get(CGAL::vertex_point, *selection_item->polyhedron()),
                  CGAL::Constant_property_map<face_descriptor, std::size_t>(1),
                  CGAL::Polygon_mesh_processing::Uniform_sizing_field( 4. / 3. * target_length, pmesh)))
             {
@@ -749,7 +748,6 @@ public Q_SLOTS:
              !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                pmesh,
                ecm,
-               get(CGAL::vertex_point, pmesh),
                CGAL::Constant_property_map<face_descriptor, std::size_t>(1),
                CGAL::Polygon_mesh_processing::Uniform_sizing_field(4. / 3. * target_length, pmesh)))
           {
