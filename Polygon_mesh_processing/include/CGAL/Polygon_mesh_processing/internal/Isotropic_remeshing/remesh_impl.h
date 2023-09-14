@@ -415,7 +415,6 @@ namespace internal {
         //the edge with longest length
         auto eit = long_edges.begin();
         halfedge_descriptor he = eit->first;
-        double sqlen = eit->second;
         long_edges.erase(eit);
 
         //split edge
@@ -515,7 +514,6 @@ namespace internal {
         //the edge with longest length
         auto eit = long_edges.begin();
         halfedge_descriptor he = eit->first;
-        double sqlen = eit->second;
         long_edges.erase(eit);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
