@@ -34,7 +34,6 @@ namespace CGAL {
  * \sa `Arr_default_dcel<Traits>`
  * \sa `ArrangementBasicTraits_2`
  * \sa `CGAL::overlay()`
- * \sa `CGAL::is_valid()`
 
  * Insertion Functions
 
