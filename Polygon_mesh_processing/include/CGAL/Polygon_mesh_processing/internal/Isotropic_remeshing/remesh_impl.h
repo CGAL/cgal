@@ -235,7 +235,6 @@ namespace internal {
            typename SizingFunction>
   bool constraints_are_short_enough(const PM& pmesh,
                                     EdgeConstraintMap ecmap,
-                                    VertexPointMap vpmap,
                                     const FacePatchMap& fpm,
                                     const SizingFunction& sizing)
   {

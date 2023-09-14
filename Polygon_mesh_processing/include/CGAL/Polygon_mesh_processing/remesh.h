@@ -274,7 +274,7 @@ void isotropic_remeshing(const FaceRange& faces
     msg.append(" true with constraints larger than 4/3 * target_edge_length.");
     msg.append(" Remeshing aborted.");
     CGAL_precondition_msg(
-      internal::constraints_are_short_enough(pmesh, ecmap, vpmap, fpmap, sizing),
+      internal::constraints_are_short_enough(pmesh, ecmap, fpmap, sizing),
       msg.c_str());
   }
 #endif
