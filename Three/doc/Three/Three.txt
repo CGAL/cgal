@@ -322,7 +322,7 @@ To create an external plugin, you must make a new Cmake project.\n
 
     project( Example_plugin )
 
-Configure CMake as you desire and fetch the right Qt5 packages :
+Configure CMake as you desire and fetch the right Qt6 packages :
 
     # Find includes in corresponding build directories
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -331,13 +331,13 @@ Configure CMake as you desire and fetch the right Qt5 packages :
     cmake_minimum_required(VERSION 3.1...3.23)
 
     #Find CGAL
-    find_package(CGAL COMPONENTS Qt5)
+    find_package(CGAL COMPONENTS Qt6)
     include( ${CGAL_USE_FILE} )
-    # Find Qt5 itself
-    find_package(Qt5
+    # Find Qt6 itself
+    find_package(Qt6
                  QUIET
-                 COMPONENTS            OpenGL Script Svg Xml
-                 OPTIONAL_COMPONENTS   ScriptTools)
+                 COMPONENTS            OpenGLWidgets Svg
+                 OPTIONAL_COMPONENTS   WebSockets)
 
 You will probably have to fetch the libraries exported by the Polyhedron_demo, like the Scene_items.
 
@@ -370,15 +370,14 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
     cmake_minimum_required(VERSION 3.1...3.23)
 
     #Find CGAL
-    find_package(CGAL COMPONENTS Qt5)
+    find_package(CGAL COMPONENTS Qt6)
     include( ${CGAL_USE_FILE} )
-    # Find Qt5 itself
-    find_package(Qt5
-                 QUIET
-                 COMPONENTS            OpenGL Script Svg Xml
-                 OPTIONAL_COMPONENTS   ScriptTools)
+    # Find Qt6 itself
+    find_package(Qt6 QUIET
+                 COMPONENTS OpenGLWidgets Svg
+                 OPTIONAL_COMPONENTS WebSockets)
 
-    if(Qt5_FOUND AND CGAL_FOUND)
+    if(Qt6_FOUND AND CGAL_FOUND)
       find_package(CGAL_polyhedron_demo)
 
     include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )

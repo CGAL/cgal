@@ -103,7 +103,7 @@ disable this ${type}.\n\
   endif()
 endfunction()
 
-function(CGAL_hook_fix_ctest_depending_on_Qt5)
+function(CGAL_hook_fix_ctest_depending_on_Qt6)
   get_property(_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
   foreach(_target ${_targets})
     if(NOT TEST "compilation of  ${_target}")
@@ -120,7 +120,7 @@ function(CGAL_hooks_at_end_of_all_directories)
   CGAL_hook_check_targets()
   CGAL_hook_check_unused_cpp_files()
   if(BUILD_TESTING)
-    CGAL_hook_fix_ctest_depending_on_Qt5()
+    CGAL_hook_fix_ctest_depending_on_Qt6()
   endif()
 endfunction()
 

@@ -25,8 +25,8 @@ the section \subpage thirdparty.
   - `-frounding-math` with gcc
   - `/fp:strict /fp:except-` with MSVC
 
-\section secexample Minimal Example Using Qt5
-This section describes a minimal example of a program that uses \cgal and Qt5 for some GUI features.
+\section secexample Minimal Example Using Qt6
+This section describes a minimal example of a program that uses \cgal and Qt6 for some GUI features.
 
 \subsection subcmake CMakeLists.txt
 \dontinclude Surface_mesh/CMakeLists.txt
