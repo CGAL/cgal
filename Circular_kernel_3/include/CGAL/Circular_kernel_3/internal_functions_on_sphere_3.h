@@ -269,6 +269,7 @@ namespace CGAL {
        typedef typename SK::Point_3  Point_3;
        typedef typename SK::Sphere_3  Sphere_3;
        typedef typename SK::Algebraic_kernel  Algebraic_kernel;
+       typedef typename SK::Boolean Bool;
 
        CGAL_kernel_precondition(!s1.is_degenerate());
        CGAL_kernel_precondition(!s2.is_degenerate());
@@ -307,7 +308,7 @@ namespace CGAL {
              return res;
          }
          if(const Circle_3* c = CGAL::Intersections::internal::intersect_get<Circle_3>(v)) {
-            if(SK().has_on_3_object()(s3, *c)) {
+            if(static_cast<Bool>(SK().has_on_3_object()(s3, *c))) {
               *res++ = *c;
             }
            return res;

@@ -326,7 +326,7 @@ namespace CGAL {
   /// @tparam P The type of the \em point property of a vertex. There is no requirement on `P`,
   ///         besides being default constructible and assignable.
   ///         In typical use cases it will be a 2D or 3D point type.
-  /// \cgalModels `MutableFaceGraph` and `FaceListGraph`
+  /// \cgalModels{MutableFaceGraph,FaceListGraph}
   ///
   /// \sa \ref PkgBGLConcepts "Graph Concepts"
 
@@ -373,9 +373,7 @@ public:
 #ifdef DOXYGEN_RUNNING
 
   /// This class represents a vertex.
-  /// \cgalModels `Index`
-  /// \cgalModels `LessThanComparable`
-  /// \cgalModels `Hashable`
+  /// \cgalModels{Index,LessThanComparable,Hashable}
   /// \sa `Halfedge_index`, `Edge_index`, `Face_index`
   class Vertex_index
   {
@@ -396,9 +394,7 @@ public:
 #ifdef DOXYGEN_RUNNING
 
   /// This class represents a halfedge.
-  /// \cgalModels `Index`
-  /// \cgalModels `LessThanComparable`
-  /// \cgalModels `Hashable`
+  /// \cgalModels{Index,LessThanComparable,Hashable}
   /// \sa `Vertex_index`, `Edge_index`, `Face_index`
   class Halfedge_index
   {
@@ -420,9 +416,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   /// This class represents a face
-  /// \cgalModels `Index`
-  /// \cgalModels `LessThanComparable`
-  /// \cgalModels `Hashable`
+  /// \cgalModels{Index,LessThanComparable,Hashable}
   /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
   class Face_index
   {
@@ -442,9 +436,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   /// This class represents an edge.
-  /// \cgalModels `Index`
-  /// \cgalModels `LessThanComparable`
-  /// \cgalModels `Hashable`
+  /// \cgalModels{Index,LessThanComparable,Hashable}
   /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
   class Edge_index
   {

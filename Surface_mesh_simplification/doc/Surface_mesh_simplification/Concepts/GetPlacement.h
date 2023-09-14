@@ -14,11 +14,13 @@ or can be intentionally returned to prevent the edge from being collapsed.
 
 \cgalRefines{DefaultConstructible,CopyConstructible}
 
-\cgalHasModel `CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::Constrained_placement<Placement>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>}
+\cgalHasModels{CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>}
+\cgalHasModels{CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>}
+\cgalHasModels{CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>}
+\cgalHasModels{CGAL::Surface_mesh_simplification::Constrained_placement<Placement>}
+\cgalHasModelsEnd
 */
 
 

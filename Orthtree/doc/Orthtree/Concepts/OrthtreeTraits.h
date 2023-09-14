@@ -5,8 +5,10 @@
   The concept `OrthtreeTraits` defines the requirements for the
   template parameter of the `CGAL::Orthtree` class.
 
-  \cgalHasModel `CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>`
-  \cgalHasModel `CGAL::Orthtree_traits_face_graph<PolygonMesh, VPM>`
+  \cgalHasModelsBegin
+  \cgalHasModel{CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>}
+  \cgalHasModel{CGAL::Orthtree_traits_face_graph<PolygonMesh, VPM>}
+  \cgalHasModelsEnd
 */
 class OrthtreeTraits
 {

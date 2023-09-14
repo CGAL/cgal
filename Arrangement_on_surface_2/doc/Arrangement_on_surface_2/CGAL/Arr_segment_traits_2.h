@@ -52,9 +52,7 @@ namespace CGAL {
  * same direction as a precondition. Moreover, `Arr_segment_traits_2` supports
  * the merging of curves of opposite directions.
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementLandmarkTraits_2`
- * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
+ * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementDirectionalXMonotoneTraits_2}
  */
 template <typename Kernel>
 class Arr_segment_traits_2 : public Kernel {

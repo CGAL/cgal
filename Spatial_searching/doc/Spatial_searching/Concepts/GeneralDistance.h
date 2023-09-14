@@ -8,8 +8,10 @@ To optimize distance computations transformed distances are used,
 e.g., for a Euclidean distance the transformed distance is the squared
 Euclidean distance.
 
-\cgalHasModel `CGAL::Manhattan_distance_iso_box_point<Traits>`
-\cgalHasModel `CGAL::Euclidean_distance_sphere_point<Traits>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Manhattan_distance_iso_box_point<Traits>}
+\cgalHasModels{CGAL::Euclidean_distance_sphere_point<Traits>}
+\cgalHasModelsEnd
 
 */
 

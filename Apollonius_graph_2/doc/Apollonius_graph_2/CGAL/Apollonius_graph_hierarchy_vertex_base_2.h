@@ -11,7 +11,7 @@ vertex base required by the
 `Apollonius_graph_hierarchy_vertex_base_2` is templated by a class `Agvb` which must be a model
 of the `ApolloniusGraphVertexBase_2` concept.
 
-\cgalModels `ApolloniusGraphHierarchyVertexBase_2`
+\cgalModels{ApolloniusGraphHierarchyVertexBase_2}
 
 \sa `CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>`
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`

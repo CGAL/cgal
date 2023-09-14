@@ -7,17 +7,13 @@
 /// \ingroup PkgPolygon2Ref
 
 /*!
-  \code
-   #include <CGAL/draw_polygon_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_polygon_2.h}
 */
 /// \defgroup PkgDrawPolygon2 Draw a 2D Polygon
 /// \ingroup PkgPolygon2Ref
 
 /*!
-  \code
-  #include <CGAL/draw_polygon_with_holes_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_polygon_with_holes_2.h}
 */
 /// \defgroup PkgDrawPolygonWithHoles2 Draw a 2D Polygon with Holes
 /// \ingroup PkgPolygon2Ref

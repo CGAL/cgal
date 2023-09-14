@@ -135,9 +135,22 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalRefines{5}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
                          "cgalRefinesBare{1}=<dl><dt>@cgalRefines</dt><dd>\1</dd></dl>" \
                          "cgalRefinesBare{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>\2</dd></dl>" \
-                         "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\"" \
+                         "cgalModelsHeader=Is model of" \
+                         "cgalModels{1}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd></dl>" \
+                         "cgalModels{2}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd></dl>" \
+                         "cgalModels{3}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd></dl>" \
+                         "cgalModels{4}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd></dl>" \
+                         "cgalModels{5}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
+                         "cgalModels{6}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd><dt></dt><dd>@c \6</dd></dl>" \
+                         "cgalModelsBareBegin=<dl><dt>@cgalModelsHeader</dt><dd></dd>" \
+                         "cgalModelsBareEnd=</dl>" \
+                         "cgalModelsBare{1}=<dt></dt><dd>\1</dd>" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
-                         "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\"" \
+                         "cgalHasModelsHeader=Has models" \
+                         "cgalHasModelsBegin=<dl><dt>@cgalHasModelsHeader</dt><dd></dd>" \
+                         "cgalHasModels{1}=<dt></dt><dd>`\1`</dd>" \
+                         "cgalHasModelsBare{1}=<dt></dt><dd>\1</dd>" \
+                         "cgalHasModelsEnd=</dl>" \
                          "cgalDebugBegin=\htmlonly <div class=\"CGALDebug\"> <div>Debugging Support</div> \endhtmlonly \n" \
                          "cgalDebugEnd=\htmlonly </div> \endhtmlonly" \
                          "cgalDebugFunction=This is a function for debugging purpose." \
@@ -190,7 +203,8 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalParamSectionEnd=\cgalParamNEnd" \
                          "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>" \
                          "cgalBigO{1}=\f$O(\1)\f$" \
-                         "cgalBigOLarge{1}=\f$O\left(\1\right)\f$"
+                         "cgalBigOLarge{1}=\f$O\left(\1\right)\f$" \
+                         "cgalInclude{1}=\#`include<\1>`"
 
 # Doxygen selects the parser to use depending on the extension of the files it
 # parses. With this tag you can assign which parser to use for a given
