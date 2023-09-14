@@ -19,6 +19,8 @@
 // todo: maybe this could be avoided
 #include <boost/property_map/property_map.hpp>
 
+#ifndef DOXYGEN_RUNNING
+
 namespace CGAL::Properties {
 
 template <typename Index>
@@ -599,5 +601,7 @@ public:
 };
 
 }
+
+#endif // DOXYGEN_RUNNING
 
 #endif //CGAL_PROPERTY_CONTAINTER_H
