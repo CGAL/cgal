@@ -51,7 +51,7 @@ namespace Point_set {
     range and value type is `Kernel::Vector_3`
 
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,

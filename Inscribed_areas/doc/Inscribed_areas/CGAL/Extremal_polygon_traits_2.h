@@ -13,7 +13,7 @@ be inscribed into a given convex polygon \f$ P\f$ using the function
 
 \tparam K must be a model of `Kernel`.
 
-\cgalModels `ExtremalPolygonTraits_2`
+\cgalModels{ExtremalPolygonTraits_2}
 
 \sa `CGAL::maximum_area_inscribed_k_gon_2()`
 \sa `CGAL::maximum_perimeter_inscribed_k_gon_2()`
@@ -117,7 +117,7 @@ k\f$-gon \f$ P_k\f$ that can be inscribed into a given convex polygon
 
 \tparam K must be a model of `Kernel`.
 
-\cgalModels `ExtremalPolygonTraits_2`
+\cgalModels{ExtremalPolygonTraits_2}
 
 \sa `CGAL::maximum_area_inscribed_k_gon_2()`
 \sa `CGAL::maximum_perimeter_inscribed_k_gon_2()`

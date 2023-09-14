@@ -281,7 +281,11 @@ public:
   Input_rep( std::optional<T>& tt) : t(tt) {}
 
   //! perform the input, calls \c operator\>\> by default.
-  std::istream& operator()( std::istream& is) const { return (is >> t.value()); }
+  std::istream& operator()( std::istream& is) const {
+    T v;
+    if(is >> v) t = v;
+    return is;
+  }
 };
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \

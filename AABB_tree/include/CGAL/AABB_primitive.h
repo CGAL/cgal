@@ -53,8 +53,10 @@ public:
  * The two property maps which are template parameters of the class enable to get the datum and the reference point of
  * the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.
  *
- * \cgalModels `AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`.
- * \cgalModels `AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`.
+ * \cgalModelsBareBegin
+ * \cgalModelsBare{`AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`}
+ * \cgalModelsBare{`AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`}
+ * \cgalModelsBareEnd
  *
  * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap` with `Id` as
  *           `key_type`. It must be a model of `CopyConstructible`, `DefaultConstructible`, and `CopyAssignable`.

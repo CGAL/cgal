@@ -9,7 +9,9 @@ a mesh generation process.
 
 \cgalRefines{RegularTriangulationTraits_3}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 In addition to the requirements described for the traits class
 RegularTriangulationTraits_3, the geometric traits class of a

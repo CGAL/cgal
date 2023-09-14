@@ -33,7 +33,7 @@ namespace CGAL {
  * while the AABB tree holding the primitive is in use.
  * The triangle type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Triangle_3`.
  *
- * \cgalModels `AABBPrimitiveWithSharedData`
+ * \cgalModels{AABBPrimitiveWithSharedData}
  *
  *\tparam FaceGraph is a model of the face graph concept.
  *\tparam VertexPointPMap  is a property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`

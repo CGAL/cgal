@@ -149,9 +149,8 @@ class AABB_tree;
 /// computations, and it handles points as query type for distance
 /// queries.
 ///
-/// \cgalModels AABBTraits
-/// \cgalModels AABBRayIntersectionTraits
-
+/// \cgalModels{AABBTraits,AABBRayIntersectionTraits}
+///
 /// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits,
 /// and provide the geometric types as well as the intersection tests and computations.
 /// \tparam Primitive provide the type of primitives stored in the AABB_tree.

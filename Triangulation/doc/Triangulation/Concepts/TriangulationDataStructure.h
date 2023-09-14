@@ -69,7 +69,9 @@ The classes `Vertex` and
 `Full_cell` have to provide the relevant I/O operators
 (possibly empty).
 
-\cgalHasModel `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure::Vertex`
 \sa `TriangulationDataStructure::FullCell`
@@ -660,8 +662,10 @@ It sets requirements of combinatorial nature
 only, as geometry is not concerned here. In particular, we only require that
 the vertex holds a handle to a full cell incident to it in the triangulation.
 
-\cgalHasModel `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
-\cgalHasModel `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>}
+\cgalHasModels{CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`
@@ -767,8 +771,10 @@ full cell as well as handles to the adjacent full cells. Two full cells
 are said to be adjacent when they share a facet. Adjacent full cells are
 called hereafter neighbors.
 
-\cgalHasModel `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, DSFullCellStoragePolicy>`
-\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, DSFullCellStoragePolicy>}
+\cgalHasModels{CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure::FullCell`
 \sa `TriangulationDataStructure::Face`

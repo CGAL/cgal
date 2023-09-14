@@ -16,7 +16,7 @@ value for CK is CGAL::Simple_cartesian<double> (see also the examples
 in the user manual).
 
 
-\cgalModels `SegmentDelaunayGraphLinfTraits_2`
+\cgalModels{SegmentDelaunayGraphLinfTraits_2}
 
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
 \sa `CGAL::Segment_Delaunay_graph_Linf_2<Gt,STag,DS>`
@@ -49,7 +49,7 @@ value for CK is CGAL::Simple_cartesian<double> (see also the examples
 in the user manual).
 
 
-\cgalModels `SegmentDelaunayGraphLinfTraits_2`
+\cgalModels{SegmentDelaunayGraphLinfTraits_2}
 
 \sa `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
 \sa `CGAL::Segment_Delaunay_graph_2<Gt,DS>`

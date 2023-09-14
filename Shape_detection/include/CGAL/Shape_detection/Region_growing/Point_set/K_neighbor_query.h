@@ -49,7 +49,7 @@ namespace Point_set {
     a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_2` or `Kernel::Point_3`
 
-    \cgalModels `NeighborQuery`
+    \cgalModels{NeighborQuery}
   */
   template<
   typename GeomTraits,

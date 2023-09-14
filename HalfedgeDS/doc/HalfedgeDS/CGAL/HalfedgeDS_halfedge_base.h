@@ -57,7 +57,7 @@ supported.
 In all cases, a reference to the next halfedge and to the opposite
 halfedge is supported.
 
-\cgalModels `HalfedgeDSHalfedge`
+\cgalModels{HalfedgeDSHalfedge}
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`
 \sa `HalfedgeDSItems`

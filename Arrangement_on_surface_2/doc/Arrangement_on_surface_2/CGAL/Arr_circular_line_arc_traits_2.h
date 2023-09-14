@@ -12,7 +12,7 @@ of both types
 
 It uses the <A HREF="https://www.boost.org/doc/html/variant.html">std::variant</A>.
 
-\cgalModels `ArrangementTraits_2`
+\cgalModels{ArrangementTraits_2}
 
 */
 template< typename CircularKernel >

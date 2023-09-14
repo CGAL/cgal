@@ -13,7 +13,7 @@ optimisation algorithms using the \f$ d\f$-dimensional \cgal kernel.
 \tparam ET NT must be models for `RingNumberType`. Their default is  `K::RT`.
 
 
-\cgalModels `PolytopeDistanceDTraits`
+\cgalModels{PolytopeDistanceDTraits}
 
 \sa `CGAL::Polytope_distance_d<Traits>`
 \sa `CGAL::Polytope_distance_d_traits_2<K,ET,NT>`
