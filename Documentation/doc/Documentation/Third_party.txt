@@ -77,7 +77,7 @@ we recommend that you define the environment variable
 \subsection thirdpartyMPFR GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
 <b>GMP Version 4.2 or later, MPFR Version 2.2.1 or later</b>
 
-The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt5` require
+The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt6` require
 \gmp and \mpfr which are libraries for multi precision integers and rational numbers,
 and for multi precision floating point numbers.
 

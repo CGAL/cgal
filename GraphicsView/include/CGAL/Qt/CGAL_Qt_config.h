@@ -14,8 +14,8 @@
 
 #include <QtCore/qglobal.h>
 
-#if defined(CGAL_Qt5_DLL)
-#  if defined(CGAL_Qt5_EXPORTS)
+#if defined(CGAL_Qt6_DLL)
+#  if defined(CGAL_Qt6_EXPORTS)
 #    define CGAL_QT_EXPORT Q_DECL_EXPORT
 #  else
 #    define CGAL_QT_EXPORT Q_DECL_IMPORT

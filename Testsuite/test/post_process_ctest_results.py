@@ -47,7 +47,7 @@ with open(report_file, "rt") as test_report:
           name="libCGALCore_shared"
         elif name == "libCGAL_ImageIO":
           name="libCGALimageIO_shared"
-        elif name == "libCGAL_Qt5":
+        elif name == "libCGAL_Qt6":
           name="libCGALQt5_shared"
         if name=="incomplete":
           is_writing=False
