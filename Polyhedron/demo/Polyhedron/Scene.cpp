@@ -15,7 +15,6 @@
 #include <QObject>
 #include <QMetaObject>
 #include <QString>
-#include <QOpenGLWidget>
 #include <QEvent>
 #include <QMouseEvent>
 #include <QPainter>

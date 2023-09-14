@@ -53,7 +53,7 @@ void Show_point_dialog::interprete_string(const QString& string)
     + "$";
 
   QRegularExpression re(full_re);
-  QRegularExpressionMatch match = re.match(string); // AF @todo  QRegExp had exactMatch()
+  QRegularExpressionMatch match = re.match(string);
   if(match.hasMatch()) {
     // const double x = re.cap(1).toDouble();
     // const double y = re.cap(2).toDouble();
