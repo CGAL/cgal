@@ -60,7 +60,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
       set_property(TEST "compilation of  ${plugin_name}" APPEND PROPERTY FIXTURES_REQUIRED demo_framework_SetupFixture)
     endif()
     # Link with CGAL
-    target_link_libraries( ${plugin_name} PUBLIC ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+    target_link_libraries( ${plugin_name} PUBLIC CGAL::CGAL )
     if(TARGET Polyhedron_3)
       add_dependencies( ${plugin_name} Polyhedron_3 )
     endif()

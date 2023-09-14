@@ -2,7 +2,7 @@
 # This file is the CGALConfig.cmake for a header-only CGAL installation
 #
 
-# For UseCGAL.cmake
+# For CGAL_CreateSingleSourceCGALProgram.cmake
 set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
 
 set(CGAL_LIBRARIES CGAL)
@@ -112,8 +112,6 @@ include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
-
-set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 
 include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 

@@ -16,7 +16,6 @@ endif()
 find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
-  include(${CGAL_USE_FILE})
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTOUIC ON)

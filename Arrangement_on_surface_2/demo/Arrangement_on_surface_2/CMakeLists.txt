@@ -16,7 +16,6 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt6)
 find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if (CGAL_Qt6_FOUND AND Qt6_FOUND)
-  include(${CGAL_USE_FILE})
   add_compile_definitions(QT_NO_KEYWORDS)
   include_directories( BEFORE ./ )
 

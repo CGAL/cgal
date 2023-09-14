@@ -6,16 +6,14 @@ project(Mesh_2_Demo)
 
 find_package(CGAL REQUIRED)
 
-include(${CGAL_USE_FILE})
-
 # conform target
 add_executable(conform conform.cpp)
-target_link_libraries(conform ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries(conform CGAL::CGAL)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS conform)
 
 # mesh target
 add_executable(mesh mesh.cpp)
-target_link_libraries(mesh ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+target_link_libraries(mesh CGAL::CGAL)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS mesh)
 
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)

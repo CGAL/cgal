@@ -7,8 +7,6 @@ if(NOT CGAL_DISABLE_GMP)
   if(TARGET CGAL::Eigen3_support)
     find_package(CGAL REQUIRED COMPONENTS Core)
 
-    include(${CGAL_USE_FILE})
-
     qt6_wrap_ui(parameterizationUI_FILES Parameterization_widget.ui OTE_dialog.ui)
     polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin
                            ${parameterizationUI_FILES})

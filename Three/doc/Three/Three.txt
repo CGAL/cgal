@@ -332,7 +332,6 @@ Configure CMake as you desire and fetch the right Qt6 packages :
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt6)
-    include( ${CGAL_USE_FILE} )
     # Find Qt6 itself
     find_package(Qt6
                  QUIET
@@ -371,7 +370,6 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt6)
-    include( ${CGAL_USE_FILE} )
     # Find Qt6 itself
     find_package(Qt6 QUIET
                  COMPONENTS OpenGLWidgets Svg

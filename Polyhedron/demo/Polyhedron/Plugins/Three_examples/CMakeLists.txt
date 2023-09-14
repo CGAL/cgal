@@ -17,9 +17,6 @@ find_package(Qt6 QUIET
              OPTIONAL_COMPONENTS WebSockets)
 
 if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
-  if(Qt6_FOUND)
-    include(${CGAL_USE_FILE})
-  endif()
   polyhedron_demo_plugin(example_plugin Example_plugin)
 
   qt6_wrap_ui(basicUI_FILES Basic_dialog.ui)

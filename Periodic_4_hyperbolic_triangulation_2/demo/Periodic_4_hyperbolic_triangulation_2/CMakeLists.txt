@@ -9,7 +9,6 @@ include_directories(${CMAKE_BINARY_DIR})
 set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED COMPONENTS Core Qt6)
-include(${CGAL_USE_FILE})
 
 find_package(LEDA QUIET)
 

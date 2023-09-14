@@ -656,7 +656,6 @@ endif()
 #
 # Variables used when WITH_{demos|examples|tests} are TRUE
 #
-set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 get_property(CGAL_FOUND GLOBAL PROPERTY CGAL_FOUND)
 get_property(CGAL_Core_FOUND GLOBAL PROPERTY CGAL_Core_FOUND)
 get_property(CGAL_ImageIO_FOUND GLOBAL PROPERTY CGAL_ImageIO_FOUND)
@@ -754,8 +753,6 @@ list(REMOVE_ITEM scripts
 install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/
-        DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
-install(FILES ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake
         DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
 
 if(IS_DIRECTORY auxiliary/gmp/include AND IS_DIRECTORY auxiliary/gmp/lib)

@@ -38,7 +38,6 @@ option(POLYHEDRON_QTSCRIPT_DEBUGGER
 # Find CGAL
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 ImageIO)
 set_package_properties(CGAL PROPERTIES TYPE REQUIRED)
-include(${CGAL_USE_FILE})
 
 # Find Qt6 itself
 find_package(Qt6 QUIET
@@ -120,8 +119,6 @@ set_package_properties(
   PURPOSE "Plugins such as Mesh_3, Bilateral smoothing, and WLOP are faster if TBB is linked.")
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
-  include(${CGAL_USE_FILE})
-
   qt6_wrap_ui(MainWindowUI_files MainWindow.ui)
   qt6_wrap_ui(SubViewerUI_files SubViewer.ui)
   qt6_wrap_ui(statisticsUI_FILES Statistics_on_item_dialog.ui)
@@ -209,7 +206,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_library(scene_basic_objects SHARED Scene_plane_item.cpp
                                          Scene_spheres_item.cpp)
   target_link_libraries(
-    scene_basic_objects PUBLIC demo_framework ${CGAL_LIBRARIES} Qt6::OpenGLWidgets
+    scene_basic_objects PUBLIC demo_framework CGAL::CGAL_Qt6 Qt6::OpenGLWidgets
                                Qt6::Gui Qt6::Widgets)
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt6::Core)
@@ -225,7 +222,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(
-      ${item_name} PUBLIC demo_framework ${CGAL_LIBRARIES} Qt6::OpenGLWidgets Qt6::Gui
+      ${item_name} PUBLIC demo_framework CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::Gui
                           Qt6::Widgets)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${item_name})
   endmacro(add_item)
@@ -376,8 +373,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(Polyhedron_3 PRIVATE demo_framework)
 
   # Link with CGAL
-  target_link_libraries(Polyhedron_3 PUBLIC ${CGAL_LIBRARIES}
-                                            ${CGAL_3RD_PARTY_LIBRARIES})
+  target_link_libraries(Polyhedron_3 PUBLIC CGAL::CGAL_Qt6)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polyhedron_3)
 
