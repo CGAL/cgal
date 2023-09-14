@@ -40,10 +40,6 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 ImageIO)
 set_package_properties(CGAL PROPERTIES TYPE REQUIRED)
 include(${CGAL_USE_FILE})
 
-if(CGAL_Qt6_FOUND)
-  message( STATUS "we found CGAL_Qt6")
-endif()
-
 # Find Qt6 itself
 find_package(Qt6 QUIET
              COMPONENTS OpenGLWidgets Widgets Qml
@@ -55,12 +51,7 @@ set_package_properties(
   PURPOSE "Enables the 3D Features, for GUI and visualization."
   DESCRIPTION "To find this package, it should be sufficient to fill the Qt6_DIR variable with: <Qt_dir>/<Qt_version>/<Compilator>/lib/cmake/Qt6")
 
-if(NOT Qt6_FOUND)
-  message( STATUS "we did not find it")
-endif()
-
 if(Qt6_FOUND)
-  message( STATUS "we did find Qt6")
   add_definitions(-DQT_NO_KEYWORDS)
   add_definitions(-DSCENE_IMAGE_GL_BUFFERS_AVAILABLE)
 endif(Qt6_FOUND)
@@ -127,17 +118,6 @@ set_package_properties(
   TBB PROPERTIES
   DESCRIPTION "A library for parallel programming."
   PURPOSE "Plugins such as Mesh_3, Bilateral smoothing, and WLOP are faster if TBB is linked.")
-
-
-
-if(NOT CGAL_Qt6_FOUND)
-  message( STATUS "NOT CGAL_Qt6_FOUND")
-endif()
-
-if(NOT Qt6_FOUND)
-  message( STATUS "NOT Qt6_FOUND")
-endif()
-
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   include(${CGAL_USE_FILE})
