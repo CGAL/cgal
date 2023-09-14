@@ -31,7 +31,9 @@ is possible to select a certain variable.
 
 \sa `Polynomial_d`
 
-\cgalHasModel `CGAL::Polynomial_traits_d<Polynomial_d>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polynomial_traits_d<Polynomial_d>}
+\cgalHasModelsEnd
 
 */
 

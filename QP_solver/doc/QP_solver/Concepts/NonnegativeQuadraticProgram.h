@@ -33,9 +33,11 @@ The description is given by appropriate <I>random-access</I>
 iterators over the program data, see below. The program therefore
 comes in <I>dense</I> representation which includes zero entries.
 
-\cgalHasModel `CGAL::Quadratic_program<NT>`
-\cgalHasModel `CGAL::Quadratic_program_from_mps<NT>`
-\cgalHasModel `CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Quadratic_program<NT>}
+\cgalHasModels{CGAL::Quadratic_program_from_mps<NT>}
+\cgalHasModels{CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
+\cgalHasModelsEnd
 
 The value types of all iterator types (nested iterator
 types, respectively, for `A_iterator` and `D_iterator`) must be

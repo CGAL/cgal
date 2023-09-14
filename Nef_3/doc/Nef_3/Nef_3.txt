@@ -448,7 +448,7 @@ We recommend the use of the \cgal kernels `Homogeneous`,
 The homogeneous kernel provides reliable fast performance. In combination with
 `leda_integer` it is the fastest kernel for `Nef_polyhedron_3`. The
 `Exact_predicates_exact_constructions_kernel` uses filtering. In non-degenerate
-scenarios it's faster than the Homogeneous kernel. The most
+scenarios it's faster than the homogeneous kernel. The most
 important advantage of the filtered kernel is that it is a %Cartesian
 kernel, which allows the proper handling of OFF files using
 floating-point coordinates.

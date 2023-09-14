@@ -37,6 +37,19 @@ Release date: October 2023
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
+-   **Breaking change**: The template parameters of
+    `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
+    have been modified, reverting changes introduced in CGAL 5.6.
+-   **Breaking change**: The vertex base of
+    `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3`
+    must now be a model of the concept ` SimplicialMeshVertexBase_3` (and not only `TriangulationVertexBase_3`).
+
+### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/6.0/Manual/packages.html#PkgSMDS3)
+-   **Breaking change**: The template parameters of
+    `CGAL::Simplicial_mesh_cell_base_3`
+    have been modified to enable passing a geometric traits and a custom cell base class.
+
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 

@@ -7,7 +7,9 @@ Concept describing the set of requirements for solving the normal equation \f$ A
 
 \sa `SparseLinearAlgebraTraits_d`
 
-\cgalHasModel `CGAL::Eigen_solver_traits<T>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Eigen_solver_traits<T>}
+\cgalHasModelsEnd
 */
 class NormalEquationSparseLinearAlgebraTraits_d
 {

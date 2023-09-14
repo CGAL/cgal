@@ -10,10 +10,12 @@ namespace Classification
 
 Concept describing a neighbor query used for classification.
 
-\cgalHasModel `CGAL::Classification::Point_set_neighborhood::K_neighbor_query`
-\cgalHasModel `CGAL::Classification::Point_set_neighborhood::Sphere_neighbor_query`
-\cgalHasModel `CGAL::Classification::Mesh_neighborhood::One_ring_neighbor_query`
-\cgalHasModel `CGAL::Classification::Mesh_neighborhood::N_ring_neighbor_query`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Classification::Point_set_neighborhood::K_neighbor_query}
+\cgalHasModels{CGAL::Classification::Point_set_neighborhood::Sphere_neighbor_query}
+\cgalHasModels{CGAL::Classification::Mesh_neighborhood::One_ring_neighbor_query}
+\cgalHasModels{CGAL::Classification::Mesh_neighborhood::N_ring_neighbor_query}
+\cgalHasModelsEnd
 
 */
 class NeighborQuery

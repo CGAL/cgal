@@ -10,7 +10,9 @@ of the underlying Delaunay triangulation of a basic alpha shape.
 \cgalRefines{DelaunayTriangulationTraits_3 if the underlying triangulation of the alpha shape is a Delaunay triangulation,
   Periodic_3DelaunayTriangulationTraits_3 if the underlying triangulation of the alpha shape is a periodic Delaunay triangulation}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended kernel)
 */

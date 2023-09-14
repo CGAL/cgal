@@ -18,6 +18,7 @@
 #define CGAL_HANDLE_H
 
 #include <cstddef>
+#include <cstdint>
 #include <atomic>
 #include <CGAL/Handle_for.h>
 #include <CGAL/assertions.h>

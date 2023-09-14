@@ -117,8 +117,8 @@ special type of objects. They must, however, supply the relevant
 traits class, which mainly involves algebraic computations. A traits
 class also encapsulates the number types used to represent coordinates
 of geometric objects and to carry out algebraic operations on them. It
-encapsulates the type of coordinate system used (e.g., Cartesian and
-Homogeneous), and the geometric or algebraic computation methods
+encapsulates the type of coordinate system used (e.g., %Cartesian and
+homogeneous), and the geometric or algebraic computation methods
 themselves. The precise minimal sets of requirements the actual traits
 classes must conform to are organized as a hierarchy of concepts; see
 Section \ref aos_sec-geom_traits.
@@ -4780,7 +4780,7 @@ or line segments. The \link Arr_conic_traits_2::Curve_2
 `Curve_2`\endlink and the derived \link
 Arr_conic_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
 classes also support basic access functions such as `source()`,
-`target()`, and `orientation()`.
+`target()`, and `%orientation()`.
 
 <!-- ------------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-conics,conics.png}
@@ -5067,7 +5067,7 @@ substitute the template parameters `RatKernel`, `AlgKernel`, and
 the same requirements of the corresponding types used to instantiate
 the `Arr_conic_traits_2` class template. Here, the use of the
 `CORE_algebraic_number_traits` class is also recommended with
-Cartesian kernels instantiated with the `Rational` and `Algebraic`
+%Cartesian kernels instantiated with the `Rational` and `Algebraic`
 number types defined by this class. The examples given in this manual
 use the type definitions listed below. These types are defined in the
 header file `arr_Bezier.h`.

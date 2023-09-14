@@ -46,7 +46,7 @@ ag.incident_edges(ag.infinite_vertex());
 ag.incident_edges(ag.infinite_vertex(), f);
 \endcode
 
-\cgalModels `DelaunayGraph_2`
+\cgalModels{DelaunayGraph_2}
 
 \sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
 \sa `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`

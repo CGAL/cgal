@@ -14,8 +14,10 @@ be absent). The value `std::nullopt` indicates that the edge should not be colla
 
 \cgalRefines{DefaultConstructible,CopyConstructible}
 
-\cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_filter<BasePlacementFilter>`
-\cgalHasModel `CGAL::Surface_mesh_simplification::Polyhedral_envelope_filter<GeomTraits, BasePlacementFilter>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Surface_mesh_simplification::Bounded_normal_change_filter<BasePlacementFilter>}
+\cgalHasModels{CGAL::Surface_mesh_simplification::Polyhedral_envelope_filter<GeomTraits, BasePlacementFilter>}
+\cgalHasModelsEnd
 */
 
 

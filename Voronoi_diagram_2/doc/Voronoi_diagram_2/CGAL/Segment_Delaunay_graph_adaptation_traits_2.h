@@ -9,7 +9,7 @@ concept. The template parameter of the `Segment_Delaunay_graph_adaptation_traits
 model of the `DelaunayGraph_2` concept, and in particular it has
 the semantics of the 2D (triangulated) segment Delaunay graph.
 
-\cgalModels `AdaptationTraits_2`
+\cgalModels{AdaptationTraits_2}
 
 \sa `AdaptationTraits_2`
 \sa `DelaunayGraph_2`

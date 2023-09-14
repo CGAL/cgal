@@ -12,7 +12,7 @@ The algorithm operates in \cgalBigO{n \log n} time and takes
 \cgalBigO{n} space at the worst case, where \f$ n\f$ is the
 size of the input polygon.
 
-\cgalModels `PolygonWithHolesConvexDecomposition_2`
+\cgalModels{PolygonWithHolesConvexDecomposition_2}
 
 */
 template <typename Kernel, typename Container>
