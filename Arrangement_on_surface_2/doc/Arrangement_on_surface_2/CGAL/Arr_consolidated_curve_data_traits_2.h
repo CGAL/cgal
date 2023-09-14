@@ -21,7 +21,7 @@ both resulting subcurves. In case two (or more) \f$ x\f$-monotone curves
 overlap, their data sets are consolidated, and are inserted into the set
 of the \f$ x\f$-monotone curve that represents the overlap.
 
-\cgalModels `ArrangementTraits_2`
+\cgalModels{ArrangementTraits_2}
 
 */
 template< typename Traits, typename Data >

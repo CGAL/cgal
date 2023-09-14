@@ -7,7 +7,9 @@
 The concept `PolygonOffsetBuilderTraits_2` describes the requirements for the geometric traits class
 required by the algorithm class `CGAL::Polygon_offset_builder_2`.
 
-\cgalHasModel `CGAL::Polygon_offset_builder_traits_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polygon_offset_builder_traits_2}
+\cgalHasModelsEnd
 
 \sa `CGAL::Polygon_offset_builder_2<Ss,Traits,Container>`
 */

@@ -20,7 +20,7 @@ algebraic coordinates.
 
 \sa `Hyperbolic_Delaunay_triangulation_CK_traits_2`
 
-\cgalModels `HyperbolicDelaunayTriangulationTraits_2`
+\cgalModels{HyperbolicDelaunayTriangulationTraits_2}
 */
 
 template< class K >

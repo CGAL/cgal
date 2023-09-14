@@ -13,7 +13,7 @@ whose `Kernel_traits<Point>::Kernel` must have a nested type `FT`.
 These requirements are fulfilled, if one uses a \cgal triangulation
 and a \cgal `Kernel`.
 
-\cgalModels `Interval`
+\cgalModels{Interval}
 
 */
 template< typename FaceHandle >

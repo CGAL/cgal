@@ -7,14 +7,15 @@ to maintain a region.
 
 A region is represented by a set items, which are included in this region.
 
-\cgalHasModel
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`
-- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region`
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`
-- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region`
-- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region`
-- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region`
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_line_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region}
+\cgalHasModelsEnd
 */
 class RegionType {
 

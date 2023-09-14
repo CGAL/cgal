@@ -528,7 +528,7 @@ private:
 /// @tparam Key The key type of the property map. It must be a model of `Index`.
 /// @tparam Value The value type of the property.
 ///
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 ///
 template <class I, class T, class CRTP_derived_class>
 class Property_map_base

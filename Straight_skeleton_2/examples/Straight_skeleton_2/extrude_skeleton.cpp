@@ -12,6 +12,7 @@
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/Random.h>
 
 #include <iostream>
 #include <unordered_map>
@@ -61,7 +62,7 @@ int main(int argc, char** argv)
 
   // below is only used for random weight generation
   double min_weight = 1., max_weight = 10.;
-  int seed = std::time(nullptr);
+  int seed = CGAL::get_default_random().get_seed();
 
   for(int i = 1; i < argc; ++i)
   {

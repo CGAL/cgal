@@ -41,7 +41,7 @@ namespace Scale_space_reconstruction_3
  *  %Smoother for scale space reconstruction based on a principal
  *  component analysis weighted by the local density of points.
  *
- *  \cgalModels CGAL::Scale_space_reconstruction_3::Smoother
+ *  \cgalModels{CGAL::Scale_space_reconstruction_3::Smoother}
  *
  *  \tparam Geom_traits geometric traits class. It must be a
  *  model of `DelaunayTriangulationTraits_3`. It must have a
