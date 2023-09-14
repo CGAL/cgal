@@ -7,7 +7,6 @@ project(Periodic_Lloyd_3_Demo)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
@@ -21,8 +20,9 @@ if(CGAL_Qt6_FOUND
 
   include_directories(BEFORE ./)
 
-   set(CMAKE_AUTOUIC ON)
-   set(CMAKE_AUTORCC ON)
+  set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
 
   if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
 

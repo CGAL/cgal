@@ -7,9 +7,6 @@ project(Triangulation_3_Demo)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 find_package(Qt6 QUIET COMPONENTS Widgets OpenGL)
@@ -40,6 +37,7 @@ endif()
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   include_directories(BEFORE ./)
+  set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTORCC ON)
 

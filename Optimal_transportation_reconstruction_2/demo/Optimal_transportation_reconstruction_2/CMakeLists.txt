@@ -61,7 +61,7 @@ else()
   endif()
 
   if(NOT Qt6_FOUND)
-    set(OTR2_MISSING_DEPS "Qt6.4, ${OTR2_MISSING_DEPS}")
+    set(OTR2_MISSING_DEPS "Qt6, ${OTR2_MISSING_DEPS}")
   endif()
 
   message("NOTICE: This demo requires ${OTR2_MISSING_DEPS} and will not be compiled.")

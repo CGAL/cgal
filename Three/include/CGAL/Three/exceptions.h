@@ -19,9 +19,6 @@
 #include <exception>
 #include <QString>
 #include <QApplication>
-//#include <QScriptable>
-//#include <QScriptContext>
-//#include <QScriptEngine>
 #include <optional>
 #include <QStringList>
 
