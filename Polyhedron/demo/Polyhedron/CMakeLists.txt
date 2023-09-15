@@ -295,13 +295,6 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp
              texture.cpp)
     target_link_libraries(scene_textured_item PUBLIC CGAL::Eigen3_support)
-    qt6_wrap_ui(editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui)
-    add_item(scene_edit_item
-             Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
-             ${editionUI_FILES})
-    target_link_libraries(
-      scene_edit_item PUBLIC CGAL::Eigen3_support scene_surface_mesh_item
-                             scene_k_ring_selection scene_basic_objects)
     add_item(scene_mcf_item Plugins/PMP/Scene_mcf_item.cpp)
     target_link_libraries(scene_mcf_item PUBLIC CGAL::Eigen3_support)
   endif()
