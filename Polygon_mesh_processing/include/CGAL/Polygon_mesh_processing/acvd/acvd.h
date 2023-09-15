@@ -81,11 +81,50 @@ struct ClusterData {
   }
 };
 
+
+// To provide the functionality remeshing (not just simplification), we might need to
+// subdivide the mesh before clustering
+// in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+
+// do the following while nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+// That is, because the subdivision steps heuristic is not 100% guaranteed to produce
+// the desired number of vertices.
+template <typename PolygonMesh,
+  typename NamedParameters = parameters::Default_named_parameters>
+void acvd_subdivide_if_needed(
+  PolygonMesh& pmesh,
+  const int nb_clusters,
+  const NamedParameters& np = parameters::default_values()
+)
+{
+  int nb_vertices = num_vertices(pmesh);
+  if (nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
+    return;
+
+  while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
+  {
+    double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
+    int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
+
+    std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
+
+    if (subdivide_steps > 0)
+    {
+      Subdivision_method_3::Upsample_subdivision(
+        pmesh,
+        np.number_of_iterations(subdivide_steps)
+      );
+    }
+  }
+  return;
+}
+
+
 template <typename PolygonMesh, /*ClusteringMetric,*/
   typename NamedParameters = parameters::Default_named_parameters>
 void acvd_simplification(
     PolygonMesh& pmesh,
-    const int& nb_clusters,
+    const int nb_clusters,
     const NamedParameters& np = parameters::default_values()
     // seed_randomization can be a named parameter
   )
@@ -109,37 +148,9 @@ void acvd_simplification(
 
   // TODO: handle cases where the mesh is not a triangle mesh
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
-
-  int nb_vertices = num_vertices(pmesh);
-
-  // TODO: copy mesh before subdivision (copy constructor or copy face graph if with properties)
-
-  // To provide the functionality remeshing (not just simplification), we might need to
-  // subdivide the mesh before clustering
-  // in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-
-  // do the following while nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-  // That is, because the subdivision steps heuristic is not 100% guaranteed to produce
-  // the desired number of vertices.
-  while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
-  {
-    double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
-    int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
-
-    std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
-
-    if (subdivide_steps > 0)
-    {
-      Subdivision_method_3::Upsample_subdivision(
-        pmesh,
-        CGAL::parameters::number_of_iterations(subdivide_steps).vertex_point_map(vpm)
-      );
-      vpm = get_property_map(CGAL::vertex_point, pmesh);
-      nb_vertices = num_vertices(pmesh);
-    }
-  }
-
-
+  
+  PolygonMesh pmesh_subdivided = pmesh;
+  acvd_subdivide_if_needed(pmesh_subdivided, nb_clusters, np);
 
   // initial random clusters
   // property map from vertex_descriptor to cluster index
@@ -185,7 +196,6 @@ void acvd_simplification(
 
     for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
       clusters_edges_active.push(hd);
-
   }
 
   // frequency of each cluster
@@ -213,129 +223,135 @@ void acvd_simplification(
 
   do
   {
-    nb_modifications = 0;
     nb_disconnected = 0;
+    do
+    {
+      nb_modifications = 0;
 
-    while (clusters_edges_active.empty() == false) {
-      Halfedge_descriptor hi = clusters_edges_active.front();
-      clusters_edges_active.pop();
+      while (!clusters_edges_active.empty()) {
+        Halfedge_descriptor hi = clusters_edges_active.front();
+        clusters_edges_active.pop();
 
-      Vertex_descriptor v1 = source(hi, pmesh);
-      Vertex_descriptor v2 = target(hi, pmesh);
+        Vertex_descriptor v1 = source(hi, pmesh);
+        Vertex_descriptor v2 = target(hi, pmesh);
 
-      int c1 = get(vertex_cluster_pmap, v1);
-      int c2 = get(vertex_cluster_pmap, v2);
+        int c1 = get(vertex_cluster_pmap, v1);
+        int c2 = get(vertex_cluster_pmap, v2);
 
-      if (c1 == -1)
-      {
-        // expand cluster c2 (add v1 to c2)
-        put(vertex_cluster_pmap, v1, c2);
-        typename GT::Point_3 vp1 = get(vpm, v1);
-        typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
-        clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1));
-
-        // add all halfedges around v1 except hi to the queue
-        for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
-          //if (hd != hi && hd != opposite(hi, pmesh))
-            clusters_edges_new.push(hd);
-        nb_modifications++;
-      }
-      else if (c2 == -1)
-      {
-        // expand cluster c1 (add v2 to c1)
-        put(vertex_cluster_pmap, v2, c1);
-        typename GT::Point_3 vp2 = get(vpm, v2);
-        typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
-        clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2));
-
-        // add all halfedges around v2 except hi to the queue
-        for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
-          //if (hd != hi && hd != opposite(hi, pmesh))
-            clusters_edges_new.push(hd);
-        nb_modifications++;
-      }
-      else if (c1 == c2)
-      {
-        clusters_edges_new.push(hi);
-      }
-      else
-      {
-        // compare the energy of the 3 cases
-        typename GT::Point_3 vp1 = get(vpm, v1);
-        typename GT::Vector_3 vpv1(vp1.x(), vp1.y(), vp1.z());
-        typename GT::Point_3 vp2 = get(vpm, v2);
-        typename GT::Vector_3 vpv2(vp2.x(), vp2.y(), vp2.z());
-        typename GT::FT v1_weight = get(vertex_weight_pmap, v1);
-        typename GT::FT v2_weight = get(vertex_weight_pmap, v2);
-
-        typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
-
-        clusters[c1].remove_vertex(vpv1, v1_weight);
-        clusters[c2].add_vertex(vpv1, v1_weight);
-
-        typename GT::FT e_v1_to_c2 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
-
-        typename GT::FT c1_weight_threshold = clusters[c1].weight_sum;
-
-        // reset to no change
-        clusters[c1].add_vertex(vpv1, v1_weight);
-        clusters[c2].remove_vertex(vpv1, v1_weight);
-
-        // The effect of the following should always be reversed after the comparison
-        clusters[c2].remove_vertex(vpv2, v2_weight);
-        clusters[c1].add_vertex(vpv2, v2_weight);
-
-        typename GT::FT e_v2_to_c1 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
-
-        typename GT::FT c2_weight_threshold = clusters[c2].weight_sum;
-
-
-        if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 && c2_weight_threshold > 0)
+        if (c1 == -1)
         {
-          // move v2 to c1
-          put(vertex_cluster_pmap, v2, c1);
+          // expand cluster c2 (add v1 to c2)
+          put(vertex_cluster_pmap, v1, c2);
+          typename GT::Point_3 vp1 = get(vpm, v1);
+          typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
+          clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1));
 
-          // cluster data is already updated
+          // add all halfedges around v1 except hi to the queue
+          for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
+            //if (hd != hi && hd != opposite(hi, pmesh))
+            clusters_edges_new.push(hd);
+          nb_modifications++;
+        }
+        else if (c2 == -1)
+        {
+          // expand cluster c1 (add v2 to c1)
+          put(vertex_cluster_pmap, v2, c1);
+          typename GT::Point_3 vp2 = get(vpm, v2);
+          typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
+          clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2));
 
           // add all halfedges around v2 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
             //if (hd != hi && hd != opposite(hi, pmesh))
-              clusters_edges_new.push(hd);
+            clusters_edges_new.push(hd);
           nb_modifications++;
         }
-        else if (e_v1_to_c2 < e_no_change && c1_weight_threshold > 0)
+        else if (c1 == c2)
         {
-          // move v1 to c2
-          put(vertex_cluster_pmap, v1, c2);
+          clusters_edges_new.push(hi);
+        }
+        else
+        {
+          // compare the energy of the 3 cases
+          typename GT::Point_3 vp1 = get(vpm, v1);
+          typename GT::Vector_3 vpv1(vp1.x(), vp1.y(), vp1.z());
+          typename GT::Point_3 vp2 = get(vpm, v2);
+          typename GT::Vector_3 vpv2(vp2.x(), vp2.y(), vp2.z());
+          typename GT::FT v1_weight = get(vertex_weight_pmap, v1);
+          typename GT::FT v2_weight = get(vertex_weight_pmap, v2);
 
-          // need to reset cluster data and then update
-          clusters[c2].add_vertex(vpv2, v2_weight);
-          clusters[c1].remove_vertex(vpv2, v2_weight);
+          typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
           clusters[c1].remove_vertex(vpv1, v1_weight);
           clusters[c2].add_vertex(vpv1, v1_weight);
 
-          // add all halfedges around v1 except hi to the queue
-          for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
-            //if (hd != hi && hd != opposite(hi, pmesh))
+          typename GT::FT e_v1_to_c2 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+
+          typename GT::FT c1_weight_threshold = clusters[c1].weight_sum;
+
+          // reset to no change
+          clusters[c1].add_vertex(vpv1, v1_weight);
+          clusters[c2].remove_vertex(vpv1, v1_weight);
+
+          // The effect of the following should always be reversed after the comparison
+          clusters[c2].remove_vertex(vpv2, v2_weight);
+          clusters[c1].add_vertex(vpv2, v2_weight);
+
+          typename GT::FT e_v2_to_c1 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+
+          typename GT::FT c2_weight_threshold = clusters[c2].weight_sum;
+
+
+          if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 && c2_weight_threshold > 0)
+          {
+            // move v2 to c1
+            put(vertex_cluster_pmap, v2, c1);
+
+            // cluster data is already updated
+
+            // add all halfedges around v2 except hi to the queue
+            for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
+              //if (hd != hi && hd != opposite(hi, pmesh))
               clusters_edges_new.push(hd);
-          nb_modifications++;
-        }
-        else
-        {
+            nb_modifications++;
+          }
+          else if (e_v1_to_c2 < e_no_change && c1_weight_threshold > 0)
+          {
+            // move v1 to c2
+            put(vertex_cluster_pmap, v1, c2);
+
+            // need to reset cluster data and then update
+            clusters[c2].add_vertex(vpv2, v2_weight);
+            clusters[c1].remove_vertex(vpv2, v2_weight);
+
+            clusters[c1].remove_vertex(vpv1, v1_weight);
+            clusters[c2].add_vertex(vpv1, v1_weight);
+
+            // add all halfedges around v1 except hi to the queue
+            for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
+              //if (hd != hi && hd != opposite(hi, pmesh))
+              clusters_edges_new.push(hd);
+            nb_modifications++;
+          }
+          else
+          {
             // no change but need to reset cluster data
             clusters[c2].add_vertex(vpv2, v2_weight);
             clusters[c1].remove_vertex(vpv2, v2_weight);
 
             clusters_edges_new.push(hi);
+          }
         }
       }
-    }
+
+      clusters_edges_active.swap(clusters_edges_new);
+    } while (nb_modifications > 0);
+
     // clean clusters here
-    // the goal is to delete clusters with multiple connected components
-    // for each cluster, do a BFS from a vertex in the cluster
-    // we need to keep the largest connected component for each cluster
-    // and set the other connected components to -1 (empty cluster), would also need to update clusters_edges_new
+      // the goal is to delete clusters with multiple connected components
+      // for each cluster, do a BFS from a vertex in the cluster
+      // we need to keep the largest connected component for each cluster
+      // and set the other connected components to -1 (empty cluster), would also need to update clusters_edges_new
 
     std::vector<bool> visited(num_vertices(pmesh), false);
     // std::vector<bool> visited_clusters(nb_clusters, false);
@@ -360,7 +376,7 @@ void acvd_simplification(
         // visited_clusters[c] = true;
         q.push(vd);
         visited[vd] = true;
-        while (q.empty() == false)
+        while (!q.empty())
         {
           Vertex_descriptor v = q.front();
           q.pop();
@@ -370,7 +386,7 @@ void acvd_simplification(
           {
             Vertex_descriptor v2 = target(hd, pmesh);
             int c2 = get(vertex_cluster_pmap, v2);
-            if (c2 == c && visited[v2] == false)
+            if (c2 == c && !visited[v2])
             {
               q.push(v2);
               visited[v2] = true;
@@ -380,10 +396,20 @@ void acvd_simplification(
       }
     }
 
+    for (int c = 0; c < nb_clusters; c++)
+    {
+      std::cout << "cluster " << c << " has " << cluster_components[c].size() << " components\n";
+      std::cout << "sizes: ";
+      for (int i = 0; i < cluster_components[c].size(); i++)
+        std::cout << cluster_components[c][i].size() << " / " << num_vertices(pmesh) << " ";
+      std::cout << "\n";
+    }
+
     // loop over clusters
     for (int c = 0; c < nb_clusters; c++)
     {
       if (cluster_components[c].size() <= 1) continue; // only one component, no need to do anything
+      nb_disconnected++;
       int max_component_size = 0;
       int max_component_index = -1;
       for (int component_i = 0; component_i < cluster_components[c].size(); component_i++)
@@ -399,7 +425,6 @@ void acvd_simplification(
       {
         if (component_i != max_component_index)
         {
-          nb_disconnected++;
           for (Vertex_descriptor vd : cluster_components[c][component_i])
           {
             put(vertex_cluster_pmap, vd, -1);
@@ -422,9 +447,7 @@ void acvd_simplification(
     }
 
     std::cout << "nb_disconnected: " << nb_disconnected << "\n";
-
-    clusters_edges_active.swap(clusters_edges_new);
-  } while (nb_modifications > 0 || nb_disconnected > 0);
+  } while (nb_disconnected > 0);
 
   // TODO: Move out the disconnected clustering check (& cleaning)
 

@@ -21,9 +21,9 @@ int main(int argc, char* argv[])
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
     CGAL::data_file_path(argv[1]) :
-    CGAL::data_file_path("meshes/better_dragon.obj");
+    CGAL::data_file_path("meshes/cactus.off");
 
-  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 98;
+  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 20;
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
