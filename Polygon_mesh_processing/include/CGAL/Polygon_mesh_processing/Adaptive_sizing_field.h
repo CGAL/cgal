@@ -213,8 +213,8 @@ private:
     for(vertex_descriptor v : vertices(face_graph))
     {
       auto vertex_curv = get(vertex_curvature_map, v);
-      const FT max_absolute_curv = CGAL::max(CGAL::abs(vertex_curv.max_curvature)
-                                           , CGAL::abs(vertex_curv.min_curvature));
+      const FT max_absolute_curv = (CGAL::max)(CGAL::abs(vertex_curv.max_curvature)
+                                             , CGAL::abs(vertex_curv.min_curvature));
       const FT vertex_size_sq = 6 * tol / max_absolute_curv - 3 * CGAL::square(tol);
       if (vertex_size_sq > CGAL::square(m_long))
       {
