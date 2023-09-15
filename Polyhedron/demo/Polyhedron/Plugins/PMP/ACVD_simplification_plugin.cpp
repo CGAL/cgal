@@ -5,7 +5,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
 #include "Scene_polyhedron_selection_item.h"
-#include "ui_ACVD_simplification_widget.h"
+#include "ui_ACVD_simplification_dialog.h"
 
 #include "SMesh_type.h"
 typedef Scene_surface_mesh_item Scene_facegraph_item;
@@ -47,50 +47,40 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionACVD; }
 
 
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     mw = mainWindow;
     scene = scene_interface;
-    messages = m;
     actionACVD = new QAction(tr(
                                 "ACVD Simplification"
                                 ), mw);
     //actionACVD->setProperty("subMenuName", "");
     if (actionACVD)
       connect(actionACVD, SIGNAL(triggered()), this, SLOT(acvd_action()));
-
-    dock_widget = new QDockWidget(
-          "ACVD Simplification", mw);
-
-    dock_widget->setVisible(false);
-
-    ui_widget.setupUi(dock_widget);
-    ui_widget.nb_clusters_spin_box->setMinimum(10);
-    ui_widget.nb_clusters_spin_box->setMaximum(1000000);
-    // get number of vertices of the mesh
-    Scene_facegraph_item* item = getSelectedItem<Scene_facegraph_item>();
-    if(!item) { return; }
-    // set default number of clusters to 5% of the number of vertices
-    ui_widget.nb_clusters_spin_box->setValue(max(item->face_graph()->number_of_faces() / 20, (unsigned int)10));
-
-    addDockWidget(dock_widget);
-    dock_widget->setWindowTitle(tr(
-                                  "ACVD Simplification"
-                                  ));
-
-    connect(ui_widget.ACVD_button,  SIGNAL(clicked()), this, SLOT(on_ACVD_button_clicked()));
-  }
-  virtual void closure()
-  {
-    dock_widget->hide();
   }
 
 public Q_SLOTS:
   void acvd_action() {
-    dock_widget->show();
-    dock_widget->raise();
-  }
 
-  void on_ACVD_button_clicked() {
+    // Create dialog box
+    QDialog dialog(mw);
+    ui.setupUi(&dialog);
+
+    ui.nb_clusters_spin_box->setMinimum(10);
+    ui.nb_clusters_spin_box->setMaximum(1000000);
+    // get number of vertices of the mesh
+    Scene_facegraph_item* item = getSelectedItem<Scene_facegraph_item>();
+    if(!item) { return; }
+    // set default number of clusters to 5% of the number of vertices
+    ui.nb_clusters_spin_box->setValue(max(item->face_graph()->number_of_faces() / 20, (unsigned int)10));
+
+    int i = dialog.exec();
+    if (i == QDialog::Rejected)
+    {
+      std::cout << "Remeshing aborted" << std::endl;
+      return;
+    }
+
+
     /*typename FaceGraphItem::Face_graph* graph = item->face_graph();
     if(!graph) return;
     QElapsedTimer time;
@@ -109,12 +99,8 @@ public Q_SLOTS:
   }
 
 private:
-  Messages_interface* messages;
   QAction* actionACVD;
-
-  QDockWidget* dock_widget;
-  Ui::ACVD_Simplification ui_widget;
-
+  Ui::ACVDDialog ui;
 }; // end Polyhedron_demo_acvd_simplification_plugin
 
 // Q_EXPORT_PLUGIN2(Polyhedron_demo_acvd_simplification_plugin, Polyhedron_demo_acvd_simplification_plugin)
