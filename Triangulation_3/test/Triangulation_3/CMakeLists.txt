@@ -64,9 +64,15 @@ target_compile_features(test_CDT_3_insert_constrained_edge_from_OFF_file PUBLIC 
 target_compile_definitions(test_CDT_3_insert_constrained_edge_from_OFF_file PUBLIC CGAL_TEST_CDT_3_USE_CDT)
 cgal_add_test(test_CDT_3_insert_constrained_edge_from_OFF_file)
 
-function(CGAL_add_cdt3_from_off_test data_name)
-  add_test(NAME "execution   of  cdt_3_from_off ${data_name}" COMMAND cdt_3_from_off ${CGAL_DATA_DIR}/meshes/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
+function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
+  add_test(NAME "execution   of  cdt_3_from_off ${data_name}" COMMAND cdt_3_from_off ${data_dir}/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
   cgal_setup_test_properties("execution   of  cdt_3_from_off ${data_name}" cdt_3_from_off)
+  add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}" COMMAND cdt_3_from_off --merge-facets ${data_dir}/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
+  cgal_setup_test_properties("execution   of  cdt_3_from_off --merge-facets ${data_name}" cdt_3_from_off)
+endfunction()
+
+function(CGAL_add_cdt3_from_off_test data_name)
+  CGAL_add_cdt3_from_off_test_aux(${data_name} ${CGAL_DATA_DIR}/meshes)
 endfunction()
 
 CGAL_add_cdt3_from_off_test("cube")
@@ -78,8 +84,7 @@ CGAL_add_cdt3_from_off_test("cheese-selection")
 CGAL_add_cdt3_from_off_test("cheese-selection-2")
 
 function(CGAL_add_cdt3_from_local_off_test data_name)
-  add_test(NAME "execution   of  cdt_3_from_off ${data_name}" COMMAND cdt_3_from_off ${CMAKE_CURRENT_SOURCE_DIR}/data/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
-  cgal_setup_test_properties("execution   of  cdt_3_from_off ${data_name}" cdt_3_from_off)
+  CGAL_add_cdt3_from_off_test_aux(${data_name} ${CMAKE_CURRENT_SOURCE_DIR}/data)
 endfunction()
 
 CGAL_add_cdt3_from_local_off_test(cheese18)
