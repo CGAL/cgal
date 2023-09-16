@@ -40,7 +40,7 @@ namespace CGAL {
             class InputNormalMap>
   struct Efficient_RANSAC_traits {
     ///
-    typedef typename Gt GeomTraits;
+    typedef Gt GeomTraits;
     ///
     typedef typename Gt::FT FT;
     ///
