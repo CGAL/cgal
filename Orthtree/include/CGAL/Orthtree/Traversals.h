@@ -37,7 +37,7 @@ namespace Orthtrees {
 
   A preorder traversal starts from the root towards the leaves.
 
-  \cgalModels `OrthtreeTraversal`
+  \cgalModels{OrthtreeTraversal}
  */
 template <typename Tree>
 struct Preorder_traversal {
@@ -77,7 +77,7 @@ public:
 
   A postorder traversal starts from the leaves towards the root.
 
-  \cgalModels `OrthtreeTraversal`
+  \cgalModels{OrthtreeTraversal}
  */
 template <typename Tree>
 struct Postorder_traversal {
@@ -104,7 +104,7 @@ public:
 
   All non-leave nodes are ignored.
 
-  \cgalModels `OrthtreeTraversal`
+  \cgalModels{OrthtreeTraversal}
  */
 template <typename Tree>
 struct Leaves_traversal {
@@ -139,7 +139,7 @@ public:
   All trees at another depth are ignored. If the selected depth is
   higher than the maximum depth of the orthtree, no node will be traversed.
 
-  \cgalModels `OrthtreeTraversal`
+  \cgalModels{OrthtreeTraversal}
  */
 template <typename Tree>
 struct Level_traversal {

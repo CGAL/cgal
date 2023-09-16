@@ -12,7 +12,9 @@
 
   \cgalRefines{OrthtreeTraits}
 
-  \cgalHasModel `CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>}
+  \cgalHasModelsEnd
 */
 class CollectionPartitioningOrthtreeTraits {
 public:

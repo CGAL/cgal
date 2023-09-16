@@ -92,7 +92,7 @@ namespace internal {
 The function object class `Mesh_edge_criteria_3` is a model of `MeshEdgeCriteria_3`. It
 provides a bound for the size criterion.
 
-\cgalModels `MeshEdgeCriteria_3`
+\cgalModels{MeshEdgeCriteria_3}
 
 \sa `MeshCriteria_3`
 \sa `CGAL::Mesh_criteria_3<Tr>`

@@ -10,7 +10,7 @@ geometric traits class of interpolation methods applied on a
 bivariate function over a two-dimensional domain. The traits class
 is templated by a kernel class `K`.
 
-\cgalModels `InterpolationTraits`
+\cgalModels{InterpolationTraits}
 
 \sa `InterpolationTraits`
 \sa `GradientFittingTraits`

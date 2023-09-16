@@ -10,7 +10,7 @@ Given a property map associating a key to a point, the class `Convex_hull_traits
 to compute the sequence of keys for which the associated points form a convex hull,
 performing the predicates of the base traits class on the points associated to the keys.
 
-\cgalModels `ConvexHullTraits_2`
+\cgalModels{ConvexHullTraits_2}
 
 \sa `CGAL::Convex_hull_constructive_traits_2<R>`
 \sa `CGAL::Projection_traits_xy_3<K>`

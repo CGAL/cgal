@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
   int hole_n = (argc > 1) ? std::atoi(argv[1]) : 2;
   int hole_nv = (argc > 2) ? std::atoi(argv[2]) : 10;
-  int seed = (argc > 3) ? std::atoi(argv[3]) : std::time(nullptr);
+  int seed = (argc > 3) ? std::atoi(argv[3]) : CGAL::get_default_random().get_seed();
 
   CGAL::Random rnd(seed);
 

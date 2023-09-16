@@ -100,7 +100,7 @@ public:
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
-\cgalModels `BarycentricCoordinates_2`
+\cgalModels{BarycentricCoordinates_2}
 
 */
 template<class Traits>

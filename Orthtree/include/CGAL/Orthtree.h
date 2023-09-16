@@ -198,9 +198,7 @@ public:
     and is rearranged by the `Orthtree`. Altering the point range
     after creating the orthtree might leave it in an invalid state.
 
-    \param point_range input point range.
-    \param point_map property map to access the input points.
-    \param enlarge_ratio ratio to which the bounding box should be enlarged.
+
     \param traits the traits object.
   */
   explicit Orthtree(Traits traits) :

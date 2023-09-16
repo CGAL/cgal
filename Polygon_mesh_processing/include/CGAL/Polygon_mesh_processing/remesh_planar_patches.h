@@ -1019,10 +1019,11 @@ void propagate_corner_status(
 template <typename Kernel,
           typename TriangleMeshRange,
           typename MeshMap,
-          typename VertexPointMap>
+          typename VertexPointMap,
+          typename TagFunction>
 bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
                                                  MeshMap mesh_map,
-                                                 double coplanar_cos_threshold,
+                                                 const TagFunction& tag_function,
                                                  const std::vector<VertexPointMap>& vpms,
                                                  bool do_not_triangulate_faces)
 {
@@ -1033,7 +1034,6 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
-  CGAL_assertion(coplanar_cos_threshold<0);
   typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
 
   // declare and init all property maps
@@ -1128,13 +1128,11 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
       put(face_cc_ids_maps[mesh_id], f, -1);
 
     if (!mesh_has_non_manifold_vertices[mesh_id])
-      nb_corners_and_nb_cc_all[mesh_id] =
-        tag_corners_and_constrained_edges<Kernel>(tm,
-                                                  coplanar_cos_threshold,
-                                                  vertex_corner_id_maps[mesh_id],
-                                                  edge_is_constrained_maps[mesh_id],
-                                                  face_cc_ids_maps[mesh_id],
-                                                  vpms[mesh_id]);
+      nb_corners_and_nb_cc_all[mesh_id] = tag_function(tm,
+                                                       vertex_corner_id_maps[mesh_id],
+                                                       edge_is_constrained_maps[mesh_id],
+                                                       face_cc_ids_maps[mesh_id],
+                                                       vpms[mesh_id]);
     else
     {
       nb_corners_and_nb_cc_all[mesh_id]={0,1};
@@ -1272,6 +1270,39 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
   }
 
   return res;
+}
+
+template <typename Kernel,
+          typename TriangleMeshRange,
+          typename MeshMap,
+          typename VertexPointMap>
+bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
+                                                 MeshMap mesh_map,
+                                                 double coplanar_cos_threshold,
+                                                 const std::vector<VertexPointMap>& vpms,
+                                                 bool do_not_triangulate_faces)
+{
+  typedef typename boost::property_traits<MeshMap>::value_type Triangle_mesh;
+  auto tag_function = [coplanar_cos_threshold](Triangle_mesh& tm,
+                                               typename boost::property_map<Triangle_mesh, CGAL::dynamic_vertex_property_t<std::size_t> >::type vertex_corner_id,
+                                               typename boost::property_map<Triangle_mesh, CGAL::dynamic_edge_property_t<bool> >::type edge_is_constrained,
+                                               typename boost::property_map<Triangle_mesh, CGAL::dynamic_face_property_t<std::size_t> >::type face_cc_ids,
+                                               VertexPointMap vpm)
+  {
+    return tag_corners_and_constrained_edges<Kernel>(tm,
+                                                     coplanar_cos_threshold,
+                                                     vertex_corner_id,
+                                                     edge_is_constrained,
+                                                     face_cc_ids,
+                                                     vpm);
+  };
+
+  return decimate_meshes_with_common_interfaces_impl<Kernel>(meshes,
+                                                             mesh_map,
+                                                             tag_function,
+                                                             vpms,
+                                                             do_not_triangulate_faces);
+
 }
 
 } //end of namespace Planar_segmentation

@@ -10,7 +10,7 @@ functionality, such as handles, iterators, and circulators.
 Specifically, for a `key` value the expression `&*key` must
 return a unique address.
 
-\cgalModels `UniqueHashFunction`
+\cgalModels{UniqueHashFunction}
 
 \sa `CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>`
 

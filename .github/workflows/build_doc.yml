@@ -60,7 +60,7 @@ jobs:
               content: 'rocket'
             })
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         name: "checkout branch"
         if: steps.get_round.outputs.result != 'stop'
         with:

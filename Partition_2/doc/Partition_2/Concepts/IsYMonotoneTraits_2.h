@@ -6,8 +6,10 @@ Requirements of a traits class to be
 used with the function `is_y_monotone_2()` that tests whether a sequence of
 2D points defines a \f$ y\f$-monotone polygon or not.
 
-\cgalHasModel `CGAL::Partition_traits_2<R>`
-\cgalHasModel `CGAL::Kernel_traits_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Partition_traits_2<R>}
+\cgalHasModels{CGAL::Kernel_traits_2}
+\cgalHasModelsEnd
 
 \sa `CGAL::Is_y_monotone_2<Traits>`
 \sa `CGAL::y_monotone_partition_2()`

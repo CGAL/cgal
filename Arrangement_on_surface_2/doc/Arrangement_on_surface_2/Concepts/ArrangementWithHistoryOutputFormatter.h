@@ -9,7 +9,9 @@ specific format.
 
 \cgalRefines{ArrangementOutputFormatter}
 
-\cgalHasModel `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Arr_with_history_text_formatter<ArrFormatter>}
+\cgalHasModelsEnd
 
 */
 

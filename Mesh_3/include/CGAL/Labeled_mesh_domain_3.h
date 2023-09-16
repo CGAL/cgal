@@ -340,7 +340,7 @@ The function type can be any model of the concept `Callable` compatible with the
 `Subdomain_index(const %Point_3&)`: it can be a function, a function object, a lambda expression...
 that takes a `%Point_3` as argument, and returns a type convertible to `Subdomain_index`.
 
-\cgalModels `MeshDomain_3`
+\cgalModels{MeshDomain_3}
 
 \sa `CGAL::Implicit_multi_domain_to_labeling_function_wrapper`
 \sa `CGAL::make_mesh_3()`
