@@ -491,18 +491,20 @@ public:
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
 
   CGAL::Named_function_parameters
-  <Kernel,
-   CGAL::internal_np::geom_traits_t,
-   CGAL::Named_function_parameters
-   <typename Base::template Property_map<Vector>,
-    CGAL::internal_np::normal_t,
-    CGAL::Named_function_parameters
-    <typename Base::template Property_map<Point>,
-     CGAL::internal_np::point_t> > >
-  inline parameters() const
-  {
+    <Kernel,
+      CGAL::internal_np::geom_traits_t,
+      CGAL::Named_function_parameters<
+        typename Base::template Property_map<Vector>,
+        CGAL::internal_np::normal_t,
+        CGAL::Named_function_parameters<
+          typename Base::template Property_map<Point>,
+          CGAL::internal_np::point_t
+        >
+      >
+    >
+  inline parameters() const {
     return CGAL::parameters::point_map (this->m_points).
-      normal_map (this->m_normals).
+      normal_map (this->m_normals.value()).
       geom_traits (Kernel());
   }
 

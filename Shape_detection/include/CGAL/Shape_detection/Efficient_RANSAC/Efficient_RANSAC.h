@@ -253,12 +253,12 @@ public:
   /*!
     Retrieves the point property map.
   */
-  const Point_map &point_map() const { return m_point_pmap; }
+  const Point_map &point_map() const { return *m_point_pmap; }
 
   /*!
     Retrieves the normal property map.
   */
-  const Normal_map &normal() const { return m_normal_pmap; }
+  const Normal_map &normal() const { return *m_normal_pmap; }
 
   Input_iterator input_iterator_first() const {
     return m_input_iterator_first;
@@ -361,13 +361,13 @@ public:
         m_direct_octrees[s] = new Direct_octree(
                 m_traits, last + 1,
                 last + subsetSize + 1,
-                m_point_pmap,
+                *m_point_pmap,
                 remainingPoints - subsetSize);
       } else
         m_direct_octrees[0] = new Direct_octree(
                 m_traits, m_input_iterator_first,
                 m_input_iterator_first + (subsetSize),
-                m_point_pmap,
+                *m_point_pmap,
                 0);
 
       m_available_octree_sizes[s] = subsetSize;
@@ -378,7 +378,7 @@ public:
 
     m_global_octree = new Indexed_octree(
             m_traits, m_input_iterator_first, m_input_iterator_beyond,
-            m_point_pmap
+            *m_point_pmap
     );
     m_global_octree->refine(m_options.cluster_epsilon);
 
@@ -574,14 +574,14 @@ public:
                     static_cast<unsigned int>(m_num_available_points));
                 while (m_shape_index[first_sample] != -1);
 
-                done = drawSamplesFromCellContainingPoint
-                  (m_global_octree,
-                   get(m_point_pmap,
-                       *(m_input_iterator_first + first_sample)),
-                   select_random_octree_level(),
-                   indices,
-                   m_shape_index,
-                   m_required_samples);
+                done = drawSamplesFromCellContainingPoint(
+                  m_global_octree,
+                  get(*m_point_pmap, *(m_input_iterator_first + first_sample)),
+                  select_random_octree_level(),
+                  indices,
+                  m_shape_index,
+                  m_required_samples
+                );
 
                 if (callback && !callback(num_invalid / double(m_num_total_points))) {
                   clear(num_invalid, candidates);
@@ -605,8 +605,8 @@ public:
                 p->compute(indices,
                            m_input_iterator_first,
                            m_traits,
-                           m_point_pmap,
-                           m_normal_pmap,
+                           *m_point_pmap,
+                           *m_normal_pmap,
                            m_options.epsilon,
                            m_options.normal_threshold);
 
@@ -1202,8 +1202,8 @@ private:
   // iterators of input data
   bool m_valid_iterators;
   Input_iterator m_input_iterator_first, m_input_iterator_beyond;
-  Point_map m_point_pmap;
-  Normal_map m_normal_pmap;
+  std::optional<Point_map> m_point_pmap;
+  std::optional<Normal_map> m_normal_pmap;
 };
 
 
