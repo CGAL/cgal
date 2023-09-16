@@ -1272,9 +1272,11 @@ public:
     // todo: this should compress the array
   }
 
-//  //undocumented convenience function that allows to get old-index->new-index information
-//  template <typename Visitor>
-//  void collect_garbage(Visitor& visitor);
+  // undocumented convenience function that allows to get old-index->new-index information
+  template <typename Visitor>
+  void collect_garbage(Visitor& visitor) {
+    // todo: this should compress the array and remap indices
+  }
 
   /// controls the recycling or not of simplices previously marked as removed
   /// upon addition of new elements.
