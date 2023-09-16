@@ -1904,8 +1904,8 @@ public:
   /// freed.
   template <class I, class T>
   void remove_property_map(Property_map<I, T> p) {
-    // todo: this is never used, but it should probably still work
     // Maybe this could be replaced with removal by name?
+    const_cast<Surface_mesh<P>*>(this)->get_property_container<I>().template remove_property(p.array());
   }
 
 
