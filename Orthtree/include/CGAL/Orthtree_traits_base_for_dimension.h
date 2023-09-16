@@ -119,7 +119,6 @@ template <typename K>
 struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
   /// \name Types
   /// @{
-  using GeomTraits = K;
   using Dimension = Dimension_tag<3>;
   using FT = typename K::FT;
   using Point_d = typename K::Point_3;
