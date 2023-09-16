@@ -1018,7 +1018,7 @@ public:
     std::vector<std::string> prop = m_base.properties();
     for (std::size_t i = 0; i < prop.size(); ++ i)
       oss << " * \"" << prop[i] << "\" property of type "
-          << CGAL::demangle(m_base.get_type(prop[i]).name()) << std::endl;
+          << CGAL::demangle(m_base.property_type(prop[i]).name()) << std::endl;
 
     return oss.str();
   }
