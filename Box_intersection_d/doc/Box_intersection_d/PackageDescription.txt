@@ -2,6 +2,9 @@
 /// \defgroup PkgBoxIntersectionDConcepts Concepts
 /// \ingroup PkgBoxIntersectionDRef
 
+/// \defgroup PkgBoxIntersectionDEnums Rnumerations
+/// \ingroup PkgBoxIntersectionDRef
+
 /// \defgroup PkgBoxIntersectionDClasses Classes
 /// \ingroup PkgBoxIntersectionDRef
 
@@ -56,4 +59,3 @@
 - `CGAL::box_self_intersection_all_pairs_d`
 
 */
-
