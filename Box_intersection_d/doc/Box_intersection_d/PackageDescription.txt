@@ -2,7 +2,7 @@
 /// \defgroup PkgBoxIntersectionDConcepts Concepts
 /// \ingroup PkgBoxIntersectionDRef
 
-/// \defgroup PkgBoxIntersectionDEnums Rnumerations
+/// \defgroup PkgBoxIntersectionDEnums Enumerations
 /// \ingroup PkgBoxIntersectionDRef
 
 /// \defgroup PkgBoxIntersectionDClasses Classes
