@@ -42,6 +42,11 @@
 
 \cgalClassifedRefPages
 
+\cgalCRPSection{Enumerations}
+- `CGAL::Box_intersection_d::Setting`
+- `CGAL::Box_intersection_d::Topology`
+
+
 \cgalCRPSection{Concepts}
 - `BoxIntersectionBox_d`
 - `BoxIntersectionTraits_d`
