@@ -48,7 +48,7 @@ namespace Point_set {
     \tparam NormalMap
     a model of `ReadablePropertyMap` whose key type is `Item` and value type is `Kernel::Vector_3`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,
@@ -252,13 +252,10 @@ namespace Point_set {
       \param region
       inlier items of the region
 
-      The first parameter is not used in this implementation.
-
       \return Boolean `true` or `false`
 
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region& region) const {
 

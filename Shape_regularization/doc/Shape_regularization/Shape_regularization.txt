@@ -456,12 +456,12 @@ This framework follows Section 3 from \cgalCite{cgal:bl-kippi-18}, however the a
 from that paper was extended and generalized. The idea behind the main algorithm is
 to minimize the energy
 
-<center>\f$U(\boldsymbol{x}) = (1 - \lambda) D(\boldsymbol{x}) + \lambda V(\boldsymbol{x})\f$,</center>
+<center>\f$U(x) = (1 - \lambda) D(x) + \lambda V(x)\f$,</center>
 
-where \f$\boldsymbol{x} = (x_1, \dots, x_n)\f$ is a configuration of perturbations operated
-on \f$n\f$ input items, \f$D(\boldsymbol{x})\f$ and \f$V(\boldsymbol{x})\f$ represent a data
+where \f$x = (x_1, \dots, x_n)\f$ is a configuration of perturbations operated
+on \f$n\f$ input items, \f$D(x)\f$ and \f$V(x)\f$ represent a data
 term and pairwise potential respectively, and \f$\lambda \in [0, 1]\f$ is a parameter weighting
-these two terms. By setting up the correct types of \f$D(\boldsymbol{x})\f$ and \f$V(\boldsymbol{x})\f$,
+these two terms. By setting up the correct types of \f$D(x)\f$ and \f$V(x)\f$,
 the problem can be reformulated into a quadratic optimization problem with \f$(n + m)\f$ variables
 and \f$2(n + m)\f$ linear constraints, where \f$m\f$ is the number of unique pairs formed by connecting
 an item to one of its closest neighbors. Let us explain how it all works when the input items
@@ -475,7 +475,7 @@ segment and \f$j\f$ is the index of the jth segment is inserted in the graph whe
 This way each pair is inserted only once. The neighbors are found via the \ref QP_Regularization_Segments_Delaunay
 "Delaunay Neighbor Query".
 
-When we have the graph, we fill in the terms \f$D(\boldsymbol{x})\f$ and \f$V(\boldsymbol{x})\f$
+When we have the graph, we fill in the terms \f$D(x)\f$ and \f$V(x)\f$
 via the concept `RegularizationType`. First, we obtain a maximum perturbation bound for each segment
 via the method `RegularizationType::bound()`. Since we want to rotate segments, we return here
 the maximum allowed angle deviation for each segment with respect to its original orientation, lets

@@ -41,7 +41,7 @@ public:
 };
 
 
-struct Visitor
+struct Visitor : public CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor<Surface_mesh>
 {
    typedef std::unordered_map<face_descriptor,face_descriptor> Container;
 

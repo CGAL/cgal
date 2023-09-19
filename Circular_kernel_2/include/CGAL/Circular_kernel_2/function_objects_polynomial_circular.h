@@ -308,7 +308,7 @@ namespace CircularFunctors {
     operator()(const Circular_arc_2 &A, OutputIterator res) const
       {
         typedef std::pair<bool, bool>                  relat_pos;
-        typedef std::pair< CGAL::Object, relat_pos>    Obj_descr_2;
+        typedef std::pair< Circular_arc_2, relat_pos>    Obj_descr_2;
         std::vector<Obj_descr_2> vec;
 
         CircularFunctors::advanced_make_xy_monotone<CK> (A, std::back_inserter(vec));

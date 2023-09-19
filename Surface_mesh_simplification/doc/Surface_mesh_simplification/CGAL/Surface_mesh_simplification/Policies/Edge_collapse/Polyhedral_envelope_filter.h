@@ -13,7 +13,7 @@ if any triangle in the profile is not inside the polyhedral envelope, in this or
 \tparam Filter must be a model of the concept `PlacementFilter`.  It defaults to a class that does
 not filter any placement.
 
-\cgalModels `PlacementFilter`
+\cgalModels{PlacementFilter}
 
 \sa `Polyhedral_envelope`
 
@@ -50,8 +50,8 @@ public:
   returns the placement, if it does not get filtered by the wrapped filter,
   and if all triangles in the profile are inside the polyhedral envelope.
   */
-  boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile,
-                                                           boost::optional<typename Profile::Point> op) const;
+  std::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile,
+                                                           std::optional<typename Profile::Point> op) const;
 
   /// @}
 

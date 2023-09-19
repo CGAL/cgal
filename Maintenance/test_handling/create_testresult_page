@@ -617,7 +617,8 @@ sub print_little_header(){
 <body>
 <h1>Test Results of ${release_name}
 <a id="permalink" href="results-${release_version}.shtml">permalink</a>
-<a id="jump_to_results" href="#testresults">jump to results</a></h1>
+<a id="jump_to_results" href="#testresults">jump to results</a>
+<a id="compare" href="comparison/diff_testsuites.html?newTest=${release_name}">compare results...</a></h1>
 <!--#include virtual="versions.inc"-->
 <p>The results of the tests are presented in a table
 ('y' = success, 'w' = warning, 't' = third party warning, 'o' = timeout, 'n' = failure, 'r' = a requirement is not found),

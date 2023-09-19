@@ -119,6 +119,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::fair()`
 - `CGAL::Polygon_mesh_processing::triangulate_face()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
+- `CGAL::Polygon_mesh_processing::triangulate_polygons()`
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()` \endlink
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
@@ -152,6 +153,8 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 \cgalCRPSection{Intersection Functions}
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
+- `CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect()`
+- `CGAL::Polygon_mesh_processing::triangle_soup_self_intersections()`
 - \link PMP_intersection_grp `CGAL::Polygon_mesh_processing::do_intersect()` \endlink
 - `CGAL::Polygon_mesh_processing::intersecting_meshes()`
 

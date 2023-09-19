@@ -38,7 +38,7 @@ int main(int argc, char** argv)
   DToS2 dtos(points.begin(), points.end(), traits);
 
   std::cout << dtos.number_of_vertices() << " vertices" << std::endl;
-  std::cout << dtos.number_of_faces() << " solid faces" << std::endl;
+  std::cout << dtos.number_of_solid_faces() << " solid faces" << std::endl;
 
   CGAL::IO::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
 

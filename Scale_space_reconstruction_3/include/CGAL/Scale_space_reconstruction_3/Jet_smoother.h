@@ -32,7 +32,7 @@ namespace Scale_space_reconstruction_3
  *  %Smoother for scale space reconstruction based on
  *  `CGAL::jet_smooth_point_set()`.
  *
- *  \cgalModels CGAL::Scale_space_reconstruction_3::Smoother
+ *  \cgalModels{CGAL::Scale_space_reconstruction_3::Smoother}
  *
  *  \tparam Geom_traits geometric traits class. It must be a
  *  model of `DelaunayTriangulationTraits_3`. It must have a

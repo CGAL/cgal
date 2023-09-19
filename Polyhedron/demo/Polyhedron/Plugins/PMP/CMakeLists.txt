@@ -56,12 +56,12 @@ if(TARGET CGAL::Eigen3_support)
 
     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
-        compilation_of__extrude_plugin
-        compilation_of__fairing_plugin
+        "compilation of  extrude_plugin"
+        "compilation of  fairing_plugin"
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
       set_tests_properties(
-      compilation_of__hole_filling_plugin
-      compilation_of__smoothing_plugin
+      "compilation of  hole_filling_plugin"
+      "compilation of  smoothing_plugin"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
   else()
@@ -105,7 +105,7 @@ add_custom_target(self_intersection_plugin)
 add_dependencies(self_intersection_plugin selection_plugin)
 
 polyhedron_demo_plugin(triangulate_facets_plugin Triangulate_facets_plugin KEYWORDS PMP)
-target_link_libraries(triangulate_facets_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+target_link_libraries(triangulate_facets_plugin PUBLIC scene_surface_mesh_item scene_selection_item scene_polygon_soup_item)
 
 polyhedron_demo_plugin(corefinement_plugin Corefinement_plugin KEYWORDS PMP)
 target_link_libraries(corefinement_plugin PUBLIC scene_surface_mesh_item)
@@ -161,13 +161,13 @@ target_link_libraries(
 
 if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(
-    compilation_of__join_and_split_plugin
-    compilation_of__selection_plugin
-    compilation_of__triangulate_facets_plugin
-    compilation_of__isotropic_remeshing_plugin
-    compilation_of__remesh_planar_patches_plugin
-    compilation_of__random_perturbation_plugin
-    compilation_of__engrave_text_plugin
-    compilation_of__degenerated_faces_plugin
+    "compilation of  join_and_split_plugin"
+    "compilation of  selection_plugin"
+    "compilation of  triangulate_facets_plugin"
+    "compilation of  isotropic_remeshing_plugin"
+    "compilation of  remesh_planar_patches_plugin"
+    "compilation of  random_perturbation_plugin"
+    "compilation of  engrave_text_plugin"
+    "compilation of  degenerated_faces_plugin"
     PROPERTIES RESOURCE_LOCK Selection_test_resources)
 endif()

@@ -18,7 +18,6 @@
 
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <boost/operators.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/logical.hpp>
@@ -34,6 +33,8 @@
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/tss.h>
 #include <CGAL/type_traits.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
+
 
 #include<type_traits>
 
@@ -383,7 +384,7 @@ public :
   // Also check that ET and AT are constructible from T?
   template<class T>
   Lazy_exact_nt (T i, std::enable_if_t<boost::mpl::and_<
-      boost::mpl::or_<boost::is_arithmetic<T>, std::is_enum<T> >,
+      boost::mpl::or_<std::is_arithmetic<T>, std::is_enum<T> >,
       boost::mpl::not_<std::is_same<T,ET> > >::value,void*> = 0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
@@ -944,9 +945,9 @@ struct Div_mod_selector {
     void operator()( const NT1& x, const NT2& y,
                      NT& q,
                      NT& r ) const {
-      CGAL_static_assertion((::std::is_same<
+      static_assert(::std::is_same<
         typename Coercion_traits< NT1, NT2 >::Type, NT
-                                              >::value));
+                                              >::value);
 
       typename Coercion_traits< NT1, NT2 >::Cast cast;
       operator()( cast(x), cast(y), q, r );
@@ -1029,8 +1030,8 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
   : public INTERN_RET::Real_embeddable_traits_base< Lazy_exact_nt<ET> , CGAL::Tag_true > {
 
   // Every type ET of Lazy_exact_nt<ET> has to be real embeddable.
-  CGAL_static_assertion((::std::is_same< typename Real_embeddable_traits< ET >
-                                ::Is_real_embeddable, Tag_true >::value));
+  static_assert(::std::is_same< typename Real_embeddable_traits< ET >
+                                ::Is_real_embeddable, Tag_true >::value);
 
   public:
     typedef Lazy_exact_nt<ET> Type;
@@ -1427,7 +1428,24 @@ class Modular_traits<Lazy_exact_nt<ET> >
 #undef CGAL_int
 #undef CGAL_To_interval
 
-} //namespace CGAL
+namespace internal {
+
+template < typename ET >
+struct Exact_field_selector<Lazy_exact_nt<ET> >
+: Exact_field_selector<ET>
+{
+  // We have a choice here :
+  // - using ET gets rid of the DAG computation as well as redoing the interval
+  // - using Lazy_exact_nt<ET> might use sharper intervals.
+  // typedef ET  Type;
+  // typedef Lazy_exact_nt<ET>  Type;
+};
+template < typename ET >
+struct Exact_ring_selector<Lazy_exact_nt<ET> >
+: Exact_ring_selector<ET>
+{};
+
+} } //namespace CGAL::internal
 
 namespace Eigen {
   template<class> struct NumTraits;

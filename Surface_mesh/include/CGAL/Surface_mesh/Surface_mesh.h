@@ -34,7 +34,6 @@
 #include <CGAL/property_map.h>
 
 #include <boost/cstdint.hpp>
-#include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
 #include <algorithm>
@@ -60,7 +59,7 @@ namespace CGAL {
     class SM_Index
     {
     public:
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
@@ -239,7 +238,7 @@ namespace CGAL {
     class SM_Edge_index
     {
     public:
-        typedef boost::uint32_t size_type;
+        typedef std::uint32_t size_type;
 
         SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
 
@@ -326,7 +325,7 @@ namespace CGAL {
   /// @tparam P The type of the \em point property of a vertex. There is no requirement on `P`,
   ///         besides being default constructible and assignable.
   ///         In typical use cases it will be a 2D or 3D point type.
-  /// \cgalModels `MutableFaceGraph` and `FaceListGraph`
+  /// \cgalModels{MutableFaceGraph,FaceListGraph}
   ///
   /// \sa \ref PkgBGLConcepts "Graph Concepts"
 
@@ -364,7 +363,7 @@ public:
     typedef P Point;
 
     /// The type used to represent an index.
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
 
     ///@}
 
@@ -376,9 +375,7 @@ public:
 #ifdef DOXYGEN_RUNNING
 
     /// This class represents a vertex.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
+    /// \cgalModels{Index,LessThanComparable,Hashable}
     /// \sa `Halfedge_index`, `Edge_index`, `Face_index`
     class Vertex_index
     {
@@ -399,9 +396,7 @@ public:
 #ifdef DOXYGEN_RUNNING
 
     /// This class represents a halfedge.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
+    /// \cgalModels{Index,LessThanComparable,Hashable}
     /// \sa `Vertex_index`, `Edge_index`, `Face_index`
     class Halfedge_index
     {
@@ -423,9 +418,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
     /// This class represents a face
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
+    /// \cgalModels{Index,LessThanComparable,Hashable}
     /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
     class Face_index
     {
@@ -445,9 +438,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
     /// This class represents an edge.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
+    /// \cgalModels{Index,LessThanComparable,Hashable}
     /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
     class Edge_index
     {
@@ -1084,7 +1075,7 @@ public:
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
     {
-        boost::array<Vertex_index, 3>
+        std::array<Vertex_index, 3>
             v = {{v0, v1, v2}};
         return add_face(v);
     }
@@ -1093,7 +1084,7 @@ public:
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2, Vertex_index v3)
     {
-        boost::array<Vertex_index, 4>
+        std::array<Vertex_index, 4>
             v = {{v0, v1, v2, v3}};
         return add_face(v);
     }

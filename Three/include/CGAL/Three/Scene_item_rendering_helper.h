@@ -41,7 +41,7 @@ struct Point_container;
 //! be rendered.
 //!
 class DEMO_FRAMEWORK_EXPORT Scene_item_rendering_helper
-    :public Scene_item
+  : public Scene_item
 {
   Q_OBJECT
 public:
@@ -100,11 +100,11 @@ public:
   //!
   //! \brief getEdgeContainer returns the `id`th `Edge_container`.
   //!
-  CGAL::Three::Edge_container* getEdgeContainer(std::size_t id)const;
+  CGAL::Three::Edge_container* getEdgeContainer(std::size_t id) const;
   //!
   //! \brief getPointContainer returns the `id`th `Point_container`.
   //!
-  CGAL::Three::Point_container* getPointContainer(std::size_t id)const;
+  CGAL::Three::Point_container* getPointContainer(std::size_t id) const;
 
   //!
   //! \brief setTriangleContainer sets the `id`th `Triangle_container` to `tc`.
@@ -134,7 +134,7 @@ public:
   //! decreasingly.
   //!
   void setPointContainer(std::size_t id,
-                        Point_container* tc);
+                         Point_container* tc);
 
   //!
   //! \brief setBuffersFilled specifies if the data should be re-computed.
@@ -149,13 +149,13 @@ public:
   //! \brief getBuffersFilled returns `false` if the item rendering data needs to be re-computed.,
   //! `true` otherwise.
   //! \see `setBuffersFilled()`
-  bool getBuffersFilled()const;
+  bool getBuffersFilled() const;
 
   //!
   //! \brief getBuffersInit returns true if the `Vao`s of `viewer` are ready
   //! for rendering.
   //!
-  bool getBuffersInit(Viewer_interface *viewer)const;
+  bool getBuffersInit(Viewer_interface *viewer) const;
 
   //!
   //! \brief setBuffersInit specifies if the `Vbo`s need to be initialized.
@@ -174,7 +174,7 @@ public:
   //! saves the result for further calls.
   //! @returns the item's bounding box's diagonal length.
   //! @todo must replace the one from Scene_item eventually
-  virtual double diagonalBbox() const Q_DECL_OVERRIDE;
+  virtual double bboxDiagonal() const Q_DECL_OVERRIDE;
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //! \param viewer the new viewer.
@@ -190,7 +190,7 @@ protected:
   QSlider* alphaSlider();
 
   //!Returns`true` if `initGL()` was called for `viewer`.
-  bool isInit(CGAL::Three::Viewer_interface* viewer)const;
+  bool isInit(CGAL::Three::Viewer_interface* viewer) const;
 
   //!Returns the float alpha value of an item.
   //! This value is between 0.0f and 1.0f.
@@ -198,7 +198,7 @@ protected:
 
   /*! Fills the `Vbo`s with data.
      */
-  virtual void initializeBuffers(Viewer_interface*)const{}
+  virtual void initializeBuffers(Viewer_interface*) const {}
 
   //!Creates the VAOs and VBOs for viewer.
   virtual void initGL(CGAL::Three::Viewer_interface* viewer) const;
@@ -210,9 +210,10 @@ protected:
   //! \brief setBbox allows to set the Bbox in compute_bbox();
   //! \param b
   //!
-  void setBbox(Bbox b)const ;
+  void setBbox(Bbox b) const;
 
-  virtual void computeElements()const{}
+  virtual void computeElements() const {}
+
 protected:
   friend struct PRIV;
   mutable PRIV* priv;

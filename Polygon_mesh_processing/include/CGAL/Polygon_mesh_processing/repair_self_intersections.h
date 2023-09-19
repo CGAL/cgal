@@ -178,7 +178,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
                                             VertexPointMap vpm,
                                             FaceOutputIterator out)
 {
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap>::value_type, Point>::value));
+  static_assert(std::is_same<typename boost::property_traits<VertexPointMap>::value_type, Point>::value);
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
@@ -2446,7 +2446,6 @@ bool remove_self_intersections(const FaceRange& face_range,
   std::set<face_descriptor> working_face_range(face_range.begin(), face_range.end());
 
   visitor.start_main_loop();
-  bool self_intersects=false;
   while(++step < max_steps)
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -2485,8 +2484,6 @@ bool remove_self_intersections(const FaceRange& face_range,
 #endif
       break;
     }
-    else
-      self_intersects=true;
 
     visitor.status_update(faces_to_treat);
 
@@ -2517,8 +2514,7 @@ bool remove_self_intersections(const FaceRange& face_range,
   std::ofstream("results/final.off") << std::setprecision(17) << tmesh;
 #endif
 
-  if (self_intersects)
-    self_intersects = does_self_intersect(working_face_range, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
+  bool self_intersects = does_self_intersect(working_face_range, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   if(self_intersects)

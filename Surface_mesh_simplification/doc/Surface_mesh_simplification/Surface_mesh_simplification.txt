@@ -306,7 +306,7 @@ int r = edge_collapse(surface_mesh, stop_predicate,
                                        .edge_is_border_map(ebmap)
                                        .get_cost(cf)
                                        .get_placement(pf)
-                                       .filter(filter
+                                       .filter(filter)
                                        .visitor(vis));
 
 \endcode
@@ -369,7 +369,7 @@ Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While t
 The class `Surface_mesh_simplification::Bounded_normal_change_filter` checks if
 a placement would invert the normal of a face around the stars of the
 two vertices of an edge that is candidate for an edge collapse.  It then
-rejects this placement by returning `boost::none`.
+rejects this placement by returning `std::nullopt`.
 
 \note This filter class replaces the usage of the class `Surface_mesh_simplification::Bounded_normal_change_placement`.
 Using the filter is faster as it is only performed on the edge to be collapsed next,

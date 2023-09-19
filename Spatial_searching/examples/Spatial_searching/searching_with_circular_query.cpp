@@ -30,7 +30,7 @@ int main()
   Point center(0.2, 0.2);
   Fuzzy_circle default_range(center, 0.2);
 
-  boost::optional<Point> any = tree.search_any_point(default_range);
+  std::optional<Point> any = tree.search_any_point(default_range);
   if(any)
     std::cout << *any << " is in the query circle\n";
   else

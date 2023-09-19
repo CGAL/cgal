@@ -31,7 +31,7 @@ linked. Valid options are, for instance, "filesystem" or "program_options".
 
 </DL>
 
-This options should suffice to create `CMakeLists.txt` script
+These options should suffice to create a `CMakeLists.txt` script
 for most directories containing programs. However, in some special
 cases, it might still be required to create the script manually, for
 instance, if some source files/executables need a different linking than

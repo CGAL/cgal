@@ -29,7 +29,7 @@ struct Clustering_functor
   Point_set* points;
   Point_set::Property_map<std::size_t> cluster_map;
   const double neighbor_radius;
-  boost::shared_ptr<std::size_t> result;
+  std::shared_ptr<std::size_t> result;
 
   Clustering_functor (Point_set* points,
                       const double neighbor_radius,

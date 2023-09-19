@@ -7,14 +7,15 @@ to maintain a region.
 
 A region is represented by a set items, which are included in this region.
 
-\cgalHasModel
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`
-- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region`
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`
-- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region`
-- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region`
-- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region`
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_line_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region}
+\cgalHasModels{CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region}
+\cgalHasModelsEnd
 */
 class RegionType {
 
@@ -37,16 +38,14 @@ public:
   typedef unspecified_type Region_index_map;
 
   /*!
-    checks if the item `to`, which is a neighbor of the item
-    `from`, can be added to the region represented by `region`.
+    checks if the item `i` can be added to the region represented by `region`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when
     trying to add a new item to a region. If this function returns `true`, the
-    item with the index `to`, is added to the region, otherwise ignored.
+    item with the index `i`, is added to the region, otherwise ignored.
   */
   bool is_part_of_region(
-    const Item from,
-    const Item to,
+    const Item i,
     const Region &region) {
   }
 

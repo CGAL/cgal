@@ -33,6 +33,9 @@ namespace CGAL
 namespace Mesh_3
 {
 
+#define CGAL_SQRT65 8.06225774829854965236661323030
+#define CGAL_SQRT17 4.12310562561766054982140985597
+
 template<typename P, typename Functor>
 std::vector<P> create_polyline(const double start,
     const double end,
@@ -335,14 +338,10 @@ std::vector<std::vector<P>> poly00122101(const int prec = 10)
     auto sq_exp = [](double x) {
         return std::sqrt(24 * x * x * x - 35 * x * x + 18 * x - 3);
     };
-    auto y1 = [sq_exp](double x)
-      { return (-sq_exp(x) - 5 * x + 3) / (6 * (x - 1) * (x - 1)); };
-    auto z1 = [sq_exp](double x)
-      { return (-sq_exp(x) - 7 * x + 3) / (6 * (x * x - 3 * x + 1)); };
-    auto y2 = [sq_exp](double x)
-      { return (sq_exp(x) - 5 * x + 3) / (6 * (x - 1) * (x - 1)); };
-    auto z2 = [sq_exp](double x)
-      { return (sq_exp(x) - 7 * x + 3) / (6 * (x * x - 3 * x + 1)); };
+auto y1 = [sq_exp](double x) { return (-sq_exp(x) - 5*x + 3)/(6 * CGAL::square(x-1)); };
+auto z1 = [sq_exp](double x) { return (-sq_exp(x) - 7*x + 3)/(6 * (x*x - 3*x+1)); };
+auto y2 = [sq_exp](double x) { return ( sq_exp(x) - 5*x + 3)/(6 * CGAL::square(x-1)); };
+auto z2 = [sq_exp](double x) { return ( sq_exp(x) - 7*x + 3)/(6 * (x*x - 3*x+1)); };
     P corner{ 1., .5, 1. / 3 };
     return {
       create_polyline<P>(1. / 3, 1. / 2,
@@ -412,7 +411,7 @@ std::vector<std::vector<P>> poly00001122(const int prec = 10)
 template<typename P>
 std::vector<std::vector<P>> poly00010121(const int prec = 10)
 {
-    auto y = [](double z) { return ((3 * z * z - 1) - std::sqrt((1. - 3 * z * z)*(1. - 3 * z * z) - 12 * (z - 1) * z * z)) / (6 * (z - 1) * z); };
+    auto y = [](double z){ return ((3 * z * z - 1) - std::sqrt(CGAL::square(1 - 3 * z * z) - 12 * (z - 1) * z * z))/(6 * (z - 1) * z); };
     auto x = [](double y, double z) { return y * z / (z + y); };
     P corner(1. / 3, 1. / 2, 1);
     return { create_polyline<P>(1, 1. / 2, corner,
@@ -967,16 +966,19 @@ create_polyline(2./3,limit_value(1.,-1.), P(0., 1./2,2./3), P(1./2, 1./3,1.),
 }
 
 //00012113
-// curve 1 : x = -(-8*z*z + 7*z + (4*z*z - 3*z)*(-(z - 1.)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), y = -(z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)), z = [(3.+ 2.23606)/8, 2./3]
-// curve 2 : x = -(-8*z*z + 7*z + (4*z*z - 3*z)*((z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), y = (z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)), z = [(3.+ 2.23606)/8, 2./3]
+// curve 1 : x = -(-8*z*z + 7*z + (4*z*z - 3*z)*(-(z - 1.)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), y = -(z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)), z = [(3.+ std::sqrt(5))/8, 2./3]
+// curve 2 : x = -(-8*z*z + 7*z + (4*z*z - 3*z)*((z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), y = (z - 1)*sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)), z = [(3.+ std::sqrt(5))/8, 2./3]
 template<typename P>
 std::vector<std::vector<P>> poly00012113(const int prec = 10)
 {
+  //split point is the same for both curves
+  //computed from x(z) and y(z) formulas at z = (3.+ std::sqrt(5))/8
+  const P split_point(0.30901699437494742, 0.30901699437494742, (3. + CGAL_SQRT5) / 8);
 return {
-  create_polyline((3.+ 2.23606)/8, 2./3,P(0.30902,0.30902,(3.+ 2.23606)/8),
+  create_polyline((3.+ CGAL_SQRT5)/8, 2./3, split_point,
                   [](double z) { return P(-(-8*z*z + 7*z + (4*z*z - 3*z)*(-(z - 1.)*std::sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)), -(z - 1)*std::sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)),z); },
                   prec),
-  create_polyline((3.+ 2.23606)/8, 2./3,P(0.30902,0.30902,(3.+ 2.23606)/8),
+  create_polyline((3.+ CGAL_SQRT5)/8, 2./3, split_point,
                   [](double z) { return P( -(-8*z*z + 7*z + (4*z*z - 3*z)*((z - 1)*std::sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3))) - 1)/(z*(4*z - 3)),(z - 1)*std::sqrt(16*z*z - 12*z + 1)/(2*z*(4*z - 3)) + (8*z*z - 7*z + 1)/(2*z*(4*z - 3)),z); },
                   prec),
 
@@ -1024,16 +1026,16 @@ template<typename P>
 std::vector<std::vector<P>> poly00012131(const int prec = 10)
 {
 return {
-  create_polyline(0., (2. - 1.4142)/2, P(0., 1./2,2./3),P((2. - 1.4142)/2,1./2,1./1.4142),
+  create_polyline(0., (2. - CGAL_SQRT2)/2, P(0., 1./2,2./3),P((2. - CGAL_SQRT2)/2,1./2,1./CGAL_SQRT2),
                   [](double x) { return P(x,1./2,(-2 + x)/(-3 + 2*x)); },
                   prec),
-  create_polyline((2. - 1.4142)/2.,1./3,P((2. - 1.4142)/2,1./2,1./1.4142), P(1./3, 1./2,1.),
+  create_polyline((2. - CGAL_SQRT2)/2.,1./3,P((2. - CGAL_SQRT2)/2,1./2,1./CGAL_SQRT2), P(1./3, 1./2,1.),
                   [](double x) { return P(x,1./2,-x/(-1 + 2*x) ); },
                   prec),
-  create_polyline(1./2, 1./1.4142, P(1./3, 1.,1./2),P((2. - 1.4142)/2,1./2,1./1.4142),
+  create_polyline(1./2, 1./CGAL_SQRT2, P(1./3, 1.,1./2),P((2. - CGAL_SQRT2)/2,1./2,1./CGAL_SQRT2),
                   [](double z) { return P((z - 1)*(2*z*((z*z + z - 1)/(4*z*(z - 1)) - std::sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1))) - 1)/(z*(2*z - 1)),(z*z + z - 1)/(4*z*(z - 1)) - std::sqrt(9*z*z*z*z - 14*z*z*z + 7*z*z - 2*z + 1)/(4*z*(z - 1)) ,z); },
                   prec),
-  create_polyline((2. - 1.4142)/2,limit_value(1./2,-1.),P((2. - 1.4142)/2,1./2,1./1.4142), P(1./2,0. ,2./3),
+  create_polyline((2. - CGAL_SQRT2)/2,limit_value(1./2,-1.),P((2. - CGAL_SQRT2)/2,1./2,1./CGAL_SQRT2), P(1./2,0. ,2./3),
                   [](double x) { return P(x,(-1 - x + 3*x*x + std::sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(4*(-1 + x)*x),(1. - 5*x + 3*x*x + std::sqrt(1 - 6*x + 19*x*x - 22*x*x*x + 9*x*x*x*x))/(2*(1 - 3*x + 2*x*x))); },
                   prec),
 };
@@ -1217,10 +1219,10 @@ return {
   create_polyline(3./5,2./3, P(1./2,1./2,3./5),
                   [](double z) { return P(-(-7*z + 5 + (2*z - 2)*(3*z - 2)/(z - 1))/(2*(z - 1)),(3*z - 2)/(z - 1),z); },
                  prec),
-  create_polyline(1./2, 2.*1.4142/17 + 5./17, P(1.,1./2.,1./2),
+  create_polyline(1./2, 2.*CGAL_SQRT2/17 + 5./17, P(1.,1./2.,1./2),
                   [](double z) { return P( -(2*z*((5*z - 1)/(4*z) - std::sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) - std::sqrt(17*z*z - 10*z + 1)/(4*z),z); },
                  prec),
-  create_polyline(1./2,2.*1.4142/17 + 5./17, P(1./2,1.,1./2),
+  create_polyline(1./2,2.* CGAL_SQRT2 /17 + 5./17, P(1./2,1.,1./2),
                   [](double z) { return P( -(2*z*((5*z - 1)/(4*z) + std::sqrt(17*z*z - 10*z + 1)/(4*z)) - 5*z + 1)/(2*z),(5*z - 1)/(4*z) + std::sqrt(17*z*z - 10*z + 1)/(4*z),z); },
                  prec),
   create_polyline(3./5,1., P(1./2.,1./2,3./5),P(1./2,1./2.,1.),
@@ -1547,10 +1549,10 @@ return {
   create_polyline(0.,1., P(1./2,2./3,0.),P(1./2,1./2,1.),
                  [](double z) { return P(-(-7*z*z + 7*z + ((7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + std::sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)))*(9*z*z - 10*z + 3) - 2)/(z*(3*z - 1)),(7*z*z - 8*z + 2)/(2*(9*z*z - 10*z + 3)) + std::sqrt(13*z*z*z*z - 36*z*z*z + 40*z*z - 20*z + 4)/(2*(9*z*z - 10*z + 3)),z); },
                  prec),
-  create_polyline(1./2,(8.06225-7.)/2, P(1./2,0.,2./3),P((8.06225-7.)/2,1./3,(3.+8.06225)/14),
+  create_polyline(1./2,(CGAL_SQRT65-7.)/2, P(1./2,0.,2./3),P((CGAL_SQRT65-7.)/2,1./3,(3.+CGAL_SQRT65)/14),
                  [](double x) { return P(x,(2 - 5*x + x*x + std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x - std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
                  prec),
-  create_polyline(1./2,(8.06225-7.)/2, P(1./2,1./2,1.),P((8.06225-7.)/2,1./3,(3.+8.06225)/14),
+  create_polyline(1./2,(CGAL_SQRT65-7.)/2, P(1./2,1./2,1.),P((CGAL_SQRT65-7.)/2,1./3,(3.+CGAL_SQRT65)/14),
                  [](double x) { return P(x,(2 - 5*x + x*x - std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - 4*x + 2*x*x)),(2 - x - x*x + std::sqrt(x)*std::sqrt(4 - 11*x + 6*x*x + x*x*x))/(2*(1 - x + x*x))); },
                  prec),
 };
@@ -2027,16 +2029,16 @@ return {
   create_polyline(1./2,2./3,P(1./2,0.,2./3),P(2./3,1./2,2./3),
                  [](double x) { return P(x,(-1 + 2*x)/(x*(-1 + 3*x)),x/(1 - 2*x + 3*x*x)); },
                  prec),
-  create_polyline(1./2,(2.23606-1)/2,P(1./2,1.,1./2),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1)/2,P(1./2,1.,1./2),P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2),
                  [](double x) { return P(x,(1 - x)/x,x); },
                  prec),
-    create_polyline((2.23606-1)/2,2./3,P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),P(2./3,1./2,2./3),
+    create_polyline((CGAL_SQRT5-1)/2,2./3,P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2),P(2./3,1./2,2./3),
                  [](double x) { return P(x,(1 - x)/x,x); },
                  prec),
-  create_polyline(1./2,(2.23606-1)/2,P(1./2,2./3,2./3),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1)/2,P(1./2,2./3,2./3),P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2),
                  [](double x) { return P(x,1/(1+x),1/(1+x)); },
                  prec),
-  create_polyline((2.23606-1)/2,1.,P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),P(1.,1./2,1./2),
+  create_polyline((CGAL_SQRT5-1)/2,1.,P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2),P(1.,1./2,1./2),
                  [](double x) { return P(x,1/(1+x),1/(1+x)); },
                  prec),
 };
@@ -2074,10 +2076,10 @@ template<typename P>
 std::vector<std::vector<P>> poly00012134(const int prec = 10)
 {
 return {
-  create_polyline(1-1./1.73205,1./2, P(1-1./1.73205,1./2,1.73205-1.),P(1./2,0.,2./3),
+  create_polyline(1-1./CGAL_SQRT3,1./2, P(1-1./CGAL_SQRT3,1./2,CGAL_SQRT3-1.),P(1./2,0.,2./3),
                  [](double x) { return P(x,(-1 + 2*x)/(x*(-2 + 3*x)),-x/(1 - 5*x + 3*x*x)); },
                  prec),
-  create_polyline(0.,1-1./1.73205, P(0.,1./2,2./3),P(1-1./1.73205,1./2,1.73205-1.),
+  create_polyline(0.,1-1./CGAL_SQRT3, P(0.,1./2,2./3),P(1-1./CGAL_SQRT3,1./2,CGAL_SQRT3-1.),
                  [](double x) { return P(x,1./2,(-2 + x)/(-3 + 2*x)); },
                  prec),
   create_polyline(2./3,1., P(1./2,2./3,2./3),P(1./2,1.,1./2),
@@ -2086,13 +2088,13 @@ return {
   create_polyline(1./2,2./3, P(1./2,1.,1./2),P(1./2,2./3,2./3),
                  [](double z) { return P( -(z - 1)*(3*z - 1)/z,z/(3*z - 1),z); },
                  prec),
-  create_polyline(1-1./1.73205,1./2,P(1-1./1.73205,1./2,1.73205-1.),P(1./2,2./3,2./3),
+  create_polyline(1-1./CGAL_SQRT3,1./2,P(1-1./CGAL_SQRT3,1./2,CGAL_SQRT3-1.),P(1./2,2./3,2./3),
                  [](double x) { return P(x,(-1 - x*x + std::sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-2 + x)*x),(-1 - 2*x + x*x - std::sqrt(1 - 6*x*x + 4*x*x*x + x*x*x*x))/(2*(-1 - 2*x + 2*x*x)) ); },
                  prec),
   create_polyline(1./2,2./3, P(1./2,1./2,1.),P(1./2,2./3,2./3),
                  [](double y) { return P( 1./2,y,y/(-1 + 3*y)); },
                  prec),
-  create_polyline(1-1./1.73205,1./2, P(1-1./1.73205,1./2,1.73205-1.),P(1./2,1./2,1.),
+  create_polyline(1-1./CGAL_SQRT3,1./2, P(1-1./CGAL_SQRT3,1./2,CGAL_SQRT3-1.),P(1./2,1./2,1.),
                  [](double x) { return P(x ,1./2,x/(1-x)); },
                  prec),
 };
@@ -2175,25 +2177,25 @@ template<typename P>
 std::vector<std::vector<P>> poly00012341(const int prec = 10)
 {
 return {
-  create_polyline(0.,1-1./1.73205, P(1./2,0.,2./3),P(1./2,1-1./1.73205,1.73205-1),
+  create_polyline(0.,1-1./CGAL_SQRT3, P(1./2,0.,2./3),P(1./2,1-1./CGAL_SQRT3,CGAL_SQRT3-1),
                  [](double y) { return P(1./2,y,(-2 + y)/(-3 + 2*y)); },
                  prec),
-  create_polyline(0.,1-1./1.73205, P(0.,1./2,2./3),P(1-1./1.73205,1./2,1.73205-1),
+  create_polyline(0.,1-1./CGAL_SQRT3, P(0.,1./2,2./3),P(1-1./CGAL_SQRT3,1./2,CGAL_SQRT3-1),
                  [](double x) { return P(x,1./2,(-2 + x)/(-3 + 2*x)); },
                  prec),
-  create_polyline(1-1./1.73205,1./2,P(1./2,1-1./1.73205,1.73205-1), P(1./2,1./2,1.),
+  create_polyline(1-1./CGAL_SQRT3,1./2,P(1./2,1-1./CGAL_SQRT3,CGAL_SQRT3-1), P(1./2,1./2,1.),
                  [](double y) { return P(1./2,y,-y/(-1 + y)); },
                  prec),
-  create_polyline(1-1./1.73205,1./2,P(1-1./1.73205,1./2,1.73205-1), P(1./2,1./2,1.),
+  create_polyline(1-1./CGAL_SQRT3,1./2,P(1-1./CGAL_SQRT3,1./2,CGAL_SQRT3-1), P(1./2,1./2,1.),
                  [](double x) { return P(x,1./2,-x/(-1 + x)); },
                  prec),
-  create_polyline(1-1./1.73205,1./2,P(1-1./1.73205,1./2,1.73205-1),P(1./2,1-1./1.73205,1.73205-1),
+  create_polyline(1-1./CGAL_SQRT3,1./2,P(1-1./CGAL_SQRT3,1./2,CGAL_SQRT3-1),P(1./2,1-1./CGAL_SQRT3,CGAL_SQRT3-1),
                  [](double x) { return P(x,(-1 - 2*x + 2*x*x + std::sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-2 + x)*x),(1 - 4*x + 2*x*x + std::sqrt(1 - 4*x + 12*x*x - 12*x*x*x + 4*x*x*x*x))/(2*(-1 + x)*(-1+x))); },
                  prec),
-  create_polyline(1./2,1., P(1./2,1-1./1.73205,1.73205-1), P(1.,1./3,1./2) ,
+  create_polyline(1./2,1., P(1./2,1-1./CGAL_SQRT3,CGAL_SQRT3-1), P(1.,1./3,1./2) ,
                  [](double x) { return P(x,(1 + x - std::sqrt(1 - x + x*x))/(3*x),(x - std::sqrt(1 - x + x*x))/(-1 + x)); },
                  prec),
-  create_polyline(1./2,1.,P(1-1./1.73205,1./2,1.73205-1),P(1./3,1.,1./2),
+  create_polyline(1./2,1.,P(1-1./CGAL_SQRT3,1./2,CGAL_SQRT3-1),P(1./3,1.,1./2),
                  [](double y) { return P((1 + y - std::sqrt(1 - y + y*y))/(3*y),y,(y - std::sqrt(1 - y + y*y))/(-1 + y)); },
                  prec),
 };
@@ -2372,16 +2374,16 @@ template<typename P>
 std::vector<std::vector<P>> poly00121304(const int prec = 10)
 {
 return {
-  create_polyline(1./2,4.-2*1.73205, P(1./2,2./3,0.),P(4.-2*1.73205,(1.+1/1.73205)/2,(1.73205-1)/2.),
+  create_polyline(1./2,4.-2*CGAL_SQRT3, P(1./2,2./3,0.),P(4.-2*CGAL_SQRT3,(1.+1/CGAL_SQRT3)/2,(CGAL_SQRT3-1)/2.),
                 [](double x) { return P(x,(2 + x - std::sqrt(4 - 8*x + x*x))/(6*x),(-2 + 5*x - x*x - std::sqrt(4 - 8*x + x*x) + x*std::sqrt(4 - 8*x + x*x))/(2*x)); },
                 prec),
-  create_polyline(1./2,4.-2*1.73205, P(1./2,1.,1./2),P(4.-2*1.73205,(1.+1/1.73205)/2,(1.73205-1)/2.),
+  create_polyline(1./2,4.-2*CGAL_SQRT3, P(1./2,1.,1./2),P(4.-2*CGAL_SQRT3,(1.+1/CGAL_SQRT3)/2,(CGAL_SQRT3-1)/2.),
                 [](double x) { return P(x,(2 + x + std::sqrt(4 - 8*x + x*x))/(6*x),(-2 + 5*x - x*x + std::sqrt(4 - 8*x + x*x) - x*std::sqrt(4 - 8*x + x*x))/(2*x)); },
                 prec),
-  create_polyline(1./2,4.-2*1.73205, P(1./2,1./2,1.),P(4.-2*1.73205,(1.73205-1)/2.,(1.+1/1.73205)/2),
+  create_polyline(1./2,4.-2*CGAL_SQRT3, P(1./2,1./2,1.),P(4.-2*CGAL_SQRT3,(CGAL_SQRT3-1)/2.,(1.+1/CGAL_SQRT3)/2),
                 [](double x) { return P(x,(-2 + 5*x - x*x + std::sqrt(4 - 8*x + x*x) - x*std::sqrt(4 - 8*x + x*x))/(2*x),(2 + x + std::sqrt(4 - 8*x + x*x))/(6*x)); },
                 prec),
-  create_polyline(1./2,4.-2*1.73205, P(1./2,0.,2./3),P(4.-2*1.73205,(1.73205-1)/2.,(1.+1/1.73205)/2),
+  create_polyline(1./2,4.-2*CGAL_SQRT3, P(1./2,0.,2./3),P(4.-2*CGAL_SQRT3,(CGAL_SQRT3-1)/2.,(1.+1/CGAL_SQRT3)/2),
                 [](double x) { return P(x,(-2 + 5*x - x*x - std::sqrt(4 - 8*x + x*x) + x*std::sqrt(4 - 8*x + x*x))/(2*x),(2 + x - std::sqrt(4 - 8*x + x*x))/(6*x)); },
                 prec),
  create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
@@ -2478,16 +2480,16 @@ return {
   create_polyline(1./3,1./2,P(1./3,1.,1./2),P(1./2,1./2,1.),
                 [](double x) { return P(x,x/(-1 + 4*x),-x/(-1 + x)); },
                 prec),
-  create_polyline(1./2,1/1.73205,P(1./2,0.,2./3),P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),
+  create_polyline(1./2,1/CGAL_SQRT3,P(1./2,0.,2./3),P(1/CGAL_SQRT3,(6-CGAL_SQRT3)/11,(3-CGAL_SQRT3)/2),
                 [](double x) { return P(x,(1 - 2*x)/(1 - 3*x + x*x),1/(1 + x)); },
                 prec),
-  create_polyline(1./1.73205,1.,P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),P(1.,1./3,1./2),
+  create_polyline(1./CGAL_SQRT3,1.,P(1/CGAL_SQRT3,(6-CGAL_SQRT3)/11,(3-CGAL_SQRT3)/2),P(1.,1./3,1./2),
                 [](double x) { return P(x,1/(2 + x),1/(1 + x)); },
                 prec),
-  create_polyline(1./2,1/1.73205,P(1./2,1./2,1.),P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),
+  create_polyline(1./2,1/CGAL_SQRT3,P(1./2,1./2,1.),P(1/CGAL_SQRT3,(6-CGAL_SQRT3)/11,(3-CGAL_SQRT3)/2),
                 [](double x) { return P(x,(-2 + 3*x)/(-3 + 4*x),(-2 + 3*x)/(-1 + x)); },
                 prec),
-  create_polyline(limit_value(0.,1),(3-1.73205)/2,P(1./2,2./3,0.),P(1/1.73205,(6-1.73205)/11,(3-1.73205)/2),
+  create_polyline(limit_value(0.,1),(3-CGAL_SQRT3)/2,P(1./2,2./3,0.),P(1/CGAL_SQRT3,(6-CGAL_SQRT3)/11,(3-CGAL_SQRT3)/2),
                 [](double z) { return P((-2*z*z + 5*z + ((3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + std::sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)))*(2*z*z - 6*z + 3) - 2)/z,(3*z*z - 6*z + 2)/(2*(2*z*z - 6*z + 3)) + std::sqrt(z*z*z*z - 4*z*z*z + 12*z*z - 12*z + 4)/(2*(2*z*z - 6*z + 3)),z); },
                 prec),
 };
@@ -2609,10 +2611,10 @@ return {
   create_polyline(1./2,1.,P(1./2,0.,2./3),P(1.,1./2,1./2),
                 [](double x) { return P(x,(-1 + 2*x)/(-1 + 2*x + x*x),1/(1 + x)); },
                 prec),
-  create_polyline(0.,4.-2*1.73205,P(0.,1./3,1./2),P(4.-2*1.73205,1/1.73205,(1.73205-1)/2.),
+  create_polyline(0.,4.-2*CGAL_SQRT3,P(0.,1./3,1./2),P(4.-2*CGAL_SQRT3,1/CGAL_SQRT3,(CGAL_SQRT3-1)/2.),
                 [](double x) { return P(x,(4 - x - std::sqrt(4 - 8*x + x*x))/6,(-2 + 5*x - x*x + std::sqrt(4 - 8*x + x*x) - x*std::sqrt(4 - 8*x + x*x))/(2*x) ); },
                 prec),
-  create_polyline(1./2,4.-2*1.73205,P(1./2,2./3,0.),P(4.-2*1.73205,1/1.73205,(1.73205-1)/2.),
+  create_polyline(1./2,4.-2*CGAL_SQRT3,P(1./2,2./3,0.),P(4.-2*CGAL_SQRT3,1/CGAL_SQRT3,(CGAL_SQRT3-1)/2.),
                 [](double x) { return P(x,(4 - x + std::sqrt(4 - 8*x + x*x))/6,(-2 + 5*x - x*x - std::sqrt(4 - 8*x + x*x) + x*std::sqrt(4 - 8*x + x*x))/(2*x) ); },
                 prec),
   create_polyline(1./2,1.,P(1./2,1./2,1.),P(1.,1./2,1./2),
@@ -2668,50 +2670,50 @@ return {
   create_polyline(0.,1./3,P(0.,1./2,1./2),P(1./3,3./5,3./7),
                 [](double x) { return P(x,1/(2 - x),1/(2 + x)); },
                 prec),
-  create_polyline(1./3,(3.-2.23606)/2,P(1./3,3./5,3./7),P((3.-2.23606)/2,1./2,1./2),
+  create_polyline(1./3,(3.-CGAL_SQRT5)/2,P(1./3,3./5,3./7),P((3.-CGAL_SQRT5)/2,1./2,1./2),
                 [](double x) { return P(x,(-1 + 2*x)/(-1 + x + x*x),x/(1 - x + x*x)); },
                 prec),
-  create_polyline((3.-2.23606)/2,1./2,P((3.-2.23606)/2,1./2,1./2),P(1./2,0.,2./3),
+  create_polyline((3.-CGAL_SQRT5)/2,1./2,P((3.-CGAL_SQRT5)/2,1./2,1./2),P(1./2,0.,2./3),
                 [](double x) { return P(x,(-1 + 2*x)/(-1 + x + x*x),x/(1 - x + x*x)); },
                 prec),
-  create_polyline(0.,(3.-2.23606)/2,P(0.,1./2,1./2),P((3.-2.23606)/2,1./2,1./2),
+  create_polyline(0.,(3.-CGAL_SQRT5)/2,P(0.,1./2,1./2),P((3.-CGAL_SQRT5)/2,1./2,1./2),
                 [](double x) { return P(x,1./2,1./2); },
                 prec),
- create_polyline((3.-2.23606)/2,1.,P((3.-2.23606)/2,1./2,1./2),P(1.,1./2,1./2),
+ create_polyline((3.-CGAL_SQRT5)/2,1.,P((3.-CGAL_SQRT5)/2,1./2,1./2),P(1.,1./2,1./2),
                 [](double x) { return P(x,1./2,1./2); },
                 prec),
 };
 }
 
 //00122344
-// curve 1 : x = [1./2,(2.23606-1.)/2], y = x/(1 + x), z = (x*x)/(-1 + 2*x + x*x)
-// curve 2 : x = [(3.-2.23606)/2,1./2], y = (-1 + x)*(-1+x)/(2 - 4*x + x*x), z = (-1 + x)/(-2 + x)
-// curve 3 : x = [1./2,(2.23606-1.)/2], y = (-1 + 2*x)/(-1 + 2*x + x*x), z = 1/(1 + x)
-// curve 4 : x = [(2.23606-1.)/2,1], y =  x/(1 + x), z = 1/(1 + x)
-// curve 5 : x = [0.,(3.-2.23606)/2], y = 1/(2 - x), z = (-1 + x)/(-2 + x)
-// curve 6 : x = [3.-2.23606)/2,1./2], y = 1/(2 - x), z = (1 - 2*x)/(2 - 4*x + x*x)
+// curve 1 : x = [1./2,(std::sqrt(5)-1.)/2], y = x/(1 + x), z = (x*x)/(-1 + 2*x + x*x)
+// curve 2 : x = [(3.-std::sqrt(5))/2,1./2], y = (-1 + x)*(-1+x)/(2 - 4*x + x*x), z = (-1 + x)/(-2 + x)
+// curve 3 : x = [1./2,(std::sqrt(5)-1.)/2], y = (-1 + 2*x)/(-1 + 2*x + x*x), z = 1/(1 + x)
+// curve 4 : x = [(std::sqrt(5)-1.)/2,1], y =  x/(1 + x), z = 1/(1 + x)
+// curve 5 : x = [0.,(3.-std::sqrt(5))/2], y = 1/(2 - x), z = (-1 + x)/(-2 + x)
+// curve 6 : x = [3.-std::sqrt(5))/2,1./2], y = 1/(2 - x), z = (1 - 2*x)/(2 - 4*x + x*x)
 // curve 7 : x = [0,1], y = z = 1/2
-// curve 8 : x = z, y = 1-z, z = [(3.-2.23606)/2,(2.23606-1.)/2]
+// curve 8 : x = z, y = 1-z, z = [(3.-std::sqrt(5))/2,(std::sqrt(5)-1.)/2]
 template<typename P>
 std::vector<std::vector<P>> poly00122344(const int prec = 10)
 {
 return {
-  create_polyline(1./2,(2.23606-1.)/2,P(1./2,1./3,1.),P((2.23606-1.)/2,(3.-2.23606)/2,(2.23606-1.)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2,P(1./2,1./3,1.),P((CGAL_SQRT5-1.)/2,(3.-CGAL_SQRT5)/2,(CGAL_SQRT5-1.)/2),
                 [](double x) { return P(x,x/(1 + x),(x*x)/(-1 + 2*x + x*x)); },
                 prec),
-  create_polyline((3.-2.23606)/2,1./2,P((3.-2.23606)/2,(2.23606-1.)/2,(3.-2.23606)/2),P(1./2,1.,1./3),
+  create_polyline((3.-CGAL_SQRT5)/2,1./2,P((3.-CGAL_SQRT5)/2,(CGAL_SQRT5-1.)/2,(3.-CGAL_SQRT5)/2),P(1./2,1.,1./3),
                 [](double x) { return P(x,(-1 + x)*(-1+x)/(2 - 4*x + x*x),(-1 + x)/(-2 + x)); },
                 prec),
-  create_polyline(1./2,(2.23606-1.)/2,P(1./2,0.,2./3),P((2.23606-1.)/2,(3.-2.23606)/2,(2.23606-1.)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2,P(1./2,0.,2./3),P((CGAL_SQRT5-1.)/2,(3.-CGAL_SQRT5)/2,(CGAL_SQRT5-1.)/2),
                 [](double x) { return P(x,(-1 + 2*x)/(-1 + 2*x + x*x),1/(1 + x)); },
                 prec),
-  create_polyline((2.23606-1.)/2,1.,P((2.23606-1.)/2,(3.-2.23606)/2,(2.23606-1.)/2),P(1.,1./2,1./2),
+  create_polyline((CGAL_SQRT5-1.)/2,1.,P((CGAL_SQRT5-1.)/2,(3.-CGAL_SQRT5)/2,(CGAL_SQRT5-1.)/2),P(1.,1./2,1./2),
                 [](double x) { return P(x,x/(1 + x),1/(1 + x)); },
                 prec),
-  create_polyline(0.,(3.-2.23606)/2,P(0.,1./2,1./2),P((3.-2.23606)/2,(2.23606-1.)/2,(3.-2.23606)/2),
+  create_polyline(0.,(3.-CGAL_SQRT5)/2,P(0.,1./2,1./2),P((3.-CGAL_SQRT5)/2,(CGAL_SQRT5-1.)/2,(3.-CGAL_SQRT5)/2),
                 [](double x) { return P(x,1/(2 - x),(-1 + x)/(-2 + x)); },
                 prec),
-  create_polyline((3.-2.23606)/2,1./2,P((3.-2.23606)/2,(2.23606-1.)/2,(3.-2.23606)/2),P(1./2,2./3,0.),
+  create_polyline((3.-CGAL_SQRT5)/2,1./2,P((3.-CGAL_SQRT5)/2,(CGAL_SQRT5-1.)/2,(3.-CGAL_SQRT5)/2),P(1./2,2./3,0.),
                 [](double x) { return P(x,1/(2 - x),(1 - 2*x)/(2 - 4*x + x*x)); },
                 prec),
   create_polyline(0.,1./2,P(0.,1./2,1./2),P(1./2,1./2,1./2),
@@ -2720,10 +2722,10 @@ return {
   create_polyline(1./2,1.,P(1./2,1./2,1./2),P(1.,1./2,1./2),
                 [](double x) { return P(x,1./2,1./2); },
                 prec),
-  create_polyline((3.-2.23606)/2,1./2,P((3.-2.23606)/2,(2.23606-1.)/2,(3.-2.23606)/2),P(1./2,1./2,1./2),
+  create_polyline((3.-CGAL_SQRT5)/2,1./2,P((3.-CGAL_SQRT5)/2,(CGAL_SQRT5-1.)/2,(3.-CGAL_SQRT5)/2),P(1./2,1./2,1./2),
                 [](double z) { return P(z,1-z,z); },
                 prec),
-  create_polyline(1./2,(2.23606-1.)/2,P(1./2,1./2,1./2),P((2.23606-1.)/2,(3.-2.23606)/2,(2.23606-1.)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2,P(1./2,1./2,1./2),P((CGAL_SQRT5-1.)/2,(3.-CGAL_SQRT5)/2,(CGAL_SQRT5-1.)/2),
                 [](double z) { return P(z,1-z,z); },
                 prec),
 };
@@ -2766,36 +2768,36 @@ return {
 }
 
 //00123414
-// curve 1 : x = [(2.23606-1)/2,2./3], y = (1 - 2*x)/(-1 + x), z = (-1 + 2*x)/x
-// curve 2 : x = [1/2,(2.23606-1)/2], y = 1/(1 + x), z = (-1 + 2*x)/x
-// curve 3 : x = [(2.23606-1)/2,1], y = 1/(1+x), z = 1/(2+x)
-// curve 4 : x = [(3-2.23606)/2,1./2], y = (-1 + 2*x)/(-1 + x), z = 1/(2 - x)
-// curve 5 : x = [0.,(3-2.23606)/2], y = 1/(3-x), z = 1/(2 - x)
-// curve 6 : x = y = 1-z, z = [(3-2.23606)/2,(2.23606-1)/2]
-// curve 7 : x = [1./3,(3-2.23606)/2], y =  (-1 + 2*x)/(-1 + x), z = (1 - 2*x)/x
+// curve 1 : x = [(std::sqrt(5)-1)/2,2./3], y = (1 - 2*x)/(-1 + x), z = (-1 + 2*x)/x
+// curve 2 : x = [1/2,(std::sqrt(5)-1)/2], y = 1/(1 + x), z = (-1 + 2*x)/x
+// curve 3 : x = [(std::sqrt(5)-1)/2,1], y = 1/(1+x), z = 1/(2+x)
+// curve 4 : x = [(3-std::sqrt(5))/2,1./2], y = (-1 + 2*x)/(-1 + x), z = 1/(2 - x)
+// curve 5 : x = [0.,(3-std::sqrt(5))/2], y = 1/(3-x), z = 1/(2 - x)
+// curve 6 : x = y = 1-z, z = [(3-std::sqrt(5))/2,(std::sqrt(5)-1)/2]
+// curve 7 : x = [1./3,(3-std::sqrt(5))/2], y =  (-1 + 2*x)/(-1 + x), z = (1 - 2*x)/x
 template<typename P>
 std::vector<std::vector<P>> poly00123414(const int prec = 10)
 {
 return {
-  create_polyline((2.23606-1)/2,2./3,P((2.23606-1)/2,(2.23606-1)/2,(3-2.23606)/2),P(2./3,1.,1./2),
+  create_polyline((CGAL_SQRT5-1)/2,2./3,P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(3-CGAL_SQRT5)/2),P(2./3,1.,1./2),
                 [](double x) { return P(x,(1 - 2*x)/(-1 + x),(-1 + 2*x)/x); },
                 prec),
-  create_polyline(1./2,(2.23606-1)/2,P(1./2,2./3,0.),P((2.23606-1)/2,(2.23606-1)/2,(3-2.23606)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1)/2,P(1./2,2./3,0.),P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(3-CGAL_SQRT5)/2),
                 [](double x) { return P(x,1/(1 + x),(-1 + 2*x)/x); },
                 prec),
-  create_polyline((2.23606-1)/2,1.,P((2.23606-1)/2,(2.23606-1)/2,(3-2.23606)/2),P(1.,1./2,1./3),
+  create_polyline((CGAL_SQRT5-1)/2,1.,P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(3-CGAL_SQRT5)/2),P(1.,1./2,1./3),
                 [](double x) { return P(x,1/(1+x),1/(2+x)); },
                 prec),
-  create_polyline((3-2.23606)/2,1./2,P((3-2.23606)/2,(3-2.23606)/2,(2.23606-1)/2),P(1./2,0.,2./3),
+  create_polyline((3-CGAL_SQRT5)/2,1./2,P((3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2,(CGAL_SQRT5-1)/2),P(1./2,0.,2./3),
                 [](double x) { return P(x,(-1 + 2*x)/(-1 + x),1/(2 - x)); },
                 prec),
-  create_polyline(0.,(3-2.23606)/2,P(0.,1./3,1./2),P((3-2.23606)/2,(3-2.23606)/2,(2.23606-1)/2),
+  create_polyline(0.,(3-CGAL_SQRT5)/2,P(0.,1./3,1./2),P((3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2,(CGAL_SQRT5-1)/2),
                 [](double x) { return P(x,1/(3-x),1/(2 - x)); },
                 prec),
-  create_polyline((3-2.23606)/2,(2.23606-1)/2,P((2.23606-1)/2,(2.23606-1)/2,(3-2.23606)/2),P((3-2.23606)/2,(3-2.23606)/2,(2.23606-1)/2),
+  create_polyline((3-CGAL_SQRT5)/2,(CGAL_SQRT5-1)/2,P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(3-CGAL_SQRT5)/2),P((3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2,(CGAL_SQRT5-1)/2),
                 [](double z) { return P(1-z,1-z,z); },
                prec),
-  create_polyline(1./3,(3-2.23606)/2,P(1./3,1./2,1.),P((3-2.23606)/2,(3-2.23606)/2,(2.23606-1)/2),
+  create_polyline(1./3,(3-CGAL_SQRT5)/2,P(1./3,1./2,1.),P((3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2,(CGAL_SQRT5-1)/2),
                 [](double x) { return P(x,(-1 + 2*x)/(-1 + x),(1 - 2*x)/x); },
                 prec),
 };
@@ -3109,13 +3111,13 @@ return {
 // curve 1 : x = [0,1], y = z = 1/2
 // curve 2 : x = 1/2, y = [0,1], z = 1/2
 // curve 3 : x = y = 1/2, z = [0,1]
-// curve 4 : x = [(2.23606-1)/2,1], y = z = 1/(1 + x)
-// curve 5 : x = [1./2,(2.23606-1)/2], y = (1 - x)/x, z = x
-// curve 6 : x = [0.,(3-2.23606)/2], y = z = (-1 + x)/(-2 + x)
-// curve 7 : x = [(3-2.23606)/2,1./2], y = (-1 + 2*x)/(-1 + x), z = x
-// curve 8 : x = y = z = [(3-2.23606)/2,(2.23606-1)/2]
-// curve 9 : x = y = [(3-2.23606)/2,1./2], z = (-1 + 2*x)/(-1 + x)
-// curve 10 : x = y = [1./2,(2.23606-1)/2], z  = (1-x)/x
+// curve 4 : x = [(std::sqrt(5)-1)/2,1], y = z = 1/(1 + x)
+// curve 5 : x = [1./2,(std::sqrt(5)-1)/2], y = (1 - x)/x, z = x
+// curve 6 : x = [0.,(3-std::sqrt(5))/2], y = z = (-1 + x)/(-2 + x)
+// curve 7 : x = [(3-std::sqrt(5))/2,1./2], y = (-1 + 2*x)/(-1 + x), z = x
+// curve 8 : x = y = z = [(3-std::sqrt(5))/2,(std::sqrt(5)-1)/2]
+// curve 9 : x = y = [(3-std::sqrt(5))/2,1./2], z = (-1 + 2*x)/(-1 + x)
+// curve 10 : x = y = [1./2,(std::sqrt(5)-1)/2], z  = (1-x)/x
 template<typename P>
 std::vector<std::vector<P>> poly01233214(const int prec = 10)
 {
@@ -3138,28 +3140,28 @@ return {
   create_polyline(1./2,1.,P(1./2,1./2.,1./2),P(1./2,1./2,1.),
                 [](double z) { return P(1./2,1./2,z); },
                 prec),
-  create_polyline((2.23606-1)/2,1.,P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),P(1.,1./2,1./2),
+  create_polyline((CGAL_SQRT5-1)/2,1.,P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2),P(1.,1./2,1./2),
                 [](double x) { return P(x,1/(1 + x),1/(1 + x)); },
                 prec),
-  create_polyline(1./2,(2.23606-1)/2,P(1./2.,1.,1./2),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1)/2,P(1./2.,1.,1./2),P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2),
                 [](double x) { return P(x,(1 - x)/x,x); },
                 prec),
-  create_polyline(0.,(3-2.23606)/2,P(0.,1./2,1./2),P((3-2.23606)/2,(3-2.23606)/2,(3-2.23606)/2),
+  create_polyline(0.,(3-CGAL_SQRT5)/2,P(0.,1./2,1./2),P((3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2),
                 [](double x) { return P(x,(-1 + x)/(-2 + x),(-1 + x)/(-2 + x)); },
                 prec),
-  create_polyline((3-2.23606)/2,1./2,P((3-2.23606)/2,(3-2.23606)/2,(3-2.23606)/2),P(1./2.,0.,1./2),
+  create_polyline((3-CGAL_SQRT5)/2,1./2,P((3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2),P(1./2.,0.,1./2),
                 [](double x) { return P(x,(-1 + 2*x)/(-1 + x),x); },
                 prec),
-  create_polyline((3-2.23606)/2,1./2,P((3-2.23606)/2,(3-2.23606)/2,(3-2.23606)/2),P(1./2,1./2,1./2),
+  create_polyline((3-CGAL_SQRT5)/2,1./2,P((3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2),P(1./2,1./2,1./2),
                 [](double x) { return P(x,x,x); },
                 prec),
-  create_polyline (1./2,(2.23606-1)/2,P(1./2.,1./2,1./2),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+  create_polyline<P> (1./2,(CGAL_SQRT5-1)/2,P(1./2.,1./2,1./2),P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2),
                 [](double x) { return P(x,x,x); },
                 prec),
-  create_polyline((3-2.23606)/2,1./2,P((3-2.23606)/2,(3-2.23606)/2,(3-2.23606)/2),P(1./2,1./2,0.),
+  create_polyline((3-CGAL_SQRT5)/2,1./2,P((3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2,(3-CGAL_SQRT5)/2),P(1./2,1./2,0.),
                 [](double x) { return P(x,x,(-1 + 2*x)/(-1 + x)); },
                 prec),
-  create_polyline (1./2,(2.23606-1)/2,P(1./2.,1./2,1.),P((2.23606-1)/2,(2.23606-1)/2,(2.23606-1)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1)/2,P(1./2.,1./2,1.),P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2),
                 [](double x) { return P(x,x,(1 - x)/x); },
                 prec),
 };
@@ -3226,14 +3228,14 @@ return {
 
 //00121345
 // curve 1 : x = 1/2, y = [1/2,1], z = y/(-1 + 3*y)
-// curve 2 : x = [1/2,(2.23606-1.)/2], y = 1./2, z = (1 - x)/x
-// curve 3 : x = [1/2,(2.23606-1.)/2], y = (1 - 2*x)/(1 - 3*x + x*x), z = 1./(x+1)
-// curve 4 : x = [(2.23606-1.)/2,1], y = 1./2, z = 1./(x+1)
-// curve 5 : x = [(2.23606-1.)/2,1], y = 1./(x+1), z = 1./2
-// curve 6 : x = [1./2,(2.23606-1.)/2], y = 1./(x+1), z = (1 - 2*x)/(1 - 3*x + x*x
-// curve 7 : x = [1./2,(2.23606-1.)/2], y = (1 - x)/x, z = 1./2
-// curve 8 : x = [(9-4.12310)/8,(2.23606-1.)/2[, y = -sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)), z = -(-x + (-sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)
-// curve 8 : x = [(9-4.12310)/8,(2.23606-1.)/2[, y = sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)), z = -(-x + (sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)
+// curve 2 : x = [1/2,(std::sqrt(5)-1.)/2], y = 1./2, z = (1 - x)/x
+// curve 3 : x = [1/2,(std::sqrt(5)-1.)/2], y = (1 - 2*x)/(1 - 3*x + x*x), z = 1./(x+1)
+// curve 4 : x = [(std::sqrt(5)-1.)/2,1], y = 1./2, z = 1./(x+1)
+// curve 5 : x = [(std::sqrt(5)-1.)/2,1], y = 1./(x+1), z = 1./2
+// curve 6 : x = [1./2,(std::sqrt(5)-1.)/2], y = 1./(x+1), z = (1 - 2*x)/(1 - 3*x + x*x
+// curve 7 : x = [1./2,(std::sqrt(5)-1.)/2], y = (1 - x)/x, z = 1./2
+// curve 8 : x = [(9-4.12310)/8,(std::sqrt(5)-1.)/2[, y = -sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)), z = -(-x + (-sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)
+// curve 8 : x = [(9-4.12310)/8,(std::sqrt(5)-1.)/2[, y = sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)), z = -(-x + (sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)
 template<typename P>
 std::vector<std::vector<P>> poly00121345(const int prec = 10)
 {
@@ -3241,28 +3243,28 @@ return {
   create_polyline(1./2,1., P(1./2,1./2,1.),P(1./2,1.,1./2),
                  [](double y) { return P(1./2,y,y/(-1 + 3*y) ); },
                  prec),
-  create_polyline(1./2,(2.23606-1.)/2, P(1./2,1./2,1.),P((2.23606-1.)/2,1./2,(2.23606-1.)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2, P(1./2,1./2,1.),P((CGAL_SQRT5-1.)/2,1./2,(CGAL_SQRT5-1.)/2),
                  [](double x) { return P(x,1./2,(1 - x)/x) ; },
                  prec),
-  create_polyline(1./2,(2.23606-1.)/2, P(1./2,0.,2./3),P((2.23606-1)/2,1./2,(2.23606-1)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2, P(1./2,0.,2./3),P((CGAL_SQRT5-1)/2,1./2,(CGAL_SQRT5-1)/2),
                  [](double x) { return P(x,(1 - 2*x)/(1 - 3*x + x*x),1./(x+1)) ; },
                  prec),
-  create_polyline((2.23606-1.)/2,1.,P((2.23606-1.)/2,1./2,(2.23606-1.)/2), P(1.,1./2,1./2),
+  create_polyline((CGAL_SQRT5-1.)/2,1.,P((CGAL_SQRT5-1.)/2,1./2,(CGAL_SQRT5-1.)/2), P(1.,1./2,1./2),
                  [](double x) { return P(x,1./2,1./(x+1)) ; },
                 prec),
-  create_polyline((2.23606-1.)/2,1.,P((2.23606-1.)/2,(2.23606-1.)/2,1./2), P(1.,1./2,1./2),
+  create_polyline((CGAL_SQRT5-1.)/2,1.,P((CGAL_SQRT5-1.)/2,(CGAL_SQRT5-1.)/2,1./2), P(1.,1./2,1./2),
                  [](double x) { return P(x,1./(x+1),1./2) ; },
                  prec),
-  create_polyline(1./2,(2.23606-1.)/2, P(1./2,2./3,0.),P((2.23606-1)/2,(2.23606-1)/2,1./2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2, P(1./2,2./3,0.),P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,1./2),
                  [](double x) { return P(x,1./(x+1),(1 - 2*x)/(1 - 3*x + x*x)) ; },
                  prec),
-  create_polyline(1./2,(2.23606-1.)/2, P(1./2,1.,1./2),P((2.23606-1.)/2,(2.23606-1)/2,1./2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2, P(1./2,1.,1./2),P((CGAL_SQRT5-1.)/2,(CGAL_SQRT5-1)/2,1./2),
                  [](double x) { return P(x,(1 - x)/x,1./2) ; },
                  prec),
-  create_polyline((9-4.12310)/8.,limit_value((2.23606-1.)/2,-1),P((9-4.12310)/8.,(4.12310-3)/2.,(4.12310-3)/2.), P((2.23606-1)/2,(2.23606-1)/2,1./2),
+  create_polyline((9-CGAL_SQRT17)/8.,limit_value((CGAL_SQRT5-1.)/2,-1),P((9-CGAL_SQRT17)/8.,(CGAL_SQRT17-3)/2.,(CGAL_SQRT17-3)/2.), P((CGAL_SQRT5-1)/2,(CGAL_SQRT5-1)/2,1./2),
                  [](double x) { return P(x,-std::sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)),-(-x + (-std::sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)) ; },
                  prec),
-  create_polyline((9-4.12310)/8.,limit_value((2.23606-1.)/2,-1),P((9-4.12310)/8.,(4.12310-3)/2.,(4.12310-3)/2.), P((2.23606-1)/2,1./2,(2.23606-1)/2),
+  create_polyline((9-CGAL_SQRT17)/8.,limit_value((CGAL_SQRT5-1.)/2,-1),P((9-CGAL_SQRT17)/8.,(CGAL_SQRT17-3)/2.,(CGAL_SQRT17-3)/2.), P((CGAL_SQRT5-1)/2,1./2,(CGAL_SQRT5-1)/2),
                  [](double x) { return P(x,std::sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)),-(-x + (std::sqrt(-x*(4*x*x - 9*x + 4))/(2*(x*x - x - 1)) + (x - 2)/(2*(x*x - x - 1)))*(x*x - x - 1) + 2)/(x*x - x - 1)) ; },
                  prec),
 };
@@ -3324,13 +3326,13 @@ return {
 //00123415
 // curve 1 : x = 1/2, y = [0,2/5], z = 2/3
 // curve 2 : x = [0,1/2], y = 1./(3-x), z = 1./(2-x)
-// curve 3 : x = [1./2,(2.23606-1)/2], y = -x/(-1 - x + x*x), z = 1./(x+1)
-// curve 4 : x = [(2.23606-1)/2.,1], y = 1./2, z = 1./(x+1)
-// curve 5 : x = [(2.23606-1)/2.,2./3], y = (1 - 2*x)/(1. - 3*x + x*x), z = (1. - x)/x
+// curve 3 : x = [1./2,(std::sqrt(5)-1)/2], y = -x/(-1 - x + x*x), z = 1./(x+1)
+// curve 4 : x = [(std::sqrt(5)-1)/2.,1], y = 1./2, z = 1./(x+1)
+// curve 5 : x = [(std::sqrt(5)-1)/2.,2./3], y = (1 - 2*x)/(1. - 3*x + x*x), z = (1. - x)/x
 // curve 6 : x = [2/3,1], y = 1./(x+1), z = 1./2
 // curve 7 : x = [1/2,2/3], y = 1./(x+1), z = (2*x-1.)/x
 // curve 8 : x = 2/3, y = [3/5,1], z = 1/2
-// curve 9 : x = [1/2,(2.23606-1)/2], y = 1/2, z = (1. - x)/x
+// curve 9 : x = [1/2,(std::sqrt(5)-1)/2], y = 1/2, z = (1. - x)/x
 // curve 10 : x = 1/2, y = [2/5,1/2], z = y/(1.-y)
 template<typename P>
 std::vector<std::vector<P>> poly00123415(const int prec = 10)
@@ -3342,13 +3344,13 @@ return {
   create_polyline(0.,1./2, P(0.,1./3,1./2),P(1./2,2./5,2./3),
                  [](double x) { return P(x,1./(3-x),1./(2-x)); },
                  prec),
-  create_polyline(1./2,(2.23606-1)/2., P(1./2,2./5,2./3),P((2.23606-1)/2.,1./2,(2.23606-1)/2.),
+  create_polyline(1./2,(CGAL_SQRT5-1)/2., P(1./2,2./5,2./3),P((CGAL_SQRT5-1)/2.,1./2,(CGAL_SQRT5-1)/2.),
                  [](double x) { return P(x,-x/(-1 - x + x*x),1./(x+1)); },
                  prec),
-  create_polyline((2.23606-1)/2.,1., P((2.23606-1)/2.,1./2,(2.23606-1)/2.),P(1.,1./2,1./2),
+  create_polyline((CGAL_SQRT5-1)/2.,1., P((CGAL_SQRT5-1)/2.,1./2,(CGAL_SQRT5-1)/2.),P(1.,1./2,1./2),
                  [](double x) { return P(x,1./2,1./(x+1)); },
                  prec),
-  create_polyline((2.23606-1)/2.,2./3, P((2.23606-1)/2.,1./2,(2.23606-1)/2.),P(2./3,3./5,1./2),
+  create_polyline((CGAL_SQRT5-1)/2.,2./3, P((CGAL_SQRT5-1)/2.,1./2,(CGAL_SQRT5-1)/2.),P(2./3,3./5,1./2),
                  [](double x) { return P(x,(1 - 2*x)/(1. - 3*x + x*x),(1. - x)/x); },
                  prec),
   create_polyline(2./3,1., P(2./3,3./5,1./2),P(1.,1./2,1./2),
@@ -3360,7 +3362,7 @@ return {
   create_polyline(3./5,1., P(2./3,3./5,1./2),P(2./3,1.,1./2),
                  [](double y) { return P(2./3,y,1./2); },
                  prec),
-  create_polyline(1./2.,(2.23606-1)/2., P(1./2,1./2,1.), P((2.23606-1)/2.,1./2,(2.23606-1)/2.),
+  create_polyline(1./2.,(CGAL_SQRT5-1)/2., P(1./2,1./2,1.), P((CGAL_SQRT5-1)/2.,1./2,(CGAL_SQRT5-1)/2.),
                  [](double x) { return P(x,1./2,(1. - x)/x); },
                  prec),
   create_polyline(2./5,1./2, P(1./2,2./5,2./3),P(1./2,1./2,1.),
@@ -3525,11 +3527,11 @@ return {
 
 //01123045
 // curve 1 : x = [0,1/2], y = 1/2, z =  (-1 + x)/(-2 + 3*x)
-// curve 2 : x = 1/2, y = [1/2,(2.23606-1.)/2], z = (1 - y)/y
-// curve 3 : x = (2*z*z - 3*z + 1)/(5*z*z - 5*z + 1), y = (-z*z + 2*z - 1)/(2*z*z - 1), z = [1/2,(2.23606-1.)/2]
-// curve 4 : x = [(2.23606-1.)/2,1], y = (-2 + 5*x - sqrt(4 - 8*x + 5*x*x))/(2*(-3 + 5*x)), z = (-2 + 4*x - x*x + x*sqrt(4 - 8*x + 5*x*x))/(2*(-1 + 2*x + x*x))
+// curve 2 : x = 1/2, y = [1/2,(std::sqrt(5)-1.)/2], z = (1 - y)/y
+// curve 3 : x = (2*z*z - 3*z + 1)/(5*z*z - 5*z + 1), y = (-z*z + 2*z - 1)/(2*z*z - 1), z = [1/2,(std::sqrt(5)-1.)/2]
+// curve 4 : x = [(std::sqrt(5)-1.)/2,1], y = (-2 + 5*x - sqrt(4 - 8*x + 5*x*x))/(2*(-3 + 5*x)), z = (-2 + 4*x - x*x + x*sqrt(4 - 8*x + 5*x*x))/(2*(-1 + 2*x + x*x))
 // curve 5 : x  =[1/2,1], y = x/(-1 + 3*x), z = 1./2
-// curve 6 : x = 1/2, y = [(2.23606-1.)/2,1], z = 1./(y+1)
+// curve 6 : x = 1/2, y = [(std::sqrt(5)-1.)/2,1], z = 1./(y+1)
 // problem with close polylines, there is an over refinement
 template<typename P>
 std::vector<std::vector<P>> poly01123045(const int prec = 10)
@@ -3538,19 +3540,19 @@ return {
   create_polyline(0.,1./2, P(0.,1./2,1./2),P(1./2,1./2,1.),
                  [](double x) { return P(x,1./2,(-1 + x)/(-2 + 3*x)); },
                  prec),
-  create_polyline(1./2,(2.23606-1.)/2, P(1./2,1./2,1.),P(1./2,(2.23606-1.)/2,(2.23606-1.)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2, P(1./2,1./2,1.),P(1./2,(CGAL_SQRT5-1.)/2,(CGAL_SQRT5-1.)/2),
                  [](double y) { return P(1./2,y,(1 - y)/y); },
                  prec),
-  create_polyline(1./2,(2.23606-1.)/2, P(0.,1./2,1./2),P(1./2,(2.23606-1.)/2,(2.23606-1.)/2),
+  create_polyline(1./2,(CGAL_SQRT5-1.)/2, P(0.,1./2,1./2),P(1./2,(CGAL_SQRT5-1.)/2,(CGAL_SQRT5-1.)/2),
                  [](double z) { return P((2*z*z - 3*z + 1)/(5*z*z - 5*z + 1),(-z*z + 2*z - 1)/(2*z*z - 1),z); },
                  prec),
-  create_polyline((2.23606-1.)/2,1.,P(1./2,(2.23606-1.)/2,(2.23606-1.)/2), P(1.,1./2,1./2),
+  create_polyline((CGAL_SQRT5-1.)/2,1.,P(1./2,(CGAL_SQRT5-1.)/2,(CGAL_SQRT5-1.)/2), P(1.,1./2,1./2),
                  [](double x) { return P(x,(-2 + 5*x - std::sqrt(4 - 8*x + 5*x*x))/(2*(-3 + 5*x)),(-2 + 4*x - x*x + x*std::sqrt(4 - 8*x + 5*x*x))/(2*(-1 + 2*x + x*x)) ); },
                  prec),
   create_polyline(1./2,1., P(1./2,1.,1./2),P(1.,1./2,1./2),
                  [](double x) { return P(x,x/(-1 + 3*x),1./2); },
                  prec),
-  create_polyline((2.23606-1.)/2,1., P(1./2,(2.23606-1.)/2,(2.23606-1.)/2),P(1./2,1.,1./2),
+  create_polyline((CGAL_SQRT5-1.)/2,1., P(1./2,(CGAL_SQRT5-1.)/2,(CGAL_SQRT5-1.)/2),P(1./2,1.,1./2),
                  [](double y) { return P(1./2,y,1./(y+1)); },
                  prec),
 };
@@ -3800,7 +3802,7 @@ inline constexpr Cube convert_to_cube(unsigned int n) {
 // User-defined literal operator.  Given an integer in octal notation, like
 // 01234567, gives the cube with the same colors. For example, `01234567_c`
 // is `Cube{0, 1, 2, 3, 4, 5, 6, 7}`.
-inline constexpr Cube operator"" _c(unsigned long long n)
+inline constexpr Cube operator""_c(unsigned long long n)
 {
   #if !defined(_MSC_VER) ||  (_MSC_VER > 1900)
   assert(n < (1 << 24));
@@ -4005,6 +4007,10 @@ public:
             { 01234567_c, CGAL::Mesh_3::poly01234567 }
     };
 };// end triple_lines_extractor
+
+#undef CGAL_SQRT65
+#undef CGAL_SQRT17
+
 }// end namespace Mesh 3
 }// end namespace CGAL
 

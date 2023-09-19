@@ -27,7 +27,7 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <fstream>
 #include <iostream>
@@ -209,19 +209,19 @@ void test_constructions(const G& g,
   // ---------------------------------------------------------------------------
   loc = std::make_pair(f, CGAL::make_array(FT(0.3), FT(0.4), FT(0.3)));
   descriptor_variant dv = PMP::get_descriptor_from_location(loc, g);
-  const face_descriptor* fd = boost::get<face_descriptor>(&dv);
+  const face_descriptor* fd = std::get_if<face_descriptor>(&dv);
   assert(fd);
 
   loc = std::make_pair(f, CGAL::make_array(FT(0.5), FT(0.5), FT(0)));
   dv = PMP::get_descriptor_from_location(loc, g);
-  const halfedge_descriptor* hd = boost::get<halfedge_descriptor>(&dv);
+  const halfedge_descriptor* hd = std::get_if<halfedge_descriptor>(&dv);
   assert(hd);
 
   loc = std::make_pair(f, CGAL::make_array(FT(1), FT(0), FT(0)));
   assert(PMP::is_on_vertex(loc, source(halfedge(f, g), g), g));
 
   dv = PMP::get_descriptor_from_location(loc, g);
-  if(const vertex_descriptor* v = boost::get<vertex_descriptor>(&dv)) { } else { assert(false); }
+  if(const vertex_descriptor* v = std::get_if<vertex_descriptor>(&dv)) { } else { assert(false); }
 
   // ---------------------------------------------------------------------------
   // just to check the API
@@ -393,8 +393,8 @@ void test_predicates(const G& g, CGAL::Random& rnd)
     loc.second[id_of_h] = FT(1);
     loc.second[(id_of_h+1)%3] = FT(0);
     loc.second[(id_of_h+2)%3] = FT(0);
-    boost::optional<halfedge_descriptor> opt_hd = CGAL::is_border(source(h, g), g);
-    assert(PMP::is_on_mesh_border<FT>(loc, g) == (opt_hd != boost::none));
+    std::optional<halfedge_descriptor> opt_hd = CGAL::is_border(source(h, g), g);
+    assert(PMP::is_on_mesh_border<FT>(loc, g) == (opt_hd != std::nullopt));
 
     loc.second[id_of_h] = FT(0.5);
     loc.second[(id_of_h+1)%3] = FT(0.5);
@@ -522,7 +522,7 @@ struct Locate_with_AABB_tree_Tester // 2D case
     typedef CGAL::AABB_face_graph_triangle_primitive<G, WrappedVPM>            AABB_face_graph_primitive;
     typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
-    CGAL_static_assertion((std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value));
+    static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
     Intrinsic_point_to_Point_3 to_p3;
 
@@ -633,7 +633,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
     typedef typename K::Point_3                            Point_3;
-    CGAL_static_assertion((std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value));
+    static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_a;
     Point_reference p3_a = get(vpm, v);

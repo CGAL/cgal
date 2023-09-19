@@ -19,7 +19,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #include <CGAL/Unique_hash_map.h>
 #include <vector>
@@ -802,8 +802,10 @@ void PM_decorator<HDS>::clone(const HDS& H) const
 
   /* First clone all objects and store correspondence in three maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
-  for (vit = H.vertices_begin(); vit!=vend; ++vit)
-    Vnew[vit] = this->phds->vertices_push_back(Vertex_base());
+  for (vit = H.vertices_begin(); vit != vend; ++vit) {
+      Vnew[vit] = this->phds->vertices_push_back(Vertex_base());
+      assert(Vnew[vit] != Vertex_handle());
+  }
   Halfedge_const_iterator eit, eend = H.halfedges_end();
   for (eit = H.halfedges_begin(); eit!=eend; ++(++eit)) {
     Hnew[eit] = this->phds->edges_push_back(Halfedge_base(),Halfedge_base());
@@ -820,8 +822,12 @@ void PM_decorator<HDS>::clone(const HDS& H) const
        vit2!=vend2; ++vit, ++vit2) {
     mark(vit2) = DC.mark(vit);
     point(vit2) = DC.point(vit);
-    if ( DC.is_isolated(vit) ) vit2->set_face(Fnew[vit->face()]);
-    else vit2->set_halfedge(Hnew[vit->halfedge()]);
+    if (DC.is_isolated(vit)) {
+      vit2->set_face(Fnew[vit->face()]);
+    }
+    else {
+      vit2->set_halfedge(Hnew[vit->halfedge()]);
+    }
   }
   Halfedge_iterator eit2, eend2 = this->phds->halfedges_end();
   for (eit = H.halfedges_begin(), eit2 = halfedges_begin();
@@ -843,9 +849,10 @@ void PM_decorator<HDS>::clone(const HDS& H) const
       fit2->store_fc(Hnew[fcit]);
     } // hole face cycles
     Isolated_vertex_const_iterator ivit;
-    for (ivit = isolated_vertices_begin(fit);
-         ivit != isolated_vertices_end(fit); ++ivit)
+    for (ivit = DC.isolated_vertices_begin(fit);
+        ivit != DC.isolated_vertices_end(fit); ++ivit) {
       fit2->store_iv(Vnew[ivit]);
+    }
       // isolated vertices in the interior
     mark(fit2) = DC.mark(fit);
   }

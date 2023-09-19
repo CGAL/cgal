@@ -62,8 +62,8 @@ struct Default_arr_traits<CGAL::internal::Polycurve_2
 };
 
 template <typename Rat_kernel_, class Alg_kernel_, class Nt_traits_>
-struct Default_arr_traits<CGAL::_Conic_arc_2<Rat_kernel_, Alg_kernel_,
-                                             Nt_traits_> >
+struct Default_arr_traits<CGAL::Conic_arc_2<Rat_kernel_, Alg_kernel_,
+                                            Nt_traits_> >
 {
   typedef CGAL::Arr_conic_traits_2<Rat_kernel_, Alg_kernel_, Nt_traits_>
                                                                         Traits;

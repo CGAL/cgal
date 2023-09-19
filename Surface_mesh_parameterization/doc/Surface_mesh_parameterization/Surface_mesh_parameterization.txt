@@ -441,7 +441,7 @@ Orbifold-Tutte Planar Embedding was introduced by Aigerman and Lipman \cgalCite{
 and is a generalization of Tutte’s embedding to other topologies, and in particular
 spheres, which we consider here. The orbifold-Tutte embedding bijectively maps
 the original surface, that is required to be a topological ball, to a canonical,
-topologically equivalent, two-dimensional flat surface called an Euclidean orbifold.
+topologically equivalent, two-dimensional flat surface called a Euclidean orbifold.
 There are 17 Euclidean orbifolds, of which only the 4 sphere orbifolds are currently implemented
 in CGAL.
 

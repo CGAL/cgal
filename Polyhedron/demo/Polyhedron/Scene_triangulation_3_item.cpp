@@ -705,6 +705,9 @@ create_histogram(const T3& triangulation, double& min_value, double& max_value)
     cit != triangulation.finite_cells_end();
     ++cit)
   {
+    if(cit->subdomain_index() == 0)
+      continue;
+
 #ifdef CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
     if (triangulation.in_dimension(cit->vertex(0)) <= 1
       || triangulation.in_dimension(cit->vertex(1)) <= 1

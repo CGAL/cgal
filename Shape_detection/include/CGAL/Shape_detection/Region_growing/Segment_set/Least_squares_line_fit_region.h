@@ -47,7 +47,7 @@ namespace Segment_set {
     a model of `ReadablePropertyMap` whose key type is `Item`
     and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,
@@ -223,13 +223,12 @@ namespace Segment_set {
       \param query
       `Item` of the query segment
 
-      The first and third parameters are not used in this implementation.
+      The last parameter is not used in this implementation.
 
       \return Boolean `true` or `false`
 
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region&) const {
 

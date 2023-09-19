@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: CGAL
+Upstream-Contact: CGAL Editorial Board <info@cgal.org>
+Source: https://github.com/CGAL/cgal
+
+Files: *.cmake *.md doc/* doc_html/* scripts/* developer_scripts/* package_info/* demo/* examples/* src/* test/* benchmarks/* benchmark/* data/* cmake/*
+Copyright: 1995-2023 The CGAL Project
+License: CC0-1.0
+
+Files: include/CGAL/Qt/ImageInterface.ui include/CGAL/Qt/resources/qglviewer-icon.xpm AUTHORS CMakeLists.txt README auxiliary/cgal_create_cmake_script.1 auxiliary/gmp/README include/CGAL/license/gpl_package_list.txt auxiliary/cgal_app.icns copyright VERSION
+Copyright: 1995-2023 The CGAL Project
+License: CC0-1.0

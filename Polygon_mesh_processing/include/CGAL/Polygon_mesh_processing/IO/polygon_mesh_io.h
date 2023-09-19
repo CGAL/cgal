@@ -105,7 +105,7 @@ bool read_polygon_mesh(const std::string& fname,
 
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > faces;
-  if(!CGAL::IO::read_polygon_soup(fname, points, faces))
+  if(!CGAL::IO::read_polygon_soup(fname, points, faces, CGAL::parameters::verbose(verbose)))
   {
     if(verbose)
       std::cerr << "Warning: cannot read polygon soup" << std::endl;

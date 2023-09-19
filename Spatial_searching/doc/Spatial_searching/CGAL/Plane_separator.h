@@ -9,7 +9,7 @@ hyperplane that is used to separate two half spaces.
 This hyperplane is defined by a cutting dimension `d` and a cutting
 value `v` as `xd=v`, where `v` denotes the `d`th coordinate value.
 
-\cgalModels `SpatialSeparator`
+\cgalModels{SpatialSeparator}
 
 */
 template< typename FT >

@@ -129,14 +129,14 @@ public:
 template <class GeomTraits_, class TopTraits_>
 class is_arrangement_2<
   Envelope_diagram_on_surface_2<GeomTraits_, TopTraits_>
-> : public boost::true_type
+> : public std::true_type
 {};
 
 // specialization
 template <class GeomTraits_, class DCEL_>
 class is_arrangement_2<
   Envelope_diagram_2<GeomTraits_, DCEL_>
-> : public boost::true_type
+> : public std::true_type
 {};
 
 

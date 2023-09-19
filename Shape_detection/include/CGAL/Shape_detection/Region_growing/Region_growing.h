@@ -451,9 +451,10 @@ namespace internal {
       Item_map item_map_ = Item_helper::get(item_map);
 
       m_nb_regions = 0;
+      typename boost::property_traits<Region_map>::value_type init_value(-1);
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
         Item item = get(item_map_, it);
-        put(m_region_map, item, std::size_t(-1));
+        put(m_region_map, item, init_value);
       }
       // TODO if we want to allow subranges while NeighborQuery operates on the full range
       // (like for faces in a PolygonMesh) we should fill a non-visited map rather than a visited map
@@ -479,8 +480,9 @@ namespace internal {
     Boolean_property_map<VisitedMap> m_visited;
 
     void fill_region_map(std::size_t idx, const Region& region) {
+      typedef typename boost::property_traits<Region_map>::value_type Id;
       for (auto item : region) {
-        put(m_region_map, item, idx);
+        put(m_region_map, item, static_cast<Id>(idx));
       }
     }
 
@@ -526,7 +528,7 @@ namespace internal {
             for (Item neighbor : neighbors) {
 
               if (!get(m_visited, neighbor)) {
-                if (m_region_type.is_part_of_region(item, neighbor, region)) {
+                if (m_region_type.is_part_of_region(neighbor, region)) {
 
                   // Add this neighbor to the other queue so that we can visit it later.
                   put(m_visited, neighbor, true);
@@ -553,13 +555,11 @@ namespace internal {
 
           // Verify that associated elements are still within the tolerance.
           bool fits = true;
-          Item former = region.front();
           for (Item item : region) {
-            if (!m_region_type.is_part_of_region(former, item, region)) {
+            if (!m_region_type.is_part_of_region(item, region)) {
               fits = false;
               break;
             }
-            former = item;
           }
 
           // The refitted primitive does not fit all elements of the region, so the growing stops here.
@@ -572,7 +572,7 @@ namespace internal {
 
           // Try to continue growing the region by considering formerly rejected elements.
           for (const std::pair<const Item, const Item>& p : rejected) {
-            if (m_region_type.is_part_of_region(p.first, p.second, region)) {
+            if (m_region_type.is_part_of_region(p.second, region)) {
 
               // Add this neighbor to the other queue so that we can visit it later.
               put(m_visited, p.second, true);
