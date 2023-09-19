@@ -32,11 +32,7 @@ concepts for the rest.
 
 
 
-\cgalModels `Kernel_d`
-\cgalModels `DelaunayTriangulationTraits`
-\cgalModels `RegularTriangulationTraits`
-\cgalModels `SearchTraits`
-\cgalModels `RangeSearchTraits`
+\cgalModels{Kernel_d,DelaunayTriangulationTraits,RegularTriangulationTraits,SearchTraits,RangeSearchTraits}
 
 \sa `CGAL::Cartesian_d<FieldNumberType>`
 \sa `CGAL::Homogeneous_d<RingNumberType>`
@@ -47,8 +43,7 @@ template< typename DimensionTag >
 struct Epick_d {
 /*!
 represents a point in the Euclidean space
-\cgalModels `DefaultConstructible`
-\cgalModels `Assignable`
+\cgalModels{DefaultConstructible,Assignable}
 */
 class Point_d {
 public:
@@ -76,8 +71,7 @@ Cartesian_const_iterator_d cartesian_end()const;
 
 /*!
 represents a weighted point in the Euclidean space
-\cgalModels `DefaultConstructible`
-\cgalModels `Assignable`
+\cgalModels{DefaultConstructible,Assignable}
 */
 class Weighted_point_d {
 public:
@@ -89,7 +83,7 @@ Point_d point() const;
 double weight() const;
 };
 
-/*! \cgalModels `Kernel_d::Center_of_sphere_d`
+/*! \cgalModels{Kernel_d::Center_of_sphere_d}
  */
 class Construct_circumcenter_d {
 public:
@@ -118,7 +112,7 @@ public:
 template<class ForwardIterator>
 FT operator()(ForwardIterator first, ForwardIterator last);
 };
-/*! \cgalModels `Kernel_d::Side_of_bounded_sphere_d`
+/*! \cgalModels{Kernel_d::Side_of_bounded_sphere_d}
  */
 class Side_of_bounded_sphere_d {
 public:

@@ -15,7 +15,9 @@ the concept `ImplicitSurfaceTraits_3` provides the types, predicates and constru
 that are passed
 to the generated model of `SurfaceMeshTraits_3`.
 
-\cgalHasModel Any \cgal Kernel.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Implicit_surface_3<Traits, Function>`
 \sa `CGAL::make_surface_mesh()`

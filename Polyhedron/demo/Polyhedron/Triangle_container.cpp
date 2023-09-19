@@ -6,19 +6,13 @@ typedef Viewer_interface VI;
 using namespace CGAL::Three;
 
 struct Tri_d{
-
-  Tri_d():
-    shrink_factor(1.0f),
-    plane(QVector4D()),
-    alpha(1.0f)
-  {}
-  Triangle_container* container;
-  float shrink_factor;
-  QVector4D plane;
-  bool is_surface;
-  float alpha;
-  QMatrix4x4 f_matrix;
-  QMatrix4x4 mv_matrix;
+  Triangle_container* container{nullptr};
+  float shrink_factor{1.f};
+  QVector4D plane{};
+  bool is_surface{false};
+  float alpha{1.f};
+  QMatrix4x4 f_matrix{};
+  QMatrix4x4 mv_matrix{};
 };
 
 Triangle_container::Triangle_container(int program, bool indexed)

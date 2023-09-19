@@ -24,13 +24,13 @@ namespace CGAL {
   /** Import a given Polyhedron_3 into a Linear_cell_complex.
    * @param alcc the linear cell complex where Polyhedron_3 will be converted.
    * @param apoly the Polyhedron.
-   * @return A dart created during the convertion.
+   * @return A dart created during the conversion.
    */
   template< class LCC, class Polyhedron >
   typename LCC::Dart_descriptor import_from_polyhedron_3(LCC& alcc,
                                                      const Polyhedron &apoly)
   {
-    CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==3 );
+    static_assert( LCC::dimension>=2 && LCC::ambient_dimension==3 );
 
     typedef typename Polyhedron::Halfedge_const_handle  Halfedge_handle;
     typedef typename Polyhedron::Facet_const_iterator   Facet_iterator;
@@ -94,7 +94,7 @@ namespace CGAL {
   /** Convert a Polyhedron_3 read into a flux into 3D linear cell complex.
    * @param alcc the linear cell complex where Polyhedron_3 will be converted.
    * @param ais the istream where read the Polyhedron_3.
-   * @return A dart created during the convertion.
+   * @return A dart created during the conversion.
    */
   template < class LCC >
   typename LCC::Dart_descriptor

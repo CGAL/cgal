@@ -621,7 +621,7 @@ void Viewer::initialize_buffers()
         buffers[7].release();
         vao[7].release();
 
-        //Querry Point
+        //Query Point
         vao[8].bind();
         buffers[8].bind();
         buffers[8].allocate(pos_queryPoint->data(), pos_queryPoint->size()*sizeof(float));
@@ -863,7 +863,7 @@ void Viewer::initialize_buffers()
         }
         vao[16].release();
 
-        //Querry point Sphere
+        //Query point Sphere
         vao[17].bind();
         buffers[8].bind();
         centerLocation[0] = rendering_program_spheres.attributeLocation("center");
@@ -2381,7 +2381,7 @@ void Viewer::toggleIncremental(bool on) {
             }//end-if-pts
             // sorts points in a way that improves space locality
             CGAL::spatial_sort( m_incrementalPts.begin(), m_incrementalPts.end() );
-            // set the current to "hightlight the new point"
+            // set the current to "highlight the new point"
             m_curStep = INIT;
         }/* else resume play */
 
@@ -2472,7 +2472,7 @@ void Viewer::incremental_insert() {
         }//end-for
         // erase existing vertices
         initClean();
-        // set the current to "hightlight the new point"
+        // set the current to "highlight the new point"
         m_curStep = INIT;
     }
 

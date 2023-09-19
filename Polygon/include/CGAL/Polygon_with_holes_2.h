@@ -33,7 +33,7 @@ types (`Kernel` and `Container`) that are used to instantiate
 the type `Polygon_2<Kernel,Container>`. The latter is used to
 represents the outer boundary and the boundary of the holes (if any exist).
 
-\cgalModels `GeneralPolygonWithHoles_2`
+\cgalModels{GeneralPolygonWithHoles_2}
 
 */
 template <class Kernel,
@@ -136,7 +136,7 @@ std::ostream& operator<<(std::ostream &os,
     default:
       os << "Polygon_with_holes_2(" << std::endl;
       if(p.is_unbounded())
-        os << "No outer bounary" << std::endl;
+        os << "No outer boundary" << std::endl;
       else
       {
         os << "Boundary(" << std::endl;
@@ -166,7 +166,7 @@ Both \ascii and binary formats are supported, and the format is automatically de
 The format consists of the number of points of the outer boundary followed
 by the points themselves in counterclockwise order, followed by the number of holes,
 and for each hole, the number of points of the outer boundary is followed
-by the points themselves in clockwise order.
+by the points themselves, in clockwise order.
 
 \relates Polygon_with_holes_2
 */

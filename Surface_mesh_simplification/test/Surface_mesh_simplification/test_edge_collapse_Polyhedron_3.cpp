@@ -198,7 +198,7 @@ void write (SurfaceSP aSurface, string aName)
 }
 
 template<class T>
-string opt2str (const boost::optional<T>& o)
+string opt2str (const std::optional<T>& o)
 {
   ostringstream ss;
   if(o)
@@ -222,7 +222,7 @@ string point2str (const P& p)
 }
 
 template<class P>
-string optpoint2str (const boost::optional<P>& p)
+string optpoint2str (const std::optional<P>& p)
 {
   ostringstream ss;
   if(p)
@@ -232,7 +232,7 @@ string optpoint2str (const boost::optional<P>& p)
   return ss.str();
 }
 template<class N>
-string optfloat2str (const boost::optional<N>& n)
+string optfloat2str (const std::optional<N>& n)
 {
   ostringstream ss;
   if(n)
@@ -258,7 +258,7 @@ string edge2str (const E& e)
   return ss.str();
 }
 
-template<class T> ostream&  operator << (ostream& os, const boost::optional<T>& o) { return os << opt2str(o); }
+template<class T> ostream&  operator << (ostream& os, const std::optional<T>& o) { return os << opt2str(o); }
 
 string normalize_EOL (string line)
 {
@@ -304,12 +304,12 @@ public :
     CHECK(aSurface.is_valid());
   }
 
-  virtual void OnCollected(const Profile& aProfile, const boost::optional<FT>& aCost) const
+  virtual void OnCollected(const Profile& aProfile, const std::optional<FT>& aCost) const
   {
     TEST_TRACE(str (boost::format("Collecting %1% : cost=%2%") % edge2str(aProfile.v0_v1()) % optfloat2str(aCost)));
   }
 
-  virtual void OnCollapsing(const Profile& aProfile, const boost::optional<Point>& aP) const
+  virtual void OnCollapsing(const Profile& aProfile, const std::optional<Point>& aP) const
   {
     TEST_TRACE(str (boost::format("S %1% - Collapsing %2% : placement=%3%") % mStep % edge2str(aProfile.v0_v1()) % optpoint2str(aP)));
 
@@ -487,7 +487,7 @@ int main(int argc, char** argv)
     }
 
     cout << endl
-         << lOK                    << " cases succedded." << endl
+         << lOK                    << " cases succeeded." << endl
          << (lCases.size() - lOK) << " cases failed." << endl;
 
     return lOK == lCases.size() ? 0 : 1;

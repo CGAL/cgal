@@ -262,7 +262,7 @@ protected:
    * \param new_vertex Output: if found a closer vertex to the query point.
    * \param cv_is_contained_in_seg Output: Whether cv is contained inside seg.
    * \return A handle to the halfedge (if no intersecting edge is found, the
-   *         function returns an ivalid halfedge handle).
+   *         function returns an invalid halfedge handle).
    */
   Halfedge_const_handle
   _intersection_with_ccb(Ccb_halfedge_const_circulator circ,

@@ -25,7 +25,5 @@ target_link_libraries(diff_between_meshes_plugin PUBLIC scene_surface_mesh_item)
    polyhedron_demo_plugin(partition_plugin Partition_graph_plugin ${partitionUI_FILES})
    target_link_libraries(partition_plugin PUBLIC scene_surface_mesh_item CGAL::METIS_support )
 else()
-  message(
-    "NOTICE : the Partition plugin needs METIS libraries and will not be compiled."
-  )
+  message(STATUS "NOTICE: the Partition plugin needs METIS libraries and will not be compiled.")
 endif()

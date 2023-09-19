@@ -36,7 +36,7 @@ int main()
   // Construct the locking data-structure, using the bounding-box of the points
   Rt::Lock_data_structure locking_ds(
     CGAL::Bbox_3(-1., -1., -1., 1., 1., 1.), 50);
-  // Contruct the triangulation in parallel
+  // Construct the triangulation in parallel
   std::cerr << "Construction and insertion" << std::endl;
   Rt rtr(V.begin(), V.end(), &locking_ds);
 

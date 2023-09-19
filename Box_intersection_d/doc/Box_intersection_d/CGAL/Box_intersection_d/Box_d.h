@@ -12,7 +12,7 @@ need to provide a unique `id`-number. The policy parameter
 `IdPolicy` offers several choices. The template parameters have to
 comply with the following requirements:
 
-\tparam NT is the number type for the box boundaries. It must meet the requierements
+\tparam NT is the number type for the box boundaries. It must meet the requirements
 of the concepts `Assignable` and `LessThanComparable`.
 \tparam D is an integer and the dimension of the box.
 \tparam IdPolicy specifies how the `id`-number will be
@@ -40,7 +40,7 @@ creates copies of the boxes that would not have identical
 `id`-numbers.
 </UL>
 
-\cgalModels `BoxIntersectionBox_d`
+\cgalModels{BoxIntersectionBox_d}
 
 \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
 \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink

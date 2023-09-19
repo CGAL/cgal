@@ -332,7 +332,7 @@ and values of alpha smaller than the size of the holes.
 Two-sided wrap.
 (Left) Wrapping a Bunny in 2D, with decreasing values for alpha.
 (Right) Wrapping a defect-laden Bunny in 3D. The rightmost column depicts a clipped visualization
-of the inside. When alpha is small enough with respect the diamater of the holes, the algorithm generates a two-sided wrap.
+of the inside. When alpha is small enough with respect the diameter of the holes, the algorithm generates a two-sided wrap.
 \cgalFigureCaptionEnd
 
 \section aw3_performance Performance

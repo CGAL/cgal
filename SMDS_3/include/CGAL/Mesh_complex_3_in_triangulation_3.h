@@ -131,7 +131,7 @@ namespace CGAL {
       }; // end class template C3t3_helper_class
 
     } // end namespace SMDS_3::details
-  } //end namesapce SMDS_3
+  } //end namespace SMDS_3
 
 /*!
   \ingroup PkgSMDS3Classes
@@ -151,7 +151,7 @@ namespace CGAL {
   vertex and cell base class are models of the concepts
   `SimplicialMeshVertexBase_3` and `SimplicialMeshCellBase_3`, respectively.
 
-  \tparam  CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
+  \tparam CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
   of the discretized geometric domain.
   It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
   `LessThanComparable`.
@@ -170,7 +170,7 @@ namespace CGAL {
   if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
   is only a model of the concept `MeshDomain_3`).
 
-  \cgalModels `MeshComplexWithFeatures_3InTriangulation_3`
+  \cgalModels{MeshComplexWithFeatures_3InTriangulation_3}
 
   \sa \link make_mesh_3() `CGAL::make_mesh_3()`\endlink
   \sa \link refine_mesh_3() `CGAL::refine_mesh_3()`\endlink
@@ -298,7 +298,7 @@ public:
   Mesh_complex_3_in_triangulation_3(Self&& rhs);
 
   /**
-  * Assignement operator, also serves as move-assignement
+  * Assignment operator, also serves as move-assignment
   */
   Self& operator=(Self rhs)
   {
@@ -640,7 +640,7 @@ public:
     but are isolated from the complex at the end of the meshing process.
 
     This function removes these so-called \em isolated vertices, that belong to the
-    triangulation but not to any cell of the `C3T3`, from the triangulation.
+    triangulation but not to any simplex of the `C3T3`, from the triangulation.
   */
   void remove_isolated_vertices()
   {
@@ -669,7 +669,8 @@ public:
     std::vector<Vertex_handle> isolated;
     for (Vertex_handle v : tr.finite_vertex_handles())
     {
-      if (v->meshing_info() == 0.)
+      if (v->meshing_info() == 0.
+        && (v->in_dimension() > 1 || v->in_dimension() < 0))
         isolated.push_back(v);
     }
 
@@ -1729,7 +1730,7 @@ Mesh_complex_3_in_triangulation_3()
   , manifold_info_initialized_(false) //TODO: parallel!
 {
   // We don't put it in the initialization list because
-  // std::atomic has no contructors
+  // std::atomic has no constructors
   number_of_facets_ = 0;
   number_of_cells_ = 0;
 }

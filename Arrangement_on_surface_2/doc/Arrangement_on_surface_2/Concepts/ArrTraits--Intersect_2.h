@@ -3,9 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines Functor
+ * \cgalRefines{Functor}
  *
- * \cgalHasModel ArrangementXMonotoneTraits_2::Intersect_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementXMonotoneTraits_2::Intersect_2}
+ * \cgalHasModelsEnd
  */
 class Intersect_2 {
 public:
@@ -17,7 +19,7 @@ public:
   /*! computes the intersections of `xc1` and `xc2` and writes them <I>in an
    * ascending lexicographic \f$xy\f$-order</I> into a range beginning at
    * `oi`. The type `OutputIterator` must dereference a polymorphic object of
-   * type `boost::variant` that wraps objects of type either type
+   * type `std::variant` that wraps objects of type either type
    * `pair<ArrTraits::Point_2, ArrTraits::Multiplicity>` or
    * `ArrTraits::X_monotone_curve_2`. An object of the former type represents an
    * intersection point with its multiplicity (in case the multiplicity is
@@ -37,8 +39,8 @@ public:
    */
   template <typename OutputIterator>
   OutputIterator operator()(ArrTraits::X_monotone_curve_2 xc1,
-                             ArrTraits::X_monotone_curve_2 xc2,
-                             OutputIterator& oi);
+                            ArrTraits::X_monotone_curve_2 xc2,
+                            OutputIterator& oi);
 
 /// @}
 

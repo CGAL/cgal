@@ -45,7 +45,7 @@ namespace CGAL {
 
 \brief Computes shortest surface paths from one or more source points on a surface mesh.
 
-\details Uses an optimized variation of Chen and Han's \f$ O(n^2) \f$ algorithm by Xin and Wang.
+\details Uses an optimized variation of Chen and Han's \cgalBigO{n^2} algorithm by Xin and Wang.
 Refer to those respective papers for the details of the implementation.
 
 \tparam Traits a model of `SurfaceMeshShortestPathTraits`.
@@ -144,7 +144,7 @@ public:
 
   /// \brief An ordered pair specifying a location on the surface of the `Triangle_mesh`.
   /// \details If `tm` is the input graph and given the pair (`f`, `bc`) such that `bc` is `(w0, w1, w2)`,
-  ///  the correspondance with the weights in `bc` and the vertices of the face `f` is the following:
+  ///  the correspondence with the weights in `bc` and the vertices of the face `f` is the following:
   /// - `w0 = source(halfedge(f,tm),tm)`
   /// - `w1 = target(halfedge(f,tm),tm)`
   /// - `w2 = target(next(halfedge(f,tm),tm),tm)`
@@ -846,10 +846,10 @@ private:
      *     \  /
      *      v3
      * The source S must reach all Vi, so for each side of the edge, there are two windwows being spawned:
-     * - v0v1 targetting v2 propagating only on the left (v0v2)
-     * - v2v0 targetting v1 propagating only on the left (v2v1)
-     * - v1v0 targetting v3 propagating only on the left (v1v3)
-     * - v3v1 targetting v0 propagating only on the left (v3v0)
+     * - v0v1 targeting v2 propagating only on the left (v0v2)
+     * - v2v0 targeting v1 propagating only on the left (v2v1)
+     * - v1v0 targeting v3 propagating only on the left (v1v3)
+     * - v3v1 targeting v0 propagating only on the left (v3v0)
      *
      * If v0v1 is a border edge, spawn 3 children in the face, and none on the other side
      */
@@ -879,11 +879,11 @@ private:
       Triangle_2 layoutFace(pt3t2(face3d));
       Point_2 sourcePoint(construct_barycenter_in_triangle_2(layoutFace, edgeSourceLocations[side]));
 
-      // v0v1 targetting v2
+      // v0v1 targeting v2
       if (m_debugOutput)
       {
         std::cout << std::endl << " ~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-        std::cout << "\tExpanding edge root, side #" << side << ", targetting LOCAL 'v2'" << std::endl;
+        std::cout << "\tExpanding edge root, side #" << side << ", targeting LOCAL 'v2'" << std::endl;
         std::cout << "\t\t3D Face = " << face3d << std::endl;
         std::cout << "\t\t2D Face = " << layoutFace << std::endl;
         std::cout << "\t\tBarycentric coordinates: " << edgeSourceLocations[side][0]
@@ -904,7 +904,7 @@ private:
       edgeRoot->push_middle_child(v2_Child);
       process_node(v2_Child);
 
-      // v2v0 targetting v1
+      // v2v0 targeting v1
       face3d = triangle_from_halfedge(prev(baseEdges[side], m_graph));
       layoutFace = pt3t2(face3d);
 
@@ -916,7 +916,7 @@ private:
       if (m_debugOutput)
       {
         std::cout << std::endl << " ~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
-        std::cout << "\tExpanding edge root, side #" << side << ", targetting LOCAL 'v1'" << std::endl;
+        std::cout << "\tExpanding edge root, side #" << side << ", targeting LOCAL 'v1'" << std::endl;
         std::cout << "\t\t3D Face = " << face3d << std::endl;
         std::cout << "\t\t2D Face = " << layoutFace << std::endl;
         std::cout << "\t\tBarycentric coordinates: " << edgeSourceLocations[side][0]
@@ -1082,7 +1082,7 @@ private:
     {
       const auto cgalIntersection = i2(cl2(segment), cl2(leftBoundary));
 
-      if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
+      if (!cgalIntersection || !std::get_if<Point_2>(&*cgalIntersection))
       {
         if (m_debugOutput)
         {
@@ -1092,7 +1092,7 @@ private:
       }
       else
       {
-        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 >= FT(1))
@@ -1140,7 +1140,7 @@ private:
     {
       const auto cgalIntersection = i2(cl2(segment), cl2(rightBoundary));
 
-      if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
+      if (!cgalIntersection || !std::get_if<Point_2>(&*cgalIntersection))
       {
         if (m_debugOutput)
         {
@@ -1150,7 +1150,7 @@ private:
       }
       else
       {
-        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 <= FT(0))
@@ -1348,7 +1348,7 @@ private:
 
           // Propagating a pseudo-source on a boundary vertex can result in a cone on a null face
           // In such a case, we only care about the part of the cone pointing at the vertex (i.e. the middle child),
-          // so we can avoid propagating over the (non-existant) left opposite edge
+          // so we can avoid propagating over the (non-existent) left opposite edge
           if (node->is_null_face())
           {
             propagateLeft = false;
@@ -1446,7 +1446,7 @@ private:
       else // there is already an occupier, at a strictly smaller distance
       {
         // this is an application of "one angle one split"
-        if (c != CGAL::LARGER) // propage on the left if the node's ray is left of the occupier's
+        if (c != CGAL::LARGER) // propagate on the left if the node's ray is left of the occupier's
           propagateLeft = true;
         if (c != CGAL::SMALLER && !node->is_source_node()) // by convention a source node only points at the left edge
           propagateRight = true;
@@ -1778,7 +1778,7 @@ private:
 
           CGAL_assertion(bool(cgalIntersection));
 
-          const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+          const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
           if (!result)
             result = &currentSourceImage;
 
@@ -2495,7 +2495,7 @@ public:
   {
     // It is a feature of C++11 that `const_iterator` may be used in calls to `erase()`, however
     // in order to support C++98, we must use `iterator`.  Semantically, this is correct, but
-    // I must cast away the const-ness to hide the internal uglyness
+    // I must cast away the const-ness to hide the internal ugliness
     return Source_point_iterator(const_cast<std::list<Face_location>&>(m_faceLocations).begin());
   }
 
@@ -3049,7 +3049,7 @@ public:
     typename Traits::Construct_barycentric_coordinates cbc(traits.construct_barycentric_coordinates_object());
     typename Traits::Compute_squared_distance_3 csd3(traits.compute_squared_distance_3_object());
     typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
-    typedef boost::optional<Intersection_type> Ray_intersection;
+    typedef std::optional<Intersection_type> Ray_intersection;
 
     std::vector<Ray_intersection> intersections;
 
@@ -3064,7 +3064,7 @@ public:
     {
       if (intersections[i])
       {
-        Point_3* intersectionPoint = boost::get<Point_3>(&(intersections[i]->first));
+        Point_3* intersectionPoint = std::get_if<Point_3>(&(intersections[i]->first));
 
         if (intersectionPoint)
         {

@@ -1,6 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/circles.cpp
 // Constructing an arrangement of circles using the circle-segment traits.
 
+#include <CGAL/draw_arrangement_2.h>
+
 #include "arr_circular.h"
 
 int main() {
@@ -27,5 +29,6 @@ int main() {
   std::cout << "The vertex with maximal degree in the arrangement is: "
             << "v_max = (" << v_max->point() << ") "
             << "with degree " << v_max->degree() << "." << std::endl;
+  CGAL::draw(arr);
   return 0;
 }

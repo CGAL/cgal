@@ -181,7 +181,7 @@ public:
 // Utility functions
 
   // Set whether to display warning message in `std::cerr` when input doesn't meet
-  // prerequesite
+  // prerequisite
   void set_verbose(bool is_verbose)
   {
     m_is_verbose = is_verbose;

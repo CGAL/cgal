@@ -52,13 +52,13 @@ typedef CGAL::Surface_mesh<Point>                                               
 * the surface model from the planes.
 */
 
-int main()
+int main(int argc, char* argv[])
 {
   Point_vector points;
 
   // Loads point set from a file.
-  const std::string input_file(CGAL::data_file_path("points_3/cube.pwn"));
-    std::ifstream input_stream(input_file.c_str());
+  const std::string input_file = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn");
+  std::ifstream input_stream(input_file.c_str());
   if (input_stream.fail()) {
     std::cerr << "failed open file \'" <<input_file << "\'" << std::endl;
     return EXIT_FAILURE;

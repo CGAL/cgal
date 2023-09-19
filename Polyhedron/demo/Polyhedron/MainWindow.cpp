@@ -1267,7 +1267,7 @@ void MainWindow::open(QString filename)
 
 bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename);
-  boost::optional<bool> item_opt;
+  std::optional<bool> item_opt;
   try {
     item_opt = wrap_a_call_to_cpp
         ([this, fileinfo, loader_name]()
@@ -1440,7 +1440,7 @@ QList<int> MainWindow::getSelectedSceneItemIndices() const
 void MainWindow::selectionChanged()
 {
   scene->setSelectedItemIndex(getSelectedSceneItemIndex());
-  scene->setSelectedItemsList(getSelectedSceneItemIndices());
+  scene->setSelectedItemIndices(getSelectedSceneItemIndices());
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   Q_FOREACH(CGAL::QGLViewer* vi, CGAL::QGLViewer::QGLViewerPool())
   {
@@ -1890,7 +1890,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 bool MainWindow::loadScript(QString filename)
 {
   QFileInfo fileinfo(filename);
-  boost::optional<bool> opt = wrap_a_call_to_cpp
+  std::optional<bool> opt = wrap_a_call_to_cpp
       ([this, fileinfo] {
     return loadScript(fileinfo);
   }, this, __FILE__, __LINE__, CGAL::Three::PARENT_CONTEXT);
@@ -2193,7 +2193,7 @@ void MainWindow::on_actionEraseAll_triggered()
   QList<int> all_ids;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
     all_ids.push_back(i);
-  scene->setSelectedItemsList(all_ids);
+  scene->setSelectedItemIndices(all_ids);
   on_actionErase_triggered();
 }
 
@@ -2544,7 +2544,7 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 
 void MainWindow::recenterScene()
 {
-  //force the recomputaion of the bbox
+  //force the recomputation of the bbox
   bbox_need_update = true;
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
@@ -2621,7 +2621,7 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
   if(id.isValid())
   {
     // mapFromSource is necessary to convert the QModelIndex received
-    // from the Scene into a valid QModelIndex in the view, beacause of
+    // from the Scene into a valid QModelIndex in the view, because of
     // the proxymodel
     sceneView->scrollTo(proxyModel->mapFromSource(id));
   }
@@ -3191,8 +3191,8 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                              tr("Enter the name of your scene file."));
     if(path.isEmpty())
       return;
-    if(!path.contains("Polyhedron_demo_"))
-      path.prepend("Polyhedron_demo_");
+    if(!path.contains("/tmp/Polyhedron_demo_"))
+      path.prepend("/tmp/Polyhedron_demo_");
     try{
       ssh_session session = nullptr;
       bool res = establish_ssh_session_from_agent(session,

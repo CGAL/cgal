@@ -26,7 +26,7 @@
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 // Barycentric coordinates headers.
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
@@ -100,7 +100,7 @@ public:
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
-\cgalModels `BarycentricCoordinates_2`
+\cgalModels{BarycentricCoordinates_2}
 
 */
 template<class Traits>
@@ -154,7 +154,7 @@ public:
 
     // This function computes mean value weights (unnormalized coordinates) for a chosen query point.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> weights(const Point_2 &query_point, OutputIterator &output)
+        inline std::optional<OutputIterator> weights(const Point_2 &query_point, OutputIterator &output)
     {
         return weights_2(query_point, output);
     }
@@ -163,7 +163,7 @@ public:
 
     // This function computes mean value barycentric coordinates for a chosen query point on the bounded side of a simple polygon.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
+        inline std::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
     {
         switch(type_of_algorithm)
         {
@@ -179,13 +179,13 @@ public:
         // Pointer cannot be here. Something went wrong.
         const bool type_of_algorithm_failure = true;
         CGAL_postcondition( !type_of_algorithm_failure );
-        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
-        else return boost::optional<OutputIterator>();
+        if(!type_of_algorithm_failure) return std::optional<OutputIterator>(output);
+        else return std::optional<OutputIterator>();
     }
 
     // This function computes mean value barycentric coordinates for a chosen query point on the unbounded side of a simple polygon.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
+        inline std::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
     {
         switch(type_of_algorithm)
         {
@@ -201,8 +201,8 @@ public:
         // Pointer cannot be here. Something went wrong.
         const bool type_of_algorithm_failure = true;
         CGAL_postcondition( !type_of_algorithm_failure );
-        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
-        else return boost::optional<OutputIterator>();
+        if(!type_of_algorithm_failure) return std::optional<OutputIterator>(output);
+        else return std::optional<OutputIterator>();
     }
 
     // Information Functions
@@ -243,7 +243,7 @@ private:
 
     // Compute mean value weights without normalization.
     template<class OutputIterator>
-        boost::optional<OutputIterator> weights_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> weights_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
@@ -293,7 +293,7 @@ private:
         ++output;
 
         // Return weights.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // COORDINATES ON BOUNDED SIDE.
@@ -301,7 +301,7 @@ private:
     // Compute mean value coordinates on the bounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_bounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_bounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
@@ -368,13 +368,13 @@ private:
         ++output;
 
         // Return coordinates.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // Compute mean value coordinates on the bounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_bounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_bounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
@@ -437,7 +437,7 @@ private:
         ++output;
 
         // Return coordinates.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // COORDINATES ON UNBOUNDED SIDE.
@@ -445,7 +445,7 @@ private:
     // Compute mean value coordinates on the unbounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
         return coordinates_on_bounded_side_precise_2(query_point, output);
@@ -454,7 +454,7 @@ private:
     // Compute mean value coordinates on the unbounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
         return coordinates_on_bounded_side_fast_2(query_point, output);

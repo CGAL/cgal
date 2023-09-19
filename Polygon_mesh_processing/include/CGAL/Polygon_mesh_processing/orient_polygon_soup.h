@@ -39,10 +39,10 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /** \ingroup PMP_orientation_grp
+ *
  *  Default visitor model of `PMPPolygonSoupOrientationVisitor`.
  *  All of its functions have an empty body. This class can be used as a
- *  base class if only some of the functions of the concept require to be
- *  overridden.
+ *  base class if only some of the functions of the concept will be overridden.
  */
 struct Default_orientation_visitor{
   void non_manifold_edge(std::size_t, std::size_t, std::size_t){}
@@ -228,7 +228,7 @@ struct Polygon_soup_orienter
   /// If the polygon was already marked as oriented, then we cut the dual edge
   /// in the graph and the primal edge is marked.
   /// At the same time, we assign an id to each polygon in the same connected
-  /// componenet of the dual graph.
+  /// component of the dual graph.
   void orient()
   {
     std::vector<bool> oriented;
@@ -483,12 +483,22 @@ struct Polygon_soup_orienter
  *
  * \brief tries to consistently orient a soup of polygons in 3D space.
  *
- * When it is not possible to produce a combinatorial manifold surface,
+ * The algorithm re-orients polygons such that the orientation
+ * of adjacent polygons is consistent. Note that the adjacency is
+ * defined in a combinatorial sense, i.e. two polygons are sharing
+ * an edge if and only if the endpoints of this edge are represented
+ * by the same point indices in both faces (possibly in a different order);
+ * it is not sufficient for the points to be geometrically identical.
+ * One may use `CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup()`
+ * to convert geometrical point equality into combinatorial point equality.
+ *
+ * When it is not possible to produce a combinatorial manifold surface
+ * (for example, if the polygon soup makes up a Möbius strip),
  * some points are duplicated.
  * Because a polygon soup does not have any connectivity (each point
  * has as many occurrences as the number of polygons it belongs to),
  * duplicating one point (or a pair of points)
- * amounts to duplicate the polygon to which it belongs.
+ * amounts to duplicating the polygon to which it belongs.
  *
  * These points are either an endpoint of an edge incident to more
  * than two polygons, an endpoint of an edge between
@@ -520,8 +530,8 @@ struct Polygon_soup_orienter
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * @return `true`  if the orientation operation succeded.
- * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
+ * @return `true`  if the orientation operation succeeded.
+ * @return `false` if some points were duplicated, thus producing a combinatorially manifold but self-intersecting polyhedron.
  *
  * @sa `orient_triangle_soup_with_reference_triangle_mesh()`
  */

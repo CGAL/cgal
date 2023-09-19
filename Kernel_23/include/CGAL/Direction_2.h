@@ -38,7 +38,7 @@ class Direction_2 : public R_::Kernel_base::Direction_2
   typedef typename R_::Kernel_base::Direction_2      RDirection_2;
 
   typedef Direction_2                        Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Direction_2>::value));
+  static_assert(std::is_same<Self, typename R_::Direction_2>::value);
 
 public:
 

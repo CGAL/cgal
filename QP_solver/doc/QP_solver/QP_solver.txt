@@ -273,7 +273,7 @@ can easily be overlooked by a novice.
 
 \cgalExample{QP_solver/first_qp.cpp}
 
-Asuming that <TT>GMP</TT> is installed, the
+Assuming that <TT>GMP</TT> is installed, the
 output of the of the above program is:
 \verbatim
 status: OPTIMAL
@@ -351,7 +351,7 @@ Similarly, if the solver knows that the program is nonnegative, it
 will be more efficient than under the general bounds
 \f$ \qpl\leq \qpx \leq \qpu\f$.
 You can argue that nonnegativity <I>is</I> something that could easily
-be checked in time \f$ O(n)\f$ beforehand, but then again nonnegative
+be checked in time \cgalBigO{n} beforehand, but then again nonnegative
 programs are so frequent that the syntactic sugar aspect becomes
 somewhat important. After all, we can save four iterators in
 specifying a nonnegative linear program in terms of the concept

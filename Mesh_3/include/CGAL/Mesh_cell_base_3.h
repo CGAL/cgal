@@ -30,8 +30,6 @@
 #include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/tags.h>
 
-#include <boost/type_traits/is_convertible.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 #endif
@@ -119,21 +117,20 @@ of the concept `MeshDomain_3`.
 of the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3` and defaults to
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3<GT>`.
 
-\cgalModels `MeshCellBase_3`
+\cgalModels{MeshCellBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 \sa `CGAL::Compact_mesh_cell_base_3<GT, MD, Tds>`
 
 */
-template< class GT,
-  class MD,
-  class Cb= CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<
-              GT, CGAL::Regular_triangulation_cell_base_3<GT> > >
+template<class GT,
+         class MD,
+         class Cb = CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<
+                      GT, CGAL::Regular_triangulation_cell_base_3<GT> > >
 class Mesh_cell_base_3
-: public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>
 #ifndef DOXYGEN_RUNNING
-, public Mesh_cell_base_3_base<
-    typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Concurrency_tag>
+  : public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>,
+    public Mesh_cell_base_3_base<typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Concurrency_tag>
 #endif
 {
   typedef typename GT::FT FT;
@@ -163,7 +160,6 @@ public:
     typedef Mesh_cell_base_3 <GT, MD, Cb3> Other;
   };
 
-  // Constructors
   Mesh_cell_base_3()
     : Base()
     , subdomain_index_()
@@ -225,6 +221,9 @@ public:
   bool is_cache_valid() const { return sliver_cache_validity_; }
   void reset_cache_validity() const { sliver_cache_validity_ = false;  }
 
+  /// \name I/O
+  ///@{
+
   static
   std::string io_signature()
   {
@@ -232,6 +231,8 @@ public:
       Get_io_signature<Subdomain_index>()() + "+"
       + Get_io_signature<Base>()();
   }
+
+  /// @}
 
 #ifdef CGAL_INTRUSIVE_LIST
 public:
@@ -248,8 +249,9 @@ public:
   }
 #endif // CGAL_INTRUSIVE_LIST
 
-  /// For the determinism of Compact_container iterators
+  /// \name Determinism
   ///@{
+
   typedef Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
@@ -258,6 +260,7 @@ public:
   void set_time_stamp(const std::size_t& ts) {
     time_stamp_ = ts;
   }
+
   ///@}
 
 private:

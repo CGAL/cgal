@@ -88,12 +88,12 @@ protected:
     // Wrapper
     struct Coaffine_orientation_d
     {
-      boost::optional<Flat_orientation_d>* fop;
+      std::optional<Flat_orientation_d>* fop;
       Construct_flat_orientation_d cfo;
       In_flat_orientation_d ifo;
 
       Coaffine_orientation_d(
-        boost::optional<Flat_orientation_d>& x,
+        std::optional<Flat_orientation_d>& x,
         Construct_flat_orientation_d const&y,
         In_flat_orientation_d const&z)
       : fop(&x), cfo(y), ifo(z) {}
@@ -102,9 +102,9 @@ protected:
       CGAL::Orientation operator()(Iter a, Iter b) const
       {
         if (*fop)
-          return ifo(fop->get(),a,b);
+          return ifo(fop->value(),a,b);
         *fop = cfo(a,b);
-        CGAL_assertion(ifo(fop->get(),a,b) == CGAL::POSITIVE);
+        CGAL_assertion(ifo(fop->value(),a,b) == CGAL::POSITIVE);
         return CGAL::POSITIVE;
       }
     };
@@ -117,7 +117,7 @@ protected:
         flat_orientation_ = *preset_flat_orientation_.second;
       }
       else
-        flat_orientation_ = boost::none;
+        flat_orientation_ = std::nullopt;
     }
 
     typedef typename TriangulationTraits::Orientation_d
@@ -188,7 +188,7 @@ protected: // DATA MEMBERS
     Triangulation_ds                            tds_;
     const Geom_traits                           kernel_;
     Vertex_handle                               infinity_;
-    mutable boost::optional<Flat_orientation_d> flat_orientation_;
+    mutable std::optional<Flat_orientation_d> flat_orientation_;
     // The user can specify a Flat_orientation_d object to be used for
     // orienting simplices of a specific dimension
     // (= preset_flat_orientation_.first)

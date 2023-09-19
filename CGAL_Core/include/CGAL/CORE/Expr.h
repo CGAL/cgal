@@ -209,7 +209,7 @@ public:
     *this -= 1;
     return *this;
   }
-  /// right deccrement operator (i--)
+  /// right decrement operator (i--)
   Expr operator--(int) {
     Expr t(*this);
     *this -= 1;
@@ -365,7 +365,7 @@ CGAL_CORE_EXPORT Expr pow(const Expr&, unsigned long);
 inline Expr operator+(const Expr& e1, const Expr& e2) {
   return Expr(new AddRep(e1.Rep(), e2.Rep()));
 }
-/// substraction
+/// subtraction
 inline Expr operator-(const Expr& e1, const Expr& e2) {
   return Expr(new SubRep(e1.Rep(), e2.Rep()));
 }

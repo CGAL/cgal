@@ -208,7 +208,7 @@ public:
   /// @{
     /*!
       Inserts the point `p` in the triangulation.
-      If the point `p` coincides with a existing vertex, then the vertex is returned
+      If the point `p` coincides with an existing vertex, then the vertex is returned
       and the triangulation is not modified. The optional parameter `start` is used
       to initialize the location of `p`.
     */

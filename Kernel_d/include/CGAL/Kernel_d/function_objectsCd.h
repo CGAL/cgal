@@ -279,7 +279,7 @@ public:
  * subspace on which the (full k-dim) predicates answers POSITIVE or NEGATIVE.
  * If no such subspace is found, return COPLANAR.
  * IMPORTANT TODO: Current implementation is VERY bad with filters: if one
- * determinant fails in the filtering step, then all the subsequent ones wil be
+ * determinant fails in the filtering step, then all the subsequent ones will be
  * in exact arithmetic :-(
  * TODO: store the axis-aligned subspace that was found in order to avoid
  * re-searching for it for subsequent calls to operator()

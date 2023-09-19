@@ -29,7 +29,7 @@ void test_rational_traits(){
 
     typedef Rational_traits<Rational> Rational_traits;
     typedef typename Rational_traits::RT RT;
-    CGAL_static_assertion((::std::is_same<RT,RT>::value));
+    static_assert(::std::is_same<RT,RT>::value);
 
     assert( Rational_traits().numerator(x) == RT(7));
     assert( Rational_traits().denominator(x) == RT(2));
@@ -39,7 +39,7 @@ void test_rational_traits(){
     assert( Rational_traits().make_rational(std::make_pair(x,x)) == Rational(1));
     assert( Rational_traits().make_rational(std::make_pair(7,RT(2))) == x);
 
-    // gloabal function to_rational
+    // global function to_rational
     x = CGAL::to_rational<Rational>(3.5);
     assert( x == Rational(7)/Rational(2));
 }

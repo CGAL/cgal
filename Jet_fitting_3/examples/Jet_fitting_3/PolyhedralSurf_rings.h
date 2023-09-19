@@ -25,7 +25,7 @@ protected:
 
   //i >= 1; from a start vertex on the current i-1 ring, push non-visited neighbors
   //of start in the nextRing and set indices to i. Also add these vertices in all.
-  static void push_neighbours_of(Vertex * start, int ith,
+  static void push_neighbors_of(Vertex * start, int ith,
                           std::vector < Vertex * >&nextRing,
                           std::vector < Vertex * >&all,
                           VertexPropertyMap& vpm);
@@ -39,7 +39,7 @@ protected:
                         VertexPropertyMap& vpm);
 
  public:
-  //collect i>=1 rings : all neighbours up to the ith ring,
+  //collect i>=1 rings : all neighbors up to the ith ring,
   static void
     collect_i_rings(Vertex* v,
                     int ring_i,
@@ -58,10 +58,10 @@ protected:
 
 template < class TPoly , class VertexPropertyMap>
 void T_PolyhedralSurf_rings <TPoly, VertexPropertyMap>::
-push_neighbours_of(Vertex * start, int ith,
-                   std::vector < Vertex * >&nextRing,
-                   std::vector < Vertex * >&all,
-                   VertexPropertyMap& vpm)
+push_neighbors_of(Vertex * start, int ith,
+                  std::vector < Vertex * >&nextRing,
+                  std::vector < Vertex * >&all,
+                  VertexPropertyMap& vpm)
 {
   Vertex *v;
   Halfedge_around_vertex_circulator
@@ -88,7 +88,7 @@ collect_ith_ring(int ith, std::vector < Vertex * >&currentRing,
   typename std::vector < Vertex * >::iterator
     itb =    currentRing.begin(), ite = currentRing.end();
 
-  CGAL_For_all(itb, ite) push_neighbours_of(*itb, ith, nextRing, all, vpm);
+  CGAL_For_all(itb, ite) push_neighbors_of(*itb, ith, nextRing, all, vpm);
 }
 
 template <class TPoly, class VertexPropertyMap>

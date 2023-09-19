@@ -64,7 +64,7 @@ namespace Surface_mesh_parameterization {
 // from the linear systems in order to have a symmetric positive definite
 // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
@@ -104,7 +104,7 @@ public:
     Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
 
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
+  static_assert(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -267,7 +267,7 @@ public:
 
     // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
     // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-    NT Du = 0, Dv = 0;
+    double Du = 0, Dv = 0;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
     {
@@ -361,7 +361,7 @@ protected:
   /// - compute w_ii = - sum of w_ijs.
   ///
   /// \pre Vertices must be indexed.
-  /// \pre Vertex i musn't be already parameterized.
+  /// \pre Vertex i mustn't be already parameterized.
   /// \pre Line i of A must contain only zeros.
   // TODO: check if this must be virtual
   // virtual

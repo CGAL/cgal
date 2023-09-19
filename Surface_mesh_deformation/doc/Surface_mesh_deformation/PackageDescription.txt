@@ -7,7 +7,7 @@
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Deformation,PkgSurfaceMeshDeformation}
 \cgalPkgPicture{deform-ico.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Sébastien Loriot, Olga Sorkine-Hornung, Yin Xu and Ilker %O. Yaz}
+\cgalPkgAuthors{Sébastien Loriot, Olga Sorkine-Hornung, Yin Xu, and Ilker %O. Yaz}
 \cgalPkgDesc{This package offers surface mesh deformation algorithms which provide new positions to the vertices of a surface mesh
 under positional constraints of some of its vertices, without requiring any additional structure other than the surface mesh itself.}
 \cgalPkgManuals{Chapter_SurfaceMeshDeformation,PkgSurfaceMeshDeformationRef}

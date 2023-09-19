@@ -303,7 +303,7 @@ void test_points_API(const std::string& ps_filename,
 
 int main(int argc, char** argv)
 {
-  const std::string tm_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/polygon_mesh.off"); // mesh
+  const std::string tm_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/building.off"); // mesh
   const std::string ts_filename = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/oblong-shuffled.off"); // triangle soup
   const std::string ss_filename = (argc > 3) ? argv[3] : CGAL::data_file_path("images/420.polylines.txt"); // segment soup
   const std::string ps_filename = (argc > 4) ? argv[4] : CGAL::data_file_path("points_3/b9_training.ply"); // point set

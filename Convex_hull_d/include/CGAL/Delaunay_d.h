@@ -830,7 +830,7 @@ locate(const Point_d& x) const
   // lift(p) is not a dimension jump
   std::list<Simplex_handle> candidates;
   std::size_t dummy1 = 0;
-  int loc = -1; // intialization is important
+  int loc = -1; // initialization is important
   Simplex_handle f;
   this -> visibility_search(origin_simplex_,lp,candidates,dummy1,loc,f);
   this -> clear_visited_marks(origin_simplex_);

@@ -28,7 +28,7 @@ namespace CGAL {
       typedef typename Map::value_type value_type;
 
     protected:
-      // --- protected datas ---
+      // --- protected data ---
       Map map;
 
     public:

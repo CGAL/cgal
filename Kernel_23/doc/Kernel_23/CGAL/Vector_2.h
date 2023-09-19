@@ -12,8 +12,7 @@ from \f$ p_1\f$ to \f$ p_2\f$.
 will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros.
 
-\cgalModels `Kernel::Vector_2`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Vector_2,Hashable if `Kernel` is a %Cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >
@@ -25,7 +24,7 @@ public:
 
 /*!
 An iterator for enumerating the
-Cartesian coordinates of a vector.
+%Cartesian coordinates of a vector.
 */
 typedef unspecified_type Cartesian_const_iterator;
 
@@ -71,7 +70,7 @@ Vector_2(double x, double y);
 
 /*!
 introduces a vector `v` initialized to `(hx/hw,hy/hw)`.
-\pre \f$ hw\neq0\f$.
+\pre `hw != 0`.
 */
 Vector_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1));
 
@@ -119,37 +118,37 @@ Kernel::FT y() const;
 
 /// \name Convenience Operators
 /// The following operations are for convenience and for compatibility
-/// with higher dimensional vectors. Again they come in a Cartesian
+/// with higher dimensional vectors. Again they come in a %Cartesian
 /// and homogeneous flavor.
 /// @{
 
 
 /*!
 returns the i'th homogeneous coordinate of `v`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
-returns the i'th Cartesian coordinate of `v`.
-\pre \f$ 0\leq i \leq1\f$.
+returns the i'th %Cartesian coordinate of `v`.
+\pre `0 <= i <= 1`.
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
-\pre \f$ 0\leq i \leq1\f$.
+\pre `0 <= i <= 1`.
 */
 Kernel::FT operator[](int i) const;
 
 /*!
-returns an iterator to the Cartesian coordinates
+returns an iterator to the %Cartesian coordinates
 of `v`, starting with the 0th coordinate.
 */
 Cartesian_const_iterator cartesian_begin() const;
 
 /*!
-returns an off the end iterator to the Cartesian
+returns an off the end iterator to the %Cartesian
 coordinates of `v`.
 */
 Cartesian_const_iterator cartesian_end() const;

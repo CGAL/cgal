@@ -17,18 +17,15 @@ include_directories(./)
 # Find CGAL and CGAL Qt5
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS
-      "NOTICE: This project requires the Eigen library, and will not be compiled."
-  )
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Script OpenGL)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
@@ -54,7 +51,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
                           ${CGAL_Qt5_MOC_FILES})
 
   target_link_libraries(PCA_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                         CGAL::Eigen3_support Qt5::Gui)
+                                         CGAL::Eigen3_support Qt5::Widgets Qt5::OpenGL)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS PCA_demo)
 
@@ -73,9 +70,6 @@ else(CGAL_Qt5_FOUND AND Qt5_FOUND)
     set(PCA_MISSING_DEPS "Qt5, ${PCA_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${PCA_MISSING_DEPS} and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${PCA_MISSING_DEPS} and will not be compiled.")
 
 endif(CGAL_Qt5_FOUND AND Qt5_FOUND)

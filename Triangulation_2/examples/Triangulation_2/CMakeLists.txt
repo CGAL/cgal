@@ -20,8 +20,5 @@ if(CGAL_Qt5_FOUND)
   target_link_libraries(draw_triangulation_2 PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(star_conflict_zone PUBLIC CGAL::CGAL_Basic_viewer)
 else()
-  message(
-    STATUS
-      "NOTICE: Several examples require Qt and will not be compiled."
-  )
+  message(STATUS "NOTICE: Several examples require Qt5 and will not be compiled.")
 endif()

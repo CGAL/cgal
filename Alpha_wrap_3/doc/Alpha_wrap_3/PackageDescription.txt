@@ -9,7 +9,7 @@
 \cgalPkgDescriptionBegin{3D Alpha Wrapping,PkgAlphaWrap3}
 \cgalPkgPicture{alpha_wrap_3.jpg}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, David Cohen-Steiner, Michael Hemmer, Cédric Portaneri, Mael Rouxel-Labbé}
+\cgalPkgAuthors{Pierre Alliez, David Cohen-Steiner, Michael Hemmer, Cédric Portaneri, and Mael Rouxel-Labbé}
 \cgalPkgDesc{This component takes a 3D triangle mesh, a triangle soup, or a point set as input, and generates
              a valid triangulated surface mesh that strictly contains the input (watertight, intersection-free
              and 2-manifold). The algorithm proceeds by shrink-wrapping

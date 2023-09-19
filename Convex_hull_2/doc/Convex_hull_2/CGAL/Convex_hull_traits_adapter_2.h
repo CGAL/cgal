@@ -7,10 +7,10 @@ The class `Convex_hull_traits_adapter_2` serves as a traits class for all the tw
 convex hull and extreme point calculation functions.
 
 Given a property map associating a key to a point, the class `Convex_hull_traits_adapter_2` enables
-to compute the sequence of keys for which the associted points form a convex hull,
+to compute the sequence of keys for which the associated points form a convex hull,
 performing the predicates of the base traits class on the points associated to the keys.
 
-\cgalModels `ConvexHullTraits_2`
+\cgalModels{ConvexHullTraits_2}
 
 \sa `CGAL::Convex_hull_constructive_traits_2<R>`
 \sa `CGAL::Projection_traits_xy_3<K>`

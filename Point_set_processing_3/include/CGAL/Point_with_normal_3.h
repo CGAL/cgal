@@ -120,7 +120,7 @@ private:
 /// Property map that accesses the normal vector from a Point_with_normal_3 object
 ///
 /// @heading Is Model for the Concepts:
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.

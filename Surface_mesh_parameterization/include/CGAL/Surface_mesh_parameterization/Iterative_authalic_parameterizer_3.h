@@ -547,9 +547,9 @@ private:
 
       for(int j=0; j<neighborsCounter; ++j)
       {
-        // Given the j-th neighbour of node i, find the two neighbours by intersecting the
-        // line through nodes i and j with all segments of the polygon made by the neighbours.
-        // Take the two neighbours on either side. Only one segment intersects this line.
+        // Given the j-th neighbor of node i, find the two neighbors by intersecting the
+        // line through nodes i and j with all segments of the polygon made by the neighbors.
+        // Take the two neighbors on either side. Only one segment intersects this line.
         for(int k=0; k<neighborsCounter; ++k)
         {
           int kk = (k == neighborsCounter-1 ? 0 : k+1);
@@ -929,7 +929,7 @@ public:
       // solve linear equations
       // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
       // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-      NT Du = 0, Dv = 0;
+      double Du = 0, Dv = 0;
       if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
          !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
       {
@@ -1007,7 +1007,7 @@ public:
         if(CGAL_SMP_IA_DEBUG_L0)
           std::cout << " *****" << std::flush;
       }
-      else if(err[i] > 100) // @fixme is that reasonnable
+      else if(err[i] > 100) // @fixme is that reasonable
       {
         break;
       }

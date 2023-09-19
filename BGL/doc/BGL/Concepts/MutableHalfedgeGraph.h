@@ -6,9 +6,11 @@ The concept `MutableHalfedgeGraph` refines the concept `HalfedgeGraph`
 and adds the requirements for operations to add vertices and edges, and to
 update the incidence information between vertices and halfedges.
 
-\cgalRefines `HalfedgeGraph`
+\cgalRefines{HalfedgeGraph}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
+\cgalHasModelsEnd
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */

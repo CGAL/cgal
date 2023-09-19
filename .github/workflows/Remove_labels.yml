@@ -2,6 +2,7 @@ name: remove_labels
 on:
   pull_request_target:
     types: [synchronize]
+  workflow_dispatch:
 jobs:
   remove_label:
     runs-on: ubuntu-latest

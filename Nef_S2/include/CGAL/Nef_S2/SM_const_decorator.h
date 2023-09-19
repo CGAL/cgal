@@ -32,7 +32,7 @@
 #define CGAL_NEF_DEBUG 67
 #include <CGAL/Nef_2/debug.h>
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -75,7 +75,7 @@ typedef size_t Size_type;
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 typedef void*  GenPtr;
 #else
-typedef boost::any GenPtr;
+typedef std::any GenPtr;
 #endif
 
 
@@ -192,7 +192,7 @@ SHalfedge_around_svertex_const_circulator
 
 SFace_cycle_const_iterator sface_cycles_begin(SFace_const_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
-The iterator is is convertable to |SVertex_const_handle|,
+The iterator is is convertible to |SVertex_const_handle|,
 |SHalfloop_const_handle|, or |SHalfedge_const_handle|.}*/
 { return f->boundary_entry_objects_.begin(); }
 
@@ -299,13 +299,13 @@ check_integrity_and_topological_planarity(bool faces) const
     EI(shalfedges_begin(),shalfedges_end(),'e');
 #endif
   SVertex_const_handle v;
-  int iso_vert_num=0;
+  CGAL_assertion_code(int iso_vert_num=0);
   /* check the source links of out edges and count isolated vertices */
   CGAL_forall_svertices(v,*this) {
     if ( is_isolated(v) ) {
       if ( faces )
         CGAL_assertion_msg(v->incident_sface() != SFace_const_handle(), get_svertex_index(v).c_str());
-      ++iso_vert_num;
+      CGAL_assertion_code(++iso_vert_num);
     } else {
       CGAL_assertion_code(SHalfedge_const_handle e=first_out_edge(v));
       CGAL_assertion_msg(e != SHalfedge_const_handle(), get_svertex_index(v).c_str());
@@ -370,7 +370,7 @@ check_integrity_and_topological_planarity(bool faces) const
   /* this means all face cycles and all isolated vertices are
      indeed referenced from a face */
   /* every isolated vertex increases the component count
-       one face cycle per component is redundent except one
+       one face cycle per component is redundant except one
        finally check the Euler formula: */
   CGAL_assertion( v_num - e_num + f_num == 1 + c_num );
 }

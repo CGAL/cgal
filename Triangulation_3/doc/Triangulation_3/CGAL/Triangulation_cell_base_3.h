@@ -20,7 +20,7 @@ It is actually not used by this class.
 It must be a model of the `TriangulationDSCellBase_3` concept.
 It has the default value `Triangulation_ds_cell_base_3`.
 
-\cgalModels `TriangulationCellBase_3`
+\cgalModels{TriangulationCellBase_3}
 
 \sa `CGAL::Triangulation_ds_cell_base_3`
 \sa `CGAL::Triangulation_cell_base_with_info_3`

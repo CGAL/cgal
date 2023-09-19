@@ -10,7 +10,7 @@ namespace CGAL {
 
 \section IOstreamIntro Introduction
 
-An algorithm is the application of a serie of steps to convert some input data into output data.
+An algorithm is the application of a series of steps to convert some input data into output data.
 As such, it is necessary to have a way to input and output external data into \cgal data structures.
 This is achieved using <em>input/output (I/O) streams</em> of data, which enables reading and writing
 to and from files, the console, or other custom structures.
@@ -69,7 +69,7 @@ as a sequence of four byte. The format depends on the machine.
 The mode `PRETTY`
 serves mainly for debugging as the type of the geometric
 object is written, as well as the data defining the object. For example
-for a point at the origin with Cartesian double coordinates, the output
+for a point at the origin with %Cartesian double coordinates, the output
 would be `PointC2(0.0, 0.0)`. At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
 is in \ascii mode.
@@ -519,4 +519,3 @@ which might look as follows:
 
 */
 } /* namespace CGAL */
-

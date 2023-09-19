@@ -24,8 +24,8 @@ namespace CGAL {
 
 /*! \class
  * A visitor class for Arrangement_zone_2, which check whether
- * a given x-monotone curve intersects the arrangment.
- * The class shouldbe templated by an Arrangement_2 class.
+ * a given x-monotone curve intersects the arrangement.
+ * The class should be templated by an Arrangement_2 class.
  */
 template <class Arrangement_>
 class Arr_do_intersect_zone_visitor

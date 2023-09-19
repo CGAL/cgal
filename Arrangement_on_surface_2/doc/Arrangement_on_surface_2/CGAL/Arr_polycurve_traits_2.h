@@ -10,7 +10,7 @@ namespace CGAL {
    * or line segments. We call such a compound curve a polycurve.  A polycurve
    * is a chain of subcurves, where each two neighboring subcurves in the chain
    * share a common endpoint; that is, the polycurve is continuous. Furthermore,
-   * the target of the \f$i\f$th segement of a polycurve has to coincide with
+   * the target of the \f$i\f$th segment of a polycurve has to coincide with
    * the source of the \f$i+1\f$st segment; that is, the polycurve has to be
    * \a well-oriented. Note that it is possible to construct general polycurves
    * that are neither continuous nor well-oriented, as it is impossible to
@@ -72,10 +72,9 @@ namespace CGAL {
    * set the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
    * included.
    *
-   * \cgalModels `ArrangementTraits_2`
-   * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
-   * \cgalModels `ArrangementApproximateTraits_2` (if the type that substitutes
-   *   the template parameter `SubcurveTraits_2` models the concept as well)
+   * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2,
+   *             ArrangementApproximateTraits_2 (if the type that substitutes
+   *   the template parameter `SubcurveTraits_2` models the concept as well)}
    *
    * \sa `Arr_algebraic_segment_traits_2<Coefficient>`
    * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
@@ -231,7 +230,7 @@ namespace CGAL {
     public:
       /*! Obtain a trimmed version of the polycurve with src and tgt as end
         * vertices.
-        * Src and tgt will be swaped if they do not conform to the direction of
+        * Src and tgt will be swapped if they do not conform to the direction of
         * the polycurve.
         */
       X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
@@ -424,7 +423,7 @@ namespace CGAL {
       /// @{
 
       /*! Append a subcurve to the polycurve at the back.
-       * \a Warning: This function does not preform the precondition test
+       * \a Warning: This function does not perform the precondition test
        *             that the `Push_back_2` functor does. Thus, it is
        *             recommended to use the latter.
        * \param subcurve The new subcurve to be appended to the polycurve.

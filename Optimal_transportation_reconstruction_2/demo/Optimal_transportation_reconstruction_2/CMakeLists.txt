@@ -19,7 +19,7 @@ include_directories(BEFORE ./ ./include)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
 # Find Qt5 itself
-find_package(Qt5 5.4 QUIET COMPONENTS OpenGL)
+find_package(Qt5 5.4 QUIET COMPONENTS Widgets)
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -33,14 +33,10 @@ find_path(
   DOC "Path to the header of the CImg library")
 
 if(CIMG_INCLUDE_DIR)
-  message(
-    STATUS "CImg library found, the demo can load point set from image files.")
+  message(STATUS "NOTICE: CImg library found, the demo can load point set from image files.")
 else()
-  message(
-    STATUS
-      "CImg library was not found, the demo will not be able to load point set from image files. "
-      "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h."
-  )
+  message(STATUS "CImg library was not found, the demo will not be able to load point set from image files. "
+                 "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
 endif()
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
@@ -72,8 +68,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_executable(Otr2_demo ${SRCS} ${CGAL_Qt5_MOC_FILES} ${UI_FILES}
                            ${CGAL_Qt5_RESOURCE_FILES})
 
-  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui
-                                          Qt5::OpenGL)
+  target_link_libraries(Otr2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
 
   # Link with pthread if necessary
   if(CIMG_INCLUDE_DIR)
@@ -81,7 +76,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     target_include_directories(Otr2_demo PRIVATE ${CIMG_INCLUDE_DIR})
     # Is pthread around? If yes, we need to link against it
     set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-    find_package(Threads)
+    find_package(Threads QUIET)
     if(CMAKE_USE_PTHREADS_INIT)
       target_link_libraries(Otr2_demo PRIVATE ${CMAKE_THREAD_LIBS_INIT})
     endif()
@@ -105,10 +100,7 @@ else(
     set(OTR2_MISSING_DEPS "Qt5.4, ${OTR2_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${OTR2_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${OTR2_MISSING_DEPS} and will not be compiled.")
 
 endif(
   CGAL_Qt5_FOUND

@@ -408,7 +408,7 @@ standard Potts model \cgalCite{cgal:l-mrfmi-09} :
 \f]
 
 where \f$\gamma>0\f$ is the parameter of the Potts model that
-quantifies the strengh of the regularization, \f$i \sim j\f$
+quantifies the strength of the regularization, \f$i \sim j\f$
 represents the pairs of neighboring items and
 \f$\mathbf{1}_{\{.\}}\f$ the characteristic function.
 
@@ -429,7 +429,7 @@ results.
 
 The following snippet shows how to classify points using a graph cut
 regularization providing a model of
-`CGAL::Classification::NeighborQuery`, a strengh parameter
+`CGAL::Classification::NeighborQuery`, a strength parameter
 \f$\gamma\f$ and a number of subdivisions.
 
 \snippet Classification/example_classification.cpp Graph_cut

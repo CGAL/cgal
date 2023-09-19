@@ -19,7 +19,7 @@
  * Definitions of the functions of the Envelope_divide_and_conquer_2 class.
  */
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -507,7 +507,7 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
 
   if (ps_y1 != ARR_INTERIOR) {
     if (ps_y2 != ARR_INTERIOR) {
-      // The curve ends have boundary conditions with oposite signs in y,
+      // The curve ends have boundary conditions with opposite signs in y,
       // we readily know their relative position (recall that they do not
       // instersect).
       if ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY))
@@ -609,9 +609,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
   // This is the rightmost vertex in the current minimization diagram (out_d).
   // The intersection points/curves that interest us are the ones in
   // [v_leftmost, v].
-  // Without using make_optional we get a "maybe uninitialized" warning with gcc -Wall
-  boost::optional<Vertex_const_handle>  v_leftmost =
-    boost::make_optional(false, Vertex_const_handle());
+  std::optional<Vertex_const_handle>  v_leftmost;
 
   if (is_leftmost1 == true) {
     if (is_leftmost2 == false)
@@ -632,9 +630,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
 
   // Find the next intersection of the envelopes to the right of the current
   // rightmost point in the merged diagram.
-  // \todo Use the faster object_cast.
-  std::list<CGAL::Object>           objects;
-  CGAL::Object                      obj;
+  std::list<std::variant<Intersection_point, X_monotone_curve_2>> objects;
   const X_monotone_curve_2*         intersection_curve;
   const Intersection_point*         intersection_point;
 
@@ -643,10 +639,10 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
 
   while (! objects.empty()) {
     // Pop the xy-lexicographically smallest intersection object.
-    obj = objects.front();
+    auto obj = objects.front();
     objects.pop_front();
 
-    if ((intersection_point = CGAL::object_cast<Intersection_point>(&obj)) !=
+    if ((intersection_point = std::get_if<Intersection_point>(&obj)) !=
         nullptr)
     {
       // We have a simple intersection point.
@@ -678,7 +674,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
           break;
       }
 
-      // Create a new vertex in the output diagram that corrsponds to the
+      // Create a new vertex in the output diagram that corresponds to the
       // current intersection point.
       if (is_in_x_range) {
         CGAL_assertion(current_res != EQUAL);
@@ -727,7 +723,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
     else {
       // We have an x-monotone curve representing an overlap of the two
       // curves.
-      intersection_curve = CGAL::object_cast<X_monotone_curve_2>(&obj);
+      intersection_curve = std::get_if<X_monotone_curve_2>(&obj);
 
       if (intersection_curve == nullptr)
         CGAL_error_msg("unrecognized intersection object.");
@@ -903,7 +899,7 @@ _merge_two_intervals(Edge_const_handle e1, bool is_leftmost1,
 
   // origin_of_v could be EQUAL but the curves do not intersect.
   // This is because of the fact that v could be the endpoint of the NEXT
-  // curve (which is lower than the currrent curve. The second diagram, however,
+  // curve (which is lower than the current curve. The second diagram, however,
   // has a curve that ends at v.
   // For example:
   // First diagram is the segment: [(0, -1), (1, 0)]

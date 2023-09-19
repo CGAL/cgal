@@ -174,7 +174,7 @@ public:
             [this]{QMessageBox::about(mw, QString("Help"),
                                     QString("This widget gives access to the low level steps of the mean curvature flow sketonization algorithm. "
                                             "The algorithm is iterative. Each iteration consist in calls to Contract, Collapse, Split, "
-                                            "and Degeneracy (repectively mesh contraction, edge collapse, edge split, and degenerate edge"
+                                            "and Degeneracy (respectively mesh contraction, edge collapse, edge split, and degenerate edge"
                                             "removal). The skeleton extraction can be called at any time but for a better result it should be"
                                             "called when the iterations are converging. A segmentation of the surface can be extracted using"
                                             "the distance of the mesh to the skeleton computed.\n"

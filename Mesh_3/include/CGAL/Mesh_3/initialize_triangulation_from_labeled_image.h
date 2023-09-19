@@ -96,25 +96,25 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
       TransformOperator transform = CGAL::Identity<Image_word_type>())
 {
   typedef typename C3T3::Triangulation       Tr;
-  typedef typename Tr::Geom_traits           Gt;
-  typedef typename Gt::FT                    FT;
+  typedef typename Tr::Geom_traits           GT;
+  typedef typename GT::FT                    FT;
   typedef typename Tr::Weighted_point        Weighted_point;
   typedef typename Tr::Bare_point            Bare_point;
   typedef typename Tr::Segment               Segment_3;
   typedef typename Tr::Vertex_handle         Vertex_handle;
   typedef typename Tr::Cell_handle           Cell_handle;
 
-  typedef typename Gt::Vector_3              Vector_3;
+  typedef typename GT::Vector_3              Vector_3;
 
   typedef MeshDomain                         Mesh_domain;
 
   Tr& tr = c3t3.triangulation();
 
-  typename Gt::Compare_weighted_squared_radius_3 cwsr =
+  typename GT::Compare_weighted_squared_radius_3 cwsr =
     tr.geom_traits().compare_weighted_squared_radius_3_object();
-  typename Gt::Construct_point_3 cp =
+  typename GT::Construct_point_3 cp =
     tr.geom_traits().construct_point_3_object();
-  typename Gt::Construct_weighted_point_3 cwp =
+  typename GT::Construct_weighted_point_3 cwp =
     tr.geom_traits().construct_weighted_point_3_object();
 
   if(protect_features) {
@@ -152,13 +152,15 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
     const Subdomain seed_label
       = domain.is_in_domain_object()(seed_point);
     const Subdomain seed_cell_label
-      = (seed_cell == Cell_handle() || tr.is_infinite(seed_cell))
+      = (   tr.dimension() < 3
+         || seed_cell == Cell_handle()
+         || tr.is_infinite(seed_cell))
         ? Subdomain()  //seed_point is OUTSIDE_AFFINE_HULL
         : domain.is_in_domain_object()(
             seed_cell->weighted_circumcenter(tr.geom_traits()));
 
-    if ( seed_label != boost::none
-      && seed_cell_label != boost::none
+    if ( seed_label != std::nullopt
+      && seed_cell_label != std::nullopt
       && *seed_label == *seed_cell_label)
         continue; //this means the connected component has already been initialized
 

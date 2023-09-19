@@ -301,7 +301,7 @@ public:
   template <class Faces_level>
   friend class Refine_edges_visitor;
 protected:
-  /* --- protected datas --- */
+  /* --- protected data --- */
 
   Tr& tr; /**< The triangulation itself. */
 
@@ -569,7 +569,7 @@ public:
     std::cerr << "E";
 #endif
     // @todo Perhaps we should remove destroyed edges too.
-    // @warning This code has been rewroten!
+    // @warning This code has been rewritten!
 
     Face_circulator fc = tr.incident_faces(v), fcbegin(fc);
     if( fc == 0 ) return;
@@ -586,7 +586,7 @@ public:
     Face_handle fh;
     int index = 0; // Avoids a warning.
                    // We know that is_edge must return true, and is_edge will assign something to index
-                   // but the compiler does not so it will issue a maybe uninitialized warning
+                   // but the compiler does not so it will issue a maybe-uninitialized warning
 
     CGAL_assume_code(bool is_edge = )
     tr.is_edge(va, v, fh, index);
@@ -632,7 +632,7 @@ protected:
                                                    // base class
   }
 
-private: /** \name DEBUGGING TYPES AND DATAS */
+private: /** \name DEBUGGING TYPES AND DATA */
   class From_pair_of_vertex_to_edge
     : public CGAL::cpp98::unary_function<Constrained_edge, Edge>
   {

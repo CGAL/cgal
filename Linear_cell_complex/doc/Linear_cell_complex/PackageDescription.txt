@@ -12,17 +12,13 @@
 /// \ingroup PkgLinearCellComplexRef
 
 /*! High-level operations.
-  \code
-   #include <CGAL/Linear_cell_complex_operations.h>
-   \endcode
+\cgalInclude{CGAL/Linear_cell_complex_operations.h}
 */
 /// \defgroup PkgLinearCellComplexOperations Operations for Linear Cell Complex
 /// \ingroup PkgLinearCellComplexRef
 
 /*!
-  \code
-   #include <CGAL/draw_linear_cell_complex.h>
-  \endcode
+\cgalInclude{CGAL/draw_linear_cell_complex.h}
 */
 /// \defgroup PkgDrawLinearCellComplex Draw a Linear Cell Complex
 /// \ingroup PkgLinearCellComplexRef
@@ -62,7 +58,7 @@
 - `CGAL::Linear_cell_complex_traits<d,K>`
 - `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`
 - `CGAL::Cell_attribute_with_point_and_id<LCC,Info_,Tag,OnMerge,OnSplit>`
-- `CGAL::Linear_cell_complex<d,d2,LCCTraits,Items,Alloc>`
+- `CGAL::Linear_cell_complex_incremental_builder_3<LCC>`
 
 \cgalCRPSection{Global Functions}
 \cgalCRPSubsection{Constructions for Linear Cell Complex}
@@ -78,4 +74,3 @@
 - \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
 
 */
-

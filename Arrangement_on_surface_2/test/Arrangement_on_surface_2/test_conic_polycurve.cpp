@@ -50,43 +50,41 @@ typedef Polycurve_conic_traits_2::Point_2             Pc_point_2;
 //                CGAL::CORE_algebraic_number_traits>
 //              >::Point_2   test_point_2;
 
-void check_equal()
-{
+void check_equal() {
   bool are_equal;
 
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Equal_2 equal = traits.equal_2_object();
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto equal = traits.equal_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
 
   //create some curves
   Conic_point_2 ps1(Rational(1,4), 4);
   Conic_point_2 pt1(2, Rational(1,2));
-  Conic_curve_2 c1(0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE, ps1, pt1);
+  Conic_curve_2 c1 =
+    ctr_sub_cv(0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE, ps1, pt1);
 
   Conic_point_2 ps2(Rational(1,4), 4);
   Conic_point_2 pt2(2, Rational(1,2));
-  Conic_curve_2 c2(0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE, ps2, pt2);
+  Conic_curve_2 c2 =
+    ctr_sub_cv(0, 0, 1, 0, 0, -1, CGAL::COUNTERCLOCKWISE, ps2, pt2);
 
   Rat_point_2 ps3(Rational(1,4), 4);
   Rat_point_2 pmid3(Rational(3,2), 2);
   Rat_point_2 pt3(2, Rational(1,3));
-  Conic_curve_2 c3(ps3, pmid3, pt3);
+  Conic_curve_2 c3 = ctr_sub_cv(ps3, pmid3, pt3);
 
   Rat_point_2 ps4(1, 5);
   Rat_point_2 pmid4(Rational(3,2), 3);
   Rat_point_2 pt4(3, Rational(1,3));
-  Conic_curve_2 c4(ps4, pmid4, pt4);
+  Conic_curve_2 c4 = ctr_sub_cv(ps4, pmid4, pt4);
 
   // //make x_monotone
-  Polycurve_conic_traits_2::X_monotone_curve_2 xmc1 =
-    construct_x_monotone_curve_2(c1);
-  Polycurve_conic_traits_2::X_monotone_curve_2 xmc2 =
-    construct_x_monotone_curve_2(c2);
-  Polycurve_conic_traits_2::X_monotone_curve_2 xmc3 =
-    construct_x_monotone_curve_2(c3);
-  Polycurve_conic_traits_2::X_monotone_curve_2 xmc4 =
-    construct_x_monotone_curve_2(c4);
+  Polycurve_conic_traits_2::X_monotone_curve_2 xmc1 = ctr_xcv(c1);
+  Polycurve_conic_traits_2::X_monotone_curve_2 xmc2 = ctr_xcv(c2);
+  Polycurve_conic_traits_2::X_monotone_curve_2 xmc3 = ctr_xcv(c3);
+  Polycurve_conic_traits_2::X_monotone_curve_2 xmc4 = ctr_xcv(c4);
 
   are_equal = equal(xmc1, xmc2);
   std::cout << "Two equal conic arcs are computed as:  "
@@ -104,18 +102,17 @@ void check_equal()
  template <typename Traits>
  void check_intersect(typename Traits::X_monotone_curve_2& xcv1,
                       typename Traits::X_monotone_curve_2& xcv2,
-                      const Traits& traits)
- {
+                      const Traits& traits) {
    typedef typename Traits::Multiplicity                Multiplicity;
    typedef typename Traits::Point_2                     Point_2;
    typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
    typedef std::pair<Multiplicity, Point_2>             Intersection_point;
-   typedef boost::variant<Intersection_point, X_monotone_curve_2>
+   typedef std::variant<Intersection_point, X_monotone_curve_2>
      Intersection_result;
 
    std::vector<Intersection_result> intersection_points;
-   traits.intersect_2_object()(xcv1, xcv2,
-                               std::back_inserter(intersection_points));
+   auto intersect = traits.intersect_2_object();
+   intersect(xcv1, xcv2, std::back_inserter(intersection_points));
    std::cout<< "Number of intersection Points: " << intersection_points.size()
             << std::endl;
 
@@ -133,13 +130,12 @@ void check_equal()
    // }
  }
 
-void check_compare_end_points_xy_2()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Compare_endpoints_xy_2 compare_endpoints_xy_2 =
-    traits.compare_endpoints_xy_2_object();
+void check_compare_end_points_xy_2() {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto cmp_endpoints = traits.compare_endpoints_xy_2_object();
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
 
   //create some curves
   Conic_point_2 ps1(Rational(1,4), 4);
@@ -153,69 +149,69 @@ void check_compare_end_points_xy_2()
   // as the intersections of the parabola with the lines y = -3 and y = -2.
   // Note that the arc is clockwise oriented.
   Conic_curve_2
-    c2 = Conic_curve_2(1, 0, 0, 0, 1, 0,         // The parabola.
-                       CGAL::CLOCKWISE,
-                       Conic_point_2(-1.73, -3), // Approximation of the source.
-                       0, 0, 0, 0, 1, 3,         // The line: y = -3.
-                       Conic_point_2(1.41, -2),  // Approximation of the target.
-                       0, 0, 0, 0, 1, 2);        // The line: y = -2.
+    c2 = ctr_sub_cv(1, 0, 0, 0, 1, 0,         // The parabola.
+                    CGAL::CLOCKWISE,
+                    Conic_point_2(-1.73, -3), // Approximation of the source.
+                    0, 0, 0, 0, 1, 3,         // The line: y = -3.
+                    Conic_point_2(1.41, -2),  // Approximation of the target.
+                    0, 0, 0, 0, 1, 2);        // The line: y = -2.
   assert(c2.is_valid());
 
   //make polyline x-monotone curves
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
-    construct_x_monotone_curve_2(c1);
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 =
-    construct_x_monotone_curve_2(c2);
+  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = ctr_xcv(c1);
+  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 = ctr_xcv(c2);
 
-  CGAL::Comparison_result res = compare_endpoints_xy_2(polyline_xmc1);
+  CGAL::Comparison_result res = cmp_endpoints(polyline_xmc1);
   std::cout << "compare_end_points_xy_2 for counterclockwise curve: "
             << (res == CGAL::SMALLER ? "SMALLER":
                (res == CGAL::LARGER ? "LARGER" : "EQUAL")) << std::endl;
 
-  res = compare_endpoints_xy_2(polyline_xmc2);
+  res = cmp_endpoints(polyline_xmc2);
   std::cout<< "compare_end_points_xy_2 for clockwise curve: "
            << (res == CGAL::SMALLER ? "SMALLER":
                (res == CGAL::LARGER ? "LARGER" : "EQUAL")) << std::endl;
 }
 
 template <typename Curve_type>
-void check_split(Curve_type &xcv1, Curve_type &xcv2)
-{
-  Polycurve_conic_traits_2 traits;
+void check_split(Curve_type& xcv1, Curve_type& xcv2) {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_sub_xcv = sub_traits.construct_x_monotone_curve_2_object();
 
   //split x poly-curves
 
-  Conic_curve_2 c6(1,1,0,6,-26,162,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(-7), Algebraic(13)),
-                   Conic_point_2(Algebraic(-3), Algebraic(9)));
-  Conic_curve_2 c7(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(-3), Algebraic(9)),
-                   Conic_point_2(Algebraic(0), Algebraic(0)));
-  Conic_curve_2 c8(0,1,0,-1,0,0, CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(0), Algebraic(0)),
-                   Conic_point_2(Algebraic(4), Algebraic(-2)));
+  Conic_curve_2 c6 = ctr_sub_cv(1,1,0,6,-26,162,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(-7), Algebraic(13)),
+                                Conic_point_2(Algebraic(-3), Algebraic(9)));
+  Conic_curve_2 c7 = ctr_sub_cv(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(-3), Algebraic(9)),
+                                Conic_point_2(Algebraic(0), Algebraic(0)));
+  Conic_curve_2 c8 = ctr_sub_cv(0,1,0,-1,0,0, CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(0), Algebraic(0)),
+                                Conic_point_2(Algebraic(4), Algebraic(-2)));
 
-  Conic_x_monotone_curve_2 xc6(c6);
-  Conic_x_monotone_curve_2 xc7(c7);
-  Conic_x_monotone_curve_2 xc8(c8);
+  Conic_x_monotone_curve_2 xc6 = ctr_sub_xcv(c6);
+  Conic_x_monotone_curve_2 xc7 = ctr_sub_xcv(c7);
+  Conic_x_monotone_curve_2 xc8 = ctr_sub_xcv(c8);
   std::vector<Conic_x_monotone_curve_2> xmono_conic_curves_2;
+
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
 
   xmono_conic_curves_2.push_back(xc6);
   xmono_conic_curves_2.push_back(xc7);
   Pc_x_monotone_curve_2 split_expected_1 =
-    traits.construct_x_monotone_curve_2_object()(xmono_conic_curves_2.begin(),
-                                                 xmono_conic_curves_2.end());
+    ctr_xcv(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
   xmono_conic_curves_2.clear();
   xmono_conic_curves_2.push_back(xc8);
   Pc_x_monotone_curve_2 split_expected_2 =
-    traits.construct_x_monotone_curve_2_object()(xmono_conic_curves_2.begin(),
-                                                 xmono_conic_curves_2.end());
+    ctr_xcv(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
 
   Polycurve_conic_traits_2::X_monotone_curve_2 split_curve_1, split_curve_2;
-  Polycurve_conic_traits_2::Point_2
-    point_of_split = Polycurve_conic_traits_2::Point_2(0,0);
+  Polycurve_conic_traits_2::Point_2 point_of_split =
+    Polycurve_conic_traits_2::Point_2(0,0);
 
   //Split functor
   traits.split_2_object()(xcv2, point_of_split, split_curve_1, split_curve_2);
@@ -229,23 +225,21 @@ void check_split(Curve_type &xcv1, Curve_type &xcv2)
     std::cout << "Something is wrong with split" << std::endl;
 }
 
-void check_is_vertical()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Is_vertical_2 is_vertical =
-    traits.is_vertical_2_object();
+void check_is_vertical() {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto is_vertical = traits.is_vertical_2_object();
 
    //create a curve
   Rat_point_2 ps1(1, 10);
   Rat_point_2 pmid1(5, 4);
   Rat_point_2 pt1(10, 1);
-  Conic_curve_2 c1(ps1, pmid1, pt1);
+  Conic_curve_2 c1 = ctr_sub_cv(ps1, pmid1, pt1);
 
   //make x-monotone curve
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
-    construct_x_monotone_curve_2(c1);
+  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = ctr_xcv(c1);
 
   bool result = is_vertical(polyline_xmc1);
   std::cout << "Is_verticle:: Expected first result is not vertivle: Computed: "
@@ -254,8 +248,7 @@ void check_is_vertical()
 
 /*! */
 template <typename stream>
-bool read_orientation(stream& is, CGAL::Orientation& orient)
-{
+bool read_orientation(stream& is, CGAL::Orientation& orient) {
   int i_orient;
   is >> i_orient;
   orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
@@ -265,8 +258,7 @@ bool read_orientation(stream& is, CGAL::Orientation& orient)
 
 /*! */
 template <typename stream>
-bool read_app_point(stream& is, Conic_point_2& p)
-{
+bool read_app_point(stream& is, Conic_point_2& p) {
   //waqar: original
   double x, y;
   is >> x >> y;
@@ -290,18 +282,18 @@ bool read_orientation_and_end_points(stream& is, CGAL::Orientation& orient,
                                      Conic_point_2& target)
 {
   // Read the orientation.
-  if (!read_orientation(is, orient)) return false;
+  if (! read_orientation(is, orient)) return false;
 
   // Read the end points of the arc and create it.
-  if (!read_app_point(is, source)) return false;
-  if (!read_app_point(is, target)) return false;
+  if (! read_app_point(is, source)) return false;
+  if (! read_app_point(is, target)) return false;
   return true;
 }
 
 /*! */
-template <typename stream, typename Curve>
-bool read_general_arc(stream& is, Curve& cv)
-{
+template <typename stream, typename Traits>
+bool read_general_arc(stream& is, typename Traits::Curve_2& cv,
+                      const Traits& traits) {
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   Rational r, s, t, u, v, w;                // The conic coefficients.
   is >> r >> s >> t >> u >> v >> w;
@@ -315,7 +307,7 @@ bool read_general_arc(stream& is, Curve& cv)
   // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
   // defines the source.
   Conic_point_2 app_source;
-  if (!read_app_point(is, app_source)) return false;
+  if (! read_app_point(is, app_source)) return false;
   Rational r1, s1, t1, u1, v1, w1;
   is >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
 
@@ -323,7 +315,7 @@ bool read_general_arc(stream& is, Curve& cv)
   // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
   // defines the target.
   Conic_point_2 app_target;
-  if (!read_app_point(is, app_target)) return false;
+  if (! read_app_point(is, app_target)) return false;
 
   Rational r2, s2, t2, u2, v2, w2;
   is >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
@@ -333,34 +325,36 @@ bool read_general_arc(stream& is, Curve& cv)
             << r2 << s2 << t2 << u2 << v2 << w2 << std::endl;
 
   // Create the conic arc.
-  cv = Curve(r, s, t, u, v, w, orient,
-             app_source, r1, s1, t1, u1, v1, w1,
-             app_target, r2, s2, t2, u2, v2, w2);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w, orient,
+              app_source, r1, s1, t1, u1, v1, w1,
+              app_target, r2, s2, t2, u2, v2, w2);
   return true;
 }
 
 /*! */
-template <typename stream, typename Curve>
-bool read_general_conic(stream& is, Curve& cv)
-{
+template <typename stream, typename Traits>
+bool read_general_conic(stream& is, typename Traits::Curve_2& cv,
+                        const Traits& traits) {
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   Rational r, s, t, u, v, w;
   is >> r >> s >> t >> u >> v >> w;
   // Create a full conic (should work only for ellipses).
-  cv = Curve(r, s, t, u, v, w);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w);
   return true;
 }
 
 // /*! */
-template <typename stream, typename Curve>
-bool read_general_curve(stream& is, Curve& cv)
-{
+template <typename stream, typename Traits>
+bool read_general_curve(stream& is, typename Traits::Curve_2& cv,
+                        const Traits& traits) {
   Rational r, s, t, u, v, w;                // The conic coefficients.
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   is >> r >> s >> t >> u >> v >> w;
   CGAL::Orientation orient;
   Conic_point_2 source, target;
-  if (!read_orientation_and_end_points(is, orient, source, target))
+  if (! read_orientation_and_end_points(is, orient, source, target))
     return false;
 
   // Create the conic (or circular) arc.
@@ -368,26 +362,25 @@ bool read_general_curve(stream& is, Curve& cv)
   //           << u << " " << v << " " << w << std::endl;
   // std::cout << "Read Points : " << source.x() << " " << source.y() << " "
   //           << target.x() << " " << target.y() << std::endl;
-  cv = Curve(r, s, t, u, v, w, orient, source, target);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w, orient, source, target);
   return true;
 }
-std::istream& skip_comments(std::istream& is, std::string& line)
-{
+std::istream& skip_comments(std::istream& is, std::string& line) {
   while (std::getline(is, line))
     if (!line.empty() && (line[0] != '#')) break;
   return is;
 }
 
-bool check_compare_y_at_x_2()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Compare_y_at_x_2 cmp_y_at_x_2 =
-    traits.compare_y_at_x_2_object();
+bool check_compare_y_at_x_2() {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_sub_xcv = sub_traits.construct_x_monotone_curve_2_object();
+  auto cmp_y_at_x_2 = traits.compare_y_at_x_2_object();
   //polycurve constructors
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_mono_polycurve = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Construct_curve_2  construct_polycurve =
-    traits.construct_curve_2_object();
+  auto construct_x_mono_polycurve = traits.construct_x_monotone_curve_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
 
    //create a curve
   Rat_point_2 ps1(1, 10);
@@ -399,14 +392,14 @@ bool check_compare_y_at_x_2()
   Rat_point_2 ps2(10, 1);
   Rat_point_2 pmid2(15, 5);
   Rat_point_2 pt2(20, 10);
-  Conic_curve_2 c2(ps2, pmid2, pt2);
+  Conic_curve_2 c2 = ctr_sub_cv(ps2, pmid2, pt2);
 
-  Conic_curve_2 c3(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(0), Algebraic(0)),
-                   Conic_point_2(Algebraic(3), Algebraic(9)));
-  Conic_curve_2 c4(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(3), Algebraic(9)),
-                   Conic_point_2(Algebraic(5), Algebraic(25)));
+  Conic_curve_2 c3 = ctr_sub_cv(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(0), Algebraic(0)),
+                                Conic_point_2(Algebraic(3), Algebraic(9)));
+  Conic_curve_2 c4 = ctr_sub_cv(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(3), Algebraic(9)),
+                                Conic_point_2(Algebraic(5), Algebraic(25)));
 
   std::vector<Conic_curve_2> conic_curves, conic_curves_2, Conic_curves_3;
   conic_curves.push_back(c1);
@@ -415,10 +408,10 @@ bool check_compare_y_at_x_2()
   //conic_curves_2.push_back(c3);
   //conic_curves_2.push_back(c4);
 
-  Conic_x_monotone_curve_2 xc1(c1);
-  Conic_x_monotone_curve_2 xc2(c2);
-  Conic_x_monotone_curve_2 xc3(c3);
-  Conic_x_monotone_curve_2 xc4(c4);
+  Conic_x_monotone_curve_2 xc1 = ctr_sub_xcv(c1);
+  Conic_x_monotone_curve_2 xc2 = ctr_sub_xcv(c2);
+  Conic_x_monotone_curve_2 xc3 = ctr_sub_xcv(c3);
+  Conic_x_monotone_curve_2 xc4 = ctr_sub_xcv(c4);
 
   std::vector<Conic_x_monotone_curve_2> xmono_conic_curves, xmono_conic_curves_2;
   /* VERY IMPORTANT
@@ -441,13 +434,13 @@ bool check_compare_y_at_x_2()
 
   //construct poly-curve
   Polycurve_conic_traits_2::Curve_2 conic_polycurve =
-    construct_polycurve(conic_curves.begin(), conic_curves.end());
+    ctr_cv(conic_curves.begin(), conic_curves.end());
   //Polycurve_conic_traits_2::Curve_2 conic_polycurve_2 =
-  //  construct_polycurve(conic_curves_2.begin(), conic_curves_2.end());
+  //  ctr_cv(conic_curves_2.begin(), conic_curves_2.end());
 
   //make x-monotone curve
   //Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
-  //  construct_x_monotone_curve_2(c1);
+  //  ctr_xcv(c1);
 
   //create points
   Polycurve_conic_traits_2::Point_2
@@ -475,176 +468,162 @@ bool check_compare_y_at_x_2()
   return true;
 }
 
-void check_are_mergable()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Are_mergeable_2  are_mergeable_2 =
-    traits.are_mergeable_2_object();
+void check_are_mergable() {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto are_mergeable_2 = traits.are_mergeable_2_object();
 
    //create a curve
   Rat_point_2 ps1(1, 10);
   Rat_point_2 pmid1(5, 4);
   Rat_point_2 pt1(10, 1);
-  Conic_curve_2 c1(ps1, pmid1, pt1);
+  Conic_curve_2 c1 = ctr_sub_cv(ps1, pmid1, pt1);
 
   Rat_point_2 ps2(10, 1);
   Rat_point_2 pmid2(15, 14);
   Rat_point_2 pt2(20, 20);
-  Conic_curve_2 c2(ps2, pmid2, pt2);
+  Conic_curve_2 c2 = ctr_sub_cv(ps2, pmid2, pt2);
 
   Rat_point_2 ps3(Rational(1,4), 4);
   Rat_point_2 pmid3(Rational(3,2), 2);
   Rat_point_2 pt3(2, Rational(1,3));
-  Conic_curve_2 c3(ps3, pmid3, pt3);
+  Conic_curve_2 c3 = ctr_sub_cv(ps3, pmid3, pt3);
 
   //construct x-monotone curve(compatible with polyline class)
-   Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
-     construct_x_monotone_curve_2(c1);
-   Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 =
-     construct_x_monotone_curve_2(c2);
-   Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc3 =
-     construct_x_monotone_curve_2(c3);
+   Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = ctr_xcv(c1);
+   Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 = ctr_xcv(c2);
+   Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc3 = ctr_xcv(c3);
 
   bool result = are_mergeable_2(polyline_xmc1, polyline_xmc2);
-  std::cout << "Are_mergable:: Mergable x-monotone polycurves are Computed as: "
-            << ((result)? "Mergable" : "Not-Mergable") << std::endl;
+  std::cout << "Are_mergeable:: Mergeable x-monotone polycurves are Computed as: "
+            << ((result)? "Mergeable" : "Not-Mergeable") << std::endl;
 
   result = are_mergeable_2(polyline_xmc1, polyline_xmc3);
-  std::cout << "Are_mergable:: Non-Mergable x-monotone polycurves are Computed as: "
-            << ((result)? "Mergable" : "Not-Mergable") << std::endl;
+  std::cout << "Are_mergeable:: Non-Mergeable x-monotone polycurves are Computed as: "
+            << ((result)? "Mergeable" : "Not-Mergeable") << std::endl;
 }
 
-void check_merge_2()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Merge_2  merge_2 = traits.merge_2_object();
+void check_merge_2() {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto merge_2 = traits.merge_2_object();
 
   //create a curve
   Rat_point_2 ps1(1, 10);
   Rat_point_2 pmid1(5, 4);
   Rat_point_2 pt1(10, 1);
-  Conic_curve_2 c1(ps1, pmid1, pt1);
+  Conic_curve_2 c1 = ctr_sub_cv(ps1, pmid1, pt1);
 
   Rat_point_2 ps2(10, 1);
   Rat_point_2 pmid2(15, 14);
   Rat_point_2 pt2(20, 20);
-  Conic_curve_2 c2(ps2, pmid2, pt2);
+  Conic_curve_2 c2 = ctr_sub_cv(ps2, pmid2, pt2);
 
 //construct x-monotone curve (compatible with polyline class)
- Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
-   construct_x_monotone_curve_2(c1);
- Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 =
-   construct_x_monotone_curve_2(c2);
+ Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = ctr_xcv(c1);
+ Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 = ctr_xcv(c2);
 
  Polycurve_conic_traits_2::X_monotone_curve_2 merged_xmc;
 
  merge_2(polyline_xmc1, polyline_xmc2, merged_xmc);
- std::cout<< "Merge_2:: Mergable x-monotone curves merged successfully"
+ std::cout<< "Merge_2:: Mergeable x-monotone curves merged successfully"
           << std:: endl;
 }
 
-void check_construct_opposite()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Construct_opposite_2 construct_opposite_2 =
-    traits.construct_opposite_2_object();
+void check_construct_opposite() {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto ctr_opposite = traits.construct_opposite_2_object();
 
   //create a curve
   Rat_point_2 ps1(1, 10);
   Rat_point_2 pmid1(5, 4);
   Rat_point_2 pt1(10, 1);
-  Conic_curve_2     c1(ps1, pmid1, pt1);
+  Conic_curve_2 c1 = ctr_sub_cv(ps1, pmid1, pt1);
 
   //construct x-monotone curve (compatible with polyline class)
  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
-   construct_x_monotone_curve_2(c1);
+   ctr_xcv(c1);
  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_opposite_curve =
-   construct_opposite_2(polyline_xmc1);
+   ctr_opposite(polyline_xmc1);
 
  std::cout<< "Construct_opposite_2:: Opposite curve created";
 }
 
-void check_compare_y_at_x_right()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Compare_y_at_x_right_2 cmp_y_at_x_right_2 =
-    traits.compare_y_at_x_right_2_object();
+void check_compare_y_at_x_right() {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto cmp_y_at_x_right = traits.compare_y_at_x_right_2_object();
 
   //create constructing curves
   Rat_point_2 ps2(1, 10);
   Rat_point_2 pmid2(5, 4);
   Rat_point_2 pt2(10, 1);
-  Conic_curve_2 c1(ps2, pmid2, pt2);
+  Conic_curve_2 c1 = ctr_sub_cv(ps2, pmid2, pt2);
 
   Rat_point_2 ps3(10, 1);
   Rat_point_2 pmid3(5, 4);
   Rat_point_2 pt3(1, 10);
-  Conic_curve_2 c2(ps3, pmid3, pt3);
+  Conic_curve_2 c2 = ctr_sub_cv(ps3, pmid3, pt3);
 
   //construct x-monotone curve (compatible with polyline class)
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
-    construct_x_monotone_curve_2(c1);
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 =
-    construct_x_monotone_curve_2(c2);
+  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = ctr_xcv(c1);
+  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 = ctr_xcv(c2);
   Polycurve_conic_traits_2::Point_2 intersection_point =
     Polycurve_conic_traits_2::Point_2(5,4);
 
   CGAL::Comparison_result result;
-  result = cmp_y_at_x_right_2(polyline_xmc1, polyline_xmc2, intersection_point);
+  result = cmp_y_at_x_right(polyline_xmc1, polyline_xmc2, intersection_point);
   std::cout << "Compare_y_at_x_right:: Expected Answer: equal, Computed answer:  "
             << (result == CGAL::SMALLER ? "smaller":
                (result == CGAL::LARGER ? "Larger" : "equal")) << std::endl;
 }
 
-void check_compare_y_at_x_left()
-{
-  Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2
-    construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Compare_y_at_x_left_2 cmp_y_at_x_left_2 =
-    traits.compare_y_at_x_left_2_object();
+void check_compare_y_at_x_left() {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto cmp_y_at_x_left = traits.compare_y_at_x_left_2_object();
 
   //create constructing curves
   Rat_point_2 ps2(1, 10);
   Rat_point_2 pmid2(5, 4);
   Rat_point_2 pt2(10, 1);
-  Conic_curve_2 c1(ps2, pmid2, pt2);
+  Conic_curve_2 c1 = ctr_sub_cv(ps2, pmid2, pt2);
 
   Rat_point_2 ps3(10, 1);
   Rat_point_2 pmid3(5, 4);
   Rat_point_2 pt3(1, 10);
-  Conic_curve_2 c2(ps3, pmid3, pt3);
+  Conic_curve_2 c2 = ctr_sub_cv(ps3, pmid3, pt3);
 
   //construct x-monotone curve(compatible with polyline class)
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 =
-    construct_x_monotone_curve_2(c1);
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 =
-    construct_x_monotone_curve_2(c2);
+  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = ctr_xcv(c1);
+  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 = ctr_xcv(c2);
   Polycurve_conic_traits_2::Point_2 intersection_point =
     Polycurve_conic_traits_2::Point_2(5,4);
 
   CGAL::Comparison_result result;
 
-  result = cmp_y_at_x_left_2(polyline_xmc1, polyline_xmc2, intersection_point);
+  result = cmp_y_at_x_left(polyline_xmc1, polyline_xmc2, intersection_point);
   std::cout << "Compare_y_at_x_left:: Expected Answer: equal, Computed answer:  "
             << (result == CGAL::SMALLER ? "smaller":
                (result == CGAL::LARGER ? "Larger" : "equal")) << std::endl;
 }
 
 template <typename GeometryTraits>
-void check_make_x_monotne_curve(const typename GeometryTraits::Curve_2& c1)
-{
+void check_make_x_monotne_curve(const typename GeometryTraits::Curve_2& c1) {
   typename GeometryTraits::Point_2                      Point_2;
   typename GeometryTraits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef boost::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
   Polycurve_conic_traits_2 traits;
   std::vector<Make_x_monotone_result> objs;
   traits.make_x_monotone_2_object()(c1, std::back_inserter(objs));
@@ -662,8 +641,7 @@ void check_make_x_monotne_curve(const typename GeometryTraits::Curve_2& c1)
 }
 
 template<typename Curve, typename Segment>
-void check_push_front(Curve base_curve, Segment curve_tobe_pushed)
-{
+void check_push_front(Curve base_curve, Segment curve_tobe_pushed) {
   Polycurve_conic_traits_2 traits;
 
   std::cout << "Base curve: " << base_curve << std::endl;
@@ -674,8 +652,7 @@ void check_push_front(Curve base_curve, Segment curve_tobe_pushed)
 }
 
 template<typename Curve, typename Segment>
-void check_push_back(Curve& base_curve, Segment curve_tobe_pushed)
-{
+void check_push_back(Curve& base_curve, Segment curve_tobe_pushed) {
   Polycurve_conic_traits_2 traits;
 
   std::cout << "Base curve: " << base_curve << std::endl;
@@ -687,8 +664,7 @@ void check_push_back(Curve& base_curve, Segment curve_tobe_pushed)
 }
 
 template<typename Segment>
-void check_compare_x_2(const Segment& seg1, const Segment& seg2)
-{
+void check_compare_x_2(const Segment& seg1, const Segment& seg2) {
   Polycurve_conic_traits_2 traits;
   CGAL::Comparison_result result;
 
@@ -706,16 +682,14 @@ void check_compare_x_2(const Segment& seg1, const Segment& seg2)
 }
 
 template<typename Curve>
-void check_compare_points(Curve& cv)
-{
+void check_compare_points(Curve& cv) {
   Polycurve_conic_traits_2 traits;
   CGAL::Arr_parameter_space result =
     traits.parameter_space_in_x_2_object()(cv, CGAL::ARR_MAX_END);
 }
 
 template <typename curve>
-void check_trim(curve& xcv, int sx, int sy, int tx, int ty)
-{
+void check_trim(curve& xcv, int sx, int sy, int tx, int ty) {
   Polycurve_conic_traits_2 traits;
 
   // Conic_point_2 source(Algebraic(-16), Algebraic(-4));
@@ -731,39 +705,41 @@ void check_trim(curve& xcv, int sx, int sy, int tx, int ty)
 
 }
 
-int main(int argc, char* argv[])
-{
-  Polycurve_conic_traits_2 traits;
+int main(int argc, char* argv[]) {
+  Conic_traits_2 sub_traits;
+  Polycurve_conic_traits_2 traits(&sub_traits);
+  auto ctr_sub_cv = sub_traits.construct_curve_2_object();
+  auto ctr_sub_xcv = sub_traits.construct_x_monotone_curve_2_object();
     //polycurve constructors
-  auto construct_x_mono_polycurve = traits.construct_x_monotone_curve_2_object();
-  auto construct_polycurve = traits.construct_curve_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  auto ctr_cv = traits.construct_curve_2_object();
 
    //create a curve
 
-  Conic_curve_2 c3(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(0), Algebraic(0)),
-                   Conic_point_2(Algebraic(3), Algebraic(9)));
-  Conic_curve_2 c4(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(3), Algebraic(9)),
-                   Conic_point_2(Algebraic(5), Algebraic(25)));
-  Conic_curve_2 c5(0,1,0,1,0,0, CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(-25), Algebraic(-5)),
-                   Conic_point_2(Algebraic(0), Algebraic(0)));
+  Conic_curve_2 c3 = ctr_sub_cv(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(0), Algebraic(0)),
+                                Conic_point_2(Algebraic(3), Algebraic(9)));
+  Conic_curve_2 c4 = ctr_sub_cv(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(3), Algebraic(9)),
+                                Conic_point_2(Algebraic(5), Algebraic(25)));
+  Conic_curve_2 c5 = ctr_sub_cv(0,1,0,1,0,0, CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(-25), Algebraic(-5)),
+                                Conic_point_2(Algebraic(0), Algebraic(0)));
 
-  Conic_curve_2 c6(1,1,0,6,-26,162,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(-7), Algebraic(13)),
-                   Conic_point_2(Algebraic(-3), Algebraic(9)));
-  Conic_curve_2 c7(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(-3), Algebraic(9)),
-                   Conic_point_2(Algebraic(0), Algebraic(0)));
-  Conic_curve_2 c8(0,1,0,-1,0,0, CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(0), Algebraic(0)),
-                   Conic_point_2(Algebraic(4), Algebraic(-2)));
+  Conic_curve_2 c6 = ctr_sub_cv(1,1,0,6,-26,162,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(-7), Algebraic(13)),
+                                Conic_point_2(Algebraic(-3), Algebraic(9)));
+  Conic_curve_2 c7 = ctr_sub_cv(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(-3), Algebraic(9)),
+                                Conic_point_2(Algebraic(0), Algebraic(0)));
+  Conic_curve_2 c8 = ctr_sub_cv(0,1,0,-1,0,0, CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(0), Algebraic(0)),
+                                Conic_point_2(Algebraic(4), Algebraic(-2)));
 
-  Conic_curve_2 c9(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
-                   Conic_point_2(Algebraic(-5), Algebraic(25)),
-                   Conic_point_2(Algebraic(5), Algebraic(25)));
-  Conic_curve_2 c10(58, 72, -48, 0, 0, -360);
+  Conic_curve_2 c9 = ctr_sub_cv(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
+                                Conic_point_2(Algebraic(-5), Algebraic(25)),
+                                Conic_point_2(Algebraic(5), Algebraic(25)));
+  Conic_curve_2 c10 = ctr_sub_cv(58, 72, -48, 0, 0, -360);
 
   //This vector is used to store curves that will be used to create polycurve
   std::vector<Conic_curve_2> conic_curves;
@@ -771,21 +747,21 @@ int main(int argc, char* argv[])
 
   //construct poly-curve
   Polycurve_conic_traits_2::Curve_2 conic_polycurve =
-    construct_polycurve(conic_curves.begin(), conic_curves.end());
+    ctr_cv(conic_curves.begin(), conic_curves.end());
 
-  Conic_curve_2 c11(0,1,0,-1,0,0,CGAL::COUNTERCLOCKWISE,
-                     Conic_point_2(Algebraic(25), Algebraic(-5)),
-                     Conic_point_2(Algebraic(0), Algebraic(0)));
-  Conic_curve_2 c12(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
-                     Conic_point_2(Algebraic(0), Algebraic(0)),
-                     Conic_point_2(Algebraic(5), Algebraic(25)));
+  Conic_curve_2 c11 = ctr_sub_cv(0,1,0,-1,0,0,CGAL::COUNTERCLOCKWISE,
+                                 Conic_point_2(Algebraic(25), Algebraic(-5)),
+                                 Conic_point_2(Algebraic(0), Algebraic(0)));
+  Conic_curve_2 c12 = ctr_sub_cv(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE,
+                                 Conic_point_2(Algebraic(0), Algebraic(0)),
+                                 Conic_point_2(Algebraic(5), Algebraic(25)));
   conic_curves.clear();
   conic_curves.push_back(c11);
   conic_curves.push_back(c12);
 
   //construct poly-curve
   Polycurve_conic_traits_2::Curve_2 conic_polycurve_2 =
-    construct_polycurve(conic_curves.begin(), conic_curves.end());
+    ctr_cv(conic_curves.begin(), conic_curves.end());
 
   /* VERY IMPORTANT
    * For efficiency reasons, we recommend users not to construct
@@ -793,13 +769,12 @@ int main(int argc, char* argv[])
    * functor supplied by the conic-arc traits class to convert conic curves
    * to x-monotone curves.
    */
-  Conic_x_monotone_curve_2 xc3(c3);
-  Conic_x_monotone_curve_2 xc4(c4);
-  Conic_x_monotone_curve_2 xc5(c5);
-  Conic_x_monotone_curve_2 xc6(c6);
-  Conic_x_monotone_curve_2 xc7(c7);
-  Conic_x_monotone_curve_2 xc8(c8);
-
+  Conic_x_monotone_curve_2 xc3 = ctr_sub_xcv(c3);
+  Conic_x_monotone_curve_2 xc4 = ctr_sub_xcv(c4);
+  Conic_x_monotone_curve_2 xc5 = ctr_sub_xcv(c5);
+  Conic_x_monotone_curve_2 xc6 = ctr_sub_xcv(c6);
+  Conic_x_monotone_curve_2 xc7 = ctr_sub_xcv(c7);
+  Conic_x_monotone_curve_2 xc8 = ctr_sub_xcv(c8);
 
   //This vector is used to store curves that will be used to create
   //X-monotone-polycurve
@@ -808,11 +783,9 @@ int main(int argc, char* argv[])
   xmono_conic_curves_2.push_back(xc3);
   xmono_conic_curves_2.push_back(xc4);
 
-
   //construct x-monotone poly-curve
   Pc_x_monotone_curve_2 conic_x_mono_polycurve_1 =
-    construct_x_mono_polycurve(xmono_conic_curves_2.begin(),
-                               xmono_conic_curves_2.end());
+    ctr_xcv(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
   xmono_conic_curves_2.clear();
   xmono_conic_curves_2.push_back(xc6);
@@ -820,15 +793,13 @@ int main(int argc, char* argv[])
   xmono_conic_curves_2.push_back(xc8);
   //construct x-monotone poly-curve
   Pc_x_monotone_curve_2 conic_x_mono_polycurve_2 =
-    construct_x_mono_polycurve(xmono_conic_curves_2.begin(),
-                               xmono_conic_curves_2.end());
+    ctr_xcv(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
   xmono_conic_curves_2.clear();
   xmono_conic_curves_2.push_back(xc5);
 
   Pc_x_monotone_curve_2 x_polycurve_push =
-    construct_x_mono_polycurve(xmono_conic_curves_2.begin(),
-                               xmono_conic_curves_2.end());
+    ctr_xcv(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
   Polycurve_conic_traits_2::X_monotone_subcurve_2 xcurve_push =
     Polycurve_conic_traits_2::X_monotone_subcurve_2(c5);
   //traits.construct_x_monotone_curve_2_object()(c5);
@@ -837,28 +808,27 @@ int main(int argc, char* argv[])
   xmono_conic_curves_2.push_back(xc3);
   xmono_conic_curves_2.push_back(xc4);
   Pc_x_monotone_curve_2 base_curve =
-    construct_x_mono_polycurve(xmono_conic_curves_2.begin(),
-                               xmono_conic_curves_2.end());
+    ctr_xcv(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
   //curves for push_back
-  Conic_curve_2 c13(1,1,0,-50,12,660,CGAL::COUNTERCLOCKWISE,
-                    Conic_point_2(Algebraic(25), Algebraic(-7)),
-                    Conic_point_2(Algebraic(25), Algebraic(-5)));
-  Conic_curve_2 c14(0,1,0,-1,0,0,CGAL::COUNTERCLOCKWISE,
-                    Conic_point_2(Algebraic(25), Algebraic(-5)),
-                    Conic_point_2(Algebraic(0), Algebraic(0)));
-  Conic_curve_2 c15(-1,0,0,0,1,0,CGAL::COUNTERCLOCKWISE,
-                    Conic_point_2(Algebraic(0), Algebraic(0)),
-                    Conic_point_2(Algebraic(5), Algebraic(25)));
+  Conic_curve_2 c13 = ctr_sub_cv(1,1,0,-50,12,660,CGAL::COUNTERCLOCKWISE,
+                                 Conic_point_2(Algebraic(25), Algebraic(-7)),
+                                 Conic_point_2(Algebraic(25), Algebraic(-5)));
+  Conic_curve_2 c14 = ctr_sub_cv(0,1,0,-1,0,0,CGAL::COUNTERCLOCKWISE,
+                                 Conic_point_2(Algebraic(25), Algebraic(-5)),
+                                 Conic_point_2(Algebraic(0), Algebraic(0)));
+  Conic_curve_2 c15 = ctr_sub_cv(-1,0,0,0,1,0,CGAL::COUNTERCLOCKWISE,
+                                 Conic_point_2(Algebraic(0), Algebraic(0)),
+                                 Conic_point_2(Algebraic(5), Algebraic(25)));
   conic_curves.clear();
   conic_curves.push_back(c13);
   conic_curves.push_back(c14);
   Polycurve_conic_traits_2::Curve_2 base_curve_push_back =
-    construct_polycurve(conic_curves.begin(), conic_curves.end());
+    ctr_cv(conic_curves.begin(), conic_curves.end());
 
   conic_curves.push_back(c15);
   Polycurve_conic_traits_2::Curve_2 Expected_push_back_result =
-    construct_polycurve(conic_curves.begin(), conic_curves.end());
+    ctr_cv(conic_curves.begin(), conic_curves.end());
 
   // //checking the orientattion consistency
   // Conic_curve_2 c21(0,1,0,1,0,0,CGAL::CLOCKWISE,
@@ -873,7 +843,7 @@ int main(int argc, char* argv[])
   //  xmono_conic_curves_2.push_back(xc20);
   // xmono_conic_curves_2.push_back(xc21);
   // Pc_x_monotone_curve_2 eric_polycurve =
-  //   construct_x_mono_polycurve(xmono_conic_curves_2.begin(),
+  //   ctr_xcv(xmono_conic_curves_2.begin(),
   //                              xmono_conic_curves_2.end());
   // std::cout << "the polycurve is: " << eric_polycurve << std::endl;
 

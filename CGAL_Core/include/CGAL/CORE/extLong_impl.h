@@ -177,7 +177,7 @@ extLong extLong::operator- () const {
 
 // sign
 //    You should check "flag" before calling this, otherwise
-//    you cannot interprete the returned value!
+//    you cannot interpret the returned value!
 CGAL_INLINE_FUNCTION
 int extLong::sign() const {
   if (flag == 2)

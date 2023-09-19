@@ -8,7 +8,7 @@
  * expected to reach this boundary side. A model of this concept can handle
  * curves that reach the bottom boundary side when it is contracted.
  *
- * \cgalRefines `ArrangementBottomSideTraits_2`
+ * \cgalRefines{ArrangementBottomSideTraits_2}
  *
  * \sa `ArrangementContractedLeftTraits_2`,
  *     `ArrangementContractedRightTraits_2`,

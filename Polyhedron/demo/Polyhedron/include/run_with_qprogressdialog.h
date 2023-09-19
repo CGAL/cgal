@@ -20,9 +20,9 @@ private:
   mutable std::size_t nb;
 
 public:
-  boost::shared_ptr<double> latest_adv;
-  boost::shared_ptr<bool> state;
-  boost::shared_ptr<Callback_signaler> signaler;
+  std::shared_ptr<double> latest_adv;
+  std::shared_ptr<bool> state;
+  std::shared_ptr<Callback_signaler> signaler;
 
   Signal_callback(bool)
     : latest_adv (new double(0))
@@ -71,7 +71,7 @@ public:
 class Functor_with_signal_callback
 {
 protected:
-  boost::shared_ptr<Signal_callback> m_callback;
+  std::shared_ptr<Signal_callback> m_callback;
 public:
 
   Signal_callback* callback() { return m_callback.get(); }
@@ -111,7 +111,7 @@ void run_with_qprogressdialog (Functor& functor,
            signal_callback->signaler.get(), SLOT(cancel()));
 
 #ifdef CGAL_HAS_STD_THREADS
-  if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
+  if (std::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
   {
     std::thread thread (functor);
 

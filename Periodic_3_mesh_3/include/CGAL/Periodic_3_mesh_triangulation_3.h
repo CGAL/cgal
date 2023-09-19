@@ -30,6 +30,7 @@
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 
 // vertex and cell bases
+#include <CGAL/Triangulation_vertex_base_with_info_3.h> // to mark dummy vertices
 #include <CGAL/Mesh_vertex_base_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
 
@@ -44,14 +45,15 @@
 #include <iostream>
 #include <iterator>
 #include <limits>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
 namespace CGAL {
 
-/// This class currently provides an interface between the classe
+/// This class currently provides an interface between the class
 /// `CGAL::Periodic_3_regular_triangulation_3` and the mesher `Mesh_3`.
-/// As periodic triangulations are parallelized, a lot of these functions will
+/// If periodic triangulations are parallelized, a lot of these functions will
 /// become obsolete.
 template<class Gt_, class Tds_>
 class Periodic_3_regular_triangulation_3_wrapper
@@ -140,12 +142,18 @@ public:
 
   /// Concurrency related
   template <typename Cell_handle>
-  bool try_lock_cell(const Cell_handle &, int = 0) const { return true; }
+  bool try_lock_cell(const Cell_handle &, int = 0) const
+  {
+    std::cerr << "ERROR: P3M3 does not yet support parallel execution" << std::endl;
+    CGAL_assertion(false);
+    return true;
+  }
 
   bool try_lock_and_get_incident_cells(Vertex_handle /* v */,
                                        std::vector<Cell_handle>& /* cells */) const
   {
-    std::cerr << "ERROR: implement try_lock_and_get_incident_cells()"<< std::endl;
+    std::cerr << "ERROR: P3M3 does not yet support parallel execution" << std::endl;
+    CGAL_assertion(false);
     return true;
   }
 
@@ -156,7 +164,7 @@ public:
   bool is_infinite(const Facet&) const { return false; }
   bool is_infinite(const Cell_handle) const { return false; }
   bool is_infinite(const Cell_handle, int) const { return false; }
-  bool is_infinite(const Cell_handle c, int i, int j) const;
+  bool is_infinite(const Cell_handle, int, int) const { return false; }
 
   Cell_handle infinite_cell() const
   {
@@ -180,9 +188,6 @@ public:
 
   void set_domain(const Iso_cuboid& domain)
   {
-    CGAL_precondition_msg(domain.xmax() - domain.xmin() == domain.ymax() - domain.ymin() &&
-                          domain.xmax() - domain.xmin() == domain.zmax() - domain.zmin(),
-                          "The fundamental domain must be a cube.");
     Base::set_domain(domain);
   }
 
@@ -191,11 +196,17 @@ public:
     return P3T3::internal::robust_canonicalize_point(p, geom_traits());
   }
 
-  // @todo it might be dangerous to call robust_canonicalize without also changing
+  // @fixme it might be dangerous to call robust_canonicalize() without also changing
   // <p, offset> = construct_periodic_point(p) (lack of consistency in the result)
   Weighted_point canonicalize_point(const Weighted_point& p) const
   {
     return P3T3::internal::robust_canonicalize_point(p, geom_traits());
+  }
+
+  // 1-cover, so we can take a const&
+  const Weighted_point& point(const Vertex_handle v) const
+  {
+    return v->point();
   }
 
   Triangle triangle(const Facet& f) const
@@ -297,51 +308,52 @@ public:
     this->v_offsets.clear();
   }
 
-  FT compute_power_distance_to_power_sphere(const Cell_handle& c, const int i) const
+  FT compute_power_distance_to_power_sphere(const Cell_handle c, const int i) const
   {
     typename Geom_traits::Compute_power_distance_to_power_sphere_3 cr =
       geom_traits().compute_power_distance_to_power_sphere_3_object();
 
     Offset o_nb = this->neighbor_offset(c, i, c->neighbor(i));
-    Offset o_vt = this->get_offset(c->neighbor(i), c->neighbor(i)->index(c));
+    Offset o_vt = get_offset(c->neighbor(i), c->neighbor(i)->index(c));
 
-    const Weighted_point& wp0 = this->point(c->vertex(0)); // need the canonical point
-    const Weighted_point& wp1 = this->point(c->vertex(1));
-    const Weighted_point& wp2 = this->point(c->vertex(2));
-    const Weighted_point& wp3 = this->point(c->vertex(3));
-    const Weighted_point& wq = this->point(c->neighbor(i)->vertex(c->neighbor(i)->index(c)));
-    const Offset& op0 = this->get_offset(c, 0);
-    const Offset& op1 = this->get_offset(c, 1);
-    const Offset& op2 = this->get_offset(c, 2);
-    const Offset& op3 = this->get_offset(c, 3);
-    const Offset& oq = o_vt - o_nb;
+    const Weighted_point& wp0 = point(c->vertex(0)); // need the canonical point
+    const Weighted_point& wp1 = point(c->vertex(1));
+    const Weighted_point& wp2 = point(c->vertex(2));
+    const Weighted_point& wp3 = point(c->vertex(3));
+    const Weighted_point& wq = point(c->neighbor(i)->vertex(c->neighbor(i)->index(c)));
+    const Offset& op0 = get_offset(c, 0);
+    const Offset& op1 = get_offset(c, 1);
+    const Offset& op2 = get_offset(c, 2);
+    const Offset& op3 = get_offset(c, 3);
+    const Offset oq = o_vt - o_nb;
 
     return cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq);
   }
 
-  // The functions below are needed by Mesh_3 but need a specific implementation
-  // for the periodic case because we need to try with different offsets
-  // to get a result
-  FT compute_power_distance_to_power_sphere(const Cell_handle& c,
+  // The functions below are used in Mesh_3 and need a specific implementation
+  // for the periodic case because we need to try with different offsets to get the result
+  FT compute_power_distance_to_power_sphere(const Cell_handle c,
                                             const Vertex_handle v) const
   {
+    // @fixme need to introduce Compare_power_distances_to_power_sphere_3(4 points, query)
     typename Geom_traits::Compute_power_distance_to_power_sphere_3 cr =
       geom_traits().compute_power_distance_to_power_sphere_3_object();
 
     FT min_power_dist = std::numeric_limits<FT>::infinity();
 
+    const Weighted_point& wp0 = point(c->vertex(0)); // need the canonical point
+    const Weighted_point& wp1 = point(c->vertex(1));
+    const Weighted_point& wp2 = point(c->vertex(2));
+    const Weighted_point& wp3 = point(c->vertex(3));
+    const Weighted_point& wq = point(v);
+    const Offset& op0 = get_offset(c, 0);
+    const Offset& op1 = get_offset(c, 1);
+    const Offset& op2 = get_offset(c, 2);
+    const Offset& op3 = get_offset(c, 3);
+
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < 3; ++j) {
         for(int k = 0; k < 3; ++k) {
-          const Weighted_point& wp0 = this->point(c->vertex(0)); // need the canonical point
-          const Weighted_point& wp1 = this->point(c->vertex(1));
-          const Weighted_point& wp2 = this->point(c->vertex(2));
-          const Weighted_point& wp3 = this->point(c->vertex(3));
-          const Weighted_point& wq = this->point(v);
-          const Offset& op0 = this->get_offset(c, 0);
-          const Offset& op1 = this->get_offset(c, 1);
-          const Offset& op2 = this->get_offset(c, 2);
-          const Offset& op3 = this->get_offset(c, 3);
           const Offset oq(i-1, j-1, k-1);
 
           FT power_dist = cr(wp0, wp1, wp2, wp3, wq, op0, op1, op2, op3, oq);
@@ -371,11 +383,14 @@ public:
           const Offset off(i-1, j-1, k-1);
           if(tester(c, off))
           {
-            return construct_tetrahedron(
-                       canonic_wp, this->point(c->vertex((index+1)&3)),
-                       this->point(c->vertex((index+2)&3)), this->point(c->vertex((index+3)&3)),
-                       off, this->get_offset(c, (index+1)&3),
-                       this->get_offset(c, (index+2)&3), this->get_offset(c, (index+3)&3));
+            return construct_tetrahedron(canonic_wp,
+                                         point(c->vertex((index+1)&3)),
+                                         point(c->vertex((index+2)&3)),
+                                         point(c->vertex((index+3)&3)),
+                                         off,
+                                         get_offset(c, (index+1)&3),
+                                         get_offset(c, (index+2)&3),
+                                         get_offset(c, (index+3)&3));
           }
         }
       }
@@ -385,7 +400,7 @@ public:
     return Tetrahedron();
   }
 
-  Bounded_side side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
+  Bounded_side side_of_power_sphere(const Cell_handle c, const Weighted_point& p,
                                     bool perturb = false) const
   {
     Weighted_point canonical_p = canonicalize_point(p);
@@ -404,62 +419,85 @@ public:
     }
 
     return bs;
-
-    return Base::side_of_power_sphere(c, canonical_p, Offset(), perturb);
   }
 
-  // Warning : This is a periodic version that computes the smallest possible
+  // Warning: This is a periodic version that computes the smallest possible distance
   // between 'p' and 'q', for all possible combinations of offsets
   FT min_squared_distance(const Bare_point& p, const Bare_point& q) const
   {
-    typename Geom_traits::Compute_squared_distance_3 csd =
+    typename Geom_traits::Compare_squared_distance_3 compare_sd =
+      geom_traits().compare_squared_distance_3_object();
+    typename Geom_traits::Compute_squared_distance_3 compute_sd =
       geom_traits().compute_squared_distance_3_object();
 
-    const Bare_point cp = canonicalize_point(p);
-    const Bare_point cq = canonicalize_point(q);
+    bool used_exact = false;
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
 
-    FT min_sq_dist = std::numeric_limits<FT>::infinity();
+    Offset min_off;
 
     for(int i = 0; i < 3; ++i) {
       for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k) {
-          FT sq_dist = csd(cq, construct_point(std::make_pair(cp, Offset(i-1, j-1, k-1))));
+        for(int k = 0; k < 3; ++k)
+        {
+          const Offset o(i-1, j-1, k-1);
 
-          if(sq_dist < min_sq_dist)
-            min_sq_dist = sq_dist;
-        }
-      }
-    }
-
-    return min_sq_dist;
-  }
-
-  // Warning : This function finds which offset 'Oq' should be applied to 'q' so
-  // that the distance between 'p' and '(q, Oq)' is minimal.
-  //
-  // \pre 'p' lives in the canonical instance.
-  Bare_point get_closest_point(const Bare_point& p, const Bare_point& q) const
-  {
-    Bare_point rq;
-    const Bare_point cq = canonicalize_point(q);
-    FT min_sq_dist = std::numeric_limits<FT>::infinity();
-
-    for(int i = -1; i < 2; ++i) {
-      for(int j = -1; j < 2; ++j) {
-        for(int k = -1; k < 2; ++k) {
-          const Bare_point tcq = construct_point(std::make_pair(cq, Offset(i, j, k)));
-          FT sq_dist = geom_traits().compute_squared_distance_3_object()(p, tcq);
-
-          if(sq_dist < min_sq_dist)
+          if((i == 0 && j == 0 && k == 0) ||
+              compare_sd(q, p, q, p,
+                         pp_q.second, pp_p.second + o,
+                         pp_q.second, pp_p.second + min_off) == SMALLER)
           {
-            rq = tcq;
-            min_sq_dist = sq_dist;
+            min_off = o;
           }
         }
       }
     }
 
-    return rq;
+    return compute_sd(q, p, pp_q.second, pp_p.second + min_off);
+  }
+
+  // Warning: This function finds which offset 'Oq' should be applied to 'q' such
+  // that the distance between 'p' and '(q, Oq)' is minimal.
+  //
+  // \pre 'p' lives in the canonical instance.
+  Bare_point get_closest_point(const Bare_point& p, const Bare_point& q) const
+  {
+    CGAL_precondition(p.x() < domain().xmax());
+    CGAL_precondition(p.y() < domain().ymax());
+    CGAL_precondition(p.z() < domain().zmax());
+    CGAL_precondition(p.x() >= domain().xmin());
+    CGAL_precondition(p.y() >= domain().ymin());
+    CGAL_precondition(p.z() >= domain().zmin());
+
+    typename Geom_traits::Compare_squared_distance_3 compare_sd =
+      geom_traits().compare_squared_distance_3_object();
+    typename Geom_traits::Construct_point_3 cp =
+      geom_traits().construct_point_3_object();
+
+    bool used_exact = false;
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(q, used_exact, geom_traits());
+
+    Offset min_off;
+    Offset null_offset(0,0,0);
+
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k)
+        {
+          const Offset o(i-1, j-1, k-1);
+
+          if((i == 0 && j == 0 && k == 0) ||
+             compare_sd(p, q, p, q,
+                        null_offset, pp_q.second + o,
+                        null_offset, pp_q.second + min_off) == SMALLER)
+          {
+            min_off = o;
+          }
+        }
+      }
+    }
+
+    return cp(q, pp_q.second + min_off);
   }
 
   Weighted_point get_closest_point(const Weighted_point& wp, const Weighted_point& wq) const
@@ -471,46 +509,28 @@ public:
     return cwp(get_closest_point(cp(wp), cp(wq)), cw(wq));
   }
 
-  Triangle get_closest_triangle(const Bare_point& p, const Triangle& t) const
+  // returns the triangle corresponding to f, with a geometric shift
+  // so that it is incident to ref_v's canonical position
+  Triangle get_incident_triangle(const Facet& f, const Vertex_handle ref_v) const
   {
-    typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_point_3 cp = geom_traits().construct_point_3_object();
     typename Geom_traits::Construct_translated_point_3 tr = geom_traits().construct_translated_point_3_object();
-    typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
+    typename Geom_traits::Construct_vector_3 cv = geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_triangle_3 ct = geom_traits().construct_triangle_3_object();
 
-    // It doesn't matter which point we use to canonicalize the triangle as P3M3 is necessarily
-    // in one cover and we have to look at all the neighboring copies anyway since we do not
-    // have control of 'p'.
-    Bare_point canon_p0 = canonicalize_point(t[0]);
-    Vector_3 move_to_canonical = cv(t[0], canon_p0);
-    const std::array<Bare_point, 3> ct = { canon_p0,
-                                           tr(t[1], move_to_canonical),
-                                           tr(t[2], move_to_canonical) };
+    CGAL_precondition(f.first != Cell_handle() && f.first->has_vertex(ref_v));
+    const int ref_v_pos = f.first->index(ref_v);
+    const Bare_point& ref_p = cp(point(ref_v));
+    const Bare_point ref_p_in_f = cp(point(f.first, ref_v_pos));
+    Vector_3 move_to_canonical = cv(ref_p_in_f, ref_p);
 
-    FT min_sq_dist = std::numeric_limits<FT>::infinity();
-    Triangle rt;
-    for(int i = -1; i < 2; ++i) {
-      for(int j = -1; j < 2; ++j) {
-        for(int k = -1; k < 2; ++k) {
+    const int s = f.second;
+    const Bare_point mp0 = tr(cp(point(f.first, (s+1)%4)), move_to_canonical);
+    const Bare_point mp1 = tr(cp(point(f.first, (s+2)%4)), move_to_canonical);
+    const Bare_point mp2 = tr(cp(point(f.first, (s+3)%4)), move_to_canonical);
+    const Triangle t = ct(mp0, mp1, mp2);
 
-          const Triangle tt(
-            construct_point(std::make_pair(ct[0], Offset(i, j, k))),
-            construct_point(std::make_pair(ct[1], Offset(i, j, k))),
-            construct_point(std::make_pair(ct[2], Offset(i, j, k))));
-
-          const FT sq_dist = csd(p, tt);
-
-          if(sq_dist == FT(0))
-            return rt;
-
-          if(sq_dist < min_sq_dist) {
-            rt = tt;
-            min_sq_dist = sq_dist;
-          }
-        }
-      }
-    }
-
-    return rt;
+    return t;
   }
 
   // Warning: This is a periodic version that computes the smallest possible
@@ -522,37 +542,51 @@ public:
                                        const Weighted_point& q,
                                        const Weighted_point& r) const
   {
-    typename Geom_traits::Compute_power_product_3 power_distance =
-      geom_traits().compute_power_product_3_object();
+    CGAL_precondition(this->is_1_cover());
 
-    // canonicalize the points
-    const Weighted_point cp =
-      geom_traits().construct_weighted_point_3_object()(canonicalize_point(p));
-    const Weighted_point cq = canonicalize_point(q);
-    const Weighted_point cr = canonicalize_point(r);
+    typename Geom_traits::Construct_point_3 cp =
+      geom_traits().construct_point_3_object();
+    typename Geom_traits::Compare_power_distance_3 compare_power_distance =
+      geom_traits().compare_power_distance_3_object();
 
-    FT min_power_distance_to_q = std::numeric_limits<FT>::infinity();
-    FT min_power_distance_to_r = std::numeric_limits<FT>::infinity();
+    // Compute the offsets that would bring p, q, and r into the canonical domain
+    bool used_exact = false;
+    std::pair<Bare_point, Offset> pp_p = P3T3::internal::construct_periodic_point(p, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_q = P3T3::internal::construct_periodic_point(cp(q), used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_r = P3T3::internal::construct_periodic_point(cp(r), used_exact, geom_traits());
 
-    for(int i = 0; i < 3; ++i) {
-      for(int j = 0; j < 3; ++j) {
-        for(int k = 0; k < 3; ++k) {
-          const Weighted_point cp_copy =
-            construct_weighted_point(std::make_pair(cp, Offset(i-1, j-1, k-1)));
-
-          const FT power_distance_to_q = power_distance(cp_copy, cq);
-          if(power_distance_to_q < min_power_distance_to_q)
-            min_power_distance_to_q = power_distance_to_q;
-
-          const FT power_distance_to_r = power_distance(cp_copy, cr);
-          if (power_distance_to_r < min_power_distance_to_r)
-            min_power_distance_to_r = power_distance_to_r;
+    // To compare pp(p, q) to pp(p, r), we first need to know the best offsets that minimize these distances
+    auto get_offset_minimizing_power_product = [&](const Weighted_point& wp,
+                                                   const Offset& base_wp_offset) -> Offset
+    {
+      Offset min_wp_offset;
+      for(int i = 0; i < 3; ++i) {
+        for(int j = 0; j < 3; ++j) {
+          for(int k = 0; k < 3; ++k)
+          {
+            const Offset off(i-1, j-1, k-1);
+            if((i == 0 && j == 0 && k == 0) ||
+               compare_power_distance(p, wp, wp,
+                                      pp_p.second,
+                                      base_wp_offset + off,
+                                      base_wp_offset + min_wp_offset) == SMALLER)
+            {
+              min_wp_offset = off;
+            }
+          }
         }
       }
-    }
 
-    CGAL_postcondition(min_power_distance_to_r < 0.5 && min_power_distance_to_q < 0.5);
-    return min_power_distance_to_q >= min_power_distance_to_r;
+      return min_wp_offset;
+    };
+
+    Offset min_q_off = get_offset_minimizing_power_product(q, pp_q.second);
+    Offset min_r_off = get_offset_minimizing_power_product(r, pp_r.second);
+
+    return !(compare_power_distance(p, q, r,
+                                    pp_p.second,
+                                    pp_q.second + min_q_off,
+                                    pp_r.second + min_r_off) == SMALLER);
   }
 
   /// \name Locate functions
@@ -574,8 +608,8 @@ public:
     return Base::nearest_power_vertex(canonicalize_point(p), start);
   }
 
-  /// Return the squared distance (note: _NOT_ the power distance) between the
-  /// 'p' and the closest vertex for the power distance.
+  /// Return the squared distance (note: _NOT_ the power distance)
+  /// between 'p' and the closest vertex for the power distance.
   std::pair<Vertex_handle, FT>
   nearest_power_vertex_with_sq_distance(const Bare_point& p, Cell_handle start) const
   {
@@ -607,14 +641,14 @@ public:
     query_offset = this->combine_offsets(Offset(), -query_offset);
 
     Vertex_handle nearest = Base::nearest_vertex_in_cell(c, canonical_p, query_offset);
-    const Weighted_point& nearest_wp = this->point(nearest);
+    const Weighted_point& nearest_wp = point(nearest);
     Offset offset_of_nearest = Base::get_min_dist_offset(canonical_p, query_offset, nearest);
     FT min_sq_dist = csd(canonical_p, cp(nearest_wp), query_offset, offset_of_nearest);
 
     std::vector<Vertex_handle> vs;
     vs.reserve(32);
 
-    while(true)
+    for(;;)
     {
       Vertex_handle tmp = nearest;
 
@@ -622,7 +656,7 @@ public:
       for(typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin();
                                                               vsit != vs.end(); ++vsit)
       {
-        // Can happen in 27-sheeted triangulations composed of few points
+        // Can happen in periodic triangulations composed of few points
         if(point(*vsit) == point(nearest))
           continue;
 
@@ -632,7 +666,7 @@ public:
         {
           tmp = *vsit;
           offset_of_nearest = min_dist_offset;
-          const Weighted_point& vswp = this->point(tmp);
+          const Weighted_point& vswp = point(tmp);
           min_sq_dist = csd(canonical_p, cp(vswp), query_offset, min_dist_offset);
         }
       }
@@ -645,6 +679,41 @@ public:
     }
 
     return std::make_pair(nearest, min_sq_dist);
+  }
+
+  std::pair<Vertex_handle, FT>
+  nearest_power_vertex_with_sq_distance(const Vertex_handle v) const
+  {
+    typename Geom_traits::Construct_point_3 cp = geom_traits().construct_point_3_object();
+    typename Geom_traits::Compute_squared_distance_3 csd = geom_traits().compute_squared_distance_3_object();
+
+    Vertex_handle min_v {};
+    FT min_sq_dist = -1;
+
+    std::vector<Cell_handle> inc_cells;
+    std::unordered_set<Vertex_handle> visited_vertices;
+    incident_cells(v, std::back_inserter(inc_cells));
+    for(Cell_handle ch : inc_cells)
+    {
+      CGAL_assertion(ch->has_vertex(v));
+      int v_pos = ch->index(v);
+      for(int i=1; i<4; ++i)
+      {
+        int vi_pos = (v_pos + i) % 4;
+        Vertex_handle vi = ch->vertex(vi_pos);
+        if(!visited_vertices.insert(vi).second) // already visited
+          continue;
+
+        FT sq_dist_i = csd(cp(point(ch, v_pos)), cp(point(ch, vi_pos)));
+        if(min_v == Vertex_handle() || sq_dist_i < min_sq_dist)
+        {
+          min_v = vi;
+          min_sq_dist = sq_dist_i;
+        }
+      }
+    }
+
+    return { min_v, min_sq_dist };
   }
 
   Cell_handle locate(const Weighted_point& p,
@@ -847,6 +916,76 @@ public:
     return make_object(s);
   }
 
+  void dual_exact(const Facet& f, const Weighted_point& ws,
+                  Bare_point& cc) const
+  {
+    // first find the offset minimizing the distance between the facet and the fourth point
+    typename Geom_traits::Construct_point_3 construct_point =
+      geom_traits().construct_point_3_object();
+
+    // @fixme need to introduce Compare_power_distances_to_power_sphere_3(3 points, query)
+    typename Geom_traits::Construct_weighted_circumcenter_3 wcc =
+      geom_traits().construct_weighted_circumcenter_3_object();
+    typename Geom_traits::Compare_squared_distance_3 compare_sd =
+      geom_traits().compare_squared_distance_3_object();
+
+    const Cell_handle c = f.first;
+    const int i = f.second;
+
+    const Bare_point fcc = wcc(point(c, (i+1)%4), point(c, (i+2)%4), point(c, (i+3)%4));
+    const Bare_point& s = construct_point(ws);
+
+    bool used_exact = false;
+    std::pair<Bare_point, Offset> pp_fcc = P3T3::internal::construct_periodic_point(fcc, used_exact, geom_traits());
+    std::pair<Bare_point, Offset> pp_s = P3T3::internal::construct_periodic_point(s, used_exact, geom_traits());
+
+    Offset min_off;
+
+    for(int i = 0; i < 3; ++i) {
+      for(int j = 0; j < 3; ++j) {
+        for(int k = 0; k < 3; ++k)
+        {
+          const Offset o(i-1, j-1, k-1);
+
+          if((i == 0 && j == 0 && k == 0) ||
+             compare_sd(fcc, s, fcc, s,
+                        pp_fcc.second, pp_s.second + o,
+                        pp_fcc.second, pp_s.second + min_off) == SMALLER)
+          {
+            min_off = o;
+          }
+        }
+      }
+    }
+
+    typedef typename Kernel_traits<Bare_point>::Kernel                Kernel;
+    typedef Exact_predicates_exact_constructions_kernel               EKernel;
+
+    typedef Cartesian_converter<Kernel, EKernel>                      To_exact;
+    typedef Cartesian_converter<EKernel, Kernel>                      Back_from_exact;
+
+    typedef CGAL::Periodic_3_regular_triangulation_traits_3<EKernel>  Exact_Rt;
+    typedef typename Exact_Rt::Weighted_point_3                       EWeighted_point_3;
+
+    To_exact to_exact;
+    Back_from_exact back_from_exact;
+
+    Exact_Rt etraits(to_exact(domain()));
+    Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      etraits.construct_weighted_circumcenter_3_object();
+
+    const EWeighted_point_3& cp = to_exact(c->vertex((i+1)%4)->point());
+    const EWeighted_point_3& cq = to_exact(c->vertex((i+2)%4)->point());
+    const EWeighted_point_3& cr = to_exact(c->vertex((i+3)%4)->point());
+    const EWeighted_point_3& cs = to_exact(ws);
+
+    cc = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs,
+                                                     pp_fcc.second + get_offset(c, (i+1)%4),
+                                                     pp_fcc.second + get_offset(c, (i+2)%4),
+                                                     pp_fcc.second + get_offset(c, (i+3)%4),
+                                                     pp_s.second + min_off));
+  }
+
   void dual_segment(const Facet& facet, Bare_point& p, Bare_point& q) const
   {
     typename Base::Periodic_segment_3 ps = Base::dual(facet);
@@ -890,12 +1029,14 @@ public:
                            to_exact(point(n->vertex(2))), to_exact(point(n->vertex(3))),
                            get_offset(n, 0), get_offset(n, 1),
                            get_offset(n, 2), get_offset(n, 3));
+
     typename EKernel::Point_3 dp;
 
     // get the offset of the first weighted circumcenter
     Offset transl_wc1;
-    while(true) /* while not in */
+    for(;;) /* while not in */
     {
+      // can safely perform a construction here because the kernel has exact constructions
       dp = etraits.construct_point_3_object()(exact_wc1, transl_wc1);
 
       if(dp.x() < dom.xmin())
@@ -916,7 +1057,7 @@ public:
 
     // get the offset of the second weighted circumcenter
     Offset transl_wc2;
-    while(true) /* while not in */
+    for(;;) /* while not in */
     {
       dp = etraits.construct_point_3_object()(exact_wc2, transl_wc2);
 
@@ -942,6 +1083,7 @@ public:
     Offset cumm_off((std::min)(o1.x(), o2.x()),
                     (std::min)(o1.y(), o2.y()),
                     (std::min)(o1.z(), o2.z()));
+
     EPoint_3 ewc1 = exact_construct_point(exact_wc1, transl_wc1);
     EPoint_3 ewc2 = exact_construct_point(exact_wc2, transl_wc2);
     p = back_from_exact(exact_construct_point(ewc1, o1 - cumm_off));
@@ -984,6 +1126,13 @@ template<class MD,
          class Cell_base_ = Default>
 class Periodic_3_mesh_triangulation_3
 {
+  // Triangulation_vertex_base_with_info_3 only does default initialization
+  // and not value initialization, but we cannot initialize info() during Mesh_3's refinement
+  struct Boolean_with_def_value
+  {
+    bool is_dummy_vertex = false;
+  };
+
   // default K
   typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
 
@@ -993,12 +1142,13 @@ class Periodic_3_mesh_triangulation_3
   // Periodic vertex and cell bases
   typedef Periodic_3_triangulation_ds_vertex_base_3<> VbDS;
   typedef Regular_triangulation_vertex_base_3<Geom_traits, VbDS> PVb;
+  typedef Triangulation_vertex_base_with_info_3<Boolean_with_def_value, Geom_traits, PVb> Vb;
 
   typedef Periodic_3_triangulation_ds_cell_base_3<> CbDS;
   typedef Regular_triangulation_cell_base_3<Geom_traits, CbDS> RCb;
   typedef Regular_triangulation_cell_base_with_weighted_circumcenter_3<Geom_traits, RCb> PCb;
 
-  typedef Mesh_vertex_base_3<Geom_traits, MD, PVb> Default_Vb;
+  typedef Mesh_vertex_base_3<Geom_traits, MD, Vb> Default_Vb;
   typedef Mesh_cell_base_3<Geom_traits, MD, PCb> Default_Cb;
 
   // default Vb/Cb

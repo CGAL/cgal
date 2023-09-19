@@ -28,6 +28,7 @@
 #include <vector>
 #include <set>
 #include <type_traits>
+#include <algorithm>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -111,7 +112,7 @@ SIGN get_sign()
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
 template<typename Image_word_type>
 void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
-                            const char* filename)
+                            const char* filename = "")
 {
   auto t = itk_img->GetOrigin();
   auto v = itk_img->GetSpacing();
@@ -138,7 +139,8 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
             itk_img->GetBufferPointer() + size,
             img_ptr);
 
-  _writeImage(img, filename);
+  if(!std::string(filename).empty())
+    _writeImage(img, filename);
 }
 #endif
 
@@ -147,7 +149,7 @@ void convert_itk_to_image_3(itk::Image<Image_word_type, 3>* const itk_img,
 /// @cond INTERNAL
 template<typename Image_word_type>
 CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image,
-                                                    const float& sigma)
+                                                          const float& sigma)
 {
   typedef unsigned char Weights_type; //from 0 t 255
   const std::size_t img_size = image.size();
@@ -309,9 +311,8 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 * @returns a `CGAL::Image_3` of weights used to build a quality `Labeled_mesh_domain_3`,
 * with the same dimensions as `image`
 */
-
-CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
-                               const float& sigma)
+template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image, const float& sigma)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
     return generate_label_weights_with_known_word_type<Word>(image, sigma);

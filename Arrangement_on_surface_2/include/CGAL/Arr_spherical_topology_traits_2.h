@@ -91,14 +91,14 @@ public:
   typedef typename Gt_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Gt_adaptor_2::Right_side_category  Right_side_category;
 
-  CGAL_static_assertion((std::is_same< Left_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Left_side_category, Arr_identified_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Bottom_side_category, Arr_contracted_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Top_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Top_side_category, Arr_contracted_side_tag >::value));
-  CGAL_static_assertion((std::is_same< Right_side_category, Arr_oblivious_side_tag >::value ||
-                         std::is_same< Right_side_category, Arr_identified_side_tag >::value));
+  static_assert(std::is_same< Left_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Left_side_category, Arr_identified_side_tag >::value);
+  static_assert(std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Bottom_side_category, Arr_contracted_side_tag >::value);
+  static_assert(std::is_same< Top_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Top_side_category, Arr_contracted_side_tag >::value);
+  static_assert(std::is_same< Right_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Right_side_category, Arr_identified_side_tag >::value);
   //@}
 
   /*! \struct
@@ -154,7 +154,7 @@ protected:
   //! The geometry-traits adaptor.
   const Gt_adaptor_2* m_geom_traits;
 
-  //! Inidicates whether the traits object should evetually be freed.
+  //! Indicates whether the traits object should eventually be freed.
   bool m_own_geom_traits;
 
   // Copy constructor and assignment operator - not supported.
@@ -289,7 +289,7 @@ public:
     return (it != m_boundary_vertices.end()) ? it->second : nullptr;
   }
 
-  // TODO remove if all occurences have been replaced with the new signature that queries for a point
+  // TODO remove if all occurrences have been replaced with the new signature that queries for a point
   /*! Obtain a vertex on the line of discontinuity that corresponds to
    *  the given curve-end (or return NULL if no such vertex exists).
    */
@@ -506,7 +506,7 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that contains the curve end.
    */
-  boost::optional<boost::variant<Vertex*, Halfedge*> >
+  std::optional<std::variant<Vertex*, Halfedge*> >
   place_boundary_vertex(Face* f,
                         const X_monotone_curve_2& xc,
                         Arr_curve_end ind,
@@ -538,7 +538,7 @@ public:
    * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  boost::variant<Vertex*, Halfedge*, Face*>
+  std::variant<Vertex*, Halfedge*, Face*>
   locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ce,
                    Arr_parameter_space ps_x,
                    Arr_parameter_space ps_y);

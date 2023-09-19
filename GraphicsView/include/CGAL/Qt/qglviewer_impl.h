@@ -194,7 +194,7 @@ This method is automatically called once, before the first call to paintGL().
 
 Overload init() instead of this method to modify viewer specific OpenGL state.
 
-If a 4.3 context could not be set, a ES 2.0 context will be used instead.
+If a 4.3 context could not be set, an ES 2.0 context will be used instead.
  \see `isOpenGL_4_3()`
 */
 CGAL_INLINE_FUNCTION
@@ -3370,7 +3370,7 @@ void CGAL::QGLViewer::copyBufferToTexture(GLint , GLenum ) {
 Use glBindTexture() to use this texture. Note that this is already done by
 copyBufferToTexture().
 
-Returns \c 0 is copyBufferToTexture() was never called or if the texure was
+Returns \c 0 is copyBufferToTexture() was never called or if the texture was
 deleted using glDeleteTextures() since then. */
 CGAL_INLINE_FUNCTION
 GLuint CGAL::QGLViewer::bufferTextureId() const {

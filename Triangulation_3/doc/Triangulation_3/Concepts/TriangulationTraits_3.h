@@ -3,7 +3,7 @@
 \ingroup PkgTriangulation3Concepts
 \cgalConcept
 
-\cgalRefines SpatialSortingTraits_3
+\cgalRefines{SpatialSortingTraits_3}
 
 The concept `TriangulationTraits_3` is the first template parameter of the class
 `Triangulation_3`. It defines the geometric objects (points, segments,
@@ -11,7 +11,9 @@ triangles and tetrahedra) forming the triangulation together with a few
 geometric predicates and constructions on these objects: lexicographical
 comparison, orientation in case of coplanar points and orientation in space.
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_3`
 */

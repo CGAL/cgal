@@ -37,7 +37,7 @@ public:
   BigIntRep() {
     mpz_init(mp);
   }
-  // Note : should the copy-ctor be alloed at all ? [Sylvain Pion]
+  // Note : should the copy-ctor be allowed at all ? [Sylvain Pion]
   BigIntRep(const BigIntRep& z) : RCRepImpl<BigIntRep>() {
     mpz_init_set(mp, z.mp);
   }

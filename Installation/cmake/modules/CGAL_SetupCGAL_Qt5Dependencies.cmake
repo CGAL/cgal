@@ -2,14 +2,14 @@
 # CGAL_SetupCGAL_Qt5Dependencies
 # ------------------------------
 #
-# The module searchs for the dependencies of the `CGAL_Qt5` library:
+# The module searches for the dependencies of the `CGAL_Qt5` library:
 #   - the `Qt5` libraries
 #
 # by calling
 #
 # .. code-block:: cmake
 #
-#    find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+#    find_package(Qt5 QUIET COMPONENTS OpenGL Widgets)
 #
 # and defines the variable :variable:`CGAL_Qt5_FOUND` and the function
 # :command:`CGAL_setup_CGAL_Qt5_dependencies`.
@@ -24,14 +24,14 @@ set(CGAL_SetupCGAL_Qt5Dependencies_included TRUE)
 # Used Modules
 # ^^^^^^^^^^^^
 #   - :module:`Qt5Config`
-find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS OpenGL Widgets OPTIONAL_COMPONENTS Svg)
 
 set(CGAL_Qt5_MISSING_DEPS "")
 if(NOT Qt5OpenGL_FOUND)
   set(CGAL_Qt5_MISSING_DEPS "Qt5OpenGL")
 endif()
-if(NOT Qt5Svg_FOUND)
-  set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5Svg")
+if(NOT Qt5Widgets_FOUND)
+  set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5Widgets")
 endif()
 if(NOT Qt5_FOUND)
   set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5")
@@ -75,8 +75,10 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
       POSITION_INDEPENDENT_CODE TRUE
       EXCLUDE_FROM_ALL TRUE
       AUTOMOC TRUE)
-    target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg )
-
+    target_link_libraries(CGAL_Qt5_moc_and_resources PUBLIC CGAL::CGAL Qt5::Widgets Qt5::OpenGL )
+    if(Qt5Svg_FOUND)
+      target_link_libraries(CGAL_Qt5_moc_and_resources PUBLIC Qt5::Svg)
+    endif()
     add_library(CGAL::CGAL_Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
     add_library(CGAL::Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
   endif()
@@ -112,7 +114,7 @@ function(CGAL_setup_CGAL_Qt5_dependencies target)
   endif()
   target_link_libraries( ${target} INTERFACE CGAL::CGAL)
   target_link_libraries( ${target} INTERFACE CGAL::Qt5_moc_and_resources)
-  target_link_libraries( ${target} INTERFACE Qt5::OpenGL Qt5::Svg )
+  target_link_libraries( ${target} INTERFACE Qt5::OpenGL Qt5::Widgets )
 
   # Remove -Wdeprecated-copy, for g++ >= 9.0, because Qt5, as of
   # version 5.12, has a lot of [-Wdeprecated-copy] warnings.

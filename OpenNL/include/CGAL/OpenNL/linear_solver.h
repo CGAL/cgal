@@ -77,7 +77,7 @@ private:
 
 // Public operations
 public:
-    // Default contructor, copy constructor, operator=() and destructor are fine
+    // Default constructor, copy constructor, operator=() and destructor are fine
 
     // Solve the sparse linear system "A*X = B"
     // Return true on success. The solution is then (1/D) * X.
@@ -138,7 +138,7 @@ private:
 
 // Public operations
 public:
-    // Default contructor, copy constructor, operator=() and destructor are fine
+    // Default constructor, copy constructor, operator=() and destructor are fine
 
     // Solve the sparse linear system "A*X = B"
     // Return true on success. The solution is then (1/D) * X.

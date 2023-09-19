@@ -187,7 +187,7 @@ proper_subset(Interval interval1, Interval interval2) {
 }
 
 
-// Set operations, functions returing Interval
+// Set operations, functions returning Interval
 //the enable_if is need for MSVC as it is not able to eliminate
 //the function if Interval_traits<Interval>::Intersection has no result_type
 //(like Null_functor)

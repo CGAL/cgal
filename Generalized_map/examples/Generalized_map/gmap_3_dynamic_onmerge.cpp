@@ -40,7 +40,7 @@ struct Split_functor
   // operator() automatically called after a split.
   void operator()(Face_attribute& ca1, Face_attribute& ca2)
   {
-     // We need to reinitalize the weight of the two faces
+     // We need to reinitialize the weight of the two faces
     GMap_3::size_type nb1=mmap.darts_of_cell<2>(ca1.dart()).size();
     GMap_3::size_type nb2=mmap.darts_of_cell<2>(ca2.dart()).size();
     mmap.info<2>(ca1.dart())*=(double(nb1)/(nb1+nb2));

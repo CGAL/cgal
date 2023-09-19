@@ -18,7 +18,7 @@ using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<
 {
   std::cout<<"Usage "<<argv[0]<<" [-draw] [-dist] [-time] [-seed S] file.off"<<std::endl
            <<"  Compute the shortest non contractible cycle passing through a vertex on the given mesh."
-           <<"  Vertex is choosen randomly."<<std::endl
+           <<"  Vertex is chosen randomly."<<std::endl
            <<"   -draw: draw the mesh and the cycle."<<std::endl
            <<"   -dist: use Euclidean distance (instead of bfs by default)."<<std::endl
            <<"   -time: show computation times."<<std::endl

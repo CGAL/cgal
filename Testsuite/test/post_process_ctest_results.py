@@ -15,7 +15,7 @@ rx_examples=re.compile('.*in examples\/')
 #For each NAME, check if NAME is a directory. If not, create one, create a 
 #text report, and write everything that is in the report until the next NAME
 #in it. Then, add 'NAME r' in the global report. This should allow to get all 
-#the NOTICE and other info explaining why the configuration is skiped.
+#the NOTICE and other info explaining why the configuration is skipped.
 
 name=""
 is_writing=False

@@ -34,7 +34,7 @@ namespace CGAL {
                                     IndicesIterator indices_beyond )
   {
     if(indices_first == indices_beyond){
-      return 0;
+      return t.insert(points.begin(), points.end());
     }
     typedef typename T::Vertex_handle Vertex_handle;
     typedef typename T::Face_handle Face_handle;

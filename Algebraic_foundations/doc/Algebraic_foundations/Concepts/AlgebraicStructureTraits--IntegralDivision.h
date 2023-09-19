@@ -13,7 +13,7 @@ exists (i.e.\ if \f$ x\f$ is divisible by \f$ y\f$). Otherwise the effect of inv
 this operation is undefined. Since the ring represented is an integral domain,
 \f$ z\f$ is uniquely defined if it exists.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicStructureTraits`
 \sa `AlgebraicStructureTraits_::Divides`

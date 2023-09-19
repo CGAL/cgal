@@ -33,9 +33,11 @@ the concept `TriangulationCellBase_3` by adding
 in the cell a container to store hidden points
 and an operator to compute its weighted circumcenter.
 
-\cgalRefines `TriangulationCellBase_3`
+\cgalRefines{TriangulationCellBase_3}
 
-\cgalHasModel `CGAL::Regular_triangulation_cell_base_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Regular_triangulation_cell_base_3}
+\cgalHasModelsEnd
 
 \sa `RegularTriangulationTraits_3`
 

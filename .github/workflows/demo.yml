@@ -1,6 +1,6 @@
 name: Test Polyhedron Demo
 
-on: [push, pull_request]
+on: [push, pull_request,workflow_dispatch]
 
 permissions:
   contents: read
@@ -9,7 +9,7 @@ jobs:
   batch_1:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: install dependencies
       run: .github/install.sh
     - name: run1
@@ -17,7 +17,7 @@ jobs:
   batch_2:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: install dependencies
       run: .github/install.sh
     - name: run2
@@ -25,7 +25,7 @@ jobs:
   batch_3:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: install dependencies
       run: .github/install.sh
     - name: run3
@@ -33,7 +33,7 @@ jobs:
   batch_4:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: install dependencies
       run: .github/install.sh
     - name: run4

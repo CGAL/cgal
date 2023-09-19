@@ -445,7 +445,7 @@ int readGisHeader( const char* name,_image* im)
 
 
       else {
-        fprintf( stderr, "readGisHeader: unknown indentifier '%s'\n", s );
+        fprintf( stderr, "readGisHeader: unknown identifier '%s'\n", s );
         ADD_USER_STRING
         *s = '\0';
       }

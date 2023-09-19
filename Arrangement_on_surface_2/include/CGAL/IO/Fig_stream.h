@@ -310,7 +310,7 @@ public:
   }
   //@}
 
-  /// \name Openning and closing the file.
+  /// \name Opening and closing the file.
   //@{
 
   /*!
@@ -731,7 +731,7 @@ public:
 
   /*!
    * Add a user-defined color.
-   * Use this function after openning the FIG stream and before writing any
+   * Use this function after opening the FIG stream and before writing any
    * other object (i.e. before calling the write_<object> () functions).
    * \param color The color.
    * \param r The red component (0 - 255).
@@ -750,7 +750,7 @@ public:
     if (color_defined (color))
       return;
 
-    // Prepare a string desribing the color.
+    // Prepare a string describing the color.
 
     std::stringstream out;
     out << "0x"  << std::hex
@@ -1401,7 +1401,7 @@ protected:
   }
 
   /*!
-   * Write a polygon, reprsented as a range of points.
+   * Write a polygon, represented as a range of points.
    */
   template <class Input_iterator>
   void _write_polygon (const int n_points,

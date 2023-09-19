@@ -18,7 +18,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Vector_3.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -200,11 +200,11 @@ MatrixC33<R> adjoint_matrix(const MatrixC33<R>& m)
 }
 
 template<class R>
-boost::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
+std::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
 {
   typedef typename R::RT                                        RT;
   typedef MatrixC33<R>                                          Matrix;
-  typedef boost::optional<Matrix>                               result_type;
+  typedef std::optional<Matrix>                               result_type;
 
   result_type rInverse;
 

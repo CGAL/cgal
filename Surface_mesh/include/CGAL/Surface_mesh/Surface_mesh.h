@@ -34,7 +34,6 @@
 #include <CGAL/property_map.h>
 
 #include <boost/cstdint.hpp>
-#include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
 #include <algorithm>
@@ -60,7 +59,7 @@ namespace CGAL {
     class SM_Index
     {
     public:
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
@@ -239,7 +238,7 @@ namespace CGAL {
     class SM_Edge_index
     {
     public:
-        typedef boost::uint32_t size_type;
+        typedef std::uint32_t size_type;
 
         SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
 
@@ -326,7 +325,7 @@ namespace CGAL {
   /// @tparam P The type of the \em point property of a vertex. There is no requirement on `P`,
   ///         besides being default constructible and assignable.
   ///         In typical use cases it will be a 2D or 3D point type.
-  /// \cgalModels `MutableFaceGraph` and `FaceListGraph`
+  /// \cgalModels{MutableFaceGraph,FaceListGraph}
   ///
   /// \sa \ref PkgBGLConcepts "Graph Concepts"
 
@@ -364,7 +363,7 @@ public:
     typedef P Point;
 
     /// The type used to represent an index.
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
 
     ///@}
 
@@ -376,9 +375,7 @@ public:
 #ifdef DOXYGEN_RUNNING
 
     /// This class represents a vertex.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
+    /// \cgalModels{Index,LessThanComparable,Hashable}
     /// \sa `Halfedge_index`, `Edge_index`, `Face_index`
     class Vertex_index
     {
@@ -399,9 +396,7 @@ public:
 #ifdef DOXYGEN_RUNNING
 
     /// This class represents a halfedge.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
+    /// \cgalModels{Index,LessThanComparable,Hashable}
     /// \sa `Vertex_index`, `Edge_index`, `Face_index`
     class Halfedge_index
     {
@@ -423,9 +418,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
     /// This class represents a face
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
+    /// \cgalModels{Index,LessThanComparable,Hashable}
     /// \sa `Vertex_index`, `Halfedge_index`, `Edge_index`
     class Face_index
     {
@@ -445,9 +438,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
     /// This class represents an edge.
-    /// \cgalModels `Index`
-    /// \cgalModels `LessThanComparable`
-    /// \cgalModels `Hashable`
+    /// \cgalModels{Index,LessThanComparable,Hashable}
     /// \sa `Vertex_index`, `Halfedge_index`, `Face_index`
     class Edge_index
     {
@@ -511,13 +502,14 @@ private: //------------------------------------------------------ iterator types
     class Index_iterator
       : public boost::iterator_facade< Index_iterator<Index_>,
                                        Index_,
-                                       std::random_access_iterator_tag
+                                       std::random_access_iterator_tag,
+                                       Index_
                                        >
     {
         typedef boost::iterator_facade< Index_iterator<Index_>,
                                         Index_,
-                                        std::random_access_iterator_tag
-                                        > Facade;
+                                        std::random_access_iterator_tag,
+                                        Index_> Facade;
     public:
         Index_iterator() : hnd_(), mesh_(nullptr) {}
         Index_iterator(const Index_& h, const Surface_mesh* m)
@@ -595,7 +587,7 @@ private: //------------------------------------------------------ iterator types
             return this->hnd_ == other.hnd_;
         }
 
-        Index_& dereference() const { return const_cast<Index_&>(hnd_); }
+        Index_ dereference() const { return hnd_; }
 
         Index_ hnd_;
         const Surface_mesh* mesh_;
@@ -1083,7 +1075,7 @@ public:
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2)
     {
-        boost::array<Vertex_index, 3>
+        std::array<Vertex_index, 3>
             v = {{v0, v1, v2}};
         return add_face(v);
     }
@@ -1092,7 +1084,7 @@ public:
     /// \returns the face index of the added face, or `Surface_mesh::null_face()` if the face could not be added.
     Face_index add_face(Vertex_index v0, Vertex_index v1, Vertex_index v2, Vertex_index v3)
     {
-        boost::array<Vertex_index, 4>
+        std::array<Vertex_index, 4>
             v = {{v0, v1, v2, v3}};
         return add_face(v);
     }
@@ -1214,6 +1206,10 @@ public:
         fprops_.resize(nfaces);
     }
 
+  /// copies the simplices from `other`, and copies values of
+  /// properties that already exist under the same name in `*this`.
+  /// In case `*this` has a property that does not exist in `other`
+  /// the copied simplices get the default value of the property.
   bool join(const Surface_mesh& other)
   {
     // increase capacity
@@ -1327,7 +1323,7 @@ public:
     /// Note however that by garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
-    /// refering to the right elements.
+    /// referring to the right elements.
     /// When adding elements, by default elements that are marked as removed
     /// are recycled.
 
@@ -1395,7 +1391,7 @@ public:
     /// \attention By garbage collecting elements get new indices.
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
-    /// refering to the right elements.
+    /// referring to the right elements.
     void collect_garbage();
 
     //undocumented convenience function that allows to get old-index->new-index information
@@ -2248,7 +2244,7 @@ private: //------------------------------------------------------- private data
   /// \relates Surface_mesh
   /// Inserts `other` into `sm`.
   /// Shifts the indices of vertices of `other` by `sm.number_of_vertices() + sm.number_of_removed_vertices()`
-  /// and analoguously for halfedges, edges, and faces.
+  /// and analogously for halfedges, edges, and faces.
   /// Copies entries of all property maps which have the same name in `sm` and `other`.
   /// that is, property maps which are only in `other` are ignored.
   /// Also copies elements which are marked as removed, and concatenates the freelists of `sm` and `other`.
@@ -2718,6 +2714,7 @@ collect_garbage(Visitor &visitor)
     garbage_ = false;
 }
 
+#ifndef DOXYGEN_RUNNING
 namespace collect_garbage_internal {
 struct Dummy_visitor{
   template<typename A, typename B, typename C>
@@ -2726,6 +2723,7 @@ struct Dummy_visitor{
 };
 
 }
+#endif
 
 template <typename P>
 void

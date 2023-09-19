@@ -503,72 +503,74 @@ bool read_WKT(std::istream& is,
   if(!is.good())
     return false;
 
-  do
+  while(is.good() && !is.eof())
   {
     typedef typename MultiPoint::value_type Point;
     typedef typename MultiLineString::value_type LineString;
     typedef typename MultiPolygon::value_type Polygon;
 
     std::string line;
-    std::streampos input_pos = is.tellg();
     std::getline(is, line);
-    std::istringstream iss(line);
-    std::string t;
-    std::string type="";
-    iss >> t;
-
-    for(std::size_t pos=0; pos < t.length(); ++pos)
-    {
-      char c = t[pos];
-      if(c == '(')
-        break;
-
-      type.push_back(c);
+    std::string::size_type header_end = line.find("("); // }
+    if(header_end == std::string::npos){
+      continue;
     }
+    std::string type="";
+    const std::string header = line.substr(0,header_end);
+    const std::string types[6] = { "MULTIPOLYGON", "MULTILINESTRING", "MULTIPOINT", "POLYGON", "LINESTRING", "POINT"};
+    for(int i= 0; i < 6; ++i){
+      if(header.find(types[i]) != std::string::npos){
+        type = types[i];
+        break;
+      }
+    }
+    if(type == ""){
+      continue;
+    }
+    std::istringstream iss(line);
 
-    is.seekg(input_pos);
     if(type == "POINT")
     {
       Point p;
-      CGAL::IO::read_point_WKT(is, p);
+      CGAL::IO::read_point_WKT(iss, p);
       points.push_back(p);
     }
     else if(type == "LINESTRING")
     {
       LineString l;
-      CGAL::IO::read_linestring_WKT(is, l);
+      CGAL::IO::read_linestring_WKT(iss, l);
       polylines.push_back(l);
     }
     else if(type == "POLYGON")
     {
       Polygon p;
-      CGAL::IO::read_polygon_WKT(is, p);
+      CGAL::IO::read_polygon_WKT(iss, p);
       if(!p.outer_boundary().is_empty())
         polygons.push_back(p);
     }
     else if(type == "MULTIPOINT")
     {
       MultiPoint mp;
-      CGAL::IO::read_multi_point_WKT(is, mp);
+      CGAL::IO::read_multi_point_WKT(iss, mp);
       for(const Point& point : mp)
         points.push_back(point);
     }
     else if(type == "MULTILINESTRING")
     {
       MultiLineString mls;
-      CGAL::IO::read_multi_linestring_WKT(is, mls);
+      CGAL::IO::read_multi_linestring_WKT(iss, mls);
       for(const LineString& ls : mls)
         polylines.push_back(ls);
     }
     else if(type == "MULTIPOLYGON")
     {
       MultiPolygon mp;
-      CGAL::IO::read_multi_polygon_WKT(is, mp);
+      CGAL::IO::read_multi_polygon_WKT(iss, mp);
       for(const Polygon& poly : mp)
         polygons.push_back(poly);
     }
   }
-  while(is.good() && !is.eof());
+
 
   return !is.fail();
 }

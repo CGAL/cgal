@@ -407,7 +407,7 @@ cmp_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 }
 
 // Because of the way the filtered predicates generator script works,
-// cmp_dist_to_pointC3() must be defined _before_ ths following one.
+// cmp_dist_to_pointC3() must be defined _before_ the following one.
 template <class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Same_uncertainty_nt<Bounded_side, FT>::type

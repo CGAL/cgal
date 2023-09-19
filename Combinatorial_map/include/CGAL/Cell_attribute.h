@@ -176,11 +176,11 @@ struct Init_id;
     { return !operator==(other); }
 
   protected:
-    /// Contructor without parameter.
+    /// Constructor without parameter.
     Cell_attribute_without_info(): mrefcounting(0), m_for_cc(Refs::null_descriptor)
     {}
 
-    /// Copy contructor.
+    /// Copy constructor.
     Cell_attribute_without_info(const Cell_attribute_without_info& acell):
       mrefcounting(acell.mrefcounting)
     {}
@@ -301,12 +301,12 @@ struct Init_id;
     { return !operator==(other); }
 
   protected:
-    /// Contructor without parameter.
+    /// Constructor without parameter.
     Cell_attribute_without_info() : mdart(Refs::null_descriptor),
                                     mrefcounting(0)
     {}
 
-    /// Copy contructor.
+    /// Copy constructor.
     Cell_attribute_without_info(const Cell_attribute_without_info& acell):
       mdart(acell.mdart),
       mrefcounting(acell.mrefcounting)
@@ -398,7 +398,7 @@ struct Init_id;
     typedef void                             Info;
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute()
     {}
   };
@@ -461,11 +461,11 @@ struct Init_id;
     { return !operator==(other); }
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute()
     {}
 
-    /// Contructor with an info in parameter.
+    /// Constructor with an info in parameter.
     Cell_attribute(const Info_& ainfo) :
       Info_for_cell_attribute<Info_>(ainfo)
     {}

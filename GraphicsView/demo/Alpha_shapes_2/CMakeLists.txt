@@ -15,16 +15,14 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets)
 include_directories(BEFORE ./include)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
-  #--------------------------------
-  # The "Delaunay" demo: Alpha_shapes_2
-  #--------------------------------
+
   # UI files (Qt Designer files)
   qt5_wrap_ui(DT_UI_FILES Alpha_shapes_2.ui)
 
@@ -39,17 +37,13 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Alpha_shapes_2)
 
   target_link_libraries(Alpha_shapes_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                               Qt5::Gui)
+                                               Qt5::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Alpha_shapes_2)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Alpha_shapes_2)
-
 else()
-
-  message(
-    STATUS "NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
-
+  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 endif()

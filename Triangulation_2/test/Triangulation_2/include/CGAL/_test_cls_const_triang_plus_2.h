@@ -46,7 +46,7 @@ _test_cls_const_triang_plus_2( const TrP & )
   trp.push_back(Constraint(Point(4,3), Point(3,4)));
 
   // test access to the hierarchy
-  std::cout << " test acces to the constraint hierarchy" << std::endl;
+  std::cout << " test access to the constraint hierarchy" << std::endl;
   Vertices_in_constraint_iterator vit = trp.vertices_in_constraint_begin(cid);
   assert (*vit == vh[10] || *vit == vh[11] );
   Vertex_handle va = *++vit;

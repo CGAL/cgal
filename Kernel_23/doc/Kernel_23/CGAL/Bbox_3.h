@@ -7,7 +7,7 @@ namespace CGAL {
 An object `b` of the class `Bbox_3` is a bounding
 box in the three-dimensional Euclidean space \f$ \E^3\f$.
 
-\cgalModels `Hashable`
+\cgalModels{Hashable}
 
 \sa `CGAL::Bbox_2`
 
@@ -90,14 +90,14 @@ double zmax() const;
 /*!
 Returns `xmin()` if `i==0` or `ymin()` if `i==1`
 or `zmin()` if `i==2`.
-\pre i>=0 and i<=2
+\pre `i>=0` and `i<=2`
 */
 double min(int i) const;
 
 /*!
 Returns `xmax()` if `i==0` or `ymax()` if `i==1`
 or `zmax()` if `i==2`.
-\pre i>=0 and i<=2
+\pre `i>=0` and `i<=2`
 */
 double max(int i) const;
 

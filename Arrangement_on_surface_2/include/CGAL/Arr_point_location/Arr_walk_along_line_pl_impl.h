@@ -98,7 +98,7 @@ Arr_walk_along_line_point_location<Arrangement>::locate(const Point_2& p) const
           //     |              |
           //     +--------------+
           //
-          // In this case, we find the first halfegde whose target is x
+          // In this case, we find the first halfedge whose target is x
           // in a clockwise direction from "6 o'clock" around x and take
           // its incident face.
 
@@ -440,7 +440,7 @@ _is_in_connected_component (const Point_2& p,
   is_on_edge = false;
   closest_to_target = false;
 
-  // Set the results for comparison acording to the ray direction.
+  // Set the results for comparison according to the ray direction.
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
 
@@ -580,7 +580,7 @@ _is_in_connected_component (const Point_2& p,
     res = top_traits->compare_y_at_x(p, &(*curr));
 
     if (res == EQUAL) {
-      // The current edge contains the query point. If the seach is inclusive
+      // The current edge contains the query point. If the search is inclusive
       // we return the edge. Otherwise, we return it only if it is vertical,
       // and contains p in its interior.
       if (inclusive) {
@@ -620,7 +620,7 @@ _is_in_connected_component (const Point_2& p,
       if (source_res != EQUAL) {
         if ((closest_he == invalid_he) ||
             (closest_he->twin() == Halfedge_const_handle(curr))) {
-          // 1. If we have no closests halfedge, we have just found one.
+          // 1. If we have no closest halfedge, we have just found one.
           // 2. If the closest halfedge is the twin of our current halfedge,
           // we can take our halfedge to be the closest one. This covers the
           // case where our closest halfedge is not in our CCB.
@@ -629,7 +629,7 @@ _is_in_connected_component (const Point_2& p,
           closest_to_target = (target_res == EQUAL);
         }
         else {
-          // Compare with the vertically closest curve so far and detemine the
+          // Compare with the vertically closest curve so far and determine the
           // curve closest to p. We first check the case that the two curves
           // have a common endpoint (note that the two curves do not intersect
           // in their interiors). Observe that if such a common vertex exists,
@@ -673,7 +673,7 @@ _is_in_connected_component (const Point_2& p,
             // In case the two curves do not have a common endpoint, but
             // overlap in their x-range (both contain p), just compare their
             // positions. Note that in this case one of the edges may be
-            // fictitious, so we preform the comparsion symbolically in this
+            // fictitious, so we perform the comparison symbolically in this
             // case.
             if (closest_he->is_fictitious())
               y_res = curve_above_under;

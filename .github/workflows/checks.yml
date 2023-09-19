@@ -1,6 +1,6 @@
 name: CMake Test Merge Branch
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 permissions:
   contents: read
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: install dependencies
       run: |
         .github/install.sh

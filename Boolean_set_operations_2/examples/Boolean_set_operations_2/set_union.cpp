@@ -25,22 +25,14 @@ typedef Traits_2::X_monotone_curve_2                      X_monotone_curve_2;
 // Construct a polygon from a circle.
 Polygon_2 construct_polygon (const Circle_2& circle)
 {
-  // Subdivide the circle into two x-monotone arcs.
+  // Subdivide the circle into two x-monotone arcs and construct the polygon
   Traits_2 traits;
   Curve_2 curve (circle);
-  std::list<CGAL::Object> objects;
-  traits.make_x_monotone_2_object() (curve, std::back_inserter(objects));
-  assert(objects.size() == 2);
-
-  // Construct the polygon.
   Polygon_2 pgn;
-  X_monotone_curve_2 arc;
-  std::list<CGAL::Object>::iterator iter;
 
-  for (iter = objects.begin(); iter != objects.end(); ++iter) {
-    CGAL::assign (arc, *iter);
-    pgn.push_back (arc);
-  }
+  traits.make_x_monotone_2_object() (curve,
+    CGAL::dispatch_or_drop_output<X_monotone_curve_2>(std::back_inserter(pgn)));
+  assert(pgn.size() == 2);
 
   return pgn;
 }

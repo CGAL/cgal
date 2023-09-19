@@ -15,6 +15,11 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
+#ifdef CGAL_TRIANGULATE_FACES_DO_NOT_USE_CDT2
+# ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+#   define CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+# endif
+#endif
 
 #include <CGAL/value_type_traits.h>
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
@@ -792,7 +797,7 @@ public:
     Triangulation tr;
     std::vector<bool> edge_exist;
     std::pair<int, int> range(0, n-1);
-    std::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, tr, edge_exist);
+    std::tuple<std::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, tr, edge_exist);
     if(!std::get<2>(res)) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
       #ifndef CGAL_TEST_SUITE
@@ -939,14 +944,14 @@ private:
   }
 
   // returns [h.first-h.second edge, true if all edges inside 3D triangulation, true if tr.dimension() >= 2]
-  std::tuple<boost::optional<Edge>, bool, bool>
+  std::tuple<std::optional<Edge>, bool, bool>
   construct_3D_triangulation(const Polyline_3& P,
                              std::pair<int,int> h,
                              Triangulation& tr,
                              std::vector<bool>& edge_exist) const
   {
     // construct 3D tr with P[h.first], P[h.second] also assign ids from h.first to h.second
-    boost::optional<Edge> e;
+    std::optional<Edge> e;
     int n_border = h.second - h.first + 1;
     tr.insert(boost::make_transform_iterator(std::next(P.begin(), h.first), Auto_count(h.first)),
               boost::make_transform_iterator(std::next(P.begin(), h.second +1), Auto_count(h.first)));
@@ -994,7 +999,7 @@ private:
   *  + when switched to all-space, we use map based lookup tables.
   ************************************************************************/
   Weight fill_by_incomplete_patches(Triangulation& tr,
-                                    boost::optional<Edge> start_edge,
+                                    std::optional<Edge> start_edge,
                                     std::vector<bool>& edge_exist,
                                     const Polyline_3& P,
                                     const Polyline_3& Q,
@@ -1067,7 +1072,7 @@ private:
       // construct tr for next coming hole
       h = remaining_holes.back();
       tr.clear();
-      std::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, tr, edge_exist);
+      std::tuple<std::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, tr, edge_exist);
       if(!std::get<0>(res)) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
         CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
@@ -1270,7 +1275,7 @@ bool is_planar_2(
 
   const double n = static_cast<double>(points.size() - 1); // the first equals to the last
   if (n < 3) {
-    return false; // cant be a plane!
+    return false; // can't be a plane!
   }
 
   // Compute centroid.
@@ -1442,11 +1447,19 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
     vertices[v->info()] = v;
   }
 
-  for (std::size_t i = 0; i < size; ++i) {
-    const std::size_t ip = (i + 1) % size;
-    if (vertices[i] != vertices[ip]) {
-      cdt.insert_constraint(vertices[i], vertices[ip]);
+  try
+  {
+    for (std::size_t i = 0; i < size; ++i) {
+      const std::size_t ip = (i + 1) % size;
+      if (vertices[i] != vertices[ip]) {
+        cdt.insert_constraint(vertices[i], vertices[ip]);
+      }
     }
+  }
+  catch(const typename CDT::Intersection_of_constraints_exception&)
+  {
+    visitor.end_planar_phase(false);
+    return false;
   }
 
   // Mark external faces.
@@ -1542,8 +1555,8 @@ triangulate_hole_polyline(const PointRange1& points,
 #endif
   typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator, Visitor>    Fill;
 
-  std::vector<Point_3> P(boost::begin(points), boost::end(points));
-  std::vector<Point_3> Q(boost::begin(third_points), boost::end(third_points));
+  std::vector<Point_3> P(std::begin(points), std::end(points));
+  std::vector<Point_3> Q(std::begin(third_points), std::end(third_points));
 
   if(P.front() != P.back()){
     P.push_back(P.front());
@@ -1563,6 +1576,9 @@ triangulate_hole_polyline(const PointRange1& points,
      w == WeightCalculator::Weight::NOT_VALID()
      &&!skip_cubic_algorithm)
   {
+#ifdef CGAL_HOLE_FILLING_VERBOSE
+    std::cerr << "Delaunay failed\n";
+#endif
     w = Fill().operator()(P, Q, tracer, WC, visitor);
   }
 #endif

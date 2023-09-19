@@ -1,16 +1,12 @@
 include(polyhedron_demo_macros)
-if(TARGET CGAL::Eigen3_support)
 
+if(TARGET CGAL::Eigen3_support)
   polyhedron_demo_plugin(jet_fitting_plugin Jet_fitting_plugin)
   target_link_libraries(
     jet_fitting_plugin PUBLIC scene_surface_mesh_item scene_polylines_item
                               CGAL::Eigen3_support)
-
 else()
-  message(
-    STATUS
-      "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available."
-  )
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
 endif()
 
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
@@ -37,44 +33,42 @@ if(TARGET CGAL::Eigen3_support)
         scene_mcf_item
         demo_framework
         CGAL::Eigen3_support)
-      # The smoothing plugin can still do some things, even if Ceres is not found
-      qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui Smoothing_tangential_relaxation.ui)
-      polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
-      target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item CGAL::Eigen3_support)
-      find_package(Ceres QUIET)
-      include(CGAL_Ceres_support)
-      if(TARGET CGAL::Ceres_support)
-        target_link_libraries(smoothing_plugin PUBLIC CGAL::Ceres_support)
-      endif()
+    # The smoothing plugin can still do some things, even if Ceres is not found
+    qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui Smoothing_tangential_relaxation.ui)
+    polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+    target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item CGAL::Eigen3_support)
+    find_package(Ceres QUIET)
+    include(CGAL_Ceres_support)
+    if(TARGET CGAL::Ceres_support)
+      target_link_libraries(smoothing_plugin PUBLIC CGAL::Ceres_support)
+    endif()
 
-      set_package_properties(
-        Ceres PROPERTIES
-        DESCRIPTION "A large scale non-linear optimization library."
-        PURPOSE "Can be used as a solver in the smoothing plugin.")
-        target_link_libraries(extrude_plugin PUBLIC CGAL::Eigen3_support)
+    set_package_properties(
+      Ceres PROPERTIES
+      DESCRIPTION "A large scale non-linear optimization library."
+      PURPOSE "Can be used as a solver in the smoothing plugin.")
+    target_link_libraries(extrude_plugin PUBLIC CGAL::Eigen3_support)
 
-        if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
-          set_tests_properties(
-            compilation_of__extrude_plugin
-            compilation_of__fairing_plugin
-            PROPERTIES RESOURCE_LOCK Selection_test_resources)
-          set_tests_properties(
-          compilation_of__hole_filling_plugin
-          compilation_of__smoothing_plugin
-          PROPERTIES RESOURCE_LOCK Selection_test_resources)
-        endif()
+    qt5_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
+    polyhedron_demo_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
+                           ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
+    target_link_libraries(remesh_planar_patches_plugin PUBLIC scene_surface_mesh_item CGAL::Eigen3_support)
+
+    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+      set_tests_properties(
+        "compilation of  extrude_plugin"
+        "compilation of  fairing_plugin"
+        PROPERTIES RESOURCE_LOCK Selection_test_resources)
+      set_tests_properties(
+      "compilation of  hole_filling_plugin"
+      "compilation of  smoothing_plugin"
+      PROPERTIES RESOURCE_LOCK Selection_test_resources)
+    endif()
   else()
-    message(
-      STATUS
-        "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available."
-    )
+    message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
-
-else(EIGEN3_FOUND)
-  message(
-    STATUS
-      "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available."
-  )
+else()
+  message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
 endif()
 
 qt5_wrap_ui(soupUI_FILES Repair_soup.ui)
@@ -111,7 +105,7 @@ add_custom_target(self_intersection_plugin)
 add_dependencies(self_intersection_plugin selection_plugin)
 
 polyhedron_demo_plugin(triangulate_facets_plugin Triangulate_facets_plugin KEYWORDS PMP)
-target_link_libraries(triangulate_facets_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+target_link_libraries(triangulate_facets_plugin PUBLIC scene_surface_mesh_item scene_selection_item scene_polygon_soup_item)
 
 polyhedron_demo_plugin(corefinement_plugin Corefinement_plugin KEYWORDS PMP)
 target_link_libraries(corefinement_plugin PUBLIC scene_surface_mesh_item)
@@ -167,12 +161,13 @@ target_link_libraries(
 
 if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(
-    compilation_of__join_and_split_plugin
-    compilation_of__selection_plugin
-    compilation_of__triangulate_facets_plugin
-    compilation_of__isotropic_remeshing_plugin
-    compilation_of__random_perturbation_plugin
-    compilation_of__engrave_text_plugin
-    compilation_of__degenerated_faces_plugin
+    "compilation of  join_and_split_plugin"
+    "compilation of  selection_plugin"
+    "compilation of  triangulate_facets_plugin"
+    "compilation of  isotropic_remeshing_plugin"
+    "compilation of  remesh_planar_patches_plugin"
+    "compilation of  random_perturbation_plugin"
+    "compilation of  engrave_text_plugin"
+    "compilation of  degenerated_faces_plugin"
     PROPERTIES RESOURCE_LOCK Selection_test_resources)
 endif()

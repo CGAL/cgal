@@ -197,7 +197,7 @@ bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>:
 
 // @todo handle boundary edges
 template <class TriangleMesh, typename VPM, typename Traits>
-boost::optional<typename Traits::FT>
+std::optional<typename Traits::FT>
 get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
                     const TriangleMesh& tmesh,
                     const VPM& vpm,
@@ -244,7 +244,7 @@ get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descrip
       Vector_3 n1 = gt.construct_cross_product_vector_3_object()(v_ar, v_ab);
       Vector_3 n2 = gt.construct_cross_product_vector_3_object()(v_ak, v_ab);
       if(gt.compute_scalar_product_3_object()(n1, n2) <= 0)
-        return boost::none;
+        return std::nullopt;
 
       delta_vol += volume(b, a, removed, origin) + volume(a, b, kept, origin); // opposite orientation
     }
@@ -268,33 +268,32 @@ get_best_edge_orientation(typename boost::graph_traits<TriangleMesh>::edge_descr
 
   halfedge_descriptor h = halfedge(e, tmesh), ho = opposite(h, tmesh);
 
-  boost::optional<FT> dv1 = get_collapse_volume(h, tmesh, vpm, gt);
-  boost::optional<FT> dv2 = get_collapse_volume(ho, tmesh, vpm, gt);
+  std::optional<FT> dv1 = get_collapse_volume(h, tmesh, vpm, gt);
+  std::optional<FT> dv2 = get_collapse_volume(ho, tmesh, vpm, gt);
 
   // the resulting point of the collapse of a halfedge is the target of the halfedge before collapse
   if(get(vcm, source(h, tmesh)))
-     return dv2 != boost::none ? ho
+     return dv2 != std::nullopt ? ho
                                : boost::graph_traits<TriangleMesh>::null_halfedge();
 
   if(get(vcm, target(h, tmesh)))
-     return dv1 != boost::none ? h
+     return dv1 != std::nullopt ? h
                                : boost::graph_traits<TriangleMesh>::null_halfedge();
 
-  if(dv1 != boost::none)
+  if(dv1 != std::nullopt)
   {
-    if(dv2 != boost::none)
+    if(dv2 != std::nullopt)
       return (*dv1 < *dv2) ? h : ho;
 
     return h;
   }
 
-  if(dv2 != boost::none)
+  if(dv2 != std::nullopt)
     return ho;
 
   return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
 
-// adapted from triangulate_faces
 template <typename TriangleMesh, typename VPM, typename Traits>
 bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
                  const TriangleMesh& tmesh,
@@ -303,49 +302,23 @@ bool should_flip(typename boost::graph_traits<TriangleMesh>::edge_descriptor e,
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename Traits::FT                                             FT;
+  typedef typename Traits:: FT                                            FT;
   typedef typename boost::property_traits<VPM>::reference                 Point_ref;
-  typedef typename Traits::Vector_3                                       Vector_3;
 
   CGAL_precondition(!is_border(e, tmesh));
 
-  halfedge_descriptor h = halfedge(e, tmesh);
+  typename Traits::Compute_approximate_angle_3 angle = gt.compute_approximate_angle_3_object();
 
-  Point_ref p0 = get(vpm, target(h, tmesh));
-  Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
-  Point_ref p2 = get(vpm, source(h, tmesh));
-  Point_ref p3 = get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh));
+  const halfedge_descriptor h = halfedge(e, tmesh);
 
-  /* Chooses the diagonal that will split the quad in two triangles that maximize
-   * the scalar product of of the un-normalized normals of the two triangles.
-   * The lengths of the un-normalized normals (computed using cross-products of two vectors)
-   *  are proportional to the area of the triangles.
-   * Maximize the scalar product of the two normals will avoid skinny triangles,
-   * and will also taken into account the cosine of the angle between the two normals.
-   * In particular, if the two triangles are oriented in different directions,
-   * the scalar product will be negative.
-   */
+  const Point_ref p0 = get(vpm, target(h, tmesh));
+  const Point_ref p1 = get(vpm, target(next(h, tmesh), tmesh));
+  const Point_ref p2 = get(vpm, source(h, tmesh));
+  const Point_ref p3 = get(vpm, target(next(opposite(h, tmesh), tmesh), tmesh));
 
-//  CGAL::cross_product(p2-p1, p3-p2) * CGAL::cross_product(p0-p3, p1-p0);
-//  CGAL::cross_product(p1-p0, p1-p2) * CGAL::cross_product(p3-p2, p3-p0);
-
-  const Vector_3 v01 = gt.construct_vector_3_object()(p0, p1);
-  const Vector_3 v12 = gt.construct_vector_3_object()(p1, p2);
-  const Vector_3 v23 = gt.construct_vector_3_object()(p2, p3);
-  const Vector_3 v30 = gt.construct_vector_3_object()(p3, p0);
-
-  const FT p1p3 = gt.compute_scalar_product_3_object()(
-                    gt.construct_cross_product_vector_3_object()(v12, v23),
-                    gt.construct_cross_product_vector_3_object()(v30, v01));
-
-  const Vector_3 v21 = gt.construct_opposite_vector_3_object()(v12);
-  const Vector_3 v03 = gt.construct_opposite_vector_3_object()(v30);
-
-  const FT p0p2 = gt.compute_scalar_product_3_object()(
-                    gt.construct_cross_product_vector_3_object()(v01, v21),
-                    gt.construct_cross_product_vector_3_object()(v23, v03));
-
-  return p0p2 <= p1p3;
+  const FT ap1 = angle(p0,p1,p2);
+  const FT ap3 = angle(p2,p3,p0);
+  return (ap1 + ap3 > FT(180));
 }
 
 template <class TriangleMesh, class VPM, class Traits, class Functor>
@@ -510,7 +483,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, std::fun
   {
     std::vector<face_descriptor> link_faces;
     collect_link_faces(e, link_faces);
-    Functor f = std::move(m_make_envelope(link_faces));
+    Functor f = m_make_envelope(link_faces);
     Base base(m_tm, m_vpm, f);
     return base.collapse(e);
   }
@@ -1410,7 +1383,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
     std::cout << "Found " << degenerate_edges_to_remove.size() << " null edges.\n";
 #endif
 
-    // first try to remove all collapsable edges
+    // first try to remove all collapsible edges
     typename std::set<edge_descriptor>::iterator it = degenerate_edges_to_remove.begin();
     while(it != degenerate_edges_to_remove.end())
     {
@@ -1741,7 +1714,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           while(true);
 
           // @todo use the area criteria? this means maybe continue exploration of larger cc
-          // mark faces of completetly explored cc
+          // mark faces of completely explored cc
           for(index=0; index<nb_cc; ++index)
           {
             if(exploration_finished[index])
@@ -2611,7 +2584,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           put(vpmap, target(Euler::split_edge(side_one[hi], tmesh), tmesh), *it);
 
           // split_edge updates the halfedge of the source vertex of h,
-          // since we reuse later the halfedge of the first refernce vertex
+          // since we reuse later the halfedge of the first reference vertex
           // we must set it as we need.
           if(source(h1, tmesh) == *ref_vertices.first)
             set_halfedge(*ref_vertices.first, prev(prev(side_one[hi], tmesh), tmesh), tmesh);
@@ -2639,7 +2612,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           put(vpmap, target(h2, tmesh), *it);
 
           // split_edge updates the halfedge of the source vertex of h,
-          // since we reuse later the halfedge of the first refernce vertex
+          // since we reuse later the halfedge of the first reference vertex
           // we must set it as we need.
           if(source(h2, tmesh) == *ref_vertices.first)
             set_halfedge(*ref_vertices.first, opposite(h2, tmesh), tmesh);

@@ -385,7 +385,7 @@ public:
    * of the world and the origin of the scene. It is relevant when the whole scene is translated
    * of a big number, because there is a useless loss of precision when drawing.
    *
-   * The offset must be added to the drawn coordinates, and substracted from the computation
+   * The offset must be added to the drawn coordinates, and subtracted from the computation
    * \attention  the result of pointUnderPixel is the real item translated by the offset.
    *
    */

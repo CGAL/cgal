@@ -43,10 +43,10 @@ simplest_rational_in_interval(double x, double y) {
 
     // Must be a fraction
     CGAL_USE_TYPE(Is_fraction);
-    CGAL_static_assertion((::std::is_same<Is_fraction, Tag_true>::value));
+    static_assert(::std::is_same<Is_fraction, Tag_true>::value);
     // Numerator_type,Denominator_type must be the same
     CGAL_USE_TYPE(Denominator_type);
-    CGAL_static_assertion((::std::is_same<Numerator_type, Denominator_type>::value));
+    static_assert(::std::is_same<Numerator_type, Denominator_type>::value);
 
 
   if(x == y){

@@ -1,34 +1,33 @@
+
+// RANSAC
 /*!
 \defgroup PkgShapeDetectionRef Shape Detection Reference
-
-\defgroup PkgShapeDetectionRG Region Growing
-\ingroup PkgShapeDetectionRef
-
-Reference Manual for the Region Growing shape detection component.
-
-\defgroup PkgShapeDetectionRGConcepts Concepts
-\ingroup PkgShapeDetectionRG
-
-Concepts used for the parameters of the `CGAL::Shape_detection::Region_growing`.
-
-\defgroup PkgShapeDetectionRGOnPoints Point Set
-\ingroup PkgShapeDetectionRG
-
-Models that can be used with the `CGAL::Shape_detection::Region_growing`
-for shape detection in a point set.
-
-\defgroup PkgShapeDetectionRGOnMesh Polygon Mesh
-\ingroup PkgShapeDetectionRG
-
-Models that can be used with the `CGAL::Shape_detection::Region_growing`
-for shape detection on a polygon mesh.
-
-\addtogroup PkgShapeDetectionRG
 
 \defgroup PkgShapeDetectionRANSAC Efficient RANSAC
 \ingroup PkgShapeDetectionRef
 
-Reference Manual for the Efficient RANSAC shape detection component.
+Classified Reference Manual for the Efficient RANSAC shape detection component.
+
+# Concepts #
+- `EfficientRANSACTraits`
+
+# Algorithm #
+- `CGAL::Shape_detection::Efficient_RANSAC_traits<GeomTraits, InputRange, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Efficient_RANSAC<Traits>`
+
+# Shapes #
+- `CGAL::Shape_detection::Plane<Traits>`
+- `CGAL::Shape_detection::Sphere<Traits>`
+- `CGAL::Shape_detection::Cylinder<Traits>`
+- `CGAL::Shape_detection::Cone<Traits>`
+- `CGAL::Shape_detection::Torus<Traits>`
+
+# Shape Interface #
+- `CGAL::Shape_detection::Shape_base<Traits>`
+
+# Property Maps #
+- `CGAL::Shape_detection::Plane_map<Traits>`
+- `CGAL::Shape_detection::Point_to_shape_index_map<Traits>`
 
 \defgroup PkgShapeDetectionRANSACConcepts Concepts
 \ingroup PkgShapeDetectionRANSAC
@@ -45,12 +44,86 @@ Shape models that can be used with the `CGAL::Shape_detection::Efficient_RANSAC`
 
 Property maps that can be used with the `CGAL::Shape_detection::Efficient_RANSAC`.
 
-\addtogroup PkgShapeDetectionRANSAC
+*/
 
-\defgroup PkgShapeDetectionDEPR Deprecated
+// Region growing
+
+/*!
+
+\defgroup PkgShapeDetectionRG Region Growing
 \ingroup PkgShapeDetectionRef
 
-Deprecated components.
+Classified Reference Manual for the Region Growing shape detection component.
+
+# Concepts #
+- `NeighborQuery`
+- `RegionType`
+
+# Algorithm #
+- `CGAL::Shape_detection::Region_growing<%NeighborQuery, %RegionType, RegionMap>`
+
+# Point Set #
+## Neighbord Query Classes ##
+- `CGAL::Shape_detection::Point_set::K_neighbor_query<GeomTraits, Item, PointMap>`
+- `CGAL::Shape_detection::Point_set::Sphere_neighbor_query<GeomTraits, Item, PointMap>`
+
+## Sorting and Fitting Classes ##
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<GeomTraits, Item, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region<GeomTraits, Item, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<GeomTraits, Item, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region<GeomTraits, Item, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<GeomTraits, Item, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting<GeomTraits, Item, %NeighborQuery, PointMap, NormalMap>`
+
+## Convenience Aliases and Functions for `%CGAL::Point_set_3` ##
+
+When the input point set is an instance of the class `CGAL::Point_set_3`, template aliases and free functions are provided
+to simplify the definition and creation of the different classes. The naming convention used is to append a suffix `_for_point_set` to the neighbor query, sorting and fitting classes. Free functions are prefixed by `make_` followed by the class name in lower case. For the complete list see \ref PkgShapeDetectionRGOnPointSet3.
+
+# Segment Set #
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<GeomTraits, Item, SegmentMap>`
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<GeomTraits, Item, %NeighborQuery, SegmentMap>`
+
+# Polygon Mesh #
+- `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh>`
+- `CGAL::Shape_detection::Polygon_mesh::Polyline_graph<GeomTraits, PolygonMesh, VertexPointMap>`
+- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, VertexToPointMap>`
+- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, %NeighborQuery, VertexToPointMap>`
+
+
+\defgroup PkgShapeDetectionRGConcepts Concepts
+\ingroup PkgShapeDetectionRG
+
+Concepts used for the parameters of the `CGAL::Shape_detection::Region_growing`.
+
+\defgroup PkgShapeDetectionRGOnPoints Point Set
+\ingroup PkgShapeDetectionRG
+
+\defgroup PkgShapeDetectionRGOnPointSet3 Convenience Aliases and Functions for Point_set_3
+\ingroup PkgShapeDetectionRG
+
+Models that can be used with the `CGAL::Shape_detection::Region_growing`
+for shape detection in a point set.
+
+\defgroup PkgShapeDetectionRGOnSegments Segment Set
+\ingroup PkgShapeDetectionRG
+
+Models that can be used with the `CGAL::Shape_detection::Region_growing`
+for shape detection in a segment set.
+
+\defgroup PkgShapeDetectionRGOnMesh Polygon Mesh
+\ingroup PkgShapeDetectionRG
+
+Models that can be used with the `CGAL::Shape_detection::Region_growing`
+for shape detection on a polygon mesh.
 
 \addtogroup PkgShapeDetectionRef
 
@@ -61,17 +134,13 @@ Deprecated components.
 \cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez, Florent Lafarge, Simon Giraudot, Thien Hoang, and Dmitry Anisimov}
 \cgalPkgDesc{This package implements the Efficient RANSAC (RANdom SAmple Consensus) approach
 for detecting arbitrary shapes in an unorganized point set with unoriented normals
-and the Region Growing approach for detecting shapes in a set of arbitrary items.
-With the Efficient RANSAC approach, five canonical shapes can be detected: planes, spheres,
-cylinders, cones, and tori. Additional shapes can be detected, given a custom shape class by the user.
-For the Region Growing approach, this package provides three particular shape detection components:
-detecting lines in a 2D point set, detecting planes in a 3D point set, and detecting planes
-on a polygon mesh.}
+and the Region Growing approach for detecting shapes in a set of arbitrary items.}
 \cgalPkgManuals{Chapter_Shape_Detection, PkgShapeDetectionRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
+\cgalPkgDependsOn{\ref thirdpartyEigen}
 \cgalPkgBib{cgal:ovja-pssd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -81,59 +150,10 @@ on a polygon mesh.}
 
 \cgalClassifedRefPages
 
-## Efficient RANSAC ##
+- \link PkgShapeDetectionRANSAC Efficient RANSAC \endlink
 
-### Concepts ###
-- `EfficientRANSACTraits`
+- \link PkgShapeDetectionRG Region Growing \endlink
 
-### Algorithm ###
-- `CGAL::Shape_detection::Efficient_RANSAC_traits<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Efficient_RANSAC<Traits>`
 
-### Shapes ###
-- `CGAL::Shape_detection::Plane<Traits>`
-- `CGAL::Shape_detection::Sphere<Traits>`
-- `CGAL::Shape_detection::Cylinder<Traits>`
-- `CGAL::Shape_detection::Cone<Traits>`
-- `CGAL::Shape_detection::Torus<Traits>`
-
-### Shape Interface ###
-- `CGAL::Shape_detection::Shape_base<Traits>`
-
-### Property Maps ###
-- `CGAL::Shape_detection::Plane_map<Traits>`
-- `CGAL::Shape_detection::Point_to_shape_index_map<Traits>`
-
-## Region Growing ##
-
-### Concepts ###
-- `NeighborQuery`
-- `RegionType`
-
-### Algorithm ###
-- `CGAL::Shape_detection::Region_growing<InputRange, NeighborQuery, RegionType, SeedMap>`
-
-### Point Set ###
-- `CGAL::Shape_detection::Point_set::K_neighbor_query<GeomTraits, InputRange, PointMap>`
-- `CGAL::Shape_detection::Point_set::Sphere_neighbor_query<GeomTraits, InputRange, PointMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap, NormalMap>`
-
-### Polygon Mesh ###
-- `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, FaceRange, VertexToPointMap>`
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, NeighborQuery, FaceRange, VertexToPointMap>`
-
-## Deprecated Components ##
-- `CGAL::Shape_detection::deprecated::Shape_detection_traits<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::deprecated::Region_growing_depr<Traits>`
 
 */

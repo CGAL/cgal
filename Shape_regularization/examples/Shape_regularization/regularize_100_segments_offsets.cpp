@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
   // Offset regularization.
   const FT max_offset_2 = FT(1) / FT(4);
 
-  // Create neigbor query and offset-based regularization model.
+  // Create neighbor query and offset-based regularization model.
   Neighbor_query neighbor_query(segments);
   Offset_regularization offset_regularization(
     segments, CGAL::parameters::maximum_offset(max_offset_2));

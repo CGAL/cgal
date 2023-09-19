@@ -23,7 +23,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 13
@@ -92,7 +92,7 @@ struct PMO_from_segs {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     geninfo<Halfedge_handle>::access(G.info(v)) = e;
     #else
-    *boost::any_cast<Halfedge_handle>(&G.info(v)) = e;
+    *std::any_cast<Halfedge_handle>(&G.info(v)) = e;
     #endif
   }
 
@@ -102,7 +102,7 @@ struct PMO_from_segs {
     return geninfo<Halfedge_handle>::access(G.info(v));
     #else
     return
-      boost::any_cast<Halfedge_handle>(G.info(v));
+      std::any_cast<Halfedge_handle>(G.info(v));
     #endif
   }
 
@@ -112,7 +112,7 @@ struct PMO_from_segs {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       geninfo<Halfedge_handle>::clear(G.info(v));
     #else
-      G.info(v)=boost::any();
+      G.info(v)=std::any();
     #endif
   }
 
@@ -336,6 +336,8 @@ public:
   using Base::set_isolated_vertex;
   using Base::has_outdeg_two;
   using Base::merge_halfedge_pairs_at_target;
+  using Base::isolated_vertices_begin;
+  using Base::isolated_vertices_end;
 
   // C++ is really friendly:
   #define USECMARK(t) const Mark& mark(t h) const { return Base::mark(h); }
@@ -458,7 +460,7 @@ and |\Mvar.mark(v,1) = D1.mark(f1)|.}*/
   create_face_objects(Out);
 
 
-  CGAL_NEF_TRACEN("transfering marks");
+  CGAL_NEF_TRACEN("transferring marks");
   Face_iterator f = this->faces_begin(); assoc_info(f);
   for (i=0; i<2; ++i) mark(f,i) = PI[i].mark(PI[i].faces_begin());
 
@@ -605,18 +607,18 @@ avoid the simplification for edge pairs referenced by |e|.}*/
     CGAL_For_all(hfc,hend) {
       set_face(hfc,f);
       if(target(hfc) == target(e_min)) {
-        Point p1 = point(source(hfc)),
-          p2 = point(target(hfc)),
-          p3 = point(target(next(hfc)));
+        const Point& p1 = point(source(hfc));
+        const Point&  p2 = point(target(hfc));
+        const Point&  p3 = point(target(next(hfc)));
         if (!K.left_turn(p1,p2,p3) )
           e_min = hfc;
       } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
         e_min = hfc;
       linked[hfc]=true;
     }
-    Point p1 = point(source(e_min)),
-          p2 = point(target(e_min)),
-          p3 = point(target(next(e_min)));
+    const Point& p1 = point(source(e_min));
+    const Point& p2 = point(target(e_min));
+    const Point& p3 = point(target(next(e_min)));
     if ( K.orientation(p1,p2,p3) > 0 ) set_halfedge(f,e_min); // outer
     else set_hole(f,e_min); // store as inner
   }
@@ -626,12 +628,15 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   for(v = this->vertices_begin(); v != vend; v=vn) { CGAL_NEF_TRACEN("at vertex "<<PV(v));
     vn=v; ++vn;
     if ( is_isolated(v) ) {
-      if ( mark(v) == mark(face(v)) ) delete_vertex_only(v);
-      else set_isolated_vertex(face(v),v);
+      if (mark(v) == mark(face(v))) {
+        delete_vertex_only(v);
+      } else {
+        set_isolated_vertex(face(v), v);
+      }
     } else { // v not isolated
       Halfedge_handle e2 = first_out_edge(v), e1 = previous(e2);
-      Point p1 = point(source(e1)), p2 = point(v),
-            p3 = point(target(e2));
+      const Point& p1 = point(source(e1)), p2 = point(v);
+      const Point& p3 = point(target(e2));
       if ( has_outdeg_two(v) &&
            mark(v) == mark(e1) && mark(v) == mark(e2) &&
            (K.orientation(p1,p2,p3) == 0) )
@@ -643,7 +648,15 @@ avoid the simplification for edge pairs referenced by |e|.}*/
   for (f = this->faces_begin(); f != fend; f=fn) {
     fn=f; ++fn;
     Union_find_handle pit = Pitem[f];
-    if ( unify_faces.find(pit) != pit ) delete_face(f);
+      Union_find_handle root = unify_faces.find(pit);
+      if (root != pit) {
+
+      for(Isolated_vertex_iterator ivi = isolated_vertices_begin(f); ivi != isolated_vertices_end(f); ++ivi){
+        ivi->set_face(*root);
+        link_as_isolated_vertex(*root,ivi);
+      }
+      delete_face(f);
+    }
   }
 
 
@@ -674,7 +687,7 @@ void discard_info(Vertex_handle v) const
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   geninfo<vertex_info>::clear(info(v));
   #else
-  info(v)=boost::any();
+  info(v)=std::any();
   #endif
 }
 
@@ -684,7 +697,7 @@ vertex_info& ginfo(Vertex_handle v) const
   return geninfo<vertex_info>::access(info(v));
   #else
   return
-    *boost::any_cast<vertex_info>(&info(v));
+    *std::any_cast<vertex_info>(&info(v));
   #endif
 }
 
@@ -729,8 +742,8 @@ void discard_info(Halfedge_handle e)  const
   geninfo<halfedge_info>::clear(info(e));
   geninfo<halfedge_info>::clear(info(twin(e)));
   #else
-  info(e)=boost::any();
-  info(twin(e))=boost::any();
+  info(e)=std::any();
+  info(twin(e))=std::any();
   #endif
 }
 
@@ -740,7 +753,7 @@ halfedge_info& ginfo(Halfedge_handle e)  const
   return geninfo<halfedge_info>::access(info(e));
   #else
   return
-    *boost::any_cast<halfedge_info>(&info(e));
+    *std::any_cast<halfedge_info>(&info(e));
   #endif
 }
 
@@ -782,7 +795,7 @@ void discard_info(Face_handle f)  const
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   geninfo<face_info>::clear(info(f));
   #else
-  info(f)=boost::any();
+  info(f)=std::any();
   #endif
 }
 
@@ -792,7 +805,7 @@ face_info& ginfo(Face_handle f)  const
   return geninfo<face_info>::access(info(f));
   #else
   return
-    *boost::any_cast<face_info>(&info(f));
+    *std::any_cast<face_info>(&info(f));
   #endif
 }
 
@@ -828,9 +841,9 @@ void create_face_objects(const Below_info& D) const
     CGAL_For_all(hfc,hend) {
       FaceCycle[hfc]=i; // assign face cycle number
       if(target(hfc) == target(e_min)) {
-        Point p1 = point(source(hfc)),
-          p2 = point(target(hfc)),
-          p3 = point(target(next(hfc)));
+        const Point& p1 = point(source(hfc));
+        const Point&p2 = point(target(hfc));
+        const Point&p3 = point(target(next(hfc)));
         if (!K.left_turn(p1,p2,p3) )
           e_min = hfc;
       } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
@@ -844,10 +857,10 @@ void create_face_objects(const Below_info& D) const
   Face_handle f_outer = this->new_face();
   for (int j=0; j<i; ++j) {
     Halfedge_handle e = MinimalHalfedge[j];
-      CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
-    Point p1 = point(source(e)),
-          p2 = point(target(e)),
-          p3 = point(target(next(e)));
+    CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
+    const Point& p1 = point(source(e));
+    const Point& p2 = point(target(e));
+    const Point& p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
       CGAL_NEF_TRACEN("  creating new face object");
       Face_handle f = this->new_face();
@@ -889,9 +902,9 @@ void create_face_objects_pl(const Below_info& D) const
     CGAL_For_all(hfc,hend) {
       FaceCycle[hfc]=i; // assign face cycle number
       if(target(hfc) == target(e_min)) {
-        Point p1 = point(source(hfc)),
-          p2 = point(target(hfc)),
-          p3 = point(target(next(hfc)));
+        const Point& p1 = point(source(hfc));
+        const Point& p2 = point(target(hfc));
+        const Point& p3 = point(target(next(hfc)));
         if (!K.left_turn(p1,p2,p3) )
           e_min = hfc;
       } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
@@ -905,10 +918,10 @@ void create_face_objects_pl(const Below_info& D) const
   (void)/* Face_handle f_outer = */ this->new_face();
   for (int j=0; j<i; ++j) {
     Halfedge_handle e = MinimalHalfedge[j];
-      CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
-    Point p1 = point(source(e)),
-          p2 = point(target(e)),
-          p3 = point(target(next(e)));
+    CGAL_NEF_TRACEN("  face cycle "<<j);CGAL_NEF_TRACEN("  minimal halfedge "<<PE(e));
+    const Point& p1 = point(source(e));
+    const Point& p2 = point(target(e));
+    const Point& p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
       CGAL_NEF_TRACEN("  creating new face object");
       Face_handle f = this->new_face();
@@ -953,13 +966,13 @@ Segment segment(const Const_decorator& N,
 
 bool is_forward_edge(const Const_decorator& N,
                      Halfedge_const_iterator hit) const
-{ Point p1 = N.point(N.source(hit));
-  Point p2 = N.point(N.target(hit));
+{ const Point& p1 = N.point(N.source(hit));
+  const Point& p2 = N.point(N.target(hit));
   return (K.compare_xy(p1,p2) < 0); }
 
 void assert_type_precondition() const
 { typename PM_decorator_::Point p1; Point p2;
-  CGAL_static_assertion((std::is_same<typename PM_decorator_::Point, Point>::value)); }
+  static_assert(std::is_same<typename PM_decorator_::Point, Point>::value); }
 
 
 

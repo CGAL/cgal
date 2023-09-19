@@ -70,7 +70,7 @@ public:
    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
    PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
-   PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
+   PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Heat_method_plugin
    PROGRAM_TETRA_FILTERING,     //! Used in Scene_tetrahedra_item with Tetrahedra_filtering_plugin
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
@@ -239,7 +239,7 @@ public Q_SLOTS:
   //! If b is true, faces will be ligted from both internal and external side.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   virtual void setTwoSides(bool b) = 0;
-  //! If b is true, then a special color mask is applied to points and meshes to differenciate
+  //! If b is true, then a special color mask is applied to points and meshes to differentiate
   //! front-faced and back-faced elements.
   virtual void setBackFrontShading(bool b) =0;
   //! \brief sets the fast drawing mode
@@ -266,7 +266,7 @@ public Q_SLOTS:
   virtual void SetOrthoProjection( bool b) =0;
 public:
 
-  //! Gives acces to recent openGL(4.3) features, allowing use of things like
+  //! Gives access to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
   //! @returns nullptr if `isOpenGL_4_3()` is `false`

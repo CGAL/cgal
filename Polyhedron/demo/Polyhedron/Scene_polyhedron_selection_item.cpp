@@ -1076,9 +1076,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     }
       //Join vertex
     case 0:
-      if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()), *polyhedron())) < 4
+      if(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()), *polyhedron()).size() < 4
            ||
-         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()))< 4)
+         CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()).size()< 4)
         {
           d->tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
                            "Select the edge with extremities you want to join.");
@@ -1177,9 +1177,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     case 6:
 
         //check preconditions
-      if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron())) == 3
+      if(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron()).size() == 3
          &&
-         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())) == 3
+         CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()).size() == 3
         && !CGAL::is_border(ed, *polyhedron()))
       {
         SMesh* mesh = polyhedron();
@@ -1599,7 +1599,7 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
   static Scene_polyhedron_selection_item_priv::vertex_on_path first;
   if(!d->first_selected)
   {
-    //if the path doesnt exist, add the vertex as the source of the path.
+    //if the path doesn't exist, add the vertex as the source of the path.
     if(!replace)
     {
       d->addVertexToPath(vh, first);
@@ -1700,11 +1700,11 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
       //get first's index
       for(it = d->path.begin(); it!=d->path.end(); ++it)
       {
-        bool end_of_path_is_prio = true;//makes the end of the path prioritary over the other points when there is a conflict
+        bool end_of_path_is_prio = true;//makes the end of the path priority over the other points when there is a conflict
         if(first.vertex == (d->path.end()-1)->vertex)
           if(it != d->path.end()-1)
             end_of_path_is_prio = false;
-        //makes the end of the path prioritary over the other points when there is a conflict
+        //makes the end of the path priority over the other points when there is a conflict
         if(it->vertex == first.vertex &&
            !(it == d->path.begin())&&// makes the beginning of the path impossible to move
            end_of_path_is_prio)

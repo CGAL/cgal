@@ -142,7 +142,7 @@ For handles and indices of vertices, halfedges, faces, etc., we provide speciali
 The class `Object` can store an object of whatever other type.
 It can be used by a function to return objects of different types.
 A mechanism to extract the stored object based on its type is also provided.
-This class is similar to `boost::any`.
+This class is similar to `std::any`.
 
 \section stl_uncertainty Uncertainty Management
 
@@ -398,7 +398,7 @@ void foo()
 
 Prior to \cgal 5.6, some packages were using Boost parameters to provide a user friendly
 way to set parameters of classes and functions. In an attempt to remove a dependency and
-to get a more uniform API accross packages, these packages have been updated to now use
+to get a more uniform API across packages, these packages have been updated to now use
 \cgal \ref bgl_namedparameters inspired by the function named parameters from
 the \boost graph library. In practice this means that the following call:
 \code

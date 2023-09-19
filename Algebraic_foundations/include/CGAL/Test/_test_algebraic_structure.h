@@ -44,7 +44,7 @@
 template <typename AdaptableFunctor, typename ResultType>
 void check_result_type(AdaptableFunctor, ResultType){
   typedef typename AdaptableFunctor::result_type result_type;
-  CGAL_static_assertion((::std::is_same<result_type,ResultType>::value));
+  static_assert(::std::is_same<result_type,ResultType>::value);
   CGAL_USE_TYPE(result_type);
 }
 // check nothing for CGAL::Null_functor
@@ -122,12 +122,11 @@ void test_algebraic_structure_intern( const CGAL::Integral_domain_tag& ) {
     CGAL_SNAP_AST_FUNCTORS(AST);
 
     using CGAL::Null_functor;
-    CGAL_static_assertion(
-        (!::std::is_same< Integral_division, Null_functor >::value));
-    CGAL_static_assertion((!::std::is_same< Divides, Null_functor >::value));
-    CGAL_static_assertion((!::std::is_same< Is_zero, Null_functor >::value));
-    CGAL_static_assertion((!::std::is_same< Is_one, Null_functor >::value));
-    CGAL_static_assertion((!::std::is_same< Square, Null_functor >::value));
+    static_assert(!::std::is_same< Integral_division, Null_functor >::value);
+    static_assert(!::std::is_same< Divides, Null_functor >::value);
+    static_assert(!::std::is_same< Is_zero, Null_functor >::value);
+    static_assert(!::std::is_same< Is_one, Null_functor >::value);
+    static_assert(!::std::is_same< Square, Null_functor >::value);
 
     // functor
     const Is_zero is_zero = Is_zero();
@@ -206,7 +205,7 @@ void test_algebraic_structure_intern(
     CGAL_SNAP_AST_FUNCTORS(AST);
 
     using CGAL::Null_functor;
-    CGAL_static_assertion((!::std::is_same< Gcd, Null_functor>::value));
+    static_assert(!::std::is_same< Gcd, Null_functor>::value);
 
     const Gcd gcd = Gcd();
     assert( gcd(  AS ( 0), AS ( 0))  ==  unit_normal( AS (0) ) );
@@ -268,9 +267,9 @@ void test_algebraic_structure_intern( const CGAL::Euclidean_ring_tag&) {
     CGAL_SNAP_AST_FUNCTORS(AST);
 
     using CGAL::Null_functor;
-    CGAL_static_assertion((!::std::is_same< Div,     Null_functor>::value));
-    CGAL_static_assertion((!::std::is_same< Mod,     Null_functor>::value));
-    CGAL_static_assertion((!::std::is_same< Div_mod, Null_functor>::value));
+    static_assert(!::std::is_same< Div,     Null_functor>::value);
+    static_assert(!::std::is_same< Mod,     Null_functor>::value);
+    static_assert(!::std::is_same< Div_mod, Null_functor>::value);
 
     const Div     div=Div();
     const Mod     mod=Mod();
@@ -387,7 +386,7 @@ void test_algebraic_structure_intern( const CGAL::Field_with_sqrt_tag& ) {
 
     CGAL_SNAP_AST_FUNCTORS(AST);
 
-    CGAL_static_assertion((!::std::is_same< Sqrt, Null_functor>::value));
+    static_assert(!::std::is_same< Sqrt, Null_functor>::value);
     const Sqrt sqrt =Sqrt();
     AS  a(4);
 
@@ -613,11 +612,9 @@ class Test_is_square {
         CGAL_USE_TYPE(First_argument_type);
         CGAL_USE_TYPE(Second_argument_type);
 
-        CGAL_static_assertion(
-                ( ::std::is_same< AS , First_argument_type>::value));
-        CGAL_static_assertion(
-                ( ::std::is_same< AS& , Second_argument_type>::value));
-        //CGAL_static_assertion(( ::std::is_same< bool , Result_type>::value));
+        static_assert(::std::is_same< AS , First_argument_type>::value);
+        static_assert(::std::is_same< AS& , Second_argument_type>::value);
+        //static_assert(::std::is_same< bool , Result_type>::value);
         bool b = Result_type(true); CGAL_USE(b);
 
         AS test_number = AS(3)*AS(3);
@@ -649,8 +646,8 @@ public:
         typedef typename Sqrt::result_type   Result_type;
         CGAL_USE_TYPE(Argument_type);
         CGAL_USE_TYPE(Result_type);
-        CGAL_static_assertion(( ::std::is_same< AS , Argument_type>::value));
-        CGAL_static_assertion(( ::std::is_same< AS , Result_type>::value));
+        static_assert(::std::is_same< AS , Argument_type>::value);
+        static_assert(::std::is_same< AS , Result_type>::value);
         typedef Algebraic_structure_traits<AS> AST;
         typedef typename AST::Is_exact Is_exact;
         assert( !Is_exact::value ||  AS (3) == sqrt( AS (9)));
@@ -675,12 +672,9 @@ public:
         CGAL_USE_TYPE(First_argument_type);
         CGAL_USE_TYPE(Second_argument_type);
         CGAL_USE_TYPE(Result_type);
-        CGAL_static_assertion(
-                ( ::std::is_same<int, First_argument_type>::value));
-        CGAL_static_assertion(
-                ( ::std::is_same< AS , Second_argument_type>::value));
-        CGAL_static_assertion(
-                ( ::std::is_same< AS , Result_type>::value));
+        static_assert(::std::is_same<int, First_argument_type>::value);
+        static_assert(::std::is_same< AS , Second_argument_type>::value);
+        static_assert(::std::is_same< AS , Result_type>::value);
          AS  epsilon(1);
         assert( test_equality_epsilon(  AS (2),
                                 root( 4,  AS (16) ), epsilon ) );
@@ -803,7 +797,7 @@ void test_algebraic_structure(){
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
     CGAL_SNAP_AST_FUNCTORS(AST);
 
-    CGAL_static_assertion((::std::is_same<AS,typename AST::Type>::value));
+    static_assert(::std::is_same<AS,typename AST::Type>::value);
 
     typedef typename AST::Boolean Boolean;
     assert(!Boolean());
@@ -816,14 +810,13 @@ void test_algebraic_structure(){
     using CGAL::Integral_domain_without_division_tag;
     using CGAL::Null_functor;
     // Test for desired exactness
-    CGAL_static_assertion(
-            ( ::std::is_same< typename AST::Is_exact, Is_exact >::value));
+    static_assert(::std::is_same< typename AST::Is_exact, Is_exact >::value);
+    static_assert(::std::is_convertible< Tag,
+                    Integral_domain_without_division_tag >::value );
+    static_assert(::std::is_same< Tag, Algebraic_category>::value);
+    static_assert(!::std::is_same< Simplify, Null_functor>::value);
+    static_assert(!::std::is_same< Unit_part, Null_functor>::value);
 
-    CGAL_static_assertion(( ::boost::is_convertible< Tag,
-                    Integral_domain_without_division_tag >::value ));
-    CGAL_static_assertion(( ::std::is_same< Tag, Algebraic_category>::value));
-    CGAL_static_assertion((!::std::is_same< Simplify, Null_functor>::value));
-    CGAL_static_assertion((!::std::is_same< Unit_part, Null_functor>::value));
     const Simplify   simplify=Simplify();;
     const Unit_part  unit_part= Unit_part();
 
@@ -943,8 +936,7 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
 
     typedef CGAL::Algebraic_structure_traits<AS> AST;
     typedef typename AST::Is_numerical_sensitive Is_numerical_sensitive;
-    CGAL_static_assertion(
-            !(::std::is_same<Is_numerical_sensitive, CGAL::Null_tag>::value));
+    static_assert(!::std::is_same<Is_numerical_sensitive, CGAL::Null_tag>::value);
     CGAL_USE_TYPE(Is_numerical_sensitive);
 }
 

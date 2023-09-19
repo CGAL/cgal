@@ -524,7 +524,7 @@ public:
 /*! \class
  * A class defining a textual (\ascii) input/output format for arrangements
  * that store auxiliary dat with all their DCEL records, as they are templated
- * by a extended DCEL class.
+ * by an extended DCEL class.
  */
 template <class Arrangement_>
 class Arr_extended_dcel_text_formatter :
@@ -549,56 +549,56 @@ public:
   typedef typename Base::Face_const_handle           Face_const_handle;
 
   /*! Default constructor.*/
-  Arr_extended_dcel_text_formatter() :
-    Base()
-  {}
+  Arr_extended_dcel_text_formatter() : Base() {}
 
   /*! Construct an output formatter. */
-  Arr_extended_dcel_text_formatter(std::ostream& os) :
-    Base(os)
-  {}
+  Arr_extended_dcel_text_formatter(std::ostream& os) : Base(os) {}
 
   /*! Construct an input formatter. */
-  Arr_extended_dcel_text_formatter(std::istream& is) :
-    Base(is)
-  {}
+  Arr_extended_dcel_text_formatter(std::istream& is) : Base(is) {}
 
   /*! Write the auxiliary data associated with the given vertex. */
   virtual void write_vertex_data(Vertex_const_handle v)
-  {
-    this->out() << '\n' << v->data();
-  }
+  { this->out() << '\n' << v->data(); }
 
   /*! Read a vertex-data object and attach it to the given vertex. */
-  virtual void read_vertex_data(Vertex_handle v)
-  {
-    this->in() >> v->data();
+  virtual void read_vertex_data(Vertex_handle v) {
+    using Vertex = typename Arrangement_2::Vertex;
+    using Type = decltype(std::declval<Vertex>().data());
+    using Data_type = typename std::remove_reference<Type>::type;
+    Data_type data;
+    this->in() >> data;
+    v->set_data(data);
     this->_skip_until_EOL();
   }
 
   /*! Write the auxiliary data associated with the given halfedge. */
   virtual void write_halfedge_data(Halfedge_const_handle he)
-  {
-    this->out() << '\n' << he->data();
-  }
+  { this->out() << '\n' << he->data(); }
 
   /*! Read a halfedge-data object and attach it to the given halfedge. */
-  virtual void read_halfedge_data(Halfedge_handle he)
-  {
-    this->in() >> he->data();
+  virtual void read_halfedge_data(Halfedge_handle he) {
+    using Halfedge = typename Arrangement_2::Halfedge;
+    using Type = decltype(std::declval<Halfedge>().data());
+    using Data_type = typename std::remove_reference<Type>::type;
+    Data_type data;
+    this->in() >> data;
+    he->set_data(data);
     this->_skip_until_EOL();
   }
 
   /*! Write the auxiliary data associated with the given face. */
   virtual void write_face_data(Face_const_handle f)
-  {
-    this->out() << f->data() << '\n';
-  }
+  { this->out() << f->data() << '\n'; }
 
   /*! Read a face-data object and attach it to the given face. */
-  virtual void read_face_data(Face_handle f)
-  {
-    this->in() >> f->data();
+  virtual void read_face_data(Face_handle f) {
+    using Face = typename Arrangement_2::Face;
+    using Type = decltype(std::declval<Face>().data());
+    using Data_type = typename std::remove_reference<Type>::type;
+    Data_type data;
+    this->in() >> data;
+    f->set_data(data);
     this->_skip_until_EOL();
   }
 };

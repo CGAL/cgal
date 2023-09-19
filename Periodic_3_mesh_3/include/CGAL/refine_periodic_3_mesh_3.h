@@ -17,13 +17,13 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/Mesh_3/config.h>
 #include <CGAL/Periodic_3_mesh_3/config.h>
+#include <CGAL/optimize_periodic_3_mesh_3.h>
 
 #include <CGAL/Mesh_3/C3T3_helpers.h>
-#include <CGAL/SMDS_3/Dump_c3t3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/refine_mesh_3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 #include <CGAL/Time_stamper.h>
 
 #include <CGAL/Named_function_parameters.h>
@@ -34,21 +34,7 @@
 #include <iterator>
 
 namespace CGAL {
-
 namespace internal {
-
-template<class C3T3, class MeshDomain>
-void project_dummy_points_of_surface(C3T3& c3t3, const MeshDomain& domain)
-{
-  typedef typename C3T3::Vertex_handle                     Vertex_handle;
-  typedef CGAL::Hash_handles_with_or_without_timestamps    Hash_fct;
-  typedef boost::unordered_set<Vertex_handle, Hash_fct>    Vertex_container;
-
-  Vertex_container vertex_container;
-  find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
-
-  project_points(c3t3, domain, vertex_container.begin(), vertex_container.end());
-}
 
 template<class C3T3, class OutputIterator>
 void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
@@ -65,21 +51,22 @@ void find_points_to_project(C3T3& c3t3, OutputIterator vertices)
     int ind = face_it->second;
     Cell_handle c = face_it->first;
 
-    for(int i = 1; i < 4; i++) {
+    for(int i = 1; i < 4; i++)
+    {
       Vertex_handle v = c->vertex((ind+i)&3);
-
-      typename C3T3::Index index = c3t3.index(v);
-      if(const int* i = boost::get<int>(&index))
+      if(v->info().is_dummy_vertex)
       {
-        if(*i == 0) // '0' is the index of dummies
-          *vertices++ = v;
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+        std::cout << c3t3.triangulation().point(v) << " must be projected" << std::endl;
+#endif
+        *vertices++ = v;
       }
     }
   }
 }
 
 template<class C3T3, class MeshDomain, class InputIterator>
-void project_points(C3T3& c3t3,
+bool project_points(C3T3& c3t3,
                     const MeshDomain& domain,
                     InputIterator vertex_begin,
                     InputIterator vertex_end)
@@ -95,40 +82,115 @@ void project_points(C3T3& c3t3,
 
   typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
     c3t3.triangulation().geom_traits().construct_point_3_object();
+  typename C3T3::Triangulation::Geom_traits::Compute_squared_distance_3 csd =
+    c3t3.triangulation().geom_traits().compute_squared_distance_3_object();
 
   CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
   CGAL::Mesh_3::Triangulation_helpers<Tr> tr_helpers;
 
+  bool did_something = false;
+
   for(InputIterator it = vertex_begin; it != vertex_end; ++it)
   {
-    Vertex_handle vh = *it;
+    Vertex_handle old_vertex = *it;
 
-    const Weighted_point& vh_wp = c3t3.triangulation().point(vh);
-    const Bare_point& vh_p = cp(vh_wp);
-    const Bare_point new_point = helper.project_on_surface(vh, vh_p);
+    const Weighted_point& weighted_old_position = c3t3.triangulation().point(old_vertex);
+    CGAL_assertion(weighted_old_position.weight() == FT(0)); // point projection happens before optimizers
 
-    const FT sq_d = CGAL::squared_distance(new_point, vh_p);
+    const Bare_point& old_position = cp(weighted_old_position);
+    const Bare_point new_position = helper.project_on_surface(old_vertex, old_position);
+    const FT sq_d = csd(new_position, old_position);
 
 #ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
-    std::cerr << "vh: " << &*vh << std::endl;
-    std::cerr << "vhp: " << vh_p << std::endl;
-    std::cerr << "projected: " << new_point << std::endl;
+    std::cerr << "\n\nMove dummy vertex" << std::endl;
+    std::cerr << "old_vertex: " << &*old_vertex << std::endl;
+    std::cerr << "old_position: " << old_position << std::endl;
+    std::cerr << "new_position: " << new_position << std::endl;
     std::cerr << "squared distance from dummy to surface: " << sq_d << std::endl;
 #endif
 
     // Skip tiny moves for efficiency
-    if(sq_d < 1e-10) // arbitrary value, maybe compare it to the surface distance criterium ?
+    auto min_v_and_sqd = c3t3.triangulation().nearest_power_vertex_with_sq_distance(old_vertex);
+    CGAL_postcondition(min_v_and_sqd.first != Vertex_handle() && min_v_and_sqd.second != FT(-1));
+
+    if(sq_d < 0.01 * min_v_and_sqd.second)
+    {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+      std::cout << "REJECTED because dummy point is close enough to the surface" << std::endl;
+#endif
       continue;
+    }
 
     // Do not project if the projected point is in a protection ball
-    if(tr_helpers.inside_protecting_balls(c3t3.triangulation(), vh, new_point))
+    if(tr_helpers.inside_protecting_balls(c3t3.triangulation(), old_vertex, new_position))
+    {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+      std::cout << "REJECTED because new pos is within protection ball" << std::endl;
+#endif
       continue;
+    }
 
-    const Vector_3 move(vh_p, new_point);
-    Vertex_handle new_vertex = helper.update_mesh(vh, move);
-    if(new_vertex != vh) // if the move has successfully been performed
-      c3t3.set_dimension(new_vertex, 2);
+    // For periodic triangulations, the move is always performed using insert+remove,
+    // so new_vertex cannot be old_vertex if the move has succeeded
+    const Vector_3 move(old_position, new_position);
+    Vertex_handle new_vertex = helper.update_mesh(old_vertex, move);
+
+    // if the move has successfully been performed
+    if(new_vertex != old_vertex && new_vertex != Vertex_handle())
+    {
+      new_vertex->info().is_dummy_vertex = false;
+      c3t3.set_dimension(new_vertex, 2); // on the surface
+
+      // @fixme
+      // This actually should be the index from the surface patch index...
+      // It can be obtained either by modifying project_on_surface to return the surface_patch index
+      auto opt_si = domain.is_in_domain_object()(cp(c3t3.triangulation().point(new_vertex)));
+      if(opt_si.has_value())
+        c3t3.set_index(new_vertex, domain.index_from_subdomain_index(*opt_si));
+      else
+        c3t3.set_index(new_vertex, 0);
+    }
+    else
+    {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+      std::cerr << "Warning: failed to create projection" << std::endl;
+#endif
+    }
+
+    // The vertex `old_vertex` can still exist in the P3RT3:
+    // - if the target already existed
+    // - if its removal would have compromised the 1-cover property of the periodic triangulation
+    // It's (almost) pointless to try and move it again, so fix it
+    if(c3t3.triangulation().tds().is_vertex(old_vertex))
+    {
+#ifdef CGAL_PERIODIC_3_MESH_3_DEBUG_DUMMY_PROJECTION
+      std::cerr << "Warning: failed to remove pre-projection: " << c3t3.triangulation().point(old_vertex) << std::endl;
+#endif
+      old_vertex->info().is_dummy_vertex = false;
+    }
+
+    did_something = true;
   }
+
+  return did_something;
+}
+
+template<class C3T3, class MeshDomain>
+void project_dummy_points_of_surface(C3T3& c3t3,
+                                     const MeshDomain& domain)
+{
+  typedef typename C3T3::Vertex_handle                     Vertex_handle;
+  typedef CGAL::Hash_handles_with_or_without_timestamps    Hash_fct;
+  typedef boost::unordered_set<Vertex_handle, Hash_fct>    Vertex_container;
+
+  bool did_something = false;
+  do
+  {
+    Vertex_container vertex_container;
+    find_points_to_project(c3t3, std::insert_iterator<Vertex_container>(vertex_container, vertex_container.begin()));
+    did_something = project_points(c3t3, domain, vertex_container.begin(), vertex_container.end());
+  }
+  while(did_something);
 }
 
 } // namespace internal
@@ -165,7 +227,7 @@ void project_points(C3T3& c3t3,
  *
  * \attention Note that the triangulation must form at all times a simplicial complex within
  * a single copy of the domain (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
- * of the manual of 3D periodic triangulations). It is the responsability of the user to provide
+ * of the manual of 3D periodic triangulations). It is the responsibility of the user to provide
  * a triangulation that satisfies this condition when calling the refinement
  * function `refine_periodic_3_mesh_3`. The underlying triangulation of a mesh
  * complex obtained through `make_periodic_3_mesh_3()` or `refine_periodic_3_mesh_3()`
@@ -298,7 +360,7 @@ void project_points(C3T3& c3t3,
  * \sa `odt_optimize_periodic_3_mesh_3()`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
-void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
+void refine_periodic_3_mesh_3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -328,7 +390,7 @@ template<typename C3T3, typename MeshDomain, typename MeshCriteria,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
          typename ... NP>
-void refine_periodic_3_mesh_3(C3T3& c3t3, MeshDomain& domain, MeshCriteria& criteria,
+void refine_periodic_3_mesh_3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria& criteria,
                               const CGAL_NP_CLASS_1&  np1,
                               const CGAL_NP_CLASS_2&  np2,
                               const NP& ... nps)
@@ -410,21 +472,21 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
   // Odt
   if(odt)
   {
-    odt_optimize_mesh_3(c3t3, domain,
-                        parameters::time_limit = odt.time_limit(),
-                        parameters::max_iteration_number = odt.max_iteration_number(),
-                        parameters::convergence = odt.convergence(),
-                        parameters::freeze_bound = odt.bound());
+    odt_optimize_periodic_3_mesh_3(c3t3, domain,
+                                   parameters::time_limit = odt.time_limit(),
+                                   parameters::max_iteration_number = odt.max_iteration_number(),
+                                   parameters::convergence = odt.convergence(),
+                                   parameters::freeze_bound = odt.bound());
   }
 
   // Lloyd
   if(lloyd)
   {
-    lloyd_optimize_mesh_3(c3t3, domain,
-                          parameters::time_limit = lloyd.time_limit(),
-                          parameters::max_iteration_number = lloyd.max_iteration_number(),
-                          parameters::convergence = lloyd.convergence(),
-                          parameters::freeze_bound = lloyd.bound());
+    lloyd_optimize_periodic_3_mesh_3(c3t3, domain,
+                                     parameters::time_limit = lloyd.time_limit(),
+                                     parameters::max_iteration_number = lloyd.max_iteration_number(),
+                                     parameters::convergence = lloyd.convergence(),
+                                     parameters::freeze_bound = lloyd.bound());
   }
 
   if(odt || lloyd)
@@ -440,9 +502,9 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
     if(perturb.is_time_limit_set())
       perturb_time_limit = perturb.time_limit();
 
-    perturb_mesh_3(c3t3, domain,
-                   parameters::time_limit = perturb_time_limit,
-                   parameters::sliver_bound = perturb.bound());
+    perturb_periodic_3_mesh_3(c3t3, domain,
+                              parameters::time_limit = perturb_time_limit,
+                              parameters::sliver_bound = perturb.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }
@@ -455,9 +517,9 @@ void refine_periodic_3_mesh_3_impl(C3T3& c3t3,
     if(exude.is_time_limit_set())
       exude_time_limit = exude.time_limit();
 
-    exude_mesh_3(c3t3,
-                 parameters::time_limit = exude_time_limit,
-                 parameters::sliver_bound = exude.bound());
+    exude_periodic_3_mesh_3(c3t3,
+                            parameters::time_limit = exude_time_limit,
+                            parameters::sliver_bound = exude.bound());
 
     dump_c3t3(c3t3, mesh_options.dump_after_perturb_prefix);
   }

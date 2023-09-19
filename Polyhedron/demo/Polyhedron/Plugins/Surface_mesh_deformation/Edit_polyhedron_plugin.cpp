@@ -45,7 +45,7 @@ public:
 public Q_SLOTS:
   void on_actionDeformation_triggered();
   /////// Dock window signal handlers //////
-  // what they do is simply transmiting required 'action' to selected scene_edit_polyhedron_item object
+  // what they do is simply transmitting required 'action' to selected scene_edit_polyhedron_item object
   void on_AddCtrlVertPushButton_clicked();
   void on_PrevCtrlVertPushButton_clicked();
   void on_NextCtrlVertPushButton_clicked();
@@ -309,7 +309,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_butto
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  boost::optional<std::size_t> minimum =
+  std::optional<std::size_t> minimum =
     edit_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
   if(minimum) {
     ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
@@ -321,7 +321,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  boost::optional<std::size_t> minimum = edit_item->get_minimum_isolated_component();
+  std::optional<std::size_t> minimum = edit_item->get_minimum_isolated_component();
   if(minimum) {
     ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
   }

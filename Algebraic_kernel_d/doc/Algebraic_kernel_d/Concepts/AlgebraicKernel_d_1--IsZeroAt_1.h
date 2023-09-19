@@ -6,7 +6,7 @@
 Computes whether an `AlgebraicKernel_d_1::Polynomial_1`
 is zero at a given `AlgebraicKernel_d_1::Algebraic_real_1`.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicKernel_d_1::SignAt_1`
 

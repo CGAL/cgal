@@ -12,7 +12,7 @@
 const int D = 4;
 typedef CGAL::Epick_d< CGAL::Dimension_tag<D> >               K;
 typedef CGAL::Delaunay_triangulation<K>                       T;
-// The triangulation uses the default instanciation of the
+// The triangulation uses the default instantiation of the
 // TriangulationDataStructure template parameter
 
 int main(int argc, char **argv)

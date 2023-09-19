@@ -209,7 +209,7 @@ Periodic_2_triangulation_hierarchy_2(const Periodic_2_triangulation_hierarchy_2<
 }
 
 
-//Assignement
+//Assignment
 template <class PTr>
 Periodic_2_triangulation_hierarchy_2<PTr> &
 Periodic_2_triangulation_hierarchy_2<PTr>::

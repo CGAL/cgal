@@ -8,10 +8,5 @@ project(SMDS_3_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-create_single_source_cgal_program( "c3t3_example.cpp" )
-create_single_source_cgal_program( "tetrahedron_soup_to_c3t3_example.cpp" )
+create_single_source_cgal_program("c3t3_example.cpp")
+create_single_source_cgal_program("tetrahedron_soup_to_c3t3_example.cpp")

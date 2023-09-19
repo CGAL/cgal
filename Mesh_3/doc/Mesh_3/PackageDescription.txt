@@ -16,10 +16,18 @@
 /// \ingroup PkgMesh3Ref
 /// The classes in this group are models of domain concepts and their associated classes.
 
+/// \defgroup PkgMesh3FeatureDetection Feature Detection
+/// \ingroup PkgMesh3Ref
+/// The functors in this group perform polyline features detection in input domains.
+
+/// \defgroup PkgMesh3DomainFields Mesh Domain Fields
+/// \ingroup PkgMesh3Ref
+/// The classes in this group are models of `MeshDomainField_3`
+
 /// \defgroup PkgMesh3Functions Mesh Generation Functions
 /// \ingroup PkgMesh3Ref
 /// The two main functions to generate a mesh are `make_mesh_3()` and `refine_mesh_3()`.
-/// The other functions allow to optimize an existing mesh.
+/// The other functions enable to optimize an existing mesh.
 
 /// \defgroup PkgMesh3Parameters Parameter Functions
 /// \ingroup PkgMesh3Ref
@@ -33,11 +41,10 @@
 
 /*!
 \addtogroup PkgMesh3Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{3D Mesh Generation,PkgMesh3}
 \cgalPkgPicture{Mesh_3/fig/multilabel_mesher_small.jpg}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
+\cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, and Mariette Yvinec}
 \cgalPkgDesc{This package is devoted to the generation of isotropic simplicial meshes discretizing 3D domains. The domain to be meshed is a region of 3D space that has to be bounded. The region may be connected or composed of multiple components and/or subdivided in several subdomains. The domain is input as an oracle able to answer queries, of a few different types, on the domain. Boundary and subdivision surfaces are either smooth or piecewise smooth surfaces, formed with planar or curved surface patches. Surfaces may exhibit 1-dimensional features (e.g. crease edges) and 0-dimensional features (e.g. singular points as corners tips, cusps or darts), that have to be fairly approximated in the mesh. Optionally, the algorithms support multi-core shared-memory architectures to take advantage of available parallelism.}
 \cgalPkgManuals{Chapter_3D_Mesh_Generation,PkgMesh3Ref}
 \cgalPkgSummaryEnd
@@ -74,34 +81,34 @@ related to the template parameters of some models of the main concepts:
 - `MeshVertexBase_3`
 - `MeshDomainField_3`
 - `MeshPolyline_3`
-- `TriangleAccessor_3`
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Mesh_triangulation_3<MD,Gt,Concurrency_tag,Vertex_base,Cell_base>`
-- `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>`
-- `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
-- `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
+- `CGAL::Mesh_triangulation_3<MD,GT,ConcurrencyTag,Vb,Cb>`
+- `CGAL::Mesh_vertex_base_3<GT,MD,Vb>`
+- `CGAL::Compact_mesh_cell_base_3<GT,MD,Tds>`
+- `CGAL::Mesh_cell_base_3<GT,MD,Cb>`
 - `CGAL::Mesh_criteria_3<Tr>`
 - `CGAL::Mesh_cell_criteria_3<Tr>`
 - `CGAL::Mesh_facet_criteria_3<Tr>`
 - `CGAL::Mesh_edge_criteria_3<Tr>`
-- `CGAL::Mesh_constant_domain_field_3<Gt,%Index>`
+- `CGAL::Mesh_constant_domain_field_3<GT,%Index>`
 
 The following classes are models of domain concepts
 and their associated classes:
 
 - `CGAL::Labeled_mesh_domain_3<LabelingFunction,BGT>`
-- `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
+- `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`
 - `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 - `CGAL::Polyhedral_complex_mesh_domain_3<IGT>`
-- `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
+- `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 - `CGAL::Mesh_polyhedron_3<IGT>`
-- `CGAL::Triangle_accessor_3<CGAL::Polyhedron_3<K>,K>`
 - `CGAL::Implicit_multi_domain_to_labeling_function_wrapper<ImplicitFunction>`
-- `CGAL::Implicit_mesh_domain_3<Function,BGT>` (deprecated)
-- `CGAL::Labeled_image_mesh_domain_3<Image,BGT>` (deprecated)
-- `CGAL::Gray_image_mesh_domain_3<Image,BGT,Image_word_type>` (deprecated)
+
+The following functors are available for feature detection:
+
+- `CGAL::Mesh_3::Detect_features_in_image`
+- `CGAL::Mesh_3::Detect_features_on_image_bbox`
 
 \cgalCRPSection{Function Templates}
 

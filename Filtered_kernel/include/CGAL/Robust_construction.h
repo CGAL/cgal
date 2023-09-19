@@ -16,7 +16,7 @@
 
 namespace CGAL {
 
-// This template class is a functor adaptor targetting geometric constructions.
+// This template class is a functor adaptor targeting geometric constructions.
 //
 // They are "robust" in the following sense : the input and output are
 // approximate (doubles), but the internal computation tries to guarantees the

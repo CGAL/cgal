@@ -3,7 +3,6 @@
 #include <iterator>
 
 #include <boost/functional/value_factory.hpp>
-#include <boost/array.hpp>
 
 #include <CGAL/assertions.h>
 #include <CGAL/algorithm.h>
@@ -36,7 +35,7 @@ FT point_on_ray_dist(const Ray& ray, const Point& point) {
 
 std::size_t accum = 0;
 
-boost::optional<
+std::optional<
   Tree::Intersection_and_primitive_id<Ray>::Type
   >
 min_intersection(const Tree& tree, const Ray& ray) {
@@ -46,12 +45,12 @@ min_intersection(const Tree& tree, const Ray& ray) {
   tree.all_intersections(ray, std::back_inserter(all_intersections));
   accum += all_intersections.size();
   Tree::FT min_distance = DBL_MAX;
-  boost::optional<
+  std::optional<
     Tree::Intersection_and_primitive_id<Ray>::Type
-    > mini = boost::none;
+    > mini = std::nullopt;
 
   for(IntersectionVector::iterator it2 = all_intersections.begin(); it2 != all_intersections.end(); ++it2) {
-    if(Point* point = boost::get<Point>(&(it2->first))) {
+    if(Point* point = std::get_if<Point>(&(it2->first))) {
       Vector i_ray(*point, ray.source());
       Tree::FT new_distance = i_ray.squared_length();
       if(new_distance < min_distance) {
@@ -92,7 +91,7 @@ int main()
   Vector bbox_center((bbox.xmin() + bbox.xmax()) / 2,
                      (bbox.ymin() + bbox.ymax()) / 2,
                      (bbox.zmin() + bbox.zmax()) / 2);
-  boost::array<double, 3> extents;
+  std::array<double, 3> extents;
   extents[0] = bbox.xmax() - bbox.xmin();
   extents[1] = bbox.ymax() - bbox.ymin();
   extents[2] = bbox.zmax() - bbox.zmin();
@@ -125,7 +124,7 @@ int main()
   rays.reserve(NB_RAYS);
   std::transform(v1.begin(), v1.end(), v2.begin(),
                  std::back_inserter(rays), boost::value_factory<Ray>());
-  std::vector< boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type > > primitives1, primitives2;
+  std::vector< std::optional<Tree::Intersection_and_primitive_id<Ray>::Type > > primitives1, primitives2;
   primitives1.reserve(NB_RAYS); primitives2.reserve(NB_RAYS);
 
 
@@ -140,7 +139,7 @@ int main()
   }
   assert(primitives1.size() == primitives2.size()); //  Different amount of primitives intersected
   assert(std::equal(primitives1.begin(), primitives1.end(), primitives2.begin())); //  Primitives mismatch
-  std::size_t c = primitives1.size() - std::count(primitives1.begin(), primitives1.end(), boost::none);
+  std::size_t c = primitives1.size() - std::count(primitives1.begin(), primitives1.end(), std::nullopt);
   std::cout << "Intersected " << c << " primitives with " << NB_RAYS << " rays" << std::endl;
   std::cout << "Primitive method had to sort " << accum/NB_RAYS
             << " intersections on average." << std::endl;

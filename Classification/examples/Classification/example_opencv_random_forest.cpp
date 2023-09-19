@@ -128,7 +128,7 @@ int main (int argc, char** argv)
   }
 
   // Write result
-  std::ofstream f ("classification.ply");
+  std::ofstream f ("classification_opencv_random_forest.ply");
   f.precision(18);
   f << pts;
 

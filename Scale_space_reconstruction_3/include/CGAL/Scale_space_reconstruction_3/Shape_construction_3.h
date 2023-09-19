@@ -117,7 +117,7 @@ public:
     /** Important note: Shape_construction_3 does not take responsibility for destroying
      *  the object after use.
      *
-     *  \tparam InputIterator an interator over the points.
+     *  \tparam InputIterator an iterator over the points.
      *  The iterator should point to a model of Point.
      *  \param begin is an iterator to the first point of the shape.
      *  \param end is a past-the-end iterator for the points.

@@ -181,7 +181,7 @@ class Face_graph_output_builder
   Node_id_map vertex_to_node_id1, vertex_to_node_id2;
 
   // output meshes
-  const std::array<boost::optional<TriangleMesh*>, 4>& requested_output;
+  const std::array<std::optional<TriangleMesh*>, 4>& requested_output;
   // input meshes closed ?
   /// \todo do we really need this?
   bool is_tm1_closed;
@@ -273,7 +273,7 @@ class Face_graph_output_builder
   };
 
   // detect if a polyline is incident to two patches that won't be imported
-  // for the current operation (polylines skipt are always incident to a
+  // for the current operation (polylines skipped are always incident to a
   // coplanar patch)
   template <class TM, class FIM1, class FIM2>
   static
@@ -411,7 +411,7 @@ public:
                             const VpmOutTuple& output_vpms,
                             EdgeMarkMapTuple& out_edge_mark_maps,
                             UserVisitor& user_visitor,
-                            const std::array<boost::optional<TriangleMesh*>, 4 >& requested_output)
+                            const std::array<std::optional<TriangleMesh*>, 4 >& requested_output)
     : tm1(tm1), tm2(tm2)
     , vpm1(vpm1), vpm2(vpm2)
     , fids1(fids1), fids2(fids2)
@@ -513,10 +513,10 @@ public:
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
-    const bool used_to_classify_patches =  requested_output[UNION]==boost::none &&
-                                           requested_output[TM1_MINUS_TM2]==boost::none &&
-                                           requested_output[TM2_MINUS_TM1]==boost::none &&
-                                           requested_output[INTERSECTION]==boost::none;
+    const bool used_to_classify_patches =  requested_output[UNION]==std::nullopt &&
+                                           requested_output[TM1_MINUS_TM2]==std::nullopt &&
+                                           requested_output[TM2_MINUS_TM1]==std::nullopt &&
+                                           requested_output[INTERSECTION]==std::nullopt;
 
     CGAL_assertion( vertex_to_node_id1.size() <= nodes.size() );
     CGAL_assertion( vertex_to_node_id2.size() <= nodes.size() );
@@ -707,7 +707,7 @@ public:
     Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
     std::size_t nb_patches_tm1 =
       connected_components(tm1,
-                           bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
+                           make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_1)
                                       .face_index_map(fids1));
 
@@ -720,7 +720,7 @@ public:
     Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
     std::size_t nb_patches_tm2 =
       connected_components(tm2,
-                           bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
+                           make_compose_property_map(fids2,make_property_map(&tm2_patch_ids[0])),
                            parameters::edge_is_constrained_map(is_marked_2)
                                       .face_index_map(fids2));
 
@@ -1051,16 +1051,18 @@ public:
           previous_bitvalue[2] = is_patch_inside_tm1.test(patch_id_q1);
           previous_bitvalue[3] = is_patch_inside_tm1.test(patch_id_q2);
 
-#ifndef CGAL_NDEBUG
+/*
+          // Note that this code is commented as impossible_operation flag could be set thanks to
+          // another polyline and such a `continue` would make us miss it.
           if (is_tm1_closed && is_tm2_closed)
           {
-            if (!patch_status_was_not_already_set[0] &&
-                !patch_status_was_not_already_set[1] &&
-                !patch_status_was_not_already_set[2] &&
-                !patch_status_was_not_already_set[3])
-              continue; // all patches were already classified, no need to redo it
+             if (!patch_status_was_not_already_set[0] &&
+                 !patch_status_was_not_already_set[1] &&
+                 !patch_status_was_not_already_set[2] &&
+                 !patch_status_was_not_already_set[3])
+               continue; // all patches were already classified, no need to redo it
           }
-#endif
+*/
 
           // check incompatibility of patch classifications
           auto inconsistent_classification = [&]()
@@ -1084,6 +1086,25 @@ public:
             }
             return false;
           };
+#ifndef CGAL_NDEBUG
+          auto debug_check_consistency = [&]()
+          {
+            if (!used_to_clip_a_surface && !used_to_classify_patches)
+            {
+              CGAL_assertion( patch_status_was_not_already_set[0] || (previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1]) );
+              CGAL_assertion( patch_status_was_not_already_set[1] || (previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2]) );
+              CGAL_assertion( patch_status_was_not_already_set[2] || (previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1]) );
+              CGAL_assertion( patch_status_was_not_already_set[3] || (previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2]) );
+            }
+          };
+          is_patch_inside_tm2.reset(patch_id_p1);
+          is_patch_inside_tm2.reset(patch_id_p2);
+          is_patch_inside_tm1.reset(patch_id_q1);
+          is_patch_inside_tm1.reset(patch_id_q2);
+#else
+          auto debug_check_consistency = [&](){};
+
+#endif
 
           //indicates that patch status will be updated
           patch_status_not_set_tm1.reset(patch_id_p1);
@@ -1140,6 +1161,7 @@ public:
             if ( q2_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q2); //case 1
             else is_patch_inside_tm2.set(patch_id_p2); //case 2
             if (inconsistent_classification()) return;
+            debug_check_consistency();
             continue;
           }
           else{
@@ -1171,6 +1193,7 @@ public:
                 is_patch_inside_tm2.set(patch_id_p2);
               } //else case 4
               if (inconsistent_classification()) return;
+              debug_check_consistency();
               continue;
             }
             else
@@ -1202,6 +1225,7 @@ public:
                   is_patch_inside_tm2.set(patch_id_p1);
                 } // else case 6
                 if (inconsistent_classification()) return;
+                debug_check_consistency();
                 continue;
               }
               else{
@@ -1231,13 +1255,14 @@ public:
                   if ( q1_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q1);  //case 7
                   else is_patch_inside_tm2.set(patch_id_p1); //case 8
                   if (inconsistent_classification()) return;
+                  debug_check_consistency();
                   continue;
                 }
               }
             }
           }
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-          #warning At some point we should have a check if a patch status is already set, what we do is consistant otherwise --> ambiguous
+          #warning At some point we should have a check if a patch status is already set, what we do is consistent otherwise --> ambiguous
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
           CGAL_assertion(
@@ -1393,10 +1418,7 @@ public:
             }
           }
           if (inconsistent_classification()) return;
-          CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
-          CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
-          CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
-          CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
+          debug_check_consistency();
         }
     }
 
@@ -1658,8 +1680,8 @@ public:
         // special code to handle non-manifold vertices on the boundary
         for (vertex_descriptor vd : vertices(tm1))
         {
-          boost::optional<halfedge_descriptor> op_h = is_border(vd, tm1);
-          if (op_h == boost::none) continue;
+          std::optional<halfedge_descriptor> op_h = is_border(vd, tm1);
+          if (op_h == std::nullopt) continue;
           halfedge_descriptor h = *op_h;
           CGAL_assertion( target(h, tm1) == vd);
           // check if the target of h is a non-manifold vertex

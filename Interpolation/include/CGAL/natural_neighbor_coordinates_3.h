@@ -48,7 +48,7 @@ construct_circumcenter(const typename DT::Facet& f,
                        const typename DT::Geom_traits::Point_3& Q,
                        const typename DT::Geom_traits& gt = typename DT::Geom_traits());
 
-// ====================== Natural Neighbors Querries ==========================
+// ====================== Natural Neighbors Queries ==========================
 // === Definitions
 
 // Given a 3D point Q and a 3D Delaunay triangulation dt,
@@ -358,7 +358,7 @@ construct_circumcenter(const typename DT::Facet& f,
                                             f.first->vertex((f.second+2)&3)->point(),
                                             f.first->vertex((f.second+3)&3)->point(),
                                             Q));
-  // else the facet is not on the enveloppe of the conflict cavity associated to P
+  // else the facet is not on the envelope of the conflict cavity associated to P
   return gt.construct_circumcenter_3_object()(
              f.first->vertex((f.second+1)&3)->point(),
              f.first->vertex((f.second+2)&3)->point(),

@@ -22,7 +22,7 @@
 
 #   This file uses Jam language syntax to describe available tools. Mostly,
 # there are 'using' lines, that contain the name of the used tools, and
-# parameters to pass to those tools -- where paremeters are separated by
+# parameters to pass to those tools -- where parameters are separated by
 # semicolons. Important syntax notes:
 #
 #   - Both ':' and ';' must be separated from other tokens by whitespace

@@ -30,9 +30,9 @@ protected:
 
   //i >= 1; from a start vertex on the current i-1 ring, push non-visited neighbors
   //of start in the nextRing and set indices to i. Also add these vertices in all.
-  void push_neighbours_of(const Vertex_const_handle start, const int ith,
-                          std::vector < Vertex_const_handle > &nextRing,
-                          std::vector < Vertex_const_handle > &all);
+  void push_neighbors_of(const Vertex_const_handle start, const int ith,
+                         std::vector < Vertex_const_handle > &nextRing,
+                         std::vector < Vertex_const_handle > &all);
 
   //i >= 1, from a currentRing i-1, collect all neighbors, set indices
   //to i and store them in nextRing and all.
@@ -44,7 +44,7 @@ protected:
  public:
   T_PolyhedralSurf_rings(const TPoly& P);
 
-  //collect i>=1 rings : all neighbours up to the ith ring,
+  //collect i>=1 rings : all neighbors up to the ith ring,
   void collect_i_rings(const Vertex_const_handle v,
                        const int ring_i,
                        std::vector < Vertex_const_handle >& all);
@@ -70,7 +70,7 @@ T_PolyhedralSurf_rings(const TPoly& P)
 
 template < class TPoly >
 void T_PolyhedralSurf_rings <TPoly>::
-push_neighbours_of(const Vertex_const_handle start, const int ith,
+push_neighbors_of(const Vertex_const_handle start, const int ith,
                    std::vector < Vertex_const_handle > &nextRing,
                    std::vector < Vertex_const_handle > &all)
 {
@@ -98,7 +98,7 @@ collect_ith_ring(const int ith, std::vector < Vertex_const_handle > &currentRing
   typename std::vector < Vertex_const_handle >::const_iterator
     itb = currentRing.begin(), ite = currentRing.end();
 
-  CGAL_For_all(itb, ite) push_neighbours_of(*itb, ith, nextRing, all);
+  CGAL_For_all(itb, ite) push_neighbors_of(*itb, ith, nextRing, all);
 }
 
 template <class TPoly>

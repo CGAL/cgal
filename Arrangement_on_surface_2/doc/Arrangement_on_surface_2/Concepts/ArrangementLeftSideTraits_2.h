@@ -10,7 +10,7 @@
  * boundary sides (that is, right, bottom, and top) are purposeful, and can have
  * models.
  *
- * \cgalRefines `ArrangementVerticalSideTraits_2`
+ * \cgalRefines{ArrangementVerticalSideTraits_2}
  *
  * \sa `ArrangementRightSideTraits_2`,
  *     `ArrangementBottomSideTraits_2`, and

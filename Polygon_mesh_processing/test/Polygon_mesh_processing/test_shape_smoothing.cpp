@@ -6,6 +6,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
+#include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 
 #include <CGAL/utility.h>
@@ -17,6 +18,7 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                 Kernel;
+typedef Kernel::FT                                                          FT;
 typedef Kernel::Point_3                                                     Point;
 typedef CGAL::Surface_mesh<Point>                                           SurfaceMesh;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>        Mesh_with_id;
@@ -38,7 +40,7 @@ void test_implicit_constrained_devil(Mesh mesh)
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typename boost::property_map<Mesh, CGAL::vertex_point_t>::type vpmap = get(CGAL::vertex_point, mesh);
 
-  // z max is 20 in the devil
+  // max 'z' is 20 in the devil
   std::set<vertex_descriptor> selected_vertices;
   for(vertex_descriptor v : vertices(mesh))
   {
@@ -46,6 +48,8 @@ void test_implicit_constrained_devil(Mesh mesh)
     if(is_border(v, mesh) || z > 19.0)
       selected_vertices.insert(v);
   }
+
+  std::cout << selected_vertices.size() << " constrained vertices" << std::endl;
 
   CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap(selected_vertices);
 
@@ -125,6 +129,29 @@ void test_implicit_constrained_elephant(Mesh mesh)
 }
 
 template <typename Mesh>
+void test_implicit_unscaled_elephant(Mesh mesh)
+{
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+  std::cout << "-- test_implicit_unscaled_elephant --" << std::endl;
+#endif
+
+  const FT ivol = PMP::volume(mesh);
+  std::cout << "Input volume is " << ivol << std::endl;
+
+  Mesh mesh_cpy(mesh);
+  const double time_step = 0.001;
+  PMP::smooth_shape(mesh_cpy, time_step, CGAL::parameters::number_of_iterations(5).do_scale(true));
+
+  FT ovol = PMP::volume(mesh_cpy);
+  std::cout << "With scaling, output volume is " << ovol << std::endl;
+  assert(equal_doubles(ivol, ovol, 1e-10));
+
+  PMP::smooth_shape(mesh, time_step, CGAL::parameters::number_of_iterations(5).do_scale(false));
+  ovol = PMP::volume(mesh);
+  std::cout << "Without scaling, output volume is " << ovol << std::endl;
+}
+
+template <typename Mesh>
 void test_curvature_flow_time_step(Mesh mesh)
 {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
@@ -167,8 +194,8 @@ int main(int, char**)
   SurfaceMesh mesh_devil;
   if(!input1 || !(input1 >> mesh_devil))
   {
-    std::cerr << "Error: can not read file.";
-    return 1;
+    std::cerr << "Error: cannot read file " << filename_devil << std::endl;
+    return EXIT_FAILURE;
   }
   input1.close();
 
@@ -176,8 +203,8 @@ int main(int, char**)
   SurfaceMesh mesh_elephant;
   if(!input2 || !(input2 >> mesh_elephant))
   {
-    std::cerr << "Error: can not read file.";
-    return 1;
+    std::cerr << "Error: cannot read file " << filename_elephant << std::endl;
+    return EXIT_FAILURE;
   }
   input2.close();
 
@@ -185,11 +212,12 @@ int main(int, char**)
   test_curvature_flow<SurfaceMesh>(mesh_elephant);
   test_implicit_constrained_elephant<SurfaceMesh>(mesh_elephant);
   test_implicit_constrained_devil<SurfaceMesh>(mesh_devil);
+  test_implicit_unscaled_elephant<SurfaceMesh>(mesh_elephant);
 
   input1.open(filename_devil);
   Mesh_with_id pl_mesh_devil;
   if(!input1 || !(input1 >> pl_mesh_devil)){
-    std::cerr << "Error: can not read file.";
+    std::cerr << "Error: cannot read file " << filename_devil << std::endl;
     return EXIT_FAILURE;
   }
   input1.close();
@@ -200,7 +228,7 @@ int main(int, char**)
   Mesh_with_id pl_mesh_elephant;
   if(!input2 || !(input2 >> pl_mesh_elephant))
   {
-    std::cerr << "Error: can not read file.";
+    std::cerr << "Error: cannot read file " << filename_elephant << std::endl;
     return EXIT_FAILURE;
   }
   input2.close();
@@ -212,6 +240,7 @@ int main(int, char**)
   test_curvature_flow<Mesh_with_id>(pl_mesh_elephant);
   test_implicit_constrained_elephant<Mesh_with_id>(pl_mesh_elephant);
   test_implicit_constrained_devil<Mesh_with_id>(pl_mesh_devil);
+  test_implicit_unscaled_elephant<Mesh_with_id>(pl_mesh_elephant);
 
   return EXIT_SUCCESS;
 }

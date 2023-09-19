@@ -23,6 +23,7 @@
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
@@ -74,6 +75,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
   typedef typename SNC_structure::Items                Items;
   typedef typename Map::Sphere_map                     Sphere_map;
   typedef CGAL::SNC_decorator<SNC_structure>           SNC_decorator;
+  typedef CGAL::SNC_const_decorator<SNC_structure>     SNC_const_decorator;
   typedef SNC_decorator                                Base;
   typedef CGAL::SNC_constructor<Items, SNC_structure>  SNC_constructor;
   typedef CGAL::SNC_external_structure<Items, SNC_structure>
@@ -82,10 +84,13 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
   typedef CGAL::SNC_SM_overlayer<Items, SM_decorator>  SM_overlayer;
   typedef CGAL::SM_point_locator<SM_decorator>         SM_point_locator;
   typedef CGAL::SNC_point_locator<SNC_decorator>       SNC_point_locator;
+  typedef CGAL::SNC_point_locator<SNC_const_decorator> SNC_const_point_locator;
 
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
+  typedef typename SNC_structure::Halfedge_const_handle Halfedge_const_handle;
   typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
+  typedef typename SNC_structure::Halffacet_const_handle Halffacet_const_handle;
   typedef typename SNC_structure::Volume_handle Volume_handle;
   typedef typename SNC_structure::SVertex_handle SVertex_handle;
   typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
@@ -144,12 +149,12 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     return v01;
   }
 
-  Vertex_handle create_local_view_on( const Point_3& p, Halfedge_handle e) {
+  Vertex_handle create_local_view_on( const Point_3& p, Halfedge_const_handle e) {
     SNC_constructor C(*this->sncp());
     return C.create_from_edge( e, p);
   }
 
-  Vertex_handle create_local_view_on( const Point_3& p, Halffacet_handle f) {
+  Vertex_handle create_local_view_on( const Point_3& p, Halffacet_const_handle f) {
     SNC_constructor C(*this->sncp());
     return C.create_from_facet( f, p);
   }
@@ -167,14 +172,14 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
             typename Selection,
             typename Association>
   class Intersection_call_back :
-    public SNC_point_locator::Intersection_call_back
+    public SNC_const_point_locator::Intersection_call_back
   {
     typedef typename SNC_decorator::Decorator_traits Decorator_traits;
     typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
     typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
 
   public:
-    Intersection_call_back( SNC_structure& s0, SNC_structure& s1,
+    Intersection_call_back( const SNC_structure& s0, const SNC_structure& s1,
                             const Selection& _bop, SNC_structure& r,
                             bool invert_order, Association& Ain) :
       snc0(s0), snc1(s1), bop(_bop), result(r),
@@ -450,18 +455,16 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     // SNC structure finds an intersection between the segment defined
     // by an edge on the other SNC structure, the call back method is
     // called with the intersecting objects and the intersection point.
-    // The responsability of the call back functor is to construct the
+    // The responsibility of the call back functor is to construct the
     // local view on the intersection point on both SNC structures,
     // overlay them and add the resulting sphere map to the result.
 
     // CGAL_NEF_SETDTHREAD(19*509*43*131);
 
-    Intersection_call_back<SNC_decorator, Selection, Association> call_back0
-      ( const_cast<SNC_structure&>(snc1), const_cast<SNC_structure&>(snc2),
-        BOP, *this->sncp(), false, A);
-    Intersection_call_back<SNC_decorator, Selection, Association> call_back1
-      ( const_cast<SNC_structure&>(snc2), const_cast<SNC_structure&>(snc2),
-        BOP, *this->sncp(), true, A);
+    Intersection_call_back<SNC_const_decorator, Selection, Association> call_back0
+      ( snc1, snc2, BOP, *this->sncp(), false, A);
+    Intersection_call_back<SNC_const_decorator, Selection, Association> call_back1
+      ( snc2, snc2, BOP, *this->sncp(), true, A);
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION
     double split_intersection = timer_overlay.time();
@@ -503,10 +506,8 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
                     << this->sncp()->number_of_vertices());
 #else
     CGAL_NEF_TRACEN("intersection by fast box intersection");
-        binop_intersection_test_segment_tree<SNC_decorator> binop_box_intersection;
-        binop_box_intersection(call_back0, call_back1,
-                               const_cast<SNC_structure&>(snc1),
-                               const_cast<SNC_structure&>(snc2));
+        binop_intersection_test_segment_tree<SNC_const_decorator> binop_box_intersection;
+        binop_box_intersection(call_back0, call_back1, snc1, snc2);
 #endif
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION

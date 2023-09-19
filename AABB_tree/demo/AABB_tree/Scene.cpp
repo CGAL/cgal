@@ -334,7 +334,7 @@ void Scene::compute_elements(int mode)
             pos_points.push_back(p.z());
         }
     }
-    //The Segements
+    //The segments
     {
         std::list<Segment>::iterator sit;
         for(sit = m_segments.begin(); sit != m_segments.end(); sit++)

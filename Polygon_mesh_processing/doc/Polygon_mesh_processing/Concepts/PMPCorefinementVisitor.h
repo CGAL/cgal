@@ -5,8 +5,10 @@
 /// used in \link PMP_corefinement_grp corefinement-related functions \endlink to track
 /// the creation of new faces and new edges.
 ///
-/// \cgalRefines `CopyConstructible`
-/// \cgalHasModel `CGAL::Polygon_mesh_processing::Corefinement::Default_visitor`.
+/// \cgalRefines{CopyConstructible}
+/// \cgalHasModelsBegin
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Corefinement::Default_visitor}
+/// \cgalHasModelsEnd
 
 class PMPCorefinementVisitor{
 public:
@@ -58,21 +60,21 @@ public:
   /// \param i_id the id of the intersection point, starting at 0. Ids are consecutive.
   /// \param sdim indicates the dimension of the simplex part of the face that is intersected by the edge
   ///             (0 for a vertex, 1 for an edge, 2 for the interior of the face)
+  /// \param h_e a halfedge from `tm_e`
   /// \param h_f a halfedge from `tm_f` indicating the simplex intersected:
   ///            if `sdim==0` the target of `h_f` is the intersection point,
   ///            if `sdim==1` the edge of `h_f` contains the intersection point in its interior,
   ///            if `sdim==2` the face of `h_f` contains the intersection point in its interior.
-  /// \param h_e a halfedge from `tm_e`
+  /// \param tm_e mesh containing `h_e`
+  /// \param tm_f mesh containing `h_f`
   /// \param is_target_coplanar `true` iff the target of `h_e` is the intersection point
   /// \param is_source_coplanar `true` iff the source of `h_e` is the intersection point
-  /// \param tm_f mesh containing `h_f`
-  /// \param tm_e mesh containing `h_e`
   void intersection_point_detected(std::size_t i_id,
                                    int sdim,
-                                   halfedge_descriptor h_f,
                                    halfedge_descriptor h_e,
-                                   const Triangle_mesh& tm_f,
+                                   halfedge_descriptor h_f,
                                    const Triangle_mesh& tm_e,
+                                   const Triangle_mesh& tm_f,
                                    bool is_target_coplanar,
                                    bool is_source_coplanar);
 
@@ -161,7 +163,7 @@ public:
   void end_building_output();
   /// called before filtering intersection edges in the interior of a set of coplanar faces.
   void filter_coplanar_edges();
-  /// called before segmenting input meshes in patches defined by connected components seperated by intersection edges.
+  /// called before segmenting input meshes in patches defined by connected components separated by intersection edges.
   void detect_patches();
   /// called before classifying which patches contribute to each Boolean operation.
   void classify_patches();

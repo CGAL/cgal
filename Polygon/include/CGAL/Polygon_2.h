@@ -242,8 +242,11 @@ class Polygon_2 {
     /// Erases the vertex pointed to by `i`.
     Vertex_circulator erase(Vertex_circulator i)
       {
-        return Vertex_circulator(&d_container,
-                                 d_container.erase(i.mod_iterator()));
+        auto it = d_container.erase(i.mod_iterator());
+        if(it == d_container.end()){
+          it = d_container.begin();
+        }
+        return Vertex_circulator(&d_container, it);
       }
 
     /// Erases the vertices in the range `[first, last)`.

@@ -45,7 +45,7 @@ functions that return instances of these types:
 
 This function implements the non-recursive variation of
 Eddy's algorithm \cgalCite{e-nchap-77} described in \cgalCite{b-chfsp-78}.
-This algorithm requires \f$ O(n h)\f$ time
+This algorithm requires \cgalBigO{n h} time
 in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points.
 */
 template <class InputIterator, class OutputIterator, class Traits>

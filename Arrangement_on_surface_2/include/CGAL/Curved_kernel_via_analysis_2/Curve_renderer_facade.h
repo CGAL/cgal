@@ -62,7 +62,6 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Arithmetic_kernel.h>
 
-#include <boost/array.hpp>
 #include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_2.h>
 
 
@@ -246,15 +245,15 @@ public:
      * \c Coord_2 must be constructible from a pair of integers / doubles
      * depending on the renderer type
      *
-     * computes optionaly end-point coordinates (even if they lie outside the
+     * computes optionally end-point coordinates (even if they lie outside the
      * window)
      */
     template < class Coord_2, template < class, class > class Container,
         class Allocator >
     inline void draw(const Arc_2& arc,
             Container< std::vector< Coord_2 >, Allocator >& pts,
-            boost::optional< Coord_2 > *end_pt1 = nullptr,
-            boost::optional< Coord_2 > *end_pt2 = nullptr) {
+            std::optional< Coord_2 > *end_pt1 = nullptr,
+            std::optional< Coord_2 > *end_pt2 = nullptr) {
 
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         Bbox_2 bbox;
@@ -335,7 +334,7 @@ Lexit:  std::cerr << "Sorry, this does not work even with exact "
      * rasterizes a point on curve, returns point coordinates as objects of
      * type \c Coord_2 which are constructible from a pair of ints / doubles
      *
-     * retunrs \c false if point lies outside the window or cannot be
+     * returns \c false if point lies outside the window or cannot be
      * rasterized due to precision problems
      */
     template < class Coord_2 >

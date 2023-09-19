@@ -121,7 +121,7 @@ struct Custom_traits_Hausdorff
 
   struct Has_on_bounded_side_3
   {
-    //documented as Comparision_result
+    //documented as Comparison_result
     CGAL::Comparison_result operator()(const Point_3&, const Point_3&, const Point_3&) const
     {return CGAL::ZERO;}
     bool operator()(const Sphere_3&, const Point_3&)
@@ -144,7 +144,7 @@ struct Custom_traits_Hausdorff
   Compute_squared_distance_3 compute_squared_distance_3_object() const {return Compute_squared_distance_3();}
   Do_intersect_3 do_intersect_3_object() const {return Do_intersect_3();}
   Equal_3 equal_3_object() const {return Equal_3();}
-// } end of requirments from AABBGeomTraits
+// } end of requirements from AABBGeomTraits
 
 
 // requirements from SearchGeomTraits_3 {

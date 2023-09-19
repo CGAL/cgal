@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2020 Free Software Foundation Europe e.V. <https://fsfe.org>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: REUSE Compliance Check
+
+on: [push, pull_request]
+
+jobs:
+  reuse:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: REUSE version
+      uses: fsfe/reuse-action@v2
+      with:
+        args: --version
+    - name: REUSE lint
+      uses: fsfe/reuse-action@v2
+      with:
+        args: --include-submodules lint
+    - name: REUSE SPDX SBOM
+      uses: fsfe/reuse-action@v2
+      with:
+        args: spdx
+    - name: install dependencies
+      run: sudo apt-get install -y cmake
+    - name: Create CGAL internal release
+      run: |
+        mkdir -p ./release
+        cmake -DDESTINATION=./release -DCGAL_VERSION=9.9 -P ./Scripts/developer_scripts/cgal_create_release_with_cmake.cmake
+    - name: REUSE lint release tarball
+      uses: fsfe/reuse-action@v2
+      with:
+        args: --root ./release/CGAL-9.9 --include-submodules lint

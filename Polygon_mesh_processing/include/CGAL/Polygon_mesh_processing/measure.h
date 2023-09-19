@@ -24,6 +24,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
 
@@ -31,6 +32,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/dynamic_bitset.hpp>
 
+#include <vector>
 #include <utility>
 #include <algorithm>
 #include <unordered_set>
@@ -308,6 +310,7 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   *   - `first`: a halfedge on the longest border.
   *     The return type `halfedge_descriptor` is a halfedge descriptor. It is
   *     deduced from the graph traits corresponding to the type `PolygonMesh`.
+  *     `first` is among the halfedges reported by `extract_boundary_cycles()`.
   *   - `second`: the length of the longest border
   *     The return type `FT` is a number type either deduced from the `geom_traits`
   *     \ref bgl_namedparameters "Named Parameters" if provided,
@@ -318,6 +321,7 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   * will be performed approximately.
   *
   * @see `face_border_length()`
+  * @see `extract_boundary_cycles()`
   */
 template<typename PolygonMesh,
          typename NamedParameters = parameters::Default_named_parameters>
@@ -334,28 +338,18 @@ longest_border(const PolygonMesh& pmesh,
             typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type>::Kernel::FT  FT;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                       halfedge_descriptor;
 
-  std::unordered_set<halfedge_descriptor> visited;
+  std::vector<halfedge_descriptor> boundary_cycles;
+  extract_boundary_cycles(pmesh, std::back_inserter(boundary_cycles));
   halfedge_descriptor result_halfedge = boost::graph_traits<PolygonMesh>::null_halfedge();
   FT result_len = 0;
-  for(halfedge_descriptor h : halfedges(pmesh))
+  for(halfedge_descriptor h : boundary_cycles)
   {
-    if(visited.find(h)== visited.end())
-    {
-      if(is_border(h, pmesh))
-      {
-        FT len = 0;
-        for(halfedge_descriptor haf : halfedges_around_face(h, pmesh))
-        {
-          len += edge_length(haf, pmesh, np);
-          visited.insert(haf);
-        }
+    FT len = face_border_length(h, pmesh, np);
 
-        if(result_len < len)
-        {
-          result_len = len;
-          result_halfedge = h;
-        }
-      }
+    if(result_len < len)
+    {
+      result_len = len;
+      result_halfedge = h;
     }
   }
   return std::make_pair(result_halfedge, result_len);
@@ -863,34 +857,38 @@ centroid(const TriangleMesh& tmesh,
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 
-  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type Kernel;
-  typedef typename Kernel::Point_3                                      Point_3;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type     Kernel;
+  Kernel k = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename Kernel::FT                                           FT;
+  typedef typename boost::property_traits<Vpm>::reference               Point_3_ref;
   typedef typename Kernel::Vector_3                                     Vector_3;
+
   typedef typename Kernel::Construct_translated_point_3                 Construct_translated_point_3;
   typedef typename Kernel::Construct_vector_3                           Construct_vector_3;
   typedef typename Kernel::Construct_normal_3                           Construct_normal_3;
   typedef typename Kernel::Compute_scalar_product_3                     Scalar_product;
   typedef typename Kernel::Construct_scaled_vector_3                    Scale;
   typedef typename Kernel::Construct_sum_of_vectors_3                   Sum;
+
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor   face_descriptor;
-  typedef typename Kernel::FT FT;
 
   FT volume = 0;
 
   Vector_3 centroid(NULL_VECTOR);
 
-  Construct_translated_point_3 point;
-  Construct_vector_3 vector;
-  Construct_normal_3 normal;
-  Scalar_product scalar_product;
-  Scale scale;
-  Sum sum;
+  Construct_translated_point_3 point = k.construct_translated_point_3_object();
+  Construct_vector_3 vector = k.construct_vector_3_object();
+  Construct_normal_3 normal = k.construct_normal_3_object();
+  Scalar_product scalar_product = k.compute_scalar_product_3_object();
+  Scale scale = k.construct_scaled_vector_3_object();
+  Sum sum = k.construct_sum_of_vectors_3_object();
 
   for(face_descriptor fd : faces(tmesh))
   {
-    const Point_3& p = get(vpm, target(halfedge(fd, tmesh), tmesh));
-    const Point_3& q = get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh));
-    const Point_3& r = get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh));
+    const Point_3_ref p = get(vpm, target(halfedge(fd, tmesh), tmesh));
+    const Point_3_ref q = get(vpm, target(next(halfedge(fd, tmesh), tmesh), tmesh));
+    const Point_3_ref r = get(vpm, target(prev(halfedge(fd, tmesh), tmesh), tmesh));
     Vector_3 vp = vector(ORIGIN, p),
              vq = vector(ORIGIN, q),
              vr = vector(ORIGIN, r);
@@ -991,8 +989,8 @@ void match_faces(const PolygonMesh1& m1,
                                        get_const_property_map(vertex_point, m1));
   const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                        get_const_property_map(vertex_point, m2));
-  CGAL_static_assertion_msg((std::is_same<typename boost::property_traits<VPMap1>::value_type,
-                             typename boost::property_traits<VPMap2>::value_type>::value),
+  static_assert(std::is_same<typename boost::property_traits<VPMap1>::value_type,
+                             typename boost::property_traits<VPMap2>::value_type>::value,
                             "Both vertex point maps must have the same point type.");
 
   const VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);

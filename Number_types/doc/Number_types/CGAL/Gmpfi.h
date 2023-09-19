@@ -18,8 +18,7 @@ This type is `ImplicitInteroperable` with `Gmpfr`, `Gmpz`,
 `Gmpq`, <TT>long</TT>, <TT>unsigned long</TT>, <TT>int</TT>, <TT>double</TT>
 and <TT>long double</TT>.
 
-\cgalModels `FieldWithKthRoot`
-\cgalModels `RealEmbeddable`
+\cgalModels{FieldWithKthRoot,RealEmbeddable}
 
 \cgalHeading{Implementation}
 

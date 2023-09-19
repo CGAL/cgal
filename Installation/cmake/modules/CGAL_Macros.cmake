@@ -360,7 +360,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}"
       COMPATIBILITY SameMajorVersion)
 
-    # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
+    # There is also a version of CGALConfig.cmake that is prepared in case CGAL is installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
 
     #write prefix exceptions
@@ -384,8 +384,8 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   # Composes a tagged list of libraries: a list with interpersed keywords or tags
   # indicating that all following libraries, up to the next tag, are to be linked only for the
   # corresponding build type. The 'general' tag indicates libraries that corresponds to all build types.
-  # 'optimized' corresponds to release builds and 'debug' to debug builds. Tags are case sensitve and
-  # the inital range of libraries listed before any tag is implicitely 'general'
+  # 'optimized' corresponds to release builds and 'debug' to debug builds. Tags are case sensitive and
+  # the initial range of libraries listed before any tag is implicitly 'general'
   #
   # This macro takes 3 lists of general, optimized and debug libraries, resp, and populates the list
   # given in the fourth argument.
@@ -425,9 +425,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   # where the general, optimized and debug libraries are collected.
   #
   # The first parameter must be a string containing a semi-colon separated list of elements.
-  # It cannot be ommitted, but it can be an empty string ""
+  # It cannot be omitted, but it can be an empty string ""
   #
-  # TThe next three arguments must be the names of the variables containing the result, and they
+  # The next three arguments must be the names of the variables containing the result, and they
   # will be APPENDED (retaining any previous contents)
   #
   # If there is a last parameter whose value is "PERSISTENT" then the result variables are internal in the cache,
@@ -487,11 +487,11 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   #
   #   tag_libraries( LIBS_1 SOME_UNDEFINED_VARIABLE_OR_EMPTY_LIST LIBS_R )
   #
-  # LIBS_R -> libA.so;libB.so  (implicitely 'general' since there is no tag)
+  # LIBS_R -> libA.so;libB.so  (implicitly 'general' since there is no tag)
   #
   #   tag_libraries( SOME_UNDEFINED_VARIABLE_OR_EMPTY_LIST LIBS_2 LIBS_R )
   #
-  # LIBS_R -> libC.so  (implicitely 'general' since there is no tag)
+  # LIBS_R -> libC.so  (implicitly 'general' since there is no tag)
   #
   macro( tag_libraries libs_general_or_optimized libs_general_or_debug libs )
 
@@ -513,7 +513,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   # Appends the list of tagged libraries contained in the variable 'libA' to the list
   # of tagged libraries contained in the variable 'libR', properly redistributing each tagged subsequence.
   #
-  # The first argument is the name of the variable recieving the list. It will be APPENDED
+  # The first argument is the name of the variable receiving the list. It will be APPENDED
   # (retaining any previous contents).
   # The second parameter is a single string value containing the tagged
   # lists of libraries to append (as a semi-colon separated list). It can be empty, in which case noting is added.

@@ -52,7 +52,7 @@ void test_default_methods(      vector<Point>& pvec0,
     x=p0;
     assert(x == p0);
 
-    // move assignement and constructor
+    // move assignment and constructor
     x.clear();
     assert(x.is_empty());
     x = std::move(p0);

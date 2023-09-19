@@ -36,11 +36,6 @@
 #  define WIN64
 #endif
 
-#ifdef _MSC_VER
-#define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
-#define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 1
-#endif
-
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
@@ -117,6 +112,7 @@
 #include <boost/version.hpp>
 
 #include <CGAL/version.h>
+#include <CGAL/version_checker.h>
 
 //----------------------------------------------------------------------//
 //  platform specific workaround flags (CGAL_CFG_...)
@@ -147,8 +143,8 @@
 #endif
 
 // Same for C++17
-#if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
-#  define CGAL_CXX17 1
+#if !(__cplusplus >= 201703L || _MSVC_LANG >= 201703L)
+#error "CGAL requires C++ 17"
 #endif
 // Same for C++20
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
@@ -346,7 +342,10 @@ using std::max;
 #define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
-#if __has_cpp_attribute(no_unique_address)
+#if _MSC_VER >= 1929 && _MSVC_LANG >= 202002L
+// see https://devblogs.microsoft.com/cppblog/msvc-cpp20-and-the-std-cpp20-switch/#c20-no_unique_address
+#  define CGAL_NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
+#elif __has_cpp_attribute(no_unique_address)
 #  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else
 #  define CGAL_NO_UNIQUE_ADDRESS
@@ -488,12 +487,6 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if CGAL_CXX17
-#  define CGAL_CPP17_INLINE inline
-#else
-#  define CGAL_CPP17_INLINE
-#endif
-
 #ifndef CGAL_NO_ASSERTIONS
 #  define CGAL_NO_ASSERTIONS_BOOL false
 #else
@@ -549,7 +542,7 @@ namespace cpp11{
 namespace CGAL {
 
 // Returns filename prefixed by the directory of CGAL containing data.
-// This directory is either defined in the environement variable CGAL_DATA_DIR,
+// This directory is either defined in the environment variable CGAL_DATA_DIR,
 // otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
 // otherwise it is empty (and thus returns filename unmodified).
 inline std::string data_file_path(const std::string& filename)
@@ -596,5 +589,62 @@ inline std::string data_file_path(const std::string& filename)
 }
 
 } // end namespace CGAL
+
+
+#if BOOST_VERSION < 107900
+
+// Workaround for an accidental enable if of Eigen::Matrix in the
+// boost::multiprecision::cpp_int constructor for some versions of
+// boost
+
+namespace Eigen{
+  template <class A, int B, int C, int D, int E, int F>
+  class Matrix;
+  template <class A, int B, class C>
+  class Ref;
+
+  template <class A, class B, int C>
+  class Product;
+
+  template<typename BinaryOp, typename Lhs, typename Rhs>  class CwiseBinaryOp;
+
+}
+
+namespace boost {
+    namespace multiprecision {
+        namespace detail {
+            template <typename T>
+            struct is_byte_container;
+
+
+            template <class A, int B, int C, int D, int E, int F>
+            struct is_byte_container< Eigen::Matrix<A, B, C, D, E, F>>
+            {
+                static const bool value = false;
+            };
+
+            template <class A, int B, class C>
+            struct is_byte_container< Eigen::Ref<A, B, C>>
+            {
+                static const bool value = false;
+            };
+
+            template <class A, class B, int C>
+            struct is_byte_container< Eigen::Product<A, B, C>>
+            {
+                static const bool value = false;
+            };
+
+            template <class A, class B, class C>
+            struct is_byte_container< Eigen::CwiseBinaryOp<A, B, C>>
+            {
+                static const bool value = false;
+            };
+
+        }
+    }
+}
+
+#endif // BOOST_VERSION < 107900
 
 #endif // CGAL_CONFIG_H

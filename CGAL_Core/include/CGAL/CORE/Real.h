@@ -115,7 +115,7 @@ public:
     *this += 1;
     return t;
   }
-  /// right deccrement operator (i--)
+  /// right decrement operator (i--)
   Real operator--(int) {
     Real t(*this);
     *this -= 1;
@@ -168,7 +168,7 @@ public:
   }
   //@}
 
-  /// \name Aprroximation Function
+  /// \name Approximation Function
   //@{
   /// approximation
   Real approx(const extLong& r=get_static_defRelPrec(),

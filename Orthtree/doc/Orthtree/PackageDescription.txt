@@ -21,7 +21,7 @@
 \cgalPkgDescriptionBegin{Quadtrees\, Octrees\, and Orthtrees,PkgOrthtree}
 \cgalPkgPicture{octree_thumbnail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, Pierre Alliez}
+\cgalPkgAuthors{Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, and Pierre Alliez}
 \cgalPkgDesc{The Orthtree package provides a data structure that subdivides space, with specializations for 2D (Quadtree) and 3D (Octree), along with a collection of algorithms for operating on these structures.}
 \cgalPkgManuals{Chapter_Orthtree,PkgOrthtreeRef}
 \cgalPkgSummaryEnd

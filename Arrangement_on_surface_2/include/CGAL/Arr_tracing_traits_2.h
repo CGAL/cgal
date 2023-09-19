@@ -26,7 +26,7 @@
 #include <iostream>
 #include <list>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
@@ -162,12 +162,17 @@ private:
   { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP); }
 
 public:
-  /*! Default constructor */
-  Arr_tracing_traits_2() :
-    Base()
+  /*! Construct default */
+  template<typename ... Args>
+  Arr_tracing_traits_2(Args ... args) :
+    Base(args...)
   {
     enable_all_traces();
   }
+
+  /*! Disable copy constructor.
+   */
+  Arr_tracing_traits_2(const Arr_tracing_traits_2&) = delete;
 
   /*! Enable the trace of a traits operation
    * \param id the operation identifier
@@ -279,7 +284,7 @@ public:
       m_object(base->construct_min_vertex_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curev the left endpoint of which is obtained
+     * \param xcv the curve the left endpoint of which is obtained
      * \return the left endpoint
      */
     const Point_2 operator()(const X_monotone_curve_2& xcv) const
@@ -305,7 +310,7 @@ public:
       m_object(base->construct_max_vertex_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curev the right endpoint of which is obtained
+     * \param xcv the curve the right endpoint of which is obtained
      * \return the right endpoint
      */
     const Point_2 operator()(const X_monotone_curve_2& xcv) const
@@ -526,7 +531,7 @@ public:
       std::cout << "make_x_monotone" << std::endl
                 << "  cv: " << cv << std::endl;
 
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
 
       std::list<Make_x_monotone_result> container;
@@ -535,12 +540,12 @@ public:
 
       size_t i = 0;
       for (auto it = container.begin(); it != container.end(); ++it) {
-        if (const auto* xcv = boost::get<X_monotone_curve_2>(&*it)) {
+        if (const auto* xcv = std::get_if<X_monotone_curve_2>(&*it)) {
           std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        if (const auto* p = boost::get<Point_2>(&*it)) {
+        if (const auto* p = std::get_if<Point_2>(&*it)) {
           std::cout << "  result[" << i++ << "]: p: " << *p << std::endl;
           continue;
         }
@@ -613,7 +618,7 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
       if (! m_enabled) return m_object(xcv1, xcv2, oi);
@@ -627,22 +632,22 @@ public:
 
       unsigned int i = 0;
       for (const auto& item : container) {
-        const X_monotone_curve_2* xcv = boost::get<X_monotone_curve_2>(&item);
+        const X_monotone_curve_2* xcv = std::get_if<X_monotone_curve_2>(&item);
         if (xcv != nullptr) {
           std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
+          *oi++ = *xcv;
           continue;
         }
 
-        const Intersection_point* ip = boost::get<Intersection_point>(&item);
+        const Intersection_point* ip = std::get_if<Intersection_point>(&item);
         if (ip != nullptr) {
           std::cout << "  result[" << i++ << "]: p: " << ip->first
                     << ", multiplicity: " << ip->second << std::endl;
+          *oi++ = *ip;
           continue;
         }
       }
 
-      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
-      container.clear();
       return oi;
     }
   };
@@ -650,13 +655,13 @@ public:
   /*! A functor that tests whether two x-monotone curves can be merged. */
   class Are_mergeable_2 {
   private:
-    typename Base::Are_mergeable_2 m_object;
+    const Base& m_base_traits;
     bool m_enabled;
 
   public:
     /*! Construct */
-    Are_mergeable_2(const Base* base, bool enabled = true) :
-      m_object(base->are_mergeable_2_object()), m_enabled(enabled) {}
+    Are_mergeable_2(const Base& base, bool enabled = true) :
+      m_base_traits(base), m_enabled(enabled) {}
 
     /*! Operate
      * \param xcv1 the first curve
@@ -667,14 +672,32 @@ public:
      */
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const
-    {
-      if (!m_enabled) return m_object(xcv1, xcv2);
+    { return are_mergable_2_impl<Base>(xcv1, xcv2, 0); }
+
+  private:
+    /*! The base does not have Are_mergable_2
+     */
+    template <typename T>
+    bool are_mergable_2_impl(const X_monotone_curve_2& /* xcv1 */,
+                             const X_monotone_curve_2& /* xcv2 */, long) const {
+      CGAL_error();
+      return false;
+    }
+
+    /*! The base does have Are_mergable_2
+     */
+    template <typename T>
+    auto are_mergable_2_impl(const X_monotone_curve_2& xcv1,
+                             const X_monotone_curve_2& xcv2, int) const ->
+    decltype(m_base_traits.are_mergeable_2_object().operator()(xcv1, xcv2)) {
+      auto are_mergeable = m_base_traits.are_mergeable_2_object();
+      if (! m_enabled) return are_mergeable(xcv1, xcv2);
       std::cout << "are_mergeable" << std::endl
                 << "  xcv1: " << xcv1 << std::endl
                 << "  xcv2: " << xcv2 << std::endl;
-      bool are_mergeable = m_object(xcv1, xcv2);
-      std::cout << "  result: " << are_mergeable << std::endl;
-      return are_mergeable;
+      bool mergeable = are_mergeable(xcv1, xcv2);
+      std::cout << "  result: " << mergeable << std::endl;
+      return mergeable;
     }
   };
 

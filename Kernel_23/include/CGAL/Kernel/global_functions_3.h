@@ -312,6 +312,15 @@ collinear_are_strictly_ordered_along_line(const Point_3<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
+compare_angle(const Point_3<K>& a, const Point_3<K>& b, const Point_3<K>& c,
+              const typename K::FT& cosine)
+{
+  return internal::compare_angle(a, b, c, cosine, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_dihedral_angle(const Point_3<K>& a1, const Point_3<K>& b1,
                        const Point_3<K>& c1, const Point_3<K>& d1,
                        const Point_3<K>& a2, const Point_3<K>& b2,

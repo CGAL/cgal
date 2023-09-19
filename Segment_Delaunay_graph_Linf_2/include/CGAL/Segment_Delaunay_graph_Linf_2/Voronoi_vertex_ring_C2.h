@@ -3937,7 +3937,7 @@ private:
 
   vertex_t v_type;
 
-  // index that indicates the refence point for the case PPS
+  // index that indicates the reference point for the case PPS
   short pps_idx;
 
   // philaris: different types are not needed any more

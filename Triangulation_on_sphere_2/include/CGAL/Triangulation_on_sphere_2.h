@@ -123,7 +123,7 @@ public:
     _gt.set_radius(radius);
   }
 
-  // Assignement
+  // Assignment
   void swap(Triangulation_on_sphere_2& tr);
   Triangulation_on_sphere_2& operator=(Triangulation_on_sphere_2 tr); // intentional copy
 
@@ -512,7 +512,7 @@ clear()
   _tds.clear();
 }
 
-// Assignement
+// Assignment
 template <typename Gt, typename Tds>
 void
 Triangulation_on_sphere_2<Gt, Tds>::

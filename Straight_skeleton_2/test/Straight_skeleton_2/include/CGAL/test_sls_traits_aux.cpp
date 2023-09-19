@@ -9,8 +9,8 @@
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
-#include<boost/format.hpp>
-#include<string>
+#include <boost/format.hpp>
+#include <string>
 
 int sSucceeded = 0 ;
 int sFailed    = 0 ;
@@ -36,8 +36,8 @@ void report( int idx, bool ok, std::string const& info = std::string("") )
 
 bool exist_event( Traits const&  aTraits, triple const& aTriple )
 {
-  boost::optional<FT> lMaxTime ;
-  return CGAL::Do_ss_event_exist_2(aTraits)(aTriple.trisegment(), lMaxTime );
+  std::optional<FT> lMaxTime ;
+  return aTraits.do_ss_event_exist_2_object()(aTriple.trisegment(), lMaxTime );
 }
 
 template<class Traits, class triple>
@@ -52,7 +52,7 @@ void test_exist_event( int            i
 
 CGAL::Comparison_result compare_events(Traits const& aTraits, triple const& aTripleA, triple const& aTripleB )
 {
-  return CGAL::Compare_ss_event_times_2(aTraits)(aTripleA.trisegment(),aTripleB.trisegment());
+  return aTraits.compare_ss_event_times_2_object()(aTripleA.trisegment(),aTripleB.trisegment());
 }
 
 template<class Traits, class triple>

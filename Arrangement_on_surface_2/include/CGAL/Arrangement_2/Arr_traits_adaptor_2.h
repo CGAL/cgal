@@ -124,7 +124,7 @@ public:
   typedef typename Base::Compare_y_at_x_right_2 Compare_y_at_x_right_2;
   typedef typename Base::Equal_2                Equal_2;
 
-  /// \name Overriden functors for bounded boundaries.
+  /// \name Overridden functors for bounded boundaries.
   //@{
 
   /*! A functor that compares the y-coordinates of (i) a given point and (ii)
@@ -643,7 +643,7 @@ public:
                            Tag_false) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
       std::list<Intersection_result> intersections;
       m_self->intersect_2_object()(xcv1, xcv2, back_inserter(intersections));
@@ -656,7 +656,7 @@ public:
 
   //@}
 
-  /// \name Overriden functors for boundaries.
+  /// \name Overridden functors for boundaries.
   //@{
 
   // left-right
@@ -1860,7 +1860,7 @@ public:
       auto compare_x = m_self->compare_x_2_object();
       auto min_res = compare_x(p, m_self->construct_min_vertex_2_object()(xcv));
       if (min_res == SMALLER) return false;   // p is to the left of the x-range
-      else if (min_res == EQUAL) return true; // p coinsides with the left end
+      else if (min_res == EQUAL) return true; // p coincides with the left end
 
       auto max_res = compare_x(p, m_self->construct_max_vertex_2_object()(xcv));
       return (max_res != LARGER);
@@ -2248,7 +2248,7 @@ public:
 
       if (ps_y1 != ARR_INTERIOR) {
         if (ps_y2 != ARR_INTERIOR) {
-          // The curve ends have special boundary with oposite signs in y,
+          // The curve ends have special boundary with opposite signs in y,
           // we readily know their relative position (recall that they do not
           // instersect).
           if ((ps_y1 == ARR_BOTTOM_BOUNDARY) && (ps_y2 == ARR_TOP_BOUNDARY))
@@ -3360,17 +3360,17 @@ public:
   typedef typename Base_traits_2::Split_2            Split_2;
   typedef typename Base_traits_2::Intersect_2        Intersect_2;
 
-  /// \name Overriden functors.
+  /// \name Overridden functors.
   //@{
 
   /*! A functor that compares two points or two x-monotone curves
-   * lexigoraphically. Two points are compared firest by their x-coordinates,
+   * lexigoraphically. Two points are compared first by their x-coordinates,
    * then by their y-coordinates. Two curves are compared first their left-most
    * endpoint, then by the graphs, and finally by their right-most endpoint.
    */
   class Compare_xy_2 {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
   public:
@@ -3387,7 +3387,7 @@ public:
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      Base base(m_self);
+      const Base& base = m_self;
       return base.compare_xy_2_object()(p1, p2);
     }
 
@@ -3580,7 +3580,7 @@ public:
       // Verify the first intersection is an overlap, remove it, and
       // recursively call.
       const X_monotone_curve_2* xcv =
-        boost::get<X_monotone_curve_2>(&(intersections.front()));
+        std::get_if<X_monotone_curve_2>(&(intersections.front()));
       if (! xcv) {
         CGAL_error_msg("The first intersection is not an overlap!");
         return SMALLER;

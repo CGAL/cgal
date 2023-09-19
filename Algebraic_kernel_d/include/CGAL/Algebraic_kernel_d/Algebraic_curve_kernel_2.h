@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <CGAL/iterator.h>
 #include <CGAL/assertions.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/basic.h>
 #include <CGAL/config.h>
@@ -359,7 +359,7 @@ public:
        Unary_compose(const Unary_compose& other) = default;
        Unary_compose& operator=(const Unary_compose& other) = default;
 
-       Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
+       Unary_compose() : _inner(::std::nullopt),_outer(::std::nullopt) {}
 
        typedef typename InnerFunctor::argument_type argument_type;
        typedef typename OuterFunctor::result_type result_type;
@@ -368,11 +368,11 @@ public:
        result_type operator() (const argument_type& arg) const {
          CGAL_assertion(bool(_inner));
          CGAL_assertion(bool(_outer));
-         return _outer.get()(_inner.get()(arg));
+         return _outer.value()(_inner.value()(arg));
        }
     private:
-       ::boost::optional<InnerFunctor> _inner;
-       ::boost::optional<OuterFunctor> _outer;
+       ::std::optional<InnerFunctor> _inner;
+       ::std::optional<OuterFunctor> _outer;
     };
 
     template<typename InnerFunctor,typename OuterFunctor>
@@ -481,18 +481,18 @@ public:
       Curve_analysis_2 _construct_defining_polynomial_from(Bound b) const {
         typedef CGAL::Fraction_traits<Bound> FT;
         // We rely on the fact that the Bound is a fraction
-        CGAL_static_assertion((::std::is_same<typename FT::Is_fraction,
-                                             CGAL::Tag_true>::value));
+        static_assert(::std::is_same<typename FT::Is_fraction,
+                                             CGAL::Tag_true>::value);
         typedef typename FT::Numerator_type Numerator;
         typedef typename FT::Denominator_type Denominator;
         typedef CGAL::Coercion_traits<Numerator,Coefficient> Num_coercion;
-        CGAL_static_assertion((::std::is_same
+        static_assert(::std::is_same
                               <Coefficient,
-                                  typename Num_coercion::Type>::value));
+                                  typename Num_coercion::Type>::value);
         typedef CGAL::Coercion_traits<Denominator,Coefficient> Denom_coercion;
-        CGAL_static_assertion((::std::is_same
+        static_assert(::std::is_same
                                <Coefficient,
-                                typename Denom_coercion::Type>::value));
+                                typename Denom_coercion::Type>::value);
         typename Num_coercion::Cast num_cast;
         typename Denom_coercion::Cast denom_cast;
         typename FT::Decompose decompose;
@@ -840,7 +840,7 @@ public:
         } else {
           // more work! We should not assume that each
           // roots[i].first has f or g as defining polynomial, because
-          // the representation might have been simplifed
+          // the representation might have been simplified
 
           // Here's the safe way: Take the simpler of the curves
           // (but the one without vertical component!)
@@ -922,7 +922,7 @@ public:
      *
      * \attention{This method returns the y-coordinate in isolating interval
      * representation. Calculating such a representation is usually a time-
-     * consuming taks, since it is against the "y-per-x"-view that we take
+     * consuming task, since it is against the "y-per-x"-view that we take
      * in our kernel. Therefore, it is recommended, if possible,
      *  to use the functors
      * \c Approximate_absolute_y_2 and \c Approximate_relative_y_2 that
@@ -2541,18 +2541,18 @@ public:
       Polynomial_1 operator() (const Polynomial_2& f, Bound b) const {
         typedef CGAL::Fraction_traits<Bound> FT;
         // We rely on the fact that the Bound is a fraction
-        CGAL_static_assertion((::std::is_same<typename FT::Is_fraction,
-                                             CGAL::Tag_true>::value));
+        static_assert(::std::is_same<typename FT::Is_fraction,
+                                             CGAL::Tag_true>::value);
         typedef typename FT::Numerator_type Numerator;
         typedef typename FT::Denominator_type Denominator;
         typedef CGAL::Coercion_traits<Numerator,Coefficient> Num_coercion;
-        CGAL_static_assertion((::std::is_same
+        static_assert(::std::is_same
                               <Coefficient,
-                                  typename Num_coercion::Type>::value));
+                                  typename Num_coercion::Type>::value);
         typedef CGAL::Coercion_traits<Denominator,Coefficient> Denom_coercion;
-        CGAL_static_assertion((::std::is_same
+        static_assert(::std::is_same
                                <Coefficient,
-                                typename Denom_coercion::Type>::value));
+                                typename Denom_coercion::Type>::value);
         typename Num_coercion::Cast num_cast;
         typename Denom_coercion::Cast denom_cast;
         typename FT::Decompose decompose;

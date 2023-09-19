@@ -1,13 +1,12 @@
 include(polyhedron_demo_macros)
-if(TARGET CGAL::Eigen3_support)
 
+if(TARGET CGAL::Eigen3_support)
   find_package(SCIP QUIET)
 
   set_package_properties(
     SCIP PROPERTIES
-    DESCRIPTION "A solver."
-    PURPOSE
-      "Can be used as a solver in the surface_reconstruction_plugin plugin.")
+    DESCRIPTION "A solver for mixed integer programming."
+    PURPOSE "Can be used as a solver in the surface_reconstruction_plugin plugin.")
 
   include(CGAL_SCIP_support)
   if(NOT TARGET CGAL::SCIP_support)
@@ -16,17 +15,13 @@ if(TARGET CGAL::Eigen3_support)
     set_package_properties(
       GLPK PROPERTIES
       DESCRIPTION "An alternative for SCIP."
-      PURPOSE
-        "Can be used as a solver in the surface_reconstruction_plugin plugin.")
+      PURPOSE "Can be used as a solver in the surface_reconstruction_plugin plugin.")
 
     include(CGAL_GLPK_support)
   endif()
 
   if(NOT TARGET CGAL::SCIP_support AND NOT TARGET CGAL::GLPK_support)
-    message(
-      STATUS
-        "NOTICE: SCIP and GLPK were not found. Polygonal surface reconstruction will not be available."
-    )
+    message(STATUS "NOTICE: SCIP and GLPK were not found. Polygonal surface reconstruction will not be available.")
   endif()
 
   qt5_wrap_ui(surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
@@ -46,11 +41,9 @@ if(TARGET CGAL::Eigen3_support)
            scene_points_with_normal_item CGAL::Eigen3_support)
 
   if(TARGET CGAL::SCIP_support)
-    target_link_libraries(surface_reconstruction_plugin
-                          PUBLIC CGAL::SCIP_support)
+    target_link_libraries(surface_reconstruction_plugin PUBLIC CGAL::SCIP_support)
   elseif(TARGET CGAL::GLPK_support)
-    target_link_libraries(surface_reconstruction_plugin
-                          PUBLIC CGAL::GLPK_support)
+    target_link_libraries(surface_reconstruction_plugin PUBLIC CGAL::GLPK_support)
   endif()
 
   qt5_wrap_ui(point_set_normal_estimationUI_FILES
@@ -120,33 +113,14 @@ if(TARGET CGAL::Eigen3_support)
                             PUBLIC CGAL::pointmatcher_support)
     endif()
   else()
-    message(
-      STATUS
-        "NOTICE: OpenGR and libpointmatcher were not found. Registration plugin will not be available."
-    )
+    message(STATUS "NOTICE: OpenGR and libpointmatcher were not found. Registration plugin will not be available.")
   endif()
-
-else(EIGEN3_FOUND)
-  message(
-    STATUS
-      "NOTICE: Eigen 3.1 (or greater) was not found. Surface reconstruction plugin will not be available."
-  )
-  message(
-    STATUS
-      "NOTICE: Eigen 3.1 (or greater) was not found. Normal estimation plugins will not be available."
-  )
-  message(
-    STATUS
-      "NOTICE: Eigen 3.1 (or greater) was not found. Smoothing plugin will not be available."
-  )
-  message(
-    STATUS
-      "NOTICE: Eigen 3.1 (or greater) was not found. Average spacing plugin will not be available."
-  )
-  message(
-    STATUS
-      "NOTICE: Eigen 3.1 (or greater) was not found. Feature detection plugin will not be available."
-  )
+else()
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Surface reconstruction plugin will not be available.")
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Normal estimation plugins will not be available.")
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Smoothing plugin will not be available.")
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Average spacing plugin will not be available.")
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Feature detection plugin will not be available.")
 endif()
 
 qt5_wrap_ui(point_set_bilateral_smoothingUI_FILES

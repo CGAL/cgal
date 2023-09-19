@@ -16,8 +16,8 @@
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 
-#include <boost/optional/optional.hpp>
-#include <boost/shared_ptr.hpp>
+#include <optional>
+#include <memory>
 
 #include <vector>
 
@@ -39,7 +39,7 @@ struct Default_polygon_offset_builder_2_visitor
 
   void on_offset_contour_started() const {}
 
-  void on_offset_point ( Point_2 const& ) const {}
+  void on_offset_point ( Point_2 const&, Halfedge_const_handle ) const {}
 
   Point_2 on_offset_point_overflowed( Halfedge_const_handle aBisector ) const
   {
@@ -69,9 +69,9 @@ public :
   typedef typename Traits::FT      FT ;
   typedef typename Traits::Point_2 Point_2 ;
 
-  typedef boost::optional<Point_2> OptionalPoint_2 ;
+  typedef std::optional<Point_2> OptionalPoint_2 ;
 
-  typedef boost::shared_ptr<Container> ContainerPtr ;
+  typedef std::shared_ptr<Container> ContainerPtr ;
 
   Polygon_offset_builder_2( Ss const& aSs, Traits const& aTraits = Traits(), Visitor const& aVisitor = Visitor() )  ;
 
@@ -137,48 +137,20 @@ private:
     return K().construct_segment_2_object()(s,t);
   }
 
-  Trisegment_2_ptr CreateTrisegment ( Triedge const& aTriedge ) const
-  {
-    CGAL_precondition( aTriedge.is_valid() ) ;
+  Trisegment_2_ptr GetTrisegment ( Vertex_const_handle aNode ) const ;
 
-    if ( aTriedge.is_skeleton() )
-    {
-      return Construct_ss_trisegment_2(mTraits)(CreateSegment(aTriedge.e0())
-                                               ,CreateSegment(aTriedge.e1())
-                                               ,CreateSegment(aTriedge.e2())
-                                               );
-    }
-    else
-    {
-      return Trisegment_2_ptr() ;
-    }
-  }
-
-  Trisegment_2_ptr CreateTrisegment ( Vertex_const_handle aNode ) const ;
-
-  Vertex_const_handle GetSeedVertex ( Vertex_const_handle   aNode
-                                    , Halfedge_const_handle aBisector
-                                    , Halfedge_const_handle aEa
-                                    , Halfedge_const_handle aEb
-                                    ) const ;
-
-  bool Is_bisector_defined_by ( Halfedge_const_handle aBisector, Halfedge_const_handle aEa, Halfedge_const_handle aEb ) const
-  {
-    return    ( aBisector->defining_contour_edge() == aEa && aBisector->opposite()->defining_contour_edge() == aEb )
-           || ( aBisector->defining_contour_edge() == aEb && aBisector->opposite()->defining_contour_edge() == aEa ) ;
-  }
-
+public:
   Comparison_result Compare_offset_against_event_time( FT aT, Vertex_const_handle aNode ) const
   {
     CGAL_precondition( aNode->is_skeleton() ) ;
 
     Comparison_result r = aNode->has_infinite_time() ? SMALLER
-                                                     : static_cast<Comparison_result>(Compare_offset_against_event_time_2(mTraits)(aT,CreateTrisegment(aNode)));
+                                                     : static_cast<Comparison_result>(mTraits.compare_offset_against_event_time_2_object()(aT,GetTrisegment(aNode)));
 
     return r ;
   }
-public:
-  boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
+
+  std::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
   {
     CGAL_assertion(aBisector->is_bisector());
     CGAL_assertion(handle_assigned(aBisector->opposite()));
@@ -199,32 +171,17 @@ public:
       CGAL_assertion ( lNodeT->is_skeleton() ) ;
 
       Vertex_const_handle lSeedNode = aBisector->slope() == POSITIVE ? lNodeS : lNodeT ;
-
-      lSeedEvent = CreateTrisegment(lSeedNode) ;
+      lSeedEvent = GetTrisegment(lSeedNode) ;
 
       CGAL_POLYOFFSET_TRACE(3,"Seed node for " << e2str(*aBisector) << " is " << v2str(*lSeedNode) << " event=" << lSeedEvent ) ;
     }
 
-    OptionalPoint_2 p = Construct_offset_point_2(mTraits)(aT
-                                                         ,CreateSegment(lBorderA)
-                                                         ,CreateSegment(lBorderB)
-                                                         ,lSeedEvent
-                                                         );
-    CGAL_stskel_intrinsic_test_assertion
-    (
-      !p
-      ||
-      ( p && !CGAL_SS_i::is_possibly_inexact_distance_clearly_not_zero
-              ( CGAL_SS_i::squared_distance_from_point_to_lineC2(p->x()
-                                                                ,p->y()
-                                                                ,lNodeS->point().x()
-                                                                ,lNodeS->point().y()
-                                                                ,lNodeT->point().x()
-                                                                ,lNodeT->point().y()
-                                                                ).to_nt()
-              )
-      )
-    ) ;
+    OptionalPoint_2 p = mTraits.construct_offset_point_2_object()( aT,
+                                                                   CreateSegment(lBorderA),
+                                                                   lBorderA->weight(),
+                                                                   CreateSegment(lBorderB),
+                                                                   lBorderB->weight(),
+                                                                   lSeedEvent );
 
     return p ;
   }

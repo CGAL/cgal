@@ -75,7 +75,7 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
   case TD::POINT:
     {
       //p is interior so it should fall on Td_active_vertex
-      Td_active_vertex& v (boost::get<Td_active_vertex>(tr));
+      Td_active_vertex& v (std::get<Td_active_vertex>(tr));
       CGAL_TRAP_PRINT_DEBUG("POINT");
       CGAL_assertion(!v.vertex()->is_at_open_boundary());
       return make_result(v.vertex());
@@ -84,7 +84,7 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
 
   case TD::CURVE:
     {
-      Td_active_edge& e (boost::get<Td_active_edge>(tr));
+      Td_active_edge& e (std::get<Td_active_edge>(tr));
       Halfedge_const_handle h = e.halfedge();
       CGAL_TRAP_PRINT_DEBUG("CURVE");
       if ( m_traits->is_in_x_range_2_object()(h->curve(),p) &&
@@ -100,7 +100,7 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
 
   case TD::TRAPEZOID:
     {
-      Td_active_trapezoid t (boost::get<Td_active_trapezoid>(tr));
+      Td_active_trapezoid t (std::get<Td_active_trapezoid>(tr));
       Halfedge_const_handle h = t.top();
       CGAL_TRAP_PRINT_DEBUG("TRAPEZOID");
       bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p))
@@ -160,7 +160,7 @@ Arr_trapezoid_ric_point_location<Arrangement>::
 _get_unbounded_face(const Td_map_item& item,const Point_2& p,
                     Arr_not_all_sides_oblivious_tag) const
 {
-  Td_active_trapezoid tr (boost::get<Td_active_trapezoid>(item));
+  Td_active_trapezoid tr (std::get<Td_active_trapezoid>(item));
   // Halfedge_const_handle h = tr.top();
   if (!tr.is_on_top_boundary() || !tr.is_on_bottom_boundary()) {
     //if one of top or bottom edges is defined
@@ -184,13 +184,13 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
     Td_map_item& left_v_item = td.locate(tr.left(),td_lt);
     CGAL_assertion(td_lt == TD::POINT);
     Halfedge_const_handle he;
-    if (boost::get<Td_active_vertex>(&left_v_item) != nullptr) {
-      Td_active_vertex v(boost::get<Td_active_vertex>(left_v_item));
+    if (std::get_if<Td_active_vertex>(&left_v_item) != nullptr) {
+      Td_active_vertex v(std::get<Td_active_vertex>(left_v_item));
       he = v.cw_he();
     }
     else {
       Td_active_fictitious_vertex
-        v(boost::get<Td_active_fictitious_vertex>(left_v_item));
+        v(std::get<Td_active_fictitious_vertex>(left_v_item));
       he = v.cw_he();
     }
     //cw_he() holds the "smallest" curve clockwise starting from 12 o'clock
@@ -201,7 +201,7 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
     //the Halfedge_handle source is left_ee.
     // this way the face on it's left is the desired one
 
-    //MICHAL: maybe add a verification that the above occures
+    //MICHAL: maybe add a verification that the above occurs
     return he->face();
   }
   else if (!tr.is_on_right_boundary()) {
@@ -216,13 +216,13 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
     Td_map_item& right_v_item = td.locate(tr.right(),td_lt);
     CGAL_assertion(td_lt == TD::POINT);
     Halfedge_const_handle he;
-    if (boost::get<Td_active_vertex>(&right_v_item)!= nullptr) {
-      Td_active_vertex v(boost::get<Td_active_vertex>(right_v_item));
+    if (std::get_if<Td_active_vertex>(&right_v_item)!= nullptr) {
+      Td_active_vertex v(std::get<Td_active_vertex>(right_v_item));
       he = v.cw_he();
     }
     else {
       Td_active_fictitious_vertex
-        v(boost::get<Td_active_fictitious_vertex>(right_v_item));
+        v(std::get<Td_active_fictitious_vertex>(right_v_item));
       he = v.cw_he();
     }
     //its cw_he() holds the "smallest" curve clockwise starting from
@@ -234,7 +234,7 @@ _get_unbounded_face(const Td_map_item& item,const Point_2& p,
     //the Halfedge_handle source is right_ee.
     // this way the face on it's left is the desired one
 
-    //MICHAL: maybe add a verification that the above occures
+    //MICHAL: maybe add a verification that the above occurs
     return he->face();
   }
 
@@ -270,13 +270,13 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
   case TD::POINT:
     {
       //p fell on Td_active_vertex
-      Td_active_vertex& v (boost::get<Td_active_vertex>(item));
+      Td_active_vertex& v (std::get<Td_active_vertex>(item));
       return (make_result(v.vertex()));
     }
     break;
  case TD::CURVE:
     {
-      Td_active_edge& e (boost::get<Td_active_edge>(item));
+      Td_active_edge& e (std::get<Td_active_edge>(item));
       Halfedge_const_handle h = e.halfedge();
 
       if ((shoot_up && h->direction() == ARR_LEFT_TO_RIGHT) ||
@@ -289,7 +289,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
     break;
   case TD::TRAPEZOID:
     {
-      Td_active_trapezoid trpz (boost::get<Td_active_trapezoid>(item));
+      Td_active_trapezoid trpz (std::get<Td_active_trapezoid>(item));
       Halfedge_const_handle h = (shoot_up) ? trpz.top() : trpz.bottom();
 
       bool is_p_above_h = (m_traits->is_in_x_range_2_object()(h->curve(),p))

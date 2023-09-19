@@ -14,8 +14,7 @@ to compute the square of the length, because otherwise we had to
 perform a square root operation which is not defined for all
 number types, which is expensive, and may not be exact.
 
-\cgalModels `Kernel::Segment_3`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Segment_3,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >

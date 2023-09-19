@@ -705,7 +705,7 @@ public: //---------------------------------------------------- circulator types
     {
     public:
 
-        /// default constructur
+        /// default constructor
         Halfedge_around_face_circulator(const Surface_mesh* m=NULL, Face f=Face())
         : mesh_(m)
         {
@@ -1103,7 +1103,7 @@ public: //--------------------------------------------------- property handling
     {
         return Halfedge_property<T>(hprops_.add<T>(name, t));
     }
-    /** add a edge property of type \c T with name \c name and default value \c t.
+    /** add an edge property of type \c T with name \c name and default value \c t.
      fails if a property named \c name exists already, since the name has to be unique.
      in this case it returns an invalid property */
     template <class T> Edge_property<T> add_edge_property(const std::string& name, const T t=T())

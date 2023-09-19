@@ -54,9 +54,7 @@ which is a variant of the Euclidean Algorithm.
 More sophisticated methods may use modular arithmetic and interpolation.
 For more information we refer to, e.g., \cgalCite{gg-mca-99}.
 
-\cgalRefines `AdaptableBinaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableBinaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

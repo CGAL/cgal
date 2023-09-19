@@ -69,7 +69,7 @@ class Alpha_shape_3 : public Dt
   // or INTERIOR with respect to the alpha shape.
   // In GENERAL mode a $k$ simplex is REGULAR if it is on the boundary
   // of the alpha_complex and belongs to a $k+1$ simplex in the complex
-  // and it is SINGULAR simplex if it is  a boundary simplex tht is not
+  // and it is SINGULAR simplex if it is a boundary simplex that is not
   // included in a $k+1$ simplex of the complex.
 
   // In REGULARIZED mode each k-dimensional simplex of the triangulation
@@ -93,11 +93,11 @@ public:
   typedef typename Dt::Geom_traits                  Gt;
   typedef typename Dt::Triangulation_data_structure Tds;
 
-  // The Exact Comparison Tag cannot be used in conjonction with periodic triangulations
+  // The Exact Comparison Tag cannot be used in conjunction with periodic triangulations
   // because the periodic triangulations' point() function returns a temporary
   // value while the lazy predicate evaluations that are used when the Exact tag
   // is set to true rely on a permanent and safe access to the points.
-  CGAL_static_assertion(
+  static_assert(
    (std::is_same<ExactAlphaComparisonTag, Tag_false>::value) ||
    (std::is_same<typename Dt::Periodic_tag, Tag_false>::value));
 
@@ -108,8 +108,8 @@ public:
   typedef typename Gt::FT Coord_type;
 
   //checks whether tags are correctly set in Vertex and Cell classes
-  CGAL_static_assertion( (std::is_same<NT,typename Dt::Cell::NT>::value) );
-  CGAL_static_assertion( (std::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value) );
+  static_assert(std::is_same<NT,typename Dt::Cell::NT>::value);
+  static_assert(std::is_same<NT,typename Dt::Vertex::Alpha_status::NT>::value);
 
   typedef typename Dt::Point Point;
 
@@ -422,7 +422,7 @@ public:
 private:
 
   // the dynamic version is not yet implemented
-  // desactivate the tetrahedralization member functions
+  // deactivate the tetrahedralization member functions
   void insert(const Point& /*p*/) {}
   // Inserts point `p' in the alpha shape and returns the
   // corresponding vertex of the underlying Delaunay tetrahedralization.
@@ -735,7 +735,7 @@ public:
   // (2) the nb of solid components is equal or less than nb_component
 
   NT find_alpha_solid() const;
-  // compute the minumum alpha such that all data points
+  // compute the minimum alpha such that all data points
   // are either on the boundary or in the interior
   // not necessarily connected
   // starting point for searching
@@ -776,7 +776,7 @@ private:
   //---------------------------------------------------------------------
 
 private:
-  // prevent default copy constructor and default assigment
+  // prevent default copy constructor and default assignment
   Alpha_shape_3(const Alpha_shape_3&);
   void operator=(const Alpha_shape_3&);
 
@@ -1292,7 +1292,7 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_vertex_maps(bool reinitialize)
                      back_inserter(incidents));
       typename std::list<Cell_handle>::iterator chit=incidents.begin();
       if (is_infinite(*chit)) as->set_is_on_chull(true);
-      while (is_infinite(*chit)) ++chit; //skip infinte cells
+      while (is_infinite(*chit)) ++chit; //skip infinite cells
       alpha = (*chit)->get_alpha();
       as->set_alpha_mid(alpha);
       as->set_alpha_max(alpha);
@@ -1330,7 +1330,7 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_vertex_maps(bool reinitialize)
       incident_cells(static_cast<Vertex_handle>(vit),
                      back_inserter(incidents));
       typename std::list<Cell_handle>::iterator chit=incidents.begin();
-      while (is_infinite(*chit)) ++chit; //skip infinte cells
+      while (is_infinite(*chit)) ++chit; //skip infinite cells
       alpha = (*chit)->get_alpha();
       as->set_alpha_mid(alpha);
       for( ; chit != incidents.end(); ++chit) {
@@ -1835,7 +1835,7 @@ Alpha_shape_3<Dt,EACT>::find_optimal_alpha(size_type nb_components) const
 template <class Dt,class EACT>
 typename Alpha_shape_3<Dt,EACT>::NT
 Alpha_shape_3<Dt,EACT>::find_alpha_solid() const
-  // compute the minumum alpha such that all data points
+  // compute the minimum alpha such that all data points
   // are either on the boundary or in the interior
   // not necessarily connected
 {

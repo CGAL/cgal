@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Simplification,PkgSurfaceMeshSimplification}
 \cgalPkgPicture{SMS-detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Fernando Cacciola, Mael Rouxel-Labbé, Baskın Şenbaşlar, and Julian Komaromy}
+\cgalPkgAuthors{Fernando Cacciola, Mael Rouxel-Labbé, Baskın Şenbaşlar, and Julian Komaromy}
 \cgalPkgDesc{This package provides an algorithm to simplify a triangulated surface mesh by edge collapsing.
              Users can define cost, constraints, and placement strategies to decide when and how should
              edges be collapsed. A few strategies are offered by default, such as the Turk/Lindstrom

@@ -24,11 +24,11 @@ namespace CGAL {
 //################################# CGAL::Fraction_traits ##################
 // Select the right alternative as Fraction_traits
 // The actual Type traits is Intern::Sqrt_ext_Ftr_base_2
-// The selction is done in two steps:
+// The selection is done in two steps:
 // 1. Inter::Sqrt_ext_Ftr_base_1 selects by the BOOL_TAG whether the COEFF type
 //    Is_fraction
 // 2. Intern::Sqrt_ext_Ftr_base_2 checks whether the internal type of the ROOT
-//    is still implicite convertible to the new COEFF type.
+//    is still implicitly convertible to the new COEFF type.
 //    since the ROOT type it self can not be converted.
 namespace Intern{
     template <class EXT, bool> class Sqrt_ext_Ftr_base_2;
@@ -41,9 +41,9 @@ namespace Intern{
  *
  *  Extensions provide suitable specializations of \c CGAL::Fraction_traits.
  *  They are decomposable iff their coefficient type is.
- *  The denominator \e d of a Extension \e ext is a low common multiple
+ *  The denominator \e d of an extension \e ext is a low common multiple
  *  (see \c CGAL::Fraction_traits::Common_factor for details) of the
- *  denominators of its coefficients.  The numerator is the Extenion
+ *  denominators of its coefficients.  The numerator is the extenion
  *  \e d*ext with a fraction-free coefficient type.
  *
  *  This works for nested Sqrt_extensions, too.

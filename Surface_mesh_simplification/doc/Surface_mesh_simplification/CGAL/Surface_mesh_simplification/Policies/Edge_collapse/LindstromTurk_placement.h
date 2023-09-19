@@ -11,7 +11,7 @@ a halfedge collapse, following the Lindstrom-Turk strategy
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
-\cgalModels `GetPlacement`
+\cgalModels{GetPlacement}
 
 \sa `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
 
@@ -38,7 +38,7 @@ public:
   Returns the new position for the remaining vertex after collapsing the edge
   (represented by its profile).
   */
-  boost::optional<typename Edge_profile::Point>
+  std::optional<typename Edge_profile::Point>
   operator()(const Edge_profile& profile) const;
 
   /// @}

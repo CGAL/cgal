@@ -346,7 +346,7 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
-      \cgalParamDescription{factor to control density of the ouput mesh,
+      \cgalParamDescription{factor to control density of the output mesh,
                             where larger values cause denser refinements, as in `refine()`}
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
@@ -515,15 +515,15 @@ namespace Polygon_mesh_processing {
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
-      \cgalParamDescription{factor to control density of the ouput mesh,
+      \cgalParamDescription{factor to control density of the output mesh,
                             where larger values cause denser refinements, as in `refine()`}
       \cgalParamType{double}
       \cgalParamDefault{\f$ \sqrt{2}\f$}
     \cgalParamNEnd
 
     \cgalParamNBegin{fairing_continuity}
-      \cgalParamDescription{A value controling the tangential continuity of the output surface patch.
-                            The possible values are 0, 1 and 2, refering to the  C<sup>0</sup>, C<sup>1</sup>
+      \cgalParamDescription{A value controlling the tangential continuity of the output surface patch.
+                            The possible values are 0, 1 and 2, referring to the  C<sup>0</sup>, C<sup>1</sup>
                             and C<sup>2</sup> continuity.}
       \cgalParamType{unsigned int}
       \cgalParamDefault{`1`}
@@ -729,11 +729,8 @@ namespace Polygon_mesh_processing {
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
 
-    bool use_cdt =
-#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
-      false;
-#else
-      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+    bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
 #endif
 bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3

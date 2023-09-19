@@ -503,7 +503,7 @@ void run_tests_with_changes_to_arr() {
 
 
   if (!all_passed) {
-    std::cout << "\tFailed: Modifying attached arrangment causes wrong output.\n";
+    std::cout << "\tFailed: Modifying attached arrangement causes wrong output.\n";
     assert(false);
   } else {
     std::cout << "\tPassed.\n" ;

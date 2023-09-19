@@ -36,13 +36,13 @@
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/tuple.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/format.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/math/special_functions/round.hpp>
 
 #include <iostream>
@@ -79,41 +79,71 @@ max_length(const Bbox_3& b)
 // -----------------------------------
 // Geometric traits generator
 // -----------------------------------
-template < typename Gt,
+template < typename GT,
            typename Use_exact_intersection_construction_tag >
 struct IGT_generator {};
 
-template < typename Gt >
-struct IGT_generator<Gt,CGAL::Tag_true>
+template < typename GT >
+struct IGT_generator<GT,CGAL::Tag_true>
 {
 #ifdef CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
-  typedef CGAL::Mesh_3::Robust_intersection_traits_3_new<Gt> type;
+  typedef CGAL::Mesh_3::Robust_intersection_traits_3_new<GT> type;
 #else // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
-  typedef CGAL::Mesh_3::Robust_intersection_traits_3<Gt> type;
+  typedef CGAL::Mesh_3::Robust_intersection_traits_3<GT> type;
 #endif // NOT CGAL_MESH_3_NEW_ROBUST_INTERSECTION_TRAITS
   typedef type Type;
 };
 
-template < typename Gt >
-struct IGT_generator<Gt,CGAL::Tag_false>
+template < typename GT >
+struct IGT_generator<GT,CGAL::Tag_false>
 {
-  typedef Gt type;
+  typedef GT type;
   typedef type Type;
 };
 
 }  // end namespace details
 }  // end namespace Mesh_3
 
-/**
- * @class Polyhedral_mesh_domain_3
- *
- *
- */
-template<class Polyhedron,/*FaceGraph*/
+
+/*!
+\ingroup PkgMesh3Domains
+
+The class `Polyhedral_mesh_domain_3` implements
+a domain defined by a simplicial polyhedral surface.
+
+The input polyhedral surface must be free of intersections.
+It must include (at least) one closed connected component
+that defines the boundary of the domain to be meshed.
+Inside this bounding component,
+the input polyhedral surface may contain
+several other components (closed or not)
+that will be represented in the final mesh.
+This class is a model of the concept `MeshDomain_3`.
+
+\tparam Polyhedron stands for the type of the input polyhedral surface(s),
+model of `FaceListGraph`.
+
+\tparam IGT stands for a geometric traits class
+providing the types and functors required to implement
+the intersection tests and intersection computations
+for polyhedral boundary surfaces. This parameter has to be instantiated
+with a model of the concept `IntersectionGeometricTraits_3`.
+
+\cgalModels{MeshDomain_3}
+
+\sa `IntersectionGeometricTraits_3`
+\sa `CGAL::make_mesh_3()`.
+*/
+#ifdef DOXYGEN_RUNNING
+template<class Polyhedron /*FaceGraph*/
+         ,class IGT>
+#else // DOXYGEN_RUNNING
+template<class Polyhedron, /*FaceGraph*/
          class IGT_,
-         class = CGAL::Default,
+         class TriangleAccessor = CGAL::Default,
          class Patch_id_ = void,
          class Use_exact_intersection_construction_tag = CGAL::Tag_true>
+#endif // DOXYGEN_RUNNING
 class Polyhedral_mesh_domain_3
 {
 public:
@@ -123,7 +153,7 @@ public:
 
   typedef Patch_id_ Patch_id;
 
-  /// Geometric object types
+  // Geometric object types
   typedef typename IGT::Point_3    Point_3;
   typedef typename IGT::Segment_3  Segment_3;
   typedef typename IGT::Ray_3      Ray_3;
@@ -134,24 +164,24 @@ public:
   //-------------------------------------------------------
   // Index Types
   //-------------------------------------------------------
-  /// Type of indexes for cells of the input complex
+  // Type of indexes for cells of the input complex
   typedef int Subdomain_index;
-  typedef boost::optional<Subdomain_index> Subdomain;
+  typedef std::optional<Subdomain_index> Subdomain;
 
-  /// Type of indexes for surface patch of the input complex
+  // Type of indexes for surface patch of the input complex
   typedef typename boost::property_map<Polyhedron,
                                        face_patch_id_t<Patch_id>
                                        >::type            Face_patch_id_pmap;
   typedef typename boost::property_traits<
     Face_patch_id_pmap>::value_type                       Surface_patch_index;
-  typedef boost::optional<Surface_patch_index>            Surface_patch;
-  /// Type of indexes to characterize the lowest dimensional face of the input
-  /// complex on which a vertex lie
+  typedef std::optional<Surface_patch_index>            Surface_patch;
+
+  // Type of indexes to characterize the lowest dimensional face of the input
+  // complex on which a vertex lie
   typedef typename Mesh_3::internal::Index_generator<
     Subdomain_index, Surface_patch_index>::type           Index;
 
   typedef std::tuple<Point_3,Index,int> Intersection;
-
 
   typedef typename IGT::FT         FT;
 
@@ -197,8 +227,6 @@ public:
   typedef typename AABB_traits::Bounding_box              Bounding_box;
 
 public:
-
-  /// Default constructor
   Polyhedral_mesh_domain_3(CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_)
@@ -206,27 +234,43 @@ public:
   {
   }
 
-  /**
-   * @brief Constructor. Contruction from a polyhedral surface
-   * @param polyhedron the polyhedron describing the polyhedral surface
-   */
-  Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           CGAL::Random* p_rng = nullptr)
+  /// \name Creation
+  /// @{
+
+  /*!
+    Construction from a bounding polyhedral surface which must be closed, and free of intersections.
+    The inside of `bounding_polyhedron` will be meshed.
+  */
+  Polyhedral_mesh_domain_3(const Polyhedron& bounding_polyhedron
+#ifndef DOXYGEN_RUNNING
+                           , CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : tree_()
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
   {
-    this->add_primitives(p);
-    if(! is_triangle_mesh(p)) {
+    this->add_primitives(bounding_polyhedron);
+    if(! is_triangle_mesh(bounding_polyhedron)) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
       CGAL_error_msg("Your input polyhedron must be triangulated!");
     }
     this->build();
   }
 
+  /*!
+    Construction from a polyhedral surface, and a bounding polyhedral surface.
+    The first polyhedron must be entirely included inside `bounding_polyhedron`, which must be closed
+    and free of intersections.
+    Using this constructor enables to mesh a polyhedral surface which is not closed, or has holes.
+    The inside of `bounding_polyhedron` will be meshed.
+  */
   Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = nullptr)
+                           const Polyhedron& bounding_polyhedron
+#ifndef DOXYGEN_RUNNING
+                           , CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : tree_()
     , bounding_tree_(new AABB_tree_)
     , p_rng_(p_rng)
@@ -241,22 +285,25 @@ public:
     this->build();
   }
 
-  /**
-   * Constructor.
-   *
+  /*!
    * Constructor from a sequence of polyhedral surfaces, and a bounding
    * polyhedral surface.
    *
-   * @param InputPolyhedraPtrIterator must an iterator of a sequence of
-   * pointers to polyhedra
+   * @tparam InputPolyhedraPtrIterator must be a model of
+   * `ForwardIterator` and value type `Polyhedron*`
    *
-   * @param bounding_polyhedron reference to the bounding surface
+   * @param begin iterator for a sequence of pointers to polyhedra
+   * @param end iterator for a sequence of pointers to polyhedra
+   * @param bounding_polyhedron the bounding surface
    */
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
-                           const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = nullptr)
+                           const Polyhedron& bounding_polyhedron
+#ifndef DOXYGEN_RUNNING
+                           , CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : p_rng_(p_rng)
     , delete_rng_(false)
   {
@@ -274,20 +321,24 @@ public:
     this->build();
   }
 
-  /**
-   * Constructor.
-   *
-   * Constructor from a sequence of polyhedral surfaces, without bounding
-   * surface. The domain will always answer false to "is_in_domain"
+  /*!
+   * Constructor from a sequence of polyhedral surfaces, without a bounding
+   * surface. The domain will always answer `false` to `is_in_domain()`
    * queries.
    *
-   * @param InputPolyhedraPtrIterator must an iterator of a sequence of
-   * pointers to polyhedra
+   * @tparam InputPolyhedraPtrIterator must be a model of
+   * `ForwardIterator` and value type `Polyhedron*`
+   *
+   * @param begin iterator for a sequence of pointers to polyhedra
+   * @param end iterator for a sequence of pointers to polyhedra
    */
   template <typename InputPolyhedraPtrIterator>
-  Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
-                           InputPolyhedraPtrIterator end,
-                           CGAL::Random* p_rng = nullptr)
+  Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin
+                           , InputPolyhedraPtrIterator end
+#ifndef DOXYGEN_RUNNING
+                           , CGAL::Random* p_rng = nullptr
+#endif
+                           )
     : p_rng_(p_rng)
   {
     if(begin != end) {
@@ -299,7 +350,9 @@ public:
     bounding_tree_ = 0;
   }
 
-  /// Destructor
+  /// @}
+
+  // Destructor
   ~Polyhedral_mesh_domain_3() {
     if(bounding_tree_ != 0 && bounding_tree_ != &tree_) {
       delete bounding_tree_;
@@ -311,9 +364,9 @@ public:
   }
 
   /**
-   * Constructs  a set of \ccc{n} points on the surface, and output them to
-   *  the output iterator \ccc{pts} whose value type is required to be
-   *  \ccc{std::pair<Points_3, Index>}.
+   * constructs a set of `n` points on the surface, and output them to
+   *  the output iterator `pts` whose value type is required to be
+   *  `std::pair<Points_3, Index>`.
    */
   struct Construct_initial_points
   {
@@ -342,9 +395,9 @@ public:
 
 
   /**
-   * Returns true if point~\ccc{p} is in the domain. If \ccc{p} is in the
+   * Returns true if point `p` is in the domain. If `p` is in the
    *  domain, the parameter index is set to the index of the subdomain
-   *  including $p$. It is set to the default value otherwise.
+   *  including `p`. It is set to the default value otherwise.
    */
   struct Is_in_domain
   {
@@ -363,16 +416,16 @@ public:
     return tree_.closest_point(p);
   }
 
-  /// Allowed query types
+  // Allowed query types
   typedef boost::mpl::vector<Segment_3, Ray_3, Line_3> Allowed_query_types;
 
   /**
-   * Returns true is the element \ccc{type} intersect properly any of the
-   * surface patches describing the either the domain boundary or some
+   * Returns `true` if the element `type` intersects properly any of the
+   * surface patches describing either the domain boundary or some
    * subdomain boundary.
-   * \ccc{Type} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
+   * `Type` is either `Segment_3`, `Ray_3` or `Line_3`.
    * Parameter index is set to the index of the intersected surface patch
-   * if \ccc{true} is returned and to the default \ccc{Surface_patch_index}
+   * if `true` is returned and to the default `Surface_patch_index`
    * value otherwise.
    */
   struct Do_intersect_surface
@@ -388,7 +441,7 @@ public:
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
 
-      boost::optional<AABB_primitive_id> primitive_id = r_domain_.tree_.any_intersected_primitive(q);
+      std::optional<AABB_primitive_id> primitive_id = r_domain_.tree_.any_intersected_primitive(q);
       if ( primitive_id )
       {
         r_domain_.cache_primitive(q, *primitive_id);
@@ -408,12 +461,12 @@ public:
   }
 
   /**
-   * Returns a point in the intersection of the primitive \ccc{type}
+   * Returns a point in the intersection of the primitive `type`
    * with some boundary surface.
-   * \ccc{Type1} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
-   * The integer \ccc{dimension} is set to the dimension of the lowest
+   * `Type1` is either `Segment_3`, `Ray_3` or `Line_3`.
+   * The integer `dimension` is set to the dimension of the lowest
    * dimensional face in the input complex containing the returned point, and
-   * \ccc{index} is set to the index to be stored at a mesh vertex lying
+   * `index` is set to the index to be stored at a mesh vertex lying
    * on this face.
    */
   struct Construct_intersection
@@ -430,7 +483,7 @@ public:
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
       typedef typename AABB_tree_::template Intersection_and_primitive_id<Query>::Type
         Intersection_and_primitive_id;
-      typedef boost::optional<Intersection_and_primitive_id> AABB_intersection;
+      typedef std::optional<Intersection_and_primitive_id> AABB_intersection;
       typedef Point_3 Bare_point;
 
       AABB_intersection intersection;
@@ -447,7 +500,7 @@ public:
       {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
         CGAL_precondition(r_domain_.do_intersect_surface_object()(q)
-                          != boost::none);
+                          != std::nullopt);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
         intersection = r_domain_.tree_.any_intersection(q);
@@ -459,7 +512,7 @@ public:
 
         // intersection may be either a point or a segment
         if ( const Bare_point* p_intersect_pt =
-             boost::get<Bare_point>( &(intersection->first) ) )
+             std::get_if<Bare_point>( &(intersection->first) ) )
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
@@ -467,7 +520,7 @@ public:
                               2);
         }
         else if ( const Segment_3* p_intersect_seg =
-                  boost::get<Segment_3>(&(intersection->first)))
+                  std::get_if<Segment_3>(&(intersection->first)))
         {
           CGAL_MESH_3_PROFILER("Mesh_3 profiler: Intersection is a segment");
 
@@ -533,14 +586,14 @@ public:
    * where lies a vertex with dimension 2 and index `index`.
    */
   Surface_patch_index surface_patch_index(const Index& index) const
-  { return boost::get<Surface_patch_index>(index); }
+  { return std::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
    *  with dimension 3 and index `index`.
    */
   Subdomain_index subdomain_index(const Index& index) const
-  { return boost::get<Subdomain_index>(index); }
+  { return std::get<Subdomain_index>(index); }
 
   // -----------------------------------
   // Backward Compatibility
@@ -607,7 +660,7 @@ private:
   AABB_tree_* bounding_tree_;
 
   // cache queries and intersected primitive
-  typedef typename boost::make_variant_over<Allowed_query_types>::type Cached_query;
+  typedef std::variant<Segment_3, Ray_3, Line_3> Cached_query;
   struct Query_cache
   {
     Query_cache() : has_cache(false) {}
@@ -691,13 +744,14 @@ Construct_initial_points::operator()(OutputIterator pts,
   typename IGT::Construct_vector_3 vector = IGT().construct_vector_3_object();
 
   const Bounding_box bbox = r_domain_.tree_.bbox();
-  const Point_3 center( FT( (bbox.xmin() + bbox.xmax()) / 2),
-                        FT( (bbox.ymin() + bbox.ymax()) / 2),
-                        FT( (bbox.zmin() + bbox.zmax()) / 2) );
+  Point_3 center( FT( (bbox.xmin() + bbox.xmax()) / 2),
+                  FT( (bbox.ymin() + bbox.ymax()) / 2),
+                  FT( (bbox.zmin() + bbox.zmax()) / 2) );
 
   CGAL::Random& rng = *(r_domain_.p_rng_ != 0 ?
                         r_domain_.p_rng_ :
                         new Random(0));
+
   Random_points_on_sphere_3<Point_3> random_point(1., rng);
 
   int i = n;
@@ -727,6 +781,15 @@ Construct_initial_points::operator()(OutputIterator pts,
         % (n - i)
         % n;
 # endif
+
+      // If the source of the ray is on the surface, every ray will return its source
+      // so change the source to a random point in the bounding box
+      if(std::get<0>(intersection) == ray_shot.source())
+      {
+        center = Point_3(rng.get_double(bbox.xmin(), bbox.xmax()),
+                         rng.get_double(bbox.ymin(), bbox.ymax()),
+                         rng.get_double(bbox.zmin(), bbox.zmax()));
+      }
     }
     ++random_point;
   }
