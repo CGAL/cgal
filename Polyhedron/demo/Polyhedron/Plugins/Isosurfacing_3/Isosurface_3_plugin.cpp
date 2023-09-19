@@ -133,99 +133,119 @@ public:
 
     for ( k = -dz_ ; k < zdim_ ; k+=dz_ )
     {
-        for ( j = -dy_ ; j < ydim_ ; j+=dy_ )
+      for ( j = -dy_ ; j < ydim_ ; j+=dy_ )
+      {
+        for ( i = -dx_ ; i < xdim_ ; i+=dx_ )
         {
-            for ( i = -dx_ ; i < xdim_ ; i+=dx_ )
+          //treat_vertex(i,j,k);
+          Word_type v0 = image_data(i, j, k);
+
+          Word_type v1 = image_data(i+dx_, j, k);
+          Word_type v2 = image_data(i, j+dy_, k);
+          Word_type v3 = image_data(i, j, k+dz_);
+
+          Word_type v4 = image_data(i+dx_, j+dy_, k);
+          Word_type v5 = image_data(i, j+dy_, k+dz_);
+          Word_type v6 = image_data(i+dx_, j, k+dz_);
+
+          Word_type v7 = image_data(i+dx_, j+dy_, k+dz_);
+
+          // if one is different
+          if (v0 != v1 || v0 != v2 || v0 != v3 || v0 != v4 || v0 != v5 || v0 != v6 || v0 != v7) {
+            int ip = i+dx_;
+            int jp = j+dy_;
+            int kp = k+dz_;
+            int index = kp*ydim_p*xdim_p + jp*xdim_p + ip;
+            double di = double(i+0.5*dx_),dj = double(j+0.5*dy_),dk = double(k+0.5*dz_);
+            if (di < 0)
+              di = 0.0;
+            if (dj < 0)
+              dj = 0.0;
+            if (dk < 0)
+              dk = 0.0;
+            if (di > xdim_-dx_)
+              di = xdim_-1;
+            if (dj > ydim_-dy_)
+              dj = ydim_-1;
+            if (dk > zdim_-dz_)
+              dk = zdim_-1;
+            di = di * vx_ + tx_;
+            dj = dj * vy_ + ty_;
+            dk = dk * vz_ + tz_;
+
+            vertex_descriptor vertex_0 = mesh_.add_vertex(Point_3(di, dj, dk));
+            vertices.insert(std::make_pair(index, vertex_0));
+
+            // check x direction
+            if (v0 != v1)
             {
-                //treat_vertex(i,j,k);
-                Word_type v0 = image_data(i, j, k);
-
-                Word_type v1 = image_data(i+dx_, j, k);
-                Word_type v2 = image_data(i, j+dy_, k);
-                Word_type v3 = image_data(i, j, k+dz_);
-
-                Word_type v4 = image_data(i+dx_, j+dy_, k);
-                Word_type v5 = image_data(i, j+dy_, k+dz_);
-                Word_type v6 = image_data(i+dx_, j, k+dz_);
-
-                Word_type v7 = image_data(i+dx_, j+dy_, k+dz_);
-
-                // if one is different
-                if (v0 != v1 || v0 != v2 || v0 != v3 || v0 != v4 || v0 != v5 || v0 != v6 || v0 != v7) {
-                    int ip = i+dx_;
-                    int jp = j+dy_;
-                    int kp = k+dz_;
-                    int index = kp*ydim_p*xdim_p + jp*xdim_p + ip;
-                    double di = double(i+0.5*dx_),dj = double(j+0.5*dy_),dk = double(k+0.5*dz_);
-                    if (di < 0)
-                        di = 0.0;
-                    if (dj < 0)
-                        dj = 0.0;
-                    if (dk < 0)
-                        dk = 0.0;
-                    if (di > xdim_-dx_)
-                        di = xdim_-1;
-                    if (dj > ydim_-dy_)
-                        dj = ydim_-1;
-                    if (dk > zdim_-dz_)
-                        dk = zdim_-1;
-                    di = di * vx_ + tx_;
-                    dj = dj * vy_ + ty_;
-                    dk = dk * vz_ + tz_;
-
-                    vertex_descriptor vertex_0 = mesh_.add_vertex(Point_3(di, dj, dk));
-                    vertices.insert(std::make_pair(index, vertex_0));
-
-                    // check x direction
-                    if (v0 != v1)
-                    {
-                        vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + ip)->second;
-                        vertex_descriptor vertex_2 = vertices.find(k *ydim_p*xdim_p + j *xdim_p + ip)->second;
-                        vertex_descriptor vertex_3 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + ip)->second;
-                        mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v1);
-                    }
-                    // check y direction
-                    if (v0 != v2)
-                    {
-                        vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + jp*xdim_p + i )->second;
-                        vertex_descriptor vertex_2 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + i )->second;
-                        vertex_descriptor vertex_3 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + ip)->second;
-                        mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v2);
-                    }
-                    // check z direction
-                    if (v0 != v3)
-                    {
-                        vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + jp*xdim_p + i )->second;
-                        vertex_descriptor vertex_2 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + i )->second;
-                        vertex_descriptor vertex_3 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + ip)->second;
-                        mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v3);
-                    }
-                }
+              vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + ip)->second;
+              vertex_descriptor vertex_2 = vertices.find(k *ydim_p*xdim_p + j *xdim_p + ip)->second;
+              vertex_descriptor vertex_3 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + ip)->second;
+              mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v1);
             }
+            // check y direction
+            if (v0 != v2)
+            {
+              vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + jp*xdim_p + i )->second;
+              vertex_descriptor vertex_2 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + i )->second;
+              vertex_descriptor vertex_3 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + ip)->second;
+              mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v2);
+            }
+            // check z direction
+            if (v0 != v3)
+            {
+              vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + jp*xdim_p + i )->second;
+              vertex_descriptor vertex_2 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + i )->second;
+              vertex_descriptor vertex_3 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + ip)->second;
+              mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v3);
+            }
+          }
         }
+      }
     }
   }
 
   void convert_to_smesh(SMesh& out, QColor c = QColor(255, 0, 0))
   {
-    // compute colors
+    // compute color map
     typedef std::map<surface_descriptor, QColor> Surface_map_type;
-    Surface_map_type surface_map;
-    Surface_map_type::iterator surface_map_it;
+    Surface_map_type surface_color_map;
+    std::map<Word_type, QColor> subdomain_indices_color_map;
     for (const Mesh_quad& quad : mesh_.polygons) {
-        surface_map_it = surface_map.find(quad.surface);
-        if (surface_map_it == surface_map.end()) {
-            surface_map[quad.surface] = QColor();
-        }
+      const surface_descriptor & surface = quad.surface;
+      subdomain_indices_color_map[surface.first] = QColor();
+      subdomain_indices_color_map[surface.second] = QColor();
+      surface_color_map[surface] = QColor();
     }
-    const double nb_domains = surface_map.size();
+
+    double nb_domains = subdomain_indices_color_map.size();
     double i = 0;
-    for (Surface_map_type::iterator it = surface_map.begin(),
-         end = surface_map.end(); it != end; ++it, i += 1.)
+    for (std::map<Word_type, QColor>::iterator it = subdomain_indices_color_map.begin(),
+         end = subdomain_indices_color_map.end(); it != end; ++it, i += 1.)
     {
+      double hue = c.hueF() + 1. / nb_domains * i;
+      if (hue > 1) { hue -= 1.; }
+      it->second = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
+    }
+
+    nb_domains = surface_color_map.size();
+    i = 0;
+    double patch_hsv_value = fmod(c.valueF() + .5, 1.);
+    for (Surface_map_type::iterator it = surface_color_map.begin(),
+         end = surface_color_map.end(); it != end; ++it, i += 1.)
+    {
+      QColor surface_color;
+      if (it->first.first == 0) {
+        surface_color = subdomain_indices_color_map[it->first.second];
+      }
+      else {
         double hue = c.hueF() + 1. / nb_domains * i;
         if (hue > 1) { hue -= 1.; }
-        surface_map[it->first] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
+        surface_color =  QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
+      }
+
+      it->second = surface_color;
     }
 
     // orient polygons
@@ -241,13 +261,13 @@ public:
     // set facet color property
     auto color_property = out.add_property_map<SMesh::Face_index>("f:color", CGAL::IO::white()).first;
     for (const Index_link & f : meshface_to_smeshface) {
-        const int & mesh_index = f.first;
-        const SMesh::Face_index & smesh_index = f.second;
-        const Mesh_quad & quad = mesh_.polygons[mesh_index];
+      const int & mesh_index = f.first;
+      const SMesh::Face_index & smesh_index = f.second;
+      const Mesh_quad & quad = mesh_.polygons[mesh_index];
 
-        const QColor & color = surface_map[quad.surface];
+      const QColor & color = surface_color_map[quad.surface];
 
-        put(color_property, smesh_index, CGAL::IO::Color(color.red(), color.green(), color.blue()));
+      put(color_property, smesh_index, CGAL::IO::Color(color.red(), color.green(), color.blue()));
     }
   }
 private:
