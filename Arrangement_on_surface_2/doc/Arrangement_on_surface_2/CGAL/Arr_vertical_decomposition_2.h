@@ -40,7 +40,7 @@ namespace CGAL {
  *
  * \pre Dereferencing `oi` must yield an object of type
  * `std::pair<Arrangement_on_surface_2::Vertex_const_handle,
- *            std::pair<std::optional<Type,std::optional<Type>>>,
+ *            std::pair<std::optional<Type,std::optional<Type>>>`,
  * where `Type` is
  * `std::variant<Arrangement_on_surface_2::Vertex_const_handle,
  *               Arrangement_on_surface_2::Halfedge_const_handle,
