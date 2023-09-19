@@ -146,11 +146,6 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
     set(CGALConfig_all_targets_are_defined FALSE)
   endif()
 endforeach()
-if(CGALConfig_all_targets_are_defined)
-  return()
-endif()
-
-message(STATUS "Using header-only CGAL")
 
 if(NOT CGAL_FOUND)
   return()
