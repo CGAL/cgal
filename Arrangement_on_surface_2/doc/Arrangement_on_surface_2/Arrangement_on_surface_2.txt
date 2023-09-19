@@ -5663,7 +5663,7 @@ to define any instance of the class template
 the `Topology_traits` type is selected based on the provided geometry
 traits `Geometry_traits_2`, or more precisely, on the boundary
 conditions defined by the geometry traits. If all sides of the
-boundary of the parameter space are cosed, the instance
+boundary of the parameter space are closed, the instance
 `Arr_bounded_planar_topology_traits_2<Geometry_traits_2,Dcel_>` is
 selected; otherwise the instance
 `Arr_unb_planar_topology_traits_2<Geometry_traits_2,Dcel_>` is

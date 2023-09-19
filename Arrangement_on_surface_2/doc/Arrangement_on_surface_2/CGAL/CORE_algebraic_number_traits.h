@@ -29,88 +29,102 @@ public:
   /// \name Utility Functions
   /// @{
 
-  /*! Obtain the numerator of a rational number.
-   * \param q A rational number.
-   * \return The numerator of q.
+  /*! obtains the numerator of a rational number.
+   *
+   * \param q The rational number.
+   * \return The numerator of `q`.
    */
   Integer numerator(const Rational& q) const;
 
-  /*! Obtain the denominator of a rational number.
-   * \param q A rational number.
-   * \return The denominator of q.
+  /*! obtains the denominator of a rational number.
+   *
+   * \param q The rational number.
+   * \return The denominator of `q`.
    */
   Integer denominator(const Rational& q) const;
 
-  /*! Convert an integer to an algebraic number.
-   * \param z An integer.
-   * \return The algebraic number equivalent to z.
+  /*! converts an integer to an algebraic number.
+   *
+   * \param z The integer.
+   * \return The algebraic number equivalent to `z`.
    */
   Algebraic convert(const Integer& z) const;
 
-  /*! Convert a rational number to an algebraic number.
+  /*! converts a rational number to an algebraic number.
+   *
    * \param q A rational number.
-   * \return The algebraic number equivalent to q.
+   * \return The algebraic number equivalent to `q`.
    */
   Algebraic convert(const Rational& q) const;
 
-  /*! Construct a rational number that lies strictly between two algebraic
+  /*! constructs a rational number that lies strictly between two algebraic
    * values.
+   *
    * \param x1 The first algebraic value.
    * \param x2 The second algebraic value.
    * \pre The two values are not equal.
-   * \return A rational number that lies in the open interval (x1, x2).
+   * \return The rational number that lies in the open interval (`x1`, `x2`).
    */
   Rational rational_in_interval(const Algebraic& x1, const Algebraic& x2) const;
 
-  /*! Obtain a range of double-precision floats that contains the given
+  /*! obtains a range of double-precision floats that contains the given
    * algebraic number.
+   *
    * \param x The given number.
-   * \return A pair <x_lo, x_hi> that contain x.
+   * \return The range of double-precision floats that contain `x`.
    */
   std::pair<double, double> double_interval(const Algebraic& x) const;
 
-  /*! Convert a sequence of rational coefficients to an equivalent sequence
-   * of integer coefficients. If the input coefficients are q(1), ..., q(k),
-   * where q(i) = n(i)/d(i) then the output coefficients will be of the
-   * form:
-   *               n(i) * lcm {d(1), ... , d(k)}
-   *       a(i) = -------------------------------
-   *               d(i) * gcd {n(1), ... , n(k)}
+  /*! converts a sequence of rational coefficients to an equivalent sequence
+   * of integer coefficients. If the input coefficients are
+   * \f$q(1),\ldots,q(k)\f$, where \f$q(i) = n(i)/d(i)\f$, then the output
+   * coefficients will be of the form:
+   * \f$a(i) = \frac{n(i) \cdot \mathrm{lcm}(d(1),\ldots,d(k))}{d(i) \cdot \mathrm{gcd}(n(1),\ldots, n(k))}\f$.
+   * It inserts the output sequence into an output container given through an
+   * output iterator.
    *
-   * \param q_begin The begin iterator of the rational sequence.
-   * \param q_end The past-the-end iterator of the rational sequence.
-   * \param zoi An output iterator for the integer coefficients.
-   * \return A past-the-end iterator for the output container.
-   * \pre The value type of q_begin and q_end is `Rational`, and
-   *      the value type of zoi is `Integer`.
+   * \param begin The begin iterator of the rational coefficients input
+   *        container.
+   * \param end The past-the-end iterator of the rational coefficients input
+   *        container.
+   * \param oi The output iterator of the integer coefficients output container.
+   * \return The past-the-end iterator of the output container.
+   *
+   * \pre The value type of `InputIterator` is `Rational`.
+   * \pre Dereferencing `oi` must yield an object convertible to `Integer`.
    */
   template <typename InputIterator, typename OutputIterator>
-  OutputIterator convert_coefficients(InputIterator q_begin,
-                                      InputIterator q_end,
-                                      OutputIterator zoi) const;
+  OutputIterator convert_coefficients(InputIterator begin,
+                                      InputIterator end,
+                                      OutputIterator oi) const;
 
-  /*! Compute the square root of an algebraic number.
+  /*! computes the square root of an algebraic number.
+   *
    * \param x The number.
-   * \return The square root of x.
-   * \pre x is non-negative.
+   * \return The square root of `x`.
+   * \pre `x` is non-negative.
    */
   Algebraic sqrt(const Algebraic& x) const;
 
-  /*! Compute the roots of a quadratic equations \f$a*x^2+ b*x + c = 0\f$
-   * with integer coefficients.
+  /*! computes the roots of a quadratic equations \f$a*x^2+ b*x + c = 0\f$
+   * with integer coefficients, and inserts them into an output container given
+   * through an output iterator.
+   *
    * \param a The coefficient of \f$x^2\f$
    * \param b The coefficient of \f$x\f$
    * \param c The free term.
-   * \param oi An output iterator for the real-valued solutions of the
-   *           quadratic equation.
-   * \return A past-the-end iterator for the output container.
-   * \pre The value type of oi is Algebraic.
+   * \param oi The output iterator of the output container of real-valued
+   *        solutions of the quadratic equation.
+   * \return The past-the-end iterator of the output container.
+   *
+   * \pre Dereferencing `oi` must yield an object convertible to `Algebraic`.
    */
   template <typename NT, typename OutputIterator>
   OutputIterator solve_quadratic_equation(const NT& a, const NT& b, const NT& c,
                                           OutputIterator oi) const;
 
-  /*! Construct a polynomial with integer coefficients.
+  /*! constructs a polynomial with integer coefficients.
+   *
    * \param coeffs The coefficients of the input polynomial.
    * \param degree The degree of the input polynomial.
    * \return The polynomial.
@@ -118,8 +132,9 @@ public:
   Polynomial construct_polynomial(const Integer* coeffs,
                                   unsigned int degree) const;
 
-  /*! Construct a polynomial with integer coefficients given rational
+  /*! constructs a polynomial with integer coefficients given rational
    * coefficients.
+   *
    * \param coeffs The coefficients of the input polynomial.
    * \param degree The degree of the input polynomial.
    * \param poly Output: The resulting polynomial with integer coefficients.
@@ -131,10 +146,11 @@ public:
                             unsigned int degree,
                             Polynomial& poly, Integer& poly_denom) const;
 
-  /*! Construct two polynomials with integer coefficients such that P(x)/Q(x)
-   * is a rational function equivalent to the one represented by the two
-   * given vectors of rational coefficients. It is guaranteed that the GCD
-   * of P(x) and Q(x) is trivial.
+  /*! constructs two polynomials with integer coefficients such that
+   * \f$P(x)/Q(x)\f$ is a rational function equivalent to the one represented
+   * by the two given vectors of rational coefficients. It is guaranteed that
+   * the GCD of \f$P(x)\f$ and \f$Q(x)\f$ is trivial.
+   *
    * \param p_coeffs The coefficients of the input numerator polynomial.
    * \param p_degree The degree of the input numerator polynomial.
    * \param q_coeffs The coefficients of the input denominator polynomial.
@@ -143,7 +159,7 @@ public:
    *                       coefficients.
    * \param q_poly Output: The resulting denominator polynomial with integer
    *                       coefficients.
-   * \return (true) on success; (false) if the denominator is 0.
+   * \return `true` on success; `false` if the denominator is 0.
    */
   bool construct_polynomials(const Rational* p_coeffs,
                              unsigned int p_degree,
@@ -155,58 +171,70 @@ public:
    */
   int degree(const Polynomial& poly) const;
 
-  /*! Evaluate a polynomial at a given x-value.
-   * \param poly A polynomial.
+  /*! evaluates a polynomial at a given \f$x\f$-value.
+   *
+   * \param poly The polynomial.
    * \param x The value to evaluate at.
-   * \return The value of the polynomial at x.
+   * \return The value of the polynomial at `x`.
    */
   template <typename NT>
   NT evaluate_at(const Polynomial& poly, NT& x) const;
 
-  /*! Compute the derivative of the given polynomial.
-   * \param poly The polynomial p(x).
-   * \return The derivative p'(x).
+  /*! computes the derivative of the given polynomial.
+   *
+   * \param poly The polynomial \f$p(x)\f$.
+   * \return The derivative \f$p'(x)\f$.
    */
   Polynomial derive(const Polynomial& poly) const;
 
-  /*! Multiply a polynomial by some scalar coefficient.
-   * \param poly The polynomial P(x).
+  /*! multiplies a polynomial by some scalar coefficient.
+   *
+   * \param poly The polynomial \f$P(x)\f$.
    * \param a The scalar value.
-   * \return The scalar multiplication a*P(x).
+   * \return The scalar multiplication \f$a \cdot P(x)\f$.
    */
   Polynomial scale(const Polynomial& poly, const Integer& a) const;
 
-  /*! Perform "long division" of two polynomials: Given A(x) and B(x) compute
-   * two polynomials Q(x) and R(x) such that: A(x) = Q(x)*B(x) + R(x) and
-   * R(x) has minimal degree.
-   * \param polyA The first polynomial A(x).
-   * \param polyB The second polynomial A(x).
-   * \param rem Output: The remainder polynomial R(x).
-   * \return The quontient polynomial Q(x).
+  /*! performs "long division" of two polynomials: Given \f$A(x)\f$ and
+   * \f$B(x)\f$ compute two polynomials \f$Q(x)\f$ and \f$R(x)\f$ such that:
+   * \f$A(x) = Q(x) \cdot B(x) + R(x)\f$ and \f$R(x)\f$ has minimal degree.
+   *
+   * \param poly_a The first polynomial \f$A(x)\f$.
+   * \param poly_b The second polynomial \f$A(x)\f$.
+   * \param rem Output: The remainder polynomial \f$R(x)\f$.
+   * \return The quontient polynomial \f$Q(x)\f$.
    */
-  Polynomial divide(const Polynomial& polyA,
-                    const Polynomial& polyB,
+  Polynomial divide(const Polynomial& poly_a,
+                    const Polynomial& poly_b,
                     Polynomial& rem) const;
 
-  /*! Compute the real-valued roots of a polynomial with integer coefficients,
-   * sorted in ascending order.
+  /*! computes the real-valued roots of a polynomial with integer coefficients,
+   * and inserts them in ascending order into an output container given through
+   * an output iterator.
+   *
    * \param poly The input polynomial.
-   * \param oi An output iterator for the real-valued root of the polynomial.
-   * \return A past-the-end iterator for the output container.
-   * \pre The value type of oi is Algebraic.
+   * \param oi The output iterator of the output container of real-valued root
+   *        of the polynomial.
+   * \return The past-the-end iterator of the output container.
+   *
+   * \pre Dereferencing `oi` must yield an object convertible to `Algebraic`.
    */
   template <typename OutputIterator>
   OutputIterator compute_polynomial_roots(const Polynomial& poly,
                                           OutputIterator oi) const;
 
-  /*! Compute the real-valued roots of a polynomial with integer coefficients,
-   * within a given interval. The roots are sorted in ascending order.
+  /*! computes the real-valued roots of a polynomial with integer coefficients
+   * within a given interval, and inserts them in ascending order into an output
+   * container given through an output iterator.
+   *
    * \param poly The input polynomial.
    * \param x_min The left bound of the interval.
    * \param x_max The right bound of the interval.
-   * \param oi An output iterator for the real-valued root of the polynomial.
-   * \return A past-the-end iterator for the output container.
-   * \pre The value type of oi is Algebraic.
+   * \param oi The output iterator of the output container of the real-valued
+   *        root of the polynomial.
+   * \return The past-the-end iterator of the output container.
+   *
+   * \pre Dereferencing `oi` must yield an object convertible to `Algebraic`.
    */
   template <typename OutputIterator>
   OutputIterator compute_polynomial_roots(const Polynomial& poly,
