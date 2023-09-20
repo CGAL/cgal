@@ -16,10 +16,12 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 int main(int argc, char** argv)
 {
+  std::cout.precision(17);
+  std::cerr.precision(17);
+
   Surface_mesh surface_mesh;
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
-  std::ifstream is(filename);
-  if(!is || !(is >> surface_mesh))
+  if(!CGAL::IO::read_polygon_mesh(filename, surface_mesh))
   {
     std::cerr << "Failed to read input mesh: " << filename << std::endl;
     return EXIT_FAILURE;
@@ -33,6 +35,8 @@ int main(int argc, char** argv)
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
+  std::cout << num_vertices(surface_mesh) << " vertices, " << num_edges(surface_mesh) << " edges (BEFORE)" << std::endl;
+
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
   double stop_ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
@@ -45,7 +49,7 @@ int main(int argc, char** argv)
   std::cout << "\nFinished!\n" << r << " edges removed.\n" << surface_mesh.number_of_edges() << " final edges.\n";
   std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count() << "ms" << std::endl;
 
-  CGAL::IO::write_polygon_mesh((argc > 3) ? argv[3] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh((argc > 3) ? argv[3] : "out_SC.off", surface_mesh, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

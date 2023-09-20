@@ -114,10 +114,7 @@ inline std::string optional_to_string(const std::optional<T>& o) {
 
   namespace internal { namespace { bool cgal_enable_sms_trace = true; } }
   #define CGAL_SMS_TRACE_IMPL(m) \
-    if(::internal::cgal_enable_sms_trace) { \
-    std::ostringstream ss; ss << m; std::string s = ss.str(); \
-    /*Surface_simplification_external_trace(s)*/ std::cerr << s << std::endl; \
-    }
+    std::cerr << m << std::endl;
 
   #define CGAL_SMS_DEBUG_CODE(code) code
 #else
