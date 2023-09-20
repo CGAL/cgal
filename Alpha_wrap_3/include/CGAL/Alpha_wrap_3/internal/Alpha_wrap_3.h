@@ -176,8 +176,8 @@ protected:
   Oracle m_oracle;
   SC_Iso_cuboid_3 m_bbox;
 
-  FT m_alpha, m_sq_alpha;
-  FT m_offset, m_sq_offset;
+  FT m_alpha = FT(-1), m_sq_alpha = FT(-1);
+  FT m_offset = FT(-1), m_sq_offset = FT(-1);
 
   Dt m_dt;
   Alpha_PQ m_queue;
@@ -268,6 +268,20 @@ public:
 
     const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
+    // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
+    // the same meshes for multiple values of alpha (and typically the same offset values).
+    //
+    // /!\ Warning /!\
+    //
+    // If this is enabled, the 3D triangulation will NEVER be cleared and re-initialized
+    // at launch. This means that the triangulation is NOT cleared, even when:
+    // - the triangulation is empty; you will get nothing.
+    // - you use an alpha value that is greater than what was used in a previous run; you will
+    //   obtain a denser result than what you might expect.
+    // - you use a different offset value between runs, you might then get points that are not
+    //   on the offset surface corresponding to your latter offset value.
+    const bool resuming = choose_parameter(get_parameter(in_np, internal_np::refine_triangulation), false);
+
 #ifdef CGAL_AW3_TIMER
     CGAL::Real_timer t;
     t.start();
@@ -275,7 +289,7 @@ public:
 
     visitor.on_alpha_wrapping_begin(*this);
 
-    if(!initialize(alpha, offset, seeds))
+    if(!initialize(alpha, offset, seeds, resuming))
       return;
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
@@ -644,6 +658,35 @@ private:
         ch->info().is_outside = false;
       }
     }
+
+    return true;
+  }
+
+  // This function is used in the case of resumption of a previous run: m_dt is not cleared,
+  // and we fill the queue with the new parameters.
+  bool initialize_from_existing_triangulation()
+  {
+    std::cout << "restart from a DT of " << m_dt.number_of_cells() << " cells" << std::endl;
+
+    Real_timer t;
+    t.start();
+
+    for(Cell_handle ch : m_dt.all_cell_handles())
+    {
+      if(!ch->info().is_outside)
+        continue;
+
+      for(int i=0; i<4; ++i)
+      {
+        if(ch->neighbor(i)->info().is_outside)
+          continue;
+
+        push_facet(std::make_pair(ch, i));
+      }
+    }
+
+    t.stop();
+    std::cout << t.time() << " for scanning" << std::endl;
 
     return true;
   }
@@ -1105,7 +1148,8 @@ private:
   template <typename SeedRange>
   bool initialize(const double alpha,
                   const double offset,
-                  const SeedRange& seeds)
+                  const SeedRange& seeds,
+                  const bool resuming = false)
   {
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Initialize..." << std::endl;
@@ -1121,20 +1165,38 @@ private:
       return false;
     }
 
+    if(resuming)
+    {
+      if(offset != m_offset)
+      {
+#ifdef CGAL_AW3_DEBUG
+        std::cerr << "Warning: resuming with a different offset!" << std::endl;
+#endif
+      }
+    }
+
     m_alpha = FT(alpha);
     m_sq_alpha = square(m_alpha);
     m_offset = FT(offset);
     m_sq_offset = square(m_offset);
 
-    m_dt.clear();
     m_queue.clear();
 
-    insert_bbox_corners();
-
-    if(seeds.empty())
-      return initialize_from_infinity();
+    if(resuming)
+    {
+      return initialize_from_existing_triangulation();
+    }
     else
-      return initialize_with_cavities(seeds);
+    {
+      m_dt.clear();
+
+      insert_bbox_corners();
+
+      if(seeds.empty())
+        return initialize_from_infinity();
+      else
+        return initialize_with_cavities(seeds);
+    }
   }
 
   template <typename Visitor>
