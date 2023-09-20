@@ -2,7 +2,7 @@
 #include <QApplication>
 #include <QAction>
 #include <QMainWindow>
-#include "Scene_surface_mesh_item.h"
+#include "Scene_polygon_soup_item.h"
 #include "Scene_image_item.h"
 #include "SMesh_type.h"
 #include "Image_type.h"
@@ -20,17 +20,17 @@ class Polyhedron_demo_isosurface_3_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
-    void init(QMainWindow*mw,
-              Scene_interface* scene_interface,
-              Messages_interface*)
-    {
-        scene = scene_interface;
-        this->mw = mw;
-        QAction *actionDualLabel = new QAction("Dual contour label image", mw);
-        actionDualLabel->setProperty("subMenuName","Isosurface");
-        connect(actionDualLabel, SIGNAL(triggered()), this, SLOT(on_actionDualLabel_triggered()));
-        _actions << actionDualLabel;
-    }
+  void init(QMainWindow*mw,
+            Scene_interface* scene_interface,
+            Messages_interface*)
+  {
+    scene = scene_interface;
+    this->mw = mw;
+    QAction *actionDualLabel = new QAction("Dual contour label image", mw);
+    actionDualLabel->setProperty("subMenuName","Isosurface");
+    connect(actionDualLabel, SIGNAL(triggered()), this, SLOT(on_actionDualLabel_triggered()));
+    _actions << actionDualLabel;
+  }
 
   QList<QAction*> actions()const {return _actions;}
 
@@ -59,21 +59,35 @@ class Polyhedron_demo_isosurface_3_plugin_helper {
     vertex_descriptor t[4];
     surface_descriptor surface;
 
+    Mesh_quad() {}
+
+    Mesh_quad(const Mesh_quad & other) {
+      t[0] = other.t[0];
+      t[1] = other.t[1];
+      t[2] = other.t[2];
+      t[3] = other.t[3];
+      surface = other.surface;
+    }
+
     Mesh_quad(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, vertex_descriptor v3, Word_type val1, Word_type val2) {
+      if (val1 < val2) {
+        t[0] = v3;
+        t[1] = v2;
+        t[2] = v1;
+        t[3] = v0;
+        surface = std::make_pair(val1, val2);
+      }
+      else {
         t[0] = v0;
         t[1] = v1;
         t[2] = v2;
         t[3] = v3;
-        if (val1 < val2) {
-            surface = std::make_pair(val1, val2);
-        }
-        else {
-            surface = std::make_pair(val2, val1);
-        }
+        surface = std::make_pair(val2, val1);
+      }
     }
 
     std::size_t size() const {
-        return 4;
+      return 4;
     }
 
     vertex_descriptor operator[](int i) const { return t[i]; }
@@ -88,17 +102,21 @@ class Polyhedron_demo_isosurface_3_plugin_helper {
   {
     using Polygon = Mesh_quad;
 
-    std::vector<EPICK::Point_3> vertices;
+    std::vector<Point_3> vertices;
     std::vector<Polygon> polygons;
 
     vertex_descriptor add_vertex(EPICK::Point_3 p) {
-        vertices.push_back(p);
-        return vertices.size()-1;
+      vertices.push_back(p);
+      return vertices.size()-1;
+    }
+
+    void add_face(const Polygon & poly) {
+      polygons.push_back(Polygon(poly));
     }
 
     void add_face(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, vertex_descriptor v3, Word_type val1, Word_type val2)
     {
-        polygons.push_back(Polygon(v0, v1, v2, v3, val1, val2));
+      polygons.push_back(Polygon(v0, v1, v2, v3, val1, val2));
     }
   };
 
@@ -137,18 +155,17 @@ public:
       {
         for ( i = -dx_ ; i < xdim_ ; i+=dx_ )
         {
-          //treat_vertex(i,j,k);
-          Word_type v0 = image_data(i, j, k);
+          const Word_type & v0 = image_data(i, j, k);
 
-          Word_type v1 = image_data(i+dx_, j, k);
-          Word_type v2 = image_data(i, j+dy_, k);
-          Word_type v3 = image_data(i, j, k+dz_);
+          const Word_type & v1 = image_data(i+dx_, j, k);
+          const Word_type & v2 = image_data(i, j+dy_, k);
+          const Word_type & v3 = image_data(i, j, k+dz_);
 
-          Word_type v4 = image_data(i+dx_, j+dy_, k);
-          Word_type v5 = image_data(i, j+dy_, k+dz_);
-          Word_type v6 = image_data(i+dx_, j, k+dz_);
+          const Word_type & v4 = image_data(i+dx_, j+dy_, k);
+          const Word_type & v5 = image_data(i, j+dy_, k+dz_);
+          const Word_type & v6 = image_data(i+dx_, j, k+dz_);
 
-          Word_type v7 = image_data(i+dx_, j+dy_, k+dz_);
+          const Word_type & v7 = image_data(i+dx_, j+dy_, k+dz_);
 
           // if one is different
           if (v0 != v1 || v0 != v2 || v0 != v3 || v0 != v4 || v0 != v5 || v0 != v6 || v0 != v7) {
@@ -156,7 +173,9 @@ public:
             int jp = j+dy_;
             int kp = k+dz_;
             int index = kp*ydim_p*xdim_p + jp*xdim_p + ip;
-            double di = double(i+0.5*dx_),dj = double(j+0.5*dy_),dk = double(k+0.5*dz_);
+            double di = i+0.5*dx_;
+            double dj = j+0.5*dy_;
+            double dk = k+0.5*dz_;
             if (di < 0)
               di = 0.0;
             if (dj < 0)
@@ -187,9 +206,9 @@ public:
             // check y direction
             if (v0 != v2)
             {
-              vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + jp*xdim_p + i )->second;
+              vertex_descriptor vertex_1 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + ip)->second;
               vertex_descriptor vertex_2 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + i )->second;
-              vertex_descriptor vertex_3 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + ip)->second;
+              vertex_descriptor vertex_3 = vertices.find(kp*ydim_p*xdim_p + jp*xdim_p + i )->second;
               mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v2);
             }
             // check z direction
@@ -206,38 +225,90 @@ public:
     }
   }
 
-  void convert_to_smesh(SMesh& out, QColor c = QColor(255, 0, 0))
+  void generate_polygon_soup(std::vector<Point_3> & vertices,
+                             std::vector<std::vector<std::size_t>> & polygons,
+                             std::vector<CGAL::IO::Color> & fcolors,
+                             std::vector<CGAL::IO::Color> & vcolors,
+                             const QColor & c)
   {
-    // compute color map
-    typedef std::map<surface_descriptor, QColor> Surface_map_type;
-    Surface_map_type surface_color_map;
-    std::map<Word_type, QColor> subdomain_indices_color_map;
+    vertices.clear();
+    polygons.clear();
+    fcolors.clear();
+    vcolors.clear();
+
+    const std::vector<Point_3> & m_vertices = mesh_.vertices;
+    const std::vector<Mesh_quad> & m_polygons = mesh_.polygons;
+    std::size_t polygon_size = m_polygons.size();
+
+    vertices.insert(vertices.begin(), m_vertices.begin(), m_vertices.end());
+
+    std::map<surface_descriptor, QColor> surface_color_map;
+    compute_color_map(surface_color_map, c);
+
+    fcolors.resize(polygon_size);
+    polygons.resize(polygon_size);
+    for (std::size_t i = 0; i < polygon_size; i++)
+    {
+      const Mesh_quad & quad = m_polygons[i];
+
+      std::vector<std::size_t> polygon;
+      polygon.resize(4);
+      polygon[0] = quad.t[0];
+      polygon[1] = quad.t[1];
+      polygon[2] = quad.t[2];
+      polygon[3] = quad.t[3];
+      polygons[i] = polygon;
+
+      const QColor & color = surface_color_map[quad.surface];
+      fcolors[i] = CGAL::IO::Color(color.red(), color.green(), color.blue());
+    }
+  }
+
+private:
+  Mesh mesh_;
+  const Image* image_;
+  int nb_surfaces;
+
+  Word_type image_data(std::size_t i, std::size_t j, std::size_t k)
+  {
+    if ( i>=0 && i<image_->xdim() && j>=0 && j<image_->ydim() && k>=0 && k<image_->zdim() )
+      return image_->value(i, j, k);
+    else
+      return 0;
+  }
+
+  void compute_color_map(std::map<surface_descriptor, QColor> & surface_color_map, const QColor & c)
+  {
+    // obtain and order all subdomains and surfaces
+    std::map<Word_type, QColor> subdomain_color_map;
     for (const Mesh_quad& quad : mesh_.polygons) {
       const surface_descriptor & surface = quad.surface;
-      subdomain_indices_color_map[surface.first] = QColor();
-      subdomain_indices_color_map[surface.second] = QColor();
+      subdomain_color_map[surface.first] = QColor();
+      subdomain_color_map[surface.second] = QColor();
       surface_color_map[surface] = QColor();
     }
 
-    double nb_domains = subdomain_indices_color_map.size();
+    // assign default color to each subdomains (same colors as images)
+    double nb_domains = subdomain_color_map.size();
     double i = 0;
-    for (std::map<Word_type, QColor>::iterator it = subdomain_indices_color_map.begin(),
-         end = subdomain_indices_color_map.end(); it != end; ++it, i += 1.)
+    for (std::map<Word_type, QColor>::iterator it = subdomain_color_map.begin(),
+         end = subdomain_color_map.end(); it != end; ++it, i += 1.)
     {
       double hue = c.hueF() + 1. / nb_domains * i;
       if (hue > 1) { hue -= 1.; }
       it->second = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
     }
 
+    // assign color for each surfaces (use subdomain color if the surface is in contact with background)
     nb_domains = surface_color_map.size();
     i = 0;
     double patch_hsv_value = fmod(c.valueF() + .5, 1.);
-    for (Surface_map_type::iterator it = surface_color_map.begin(),
+    for (std::map<surface_descriptor, QColor>::iterator it = surface_color_map.begin(),
          end = surface_color_map.end(); it != end; ++it, i += 1.)
     {
       QColor surface_color;
       if (it->first.first == 0) {
-        surface_color = subdomain_indices_color_map[it->first.second];
+        surface_color = subdomain_color_map[it->first.second];
       }
       else {
         double hue = c.hueF() + 1. / nb_domains * i;
@@ -247,40 +318,6 @@ public:
 
       it->second = surface_color;
     }
-
-    // orient polygons
-    CGAL::Polygon_mesh_processing::orient_polygon_soup(mesh_.vertices, mesh_.polygons);
-
-    // make polygon mesh
-    typedef std::pair<int, SMesh::Face_index> Index_link;
-    std::vector<Index_link> meshface_to_smeshface;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(mesh_.vertices, mesh_.polygons, out,
-            CGAL::parameters::polygon_to_face_output_iterator(std::back_inserter(meshface_to_smeshface))
-        );
-
-    // set facet color property
-    auto color_property = out.add_property_map<SMesh::Face_index>("f:color", CGAL::IO::white()).first;
-    for (const Index_link & f : meshface_to_smeshface) {
-      const int & mesh_index = f.first;
-      const SMesh::Face_index & smesh_index = f.second;
-      const Mesh_quad & quad = mesh_.polygons[mesh_index];
-
-      const QColor & color = surface_color_map[quad.surface];
-
-      put(color_property, smesh_index, CGAL::IO::Color(color.red(), color.green(), color.blue()));
-    }
-  }
-private:
-  Mesh mesh_;
-  const Image* image_;
-  int nb_surfaces;
-
-  Word_type image_data(std::size_t i, std::size_t j, std::size_t k)
-  {
-    if ( i>=0 && i<image_->xdim() && j>=0 && j<image_->ydim() && k>=0 && k<image_->zdim() )
-        return image_->value(i, j, k);
-    else
-        return 0;
   }
 };
 
@@ -298,20 +335,29 @@ void Polyhedron_demo_isosurface_3_plugin::on_actionDualLabel_triggered()
 
     QElapsedTimer time;
     time.start();
+    QElapsedTimer time_per_op;
+    time_per_op.start();
     std::cout << "Dual contour label image...";
 
-    SMesh mesh;
     Polyhedron_demo_isosurface_3_plugin_helper helper(img_item->image());
     helper.dual_contouring_label_image();
-    helper.convert_to_smesh(mesh, img_item->color());
+
+    std::vector<Point_3> vertices;
+    std::vector<std::vector<std::size_t>> polygons;
+    std::vector<CGAL::IO::Color> fcolors;
+    std::vector<CGAL::IO::Color> vcolors;
+
+    helper.generate_polygon_soup(vertices, polygons, fcolors, vcolors, img_item->color());
 
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
-    Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(mesh);
-    new_item->setName(tr("%1 (surfaces)").arg(scene->item(index)->name()));
+    Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
+    new_item->load(vertices, polygons, fcolors, vcolors);
+    new_item->setName(tr("%1 (surface)").arg(scene->item(index)->name()));
     new_item->setColor(img_item->color());
     new_item->setRenderingMode(FlatPlusEdges);
     scene->addItem(new_item);
+
 
     img_item->setVisible(false);
 
