@@ -68,11 +68,6 @@ struct Less_gate
   template <typename DT3>
   bool operator()(const Gate<DT3>& a, const Gate<DT3>& b) const
   {
-    // @fixme? make it a total order by comparing addresses if both gates are bbox facets
-    if(a.is_artificial_facet())
-      return true;
-    else if(b.is_artificial_facet())
-      return false;
     return a.priority() > b.priority();
   }
 };
