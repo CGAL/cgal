@@ -1053,6 +1053,24 @@ private:
     TRAVERSABLE
   };
 
+  inline const char* get_status_message(const Facet_queue_status status)
+  {
+    constexpr std::size_t status_count = 3;
+
+    // Messages corresponding to Error_code list above. Must be kept in sync!
+    static const char* message[status_count] = {
+      "Irrelevant facet",
+      "Artificial facet",
+      "Traversable facet"
+    };
+
+    if(status > status_count || status < 0)
+      return "Unknown status";
+    else
+      return message[status];
+  }
+
+public:
   // @speed some decent time may be spent constructing Facet (pairs) for no reason as it's always
   // just to grab the .first and .second as soon as it's constructed, and not due to API requirements
   // e.g. from DT3
@@ -1062,9 +1080,9 @@ private:
 
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
     std::cout << "facet status: "
-              << f.first->vertex((f.second + 1)&3)->point() << " "
-              << f.first->vertex((f.second + 2)&3)->point() << " "
-              << f.first->vertex((f.second + 3)&3)->point() << std::endl;
+              << m_dt.point(f.first, Dt::vertex_triple_index(f.second, 0)) << " "
+              << m_dt.point(f.first, Dt::vertex_triple_index(f.second, 1)) << " "
+              << m_dt.point(f.first, Dt::vertex_triple_index(f.second, 2)) << std::endl;
 #endif
 
     // skip if neighbor is OUTSIDE or infinite
@@ -1119,6 +1137,7 @@ private:
     return IRRELEVANT;
   }
 
+private:
   bool push_facet(const Facet& f)
   {
     CGAL_precondition(f.first->info().is_outside);
@@ -1127,19 +1146,29 @@ private:
     if(m_queue.contains_with_bounds_check(Gate(f)))
       return false;
 
-    const Facet_queue_status s = facet_status(f);
-    if(s == IRRELEVANT)
+    const Facet_queue_status status = facet_status(f);
+    if(status == IRRELEVANT)
       return false;
 
     const Cell_handle ch = f.first;
-    const int id = f.second;
-    const Point_3& p0 = m_dt.point(ch, (id+1)&3);
-    const Point_3& p1 = m_dt.point(ch, (id+2)&3);
-    const Point_3& p2 = m_dt.point(ch, (id+3)&3);
+    const int s = f.second;
+    const Point_3& p0 = m_dt.point(ch, Dt::vertex_triple_index(s, 0));
+    const Point_3& p1 = m_dt.point(ch, Dt::vertex_triple_index(s, 1));
+    const Point_3& p2 = m_dt.point(ch, Dt::vertex_triple_index(s, 2));
 
-    // @todo should prob be the real value we compare to alpha instead of squared_radius
+    // @todo should prob be the real value that we compare to alpha instead of squared_radius
     const FT sqr = geom_traits().compute_squared_radius_3_object()(p0, p1, p2);
-    m_queue.resize_and_push(Gate(f, sqr, (s == ARTIFICIAL_FACET)));
+    m_queue.resize_and_push(Gate(f, sqr, (status == ARTIFICIAL_FACET)));
+
+#ifdef CGAL_AW3_DEBUG_QUEUE
+    static int gid = 0;
+    std::cout << "Queue insertion #" << gid++ << "\n"
+              << "  ch = " << &*ch << " (" << m_dt.is_infinite(ch) << ") " << "\n"
+              << "\t" << p0 << "\n\t" << p1 << "\n\t" << p2 << std::endl;
+    std::cout << "  Status: " << get_status_message(status) << std::endl;
+    std::cout << "  SQR: " << sqr << std::endl;
+    std::cout << "  Artificiality: " << (status == ARTIFICIAL_FACET) << std::endl;
+#endif
 
     return true;
   }
@@ -1160,7 +1189,7 @@ private:
     if(!is_positive(alpha) || !is_positive(offset))
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Error: invalid input parameters" << std::endl;
+      std::cerr << "Error: invalid input parameters: " << alpha << " and" << offset << std::endl;
 #endif
       return false;
     }
@@ -1230,7 +1259,9 @@ private:
       std::cout << m_queue.size() << " facets in the queue" << std::endl;
       std::cout << "Face " << fid++ << "\n"
                 << "c = " << &*ch << " (" << m_dt.is_infinite(ch) << "), n = " << &*neighbor << " (" << m_dt.is_infinite(neighbor) << ")" << "\n"
-                << m_dt.point(ch, (id+1)&3) << "\n" << m_dt.point(ch, (id+2)&3) << "\n" << m_dt.point(ch, (id+3)&3) << std::endl;
+                << m_dt.point(ch, Dt::vertex_triple_index(id, 0)) << "\n"
+                << m_dt.point(ch, Dt::vertex_triple_index(id, 1)) << "\n"
+                << m_dt.point(ch, Dt::vertex_triple_index(id, 2)) << std::endl;
       std::cout << "Priority: " << gate.priority() << std::endl;
 #endif
 
@@ -1246,7 +1277,9 @@ private:
       std::string face_name = "results/steps/face_" + std::to_string(static_cast<int>(i++)) + ".xyz";
       std::ofstream face_out(face_name);
       face_out.precision(17);
-      face_out << "3\n" << m_dt.point(ch, (id+1)&3) << "\n" << m_dt.point(ch, (id+2)&3) << "\n" << m_dt.point(ch, (id+3)&3) << std::endl;
+      face_out << "3\n" << m_dt.point(ch, Dt::vertex_triple_index(id, 0)) << "\n"
+                        << m_dt.point(ch, Dt::vertex_triple_index(id, 1)) << "\n"
+                        << m_dt.point(ch, Dt::vertex_triple_index(id, 2)) << std::endl;
       face_out.close();
 #endif
 
@@ -1373,7 +1406,7 @@ private:
     inc_cells.reserve(64);
     m_dt.incident_cells(v, std::back_inserter(inc_cells));
 
-    // Flood one inside and outside CC.
+    // Flood one inside and outside CC within the cell umbrella of the vertex.
     // Process both an inside and an outside CC to also detect edge pinching.
     // If there are still unprocessed afterwards, there is a non-manifoldness issue.
     //
@@ -1664,7 +1697,8 @@ public:
 private:
   void check_queue_sanity()
   {
-    std::cout << "Check queue sanity..." << std::endl;
+    std::cout << "\t~~~ Check queue sanity ~~~" << std::endl;
+
     std::vector<Gate> queue_gates;
     Gate previous_top_gate = m_queue.top();
     while(!m_queue.empty())
@@ -1674,15 +1708,16 @@ private:
       const Facet& current_f = current_gate.facet();
       const Cell_handle ch = current_f.first;
       const int id = current_f.second;
-      const Point_3& p0 = m_dt.point(ch, (id+1)&3);
-      const Point_3& p1 = m_dt.point(ch, (id+2)&3);
-      const Point_3& p2 = m_dt.point(ch, (id+3)&3);
+      const Point_3& p0 = m_dt.point(ch, Dt::vertex_triple_index(id, 0));
+      const Point_3& p1 = m_dt.point(ch, Dt::vertex_triple_index(id, 1));
+      const Point_3& p2 = m_dt.point(ch, Dt::vertex_triple_index(id, 2));
       const FT sqr = geom_traits().compute_squared_radius_3_object()(p0, p1, p2);
 
-      std::cout << "At Facet with VID " << get(Gate_ID_PM<Dt>(), current_gate)  << std::endl;
-
-      if(current_gate.priority() != sqr)
-        std::cerr << "Error: facet in queue has wrong priority" << std::endl;
+      std::cout << "At Facet with VID " << get(Gate_ID_PM<Dt>(), current_gate) << "\n";
+      std::cout << "\t" << p0 << "\n\t" << p1 << "\n\t" << p2 << "\n";
+      std::cout << "  Artificiality: " << current_gate.is_artificial_facet() << "\n";
+      std::cout << "  SQR: " << sqr << "\n";
+      std::cout << "  Priority " << current_gate.priority() << std::endl;
 
       if(Less_gate()(current_gate, previous_top_gate))
         std::cerr << "Error: current gate has higher priority than the previous top" << std::endl;
@@ -1691,7 +1726,8 @@ private:
 
       m_queue.pop();
     }
-    std::cout << "End sanity check" << std::endl;
+
+    std::cout << "\t~~~ End queue sanity check ~~~" << std::endl;
 
     // Rebuild
     CGAL_assertion(m_queue.empty());
