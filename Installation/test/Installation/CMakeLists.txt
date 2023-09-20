@@ -7,32 +7,16 @@ project( Installation_Tests )
 
 
 macro(create_link_to_program COMPONENT)
-
   add_executable(link_to_${COMPONENT} link_to_${COMPONENT}.cpp)
-
-  include_directories(${${COMPONENT}_3RD_PARTY_INCLUDE_DIRS})
-
-  add_definitions(${${COMPONENT}_3RD_PARTY_DEFINITIONS})
-
-  link_directories(${${COMPONENT}_3RD_PARTY_LIBRARIES_DIRS})
-
-  # Link the executable to CGAL and third-party libraries
-  if(CGAL_AUTO_LINK_ENABLED OR CGAL_HEADER_ONLY)
-    target_link_libraries(link_to_${COMPONENT} ${CGAL_3RD_PARTY_LIBRARIES}
-                          ${${COMPONENT}_3RD_PARTY_LIBRARIES})
-  else()
-    target_link_libraries(
-      link_to_${COMPONENT} CGAL::${COMPONENT} ${CGAL_3RD_PARTY_LIBRARIES}
-      ${${COMPONENT}_3RD_PARTY_LIBRARIES})
-  endif()
-
+  target_link_libraries(link_to_${COMPONENT} CGAL::${COMPONENT})
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS link_to_${COMPONENT})
-
+  CGAL_add_test(link_to_${COMPONENT})
 endmacro()
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 include(CGAL_CreateSingleSourceCGALProgram)
+include(CGAL_SetupGMP)
 
 create_single_source_cgal_program("endian.cpp")
 
@@ -68,6 +52,7 @@ if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL Windows)
   target_link_libraries(display_dll_version_info version)
   add_executable(test_gmp_mpfr_dll test_gmp_mpfr_dll.cpp)
   target_link_libraries(test_gmp_mpfr_dll version)
+  use_CGAL_GMP_support(test_gmp_mpfr_dll)
   CGAL_add_test(test_gmp_mpfr_dll)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS test_gmp_mpfr_dll )
   string(RANDOM RDM_DIR)#5 random chars to avoid conflicts in parallel testsuites
