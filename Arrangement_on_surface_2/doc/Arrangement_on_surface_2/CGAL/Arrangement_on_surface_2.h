@@ -1321,9 +1321,7 @@ bool remove_vertex
  * \pre The point-location object `pl`, must model the
  *      `ArrangementPointLocation_2` concept.
  * \pre Dereferencing `oi` must yield a polymorphic object of type
- *      `std::variant<Arrangement_on_surface_2::Vertex_handle,
- *                    Arrangement_on_surface_2::Halfedge_handle,
- *                    Arrangement_on_surface_2::Face_handle>`.
+ *      `std::variant<Arrangement_on_surface_2::Vertex_handle, Arrangement_on_surface_2::Halfedge_handle, Arrangement_on_surface_2::Face_handle>`.
  *
  * \cgalHeading{Requirements}
  */

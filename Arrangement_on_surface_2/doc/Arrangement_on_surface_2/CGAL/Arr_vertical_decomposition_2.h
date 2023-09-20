@@ -42,9 +42,7 @@ namespace CGAL {
  * `std::pair<Arrangement_on_surface_2::Vertex_const_handle,
  *            std::pair<std::optional<Type,std::optional<Type>>>`,
  * where `Type` is
- * `std::variant<Arrangement_on_surface_2::Vertex_const_handle,
- *               Arrangement_on_surface_2::Halfedge_const_handle,
- *               Arrangement_on_surface_2::Face_const_handle>`.
+ * `std::variant<Arrangement_on_surface_2::Vertex_const_handle, Arrangement_on_surface_2::Halfedge_const_handle, Arrangement_on_surface_2::Face_const_handle>`.
  */
 template <typename Traits, typename TopologyTraits, typename OutputIterator>
 OutputIterator
