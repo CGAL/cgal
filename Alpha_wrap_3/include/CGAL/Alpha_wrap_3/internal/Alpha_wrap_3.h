@@ -173,7 +173,7 @@ class Alpha_wrap_3
   using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Dt>, CGAL_BOOST_PAIRING_HEAP>;
 
 protected:
-  const Oracle m_oracle;
+  Oracle m_oracle;
   SC_Iso_cuboid_3 m_bbox;
 
   FT m_alpha, m_sq_alpha;
@@ -183,10 +183,12 @@ protected:
   Alpha_PQ m_queue;
 
 public:
-  // Main constructor
+  Alpha_wrap_3()
+    : m_queue(4096)
+  { }
+
   Alpha_wrap_3(const Oracle& oracle)
-    :
-      m_oracle(oracle),
+    : m_oracle(oracle),
       m_dt(Geom_traits(oracle.geom_traits())),
       // used to set up the initial MPQ, use some arbitrary not-too-small value
       m_queue(4096)
@@ -198,6 +200,8 @@ public:
 
 public:
   const Geom_traits& geom_traits() const { return m_dt.geom_traits(); }
+  Oracle& oracle() { return m_oracle; }
+  const Oracle& oracle() const { return m_oracle; }
   Dt& triangulation() { return m_dt; }
   const Dt& triangulation() const { return m_dt; }
   const Alpha_PQ& queue() const { return m_queue; }
