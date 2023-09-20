@@ -35,6 +35,10 @@ Release date: October 2023
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
+-   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
+    when inserting an arc that lies on the identification curve.
+
 ### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
 -   **Breaking change**: The template parameters of
     `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
