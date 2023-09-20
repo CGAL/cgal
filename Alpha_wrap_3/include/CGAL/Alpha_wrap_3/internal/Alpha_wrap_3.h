@@ -1027,6 +1027,15 @@ private:
     // skip if neighbor is OUTSIDE or infinite
     const Cell_handle ch = f.first;
     const int id = f.second;
+
+    if(!ch->info().is_outside)
+    {
+#ifdef CGAL_AW3_DEBUG_FACET_STATUS
+      std::cout << "Facet is inside" << std::endl;
+#endif
+      return IRRELEVANT;
+    }
+
     const Cell_handle nh = ch->neighbor(id);
     if(m_dt.is_infinite(nh))
       return TRAVERSABLE;
