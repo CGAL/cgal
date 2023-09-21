@@ -47,14 +47,14 @@ namespace Polygon_mesh_processing
 *         has an internal property map for `CGAL::vertex_point_t`.
 */
 template <class PolygonMesh,
-          class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
+          class VPMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
 class Adaptive_sizing_field
 #ifndef DOXYGEN_RUNNING
   : public Sizing_field_base<PolygonMesh, VPMap>
 #endif
 {
 private:
-  typedef Sizing_field_base<PolygonMesh> Base;
+  typedef Sizing_field_base<PolygonMesh, VPMap> Base;
   typedef typename CGAL::dynamic_vertex_property_t<typename Base::FT> Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh,
                                        Vertex_property_tag>::type VertexSizingMap;

@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
   const double tol = 0.001;
   const std::pair edge_min_max{0.001, 0.5};
-  PMP::Adaptive_sizing_field sizing_field(tol, edge_min_max, faces(mesh), mesh);
+  PMP::Adaptive_sizing_field<Mesh> sizing_field(tol, edge_min_max, faces(mesh), mesh);
   unsigned int nb_iter = 5;
 
   PMP::isotropic_remeshing(
