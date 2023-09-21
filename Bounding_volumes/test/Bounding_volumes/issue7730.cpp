@@ -20,7 +20,7 @@ int main()
   int p = 3;
 
   Cont points = { Point(0, -1), Point(1, -2),  Point(3,2),  Point(4,1) };
-  
+
   FT p_radius;
 
   CGAL::rectangular_p_center_2(
