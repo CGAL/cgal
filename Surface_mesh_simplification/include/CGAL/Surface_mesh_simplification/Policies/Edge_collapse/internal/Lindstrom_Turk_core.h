@@ -13,8 +13,6 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/LindstromTurk_params.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
