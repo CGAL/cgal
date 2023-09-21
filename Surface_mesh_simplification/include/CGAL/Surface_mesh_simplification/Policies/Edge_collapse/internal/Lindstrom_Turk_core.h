@@ -155,6 +155,36 @@ private :
   }
 #endif
 
+#ifdef __AVX__
+  static Vector SL_cross_product_avx(const Vector& A, const Vector& B)
+  {
+    const FT ax=A.x(), ay=A.y(), az=A.z();
+    const FT bx=B.x(), by=B.y(), bz=B.z();
+
+    __m256d a = _mm256_set_pd(ay, az, ax, 1.0);
+    __m256d b = _mm256_set_pd(bz, bx, by, 1.0);
+    __m256d c = _mm256_set_pd(az, ax, ay, 1.0);
+    __m256d d = _mm256_set_pd(by, bz, bx, 1.0);
+
+    __m256d s1 = _mm256_sub_pd(b, c);
+    __m256d s2 = _mm256_sub_pd(a, d);
+
+    b = _mm256_mul_pd(a, s1);
+    d = _mm256_mul_pd(c, s2);
+    a = _mm256_add_pd(b, d);
+
+    double res[4];
+    _mm256_storeu_pd(res, a);
+
+//            a  * (b  - c ) + c  * ( a - d);
+//    FT x =  ay * (bz - az) + az * (ay - by);
+//    FT y =  az * (bx - ax) + ax * (az - bz);
+//    FT z =  ax * (by - ay) + ay * (ax - bx);
+
+    return Vector(res[3], res[2], res[1]);
+  }
+#end
+
   static Vector SL_cross_product(const Vector& a, const Vector& b)
   {
     const FT ax=a.x(), ay=a.y(), az=a.z();
