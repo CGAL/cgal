@@ -150,9 +150,9 @@ public Q_SLOTS:
     if(!tet_item)
       return;
     Scene_c3t3_item* c3t3_item = tet_item->c3t3_item();
-    if(c3t3_item->subdomain_indices().size() > 96)
+    if(c3t3_item->subdomain_indices().size() > 25)
     {
-      QMessageBox::warning(nullptr, "Warning", tr("The filtering is only available for items with less than 96 subdomains, and this one has %1").arg(c3t3_item->subdomain_indices().size()));
+      QMessageBox::warning(nullptr, "Warning", tr("The filtering is only available for items with less than 24 subdomains, and this one has %1").arg(c3t3_item->subdomain_indices().size()));
       return;
     }
     int counter = 0;
