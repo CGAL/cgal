@@ -183,7 +183,7 @@ private :
 
     return Vector(res[3], res[2], res[1]);
   }
-#end
+#endif
 
   static Vector SL_cross_product(const Vector& a, const Vector& b)
   {
