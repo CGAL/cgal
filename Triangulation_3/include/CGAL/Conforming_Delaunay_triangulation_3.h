@@ -171,6 +171,7 @@ protected:
                                              Visitor&) {
     if(va != vb) {
       const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
+      pair_of_vertices_to_cid.emplace(make_sorted_pair(va, vb), c_id);
       // traverse all the vertices along [va, vb] and add pairs of consecutive
       // vertices as sub-constraints.
       std::for_each(tr.segment_traverser_simplices_begin(va, vb), tr.segment_traverser_simplices_end(),
@@ -395,6 +396,12 @@ protected:
     {
       return {};
     }
+    auto it = pair_of_vertices_to_cid.find(make_sorted_pair(va, vb));
+    if(it != pair_of_vertices_to_cid.end()) {
+      return it->second;
+    }
+    return {};
+    // @TODO: cleanup the rest of the function, and `constraint_around`
     Constraint_id c_id = constraint_around(va, vb, false);
     if(c_id != Constraint_id{}) return c_id;
     c_id = constraint_around(vb, va, false);
@@ -639,6 +646,7 @@ protected:
   T_3& tr = *this;
   Compare_vertex_handle comp = {this};
   Constraint_hierarchy constraint_hierarchy = {comp};
+  std::map<std::pair<Vertex_handle, Vertex_handle>, Constraint_id> pair_of_vertices_to_cid;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
 
   std::stack<std::pair<Subconstraint, Constraint_id> >
