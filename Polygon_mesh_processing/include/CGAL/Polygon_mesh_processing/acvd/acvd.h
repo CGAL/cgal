@@ -122,7 +122,7 @@ void acvd_subdivide_if_needed(
 
 template <typename PolygonMesh, /*ClusteringMetric,*/
   typename NamedParameters = parameters::Default_named_parameters>
-void acvd_simplification(
+PolygonMesh acvd_simplification(
     PolygonMesh& pmesh,
     const int nb_clusters,
     const NamedParameters& np = parameters::default_values()
@@ -149,8 +149,33 @@ void acvd_simplification(
   // TODO: handle cases where the mesh is not a triangle mesh
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
   
-  PolygonMesh pmesh_subdivided = pmesh;
-  acvd_subdivide_if_needed(pmesh_subdivided, nb_clusters, np);
+  // TODO: copy the mesh in order to not modify the original mesh
+  int nb_vertices = num_vertices(pmesh);
+
+  // To provide the functionality remeshing (not just simplification), we might need to
+  // subdivide the mesh before clustering
+  // in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+
+  // do the following while nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+  // That is, because the subdivision steps heuristic is not 100% guaranteed to produce
+  // the desired number of vertices.
+  while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
+  {
+    double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
+    int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
+
+    std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
+
+    if (subdivide_steps > 0)
+    {
+      Subdivision_method_3::Upsample_subdivision(
+        pmesh,
+        CGAL::parameters::number_of_iterations(subdivide_steps).vertex_point_map(vpm)
+      );
+      vpm = get_property_map(CGAL::vertex_point, pmesh);
+      nb_vertices = num_vertices(pmesh);
+    }
+  }
 
   // initial random clusters
   // property map from vertex_descriptor to cluster index
@@ -396,14 +421,14 @@ void acvd_simplification(
       }
     }
 
-    for (int c = 0; c < nb_clusters; c++)
-    {
-      std::cout << "cluster " << c << " has " << cluster_components[c].size() << " components\n";
-      std::cout << "sizes: ";
-      for (int i = 0; i < cluster_components[c].size(); i++)
-        std::cout << cluster_components[c][i].size() << " / " << num_vertices(pmesh) << " ";
-      std::cout << "\n";
-    }
+    // for (int c = 0; c < nb_clusters; c++)
+    // {
+    //   std::cout << "cluster " << c << " has " << cluster_components[c].size() << " components\n";
+    //   std::cout << "sizes: ";
+    //   for (int i = 0; i < cluster_components[c].size(); i++)
+    //     std::cout << cluster_components[c][i].size() << " / " << num_vertices(pmesh) << " ";
+    //   std::cout << "\n";
+    // }
 
     // loop over clusters
     for (int c = 0; c < nb_clusters; c++)
@@ -593,9 +618,11 @@ void acvd_simplification(
   orient_polygon_soup(points, polygons);
   polygon_soup_to_polygon_mesh(points, polygons, simplified_mesh);
 
-  name = std::to_string(nb_clusters) + "_simped.off";
-  CGAL::IO::write_OFF(name, simplified_mesh);
+  // name = std::to_string(nb_clusters) + "_simped.off";
+  // CGAL::IO::write_OFF(name, simplified_mesh);
   std::cout << "kak3" << std::endl;
+
+  return simplified_mesh;
 
 }
 
@@ -604,13 +631,13 @@ void acvd_simplification(
 
 template <typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
-void  acvd_isotropic_simplification(
+PolygonMesh acvd_isotropic_simplification(
     PolygonMesh& pmesh,
     const int& nb_vertices,
     const NamedParameters& np = parameters::default_values()
   )
 {
-  internal::acvd_simplification<PolygonMesh, /*IsotropicMetric,*/ NamedParameters>(
+  return internal::acvd_simplification<PolygonMesh, /*IsotropicMetric,*/ NamedParameters>(
     pmesh,
     nb_vertices,
     np
