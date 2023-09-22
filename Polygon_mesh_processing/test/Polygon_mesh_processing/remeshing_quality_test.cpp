@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   std::cout << "Remeshing done, checking triangle quality...\n" << std::endl;
   double qmin = (std::numeric_limits<double>::max)();      // minimum triangle quality
   double qavg = 0.;           // average quality
-  double min_angle = std::numeric_limits<double>::max(); // minimum angle
+  double min_angle = (std::numeric_limits<double>::max)(); // minimum angle
   double avg_min_angle = 0.; // average minimum angle
   for (auto face : mesh.faces())
   {
