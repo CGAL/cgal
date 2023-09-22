@@ -195,11 +195,10 @@ int go(Mesh mesh, std::string output_filename) {
   CDT cdt;
   auto pmap = get(CGAL::vertex_point, mesh);
 
-  auto [patch_id_map, ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", 0);
-  assert(ok);
-  for(auto f: faces(mesh)) {
-    put(patch_id_map, f, -1);
-  }
+  auto [patch_id_map, ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -1);
+  assert(ok); CGAL_USE(ok);
+  auto [v_selected_map, ok2] = mesh.add_property_map<vertex_descriptor, bool>("v:selected", false);
+  assert(ok2); CGAL_USE(ok2);
   int nb_patches = 0;
   std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
   if(merge_facets) {
@@ -228,7 +227,11 @@ int go(Mesh mesh, std::string output_filename) {
           auto c = get(pmap, target(next(h, mesh), mesh));
           auto d = get(pmap, target(next(opp, mesh), mesh));
           if(CGAL::orientation(a, b, c, d) != CGAL::COPLANAR) {
-            edges.emplace_back(source(e, mesh), target(e, mesh));
+            auto va = source(h, mesh);
+            auto vb = target(h, mesh);
+            edges.emplace_back(va, vb);
+            put(v_selected_map, va, true);
+            put(v_selected_map, vb, true);
             continue;
           }
           if(get(patch_id_map, n) >= 0) continue;
@@ -292,6 +295,7 @@ int go(Mesh mesh, std::string output_filename) {
   };
 
   for(auto v: vertices(mesh)) {
+    if(merge_facets && false == get(v_selected_map, v)) continue;
     cdt.insert(get(pmap, v));
   }
   int poly_id = 0;
