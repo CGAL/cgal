@@ -629,6 +629,43 @@ PolygonMesh acvd_simplification(
 
 } // namespace internal
 
+/**
+* \ingroup ACVD_grp
+*
+* Performs uniform (isotropic) centroidal voronoi diagram simplification on a polygon mesh.
+* This can also be used for remeshing by setting the number of clusters to the desired number of vertices.
+* The number of clusters is the number of vertices in the output mesh.
+*
+* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
+*
+* @param pmesh input polygon mesh
+* @param nb_vertices number of target vertices in the output mesh
+* @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{vertex_point_map}
+*       \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
+*       \cgalParamType{a class model of `ReadablePropertyMap` with
+*                      `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                      as key type and `GT::Point_3` as value type.}
+*       \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
+*       \cgalParamExtra{If this parameter is omitted, an internal property map for
+*                       `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*      \cgalParamDescription{an instance of a geometric traits class.}
+*      \cgalParamType{a class model of `Kernel`}
+*      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
+*      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+* \cgalNamedParamsEnd
+*
+*/
+
 template <typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
 PolygonMesh acvd_isotropic_simplification(
