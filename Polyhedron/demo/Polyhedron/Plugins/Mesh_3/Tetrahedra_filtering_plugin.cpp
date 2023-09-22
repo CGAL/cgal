@@ -11,6 +11,7 @@
 #include <CGAL/double.h>
 
 #include "Scene_c3t3_item.h"
+#include "Scene_triangulation_3_item.h"
 #include "Scene_tetrahedra_item.h"
 #include "Messages_interface.h"
 #include "CGAL_double_edit.h"
@@ -150,9 +151,13 @@ public Q_SLOTS:
     if(!tet_item)
       return;
     Scene_c3t3_item* c3t3_item = tet_item->c3t3_item();
-    if(c3t3_item->subdomain_indices().size() > 25)
+    unsigned int max_number_of_item = 32*Scene_triangulation_3_item::number_of_bitset-1;
+    if(c3t3_item->subdomain_indices().size() >= max_number_of_item)
     {
-      QMessageBox::warning(nullptr, "Warning", tr("The filtering is only available for items with less than 24 subdomains, and this one has %1").arg(c3t3_item->subdomain_indices().size()));
+      QString message = tr("The filtering is only available for items with less than %1 subdomains, and this one has %2")
+                            .arg(max_number_of_item)
+                            .arg(c3t3_item->subdomain_indices().size());
+      QMessageBox::warning(nullptr, "Warning", message);
       return;
     }
     int counter = 0;
