@@ -81,21 +81,26 @@ public Q_SLOTS:
     }
 
 
-    /*typename FaceGraphItem::Face_graph* graph = item->face_graph();
+    Face_graph* graph = item->face_graph();
     if(!graph) return;
     QElapsedTimer time;
     time.start();
-    CGAL::Three::Three::information("Upsample subdivision...");
+    CGAL::Three::Three::information("ACVD Simplification...");
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    CGAL::Subdivision_method_3::Upsample_subdivision(
-        *graph,
-        CGAL::params::number_of_iterations(ui_widget.nb_clusters_spin_box->value()/10)
-    );
+    FaceGraph simplified_graph = CGAL::Polygon_mesh_processing::acvd_isotropic_simplification(*graph, ui.nb_clusters_spin_box->value());
 
+    // update the scene
     CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
     QApplication::restoreOverrideCursor();
     item->invalidateOpenGLBuffers();
-    scene->itemChanged(item);*/
+
+    // add the simplified mesh to the scene
+    Scene_facegraph_item* simplified_item = new Scene_facegraph_item(simplified_graph);
+    simplified_item->setName(QString(item->name() + "_simplified"));
+    scene->addItem(simplified_item);
+    simplified_item->invalidateOpenGLBuffers();
+    scene->itemChanged(simplified_item);
+
   }
 
 private:
