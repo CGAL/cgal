@@ -206,15 +206,15 @@ private:
 #endif
 
     Vertex_curvature_map vertex_curvature_map = get(Vertex_curvature_tag(), face_graph);
-    interpolated_corrected_principal_curvatures_and_directions(face_graph
-                                                             , vertex_curvature_map
-                                                             , parameters::ball_radius(radius));
+    interpolated_corrected_principal_curvatures_and_directions(face_graph,
+                                                               vertex_curvature_map,
+                                                               parameters::ball_radius(radius));
     // calculate vertex sizing field L(x_i) from the curvature field
     for(vertex_descriptor v : vertices(face_graph))
     {
       auto vertex_curv = get(vertex_curvature_map, v);
-      const FT max_absolute_curv = (CGAL::max)(CGAL::abs(vertex_curv.max_curvature)
-                                             , CGAL::abs(vertex_curv.min_curvature));
+      const FT max_absolute_curv = (CGAL::max)(CGAL::abs(vertex_curv.max_curvature),
+                                               CGAL::abs(vertex_curv.min_curvature));
       const FT vertex_size_sq = 6 * tol / max_absolute_curv - 3 * CGAL::square(tol);
       if (vertex_size_sq > CGAL::square(m_long))
       {
@@ -257,16 +257,17 @@ private:
   }
 
 public:
-  FT get_sizing(const vertex_descriptor v) const {
-      CGAL_assertion(get(m_vertex_sizing_map, v));
-      return get(m_vertex_sizing_map, v);
-    }
+  FT get_sizing(const vertex_descriptor v) const
+  {
+    CGAL_assertion(get(m_vertex_sizing_map, v));
+    return get(m_vertex_sizing_map, v);
+  }
 
   std::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     const FT sqlen = sqlength(h, pmesh);
-    FT sqtarg_len = CGAL::square(4./3. * CGAL::min(get(m_vertex_sizing_map, source(h, pmesh)),
-                                                   get(m_vertex_sizing_map, target(h, pmesh))));
+    FT sqtarg_len = CGAL::square(4./3. * (CGAL::min)(get(m_vertex_sizing_map, source(h, pmesh)),
+                                                     get(m_vertex_sizing_map, target(h, pmesh))));
     CGAL_assertion(get(m_vertex_sizing_map, source(h, pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, target(h, pmesh)));
     if(sqlen > sqtarg_len)
@@ -275,12 +276,11 @@ public:
       return std::nullopt;
   }
 
-  std::optional<FT> is_too_long(const vertex_descriptor va,
-                                  const vertex_descriptor vb) const
+  std::optional<FT> is_too_long(const vertex_descriptor va, const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);
-    FT sqtarg_len = CGAL::square(4./3. * CGAL::min(get(m_vertex_sizing_map, va),
-                                                   get(m_vertex_sizing_map, vb)));
+    FT sqtarg_len = CGAL::square(4./3. * (CGAL::min)(get(m_vertex_sizing_map, va),
+                                                     get(m_vertex_sizing_map, vb)));
     CGAL_assertion(get(m_vertex_sizing_map, va));
     CGAL_assertion(get(m_vertex_sizing_map, vb));
     if (sqlen > sqtarg_len)
@@ -292,8 +292,8 @@ public:
   std::optional<FT> is_too_short(const halfedge_descriptor h, const PolygonMesh& pmesh) const
   {
     const FT sqlen = sqlength(h, pmesh);
-    FT sqtarg_len = CGAL::square(4./5. * CGAL::min(get(m_vertex_sizing_map, source(h, pmesh)),
-                                                   get(m_vertex_sizing_map, target(h, pmesh))));
+    FT sqtarg_len = CGAL::square(4./5. * (CGAL::min)(get(m_vertex_sizing_map, source(h, pmesh)),
+                                                     get(m_vertex_sizing_map, target(h, pmesh))));
     CGAL_assertion(get(m_vertex_sizing_map, source(h, pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, target(h, pmesh)));
     if (sqlen < sqtarg_len)

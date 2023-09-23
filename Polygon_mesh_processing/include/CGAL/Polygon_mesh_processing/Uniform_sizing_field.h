@@ -111,8 +111,7 @@ public:
       return std::nullopt;
   }
 
-  std::optional<FT> is_too_long(const vertex_descriptor va,
-                                  const vertex_descriptor vb) const
+  std::optional<FT> is_too_long(const vertex_descriptor va, const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);
     if (sqlen > m_sq_long)
