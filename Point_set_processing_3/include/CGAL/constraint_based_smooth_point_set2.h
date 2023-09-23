@@ -70,7 +70,7 @@ void optimize_matrix_eigenvalues(
 
   // do binary optimization
   // scale so that eigenvalues are in range [0, 1]
-  for(auto& eigen : eigens)
+  for (auto& eigen : eigens)
   {
     for (int i=0; i<3; ++i)
     {
@@ -80,7 +80,6 @@ void optimize_matrix_eigenvalues(
     }
   }
   // std::cout << "\n";
-
 }
 
 // Finds the optimized eigenvalues (and eigenvectors) of the normal voting
@@ -128,6 +127,8 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_nvt_eigenvalues(
 
   Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(nvt);
   std::pair<Eigen::Vector3d, Eigen::Matrix3d> eigens(solver.eigenvalues(), solver.eigenvectors());
+
+  // std::cout << eigens.first << "\n";
 
   return eigens;
 }
@@ -411,7 +412,7 @@ constraint_based_smooth_point_set(
   FT neighbor_radius = 0;
   FT normal_threshold = 0.9 * (180/M_PI);
   FT damping_factor = 3;
-  FT eigenvalue_threshold_nvt = .3;
+  FT eigenvalue_threshold_nvt = 0.01;
   FT eigenvalue_threshold_covm = .3;
   FT update_threshold = 0;
 
@@ -434,13 +435,18 @@ constraint_based_smooth_point_set(
   if (neighbor_radius == 0)
   {
     FT avg_dist = CGAL::compute_average_spacing<ConcurrencyTag>(
-                         points, 6,
+                         points, 16,
                          CGAL::parameters::point_map(point_map));
 
     neighbor_radius = 2 * avg_dist;
-    update_threshold = 2 * neighbor_radius;
 
     std::cout << "neighbor radius: " << neighbor_radius << "\n";
+  }
+
+  if (update_threshold == 0)
+  {
+    update_threshold = 2 * neighbor_radius;
+
     std::cout << "update threshold: " << update_threshold << "\n";
   }
 
