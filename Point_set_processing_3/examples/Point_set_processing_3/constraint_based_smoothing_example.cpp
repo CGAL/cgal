@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/constraint_based_smooth_point_set2.h>
+#include <CGAL/constraint_based_smooth_point_set.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/IO/write_points.h>
 #include <CGAL/property_map.h>
@@ -91,7 +91,6 @@ int main(int argc, char*argv[])
                                                         CGAL::IO::PLY_property<unsigned char>("green"),
                                                         CGAL::IO::PLY_property<unsigned char>("blue"))))
     {
-      std::cout << "AHHHHHHHHHHHHHHHHHH" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -123,7 +122,6 @@ int main(int argc, char*argv[])
                                                       CGAL::IO::PLY_property<unsigned char>("green"),
                                                       CGAL::IO::PLY_property<unsigned char>("blue"))))
   {
-    std::cout << "AHHHHHHHHHHHHHHHHHH" << std::endl;
     return EXIT_FAILURE;
   }
 
