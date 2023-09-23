@@ -68,6 +68,9 @@ if(TARGET CGAL::Eigen3_support)
 
   create_single_source_cgal_program("jet_pointer_as_property_map.cpp")
   target_link_libraries(jet_pointer_as_property_map PUBLIC CGAL::Eigen3_support)
+
+  create_single_source_cgal_program("constraint_based_smoothing_test.cpp")
+  target_link_libraries(constraint_based_smoothing_test PUBLIC CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

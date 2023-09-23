@@ -417,8 +417,8 @@ constraint_based_smooth_point_set(
   FT neighbor_radius = 0;
   FT normal_threshold = 0.9 * (180/M_PI);
   FT damping_factor = 3;
-  FT eigenvalue_threshold_nvt = 0.01;
-  FT eigenvalue_threshold_covm = .3;
+  FT eigenvalue_threshold_nvt = 0.5;
+  FT eigenvalue_threshold_covm = .25;
   FT update_threshold = 0;
 
   bool do_point_smoothing = true;
@@ -486,7 +486,7 @@ constraint_based_smooth_point_set(
                                                 (points.end(), pwns_neighbors.end(), nvt_optimized_eigens.end()))),
     [&](const typename Zip_iterator_2::reference& t)
     {
-      get<2>(t) = internal::calculate_optimized_nvt_eigenvalues<Kernel, PointRange>
+      get<2>(t) = internal::calculate_nvt_eigenvalues<Kernel, PointRange>
           (get<0>(t),
           point_map, normal_map,
           get<1>(t),
@@ -551,7 +551,7 @@ constraint_based_smooth_point_set(
                                                 (points.end(), pwns_neighbors.end(), covm_optimized_eigens.end()))),
     [&](const typename Zip_iterator_2::reference& t)
     {
-      get<2>(t) = internal::calculate_optimized_covm_eigenvalues<Kernel, PointRange>
+      get<2>(t) = internal::calculate_covm_eigenvalues<Kernel, PointRange>
           (get<0>(t),
            point_map, normal_map,
            get<1>(t),
