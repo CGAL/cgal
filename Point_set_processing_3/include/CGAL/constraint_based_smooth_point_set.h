@@ -43,6 +43,8 @@ namespace CGAL {
 
 namespace internal {
 
+// Set eigenvalues of a matrix to 0 or 1 based on whether they are
+// above/below a threshold
 template <typename Kernel>
 void optimize_matrix_eigenvalues(
   std::vector<std::pair<Eigen::Vector3d, Eigen::Matrix3d>>& eigens,
@@ -82,11 +84,10 @@ void optimize_matrix_eigenvalues(
   // std::cout << "\n";
 }
 
-// Finds the optimized eigenvalues (and eigenvectors) of the normal voting
-// tensors at each point
+// Calculates the normal voting tensor and decomposes it into it's eigenvalues and eigenvectors
 template <typename Kernel, typename PointRange,
         typename PointMap, typename VectorMap>
-std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_nvt_eigenvalues(
+std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_nvt_eigenvalues(
   const typename PointRange::iterator::value_type& vt,
   PointMap point_map,
   VectorMap normal_map,
@@ -133,9 +134,10 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_nvt_eigenvalues(
   return eigens;
 }
 
+// Calculates the covariance matrix and decomposes it into it's eigenvalues and eigenvectors
 template <typename Kernel, typename PointRange,
         typename PointMap, typename VectorMap>
-std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_covm_eigenvalues(
+std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_covm_eigenvalues(
   const typename PointRange::iterator::value_type& vt,
   PointMap point_map,
   VectorMap normal_map,
@@ -171,7 +173,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_covm_eigenvalues
     }
   }
 
-  if (weight != 0)  // idk if exact equality is okay
+  if (weight != 0)
   {
     v_bar /= weight;
   }
@@ -191,7 +193,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_covm_eigenvalues
     }
   }
 
-  if (weight != 0)  // idk if exact equality is okay
+  if (weight != 0)
   {
     covm /= weight;
   }
@@ -202,6 +204,7 @@ std::pair<Eigen::Vector3d, Eigen::Matrix3d> calculate_optimized_covm_eigenvalues
   return eigens;
 }
 
+// Calculates new normal positions based off the normal voting tensor
 template <typename Kernel, typename PointRange,
           typename PointMap, typename VectorMap>
 typename Kernel::Vector_3 nvt_normal_denoising(
@@ -235,6 +238,7 @@ typename Kernel::Vector_3 nvt_normal_denoising(
 enum point_type_t {corner = 3, edge = 1, flat = 2};  // covm
 // enum point_type_t {corner = 3, edge = 2, flat = 1};  // nvt
 
+// Detects type of point by using the covariance matrix eigenvalues
 template <typename Kernel>
 point_type_t feature_detection(
   std::pair<Eigen::Vector3d, Eigen::Matrix3d> covm_eigens
@@ -257,6 +261,7 @@ point_type_t feature_detection(
   return static_cast<point_type_t>(dominant_eigenvalue_count);
 }
 
+// Calculates new point position based on the point type and the covariance matrix
 template <typename Kernel, typename PointRange,
           typename PointMap, typename VectorMap>
 typename Kernel::Point_3 calculate_new_point(
