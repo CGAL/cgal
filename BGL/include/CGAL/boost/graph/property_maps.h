@@ -82,7 +82,7 @@ template < class PolygonMesh,
 struct Segment_from_edge_descriptor_map{
 
   Segment_from_edge_descriptor_map()
-    : m_pm(nullptr)
+    : m_pm(nullptr), m_vpm()
   {}
 
   Segment_from_edge_descriptor_map(PolygonMesh const * pm)
@@ -105,7 +105,7 @@ struct Segment_from_edge_descriptor_map{
   typedef boost::readable_property_map_tag category;
   //data
   std::remove_const_t<PolygonMesh>* m_pm;
-  VertexPointMap m_vpm;
+  std::optional<VertexPointMap> m_vpm;
 
   //get function for property map
   inline friend
@@ -113,8 +113,8 @@ struct Segment_from_edge_descriptor_map{
   get(const Segment_from_edge_descriptor_map<PolygonMesh,VertexPointMap>& pmap,
       key_type h)
   {
-    return value_type(get(pmap.m_vpm, source(h, *pmap.m_pm) ),
-                      get(pmap.m_vpm, target(h, *pmap.m_pm) ) );
+    return value_type(get(pmap.m_vpm.value(), source(h, *pmap.m_pm) ),
+                      get(pmap.m_vpm.value(), target(h, *pmap.m_pm) ) );
   }
 
   inline friend
@@ -122,8 +122,8 @@ struct Segment_from_edge_descriptor_map{
   get(const Segment_from_edge_descriptor_map<PolygonMesh,VertexPointMap>& pmap,
       const std::pair<key_type, const PolygonMesh*>& h)
   {
-    return value_type(get(pmap.m_vpm, source(h.first, *pmap.m_pm) ),
-                      get(pmap.m_vpm, target(h.first, *pmap.m_pm) ) );
+    return value_type(get(pmap.m_vpm.value(), source(h.first, *pmap.m_pm) ),
+                      get(pmap.m_vpm.value(), target(h.first, *pmap.m_pm) ) );
   }
 };
 
@@ -160,7 +160,7 @@ struct One_point_from_face_descriptor_map{
   get(const One_point_from_face_descriptor_map<PolygonMesh,VertexPointMap>& m,
       key_type f)
   {
-    return get(*m.m_vpm, target(halfedge(f, *m.m_pm), *m.m_pm));
+    return get(m.m_vpm.value(), target(halfedge(f, *m.m_pm), *m.m_pm));
   }
 
   inline friend
@@ -168,7 +168,7 @@ struct One_point_from_face_descriptor_map{
   get(const One_point_from_face_descriptor_map<PolygonMesh,VertexPointMap>& m,
       const std::pair<key_type, const PolygonMesh*>& f)
   {
-    return get(*m.m_vpm, target(halfedge(f.first, *m.m_pm), *m.m_pm));
+    return get(m.m_vpm.value(), target(halfedge(f.first, *m.m_pm), *m.m_pm));
   }
 };
 

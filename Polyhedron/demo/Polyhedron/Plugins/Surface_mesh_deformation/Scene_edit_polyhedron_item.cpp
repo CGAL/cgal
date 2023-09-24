@@ -531,8 +531,6 @@ struct Is_constrained_map<SMesh>
   SMesh::Property_map<sm_vertex_descriptor,int> icmap;
   SMesh* mesh;
 
-  //Is_constrained_map() {}
-
   Is_constrained_map(std::vector<int>* vec, SMesh* mesh)
     : mesh(mesh), icmap(mesh->add_property_map<sm_vertex_descriptor, int>("v:is_control", -1).first) {
     for (unsigned int i = 0; i < vec->size(); ++i) {
