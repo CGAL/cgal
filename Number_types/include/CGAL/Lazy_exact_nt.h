@@ -19,7 +19,6 @@
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <boost/operators.hpp>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/logical.hpp>
 
 #include <CGAL/Interval_nt.h>
@@ -1179,12 +1178,11 @@ struct Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
         Are_implicit_interoperable;                                     \
     private:                                                            \
         static const  bool interoperable                                \
-        =std::is_same< Are_implicit_interoperable, Tag_false>::value; \
+        =std::is_same< Are_implicit_interoperable, Tag_false>::value;   \
     public:                                                             \
-        typedef typename boost::mpl::if_c <interoperable,Null_tag,NT>   \
-        ::type  Type;                                          \
-        typedef typename boost::mpl::if_c <interoperable, Null_functor, \
-    INTERN_CT::Cast_from_to<NTX,NT> >::type Cast;                       \
+        typedef std::conditional_t <interoperable,Null_tag,NT> Type;    \
+        typedef std::conditional_t <interoperable, Null_functor,        \
+    INTERN_CT::Cast_from_to<NTX,NT> > Cast;                             \
     };                                                                  \
                                                                         \
     template<class ET>                                                  \

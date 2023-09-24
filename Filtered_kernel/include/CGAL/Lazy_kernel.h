@@ -27,7 +27,6 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <boost/none.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <CGAL/Lazy_exact_nt.h>
 

@@ -48,7 +48,6 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <array>
 #include <CGAL/array.h>

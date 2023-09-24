@@ -23,8 +23,6 @@
 
 #include <list>
 #include <boost/type_traits.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits.hpp>
 #include <list>
 
 #include <CGAL/Arr_accessor.h>
@@ -271,7 +269,7 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Cgt2>, const Cgt2&, Cgt2>
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep:
@@ -326,7 +324,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Cgt2>, const Cgt2&, Cgt2>
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep.
@@ -379,7 +377,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Igt2>, const Igt2&, Igt2>
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -979,7 +977,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Igt2>, const Igt2&, Igt2>
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.

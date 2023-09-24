@@ -23,7 +23,6 @@
 #include <CGAL/Object.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/utility/result_of.hpp>
 

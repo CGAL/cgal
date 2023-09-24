@@ -1,4 +1,4 @@
-// Copyright (c) 2012  INRIA Sophia-Antipolis (France).
+3// Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -35,8 +35,6 @@
 
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/queuing_mutex.h>
-
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 

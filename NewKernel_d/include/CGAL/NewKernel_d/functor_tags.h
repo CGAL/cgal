@@ -18,7 +18,6 @@
 #include <boost/type_traits.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/empty.hpp>
 #include <boost/mpl/front.hpp>
@@ -233,7 +232,7 @@ namespace CGAL {
 #undef CGAL_DECL_ITER_OBJ
 
         template<class A,class T,class B,class C>struct Get_functor_category<A,Construct_ttag<T>,B,C> :
-          boost::mpl::if_c<iterator_tag_traits<T>::is_iterator,
+          std::conditional<iterator_tag_traits<T>::is_iterator,
                            Construct_iterator_tag,
                            Construct_tag> {};
 

@@ -29,7 +29,6 @@
 #include <CGAL/Side_of_triangle_mesh.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <exception>
 #include <iterator>

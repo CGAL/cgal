@@ -21,7 +21,6 @@
 #include <CGAL/config.h>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/not.hpp>
@@ -246,14 +245,14 @@ struct Arr_all_sides_not_finite_tag :
 struct Arr_not_all_sides_not_finite_tag :
   public virtual Arr_not_all_sides_oblivious_tag {};
 
-typedef boost::mpl::bool_<true>                                 Arr_true;
-typedef boost::mpl::bool_<false>                                Arr_false;
+typedef std::true_type                                          Arr_true;
+typedef std::false_type                                         Arr_false;
 
 template <typename ArrSideCategory>
 struct Arr_is_side_oblivious {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_oblivious_side_tag>        Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::conditional<Is_same::value, Arr_true, Arr_false> result;
   typedef typename result::type                                 type;
 };
 
@@ -261,7 +260,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_open {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_open_side_tag>             Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::conditional<Is_same,::value Arr_true, Arr_false> result;
   typedef typename result::type                                 type;
 };
 
@@ -269,7 +268,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_identified {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_identified_side_tag>       Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::conditional<Is_same::value, Arr_true, Arr_false> result;
   typedef typename result::type                                 type;
 };
 
@@ -277,7 +276,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_contracted {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_contracted_side_tag>       Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::conditional<Is_same::value, Arr_true, Arr_false> result;
   typedef typename result::type                                 type;
 };
 
@@ -285,7 +284,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_closed {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_closed_side_tag>           Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::conditional<Is_same::value, Arr_true, Arr_false> result;
   typedef typename result::type                                 type;
 };
 
@@ -307,10 +306,10 @@ struct Arr_all_sides_oblivious_category {
   /*! Boolean tag that is Arr_all_sides_oblivious_tag if all sides are
    * oblivious, otherwise Arr_not_all_sides_oblivious_tag
    */
-  typedef typename boost::mpl::if_<boost::mpl::and_<Lef_obl, Rig_obl,
-                                                    Bot_obl, Top_obl>,
-                                   Arr_all_sides_oblivious_tag,
-                                   Arr_not_all_sides_oblivious_tag>::type
+  typedef std::conditional_t<Lef_obl::value && Rig_obl::value &&
+                             Bot_obl::value && Top_obl::value,
+                             Arr_all_sides_oblivious_tag,
+                             Arr_not_all_sides_oblivious_tag>
     result;
 };
 
@@ -340,10 +339,10 @@ public:
   /*! Boolean tag that is Arr_all_sides_not_open_tag if all sides are not-open,
    * otherwise Arr_not_all_sides_not_open_tag
    */
-  typedef typename boost::mpl::if_<boost::mpl::and_<Lef_not_ope, Rig_not_ope,
-                                                    Bot_not_ope, Top_not_ope>,
-                                   Arr_all_sides_not_open_tag,
-                                   Arr_not_all_sides_not_open_tag>::type
+  typedef std::conditional_t<Lef_not_ope::value && Rig_not_ope::value &&
+                             Bot_not_ope::value && Top_not_ope::value,
+                             Arr_all_sides_not_open_tag,
+                             Arr_not_all_sides_not_open_tag>
     result;
 };
 
@@ -379,18 +378,18 @@ private:
   typedef boost::mpl::or_<Bot_obl, Bot_ope>                     Bot_obl_or_ope;
   typedef boost::mpl::or_<Top_obl, Top_ope>                     Top_obl_or_ope;
 
-  typedef typename boost::mpl::if_<boost::mpl::and_<Lef_obl_or_ope,
-                                                    Rig_obl_or_ope,
-                                                    Bot_obl_or_ope,
-                                                    Top_obl_or_ope>,
-                                   Arr_all_sides_not_finite_tag,
-                                   Arr_not_all_sides_not_finite_tag>::type
+  typedef std::conditional_t<Lef_obl_or_ope::value &&
+                             Rig_obl_or_ope::value &&
+                             Bot_obl_or_ope::value &&
+                             Top_obl_or_ope::value,
+                             Arr_all_sides_not_finite_tag,
+                             Arr_not_all_sides_not_finite_tag>
     tmp;
 
 public:
-  typedef typename boost::mpl::if_<boost::mpl::and_<Lef_obl, Rig_obl,
-                                                    Bot_obl, Top_obl>,
-                                   Arr_all_sides_oblivious_tag, tmp>::type
+  typedef std::conditional_t<Lef_obl::value && Rig_obl::value &&
+                             Bot_obl::value && Top_obl::value,
+                             Arr_all_sides_oblivious_tag, tmp>
     result;
 };
 
@@ -532,11 +531,11 @@ struct Arr_two_sides_category {
     Is_open;
 
 public:
-  typedef typename boost::mpl::if_<Is_identified, Arr_has_identified_side_tag,
-    typename boost::mpl::if_<Is_contracted, Arr_has_contracted_side_tag,
-      typename boost::mpl::if_<Is_closed, Arr_has_closed_side_tag,
-        typename boost::mpl::if_<Is_open, Arr_has_open_side_tag,
-          Arr_all_sides_oblivious_tag>::type>::type>::type>::type
+  typedef std::conditional_t<Is_identified::value, Arr_has_identified_side_tag,
+    std::conditional_t<Is_contracted::value, Arr_has_contracted_side_tag,
+      std::conditional_t<Is_closed::value, Arr_has_closed_side_tag,
+        std::conditional_t<Is_open::value, Arr_has_open_side_tag,
+          Arr_all_sides_oblivious_tag>>>>
     result;
 };
 

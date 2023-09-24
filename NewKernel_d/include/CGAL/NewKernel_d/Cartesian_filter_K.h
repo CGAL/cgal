@@ -15,7 +15,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/NewKernel_d/KernelD_converter.h>
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
 
 namespace CGAL {
