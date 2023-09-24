@@ -730,11 +730,9 @@ private:
       return;
 
     // Here we only target the property maps added by this plugin, so 'double' is fine
-    SMesh::Property_map<face_descriptor, double> property;
-    bool found;
-    std::tie(property, found) = sm->property_map<face_descriptor, double>(property_name);
-    if(found)
-      sm->remove_property_map(property);
+    auto property = sm->get_property_map<face_descriptor, double>(property_name);
+    if(property)
+      sm->remove_property_map(property.value());
   }
 
   void removePluginProperties(Scene_item* item)
