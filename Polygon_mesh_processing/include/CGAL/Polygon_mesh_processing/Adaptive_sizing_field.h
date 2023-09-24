@@ -1,4 +1,4 @@
-// Copyright (c) 2020 GeometryFactory (France)
+// Copyright (c) 2023 GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Jane Tournois
+// Author(s)     : Ivan Paden
 
 #ifndef CGAL_PMP_REMESHING_ADAPTIVE_SIZING_FIELD_H
 #define CGAL_PMP_REMESHING_ADAPTIVE_SIZING_FIELD_H

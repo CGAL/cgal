@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2021 GeometryFactory (France).
+// Copyright (c) 2015-2023 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Jane Tournois
+// Author(s)     : Jane Tournois, Ivan Paden
 
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TANGENTIAL_RELAXATION_H
