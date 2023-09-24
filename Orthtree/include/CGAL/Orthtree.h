@@ -48,13 +48,12 @@ namespace CGAL {
   \ingroup PkgOrthtreeClasses
 
   \brief A data structure using an axis-aligned hybercubic
-  decomposition of dD space for efficient point access and
-  computations.
+  decomposition of dD space for efficient access and
+  computation.
 
-  \details It builds a hierarchy of nodes which subdivide the space
-  based on a collection of points.  Each node represents an
-  axis-aligned hypercubic region of space.  A node contains the range
-  of points that are present in the region it defines, and it may
+  \details It builds a hierarchy of nodes which subdivices the space.
+  Each node represents an axis-aligned hypercubic region of space.
+  The contents of nodes depend on the Traits class, non-leaf nodes also
   contain \f$2^{dim}\f$ other nodes which further subdivide the
   region.
 
@@ -158,7 +157,7 @@ private: // data members :
   Traits m_traits; /* the tree traits */
 
   Node_property_container m_node_properties;
-  Node_property_container::Array <Node_data>& m_node_points;
+  Node_property_container::Array <Node_data>& m_node_contents;
   Node_property_container::Array <std::uint8_t>& m_node_depths;
   Node_property_container::Array <Global_coordinates>& m_node_coordinates;
   Node_property_container::Array <Maybe_node_index>& m_node_parents;
@@ -169,7 +168,7 @@ private: // data members :
   using Bbox_dimensions = std::array<FT, Dimension::value>;
   std::vector<Bbox_dimensions> m_side_per_depth;      /* side length per node's depth */
 
-  Cartesian_ranges cartesian_range; /* a helper to easily iterator on coordinates of points */
+  Cartesian_ranges cartesian_range; /* a helper to easily iterate over coordinates of points */
 
 public:
 
@@ -177,33 +176,22 @@ public:
   /// @{
 
   /*!
-    \brief creates an orthtree from a collection of points.
+    \brief creates an orthtree for a traits instance.
 
-    The constructed orthtree has a root node, with no children, that
-    contains the points passed. That root node has a bounding box that
-    encloses all of the points passed, with padding according to the
-    `enlarge_ratio`.
-
-    That root node is built as a `n`-cube (square in 2D, cube in 3D,
-    etc.) whose edge size is the longest bounding box edge multiplied
-    by `enlarge_ratio`. Using an `enlarge_ratio>1.0` prevents some
-    points from being exactly on the border of some cells, which can
-    lead to over-refinement.
+    The constructed orthtree has a root node with no children,
+    containing the contents determined by `construct_root_node_contents_object` from the Traits class.
+    That root node has a bounding box determined by `construct_root_node_bbox_object` from the Traits class,
+    which typically encloses its contents.
 
     This single-node orthtree is valid and compatible
     with all Orthtree functionality, but any performance benefits are
     unlikely to be realized until `refine()` is called.
 
-    \warning The input point range is not copied. It is used directly
-    and is rearranged by the `Orthtree`. Altering the point range
-    after creating the orthtree might leave it in an invalid state.
-
-
     \param traits the traits object.
   */
   explicit Orthtree(Traits traits) :
     m_traits(traits),
-    m_node_points(m_node_properties.add_property<Node_data>("points")),
+    m_node_contents(m_node_properties.add_property<Node_data>("contents")),
     m_node_depths(m_node_properties.add_property<std::uint8_t>("depths", 0)),
     m_node_coordinates(m_node_properties.add_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.add_property<Maybe_node_index>("parents")),
@@ -234,7 +222,7 @@ public:
     m_traits(other.m_traits),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(other.m_node_properties),
-    m_node_points(m_node_properties.get_property<Node_data>("points")),
+    m_node_contents(m_node_properties.get_property<Node_data>("contents")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
@@ -245,7 +233,7 @@ public:
     m_traits(other.m_traits),
     m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(std::move(other.m_node_properties)),
-    m_node_points(m_node_properties.get_property<Node_data>("points")),
+    m_node_contents(m_node_properties.get_property<Node_data>("contents")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
@@ -299,7 +287,7 @@ public:
       // Check if this node needs to be processed
       if (split_predicate(current, *this)) {
 
-        // Split the node, redistributing its points to its children
+        // Split the node, redistributing its contents to its children
         split(current);
 
       }
@@ -317,7 +305,7 @@ public:
   /*!
 
     \brief Convenience overload that refines an orthtree using a
-    maximum depth and maximum number of points in a node as split
+    maximum depth and maximum number of inliers in a node as split
     predicate.
 
     This is equivalent to calling
@@ -330,8 +318,11 @@ public:
     at a depth smaller than `max_depth` but already has fewer inliers
     than `bucket_size`, it is not split.
 
+    \warning This convenience method is only appropriate for trees with traits classes where
+    `Node_data` is a list-like type with a `size()` method.
+
     \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
-    \param bucket_size maximum points a node is allowed to contain.
+    \param bucket_size maximum number of items a node is allowed to contain.
    */
   void refine(size_t max_depth = 10, size_t bucket_size = 20) {
     refine(Orthtrees::Maximum_depth_and_maximum_number_of_inliers(max_depth, bucket_size));
@@ -465,9 +456,9 @@ public:
   /*!
     \brief constructs the bounding box of a node.
 
-    \note The object constructed is not the bounding box of the point
-    subset inside the node, but the bounding box of the node itself
-    (cubic).
+    \note The object constructed is not the bounding box of the node's contents,
+    but the bounding box of the node itself.
+    For a cubic orthtree, this will always be cubic.
    */
   Bbox bbox(Node_index n) const {
 
@@ -660,14 +651,14 @@ public:
    * @return the data associated with the node.
    */
   Node_data& data(Node_index n) {
-    return m_node_points[n];
+    return m_node_contents[n];
   }
 
   /*!
    * \brief const version of `data()`
    */
   const Node_data& data(Node_index n) const {
-    return m_node_points[n];
+    return m_node_contents[n];
   }
 
   /*!
@@ -829,8 +820,8 @@ public:
   Only leaf nodes should be split.
   When a node is split it is no longer a leaf node.
   A number of `Degree::value` children are constructed automatically, and their values are set.
-  Contents of this node are _not_ propagated automatically.
-  It is the responsibility of the caller to redistribute the points contained by a node after splitting
+  Contents of this node are _not_ propagated automatically, this is responsibility of the
+  `distribute_node_contents_object` in the Traits class.
  */
   void split(Node_index n) {
 
@@ -867,7 +858,7 @@ public:
     // Find the point around which the node is split
     Point center = barycenter(n);
 
-    // Add the node's points to its children
+    // Add the node's contents to its children
     m_traits.distribute_node_contents_object()(n, *this, center);
   }
 
@@ -1073,7 +1064,6 @@ private: // functions :
 
       // if this node is a leaf, then it's considered an intersecting node
       if (is_leaf(node)) {
-        // todo: output iterator should hold indices instead of pointers
         *output++ = node;
         return output;
       }

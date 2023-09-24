@@ -67,6 +67,10 @@ void reassign_points(
   \tparam PointSet must be a model of range whose value type is the key type of `PointMap`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Traits::Point_d`
 
+  \warning The input point set is not copied. It is used directly
+  and is rearranged by the `Orthtree`. Altering the point range
+  after creating the orthtree might leave it in an invalid state.
+
   \cgalModels{OrthtreeTraits}
   \sa `CGAL::Octree`
   \sa `CGAL::Orthtree_traits_2`

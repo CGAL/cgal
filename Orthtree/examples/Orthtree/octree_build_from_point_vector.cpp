@@ -6,7 +6,7 @@
 // Type Declarations
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_3;
-using Point_vector = std::vector<Point>; // todo: this was changed to std::list at some point; why?
+using Point_vector = std::vector<Point>;
 using Octree = CGAL::Octree<Kernel, Point_vector>;
 
 int main() {
