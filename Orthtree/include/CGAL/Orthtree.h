@@ -25,9 +25,9 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/span.h>
 
 #include <boost/function.hpp>
-#include <boost/core/span.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
 
