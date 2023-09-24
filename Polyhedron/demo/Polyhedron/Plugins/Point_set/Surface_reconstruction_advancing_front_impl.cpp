@@ -19,9 +19,8 @@ struct Construct{
 
   template <typename PointRange>
   Construct(SMesh& mesh, const PointRange& points)
-    : mesh(mesh)
+    : mesh(mesh), vpmap(get(boost::vertex_point, mesh))
   {
-    vpmap = get(boost::vertex_point, mesh);
     for (const auto& p : points)
     {
       typename boost::graph_traits<SMesh>::vertex_descriptor v;
@@ -192,8 +191,7 @@ SMesh* advancing_front (const Point_set& points,
 
   if (structuring) // todo
   {
-    Point_set::Property_map<int> shape_map
-      = points.property_map<int>("shape").first;
+    auto shape_map = points.property_map<int>("shape").value();
 
     typedef CGAL::Point_set_with_structure<Kernel> Structuring;
     std::vector<Plane_3> planes;
