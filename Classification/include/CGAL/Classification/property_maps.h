@@ -59,8 +59,6 @@ private:
 
 public:
 
-  Face_descriptor_to_center_of_mass_map ()
-    : m_mesh (nullptr) { }
   Face_descriptor_to_center_of_mass_map (const FaceGraph* mesh)
     : m_mesh (mesh), m_vpm (get (vertex_point, *m_mesh)) { }
   Face_descriptor_to_center_of_mass_map (const FaceGraph* mesh, VertexPointMap vpm)

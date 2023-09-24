@@ -47,13 +47,9 @@ class Point_set_item_classification : public Item_classification_base
     Point_set::Property_map<int> cluster_id;
     std::vector<Cluster>* clusters;
 
-    Cluster_neighborhood (Point_set* point_set,
-                          std::vector<Cluster>& clusters)
-      : point_set (point_set)
-      , clusters (&clusters)
-    {
-      cluster_id = point_set->property_map<int>("shape").first;
-    }
+    Cluster_neighborhood(Point_set* point_set,
+                         std::vector<Cluster>& clusters)
+      : point_set(point_set), clusters(&clusters), cluster_id(point_set->add_property_map<int>("shape").first) {}
 
     template <typename OutputIterator>
     OutputIterator operator() (const Point_set::Index& idx,
@@ -147,18 +143,16 @@ class Point_set_item_classification : public Item_classification_base
   bool try_adding_simple_feature (const std::string& name)
   {
     typedef typename Point_set::template Property_map<Type> Pmap;
-    bool okay = false;
-    Pmap pmap;
-    boost::tie (pmap, okay) = m_points->point_set()->template property_map<Type>(name.c_str());
-    if (okay)
+    auto pmap = m_points->point_set()->template property_map<Type>(name.c_str());
+    if (pmap)
     {
       std::cerr << "Adding property<" << CGAL::demangle(typeid(Type).name()) << ">("
                 << name << ") as feature" << std::endl;
       m_features.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
-        (*(m_points->point_set()), pmap, name.c_str());
+        (*(m_points->point_set()), pmap.value(), name.c_str());
     }
 
-    return okay;
+    return pmap.has_value();
   }
 
   void add_selection_to_training_set (std::size_t label)
@@ -166,8 +160,8 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
     {
-      m_training[*it] = int(label);
-      m_classif[*it] = int(label);
+      m_training.value()[*it] = int(label);
+      m_classif.value()[*it] = int(label);
     }
 
     m_points->resetSelection();
@@ -178,8 +172,8 @@ class Point_set_item_classification : public Item_classification_base
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
-      if (m_training[*it] == int(label))
-        m_training[*it] = -1;
+      if (m_training.value()[*it] == int(label))
+        m_training.value()[*it] = -1;
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
@@ -188,8 +182,8 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
     {
-      m_training[*it] = -1;
-      m_classif[*it] = -1;
+      m_training.value()[*it] = -1;
+      m_classif.value()[*it] = -1;
     }
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
@@ -198,7 +192,7 @@ class Point_set_item_classification : public Item_classification_base
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
-      m_training[*it] = -1;
+      m_training.value()[*it] = -1;
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
@@ -206,7 +200,7 @@ class Point_set_item_classification : public Item_classification_base
   {
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
-      m_training[*it] = m_classif[*it];
+      m_training.value()[*it] = m_classif.value()[*it];
 
     m_points->resetSelection();
     if (m_index_color == 1 || m_index_color == 2)
@@ -229,7 +223,7 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
-      int c = m_classif[*it];
+      int c = m_classif.value()[*it];
       if (c == label)
         points_item->point_set()->insert (m_points->point_set()->point(*it));
     }
@@ -251,7 +245,7 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
       {
-        int c = m_classif[*it];
+        int c = m_classif.value()[*it];
         if (c != -1)
           points_item[c]->point_set()->insert (m_points->point_set()->point(*it));
       }
@@ -271,15 +265,15 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
-      if (m_training[*it] == int(position))
-        m_training[*it] = -1;
-      else if (m_training[*it] > int(position))
-        m_training[*it] --;
+      if (m_training.value()[*it] == int(position))
+        m_training.value()[*it] = -1;
+      else if (m_training.value()[*it] > int(position))
+        m_training.value()[*it] --;
 
-      if (m_classif[*it] == int(position))
-        m_classif[*it] = -1;
-      else if (m_classif[*it] > int(position))
-        m_classif[*it] --;
+      if (m_classif.value()[*it] == int(position))
+        m_classif.value()[*it] = -1;
+      else if (m_classif.value()[*it] > int(position))
+        m_classif.value()[*it] --;
     }
     update_comments_of_point_set_item();
   }
@@ -364,8 +358,8 @@ class Point_set_item_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
       {
-        m_classif[*it] = indices[*it];
-        ground_truth[*it] = m_training[*it];
+        m_classif.value()[*it] = indices[*it];
+        ground_truth[*it] = m_training.value()[*it];
       }
 
     if (m_index_color == 1 || m_index_color == 2)
@@ -396,14 +390,11 @@ class Point_set_item_classification : public Item_classification_base
 
   std::vector<Cluster> m_clusters;
 
-  Point_set::Property_map<unsigned char> m_red;
-  Point_set::Property_map<unsigned char> m_green;
-  Point_set::Property_map<unsigned char> m_blue;
-  Point_set::Property_map<CGAL::IO::Color> m_color;
+  std::optional<Point_set::Property_map<CGAL::IO::Color>> m_color;
   std::vector<std::vector<float> > m_label_probabilities;
 
-  Point_set::Property_map<int> m_training;
-  Point_set::Property_map<int> m_classif;
+  std::optional<Point_set::Property_map<int>> m_training;
+  std::optional<Point_set::Property_map<int>> m_classif;
 
   Generator* m_generator;
 
