@@ -26,7 +26,7 @@ public:
   /*!
    * Sphere type used for the shrinking-sphere approach for neighbor queries
    */
-  typedef unspecified_type Sphere_d;
+  using Sphere_d = unspecified_type;
 
   /*!
    * \brief An element of the `Node_data` list-like type.
@@ -34,14 +34,14 @@ public:
    * Must be constructible from the type produced by dereferencing a `Node_data` iterator.
    * Typically the same as that type, but can also be an `std::reference_wrapper<>` if the type is not copyable.
    */
-  typedef unspecified_type Node_data_element;
+  using Node_data_element = unspecified_type;
 
   /*!
    * \brief Functor with an operator to produce a geometric object from a `Node_data_element`.
    *
    * The return type of the functor must be a valid argument to `CGAL::squared_distance`.
    */
-  typedef unspecified_type Get_geometric_object_for_element;
+  using Get_geometric_object_for_element = unspecified_type;
 
   /// @}
 

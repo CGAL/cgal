@@ -17,10 +17,10 @@ public:
   /// \name Types
   /// @{
 
-  typedef unspecified_type Dimension; ///< Dimension type (see `CGAL::Dimension_tag`).
-  typedef unspecified_type FT; ///< The number type of the %Cartesian coordinates of types `Point_d`
-  typedef unspecified_type Point_d; ///< Point type.
-  typedef unspecified_type Bbox_d; ///< Bounding box type. Must be constructible from a pair of Point_d types.
+  using Dimension = unspecified_type; ///< Dimension type (see `CGAL::Dimension_tag`).
+  using FT = unspecified_type; ///< The number type of the %Cartesian coordinates of types `Point_d`
+  using Point_d = unspecified_type; ///< Point type.
+  using Bbox_d = unspecified_type; ///< Bounding box type. Must be constructible from a pair of Point_d types.
 
   /*!
     A random access iterator type to enumerate the
@@ -28,20 +28,20 @@ public:
 
     todo: This isn't used, should it be?
   */
-  typedef unspecified_type Cartesian_const_iterator_d;
+  using Cartesian_const_iterator_d = unspecified_type;
 
 
   /*!
    * \brief The data type contained by each node.
    */
-  typedef unspecified_type Node_data;
+  using Node_data = unspecified_type;
 
   /*!
    * \brief Number-type which can take on values indicating adjacency directions.
    *
    * Must be able to take on values ranging from 0 to the number of faces of the (hyper)cube type, equivalent to 2 * D.
    */
-  typedef unspecified_type Adjacency; ///< Specify the adjacency directions
+  using Adjacency = unspecified_type; ///< Specify the adjacency directions
 
   /*!
    * \brief Functor with an operator to create the bounding box of the root node.
@@ -50,7 +50,7 @@ public:
    * It may be tight-fitting. The orthtree constructor produces a bounding cube surrounding this region.
    * For traits which assign no data to each node, this can be defined to return a fixed region.
    */
-  typedef unspecified_type Construct_root_node_bbox;
+  using Construct_root_node_bbox = unspecified_type;
 
   /*!
    * \brief Functor which initializes the contained elements for the root node.
@@ -64,7 +64,7 @@ public:
    * For a tree in which each node contains an `std::span` this function would return the span containing all items.
    *
    */
-  typedef unspecified_type Construct_root_node_contents;
+  using Construct_root_node_contents = unspecified_type;
 
   /*!
    * \brief Functor which distributes a node's contents to its children.
@@ -76,7 +76,7 @@ public:
    * For a tree in which each node contains a span, this may mean rearranging the contents of the original node
    * and producing spans containing a subset of its contents for each of its children.
    */
-  typedef unspecified_type Distribute_node_contents;
+  using Distribute_node_contents = unspecified_type;
 
   /*!
    * \brief Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc. FT arguments.
@@ -84,7 +84,7 @@ public:
    * For trees which use a different kernel for the Bbox type,
    * the return type of this functor must match the kernel used by the Bbox and not that of the contents.
    */
-  typedef unspecified_type Construct_point_d;
+  using Construct_point_d = unspecified_type;
 
   /// @}
 
