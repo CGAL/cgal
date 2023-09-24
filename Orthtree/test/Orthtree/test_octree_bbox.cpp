@@ -114,6 +114,19 @@ void test_25_nodes() {
          Octree::Bbox(0, 0.5, 0.5, 0.5, 1, 1));
   assert(octree.bbox(octree.node(7, 7)) ==
          Octree::Bbox(0.5, 0.5, 0.5, 1, 1, 1));
+
+  // All child nodes should share a vertex
+  auto center_of_last_child = octree.bbox(octree.node(7, 7)).vertex(0);
+  assert(octree.bbox(octree.node(7, 0)).vertex(7) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 1)).vertex(4) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 2)).vertex(6) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 3)).vertex(5) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 4)).vertex(2) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 5)).vertex(3) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 6)).vertex(1) == center_of_last_child);
+
+  // Nodes of different sizes should also share vertices
+  assert(octree.bbox(octree.node(7, 0)).vertex(0) == octree.bbox(octree.node(0, 7)).vertex(7));
 }
 
 int main(void) {
