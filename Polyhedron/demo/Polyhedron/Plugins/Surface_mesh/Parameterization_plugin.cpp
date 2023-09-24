@@ -269,10 +269,9 @@ public :
     pen.setWidth(0);
     painter->setPen(pen);
     painter->setBrush(brush);
-    SMesh::Property_map<halfedge_descriptor,float> u,v;
 
-    u = graph->add_property_map<halfedge_descriptor,float>("h:u", 0.0f).first;
-    v = graph->add_property_map<halfedge_descriptor,float>("h:v", 0.0f).first;
+    auto u = graph->add_property_map<halfedge_descriptor,float>("h:u", 0.0f).first;
+    auto v = graph->add_property_map<halfedge_descriptor,float>("h:v", 0.0f).first;
 
     for( Component::iterator
          fi = components->at(m_current_component).begin();
@@ -926,11 +925,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   QApplication::restoreOverrideCursor();
   QPointF pmin(FLT_MAX, FLT_MAX), pmax(-FLT_MAX, -FLT_MAX);
 
-  SMesh::Property_map<halfedge_descriptor, float> umap;
-  SMesh::Property_map<halfedge_descriptor, float> vmap;
-
-  umap = tMesh.add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
-  vmap = tMesh.add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
+  auto umap = tMesh.add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
+  auto vmap = tMesh.add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
 
   tMesh.property_stats(std::cerr);
   Base_face_graph::Halfedge_iterator it;
