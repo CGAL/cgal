@@ -17,15 +17,17 @@ using Octree = CGAL::Octree<Kernel, Point_set, Point_map>;
 template <typename Tree>
 struct First_branch_traversal {
 
+  using Node_index = typename Tree::Node_index;
+
   const Tree& m_orthtree;
 
   explicit First_branch_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
 
-  typename Tree::Node_index first_index() const {
+  Node_index first_index() const {
     return m_orthtree.root();
   }
 
-  typename Tree::Maybe_node_index next_index(typename Tree::Node_index n) const {
+  std::optional<Node_index> next_index(Node_index n) const {
 
     // Stop when we reach the base of the tree
     if (m_orthtree.is_leaf(n))

@@ -47,13 +47,15 @@ private:
 
 public:
 
+  using Node_index = typename Tree::Node_index;
+
   Preorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
 
-  typename Tree::Node_index first_index() const {
+  Node_index first_index() const {
     return m_orthtree.root();
   }
 
-  std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+  std::optional<Node_index> next_index(Node_index n) const {
 
     if (m_orthtree.is_leaf(n)) {
 
@@ -87,13 +89,15 @@ private:
 
 public:
 
+  using Node_index = typename Tree::Node_index;
+
   Postorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
 
-  typename Tree::Node_index first_index() const {
+  Node_index first_index() const {
     return m_orthtree.deepest_first_child(m_orthtree.root());
   }
 
-  std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+  std::optional<Node_index> next_index(Node_index n) const {
     return m_orthtree.index(next(&m_orthtree[n]));
   }
 };
@@ -114,13 +118,15 @@ private:
 
 public:
 
+  using Node_index = typename Tree::Node_index;
+
   Leaves_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
 
-  typename Tree::Node_index first_index() const {
+  Node_index first_index() const {
     return m_orthtree.deepest_first_child(m_orthtree.root());
   }
 
-  std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+  std::optional<Node_index> next_index(Node_index n) const {
 
     if (m_orthtree.next_sibling(n))
       return m_orthtree.deepest_first_child(*m_orthtree.next_sibling(n));
@@ -150,17 +156,19 @@ private:
 
 public:
 
+  using Node_index = typename Tree::Node_index;
+
   /*!
     constructs a `depth`-level traversal.
   */
   Level_traversal(const Tree& orthtree, std::size_t depth) : m_orthtree(orthtree), m_depth(depth) {}
 
-  typename Tree::Node_index first_index() const {
+  Node_index first_index() const {
     // assumes the tree has at least one child at m_depth
     return *m_orthtree.first_child_at_depth(m_orthtree.root(), m_depth);
   }
 
-  std::optional<typename Tree::Node_index> next_index(typename Tree::Node_index n) const {
+  std::optional<Node_index> next_index(Node_index n) const {
 
     auto next = m_orthtree.next_sibling(n);
 
