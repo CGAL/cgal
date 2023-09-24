@@ -1122,6 +1122,7 @@ public:
     Property_back_inserter& operator*() { return *this; }
     Property_back_inserter& operator= (const value_type& p)
     {
+
       if(ps.size() <= index)
         ps.insert();
       put(map, index, p);
@@ -1182,7 +1183,7 @@ public:
   /// \cgalAdvancedBegin
   /// Back inserter on points
   /// \cgalAdvancedEnd
-  typedef Property_back_inserter<Point_map> Point_back_inserter;
+  typedef Property_back_inserter<Point> Point_back_inserter;
   /// \cgalAdvancedType
   /// \cgalAdvancedBegin
   /// Property map for pushing new points
