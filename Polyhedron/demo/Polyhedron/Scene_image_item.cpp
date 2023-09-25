@@ -756,6 +756,7 @@ void Scene_image_item::drawEdges(Viewer_interface *viewer) const
     getEdgeContainer(0)->setWidth(3.0f);
   }
   getEdgeContainer(0)->setColor(QColor(Qt::black));
+  getEdgeContainer(0)->setClipping(false);
   viewer->glDepthRangef(0.00001f, 0.99999f);
   getEdgeContainer(0)->draw(viewer, true);
   viewer->glDepthRangef(0.0f, 1.0f);
