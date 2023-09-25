@@ -248,25 +248,6 @@ int go(Mesh mesh, std::string output_filename) {
     CGAL::IO::write_PLY(out, mesh);
   }
 
-  const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
-  double d_x = bbox.xmax() - bbox.xmin();
-  double d_y = bbox.ymax() - bbox.ymin();
-  double d_z = bbox.zmax() - bbox.zmin();
-
-  const double max_d = (std::max)(d_x, (std::max)(d_y, d_z));
-  if(d_x == 0) d_x = max_d;
-  if(d_y == 0) d_y = max_d;
-  if(d_z == 0) d_z = max_d;
-
-  cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
-  cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
-  cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
-  cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
-  cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
-  cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
-  cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
-  cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
-
   int exit_code = EXIT_SUCCESS;
 
   auto finally = [&cdt,output_filename]() {
@@ -301,6 +282,26 @@ int go(Mesh mesh, std::string output_filename) {
   for(auto v: vertices(mesh)) {
     if(merge_facets && false == get(v_selected_map, v)) continue;
     cdt.insert(get(pmap, v));
+  }
+  if(cdt.dimension() < 3) {
+    const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
+    double d_x = bbox.xmax() - bbox.xmin();
+    double d_y = bbox.ymax() - bbox.ymin();
+    double d_z = bbox.zmax() - bbox.zmin();
+
+    const double max_d = (std::max)(d_x, (std::max)(d_y, d_z));
+    if(d_x == 0) d_x = max_d;
+    if(d_y == 0) d_y = max_d;
+    if(d_z == 0) d_z = max_d;
+
+    cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
+    cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
+    cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
+    cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
+    cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
+    cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
+    cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
+    cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
   }
   int poly_id = 0;
   CDT_3_try {
