@@ -88,6 +88,7 @@ function(CGAL_add_cdt3_from_local_off_test data_name)
 endfunction()
 
 CGAL_add_cdt3_from_local_off_test(cheese18)
+CGAL_add_cdt3_from_local_off_test(cheese23)
 CGAL_add_cdt3_from_local_off_test(cheese28)
 CGAL_add_cdt3_from_local_off_test(cheese31)
 CGAL_add_cdt3_from_local_off_test(cheese36-bis)
