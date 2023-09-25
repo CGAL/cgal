@@ -60,13 +60,13 @@ public:
   /// nullptr by default.
   std::function<CGAL::IO::Color(const DS &, FaceDescriptor)>   face_color;
 
-  /// ignores all vertices when `b` is `true`; otherwise ignore only vertices for which `ignore_vertex` returns `true`.
+  /// ignores all vertices when `b` is `true`; otherwise ignores only vertices for which `ignore_vertex` returns `true`.
   void ignore_all_vertices(bool b);
 
-  /// ignores all edges when `b` is `true`; otherwise ignore only edges for which `ignore_edge` returns `true`.
+  /// ignores all edges when `b` is `true`; otherwise ignores only edges for which `ignore_edge` returns `true`.
   void ignore_all_vertices(bool b);
 
-  /// ignores all faces when `b` is `true`; otherwise ignore only faces for which `ignore_face` returns `true`.
+  /// ignores all faces when `b` is `true`; otherwise ignores only faces for which `ignore_face` returns `true`.
   void ignore_all_vertices(bool b);
 };
 
