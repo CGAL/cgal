@@ -199,7 +199,7 @@ void write_soup_points_tag(std::ostream& os,
   {
     os << "\">\n";
     for(const Point& p : points)
-      os << oformat(p.x()) << " " << oformat(p.y()) << " " << oformat(p.z()) << " ";
+      os << IO::oformat(p.x()) << " " << IO::oformat(p.y()) << " " << IO::oformat(p.z()) << " ";
     os << "      </DataArray>\n";
   }
   os << "    </Points>\n";
