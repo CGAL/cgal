@@ -67,7 +67,7 @@ cgal_add_test(test_CDT_3_insert_constrained_edge_from_OFF_file)
 function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
   add_test(NAME "execution   of  cdt_3_from_off ${data_name}" COMMAND cdt_3_from_off ${data_dir}/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
   cgal_setup_test_properties("execution   of  cdt_3_from_off ${data_name}" cdt_3_from_off)
-  add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}" COMMAND cdt_3_from_off --merge-facets ${data_dir}/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
+  add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}" COMMAND cdt_3_from_off --merge-facets ${data_dir}/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}--merge-facets.off)
   cgal_setup_test_properties("execution   of  cdt_3_from_off --merge-facets ${data_name}" cdt_3_from_off)
 endfunction()
 
