@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
     try {
       go(mesh, output_filename);
     } catch(CGAL::Failure_exception& e) {
-      if(e.expression().find(std::string("orientation(p0, p1, p2, p3) == POSITIVE")) != std::string::npos)
+      if(e.expression().find(std::string("handles.back() == va")) != std::string::npos)
       {
         std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
         std::ofstream bad("bad.off");
@@ -302,8 +302,28 @@ int go(Mesh mesh, std::string output_filename) {
   CDT_3_try {
     if(merge_facets) {
       for(int i = 0; i < nb_patches; ++i) {
-        const auto& edges = patch_edges[i];
+        auto& edges = patch_edges[i];
         auto polylines = segment_soup_to_polylines(edges);
+        while(true) {
+          const auto non_closed_polylines_begin =
+              std::partition(polylines.begin(), polylines.end(),
+                             [](const auto& polyline) { return polyline.front() == polyline.back(); });
+          if(non_closed_polylines_begin == polylines.end())
+            break;
+          edges.clear();
+          for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
+            auto& polyline = *it;
+            for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
+              edges.emplace_back(*it, *(it + 1));
+            }
+          }
+          polylines.erase(non_closed_polylines_begin, polylines.end());
+          auto other_polylines = segment_soup_to_polylines(edges);
+          polylines.insert(polylines.end(),
+                           std::make_move_iterator(other_polylines.begin()),
+                           std::make_move_iterator(other_polylines.end()));
+        }
+
         std::optional<int> face_index;
         for(auto& polyline: polylines) {
           assert(polyline.front() == polyline.back());

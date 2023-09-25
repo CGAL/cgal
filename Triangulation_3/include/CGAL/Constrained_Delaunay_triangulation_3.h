@@ -534,7 +534,7 @@ public:
       const auto vb = *circ;
       const auto c_id = this->constraint_from_extremities(va, vb);
       if(c_id != Constraint_id{}) {
-        const bool constraint_c_id_is_reversed = true;
+        const bool constraint_c_id_is_reversed = va != (*this->constraint_hierarchy.vertices_in_constraint_begin(c_id));
         border.push_back(Face_edge{c_id, constraint_c_id_is_reversed});
         constraint_to_faces.emplace(c_id, polygon_contraint_id);
       } else {
@@ -635,9 +635,7 @@ private:
           const auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
           CGAL_assertion(std::distance(v_begin, v_end) >= 2);
           auto va = *v_begin;
-          auto vb_it = v_end;
-          --vb_it;
-          auto vb = *vb_it;
+          auto vb = *std::prev(v_end);
           if(reversed) {
             using std::swap;
             swap(va, vb);
