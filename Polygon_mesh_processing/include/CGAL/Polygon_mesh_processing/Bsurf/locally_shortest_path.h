@@ -20,9 +20,29 @@
 
 #include <boost/graph/graph_traits.hpp>
 
-
+#include <CGAL/Polygon_mesh_processing/locate.h>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
 
+template <class TriangleMesh, class FT>
+struct Edge_location
+{
+  typename boost::graph_traits<TriangleMesh>::edge_descriptor ed;
+  FT alpha;
+};
+
+template <class FT, class TriangleMesh, class EdgeLocationRange>
+void
+locally_shortest_path(const Face_location<TriangleMesh, FT>& src,
+                      const Face_location<TriangleMesh, FT>& tgt,
+                      const TriangleMesh& tmesh,
+                      EdgeLocationRange& edge_locations)
+{
+
+}
+
+
 } } // CGAL::Polygon_mesh_processing
+
+#endif
