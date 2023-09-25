@@ -102,13 +102,13 @@ public:
 protected:
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
-  auto display_vert(Vertex_handle v) {
+  auto display_vert(Vertex_handle v) const{
     std::stringstream os;
     os.precision(17);
     os << IO::oformat(v) << "=(" << this->tr.point(v) << ")";
     return os.str();
   };
-  auto display_subcstr(Subconstraint subconstraint) {
+  auto display_subcstr(Subconstraint subconstraint) const {
     std::stringstream os;
     os << "[ " << display_vert(subconstraint.first)
        << " - " << display_vert(subconstraint.second) << " ]";
