@@ -340,6 +340,18 @@ struct Barycentric_point_constructor<K, P, 3> // 3D version
 
     return P(x, y, z);
   }
+
+  P operator()(const P& p, const FT wp, const P& q, const FT wq,
+               const K& /*k*/) const
+  {
+    FT sum = wp + wq;
+    CGAL_assertion(sum != FT(0));
+    FT x = (wp * p.x() + wq * q.x()) / sum;
+    FT y = (wp * p.y() + wq * q.y()) / sum;
+    FT z = (wp * p.z() + wq * q.z()) / sum;
+
+    return P(x, y, z);
+  }
 };
 
 } // namespace internal
