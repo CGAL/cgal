@@ -1910,7 +1910,6 @@ private:
       bool degenerate_chord = false;
       if (chord_len > FT(0.0)) {
         Segment_3 seg(pt_begin, pt_end);
-        chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
         for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
           const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_vpoint_map[target(*citr, *m_ptm)], seg));
           if (dist > dist_max) {
