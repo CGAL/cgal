@@ -38,12 +38,10 @@
 namespace CGAL {
 namespace KSR_3 {
 
-const std::tuple<unsigned char, unsigned char, unsigned char>
-get_idx_color(std::size_t idx) {
+const CGAL::Color get_idx_color(std::size_t idx) {
 
   CGAL::Random rand(static_cast<unsigned int>(idx));
-  return std::make_tuple(
-    static_cast<unsigned char>(rand.get_int(32, 192)),
+  return CGAL::Color(static_cast<unsigned char>(rand.get_int(32, 192)),
     static_cast<unsigned char>(rand.get_int(32, 192)),
     static_cast<unsigned char>(rand.get_int(32, 192)));
 }
@@ -108,12 +106,11 @@ void dump_2d_surface_mesh(
   using Mesh         = CGAL::Surface_mesh<Point_3>;
   using Face_index   = typename Mesh::Face_index;
   using Vertex_index = typename Mesh::Vertex_index;
-  using Uchar_map    = typename Mesh::template Property_map<Face_index, unsigned char>;
+
+  using Color_map = typename Mesh::template Property_map<Face_index, CGAL::Color>;
 
   Mesh mesh;
-  Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
-  Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
-  Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
+  Color_map color = mesh.template add_property_map<Face_index, CGAL::Color>("f:color", CGAL::IO::white()).first;
 
   std::vector<Vertex_index> vertices;
   std::vector<Vertex_index> map_vertices;
@@ -140,8 +137,8 @@ void dump_2d_surface_mesh(
       std::cout << "could not dump mesh " << tag << std::endl;
       return;
     }
-    std::tie(red[face], green[face], blue[face]) =
-      get_idx_color((support_plane_idx + 1) * (pface.second + 1));
+
+    color[face] = get_idx_color((support_plane_idx + 1) * (pface.second + 1));
   }
 
   const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygons.ply";
@@ -158,17 +155,13 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
   using Mesh         = CGAL::Surface_mesh<Point_3>;
   using Face_index   = typename Mesh::Face_index;
   using Vertex_index = typename Mesh::Vertex_index;
-  using Uchar_map    = typename Mesh::template Property_map<Face_index, unsigned char>;
+  using Color_map = typename Mesh::template Property_map<Face_index, CGAL::Color>;
 
   Mesh mesh;
-  Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
-  Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
-  Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
+  Color_map color = mesh.template add_property_map<Face_index, CGAL::Color>("f:color", CGAL::IO::white()).first;
 
   Mesh bbox_mesh;
-  Uchar_map bbox_red   = bbox_mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
-  Uchar_map bbox_green = bbox_mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
-  Uchar_map bbox_blue  = bbox_mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
+  Color_map bbox_color = bbox_mesh.template add_property_map<Face_index, CGAL::Color>("f:color", CGAL::IO::white()).first;
 
   std::vector<Vertex_index> vertices;
   std::vector<Vertex_index> map_vertices;
@@ -193,8 +186,7 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
         CGAL_assertion(vertices.size() >= 3);
         const auto face = bbox_mesh.add_face(vertices);
         CGAL_assertion(face != Mesh::null_face());
-        std::tie(bbox_red[face], bbox_green[face], bbox_blue[face]) =
-          get_idx_color((i + 1) * (pface.second + 1));
+        bbox_color[face] = get_idx_color((i + 1) * (pface.second + 1));
       }
 
     } else {
@@ -216,8 +208,8 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
         CGAL_assertion(vertices.size() >= 3);
         const auto face = mesh.add_face(vertices);
         CGAL_assertion(face != Mesh::null_face());
-        std::tie(red[face], green[face], blue[face]) =
-          get_idx_color(i * (pface.second + 1));
+
+        color[face] = get_idx_color(i * (pface.second + 1));
       }
     }
   }
