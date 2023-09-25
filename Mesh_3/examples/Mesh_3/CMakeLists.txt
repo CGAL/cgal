@@ -198,6 +198,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     target
     mesh_3D_image
     mesh_3D_weighted_image
+    mesh_3D_weighted_image_with_detection_of_features
     mesh_3D_image_variable_size
     mesh_3D_image_with_custom_initialization
     mesh_3D_gray_image_with_custom_initialization
