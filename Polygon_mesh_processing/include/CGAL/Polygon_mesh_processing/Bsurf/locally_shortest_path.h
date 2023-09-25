@@ -16,47 +16,53 @@
 // #include <CGAL/license/Polygon_mesh_processing/bsurf.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Dual.h>
 #include <CGAL/Polygon_mesh_processing/locate.h>
+#include <CGAL/boost/graph/Dual.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 #include <boost/graph/graph_traits.hpp>
 
-
-
-namespace CGAL{
+namespace CGAL {
 namespace Polygon_mesh_processing {
 
 template <class TriangleMesh, class FT>
-using Edge_location = std::pair< typename boost::graph_traits<TriangleMesh>::edge_descriptor, std::array<FT, 2> >;
+using Edge_location =
+    std::pair<typename boost::graph_traits<TriangleMesh>::edge_descriptor,
+              std::array<FT, 2>>;
 
-template <typename FT, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
+template <typename FT, typename TriangleMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
-Point
-construct_point(const Edge_location<TriangleMesh, FT>& loc,
+Point construct_point(
+    const Edge_location<TriangleMesh, FT> &loc,
 #else
 typename internal::Location_traits<TriangleMesh, NamedParameters>::Point
-construct_point(const Edge_location<TriangleMesh,FT> & loc,
+construct_point(const Edge_location<TriangleMesh, FT> &loc,
 #endif
-                const TriangleMesh& tm,
-                const NamedParameters& np = parameters::default_values())
-{
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor            edge_descriptor;
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type            Geom_traits;
+    const TriangleMesh &tm,
+    const NamedParameters &np = parameters::default_values()) {
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
+      edge_descriptor;
+  typedef
+      typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type  VertexPointMap;
-  typedef typename boost::property_traits<VertexPointMap>::value_type            Point;
-  typedef typename boost::property_traits<VertexPointMap>::reference             Point_reference;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
+      VertexPointMap;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference
+      Point_reference;
 
-  using parameters::get_parameter;
   using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
 
-  VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                                    get_const_property_map(boost::vertex_point, tm));
-  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+  VertexPointMap vpm = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::vertex_point),
+      get_const_property_map(boost::vertex_point, tm));
+  Geom_traits gt = choose_parameter<Geom_traits>(
+      get_parameter(np, internal_np::geom_traits));
 
   edge_descriptor ed = loc.first;
   const Point_reference p0 = get(vpm, source(ed, tm));
@@ -66,41 +72,452 @@ construct_point(const Edge_location<TriangleMesh,FT> & loc,
   return bp_constructor(p0, loc.second[0], p1, loc.second[1], gt);
 }
 
-template <class FT, class TriangleMesh, class EdgeLocationRange>
-void
-locally_shortest_path(const Face_location<TriangleMesh, FT>& src,
-                      const Face_location<TriangleMesh, FT>& tgt,
-                      const TriangleMesh& tmesh,
-                      EdgeLocationRange& edge_locations)
+namespace internal {
+
+template <class K, class TriangleMesh, class VertexPointMap>
+struct Locally_shortest_path_imp 
 {
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  using face_descriptor =
+      typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using vertex_descriptor =
+      typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using halfedge_descriptor =
+      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
 
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<face_descriptor> >::const_type
-    predecessor_map =  get(CGAL::dynamic_face_property_t<face_descriptor>(), tmesh);
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<FT> >::const_type
-    distance_map =  get(CGAL::dynamic_face_property_t<FT>(), tmesh);
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_edge_property_t<FT> >::const_type
-    weight_map =  get(CGAL::dynamic_edge_property_t<FT>(), tmesh);
+  using Point_2 = typename K::Point_2;
+  using Point_3 = typename K::Point_3;
+  using Vector_2 = typename K::Vector_2;
+  using Vector_3 = typename K::Vector_3;
+  using FT = typename K::FT;
 
+  static
+  Vector_2
+  intersect_circles(const Vector_2 &c2, FT R2,
+                    const Vector_2 &c1, FT R1) 
+  {
+    auto R = (c2 - c1).squared_length();
+    assert(R > 0);
+    auto invR = FT(1) / R;
+    Vector_2 result = c1+c2;
+
+    result = result + (c2 - c1) * ((R1 - R2) * invR);
+    auto A = 2 * (R1 + R2) * invR;
+    auto B = (R1 - R2) * invR;
+    auto s = A - B * B - 1;
+    assert(s >= 0);
+    result = result + Vector_2(c2.y() - c1.y(), c1.x() - c2.x()) * sqrt(s);
+    return result / 2.;
+  }
+
+  static std::array<Vector_2, 3>
+  init_flat_triangles(face_descriptor f,
+                      const VertexPointMap &vpm, const TriangleMesh &mesh,
+                      const Face_location<TriangleMesh, FT> &src)
+  {
+    halfedge_descriptor h = halfedge(f, mesh);
+    std::array<vertex_descriptor, 3> triangle_vertices = make_array(
+        source(h, mesh), target(h, mesh), target(next(h, mesh), mesh));
+
+    std::array<Vector_2, 3> tr2d;
+    tr2d[0] = Vector_2(0, 0);
+    tr2d[1] =
+        Vector_2(0, sqrt(squared_distance(get(vpm, triangle_vertices[0]),
+                                          get(vpm, triangle_vertices[1]))));
+    auto rx = squared_distance(get(vpm, triangle_vertices[0]),
+                               get(vpm, triangle_vertices[2]));
+    auto ry = squared_distance(get(vpm, triangle_vertices[1]),
+                               get(vpm, triangle_vertices[2]));
+    tr2d[2] = intersect_circles(tr2d[0], rx, tr2d[1], ry);
+
+    return tr2d;
+  }
+
+  static std::array<Vector_2, 2>
+  init_source_triangle(halfedge_descriptor hopp,
+                       const VertexPointMap &vpm,
+                       const TriangleMesh &mesh,
+                       Face_location<TriangleMesh, FT> src)
+  {
+    halfedge_descriptor h = opposite(hopp, mesh);
+    std::array<vertex_descriptor, 3> triangle_vertices = make_array(
+        source(h, mesh), target(h, mesh), target(next(h, mesh), mesh));
+
+    std::array<Vector_2, 3> tr2d;
+    tr2d[0] = Vector_2(0, 0);
+    tr2d[1] =
+        Vector_2(0, sqrt(squared_distance(get(vpm, triangle_vertices[0]),
+                                          get(vpm, triangle_vertices[1]))));
+    FT rx = squared_distance(get(vpm, triangle_vertices[0]),
+                               get(vpm, triangle_vertices[2]));
+    FT ry = squared_distance(get(vpm, triangle_vertices[1]),
+                               get(vpm, triangle_vertices[2]));
+    tr2d[2] = intersect_circles(tr2d[0], rx, tr2d[1], ry);
+
+ 
+    halfedge_descriptor href = halfedge(src.first, mesh);
+    if (href!=h)
+    {
+      if (href==next(h, mesh))
+      {
+        std::array<FT, 3> tmp = CGAL::make_array(src.second[2], src.second[0], src.second[1]);
+        src.second = tmp;
+      }
+      else
+      {
+        CGAL_assertion(next(href, mesh)==h);
+        std::array<FT, 3> tmp = CGAL::make_array(src.second[1], src.second[2], src.second[0]);
+        src.second = tmp;
+      }
+    }
+
+    auto point_coords = tr2d[0] * src.second[0] + tr2d[1] * src.second[1] +
+                        tr2d[2] * src.second[2];
+    return make_array(tr2d[0] - point_coords,
+                      tr2d[1] - point_coords);
+  }
+
+  static std::array<Vector_2, 2>
+  init_target_triangle(halfedge_descriptor h,
+                       const std::array<Vector_2, 2>& flat_tid,
+                       const VertexPointMap &vpm, const TriangleMesh &mesh,
+                       Face_location<TriangleMesh, FT> tgt)
+  {
+    std::array<vertex_descriptor, 3> triangle_vertices = make_array(
+        source(h, mesh), target(h, mesh), target(next(h, mesh), mesh));
+
+    std::array<Vector_2, 3> tr2d;
+    tr2d[0] = flat_tid[1];
+    tr2d[1] = flat_tid[0];
+    FT rx = squared_distance(get(vpm, triangle_vertices[0]),
+                             get(vpm, triangle_vertices[2]));
+    FT ry = squared_distance(get(vpm, triangle_vertices[1]),
+                             get(vpm, triangle_vertices[2]));
+    tr2d[2] = intersect_circles(tr2d[0], rx, tr2d[1], ry);
+
+ 
+    halfedge_descriptor href = halfedge(tgt.first, mesh);
+    if (href!=h)
+    {
+      if (href==next(h, mesh))
+      {
+        std::array<FT, 3> tmp = CGAL::make_array(tgt.second[2], tgt.second[0], tgt.second[1]);
+        tgt.second = tmp;
+      }
+      else
+      {
+        CGAL_assertion(next(href, mesh)==h);
+        std::array<FT, 3> tmp = CGAL::make_array(tgt.second[1], tgt.second[2], tgt.second[0]);
+        tgt.second = tmp;
+      }
+    }
+
+    auto point_coords = tr2d[0] * tgt.second[0] + tr2d[1] * tgt.second[1] +
+                        tr2d[2] * tgt.second[2];
+    return make_array(point_coords,
+                      point_coords);
+  }
+
+  // static
+  // std::array<Vector_2, 3>
+  // unfold_face(halfedge_descriptor h,
+  //             const VertexPointMap &vpm, const TriangleMesh &mesh,
+  //             const std::array<Vector_2, 3>& flat_tid) 
+  // {
+  //   halfedge_descriptor h_opp = opposite(h_curr, mesh);
+    
+    
+        
+  //   vertex_descriptor v = target(next(h_curr,mesh),mesh);
+  //   vertex_descriptor a = target(h_curr,mesh);
+  //   vertex_descriptor b = source(h_curr, mesh);
+  //   FT r0 = squared_distance(get(vpm,v), get(vpm,a));
+  //   FT r1 = squared_distance(get(vpm,v), get(vpm,b));
+    
+  //   Vector_2 v2 = intersect_circles(flat_tid[0], r0, flat_tid[1], r1);
+
+
+  //   std::array<Vector_2, 2> res;
+  //   if(next(h_curr, mesh) == h_next_opp)
+  //   {
+  //      res[0]=flat_tid[0];
+  //      //res[2]=flat_tid[1];
+  //      res[1]=v2;
+  //   }
+  //   else
+  //   {
+  //     CGAL_assertion(prev(h_curr, mesh) == h_next_opp);
+  //     res[0]=v2;
+  //     res[1]=flat_tid[1];
+  //     //res[2]=flat_tid[0];
+  //   }
+
+  //   return res;
+  // }
+static
+  std::array<Vector_2, 2>
+  unfold_face(halfedge_descriptor h_curr, halfedge_descriptor h_next,
+              const VertexPointMap &vpm, const TriangleMesh &mesh,
+              const std::array<Vector_2, 2>& flat_tid) 
+  {
+    halfedge_descriptor h_next_opp = opposite(h_next, mesh);
+    CGAL_assertion(face( h_curr, mesh) == face(h_next_opp, mesh));
+    
+        
+    vertex_descriptor v = target(next(h_curr,mesh),mesh);
+    vertex_descriptor a = target(h_curr,mesh);
+    vertex_descriptor b = source(h_curr, mesh);
+    FT r0 = squared_distance(get(vpm,v), get(vpm,a));
+    FT r1 = squared_distance(get(vpm,v), get(vpm,b));
+    
+    Vector_2 v2 = intersect_circles(flat_tid[0], r0, flat_tid[1], r1);
+
+
+    std::array<Vector_2, 2> res;
+    if(next(h_curr, mesh) == h_next_opp)
+    {
+       res[0]=flat_tid[0];
+       //res[2]=flat_tid[1];
+       res[1]=v2;
+    }
+    else
+    {
+      CGAL_assertion(prev(h_curr, mesh) == h_next_opp);
+      res[0]=v2;
+      res[1]=flat_tid[1];
+      //res[2]=flat_tid[0];
+    }
+
+    return res;
+  }
+  static 
+  std::vector< std::array<Vector_2, 2>>
+  unfold_strip(const std::vector<halfedge_descriptor>& initial_path, 
+              const Face_location<TriangleMesh, FT>& src,
+              const Face_location<TriangleMesh, FT>& tgt,
+              const VertexPointMap &vpm, const TriangleMesh &mesh)
+  { 
+    std::size_t s=initial_path.size();
+    std::vector<std::array<Vector_2, 2>> result(s+1);
+    result[0]=init_source_triangle(initial_path[0], vpm, mesh, src);
+    for(std::size_t i=1;i<s;++i)
+      result[i]=unfold_face(initial_path[i-1],initial_path[i], vpm, mesh, result[i-1]);
+
+    result[s]=init_target_triangle(initial_path.back(), result[s-1], vpm, mesh, tgt); 
+
+    return result;
+  }
+  struct funnel_point {
+    int   face = 0;
+    Vector_2 pos;
+  };
+  //TODO: reimplement using CGAL
+  static
+  FT intersect_segments(const Vector_2 &start1, const Vector_2 &end1,
+                        const Vector_2 &start2, const Vector_2 &end2)
+  {
+    if (end1 == start2) return 0;
+    if (end2 == start1) return 1;
+    if (start2 == start1) return 0;
+    if (end2 == end1) return 1;
+    auto a   = end1 - start1;    // direction of line a
+    auto b   = start2 - end2;    // direction of line b, reversed
+    auto d   = start2 - start1;  // right-hand side
+    auto det = a.x() * b.y() - a.y() * b.x();
+    assert(det);
+    return (a.x() * d.y() - a.y() * d.x()) / det;
+  }
+  static 
+  int max_curvature_point(const std::vector<funnel_point> &path) {
+    // Among vertices around which the path curves, find the vertex
+    // with maximum angle. We are going to fix that vertex. Actually, max_index is
+    // the index of the first face containing that vertex.
+    auto max_index = -1;
+    auto max_angle = 0.0f;
+    for (auto i = 1; i < path.size() - 1; ++i) {
+      Vector_2 pos   = path[i].pos;
+      Vector_2 prev  = path[i - 1].pos;
+      Vector_2 next  = path[i + 1].pos;
+      Vector_2 v0    = pos - prev;
+      v0 = v0 / sqrt(v0.squared_length());
+      Vector_2 v1    = next - pos;
+      v1 = v1 / sqrt(v1.squared_length());
+      FT angle = 1 - scalar_product(v0, v1);
+      if (angle > max_angle) {
+        max_index = path[i].face;
+        max_angle = angle;
+      }
+    }
+    return max_index;
+  }
+
+  static
+  std::vector<FT>
+  funnel(const std::vector< std::array<Vector_2, 2>>& portals, int& max_index) 
+  {
+    // Find straight path.
+    Vector_2 start(NULL_VECTOR);
+    int apex_index  = 0;
+    int left_index  = 0;
+    int right_index = 0;
+    Vector_2 apex        = start;
+    Vector_2 left_bound  = portals[0][0];
+    Vector_2 right_bound = portals[0][1];
+
+    // Add start point.
+    std::vector<funnel_point> points = std::vector<funnel_point>{{apex_index, apex}};
+    points.reserve(portals.size());
+
+    // @Speed: is this slower than an inlined function?
+    auto area = [](const Vector_2 a, const Vector_2 b, const Vector_2 c) {
+      return determinant(b - a, c - a);
+    };
+
+    for (auto i = 1; i < portals.size(); ++i) {
+      auto left = portals[i][0], right = portals[i][1];
+      // Update right vertex.
+      if (area(apex, right_bound, right) <= 0) {
+        if (apex == right_bound || area(apex, left_bound, right) > 0) {
+          // Tighten the funnel.
+          right_bound = right;
+          right_index = i;
+        } else {
+          // Right over left, insert left to path and restart scan from
+          // portal left point.
+          if (left_bound != apex) {
+            points.push_back({left_index, left_bound});
+            // Make current left the new apex.
+            apex       = left_bound;
+            apex_index = left_index;
+            // Reset portal
+            left_bound  = apex;
+            right_bound = apex;
+            left_index  = apex_index;
+            right_index = apex_index;
+            // Restart scan
+            i = apex_index;
+            continue;
+          }
+        }
+      }
+
+      // Update left vertex.
+      if (area(apex, left_bound, left) >= 0) {
+        if (apex == left_bound || area(apex, right_bound, left) < 0) {
+          // Tighten the funnel.
+          left_bound = left;
+          left_index = i;
+        } else {
+          if (right_bound != apex) {
+            points.push_back({right_index, right_bound});
+            // Make current right the new apex.
+            apex       = right_bound;
+            apex_index = right_index;
+            // Reset portal
+            left_bound  = apex;
+            right_bound = apex;
+            left_index  = apex_index;
+            right_index = apex_index;
+            // Restart scan
+            i = apex_index;
+            continue;
+          }
+        }
+      }
+    }
+
+    // This happens when we got an apex on the last edge of the strip
+    if (points.back().pos != portals.back()[0]) {
+      points.push_back({(int)portals.size() - 1, portals.back()[0]});
+    }
+    assert(points.back().pos == portals.back()[0]);
+    assert(points.back().pos == portals.back()[1]);
+
+    std::vector<double> lerps;
+    lerps.reserve(portals.size());
+    for (auto i = 0; i < points.size() - 1; i++) {
+      auto a = points[i].pos;
+      auto b = points[i + 1].pos;
+      for (auto k = points[i].face; k < points[i + 1].face; ++k) {
+        auto portal = portals[k];
+        //      assert(cross(b - a, portal.second - portal.first) > 0);
+        FT s = intersect_segments(a, b, portal[0], portal[1]);
+        lerps.push_back(std::clamp(s, 0.0, 1.0));
+      }
+    }
+
+    auto index = 1;
+    for (auto i = 1; i < portals.size(); ++i) {
+      if ((portals[i][0] == points[index].pos) ||
+          (portals[i][1] == points[index].pos)) {
+        points[index].face = i;
+        index += 1;
+      }
+    }
+    max_index = max_curvature_point(points);
+    // assert(lerps.size() == portals.size() - 1);
+    return lerps;
+  }
+};
+
+} // namespace internal
+
+template <class FT, class TriangleMesh, class EdgeLocationRange>
+void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
+                           const Face_location<TriangleMesh, FT> &tgt,
+                           const TriangleMesh &tmesh,
+                           EdgeLocationRange &edge_locations)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor
+      face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+      halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
+      edge_descriptor;
+
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
+  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
+
+  typename boost::property_map<
+      TriangleMesh, CGAL::dynamic_face_property_t<face_descriptor>>::const_type
+      predecessor_map =
+          get(CGAL::dynamic_face_property_t<face_descriptor>(), tmesh);
+  typename boost::property_map<TriangleMesh,
+                               CGAL::dynamic_face_property_t<FT>>::const_type
+      distance_map = get(CGAL::dynamic_face_property_t<FT>(), tmesh);
+  typename boost::property_map<
+      TriangleMesh, CGAL::dynamic_edge_property_t<FT>>::const_type weight_map =
+      get(CGAL::dynamic_edge_property_t<FT>(), tmesh);
+
+
+//TODO: handle boundary edges
   Dual dual(tmesh);
 
-  // TODO: fill the weight map
+  // TODO: fill the weight map using something better than euclidean distance
+  for (edge_descriptor ed : edges(tmesh))
+  {
+    halfedge_descriptor h=halfedge(ed, tmesh), hopp=opposite(h, tmesh);
+    put(weight_map, ed, 
+        sqrt(squared_distance(
+              centroid(get(vpm, source(h, tmesh)), get(vpm, target(h, tmesh)), get(vpm, target(next(h, tmesh), tmesh))),
+              centroid(get(vpm, source(hopp, tmesh)), get(vpm, target(hopp, tmesh)), get(vpm, target(next(hopp, tmesh), tmesh)))
+              )));
+  }
 
   // TODO try stopping dijkstra as soon tgt is out of the queue.
   boost::dijkstra_shortest_paths(dual, src.first,
                                  boost::distance_map(distance_map)
-                                       .predecessor_map(predecessor_map)
-                                       .weight_map(weight_map));
+                                     .predecessor_map(predecessor_map)
+                                     .weight_map(weight_map));
 
   std::vector<halfedge_descriptor> initial_path;
 
-  auto common_halfedge=[](face_descriptor f1, face_descriptor f2, const TriangleMesh& tmesh)
-  {
-    halfedge_descriptor h=halfedge(f1, tmesh);
-    for (int i=0; i<3;++i)
-    {
-      if (face(opposite(h, tmesh), tmesh)==f2)
+  auto common_halfedge = [](face_descriptor f1, face_descriptor f2,
+                            const TriangleMesh &tmesh) {
+    halfedge_descriptor h = halfedge(f1, tmesh);
+    for (int i = 0; i < 3; ++i) {
+      if (face(opposite(h, tmesh), tmesh) == f2)
         return h;
       h = next(h, tmesh);
     }
@@ -109,18 +526,32 @@ locally_shortest_path(const Face_location<TriangleMesh, FT>& src,
   };
 
   face_descriptor current_face = tgt.first;
-  while (true)
-  {
+  while (true) {
     face_descriptor prev = get(predecessor_map, current_face);
-    halfedge_descriptor h=common_halfedge(current_face, prev, tmesh);
+    halfedge_descriptor h = common_halfedge(current_face, prev, tmesh);
     initial_path.push_back(h);
-    if (prev==src.first) break;
-    current_face=prev;
+    if (prev == src.first)
+      break;
+    current_face = prev;
   }
   std::reverse(initial_path.begin(), initial_path.end());
+
+//TODO replace with named parameter
+  std::vector< std::array<typename K::Vector_2, 2>> portals=Impl::unfold_strip(initial_path,src,tgt,vpm,tmesh);
+  int max_index=0;
+  std::vector<FT> lerps=Impl::funnel(portals,max_index);
+
+  CGAL_assertion(lerps.size()==initial_path.size());
+
+  //TODO: tmp for testing
+  edge_locations.reserve(initial_path.size());
+  for(std::size_t i=0; i<initial_path.size(); ++i)
+  {
+    edge_locations.emplace_back(initial_path[i], make_array(lerps[i], 1.-lerps[i]));
+  }
 }
 
-
-} } // CGAL::Polygon_mesh_processing
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #endif
