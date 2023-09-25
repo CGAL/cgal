@@ -1904,64 +1904,64 @@ private:
       if_subdivide = true;
     }
     else {
-        FT dist_max(0.0);
-        Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
-        const FT chord_len = CGAL::approximate_sqrt(chord_vec.squared_length());
-        bool degenerate_chord = false;
-        if (chord_len > FT(0.0)) {
-          Segment_3 seg(pt_begin, pt_end);
-            chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
-            for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-              //Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-              //vec = cross_product_functor(chord_vec, vec);
-              //const FT dist = CGAL::approximate_sqrt(vec.squared_length());
-              const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_vpoint_map[target(*citr, *m_ptm)], seg));
-                if (dist > dist_max) {
-                    chord_max = citr;
-                    dist_max = dist;
-                }
-            }
+      FT dist_max(0.0);
+      Vector_3 chord_vec = vector_functor(pt_begin, pt_end);
+      const FT chord_len = CGAL::approximate_sqrt(chord_vec.squared_length());
+      bool degenerate_chord = false;
+      if (chord_len > FT(0.0)) {
+        Segment_3 seg(pt_begin, pt_end);
+        chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
+        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+          //Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
+          //vec = cross_product_functor(chord_vec, vec);
+          //const FT dist = CGAL::approximate_sqrt(vec.squared_length());
+          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_vpoint_map[target(*citr, *m_ptm)], seg));
+          if (dist > dist_max) {
+            chord_max = citr;
+            dist_max = dist;
+          }
         }
-        else {
-            degenerate_chord = true;
-            for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-                const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
-                    pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
-                if (dist > dist_max) {
-                    chord_max = citr;
-                    dist_max = dist;
-                }
-            }
+      }
+      else {
+        degenerate_chord = true;
+        for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
+          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
+                                                                        pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
+          if (dist > dist_max) {
+            chord_max = citr;
+            dist_max = dist;
+          }
         }
+      }
 
-        FT criterion = dist_max;
-        if (relative_to_chord && !degenerate_chord)
-            criterion /= chord_len;
-        else
-            criterion /= m_average_edge_length;
+      FT criterion = dist_max;
+      if (relative_to_chord && !degenerate_chord)
+        criterion /= chord_len;
+      else
+        criterion /= m_average_edge_length;
 
-        if (with_dihedral_angle) {
-            // suppose the proxy normal angle is acute
-            std::size_t px_left = get(m_fproxy_map, face(he_first, *m_ptm));
-            std::size_t px_right = px_left;
-            if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm))
-                px_right = get(m_fproxy_map, face(opposite(he_first, *m_ptm), *m_ptm));
-            FT norm_sin(1.0);
-            if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm)) {
-                Vector_3 vec = cross_product_functor(
-                    m_px_planes[px_left].normal, m_px_planes[px_right].normal);
-                norm_sin = CGAL::approximate_sqrt(vec.squared_length());
-            }
-            criterion *= norm_sin;
+      if (with_dihedral_angle) {
+        // suppose the proxy normal angle is acute
+        std::size_t px_left = get(m_fproxy_map, face(he_first, *m_ptm));
+        std::size_t px_right = px_left;
+        if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm))
+          px_right = get(m_fproxy_map, face(opposite(he_first, *m_ptm), *m_ptm));
+        FT norm_sin(1.0);
+        if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm)) {
+          Vector_3 vec = cross_product_functor(
+                                               m_px_planes[px_left].normal, m_px_planes[px_right].normal);
+          norm_sin = CGAL::approximate_sqrt(vec.squared_length());
         }
-        if (is_boundary) {
-            if (criterion > boundary_subdivision_ratio)
-                if_subdivide = true;
-        }
-        else {
-            if (criterion > subdivision_ratio)
-                if_subdivide = true;
-        }
+        criterion *= norm_sin;
+      }
+      if (is_boundary) {
+        if (criterion > boundary_subdivision_ratio)
+          if_subdivide = true;
+      }
+      else {
+        if (criterion > subdivision_ratio)
+          if_subdivide = true;
+      }
     }
     if (if_subdivide) {
       // subdivide at the most remote vertex
