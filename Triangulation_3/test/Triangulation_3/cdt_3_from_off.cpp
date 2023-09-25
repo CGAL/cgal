@@ -218,7 +218,11 @@ int go(Mesh mesh, std::string output_filename) {
           auto e = edge(h, mesh);
           auto opp = opposite(h, mesh);
           if(is_border_edge(opp, mesh)) {
-            edges.emplace_back(source(e, mesh), target(e, mesh));
+            auto va = source(h, mesh);
+            auto vb = target(h, mesh);
+            edges.emplace_back(va, vb);
+            put(v_selected_map, va, true);
+            put(v_selected_map, vb, true);
             continue;
           }
           auto n = face(opp, mesh);
