@@ -799,7 +799,7 @@ public:
    *   \cgalParamNBegin{boundary_subdivision_ratio}
    *     \cgalParamDescription{the chord subdivision ratio threshold to the chord length or average edge length for boundary edges}
    *     \cgalParamType{`geom_traits::FT`}
-   *     \cgalParamDefault{`5.0`}
+   *     \cgalParamDefault{`subdivision_ratio`}
    *   \cgalParamNEnd
    *
    *   \cgalParamNBegin{relative_to_chord}
@@ -840,7 +840,7 @@ public:
     using parameters::choose_parameter;
 
     const FT subdivision_ratio = choose_parameter(get_parameter(np, internal_np::subdivision_ratio), FT(5.0));
-    const FT boundary_subdivision_ratio = choose_parameter(get_parameter(np, internal_np::boundary_subdivision_ratio), FT(5.0));
+    const FT boundary_subdivision_ratio = choose_parameter(get_parameter(np, internal_np::boundary_subdivision_ratio), subdivision_ratio);
     const bool relative_to_chord = choose_parameter(get_parameter(np, internal_np::relative_to_chord), false);
     const bool with_dihedral_angle = choose_parameter(get_parameter(np, internal_np::with_dihedral_angle), false);
     const bool optimize_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_anchor_location), true);
@@ -1912,9 +1912,6 @@ private:
         Segment_3 seg(pt_begin, pt_end);
         chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
         for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-          //Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-          //vec = cross_product_functor(chord_vec, vec);
-          //const FT dist = CGAL::approximate_sqrt(vec.squared_length());
           const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_vpoint_map[target(*citr, *m_ptm)], seg));
           if (dist > dist_max) {
             chord_max = citr;
@@ -1926,7 +1923,7 @@ private:
         degenerate_chord = true;
         for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
           const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
-                                                                        pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
+            pt_begin, m_vpoint_map[target(*citr, *m_ptm)]));
           if (dist > dist_max) {
             chord_max = citr;
             dist_max = dist;
@@ -1949,7 +1946,7 @@ private:
         FT norm_sin(1.0);
         if (!CGAL::is_border(opposite(he_first, *m_ptm), *m_ptm)) {
           Vector_3 vec = cross_product_functor(
-                                               m_px_planes[px_left].normal, m_px_planes[px_right].normal);
+            m_px_planes[px_left].normal, m_px_planes[px_right].normal);
           norm_sin = CGAL::approximate_sqrt(vec.squared_length());
         }
         criterion *= norm_sin;
