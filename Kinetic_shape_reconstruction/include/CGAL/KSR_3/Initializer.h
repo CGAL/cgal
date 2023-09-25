@@ -439,29 +439,28 @@ private:
             const Vector_2 edge_dir = sp.original_edge_direction((v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size(), v);
             typename Intersection_kernel::Segment_2 seg(to_exact(prev), to_exact(p));
             const auto result = CGAL::intersection(seg, exact_line);
-            if (result) {
-              const typename Intersection_kernel::Point_2* intersection = boost::get<typename Intersection_kernel::Point_2>(&*result);
-              if (intersection) {
-                typename Intersection_kernel::FT eproj = (*intersection - exact_line.point()) * ldir;
-                FT proj = to_inexact(eproj);
-                if (eproj < emin) {
-                  eminp = *intersection;
-                  emin = eproj;
-                  minp = to_inexact(*intersection);
-                  min = proj;
-                  typename Intersection_kernel::FT p = dir * edge_dir;
-                  assert(p != 0);
-                  min_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
-                }
-                if (emax < eproj) {
-                  emaxp = *intersection;
-                  emax = eproj;
-                  maxp = to_inexact(*intersection);
-                  max = proj;
-                  typename Intersection_kernel::FT p = dir * edge_dir;
-                  assert(p != 0);
-                  max_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
-                }
+            const typename Intersection_kernel::Point_2* intersection;
+
+            if (result && CGAL::assign(intersection, result)) {
+              typename Intersection_kernel::FT eproj = (*intersection - exact_line.point()) * ldir;
+              FT proj = to_inexact(eproj);
+              if (eproj < emin) {
+                eminp = *intersection;
+                emin = eproj;
+                minp = to_inexact(*intersection);
+                min = proj;
+                typename Intersection_kernel::FT p = dir * edge_dir;
+                assert(p != 0);
+                min_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
+              }
+              if (emax < eproj) {
+                emaxp = *intersection;
+                emax = eproj;
+                maxp = to_inexact(*intersection);
+                max = proj;
+                typename Intersection_kernel::FT p = dir * edge_dir;
+                assert(p != 0);
+                max_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
               }
             }
             else std::cout << "crossing segment does not intersect line" << std::endl;
@@ -1019,10 +1018,9 @@ private:
 
     const auto inter = CGAL::intersection(t1, t2);
     if (!inter) return false;
-    if (const ResultType* typed_inter = boost::get<ResultType>(&*inter)) {
-      result = *typed_inter;
+    if (CGAL::assign(result, inter))
       return true;
-    }
+
     return false;
   }
 };

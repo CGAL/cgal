@@ -44,7 +44,8 @@
 #include <CGAL/KSR_3/FacePropagation.h>
 #include <CGAL/KSR_3/Finalizer.h>
 
-#include <../../../../../orthtree/Orthtree/include/CGAL/Octree.h>
+#include <CGAL/Octree.h>
+#include <CGAL/Orthtree_traits_polygons.h>
 
 //#define OVERLAY_2_DEBUG
 #define OVERLAY_2_CHECK
@@ -98,7 +99,7 @@ private:
   using Timer        = CGAL::Real_timer;
   using Parameters = KSR::Parameters_3<FT>;
 
-  using Octree = CGAL::Octree<Kernel, std::vector<Point_3> >;
+  using Octree = CGAL::Orthtree<CGAL::Orthtree_traits_polygons<Kernel> >;
   using Octree_node = typename Octree::Node_index;
 
   struct VI
@@ -2256,7 +2257,7 @@ private:
     // ymin 1, ymax 3
     // zmin 0, zmax 5
 
-    if ((*m_octree)[node].is_leaf()) {
+    if (m_octree->is_leaf(node)) {
       // Mapping to partition is needed.
       std::size_t idx = m_node2partition[node];
       Sub_partition& partition = m_partition_nodes[m_node2partition[node]];
@@ -2355,7 +2356,7 @@ private:
 
   void collect_opposing_faces(Octree_node node, std::size_t dimension, std::vector<Index>& lower, std::vector<Index>& upper, typename Intersection_kernel::Plane_3 &plane) {
     // Nothing to do for a leaf node.
-    if ((*m_octree)[node].is_leaf())
+    if (m_octree->is_leaf(node))
       return;
 
     typename Intersection_kernel::Plane_3 pl[7];
@@ -2892,7 +2893,7 @@ private:
 
   void make_conformal(Octree_node node) {
     // Nothing to do for a leaf node.
-    if ((*m_octree)[node].is_leaf())
+    if (m_octree->is_leaf(node))
       return;
 
     // Make childs conformal
@@ -3184,8 +3185,8 @@ private:
       std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
     }
 
-    m_octree = std::make_unique<Octree>(m_points, m_polygons);
-    m_octree->refine(0, 3, 40);
+    m_octree = std::make_unique<Octree>(CGAL::Orthtree_traits_polygons<Kernel>(m_points, m_polygons));
+    m_octree->refine(3, 40);
 
     /*
     // Collect all the leaf nodes
@@ -3196,30 +3197,33 @@ private:
     */
 
     std::size_t leaf_count = 0;
-    for (std::size_t i = 0; i < m_octree->num_nodes(); i++) {
-      auto gc = m_octree->global_coordinates(i);
+    std::size_t max_count = 0;
 
-      if ((*m_octree)[i].is_leaf())
+    for (Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree))) {
+      if (m_octree->is_leaf(node))
         leaf_count++;
+      else
+        std::cout << "Leaves_traversal traverses non-leaves" << std::endl;
+      max_count = (std::max<std::size_t>)(max_count, node);
     }
 
     m_partition_nodes.resize(leaf_count);
 
-    m_node2partition.resize(m_octree->num_nodes(), std::size_t(-1));
+    m_node2partition.resize(max_count + 1, std::size_t(-1));
 
     std::size_t idx = 0;
-    for (std::size_t i = 0; i < m_octree->num_nodes(); i++)
-      if ((*m_octree)[i].is_leaf()) {
+    for (Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree)))
+      if (m_octree->is_leaf(node)) {
         // Creating bounding box
-        std::array<typename Intersection_kernel::FT, 6> array = m_octree->bbox_exact(i);
-        m_partition_nodes[idx].bbox[0] = typename Intersection_kernel::Point_3(array[0], array[1], array[2]);
-        m_partition_nodes[idx].bbox[1] = typename Intersection_kernel::Point_3(array[3], array[1], array[2]);
-        m_partition_nodes[idx].bbox[2] = typename Intersection_kernel::Point_3(array[3], array[4], array[2]);
-        m_partition_nodes[idx].bbox[3] = typename Intersection_kernel::Point_3(array[0], array[4], array[2]);
-        m_partition_nodes[idx].bbox[4] = typename Intersection_kernel::Point_3(array[0], array[4], array[5]);
-        m_partition_nodes[idx].bbox[5] = typename Intersection_kernel::Point_3(array[0], array[1], array[5]);
-        m_partition_nodes[idx].bbox[6] = typename Intersection_kernel::Point_3(array[3], array[1], array[5]);
-        m_partition_nodes[idx].bbox[7] = typename Intersection_kernel::Point_3(array[3], array[4], array[5]);
+        CGAL::Iso_cuboid_3<Kernel> box = m_octree->bbox(node);
+        m_partition_nodes[idx].bbox[0] = typename Intersection_kernel::Point_3(box.xmin(), box.ymin(), box.zmin());
+        m_partition_nodes[idx].bbox[1] = typename Intersection_kernel::Point_3(box.xmax(), box.ymin(), box.zmin());
+        m_partition_nodes[idx].bbox[2] = typename Intersection_kernel::Point_3(box.xmax(), box.ymax(), box.zmin());
+        m_partition_nodes[idx].bbox[3] = typename Intersection_kernel::Point_3(box.xmin(), box.ymax(), box.zmin());
+        m_partition_nodes[idx].bbox[4] = typename Intersection_kernel::Point_3(box.xmin(), box.ymax(), box.zmax());
+        m_partition_nodes[idx].bbox[5] = typename Intersection_kernel::Point_3(box.xmin(), box.ymin(), box.zmax());
+        m_partition_nodes[idx].bbox[6] = typename Intersection_kernel::Point_3(box.xmax(), box.ymin(), box.zmax());
+        m_partition_nodes[idx].bbox[7] = typename Intersection_kernel::Point_3(box.xmax(), box.ymax(), box.zmax());
 
 /*
         auto bbox = m_octree->bbox(i);
@@ -3234,29 +3238,22 @@ private:
 
         // Get consistent Plane_3 from Octree to generate exact planes
 
-/*
-        if (!(*m_octree)[i].is_root())
-          std::cout << "parent: " << m_octree->parent(i) << " current: " << i << std::endl;
-        std::cout << "local: " << m_octree->local_coordinates(i) << std::endl;
-        std::array<uint32_t, 3> gc = m_octree->global_coordinates(i);
-        std::cout << "global: " << gc[0] << " " << gc[1] << " " << gc[2] << std::endl;
-        std::cout << "center: " << m_octree->barycenter(i) << std::endl;*/
+        auto polys = m_octree->data(node);
+        for (std::size_t j = 0; j < polys.size(); j++) {
+          m_partition_nodes[idx].input_polygons.push_back(polys[j].first);
+          m_partition_nodes[idx].m_input_planes.push_back(m_input_planes[polys[j].first]);
+        }
 
-        auto polys = (*m_octree)[i].polygons();
-        std::copy(polys.begin(), polys.end(), std::back_inserter(m_partition_nodes[idx].input_polygons));
-        for (std::size_t j = 0; j < polys.size(); j++)
-          m_partition_nodes[idx].m_input_planes.push_back(m_input_planes[polys[j]]);
-        auto &cp = (*m_octree)[i].clipped_polygons();
-        m_partition_nodes[idx].clipped_polygons.resize(cp.size());
-        for (std::size_t i = 0; i < cp.size(); i++) {
-          m_partition_nodes[idx].clipped_polygons[i].resize(cp[i].size());
-          for (std::size_t j = 0; j < cp[i].size(); j++)
-            m_partition_nodes[idx].clipped_polygons[i][j] = cp[i][j].second;
+        m_partition_nodes[idx].clipped_polygons.resize(polys.size());
+        for (std::size_t i = 0; i < polys.size(); i++) {
+          m_partition_nodes[idx].clipped_polygons[i].resize(polys[i].second.size());
+          for (std::size_t j = 0; j < polys[i].second.size(); j++)
+            m_partition_nodes[idx].clipped_polygons[i][j] = polys[i].second[j];
         }
 
         // set node index
-        m_partition_nodes[idx].node = i;
-        m_node2partition[i] = idx;
+        m_partition_nodes[idx].node = node;
+        m_node2partition[node] = idx;
 
         if (m_parameters.debug) {
           const std::string vfilename = std::to_string(idx) + "-box.polylines.txt";

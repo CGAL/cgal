@@ -88,6 +88,14 @@ public:
   };
 
   struct Data {
+    Data() : mesh(),
+      v_ivertex_map(mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first),
+      v_iedge_map(mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first),
+      e_iedge_map(mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first),
+      input_map(mesh.template add_property_map<Face_index, std::vector<std::size_t> >("f:input", std::vector<std::size_t>()).first),
+      f_initial_map(mesh.template add_property_map<Face_index, bool >("f:initial", false).first),
+      v_original_map(mesh.template add_property_map<Vertex_index, bool>("v:original", false).first) {}
+
     bool is_bbox;
     Point_2 centroid;
     Plane_3 plane;
@@ -127,10 +135,7 @@ private:
   std::shared_ptr<Data> m_data;
 
 public:
-  Support_plane() :
-  m_data(std::make_shared<Data>()) {
-    add_property_maps();
-  }
+  Support_plane() : m_data(std::make_shared<Data>()) {}
 
   template<typename PointRange>
   Support_plane(const PointRange& polygon, const bool is_bbox, typename Intersection_kernel::Plane_3 plane, std::size_t idx) :
@@ -264,7 +269,6 @@ public:
   }
 
   void add_property_maps() {
-
     m_data->v_ivertex_map  = m_data->mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first;
     m_data->v_iedge_map    = m_data->mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first;
     m_data->e_iedge_map    = m_data->mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first;

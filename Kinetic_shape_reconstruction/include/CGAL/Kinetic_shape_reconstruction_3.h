@@ -88,7 +88,7 @@ public:
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_reconstruction_3(PointSet& ps,
-    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(ps), m_kinetic_partition(np) {}
+    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(ps), m_kinetic_partition(np), m_point_map(ps.point_map()), m_normal_map(ps.normal_map()) {}
 
   /*!
     \brief Detects shapes in the provided point cloud
@@ -1205,6 +1205,7 @@ private:
       parameters::get_parameter(np, internal_np::maximum_offset), 0.01);
 
     // Regularize detected planes.
+/*
     CGAL::Shape_regularization::Planes::regularize_planes(range, m_points,
       CGAL::parameters::plane_index_map(region_growing.region_map())
       .point_map(m_point_map)
@@ -1213,7 +1214,7 @@ private:
       .regularize_parallelism(regularize_parallelism)
       .regularize_coplanarity(regularize_coplanarity)
       .maximum_angle(angle_tolerance)
-      .maximum_offset(maximum_offset));
+      .maximum_offset(maximum_offset));*/
 
     std::vector<Plane_3> pl;
 

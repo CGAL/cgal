@@ -566,13 +566,13 @@ private:
     // Purpose: merge facets between the same volumes. Every pair of volumes can have at most one contact polygon (which also has to be convex)
     // Precondition: all volumes are convex, the contact area between each pair of volumes is empty or convex
 
-    std::vector<E_constraint_map> edge_constraint_maps(m_data.number_of_support_planes());
+    std::vector<E_constraint_map> edge_constraint_maps;
 
     for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
       //dump_2d_surface_mesh(m_data, sp, "face_merge/" + m_data.prefix() + std::to_string(sp) + "-before");
       typename Support_plane::Mesh& mesh = m_data.support_plane(sp).mesh();
 
-      edge_constraint_maps[sp] = mesh.template add_property_map<typename Support_plane::Edge_index, bool>("e:keep", true).first;
+      edge_constraint_maps.push_back(mesh.template add_property_map<typename Support_plane::Edge_index, bool>("e:keep", true).first);
       F_component_map fcm = mesh.template add_property_map<typename Support_plane::Face_index, typename boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>("f:component", 0).first;
 
       for (auto e : mesh.edges()) {

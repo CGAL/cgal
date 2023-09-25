@@ -255,11 +255,11 @@ public:
     const Type1& t1, const Type2& t2, ResultType& result) {
 
     const auto inter = CGAL::intersection(t1, t2);
+
     if (!inter) return false;
-    if (const ResultType* typed_inter = boost::get<ResultType>(&*inter)) {
-      result = *typed_inter;
+    if (CGAL::assign(result, inter))
       return true;
-    }
+
     return false;
   }
 
@@ -494,7 +494,7 @@ public:
         continue;
       }
       const IkPoint_2* p = nullptr;
-      if ((p = boost::get<IkPoint_2>(&*result))) {
+      if (CGAL::assign(p, result)) {
         FT l = CGAL::sqrt(sp.data().original_vectors[idx].squared_length());
 
         double l2 = CGAL::to_double((*p - sp.data().original_rays[idx].point(0)).squared_length());
