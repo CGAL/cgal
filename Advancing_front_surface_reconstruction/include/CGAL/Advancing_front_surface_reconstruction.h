@@ -186,7 +186,7 @@ namespace CGAL {
                                      CGAL::Advancing_front_surface_reconstruction_vertex_base_3<
                                        CGAL::Exact_predicates_inexact_constructions_kernel>,
                                      CGAL::Advancing_front_surface_reconstruction_cell_base_3<
-                                       CGAL::Exact_predicates_inexact_constructions_kernel> > >`
+                                       CGAL::Exact_predicates_inexact_constructions_kernel> > >
   \endcode
 
   \tparam P must be a functor offering

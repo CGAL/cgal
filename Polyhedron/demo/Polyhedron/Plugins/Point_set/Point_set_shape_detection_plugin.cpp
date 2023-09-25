@@ -274,13 +274,13 @@ private:
     }
     std::string& comments = item->comments();
 
-    Point_set::Property_map<int> shape_id;
+    std::optional<Point_set::Property_map<int>> shape_id;
     if (dialog.add_property()) {
-      bool added = false;
-      boost::tie(shape_id, added) = points->template add_property_map<int> ("shape", -1);
+      auto [shape_id_pmap, added] = points->template add_property_map<int> ("shape", -1);
+      shape_id = shape_id_pmap;
       if (!added) {
         for (auto it = points->begin(); it != points->end(); ++ it)
-          shape_id[*it] = -1;
+          shape_id.value()[*it] = -1;
       }
 
       // Remove previously detected shapes from comments.
@@ -382,8 +382,8 @@ private:
 
       for (auto &item : regions[index].second) {
         point_item->point_set()->insert(points->point(item));
-        if (dialog.add_property())
-          shape_id[item] = index;
+        if (dialog.add_property() && shape_id)
+          shape_id.value()[item] = index;
       }
 
       unsigned char r, g, b;
@@ -440,7 +440,7 @@ private:
         Scene_surface_mesh_item* sm_item = nullptr;
         sm_item = new Scene_surface_mesh_item;
 
-        boost::shared_ptr<Plane_3> rg_plane(boost::make_shared<Plane_3>(plane));
+        std::shared_ptr<Plane_3> rg_plane(std::make_shared<Plane_3>(plane));
         build_alpha_shape(
           *(point_item->point_set()), rg_plane,
           sm_item, search_sphere_radius);
@@ -559,15 +559,13 @@ private:
 
     std::string& comments = item->comments();
 
-    Point_set::Property_map<int> shape_id;
-    if (dialog.add_property())
-    {
-      bool added = false;
-      boost::tie (shape_id, added) = points->template add_property_map<int> ("shape", -1);
-      if (!added)
-      {
-        for (Point_set::iterator it = points->begin(); it != points->end(); ++ it)
-          shape_id[*it] = -1;
+    std::optional<Point_set::Property_map<int>> shape_id;
+    if (dialog.add_property()) {
+      auto [shape_id_pmap, added] = points->template add_property_map<int> ("shape", -1);
+      shape_id = shape_id_pmap;
+      if (!added) {
+        for (auto it = points->begin(); it != points->end(); ++ it)
+          shape_id.value()[*it] = -1;
       }
 
       // Remove previously detected shapes from comments
@@ -656,7 +654,7 @@ private:
     std::map<Kernel::Point_3, QColor> color_map;
 
     int index = 0;
-    for(boost::shared_ptr<typename Ransac::Shape> shape : ransac.shapes())
+    for(std::shared_ptr<typename Ransac::Shape> shape : ransac.shapes())
     {
       CGAL::Shape_detection::Cylinder<Traits> *cyl;
       cyl = dynamic_cast<CGAL::Shape_detection::Cylinder<Traits> *>(shape.get());
@@ -696,8 +694,8 @@ private:
       for(std::size_t i : shape->indices_of_assigned_points())
       {
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
-        if (dialog.add_property())
-          shape_id[*(points->begin()+i)] = index;
+        if (dialog.add_property() && shape_id)
+          shape_id.value()[*(points->begin()+i)] = index;
       }
 
       unsigned char r, g, b;
@@ -731,8 +729,8 @@ private:
         {
           ss << item->name().toStdString() << "_plane_";
 
-          boost::shared_ptr<CGAL::Shape_detection::Plane<Traits> > pshape
-            = boost::dynamic_pointer_cast<CGAL::Shape_detection::Plane<Traits> > (shape);
+          std::shared_ptr<CGAL::Shape_detection::Plane<Traits> > pshape
+            = std::dynamic_pointer_cast<CGAL::Shape_detection::Plane<Traits> > (shape);
 
           Kernel::Point_3 ref = CGAL::ORIGIN + pshape->plane_normal ();
 
@@ -901,7 +899,7 @@ private:
   }
 
     template<typename Plane>
-    void build_alpha_shape (Point_set& points, boost::shared_ptr<Plane> plane,
+    void build_alpha_shape (Point_set& points, std::shared_ptr<Plane> plane,
                           Scene_surface_mesh_item* sm_item, double epsilon);
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
@@ -928,7 +926,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetectShapesSM_t
     dialog.m_cluster_epsilon_field->setEnabled(false);
     dialog.groupBox_3->setEnabled(false);
     //todo: check default values
-    dialog.m_epsilon_field->setValue(0.01*sm_item->diagonalBbox());
+    dialog.m_epsilon_field->setValue(0.01*sm_item->bboxDiagonal());
     std::size_t nb_faces = mesh->number_of_faces();
     dialog.m_min_pts_field->setValue((std::max)(static_cast<int>(0.01*nb_faces), 1));
     if(!dialog.exec()) return;
@@ -997,7 +995,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
 template<typename Plane>
 void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
-(Point_set& points,  boost::shared_ptr<Plane> plane, Scene_surface_mesh_item* sm_item, double epsilon)
+(Point_set& points,  std::shared_ptr<Plane> plane, Scene_surface_mesh_item* sm_item, double epsilon)
 {
   typedef Kernel::Point_2  Point_2;
   typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;

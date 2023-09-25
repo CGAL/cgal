@@ -42,7 +42,7 @@ namespace Contours {
     range and value type is `GeomTraits::Point_2`. The default is
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
-    \cgalModels `ContourDirections`
+    \cgalModels{ContourDirections}
   */
   template<
   typename GeomTraits,

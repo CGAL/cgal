@@ -29,7 +29,7 @@ struct Clustering_functor
   Point_set* points;
   Point_set::Property_map<std::size_t> cluster_map;
   const double neighbor_radius;
-  boost::shared_ptr<std::size_t> result;
+  std::shared_ptr<std::size_t> result;
 
   Clustering_functor (Point_set* points,
                       const double neighbor_radius,
@@ -121,13 +121,10 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
     QApplication::processEvents();
     CGAL::Real_timer task_timer; task_timer.start();
 
-    Point_set::Property_map<std::size_t> cluster_map;
-
-    if (add_property->isChecked())
-      cluster_map = points->add_property_map<std::size_t> ("cluster_map").first;
-    else
+    auto [cluster_map, _] = points->add_property_map<std::size_t>(
       // Use long name to avoid overwriting potentially existing map
-      cluster_map = points->add_property_map<std::size_t> ("cluster_point_set_property_map").first;
+      add_property->isChecked() ? "cluster_map" : "cluster_point_set_property_map"
+    );
 
     // Default value
     if (neighbor_radius->value() == 0)
@@ -176,14 +173,13 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
     if (gen_color->isChecked())
     {
       Scene_points_with_normal_item* colored;
-      Point_set::Property_map<unsigned char> red, green, blue;
 
       colored = new Scene_points_with_normal_item;
       colored->setName (QString("%1 (clustering)").arg(item->name()));
 
-      red = colored->point_set()->add_property_map<unsigned char>("red", 0).first;
-      green = colored->point_set()->add_property_map<unsigned char>("green", 0).first;
-      blue = colored->point_set()->add_property_map<unsigned char>("blue", 0).first;
+      auto red = colored->point_set()->add_property_map<unsigned char>("red", 0).first;
+      auto green = colored->point_set()->add_property_map<unsigned char>("green", 0).first;
+      auto blue = colored->point_set()->add_property_map<unsigned char>("blue", 0).first;
       colored->point_set()->check_colors();
 
       colored->point_set()->reserve (points->size());

@@ -3,11 +3,13 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableFunctor
+ * \cgalRefines{AdaptableFunctor}
  *
- * \cgalHasModel ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2
- * \cgalHasModel ArrangementOpenBoundaryTraits_2::Compare_x_on_boundary_2
- * \cgalHasModel ArrangementSphericalBoundaryTraits_2::Compare_x_on_boundary_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{ArrangementOpenBoundaryTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{ArrangementSphericalBoundaryTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModelsEnd
  */
 class CompareXOnBoundaryOfCurveEnd_2 {
 public:

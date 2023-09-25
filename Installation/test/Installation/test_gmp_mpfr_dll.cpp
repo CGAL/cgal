@@ -8,10 +8,8 @@ int main() {
 #define GMP_SONAME "libgmp-10"
 #define MPFR_SONAME "libmpfr-4"
 #define GMP_SONAME_BACKUP "gmp"
+#define GMP_SONAME_BACKUP_2 "gmp-10"
 #define MPFR_SONAME_BACKUP "mpfr-6"
-#define GMP_MAJOR 5
-#define MPFR_MAJOR 3
-
 
 #include <iostream>
 #include <cassert>
@@ -35,12 +33,21 @@ bool get_version_info(const LPCTSTR name,
     std::cerr << name << " is not loaded!\n";
     return false;
   }
+  else
+    std::cerr << name << " is loaded.\n";
+
   char fileName[_MAX_PATH];
   DWORD size = GetModuleFileName(g_dllHandle, fileName, _MAX_PATH);
   fileName[size] = NULL;
   std::cerr << "Query FileVersion of \"" << fileName << "\"\n";
   DWORD handle = 0;
   size = GetFileVersionInfoSize(fileName, &handle);
+
+  DWORD err = GetLastError();
+  if (size == 0) {
+    std::cerr << "GetFileVersionInfoSize failed with error " << err << std::endl;
+  }
+
   BYTE* versionInfo = new BYTE[size];
   if (!GetFileVersionInfo(fileName, handle, size, versionInfo))
   {
@@ -66,7 +73,9 @@ int main() {
   int major, minor, patch, build;
   if(!get_version_info(GMP_SONAME, major, minor, patch, build)) {
     if(!get_version_info(GMP_SONAME_BACKUP, major, minor, patch, build)) {
-      return 1;
+      if (!get_version_info(GMP_SONAME_BACKUP_2, major, minor, patch, build)) {
+        return 1;
+      }
     }
   }
 

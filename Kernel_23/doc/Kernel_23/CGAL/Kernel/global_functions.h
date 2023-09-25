@@ -619,7 +619,19 @@ const CGAL::Point_3<Kernel>&r);
 
 /// @}
 
-
+/// \ingroup kernel_global_function
+/*!
+compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+\f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ of the triangle
+\f$ (a, b, c)\f$ at the vertex `b`, and \f$ \theta_2\f$ is
+the angle in \f$ [0, \pi]\f$ such that \f$ cos(\theta_2) = cosine\f$.
+\pre `a!=b && c!=b`.
+*/
+template <typename Kernel>
+Comparison_result compare_angle(const CGAL::Point_3<Kernel>& a,
+                                const CGAL::Point_3<Kernel>& b,
+                                const CGAL::Point_3<Kernel>& c,
+                                const Kernel::FT& cosine);
 
 /// \defgroup compare_dihedral_angle_grp CGAL::compare_dihedral_angle()
 /// \ingroup kernel_global_function
@@ -741,7 +753,7 @@ const CGAL::Point_3<Kernel>& r);
 /// @{
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xy\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared. This is the same function as `compare_xy` and exists for compatibility with `Point_d<Kernel>`.
@@ -751,7 +763,7 @@ Comparison_result
 compare_lexicographically(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Kernel>& q);
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xyz\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
@@ -1132,7 +1144,7 @@ global function are available.
 /// @{
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xy\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared.
@@ -1142,7 +1154,7 @@ Comparison_result
 compare_xy(const CGAL::Point_2<Kernel>& p, const CGAL::Point_2<Kernel>& q);
 
 /*!
-Compares the Cartesian coordinates of points `p` and `q`
+Compares the %Cartesian coordinates of points `p` and `q`
 lexicographically in \f$ xy\f$ order: first \f$ x\f$-coordinates are
 compared, if they are equal, \f$ y\f$-coordinates are compared.
 
@@ -1165,7 +1177,7 @@ compare_xy(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 /// @{
 
 /*!
-Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
+Compares the \f$ x\f$ and \f$ y\f$ %Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename CircularKernel>
@@ -1174,7 +1186,7 @@ Comparison_result
             const CGAL::Circular_arc_point_2<CircularKernel> &q);
 
 /*!
-Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
+Compares the \f$ x\f$ and \f$ y\f$ %Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename CircularKernel>
@@ -1197,7 +1209,7 @@ compare_xy(const CGAL::Circular_arc_point_2<CircularKernel> &p,
 
 /*!
 
-Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
+Compares the \f$ x\f$ and \f$ y\f$ %Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename SphericalKernel>
@@ -1206,7 +1218,7 @@ Comparison_result
             const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 /*!
 
-Compares the \f$ x\f$ and \f$ y\f$ Cartesian coordinates of points `p` and
+Compares the \f$ x\f$ and \f$ y\f$ %Cartesian coordinates of points `p` and
 `q` lexicographically.
 */
 template <typename SphericalKernel>
@@ -1430,13 +1442,13 @@ global function are available.
 */
 /// @{
 /*!
-  compares Cartesian \f$ y\f$-coordinates of `p` and `q`.
+  compares %Cartesian \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_y(const CGAL::Point_2<Kernel> &p,
                             const CGAL::Point_2<Kernel> &q);
 /*!
-  compares Cartesian \f$ y\f$-coordinates of `p` and `q`.
+  compares %Cartesian \f$ y\f$-coordinates of `p` and `q`.
 */
 template <typename Kernel>
 Comparison_result compare_y(const CGAL::Point_3<Kernel> &p,
@@ -1552,7 +1564,7 @@ global function are available.
 /// @{
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ xyz\f$ order: first
 \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates
 are compared, and if both \f$ x\f$- and \f$ y\f$- coordinate are equal,
@@ -1575,7 +1587,7 @@ compare_xyz(const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q);
 */
 /// @{
 
-/*! Compares the Cartesian coordinates of points `p` and `q` lexicographically.
+/*! Compares the %Cartesian coordinates of points `p` and `q` lexicographically.
 */
 template <typename SphericalKernel>
 Comparison_result
@@ -1583,7 +1595,7 @@ compare_xyz(const CGAL::Circular_arc_point_3<SphericalKernel> &p,
 const CGAL::Circular_arc_point_3<SphericalKernel> &q);
 
 /*!
-Compares the Cartesian coordinates of points `p` and `q` lexicographically.
+Compares the %Cartesian coordinates of points `p` and `q` lexicographically.
 */
 template <typename SphericalKernel>
 Comparison_result
@@ -1670,7 +1682,7 @@ compare_z(const CGAL::Circular_arc_point_3<SphericalKernel> &p, const CGAL::Poin
 /// @{
 
 /*!
-Compares the Cartesian coordinates of points `p` and
+Compares the %Cartesian coordinates of points `p` and
 `q` lexicographically in \f$ yx\f$ order: first
 \f$ y\f$-coordinates are compared, if they are equal, \f$ x\f$-coordinates
 are compared.

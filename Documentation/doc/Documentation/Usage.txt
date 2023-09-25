@@ -175,7 +175,7 @@ After that, you will have to specify the Qt5_DIR by hand to cmake, using somethi
 
     -DQt5_DIR=/usr/local/opt/qt5/lib/cmake/Qt5
 
-where '/usr/local/` is actually your current brew installation directory. Check this directory
+where `/usr/local/` is actually your current brew installation directory. Check this directory
 to be sure where the Qt5 is placed on your machine.
 
 \subsection usage_configuring_cmake_gui Specifying Missing Dependencies

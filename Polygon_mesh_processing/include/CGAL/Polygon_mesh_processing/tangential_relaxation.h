@@ -111,7 +111,7 @@ struct Allow_all_moves{
 *   \cgalParamNBegin{allow_move_functor}
 *     \cgalParamDescription{A function object used to determinate if a vertex move should be allowed or not}
 *     \cgalParamType{Unary functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)` returning `true`
-*                    if the vertex `v` can be moved from `src` to `tgt`; %Point_3` being the value type of the vertex point map }
+*                    if the vertex `v` can be moved from `src` to `tgt`; `Point_3` being the value type of the vertex point map }
 *     \cgalParamDefault{If not provided, all moves are allowed.}
 *   \cgalParamNEnd
 *
@@ -188,6 +188,10 @@ void tangential_relaxation(const VertexRange& vertices,
       }
       prev = n;
     }
+
+    if (first_run)
+      return true; //vertex incident only to degenerate faces
+
     if (!get(ecm, edge(first_h, tm)))
       if (to_double(first * prev) <= 0)
         return false;
@@ -214,6 +218,7 @@ void tangential_relaxation(const VertexRange& vertices,
     typedef std::tuple<vertex_descriptor, Vector_3, Point_3> VNP;
     std::vector< VNP > barycenters;
     auto gt_barycenter = gt.construct_barycenter_3_object();
+    auto gt_project = gt.construct_projected_point_3_object();
 
     // at each vertex, compute vertex normal
     std::unordered_map<vertex_descriptor, Vector_3> vnormals;
@@ -265,8 +270,19 @@ void tangential_relaxation(const VertexRange& vertices,
           //check squared cosine is < 0.25 (~120 degrees)
           if (0.25 < dot*dot / ( squared_distance(get(vpm,ph0), get(vpm, v)) *
                                  squared_distance(get(vpm,ph1), get(vpm, v))) )
-            barycenters.emplace_back(v, vn,
-              gt_barycenter(get(vpm, ph0), 0.25, get(vpm, ph1), 0.25, get(vpm, v), 0.5));
+          {
+            typename GT::Point_3 bary = gt_barycenter(get(vpm, ph0), 0.25, get(vpm, ph1), 0.25, get(vpm, v), 0.5);
+            // to avoid shrinking of borders, we project back onto the incident segments
+            typename GT::Segment_3 s1(get(vpm, ph0), get(vpm,v)),
+                                   s2(get(vpm, ph1), get(vpm,v));
+
+            typename GT::Point_3 p1 = gt_project(s1, bary), p2 = gt_project(s2, bary);
+
+            bary = squared_distance(p1, bary)<squared_distance(p2,bary)? p1:p2;
+            barycenters.emplace_back(v, vn, bary);
+          }
+
+
         }
       }
     }

@@ -12,6 +12,7 @@ project(Surface_mesh_Examples)
 #CGAL_Qt5 is needed for the drawing.
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
+create_single_source_cgal_program("sm_points.cpp")
 create_single_source_cgal_program("sm_derivation.cpp")
 create_single_source_cgal_program("sm_join.cpp")
 create_single_source_cgal_program("sm_aabbtree.cpp")

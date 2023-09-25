@@ -5,9 +5,11 @@
 
 The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`.
 
-\cgalHasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>}
+\cgalHasModelsEnd
 
-\cgalRefines `SearchGeomTraits_3`
+\cgalRefines{SearchGeomTraits_3}
 
 \sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
@@ -119,10 +121,10 @@ typedef unspecified_type Do_intersect;
 
 /*!
 A functor object to compute the intersection of a query and a primitive. Provides the operator:
-`boost::optional<Intersection_and_primitive_id<Query>::%Type > operator()(const Query & q, const Primitive& primitive);` which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive.
+`std::optional<Intersection_and_primitive_id<Query>::%Type > operator()(const Query & q, const Primitive& primitive);` which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive.
 
 \cgalHeading{Note on Backward Compatibility}
-Before the release 4.3 of \cgal, the return type of this function used to be `boost::optional<Object_and_primitive_id>`.
+Before the release 4.3 of \cgal, the return type of this function used to be `std::optional<Object_and_primitive_id>`.
 */
 typedef unspecified_type Intersection;
 

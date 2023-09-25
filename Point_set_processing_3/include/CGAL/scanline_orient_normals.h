@@ -328,7 +328,7 @@ void orient_scanline (Iterator begin, Iterator end,
     const Point_3& p = get (point_map, *it);
     mean_x += p.x();
     mean_y += p.y();
-    max_z = (std::max)(max_z, p.z());
+    max_z = (std::max)(max_z, CGAL::to_double(p.z()));
     ++ nb;
   }
 

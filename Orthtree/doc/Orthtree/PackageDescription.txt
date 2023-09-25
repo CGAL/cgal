@@ -48,7 +48,7 @@
 
 \cgalCRPSection{Traits}
 - `CGAL::Orthtree_traits_2<GeomTraits>`
-- `CGAL::Orthtree_traits_3<GeomTraits>`
+- `CGAL::Orthtree_traits_point_3<GeomTraits>`
 - `CGAL::Orthtree_traits_d<GeomTraits, Dimension>`
 
 \cgalCRPSection{Split Predicates}

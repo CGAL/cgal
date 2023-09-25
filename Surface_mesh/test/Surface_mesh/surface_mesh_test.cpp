@@ -219,15 +219,11 @@ void point_position_accessor ()
 void properties () {
   Surface_fixture f;
 
-
-  Sm::Property_map<Sm::Vertex_index, int> prop;
-  bool created = false;
-
-  boost::tie(prop,created) = f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty", 23);
+  auto [prop, created] = f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty", 23);
   assert(created == true);
 
-  boost::tie(prop, created)= f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty");
-  assert(created == false);
+  auto [_, created_again] = f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty");
+  assert(created_again == false);
 }
 
 void move () {

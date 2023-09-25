@@ -1,6 +1,6 @@
 /// \ingroup PkgSurfaceMeshDeformationConcepts
 /// \cgalConcept
-/// \cgalRefines `DefaultConstructible` and `Assignable`
+/// \cgalRefines{DefaultConstructible,Assignable}
 ///
 /// Concept describing the set of requirements of a simple point type.
 ///
@@ -9,7 +9,7 @@ class RawPoint_3
 public:
 /// \name Creation
 /// @{
-  /// constructor from Cartesian coordinates
+  /// constructor from %Cartesian coordinates
   RawPoint_3(double x, double y, double z);
 /// @}
 

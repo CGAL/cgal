@@ -7,8 +7,7 @@ namespace CGAL {
 An object of the class `Gmpz` is an arbitrary precision integer
 based on the \gmp Library.
 
-\cgalModels `EuclideanRing`
-\cgalModels `RealEmbeddable`
+\cgalModels{EuclideanRing,RealEmbeddable}
 
 \cgalHeading{Implementation}
 

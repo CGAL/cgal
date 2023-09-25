@@ -21,6 +21,7 @@ create_single_source_cgal_program("point_inside_surface_mesh_test.cpp")
 create_single_source_cgal_program("polygon_mesh_slicer_test.cpp")
 create_single_source_cgal_program("self_intersection_polyhedron_test.cpp")
 create_single_source_cgal_program("self_intersection_surface_mesh_test.cpp")
+create_single_source_cgal_program("self_intersection_triangle_soup_test.cpp")
 create_single_source_cgal_program("pmp_do_intersect_test.cpp")
 create_single_source_cgal_program("test_is_polygon_soup_a_polygon_mesh.cpp")
 create_single_source_cgal_program("test_stitching.cpp")
@@ -79,6 +80,8 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("delaunay_remeshing_test.cpp")
   target_link_libraries(delaunay_remeshing_test PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("test_decimation_of_planar_patches.cpp")
+  target_link_libraries(test_decimation_of_planar_patches PUBLIC CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Tests that use the Eigen library will not be compiled.")
 endif()
@@ -124,7 +127,7 @@ endif()
 
 if(BUILD_TESTING)
   set_tests_properties(
-    execution___of__triangulate_hole_Polyhedron_3_no_delaunay_test
-    execution___of__triangulate_hole_Polyhedron_3_test
+    "execution   of  triangulate_hole_Polyhedron_3_no_delaunay_test"
+    "execution   of  triangulate_hole_Polyhedron_3_test"
     PROPERTIES RESOURCE_LOCK Triangulation_with_hole)
 endif()

@@ -16,7 +16,7 @@ It defaults to:
 \code
   CGAL::Triangulation_data_structure_2<
     CGAL::Apollonius_graph_vertex_base_2<Gt,true>,
-    CGAL::Triangulation_face_base_2<Gt> >`
+    CGAL::Triangulation_face_base_2<Gt> >
 \endcode
 
 \cgalHeading{Traversal of the Apollonius Graph}
@@ -46,7 +46,7 @@ ag.incident_edges(ag.infinite_vertex());
 ag.incident_edges(ag.infinite_vertex(), f);
 \endcode
 
-\cgalModels `DelaunayGraph_2`
+\cgalModels{DelaunayGraph_2}
 
 \sa `CGAL::Apollonius_graph_traits_2<K,Method_tag>`
 \sa `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
@@ -608,24 +608,22 @@ Vertex_handle nearest_neighbor(const Point_2& p, Vertex_handle vnear) const;
 /*!
 Returns the
 dual corresponding to the face handle `f`. The returned object can
-be assignable to one of the following: `Site_2`, `Gt::Line_2`.
+be assigned to one of the following: `Site_2`, `Gt::Line_2`.
 */
 Gt::Object_2 dual(Face_handle f) const;
 
 /*!
 Returns the
 dual of the face to which `it` points to. The returned object can
-be assignable to one of the following: `Site_2`, `Gt::Line_2`.
+be assigned to one of the following: `Site_2`, `Gt::Line_2`.
 */
 Gt::Object_2 dual(All_faces_iterator it) const;
 
 /*!
 Returns
-the dual of the face to which `it` points to. The returned
-object can be assignable to one of the following: `Site_2`,
-`Gt::Line_2`.
+the dual of the face to which `it` points to.
 */
-Gt::Object_2 dual(Finite_faces_iterator it) const;
+Site dual(Finite_faces_iterator it) const;
 
 /// @}
 

@@ -276,11 +276,11 @@ struct Scene_surface_mesh_item_priv{
   mutable QOpenGLShaderProgram *program;
   Scene_surface_mesh_item *item;
 
-  mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
+  mutable std::optional<SMesh::Property_map<face_descriptor,int>> fpatch_id_map;
   mutable int min_patch_id;
-  mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
-  mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
-  mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
+  mutable std::optional<SMesh::Property_map<vertex_descriptor,int>> v_selection_map;
+  mutable std::optional<SMesh::Property_map<face_descriptor,int>> f_selection_map;
+  mutable std::optional<SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool>> e_is_feature_map;
 
   mutable Color_vector colors_;
   double volume, area;
@@ -296,45 +296,33 @@ struct Scene_surface_mesh_item_priv{
 };
 
 const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
+
+void Scene_surface_mesh_item::initialize_priv()
+{
+  CGAL_precondition(d != nullptr);
+
+  d->floated = false;
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
+  d->checkFloat();
+  d->textVItems = new TextListItem(this);
+  d->textEItems = new TextListItem(this);
+  d->textFItems = new TextListItem(this);
+
+  are_buffers_filled = false;
+  invalidate(ALL);
+}
+
 Scene_surface_mesh_item::Scene_surface_mesh_item()
 {
   d = new Scene_surface_mesh_item_priv(new SMesh(), this);
-  d->floated = false;
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-
-  are_buffers_filled = false;
-  invalidate(ALL);
+  initialize_priv();
 }
 
-Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
-{
-  d = new Scene_surface_mesh_item_priv(other, this);
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->floated = false;
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-
-  are_buffers_filled = false;
-  invalidate(ALL);
-}
-
-void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
+Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
   d = new Scene_surface_mesh_item_priv(sm, this);
-  d->floated = false;
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-  are_buffers_filled = false;
-  invalidate(ALL);
+  initialize_priv();
+
   std::size_t isolated_v = 0;
   for(vertex_descriptor v : vertices(*sm))
   {
@@ -344,21 +332,20 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
     }
   }
   setNbIsolatedvertices(isolated_v);
-
-}
-Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
-{
-  standard_constructor(sm);
 }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(const SMesh& sm)
-{
-  standard_constructor(new SMesh(sm));
-}
+  : Scene_surface_mesh_item(new SMesh(sm))
+{ }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh&& sm)
+  : Scene_surface_mesh_item(new SMesh(std::move(sm)))
+{ }
+
+Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
 {
-  standard_constructor(new SMesh(std::move(sm)));
+  d = new Scene_surface_mesh_item_priv(other, this);
+  initialize_priv();
 }
 
 Scene_surface_mesh_item*
@@ -371,7 +358,7 @@ Scene_surface_mesh_item::vertex_selection_map()
   if(! d->v_selection_map){
     d->v_selection_map = d->smesh_->add_property_map<vertex_descriptor,int>("v:selection").first;
   }
-  return d->v_selection_map;
+  return d->v_selection_map.value();
 }
 
 Scene_surface_mesh_item::Face_selection_map
@@ -380,7 +367,7 @@ Scene_surface_mesh_item::face_selection_map()
   if(! d->f_selection_map){
     d->f_selection_map = d->smesh_->add_property_map<face_descriptor,int>("f:selection").first;
   }
-  return d->f_selection_map;
+  return d->f_selection_map.value();
 }
 
 std::vector<QColor>&
@@ -527,7 +514,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       idx_edge_data_.push_back(source(ed, *smesh_));
       idx_edge_data_.push_back(target(ed, *smesh_));
       if(has_feature_edges &&
-         get(e_is_feature_map, ed))
+         get(*e_is_feature_map, ed))
       {
         idx_feature_edge_data_.push_back(source(ed, *smesh_));
         idx_feature_edge_data_.push_back(target(ed, *smesh_));
@@ -569,7 +556,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
           {
             //The sharp features detection produces patch ids >=1, this
             //is meant to insure the wanted id is in the range [min,max]
-            QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id];
+            QColor c = item->color_vector()[fpatch_id_map.value()[fd] - min_patch_id];
             CGAL::IO::Color color(c.red(),c.green(),c.blue());
             CPF::add_color_in_buffer(color, f_colors);
           }
@@ -598,7 +585,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         CGAL::IO::Color *c;
         if(has_fpatch_id)
         {
-          QColor color = item->color_vector()[fpatch_id_map[fd] - min_patch_id];
+          QColor color = item->color_vector()[fpatch_id_map.value()[fd] - min_patch_id];
           c = new CGAL::IO::Color(color.red(),color.green(),color.blue());
         }
         else if(has_fcolors)
@@ -737,8 +724,8 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
   int max = 0;
   min_patch_id = (std::numeric_limits<int>::max)();
   for(face_descriptor fd : faces(*smesh_)){
-    max = (std::max)(max, fpatch_id_map[fd]);
-    min_patch_id = (std::min)(min_patch_id, fpatch_id_map[fd]);
+    max = (std::max)(max, fpatch_id_map.value()[fd]);
+    min_patch_id = (std::min)(min_patch_id, fpatch_id_map.value()[fd]);
   }
   if(item->property("recompute_colors").toBool())
   {
@@ -751,7 +738,6 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
 
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
-
   item->getTriangleContainer(1)->initializeBuffers(viewer);
   item->getTriangleContainer(0)->initializeBuffers(viewer);
   item->getEdgeContainer(1)->initializeBuffers(viewer);
@@ -925,7 +911,7 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
       CGAL::IO::Color* color;
       if(has_fpatch_id)
       {
-        QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id];
+        QColor c = item->color_vector()[fpatch_id_map.value()[fd] - min_patch_id];
         color = new CGAL::IO::Color(c.red(),c.green(),c.blue());
       }
       else if(has_fcolors)
@@ -1017,7 +1003,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
       CGAL::IO::Color* color;
       if(has_fpatch_id)
       {
-        QColor c= item->color_vector()[fpatch_id_map[fd] - min_patch_id];
+        QColor c= item->color_vector()[fpatch_id_map.value()[fd] - min_patch_id];
         color = new CGAL::IO::Color(c.red(),c.green(),c.blue());
       }
       else if(has_fcolors)
@@ -1189,11 +1175,11 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
 
 void
 Scene_surface_mesh_item::select(double orig_x,
-                              double orig_y,
-                              double orig_z,
-                              double dir_x,
-                              double dir_y,
-                              double dir_z)
+                                double orig_y,
+                                double orig_z,
+                                double dir_x,
+                                double dir_y,
+                                double dir_z)
 {
   SMesh *sm = d->smesh_;
   std::size_t vertex_to_emit = 0;
@@ -1214,9 +1200,9 @@ Scene_surface_mesh_item::select(double orig_x,
     {
 
       const EPICK::Point_3* closest_point =
-          boost::get<EPICK::Point_3>(&(closest->first));
+          std::get_if<EPICK::Point_3>(&(closest->first));
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {
@@ -1225,7 +1211,7 @@ Scene_surface_mesh_item::select(double orig_x,
         }
         else {
           const EPICK::Point_3* it_point =
-              boost::get<EPICK::Point_3>(&it->first);
+              std::get_if<EPICK::Point_3>(&it->first);
           if(it_point &&
              (ray_dir * (*it_point - *closest_point)) < 0)
           {
@@ -1431,7 +1417,7 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
       const EPICK::Point_3* closest_point =
           CGAL::object_cast<EPICK::Point_3>(&closest->first);
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {
@@ -1461,31 +1447,23 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
 }
 void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
 {
-  if(b)
-  {
-    d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id", 1).first;
+  if (b) {
+    d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor, int>("f:patch_id", 1).first;
     d->has_fcolors = true;
-  }
-  else
-  {
-    if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
-    {
-      d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
-      d->smesh_->remove_property_map(d->fpatch_id_map);
+  } else {
+    d->fpatch_id_map = d->smesh_->get_property_map<face_descriptor, int>("f:patch_id");
+    if (d->fpatch_id_map) {
+      d->smesh_->remove_property_map(d->fpatch_id_map.value());
       d->has_fcolors = false;
     }
-    if(d->smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").second)
-    {
-     SMesh::Property_map<face_descriptor, CGAL::IO::Color> pmap =
-         d->smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
-         d->smesh_->remove_property_map(pmap);
+    auto fcolormap = d->smesh_->get_property_map<face_descriptor, CGAL::IO::Color>("f:color");
+    if (fcolormap) {
+      d->smesh_->remove_property_map(*fcolormap);
       d->has_fcolors = false;
     }
-    if(d->smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").second)
-    {
-      SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> pmap =
-          d->smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
-          d->smesh_->remove_property_map(pmap);
+    auto vcolormap = d->smesh_->get_property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
+    if (vcolormap) {
+      d->smesh_->remove_property_map(*vcolormap);
       d->has_vcolors = false;
     }
     this->setProperty("NbPatchIds", 0); //for the joinandsplit_plugin
@@ -1595,12 +1573,10 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
 bool
 Scene_surface_mesh_item::save_obj(std::ostream& out) const
 {
-  SMesh::template Property_map<SMesh::Vertex_index, EPICK::Vector_3> vnormals;
-  bool has_normals = false;
-  boost::tie(vnormals, has_normals) = d->smesh_->template property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
+  auto vnormals = d->smesh_->template get_property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
 
-  if(has_normals)
-    return CGAL::IO::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(vnormals));
+  if(vnormals)
+    return CGAL::IO::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(*vnormals));
   else
     return CGAL::IO::write_OBJ(out, *(d->smesh_));
 }
@@ -1923,9 +1899,9 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
     if(!intersections.empty()) {
       Intersections::iterator closest = intersections.begin();
       const EPICK::Point_3* closest_point =
-          boost::get<EPICK::Point_3>(&closest->first);
+          std::get_if<EPICK::Point_3>(&closest->first);
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {
@@ -1934,7 +1910,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
         }
         else {
           const EPICK::Point_3* it_point =
-              boost::get<EPICK::Point_3>(&it->first);
+              std::get_if<EPICK::Point_3>(&it->first);
           if(it_point &&
              (ray_dir * (*it_point - *closest_point)) < 0)
           {
@@ -2014,12 +1990,12 @@ void Scene_surface_mesh_item::resetColors()
   setItemIsMulticolor(false);
   if(d->has_feature_edges){
     for(boost::graph_traits<SMesh>::edge_descriptor e : edges(*d->smesh_)){
-      put(d->e_is_feature_map, e, false);
+      put(d->e_is_feature_map.value(), e, false);
     }
     d->has_feature_edges = false;
   }
   invalidate(COLORS);
-  itemChanged();
+  itemChanged(); // @fixme really shouldn't call something that strong
 }
 
 QMenu* Scene_surface_mesh_item::contextMenu()
@@ -2397,15 +2373,14 @@ void Scene_surface_mesh_item::setAlpha(int alpha)
 
 QSlider* Scene_surface_mesh_item::alphaSlider() { return d->alphaSlider; }
 
-void Scene_surface_mesh_item::computeElements()const
+void Scene_surface_mesh_item::computeElements() const
 {
   d->compute_elements(ALL);
   setBuffersFilled(true);
-  const_cast<Scene_surface_mesh_item*>(this)->itemChanged();
 }
 
 void
-Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
+Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
 {
   const_cast<Scene_surface_mesh_item*>(this)->//temporary, until the drawing pipeline is not const anymore.
       d->initializeBuffers(viewer);
@@ -2425,8 +2400,9 @@ void Scene_surface_mesh_item::computeItemColorVectorAutomatically(bool b)
   this->setProperty("recompute_colors",b);
 }
 
-void write_in_vbo(Vbo* vbo, cgal_gl_data* data,
-               std::size_t size)
+void write_in_vbo(Vbo* vbo,
+                  cgal_gl_data* data,
+                  std::size_t size)
 {
   vbo->bind();
   vbo->vbo.write(static_cast<int>((3*size)*sizeof(cgal_gl_data)),

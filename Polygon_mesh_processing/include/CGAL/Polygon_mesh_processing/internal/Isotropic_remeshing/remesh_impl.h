@@ -43,7 +43,7 @@
 #include <boost/range/join.hpp>
 #include <memory>
 #include <boost/container/flat_set.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/property_map/function_property_map.hpp>
 
 #include <map>
@@ -156,15 +156,15 @@ namespace internal {
     template <class Range>
     bool same_range(const Range& r1, const Range& r2)
     {
-      return boost::begin(r1)==boost::begin(r2) &&
-             boost::end(r1)==boost::end(r2);
+      return std::begin(r1)==std::begin(r2) &&
+             std::end(r1)==std::end(r2);
     }
 
     template <class Range1, class Range2>
     bool same_range(const Range1& r1, const Range2& r2)
     {
-      return std::distance(boost::begin(r1), boost::end(r1)) ==
-             std::distance(boost::begin(r2), boost::end(r2));
+      return std::distance(std::begin(r1), std::end(r1)) ==
+             std::distance(std::begin(r2), std::end(r2));
     }
 
   public:
@@ -384,10 +384,6 @@ namespace internal {
     void split_long_edges(const EdgeRange& edge_range,
                           const double& high)
     {
-      typedef boost::bimap<
-        boost::bimaps::set_of<halfedge_descriptor>,
-        boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
-      typedef typename Boost_bimap::value_type                       long_edge;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")...";
@@ -396,12 +392,17 @@ namespace internal {
       double sq_high = high*high;
 
       //collect long edges
-      Boost_bimap long_edges;
+      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
+        long_edges(
+          [](const H_and_sql& p1, const H_and_sql& p2)
+          { return p1.second > p2.second; }
+        );
       for(edge_descriptor e : edge_range)
       {
         double sqlen = sqlength(e);
         if (sqlen > sq_high)
-          long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+          long_edges.emplace(halfedge(e, mesh_), sqlen);
       }
 
       //split long edges
@@ -411,10 +412,10 @@ namespace internal {
       while (!long_edges.empty())
       {
         //the edge with longest length
-        typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
-        halfedge_descriptor he = eit->second;
-        double sqlen = eit->first;
-        long_edges.right.erase(eit);
+        auto eit = long_edges.begin();
+        halfedge_descriptor he = eit->first;
+        double sqlen = eit->second;
+        long_edges.erase(eit);
 
         //split edge
         Point refinement_point = this->midpoint(he);
@@ -438,8 +439,8 @@ namespace internal {
         if (sqlen_new > sq_high)
         {
           //if it was more than twice the "long" threshold, insert them
-          long_edges.insert(long_edge(hnew, sqlen_new));
-          long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
+          long_edges.emplace(hnew, sqlen_new);
+          long_edges.emplace(next(hnew, mesh_), sqlen_new);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
@@ -479,25 +480,26 @@ namespace internal {
     //is split at its midpoint and the two adjacent triangles are bisected (2-4 split)"
     void split_long_edges(const double& high)
     {
-      typedef boost::bimap<
-        boost::bimaps::set_of<halfedge_descriptor>,
-        boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
-      typedef typename Boost_bimap::value_type                       long_edge;
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")..." << std::endl;
 #endif
       double sq_high = high*high;
 
       //collect long edges
-      Boost_bimap long_edges;
+      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
+      long_edges(
+        [](const H_and_sql& p1, const H_and_sql& p2)
+        { return p1.second > p2.second; }
+      );
+
       for(edge_descriptor e : edges(mesh_))
       {
         if (!is_split_allowed(e))
           continue;
         double sqlen = sqlength(e);
         if(sqlen > sq_high)
-          long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+          long_edges.emplace(halfedge(e, mesh_), sqlen);
       }
 
       //split long edges
@@ -507,13 +509,13 @@ namespace internal {
       while (!long_edges.empty())
       {
         //the edge with longest length
-        typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
-        halfedge_descriptor he = eit->second;
-        double sqlen = eit->first;
-        long_edges.right.erase(eit);
+        auto eit = long_edges.begin();
+        halfedge_descriptor he = eit->first;
+        double sqlen = eit->second;
+        long_edges.erase(eit);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
-        std::cout << "\r\t(" << long_edges.left.size() << " long edges, ";
+        std::cout << "\r\t(" << long_edges.size() << " long edges, ";
         std::cout << nb_splits << " splits)";
         std::cout.flush();
 #endif
@@ -550,8 +552,8 @@ namespace internal {
         if (sqlen_new > sq_high)
         {
           //if it was more than twice the "long" threshold, insert them
-          long_edges.insert(long_edge(hnew,              sqlen_new));
-          long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
+          long_edges.emplace(hnew, sqlen_new);
+          long_edges.emplace(next(hnew, mesh_), sqlen_new);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
@@ -573,7 +575,7 @@ namespace internal {
           {
             double sql = sqlength(hnew2);
             if (sql > sq_high)
-              long_edges.insert(long_edge(hnew2, sql));
+              long_edges.emplace(hnew2, sql);
           }
         }
 
@@ -596,7 +598,7 @@ namespace internal {
           {
             double sql = sqlength(hnew2);
             if (sql > sq_high)
-              long_edges.insert(long_edge(hnew2, sql));
+              long_edges.emplace(hnew2, sql);
           }
         }
       }
@@ -1942,7 +1944,7 @@ private:
     bool check_normals(const HalfedgeRange& hedges) const
     {
       std::size_t nb_patches = patch_id_to_index_map.size();
-      //std::vector<boost::optional<Vector_3> > normal_per_patch(nb_patches,boost::none);
+      //std::vector<std::optional<Vector_3> > normal_per_patch(nb_patches,std::nullopt);
       std::vector<bool> initialized(nb_patches,false);
       std::vector<Vector_3> normal_per_patch(nb_patches);
 
@@ -1966,7 +1968,7 @@ private:
             return false;
           }
         }
-        //normal_per_patch[index] = boost::make_optional(n);
+        //normal_per_patch[index] = std::make_optional(n);
         normal_per_patch[index] = n;
         initialized[index] = true;
       }

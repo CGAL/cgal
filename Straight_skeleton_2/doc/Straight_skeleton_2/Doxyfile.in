@@ -1,3 +1,11 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Straight Skeleton and Polygon Offsetting"
+
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/complex_skeleton.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/sls_progress.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/sls_weights.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/artificial_bisectors.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/exterior_skeleton.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/sls_extrusion.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/sls_cropped_extrusion.png \

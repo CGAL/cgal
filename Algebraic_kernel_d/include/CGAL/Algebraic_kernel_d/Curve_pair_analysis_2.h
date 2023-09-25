@@ -22,7 +22,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/Handle_with_policy.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -136,9 +136,9 @@ public:
 
     typedef std::vector<Slice_element> Slice_info;
 
-    typedef boost::optional<Slice_info> Lazy_slice_info;
+    typedef std::optional<Slice_info> Lazy_slice_info;
 
-    typedef boost::optional<Bound> Lazy_bound;
+    typedef std::optional<Bound> Lazy_bound;
 
     typedef CGAL::internal::Event_indices<size_type> Event_indices;
 
@@ -151,11 +151,11 @@ public:
     typedef std::vector<std::vector<Intersection_info> >
         Intersection_info_container;
 
-    typedef boost::optional<Intersection_info_container>
+    typedef std::optional<Intersection_info_container>
         Lazy_intersection_info_container;
 
     // For lazy evaluation of Status_line_CPA_1s.
-    typedef boost::optional<Status_line_CPA_1> Lazy_status_line_CPA_1;
+    typedef std::optional<Status_line_CPA_1> Lazy_status_line_CPA_1;
 
     //! @}
 
@@ -191,31 +191,31 @@ private:
     Polynomial_2 g;
 
 
-    mutable boost::optional<std::vector<Polynomial_2> > subresultants;
+    mutable std::optional<std::vector<Polynomial_2> > subresultants;
 
-    mutable boost::optional<std::vector<Polynomial_1> >
+    mutable std::optional<std::vector<Polynomial_1> >
         principal_subresultants;
-    mutable boost::optional<std::vector<Polynomial_1> >
+    mutable std::optional<std::vector<Polynomial_1> >
         coprincipal_subresultants;
 
-    mutable boost::optional<Polynomial_1> resultant;
+    mutable std::optional<Polynomial_1> resultant;
 
-    mutable boost::optional<std::vector<Algebraic_real_1> > resultant_roots;
-    mutable boost::optional<std::vector<Algebraic_real_1> >
+    mutable std::optional<std::vector<Algebraic_real_1> > resultant_roots;
+    mutable std::optional<std::vector<Algebraic_real_1> >
         event_x_coordinates;
-    mutable boost::optional<std::vector<size_type> >
+    mutable std::optional<std::vector<size_type> >
         multiplicities_of_resultant_roots;
 
-    mutable boost::optional<std::vector<Bound> > stripe_values;
+    mutable std::optional<std::vector<Bound> > stripe_values;
 
     mutable std::vector< Lazy_status_line_CPA_1 > event_slices;
 
-    mutable boost::optional<std::vector< Lazy_bound > > intermediate_values;
+    mutable std::optional<std::vector< Lazy_bound > > intermediate_values;
 
-    mutable boost::optional< std::vector< Lazy_status_line_CPA_1 > >
+    mutable std::optional< std::vector< Lazy_status_line_CPA_1 > >
         intermediate_slices;
 
-    mutable boost::optional<std::vector<Event_indices> > event_indices;
+    mutable std::optional<std::vector<Event_indices> > event_indices;
 
     mutable Lazy_intersection_info_container intersection_info_container;
 
@@ -530,7 +530,7 @@ private:
     /*
      * \brief Computes the intermediate x-coordinates and their status lines
      *
-     * In fact, it only fills the data fields with boost::none instances,
+     * In fact, it only fills the data fields with std::nullopt instances,
      * according to the lazy philosophy of the whole class.
      */
     void compute_intermediate_values_and_slices() const;
@@ -547,7 +547,7 @@ public:
             compute_resultant();
         }
         CGAL_assertion(bool(this->ptr()->resultant));
-        return this->ptr()->resultant.get();
+        return this->ptr()->resultant.value();
     }
 
     std::vector<Algebraic_real_1>& resultant_roots() const {
@@ -555,7 +555,7 @@ public:
             compute_resultant_roots_with_multiplicities();
         }
         CGAL_assertion(bool(this->ptr()->resultant_roots));
-        return this->ptr()->resultant_roots.get();
+        return this->ptr()->resultant_roots.value();
     }
 
     Algebraic_real_1& resultant_roots(size_type i) const {
@@ -569,7 +569,7 @@ public:
             compute_resultant_roots_with_multiplicities();
         }
         CGAL_assertion(bool(this->ptr()->multiplicities_of_resultant_roots));
-        return this->ptr()->multiplicities_of_resultant_roots.get();
+        return this->ptr()->multiplicities_of_resultant_roots.value();
     }
 
     size_type multiplicities_of_resultant_roots(size_type i) const {
@@ -586,10 +586,10 @@ public:
               (kernel(),
                resultant_roots().begin(),
                resultant_roots().end(),
-               std::back_inserter(this->ptr()->stripe_values.get()));
+               std::back_inserter(this->ptr()->stripe_values.value()));
         }
         CGAL_assertion(bool(this->ptr()->stripe_values));
-        return this->ptr()->stripe_values.get();
+        return this->ptr()->stripe_values.value();
     }
 
     std::vector<Algebraic_real_1>& event_x_coordinates() const {
@@ -597,7 +597,7 @@ public:
             compute_event_x_coordinates_with_event_indices();
         }
         CGAL_assertion(bool(this->ptr()->event_x_coordinates));
-        return this->ptr()->event_x_coordinates.get();
+        return this->ptr()->event_x_coordinates.value();
     }
 
     std::vector<Event_indices>& event_indices() const {
@@ -605,7 +605,7 @@ public:
             compute_event_x_coordinates_with_event_indices();
         }
         CGAL_assertion(bool(this->ptr()->event_indices));
-        return this->ptr()->event_indices.get();
+        return this->ptr()->event_indices.value();
     }
 
 public:
@@ -613,7 +613,7 @@ public:
     /*
      * \brief returns the indices of the <tt>i</tt>th event value
      *
-     * Returns a Event_indices <tt>(fg,ffy,ggy)</tt> such that
+     * Returns an `Event_indices` <tt>(fg,ffy,ggy)</tt> such that
      * the <tt>i</tt>th event root is the <tt>fg</tt>th root of the
      * resultant of \c f and \c g, the <tt>ffy</tt>th root of the
      * discriminant of \c f, and  the <tt>ggy</tt>th root of the
@@ -633,7 +633,7 @@ private:
             compute_intermediate_values_and_slices();
         }
         CGAL_assertion(bool(this->ptr()->intermediate_values));
-        return this->ptr()->intermediate_values.get();
+        return this->ptr()->intermediate_values.value();
     }
 
     std::vector<Lazy_status_line_CPA_1>& intermediate_slices() const {
@@ -641,7 +641,7 @@ private:
             compute_intermediate_values_and_slices();
         }
         CGAL_assertion(bool(this->ptr()->intermediate_slices));
-        return this->ptr()->intermediate_slices.get();
+        return this->ptr()->intermediate_slices.value();
     }
 
 
@@ -652,7 +652,7 @@ private:
             compute_subresultants();
         }
         CGAL_assertion(bool(this->ptr()->subresultants));
-        return this->ptr()->subresultants.get();
+        return this->ptr()->subresultants.value();
     }
 
     Polynomial_2& subresultants(size_type i) const {
@@ -666,7 +666,7 @@ private:
             compute_subresultants();
         }
         CGAL_assertion(bool(this->ptr()->principal_subresultants));
-        return this->ptr()->principal_subresultants.get();
+        return this->ptr()->principal_subresultants.value();
     }
 
     Polynomial_1& principal_subresultants(size_type i) const {
@@ -681,7 +681,7 @@ private:
             compute_subresultants();
         }
         CGAL_assertion(bool(this->ptr()->coprincipal_subresultants));
-        return this->ptr()->coprincipal_subresultants.get();
+        return this->ptr()->coprincipal_subresultants.value();
     }
 
     Polynomial_1& coprincipal_subresultants(size_type i) const {
@@ -1030,7 +1030,7 @@ public:
             this->ptr()->event_slices[i] = create_event_slice(i);
         }
         CGAL_assertion(bool(this->ptr()->event_slices[i]));
-        return this->ptr()->event_slices[i].get();
+        return this->ptr()->event_slices[i].value();
     }
 
 
@@ -1045,7 +1045,7 @@ public:
 
         }
 
-        return intermediate_slices()[i].get();
+        return intermediate_slices()[i].value();
     }
 
     //!  Returns bound representative value at the <tt>i</tt>th interval
@@ -1074,7 +1074,7 @@ public:
             }
         }
         CGAL_assertion(bool(intermediate_values()[i]));
-        return intermediate_values()[i].get();
+        return intermediate_values()[i].value();
 
     }
 
@@ -1312,11 +1312,11 @@ void Curve_pair_analysis_2<AlgebraicKernelWithAnalysis_2>::compute_resultant()
         compute_subresultants();
 
         this->ptr()->resultant
-            = this->ptr()->principal_subresultants.get()[0];
+            = this->ptr()->principal_subresultants.value()[0];
     }
 
 
-    if(this->ptr()->resultant.get().is_zero()) {
+    if(this->ptr()->resultant.value().is_zero()) {
         throw CGAL::internal::Zero_resultant_exception<Polynomial_2>
             (this->ptr()->f,
              this->ptr()->g);
@@ -1345,8 +1345,8 @@ compute_resultant_roots_with_multiplicities() const {
     solve_1(resultant(), std::back_inserter(res_pairs));
 
     for(int i=0; i < static_cast<int>(res_pairs.size()); i++ ) {
-        this->ptr()->resultant_roots.get().push_back(res_pairs[i].first);
-        this->ptr()->multiplicities_of_resultant_roots.get()
+        this->ptr()->resultant_roots.value().push_back(res_pairs[i].first);
+        this->ptr()->multiplicities_of_resultant_roots.value()
             .push_back(res_pairs[i].second);
     }
 
@@ -1357,13 +1357,13 @@ compute_resultant_roots_with_multiplicities() const {
 #if CGAL_ACK_DEBUG_FLAG
     for(size_type i = 0;
         i<static_cast<size_type>
-            (this->ptr()->resultant_roots.get().size());
+            (this->ptr()->resultant_roots.value().size());
         i++) {
         CGAL_ACK_DEBUG_PRINT
             << "Root at "
-            << CGAL::to_double(this->ptr()->resultant_roots.get()[i])
+            << CGAL::to_double(this->ptr()->resultant_roots.value()[i])
             << " with multiplicity "
-            << this->ptr()->multiplicities_of_resultant_roots.get()[i]
+            << this->ptr()->multiplicities_of_resultant_roots.value()[i]
             << std::endl;
     }
 #endif
@@ -1401,18 +1401,18 @@ compute_event_x_coordinates_with_event_indices() const {
          one_curve_events.end(),
          resultant_roots().begin(),
          resultant_roots().end(),
-         std::back_inserter(this->ptr()->event_x_coordinates.get()),
+         std::back_inserter(this->ptr()->event_x_coordinates.value()),
          std::back_inserter(events_type),
          compare);
     std::vector<Algebraic_real_1>& events
-        = this->ptr()->event_x_coordinates.get();
+        = this->ptr()->event_x_coordinates.value();
 
     typename std::vector<CGAL::internal::Three_valued>::iterator one_curve_it
         =one_curve_events_type.begin();
     size_type inter_count=0, f_count=0,g_count=0;
     this->ptr()->event_indices = std::vector<Event_indices>();
     std::vector<Event_indices>& event_indices
-        = this->ptr()->event_indices.get();
+        = this->ptr()->event_indices.value();
     for(size_type i=0;i<static_cast<size_type>(events.size());i++) {
 /*
         #if CGAL_ACK_DEBUG_FLAG
@@ -1519,8 +1519,8 @@ compute_intermediate_values_and_slices() const {
     std::size_t size = event_x_coordinates().size()+1;
     this->ptr()->intermediate_values=std::vector<Lazy_bound>();
     this->ptr()->intermediate_slices=std::vector<Lazy_status_line_CPA_1>();
-    this->ptr()->intermediate_values.get().resize(size);
-    this->ptr()->intermediate_slices.get().resize(size);
+    this->ptr()->intermediate_values.value().resize(size);
+    this->ptr()->intermediate_slices.value().resize(size);
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
 #endif
@@ -1539,25 +1539,25 @@ compute_subresultants() const {
     if(CGAL::degree(f,1)<CGAL::degree(g,1)) {
 #if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
         CGAL::internal::bezout_polynomial_subresultants
-            (g,f,std::back_inserter(this->ptr()->subresultants.get()));
+            (g,f,std::back_inserter(this->ptr()->subresultants.value()));
 #else
         typename CGAL::Polynomial_traits_d<Polynomial_2>
             ::Polynomial_subresultants()
-            (g,f,std::back_inserter(this->ptr()->subresultants.get()));
+            (g,f,std::back_inserter(this->ptr()->subresultants.value()));
 #endif
     } else {
 #if CGAL_ACK_USE_BEZOUT_MATRIX_FOR_SUBRESULTANTS
         CGAL::internal::bezout_polynomial_subresultants
-            (f,g,std::back_inserter(this->ptr()->subresultants.get()));
+            (f,g,std::back_inserter(this->ptr()->subresultants.value()));
 #else
         typename CGAL::Polynomial_traits_d<Polynomial_2>
             ::Polynomial_subresultants()
-            (f,g,std::back_inserter(this->ptr()->subresultants.get()));
+            (f,g,std::back_inserter(this->ptr()->subresultants.value()));
 #endif
     }
 
     std::vector<Polynomial_2>& subresultants
-        = this->ptr()->subresultants.get();
+        = this->ptr()->subresultants.value();
 
     size_type n = static_cast<size_type>(subresultants.size());
 
@@ -1584,11 +1584,11 @@ compute_subresultants() const {
     // This must be corrected, if f and g have same degree:
     if(CGAL::degree(f,1) == CGAL::degree(g,1)) {
         if(n>=1) {
-            this->ptr()->principal_subresultants.get()[n-1]
+            this->ptr()->principal_subresultants.value()[n-1]
                 = Polynomial_1(CGAL::leading_coefficient(g));
         }
         if(n>=2) {
-            this->ptr()->coprincipal_subresultants.get()[n-2]
+            this->ptr()->coprincipal_subresultants.value()[n-2]
                 = Polynomial_1(g[CGAL::degree(g,1)-1]);
         }
     }

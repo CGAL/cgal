@@ -3,9 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableBinaryFunction
+ * \cgalRefines{AdaptableBinaryFunction}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Equal_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::Equal_2}
+ * \cgalHasModelsEnd
  */
 class Equal_2 {
 public:

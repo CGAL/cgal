@@ -82,7 +82,7 @@ container. The iterator does not have constant amortized time complexity for
 the increment and decrement operations in all cases, only when not too many
 elements have not been freed (i.e.\ when the `size()` is close to the
 `capacity()`). Iterating from `begin()` to `end()` takes
-`O(capacity())` time, not `size()`. In the case where the container
+\cgalBigO{capacity()} time, not `size()`. In the case where the container
 has a small `size()` compared to its `capacity()`, we advise to
 "defragment the memory" by copying the container if the iterator performance
 is needed.
@@ -661,7 +661,7 @@ void clear();
 
 /// \name Ownership testing
 /// The following functions are mostly helpful for efficient debugging, since
-/// their complexity is \f$ O(\sqrt{\mathrm{c.capacity()}})\f$.
+/// their complexity is \cgalBigO{\sqrt{\mathrm{c.capacity()}}}.
 /// @{
 
 /*!
@@ -670,7 +670,7 @@ void clear();
 bool owns(const_iterator pos);
 
 /*!
- * returns whether `pos` is in the range `[cc.begin(), cc`.end())` (`cc.end()` excluded).
+ * returns whether `pos` is in the range `[cc.begin(), cc.end())` (`cc.end()` excluded).
  */
 bool owns_dereferenceable(const_iterator pos);
 
@@ -681,7 +681,7 @@ bool owns_dereferenceable(const_iterator pos);
 /// @{
 /*!
 adds the items of `cc2` to the end of `cc` and `cc2` becomes empty.
-The time complexity is O(`cc`.`capacity()`-`cc`.`size()`).
+The time complexity is \cgalBigO{cc.capacity()-cc.size()}.
 \pre `cc2` must not be the same as `cc`, and the allocators of `cc` and `cc2` must be compatible: `cc.get_allocator() == cc2.get_allocator()`.
 */
 void merge(Compact_container<T, Allocator> &cc);

@@ -49,10 +49,10 @@ public:
     typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::type             VPM;
 
     // usually will be true, but might not be the case if using custom type points
-//    CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
-//                                        typename boost::property_traits<VPM>::value_type>::value));
-//    CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
-//                                        typename boost::range_value<Point_container>::type>::value));
+//    static_assert(std::is_same<typename Kernel::Point_3,
+//                                        typename boost::property_traits<VPM>::value_type>::value);
+//    static_assert(std::is_same<typename Kernel::Point_3,
+//                                        typename boost::range_value<Point_container>::type>::value);
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_normal_map_t, NamedParameters,
@@ -102,10 +102,10 @@ public:
 
     // Construct the graph
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(CGAL::vertex_point, g));
-    VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), VNM());
-    VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
-    VTM vtm = choose_parameter(get_parameter(np, internal_np::vertex_texture_map), VTM());
-    FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+    VNM vnm = choose_parameter<VNM>(get_parameter(np, internal_np::vertex_normal_map));
+    VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
+    VTM vtm = choose_parameter<VTM>(get_parameter(np, internal_np::vertex_texture_map));
+    FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
 
     const bool has_vertex_normals = (is_vnm_requested && !(vertex_normals.empty()));
     const bool has_vertex_colors = (is_vcm_requested && !(vertex_colors.empty()));

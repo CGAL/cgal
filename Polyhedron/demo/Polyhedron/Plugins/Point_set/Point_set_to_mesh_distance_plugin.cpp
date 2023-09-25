@@ -177,27 +177,22 @@ public:
   }
 private Q_SLOTS:
 
-  void select()
-  {
+  void select() {
     Scene_points_with_normal_item* item =
-        qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
-    if(!item ||
-       !item->point_set()->has_property_map<double>("distance"))
-    {
+      qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    if (!item || !item->point_set()->has_property_map<double>("distance")) {
       CGAL::Three::Three::warning("You must select the resulting point set.");
       return;
     }
-    PMap distance_map;
-     boost::tie (distance_map, boost::tuples::ignore) = item->point_set()->property_map<double>("distance");
-   double distance = dock_widget->distance_spinbox->value();
-   for (Point_set::iterator it = item->point_set()->begin();
-        it != item->point_set()->end(); ++ it)
-   {
-     if(distance <= distance_map[*it])
-       item->point_set()->select(*it);
-   }
-   item->invalidateOpenGLBuffers();
-   item->itemChanged();
+    auto distance_map = item->point_set()->property_map<double>("distance").value();
+    double distance = dock_widget->distance_spinbox->value();
+    for (Point_set::iterator it = item->point_set()->begin();
+         it != item->point_set()->end(); ++it) {
+      if (distance <= distance_map[*it])
+        item->point_set()->select(*it);
+    }
+    item->invalidateOpenGLBuffers();
+    item->itemChanged();
   }
   void perform()
   {
@@ -216,18 +211,14 @@ private Q_SLOTS:
     Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item(*pn);
     Color_ramp thermal_ramp;
     thermal_ramp.build_blue();
-    PMap distance_map;
-    PMap fred_map;
-    PMap fgreen_map;
-    PMap fblue_map;
 
-    bool d, r, g, b;
+
     new_item->point_set()->remove_colors();
     //bind pmaps
-    boost::tie(distance_map  , d) = new_item->point_set()->add_property_map<double>("distance",0);
-    boost::tie(fred_map  , r) = new_item->point_set()->add_property_map<double>("red",0);
-    boost::tie(fgreen_map, g)  = new_item->point_set()->add_property_map<double>("green",0);
-    boost::tie(fblue_map , b)  = new_item->point_set()->add_property_map<double>("blue",0);
+    auto [distance_map, d] = new_item->point_set()->add_property_map<double>("distance", 0);
+    auto [fred_map, r] = new_item->point_set()->add_property_map<double>("red", 0);
+    auto [fgreen_map, g] = new_item->point_set()->add_property_map<double>("green", 0);
+    auto [fblue_map, b] = new_item->point_set()->add_property_map<double>("blue", 0);
     new_item->point_set()->check_colors();
 
     Point_set* points = new_item->point_set();

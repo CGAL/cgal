@@ -64,11 +64,12 @@ public:
   typedef typename Base::Point                                  Point;
 
   /*! Constructor */
-  Arr_polyhedral_sgm_polyhedron_3_vertex() : Base(), m_marked(false) {}
+  Arr_polyhedral_sgm_polyhedron_3_vertex() :
+    Base(), m_processed(false), m_marked(false) {}
 
   /*! Constructor */
   Arr_polyhedral_sgm_polyhedron_3_vertex(const Point & p) :
-    Base(p), m_marked(false) {}
+    Base(p), m_processed(false), m_marked(false) {}
 
   /*! Obtain the mutable (geometrical) point. Delegate */
   Point & point() { return Base::point(); }

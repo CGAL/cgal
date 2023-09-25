@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # Copyright (c) 2012 GeometryFactory (France). All rights reserved.
 # All rights reserved.
-# 
+#
 # This file is part of CGAL (www.cgal.org).
-# 
+#
 # $URL$
 # $Id$
 # SPDX-License-Identifier: GPL-3.0-or-later
@@ -74,7 +74,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </head><body>
 <h1 id="maintitle">Doxygen Manual Results</h1>'''
     page_footer='''<table border="1" cellspacing="2" cellpadding="5" class="test-results">
-    <tr><td/><th colspan="3">Doxygen 1.8.4</th><th colspan="3">Doxygen 1.8.13(official)</th><th colspan="3">Doxygen master</th></tr>
+    <tr><td/><th colspan="3">Doxygen 1.8.13(patched)</th><th colspan="3">Doxygen 1.9.6(patched)</th><th colspan="3">Doxygen master</th></tr>
 <tr>
 <th>Package Name</th>
 <th>Logs </th>
@@ -97,7 +97,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
       suffix = ''
       if args.doxygen_version2:
         suffix = args.doxygen_version2
-      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix} (used for the official CGAL documentation)</a>\n".format(_suffix=suffix) 
+      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix} (used for the official CGAL documentation)</a>\n".format(_suffix=suffix)
       suffix = ''
       if args.master_describe:
         suffix=args.master_describe
@@ -205,9 +205,9 @@ def main():
     parser.add_argument('--doxygen-version1', default ='', help='Specify this argument if you want to add a version number to the name of the link to the first documentation.')
     parser.add_argument('--doxygen-version2', default ='', help='Specify this argument if you want to add a version number to the name of the link to the second documentation.')
     parser.add_argument('--master-describe', default ='', help='Specify this argument if you want to add a suffix to the name of the link to the doxygen master documentation.')
-    
+
     args = parser.parse_args()
-    
+
     if args.cgal_version:
       version_string="CGAL-"+args.cgal_version
       version_date=datetime.datetime.now().strftime("%Y-%m-%d")
@@ -255,7 +255,7 @@ def main():
         try:
             with open(publish_dir + 'index.html') as f: pass
         except IOError as e:
-            print('No index.html in the publish directory found. Writing a skeleton.')               
+            print('No index.html in the publish directory found. Writing a skeleton.')
             with open(publish_dir + 'index.html', 'w') as f:
                 f.write('''<!DOCTYPE html>
 <style type="text/css">
@@ -267,10 +267,10 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-  <tr><td/><td/><th colspan="2">Doxygen 1.8.4</th><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen master</th><td/><td/></tr>
+  <tr><td/><td/><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen 1.9.6</th><th colspan="2">Doxygen master</th><td/><td/></tr>
 <tr><th>Revision</th><th>Date</th><th>Warnings</th>
 <th>Errors</th><th>Warnings </th><th>Errors</th><th>Warnings </th><th>Errors </th>
-<th>Diff with doxygen master</th><th>Diff with doxygen 1.8.13</th></tr></table></body>''')
+<th>Diff with doxygen master</th><th>Diff with doxygen 1.9.6</th></tr></table></body>''')
                 args_list=''
                 for arg in sys.argv[0:]:
                   args_list+=arg+' '
@@ -361,6 +361,6 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         except:
           sys.stderr.write("Error while writing to "+log_target+". Does it already exists?\n")
           raise
-        
+
 if __name__ == "__main__":
     main()

@@ -102,12 +102,12 @@ The energy function minimized using alpha-expansion graph cut algorithm \cgalCit
          <td>
                 \f$ E(\bar{x}) = \sum\limits_{f \in F} e_1(f, x_f) + \lambda \sum\limits_{ \{f,g\} \in N} e_2(x_f, x_g) \f$
 
-                \f$ e_1(f, x_f) = -log(max(P(f|x_f), \epsilon)) \f$
+                \f$ e_1(f, x_f) = -\log(\max(P(f|x_f), \epsilon_1)) \f$
 
                 \f$ e_2(x_f, x_g) =
                 \left \{
                 \begin{array}{rl}
-                        -log(\theta(f,g)/\pi) &\mbox{ $x_f \ne x_g$} \\
+                        -\log(w\max(1 - |\theta(f,g)|/\pi, \epsilon_2)) &\mbox{ $x_f \ne x_g$} \\
                         0 &\mbox{ $x_f = x_g$}
                 \end{array}
                 \right \} \f$
@@ -119,16 +119,17 @@ where:
   - \f$x_f\f$ denotes the cluster assigned to facet \f$f\f$,
   - \f$P(f|x_p)\f$ denotes the probability of assigning facet \f$f\f$ to cluster \f$x_p\f$,
   - \f$\theta(f,g)\f$ denotes the dihedral angle between neighboring facets \f$f\f$ and \f$g\f$:
-         concave angles and convex angles are weighted by 1 and 0.1 respectively,
-  - \f$\epsilon\f$ denotes the minimal probability threshold,
+         convex angles, \f$[-\pi, 0]\f$, and concave angles, \f$]0, \pi]\f$, are weighted by \f$w=0.08\f$ and \f$w=1\f$, respectively,
+  - \f$\epsilon_1, \epsilon_2\f$ denote minimal probability and angle thresholds, respectively,
   - \f$\lambda \in [0,1]\f$ denotes a smoothness parameter.
          </td>
   </tr>
   </table>
 
+Note both terms of the energy function, \f$ e_1 \f$ and \f$ e_2 \f$, are always non-negative.
 The first term of the energy function provides the contribution of the soft clustering probabilities.
-The second term of the energy function is a geometric criterion that is larger when two adjacent facets sharing a sharp and concave edge are in the same cluster.
-The smoothness parameter makes this geometric criteria more or less prevalent.
+The second term of the energy function is a geometric criterion that is larger the closer to \f$\pm\pi\f$ the dihedral angle between two adjacent facets not in the same cluster is.
+The smoothness parameter makes this geometric criterion more or less prevalent.
 
 Assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets that are placed under different clusters is less expensive than separating them and creating boundaries.
@@ -216,7 +217,7 @@ When using a `Surface_mesh`, you can use the built-in property mechanism.
 <!-- \subsection SMSRuntime Runtime of the functions sdf_values() and segmentation_from_sdf_values() -->
 
 The following tables provide the runtime of the functions `sdf_values()` and `segmentation_from_sdf_values()`.
-The results were produced with the release 4.4 of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+The results were produced with the release 4.4 of \cgal, on an Intel i7 3.2 GHz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
 The models used for the benchmarks are the <i>dinosaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
 

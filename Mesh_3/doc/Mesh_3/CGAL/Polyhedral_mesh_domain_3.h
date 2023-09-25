@@ -24,7 +24,7 @@ the intersection tests and intersection computations
 for polyhedral boundary surfaces. This parameter has to be instantiated
 with a model of the concept `IntersectionGeometricTraits_3`.
 
-\cgalModels `MeshDomain_3`
+\cgalModels{MeshDomain_3}
 
 \sa `IntersectionGeometricTraits_3`
 \sa `CGAL::make_mesh_3()`.

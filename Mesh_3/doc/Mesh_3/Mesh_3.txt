@@ -296,7 +296,7 @@ also inserts a small set of auxiliary vertices that belong to the triangulation
 but are isolated from the complex at the end of the meshing process.
 
 These so-called \em isolated vertices belong to the triangulation but not to any cell
-of the `C3T3`. They can be removed using the function `remove_isolated_vertices()`.
+of the `C3T3`. They can be removed using the function `remove_isolated_vertices()` of `CGAL::Mesh_complex_3_in_triangulation_3`.
 
 
 \section Mesh_3_section_interface Interface
@@ -422,7 +422,7 @@ Specifically, it is
 either a constant or a spatially variable scalar field. It
 provides an upper bound for the distance between the circumcenter
 of a surface facet and the center of a surface Delaunay ball of this facet.
-<LI><I>`facet_topology`.</I> This parameters controls the set of topological constraints
+<LI><I>`facet_topology`.</I> This parameter controls the set of topological constraints
 which have to be verified by each surface facet. By default, each vertex of a surface
 facet has to be located on a surface patch, on a curve, or on a corner. It can
 also be set to check whether the three vertices of a surface facet belongs to the same
@@ -494,7 +494,7 @@ protecting ball centers that are consecutive on a 1-feature. This parameter has 
 
 The four additional parameters are optimization parameters.
 They control which optimization processes are performed
-and allow the user to tune the parameters of the activated optimization processes.
+and enable the user to tune the parameters of the activated optimization processes.
 These parameters have internal types which are not described
 but the library provides global functions to generate
 appropriate values of these types:
@@ -679,7 +679,7 @@ View of 3D meshes produced from a polyhedral domain with a nested surface.
 
 The following code creates a polyhedral domain, with only one polyhedron,
 and no "bounding polyhedron", so the volumetric part of the domain will be empty.
-This allows to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
+This enables to remesh a surface, and is equivalent to the function `make_surface_mesh()`.
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
 
@@ -725,7 +725,7 @@ to the voxels surface, causing an aliasing effect.
 A solution to generate a smooth and accurate output surface was described by Stalling et al in
 \cgalCite{stalling1998weighted}. It consists in generating a second input image, made
 of integer coefficients called *weights*, and use those weights to define smoother domain boundaries.
-The 3D image of weights can be generated using `CGAL::Mesh_3::generate_weights()` as shown in
+The 3D image of weights can be generated using `CGAL::Mesh_3::generate_label_weights()` as shown in
 the following example.
 
 \cgalExample{Mesh_3/mesh_3D_weighted_image.cpp}
@@ -734,7 +734,6 @@ the following example.
 Surface of the output mesh generated with a very small `facet_distance`
 without the weights (left, 25563 vertices) and with the weights (right, 19936 vertices).
 \cgalFigureEnd
-
 
 \subsubsection Mesh_3DomainsFrom3DImagesWithCustomInitialization Domains From 3D Images, with a Custom Initialization
 
@@ -926,23 +925,27 @@ The first modification is the type of the mesh domain. Instead of being
 
 \snippet Mesh_3/mesh_3D_image_with_features.cpp Domain definition
 
-Then, in the function `%main()`, after the `%domain` object has been created,
-a dedicated function computes the 1D-features, and adds them to the domain.
+In the %main() function, the domain is created with an additional argument - a
+dedicated functor that computes the one-dimensional features, which are then
+added to the domain.
 
-\snippet Mesh_3/mesh_3D_image_with_features.cpp Call add_1D_features
+\snippet Mesh_3/mesh_3D_image_with_detection_of_features.cpp Domain creation
 
-The function template `%add_1D_features()` is defined in the example
-file. It uses non-documented code from \cgal, that should be copy-pasted in
-any user-code willing to use similar code. It uses the undocumented
-function template `%CGAL::polylines_to_protect` that computes the
-1D-features that correspond to the intersection of the bounding box of the
-image with the surfaces defined by the image. At the same time, a few other
-polylines are added as 1D-features, to protect 1D curves in the interior of
-the image. Then, the method
-`CGAL::Mesh_domain_with_polyline_features_3::add_features` is called twice
-to add the computed 1D-features to the mesh domain.
+The `CGAL::Mesh_3::Detect_features_in_image` functor is defined in its own
+header file. It computes the one-dimensional features that correspond to the
+intersections of the bounding box of the image with the surfaces defined by the
+image, as well as polylines that lie at the intersection of three or more
+subdomains (including the outside). It then constructs a graph of these polyline
+features. The named constructor adds this feature graph to the domain for later
+feature protection. The original feature detection algorithm was described in
+\cgalCite{cgal:hssz-gmcabonbc-97}, which provides a list of possible voxel
+configurations. The feature detection implemented in \cgal generalizes this
+description.
 
-\snippet Mesh_3/mesh_3D_image_with_features.cpp Add 1D features
+The example \ref Mesh_3/mesh_3D_image_with_features.cpp shows how
+user-specified input polylines can further be added as 1D features to the mesh domain.
+
+\snippet Mesh_3/mesh_3D_image_with_features.cpp Domain creation
 
 In the meshing criteria, if 1D features are added to the domain, the user
 can define the parameter `edge_size` of the criteria class
@@ -970,7 +973,7 @@ protection of the 1D-features.
 Left: the mesh without any call to `%add_features()`.
 
 Middle: the mesh with only the 1D-features computed by
-`%CGAL::polylines_to_protect()`.
+`CGAL::Mesh_3::Detect_features_on_image_bbox()`.
 
 Right: the mesh with added 1D-features in the interior of the bounding box
 of the image.
@@ -1010,7 +1013,24 @@ Right: the mesh with added 1D-features along sharp edges and edges shared
 by at least two of the input polyhedral surfaces forming the complex.
 \cgalFigureCaptionEnd
 
+\subsubsection Mesh_3EdgesSizingField Sizing Field for Feature Edges
 
+The following example shows how to generate a mesh from a polyhedral complex
+or a polyhedral surface with polyline features.
+Polyline features are covered by a set of so-called "protecting balls" which
+sizes are highly related to the edge length, and
+are driven by the size component of `Mesh_edge_criteria_3`
+(see Section \ref Mesh_3Protectionof0and1dimensionalExposed).
+The ideal size can be computed using
+`Sizing_field_with_aabb_tree` that helps start the feature protection
+and one-dimensional meshing process with a good initial guess.
+To fit the protecting balls requirements,
+no protecting ball can have its radius
+larger than half of the distance from the corresponding vertex (its center),
+to surface patches the
+current polyline feature does not belong to.
+
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_sizing.cpp}
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 
@@ -1408,6 +1428,6 @@ and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 
 In 2013, Clément Jamin made the meshing and optimization algorithms parallel
 on multi-core shared-memory architectures.
-\todo Add reference to paper or research report when it is available.
+
 */
 } /* namespace CGAL */

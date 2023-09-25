@@ -19,7 +19,7 @@ and must be a model of `TriangulationTraits_2`.
 `Triangulation_vertex_base_with_id_2` derives. It has the default
 value `Triangulation_vertex_base_2<TriangulationTraits_2>`.
 
-\cgalModels `TriangulationVertexBase_2`
+\cgalModels{TriangulationVertexBase_2}
 
 \sa `CGAL::Triangulation_vertex_base_2`
 */

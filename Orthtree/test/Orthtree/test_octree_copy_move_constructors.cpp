@@ -9,11 +9,11 @@
 #include <cassert>
 #include <CGAL/point_generators_3.h>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::FT FT;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using FT = Kernel::FT;
+using Point_set = CGAL::Point_set_3<Point>;
+using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
 
 int main(void)
 {
@@ -24,27 +24,28 @@ int main(void)
   for (std::size_t i = 0; i < nb_pts; ++i)
     points.insert(*(generator++));
 
-  Octree base (points, points.point_map());
-  assert (base.root().is_leaf()); // base is not refined yet
+  Octree base ({points, points.point_map()});
+  assert (base.is_leaf(base.root())); // base is not refined yet
 
   Octree copy1 (base);
-  assert (copy1.root().is_leaf()); // copy1 is thus not refined either
+  assert (copy1.is_leaf(copy1.root())); // copy1 is thus not refined either
   assert (base == copy1); // base should be equal to copy1
 
   base.refine();
-  assert (!base.root().is_leaf()); // base is now refined
-  assert (copy1.root().is_leaf()); // copy1 should be unaffected and still unrefined
+  assert (!base.is_leaf(base.root())); // base is now refined
+  assert (copy1.is_leaf(copy1.root())); // copy1 should be unaffected and still unrefined
   assert (base != copy1); // base should be different from copy1
 
   Octree copy2 (base);
-  assert (!copy2.root().is_leaf()); // copy2 should be refined
+  assert (!copy2.is_leaf(copy2.root())); // copy2 should be refined
   assert (base == copy2); // base should be equal to copy2
 
   Octree move (std::move(base));
-  assert (!move.root().is_leaf()); // move should be refined
-  assert (base.root().is_leaf()); // base should be back to init state (unrefined)
-  assert (copy1.root().is_leaf()); // copy1 still unaffected and still unrefined
-  assert (!copy2.root().is_leaf()); // copy2 unaffected by move and still refined
+  assert (!move.is_leaf(move.root())); // move should be refined
+  // fixme: my linter isn't happy about use-after-move
+  assert (base.is_leaf(base.root())); // base should be back to init state (unrefined)
+  assert (copy1.is_leaf(copy1.root())); // copy1 still unaffected and still unrefined
+  assert (!copy2.is_leaf(copy2.root())); // copy2 unaffected by move and still refined
   assert (move == copy2); // move should be equal to copy2
 
   return EXIT_SUCCESS;

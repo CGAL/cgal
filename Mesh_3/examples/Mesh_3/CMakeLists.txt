@@ -49,6 +49,9 @@ target_link_libraries(mesh_hybrid_mesh_domain PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("mesh_implicit_sphere.cpp")
 target_link_libraries(mesh_implicit_sphere PUBLIC CGAL::Eigen3_support)
 
+create_single_source_cgal_program("mesh_implicit_ellipsoid.cpp")
+target_link_libraries(mesh_implicit_ellipsoid PUBLIC CGAL::Eigen3_support)
+
 create_single_source_cgal_program("mesh_implicit_sphere_variable_size.cpp")
 target_link_libraries(mesh_implicit_sphere_variable_size PUBLIC CGAL::Eigen3_support)
 
@@ -96,6 +99,10 @@ create_single_source_cgal_program("mesh_polyhedral_domain_with_features.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_features
                       PUBLIC CGAL::Eigen3_support)
 
+create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sizing.cpp")
+target_link_libraries(mesh_polyhedral_domain_with_features_sizing
+                      PUBLIC CGAL::Eigen3_support)
+
 create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sm.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_features_sm
                       PUBLIC CGAL::Eigen3_support)
@@ -133,6 +140,12 @@ if(TARGET CGAL::CGAL_ImageIO)
   create_single_source_cgal_program("mesh_3D_image_with_features.cpp")
   target_link_libraries(mesh_3D_image_with_features PUBLIC CGAL::Eigen3_support)
 
+  create_single_source_cgal_program("mesh_3D_image_with_input_features.cpp")
+  target_link_libraries(mesh_3D_image_with_input_features PUBLIC CGAL::Eigen3_support)
+
+  create_single_source_cgal_program("mesh_3D_image_with_detection_of_features.cpp")
+  target_link_libraries(mesh_3D_image_with_detection_of_features PUBLIC CGAL::Eigen3_support)
+
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program("mesh_optimization_example.cpp")
     target_link_libraries(mesh_optimization_example PUBLIC CGAL::Eigen3_support)
@@ -158,11 +171,15 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_variable_size
                           PUBLIC CGAL::Eigen3_support)
 
-    find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+    find_package(ITK NAMES ITK InsightToolkit QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)
       include(CGAL_ITK_support)
       create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
       target_link_libraries(mesh_3D_weighted_image
+                            PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
+
+      create_single_source_cgal_program("mesh_3D_weighted_image_with_detection_of_features.cpp")
+      target_link_libraries(mesh_3D_weighted_image_with_detection_of_features
                             PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
     else(ITK_FOUND)
       message(STATUS "NOTICE: The examples that need ITK will not be compiled.")
@@ -185,6 +202,8 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_3D_image_with_custom_initialization
     mesh_3D_gray_image_with_custom_initialization
     mesh_3D_image_with_features
+    mesh_3D_image_with_detection_of_features
+    mesh_3D_image_with_input_features
     mesh_implicit_domains
     mesh_implicit_sphere
     mesh_implicit_sphere_variable_size
@@ -195,6 +214,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_polyhedral_domain
     mesh_polyhedral_domain_sm
     mesh_polyhedral_domain_with_features
+    mesh_polyhedral_domain_with_features_sizing
     mesh_polyhedral_domain_with_features_sm
     mesh_polyhedral_domain_with_lipschitz_sizing
     mesh_two_implicit_spheres_with_balls)

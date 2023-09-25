@@ -196,3 +196,17 @@ if (NOT TARGET CGAL::CGAL_Basic_viewer)
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
 endif()
 
+
+#warning: the order in this list has to match the enum in Exact_type_selector
+set(CGAL_CMAKE_EXACT_NT_BACKEND_OPTIONS GMP_BACKEND GMPXX_BACKEND BOOST_GMP_BACKEND BOOST_BACKEND LEDA_BACKEND MP_FLOAT_BACKEND Default)
+set(CGAL_CMAKE_EXACT_NT_BACKEND "Default" CACHE STRING "Setting for advanced users that what to change the default number types used in filtered kernels. Some options might not be working depending on how you configured your build.")
+set_property(CACHE CGAL_CMAKE_EXACT_NT_BACKEND PROPERTY STRINGS ${CGAL_CMAKE_EXACT_NT_BACKEND_OPTIONS})
+
+if ( NOT "${CGAL_CMAKE_EXACT_NT_BACKEND}" STREQUAL "Default" )
+  list(FIND CGAL_CMAKE_EXACT_NT_BACKEND_OPTIONS ${CGAL_CMAKE_EXACT_NT_BACKEND} DEB_VAL)
+  set_property(
+      TARGET CGAL
+      APPEND PROPERTY
+          INTERFACE_COMPILE_DEFINITIONS "CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND=${DEB_VAL}"
+  ) # do not use set_target_properties to avoid overwritting
+endif()

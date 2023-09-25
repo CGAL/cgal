@@ -6,7 +6,7 @@
  * identified on the bottom and top sides and curves inserted into the
  * arrangement are expected to reach these boundary sides.
  *
- * \cgalRefines `ArrangementBasicTraits_2`
+ * \cgalRefines{ArrangementBasicTraits_2}
  *
  * \sa `ArrangementIdentifiedVerticalTraits_2`,
  *     `ArrangementOpenBottomTraits_2`,

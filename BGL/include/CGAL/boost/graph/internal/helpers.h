@@ -15,6 +15,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/value_type_traits.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
 
@@ -222,7 +223,6 @@ namespace impl
     {
       put(map, pair.first, pair.second);
     }
-
   };
 
   template<typename PMAP>
@@ -236,6 +236,13 @@ namespace impl
     return Emptyset_iterator();
   }
 }//end of impl
+
+template <class PMAP>
+struct value_type_traits<boost::function_output_iterator<impl::Output_iterator_functor<PMAP>>>
+{
+  typedef std::pair<typename impl::Output_iterator_functor<PMAP>::input_t,
+                    typename impl::Output_iterator_functor<PMAP>::output_t> type;
+};
 
 } // CGAL
 

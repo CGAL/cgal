@@ -6,273 +6,384 @@ namespace CGAL {
 \anchor Chapter_2D_Straight_Skeleton_and_Polygon_Offsetting
 \anchor chapterstraightskeleton2
 \cgalAutoToc
-\author Fernando Cacciola
+
+\cgalFigureAnchor{ComplexSLS}
+<center>
+<img src="complex_skeleton.png" style="max-width:70%;"/>
+</center>
+
+\authors Fernando Cacciola, Sébastien Loriot, and Mael Rouxel-Labbé
+
+\section Straight_skeleton_2Introduction Introduction
+
+\subsection Straight_skeleton_2Straight Straight Skeletons
+
+This package implements weighted straight skeletons for two-dimensional polygons with holes.
+An intuitive way to think of the construction of straight skeletons is to imagine that wavefronts
+(or grassfires) are spawned at each edge of the polygon, and are moving inward. As the fronts
+progress, they either contract or expand depending on the angles formed between polygon edges,
+and sometimes disappear. Under this transformation, polygon vertices move along the
+angular bisector of the lines subtending the edges, tracing a tree-like structure, the straight skeleton.
+
+\cgalFigureAnchor{SLSProgress}
+<center>
+<img src="sls_progress.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{SLSProgress}
+Construction of a straight skeleton: the wavefront interfaces define the straight skeleton.
+\cgalFigureCaptionEnd
+
+\subsection Straight_skeleton_2Comparison Straight Skeletons, Medial Axis and Voronoi Diagrams
+
+The straight skeleton of a polygon is similar to the medial axis and the Voronoi diagram of a polygon
+in the way it partitions it; however, unlike the medial axis and the Voronoi diagram, the bisectors
+are not equidistant to its defining edges but to the supporting lines of such edges. As a result,
+the bisectors of a straight skeleton might not be located in the center of the polygon and thus
+cannot be regarded as a proper medial axis in its geometrical meaning.
+
+On the other hand, only reflex vertices (i.e., vertices whose internal angle \f$ > \pi\f$)
+are responsible for deviations of the bisectors from its center location. Therefore, for convex polygons,
+the straight skeleton, the medial axis and the Voronoi diagram are exactly equivalent. Furthermore,
+if a non-convex polygon contains only vertices of low reflexivity, the straight skeleton bisectors
+will be placed nearly equidistant to their defining edges, producing a straight skeleton
+much alike a "proper" medial axis.
+
+\subsection Straight_skeleton_2IntroUsages Uses of Straight Skeletons
+
+This package implements construction of straight skeletons as well as two typical use cases
+of the straight skeleton: polygon offsetting and straight skeleton extrusion.
+
+<ul>
+  <li>\link Straight_skeleton_2Offset Polygon Offsetting\endlink: Growing and shrinking 2D polygons.</li>
+  <li>\link Straight_skeleton_2Extrusion Straight Skeleton Extrusion\endlink: Creating a volume by adding height
+      to the straight skeleton. </li>
+</ul>
 
 \section Straight_skeleton_2Definitions Definitions
 
-\subsection Straight_skeleton_22DContour 2D Contour
+We now define in detail what is the straight skeleton, starting from the input polygon.
 
-A <I>2D contour</I> is a closed sequence (a cycle) of 3 or more <I>connected 2D oriented straight line segments</I> called <I>contour edges</I>. The endpoints of the contour edges are called <I>vertices</I>. Each contour edge shares its endpoints with at least two other contour edges.
+\subsection Straight_skeleton_22DContour 2D Contours
 
-If the edges intersect only at the vertices and at most are coincident along a line but do not <I>cross</I> one another, the contour is classified as <I>simple</I>.
+A <I>2D contour</I> is a closed sequence (a cycle) of three or more <I>connected 2D oriented straight
+line segments</I> called <I>contour edges</I>. The endpoints of contour edges are called <I>vertices</I>,
+and are shared by exactly two incident edges.
 
-A contour is topologically equivalent to a <I>disk</I> and if it is simple, is said to be a <I>Jordan Curve</I>.
+A contour partitions the plane in open regions that are bounded and unbounded.
+If the contour forms the boundary of a single open region that is a simply connected set,
+then this contour is said to be <I>weakly simple</I>. If the edges of the contour intersect
+only at their common vertices, the contour is said to be <I>simple</I>.
 
-Contours partition the plane in two open regions: one bounded and one unbounded. If the bounded region of a contour is only one <I>singly-connected set</I>, the contour is said to be <I>strictly-simple</I>.
-
-The `Orientation` of a contour is given by the order of the vertices around the region they bound. It can be `CLOCKWISE` (CW) or `COUNTERCLOCKWISE` (CCW).
-
-The <I>bounded side</I> of a contour edge is the side facing the bounded region of the contour. If the contour is oriented CCW, the bounded side of an edge is its left side.
-
-A contour with a null edge (a segment of length zero given by two consecutive coincident vertices), or with edges not connected to the bounded region (an antenna: 2 consecutive edges going forth and back along the same line), is said to be <I>degenerate</I> (collinear edges are <I>not</I> considered a degeneracy).
+The orientation of a contour is given by the order of the vertices around the region they bound.
+It can be `clockwise` (CW) or `counterclockwise` (CCW). The <I>bounded side</I> of a contour edge
+is the side facing the bounded region of the contour. If the contour is oriented CCW, the bounded
+side of an edge is its left side.
 
 \subsection Straight_skeleton_22DPolygonwithHoles 2D Polygon with Holes
 
 A <I>2D polygon</I> is a contour.
 
-A <I>2D polygon with holes</I> is a contour, called the <I>outer contour</I>, having zero or more contours, called <I>inner contours</I>, or <I>holes</I>, in its bounded region. The intersection of the bounded region of the outer contour and the unbounded regions of each inner contour is the <I>interior</I> of the polygon with holes. The orientation of the holes must be opposite to the orientation of the outer contour and there cannot be any intersection among any contour. A hole cannot be in the bounded region of any other hole.
+A <I>2D polygon with holes</I> is a contour having zero or more contours in its bounded regions.
+The former contour is called <I>outer contour</I> or <I>outer boundary</I>, and the latter
+contours are called <I>inner contours</I>, or <I>holes</I>. In this chapter, we require that
+there cannot be any intersection among any two contours. Furthermore, we require that the outer
+contour is CCW oriented, that holes are CW oriented, and that a hole cannot be
+in the bounded region of another hole.
 
-A polygon with holes is strictly-simple if its interior is a singly-connected set.
+The intersection of the bounded regions of the outer contour and the unbounded regions
+of each inner contour is the <I>interior</I> of the polygon with holes. A polygon with holes
+is said to be <I>weakly simple</I> if its interior is a simply connected set.
 
-The orientation of a polygon with holes is the orientation of its outer contour. The bounded side of <I>any</I> edge, whether of the outer contour or a hole, is the <I>same</I> for all edges. That is, if the outer contour is oriented CCW and the holes CW, both contour and hole edges face the polygon interior to their left.
-
-Throughout the rest of this chapter the term <I>polygon</I> will be used as a shortcut for <I>polygon with holes</I>.
+Throughout the rest of this chapter the term <I>polygon</I> will be used as a shortcut
+for <I>polygon with holes</I>.
 
 \cgalFigureBegin{Validpolygons,valid_polygons.png}
-Examples of strictly simple polygons: One with no holes and two edges coincident (left) and one with 2 holes (right).
+Examples of weakly simple polygons: one with no holes and two edges coincident (left) and one
+with 2 holes (right).
 \cgalFigureEnd
 
 \cgalFigureBegin{Invalidpolygons,invalid_polygons.png}
-Examples of non-simple polygons: One folding into itself, that is, non-planar (left), one with a vertex touching an edge (middle), and one with a hole crossing into the outside (right)
+Examples of non-simple polygons: one folding into itself, that is, non-planar (left), one with a vertex
+touching an edge (middle), and one with a hole crossing into the outside (right)
 \cgalFigureEnd
 
+\subsection Straight_skeleton_2StraightSkeletonofa2D Straight Skeleton of a 2D Weakly Simple Polygon
 
-\subsection Straight_skeleton_2InwardOffsetofaNondegenerate Inward Offset of a Non-degenerate Strictly-Simple Polygon with Holes
+Given a contour edge called the <I>source edge</I>, its <I>offset edge</I> at time `t` is an edge
+parallel with the same orientation such that the Euclidean distance between the lines
+supporting both edges is exactly `t`. An offset edge is always located to the bounded side of
+its source edge (which is an oriented straight line segment).
 
-For any 2D non-degenerate strictly-simple polygon with holes called the <I>source</I>, there can exist a <I>set</I> of 0, 1 or more <I>inward offset polygons with holes</I>, or just offset polygons for short, at some euclidean distance <I>t</I> \f$ >0\f$ (each being strictly simple and non-degenerate). Any contour edge of such offset polygon, called an <I>offset edge</I> corresponds to <I>some</I> contour edge of the source polygon, called its <I>source edge</I>. An offset edge is parallel to its source edge and has the same orientation. The Euclidean distance between the <I>lines</I> supporting an offset edge and its source edge is exactly `t`.
+The straight skeleton is spawned by applying a continuous, <I>inward offsetting</I> to the contour edges.
+Under this transformation, polygon vertices move along the angular bisector of the lines subtending
+the edges, at a speed that depends on the angle between the two incident contour edges. So-called
+<I>events</I> happen when two moving vertices impact each other, or when a moving vertex
+collides with an offset edge. The different event types are detailed in the documentation of the class
+`CGAL::Straight_skeleton_builder_2`.
 
-An offset edge is always located to the bounded side of its source edge (which is an oriented straight line segment).
+The straight skeleton is the set of segments traced out by the moving vertices during this process.
+It forms a unique partitioning of the polygon interior into <I>straight skeleton regions</I>
+corresponding to the monotone areas traced by the continuous inward offsetting of the contour edges.
+Each region corresponds to exactly 1 contour edge. These regions are bounded by the angular bisectors
+of the supporting lines of the contour edges, and each such region is itself a non-convex,
+weakly simple polygon.
 
-An offset polygon can have fewer, equal, or more sides as its source polygon.
+\cgalFigureBegin{MoreSLS,simple_skeleton_0.png}
+Straight skeletons of various weakly simple polygons.
+\cgalFigureEnd
 
-If the source polygon has no holes, no offset polygon has holes. If the source polygon has holes, any of the offset polygons can have holes itself, but it might as well have no holes at all (if the distance is sufficiently large).
+The main entry points for straight skeletons are the following functions:
 
-Each offset polygon has the same orientation as the source polygon.
+<ul>
+  <li>CGAL::create_interior_straight_skeleton_2()</li>
+  <li>CGAL::create_exterior_straight_skeleton_2()</li>
+</ul>
+
+\subsection Straight_skeleton_2Weights Weighted Straight Skeletons
+
+Weighted straight skeletons are a generalization of straight skeletons: contour edges are assigned
+a positive weight, which can be understood as assigning a speed to the wavefront spawned from
+the contour edge. Vertices no longer move along the angular bisector between two contour edges, but
+along a weighted bisector.
+
+This \cgal package supports positive multiplicative weights: if the supporting line of a contour edge
+is described through the equation `ax+by+c=0` then the supporting line of the offset edge
+at distance `t` is `ax+by+c-t=0`. With a multiplicative weight `w`, the equation becomes `w(ax+by+c)-t=0`.
+Therefore, a larger weight implies a faster moving front.
+
+\cgalFigureAnchor{SLSWeight}
+<center>
+<img src="sls_weights.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{SLSWeight}
+An unweighted straight skeleton (leftmost) and three randomly weighted straight skeletons.
+\cgalFigureCaptionEnd
+
+A significant change from unweighted straight skeleton of polygon with holes is that the faces
+of a straight skeleton of a polygon with holes are no longer necessarily weakly simple polygons:
+a face can for example completely encompass a set of faces incident to a hole, giving it the topology
+of a ring. This property is essential, both to have a valid halfedge data structure (e.g., one cannot
+have a face with multiple boundaries), and to correctly extract the offset contours of the straight
+skeleton. Thus, a post processing step is applied to ensure the weakly simple property in all faces.
+This post processing adds so-called <I>artificial bisector/vertices</I> where required to cut the face
+into a weakly simple polygon. This is achieved by shooting a ray from the farthest (w.r.t. time) vertex
+for each boundary that does not contain the defining contour edge of its incident face.
+
+\cgalFigureAnchor{SLSArtificial}
+<center>
+<img src="artificial_bisectors.png" style="max-width:75%;"/>
+</center>
+\cgalFigureCaptionBegin{SLSArtificial}
+A polygon with four holes (black) and its straight skeleton (red).
+Three artifical bisectors (green) are added in a post-processing step to recover the simply-connected
+property for the straight skeleton face (gray) of the rightmost vertical contour edge.
+\cgalFigureCaptionEnd
+
+The main entry points for weighted straight skeletons are the following functions:
+
+<ul>
+  <li>CGAL::create_interior_weighted_straight_skeleton_2()</li>
+  <li>CGAL::create_exterior_weighted_straight_skeleton_2()</li>
+</ul>
+
+\subsection Straight_skeleton_2StraightSkeletonGeneral Straight Skeleton of a General Polygon
+
+A straight skeleton can also be defined for a general multiply-connected, planar, directed straight-line
+graph by considering all the edges as embedded in an unbounded region \cgalCite{aa-skfgpf-95}.
+The only difference is that in this case some faces will be only partially bounded.
+
+The current version of this \cgal package can only construct the straight skeleton in the interior
+of a simple polygon with holes, that is it does not handle general polygonal figures in the plane.
+
+\section Straight_skeleton_2Usages Uses of Straight Skeletons
+
+\subsection Straight_skeleton_2Offset Polygon Offsetting
 
 \anchor Offsets
 
-\subsection Straight_skeleton_2StraightSkeletonofa2D Straight Skeleton of a 2D Non-degenerate Strictly-Simple Polygon with Holes
+The straight skeleton is defined by the trace of the moving vertices, but one can also consider
+the state of the polygon at a fixed time `t` made up of the translated vertices.
+This is the <I>offset polygon</I>.
 
-The <I>2D straight skeleton</I> of a non-degenerate strictly-simple polygon with holes \cgalCite{aaag-ntsp-95} is a special partitioning of the polygon interior into <I>straight skeleton regions</I> corresponding to the monotone areas traced by a continuous <I>inward offsetting</I> of the contour edges. Each region corresponds to exactly 1 contour edge.
+An offset polygon can have fewer, equal, or more sides as its source polygon. It can even be composed
+of multiple polygons. If the source polygon has no holes, then no offset polygon has any holes.
+If the source polygon has holes, any of the offset polygons can have holes itself, but it might
+as well have no holes at all (if the distance is sufficiently large). Each offset polygon
+has the same orientation as the source polygon.
 
-These regions are bounded by angular bisectors of the supporting lines of the contour edges and each such region is itself a non-convex non-degenerate strictly-simple polygon.
+The main entry points for polygon offsetting are the following functions:
 
-\cgalFigureBegin{ComplexSLS,complex_skeleton.png}
-Straight skeleton of a complex shaggy contour
-\cgalFigureEnd
+<ul>
+  <li>CGAL::create_offset_polygons_2()</li>
+  <li>CGAL::create_interior_skeleton_and_offset_polygons_2()</li>
+  <li>CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()</li>
+  <li>CGAL::create_interior_weighted_skeleton_and_offset_polygons_2()</li>
+  <li>CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2()</li>
+</ul>
 
-\cgalFigureBegin{MoreSLS,simple_skeleton_0.png}
-Other examples: A vertex-event (left), the case of several collinear edges (middle), and the case of a validly simple polygon with tangent edges (right).
-\cgalFigureEnd
+\subsection Straight_skeleton_2ExteriorSkeletonsandExterior Exterior Straight Skeletons and Exterior Offset Contours
 
-\subsection Straight_skeleton_2AngularBisectingLines Angular Bisecting Lines and Offset Bisectors
+This \cgal package can only construct the straight skeleton and offset contours in the <I>interior</I>
+of a polygon with holes. However, constructing exterior skeletons and exterior offsets is possible.
 
-Given two points and a line passing through them, the perpendicular line passing through the midpoint is the bisecting line (or bisector) of those points.
+Say you have some polygon with one hole, and you wish to obtain some exterior offset contours.
+The interior region of a polygon with holes is connected while the exterior region is not: there is
+an unbounded region outside the outer contour, and one bounded region inside each hole. To construct
+an offset contour you need to construct a straight skeleton. Thus, to construct exterior offset contours
+for a polygon with holes, you need to construct, <I>separately</I>, the exterior skeleton
+of the outer contour and the interior skeleton of each hole.
 
-Two non-parallel lines, intersecting at a point, are bisected by two
-other lines passing through that intersection point.
+Constructing the interior skeleton of a hole is directly supported by this \cgal package;
+you simply need to input the hole's vertices in reversed order as if it were an outer contour
+as to treat them as simple polygons without holes. The offset contour(s) should also be reversed.
 
-Two parallel lines are bisected by another parallel line placed
-halfway in between.
+Constructing the exterior skeleton of the outer contour is achieved by means of the following trick:
+consider the outer contour as a hole of a larger rectangle (call it <I>frame</I>). If the frame
+is sufficiently separated from the contour, the resulting skeleton will be equivalent
+to a <I>real</I> exterior skeleton once the offset contour corresponding to the outer frame is removed,
+which is performed automatically by some of the functions of this package.
 
-Given just one line, any perpendicular line can be considered the
-bisecting line (any bisector of any two points along the single line).
+\cgalFigureAnchor{SLSExterior}
+<center>
+<img src="exterior_skeleton.png" style="max-width:50%;"/>
+</center>
+\cgalFigureCaptionBegin{SLSExterior}
+Exterior skeleton obtained using a frame (left) and 2 sample exterior offset contours (right)
+\cgalFigureCaptionEnd
 
-The bisecting lines of two edges are the lines bisecting the
-supporting lines of the edges (if the edges are parallel or collinear,
-there is just one bisecting line).
+\cgalAdvancedBegin
+It is necessary to place the frame sufficiently far away from the contour. If it is not, it could occur
+that the outward offset contour collides and merges with the inward offset frame, resulting in 1
+instead of 2 offset contours. However, the proper separation between the contour and the frame is
+not directly given by the offset distance at which you want the offset contour. That distance
+must be at least the desired offset plus the largest euclidean distance between an offset vertex
+and its original. This \cgal packages provides a helper function to compute the required separation:
+`compute_outer_frame_margin()`.
+\cgalAdvancedEnd
 
-The halfplane to the bounded side of the line supporting a contour edge is
-called the <I>offset zone</I> of the contour edge.
+For convenience, the following functions are provided:
 
-Given any number of contour edges (not necessarily consecutive), the
-intersection of their offset zones is called their <I>combined
-offset zone</I>.
+<ul>
+  <li>`CGAL::create_exterior_skeleton_and_offset_polygons_2()`, which adds the outer frame to the input polygon
+      (with or without holes) and provides output offset polygons (`CGAL::Polygon_2`), <b>including</b>
+      the offset of the outer frame.</li>
+  <li>`CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`, which adds the outer frame
+      to the input polygon (with or without holes) and provides as output offset polygons with holes
+      (`CGAL::Polygon_with_holes_2`), <b>excluding</b> the offset of the outer frame.</li>
+</ul>
 
-Any two contour edges define an <I>offset bisector</I>, as follows: If
-the edges are non-parallel, their bisecting lines can be decomposed as
-4 rays originating at the intersection of the supporting lines. Only
-one of these rays is contained in the combined offset zone of the
-edges (which one depends on the possible combinations of
-orientations). This ray is the offset bisector of the non-parallel
-contour edges.
+These also exists in weighted versions.
 
-If the edges are parallel (but not collinear) and have opposite
-orientation, the entire and unique bisecting line is their offset
-bisector. If the edges are parallel but have the same orientation,
-there is no offset bisector between them.
+\subsection Straight_skeleton_2Extrusion Straight Skeleton Extrusion
 
-If the edges are collinear and have the same orientation, their offset
-bisector is given by a perpendicular ray to the left of the edges
-which originates at the midpoint of the combined complement of
-the edges. (The <I>complement</I> of an edge/segment are the two
-rays along its supporting line which are not the segment and the
-<I>combined complement</I> of `N` collinear segments is the
-intersection of the complements of each segment). If the edges are
-collinear but have opposite orientation, there is no offset bisector
-between them.
+Perhaps the first (historically) use-case of straight skeletons: given a polygonal roof, the straight skeleton
+directly gives the layout of each tent. If each skeleton edge is lifted from the plane a height equal
+to its offset distance, the resulting roof is "correct" in that water will always fall down
+to the contour edges (the roof's border), regardless of where it falls on the roof.
+Laycock and Day \cgalCite{cgal:ld-agrm-03} give an algorithm for roof design based on the straight skeleton.
 
-\subsection Straight_skeleton_2FacesEdgesandVertices Faces, Edges and Vertices
+This \cgal package implements skeleton extrusion for polygons with holes, with support for positive
+multiplicative weights. The output is a closed, combinatorially 2-manifold surface triangle mesh.
 
-Each region of the partitioning defined by a straight skeleton is
-called a <I>face</I>. Each face is bounded by straight line segments,
-called <I>edges</I>. Exactly one edge per face is a <I>contour edge</I>
-(corresponds to a side of the polygon) and the rest of the edges,
-located in the interior of the polygon, are called <I>skeleton
-edges</I>, or <I>bisectors</I>.
+\cgalFigureAnchor{SLSExtrusion}
+<center>
+<img src="sls_extrusion.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{SLSExtrusion}
+Input polygon (left), weighted skeleton with colored faces (middle), and extruded skeleton (right).
+\cgalFigureCaptionEnd
 
-The bisectors of the straight skeleton are segments of the offset
-bisectors as defined previously. Since an offset bisector is a ray of
-a bisecting line of 2 contour edges, each skeleton edge (or bisector)
-is uniquely given by two contour edges. These edges are called the
-<I>defining contour edges</I> of the bisector.
+The main entry point for straight skeleton extrusion is the function `CGAL::extrude_skeleton()`, whose
+API also enables passing angles for each tent, which are then converted internally to edge weights.
 
-The intersection of the edges are called <I>vertices</I>. Although in a
-simple polygon, only 2 edges intersect at a vertex, in a straight
-skeleton, 3 or more edges intersect a any given vertex. That is, vertices in a
-straight skeleton have degree \f$ >=3\f$.
+The extrusion can be performed to a maximum height, as shown in the figure below.
 
-A <I>contour vertex</I> is a vertex for which 2 of its incident edges are contour edges.
+\cgalFigureAnchor{SLSCroppedExtrusion}
+<center>
+<img src="sls_cropped_extrusion.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{SLSCroppedExtrusion}
+Input polygon with three holes and its weighted straight skeleton (left), and two extrusions
+of the skeleton with different maximum heights (middle and right).
+\cgalFigureCaptionEnd
 
-A <I>skeleton vertex</I> is a vertex whose incident edges are all skeleton edges.
+\subsection Straight_skeleton_2OtherUsages Other Uses of Straight Skeletons
 
-A <I>contour bisector</I> is a bisector whose defining contour edges
-are consecutive. Such a bisector is incident upon 1 contour vertex and
-1 skeleton vertex and touches the input polygon at exactly 1 endpoint.
+Just like medial axes, straight skeletons can also be used for 2D shape description and matching.
+Essentially, all the applications of image-based skeletonization (for which there is a vast literature)
+are also direct applications of the straight skeleton, especially since skeleton edges are simply
+straight line segments.
 
-An <I>inner bisector</I> is a bisector whose defining contour edges are
-not consecutive. Such a bisector is incident upon 2 skeleton vertices
-and is strictly contained in the interior of the polygon.
+Consider the subgraph formed only by <I>inner bisectors</I> (that is, only the skeleton edges
+which are not incident upon a contour vertex). Call this subgraph a <I>skeleton axis</I>.
+Each node in the skeleton axis whose degree is \f$ >=3\f$ roots more than one skeleton tree.
+Each skeleton tree roughly corresponds to a region in the input topologically equivalent
+to a rectangle; that is, without branches. For example, a simple character "H" would contain 2 higher
+degree nodes separating the skeleton axis in 5 trees; while the character "@" would contain
+just 1 higher degree node separating the skeleton axis in 2 curly trees.
 
-\section Straight_skeleton_2Representation Representation
+Since a skeleton edge is a straight line, each branch in a skeleton tree is a polyline.
+Thus, the path-length of the tree can be directly computed. Furthermore, the polyline
+for a particular tree can be interpolated to obtain curve-related information.
 
-This \cgal package represents a straight skeleton as a specialized `Halfedge Data Structure` (HDS) whose vertices embed 2D Points (see the `StraightSkeleton_2` concept in the reference manual for details).
+Pruning each skeleton tree cutting off branches whose length is below some threshold; or smoothing
+a given branch, can be used to reconstruct the polygon without undesired details, or fit into
+a particular canonical shape.
 
-Its halfedges, by considering the source and target points, implicitly embed 2D oriented straight line segments (each halfedge per see does not embed a segment explicitly).
+Each skeleton edge in a skeleton branch is associated with 2 contour edges which are facing each other.
+If the polygon has a bottleneck (it almost touches itself), a search in the skeleton graph measuring
+the distance between each pair of contour edges will reveal the location of the bottleneck,
+allowing you to cut the shape in two. Likewise, if two shapes are too close to each other
+along some part of their boundaries (a near contact zone), a similar search in an exterior skeleton
+of the two shapes at once would reveal the parts of near contact, allowing you to stitch the shapes.
+These <I>cut and stitch</I> operations can be directly executed in the straight skeleton itself
+instead of the input polygon (because the straight skeleton contains a graph
+of the connected contour edges).
 
-A face of the straight skeleton is represented as a face in the
-HDS. Both contour and skeleton edges are represented by pairs of
-opposite HDS halfedges, and both contour and skeleton vertices are
-represented by HDS vertices.
+\section Straight_skeleton_2Implementation Implementation Details
 
-In a HDS, a border halfedge is a halfedge which is incident upon an
-unbounded face. In the case of the straight skeleton HDS, such border
-halfedges are oriented such that their left side faces outwards the
-polygon. Therefore, the opposite halfedge of any border halfedge is
-oriented such that its left side faces inward the polygon.
+The reference manual of this \cgal package contains many details about the straight skeleton
+construction algorithm that has been implemented. In particular, the classes and `CGAL::Straight_skeleton_2`
+and `CGAL::Straight_skeleton_builder_2` describe the algorithm in depth.
 
-This \cgal package requires the input polygon (with holes) to be non-degenerate,
-strictly-simple, and oriented counter-clockwise.
-
-The skeleton halfedges are oriented such that their <I>left</I> side faces
-inward the region they bound. That is, the vertices (both contour and
-skeleton) of a face are circulated in counter-clockwise order. There
-is one and only one contour halfedge incident upon any face.
-
-The contours of the input polygon are traced by the border halfedges
-of the HDS (those facing outward), but in the opposite direction. That
-is, the vertices of the contours can only by traced from the straight
-skeleton data structure by circulating the border halfedges,
-and the resulting vertex sequence will be reversed w.r.t
-the input vertex sequence.
-
-A skeleton edge, according to the definition given in the previous
-section, is defined by 2 contour edges. In the representation, each
-one of the opposite halfedges that represent a skeleton edge is
-associated with one of the opposite halfedges that correspond to one
-of its defining contour edges. Thus, the 2 opposite halfedges of a
-skeleton edge link the edge to its 2 defining contour edges.
-
-Starting from any border contour halfedge, circulating the structure
-walks through border counter halfedges and traces the vertices of the
-polygon's contours (in opposite order).
-
-Starting from any non-border but contour halfedge, circulating the
-structure walks counter-clockwise around the face corresponding
-to that contour halfedge. The vertices around a face always describe
-a non-convex non-degenerate strictly-simple polygon.
-
-A vertex is the intersection of contour and/or skeleton edges. Since a
-skeleton edge is defined by 2 contour edges, any vertex is itself
-defined by a unique set of contour edges. These are called the
-<I>defining contour edges</I> of the vertex.
-
-A vertex is identified by its set of defining contour edges. Two
-vertices are distinct if they have differing sets of defining contour
-edges. Note that vertices can be distinct even if they are geometrically
-embedded at the same point.
-
-The <I>degree</I> of a vertex is the number of halfedges around the vertex
-incident upon (pointing to) the vertex. As with any halfedge data structure,
-there is one outgoing halfedge for each incoming (incident) halfedge around
-a vertex. The degree of the vertex counts only incoming (incident) halfedges.
-
-In a straight skeleton, the degree of a vertex is not only the number of
-incident halfedges around the vertex but also the number of defining contour
-halfedges. The vertex itself is the point where all the defining
-contour edges simultaneously collide.
-
-Contour vertices have exactly two defining contour halfedges, which are
-the contour edges incident upon the vertex; and 3 incident halfedges.
-One and only one of the incident halfedges is a skeleton halfedge.
-The degree of a contour vertex is exactly 3.
-
-Skeleton vertices have at least 3 defining contour halfedges and 3 incident skeleton halfedges.
-If more than 3 edges collide simultaneously at the same point and time (like in any regular polygon
-with more than 3 sides), the corresponding skeleton vertex will have more than 3 defining contour
-halfedges and incident skeleton halfedges. That is, the degree of a skeleton vertex is \f$ >=3\f$
-(the algorithm initially produces nodes of degree 3 but in the end all coincident nodes are merged to form higher degree nodes). All halfedges incident upon a skeleton vertex are skeleton halfedges.
-
-The defining contour halfedges and incident halfedges around a vertex can be traced using the circulators provided by the vertex class. The degree of a vertex is not cached and cannot be directly obtained from the vertex, but you can calculate this number by manually counting the number of incident halfedges around the vertex.
-
-Each vertex stores a 2D point and a `time`, which is the euclidean distance from the vertex's point to the <I>lines</I> supporting each of the defining contour edges of the vertex (the distance is the same to each line). Unless the polygon is convex, this distance is not equidistant to the edges, as in the case of a Medial Axis, therefore, the time of a skeleton vertex does not correspond to the distance from the polygon to the vertex (so it cannot be used to obtain the deep of a region in a shape, for instance).
-
-If the polygon <I>is</I> convex, the straight skeleton is exactly equivalent to the polygon's Voronoi diagram and each vertex time is the equidistance to the defining edges.
-
-Contour vertices have time zero.
-
-
-\cgalFigureBegin{Simplepolyoffsets,fig6.png}
-Straight Skeleton Data Structure
-\cgalFigureEnd
-
-\section Straight_skeleton_2API API
+\section Straight_skeleton_2Examples Examples
 
 \subsection Straight_skeleton_2CreateaStraightSkeleton Create a Straight Skeleton
 
-The straight skeleton data structure is defined by the `StraightSkeleton_2` concept and modeled in the `Straight_skeleton_2<Traits,Items,Alloc>` class.
+The straight skeleton data structure is implemented in the class `CGAL::Straight_skeleton_2`.
 
-The simplest way to construct a straight skeleton is via the free functions `create_interior_straight_skeleton_2()` and `create_exterior_straight_skeleton_2()`, as shown in the following example:
+The simplest way to construct a straight skeleton is via the free functions
+`CGAL::create_interior_straight_skeleton_2()` and `CGAL::create_exterior_straight_skeleton_2()`,
+as shown in the following example:
 
 \cgalExample{Straight_skeleton_2/Create_straight_skeleton_2.cpp}
 
-The input to these functions is the polygon, which can be given as an iterator pair or directly as a `Polygon_2` object. In the case of the exterior skeleton, a maximum offset must be specified as well (see the ref manual for details on this max offset parameter).
+The input to these functions is the polygon, which can be given as an iterator pair or directly
+as a `CGAL::Polygon_2` object. In the case of the exterior skeleton, a maximum offset must be specified
+as well (see Section \link Straight_skeleton_2ExteriorSkeletonsandExterior \endlink for details
+on this max offset parameter).
 
 \subsection Straight_skeleton_2CreateaStraightSkeleton_1 Create a Straight Skeleton from a Polygon With Holes
 
-If `Polygon_with_holes_2` is used, you can pass an instance of it directly to the function creating the interior skeleton, as shown below. Notice that a different header must be included in this case.
+If `CGAL::Polygon_with_holes_2` is used, you can pass an instance of it directly to the function creating
+the interior skeleton, as shown below. Notice that a different header must be included in this case.
 
 \cgalExample{Straight_skeleton_2/Create_straight_skeleton_from_polygon_with_holes_2.cpp}
 
 \subsection Straight_skeleton_2CreateOffsetPolygonsfrom Create Offset Polygons from a Straight Skeleton
 
-If you already have a straight skeleton instance, the simpler way to generate offset polygons is to call `create_offset_polygons_2()` as shown in the next example, passing the desired offset and the straight skeleton. You can reuse the same skeleton to generate offsets at a different distance, which is recommended because producing the straight skeleton is much slower than generating offset polygons.
+If you already have a straight skeleton object, the simpler way to generate offset polygons is
+to call `CGAL::create_offset_polygons_2()` as shown in the next example, passing the desired offset and
+the straight skeleton. You can reuse the same skeleton to generate offsets at a different distance,
+which is recommended because producing the straight skeleton is much slower than generating offset polygons.
 
 \cgalExample{Straight_skeleton_2/Create_offset_polygons_2.cpp}
 
 \subsection Straight_skeleton_2CreateOffsetPolygonsfrom_1 Create Offset Polygons from a Polygon (With or Without Holes)
 
-If you need offset polygons at just one single distance, you can hide away the construction of the straight skeleton by calling directly the functions `create_interior_skeleton_and_offset_polygons_2()` and `create_exterior_skeleton_and_offset_polygons_2()` as shown in the following examples:
+If you need offset polygons at a single distance, you can hide away the construction
+of the straight skeleton by calling directly the functions `CGAL::create_interior_skeleton_and_offset_polygons_2()`
+and `CGAL::create_exterior_skeleton_and_offset_polygons_2()` as shown in the following examples:
 
 \cgalExample{Straight_skeleton_2/Create_skeleton_and_offset_polygons_2.cpp}
 
@@ -280,204 +391,122 @@ If you need offset polygons at just one single distance, you can hide away the c
 
 \cgalExample{Straight_skeleton_2/Create_saop_from_polygon_with_holes_2.cpp}
 
-If the input polygon has holes, there can be holes in the offset polygons.
-However, the polygons generated by all the offsetting functions shown before
-do not have any parent-hole relationship computed; that is, they just instances
-of `Polygon_2` instead of `Polygon_with_holes_2`.
-If `Polygon_with_holes_2` are available and you need the offsetting to produce them, you can call the function `arrange_offset_polygons_2()` passing the result of any of the offsetting functions described so far. That function arranges the offset polygons detecting and distributing holes within parents.
-As a shortcut, you can use the function `create_interior_skeleton_and_offset_polygons_with_holes_2()` as shown below:
+If the input polygon has holes, there can be holes in the offset polygons. However, the polygons
+generated by all the offsetting functions shown before do not have any parent-hole relationship
+computed; that is, they just instances of `Polygon_2` instead of `Polygon_with_holes_2`.
+If `Polygon_with_holes_2` are available and you need the offsetting to produce them, you can call
+the function `CGAL::arrange_offset_polygons_2()` passing the result of any of the offsetting functions
+described so far. That function arranges the offset polygons detecting and distributing holes within parents.
+As a shortcut, you can use the function `CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()`
+as shown below:
 
 \cgalExample{Straight_skeleton_2/Create_skeleton_and_offset_polygons_with_holes_2.cpp}
 
 \cgalAdvancedBegin
-Consider an input polygon with parallel edges separated a
-distance \f$ 2*t\f$. If you produce an offset polygon at distance \f$
-t\f$, these parallel edges will just collapse each other and vanish
-from the result, keeping the output as a <I>simple polygon</I>, just
-like the input. However, if you request an offset polygon at a
-distance \f$ t-epsilon\f$, the result will still be a simple polygon
-but with edges that are so close to each other that will almost
-intersect.  If a kernel with exact constructions is used, the
-offsetting algorithm can guarantee that the output contains only
-simple polygons. However, if inexact constructions are used the
-roundoff in the coordinates of the output points will cause parallel
-edges that <I>almost</I> collapse-but not so-to become really
-collinear or even cross each other.
+Consider an input polygon with parallel edges separated a distance \f$ 2*t\f$. If you produce
+an offset polygon at distance \f$ t\f$, these parallel edges will just collapse each other and vanish
+from the result, keeping the output as a <I>simple polygon</I>, just like the input. However, if you
+request an offset polygon at a distance \f$ t-epsilon\f$, the result will still be a simple polygon
+but with edges that are so close to each other that will almost intersect.  If a kernel with exact
+constructions is used, the offsetting algorithm can guarantee that the output contains only simple
+polygons. However, if inexact constructions are used the roundoff in the coordinates of the output
+points will cause parallel edges that <I>almost</I> collapse-but not so-to become really collinear
+or even cross each other.
 
-Thus, it is necessary to use a kernel with exact constructions if
-offset polygons must be simple, yet computing a straight skeleton
-using that kernel is very slow, much more than computing the offset
-polygons. To help with this, it is possible to construct the straight
-skeleton using the recommended kernel
-`Exact_predicates_inexact_constructions_kernel`, then convert the
-skeleton to a different kernel via the function
-`convert_straight_skeleton_2()` and input the converted skeleton to the
-offsetting functions.
+Thus, it is necessary to use a kernel with exact constructions if offset polygons must be simple,
+yet computing a straight skeleton using that kernel is very slow, much more than computing the offset
+polygons. To help with this, it is possible to construct the straight skeleton using the recommended
+kernel `Exact_predicates_inexact_constructions_kernel`, then convert the skeleton to a different kernel
+via the function `CGAL::convert_straight_skeleton_2()` and input the converted skeleton to the offsetting functions.
 
-All the offsetting functions that take polygons as input (and create
-the straight skeleton under the hood) apply that optimization
-automatically: that is, the output polygons are defined over the same
-kernel of the input polygons, whatever that is, yet the straight
-skeleton is constructed with the faster recommended kernel and
-converted if necessary.
+All the offsetting functions that take polygons as input (and create the straight skeleton
+under the hood) apply that optimization automatically: that is, the output polygons are defined
+over the same kernel of the input polygons, whatever that is, yet the straight skeleton is constructed
+with the faster recommended kernel and converted if necessary.
 
-Notice how some of the examples above use
-`Exact_predicates_exact_constructions_kernel`. In all cases, the
-straight skeleton is constructed using
-`Exact_predicates_inexact_constructions_kernel`.
+Notice how some of the examples above use `Exact_predicates_exact_constructions_kernel`. In all cases,
+the straight skeleton is constructed using `Exact_predicates_inexact_constructions_kernel`.
 \cgalAdvancedEnd
 
-\subsection Straight_skeleton_2LowlevelAPI Low level API
+\subsection Straight_skeleton_2ExtrusionExample Extrude the Skeleton of a Polygon with Holes
 
-All the high level functions described above are just wrappers around the low level
-API described here. This low level API is richer and provides options and configurations
-not covered by any of those functions.
+The following example shows how to extrude the weighted skeleton of a polygon with holes:
 
-The straight skeleton construction algorithm is encapsulated in the
-class `Straight_skeleton_builder_2<Gt,Ss,Visitor>` which is
-parameterized on a geometric traits (class
-`Straight_skeleton_builder_traits_2<Kernel>`) and the Straight
-Skeleton class (Ss).
+\cgalExample{Straight_skeleton_2/extrude_skeleton.cpp}
 
-The offset contours construction algorithm is encapsulated in the class
-`Polygon_offset_builder_2<Ss,Gt,Container>` which is
-parameterized on the Straight Skeleton class (Ss), a
-geometric traits (class `Polygon_offset_builder_traits_2<Kernel>`)
-and a container type where the resulting offset polygons are
-generated.
+\subsection Straight_skeleton_2LowlevelAPI Low Level API
 
-To construct the straight skeleton of a polygon with holes the user must:
+All the high level functions described above are just wrappers around the low-level API described here.
+This low level API is richer and provides options and configurations not covered by any of those functions.
 
-(1) Instantiate the straight skeleton builder.
+The straight skeleton construction algorithm is encapsulated in the class `CGAL::Straight_skeleton_builder_2`,
+which is parameterized by a geometric traits (`CGAL::Straight_skeleton_builder_traits_2`)
+and the Straight Skeleton class.
 
-(2) Enter one contour at a time, starting from the outer contour, via
-the method `Straight_skeleton_builder_2::enter_contour()`. The input polygon with holes must be
-non-degenerate, strictly-simple and counter-clockwise oriented
-(see the definitions at the beginning of this chapter).
-Collinear edges are allowed. The insertion order of each hole
-is unimportant but the outer contour must be entered first.
+The offset contours construction algorithm is encapsulated in the class `CGAL::Polygon_offset_builder_2`,
+which is parameterized by the Straight Skeleton class, a geometric traits
+(`Polygon_offset_builder_traits_2<Kernel>`) and a container type where the resulting offset polygons
+are generated.
 
-(3) Call `Straight_skeleton_builder_2::construct_skeleton()` once <I>all</I> the contours have been entered. You
-cannot enter another contour once the skeleton has been constructed.
+To construct the straight skeleton of a polygon the user must:
+
+<ol>
+  <li>Instantiate the straight skeleton builder.</li>
+  <li> Enter one contour at a time, starting from the outer contour, via the method
+       `Straight_skeleton_builder_2::enter_contour()`. The input polygon must be
+       weakly simple and counter-clockwise oriented (see the definitions at the beginning
+       of this chapter). Collinear edges are allowed. The insertion order of each hole is
+       unimportant but the outer contour must be entered first.</li>
+  <li>Call `Straight_skeleton_builder_2::construct_skeleton()` once <I>all</I> the contours
+       have been entered. You cannot enter another contour once the skeleton has been constructed.</li>
+</ol>
 
 To construct a set of inward offset contours the user must:
 
-(1) Construct the straight skeleton of the source polygon with holes.
+<ol>
+  <li>Construct the straight skeleton of the source polygon.</li>
+  <li>Instantiate the polygon offset builder passing in the straight skeleton as a parameter.</li>
+  <li>Call `Polygon_offset_builder_2::construct_offset_contours()` passing the desired offset
+      distance and an output iterator that can store a `std::shared_ptr` of `Container` instances
+      into a resulting sequence (typically, a back insertion iterator)</li>
+</ol>
 
-(2) Instantiate the polygon offset builder passing in the straight skeleton as a parameter.
+Each element in the resulting sequence is an <I>offset contour</I>, given by a `std::shared_ptr`
+holding a dynamically allocated instance of the Container type. Such a container can be any model
+of the `SequenceContainer` concept, for example, a `CGAL::Polygon_2`, or just a `std::vector` of 2D points.
 
-(3) Call `Polygon_offset_builder_2::construct_offset_contours()` passing the desired offset
-distance and an output iterator that can store a
-`boost::shared_ptr` of `Container` instances
-into a resulting sequence (typically, a back insertion iterator)
-
-Each element in the resulting sequence is an <I>offset contour</I>, given by
-a `boost::shared_ptr` holding a dynamically allocated instance
-of the Container type. Such a container can be any model of the
-`SequenceContainer` concept, for example, a `CGAL::Polygon_2`,
-or just a `std::vector` of 2D points.
-
-The resulting sequence of offset contours can contain both outer and inner contours.
-Each offset hole (inner offset contour) would logically belong in the interior of some
-of the outer offset contours.
+The resulting sequence of offset contours can contain both outer and inner contours. Each offset hole
+(inner offset contour) would logically belong in the interior of some of the outer offset contours.
 However, this algorithm returns a sequence of contours in arbitrary order and there is no
 indication whatsoever of the parental relationship between inner and outer contours.
 
 On the other hand, each outer contour is counter-clockwise oriented while each hole is clockwise-oriented.
-And since offset contours do form simple polygons with holes, it is guaranteed that no hole will be inside another hole, no outer contour will be inside any other contour, and each hole will be inside exactly 1 outer contour.
+And since offset contours do form simple polygons, it is guaranteed that no hole will be
+inside another hole, no outer contour will be inside any other contour, and each hole will be inside
+exactly 1 outer contour.
 
-Parental relationships are <I>not</I> automatically reconstructed by this algorithm because this relation is not directly given by the input polygon with holes and must be done as a post processing step. The function `arrange_offset_polygons_2()` can be used to do that efficiently.
+Parental relationships are <I>not</I> automatically reconstructed by this algorithm because
+this relation is not directly given by the input polygon and must be done as a post-processing
+step. The function `CGAL::arrange_offset_polygons_2()` can be used to do that efficiently.
 
-A user can reconstruct the parental relationships as a post processing operation
-by testing each inner contour (which is identified by being clockwise) against each outer contour (identified as being counter-clockwise) for insideness.
+A user can reconstruct the parental relationships as a post processing operation by testing
+each inner contour (which is identified by being clockwise) against each outer contour (identified
+as being counter-clockwise) for insideness.
 
-This algorithm requires exact predicates but not exact constructions
+This algorithm requires exact predicates but not exact constructions.
 Therefore, the `Exact_predicates_inexact_constructions_kernel` should be used.
 
 \cgalExample{Straight_skeleton_2/Low_level_API.cpp}
 
-\subsection Straight_skeleton_2ExteriorSkeletonsandExterior Exterior Skeletons and Exterior Offset Contours
+\section Straight_skeleton_2History Implementation History
 
-This \cgal package can only construct the straight skeleton and offset contours in the <I>interior</I> of a polygon with holes. However, constructing exterior skeletons and exterior offsets is possible:
+Fernando Cacciola created the first version of this package, providing unweighted straight skeletons
+and polygon offsetting.
 
-Say you have some polygon made of 1 outer contour C0 and 1 hole C1, and you need to obtain some exterior offset contours.
-
-The interior region of a polygon with holes is connected while the exterior region is not: there is an unbounded region outside the outer contour, and one bounded region inside each hole.
-To construct an offset contour you need to construct a straight skeleton. Thus, to construct exterior offset contours for a polygon with holes, you need to construct, <I>separately</I>, the exterior skeleton of the outer contour and the interior skeleton of each hole.
-
-Constructing the interior skeleton of a hole is directly supported by this \cgal package; you just need to input the hole's vertices in reversed order as if it were an outer contour.
-
-Constructing the exterior skeleton of the outer contour is possible by means of the following trick: place the contour as a hole of a big rectangle (call it <I>frame</I>). If the frame is sufficiently separated from the contour, the resulting skeleton will be practically equivalent to a <I>real</I> exterior skeleton.
-
-To construct exterior offset contours in the inside of each hole you just use the skeleton constructed in the interior, and, if required, revert the orientation of each resulting offset contour.
-
-Constructing exterior offset contours in the outside of the outer contour is just a little bit more involved: Since the contour is placed as a hole of a frame, you will always obtain 2 offset contours for any given distance; one is the offsetted frame and the other is the offsetted contour. Thus, from the resulting offset contour sequence, you always need to discard the offsetted frame, easily identified as the offset contour with the largest area.
-
-It is necessary to place the frame sufficiently away from the contour. If it is not, it could occur that the outward offset contour collides and merges with the inward offset frame, resulting in 1 instead of 2 offset contours.
-
-However, the proper separation between the contour and the frame is not directly given by the offset distance at which you want the offset contour. That distance must be at least the desired offset plus the largest euclidean distance between an offset vertex and its original.
-
-This \cgal packages provides a helper function to compute the required separation:
-`compute_outer_frame_margin()`
-
-If you use this function to place the outer frame you are guaranteed to obtain an offset contour corresponding exclusively to the frame, which you can always identify as the one with the largest area and which you can simple remove from the result (to keep just the relevant outer contours).
-
-\cgalFigureBegin{Exterior,exterior_skeleton.png,exterior_offset.png}
-Exterior skeleton obtained using a frame (left) and 2 sample exterior offset contours (right)
-\cgalFigureEnd
-
-For convenience, the following functions are provided:
-
-- `CGAL::create_exterior_skeleton_and_offset_polygons_2()` adds the outer frame to the input polygon (with or without holes) and provides output offset polygons (`CGAL::Polygon_2<K>`), including the offset of the outer frame.
-- `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()` adds the outer frame to the input polygon (with or without holes) and provides as output offset polygons with holes (`CGAL::Polygon_with_holes_2`), exclusing the offset of the outer frame.
-
-\section Straight_skeleton_2Straight Straight Skeletons, Medial Axis and Voronoi Diagrams
-
-The straight skeleton of a polygon is similar to the medial
-axis and the Voronoi diagram of a polygon in the way it partitions
-it; however, unlike the medial axis and Voronoi diagram, the
-bisectors are not equidistant to its defining edges but to the
-supporting lines of such edges. As a result, Straight Skeleton
-bisectors might not be located in the center of the polygon and so
-cannot be regarded as a proper Medial Axis in its geometrical meaning.
-
-On the other hand, only reflex vertices (whose internal angle \f$ > \pi\f$)
-are the source of deviations of the bisectors from its center
-location. Therefore, for convex polygons, the straight skeleton, the
-medial axis and the Voronoi diagram are exactly equivalent,
-and, if a non-convex polygon contains only vertices of low
-reflexivity, the straight skeleton bisectors will be placed nearly
-equidistant to their defining edges, producing a straight skeleton
-pretty much alike a proper medial axis.
-
-\section Straight_skeleton_2Usages Usages of the Straight Skeletons
-
-The most natural usage of straight skeletons is offsetting: growing and shrinking polygons (provided by this \cgal package).
-
-Another usage, perhaps its very first, is roof design: The straight skeleton of a polygonal roof directly gives the layout of each tent. If each skeleton edge is lifted from the plane a height equal to its offset distance, the resulting roof is "correct" in that water will always fall down to the contour edges (roof border) regardless of were in the roof it falls. \cgalCite{cgal:ld-agrm-03} gives an algorithm for roof design based on the straight skeleton.
-
-Just like medial axes, 2D straight skeletons can also be used for 2D shape description and matching. Essentially, all the applications of image-based skeletonization (for which there is a vast literature) are also direct applications of the straight skeleton, specially since skeleton edges are simply straight line segments.
-
-Consider the subgraph formed only by <I>inner bisectors</I> (that is, only the skeleton halfedges which are not incident upon a contour vertex). Call this subgraph a <I>skeleton axis</I>.
-Each node in the skeleton axis whose degree is \f$ >=3\f$ roots more than one skeleton tree. Each skeleton tree roughly corresponds to a region in the input topologically equivalent to a rectangle; that is, without branches. For example, a simple letter "H" would contain 2 higher degree nodes separating the skeleton axis in 5 trees; while the letter "@" would contain just 1 higher degree node separating the skeleton axis in 2 curly trees.
-
-Since a skeleton edge is a 2D straight line, each branch in a skeleton tree is a polyline. Thus, the path-length of the tree can be directly computed. Furthermore, the polyline for a particular tree can be interpolated to obtain curve-related information.
-
-Pruning each skeleton tree cutting off branches whose length is below some threshold; or smoothing a given branch, can be used to reconstruct the polygon without undesired details, or fit into a particular canonical shape.
-
-Each skeleton edge in a skeleton branch is associated with 2 contour edges which are facing each other. If the polygon has a bottleneck (it almost touches itself), a search in the skeleton graph measuring the distance between each pair of contour edges will reveal the location of the bottleneck, allowing you to cut the shape in two. Likewise, if two shapes are too close to each other along some part of their boundaries (a near contact zone), a similar search in an exterior skeleton of the two shapes at once would reveal the parts of near contact, allowing you to stitch the shapes. These <I>cut and stitch</I> operations can be directly executed in the straight skeleton itself instead of the input polygon (because the straight skeleton contains a graph of the connected contour edges).
-
-\section Straight_skeleton_2Straight_1 Straight Skeleton of a General Figure in the Plane
-
-A straight skeleton can also be defined for a general
-multiply-connected planar directed straight-line graph \cgalCite{aa-skfgpf-95} by considering
-all the edges as embedded in an unbounded region. The only difference
-is that in this case some faces will be only partially bounded.
-
-The current version of this \cgal package can only construct the
-straight skeleton in the interior of a simple polygon with holes, that is it
-doesn't handle general polygonal figures in the plane.
+Sébastien Loriot and Mael Rouxel-Labbé implemented further robustification techniques,
+as well as weighted straight skeletons, and skeleton extrusion.
 
 */
+
 } /* namespace CGAL */
 

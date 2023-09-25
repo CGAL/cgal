@@ -358,12 +358,11 @@ namespace internal {
     */
     template<typename PrimitiveAndRegionOutputIterator = Emptyset_iterator>
     PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator region_out = PrimitiveAndRegionOutputIterator()) {
-//      clear(); TODO: this is not valid to comment this clear()
+      //      clear(); TODO: this is not valid to comment this clear()
       m_visited_map.clear(); // tmp replacement for the line above
 
       Region region;
       m_nb_regions = 0;
-
 
       // Grow regions.
       for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
@@ -376,9 +375,11 @@ namespace internal {
           // Check global conditions.
           if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
-          } else {
-            *(region_out++) = std::pair<typename RegionType::Primitive, Region>(m_region_type.primitive(), region);
+          }
+          else {
             fill_region_map(m_nb_regions++, region);
+            if (!std::is_same<PrimitiveAndRegionOutputIterator, Emptyset_iterator>::value)
+              *region_out++ = std::make_pair(m_region_type.primitive(), std::move(region));
           }
         }
       }
@@ -391,8 +392,7 @@ namespace internal {
 
       \return Property map that maps each iterator of the input range to a region index.
     */
-
-    const Region_map &region_map() {
+    const Region_map& region_map() {
       return m_region_map;
     }
 
@@ -408,7 +408,7 @@ namespace internal {
       a model of `OutputIterator` whose value type is `Item`
 
       \tparam InputRange
-        a model of `ConstRange
+        a model of `ConstRange`
 
       \tparam ItemMap
         a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
@@ -451,9 +451,10 @@ namespace internal {
       Item_map item_map_ = Item_helper::get(item_map);
 
       m_nb_regions = 0;
+      typename boost::property_traits<Region_map>::value_type init_value(-1);
       for (auto it = input_range.begin(); it != input_range.end(); it++) {
         Item item = get(item_map_, it);
-        put(m_region_map, item, std::size_t(-1));
+        put(m_region_map, item, init_value);
       }
       // TODO if we want to allow subranges while NeighborQuery operates on the full range
       // (like for faces in a PolygonMesh) we should fill a non-visited map rather than a visited map
@@ -470,6 +471,7 @@ namespace internal {
     Neighbor_query& m_neighbor_query;
     Region_type& m_region_type;
     Region_map m_region_map;
+
     std::vector<Item> m_seed_range;
     std::size_t m_nb_regions = 0;
 
@@ -478,8 +480,9 @@ namespace internal {
     Boolean_property_map<VisitedMap> m_visited;
 
     void fill_region_map(std::size_t idx, const Region& region) {
+      typedef typename boost::property_traits<Region_map>::value_type Id;
       for (auto item : region) {
-        put(m_region_map, item, idx);
+        put(m_region_map, item, static_cast<Id>(idx));
       }
     }
 
@@ -525,7 +528,7 @@ namespace internal {
             for (Item neighbor : neighbors) {
 
               if (!get(m_visited, neighbor)) {
-                if (m_region_type.is_part_of_region(item, neighbor, region)) {
+                if (m_region_type.is_part_of_region(neighbor, region)) {
 
                   // Add this neighbor to the other queue so that we can visit it later.
                   put(m_visited, neighbor, true);
@@ -552,13 +555,11 @@ namespace internal {
 
           // Verify that associated elements are still within the tolerance.
           bool fits = true;
-          Item former = region.front();
           for (Item item : region) {
-            if (!m_region_type.is_part_of_region(former, item, region)) {
+            if (!m_region_type.is_part_of_region(item, region)) {
               fits = false;
               break;
             }
-            former = item;
           }
 
           // The refitted primitive does not fit all elements of the region, so the growing stops here.
@@ -571,7 +572,7 @@ namespace internal {
 
           // Try to continue growing the region by considering formerly rejected elements.
           for (const std::pair<const Item, const Item>& p : rejected) {
-            if (m_region_type.is_part_of_region(p.first, p.second, region)) {
+            if (m_region_type.is_part_of_region(p.second, region)) {
 
               // Add this neighbor to the other queue so that we can visit it later.
               put(m_visited, p.second, true);

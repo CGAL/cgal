@@ -7,9 +7,11 @@ Required member functions for the `Sqrt3Mask_3` concept. This
 policy concept of geometric computations is used in
 `CGAL::Subdivision_method_3::Sqrt3<PolygonMesh, Mask, NamedParameters>`.
 
-\cgalRefines `SubdivisionMask_3`
+\cgalRefines{SubdivisionMask_3}
 
-\cgalHasModel `CGAL::Sqrt3_mask_3<PolygonMesh, VertexPointMap>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Sqrt3_mask_3<PolygonMesh, VertexPointMap>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Subdivision_method_3`
 

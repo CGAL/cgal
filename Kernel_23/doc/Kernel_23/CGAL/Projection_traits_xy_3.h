@@ -21,18 +21,19 @@ constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
 `CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
 provides exact predicates.
 
-\cgalModels The class is a model of several 2D triangulation traits class concepts,
-  except that it does not provide the type and constructors
-  required to build the dual Voronoi diagram.
-\cgalModels `PolygonTraits_2`
-\cgalModels `ConvexHullTraits_2`
-\cgalModels `TriangulationTraits_2`
-\cgalModels `DelaunayTriangulationTraits_2`
-\cgalModels `ConstrainedTriangulationTraits_2`
-\cgalModels `ConvexHullTraits_2`
-\cgalModels `DelaunayMeshTraits_2`
-\cgalModels `AnalyticWeightTraits_2`
-\cgalModels `Barycentric_coordinates::BarycentricTraits_2`
+\cgalModelsBareBegin
+\cgalModelsBare{The class is a model of several 2D triangulation traits class concepts,
+  except that it does not provide the type and constructors required to build the dual Voronoi diagram.}
+\cgalModelsBare{`PolygonTraits_2`}
+\cgalModelsBare{`ConvexHullTraits_2`}
+\cgalModelsBare{`TriangulationTraits_2`}
+\cgalModelsBare{`DelaunayTriangulationTraits_2`}
+\cgalModelsBare{`ConstrainedTriangulationTraits_2`}
+\cgalModelsBare{`ConvexHullTraits_2`}
+\cgalModelsBare{`DelaunayMeshTraits_2`}
+\cgalModelsBare{`AnalyticWeightTraits_2`}
+\cgalModelsBare{`Barycentric_coordinates::BarycentricTraits_2`}
+\cgalModelsBareEnd
 
 \sa `CGAL::Projection_traits_3`
 */
@@ -81,7 +82,7 @@ typedef Line_3<K> Line_2;
 A construction object.
 Provides the operator :
 
-`boost::optional< boost::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
+`std::optional< std::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
 which returns a 3D object whose projection on the xy-plane
 is the intersection of the projections of `s1` and `s2`.
 If non empty, the returned object is either a segment or a point.

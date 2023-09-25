@@ -5,10 +5,10 @@ namespace ArrTraits {
  *
  * represents a general planar curve.
  *
- * \cgalRefines DefaultConstructible
- * \cgalRefines CopyConstructible
- * \cgalRefines Assignable
- * \cgalHasModel ArrangementTraits_2::Curve_2
+ * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementTraits_2::Curve_2}
+ * \cgalHasModelsEnd
  */
 class Curve_2 {
 public:

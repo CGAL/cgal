@@ -23,18 +23,32 @@ int main(int argc, char* argv[])
   Surface_mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
-    std::cerr << "Invalid input." << std::endl;
-    return 1;
+    std::cerr << "Error: Invalid input." << std::endl;
+    return EXIT_FAILURE;
   }
+
+  if(is_empty(mesh))
+  {
+    std::cerr << "Warning: empty file?" << std::endl;
+    return EXIT_SUCCESS;
+  }
+
+  if(!CGAL::is_triangle_mesh(mesh))
+    std::cout << "Input mesh is not triangulated." << std::endl;
+  else
+    std::cout << "Input mesh is triangulated." << std::endl;
 
   PMP::triangulate_faces(mesh);
 
   // Confirm that all faces are triangles.
   for(boost::graph_traits<Surface_mesh>::face_descriptor f : faces(mesh))
+  {
     if(!CGAL::is_triangle(halfedge(f, mesh), mesh))
       std::cerr << "Error: non-triangular face left in mesh." << std::endl;
+  }
+
 
   CGAL::IO::write_polygon_mesh(outfilename, mesh, CGAL::parameters::stream_precision(17));
 
-  return 0;
+  return EXIT_SUCCESS;
 }

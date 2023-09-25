@@ -643,7 +643,7 @@ public:
                            Tag_false) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
       std::list<Intersection_result> intersections;
       m_self->intersect_2_object()(xcv1, xcv2, back_inserter(intersections));
@@ -3370,7 +3370,7 @@ public:
    */
   class Compare_xy_2 {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
   public:
@@ -3387,7 +3387,7 @@ public:
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      Base base(m_self);
+      const Base& base = m_self;
       return base.compare_xy_2_object()(p1, p2);
     }
 
@@ -3580,7 +3580,7 @@ public:
       // Verify the first intersection is an overlap, remove it, and
       // recursively call.
       const X_monotone_curve_2* xcv =
-        boost::get<X_monotone_curve_2>(&(intersections.front()));
+        std::get_if<X_monotone_curve_2>(&(intersections.front()));
       if (! xcv) {
         CGAL_error_msg("The first intersection is not an overlap!");
         return SMALLER;

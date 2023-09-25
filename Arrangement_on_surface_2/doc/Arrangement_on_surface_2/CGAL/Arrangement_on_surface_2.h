@@ -52,6 +52,10 @@ namespace CGAL {
 
  * \sa `PkgArrangementOnSurface2Read`
  * \sa `PkgArrangementOnSurface2Write`
+ *
+ * Drawing function
+ *
+ * \sa `PkgArrangementOnSurface2Draw`
  */
 template <typename GeometryTraits, typename TopologyTraits>
 class Arrangement_on_surface_2 {

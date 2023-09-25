@@ -57,7 +57,7 @@ bool read_XYZ(std::istream& is,
   bool has_normals = false;
   for(typename CGAL::Point_set_3<Point, Vector>::const_iterator it=point_set.begin(); it!=point_set.end(); ++it)
   {
-    if(point_set.normal(*it) != CGAL::NULL_VECTOR)
+    if(std::size_t(*it) < point_set.size() && point_set.normal(*it) != CGAL::NULL_VECTOR)
     {
       has_normals = true;
       break;

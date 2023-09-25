@@ -143,7 +143,7 @@ public:
 #endif
 
     PPM pm = choose_parameter<PPM>(get_parameter(np, internal_np::point_map));
-    CGAL_static_assertion((std::is_same<typename boost::property_traits<PPM>::value_type, Point_3>::value));
+    static_assert(std::is_same<typename boost::property_traits<PPM>::value_type, Point_3>::value);
 
     Splitter_base::reserve(faces.size());
 

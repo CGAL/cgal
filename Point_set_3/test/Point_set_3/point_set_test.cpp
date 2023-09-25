@@ -19,12 +19,15 @@ typedef std::array<unsigned char, 3> Color;
 std::size_t nb_test = 0;
 std::size_t nb_success = 0;
 
+// todo: Automatically numbering the tests is unhelpful
 void test (bool expr, const char* msg)
 {
   ++ nb_test;
-  if (!expr)
+  if (!expr) {
     std::cerr << "Error on test " << nb_test << ": " << msg << std::endl;
-  else
+    // stop on fail, so it's easier to find the error (and so it shows up in CI)
+    exit(1);
+  } else
     ++ nb_success;
 }
 
@@ -80,10 +83,8 @@ int main (int, char**)
   point_set.collect_garbage();
   test (!(point_set.has_garbage()), "point set shouldn't have garbage.");
 
-  test (!(point_set.has_property_map<Color> ("color")), "point set shouldn't have colors.");
-  Point_set::Property_map<Color> color_prop;
-  bool garbage;
-  boost::tie (color_prop, garbage) = point_set.add_property_map ("color", Color());
+  test (!(point_set.has_property_map<Color>("color")), "point set shouldn't have colors.");
+  auto [color_prop, garbage] = point_set.add_property_map ("color", Color());
   test (point_set.has_property_map<Color> ("color"), "point set should have colors.");
 
   for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
@@ -95,8 +96,7 @@ int main (int, char**)
       test ((get (color_prop, *it) == c), "recovered color is incorrect.");
     }
 
-  Point_set::Property_map<Color> color_prop_2;
-  boost::tie (color_prop_2, garbage) = point_set.property_map<Color>("color");
+  auto color_prop_2 = point_set.property_map<Color>("color").value();
   test ((color_prop_2 == color_prop), "color property not recovered correctly.");
 
   point_set.remove_normal_map ();
@@ -114,12 +114,13 @@ int main (int, char**)
   for (const auto& p : pnt)
     std::cerr << " * " << p.first << " with type " << p.second.name() << std::endl;
 
-  test (point_set.base().n_properties() == 4, "point set should have 4 properties.");
+  // todo: was it okay to rename this to num_properties?
+  test (point_set.base().num_properties() == 4, "point set should have 4 properties.");
 
   Point p_before = *(point_set.points().begin());
   point_set.clear_properties();
 
-  test (point_set.base().n_properties() == 2, "point set should have 2 properties.");
+  test (point_set.base().num_properties() == 2, "point set should have 2 properties.");
   test (!(point_set.has_property_map<int>("label")), "point set shouldn' have labels.");
   test (!(point_set.has_property_map<double>("intensity")), "point set shouldn' have intensity.");
   test (!(point_set.empty()), "point set shouldn' be empty.");

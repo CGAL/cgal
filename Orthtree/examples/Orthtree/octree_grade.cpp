@@ -4,15 +4,17 @@
 #include <CGAL/Octree.h>
 
 // Type Declarations
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef std::vector<Point> Point_vector;
-typedef CGAL::Octree<Kernel, Point_vector> Octree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using Point_vector = std::vector<Point>;
+using Octree = CGAL::Octree<Kernel, Point_vector>;
 
 int main() {
 
   // Here, our point set is a vector
   Point_vector points;
+
+  using IPoint = CGAL::Simple_cartesian<int>::Point_3;
 
   // Add a few points to the vector, most of which are in one region
   points.emplace_back(1, 1, 1);
@@ -28,7 +30,7 @@ int main() {
   points.emplace_back(-1.0001, 1, 1);
 
   // Create an octree from the points
-  Octree octree(points);
+  Octree octree({points});
 
   // Build the octree with a small bucket size, so we get a deep node
   octree.refine(10, 2);

@@ -19,13 +19,10 @@
 #include <CGAL/IO/Arr_with_history_iostream.h>
 #include <CGAL/IO/Arr_with_history_text_formatter.h>
 
-template <
-  typename Arrangement,
-  typename Traits = typename Arrangement::Geometry_traits_2>
-struct ArrReader
-{
-  Arrangement* operator()(std::ifstream& ifs)
-  {
+template <typename Arrangement,
+          typename Traits = typename Arrangement::Geometry_traits_2>
+struct ArrReader {
+  Arrangement* operator()(std::ifstream& ifs) {
     using Text_formatter = CGAL::Arr_text_formatter<Arrangement>;
     using ArrFormatter = CGAL::Arr_with_history_text_formatter<Text_formatter>;
 
@@ -37,33 +34,34 @@ struct ArrReader
 };
 
 #ifdef CGAL_USE_CORE
-template <
-  typename Arrangement, typename Rat_kernel_, typename Alg_kernel_,
-  typename Nt_traits_>
-struct ArrReader<
-  Arrangement, CGAL::Arr_conic_traits_2<Rat_kernel_, Alg_kernel_, Nt_traits_>>
+
+// Specialization of `ArrReader` for the conic traits.
+template <typename Arrangement, typename Rat_kernel_, typename Alg_kernel_,
+          typename Nt_traits_>
+struct ArrReader<Arrangement,
+                 CGAL::Arr_conic_traits_2<Rat_kernel_, Alg_kernel_, Nt_traits_>>
 {
   using Traits = typename Arrangement::Geometry_traits_2;
   using Curve_2 = typename Arrangement::Curve_2;
 
-  Arrangement* operator()(std::ifstream& ifs)
-  {
-    Conic_reader<Traits> conicReader;
+  Arrangement* operator()(std::ifstream& ifs) {
+    auto arr = new Arrangement();
+    const auto* traits = arr->geometry_traits();
+    Conic_reader<Traits> conicReader(*traits);;
     std::vector<Curve_2> curve_list;
     CGAL::Bbox_2 bbox;
     conicReader.read_data(ifs, std::back_inserter(curve_list), bbox);
-    auto arr = new Arrangement();
     CGAL::insert(*arr, curve_list.begin(), curve_list.end());
     return arr;
   }
 };
 
-template <
-  typename Arrangement, typename Rat_kernel_, typename Alg_kernel_,
-  typename Nt_traits_, typename Bounding_traits_>
-struct ArrReader<
-  Arrangement, CGAL::Arr_Bezier_curve_traits_2<
-                 Rat_kernel_, Alg_kernel_, Nt_traits_, Bounding_traits_>>
+// Specialization of `ArrReader` for the Bezier traits.
+template <typename Arrangement, typename Rat_kernel_, typename Alg_kernel_,
+          typename Nt_traits_, typename Bounding_traits_>
+struct ArrReader<Arrangement,
+                 CGAL::Arr_Bezier_curve_traits_2<Rat_kernel_, Alg_kernel_,
+                                                 Nt_traits_, Bounding_traits_>>
 {
   Arrangement* operator()(std::ifstream&) { return nullptr; }
 };
@@ -77,8 +75,7 @@ struct ArrReader<
 #endif
 
 std::pair<CGAL::Object, demo_types::TraitsType>
-ArrangementIO::read(std::ifstream& ifs)
-{
+ArrangementIO::read(std::ifstream& ifs) {
   // read type info
   while (ifs.peek() == '#' || std::isspace(ifs.peek())) ifs.get();
 
@@ -95,13 +92,10 @@ ArrangementIO::read(std::ifstream& ifs)
   return res;
 }
 
-template <
-  typename Arrangement,
-  typename Traits = typename Arrangement::Geometry_traits_2>
-struct ArrWriter
-{
-  void operator()(Arrangement* arr, std::ofstream& ofs)
-  {
+template <typename Arrangement,
+          typename Traits = typename Arrangement::Geometry_traits_2>
+struct ArrWriter {
+  void operator()(Arrangement* arr, std::ofstream& ofs) {
     using TextFormatter = CGAL::Arr_text_formatter<Arrangement>;
     using ArrFormatter = CGAL::Arr_with_history_text_formatter<TextFormatter>;
 
@@ -111,19 +105,18 @@ struct ArrWriter
 };
 
 #ifdef CGAL_USE_CORE
-template <
-  typename Arrangement, typename Rat_kernel_, typename Alg_kernel_,
-  typename Nt_traits_>
-struct ArrWriter<
-  Arrangement, CGAL::Arr_conic_traits_2<Rat_kernel_, Alg_kernel_, Nt_traits_>>
+
+template <typename Arrangement, typename Rat_kernel_, typename Alg_kernel_,
+          typename Nt_traits_>
+struct ArrWriter<Arrangement, CGAL::Arr_conic_traits_2<Rat_kernel_, Alg_kernel_,
+                                                       Nt_traits_>>
 {
   using Traits = typename Arrangement::Geometry_traits_2;
   using Curve_2 = typename Arrangement::Curve_2;
 
-  void operator()(Arrangement* arr, std::ofstream& ofs)
-  {
-    Conic_reader<Traits> conicReader;
-    conicReader.write_data(ofs, arr->curves_begin(), arr->curves_end());
+  void operator()(Arrangement* arr, std::ofstream& ofs) {
+    Conic_reader<Traits> conic_reader(*(arr->geometry_traits()));
+    conic_reader.write_data(ofs, arr->curves_begin(), arr->curves_end());
   }
 };
 
@@ -145,9 +138,9 @@ struct ArrWriter<
 };
 #endif
 
-bool ArrangementIO::write(
-  const std::pair<CGAL::Object, demo_types::TraitsType>& arr_pair,
-  std::ofstream& ofs)
+bool ArrangementIO::write(const std::pair<CGAL::Object,
+                          demo_types::TraitsType>& arr_pair,
+                          std::ofstream& ofs)
 {
   auto tt = arr_pair.second;
   auto arr_obj = arr_pair.first;
@@ -159,8 +152,7 @@ bool ArrangementIO::write(
   demo_types::visitArrangementType(tt, [&](auto type_holder) {
     using Arrangement = typename decltype(type_holder)::type;
     Arrangement* arr;
-    if (CGAL::assign(arr, arr_obj))
-    {
+    if (CGAL::assign(arr, arr_obj)) {
       ArrWriter<Arrangement>{}(arr, ofs);
       result = true;
     }

@@ -47,7 +47,7 @@ namespace Segment_set {
     a model of `ReadablePropertyMap` whose key type is `Item`
     and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,
@@ -123,14 +123,12 @@ namespace Segment_set {
           \cgalParamDefault{1}
         \cgalParamNEnd
         \cgalParamNBegin{maximum_angle}
-          \cgalParamDescription{the maximum angle in degrees between
-          the direction of a segment and the direction of a line}
+          \cgalParamDescription{the maximum angle in degrees between the direction of a segment and the direction of a line}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
         \cgalParamNEnd
-        \cgalParamNBegin{cosine_of_maxium_angle}
-          \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
-          this parameter can be used instead of the `maximum_angle`}
+        \cgalParamNBegin{cosine_of_maximum_angle}
+          \cgalParamDescription{the cosine value `cos(maximum_angle * PI / 180)` to be used instead of the parameter `maximum_angle()`}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{`cos(25 * PI / 180)`}
         \cgalParamNEnd
@@ -152,7 +150,7 @@ namespace Segment_set {
 
       \pre `maximum_distance >= 0`
       \pre `maximum_angle >= 0 && maximum_angle <= 90`
-      \pre `cosine_of_maxium_angle >= 0 && cosine_of_maxium_angle <= 1`
+      \pre `cosine_of_maximum_angle >= 0 && cosine_of_maximum_angle <= 1`
       \pre `minimum_region_size > 0`
     */
     template<typename NamedParameters = parameters::Default_named_parameters>
@@ -182,7 +180,7 @@ namespace Segment_set {
       const FT default_cos_value = static_cast<FT>(std::cos(CGAL::to_double(
         (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
       const FT cos_value = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::cosine_of_maxium_angle), default_cos_value);
+        parameters::get_parameter(np, internal_np::cosine_of_maximum_angle), default_cos_value);
       CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
       m_cos_value_threshold = cos_value;
     }
@@ -225,13 +223,12 @@ namespace Segment_set {
       \param query
       `Item` of the query segment
 
-      The first and third parameters are not used in this implementation.
+      The last parameter is not used in this implementation.
 
       \return Boolean `true` or `false`
 
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region&) const {
 

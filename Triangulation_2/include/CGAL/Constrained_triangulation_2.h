@@ -352,8 +352,8 @@ public:
 template <class OutputIterator>
 void
 insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
-// forces the constrained [va,vb]
-// [va,vb] will eventually be split into several edges
+// forces the constrained [vaa,vbb]
+// [vaa,vbb] will potentially be split into several edges
 // if a vertex vc of t lies on segment ab
 // of if ab intersect some constrained edges
 {
@@ -828,6 +828,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 // if a vertex vc of t lies on segment ab
 // or if ab intersect some constrained edges
 {
+  if(vaa == vbb){
+    return;
+  }
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));
 
@@ -1888,16 +1891,16 @@ compute_intersection(const Gt& gt,
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   typedef typename Gt::Segment_2 Segment_2;
   if(result){
-    if (const Segment_2* s = boost::get<Segment_2>(&*result)){
+    if (const Segment_2* s = std::get_if<Segment_2>(&*result)){
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "compute_intersection: " << *s << '\n';
-    }else if(const Point_2* p = boost::get<Point_2 >(&*result))
+    }else if(const Point_2* p = std::get_if<Point_2 >(&*result))
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "compute_intersection: " << *p << '\n';
   }
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   if(result){
-    if(const Point_2* p = boost::get<Point_2 >(&*result)){
+    if(const Point_2* p = std::get_if<Point_2 >(&*result)){
       pi = *p;
       return true;
     }

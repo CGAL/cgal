@@ -5,7 +5,7 @@
 
 This `AdaptableUnaryFunction` returns a representative in the original type of a given modular image. More precisely, it implements the *right inverse* of a proper restriction of the homomorphism \f$ \varphi\f$, which is implemented by `ModularTraits::ModularImage`.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `ModularTraits`
 

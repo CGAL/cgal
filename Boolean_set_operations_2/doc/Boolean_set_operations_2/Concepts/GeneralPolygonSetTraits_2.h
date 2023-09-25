@@ -11,11 +11,13 @@ a type that represents a general polygon and another one that represents
 general polygon with holes. It also requires operations that operate on these
 types.
 
-\cgalRefines `ArrangementDirectionalXMonotoneTraits_2`
+\cgalRefines{ArrangementDirectionalXMonotoneTraits_2}
 
-\cgalHasModel `CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>`
-\cgalHasModel `CGAL::Gps_circle_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>}
+\cgalHasModels{CGAL::Gps_circle_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>}
+\cgalHasModelsEnd
 
 \sa `ArrangementDirectionalXMonotoneTraits_2`
 

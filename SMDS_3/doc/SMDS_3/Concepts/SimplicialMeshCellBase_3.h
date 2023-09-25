@@ -4,25 +4,24 @@
 
 The concept `SimplicialMeshCellBase_3` describes the requirements
 for the `TriangulationDataStructure_3::Cell` type of the triangulation
-used in the 3D simplicial mesh data structure. The type `SimplicialMeshCellBase_3`
-refines the concept `TriangulationCellBase_3`
-and must be copy constructible.
-The concept `SimplicialMeshCellBase_3`
-includes a way to store and retrieve
-if a given cell of the triangulation is inside a subdomain or not,
-and which subdomain it belongs to
-in case of a multi-domain.
+used in a 3D simplicial mesh data structure.
+
+The type `SimplicialMeshCellBase_3` refines the concept `TriangulationCellBase_3`
+and must be copy constructible. The concept `SimplicialMeshCellBase_3` includes a way to store and
+retrieve if a given cell of the triangulation is inside a subdomain or not, and which subdomain it
+belongs to in case of a multi-domain.
 
 Moreover, this concept adds four markers per cell to mark the facets
 of the triangulation that are surface facets.
 
-\cgalRefines `TriangulationCellBase_3 `
-\cgalRefines `CopyConstructible`
+\cgalRefines{TriangulationCellBase_3,CopyConstructible}
 
-\cgalHasModel `CGAL::Compact_mesh_cell_base_3`
-\cgalHasModel `CGAL::Mesh_cell_base_3`
-\cgalHasModel `CGAL::Simplicial_mesh_cell_base_3`
-\cgalHasModel `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Compact_mesh_cell_base_3}
+\cgalHasModels{CGAL::Mesh_cell_base_3}
+\cgalHasModels{CGAL::Simplicial_mesh_cell_base_3}
+\cgalHasModels{CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3}
+\cgalHasModelsEnd
 
 */
 

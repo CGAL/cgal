@@ -211,7 +211,7 @@ private:
   // by the concept SurfaceMeshDeformationWeights.
   // A bit awkward, but better than duplicating code...
   PolygonMesh const * const m_pmesh_ptr;
-  const VertexPointMap m_vpm;
+  const std::optional<VertexPointMap> m_vpm;
   const GeomTraits m_traits;
 
   bool m_use_clamped_version;
@@ -293,7 +293,7 @@ public:
   typename GeomTraits::FT operator()(const halfedge_descriptor he) const
   {
     CGAL_precondition(m_pmesh_ptr != nullptr);
-    return this->operator()(he, *m_pmesh_ptr, m_vpm, m_traits);
+    return this->operator()(he, *m_pmesh_ptr, m_vpm.value(), m_traits);
   }
 };
 
@@ -319,7 +319,7 @@ class Secure_cotangent_weight_with_voronoi_area
 
 private:
   const PolygonMesh& m_pmesh;
-  const VertexPointMap m_vpm;
+  const std::optional<VertexPointMap> m_vpm;
   GeomTraits m_traits;
 
   Cotangent_weight<PolygonMesh, VertexPointMap, GeomTraits> cotangent_weight_calculator;
@@ -329,7 +329,7 @@ public:
                                             const VertexPointMap vpm,
                                             const GeomTraits& traits = GeomTraits())
     : m_pmesh(pmesh), m_vpm(vpm), m_traits(traits),
-      cotangent_weight_calculator(m_pmesh, m_vpm, m_traits,
+      cotangent_weight_calculator(m_pmesh, m_vpm.value(), m_traits,
                                   true /*clamp*/, true /*bound from below*/)
   { }
 
@@ -361,9 +361,9 @@ private:
       const vertex_descriptor v1 = source(he, m_pmesh);
       const vertex_descriptor v2 = target(next(he, m_pmesh), m_pmesh);
 
-      const Point_ref p0 = get(m_vpm, v0);
-      const Point_ref p1 = get(m_vpm, v1);
-      const Point_ref p2 = get(m_vpm, v2);
+      const Point_ref p0 = get(m_vpm.value(), v0);
+      const Point_ref p1 = get(m_vpm.value(), v1);
+      const Point_ref p2 = get(m_vpm.value(), v2);
 
       const CGAL::Angle angle0 = CGAL::angle(p1, p0, p2);
       if((angle0 == CGAL::OBTUSE) ||

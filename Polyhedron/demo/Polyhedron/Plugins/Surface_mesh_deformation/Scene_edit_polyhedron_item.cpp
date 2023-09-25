@@ -448,11 +448,7 @@ struct ROI_faces_pmap<SMesh>
   SMesh::Property_map<sm_face_descriptor,bool> irmap;
 
   ROI_faces_pmap(std::map<key_type, value_type>*, SMesh* mesh)
-    :mesh(mesh)
-  {
-    //add a is_ROI property_map to mesh
-    irmap = mesh->add_property_map<sm_face_descriptor,bool>("f:is_roi",false).first;
-  }
+    : mesh(mesh), irmap(mesh->add_property_map<sm_face_descriptor, bool>("f:is_roi", false).first) {}
 
   friend value_type get(const ROI_faces_pmap<SMesh>&pmap, const key_type& f)
   {
@@ -535,14 +531,9 @@ struct Is_constrained_map<SMesh>
   SMesh::Property_map<sm_vertex_descriptor,int> icmap;
   SMesh* mesh;
 
-  Is_constrained_map()
-  {}
   Is_constrained_map(std::vector<int>* vec, SMesh* mesh)
-    :mesh(mesh)
-  {
-    icmap = mesh->add_property_map<sm_vertex_descriptor,int>("v:is_control", -1).first;
-    for(unsigned int i=0; i<vec->size(); ++i)
-    {
+    : mesh(mesh), icmap(mesh->add_property_map<sm_vertex_descriptor, int>("v:is_control", -1).first) {
+    for (unsigned int i = 0; i < vec->size(); ++i) {
       icmap[sm_vertex_descriptor(i)] = (*vec)[i];
     }
   }
@@ -1621,7 +1612,7 @@ void Scene_edit_polyhedron_item::reset_deform_object()
   refresh_all_group_centers();
 }
 
-boost::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_component() {
+std::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_component() {
   Travel_isolated_components<SMesh>::Minimum_visitor visitor;
   Travel_isolated_components<SMesh>(*surface_mesh()).travel<sm_vertex_descriptor>
       (vertices(*surface_mesh()).first, vertices(*surface_mesh()).second,
@@ -1630,7 +1621,7 @@ boost::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_co
 }
 
 
-boost::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_components(std::size_t threshold) {
+std::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_components(std::size_t threshold) {
     typedef boost::function_output_iterator<Select_roi_output<SMesh> > Output_iterator;
     Output_iterator out(d->deform_sm_mesh);
 

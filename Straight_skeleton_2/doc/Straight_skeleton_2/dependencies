@@ -4,6 +4,7 @@ STL_Extension
 Algebraic_foundations
 Circulator
 Stream_support
+BGL
 HalfedgeDS
 Boolean_set_operations_2
 Polygon
