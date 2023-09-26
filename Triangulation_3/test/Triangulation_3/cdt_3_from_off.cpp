@@ -157,8 +157,8 @@ int main(int argc, char* argv[])
 
 template <typename Range_of_segments>
 auto segment_soup_to_polylines(Range_of_segments&& segment_soup) {
-  using Segment = typename std::ranges::range_value_t<Range_of_segments>;
-  using Point = std::decay_t<decltype([](){ auto [a, b] = std::declval<Segment>(); return a; } ())>;
+  using Point = decltype([&](){ using std::begin; auto [a, b] = *begin(segment_soup); return a; } ());
+
   std::vector<std::vector<Point>> polylines;
 
   using Graph = boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, Point>;
