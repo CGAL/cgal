@@ -163,13 +163,13 @@ void Clipping_box_plugin::clip(bool b)
   clipping = b;
   if (b)
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       v->installEventFilter(this);
     }
   }
   else {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       v->removeEventFilter(this);
     }
