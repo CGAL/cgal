@@ -75,7 +75,7 @@ construct_point(const Edge_location<TriangleMesh, FT> &loc,
 namespace internal {
 
 template <class K, class TriangleMesh, class VertexPointMap>
-struct Locally_shortest_path_imp 
+struct Locally_shortest_path_imp
 {
   using face_descriptor =
       typename boost::graph_traits<TriangleMesh>::face_descriptor;
@@ -90,10 +90,11 @@ struct Locally_shortest_path_imp
   using Vector_3 = typename K::Vector_3;
   using FT = typename K::FT;
 
+  // TODO: recode using CGAL code?
   static
   Vector_2
   intersect_circles(const Vector_2 &c2, FT R2,
-                    const Vector_2 &c1, FT R1) 
+                    const Vector_2 &c1, FT R1)
   {
     auto R = (c2 - c1).squared_length();
     assert(R > 0);
@@ -153,7 +154,7 @@ struct Locally_shortest_path_imp
                                get(vpm, triangle_vertices[2]));
     tr2d[2] = intersect_circles(tr2d[0], rx, tr2d[1], ry);
 
- 
+
     halfedge_descriptor href = halfedge(src.first, mesh);
     if (href!=h)
     {
@@ -172,6 +173,12 @@ struct Locally_shortest_path_imp
 
     auto point_coords = tr2d[0] * src.second[0] + tr2d[1] * src.second[1] +
                         tr2d[2] * src.second[2];
+#ifdef CGAL_DEBUG_BSURF
+    std::cout << "4 " << tr2d[0] - point_coords << " 0 "
+              << tr2d[1] - point_coords << " 0 "
+              << tr2d[2] - point_coords << " 0 "
+              << tr2d[0] - point_coords << " 0\n";
+#endif
     return make_array(tr2d[0] - point_coords,
                       tr2d[1] - point_coords);
   }
@@ -194,7 +201,7 @@ struct Locally_shortest_path_imp
                              get(vpm, triangle_vertices[2]));
     tr2d[2] = intersect_circles(tr2d[0], rx, tr2d[1], ry);
 
- 
+
     halfedge_descriptor href = halfedge(tgt.first, mesh);
     if (href!=h)
     {
@@ -213,6 +220,14 @@ struct Locally_shortest_path_imp
 
     auto point_coords = tr2d[0] * tgt.second[0] + tr2d[1] * tgt.second[1] +
                         tr2d[2] * tgt.second[2];
+
+#ifdef CGAL_DEBUG_BSURF
+    std::cout << "4 " << tr2d[0]  << " 0 "
+              << tr2d[1]  << " 0 "
+              << tr2d[2] << " 0 "
+              << tr2d[0]  << " 0\n";
+#endif
+
     return make_array(point_coords,
                       point_coords);
   }
@@ -221,18 +236,18 @@ struct Locally_shortest_path_imp
   // std::array<Vector_2, 3>
   // unfold_face(halfedge_descriptor h,
   //             const VertexPointMap &vpm, const TriangleMesh &mesh,
-  //             const std::array<Vector_2, 3>& flat_tid) 
+  //             const std::array<Vector_2, 3>& flat_tid)
   // {
   //   halfedge_descriptor h_opp = opposite(h_curr, mesh);
-    
-    
-        
+
+
+
   //   vertex_descriptor v = target(next(h_curr,mesh),mesh);
   //   vertex_descriptor a = target(h_curr,mesh);
   //   vertex_descriptor b = source(h_curr, mesh);
   //   FT r0 = squared_distance(get(vpm,v), get(vpm,a));
   //   FT r1 = squared_distance(get(vpm,v), get(vpm,b));
-    
+
   //   Vector_2 v2 = intersect_circles(flat_tid[0], r0, flat_tid[1], r1);
 
 
@@ -257,19 +272,19 @@ static
   std::array<Vector_2, 2>
   unfold_face(halfedge_descriptor h_curr, halfedge_descriptor h_next,
               const VertexPointMap &vpm, const TriangleMesh &mesh,
-              const std::array<Vector_2, 2>& flat_tid) 
+              const std::array<Vector_2, 2>& flat_tid)
   {
     halfedge_descriptor h_next_opp = opposite(h_next, mesh);
     CGAL_assertion(face( h_curr, mesh) == face(h_next_opp, mesh));
-    
-        
+
+
     vertex_descriptor v = target(next(h_curr,mesh),mesh);
     vertex_descriptor a = target(h_curr,mesh);
     vertex_descriptor b = source(h_curr, mesh);
     FT r0 = squared_distance(get(vpm,v), get(vpm,a));
     FT r1 = squared_distance(get(vpm,v), get(vpm,b));
-    
-    Vector_2 v2 = intersect_circles(flat_tid[0], r0, flat_tid[1], r1);
+
+    Vector_2 v2 = intersect_circles(flat_tid[1], r1, flat_tid[0], r0);
 
 
     std::array<Vector_2, 2> res;
@@ -278,6 +293,12 @@ static
        res[0]=flat_tid[0];
        //res[2]=flat_tid[1];
        res[1]=v2;
+#ifdef CGAL_DEBUG_BSURF
+       std::cout << "4 " << res[0]  << " 0 "
+                 << res[1]  << " 0 "
+                 << flat_tid[1] << " 0 "
+                 << res[0]  << " 0\n";
+#endif
     }
     else
     {
@@ -285,24 +306,30 @@ static
       res[0]=v2;
       res[1]=flat_tid[1];
       //res[2]=flat_tid[0];
+#ifdef CGAL_DEBUG_BSURF
+      std::cout << "4 " << res[0]  << " 0 "
+                << res[1]  << " 0 "
+                << flat_tid[0] << " 0 "
+                << res[0]  << " 0\n";
+#endif
     }
 
     return res;
   }
-  static 
+  static
   std::vector< std::array<Vector_2, 2>>
-  unfold_strip(const std::vector<halfedge_descriptor>& initial_path, 
+  unfold_strip(const std::vector<halfedge_descriptor>& initial_path,
               const Face_location<TriangleMesh, FT>& src,
               const Face_location<TriangleMesh, FT>& tgt,
               const VertexPointMap &vpm, const TriangleMesh &mesh)
-  { 
+  {
     std::size_t s=initial_path.size();
     std::vector<std::array<Vector_2, 2>> result(s+1);
     result[0]=init_source_triangle(initial_path[0], vpm, mesh, src);
     for(std::size_t i=1;i<s;++i)
       result[i]=unfold_face(initial_path[i-1],initial_path[i], vpm, mesh, result[i-1]);
 
-    result[s]=init_target_triangle(initial_path.back(), result[s-1], vpm, mesh, tgt); 
+    result[s]=init_target_triangle(initial_path.back(), result[s-1], vpm, mesh, tgt);
 
     return result;
   }
@@ -326,7 +353,7 @@ static
     assert(det);
     return (a.x() * d.y() - a.y() * d.x()) / det;
   }
-  static 
+  static
   int max_curvature_point(const std::vector<funnel_point> &path) {
     // Among vertices around which the path curves, find the vertex
     // with maximum angle. We are going to fix that vertex. Actually, max_index is
@@ -352,7 +379,7 @@ static
 
   static
   std::vector<FT>
-  funnel(const std::vector< std::array<Vector_2, 2>>& portals, int& max_index) 
+  funnel(const std::vector< std::array<Vector_2, 2>>& portals, int& max_index)
   {
     // Find straight path.
     Vector_2 start(NULL_VECTOR);
@@ -498,7 +525,7 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   for (edge_descriptor ed : edges(tmesh))
   {
     halfedge_descriptor h=halfedge(ed, tmesh), hopp=opposite(h, tmesh);
-    put(weight_map, ed, 
+    put(weight_map, ed,
         sqrt(squared_distance(
               centroid(get(vpm, source(h, tmesh)), get(vpm, target(h, tmesh)), get(vpm, target(next(h, tmesh), tmesh))),
               centroid(get(vpm, source(hopp, tmesh)), get(vpm, target(hopp, tmesh)), get(vpm, target(next(hopp, tmesh), tmesh)))

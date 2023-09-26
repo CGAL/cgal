@@ -32,6 +32,9 @@ int main(int argc, char** argv)
   std::cout << "seed " << rnd.get_seed() << std::endl;
   Mesh::Face_index f1 = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));
   Mesh::Face_index f2 = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));
+  // or pick specific faces
+  //Mesh::Face_index f1(  5090 );
+  //Mesh::Face_index f2( 617 );
   Face_location src(f1, CGAL::make_array(0.3,0.3,0.4));
   Face_location tgt(f2, CGAL::make_array(0.3,0.3,0.4));
 
