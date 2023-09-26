@@ -216,7 +216,6 @@ int go(Mesh mesh, std::string output_filename) {
         if(get(patch_id_map, f) >= 0) continue;
         put(patch_id_map, f, nb_patches);
         for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
-          auto e = edge(h, mesh);
           auto opp = opposite(h, mesh);
           if(is_border_edge(opp, mesh)) {
             auto va = source(h, mesh);
