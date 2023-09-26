@@ -1873,7 +1873,7 @@ private:
     typename CDT_2::Locate_type lt;
     int i;
     auto fh = cdt_2.locate(steiner_pt, lt, i, fh_2d);
-    CGAL_assertion(!fh->info().is_outside_the_face);
+    CGAL_assertion(!fh->info().is_outside_the_face); CGAL_USE(fh);
     const auto v_2d = non_const_cdt_2.insert(steiner_pt, fh_2d);
     v_2d->info().vertex_handle_3d = v;
     auto f_circ = cdt_2.incident_faces(v_2d);
