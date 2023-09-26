@@ -66,8 +66,10 @@ int main(int argc, char* argv[])
     } else if(arg == "--ratio") {
       assert(i + 1 < argc);
       ratio = std::stod(argv[++i]);
-    }
-    else {
+    } else if(arg[0] == '-') {
+      std::cerr << "Unknown option: " << arg << '\n';
+      return 1;
+    } else {
       switch(positional) {
         case 0:
           filename = arg;
