@@ -1344,7 +1344,7 @@ private:
                            map_lower_cavity_vertices_to_ambient_vertices,
                            vertices_of_lower_cavity);
 
-    CGAL_assertion(std::all_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
+    std::for_each(fh_region.begin(), fh_region.end(), [&](auto fh) {
       auto is_fh_facet_of = [this, fh](const auto& tr) -> std::optional<Facet> {
         const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
         const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
@@ -1393,7 +1393,7 @@ private:
         throw Next_region{"missing facet in polygon", fh_region[0]};
       }
       return test;
-    }));
+    });
 
 #if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# glu the upper triangulation of the cavity\n";
