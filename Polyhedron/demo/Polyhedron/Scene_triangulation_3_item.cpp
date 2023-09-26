@@ -3,6 +3,7 @@
 #include "Scene_triangulation_3_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_spheres_item.h"
+#include "Plugins/PCA/Scene_edit_box_item.h"
 
 #include <QVector>
 #include <QColor>
@@ -456,13 +457,11 @@ struct Scene_triangulation_3_item_priv {
   {
     if (intersection)
       intersection->setVisible(b);
+    cut_plane_enabled = b;
   }
   bool is_intersection_enabled()
   {
-    if (intersection)
-      return intersection->visible();
-    else
-      return false;
+    return cut_plane_enabled;
   }
   bool is_item_clip_box(int id)
   {
@@ -530,6 +529,7 @@ struct Scene_triangulation_3_item_priv {
   boost::dynamic_bitset<> visible_subdomain;
   std::bitset<24> bs[4] = {16777215, 16777215, 16777215, 16777215};
   bool show_tetrahedra;
+  bool cut_plane_enabled;
   bool is_aabb_tree_built;
   bool last_intersection;
   bool cut_edges;

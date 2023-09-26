@@ -2,7 +2,6 @@
 #define SCENE_TRIANGULATION_3_ITEM_H
 
 #include "Scene_triangulation_3_item_config.h"
-#include "Plugins/PCA/Scene_edit_box_item.h"
 #include "T3_type.h"
 
 #include <QVector>
