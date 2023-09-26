@@ -104,7 +104,7 @@ public:
   */
   template <typename FaceRange
           , typename NamedParameters = parameters::Default_named_parameters>
-  Adaptive_sizing_field(const double tol
+  Adaptive_sizing_field(const FT tol
                       , const std::pair<FT, FT>& edge_len_min_max
                       , const FaceRange& face_range
                       , const VPMap& vpmap
@@ -171,7 +171,7 @@ public:
   */
   template <typename FaceRange
           , typename NamedParameters = parameters::Default_named_parameters>
-  Adaptive_sizing_field(const double tol
+  Adaptive_sizing_field(const FT tol
                       , const std::pair<FT, FT>& edge_len_min_max
                       , const FaceRange& face_range
                       , PolygonMesh& pmesh
