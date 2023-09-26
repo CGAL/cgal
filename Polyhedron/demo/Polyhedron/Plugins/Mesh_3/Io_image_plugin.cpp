@@ -54,6 +54,7 @@
 #include <CGAL/IO/read_vtk_image_data.h>
 
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkImageData.h>
 #include <vtkXMLImageDataReader.h>
@@ -333,6 +334,8 @@ public:
   QString nameFilters() const override;
   bool canLoad(QFileInfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene = true) override;
+  template <class vtkReader>
+  bool load_vtk_file(QFileInfo fileinfo, Image* image);
 
   bool canSave(const CGAL::Three::Scene_item*) override;
   bool save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items ) override
@@ -1123,6 +1126,25 @@ void convert(Image* image)
   image->image()->wordKind = WK_FLOAT;
 }
 
+
+template <class vtkReader>
+bool
+Io_image_plugin::load_vtk_file(QFileInfo fileinfo, Image* image)
+{
+#ifdef CGAL_USE_VTK
+  vtkNew<vtkReader> reader;
+  reader->SetFileName(fileinfo.filePath().toUtf8());
+  reader->Update();
+  auto vtk_image = reader->GetOutput();
+  vtk_image->Print(std::cerr);
+  *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+  return true;
+#else
+  return false;
+#endif
+}
+
+
 QList<Scene_item*>
 Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
 {
@@ -1130,20 +1152,15 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
 
+  QString warningMessage;
   // read a vti file
   if(fileinfo.suffix() == "vti")
   {
 #ifdef CGAL_USE_VTK
-    vtkNew<vtkXMLImageDataReader> reader;
-    reader->SetFileName(fileinfo.filePath().toUtf8());
-    reader->Update();
-    auto vtk_image = reader->GetOutput();
-    vtk_image->Print(std::cerr);
-    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    ok = load_vtk_file<vtkXMLImageDataReader>(fileinfo, image);
 #else
-    CGAL::Three::Three::warning("VTK is required to read VTI files");
-    delete image;
-    return QList<Scene_item*>();
+    ok = false;
+    warningMessage = "VTK is required to read VTI files";
 #endif
   }
 
@@ -1151,16 +1168,10 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   else if(fileinfo.suffix() == "nrrd")
   {
 #ifdef CGAL_USE_VTK
-    vtkNew<vtkNrrdReader> reader;
-    reader->SetFileName(fileinfo.filePath().toUtf8());
-    reader->Update();
-    auto vtk_image = reader->GetOutput();
-    vtk_image->Print(std::cerr);
-    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    ok = load_vtk_file<vtkNrrdReader>(fileinfo, image);
 #else
-    CGAL::Three::Three::warning("VTK is required to read NRRD files");
-    delete image;
-    return QList<Scene_item*>();
+    ok = false;
+    warningMessage = "VTK is required to read NRRD files";
 #endif
   }
 
@@ -1170,16 +1181,10 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
         && fileinfo.fileName().endsWith(QString(".nii.gz"), Qt::CaseInsensitive)))
   {
 #ifdef CGAL_USE_VTK
-    vtkNew<vtkNIFTIImageReader> reader;
-    reader->SetFileName(fileinfo.filePath().toUtf8());
-    reader->Update();
-    auto vtk_image = reader->GetOutput();
-    vtk_image->Print(std::cerr);
-    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    ok = load_vtk_file<vtkNIFTIImageReader>(fileinfo, image);
 #else
-    CGAL::Three::Three::warning("VTK is required to read NIfTI files");
-    delete image;
-    return QList<Scene_item*>();
+    ok = false;
+    warningMessage = "VTK is required to read NifTI files";
 #endif
   }
 
@@ -1286,9 +1291,14 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     if(!success)
     {
       ok = false;
-      delete image;
-      return QList<Scene_item*>();
     }
+  }
+
+  if (!ok) {
+    if (warningMessage.length() > 0)
+        CGAL::Three::Three::warning(warningMessage);
+    delete image;
+    return QList<Scene_item*>();
   }
 
   // Get display precision
