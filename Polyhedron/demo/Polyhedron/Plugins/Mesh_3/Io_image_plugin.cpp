@@ -79,6 +79,23 @@
 #include <iostream>
 #include <locale>
 
+template <class vtkReader>
+bool
+load_vtk_file(QFileInfo fileinfo, Image* image)
+{
+#ifdef CGAL_USE_VTK
+    vtkNew<vtkReader> reader;
+    reader->SetFileName(fileinfo.filePath().toUtf8());
+    reader->Update();
+    auto vtk_image = reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    return true;
+#else
+    return false;
+#endif
+}
+
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
 
@@ -334,8 +351,6 @@ public:
   QString nameFilters() const override;
   bool canLoad(QFileInfo) const override;
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene = true) override;
-  template <class vtkReader>
-  bool load_vtk_file(QFileInfo fileinfo, Image* image);
 
   bool canSave(const CGAL::Three::Scene_item*) override;
   bool save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items ) override
@@ -1124,24 +1139,6 @@ void convert(Image* image)
   image->image()->data = (void*)f_data;
   image->image()->wdim = 4;
   image->image()->wordKind = WK_FLOAT;
-}
-
-
-template <class vtkReader>
-bool
-Io_image_plugin::load_vtk_file(QFileInfo fileinfo, Image* image)
-{
-#ifdef CGAL_USE_VTK
-  vtkNew<vtkReader> reader;
-  reader->SetFileName(fileinfo.filePath().toUtf8());
-  reader->Update();
-  auto vtk_image = reader->GetOutput();
-  vtk_image->Print(std::cerr);
-  *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
-  return true;
-#else
-  return false;
-#endif
 }
 
 
