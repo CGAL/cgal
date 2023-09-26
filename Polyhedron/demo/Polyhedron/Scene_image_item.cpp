@@ -114,15 +114,7 @@ is_vertex_active(std::size_t i, std::size_t j, std::size_t k) const
   Word_type v7 = image_data(i    , j    , k-dz_);
   Word_type v8 = image_data(i    , j    , k  );
 
-  // don't draw interior vertices
-  if ( v1 != 0 && v2 != 0 && v3 != 0 && v4 != 0 &&
-       v5 != 0 && v6 != 0 && v7 != 0 && v8 != 0 )
-  {
-    return false;
-  }
-
-  return ( v1 != 0 || v2 != 0 || v3 != 0 || v4 != 0 ||
-           v5 != 0 || v6 != 0 || v7 != 0 || v8 != 0 );
+  return v1 != v2 || v1 != v3 || v1 != v4 || v1 != v5 || v1 != v6 || v1 != v7 || v1 != v8;
 }
 template <typename Word_type>
 const QColor&
