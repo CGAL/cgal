@@ -90,6 +90,23 @@ struct Locally_shortest_path_imp
   using Vector_3 = typename K::Vector_3;
   using FT = typename K::FT;
 
+// #ifdef CGAL_DEBUG_BSURF
+  static
+  void dump_path(const std::vector<halfedge_descriptor>& path,
+                 const std::vector<FT>& lerps,
+                 const Face_location<TriangleMesh,FT>& src,
+                 const Face_location<TriangleMesh,FT>& tgt,
+                 const TriangleMesh& mesh)
+  {
+    static int i = -1;
+    std::ofstream out("path_"+std::to_string(++i)+".polylines.txt");
+    out << path.size()+2 << " " << construct_point(src, mesh);
+    for(std::size_t i=0; i<path.size(); ++i)
+      out << " " << construct_point(Edge_location<TriangleMesh, FT>(path[i], make_array(lerps[i], 1.-lerps[i])), mesh);
+    out << " " << construct_point(tgt, mesh) << "\n";
+  }
+// #endif
+
   // TODO: recode using CGAL code?
   static
   Vector_2
@@ -484,6 +501,107 @@ static
     // assert(lerps.size() == portals.size() - 1);
     return lerps;
   }
+  static
+  void straighten_path(std::vector< std::array<Vector_2, 2>>& portals,
+                       std::vector<FT>& lerps,
+                       std::vector<halfedge_descriptor>& path,    
+                       const Face_location<TriangleMesh, FT>& src,
+                       const Face_location<TriangleMesh, FT>& tgt,
+                       const VertexPointMap &vpm, const TriangleMesh &mesh,int index)
+  { 
+    dump_path(path, lerps, src, tgt, mesh);
+    vertex_descriptor vertex=boost::graph_traits<TriangleMesh>::null_vertex();
+
+    // TODO: use a while loop breaking when no apex vertices not already visited are available
+    for (auto i = 0; i < portals.size() * 2 && index != -1; i++) 
+    {
+      std::cout << "improve path\n";
+
+      vertex_descriptor new_vertex=boost::graph_traits<TriangleMesh>::null_vertex();
+      halfedge_descriptor h_curr       = path[index];
+      halfedge_descriptor h_next       = path[index + 1];
+      auto flank_left = false;
+      bool is_target = false;
+      if (lerps[index] == 0) {
+        new_vertex = target(h_curr,mesh);
+        flank_left = false;
+        is_target = true;
+      } else if (lerps[index] == 1) {
+        new_vertex = source(h_curr,mesh);
+        flank_left = true;
+      }
+      if (new_vertex == vertex) break;
+      vertex = new_vertex;
+  
+// std::cout << "OLD: " << get(vpm, new_vertex) <<  "\n";
+// for (auto h : path)
+// {
+//   std::cout << "4 " << get(vpm, source(h, mesh))
+//             << "  " << get(vpm, target(h, mesh))
+//             << "  " << get(vpm, target(next(h, mesh), mesh))
+//             << "  " << get(vpm, source(h, mesh)) << "\n";
+
+// }
+
+
+      // if I hit the source vertex v of h_curr, then h_next has v as source, thus we turn ccw around v in path
+      // Similarly, if I hit the target vertex v of h_curr, then  h_next has v as target, thus we turn cw around v in path
+      CGAL_assertion(!is_target || opposite(next(h_curr, mesh), mesh)==h_next);
+      CGAL_assertion(is_target || opposite(prev(h_curr, mesh), mesh)==h_next);
+
+      std::size_t curr_index = index+1;
+
+      //TODO check that curr_index does not go out of bound
+      std::vector<halfedge_descriptor> new_hedges;
+      if (is_target)
+      {
+        while (target(path[curr_index], mesh) == new_vertex) ++curr_index;
+        halfedge_descriptor h_loop=next(h_curr, mesh);
+        CGAL_assertion(face(path[index-1], mesh)==face(opposite(h_loop, mesh), mesh));
+        do {
+          new_hedges.push_back(h_loop);
+          h_loop=opposite(next(h_loop,mesh), mesh);
+        }
+        while(face(opposite(path[curr_index], mesh), mesh)!=face(h_loop, mesh));
+        new_hedges.push_back(h_loop);
+      }
+      else
+      {
+        while (source(path[curr_index], mesh) == new_vertex) ++curr_index;
+        halfedge_descriptor h_loop=opposite(next(opposite(h_curr, mesh), mesh), mesh); // skip the face before h_curr (as we won't remove it from path) 
+        CGAL_assertion(face(path[index-1], mesh)==face(opposite(h_loop, mesh), mesh));
+        do {
+          new_hedges.push_back(h_loop);
+          h_loop=opposite(next(h_loop,mesh), mesh);
+        }
+        while(face(opposite(path[curr_index], mesh), mesh)!=face(h_loop, mesh));
+        new_hedges.push_back(h_loop);
+      }
+
+      // replace the halfedges incident to the apex vertex with the opposite part of the ring
+      std::vector<halfedge_descriptor> new_path(path.begin(),path.begin()+index);
+      new_path.insert(new_path.end(), new_hedges.begin(), new_hedges.end());
+      new_path.insert(new_path.end(), path.begin()+curr_index, path.end());
+      path.swap(new_path);
+      
+
+// std::cout << "NEW\n";
+// for (auto h : path)
+// {
+//   std::cout << "4 " << get(vpm, source(h, mesh))
+//             << "  " << get(vpm, target(h, mesh))
+//             << "  " << get(vpm, target(next(h, mesh), mesh))
+//             << "  " << get(vpm, source(h, mesh)) << "\n";
+
+// }
+
+      portals=unfold_strip(path,src,tgt,vpm,mesh);
+      lerps=funnel(portals,index);
+
+      dump_path(path, lerps, src, tgt, mesh);
+    }
+
+  }
 };
 
 } // namespace internal
@@ -501,6 +619,7 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
       edge_descriptor;
 
+  //TODO replace with named parameter
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
   using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
@@ -563,11 +682,10 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   }
   std::reverse(initial_path.begin(), initial_path.end());
 
-//TODO replace with named parameter
   std::vector< std::array<typename K::Vector_2, 2>> portals=Impl::unfold_strip(initial_path,src,tgt,vpm,tmesh);
   int max_index=0;
   std::vector<FT> lerps=Impl::funnel(portals,max_index);
-
+  Impl::straighten_path(portals,lerps,initial_path,src,tgt,vpm,tmesh,max_index);
   CGAL_assertion(lerps.size()==initial_path.size());
 
   //TODO: tmp for testing

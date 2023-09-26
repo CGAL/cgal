@@ -28,7 +28,8 @@ int main(int argc, char** argv)
   std::size_t nb_faces = faces(mesh).size();
 
   // take two random faces and pick the centroid
-  CGAL::Random rnd = CGAL::get_default_random();
+  // CGAL::Random rnd = CGAL::get_default_random();
+  CGAL::Random rnd(1695720148);
   std::cout << "seed " << rnd.get_seed() << std::endl;
   Mesh::Face_index f1 = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));
   Mesh::Face_index f2 = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));
@@ -38,9 +39,12 @@ int main(int argc, char** argv)
   Face_location src(f1, CGAL::make_array(0.3,0.3,0.4));
   Face_location tgt(f2, CGAL::make_array(0.3,0.3,0.4));
 
+  std::cout << "src = " << PMP::construct_point(src, mesh) << "\n";
+  std::cout << "tgt = " << PMP::construct_point(tgt, mesh) << "\n";
+
   std::vector<Edge_location> edge_locations;
   CGAL::Polygon_mesh_processing::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
-
+  
   std::ofstream out("locally_shortest_path.polylines.txt");
   out << edge_locations.size()+2;
   out << " " << PMP::construct_point(src, mesh);
