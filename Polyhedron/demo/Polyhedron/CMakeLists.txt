@@ -264,6 +264,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp)
 
+  add_item(scene_edit_path_item Plugins/Bsurf/Scene_edit_path_item.cpp)
+
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
 
