@@ -251,6 +251,22 @@ struct Scene_edit_box_item_priv{
   double applyX(int id, double x, double dirx);
   double applyY(int id, double y, double diry);
   double applyZ(int id, double z, double dirz);
+  void reset_vertices()
+  {
+    Scene_item::Bbox bb = scene->bbox();
+    float eps = 1.e-6;
+    pool[0] = bb.xmin()-eps; pool[3] = bb.xmax()+eps;
+    pool[1] = bb.ymin()-eps; pool[4] = bb.ymax()+eps;
+    pool[2] = bb.zmin()-eps; pool[5] = bb.zmax()+eps;
+    double x=(bb.xmin()+bb.xmax())/2;
+    double y=(bb.ymin()+bb.ymax())/2;
+    double z=(bb.zmin()+bb.zmax())/2;
+    center_ = CGAL::qglviewer::Vec(x,y,z);
+    relative_center_ = CGAL::qglviewer::Vec(0,0,0);
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    frame->setPosition(center_+offset);
+    item->invalidateOpenGLBuffers();
+  }
   const Scene_interface* scene;
   Scene_edit_box_item* item;
   QPoint picked_pixel;
@@ -1306,4 +1322,9 @@ void Scene_edit_box_item::connectNewViewer(QObject *o)
   if(!viewer)
     return;
   viewer->setMouseTracking(true);
+}
+
+void Scene_edit_box_item::reset()
+{
+  d->reset_vertices();
 }

@@ -59,6 +59,7 @@ public Q_SLOTS:
     void highlight(CGAL::Three::Viewer_interface* viewer);
     void clearHL();
     void connectNewViewer(QObject* o);
+    void reset();
 protected:
     friend struct Scene_edit_box_item_priv;
     Scene_edit_box_item_priv* d;

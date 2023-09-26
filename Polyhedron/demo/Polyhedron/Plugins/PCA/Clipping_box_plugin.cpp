@@ -135,6 +135,12 @@ void Clipping_box_plugin::clipbox()
   });
   connect(dock_widget->tabWidget, &QTabWidget::currentChanged,
           this, &Clipping_box_plugin::tab_change);
+  connect(dock_widget->resetButton, &QPushButton::clicked,
+          this, [this]()
+  {
+    item->reset();
+    do_clip(true);
+  });
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
 
