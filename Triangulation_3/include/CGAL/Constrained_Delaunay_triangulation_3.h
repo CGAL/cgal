@@ -1838,6 +1838,7 @@ private:
                              std::back_inserter(facets),
                              std::back_inserter(cells),
                              Emptyset_iterator()));
+      break;
     } // dim 2
     default: CGAL_error();
     }
