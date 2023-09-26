@@ -3,7 +3,6 @@
 #include "Scene_triangulation_3_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_spheres_item.h"
-#include "Plugins/PCA/Scene_edit_box_item.h"
 
 #include <QVector>
 #include <QColor>
