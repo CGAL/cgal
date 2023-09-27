@@ -139,11 +139,9 @@ struct Locally_shortest_path_imp
   }
 
   static std::array<Vector_2, 3>
-  init_flat_triangles(face_descriptor f,
-                      const VertexPointMap &vpm, const TriangleMesh &mesh,
-                      const Face_location<TriangleMesh, FT> &src)
+  init_flat_triangle( const halfedge_descriptor& h,
+                      const VertexPointMap &vpm, const TriangleMesh &mesh)
   {
-    halfedge_descriptor h = halfedge(f, mesh);
     std::array<vertex_descriptor, 3> triangle_vertices = make_array(
         source(h, mesh), target(h, mesh), target(next(h, mesh), mesh));
 
@@ -160,7 +158,7 @@ struct Locally_shortest_path_imp
 
     return tr2d;
   }
-
+  
   static std::array<Vector_2, 2>
   init_source_triangle(halfedge_descriptor hopp,
                        const VertexPointMap &vpm,
@@ -260,42 +258,35 @@ struct Locally_shortest_path_imp
                       point_coords);
   }
 
-  // static
-  // std::array<Vector_2, 3>
-  // unfold_face(halfedge_descriptor h,
-  //             const VertexPointMap &vpm, const TriangleMesh &mesh,
-  //             const std::array<Vector_2, 3>& flat_tid)
-  // {
-  //   halfedge_descriptor h_opp = opposite(h_curr, mesh);
+  static
+  std::array<Vector_2, 3>
+  unfold_face(halfedge_descriptor h,
+              const VertexPointMap &vpm, const TriangleMesh &mesh,
+              const std::array<Vector_2, 3>& flat_tid)
+  {
+    halfedge_descriptor h_opp = opposite(h, mesh);
 
 
 
-  //   vertex_descriptor v = target(next(h_curr,mesh),mesh);
-  //   vertex_descriptor a = target(h_curr,mesh);
-  //   vertex_descriptor b = source(h_curr, mesh);
-  //   FT r0 = squared_distance(get(vpm,v), get(vpm,a));
-  //   FT r1 = squared_distance(get(vpm,v), get(vpm,b));
+    vertex_descriptor v = target(next(h_opp,mesh),mesh);
+    vertex_descriptor a = target(h_opp,mesh);//consistent with init_flat_triangle
+    vertex_descriptor b = source(h_opp, mesh);
+    FT r0 = squared_distance(get(vpm,v), get(vpm,a));
+    FT r1 = squared_distance(get(vpm,v), get(vpm,b));
 
-  //   Vector_2 v2 = intersect_circles(flat_tid[0], r0, flat_tid[1], r1);
+    Vector_2 v2 = intersect_circles(flat_tid[0], r0, flat_tid[1], r1);
 
 
-  //   std::array<Vector_2, 2> res;
-  //   if(next(h_curr, mesh) == h_next_opp)
-  //   {
-  //      res[0]=flat_tid[0];
-  //      //res[2]=flat_tid[1];
-  //      res[1]=v2;
-  //   }
-  //   else
-  //   {
-  //     CGAL_assertion(prev(h_curr, mesh) == h_next_opp);
-  //     res[0]=v2;
-  //     res[1]=flat_tid[1];
-  //     //res[2]=flat_tid[0];
-  //   }
+    std::array<Vector_2, 3> res;
 
-  //   return res;
-  // }
+    res[0]=flat_tid[0];
+    res[1]=flat_tid[1];
+    res[2]=v2;
+    
+
+    return res;
+  }
+
   static
   std::array<Vector_2, 2>
   unfold_face(halfedge_descriptor h_curr, halfedge_descriptor h_next,
@@ -688,6 +679,27 @@ struct Locally_shortest_path_imp
 #endif
 
   }
+  //:::::::::::::::::::::Straightest Geodesic::::::::::::::::::::::::::::
+  std::vector<Vector_3> get_3D_basis_at_point(const Face_location<TriangleMesh, FT>& p,
+                                        const TriangleMesh& mesh,
+                                        const VertexPointMap &vpm)
+  {
+    halfedge_descriptor h=halfedge(p.first,mesh);
+
+    Point_3 p0=get(vpm, source(h, mesh));
+    Point_3 p1=get(vpm, target(h, mesh));
+    Point_3 p2= get(vpm,target(next(h, mesh), mesh));
+
+    Vector_3 e=p1-p0;
+    e/=sqrt(e.squared_length());
+    Vector_3 n= triangle_normal(p0,p1,p2);
+    Vector_3 e1= cross_product(n,e);
+
+    return {e,e1,n};
+
+
+  }
+  
 
 // TODO:  starting from here, we can move that to a de Casteljau Impl struct
 
@@ -893,20 +905,32 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
       TriangleMesh, CGAL::dynamic_edge_property_t<FT>>::const_type weight_map =
       get(CGAL::dynamic_edge_property_t<FT>(), tmesh);
 
+ auto compute_dual_weights=[&tmesh,&vpm](const halfedge_descriptor& h)
+ {
+      auto flat_tid= Impl::init_flat_triangle(h,vpm,tmesh);
+      auto flat_nei= Impl::unfold_face(h,vpm,tmesh,flat_tid);
+      Vector_2 c0=0.33*(flat_tid[0]+flat_tid[1]+flat_tid[2]);
+      Vector_2 c1=0.33*(flat_nei[0]+flat_nei[1]+flat_nei[2]);
 
+      return sqrt((c1 - c0).squared_length());
+ };
 //TODO: handle boundary edges
   Dual dual(tmesh);
 
   // TODO: fill the weight map using something better than euclidean distance
   // TODO: the edge map could be precomputed if we know that several queries will be done
+  // TODO: construct the dual graph once at the beginning and then use Dijkstra to 
+  //       to navigate it at every query
   for (edge_descriptor ed : edges(tmesh))
   {
     halfedge_descriptor h=halfedge(ed, tmesh), hopp=opposite(h, tmesh);
-    put(weight_map, ed,
-        sqrt(squared_distance(
-              centroid(get(vpm, source(h, tmesh)), get(vpm, target(h, tmesh)), get(vpm, target(next(h, tmesh), tmesh))),
-              centroid(get(vpm, source(hopp, tmesh)), get(vpm, target(hopp, tmesh)), get(vpm, target(next(hopp, tmesh), tmesh)))
-              )));
+    
+     put(weight_map, ed, compute_dual_weights(h));
+    // put(weight_map, ed,
+    //     sqrt(squared_distance(
+    //           centroid(get(vpm, source(h, tmesh)), get(vpm, target(h, tmesh)), get(vpm, target(next(h, tmesh), tmesh))),
+    //           centroid(get(vpm, source(hopp, tmesh)), get(vpm, target(hopp, tmesh)), get(vpm, target(next(hopp, tmesh), tmesh)))
+    //           )));
   }
 
   // TODO try stopping dijkstra as soon tgt is out of the queue.
