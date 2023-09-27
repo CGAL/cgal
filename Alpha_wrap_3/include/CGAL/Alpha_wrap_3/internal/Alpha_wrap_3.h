@@ -290,7 +290,7 @@ public:
       extract_surface(output_mesh, ovpm, true /*tolerate non manifoldness*/);
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-      dump_triangulation_faces("intermediate_dt3.off", false /*only_boundary_faces*/);
+      dump_triangulation_faces("intermediate_tr.off", false /*only_boundary_faces*/);
       IO::write_polygon_mesh("intermediate.off", output_mesh,
                              CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
 #endif
@@ -350,7 +350,7 @@ public:
 
  #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
     IO::write_polygon_mesh("final.off", output_mesh, CGAL::parameters::stream_precision(17));
-    dump_triangulation_faces("final_dt3.off", false /*only_boundary_faces*/);
+    dump_triangulation_faces("final_tr.off", false /*only_boundary_faces*/);
  #endif
 #endif
 
@@ -643,7 +643,9 @@ private:
   // and we fill the queue with the new parameters.
   bool initialize_from_existing_triangulation()
   {
-    std::cout << "restart from a DT of " << m_tr.number_of_cells() << " cells" << std::endl;
+#ifdef CGAL_AW3_DEBUG_INITIALIZATION
+    std::cout << "Restart from a DT of " << m_tr.number_of_cells() << " cells" << std::endl;
+#endif
 
     Real_timer t;
     t.start();
@@ -1050,7 +1052,6 @@ private:
 public:
   // @speed some decent time may be spent constructing Facet (pairs) for no reason as it's always
   // just to grab the .first and .second as soon as it's constructed, and not due to API requirements
-  // e.g. from DT3
   Facet_queue_status facet_status(const Facet& f) const
   {
     CGAL_precondition(!m_tr.is_infinite(f));

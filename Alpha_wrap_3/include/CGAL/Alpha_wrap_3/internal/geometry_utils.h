@@ -40,16 +40,16 @@ struct Orientation_of_circumcenter
   }
 };
 
-template <typename Dt>
+template <typename Tr>
 bool
-less_squared_radius_of_min_empty_sphere(typename Dt::Geom_traits::FT sq_alpha,
-                                        const typename Dt::Facet& fh,
-                                        const Dt& dt)
+less_squared_radius_of_min_empty_sphere(typename Tr::Geom_traits::FT sq_alpha,
+                                        const typename Tr::Facet& fh,
+                                        const Tr& tr)
 {
-  using Cell_handle = typename Dt::Cell_handle;
-  using Point = typename Dt::Point;
+  using Cell_handle = typename Tr::Cell_handle;
+  using Point = typename Tr::Point;
 
-  using CK = typename Dt::Geom_traits;
+  using CK = typename Tr::Geom_traits;
   using Exact_kernel = typename Exact_kernel_selector<CK>::Exact_kernel;
   using Approximate_kernel = Simple_cartesian<Interval_nt_advanced>;
   using C2A = Cartesian_converter<CK, Approximate_kernel>;
@@ -65,17 +65,17 @@ less_squared_radius_of_min_empty_sphere(typename Dt::Geom_traits::FT sq_alpha,
   const int ic = fh.second;
   const Cell_handle n = c->neighbor(ic);
 
-  const Point& p1 = dt.point(c, Dt::vertex_triple_index(ic,0));
-  const Point& p2 = dt.point(c, Dt::vertex_triple_index(ic,1));
-  const Point& p3 = dt.point(c, Dt::vertex_triple_index(ic,2));
+  const Point& p1 = tr.point(c, Tr::vertex_triple_index(ic,0));
+  const Point& p2 = tr.point(c, Tr::vertex_triple_index(ic,1));
+  const Point& p3 = tr.point(c, Tr::vertex_triple_index(ic,2));
 
   // This is not actually possible in the context of alpha wrapping, but keeping it for genericity
   // and because it does not cost anything.
-  if(dt.is_infinite(n))
+  if(tr.is_infinite(n))
   {
     Orientation ori = orientation_of_circumcenter(p1, p2, p3,
-                                                  dt.point(c, 0), dt.point(c, 1),
-                                                  dt.point(c, 2), dt.point(c, 3));
+                                                  tr.point(c, 0), tr.point(c, 1),
+                                                  tr.point(c, 2), tr.point(c, 3));
 
     if(ori == POSITIVE)
     {
@@ -84,18 +84,18 @@ less_squared_radius_of_min_empty_sphere(typename Dt::Geom_traits::FT sq_alpha,
     }
     else
     {
-      Comparison_result cr = compare_squared_radius(dt.point(c, 0), dt.point(c, 1),
-                                                    dt.point(c, 2), dt.point(c, 3),
+      Comparison_result cr = compare_squared_radius(tr.point(c, 0), tr.point(c, 1),
+                                                    tr.point(c, 2), tr.point(c, 3),
                                                     sq_alpha);
       return cr == LARGER;
     }
   }
 
-  if(dt.is_infinite(c))
+  if(tr.is_infinite(c))
   {
     Orientation ori = orientation_of_circumcenter(p1, p2, p3,
-                                                  dt.point(n, 0), dt.point(n, 1),
-                                                  dt.point(n, 2), dt.point(n, 3));
+                                                  tr.point(n, 0), tr.point(n, 1),
+                                                  tr.point(n, 2), tr.point(n, 3));
 
     if(ori == NEGATIVE)
     {
@@ -104,8 +104,8 @@ less_squared_radius_of_min_empty_sphere(typename Dt::Geom_traits::FT sq_alpha,
     }
     else
     {
-      Comparison_result cr = compare_squared_radius(dt.point(n, 0), dt.point(n, 1),
-                                                    dt.point(n, 2), dt.point(n, 3),
+      Comparison_result cr = compare_squared_radius(tr.point(n, 0), tr.point(n, 1),
+                                                    tr.point(n, 2), tr.point(n, 3),
                                                     sq_alpha);
       return cr == LARGER;
     }
@@ -113,40 +113,40 @@ less_squared_radius_of_min_empty_sphere(typename Dt::Geom_traits::FT sq_alpha,
 
   // both c and n are finite
   if(orientation_of_circumcenter(p1, p2, p3,
-                                 dt.point(c, 0), dt.point(c, 1), dt.point(c, 2), dt.point(c, 3)) !=
+                                 tr.point(c, 0), tr.point(c, 1), tr.point(c, 2), tr.point(c, 3)) !=
      orientation_of_circumcenter(p1, p2, p3,
-                                 dt.point(n, 0), dt.point(n, 1), dt.point(n, 2), dt.point(n, 3)))
+                                 tr.point(n, 0), tr.point(n, 1), tr.point(n, 2), tr.point(n, 3)))
   {
     Comparison_result cr = compare_squared_radius(p1, p2, p3, sq_alpha);
 #ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
     std::cout << "dual crosses the face; CR: "
-              << typename Dt::Geom_traits().compute_squared_radius_3_object()(p1, p2, p3)
+              << typename Tr::Geom_traits().compute_squared_radius_3_object()(p1, p2, p3)
               << " sq alpha " << sq_alpha << std::endl;
 #endif
     return cr == LARGER;
   }
   else
   {
-    Comparison_result cr = compare_squared_radius(dt.point(c, 0), dt.point(c, 1),
-                                                  dt.point(c, 2), dt.point(c, 3),
+    Comparison_result cr = compare_squared_radius(tr.point(c, 0), tr.point(c, 1),
+                                                  tr.point(c, 2), tr.point(c, 3),
                                                   sq_alpha);
 #ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
     std::cout << "dual does not cross the face; CR(c): "
-              << typename Dt::Geom_traits().compute_squared_radius_3_object()(dt.point(c, 0), dt.point(c, 1),
-                                                                              dt.point(c, 2), dt.point(c, 3))
+              << typename Tr::Geom_traits().compute_squared_radius_3_object()(tr.point(c, 0), tr.point(c, 1),
+                                                                              tr.point(c, 2), tr.point(c, 3))
               << " sq alpha " << sq_alpha << std::endl;
 #endif
 
     if(cr != LARGER)
       return false;
 
-    cr = compare_squared_radius(dt.point(n, 0), dt.point(n, 1),
-                                dt.point(n, 2), dt.point(n, 3),
+    cr = compare_squared_radius(tr.point(n, 0), tr.point(n, 1),
+                                tr.point(n, 2), tr.point(n, 3),
                                 sq_alpha);
 #ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
     std::cout << "dual does not cross the face; CR(n): "
-              << typename Dt::Geom_traits().compute_squared_radius_3_object()(dt.point(n, 0), dt.point(n, 1),
-                                                                              dt.point(n, 2), dt.point(n, 3))
+              << typename Tr::Geom_traits().compute_squared_radius_3_object()(tr.point(n, 0), tr.point(n, 1),
+                                                                              tr.point(n, 2), tr.point(n, 3))
               << " sq alpha " << sq_alpha << std::endl;
 #endif
 

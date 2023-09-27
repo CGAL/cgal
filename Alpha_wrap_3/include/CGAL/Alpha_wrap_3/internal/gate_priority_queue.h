@@ -28,11 +28,11 @@ namespace Alpha_wraps_3 {
 namespace internal {
 
 // Represents an alpha-traversable facet in the mutable priority queue
-template <typename DT3>
+template <typename Tr>
 class Gate
 {
-  using Facet = typename DT3::Facet;
-  using FT = typename DT3::Geom_traits::FT;
+  using Facet = typename Tr::Facet;
+  using FT = typename Tr::Geom_traits::FT;
 
 private:
   Facet m_facet;
@@ -65,24 +65,24 @@ public:
 
 struct Less_gate
 {
-  template <typename DT3>
-  bool operator()(const Gate<DT3>& a, const Gate<DT3>& b) const
+  template <typename Tr>
+  bool operator()(const Gate<Tr>& a, const Gate<Tr>& b) const
   {
     return a.priority() > b.priority();
   }
 };
 
-template <typename DT3>
+template <typename Tr>
 struct Gate_ID_PM
 {
-  using key_type = Gate<DT3>;
+  using key_type = Gate<Tr>;
   using value_type = std::size_t;
   using reference = std::size_t;
   using category = boost::readable_property_map_tag;
 
   inline friend value_type get(Gate_ID_PM, const key_type& k)
   {
-    using Facet = typename DT3::Facet;
+    using Facet = typename Tr::Facet;
 
     const Facet& f = k.facet();
     return (4 * f.first->time_stamp() + f.second);
