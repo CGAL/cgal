@@ -53,7 +53,9 @@ int main(int argc, char** argv)
   // Mesh::Face_index f1(  3265 );
   // Mesh::Face_index f2( 3014 );
 
-
+  // TODO: add in testsuite: special case
+  // Mesh::Face_index f1(  3543 );
+  // Mesh::Face_index f2( 4356 );
 
   Face_location src(f1, CGAL::make_array(0.3,0.3,0.4));
   Face_location tgt(f2, CGAL::make_array(0.3,0.3,0.4));
