@@ -1418,7 +1418,7 @@ private:
                           squared_distance(m_dt.point(c, 0), m_dt.point(c, 2)),
                           squared_distance(m_dt.point(c, 0), m_dt.point(c, 3)),
                           squared_distance(m_dt.point(c, 1), m_dt.point(c, 2)),
-                          squared_distance(m_dt.point(c, 3), m_dt.point(c, 3)),
+                          squared_distance(m_dt.point(c, 1), m_dt.point(c, 3)),
                           squared_distance(m_dt.point(c, 2), m_dt.point(c, 3)) });
     };
 
