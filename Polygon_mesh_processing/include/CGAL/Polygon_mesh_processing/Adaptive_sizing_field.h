@@ -40,7 +40,7 @@ namespace Polygon_mesh_processing
 *
 * \cgalModels{PMPSizingField}
 *
-* \sa `isotropic_remeshing`
+* \sa `isotropic_remeshing()`
 * \sa `Uniform_sizing_field`
 *
 * @tparam PolygonMesh model of `MutableFaceGraph` that
