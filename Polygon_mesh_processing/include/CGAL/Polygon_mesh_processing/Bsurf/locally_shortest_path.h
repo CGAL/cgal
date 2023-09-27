@@ -26,10 +26,20 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
+template <class FT, class TriangleMesh, class EdgeLocationRange>
+void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
+                           const Face_location<TriangleMesh, FT> &tgt,
+                           const TriangleMesh &tmesh,
+                           EdgeLocationRange &edge_locations);
+
 template <class TriangleMesh, class FT>
 using Edge_location =
     std::pair<typename boost::graph_traits<TriangleMesh>::edge_descriptor,
               std::array<FT, 2>>;
+
+template <class TriangleMesh, class FT>
+using Bezier_segment = std::array<Face_location<TriangleMesh, FT>, 4>;
+
 
 template <typename FT, typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
@@ -623,6 +633,173 @@ static
 #endif
 
   }
+
+// TODO:  starting from here, we can move that to a de Casteljau Impl struct
+
+  template <class EdgeLocationRange>
+  static
+  std::vector<Point_3>
+  get_positions(const EdgeLocationRange& edge_locations,
+                const TriangleMesh& mesh,
+                const Face_location<TriangleMesh, FT>& src,
+                const Face_location<TriangleMesh, FT>& tgt)
+  {
+    std::vector<Point_3> result;
+    result.reserve(edge_locations.size()+2);
+    result.push_back(construct_point(src,mesh));
+    for(auto& e: edge_locations)
+        result.push_back(construct_point(e,mesh));
+
+    result.push_back(construct_point(tgt,mesh));
+//TODO: we must guarantee that result is sorted and unique (rounding issue?)
+    return result;
+  }
+
+  template <class EdgeLocationRange>
+  static
+  std::vector<FT>
+  path_parameters(const EdgeLocationRange& edge_locations,
+                  const TriangleMesh& mesh,
+                  const Face_location<TriangleMesh, FT>& src,
+                  const Face_location<TriangleMesh, FT>& tgt)
+  {
+    std::vector<Point_3> pos=get_positions(edge_locations,mesh,src,tgt);
+    FT L=0.;
+    std::vector<FT> result(pos.size());
+    for(std::size_t i=0;i<pos.size();++i)
+    {
+      if(i) L+=sqrt(squared_distance(pos[i],pos[i-1]));
+      result[i]=L;
+    }
+
+    for(auto& t:result) t/=L;
+
+    return result;
+  }
+
+  template <class EdgeLocationRange>
+  static
+  Face_location<TriangleMesh, FT>
+  eval_point_on_geodesic(const EdgeLocationRange& edge_locations,
+                         const TriangleMesh& mesh,
+                         const Face_location<TriangleMesh, FT>& src,
+                         const Face_location<TriangleMesh, FT>& tgt,
+                         const std::vector<FT>& parameters,/// edge length parameterization of the path from src to tgt through edge_locations
+                         const FT& t)
+  {
+    if (t==0) return src;
+    if (t==1) return tgt;
+
+    if(src.first==tgt.first)
+    {
+      std::array<FT,3> bary;
+      bary[0]=(1-t)*src.second[0]+t*tgt.second[0];
+      bary[1]=(1-t)*src.second[1]+t*tgt.second[1];
+      bary[2]=(1-t)*src.second[2]+t*tgt.second[2];
+      return {src.first,bary};
+    }
+
+    std::size_t i = 0;
+    for (; i < parameters.size() - 1; i++)
+    {
+      if (parameters[i + 1] >= t) break;
+    }
+    FT t_low = parameters[i];
+    FT t_high = parameters[i + 1];
+    CGAL_assertion(t_high!=t_low);
+    FT alpha = (t - t_low) / (t_high - t_low);
+    std::array<FT,3> bary_low;
+    std::array<FT,3> bary_high;
+
+    face_descriptor curr_tid = i==0?src.first:face(halfedge(edge_locations[i].first,mesh),mesh);
+    halfedge_descriptor h_face = halfedge(curr_tid, mesh);
+    auto edge_barycentric_coordinate =
+      [&mesh, h_face](halfedge_descriptor h_edge,
+                     const std::array<FT,2>& bary_edge)
+    {
+      std::array<FT,3> bary_edge_in_face;
+      if (h_face!=h_edge)
+      {
+        if (h_face==next(h_edge, mesh))
+        {
+          bary_edge_in_face[0]=bary_edge[1];
+          bary_edge_in_face[1]=0;
+          bary_edge_in_face[2]=bary_edge[0];
+        }
+        else
+        {
+          bary_edge_in_face[0]=0;
+          bary_edge_in_face[1]=bary_edge[0];
+          bary_edge_in_face[2]=bary_edge[1];
+        }
+      }
+      else
+      {
+        bary_edge_in_face[0]=bary_edge[0];
+        bary_edge_in_face[1]=bary_edge[1];
+        bary_edge_in_face[2]=0;
+      }
+
+      return bary_edge_in_face;
+    };
+
+    if(i==0)
+      bary_low=src.second;
+    else
+    {
+      halfedge_descriptor h_low = halfedge(edge_locations[i].first, mesh);
+      bary_low = edge_barycentric_coordinate(h_low, edge_locations[i].second);
+    }
+
+    if(i==parameters.size()-2)
+      bary_high=tgt.second;
+    else
+    {
+      halfedge_descriptor h_high = opposite(halfedge(edge_locations[i+1].first, mesh), mesh);
+      CGAL_assertion(face(h_high,mesh)==curr_tid);
+      std::array<FT,2> edge_bary_high=edge_locations[i+1].second;
+      std::swap(edge_bary_high[0],edge_bary_high[1]);
+      bary_high = edge_barycentric_coordinate(h_high, edge_bary_high);
+    }
+
+    std::array<FT,3> bary;
+    bary[0]=(1-alpha)*bary_low[0]+alpha*bary_high[0];
+    bary[1]=(1-alpha)*bary_low[1]+alpha*bary_high[1];
+    bary[2]=(1-alpha)*bary_low[2]+alpha*bary_high[2];
+
+    return {curr_tid,bary};
+  }
+
+  static
+  Face_location<TriangleMesh, FT>
+  geodesic_lerp(const TriangleMesh &mesh,
+                const Face_location<TriangleMesh, FT>& src,
+                const Face_location<TriangleMesh, FT>& tgt,const FT& t)
+  {
+    std::vector<Edge_location<TriangleMesh, FT>> edge_locations;
+    locally_shortest_path<FT>(src,tgt,mesh, edge_locations);
+    std::vector<FT> parameters=path_parameters(edge_locations,mesh,src,tgt);
+    Face_location<TriangleMesh, FT> point =
+      eval_point_on_geodesic(edge_locations,mesh,src,tgt,parameters,t);
+    return point;
+  }
+
+
+  static
+  std::pair<Bezier_segment<TriangleMesh, FT>,Bezier_segment<TriangleMesh,FT>>
+  subdivide_bezier_polygon(const TriangleMesh& mesh,
+                           const Bezier_segment<TriangleMesh,FT>& polygon,
+                           const FT& t)
+  {
+     Face_location<TriangleMesh, FT> Q0 = geodesic_lerp(mesh, polygon[0], polygon[1], t);
+     Face_location<TriangleMesh, FT> Q1 = geodesic_lerp(mesh, polygon[1], polygon[2], t);
+     Face_location<TriangleMesh, FT> Q2 = geodesic_lerp(mesh, polygon[2], polygon[3], t);
+     Face_location<TriangleMesh, FT> R0 = geodesic_lerp(mesh, Q0, Q1, t);
+     Face_location<TriangleMesh, FT> R1 = geodesic_lerp(mesh, Q1, Q2, t);
+     Face_location<TriangleMesh, FT> S  = geodesic_lerp(mesh, R0, R1, t);
+
+    return {{polygon[0], Q0, R0, S}, {S, R1, Q2, polygon[3]}};
+  }
 };
 
 } // namespace internal
@@ -715,6 +892,38 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   {
     edge_locations.emplace_back(initial_path[i], make_array(lerps[i], 1.-lerps[i]));
   }
+}
+
+template <class TriangleMesh, class FT>
+std::vector<Face_location<TriangleMesh, FT>>
+recursive_de_Casteljau(const TriangleMesh &mesh,
+                       const Bezier_segment<TriangleMesh, FT>& control_points,
+                       const int num_subdiv)
+{
+  //TODO replace with named parameter
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
+  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
+
+  std::vector<Bezier_segment<TriangleMesh, FT>> segments(1,control_points);
+  std::vector<Bezier_segment<TriangleMesh, FT>> result;
+  for (auto subdivision = 0; subdivision < num_subdiv; subdivision++)
+  {
+    result.clear();
+    result.reserve(segments.size() * 2);
+    for (std::size_t i = 0; i < segments.size(); ++i)
+    {
+      auto [split0, split1] = Impl::subdivide_bezier_polygon(mesh, segments[i], 0.5);
+      result.push_back(split0);
+      result.push_back(split1);
+    }
+    std::swap(segments, result);
+  }
+
+  // nasty trick to build the vector from a pair of iterators
+  // using the fact that data in array and vector are contiguous
+  return {(Face_location<TriangleMesh, FT>*)segments.data(),
+          (Face_location<TriangleMesh, FT>*)segments.data() + segments.size() * 4};
 }
 
 } // namespace Polygon_mesh_processing
