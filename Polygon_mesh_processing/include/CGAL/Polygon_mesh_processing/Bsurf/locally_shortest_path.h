@@ -100,7 +100,7 @@ struct Locally_shortest_path_imp
   using Vector_3 = typename K::Vector_3;
   using FT = typename K::FT;
 
-#ifdef CGAL_DEBUG_BSURF
+// #ifdef CGAL_DEBUG_BSURF
   static
   void dump_path(const std::vector<halfedge_descriptor>& path,
                  const std::vector<FT>& lerps,
@@ -109,13 +109,14 @@ struct Locally_shortest_path_imp
                  const TriangleMesh& mesh)
   {
     static int i = -1;
+    std::cout << "dump current path in path_"+std::to_string(i)+".polylines.txt\n";
     std::ofstream out("path_"+std::to_string(++i)+".polylines.txt");
     out << path.size()+2 << " " << construct_point(src, mesh);
     for(std::size_t i=0; i<path.size(); ++i)
       out << " " << construct_point(Edge_location<TriangleMesh, FT>(path[i], make_array(lerps[i], 1.-lerps[i])), mesh);
     out << " " << construct_point(tgt, mesh) << "\n";
   }
-#endif
+// #endif
 
   // TODO: recode using CGAL code?
   static
@@ -401,6 +402,12 @@ static
         max_angle = angle;
       }
     }
+
+std::cout << "funnels ("<< max_index << ")";
+for (auto f : path)
+  std::cout << " " << f.pos << " |";
+std::cout << "\n";
+
     return max_index;
   }
 
@@ -425,7 +432,8 @@ static
       return determinant(b - a, c - a);
     };
 
-    for (std::size_t i = 0; i < portals.size(); ++i) {
+    for (std::size_t i = 0; i < portals.size(); ++i) 
+    {
       auto left = portals[i][0], right = portals[i][1];
       // Update right vertex.
       if (area(apex, right_bound, right) <= 0) {
@@ -493,15 +501,29 @@ static
       for (auto k = points[i].face; k < points[i + 1].face; ++k) {
         auto portal = portals[k];
         //      assert(cross(b - a, portal.second - portal.first) > 0);
+
+std::cout << "i=" << i << "\n";
+std::cout << "a=" << a << " b=" << b << " portal[0]=" << portal[0] << " portal[1]=" << portal[1] << "\n";
+
         FT s = intersect_segments(a, b, portal[0], portal[1]);
+
+std::cout << "s=" << s << "\n";
+
         lerps.push_back(std::clamp(s, 0.0, 1.0));
       }
     }
 
     auto index = 1;
-    for (std::size_t i = 0; i < portals.size(); ++i) {
+    std::cout << "setting funnel_point indices\n";
+    for (std::size_t i = 0; i < portals.size(); ++i) 
+    {
+      std::cout << "  i=" << i << " index = " << index << "\n";
+      std::cout << "  portals[i][0]=" << portals[i][0] << " portals[i][1]=" << portals[i][1] << "\n";
+      std::cout << "  points[index].pos = " <<points[index].pos << "\n";
       if ((portals[i][0] == points[index].pos) ||
-          (portals[i][1] == points[index].pos)) {
+          (portals[i][1] == points[index].pos)) 
+      {
+        std::cout << "  setting point["<<index<<"].face="<< i << "\n"; 
         points[index].face = i;
         index += 1;
       }
@@ -518,17 +540,20 @@ static
                        const Face_location<TriangleMesh, FT>& tgt,
                        const VertexPointMap &vpm, const TriangleMesh &mesh, std::size_t index)
   {
-#ifdef CGAL_DEBUG_BSURF
+// #ifdef CGAL_DEBUG_BSURF
     dump_path(path, lerps, src, tgt, mesh);
-#endif
+// #endif
+
     vertex_descriptor vertex=boost::graph_traits<TriangleMesh>::null_vertex();
 
     // TODO: use a while loop breaking when no apex vertices not already visited are available
     for (std::size_t i = 0; i < portals.size() * 2 && index != std::size_t(-1); i++)
     {
-#ifdef CGAL_DEBUG_BSURF
+// #ifdef CGAL_DEBUG_BSURF
       std::cout << "Improving path " << path.size() << " hedges\n";
-#endif
+      std::cout << "src = " << construct_point(src, mesh) << "\n";
+      std::cout << "tgt = " << construct_point(tgt, mesh) << "\n";
+// #endif
 
       vertex_descriptor new_vertex=boost::graph_traits<TriangleMesh>::null_vertex();
       halfedge_descriptor h_curr       = path[index];
@@ -543,7 +568,7 @@ static
       if (new_vertex == vertex) break;
       vertex = new_vertex;
 
-#ifdef CGAL_DEBUG_BSURF
+// #ifdef CGAL_DEBUG_BSURF
       std::cout << "  Current strip with Apex: " << get(vpm, new_vertex) <<  "\n";
       for (auto h : path)
       {
@@ -553,10 +578,14 @@ static
                   << "  " << get(vpm, source(h, mesh)) << std::endl;
 
       }
-#endif
+// #endif
 
       // if I hit the source vertex v of h_curr, then h_next has v as source, thus we turn ccw around v in path
       // Similarly, if I hit the target vertex v of h_curr, then  h_next has v as target, thus we turn cw around v in path
+
+      if ( !(!is_target || opposite(next(h_curr, mesh), mesh)==h_next) )
+        std::cout <<  edge(h_curr, mesh) << " |  " << edge(opposite(next(h_curr, mesh), mesh), mesh) << " vs " << edge(h_next, mesh) << "\n";
+
       CGAL_assertion(!is_target || opposite(next(h_curr, mesh), mesh)==h_next);
       CGAL_assertion(is_target || opposite(prev(h_curr, mesh), mesh)==h_next);
 
@@ -565,16 +594,19 @@ static
       if (is_target)
       {
         face_descriptor target_face;
-        if(index+1==path.size()-1)
+
+        while (target(path[curr_index], mesh) == new_vertex)
         {
-          target_face=tgt.first;
-          curr_index=index+2;
+          if(curr_index==path.size()-1)
+          {
+            target_face=tgt.first;
+            curr_index=path.size();
+            break;
+          }
+          ++curr_index;
         }
-        else
-        {
-          while (target(path[curr_index], mesh) == new_vertex) ++curr_index;
+        if (curr_index != path.size())
           target_face = face(opposite(path[curr_index], mesh), mesh);
-        }
 
         halfedge_descriptor h_loop=opposite(prev(opposite(h_curr, mesh), mesh), mesh);
         do {
@@ -587,16 +619,22 @@ static
       else
       {
         face_descriptor target_face;
-        if (index+1==path.size()-1)
+
+std::cout << "index = " << index << "\n";
+std::cout << "path.size() = " << path.size() << "\n";
+
+        while (source(path[curr_index], mesh) == new_vertex)
         {
-          target_face=tgt.first;
-          curr_index=index+2;
+          if(curr_index==path.size()-1)
+          {
+            target_face=tgt.first;
+            curr_index=path.size();
+            break;
+          }
+          ++curr_index;
         }
-        else
-        {
-          while (source(path[curr_index], mesh) == new_vertex) ++curr_index;
+        if (curr_index != path.size())
           target_face=face(opposite(path[curr_index], mesh), mesh);
-        }
 
         halfedge_descriptor h_loop=opposite(next(opposite(h_curr, mesh), mesh), mesh); // skip the face before h_curr (as we won't remove it from path)
         do {
@@ -615,9 +653,9 @@ static
 
       portals=unfold_strip(path,src,tgt,vpm,mesh);
       lerps=funnel(portals,index);
-#ifdef CGAL_DEBUG_BSURF
+// #ifdef CGAL_DEBUG_BSURF
       dump_path(path, lerps, src, tgt, mesh);
-#endif
+// #endif
     }
 
 #ifdef CGAL_DEBUG_BSURF
@@ -711,7 +749,9 @@ static
     std::array<FT,3> bary_low;
     std::array<FT,3> bary_high;
 
-    face_descriptor curr_tid = i==0?src.first:face(halfedge(edge_locations[i].first,mesh),mesh);
+    // warning there is an offset of the index: parameters contains one extra element (src) at 0
+    // while edge_locations does not
+    face_descriptor curr_tid = i==0?src.first:face(halfedge(edge_locations[i-1].first,mesh),mesh);
     halfedge_descriptor h_face = halfedge(curr_tid, mesh);
     auto edge_barycentric_coordinate =
       [&mesh, h_face](halfedge_descriptor h_edge,
@@ -747,17 +787,17 @@ static
       bary_low=src.second;
     else
     {
-      halfedge_descriptor h_low = halfedge(edge_locations[i].first, mesh);
-      bary_low = edge_barycentric_coordinate(h_low, edge_locations[i].second);
+      halfedge_descriptor h_low = halfedge(edge_locations[i-1].first, mesh);
+      bary_low = edge_barycentric_coordinate(h_low, edge_locations[i-1].second);
     }
 
     if(i==parameters.size()-2)
       bary_high=tgt.second;
     else
     {
-      halfedge_descriptor h_high = opposite(halfedge(edge_locations[i+1].first, mesh), mesh);
+      halfedge_descriptor h_high = opposite(halfedge(edge_locations[i].first, mesh), mesh);
       CGAL_assertion(face(h_high,mesh)==curr_tid);
-      std::array<FT,2> edge_bary_high=edge_locations[i+1].second;
+      std::array<FT,2> edge_bary_high=edge_locations[i].second;
       std::swap(edge_bary_high[0],edge_bary_high[1]);
       bary_high = edge_barycentric_coordinate(h_high, edge_bary_high);
     }
@@ -881,6 +921,8 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   std::reverse(initial_path.begin(), initial_path.end());
 
   std::vector< std::array<typename K::Vector_2, 2>> portals=Impl::unfold_strip(initial_path,src,tgt,vpm,tmesh);
+  std::cout << "portals.size() " << portals.size() << "\n";
+  std::cout << "initial_path.size() " << initial_path.size() << "\n";
   std::size_t max_index=0;
   std::vector<FT> lerps=Impl::funnel(portals,max_index);
   Impl::straighten_path(portals,lerps,initial_path,src,tgt,vpm,tmesh,max_index);
