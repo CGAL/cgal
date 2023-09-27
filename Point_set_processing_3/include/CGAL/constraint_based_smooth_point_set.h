@@ -417,8 +417,8 @@ constraint_based_smooth_point_set(
   FT neighbor_radius = 0;
   FT normal_threshold = 0.9 * (180/M_PI);
   FT damping_factor = 3;
-  FT eigenvalue_threshold_nvt = 0.5;
-  FT eigenvalue_threshold_covm = .25;
+  FT eigenvalue_threshold_nvt = 0.7;
+  FT eigenvalue_threshold_covm = .2;
   FT update_threshold = 0;
 
   bool do_point_smoothing = true;

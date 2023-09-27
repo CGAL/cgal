@@ -89,7 +89,7 @@ namespace internal {
     {
       Point p = get<0>(point);
       
-      cum_point_diff += std::sqrt(p[0]*p[0] + p[1]*p[1] + p[2]*p[2]) - 1; 
+      cum_point_diff += std::abs(p[0]*p[0] + p[1]*p[1] + p[2]*p[2] - 1); 
     }
 
     return cum_point_diff / points.size();
@@ -113,7 +113,7 @@ int main(int argc, char*argv[])
   }
 
   // Algorithm parameters
-  const int iter_number = 3;
+  const int iter_number = 5;
 
   // saved parameters for sphere
   // FT neighbor_radius = 0;
