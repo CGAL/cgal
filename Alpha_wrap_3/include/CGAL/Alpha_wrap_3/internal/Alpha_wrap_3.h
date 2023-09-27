@@ -1173,15 +1173,11 @@ private:
       return false;
     }
 
-    if(resuming)
-    {
-      if(offset != m_offset)
-      {
-#ifdef CGAL_AW3_DEBUG
-        std::cerr << "Warning: resuming with a different offset!" << std::endl;
-#endif
-      }
-    }
+    if(resuming && alpha > m_alpha)
+      std::cerr << "Warning: resuming with an alpha greater than last iteration!" << std::endl;
+
+    if(resuming && offset != m_offset)
+      std::cerr << "Warning: resuming with a different offset!" << std::endl;
 
     m_alpha = FT(alpha);
     m_sq_alpha = square(m_alpha);
