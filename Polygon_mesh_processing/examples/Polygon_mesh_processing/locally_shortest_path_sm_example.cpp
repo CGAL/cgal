@@ -31,6 +31,7 @@ int main(int argc, char** argv)
   CGAL::Random rnd = CGAL::get_default_random();
   // CGAL::Random rnd(1695720148);
   // CGAL::Random rnd(1695724381);
+  // CGAL::Random rnd(1695813638);
 
   std::cout << "seed " << rnd.get_seed() << std::endl;
   Mesh::Face_index f1 = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));

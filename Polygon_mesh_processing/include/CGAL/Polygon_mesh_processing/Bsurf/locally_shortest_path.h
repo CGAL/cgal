@@ -158,7 +158,7 @@ struct Locally_shortest_path_imp
 
     return tr2d;
   }
-  
+
   static std::array<Vector_2, 2>
   init_source_triangle(halfedge_descriptor hopp,
                        const VertexPointMap &vpm,
@@ -274,7 +274,7 @@ struct Locally_shortest_path_imp
     FT r0 = squared_distance(get(vpm,v), get(vpm,a));
     FT r1 = squared_distance(get(vpm,v), get(vpm,b));
 
-    Vector_2 v2 = intersect_circles(flat_tid[0], r0, flat_tid[1], r1);
+    Vector_2 v2 = intersect_circles(flat_tid[1], r1, flat_tid[0], r0);
 
 
     std::array<Vector_2, 3> res;
@@ -282,7 +282,7 @@ struct Locally_shortest_path_imp
     res[0]=flat_tid[0];
     res[1]=flat_tid[1];
     res[2]=v2;
-    
+
 
     return res;
   }
@@ -699,7 +699,7 @@ struct Locally_shortest_path_imp
 
 
   }
-  
+
 
 // TODO:  starting from here, we can move that to a de Casteljau Impl struct
 
@@ -909,6 +909,7 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
  {
       auto flat_tid= Impl::init_flat_triangle(h,vpm,tmesh);
       auto flat_nei= Impl::unfold_face(h,vpm,tmesh,flat_tid);
+
       Vector_2 c0=0.33*(flat_tid[0]+flat_tid[1]+flat_tid[2]);
       Vector_2 c1=0.33*(flat_nei[0]+flat_nei[1]+flat_nei[2]);
 
@@ -919,18 +920,20 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
 
   // TODO: fill the weight map using something better than euclidean distance
   // TODO: the edge map could be precomputed if we know that several queries will be done
-  // TODO: construct the dual graph once at the beginning and then use Dijkstra to 
+  // TODO: construct the dual graph once at the beginning and then use Dijkstra to
   //       to navigate it at every query
   for (edge_descriptor ed : edges(tmesh))
   {
     halfedge_descriptor h=halfedge(ed, tmesh), hopp=opposite(h, tmesh);
-    
-     put(weight_map, ed, compute_dual_weights(h));
+
+    //  distance between centroids of unfolded triangles
+    put(weight_map, ed, compute_dual_weights(h));
+    // Euclidean distance between centroids
     // put(weight_map, ed,
-    //     sqrt(squared_distance(
-    //           centroid(get(vpm, source(h, tmesh)), get(vpm, target(h, tmesh)), get(vpm, target(next(h, tmesh), tmesh))),
-    //           centroid(get(vpm, source(hopp, tmesh)), get(vpm, target(hopp, tmesh)), get(vpm, target(next(hopp, tmesh), tmesh)))
-    //           )));
+    //      sqrt(squared_distance(
+    //            centroid(get(vpm, source(h, tmesh)), get(vpm, target(h, tmesh)), get(vpm, target(next(h, tmesh), tmesh))),
+    //            centroid(get(vpm, source(hopp, tmesh)), get(vpm, target(hopp, tmesh)), get(vpm, target(next(hopp, tmesh), tmesh)))
+    //            )));
   }
 
   // TODO try stopping dijkstra as soon tgt is out of the queue.
