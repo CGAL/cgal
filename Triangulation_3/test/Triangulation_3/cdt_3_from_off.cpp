@@ -11,6 +11,7 @@
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <vector>
 #include <cassert>
@@ -91,7 +92,8 @@ int main(int argc, char* argv[])
 
   std::ifstream input(filename);
   Mesh mesh;
-  if (!input || !(input >> mesh))
+  const bool ok = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh);
+  if (!ok)
   {
     std::cerr << "Not a valid input file." << std::endl;
     return 1;
