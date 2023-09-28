@@ -50,7 +50,7 @@ namespace Polygon_mesh_processing {
 *
 * @param pmesh a polygon mesh with triangulated surface patches to be remeshed
 * @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param sizing uniform or adaptive sizing field that determines a target length for individual edges.
+* @param sizing field that determines a target length for individual edges.
 *        If a number convertible to a double is passed, it will use a `Uniform_sizing_field()`
 *        with the number as a target edge length.
 *        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
