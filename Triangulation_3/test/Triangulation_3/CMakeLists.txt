@@ -1,7 +1,4 @@
-# Created by the script cgal_create_cmake_script
-# This is the CMake script for compiling a CGAL application.
-
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.7...3.23)
 project(Triangulation_3_Tests)
 
 find_package(CGAL REQUIRED)
@@ -65,10 +62,32 @@ target_compile_definitions(test_CDT_3_insert_constrained_edge_from_OFF_file PUBL
 cgal_add_test(test_CDT_3_insert_constrained_edge_from_OFF_file)
 
 function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
-  add_test(NAME "execution   of  cdt_3_from_off ${data_name}" COMMAND cdt_3_from_off ${data_dir}/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
+  set(options)
+  set(oneValueArgs DATA_FILENAME TIMEOUT)
+  set(multiValueArgs LABELS)
+  cmake_parse_arguments(PARSE_ARGV 2 "MY" "${options}" "${oneValueArgs}"
+                      "${multiValueArgs}")
+  if(NOT MY_DATA_FILENAME)
+    set(data_filename ${data_name}.off)
+  else()
+    set(data_filename ${MY_DATA_FILENAME})
+  endif()
+  add_test(NAME "execution   of  cdt_3_from_off ${data_name}" COMMAND cdt_3_from_off ${data_dir}/${data_filename} ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
   cgal_setup_test_properties("execution   of  cdt_3_from_off ${data_name}" cdt_3_from_off)
-  add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}" COMMAND cdt_3_from_off --merge-facets ${data_dir}/${data_name}.off ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}--merge-facets.off)
+  add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}" COMMAND cdt_3_from_off --merge-facets ${data_dir}/${data_filename} ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}--merge-facets.off)
   cgal_setup_test_properties("execution   of  cdt_3_from_off --merge-facets ${data_name}" cdt_3_from_off)
+  if(MY_LABELS)
+    set_property(TEST
+      "execution   of  cdt_3_from_off ${data_name}"
+      "execution   of  cdt_3_from_off --merge-facets ${data_name}"
+      APPEND PROPERTY LABELS "${MY_LABELS}")
+  endif()
+  if(MY_TIMEOUT)
+    set_tests_properties(
+      "execution   of  cdt_3_from_off ${data_name}"
+      "execution   of  cdt_3_from_off --merge-facets ${data_name}"
+      PROPERTIES TIMEOUT "${MY_TIMEOUT}")
+  endif()
 endfunction()
 
 function(CGAL_add_cdt3_from_off_test data_name)
@@ -102,13 +121,18 @@ CGAL_add_cdt3_from_local_off_test(HexiCosPot-1-sv)
 CGAL_add_cdt3_from_local_off_test(HexiCosPot-1-sv-reduced)
 CGAL_add_cdt3_from_local_off_test(mpi-part)
 
+include(./Thingi10k-CDT.cmake)
+
 add_test(NAME "execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3 3torus" COMMAND cdt_3_from_off_CGAL_DEBUG_CDT_3 ${CGAL_DATA_DIR}/meshes/3torus.off)
 cgal_setup_test_properties("execution   of  cdt_3_from_off 3torus" cdt_3_from_off)
 
 get_directory_property(all_tests TESTS)
 foreach(test ${all_tests})
   if(test MATCHES cdt|CDT)
-    set_property(TEST ${test} APPEND PROPERTY LABELS CDT_3)
+    get_property(labels TEST ${test} PROPERTY LABELS)
+    if(NOT Thingi10K IN_LIST labels)
+      set_property(TEST ${test} APPEND PROPERTY LABELS CDT_3)
+    endif()
   endif()
 endforeach()
 
