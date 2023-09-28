@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `Basic_viewer_qt` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements can either be added directly in the viewer or through the storage. This class requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
+The class `Basic_viewer_qt` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements can either be added directly in the viewer or through the scene. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \tparam BufferType the type used for point coordinates: `float` by default.
 
@@ -115,7 +115,7 @@ public:
   /// returns the mono color used for faces.
   const CGAL::IO::Color& get_faces_mono_color() const;
 
-  /// clears the basic viewer, i.e. remove all its elements.
+  /// clears the basic viewer, i.e., remove all its elements.
   void clear();
 
   /// returns `true` if the viewer is empty.
@@ -195,22 +195,22 @@ public:
   template <typename KPoint>
   void add_text(const KPoint &kp, const std::string &txt);
 
-  /// returns the graphic storage of the viewer.
+  /// returns the graphics scene of the viewer.
   Graphics_scene<BufferType>& get_graphics_scene();
 
-  /// returns the graphic storage of the viewer, const version.
+  /// returns the graphics scene of the viewer, const version.
   const Graphics_scene<BufferType>& get_graphics_scene() const;
 
-  /// negates all normal of vertices and faces.
+  /// negates all normals of vertices and faces.
   void negate_all_normals();
 
-  /// returns true if the data structure in in 2D, i.e. lies on a plane.
+  /// returns `true` if the data structure in in 2D, i.e., lies on a plane.
   bool is_two_dimensional() const;
 
   /// draws the viewer without recomputing all internal buffers.
   virtual void draw();
 
-  /// redraws the viewer, i.e. recompute all internal buffers and update the window.
+  /// redraws the viewer, i.e., recompute all internal buffers and update the window.
   virtual void redraw();
 
   /// Function called when a key is pressed. Users can define their own function in order
@@ -223,7 +223,7 @@ public:
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `QApplication_and_basic_viewer` regroups a `Basic_viewer_qt` and Qt `QApplication`. The `QApplication` is created in the constructor, but ran by the run method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer_qt` to define their own behavior. This class requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
+The class `QApplication_and_basic_viewer` regroups a `Basic_viewer_qt` and Qt `QApplication`. The `QApplication` is created in the constructor, but started by the `run()` method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer_qt` to define their own behavior. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \tparam BufferType the type used for point coordinates: `float` by default.
 
@@ -236,7 +236,7 @@ public:
   QApplication_and_basic_viewer(CGAL::Graphics_scene<BufferType>& buffer,
                                 const char* title="CGAL Basic Viewer");
 
-  /// runs the `QApplication`, i.e. open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
+  /// runs the `QApplication`, i.e., open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
   void run();
 
   /// returns a reference to the `Basic_viewer_qt` associated with this.
@@ -245,11 +245,11 @@ public:
 
 //------------------------------------------------------------------------------
 /*!
-  opens a new window and draws the given `Graphics_scene` (which must have been filled before). `title` will be the title of the window.  A call to this method is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
+  opens a new window and draws the given `Graphics_scene` (which must have been filled before). `title` will be the title of the window.  A call to this method is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition CGAL_USE_BASIC_VIEWER.
 */
 template <typename BufferType=float>
 void draw_graphics_scene(Graphics_scene<BufferType>& graphic_buffer,
-                          const char *title="CGAL Basic Viewer")
+                         const char *title="CGAL Basic Viewer")
 {}
 
 } // End namespace CGAL
