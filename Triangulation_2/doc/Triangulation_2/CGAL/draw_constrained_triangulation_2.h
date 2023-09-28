@@ -30,7 +30,7 @@ A call to this function is blocking, that is the program continues as soon as th
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \tparam CT2 a triangulation class derived from `Constrained_triangulation_2`
-\tparam InDomainPMap a class model of `ReadWritePropertyMap`  with
+\tparam InDomainPMap a class model of `ReadablePropertyMap`  with
 `CT::Face_handle`  as key type and  `bool`  as value type.
 
 \param act2 the constrained triangulation to draw.
