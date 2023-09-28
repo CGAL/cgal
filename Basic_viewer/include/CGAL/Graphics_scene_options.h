@@ -20,51 +20,51 @@
 namespace CGAL {
 
 template <typename DS,
-          typename vertex_handle,
-          typename edge_handle,
-          typename face_handle,
-          typename volume_handle=void>
+          typename VertexHandle,
+          typename EdgeHandle,
+          typename FaceHandle,
+          typename VolumeHandle=void>
 struct Graphics_scene_options;
 
 // Drawing functor for a 2D combinatorial data structure
 // (with vertices, edges and faces)
 template <typename DS,
-          typename vertex_handle,
-          typename edge_handle,
-          typename face_handle>
-struct Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle, void>
+          typename VertexHandle,
+          typename EdgeHandle,
+          typename FaceHandle>
+struct Graphics_scene_options<DS, VertexHandle, EdgeHandle, FaceHandle, void>
 {
   Graphics_scene_options(): m_enabled_vertices(true),
                             m_enabled_edges(true),
                             m_enabled_faces(true)
   {
-    draw_vertex=[](const DS &, vertex_handle)->bool { return true; };
-    draw_edge=[](const DS &, edge_handle)->bool { return true; };
-    draw_face=[](const DS &, face_handle)->bool { return true; };
+    draw_vertex=[](const DS &, VertexHandle)->bool { return true; };
+    draw_edge=[](const DS &, EdgeHandle)->bool { return true; };
+    draw_face=[](const DS &, FaceHandle)->bool { return true; };
 
-    colored_vertex=[](const DS &, vertex_handle)->bool { return false; };
-    colored_edge=[](const DS &, edge_handle)->bool { return false; };
-    colored_face=[](const DS &, face_handle)->bool { return false; };
+    colored_vertex=[](const DS &, VertexHandle)->bool { return false; };
+    colored_edge=[](const DS &, EdgeHandle)->bool { return false; };
+    colored_face=[](const DS &, FaceHandle)->bool { return false; };
 
-    face_wireframe=[](const DS &, face_handle)->bool { return false; };
+    face_wireframe=[](const DS &, FaceHandle)->bool { return false; };
   }
 
   // The seven following functions should not be null
-  std::function<bool(const DS &, vertex_handle)> draw_vertex;
-  std::function<bool(const DS &, edge_handle)>   draw_edge;
-  std::function<bool(const DS &, face_handle)>   draw_face;
+  std::function<bool(const DS &, VertexHandle)> draw_vertex;
+  std::function<bool(const DS &, EdgeHandle)>   draw_edge;
+  std::function<bool(const DS &, FaceHandle)>   draw_face;
 
-  std::function<bool(const DS &, vertex_handle)> colored_vertex;
-  std::function<bool(const DS &, edge_handle)>   colored_edge;
-  std::function<bool(const DS &, face_handle)>   colored_face;
+  std::function<bool(const DS &, VertexHandle)> colored_vertex;
+  std::function<bool(const DS &, EdgeHandle)>   colored_edge;
+  std::function<bool(const DS &, FaceHandle)>   colored_face;
 
-  std::function<bool(const DS &, face_handle)> face_wireframe;
+  std::function<bool(const DS &, FaceHandle)> face_wireframe;
 
   // These functions must be non null if the corresponding colored_XXX function
   // returns true.
-  std::function<CGAL::IO::Color(const DS &, vertex_handle)> vertex_color;
-  std::function<CGAL::IO::Color(const DS &, edge_handle)>   edge_color;
-  std::function<CGAL::IO::Color(const DS &, face_handle)>   face_color;
+  std::function<CGAL::IO::Color(const DS &, VertexHandle)> vertex_color;
+  std::function<CGAL::IO::Color(const DS &, EdgeHandle)>   edge_color;
+  std::function<CGAL::IO::Color(const DS &, FaceHandle)>   face_color;
 
   void disable_vertices() { m_enabled_vertices=false; }
   void enable_vertices() { m_enabled_vertices=true; }
@@ -85,24 +85,24 @@ protected:
 // Drawing functor for a 3D combinatorial data structure
 // (with vertices, edges, faces and volumes)
 template <typename DS,
-          typename vertex_handle,
-          typename edge_handle,
-          typename face_handle,
-          typename volume_handle>
+          typename VertexHandle,
+          typename EdgeHandle,
+          typename FaceHandle,
+          typename VolumeHandle>
 struct Graphics_scene_options:
-    public Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle>
+    public Graphics_scene_options<DS, VertexHandle, EdgeHandle, FaceHandle>
 {
   Graphics_scene_options() : m_enabled_volumes(true)
   {
-    draw_volume=[](const DS &, volume_handle)->bool { return true; };
-    colored_volume=[](const DS &, volume_handle)->bool { return false; };
-    volume_wireframe=[](const DS &, volume_handle)->bool { return false; };
+    draw_volume=[](const DS &, VolumeHandle)->bool { return true; };
+    colored_volume=[](const DS &, VolumeHandle)->bool { return false; };
+    volume_wireframe=[](const DS &, VolumeHandle)->bool { return false; };
   }
 
-  std::function<bool(const DS &, volume_handle)>            draw_volume;
-  std::function<bool(const DS &, volume_handle)>            colored_volume;
-  std::function<bool(const DS &, volume_handle)>            volume_wireframe;
-  std::function<CGAL::IO::Color(const DS &, volume_handle)> volume_color;
+  std::function<bool(const DS &, VolumeHandle)>            draw_volume;
+  std::function<bool(const DS &, VolumeHandle)>            colored_volume;
+  std::function<bool(const DS &, VolumeHandle)>            volume_wireframe;
+  std::function<CGAL::IO::Color(const DS &, VolumeHandle)> volume_color;
 
   void disable_volumes() { m_enabled_volumes=false; }
   void enable_volumes() { m_enabled_volumes=true; }
