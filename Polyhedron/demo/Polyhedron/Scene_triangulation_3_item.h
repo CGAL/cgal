@@ -142,7 +142,9 @@ public:
 
   QColor get_histogram_color(const double v) const;
 
+  void resetVisibleSubdomain();
   void switchVisibleSubdomain(int);
+  bool isVisibleSubdomain(int) const;
 
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 

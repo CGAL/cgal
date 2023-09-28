@@ -59,6 +59,10 @@ public :
     addDockWidget(dock_widget);
 
     connect(dock_widget->resetButton, &QPushButton::clicked, [this](){
+      if(!tet_item)
+          return;
+      tet_item->c3t3_item()->resetVisibleSubdomain();
+      tet_item->c3t3_item()->computeIntersection();
       filter();
     });
   }
@@ -130,6 +134,7 @@ public Q_SLOTS:
     connect(dock_widget->minEdit, &DoubleEdit::editingFinished, tet_item, QOverload<>::of(&Scene_tetrahedra_item::setMinThreshold));
     connect(dock_widget->maxEdit, &DoubleEdit::editingFinished, tet_item, QOverload<>::of(&Scene_tetrahedra_item::setMaxThreshold));
 
+    onFilterIndexChanged(dock_widget->filterBox->currentIndex());
     dock_widget->show();
   }
 
@@ -163,6 +168,13 @@ public Q_SLOTS:
     int counter = 0;
     int limit = static_cast<int>(std::ceil(CGAL::approximate_sqrt(EPICK::FT(c3t3_item->subdomain_indices().size()))));
     QGridLayout *layout = dock_widget->gridLayout;
+    //delete all items (see https://stackoverflow.com/questions/4272196/qt-remove-all-widgets-from-layout)
+    QLayoutItem* item;
+    while ((item = layout->takeAt(0)))
+    {
+      delete item->widget();
+      delete item;
+    }
     for (std::set<int>::iterator it = c3t3_item->subdomain_indices().begin(),
          end = c3t3_item->subdomain_indices().end(); it != end; ++it)
     {
@@ -170,7 +182,7 @@ public Q_SLOTS:
       QPushButton* button = new QPushButton(tr("%1").arg(index));
       buttons.push_back(button);
       button->setCheckable(true);
-      button->setChecked(true);
+      button->setChecked(c3t3_item->isVisibleSubdomain(index));
       QColor color = c3t3_item->getSubdomainIndexColor(index);
       QString s("QPushButton { font-weight: bold; background: #"
                 + QString::number(90,16)

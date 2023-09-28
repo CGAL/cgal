@@ -2046,6 +2046,12 @@ QColor Scene_triangulation_3_item::getSubdomainIndexColor(int i) const
   return d->colors_subdomains[i];
 }
 
+void Scene_triangulation_3_item::resetVisibleSubdomain()
+{
+  d->visible_subdomain.set();
+  memset(d->visible_biteset, 0xFFFF, number_of_bitset * sizeof(uint));
+}
+
 void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
 {
   d->visible_subdomain[id] = !d->visible_subdomain[id];
@@ -2054,6 +2060,11 @@ void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
   int j = compact_id%32;
 
   d->visible_biteset[i][j] = d->visible_subdomain[id];
+}
+
+bool Scene_triangulation_3_item::isVisibleSubdomain(int id) const
+{
+  return d->visible_subdomain[id];
 }
 
 void Scene_triangulation_3_item::computeIntersection()
