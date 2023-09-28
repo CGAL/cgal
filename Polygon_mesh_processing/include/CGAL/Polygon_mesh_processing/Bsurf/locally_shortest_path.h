@@ -679,10 +679,16 @@ struct Locally_shortest_path_imp
 #endif
 
   }
+
+
+
+  #if 0
   //:::::::::::::::::::::Straightest Geodesic::::::::::::::::::::::::::::
-  std::vector<Vector_3> get_3D_basis_at_point(const Face_location<TriangleMesh, FT>& p,
-                                        const TriangleMesh& mesh,
-                                        const VertexPointMap &vpm)
+  static
+  std::vector<Vector_3>
+  get_3D_basis_at_point(const Face_location<TriangleMesh, FT>& p,
+                        const TriangleMesh& mesh,
+                        const VertexPointMap &vpm)
   {
     halfedge_descriptor h=halfedge(p.first,mesh);
 
@@ -696,12 +702,407 @@ struct Locally_shortest_path_imp
     Vector_3 e1= cross_product(n,e);
 
     return {e,e1,n};
-
-
   }
 
 
-// TODO:  starting from here, we can move that to a de Casteljau Impl struct
+  static
+  std::tuple<bool, int>
+  point_is_edge(const Face_location<TriangleMesh, FT>& p,
+                const FT& tol=1e-5)
+  {
+    auto bary=p.second;
+    if (bary[0] > tol && bary[1] > tol && bary[2] <= tol)
+      return {true, 0};
+    if (bary[1] > tol && bary[2] > tol && bary[0] <= tol)
+      return {true, 1};
+    if (bary[2] > tol && bary[0] > tol && bary[1] <= tol)
+      return {true, 2};
+
+    return {false, -1};
+  }
+
+  static
+  //https://rootllama.wordpress.com/2014/06/20/ray-line-segment-intersection-test-in-2d/
+  std::pair<FT, FT>
+  intersect(const Vector_2 &direction, const Vector_2 &left,
+            const Vector_2 &right,const Vector_2& origin)
+  {
+    auto v1 = origin-left;
+    auto v2 = right - left;
+    auto v3 = vec2f{-direction.y, direction.x};
+    auto t0 = cross(v2, v1) / dot(v2, v3);
+    auto t1 = -dot(left, v3) / dot(v2, v3);
+    return std::make_pair(t0, t1);
+  };
+
+  static
+  std::tuple<int,float>
+  segment_in_tri(const Vector_2& p,
+                 const  std::array<Vector_2, 3>& tri,
+                 const Vector_2& dir,
+                 const int& k)
+  {
+    for (auto i = 0; i < 3; ++i)
+    {
+      auto [t0, t1] = intersect(dir, tri[(k+i)%3], tri[(k + 1+i) % 3],p);
+
+      //TODO: replace intersection with CGAL code
+      if (t0 > 0 && t1 >= -1e-4 && t1 <= 1 + 1e-4)
+      {
+          auto result_k =(k+i)%3;
+          return {result_k, clamp(t1, 0.f, 1.f)};
+      }
+    }
+    CGAL_assertion(false);
+    return {-1,-1};
+  }
+
+  FT get_total_angle(const vertex_descriptor& vid,
+                     const TriangleMesh& mesh,
+                     const VertexPointMap &vpm)
+  {
+    halfedge_descriptor h_ref= halfedge(vid,mesh);
+    halfedge_descriptor h_start=h_ref
+    halfedge_descriptor h_next = next(h_start,mesh);
+
+    FT theta=angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
+                   get(vpm,target(h_next,mesh))-get(vpm,target(h_start,mesh)));
+    h_start=opposite(h_next,mesh);
+    h_next=next(h_start,mesh);
+    while(h_start!=h_ref)
+    {
+      theta+=angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
+                   get(vpm,target(h_next,mesh))-get(vpm,target(h_start,mesh)));
+      h_start=opposite(h_next,mesh);
+      h_next=next(h_start,mesh);
+    }
+
+    return theta;
+  }
+
+  static
+  std::tuple<Vector_2, Face_location<TriangleMesh, FT>, halfedge_descriptor>
+  polthier_condition_at_vert(const TriangleMesh& mesh,
+                             const VertexPointMap &vpm
+                             const vertex_descriptor& vid,
+                             const face_descriptor& tid,
+                             const int kv,
+                             const Vector_3 &dir)
+  {
+    FT total_angle=get_total_angle(vid,mesh,vpm);
+    FT theta = 0.5 * total_angle;
+    halfedge_descriptor h=halfedge(tid,mesh);
+    while(target(h,mesh)!=vid)
+      h=next(h,mesh);
+
+    Point_3 vert = get(vpm,vid);
+    Point_3 vert_adj=get(vpm,source(h,mesh));
+    Vector_3 v = vert - vert_adj;
+
+    FT acc = angle(v, dir);
+    FT prev_angle = acc;
+    face_descriptor curr_tid = tid;
+
+    while (acc < theta) {
+      h=prev(opposite(h.mesh),mesh);
+      prev_angle = acc;
+      Point_3 next_vert_adj=get(vpm,source(h,mesh));
+      acc += angle(vert_adj - vert,next_vert_adj - vert);
+      vert_adj=next_vert_adj;
+    }
+    auto offset = theta - prev;
+    Point_3 prev_vert_adj=get(vpm,target(next(h,mesh,mesh)));
+
+    FT l = sqrt(squared_distance(prev_vert_adj,vert));
+    FT phi = angle(vert - prev_vert_adj, vert_adj - prev_vert_adj);
+    FT x = l * std::sin(offset) / std::sin(M_PI - phi - offset);
+    FT alpha = x / sqrt(squared_distance(vert_adj - prev_vert_adj));
+    halfedge_descriptor prev_h=prev(h,mesh);
+    std::array<Vector_2,3> flat_tid = init_flat_triangle(prev_h,vpm,mesh);
+
+    Vector_2 q = (1 - alpha) * flat_tid[0] + alpha * flat_tid[1];
+
+    Vector_2 new_dir = q - flat_tid[2];
+
+    Face_location<TriangleMesh, FT> new_p;
+    new_p.first=face(h,mesh);
+    halfedge_descriptor h_face=halfedge(new_p.first,mesh);
+    Vector_3 bary;
+    Vector_2 bary_edge=Vector_2{1-alpha,alpha};
+
+    if (h_face!=prev_h)
+    {
+      if (h_face==next(prev_h, mesh))
+      {
+        new_p.second[0]=bary_edge[1];
+        new_p.second[1]=0;
+        new_p.second[2]=bary_edge[0];
+      }
+      else
+      {
+        new_p.second[0]=0;
+        new_p.second[1]=bary_edge[0];
+        new_p.second[2]=bary_edge[1];
+      }
+    }
+    else
+    {
+      new_p.second[0]=bary_edge[0];
+      new_p.second[1]=bary_edge[1];
+      new_p.second[2]=0;
+    }
+
+    return {new_dir, point_from_vert(triangles, vid, face(prev_h,mesh)), prev_h};
+  }
+
+  static
+  std::vector<Face_location<TriangleMesh, FT>>
+  straightest_goedesic(const Face_location<TriangleMesh, FT>& p,
+                       const TriangleMesh& mesh,
+                       const VertexPointMap &vpm,
+                       const Vector_2& dir,const FT& len)
+  {
+    auto get_vid=[&mesh](const int k,const face_descriptor& tid)
+    {
+      halfedge_descriptor h=halfedge(tid,mesh);
+      if(k==0)
+         return source(h,mesh);
+      if(k==1)
+         return target(h,mesh);
+      if(k==2)
+        return target(next(h,mesh),mesh);
+
+    };
+
+    std::vector<Face_location<TriangleMesh, FT>> result;
+    FT accumulated=0.;
+    face_descriptor curr_tid=p.first;
+    std::array<Vector_2, 3> curr_flat_tid=init_flat_triangle(halfedge(curr_tid,mesh),vpm,mesh);
+    Vector_2 flat_p= p.second[0]*curr_flat_tid[0]+p.second[1]*curr_flat_tid[1]+p.second[2]*curr_flat_tid[2];
+    Face_location<TriangleMesh, FT> curr_p=p;
+    Face_location<TriangleMesh, FT> prev_p;
+    Vector_2 curr_dir=dir;
+
+    result.push_back(p);
+
+    int k_start=-1;
+
+    auto [is_vert, kv] = point_is_vert(p);
+    auto [is_edge, ke] = point_is_edge(p);
+    if (is_vert)
+      k_start = kv;
+    else if (is_edge)
+      k_start = ke;
+
+
+    while (accumulated < len)
+    {
+      auto [k, t1] = segment_in_tri(flat_p, curr_flat_tid, curr_dir,k_start);
+
+      Vector_3 new_bary=Vector_3{0,0,0};
+      Face_location<TriangleMesh, FT> point_on_edge;
+      //TODO: we assume k is always different from -1, check this!
+
+      new_bary[k] = 1 - t1;
+      new_bary[(k + 1) % 3] = t1;
+      point_on_edge.first=curr_tid;
+      point_on_edge.second=new_bary;
+
+
+      std::tie(is_vert, kv) = point_is_vert(point_on_edge);
+
+      if (is_vert)
+      {
+        auto vid = get_vertex(kv,curr_tid);
+
+        accumulated +=
+            sqrt(squared_distance(construct_point(curr_p,mesh) - get(vpm,vid)));
+        prev_p = curr_p;
+        std::tie(curr_dir, curr_p, k_start) =
+            polthier_condition_at_vert(triangles, positions, adjacencies,
+                                      total_angles, vid, curr_tid, dir3d);
+        curr_tid = curr_p.face;
+        if (curr_tid == -1)
+          return result;
+
+      }
+      else
+      {
+        auto adj = adjacencies[curr_tid][k];
+        if (adj == -1)
+          return result;
+        auto h = find(adjacencies[adj], curr_tid);
+
+        new_bary = zero3f;
+        new_bary[h] = t1;
+        new_bary[(h + 1) % 3] = 1 - t1;
+
+        prev_p = curr_p;
+        curr_p = mesh_point{adj, vec2f{new_bary.y, new_bary.z}};
+        accumulated += length(eval_position(triangles, positions, curr_p) -
+                              eval_position(triangles, positions, prev_p));
+
+        auto T = switch_reference_frame(triangles, positions, adj, curr_tid);
+        curr_dir = switch_reference_frame_vector(T, curr_dir);
+
+        curr_tid = adj;
+        k_start = h;
+      }
+
+      result.push_back(curr_p);
+    }
+
+    auto excess = accumulated - len;
+    auto prev_pos = eval_position(triangles, positions, result.rbegin()[1]);
+    auto last_pos = eval_position(triangles, positions, result.back());
+    auto alpha = excess / length(last_pos - prev_pos);
+    auto pos = alpha * prev_pos + (1 - alpha) * last_pos;
+
+    auto [inside, bary] =
+        point_in_triangle(triangles, positions, prev_p.face, pos);
+    if (!inside)
+      std::cout << "error!This point should be in the triangle" << std::endl;
+
+    result.pop_back();
+    result.push_back(mesh_point{prev_p.face, bary});
+
+    return result;
+  }
+
+  static
+  std::vector<mesh_point>
+  polthier_straightest_geodesic(const vector<vec3i> &triangles, const vector<vec3f> &positions,
+                                const vector<vec3i> &adjacencies, const vector<vector<int>> &v2t,
+                                const vector<vector<float>> &angles, const vector<float> &total_angles,
+                                const mesh_point &p, const vec2f &dir, const float &len)
+  {
+    auto result = vector<mesh_point>{};
+    auto accumulated = 0.f;
+    auto curr_tid = p.face;
+    auto curr_p = p;
+    auto prev_p = mesh_point{};
+    auto curr_dir = dir;
+
+    result.push_back(p);
+
+    auto k_start = 0;
+    auto [is_vert, kv] = point_is_vert(p);
+    auto [is_edge, ke] = point_is_edge(p);
+    if (is_vert)
+      k_start = kv;
+    else if (is_edge)
+      k_start = ke;
+
+    auto count = 0;
+    while (accumulated < len)
+    {
+      ++count;
+      auto [k, t1] = straightest_path_in_tri(triangles, positions, curr_p,
+                                            curr_dir, k_start);
+
+      auto new_bary = zero3f;
+      auto point_on_edge = mesh_point{};
+      if (k != -1) {
+        new_bary[k] = 1 - t1;
+        new_bary[(k + 1) % 3] = t1;
+        point_on_edge = mesh_point{curr_tid, vec2f{new_bary.y, new_bary.z}};
+      } else {
+        std::tie(is_edge, ke) = point_is_edge(curr_p, 5e-3);
+        std::tie(is_vert, kv) = point_is_vert(curr_p, 5e-3);
+        auto bary = get_bary(curr_p.uv);
+        if (is_edge) {
+          k = ke;
+          t1 = bary[(k + 1) % 3];
+          point_on_edge = curr_p;
+        } else if (is_vert) {
+          auto bary3 = zero3f;
+          bary3[kv] = 1;
+          point_on_edge = {curr_p.face, {bary3.y, bary3.z}};
+        } else {
+          std::cout << "Error!This should not happen" << std::endl;
+          return result;
+        }
+      }
+
+      std::tie(is_vert, kv) = point_is_vert(point_on_edge);
+
+      if (is_vert) {
+        auto vid = triangles[curr_tid][kv];
+        if (angles[vid].size() == 0)
+          return result;
+
+        accumulated +=
+            length(eval_position(triangles, positions, curr_p) - positions[vid]);
+        auto dir3d = normalize(eval_position(triangles, positions, curr_p) -
+                              positions[vid]);
+        prev_p = curr_p;
+        std::tie(curr_dir, curr_p, k_start) =
+            polthier_condition_at_vert(triangles, positions, adjacencies,
+                                      total_angles, vid, curr_tid, dir3d);
+        curr_tid = curr_p.face;
+        if (curr_tid == -1)
+          return result;
+
+      } else {
+        auto adj = adjacencies[curr_tid][k];
+        if (adj == -1)
+          return result;
+        auto h = find(adjacencies[adj], curr_tid);
+
+        new_bary = zero3f;
+        new_bary[h] = t1;
+        new_bary[(h + 1) % 3] = 1 - t1;
+
+        prev_p = curr_p;
+        curr_p = mesh_point{adj, vec2f{new_bary.y, new_bary.z}};
+        accumulated += length(eval_position(triangles, positions, curr_p) -
+                              eval_position(triangles, positions, prev_p));
+
+        auto T = switch_reference_frame(triangles, positions, adj, curr_tid);
+        curr_dir = switch_reference_frame_vector(T, curr_dir);
+
+        curr_tid = adj;
+        k_start = h;
+      }
+
+      result.push_back(curr_p);
+    }
+
+    auto excess = accumulated - len;
+    auto prev_pos = eval_position(triangles, positions, result.rbegin()[1]);
+    auto last_pos = eval_position(triangles, positions, result.back());
+    auto alpha = excess / length(last_pos - prev_pos);
+    auto pos = alpha * prev_pos + (1 - alpha) * last_pos;
+
+    auto [inside, bary] =
+        point_in_triangle(triangles, positions, prev_p.face, pos);
+    if (!inside)
+      std::cout << "error!This point should be in the triangle" << std::endl;
+
+    result.pop_back();
+    result.push_back(mesh_point{prev_p.face, bary});
+
+    return result;
+  }
+#endif
+
+};
+
+template <class K, class TriangleMesh, class VertexPointMap>
+struct Bezier_tracing_impl
+{
+  using face_descriptor =
+      typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using vertex_descriptor =
+      typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using halfedge_descriptor =
+      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+
+  using Point_2 = typename K::Point_2;
+  using Point_3 = typename K::Point_3;
+  using Vector_2 = typename K::Vector_2;
+  using Vector_3 = typename K::Vector_3;
+  using FT = typename K::FT;
 
   template <class EdgeLocationRange>
   static
@@ -869,6 +1270,579 @@ struct Locally_shortest_path_imp
 
     return {{polygon[0], Q0, R0, S}, {S, R1, Q2, polygon[3]}};
   }
+
+};
+
+
+template <class K, class TriangleMesh, class VertexPointMap, class VertexIndexMap, class FaceIndexMap>
+struct Geodesic_circle_impl
+{
+  using face_descriptor =
+      typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using vertex_descriptor =
+      typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using halfedge_descriptor =
+      typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+
+  using Point_2 = typename K::Point_2;
+  using Point_3 = typename K::Point_3;
+  using Vector_2 = typename K::Vector_2;
+  using Vector_3 = typename K::Vector_3;
+  using FT = typename K::FT;
+
+  struct geodesic_solver {
+    struct graph_edge {
+      int node = -1;
+      double length=DBL_MAX;
+    };
+    std::vector<std::vector<graph_edge>> graph;
+  };
+  struct dual_geodesic_solver {
+    struct edge {
+      int node = -1;
+      double length = DBL_MAX;
+    };
+    std::vector<std::array<edge, 3>> graph = {};
+  };
+
+  static
+  std::tuple<bool,int>
+  point_is_vert(const Face_location<TriangleMesh, FT>& p,const FT& tol=1e-5)
+  {
+     auto bary=p.second;
+     if (bary[0] > tol && bary[1] <= tol && bary[2] <= tol)
+         return {true, 0};
+     if (bary[1] > tol && bary[0] <= tol && bary[2] <= tol)
+        return {true, 1};
+     if (bary[2] > tol && bary[0] <= tol && bary[1] <= tol)
+        return {true, 2};
+
+   return {false, -1};
+  }
+
+  static
+  void connect_nodes(geodesic_solver &solver,
+                    const vertex_descriptor& a,
+                    const vertex_descriptor& b,
+                    const VertexPointMap &vpm,
+                    const VertexIndexMap& vidmap, const FT& length)
+  {
+    solver.graph[get(vidmap,a)].push_back({get(vidmap,b), length});
+    solver.graph[get(vidmap,b)].push_back({get(vidmap,a), length});
+  }
+
+  static
+  double opposite_nodes_arc_length(const VertexPointMap &vpm,
+                                   const TriangleMesh &mesh,
+                                   const vertex_descriptor& a,
+                                   const vertex_descriptor& b,
+                                   const vertex_descriptor& v0,
+                                   const vertex_descriptor& v1)
+  {
+    // Triangles (a, b, v0) and (a, b, v1) are connected by (a, b) edge
+    // Nodes a and c must be connected.
+
+    //NOOO it is the opposite
+
+    Vector_3 ba = get(vpm,a) - get(vpm,b);
+    Vector_3 bv0 = get(vpm,v0) - get(vpm,b);
+    Vector_3 bv1 = get(vpm,v1) - get(vpm,b);
+
+    double cos_alpha = ba/sqrt(ba.squared_lenght())*bv1/sqrt(bv1.squared_lenght());
+    double cos_beta  = bv0/sqrt(bv0.squared_lenght())*bv1/sqrt(bv1.squared_lenght());
+    double sin_alpha = sqrt(std::max(0.0, 1 - cos_alpha * cos_alpha));
+    double sin_beta  = sqrt(std::max(0.0, 1 - cos_beta * cos_beta));
+
+    // cos(alpha + beta)
+    double cos_alpha_beta = cos_alpha * cos_beta - sin_alpha * sin_beta;
+    if (cos_alpha_beta <= -1) return DBL_MAX;
+
+    // law of cosines (generalized Pythagorean theorem)
+    double len = dot(ba, ba) + dot(bv0, bv0) -
+              length(ba) * length(bv0) * 2 * cos_alpha_beta;
+
+    if (len <= 0)
+      return DBL_MAX;
+    else
+      return sqrt(len);
+  }
+
+  static
+  void connect_opposite_nodes(geodesic_solver& solver,
+                              const VertexPointMap &vpm,
+                              const TriangleMesh &mesh,
+                              const VertexIndexMap& vidmap,
+                              const vertex_descriptor& a,
+                              const vertex_descriptor& b,
+                              const halfedge_descriptor& h)
+  {
+    vertex_descriptor v0 =target(next(h,mesh),mesh);
+    vertex_descriptor v1= target(next(opposite(h,mesh),mesh),mesh);
+    auto length = opposite_nodes_arc_length(vpm, mesh, vidmap, a,b,v0,v1);
+    connect_nodes(solver, v0, v1, length);
+  }
+
+  static
+  geodesic_solver
+  make_geodesic_solver(const VertexPointMap &vpm,
+                       const VertexIndexMap& vidmap,
+                       const TriangleMesh &mesh)
+  {
+    geodesic_solver solver;
+    solver.graph.resize(vertices(mesh).size());
+    for (auto& f : faces(mesh)) {
+      halfedge_descriptor h=halfedge(f,mesh);
+      for(auto i=0;i<3;++i)
+    {
+      vertex_descriptor a=source(h,mesh);
+      vertex_descriptor b=target(h,mesh);
+      if(a<b)
+        {
+          FT len=sqrt(squared_distance(get(vpm,a),get(vpm,b)));
+          connect_nodes(solver,a,b,vpm,vidmap,len);
+        }
+        face_descriptor nei=face(opposite(h,mesh),mesh);
+        if(f<nei)
+            connect_opposite_nodes(vpm,mesh,vidmap,a,b,h);
+
+        h=next(h,mesh);
+      }
+    }
+    return solver;
+  }
+
+  static
+  dual_geodesic_solver
+  make_dual_geodesic_solver(const VertexPointMap &vpm,
+                            const FaceIndexMap& tidmap,
+                            const TriangleMesh &mesh)
+  {
+    auto compute_dual_weights=[&mesh,&vpm](const halfedge_descriptor& h)
+    {
+      using Impl = Locally_shortest_path_imp<K, TriangleMesh, VertexPointMap>;
+      std::array<Vector_2,3> flat_tid= Impl::init_flat_triangle(h,vpm,mesh);
+      std::array<Vector_2,3> flat_nei= Impl::unfold_face(h,vpm,mesh,flat_tid);
+
+      Vector_2 c0=0.33*(flat_tid[0]+flat_tid[1]+flat_tid[2]);
+      Vector_2 c1=0.33*(flat_nei[0]+flat_nei[1]+flat_nei[2]);
+
+      return sqrt((c1 - c0).squared_length());
+    };
+
+    dual_geodesic_solver solver;
+    solver.graph.resize(faces(mesh).size());
+    for (auto f : faces(mesh)) {
+      halfedge_descriptor h=halfedge(f,mesh);
+      int entry=get(tidmap,f);
+      for (auto i = 0; i < 3; ++i) {
+        solver.graph[entry][i].node = get(tidmap,face(opposite(h,mesh),mesh));
+        solver.graph[entry][i].length = compute_dual_weights(h);
+      }
+      h=next(h,mesh);
+    }
+    return solver;
+  }
+
+  // `update` is a function that is executed during expansion, every time a node
+  // is put into queue. `exit` is a function that tells whether to expand the
+  // current node or perform early exit.
+  template <typename Update, typename Stop, typename Exit>
+  static
+  void visit_geodesic_graph(std::vector<double> &field, const geodesic_solver &solver,
+                            const std::vector<int> &sources, Update &&update,
+                            Stop &&stop, Exit &&exit)
+  {
+    /*
+      This algortithm uses the heuristic Small Label Fisrt and Large Label Last
+      https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm
+
+      Large Label Last (LLL): When extracting nodes from the queue, pick the
+      front one. If it weights more than the average weight of the queue, put
+      on the back and check the next node. Continue this way.
+      Sometimes average_weight is less than every value due to floating point
+      errors (doesn't happen with double precision).
+
+      Small Label First (SLF): When adding a new node to queue, instead of
+      always pushing it to the end of the queue, if it weights less than the
+      front node of the queue, it is put on front. Otherwise the node is put at
+      the end of the queue.
+    */
+
+    auto in_queue = std::vector<bool>(solver.graph.size(), false);
+
+    // Cumulative weights of elements in queue. Used to keep track of the
+    // average weight of the queue.
+    auto cumulative_weight = 0.0;
+
+    // setup queue
+    auto queue = std::deque<int>();
+    for (auto source : sources) {
+      in_queue[source] = true;
+      cumulative_weight += field[source];
+      queue.push_back(source);
+    }
+
+    while (!queue.empty()) {
+      auto node = queue.front();
+      auto average_weight = (cumulative_weight / queue.size());
+
+      // Large Label Last (see comment at the beginning)
+      for (auto tries = 0; tries < queue.size() + 1; tries++) {
+        if (field[node] <= average_weight)
+          break;
+        queue.pop_front();
+        queue.push_back(node);
+        node = queue.front();
+      }
+
+      // Remove node from queue.
+      queue.pop_front();
+      in_queue[node] = false;
+      cumulative_weight -= field[node];
+
+      // Check early exit condition.
+      if (exit(node))
+        break;
+      if (stop(node))
+        continue;
+
+      for (auto i = 0; i < (int)solver.graph[node].size(); i++) {
+        // Distance of neighbor through this node
+        auto new_distance = field[node] + solver.graph[node][i].length;
+        auto neighbor = solver.graph[node][i].node;
+
+        auto old_distance = field[neighbor];
+        if (new_distance >= old_distance)
+          continue;
+
+        if (in_queue[neighbor]) {
+          // If neighbor already in queue, don't add it.
+          // Just update cumulative weight.
+          cumulative_weight += new_distance - old_distance;
+        } else {
+          // If neighbor not in queue, add node to queue using Small Label
+          // First (see comment at the beginning).
+          if (queue.empty() || (new_distance < field[queue.front()]))
+            queue.push_front(neighbor);
+          else
+            queue.push_back(neighbor);
+
+          // Update queue information.
+          in_queue[neighbor] = true;
+          cumulative_weight += new_distance;
+        }
+
+        // Update distance of neighbor.
+        field[neighbor] = new_distance;
+        update(node, neighbor, new_distance);
+      }
+    }
+  }
+
+  template <typename Update, typename Stop, typename Exit>
+  static
+  void visit_dual_geodesic_graph(std::vector<double> &field,
+                                const dual_geodesic_solver &solver,
+                                const std::vector<int> &sources,
+                                Update &&update,
+                                Stop &&stop,
+                                Exit &&exit)
+  {
+    /*
+      This algortithm uses the heuristic Small Label Fisrt and Large Label Last
+      https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm
+
+      Large Label Last (LLL): When extracting nodes from the queue, pick the
+      front one. If it weights more than the average weight of the queue, put
+      on the back and check the next node. Continue this way.
+      Sometimes average_weight is less than every value due to floating point
+      errors (doesn't happen with double precision).
+
+      Small Label First (SLF): When adding a new node to queue, instead of
+      always pushing it to the end of the queue, if it weights less than the
+      front node of the queue, it is put on front. Otherwise the node is put at
+      the end of the queue.
+    */
+
+    auto in_queue = std::vector<bool>(solver.graph.size(), false);
+
+    // Cumulative weights of elements in queue. Used to keep track of the
+    // average weight of the queue.
+    auto cumulative_weight = 0.0;
+
+    // setup queue
+    auto queue = std::deque<int>();
+    for (auto source : sources) {
+      in_queue[source] = true;
+      cumulative_weight += field[source];
+      queue.push_back(source);
+    }
+
+    while (!queue.empty()) {
+      auto node = queue.front();
+      auto average_weight = (cumulative_weight / queue.size());
+
+      // Large Label Last (see comment at the beginning)
+      for (auto tries = 0; tries < queue.size() + 1; tries++) {
+        if (field[node] <= average_weight)
+          break;
+        queue.pop_front();
+        queue.push_back(node);
+        node = queue.front();
+      }
+
+      // Remove node from queue.
+      queue.pop_front();
+      in_queue[node] = false;
+      cumulative_weight -= field[node];
+
+      // Check early exit condition.
+      if (exit(node))
+        break;
+      if (stop(node))
+        continue;
+
+      for (auto i = 0; i < (int)solver.graph[node].size(); i++) {
+        // Distance of neighbor through this node
+        auto new_distance = field[node] + solver.graph[node][i].length;
+        auto neighbor = solver.graph[node][i].node;
+
+        auto old_distance = field[neighbor];
+        if (new_distance >= old_distance)
+          continue;
+
+        if (in_queue[neighbor]) {
+          // If neighbor already in queue, don't add it.
+          // Just update cumulative weight.
+          cumulative_weight += new_distance - old_distance;
+        } else {
+          // If neighbor not in queue, add node to queue using Small Label
+          // First (see comment at the beginning).
+          if (queue.empty() || (new_distance < field[queue.front()]))
+            queue.push_front(neighbor);
+          else
+            queue.push_back(neighbor);
+
+          // Update queue information.
+          in_queue[neighbor] = true;
+          cumulative_weight += new_distance;
+        }
+
+        // Update distance of neighbor.
+        field[neighbor] = new_distance;
+        update(node, neighbor, new_distance);
+      }
+    }
+  }
+
+  static
+  std::vector<double>
+  compute_geodesic_distances(const geodesic_solver &solver,
+                             const VertexIndexMap& vidmap,
+                             const std::vector<std::pair<vertex_descriptor, double>> &sources_and_dist)
+  {
+    auto update = [](int node, int neighbor, double new_distance) {};
+    auto stop = [](int node) { return false; };
+    auto exit = [](int node) { return false; };
+
+    auto distances = std::vector<double>{};
+    distances.assign(solver.graph.size(), DBL_MAX);
+    std::vector<int>sources_id((sources_and_dist.size()));
+    for (auto i = 0; i < sources_and_dist.size(); ++i) {
+      sources_id[i] = get(vidmap,sources_and_dist[i].first);
+      distances[sources_id[i]] = sources_and_dist[i].second;
+    }
+    visit_geodesic_graph(distances, solver, sources_id, update, stop, exit);
+
+    return distances;
+  }
+
+  static
+  std::vector<double> solve_with_targets(const geodesic_solver& solver,
+                                        const VertexIndexMap& vidmap,
+                                        const std::vector<std::pair<vertex_descriptor, double>> &sources_and_dist,
+                                        const std::vector<std::pair<vertex_descriptor, double>> &targets_and_dist)
+  {
+    auto update       = [](int node, int neighbor, float new_distance) {};
+    auto stop         = [](int node) { return false; };
+    double max_distance = DBL_MAX;
+    std::vector<int> exit_verts(targets_and_dist.size());
+    for (auto i = 0; i < targets_and_dist.size(); ++i) {
+        exit_verts[i]=get(vidmap,targets_and_dist[i].first);
+    }
+    auto exit = [&exit_verts](int node) {
+      auto it = find(exit_verts.begin(), exit_verts.end(), node);
+      if (it != exit_verts.end())
+        exit_verts.erase(it);
+
+    if (exit_verts.empty())
+        return true;
+
+      return false;
+    };
+
+    auto distances  = vector<double>(solver.graph.size(), DBL_MAX);
+    std::vector<int>sources_id((sources_and_dist.size()));
+    for (auto i = 0; i < sources_and_dist.size(); ++i) {
+      sources_id[i] = get(vidmap,sources_and_dist[i].first);
+      distances[sources_id[i]] = sources_and_dist[i].second;
+    }
+
+    visit_graph(distances, solver, sources_id, update, stop, exit);
+    return distances;
+  }
+
+  //compute the length between two opposite vertices by flattening
+  //TODO: handle concave configurations
+  static
+  double length_by_flattening(const VertexPointMap &vpm,
+                            const TriangleMesh &mesh,
+                            const halfedge_descriptor& h)
+  {
+    std::array<Vector_2,3> flat_tid=init_flat_triangle(h,vpm,mesh);
+    std::array<Vector_2,3> flat_nei=unfold_face(h,vpm,mesh,flat_tid);
+    return sqrt(squared_distance(flat_tid[2],flat_nei[2]));
+  }
+
+  static
+  Point_3 eval_position(const VertexPointMap &vpm,
+                        const TriangleMesh &mesh,
+                        const Face_location<TriangleMesh, FT>& p)
+  {
+    halfedge_descriptor h=halfedge(p.first,mesh);
+    return p.second[0]*source(h,mesh)+p.second[1]*target(h,mesh)+p.second[2]*target(next(h,mesh),mesh);
+  }
+
+  // compute the distance between a point p and some vertices around him
+  // TODO: consider to take more vertices (increase accuracy)
+  // TODO: handle concave configurations
+  static
+  std::vector<std::pair<vertex_descriptor, double>>
+  nodes_around_point(const VertexPointMap &vpm,
+                    const TriangleMesh &mesh,
+                    const Face_location<TriangleMesh, FT>& p)
+  {
+    auto get_vid=[&mesh](const int k,const face_descriptor& tid)
+      {
+        halfedge_descriptor h=halfedge(tid,mesh);
+        if(k==0)
+          return source(h,mesh);
+        if(k==1)
+          return target(h,mesh);
+        if(k==2)
+          return target(next(h,mesh),mesh);
+
+      };
+    std::vector<std::pair<int, float>> nodes;
+    nodes.reserve(6);
+    auto [is_vert,offset]=point_is_vert(p);
+    if (is_vert) {
+      vertex_descriptor vid = get_vid(offset,p.first);
+      nodes.push_back({vid, 0});
+    } else {
+      face_descriptor tid = p.first;
+      Point_3 pos = eval_position(vpm, mesh, p);
+      halfedge_descriptor h=halfedge(tid,mesh);
+      for (auto i = 0; i < 3; ++i) {
+        vertex_descriptor p0 = source(h,mesh);
+        //connect to current vertex
+        double d = sqrt(squared_distances(get(vpm,p0),pos));
+        nodes.push_back(std::make_pair(p0, d));
+
+        //connecting to opposite vertex w.r.t to current halfedge
+        vertex_descriptor opp = target(next(opposite(h,mesh),mesh),mesh);
+        double l =
+            length_by_flattening(vpm,mesh,h);
+        nodes.push_back(std::make_pair(opp, l));
+        h=next(h,mesh);
+      }
+    }
+
+    return nodes;
+  }
+
+  //compute geodesic distance field from p
+  //TODO: can be easiliy extended to more than one source
+  static
+  std::vector<double>
+  compute_geodesic_distances(const geodesic_solver &solver,
+                             const VertexPointMap &vpm,
+                             const TriangleMesh &mesh,
+                             const Face_location<TriangleMesh, FT>& p)
+  {
+    std::vector<std::pair<vertex_descriptor,double>> source_nodes=nodes_around_point(vpm,mesh,p);
+
+    return compute_geodesic_distances(solver, source_nodes);
+  }
+
+  //compute the geodesic distance field from src, and stop the propagation
+  //once tgt is reached
+  static
+  std::vector<double>
+  compute_pruned_geodesic_distances(const geodesic_solver &solver,
+                                    const VertexPointMap &vpm,
+                                    const VertexIndexMap& vidmap,
+                                    const TriangleMesh &mesh,
+                                    const Face_location<TriangleMesh, FT>& src,
+                                    const Face_location<TriangleMesh, FT>& tgt)
+  {
+    std::vector<std::pair<vertex_descriptor, double>>
+    source_nodes = nodes_around_point(vpm,mesh,src);
+
+    std::vector<std::pair<vertex_descriptor, double>>
+    target_nodes = nodes_around_point(vpm,mesh,tgt);
+
+    return solve_with_targets(solver, source_nodes, target_nodes);
+  }
+
+  static
+  std::vector<halfedge_descriptor>
+  strip_on_dual_graph(const dual_geodesic_solver &solver,
+                      const TriangleMesh &mesh,
+                      const int src,
+                      const int tgt)
+  {
+    if (src == tgt)
+      return {};
+
+    auto common_halfedge = [&mesh](face_descriptor f1, face_descriptor f2) {
+      halfedge_descriptor h = halfedge(f1, mesh);
+      for (int i = 0; i < 3; ++i) {
+        if (face(opposite(h, mesh), mesh) == f2)
+          return h;
+        h = next(h, mesh);
+      }
+      CGAL_assertion(!"faces do no share a common edge");
+      return halfedge_descriptor();
+    };
+    // initialize once for all and sparsely cleanup at the end of every solve
+    std::vector<int> parents(solver.graph.size(), -1);
+    std::vector<double> field(solver.graph.size(), DBL_MAX);
+    std::vector<face_descriptor> id_to_face_map(faces(mesh).begin(), faces(mesh).end());
+
+    field[src]=0.0;
+    std::vector<int> sources = std::vector<int>{src};
+    auto update = [&parents](int node, int neighbor, double new_distance) {
+      parents[neighbor] = node;
+    };
+    auto stop = [](int node) { return false; };
+    auto exit = [tgt](int node) { return node==tgt; };
+
+    visit_dual_geodesic_graph(field,solver, std::vector<int>{src}, update, stop, exit);
+
+    // extract_strip
+    std::vector<halfedge_descriptor> strip;
+    int node = tgt;
+    CGAL_assertion(parents[tgt] != -1);
+    //update the result using id_to_face_map
+    strip.reserve((int)std::sqrt(parents.size()));
+    while (node != -1) {
+      strip.push_back(common_halfedge(id_to_face_map[node],id_to_face_map[parents[node]]));
+      node = parents[node];
+    }
+    std::reverse(strip.begin(),strip.end());
+    return strip;
+  }
 };
 
 } // namespace internal
@@ -894,6 +1868,7 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   VPM vpm = get(CGAL::vertex_point, tmesh);
 
+#if CGAL_BSURF_USE_DIJKSTRA_SP
   typename boost::property_map<
       TriangleMesh, CGAL::dynamic_face_property_t<face_descriptor>>::const_type
       predecessor_map =
@@ -966,6 +1941,18 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
     current_face = prev;
   }
   std::reverse(initial_path.begin(), initial_path.end());
+#else
+  //TODO: VIM is not needed here
+  typedef typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type VIM;
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type FIM;
+  const FIM fim = get_initialized_face_index_map(tmesh, parameters::default_values());
+
+  using Impl2 = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
+
+  typename Impl2::dual_geodesic_solver solver = Impl2::make_dual_geodesic_solver(vpm, fim, tmesh);
+  std::vector<halfedge_descriptor> initial_path =
+    Impl2::strip_on_dual_graph(solver, tmesh, get(fim, src.first), get(fim,tgt.first));
+#endif
 
   std::vector< std::array<typename K::Vector_2, 2>> portals=Impl::unfold_strip(initial_path,src,tgt,vpm,tmesh);
   std::size_t max_index=0;
@@ -982,14 +1969,15 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
 
 template <class TriangleMesh, class FT>
 std::vector<Face_location<TriangleMesh, FT>>
-recursive_de_Casteljau(const TriangleMesh &mesh,
+recursive_de_Casteljau(const TriangleMesh& mesh,
                        const Bezier_segment<TriangleMesh, FT>& control_points,
                        const int num_subdiv)
 {
   //TODO replace with named parameter
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
-  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
+  using Impl = internal::Bezier_tracing_impl<K, TriangleMesh, VPM>;
+
 
   std::vector<Bezier_segment<TriangleMesh, FT>> segments(1,control_points);
   std::vector<Bezier_segment<TriangleMesh, FT>> result;
@@ -1010,6 +1998,39 @@ recursive_de_Casteljau(const TriangleMesh &mesh,
   // using the fact that data in array and vector are contiguous
   return {(Face_location<TriangleMesh, FT>*)segments.data(),
           (Face_location<TriangleMesh, FT>*)segments.data() + segments.size() * 4};
+}
+
+template <class FT, class TriangleMesh, class VertexDistanceMap>
+void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& center,
+                                         VertexDistanceMap distance_map,
+                                         const TriangleMesh& tmesh)
+{
+  // TODO: the solver could be init once and used several times for different centers
+  //       in particular, it can be tweaked to compute the Voronoi diagram of the initial centers
+  //       or geodesic furthest point sampling.
+  // TODO: add a parameter for the link size to increase to precision of the approximation of the distance
+  // TODO: concave flattening should be handled to improve the approximation of the distance
+  //       (shortest path is not a line in that case)
+
+  //TODO replace with named parameter
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
+  using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
+
+  typedef typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type VIM;
+  const VIM vim = get_initialized_vertex_index_map(tmesh, parameters::default_values());
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type FIM;
+  const FIM fim = get_initialized_face_index_map(tmesh, parameters::default_values());
+
+  using Impl = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
+
+  typename Impl::geodesic_solver solver = Impl::make_geodesic_solver(vpm, vim,tmesh);
+  std::vector<double> distances = Impl::compute_geodesic_distances(solver, vpm, tmesh, center);
+
+  for (typename Impl::vertex_descriptor v : vertices(tmesh))
+  {
+    put(distance_map, v, distances[get(vim,v)]);
+  }
 }
 
 } // namespace Polygon_mesh_processing
