@@ -1437,8 +1437,8 @@ struct Geodesic_circle_impl
       for (auto i = 0; i < 3; ++i) {
         solver.graph[entry][i].node = get(tidmap,face(opposite(h,mesh),mesh));
         solver.graph[entry][i].length = compute_dual_weights(h);
+        h=next(h,mesh);
       }
-      h=next(h,mesh);
     }
     return solver;
   }
@@ -1821,14 +1821,14 @@ struct Geodesic_circle_impl
     std::vector<face_descriptor> id_to_face_map(faces(mesh).begin(), faces(mesh).end());
 
     field[src]=0.0;
-    std::vector<int> sources = std::vector<int>{src};
+    std::vector<int> sources = {src};
     auto update = [&parents](int node, int neighbor, double) {
       parents[neighbor] = node;
     };
     auto stop = [](int) { return false; };
     auto exit = [tgt](int node) { return node==tgt; };
 
-    visit_dual_geodesic_graph(field,solver, std::vector<int>{src}, update, stop, exit);
+    visit_dual_geodesic_graph(field,solver, sources, update, stop, exit);
 
     // extract_strip
     std::vector<halfedge_descriptor> strip;
@@ -1865,6 +1865,8 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   VPM vpm = get(CGAL::vertex_point, tmesh);
 
+
+//TODO: handle cases of src and tgt not in the same connected component (assert?)
 #if CGAL_BSURF_USE_DIJKSTRA_SP
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor
       face_descriptor;
