@@ -1867,7 +1867,7 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
 
 
 //TODO: handle cases of src and tgt not in the same connected component (assert?)
-#if CGAL_BSURF_USE_DIJKSTRA_SP
+#ifdef CGAL_BSURF_USE_DIJKSTRA_SP
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor
       face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
