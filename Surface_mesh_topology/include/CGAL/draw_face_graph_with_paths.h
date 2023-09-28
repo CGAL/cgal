@@ -17,7 +17,7 @@
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Graphic_storage.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 
 #include <iostream>
 #include <initializer_list>
@@ -30,15 +30,15 @@
 
 namespace CGAL {
 
-// Specific drawing functor
+// Specific graphics scene options
 template <typename DS,
           typename vertex_handle,
           typename edge_handle,
           typename face_handle>
-struct Drawing_functor_face_graph_with_paths :
-    public CGAL::Drawing_functor<DS, vertex_handle, edge_handle, face_handle>
+struct Graphics_scene_options_face_graph_with_paths :
+    public CGAL::Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle>
 {
-  Drawing_functor_face_graph_with_paths(std::size_t nbpaths): m_nbpaths(nbpaths)
+  Graphics_scene_options_face_graph_with_paths(std::size_t nbpaths): m_nbpaths(nbpaths)
   {
     color_of_path=[](std::size_t i)->CGAL::IO::Color
     {
@@ -141,14 +141,14 @@ const typename CGAL::Get_traits<Mesh>::Point& get_point
   return CGAL::Get_traits<Mesh>::get_point(mesh, dh);
 }
 
-template <typename Mesh, typename BufferType=float, class DrawingFunctor>
+template <typename Mesh, typename BufferType=float, class GSOptions>
 void compute_face(const Mesh& mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                   CGAL::Graphic_storage<BufferType>& graphic_storage,
-                  DrawingFunctor& drawing_functor)
+                  GSOptions& gs_options)
 {
-  if(!drawing_functor.draw_face(lcc, dh))
+  if(!gs_options.draw_face(lcc, dh))
   { return; }
 
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
@@ -170,8 +170,8 @@ void compute_face(const Mesh& mesh,
   }
   while(cur!=dh);
 
-  if(drawing_functor.colored_face(lcc, dh))
-  { graphic_storage.face_begin(drawing_functor.face_color(lcc, dh)); }
+  if(gs_options.colored_face(lcc, dh))
+  { graphic_storage.face_begin(gs_options.face_color(lcc, dh)); }
   else
   { graphic_storage.face_begin(); }
 
@@ -188,16 +188,16 @@ void compute_face(const Mesh& mesh,
   graphic_storage.face_end();
 }
 
-template <typename Mesh, typename BufferType=float, class DrawingFunctor>
+template <typename Mesh, typename BufferType=float, class GSOptions>
 void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                   typename Get_map<Mesh, Mesh>::type::size_type m_amark,
                   CGAL::Graphic_storage<BufferType>& graphic_storage,
-                  DrawingFunctor& drawing_functor,
+                  GSOptions& gs_options,
                   bool draw_marked_darts=true)
 {
-  if(!drawing_functor.draw_edge(lcc, dh))
+  if(!gs_options.draw_edge(lcc, dh))
   { return; }
 
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
@@ -242,7 +242,7 @@ template <typename Mesh, typename BufferType = float>
 void compute_vertex(const Mesh &mesh,
                     typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                     CGAL::Graphic_storage<BufferType>& graphic_storage,
-                    DrawingFunctor& drawing_functor)
+                    GSOptions& gs_options)
 {
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
@@ -263,7 +263,7 @@ void compute_path(const Mesh &mesh,
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
   typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
 
-  if ((*m_paths)[i].is_empty() || !drawing_functor.draw_path(i))
+  if ((*m_paths)[i].is_empty() || !gs_options.draw_path(i))
   { return; }
 
   CGAL::Random random(static_cast<unsigned int>(i));
@@ -280,10 +280,10 @@ void compute_path(const Mesh &mesh,
   }
 }
 
-template <class Mesh, class DrawingFunctor, typename BufferType = float>
+template <class Mesh, class GSOptions, typename BufferType = float>
 void compute_elements(const Mesh &mesh,
                       CGAL::Graphic_storage<BufferType> &graphic_storage,
-                      const DrawingFunctor &m_drawing_functor,
+                      const GSOptions &m_gs_options,
                       const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
                       typename Get_map<Mesh, Mesh>::type::size_type amark)
 {
@@ -369,17 +369,17 @@ void compute_elements(const Mesh &mesh,
 
 } // namespace draw_function_for_face_graph_with_paths
 
-template <typename BufferType=float, class Mesh, class DrawingFunctor>
+template <typename BufferType=float, class Mesh, class GSOptions>
 void add_in_graphic_storage(const Mesh& mesh,
                            CGAL::Graphic_storage<BufferType>& graphic_storage,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
-                           const DrawingFunctor& drawing_functor,
+                           const GSOptions& gs_options,
                            typename Get_map<Mesh, Mesh>::type::size_type amark=
                            typename Get_map<Mesh, Mesh>::type::INVALID_MARK)
 {
   draw_function_for_face_graph_with_paths::compute_elements(mesh,
                                                             graphic_storage,
-                                                            drawing_functor,
+                                                            gs_options,
                                                             paths, amark);
 }
 
@@ -390,14 +390,14 @@ void add_in_graphic_storage(const Mesh& mesh,
                            typename Get_map<Mesh, Mesh>::type::size_type amark=
                            typename Get_map<Mesh, Mesh>::type::INVALID_MARK)
 {
-  // Default functor; user can add his own functor.
-  Drawing_functor<Mesh,
+  // Default graphics view options.
+  Graphics_scene_options<Mesh,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor /*vh*/,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor /*eh*/,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor /*fh*/>
-      drawing_functor;
+      gs_options;
 
-  add_in_graphic_storage(mesh, graphic_storage, drawing_functor, paths, amark);
+  add_in_graphic_storage(mesh, graphic_storage, gs_options, paths, amark);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -414,16 +414,16 @@ void draw(const Mesh& mesh,
   draw_graphic_storage(buffer, title);
 }
 
-template<typename Mesh, typename DrawingFunctor, typename BufferType=float>
+template<typename Mesh, typename GSOptions, typename BufferType=float>
 void draw(const Mesh& mesh,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
-          const DrawingFunctor& drawing_functor,
+          const GSOptions& gs_options,
           typename Get_map<Mesh, Mesh>::type::size_type amark=
           (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
           const char* title="Mesh Viewer With Path")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_storage(mesh, buffer, drawing_functor, &paths, amark);
+  add_in_graphic_storage(mesh, buffer, gs_options, &paths, amark);
   draw_graphic_storage(buffer, title);
 }
 
@@ -457,10 +457,10 @@ namespace CGAL
     std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }
 
-  template<class Mesh, typename DrawingFunctor, typename BufferType=float>
+  template<class Mesh, typename GSOptions, typename BufferType=float>
   void draw(const Mesh&,
             const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >&,
-            const DrawingFunctor&,
+            const GSOptions&,
             typename Get_map<Mesh, Mesh>::type::size_type=
             (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
             const char* ="")

@@ -16,7 +16,7 @@ typedef std::pair<Point, Vector> Pwn;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 using PS3=CGAL::Point_set_3<Point>;
 
-struct Drawing_functor_green_points:
+struct Graphics_scene_options_green_points:
   public CGAL::Graphics_scene_options<PS3, typename PS3::const_iterator,
                                       typename PS3::const_iterator,
                                       typename PS3::const_iterator>
@@ -55,7 +55,7 @@ int main(void)
     { point_set.insert(it.first); }
 
     CGAL::Graphic_storage<float> graphic_buffer;
-    CGAL::add_in_graphic_storage(point_set, graphic_buffer, Drawing_functor_green_points());
+    CGAL::add_in_graphic_storage(point_set, graphic_buffer, Graphics_scene_options_green_points());
     CGAL::add_in_graphic_storage(output_mesh, graphic_buffer);
     CGAL::draw_graphic_storage(graphic_buffer);
   }

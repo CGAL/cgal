@@ -9,16 +9,16 @@ Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5
 \param alcc the linear cell complex to draw.
 
 */
-  template<class LCC, class DrawingFunctor>
-  void draw(const LCC& alcc, const DrawingFunctor& afunctor);
+  template<class LCC, class GSOptions>
+  void draw(const LCC& alcc, const GSOptions& gs_options);
 
 /*!
 \ingroup PkgDrawLinearCellComplex
 
 */
-  template<class LCC, class BufferType, class DrawingFunctor>
+  template<class LCC, class BufferType, class GSOptions>
   void add_in_graphic_storage(const LCC& alcc, CGAL::Graphic_storage<BufferType>& graphic_storage,
-                              const DrawingFunctor& afunctor);
+                              const GSOptions& gs_options);
 
 } /* namespace CGAL */
 

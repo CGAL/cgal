@@ -20,7 +20,7 @@
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Graphic_storage.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polygon_2.h>
 
 #ifdef DOXYGEN_RUNNING
@@ -46,20 +46,20 @@ namespace CGAL {
 
 namespace draw_function_for_p2 {
 
-template <typename BufferType=float, class P2, class DrawingFunctor>
+template <typename BufferType=float, class P2, class GSOptions>
 void compute_elements(const P2& p2,
                       CGAL::Graphic_storage<BufferType> &graphic_storage,
-                      const DrawingFunctor& drawing_functor)
+                      const GSOptions& gs_options)
 {
   if (p2.is_empty())
     return;
 
   typename P2::Point_2 prev=p2.vertex(p2.size()-1);
 
-  if (drawing_functor.are_faces_enabled())
+  if (gs_options.are_faces_enabled())
   {
-    if(drawing_functor.colored_face(p2, nullptr))
-    { graphic_storage.face_begin(drawing_functor.face_color(p2, nullptr)); }
+    if(gs_options.colored_face(p2, nullptr))
+    { graphic_storage.face_begin(gs_options.face_color(p2, nullptr)); }
     else
     { graphic_storage.face_begin(); }
   }
@@ -67,31 +67,31 @@ void compute_elements(const P2& p2,
   for (typename P2::Vertex_const_iterator i=p2.vertices_begin();
        i!=p2.vertices_end(); ++i)
   {
-    if(drawing_functor.are_vertices_enabled() &&
-       drawing_functor.draw_vertex(p2, i))
+    if(gs_options.are_vertices_enabled() &&
+       gs_options.draw_vertex(p2, i))
     { // Add vertex
-      if(drawing_functor.colored_vertex(p2, i))
-      { graphic_storage.add_point(*i, drawing_functor.vertex_color(p2, i)); }
+      if(gs_options.colored_vertex(p2, i))
+      { graphic_storage.add_point(*i, gs_options.vertex_color(p2, i)); }
       else
       { graphic_storage.add_point(*i); }
     }
 
-    if(drawing_functor.are_edges_enabled() &&
-       drawing_functor.draw_edge(p2, i))
+    if(gs_options.are_edges_enabled() &&
+       gs_options.draw_edge(p2, i))
     { // Add edge with previous point
-      if(drawing_functor.colored_vertex(p2, i))
-      { graphic_storage.add_segment(prev, *i, drawing_functor.edge_color(p2, i)); }
+      if(gs_options.colored_vertex(p2, i))
+      { graphic_storage.add_segment(prev, *i, gs_options.edge_color(p2, i)); }
       else
       { graphic_storage.add_segment(prev, *i); }
     }
 
-    if(drawing_functor.are_faces_enabled())
+    if(gs_options.are_faces_enabled())
     { graphic_storage.add_point_in_face(*i); } // Add point in face
 
     prev = *i;
   }
 
-  if (drawing_functor.are_faces_enabled())
+  if (gs_options.are_faces_enabled())
   { graphic_storage.face_end(); }
 }
 
@@ -101,21 +101,21 @@ void compute_elements(const P2& p2,
 
 // Specializations of add_in_graphic_storage function
 
-template<typename BufferType=float, class T, class C, class DrawingFunctor>
+template<typename BufferType=float, class T, class C, class GSOptions>
 void add_in_graphic_storage(const CGAL_P2_TYPE& ap2,
                            CGAL::Graphic_storage<BufferType>& graphic_storage,
-                           const DrawingFunctor& drawingfunctor)
-{ draw_function_for_p2::compute_elements(ap2, graphic_storage, drawingfunctor); }
+                           const GSOptions& gs_options)
+{ draw_function_for_p2::compute_elements(ap2, graphic_storage, gs_options); }
 
 template<typename BufferType=float, class T, class C>
 void add_in_graphic_storage(const CGAL_P2_TYPE& ap2,
                            CGAL::Graphic_storage<BufferType> &graphic_storage)
 {
-  CGAL::Drawing_functor<CGAL_P2_TYPE,
+  CGAL::Graphics_scene_options<CGAL_P2_TYPE,
                         typename CGAL_P2_TYPE::Vertex_const_iterator,
                         typename CGAL_P2_TYPE::Vertex_const_iterator,
-                        void*> drawingfunctor;
-  draw_function_for_p2::compute_elements(ap2, graphic_storage, drawingfunctor);
+                        void*> gs_options;
+  draw_function_for_p2::compute_elements(ap2, graphic_storage, gs_options);
 }
 
 // Specialization of draw function.
@@ -131,13 +131,13 @@ void draw(const CGAL_P2_TYPE &ap2,
   draw_graphic_storage(buffer, title);
 }
 
-template <class T, class C, class DrawingFunctor>
+template <class T, class C, class GSOptions>
 void draw(const CGAL_P2_TYPE &ap2,
-          const DrawingFunctor& drawingfunctor,
+          const GSOptions& gs_options,
           const char *title="Polygon_2 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_storage(ap2, buffer, drawingfunctor);
+  add_in_graphic_storage(ap2, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
 

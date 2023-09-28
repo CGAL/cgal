@@ -16,7 +16,7 @@
 #include <CGAL/license/Voronoi_diagram_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Graphic_storage.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Voronoi_diagram_2.h>
 #include <CGAL/Voronoi_diagram_2/Face.h>
@@ -27,16 +27,16 @@
 
 namespace CGAL {
 
-// We need a specific functor for voronoi2 in order to allow to differentiate
-// voronoi and dual vertices, and to manage rays.
+// We need a specific graphics scene option for voronoi2 in order to allow
+// to differentiate voronoi and dual vertices, and to manage rays.
 template <typename DS,
           typename vertex_handle,
           typename edge_handle,
           typename face_handle>
-struct Drawing_functor_voronoi :
-    public CGAL::Drawing_functor<DS, vertex_handle, edge_handle, face_handle>
+struct Graphics_scene_options_voronoi :
+    public CGAL::Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle>
 {
-  Drawing_functor_voronoi() : m_draw_voronoi_vertices(true),
+  Graphics_scene_options_voronoi() : m_draw_voronoi_vertices(true),
                               m_draw_dual_vertices(true),
                               dual_vertex_color(CGAL::IO::Color(50, 100, 180)),
                               ray_color(CGAL::IO::Color(100, 0, 0)),
@@ -69,43 +69,43 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3  Local_point;
 typedef Local_kernel::Vector_3 Local_vector;
 
-template <typename BufferType=float, class V2, class DrawingFunctor>
+template <typename BufferType=float, class V2, class GSOptions>
 void compute_vertex(const V2& v2,
                     typename V2::Vertex_iterator vh,
                     CGAL::Graphic_storage<BufferType>& graphic_storage,
-                    const DrawingFunctor& drawing_functor)
+                    const GSOptions& gs_options)
 {
-  if(!drawing_functor.draw_vertex(v2, vh))
+  if(!gs_options.draw_vertex(v2, vh))
   { return; }
 
-  if(drawing_functor.colored_vertex(v2, vh))
-  { graphic_storage.add_point(vh->point(), drawing_functor.vertex_color(v2, vh)); }
+  if(gs_options.colored_vertex(v2, vh))
+  { graphic_storage.add_point(vh->point(), gs_options.vertex_color(v2, vh)); }
   else
   { graphic_storage.add_point(vh->point()); }
 }
 
-template <typename BufferType=float, class V2, class DrawingFunctor>
+template <typename BufferType=float, class V2, class GSOptions>
 void compute_dual_vertex(const V2& /*v2*/,
                          typename V2::Delaunay_graph::Finite_vertices_iterator vi,
                          CGAL::Graphic_storage<BufferType> &graphic_storage,
-                         const DrawingFunctor& drawing_functor)
-{ graphic_storage.add_point(vi->point(), drawing_functor.dual_vertex_color); }
+                         const GSOptions& gs_options)
+{ graphic_storage.add_point(vi->point(), gs_options.dual_vertex_color); }
 
-template <typename BufferType=float, class V2, class DrawingFunctor>
+template <typename BufferType=float, class V2, class GSOptions>
 void add_segments_and_update_bounding_box(const V2& v2,
                                           typename V2::Halfedge_iterator he,
                                           CGAL::Graphic_storage<BufferType>& graphic_storage,
-                                          DrawingFunctor& drawing_functor)
+                                          GSOptions& gs_options)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef typename V2::Delaunay_vertex_handle Delaunay_vertex_const_handle;
 
   if (he->is_segment())
   {
-    if(drawing_functor.colored_edge(v2, he))
+    if(gs_options.colored_edge(v2, he))
     {
       graphic_storage.add_segment(he->source()->point(), he->target()->point(),
-                                 drawing_functor.edge_color(v2, he));
+                                 gs_options.edge_color(v2, he));
     }
     else
     {
@@ -221,11 +221,11 @@ Local_kernel::Point_2 get_second_point(typename V2::Halfedge_handle ray,
 }
 
 // Halfedge_const_handle
-template <typename BufferType=float, class V2, class DrawingFunctor>
+template <typename BufferType=float, class V2, class GSOptions>
 void compute_rays_and_bisectors(const V2&,
                                 typename V2::Halfedge_iterator he,
                                 CGAL::Graphic_storage<BufferType>& graphic_storage,
-                                const DrawingFunctor& drawing_functor)
+                                const GSOptions& gs_options)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef typename V2::Delaunay_vertex_handle Delaunay_vertex_const_handle;
@@ -240,28 +240,28 @@ void compute_rays_and_bisectors(const V2&,
     if (he->has_source())
     {
       // add_ray_segment(he->source()->point(), get_second_point(he, graphic_storage.get_bounding_box()));
-      graphic_storage.add_ray(he->source()->point(), direction, drawing_functor.ray_color);
+      graphic_storage.add_ray(he->source()->point(), direction, gs_options.ray_color);
     }
   }
   else if (he->is_bisector())
   {
     Kernel::Point_2 pointOnLine((v1->point().x() + v2->point().x()) / 2,
                                 (v1->point().y() + v2->point().y()) / 2);
-    graphic_storage.add_line(pointOnLine, direction, drawing_functor.bisector_color);
+    graphic_storage.add_line(pointOnLine, direction, gs_options.bisector_color);
   }
 }
 
-template <typename BufferType=float, class V2, class DrawingFunctor>
+template <typename BufferType=float, class V2, class GSOptions>
 void compute_face(const V2& v2,
                   typename V2::Face_iterator fh,
                   CGAL::Graphic_storage<BufferType>& graphic_storage,
-                  const DrawingFunctor& m_drawing_functor)
+                  const GSOptions& m_gs_options)
 {
-  if(fh->is_unbounded() || !m_drawing_functor.draw_face(v2, fh))
+  if(fh->is_unbounded() || !m_gs_options.draw_face(v2, fh))
   { return; }
 
-  if(m_drawing_functor.colored_face(v2, fh))
-  { graphic_storage.face_begin(m_drawing_functor.face_color(v2, fh)); }
+  if(m_gs_options.colored_face(v2, fh))
+  { graphic_storage.face_begin(m_gs_options.face_color(v2, fh)); }
   else { graphic_storage.face_begin(); }
 
   typename V2::Ccb_halfedge_circulator ec_start=fh->ccb();
@@ -286,48 +286,48 @@ void compute_face(const V2& v2,
   //        }
 }
 
-template <typename BufferType=float, class V2, class DrawingFunctor>
+template <typename BufferType=float, class V2, class GSOptions>
 void compute_elements(const V2& v2,
                       CGAL::Graphic_storage<BufferType>& graphic_storage,
-                      const DrawingFunctor& drawing_functor)
+                      const GSOptions& gs_options)
 {
-  if(drawing_functor.are_vertices_enabled())
+  if(gs_options.are_vertices_enabled())
   {
     // Draw the voronoi vertices
-    if (drawing_functor.are_voronoi_vertices_enabled())
+    if (gs_options.are_voronoi_vertices_enabled())
     {
       for (typename V2::Vertex_iterator it=v2.vertices_begin();
            it!=v2.vertices_end(); ++it)
-      { compute_vertex(v2, it, graphic_storage, drawing_functor); }
+      { compute_vertex(v2, it, graphic_storage, gs_options); }
     }
 
     // Draw the dual vertices
-    if (drawing_functor.are_dual_vertices_enabled())
+    if (gs_options.are_dual_vertices_enabled())
     {
       for (typename V2::Delaunay_graph::Finite_vertices_iterator
              it=v2.dual().finite_vertices_begin();
            it!=v2.dual().finite_vertices_end(); ++it)
-      { compute_dual_vertex(v2, it, graphic_storage, drawing_functor); }
+      { compute_dual_vertex(v2, it, graphic_storage, gs_options); }
     }
   }
 
-  if(drawing_functor.are_edges_enabled())
+  if(gs_options.are_edges_enabled())
   {
     // Add segments and update bounding box
     for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
          it!=v2.halfedges_end(); ++it)
     { add_segments_and_update_bounding_box(v2, it,
-                                           graphic_storage, drawing_functor); }
+                                           graphic_storage, gs_options); }
   }
 
   for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
        it!=v2.halfedges_end(); ++it)
-  { compute_rays_and_bisectors(v2, it, graphic_storage, drawing_functor); }
+  { compute_rays_and_bisectors(v2, it, graphic_storage, gs_options); }
 
-  if (drawing_functor.are_faces_enabled())
+  if (gs_options.are_faces_enabled())
   {
     for (typename V2::Face_iterator it=v2.faces_begin(); it!=v2.faces_end(); ++it)
-    { compute_face(v2, it, graphic_storage, drawing_functor); }
+    { compute_face(v2, it, graphic_storage, gs_options); }
   }
 }
 
@@ -336,39 +336,39 @@ void compute_elements(const V2& v2,
 #define CGAL_VORONOI_TYPE CGAL::Voronoi_diagram_2 <DG, AT, AP>
 
 template <class DG, class AT, class AP,
-          typename BufferType=float, class DrawingFunctor>
+          typename BufferType=float, class GSOptions>
 void add_in_graphic_storage(const CGAL_VORONOI_TYPE &v2,
                            CGAL::Graphic_storage<BufferType>& graphic_storage,
-                           const DrawingFunctor& m_drawing_functor)
+                           const GSOptions& m_gs_options)
 {
-  draw_function_for_v2::compute_elements(v2, graphic_storage, m_drawing_functor);
+  draw_function_for_v2::compute_elements(v2, graphic_storage, m_gs_options);
 }
 
 template <class DG, class AT, class AP, typename BufferType=float>
 void add_in_graphic_storage(const CGAL_VORONOI_TYPE& v2,
                            CGAL::Graphic_storage<BufferType>& graphic_storage)
 {
-  // Default functor; user can add his own functor.
-  CGAL::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
+  // Default graphics view options.
+  CGAL::Graphics_scene_options_voronoi<CGAL_VORONOI_TYPE,
                                 typename CGAL_VORONOI_TYPE::Vertex_iterator,
                                 typename CGAL_VORONOI_TYPE::Halfedge_iterator,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
-    drawing_functor;
+    gs_options;
 
-  add_in_graphic_storage(v2, graphic_storage, drawing_functor);
+  add_in_graphic_storage(v2, graphic_storage, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 // Specialization of draw function.
 template<class DG, class AT, class AP,
-         typename BufferType=float, class DrawingFunctor>
+         typename BufferType=float, class GSOptions>
 void draw(const CGAL_VORONOI_TYPE& av2,
-          const DrawingFunctor& drawing_functor,
+          const GSOptions& gs_options,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_storage(av2, buffer, drawing_functor);
+  add_in_graphic_storage(av2, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
 
@@ -378,20 +378,20 @@ void draw(const CGAL_VORONOI_TYPE& av2,
 {
   CGAL::Graphic_storage<BufferType> buffer;
 
-  CGAL::Drawing_functor_voronoi<CGAL_VORONOI_TYPE,
+  CGAL::Graphics_scene_options_voronoi<CGAL_VORONOI_TYPE,
                                 typename CGAL_VORONOI_TYPE::Vertex_iterator,
                                 typename CGAL_VORONOI_TYPE::Halfedge_iterator,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
-    drawing_functor;
+    gs_options;
 
-  add_in_graphic_storage(av2, buffer, drawing_functor);
+  add_in_graphic_storage(av2, buffer, gs_options);
 
   QApplication_and_basic_viewer app(buffer, title);
   if(app)
   {
     // Here we define the std::function to capture key pressed.
     app.basic_viewer().on_key_pressed=
-      [&av2, &drawing_functor] (QKeyEvent* e, CGAL::Basic_viewer_qt<float>* basic_viewer) -> bool
+      [&av2, &gs_options] (QKeyEvent* e, CGAL::Basic_viewer_qt<float>* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_R) && (modifiers == ::Qt::NoButton))
@@ -404,33 +404,33 @@ void draw(const CGAL_VORONOI_TYPE& av2,
         }
         else if ((e->key() == ::Qt::Key_V) && (modifiers == ::Qt::ShiftModifier))
         {
-          if(drawing_functor.are_voronoi_vertices_enabled())
-          { drawing_functor.disable_voronoi_vertices(); }
-          else { drawing_functor.enable_voronoi_vertices(); }
+          if(gs_options.are_voronoi_vertices_enabled())
+          { gs_options.disable_voronoi_vertices(); }
+          else { gs_options.enable_voronoi_vertices(); }
 
           basic_viewer->displayMessage
             (QString("Voronoi vertices=%1.").
-             arg(drawing_functor.are_voronoi_vertices_enabled()?"true":"false"));
+             arg(gs_options.are_voronoi_vertices_enabled()?"true":"false"));
 
           basic_viewer->clear();
           draw_function_for_v2::compute_elements(av2,
                                                  basic_viewer->get_graphic_storage(),
-                                                 drawing_functor);
+                                                 gs_options);
           basic_viewer->redraw();
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
         {
-          if(drawing_functor.are_dual_vertices_enabled())
-          { drawing_functor.disable_dual_vertices(); }
-          else { drawing_functor.enable_dual_vertices(); }
+          if(gs_options.are_dual_vertices_enabled())
+          { gs_options.disable_dual_vertices(); }
+          else { gs_options.enable_dual_vertices(); }
 
           basic_viewer->displayMessage(QString("Dual vertices=%1.").
-                                       arg(drawing_functor.are_dual_vertices_enabled()?"true":"false"));
+                                       arg(gs_options.are_dual_vertices_enabled()?"true":"false"));
 
           basic_viewer->clear();
           draw_function_for_v2::compute_elements(av2,
                                                  basic_viewer->get_graphic_storage(),
-                                                 drawing_functor);
+                                                 gs_options);
           basic_viewer->redraw();
         }
         else

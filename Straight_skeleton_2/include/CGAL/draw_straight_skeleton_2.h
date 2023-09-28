@@ -16,7 +16,7 @@
 #include <CGAL/license/Straight_skeleton_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <CGAL/Graphic_storage.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Straight_skeleton_2.h>
 #include <sstream>
 
@@ -24,19 +24,19 @@ namespace CGAL {
 
 namespace draw_function_for_ss2 {
 
-template <typename BufferType=float, class SS2, class DrawingFunctor>
+template <typename BufferType=float, class SS2, class GSOptions>
 void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
                   CGAL::Graphic_storage<BufferType>& graphic_storage,
-                  const DrawingFunctor& drawing_functor)
+                  const GSOptions& gs_options)
 {
-  if (!drawing_functor.draw_edge(ss2, eh))
+  if (!gs_options.draw_edge(ss2, eh))
   { return; }
 
-  if (drawing_functor.colored_edge(ss2, eh))
+  if (gs_options.colored_edge(ss2, eh))
   {
     graphic_storage.add_segment(eh->opposite()->vertex()->point(),
                                eh->vertex()->point(),
-                               drawing_functor.edge_color(ss2, eh));
+                               gs_options.edge_color(ss2, eh));
   }
   else
   {
@@ -45,14 +45,14 @@ void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
   }
 }
 
-template<typename BufferType=float, class SS2, class DrawingFunctor>
+template<typename BufferType=float, class SS2, class GSOptions>
 void print_halfedge_labels(const SS2& ss2,
                            typename SS2::Halfedge_const_handle h,
                            CGAL::Graphic_storage<BufferType>& graphic_storage,
-                           const DrawingFunctor& drawing_functor)
+                           const GSOptions& gs_options)
 {
-  // TODO? a functor different from draw_edge to allow to show only some labels ??
-  if(!drawing_functor.draw_edge(ss2, h))
+  // TODO? an option different from draw_edge to allow to show only some labels ??
+  if(!gs_options.draw_edge(ss2, h))
   { return; }
 
   std::stringstream label;
@@ -65,30 +65,30 @@ void print_halfedge_labels(const SS2& ss2,
       label.str());
 }
 
-template <typename BufferType = float, class SS2, class DrawingFunctor>
+template <typename BufferType = float, class SS2, class GSOptions>
 void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
                     CGAL::Graphic_storage<BufferType>& graphic_storage,
-                    const DrawingFunctor& drawing_functor)
+                    const GSOptions& gs_options)
 {
-  if (!drawing_functor.draw_vertex(ss2, vh))
+  if (!gs_options.draw_vertex(ss2, vh))
   { return; }
 
-  if (drawing_functor.colored_vertex(ss2, vh))
+  if (gs_options.colored_vertex(ss2, vh))
   {
-    graphic_storage.add_point(vh->point(), drawing_functor.vertex_color(ss2, vh));
+    graphic_storage.add_point(vh->point(), gs_options.vertex_color(ss2, vh));
   }
   else
   { graphic_storage.add_point(vh->point()); }
 }
 
-template <typename BufferType=float, class SS2, class DrawingFunctor>
+template <typename BufferType=float, class SS2, class GSOptions>
 void print_vertex_label(const SS2& ss2,
                         typename SS2::Vertex_const_handle vh,
                         CGAL::Graphic_storage<BufferType>& graphic_storage,
-                        const DrawingFunctor& drawing_functor)
+                        const GSOptions& gs_options)
 {
-  // TODO? a functor different from draw_vertex to allow to show only some labels ??
-  if (!drawing_functor.draw_vertex(ss2, vh))
+  // TODO? an option different from draw_vertex to allow to show only some labels ??
+  if (!gs_options.draw_vertex(ss2, vh))
   { return; }
 
   std::stringstream label;
@@ -96,31 +96,31 @@ void print_vertex_label(const SS2& ss2,
   graphic_storage.add_text(vh->point(), label.str());
 }
 
-template <typename BufferType=float, class SS2, class DrawingFunctor>
+template <typename BufferType=float, class SS2, class GSOptions>
 void compute_elements(const SS2& ss2,
                       CGAL::Graphic_storage<BufferType>& graphic_storage,
-                      const DrawingFunctor& drawing_functor)
+                      const GSOptions& gs_options)
 {
-  if (!drawing_functor.are_edges_enabled())
+  if (!gs_options.are_edges_enabled())
   {
     for (typename SS2::Halfedge_const_iterator it=ss2.halfedges_begin();
          it != ss2.halfedges_end(); ++it)
     {
       if (it->id()<it->opposite()->id())
       {
-        compute_edge(ss2, it, graphic_storage, drawing_functor);
-        print_halfedge_labels(ss2, it, graphic_storage, drawing_functor);
+        compute_edge(ss2, it, graphic_storage, gs_options);
+        print_halfedge_labels(ss2, it, graphic_storage, gs_options);
       }
     }
   }
 
-  if (!drawing_functor.are_vertices_enabled())
+  if (!gs_options.are_vertices_enabled())
   {
     for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin();
          it!=ss2.vertices_end(); ++it)
     {
-      compute_vertex(ss2, it, graphic_storage, drawing_functor);
-      print_vertex_label(ss2, it, graphic_storage, drawing_functor);
+      compute_vertex(ss2, it, graphic_storage, gs_options);
+      print_vertex_label(ss2, it, graphic_storage, gs_options);
     }
   }
 }
@@ -129,20 +129,20 @@ void compute_elements(const SS2& ss2,
 
 #define CGAL_SS_TYPE CGAL::Straight_skeleton_2<K>
 
-template <typename BufferType=float, class K, class DrawingFunctor>
+template <typename BufferType=float, class K, class GSOptions>
 void add_in_graphic_storage(const CGAL_SS_TYPE &ass2,
                            CGAL::Graphic_storage<BufferType>& graphic_storage,
-                           const DrawingFunctor& drawing_functor)
+                           const GSOptions& gs_options)
 {
   draw_function_for_ss2::compute_elements(ass2, graphic_storage,
-                                          drawing_functor);
+                                          gs_options);
 }
 
 template <typename BufferType=float, class K>
 void add_in_graphic_storage(const CGAL_SS_TYPE& ass2,
                            CGAL::Graphic_storage<BufferType>& graphic_storage)
 {
-  Drawing_functor<CGAL_SS_TYPE,
+  Graphics_scene_options<CGAL_SS_TYPE,
                   typename CGAL_SS_TYPE::Vertex_const_handle,
                   typename CGAL_SS_TYPE::Halfedge_const_handle,
                   typename CGAL_SS_TYPE::Face_const_handle>
@@ -182,12 +182,12 @@ void add_in_graphic_storage(const CGAL_SS_TYPE& ass2,
 // Specialization of draw function.
 #ifdef CGAL_USE_BASIC_VIEWER
 
-template <class K, class DrawingFunctor>
-void draw(const CGAL_SS_TYPE &ass2, const DrawingFunctor &drawingfunctor,
+template <class K, class GSOptions>
+void draw(const CGAL_SS_TYPE &ass2, const GSOptions &gs_options,
           const char *title="Straight Skeleton Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_storage(ass2, buffer, drawingfunctor);
+  add_in_graphic_storage(ass2, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
 

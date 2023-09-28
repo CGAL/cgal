@@ -32,7 +32,7 @@ void add_in_graphic_storage(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
 {
   using BASET2=CGAL::Triangulation_2<Gt, Tds>;
 
-  Drawing_functor<BASET2, //CGAL_T2_TYPE,
+  Graphics_scene_options<BASET2, //CGAL_T2_TYPE,
                   typename CGAL_T2_TYPE::Vertex_handle,
                   typename CGAL_T2_TYPE::Finite_edges_iterator,
                   typename CGAL_T2_TYPE::Finite_faces_iterator>

@@ -13,7 +13,7 @@
 #define CGAL_POLYGON_TRIANGULATION_DRAWING_FUNCTOR_H
 
 #include <CGAL/license/Triangulation_2.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Random.h>
 #include <CGAL/draw_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -22,14 +22,14 @@ namespace CGAL
 {
 
 template<class PT>
-struct Polygon_triangulation_drawing_functor :
-  public CGAL::Drawing_functor<PT,
+struct Polygon_triangulation_gs_options :
+  public CGAL::Graphics_scene_options<PT,
                                typename PT::Vertex_handle,
                                typename PT::Finite_edges_iterator,
                                typename PT::Finite_faces_iterator>
 {
   template<class IPM>
-  Polygon_triangulation_drawing_functor(IPM ipm)
+  Polygon_triangulation_gs_options(IPM ipm)
   {
     this->colored_face =
       [](const PT&, const typename PT::Finite_faces_iterator) -> bool
@@ -59,23 +59,23 @@ struct Polygon_triangulation_drawing_functor :
 #define CGAL_CT2_TYPE CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>
 
 template <class K, class TDS, typename Itag,
-          typename BufferType=float, class DrawingFunctor>
+          typename BufferType=float, class GSOptions>
 void add_in_graphic_storage(const CGAL_CT2_TYPE& ct2,
                            CGAL::Graphic_storage<BufferType>& graphic_buffer,
-                           const DrawingFunctor& drawing_functor)
+                           const GSOptions& gs_options)
 {
-  draw_function_for_t2::compute_elements(ct2, graphic_buffer, drawing_functor);
+  draw_function_for_t2::compute_elements(ct2, graphic_buffer, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 // Specialization of draw function.
-template <class K, class TDS, typename Itag, class DrawingFunctor>
-void draw(const CGAL_CT2_TYPE &ct2, const DrawingFunctor &drawingfunctor,
+template <class K, class TDS, typename Itag, class GSOptions>
+void draw(const CGAL_CT2_TYPE &ct2, const GSOptions &gs_options,
           const char *title="Constrained Triangulation_2 Basic Viewer")
 {
   CGAL::Graphic_storage<float> buffer;
-  add_in_graphic_storage(ct2, buffer, drawingfunctor);
+  add_in_graphic_storage(ct2, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
 

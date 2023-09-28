@@ -6,12 +6,12 @@
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/draw_face_graph_with_paths.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 
 template<typename ALCC>
-struct Facewidth_draw_functor
+struct Facewidth_graphics_scene_options
 {
-  Facewidth_draw_functor(typename ALCC::size_type amark1, typename ALCC::size_type amark2) :
+  Facewidth_graphics_scene_options(typename ALCC::size_type amark1, typename ALCC::size_type amark2) :
     m_vertex_mark(amark1), m_face_mark(amark2)
   {}
 
@@ -107,7 +107,7 @@ void draw_facewidth(const LCC& lcc,
     { lcc.template mark_cell<2>(cycle[i], face_mark); }
   }
 
-  Facewidth_draw_functor<LCC> df(vertex_mark, face_mark);
+  Facewidth_graphics_scene_options<LCC> df(vertex_mark, face_mark);
   CGAL::draw(lcc, df, "Face width");
 
   lcc.free_mark(vertex_mark);
