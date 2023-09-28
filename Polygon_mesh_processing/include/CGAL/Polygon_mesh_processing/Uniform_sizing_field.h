@@ -25,8 +25,7 @@ namespace Polygon_mesh_processing
 {
 /*!
 * \ingroup PMP_meshing_grp
-* provides a set of instructions for isotropic remeshing to achieve uniform
-* mesh edge lengths.
+* provides criteria for isotropic remeshing to achieve uniform mesh edge lengths.
 *
 * Edges longer than the 4/3 of the target edge length will be split in half, while
 * edges shorter than the 4/5 of the target edge length will be collapsed.
