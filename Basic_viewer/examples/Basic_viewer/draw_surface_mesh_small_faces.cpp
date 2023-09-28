@@ -14,19 +14,18 @@ typedef Mesh::Face_index               face_descriptor;
 typedef K::FT                          FT;
 
 template<class SM>
-struct Drawing_functor_small_faces:
-  public CGAL::Drawing_functor<SM,
+struct Graphics_scene_options_small_faces:
+  public CGAL::Graphics_scene_options<SM,
                                typename boost::graph_traits<SM>::vertex_descriptor,
                                typename boost::graph_traits<SM>::edge_descriptor,
                                typename boost::graph_traits<SM>::face_descriptor>
 {
-  using Self=Drawing_functor_small_faces<SM>;
-  using Base=CGAL::Drawing_functor<SM,
-                               typename boost::graph_traits<SM>::vertex_descriptor,
-                               typename boost::graph_traits<SM>::edge_descriptor,
-                                   typename boost::graph_traits<SM>::face_descriptor>;
+  using Base=CGAL::Graphics_scene_options<SM,
+                                          typename boost::graph_traits<SM>::vertex_descriptor,
+                                          typename boost::graph_traits<SM>::edge_descriptor,
+                                          typename boost::graph_traits<SM>::face_descriptor>;
 
-  Drawing_functor_small_faces(const SM& sm): Base(), m_sm(sm)
+  Graphics_scene_options_small_faces(const SM& sm): Base(), m_sm(sm)
   {
     typename SM::template Property_map<face_descriptor, FT> faces_size;
     boost::tie(faces_size, m_with_size)=sm.template property_map<face_descriptor, FT>("f:size");
@@ -99,37 +98,37 @@ int main(int argc, char* argv[])
   for(face_descriptor fd : sm.faces())
   { faces_size[fd]=CGAL::Polygon_mesh_processing::face_area(fd, sm); }
 
-  Drawing_functor_small_faces df(sm);
+  Graphics_scene_options_small_faces gsosm(sm);
   CGAL::Graphic_storage<float> buffer;
 
-  add_in_graphic_storage(sm, buffer, df);
+  add_in_graphic_storage(sm, buffer, gsosm);
   CGAL::QApplication_and_basic_viewer app(buffer, "Small faces");
   if(app)
   {
     app.basic_viewer().on_key_pressed=
-      [&sm, &df, &buffer] (QKeyEvent* e, CGAL::Basic_viewer_qt<float>* basic_viewer) -> bool
+      [&sm, &gsosm, &buffer] (QKeyEvent* e, CGAL::Basic_viewer_qt<float>* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_I) && (modifiers == ::Qt::NoButton))
         {
-          df.m_threshold+=5;
-          if(df.m_threshold>100) { df.m_threshold=100; }
+          gsosm.m_threshold+=5;
+          if(gsosm.m_threshold>100) { gsosm.m_threshold=100; }
           basic_viewer->displayMessage
-            (QString("Small faces threshold=%1.").arg(df.m_threshold));
+            (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
           basic_viewer->clear();
-          add_in_graphic_storage(sm, buffer, df);
+          add_in_graphic_storage(sm, buffer, gsosm);
           basic_viewer->redraw();
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
         {
-          if(df.m_threshold<5) { df.m_threshold=0; }
-          else  { df.m_threshold-=5; }
+          if(gsosm.m_threshold<5) { gsosm.m_threshold=0; }
+          else  { gsosm.m_threshold-=5; }
           basic_viewer->displayMessage
-            (QString("Small faces threshold=%1.").arg(df.m_threshold));
+            (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
           basic_viewer->clear();
-          add_in_graphic_storage(sm, buffer, df);
+          add_in_graphic_storage(sm, buffer, gsosm);
           basic_viewer->redraw();
         }
         else

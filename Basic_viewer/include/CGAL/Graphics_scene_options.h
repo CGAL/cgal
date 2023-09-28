@@ -19,17 +19,24 @@
 
 namespace CGAL {
 
+template <typename DS,
+          typename vertex_handle,
+          typename edge_handle,
+          typename face_handle,
+          typename volume_handle=void>
+struct Graphics_scene_options;
+
 // Drawing functor for a 2D combinatorial data structure
 // (with vertices, edges and faces)
 template <typename DS,
           typename vertex_handle,
           typename edge_handle,
           typename face_handle>
-struct Drawing_functor
+struct Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle, void>
 {
-  Drawing_functor(): m_enabled_vertices(true),
-                     m_enabled_edges(true),
-                     m_enabled_faces(true)
+  Graphics_scene_options(): m_enabled_vertices(true),
+                            m_enabled_edges(true),
+                            m_enabled_faces(true)
   {
     draw_vertex=[](const DS &, vertex_handle)->bool { return true; };
     draw_edge=[](const DS &, edge_handle)->bool { return true; };
@@ -82,10 +89,10 @@ template <typename DS,
           typename edge_handle,
           typename face_handle,
           typename volume_handle>
-struct Drawing_functor_with_volume :
-    public Drawing_functor<DS, vertex_handle, edge_handle, face_handle>
+struct Graphics_scene_options:
+    public Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle>
 {
-  Drawing_functor_with_volume() : m_enabled_volumes(true)
+  Graphics_scene_options() : m_enabled_volumes(true)
   {
     draw_volume=[](const DS &, volume_handle)->bool { return true; };
     colored_volume=[](const DS &, volume_handle)->bool { return false; };

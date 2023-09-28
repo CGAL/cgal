@@ -15,7 +15,7 @@
 #define CGAL_DRAW_FACE_GRAPH_H
 
 #include <CGAL/Graphic_storage.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Random.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -24,10 +24,10 @@ namespace CGAL {
 
 namespace draw_function_for_FG {
 
-template <typename BufferType=float, typename FG, typename DrawingFunctor>
+template <typename BufferType=float, typename FG, typename GSOptions>
 void compute_elements(const FG &fg,
                       CGAL::Graphic_storage<BufferType> &graphic_storage,
-                      const DrawingFunctor &m_drawing_functor)
+                      const GSOptions &m_gs_options)
 {
   using Point=typename boost::property_map_value<FG, CGAL::vertex_point_t>::type;
   using Kernel = typename CGAL::Kernel_traits<Point>::Kernel;
@@ -48,7 +48,7 @@ void compute_elements(const FG &fg,
                     get(point_pmap, target(h, fg))),
             Vector(get(point_pmap, target(h, fg)),
                     get(point_pmap, target(next(h, fg), fg))));
-        if (ni != NULL_VECTOR)
+        if (ni!=NULL_VECTOR)
         {
           n += ni;
           ++i;
@@ -58,15 +58,15 @@ void compute_elements(const FG &fg,
     put(vnormals, v, n / i);
   }
 
-  if (m_drawing_functor.are_faces_enabled())
+  if (m_gs_options.are_faces_enabled())
   {
     for (auto fh : faces(fg))
     {
       if (fh != boost::graph_traits<FG>::null_face() && // face exists
-          !m_drawing_functor.face_wireframe(fg, fh) && // face is not wireframe
-          m_drawing_functor.colored_face(fg, fh)) // and face is colored
+          !m_gs_options.face_wireframe(fg, fh) && // face is not wireframe
+          m_gs_options.colored_face(fg, fh)) // and face is colored
       {
-        graphic_storage.face_begin(m_drawing_functor.face_color(fg, fh));
+        graphic_storage.face_begin(m_gs_options.face_color(fg, fh));
         auto hd = halfedge(fh, fg);
         const auto first_hd = hd;
         do
@@ -81,15 +81,15 @@ void compute_elements(const FG &fg,
     }
   }
 
-  if(m_drawing_functor.are_edges_enabled())
+  if(m_gs_options.are_edges_enabled())
   {
     for (auto e : edges(fg))
     {
-      if(m_drawing_functor.colored_edge(fg, e)) // edge is colored
+      if(m_gs_options.colored_edge(fg, e)) // edge is colored
       {
         graphic_storage.add_segment(get(point_pmap, source(halfedge(e, fg), fg)),
                                    get(point_pmap, target(halfedge(e, fg), fg)),
-                                   m_drawing_functor.edge_color(fg, e));
+                                   m_gs_options.edge_color(fg, e));
       }
       else
       {
@@ -99,14 +99,14 @@ void compute_elements(const FG &fg,
     }
   }
 
-  if(m_drawing_functor.are_vertices_enabled())
+  if(m_gs_options.are_vertices_enabled())
   {
     for (auto v : vertices(fg))
     {
-      if(m_drawing_functor.colored_vertex(fg, v)) // vertex is colored
+      if(m_gs_options.colored_vertex(fg, v)) // vertex is colored
       {
         graphic_storage.add_point(get(point_pmap, v),
-                                 m_drawing_functor.vertex_color(fg, v));
+                                 m_gs_options.vertex_color(fg, v));
       }
       else
       {
@@ -118,30 +118,29 @@ void compute_elements(const FG &fg,
 
 } // draw_function_for_FG
 
-template <typename BufferType=float, class FG, class DrawingFunctor>
+template <typename BufferType=float, class FG, class GSOptions>
 void add_in_graphic_storage_for_fg(const FG &fg,
-                                  CGAL::Graphic_storage<BufferType> &graphic_storage,
-                                  const DrawingFunctor &drawing_functor)
+                                   CGAL::Graphic_storage<BufferType> &graphic_storage,
+                                   const GSOptions &gs_options)
 {
-  draw_function_for_FG::compute_elements(fg, graphic_storage, drawing_functor);
+  draw_function_for_FG::compute_elements(fg, graphic_storage, gs_options);
 }
 
 template <typename BufferType=float, class FG>
 void add_in_graphic_storage_for_fg(const FG &fg,
-                                  CGAL::Graphic_storage<BufferType> &graphic_storage)
+                                   CGAL::Graphic_storage<BufferType> &graphic_storage)
 {
-  Drawing_functor<FG,
-                  typename boost::graph_traits<FG>::vertex_descriptor,
-                  typename boost::graph_traits<FG>::edge_descriptor,
-                  typename boost::graph_traits<FG>::face_descriptor>
-      drawing_functor;
+  Graphics_scene_options<FG,
+                         typename boost::graph_traits<FG>::vertex_descriptor,
+                         typename boost::graph_traits<FG>::edge_descriptor,
+                         typename boost::graph_traits<FG>::face_descriptor>
+    gs_options;
 
-  drawing_functor.colored_face = [](const FG&,
+  gs_options.colored_face = [](const FG&,
              typename boost::graph_traits<FG>::face_descriptor) -> bool
   { return true; };
 
-
-  drawing_functor.face_color =  [] (const FG&,
+  gs_options.face_color =  [] (const FG&,
              typename boost::graph_traits<FG>::face_descriptor fh) -> CGAL::IO::Color
   {
     if (fh==boost::graph_traits<FG>::null_face())
@@ -151,7 +150,7 @@ void add_in_graphic_storage_for_fg(const FG &fg,
     return get_random_color(CGAL::get_default_random());
   };
 
-  add_in_graphic_storage_for_fg(fg, graphic_storage, drawing_functor);
+  add_in_graphic_storage_for_fg(fg, graphic_storage, gs_options);
 }
 
 } // End namespace CGAL

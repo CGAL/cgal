@@ -31,7 +31,7 @@ void draw(const SM& asm);
 
 #include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Graphic_storage.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
@@ -40,8 +40,8 @@ namespace CGAL {
 
 // Check if there are any color maps that could be used
 template <typename K>
-struct Drawing_functor_surface_mesh
-  : public Drawing_functor<Surface_mesh<K>,
+struct Graphics_scene_options_surface_mesh
+  : public Graphics_scene_options<Surface_mesh<K>,
                            typename boost::graph_traits<::CGAL::Surface_mesh<K>>::vertex_descriptor,
                            typename boost::graph_traits<::CGAL::Surface_mesh<K>>::edge_descriptor,
                            typename boost::graph_traits<::CGAL::Surface_mesh<K>>::face_descriptor>
@@ -51,7 +51,7 @@ struct Drawing_functor_surface_mesh
   using edge_descriptor = typename boost::graph_traits<SM>::edge_descriptor;
   using face_descriptor = typename boost::graph_traits<SM>::face_descriptor;
 
-  Drawing_functor_surface_mesh(const SM& amesh)
+  Graphics_scene_options_surface_mesh(const SM& amesh)
   {
     bool found=false;
     std::tie(vcolors, found)=
@@ -94,17 +94,17 @@ private:
   typename SM::template Property_map<face_descriptor, CGAL::IO::Color> fcolors;
 };
 
-template<class K, typename BufferType=float,  class DrawingFunctor>
+template<class K, typename BufferType=float,  class GSOptions>
 void add_in_graphic_storage(const Surface_mesh<K>& amesh,
-                           CGAL::Graphic_storage<BufferType> &graphic_storage,
-                           const DrawingFunctor &drawing_functor)
-{ add_in_graphic_storage_for_fg(amesh, graphic_storage, drawing_functor); }
+                            CGAL::Graphic_storage<BufferType> &graphic_storage,
+                            const GSOptions &gs_options)
+{ add_in_graphic_storage_for_fg(amesh, graphic_storage, gs_options); }
 
 template<class K, typename BufferType=float>
 void add_in_graphic_storage(const Surface_mesh<K>& amesh,
                            CGAL::Graphic_storage<BufferType> &graphic_storage)
 { add_in_graphic_storage_for_fg(amesh, graphic_storage,
-                                Drawing_functor_surface_mesh<K>(amesh)); }
+                                Graphics_scene_options_surface_mesh<K>(amesh)); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -118,13 +118,13 @@ void draw(const Surface_mesh<K>& amesh,
   draw_graphic_storage(buffer, title);
 }
 
-template<class K, typename BufferType=float, class DrawingFunctor>
+template<class K, typename BufferType=float, class GSOptions>
 void draw(const Surface_mesh<K>& amesh,
-          const DrawingFunctor &drawing_functor,
+          const GSOptions &gs_options,
           const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphic_storage<BufferType> buffer;
-  add_in_graphic_storage(amesh, buffer, drawing_functor);
+  add_in_graphic_storage(amesh, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
 

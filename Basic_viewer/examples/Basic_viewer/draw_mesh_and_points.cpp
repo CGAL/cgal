@@ -4,7 +4,7 @@
 #include <CGAL/IO/read_points.h>
 #include <CGAL/draw_polyhedron.h>
 #include <CGAL/draw_point_set_3.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 
 #include <vector>
 #include <fstream>
@@ -17,9 +17,9 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 using PS3=CGAL::Point_set_3<Point>;
 
 struct Drawing_functor_green_points:
-  public CGAL::Drawing_functor<PS3, typename PS3::const_iterator,
-                               typename PS3::const_iterator,
-                               typename PS3::const_iterator>
+  public CGAL::Graphics_scene_options<PS3, typename PS3::const_iterator,
+                                      typename PS3::const_iterator,
+                                      typename PS3::const_iterator>
 {
   bool colored_vertex(const PS3&, typename PS3::const_iterator) const
   { return true; }

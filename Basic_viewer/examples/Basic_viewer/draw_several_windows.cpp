@@ -4,7 +4,7 @@
 #include <CGAL/IO/read_points.h>
 #include <CGAL/draw_polyhedron.h>
 #include <CGAL/draw_point_set_3.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 #include <QMainWindow>
 

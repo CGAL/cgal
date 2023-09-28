@@ -1,17 +1,18 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_surface_mesh.h>
-#include <CGAL/Drawing_functor.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <fstream>
 
-typedef CGAL::Simple_cartesian<double>                       Kernel;
-typedef Kernel::Point_3                                      Point;
-typedef CGAL::Surface_mesh<Point>                            Mesh;
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef Kernel::Point_3                Point;
+typedef CGAL::Surface_mesh<Point>      Mesh;
 
-struct Colored_faces_given_height: public CGAL::Drawing_functor<Mesh,
-                                   typename Mesh::Vertex_index,
-                                   typename Mesh::Edge_index,
-                                   typename Mesh::Face_index>
+struct Colored_faces_given_height:
+  public CGAL::Graphics_scene_options<Mesh,
+                                      typename Mesh::Vertex_index,
+                                      typename Mesh::Edge_index,
+                                      typename Mesh::Face_index>
 {
   Colored_faces_given_height(const Mesh& sm)
   {
