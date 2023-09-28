@@ -364,9 +364,9 @@ public:
   void face_end()
   { gBuffer.face_end(); }
 
-  Graphics_scene<BufferType>& get_graphic_storage()
+  Graphics_scene<BufferType>& get_graphics_scene()
   { return gBuffer; }
-  const Graphics_scene<BufferType>& get_graphic_storage() const
+  const Graphics_scene<BufferType>& get_graphics_scene() const
   { return gBuffer; }
 
   virtual void redraw()
@@ -1669,7 +1669,7 @@ protected:
 };
 
 template <typename BufferType=float>
-void draw_graphic_storage(Graphics_scene<BufferType>& graphic_storage,
+void draw_graphics_scene(Graphics_scene<BufferType>& graphics_scene,
                  const char *title="CGAL Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
@@ -1686,7 +1686,7 @@ void draw_graphic_storage(Graphics_scene<BufferType>& graphic_storage,
     const char *argv[2] = {title, nullptr};
     QApplication app(argc, const_cast<char **>(argv));
     Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(),
-                                             graphic_storage, title);
+                                             graphics_scene, title);
 
     basic_viewer.show();
     app.exec();

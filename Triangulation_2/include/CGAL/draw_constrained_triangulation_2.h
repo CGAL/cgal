@@ -27,8 +27,8 @@ namespace CGAL
 #define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
 
 template <class Gt, class Tds, class Itag, class InDomainPmap, typename BufferType=float>
-void add_in_graphic_storage(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
-                            CGAL::Graphics_scene<BufferType>& graphic_storage)
+void add_in_graphics_scene(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
+                            CGAL::Graphics_scene<BufferType>& graphics_scene)
 {
   using BASET2=CGAL::Triangulation_2<Gt, Tds>;
 
@@ -54,15 +54,15 @@ void add_in_graphic_storage(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
     [&ipm](const BASET2&, typename CGAL_T2_TYPE::Finite_faces_iterator fh) -> CGAL::IO::Color
   { return get(ipm, fh)? CGAL::IO::yellow() : CGAL::IO::white(); };
 
-  add_in_graphic_storage(at2, graphic_storage, drawingFunctor);
+  add_in_graphics_scene(at2, graphics_scene, drawingFunctor);
 }
 
 template <class Gt, class Tds, class Itag, typename BufferType=float>
-void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
-                            CGAL::Graphics_scene<BufferType>& graphic_storage)
+void add_in_graphics_scene(const CGAL_T2_TYPE& at2,
+                            CGAL::Graphics_scene<BufferType>& graphics_scene)
 {
   internal::In_domain<CGAL_T2_TYPE> in_domain;
-  add_in_graphic_storage(at2, in_domain, graphic_storage);
+  add_in_graphics_scene(at2, in_domain, graphics_scene);
 }
 
 template<class Gt, class Tds, class Itag, class InDomainPmap>
@@ -70,8 +70,8 @@ void draw(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
           const char *title="Constrained Triangulation_2 Basic Viewer")
 {
   CGAL::Graphics_scene<float> buffer;
-  add_in_graphic_storage(at2, ipm, buffer);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(at2, ipm, buffer);
+  draw_graphics_scene(buffer, title);
 }
 
 

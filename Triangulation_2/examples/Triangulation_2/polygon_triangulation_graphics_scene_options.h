@@ -9,8 +9,8 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_POLYGON_TRIANGULATION_DRAWING_FUNCTOR_H
-#define CGAL_POLYGON_TRIANGULATION_DRAWING_FUNCTOR_H
+#ifndef CGAL_POLYGON_TRIANGULATION_GRAPHICS_SCENE_OPTIONS_H
+#define CGAL_POLYGON_TRIANGULATION_GRAPHICS_SCENE_OPTIONS_H
 
 #include <CGAL/license/Triangulation_2.h>
 #include <CGAL/Graphics_scene_options.h>
@@ -60,7 +60,7 @@ struct Polygon_triangulation_gs_options :
 
 template <class K, class TDS, typename Itag,
           typename BufferType=float, class GSOptions>
-void add_in_graphic_storage(const CGAL_CT2_TYPE& ct2,
+void add_in_graphics_scene(const CGAL_CT2_TYPE& ct2,
                            CGAL::Graphics_scene<BufferType>& graphic_buffer,
                            const GSOptions& gs_options)
 {
@@ -75,8 +75,8 @@ void draw(const CGAL_CT2_TYPE &ct2, const GSOptions &gs_options,
           const char *title="Constrained Triangulation_2 Basic Viewer")
 {
   CGAL::Graphics_scene<float> buffer;
-  add_in_graphic_storage(ct2, buffer, gs_options);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(ct2, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER
@@ -85,4 +85,4 @@ void draw(const CGAL_CT2_TYPE &ct2, const GSOptions &gs_options,
 
 }; // end namespace CGAL
 
-#endif // CGAL_POLYGON_TRIANGULATION_DRAWING_FUNCTOR_H
+#endif // CGAL_POLYGON_TRIANGULATION_GRAPHICS_SCENE_OPTIONS_H

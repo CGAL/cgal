@@ -55,9 +55,9 @@ int main(void)
     { point_set.insert(it.first); }
 
     CGAL::Graphics_scene<float> graphic_buffer;
-    CGAL::add_in_graphic_storage(point_set, graphic_buffer, Graphics_scene_options_green_points());
-    CGAL::add_in_graphic_storage(output_mesh, graphic_buffer);
-    CGAL::draw_graphic_storage(graphic_buffer);
+    CGAL::add_in_graphics_scene(point_set, graphic_buffer, Graphics_scene_options_green_points());
+    CGAL::add_in_graphics_scene(output_mesh, graphic_buffer);
+    CGAL::draw_graphics_scene(graphic_buffer);
   }
   else
   { return EXIT_FAILURE; }

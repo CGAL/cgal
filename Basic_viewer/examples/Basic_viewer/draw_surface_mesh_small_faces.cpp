@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
   Graphics_scene_options_small_faces gsosm(sm);
   CGAL::Graphics_scene<float> buffer;
 
-  add_in_graphic_storage(sm, buffer, gsosm);
+  add_in_graphics_scene(sm, buffer, gsosm);
   CGAL::QApplication_and_basic_viewer app(buffer, "Small faces");
   if(app)
   {
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
             (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
           basic_viewer->clear();
-          add_in_graphic_storage(sm, buffer, gsosm);
+          add_in_graphics_scene(sm, buffer, gsosm);
           basic_viewer->redraw();
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
             (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
           basic_viewer->clear();
-          add_in_graphic_storage(sm, buffer, gsosm);
+          add_in_graphics_scene(sm, buffer, gsosm);
           basic_viewer->redraw();
         }
         else

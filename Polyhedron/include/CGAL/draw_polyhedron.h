@@ -26,7 +26,7 @@ namespace CGAL
 #define CGAL_POLY_TYPE CGAL::Polyhedron_3 \
   <PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc>
 
-// Specialization of add_in_graphic_storage function.
+// Specialization of add_in_graphics_scene function.
 template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
          template < class T, class I, class A>
@@ -34,10 +34,10 @@ template<class PolyhedronTraits_3,
          class Alloc,
          typename BufferType=float,
          class GSOptions>
-void add_in_graphic_storage(const CGAL_POLY_TYPE& apoly,
-                           CGAL::Graphics_scene<BufferType> &graphic_storage,
+void add_in_graphics_scene(const CGAL_POLY_TYPE& apoly,
+                           CGAL::Graphics_scene<BufferType> &graphics_scene,
                            const GSOptions &gs_options)
-{ add_in_graphic_storage_for_fg(apoly, graphic_storage, gs_options); }
+{ add_in_graphics_scene_for_fg(apoly, graphics_scene, gs_options); }
 
 template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
@@ -45,9 +45,9 @@ template<class PolyhedronTraits_3,
          class T_HDS,
          class Alloc,
          typename BufferType=float>
-void add_in_graphic_storage(const CGAL_POLY_TYPE& apoly,
-                           CGAL::Graphics_scene<BufferType> &graphic_storage)
-{ add_in_graphic_storage_for_fg(apoly, graphic_storage); }
+void add_in_graphics_scene(const CGAL_POLY_TYPE& apoly,
+                           CGAL::Graphics_scene<BufferType> &graphics_scene)
+{ add_in_graphics_scene_for_fg(apoly, graphics_scene); }
 
 // Specialization of draw function: require Qt and the CGAL basic viewer.
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -62,8 +62,8 @@ void draw(const CGAL_POLY_TYPE& apoly,
           const char* title="Polyhedron Basic Viewer")
 {
   CGAL::Graphics_scene<BufferType> buffer;
-  add_in_graphic_storage_for_fg(apoly, buffer);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene_for_fg(apoly, buffer);
+  draw_graphics_scene(buffer, title);
 }
 
 template<class PolyhedronTraits_3,
@@ -78,8 +78,8 @@ void draw(const CGAL_POLY_TYPE& apoly,
           const char* title="Polyhedron Basic Viewer")
 {
   CGAL::Graphics_scene<BufferType> buffer;
-  add_in_graphic_storage_for_fg(apoly, buffer, gs_options);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene_for_fg(apoly, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
 }
 #endif // CGAL_USE_BASIC_VIEWER
 

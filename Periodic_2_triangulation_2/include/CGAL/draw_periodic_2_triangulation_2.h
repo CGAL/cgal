@@ -69,7 +69,7 @@ namespace draw_function_for_P2T2
 template <typename BufferType=float, class P2T2, class GSOptions>
 void compute_vertex(const P2T2 &p2t2,
                     typename P2T2::Periodic_point_iterator pi,
-                    CGAL::Graphics_scene<BufferType>& graphic_storage,
+                    CGAL::Graphics_scene<BufferType>& graphics_scene,
                     const GSOptions& gs_options)
 {
   // Construct the point in 9-sheeted covering space and add to viewer
@@ -77,16 +77,16 @@ void compute_vertex(const P2T2 &p2t2,
   { return; }
 
   if(gs_options.colored_vertex(p2t2, pi))
-  { graphic_storage.add_point(p2t2.point(*pi),
+  { graphics_scene.add_point(p2t2.point(*pi),
                              gs_options.vertex_color(p2t2, pi)); }
   else
-  { graphic_storage.add_point(p2t2.point(*pi)); }
+  { graphics_scene.add_point(p2t2.point(*pi)); }
 }
 
 template <typename BufferType=float, class P2T2, class GSOptions>
 void compute_edge(const P2T2 &p2t2,
                   typename P2T2::Periodic_segment_iterator si,
-                  CGAL::Graphics_scene<BufferType>& graphic_storage,
+                  CGAL::Graphics_scene<BufferType>& graphics_scene,
                   const GSOptions& gs_options)
 {
   if(!gs_options.draw_edge(p2t2, si))
@@ -95,16 +95,16 @@ void compute_edge(const P2T2 &p2t2,
   // Construct the segment in 9-sheeted covering space and add to viewer
   typename P2T2::Segment s(p2t2.segment(*si));
   if(gs_options.colored_edge(p2t2, si))
-  { graphic_storage.add_segment(s[0], s[1],
+  { graphics_scene.add_segment(s[0], s[1],
                                gs_options.edge_color(p2t2, si)); }
   else
-  { graphic_storage.add_segment(s[0], s[1]); }
+  { graphics_scene.add_segment(s[0], s[1]); }
 }
 
 template <typename BufferType=float, class P2T2, class GSOptions>
 void compute_face(const P2T2 &p2t2,
                   typename P2T2::Periodic_triangle_iterator ti,
-                  CGAL::Graphics_scene<BufferType>& graphic_storage,
+                  CGAL::Graphics_scene<BufferType>& graphics_scene,
                   const GSOptions& gs_options)
 {
   if(!gs_options.draw_face(p2t2, ti))
@@ -114,19 +114,19 @@ void compute_face(const P2T2 &p2t2,
   typename P2T2::Triangle t(p2t2.triangle(*ti));
 
   if(gs_options.colored_face(p2t2, ti))
-  { graphic_storage.face_begin(gs_options.face_color(p2t2, ti)); }
+  { graphics_scene.face_begin(gs_options.face_color(p2t2, ti)); }
   else
-  { graphic_storage.face_begin(); }
+  { graphics_scene.face_begin(); }
 
-  graphic_storage.add_point_in_face(t[0]);
-  graphic_storage.add_point_in_face(t[1]);
-  graphic_storage.add_point_in_face(t[2]);
-  graphic_storage.face_end();
+  graphics_scene.add_point_in_face(t[0]);
+  graphics_scene.add_point_in_face(t[1]);
+  graphics_scene.add_point_in_face(t[2]);
+  graphics_scene.face_end();
 }
 
 template <typename BufferType=float, class P2T2, class GSOptions>
 void compute_domain(const P2T2& p2t2,
-                    CGAL::Graphics_scene<BufferType>& graphic_storage,
+                    CGAL::Graphics_scene<BufferType>& graphics_scene,
                     const GSOptions& gs_options)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -145,17 +145,17 @@ void compute_domain(const P2T2& p2t2,
       Kernel::Point_2 p3(orig_domain.xmax(), orig_domain.ymin());
       Kernel::Point_2 p4((orig_domain.max)());
 
-      graphic_storage.add_segment(p1 + shift, p2 + shift, gs_options.domain_color);
-      graphic_storage.add_segment(p1 + shift, p3 + shift, gs_options.domain_color);
-      graphic_storage.add_segment(p2 + shift, p4 + shift, gs_options.domain_color);
-      graphic_storage.add_segment(p3 + shift, p4 + shift, gs_options.domain_color);
+      graphics_scene.add_segment(p1 + shift, p2 + shift, gs_options.domain_color);
+      graphics_scene.add_segment(p1 + shift, p3 + shift, gs_options.domain_color);
+      graphics_scene.add_segment(p2 + shift, p4 + shift, gs_options.domain_color);
+      graphics_scene.add_segment(p3 + shift, p4 + shift, gs_options.domain_color);
     }
   }
 }
 
 template <typename BufferType=float, class P2T2, class GSOptions>
 void compute_elements(const P2T2& p2t2,
-                      CGAL::Graphics_scene<BufferType>& graphic_storage,
+                      CGAL::Graphics_scene<BufferType>& graphics_scene,
                       const GSOptions& gs_options)
 {
   // Get the display type, iterate through periodic elements according
@@ -168,27 +168,27 @@ void compute_elements(const P2T2& p2t2,
   {
     for (typename P2T2::Periodic_point_iterator it=p2t2.periodic_points_begin(it_type);
          it!=p2t2.periodic_points_end(it_type); ++it)
-    { compute_vertex(p2t2, it, graphic_storage, gs_options); }
+    { compute_vertex(p2t2, it, graphics_scene, gs_options); }
   }
 
   if(gs_options.are_edges_enabled())
   {
     for (typename P2T2::Periodic_segment_iterator it=p2t2.periodic_segments_begin(it_type);
          it!=p2t2.periodic_segments_end(it_type); ++it)
-    { compute_edge(p2t2, it, graphic_storage, gs_options); }
+    { compute_edge(p2t2, it, graphics_scene, gs_options); }
   }
 
   if (gs_options.are_faces_enabled())
   {
     for (typename P2T2::Periodic_triangle_iterator it=p2t2.periodic_triangles_begin(it_type);
          it!=p2t2.periodic_triangles_end(it_type); ++it)
-    { compute_face(p2t2, it, graphic_storage, gs_options); }
+    { compute_face(p2t2, it, graphics_scene, gs_options); }
   }
 
   if(gs_options.get_draw_domain())
   {
     // Compute the (9-sheet covering space) domain of the periodic triangulation
-    compute_domain(p2t2, graphic_storage, gs_options);
+    compute_domain(p2t2, graphics_scene, gs_options);
   }
 }
 
@@ -197,16 +197,16 @@ void compute_elements(const P2T2& p2t2,
 #define CGAL_P2T2_TYPE CGAL::Periodic_2_triangulation_2<Gt, Tds >
 
 template <typename BufferType=float, class Gt, class Tds, class GSOptions>
-void add_in_graphic_storage(const CGAL_P2T2_TYPE& p2t2,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage,
+void add_in_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene,
                            const GSOptions& gs_options)
 {
-  draw_function_for_P2T2::compute_elements(p2t2, graphic_storage, gs_options);
+  draw_function_for_P2T2::compute_elements(p2t2, graphics_scene, gs_options);
 }
 
 template <typename BufferType=float, class Gt, class Tds>
-void add_in_graphic_storage(const CGAL_P2T2_TYPE& p2t2,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage)
+void add_in_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene)
 {
   CGAL::Graphics_scene_options_periodic_2_triangulation_2
     <CGAL_P2T2_TYPE,
@@ -214,7 +214,7 @@ void add_in_graphic_storage(const CGAL_P2T2_TYPE& p2t2,
      typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
 
-  add_in_graphic_storage(p2t2, graphic_storage, gs_options);
+  add_in_graphics_scene(p2t2, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -226,8 +226,8 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
           const char* title="2D Periodic Triangulation Viewer")
 {
   CGAL::Graphics_scene<BufferType> buffer;
-  add_in_graphic_storage(ap2t2, buffer, gs_options);
-  draw_graphic_storage(buffer);
+  add_in_graphics_scene(ap2t2, buffer, gs_options);
+  draw_graphics_scene(buffer);
 }
 
 template<class Gt, class Tds, class BufferType=float>
@@ -241,7 +241,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
      typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
 
-  add_in_graphic_storage(ap2t2, buffer, gs_options);
+  add_in_graphics_scene(ap2t2, buffer, gs_options);
   QApplication_and_basic_viewer app(buffer, title);
   if(app)
   {
@@ -260,7 +260,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
                                                "Unique cover"))));
           basic_viewer->clear();
           draw_function_for_P2T2::compute_elements(ap2t2,
-                                                   basic_viewer->get_graphic_storage(),
+                                                   basic_viewer->get_graphics_scene(),
                                                    gs_options);
           basic_viewer->redraw();
         }

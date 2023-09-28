@@ -44,7 +44,7 @@ namespace draw_function_for_PointSet {
 
 template <typename BufferType=float, class PointSet, class GSOptions>
 void compute_elements(const PointSet& pointset,
-                      Graphics_scene<BufferType>& graphic_storage,
+                      Graphics_scene<BufferType>& graphics_scene,
                       const GSOptions& gs_options)
 {
   if (!gs_options.are_vertices_enabled())
@@ -57,11 +57,11 @@ void compute_elements(const PointSet& pointset,
     {
       if (gs_options.colored_vertex(pointset, it))
       {
-        graphic_storage.add_point(pointset.point(*it),
+        graphics_scene.add_point(pointset.point(*it),
                                  gs_options.vertex_color(pointset, it));
       }
       else
-      { graphic_storage.add_point(pointset.point(*it)); }
+      { graphics_scene.add_point(pointset.point(*it)); }
     }
   }
 }
@@ -69,23 +69,23 @@ void compute_elements(const PointSet& pointset,
 } // namespace draw_function_for_PointSet
 
 template <class P, class V, typename BufferType=float, class GSOptions>
-void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
-                            Graphics_scene<BufferType>& graphic_storage,
+void add_in_graphics_scene(const Point_set_3<P, V>& apointset,
+                            Graphics_scene<BufferType>& graphics_scene,
                             const GSOptions& gs_options)
 {
   draw_function_for_PointSet::compute_elements(apointset,
-                                               graphic_storage,
+                                               graphics_scene,
                                                gs_options);
 }
 
 template <class P, class V, typename BufferType=float>
-void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
-                            Graphics_scene<BufferType>& graphic_storage)
+void add_in_graphics_scene(const Point_set_3<P, V>& apointset,
+                            Graphics_scene<BufferType>& graphics_scene)
 {
   CGAL::Graphics_scene_options<Point_set_3<P, V>,
                                typename Point_set_3<P, V>::const_iterator,
                                int, int> gs_options;
-  add_in_graphic_storage(apointset, graphic_storage, gs_options);
+  add_in_graphics_scene(apointset, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -97,8 +97,8 @@ void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
   Graphics_scene<float> buffer;
-  add_in_graphic_storage(apointset, buffer, gs_options);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(apointset, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
 }
 
 template <class P, class V>
@@ -106,8 +106,8 @@ void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
   Graphics_scene<float> buffer;
-  add_in_graphic_storage(apointset, buffer);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(apointset, buffer);
+  draw_graphics_scene(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

@@ -32,7 +32,7 @@ adds the vertices, edges and faces of `at2` into the given graphic storage `gs`.
 
 */
 template<class T2>
-void add_in_graphic_storage(const T2& at2,
+void add_in_graphics_scene(const T2& at2,
                             CGAL::Graphics_scene<BufferType>& gs,
                             const CGAL::Graphics_scene_options<T2,
                             typename T2::Vertex_handle,

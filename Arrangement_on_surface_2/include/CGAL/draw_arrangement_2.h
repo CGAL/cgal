@@ -70,7 +70,7 @@ public:
                         const char* title = "2D Arrangement Basic Viewer",
                         bool draw_vertices = false) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, m_graphic_storage, title, draw_vertices, true, true, false, false),
+    Base(parent, m_graphics_scene, title, draw_vertices, true, true, false, false),
     m_arr(arr),
     m_color_generator(color_generator)
   {
@@ -511,7 +511,7 @@ protected:
   Color_generator m_color_generator;
 
   std::unordered_map<Face_const_handle, bool> m_visited;
-  CGAL::Graphics_scene<float> m_graphic_storage;
+  CGAL::Graphics_scene<float> m_graphics_scene;
 };
 
 //! Basic viewer of a 2D arrangement.

@@ -26,7 +26,7 @@ namespace draw_function_for_FG {
 
 template <typename BufferType=float, typename FG, typename GSOptions>
 void compute_elements(const FG &fg,
-                      CGAL::Graphics_scene<BufferType> &graphic_storage,
+                      CGAL::Graphics_scene<BufferType> &graphics_scene,
                       const GSOptions &m_gs_options)
 {
   using Point=typename boost::property_map_value<FG, CGAL::vertex_point_t>::type;
@@ -66,17 +66,17 @@ void compute_elements(const FG &fg,
           !m_gs_options.face_wireframe(fg, fh) && // face is not wireframe
           m_gs_options.colored_face(fg, fh)) // and face is colored
       {
-        graphic_storage.face_begin(m_gs_options.face_color(fg, fh));
+        graphics_scene.face_begin(m_gs_options.face_color(fg, fh));
         auto hd = halfedge(fh, fg);
         const auto first_hd = hd;
         do
         {
           auto v = source(hd, fg);
-          graphic_storage.add_point_in_face(get(point_pmap, v), get(vnormals, v));
+          graphics_scene.add_point_in_face(get(point_pmap, v), get(vnormals, v));
           hd = next(hd, fg);
         }
         while (hd != first_hd);
-        graphic_storage.face_end();
+        graphics_scene.face_end();
       }
     }
   }
@@ -87,13 +87,13 @@ void compute_elements(const FG &fg,
     {
       if(m_gs_options.colored_edge(fg, e)) // edge is colored
       {
-        graphic_storage.add_segment(get(point_pmap, source(halfedge(e, fg), fg)),
+        graphics_scene.add_segment(get(point_pmap, source(halfedge(e, fg), fg)),
                                    get(point_pmap, target(halfedge(e, fg), fg)),
                                    m_gs_options.edge_color(fg, e));
       }
       else
       {
-        graphic_storage.add_segment(get(point_pmap, source(halfedge(e, fg), fg)),
+        graphics_scene.add_segment(get(point_pmap, source(halfedge(e, fg), fg)),
                                    get(point_pmap, target(halfedge(e, fg), fg)));
       }
     }
@@ -105,12 +105,12 @@ void compute_elements(const FG &fg,
     {
       if(m_gs_options.colored_vertex(fg, v)) // vertex is colored
       {
-        graphic_storage.add_point(get(point_pmap, v),
+        graphics_scene.add_point(get(point_pmap, v),
                                  m_gs_options.vertex_color(fg, v));
       }
       else
       {
-        graphic_storage.add_point(get(point_pmap, v));
+        graphics_scene.add_point(get(point_pmap, v));
       }
     }
   }
@@ -119,16 +119,16 @@ void compute_elements(const FG &fg,
 } // draw_function_for_FG
 
 template <typename BufferType=float, class FG, class GSOptions>
-void add_in_graphic_storage_for_fg(const FG &fg,
-                                   CGAL::Graphics_scene<BufferType> &graphic_storage,
+void add_in_graphics_scene_for_fg(const FG &fg,
+                                   CGAL::Graphics_scene<BufferType> &graphics_scene,
                                    const GSOptions &gs_options)
 {
-  draw_function_for_FG::compute_elements(fg, graphic_storage, gs_options);
+  draw_function_for_FG::compute_elements(fg, graphics_scene, gs_options);
 }
 
 template <typename BufferType=float, class FG>
-void add_in_graphic_storage_for_fg(const FG &fg,
-                                   CGAL::Graphics_scene<BufferType> &graphic_storage)
+void add_in_graphics_scene_for_fg(const FG &fg,
+                                   CGAL::Graphics_scene<BufferType> &graphics_scene)
 {
   Graphics_scene_options<FG,
                          typename boost::graph_traits<FG>::vertex_descriptor,
@@ -150,7 +150,7 @@ void add_in_graphic_storage_for_fg(const FG &fg,
     return get_random_color(CGAL::get_default_random());
   };
 
-  add_in_graphic_storage_for_fg(fg, graphic_storage, gs_options);
+  add_in_graphics_scene_for_fg(fg, graphics_scene, gs_options);
 }
 
 } // End namespace CGAL

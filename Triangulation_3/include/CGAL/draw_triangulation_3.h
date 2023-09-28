@@ -28,29 +28,29 @@ namespace draw_function_for_t3
 template <typename BufferType=float, class T3, class GSOptions>
 void compute_face(typename T3::Finite_facets_iterator fh,
                   const GSOptions& gs_options,
-                  CGAL::Graphics_scene<BufferType>& graphic_storage, const T3 *t3)
+                  CGAL::Graphics_scene<BufferType>& graphics_scene, const T3 *t3)
 {
   if(!gs_options.draw_face(*t3, fh))
   { return; }
 
   if(gs_options.colored_face(*t3, fh))
-  { graphic_storage.face_begin(gs_options.face_color(*t3, fh)); }
+  { graphics_scene.face_begin(gs_options.face_color(*t3, fh)); }
   else
-  { graphic_storage.face_begin(); }
+  { graphics_scene.face_begin(); }
 
-  graphic_storage.add_point_in_face(fh->first->vertex((fh->second + 1) % 4)->
+  graphics_scene.add_point_in_face(fh->first->vertex((fh->second + 1) % 4)->
                                    point());
-  graphic_storage.add_point_in_face(fh->first->vertex((fh->second + 2) % 4)->
+  graphics_scene.add_point_in_face(fh->first->vertex((fh->second + 2) % 4)->
                                    point());
-  graphic_storage.add_point_in_face(fh->first->vertex((fh->second + 3) % 4)->
+  graphics_scene.add_point_in_face(fh->first->vertex((fh->second + 3) % 4)->
                                    point());
 
-  graphic_storage.face_end();
+  graphics_scene.face_end();
 }
 
 template <typename BufferType=float, class T3, class GSOptions>
 void compute_edge(typename T3::Finite_edges_iterator eh,
-                  CGAL::Graphics_scene<BufferType>& graphic_storage,
+                  CGAL::Graphics_scene<BufferType>& graphics_scene,
                   const GSOptions& gs_options, const T3* t3)
 {
   if(!gs_options.draw_edge(*t3, eh))
@@ -58,19 +58,19 @@ void compute_edge(typename T3::Finite_edges_iterator eh,
 
   if(gs_options.colored_edge(*t3, eh))
   {
-    graphic_storage.add_segment(eh->first->vertex(eh->second)->point(),
+    graphics_scene.add_segment(eh->first->vertex(eh->second)->point(),
                                eh->first->vertex(eh->third)->point(),
                                gs_options.edge_color(*t3, eh));
   }
   else {
-    graphic_storage.add_segment(eh->first->vertex(eh->second)->point(),
+    graphics_scene.add_segment(eh->first->vertex(eh->second)->point(),
                                eh->first->vertex(eh->third)->point());
   }
 }
 
 template <typename BufferType=float, class T3, class GSOptions>
 void compute_vertex(typename T3::Vertex_handle vh,
-                    CGAL::Graphics_scene<BufferType>& graphic_storage,
+                    CGAL::Graphics_scene<BufferType>& graphics_scene,
                     const GSOptions& gs_options, const T3* t3)
 {
   if(!gs_options.draw_vertex(*t3, vh))
@@ -78,36 +78,36 @@ void compute_vertex(typename T3::Vertex_handle vh,
 
   if(gs_options.colored_vertex(*t3, vh))
   {
-    graphic_storage.add_point(vh->point(), gs_options.vertex_color(*t3, vh));
+    graphics_scene.add_point(vh->point(), gs_options.vertex_color(*t3, vh));
   }
   else
-  { graphic_storage.add_point(vh->point()); }
+  { graphics_scene.add_point(vh->point()); }
 }
 
 template <typename BufferType=float, class T3, class GSOptions>
 void compute_elements(const T3* t3,
-                      CGAL::Graphics_scene<BufferType>& graphic_storage,
+                      CGAL::Graphics_scene<BufferType>& graphics_scene,
                       const GSOptions& gs_options)
 {
   if (gs_options.are_faces_enabled())
   {
     for (typename T3::Finite_facets_iterator it=t3->finite_facets_begin();
          it!=t3->finite_facets_end(); ++it)
-    { compute_face(it, gs_options, graphic_storage, t3); }
+    { compute_face(it, gs_options, graphics_scene, t3); }
   }
 
   if (gs_options.are_edges_enabled())
   {
     for (typename T3::Finite_edges_iterator it=t3->finite_edges_begin();
          it!=t3->finite_edges_end(); ++it)
-    { compute_edge(it, graphic_storage,gs_options, t3); }
+    { compute_edge(it, graphics_scene,gs_options, t3); }
   }
 
   if (gs_options.are_vertices_enabled())
   {
     for (typename T3::Finite_vertices_iterator it=t3->finite_vertices_begin();
          it!=t3->finite_vertices_end(); ++it)
-    { compute_vertex(it, graphic_storage, gs_options, t3); }
+    { compute_vertex(it, graphics_scene, gs_options, t3); }
   }
 }
 
@@ -117,17 +117,17 @@ void compute_elements(const T3* t3,
 
 template <class Gt, class Tds, class Lock_data_structure,
           typename BufferType=float, class GSOptions>
-void add_in_graphic_storage(const CGAL_T3_TYPE& at3,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage,
+void add_in_graphics_scene(const CGAL_T3_TYPE& at3,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene,
                            const GSOptions& gs_options)
 {
-  draw_function_for_t3::compute_elements(&at3, graphic_storage, gs_options);
+  draw_function_for_t3::compute_elements(&at3, graphics_scene, gs_options);
 }
 
 template <class Gt, class Tds, class Lock_data_structure,
           typename BufferType=float>
-void add_in_graphic_storage(const CGAL_T3_TYPE& at3,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage)
+void add_in_graphics_scene(const CGAL_T3_TYPE& at3,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene)
 {
   CGAL::Graphics_scene_options<CGAL_T3_TYPE,
                        typename CGAL_T3_TYPE::Vertex_handle,
@@ -151,7 +151,7 @@ void add_in_graphic_storage(const CGAL_T3_TYPE& at3,
       return get_random_color(random);
     };
 
-  add_in_graphic_storage(at3, graphic_storage, gs_options);
+  add_in_graphics_scene(at3, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -162,16 +162,16 @@ void draw(const CGAL_T3_TYPE &at3, const GSOptions &gs_options,
           const char *title="T3 Basic Viewer")
 {
   CGAL::Graphics_scene<float> buffer;
-  add_in_graphic_storage(at3, buffer, gs_options);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(at3, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
 }
 
 template <class Gt, class Tds, class Lock_data_structure>
 void draw(const CGAL_T3_TYPE &at3, const char *title="T3 Basic Viewer")
 {
   CGAL::Graphics_scene<float> buffer;
-  add_in_graphic_storage(at3, buffer);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(at3, buffer);
+  draw_graphics_scene(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

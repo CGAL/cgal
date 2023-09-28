@@ -26,7 +26,7 @@ namespace draw_function_for_ss2 {
 
 template <typename BufferType=float, class SS2, class GSOptions>
 void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
-                  CGAL::Graphics_scene<BufferType>& graphic_storage,
+                  CGAL::Graphics_scene<BufferType>& graphics_scene,
                   const GSOptions& gs_options)
 {
   if (!gs_options.draw_edge(ss2, eh))
@@ -34,13 +34,13 @@ void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
 
   if (gs_options.colored_edge(ss2, eh))
   {
-    graphic_storage.add_segment(eh->opposite()->vertex()->point(),
+    graphics_scene.add_segment(eh->opposite()->vertex()->point(),
                                eh->vertex()->point(),
                                gs_options.edge_color(ss2, eh));
   }
   else
   {
-    graphic_storage.add_segment(eh->opposite()->vertex()->point(),
+    graphics_scene.add_segment(eh->opposite()->vertex()->point(),
                                eh->vertex()->point());
   }
 }
@@ -48,7 +48,7 @@ void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
 template<typename BufferType=float, class SS2, class GSOptions>
 void print_halfedge_labels(const SS2& ss2,
                            typename SS2::Halfedge_const_handle h,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene,
                            const GSOptions& gs_options)
 {
   // TODO? an option different from draw_edge to allow to show only some labels ??
@@ -60,14 +60,14 @@ void print_halfedge_labels(const SS2& ss2,
   label << "H" << h->opposite()->id() << " (V" << h->opposite()->vertex()->id()
         << ") ";
 
-  graphic_storage.add_text(
+  graphics_scene.add_text(
       CGAL::midpoint(h->opposite()->vertex()->point(), h->vertex()->point()),
       label.str());
 }
 
 template <typename BufferType = float, class SS2, class GSOptions>
 void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
-                    CGAL::Graphics_scene<BufferType>& graphic_storage,
+                    CGAL::Graphics_scene<BufferType>& graphics_scene,
                     const GSOptions& gs_options)
 {
   if (!gs_options.draw_vertex(ss2, vh))
@@ -75,16 +75,16 @@ void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
 
   if (gs_options.colored_vertex(ss2, vh))
   {
-    graphic_storage.add_point(vh->point(), gs_options.vertex_color(ss2, vh));
+    graphics_scene.add_point(vh->point(), gs_options.vertex_color(ss2, vh));
   }
   else
-  { graphic_storage.add_point(vh->point()); }
+  { graphics_scene.add_point(vh->point()); }
 }
 
 template <typename BufferType=float, class SS2, class GSOptions>
 void print_vertex_label(const SS2& ss2,
                         typename SS2::Vertex_const_handle vh,
-                        CGAL::Graphics_scene<BufferType>& graphic_storage,
+                        CGAL::Graphics_scene<BufferType>& graphics_scene,
                         const GSOptions& gs_options)
 {
   // TODO? an option different from draw_vertex to allow to show only some labels ??
@@ -93,12 +93,12 @@ void print_vertex_label(const SS2& ss2,
 
   std::stringstream label;
   label << "V" << vh->id() << std::ends;
-  graphic_storage.add_text(vh->point(), label.str());
+  graphics_scene.add_text(vh->point(), label.str());
 }
 
 template <typename BufferType=float, class SS2, class GSOptions>
 void compute_elements(const SS2& ss2,
-                      CGAL::Graphics_scene<BufferType>& graphic_storage,
+                      CGAL::Graphics_scene<BufferType>& graphics_scene,
                       const GSOptions& gs_options)
 {
   if (!gs_options.are_edges_enabled())
@@ -108,8 +108,8 @@ void compute_elements(const SS2& ss2,
     {
       if (it->id()<it->opposite()->id())
       {
-        compute_edge(ss2, it, graphic_storage, gs_options);
-        print_halfedge_labels(ss2, it, graphic_storage, gs_options);
+        compute_edge(ss2, it, graphics_scene, gs_options);
+        print_halfedge_labels(ss2, it, graphics_scene, gs_options);
       }
     }
   }
@@ -119,8 +119,8 @@ void compute_elements(const SS2& ss2,
     for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin();
          it!=ss2.vertices_end(); ++it)
     {
-      compute_vertex(ss2, it, graphic_storage, gs_options);
-      print_vertex_label(ss2, it, graphic_storage, gs_options);
+      compute_vertex(ss2, it, graphics_scene, gs_options);
+      print_vertex_label(ss2, it, graphics_scene, gs_options);
     }
   }
 }
@@ -130,17 +130,17 @@ void compute_elements(const SS2& ss2,
 #define CGAL_SS_TYPE CGAL::Straight_skeleton_2<K>
 
 template <typename BufferType=float, class K, class GSOptions>
-void add_in_graphic_storage(const CGAL_SS_TYPE &ass2,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage,
+void add_in_graphics_scene(const CGAL_SS_TYPE &ass2,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene,
                            const GSOptions& gs_options)
 {
-  draw_function_for_ss2::compute_elements(ass2, graphic_storage,
+  draw_function_for_ss2::compute_elements(ass2, graphics_scene,
                                           gs_options);
 }
 
 template <typename BufferType=float, class K>
-void add_in_graphic_storage(const CGAL_SS_TYPE& ass2,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage)
+void add_in_graphics_scene(const CGAL_SS_TYPE& ass2,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene)
 {
   Graphics_scene_options<CGAL_SS_TYPE,
                   typename CGAL_SS_TYPE::Vertex_const_handle,
@@ -176,7 +176,7 @@ void add_in_graphic_storage(const CGAL_SS_TYPE& ass2,
      return CGAL::IO::Color(10, 180, 10); // green, but not flashy
   };
 
-  add_in_graphic_storage(ass2, graphic_storage, drawingFunctor);
+  add_in_graphics_scene(ass2, graphics_scene, drawingFunctor);
 }
 
 // Specialization of draw function.
@@ -187,8 +187,8 @@ void draw(const CGAL_SS_TYPE &ass2, const GSOptions &gs_options,
           const char *title="Straight Skeleton Basic Viewer")
 {
   CGAL::Graphics_scene<float> buffer;
-  add_in_graphic_storage(ass2, buffer, gs_options);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(ass2, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
 }
 
 template <class K>
@@ -196,8 +196,8 @@ void draw(const CGAL_SS_TYPE &ass2,
           const char *title="Straight Skeleton Basic Viewer")
 {
   CGAL::Graphics_scene<float> buffer;
-  add_in_graphic_storage(ass2, buffer);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(ass2, buffer);
+  draw_graphics_scene(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

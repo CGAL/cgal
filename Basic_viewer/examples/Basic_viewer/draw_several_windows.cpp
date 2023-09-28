@@ -48,8 +48,8 @@ int main(void)
   { point_set.insert(it.first); }
 
   CGAL::Graphics_scene<float> graphic_buffer1, graphic_buffer2;
-  CGAL::add_in_graphic_storage(point_set, graphic_buffer1);
-  CGAL::add_in_graphic_storage(output_mesh, graphic_buffer2);
+  CGAL::add_in_graphics_scene(point_set, graphic_buffer1);
+  CGAL::add_in_graphics_scene(output_mesh, graphic_buffer2);
 
   /// (2) Qt code that create windows, add them in a layout, and create app.
 

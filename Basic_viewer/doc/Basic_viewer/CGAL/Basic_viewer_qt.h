@@ -196,10 +196,10 @@ public:
   void add_text(const KPoint &kp, const std::string &txt);
 
   /// returns the graphic storage of the viewer.
-  Graphics_scene<BufferType>& get_graphic_storage();
+  Graphics_scene<BufferType>& get_graphics_scene();
 
   /// returns the graphic storage of the viewer, const version.
-  const Graphics_scene<BufferType>& get_graphic_storage() const;
+  const Graphics_scene<BufferType>& get_graphics_scene() const;
 
   /// negates all normal of vertices and faces.
   void negate_all_normals();
@@ -248,7 +248,7 @@ public:
   opens a new window and draws the given `Graphics_scene` (which must have been filled before). `title` will be the title of the window.  A call to this method is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the macro CGAL_USE_BASIC_VIEWER is defined. Linking with the cmake target CGAL::CGAL_Basic_viewer will link with CGAL_Qt5 and add the definition CGAL_USE_BASIC_VIEWER.
 */
 template <typename BufferType=float>
-void draw_graphic_storage(Graphics_scene<BufferType>& graphic_buffer,
+void draw_graphics_scene(Graphics_scene<BufferType>& graphic_buffer,
                           const char *title="CGAL Basic Viewer")
 {}
 

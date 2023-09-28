@@ -3,7 +3,7 @@
 #include <CGAL/mark_domain_in_triangulation.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/draw_triangulation_2.h>
-#include "polygon_triangulation_drawing_functor.h"
+#include "polygon_triangulation_graphics_scene_options.h"
 
 #include <iostream>
 #include <unordered_map>
@@ -58,7 +58,7 @@ int main( )
   assert(count > 0);
   assert(count < cdt.number_of_faces());
 
-  CGAL::Polygon_triangulation_drawing_functor<CDT> myfunctor(in_domain);
+  CGAL::Polygon_triangulation_gs_options<CDT> myfunctor(in_domain);
   CGAL::draw(cdt, myfunctor);
   return 0;
 }

@@ -19,7 +19,7 @@ Viewer::Viewer(QWidget *parent)
   : Base(parent, m_graphic_buffer, ""),
     m_previous_scene_empty(true)
 {
-  m_drawing_functor.face_color=[](const LCC & alcc,
+  m_gs_options.face_color=[](const LCC & alcc,
                                     Dart_const_descriptor dh)->CGAL::IO::Color
   {
     if(alcc.template is_free<3>(dh))
@@ -38,13 +38,13 @@ Viewer::Viewer(QWidget *parent)
     return CGAL::IO::Color((c1[0]+c2[0])/2, (c1[1]+c2[1])/2, (c1[2]+c2[2])/2);
   };
 
-  m_drawing_functor.colored_face=[](const LCC &, Dart_const_descriptor)->bool
+  m_gs_options.colored_face=[](const LCC &, Dart_const_descriptor)->bool
   { return true; };
 
-  m_drawing_functor.draw_volume=[](const LCC & alcc, Dart_const_descriptor dh)->bool
+  m_gs_options.draw_volume=[](const LCC & alcc, Dart_const_descriptor dh)->bool
   { return alcc.template info<3>(dh).is_visible(); };
 
-  m_drawing_functor.volume_wireframe=[](const LCC& alcc, Dart_const_descriptor dh)->bool
+  m_gs_options.volume_wireframe=[](const LCC& alcc, Dart_const_descriptor dh)->bool
   { return !(alcc.template info<3>(dh).is_filled()); };
 }
 
@@ -53,7 +53,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
   scene = scene_;
 
   if (scene->lcc!=nullptr)
-  { CGAL::add_in_graphic_storage(*scene->lcc, gBuffer, m_drawing_functor); }
+  { CGAL::add_in_graphics_scene(*scene->lcc, gBuffer, m_gs_options); }
 
   if (doredraw)
   { Base::redraw(); }
@@ -62,7 +62,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
 void Viewer::sceneChanged()
 {
   gBuffer.clear();
-  CGAL::add_in_graphic_storage(*scene->lcc, gBuffer, m_drawing_functor);
+  CGAL::add_in_graphics_scene(*scene->lcc, gBuffer, m_gs_options);
 
   this->camera()->setSceneBoundingBox(
       CGAL::qglviewer::Vec(gBuffer.get_bounding_box().xmin(),

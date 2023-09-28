@@ -17,7 +17,7 @@ Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5
 
 */
   template<class LCC, class BufferType, class GSOptions>
-  void add_in_graphic_storage(const LCC& alcc, CGAL::Graphics_scene<BufferType>& graphic_storage,
+  void add_in_graphics_scene(const LCC& alcc, CGAL::Graphics_scene<BufferType>& graphics_scene,
                               const GSOptions& gs_options);
 
 } /* namespace CGAL */

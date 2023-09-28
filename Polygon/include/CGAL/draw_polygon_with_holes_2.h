@@ -55,12 +55,12 @@ namespace draw_function_for_ph2_with_holes {
 template <typename BufferType=float, class P2, class GSOptions>
 void compute_one_loop_elements(const P2& ap2,
                                const typename P2::General_polygon_2& aloop,
-                               Graphics_scene<BufferType> &graphic_storage,
+                               Graphics_scene<BufferType> &graphics_scene,
                                bool hole,
                                const GSOptions& gs_options)
 {
   if (hole && gs_options.are_faces_enabled())
-  { graphic_storage.add_point_in_face(aloop.vertex(aloop.size()-1)); }
+  { graphics_scene.add_point_in_face(aloop.vertex(aloop.size()-1)); }
 
   typename P2::General_polygon_2::Vertex_const_iterator prev;
   for(typename P2::General_polygon_2::Vertex_const_iterator i=aloop.vertices_begin();
@@ -70,9 +70,9 @@ void compute_one_loop_elements(const P2& ap2,
        gs_options.draw_vertex(ap2, i))
      { // Add vertex
         if(gs_options.colored_vertex(ap2, i))
-      { graphic_storage.add_point(*i, gs_options.vertex_color(ap2, i)); }
+      { graphics_scene.add_point(*i, gs_options.vertex_color(ap2, i)); }
       else
-      { graphic_storage.add_point(*i); }
+      { graphics_scene.add_point(*i); }
      }
 
     if(i!=aloop.vertices_begin() &&
@@ -80,13 +80,13 @@ void compute_one_loop_elements(const P2& ap2,
        gs_options.draw_edge(ap2, i))
     { // Add segment with previous point
           if(gs_options.colored_vertex(ap2, i))
-      { graphic_storage.add_segment(*prev, *i, gs_options.edge_color(ap2, i)); }
+      { graphics_scene.add_segment(*prev, *i, gs_options.edge_color(ap2, i)); }
       else
-      { graphic_storage.add_segment(*prev, *i); }
+      { graphics_scene.add_segment(*prev, *i); }
     }
 
     if(gs_options.are_faces_enabled())
-    { graphic_storage.add_point_in_face(*i); } // Add point in face
+    { graphics_scene.add_point_in_face(*i); } // Add point in face
 
     prev=i;
   }
@@ -94,11 +94,11 @@ void compute_one_loop_elements(const P2& ap2,
   // Add the last segment between the last point and the first one
   if(gs_options.are_edges_enabled() &&
      gs_options.draw_edge(ap2, aloop.vertices_begin()))
-  { graphic_storage.add_segment(*prev, *(aloop.vertices_begin())); }
+  { graphics_scene.add_segment(*prev, *(aloop.vertices_begin())); }
 }
 
 template <typename BufferType=float, class P2, class GSOptions>
-void compute_elements(const P2& p2, Graphics_scene<BufferType> &graphic_storage,
+void compute_elements(const P2& p2, Graphics_scene<BufferType> &graphics_scene,
                       const GSOptions& gs_options)
 {
   if (p2.outer_boundary().is_empty()) return;
@@ -106,26 +106,26 @@ void compute_elements(const P2& p2, Graphics_scene<BufferType> &graphic_storage,
   if (gs_options.are_faces_enabled())
   {
     if(gs_options.colored_face(p2, nullptr))
-    { graphic_storage.face_begin(gs_options.face_color(p2, nullptr)); }
+    { graphics_scene.face_begin(gs_options.face_color(p2, nullptr)); }
     else
-    { graphic_storage.face_begin(); }
+    { graphics_scene.face_begin(); }
   }
 
-  compute_one_loop_elements<BufferType, P2>(p2, p2.outer_boundary(), graphic_storage,
+  compute_one_loop_elements<BufferType, P2>(p2, p2.outer_boundary(), graphics_scene,
                                             false, gs_options);
 
   for (typename P2::Hole_const_iterator it=p2.holes_begin(); it!=p2.holes_end(); ++it)
   {
-    compute_one_loop_elements<BufferType, P2>(p2, *it, graphic_storage,
+    compute_one_loop_elements<BufferType, P2>(p2, *it, graphics_scene,
                                               true, gs_options);
     if (gs_options.are_faces_enabled())
-    { graphic_storage.add_point_in_face(p2.outer_boundary().vertex
+    { graphics_scene.add_point_in_face(p2.outer_boundary().vertex
                                        (p2.outer_boundary().size()-1));
     }
   }
 
  if (gs_options.are_faces_enabled())
- { graphic_storage.face_end(); }
+ { graphics_scene.face_end(); }
 }
 
 } // draw_function_for_ph2
@@ -133,24 +133,24 @@ void compute_elements(const P2& p2, Graphics_scene<BufferType> &graphic_storage,
 #define CGAL_P2_WITH_HOLES_TYPE CGAL::Polygon_with_holes_2<T, C>
 
 template <class T, class C, typename BufferType=float, class GSOptions>
-void add_in_graphic_storage(const CGAL_P2_WITH_HOLES_TYPE& p2,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage,
+void add_in_graphics_scene(const CGAL_P2_WITH_HOLES_TYPE& p2,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene,
                            const GSOptions &gs_options)
 {
-  draw_function_for_ph2_with_holes::compute_elements(p2, graphic_storage,
+  draw_function_for_ph2_with_holes::compute_elements(p2, graphics_scene,
                                                      gs_options);
 }
 
 template <class T, class C, typename BufferType=float>
-void add_in_graphic_storage(const CGAL_P2_WITH_HOLES_TYPE& p2,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage)
+void add_in_graphics_scene(const CGAL_P2_WITH_HOLES_TYPE& p2,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene)
 {
   Graphics_scene_options<CGAL_P2_WITH_HOLES_TYPE,
                   typename CGAL_P2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
                   typename CGAL_P2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
                   void*> gs_options;
 
-  add_in_graphic_storage(p2, graphic_storage, gs_options);
+  add_in_graphics_scene(p2, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -161,8 +161,8 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2, const GSOptions &gs_options,
           const char* title="Polygon with Holes Basic Viewer")
 {
   CGAL::Graphics_scene<BufferType> buffer;
-  add_in_graphic_storage(ap2, buffer, gs_options);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(ap2, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
 }
 
 template<class T, class C, typename BufferType=float>
@@ -170,8 +170,8 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
           const char* title="Polygon with Holes Basic Viewer")
 {
   CGAL::Graphics_scene<BufferType> buffer;
-  add_in_graphic_storage(ap2, buffer);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(ap2, buffer);
+  draw_graphics_scene(buffer, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER

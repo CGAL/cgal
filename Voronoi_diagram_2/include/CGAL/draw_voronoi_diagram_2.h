@@ -72,29 +72,29 @@ typedef Local_kernel::Vector_3 Local_vector;
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_vertex(const V2& v2,
                     typename V2::Vertex_iterator vh,
-                    CGAL::Graphics_scene<BufferType>& graphic_storage,
+                    CGAL::Graphics_scene<BufferType>& graphics_scene,
                     const GSOptions& gs_options)
 {
   if(!gs_options.draw_vertex(v2, vh))
   { return; }
 
   if(gs_options.colored_vertex(v2, vh))
-  { graphic_storage.add_point(vh->point(), gs_options.vertex_color(v2, vh)); }
+  { graphics_scene.add_point(vh->point(), gs_options.vertex_color(v2, vh)); }
   else
-  { graphic_storage.add_point(vh->point()); }
+  { graphics_scene.add_point(vh->point()); }
 }
 
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_dual_vertex(const V2& /*v2*/,
                          typename V2::Delaunay_graph::Finite_vertices_iterator vi,
-                         CGAL::Graphics_scene<BufferType> &graphic_storage,
+                         CGAL::Graphics_scene<BufferType> &graphics_scene,
                          const GSOptions& gs_options)
-{ graphic_storage.add_point(vi->point(), gs_options.dual_vertex_color); }
+{ graphics_scene.add_point(vi->point(), gs_options.dual_vertex_color); }
 
 template <typename BufferType=float, class V2, class GSOptions>
 void add_segments_and_update_bounding_box(const V2& v2,
                                           typename V2::Halfedge_iterator he,
-                                          CGAL::Graphics_scene<BufferType>& graphic_storage,
+                                          CGAL::Graphics_scene<BufferType>& graphics_scene,
                                           GSOptions& gs_options)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -104,12 +104,12 @@ void add_segments_and_update_bounding_box(const V2& v2,
   {
     if(gs_options.colored_edge(v2, he))
     {
-      graphic_storage.add_segment(he->source()->point(), he->target()->point(),
+      graphics_scene.add_segment(he->source()->point(), he->target()->point(),
                                  gs_options.edge_color(v2, he));
     }
     else
     {
-      graphic_storage.add_segment(he->source()->point(), he->target()->point());
+      graphics_scene.add_segment(he->source()->point(), he->target()->point());
     }
   }
   else
@@ -127,10 +127,10 @@ void add_segments_and_update_bounding_box(const V2& v2,
         end_point = he->source()->point();
 
         // update_bounding_box_for_ray(end_point, direction);
-        Local_point lp = graphic_storage.get_local_point(end_point);
-        Local_vector lv = graphic_storage.get_local_vector(direction);
+        Local_point lp = graphics_scene.get_local_point(end_point);
+        Local_vector lv = graphics_scene.get_local_vector(direction);
         CGAL::Bbox_3 b = (lp + lv).bbox();
-        graphic_storage.update_bounding_box(b);
+        graphics_scene.update_bounding_box(b);
       }
     }
     else if (he->is_bisector())
@@ -143,12 +143,12 @@ void add_segments_and_update_bounding_box(const V2& v2,
 
       // update_bounding_box_for_line(pointOnLine, direction,
       //                               perpendicularDirection);
-      Local_point lp = graphic_storage.get_local_point(pointOnLine);
-      Local_vector lv = graphic_storage.get_local_vector(direction);
-      Local_vector lpv = graphic_storage.get_local_vector(perpendicularDirection);
+      Local_point lp = graphics_scene.get_local_point(pointOnLine);
+      Local_vector lv = graphics_scene.get_local_vector(direction);
+      Local_vector lpv = graphics_scene.get_local_vector(perpendicularDirection);
 
       CGAL::Bbox_3 b = lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox();
-      graphic_storage.update_bounding_box(b);
+      graphics_scene.update_bounding_box(b);
     }
   }
 }
@@ -224,7 +224,7 @@ Local_kernel::Point_2 get_second_point(typename V2::Halfedge_handle ray,
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_rays_and_bisectors(const V2&,
                                 typename V2::Halfedge_iterator he,
-                                CGAL::Graphics_scene<BufferType>& graphic_storage,
+                                CGAL::Graphics_scene<BufferType>& graphics_scene,
                                 const GSOptions& gs_options)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -239,39 +239,39 @@ void compute_rays_and_bisectors(const V2&,
   {
     if (he->has_source())
     {
-      // add_ray_segment(he->source()->point(), get_second_point(he, graphic_storage.get_bounding_box()));
-      graphic_storage.add_ray(he->source()->point(), direction, gs_options.ray_color);
+      // add_ray_segment(he->source()->point(), get_second_point(he, graphics_scene.get_bounding_box()));
+      graphics_scene.add_ray(he->source()->point(), direction, gs_options.ray_color);
     }
   }
   else if (he->is_bisector())
   {
     Kernel::Point_2 pointOnLine((v1->point().x() + v2->point().x()) / 2,
                                 (v1->point().y() + v2->point().y()) / 2);
-    graphic_storage.add_line(pointOnLine, direction, gs_options.bisector_color);
+    graphics_scene.add_line(pointOnLine, direction, gs_options.bisector_color);
   }
 }
 
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_face(const V2& v2,
                   typename V2::Face_iterator fh,
-                  CGAL::Graphics_scene<BufferType>& graphic_storage,
+                  CGAL::Graphics_scene<BufferType>& graphics_scene,
                   const GSOptions& m_gs_options)
 {
   if(fh->is_unbounded() || !m_gs_options.draw_face(v2, fh))
   { return; }
 
   if(m_gs_options.colored_face(v2, fh))
-  { graphic_storage.face_begin(m_gs_options.face_color(v2, fh)); }
-  else { graphic_storage.face_begin(); }
+  { graphics_scene.face_begin(m_gs_options.face_color(v2, fh)); }
+  else { graphics_scene.face_begin(); }
 
   typename V2::Ccb_halfedge_circulator ec_start=fh->ccb();
   typename V2::Ccb_halfedge_circulator ec=ec_start;
   do
   {
-    graphic_storage.add_point_in_face(ec->source()->point());
+    graphics_scene.add_point_in_face(ec->source()->point());
   }
   while (++ec!=ec_start);
-  graphic_storage.face_end();
+  graphics_scene.face_end();
 
   // Test: for unbounded faces (??)
   //      else {
@@ -280,7 +280,7 @@ void compute_face(const V2& v2,
   //                    add_point_in_face(ec->source()->point());
   //                }
   //                else{
-  //                    add_point_in_face(get_second_point(ec->twin(), graphic_storage.get_bounding_box()));
+  //                    add_point_in_face(get_second_point(ec->twin(), graphics_scene.get_bounding_box()));
   //                }
   //            } while(++ec != ec_start);
   //        }
@@ -288,7 +288,7 @@ void compute_face(const V2& v2,
 
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_elements(const V2& v2,
-                      CGAL::Graphics_scene<BufferType>& graphic_storage,
+                      CGAL::Graphics_scene<BufferType>& graphics_scene,
                       const GSOptions& gs_options)
 {
   if(gs_options.are_vertices_enabled())
@@ -298,7 +298,7 @@ void compute_elements(const V2& v2,
     {
       for (typename V2::Vertex_iterator it=v2.vertices_begin();
            it!=v2.vertices_end(); ++it)
-      { compute_vertex(v2, it, graphic_storage, gs_options); }
+      { compute_vertex(v2, it, graphics_scene, gs_options); }
     }
 
     // Draw the dual vertices
@@ -307,7 +307,7 @@ void compute_elements(const V2& v2,
       for (typename V2::Delaunay_graph::Finite_vertices_iterator
              it=v2.dual().finite_vertices_begin();
            it!=v2.dual().finite_vertices_end(); ++it)
-      { compute_dual_vertex(v2, it, graphic_storage, gs_options); }
+      { compute_dual_vertex(v2, it, graphics_scene, gs_options); }
     }
   }
 
@@ -317,17 +317,17 @@ void compute_elements(const V2& v2,
     for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
          it!=v2.halfedges_end(); ++it)
     { add_segments_and_update_bounding_box(v2, it,
-                                           graphic_storage, gs_options); }
+                                           graphics_scene, gs_options); }
   }
 
   for (typename V2::Halfedge_iterator it=v2.halfedges_begin();
        it!=v2.halfedges_end(); ++it)
-  { compute_rays_and_bisectors(v2, it, graphic_storage, gs_options); }
+  { compute_rays_and_bisectors(v2, it, graphics_scene, gs_options); }
 
   if (gs_options.are_faces_enabled())
   {
     for (typename V2::Face_iterator it=v2.faces_begin(); it!=v2.faces_end(); ++it)
-    { compute_face(v2, it, graphic_storage, gs_options); }
+    { compute_face(v2, it, graphics_scene, gs_options); }
   }
 }
 
@@ -337,16 +337,16 @@ void compute_elements(const V2& v2,
 
 template <class DG, class AT, class AP,
           typename BufferType=float, class GSOptions>
-void add_in_graphic_storage(const CGAL_VORONOI_TYPE &v2,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage,
+void add_in_graphics_scene(const CGAL_VORONOI_TYPE &v2,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene,
                            const GSOptions& m_gs_options)
 {
-  draw_function_for_v2::compute_elements(v2, graphic_storage, m_gs_options);
+  draw_function_for_v2::compute_elements(v2, graphics_scene, m_gs_options);
 }
 
 template <class DG, class AT, class AP, typename BufferType=float>
-void add_in_graphic_storage(const CGAL_VORONOI_TYPE& v2,
-                           CGAL::Graphics_scene<BufferType>& graphic_storage)
+void add_in_graphics_scene(const CGAL_VORONOI_TYPE& v2,
+                           CGAL::Graphics_scene<BufferType>& graphics_scene)
 {
   // Default graphics view options.
   CGAL::Graphics_scene_options_voronoi<CGAL_VORONOI_TYPE,
@@ -355,7 +355,7 @@ void add_in_graphic_storage(const CGAL_VORONOI_TYPE& v2,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
     gs_options;
 
-  add_in_graphic_storage(v2, graphic_storage, gs_options);
+  add_in_graphics_scene(v2, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -368,8 +368,8 @@ void draw(const CGAL_VORONOI_TYPE& av2,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
   CGAL::Graphics_scene<BufferType> buffer;
-  add_in_graphic_storage(av2, buffer, gs_options);
-  draw_graphic_storage(buffer, title);
+  add_in_graphics_scene(av2, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
 }
 
 template<class DG, class AT, class AP, typename BufferType=float>
@@ -384,7 +384,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
     gs_options;
 
-  add_in_graphic_storage(av2, buffer, gs_options);
+  add_in_graphics_scene(av2, buffer, gs_options);
 
   QApplication_and_basic_viewer app(buffer, title);
   if(app)
@@ -414,7 +414,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
 
           basic_viewer->clear();
           draw_function_for_v2::compute_elements(av2,
-                                                 basic_viewer->get_graphic_storage(),
+                                                 basic_viewer->get_graphics_scene(),
                                                  gs_options);
           basic_viewer->redraw();
         }
@@ -429,7 +429,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
 
           basic_viewer->clear();
           draw_function_for_v2::compute_elements(av2,
-                                                 basic_viewer->get_graphic_storage(),
+                                                 basic_viewer->get_graphics_scene(),
                                                  gs_options);
           basic_viewer->redraw();
         }
