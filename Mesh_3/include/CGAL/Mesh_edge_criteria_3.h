@@ -141,18 +141,18 @@ public:
   *
   * \note If one parameter is set to 0, then its corresponding criterion is ignored.
   *
-  * @tparam SizingField a model of `MeshDomainField_3`
+  * @tparam SizingField and @tparam SizingField2 are models of `MeshDomainField_3`
   */
-  template < typename Sizing_field, typename Sizing_field2 = FT >
-  Mesh_edge_criteria_3(const Sizing_field& length_bound,
+  template < typename SizingField, typename SizingField2 = FT >
+  Mesh_edge_criteria_3(const SizingField& length_bound,
                        const FT& min_length_bound = 0,
-                       const Sizing_field2& distance_bound = FT(DBL_MAX))
+                       const SizingField2& distance_bound = FT(DBL_MAX))
       : min_length_bound_(min_length_bound)
   {
     init_p_size(length_bound,
-                  Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field>());
+                  Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>());
     init_distance_bound(distance_bound,
-                  Mesh_3::Is_mesh_domain_field_3<Tr, Sizing_field2>());
+                  Mesh_3::Is_mesh_domain_field_3<Tr, SizingField2>());
   }
 
   /// @}
@@ -199,11 +199,11 @@ private:
         Index>(length_bound);
   }
 
-  template <typename Sizing_field>
-  void init_p_size(const Sizing_field& length_bound, Tag_true)
+  template <typename SizingField>
+  void init_p_size(const SizingField& length_bound, Tag_true)
   {
     p_size_ = new Mesh_3::internal::Sizing_field_container<
-        Sizing_field,
+        SizingField,
         FT,
         Point_3,
         Index>(length_bound);
@@ -218,18 +218,18 @@ private:
         Index>(distance_bound);
   }
 
-  template <typename Sizing_field>
-  void init_distance_bound(const Sizing_field& distance_bound, Tag_true)
+  template <typename SizingField>
+  void init_distance_bound(const SizingField& distance_bound, Tag_true)
   {
     distance_bound_ = new Mesh_3::internal::Sizing_field_container<
-        Sizing_field,
+        SizingField,
         FT,
         Point_3,
         Index>(distance_bound);
   }
 
   // A pointer to Sizing_field_interface to handle dynamic wrapping of
-  // real Sizing_field type
+  // real SizingField type
   Sizing_field_interface* p_size_;
   const FT min_length_bound_;
   Sizing_field_interface* distance_bound_;
