@@ -19,7 +19,7 @@
 #define CGAL_DRAW_POLYGON_2_H
 
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_storage.h>
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polygon_2.h>
 
@@ -48,7 +48,7 @@ namespace draw_function_for_p2 {
 
 template <typename BufferType=float, class P2, class GSOptions>
 void compute_elements(const P2& p2,
-                      CGAL::Graphic_storage<BufferType> &graphic_storage,
+                      CGAL::Graphics_scene<BufferType> &graphic_storage,
                       const GSOptions& gs_options)
 {
   if (p2.is_empty())
@@ -103,13 +103,13 @@ void compute_elements(const P2& p2,
 
 template<typename BufferType=float, class T, class C, class GSOptions>
 void add_in_graphic_storage(const CGAL_P2_TYPE& ap2,
-                           CGAL::Graphic_storage<BufferType>& graphic_storage,
+                           CGAL::Graphics_scene<BufferType>& graphic_storage,
                            const GSOptions& gs_options)
 { draw_function_for_p2::compute_elements(ap2, graphic_storage, gs_options); }
 
 template<typename BufferType=float, class T, class C>
 void add_in_graphic_storage(const CGAL_P2_TYPE& ap2,
-                           CGAL::Graphic_storage<BufferType> &graphic_storage)
+                           CGAL::Graphics_scene<BufferType> &graphic_storage)
 {
   CGAL::Graphics_scene_options<CGAL_P2_TYPE,
                         typename CGAL_P2_TYPE::Vertex_const_iterator,
@@ -126,7 +126,7 @@ template <class T, class C>
 void draw(const CGAL_P2_TYPE &ap2,
           const char *title="Polygon_2 Basic Viewer")
 {
-  CGAL::Graphic_storage<float> buffer;
+  CGAL::Graphics_scene<float> buffer;
   add_in_graphic_storage(ap2, buffer);
   draw_graphic_storage(buffer, title);
 }
@@ -136,7 +136,7 @@ void draw(const CGAL_P2_TYPE &ap2,
           const GSOptions& gs_options,
           const char *title="Polygon_2 Basic Viewer")
 {
-  CGAL::Graphic_storage<float> buffer;
+  CGAL::Graphics_scene<float> buffer;
   add_in_graphic_storage(ap2, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }

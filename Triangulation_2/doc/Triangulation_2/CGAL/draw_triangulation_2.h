@@ -15,7 +15,7 @@ Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with
 
 */
 template<class T2>
-void draw(const T2& at2, const CGAL::Cell_parameters<T2,
+void draw(const T2& at2, const CGAL::Graphics_scene_options<T2,
                   typename T2::Vertex_handle,
                   typename T2::Finite_edges_iterator,
                   typename T2::Finite_faces_iterator>& cp=default);
@@ -33,8 +33,8 @@ adds the vertices, edges and faces of `at2` into the given graphic storage `gs`.
 */
 template<class T2>
 void add_in_graphic_storage(const T2& at2,
-                            CGAL::Graphic_storage<BufferType>& gs,
-                            const CGAL::Cell_parameters<T2,
+                            CGAL::Graphics_scene<BufferType>& gs,
+                            const CGAL::Graphics_scene_options<T2,
                             typename T2::Vertex_handle,
                             typename T2::Finite_edges_iterator,
                             typename T2::Finite_faces_iterator>& cp=default);

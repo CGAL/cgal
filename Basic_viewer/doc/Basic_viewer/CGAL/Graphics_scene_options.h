@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgBasicViewerClasses
 
-The class `Cell_parameters` is used to tune the way that the cells of a given data structure of \cgal are considered.
+The class `Graphics_scene_options` is used to tune the way that the cells of a given data structure of \cgal are considered.
 The different `std::function` can be modified to change for example the behavior of the drawing.
 
 \tparam DS a data structure of \cgal.
@@ -17,7 +17,7 @@ template <typename DS,
           typename VertexDescriptor,
           typename EdgeDescriptor,
           typename FaceDescriptor>
-struct Cell_parameters
+struct Graphics_scene_options
 {
 public:
   /// `std::function` that returns `true` if the given vertex must be ignored, `false` otherwise.
@@ -73,7 +73,7 @@ public:
 /*!
 \ingroup PkgBasicViewerClasses
 
-The class `Cell_parameters_with_volume` is used to tune the way that the cells of a given data structure of \cgal are considered, for a data structure that contains volumes.
+The class `Graphics_scene_options` is used to tune the way that the cells of a given data structure of \cgal are considered, for a data structure that contains volumes.
 The different `std::function` can be modified to change for example the behavior of the drawing.
 
 \tparam DS a data structure of \cgal.
@@ -90,8 +90,8 @@ template <typename DS,
           typename EdgeDescriptor,
           typename FaceDescriptor,
           typename VolumeDescriptor>
-struct Cell_parameters_with_volume :
-    public Cell_parameters<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor>
+struct Graphics_scene_options :
+    public Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor>
 {
 public:
   /// `std::function` that returns `true` if the given volume must be ignored, `false` otherwise.

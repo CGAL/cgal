@@ -16,7 +16,7 @@
 
 #include <CGAL/license/Nef_3.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_storage.h>
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_iteration.h>
@@ -95,7 +95,7 @@ class Nef_Visitor {
 
 public:
   Nef_Visitor(const Nef_Polyhedron&_nef,
-              CGAL::Graphic_storage<BufferType>& _graphic_storage,
+              CGAL::Graphics_scene<BufferType>& _graphic_storage,
               const GSOptions&_gs_options) :
     n_faces(0), n_edges(0),
     nef(_nef),
@@ -207,14 +207,14 @@ public:
 protected:
   std::unordered_map<Halffacet_const_handle, bool> facets_done;
   std::unordered_map<Halfedge_const_handle, bool> edges_done;
-  CGAL::Graphic_storage<BufferType>& graphic_storage;
+  CGAL::Graphics_scene<BufferType>& graphic_storage;
   const GSOptions& gs_options;
   const Nef_Polyhedron& nef;
 };
 
 template <typename BufferType=float, class Nef_Polyhedron, class GSOptions>
 void compute_elements(const Nef_Polyhedron &nef,
-                      CGAL::Graphic_storage<BufferType> &graphic_storage,
+                      CGAL::Graphics_scene<BufferType> &graphic_storage,
                       const GSOptions &gs_options)
 {
 
@@ -243,7 +243,7 @@ void compute_elements(const Nef_Polyhedron &nef,
 template <typename Kernel_, typename Items_, typename Mark_,
           typename BufferType=float, class GSOptions>
 void add_in_graphic_storage(const CGAL_NEF3_TYPE &anef,
-                           CGAL::Graphic_storage<BufferType> &graphic_storage,
+                           CGAL::Graphics_scene<BufferType> &graphic_storage,
                            const GSOptions &gs_options)
 {
   draw_function_for_nef_polyhedron::compute_elements(anef,
@@ -254,7 +254,7 @@ void add_in_graphic_storage(const CGAL_NEF3_TYPE &anef,
 template <typename Kernel_, typename Items_, typename Mark_,
           typename BufferType=float>
 void add_in_graphic_storage(const CGAL_NEF3_TYPE &anef,
-                           CGAL::Graphic_storage<BufferType> &graphic_storage)
+                           CGAL::Graphics_scene<BufferType> &graphic_storage)
 {
   // Default graphics view options.
   Graphics_scene_options<CGAL_NEF3_TYPE,
@@ -289,7 +289,7 @@ void draw(const CGAL_NEF3_TYPE &anef,
           const GSOptions &gs_options,
           const char *title="Nef Polyhedron Viewer")
 {
-  CGAL::Graphic_storage<BufferType> buffer;
+  CGAL::Graphics_scene<BufferType> buffer;
   add_in_graphic_storage(anef, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
@@ -299,7 +299,7 @@ template <typename Kernel_, typename Items_, typename Mark_,
 void draw(const CGAL_NEF3_TYPE &anef,
           const char *title="Nef Polyhedron Viewer")
 {
-  CGAL::Graphic_storage<BufferType> buffer;
+  CGAL::Graphics_scene<BufferType> buffer;
   add_in_graphic_storage(anef, buffer);
   draw_graphic_storage(buffer, title);
 }

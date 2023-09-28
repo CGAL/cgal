@@ -20,7 +20,7 @@ using PS3=CGAL::Point_set_3<Point>;
 
 int main(void)
 {
-  /// (1) Some CGAL code that create data structure and fill Graphic_storage.
+  /// (1) Some CGAL code that create data structure and fill Graphics_scene.
   std::vector<Pwn> points;
 
   if(!CGAL::IO::read_points(CGAL::data_file_path("points_3/kitten.xyz"), std::back_inserter(points),
@@ -47,7 +47,7 @@ int main(void)
   for(Pwn& it: points)
   { point_set.insert(it.first); }
 
-  CGAL::Graphic_storage<float> graphic_buffer1, graphic_buffer2;
+  CGAL::Graphics_scene<float> graphic_buffer1, graphic_buffer2;
   CGAL::add_in_graphic_storage(point_set, graphic_buffer1);
   CGAL::add_in_graphic_storage(output_mesh, graphic_buffer2);
 

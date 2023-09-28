@@ -10,8 +10,8 @@
 // Author(s):   Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //              Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
-#ifndef CGAL_DRAWING_FUNCTORS_H
-#define CGAL_DRAWING_FUNCTORS_H
+#ifndef CGAL_GRAPHICS_SCENE_OPTIONS_H
+#define CGAL_GRAPHICS_SCENE_OPTIONS_H
 
 #include <CGAL/license/GraphicsView.h>
 #include <CGAL/IO/Color.h>
@@ -114,4 +114,4 @@ protected:
 
 } // End namespace CGAL
 
-#endif // CGAL_DRAWING_FUNCTORS_H
+#endif // CGAL_GRAPHICS_SCENE_OPTIONS_H

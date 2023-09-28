@@ -34,12 +34,12 @@ public Q_SLOTS:
   void sceneChanged();
 
 private:
-  CGAL::Drawing_functor_with_volume<LCC,
+  CGAL::Graphics_scene_options<LCC,
                                          Dart_const_descriptor,
                                          Dart_const_descriptor,
                                          Dart_const_descriptor,
                                          Dart_const_descriptor> m_drawing_functor;
-  CGAL::Graphic_storage<float> m_graphic_buffer;
+  CGAL::Graphics_scene<float> m_graphic_buffer;
   Scene* scene;
   bool m_previous_scene_empty;
 };

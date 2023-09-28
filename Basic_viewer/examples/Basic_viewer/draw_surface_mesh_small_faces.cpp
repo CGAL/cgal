@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
   { faces_size[fd]=CGAL::Polygon_mesh_processing::face_area(fd, sm); }
 
   Graphics_scene_options_small_faces gsosm(sm);
-  CGAL::Graphic_storage<float> buffer;
+  CGAL::Graphics_scene<float> buffer;
 
   add_in_graphic_storage(sm, buffer, gsosm);
   CGAL::QApplication_and_basic_viewer app(buffer, "Small faces");

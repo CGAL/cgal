@@ -30,7 +30,7 @@ void draw(const SM& asm);
 #else // DOXYGEN_RUNNING
 
 #include <CGAL/license/Surface_mesh.h>
-#include <CGAL/Graphic_storage.h>
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
@@ -96,13 +96,13 @@ private:
 
 template<class K, typename BufferType=float,  class GSOptions>
 void add_in_graphic_storage(const Surface_mesh<K>& amesh,
-                            CGAL::Graphic_storage<BufferType> &graphic_storage,
+                            CGAL::Graphics_scene<BufferType> &graphic_storage,
                             const GSOptions &gs_options)
 { add_in_graphic_storage_for_fg(amesh, graphic_storage, gs_options); }
 
 template<class K, typename BufferType=float>
 void add_in_graphic_storage(const Surface_mesh<K>& amesh,
-                           CGAL::Graphic_storage<BufferType> &graphic_storage)
+                           CGAL::Graphics_scene<BufferType> &graphic_storage)
 { add_in_graphic_storage_for_fg(amesh, graphic_storage,
                                 Graphics_scene_options_surface_mesh<K>(amesh)); }
 
@@ -113,7 +113,7 @@ template<class K, typename BufferType=float>
 void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
-  CGAL::Graphic_storage<BufferType> buffer;
+  CGAL::Graphics_scene<BufferType> buffer;
   add_in_graphic_storage(amesh, buffer);
   draw_graphic_storage(buffer, title);
 }
@@ -123,7 +123,7 @@ void draw(const Surface_mesh<K>& amesh,
           const GSOptions &gs_options,
           const char* title="Surface_mesh Basic Viewer")
 {
-  CGAL::Graphic_storage<BufferType> buffer;
+  CGAL::Graphics_scene<BufferType> buffer;
   add_in_graphic_storage(amesh, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }

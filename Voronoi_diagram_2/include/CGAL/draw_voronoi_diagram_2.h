@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Voronoi_diagram_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_storage.h>
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Voronoi_diagram_2.h>
@@ -72,7 +72,7 @@ typedef Local_kernel::Vector_3 Local_vector;
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_vertex(const V2& v2,
                     typename V2::Vertex_iterator vh,
-                    CGAL::Graphic_storage<BufferType>& graphic_storage,
+                    CGAL::Graphics_scene<BufferType>& graphic_storage,
                     const GSOptions& gs_options)
 {
   if(!gs_options.draw_vertex(v2, vh))
@@ -87,14 +87,14 @@ void compute_vertex(const V2& v2,
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_dual_vertex(const V2& /*v2*/,
                          typename V2::Delaunay_graph::Finite_vertices_iterator vi,
-                         CGAL::Graphic_storage<BufferType> &graphic_storage,
+                         CGAL::Graphics_scene<BufferType> &graphic_storage,
                          const GSOptions& gs_options)
 { graphic_storage.add_point(vi->point(), gs_options.dual_vertex_color); }
 
 template <typename BufferType=float, class V2, class GSOptions>
 void add_segments_and_update_bounding_box(const V2& v2,
                                           typename V2::Halfedge_iterator he,
-                                          CGAL::Graphic_storage<BufferType>& graphic_storage,
+                                          CGAL::Graphics_scene<BufferType>& graphic_storage,
                                           GSOptions& gs_options)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -224,7 +224,7 @@ Local_kernel::Point_2 get_second_point(typename V2::Halfedge_handle ray,
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_rays_and_bisectors(const V2&,
                                 typename V2::Halfedge_iterator he,
-                                CGAL::Graphic_storage<BufferType>& graphic_storage,
+                                CGAL::Graphics_scene<BufferType>& graphic_storage,
                                 const GSOptions& gs_options)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -254,7 +254,7 @@ void compute_rays_and_bisectors(const V2&,
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_face(const V2& v2,
                   typename V2::Face_iterator fh,
-                  CGAL::Graphic_storage<BufferType>& graphic_storage,
+                  CGAL::Graphics_scene<BufferType>& graphic_storage,
                   const GSOptions& m_gs_options)
 {
   if(fh->is_unbounded() || !m_gs_options.draw_face(v2, fh))
@@ -288,7 +288,7 @@ void compute_face(const V2& v2,
 
 template <typename BufferType=float, class V2, class GSOptions>
 void compute_elements(const V2& v2,
-                      CGAL::Graphic_storage<BufferType>& graphic_storage,
+                      CGAL::Graphics_scene<BufferType>& graphic_storage,
                       const GSOptions& gs_options)
 {
   if(gs_options.are_vertices_enabled())
@@ -338,7 +338,7 @@ void compute_elements(const V2& v2,
 template <class DG, class AT, class AP,
           typename BufferType=float, class GSOptions>
 void add_in_graphic_storage(const CGAL_VORONOI_TYPE &v2,
-                           CGAL::Graphic_storage<BufferType>& graphic_storage,
+                           CGAL::Graphics_scene<BufferType>& graphic_storage,
                            const GSOptions& m_gs_options)
 {
   draw_function_for_v2::compute_elements(v2, graphic_storage, m_gs_options);
@@ -346,7 +346,7 @@ void add_in_graphic_storage(const CGAL_VORONOI_TYPE &v2,
 
 template <class DG, class AT, class AP, typename BufferType=float>
 void add_in_graphic_storage(const CGAL_VORONOI_TYPE& v2,
-                           CGAL::Graphic_storage<BufferType>& graphic_storage)
+                           CGAL::Graphics_scene<BufferType>& graphic_storage)
 {
   // Default graphics view options.
   CGAL::Graphics_scene_options_voronoi<CGAL_VORONOI_TYPE,
@@ -367,7 +367,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
           const GSOptions& gs_options,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
-  CGAL::Graphic_storage<BufferType> buffer;
+  CGAL::Graphics_scene<BufferType> buffer;
   add_in_graphic_storage(av2, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
@@ -376,7 +376,7 @@ template<class DG, class AT, class AP, typename BufferType=float>
 void draw(const CGAL_VORONOI_TYPE& av2,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
-  CGAL::Graphic_storage<BufferType> buffer;
+  CGAL::Graphics_scene<BufferType> buffer;
 
   CGAL::Graphics_scene_options_voronoi<CGAL_VORONOI_TYPE,
                                 typename CGAL_VORONOI_TYPE::Vertex_iterator,

@@ -186,7 +186,7 @@ private:
   //! Indicates whether to draw unbounded polygons with holes.
   bool m_draw_unbounded = false;
 
-  Graphic_storage<float> gs;
+  Graphics_scene<float> gs;
 };
 
 // Specialization of draw function.

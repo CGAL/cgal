@@ -10,8 +10,8 @@
 // Author(s): Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //            Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
-#ifndef CGAL_GRAPHIC_STORAGE_H
-#define CGAL_GRAPHIC_STORAGE_H
+#ifndef CGAL_GRAPHICS_SCENE_H
+#define CGAL_GRAPHICS_SCENE_H
 
 #include <CGAL/license/GraphicsView.h>
 #include <QString>
@@ -56,14 +56,14 @@ inline CGAL::IO::Color get_random_color(CGAL::Random& random)
 // This class is responsible for dealing with available CGAL data structures and
 // handling buffers.
 template <typename BufferType = float>
-class Graphic_storage
+class Graphics_scene
 {
 public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
 
-  Graphic_storage()
+  Graphics_scene()
       : m_buffer_for_mono_points(&arrays[POS_MONO_POINTS], nullptr,
                                  &m_bounding_box, nullptr, nullptr, nullptr),
         m_buffer_for_colored_points(&arrays[POS_COLORED_POINTS], nullptr,
@@ -417,4 +417,4 @@ protected:
 
 } // namespace CGAL
 
-#endif // CGAL_GRAPHIC_STORAGE_H
+#endif // CGAL_GRAPHICS_SCENE_H

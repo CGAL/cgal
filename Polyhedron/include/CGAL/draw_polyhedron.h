@@ -14,7 +14,7 @@
 #define CGAL_DRAW_POLYHEDRON_H
 
 #include <CGAL/license/Polyhedron.h>
-#include <CGAL/Graphic_storage.h>
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/draw_face_graph.h>
@@ -35,7 +35,7 @@ template<class PolyhedronTraits_3,
          typename BufferType=float,
          class GSOptions>
 void add_in_graphic_storage(const CGAL_POLY_TYPE& apoly,
-                           CGAL::Graphic_storage<BufferType> &graphic_storage,
+                           CGAL::Graphics_scene<BufferType> &graphic_storage,
                            const GSOptions &gs_options)
 { add_in_graphic_storage_for_fg(apoly, graphic_storage, gs_options); }
 
@@ -46,7 +46,7 @@ template<class PolyhedronTraits_3,
          class Alloc,
          typename BufferType=float>
 void add_in_graphic_storage(const CGAL_POLY_TYPE& apoly,
-                           CGAL::Graphic_storage<BufferType> &graphic_storage)
+                           CGAL::Graphics_scene<BufferType> &graphic_storage)
 { add_in_graphic_storage_for_fg(apoly, graphic_storage); }
 
 // Specialization of draw function: require Qt and the CGAL basic viewer.
@@ -61,7 +61,7 @@ template<class PolyhedronTraits_3,
 void draw(const CGAL_POLY_TYPE& apoly,
           const char* title="Polyhedron Basic Viewer")
 {
-  CGAL::Graphic_storage<BufferType> buffer;
+  CGAL::Graphics_scene<BufferType> buffer;
   add_in_graphic_storage_for_fg(apoly, buffer);
   draw_graphic_storage(buffer, title);
 }
@@ -77,7 +77,7 @@ void draw(const CGAL_POLY_TYPE& apoly,
           const GSOptions &gs_options,
           const char* title="Polyhedron Basic Viewer")
 {
-  CGAL::Graphic_storage<BufferType> buffer;
+  CGAL::Graphics_scene<BufferType> buffer;
   add_in_graphic_storage_for_fg(apoly, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }

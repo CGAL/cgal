@@ -16,7 +16,7 @@ draw(XXX)
 
 \subsection Basic_viewerDoc_2 Customize the drawing
 
-Drawing_functor
+Graphics_scene_options
 
 \subsection Basic_viewerDoc_3 Graphic storage
 

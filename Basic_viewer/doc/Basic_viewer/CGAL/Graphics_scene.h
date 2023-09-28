@@ -4,13 +4,13 @@ namespace CGAL {
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `Graphic_storage` stores points, segments, triangles, rays and lines. Elements can be added, possibly with associated colors. Non triangular faces can be directly added and are triangulated internally.
+The class `Graphics_scene` stores points, segments, triangles, rays and lines. Elements can be added, possibly with associated colors. Non triangular faces can be directly added and are triangulated internally.
 
 \tparam BufferType the number type used for point coordinates: `float` by default.
 
 */
 template <typename BufferType=float>
-class Graphic_storage {
+class Graphics_scene {
 public:
   /// adds the given point in the storage.
   template <typename KPoint>

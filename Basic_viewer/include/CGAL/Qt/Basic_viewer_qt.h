@@ -49,7 +49,7 @@
 #include <cfloat>
 
 #include <CGAL/Basic_shaders.h>
-#include <CGAL/Graphic_storage.h>
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
 #include <CGAL/assertions.h>
@@ -68,11 +68,11 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
-  using GS=Graphic_storage<BufferType>;
+  using GS=Graphics_scene<BufferType>;
 
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
-                  Graphic_storage<BufferType>& buf,
+                  Graphics_scene<BufferType>& buf,
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
@@ -364,9 +364,9 @@ public:
   void face_end()
   { gBuffer.face_end(); }
 
-  Graphic_storage<BufferType>& get_graphic_storage()
+  Graphics_scene<BufferType>& get_graphic_storage()
   { return gBuffer; }
-  const Graphic_storage<BufferType>& get_graphic_storage() const
+  const Graphics_scene<BufferType>& get_graphic_storage() const
   { return gBuffer; }
 
   virtual void redraw()
@@ -1595,7 +1595,7 @@ public:
   std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<BufferType> *)> on_key_pressed;
 
 protected:
-  Graphic_storage<BufferType>& gBuffer;
+  Graphics_scene<BufferType>& gBuffer;
 
   bool m_draw_vertices;
   bool m_draw_edges;
@@ -1669,7 +1669,7 @@ protected:
 };
 
 template <typename BufferType=float>
-void draw_graphic_storage(Graphic_storage<BufferType>& graphic_storage,
+void draw_graphic_storage(Graphics_scene<BufferType>& graphic_storage,
                  const char *title="CGAL Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
@@ -1698,7 +1698,7 @@ template <typename BufferType=float>
 class QApplication_and_basic_viewer
 {
 public:
-  QApplication_and_basic_viewer(CGAL::Graphic_storage<BufferType>& buffer,
+  QApplication_and_basic_viewer(CGAL::Graphics_scene<BufferType>& buffer,
                                 const char* title="CGAL Basic Viewer"):
     m_application(nullptr),
     m_basic_viewer(nullptr),

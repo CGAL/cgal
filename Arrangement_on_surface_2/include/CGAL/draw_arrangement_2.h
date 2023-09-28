@@ -511,7 +511,7 @@ protected:
   Color_generator m_color_generator;
 
   std::unordered_map<Face_const_handle, bool> m_visited;
-  CGAL::Graphic_storage<float> m_graphic_storage;
+  CGAL::Graphics_scene<float> m_graphic_storage;
 };
 
 //! Basic viewer of a 2D arrangement.

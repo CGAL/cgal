@@ -16,7 +16,7 @@
 
 #include <CGAL/license/Point_set_3.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_storage.h>
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Point_set_3.h>
 
@@ -44,7 +44,7 @@ namespace draw_function_for_PointSet {
 
 template <typename BufferType=float, class PointSet, class GSOptions>
 void compute_elements(const PointSet& pointset,
-                      Graphic_storage<BufferType>& graphic_storage,
+                      Graphics_scene<BufferType>& graphic_storage,
                       const GSOptions& gs_options)
 {
   if (!gs_options.are_vertices_enabled())
@@ -70,7 +70,7 @@ void compute_elements(const PointSet& pointset,
 
 template <class P, class V, typename BufferType=float, class GSOptions>
 void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
-                            Graphic_storage<BufferType>& graphic_storage,
+                            Graphics_scene<BufferType>& graphic_storage,
                             const GSOptions& gs_options)
 {
   draw_function_for_PointSet::compute_elements(apointset,
@@ -80,7 +80,7 @@ void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
 
 template <class P, class V, typename BufferType=float>
 void add_in_graphic_storage(const Point_set_3<P, V>& apointset,
-                            Graphic_storage<BufferType>& graphic_storage)
+                            Graphics_scene<BufferType>& graphic_storage)
 {
   CGAL::Graphics_scene_options<Point_set_3<P, V>,
                                typename Point_set_3<P, V>::const_iterator,
@@ -96,7 +96,7 @@ void draw(const Point_set_3<P, V>& apointset,
           const GSOptions& gs_options,
           const char *title="Point_set_3 Basic Viewer")
 {
-  Graphic_storage<float> buffer;
+  Graphics_scene<float> buffer;
   add_in_graphic_storage(apointset, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
@@ -105,7 +105,7 @@ template <class P, class V>
 void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
-  Graphic_storage<float> buffer;
+  Graphics_scene<float> buffer;
   add_in_graphic_storage(apointset, buffer);
   draw_graphic_storage(buffer, title);
 }

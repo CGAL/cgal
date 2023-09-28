@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Triangulation_2.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
-#include <CGAL/Graphic_storage.h>
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
@@ -27,7 +27,7 @@ namespace draw_function_for_t2 {
 template <typename BufferType=float, class T2, class GSOptions>
 void compute_face(const T2& t2,
                   typename T2::Finite_faces_iterator fh,
-                  CGAL::Graphic_storage<BufferType>& graphic_storage,
+                  CGAL::Graphics_scene<BufferType>& graphic_storage,
                   const GSOptions& gs_options)
 {
   if (!gs_options.draw_face(t2, fh))
@@ -47,7 +47,7 @@ void compute_face(const T2& t2,
 
 template <typename BufferType=float, class T2, class GSOptions>
 void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
-                  CGAL::Graphic_storage<BufferType>& graphic_storage,
+                  CGAL::Graphics_scene<BufferType>& graphic_storage,
                   const GSOptions& gs_options)
 {
   if (!gs_options.draw_edge(t2, eh))
@@ -70,7 +70,7 @@ void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
 
 template <typename BufferType=float, class T2, class GSOptions>
 void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
-                    CGAL::Graphic_storage<BufferType>& graphic_storage,
+                    CGAL::Graphics_scene<BufferType>& graphic_storage,
                     const GSOptions& gs_options)
 {
   if (!gs_options.draw_vertex(t2, vh))
@@ -88,7 +88,7 @@ void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
 
 template <typename BufferType=float, class T2, class GSOptions>
 void compute_elements(const T2& t2,
-                      CGAL::Graphic_storage<BufferType>& graphic_storage,
+                      CGAL::Graphics_scene<BufferType>& graphic_storage,
                       const GSOptions& gs_options)
 {
   if (gs_options.are_faces_enabled())
@@ -119,7 +119,7 @@ void compute_elements(const T2& t2,
 
 template <class Gt, class Tds, typename BufferType=float, class GSOptions>
 void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
-                            CGAL::Graphic_storage<BufferType>& graphic_storage,
+                            CGAL::Graphics_scene<BufferType>& graphic_storage,
                             const GSOptions& gs_options)
 {
   draw_function_for_t2::compute_elements(at2, graphic_storage, gs_options);
@@ -127,7 +127,7 @@ void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
 
 template <class Gt, class Tds, typename BufferType=float>
 void add_in_graphic_storage(const CGAL_T2_TYPE& at2,
-                            CGAL::Graphic_storage<BufferType>& graphic_storage)
+                            CGAL::Graphics_scene<BufferType>& graphic_storage)
 {
   Graphics_scene_options<CGAL_T2_TYPE,
                   typename CGAL_T2_TYPE::Vertex_handle,
@@ -156,7 +156,7 @@ template <class Gt, class Tds, class GSOptions>
 void draw(const CGAL_T2_TYPE &at2, const GSOptions &gs_options,
           const char *title="Triangulation_2 Basic Viewer")
 {
-  CGAL::Graphic_storage<float> buffer;
+  CGAL::Graphics_scene<float> buffer;
   add_in_graphic_storage(at2, buffer, gs_options);
   draw_graphic_storage(buffer, title);
 }
@@ -165,7 +165,7 @@ template <class Gt, class Tds>
 void draw(const CGAL_T2_TYPE& at2,
           const char *title="Triangulation_2 Basic Viewer")
 {
-  CGAL::Graphic_storage<float> buffer;
+  CGAL::Graphics_scene<float> buffer;
   add_in_graphic_storage(at2, buffer);
   draw_graphic_storage(buffer, title);
 }
