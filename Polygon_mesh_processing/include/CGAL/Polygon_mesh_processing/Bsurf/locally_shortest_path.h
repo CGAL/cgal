@@ -1324,16 +1324,16 @@ struct Geodesic_circle_impl
   void connect_nodes(geodesic_solver &solver,
                     const vertex_descriptor& a,
                     const vertex_descriptor& b,
-                    const VertexPointMap &vpm,
-                    const VertexIndexMap& vidmap, const FT& length)
+                    const VertexIndexMap& vidmap,
+                    const FT& length)
   {
-    solver.graph[get(vidmap,a)].push_back({get(vidmap,b), length});
-    solver.graph[get(vidmap,b)].push_back({get(vidmap,a), length});
+    // TODO: avoid cast
+    solver.graph[get(vidmap,a)].push_back({static_cast<int>(get(vidmap,b), length)});
+    solver.graph[get(vidmap,b)].push_back({static_cast<int>(get(vidmap,a), length)});
   }
 
   static
   double opposite_nodes_arc_length(const VertexPointMap &vpm,
-                                   const TriangleMesh &mesh,
                                    const vertex_descriptor& a,
                                    const vertex_descriptor& b,
                                    const vertex_descriptor& v0,
@@ -1348,8 +1348,8 @@ struct Geodesic_circle_impl
     Vector_3 bv0 = get(vpm,v0) - get(vpm,b);
     Vector_3 bv1 = get(vpm,v1) - get(vpm,b);
 
-    double cos_alpha = ba/sqrt(ba.squared_lenght())*bv1/sqrt(bv1.squared_lenght());
-    double cos_beta  = bv0/sqrt(bv0.squared_lenght())*bv1/sqrt(bv1.squared_lenght());
+    double cos_alpha = ba/sqrt(ba.squared_length())*bv1/sqrt(bv1.squared_length());
+    double cos_beta  = bv0/sqrt(bv0.squared_length())*bv1/sqrt(bv1.squared_length());
     double sin_alpha = sqrt(std::max(0.0, 1 - cos_alpha * cos_alpha));
     double sin_beta  = sqrt(std::max(0.0, 1 - cos_beta * cos_beta));
 
@@ -1358,8 +1358,8 @@ struct Geodesic_circle_impl
     if (cos_alpha_beta <= -1) return DBL_MAX;
 
     // law of cosines (generalized Pythagorean theorem)
-    double len = dot(ba, ba) + dot(bv0, bv0) -
-              length(ba) * length(bv0) * 2 * cos_alpha_beta;
+    double len = ba.squared_length() + bv0.squared_length() -
+                 sqrt(ba.squared_length()) * sqrt(bv0.squared_length()) * 2 * cos_alpha_beta;
 
     if (len <= 0)
       return DBL_MAX;
@@ -1378,8 +1378,8 @@ struct Geodesic_circle_impl
   {
     vertex_descriptor v0 =target(next(h,mesh),mesh);
     vertex_descriptor v1= target(next(opposite(h,mesh),mesh),mesh);
-    auto length = opposite_nodes_arc_length(vpm, mesh, vidmap, a,b,v0,v1);
-    connect_nodes(solver, v0, v1, length);
+    auto length = opposite_nodes_arc_length(vpm, a,b,v0,v1);
+    connect_nodes(solver, v0, v1, vidmap, length);
   }
 
   static
@@ -1390,7 +1390,7 @@ struct Geodesic_circle_impl
   {
     geodesic_solver solver;
     solver.graph.resize(vertices(mesh).size());
-    for (auto& f : faces(mesh)) {
+    for (face_descriptor f : faces(mesh)) {
       halfedge_descriptor h=halfedge(f,mesh);
       for(auto i=0;i<3;++i)
     {
@@ -1399,11 +1399,11 @@ struct Geodesic_circle_impl
       if(a<b)
         {
           FT len=sqrt(squared_distance(get(vpm,a),get(vpm,b)));
-          connect_nodes(solver,a,b,vpm,vidmap,len);
+          connect_nodes(solver,a,b,vidmap,len);
         }
         face_descriptor nei=face(opposite(h,mesh),mesh);
         if(f<nei)
-            connect_opposite_nodes(vpm,mesh,vidmap,a,b,h);
+            connect_opposite_nodes(solver,vpm,mesh,vidmap,a,b,h);
 
         h=next(h,mesh);
       }
@@ -1487,7 +1487,7 @@ struct Geodesic_circle_impl
       auto average_weight = (cumulative_weight / queue.size());
 
       // Large Label Last (see comment at the beginning)
-      for (auto tries = 0; tries < queue.size() + 1; tries++) {
+      for (std::size_t tries = 0; tries < queue.size() + 1; tries++) {
         if (field[node] <= average_weight)
           break;
         queue.pop_front();
@@ -1641,14 +1641,14 @@ struct Geodesic_circle_impl
                              const VertexIndexMap& vidmap,
                              const std::vector<std::pair<vertex_descriptor, double>> &sources_and_dist)
   {
-    auto update = [](int node, int neighbor, double new_distance) {};
-    auto stop = [](int node) { return false; };
-    auto exit = [](int node) { return false; };
+    auto update = [](int /* node */, int /* neighbor */, double /* new_distance */) {};
+    auto stop = [](int /* node */) { return false; };
+    auto exit = [](int /* node */) { return false; };
 
     auto distances = std::vector<double>{};
     distances.assign(solver.graph.size(), DBL_MAX);
     std::vector<int>sources_id((sources_and_dist.size()));
-    for (auto i = 0; i < sources_and_dist.size(); ++i) {
+    for (std::size_t i = 0; i < sources_and_dist.size(); ++i) {
       sources_id[i] = get(vidmap,sources_and_dist[i].first);
       distances[sources_id[i]] = sources_and_dist[i].second;
     }
@@ -1699,9 +1699,10 @@ struct Geodesic_circle_impl
                             const TriangleMesh &mesh,
                             const halfedge_descriptor& h)
   {
-    std::array<Vector_2,3> flat_tid=init_flat_triangle(h,vpm,mesh);
-    std::array<Vector_2,3> flat_nei=unfold_face(h,vpm,mesh,flat_tid);
-    return sqrt(squared_distance(flat_tid[2],flat_nei[2]));
+    using Impl = Locally_shortest_path_imp<K, TriangleMesh, VertexPointMap>;
+    std::array<Vector_2,3> flat_tid=Impl::init_flat_triangle(h,vpm,mesh);
+    std::array<Vector_2,3> flat_nei=Impl::unfold_face(h,vpm,mesh,flat_tid);
+    return sqrt((flat_tid[2]-flat_nei[2]).squared_length());
   }
 
   static
@@ -1710,7 +1711,7 @@ struct Geodesic_circle_impl
                         const Face_location<TriangleMesh, FT>& p)
   {
     halfedge_descriptor h=halfedge(p.first,mesh);
-    return p.second[0]*source(h,mesh)+p.second[1]*target(h,mesh)+p.second[2]*target(next(h,mesh),mesh);
+    return CGAL::barycenter(get(vpm, source(h,mesh)), p.second[0], get(vpm, target(h,mesh)), p.second[1], get(vpm, target(next(h,mesh),mesh)), p.second[2]);
   }
 
   // compute the distance between a point p and some vertices around him
@@ -1723,17 +1724,20 @@ struct Geodesic_circle_impl
                     const Face_location<TriangleMesh, FT>& p)
   {
     auto get_vid=[&mesh](const int k,const face_descriptor& tid)
+    {
+      halfedge_descriptor h=halfedge(tid,mesh);
+      switch(k)
       {
-        halfedge_descriptor h=halfedge(tid,mesh);
-        if(k==0)
+        case 0:
           return source(h,mesh);
-        if(k==1)
+        case 1:
           return target(h,mesh);
-        if(k==2)
+        default:
           return target(next(h,mesh),mesh);
+      }
+    };
 
-      };
-    std::vector<std::pair<int, float>> nodes;
+    std::vector<std::pair<vertex_descriptor, double>> nodes;
     nodes.reserve(6);
     auto [is_vert,offset]=point_is_vert(p);
     if (is_vert) {
@@ -1746,7 +1750,7 @@ struct Geodesic_circle_impl
       for (auto i = 0; i < 3; ++i) {
         vertex_descriptor p0 = source(h,mesh);
         //connect to current vertex
-        double d = sqrt(squared_distances(get(vpm,p0),pos));
+        double d = sqrt(squared_distance(get(vpm,p0),pos));
         nodes.push_back(std::make_pair(p0, d));
 
         //connecting to opposite vertex w.r.t to current halfedge
@@ -1765,14 +1769,15 @@ struct Geodesic_circle_impl
   //TODO: can be easiliy extended to more than one source
   static
   std::vector<double>
-  compute_geodesic_distances(const geodesic_solver &solver,
-                             const VertexPointMap &vpm,
+  compute_geodesic_distances(const geodesic_solver& solver,
+                             const VertexPointMap& vpm,
+                             const VertexIndexMap& vim,
                              const TriangleMesh &mesh,
                              const Face_location<TriangleMesh, FT>& p)
   {
     std::vector<std::pair<vertex_descriptor,double>> source_nodes=nodes_around_point(vpm,mesh,p);
 
-    return compute_geodesic_distances(solver, source_nodes);
+    return compute_geodesic_distances(solver, vim, source_nodes);
   }
 
   //compute the geodesic distance field from src, and stop the propagation
@@ -2024,12 +2029,11 @@ void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& 
   typedef typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type VIM;
   const VIM vim = get_initialized_vertex_index_map(tmesh, parameters::default_values());
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type FIM;
-  const FIM fim = get_initialized_face_index_map(tmesh, parameters::default_values());
 
   using Impl = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
 
   typename Impl::geodesic_solver solver = Impl::make_geodesic_solver(vpm, vim,tmesh);
-  std::vector<double> distances = Impl::compute_geodesic_distances(solver, vpm, tmesh, center);
+  std::vector<double> distances = Impl::compute_geodesic_distances(solver, vpm, vim, tmesh, center);
 
   for (typename Impl::vertex_descriptor v : vertices(tmesh))
   {
