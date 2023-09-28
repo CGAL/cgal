@@ -1836,7 +1836,7 @@ struct Geodesic_circle_impl
     CGAL_assertion(parents[tgt] != -1);
     //update the result using id_to_face_map
     strip.reserve((int)std::sqrt(parents.size()));
-    while (node != -1) {
+    while (parents[node] != -1) {
       strip.push_back(common_halfedge(id_to_face_map[node],id_to_face_map[parents[node]]));
       node = parents[node];
     }
