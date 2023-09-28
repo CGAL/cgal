@@ -1583,7 +1583,7 @@ struct Geodesic_circle_impl
       auto average_weight = (cumulative_weight / queue.size());
 
       // Large Label Last (see comment at the beginning)
-      for (auto tries = 0; tries < queue.size() + 1; tries++) {
+      for (std::size_t tries = 0; tries < queue.size() + 1; tries++) {
         if (field[node] <= average_weight)
           break;
         queue.pop_front();
@@ -1681,7 +1681,7 @@ struct Geodesic_circle_impl
       return false;
     };
 
-    auto distances  = vector<double>(solver.graph.size(), DBL_MAX);
+    auto distances  = std::vector<double>(solver.graph.size(), DBL_MAX);
     std::vector<int>sources_id((sources_and_dist.size()));
     for (auto i = 0; i < sources_and_dist.size(); ++i) {
       sources_id[i] = get(vidmap,sources_and_dist[i].first);
@@ -1822,10 +1822,10 @@ struct Geodesic_circle_impl
 
     field[src]=0.0;
     std::vector<int> sources = std::vector<int>{src};
-    auto update = [&parents](int node, int neighbor, double new_distance) {
+    auto update = [&parents](int node, int neighbor, double) {
       parents[neighbor] = node;
     };
-    auto stop = [](int node) { return false; };
+    auto stop = [](int) { return false; };
     auto exit = [tgt](int node) { return node==tgt; };
 
     visit_dual_geodesic_graph(field,solver, std::vector<int>{src}, update, stop, exit);
@@ -1855,12 +1855,9 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
 {
   if (src.first == tgt.first) return;
 
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor
-      face_descriptor;
+
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
       halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
-      edge_descriptor;
 
   //TODO replace with named parameter
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
@@ -1869,6 +1866,11 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   VPM vpm = get(CGAL::vertex_point, tmesh);
 
 #if CGAL_BSURF_USE_DIJKSTRA_SP
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor
+      face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
+      edge_descriptor;
+
   typename boost::property_map<
       TriangleMesh, CGAL::dynamic_face_property_t<face_descriptor>>::const_type
       predecessor_map =
