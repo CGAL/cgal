@@ -1228,8 +1228,10 @@ private:
       CGAL_precondition(!m_tr.is_infinite(f));
 
       const Cell_handle ch = f.first;
-      const int id = f.second;
-      const Cell_handle neighbor = ch->neighbor(id);
+      const int s = f.second;
+      CGAL_precondition(ch->is_outside());
+
+      const Cell_handle neighbor = ch->neighbor(s);
 
 #ifdef CGAL_AW3_DEBUG_QUEUE
       static int fid = 0;
@@ -1237,10 +1239,11 @@ private:
       std::cout << m_queue.size() << " facets in the queue" << std::endl;
       std::cout << "Face " << fid++ << "\n"
                 << "c = " << &*ch << " (" << m_tr.is_infinite(ch) << "), n = " << &*neighbor << " (" << m_tr.is_infinite(neighbor) << ")" << "\n"
-                << m_tr.point(ch, Triangulation::vertex_triple_index(id, 0)) << "\n"
-                << m_tr.point(ch, Triangulation::vertex_triple_index(id, 1)) << "\n"
-                << m_tr.point(ch, Triangulation::vertex_triple_index(id, 2)) << std::endl;
-      std::cout << "Priority: " << gate.priority() << std::endl;
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)) << "\n"
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)) << "\n"
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
+      std::cout << "Artificiality: " << gate.is_artificial_facet() << std::endl;
+      std::cout << "Priority: " << gate.priority() << " (sq alpha: " << m_sq_alpha << ")" << std::endl;
 #endif
 
       visitor.before_facet_treatment(*this, gate);
@@ -1255,9 +1258,9 @@ private:
       std::string face_name = "results/steps/face_" + std::to_string(static_cast<int>(i++)) + ".xyz";
       std::ofstream face_out(face_name);
       face_out.precision(17);
-      face_out << "3\n" << m_tr.point(ch, Triangulation::vertex_triple_index(id, 0)) << "\n"
-                        << m_tr.point(ch, Triangulation::vertex_triple_index(id, 1)) << "\n"
-                        << m_tr.point(ch, Triangulation::vertex_triple_index(id, 2)) << std::endl;
+      face_out << "3\n" << m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)) << "\n"
+                        << m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)) << "\n"
+                        << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
       face_out.close();
 #endif
 
