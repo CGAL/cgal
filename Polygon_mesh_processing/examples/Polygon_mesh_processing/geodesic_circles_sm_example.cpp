@@ -64,6 +64,7 @@ int main(int argc, char** argv)
           double alpha = (r - dt) / (ds - dt);
           pts.push_back( CGAL::barycenter(mesh.point(src), alpha, mesh.point(tgt), 1-alpha) );
         }
+        h=next(h, mesh);
       }
       if (pts.size()==2)
         out << "2 " << pts[0] << " " << pts[1] << "\n";

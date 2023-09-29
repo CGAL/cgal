@@ -2176,6 +2176,10 @@ void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& 
   //       in particular, it can be tweaked to compute the Voronoi diagram of the initial centers
   //       or geodesic furthest point sampling.
   // TODO: add a parameter for the link size to increase to precision of the approximation of the distance
+  //       that is you increase the size of the neighborhood of each vertex and you connect in the graph each vertex to its neighbors
+  //       with weight being the geodesic shortest path.
+  //       the more neighbors you have, the better is the approximation
+  // TODO: graph construction can be done in parallel
   // TODO: concave flattening should be handled to improve the approximation of the distance
   //       (shortest path is not a line in that case)
 
