@@ -124,8 +124,13 @@ class Alpha_wrap_3
   using Default_Tds = CGAL::Triangulation_data_structure_3<Default_Vb, Default_Cbt>;
   using Default_Triangulation = CGAL::Delaunay_triangulation_3<Default_Gt, Default_Tds, Fast_location>;
 
+public:
   using Triangulation = typename Default::Get<Triangulation_, Default_Triangulation>::type;
 
+  // Use the geom traits from the triangulation, and trust the (advanced) user that provided it
+  using Geom_traits = typename Triangulation::Geom_traits;
+
+private:
   using Cell_handle = typename Triangulation::Cell_handle;
   using Facet = typename Triangulation::Facet;
   using Vertex_handle = typename Triangulation::Vertex_handle;
@@ -133,9 +138,6 @@ class Alpha_wrap_3
 
   using Gate = internal::Gate<Triangulation>;
   using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Triangulation>, CGAL_BOOST_PAIRING_HEAP>;
-
-  // Use the geom traits from the triangulation, and trust the (advanced) user that provided it
-  using Geom_traits = typename Triangulation::Geom_traits;
 
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
