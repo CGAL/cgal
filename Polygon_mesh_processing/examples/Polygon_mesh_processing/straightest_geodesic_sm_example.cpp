@@ -4,8 +4,11 @@
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
-
+#if 0
 #include <CGAL/Polygon_mesh_processing/walk_to_select.h>
+#else
+
+#endif
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -43,17 +46,23 @@ int main(int argc, char** argv)
   double target_distance = 0.5;
 
 
+  K::Vector_2 dir(1,1);
+#if 0
   std::vector<K::Point_3> path;
   PMP::walk_and_intersection_point_collection<K>(mesh, src_pt, src.first,
                                                  K::Plane_3(src_pt, K::Vector_3(0,1,0)),
                                                  K::Plane_3(src_pt, K::Vector_3(1,0,0)),
                                                  target_distance,
                                                  path);
-
+#else
+  std::vector<Face_location> path = PMP::straightest_geodesic<K>(src, dir, target_distance, mesh);
+#endif
 
   std::ofstream out("straightest_geodesic_path.polylines.txt");
   out << path.size() << " ";
-  std::copy(path.begin(), path.end(), std::ostream_iterator<K::Point_3>(out, " "));
+
+  for (auto fl : path)
+    out << " " << PMP::construct_point(fl, mesh);
   out << "\n";
 
   return 0;
