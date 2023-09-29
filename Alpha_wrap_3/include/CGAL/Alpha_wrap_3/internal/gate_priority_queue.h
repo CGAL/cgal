@@ -68,6 +68,24 @@ struct Less_gate
   template <typename Tr>
   bool operator()(const Gate<Tr>& a, const Gate<Tr>& b) const
   {
+    // If one is artificial and the other is not, give priority to the artificial facet
+    //
+    // The artificial facet are given highest priority because they need to be treated
+    // regardless of their circumradius. Treating them first allow the part that depends
+    // on alpha to be treated uniformly in a way: whatever the alpha, we'll do the same
+    // first treatmen
+    if(a.is_artificial_facet() != b.is_artificial_facet())
+      return a.is_artificial_facet();
+
+    if(a.priority() == b.priority())
+    {
+      // arbitrary, the sole purpose is to make it a total order for determinism
+      if(a.facet().first->time_stamp() == b.facet().first->time_stamp())
+        return a.facet().second < b.facet().second;
+
+      return a.facet().first->time_stamp() < b.facet().first->time_stamp();
+    }
+
     return a.priority() > b.priority();
   }
 };
