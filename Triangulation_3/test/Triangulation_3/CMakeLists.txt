@@ -120,6 +120,7 @@ CGAL_add_cdt3_from_local_off_test(HexiCosPot-1-reduced)
 CGAL_add_cdt3_from_local_off_test(HexiCosPot-1-sv)
 CGAL_add_cdt3_from_local_off_test(HexiCosPot-1-sv-reduced)
 CGAL_add_cdt3_from_local_off_test(mpi-part)
+CGAL_add_cdt3_from_local_off_test(thingi-1036467-selection3)
 
 include(./Thingi10k-CDT.cmake)
 

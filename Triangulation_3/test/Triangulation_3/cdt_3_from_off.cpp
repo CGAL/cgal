@@ -121,7 +121,6 @@ int main(int argc, char* argv[])
         const auto f = m.faces().begin() + i;
         CGAL::Euler::remove_face(halfedge(*f, m), m);
       }
-      m.collect_garbage();
       assert(m.is_valid(true));
       std::cerr << "number of faces: " << m.number_of_faces() << '\n';
     };
