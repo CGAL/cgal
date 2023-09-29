@@ -106,28 +106,28 @@ int main(int argc, char* argv[])
   std::cerr << "RATIO: " << ratio << '\n';
   std::cerr << "NB BUCKETS: " << nb_buckets << '\n';
 
-  auto simplify = [&](Mesh& m) {
-    const auto nb_to_skip = static_cast<int>(std::round(m.number_of_faces() * ratio));
-    std::cerr << "nb_to_skip: " << nb_to_skip << '\n';
-    const auto bucket = CGAL::get_default_random().get_int(0, nb_buckets);
-    std::cerr << "bucket: " << bucket << '\n';
-    const auto start = (std::min)(bucket * nb_to_skip, static_cast<int>(m.number_of_faces()));
-    const auto end = (std::min)(start + nb_to_skip, static_cast<int>(m.number_of_faces()));
-    std::cerr << "SKIP from " << start << " to " << end << '\n';
-    for(auto i = end - 1; i >= start; --i) {
-      const auto f = m.faces().begin() + i;
-      CGAL::Euler::remove_face(halfedge(*f, m), m);
-    }
-    m.collect_garbage();
-    assert(m.is_valid(true));
-    std::cerr << "number of faces: " << m.number_of_faces() << '\n';
-};
-
   const Mesh orig_mesh{mesh};
   Mesh bad_mesh{mesh};
-  while(true) {
+  for(int bucket = 0; bucket < nb_buckets;) {
+
+    auto simplify = [&](Mesh& m) {
+      const auto nb_to_skip = static_cast<int>(std::round(m.number_of_faces() * ratio));
+      std::cerr << "nb_to_skip: " << nb_to_skip << '\n';
+      std::cerr << "bucket: " << bucket << '\n';
+      const auto start = (std::min)(bucket * nb_to_skip, static_cast<int>(m.number_of_faces()));
+      const auto end = (std::min)(start + nb_to_skip, static_cast<int>(m.number_of_faces()));
+      std::cerr << "SKIP from " << start << " to " << end << '\n';
+      for(auto i = end - 1; i >= start; --i) {
+        const auto f = m.faces().begin() + i;
+        CGAL::Euler::remove_face(halfedge(*f, m), m);
+      }
+      m.collect_garbage();
+      assert(m.is_valid(true));
+      std::cerr << "number of faces: " << m.number_of_faces() << '\n';
+    };
+
     simplify(mesh);
-        std::ofstream current("current.off");
+        std::ofstream current("current_mesh.off");
         current.precision(17);
         current << mesh;
         current.close();
@@ -135,13 +135,14 @@ int main(int argc, char* argv[])
     try {
       go(mesh, output_filename);
     } catch(CGAL::Failure_exception& e) {
-      if(e.expression().find(std::string("handles.back() == va")) != std::string::npos)
+      if(e.expression().find(std::string("orientation")) != std::string::npos)
       {
         std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
-        std::ofstream bad("bad.off");
+        std::ofstream bad("bad_mesh.off");
         bad.precision(17);
         bad << mesh;
         bad_mesh = mesh;
+        bucket = 0;
         continue;
       } else {
         std::cerr << "ERROR MESH: " << e.what() << '\n';
@@ -153,6 +154,7 @@ int main(int argc, char* argv[])
     }
     std::cerr << "GOOD MESH :-( " << mesh.number_of_faces() << " faces\n";
     mesh = bad_mesh;
+    ++bucket;
   }
 }
 
