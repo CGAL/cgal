@@ -399,9 +399,10 @@ namespace internal {
         );
       for(edge_descriptor e : edge_range)
       {
-        std::optional<double> sqlen = sizing.is_too_long(halfedge(e, mesh_), mesh_);
+        const halfedge_descriptor he = halfedge(e, mesh_);
+        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_));
         if(sqlen != std::nullopt)
-          long_edges.emplace(halfedge(e, mesh_), sqlen.value());
+          long_edges.emplace(he, sqlen.value());
       }
 
       //split long edges
@@ -437,13 +438,14 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(hnew, mesh_);
+        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_));
         if(sqlen_new != std::nullopt)
           long_edges.emplace(hnew, sqlen_new.value());
 
-        sqlen_new = sizing.is_too_long(next(hnew, mesh_), mesh_);
+        const halfedge_descriptor hnext = next(hnew, mesh_);
+        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_));
         if (sqlen_new != std::nullopt)
-          long_edges.emplace(next(hnew, mesh_), sqlen_new.value());
+          long_edges.emplace(hnext, sqlen_new.value());
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
@@ -498,7 +500,8 @@ namespace internal {
       {
         if (!is_split_allowed(e))
           continue;
-        std::optional<double> sqlen = sizing.is_too_long(halfedge(e, mesh_), mesh_);
+        const halfedge_descriptor he = halfedge(e, mesh_);
+        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_));
         if(sqlen != std::nullopt)
           long_edges.emplace(halfedge(e, mesh_), sqlen.value());
       }
@@ -553,13 +556,14 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(hnew, mesh_);
+        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_));
         if(sqlen_new != std::nullopt)
           long_edges.emplace(hnew, sqlen_new.value());
 
-        sqlen_new = sizing.is_too_long(next(hnew, mesh_), mesh_);
+        const halfedge_descriptor hnext = next(hnew, mesh_);
+        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_));
         if (sqlen_new != std::nullopt)
-          long_edges.emplace(next(hnew, mesh_), sqlen_new.value());
+          long_edges.emplace(hnext, sqlen_new.value());
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
@@ -578,7 +582,7 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            std::optional<double> sql = sizing.is_too_long(hnew2, mesh_);
+            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_));
             if(sql != std::nullopt)
               long_edges.emplace(hnew2, sql.value());
           }
@@ -601,7 +605,7 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            std::optional<double> sql = sizing.is_too_long(hnew2, mesh_);
+            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_));
             if (sql != std::nullopt)
               long_edges.emplace(hnew2, sql.value());
           }

@@ -255,19 +255,6 @@ public:
     return get(m_vertex_sizing_map, v);
   }
 
-  std::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
-  {
-    const FT sqlen = sqlength(h, pmesh);
-    FT sqtarg_len = CGAL::square(4./3. * (CGAL::min)(get(m_vertex_sizing_map, source(h, pmesh)),
-                                                     get(m_vertex_sizing_map, target(h, pmesh))));
-    CGAL_assertion(get(m_vertex_sizing_map, source(h, pmesh)));
-    CGAL_assertion(get(m_vertex_sizing_map, target(h, pmesh)));
-    if(sqlen > sqtarg_len)
-      return sqlen;
-    else
-      return std::nullopt;
-  }
-
   std::optional<FT> is_too_long(const vertex_descriptor va, const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);

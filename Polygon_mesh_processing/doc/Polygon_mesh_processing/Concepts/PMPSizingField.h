@@ -31,12 +31,6 @@ typedef unspecified_type FT;
 /// @name Functions
 /// @{
 
-/// called to check whether the halfedge `h` is longer than the target edge size
-/// and as such should be split. If the halfedge is longer, it returns the squared
-/// length of the edge.
-std::optional<FT> is_too_long(const halfedge_descriptor h,
-                                const PolygonMesh& pmesh) const;
-
 /// a function controlling edge split and edge collapse,
 /// returning the squared distance between the points of `va` and `vb`
 /// if an edge between `va` and `vb` would be too long, and `std::nullopt` otherwise.

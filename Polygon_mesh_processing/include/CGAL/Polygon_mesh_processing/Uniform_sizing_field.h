@@ -100,15 +100,6 @@ private:
   }
 
 public:
-  std::optional<FT> is_too_long(const halfedge_descriptor h, const PolygonMesh& pmesh) const
-  {
-    const FT sqlen = sqlength(h, pmesh);
-    if(sqlen > m_sq_long)
-      return sqlen;
-    else
-      return std::nullopt;
-  }
-
   std::optional<FT> is_too_long(const vertex_descriptor va, const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);
