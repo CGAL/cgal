@@ -15,15 +15,15 @@ public:
 typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
 /// Halfedge descriptor type
-typedef unspecified_type halfedge_descriptor;
+typedef boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-/// 3D point type
+/// 3D point type matching the value type of the vertex property map passed to `CGAL::Polygon_mesh_processing::isotropic_remeshing()`
 typedef unspecified_type Point_3;
 
-/// Polygon mesh type
+/// Polygon mesh type matching the type passed to `CGAL::Polygon_mesh_processing::isotropic_remeshing()`
 typedef unspecified_type PolygonMesh;
 
-/// Numerical type
+/// Number type matching the `FT` type of the geometric traits passed to `CGAL::Polygon_mesh_processing::isotropic_remeshing()`
 typedef unspecified_type FT;
 
 /// @}
@@ -37,19 +37,18 @@ typedef unspecified_type FT;
 std::optional<FT> is_too_long(const halfedge_descriptor h,
                                 const PolygonMesh& pmesh) const;
 
-/// called to check whether the halfedge with end vertices `va` and `vb` is longer
-/// than the target edge size and as such should be split. If the halfedge is longer,
-/// it returns the squared length of the edge.
+/// a function controlling edge split and edge collapse, 
+/// returning the squared distance between the points of `va` and `vb`
+/// if an edge between `va` and `vb` would be too long, and `std::nullopt` otherwise.
 std::optional<FT> is_too_long(const vertex_descriptor va,
                                 const vertex_descriptor vb) const;
 
-/// called to check whether the halfedge `h` should be collapsed in case it is
-/// shorter than the target edge size.
+/// a function controlling edge collapse by returning the squared length of `h`
+/// if it is too short, and `std::nullopt` otherwise.
 std::optional<FT> is_too_short(const halfedge_descriptor h,
                                  const PolygonMesh& pmesh) const;
 
-/// called to define the location of the halfedge `h` split in case `is_too_long()`
-/// returns a value.
+/// a function returning the location of the split point of the edge of `h`.
 Point_3 split_placement(const halfedge_descriptor h,
                         const PolygonMesh& pmesh) const;
 /// @}

@@ -79,7 +79,7 @@
 \cgalPkgPicture{hole_filling_ico.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katriopla, Sébastien Loriot, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz}
+\cgalPkgAuthors{David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz}
 \cgalPkgDesc{This package provides a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms such as
 Boolean operations, remeshing, repairing, collision and intersection detection, and more.}

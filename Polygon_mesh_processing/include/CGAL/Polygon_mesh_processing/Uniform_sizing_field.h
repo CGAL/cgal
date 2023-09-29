@@ -27,8 +27,8 @@ namespace Polygon_mesh_processing
 * \ingroup PMP_meshing_grp
 * provides criteria for isotropic remeshing to achieve uniform mesh edge lengths.
 *
-* Edges longer than the 4/3 of the target edge length will be split in half, while
-* edges shorter than the 4/5 of the target edge length will be collapsed.
+* Edges longer than 4/3 of the target edge length will be split in half, while
+* edges shorter than 4/5 of the target edge length will be collapsed.
 *
 * \cgalModels{PMPSizingField}
 *
@@ -38,7 +38,7 @@ namespace Polygon_mesh_processing
 * @tparam PolygonMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
 * @tparam VPMap a property map associating points to the vertices of `pmesh`.
-*         It is a a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*         It is a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *          as key type and `%Point_3` as value type. Default is `boost::get(CGAL::vertex_point, pmesh)`.
 */
 template <class PolygonMesh,
@@ -61,11 +61,11 @@ public:
   /// @{
 
   /*!
-  * returns an object to serve as criterion for uniform edge lengths.
-  * \param size is the target edge length for the isotropic remeshing. If set to 0,
+  * Constructor.
+  * \param size the target edge length for isotropic remeshing. If set to 0,
   *        the criterion for edge length is ignored and edges are neither split nor collapsed.
   * \param vpmap is the input vertex point map that associates points to the vertices of
-  *        an input mesh.
+  *        the input mesh.
   */
   Uniform_sizing_field<PolygonMesh, VPMap>(const FT size, const VPMap& vpmap)
     : m_sq_short( CGAL::square(4./5. * size))
@@ -74,10 +74,9 @@ public:
   {}
 
   /*!
-  * returns an object to serve as criterion for uniform edge lengths. It calls the first
-  * constructor using default values for the vertex point map of the input polygon mesh.
+  * Constructor using default values for the vertex point map of the input polygon mesh.
   *
-  * @param size is the target edge length for the isotropic remeshing. If set to 0,
+  * @param size the target edge length for isotropic remeshing. If set to 0,
   *        the criterion for edge length is ignored and edges are neither split nor collapsed.
   * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. The default
   *        vertex point map of pmesh is used to construct the class.

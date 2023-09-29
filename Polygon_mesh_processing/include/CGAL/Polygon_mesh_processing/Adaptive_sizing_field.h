@@ -35,7 +35,7 @@ namespace Polygon_mesh_processing
 * The local discrete curvatures are calculated using the
 * `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()` function.
 *
-* Edges longer than the local target edge length are split in half, while
+* Edges longer than the local target edge length are split in two, while
 * edges shorter than the local target edge length are collapsed.
 *
 * \cgalModels{PMPSizingField}
@@ -70,7 +70,7 @@ public:
   /// \name Creation
   /// @{
   /*!
-  * returns an object to serve as criteria for adaptive curvature-based edge lengths.
+  * constructor
   *
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
   *         model of `Range`. Its iterator type is `ForwardIterator`.
@@ -78,27 +78,19 @@ public:
   *
   * @param tol the error tolerance, used together with curvature to derive target edge length.
   *        Lower tolerance values will result in shorter mesh edges.
-  * @param edge_len_min_max is the stopping criterion for minimum and maximum allowed
-  *        edge length.
+  * @param edge_len_min_max contains the bounds for minimum and maximum 
+  *        edge lengths
   * @param face_range the range of triangular faces defining one or several surface patches
-  *        to be remeshed. It should be the same as the range of faces used for `isotropic_remeshing()`.
+  *        to be remeshed. It should be the same as the range of faces passed to `isotropic_remeshing()`.
   * \param vpmap is the input vertex point map that associates points to the vertices of
-  *        an input mesh.
+  *        the input mesh.
   * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. It should be the
-  *              same mesh as the one used in `isotropic_remeshing()`.
+  *              same mesh as the one passed to `isotropic_remeshing()`.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   * \cgalNamedParamsBegin
   *   \cgalParamNBegin{ball_radius}
-  *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures.
-  *                           It can potentially smooth the curvature and consequently the sizing field in the
-   *                          case of noisy input.}
-  *     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures.
-  *                           It can effectively smooth the curvature field and consequently the sizing field.}
-  *     \cgalParamType{`Base::FT`}
-  *     \cgalParamDefault{`-1`}
-  *     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
-  *                     measures on faces around the vertex.}
+  *     \cgalParamDescription{`ball_radius` parameter passed to `interpolated_corrected_curvatures()`}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */

@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katriopla, Sébastien Loriot, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -120,10 +120,9 @@ by \cgalFigureRef{iso_remeshing}. The algorithm has two parameters:
 the sizing field object for the remeshed surface patch, and
 the number of iterations of the abovementioned sequence of operations.
 
-The sizing field establishes the target edge length for the remeshed surface. The sizing field can be uniform or
-adaptive. With the uniform sizing field, initiated by the `CGAL::Polygon_mesh_processing::Uniform_sizing_field()` constructor,
-all triangle edges are targeted to have equal lengths. On the other hand, with the adaptive sizing field, initiated by
-the `CGAL::Polygon_mesh_processing::Adaptive_sizing_field()`, triangle edge lengths depend on the local curvature --
+The sizing field establishes the local target edge length for the remeshed surface. Two sizing fields are
+provided: a uniform and a curvature-adaptive sizing field. With `CGAL::Polygon_mesh_processing::Uniform_sizing_field`,
+all triangle edges are targeted to have equal lengths. With `CGAL::Polygon_mesh_processing::Adaptive_sizing_field`, triangle edge lengths depend on the local curvature --
 shorter edges appear in regions with a higher curvature and vice versa. The outline of the adaptive sizing
 field algorithm is available in \cgalCite{dunyach2013curvRemesh}. The distinction between uniform and adaptive
 sizing fields is depicted in figure \cgalFigureRef{uniform_and_adaptive}.
@@ -1285,6 +1284,8 @@ The interpolated corrected curvatures were implemented during GSoC 2022. This wa
 supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{lachaud2020}.
 <a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
 used as a reference during the project.
+
+The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
 
 */
 } /* namespace CGAL */
