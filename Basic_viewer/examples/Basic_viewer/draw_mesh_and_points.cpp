@@ -35,7 +35,7 @@ int main(void)
                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
                                              .normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
   {
-    std::cerr << "Error: cannot read input file!" << std::endl;
+    std::cerr << "Error: cannot read input file " << CGAL::data_file_path("points_3/kitten.xyz") << std::endl;
     return EXIT_FAILURE;
   }
 

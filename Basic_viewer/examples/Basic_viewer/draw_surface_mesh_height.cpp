@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
   Mesh sm;
   if(!CGAL::IO::read_polygon_mesh(filename, sm))
   {
-    std::cerr << "Invalid input file." << std::endl;
+    std::cerr << "Invalid input file: " << filename << std::endl;
     return EXIT_FAILURE;
   }
 
