@@ -595,14 +595,14 @@ protected:
       const auto& orig_pa = tr.point(orig_va);
       const auto& orig_pb = tr.point(orig_vb);
       const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
-      const auto length_ab = CGAL::sqrt(sq_length_functor(vector_ab));
+      const auto length_ab = CGAL::approximate_sqrt(sq_length_functor(vector_ab));
       auto return_orig_result_point =
           [&](auto lambda, Point orig_pa, Point orig_pb)
               -> Construct_Steiner_point_return_type
           {
             const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
             const auto inter_point = translate_functor(orig_pa, scaled_vector_functor(vector_orig_ab, lambda));
-            const auto dist_a_result = CGAL::sqrt(sq_length_functor(vector_functor(orig_pa, inter_point)));
+            const auto dist_a_result = CGAL::approximate_sqrt(sq_length_functor(vector_functor(orig_pa, inter_point)));
             const auto ratio = dist_a_result / length_ab;
             const auto result_point = (ratio < 0.2 || ratio > 0.8)
                                           ? midpoint_functor(pa, pb)
@@ -615,15 +615,15 @@ protected:
             return {result_point, reference_vertex->cell(), reference_vertex};
           };
 
-      const auto length_orig_ab = CGAL::sqrt(sq_length_functor(vector_orig_ab));
+      const auto length_orig_ab = CGAL::approximate_sqrt(sq_length_functor(vector_orig_ab));
       if(ref_va == orig_va || ref_vb == orig_va) {
         const auto vector_orig_a_ref = vector_functor(orig_pa, reference_point);
-        const auto length_orig_a_ref = CGAL::sqrt(sq_length_functor(vector_orig_a_ref));
+        const auto length_orig_a_ref = CGAL::approximate_sqrt(sq_length_functor(vector_orig_a_ref));
         const auto lambda = length_orig_a_ref / length_orig_ab;
         return return_orig_result_point(lambda, orig_pa, orig_pb);
       } else if(ref_va == orig_vb || ref_vb == orig_vb) {
         const auto vector_orig_b_ref = vector_functor(orig_pb, reference_point);
-        const auto length_orig_b_ref = CGAL::sqrt(sq_length_functor(vector_orig_b_ref));
+        const auto length_orig_b_ref = CGAL::approximate_sqrt(sq_length_functor(vector_orig_b_ref));
         const auto lambda = length_orig_b_ref / length_orig_ab;
         return return_orig_result_point(lambda, orig_pb, orig_pa);
       }
