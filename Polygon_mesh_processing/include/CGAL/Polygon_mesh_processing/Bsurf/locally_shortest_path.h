@@ -2332,6 +2332,10 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
 
   std::vector< std::array<typename K::Vector_2, 2>> portals=Impl::unfold_strip(initial_path,src,tgt,vpm,tmesh);
   std::size_t max_index=0;
+
+  //TODO: if src and/or target are vertices are edges, the selected face should matter to avoid cycling
+  //      around them. ==> after dijkstra, clean the strip if the halfedge is incident to the source/target
+
   std::vector<FT> lerps=Impl::funnel(portals,max_index);
   // TODO: if you comment this if you don't want to shorten the path (option?).
   //       but this part is really fast so maybe does not make sense.
