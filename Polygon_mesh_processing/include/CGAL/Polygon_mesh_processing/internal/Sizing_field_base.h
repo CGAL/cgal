@@ -24,6 +24,8 @@ namespace CGAL
 {
 namespace Polygon_mesh_processing
 {
+namespace internal
+{
 /*!
 * \ingroup PMP_meshing_grp
 * pure virtual class serving as a base for sizing field classes utilized in isotropic
@@ -66,6 +68,7 @@ public:
 
 };
 
+}//end namespace internal
 }//end namespace Polygon_mesh_processing
 }//end namespace CGAL
 

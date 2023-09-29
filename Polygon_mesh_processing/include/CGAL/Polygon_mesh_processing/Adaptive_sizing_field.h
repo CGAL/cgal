@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
-#include <CGAL/Polygon_mesh_processing/Sizing_field_base.h>
+#include <CGAL/Polygon_mesh_processing/internal/Sizing_field_base.h>
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <CGAL/boost/graph/selection.h>
@@ -50,11 +50,11 @@ template <class PolygonMesh,
           class VPMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
 class Adaptive_sizing_field
 #ifndef DOXYGEN_RUNNING
-  : public Sizing_field_base<PolygonMesh, VPMap>
+: public internal::Sizing_field_base<PolygonMesh, VPMap>
 #endif
 {
 private:
-  typedef Sizing_field_base<PolygonMesh, VPMap> Base;
+  typedef internal::Sizing_field_base<PolygonMesh, VPMap> Base;
   typedef typename CGAL::dynamic_vertex_property_t<typename Base::FT> Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh,
                                        Vertex_property_tag>::type VertexSizingMap;
