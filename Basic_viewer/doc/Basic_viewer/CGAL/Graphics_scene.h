@@ -80,7 +80,7 @@ public:
   /// returns `true` iff the storage has no element.
   bool is_empty() const;
 
-  /// clears the storage, i.e. removes all points, segments, triangles and text.
+  /// clears the storage, i.e., removes all points, segments, triangles and text.
   void clear();
 };
 

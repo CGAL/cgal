@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Basic_viewer_qt` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements can either be added directly in the viewer or through the scene. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam BufferType the type used for point coordinates: `float` by default.
+\tparam BufferType the number type used for point coordinates: `float` by default.
 
 */
 template <typename BufferType=float>
@@ -128,7 +128,7 @@ public:
   bool is_clipping_plane_enabled() const;
 
   /// returns the clipping plane when it is enabled.
-  Local_kernel::Plane_3 clipping_plane() const;
+  CGAL::Exact_predicates_inexact_constructions_kernel::Plane_3 clipping_plane() const;
 
   /// adds the given point in the viewer.
   template <typename KPoint>
@@ -225,7 +225,7 @@ public:
 
 The class `QApplication_and_basic_viewer` regroups a `Basic_viewer_qt` and Qt `QApplication`. The `QApplication` is created in the constructor, but started by the `run()` method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer_qt` to define their own behavior. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam BufferType the type used for point coordinates: `float` by default.
+\tparam BufferType the number type used for point coordinates: `float` by default.
 
 */
 template <typename BufferType=float>
