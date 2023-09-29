@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/alpha_wrap_3.h>
-#include "alpha_wrap_validation.h"
+#include <CGAL/Alpha_wrap_3/internal/validation.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/IO/polygon_soup_io.h>
