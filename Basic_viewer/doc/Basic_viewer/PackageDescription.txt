@@ -6,7 +6,7 @@
 /*!
 \addtogroup PkgBasicViewerRef
 \cgalPkgDescriptionBegin{Basic Viewer,PkgBasicViewer}
-\cgalPkgPicture{TODO.png}
+\cgalPkgPicture{basic_viewer_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand, Mostafa Ashraf}
 \cgalPkgDesc{This package implements basic viewer class.}
