@@ -1355,15 +1355,16 @@ private:
           }
         }
       }
-      else
+      else // no need for a Steiner point, carve through and continue
       {
         // tag neighbor as OUTSIDE
         neighbor->is_outside() = true;
 
         // for each finite facet of neighbor, push it to the queue
-        for(int i=0; i<4; ++i)
+        const int mi = m_tr.mirror_index(ch, s);
+        for(int i=1; i<4; ++i)
         {
-          const Facet neighbor_f = std::make_pair(neighbor, i);
+          const Facet neighbor_f = std::make_pair(neighbor, (mi+i)&3);
           push_facet(neighbor_f);
         }
       }
