@@ -48,6 +48,7 @@ int main(int argc, char** argv)
 
   std::ofstream out("circles.polylines.txt");
 
+  for(auto v: vertices(mesh)) std::cout << get(distance_map, v) << "\n";
   for (double r : radii)
   {
     for (Mesh::Face_index f : faces(mesh))

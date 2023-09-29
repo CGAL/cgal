@@ -21,6 +21,8 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+//TODO: split to avoid redundant linking
+#include <Eigen/Dense>
 #include <boost/graph/graph_traits.hpp>
 
 namespace CGAL {
@@ -716,149 +718,280 @@ struct Locally_shortest_path_imp
 
 
   // //:::::::::::::::::::::Straightest Geodesic::::::::::::::::::::::::::::
+  static
+  Eigen::Matrix3d rot_matrix (const FT& angle, const Vector_3& axis)
+  {
+    Eigen::Matrix3d result;
+    double c=std::cos(angle);
+    double s=std::sin(angle);
+    result <<c + (1 - c) * std::pow(axis.x(),2),(1 - c) * axis.x() * axis.y() + s * axis.z(),
+            (1 - c) * axis.x() * axis.z() - s * axis.y(),
+            (1 - c) * axis.x() * axis.y() - s * axis.z(),c + (1 - c) * axis.y() * axis.y(),
+            (1 - c) * axis.y() * axis.z() + s * axis.x(),(1 - c) * axis.x() * axis.z() + s * axis.y(),
+            (1 - c) * axis.y() * axis.z() - s * axis.x(),c + (1 - c) * axis.z() * axis.z();
+
+    return result;
+  }
+  static
+  Vector_3 rotate_vector(const Vector_3& v,const Vector_3& axis, const FT& angle)
+  {
+    Eigen::Matrix3d rot=rot_matrix(angle,axis);
+    Eigen::Vector3d wrap_v;
+    wrap_v<<v.x(),v.y(),v.z();
+    Eigen::Vector3d rotated=rot*wrap_v;
+
+    return Vector_3{rotated(0),rotated(1),rotated(2)};
+  }
+  static
+  void parallel_transport_through_flattening(Vector_3& v,
+                                             const VertexPointMap &vpm,
+                                             const TriangleMesh &mesh,
+                                             const face_descriptor& from,
+                                             const face_descriptor& to)
+  {
+      halfedge_descriptor h_ref = halfedge(from, mesh);
+      halfedge_descriptor h=h_ref;
+      for (int i = 0; i < 3; ++i) {
+        if (face(opposite(h_ref, mesh), mesh) == to)
+         {
+           h=h_ref;
+           break;
+         }
+        h_ref = next(h_ref, mesh);
+      }
+
+    std::array<Vector_2,3> flat_from = init_flat_triangle(h,vpm,mesh);
+     std::array<Vector_2,3> flat_to = unfold_face(h,vpm,mesh,flat_from);
+    Vector_2 bary = Vector_2{0.333, 0.333};
+    Vector_2 c0 = 0.33*(flat_from[0]+flat_from[1]+flat_from[2]);
+    Vector_2 c1 = 0.33*(flat_to[0]+flat_to[1]+flat_to[2]);
+    Vector_2 e0 = flat_from[0] - c0;
+    Vector_2 e1 = flat_to[0] - c1;
+
+    Vector_2 w = c1 - c0;
+    FT phi_ij = angle(e0, w);
+    if (e0.x()*w.y()-e0.y()*w.x() < 0)
+      phi_ij = 2 * M_PI - phi_ij;
+    w *= -1;
+    FT phi_ji = angle(e1, w);
+
+    if (e1.x()*w.y()-e1.y()*w.x() < 0)
+      phi_ji = 2 * M_PI - phi_ji;
+
+    Vector_3 n_from= face_normal(vpm, mesh, from);
+    std::vector<Vector_3> e_from = polar_basis(vpm, mesh, from);
+    double teta = angle(e_from, v);
+    if (cross_product(e_from, v)*n_from < 0)
+      teta = 2 * M_PI - teta;
+
+    std::vector<Vector_3> e_to = polar_basis(vpm, mesh, from ,to);
+    Vector_3 n_to = face_normal(vpm, mesh, to);
+    double rot = teta + phi_ji + M_PI - phi_ij;
+    e_to =e_to*sqrt(v.length_squared());
+    v = rotate_vector(e_to, n_to, rot);
+
+  }
+  static
+  void parallel_transport_through_flattening(Vector_2& v,
+                                             const VertexPointMap &vpm,
+                                             const TriangleMesh &mesh,
+                                             const face_descriptor& from,
+                                             const face_descriptor& to)
+  {
+      halfedge_descriptor h_ref = halfedge(from, mesh);
+      halfedge_descriptor h=h_ref;
+      for (int i = 0; i < 3; ++i) {
+        if (face(opposite(h_ref, mesh), mesh) == to)
+         {
+           h=h_ref;
+           break;
+         }
+        h_ref = next(h_ref, mesh);
+      }
+
+    std::array<Vector_2,3> flat_from = init_flat_triangle(h,vpm,mesh);
+     std::array<Vector_2,3> flat_to = unfold_face(h,vpm,mesh,flat_from);
+    Vector_2 bary = Vector_2{0.333, 0.333};
+    Vector_2 c0 = 0.33*(flat_from[0]+flat_from[1]+flat_from[2]);
+    Vector_2 c1 = 0.33*(flat_to[0]+flat_to[1]+flat_to[2]);
+    Vector_2 e0 = flat_from[0] - c0;
+    Vector_2 e1 = flat_to[0] - c1;
+
+    Vector_2 w = c1 - c0;
+    FT phi_ij = angle(e0, w);
+    if (e0.x()*w.y()-e0.y()*w.x() < 0)
+      phi_ij = 2 * M_PI - phi_ij;
+    w *= -1;
+    FT phi_ji = angle(e1, w);
+
+    if (e1.x()*w.y()-e1.y()*w.x() < 0)
+      phi_ji = 2 * M_PI - phi_ji;
+
+
+    double teta = angle(e0, v);
+    if (e0.x()*v.y()-e0.y()*v.x() < 0)
+      teta = 2 * M_PI - teta;
+
+    double rot = teta + phi_ji + M_PI - phi_ij;
+    e1 =e1/sqrt(e1.length_squared())*sqrt(v.length_squared());
+
+    Vector_3 v_3d = rotate_vector(Vector_3{e1.x(),e1.y(),0}, Vector_3{0,0,1}, rot);
+
+    v=Vector_2{v_3d.x(),v_3d.y()};
+
+  }
+  Vector_3 parallel_transport_along_path(const std::vector<Edge_location<TriangleMesh, FT>>& edge_locations,
+                                         const VertexPointMap &vpm,
+                                         const TriangleMesh& mesh,
+                                         const Face_location<TriangleMesh, FT>& src,
+                                         const Face_location<TriangleMesh, FT>& tgt,
+                                         const Vector_3& v)
+  {
+    if(edge_locations.size()==0)
+    return v;
+    Vector_3 w=v;
+    face_descriptor f_start=src.first;
+    for(std::size_t i=0;i<edge_locations.size()-1;++i)
+    parallel_transport_through_flattening(w,vpm,mesh,f_start,face(halfedge(edge_locations[i],mesh),mesh));
+
+    return w;
+  }
   // static
-  // void parallel_transport_through_flattening(Vector_3& v,
-  //                                            const VertexPointMap &vpm,
-  //                                            const TriangleMesh &mesh,
-  //                                            const face_descriptor& from,
-  //                                            const face_descriptor& to)
+  // std::tuple<Vector_3,face_descriptor>
+  // polthier_condition_at_vert(const TriangleMesh& mesh,
+  //                            const VertexPointMap &vpm
+  //                            const vertex_descriptor& vid,
+  //                            const face_descriptor& tid,
+  //                            const int kv,
+  //                            const Vector_3 &dir)
   // {
-  //     halfedge_descriptor h_ref = halfedge(from, mesh);
-  //     halfedge_descriptor h=h_ref;
-  //     for (int i = 0; i < 3; ++i) {
-  //       if (face(opposite(h_ref, mesh), mesh) == to)
-  //        {
-  //          h=h_ref;
-  //          break;
-  //        }
-  //       h_ref = next(h_ref, mesh);
-  //     }
+  //   FT total_angle=get_total_angle(vid,mesh,vpm);
+  //   FT theta = 0.5 * total_angle;
+  //   halfedge_descriptor h=halfedge(tid,mesh);
+  //   while(target(h,mesh)!=vid)
+  //     h=next(h,mesh);
 
-  //   std::array<Vector_2,3> flat_from = init_flat_triangle(h,vpm,mesh);
-  //    std::array<Vector_2,3> flat_to = unfold_face(h,vpm,mesh,flat_from);
-  //   Vector_2 bary = Vector_2{0.333, 0.333};
-  //   Vector_2 c0 = 0.33*(flat_from[0]+flat_from[1]+flat_from[2]);
-  //   Vector_2 c1 = 0.33*(flat_t0[0]+flat_t0[1]+flat_t0[2]);
-  //   Vector_2 e0 = flat_from[0] - c0;
-  //   Vector_2 e1 = flat_to[0] - c1;
+  //   Point_3 vert = get(vpm,vid);
+  //   Point_3 vert_adj=get(vpm,source(h,mesh));
+  //   Vector_3 v = vert - vert_adj;
 
-  //   Vector_2 w = c1 - c0;
-  //   FT phi_ij = angle(e0, w);
-  //   if (e0.x()*w.y()-e0.y()*w.x() < 0)
-  //     phi_ij = 2 * M_PI - phi_ij;
-  //   w *= -1;
-  //   FT phi_ji = angle(e1, w);
+  //   FT acc = angle(v, dir);
+  //   FT prev_angle = acc;
+  //   face_descriptor curr_tid = tid;
 
-  //   if (e1.x()*w.y()-e1.y()*w.x() < 0)
-  //     phi_ji = 2 * M_PI - phi_ji;
-
-  //   Vector_3 n_from= face_normal(vpm, mesh, from);
-  //   std::vector<Vector_3> e_from = polar_basis(vpm, mesh, from);
-  //   double teta = angle(e_from, v);
-  //   if (cross_product(e_from, v)*n_from < 0)
-  //     teta = 2 * M_PI - teta;
-
-  //   std::vector<Vector_3> e_to = polar_basis(vpm, mesh, from to);
-  //   Vector_3 n_to = face_normal(vpm, mesh, to);
-  //   double rot = teta + phi_ji + M_PI - phi_ij;
-  //   e_to =e_to*sqrt(v.length_squared());
-  //   v = rot_vect(e_to, n_to, rot);
-  // }
-  // static
-  // std::vector<Vector_3>
-  // get_3D_basis_at_point(const Face_location<TriangleMesh, FT>& p,
-  //                       const TriangleMesh& mesh,
-  //                       const VertexPointMap &vpm)
-  // {
-  //   halfedge_descriptor h=halfedge(p.first,mesh);
-
-  //   Point_3 p0=get(vpm, source(h, mesh));
-  //   Point_3 p1=get(vpm, target(h, mesh));
-  //   Point_3 p2= get(vpm,target(next(h, mesh), mesh));
-
-  //   Vector_3 e=p1-p0;
-  //   e/=sqrt(e.squared_length());
-  //   Vector_3 n= triangle_normal(p0,p1,p2);
-  //   Vector_3 e1= cross_product(n,e);
-
-  //   return {e,e1,n};
-  // }
-
-
-  // static
-  // std::tuple<bool, int>
-  // point_is_edge(const Face_location<TriangleMesh, FT>& p,
-  //               const FT& tol=1e-5)
-  // {
-  //   auto bary=p.second;
-  //   if (bary[0] > tol && bary[1] > tol && bary[2] <= tol)
-  //     return {true, 0};
-  //   if (bary[1] > tol && bary[2] > tol && bary[0] <= tol)
-  //     return {true, 1};
-  //   if (bary[2] > tol && bary[0] > tol && bary[1] <= tol)
-  //     return {true, 2};
-
-  //   return {false, -1};
-  // }
-
-  // static
-  // //https://rootllama.wordpress.com/2014/06/20/ray-line-segment-intersection-test-in-2d/
-  // std::pair<FT, FT>
-  // intersect(const Vector_2 &direction, const Vector_2 &left,
-  //           const Vector_2 &right,const Vector_2& origin)
-  // {
-  //   auto v1 = origin-left;
-  //   auto v2 = right - left;
-  //   auto v3 = vec2f{-direction.y, direction.x};
-  //   auto t0 = cross(v2, v1) / dot(v2, v3);
-  //   auto t1 = -dot(left, v3) / dot(v2, v3);
-  //   return std::make_pair(t0, t1);
-  // };
-
-  // static
-  // std::tuple<int,float>
-  // segment_in_tri(const Vector_2& p,
-  //                const  std::array<Vector_2, 3>& tri,
-  //                const Vector_2& dir,
-  //                const int& k)
-  // {
-  //   for (auto i = 0; i < 3; ++i)
-  //   {
-  //     auto [t0, t1] = intersect(dir, tri[(k+i)%3], tri[(k + 1+i) % 3],p);
-
-  //     //TODO: replace intersection with CGAL code
-  //     if (t0 > 0 && t1 >= -1e-4 && t1 <= 1 + 1e-4)
-  //     {
-  //         auto result_k =(k+i)%3;
-  //         return {result_k, clamp(t1, 0.f, 1.f)};
-  //     }
+  //   while (acc < theta) {
+  //     h=prev(opposite(h.mesh),mesh);
+  //     prev_angle = acc;
+  //     Point_3 next_vert_adj=get(vpm,source(h,mesh));
+  //     acc += angle(vert_adj - vert,next_vert_adj - vert);
+  //     vert_adj=next_vert_adj;
   //   }
-  //   CGAL_assertion(false);
-  //   return {-1,-1};
+  //   auto offset = theta - prev;
+  //   Point_3 prev_vert_adj=get(vpm,target(next(h,mesh,mesh)));
+
+  //   Vector_3 result=Vector_3{prev_vert_adj.x()-vert.x(),prev_vert_adj.y()-vert.y(),prev_vert_adj.z()-vert.z()};
+  //   face_descriptor f=face(h,mesh);
+  //   Vector_3 n=face_normal(vpm,mesh,f);
+  //   result=rotate_vector(result,n,offset);
+  //   return {result,f};
   // }
 
-  // FT get_total_angle(const vertex_descriptor& vid,
-  //                    const TriangleMesh& mesh,
-  //                    const VertexPointMap &vpm)
-  // {
-  //   halfedge_descriptor h_ref= halfedge(vid,mesh);
-  //   halfedge_descriptor h_start=h_ref
-  //   halfedge_descriptor h_next = next(h_start,mesh);
 
-  //   FT theta=angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
-  //                  get(vpm,target(h_next,mesh))-get(vpm,target(h_start,mesh)));
-  //   h_start=opposite(h_next,mesh);
-  //   h_next=next(h_start,mesh);
-  //   while(h_start!=h_ref)
-  //   {
-  //     theta+=angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
-  //                  get(vpm,target(h_next,mesh))-get(vpm,target(h_start,mesh)));
-  //     h_start=opposite(h_next,mesh);
-  //     h_next=next(h_start,mesh);
-  //   }
+  static
+  std::vector<Vector_3>
+  get_3D_basis_at_point(const Face_location<TriangleMesh, FT>& p,
+                        const TriangleMesh& mesh,
+                        const VertexPointMap &vpm)
+  {
+    halfedge_descriptor h=halfedge(p.first,mesh);
 
-  //   return theta;
-  // }
+    Point_3 p0=get(vpm, source(h, mesh));
+    Point_3 p1=get(vpm, target(h, mesh));
+    Point_3 p2= get(vpm,target(next(h, mesh), mesh));
+
+    Vector_3 e=p1-p0;
+    e/=sqrt(e.squared_length());
+    Vector_3 n= triangle_normal(p0,p1,p2);
+    Vector_3 e1= cross_product(n,e);
+
+    return {e,e1,n};
+  }
+
+
+  static
+  std::tuple<bool, int>
+  point_is_edge(const Face_location<TriangleMesh, FT>& p,
+                const FT& tol=1e-5)
+  {
+    auto bary=p.second;
+    if (bary[0] > tol && bary[1] > tol && bary[2] <= tol)
+      return {true, 0};
+    if (bary[1] > tol && bary[2] > tol && bary[0] <= tol)
+      return {true, 1};
+    if (bary[2] > tol && bary[0] > tol && bary[1] <= tol)
+      return {true, 2};
+
+    return {false, -1};
+  }
+
+  static
+  //https://rootllama.wordpress.com/2014/06/20/ray-line-segment-intersection-test-in-2d/
+  std::pair<FT, FT>
+  intersect(const Vector_2 &direction, const Vector_2 &left,
+            const Vector_2 &right,const Vector_2& origin)
+  {
+    Vector_2 v1 = origin-left;
+    Vector_2 v2 = right - left;
+    Vector_2 v3 = Vector_2{-direction.y, direction.x};
+    double t0 = (v2.x()*v1.y()-v2.y()*v1.x())/ v2*v3;
+    double t1 = -left*v3/ v2*v3;
+    return std::make_pair(t0, t1);
+  };
+
+  static
+  std::tuple<int,float>
+  segment_in_tri(const Vector_2& p,
+                 const  std::array<Vector_2, 3>& tri,
+                 const Vector_2& dir,
+                 const int& k)
+  {
+    for (auto i = 0; i < 3; ++i)
+    {
+      auto [t0, t1] = intersect(dir, tri[(k+i)%3], tri[(k + 1+i) % 3],p);
+
+      //TODO: replace intersection with CGAL code
+      if (t0 > 0 && t1 >= -1e-4 && t1 <= 1 + 1e-4)
+      {
+          auto result_k =(k+i)%3;
+          return {result_k, clamp(t1, 0.f, 1.f)};
+      }
+    }
+    CGAL_assertion(false);
+    return {-1,-1};
+  }
+
+  FT get_total_angle(const vertex_descriptor& vid,
+                     const TriangleMesh& mesh,
+                     const VertexPointMap &vpm)
+  {
+    halfedge_descriptor h_ref= halfedge(vid,mesh);
+    halfedge_descriptor h_start=h_ref;
+    halfedge_descriptor h_next = next(h_start,mesh);
+
+    FT theta=angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
+                   get(vpm,target(h_next,mesh))-get(vpm,target(h_start,mesh)));
+    h_start=opposite(h_next,mesh);
+    h_next=next(h_start,mesh);
+    while(h_start!=h_ref)
+    {
+      theta+=angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
+                   get(vpm,target(h_next,mesh))-get(vpm,target(h_start,mesh)));
+      h_start=opposite(h_next,mesh);
+      h_next=next(h_start,mesh);
+    }
+
+    return theta;
+  }
 
   // static
   // std::tuple<Vector_2, Face_location<TriangleMesh, FT>, halfedge_descriptor>
@@ -954,6 +1087,48 @@ struct Locally_shortest_path_imp
 
   //   };
 
+  //    auto get_halfedge=[&mesh](const int k,const face_descriptor& tid)
+  //   {
+  //     halfedge_descriptor h=halfedge(tid,mesh);
+  //     if(k==0)
+  //        return h;
+  //     if(k==1)
+  //        return next(h,mesh);
+  //     if(k==2)
+  //       return next(next(h,mesh),mesh);
+
+  //   };
+
+  //   auto edge_barycentric_coordinate =
+  //     [&mesh, h_face](halfedge_descriptor h_edge,
+  //                    const std::array<FT,2>& bary_edge)
+  //   {
+  //     std::array<FT,3> bary_edge_in_face;
+  //     if (h_face!=h_edge)
+  //     {
+  //       if (h_face==next(h_edge, mesh))
+  //       {
+  //         bary_edge_in_face[0]=bary_edge[1];
+  //         bary_edge_in_face[1]=0;
+  //         bary_edge_in_face[2]=bary_edge[0];
+  //       }
+  //       else
+  //       {
+  //         bary_edge_in_face[0]=0;
+  //         bary_edge_in_face[1]=bary_edge[0];
+  //         bary_edge_in_face[2]=bary_edge[1];
+  //       }
+  //     }
+  //     else
+  //     {
+  //       bary_edge_in_face[0]=bary_edge[0];
+  //       bary_edge_in_face[1]=bary_edge[1];
+  //       bary_edge_in_face[2]=0;
+  //     }
+
+  //     return bary_edge_in_face;
+  //   };
+
   //   std::vector<Face_location<TriangleMesh, FT>> result;
   //   FT accumulated=0.;
   //   face_descriptor curr_tid=p.first;
@@ -993,7 +1168,7 @@ struct Locally_shortest_path_imp
 
   //     if (is_vert)
   //     {
-  //       auto vid = get_vertex(kv,curr_tid);
+  //       uint vid = get_vertex(kv,curr_tid);
 
   //       accumulated +=
   //           sqrt(squared_distance(construct_point(curr_p,mesh) - get(vpm,vid)));
@@ -1001,17 +1176,13 @@ struct Locally_shortest_path_imp
   //       std::tie(curr_dir, curr_p, k_start) =
   //           polthier_condition_at_vert(triangles, positions, adjacencies,
   //                                     total_angles, vid, curr_tid, dir3d);
-  //       curr_tid = curr_p.face;
-  //       if (curr_tid == -1)
-  //         return result;
+  //       curr_tid = curr_p.first;
 
   //     }
   //     else
   //     {
-  //       auto adj = adjacencies[curr_tid][k];
-  //       if (adj == -1)
-  //         return result;
-  //       auto h = find(adjacencies[adj], curr_tid);
+
+  //       face_descriptor adj = face(get_halfedge(curr_tid,k),mesh);
 
   //       new_bary = zero3f;
   //       new_bary[h] = t1;
@@ -1373,14 +1544,14 @@ struct Geodesic_circle_impl
   struct geodesic_solver {
     struct graph_edge {
       int node = -1;
-      double length=DBL_MAX;
+      double len=DBL_MAX;
     };
     std::vector<std::vector<graph_edge>> graph;
   };
   struct dual_geodesic_solver {
     struct edge {
       int node = -1;
-      double length = DBL_MAX;
+      double len = DBL_MAX;
     };
     std::vector<std::array<edge, 3>> graph = {};
   };
@@ -1467,6 +1638,7 @@ struct Geodesic_circle_impl
     vertex_descriptor v0 =target(next(h,mesh),mesh);
     vertex_descriptor v1= target(next(opposite(h,mesh),mesh),mesh);
     auto len = opposite_nodes_arc_length(vpm, v0,v1,a,b);
+     //std::cout<<len<<std::endl;
     connect_nodes(solver, v0, v1, vidmap, len);
   }
 
@@ -1487,10 +1659,9 @@ struct Geodesic_circle_impl
 
       if(a<b)
         {
-           if(get(vidmap,a)==224)
-            std::cout<<" 224 is considered"<<std::endl;
           FT len=sqrt(squared_distance(get(vpm,a),get(vpm,b)));
-          CGAL_assertion(len<DBL_MAX);
+          //std::cout<<len<<std::endl;
+          CGAL_assertion(len<DBL_MAX && len>0);
           connect_nodes(solver,a,b,vidmap,len);
         }
         face_descriptor nei=face(opposite(h,mesh),mesh);
@@ -1545,7 +1716,7 @@ struct Geodesic_circle_impl
       int entry=get(tidmap,f);
       for (auto i = 0; i < 3; ++i) {
         solver.graph[entry][i].node = get(tidmap,face(opposite(h,mesh),mesh));
-        solver.graph[entry][i].length = compute_dual_weights(h);
+        solver.graph[entry][i].len = compute_dual_weights(h);
         h=next(h,mesh);
       }
     }
@@ -1617,7 +1788,7 @@ struct Geodesic_circle_impl
 
       for (auto i = 0; i < (int)solver.graph[node].size(); i++) {
         // Distance of neighbor through this node
-        double new_distance = field[node] + solver.graph[node][i].length;
+        double new_distance = field[node] + solver.graph[node][i].len;
 
         auto neighbor = solver.graph[node][i].node;
 
@@ -1714,7 +1885,7 @@ struct Geodesic_circle_impl
 
       for (auto i = 0; i < (int)solver.graph[node].size(); i++) {
         // Distance of neighbor through this node
-        auto new_distance = field[node] + solver.graph[node][i].length;
+        auto new_distance = field[node] + solver.graph[node][i].len;
         auto neighbor = solver.graph[node][i].node;
 
         auto old_distance = field[neighbor];
@@ -1798,7 +1969,7 @@ struct Geodesic_circle_impl
       distances[sources_id[i]] = sources_and_dist[i].second;
     }
 
-    visit_graph(distances, solver, sources_id, update, stop, exit);
+    visit_geodesic_graph(distances, solver, sources_id, update, stop, exit);
     return distances;
   }
 
