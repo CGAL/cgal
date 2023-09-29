@@ -105,8 +105,8 @@ int main(int argc, char** argv)
 
   CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
 
-  Mesh output_mesh;
-  aw3(alpha, offset, output_mesh);
+  Mesh wrap;
+  aw3(alpha, offset, wrap);
 
   t.stop();
   std::cout << "Took " << t.time() << std::endl;
@@ -123,7 +123,7 @@ int main(int argc, char** argv)
   std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_" + std::to_string(static_cast<int>(relative_alpha))
                             + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
   std::cout << "Writing to " << output_name << std::endl;
-  CGAL::IO::write_polygon_mesh(output_name, output_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }
