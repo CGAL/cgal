@@ -26,7 +26,7 @@
 #include <CGAL/Polyhedron_simplex_type.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/walk_in_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/walk_in_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/intersections.h>
 #include <CGAL/boost/graph/property_maps.h>
@@ -35,8 +35,9 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <CGAL/Named_function_parameters.h>
 
-#include <boost/optional.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <bitset>
 
@@ -444,12 +445,12 @@ get_sorted_intersected_halfedges(typename boost::graph_traits<TriangleMesh>::fac
   if (k!=1) return boost::none;
 
   // TODO: avoid the constructions
-  boost::optional<boost::variant<typename K::Point_3, typename K::Segment_3> >
+  std::optional<std::variant<typename K::Point_3, typename K::Segment_3> >
     inter_res = intersection( typename K::Segment_3(get(vpm, source(int_edges[0], tm)),
                                                     get(vpm, target(int_edges[0], tm))),
                               axis_1 );
-  CGAL_assertion( inter_res != boost::none );
-  const typename K::Point_3* pt  = boost::get<typename K::Point_3>(&(*inter_res));
+  CGAL_assertion( inter_res != std::nullopt );
+  const typename K::Point_3* pt  = std::get_if<typename K::Point_3>(&(*inter_res));
   CGAL_assertion( pt!=NULL );
 
   if (axis_2.oriented_side( *pt )!= ON_NEGATIVE_SIDE)
@@ -566,6 +567,86 @@ two_side_walk_and_intersection_point_collection(const TriangleMesh& tm,
   }
   else
     inter_points.push_back(*pt);
+
+  return center_pos;
+}
+
+template <class K, class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
+std::size_t
+walk_and_intersection_point_collection(const TriangleMesh& tm,
+                                       const typename K::Point_3& center,
+                                       typename boost::graph_traits<TriangleMesh>::face_descriptor start_face,
+                                       const typename K::Plane_3& axis_1,
+                                       const typename K::Plane_3& axis_2,
+                                       double target_distance,
+                                       std::vector<typename K::Point_3>& inter_points,
+                                       const NamedParameters& np = parameters::default_values())
+{
+  typedef boost::graph_traits<TriangleMesh> BGT;
+  typedef typename BGT::halfedge_descriptor halfedge_descriptor;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  // Vertex point maps
+  typedef typename GetVertexPointMap<TriangleMesh,
+      NamedParameters>::const_type Vpm;
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tm));
+
+  typedef walker_internal::Edge_intersection_with_plane<TriangleMesh, Vpm> Predicate;
+  typedef walker_internal::Walk_in_polygon_mesh_visitor<TriangleMesh, Vpm> Visitor;
+
+  boost::optional< std::array<halfedge_descriptor, 2> > opt_int_edges =
+    get_sorted_intersected_halfedges<K>(start_face, tm, vpm, axis_1, axis_2);
+
+  if (opt_int_edges == boost::none)
+  {
+    std::cout << "no intersected edge, nothing is done\n";
+    return 0;
+  }
+
+  //    first compute the out point from the center triangle (TODO: make more robust)
+  std::optional<std::variant<typename K::Point_3, typename K::Segment_3> >
+  inter_res = intersection( typename K::Segment_3(get(vpm, source((*opt_int_edges)[0], tm)),
+                                                  get(vpm, target((*opt_int_edges)[0], tm))),
+                            axis_1 );
+  if ( inter_res == std::nullopt)
+  {
+    CGAL_warning(!"Intersection 1 not found");
+    return 0;
+  }
+  const typename K::Point_3* pt = std::get_if<typename K::Point_3>(&(*inter_res));
+  if ( pt == nullptr )
+  {
+    CGAL_warning(!"Intersection 1 is not a point");
+    return 0;
+  }
+
+  //    walk only if needed
+  if ( CGAL::compare_squared_distance(center, *pt, target_distance*target_distance) == SMALLER )
+  {
+    Predicate predicate(center, axis_1.orthogonal_vector(),
+                                axis_2.orthogonal_vector(), tm, vpm);
+    Visitor visitor = Visitor(tm, vpm, target_distance, center);
+    visitor.register_initial_intersection({(*opt_int_edges)[0], *pt});
+    walk_in_polygon_mesh(tm,
+                         (*opt_int_edges)[0], CGAL::POLYHEDRON_EDGE,
+                         BGT::null_halfedge(), CGAL::POLYHEDRON_NONE,
+                         predicate, visitor);
+    visitor.get_intersection_points(std::back_inserter(inter_points));
+    inter_points.back() = visitor.end_point(); // replace the last point by the real endpoint of the walk
+    // reverse sequence
+    std::reverse(inter_points.begin(), inter_points.end());
+  }
+  else
+    inter_points.push_back(*pt);
+
+  // add the center + save its position
+  std::size_t center_pos = inter_points.size();
+  if (inter_points.back()!=center)
+    inter_points.push_back(center);
+  else
+    --center_pos;
 
   return center_pos;
 }
