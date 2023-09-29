@@ -2066,7 +2066,7 @@ struct Geodesic_circle_impl
 
     std::vector<std::pair<vertex_descriptor, double>> nodes;
     nodes.reserve(6);
-    auto [is_vert,offset]=point_is_vert(p);
+    auto [is_vert,offset]=Locally_shortest_path_imp<K,TriangleMesh, VertexPointMap>::point_is_vert(p);
     if (is_vert) {
       vertex_descriptor vid = get_vid(offset,p.first);
       nodes.push_back({vid, 0});
