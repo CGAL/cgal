@@ -154,6 +154,80 @@ less_squared_radius_of_min_empty_sphere(typename Tr::Geom_traits::FT sq_alpha,
   }
 }
 
+template <typename Tr>
+bool
+smallest_squared_radius_3(const typename Tr::Facet& fh,
+                          const Tr& tr)
+{
+  using Cell_handle = typename Tr::Cell_handle;
+  using Point = typename Tr::Point;
+  using FT = typename Tr::Geom_traits::FT;
+
+  using CK = typename Tr::Geom_traits;
+  using Exact_kernel = typename Exact_kernel_selector<CK>::Exact_kernel;
+  using Approximate_kernel = Simple_cartesian<Interval_nt_advanced>;
+  using C2A = Cartesian_converter<CK, Approximate_kernel>;
+  using C2E = typename Exact_kernel_selector<CK>::C2E;
+
+  using Orientation_of_circumcenter = Filtered_predicate<Orientation_of_circumcenter<Exact_kernel>,
+                                                         Orientation_of_circumcenter<Approximate_kernel>,
+                                                         C2E, C2A>;
+
+  Orientation_of_circumcenter orientation_of_circumcenter;
+
+  auto squared_radius = tr.geom_traits().compute_squared_radius_3_object();
+
+  const Cell_handle c = fh.first;
+  const int ic = fh.second;
+  const Cell_handle n = c->neighbor(ic);
+
+  const Point& p1 = tr.point(c, Tr::vertex_triple_index(ic,0));
+  const Point& p2 = tr.point(c, Tr::vertex_triple_index(ic,1));
+  const Point& p3 = tr.point(c, Tr::vertex_triple_index(ic,2));
+
+  // This is not actually possible in the context of alpha wrapping, but keeping it for genericity
+  // and because it does not cost anything.
+  if(tr.is_infinite(n))
+  {
+    Orientation ori = orientation_of_circumcenter(p1, p2, p3,
+                                                  tr.point(c, 0), tr.point(c, 1),
+                                                  tr.point(c, 2), tr.point(c, 3));
+    if(ori == POSITIVE)
+      return squared_radius(p1, p2, p3);
+    else
+      return squared_radius(tr.point(c, 0), tr.point(c, 1), tr.point(c, 2), tr.point(c, 3));
+  }
+
+  if(tr.is_infinite(c))
+  {
+    Orientation ori = orientation_of_circumcenter(p1, p2, p3,
+                                                  tr.point(n, 0), tr.point(n, 1),
+                                                  tr.point(n, 2), tr.point(n, 3));
+    if(ori == NEGATIVE)
+      return squared_radius(p1, p2, p3);
+    else
+      return squared_radius(tr.point(n, 0), tr.point(n, 1), tr.point(n, 2), tr.point(n, 3));
+  }
+
+  // both c and n are finite
+  if(orientation_of_circumcenter(p1, p2, p3,
+                                 tr.point(c, 0), tr.point(c, 1), tr.point(c, 2), tr.point(c, 3)) !=
+     orientation_of_circumcenter(p1, p2, p3,
+                                 tr.point(n, 0), tr.point(n, 1), tr.point(n, 2), tr.point(n, 3)))
+  {
+    // Dual crosses the face
+    return squared_radius(p1, p2, p3);
+  }
+  else
+  {
+    // Dual does not crosses the face
+    FT cr = squared_radius(tr.point(c, 0), tr.point(c, 1), tr.point(c, 2), tr.point(c, 3));
+    FT cnr = squared_radius(tr.point(n, 0), tr.point(n, 1), tr.point(n, 2), tr.point(n, 3));
+    return (CGAL::min)(cr, cnr);
+  }
+}
+
+
 } // namespace internal
 } // namespace Alpha_wraps_3
 } // namespace CGAL

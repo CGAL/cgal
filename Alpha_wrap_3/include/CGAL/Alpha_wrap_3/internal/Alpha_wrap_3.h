@@ -1131,17 +1131,16 @@ private:
     if(status == IRRELEVANT)
       return false;
 
+    const FT sqr = smallest_squared_radius_3(f, m_tr);
+    m_queue.resize_and_push(Gate(f, sqr, (status == ARTIFICIAL_FACET)));
+
+#ifdef CGAL_AW3_DEBUG_QUEUE
     const Cell_handle ch = f.first;
     const int s = f.second;
     const Point_3& p0 = m_tr.point(ch, Triangulation::vertex_triple_index(s, 0));
     const Point_3& p1 = m_tr.point(ch, Triangulation::vertex_triple_index(s, 1));
     const Point_3& p2 = m_tr.point(ch, Triangulation::vertex_triple_index(s, 2));
 
-    // @todo should prob be the real value that we compare to alpha instead of squared_radius
-    const FT sqr = geom_traits().compute_squared_radius_3_object()(p0, p1, p2);
-    m_queue.resize_and_push(Gate(f, sqr, (status == ARTIFICIAL_FACET)));
-
-#ifdef CGAL_AW3_DEBUG_QUEUE
     static int gid = 0;
     std::cout << "Queue insertion #" << gid++ << "\n"
               << "  ch = " << &*ch << " (" << m_tr.is_infinite(ch) << ") " << "\n"
@@ -1150,6 +1149,8 @@ private:
     std::cout << "  SQR: " << sqr << std::endl;
     std::cout << "  Artificiality: " << (status == ARTIFICIAL_FACET) << std::endl;
 #endif
+
+    CGAL_assertion(status == ARTIFICIAL_FACET || sqr >= m_sq_alpha);
 
     return true;
   }
