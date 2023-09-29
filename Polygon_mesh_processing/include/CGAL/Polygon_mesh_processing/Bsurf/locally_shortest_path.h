@@ -1960,6 +1960,43 @@ struct Geodesic_circle_impl
   }
 };
 
+#ifdef CGAL_BSURF_USE_DIJKSTRA_SP
+  class Dijkstra_end_exception : public std::exception
+  {
+    const char* what() const throw ()
+    {
+      return "Dijkstra shortest path: reached the target vertex.";
+    }
+  };
+
+  template <class Graph>
+  class Stop_at_target_Dijkstra_visitor : boost::default_dijkstra_visitor
+  {
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+    typedef typename boost::graph_traits<Graph>::edge_descriptor edge_descriptor;
+
+    vertex_descriptor destination_vd;
+
+  public:
+    Stop_at_target_Dijkstra_visitor(vertex_descriptor destination_vd)
+      : destination_vd(destination_vd)
+    { }
+
+    void initialize_vertex(const vertex_descriptor& /*s*/, const Graph& /*mesh*/) const { }
+    void examine_vertex(const vertex_descriptor& /*s*/, const Graph& /*mesh*/) const { }
+    void examine_edge(const edge_descriptor& /*e*/, const Graph& /*mesh*/) const { }
+    void edge_relaxed(const edge_descriptor& /*e*/, const Graph& /*mesh*/) const { }
+    void discover_vertex(const vertex_descriptor& /*s*/, const Graph& /*mesh*/) const { }
+    void edge_not_relaxed(const edge_descriptor& /*e*/, const Graph& /*mesh*/) const { }
+    void finish_vertex(const vertex_descriptor &vd, const Graph& /* mesh*/) const
+    {
+      if(vd == destination_vd)
+        throw Dijkstra_end_exception();
+    }
+  };
+#endif
+
+
 } // namespace internal
 
 template <class FT, class TriangleMesh, class EdgeLocationRange>
@@ -2030,11 +2067,20 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
     //            )));
   }
 
+    internal::Stop_at_target_Dijkstra_visitor<Dual<TriangleMesh>> vis(tgt.first);
+
+    try{
+      boost::dijkstra_shortest_paths(dual, src.first,
+                                     boost::distance_map(distance_map)
+                                         .predecessor_map(predecessor_map)
+                                         .weight_map(weight_map)
+                                         .visitor(vis));
+    }
+    catch(const internal::Dijkstra_end_exception&)
+    {}
+
   // TODO try stopping dijkstra as soon tgt is out of the queue.
-  boost::dijkstra_shortest_paths(dual, src.first,
-                                 boost::distance_map(distance_map)
-                                     .predecessor_map(predecessor_map)
-                                     .weight_map(weight_map));
+
 
   std::vector<halfedge_descriptor> initial_path;
 
@@ -2076,6 +2122,8 @@ void locally_shortest_path(const Face_location<TriangleMesh, FT> &src,
   std::vector< std::array<typename K::Vector_2, 2>> portals=Impl::unfold_strip(initial_path,src,tgt,vpm,tmesh);
   std::size_t max_index=0;
   std::vector<FT> lerps=Impl::funnel(portals,max_index);
+  // TODO: if you comment this if you don't want to shorten the path (option?).
+  //       but this part is really fast so maybe does not make sense.
   Impl::straighten_path(portals,lerps,initial_path,src,tgt,vpm,tmesh,max_index);
   CGAL_assertion(lerps.size()==initial_path.size());
 
