@@ -778,7 +778,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       sm_items.removeAll(make_not_null(bounding_sm_item));
     }
 
-    Scene_polylines_item::Polylines_container plc;
+    Scene_polylines_item::Polylines_container polylines_empty_container;
     SMesh* bounding_polyhedron = (bounding_sm_item == nullptr)
                                      ? nullptr
                                      : bounding_sm_item->polyhedron();
@@ -814,7 +814,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     {
       thread = cgal_code_mesh_3(
         polyhedrons,
-        protect_polylines ? polylines_item->polylines : plc,
+        protect_polylines ? polylines_item->polylines : polylines_empty_container,
         bounding_polyhedron,
         item_name,
         angle,
@@ -881,11 +881,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       ? image_item->image_weights()
       : nullptr;
 
-    Scene_polylines_item::Polylines_container plc;
+    Scene_polylines_item::Polylines_container polylines_empty_container;
 
     thread = cgal_code_mesh_3(
         pImage,
-        (img_polylines_item == nullptr) ? plc : img_polylines_item->polylines,
+        (img_polylines_item == nullptr) ? polylines_empty_container : img_polylines_item->polylines,
         angle,
         facets_sizing,
         facets_min_sizing,
