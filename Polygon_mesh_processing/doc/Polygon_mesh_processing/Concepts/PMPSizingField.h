@@ -37,7 +37,7 @@ typedef unspecified_type FT;
 std::optional<FT> is_too_long(const halfedge_descriptor h,
                                 const PolygonMesh& pmesh) const;
 
-/// a function controlling edge split and edge collapse, 
+/// a function controlling edge split and edge collapse,
 /// returning the squared distance between the points of `va` and `vb`
 /// if an edge between `va` and `vb` would be too long, and `std::nullopt` otherwise.
 std::optional<FT> is_too_long(const vertex_descriptor va,

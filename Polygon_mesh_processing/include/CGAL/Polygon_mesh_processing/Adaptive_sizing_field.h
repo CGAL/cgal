@@ -70,7 +70,7 @@ public:
   /// \name Creation
   /// @{
   /*!
-  * constructor
+  * Constructor
   *
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
   *         model of `Range`. Its iterator type is `ForwardIterator`.
@@ -78,7 +78,7 @@ public:
   *
   * @param tol the error tolerance, used together with curvature to derive target edge length.
   *        Lower tolerance values will result in shorter mesh edges.
-  * @param edge_len_min_max contains the bounds for minimum and maximum 
+  * @param edge_len_min_max contains the bounds for minimum and maximum
   *        edge lengths
   * @param face_range the range of triangular faces defining one or several surface patches
   *        to be remeshed. It should be the same as the range of faces passed to `isotropic_remeshing()`.
