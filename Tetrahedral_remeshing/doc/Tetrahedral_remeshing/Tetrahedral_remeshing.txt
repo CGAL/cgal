@@ -15,7 +15,7 @@ namespace CGAL {
 \section secTetRemeshing Multi-Material Isotropic Tetrahedral Remeshing
 
 This package implements an algorithm for quality tetrahedral remeshing,
-introduced by N.Faraj et al in \cgalCite{faraj2016mvr}.
+introduced by Faraj et al in \cgalCite{faraj2016mvr}.
 This practical iterative remeshing algorithm is designed to remesh
 multi-material tetrahedral meshes, by iteratively performing a sequence of
 elementary operations such as edge splits, edge collapses, edge flips,

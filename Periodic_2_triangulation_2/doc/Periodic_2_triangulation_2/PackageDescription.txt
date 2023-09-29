@@ -16,9 +16,7 @@
 /// \ingroup PkgPeriodic2Triangulation2Ref
 
 /*! Draw.
-  \code
-   #include <CGAL/draw_periodic_2_triangulation_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_periodic_2_triangulation_2.h}
 */
 /// \defgroup PkgDrawPeriodic2Triangulation2 Draw a 2D Periodic Triangulation
 /// \ingroup PkgPeriodic2Triangulation2Ref

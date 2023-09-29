@@ -5,7 +5,9 @@ namespace ArrTraits {
  *
  * \cgalRefines{AdaptableUnaryFunction}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Construct_min_vertex_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::Construct_min_vertex_2}
+ * \cgalHasModelsEnd
  */
 class ConstructMinVertex_2 {
 public:

@@ -24,7 +24,7 @@ discarded. By default `StoreHidden` is set to `true`.
 By default this parameter is
 instantiated by `Triangulation_ds_vertex_base_2<>`.
 
-\cgalModels `ApolloniusGraphVertexBase_2`
+\cgalModels{ApolloniusGraphVertexBase_2}
 
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`
 \sa `CGAL::Apollonius_graph_hierarchy_vertex_base_2<Gt>`

@@ -15,7 +15,7 @@ See section \ref Segment_Delaunay_graph_2StronglyIntersecting for more informati
 
 \tparam Gt must be a model of the concept `SegmentDelaunayGraphTraits_2`.
 
-\cgalModels `SegmentDelaunayGraphStorageTraits_2`
+\cgalModels{SegmentDelaunayGraphStorageTraits_2}
 
 \sa `CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,St,STag,DS>`
 \sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`

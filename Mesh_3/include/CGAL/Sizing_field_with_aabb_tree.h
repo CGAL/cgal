@@ -59,7 +59,7 @@ namespace CGAL {
 * and derive from `CGAL::Polyhedral_mesh_domain_with_features_3`
 
 
-* @cgalModels `MeshDomainField_3`
+* @cgalModels{MeshDomainField_3}
 */
 template <typename GT,
           typename MeshDomain

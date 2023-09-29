@@ -50,6 +50,8 @@ public:
   float sigma_weights() const;
   float default_sigma_weights() const;
 
+  void setColor(QColor c);
+
   void invalidateOpenGLBuffers();
   void initializeBuffers(Viewer_interface *) const;
   void computeElements() const;

@@ -47,7 +47,7 @@ namespace Surface_mesh_parameterization {
 /// `TriangleMesh` class and does not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///

@@ -27,7 +27,7 @@ container to store vertices and cells. It can be `Sequential_tag` (use of a
 `create_vertex()`, `create_cell()`, `delete_vertex()`, and `delete_cell()`.
 `Sequential_tag` is the default value.
 
-\cgalModels `TriangulationDataStructure_3`
+\cgalModels{TriangulationDataStructure_3}
 
 The base class `Triangulation_utils_3` defines basic computations on
 indices of vertices and neighbors of cells.

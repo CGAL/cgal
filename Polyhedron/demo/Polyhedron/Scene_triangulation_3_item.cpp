@@ -442,6 +442,7 @@ struct Scene_triangulation_3_item_priv {
   typedef std::set<int> Indices;
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
+  std::unordered_map<int, int> visible_surface_patch_to_subdomain;
   std::unordered_map<int, int> id_to_compact;
   QSlider* tet_Slider;
   bool is_filterable;
@@ -643,6 +644,7 @@ Scene_triangulation_3_item::triangulation_changed()
   // Fill indices map and get max subdomain value
   d->surface_patch_indices_.clear();
   d->subdomain_indices_.clear();
+  d->visible_surface_patch_to_subdomain.clear();
   d->visible_subdomain.clear();
   d->id_to_compact.clear();
 
@@ -664,7 +666,18 @@ Scene_triangulation_3_item::triangulation_changed()
        end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
     max = (std::max)(max, fit->first->surface_patch_index(fit->second));
-    d->surface_patch_indices_.insert(fit->first->surface_patch_index(fit->second));
+    int index = fit->first->surface_patch_index(fit->second);
+    d->surface_patch_indices_.insert(index);
+    int dom0 = fit->first->subdomain_index();
+    int dom1 = fit->first->neighbor(fit->second)->subdomain_index();
+    if (dom0 == 0) // if cell is not in complex
+    {
+        d->visible_surface_patch_to_subdomain[index] = dom1;
+    }
+    else if (dom1 == 0)  // if opposite cell is not in complex
+    {
+        d->visible_surface_patch_to_subdomain[index] = dom0;
+    }
   }
 
   d->colors.resize(max + 1);
@@ -882,12 +895,19 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
   }
   const size_type nb_patch_indices = surface_patch_indices_.size();
   i = 0;
+  double patch_hsv_value = fmod(c.valueF() + .5, 1.);
   for (Indices::iterator it = surface_patch_indices_.begin(),
          end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
   {
     double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
     if (hue > 1) { hue -= 1.; }
-    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
+    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
+  }
+
+  for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
+       end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
+  {
+    colors[it->first] = colors_subdomains[it->second];
   }
 }
 
