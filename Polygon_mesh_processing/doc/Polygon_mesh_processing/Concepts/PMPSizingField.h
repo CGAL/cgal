@@ -12,7 +12,7 @@ public:
 /// @{
 
 /// Vertex descriptor type
-typedef unspecified_type vertex_descriptor;
+typedef boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
 /// Halfedge descriptor type
 typedef unspecified_type halfedge_descriptor;
