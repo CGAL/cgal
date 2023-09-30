@@ -129,6 +129,7 @@ namespace Orthtrees {
 
   \tparam Tree must be an orthtree with traits which are a model of CollectionPartitioningOrthtreeTraits
   \tparam OutputIterator must be a model of `OutputIterator` that accepts points
+
   \param orthtree the tree to search within
   \param query_sphere the region to search within
   \param k the number of points to find
@@ -172,6 +173,7 @@ OutputIterator nearest_k_neighbors_in_radius(
 
   \tparam Tree must be an orthtree with traits which are a model of CollectionPartitioningOrthtreeTraits
   \tparam OutputIterator a model of `OutputIterator` that accept `Point_d` objects.
+
   \param orthtree the tree to search within
   \param query query point.
   \param k number of neighbors.
@@ -193,6 +195,7 @@ OutputIterator nearest_neighbors(const Tree& orthtree, const typename Tree::Poin
 
   \tparam Tree must be an orthtree with traits which are a model of CollectionPartitioningOrthtreeTraits
   \tparam OutputIterator a model of `OutputIterator` that accept `Point_d` objects.
+
   \param orthtree the tree to search within
   \param query query sphere.
   \param output output iterator.

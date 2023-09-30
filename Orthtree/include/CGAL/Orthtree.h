@@ -757,6 +757,7 @@ public:
     \pre `!is_leaf()`
 
     \param n index of the node to retrieve the child of
+    \param i in [0, 2^D) specifying the child to retrieve
 
     \return the index of the `i`th child of node n
    */
@@ -1004,8 +1005,8 @@ public:
   /*!
     \brief Helper function for calling `is_topology_equal` on the root nodes of two trees.
 
-    \param lhsTree an Orthtree
-    \param rhsTree another Orthtree
+    \param lhs an Orthtree
+    \param rhs another Orthtree
 
     \return True if lhsTree and rhsTree have the same topology
    */
@@ -1111,7 +1112,7 @@ public:
     \brief equivalent to `adjacent_node()`, with an adjacency direction rather than a bitset.
 
     \param n index of the node to find a neighbor of
-    \param direction which way to find the adjacent node relative to this one
+    \param adjacency which way to find the adjacent node relative to this one
    */
   Maybe_node_index adjacent_node(Node_index n, Adjacency adjacency) const {
     return adjacent_node(n, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
