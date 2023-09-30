@@ -65,6 +65,7 @@ public:
   virtual std::optional<FT> is_too_short(const halfedge_descriptor h,
                                          const PolygonMesh& pmesh) const = 0;
   virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const = 0;
+  virtual void update(const vertex_descriptor v, const PolygonMesh& pmesh) = 0;
 
 };
 

@@ -126,6 +126,9 @@ public:
                     get(m_vpmap, source(h, pmesh)));
   }
 
+  void update(const vertex_descriptor v, const PolygonMesh& pmesh)
+  {}
+
 private:
   FT m_sq_short;
   FT m_sq_long;

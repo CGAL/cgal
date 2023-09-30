@@ -433,8 +433,7 @@ namespace internal {
         std::cout << "   refinement point : " << refinement_point << std::endl;
 #endif
         //update sizing field with the new point
-        if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
-          sizing.update_sizing_map(vnew, mesh_);
+        sizing.update(vnew, mesh_);
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
@@ -551,8 +550,7 @@ namespace internal {
         halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
         //update sizing field with the new point
-        if constexpr (!std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
-          sizing.update_sizing_map(vnew, mesh_);
+        sizing.update(vnew, mesh_);
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
