@@ -263,7 +263,7 @@ public:
     CGAL_assertion(get(m_vertex_sizing_map, va));
     CGAL_assertion(get(m_vertex_sizing_map, vb));
     if (sqlen > sqtarg_len)
-      return sqlen;
+      return sqlen / sqtarg_len;
     else
       return std::nullopt;
   }
@@ -276,7 +276,7 @@ public:
     CGAL_assertion(get(m_vertex_sizing_map, source(h, pmesh)));
     CGAL_assertion(get(m_vertex_sizing_map, target(h, pmesh)));
     if (sqlen < sqtarg_len)
-      return sqlen;
+      return sqlen / sqtarg_len;
     else
       return std::nullopt;
   }

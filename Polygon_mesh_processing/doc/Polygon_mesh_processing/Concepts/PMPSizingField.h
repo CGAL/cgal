@@ -32,13 +32,13 @@ typedef unspecified_type FT;
 /// @{
 
 /// a function controlling edge split and edge collapse,
-/// returning the squared distance between the points of `va` and `vb`
-/// if an edge between `va` and `vb` would be too long, and `std::nullopt` otherwise.
+/// returning the ratio of the current edge length and the local target edge length between
+/// the points of `va` and `vb` in case the current edge is too long, and `std::nullopt` otherwise.
 std::optional<FT> is_too_long(const vertex_descriptor va,
                                 const vertex_descriptor vb) const;
 
-/// a function controlling edge collapse by returning the squared length of `h`
-/// if it is too short, and `std::nullopt` otherwise.
+/// a function controlling edge collapse by returning the ratio of the squared length of `h` and the
+/// local target edge length if it is too short, and `std::nullopt` otherwise.
 std::optional<FT> is_too_short(const halfedge_descriptor h,
                                  const PolygonMesh& pmesh) const;
 

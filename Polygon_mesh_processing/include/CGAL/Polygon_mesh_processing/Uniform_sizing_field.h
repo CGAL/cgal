@@ -104,6 +104,7 @@ public:
   {
     const FT sqlen = sqlength(va, vb);
     if (sqlen > m_sq_long)
+      //no need to return the ratio for the uniform field
       return sqlen;
     else
       return std::nullopt;
@@ -113,6 +114,7 @@ public:
   {
     const FT sqlen = sqlength(h, pmesh);
     if (sqlen < m_sq_short)
+      //no need to return the ratio for the uniform field
       return sqlen;
     else
       return std::nullopt;
