@@ -33,7 +33,7 @@ namespace Polygon_mesh_processing
 * of local discrete curvatures.
 *
 * The local discrete curvatures are calculated using the
-* `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()` function.
+* `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` function.
 *
 * Edges longer than the local target edge length are split in two, while
 * edges shorter than the local target edge length are collapsed.
@@ -163,9 +163,9 @@ private:
 #endif
 
     Vertex_curvature_map vertex_curvature_map = get(Vertex_curvature_tag(), face_graph);
-    interpolated_corrected_principal_curvatures_and_directions(face_graph,
-                                                               vertex_curvature_map,
-                                                               parameters::ball_radius(radius));
+    interpolated_corrected_curvatures(face_graph,
+                                      parameters::vertex_principal_curvatures_and_directions_map(vertex_curvature_map)
+                                                 .ball_radius(radius));
     // calculate vertex sizing field L(x_i) from the curvature field
     for(vertex_descriptor v : vertices(face_graph))
     {
