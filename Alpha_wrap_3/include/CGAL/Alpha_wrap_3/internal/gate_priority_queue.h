@@ -37,17 +37,17 @@ class Gate
 private:
   Facet m_facet;
   FT m_priority; // circumsphere sq_radius
-  bool m_is_artificial_facet;
+  bool m_is_permissive_facet;
 
 public:
   // Constructors
   Gate(const Facet& facet,
        const FT& priority,
-       const bool is_artificial_facet)
+       const bool is_permissive_facet)
     :
       m_facet(facet),
       m_priority(priority),
-      m_is_artificial_facet(is_artificial_facet)
+      m_is_permissive_facet(is_permissive_facet)
   {
     CGAL_assertion(priority >= 0);
   }
@@ -60,7 +60,7 @@ public:
 public:
   const Facet& facet() const { return m_facet; }
   const FT& priority() const { return m_priority; }
-  bool is_artificial_facet() const { return m_is_artificial_facet; }
+  bool is_permissive_facet() const { return m_is_permissive_facet; }
 };
 
 struct Less_gate
@@ -68,14 +68,14 @@ struct Less_gate
   template <typename Tr>
   bool operator()(const Gate<Tr>& a, const Gate<Tr>& b) const
   {
-    // If one is artificial and the other is not, give priority to the artificial facet
+    // If one is permissive and the other is not, give priority to the permissive facet
     //
-    // The artificial facet are given highest priority because they need to be treated
+    // The permissive facet are given highest priority because they need to be treated
     // regardless of their circumradius. Treating them first allow the part that depends
     // on alpha to be treated uniformly in a way: whatever the alpha, we'll do the same
     // first treatmen
-    if(a.is_artificial_facet() != b.is_artificial_facet())
-      return a.is_artificial_facet();
+    if(a.is_permissive_facet() != b.is_permissive_facet())
+      return a.is_permissive_facet();
 
     if(a.priority() == b.priority())
     {

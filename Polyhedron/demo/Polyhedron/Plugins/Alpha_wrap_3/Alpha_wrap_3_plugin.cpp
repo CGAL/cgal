@@ -113,10 +113,10 @@ public:
     if(!points || !faces || !fcolors || !vcolors)
       return;
 
-    // If the next top of the queue has vertices on the bbox, don't draw (as to avoid producing
+    // If the next top of the queue has vertices on the bbox, don't draw (try to avoid producing
     // spikes in the visualization)
 //    const auto& gate = wrapper.queue().top();
-//    if(wrapper.triangulation().number_of_vertices() > 500 && gate.is_artificial_facet())
+//    if(wrapper.triangulation().number_of_vertices() > 500 && gate.is_permissive_facet())
 //      return;
 
     // Skip some...
@@ -216,7 +216,7 @@ struct AW3_interrupter_visitor
   { }
 
   // Only overload this one because it gives a better state of the wrap (for other visitor calls,
-  // we often get tetrahedral spikes because there are artificial gates in the queue)
+  // we often get tetrahedral spikes because there are scaffolding gates in the queue)
   template <typename Wrapper, typename Point>
   void before_Steiner_point_insertion(const Wrapper& wrapper, const Point& p)
   {

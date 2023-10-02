@@ -523,7 +523,7 @@ private:
         continue;
       }
 
-      // Mark the seeds and icosahedron vertices as "artificial vertices" such that the facets
+      // Mark the seeds and icosahedron vertices as "scaffolding vertices" such that the facets
       // incident to these vertices are always traversable regardless of their circumcenter.
       // This is done because otherwise some cavities can appear on the mesh: non-traversable facets
       // with two vertices on the offset, and the third being a deeper inside seed / ico_seed.
@@ -592,11 +592,12 @@ private:
       std::vector<Cell_handle> inc_cells;
       inc_cells.reserve(64);
       m_tr.incident_cells(seed_v, std::back_inserter(inc_cells));
+
       for(Cell_handle ch : inc_cells)
         ch->is_outside() = cavity_cell_outside_tag(ch);
     }
 
-    // Might as well go through the full triangulation since only seeds should have been inserted
+    // Should be cheap enough to go through the full triangulation as only seeds have been inserted
     for(Cell_handle ch : m_tr.all_cell_handles())
     {
       if(!ch->is_outside())
@@ -1027,21 +1028,24 @@ private:
   }
 
 private:
+  // A permissive gate is a gate that we can traverse without checking its circumradius
   enum Facet_queue_status
   {
     IRRELEVANT = 0,
-    ARTIFICIAL_FACET,
+    HAS_INFINITE_NEIGHBOR, // the cell incident to the mirrored facet is infinite (permissive)
+    SCAFFOLDING, // incident to a SEED or BBOX vertex (permissive)
     TRAVERSABLE
   };
 
   inline const char* get_status_message(const Facet_queue_status status)
   {
-    constexpr std::size_t status_count = 3;
+    constexpr std::size_t status_count = 4;
 
     // Messages corresponding to Error_code list above. Must be kept in sync!
     static const char* message[status_count] = {
       "Irrelevant facet",
-      "Artificial facet",
+      "Facet incident to infinite neighbor",
+      "Facet with a bbox/seed vertex",
       "Traversable facet"
     };
 
@@ -1079,7 +1083,7 @@ public:
 
     const Cell_handle nh = ch->neighbor(id);
     if(m_tr.is_infinite(nh))
-      return TRAVERSABLE;
+      return HAS_INFINITE_NEIGHBOR;
 
     if(nh->is_outside())
     {
@@ -1089,7 +1093,7 @@ public:
       return IRRELEVANT;
     }
 
-    // push if facet is connected to artificial vertices
+    // push if facet is connected to scaffolding vertices
     for(int i=0; i<3; ++i)
     {
       const Vertex_handle vh = ch->vertex(Triangulation::vertex_triple_index(id, i));
@@ -1097,9 +1101,9 @@ public:
          vh->type() == AW3i::Vertex_type:: SEED_VERTEX)
       {
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
-        std::cout << "artificial facet due to artificial vertex #" << i << std::endl;
+        std::cout << "Scaffolding facet due to vertex #" << i << std::endl;
 #endif
-        return ARTIFICIAL_FACET;
+        return SCAFFOLDING;
       }
     }
 
@@ -1132,7 +1136,8 @@ private:
       return false;
 
     const FT sqr = smallest_squared_radius_3(f, m_tr);
-    m_queue.resize_and_push(Gate(f, sqr, (status == ARTIFICIAL_FACET)));
+    const bool is_permissive = (status == HAS_INFINITE_NEIGHBOR || status == SCAFFOLDING);
+    m_queue.resize_and_push(Gate(f, sqr, is_permissive));
 
 #ifdef CGAL_AW3_DEBUG_QUEUE
     const Cell_handle ch = f.first;
@@ -1147,10 +1152,10 @@ private:
               << "\t" << p0 << "\n\t" << p1 << "\n\t" << p2 << std::endl;
     std::cout << "  Status: " << get_status_message(status) << std::endl;
     std::cout << "  SQR: " << sqr << std::endl;
-    std::cout << "  Artificiality: " << (status == ARTIFICIAL_FACET) << std::endl;
+    std::cout << "  Permissiveness: " << is_permissive << std::endl;
 #endif
 
-    CGAL_assertion(status == ARTIFICIAL_FACET || sqr >= m_sq_alpha);
+    CGAL_assertion(is_permissive || sqr >= m_sq_alpha);
 
     return true;
   }
@@ -1242,8 +1247,8 @@ private:
                 << m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)) << "\n"
                 << m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)) << "\n"
                 << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
-      std::cout << "Artificiality: " << gate.is_artificial_facet() << std::endl;
       std::cout << "Priority: " << gate.priority() << " (sq alpha: " << m_sq_alpha << ")" << std::endl;
+      std::cout << "Permissiveness: " << gate.is_permissive_facet() << std::endl;
 #endif
 
       visitor.before_facet_treatment(*this, gate);
@@ -1547,7 +1552,7 @@ public:
     }
 
     // Some lambdas for the comparer
-    auto has_artificial_vertex = [](Cell_handle c) -> bool
+    auto has_scaffolding_vertex = [](Cell_handle c) -> bool
     {
       for(int i=0; i<4; ++i)
       {
@@ -1625,9 +1630,9 @@ public:
       // @todo give topmost priority to cells with > 1 non-manifold vertex?
       auto comparer = [&](Cell_handle l, Cell_handle r) -> bool
       {
-        if(has_artificial_vertex(l))
+        if(has_scaffolding_vertex(l))
           return false;
-        if(has_artificial_vertex(r))
+        if(has_scaffolding_vertex(r))
           return true;
 
         const int l_bf_count = count_boundary_facets(l, v);
@@ -1706,7 +1711,7 @@ private:
 
       std::cout << "At Facet with VID " << get(Gate_ID_PM<Triangulation>(), current_gate) << "\n";
       std::cout << "\t" << p0 << "\n\t" << p1 << "\n\t" << p2 << "\n";
-      std::cout << "  Artificiality: " << current_gate.is_artificial_facet() << "\n";
+      std::cout << "  Permissiveness: " << current_gate.is_permissive_facet() << "\n";
       std::cout << "  SQR: " << sqr << "\n";
       std::cout << "  Priority " << current_gate.priority() << std::endl;
 
