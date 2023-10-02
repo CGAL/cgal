@@ -245,22 +245,17 @@ private:
     return { biggest_facet, biggest_sq_dist };
   }
 
-  bool biggest_incident_facet_is_smaller_than_min_size(const Edge& e) const
+  bool is_smaller_than_min_size(const FT& sq_dist) const
   {
     if(!m_facet_min_size)
       return false;
-
-    const FT sq_dist = biggest_incident_facet_in_complex(e).second;
-    return (sq_dist < CGAL::square(*m_facet_min_size));
+    return sq_dist < CGAL::square(*m_facet_min_size);
   }
 
-  bool biggest_incident_facet_is_smaller_than_min_size(const Vertex_handle& v) const
+  template<typename T> //T may be Edge or Vertex_handle
+  bool biggest_incident_facet_is_smaller_than_min_size(const T& t) const
   {
-    if(!m_facet_min_size)
-      return false;
-
-    const FT sq_dist = biggest_incident_facet_in_complex(v).second;
-    return (sq_dist < CGAL::square(*m_facet_min_size));
+    return is_smaller_than_min_size(biggest_incident_facet_in_complex(t).second);
   }
 
   ///////////////////////
@@ -379,15 +374,15 @@ public:
            ( (!m_with_boundary) &&
              (this->r_c3t3_.face_status(*eit) == C3t3::BOUNDARY) ) )
       {
-        if (biggest_incident_facet_is_smaller_than_min_size(*eit))
+        const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(*eit);
+        if (is_smaller_than_min_size(sq_dist))
           continue;
 
 #ifdef CGAL_LINKED_WITH_TBB
         // Parallel
         if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
-          this->insert_bad_facet(biggest_incident_facet_in_complex(*eit).first,
-                                 typename Base::Quality());
+          this->insert_bad_facet(biggest_f, typename Base::Quality());
         } else
 #endif // CGAL_LINKED_WITH_TBB
         { // Sequential
@@ -422,7 +417,8 @@ public:
     {
       if( this->r_c3t3_.face_status(vit) == C3t3::SINGULAR )
       {
-        if(biggest_incident_facet_is_smaller_than_min_size(vit))
+        const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(vit);
+        if (is_smaller_than_min_size(sq_dist))
           continue;
 
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
@@ -433,8 +429,7 @@ public:
         // Parallel
         if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
-          this->insert_bad_facet(biggest_incident_facet_in_complex(vit).first,
-                                 typename Base::Quality());
+          this->insert_bad_facet(biggest_f, typename Base::Quality());
         } else
 #endif // CGAL_LINKED_WITH_TBB
         { // Sequential
@@ -597,15 +592,17 @@ public:
                  (this->r_c3t3_.face_status(edge) == C3t3::BOUNDARY) )
                )
           {
-            if (biggest_incident_facet_is_smaller_than_min_size(edge))
+            const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(edge);
+            if (is_smaller_than_min_size(sq_dist))
               continue;
+
 #ifdef CGAL_LINKED_WITH_TBB
             // Parallel
             if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
             {
-              this->insert_bad_facet(biggest_incident_facet_in_complex(edge).first,
-                                     typename Base::Quality());
-            } else
+              this->insert_bad_facet(biggest_f, typename Base::Quality());
+            }
+            else
 #endif // CGAL_LINKED_WITH_TBB
             { // Sequential
               m_bad_edges.insert(Bad_edge(edge_to_edgevv(edge),
@@ -647,7 +644,8 @@ public:
            // !this->r_c3t3_.is_regular_or_boundary_for_vertices(*vit)
            )
       {
-        if(biggest_incident_facet_is_smaller_than_min_size(*vit))
+        const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(*vit);
+        if (is_smaller_than_min_size(sq_dist))
           continue;
 
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
@@ -658,9 +656,9 @@ public:
         // Parallel
         if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
         {
-          this->insert_bad_facet(biggest_incident_facet_in_complex(*vit).first,
-                                 typename Base::Quality());
-        } else
+          this->insert_bad_facet(biggest_f, typename Base::Quality());
+        }
+        else
 #endif // CGAL_LINKED_WITH_TBB
         { // Sequential
           m_bad_vertices.insert(*vit);
@@ -669,11 +667,14 @@ public:
     }
 
     if ( this->r_c3t3_.has_incident_facets_in_complex(v) &&
-         (this->r_c3t3_.face_status(v) == C3t3::SINGULAR) &&
-          !biggest_incident_facet_is_smaller_than_min_size(v)
+         (this->r_c3t3_.face_status(v) == C3t3::SINGULAR)
          // !this->r_c3t3_.is_regular_or_boundary_for_vertices(v)
          )
     {
+      const auto [biggest_f, sq_dist] = biggest_incident_facet_in_complex(v);
+      if (is_smaller_than_min_size(sq_dist))
+        return;
+
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
       std::cerr << "m_bad_vertices.insert("
                 << this->r_tr_.point(v) << ")\n";
@@ -682,9 +683,9 @@ public:
       // Parallel
       if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
       {
-        this->insert_bad_facet(biggest_incident_facet_in_complex(v).first,
-                               typename Base::Quality());
-      } else
+        this->insert_bad_facet(biggest_f, typename Base::Quality());
+      }
+      else
 #endif // CGAL_LINKED_WITH_TBB
       { // Sequential
         m_bad_vertices.insert(v);
