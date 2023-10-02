@@ -319,10 +319,10 @@ public:
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
     const InputRange& input_range,
+    const PolygonRange polygon_range,
 #ifdef DOXYGEN_RUNNING
     const PlaneRange& plane_range,
 #endif
-    const PolygonRange polygon_range,
     const NamedParameters & np = CGAL::parameters::default_values()) :
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
@@ -346,6 +346,9 @@ public:
   \tparam PolygonRange
   contains index ranges to form polygons by providing indices into InputRange
 
+  \tparam PlaneRange
+  provides `typename Intersection_kernel::Plane_3>` for each polygon.
+
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
 
@@ -354,6 +357,9 @@ public:
 
   \param polygon_range
   a range of polygons defined by a range of indices into `input_range`
+
+  \param plane_range
+  a range of planes providing a plane for each input polygon.
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -367,10 +373,19 @@ public:
   \cgalNamedParamsEnd
   */
 
-  template<typename InputRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
+  template<
+    typename InputRange,
+    typename PolygonRange,
+#ifdef DOXYGEN_RUNNING
+    typename PlaneRange,
+#endif
+    typename NamedParameters = parameters::Default_named_parameters>
   void insert(
     const InputRange& input_range,
     const PolygonRange polygon_range,
+#ifdef DOXYGEN_RUNNING
+    const PlaneRange& plane_range,
+#endif
     const NamedParameters& np = CGAL::parameters::default_values()) {
     To_exact to_exact;
     From_exact from_exact;
@@ -765,13 +780,13 @@ public:
   }
 
   /*!
-  \brief provides faces of the partition belonging to the regularized input polygon.
+  \brief provides faces of the partition belonging to the input polygon.
 
   \tparam OutputIterator
   must be an output iterator to which `Index` can be assigned.
 
   \param polygon_index
-  index of the regularized input polygon.
+  index of the input polygon.
 
   \param it
   output iterator.
@@ -781,7 +796,7 @@ public:
   \pre successful partition
   */
   template<class OutputIterator>
-  void faces_of_regularized_polygon(const std::size_t polygon_index, OutputIterator it) const {
+  void faces_of_polygon(const std::size_t polygon_index, OutputIterator it) const {
     if (polygon_index >= m_input_planes.size()) {
       assert(false);
     }
@@ -830,7 +845,7 @@ public:
 
   \pre successful partition
   */
-  void map_points_to_regularized_polygons(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<Index, std::vector<std::size_t> > > &mapping) {
+  void map_points_to_polygons(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<Index, std::vector<std::size_t> > > &mapping) {
     std::vector<Index> faces;
 
     if (polygon_index >= m_input_planes.size()) {
@@ -1000,18 +1015,19 @@ public:
   }
 
   /*!
-  \brief provides the exact 'Plane_3' for a regularized input polygon.
+  \brief provides the exact 'Plane_3' for a input polygon.
 
   \param polygon_index
-  index of regularized input polygon.
+  index of input polygon.
 
   \warning Removed. The user will provide planes for each input polygon.
 
   */
-  const typename Intersection_kernel::Plane_3 &regularized_plane(std::size_t polygon_index) const {
+  const typename Intersection_kernel::Plane_3 &plane(std::size_t polygon_index) const {
     return m_input_planes[polygon_index];
   }
 
+#ifndef DOXYGEN_RUNNING
   /*!
   \brief provides the mapping of regularized input polygons to inserted input polygons.
 
@@ -1023,7 +1039,7 @@ public:
   const std::vector<std::vector<std::size_t> > &regularized_input_mapping() const {
     return m_regularized2input;
   }
-
+#endif
   /*!
   \brief Mapping of a vertex index to its position.
 
