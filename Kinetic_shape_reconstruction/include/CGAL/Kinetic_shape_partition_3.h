@@ -1002,7 +1002,7 @@ public:
   \param vertex_index
   query vertex.
 
-  \return 'GeomTraits::Point_3' of a vertex.
+  \return `GeomTraits::Point_3` of a vertex.
 
   \pre successful partition
   */
@@ -1016,7 +1016,7 @@ public:
   \param vertex_index
   query vertex.
 
-  \return 'Intersection_kernel::Point_3' of a vertex.
+  \return `IntersectionTraits::Point_3` of a vertex.
 
   \pre successful partition
   */
@@ -1068,7 +1068,7 @@ public:
   \brief Exact vertex positions of a face of the kinetic partition.
 
   \tparam OutputIterator
-  must be an output iterator to which `Intersection_kernel::Point_3` can be assigned.
+  must be an output iterator to which `IntersectionTraits::Point_3` can be assigned.
 
   \param face_index
    index of the query face.
@@ -1089,7 +1089,7 @@ public:
   \brief Vertices and their exact positions of a face of the kinetic partition.
 
   \tparam OutputIterator
-  must be an output iterator to which `Intersection_kernel::Point_3` can be assigned.
+  must be an output iterator to which `IntersectionTraits::Point_3` can be assigned.
 
   \tparam IndexOutputIterator
   must be an output iterator to which `Index` can be assigned.
@@ -1164,12 +1164,12 @@ public:
   /*!
   \brief Indices of adjacent volumes. Negative indices correspond to the empty spaces behind the sides of the bounding box.
 
-    -1 zmin
-    -2 ymin
-    -3 xmax
-    -4 ymax
-    -5 xmin
-    -6 zmax
+    -1 zmin\n
+    -2 ymin\n
+    -3 xmax\n
+    -4 ymax\n
+    -5 xmin\n
+    -6 zmax\n
 
     \param face_index
     index of the query face.
