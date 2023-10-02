@@ -281,6 +281,7 @@ struct Scene_edit_box_item_priv{
 Scene_edit_box_item::Scene_edit_box_item()
 {
   d = nullptr;
+  contextMenu();
 }
 Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
 {
@@ -311,10 +312,24 @@ Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
                             : Vi::PROGRAM_NO_SELECTION,
                             false));
   }
+  contextMenu();
 }
 QString Scene_edit_box_item::toolTip() const {
 
   return QString();
+}
+
+
+QMenu* Scene_edit_box_item::contextMenu()
+{
+  // diasable "Alpha slider" in menu
+  QMenu* resMenu = Scene_item::contextMenu();
+  bool prop = property("menu_changed").toBool();
+  if(!prop)
+  {
+    setProperty("menu_changed", true);
+  }
+  return resMenu;
 }
 
 void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4 f_matrix ) const

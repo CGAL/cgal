@@ -33,6 +33,7 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item:
     }
 
     QString toolTip() const;
+    QMenu* contextMenu();
 
     bool eventFilter(QObject *, QEvent *);
     // Indicate if rendering mode is supported
