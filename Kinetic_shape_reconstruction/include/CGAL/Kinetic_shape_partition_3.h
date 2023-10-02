@@ -257,8 +257,8 @@ public:
   \tparam PolygonRange
   contains index ranges to form polygons by providing indices into InputRange.
 
-  \tparam PolygonRange
-  provides the `typename Intersection_kernel::Plane_3>` for each polygon.
+  \tparam PlaneRange
+  provides `typename Intersection_kernel::Plane_3>` for each polygon.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -268,6 +268,9 @@ public:
 
   \param polygon_range
   a range of polygons defined by a range of indices into `input_range`
+
+  \param plane_range
+  a range of planes providing a plane for each input polygon.
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
