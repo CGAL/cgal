@@ -459,7 +459,7 @@ public:
 
     Timer timer;
     m_parameters.bbox_dilation_ratio = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::bbox_dilation_ratio), FT(11) / FT(10));
+      parameters::get_parameter(np, internal_np::bbox_dilation_ratio), FT(12) / FT(10));
     m_parameters.angle_tolerance = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::angle_tolerance), FT(0) / FT(10));
     m_parameters.distance_tolerance = parameters::choose_parameter(
@@ -541,11 +541,6 @@ public:
     }
   }
 
-  void partition(std::size_t k) {
-    FT a, b, c;
-    partition(k, a, b, c);
-  }
-
   /*!
   \brief propagates the kinetic polygons in the initialized partition.
 
@@ -554,6 +549,12 @@ public:
 
   \pre successful initialization and k != 0
   */
+  void partition(std::size_t k) {
+    FT a, b, c;
+    partition(k, a, b, c);
+  }
+
+#ifndef DOXYGEN_RUNNING
   void partition(std::size_t k, FT &partition_time, FT &finalization_time, FT &conformal_time) {
     m_volumes.clear();
     Timer timer;
@@ -605,9 +606,10 @@ public:
 
       // Finalization.
 
-      for (std::size_t i = 0; i < partition.m_data->number_of_support_planes(); i++)
-        if (!partition.m_data->support_plane(i).mesh().is_valid(true))
-          std::cout << i << ". support has an invalid mesh!" << std::endl;
+      if (m_parameters.debug)
+        for (std::size_t i = 0; i < partition.m_data->number_of_support_planes(); i++)
+          if (!partition.m_data->support_plane(i).mesh().is_valid(true))
+            std::cout << i << ". support has an invalid mesh!" << std::endl;
 
       for (std::size_t i = 6; i < partition.m_data->number_of_support_planes(); i++) {
         bool initial = false;
@@ -691,6 +693,7 @@ public:
 
     return;
   }
+#endif
 
   /// @}
 
@@ -727,58 +730,39 @@ public:
     return m_volumes.size();
   }
 
+  /*!
+  \brief returns barycenter for a given volume.
+
+  \param volume_index
+  index of the volume.
+
+  \pre successful partition
+  */
   const Point_3 &volume_centroid(std::size_t volume_index) const {
     assert(volume_index < m_volumes.size());
     auto p = m_volumes[volume_index];
     return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
   }
-  /*
 
-  template<class OutputIterator>
-  void faces_of_input_polygon(const std::size_t input_polygon_index, OutputIterator it) const {
-    if (input_polygon_index >= m_input2regularized.size()) {
-      assert(false);
-    }
+  /*!
+  \brief provides faces of the partition belonging to the regularized input polygon.
 
-    std::cout << "switch to hjk Data_structure::m_face2sp" << std::endl;
+  \tparam OutputIterator
+  must be an output iterator to which `Index` can be assigned.
 
-    std::size_t mapped_input = m_input2regularized[input_polygon_index];
-    for (std::size_t idx : m_partitions) {
-      const Sub_partition& p = m_partition_nodes[idx];
-      // Check if it contains this input polygon and get support plane index
-      int sp_idx = -1;
-      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
-        if (p.input_polygons[i] == mapped_input) {
-          sp_idx = p.m_data->support_plane_index(i);
-          break;
-        }
-      }
+  \param polygon_index
+  index of the regularized input polygon.
 
-      // Continue if the partition does not contain this input polygon.
-      if (sp_idx == -1)
-        continue;
+  \param it
+  output iterator.
 
-      auto pfaces = p.m_data->pfaces(sp_idx);
-      auto f2i = p.m_data->face_to_index();
-
-      for (const auto& f : pfaces) {
-        assert(f.first == sp_idx);
-        auto fit = f2i.find(f);
-        assert(fit != f2i.end());
-
-        *it++ = std::make_pair(idx, fit->second);
-      }
-    }
-  }
-*/
-
+  \pre successful partition
+  */
   template<class OutputIterator>
   void faces_of_regularized_polygon(const std::size_t polygon_index, OutputIterator it) const {
     if (polygon_index >= m_input_planes.size()) {
       assert(false);
     }
-
-    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
 
     for (std::size_t idx : m_partitions) {
       const Sub_partition& p = m_partition_nodes[idx];
@@ -808,15 +792,26 @@ public:
     }
   }
 
-  void map_points_to_regularized_polygons(const std::size_t polygon_index, std::vector<Point_3>& pts, std::vector<std::pair<Index, std::vector<std::size_t> > > &mapping) {
+  /*!
+  \brief maps points onto the faces of the input polygon 'polygon_index' in the partition
+
+  \param polygon_index
+  index of the regularized input polygon.
+
+  \param pts
+  points to be mapped onto the faces of the partition.
+
+  \param mapping
+  resulting mapping vector containing one pair for each face in the partition containing points from pts.
+
+  \pre successful partition
+  */
+  void map_points_to_regularized_polygons(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<Index, std::vector<std::size_t> > > &mapping) {
     std::vector<Index> faces;
 
     if (polygon_index >= m_input_planes.size()) {
       assert(false);
     }
-
-    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
-    //ToDo I need to check whether the current way provides all faces as some faces may have been added during the make_conformal step
 
     for (std::size_t idx : m_partitions) {
       const Sub_partition& p = m_partition_nodes[idx];
@@ -980,22 +975,32 @@ public:
     }
   }
 
+  /*!
+  \brief provides the exact 'Plane_3' for a regularized input polygon.
+
+  \param it
+  output iterator.
+  */
   const typename Intersection_kernel::Plane_3 &regularized_plane(std::size_t polygon_index) const {
     return m_input_planes[polygon_index];
   }
 
+  /*!
+  \brief provides the mapping of regularized input planes to inserted input planes.
+
+  \return a vector containing the indices of input polygons for each regularized input polygon.
+
+  */
   const std::vector<std::vector<std::size_t> > &regularized_input_mapping() const {
     return m_regularized2input;
   }
 
-#ifndef DOXYGEN_RUNNING
   /*!
   \brief Mapping of a vertex index to its position.
 
-  @return
-   vector of points.
+  \return 'GeomTraits::Point_3' of a vertex.
 
-    \pre successful partition
+  \pre successful partition
   */
   const Point_3& vertex(const Index& vertex_index) const {
     return m_partition_nodes[vertex_index.first].m_data->vertices()[vertex_index.second];
@@ -1004,23 +1009,25 @@ public:
   /*!
   \brief Mapping of a vertex index to its exact position.
 
-  @return
-   vector of points.
+  \return 'Intersection_kernel::Point_3' of a vertex.
 
-    \pre successful partition
+  \pre successful partition
   */
   const typename Intersection_kernel::Point_3& exact_vertex(const Index& vertex_index) const {
     return m_partition_nodes[vertex_index.first].m_data->exact_vertices()[vertex_index.second];
   }
 
   /*!
-  \brief Vertices of a face.
+  \brief Vertex positions of a face of the kinetic partition.
 
-  \param volume_index
-   index of the query volume.
+  \tparam OutputIterator
+  must be an output iterator to which `GeomTraits::Point_3` can be assigned.
 
-  @return
-   vector of face indices.
+  \param face_index
+   index of the query face.
+
+  \param it
+  output iterator.
 
   \pre successful partition
   */
@@ -1030,12 +1037,40 @@ public:
       *it++ = m_partition_nodes[p.first].m_data->vertices()[p.second];
   }
 
+  /*!
+  \brief Vertices of a face of the kinetic partition.
+
+  \tparam OutputIterator
+  must be an output iterator to which `Index` can be assigned.
+
+  \param face_index
+   index of the query face.
+
+  \param it
+  output iterator.
+
+  \pre successful partition
+  */
   template<class OutputIterator>
   void vertex_indices(const Index& face_index, OutputIterator it) const {
   for (auto& i : m_partition_nodes[face_index.first].m_data->face_to_vertices()[face_index.second])
     *it++ = std::make_pair(face_index.first, i);
   }
 
+  /*!
+  \brief Exact vertex positions of a face of the kinetic partition.
+
+  \tparam OutputIterator
+  must be an output iterator to which `Intersection_kernel::Point_3` can be assigned.
+
+  \param face_index
+   index of the query face.
+
+  \param it
+  output iterator.
+
+  \pre successful partition
+  */
   template<class OutputIterator>
   void exact_vertices(const Index& face_index, OutputIterator it) const {
 
@@ -1043,6 +1078,26 @@ public:
       *it++ = m_partition_nodes[p.first].m_data->exact_vertices()[p.second];
   }
 
+  /*!
+  \brief Vertices and their exact positions of a face of the kinetic partition.
+
+  \tparam OutputIterator
+  must be an output iterator to which `Intersection_kernel::Point_3` can be assigned.
+
+  \tparam IndexOutputIterator
+  must be an output iterator to which `Index` can be assigned.
+
+  \param face_index
+   index of the query face.
+
+  \param it
+  output iterator for vertex positions.
+
+  \param iit
+  output iterator for vertices.
+
+  \pre successful partition
+  */
   template<class OutputIterator, class IndexOutputIterator>
   void exact_vertices(const Index& face_index, OutputIterator pit, IndexOutputIterator iit) const {
     const auto& v = m_partition_nodes[face_index.first].m_data->exact_vertices();
@@ -1053,28 +1108,16 @@ public:
   }
 
   /*!
-  \brief Vertex indices of face.
+  \brief Face indices of a volume.
 
-  \param face_index
-   index of the query face.
-
-  @return
-   vector of vertex indices.
-
-  \pre successful partition
-  */
-  /*const std::vector<Index>& vertices(const Index &face_index) const {
-    return m_data.face_to_vertices()[face_index];
-  }*/
-
-  /*!
-  \brief Face indices of the volume.
+  \tparam OutputIterator
+  must be an output iterator to which `Index` can be assigned.
 
   \param volume_index
    index of the query volume.
 
-  @return
-   vector of face indices.
+  \param it
+  output iterator.
 
   \pre successful partition
   */
@@ -1087,6 +1130,17 @@ public:
       *it++ = std::make_pair(p.first, i);
   }
 
+  /*!
+  \brief Retrieves all unique faces of the partition. Unique means that the shared face between two adjacent volumes is only contained once.
+
+  \tparam OutputIterator
+  must be an output iterator to which `Index` can be assigned.
+
+  \param it
+  output iterator.
+
+  \pre successful partition
+  */
   template<class OutputIterator>
   void unique_faces(OutputIterator it) const {
     for (std::size_t i = 0; i < m_partition_nodes.size(); i++) {
@@ -1103,18 +1157,18 @@ public:
   /*!
   \brief Indices of adjacent volumes. Negative indices correspond to the empty spaces behind the sides of the bounding box.
 
-    \param face_index
-    index of the query face.
-
-    @return
-    pair of adjacent volumes.
-
     -1 zmin
     -2 ymin
     -3 xmax
     -4 ymax
     -5 xmin
     -6 zmax
+
+    \param face_index
+    index of the query face.
+
+    @return
+    pair of adjacent volumes.
 
     \pre successful partition
   */
@@ -1136,8 +1190,8 @@ public:
     //return std::pair<Index, Index>(std::make_pair(face_index.first, p.first), std::make_pair(face_index.first, p.second));// m_data.face_to_volumes()[face_index];
   }
 
-  /*!
-  \brief Retrieves the support plane generated from the input polygon.
+  /*
+  \brief Retrieves the support plane generated from regularized input polygon.
 
   \param input_polygon_index
    index of the input polygon.
@@ -1146,14 +1200,12 @@ public:
    index into polygon_map provided on initialization.
 
   \pre successful partition
-  */
+
   std::size_t support_plane_index(const std::size_t input_polygon_index) const {
       const int support_plane_idx = m_data.support_plane_index(input_polygon_index);
       CGAL_assertion(support_plane_idx >= 6);
       return support_plane_idx;
-  }
-
-#endif
+  }*/
 
   /*!
    \brief creates a linear cell complex from the kinetic partition.
@@ -3185,8 +3237,8 @@ private:
       std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
     }
 
-    m_octree = std::make_unique<Octree>(CGAL::Orthtree_traits_polygons<Kernel>(m_points, m_polygons));
-    m_octree->refine(3, 40);
+    m_octree = std::make_unique<Octree>(CGAL::Orthtree_traits_polygons<Kernel>(m_points, m_polygons, m_parameters.bbox_dilation_ratio));
+    m_octree->refine(0, 40);
 
     /*
     // Collect all the leaf nodes
