@@ -125,8 +125,6 @@ public:
     FT distance_tolerance;
     FT angle_tolerance;
 
-    std::size_t actual_input_plane;
-
     int k;
   };
 
@@ -176,7 +174,6 @@ public:
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
     m_data->angle_tolerance = 0;
-    m_data->actual_input_plane = -1;
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -483,10 +480,6 @@ public:
 
   void set_crossed_line(std::size_t line) {
     m_data->crossed_lines.insert(line);
-  }
-
-  void set_input_plane(std::size_t input_plane_idx) {
-    m_data->actual_input_plane = input_plane_idx;
   }
 
   template<typename Pair>

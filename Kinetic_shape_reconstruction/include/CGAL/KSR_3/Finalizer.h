@@ -104,8 +104,10 @@ public:
   void create_polyhedra() {
 
     if (m_parameters.debug) {
-      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
+      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-partition-sp" + std::to_string(sp));
+        std::cout << sp << " has " << m_data.support_plane(sp).data().mesh.number_of_faces() << " faces" << std::endl;
+      }
     }
 
     std::cout.precision(20);
@@ -113,7 +115,6 @@ public:
     CGAL_assertion(m_data.check_interior());
     CGAL_assertion(m_data.check_vertices());
     CGAL_assertion(m_data.check_edges());
-    m_data.check_edges();
 
     merge_facets_connected_components();
 
@@ -619,6 +620,7 @@ private:
       std::vector<Point_3> pts;
       pts.push_back(s);
       pts.push_back(t);
+      
       if (visited_halfedges[h])
         continue;
 
@@ -659,13 +661,24 @@ private:
           else
             n = mesh.next(mesh.opposite(n));
 
+          Halfedge p = mesh.prev(n);
+
           //Point_3 tn2 = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
           visited_halfedges[n] = true;
+
+          Face_index fn = mesh.face(n);
+          typename boost::graph_traits<typename Support_plane::Mesh>::faces_size_type cn = fcm[fn];
 
           f_other = mesh.face(mesh.opposite(n));
           if (f_other == mesh.null_face())
             break;
           c_other = fcm[f_other];
+          if (c0 == c_other && ecm[Edge_index(n>>1)])
+            std::cout << "edge and face constraint map inconsistent1" << std::endl;
+
+          if (c0 != c_other && !ecm[Edge_index(n >> 1)])
+            std::cout << "edge and face constraint map inconsistent2" << std::endl;
+
         } while (c0 == c_other && n != h);
 
         if (n == h) {
@@ -731,7 +744,7 @@ private:
     }
 
     if (!mesh.is_valid(true)) {
-      std::cout << "mesh is not valid after merging faces of sp " << sp_idx << std::endl;
+      std::cout << "mesh is not valid after merging faces of sp " << sp_idx << " in " << m_data.prefix() << std::endl;
     }
   }
 
@@ -740,8 +753,6 @@ private:
     for (std::size_t j : planes) {
       if (sp == j)
         continue;
-
-      m_data.support_plane(j).mesh().is_valid(true);
 
       for (auto e2 : m_data.support_plane(j).mesh().edges()) {
         if (iedge == m_data.iedge(PEdge(j, e2))) {

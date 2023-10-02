@@ -420,11 +420,6 @@ public:
 
     typename Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
 
-    if (kinetic_interval.size() != 0) {
-      int a;
-      a = 3;
-    }
-
     Point_2 s = sp.to_2d(from_exact(point_3(m_intersection_graph.source(edge))));
     Point_2 t = sp.to_2d(from_exact(point_3(m_intersection_graph.target(edge))));
     Vector_2 segment = t - s;
@@ -493,15 +488,15 @@ public:
         time[i] = (std::numeric_limits<double>::max)();
         continue;
       }
-      const IkPoint_2* p = nullptr;
+      IkPoint_2 p;
       if (CGAL::assign(p, result)) {
         FT l = CGAL::sqrt(sp.data().original_vectors[idx].squared_length());
 
-        double l2 = CGAL::to_double((*p - sp.data().original_rays[idx].point(0)).squared_length());
+        double l2 = CGAL::to_double((p - sp.data().original_rays[idx].point(0)).squared_length());
         time[i] = l2 / l;
         CGAL_assertion(0 <= time[i]);
-        intersections[i] = from_exact(*p);
-        intersections_bary[i] = abs(((from_exact(*p) - s) * segment)) / segment_length;
+        intersections[i] = from_exact(p);
+        intersections_bary[i] = abs(((from_exact(p) - s) * segment)) / segment_length;
         if (!ccw)
           intersections_bary[i] = 1.0 - intersections_bary[i];
       }
@@ -579,10 +574,11 @@ public:
     }
 
     if (kinetic_interval.size() > 4) {
-      if (kinetic_interval[2].first > kinetic_interval[1].first) {
-        int a;
-        a = 2;
-      }
+      for (std::size_t i = 1; i < kinetic_interval.size(); i++)
+        if (kinetic_interval[i].first > kinetic_interval[i - 1].first) {
+          int a;
+          a = 2;
+        }
     }
 
     CGAL_assertion(0 <= event.intersection_bary && event.intersection_bary <= 1);
@@ -1863,6 +1859,7 @@ public:
     bool success = true;
 
     std::vector<PFace> nfaces;
+    std::size_t idx = 0;
     for (const auto edge : m_intersection_graph.edges()) {
       incident_faces(edge, nfaces);
       if (nfaces.size() == 1) {
@@ -1873,6 +1870,7 @@ public:
         "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
         success = false;
       }
+      idx++;
     }
     return success;
   }

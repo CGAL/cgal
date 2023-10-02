@@ -143,6 +143,13 @@ public:
     CGAL_assertion(m_data.check_intersection_graph());
 
     m_data.initialization_done();
+
+    if (m_parameters.debug) {
+      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
+        dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "before-partition-sp" + std::to_string(sp));
+        std::cout << sp << " has " << m_data.support_plane(sp).data().mesh.number_of_faces() << " faces" << std::endl;
+      };
+    }
   }
 
   void clear() {
@@ -389,6 +396,7 @@ private:
       if (sp.is_bbox())
         continue;
 
+      // Until here the mesh of each support plane contains the input polygon.
       sp.mesh().clear_without_removing_property_maps();
 
       std::map<std::size_t, std::vector<IEdge> > line2edges;
@@ -439,24 +447,24 @@ private:
             const Vector_2 edge_dir = sp.original_edge_direction((v + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size(), v);
             typename Intersection_kernel::Segment_2 seg(to_exact(prev), to_exact(p));
             const auto result = CGAL::intersection(seg, exact_line);
-            const typename Intersection_kernel::Point_2* intersection;
+            typename Intersection_kernel::Point_2 intersection;
 
             if (result && CGAL::assign(intersection, result)) {
-              typename Intersection_kernel::FT eproj = (*intersection - exact_line.point()) * ldir;
+              typename Intersection_kernel::FT eproj = (intersection - exact_line.point()) * ldir;
               FT proj = to_inexact(eproj);
               if (eproj < emin) {
-                eminp = *intersection;
+                eminp = intersection;
                 emin = eproj;
-                minp = to_inexact(*intersection);
+                minp = to_inexact(intersection);
                 min = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
                 assert(p != 0);
                 min_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
               }
               if (emax < eproj) {
-                emaxp = *intersection;
+                emaxp = intersection;
                 emax = eproj;
-                maxp = to_inexact(*intersection);
+                maxp = to_inexact(intersection);
                 max = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
                 assert(p != 0);
@@ -653,7 +661,6 @@ private:
     for (std::size_t i = 0; i < 6; i++)
       for (std::size_t j = 0; j < m_input_planes.size(); j++)
           if (m_data.support_plane(i).exact_plane() == m_input_planes[j] || m_data.support_plane(i).exact_plane() == m_input_planes[j].opposite()) {
-            m_data.support_plane(i).set_input_plane(j);
             m_data.input_polygon_map()[j] = i;
             remove[j] = true;
           }
