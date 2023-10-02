@@ -824,7 +824,7 @@ public:
    *   \cgalParamNBegin{optimize_boundary_anchor_location}
    *     \cgalParamDescription{If `true`, optimize the anchor locations of boundary vertices}
    *     \cgalParamType{`Boolean`}
-   *     \cgalParamDefault{`true`}
+   *     \cgalParamDefault{`optimize_anchor_location`}
    *   \cgalParamNEnd
    *
    *   \cgalParamNBegin{pca_plane}
@@ -844,7 +844,7 @@ public:
     const bool relative_to_chord = choose_parameter(get_parameter(np, internal_np::relative_to_chord), false);
     const bool with_dihedral_angle = choose_parameter(get_parameter(np, internal_np::with_dihedral_angle), false);
     const bool optimize_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_anchor_location), true);
-    const bool optimize_boundary_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_boundary_anchor_location), true);
+    const bool optimize_boundary_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_boundary_anchor_location), optimize_anchor_location);
     const bool pca_plane = choose_parameter(get_parameter(np, internal_np::pca_plane), false);
 
     // compute averaged edge length, used in chord subdivision
