@@ -30,7 +30,7 @@ int main(int argc, char** argv)
   std::vector<std::array<std::size_t, 3> > faces;
   if(!CGAL::IO::read_polygon_soup(filename, points, faces) || faces.empty())
   {
-    std::cerr << "Invalid input." << std::endl;
+    std::cerr << "Invalid input:" << filename << std::endl;
     return EXIT_FAILURE;
   }
 

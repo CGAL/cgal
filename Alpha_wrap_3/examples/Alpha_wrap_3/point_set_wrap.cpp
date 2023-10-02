@@ -23,7 +23,7 @@ int main(int argc, char** argv)
   Point_container points;
   if(!CGAL::IO::read_points(filename, std::back_inserter(points)) || points.empty())
   {
-    std::cerr << "Invalid input." << std::endl;
+    std::cerr << "Invalid input:" << filename << std::endl;
     return EXIT_FAILURE;
   }
 

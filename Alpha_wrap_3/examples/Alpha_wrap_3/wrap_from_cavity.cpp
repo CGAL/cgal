@@ -25,7 +25,7 @@ int main(int argc, char** argv)
   if(!PMP::IO::read_polygon_mesh(filename, input) ||
      is_empty(input) || !is_triangle_mesh(input))
   {
-    std::cerr << "Invalid input." << std::endl;
+    std::cerr << "Invalid input:" << filename << std::endl;
     return EXIT_FAILURE;
   }
 
