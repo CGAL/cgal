@@ -252,10 +252,13 @@ public:
   \brief constructs a kinetic shape partition object and initializes it.
 
   \tparam InputRange
-  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
+  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
   \tparam PolygonRange
-  contains index ranges to form polygons by providing indices into InputRange
+  contains index ranges to form polygons by providing indices into InputRange.
+
+  \tparam PolygonRange
+  provides the `typename Intersection_kernel::Plane_3>` for each polygon.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -307,9 +310,15 @@ public:
   template<
     typename InputRange,
     typename PolygonRange,
+#ifdef DOXYGEN_RUNNING
+    typename PlaneRange,
+#endif
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
     const InputRange& input_range,
+#ifdef DOXYGEN_RUNNING
+    const PlaneRange& plane_range,
+#endif
     const PolygonRange polygon_range,
     const NamedParameters & np = CGAL::parameters::default_values()) :
     m_parameters(
@@ -706,6 +715,8 @@ public:
   /*!
   \brief returns the number of vertices in the kinetic partition.
 
+  \warning Replaced by `lcc.one_dart_per_cell<1>().size()`
+
   \pre successful partition
   */
   std::size_t number_of_vertices() const {
@@ -715,6 +726,8 @@ public:
   /*!
   \brief returns the number of faces in the kinetic partition.
 
+  \warning Replaced by `lcc.one_dart_per_cell<2>().size()`
+
   \pre successful partition
   */
   std::size_t number_of_faces() const {
@@ -723,6 +736,8 @@ public:
 
   /*!
   \brief returns the number of volumes created by the kinetic partition.
+
+  \warning Replaced by `lcc.one_dart_per_cell<3>().size()`
 
   \pre successful partition
   */
@@ -735,6 +750,8 @@ public:
 
   \param volume_index
   index of the volume.
+
+  \warning Removed. New property for each 3-cell: `Point_3 CMap::attribute<3>(d).centroid`
 
   \pre successful partition
   */
@@ -755,6 +772,8 @@ public:
 
   \param it
   output iterator.
+
+  \warning Removed. Two new properties for each 2-cell: `size_t CMap::attribute<2>(d).input_polygon`, `bool CMap::attribute<2>(d).overlaps_input_polygon`
 
   \pre successful partition
   */
@@ -793,7 +812,7 @@ public:
   }
 
   /*!
-  \brief maps points onto the faces of the input polygon 'polygon_index' in the partition
+  \brief maps points onto the faces of the regularized input polygon 'polygon_index' in the partition
 
   \param polygon_index
   index of the regularized input polygon.
@@ -803,6 +822,8 @@ public:
 
   \param mapping
   resulting mapping vector containing one pair for each face in the partition containing points from pts.
+
+  \warning Removed. Two new properties for each 2-cell: `size_t CMap::attribute<2>(d).input_polygon`, `bool CMap::attribute<2>(d).overlaps_input_polygon`
 
   \pre successful partition
   */
@@ -981,15 +1002,19 @@ public:
   \param polygon_index
   index of regularized input polygon.
 
+  \warning Removed. The user will provide planes for each input polygon.
+
   */
   const typename Intersection_kernel::Plane_3 &regularized_plane(std::size_t polygon_index) const {
     return m_input_planes[polygon_index];
   }
 
   /*!
-  \brief provides the mapping of regularized input planes to inserted input planes.
+  \brief provides the mapping of regularized input polygons to inserted input polygons.
 
   \return a vector containing the indices of input polygons for each regularized input polygon.
+
+  \warning Removed as regularization is moved out of KSP.
 
   */
   const std::vector<std::vector<std::size_t> > &regularized_input_mapping() const {
@@ -1004,6 +1029,8 @@ public:
 
   \return `GeomTraits::Point_3` of a vertex.
 
+  \warning Removed\n Replaced by to_inexact(CMap::attribute<0>(d).point)
+
   \pre successful partition
   */
   const Point_3& vertex(const Index& vertex_index) const {
@@ -1017,6 +1044,8 @@ public:
   query vertex.
 
   \return `IntersectionTraits::Point_3` of a vertex.
+
+  \warning Replaced by `CMap::attribute<0>(d).point`.
 
   \pre successful partition
   */
@@ -1035,6 +1064,8 @@ public:
 
   \param it
   output iterator.
+
+  \warning Removed\n Replaced by `for (auto d : CMap::darts_of_cell<2, 3>(d)) *it++ = to_inexact(CMap::attribute<0>(d).point);`
 
   \pre successful partition
   */
@@ -1056,6 +1087,8 @@ public:
   \param it
   output iterator.
 
+  \warning Replaced by `CMap::darts_of_cell<2, 3>(d)`
+
   \pre successful partition
   */
   template<class OutputIterator>
@@ -1075,6 +1108,8 @@ public:
 
   \param it
   output iterator.
+
+  \warning Replaced by `for (auto d : CMap::darts_of_cell<2, 3>(d)) *it++ = CMap::attribute<0>(d).point;`
 
   \pre successful partition
   */
@@ -1103,6 +1138,8 @@ public:
   \param iit
   output iterator for vertices.
 
+  \warning Removed\n
+
   \pre successful partition
   */
   template<class OutputIterator, class IndexOutputIterator>
@@ -1126,6 +1163,8 @@ public:
   \param it
   output iterator.
 
+  \warning Replaced by `CMap::one_dart_per_incident_cell<2, 3, 3>(d)`
+
   \pre successful partition
   */
   template<class OutputIterator>
@@ -1146,6 +1185,8 @@ public:
   \param it
   output iterator.
 
+  \warning Removed as identical to faces().
+
   \pre successful partition
   */
   template<class OutputIterator>
@@ -1164,18 +1205,20 @@ public:
   /*!
   \brief Indices of adjacent volumes. Negative indices correspond to the empty spaces behind the sides of the bounding box.
 
-    -1 zmin\n
-    -2 ymin\n
-    -3 xmax\n
-    -4 ymax\n
-    -5 xmin\n
-    -6 zmax\n
+    `-1` zmin\n
+    `-2` ymin\n
+    `-3` xmax\n
+    `-4` ymax\n
+    `-5` xmin\n
+    `-6` zmax\n
 
     \param face_index
     index of the query face.
 
     @return
     pair of adjacent volumes.
+
+    \warning Replaced by `beta<3>(d)` as d is part of one 3-cell already
 
     \pre successful partition
   */
