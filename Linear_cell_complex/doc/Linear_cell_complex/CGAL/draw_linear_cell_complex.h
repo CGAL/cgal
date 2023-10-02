@@ -7,6 +7,7 @@ opens a new window and draws `alcc`, a model of the `LinearCellComplex` concept.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 \tparam LCC a model of the `LinearCellComplex` concept.
 \param alcc the linear cell complex to draw.
+\param gs_options graphics scene options.
 
 */
   template<class LCC, class GSOptions>
@@ -14,6 +15,12 @@ Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5
 
 /*!
 \ingroup PkgDrawLinearCellComplex
+
+Add in the given graphics scene the elements of alcc.
+
+\param alcc the linear cell complex to draw.
+\param graphics_scene the graphics scene.
+\param gs_options graphics scene options.
 
 */
   template<class LCC, class BufferType, class GSOptions>
