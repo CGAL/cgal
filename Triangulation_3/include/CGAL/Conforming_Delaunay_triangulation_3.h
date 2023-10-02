@@ -602,7 +602,7 @@ protected:
           {
             const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
             const auto inter_point = translate_functor(orig_pa, scaled_vector_functor(vector_orig_ab, lambda));
-            const auto dist_a_result = CGAL::approximate_sqrt(sq_length_functor(vector_functor(orig_pa, inter_point)));
+            const auto dist_a_result = CGAL::approximate_sqrt(sq_length_functor(vector_functor(pa, inter_point)));
             const auto ratio = dist_a_result / length_ab;
             const auto result_point = (ratio < 0.2 || ratio > 0.8)
                                           ? midpoint_functor(pa, pb)
