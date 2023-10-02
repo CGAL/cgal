@@ -4,7 +4,9 @@
 
 A concept that describes the set of types required by the `CGAL::Kinetic_shape_partition_3`.
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Kinetic_shape_partition_3`
 */

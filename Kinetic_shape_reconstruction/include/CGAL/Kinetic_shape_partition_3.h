@@ -978,8 +978,9 @@ public:
   /*!
   \brief provides the exact 'Plane_3' for a regularized input polygon.
 
-  \param it
-  output iterator.
+  \param polygon_index
+  index of regularized input polygon.
+
   */
   const typename Intersection_kernel::Plane_3 &regularized_plane(std::size_t polygon_index) const {
     return m_input_planes[polygon_index];
@@ -998,6 +999,9 @@ public:
   /*!
   \brief Mapping of a vertex index to its position.
 
+  \param vertex_index
+  query vertex.
+
   \return 'GeomTraits::Point_3' of a vertex.
 
   \pre successful partition
@@ -1008,6 +1012,9 @@ public:
 
   /*!
   \brief Mapping of a vertex index to its exact position.
+
+  \param vertex_index
+  query vertex.
 
   \return 'Intersection_kernel::Point_3' of a vertex.
 
@@ -1090,7 +1097,7 @@ public:
   \param face_index
    index of the query face.
 
-  \param it
+  \param pit
   output iterator for vertex positions.
 
   \param iit

@@ -978,6 +978,9 @@ public:
     there is no adjacent node in that direction, it returns a null
     node.
 
+    \param n
+    query node.
+
     \param direction which way to find the adjacent node relative to
     this one. Each successive bit selects the direction for the
     corresponding dimension: for an Octree in 3D, 010 means: negative
