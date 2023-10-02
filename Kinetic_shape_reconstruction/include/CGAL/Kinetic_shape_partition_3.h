@@ -830,10 +830,10 @@ public:
   }
 
   /*!
-  \brief maps points onto the faces of the regularized input polygon 'polygon_index' in the partition
+  \brief maps points onto the faces of the input polygon 'polygon_index' in the partition
 
   \param polygon_index
-  index of the regularized input polygon.
+  index of the input polygon.
 
   \param pts
   points to be mapped onto the faces of the partition.
@@ -1260,7 +1260,7 @@ public:
   }
 
   /*
-  \brief Retrieves the support plane generated from regularized input polygon.
+  \brief Retrieves the support plane generated from input polygon.
 
   \param input_polygon_index
    index of the input polygon.
