@@ -1357,10 +1357,10 @@ private:
       const bool test = !fail_upper && !fail_lower;
       if(fail_upper || fail_lower) {
         if(fail_upper) {
-          std::cerr << "ERROR: Face is not a facet of the upper cavity\n";
+          std::cerr << "NOTE: Face is not a facet of the upper cavity\n";
         }
         if(fail_lower) {
-          std::cerr << "ERROR: Face is not a facet of the lower cavity\n";
+          std::cerr << "NOTE: Face is not a facet of the lower cavity\n";
         }
         // debug_region_size_4();
         // dump_region(face_index, region_count, cdt_2);
@@ -1938,7 +1938,7 @@ private:
         restore_subface_region(face_index, region_count++, non_const_cdt_2, fh_region);
       }
       catch(Next_region& e) {
-        std::cerr << "ERROR: " << e.what() << " in sub-region " << (region_count - 1)
+        std::cerr << "NOTE: " << e.what() << " in sub-region " << (region_count - 1)
                   << " of face #F" << face_index << '\n';
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
         std::cerr << "  constrained edges are:\n";
