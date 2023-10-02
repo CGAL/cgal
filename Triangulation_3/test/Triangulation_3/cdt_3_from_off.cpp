@@ -102,16 +102,23 @@ int main(int argc, char* argv[])
   if(ratio == 0.) {
     return go(std::move(mesh), output_filename);
   }
-  const auto nb_buckets = static_cast<int>(std::round(1 / ratio));
+  auto nb_buckets = static_cast<int>(std::floor(1 / ratio)) + 1;
   std::cerr << "RATIO: " << ratio << '\n';
-  std::cerr << "NB BUCKETS: " << nb_buckets << '\n';
 
   const Mesh orig_mesh{mesh};
   Mesh bad_mesh{mesh};
   for(int bucket = 0; bucket < nb_buckets;) {
+    const auto nb_faces = mesh.number_of_faces();
+    auto nb_to_skip = static_cast<int>(std::round(nb_faces * ratio));
+    if(nb_to_skip < 1) {
+      nb_to_skip = 1;
+      nb_buckets = nb_faces;
+    }
+    if(bucket == 0) {
+      std::cerr << "NB BUCKETS: " << nb_buckets << '\n';
+    }
 
     auto simplify = [&](Mesh& m) {
-      const auto nb_to_skip = static_cast<int>(std::round(m.number_of_faces() * ratio));
       std::cerr << "nb_to_skip: " << nb_to_skip << '\n';
       std::cerr << "bucket: " << bucket << '\n';
       const auto start = (std::min)(bucket * nb_to_skip, static_cast<int>(m.number_of_faces()));
@@ -123,6 +130,10 @@ int main(int argc, char* argv[])
       }
       assert(m.is_valid(true));
       std::cerr << "number of faces: " << m.number_of_faces() << '\n';
+      if(m.number_of_faces() >= nb_faces) {
+        std::cerr << "ERROR: could not simplify mesh\n";
+        std::exit(EXIT_FAILURE);
+      }
     };
 
     simplify(mesh);
