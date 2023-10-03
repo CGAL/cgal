@@ -126,7 +126,7 @@ public:
                     get(m_vpmap, source(h, pmesh)));
   }
 
-  void update(const vertex_descriptor v, const PolygonMesh& pmesh)
+  void update(const vertex_descriptor /* v */, const PolygonMesh& /* pmesh */)
   {}
 
 private:

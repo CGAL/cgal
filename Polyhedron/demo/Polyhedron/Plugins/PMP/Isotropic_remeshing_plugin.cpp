@@ -1116,8 +1116,8 @@ private:
       const unsigned int nb_iter,
       const bool protect,
       const bool smooth_features)
-      : edges_only_(edges_only)
-      , edge_sizing_type_(edge_sizing_type)
+      : edge_sizing_type_(edge_sizing_type)
+      , edges_only_(edges_only)
       , target_length_(target_length)
       , error_tol_(error_tol)
       , min_length_(min_length)
@@ -1128,8 +1128,8 @@ private:
     {}
 
     Remesh_polyhedron_item(const Remesh_polyhedron_item& remesh)
-      : edges_only_(remesh.edges_only_)
-      , edge_sizing_type_(remesh.edge_sizing_type_)
+      : edge_sizing_type_(remesh.edge_sizing_type_)
+      , edges_only_(remesh.edges_only_)
       , target_length_(remesh.target_length_)
       , error_tol_(remesh.error_tol_)
       , min_length_(remesh.min_length_)
