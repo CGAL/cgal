@@ -22,8 +22,8 @@
 \cgalClassifedRefPages
 
 \cgalCRPSection{Classes}
-- `CGAL::Graphics_scene_options<DS, Vertex_descriptor, Edge_descriptor, Face_descriptor>`
-- `CGAL::Graphics_scene_options<DS, Vertex_descriptor, Edge_descriptor, Face_descriptor, Volume_descriptor>`
+- `CGAL::Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor>`
+- `CGAL::Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor, VolumeDescriptor>`
 - `CGAL::Graphics_scene<BufferType>`
 - `CGAL::Basic_viewer_qt<BufferType>`
 - `CGAL::QApplication_and_basic_viewer<BufferType>`
