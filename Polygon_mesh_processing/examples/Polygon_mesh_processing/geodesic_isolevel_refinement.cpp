@@ -3,7 +3,7 @@
 
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/refine_mesh_at_isolevel.h>
+#include <CGAL/Polygon_mesh_processing/refine_mesh_at_isolevel.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <fstream>
@@ -21,7 +21,7 @@ typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<Triangle_mesh> He
 
 int main(int argc, char* argv[])
 {
-  const char* filename = argv[1];
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Triangle_mesh tm;
   if(!CGAL::IO::read_polygon_mesh(filename, tm) ||
@@ -31,33 +31,42 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
+  // default isovalues for cutting the mesh
+  std::vector<double> isovalues = {0.001, 0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 10};
+
+  if (argc>2)
+  {
+    isovalues.clear();
+    for (int i=2; i<argc; ++i)
+      isovalues.push_back(atof(argv[i]));
+  }
+
   //property map for the distance values to the source set
   Vertex_distance_map vertex_distance = tm.add_property_map<vertex_descriptor, double>("v:distance", 0).first;
 
   Heat_method hm(tm);
 
-  //add the first vertex as the source set
+  //use heat method to compute approximated geodesic distances to the source vertex `s`
   vertex_descriptor s = *(vertices(tm).first);
   hm.add_source(s);
   hm.estimate_geodesic_distances(vertex_distance);
 
-  //property map for the constrained status of edges
+  // property map to flag new cut edge added in the mesh
   auto ecm = tm.add_property_map<edge_descriptor, bool>("e:is_constrained", 0).first;
 
+  // refine the mesh along isovalues
+  for (double isovalue : isovalues)
+    CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel(tm, vertex_distance, isovalue, CGAL::parameters::edge_is_constrained_map(ecm));
 
-  for (int i=2; i<argc; ++i)
-    CGAL::Polygon_mesh_processing::experimental::refine_mesh_at_isolevel(tm, vertex_distance, atof(argv[i]), CGAL::parameters::edge_is_constrained_map(ecm));
-
+  // split the mesh in connected components bounded by the isocurves
   std::vector<Triangle_mesh> splitted;
-
   CGAL::Polygon_mesh_processing::split_connected_components(tm, splitted, CGAL::parameters::edge_is_constrained_map(ecm));
 
-#ifdef CGAL_TEST_SUITE
-  assert(splitted.size() == 22);
-#else
+  assert(argc!=1 || splitted.size() == 22);
+
+  // export each submesh in a file
   for(std::size_t i=0; i<splitted.size(); ++i)
     std::ofstream("out_"+std::to_string(i)+".off") << std::setprecision(17) << splitted[i];
-#endif
 
   return 0;
 }

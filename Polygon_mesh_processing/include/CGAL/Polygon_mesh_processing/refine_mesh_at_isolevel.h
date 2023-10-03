@@ -1,4 +1,4 @@
-// Copyright (c) 2021 GeometryFactory (France).
+// Copyright (c) 2021-2023 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -19,29 +19,38 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-namespace experimental {
 
-/*! \ingroup PkgPolygonMeshProcessingRef
- * Function object that computes the intersection of a plane with
- * a triangulated surface mesh.
+/*!
+ * \ingroup PkgPolygonMeshProcessingRef
+ *
+ * refines `pm` by adding new vertices on edges having their incident vertices associated with
+ * values respectively larger and smaller than `isovalue` in `value_map`.
+ * The placement of new vertices on edges will be done by linear interpolation
+ * using the aforementioned values.
+ * New vertices will be associated `isovalue` in `value_map` when created.
+ * Additionally new edges will be added by connecting new vertices created sharing
+ * a common incident face. Note that in case more that two new vertices are added
+ * on a face boundary, no edges will be created in that face.
  *
  * @tparam PolygonMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
- * @tparam ValueMap a model of the concept `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
- *                  as key type and with its value type being model of `LessThanComparable`.
+ * @tparam ValueMap a model of the concept `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                  as key type and with its value type being the type of the coordinates of points associated with vertices
+ *                  in the vertex map provided to the `vertex_point_map()` named parameter.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters" for `pm`
  *
- * @param pm the polygon mesh to be refined
- * @param value_map the property map containing value at each vertex for a given function defined over the mesh
- * @param isovalue the value used to defined the cut locus of edges having their incident vertices associated with
- *                 values respectively larger and smaller than `isovalue` in `value_map`
+ * @param pm the polygon mesh to be refined.
+ * @param value_map the property map containing value at each vertex for a given function defined over the mesh.
+ * @param isovalue the value used to defined
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
- *     \cgalParamDescription{an ouput property map associating `true` to all new edges added by the cut, and false to input edges.
+ *     \cgalParamDescription{an ouput property map associating `true` to all new edges added by the cut, and false to input edges.}
  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
  *     \cgalParamDefault{No marks on edges will be put}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -53,7 +62,7 @@ namespace experimental {
  * \cgalNamedParamsEnd
  *
  */
-template <class PolygonMesh, class ValueMap, class NamedParameters = parameter::Default_named_parameters>
+template <class PolygonMesh, class ValueMap, class NamedParameters = parameters::Default_named_parameters>
 void refine_mesh_at_isolevel(PolygonMesh& pm,
                              ValueMap value_map,
                              typename boost::property_traits<ValueMap>::value_type isovalue,
@@ -63,6 +72,7 @@ void refine_mesh_at_isolevel(PolygonMesh& pm,
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+  typedef typename boost::property_map<ValueMap>::value_type FT;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -113,9 +123,9 @@ void refine_mesh_at_isolevel(PolygonMesh& pm,
   for (edge_descriptor e : to_split)
   {
     vertex_descriptor src = source(e, pm), tgt = target(e, pm);
-    double ds = get(value_map, src);
-    double dt = get(value_map, tgt);
-    double alpha = (isovalue - dt) / (ds - dt);
+    FT ds = get(value_map, src);
+    FT dt = get(value_map, tgt);
+    FT alpha = (isovalue - dt) / (ds - dt);
     halfedge_descriptor hnew = CGAL::Euler::split_edge(halfedge(e, pm), pm);
     put(vpm, target(hnew, pm), barycenter(get(vpm,src), alpha, get(vpm, tgt), 1-alpha));
     put(value_map,  target(hnew, pm) , isovalue);
@@ -146,7 +156,7 @@ void refine_mesh_at_isolevel(PolygonMesh& pm,
   }
 }
 
-} } } // end of CGAL::Polygon_mesh_processing::experimental
+} } // end of CGAL::Polygon_mesh_processing
 
 
 #endif
