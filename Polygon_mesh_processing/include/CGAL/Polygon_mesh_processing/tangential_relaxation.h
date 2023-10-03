@@ -119,10 +119,12 @@ struct Allow_all_moves{
 *
 * \todo check if it should really be a triangle mesh or if a polygon mesh is fine
 */
-template <typename VertexRange, class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
+template <typename VertexRange,
+          class TriangleMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 void tangential_relaxation(const VertexRange& vertices,
                            TriangleMesh& tm,
-                           const NamedParameters& np = parameters::default_values())
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -131,17 +133,17 @@ void tangential_relaxation(const VertexRange& vertices,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type GT;
   GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
+  typedef typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::type VPMap;
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_property_map(vertex_point, tm));
 
   typedef Static_boolean_property_map<edge_descriptor, false> Default_ECM;
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
-      NamedParameters,
+      CGAL_NP_CLASS,
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint)
     > ::type ECM;
   ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
@@ -149,7 +151,7 @@ void tangential_relaxation(const VertexRange& vertices,
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
-      NamedParameters,
+      CGAL_NP_CLASS,
       Static_boolean_property_map<vertex_descriptor, false> // default (no constraint)
     > ::type VCM;
   VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
@@ -201,7 +203,7 @@ void tangential_relaxation(const VertexRange& vertices,
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::allow_move_functor_t,
-      NamedParameters,
+      CGAL_NP_CLASS,
       internal::Allow_all_moves// default
     > ::type Shall_move;
   Shall_move shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
@@ -281,8 +283,6 @@ void tangential_relaxation(const VertexRange& vertices,
             bary = squared_distance(p1, bary)<squared_distance(p2,bary)? p1:p2;
             barycenters.emplace_back(v, vn, bary);
           }
-
-
         }
       }
     }
@@ -417,11 +417,11 @@ void tangential_relaxation(const VertexRange& vertices,
 template <typename VertexRange,
           class TriangleMesh,
           class SizingFunction,
-          class NamedParameters = parameters::Default_named_parameters>
-void tangential_relaxation_with_sizing(const VertexRange& vertices,
-                                       TriangleMesh& tm,
-                                       const SizingFunction& sizing,
-                                       const NamedParameters& np = parameters::default_values())
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+void tangential_relaxation(const VertexRange& vertices,
+                           TriangleMesh& tm,
+                           const SizingFunction& sizing,
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -430,17 +430,17 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type GT;
   GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
+  typedef typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::type VPMap;
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
     get_property_map(vertex_point, tm));
 
   typedef Static_boolean_property_map<edge_descriptor, false> Default_ECM;
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
-    NamedParameters,
+    CGAL_NP_CLASS,
     Static_boolean_property_map<edge_descriptor, false> // default (no constraint)
   > ::type ECM;
   ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
@@ -448,7 +448,7 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::vertex_is_constrained_t,
-    NamedParameters,
+    CGAL_NP_CLASS,
     Static_boolean_property_map<vertex_descriptor, false> // default (no constraint)
   > ::type VCM;
   VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
@@ -500,7 +500,7 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::allow_move_functor_t,
-    NamedParameters,
+    CGAL_NP_CLASS,
     internal::Allow_all_moves// default
   > ::type Shall_move;
   Shall_move shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
@@ -634,7 +634,8 @@ void tangential_relaxation_with_sizing(const VertexRange& vertices,
 */
 template <class TriangleMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-void tangential_relaxation(TriangleMesh& tm, const CGAL_NP_CLASS& np = parameters::default_values())
+void tangential_relaxation(TriangleMesh& tm,
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
   tangential_relaxation(vertices(tm), tm, np);
 }
@@ -642,11 +643,11 @@ void tangential_relaxation(TriangleMesh& tm, const CGAL_NP_CLASS& np = parameter
 template <class TriangleMesh,
           typename SizingFunction,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-void tangential_relaxation_with_sizing(TriangleMesh& tm,
-                                       const SizingFunction& sizing,
-                                       const CGAL_NP_CLASS& np = parameters::default_values())
+void tangential_relaxation(TriangleMesh& tm,
+                           const SizingFunction& sizing,
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  tangential_relaxation_with_sizing(vertices(tm), tm, sizing, np);
+  tangential_relaxation(vertices(tm), tm, sizing, np);
 }
 
 } } // CGAL::Polygon_mesh_processing

@@ -129,7 +129,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::smooth_mesh()` (deprecated)
 - `CGAL::Polygon_mesh_processing::angle_and_area_smoothing()`
 - `CGAL::Polygon_mesh_processing::tangential_relaxation()`
-- `CGAL::Polygon_mesh_processing::tangential_relaxation_with_sizing()`
 - `CGAL::Polygon_mesh_processing::smooth_shape()`
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
 

@@ -1071,7 +1071,7 @@ namespace internal {
         std::cout << " using tangential relaxation weighted with the sizing field";
         std::cout << std::endl;
 #endif
-        tangential_relaxation_with_sizing(
+        tangential_relaxation(
           vertices(mesh_),
           mesh_,
           sizing,
