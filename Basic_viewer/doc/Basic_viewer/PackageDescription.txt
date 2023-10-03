@@ -28,7 +28,7 @@
 - `CGAL::Basic_viewer_qt<BufferType>`
 - `CGAL::QApplication_and_basic_viewer<BufferType>`
 
-\cgalCRPSubsection{Draw a Graphic Storage}
+\cgalCRPSubsection{Draw a Graphics Scene}
 
 - `CGAL::draw_graphics_scene()`
 
