@@ -379,7 +379,8 @@ void tangential_relaxation(const VertexRange& vertices,
 *
 *   \cgalParamNBegin{edge_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`.
-*                           The endpoints of a constrained edge cannot be moved by relaxation.}
+*                           The endpoints of a constrained edge cannot be moved by relaxation, unless `relax_constraints` is `true`.
+*                           The endpoints of a constrained polyline can never be moved by relaxation.
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no edges are constrained}

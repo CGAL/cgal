@@ -203,7 +203,7 @@ template<typename PolygonMesh
 void isotropic_remeshing(const FaceRange& faces
                        , SizingFunction& sizing
                        , PolygonMesh& pmesh
-                       , const NamedParameters& np)
+                       , const NamedParameters& np = parameters::default_values())
 {
   if (std::begin(faces)==std::end(faces))
     return;

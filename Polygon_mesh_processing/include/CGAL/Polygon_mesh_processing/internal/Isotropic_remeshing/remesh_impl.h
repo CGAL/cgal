@@ -386,8 +386,8 @@ namespace internal {
     {
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-//      std::cout << "Split long edges (" << high << ")...";
-//      std::cout.flush();
+      std::cout << "Split long edges...";
+      std::cout.flush();
 #endif
 
       //collect long edges
