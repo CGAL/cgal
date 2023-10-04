@@ -40,7 +40,8 @@ struct SS_oracle_traits
 {
   using Geom_traits = Alpha_wrap_AABB_geom_traits<GT_>; // Wrap the kernel to add Ball_3 + custom Do_intersect_3
 
-  using Segments = std::vector<typename GT_::Segment_3>;
+  using Segment = typename GT_::Segment_3;
+  using Segments = std::vector<Segment>;
   using SR_iterator = typename Segments::const_iterator;
 
   using Primitive = AABB_primitive<SR_iterator,
@@ -68,6 +69,7 @@ public:
   using Geom_traits = typename SSOT::Geom_traits;
 
 private:
+  using Segment = typename SSOT::Segment;
   using Segments = typename SSOT::Segments;
   using AABB_tree = typename SSOT::AABB_tree;
   using Oracle_base = AABB_tree_oracle<Geom_traits, AABB_tree, CGAL::Default, BaseOracle>;
@@ -105,8 +107,22 @@ public:
       return;
     }
 
+    typename Geom_traits::Is_degenerate_3 is_degenerate = this->geom_traits().is_degenerate_3_object();
+
     const std::size_t old_size = m_segments.size();
-    m_segments.insert(std::cend(m_segments), std::cbegin(segments), std::cend(segments));
+
+    for(const Segment& s : segments)
+    {
+      if(is_degenerate(s))
+      {
+#ifdef CGAL_AW3_DEBUG
+        std::cerr << "Warning: ignoring degenerate segment " << s << std::endl;
+#endif
+        continue;
+      }
+
+      m_segments.push_back(s);
+    }
 
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Insert into AABB tree (segments)..." << std::endl;

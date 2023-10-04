@@ -164,7 +164,12 @@ public:
 
       const Triangle_3 tr = triangle(p0, p1, p2);
       if(is_degenerate(tr))
+      {
+#ifdef CGAL_AW3_DEBUG
+        std::cerr << "Warning: ignoring degenerate face " << tr << std::endl;
+#endif
         continue;
+      }
 
       Splitter_base::split_and_insert_datum(tr, this->tree(), this->geom_traits());
     }
@@ -190,7 +195,12 @@ public:
     for(const Triangle_3& tr : triangles)
     {
       if(is_degenerate(tr))
+      {
+#ifdef CGAL_AW3_DEBUG
+        std::cerr << "Warning: ignoring degenerate triangle " << tr << std::endl;
+#endif
         continue;
+      }
 
       Splitter_base::split_and_insert_datum(tr, this->tree(), this->geom_traits());
     }

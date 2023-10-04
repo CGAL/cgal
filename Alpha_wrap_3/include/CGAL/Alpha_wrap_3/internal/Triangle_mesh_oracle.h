@@ -153,7 +153,12 @@ public:
     for(face_descriptor f : faces(tmesh))
     {
       if(Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, np))
+      {
+#ifdef CGAL_AW3_DEBUG
+        std::cerr << "Warning: ignoring degenerate face " << f << std::endl;
+#endif
         continue;
+      }
 
       const Point_ref p0 = get(vpm, source(halfedge(f, tmesh), tmesh));
       const Point_ref p1 = get(vpm, target(halfedge(f, tmesh), tmesh));
