@@ -169,6 +169,12 @@ public:
       Splitter_base::split_and_insert_datum(tr, this->tree(), this->geom_traits());
     }
 
+    // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
+    // it will be done at the first treatment of a facet that needs a Steiner point.
+    // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
+    // to accelerate the tree.
+    this->tree().accelerate_distance_queries();
+
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Tree: " << this->tree().size() << " primitives (" << faces.size() << " faces in input)" << std::endl;
 #endif

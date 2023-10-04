@@ -115,6 +115,12 @@ public:
 
     this->tree().insert(std::next(std::cbegin(m_points), old_size), std::cend(m_points));
 
+    // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
+    // it will be done at the first treatment of a facet that needs a Steiner point.
+    // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
+    // to accelerate the tree.
+    this->tree().accelerate_distance_queries();
+
     CGAL_postcondition(this->tree().size() == m_points.size());
   }
 };
