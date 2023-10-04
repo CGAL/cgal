@@ -1276,74 +1276,105 @@ public:
       return support_plane_idx;
   }*/
 
+  typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
+
+  struct LCC_Properties
+  {
+    struct Face_property {
+      std::size_t Input_polygon_index;
+      bool Part_of_initial_polygon;
+    };
+
+    struct Volume_property {
+      typename Intersection_kernel::Point_3 barycenter;
+    };
+
+    template<class LCC>
+    struct Dart_wrapper
+    {
+      typedef CGAL::Cell_attribute_with_point< LCC > Vertex_attribute;
+      typedef CGAL::Cell_attribute< LCC, Face_property > Face_attribute;
+      typedef CGAL::Cell_attribute< LCC, Volume_property > Volume_attribute;
+
+      typedef std::tuple<Vertex_attribute, void, Face_attribute, Volume_attribute> Attributes;
+    };
+  };
+
+  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, LCC_Properties>;
+
   /*!
-   \brief creates a linear cell complex from the kinetic partition.
+   \brief returns a linear cell complex from the kinetic partition.
 
-   \tparam LCC
-    most be a model of `LinearCellComplex`
-    The dimension of the combinatorial map and the dimension of the ambient space have to be 3.
-
-   \param lcc
-    an instance of LCC
+   \return linear cell complex of kinetic partition with `LCC_Properties::Volume_property` and `LCC_Properties::Face_property`.
 
    \pre successful partition
   */
 
-  template<typename LCC>
-  void get_linear_cell_complex(LCC& lcc) const {
-    using LCC_Kernel = typename LCC::Traits;
-    CGAL::Cartesian_converter<Intersection_kernel, LCC_Kernel> conv;
-    lcc.clear();/*
+  LCC& get_linear_cell_complex() {
+    m_lcc.clear();
 
-    std::vector<bool> used_vertices(m_data.igraph().number_of_vertices(), false);
-    std::vector<int> remap(m_data.igraph().number_of_vertices(), -1);
-    std::vector<Point_3> mapped_vertices;
-    mapped_vertices.reserve(m_data.igraph().number_of_vertices());
+    std::map<Index, std::size_t> mapped_vertices;
+    std::map<typename Intersection_kernel::Point_3, std::size_t> mapped_points;
+    std::vector<typename Intersection_kernel::Point_3> vtx;
 
-    for (const auto& volume : m_data.volumes()) {
-      for (const auto& vertex : volume.pvertices) {
-        CGAL_assertion(m_data.has_ivertex(vertex));
-        IVertex ivertex = m_data.ivertex(vertex);
-        if (remap[ivertex] == -1) {
-          remap[ivertex] = static_cast<int>(mapped_vertices.size());
-          mapped_vertices.push_back(conv(m_data.point_3(ivertex)));
-        }
-      }
-    }
+    std::vector<Index> faces_of_volume, vtx_of_face;
+    std::vector<typename Intersection_kernel::Point_3> pts_of_face;
+    for (std::size_t i = 0; i < number_of_volumes(); i++) {
+      faces(i, std::back_inserter(faces_of_volume));
 
-    CGAL::Linear_cell_complex_incremental_builder_3<LCC> ib(lcc);
-    for (const auto& p : mapped_vertices)
-      ib.add_vertex(p);
+      for (const Index& f : faces_of_volume) {
+        exact_vertices(f, std::back_inserter(pts_of_face), std::back_inserter(vtx_of_face));
 
-    for (const auto& vol : m_data.volumes()) {
-      ib.begin_surface();
-      for (std::size_t i = 0; i < vol.pfaces.size(); i++) {
-        auto vertex_range = m_data.pvertices_of_pface(vol.pfaces[i]);
-        ib.begin_facet();
-        if (vol.pface_oriented_outwards[i]) {
-          typename Data_structure::PVertex_of_pface_iterator it = vertex_range.begin();
-          while (it != vertex_range.end()) {
-            CGAL_assertion(m_data.has_ivertex(*it));
-            IVertex ivertex = m_data.ivertex(*it);
-            ib.add_vertex_to_facet(static_cast<std::size_t>(remap[ivertex]));
-            it++;
+        for (std::size_t j = 0; j < pts_of_face.size(); j++) {
+          auto pit = mapped_points.emplace(pts_of_face[j], vtx.size());
+          if (pit.second) {
+            mapped_vertices[vtx_of_face[j]] = vtx.size();
+            vtx.push_back(pts_of_face[j]);
           }
         }
-        else {
-          typename Data_structure::PVertex_of_pface_iterator it = vertex_range.end()--;
-          do {
-            CGAL_assertion(m_data.has_ivertex(*it));
-            IVertex ivertex = m_data.ivertex(*it);
-            ib.add_vertex_to_facet(static_cast<std::size_t>(remap[ivertex]));
-            it--;
-            if (it == vertex_range.begin())
-              break;
-          } while (true);
-        }
-        ib.end_facet();
+
+        pts_of_face.clear();
+        vtx_of_face.clear();
       }
-      ib.end_surface();
-    }*/
+      faces_of_volume.clear();
+    }
+
+    CGAL::Linear_cell_complex_incremental_builder_3<LCC> ib(m_lcc);
+    for (const auto& p : vtx)
+      ib.add_vertex(p);
+
+    for (std::size_t v = 0; v < number_of_volumes(); v++) {
+      ib.begin_surface();
+      faces(v, std::back_inserter(faces_of_volume));
+
+      for (std::size_t j = 0; j < faces_of_volume.size(); j++) {
+        vertex_indices(faces_of_volume[j], std::back_inserter(vtx_of_face));
+
+        //auto vertex_range = m_data.pvertices_of_pface(vol.pfaces[i]);
+        ib.begin_facet();
+
+        if (!vol.pface_oriented_outwards[j])
+          std::reverse(vtx_of_face.begin(), vtx_of_face.end());
+
+        for (const auto& v : vtx_of_face)
+          ib.add_vertex_to_facet(static_cast<std::size_t>(mapped_vertices[v]));
+
+        auto face_dart = ib.end_facet(); // returns a dart to the face
+        LCC_Properties::Face_property face_prop;
+        face_prop.Input_polygon_index = 5;
+        face_prop.Part_of_initial_polygon = true;
+        m_lcc.info<2>(face_dart) = face_prop;
+
+        vtx_of_face.clear();
+      }
+
+      auto vol_dart = ib.end_surface(); // returns a dart to the volume
+      int num_faces = m_lcc.one_dart_per_cell<2>().size();
+      faces_of_volume.clear();
+    }
+    int num_volumes = m_lcc.one_dart_per_cell<3>().size();
+
+    return m_lcc;
   }
 
   /// @}

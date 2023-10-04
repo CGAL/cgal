@@ -237,8 +237,7 @@ int main(const int argc, const char** argv) {
   CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.95");
 
   // Output.
-  CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
-  ksr.partition().get_linear_cell_complex(lcc);
+  ksr.partition().get_linear_cell_complex();
 
   std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;
   std::cout << "Kinetic partition:      " << (after_partition - after_shape_detection) << " seconds!" << std::endl;
