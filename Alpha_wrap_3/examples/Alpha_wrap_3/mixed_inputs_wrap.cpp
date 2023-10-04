@@ -120,8 +120,9 @@ int main(int argc, char** argv)
   std::string ps_name = std::string(ps_filename);
   ps_name = ps_name.substr(ps_name.find_last_of("/") + 1, ps_name.length() - 1);
   ps_name = ps_name.substr(0, ps_name.find_last_of("."));
-  std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_" + std::to_string(static_cast<int>(relative_alpha))
-                            + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_"
+                                  + std::to_string(static_cast<int>(relative_alpha)) + "_"
+                                  + std::to_string(static_cast<int>(relative_offset)) + ".off";
   std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
