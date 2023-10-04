@@ -848,28 +848,26 @@ private:
     return fh_region;
   }
 
-  auto brute_force_border_3_of_region(const std::vector<CDT_2_face_handle>& fh_region) {
-    std::set<std::pair<Vertex_handle, Vertex_handle>> border_edges_set;
-    for(const auto fh: fh_region) {
-      for(int i = 0; i < 3; ++i) {
-        const auto va = fh->vertex(CDT_2::cw(i))->info().vertex_handle_3d;
-        const auto vb = fh->vertex(CDT_2::ccw(i))->info().vertex_handle_3d;
-        if(this->tds().is_edge(va, vb)) {
-          CGAL_assertion_code(const auto result =)
-          border_edges_set.insert(CGAL::make_sorted_pair(va, vb));
-          CGAL_assertion(result.second == true);
-        }
-      }
-    }
+  auto brute_force_border_3_of_region([[maybe_unused]] CDT_3_face_index face_index,
+                                      [[maybe_unused]] int region_count,
+                                      [[maybe_unused]] const CDT_2& cdt_2,
+                                      const std::vector<CDT_2_face_handle>& fh_region)
+  {
+    const std::set<CDT_2_face_handle> fh_region_set{fh_region.begin(), fh_region.end()};
     std::vector<Edge> border_edges;
-    border_edges.reserve(border_edges_set.size());
-    for(const auto& [va, vb]: border_edges_set) {
-      Cell_handle c;
-      int i, j;
-      CGAL_assume_code(bool b =)
-      this->tds().is_edge(va, vb, c, i, j);
-      CGAL_assume(b);
-      border_edges.emplace_back(c, i, j);
+    for(const auto fh: fh_region) {
+      for(int index = 0; index < 3; ++index) {
+        if(fh_region_set.count(fh->neighbor(index)) > 0) continue;
+        // otherwise we have a border edge: fh->neighbor(i) is not in the region
+        const auto va = fh->vertex(CDT_2::cw(index))->info().vertex_handle_3d;
+        const auto vb = fh->vertex(CDT_2::ccw(index))->info().vertex_handle_3d;
+        Cell_handle c;
+        int i, j;
+        CGAL_assume_code(bool b =)
+        this->tds().is_edge(va, vb, c, i, j);
+        CGAL_assume(b);
+        border_edges.emplace_back(c, i, j);
+      }
     }
 #if CGAL_CDT_3_DEBUG_REGIONS
     std::cerr << "region size is: " << fh_region.size() << "\n";
@@ -1130,7 +1128,7 @@ private:
   {
     const auto& cdt_2 = non_const_cdt_2;
     const auto& fh_region = non_const_fh_region;
-    const auto border_edges = brute_force_border_3_of_region(fh_region);
+    const auto border_edges = brute_force_border_3_of_region(face_index, region_count, cdt_2, fh_region);
     const auto polygon_vertices = [&]() {
       std::set<Vertex_handle> vertices;
       for(const auto& [c, i, j]: border_edges) {
