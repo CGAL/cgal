@@ -99,7 +99,7 @@ struct Scene_edit_box_item_priv{
     constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(.0,.0,.1));
     frame->setConstraint(&constraint);
     //create the sphere model
-    float eps = 1.e-3;
+    double eps = 1.e-3;
     pool[0] = bb.xmin()-eps; pool[3] = bb.xmax()+eps;
     pool[1] = bb.ymin()-eps; pool[4] = bb.ymax()+eps;
     pool[2] = bb.zmin()-eps; pool[5] = bb.zmax()+eps;
@@ -255,7 +255,7 @@ struct Scene_edit_box_item_priv{
   void reset_vertices()
   {
     Scene_item::Bbox bb = scene->bbox();
-    float eps = 1.e-3;
+    double eps = 1.e-3;
     pool[0] = bb.xmin()-eps; pool[3] = bb.xmax()+eps;
     pool[1] = bb.ymin()-eps; pool[4] = bb.ymax()+eps;
     pool[2] = bb.zmin()-eps; pool[5] = bb.zmax()+eps;
