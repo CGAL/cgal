@@ -747,7 +747,6 @@ protected:
       }
       // (2.2) We check if the facet is external or internal
       std::queue<typename CDT::Face_handle> face_queue, faces_internal;
-      typename CDT::Face_handle face_internal = nullptr;
       if (cdt.infinite_vertex()->face()!=nullptr)
       {
         typename CDT::Face_circulator
