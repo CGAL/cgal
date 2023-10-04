@@ -396,7 +396,6 @@ public Q_SLOTS:
       unsigned int nb_smooth = ui.nbSmoothing_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
       bool smooth_features = ui.smooth1D_checkbox->isChecked();
-      bool curv_smooth = ui.curvSmooth_checkbox->isChecked();
       double curv_ball_r = ui.curvSmoothBallR_edit->value();
 
       // wait cursor
@@ -871,8 +870,6 @@ public Q_SLOTS:
     unsigned int nb_iter = 1;
     bool protect = false;
     bool smooth_features = true;
-    bool curv_smooth = false;
-    double curv_ball_r = -1;
 
     std::vector<Scene_facegraph_item*> selection;
     for(int index : scene->selectionIndices())
@@ -913,8 +910,6 @@ public Q_SLOTS:
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
         smooth_features = ui.smooth1D_checkbox->isChecked();
-        curv_smooth = ui.curvSmooth_checkbox->isChecked();
-        curv_ball_r = ui.curvSmoothBallR_edit->value();
         }
       }
     }
@@ -1024,7 +1019,6 @@ private:
     unsigned int nb_iter_;
     bool protect_;
     bool smooth_features_;
-    bool curv_smooth_;
     double curv_ball_r_;
 
   protected:
