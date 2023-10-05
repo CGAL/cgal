@@ -130,9 +130,9 @@ public:
   {
     int i,j,k;
 
-    float dx_ = 1.0;
-    float dy_ = 1.0;
-    float dz_ = 1.0;
+    const int dx_ = 1;
+    const int dy_ = 1;
+    const int dz_ = 1;
     double vx_ = image_->vx();
     double vy_ = image_->vy();
     double vz_ = image_->vz();
@@ -140,12 +140,12 @@ public:
     double ty_ = image_->ty();
     double tz_ = image_->tz();
 
-    int xdim_ = image_->xdim();
-    int ydim_ = image_->ydim();
-    int zdim_ = image_->zdim();
+    int xdim_ = static_cast<int>(image_->xdim());
+    int ydim_ = static_cast<int>(image_->ydim());
+    int zdim_ = static_cast<int>(image_->zdim());
     int xdim_p = xdim_+dx_;
     int ydim_p = ydim_+dy_;
-    int zdim_p = zdim_+dz_;
+    int xydim_p = ydim_p*xdim_p;
 
     std::map<std::size_t, vertex_descriptor> vertices;
 
@@ -169,10 +169,10 @@ public:
 
           // if one is different
           if (v0 != v1 || v0 != v2 || v0 != v3 || v0 != v4 || v0 != v5 || v0 != v6 || v0 != v7) {
-            int ip = i+dx_;
-            int jp = j+dy_;
-            int kp = k+dz_;
-            int index = kp*ydim_p*xdim_p + jp*xdim_p + ip;
+            unsigned int ip = i+dx_;
+            unsigned int jp = j+dy_;
+            unsigned int kp = k+dz_;
+            unsigned int index = kp*xydim_p + jp*xdim_p + ip;
             double di = i+0.5*dx_;
             double dj = j+0.5*dy_;
             double dk = k+0.5*dz_;
@@ -198,25 +198,25 @@ public:
             // check x direction
             if (v0 != v1)
             {
-              vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + ip)->second;
-              vertex_descriptor vertex_2 = vertices.find(k *ydim_p*xdim_p + j *xdim_p + ip)->second;
-              vertex_descriptor vertex_3 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + ip)->second;
+              vertex_descriptor vertex_1 = vertices.find(kp*xydim_p + j *xdim_p + ip)->second;
+              vertex_descriptor vertex_2 = vertices.find(k *xydim_p + j *xdim_p + ip)->second;
+              vertex_descriptor vertex_3 = vertices.find(k *xydim_p + jp*xdim_p + ip)->second;
               mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v1);
             }
             // check y direction
             if (v0 != v2)
             {
-              vertex_descriptor vertex_1 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + ip)->second;
-              vertex_descriptor vertex_2 = vertices.find(k *ydim_p*xdim_p + jp*xdim_p + i )->second;
-              vertex_descriptor vertex_3 = vertices.find(kp*ydim_p*xdim_p + jp*xdim_p + i )->second;
+              vertex_descriptor vertex_1 = vertices.find(k *xydim_p + jp*xdim_p + ip)->second;
+              vertex_descriptor vertex_2 = vertices.find(k *xydim_p + jp*xdim_p + i )->second;
+              vertex_descriptor vertex_3 = vertices.find(kp*xydim_p + jp*xdim_p + i )->second;
               mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v2);
             }
             // check z direction
             if (v0 != v3)
             {
-              vertex_descriptor vertex_1 = vertices.find(kp*ydim_p*xdim_p + jp*xdim_p + i )->second;
-              vertex_descriptor vertex_2 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + i )->second;
-              vertex_descriptor vertex_3 = vertices.find(kp*ydim_p*xdim_p + j *xdim_p + ip)->second;
+              vertex_descriptor vertex_1 = vertices.find(kp*xydim_p + jp*xdim_p + i )->second;
+              vertex_descriptor vertex_2 = vertices.find(kp*xydim_p + j *xdim_p + i )->second;
+              vertex_descriptor vertex_3 = vertices.find(kp*xydim_p + j *xdim_p + ip)->second;
               mesh_.add_face(vertex_0, vertex_1, vertex_2, vertex_3, v0, v3);
             }
           }
@@ -267,7 +267,6 @@ public:
 private:
   Mesh mesh_;
   const Image* image_;
-  int nb_surfaces;
 
   Word_type image_data(std::size_t i, std::size_t j, std::size_t k)
   {
