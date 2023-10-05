@@ -187,10 +187,17 @@ PolygonMesh acvd_simplification(
 
     if (subdivide_steps > 0)
     {
-      Subdivision_method_3::Upsample_subdivision(
-        pmesh,
-        CGAL::parameters::number_of_iterations(subdivide_steps).vertex_point_map(vpm)
-      );
+      if (gradation_factor == 0) // no adaptive clustering
+        Subdivision_method_3::Upsample_subdivision(
+          pmesh,
+          CGAL::parameters::number_of_iterations(subdivide_steps)
+        );
+      else // adaptive clustering
+        // TODO: need to interpolate curvature values
+        Subdivision_method_3::Upsample_subdivision(
+          pmesh,
+          CGAL::parameters::number_of_iterations(subdivide_steps).vertex_principal_curvatures_and_directions_map(vpcd_map)
+        );
       vpm = get_property_map(CGAL::vertex_point, pmesh);
       nb_vertices = num_vertices(pmesh);
     }
@@ -226,7 +233,7 @@ PolygonMesh acvd_simplification(
         typename GT::FT k1 = get(vpcd_map, vd).min_curvature;
         typename GT::FT k2 = get(vpcd_map, vd).max_curvature;
         typename GT::FT k_sq = (k1 * k1 + k2 * k2);
-        vertex_weight += weight * pow(k_sq, gradation_factor / 2.0);  // /2.0 because k_sq is squared
+        vertex_weight += weight * (1 + pow(k_sq, gradation_factor / 2.0));  // /2.0 because k_sq is squared
       }
       put(vertex_weight_pmap, vd, vertex_weight);
     }
