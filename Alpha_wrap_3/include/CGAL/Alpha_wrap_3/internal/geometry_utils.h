@@ -155,7 +155,7 @@ less_squared_radius_of_min_empty_sphere(typename Tr::Geom_traits::FT sq_alpha,
 }
 
 template <typename Tr>
-bool
+typename Tr::Geom_traits::FT
 smallest_squared_radius_3(const typename Tr::Facet& fh,
                           const Tr& tr)
 {
