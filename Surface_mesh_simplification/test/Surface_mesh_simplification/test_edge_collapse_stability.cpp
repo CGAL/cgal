@@ -44,8 +44,8 @@ int main(int argc, char** argv)
   CGAL::Iso_cuboid_3<Kernel> bbox(CGAL::Polygon_mesh_processing::bbox(mesh));
 
   // scale a bit the bounding box bbox, because the kernel is SC
-  bbox = { bbox.min() - 0.01 * (bbox.max() - bbox.min()),
-           bbox.max() + 0.01 * (bbox.max() - bbox.min()) };
+  bbox = { (bbox.min)() - 0.01 * ((bbox.max)() - (bbox.min)()),
+           (bbox.max)() + 0.01 * ((bbox.max)() - (bbox.min)()) };
 
   std::cout << "Bbox: " << bbox << std::endl;
 
