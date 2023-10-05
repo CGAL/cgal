@@ -92,6 +92,9 @@ struct Wrapping_default_visitor
   template <typename AlphaWrapper>
   void on_flood_fill_begin(const AlphaWrapper&) { }
 
+  template <typename Wrapper>
+  constexpr bool go_further(const Wrapper& wrapper) { return true; }
+
   template <typename AlphaWrapper, typename Gate>
   void before_facet_treatment(const AlphaWrapper&, const Gate&) { }
 
@@ -1212,7 +1215,7 @@ private:
   }
 
   template <typename Visitor>
-  void alpha_flood_fill(Visitor& visitor)
+  bool alpha_flood_fill(Visitor& visitor)
   {
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Flood fill..." << std::endl;
@@ -1251,10 +1254,6 @@ private:
       std::cout << "Permissiveness: " << gate.is_permissive_facet() << std::endl;
 #endif
 
-      visitor.before_facet_treatment(*this, gate);
-
-      m_queue.pop();
-
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
       static int i = 0;
       std::string step_name = "results/steps/step_" + std::to_string(static_cast<int>(i)) + ".off";
@@ -1268,6 +1267,13 @@ private:
                         << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
       face_out.close();
 #endif
+
+      if(!visitor.go_further(*this))
+        return false;
+
+      visitor.before_facet_treatment(*this, gate);
+
+      m_queue.pop();
 
       if(m_tr.is_infinite(neighbor))
       {
@@ -1384,6 +1390,8 @@ private:
     CGAL_postcondition_code(  if(!fit->first->is_outside()) f = m_tr.mirror_facet(f);)
     CGAL_postcondition(       facet_status(f) == IRRELEVANT);
     CGAL_postcondition_code(})
+
+    return true;
   }
 
 private:
