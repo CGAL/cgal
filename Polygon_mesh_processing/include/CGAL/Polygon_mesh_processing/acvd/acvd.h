@@ -27,6 +27,7 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 #include <CGAL/subdivision_method_3.h>
 
 #include <CGAL/Point_set_3/IO.h>
@@ -120,6 +121,9 @@ void acvd_subdivide_if_needed(
 }
 
 
+// provide a property map for principal curvatures as a named parameter for adaptive clustering
+// provide a gradation factor as a named parameter for adaptive clustering
+
 template <typename PolygonMesh, /*ClusteringMetric,*/
   typename NamedParameters = parameters::Default_named_parameters>
 PolygonMesh acvd_simplification(
@@ -138,6 +142,10 @@ PolygonMesh acvd_simplification(
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_halfedge_property_t<bool> >::type HalfedgeVisitedMap;
+    typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
+    NamedParameters,
+    Default_principal_map>::type Vertex_principal_curvatures_and_directions_map;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -145,6 +153,17 @@ PolygonMesh acvd_simplification(
 
   Vertex_position_map vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
     get_property_map(CGAL::vertex_point, pmesh));
+
+  // get curvature related parameters
+  const typename GT::FT gradation_factor = choose_parameter(get_parameter(np, internal_np::gradation_factor), 0);
+  const typename Vertex_principal_curvatures_and_directions_map vpcd_map =
+    choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map),
+      Default_principal_map());
+
+  if (gradation_factor > 0 &&
+    is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
+    interpolated_corrected_principal_curvatures_and_directions(pmesh, vpcd_map);
+
 
   // TODO: handle cases where the mesh is not a triangle mesh
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
@@ -200,7 +219,15 @@ PolygonMesh acvd_simplification(
     for (Vertex_descriptor vd : vertices_around_face(halfedge(fd, pmesh), pmesh))
     {
       typename GT::FT vertex_weight = get(vertex_weight_pmap, vd);
-      vertex_weight += weight;
+      if (gradation_factor == 0) // no adaptive clustering
+        vertex_weight += weight;
+      else // adaptive clustering
+      {
+        typename GT::FT k1 = get(vpcd_map, vd).min_curvature;
+        typename GT::FT k2 = get(vpcd_map, vd).max_curvature;
+        typename GT::FT k_sq = (k1 * k1 + k2 * k2);
+        vertex_weight += weight * pow(k_sq, gradation_factor / 2.0);  // /2.0 because k_sq is squared
+      }
       put(vertex_weight_pmap, vd, vertex_weight);
     }
   }
@@ -618,8 +645,8 @@ PolygonMesh acvd_simplification(
   orient_polygon_soup(points, polygons);
   polygon_soup_to_polygon_mesh(points, polygons, simplified_mesh);
 
-  // name = std::to_string(nb_clusters) + "_simped.off";
-  // CGAL::IO::write_OFF(name, simplified_mesh);
+  name = std::to_string(nb_clusters) + "_simped.off";
+  CGAL::IO::write_OFF(name, simplified_mesh);
   std::cout << "kak3" << std::endl;
 
   return simplified_mesh;

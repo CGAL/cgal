@@ -3,6 +3,7 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <boost/graph/graph_traits.hpp>
 
@@ -25,13 +26,36 @@ int main(int argc, char* argv[])
 
   const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 20;
 
+  const double gradation_factor = (argc > 3) ? atof(argv[3]) : 0;
+
+
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
 
-  PMP::acvd_isotropic_simplification(smesh, nb_clusters);
+  bool created = false;
+  Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
+    principal_curvatures_and_directions_map;
+
+  boost::tie(principal_curvatures_and_directions_map, created) =
+    smesh.add_property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
+    ("v:principal_curvatures_and_directions_map", { 0, 0,
+        Epic_kernel::Vector_3(0,0,0),
+        Epic_kernel::Vector_3(0,0,0) });
+  assert(created);
+
+
+  PMP::interpolated_corrected_principal_curvatures_and_directions(smesh, principal_curvatures_and_directions_map);
+
+
+  PMP::acvd_isotropic_simplification(
+    smesh,
+    nb_clusters,
+    CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
+      .gradation_factor(gradation_factor)
+      );
   // std::cout << "kak3" << std::endl;
   return 0;
 
