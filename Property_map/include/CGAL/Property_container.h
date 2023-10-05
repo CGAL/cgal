@@ -106,7 +106,7 @@ public:
   }
 
   virtual void move(Property_array_base<Index>&& other_base) override {
-    auto&& other = dynamic_cast<Property_array<Index, T>&&>(other_base);
+    auto&& other = static_cast<Property_array<Index, T>&&>(other_base);
     m_data = std::move(other.m_data);
     CGAL_precondition(m_active_indices.size() == m_data.size());
   }
@@ -489,10 +489,13 @@ public:
         [](bool used) { return !used; }
       );
 
+      auto unused_end = unused_begin;
+
       // Determine if the group fits
-      auto unused_end = std::find_if(
-        unused_begin, std::min(unused_begin + n, m_active_indices.end()),
-        [](bool used) { return used; }
+      if (std::distance(unused_begin, m_active_indices.end()) >= n)
+        unused_end = std::find_if(
+          unused_begin, std::min(unused_begin + n, m_active_indices.end()),
+          [](bool used) { return used; }
       );
 
       // If the discovered range was large enough
