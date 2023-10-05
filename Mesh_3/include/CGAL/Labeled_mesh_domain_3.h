@@ -188,6 +188,32 @@ namespace internal {
     }
   };
 
+  template <class OutputIterator>
+  struct Construct_initial_point_function_wrapper
+  {
+    template <typename Functor>
+    Construct_initial_point_function_wrapper(Functor functor)
+        : has_functor_(true)
+        , initial_points_function_no_number_(functor)
+        , initial_points_function_number_(functor)
+    { }
+    Construct_initial_point_function_wrapper(Null_functor)
+        : has_functor_(false)
+    { }
+    OutputIterator operator()(OutputIterator pts) const
+    {
+      return initial_points_function_no_number_(pts);
+    }
+    OutputIterator operator()(OutputIterator pts, int n) const
+    {
+      return initial_points_function_number_(pts, n);
+    }
+    const bool has_functor_;
+  private:
+    const std::function<OutputIterator(OutputIterator)> initial_points_function_no_number_;
+    const std::function<OutputIterator(OutputIterator, int)> initial_points_function_number_;
+  };
+
 } // end namespace CGAL::Mesh_3::internal
 } // end namespace CGAL::Mesh_3
 
@@ -248,6 +274,17 @@ protected:
     return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
 
+  typedef typename CGAL::Mesh_3::internal::
+      Index_generator<Subdomain_index, Surface_patch_index>::Index Index_;
+  typedef typename std::back_insert_iterator<std::vector<std::pair<Point_3, Index_> >> OutputInsertor_;
+  typedef typename CGAL::Mesh_3::internal::Construct_initial_point_function_wrapper<OutputInsertor_> Construct_initial_point_function_wrapper;
+
+  template <typename Functor>
+  static Construct_initial_point_function_wrapper
+  construct_initial_points_functor(Functor functor) {
+    return Construct_initial_point_function_wrapper(functor);
+  }
+
   template <typename Function,
             typename Bounding_object,
             typename Null,
@@ -257,7 +294,8 @@ protected:
                                      const FT& error_bound,
                                      Construct_surface_patch_index cstr_s_p_i,
                                      Null null,
-                                     CGAL::Random* p_rng)
+                                     CGAL::Random* p_rng,
+                                     Construct_initial_point_function_wrapper cstr_i_p)
     : function_(f)
     , bbox_(iso_cuboid(bounding))
     , cstr_s_p_index(cstr_s_p_i)
@@ -266,6 +304,7 @@ protected:
              CGAL_Random_share_ptr_t(new CGAL::Random(0)) :
              CGAL_Random_share_ptr_t(p_rng, Mesh_3::internal::Do_not_delete()))
     , squared_error_bound_(squared_error_bound(bbox_,error_bound))
+    , initial_points_function_(cstr_i_p)
   {}
 
   // The function which answers subdomain queries
@@ -282,6 +321,8 @@ protected:
   // outside of the domain.
   typedef std::function<bool(Subdomain_index)> Null;
   Null null;
+  // The function that places initial points
+  const Construct_initial_point_function_wrapper initial_points_function_;
   // The random number generator used by Construct_initial_points
   CGAL_Random_share_ptr_t p_rng_;
   // Error bound relative to sphere radius
@@ -406,6 +447,10 @@ private:
   typedef typename Impl_details::Function Function;
 
 public:
+  // Type of the Construct_initial_points functor returned by construct_initial_points_object()
+  typedef typename Impl_details::Construct_initial_point_function_wrapper Construct_initial_points;
+
+public:
   // Geometric object types
   typedef typename BGT::Point_3    Point_3;
   typedef typename BGT::Segment_3  Segment_3;
@@ -471,7 +516,8 @@ public:
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
-                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::initial_points_param), Null_functor()))
   {}
 ///@}
 
@@ -483,7 +529,8 @@ public:
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::error_bound), FT(1e-3)),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::surface_patch_index), construct_pair_functor()),
                 parameters::choose_parameter(parameters::get_parameter(np, internal_np::null_subdomain_index_param), Null_subdomain_index()),
-                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr))
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::rng), nullptr),
+                parameters::choose_parameter(parameters::get_parameter(np, internal_np::initial_points_param), Null_functor()))
   {}
 
   // Overload handling parameters passed with operator=
@@ -583,6 +630,7 @@ public:
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
     auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+    auto construct_initial_points = choose_parameter(get_parameter(np, internal_np::initial_points_param), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
               (p::function = create_gray_image_wrapper
@@ -596,7 +644,9 @@ public:
                p::null_subdomain_index =
                        create_null_subdomain_index(null_subdomain_index_),
                p::construct_surface_patch_index =
-                       create_construct_surface_patch_index(construct_surface_patch_index_));
+                       create_construct_surface_patch_index(construct_surface_patch_index_),
+               p::initial_points =
+                       construct_initial_points_functor(construct_initial_points));
 
   }
 
@@ -736,6 +786,8 @@ public:
     Input_features_ref_type input_features_
           = choose_parameter(get_parameter_reference(np, internal_np::input_features_param), empty_vec);
 
+    auto construct_initial_points = choose_parameter(get_parameter(np, internal_np::initial_points_param), Null_functor());
+
     CGAL_USE(iso_value_);
     namespace p = CGAL::parameters;
 
@@ -767,7 +819,9 @@ public:
        p::null_subdomain_index =
                create_null_subdomain_index(null_subdomain_index_),
        p::construct_surface_patch_index =
-               create_construct_surface_patch_index(construct_surface_patch_index_));
+               create_construct_surface_patch_index(construct_surface_patch_index_),
+       p::initial_points =
+               construct_initial_points_functor(construct_initial_points));
 
     // features
     Mesh_3::internal::Add_features_in_domain<!no_features>()
@@ -793,6 +847,7 @@ public:
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
     auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+    auto construct_initial_points = choose_parameter(get_parameter(np, internal_np::initial_points_param), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
             (p::function = create_gray_image_wrapper
@@ -806,7 +861,9 @@ public:
              p::null_subdomain_index =
                      create_null_subdomain_index(null_subdomain_index_),
              p::construct_surface_patch_index =
-                     create_construct_surface_patch_index(construct_surface_patch_index_));
+                     create_construct_surface_patch_index(construct_surface_patch_index_),
+             p::initial_points =
+                     construct_initial_points_functor(construct_initial_points));
 
   }
 
@@ -922,6 +979,7 @@ public:
     CGAL::Random* p_rng_ = choose_parameter(get_parameter(np, internal_np::rng), nullptr);
     auto null_subdomain_index_ = choose_parameter(get_parameter(np, internal_np::null_subdomain_index_param), Null_functor());
     auto construct_surface_patch_index_ = choose_parameter(get_parameter(np, internal_np::surface_patch_index), Null_functor());
+    auto construct_initial_points = choose_parameter(get_parameter(np, internal_np::initial_points_param), Null_functor());
     namespace p = CGAL::parameters;
     return Labeled_mesh_domain_3
             (p::function = make_implicit_to_labeling_function_wrapper<BGT>(function),
@@ -931,7 +989,9 @@ public:
              p::null_subdomain_index =
                      create_null_subdomain_index(null_subdomain_index_),
              p::construct_surface_patch_index =
-                     create_construct_surface_patch_index(construct_surface_patch_index_));
+                     create_construct_surface_patch_index(construct_surface_patch_index_),
+             p::initial_points =
+                     construct_initial_points_functor(construct_initial_points));
   }
 /// @}
 #ifndef DOXYGEN_RUNNING
@@ -962,7 +1022,8 @@ public:
 #ifndef CGAL_NO_DEPRECATED_CODE
   template<typename SubdomainIndex = Null_functor,
            typename NullSubdomainIndex = Null_functor,
-           typename ConstructSurfacePatchIndex = Null_functor>
+           typename ConstructSurfacePatchIndex = Null_functor,
+           typename ConstructInitialPoints = Null_functor>
   CGAL_DEPRECATED
   static Labeled_mesh_domain_3
   create_gray_image_mesh_domain(const CGAL::Image_3& image_,
@@ -972,19 +1033,22 @@ public:
                                 CGAL::Random* rng = nullptr,
                                 SubdomainIndex image_values_to_subdom_indices = SubdomainIndex(),
                                 NullSubdomainIndex null_subdomain_index_ = NullSubdomainIndex(),
-                                ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex())
+                                ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex(),
+                                ConstructInitialPoints construct_initial_points_ = Null_functor())
   {
     return create_gray_image_mesh_domain(image_, parameters::iso_value(iso_value)
                                                             .image_values_to_subdomain_indices(image_values_to_subdom_indices)
                                                             .value_outside(value_outside)
                                                             .relative_error_bound(relative_error_bound)
                                                             .p_rng(rng).null_subdomain_index(null_subdomain_index_)
-                                                            .construct_surface_patch_index(construct_surface_patch_index_));
+                                                            .construct_surface_patch_index(construct_surface_patch_index_)
+                                                            .initial_points(construct_initial_points_));
   }
 
   template<typename SubdomainIndex = Null_functor,
            typename NullSubdomainIndex = Null_functor,
-           typename ConstructSurfacePatchIndex = Null_functor>
+           typename ConstructSurfacePatchIndex = Null_functor,
+           typename ConstructInitialPoints = Null_functor>
   CGAL_DEPRECATED
   static Labeled_mesh_domain_3
   create_labeled_image_mesh_domain(const CGAL::Image_3& image_,
@@ -994,7 +1058,8 @@ public:
                                    CGAL::Random* rng = nullptr,
                                    SubdomainIndex image_values_to_subdom_indices = SubdomainIndex(),
                                    NullSubdomainIndex null_subdomain_index_ = NullSubdomainIndex(),
-                                   ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex())
+                                   ConstructSurfacePatchIndex construct_surface_patch_index_ = ConstructSurfacePatchIndex(),
+                                   ConstructInitialPoints construct_initial_points_ = Null_functor())
   {
     return create_labeled_image_mesh_domain(image_, parameters::weights(weights_)
                                                                .image_values_to_subdomain_indices(image_values_to_subdom_indices)
@@ -1002,7 +1067,8 @@ public:
                                                                .relative_error_bound(relative_error_bound)
                                                                .p_rng(rng)
                                                                .null_subdomain_index(null_subdomain_index_)
-                                                               .construct_surface_patch_index(construct_surface_patch_index_));
+                                                               .construct_surface_patch_index(construct_surface_patch_index_)
+                                                               .initial_points(construct_initial_points_));
   }
 #endif
 
@@ -1012,9 +1078,9 @@ public:
    *  the output iterator `pts` whose value type is required to be
    *  `std::pair<Points_3, Index>`.
    */
-  struct Construct_initial_points
+  struct Defult_construct_initial_points
   {
-    Construct_initial_points(const Labeled_mesh_domain_3& domain)
+    Defult_construct_initial_points(const Labeled_mesh_domain_3& domain)
       : r_domain_(domain) {}
 
     template<class OutputIterator>
@@ -1027,7 +1093,12 @@ public:
   // Returns Construct_initial_points object
   Construct_initial_points construct_initial_points_object() const
   {
-    return Construct_initial_points(*this);
+    if (this->initial_points_function_.has_functor_) {
+      return this->initial_points_function_;
+    }
+    else {
+      return construct_initial_points_functor(Defult_construct_initial_points(*this));
+    }
   }
 
   /*
@@ -1499,7 +1570,7 @@ template<class BGT, class Subdomain_index, class Surface_patch_index>
 template<class OutputIterator>
 OutputIterator
 Labeled_mesh_domain_3<BGT, Subdomain_index, Surface_patch_index>::
-Construct_initial_points::operator()(OutputIterator pts,
+Defult_construct_initial_points::operator()(OutputIterator pts,
                                      const int nb_points) const
 {
   // Create point_iterator on and in bounding_sphere
