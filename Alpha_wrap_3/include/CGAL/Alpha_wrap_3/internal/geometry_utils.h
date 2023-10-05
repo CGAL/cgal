@@ -61,6 +61,10 @@ less_squared_radius_of_min_empty_sphere(typename Tr::Geom_traits::FT sq_alpha,
 
   Orientation_of_circumcenter orientation_of_circumcenter;
 
+#ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
+  std::cout << "Checking for traversability of facet" << std::endl;
+#endif
+
   const Cell_handle c = fh.first;
   const int ic = fh.second;
   const Cell_handle n = c->neighbor(ic);
@@ -73,6 +77,11 @@ less_squared_radius_of_min_empty_sphere(typename Tr::Geom_traits::FT sq_alpha,
   // and because it does not cost anything.
   if(tr.is_infinite(n))
   {
+#ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
+    std::cerr << "Warning: computing less_squared_radius_of_min_empty_sphere() with an infinite neighbor?" << std::endl;
+#endif
+    CGAL_assertion(!tr.is_infinite(c));
+
     Orientation ori = orientation_of_circumcenter(p1, p2, p3,
                                                   tr.point(c, 0), tr.point(c, 1),
                                                   tr.point(c, 2), tr.point(c, 3));
@@ -96,6 +105,10 @@ less_squared_radius_of_min_empty_sphere(typename Tr::Geom_traits::FT sq_alpha,
     Orientation ori = orientation_of_circumcenter(p1, p2, p3,
                                                   tr.point(n, 0), tr.point(n, 1),
                                                   tr.point(n, 2), tr.point(n, 3));
+
+#ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
+    std::cout << "Cell 'c' is infinite; Orientation: " << ori << std::endl;
+#endif
 
     if(ori == NEGATIVE)
     {
@@ -177,6 +190,12 @@ smallest_squared_radius_3(const typename Tr::Facet& fh,
 
   auto squared_radius = tr.geom_traits().compute_squared_radius_3_object();
 
+#ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
+  std::cout << "Computing circumradius of facet" << std::endl;
+#endif
+
+  CGAL_precondition(!tr.is_infinite(fh));
+
   const Cell_handle c = fh.first;
   const int ic = fh.second;
   const Cell_handle n = c->neighbor(ic);
@@ -189,6 +208,8 @@ smallest_squared_radius_3(const typename Tr::Facet& fh,
   // and because it does not cost anything.
   if(tr.is_infinite(n))
   {
+    CGAL_assertion(!tr.is_infinite(c));
+
     Orientation ori = orientation_of_circumcenter(p1, p2, p3,
                                                   tr.point(c, 0), tr.point(c, 1),
                                                   tr.point(c, 2), tr.point(c, 3));
@@ -203,6 +224,11 @@ smallest_squared_radius_3(const typename Tr::Facet& fh,
     Orientation ori = orientation_of_circumcenter(p1, p2, p3,
                                                   tr.point(n, 0), tr.point(n, 1),
                                                   tr.point(n, 2), tr.point(n, 3));
+
+#ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
+    std::cout << "Cell 'c' is infinite; Orientation: " << ori << std::endl;
+#endif
+
     if(ori == NEGATIVE)
       return squared_radius(p1, p2, p3);
     else
@@ -215,14 +241,21 @@ smallest_squared_radius_3(const typename Tr::Facet& fh,
      orientation_of_circumcenter(p1, p2, p3,
                                  tr.point(n, 0), tr.point(n, 1), tr.point(n, 2), tr.point(n, 3)))
   {
-    // Dual crosses the face
+#ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
+    std::cout << "dual crosses the face; CR: " << squared_radius(p1, p2, p3) << std::endl;
+#endif
+
     return squared_radius(p1, p2, p3);
   }
   else
   {
-    // Dual does not crosses the face
-    FT cr = squared_radius(tr.point(c, 0), tr.point(c, 1), tr.point(c, 2), tr.point(c, 3));
-    FT cnr = squared_radius(tr.point(n, 0), tr.point(n, 1), tr.point(n, 2), tr.point(n, 3));
+    const FT cr = squared_radius(tr.point(c, 0), tr.point(c, 1), tr.point(c, 2), tr.point(c, 3));
+    const FT cnr = squared_radius(tr.point(n, 0), tr.point(n, 1), tr.point(n, 2), tr.point(n, 3));
+
+#ifdef CGAL_AW3_DEBUG_TRAVERSABILITY
+    std::cout << "dual does not cross the face; CR(c): " << cr << " CRn: " << cnr << std::endl;
+#endif
+
     return (CGAL::min)(cr, cnr);
   }
 }

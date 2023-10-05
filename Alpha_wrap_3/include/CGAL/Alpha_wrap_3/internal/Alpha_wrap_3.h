@@ -671,7 +671,7 @@ private:
     }
 
     t.stop();
-    std::cout << t.time() << " for scanning" << std::endl;
+    std::cout << t.time() << " for scanning a queue of size " << m_queue.size() << std::endl;
 
     return true;
   }
