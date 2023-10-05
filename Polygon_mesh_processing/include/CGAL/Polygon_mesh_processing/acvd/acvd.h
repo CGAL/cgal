@@ -279,6 +279,7 @@ PolygonMesh acvd_simplification(
 
   int nb_modifications = 0;
   int nb_disconnected = 0;
+  int iteration = 0;
 
   do
   {
@@ -403,8 +404,11 @@ PolygonMesh acvd_simplification(
         }
       }
 
+      iteration++;
+      std::cout << "iteration: " << iteration << ", # Modifications: " << nb_modifications << "\n";
+
       clusters_edges_active.swap(clusters_edges_new);
-    } while (nb_modifications > 0);
+    } while (nb_modifications > 0/* && iteration < 100*/);
 
     // clean clusters here
       // the goal is to delete clusters with multiple connected components
@@ -412,6 +416,7 @@ PolygonMesh acvd_simplification(
       // we need to keep the largest connected component for each cluster
       // and set the other connected components to -1 (empty cluster), would also need to update clusters_edges_new
 
+    // TODO: This visited array should be a property map for generalization
     std::vector<bool> visited(num_vertices(pmesh), false);
     // std::vector<bool> visited_clusters(nb_clusters, false);
     // [cluster][component_index][vertex_index]

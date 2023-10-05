@@ -46,9 +46,7 @@ int main(int argc, char* argv[])
         Epic_kernel::Vector_3(0,0,0) });
   assert(created);
 
-
   PMP::interpolated_corrected_principal_curvatures_and_directions(smesh, principal_curvatures_and_directions_map);
-
 
   PMP::acvd_isotropic_simplification(
     smesh,
