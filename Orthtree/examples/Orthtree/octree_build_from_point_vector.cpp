@@ -23,7 +23,7 @@ int main() {
   points.emplace_back(-1, 1, 1);
 
   // Create an octree from the points
-  Octree octree({points});
+  Octree octree(points);
 
   // Build the octree
   octree.refine(10, 1);
