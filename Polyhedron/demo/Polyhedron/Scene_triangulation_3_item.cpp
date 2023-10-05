@@ -353,7 +353,7 @@ struct Scene_triangulation_3_item_priv {
     is_aabb_tree_built = false;
     alphaSlider = NULL;
     is_filterable = true;
-    visible_bitset.fill(0xFFFF);
+    visible_bitset.fill(0xFFFFFFFF);
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -2053,7 +2053,7 @@ QColor Scene_triangulation_3_item::getSubdomainIndexColor(int i) const
 void Scene_triangulation_3_item::resetVisibleSubdomain()
 {
   d->visible_subdomain.set();
-  d->visible_bitset.fill(0xFFFF);
+  d->visible_bitset.fill(0xFFFFFFFF);
 }
 
 void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
