@@ -8,7 +8,7 @@
  * that the multipolygon is composed of.
  *
  * \cgalHasModelsBegin
- * \cgalHasModel{CGAL::Multipolygon_with_holes_2<Polygon>}
+ * \cgalHasModels{CGAL::Multipolygon_with_holes_2<Polygon>}
  * \cgalHasModelsEnd
  */
 
