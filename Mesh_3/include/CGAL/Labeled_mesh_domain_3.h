@@ -1537,7 +1537,7 @@ protected:
   }
 
   static
-  Construct_surface_patch_index
+  Construct_pair_from_subdomain_indices<Subdomain_index>
   create_construct_surface_patch_index(const Null_functor&) {
     return Impl_details::construct_pair_functor();
   }
