@@ -530,7 +530,7 @@ private:
     std::cout << "\t vertices = " << nbv << std::endl;
 
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "c3t3_vertices_");
+      m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
 #endif
   }
