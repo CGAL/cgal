@@ -268,7 +268,7 @@ private:
   Mesh mesh_;
   const Image* image_;
 
-  Word_type image_data(std::size_t i, std::size_t j, std::size_t k)
+  Word_type image_data(int i, int j, int k)
   {
     if ( i>=0 && i<image_->xdim() && j>=0 && j<image_->ydim() && k>=0 && k<image_->zdim() )
       return image_->value(i, j, k);
