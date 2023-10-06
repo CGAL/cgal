@@ -160,12 +160,12 @@ void tangential_relaxation(const VertexRange& vertices,
                              Static_boolean_property_map<vertex_descriptor, false>());
 
   typedef typename internal_np::Lookup_named_param_def <
-      internal_np::vertex_is_constrained_t,
+      internal_np::sizing_function_t,
       CGAL_NP_CLASS,
       Uniform_sizing_field<TriangleMesh, VPMap>
     > ::type SizingFunction;
   SizingFunction sizing = choose_parameter(get_parameter(np, internal_np::sizing_function),
-                                        Uniform_sizing_field(-1, tm));//todo ip just a placeholder
+                                           Uniform_sizing_field(-1, tm));//todo ip just a placeholder
 
   const bool relax_constraints = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
