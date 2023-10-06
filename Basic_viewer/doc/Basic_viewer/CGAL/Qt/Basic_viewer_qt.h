@@ -20,112 +20,112 @@ public:
                   const char* title="");
 
   /// enables or disables the drawing of vertices.
-  void set_draw_vertices(bool b);
+  void draw_vertices(bool b);
 
   /// enables or disables the drawing of edges.
-  void set_draw_edges(bool b);
+  void draw_edges(bool b);
 
   /// enables or disables the drawing of rays.
-  void set_draw_rays(bool b);
+  void draw_rays(bool b);
 
   /// enables or disables the drawing of lines.
-  void set_draw_lines(bool b);
+  void draw_lines(bool b);
 
   /// enables or disables the drawing of faces.
-  void set_draw_faces(bool b);
+  void draw_faces(bool b);
 
   /// enables or disables the use of only one color (if `b` is `true`) or the use of multiple colors (if `b` is `false`).
-  void set_use_mono_color(bool b);
+  void use_mono_color(bool b);
 
   /// enables or disables the drawing of texts.
-  void set_draw_text(bool b);
+  void draw_text(bool b);
 
   /// sets the color used for vertices in mono_color mode.
-  void set_vertices_mono_color(const CGAL::IO::Color& c);
+  void vertices_mono_color(const CGAL::IO::Color& c);
 
   /// sets the color used for edges in mono_color mode.
-  void set_edges_mono_color(const CGAL::IO::Color& c);
+  void edges_mono_color(const CGAL::IO::Color& c);
 
   /// sets the color used for rays in mono_color mode.
-  void set_rays_mono_color(const CGAL::IO::Color& c);
+  void rays_mono_color(const CGAL::IO::Color& c);
 
   /// sets the color used for lines in mono_color mode.
-  void set_lines_mono_color(const CGAL::IO::Color& c);
+  void lines_mono_color(const CGAL::IO::Color& c);
 
   /// sets the color used for faces in mono_color mode.
-  void set_faces_mono_color(const CGAL::IO::Color& c);
+  void faces_mono_color(const CGAL::IO::Color& c);
 
-  /// negates the drawing of vertices (becomes `true` if it was `false` and reciprocally).
-  void negate_draw_vertices();
+  /// toggles the drawing of vertices.
+  void toggle_draw_vertices();
 
-  /// negates the drawing of edges (becomes `true` if it was `false` and reciprocally).
-  void negate_draw_edges();
+  /// toggles the drawing of edges.
+  void toggle_draw_edges();
 
-  /// negates the drawing of rays (becomes `true` if it was `false` and reciprocally).
-  void negate_draw_rays();
+  /// toggles the drawing of rays.
+  void toggle_draw_rays();
 
-  /// negates the drawing of lines (becomes `true` if it was `false` and reciprocally).
-  void negate_draw_lines();
+  /// toggles the drawing of lines.
+  void toggle_draw_lines();
 
-  /// negates the drawing of faces (becomes `true` if it was `false` and reciprocally).
-  void negate_draw_faces();
+  /// toggles the drawing of faces.
+  void toggle_draw_faces();
 
-  /// negates the use of mono color mode (becomes `true` if it was `false` and reciprocally).
-  void negate_use_mono_color();
+  /// toggles the use of mono color mode.
+  void toggle_use_mono_color();
 
-  /// negates the drawing of text (becomes `true` if it was `false` and reciprocally).
-  void negate_draw_text();
+  /// toggles the drawing of text.
+  void toggle_draw_text();
 
   /// returns `true` if vertices are drawn.
-  bool get_draw_vertices() const;
+  bool draw_vertices() const;
 
   /// returns `true` if edges are drawn.
-  bool get_draw_edges() const;
+  bool draw_edges() const;
 
   /// returns `true` if rays are drawn.
-  bool get_draw_rays() const;
+  bool draw_rays() const;
 
   /// returns `true` if lines are drawn.
-  bool get_draw_lines() const;
+  bool draw_lines() const;
 
   /// returns `true` if faces are drawn.
-  bool get_draw_faces() const;
+  bool draw_faces() const;
 
   /// returns `true` if mono color mode is used.
-  bool get_use_mono_color() const;
+  bool use_mono_color() const;
 
   /// returns `true` if normal are reversed.
-  bool get_inverse_normal() const;
+  bool reverse_normal() const;
 
   /// returns `true` if text are drawn.
-  bool get_draw_text() const;
+  bool draw_text() const;
 
   /// returns the mono color used for vertices.
-  const CGAL::IO::Color& get_vertices_mono_color() const;
+  const CGAL::IO::Color& vertices_mono_color() const;
 
   /// returns the mono color used for edges.
-  const CGAL::IO::Color& get_edges_mono_color() const;
+  const CGAL::IO::Color& edges_mono_color() const;
 
   /// returns the mono color used for rays.
-  const CGAL::IO::Color& get_rays_mono_color() const;
+  const CGAL::IO::Color& rays_mono_color() const;
 
   /// returns the mono color used for lines.
-  const CGAL::IO::Color& get_lines_mono_color() const;
+  const CGAL::IO::Color& lines_mono_color() const;
 
   /// returns the mono color used for faces.
-  const CGAL::IO::Color& get_faces_mono_color() const;
+  const CGAL::IO::Color& faces_mono_color() const;
 
   /// clears the basic viewer, i.e., remove all its elements.
   void clear();
 
   /// returns `true` if the viewer is empty.
-  bool is_empty() const;
+  bool empty() const;
 
   /// returns the bounding box of all the elements in the viewer.
   const CGAL::Bbox_3& bounding_box() const;
 
   /// returns `true` if the clipping plane is enabled.
-  bool is_clipping_plane_enabled() const;
+  bool clipping_plane_enabled() const;
 
   /// returns the clipping plane when it is enabled.
   CGAL::Exact_predicates_inexact_constructions_kernel::Plane_3 clipping_plane() const;
@@ -172,19 +172,19 @@ public:
   void face_begin(const CGAL::IO::Color &acolor);
 
   /// returns `true` iff a face is started.
-  bool is_a_face_started() const;
+  bool a_face_started() const;
 
   /// adds the given point in the current face.
-  /// @pre `is_a_face_started()`
+  /// @pre `a_face_started()`
   template <typename KPoint> bool add_point_in_face(const KPoint &kp);
 
   /// adds the given point in the current face, having the vertex normal.
-  /// @pre `is_a_face_started()`
+  /// @pre `a_face_started()`
   template <typename KPoint, typename KVector>
   bool add_point_in_face(const KPoint &kp, const KVector &p_normal);
 
   /// ends the current face.
-  /// @pre `is_a_face_started()`
+  /// @pre `a_face_started()`
   void face_end();
 
   /// adds the given text at the given position in the viewer.
@@ -196,16 +196,16 @@ public:
   void add_text(const KPoint &kp, const std::string &txt);
 
   /// returns the graphics scene of the viewer.
-  Graphics_scene<BufferType>& get_graphics_scene();
+  Graphics_scene<BufferType>& graphics_scene();
 
   /// returns the graphics scene of the viewer, const version.
-  const Graphics_scene<BufferType>& get_graphics_scene() const;
+  const Graphics_scene<BufferType>& graphics_scene() const;
 
-  /// negates all normals of vertices and faces.
-  void negate_all_normals();
+  /// reverses all normals of vertices and faces.
+  void reverse_all_normals();
 
   /// returns `true` if the data structure in in 2D, i.e., lies on a plane.
-  bool is_two_dimensional() const;
+  bool two_dimensional() const;
 
   /// draws the viewer without recomputing all internal buffers.
   virtual void draw();

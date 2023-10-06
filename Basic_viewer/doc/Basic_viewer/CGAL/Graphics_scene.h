@@ -54,19 +54,19 @@ public:
   void face_begin(const CGAL::IO::Color &acolor);
 
   /// return `true` iff a face is started.
-  bool is_a_face_started() const;
+  bool a_face_started() const;
 
   /// adds the given point in the current face.
-  /// @pre `is_a_face_started()`
+  /// @pre `a_face_started()`
   template <typename KPoint> bool add_point_in_face(const KPoint &kp);
 
   /// adds the given point in the current face, having the vertex normal.
-  /// @pre `is_a_face_started()`
+  /// @pre `a_face_started()`
   template <typename KPoint, typename KVector>
   bool add_point_in_face(const KPoint &kp, const KVector &p_normal);
 
   /// end the current face.
-  /// @pre `is_a_face_started()`
+  /// @pre `a_face_started()`
   void face_end();
 
   /// adds the given text at the given position in the storage.
@@ -78,7 +78,7 @@ public:
   void add_text(const KPoint &kp, const std::string &txt);
 
   /// returns `true` iff the storage has no element.
-  bool is_empty() const;
+  bool empty() const;
 
   /// clears the storage, i.e., removes all points, segments, triangles and text.
   void clear();
