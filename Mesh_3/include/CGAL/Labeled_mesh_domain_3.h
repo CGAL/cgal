@@ -824,7 +824,7 @@ public:
        p::construct_surface_patch_index =
                create_construct_surface_patch_index(construct_surface_patch_index_),
        p::construct_initial_points =
-               construct_initial_points_functor(construct_initial_points));
+               Impl_details::construct_initial_points_functor(construct_initial_points));
 
     // features
     Mesh_3::internal::Add_features_in_domain<!no_features>()
@@ -866,7 +866,7 @@ public:
              p::construct_surface_patch_index =
                      create_construct_surface_patch_index(construct_surface_patch_index_),
              p::construct_initial_points =
-                     construct_initial_points_functor(construct_initial_points));
+                     Impl_details::construct_initial_points_functor(construct_initial_points));
 
   }
 
@@ -994,7 +994,7 @@ public:
              p::construct_surface_patch_index =
                      create_construct_surface_patch_index(construct_surface_patch_index_),
              p::construct_initial_points =
-                     construct_initial_points_functor(construct_initial_points));
+                     Impl_details::construct_initial_points_functor(construct_initial_points));
   }
 /// @}
 #ifndef DOXYGEN_RUNNING
@@ -1097,7 +1097,7 @@ public:
   Construct_initial_points construct_initial_points_object() const
   {
     if (this->initial_points_function_.is_default()) {
-      return construct_initial_points_functor(Defult_construct_initial_points(*this));
+      return Impl_details::construct_initial_points_functor(Defult_construct_initial_points(*this));
     }
     else {
       return this->initial_points_function_;
