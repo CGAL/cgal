@@ -39,6 +39,7 @@ endif()
 
 create_single_source_cgal_program( "test_meshing_implicit_function.cpp" )
 create_single_source_cgal_program( "test_meshing_polyhedral_complex.cpp" )
+create_single_source_cgal_program( "test_meshing_polyhedral_complex_with_manifold_and_min_size.cpp")
 create_single_source_cgal_program( "test_meshing_polyhedron.cpp" )
 create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
 create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
@@ -81,6 +82,7 @@ foreach(target
     test_meshing_with_one_step
     test_min_edge_length
     test_min_size_criteria
+    test_meshing_polyhedral_complex_with_manifold_and_min_size
     )
   if(TARGET ${target})
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
