@@ -25,16 +25,16 @@ from those of inner boundaries.
 
 \section SectionPolygonRepair_Definitions Definitions
 
-- A valid <B>polygon</B> (without holes) is a point set in \f$ \mathbb{R}^2\f$
+- A valid <em>polygon</em> (without holes) is a point set in \f$ \mathbb{R}^2\f$
 that is bounded by a cycle of linear edges, which is known as its
-<B>outer boundary</B>. This outer boundary should be <B>simple</B>,
+<em>outer boundary</em>. This outer boundary should be <em>simple</em>,
 meaning that the interiors of its edges are pairwise disjoint and all of
 its vertices have a degree of two. It is thus topologically equivalent to a
 disk and is represented internally as the sequence of points at the common
 end points of the edges around its outer boundary.
 
-- A valid <B>polygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$
-that is bounded by one outer boundary and zero or more <B>inner boundaries</B>,
+- A valid <em>polygon with holes</em> is a point set in \f$ \mathbb{R}^2\f$
+that is bounded by one outer boundary and zero or more <em>inner boundaries</em>,
 where each inner boundary represents a hole in the polygon. Considered
 independently, each boundary should be simple. The different boundaries of a polygon
 are allowed to intersect tangentially at their common vertices (with no common
@@ -43,7 +43,7 @@ The interior of a polygon with holes should form a connected point set.
 Note that a valid polygon can also be represented as a valid polygon with
 holes (where the number of holes is zero).
 
-- A valid <B>multipolygon with holes</B> is a point set in \f$ \mathbb{R}^2\f$
+- A valid <em>multipolygon with holes</em> is a point set in \f$ \mathbb{R}^2\f$
 that is represented by a set of zero or more valid polygons with holes.
 The interiors of the polygons with holes should be pairwise disjoint, but they
 are allowed to intersect tangentially at their common vertices. Note that
@@ -102,7 +102,7 @@ Examples of polygons with holes (a-d) and multipolygons with holes
 For the purposes of the repair operation, the input polygon, polygon with holes
 or multipolygon is merely used as a container of input line segments. These line
 segments are added to the arrangement as edges. Internally, this is done using
-a constrained triangulation where they added as constraints.
+a constrained triangulation where they are added as constraints.
 
 With the odd-even heuristic, only the edges that are present an odd number of
 times in the input will be edges in the final arrangement.
@@ -149,9 +149,9 @@ with holes has zero holes and extract these if needed.
 
 \subsection SubsectionPolygonRepair_Repair Repairing a (Multi)polygon
 
-It's possible to repair a polygon, polygon with holes or multipolygon with holes
-using the odd-even rule by calling the `repair_odd_even` function as shown in the
-following example. This function returns a repaired multipolygon with holes.
+It is possible to repair a polygon, polygon with holes or multipolygon with holes
+using the odd-even rule by calling the `Polygon_repair::repair_odd_even()` function
+as shown in the following example. This function returns a repaired multipolygon with holes.
 
 \cgalExample{Polygon_repair/repair_polygon_2.cpp}
 
