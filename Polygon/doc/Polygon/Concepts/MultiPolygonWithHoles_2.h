@@ -7,7 +7,9 @@
  * The concept requires the ability to store the polygons with holes
  * that the multipolygon is composed of.
  *
- * \cgalHasModel `CGAL::Multipolygon_with_holes_2<Polygon>`
+ * \cgalHasModelsBegin
+ * \cgalHasModel{CGAL::Multipolygon_with_holes_2<Polygon>}
+ * \cgalHasModelsEnd
  */
 
 class MultipolygonWithHoles_2 {

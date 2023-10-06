@@ -28,7 +28,7 @@ namespace CGAL {
  * the types `Polygon_2<Kernel,Container>` and `Polygon_with_holes_2<Kernel,Container>`.
  * The latter is used to represent each polygon with holes. The former is converted to the latter.
  *
- * \cgalModels `MultipolygonWithHoles_2`
+ * \cgalModels{MultipolygonWithHoles_2}
  */
 template <class Kernel,
           class Container = std::vector<typename Kernel::Point_2>>
