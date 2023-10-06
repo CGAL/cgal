@@ -193,12 +193,12 @@ namespace internal {
   {
     template <typename Functor>
     Construct_initial_point_function_wrapper(Functor functor)
-        : has_functor_(true)
-        , initial_points_function_no_number_(functor)
+        : initial_points_function_no_number_(functor)
         , initial_points_function_number_(functor)
     { }
     Construct_initial_point_function_wrapper(Null_functor)
-        : has_functor_(false)
+        : initial_points_function_no_number_()
+        , initial_points_function_number_()
     { }
     OutputIterator operator()(OutputIterator pts) const
     {
@@ -208,7 +208,10 @@ namespace internal {
     {
       return initial_points_function_number_(pts, n);
     }
-    const bool has_functor_;
+    bool is_default() const
+    {
+      return !(bool)initial_points_function_no_number_;
+    }
   private:
     const std::function<OutputIterator(OutputIterator)> initial_points_function_no_number_;
     const std::function<OutputIterator(OutputIterator, int)> initial_points_function_number_;
@@ -645,7 +648,7 @@ public:
                        create_null_subdomain_index(null_subdomain_index_),
                p::construct_surface_patch_index =
                        create_construct_surface_patch_index(construct_surface_patch_index_),
-               p::initial_points =
+               p::construct_initial_points =
                        construct_initial_points_functor(construct_initial_points));
 
   }
@@ -820,7 +823,7 @@ public:
                create_null_subdomain_index(null_subdomain_index_),
        p::construct_surface_patch_index =
                create_construct_surface_patch_index(construct_surface_patch_index_),
-       p::initial_points =
+       p::construct_initial_points =
                construct_initial_points_functor(construct_initial_points));
 
     // features
@@ -862,7 +865,7 @@ public:
                      create_null_subdomain_index(null_subdomain_index_),
              p::construct_surface_patch_index =
                      create_construct_surface_patch_index(construct_surface_patch_index_),
-             p::initial_points =
+             p::construct_initial_points =
                      construct_initial_points_functor(construct_initial_points));
 
   }
@@ -990,7 +993,7 @@ public:
                      create_null_subdomain_index(null_subdomain_index_),
              p::construct_surface_patch_index =
                      create_construct_surface_patch_index(construct_surface_patch_index_),
-             p::initial_points =
+             p::construct_initial_points =
                      construct_initial_points_functor(construct_initial_points));
   }
 /// @}
@@ -1093,11 +1096,11 @@ public:
   // Returns Construct_initial_points object
   Construct_initial_points construct_initial_points_object() const
   {
-    if (this->initial_points_function_.has_functor_) {
-      return this->initial_points_function_;
+    if (this->initial_points_function_.is_default()) {
+      return construct_initial_points_functor(Defult_construct_initial_points(*this));
     }
     else {
-      return construct_initial_points_functor(Defult_construct_initial_points(*this));
+      return this->initial_points_function_;
     }
   }
 
