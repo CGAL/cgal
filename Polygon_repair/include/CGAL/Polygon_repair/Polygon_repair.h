@@ -129,7 +129,7 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
   CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
   int regions = 0, holes = 0;
   while (!to_check.empty()) {
-    if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+    if (to_check.front()->label() == 0) { // label = 0 means not labeled yet
       if (to_check_added_by.front() < 0) {
         CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
         ++regions;
@@ -172,7 +172,7 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
   regions = 0;
   holes = 0;
   while (!to_check.empty()) {
-    if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+    if (to_check.front()->label() == 0) { // label = 0 means not labeled yet
       if (to_check_added_by.front() < 0) {
         CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
         ++regions;
@@ -215,7 +215,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
       CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
       int regions = 0, holes = 0;
       while (!to_check.empty()) {
-        if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+        if (to_check.front()->label() == 0) { // label = 0 means not labeled yet
           if (to_check_added_by.front() < 0) {
             CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
             ++regions;
@@ -227,7 +227,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
         to_check_added_by.pop_front();
       }
 
-      // Test vertices in labelled triangulation
+      // Test vertices in labeled triangulation
       for (auto const& vertex: polygon.outer_boundary().vertices()) {
         typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
         if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() > 0) {
@@ -491,7 +491,7 @@ public:
     while (!to_check_in_region.empty()) {
       for (int neighbour = 0; neighbour < 3; ++neighbour) {
         if (!tt.is_constrained(typename Triangulation::Edge(to_check_in_region.front(), neighbour))) {
-          if (to_check_in_region.front()->neighbor(neighbour)->label() == 0) { // unlabelled
+          if (to_check_in_region.front()->neighbor(neighbour)->label() == 0) { // unlabeled
             to_check_in_region.front()->neighbor(neighbour)->label() = label;
             to_check_in_region.push_back(to_check_in_region.front()->neighbor(neighbour));
             to_check_in_region.front()->neighbor(neighbour)->processed() = true;
@@ -550,7 +550,7 @@ public:
     // Label region of front element to_check list
     while (!to_check.empty()) {
 
-      if (to_check.front()->label() == 0) { // label = 0 means not labelled yet
+      if (to_check.front()->label() == 0) { // label = 0 means not labeled yet
         if (to_check_added_by.front() < 0) {
           label_region(t, to_check.front(), number_of_polygons+1, to_check, to_check_added_by);
           ++number_of_polygons;
