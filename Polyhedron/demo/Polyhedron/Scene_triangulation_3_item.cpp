@@ -576,6 +576,7 @@ void Scene_triangulation_3_item::common_constructor(bool display_elements)
 
   d->is_grid_shown = display_elements;
   d->show_tetrahedra = display_elements;
+  d->cut_plane_enabled = display_elements;
   d->last_intersection = !d->show_tetrahedra;
 
   setTriangleContainer(T3_faces, new Tc(Vi::PROGRAM_C3T3, false));
