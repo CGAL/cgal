@@ -27,14 +27,14 @@ namespace CGAL {
 
 namespace Polygon_repair {
 
-template <class Kernel, class PolygonContainer>
+template <class Kernel, class Container>
 class Polygon_repair;
 
 /// \ingroup PkgPolygonRepairFunctions
 /// Repair a polygon without holes using the odd-even heuristic
-template <class Kernel, class PolygonContainer>
-Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygon_2<Kernel, PolygonContainer>& p) {
-  CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer> pr;
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair_odd_even(const Polygon_2<Kernel, Container>& p) {
+  CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_odd_even(p);
   if (pr.triangulation().number_of_faces() > 0) {
     pr.label_triangulation_odd_even();
@@ -44,9 +44,9 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygo
 
 /// \ingroup PkgPolygonRepairFunctions
 /// Repair a polygon with holes using the odd-even heuristic
-template <class Kernel, class PolygonContainer>
-Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygon_with_holes_2<Kernel, PolygonContainer>& p) {
-  CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer> pr;
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair_odd_even(const Polygon_with_holes_2<Kernel, Container>& p) {
+  CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_odd_even(p);
   if (pr.triangulation().number_of_faces() > 0) {
     pr.label_triangulation_odd_even();
@@ -56,9 +56,9 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Polygo
 
 /// \ingroup PkgPolygonRepairFunctions
 /// Repair a multipolygon with holes using the odd-even heuristic
-template <class Kernel, class PolygonContainer>
-Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& mp) {
-  CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer> pr;
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair_odd_even(const Multipolygon_with_holes_2<Kernel, Container>& mp) {
+  CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_odd_even(mp);
   if (pr.triangulation().number_of_faces() > 0) {
     pr.label_triangulation_odd_even();
@@ -66,8 +66,8 @@ Multipolygon_with_holes_2<Kernel, PolygonContainer> repair_odd_even(const Multip
   } return pr.multipolygon();
 }
 
-template <class Kernel, class PolygonContainer>
-bool is_valid(const Polygon_2<Kernel, PolygonContainer>& polygon) {
+template <class Kernel, class Container>
+bool is_valid(const Polygon_2<Kernel, Container>& polygon) {
   if (polygon.vertices().size() < 3) {
     std::cout << "Invalid: less than 3 vertices" << std::endl;
     return false;
@@ -82,8 +82,8 @@ bool is_valid(const Polygon_2<Kernel, PolygonContainer>& polygon) {
   } return true;
 }
 
-template <class Kernel, class PolygonContainer>
-bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
+template <class Kernel, class Container>
+bool is_valid(const Polygon_with_holes_2<Kernel, Container>& polygon) {
 
   // Validate outer boundary
   for (auto const& edge: polygon.outer_boundary().edges()) {
@@ -110,11 +110,11 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
   }
 
   // Create triangulation of outer boundary
-  typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation vt;
+  typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation vt;
   for (auto const& edge: polygon.outer_boundary().edges()) {
     try {
       vt.insert_constraint(edge.source(), edge.target());
-    } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Intersection_of_constraints_exception ice) {
+    } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Intersection_of_constraints_exception ice) {
       std::cout << "Invalid: intersection in outer boundary" << std::endl;
       return false;
     }
@@ -124,17 +124,17 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
   } for (auto const face: vt.all_face_handles()) {
     face->label() = 0;
     face->processed() = false;
-  } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle> to_check;
+  } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Face_handle> to_check;
   std::list<int> to_check_added_by;
-  CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+  CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
   int regions = 0, holes = 0;
   while (!to_check.empty()) {
     if (to_check.front()->label() == 0) { // label = 0 means not labeled yet
       if (to_check_added_by.front() < 0) {
-        CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
+        CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
         ++regions;
       } else {
-        CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
+        CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
         ++holes;
       }
     } to_check.pop_front();
@@ -144,10 +144,10 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
   // Hole nesting
   for (auto const& hole: polygon.holes()) {
     for (auto const& vertex: hole.vertices()) {
-      typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type lt;
+      typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Locate_type lt;
       int li;
-      typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
-      if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() != 1) {
+      typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
+      if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Locate_type::FACE && f->label() != 1) {
         std::cout << "Invalid: hole (partly) outside outer boundary" << std::endl;
         return false;
       }
@@ -155,7 +155,7 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
     for (auto const& edge: hole.edges()) {
       try {
         vt.insert_constraint(edge.source(), edge.target());
-      } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Intersection_of_constraints_exception ice) {
+      } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Intersection_of_constraints_exception ice) {
         std::cout << "Invalid: hole (partly) outside outer boundary" << std::endl;
         return false;
       }
@@ -168,16 +168,16 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
     face->processed() = false;
   } to_check.clear();
   to_check_added_by.clear();
-  CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+  CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
   regions = 0;
   holes = 0;
   while (!to_check.empty()) {
     if (to_check.front()->label() == 0) { // label = 0 means not labeled yet
       if (to_check_added_by.front() < 0) {
-        CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
+        CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
         ++regions;
       } else {
-        CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
+        CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
         ++holes;
       }
     } to_check.pop_front();
@@ -190,16 +190,16 @@ bool is_valid(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
   return true;
 }
 
-template <class Kernel, class PolygonContainer>
-bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
+template <class Kernel, class Container>
+bool is_valid(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon) {
 
   // Validate polygons
   for (auto const& polygon: multipolygon.polygons()) {
     if (!is_valid(polygon)) return false;
   }
 
-  typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation vt;
-  typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type lt;
+  typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation vt;
+  typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Locate_type lt;
   int li;
   for (auto const& polygon: multipolygon.polygons()) {
 
@@ -210,17 +210,17 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
       for (auto const face: vt.all_face_handles()) {
         face->label() = 0;
         face->processed() = false;
-      } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle> to_check;
+      } std::list<typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Face_handle> to_check;
       std::list<int> to_check_added_by;
-      CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
+      CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, vt.infinite_face(), -1, to_check, to_check_added_by); // exterior
       int regions = 0, holes = 0;
       while (!to_check.empty()) {
         if (to_check.front()->label() == 0) { // label = 0 means not labeled yet
           if (to_check_added_by.front() < 0) {
-            CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
+            CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, to_check.front(), regions+1, to_check, to_check_added_by);
             ++regions;
           } else {
-            CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
+            CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::label_region(vt, to_check.front(), -(holes+2), to_check, to_check_added_by);
             ++holes;
           }
         } to_check.pop_front();
@@ -229,16 +229,16 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
 
       // Test vertices in labeled triangulation
       for (auto const& vertex: polygon.outer_boundary().vertices()) {
-        typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
-        if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() > 0) {
+        typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
+        if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Locate_type::FACE && f->label() > 0) {
           std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
           return false;
         }
       }
       for (auto const& hole: polygon.holes()) {
         for (auto const& vertex: hole.vertices()) {
-          typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
-          if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Locate_type::FACE && f->label() > 0) {
+          typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Face_handle f = vt.locate(vertex, lt, li);
+          if (lt == CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Locate_type::FACE && f->label() > 0) {
             std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
             return false;
           }
@@ -251,7 +251,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
     for (auto const& edge: polygon.outer_boundary().edges()) {
       try {
         vt.insert_constraint(edge.source(), edge.target());
-      } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Intersection_of_constraints_exception ice) {
+      } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Intersection_of_constraints_exception ice) {
         std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
         return false;
       }
@@ -260,7 +260,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
       for (auto const& edge: hole.edges()) {
         try {
           vt.insert_constraint(edge.source(), edge.target());
-        } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, PolygonContainer>::Validation_triangulation::Intersection_of_constraints_exception ice) {
+        } catch (typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Intersection_of_constraints_exception ice) {
           std::cout << "Invalid: (partly) overlapping polygons" << std::endl;
           return false;
         }
@@ -271,7 +271,7 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipo
   return true;
 }
 
-template <class Kernel, class PolygonContainer = std::vector<typename Kernel::Point_2>>
+template <class Kernel, class Container = std::vector<typename Kernel::Point_2>>
 class Polygon_repair {
 public:
   using Vertex_base = CGAL::Triangulation_vertex_base_2<Kernel>;
@@ -296,7 +296,7 @@ public:
   using Validation_triangulation = CGAL::Constrained_triangulation_2<Kernel, Triangulation_data_structure, Validation_tag>;
 
   struct Polygon_less {
-    using Polygon_2 = CGAL::Polygon_2<Kernel, PolygonContainer>;
+    using Polygon_2 = CGAL::Polygon_2<Kernel, Container>;
     bool operator()(const Polygon_2& pa, const Polygon_2& pb) const {
       typename Polygon_2::Vertex_iterator va = pa.vertices_begin();
       typename Polygon_2::Vertex_iterator vb = pb.vertices_begin();
@@ -311,7 +311,7 @@ public:
   };
 
   struct Polygon_with_holes_less {
-    using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, PolygonContainer>;
+    using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, Container>;
     Polygon_less pl;
     bool operator()(const Polygon_with_holes_2& pa, const Polygon_with_holes_2& pb) const {
       if (pl(pa.outer_boundary(), pb.outer_boundary())) return true;
@@ -334,7 +334,7 @@ public:
   /// @{
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation_odd_even(const Polygon_2<Kernel, PolygonContainer>& polygon) {
+  void add_to_triangulation_odd_even(const Polygon_2<Kernel, Container>& polygon) {
 
     // Get unique edges
     for (auto const& edge: polygon.edges()) {
@@ -375,7 +375,7 @@ public:
   }
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation_odd_even(const Polygon_with_holes_2<Kernel, PolygonContainer>& polygon) {
+  void add_to_triangulation_odd_even(const Polygon_with_holes_2<Kernel, Container>& polygon) {
 
     // Get unique edges
     for (auto const& edge: polygon.outer_boundary().edges()) {
@@ -425,7 +425,7 @@ public:
   }
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation_odd_even(const Multipolygon_with_holes_2<Kernel, PolygonContainer>& multipolygon) {
+  void add_to_triangulation_odd_even(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon) {
 
     // Get unique edges
     for (auto const& polygon: multipolygon.polygons()) {
@@ -602,8 +602,8 @@ public:
   // Reconstruct multipolygon based on the triangles labeled as inside the polygon
   void reconstruct_multipolygon() {
     mp.clear();
-    std::vector<Polygon_2<Kernel, PolygonContainer>> polygons; // outer boundaries
-    std::vector<std::set<Polygon_2<Kernel, PolygonContainer>, Polygon_less>> holes; // holes are ordered (per polygon)
+    std::vector<Polygon_2<Kernel, Container>> polygons; // outer boundaries
+    std::vector<std::set<Polygon_2<Kernel, Container>, Polygon_less>> holes; // holes are ordered (per polygon)
     polygons.resize(number_of_polygons);
     holes.resize(number_of_polygons);
 
@@ -621,7 +621,7 @@ public:
         reconstruct_ring(ring, face, opposite_vertex);
 
         // Put ring in polygons
-        Polygon_2<Kernel, PolygonContainer> polygon(ring.begin(), ring.end());
+        Polygon_2<Kernel, Container> polygon(ring.begin(), ring.end());
         // std::cout << "Reconstructed ring for polygon " << face->label() << " with ccw? " << (polygon.orientation() == CGAL::COUNTERCLOCKWISE) << std::endl;
         if (polygon.orientation() == CGAL::COUNTERCLOCKWISE) {
           polygons[face->label()-1] = polygon;
@@ -632,9 +632,9 @@ public:
     }
 
     // Create polygons with holes and put in multipolygon
-    std::set<Polygon_with_holes_2<Kernel, PolygonContainer>, Polygon_with_holes_less> ordered_polygons;
+    std::set<Polygon_with_holes_2<Kernel, Container>, Polygon_with_holes_less> ordered_polygons;
     for (int i = 0; i < polygons.size(); ++i) {
-      ordered_polygons.insert(Polygon_with_holes_2<Kernel, PolygonContainer>(polygons[i], holes[i].begin(), holes[i].end()));
+      ordered_polygons.insert(Polygon_with_holes_2<Kernel, Container>(polygons[i], holes[i].begin(), holes[i].end()));
     }
     for (auto const& polygon: ordered_polygons) {
       // std::cout << "Adding polygon " << polygon << std::endl;
@@ -661,7 +661,7 @@ public:
     return t;
   }
 
-  Multipolygon_with_holes_2<Kernel, PolygonContainer> multipolygon() {
+  Multipolygon_with_holes_2<Kernel, Container> multipolygon() {
     return mp;
   }
 
@@ -671,7 +671,7 @@ public:
 protected:
   Triangulation t;
   Edge_map unique_edges;
-  Multipolygon_with_holes_2<Kernel, PolygonContainer> mp;
+  Multipolygon_with_holes_2<Kernel, Container> mp;
   int number_of_polygons, number_of_holes;
   typename Triangulation::Face_handle search_start;
 };
