@@ -95,7 +95,7 @@ protected:
   mutable bool m_bad_vertices_initialized;
   bool m_with_manifold_criterion;
   bool m_with_boundary;
-  std::optional<FT> m_facet_min_size;
+  std::optional<FT> m_squared_facet_min_size ;
 
 private:
   // computes and return an ordered pair of Vertex
@@ -247,9 +247,9 @@ private:
 
   bool is_smaller_than_min_size(const FT& sq_dist) const
   {
-    if(!m_facet_min_size)
+    if(!m_squared_facet_min_size )
       return false;
-    return sq_dist < CGAL::square(*m_facet_min_size);
+    return sq_dist < *m_squared_facet_min_size;
   }
 
   template<typename T> //T may be Edge or Vertex_handle
@@ -340,7 +340,7 @@ public:
     , m_bad_vertices_initialized(false)
     , m_with_manifold_criterion((mesh_topology & MANIFOLD_WITH_BOUNDARY) != 0)
     , m_with_boundary((mesh_topology & NO_BOUNDARY) == 0)
-    , m_facet_min_size(criteria.min_radius_bound())
+    , m_squared_facet_min_size(criteria.squared_min_radius_bound())
   {
 #ifdef CGAL_MESH_3_DEBUG_CONSTRUCTORS
     std::cerr << "CONS: Refine_facets_manifold_base";

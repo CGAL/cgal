@@ -182,6 +182,12 @@ public:
   std::optional<FT> min_radius_bound() const {
     return min_radius_bound_;
   }
+  std::optional<FT> squared_min_radius_bound() const {
+    if(min_radius_bound_)
+      return CGAL::square(*min_radius_bound_);
+    else
+      return std::nullopt;
+  }
 
 private:
   void init_aspect(const FT& angle_bound)
