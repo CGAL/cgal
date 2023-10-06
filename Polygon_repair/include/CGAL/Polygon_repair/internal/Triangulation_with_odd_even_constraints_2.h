@@ -16,6 +16,8 @@
 #include <CGAL/iterator.h>
 
 namespace CGAL {
+namespace Polygon_repair {
+namespace internal {
 
 template <class Triangulation_>
 class Triangulation_with_odd_even_constraints_2 : public Triangulation_ {
@@ -122,6 +124,8 @@ public:
   }
 };
 
+} // namespace internal
+} // namespace Polygon_repair
 } // namespace CGAL
 
 #endif // CGAL_TRIANGULATION_WITH_ODD_EVEN_CONSTRAINTS_2_H

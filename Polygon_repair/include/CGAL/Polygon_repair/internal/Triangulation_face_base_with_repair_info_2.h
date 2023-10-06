@@ -17,6 +17,8 @@
 #include <CGAL/Triangulation_face_base_2.h>
 
 namespace CGAL {
+namespace Polygon_repair {
+namespace internal {
 
 template <typename Kernel, typename FaceBase = Triangulation_face_base_2<Kernel>>
 class Triangulation_face_base_with_repair_info_2 : public FaceBase {
@@ -47,6 +49,8 @@ public:
   int& label() { return _label; }
 };
 
+} // namespace internal
+} // namespace Polygon_repair
 } //namespace CGAL
 
 #endif // CGAL_TRIANGULATION_WITH_REPAIR_INFO_2_H
