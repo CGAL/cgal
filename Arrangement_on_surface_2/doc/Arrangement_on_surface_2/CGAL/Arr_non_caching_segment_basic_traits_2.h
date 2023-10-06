@@ -21,7 +21,7 @@ instantiations for the kernel. Using other (inexact) number types
 `Simple_cartesian<double>`) is also possible, at the user's own
 risk.
 
-\cgalModels `ArrangementLandmarkTraits_2`
+\cgalModels{ArrangementLandmarkTraits_2}
 
 */
 template< typename Kernel >

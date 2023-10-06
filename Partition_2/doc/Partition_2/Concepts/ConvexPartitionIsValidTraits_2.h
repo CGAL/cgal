@@ -6,7 +6,9 @@ Requirements of a traits class used
 by `convex_partition_is_valid_2` for testing the validity of a
 convex partition of a polygon.
 
-\cgalHasModel `CGAL::Partition_traits_2<R>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Partition_traits_2<R>}
+\cgalHasModelsEnd
 
 \sa `CGAL::approx_convex_partition_2()`
 \sa `CGAL::greene_approx_convex_partition_2()`

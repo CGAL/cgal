@@ -13,7 +13,7 @@ if any triangle in the profile changes the normal by more than 90 degree, in thi
 \tparam Filter must be a model of the concept `PlacementFilter`. It defaults to a class that does
 not filter any placement.
 
-\cgalModels `PlacementFilter`
+\cgalModels{PlacementFilter}
 
 */
 template <typename Filter>

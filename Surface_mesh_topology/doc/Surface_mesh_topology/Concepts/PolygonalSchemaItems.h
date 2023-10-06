@@ -6,7 +6,9 @@
 
   \cgalRefines{GenericMapItems}
 
-  \cgalHasModel \link CGAL::Surface_mesh_topology::Polygonal_schema_min_items `CGAL::Surface_mesh_topology::Polygonal_schema_min_items`\endlink
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link CGAL::Surface_mesh_topology::Polygonal_schema_min_items `CGAL::Surface_mesh_topology::Polygonal_schema_min_items`\endlink}
+  \cgalHasModelsEnd
   */
 
 class PolygonalSchemaItems

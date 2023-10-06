@@ -6,13 +6,14 @@
 A model of concept `MinSphereOfSpheresTraits` must provide the
 following constants, types, predicates and operations.
 
-\cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>`
-\cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>`
-\cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>`
-
-\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>`
-\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_3<K,FT,UseSqrt,Algorithm>`
-\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Min_sphere_of_spheres_d_traits_2<K,FT,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_points_d_traits_3<K,FT,UseSqrt,Algorithm>}
+\cgalHasModels{CGAL::Min_sphere_of_points_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>}
+\cgalHasModelsEnd
 */
 
 class MinSphereOfSpheresTraits {

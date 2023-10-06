@@ -7,9 +7,7 @@
 namespace ArrDirectionalTraits {}
 
 /*!
-  \code
-  #include <CGAL/draw_polygon_set_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_polygon_set_2.h}
 */
 /// \defgroup PkgDrawPolygonSet2 Draw a 2D Polygon Set
 /// \ingroup PkgBooleanSetOperations2Ref

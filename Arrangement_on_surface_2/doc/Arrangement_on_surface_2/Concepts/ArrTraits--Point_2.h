@@ -7,7 +7,9 @@ namespace ArrTraits {
  *
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Point_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::Point_2}
+ * \cgalHasModelsEnd
  */
 class Point_2 {
 public:

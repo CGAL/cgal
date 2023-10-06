@@ -11,7 +11,7 @@ must provide the respective type for the point. Vertices and facets
 both do <I>not</I> contain a halfedge handle to an incident
 halfedge.
 
-\cgalModels `PolyhedronItems_3`
+\cgalModels{PolyhedronItems_3}
 
 \sa `CGAL::Polyhedron_3<Traits>`
 \sa `CGAL::Polyhedron_items_3`

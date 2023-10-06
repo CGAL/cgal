@@ -14,7 +14,7 @@ orthogonal to an oriented plane, or the direction of an oriented line.
 Further, they can be used to indicate angles. The slope of a direction
 is `dy()`/`dx()`.
 
-\cgalModels `Kernel::Direction_2`
+\cgalModels{Kernel::Direction_2}
 
 */
 template< typename Kernel >
