@@ -92,7 +92,7 @@ protected:
 };
 
 /*!
-exports a multipolygon with holes to the output stream `os`.
+inserts a multipolygon with holes to the output stream `os`.
 
 An \ascii and a binary format exist. The format can be selected with
 the \cgal modifiers for streams, `set_ascii_mode()` and `set_binary_mode()`,
@@ -100,11 +100,11 @@ respectively. The modifier `set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
 be free of comments. The default for writing is \ascii without comments.
 
-The number of polygons is exported followed by the polygons. For each polygon,
-the number of points of the outer boundary is exported followed by the
+The number of polygons is written followed by the polygons. For each polygon,
+the number of points of the outer boundary is written followed by the
 points themselves in counterclockwise order. Then, the number of holes
-is exported, and for each hole, the number of points on its outer
-boundary is exported followed by the points themselves in clockwise
+is written, and for each hole, the number of points on its outer
+boundary is written followed by the points themselves in clockwise
 order.
 
 \relates Multipolygon_with_holes_2

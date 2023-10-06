@@ -59,7 +59,7 @@ some member functions.
 
 \cgalExample{Polygon/Polygon.cpp}
 
-\subsection SubsectionPolygonRepair_Multipolygon The multipolygon with holes class
+\subsection SubsectionPolygonRepair_Multipolygon The Multipolygon with Holes Class
 
 The following example shows the creation of a multipolygon with holes and the traversal
 of the polygons in it.
