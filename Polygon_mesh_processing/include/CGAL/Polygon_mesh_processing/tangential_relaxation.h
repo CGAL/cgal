@@ -17,6 +17,7 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
 #include <CGAL/property_map.h>
 
 #include <CGAL/Named_function_parameters.h>
@@ -132,6 +133,7 @@ void tangential_relaxation(const VertexRange& vertices,
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type GT;
   GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
@@ -156,6 +158,14 @@ void tangential_relaxation(const VertexRange& vertices,
     > ::type VCM;
   VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                              Static_boolean_property_map<vertex_descriptor, false>());
+
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::vertex_is_constrained_t,
+      CGAL_NP_CLASS,
+      Uniform_sizing_field<TriangleMesh, VPMap>
+    > ::type SizingFunction;
+  SizingFunction sizing = choose_parameter(get_parameter(np, internal_np::sizing_function),
+                                        Uniform_sizing_field(-1, tm));//todo ip just a placeholder
 
   const bool relax_constraints = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
@@ -222,6 +232,12 @@ void tangential_relaxation(const VertexRange& vertices,
     auto gt_barycenter = gt.construct_barycenter_3_object();
     auto gt_project = gt.construct_projected_point_3_object();
 
+//    if constexpr (is_default_parameter<CGAL_NP_CLASS, internal_np::sizing_function_t>::value)
+//      {
+//      auto gt_area = gt.compute_area_3_object();
+//      auto gt_centroid = gt.construct_centroid_3_object();
+//      }
+
     // at each vertex, compute vertex normal
     std::unordered_map<vertex_descriptor, Vector_3> vnormals;
     compute_vertex_normals(tm, boost::make_assoc_property_map(vnormals), np);
@@ -246,15 +262,39 @@ void tangential_relaxation(const VertexRange& vertices,
       {
         const Vector_3& vn = vnormals.at(v);
         Vector_3 move = CGAL::NULL_VECTOR;
-        unsigned int star_size = 0;
-        for(halfedge_descriptor h :interior_hedges)
+        if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<TriangleMesh, VPMap>>)
         {
-          move = move + Vector_3(get(vpm, v), get(vpm, source(h, tm)));
-          ++star_size;
+          unsigned int star_size = 0;
+          for(halfedge_descriptor h :interior_hedges)
+          {
+            move = move + Vector_3(get(vpm, v), get(vpm, source(h, tm)));
+            ++star_size;
+          }
+          CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
+          move = (1. / static_cast<double>(star_size)) * move;
         }
-        CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
-        move = (1. / static_cast<double>(star_size)) * move;
+        else
+        {
+          auto gt_centroid = gt.construct_centroid_3_object();
+          auto gt_area = gt.compute_area_3_object();
+          double weight = 0;
+          for(halfedge_descriptor h :interior_hedges)
+          {
+            // calculate weight
+            // need v, v1 and v2
+            const vertex_descriptor v1 = target(next(h, tm), tm);
+            const vertex_descriptor v2 = source(h, tm);
 
+            const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
+            const double face_weight = tri_area
+                                       / (1. / 3. * (sizing.get_sizing(v) + sizing.get_sizing(v1) + sizing.get_sizing(v2)));
+            weight += face_weight;
+
+            const Point_3 centroid = gt_centroid(get(vpm, v), get(vpm, v1), get(vpm, v2));
+            move = move + Vector_3(get(vpm, v), centroid) * face_weight;
+          }
+          move = move / weight; //todo ip: what if weight ends up being close to 0?
+        }
         barycenters.emplace_back(v, vn, get(vpm, v) + move);
       }
       else
@@ -418,7 +458,7 @@ template <typename VertexRange,
           class TriangleMesh,
           class SizingFunction,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-void tangential_relaxation(const VertexRange& vertices,
+void tangential_relaxation_with_sizing(const VertexRange& vertices,
                            TriangleMesh& tm,
                            const SizingFunction& sizing,
                            const CGAL_NP_CLASS& np = parameters::default_values())
@@ -643,7 +683,7 @@ void tangential_relaxation(TriangleMesh& tm,
 template <class TriangleMesh,
           typename SizingFunction,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-void tangential_relaxation(TriangleMesh& tm,
+void tangential_relaxation_with_sizing(TriangleMesh& tm,
                            const SizingFunction& sizing,
                            const CGAL_NP_CLASS& np = parameters::default_values())
 {
