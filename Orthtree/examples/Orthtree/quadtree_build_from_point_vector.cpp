@@ -18,7 +18,7 @@ int main()
     points_2d.emplace_back(r.get_double(-1., 1.),
                            r.get_double(-1., 1.));
 
-  Quadtree quadtree({points_2d});
+  Quadtree quadtree(points_2d);
   quadtree.refine(10, 5);
 
   return EXIT_SUCCESS;

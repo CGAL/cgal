@@ -30,7 +30,7 @@ int main() {
   points.emplace_back(-1.0001, 1, 1);
 
   // Create an octree from the points
-  Octree octree({points});
+  Octree octree(points);
 
   // Build the octree with a small bucket size, so we get a deep node
   octree.refine(10, 2);
