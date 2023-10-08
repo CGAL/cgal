@@ -690,7 +690,7 @@ public:
     /// End iterator for vertices.
     Vertex_iterator vertices_end() const
     {
-        return Vertex_iterator(Vertex_index(number_of_vertices()), this);
+        return Vertex_iterator(Vertex_index(num_vertices()), this);
     }
     /// @endcond
 
@@ -711,7 +711,7 @@ public:
     /// End iterator for halfedges.
     Halfedge_iterator halfedges_end() const
     {
-        return Halfedge_iterator(Halfedge_index(number_of_halfedges()), this);
+        return Halfedge_iterator(Halfedge_index(num_halfedges()), this);
     }
     /// @endcond
 
@@ -732,7 +732,7 @@ public:
     /// End iterator for edges.
     Edge_iterator edges_end() const
     {
-        return Edge_iterator(Edge_index(number_of_edges()), this);
+        return Edge_iterator(Edge_index(num_edges()), this);
     }
     /// @endcond
 
@@ -754,7 +754,7 @@ public:
     /// End iterator for faces.
     Face_iterator faces_end() const
     {
-        return Face_iterator(Face_index(number_of_faces()), this);
+        return Face_iterator(Face_index(num_faces()), this);
     }
     /// @endcond
 
@@ -908,31 +908,58 @@ public:
       hconn_(hprops_.add_property<Halfedge_connectivity>("h:connectivity")),
       fconn_(fprops_.add_property<Face_connectivity>("f:connectivity")),
       vpoint_(vprops_.add_property<Point>("v:point")),
+      vremoved_(vprops_.add_property<bool>("v:removed")),
+      eremoved_(eprops_.add_property<bool>("e:removed")),
+      fremoved_(fprops_.add_property<bool>("f:removed")),
       anonymous_property_(0) {}
 
     /// Copy constructor: copies `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh(const Surface_mesh& rhs) :
-      vprops_(rhs.vprops_),
-      hprops_(rhs.hprops_),
-      fprops_(rhs.fprops_),
-      eprops_(rhs.eprops_),
-      vconn_(vprops_.get_property<Vertex_connectivity>("v:connectivity")),
-      vpoint_(vprops_.get_property<Point>("v:point")),
-      hconn_(hprops_.get_property<Halfedge_connectivity>("h:connectivity")),
-      fconn_(fprops_.get_property<Face_connectivity>("f:connectivity")),
-      anonymous_property_(0) {}
+      vprops_(rhs.vprops_)
+      , hprops_(rhs.hprops_)
+      , fprops_(rhs.fprops_)
+      , eprops_(rhs.eprops_)
+      , vpoint_(vprops_.get_property<Point>("v:point"))
+      , vconn_(vprops_.get_property<Vertex_connectivity>("v:connectivity"))
+      , hconn_(hprops_.get_property<Halfedge_connectivity>("h:connectivity"))
+      , fconn_(fprops_.get_property<Face_connectivity>("f:connectivity"))
+      , vremoved_(vprops_.get_property<bool>("v:removed"))
+      , eremoved_(eprops_.get_property<bool>("e:removed"))
+      , fremoved_(fprops_.get_property<bool>("f:removed"))
+      , removed_vertices_(rhs.removed_vertices_)
+      , removed_edges_(rhs.removed_edges_)
+      , removed_faces_(rhs.removed_faces_)
+      , vertices_freelist_(rhs.vertices_freelist_)
+      , edges_freelist_(rhs.edges_freelist_)
+      , faces_freelist_(rhs.faces_freelist_)
+      , garbage_(rhs.garbage_)
+      , recycle_(rhs.recycle_)
+      , anonymous_property_(rhs.anonymous_property_)
+    {}
 
     /// Move constructor.
-    Surface_mesh(Surface_mesh&& sm) :
-      vprops_(std::move(sm.vprops_)),
-      hprops_(std::move(sm.hprops_)),
-      eprops_(std::move(sm.eprops_)),
-      fprops_(std::move(sm.fprops_)),
-      vconn_(vprops_.get_property<Vertex_connectivity>("v:connectivity")),
-      vpoint_(vprops_.get_property<Point>("v:point")),
-      hconn_(hprops_.get_property<Halfedge_connectivity>("h:connectivity")),
-      fconn_(fprops_.get_property<Face_connectivity>("f:connectivity")),
-      anonymous_property_(0) {}
+    Surface_mesh(Surface_mesh&& sm)
+      : vprops_(std::move(sm.vprops_))
+      , hprops_(std::move(sm.hprops_))
+      , eprops_(std::move(sm.eprops_))
+      , fprops_(std::move(sm.fprops_))
+      , vpoint_(vprops_.get_property<Point>("v:point"))
+      , vconn_(vprops_.get_property<Vertex_connectivity>("v:connectivity"))
+      , hconn_(hprops_.get_property<Halfedge_connectivity>("h:connectivity"))
+      , fconn_(fprops_.get_property<Face_connectivity>("f:connectivity"))
+      , vremoved_(vprops_.get_property<bool>("v:removed"))
+      , eremoved_(eprops_.get_property<bool>("e:removed"))
+      , fremoved_(fprops_.get_property<bool>("f:removed"))
+      , removed_vertices_(std::exchange(sm.removed_vertices_, 0))
+      , removed_edges_(std::exchange(sm.removed_edges_, 0))
+      , removed_faces_(std::exchange(sm.removed_faces_, 0))
+      , vertices_freelist_(std::exchange(sm.vertices_freelist_,(std::numeric_limits<size_type>::max)()))
+      , edges_freelist_(std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)()))
+      , faces_freelist_(std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)()))
+      , garbage_(std::exchange(sm.garbage_, false))
+      , recycle_(std::exchange(sm.recycle_, true))
+      , anonymous_property_(std::exchange(sm.anonymous_property_, 0))
+    {}
 
     /// assigns `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh& operator=(const Surface_mesh& rhs);
@@ -940,6 +967,7 @@ public:
     /// move assignment
     Surface_mesh& operator=(Surface_mesh&& sm)
     {
+      // Moving properties also moves their contents without invalidating references
       vprops_ = std::move(sm.vprops_);
       hprops_ = std::move(sm.hprops_);
       eprops_ = std::move(sm.eprops_);
@@ -957,10 +985,17 @@ public:
    /// adds a new vertex, and resizes vertex properties if necessary.
     Vertex_index add_vertex()
     {
-      if(recycle_)
-        return vprops_.emplace();
-      else
-        return vprops_.emplace_back();
+      size_type inf = (std::numeric_limits<size_type>::max)();
+      if(recycle_ && (vertices_freelist_ != inf)){
+        size_type idx = vertices_freelist_;
+        vertices_freelist_ = (size_type)vconn_[Vertex_index(vertices_freelist_)].halfedge_;
+        --removed_vertices_;
+        vremoved_[Vertex_index(idx)] = false;
+        vprops_.reset(Vertex_index(idx));
+        return Vertex_index(idx);
+      } else {
+        return Vertex_index(vprops_.emplace_back());
+      }
     }
 
     /// adds a new vertex, resizes vertex properties if necessary,
@@ -980,19 +1015,21 @@ public:
     /// adds a new edge, and resizes edge and halfedge properties if necessary.
     Halfedge_index add_edge()
     {
-
-      // Add properties for a new edge
-      if (recycle_)
-        eprops_.emplace();
-      else
+      Halfedge_index h0, h1;
+      size_type inf = (std::numeric_limits<size_type>::max)();
+      if(recycle_ && (edges_freelist_ != inf)){
+        size_type idx = edges_freelist_;
+        edges_freelist_ = (size_type)hconn_[Halfedge_index(edges_freelist_)].next_halfedge_;
+        --removed_edges_;
+        eremoved_[Edge_index(Halfedge_index(idx))] = false;
+        hprops_.reset(Halfedge_index(idx));
+        hprops_.reset(opposite(Halfedge_index(idx)));
+        eprops_.reset(Edge_index(Halfedge_index(idx)));
+        return Halfedge_index(idx);
+      } else {
         eprops_.emplace_back();
-
-      // Add properties for a pair of new half-edges
-      // The new half-edges are placed adjacently, and we return the index of the first
-      if (recycle_)
-        return hprops_.emplace_group(2);
-      else
-        return hprops_.emplace_group_back(2);
+        return Halfedge_index(hprops_.emplace_group_back(2));
+      }
     }
 
     /// adds two opposite halfedges, and resizes edge and halfedge properties if necessary.
@@ -1015,10 +1052,17 @@ public:
     /// adds a new face, and resizes face properties if necessary.
     Face_index add_face()
     {
-      if(recycle_)
-        return fprops_.emplace();
-      else
-        return fprops_.emplace_back();
+      size_type inf = (std::numeric_limits<size_type>::max)();
+      if(recycle_ && (faces_freelist_ != inf)){
+        size_type idx = faces_freelist_;
+        faces_freelist_ = (size_type)fconn_[Face_index(faces_freelist_)].halfedge_;
+        --removed_faces_;
+        fprops_.reset(Face_index(idx));
+        fremoved_[Face_index(idx)] = false;
+        return Face_index(idx);
+      } else {
+        return Face_index(fprops_.emplace_back());
+      }
     }
 
     /// if possible, adds a new face with vertices from a range with value type `Vertex_index`.
@@ -1068,16 +1112,18 @@ public:
     /// adjusting anything.
     void remove_vertex(Vertex_index v)
     {
-        // todo: confirm this behaves correctly
-        vprops_.erase(v);
+        vremoved_[v] = true; ++removed_vertices_; garbage_ = true;
+        vconn_[v].halfedge_ = Halfedge_index(vertices_freelist_);
+        vertices_freelist_ = (size_type)v;
     }
 
     /// removes the two halfedges corresponding to `e` from the halfedge data structure without
     /// adjusting anything.
     void remove_edge(Edge_index e)
     {
-        // todo: confirm this behaves correctly
-        eprops_.erase(e);
+        eremoved_[e] = true; ++removed_edges_; garbage_ = true;
+        hconn_[Halfedge_index((size_type)e << 1)].next_halfedge_ = Halfedge_index(edges_freelist_ );
+        edges_freelist_ = ((size_type)e << 1);
     }
 
     /// removes  face `f` from the halfedge data structure without
@@ -1085,8 +1131,9 @@ public:
 
     void remove_face(Face_index f)
     {
-        // todo: confirm this behaves correctly
-        fprops_.erase(f);
+        fremoved_[f] = true; ++removed_faces_; garbage_ = true;
+        fconn_[f].halfedge_ = Halfedge_index(faces_freelist_);
+        faces_freelist_ = (size_type)f;
     }
 
 
@@ -1099,51 +1146,45 @@ public:
     /// allocated for elements, and to clear the structure.
     ///@{
 
-#ifndef DOXYGEN_RUNNING
-    /// returns the number of used and removed vertices in the mesh.
-    size_type num_vertices() const { return (size_type) vprops_.size(); }
-
-    /// returns the number of used and removed halfedges in the mesh.
-    size_type num_halfedges() const { return (size_type) hprops_.size(); }
-
-    /// returns the number of used and removed edges in the mesh.
-    size_type num_edges() const { return (size_type) eprops_.size(); }
-
-    /// returns the number of used and removed faces in the mesh.
-    size_type num_faces() const { return (size_type) fprops_.size(); }
-
-#endif
-
   /// returns the number of vertices in the mesh.
   size_type number_of_vertices() const
   {
-    return vprops_.size();
+    return num_vertices() - number_of_removed_vertices();
   }
 
   /// returns the number of halfedges in the mesh.
   size_type number_of_halfedges() const
   {
-    return hprops_.size();
+    return num_halfedges() - number_of_removed_halfedges();
   }
 
   /// returns the number of edges in the mesh.
   size_type number_of_edges() const
   {
-    return eprops_.size();
+    return num_edges() - number_of_removed_edges();
   }
 
   /// returns the number of faces in the mesh.
   size_type number_of_faces() const
   {
-    return fprops_.size();
+    return num_faces() - number_of_removed_faces();
   }
 
     /// returns `true` iff the mesh is empty, i.e., has no vertices, halfedges and faces.
     bool is_empty() const
   {
-    return (vprops_.size() == 0
-            && hprops_.size() == 0
-            && fprops_.size() == 0);
+    return ( num_vertices() == number_of_removed_vertices()
+             && num_halfedges() == number_of_removed_halfedges()
+             && num_faces() == number_of_removed_faces());
+  }
+
+  /// removes all vertices, halfedge, edges and faces. Collects garbage but keeps all property maps.
+  void clear_without_removing_property_maps()
+  {
+    vprops_.reserve(0);
+    hprops_.reserve(0);
+    eprops_.reserve(0);
+    fprops_.reserve(0);
   }
 
     /// removes all vertices, halfedge, edges and faces. Collects garbage and removes all property maps added by a call to `add_property_map()` for all simplex types.
@@ -1158,14 +1199,6 @@ public:
       eprops_.remove_all_properties_except({});
     }
 
-    void clear_without_removing_property_maps()
-    {
-      vprops_.reserve(0);
-      hprops_.reserve(0);
-      eprops_.reserve(0);
-      fprops_.reserve(0);
-    }
-
 
     /// reserves space for vertices, halfedges, edges, faces, and their currently
     /// associated properties.
@@ -1177,6 +1210,16 @@ public:
         hprops_.reserve(2*nedges);
         eprops_.reserve(nedges);
         fprops_.reserve(nfaces);
+    }
+
+      void resize(size_type nvertices,
+                 size_type nedges,
+                 size_type nfaces )
+    {
+        vprops_.resize(nvertices);
+        hprops_.resize(2*nedges);
+        eprops_.resize(nedges);
+        fprops_.resize(nfaces);
     }
 
   /// copies the simplices from `other`, and copies values of
@@ -1195,24 +1238,22 @@ public:
     fprops_.append(other.fprops_);
     eprops_.append(other.eprops_);
 
-    // todo: the below code assumes no gaps were present in the properties! That might be okay for this situation.
-
     // translate halfedge index in vertex -> halfedge
-    for(size_type i = nv; i < nv+other.number_of_vertices(); i++){
+    for(size_type i = nv; i < nv+other.num_vertices(); i++){
       Vertex_index vi(i);
       if(vconn_[vi].halfedge_ != null_halfedge()){
         vconn_[vi].halfedge_ = Halfedge_index(size_type(vconn_[vi].halfedge_)+nh);
       }
     }
     // translate halfedge index in face -> halfedge
-    for(size_type i = nf; i < nf+other.number_of_faces(); i++){
+    for(size_type i = nf; i < nf+other.num_faces(); i++){
       Face_index fi(i);
       if(fconn_[fi].halfedge_ != null_halfedge()){
         fconn_[fi].halfedge_ = Halfedge_index(size_type(fconn_[fi].halfedge_)+nh);
       }
     }
     // translate indices in halfedge -> face, halfedge -> target, halfedge -> prev, and halfedge -> next
-    for(size_type i = nh; i < nh+other.number_of_halfedges(); i++){
+    for(size_type i = nh; i < nh+other.num_halfedges(); i++){
       Halfedge_index hi(i);
       if(hconn_[hi].face_ != null_face()){
         hconn_[hi].face_ = Face_index(size_type(hconn_[hi].face_)+nf);
@@ -1227,6 +1268,55 @@ public:
         hconn_[hi].prev_halfedge_ = Halfedge_index(size_type(hconn_[hi].prev_halfedge_)+nh);
       }
     }
+    size_type inf_value = (std::numeric_limits<size_type>::max)();
+
+    // merge vertex free list
+    if(other.vertices_freelist_ != inf_value){
+      Vertex_index vi(nv+other.vertices_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      // correct the indices in the linked list of free vertices copied (due to vconn_ translation)
+      while(vconn_[vi].halfedge_ != inf){
+        Vertex_index corrected_vi = Vertex_index(size_type(vconn_[vi].halfedge_)+nv-nh);
+        vconn_[vi].halfedge_ = Halfedge_index(corrected_vi);
+        vi = corrected_vi;
+      }
+      // append the vertex free linked list of `this` to the copy of `other`
+      vconn_[vi].halfedge_ = Halfedge_index(vertices_freelist_);
+      // update the begin of the vertex free linked list
+      vertices_freelist_ = nv + other.vertices_freelist_;
+    }
+    // merge face free list
+    if(other.faces_freelist_ != inf_value){
+      Face_index fi(nf+other.faces_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      // correct the indices in the linked list of free faces copied (due to fconn_ translation)
+      while(fconn_[fi].halfedge_ != inf){
+        Face_index corrected_fi = Face_index(size_type(fconn_[fi].halfedge_)+nf-nh);
+        fconn_[fi].halfedge_ = Halfedge_index(corrected_fi);
+        fi = corrected_fi;
+      }
+      // append the face free linked list of `this` to the copy of `other`
+      fconn_[fi].halfedge_ = Halfedge_index(faces_freelist_);
+      // update the begin of the face free linked list
+      faces_freelist_ = nf + other.faces_freelist_;
+    }
+    // merge edge free list
+    if(other.edges_freelist_ != inf_value){
+      Halfedge_index hi(nh+other.edges_freelist_);
+      Halfedge_index inf((std::numeric_limits<size_type>::max)());
+      while(hconn_[hi].next_halfedge_ != inf){
+        hi = hconn_[hi].next_halfedge_;
+      }
+      // append the halfedge free linked list of `this` to the copy of `other`
+      hconn_[hi].next_halfedge_ = Halfedge_index(edges_freelist_);
+      // update the begin of the halfedge free linked list
+      edges_freelist_ = nh + other.edges_freelist_;
+    }
+    // update garbage infos
+    garbage_ = garbage_ || other.garbage_;
+    removed_vertices_ += other.removed_vertices_;
+    removed_edges_ += other.removed_edges_;
+    removed_faces_ += other.removed_faces_;
     return true;
   }
 
@@ -1252,49 +1342,63 @@ public:
     /// are recycled.
 
     ///@{
+#ifndef DOXYGEN_RUNNING
+   /// returns the number of used and removed vertices in the mesh.
+    size_type num_vertices() const { return (size_type) vprops_.size(); }
+
+    /// returns the number of used and removed halfedges in the mesh.
+    size_type num_halfedges() const { return (size_type) hprops_.size(); }
+
+    /// returns the number of used and removed edges in the mesh.
+    size_type num_edges() const { return (size_type) eprops_.size(); }
+
+    /// returns the number of used and removed faces in the mesh.
+    size_type num_faces() const { return (size_type) fprops_.size(); }
+
+#endif
 
     /// returns the number of vertices in the mesh which are marked removed.
-    size_type number_of_removed_vertices() const { return vprops_.capacity() - vprops_.size(); }
+    size_type number_of_removed_vertices() const { return removed_vertices_; }
 
     /// returns the number of halfedges in the mesh which are marked removed.
-    size_type number_of_removed_halfedges() const { return hprops_.capacity() - hprops_.size(); }
+    size_type number_of_removed_halfedges() const { return 2*removed_edges_; }
 
     /// returns the number of edges in the mesh which are marked removed.
-    size_type number_of_removed_edges() const { return eprops_.capacity() - eprops_.size(); }
+    size_type number_of_removed_edges() const { return removed_edges_; }
 
     /// returns the number offaces in the mesh which are marked removed.
-    size_type number_of_removed_faces() const { return fprops_.capacity() - fprops_.size(); }
+    size_type number_of_removed_faces() const { return removed_faces_; }
+
 
 
     /// returns whether vertex `v` is marked removed.
+    /// \sa `collect_garbage()`
     bool is_removed(Vertex_index v) const
     {
-      return vprops_.is_erased(v);
+        return vremoved_[v];
     }
     /// returns whether halfedge `h` is marked removed.
+    /// \sa `collect_garbage()`
     bool is_removed(Halfedge_index h) const
     {
-      return hprops_.is_erased(h);
+        return eremoved_[edge(h)];
     }
     /// returns whether edge `e` is marked removed.
+    /// \sa `collect_garbage()`
     bool is_removed(Edge_index e) const
     {
-      return eprops_.is_erased(e);
+        return eremoved_[e];
     }
     /// returns whether face `f` is marked removed.
+    /// \sa `collect_garbage()`
     bool is_removed(Face_index f) const
     {
-      return fprops_.is_erased(f);
+        return fremoved_[f];
     }
 
     /// checks if any vertices, halfedges, edges, or faces are marked as removed.
     /// \sa collect_garbage
-    bool has_garbage() const {
-      return number_of_removed_vertices() != 0 ||
-             number_of_removed_edges() != 0 ||
-             number_of_removed_halfedges() != 0 ||
-             number_of_removed_faces() != 0;
-    }
+    bool has_garbage() const { return garbage_; }
 
     /// really removes vertices, halfedges, edges, and faces which are marked removed.
     /// \sa `has_garbage()`
@@ -1302,15 +1406,11 @@ public:
     /// In case you store indices in an auxiliary data structure
     /// or in a property these indices are potentially no longer
     /// referring to the right elements.
-    void collect_garbage() {
-      // todo: this should compress the array
-    }
+    void collect_garbage();
 
     //undocumented convenience function that allows to get old-index->new-index information
     template <typename Visitor>
-    void collect_garbage(Visitor& visitor) {
-      // todo: this should compress the array and remap indices
-    }
+    void collect_garbage(Visitor& visitor);
 
     /// controls the recycling or not of simplices previously marked as removed
     /// upon addition of new elements.
@@ -1326,6 +1426,13 @@ public:
     /// of all properties to the minimal required size.
     /// \attention Invalidates all existing references to properties.
 
+    void shrink_to_fit()
+    {
+        vprops_.shrink_to_fit();
+        hprops_.shrink_to_fit();
+        eprops_.shrink_to_fit();
+        fprops_.shrink_to_fit();
+    }
     /// @endcond
 
     ///@}
@@ -1342,23 +1449,23 @@ public:
     /// returns whether the index of vertex `v` is valid, that is within the current array bounds.
     bool has_valid_index(Vertex_index v) const
     {
-      return ((size_type)v < number_of_vertices());
+      return ((size_type)v < num_vertices());
     }
 
     /// returns whether the index of halfedge `h` is valid, that is within the current array bounds.
     bool has_valid_index(Halfedge_index h) const
     {
-      return ((size_type)h < number_of_halfedges());
+      return ((size_type)h < num_halfedges());
     }
     /// returns whether the index of edge `e` is valid, that is within the current array bounds.
     bool has_valid_index(Edge_index e) const
     {
-      return ((size_type)e < number_of_edges());
+      return ((size_type)e < num_edges());
     }
     /// returns whether the index of face `f` is valid, that is within the current array bounds.
     bool has_valid_index(Face_index f) const
     {
-      return ((size_type)f < number_of_faces());
+        return ((size_type)f < num_faces());
     }
 
     /// @}
@@ -1455,6 +1562,32 @@ public:
         if(!valid && verbose){
           std::cerr << "#faces: iterated: " << fcount << " vs number_of_faces(): " << number_of_faces()<< std::endl;
         }
+
+        size_type inf = (std::numeric_limits<size_type>::max)();
+        size_type vfl = vertices_freelist_;
+        size_type rv = 0;
+        while(vfl != inf){
+          vfl = (size_type)vconn_[Vertex_index(vfl)].halfedge_;
+          rv++;
+        }
+        valid = valid && ( rv == removed_vertices_ );
+
+
+        size_type efl = edges_freelist_;
+        size_type re = 0;
+        while(efl != inf){
+          efl = (size_type)hconn_[Halfedge_index(efl)].next_halfedge_;
+          re++;
+        }
+        valid = valid && ( re == removed_edges_ );
+
+        size_type ffl = faces_freelist_;
+        size_type rf = 0;
+        while(ffl != inf){
+          ffl = (size_type)fconn_[Face_index(ffl)].halfedge_;
+          rf++;
+        }
+        valid = valid && ( rf == removed_faces_ );
 
         return valid;
     }
@@ -1919,8 +2052,6 @@ private: //--------------------------------------------------- property handling
 
 #endif
 
-    // todo: I can't see a good reason for these two functions to exist separately, but do almost the same thing
-
     /// adds a property map named `name` with value type `T` and default `t`
     /// for index type `I`. Returns the property map together with a Boolean
     /// that is `true` if a new map was created. In case it already exists
@@ -1934,7 +2065,6 @@ private: //--------------------------------------------------- property handling
         oss << "anonymous-property-" << anonymous_property_++;
         name = std::string(oss.str());
       }
-      // todo: double check this is working
       auto [array, created] =
         const_cast<Surface_mesh<P>*>(this)->get_property_container<I>().template get_or_add_property<T>(name, t);
       return {{array.get()}, created};
@@ -2053,19 +2183,19 @@ private: //--------------------------------------------------- property handling
   /// @}
 
 #if defined(CGAL_SURFACE_MESH_TEST_SUITE)
-  std::vector<Vertex_index> vertex_freelist() const
+  Vertex_index vertex_freelist() const
   {
-    return vprops_.inactive_list();
+    return Vertex_index(vertices_freelist_);
   }
 
-  std::vector<Face_index> face_freelist() const
+  Face_index face_freelist() const
   {
-    return fprops_.inactive_list();
+    return Face_index(faces_freelist_);
   }
 
-  std::vector<Edge_index> edge_freelist() const
+  Edge_index edge_freelist() const
   {
-    return eprops_.inactive_list();
+    return Edge_index(edges_freelist_>>1);
   }
 #endif
 
@@ -2087,11 +2217,20 @@ private: //------------------------------------------------------- private data
     Property_array<Halfedge_index, Halfedge_connectivity>& hconn_;
     Property_array<Face_index, Face_connectivity>& fconn_;
 
+    Property_array<Vertex_index, bool>  &vremoved_;
+    Property_array<Edge_index, bool>    &eremoved_;
+    Property_array<Face_index, bool>    &fremoved_;
+
     Property_array<Vertex_index, Point>& vpoint_;
 
-    size_type vertices_freelist_;
-    size_type edges_freelist_;
-    size_type faces_freelist_;
+    size_type removed_vertices_ = 0;
+    size_type removed_edges_ = 0;
+    size_type removed_faces_ = 0;
+
+    size_type vertices_freelist_ = std::numeric_limits<size_type>::max();
+    size_type edges_freelist_ = std::numeric_limits<size_type>::max();
+    size_type faces_freelist_ = std::numeric_limits<size_type>::max();
+    bool garbage_ = false;
     bool recycle_ = true;
 
     size_type anonymous_property_;
@@ -2315,6 +2454,169 @@ degree(Face_index f) const
     return count;
 }
 
+template <typename P> template< typename Visitor>
+void
+Surface_mesh<P>::
+collect_garbage(Visitor &visitor)
+{
+    if (!has_garbage())
+    {
+      return;
+    }
+
+    std::uint32_t i, i0, i1,
+    nV(num_vertices()),
+    nE(num_edges()),
+    nH(num_halfedges()),
+    nF(num_faces());
+
+    Vertex_index    v;
+    Halfedge_index  h;
+    Face_index      f;
+
+
+    // setup index mapping%
+    Property_map<Vertex_index, Vertex_index>      vmap = add_property_map<Vertex_index, Vertex_index>("v:garbage-collection").first;
+    Property_map<Halfedge_index, Halfedge_index>  hmap = add_property_map<Halfedge_index, Halfedge_index>("h:garbage-collection").first;
+    Property_map<Face_index, Face_index>          fmap = add_property_map<Face_index, Face_index>("f:garbage-collection").first;
+    for (i=0; i<nV; ++i)
+        vmap[Vertex_index(i)] = Vertex_index(i);
+    for (i=0; i<nH; ++i)
+        hmap[Halfedge_index(i)] = Halfedge_index(i);
+    for (i=0; i<nF; ++i)
+        fmap[Face_index(i)] = Face_index(i);
+
+
+
+    // really remove vertices
+    if (nV > 0)
+    {
+        i0=0;  i1=nV-1;
+
+        while (1)
+        {
+            // find first removed and last un-removed
+            while (!vremoved_[Vertex_index(i0)] && i0 < i1)  ++i0;
+            while ( vremoved_[Vertex_index(i1)] && i0 < i1)  --i1;
+            if (i0 >= i1) break;
+
+            // swap
+            vprops_.swap(i0, i1);
+        };
+
+        // remember new size
+        nV = vremoved_[Vertex_index(i0)] ? i0 : i0+1;
+    }
+
+    // really remove edges
+    if (nE > 0)
+    {
+        i0=0;  i1=nE-1;
+
+        while (1)
+        {
+            // find first removed and last un-removed
+            while (!eremoved_[Edge_index(i0)] && i0 < i1) ++i0;
+            while ( eremoved_[Edge_index(i1)] && i0 < i1) --i1;
+            if (i0 >= i1) break;
+
+            // swap
+            eprops_.swap(SM_Edge_index{i0}, SM_Edge_index{i1});
+            hprops_.swap(SM_Halfedge_index{2*i0},   SM_Halfedge_index{2*i1});
+            hprops_.swap(SM_Halfedge_index{2*i0+1}, SM_Halfedge_index{2*i1+1});
+        };
+
+        // remember new size
+        nE = eremoved_[Edge_index(i0)] ? i0 : i0+1;
+        nH = 2*nE;
+    }
+
+
+    // really remove faces
+    if (nF > 0)
+    {
+        i0=0;  i1=nF-1;
+
+        while (1)
+        {
+            // find 1st removed and last un-removed
+            while (!fremoved_[Face_index(i0)] && i0 < i1)  ++i0;
+            while ( fremoved_[Face_index(i1)] && i0 < i1)  --i1;
+            if (i0 >= i1) break;
+
+            // swap
+            fprops_.swap(SM_Face_index{i0}, SM_Face_index{i1});
+        };
+
+        // remember new size
+        nF = fremoved_[Face_index(i0)] ? i0 : i0+1;
+    }
+
+
+    // update vertex connectivity
+    for (i=0; i<nV; ++i)
+    {
+        v = Vertex_index(i);
+        if (!is_isolated(v))
+            set_halfedge(v, hmap[halfedge(v)]);
+    }
+
+
+    // update halfedge connectivity
+    for (i=0; i<nH; ++i)
+    {
+        h = Halfedge_index(i);
+        set_target(h, vmap[target(h)]);
+        set_next(h, hmap[next(h)]);
+        if (!is_border(h))
+            set_face(h, fmap[face(h)]);
+    }
+
+
+    // update indices of faces
+    for (i=0; i<nF; ++i)
+    {
+        f = Face_index(i);
+        set_halfedge(f, hmap[halfedge(f)]);
+    }
+
+    //apply visitor before invalidating the maps
+    visitor(vmap, hmap, fmap);
+    // remove index maps
+    remove_property_map<Vertex_index>(vmap);
+    remove_property_map<Halfedge_index>(hmap);
+    remove_property_map<Face_index>(fmap);
+
+    // finally resize arrays
+    vprops_.resize(nV); vprops_.shrink_to_fit();
+    hprops_.resize(nH); hprops_.shrink_to_fit();
+    eprops_.resize(nE); eprops_.shrink_to_fit();
+    fprops_.resize(nF); fprops_.shrink_to_fit();
+
+    removed_vertices_ = removed_edges_ = removed_faces_ = 0;
+    vertices_freelist_ = edges_freelist_ = faces_freelist_ = -1;
+    garbage_ = false;
+}
+
+#ifndef DOXYGEN_RUNNING
+namespace collect_garbage_internal {
+struct Dummy_visitor{
+  template<typename A, typename B, typename C>
+  void operator()(const A&, const B&, const C&)
+  {}
+};
+
+}
+#endif
+
+template <typename P>
+void
+Surface_mesh<P>::
+collect_garbage()
+{
+  collect_garbage_internal::Dummy_visitor visitor;
+  collect_garbage(visitor);
+}
 
 namespace internal{
   namespace handle {
