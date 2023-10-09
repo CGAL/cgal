@@ -59,14 +59,14 @@ int main(int argc, char* argv[])
     CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel(tm, vertex_distance, isovalue, CGAL::parameters::edge_is_constrained_map(ecm));
 
   // split the mesh in connected components bounded by the isocurves
-  std::vector<Triangle_mesh> splitted;
-  CGAL::Polygon_mesh_processing::split_connected_components(tm, splitted, CGAL::parameters::edge_is_constrained_map(ecm));
+  std::vector<Triangle_mesh> edges_split;
+  CGAL::Polygon_mesh_processing::split_connected_components(tm, edges_split, CGAL::parameters::edge_is_constrained_map(ecm));
 
-  assert(argc!=1 || splitted.size() == 22);
+  assert(argc!=1 || edges_split.size() == 22);
 
   // export each submesh in a file
-  for(std::size_t i=0; i<splitted.size(); ++i)
-    std::ofstream("out_"+std::to_string(i)+".off") << std::setprecision(17) << splitted[i];
+  for(std::size_t i=0; i<edges_split.size(); ++i)
+    std::ofstream("out_"+std::to_string(i)+".off") << std::setprecision(17) << edges_split[i];
 
   return 0;
 }
