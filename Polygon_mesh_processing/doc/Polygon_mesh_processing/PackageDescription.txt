@@ -213,15 +213,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - \link PMP_locate_grp Random Location Generation \endlink
 
 \cgalCRPSection{Corrected Curvatures}
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
 - `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_one_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature_one_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_one_vertex()`
-- `CGAL::Polygon_mesh_processing::Principal_curvatures_and_directions`
 
 \cgalCRPSection{Normal Computation Functions}
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`

@@ -1048,33 +1048,6 @@ private:
 *
 * \cgalNamedParamsBegin
 *
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Point_3` as value type.}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Vector_3` as value type.}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using `compute_vertex_normals()`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class.}
-*     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{vertex_mean_curvature_map}
 *     \cgalParamDescription{a property map associating mean curvatures to the vertices of `pmesh`.}
 *     \cgalParamType{a class model of `WritablePropertyMap` with
@@ -1110,6 +1083,33 @@ private:
 *                     measures on faces around the vertex.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with
+*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `GT::Point_3` as value type.}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for
+*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_normal_map}
+*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with
+*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `GT::Vector_3` as value type.}
+*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
+*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
+*                     computed using `compute_vertex_normals()`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class.}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
 * \cgalNamedParamsEnd
 *
 * @see `interpolated_corrected_mean_curvature()`
@@ -1117,231 +1117,12 @@ private:
 * @see `interpolated_corrected_principal_curvatures_and_directions()`
 */
 template<typename PolygonMesh,
-         typename NamedParameters = parameters::Default_named_parameters>
+         typename  CGAL_NP_TEMPLATE_PARAMETERS>
 void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
-                                       const NamedParameters& np = parameters::default_values())
+                                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  internal::Interpolated_corrected_curvatures_computer<PolygonMesh, NamedParameters>(pmesh, np);
+  internal::Interpolated_corrected_curvatures_computer<PolygonMesh, CGAL_NP_CLASS>(pmesh, np);
 }
-
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* computes the interpolated corrected mean curvature across the mesh `pmesh`.
-*
-* \note This function depends on the \eigen 3.1 (or later) library.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam VertexCurvatureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `GT::FT` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param vcm the vertex property map in which the computed mean curvatures are stored.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters".
-*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
-*
-* \cgalNamedParamsBegin
-*
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Point_3` as value type.}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Vector_3` as value type.}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using `compute_vertex_normals()`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class.}
-*     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{ball_radius}
-*     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-*                           by summing measures of faces inside a ball of this radius centered at the
-*                           vertex expanded from. The summed face measures are weighted by their
-*                           inclusion ratio inside this ball.}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
-*                     measures on faces around the vertex.}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @see `interpolated_corrected_Gaussian_curvature()`
-* @see `interpolated_corrected_principal_curvatures_and_directions()`
-* @see `interpolated_corrected_curvatures()`
-*/
-
-template<typename PolygonMesh, typename VertexCurvatureMap,
-         typename NamedParameters = parameters::Default_named_parameters>
-void interpolated_corrected_mean_curvature(const PolygonMesh& pmesh,
-                                           VertexCurvatureMap vcm,
-                                           const NamedParameters& np = parameters::default_values())
-{
-  interpolated_corrected_curvatures(pmesh, np.vertex_mean_curvature_map(vcm));
-}
-
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* computes the interpolated corrected Gaussian curvature across the mesh `pmesh`.
-*
-* \note This function depends on the \eigen 3.1 (or later) library.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam VertexCurvatureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `GT::FT` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param vcm the vertex property map in which the computed Gaussian curvatures are stored.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters".
-*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
-*
-* \cgalNamedParamsBegin
-*
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Point_3` as value type.}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `GT::ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Vector_3` as value type.}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using `compute_vertex_normals()`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class.}
-*     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{ball_radius}
-*     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-*                           by summing measures of faces inside a ball of this radius centered at the
-*                           vertex expanded from. The summed face measures are weighted by their
-*                           inclusion ratio inside this ball.}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
-*                     measures on faces around the vertex.}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @see `interpolated_corrected_mean_curvature()`
-* @see `interpolated_corrected_principal_curvatures_and_directions()`
-* @see `interpolated_corrected_curvatures()`
-*/
-template<typename PolygonMesh, typename VertexCurvatureMap,
-         typename NamedParameters = parameters::Default_named_parameters>
-void interpolated_corrected_Gaussian_curvature(const PolygonMesh& pmesh,
-                                               VertexCurvatureMap vcm,
-                                               const NamedParameters& np = parameters::default_values())
-{
-  interpolated_corrected_curvatures(pmesh, np.vertex_Gaussian_curvature_map(vcm));
-}
-
-/**
-* \ingroup PMP_corrected_curvatures_grp
-*
-* computes the interpolated corrected principal curvatures and directions across the mesh `pmesh`.
-*
-* \note This function depends on the \eigen 3.1 (or later) library.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam VertexCurvatureMap a model of `WritablePropertyMap` with
-* `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-* `Principal_curvatures_and_directions` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param vcm the vertex property map in which the computed principal curvatures and directions are stored.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
-*
-* \cgalNamedParamsBegin
-*
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Point_3` as value type.}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Vector_3` as value type.}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using `compute_vertex_normals()`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class.}
-*     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{ball_radius}
-*     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-*                           by summing measures of faces inside a ball of this radius centered at the
-*                           vertex expanded from. The summed face measures are weighted by their
-*                           inclusion ratio inside this ball.}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
-*                     measures on faces around the vertex.}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @see `interpolated_corrected_mean_curvature()`
-* @see `interpolated_corrected_Gaussian_curvature()`
-* @see `interpolated_corrected_curvatures()`
-*/
-template<typename PolygonMesh, typename VertexCurvatureMap,
-typename NamedParameters = parameters::Default_named_parameters>
-void interpolated_corrected_principal_curvatures_and_directions(const PolygonMesh& pmesh,
-                                                                VertexCurvatureMap vcm,
-                                                                const NamedParameters& np = parameters::default_values())
-{
-  interpolated_corrected_curvatures(pmesh, np.vertex_principal_curvatures_and_directions_map(vcm));
-}
-
 
 /**
 * \ingroup PMP_corrected_curvatures_grp
@@ -1352,6 +1133,7 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 * \note This function depends on the \eigen 3.1 (or later) library.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`.
+* @tparam VertexDescriptor must be convertible to `boost::graph_traits<PolygonMesh>::%vertex_descriptor`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param pmesh the polygon mesh.
@@ -1360,32 +1142,6 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Point_3` as value type.}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Vector_3` as value type.}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using `compute_vertex_normals()`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class.}
-*     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_mean_curvature}
 *     \cgalParamDescription{a reference to a scalar value to store the mean curvature at the vertex `v`.}
@@ -1412,261 +1168,47 @@ void interpolated_corrected_principal_curvatures_and_directions(const PolygonMes
 *                           inclusion ratio inside this ball.}
 *     \cgalParamType{`GT::FT`}
 *     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the epansion is then just a sum of
+*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion is then just a sum of
 *                     measures on faces around the vertex.}
 *   \cgalParamNEnd
 *
-* \cgalNamedParamsEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with
+*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `GT::Point_3` as value type.}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for
+*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
 *
-* @see `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
-* @see `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_one_vertex()`
-* @see `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature_one_vertex()`
-* @see `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
+*   \cgalParamNBegin{vertex_normal_map}
+*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with
+*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `GT::Vector_3` as value type.}
+*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
+*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
+*                     computed using `compute_vertex_normals()`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class.}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+* \cgalNamedParamsEnd
 */
-template<typename PolygonMesh,
-         typename NamedParameters = parameters::Default_named_parameters>
-void interpolated_corrected_curvatures_one_vertex(const PolygonMesh& pmesh,
-                                                  typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                                                  const NamedParameters& np = parameters::default_values())
+template<typename VertexDescriptor,
+         typename PolygonMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+void interpolated_corrected_curvatures(VertexDescriptor v,
+                                       const PolygonMesh& pmesh,
+                                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   internal::interpolated_corrected_curvatures_one_vertex(pmesh, v, np);
-}
-
-/**
-* \ingroup PMP_corrected_curvatures_grp
-* computes the interpolated corrected mean curvature at vertex `v` of mesh `pmesh`.
-*
-* \note This function depends on the \eigen 3.1 (or later) library.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param v the vertex of `pmesh` to compute the mean curvature at.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Point_3` as value type.}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Vector_3` as value type.}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using `compute_vertex_normals()`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class.}
-*     \cgalParamType{a class model of `Kernel`.}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{ball_radius}
-*     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-*                           by summing measures of faces inside a ball of this radius centered at the
-*                           vertex expanded from. The summed face measures are weighted by their
-*                           inclusion ratio inside this ball.}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
-*                     measures on faces around the vertex.}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @return the interpolated corrected mean curvature at the vertex `v`.
-*
-* @see `interpolated_corrected_mean_curvature()`
-* @see `interpolated_corrected_Gaussian_curvature_one_vertex()`
-* @see `interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
-* @see `interpolated_corrected_curvatures_one_vertex()`
-*/
-
-template<typename PolygonMesh,
-         typename NamedParameters = parameters::Default_named_parameters>
-#ifdef DOXYGEN_RUNNING
-typename GT::FT
-#else
-typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
-#endif
-interpolated_corrected_mean_curvature_one_vertex(const PolygonMesh& pmesh,
-                                                 typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                                                 const NamedParameters& np = parameters::default_values())
-{
-  typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT mean_curvature;
-  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_mean_curvature(std::ref(mean_curvature)));
-  return mean_curvature;
-}
-
-/**
-* \ingroup PMP_corrected_curvatures_grp
-* computes the interpolated corrected Gaussian curvature at vertex `v` of mesh `pmesh`.
-*
-* \note This function depends on the \eigen 3.1 (or later) library.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param v the vertex of `pmesh` to compute the Gaussian curvature at.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Point_3` as value type.}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `GT::Vector_3` as value type.}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using `compute_vertex_normals()`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class.}
-*     \cgalParamType{a class model of `Kernel`.}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{ball_radius}
-*     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-*                           by summing measures of faces inside a ball of this radius centered at the
-*                           vertex expanded from. The summed face measures are weighted by their
-*                           inclusion ratio inside this ball.}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
-*                     measures on faces around the vertex.}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @return the interpolated corrected Gaussian curvature at the vertex `v`.
-*
-* @see `interpolated_corrected_Gaussian_curvature()`
-* @see `interpolated_corrected_mean_curvature_one_vertex()`
-* @see `interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
-* @see `interpolated_corrected_curvatures_one_vertex()`
-*/
-
-template<typename PolygonMesh,
-  typename NamedParameters = parameters::Default_named_parameters>
-#ifdef DOXYGEN_RUNNING
-typename GT::FT
-#else
-typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
-#endif
-interpolated_corrected_Gaussian_curvature_one_vertex(const PolygonMesh& pmesh,
-                                                     typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                                                     const NamedParameters& np = parameters::default_values())
-{
-  typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT gc;
-  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_Gaussian_curvature(std::ref(gc)));
-  return gc;
-}
-
-/**
-* \ingroup PMP_corrected_curvatures_grp
-* computes the interpolated corrected principal curvatures and directions at vertex `v` of mesh `pmesh`.
-*
-* \note This function depends on the \eigen 3.1 (or later) library.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh the polygon mesh.
-* @param v the vertex of `pmesh` to compute the principal curvatures and directions at.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
-*
-* \cgalNamedParamsBegin
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Point_3` as value type.}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_normal_map}
-*     \cgalParamDescription{a property map associating normal vectors to the vertices of `pmesh`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Vector_3` as value type.}
-*     \cgalParamDefault{`get(dynamic_vertex_property_t<GT::Vector_3>(), pmesh)`.}
-*     \cgalParamExtra{If this parameter is omitted, vertex normals will be
-*                     computed using `compute_vertex_normals()`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class.}
-*     \cgalParamType{a class model of `Kernel`.}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{ball_radius}
-*     \cgalParamDescription{a scalar value specifying the radius used for expanding curvature measures
-*                           by summing measures of faces inside a ball of this radius centered at the
-*                           vertex expanded from. The summed face measures are weighted by their
-*                           inclusion ratio inside this ball.}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{`-1`}
-*     \cgalParamExtra{If this parameter is omitted (`-1`), the expansion will just by a weightless sum of
-*                     measures on faces around the vertex.}
-*   \cgalParamNEnd
-* \cgalNamedParamsEnd
-*
-* @return the interpolated corrected principal curvatures and directions at the vertex `v`.
-*
-* @see `interpolated_corrected_principal_curvatures_and_directions()`
-* @see `interpolated_corrected_mean_curvature_one_vertex()`
-* @see `interpolated_corrected_Gaussian_curvature_one_vertex()`
-* @see `interpolated_corrected_curvatures_one_vertex()`
-*/
-
-template<typename PolygonMesh,
-         typename NamedParameters = parameters::Default_named_parameters>
-#ifdef DOXYGEN_RUNNING
-Principal_curvatures_and_directions<GT>
-#else
-Principal_curvatures_and_directions<typename GetGeomTraits<PolygonMesh, NamedParameters>::type>
-#endif
-interpolated_corrected_principal_curvatures_and_directions_one_vertex(const PolygonMesh& pmesh,
-                                                                      typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                                                                      const NamedParameters& np = parameters::default_values())
-{
-  using GT=typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
-  Principal_curvatures_and_directions<GT> pcd;
-  interpolated_corrected_curvatures_one_vertex(pmesh, v, np.vertex_principal_curvatures_and_directions(std::ref(pcd)));
-  return pcd;
 }
 
 } // namespace Polygon_mesh_processing

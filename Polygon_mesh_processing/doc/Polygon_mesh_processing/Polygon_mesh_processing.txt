@@ -999,20 +999,9 @@ is divided by the interpolated area measure.
 The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`,
 `Polyhedron_3` and other polygonal mesh structures based on the concept `FaceGraph`.
 
-These computations are performed using (on all vertices of the mesh):
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
-
-Where it is recommended to use the last function for computing multiple curvatures (for example: mean and
-Gaussian) as the implementation performs the shared computations only once, making it more efficient.
-
-Similarly, we can use the following functions to compute curvatures on a specific vertex:
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature_one_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature_one_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_principal_curvatures_and_directions_one_vertex()`
-- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures_one_vertex()`
+These computations are performed using (on all vertices of the mesh) `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
+where function named parameters are use to select the curvatures (and possibly directions) to be computed. An overlay with the same named
+but accepting and accepting a given vertex is also available in case the computation should be done only for that vertex.
 
 \subsection ICCResults Results & Performance
 
@@ -1022,32 +1011,43 @@ First, \cgalFigureRef{icc_measures} first illustrates various curvature measure 
 
 \cgalFigureAnchor{icc_measures}
 <center>
-<img src="bimba-mean0.040000-0.000000.png" style="max-width:20%;"/>
-<img src="bimba-gaussian0.040000-0.000000.png" style="max-width:20%;"/>
-<img src="bimba-dmin0.040000-0.000000.png" style="max-width:20%;"/>
-<img src="bimba-dmax0.040000-0.000000.png" style="max-width:20%;"/>
+<table border=0>
+<tr>
+<td><img src="bimba-mean0.040000-0.000000.png" style="width:100%;"/></td>
+<td><img src="bimba-gaussian0.040000-0.000000.png" style="width:100%;"/></td>
+<td><img src="bimba-dmin0.040000-0.000000.png" style="width:100%;"/></td>
+<td><img src="bimba-dmax0.040000-0.000000.png" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
 </center>
+
+
 \cgalFigureCaptionBegin{icc_measures}
 Mean curvature, Gaussian curvature, minimal principal curvature direction and minimal principal curvature direction on a mesh (ball radius set to 0.04).
 \cgalFigureCaptionEnd
 
 \cgalFigureAnchor{icc_various_ball_radii}
 <center>
-<img src="bimba-mean0.020000-0.000000.png" style="max-width:10%;"/>
-<img src="bimba-mean0.030000-0.000000.png" style="max-width:10%;"/>
-<img src="bimba-mean0.040000-0.000000.png" style="max-width:10%;"/>
-<img src="bimba-mean0.050000-0.000000.png" style="max-width:10%;"/><br>
-<img src="bimba-mean0.020000-0.002000.png" style="max-width:10%;"/>
-<img src="bimba-mean0.030000-0.002000.png" style="max-width:10%;"/>
-<img src="bimba-mean0.040000-0.002000.png" style="max-width:10%;"/>
-<img src="bimba-mean0.050000-0.002000.png" style="max-width:10%;"/>
+<table border=0>
+<tr>
+<td><img src="bimba-mean0.020000-0.000000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.030000-0.000000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.000000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.050000-0.000000.png" style="width:100%;"/></td>
+</tr>
+<tr>
+<td><img src="bimba-mean0.020000-0.002000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.030000-0.002000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.002000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.050000-0.002000.png" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
 </center>
 \cgalFigureCaptionBegin{icc_various_ball_radii}
 When changing the integration ball radius, we obtain a scale space of curvature measure that can be used to tackle possible noise in the input as illustrated in the second row (mean curvature only with fixed colormap ranges and ball radii in {0.02,0.03,0.04,0.05}).
 \cgalFigureCaptionEnd
-
-
-
 
 
 \ref BGLPropertyMaps are used to record the computed curvatures as shown in examples. In the following examples, for each property map, we associate
