@@ -28,8 +28,8 @@ namespace Polygon_mesh_processing {
  * The placement of new vertices on edges will be done by linear interpolation
  * using the aforementioned values.
  * New vertices will be associated `isovalue` in `value_map` when created.
- * Additionally new edges will be added by connecting new vertices created sharing
- * a common incident face. Note that in case more that two new vertices are added
+ * Additionally, new edges will be added by connecting new vertices created sharing
+ * a common incident face. Note that in case more than two new vertices are added
  * on a face boundary, no edges will be created in that face.
  *
  * @tparam PolygonMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
@@ -39,7 +39,7 @@ namespace Polygon_mesh_processing {
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters" for `pm`
  *
  * @param pm the polygon mesh to be refined.
- * @param value_map the property map containing value at each vertex for a given function defined over the mesh.
+ * @param value_map the property map containing a value at each vertex for a given function defined over the mesh.
  * @param isovalue the value used to defined
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
@@ -72,7 +72,7 @@ void refine_mesh_at_isolevel(PolygonMesh& pm,
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef typename boost::property_map<ValueMap>::value_type FT;
+  typedef typename boost::property_traits<ValueMap>::value_type FT;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
