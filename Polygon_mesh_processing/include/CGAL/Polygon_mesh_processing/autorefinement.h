@@ -1131,15 +1131,15 @@ void generate_subtriangles(std::size_t ti,
 * refines a soup of triangles so that no pair of triangles intersects.
 * Output triangles may share a common edge or a common vertex (but with the same indexed position in `points`).
 * Note that points in `soup_points` can only be added (intersection points) at the end of the container, with the initial order preserved.
-* Note that if `soup_points` contains two or more identical points and only the first copy (following the order in the `soup_points`)
+* Note that if `soup_points` contains two or more identical points then only the first copy (following the order in the `soup_points`)
 * will be used in `soup_triangles`.
-* `soup_triangles` will be updated to contain both the input triangles and the new subdivides triangles. Degenerate triangles will be removed.
+* `soup_triangles` will be updated to contain both the input triangles and the new subdivided triangles. Degenerate triangles will be removed.
 * Also triangles in `soup_triangles` will be triangles without intersection first, followed by triangles coming from a subdivision induced
 * by an intersection. The named parameter `visitor()` can be used to track
 *
 * @tparam PointRange a model of the concept `RandomAccessContainer`
 * whose value type is the point type
-* @tparam TriIdsRange a model of the concepts `RandomAccessContainer`, `BackInsertionSequence` and `Swappable`, whose
+* @tparam TriangleRange a model of the concepts `RandomAccessContainer`, `BackInsertionSequence` and `Swappable`, whose
 * value type is a model of the concept `RandomAccessContainer` whose value type is convertible to `std::size_t` and that
 * is constructible from an `std::initializer_list<std::size_t>` of size 3.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1174,9 +1174,9 @@ void generate_subtriangles(std::size_t ti,
 * \cgalNamedParamsEnd
 *
 */
-template <class PointRange, class TriIdsRange, class NamedParameters = parameters::Default_named_parameters>
+template <class PointRange, class TriangleRange, class NamedParameters = parameters::Default_named_parameters>
 void autorefine_triangle_soup(PointRange& soup_points,
-                              TriIdsRange& soup_triangles,
+                              TriangleRange& soup_triangles,
                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
@@ -1507,7 +1507,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
 #endif
   }
 
-  TriIdsRange soup_triangles_out;
+  TriangleRange soup_triangles_out;
   soup_triangles_out.reserve(soup_triangles.size()); // TODO: remove #deg tri?
 
   visitor.number_of_output_triangles(soup_triangles.size()+new_triangles.size());

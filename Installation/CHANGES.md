@@ -39,8 +39,8 @@ Release date: October 2023
 
 -   Added the function
     `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` that refines a soup of triangles so that no pair of triangles intersects
-     (they can share an edge or a vertex). Also added, the function `autorefine()` operating directly on a triangle mesh and updating it
-     using the aforementioned function on triangle soup.
+     in their interiors. Also added, the function `autorefine()` operating directly on a triangle mesh and updating it
+     using the aforementioned function on a triangle soup.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
