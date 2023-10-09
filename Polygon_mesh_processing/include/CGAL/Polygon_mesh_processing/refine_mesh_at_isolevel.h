@@ -15,6 +15,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
 
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
