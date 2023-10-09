@@ -49,7 +49,9 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Default.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Modifiable_priority_queue.h>
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+ #include <CGAL/Modifiable_priority_queue.h>
+#endif
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
@@ -140,7 +142,18 @@ private:
   using Locate_type = typename Triangulation::Locate_type;
 
   using Gate = internal::Gate<Triangulation>;
+
+  // A sorted queue is a priority queue sorted by circumradius, and is experimentally much slower,
+  // but intermediate results are visually nice: somewhat uniform meshes.
+  //
+  // An unsorted queue is a LIFO queue, and is experimentally much faster (~35%),
+  // but intermediate results are not useful: a LIFO will mean carving is done very deep
+  // before than wide
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
   using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Triangulation>, CGAL_BOOST_PAIRING_HEAP>;
+#else
+  using Alpha_PQ = std::stack<Gate>;
+#endif
 
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
@@ -166,17 +179,24 @@ protected:
 
 public:
   Alpha_wrap_3()
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      // '4096' is an arbitrary, not-too-small value for the largest ID in queue initialization
     : m_queue(4096)
-  { }
-
-  Alpha_wrap_3(const Oracle& oracle)
-    : m_oracle(oracle),
-      m_tr(Geom_traits(oracle.geom_traits())),
-      // used to set up the initial MPQ, use some arbitrary not-too-small value
-      m_queue(4096)
+#endif
   {
     // Due to the Steiner point computation being a dichotomy, the algorithm is inherently inexact
     // and passing exact kernels is explicitly disabled to ensure no misunderstanding.
+    static_assert(std::is_floating_point<FT>::value);
+  }
+
+  Alpha_wrap_3(const Oracle& oracle)
+    :
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      m_queue(4096),
+#endif
+      m_oracle(oracle),
+      m_tr(Geom_traits(oracle.geom_traits()))
+  {
     static_assert(std::is_floating_point<FT>::value);
   }
 
@@ -1130,17 +1150,23 @@ private:
   {
     CGAL_precondition(f.first->is_outside());
 
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     // skip if f is already in queue
     if(m_queue.contains_with_bounds_check(Gate(f)))
       return false;
+#endif
 
     const Facet_queue_status status = facet_status(f);
     if(status == IRRELEVANT)
       return false;
 
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     const FT sqr = smallest_squared_radius_3(f, m_tr);
     const bool is_permissive = (status == HAS_INFINITE_NEIGHBOR || status == SCAFFOLDING);
     m_queue.resize_and_push(Gate(f, sqr, is_permissive));
+#else
+    m_queue.push(Gate(f, m_tr));
+#endif
 
 #ifdef CGAL_AW3_DEBUG_QUEUE
     const Cell_handle ch = f.first;
@@ -1154,11 +1180,13 @@ private:
               << "  ch = " << &*ch << " (" << m_tr.is_infinite(ch) << ") " << "\n"
               << "\t" << p0 << "\n\t" << p1 << "\n\t" << p2 << std::endl;
     std::cout << "  Status: " << get_status_message(status) << std::endl;
+ #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     std::cout << "  SQR: " << sqr << std::endl;
     std::cout << "  Permissiveness: " << is_permissive << std::endl;
-#endif
 
     CGAL_assertion(is_permissive || sqr >= m_sq_alpha);
+ #endif // CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+#endif // CGAL_AW3_DEBUG_QUEUE
 
     return true;
   }
@@ -1195,7 +1223,11 @@ private:
     m_offset = FT(offset);
     m_sq_offset = square(m_offset);
 
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     m_queue.clear();
+#else
+    m_queue = { };
+#endif
 
     if(resuming)
     {
@@ -1232,6 +1264,15 @@ private:
 
       // const& to something that will be popped, but safe as `ch` && `id` are extracted before the pop
       const Gate& gate = m_queue.top();
+
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      if(gate.is_zombie())
+      {
+        m_queue.pop();
+        continue;
+      }
+#endif
+
       const Facet& f = gate.facet();
       CGAL_precondition(!m_tr.is_infinite(f));
 
@@ -1304,6 +1345,7 @@ private:
                             std::back_inserter(boundary_facets),
                             std::back_inserter(conflict_zone));
 
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
         // Purge the queue of facets that will be deleted/modified by the Steiner point insertion,
         // and which might have been gates
         for(const Cell_handle& cch : conflict_zone)
@@ -1322,6 +1364,7 @@ private:
           if(m_queue.contains_with_bounds_check(Gate(mf)))
             m_queue.erase(Gate(mf));
         }
+#endif
 
         visitor.before_Steiner_point_insertion(*this, steiner_point);
 
@@ -1715,18 +1758,23 @@ private:
       const Point_3& p0 = m_tr.point(ch, Triangulation::vertex_triple_index(id, 0));
       const Point_3& p1 = m_tr.point(ch, Triangulation::vertex_triple_index(id, 1));
       const Point_3& p2 = m_tr.point(ch, Triangulation::vertex_triple_index(id, 2));
-      const FT sqr = geom_traits().compute_squared_radius_3_object()(p0, p1, p2);
 
-      std::cout << "At Facet with VID " << get(Gate_ID_PM<Triangulation>(), current_gate) << "\n";
+      std::cout << "Facet with VID " << get(Gate_ID_PM<Triangulation>(), current_gate) << "\n";
       std::cout << "\t" << p0 << "\n\t" << p1 << "\n\t" << p2 << "\n";
+
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
       std::cout << "  Permissiveness: " << current_gate.is_permissive_facet() << "\n";
-      std::cout << "  SQR: " << sqr << "\n";
+      std::cout << "  SQR: " << geom_traits().compute_squared_radius_3_object()(p0, p1, p2) << "\n";
       std::cout << "  Priority " << current_gate.priority() << std::endl;
 
       if(Less_gate()(current_gate, previous_top_gate))
         std::cerr << "Error: current gate has higher priority than the previous top" << std::endl;
 
       previous_top_gate = current_gate;
+#else
+      if(current_gate.is_zombie())
+        std::cout << "Gate is a zombie!" << std::endl;
+#endif
 
       m_queue.pop();
     }

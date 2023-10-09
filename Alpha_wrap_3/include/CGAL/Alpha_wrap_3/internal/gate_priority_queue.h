@@ -27,6 +27,8 @@ namespace CGAL {
 namespace Alpha_wraps_3 {
 namespace internal {
 
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+
 // Represents an alpha-traversable facet in the mutable priority queue
 template <typename Tr>
 class Gate
@@ -89,6 +91,44 @@ struct Less_gate
     return a.priority() > b.priority();
   }
 };
+
+#else // CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+
+// Represents an alpha-traversable facet in the mutable priority queue
+template <typename Tr>
+class Gate
+{
+  using Facet = typename Tr::Facet;
+  using FT = typename Tr::Geom_traits::FT;
+
+private:
+  Facet m_facet, m_mirror_facet;
+  const unsigned int m_erase_counter_mem;
+  const unsigned int m_mirror_erase_counter_mem;
+
+public:
+  // Constructors
+  Gate(const Facet& facet,
+       const Tr& tr)
+    :
+      m_facet(facet),
+      m_mirror_facet(tr.mirror_facet(facet)),
+      m_erase_counter_mem(m_facet.first->erase_counter()),
+      m_mirror_erase_counter_mem(m_mirror_facet.first->erase_counter())
+  {
+  }
+
+public:
+  const Facet& facet() const { return m_facet; }
+
+  const bool is_zombie() const
+  {
+    return (m_facet.first->erase_counter() != m_erase_counter_mem) ||
+           (m_mirror_facet.first->erase_counter() != m_mirror_erase_counter_mem);
+  }
+};
+
+#endif // CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
 
 template <typename Tr>
 struct Gate_ID_PM
