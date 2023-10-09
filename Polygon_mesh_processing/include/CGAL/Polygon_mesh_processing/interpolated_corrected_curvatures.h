@@ -1112,9 +1112,6 @@ private:
 *
 * \cgalNamedParamsEnd
 *
-* @see `interpolated_corrected_mean_curvature()`
-* @see `interpolated_corrected_Gaussian_curvature()`
-* @see `interpolated_corrected_principal_curvatures_and_directions()`
 */
 template<typename PolygonMesh,
          typename  CGAL_NP_TEMPLATE_PARAMETERS>
