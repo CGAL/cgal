@@ -53,7 +53,7 @@ namespace Polygon_mesh_processing {
 namespace Corefinement {
 
 
-template <class Kernel, class TriangleMesh>
+template <class Kernel, class TriangleMesh, class ID=std::size_t>
 struct Visitor_for_non_manifold_output
   : public Default_visitor<TriangleMesh>
 {
@@ -63,7 +63,7 @@ struct Visitor_for_non_manifold_output
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef std::unordered_map<vertex_descriptor, std::size_t> Vertex_id_map; // TODO use a dynamic property map?
+  typedef std::unordered_map<vertex_descriptor, ID> Vertex_id_map; // TODO use a dynamic property map?
   typedef boost::container::flat_map<const TriangleMesh*, Vertex_id_map> Vertex_id_maps;
   std::shared_ptr<Vertex_id_maps> vertex_id_maps;
   const TriangleMesh& m_tm1;
@@ -91,16 +91,16 @@ struct Visitor_for_non_manifold_output
   {
     if (sdim==0)
     {
-      (*vertex_id_maps)[&tm_f].emplace(target(h_f,tm_f), node_id);
+      (*vertex_id_maps)[&tm_f].emplace(target(h_f,tm_f), static_cast<ID>(node_id));
     }
     if (is_target_coplanar)
     {
       CGAL_assertion(!is_source_coplanar);
-      (*vertex_id_maps)[&tm_e].emplace(target(h_e,tm_e), node_id);
+      (*vertex_id_maps)[&tm_e].emplace(target(h_e,tm_e), static_cast<ID>(node_id));
     }
     if (is_source_coplanar)
     {
-      (*vertex_id_maps)[&tm_e].emplace(source(h_e,tm_e), node_id);
+      (*vertex_id_maps)[&tm_e].emplace(source(h_e,tm_e), static_cast<ID>(node_id));
     }
   }
 
@@ -109,7 +109,7 @@ struct Visitor_for_non_manifold_output
                         vertex_descriptor vh,
                         TriangleMesh& tm)
   {
-    (*vertex_id_maps)[&tm].emplace(vh, node_id);
+    (*vertex_id_maps)[&tm].emplace(vh, static_cast<ID>(node_id));
   }
 
   template <class FaceIndexMap>
@@ -190,11 +190,11 @@ struct Visitor_for_non_manifold_output
 
   template <bool inverse_tm1_faces, bool inverse_tm2_faces, class Point_3, class FCM>
   void extract_soup(std::vector<Point_3>& points,
-                    std::vector< std::array<std::size_t, 3> >& triangles,
+                    std::vector< std::array<ID, 3> >& triangles,
                     FCM tm1_face_classification,
                     FCM tm2_face_classification)
   {
-    std::size_t vertex_offset = vertex_id_maps->begin()->second.size();
+    ID vertex_offset = static_cast<ID>(vertex_id_maps->begin()->second.size());
     Vertex_id_map vid1 = vertex_id_maps->find(&m_tm1)->second; // copy on purpose
     Vertex_id_map vid2 = vertex_id_maps->find(&m_tm2)->second; // copy on purpose
 
@@ -228,8 +228,8 @@ struct Visitor_for_non_manifold_output
     }
 
     if (vid_not_used.any()){
-      std::vector<std::size_t> free_vids;
-      for (std::size_t i = vid_not_used.find_first();
+      std::vector<ID> free_vids;
+      for (ID i = vid_not_used.find_first();
                        i < vid_not_used.npos;
                        i = vid_not_used.find_next(i))
       {
@@ -239,15 +239,15 @@ struct Visitor_for_non_manifold_output
       for (auto& p : vid1)
       {
         auto it = std::upper_bound(free_vids.begin(), free_vids.end(), p.second);
-        p.second -= std::distance(free_vids.begin(), it);
+        p.second -= static_cast<ID>(std::distance(free_vids.begin(), it));
       }
       for (auto& p : vid2)
       {
         auto it = std::upper_bound(free_vids.begin(), free_vids.end(), p.second);
-        p.second -= std::distance(free_vids.begin(), it);
+        p.second -= static_cast<ID>(std::distance(free_vids.begin(), it));
       }
 
-      vertex_offset-=free_vids.size();
+      vertex_offset-=static_cast<ID>(free_vids.size());
 
     }
     points.resize(vertex_offset);
@@ -313,7 +313,7 @@ struct Visitor_for_non_manifold_output
 
   template <class Point_3>
   void extract_intersection(std::vector<Point_3>& points,
-                            std::vector< std::array<std::size_t, 3> >& triangles)
+                            std::vector< std::array<ID, 3> >& triangles)
   {
     auto tm1_face_classification = m_tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:intersection").first;
     auto tm2_face_classification = m_tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:intersection").first;
@@ -322,7 +322,7 @@ struct Visitor_for_non_manifold_output
 
   template <class Point_3>
   void extract_union(std::vector<Point_3>& points,
-                            std::vector< std::array<std::size_t, 3> >& triangles)
+                            std::vector< std::array<ID, 3> >& triangles)
   {
     auto tm1_face_classification = m_tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:union").first;
     auto tm2_face_classification = m_tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:union").first;
@@ -331,7 +331,7 @@ struct Visitor_for_non_manifold_output
 
   template <class Point_3>
   void extract_tm1_minus_tm2(std::vector<Point_3>& points,
-                             std::vector< std::array<std::size_t, 3> >& triangles)
+                             std::vector< std::array<ID, 3> >& triangles)
   {
     auto tm1_face_classification = m_tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:tm1_minus_tm2").first;
     auto tm2_face_classification = m_tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:tm1_minus_tm2").first;
@@ -340,7 +340,7 @@ struct Visitor_for_non_manifold_output
 
   template <class Point_3>
   void extract_tm2_minus_tm1(std::vector<Point_3>& points,
-                            std::vector< std::array<std::size_t, 3> >& triangles)
+                            std::vector< std::array<ID, 3> >& triangles)
   {
     auto tm1_face_classification = m_tm1.template property_map<typename TriangleMesh::Face_index, bool>("f:tm2_minus_tm1").first;
     auto tm2_face_classification = m_tm2.template property_map<typename TriangleMesh::Face_index, bool>("f:tm2_minus_tm1").first;
