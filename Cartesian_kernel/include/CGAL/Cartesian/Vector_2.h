@@ -50,7 +50,11 @@ public:
   VectorC2() {}
 
   VectorC2(const FT &x, const FT &y)
-    : base(CGAL::make_array(x, y)) {}
+    : base(Rep{x, y}) {}
+
+  template <class T1, class T2>
+  VectorC2(T1 &&x, T2 &&y)
+    : base(fwd_make_array<FT>(std::forward<T1>(x), std::forward<T2>(y))) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
     : base( hw != FT(1) ? CGAL::make_array<FT>(hx/hw, hy/hw)

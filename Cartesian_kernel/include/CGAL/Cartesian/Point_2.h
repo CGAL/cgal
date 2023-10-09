@@ -47,6 +47,11 @@ public:
   PointC2(const FT &x, const FT &y)
     : base(x, y) {}
 
+  template <class T1, class T2>
+  PointC2(T1 &&x, T2 &&y)
+    : base(std::forward<T1>(x), std::forward<T2>(y))
+  {}
+
   PointC2(const FT &hx, const FT &hy, const FT &hw)
     : base(hx, hy, hw) {}
 
