@@ -273,11 +273,7 @@ protected:
   }
 
 
-  typedef std::function<
-      Surface_patch_index(Subdomain_index,
-                          Subdomain_index)> Construct_surface_patch_index;
-
-  static Construct_surface_patch_index
+  static Construct_pair_from_subdomain_indices<Subdomain_index>
   construct_pair_functor() {
     return Construct_pair_from_subdomain_indices<Subdomain_index>();
   }
@@ -321,6 +317,9 @@ protected:
   // The bounding box
   const Iso_cuboid_3 bbox_;
 
+  typedef std::function<
+      Surface_patch_index(Subdomain_index,
+                          Subdomain_index)> Construct_surface_patch_index;
   Construct_surface_patch_index cstr_s_p_index;
   // The functor that decides which sub-domain indices correspond to the
   // outside of the domain.
