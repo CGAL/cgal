@@ -1440,15 +1440,17 @@ private:
 
       // Prioritize:
       // - cells without bbox vertices
-      // - cells that already have a large number of boundary facets
       // - small cells when equal number of boundary facets
-      // @todo give topmost priority to cells with > 1 non-manifold vertex?
+      //
+      // Note that these are properties that do not depend on where the surface is, so we can
+      // sort once. However, if a criterion such as the number of inside cells were added,
+      // one would need to sort again after each modification of is_outside() statuses.
       auto comparer = [&](Cell_handle l, Cell_handle r) -> bool
       {
-        if(has_artificial_vertex(l))
-          return false;
-        if(has_artificial_vertex(r))
-          return true;
+        CGAL_precondition(!m_dt.is_infinite(l) && !m_dt.is_infinite(r));
+
+        if(has_artificial_vertex(l) != has_artificial_vertex(r))
+          return has_artificial_vertex(r);
 
         return sq_longest_edge(l) < sq_longest_edge(r);
       };
@@ -1457,17 +1459,13 @@ private:
       inc_cells.reserve(64);
       m_dt.finite_incident_cells(v, std::back_inserter(inc_cells));
 
-#define CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-#ifndef CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-      std::sort(inc_cells.begin(), inc_cells.end(), comparer); // sort once
-#endif
+      // 'std::stable_sort' to have determinism without having to write something like:
+      //     if(longest_edge(l) == longest_edge(r)) return ...
+      // in the comparer. It's a small range, so the cost does not matter.
+      std::stable_sort(inc_cells.begin(), inc_cells.end(), comparer);
 
       for(auto cit=inc_cells.begin(), cend=inc_cells.end(); cit!=cend; ++cit)
       {
-#ifdef CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-        // sort at every iteration since the number of boundary facets evolves
-        std::sort(cit, cend, comparer);
-#endif
         Cell_handle ic = *cit;
         CGAL_assertion(!m_dt.is_infinite(ic));
 
