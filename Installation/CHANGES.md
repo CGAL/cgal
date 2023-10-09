@@ -52,6 +52,10 @@ Release date: October 2023
     `CGAL::Simplicial_mesh_cell_base_3`
     have been modified to enable passing a geometric traits and a custom cell base class.
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonMeshProcessing)
+- added the function `CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel()` that refines a polygon mesh
+  along an isocurve.
+
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
