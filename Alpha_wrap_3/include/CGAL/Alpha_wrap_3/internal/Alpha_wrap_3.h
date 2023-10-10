@@ -1675,7 +1675,12 @@ public:
     for(Vertex_handle v : m_tr.finite_vertex_handles())
     {
       if(is_non_manifold(v))
+      {
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
+        std::cout << v->point() << " is non-manifold" << std::endl;
+#endif
         non_manifold_vertices.push(v);
+      }
     }
 
     // Some lambdas for the comparer
@@ -1693,25 +1698,27 @@ public:
       return false;
     };
 
-    auto is_on_boundary = [&](Cell_handle c, int i) -> bool
-    {
-      return is_on_outside_boundary(c, c->neighbor(i));
-    };
-
-    auto count_boundary_facets = [&](Cell_handle c, Vertex_handle v) -> int
-    {
-      const int v_index_in_c = c->index(v);
-      int boundary_facets = 0;
-      for(int i=0; i<3; ++i) // also take into account the opposite facet?
-      {
-        if(i == v_index_in_c)
-          continue;
-
-        boundary_facets += is_on_boundary(c, i);
-      }
-
-      return boundary_facets;
-    };
+    // This seemed like a good idea, but in the end it can have strong cascading issues,
+    // whereas some cells with much lower volume would have solved the non-manifoldness.
+//    auto is_on_boundary = [](Cell_handle c, int i) -> bool
+//    {
+//      return is_on_outside_boundary(c, c->neighbor(i));
+//    };
+//
+//    auto count_boundary_facets = [&](Cell_handle c, Vertex_handle v) -> int
+//    {
+//      const int v_index_in_c = c->index(v);
+//      int boundary_facets = 0;
+//      for(int i=0; i<3; ++i) // also take into account the opposite facet?
+//      {
+//        if(i == v_index_in_c)
+//          continue;
+//
+//        boundary_facets += is_on_boundary(c, i);
+//      }
+//
+//      return boundary_facets;
+//    };
 
     // longest edge works better
 //    auto sq_circumradius = [&](Cell_handle c) -> FT
@@ -1720,52 +1727,48 @@ public:
 //      return geom_traits().compute_squared_distance_3_object()(m_tr.point(c, 0), cc);
 //    };
 
+    // the reasoning behind using longest edge rather than volume is that we want to avoid
+    // spikes (which would have a small volume), and can often happen since we do not spend
+    // any care on the quality of tetrahedra.
     auto sq_longest_edge = [&](Cell_handle c) -> FT
     {
       return (std::max)({ squared_distance(m_tr.point(c, 0), m_tr.point(c, 1)),
                           squared_distance(m_tr.point(c, 0), m_tr.point(c, 2)),
                           squared_distance(m_tr.point(c, 0), m_tr.point(c, 3)),
                           squared_distance(m_tr.point(c, 1), m_tr.point(c, 2)),
-                          squared_distance(m_tr.point(c, 3), m_tr.point(c, 3)),
+                          squared_distance(m_tr.point(c, 1), m_tr.point(c, 3)),
                           squared_distance(m_tr.point(c, 2), m_tr.point(c, 3)) });
     };
 
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
     std::cout << non_manifold_vertices.size() << " initial NMV" << std::endl;
 #endif
 
     while(!non_manifold_vertices.empty())
     {
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
       std::cout << non_manifold_vertices.size() << " NMV in queue" << std::endl;
 #endif
 
       Vertex_handle v = non_manifold_vertices.top();
       non_manifold_vertices.pop();
 
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
-      std::cout << "·";
-#endif
-
       if(!is_non_manifold(v))
         continue;
 
       // Prioritize:
       // - cells without bbox vertices
-      // - cells that already have a large number of boundary facets
       // - small cells when equal number of boundary facets
-      // @todo give topmost priority to cells with > 1 non-manifold vertex?
+      //
+      // Note that these are properties that do not depend on where the surface is, so we can
+      // sort once. However, if a criterion such as the number of inside cells were added,
+      // one would need to sort again after each modification of is_outside() statuses.
       auto comparer = [&](Cell_handle l, Cell_handle r) -> bool
       {
-        if(has_scaffolding_vertex(l))
-          return false;
-        if(has_scaffolding_vertex(r))
-          return true;
+        CGAL_precondition(!m_dt.is_infinite(l) && !m_dt.is_infinite(r));
 
-        const int l_bf_count = count_boundary_facets(l, v);
-        const int r_bf_count = count_boundary_facets(r, v);
-        if(l_bf_count != r_bf_count)
-          return l_bf_count > r_bf_count;
+        if(has_scaffolding_vertex(l) != has_scaffolding_vertex(r))
+          return has_scaffolding_vertex(r);
 
         return sq_longest_edge(l) < sq_longest_edge(r);
       };
@@ -1774,17 +1777,13 @@ public:
       inc_cells.reserve(64);
       m_tr.finite_incident_cells(v, std::back_inserter(inc_cells));
 
-#define CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-#ifndef CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-      std::sort(inc_cells.begin(), inc_cells.end(), comparer); // sort once
-#endif
+      // 'std::stable_sort' to have determinism without having to write something like:
+      //     if(longest_edge(l) == longest_edge(r)) return ...
+      // in the comparer. It's a small range, so the cost does not matter.
+      std::stable_sort(inc_cells.begin(), inc_cells.end(), comparer);
 
       for(auto cit=inc_cells.begin(), cend=inc_cells.end(); cit!=cend; ++cit)
       {
-#ifdef CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-        // sort at every iteration since the number of boundary facets evolves
-        std::sort(cit, cend, comparer);
-#endif
         Cell_handle ic = *cit;
         CGAL_assertion(!m_tr.is_infinite(ic));
 
