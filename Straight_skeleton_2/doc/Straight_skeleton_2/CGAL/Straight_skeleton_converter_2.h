@@ -87,7 +87,7 @@ std::shared_ptr<Target_skeleton> operator()( const Source_skeleton& s) const;
 /*!
 \ingroup PkgStraightSkeleton2Auxiliary
 
-\cgalModels `StraightSkeletonItemsConverter_2`
+\cgalModels{StraightSkeletonItemsConverter_2}
 
 `Straight_skeleton_items_converter_2` is a model of the `StraightSkeletonItemsConverter_2` concept
 

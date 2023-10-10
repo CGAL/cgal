@@ -9,7 +9,7 @@ both exact geometric predicates and exact geometric constructions.
 
 It defines the same types as `CGAL::Spherical_kernel_3`.
 
-\cgalModels `SphericalKernel`
+\cgalModels{SphericalKernel}
 
 */
 

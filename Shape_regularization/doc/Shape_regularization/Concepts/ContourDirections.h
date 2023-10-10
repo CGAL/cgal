@@ -10,10 +10,11 @@ a model of this concept, the user sets such directions and provides a way to ori
 contour edges towards these directions. All contour regularization functions
 in this package are parameterized by this concept.
 
-\cgalHasModel
-- `Contours::Longest_direction_2`
-- `Contours::Multiple_directions_2`
-- `Contours::User_defined_directions_2`
+\cgalHasModelsBegin
+\cgalHasModels{Contours::Longest_direction_2}
+\cgalHasModels{Contours::Multiple_directions_2}
+\cgalHasModels{Contours::User_defined_directions_2}
+\cgalHasModelsEnd
 */
 class ContourDirections {
 

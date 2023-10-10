@@ -13,7 +13,7 @@ to the `Alpha_shape_3` class.
         By default, it is instantiated with `Delaunay_triangulation_cell_base_3<Traits>`,
         which is appropriate for basic alpha shapes.
 
-\cgalModels `FixedAlphaShapeCell_3`
+\cgalModels{FixedAlphaShapeCell_3}
 
 \sa `Alpha_shape_cell_base_3`
 \sa `Delaunay_triangulation_cell_base_3`

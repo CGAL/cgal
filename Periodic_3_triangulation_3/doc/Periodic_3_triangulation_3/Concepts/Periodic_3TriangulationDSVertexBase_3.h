@@ -12,7 +12,9 @@ a vertex provides access to one of its incident cells through a handle.
 
 \cgalRefines{TriangulationDSVertexBase_3}
 
-\cgalHasModel `CGAL::Periodic_3_triangulation_ds_vertex_base_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_3_triangulation_ds_vertex_base_3}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_3`
 \sa `TriangulationDSVertexBase_3`

@@ -27,7 +27,7 @@ namespace Polyline_simplification_2
 /// This class is a cost function which calculates the cost as the square of the distance between the original and simplified polylines,
 /// possibly scaled based on a factor.
 ///
-/// \cgalModels `PolylineSimplificationCostFunction`.
+/// \cgalModels{PolylineSimplificationCostFunction}
 template<class FT>
 class Hybrid_squared_distance_cost
 {

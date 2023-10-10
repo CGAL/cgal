@@ -5,14 +5,16 @@
 The concept `SearchTraits` defines the requirements for the template
 parameter of the search classes.
 
-\cgalHasModel `CGAL::Cartesian_d<FT>`
-\cgalHasModel `CGAL::Homogeneous_d<RT>`
-\cgalHasModel `CGAL::Epick_d<DimensionTag>`
-\cgalHasModel `CGAL::Epeck_d<DimensionTag>`
-\cgalHasModel `CGAL::Search_traits_2<Kernel>`
-\cgalHasModel `CGAL::Search_traits_3<Kernel>`
-\cgalHasModel `CGAL::Search_traits_d<Kernel,Dim>`
-\cgalHasModel `CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Cartesian_d<FT>}
+\cgalHasModels{CGAL::Homogeneous_d<RT>}
+\cgalHasModels{CGAL::Epick_d<DimensionTag>}
+\cgalHasModels{CGAL::Epeck_d<DimensionTag>}
+\cgalHasModels{CGAL::Search_traits_2<Kernel>}
+\cgalHasModels{CGAL::Search_traits_3<Kernel>}
+\cgalHasModels{CGAL::Search_traits_d<Kernel,Dim>}
+\cgalHasModels{CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>}
+\cgalHasModelsEnd
 
 \sa `RangeSearchTraits`
 \sa `CGAL::Search_traits_adapter<Key,PointPropertyMap,BaseTraits>`

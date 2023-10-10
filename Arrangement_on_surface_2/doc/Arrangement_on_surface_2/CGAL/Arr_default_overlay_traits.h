@@ -10,7 +10,7 @@ of type `Arrangement` that store no auxiliary data with their \dcel records, whe
 \dcel data as well. This class simply gives empty implementation for all
 traits-class functions.
 
-\cgalModels `OverlayTraits`
+\cgalModels{OverlayTraits}
 
 \sa `overlay`
 
@@ -43,7 +43,7 @@ it uses the functor `OvlFaceData`, which accepts a `FaceData_A` object
 and a `FaceData_B` object and computes a corresponding `FaceData_R`
 object, in order to set the auxiliary data of the overlay face.
 
-\cgalModels `OverlayTraits`
+\cgalModels{OverlayTraits}
 
 \sa `overlay`
 \sa `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`

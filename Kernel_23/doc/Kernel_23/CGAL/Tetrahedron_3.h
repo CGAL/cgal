@@ -17,7 +17,7 @@ a <I>negative</I> side.
 The boundary of a tetrahedron splits the space in two open regions, a
 bounded one and an unbounded one.
 
-\cgalModels `Kernel::Tetrahedron_3`
+\cgalModels{Kernel::Tetrahedron_3}
 
 */
 template< typename Kernel >
