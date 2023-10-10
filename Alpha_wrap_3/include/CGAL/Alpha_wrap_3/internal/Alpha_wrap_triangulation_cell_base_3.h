@@ -20,6 +20,16 @@ namespace CGAL {
 namespace Alpha_wraps_3 {
 namespace internal {
 
+enum class Cell_label
+{
+  // Cells that have been carved
+  OUTSIDE,
+  // Cells that have not yet been carved
+  INSIDE,
+  // OUTSIDE cells that have been labeled "inside" again as to make the result manifold
+  MANIFOLD
+};
+
 template < typename GT,
            typename Cb = CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<GT> >
 class Alpha_wrap_triangulation_cell_base_3
@@ -29,6 +39,7 @@ public:
   typedef typename Cb::Vertex_handle                   Vertex_handle;
   typedef typename Cb::Cell_handle                     Cell_handle;
 
+public:
   template < typename TDS2 >
   struct Rebind_TDS
   {
@@ -37,7 +48,7 @@ public:
   };
 
 private:
-  bool outside = false;
+  Cell_label m_label = Cell_label::INSIDE;
 
 #ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
   unsigned int m_erase_counter;
@@ -61,8 +72,10 @@ public:
   {}
 
 public:
-  bool is_outside() const { return outside; }
-  bool& is_outside() { return outside; }
+  Cell_label label() const { return m_label; }
+  Cell_label& label() { return m_label; }
+  bool is_inside() const { return m_label == Cell_label::INSIDE; }
+  bool is_outside() const { return m_label == Cell_label::OUTSIDE; }
 
 #ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
   unsigned int erase_counter() const

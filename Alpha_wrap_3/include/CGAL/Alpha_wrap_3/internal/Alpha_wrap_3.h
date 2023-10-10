@@ -439,6 +439,20 @@ public:
   }
 
 private:
+  // The distinction between inside boundary and outside boundary is the presence of cells
+  // being flagged for manifoldness: inside boundary considers those outside, and outside
+  // boundary considers them inside.
+  bool is_on_inside_boundary(Cell_handle ch, Cell_handle nh) const
+  {
+    return (ch->is_inside() != nh->is_inside()); // one is INSIDE, the other is not
+  }
+
+  bool is_on_outside_boundary(Cell_handle ch, Cell_handle nh) const
+  {
+    return (ch->is_outside() != nh->is_outside()); // one is OUTSIDE, the other is not
+  }
+
+private:
   // Adjust the bbox & insert its corners to construct the starting triangulation
   void insert_bbox_corners()
   {
@@ -465,20 +479,20 @@ private:
   // - Cells whose circumcenter is in the offset volume are inside: this is because
   // we need to have outside cell circumcenters outside of the volume to ensure
   // that the refinement point is separated from the existing point set.
-  bool cavity_cell_outside_tag(const Cell_handle ch)
+  Cell_label cavity_cell_label(const Cell_handle ch)
   {
     CGAL_precondition(!m_tr.is_infinite(ch));
 
     const Tetrahedron_with_outside_info<Geom_traits> tet(ch, geom_traits());
     if(m_oracle.do_intersect(tet))
-      return false;
+      return Cell_label::INSIDE;
 
     const Point_3& ch_cc = circumcenter(ch);
     typename Geom_traits::Construct_ball_3 ball = geom_traits().construct_ball_3_object();
     const Ball_3 ch_cc_offset_ball = ball(ch_cc, m_sq_offset);
     const bool is_cc_in_offset = m_oracle.do_intersect(ch_cc_offset_ball);
 
-    return !is_cc_in_offset;
+    return is_cc_in_offset ? Cell_label::INSIDE : Cell_label::OUTSIDE;
   }
 
   // Create a cavity using seeds rather than starting from the infinity.
@@ -631,16 +645,17 @@ private:
       m_tr.incident_cells(seed_v, std::back_inserter(inc_cells));
 
       for(Cell_handle ch : inc_cells)
-        ch->is_outside() = cavity_cell_outside_tag(ch);
+        ch->label() = cavity_cell_label(ch);
     }
 
     // Should be cheap enough to go through the full triangulation as only seeds have been inserted
     for(Cell_handle ch : m_tr.all_cell_handles())
     {
-      if(!ch->is_outside())
+      if(ch->is_inside())
         continue;
 
-      // When the algorithm starts from a manually dug hole, infinite cells are tagged "inside"
+      // When the algorithm starts from a manually dug hole, infinite cells are initialized
+      // as INSIDE such that they do not appear on the boundary
       CGAL_assertion(!m_tr.is_infinite(ch));
 
       for(int i=0; i<4; ++i)
@@ -666,17 +681,24 @@ private:
     {
       if(m_tr.is_infinite(ch))
       {
-        ch->is_outside() = true;
+        ch->label() = Cell_label::OUTSIDE;
         const int inf_index = ch->index(m_tr.infinite_vertex());
         push_facet(std::make_pair(ch, inf_index));
       }
       else
       {
-        ch->is_outside() = false;
+        ch->label() = Cell_label::INSIDE;
       }
     }
 
     return true;
+  }
+
+  void reset_manifold_labels()
+  {
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      if(ch->label() == Cell_label::MANIFOLD)
+        ch->label() = Cell_label::OUTSIDE;
   }
 
   // This function is used in the case of resumption of a previous run: m_tr is not cleared,
@@ -692,7 +714,7 @@ private:
 
     for(Cell_handle ch : m_tr.all_cell_handles())
     {
-      if(!ch->is_outside())
+      if(ch->is_inside())
         continue;
 
       for(int i=0; i<4; ++i)
@@ -711,38 +733,6 @@ private:
   }
 
 private:
-  void extract_boundary(std::vector<Point_3>& points,
-                        std::vector<std::array<std::size_t, 3> >& faces) const
-  {
-    std::unordered_map<Vertex_handle, std::size_t> vertex_to_id;
-
-    for(auto fit=m_tr.all_facets_begin(), fend=m_tr.all_facets_end(); fit!=fend; ++fit)
-    {
-      Facet f = *fit;
-      if(!f.first->is_outside())
-        f = m_tr.mirror_facet(f);
-
-      const Cell_handle ch = f.first;
-      const int s = f.second;
-      const Cell_handle nh = ch->neighbor(s);
-      if(ch->is_outside() == nh->is_outside())
-        continue;
-
-      std::array<std::size_t, 3> ids;
-      for(int pos=0; pos<3; ++pos)
-      {
-        Vertex_handle vh = ch->vertex(Triangulation::vertex_triple_index(s, pos));
-        auto insertion_res = vertex_to_id.emplace(vh, vertex_to_id.size());
-        if(insertion_res.second) // successful insertion, never-seen-before vertex
-          points.push_back(m_tr.point(vh));
-
-        ids[pos] = insertion_res.first->second;
-      }
-
-      faces.emplace_back(std::array<std::size_t, 3>{ids[0], ids[1], ids[2]});
-    }
-  }
-
   template <typename OutputMesh, typename OVPM>
   void extract_manifold_surface(OutputMesh& output_mesh,
                                 OVPM ovpm) const
@@ -760,7 +750,39 @@ private:
 
     std::vector<Point_3> points;
     std::vector<std::array<std::size_t, 3> > faces;
-    extract_boundary(points, faces);
+
+    std::unordered_map<Vertex_handle, std::size_t> vertex_to_id;
+
+    for(auto fit=m_tr.all_facets_begin(), fend=m_tr.all_facets_end(); fit!=fend; ++fit)
+    {
+      Facet f = *fit;
+      if(!f.first->is_outside())
+        f = m_tr.mirror_facet(f);
+
+      const Cell_handle ch = f.first;
+      const int s = f.second;
+      const Cell_handle nh = ch->neighbor(s);
+      if(!is_on_outside_boundary(ch, nh))
+        continue;
+
+      std::array<std::size_t, 3> ids;
+      for(int pos=0; pos<3; ++pos)
+      {
+        Vertex_handle vh = ch->vertex(Triangulation::vertex_triple_index(s, pos));
+        auto insertion_res = vertex_to_id.emplace(vh, vertex_to_id.size());
+        if(insertion_res.second) // successful insertion, never-seen-before vertex
+          points.push_back(m_tr.point(vh));
+
+        ids[pos] = insertion_res.first->second;
+      }
+
+      faces.emplace_back(std::array<std::size_t, 3>{ids[0], ids[1], ids[2]});
+    }
+
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "\t" << points.size() << " points" << std::endl;
+    std::cout << "\t" << faces.size() << " faces" << std::endl;
+#endif
 
     if(faces.empty())
     {
@@ -787,8 +809,8 @@ private:
   }
 
   template <typename OutputMesh, typename OVPM>
-  void extract_possibly_non_manifold_surface(OutputMesh& output_mesh,
-                                             OVPM ovpm) const
+  void extract_inside_boundary(OutputMesh& output_mesh,
+                               OVPM ovpm) const
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -810,16 +832,20 @@ private:
     std::map<Facet, std::size_t> facet_ids;
     std::size_t idx = 0;
 
+    // Looks identical to the block in extract_manifold_surface(), but there are
+    // two significant differences:
+    // - Boundary considers MANIFOLD outside here
+    // - There is no attempt to re-use the same vertex in multiple faces
     for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit)
     {
       Facet f = *fit;
-      if(!f.first->is_outside())
+      if(f.first->is_inside()) // need f.first to be OUTSIDE or MANIFOLD
         f = m_tr.mirror_facet(f);
 
       const Cell_handle ch = f.first;
       const int s = f.second;
       const Cell_handle nh = ch->neighbor(s);
-      if(ch->is_outside() == nh->is_outside())
+      if(!is_on_inside_boundary(ch, nh)) // MANIFOLD here is outside
         continue;
 
       facet_ids[f] = idx / 3;
@@ -858,13 +884,13 @@ private:
     for(auto fit=m_tr.all_facets_begin(), fend=m_tr.all_facets_end(); fit!=fend; ++fit)
     {
       Facet f = *fit;
-      if(!f.first->is_outside())
+      if(f.first->is_inside()) // f.first must be MANIFOLD or OUTSIDE
         f = m_tr.mirror_facet(f);
 
       const Cell_handle ch = f.first;
       const int s = f.second;
       const Cell_handle nh = ch->neighbor(s);
-      if(ch->is_outside() == nh->is_outside())
+      if(!is_on_inside_boundary(ch, nh)) // MANIFOLD here is outside
         continue;
 
       put(face_to_facet, i2f[idx++], f);
@@ -877,7 +903,7 @@ private:
     {
       const Facet& tr_f = get(face_to_facet, f);
       const Cell_handle ch = tr_f.first;
-      CGAL_assertion(ch->is_outside());
+      CGAL_assertion(!ch->is_inside()); // OUTSIDE or MANIFOLD
 
       for(halfedge_descriptor h : halfedges_around_face(halfedge(f, output_mesh), output_mesh))
       {
@@ -922,18 +948,18 @@ private:
           third_vh = curr_ch->vertex(facet_third_id);
           curr_ch = curr_ch->neighbor(Triangulation::next_around_edge(i,j));
 
-          if(!curr_ch->is_outside())
+          if(curr_ch->is_inside())
             break;
         }
         while(curr_ch != start_ch);
 
         CGAL_assertion(curr_ch != start_ch);
-        CGAL_assertion(!curr_ch->is_outside());
+        CGAL_assertion(curr_ch->is_inside());
 
         const int opp_id = 6 - (curr_ch->index(s_vh) + curr_ch->index(t_vh) + curr_ch->index(third_vh));
         const Facet tr_f2 = m_tr.mirror_facet(Facet(curr_ch, opp_id));
         CGAL_assertion(facet_ids.count(Facet(curr_ch, opp_id)) == 0);
-        CGAL_assertion(tr_f2.first->is_outside());
+        CGAL_assertion(!tr_f2.first->is_inside());
         CGAL_assertion(tr_f2.first->neighbor(tr_f2.second) == curr_ch);
         CGAL_assertion(tr_f2.first->has_vertex(s_vh) && tr_f2.first->has_vertex(t_vh));
 
@@ -972,7 +998,7 @@ public:
                        const bool tolerate_non_manifoldness = false) const
   {
     if(tolerate_non_manifoldness)
-      extract_possibly_non_manifold_surface(output_mesh, ovpm);
+      extract_inside_boundary(output_mesh, ovpm);
     else
       extract_manifold_surface(output_mesh, ovpm);
   }
@@ -1115,8 +1141,9 @@ public:
     // skip if neighbor is OUTSIDE or infinite
     const Cell_handle ch = f.first;
     const int id = f.second;
+    CGAL_precondition(ch->label() == Cell_label::INSIDE || ch->label() == Cell_label::OUTSIDE);
 
-    if(!ch->is_outside())
+    if(!ch->is_outside()) // INSIDE or MANIFOLD
     {
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
       std::cout << "Facet is inside" << std::endl;
@@ -1125,6 +1152,8 @@ public:
     }
 
     const Cell_handle nh = ch->neighbor(id);
+    CGAL_precondition(ch->label() == Cell_label::INSIDE || ch->label() == Cell_label::OUTSIDE);
+
     if(m_tr.is_infinite(nh))
       return HAS_INFINITE_NEIGHBOR;
 
@@ -1301,6 +1330,7 @@ private:
       CGAL_precondition(ch->is_outside());
 
       const Cell_handle nh = ch->neighbor(s);
+      CGAL_precondition(nh->label() == Cell_label::INSIDE || nh->label() == Cell_label::OUTSIDE);
 
 #ifdef CGAL_AW3_DEBUG_QUEUE
       static int fid = 0;
@@ -1338,7 +1368,7 @@ private:
 
       if(m_tr.is_infinite(nh))
       {
-        nh->is_outside() = true;
+        nh->label() = Cell_label::OUTSIDE;
         continue;
       }
 
@@ -1402,7 +1432,7 @@ private:
         for(const Cell_handle& new_ch : new_cells)
         {
           // std::cout << "new cell has time stamp " << new_ch->time_stamp() << std::endl;
-          new_ch->is_outside() = m_tr.is_infinite(new_ch);
+          new_ch->label() = m_tr.is_infinite(new_ch) ? Cell_label::OUTSIDE : Cell_label::INSIDE;
         }
 
         // Push all new boundary facets to the queue.
@@ -1418,7 +1448,7 @@ private:
               continue;
 
             const Cell_handle new_nh = new_ch->neighbor(i);
-            if(new_nh->is_outside() == new_ch->is_outside()) // not on the boundary
+            if(new_nh->label() == new_ch->label()) // not on a boundary
               continue;
 
             const Facet boundary_f = std::make_pair(new_ch, i);
@@ -1431,7 +1461,7 @@ private:
       }
       else // no need for a Steiner point, carve through and continue
       {
-        nh->is_outside() = true;
+        nh->label() = Cell_label::OUTSIDE;
 
         // for each finite facet of neighbor, push it to the queue
         const int mi = m_tr.mirror_index(ch, s);
@@ -1447,9 +1477,10 @@ private:
 
     // Check that no useful facet has been ignored
     CGAL_postcondition_code(for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit) {)
-    CGAL_postcondition_code(  if(fit->first->is_outside() == fit->first->neighbor(fit->second)->is_outside()) continue;)
+    CGAL_postcondition_code(  Cell_handle ch = fit->first; Cell_handle nh = fit->first->neighbor(fit->second); )
+    CGAL_postcondition_code(  if(ch->label() == nh->label()) continue;)
     CGAL_postcondition_code(  Facet f = *fit;)
-    CGAL_postcondition_code(  if(!fit->first->is_outside()) f = m_tr.mirror_facet(f);)
+    CGAL_postcondition_code(  if(ch->is_inside()) f = m_tr.mirror_facet(f);)
     CGAL_postcondition(       facet_status(f) == IRRELEVANT);
     CGAL_postcondition_code(})
 
@@ -1481,7 +1512,7 @@ private:
       if(ic->is_outside())
         outside_start = ic;
       else if(inside_start == Cell_handle())
-        inside_start = ic;
+        inside_start = ic; // can be INSIDE or MANIFOLD
     }
 
     // fully inside / outside
@@ -1513,8 +1544,10 @@ private:
         CGAL_assertion(neigh_c->has_vertex(v));
 
         if(neigh_c->tds_data().processed() ||
-           neigh_c->is_outside() != curr_c->is_outside()) // do not cross the boundary
+           is_on_outside_boundary(neigh_c, curr_c)) // do not cross the boundary
+        {
           continue;
+        }
 
         cells_to_visit.push(neigh_c);
       }
@@ -1640,9 +1673,9 @@ public:
       return false;
     };
 
-    auto is_on_boundary = [](Cell_handle c, int i) -> bool
+    auto is_on_boundary = [&](Cell_handle c, int i) -> bool
     {
-      return (c->is_outside() != c->neighbor(i)->is_outside());
+      return is_on_outside_boundary(c, c->neighbor(i));
     };
 
     auto count_boundary_facets = [&](Cell_handle c, Vertex_handle v) -> int
@@ -1736,7 +1769,7 @@ public:
         CGAL_assertion(!m_tr.is_infinite(ic));
 
         // This is where new material is added
-        ic->is_outside() = false;
+        ic->label() = Cell_label::MANIFOLD;
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
         static int i = 0;
@@ -1829,7 +1862,7 @@ private:
       int s = fit->second;
 
       Cell_handle nh = ch->neighbor(s);
-      if(only_boundary_faces && (ch->is_outside() == nh->is_outside()))
+      if(only_boundary_faces && ch->label() == nh->label())
         continue;
 
       std::array<std::size_t, 3> ids;
