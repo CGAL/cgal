@@ -1098,7 +1098,7 @@ private:
 
 private:
   // A permissive gate is a gate that we can traverse without checking its circumradius
-  enum Facet_queue_status
+  enum class Facet_status
   {
     IRRELEVANT = 0,
     HAS_INFINITE_NEIGHBOR, // the cell incident to the mirrored facet is infinite (permissive)
@@ -1106,7 +1106,7 @@ private:
     TRAVERSABLE
   };
 
-  inline const char* get_status_message(const Facet_queue_status status)
+  inline const char* get_status_message(const Facet_status status)
   {
     constexpr std::size_t status_count = 4;
 
@@ -1127,7 +1127,7 @@ private:
 public:
   // @speed some decent time may be spent constructing Facet (pairs) for no reason as it's always
   // just to grab the .first and .second as soon as it's constructed, and not due to API requirements
-  Facet_queue_status facet_status(const Facet& f) const
+  Facet_status facet_status(const Facet& f) const
   {
     CGAL_precondition(!m_tr.is_infinite(f));
 
@@ -1148,21 +1148,21 @@ public:
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
       std::cout << "Facet is inside" << std::endl;
 #endif
-      return IRRELEVANT;
+      return Facet_status::IRRELEVANT;
     }
 
     const Cell_handle nh = ch->neighbor(id);
     CGAL_precondition(ch->label() == Cell_label::INSIDE || ch->label() == Cell_label::OUTSIDE);
 
     if(m_tr.is_infinite(nh))
-      return HAS_INFINITE_NEIGHBOR;
+      return Facet_status::HAS_INFINITE_NEIGHBOR;
 
     if(nh->is_outside())
     {
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
       std::cout << "Neighbor already outside" << std::endl;
 #endif
-      return IRRELEVANT;
+      return Facet_status::IRRELEVANT;
     }
 
     // push if facet is connected to scaffolding vertices
@@ -1175,7 +1175,7 @@ public:
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
         std::cout << "Scaffolding facet due to vertex #" << i << std::endl;
 #endif
-        return SCAFFOLDING;
+        return Facet_status::SCAFFOLDING;
       }
     }
 
@@ -1185,13 +1185,13 @@ public:
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
       std::cout << "traversable" << std::endl;
 #endif
-      return TRAVERSABLE;
+      return Facet_status::TRAVERSABLE;
     }
 
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
     std::cout << "not traversable" << std::endl;
 #endif
-    return IRRELEVANT;
+    return Facet_status::IRRELEVANT;
   }
 
 private:
@@ -1205,13 +1205,14 @@ private:
       return false;
 #endif
 
-    const Facet_queue_status status = facet_status(f);
-    if(status == IRRELEVANT)
+    const Facet_status status = facet_status(f);
+    if(status == Facet_status::IRRELEVANT)
       return false;
 
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     const FT sqr = smallest_squared_radius_3(f, m_tr);
-    const bool is_permissive = (status == HAS_INFINITE_NEIGHBOR || status == SCAFFOLDING);
+    const bool is_permissive = (status == Facet_status::HAS_INFINITE_NEIGHBOR ||
+                                status == Facet_status::SCAFFOLDING);
     m_queue.resize_and_push(Gate(f, sqr, is_permissive));
 #else
     m_queue.push(Gate(f, m_tr));
@@ -1481,7 +1482,7 @@ private:
     CGAL_postcondition_code(  if(ch->label() == nh->label()) continue;)
     CGAL_postcondition_code(  Facet f = *fit;)
     CGAL_postcondition_code(  if(ch->is_inside()) f = m_tr.mirror_facet(f);)
-    CGAL_postcondition(       facet_status(f) == IRRELEVANT);
+    CGAL_postcondition(       facet_status(f) == Facet_status::IRRELEVANT);
     CGAL_postcondition_code(})
 
     return true;
