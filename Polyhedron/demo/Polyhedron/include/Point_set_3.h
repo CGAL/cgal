@@ -295,17 +295,17 @@ public:
 
   void set_color (const Index& index, const QColor& color)
   {
-    m_red[index] = color.red();
-    m_green[index] = color.green();
-    m_blue[index] = color.blue();
+    m_red.value()[index] = color.red();
+    m_green.value()[index] = color.green();
+    m_blue.value()[index] = color.blue();
   }
 
   template <typename ColorRange>
   void set_color (const Index& index, const ColorRange& color)
   {
-    m_red[index] = color[0];
-    m_green[index] = color[1];
-    m_blue[index] = color[2];
+    m_red.value()[index] = color[0];
+    m_green.value()[index] = color[1];
+    m_blue.value()[index] = color[2];
   }
 
 

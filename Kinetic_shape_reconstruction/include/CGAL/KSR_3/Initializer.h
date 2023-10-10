@@ -708,9 +708,10 @@ private:
       const Polygon_2& polygon = pair.first;
       const Indices& input_indices = pair.second;
       m_data.add_input_polygon(support_plane_idx, input_indices, polygon);
-      if (m_parameters.debug)
-        dump_polygons(m_data, polygons, m_data.prefix() + "inserted-polygons");
     }
+
+    //if (m_parameters.debug)
+      dump_polygons(m_data, polygons, m_data.prefix() + "inserted-polygons.ply");
 
     CGAL_assertion(m_data.number_of_support_planes() >= 6);
     if (m_parameters.verbose) {

@@ -142,7 +142,7 @@ namespace CGAL {
                                 std::size_t idx = 0;
                                 for (typename PointRange::const_iterator it = points.begin(); it != points.end(); ++it) {
                                         Base_class::m_points[idx] = get(point_map, *it);
-                                        Base_class::m_normals[idx] = get(normal_map, *it);
+                                        Base_class::m_normals.value()[idx] = get(normal_map, *it);
                                         int plane_index = get(plane_index_map, *it);
                                         if (plane_index != -1) {
                                           auto it_and_bool = plane_index_remap.emplace(plane_index, planar_segments_.size());

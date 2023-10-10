@@ -16,9 +16,9 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = K::Point_3;
 using Segment_3 = K::Segment_3;
 
-using Face = std::array<std::size_t, 3>;
 using Segments = std::vector<Segment_3>;
 using Points = std::vector<Point_3>;
+using Face = std::array<std::size_t, 3>;
 using Faces = std::vector<Face>;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;

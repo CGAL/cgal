@@ -66,13 +66,15 @@ struct Get_iso_box_d<T,true>
 
 template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter : public Base_traits{
-  PointPropertyMap ppmap;
+  std::optional<PointPropertyMap> ppmap;
 
 public:
   typedef Base_traits Base;
   typedef typename internal::Get_iso_box_d<Base>::type Iso_box_d;
 
-  Search_traits_adapter(const PointPropertyMap& ppmap_=PointPropertyMap(),
+  Search_traits_adapter() {}
+
+  Search_traits_adapter(const PointPropertyMap& ppmap_,
                           const Base_traits& base=Base_traits()
   ):Base_traits(base),ppmap(ppmap_){}
 
@@ -246,28 +248,30 @@ public:
     }
     Iso_box_d operator() (const Point_with_info& p, const Point_with_info& q) const
     {
-      return Base_functor::operator() (get(ppmap,p),get(ppmap,q));
+      return Base_functor::operator() (get(ppmap.value(),p),get(ppmap.value(),q));
     }
   };
 
-  const PointPropertyMap& point_property_map() const {return ppmap;}
+  const PointPropertyMap& point_property_map() const {return ppmap.value();}
 
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
     return Construct_cartesian_const_iterator_d(
       Base::construct_cartesian_const_iterator_d_object(),
-      ppmap);
+      ppmap.value());
   }
 };
 
 template <class Point_with_info,class PointPropertyMap,class Base_distance>
 class Distance_adapter : public Base_distance {
-  PointPropertyMap ppmap;
+  std::optional<PointPropertyMap> ppmap;
 
 public:
 
-  Distance_adapter( const PointPropertyMap& ppmap_=PointPropertyMap(),
-                         const Base_distance& distance=Base_distance()
-  ):Base_distance(distance),ppmap(ppmap_){}
+  Distance_adapter() {}
+
+  Distance_adapter(const PointPropertyMap& ppmap_,
+                   const Base_distance& distance = Base_distance())
+    : Base_distance(distance), ppmap(ppmap_) {}
 
   using Base_distance::transformed_distance;
 
@@ -275,11 +279,11 @@ public:
   typedef Point_with_info Point_d;
   typedef typename Base_distance::Query_item Query_item;
 
-  const PointPropertyMap& point_property_map() const {return ppmap;}
+  const PointPropertyMap& point_property_map() const {return ppmap.value();}
 
   FT transformed_distance(const Query_item& p1, const Point_with_info& p2) const
   {
-    return Base_distance::transformed_distance(p1,get(ppmap,p2));
+    return Base_distance::transformed_distance(p1,get(ppmap.value(),p2));
   }
 
   template <class FT,class Dimension>

@@ -1084,7 +1084,8 @@ public:
   \param it
   output iterator.
 
-  \warning Removed\n Replaced by `for (auto d : CMap::darts_of_cell<2, 3>(d)) *it++ = to_inexact(CMap::attribute<0>(d).point);`
+  \warning Removed\n Replaced by `for (auto vd : CMap::darts_of_cell<2, 2>(fd)) *it++ = to_inexact(CMap::attribute<0>(vd).point);`
+  alternatively a loop with beta(1) to be sure the vertices are in correct order
 
   \pre successful partition
   */
@@ -1106,7 +1107,7 @@ public:
   \param it
   output iterator.
 
-  \warning Replaced by `CMap::darts_of_cell<2, 3>(d)`
+  \warning Replaced by `CMap::darts_of_cell<2, 2>(d)`
 
   \pre successful partition
   */
@@ -1182,7 +1183,7 @@ public:
   \param it
   output iterator.
 
-  \warning Replaced by `CMap::one_dart_per_incident_cell<2, 3, 3>(d)`
+  \warning Replaced by `CMap::one_dart_per_incident_cell<2, 3, 3>(vol_d)`
 
   \pre successful partition
   */
@@ -1237,7 +1238,8 @@ public:
     @return
     pair of adjacent volumes.
 
-    \warning Replaced by `beta<3>(d)` as d is part of one 3-cell already
+    \warning Replaced by `beta<3>(vol_d)` as d is part of one 3-cell already
+    bbox sides should be stored in the Face_property
 
     \pre successful partition
   */
@@ -1353,6 +1355,11 @@ public:
         //auto vertex_range = m_data.pvertices_of_pface(vol.pfaces[i]);
         ib.begin_facet();
 
+        bool outward;
+
+        PVertex vtx = *m_data.pvertices_of_pface(volume.pfaces[i]).begin();
+        volume.pface_oriented_outwards[i] = ((m_data.point_3(vtx) - volume.centroid) * m_data.support_plane(volume.pfaces[i]).plane().orthogonal_vector() < 0);
+
         if (!vol.pface_oriented_outwards[j])
           std::reverse(vtx_of_face.begin(), vtx_of_face.end());
 
@@ -1360,15 +1367,16 @@ public:
           ib.add_vertex_to_facet(static_cast<std::size_t>(mapped_vertices[v]));
 
         auto face_dart = ib.end_facet(); // returns a dart to the face
-        LCC_Properties::Face_property face_prop;
-        face_prop.Input_polygon_index = 5;
-        face_prop.Part_of_initial_polygon = true;
-        m_lcc.info<2>(face_dart) = face_prop;
+        m_lcc.set_attribute<2>(face_dart, m_lcc.create_attribute<2>());
+        m_lcc.info<2>(face_dart).Input_polygon_index = 5;
+        m_lcc.info<2>(face_dart).Part_of_initial_polygon = true;
 
         vtx_of_face.clear();
       }
 
       auto vol_dart = ib.end_surface(); // returns a dart to the volume
+      m_lcc.set_attribute<3>(vol_dart, m_lcc.create_attribute<3>());
+      m_lcc.info<3>(vol_dart).barycenter;
       int num_faces = m_lcc.one_dart_per_cell<2>().size();
       faces_of_volume.clear();
     }

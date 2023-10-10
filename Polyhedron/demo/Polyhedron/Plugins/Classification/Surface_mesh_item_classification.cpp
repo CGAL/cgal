@@ -15,13 +15,13 @@
 Surface_mesh_item_classification::Surface_mesh_item_classification(Scene_surface_mesh_item* mesh)
   : m_mesh (mesh),
     m_selection (nullptr),
-    m_generator (nullptr)
+    m_generator (nullptr),
+    m_training(m_mesh->polyhedron()->add_property_map<face_descriptor, std::size_t>("f:training", std::size_t(-1)).first),
+    m_classif(m_mesh->polyhedron()->add_property_map<face_descriptor, std::size_t>("f:label", std::size_t(-1)).first)
 {
   m_index_color = 1;
 
   backup_existing_colors_and_add_new();
-  m_training = m_mesh->polyhedron()->add_property_map<face_descriptor, std::size_t>("f:training", std::size_t(-1)).first;
-  m_classif = m_mesh->polyhedron()->add_property_map<face_descriptor, std::size_t>("f:label", std::size_t(-1)).first;
 
   m_labels.add("ground");
   m_labels.add("vegetation");
@@ -64,8 +64,8 @@ void Surface_mesh_item_classification::backup_existing_colors_and_add_new()
       = m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::IO::Color>("f:real_color").first;
     for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     {
-      m_real_color[fd] = m_color[fd];
-      m_color[fd] = CGAL::IO::Color(128, 128, 128);
+      m_real_color.value()[fd] = m_color.value()[fd];
+      m_color.value()[fd] = CGAL::IO::Color(128, 128, 128);
     }
   }
   else
@@ -77,7 +77,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
 {
   m_index_color = index;
   int index_color = index;
-  if (index == 0 && m_real_color == Mesh::Property_map<face_descriptor, CGAL::IO::Color>())
+  if (index == 0 && !m_real_color)
     index_color = -1;
 
   static Color_ramp ramp;
@@ -86,12 +86,12 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
   if (index_color == -1) // item color
   {
     for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
-      m_color[fd] = CGAL::IO::Color(128,128,128);
+      m_color.value()[fd] = CGAL::IO::Color(128,128,128);
   }
   else if (index_color == 0) // real colors
   {
     for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
-      m_color[fd] = m_real_color[fd];
+      m_color.value()[fd] = m_real_color.value()[fd];
   }
   else if (index_color == 1) // classif
   {
@@ -103,7 +103,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       if (c != std::size_t(-1))
         color = label_qcolor (m_labels[c]);
 
-      m_color[fd] = CGAL::IO::Color(color.red(), color.green(), color.blue());
+      m_color.value()[fd] = CGAL::IO::Color(color.red(), color.green(), color.blue());
     }
   }
   else if (index_color == 2) // training
@@ -120,7 +120,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       float div = 1;
       if (c != c2)
         div = 2;
-      m_color[fd] = CGAL::IO::Color(color.red() / div,
+      m_color.value()[fd] = CGAL::IO::Color(color.red() / div,
                                 color.green() / div,
                                 color.blue() / div);
     }
@@ -135,7 +135,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       {
         for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
         {
-          m_color[fd] = CGAL::IO::Color((unsigned char)(128),
+          m_color.value()[fd] = CGAL::IO::Color((unsigned char)(128),
                                     (unsigned char)(128),
                                     (unsigned char)(128));
         }
@@ -145,7 +145,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
         for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
         {
           float v = (std::max) (0.f, (std::min)(1.f, m_label_probabilities[corrected_index][fd]));
-          m_color[fd] = CGAL::IO::Color((unsigned char)(ramp.r(v) * 255),
+          m_color.value()[fd] = CGAL::IO::Color((unsigned char)(ramp.r(v) * 255),
                                     (unsigned char)(ramp.g(v) * 255),
                                     (unsigned char)(ramp.b(v) * 255));
         }
@@ -189,7 +189,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
         if (v < 0.f) v = 0.f;
         if (v > 1.f) v = 1.f;
 
-        m_color[fd] = CGAL::IO::Color((unsigned char)(ramp.r(v) * 255),
+        m_color.value()[fd] = CGAL::IO::Color((unsigned char)(ramp.r(v) * 255),
                                   (unsigned char)(ramp.g(v) * 255),
                                   (unsigned char)(ramp.b(v) * 255));
       }

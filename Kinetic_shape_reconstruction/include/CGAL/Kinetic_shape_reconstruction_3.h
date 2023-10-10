@@ -1216,6 +1216,17 @@ private:
       .maximum_angle(angle_tolerance)
       .maximum_offset(maximum_offset));*/
 
+    // Merge coplanar regions
+    for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
+      for (std::size_t j = i + 1; j < m_regions.size(); j++) {
+        if (m_regions[i].first == m_regions[j].first || m_regions[i].first.opposite() == m_regions[j].first) {
+          std::move(m_regions[j].second.begin(), m_regions[j].second.begin(), std::back_inserter(m_regions[i].second));
+          m_regions.remove(m_regions.begin() + j);
+          j--
+        }
+      }
+    }
+
     std::vector<Plane_3> pl;
 
     std::size_t idx = 0;

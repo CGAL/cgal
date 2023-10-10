@@ -26,11 +26,9 @@ SMesh* polygonal_reconstruct (const Point_set& points,
   CGAL_USE (model_complexity);
   CGAL_USE (solver_name);
 
-  Point_set::Property_map<int> shape_map
-    = points.property_map<int>("shape").first;
+  auto shape_map = points.property_map<int>("shape").value();
 
-        Polygonal_surface_reconstruction poly
-    (points, points.point_map(), points.normal_map(), shape_map);
+  Polygonal_surface_reconstruction poly(points, points.point_map(), points.normal_map(), shape_map);
 
   SMesh* mesh = new SMesh;
 

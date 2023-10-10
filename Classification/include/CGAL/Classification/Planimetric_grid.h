@@ -59,7 +59,7 @@ private:
   using Image_bool = Image<bool>;
 
   const PointRange* m_points;
-  PointMap m_point_map;
+  std::optional<PointMap> m_point_map;
   Iso_cuboid_3 m_bbox;
   float m_resolution;
 
@@ -342,7 +342,7 @@ public:
   {
     if (m_lower_scale == nullptr)
     {
-      const Point_3& p = get(m_point_map, *(m_points->begin()+index));
+      const Point_3& p = get(m_point_map.value(), *(m_points->begin()+index));
       return (std::size_t)((p.x() - m_bbox.xmin()) / m_resolution);
     }
 
@@ -356,7 +356,7 @@ public:
   {
     if (m_lower_scale == nullptr)
     {
-      const Point_3& p = get(m_point_map, *(m_points->begin()+index));
+      const Point_3& p = get(m_point_map.value(), *(m_points->begin()+index));
       return (std::size_t)((p.y() - m_bbox.ymin()) / m_resolution);
     }
 
