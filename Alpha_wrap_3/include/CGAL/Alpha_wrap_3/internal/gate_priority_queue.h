@@ -74,8 +74,8 @@ struct Less_gate
     //
     // The permissive facet are given highest priority because they need to be treated
     // regardless of their circumradius. Treating them first allow the part that depends
-    // on alpha to be treated uniformly in a way: whatever the alpha, we'll do the same
-    // first treatmen
+    // on alpha to be treated uniformly in a way: whatever the alpha, all scaffolding faces
+    // will first be treated
     if(a.is_permissive_facet() != b.is_permissive_facet())
       return a.is_permissive_facet();
 

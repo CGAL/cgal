@@ -175,6 +175,7 @@ protected:
   FT m_offset = FT(-1), m_sq_offset = FT(-1);
 
   Triangulation m_tr;
+
   Alpha_PQ m_queue;
 
 public:
@@ -250,24 +251,33 @@ public:
     using parameters::get_parameter_reference;
     using parameters::choose_parameter;
 
+    //
     using OVPM = typename CGAL::GetVertexPointMap<OutputMesh, OutputNamedParameters>::type;
     OVPM ovpm = choose_parameter(get_parameter(out_np, internal_np::vertex_point),
                                  get_property_map(vertex_point, output_mesh));
 
-    typedef typename internal_np::Lookup_named_param_def <
-      internal_np::visitor_t,
-      InputNamedParameters,
-      Wrapping_default_visitor // default
-    >::reference                                                                 Visitor;
+    //
+    using Visitor = typename internal_np::Lookup_named_param_def<
+                      internal_np::visitor_t,
+                      InputNamedParameters,
+                      Wrapping_default_visitor // default
+                    >::reference;
 
     Wrapping_default_visitor default_visitor;
     Visitor visitor = choose_parameter(get_parameter_reference(in_np, internal_np::visitor), default_visitor);
 
-    std::vector<Point_3> no_seeds;
+    //
     using Seeds = typename internal_np::Lookup_named_param_def<
-                    internal_np::seed_points_t, InputNamedParameters, std::vector<Point_3> >::reference;
+                    internal_np::seed_points_t,
+                    InputNamedParameters,
+                    std::vector<Point_3> >::reference;
+
+    std::vector<Point_3> no_seeds;
     Seeds seeds = choose_parameter(get_parameter_reference(in_np, internal_np::seed_points), no_seeds);
 
+    // Whether or not some cells should be reflagged as "inside" after the refinement+carving loop
+    // as ended, as to ensure that the result is not only combinatorially manifold, but also
+    // geometrically manifold.
     const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
     // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
@@ -294,9 +304,16 @@ public:
     if(!initialize(alpha, offset, seeds, resuming))
       return;
 
+#ifdef CGAL_AW3_TIMER
+    t.stop();
+    std::cout << "Initialization took: " << t.time() << " s." << std::endl;
+    t.reset();
+    t.start();
+#endif
+
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
     extract_surface(output_mesh, ovpm, true /*tolerate non manifoldness*/);
-    CGAL::IO::write_polygon_mesh("initial_cavities.off", output_mesh,
+    CGAL::IO::write_polygon_mesh("starting_wrap.off", output_mesh,
                                  CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
 #endif
 
@@ -305,20 +322,20 @@ public:
 #ifdef CGAL_AW3_TIMER
     t.stop();
     std::cout << "Flood filling took: " << t.time() << " s." << std::endl;
+    t.reset();
+    t.start();
 #endif
 
     if(do_enforce_manifoldness)
     {
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
-      std::cout << "> Make manifold..." << std::endl;
-
+#ifdef CGAL_AW3_DEBUG
       extract_surface(output_mesh, ovpm, true /*tolerate non manifoldness*/);
 
-#ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-      dump_triangulation_faces("intermediate_tr.off", false /*only_boundary_faces*/);
-      IO::write_polygon_mesh("intermediate.off", output_mesh,
+ #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
+      dump_triangulation_faces("carved_tr.off", false /*only_boundary_faces*/);
+      IO::write_polygon_mesh("carved_wrap.off", output_mesh,
                              CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
-#endif
+ #endif
 
       FT base_vol = 0;
       if(is_closed(output_mesh)) // might not be due to manifoldness
@@ -327,19 +344,16 @@ public:
         std::cerr << "Warning: couldn't compute volume before manifoldness fixes (mesh is not closed)" << std::endl;
 #endif
 
-#ifdef CGAL_AW3_TIMER
-    t.reset();
-    t.start();
-#endif
-
       make_manifold();
 
 #ifdef CGAL_AW3_TIMER
       t.stop();
-      std::cout << "\nManifoldness post-processing took: " << t.time() << " s." << std::endl;
+      std::cout << "Manifoldness post-processing took: " << t.time() << " s." << std::endl;
+      t.reset();
+      t.start();
 #endif
 
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
+#ifdef CGAL_AW3_DEBUG
       if(!is_zero(base_vol))
       {
         extract_surface(output_mesh, ovpm, false /*do not tolerate non-manifoldness*/);
@@ -751,7 +765,7 @@ private:
     if(faces.empty())
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Empty wrap?..." << std::endl;
+      std::cerr << "Warning: empty wrap?..." << std::endl;
 #endif
       return;
     }
@@ -791,7 +805,8 @@ private:
     std::vector<Point_3> points;
     std::vector<std::array<std::size_t, 3> > polygons;
 
-    // Explode the polygon soup into indepent triangles, and stitch back edge by edge by walking along the exterior
+    // Explode the polygon soup into indepent triangles, and stitch it back
+    // edge by edge by walking along the exterior
     std::map<Facet, std::size_t> facet_ids;
     std::size_t idx = 0;
 
@@ -817,10 +832,15 @@ private:
       idx += 3;
     }
 
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "\t" << points.size() << " points" << std::endl;
+    std::cout << "\t" << polygons.size() << " polygons" << std::endl;
+#endif
+
     if(polygons.empty())
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Empty wrap?..." << std::endl;
+      std::cerr << "Warning: empty wrap?..." << std::endl;
 #endif
       return;
     }
@@ -1280,14 +1300,14 @@ private:
       const int s = f.second;
       CGAL_precondition(ch->is_outside());
 
-      const Cell_handle neighbor = ch->neighbor(s);
+      const Cell_handle nh = ch->neighbor(s);
 
 #ifdef CGAL_AW3_DEBUG_QUEUE
       static int fid = 0;
       std::cout << m_tr.number_of_vertices() << " DT vertices" << std::endl;
       std::cout << m_queue.size() << " facets in the queue" << std::endl;
       std::cout << "Face " << fid++ << "\n"
-                << "c = " << &*ch << " (" << m_tr.is_infinite(ch) << "), n = " << &*neighbor << " (" << m_tr.is_infinite(neighbor) << ")" << "\n"
+                << "c = " << &*ch << " (" << m_tr.is_infinite(ch) << "), n = " << &*nh << " (" << m_tr.is_infinite(nh) << ")" << "\n"
                 << m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)) << "\n"
                 << m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)) << "\n"
                 << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
@@ -1316,14 +1336,14 @@ private:
 
       m_queue.pop();
 
-      if(m_tr.is_infinite(neighbor))
+      if(m_tr.is_infinite(nh))
       {
-        neighbor->is_outside() = true;
+        nh->is_outside() = true;
         continue;
       }
 
       Point_3 steiner_point;
-      if(compute_steiner_point(ch, neighbor, steiner_point))
+      if(compute_steiner_point(ch, nh, steiner_point))
       {
 //        std::cout << CGAL::abs(CGAL::approximate_sqrt(m_oracle.squared_distance(steiner_point)) - m_offset)
 //                  << " vs " << 1e-2 * m_offset << std::endl;
@@ -1332,7 +1352,7 @@ private:
         // locate cells that are going to be destroyed and remove their facet from the queue
         int li, lj = 0;
         Locate_type lt;
-        const Cell_handle conflict_cell = m_tr.locate(steiner_point, lt, li, lj, neighbor);
+        const Cell_handle conflict_cell = m_tr.locate(steiner_point, lt, li, lj, nh);
         CGAL_assertion(lt != Triangulation::VERTEX);
 
         // Using small vectors like in Triangulation_3 does not bring any runtime improvement
@@ -1379,10 +1399,10 @@ private:
         std::vector<Cell_handle> new_cells;
         new_cells.reserve(32);
         m_tr.incident_cells(vh, std::back_inserter(new_cells));
-        for(const Cell_handle& ch : new_cells)
+        for(const Cell_handle& new_ch : new_cells)
         {
-          // std::cout << "new cell has time stamp " << ch->time_stamp() << std::endl;
-          ch->is_outside() = m_tr.is_infinite(ch);
+          // std::cout << "new cell has time stamp " << new_ch->time_stamp() << std::endl;
+          new_ch->is_outside() = m_tr.is_infinite(new_ch);
         }
 
         // Push all new boundary facets to the queue.
@@ -1390,19 +1410,19 @@ private:
         // because we need to handle internal facets, infinite facets, and also more subtle changes
         // such as a new cell being marked inside which now creates a boundary
         // with its incident "outside" flagged cell.
-        for(Cell_handle ch : new_cells)
+        for(Cell_handle new_ch : new_cells)
         {
           for(int i=0; i<4; ++i)
           {
-            if(m_tr.is_infinite(ch, i))
+            if(m_tr.is_infinite(new_ch, i))
               continue;
 
-            const Cell_handle nh = ch->neighbor(i);
-            if(nh->is_outside() == ch->is_outside()) // not on the boundary
+            const Cell_handle new_nh = new_ch->neighbor(i);
+            if(new_nh->is_outside() == new_ch->is_outside()) // not on the boundary
               continue;
 
-            const Facet boundary_f = std::make_pair(ch, i);
-            if(ch->is_outside())
+            const Facet boundary_f = std::make_pair(new_ch, i);
+            if(new_ch->is_outside())
               push_facet(boundary_f);
             else
               push_facet(m_tr.mirror_facet(boundary_f));
@@ -1411,14 +1431,13 @@ private:
       }
       else // no need for a Steiner point, carve through and continue
       {
-        // tag neighbor as OUTSIDE
-        neighbor->is_outside() = true;
+        nh->is_outside() = true;
 
         // for each finite facet of neighbor, push it to the queue
         const int mi = m_tr.mirror_index(ch, s);
         for(int i=1; i<4; ++i)
         {
-          const Facet neighbor_f = std::make_pair(neighbor, (mi+i)&3);
+          const Facet neighbor_f = std::make_pair(nh, (mi+i)&3);
           push_facet(neighbor_f);
         }
       }
@@ -1589,6 +1608,10 @@ public:
   void make_manifold()
   {
     namespace PMP = Polygon_mesh_processing;
+
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "> Make manifold..." << std::endl;
+#endif
 
     // This seems more harmful than useful after the priority queue has been introduced since
     // it adds a lot of flat cells into the triangulation, which then get added to the mesh
@@ -1802,17 +1825,17 @@ private:
 
     for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit)
     {
-      Cell_handle c = fit->first;
+      Cell_handle ch = fit->first;
       int s = fit->second;
 
-      Cell_handle nc = c->neighbor(s);
-      if(only_boundary_faces && (c->is_outside() == nc->is_outside()))
+      Cell_handle nh = ch->neighbor(s);
+      if(only_boundary_faces && (ch->is_outside() == nh->is_outside()))
         continue;
 
       std::array<std::size_t, 3> ids;
       for(std::size_t pos=0; pos<3; ++pos)
       {
-        Vertex_handle v = c->vertex((s+pos+1)&3);
+        Vertex_handle v = ch->vertex((s+pos+1)&3);
         auto insertion_res = vertex_to_id.emplace(v, nv);
         if(insertion_res.second)
         {
