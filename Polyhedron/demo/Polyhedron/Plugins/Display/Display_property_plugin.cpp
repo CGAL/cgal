@@ -861,11 +861,11 @@ private:
 
     if (curvature_type == MEAN_CURVATURE)
     {
-      CGAL::Polygon_mesh_processing::interpolated_corrected_mean_curvature(*sm, vcurvature);
+      CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures(*sm, CGAL::parameters::vertex_mean_curvature(vcurvature));
     }
     else if (curvature_type == GAUSSIAN_CURVATURE)
     {
-      CGAL::Polygon_mesh_processing::interpolated_corrected_Gaussian_curvature(*sm, vcurvature);
+      CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures(*sm, CGAL::parameters::vertex_Gaussian_curvature(vcurvature));
     }
 
     displaySMProperty<vertex_descriptor>(tied_string, *sm);
