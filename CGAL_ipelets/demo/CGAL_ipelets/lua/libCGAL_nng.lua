@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
--- CGAL MST ipelet description
+-- CGAL NNG ipelet description
 ----------------------------------------------------------------------
 
 label = "Nearest-neighbor graph"
