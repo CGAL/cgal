@@ -1327,6 +1327,9 @@ private:
     // Explore all finite cells that are reachable from one of the initial outside cells.
     while(!m_queue.empty())
     {
+      if(!visitor.go_further(*this))
+        return false;
+
 #ifdef CGAL_AW3_DEBUG_QUEUE_PP
       check_queue_sanity();
 #endif
@@ -1378,9 +1381,6 @@ private:
                         << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
       face_out.close();
 #endif
-
-      if(!visitor.go_further(*this))
-        return false;
 
       visitor.before_facet_treatment(*this, gate);
 
