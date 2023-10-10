@@ -281,18 +281,16 @@ public:
     const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
     // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
-    // the same meshes for multiple values of alpha (and typically the same offset values).
-    //
+    // the same input for multiple values of alpha (and typically the same offset values).
     // /!\ Warning /!\
     //
-    // If this is enabled, the 3D triangulation will NEVER be cleared and re-initialized
-    // at launch. This means that the triangulation is NOT cleared, even when:
-    // - the triangulation is empty; you will get nothing.
+    // If this is enabled, the 3D triangulation will NOT be re-initialized
+    // at launch. This means that the triangulation is NOT cleared, even if:
     // - you use an alpha value that is greater than what was used in a previous run; you will
-    //   obtain a denser result than what you might expect.
+    //   obtain the same result as the last run.
     // - you use a different offset value between runs, you might then get points that are not
-    //   on the offset surface corresponding to your latter offset value.
-    const bool resuming = choose_parameter(get_parameter(in_np, internal_np::refine_triangulation), false);
+    //   on the offset surface corresponding to that corresponding to the latter offset value.
+    const bool refining = choose_parameter(get_parameter(in_np, internal_np::refine_triangulation), false);
 
 #ifdef CGAL_AW3_TIMER
     CGAL::Real_timer t;
@@ -301,7 +299,7 @@ public:
 
     visitor.on_alpha_wrapping_begin(*this);
 
-    if(!initialize(alpha, offset, seeds, resuming))
+    if(!initialize(alpha, offset, seeds, refining))
       return;
 
 #ifdef CGAL_AW3_TIMER
@@ -368,13 +366,14 @@ public:
         if(ratio > 1.1) // more than 10% extra volume
           std::cerr << "Warning: large increase of volume after manifoldness resolution" << std::endl;
       }
-#endif
-    } // do_enforce_manifoldness
 
-#ifdef CGAL_AW3_TIMER
-    t.reset();
-    t.start();
+      std::size_t nm_cells_counter = 0;
+      for(Cell_handle ch : m_tr.all_cell_handles())
+        if(ch->label() == Cell_label::MANIFOLD)
+          ++nm_cells_counter;
+      std::cout << "Number of added cells: " << nm_cells_counter << std::endl;
 #endif
+    }
 
     extract_surface(output_mesh, ovpm, !do_enforce_manifoldness);
 
@@ -1246,12 +1245,19 @@ private:
   bool initialize(const double alpha,
                   const double offset,
                   const SeedRange& seeds,
-                  const bool resuming = false)
+                  const bool refining)
   {
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Initialize..." << std::endl;
-    std::cout << "Alpha: " << alpha << std::endl;
-    std::cout << "Offset: " << offset << std::endl;
+#endif
+
+    const bool resuming = refining && (alpha == m_alpha) && (offset == m_offset);
+
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "\tAlpha: " << alpha << std::endl;
+    std::cout << "\tOffset: " << offset << std::endl;
+    std::cout << "\tRefining? " << refining << std::endl;
+    std::cout << "\tResuming? " << resuming << std::endl;
 #endif
 
     if(!is_positive(alpha) || !is_positive(offset))
@@ -1262,16 +1268,24 @@ private:
       return false;
     }
 
-    if(resuming && alpha > m_alpha)
-      std::cerr << "Warning: resuming with an alpha greater than last iteration!" << std::endl;
-
-    if(resuming && offset != m_offset)
-      std::cerr << "Warning: resuming with a different offset!" << std::endl;
+    if(refining && alpha > m_alpha)
+      std::cerr << "Warning: refining with an alpha greater than the last iteration's!" << std::endl;
+    if(refining && offset != m_offset)
+      std::cerr << "Warning: refining with a different offset value!" << std::endl;
 
     m_alpha = FT(alpha);
     m_sq_alpha = square(m_alpha);
     m_offset = FT(offset);
     m_sq_offset = square(m_offset);
+
+    // Resuming means that we do not need to re-initialize the queue: either we have finished
+    // and there is nothing to do, or the interruption was due to a user callback in the visitor,
+    // and we can resume with the current queue
+    if(resuming)
+    {
+      reset_manifold_labels();
+      return true;
+    }
 
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     m_queue.clear();
@@ -1279,13 +1293,18 @@ private:
     m_queue = { };
 #endif
 
-    if(resuming)
+    if(refining)
     {
+      // If we are re-using the triangulation, change the label of the extra elements
+      // that we have added to ensure a manifold result back to external (MANIFOLD -> OUTSIDE)
+      reset_manifold_labels();
+
       return initialize_from_existing_triangulation();
     }
     else
     {
       m_tr.clear();
+
 
       insert_bbox_corners();
 
