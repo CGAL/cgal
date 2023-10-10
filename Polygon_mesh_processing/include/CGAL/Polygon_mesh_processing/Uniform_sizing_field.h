@@ -74,12 +74,12 @@ public:
   {}
 
   /*!
-  * Constructor using default values for the vertex point map of the input polygon mesh.
+  * Constructor using internal vertex point map of the input polygon mesh.
   *
   * @param size the target edge length for isotropic remeshing. If set to 0,
   *        the criterion for edge length is ignored and edges are neither split nor collapsed.
   * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. The default
-  *        vertex point map of pmesh is used to construct the class.
+  *        vertex point map of `pmesh` is used to construct the class.
   */
   Uniform_sizing_field<PolygonMesh, VPMap>(const FT size, const PolygonMesh& pmesh)
     : Uniform_sizing_field(size, get(CGAL::vertex_point, pmesh))
@@ -130,8 +130,8 @@ public:
   {}
 
 private:
-  FT m_sq_short;
-  FT m_sq_long;
+  const FT m_sq_short;
+  const FT m_sq_long;
   const VPMap m_vpmap;
 };
 

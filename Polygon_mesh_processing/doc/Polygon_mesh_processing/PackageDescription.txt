@@ -133,8 +133,8 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
 
 \cgalCRPSection{Sizing Fields}
-- `CGAL::Polygon_mesh_processing::Uniform_sizing_field()`
-- `CGAL::Polygon_mesh_processing::Adaptive_sizing_field()`
+- `CGAL::Polygon_mesh_processing::Uniform_sizing_field`
+- `CGAL::Polygon_mesh_processing::Adaptive_sizing_field`
 
 \cgalCRPSection{Orientation Functions}
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`

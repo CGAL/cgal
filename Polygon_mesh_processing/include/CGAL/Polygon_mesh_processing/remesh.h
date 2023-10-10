@@ -382,7 +382,7 @@ void isotropic_remeshing(const FaceRange& faces
 * @param pmesh a polygon mesh
 * @param edges the range of edges to be split if they are longer than given threshold
 * @param sizing the sizing function that is used to split edges from 'edges' list. If a number convertible to
-*        a double is passed, it will use a `Uniform_sizing_field()` with the number as a target edge length.
+*        a `double` is passed, it will use a `Uniform_sizing_field()` with the number as target edge length.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
 * \cgalNamedParamsBegin
