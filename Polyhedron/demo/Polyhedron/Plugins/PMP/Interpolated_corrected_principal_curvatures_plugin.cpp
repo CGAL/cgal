@@ -75,10 +75,10 @@ void compute(SMesh* sMesh,
   assert(created);
 
 
-  PMP::interpolated_corrected_principal_curvatures_and_directions(
+  PMP::interpolated_corrected_curvatures(
     *sMesh,
-    principal_curvatures_and_directions_map,
     CGAL::parameters::ball_radius(0)
+                     .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
   );
 
   double max_curvature_magnitude_on_mesh = 0;
