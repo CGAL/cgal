@@ -1777,15 +1777,19 @@ public:
       inc_cells.reserve(64);
       m_tr.finite_incident_cells(v, std::back_inserter(inc_cells));
 
+      std::vector<Cell_handle> finite_outside_inc_cells;
+      finite_outside_inc_cells.reserve(64);
+      std::copy_if(inc_cells.begin(), inc_cells.end(), std::back_inserter(finite_outside_inc_cells),
+                   [&](Cell_handle c) -> bool { return !m_tr.is_infinite(c) && c->is_outside(); });
+
       // 'std::stable_sort' to have determinism without having to write something like:
       //     if(longest_edge(l) == longest_edge(r)) return ...
       // in the comparer. It's a small range, so the cost does not matter.
-      std::stable_sort(inc_cells.begin(), inc_cells.end(), comparer);
+      std::stable_sort(finite_outside_inc_cells.begin(), finite_outside_inc_cells.end(), comparer);
 
-      for(auto cit=inc_cells.begin(), cend=inc_cells.end(); cit!=cend; ++cit)
+      for(Cell_handle ic : finite_outside_inc_cells)
       {
-        Cell_handle ic = *cit;
-        CGAL_assertion(!m_tr.is_infinite(ic));
+        CGAL_assertion(!m_tr.is_infinite(ic) && ic->is_outside());
 
         // This is where new material is added
         ic->label() = Cell_label::MANIFOLD;
