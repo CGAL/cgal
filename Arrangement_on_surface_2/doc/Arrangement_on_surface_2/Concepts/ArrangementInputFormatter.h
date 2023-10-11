@@ -5,9 +5,11 @@
  * functions that enable reading an arrangement from an input stream using a
  * specific format.
  *
- * \cgalHasModel `CGAL::Arr_text_formatter<Arrangement>`
- * \cgalHasModel `CGAL::Arr_face_extended_text_formatter<Arrangement>`
- * \cgalHasModel `CGAL::Arr_extended_dcel_text_formatter<Arrangement>`
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arr_text_formatter<Arrangement>}
+ * \cgalHasModels{CGAL::Arr_face_extended_text_formatter<Arrangement>}
+ * \cgalHasModels{CGAL::Arr_extended_dcel_text_formatter<Arrangement>}
+ * \cgalHasModelsEnd
  *
  */
 
@@ -131,7 +133,7 @@ void read_x_monotone_curve(X_monotone_curve_2& c);
 /*! reads an auxiliary halfedge-data object and associates it with the halfedge
  * `he`.
  */
-void read_halfegde_data(Halfedge_handle he);
+void read_halfedge_data(Halfedge_handle he);
 
 /*! reads a message indicating the beginning of a single face record. */
 void read_face_begin();

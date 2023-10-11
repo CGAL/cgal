@@ -31,7 +31,7 @@ The class `Eigen_svd` provides an algorithm to solve in the least
 square sense a linear system with a singular value decomposition using
 \ref thirdpartyEigen.
 
-\cgalModels `SvdTraits`
+\cgalModels{SvdTraits}
 
 */
 class Eigen_svd

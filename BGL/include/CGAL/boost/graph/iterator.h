@@ -182,7 +182,7 @@ struct Opposite_face {
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_source_iterator` `havi` with `h = *havi;`
  * the following holds: Either `++havi` is the past the end iterator, or `next(opposite(h,g),g) == *++havi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Halfedge_around_source_iterator {
@@ -213,16 +213,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_source_iterator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_source_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base() == nullptr));
   }
 
   bool operator==( const Self& i) const {
@@ -280,7 +274,7 @@ public:
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_target_iterator` `havi` with `h = *havi;`
  * the following holds: Either `++havi` is the past the end iterator, or `opposite(next(h,g),g) == *++havi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 
 template <typename Graph>
@@ -313,16 +307,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_target_iterator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_target_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base() == nullptr));
   }
 
   bool operator==( const Self& i) const {
@@ -381,7 +369,7 @@ public:
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_iterator` `hafi` with  `h = *hafi`
  * the following holds: Either `++hafi` is the past the end iterator, or `next(h,g) == *++hafi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 
 template <typename Graph>
@@ -412,16 +400,9 @@ public:
   pointer           operator -> ( )       { return &pos; }
   const value_type* operator -> ( ) const { return &pos; }
 
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_face_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_face_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base() == nullptr));
   }
 
   bool operator==( const Self& i) const {
@@ -484,7 +465,7 @@ class Halfedge_around_target_circulator;
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_source_circulator` `havc` with `h = *havc;`
  * the following holds: `next(opposite(h,g),g) == *++havc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 template <typename Graph>
 class Halfedge_around_source_circulator
@@ -522,21 +503,20 @@ public:
   Halfedge_around_source_circulator(vertex_descriptor vd, const Graph& g)
     : Halfedge_around_source_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(halfedge(vd,g),g)), opp(g)
   {}
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_source_circulator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Halfedge_around_source_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
   {
     return this->base_reference() == nullptr;
+  }
+
+  bool operator!= (void*) const
+  {
+    return this->base_reference() != nullptr;
   }
 
 private:
@@ -551,7 +531,7 @@ private:
  * It circulates over the same halfedges as the `Halfedge_around_target_circulator`.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 
 template <typename Graph>
@@ -580,21 +560,19 @@ public:
 #ifndef DOXYGEN_RUNNING
   typedef std::size_t size_type;
 
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Face_around_target_circulator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Face_around_target_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
   {
     return this->base_reference() == nullptr;
+  }
+
+  bool operator!= (void*) const
+  {
+    return this->base_reference() != nullptr;
   }
 
 
@@ -612,7 +590,7 @@ private:
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_target_circulator` `havc` with `h = *havc;`
  * the following holds: `opposite(next(h,g),g) == *++havc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 
 
@@ -654,23 +632,20 @@ public:
   bool       operator == ( const Self& other) const { return  g == other.g && pos == other.pos; }
   bool       operator != ( const Self& other) const { return  g != other.g || pos != other.pos; }
 
-
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_target_circulator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (g == nullptr)) ?
-      &Halfedge_around_target_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (g == nullptr));
   }
 
 
   bool operator== (void* ) const
   {
     return g == nullptr;
+  }
+
+  bool operator!= (void* ) const
+  {
+    return g != nullptr;
   }
 
 
@@ -717,7 +692,7 @@ private:
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_circulator` `hafc` with  `h = *hafc`
  * the following holds:  `next(h,g) == *++hafc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 
 template <typename Graph>
@@ -751,22 +726,19 @@ public:
   bool       operator == ( const Self& other) const { return  g == other.g && pos == other.pos; }
   bool       operator != ( const Self& other) const { return  g != other.g || pos != other.pos; }
 
-
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_face_circulator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (g == nullptr)) ?
-      &Halfedge_around_face_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (g == nullptr));
   }
 
   bool operator== (void* ) const
   {
     return g == nullptr;
+  }
+
+  bool operator!= (void* ) const
+  {
+    return g != nullptr;
   }
 
   Self& operator++()
@@ -872,7 +844,7 @@ halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h
  * may be the null face, and it may be several times the same face descriptor.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 template <typename Graph>
 class Face_around_face_iterator
@@ -910,7 +882,7 @@ private:
  * may be the null face, and it may be several times the same face descriptor.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 template <typename Graph>
 class Face_around_face_circulator
@@ -924,7 +896,7 @@ class Face_around_face_circulator
  * may be the null face, and it may be several times the same face descriptor.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Face_around_target_iterator
@@ -980,6 +952,12 @@ faces_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, co
   return make_range(I(h,g), I(h,g,1));
 }
 
+/**
+ * \ingroup PkgBGLIterators
+ * A bidirectional circulator with value type `boost::graph_traits<Graph>::%vertex_descriptor` over all vertices incident to the same face or border.
+ * \tparam Graph must be a model of the concept `HalfedgeGraph`
+ * \cgalModels{BidirectionalIterator}
+ */
 template <typename Graph>
 class Vertex_around_face_circulator
 #ifndef DOXYGEN_RUNNING
@@ -1008,22 +986,22 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Vertex_around_face_circulator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Vertex_around_face_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
   {
     return this->base_reference()== nullptr;
   }
+
+  bool operator!= (void*) const
+  {
+    return this->base_reference()!= nullptr;
+  }
+
 private:
   friend class boost::iterator_core_access;
   typename  boost::graph_traits<Graph>::vertex_descriptor dereference() const { return fct(*this->base_reference()); }
@@ -1035,7 +1013,7 @@ private:
  * A bidirectional iterator  with value type `boost::graph_traits<Graph>::%vertex_descriptor`
  *  over all vertices incident to the same face or border.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Vertex_around_face_iterator
@@ -1062,16 +1040,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Vertex_around_face_iterator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Vertex_around_face_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
@@ -1163,7 +1135,7 @@ edges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, co
  * It circulates over the same halfedges as the `Halfedge_around_target_circulator`.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 template <typename Graph>
 class Vertex_around_target_circulator
@@ -1192,21 +1164,20 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Vertex_around_target_circulator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Vertex_around_target_circulator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
   bool operator== (void*) const
   {
     return this->base_reference()== nullptr;
+  }
+
+  bool operator!= (void*) const
+  {
+    return this->base_reference()!= nullptr;
   }
 
 private:
@@ -1223,7 +1194,7 @@ private:
  * It iterates over the same halfedges as the `Halfedge_around_target_iterator`.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Vertex_around_target_iterator
@@ -1250,16 +1221,10 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Vertex_around_target_iterator::*bool_type)() const;
 
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Vertex_around_target_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 private:
   friend class boost::iterator_core_access;
@@ -1337,16 +1302,9 @@ public:
   Out_edge_iterator(halfedge_descriptor h, const Graph& g, int n = 0)
     : Out_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), opp(g) {}
 
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Out_edge_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &Out_edge_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
 
@@ -1379,16 +1337,9 @@ public:
     : In_edge_iterator::iterator_adaptor_(Halfedge_around_target_iterator<Graph>(h,g,(h==halfedge_descriptor())?1:n)), fct(g)
   {}
 
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (In_edge_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
+  explicit operator bool() const
   {
-    return (! (this->base_reference() == nullptr)) ?
-      &In_edge_iterator::this_type_does_not_support_comparisons : 0;
+    return (! (this->base_reference() == nullptr));
   }
 
  private:

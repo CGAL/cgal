@@ -628,7 +628,7 @@ public:
     };
 
     typedef typename boost::mpl::if_c<
-        !boost::is_same< typename Algebraic_structure_traits<NT>::Sqrt,
+        !std::is_same< typename Algebraic_structure_traits<NT>::Sqrt,
                          Null_functor >::value,
          typename INTERN_QUOTIENT::Sqrt_selector< Type,
                                                   Is_exact >::Sqrt,

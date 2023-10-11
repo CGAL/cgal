@@ -38,6 +38,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_cell_primitive.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/IO/Color.h>
 
 #include "Scene_polygon_soup_item.h"
 
@@ -188,7 +189,7 @@ public :
   }
 
   void addTriangle(const Tr::Bare_point& pa, const Tr::Bare_point& pb,
-                   const Tr::Bare_point& pc, const CGAL::Color color)
+                   const Tr::Bare_point& pc, const CGAL::IO::Color color)
   {
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
@@ -441,6 +442,7 @@ struct Scene_triangulation_3_item_priv {
   typedef std::set<int> Indices;
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
+  std::unordered_map<int, int> visible_surface_patch_to_subdomain;
   std::unordered_map<int, int> id_to_compact;
   QSlider* tet_Slider;
   bool is_filterable;
@@ -642,6 +644,7 @@ Scene_triangulation_3_item::triangulation_changed()
   // Fill indices map and get max subdomain value
   d->surface_patch_indices_.clear();
   d->subdomain_indices_.clear();
+  d->visible_surface_patch_to_subdomain.clear();
   d->visible_subdomain.clear();
   d->id_to_compact.clear();
 
@@ -663,7 +666,18 @@ Scene_triangulation_3_item::triangulation_changed()
        end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
     max = (std::max)(max, fit->first->surface_patch_index(fit->second));
-    d->surface_patch_indices_.insert(fit->first->surface_patch_index(fit->second));
+    int index = fit->first->surface_patch_index(fit->second);
+    d->surface_patch_indices_.insert(index);
+    int dom0 = fit->first->subdomain_index();
+    int dom1 = fit->first->neighbor(fit->second)->subdomain_index();
+    if (dom0 == 0) // if cell is not in complex
+    {
+        d->visible_surface_patch_to_subdomain[index] = dom1;
+    }
+    else if (dom1 == 0)  // if opposite cell is not in complex
+    {
+        d->visible_surface_patch_to_subdomain[index] = dom0;
+    }
   }
 
   d->colors.resize(max + 1);
@@ -704,6 +718,9 @@ create_histogram(const T3& triangulation, double& min_value, double& max_value)
     cit != triangulation.finite_cells_end();
     ++cit)
   {
+    if(cit->subdomain_index() == 0)
+      continue;
+
 #ifdef CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
     if (triangulation.in_dimension(cit->vertex(0)) <= 1
       || triangulation.in_dimension(cit->vertex(1)) <= 1
@@ -798,6 +815,8 @@ Scene_triangulation_3_item::build_histogram()
   {
     max_size = (std::max)(max_size, *it);
   }
+  if(max_size == 0)
+    return;
 
   // colored histogram
   int j = 0;
@@ -876,12 +895,19 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
   }
   const size_type nb_patch_indices = surface_patch_indices_.size();
   i = 0;
+  double patch_hsv_value = fmod(c.valueF() + .5, 1.);
   for (Indices::iterator it = surface_patch_indices_.begin(),
          end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
   {
     double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
     if (hue > 1) { hue -= 1.; }
-    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
+    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
+  }
+
+  for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
+       end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
+  {
+    colors[it->first] = colors_subdomains[it->second];
   }
 }
 
@@ -1253,7 +1279,7 @@ void Scene_triangulation_3_item_priv::computeIntersection(const Primitive& cell)
   const Tr::Bare_point& pc = wp2p(ch->vertex(2)->point());
   const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
-  CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
+  CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
   if(is_filterable)
   {
@@ -1355,7 +1381,7 @@ void Scene_triangulation_3_item_priv::computeSpheres()
     typedef unsigned char UC;
     tr_vertices.push_back(*vit);
     spheres->add_sphere(Geom_traits::Sphere_3(center, radius),s_id++,
-                        CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
+                        CGAL::IO::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
 
   }
   spheres->invalidateOpenGLBuffers();

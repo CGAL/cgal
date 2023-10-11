@@ -124,7 +124,7 @@ public:
   unsigned int get_height() const { return m_win_height; }
 
   template <class MyId>
-  static void my_validate(boost::any & v,
+  static void my_validate(std::any & v,
                           const std::vector<std::string> & values);
 
 protected:

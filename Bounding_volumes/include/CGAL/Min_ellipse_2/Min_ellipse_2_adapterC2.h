@@ -18,7 +18,7 @@
 
 // includes
 #  include <CGAL/Cartesian/ConicCPA2.h>
-#  include <CGAL/Optimisation/assertions.h>
+#  include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -235,7 +235,7 @@ class _Min_ellipse_2_adapterC2__Ellipse {
                 int tau_star = c.vol_derivative( dr, ds, dt, du, dv, dw);
                 return( CGAL::Bounded_side( CGAL_NTS sign( tau_star))); } }
           default:
-            CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&
+            CGAL_assertion( ( n_boundary_points >= 0) &&
                                          ( n_boundary_points <= 5) ); }
         // keeps g++ happy
         return( CGAL::Bounded_side( 0));
@@ -298,7 +298,7 @@ class _Min_ellipse_2_adapterC2__Ellipse {
                     || (    ( conic1 == e.conic2)
                          && ( conic2 == e.conic1)));
           default:
-            CGAL_optimisation_assertion(    ( n_boundary_points >= 0)
+            CGAL_assertion(    ( n_boundary_points >= 0)
                                          && ( n_boundary_points <= 5)); }
         // keeps g++ happy
         return( false);
@@ -341,7 +341,7 @@ operator << ( std::ostream& os,
       case CGAL::IO::BINARY:
         break;
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                         "CGAL::IO::get_mode( os) invalid!");
         break; }
 
@@ -405,7 +405,7 @@ operator >> ( std::istream& is,
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::mode invalid!");
         break; }
 

@@ -19,7 +19,7 @@ A translation \f$g\f$ in \f$\mathcal G\f$ is a mapping acting on the hyperbolic 
 \f$\mathbb H^2\f$. It has the form
 \f[ g(z) = \frac{ \alpha\cdot z + \beta }{ \overline{\beta}\cdot z + \overline{\alpha} }, \qquad
         \alpha,\beta \in \mathbb C, \qquad z \in \mathbb H^2, \qquad |\alpha|^2 - |\beta|^2 = 1, \f]
-where \f$\overline{\alpha}\f$ ane \f$\overline{\beta}\f$ are the complex conjugates of
+where \f$\overline{\alpha}\f$ and \f$\overline{\beta}\f$ are the complex conjugates of
 \f$\alpha\f$ and \f$\beta\f$ respectively. In this implementation, the translation \f$g\f$
 is uniquely defined by its coefficients \f$\alpha\f$ and \f$\beta\f$.
 

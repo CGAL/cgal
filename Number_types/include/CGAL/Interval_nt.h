@@ -1463,6 +1463,7 @@ public:
   typedef double Bound;
   typedef CGAL::Tag_false With_empty_interval;
   typedef CGAL::Tag_true  Is_interval;
+  static constexpr bool is_interval_v = true;
 
  struct Construct :public CGAL::cpp98::binary_function<Bound,Bound,Interval>{
     Interval operator()( const Bound& l,const Bound& r) const {

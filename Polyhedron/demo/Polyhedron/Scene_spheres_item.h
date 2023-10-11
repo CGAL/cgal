@@ -20,7 +20,7 @@ struct Scene_spheres_item_priv;
  * sorted by the value of their "index". This item also has an internal picking mechanism that
  * colorizes all the spheres that has the same index as the one that has been picked.
  * The picking is only usable if several indices exist.
- * If all the spheres have the index 0, they can have independant colors (generally used by the items that
+ * If all the spheres have the index 0, they can have independent colors (generally used by the items that
  * have a Scene_spheres_item child).
 */
 class SCENE_BASIC_OBJECTS_EXPORT Scene_spheres_item

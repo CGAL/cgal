@@ -55,7 +55,7 @@ _test_cls_periodic_3_tds_3( const Tds &)
 
   // Test I/O for dimension -2
   // the other dimensions are not tested here
-  // (they are implicitely tested in triangulation)
+  // (they are implicitly tested in triangulation)
   Tds tdsfromfile;
   std::cout << "    I/O" << std::endl;
   {

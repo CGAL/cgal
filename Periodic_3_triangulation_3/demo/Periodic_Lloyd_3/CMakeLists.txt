@@ -19,7 +19,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Script Help OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL Help)
 
 if(Qt5Help_VERSION VERSION_LESS 5.12)
   set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qcollectiongenerator)
@@ -33,7 +33,7 @@ if(CGAL_Qt5_FOUND
 
   include_directories(BEFORE ./)
 
-  # ui file, created wih Qt Designer
+  # ui file, created with Qt Designer
   qt5_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)
@@ -68,7 +68,7 @@ if(CGAL_Qt5_FOUND
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3)
 
   target_link_libraries(Periodic_Lloyd_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                                 Qt5::OpenGL)
+                                                 Qt5::Widgets Qt5::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Periodic_Lloyd_3)
@@ -92,9 +92,6 @@ else(CGAL_Qt5_FOUND
         "${CGAL_QCOLLECTIONGENERATOR_TARGET}, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS} and will not be compiled.")
 
 endif()

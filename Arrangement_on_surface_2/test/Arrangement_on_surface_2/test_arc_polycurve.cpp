@@ -19,7 +19,7 @@ typedef Sub_traits_2::CoordNT                        CoordNT;
 typedef Sub_traits_2::Point_2                        Point_2;
 typedef Sub_traits_2::Curve_2                        Subcurve_2;
 typedef Sub_traits_2::X_monotone_curve_2             Subcurve_x_monotone_2;
-typedef boost::variant<Point_2, Subcurve_x_monotone_2>
+typedef std::variant<Point_2, Subcurve_x_monotone_2>
   Make_sub_x_monotone_result;
 
 void check_equal()
@@ -81,8 +81,8 @@ void check_intersect(Traits_2::Make_x_monotone_2
   make_x_monotone_2(curve1, std::back_inserter(x_monotone_curves));
   make_x_monotone_2(curve2, std::back_inserter(x_monotone_curves));
 
-  const auto* x_curve1 = boost::get<Subcurve_x_monotone_2>(curves[0]);
-  const auto* x_curve2 = boost::get<Subcurve_x_monotone_2>(curves[1]);
+  const auto* x_curve1 = std::get<Subcurve_x_monotone_2>(curves[0]);
+  const auto* x_curve2 = std::get<Subcurve_x_monotone_2>(curves[1]);
 
   std::vector<Intersection_result> Points_of_intersection;
 
@@ -100,7 +100,7 @@ void check_intersect(Traits_2::Make_x_monotone_2
 
   curve3 = Subcurve_2(c6, 1, CGAL::CLOCKWISE, s6, t6);
   make_x_monotone_2(curve3, std::back_inserter(x_curves));
-  const auto* x_curve2 = boost::get<>(&x_curves[2]);
+  const auto* x_curve2 = std::get<>(&x_curves[2]);
 
   Points_of_intersection.clear();
   //intersect_2(X_monotone_curve1, X_monotone_curve2,
@@ -131,8 +131,8 @@ check_compare_end_points_xy_2(Traits_2::Compare_endpoints_xy_2
   std::vector<Make_sub_x_monotone_result> x_curves;
   make_x_monotone_2(curve1, std::back_inserter(x_curves));
 
-  const auto* x_curve1 = boost::get<Subcurve_x_monotone_2>(&x_curves[0]);
-  const auto* x_curve2 = boost::get<Subcurve_x_monotone_2>(&x_curves[1]);
+  const auto* x_curve1 = std::get_if<Subcurve_x_monotone_2>(&x_curves[0]);
+  const auto* x_curve2 = std::get_if<Subcurve_x_monotone_2>(&x_curves[1]);
 
   auto res = compare_endpoints_xy_2(x_curve1);
   std::cout<< "The first result is: " << res << std::endl;
@@ -143,7 +143,7 @@ check_compare_end_points_xy_2(Traits_2::Compare_endpoints_xy_2
   Point_2 s2 = Point_2(one_plus_sqrt_3, CoordNT(1));
   curve2 = Subcurve_2(circ2, s1, t1);
   make_x_monotone_2(curve2, std::back_inserter(x_curves));
-  const auto* x_curve2 = boost::get<Subcurve_x_monotone_2>(&x_curves[1]);
+  const auto* x_curve2 = std::get_if<Subcurve_x_monotone_2>(&x_curves[1]);
 
   res = compare_endpoints_xy_2(x_curve2);
 
@@ -170,7 +170,7 @@ void check_split(Traits_2::Split_2  split_2,
   //make x_monotone
   std::vector<Make_sub_x_monotone_result> x_curves;
   make_x_monotone_2(curve, std::back_inserter(x_curves));
-  const auto* x_curve1 = boost::get<Subcurve_x_monotone_2>(&x_curves[0]);
+  const auto* x_curve1 = std::get_if<Subcurve_x_monotone_2>(&x_curves[0]);
 
   // Subcurve_x_monotone_2 split_x_monotone_curve1, split_x_monotone_curve2 ;
   //split_2(X_monotone_curve, Kernel::Point_2::Kernel::Point_2(1, 4),
@@ -200,8 +200,8 @@ void check_is_vertical(Traits_2::Make_x_monotone_2
 
   //std::vector<Subcurve_x_monotone_2> x_monotone_polycurves;
 
-  const auto* x_polycurve1 = boost::get<Subcurve_x_monotone_2>(&x_curves[0]);
-  const auto* x_polycurve2 = boost::get<Subcurve_x_monotone_2>(&x_curves[1]);
+  const auto* x_polycurve1 = std::get_if<Subcurve_x_monotone_2>(&x_curves[0]);
+  const auto* x_polycurve2 = std::get_if<Subcurve_x_monotone_2>(&x_curves[1]);
 
   bool res = is_vertical(x_polycurve1);
   std::cout << "Is_verticle:: The xmonotone curve (quarter circle) is : "
@@ -232,8 +232,8 @@ void check_compare_y_at_x_2(Traits_2::Make_x_monotone_2 make_x_monotone_2,
   for (const auto& cv : curves)
     make_x_monotone_2(cv, std::back_inserter(x_curves));
 
-  const auto* x_polycurve1 = boost::get<Subcurve_x_monotone_2>(&x_curves[0]);
-  const auto* x_polycurve2 = boost::get<Subcurve_x_monotone_2>(&x_curves[1]);
+  const auto* x_polycurve1 = std::get_if<Subcurve_x_monotone_2>(&x_curves[0]);
+  const auto* x_polycurve2 = std::get_if<Subcurve_x_monotone_2>(&x_curves[1]);
 
   Kernel::Point_2 p_test = Kernel::Point_2(3, 1);
 
@@ -267,7 +267,7 @@ void check_push_back(Traits_2::Make_x_monotone_2
             << polycurve.number_of_subcurves() << std::endl;
 
   push_back_2(polycurve, curves[1]);
-  //throws a warning "size is depricated"
+  //throws a warning "size is deprecated"
   std::cout << "size of polycurve after 2 push_backs: "
             << polycurve.number_of_subcurves() << std::endl;
 }

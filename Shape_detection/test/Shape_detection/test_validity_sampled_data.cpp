@@ -2,7 +2,7 @@
 
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
-#include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
+#include <CGAL/Shape_detection/Region_growing/Point_set.h>
 
 #ifdef CGAL_TEST_RANSAC_PROTOTYPE
 #include <RansacShapeDetector.h>
@@ -29,12 +29,17 @@ using Vector_3 = Kernel::Vector_3;
 
 using Pwn = std::pair<Point_3, Vector_3>;
 using Point_set = std::vector<Pwn>;
+using Item           = Point_set::const_iterator;
+
+using Deref_map         = CGAL::Dereference_property_map<const Pwn, Item>;
 using Point_map = CGAL::First_of_pair_property_map<Pwn>;
 using Normal_map = CGAL::Second_of_pair_property_map<Pwn>;
+using RG_Point_map         = CGAL::Compose_property_map<Deref_map, Point_map>;
+using RG_Normal_map        = CGAL::Compose_property_map<Deref_map, Normal_map>;
 
-using RG_query = SD::Point_set::Sphere_neighbor_query<Kernel, Point_set, Point_map>;
-using RG_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Point_map, Normal_map>;
-using Region_growing = SD::Region_growing<Point_set, RG_query, RG_region>;
+using RG_query = SD::Point_set::Sphere_neighbor_query<Kernel, Item, RG_Point_map>;
+using RG_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Item, RG_Point_map, RG_Normal_map>;
+using Region_growing = SD::Region_growing<RG_query, RG_region>;
 
 using RANSAC_traits = SD::Efficient_RANSAC_traits<Kernel, Point_set, Point_map, Normal_map>;
 using RANSAC = SD::Efficient_RANSAC<RANSAC_traits>;
@@ -45,7 +50,7 @@ void test_copied_point_cloud (const Point_set& points, std::size_t nb);
 int main (int argc, char** argv)
 {
   Point_set points;
-  const std::string ifilename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/point_set_3.xyz");
+  const std::string ifilename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/building.xyz");
   std::ifstream ifile(ifilename);
 
   if (!ifile ||
@@ -100,7 +105,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   bbox = CGAL::bbox_3
     (CGAL::make_transform_iterator_from_property_map (points.begin(), Point_map()),
-     CGAL::make_transform_iterator_from_property_map (points.end(), Point_map()));
+    CGAL::make_transform_iterator_from_property_map(points.end(), Point_map()));
 
   typename RANSAC::Parameters parameters;
   parameters.probability = 0.01;
@@ -111,13 +116,19 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   CGAL::Real_timer t;
   t.start();
-  RG_query rg_query (points, parameters.cluster_epsilon);
-  RG_region rg_region (points, parameters.epsilon, parameters.normal_threshold, parameters.min_points);
+  RG_query rg_query (
+    points,
+    CGAL::parameters::sphere_radius(parameters.cluster_epsilon));
+  RG_region rg_region (
+    CGAL::parameters::
+    maximum_distance(parameters.epsilon).
+    cosine_of_maximum_angle(parameters.normal_threshold).
+    minimum_region_size(parameters.min_points));
   Region_growing region_growing (points, rg_query, rg_region);
   std::size_t nb_detected = 0;
   std::size_t nb_unassigned = 0;
   region_growing.detect (boost::make_function_output_iterator ([&](const auto&) { ++ nb_detected; }));
-  region_growing.unassigned_items (boost::make_function_output_iterator ([&](const auto&) { ++ nb_unassigned; }));
+  region_growing.unassigned_items(points, boost::make_function_output_iterator ([&](const auto&) { ++ nb_unassigned; }));
   t.stop();
   std::cerr << "Region Growing = " << nb_detected << " planes (" << 1000 * t.time() << "ms)" << std::endl;
 
@@ -165,13 +176,13 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
             << detected_ransac.front() << ";" << detected_ransac.back() << "], time["
             << times_ransac.front() << ";" << times_ransac.back() << "])" << std::endl;
 
-  // RANSAC should at least detect 75% of shapes
+  // RANSAC should detect at least 75% of shapes.
   assert (detected_ransac[detected_ransac.size() / 2] > std::size_t(0.75 * ground_truth));
 
 #ifdef CGAL_TEST_RANSAC_PROTOTYPE
   {
     CGAL::Real_timer timer;
-    double timeout = 120.; // 2 minute timeout
+    double timeout = 120.; // 2 minutes timeout
     timer.start();
     std::size_t nb_runs = 500;
     std::vector<std::size_t> detected_ransac;
@@ -196,7 +207,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
         proto_points.push_back(Pt);
       }
 
-      //manually set bounding box!
+      // Manually set bounding box!
       Vec3f cbbMin, cbbMax;
       cbbMin[0] = static_cast<float>(bbox.xmin());
       cbbMin[1] = static_cast<float>(bbox.ymin());

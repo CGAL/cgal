@@ -83,9 +83,9 @@ public:
     // end-points (in degenerate case both point to the same object)
     mutable Generic_point_2 _m_min;
 
-    mutable boost::optional<Generic_point_2> _m_max;
+    mutable std::optional<Generic_point_2> _m_max;
     // stores native arc object (only for non-degenerate case)
-    mutable boost::optional<Arc_2> _m_arc;
+    mutable std::optional<Arc_2> _m_arc;
 
     // whether an arc is degenerate
     //bool _m_is_degenerate;
@@ -148,7 +148,7 @@ public:
 #endif
 
     /*!\brief
-     * constructs an arc from a given represenation
+     * constructs an arc from a given representation
      */
     Generic_arc_2(Rep rep) :
         Base(rep) {

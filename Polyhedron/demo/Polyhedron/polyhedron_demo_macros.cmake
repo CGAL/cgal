@@ -36,25 +36,28 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
       target_link_libraries( ${plugin_name} PUBLIC demo_framework)
       add_dependencies(${plugin_name} demo_framework)
       if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
-        if(NOT TARGET compilation_of__demo_framework)
+        if(NOT TARGET "compilation_of__demo_framework")
               # This custom target is useless. It is used only as a flag to
               # detect that the test has already been created.
-              add_custom_target(compilation_of__demo_framework)
-              add_dependencies( compilation_of__demo_framework demo_framework )
-              add_test(NAME "compilation_of__demo_framework"
+              add_custom_target("compilation_of__demo_framework")
+              add_dependencies( "compilation_of__demo_framework" demo_framework )
+              add_test(NAME "compilation of  demo_framework"
                 COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "demo_framework" --config "$<CONFIG>")
 
-              set_property(TEST "compilation_of__demo_framework"
+              set_property(TEST "compilation of  demo_framework"
                 APPEND PROPERTY LABELS "CGAL_build_system")
-              set_property(TEST "compilation_of__demo_framework"
-                PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
-              set_property(TEST "compilation_of__demo_framework"
+              set_property(TEST "compilation of  demo_framework"
+                APPEND PROPERTY FIXTURES_SETUP "demo_framework_SetupFixture")
+              set_property(TEST "compilation of  demo_framework"
                 APPEND PROPERTY DEPENDS "compilation_of__CGAL_Qt5_moc_and_resources")
         endif()
       endif()
     else()
       target_link_libraries( ${plugin_name} PUBLIC Polyhedron_demo_framework)
       add_dependencies(${plugin_name} Polyhedron_demo_framework)
+    endif()
+    if(TARGET "compilation_of__demo_framework")
+      set_property(TEST "compilation of  ${plugin_name}" APPEND PROPERTY FIXTURES_REQUIRED demo_framework_SetupFixture)
     endif()
     # Link with CGAL
     target_link_libraries( ${plugin_name} PUBLIC ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )

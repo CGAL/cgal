@@ -166,8 +166,8 @@ public:
     canonicalize();
   }
 
-  // arithmetics
-  // -----------
+  // arithmetic
+  // ----------
   Gmpzf operator+() const;
   Gmpzf operator-() const;
   Gmpzf& operator+=( const Gmpzf& b);
@@ -203,8 +203,8 @@ private:
 // implementation
 // ==============
 
-// arithmetics
-// -----------
+// arithmetic
+// ----------
 
 inline
 Gmpzf Gmpzf::operator+() const

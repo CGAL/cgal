@@ -12,8 +12,7 @@ from \f$ p_1\f$ to \f$ p_2\f$.
 will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros.
 
-\cgalModels `Kernel::Vector_3`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Vector_3,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 \sa `cross_product_grp`
 \sa `determinant_grp`
@@ -137,19 +136,19 @@ Kernel::FT z() const;
 
 /*!
 returns the i'th homogeneous coordinate of `v`.
-\pre \f$ 0\leq i \leq3\f$.
+\pre `0 <= i <= 3`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th %Cartesian coordinate of `v`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre  `0 <= i <= 2`
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre  `0 <= i <= 2`
 */
 Kernel::FT operator[](int i) const;
 

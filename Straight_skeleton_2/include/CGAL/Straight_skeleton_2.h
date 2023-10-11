@@ -92,20 +92,20 @@ private :
 
 public :
 
-    static int id ( Vertex_const_handle h )
+    static int id ( Vertex_const_handle v )
     {
       Vertex_const_handle null ;
-      return h != null ? h->id() : -1 ;
+      return v != null ? v->id() : -1 ;
     }
     static int id ( Halfedge_const_handle h )
     {
       Halfedge_const_handle null ;
       return h != null ? h->id() : -1 ;
     }
-    static int id ( Face_const_handle h )
+    static int id ( Face_const_handle f )
     {
       Face_const_handle null ;
-      return h != null ? 0 : -1 ;
+      return f != null ? f->id() : -1 ;
     }
 
     // Partial skeletons are used when constructing offsets, to avoid building larger-than-needed skeletons.
@@ -213,7 +213,7 @@ public :
           if ( begin->is_border())
               ++nb;
       }
-      CGAL_STSKEL_VALIDITY_TRACE("summe border halfedges (2*nb) = " << 2 * nb );
+      CGAL_STSKEL_VALIDITY_TRACE("sum of border halfedges (2*nb) = " << 2 * nb );
 
       bool nvalid = ( n == this->size_of_halfedges());
 
@@ -272,7 +272,9 @@ public :
               Halfedge_const_handle g = h;
               do
               {
-                CGAL_STSKEL_VALIDITY_TRACE("  v->halfedge(): " << id(h) << ", ->next(): " << id(h->next())
+                CGAL_STSKEL_VALIDITY_TRACE("  v->halfedge(): " << id(h)
+                                          << ", ->face(): " << id(h->face())
+                                          << ", ->next(): " << id(h->next())
                                           << ", ->next()->opposite(): " << id(h->next()->opposite())
                                           );
                 ++n;
@@ -336,7 +338,7 @@ public :
             Halfedge_const_handle g = h;
             do
             {
-              CGAL_STSKEL_VALIDITY_TRACE("  f->halfedge():" << id(h) << ", ->next(): " << id(h->next()));
+              CGAL_STSKEL_VALIDITY_TRACE("  f->halfedge(): " << id(h) << ", ->face(): " << id(h->face()) << ", ->next(): " << id(h->next()));
               ++n;
               h = h->next();
               valid = valid && ( n <= this->size_of_halfedges() && n!=0);

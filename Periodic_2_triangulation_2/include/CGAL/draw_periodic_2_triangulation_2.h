@@ -60,7 +60,7 @@ public:
   /// @param ap2t2 the p2t2 to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  ///        useful for very big object where this time could be long)
   SimplePeriodic2Triangulation2ViewerQt(QWidget* parent, const P2T2& ap2t2,
                                const char* title="Basic P2T2 Viewer",
                                bool anofaces=false,

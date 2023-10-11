@@ -42,8 +42,7 @@ namespace CGAL {
   some container; an instance of the class `Const_oneset_iterator<T>`,
   constructed from the value in question, does the job more efficiently.
 
-  \cgalModels `QuadraticProgram`
-  \cgalModels `LinearProgram`
+  \cgalModels{QuadraticProgram,LinearProgram}
 
   \cgalHeading{Example}
 
@@ -54,7 +53,7 @@ namespace CGAL {
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -296,16 +295,13 @@ make_quadratic_program_from_iterators (
   some container; an instance of the class `Const_oneset_iterator<T>`,
   constructed from the value in question, does the job more efficiently.
 
-  \cgalModels `QuadraticProgram`
-  \cgalModels `LinearProgram`
-  \cgalModels `NonnegativeQuadraticProgram`
-  \cgalModels `NonnegativeLinearProgram`
+  \cgalModels{QuadraticProgram,LinearProgram,NonnegativeQuadraticProgram,NonnegativeLinearProgram}
 
   \cgalHeading{Example}
 
   \ref QP_solver/first_nonnegative_lp_from_iterators.cpp
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -378,8 +374,7 @@ public:
   some container; an instance of the class `Const_oneset_iterator<T>`,
   constructed from the value in question, does the job more efficiently.
 
-  \cgalModels `QuadraticProgram`
-  \cgalModels `NonnegativeQuadraticProgram`
+  \cgalModels{QuadraticProgram,NonnegativeQuadraticProgram}
 
   \cgalHeading{Example}
 
@@ -390,7 +385,7 @@ public:
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -467,7 +462,7 @@ public:
   some container; an instance of the class `Const_oneset_iterator<T>`,
   constructed from the value in question, does the job more efficiently.
 
-  \cgalModels `QuadraticProgram`
+  \cgalModels{QuadraticProgram}
 
   \cgalHeading{Example}
 
@@ -478,7 +473,7 @@ public:
   should give you a flavor of the use of this
   model in practice.
 
-  `QP_solver/solve_convex_hull_containment_lp.h`
+  \ref QP_solver/solve_convex_hull_containment_lp.h
 
   \ref QP_solver/convex_hull_containment.cpp
 
@@ -560,10 +555,7 @@ public:
   into type `NT`. The constructed program can be further manipulated
   by using the set-methods below.
 
-  \cgalModels `QuadraticProgram`
-  \cgalModels `LinearProgram`
-  \cgalModels `NonnegativeQuadraticProgram`
-  \cgalModels `NonnegativeLinearProgram`
+  \cgalModels{QuadraticProgram,LinearProgram,NonnegativeQuadraticProgram,NonnegativeLinearProgram}
 
   \cgalHeading{Example}
 
@@ -771,10 +763,7 @@ namespace CGAL {
   If you want to read a quadratic program in `MPSFormat` from a stream,
   please use the model `Quadratic_program_from_mps<NT>`.
 
-  \cgalModels `QuadraticProgram`
-  \cgalModels `LinearProgram`
-  \cgalModels `NonnegativeQuadraticProgram`
-  \cgalModels `NonnegativeLinearProgram`
+  \cgalModels{QuadraticProgram,LinearProgram,NonnegativeQuadraticProgram,NonnegativeLinearProgram}
 
   \cgalHeading{Example}
 

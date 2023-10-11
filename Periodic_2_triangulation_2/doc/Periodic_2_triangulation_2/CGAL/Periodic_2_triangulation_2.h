@@ -55,7 +55,7 @@ optional parameter is given).
 
 Insertion of a point is done by locating a face that contains the
 point, and then splitting this face. Apart from the location,
-insertion takes a time \f$ O(1)\f$.
+insertion takes a time \cgalBigO{1}.
 
 Removal of a vertex is more difficult than in the Euclidean space,
 since the star of a vertex may not be disjoint from the star of a
@@ -100,7 +100,7 @@ public:
     UNIQUE_COVER_DOMAIN
   };
 
-/// The enum `@` is defined by `Periodic_2_triangulation_2` to
+/// The enum `Locate_type` is defined by `Periodic_2_triangulation_2` to
 /// specify which case occurs when locating a point in the
 /// triangulation. If the triangulation does not contain any points
 /// `EMPTY` is returned.
@@ -210,7 +210,7 @@ public:
 
   The vertices and faces of the triangulations are accessed through
   `handles`, `iterators` and `circulators`. The handles are %CGAL
-  \ref models "models" of
+  models of
   the concept `Handle` which basically offers the two dereference
   operators and `->`. The iterators and circulators are all
   bidirectional and non-mutable. The circulators and iterators are

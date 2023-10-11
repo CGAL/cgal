@@ -15,7 +15,7 @@
 #include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Container_helper.h>
 #include <CGAL/iterator.h>
@@ -140,7 +140,7 @@ bool simplify_polygon(PointRange& points,
   return (removed_points_n != 0);
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // For each polygon of the soup, removes consecutive identical (in a geometric sense) points.
 //
@@ -194,7 +194,7 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
   return simplified_polygons_n;
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // splits "pinched" polygons, that is polygons for which a point appears more than once,
 // into multiple non-pinched polygons.
@@ -203,22 +203,12 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose `value_type` is itself a model of the concepts `SequenceContainer`
 //                      and `Swappable` whose `value_type` is `std::size_t`.
-// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+// \tparam Traits a traits class providing `Equal_3` and `Less_xyz_3` for two 3D points
 //
 // \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
-//        using the indices of the points in `points`.
-// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-//
-// \cgalNamedParamsBegin
-//   \cgalParamNBegin{geom_traits}
-//     \cgalParamDescription{an instance of a geometric traits class}
-//     \cgalParamType{The traits class must provide the nested functor `Less_xyz_3`
-//                    to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.}
-//     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-//     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-//   \cgalParamNEnd
-// \cgalNamedParamsEnd
+//                 using the indices of the points in `points`.
+// \param traits an instance of traits
 //
 // \sa `repair_polygon_soup()`
 template <typename Traits, typename PointRange, typename PolygonRange>
@@ -301,7 +291,7 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
   return new_polygons_n;
 }
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // removes polygons with fewer than 2 points from the soup.
 //
@@ -309,11 +299,10 @@ std::size_t split_pinched_polygons_in_polygon_soup(PointRange& points,
 // \tparam PolygonRange a model of the concept `SequenceContainer`
 //                      whose `value_type` is itself a model of the concept `Container`
 //                      whose `value_type` is `std::size_t`.
-// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
-//        using the indices of the points in `points`.
+//                 using the indices of the points in `points`.
 //
 // \sa `repair_polygon_soup()`
 template <typename PointRange, typename PolygonRange>
@@ -345,9 +334,70 @@ std::size_t remove_invalid_polygons_in_polygon_soup(PointRange& /*points*/,
   return removed_polygons_n;
 }
 
+// \ingroup PMP_combinatorial_repair_grp
+//
+// Removes invalid array-based polygons, i.e. polygons which have two equal consecutive points.
+//
+// \tparam PointRange a model of the concept `Container` whose value type is the point type.
+// \tparam PolygonRange a model of the concept `SequenceContainer`
+//                      whose value_type is `std::array<std::size_t, N>` with `N`.
+// \tparam Traits Traits class providing `Equal_3` for two points.
+//
+// \param points points of the soup of polygons.
+// \param polygons a vector of polygons. Each element in the vector describes a polygon
+//                 using the indices of the points in `points`.
+// \param traits an instance of the traits clas
+//
+template <typename Traits, typename PointRange, typename PolygonRange>
+std::size_t remove_invalid_polygons_in_array_polygon_soup(PointRange& points,
+                                                          PolygonRange& polygons,
+                                                          const Traits& traits = Traits())
+{
+  typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
+
+  std::vector<std::size_t> to_remove;
+  const std::size_t ini_polygons_size = polygons.size();
+  for(std::size_t polygon_index=0; polygon_index!=ini_polygons_size; ++polygon_index)
+  {
+    const Polygon_3& polygon = polygons[polygon_index];
+    const std::size_t N = polygon.size(), last = N-1;
+    CGAL_assertion(N > 2);
+
+    for(std::size_t i=0; i<N; ++i)
+    {
+      const std::size_t next_i = (i == last) ? 0 : i+1;
+      if(polygon[i] == polygon[next_i] || // combinatorial equality
+         traits.equal_3_object()(points[polygon[i]], points[polygon[next_i]])) // geometric equality
+      {
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
+        std::cout << "Invalid polygon:";
+        print_polygon(std::cout, polygons[polygon_index]);
+#endif
+        to_remove.push_back(polygon_index);
+        break;
+      }
+    }
+  }
+
+  while(!to_remove.empty())
+  {
+    polygons.erase(polygons.begin() + to_remove.back());
+    to_remove.pop_back();
+  }
+
+  const std::size_t removed_polygons_n = ini_polygons_size - polygons.size();
+
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+  if(removed_polygons_n > 0)
+    std::cout << "Removed " << removed_polygons_n << " invalid polygon(s)" << std::endl;
+#endif
+
+  return removed_polygons_n;
+}
+
 } // end namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// removes the isolated points from a polygon soup.
 /// A point is considered <i>isolated</i> if it does not appear in any polygon of the soup.
@@ -450,7 +500,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
   return removed_points_n;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief merges the duplicate points in a polygon soup.
 ///
@@ -673,14 +723,14 @@ Polygon construct_canonical_polygon(const PointRange& points,
   return construct_canonical_polygon(points, polygon, useless, traits);
 }
 
-template <typename PointRange, typename PolygonRange, typename Traits>
+template <typename PointRange, typename PolygonRange>
 struct Polygon_hash
 {
   typedef std::size_t                                                             result_type;
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::Polygon_3   Polygon_3;
 
-  Polygon_hash(const PointRange& points, const PolygonRange& canonical_polygons, const Traits& traits)
-    : points(points), canonical_polygons(canonical_polygons), traits(traits)
+  Polygon_hash(const PointRange& points, const PolygonRange& canonical_polygons)
+    : points(points), canonical_polygons(canonical_polygons)
   { }
 
   template <typename Polygon_ID>
@@ -698,7 +748,6 @@ struct Polygon_hash
 private:
   const PointRange& points;
   const PolygonRange& canonical_polygons;
-  const Traits& traits;
 };
 
 template <typename PointRange, typename PolygonRange, typename Reversed_markers, typename Traits>
@@ -768,7 +817,7 @@ struct Duplicate_collector<ValueType, CGAL::Emptyset_iterator>
   void dump(CGAL::Emptyset_iterator) { }
 };
 
-// \ingroup PMP_repairing_grp
+// \ingroup PMP_combinatorial_repair_grp
 //
 // collects duplicate polygons in a polygon soup, that is polygons that share the same vertices in the same
 // order.
@@ -779,12 +828,14 @@ struct Duplicate_collector<ValueType, CGAL::Emptyset_iterator>
 //                      and `ReversibleContainer` whose `value_type` is `std::size_t`.
 // \tparam DuplicateOutputIterator a model of `OutputIterator` with value type
 //                                 `std::vector<std::vector<std::size_t> >`.
+// \tparam Traits a traits class providing `Less_xyz_3` for two 3D points
 //
 // \param points points of the soup of polygons
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
 // \param out the output iterator in which duplicate polygons are put. Each entry is a vector of
 //            polygon ids `i0`, `i1`, etc. such that `polygons[i0] = polygons[i1] = ...`
+// \param traits an instance of traits
 // \param same_orientation whether two polygons should have the same orientation to be duplicates.
 //
 // \sa `repair_polygon_soup()`
@@ -797,11 +848,11 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 {
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
 
-  typedef internal::Polygon_hash<PointRange, PolygonRange, Traits>                Hasher;
+  typedef internal::Polygon_hash<PointRange, PolygonRange>                        Hasher;
   typedef boost::dynamic_bitset<>                                                 Reversed_markers;
   typedef internal::Polygon_equality_tester<PointRange, PolygonRange,
                                             Reversed_markers, Traits>             Equality;
-  typedef std::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
+  typedef std::unordered_set<P_ID, Hasher, Equality>                              Unique_polygons;
 
   const std::size_t polygons_n = polygons.size();
 
@@ -819,7 +870,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
       is_reversed.set(polygon_index);
   }
 
-  Hasher hash(points, canonical_polygons, traits);
+  Hasher hash(points, canonical_polygons);
   Equality equal(points, canonical_polygons, is_reversed, traits, same_orientation);
 
   Unique_polygons unique_polygons(polygons_n /*bucket size*/, hash, equal);
@@ -846,7 +897,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 
 } // end namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// merges the duplicate polygons in a polygon soup. Two polygons are duplicate if they share the same
 /// vertices in the same order. Note that the first vertex of the polygon does not matter, that is
@@ -1031,15 +1082,21 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
                   PolygonRange& polygons,
                   const NamedParameters& np) const
   {
-  #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+
+    typedef typename GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
+    Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
     std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " arrays" << std::endl;
-  #endif
+#endif
 
     merge_duplicate_points_in_polygon_soup(points, polygons, np);
 //  skipped steps:
 //    simplify_polygons_in_polygon_soup(points, polygons, traits);
 //    split_pinched_polygons_in_polygon_soup(points, polygons, traits);
-    remove_invalid_polygons_in_polygon_soup(points, polygons);
+    remove_invalid_polygons_in_array_polygon_soup(points, polygons, traits);
     merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
     remove_isolated_points_in_polygon_soup(points, polygons);
   }
@@ -1047,7 +1104,7 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// \brief cleans a given polygon soup through various repairing operations.
 ///
@@ -1068,7 +1125,7 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
 ///
 /// \tparam PointRange a model of the concepts `SequenceContainer` and `Swappable`
 ///                    and whose value type is the point type.
-/// \tparam PolygonRange a model of the concept `SequenceContainer`.
+/// \tparam PolygonRange a model of the concept `SequenceContainer`
 ///                      whose `value_type` is itself a model of the concepts `SequenceContainer`,
 ///                      `Swappable`, and `ReversibleContainer` whose `value_type` is `std::size_t`.
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

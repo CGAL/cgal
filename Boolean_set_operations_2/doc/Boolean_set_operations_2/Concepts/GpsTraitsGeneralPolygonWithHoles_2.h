@@ -5,13 +5,13 @@
 
 A model of this concept represents a general polygon with holes.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \cgalGeneralizes `GeneralPolygonWithHoles_2`
 
-\cgalHasModel `GeneralPolygonSetTraits_2::Polygon_with_holes2`
+\cgalHasModelsBegin
+\cgalHasModels{GeneralPolygonSetTraits_2::Polygon_with_holes2}
+\cgalHasModelsEnd
 
 \sa `GeneralPolygonWithHoles_2`
 

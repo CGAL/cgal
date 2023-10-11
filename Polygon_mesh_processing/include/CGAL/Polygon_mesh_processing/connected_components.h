@@ -32,9 +32,6 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Container_helper.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/tuple.h>
-
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/Default.h>
 #include <CGAL/Dynamic_property_map.h>
@@ -42,7 +39,7 @@
 #include <CGAL/tuple.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing{
@@ -556,7 +553,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
                                                       >::type             FaceSizeMap;
   typedef typename boost::property_traits<FaceSizeMap>::value_type        Face_size;
 
-  CGAL_static_assertion((std::is_convertible<ThresholdValueType, Face_size>::value));
+  static_assert(std::is_convertible<ThresholdValueType, Face_size>::value);
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
                                                        NamedParameters,

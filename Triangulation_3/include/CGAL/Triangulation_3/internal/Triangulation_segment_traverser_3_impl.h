@@ -22,10 +22,10 @@ template < class Tr, class Inc >
 Triangulation_segment_cell_iterator_3<Tr,Inc>::
 Triangulation_segment_cell_iterator_3( const Tr* tr, Vertex_handle s, Vertex_handle t )
 : _tr(tr) {
-    CGAL_triangulation_precondition( !_tr->is_infinite(s) );
-    CGAL_triangulation_precondition( !_tr->is_infinite(t) );
-    CGAL_triangulation_precondition( s->point() != t->point() );
-    CGAL_triangulation_precondition( _tr->dimension() >= 2 );
+    CGAL_precondition( !_tr->is_infinite(s) );
+    CGAL_precondition( !_tr->is_infinite(t) );
+    CGAL_precondition( s->point() != t->point() );
+    CGAL_precondition( _tr->dimension() >= 2 );
 
     _source = s->point();
     _target = t->point();
@@ -47,10 +47,10 @@ template < class Tr, class Inc >
 Triangulation_segment_cell_iterator_3<Tr,Inc>::
 Triangulation_segment_cell_iterator_3( const Tr* tr, Vertex_handle s, const Point& t )
 : _tr(tr) {
-    CGAL_triangulation_precondition( !_tr->is_infinite(s) );
-    CGAL_triangulation_precondition( s->point() != t );
-    CGAL_triangulation_precondition( _tr->dimension() >= 2 );
-    CGAL_triangulation_precondition( _tr->dimension() == 3 ||
+    CGAL_precondition( !_tr->is_infinite(s) );
+    CGAL_precondition( s->point() != t );
+    CGAL_precondition( _tr->dimension() >= 2 );
+    CGAL_precondition( _tr->dimension() == 3 ||
                                      orientation( *_tr->finite_facets_begin(), t ) == COPLANAR );
 
     _source = s->point();
@@ -73,10 +73,10 @@ template < class Tr, class Inc >
 Triangulation_segment_cell_iterator_3<Tr,Inc>::
 Triangulation_segment_cell_iterator_3( const Tr* tr, const Point& s, Vertex_handle t, Cell_handle hint )
 : _tr(tr) {
-    CGAL_triangulation_precondition( !_tr->is_infinite(t) );
-    CGAL_triangulation_precondition( s != t->point() );
-    CGAL_triangulation_precondition( _tr->dimension() >= 2 );
-    CGAL_triangulation_precondition( _tr->dimension() == 3 ||
+    CGAL_precondition( !_tr->is_infinite(t) );
+    CGAL_precondition( s != t->point() );
+    CGAL_precondition( _tr->dimension() >= 2 );
+    CGAL_precondition( _tr->dimension() == 3 ||
                                      orientation( *_tr->finite_facets_begin(), s ) == COPLANAR );
 
     _source = s;
@@ -86,7 +86,7 @@ Triangulation_segment_cell_iterator_3( const Tr* tr, const Point& s, Vertex_hand
 
     cell() = _tr->locate( s, lt(), li(), lj(), hint );
 
-    CGAL_triangulation_postcondition( cell() != Cell_handle() );
+    CGAL_postcondition( cell() != Cell_handle() );
 
     jump_to_intersecting_cell();
 }
@@ -95,9 +95,9 @@ template < class Tr, class Inc >
 Triangulation_segment_cell_iterator_3<Tr,Inc>::
 Triangulation_segment_cell_iterator_3( const Tr* tr, const Point& s, const Point& t, Cell_handle hint )
 : _tr(tr) {
-    CGAL_triangulation_precondition( s != t );
-    CGAL_triangulation_precondition( _tr->dimension() >= 2 );
-    CGAL_triangulation_precondition( _tr->dimension() == 3 ||
+    CGAL_precondition( s != t );
+    CGAL_precondition( _tr->dimension() >= 2 );
+    CGAL_precondition( _tr->dimension() == 3 ||
                                      coplanar( *_tr->finite_facets_begin(), _target ) );
 
     _source = s;
@@ -107,7 +107,7 @@ Triangulation_segment_cell_iterator_3( const Tr* tr, const Point& s, const Point
 
     cell() = _tr->locate( s, lt(), li(), lj(), hint );
 
-    CGAL_triangulation_postcondition( cell() != Cell_handle() );
+    CGAL_postcondition( cell() != Cell_handle() );
 
     jump_to_intersecting_cell();
 }
@@ -133,7 +133,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::end() const {
 template < class Tr, class Inc >
 inline Triangulation_segment_cell_iterator_3<Tr,Inc>&
 Triangulation_segment_cell_iterator_3<Tr,Inc>::operator++() {
-    CGAL_triangulation_precondition( cell() != Cell_handle() );
+    CGAL_precondition( cell() != Cell_handle() );
     increment();
     return *this;
 }
@@ -171,8 +171,8 @@ operator!=( const SCI& sci ) const {
 
 template < class Tr, class Inc >
 inline bool Triangulation_segment_cell_iterator_3<Tr,Inc>::
-operator==( Nullptr_t CGAL_triangulation_assertion_code(n) ) const {
-    CGAL_triangulation_assertion( n == NULL );
+operator==( Nullptr_t CGAL_assertion_code(n) ) const {
+    CGAL_assertion( n == NULL );
     return cell() == Cell_handle();
 }
 
@@ -235,7 +235,7 @@ jump_to_intersecting_cell()
 template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next() {
-    CGAL_triangulation_precondition( has_next() );
+    CGAL_precondition( has_next() );
 
     // Check if the target is in the current cell.
     int ti;
@@ -493,7 +493,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
   }
 
   // For the remembering stochastic walk, we start trying with a random facet.
-  CGAL_triangulation_assertion_code(bool incell = true;)
+  CGAL_assertion_code(bool incell = true;)
 
   for(int li = 0; li < 4; ++li)
   {
@@ -514,7 +514,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
         vert[li] = backup_vert_li;
         continue;
     }
-    CGAL_triangulation_assertion_code(incell = false;)
+    CGAL_assertion_code(incell = false;)
 
     // Check if the target is inside the 3-wedge with
     // the source as apex and the facet as an intersection.
@@ -558,14 +558,14 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     switch(Or) {
     case 3: {
       if(regular_case) {
-        CGAL_triangulation_assertion(li == outside);
-        CGAL_triangulation_assertion(!inside);
+        CGAL_assertion(li == outside);
+        CGAL_assertion(!inside);
       }
       return {{cur_cell, Tr::FACET, li}, {next, Tr::FACET, next->index(cur_cell)}};
     }
     case 2: {
       if(regular_case)
-        CGAL_triangulation_assertion(degenerate);
+        CGAL_assertion(degenerate);
       for(int j = 0; j < 4; ++j) {
         if(li != j && o[5 - edgeIndex(li, j)] == COPLANAR) {
           Edge opp = opposite_edge(prev.cell, li, j);
@@ -579,7 +579,7 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
     }
     case 1:
       if(regular_case)
-        CGAL_triangulation_assertion(degenerate);
+        CGAL_assertion(degenerate);
       for(int j = 0; j < 4; ++j) {
         if(li != j && o[5 - edgeIndex(li, j)] == NEGATIVE) {
           return {{cur_cell, Tr::VERTEX, j}, {next, Tr::VERTEX, next->index(cur_cell->vertex(j))}};
@@ -595,13 +595,13 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
   }
 
   // The target lies inside this cell.
-  CGAL_triangulation_assertion( incell );
+  CGAL_assertion( incell );
   return {
     [&]() -> Simplex {
       switch( op[0] + op[1] + op[2] + op[3] ) {
       case 4:
-        CGAL_triangulation_assertion( pos == 6 );
-        CGAL_triangulation_assertion( (! regular_case) || inside );
+        CGAL_assertion( pos == 6 );
+        CGAL_assertion( (! regular_case) || inside );
         return { cur_cell, Tr::CELL };
         break;
       case 3:
@@ -634,7 +634,7 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_3_inf( int inf )
 {
-    CGAL_triangulation_precondition( _tr->is_infinite( cell()->vertex(inf) ) );
+    CGAL_precondition( _tr->is_infinite( cell()->vertex(inf) ) );
 
     // If this cell was reached by traversal from a finite one, it must be the final cell.
     Cell_handle fin = cell()->neighbor(inf);
@@ -663,7 +663,7 @@ walk_to_next_3_inf( int inf )
     }
 
     vert[inf] = &(_source);
-    CGAL_triangulation_assertion( _tr->orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
+    CGAL_assertion( _tr->orientation( *vert[0], *vert[1], *vert[2], *vert[3] ) == POSITIVE );
 
     int li = 0;
     // Check if the line enters an adjacent infinite cell.
@@ -693,7 +693,7 @@ walk_to_next_3_inf( int inf )
 
         // The target lies behind the plane through the source and two finite vertices.
         // Traverse to the incident infinite cell.
-        CGAL_triangulation_assertion( _tr->is_infinite( next ) );
+        CGAL_assertion( _tr->is_infinite( next ) );
         _prev = Simplex{ cell(), Tr::FACET, li, -1 };
         _cur = Simplex{ next, Tr::FACET, next->index(prev_cell()), -1 };
         return;
@@ -927,7 +927,7 @@ walk_to_next_2()
             if( op == POSITIVE )
               _prev = Simplex{ cell(), Tr::FACET, 3, -1 };
             else {
-                CGAL_triangulation_assertion( op == ZERO );
+                CGAL_assertion( op == ZERO );
                 switch( o ) {
                 case POSITIVE:
                   _prev = Simplex{ cell(), Tr::EDGE, li(), lk };
@@ -1023,8 +1023,8 @@ template < class Tr, class Inc >
 void Triangulation_segment_cell_iterator_3<Tr,Inc>::
 walk_to_next_2_inf( int inf )
 {
-    CGAL_triangulation_precondition( _tr->is_infinite( cell()->vertex(3) ) );
-    CGAL_triangulation_precondition( _tr->is_infinite( cell()->vertex(inf) ) );
+    CGAL_precondition( _tr->is_infinite( cell()->vertex(3) ) );
+    CGAL_precondition( _tr->is_infinite( cell()->vertex(inf) ) );
 
     // If this cell was reached by traversal from a finite one, it must be the final cell.
     Cell_handle fin = cell()->neighbor(inf);
@@ -1124,9 +1124,9 @@ typename Triangulation_segment_cell_iterator_3<Tr, Inc>::Edge
 Triangulation_segment_cell_iterator_3<Tr, Inc>::opposite_edge(
   Cell_handle c, int li, int lj) const
 {
-  CGAL_triangulation_precondition(li >= 0 && li < 4);
-  CGAL_triangulation_precondition(lj >= 0 && lj < 4);
-  CGAL_triangulation_precondition(li != lj);
+  CGAL_precondition(li >= 0 && li < 4);
+  CGAL_precondition(lj >= 0 && lj < 4);
+  CGAL_precondition(li != lj);
 
   switch (6 - li - lj) { // i + j + missing indices = 6.
     case 1: return Edge(c, 0, 1);

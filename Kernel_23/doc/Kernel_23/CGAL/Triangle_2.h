@@ -13,7 +13,7 @@ boundary the negative side.
 The boundary of a triangle splits the plane in
 two open regions, a bounded one and an unbounded one.
 
-\cgalModels `Kernel::Triangle_2`
+\cgalModels{Kernel::Triangle_2}
 
 */
 template< typename Kernel >

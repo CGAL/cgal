@@ -311,7 +311,7 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   assert( T0_1_1.number_of_vertices() == 1 );
   assert( T0_1_1.is_valid(verbose) );
 
-  // test assignement
+  // test assignment
   Cls T0_1_2;
   T0_1_2 = T0_1;
   assert( T0_1_2.dimension() == 0 );

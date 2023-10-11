@@ -44,11 +44,11 @@ namespace CGAL {
   number type that `FieldNumberType`
 
   \note The `FT` type is provided for convenience. Internally, this FT type is converted
-  to `c_float` type that can be set either to `float` or `double`. By default, the `double`
-  type is used. After the optimization is complete, the `c_float` type is converted back to `FT`.
-  See more about `c_float` <a href="https://osqp.org/docs/interfaces/C.html#data-types">here</a>.
+  to `OSQPFloat` type that can be set either to `float` or `double`. By default, the `double`
+  type is used. After the optimization is complete, the `OSQPFloat` type is converted back to `FT`.
+  See more about `OSQPFloat` <a href="https://osqp.org/docs/interfaces/C.html#data-types">here</a>.
 
-  \cgalModels `QuadraticProgramTraits`
+  \cgalModels{QuadraticProgramTraits}
 */
 template<typename FT>
 class OSQP_quadratic_program_traits
@@ -192,27 +192,27 @@ public:
     CGAL_precondition(q_vec.size() == n);
     CGAL_precondition(l_vec.size() == m && l_vec.size() == m);
 
-    const c_int P_nnz = static_cast<c_int>(P_vec.size());
-    auto P_x = std::make_unique<c_float[]>(P_nnz);
-    auto P_i = std::make_unique<c_int[]>(P_nnz);
-    auto P_p = std::make_unique<c_int[]>(n + 1);
+    const OSQPInt P_nnz = static_cast<OSQPInt>(P_vec.size());
+    auto P_x = std::make_unique<OSQPFloat[]>(P_nnz);
+    auto P_i = std::make_unique<OSQPInt[]>(P_nnz);
+    auto P_p = std::make_unique<OSQPInt[]>(n + 1);
     set_matrix_from_triplets("P", P_vec, P_x.get(), P_i.get(), P_p.get());
     if(verbose) std::cout << "P_nnz: " << P_nnz << std::endl;
 
-    const c_int A_nnz = static_cast<c_int>(A_vec.size());
-    auto A_x = std::make_unique<c_float[]>(A_nnz);
-    auto A_i = std::make_unique<c_int[]>(A_nnz);
-    auto A_p = std::make_unique<c_int[]>(n + 1);
+    const OSQPInt A_nnz = static_cast<OSQPInt>(A_vec.size());
+    auto A_x = std::make_unique<OSQPFloat[]>(A_nnz);
+    auto A_i = std::make_unique<OSQPInt[]>(A_nnz);
+    auto A_p = std::make_unique<OSQPInt[]>(n + 1);
     set_matrix_from_triplets("A", A_vec, A_x.get(), A_i.get(), A_p.get());
     if(verbose) std::cout << "A_nnz: " << A_nnz << std::endl;
 
-    const c_int q_size = static_cast<c_int>(q_vec.size());
-    const c_int l_size = static_cast<c_int>(l_vec.size());
-    const c_int u_size = static_cast<c_int>(u_vec.size());
+    const OSQPInt q_size = static_cast<OSQPInt>(q_vec.size());
+    const OSQPInt l_size = static_cast<OSQPInt>(l_vec.size());
+    const OSQPInt u_size = static_cast<OSQPInt>(u_vec.size());
 
-    auto q_x = std::make_unique<c_float[]>(q_size);
-    auto l_x = std::make_unique<c_float[]>(l_size);
-    auto u_x = std::make_unique<c_float[]>(u_size);
+    auto q_x = std::make_unique<OSQPFloat[]>(q_size);
+    auto l_x = std::make_unique<OSQPFloat[]>(l_size);
+    auto u_x = std::make_unique<OSQPFloat[]>(u_size);
     set_qlu_data(q_x.get(), l_x.get(), u_x.get());
 
     // Problem settings.
@@ -220,22 +220,11 @@ public:
     CGAL_assertion(settings);
 
     // Structures.
-    OSQPWorkspace *work;
-    OSQPData *data = (OSQPData *) malloc(sizeof(OSQPData));
-    CGAL_assertion(data);
+    OSQPCscMatrix* P = static_cast<OSQPCscMatrix*>(malloc(sizeof(OSQPCscMatrix)));
+    OSQPCscMatrix* A = static_cast<OSQPCscMatrix*>(malloc(sizeof(OSQPCscMatrix)));
 
-    // Populate data.
-    data->n = static_cast<c_int>(n);
-    data->m = static_cast<c_int>(m);
-    data->P = csc_matrix(data->n, data->n, P_nnz, P_x.get(), P_i.get(), P_p.get());
-    CGAL_assertion(data->P);
-
-    data->q = q_x.get();
-    data->A = csc_matrix(data->m, data->n, A_nnz, A_x.get(), A_i.get(), A_p.get());
-    CGAL_assertion(data->A);
-
-    data->l = l_x.get();
-    data->u = u_x.get();
+    csc_set_data(A, m, n, A_nnz, A_x.get(), A_i.get(), A_p.get());
+    csc_set_data(P, n, n, P_nnz, P_x.get(), P_i.get(), P_p.get());
 
     // Set solver settings.
     osqp_set_default_settings(settings);
@@ -243,38 +232,33 @@ public:
     settings->eps_rel = eps_rel;
     settings->verbose = verbose;
 
-    // Set workspace.
-    osqp_setup(&work, data, settings);
+    OSQPSolver* solver = NULL;
+    OSQPInt exitflag = osqp_setup(&solver, P, q_x.get(), A, l_x.get(), u_x.get(), m, n, settings);
 
-    // Solve problem.
-    c_int exitflag = -1;
     try
     {
-      exitflag = osqp_solve(work);
+      if (!exitflag)
+        exitflag = osqp_solve(solver);
+
+      const OSQPFloat* x = solver->solution->x;
+      for (std::size_t i = 0; i < n; ++i)
+      {
+        const FT value{ x[i] };
+        *(++solution) = value;
+      }
     }
-    catch(std::exception& e)
+    catch (std::exception& e)
     {
       std::cerr << "ERROR: OSQP solver has thrown an exception!" << std::endl;
       std::cerr << e.what() << std::endl;
     }
-    const bool success = (exitflag == 0);
 
-    // Create solution.
-    const c_float *x = work->solution->x;
-    for(std::size_t i=0; i<n; ++i)
-    {
-      const FT value{x[i]};
-      *(++solution) = value;
-    }
+    osqp_cleanup(solver);
+    if (A) free(A);
+    if (P) free(P);
+    if (settings) free(settings);
 
-    // Clean workspace.
-    osqp_cleanup(work);
-    c_free(data->A);
-    c_free(data->P);
-    c_free(data);
-    c_free(settings);
-
-    return success;
+    return (exitflag == 0);
   }
   /// \endcond
 
@@ -282,9 +266,9 @@ private:
   // Based on the code in scipy, function coo_tocsr()
   void set_matrix_from_triplets(const std::string /* name */,
                                 const std::vector<Triplet>& triplets,
-                                c_float *M_x,
-                                c_int *M_i,
-                                c_int *M_p) const
+                                OSQPFloat *M_x,
+                                OSQPInt *M_i,
+                                OSQPInt *M_p) const
   {
     const std::size_t nnz = triplets.size();
 
@@ -296,10 +280,10 @@ private:
     }
 
     // Fill M_p
-    c_int cumsum = 0;
+    OSQPInt cumsum = 0;
     for(std::size_t j=0; j<n; ++j)
     {
-      const c_int tmp = M_p[j];
+      const OSQPInt tmp = M_p[j];
       M_p[j] = cumsum;
       cumsum += tmp;
     }
@@ -308,19 +292,19 @@ private:
     // Write Ai, Ax into M_i, M_x
     for(std::size_t k=0; k<nnz; ++k)
     {
-      const c_int col = static_cast<c_int>(std::get<1>(triplets[k]));
-      const c_int dest = M_p[col];
+      const OSQPInt col = static_cast<OSQPInt>(std::get<1>(triplets[k]));
+      const OSQPInt dest = M_p[col];
 
-      M_i[dest] = static_cast<c_int>(std::get<0>(triplets[k]));
-      M_x[dest] = c_float(CGAL::to_double(std::get<2>(triplets[k])));
+      M_i[dest] = static_cast<OSQPInt>(std::get<0>(triplets[k]));
+      M_x[dest] = OSQPFloat(CGAL::to_double(std::get<2>(triplets[k])));
 
       M_p[col]++;
     }
 
-    c_int last = 0;
+    OSQPInt last = 0;
     for(std::size_t j=0; j<=n; ++j)
     {
-      const c_int tmp = M_p[j];
+      const OSQPInt tmp = M_p[j];
       M_p[j] = last;
       last = tmp;
     }
@@ -341,19 +325,19 @@ private:
     // std::cout << std::endl;
   }
 
-  void set_qlu_data(c_float *q_x,
-                    c_float *l_x,
-                    c_float *u_x) const
+  void set_qlu_data(OSQPFloat *q_x,
+                    OSQPFloat *l_x,
+                    OSQPFloat *u_x) const
   {
     for(std::size_t i=0; i<n; ++i)
     {
-      q_x[i] = c_float(CGAL::to_double(q_vec[i]));
+      q_x[i] = OSQPFloat(CGAL::to_double(q_vec[i]));
     }
 
     for(std::size_t i=0; i<m; ++i)
     {
-      l_x[i] = c_float(CGAL::to_double(l_vec[i]));
-      u_x[i] = c_float(CGAL::to_double(u_vec[i]));
+      l_x[i] = OSQPFloat(CGAL::to_double(l_vec[i]));
+      u_x[i] = OSQPFloat(CGAL::to_double(u_vec[i]));
     }
 
     // std::cout << "q_x: ";

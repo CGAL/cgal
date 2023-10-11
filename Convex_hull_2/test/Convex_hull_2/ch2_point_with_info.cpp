@@ -1,13 +1,16 @@
-#include <iostream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/convex_hull_traits_2.h>
+
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 
+#include <iostream>
+#include <iterator>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
-
 
 template <class F, class Point>
 struct Forward_bool_functor
@@ -51,7 +54,7 @@ struct CH_traits_for_point_ids
   typedef CGAL::Convex_hull_traits_2<K> Base;
   typedef Forward_bool_functor<typename Base::Less_xy_2, typename K::Point_2> Less_xy_2;
   typedef Forward_bool_functor<typename Base::Less_yx_2, typename K::Point_2> Less_yx_2;
-  typedef Forward_bool_functor<typename Base::Less_signed_distance_to_line_2, typename K::Point_2> Less_signed_distance_to_line_2;
+  typedef Forward_bool_functor<typename Base::Compare_signed_distance_to_line_2, typename K::Point_2> Compare_signed_distance_to_line_2;
   typedef Forward_bool_functor<typename Base::Less_rotate_ccw_2, typename K::Point_2> Less_rotate_ccw_2;
   typedef Forward_bool_functor<typename Base::Left_turn_2, typename K::Point_2> Left_turn_2;
   typedef Forward_bool_functor<typename Base::Equal_2, typename K::Point_2> Equal_2;
@@ -86,9 +89,9 @@ struct CH_traits_for_point_ids
     return Less_yx_2(points);
   }
 
-  Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object () const
+  Compare_signed_distance_to_line_2 compare_signed_distance_to_line_2_object () const
   {
-    return Less_signed_distance_to_line_2(points);
+    return Compare_signed_distance_to_line_2(points);
   }
 
   Less_rotate_ccw_2 less_rotate_ccw_2_object () const
@@ -128,5 +131,5 @@ int main()
 
   assert( result.size() == 3 );
 
-  return 0;
+  return EXIT_SUCCESS;
 }

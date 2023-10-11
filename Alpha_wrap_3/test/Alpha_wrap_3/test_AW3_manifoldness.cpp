@@ -46,7 +46,6 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
 
   Mesh nm_wrap;
   CGAL::alpha_wrap_3(input_mesh, alpha, offset, nm_wrap,
-                     CGAL::parameters::default_values(),
                      CGAL::parameters::do_enforce_manifoldness(false));
 
   std::cout << "Result: " << vertices(nm_wrap).size() << " vertices, " << faces(nm_wrap).size() << " faces" << std::endl;
@@ -68,7 +67,6 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
 
   Mesh m_wrap;
   CGAL::alpha_wrap_3(input_mesh, alpha, offset, m_wrap,
-                     CGAL::parameters::default_values(),
                      CGAL::parameters::do_enforce_manifoldness(true));
 
 //  CGAL::IO::write_polygon_mesh("last.off", wrap, CGAL::parameters::stream_precision(17));

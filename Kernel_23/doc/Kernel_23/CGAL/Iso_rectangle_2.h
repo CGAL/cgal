@@ -17,8 +17,7 @@ difference however is that bounding boxes have always double coordinates,
 whereas the coordinate type of an iso-oriented rectangle is chosen by
 the user.
 
-\cgalModels `Kernel::IsoRectangle_2`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::IsoRectangle_2,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >
@@ -62,7 +61,7 @@ const Point_2<Kernel> &top);
 introduces an iso-oriented rectangle `r` with diagonal
 opposite vertices (`min_hx/hw`, `min_hy/hw`) and
 (`max_hx/hw`, `max_hy/hw`).
-\pre `hw` \f$ \neq\f$ 0.
+\pre `hw != 0`.
 */
 Iso_rectangle_2(const Kernel::RT& min_hx, const Kernel::RT& min_hy,
 const Kernel::RT& max_hx, const Kernel::RT& max_hy,
@@ -134,14 +133,14 @@ Kernel::FT ymax() const;
 /*!
 returns the `i`'th %Cartesian coordinate of the
 lower left vertex of `r`.
-\pre \f$ 0 \leq i \leq1\f$.
+\pre `0 <= i <= 1`.
 */
 Kernel::FT min_coord(int i) const;
 
 /*!
 returns the `i`'th %Cartesian coordinate of the
 upper right vertex of `r`.
-\pre \f$ 0 \leq i \leq1\f$.
+\pre `0 <= i <= 1`.
 */
 Kernel::FT max_coord(int i) const;
 

@@ -21,7 +21,7 @@ namespace internal {
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Plane_3& p,
              const typename K::Sphere_3& s,
              const K&)
@@ -37,7 +37,7 @@ do_intersect(const typename K::Plane_3& p,
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Sphere_3& s,
              const typename K::Plane_3& p,
              const K&)

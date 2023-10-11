@@ -106,7 +106,7 @@ namespace internal
     }
   };
 
-  // Specialization when K==Local_kernel, because there is no need of convertion here.
+  // Specialization when K==Local_kernel, because there is no need of conversion here.
   template<typename Local_kernel>
   struct Geom_utils<Local_kernel, Local_kernel>
   {
@@ -577,7 +577,7 @@ protected:
           add_gouraud_normal(m_vertex_normals_for_face[i]);
         }
         else
-        { // Here user does not provide all vertex normals: we use face normal istead
+        { // Here user does not provide all vertex normals: we use face normal instead
           // and thus we will not be able to use Gouraud
           add_gouraud_normal(normal);
         }
@@ -703,7 +703,7 @@ protected:
         else { ++(edges[p1][p2]); }
       }
 
-      // (1) We insert all the edges as contraint in the CDT.
+      // (1) We insert all the edges as constraint in the CDT.
       typename CDT::Vertex_handle previous=nullptr, first=nullptr;
       for (unsigned int i=0; i<m_points_of_face.size(); ++i)
       {
@@ -872,7 +872,7 @@ protected:
   }
 
 protected:
-  // Types usefull for triangulation
+  // Types useful for triangulation
   struct Vertex_info
   {
     Local_vector v;

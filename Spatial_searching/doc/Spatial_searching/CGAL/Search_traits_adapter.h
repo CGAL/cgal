@@ -16,8 +16,8 @@ with `Key` as  key type  and `Base_distance::Point_d` as  value type.
 
 \tparam Base_distance is a model of either `GeneralDistance` or `OrthogonalDistance`.
 
-\cgalModels `GeneralDistance` if Base_distance is a model of `GeneralDistance`
-\cgalModels `OrthogonalDistance` if Base_distance is a model of `OrthogonalDistance`
+\cgalModels{GeneralDistance if `Base_distance` is a model of `GeneralDistance`,
+            OrthogonalDistance if `Base_distance` is a model of `OrthogonalDistance`}
 
 \sa `Search_traits_adapter<Key,PointPropertyMap,BaseTraits>`
 
@@ -87,8 +87,8 @@ with `Key` as `key_type` and `Base_distance::Point_d` as `value_type`.
 
 \tparam BaseTraits is a model of either `SearchTraits` or `RangeSearchTraits`.
 
-\cgalModels `SearchTraits` if `BaseTraits` is a model of `SearchTraits`.
-\cgalModels `RangeSearchTraits` if `BaseTraits` is a model of `RangeSearchTraits`.
+\cgalModels{SearchTraits if `BaseTraits` is a model of `SearchTraits`.,
+            RangeSearchTraits if `BaseTraits` is a model of `RangeSearchTraits`.}
 
 \sa `Distance_adapter<Key,PointPropertyMap,Base_distance>`
 \sa `Search_traits_2<Kernel>`

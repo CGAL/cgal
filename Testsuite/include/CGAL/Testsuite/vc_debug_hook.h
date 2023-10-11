@@ -9,7 +9,7 @@
 //
 // Author(s)     : Fernando Cacciola
 //
-// This is used by the testsuite to prevent Visual C++ from poping up an error window.
+// This is used by the testsuite to prevent Visual C++ from popping up an error window.
 //
 
 #ifndef CGAL_VC_DEBUG_HOOK_H
@@ -40,7 +40,7 @@ namespace
     switch(n)
     {
       case SIGSEGV: std::cerr << "In CGAL_handle_signal, Program received signal SIGSEGV: Segmentation Fault." << std::endl; break ;
-      case SIGFPE : std::cerr << "In CGAL_handle_signal, Program received signal SIGFPE: Floating Point Execption." << std::endl; break ;
+      case SIGFPE : std::cerr << "In CGAL_handle_signal, Program received signal SIGFPE: Floating Point Exception." << std::endl; break ;
       case SIGILL : std::cerr << "In CGAL_handle_signal, Program received signal SIGILL: Illegal Instruction." << std::endl; break ;
       default:
         std::cerr << "In CGAL_handle_signal, Program received signal " << n << std::endl; break ;

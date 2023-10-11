@@ -13,8 +13,8 @@
 
 /* Usage
  *
- *  This example converts arbitrary-precision arrangment into fixed-precision using Snap Rounding and by using INPUT DATA FROM A USER SPECIFIED FILE.
- *  <Argument 1> (Mandatory) path to the input file containing the arrangment information.
+ *  This example converts arbitrary-precision arrangement into fixed-precision using Snap Rounding and by using INPUT DATA FROM A USER SPECIFIED FILE.
+ *  <Argument 1> (Mandatory) path to the input file containing the arrangement information.
  *  <Argument 2> (Optional)  path to the output file where the results of snap rounding will be stored.
  *                                                        Not providing this argument will print the result on standard output.
  *

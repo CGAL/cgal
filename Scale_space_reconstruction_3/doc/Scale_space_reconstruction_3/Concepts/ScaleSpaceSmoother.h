@@ -15,8 +15,10 @@ namespace Scale_space_reconstruction_3 {
  * \note the functor can be applied several times by the scale space
  * reconstruction algorithm.
  *
- * \cgalHasModel CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother
- * \cgalHasModel CGAL::Scale_space_reconstruction_3::Jet_smoother
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Scale_space_reconstruction_3::Weighted_PCA_smoother}
+ * \cgalHasModels{CGAL::Scale_space_reconstruction_3::Jet_smoother}
+ * \cgalHasModelsEnd
  */
 class Smoother
 {

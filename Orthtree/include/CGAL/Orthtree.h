@@ -277,7 +277,7 @@ public:
 
   // Non-necessary but just to be clear on the rule of 5:
 
-  // assignement operators deleted (PointRange is a ref)
+  // assignment operators deleted (PointRange is a ref)
   Orthtree& operator= (const Orthtree& other) = delete;
   Orthtree& operator= (Orthtree&& other) = delete;
   // Destructor

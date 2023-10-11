@@ -105,6 +105,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
     Face_circulator fc_start = fc;
     int n_inf = 0;
     int n_faces = 0;
+    CGAL_USE(n_faces);
     do {
       if ( is_infinite(fc) ) { n_inf++; }
       fc++;

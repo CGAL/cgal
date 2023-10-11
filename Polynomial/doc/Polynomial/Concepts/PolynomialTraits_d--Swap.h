@@ -5,9 +5,7 @@
 
 This `AdaptableFunctor` swaps two variables of a multivariate polynomial.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

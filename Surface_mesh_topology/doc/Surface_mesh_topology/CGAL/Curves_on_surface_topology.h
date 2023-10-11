@@ -14,7 +14,7 @@ namespace Surface_mesh_topology {
   public:
 
     /*!
-      A handle to `Dart` for combinatorial/generalized maps, or a halfedge descriptor for models of the `FaceGraph` concept.
+      A descriptor to `Dart` for combinatorial/generalized maps, or a halfedge descriptor for models of the `FaceGraph` concept.
     */
     typedef unspecified_type halfedge_descriptor;
 
@@ -53,10 +53,10 @@ namespace Surface_mesh_topology {
     template <class WeightFunctor=Unit_weight_functor>
     Path_on_surface<Mesh> compute_shortest_non_contractible_cycle(const WeightFunctor& wf=WeightFunctor()) const;
 
-    /*! returns a non-contractible cycle of type `Path_on_surface` with minimal length going through the source vertex of `dh`, where the length of a cycle is the sum of the weights of its edges computed thanks to the WeightFunctor `wf`. By default, all the edge weights are set to 1 (thanks to the `Unit_weight_functor` functor).
+    /*! returns a non-contractible cycle of type `Path_on_surface` with minimal length going through the source vertex of `d`, where the length of a cycle is the sum of the weights of its edges computed thanks to the WeightFunctor `wf`. By default, all the edge weights are set to 1 (thanks to the `Unit_weight_functor` functor).
      */
     template <class WeightFunctor=Unit_weight_functor>
-    Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_base_point(halfedge_descriptor dh, const WeightFunctor& wf=WeightFunctor()) const;
+    Path_on_surface<Mesh> compute_shortest_non_contractible_cycle_with_base_point(halfedge_descriptor d, const WeightFunctor& wf=WeightFunctor()) const;
 
     /*! returns a vector of darts representing a non-contractible curve with a minimal number of intersection with the graph of the mesh. This curve can be described by the alternating sequence of faces and vertices it goes through, so that each dart in the returned vector belongs to both a face and the next vertex in the alternating sequence. (Here, faces and vertices are viewed as subsets of darts.) The size of the returned vector is the face width of the mesh.
      */
@@ -91,7 +91,7 @@ namespace Surface_mesh_topology {
     /// Number type of the weights.
     using Weight_t=double;
 
-    /// creates an Euclidean_length_weight_functor given a mesh.
+    /// creates a Euclidean_length_weight_functor given a mesh.
     Euclidean_length_weight_functor(const Mesh& m);
   };
 

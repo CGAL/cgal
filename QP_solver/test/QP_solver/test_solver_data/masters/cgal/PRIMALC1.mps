@@ -1,6 +1,6 @@
-* Description: from the benchmarks at http://www.doc.ic.ac.uk/~im/
+* Description: from the benchmarks at https://www.doc.ic.ac.uk/~im/
 * Derivatives: none
-NAME          PRIMALC1  
+NAME          PRIMALC1
 ROWS
   N OBJ.FUNC
   L R------1

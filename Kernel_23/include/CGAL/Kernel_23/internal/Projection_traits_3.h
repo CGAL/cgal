@@ -13,7 +13,7 @@
 #define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
 #include <CGAL/assertions.h>
-
+#include <CGAL/tags.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
 #include <CGAL/Triangle_3.h>
@@ -251,6 +251,32 @@ public:
 };
 
 template <class R, int dim>
+class Compare_signed_distance_to_line_projected_3
+{
+public:
+  typedef typename R::Point_3   Point_3;
+  typedef typename R::Point_2   Point_2;
+  typedef typename R::FT        RT;
+  typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+  typedef typename R::Comparison_result result_type;
+
+  Point_2 project(const Point_3& p) const
+  {
+    return Point_2(x(p),y(p));
+  }
+
+  result_type operator()(const Point_3& p,
+                         const Point_3& q,
+                         const Point_3& r,
+                         const Point_3& s) const
+  {
+    return typename R::Compare_signed_distance_to_line_2()
+      (  project(p), project(q), project(r), project(s) );
+  }
+};
+
+template <class R, int dim>
 class Less_signed_distance_to_line_projected_3
 {
 public:
@@ -259,7 +285,7 @@ public:
   typedef typename R::FT        RT;
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  typedef bool result_type;
+  typedef typename R::Boolean result_type;
 
   Point_2 project(const Point_3& p) const
   {
@@ -267,15 +293,14 @@ public:
   }
 
   result_type operator()(const Point_3& p,
-                               const Point_3& q,
-                               const Point_3& r,
-                               const Point_3& s) const
+                         const Point_3& q,
+                         const Point_3& r,
+                         const Point_3& s) const
   {
     return typename R::Less_signed_distance_to_line_2()
       (  project(p), project(q), project(r), project(s) );
   }
 };
-
 
 template <class R,int dim>
 class Squared_distance_projected_3
@@ -403,10 +428,10 @@ public:
 
 
 
-  boost::optional< boost::variant<Point_3,Segment_3> >
+  std::optional< std::variant<Point_3,Segment_3> >
   operator()(const Segment_3& s1, const Segment_3& s2) const
   {
-    typedef  boost::variant<Point_3, Segment_3> variant_type;
+    typedef  std::variant<Point_3, Segment_3> variant_type;
 
     Point_2 s1_source = project(s1.source());
     Point_2 s1_target = project(s1.target());
@@ -422,10 +447,10 @@ public:
 
     auto o = intersection(s1_2,s2_2);
     if(! o){
-      return boost::none;
+      return std::nullopt;
     }
 
-    if(const Segment_2* si = boost::get<Segment_2>(&*o)){
+    if(const Segment_2* si = std::get_if<Segment_2>(&*o)){
       FT src[3],tgt[3];
       //the third coordinate is the midpoint between the points on s1 and s2
       FT z1 = s1.source()[dim] + ( alpha(si->source(), s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -443,11 +468,11 @@ public:
       src[Projector<R,dim>::y_index] = si->source().y();
       tgt[Projector<R,dim>::x_index] = si->target().x();
       tgt[Projector<R,dim>::y_index] = si->target().y();
-      return boost::make_optional(variant_type(Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) ) );
+      return std::make_optional(variant_type(Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) ) );
     }
 
 
-    const Point_2* pi = boost::get<Point_2>(&*o);
+    const Point_2* pi = std::get_if<Point_2>(&*o);
     FT coords[3];
     //compute the third coordinate of the projected intersection point onto 3D segments
     FT z1 = s1.source()[dim] + ( alpha(*pi, s1_source, s1_target) * ( s1.target()[dim] - s1.source()[dim] ));
@@ -459,7 +484,7 @@ public:
 
     Point_3 res(coords[0],coords[1],coords[2]);
     CGAL_assertion(x(res)==pi->x() && y(res)==pi->y());
-    return boost::make_optional(variant_type(res));
+    return std::make_optional(variant_type(res));
   }
 };
 
@@ -910,6 +935,7 @@ public:
   typedef Oriented_side_projected_3<Rp,dim>                   Oriented_side_2;
   typedef Angle_projected_3<Rp,dim>                           Angle_2;
   typedef Side_of_oriented_circle_projected_3<Rp,dim>         Side_of_oriented_circle_2;
+  typedef Compare_signed_distance_to_line_projected_3<Rp,dim> Compare_signed_distance_to_line_2;
   typedef Less_signed_distance_to_line_projected_3<Rp,dim>    Less_signed_distance_to_line_2;
   typedef Side_of_bounded_circle_projected_3<Rp,dim>          Side_of_bounded_circle_2;
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
@@ -946,7 +972,7 @@ public:
 
 
   struct Less_xy_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_x_2 cx;
@@ -960,7 +986,7 @@ public:
 
 
   struct Less_yx_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_y_2 cy;
@@ -973,7 +999,7 @@ public:
   };
 
   struct Equal_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
 
@@ -984,7 +1010,7 @@ public:
   };
 
   struct Left_turn_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
 
@@ -994,7 +1020,7 @@ public:
   };
 
   struct Collinear_2 {
-    typedef bool result_type;
+    typedef typename R::Boolean result_type;
     bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       Orientation_2 ori;
@@ -1045,6 +1071,10 @@ public:
   Less_yx_2
   less_yx_2_object() const
     { return Less_yx_2();}
+
+  Compare_signed_distance_to_line_2
+    compare_signed_distance_to_line_2_object() const
+    {return Compare_signed_distance_to_line_2();}
 
   Less_signed_distance_to_line_2
     less_signed_distance_to_line_2_object() const

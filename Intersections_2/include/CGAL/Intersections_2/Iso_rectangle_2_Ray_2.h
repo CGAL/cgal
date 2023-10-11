@@ -55,21 +55,25 @@ protected:
 };
 
 template <class K>
-inline bool do_intersect(const typename K::Ray_2 &p1,
-                         const typename K::Iso_rectangle_2 &p2,
-                         const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Ray_2& r,
+             const typename K::Iso_rectangle_2& ir,
+             const K&)
 {
-    typedef Ray_2_Iso_rectangle_2_pair<K> pair_t;
-    pair_t pair(&p1, &p2);
-    return pair.intersection_type() != pair_t::NO_INTERSECTION;
+  typedef Ray_2_Iso_rectangle_2_pair<K> pair_t;
+  pair_t pair(&r, &ir);
+  return pair.intersection_type() != pair_t::NO_INTERSECTION;
 }
 
 template <class K>
-inline bool do_intersect(const typename K::Iso_rectangle_2 &p2,
-                         const typename K::Ray_2 &p1,
-                         const K& k)
+inline
+typename K::Boolean
+do_intersect(const typename K::Iso_rectangle_2& ir,
+             const typename K::Ray_2& r,
+             const K& k)
 {
-  return do_intersect(p1, p2, k);
+  return do_intersect(r, ir, k);
 }
 
 template <class K>
@@ -200,9 +204,8 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_point() const
 CGAL_INTERSECTION_FUNCTION(Ray_2, Iso_rectangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Ray_2, Iso_rectangle_2, 2)
 
-
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_RAY_2_iSO_RECTANGLE_2_INTERSECTION_H
+#endif // CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H

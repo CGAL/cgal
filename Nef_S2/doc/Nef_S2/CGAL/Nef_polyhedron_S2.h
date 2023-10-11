@@ -31,7 +31,7 @@ type modeling \f$\mathbb{Q}\f$.
 
 The second parameter and the third parameter are for future considerations.
 Neither `Nef_polyhedronItems_S2` nor `Nef_polyhedronMarks` is
-specifed, yet. Do not use other than the default types for these two
+specified, yet. Do not use other than the default types for these two
 template parameters.
 
 \cgalHeading{Exploration - Point location - Ray shooting}
@@ -58,7 +58,7 @@ Operations like `empty` take constant time. The operations
 `clear`, `complement`, `interior`, `closure`,
 `boundary`, `regularization`, input and output take linear
 time. All binary set operations and comparison operations take time
-\f$ O(n \log n)\f$ where \f$ n\f$ is the size of the output plus the size of the
+\cgalBigO{n \log n} where \f$ n\f$ is the size of the output plus the size of the
 input.
 
 The point location and ray shooting operations are implemented in the
@@ -257,7 +257,7 @@ Sphere_point antipode() ;
 \ingroup PkgNefS2Ref
 
 An object `s` of type `Sphere_segment` is a segment in the
-surface of a unit sphere that is part of a great circle trough the
+surface of a unit sphere that is part of a great circle through the
 origin. Sphere segments are represented by two sphere points \f$ p\f$ and
 \f$ q\f$ plus an oriented plane \f$ h\f$ that contains \f$ p\f$ and \f$ q\f$. The plane
 determines the sphere segment as follows. Let \f$ c\f$ be the circle in the

@@ -30,7 +30,7 @@ namespace HomogeneousKernelFunctors {
 
   using namespace CommonKernelFunctors;
 
-  // For lazyness...
+  // For laziness...
   using CartesianKernelFunctors::Are_parallel_2;
   using CartesianKernelFunctors::Are_parallel_3;
   using CartesianKernelFunctors::Compute_squared_area_3;

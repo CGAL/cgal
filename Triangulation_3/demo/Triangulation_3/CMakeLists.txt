@@ -20,7 +20,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS OpenGL)
+find_package(Qt5 QUIET COMPONENTS Widgets OpenGL)
 
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
@@ -70,7 +70,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS T3_demo)
 
   target_link_libraries(T3_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5)
-  target_link_libraries(T3_demo PRIVATE Qt5::OpenGL)
+  target_link_libraries(T3_demo PRIVATE Qt5::Widgets Qt5::OpenGL)
   if(TARGET CGAL::TBB_support)
     target_link_libraries(T3_demo PUBLIC CGAL::TBB_support)
   endif()
@@ -81,7 +81,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(T3_demo)
 
-else(Qt5_FOUND)
+else(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(TRIANGULATION_3_MISSING_DEPS "")
 
@@ -94,11 +94,6 @@ else(Qt5_FOUND)
     set(TRIANGULATION_3_MISSING_DEPS "Qt5, ${TRIANGULATION_3_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${TRIANGULATION_3_MISSING_DEPS}, and will not be compiled.")
 
-endif(
-  CGAL_Qt5_FOUND
-  AND Qt5_FOUND)
+endif(CGAL_Qt5_FOUND AND Qt5_FOUND)

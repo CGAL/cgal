@@ -34,8 +34,7 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // Sizing field
 typedef CGAL::Mesh_3::Lipschitz_sizing<K, Mesh_domain, Mesh_domain::AABB_tree> Lip_sizing;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
@@ -69,18 +68,19 @@ int main(int argc, char*argv[])
                                           0.5);    //max_size
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = min_size,
-                         facet_angle = 25,
-                         facet_size = min_size,
-                         facet_distance = 0.005,
-                         cell_radius_edge_ratio = 3,
-                         cell_size = lip_sizing);
+  Mesh_criteria criteria(params::edge_size(min_size).
+                                 facet_angle(25).
+                                 facet_size(min_size).
+                                 facet_distance(0.005).
+                                 cell_radius_edge_ratio(3).
+                                 cell_size(lip_sizing));
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
   // Output
   std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return EXIT_SUCCESS;
 }

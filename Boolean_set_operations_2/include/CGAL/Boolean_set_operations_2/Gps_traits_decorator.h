@@ -15,9 +15,6 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
-
-#include <boost/mpl/assert.hpp>
-
 namespace CGAL {
 
 template <class Traits_, class Curve_data_, class Point_data_>
@@ -56,30 +53,14 @@ public:
   typedef typename Base::Right_side_category       Right_side_category;
 
   // a side is either oblivious or open (unbounded)
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_<
-       boost::is_same< Left_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Left_side_category, Arr_open_side_tag > >
-      )
-  );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_<
-       boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Bottom_side_category, Arr_open_side_tag > >
-      )
-  );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_<
-       boost::is_same< Top_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Top_side_category, Arr_open_side_tag > >
-      )
-  );
-  BOOST_MPL_ASSERT(
-      (boost::mpl::or_<
-       boost::is_same< Right_side_category, Arr_oblivious_side_tag >,
-       boost::is_same< Right_side_category, Arr_open_side_tag > >
-      )
-  );
+  static_assert(std::is_same< Left_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Left_side_category, Arr_open_side_tag >::value);
+  static_assert(std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Bottom_side_category, Arr_open_side_tag >::value);
+  static_assert(std::is_same< Top_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Top_side_category, Arr_open_side_tag >::value);
+  static_assert(std::is_same< Right_side_category, Arr_oblivious_side_tag >::value ||
+                         std::is_same< Right_side_category, Arr_open_side_tag >::value);
 
   class Ex_point_2
   {
@@ -406,7 +387,7 @@ public:
     }
   };
 
-  /*! Get a Equal_2 functor object. */
+  /*! Get an `Equal_2` functor object. */
   Equal_2 equal_2_object() const
   {
     return Equal_2(m_base_traits->equal_2_object());

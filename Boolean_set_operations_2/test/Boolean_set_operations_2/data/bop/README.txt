@@ -1,8 +1,8 @@
                           input files for test_bop (test boolean operations on two polygons)
                           ------------------------------------------------------------------
 
-strcutre of file:
-----------------
+structure of file:
+-----------------
 
 # first polygon
 T1  # polygon's type : 0 is Polygon_2, 1 is Polygon_with_holes_2

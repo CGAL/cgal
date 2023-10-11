@@ -1,7 +1,7 @@
 # Doxyfile 1.8.13
 
 # This file describes the settings to be used by the documentation system
-# doxygen (www.doxygen.org) for a project.
+# doxygen (https://www.doxygen.nl/) for a project.
 #
 # Only the settings that are not the default ones are kept in this file
 
@@ -127,10 +127,30 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalFigureCaptionEnd=\htmlonly </div> <br> \endhtmlonly" \
                          "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief" \
                          "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief" \
-                         "cgalRefines=\xrefitem refines \"Refines\" \"Refinement Relationships\"" \
-                         "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\"" \
+                         "cgalRefines=Refines" \
+                         "cgalRefines{1}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd></dl>" \
+                         "cgalRefines{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd></dl>" \
+                         "cgalRefines{3}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd></dl>" \
+                         "cgalRefines{4}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd></dl>" \
+                         "cgalRefines{5}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
+                         "cgalRefinesBare{1}=<dl><dt>@cgalRefines</dt><dd>\1</dd></dl>" \
+                         "cgalRefinesBare{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>\2</dd></dl>" \
+                         "cgalModelsHeader=Is model of" \
+                         "cgalModels{1}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd></dl>" \
+                         "cgalModels{2}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd></dl>" \
+                         "cgalModels{3}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd></dl>" \
+                         "cgalModels{4}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd></dl>" \
+                         "cgalModels{5}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
+                         "cgalModels{6}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd><dt></dt><dd>@c \6</dd></dl>" \
+                         "cgalModelsBareBegin=<dl><dt>@cgalModelsHeader</dt><dd></dd>" \
+                         "cgalModelsBareEnd=</dl>" \
+                         "cgalModelsBare{1}=<dt></dt><dd>\1</dd>" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
-                         "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\"" \
+                         "cgalHasModelsHeader=Has models" \
+                         "cgalHasModelsBegin=<dl><dt>@cgalHasModelsHeader</dt><dd></dd>" \
+                         "cgalHasModels{1}=<dt></dt><dd>`\1`</dd>" \
+                         "cgalHasModelsBare{1}=<dt></dt><dd>\1</dd>" \
+                         "cgalHasModelsEnd=</dl>" \
                          "cgalDebugBegin=\htmlonly <div class=\"CGALDebug\"> <div>Debugging Support</div> \endhtmlonly \n" \
                          "cgalDebugEnd=\htmlonly </div> \endhtmlonly" \
                          "cgalDebugFunction=This is a function for debugging purpose." \
@@ -152,9 +172,9 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>" \
                          "cgalPkgDependsOn{1}=<B>Depends on:</B> \1 <BR>" \
                          "cgalPkgLicense{1}=<B>License:</B> \1 <BR>" \
-                         "cgalPkgDemo{2}=<B>Windows Demo:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
-                         "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
-                         "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
+                         "cgalPkgDemo{2}=<B>Windows demo:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR><B>Common demo dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
+                         "cgalPkgDemo{4}=<B>Windows demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR><B>Common demo dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
+                         "cgalPkgDemo{6}=<B>Windows demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR><B>Common demo dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
                          "cgalPkgDescriptionEnd=" \
                          "cgalModifBegin=\htmlonly <div class=\"CGALModification\"> \endhtmlonly \xrefitem Modification \"Modifications\" \"MODIFICATIONS\" " \
                          "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly" \
@@ -178,7 +198,13 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalParamType{1}=<li><b>Type: </b>\1</li>" \
                          "cgalParamDefault{1}=<li><b>%Default: </b>\1</li>" \
                          "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>" \
-                         "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>"
+                         "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>" \
+                         "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}" \
+                         "cgalParamSectionEnd=\cgalParamNEnd" \
+                         "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>" \
+                         "cgalBigO{1}=\f$O(\1)\f$" \
+                         "cgalBigOLarge{1}=\f$O\left(\1\right)\f$" \
+                         "cgalInclude{1}=\#`include<\1>`"
 
 # Doxygen selects the parser to use depending on the extension of the files it
 # parses. With this tag you can assign which parser to use for a given
@@ -208,7 +234,6 @@ EXTENSION_MAPPING      = txt=C++
 # The default value is: NO.
 
 BUILTIN_STL_SUPPORT    = YES
-
 
 # For Microsoft's IDL there are propget and propput attributes to indicate
 # getter and setter methods for a property. Setting this option to YES will make
@@ -253,7 +278,7 @@ EXTRACT_ALL            = YES
 # the EXTRACT_ALL tag is set to NO.
 # The default value is: NO.
 
-EXTRACT_ALL_NO_DETAILED_IF_EMPTY                                        = YES
+${CGAL_OPT_EXTRACT_ALL_NO_DETAILED_IF_EMPTY}
 
 # If the EXTRACT_STATIC tag is set to YES, all static members of a file will be
 # included in the documentation.
@@ -314,7 +339,7 @@ LAYOUT_FILE            = ${CGAL_DOC_RESOURCE_DIR}/DoxygenLayoutPackage.xml
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
 # extension is automatically appended if omitted. This requires the bibtex tool
-# to be installed. See also http://en.wikipedia.org/wiki/BibTeX for more info.
+# to be installed. See also https://en.wikipedia.org/wiki/BibTeX for more info.
 # For LaTeX the style of the bibliography can be controlled using
 # LATEX_BIB_STYLE. To use this feature you need bibtex and perl available in the
 # search path. See also \cite for info how to create references.
@@ -511,7 +536,7 @@ DISABLE_INDEX          = YES
 GENERATE_TREEVIEW      = YES
 
 # Enable the USE_MATHJAX option to render LaTeX formulas using MathJax (see
-# http://www.mathjax.org) which uses client side Javascript for the rendering
+# https://www.mathjax.org) which uses client side Javascript for the rendering
 # instead of using pre-rendered bitmaps. Use this if you do not have LaTeX
 # installed or if you want to formulas look prettier in the HTML output. When
 # enabled you may also need to install MathJax separately and configure the path
@@ -528,7 +553,7 @@ USE_MATHJAX            = YES
 # MATHJAX_RELPATH should be ../mathjax. The default value points to the MathJax
 # Content Delivery Network so you can quickly see the result without installing
 # MathJax. However, it is strongly recommended to install a local copy of
-# MathJax from http://www.mathjax.org before deployment.
+# MathJax from https://www.mathjax.org before deployment.
 # The default value is: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
@@ -544,7 +569,7 @@ MATHJAX_EXTENSIONS     = TeX/AMSmath \
 
 # The MATHJAX_CODEFILE tag can be used to specify a file with javascript pieces
 # of code that will be used on startup of the MathJax code. See the MathJax site
-# (see: http://docs.mathjax.org/en/latest/output.html) for more details. For an
+# (see: https://docs.mathjax.org/en/latest/output/index.html) for more details. For an
 # example see the documentation.
 # This tag requires that the tag USE_MATHJAX is set to YES.
 
@@ -634,7 +659,6 @@ MACRO_EXPANSION        = YES
 
 EXPAND_ONLY_PREDEF     = YES
 
-
 # The PREDEFINED tag can be used to specify one or more macro names that are
 # defined before the preprocessor is started (similar to the -D option of e.g.
 # gcc). The argument of the tag is a list of macros of the form: name or
@@ -650,7 +674,8 @@ PREDEFINED             = DOXYGEN_RUNNING \
                          "CGAL_NP_CLASS_1=NamedParameters1" \
                          "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
                          "CGAL_NP_CLASS_2=NamedParameters2" \
-                         CGAL_DEPRECATED
+                         CGAL_DEPRECATED \
+                         CGAL_DEPRECATED_MSG(name)=
 
 #---------------------------------------------------------------------------
 # Configuration options related to external references

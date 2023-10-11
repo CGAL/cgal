@@ -18,7 +18,6 @@
 #include <CGAL/Envelope_3/Envelope_overlay_2.h>
 
 #include <CGAL/Arr_walk_along_line_point_location.h>
-#include <CGAL/Object.h>
 #include <CGAL/enum.h>
 
 #include <iostream>
@@ -34,7 +33,7 @@
 // of general surfaces in 3d, used for testing.
 // The algorithm projects the surfaces on the plane, and projects all the intersections
 // between surfaces, to get an arrangement that is a partition of the real envelope.
-// Then it computes for each part in the arragement the surfaces on the envelope over it
+// Then it computes for each part in the arrangement the surfaces on the envelope over it
 // by comparing them all.
 
 namespace CGAL {
@@ -116,49 +115,41 @@ public:
       Xy_monotone_surface_3 &cur_surface = surfaces[i];
       // first insert all the projected curves of the boundary of the current surface
       // collect the curve in this list, and use sweepline at the end
-      std::list<Object>                            boundary_list;
       typedef std::pair<X_monotone_curve_2, Oriented_side> Boundary_xcurve;
+      std::list<std::variant<Boundary_xcurve, Point_2>> boundary_list;
 
-      typedef std::list<Object>::const_iterator Boundary_iterator;
       traits.construct_projected_boundary_2_object()(cur_surface, std::back_inserter(boundary_list));
-      for(Boundary_iterator boundary_it = boundary_list.begin();
+      for(auto boundary_it = boundary_list.begin();
           boundary_it != boundary_list.end();
           ++boundary_it)
       {
-        const Object& obj = *boundary_it;
-        Boundary_xcurve boundary_cv;
-        assert(assign(boundary_cv, obj));
-        assign(boundary_cv, obj);
-        curves_col.push_back(boundary_cv.first);
+        const Boundary_xcurve* boundary_cv = std::get_if<Boundary_xcurve>(&(*boundary_it));
+        assert(boundary_cv!=nullptr);
+        curves_col.push_back(boundary_cv->first);
       }
 
       // second, intersect it with all surfaces before it
-      Object cur_obj;
       for(j=0; j<i; ++j)
       {
         Xy_monotone_surface_3& prev_surface = surfaces[j];
 
-        std::vector<Object> inter_objs;
+        std::vector<std::variant<Intersection_curve,Point_2>> inter_objs;
         traits.construct_projected_intersections_2_object()(cur_surface, prev_surface, std::back_inserter(inter_objs));
 
         // we collect all intersections and use sweep to insert them
-        Point_2 point;
-        Intersection_curve curve;
         for(std::size_t k=0; k<inter_objs.size(); ++k)
         {
-          cur_obj = inter_objs[k];
-          assert(!cur_obj.is_empty());
-          if (CGAL::assign(point, cur_obj))
+          if (const Point_2* point = std::get_if<Point_2>(&inter_objs[k]))
           {
             #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
               std::cout << "intersection between surfaces is a point: " << point << std::endl;
             #endif
             //insert_vertex(result, point, pl);
-            points_col.push_back(point);
+            points_col.push_back(*point);
           }
-          else if (CGAL::assign(curve, cur_obj))
+          else if (const Intersection_curve* curve = std::get_if<Intersection_curve>(&inter_objs[k]))
           {
-            curves_col.push_back(curve.first);
+            curves_col.push_back(curve->first);
             /*#ifdef CGAL_DEBUG_ENVELOPE_TEST_3
               std::cout << "intersection between surfaces is a curve: " << curve.first << std::endl;
             #endif
@@ -214,7 +205,7 @@ public:
     for(; hi != result.halfedges_end(); ++hi, ++hi)
     {
       Halfedge_handle hh = hi;
-      // first we find the surfaces that are defined over the egde
+      // first we find the surfaces that are defined over the edge
       std::list<Xy_monotone_surface_3> defined_surfaces;
       for(std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_surface_defined_over_edge(hh, surfaces[i]))
@@ -256,7 +247,7 @@ public:
    * \todo The overlay compares the data using assertions. This should be
    * replaced, but since we want to terminate the overlay once we
    * determine that the 2 diagrams differ, we cannot simply remove the
-   * assertions. One option is to generate an exeption and catch it.
+   * assertions. One option is to generate an exception and catch it.
    */
   bool compare_diagrams(Minimization_diagram_2 &test_env,
                         Minimization_diagram_2 &env)

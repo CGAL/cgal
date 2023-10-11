@@ -5,7 +5,9 @@
 The concept `MeshDomainField_3` describes a scalar field which could be queried
 at any point of the space.
 
-\cgalHasModel `CGAL::Mesh_constant_domain_field_3<Gt,%Index>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Mesh_constant_domain_field_3<GT,%Index>}
+\cgalHasModelsEnd
 
 \sa `MeshDomain_3`
 \sa `MeshDomainWithFeatures_3`
@@ -46,10 +48,9 @@ on the input feature including the query point.
 /// @{
 
 /*!
-
 returns the value of the sizing field at the point `p`,
 assumed to be included in the input complex feature with dimension `dimension`
-and mesh vertex index `index`.
+and mesh subcomplex index `index`.
 */
 FT operator()(const Point_3& p, int dimension, const Index& index) const;
 

@@ -19,7 +19,7 @@ void test(const int d, const string & type, const int N)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that DC contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename DC::Full_cell_handle Full_cell_handle;
     typedef typename DC::Face Face;
     typedef typename DC::Point Point;

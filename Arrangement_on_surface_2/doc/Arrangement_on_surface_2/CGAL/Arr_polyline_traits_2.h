@@ -15,7 +15,7 @@ namespace CGAL {
  * curves, commonly referred to as polylines. Each polyline is a
  * chain of segments, where each two neighboring segments in the
  * chain share a common endpoint; that is, the polyline is
- * continuous. Furthermore, the target of the \f$i\f$th segement of
+ * continuous. Furthermore, the target of the \f$i\f$th segment of
  * a polyline has to coincide with the source of the \f$i+1\f$st
  * segment; that is, the polyline has to be \a well-oriented. Note
  * that it is possible to construct general polylines that are
@@ -77,12 +77,9 @@ namespace CGAL {
  * the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
  * included.
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
- * \cgalModels `ArrangementConstructXMonotoneCurveTraits_2`
- * \cgalModels `ArrangementConstructCurveTraits_2`
- * \cgalModels `ArrangementApproximateTraits_2` (if the type that substitutes
- *   the template parameter `SegmentTraits_2` models the concept as well)
+ * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2,`ArrangementConstructXMonotoneCurveTraits_2`
+ *             ArrangementConstructCurveTraits_2,ArrangementApproximateTraits_2 (if the type that substitutes
+ *   the template parameter `SegmentTraits_2` models the concept as well)}
  *
  * \sa `Arr_polycurve_traits_2<SubcurveTraits_2>`
  * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`

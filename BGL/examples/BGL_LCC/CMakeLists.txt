@@ -7,26 +7,9 @@ project(BGL_LCC_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-# include for local directory
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
 # create a target per cppfile
 file(
-  GLOB_RECURSE cppfiles
+  GLOB cppfiles
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   *.cpp)
 foreach(cppfile ${cppfiles})

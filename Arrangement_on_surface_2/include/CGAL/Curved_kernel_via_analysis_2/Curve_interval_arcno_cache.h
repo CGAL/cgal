@@ -84,7 +84,7 @@ struct Curve_interval_arcno_cache {
 
     //!@}
 
-    //!\name Functor invokation
+    //!\name Functor invocation
     //!@{
 
     /*!\brief

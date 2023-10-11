@@ -51,8 +51,7 @@ For example, passing `Location_policy<Compact>` as parameter to
 
 `Tag` can only be either `Fast` or `Compact` currently.
 
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
+\cgalModels{DefaultConstructible,CopyConstructible}
 
 \sa `Compact`
 \sa `Fast`

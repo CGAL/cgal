@@ -67,7 +67,7 @@ scene.erase(0);
 
 testItem = "./testing/data/mini.surf";
 main_window.open(testItem, 'surf_io_plugin');
-scene.erase(3); //id of the group contaning the items.
+scene.erase(3); //id of the group containing the items.
 
 testItem = "./testing/data/sphere.inr";
 main_window.open(testItem, 'segmented images');

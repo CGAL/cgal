@@ -131,7 +131,8 @@ protected:
                                                         Vertices_to_edges_map;
 
   typedef std::pair<X_monotone_curve_2, Multiplicity>   Intersection_curve;
-  typedef std::list<Object>                             Intersections_list;
+  typedef std::list<std::variant<Intersection_curve,
+                    Point_2>>                           Intersections_list;
 
   // this is used in the resolve edge process
   typedef Triple<Point_2, bool, bool>                   Point_2_with_info;
@@ -199,7 +200,8 @@ public:
     // find the projected intersections of the surfaces. if none - we have
     // a simple case:
     // need only resolve non-intersecting and return
-    std::list<Object> inter_objs;
+    std::list<std::variant<Intersection_curve, Point_2>> inter_objs;
+
     get_projected_intersections(surf1, surf2, std::back_inserter(inter_objs));
 
     if (inter_objs.size() == 0)
@@ -243,11 +245,6 @@ public:
     map_copied_to_orig_faces[copied_face] = face;
 
 
-    // insert the projected intersections into the temporary minimization diagram
-    Point_2 point;
-    Intersection_curve curve;
-    Object cur_obj;
-
     // we use our zone visitor, which only inserts into the arrangement the
     // points and curves which are inside the copied face
     // it updates the result arrangement at the same time (action after action
@@ -287,12 +284,10 @@ public:
                                           this);
 
     Md_point_location pl(copied_face_arr);
-    std::list<Object>::iterator inter_objs_it = inter_objs.begin();
-    for (; inter_objs_it != inter_objs.end(); ++inter_objs_it)
+    for (auto inter_objs_it = inter_objs.begin();
+              inter_objs_it != inter_objs.end(); ++inter_objs_it)
     {
-      cur_obj = *inter_objs_it;
-      CGAL_assertion(!cur_obj.is_empty());
-      if (assign(point, cur_obj))
+      if (const Point_2* point = std::get_if<Point_2>(&(*inter_objs_it)))
       {
         // intersection can be a point when the surfaces only touch each other.
         // we are only interested in the points that are inside the face or
@@ -302,12 +297,12 @@ public:
         // should use observer for split_edge
         // if not in a sub-face of "face", shouldn't insert it
         // the above information is available in zone_visitor
-        insert_point(copied_face_arr, point, pl, zone_visitor);
+        insert_point(copied_face_arr, *point, pl, zone_visitor);
       }
-      else if (assign(curve, cur_obj))
+      else if (const Intersection_curve* curve = std::get_if<Intersection_curve>(&(*inter_objs_it)))
       {
-        zone_visitor.set_current_intersection_type(curve.second);
-        insert(copied_face_arr, curve.first, pl, zone_visitor);
+        zone_visitor.set_current_intersection_type(curve->second);
+        insert(copied_face_arr, curve->first, pl, zone_visitor);
         CGAL_assertion(copied_face_arr.is_valid());
         CGAL_assertion(result.is_valid());
       }
@@ -485,7 +480,7 @@ public:
     const Xy_monotone_surface_3& surf2 = get_aux_surface(edge, 1);
 
     // find the projected intersections
-    std::list<Object> inter_objs;
+    std::list<std::variant<Intersection_curve, Point_2>> inter_objs;
     get_projected_intersections(surf1, surf2, std::back_inserter(inter_objs));
 
     if (inter_objs.size() == 0)
@@ -511,7 +506,7 @@ public:
     // we should have a list of points where we should split the edge's curve
     // we then will sort the list, and split the curve
 
-    // we should pay a special attension for overlaps, since we can get special
+    // we should pay a special attention for overlaps, since we can get special
     // edges
 
     // we associate with every point 2 flags:
@@ -522,52 +517,42 @@ public:
     bool is_min_end_at_inf = false;
     bool is_max_end_at_inf = false;
 
-    Point_2 point;
-    Intersection_curve icurve;
-    Object cur_obj;
-
-    std::list<Object>::iterator inter_objs_it = inter_objs.begin();
-    for (; inter_objs_it != inter_objs.end(); ++inter_objs_it)
+    for (auto inter_objs_it = inter_objs.begin();
+              inter_objs_it != inter_objs.end(); ++inter_objs_it)
     {
-      cur_obj = *inter_objs_it;
-      CGAL_assertion(!cur_obj.is_empty());
-      if (assign(point, cur_obj))
+      if (const Point_2* point = std::get_if<Point_2>(&(*inter_objs_it)))
       {
         // if the point is on the curve, should add it the split points
         // list, otherwise, it is irrelevant and should be ignored
-        if (is_point_on_curve(point, original_cv))
-          split_points.push_back(Point_2_with_info(point, false, false));
+        if (is_point_on_curve(*point, original_cv))
+          split_points.push_back(Point_2_with_info(*point, false, false));
       }
-      else if (assign(icurve, cur_obj))
+      else if (const Intersection_curve* icurve = std::get_if<Intersection_curve>(&(*inter_objs_it)))
       {
-        const X_monotone_curve_2& x_curve = icurve.first;
+        const X_monotone_curve_2& x_curve = icurve->first;
 
         // find the intersection points and overlapping segments with the
         // original curve and insert them to the list of split points
         // intersect the x-monotone curve with the edge's curve
         typedef std::pair<Point_2, unsigned int> Intersect_point_2;
-        std::list<Object> intersections_list;
-        const Intersect_point_2* ip;
-        const X_monotone_curve_2* icv;
+        std::list<std::variant<X_monotone_curve_2, Intersect_point_2>> intersections_list;
 
         m_traits->intersect_2_object()(x_curve, original_cv,
                                        std::back_inserter(intersections_list));
 
-        std::list<Object>::iterator inter_it = intersections_list.begin();
-        for (; inter_it != intersections_list.end(); ++inter_it)
+        for (auto inter_it = intersections_list.begin(); inter_it != intersections_list.end(); ++inter_it)
         {
-          ip = object_cast<Intersect_point_2>(&(*inter_it));
-          if (ip != nullptr)
+          if (const Intersect_point_2* ip = std::get_if<Intersect_point_2>(&(*inter_it)))
           {
             split_points.push_back(Point_2_with_info(ip->first, false, false));
           }
           else
           {
-            icv = object_cast<X_monotone_curve_2>(&(*inter_it));
+            const X_monotone_curve_2* icv = std::get_if<X_monotone_curve_2>(&(*inter_it));
             CGAL_assertion(icv != nullptr);
 
             // we will add the *icv end points to the split_points, unless
-            // but we should be carefull with infinite curves.
+            // but we should be careful with infinite curves.
             Arr_traits_adaptor_2<Traits> tr_adaptor(*m_traits);
             if (tr_adaptor.parameter_space_in_y_2_object()
                 (*icv, ARR_MIN_END) == ARR_INTERIOR &&
@@ -791,15 +776,15 @@ protected:
     const Vertex_const_handle* vh;
     Vertex_handle vh_for_p;
 
-    CGAL::Object obj = pl.locate(p);
+    auto obj = pl.locate(p);
     visitor.init(&arr);
 
-    if ((fh = object_cast<Face_const_handle>(&obj))
+    if ((fh = std::get_if<Face_const_handle>(&obj))
         != nullptr)
     {
       vh_for_p = visitor.found_point_in_face(p, arr.non_const_handle(*fh));
     }
-    else if ((hh = object_cast<Halfedge_const_handle>(&obj)) != nullptr)
+    else if ((hh = std::get_if<Halfedge_const_handle>(&obj)))
     {
       vh_for_p = visitor.found_point_on_edge(p , arr.non_const_handle(*hh));
     }
@@ -807,7 +792,7 @@ protected:
     {
       // In this case p lies on an existing vertex, so we just update this
       // vertex.
-      vh = object_cast<Vertex_const_handle>(&obj);
+      vh = std::get_if<Vertex_const_handle>(&obj);
       CGAL_assertion(vh != nullptr);
       vh_for_p = visitor.found_point_on_vertex(p, arr.non_const_handle(*vh));
     }
@@ -825,7 +810,7 @@ protected:
   // and we compare the surfaces to the left/right of it
   // otherwise we compare the surfaces over an (arbitrary) edge of the face,
   // assuming this is the correct answer for the face since the surfaces are
-  // continous
+  // continuous
   // In either case, we try to copy decision from an incident face, is possible
   // before asking the geometric question
   Comparison_result resolve_minimal_face(Face_handle face,
@@ -1000,7 +985,7 @@ protected:
                                                  const Xy_monotone_surface_3&,
                                                  Arr_all_sides_oblivious_tag)
   {
-    CGAL_error(); // doesnt' suppose to reach here at all!!!
+    CGAL_error(); // doesn't suppose to reach here at all!!!
     return SMALLER;
   }
 
@@ -1035,7 +1020,7 @@ protected:
   bool can_copy_decision_from_face_to_edge(Halfedge_handle h)
   {
     // can copy decision from face to its incident edge if the aux
-    // envelopes are continous over the face and edge
+    // envelopes are continuous over the face and edge
     return (h->get_has_equal_aux_data_in_face(0) &&
             h->get_has_equal_aux_data_in_face(1));
   }
@@ -1043,7 +1028,7 @@ protected:
   bool can_copy_decision_from_edge_to_vertex(Halfedge_handle h)
   {
     // can copy decision from face to its incident edge if the aux
-    // envelopes are continous over the face and edge
+    // envelopes are continuous over the face and edge
     return (h->get_has_equal_aux_data_in_target(0) &&
             h->get_has_equal_aux_data_in_target(1));
   }
@@ -1113,7 +1098,7 @@ protected:
       // intersection, there would also be intersection between the surfaces
       // over the face, and we know now that there isn't.
 
-      // if the first map is continous, but the second isn't (i.e. when we move
+      // if the first map is continuous, but the second isn't (i.e. when we move
       // from the face to the edge, the envelope goes closer), then if the
       // second map wins on the face, it wins on the edge also
       else if (!hh->is_decision_set() &&
@@ -1125,7 +1110,7 @@ protected:
         hh->twin()->set_decision(DAC_DECISION_SECOND);
 
       }
-      // if the second map is continous, but the first isn't, then if the
+      // if the second map is continuous, but the first isn't, then if the
       // first map wins on the face, it wins on the edge also
       else if (!hh->is_decision_set() &&
                face->get_decision() == DAC_DECISION_FIRST &&
@@ -1164,7 +1149,7 @@ protected:
     {
       vh->set_decision(hh->get_decision());
     }
-    // if the first map is continous, but the second isn't (i.e. when we move
+    // if the first map is continuous, but the second isn't (i.e. when we move
     // from the edge to the vertex, the envelope goes closer), then if the
     // second map wins on the edge, it wins on the vertex also
     else if (hh->get_decision() == DAC_DECISION_SECOND &&
@@ -1173,7 +1158,7 @@ protected:
     {
       vh->set_decision(DAC_DECISION_SECOND);
     }
-    // if the second map is continous, but the first isn't, then if the
+    // if the second map is continuous, but the first isn't, then if the
     // first map wins on the edge, it wins on the vertex also
     else if (hh->get_decision() == DAC_DECISION_FIRST &&
              !hh->get_has_equal_aux_data_in_target(0) &&
@@ -1299,7 +1284,7 @@ protected:
           res = convert_decision_to_comparison_result(hh->get_decision());
           result = true;
         }
-        // if the first map is continous, but the second isn't (i.e. when we
+        // if the first map is continuous, but the second isn't (i.e. when we
         // move from the edge to the face, the envelope goes farther), then
         // if the first map wins on the edge, it wins on the face also
         else if (hh->is_decision_set() &&
@@ -1310,7 +1295,7 @@ protected:
           res = convert_decision_to_comparison_result(DAC_DECISION_FIRST);
           result = true;
         }
-        // if the second map is continous, but the first isn't, then if the
+        // if the second map is continuous, but the first isn't, then if the
         // second map wins on the edge, it wins on the face also
         else if (hh->is_decision_set() &&
                  hh->get_decision() == DAC_DECISION_SECOND &&
@@ -1342,7 +1327,7 @@ protected:
           res = convert_decision_to_comparison_result(hh->get_decision());
           result = true;
         }
-        // if the first map is continous, but the second isn't (i.e. when we
+        // if the first map is continuous, but the second isn't (i.e. when we
         // move from the edge to the face, the envelope goes farther), then
         // if the first map wins on the edge, it wins on the face also
         else if (hh->is_decision_set() &&
@@ -1354,7 +1339,7 @@ protected:
 
           result = true;
         }
-        // if the second map is continous, but the first isn't, then if the
+        // if the second map is continuous, but the first isn't, then if the
         // second map wins on the edge, it wins on the face also
         else if (hh->is_decision_set() &&
                  hh->get_decision() == DAC_DECISION_SECOND &&
@@ -1408,7 +1393,7 @@ protected:
       // can copy the data from the edge, since we already took care of
       // the vertices of projected intersections
       edge->source()->set_decision(edge->get_decision());
-    // if the first map is continous, but the second isn't (i.e. when we move
+    // if the first map is continuous, but the second isn't (i.e. when we move
     // from the edge to the vertex, the envelope goes closer), then if the
     // second map wins on the edge, it wins on the vertex also
     else if (edge->get_decision() == DAC_DECISION_SECOND &&
@@ -1417,7 +1402,7 @@ protected:
     {
       edge->source()->set_decision(DAC_DECISION_SECOND);
     }
-    // if the second map is continous, but the first isn't, then if the
+    // if the second map is continuous, but the first isn't, then if the
     // first map wins on the edge, it wins on the vertex also
     else if (edge->get_decision() == DAC_DECISION_FIRST &&
              !edge->twin()->get_has_equal_aux_data_in_target(0) &&
@@ -1432,7 +1417,7 @@ protected:
       // can copy the data from the edge, since we already took care of
       // the vertices of projected intersections
       edge->target()->set_decision(edge->get_decision());
-    // if the first map is continous, but the second isn't (i.e. when we move
+    // if the first map is continuous, but the second isn't (i.e. when we move
     // from the edge to the vertex, the envelope goes closer), then if the
     // second map wins on the edge, it wins on the vertex also
     else if (edge->get_decision() == DAC_DECISION_SECOND &&
@@ -1441,7 +1426,7 @@ protected:
     {
       edge->target()->set_decision(DAC_DECISION_SECOND);
     }
-    // if the second map is continous, but the first isn't, then if the
+    // if the second map is continuous, but the first isn't, then if the
     // first map wins on the edge, it wins on the vertex also
     else if (edge->get_decision() == DAC_DECISION_FIRST &&
              !edge->get_has_equal_aux_data_in_target(0) &&
@@ -2117,7 +2102,7 @@ protected:
 
 
   // this observer is used in the process of resolving a face
-  // it listens to what happpens in the copied arrangement, and copies back
+  // it listens to what happens in the copied arrangement, and copies back
   // the actions to result arrangements very efficiently
   class Copy_observer : public Md_observer
   {
@@ -2263,7 +2248,7 @@ protected:
     virtual void after_create_edge(Halfedge_handle e)
 
     {
-      // a new edge e was created in small_arr, we should create a corresponing
+      // a new edge e was created in small_arr, we should create a corresponding
       // edge in big_arr
       CGAL_assertion(map_vertices.is_defined(create_edge_v1));
       CGAL_assertion(map_vertices.is_defined(create_edge_v2));
@@ -3171,7 +3156,7 @@ protected:
     // for using its methods
     Self* parent;
 
-    // current type of interection curve that is inserted
+    // current type of intersection curve that is inserted
     Multiplicity itype;
   };
 

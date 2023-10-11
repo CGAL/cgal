@@ -19,7 +19,6 @@
 #include <set>
 #include <stack>
 #include <algorithm>
-#include <boost/array.hpp>
 
 Cluster_classification::Cluster_classification(Scene_points_with_normal_item* points)
   : m_points (points)
@@ -637,11 +636,11 @@ void Cluster_classification::compute_features (std::size_t nb_scales, float voxe
 
   bool colors = (m_color != Point_set::Property_map<CGAL::IO::Color>());
 
-  Point_set::Property_map<boost::uint8_t> echo_map;
+  Point_set::Property_map<std::uint8_t> echo_map;
   bool echo;
-  boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("echo");
+  boost::tie (echo_map, echo) = m_points->point_set()->template property_map<std::uint8_t>("echo");
   if (!echo)
-    boost::tie (echo_map, echo) = m_points->point_set()->template property_map<boost::uint8_t>("number_of_returns");
+    boost::tie (echo_map, echo) = m_points->point_set()->template property_map<std::uint8_t>("number_of_returns");
 
   Feature_set pointwise_features;
 
@@ -773,17 +772,17 @@ void Cluster_classification::add_remaining_point_set_properties_as_features(Feat
         prop[i] == "r" || prop[i] == "g" || prop[i] == "b")
       continue;
 
-    if (try_adding_simple_feature<boost::int8_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::int8_t>(feature_set, prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::uint8_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::uint8_t>(feature_set, prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::int16_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::int16_t>(feature_set, prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::uint16_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::uint16_t>(feature_set, prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::int32_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::int32_t>(feature_set, prop[i]))
       continue;
-    if (try_adding_simple_feature<boost::uint32_t>(feature_set, prop[i]))
+    if (try_adding_simple_feature<std::uint32_t>(feature_set, prop[i]))
       continue;
     if (try_adding_simple_feature<float>(feature_set, prop[i]))
       continue;

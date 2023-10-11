@@ -93,8 +93,9 @@ protected Q_SLOTS:
   void popupAboutCGAL();
   void popupAboutDemo();
 
+#if QT_SVG_LIB
   void exportSVG();
-
+#endif
   void openRecentFile_aux();
   void addToRecentFiles(QString fileName);
   void updateRecentFileActions();

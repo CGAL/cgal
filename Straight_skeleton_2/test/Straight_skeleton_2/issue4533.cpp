@@ -1,11 +1,11 @@
-#include<CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include<CGAL/create_straight_skeleton_2.h>
-#include<CGAL/draw_straight_skeleton_2.h>
-#include "print.h"
-#include<CGAL/Polygon_2.h>
+#include <CGAL/create_straight_skeleton_2.h>
+#include <CGAL/draw_straight_skeleton_2.h>
+#include <CGAL/Straight_skeleton_2/IO/print.h>
+#include <CGAL/Polygon_2.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <cassert>
 
@@ -15,7 +15,7 @@ typedef K::Point_2                                                  Point;
 typedef CGAL::Polygon_2<K>                                          Polygon_2;
 typedef CGAL::Straight_skeleton_2<K>                                Ss;
 
-typedef boost::shared_ptr<Ss>                                       SsPtr;
+typedef std::shared_ptr<Ss>                                       SsPtr;
 
 int main()
 {
@@ -35,7 +35,7 @@ int main()
 
   SsPtr iss = CGAL::create_interior_straight_skeleton_2(poly.vertices_begin(), poly.vertices_end());
 
-  print_straight_skeleton(*iss);
+  CGAL::Straight_skeletons_2::IO::print_straight_skeleton(*iss);
   draw(*iss);
 
   assert(iss->size_of_vertices() == 9);

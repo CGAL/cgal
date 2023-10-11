@@ -38,15 +38,15 @@ find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 
 EOF
     if [ -d "${SOURCE_DIR}" ] ; then
-      echo "  set(CGAL_CURRENT_SOURCE_DIR \"${SOURCE_DIR}\")"
+      echo "set(CGAL_CURRENT_SOURCE_DIR \"${SOURCE_DIR}\")"
       echo
     fi
     if [ -d "${SOURCE_DIR}../include" ] ; then
-      echo "  include_directories (BEFORE \"${SOURCE_DIR}../include\")"
+      echo "include_directories (BEFORE \"${SOURCE_DIR}../include\")"
       echo
     fi
     if [ -d "${SOURCE_DIR}include" ] ; then
-      echo "    include_directories (BEFORE \"${SOURCE_DIR}include\")"
+      echo "include_directories (BEFORE \"${SOURCE_DIR}include\")"
       echo
     fi
     
@@ -59,7 +59,7 @@ EOF
       BASE=`basename $BASE .CPP`
       BASE=`basename $BASE .c++`
       BASE=`basename $BASE .C`
-      egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+      grep -E '\bmain[ \t]*\(' $file >/dev/null 2>&1
       if [ $? -eq 0 ]; then
         echo "create_single_source_cgal_program( \"$file\" )"
         echo "Adding a target ${BASE}..." >&3

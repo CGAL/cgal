@@ -6,8 +6,8 @@ Results (Point Set 2):
 Test #1
   sphere_radius = 1
   min_region_size = 5
-  distance_threshold = 4.5
-  angle_threshold = 45
+  max_distance = 4.5
+  max_angle = 45
   -----
   Time elapsed: 0.138831
   Number of detected regions: 794
@@ -18,8 +18,8 @@ Test #1
 Test #2
   sphere_radius = 3
   min_region_size = 5
-  distance_threshold = 4.5
-  angle_threshold = 45
+  max_distance = 4.5
+  max_angle = 45
   -----
   Time elapsed: 0.069098
   Number of detected regions: 3063
@@ -30,8 +30,8 @@ Test #2
 Test #3
   sphere_radius = 6
   min_region_size = 5
-  distance_threshold = 4.5
-  angle_threshold = 45
+  max_distance = 4.5
+  max_angle = 45
   -----
   Time elapsed: 0.077703
   Number of detected regions: 2508
@@ -42,8 +42,8 @@ Test #3
 Test #4
   sphere_radius = 9
   min_region_size = 5
-  distance_threshold = 4.5
-  angle_threshold = 45
+  max_distance = 4.5
+  max_angle = 45
   -----
   Time elapsed: 0.093415
   Number of detected regions: 2302

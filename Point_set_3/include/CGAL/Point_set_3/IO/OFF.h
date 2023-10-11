@@ -36,7 +36,7 @@ namespace IO {
 /*!
   \ingroup PkgPointSet3IOOFF
 
-  \brief reads the content of an intput stream in the \ref IOStreamOFF into a point set.
+  \brief reads the content of an input stream in the \ref IOStreamOFF into a point set.
 
   If normals are present in the input (NOFF), a normal map will be created and filled.
 

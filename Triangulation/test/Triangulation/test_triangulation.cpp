@@ -16,7 +16,7 @@ void test(const int d, const string & type, int N)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that T contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename T::Full_cell_handle Full_cell_handle;
     typedef typename T::Point Point;
     typedef typename T::Geom_traits::RT RT;

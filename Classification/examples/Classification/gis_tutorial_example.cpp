@@ -474,8 +474,7 @@ int main (int argc, char** argv)
   for (Mesh::Halfedge_index hi : holes)
     if (hi != outer_hull)
       CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
-        (dtm_mesh, hi, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
-         CGAL::parameters::fairing_continuity(0));
+         (dtm_mesh, hi, CGAL::parameters::fairing_continuity(0));
 
   // Save DTM with holes filled
   std::ofstream dtm_filled_ofile ("dtm_filled.ply", std::ios_base::binary);

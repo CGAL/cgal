@@ -12,9 +12,11 @@ Concept describing a classifier used by classification functions (see
 `CGAL::Classification::classify()`, `CGAL::Classification::classify_with_local_smoothing()` and
 `CGAL::Classification::classify_with_graphcut()`).
 
-\cgalHasModel `CGAL::Classification::Sum_of_weighted_features_classifier`
-\cgalHasModel `CGAL::Classification::ETHZ::Random_forest_classifier`
-\cgalHasModel `CGAL::Classification::OpenCV::Random_forest_classifier`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Classification::Sum_of_weighted_features_classifier}
+\cgalHasModels{CGAL::Classification::ETHZ::Random_forest_classifier}
+\cgalHasModels{CGAL::Classification::OpenCV::Random_forest_classifier}
+\cgalHasModelsEnd
 
 */
 class Classifier

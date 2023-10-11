@@ -30,7 +30,8 @@
 namespace CGAL {
 
 template <class K>
-inline bool
+inline
+typename K::Boolean
 do_intersect(const Plane_3<K>& plane1,
              const Plane_3<K>& plane2,
              const Plane_3<K>& plane3)
@@ -51,7 +52,7 @@ intersection(const Plane_3<K>& plane1,
 
 template <class K>
 inline
-boost::optional<typename K::Point_3>
+std::optional<typename K::Point_3>
 intersection_point_for_polyhedral_envelope(const Plane_3<K>& p0,
                                            const Plane_3<K>& p1,
                                            const Plane_3<K>& p2)

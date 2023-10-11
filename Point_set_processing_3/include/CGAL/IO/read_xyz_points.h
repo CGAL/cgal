@@ -16,10 +16,9 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -234,7 +233,7 @@ bool read_XYZ(const std::string& fname,
 // variants with default output iterator value type
 template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_XYZ(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
+              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }

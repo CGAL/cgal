@@ -22,8 +22,7 @@
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_face_graph_triangle_primitive.h>"
 #include <CGAL/Installation/internal/deprecation_warning.h>
 
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL {
     /// \ingroup PkgAABBTreeRef
@@ -36,7 +35,7 @@ namespace CGAL {
     /// the polyhedron from which the AABB tree is built should not be
     /// deleted while the AABB tree is in use.
     ///
-    /// \cgalModels `AABBPrimitive`
+    /// \cgalModels{AABBPrimitive}
     /// \tparam GeomTraits must provides a \c %Point_3
     /// type, used as \c Point, and a \c %Triangle_3 type, used as \c
     /// Datum and constructible from three arguments of type \c
@@ -76,9 +75,9 @@ namespace CGAL {
             : m_facet_handle(*ptr)  { };
         template <class Iterator>
         AABB_polyhedron_triangle_primitive( Iterator it,
-                                            typename boost::enable_if<
-                                                       boost::is_same<Id,typename Iterator::value_type>
-                                            >::type* =0
+                                            std::enable_if_t<
+                                                std::is_same<Id,typename Iterator::value_type>::value
+                                            >* =0
         ) : m_facet_handle(*it)  { }
 
 

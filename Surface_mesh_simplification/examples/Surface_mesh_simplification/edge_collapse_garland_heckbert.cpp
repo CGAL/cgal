@@ -1,10 +1,12 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
 #include <chrono>
 #include <fstream>
@@ -29,13 +31,13 @@ void collapse_gh(Surface_mesh& mesh,
 {
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
+  SMS::Edge_count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
   // Garland&Heckbert simplification policies
 
   typedef typename GHPolicies::Get_cost                                        GH_cost;
   typedef typename GHPolicies::Get_placement                                   GH_placement;
-  typedef SMS::Bounded_normal_change_placement<GH_placement>                    Bounded_GH_placement;
+  typedef SMS::Bounded_normal_change_placement<GH_placement>                   Bounded_GH_placement;
 
   GHPolicies gh_policies(mesh);
   const GH_cost& gh_cost = gh_policies.get_cost();
@@ -56,7 +58,7 @@ void collapse_gh(Surface_mesh& mesh,
 }
 
 // Usage:
-// ./command [input] [ratio] [policy] [outpout]
+// ./command [input] [ratio] [policy] [output]
 // policy can be "cp" (classic plane), "ct" (classic triangle), "pp" (probabilistic plane), "pt" (probabilistic triangle)
 int main(int argc, char** argv)
 {

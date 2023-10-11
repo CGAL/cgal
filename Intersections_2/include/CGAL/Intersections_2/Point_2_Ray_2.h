@@ -30,9 +30,9 @@ namespace internal {
 
 template <class K>
 inline
-bool
-do_intersect(const typename K::Point_2 &pt,
-             const typename K::Ray_2 &ray,
+typename K::Boolean
+do_intersect(const typename K::Point_2& pt,
+             const typename K::Ray_2& ray,
              const K&)
 {
   return ray.has_on(pt);
@@ -41,9 +41,9 @@ do_intersect(const typename K::Point_2 &pt,
 
 template <class K>
 inline
-bool
-do_intersect(const typename K::Ray_2 &ray,
-             const typename K::Point_2 &pt,
+typename K::Boolean
+do_intersect(const typename K::Ray_2& ray,
+             const typename K::Point_2& pt,
              const K&)
 {
   return ray.has_on(pt);
@@ -51,8 +51,7 @@ do_intersect(const typename K::Ray_2 &ray,
 
 
 template <class K>
-typename CGAL::Intersection_traits
-<K, typename K::Point_2, typename K::Ray_2>::result_type
+typename CGAL::Intersection_traits<K, typename K::Point_2, typename K::Ray_2>::result_type
 intersection(const typename K::Point_2 &pt,
              const typename K::Ray_2 &ray,
              const K& k)
@@ -64,8 +63,7 @@ intersection(const typename K::Point_2 &pt,
 }
 
 template <class K>
-typename CGAL::Intersection_traits
-<K, typename K::Ray_2, typename K::Point_2>::result_type
+typename CGAL::Intersection_traits<K, typename K::Ray_2, typename K::Point_2>::result_type
 intersection(const typename K::Ray_2 &ray,
              const typename K::Point_2 &pt,
              const K& k)
@@ -79,7 +77,6 @@ intersection(const typename K::Ray_2 &ray,
 CGAL_INTERSECTION_FUNCTION(Point_2, Ray_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Point_2, Ray_2, 2)
 
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif
+#endif // CGAL_INTERSECTIONS_2_POINT_2_RAY_2_H

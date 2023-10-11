@@ -6,12 +6,14 @@ project(Spatial_searching_)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
-find_package(Eigen3 3.1.91) # (requires 3.2.0 or greater)
-include(CGAL_Eigen3_support)
-
 include_directories(BEFORE "include")
+
+find_package(Eigen3 3.1.91 QUIET) # (requires 3.1.91 or greater)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message("NOTICE: These benchmarks require Eigen 3.1.91 (or greater), and will not be compiled.")
+  return()
+endif()
 
 # create_single_source_cgal_program("Compare_ANN_STANN_CGAL.cpp") # does not compile, missing dependency
 create_single_source_cgal_program("nanoflan.cpp")

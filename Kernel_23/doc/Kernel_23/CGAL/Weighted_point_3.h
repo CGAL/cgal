@@ -13,8 +13,7 @@ to `NT`, and `Kernel::FT` is equal to `Quotient<NT>`.
 
 \sa `Point_3<Kernel>`
 
-\cgalModels `Kernel::WeightedPoint_3`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::WeightedPoint_3,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >
@@ -157,19 +156,19 @@ public:
 
   /*!
   returns the i'th homogeneous coordinate of `p`.
-  \pre \f$ 0\leq i \leq3\f$.
+  \pre  `0 <= i <= 3`
   */
   Kernel::RT homogeneous(int i) const;
 
   /*!
   returns the i'th %Cartesian coordinate of `p`.
-  \pre \f$ 0\leq i \leq2\f$.
+  \pre  `0 <= i <= 2`
   */
   Kernel::FT cartesian(int i) const;
 
   /*!
   returns `cartesian(i)`.
-  \pre \f$ 0\leq i \leq2\f$.
+  \pre  `0 <= i <= 2`
   */
   Kernel::FT operator[](int i) const;
 

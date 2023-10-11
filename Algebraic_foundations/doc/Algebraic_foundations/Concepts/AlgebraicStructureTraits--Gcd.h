@@ -17,7 +17,7 @@ unit-normal (i.e.\ have unit part 1).
 to the partial order of divisibility. This is because an element \f$ a \in R\f$ is said to divide \f$ b \in R\f$, iff \f$ \exists r \in R\f$ such that \f$ a \cdot r = b\f$.
 Thus, \f$ 0\f$ is divided by every element of the Ring, in particular by itself.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicStructureTraits`
 

@@ -29,7 +29,7 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_geometric_repair_grp
 ///
 /// \brief removes the isolated vertices from any polygon mesh.
 ///
@@ -60,7 +60,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
   return nb_removed;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_geometric_repair_grp
 ///
 /// \brief removes connected components whose area or volume is under a certain threshold value.
 ///

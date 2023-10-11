@@ -6,17 +6,8 @@ project(Surface_mesh_skeletonization_Examples)
 
 find_package(CGAL REQUIRED)
 
-find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
-
-find_package(OpenMesh QUIET)
-
-if(OpenMesh_FOUND)
-  include(UseOpenMesh)
-else()
-  message(STATUS "Examples that use OpenMesh will not be compiled.")
-endif()
-
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("simple_mcfskel_example.cpp")
   create_single_source_cgal_program("simple_mcfskel_sm_example.cpp")
@@ -25,6 +16,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("MCF_Skeleton_sm_example.cpp")
   create_single_source_cgal_program("MCF_Skeleton_LCC_example.cpp")
   create_single_source_cgal_program("segmentation_example.cpp")
+
   foreach(
     target
     simple_mcfskel_example
@@ -37,13 +29,16 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 
+  find_package(OpenMesh QUIET)
   if(OpenMesh_FOUND)
+    include(UseOpenMesh)
+    message(STATUS "Found OpenMesh")
+
     create_single_source_cgal_program("MCF_Skeleton_om_example.cpp")
-    target_link_libraries( MCF_Skeleton_om_example PUBLIC CGAL::Eigen3_support PRIVATE ${OPENMESH_LIBRARIES})
+    target_link_libraries(MCF_Skeleton_om_example PUBLIC CGAL::Eigen3_support PRIVATE ${OPENMESH_LIBRARIES})
+  else()
+    message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
   endif()
 else()
-  message(
-    STATUS
-      "These programs require the Eigen library (3.2 or greater), and will not be compiled."
-  )
+  message("NOTICE: These programs require the Eigen library (3.2 or greater), and will not be compiled.")
 endif()

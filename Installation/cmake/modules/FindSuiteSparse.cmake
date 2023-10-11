@@ -1,8 +1,8 @@
 ## CMake file to locate SuiteSparse and its useful composite projects
-## The first developpement of this file was made fro Windows users who
-## use: 
+## The first development of this file was done by Windows users who
+## used: 
 ##  https://github.com/jlblancoc/suitesparse-metis-for-windows
-## Anyway, it chould be work also on linux (tested on fedora 17 when you installed suitesparse from yum)
+## Anyway, it could work also on linux (tested on fedora 17 when you installed suitesparse from yum)
 ##
 ##
 ## Inputs variables this file can process (variable must be given before find_package(SUITESPARES ...) command) :
@@ -11,7 +11,7 @@
 ##   Note: SuiteSparse lib usually requires linking to a blas and lapack library.
 ##
 ##
-## Help variables this file handle internaly :
+## Help variables this file handle internally :
 ##   * SuiteSparse_SEARCH_LIB_POSTFIX		Is set in cache (as advanced) to look into the right lib/lib64 dir for libraries (user can change)
 ##
 ##
@@ -20,19 +20,19 @@
 ##   * SuiteSparse_INCLUDE_DIRS  			Paths containing SuiteSparse needed headers (depend on which COMPONENTS you gave)
 ##   * SuiteSparse_LIBRARIES     			Absolute paths of SuiteSparse libs found (depend on which COMPONENTS you gave)
 ##   If SuiteSparse_USE_LAPACK_BLAS is set to ON : 
-##   	* SuiteSparse_LAPACK_BLAS_LIBRARIES 	Which contain the libblas and liblapack libraries
+##   	* SuiteSparse_LAPACK_BLAS_LIBRARIES     	Which contain the libblas and liblapack libraries
 ##   	On windows:
-##   		* SuiteSparse_LAPACK_BLAS_DLL		Which contain all requiered binaries for use libblas and liblapack
+##   		* SuiteSparse_LAPACK_BLAS_DLL		Which contain all required binaries for use libblas and liblapack
 ##
 ##
 ## Detailed variables this file provide :
 ##   * SuiteSparse_<UPPPER_CASE_COMPONENT>_FOUND		True if the given component to look for is found (INCLUDE DIR and LIBRARY)
-##   * SuiteSparse_<UPPPER_CASE_COMPONENT>_INCLUDE_DIR	The path directory where we can found all compenent header files
+##   * SuiteSparse_<UPPPER_CASE_COMPONENT>_INCLUDE_DIR  	The path directory where all component header files can be found
 ##   * SuiteSparse_<UPPPER_CASE_COMPONENT>_LIBRARY		The file path to the component library
 ##   Note: If a component is not found, a SuiteSparse_<UPPPER_CASE_COMPONENT>_DIR cache variable is set to allow user set the search directory.
 ##
 ##
-## Possible componnents to find are (maybe some others can be available):
+## Possible components to find are (maybe some others can be available):
 ##   * AMD
 ##   * CAMD
 ##   * COLAMD
@@ -125,13 +125,13 @@ endif()
 ## we can use a generic way to find all of these with simple cmake lines of code
 macro(SuiteSparse_FIND_COMPONENTS )
 
-	## On windows : we absolutly need SuiteSparse_config.h every time for all projects
+	## On windows : we absolutely need SuiteSparse_config.h every time for all projects
 	if(WIN32)
 		list(FIND SuiteSparse_FIND_COMPONENTS "suitesparseconfig" SS_config_index)
 		if(${SS_config_index} MATCHES "-1")
 			list(APPEND SuiteSparse_FIND_COMPONENTS suitesparseconfig)
 			if(SuiteSparse_VERBOSE)
-				message(STATUS "   On windows, we absolutly need SuiteSparse_config.h every time for all projects : add suitesparseconfig component to look for")
+				message(STATUS "   On windows, we absolutely need SuiteSparse_config.h every time for all projects : add suitesparseconfig component to look for")
 			endif()
 		endif()
 	endif()
@@ -292,7 +292,7 @@ macro(SuiteSparse_FIND_COMPONENTS )
 		endif()
 		if(NOT ${componentToCheck})
 			set(SuiteSparse_FOUND OFF)
-			break() ## one component not found is enought to failed
+			break() ## one component not found is enough to failed
 		endif()
 	endforeach()
 endmacro()

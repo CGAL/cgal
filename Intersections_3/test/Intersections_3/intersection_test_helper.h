@@ -237,8 +237,8 @@ public:
 
     const auto ires12 = CGAL::intersection(o1, o2);
 
-     Res tmp;
-    if(has_exact_p)
+    Res tmp;
+    if(has_exact_c)
     {
       assert(CGAL::assign(tmp, ires12));
       assert(approx_equal(tmp, result));
@@ -246,7 +246,7 @@ public:
     else
     {
       if(CGAL::assign(tmp, ires12))
-        assert(approx_equal(tmp, result));
+        CGAL_warning(approx_equal(tmp, result));
       else
         CGAL_warning_msg(false, "Expected an intersection, but it was not found!");
     }
@@ -309,10 +309,8 @@ public:
     template<typename T>
     bool compare_to_other_variant(const T& t) const
     {
-      if(ov->type() == typeid(T))
+      if(auto* r = std::get_if<T>(&*ov))
       {
-        auto* r = boost::get<T>(&*ov); // ov is an optional<variant>
-        assert(r);
         return (t == *r);
       }
 
@@ -363,7 +361,7 @@ public:
         assert(ires12 && ires34);
 
         Variant_visitor<decltype(ires12)> vis(ires12);
-        boost::apply_visitor(vis, *ires34);
+        std::visit(vis, *ires34);
         assert(vis.equal);
       }
     }

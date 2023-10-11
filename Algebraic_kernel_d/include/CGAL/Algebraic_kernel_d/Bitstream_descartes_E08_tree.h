@@ -31,7 +31,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/tss.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 /*
  *  AUXILIARY CLASSES AND FUNCTIONS
@@ -446,7 +446,7 @@ private:
     Integer_vector coeff_; // wrt [lower_, upper_], approximate
     int min_var_, max_var_;
     bool coeff_update_delayed_;
-    // "state data" (copied en bloc by .copy_state_from())
+    // "state data" (copied en block by .copy_state_from())
     long subdepth_bound_, subdepth_current_;
     long log_eps_;   // $q - p$
     long log_C_eps_; // $q - p + 4n$

@@ -181,7 +181,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     private: // traits class:
       Traits& t;
 
-    private: // for internal consisteny checks:
+    private: // for internal consistency checks:
       #ifdef CGAL_MINIBALL_DEBUG
       // The following variable is true if and only if no ball has been
       // pushed so far, or is_spanning() has been called at least once and

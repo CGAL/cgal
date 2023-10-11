@@ -52,7 +52,7 @@ split_trapezoid_by_vertex(Dag_node& split_node,
   Dag_node left_node, right_node;
 
   if (traits->is_td_trapezoid(curr_item)) {
-    Td_active_trapezoid& tr(boost::get<Td_active_trapezoid>(curr_item));
+    Td_active_trapezoid& tr(std::get<Td_active_trapezoid>(curr_item));
 
     CGAL_warning(traits->is_in_closure(tr, traits->vtx_to_ce(v)));
 
@@ -63,39 +63,39 @@ split_trapezoid_by_vertex(Dag_node& split_node,
                         (v, tr.right(), tr.bottom(), tr.top()));
 
     Td_active_trapezoid&
-      left_tr(boost::get<Td_active_trapezoid>(left_node.get_data()));
+      left_tr(std::get<Td_active_trapezoid>(left_node.get_data()));
     Td_active_trapezoid&
-      right_tr(boost::get<Td_active_trapezoid>(right_node.get_data()));
+      right_tr(std::get<Td_active_trapezoid>(right_node.get_data()));
 
     CGAL_warning(traits->is_trapezoids_top_equal(left_tr,right_tr));
     CGAL_warning(traits->is_trapezoids_bottom_equal(left_tr,right_tr));
     CGAL_warning(left_tr.is_on_left_boundary() == tr.is_on_left_boundary());
     CGAL_warning(right_tr.is_on_right_boundary() == tr.is_on_right_boundary());
 
-    left_tr.init_neighbours(tr.lb(), tr.lt(),
-                            right_node.get_data(), right_node.get_data());
-    right_tr.init_neighbours(left_node.get_data(), left_node.get_data(),
-                             tr.rb(), tr.rt());
+    left_tr.init_neighbors(tr.lb(), tr.lt(),
+                           right_node.get_data(), right_node.get_data());
+    right_tr.init_neighbors(left_node.get_data(), left_node.get_data(),
+                            tr.rb(), tr.rt());
     if (!traits->is_empty_item(tr.lb())) {
-      Td_active_trapezoid& lb(boost::get<Td_active_trapezoid>(tr.lb()));
+      Td_active_trapezoid& lb(std::get<Td_active_trapezoid>(tr.lb()));
       lb.set_rb(left_node.get_data());
     }
     if (!traits->is_empty_item(tr.lt())) {
-      Td_active_trapezoid& lt(boost::get<Td_active_trapezoid>(tr.lt()));
+      Td_active_trapezoid& lt(std::get<Td_active_trapezoid>(tr.lt()));
       lt.set_rt(left_node.get_data());
     }
     if (!traits->is_empty_item(tr.rb())) {
-      Td_active_trapezoid& rb(boost::get<Td_active_trapezoid>(tr.rb()));
+      Td_active_trapezoid& rb(std::get<Td_active_trapezoid>(tr.rb()));
       rb.set_lb(right_node.get_data());
     }
     if (!traits->is_empty_item(tr.rt())) {
-      Td_active_trapezoid& rt(boost::get<Td_active_trapezoid>(tr.rt()));
+      Td_active_trapezoid& rt(std::get<Td_active_trapezoid>(tr.rt()));
       rt.set_lt(right_node.get_data());
     }
   }
   else {
     // the curr_item is an edge
-    Td_active_edge& e(boost::get<Td_active_edge>(curr_item));
+    Td_active_edge& e(std::get<Td_active_edge>(curr_item));
 
     CGAL_warning(traits->is_in_closure(e, traits->vtx_to_ce(v)));
 
@@ -103,16 +103,16 @@ split_trapezoid_by_vertex(Dag_node& split_node,
 
     right_node.set_data(Td_active_edge(e.halfedge()));
 
-    Td_active_edge& left_e(boost::get<Td_active_edge>(left_node.get_data()));
-    Td_active_edge& right_e(boost::get<Td_active_edge>(right_node.get_data()));
+    Td_active_edge& left_e(std::get<Td_active_edge>(left_node.get_data()));
+    Td_active_edge& right_e(std::get<Td_active_edge>(right_node.get_data()));
 
     //CGAL_warning(left_e.is_on_left_boundary() == e.is_on_left_boundary());
     //CGAL_warning(right_e.is_on_right_boundary() == e.is_on_right_boundary());
 
-    left_e.init_neighbours(boost::none);
-    //left_e.init_neighbours(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
-    right_e.init_neighbours(e.next());
-    //right_e.init_neighbours(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
+    left_e.init_neighbors(std::nullopt);
+    //left_e.init_neighbors(e.lb(),e.lt(),Td_map_item(),right_node.get_data());
+    right_e.init_neighbors(e.next());
+    //right_e.init_neighbors(left_node.get_data(),left_node.get_data(),e.rb(),e.rt());
   }
 
   // left and right are set to the point itself,
@@ -132,10 +132,10 @@ split_trapezoid_by_vertex(Dag_node& split_node,
   const Dag_node* left_ptr  = &split_node.left_child();
   const Dag_node* right_ptr = &split_node.right_child();
 
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)left_ptr),
+  std::visit(set_dag_node_visitor((Dag_node*)left_ptr),
                        left_ptr->get_data());
   //(*left_ptr)->set_dag_node((Dag_node*)left_ptr);
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)right_ptr),
+  std::visit(set_dag_node_visitor((Dag_node*)right_ptr),
                        right_ptr->get_data());
   //(*right_ptr)->set_dag_node((Dag_node*)right_ptr);
 
@@ -168,7 +168,7 @@ build_vertex_map_item(Vertex_const_handle v,
 
 //-----------------------------------------------------------------------------
 // Description:
-//  the opposite operation for spliting the trapezoid with
+//  the opposite operation for splitting the trapezoid with
 //  vertical line through ce
 // Precondition:
 //  tr_node data is a td vertex and is active
@@ -219,7 +219,7 @@ deactivate_trapezoid(Dag_node& trpz_node, Dag_node* active_node) const
   CGAL_precondition(traits->is_active(trpz_node.get_data()));
   CGAL_precondition(traits->is_td_trapezoid(trpz_node.get_data()));
   if (Td_active_trapezoid* trap =
-      boost::get<Td_active_trapezoid>(&trpz_node.get_data()))
+      std::get_if<Td_active_trapezoid>(&trpz_node.get_data()))
     trap->non_recursive_clear_neighbors();
   trpz_node.set_data(Td_inactive_trapezoid());
   if (active_node) trpz_node.set_left_child(*active_node);
@@ -233,11 +233,11 @@ deactivate_vertex(Dag_node& vtx_node) const
   CGAL_precondition(traits->is_td_vertex(vtx_node.get_data()));
   if (traits->is_fictitious_vertex(vtx_node.get_data())) {
     Td_active_fictitious_vertex&
-      v(boost::get<Td_active_fictitious_vertex>(vtx_node.get_data()));
+      v(std::get<Td_active_fictitious_vertex>(vtx_node.get_data()));
     vtx_node.set_data(Td_inactive_fictitious_vertex(v.vertex(), &vtx_node));
   }
   else {
-    Td_active_vertex& v(boost::get<Td_active_vertex>(vtx_node.get_data()));
+    Td_active_vertex& v(std::get<Td_active_vertex>(vtx_node.get_data()));
     vtx_node.set_data(Td_inactive_vertex(v.vertex(), &vtx_node));
   }
 }
@@ -259,7 +259,7 @@ deactivate_edge(std::shared_ptr<X_monotone_curve_2>& cv,
 //  trapezoidal tree with an input halfedge he
 // Precondition:
 //  The root trapezoid is active
-//  The root trapezoid is devided by he or is equal to it and is vertical.
+//  The root trapezoid is divided by he or is equal to it and is vertical.
 template <typename Td_traits>
 typename Trapezoidal_decomposition_2<Td_traits>::Dag_node &
 Trapezoidal_decomposition_2<Td_traits>::
@@ -274,7 +274,7 @@ split_trapezoid_by_halfedge(Dag_node& split_node,
   CGAL_precondition(traits->is_td_trapezoid(split_node.get_data()));
 
   Td_map_item curr_item(split_node.get_data());
-  Td_active_trapezoid& split_tr = boost::get<Td_active_trapezoid>(curr_item);
+  Td_active_trapezoid& split_tr = std::get<Td_active_trapezoid>(curr_item);
 
   // sets left and right according to td_edge's source and target positions
   // sets bottom and top to Halfedge itself
@@ -303,37 +303,37 @@ split_trapezoid_by_halfedge(Dag_node& split_node,
                          //  CGAL_TD_ON_BOTTOM_BOUNDARY )));
 
   Td_active_trapezoid& bottom =
-    boost::get<Td_active_trapezoid>(bottom_node.get_data());
+    std::get<Td_active_trapezoid>(bottom_node.get_data());
   Td_active_trapezoid& top =
-    boost::get<Td_active_trapezoid>(top_node.get_data());
+    std::get<Td_active_trapezoid>(top_node.get_data());
 
-  top.init_neighbours(prev_top_tr, split_tr.lt(), boost::none , split_tr.rt());
-  bottom.init_neighbours(split_tr.lb(), prev_bottom_tr, split_tr.rb(),
-                         boost::none);
+  top.init_neighbors(prev_top_tr, split_tr.lt(), std::nullopt , split_tr.rt());
+  bottom.init_neighbors(split_tr.lb(), prev_bottom_tr, split_tr.rb(),
+                         std::nullopt);
 
   if (!traits->is_empty_item(prev_bottom_tr)) {
     Td_active_trapezoid&
-      prev_btm(boost::get<Td_active_trapezoid>(prev_bottom_tr));
+      prev_btm(std::get<Td_active_trapezoid>(prev_bottom_tr));
     prev_btm.set_rt(bottom_node.get_data());
   }
   if (!traits->is_empty_item(prev_top_tr)) {
-    Td_active_trapezoid& prev_top(boost::get<Td_active_trapezoid>(prev_top_tr));
+    Td_active_trapezoid& prev_top(std::get<Td_active_trapezoid>(prev_top_tr));
     prev_top.set_rb(top_node.get_data());
   }
   if (!traits->is_empty_item(split_tr.lb())) {
-    Td_active_trapezoid& lb(boost::get<Td_active_trapezoid>(split_tr.lb()));
+    Td_active_trapezoid& lb(std::get<Td_active_trapezoid>(split_tr.lb()));
     lb.set_rb(bottom_node.get_data());
   }
   if (!traits->is_empty_item(split_tr.lt())) {
-    Td_active_trapezoid& lt(boost::get<Td_active_trapezoid>(split_tr.lt()));
+    Td_active_trapezoid& lt(std::get<Td_active_trapezoid>(split_tr.lt()));
     lt.set_rt(top_node.get_data());
   }
   if (!traits->is_empty_item(split_tr.rb())) {
-    Td_active_trapezoid& rb(boost::get<Td_active_trapezoid>(split_tr.rb()));
+    Td_active_trapezoid& rb(std::get<Td_active_trapezoid>(split_tr.rb()));
     rb.set_lb(bottom_node.get_data());
   }
   if (!traits->is_empty_item(split_tr.rt())) {
-    Td_active_trapezoid& rt(boost::get<Td_active_trapezoid>(split_tr.rt()));
+    Td_active_trapezoid& rt(std::get<Td_active_trapezoid>(split_tr.rt()));
     rt.set_lt(top_node.get_data());
   }
   split_node.replace(sep,bottom_node,top_node); //nodes depth are updated here
@@ -348,14 +348,14 @@ split_trapezoid_by_halfedge(Dag_node& split_node,
   const Dag_node* bottomPtr = &split_node.left_child();
   const Dag_node* topPtr    = &split_node.right_child();
 
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)bottomPtr),
+  std::visit(set_dag_node_visitor((Dag_node*)bottomPtr),
                        bottomPtr->get_data());
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)topPtr),
+  std::visit(set_dag_node_visitor((Dag_node*)topPtr),
                        topPtr->get_data());
 
-  // Td_active_edge& new_e = boost::get<Td_active_edge>(split_node.get_data());
+  // Td_active_edge& new_e = std::get<Td_active_edge>(split_node.get_data());
   if (!traits->is_empty_item(prev_e)) {
-    Td_active_edge& e( boost::get<Td_active_edge>(prev_e));
+    Td_active_edge& e( std::get<Td_active_edge>(prev_e));
     e.set_next(split_node.get_data());
   }
   //update these trapezoids pointers.
@@ -404,14 +404,14 @@ update_vtx_with_new_edge(Halfedge_const_handle he,
 
   //set cw to hold the halfedge whose source is p,
   // which is clockwise "smallest" starting from top (12 o'clock)
-  Halfedge_const_handle cw_he(boost::apply_visitor(cw_he_visitor(), vtx_item));
+  Halfedge_const_handle cw_he(std::visit(cw_he_visitor(), vtx_item));
   if (traits->compare_cw_around_point_2_object()(he->curve(),
                                                  is_edge_to_right(he,p),
                                                  cw_he->curve(),
                                                  is_edge_to_right(cw_he,p),
                                                  p) == SMALLER)
   {
-    boost::apply_visitor(set_cw_he_visitor(he),vtx_item);//v_tr->set_top(he);
+    std::visit(set_cw_he_visitor(he),vtx_item);//v_tr->set_top(he);
   }
 
   return vtx_item;
@@ -430,7 +430,7 @@ insert_curve_at_vtx_using_dag(Halfedge_const_handle he,
 {
   CGAL_precondition(lt==TRAPEZOID || lt==UNBOUNDED_TRAPEZOID);
 
-  Dag_node* node = boost::apply_visitor(dag_node_visitor(), item);
+  Dag_node* node = std::visit(dag_node_visitor(), item);
 
   CGAL_assertion(node != nullptr);
   CGAL_assertion(he != m_empty_he_handle);
@@ -458,13 +458,13 @@ insert_curve_at_vtx_using_dag(Halfedge_const_handle he,
 //  CGAL_precondition(traits->is_td_vertex(vtx_item));
 //  CGAL_precondition(traits->is_active(vtx_item));
 //
-//  Halfedge_const_handle cw_he (boost::apply_visitor(cw_he_visitor(), vtx_item));
+//  Halfedge_const_handle cw_he (std::visit(cw_he_visitor(), vtx_item));
 //
 //  //make sure the cw_he is added in same direction as before
 //  //  such that vtx_item is the source (done inside the set methods)
 //  if (cw_he == old_he || cw_he->twin() == old_he)
 //  {
-//    boost::apply_visitor(set_cw_he_visitor(new_he), vtx_item);
+//    std::visit(set_cw_he_visitor(new_he), vtx_item);
 //  }
 //}
 
@@ -479,12 +479,12 @@ update_vtx_cw_he_after_merge(const X_monotone_curve_2& old_cv,
   CGAL_precondition(traits->is_td_vertex(vtx_item));
   CGAL_precondition(traits->is_active(vtx_item));
 
-  Halfedge_const_handle cw_he(boost::apply_visitor(cw_he_visitor(), vtx_item));
+  Halfedge_const_handle cw_he(std::visit(cw_he_visitor(), vtx_item));
 
   //make sure the cw_he is added in same direction as before
   //  such that v_tr is the source (done inside the set methods)
   if (traits->equal_2_object()(cw_he->curve(), old_cv))
-    boost::apply_visitor(set_cw_he_visitor(new_he), vtx_item);
+    std::visit(set_cw_he_visitor(new_he), vtx_item);
 }
 
 //-----------------------------------------------------------------------------
@@ -499,12 +499,12 @@ update_vtx_cw_he_after_remove(Halfedge_const_handle old_he,
   CGAL_precondition(traits->is_td_vertex(vtx_item));
   CGAL_precondition(traits->is_active(vtx_item));
 
-  Halfedge_const_handle cw_he(boost::apply_visitor(cw_he_visitor(), vtx_item));
+  Halfedge_const_handle cw_he(std::visit(cw_he_visitor(), vtx_item));
   if ((old_he == cw_he) || (old_he->twin() == cw_he)) {
     Halfedge_const_handle new_he = cw_he->twin()->next();
     if (new_he != cw_he)
-      boost::apply_visitor(set_cw_he_visitor(new_he), vtx_item);
-    else boost::apply_visitor(reset_cw_he_visitor(), vtx_item); // dangling edge removed
+      std::visit(set_cw_he_visitor(new_he), vtx_item);
+    else std::visit(reset_cw_he_visitor(), vtx_item); // dangling edge removed
   }
 }
 
@@ -520,20 +520,20 @@ update_vtx_cw_he_after_remove(Halfedge_const_handle old_he,
 //  CGAL_precondition(traits->is_td_vertex(vtx_item));
 //  CGAL_precondition(traits->is_active(vtx_item));
 //
-//  Halfedge_const_handle top_he (boost::apply_visitor(top_he_visitor(), vtx_item));
-//  Halfedge_const_handle bottom_he (boost::apply_visitor(bottom_he_visitor(), vtx_item));
+//  Halfedge_const_handle top_he (std::visit(top_he_visitor(), vtx_item));
+//  Halfedge_const_handle bottom_he (std::visit(bottom_he_visitor(), vtx_item));
 //
 //  //make sure the top & bottom are added in same direction as before
 //  //  such that sep is the source (done inside the set methods)
 //  if ((top_he == he1) || (top_he == he1->twin()) ||
 //      (top_he == he2) || (top_he == he2->twin()) )
 //  {
-//     boost::apply_visitor(set_top_he_visitor(new_he), vtx_item); //v_tr.set_top(new_he);
+//     std::visit(set_top_he_visitor(new_he), vtx_item); //v_tr.set_top(new_he);
 //  }
 //  if ((bottom_he == he1) || (bottom_he == he1->twin()) ||
 //      (bottom_he == he2) || (bottom_he == he2->twin()) )
 //  {
-//    boost::apply_visitor(set_bottom_he_visitor(new_he), vtx_item); //v_tr.set_bottom(new_he);
+//    std::visit(set_bottom_he_visitor(new_he), vtx_item); //v_tr.set_bottom(new_he);
 //  }
 //}
 
@@ -561,22 +561,22 @@ update_map_items_after_merge(In_face_iterator& it,
     CGAL_assertion(traits->is_active(curr_item));
 
     if (traits->is_td_edge(curr_item)) {
-      Td_active_edge& e(boost::get<Td_active_edge>(curr_item));
+      Td_active_edge& e(std::get<Td_active_edge>(curr_item));
       if (e.halfedge() == old_he || e.halfedge() == old_he->twin())
         e.set_halfedge(new_he);
     }
     else if (traits->is_td_trapezoid(curr_item)) {
-      Td_active_trapezoid& tr(boost::get<Td_active_trapezoid>(curr_item));
+      Td_active_trapezoid& tr(std::get<Td_active_trapezoid>(curr_item));
       if (tr.bottom() == old_he || tr.bottom() == old_he->twin())
         tr.set_bottom(new_he);
       if (tr.top() == old_he || tr.top() == old_he->twin()) tr.set_top(new_he);
     }
     else {
       //if is_td_vertex
-      Halfedge_const_handle cw_he(boost::apply_visitor(cw_he_visitor(),
+      Halfedge_const_handle cw_he(std::visit(cw_he_visitor(),
                                                        curr_item));
       if (cw_he == old_he || cw_he == old_he->twin())
-        boost::apply_visitor(set_cw_he_visitor(new_he), curr_item);
+        std::visit(set_cw_he_visitor(new_he), curr_item);
     }
 
     last_item = *it;
@@ -609,26 +609,26 @@ search_using_dag(Dag_node& curr_node,
 
   while (true) {
     //curr_node is the current pointer to node in the data structure
-    //curr_item is the curent Td_map_item held in curr_node
+    //curr_item is the current Td_map_item held in curr_node
     Td_map_item curr_item(curr_node.get_data());
 
     if (traits->is_td_vertex(curr_item)) {
       // the curr_item represents a vertex
       //bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      //if ((is_fict_vtx  && is_end_point_left_low(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
-      //    (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(), curr_item))) )
+      //if ((is_fict_vtx  && is_end_point_left_low(p, *(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+      //    (!is_fict_vtx &&  is_end_point_left_low(p, std::visit(point_for_vertex_visitor(), curr_item))) )
       if (is_end_point_left_low(p, curr_node)) {
         curr_node = curr_node.left_child();
         continue;
       }
-      //else if ((is_fict_vtx  && is_end_point_right_top(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
-      //         (!is_fict_vtx && is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(), curr_item))) )
+      //else if ((is_fict_vtx  && is_end_point_right_top(p, *(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+      //         (!is_fict_vtx && is_end_point_right_top(p, std::visit(point_for_vertex_visitor(), curr_item))) )
       else if (is_end_point_right_top(p, curr_node)) {
         curr_node = curr_node.right_child();
         continue;
       }
-      //else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-      //         (!is_fict_vtx && traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      //else if ((is_fict_vtx  && traits->equal_curve_end_2_object()(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+      //         (!is_fict_vtx && traits->equal_2_object()(std::visit(point_for_vertex_visitor(), curr_item), p)) )
       else if (are_equal_end_points(p, curr_node)) {
         if (he == m_empty_he_handle) {
           // he is the empty handle
@@ -663,13 +663,13 @@ search_using_dag(Dag_node& curr_node,
                        are_equal_end_points(p,curr_node));
 
                     //(is_fict_vtx &&
-                    //  (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-                    //   is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-                    //   traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
+                    //  (is_end_point_left_low(p,*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                    //   is_end_point_right_top(p,*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+                    //   traits->equal_curve_end_2_object()(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
                     // (!is_fict_vtx &&
-                    //  (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-                    //   is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-                    //   traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
+                    //  (is_end_point_left_low(p,std::visit(point_for_vertex_visitor(), curr_item)) ||
+                    //   is_end_point_right_top(p,std::visit(point_for_vertex_visitor(), curr_item)) ||
+                    //   traits->equal_2_object()(std::visit(point_for_vertex_visitor(), curr_item),p))));
 
         return Locate_type();
       }
@@ -678,7 +678,7 @@ search_using_dag(Dag_node& curr_node,
       // curr_item represents an edge,
       //   so top() is a real Halfedge with a curve() if curr_item is active
       //   or curr_item holds the curve if it is not active
-      const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), curr_item));
+      const X_monotone_curve_2& he_cv = *(std::visit(cv_for_edge_visitor(), curr_item));
 
       Comparison_result cres = traits->compare_y_at_x_2_object()(p, he_cv);
       if (cres == SMALLER) {
@@ -753,7 +753,7 @@ search_using_dag(Dag_node& curr_node,
     else {
       // if is_degenerate() == 0, meaning: curr_item is a real trapezoid
       if (traits->is_active(curr_item)) {
-        Td_active_trapezoid& tr = boost::get<Td_active_trapezoid>(curr_item);
+        Td_active_trapezoid& tr = std::get<Td_active_trapezoid>(curr_item);
         return tr.is_on_boundaries() ? UNBOUNDED_TRAPEZOID : TRAPEZOID;
       }
       curr_node = curr_node.left_child();
@@ -793,7 +793,7 @@ search_using_dag(Dag_node& curr_node,
 //  while(true)
 //  {
 //    //curr_node is the current pointer to node in the data structure
-//    //curr_item is the curent Td_map_item held in curr_node
+//    //curr_item is the current Td_map_item held in curr_node
 //    Td_map_item curr_item(curr_node.get_data());
 //
 //    if (traits->is_td_vertex(curr_item))
@@ -810,30 +810,30 @@ search_using_dag(Dag_node& curr_node,
 //      bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
 //      if (is_fict_vtx)
 //      {
-//        Curve_end vtx_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)));
+//        Curve_end vtx_ce(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)));
 //        print_ce_data(vtx_ce.cv(), vtx_ce.ce(), out);
 //      }
 //      else
 //      {
-//        print_point_data(boost::apply_visitor(point_for_vertex_visitor(),curr_item), out);
+//        print_point_data(std::visit(point_for_vertex_visitor(),curr_item), out);
 //      }
 //
-//      if ((is_fict_vtx && is_end_point_left_low(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
-//        (!is_fict_vtx &&  is_end_point_left_low(p, boost::apply_visitor(point_for_vertex_visitor(),curr_item))) )
+//      if ((is_fict_vtx && is_end_point_left_low(p, *(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+//        (!is_fict_vtx &&  is_end_point_left_low(p, std::visit(point_for_vertex_visitor(),curr_item))) )
 //      {
 //        out << " Going left " << std::endl;
 //        curr_node = curr_node.left_child();
 //        continue;
 //      }
-//      else if ((is_fict_vtx && is_end_point_right_top(p, *(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
-//               (!is_fict_vtx &&  is_end_point_right_top(p, boost::apply_visitor(point_for_vertex_visitor(),curr_item))) )
+//      else if ((is_fict_vtx && is_end_point_right_top(p, *(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)))) ||
+//               (!is_fict_vtx &&  is_end_point_right_top(p, std::visit(point_for_vertex_visitor(),curr_item))) )
 //      {
 //        out << " Going right " << std::endl;
 //        curr_node = curr_node.right_child();
 //        continue;
 //      }
-//      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-//               (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(),curr_item), p)) )
+//      else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+//               (!is_fict_vtx &&  traits->equal_2_object()(std::visit(point_for_vertex_visitor(),curr_item), p)) )
 //      {
 //        out << " Equal to query " << std::endl;
 //        if (he == m_empty_he_handle) //if he is the empty handle
@@ -876,7 +876,7 @@ search_using_dag(Dag_node& curr_node,
 //      // if curr_item represents an edge,
 //      //   so top() is a real Halfedge with a curve() if curr_item is active
 //      //   or curr_item holds the curve if it is not active
-//      const X_monotone_curve_2& he_cv = *(boost::apply_visitor(cv_for_edge_visitor(), curr_item));
+//      const X_monotone_curve_2& he_cv = *(std::visit(cv_for_edge_visitor(), curr_item));
 //
 //      out << " EDGE : " ;
 //      if (traits->is_active(curr_item))
@@ -951,7 +951,7 @@ search_using_dag(Dag_node& curr_node,
 //      if (traits->is_active(curr_item))
 //      {
 //        out << " (active) ";
-//        Td_active_trapezoid tr =  boost::get<Td_active_trapezoid>(curr_item);
+//        Td_active_trapezoid tr =  std::get<Td_active_trapezoid>(curr_item);
 //        if (tr.is_on_boundaries())
 //          out << " UNBOUNDED! ";
 //        else
@@ -1017,26 +1017,26 @@ search_using_dag_with_cv(Dag_node& curr_node,
 {
   while (true) {
     //curr_node is the current pointer to node in the data structure
-    //curr_item is the curent Td_map_item held in curr_node
+    //curr_item is the current Td_map_item held in curr_node
     Td_map_item curr_item(curr_node.get_data());
 
     if (traits->is_td_vertex(curr_item)) {
       // the curr_item represents a vertex
       //bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      //if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
-      //    (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
+      //if ((is_fict_vtx  && is_end_point_right_top(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+      //    (!is_fict_vtx && is_end_point_right_top(std::visit(point_for_vertex_visitor(), curr_item), ce)) )
       if (is_end_point_left_low(ce, curr_node)) {
         curr_node = curr_node.left_child();
         continue;
       }
-      //else if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
-      //         (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
+      //else if ((is_fict_vtx  && is_end_point_left_low(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+      //         (!is_fict_vtx && is_end_point_left_low(std::visit(point_for_vertex_visitor(), curr_item), ce)) )
       else if (is_end_point_right_top(ce, curr_node)) {
         curr_node = curr_node.right_child();
         continue;
       }
-      //else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
-      //         (!is_fict_vtx &&  traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), ce)) )
+      //else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), ce)) ||
+      //         (!is_fict_vtx &&  traits->equal_curve_end_2_object()(std::visit(point_for_vertex_visitor(), curr_item), ce)) )
       else if (are_equal_end_points(ce, curr_node)) {
         if (!p_cv) {
           // p_cv was not given
@@ -1070,13 +1070,13 @@ search_using_dag_with_cv(Dag_node& curr_node,
                        is_end_point_right_top(ce, curr_node) ||
                        are_equal_end_points(ce, curr_node));
           //(is_fict_vtx &&
-          //            (is_end_point_left_low(ce,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-          //             is_end_point_right_top(ce,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-          //             traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),ce))) ||
+          //            (is_end_point_left_low(ce,*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+          //             is_end_point_right_top(ce,*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+          //             traits->equal_curve_end_2_object()(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)),ce))) ||
           //           (!is_fict_vtx &&
-          //            (is_end_point_left_low(ce,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-          //             is_end_point_right_top(ce,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-          //             traits->equal_curve_end_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),ce))));
+          //            (is_end_point_left_low(ce,std::visit(point_for_vertex_visitor(), curr_item)) ||
+          //             is_end_point_right_top(ce,std::visit(point_for_vertex_visitor(), curr_item)) ||
+          //             traits->equal_curve_end_2_object()(std::visit(point_for_vertex_visitor(), curr_item),ce))));
         return Locate_type();
       }
     }
@@ -1086,7 +1086,7 @@ search_using_dag_with_cv(Dag_node& curr_node,
       //   or curr_item holds the curve if it is not active
 
       const X_monotone_curve_2& he_cv =
-        *(boost::apply_visitor(cv_for_edge_visitor(), curr_item));
+        *(std::visit(cv_for_edge_visitor(), curr_item));
       Comparison_result cres =
         traits->compare_curve_end_y_at_x_2_object()(ce, he_cv);
       if (cres == SMALLER) {
@@ -1174,7 +1174,7 @@ search_using_dag_with_cv(Dag_node& curr_node,
     else {
       // if is_degenerate() == 0, meaning: curr_item is a real trapezoid
       if (traits->is_active(curr_item)) {
-        Td_active_trapezoid& tr = boost::get<Td_active_trapezoid>(curr_item);
+        Td_active_trapezoid& tr = std::get<Td_active_trapezoid>(curr_item);
         return tr.is_on_boundaries() ? UNBOUNDED_TRAPEZOID : TRAPEZOID;
       }
       curr_node = curr_node.left_child();
@@ -1207,26 +1207,26 @@ search_using_dag_with_cv(Dag_node& curr_node,
 
   while (true) {
     //curr_node is the current pointer to node in the data structure
-    //curr_item is the curent Td_map_item held in curr_node
+    //curr_item is the current Td_map_item held in curr_node
     Td_map_item curr_item(curr_node.get_data());
 
     if (traits->is_td_vertex(curr_item)) {
       // the curr_item represents a vertex
       //bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
-      //if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-      //    (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      //if ((is_fict_vtx  && is_end_point_right_top(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+      //    (!is_fict_vtx && is_end_point_right_top(std::visit(point_for_vertex_visitor(), curr_item), p)) )
       if (is_end_point_left_low(p, curr_node)) {
         curr_node = curr_node.left_child();
         continue;
       }
-      //else if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-      //         (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      //else if ((is_fict_vtx  && is_end_point_left_low(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+      //         (!is_fict_vtx && is_end_point_left_low(std::visit(point_for_vertex_visitor(), curr_item), p)) )
       else if (is_end_point_right_top(p, curr_node)) {
         curr_node = curr_node.right_child();
         continue;
       }
-      //else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
-      //         (!is_fict_vtx &&  traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item), p)) )
+      //else if ((is_fict_vtx && traits->equal_curve_end_2_object()(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), p)) ||
+      //         (!is_fict_vtx &&  traits->equal_2_object()(std::visit(point_for_vertex_visitor(), curr_item), p)) )
       else if (are_equal_end_points(p, curr_node)) {
         if (!p_cv) {
           // p_cv was not given
@@ -1260,13 +1260,13 @@ search_using_dag_with_cv(Dag_node& curr_node,
                        is_end_point_right_top(p, curr_node) ||
                        are_equal_end_points(p, curr_node));
         //CGAL_assertion((is_fict_vtx &&
-        //              (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-        //               is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
-        //               traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
+        //              (is_end_point_left_low(p,*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+        //               is_end_point_right_top(p,*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item))) ||
+        //               traits->equal_curve_end_2_object()(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
         //             (!is_fict_vtx &&
-        //              (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-        //               is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
-        //               traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
+        //              (is_end_point_left_low(p,std::visit(point_for_vertex_visitor(), curr_item)) ||
+        //               is_end_point_right_top(p,std::visit(point_for_vertex_visitor(), curr_item)) ||
+        //               traits->equal_2_object()(std::visit(point_for_vertex_visitor(), curr_item),p))));
         return Locate_type();
       }
     }
@@ -1275,7 +1275,7 @@ search_using_dag_with_cv(Dag_node& curr_node,
       //   so top() is a real Halfedge with a curve() if curr_item is active
       //   or curr_item holds the curve if it is not active
       const X_monotone_curve_2& he_cv =
-        *(boost::apply_visitor(cv_for_edge_visitor(), curr_item));
+        *(std::visit(cv_for_edge_visitor(), curr_item));
       Comparison_result cres = traits->compare_y_at_x_2_object()(p, he_cv);
       if (cres == SMALLER) {
         curr_node = curr_node.left_child();
@@ -1351,7 +1351,7 @@ search_using_dag_with_cv(Dag_node& curr_node,
     else {
       // is_degenerate() == 0, meaning: curr_item is a real trapezoid
       if (traits->is_active(curr_item)) {
-        Td_active_trapezoid& tr = boost::get<Td_active_trapezoid>(curr_item);
+        Td_active_trapezoid& tr = std::get<Td_active_trapezoid>(curr_item);
         return tr.is_on_boundaries() ? UNBOUNDED_TRAPEZOID : TRAPEZOID;
       }
       curr_node = curr_node.left_child();
@@ -1377,7 +1377,7 @@ container2dag(Nodes_map& ar, int left, int right, int& num_of_new_nodes) const
     CGAL_assertion(traits->is_active(item));
     CGAL_assertion(traits->is_td_trapezoid(item));
     Dag_node& tr_node( ar.find(d)->second);
-    Td_active_trapezoid& tr(boost::get<Td_active_trapezoid>(tr_node.get_data()));
+    Td_active_trapezoid& tr(std::get<Td_active_trapezoid>(tr_node.get_data()));
     Vertex_const_handle v = tr.right();
 
     Curve_end ce(traits->vtx_to_ce(v));
@@ -1397,15 +1397,15 @@ container2dag(Nodes_map& ar, int left, int right, int& num_of_new_nodes) const
     }
 
     num_of_new_nodes++;
-    boost::apply_visitor(set_dag_node_visitor((Dag_node*)&(curr_node.left_child())), curr_node.left_child().get_data());
-    boost::apply_visitor(set_dag_node_visitor((Dag_node*)&(curr_node.right_child())), curr_node.right_child().get_data());
-    boost::apply_visitor(set_dag_node_visitor((Dag_node*)&curr_node),
+    std::visit(set_dag_node_visitor((Dag_node*)&(curr_node.left_child())), curr_node.left_child().get_data());
+    std::visit(set_dag_node_visitor((Dag_node*)&(curr_node.right_child())), curr_node.right_child().get_data());
+    std::visit(set_dag_node_visitor((Dag_node*)&curr_node),
                          curr_node.get_data());
     //curr_node.left_child()->set_dag_node(&curr_node.left_child());
     //curr_node.right_child()->set_dag_node(&curr_node.right_child());
     //curr_node->set_dag_node(&curr_node);// fake temporary node
     deactivate_vertex(curr_node); //curr_node->remove(); // mark as deleted
-    boost::apply_visitor(set_dag_node_visitor((Dag_node*)nullptr),
+    std::visit(set_dag_node_visitor((Dag_node*)nullptr),
                          curr_node.get_data());//curr_node->set_dag_node(0);
 
     return curr_node;
@@ -1423,7 +1423,7 @@ is_last_edge(Halfedge_const_handle /* he */ , Td_map_item& vtx_item)
   CGAL_precondition(traits->is_active(vtx_item));
 
   Vertex_const_handle
-    v(boost::apply_visitor(vertex_for_active_vertex_visitor(), vtx_item));
+    v(std::visit(vertex_for_active_vertex_visitor(), vtx_item));
 
   typename Arrangement_on_surface_2::Halfedge_around_vertex_const_circulator
     first, second;
@@ -1443,7 +1443,7 @@ is_last_edge(Halfedge_const_handle /* he */ , Td_map_item& vtx_item)
 // Remark:
 //  Given an edge-degenerate trapezoid representing a Halfedge,
 //  all the other trapezoids representing the Halfedge can be extracted
-//  via moving continously to the left and right neighbours.
+//  via moving continuously to the left and right neighbors.
 template <typename Td_traits>
 typename Trapezoidal_decomposition_2<Td_traits>::Td_map_item
 Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
@@ -1518,13 +1518,13 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
 
   // locate and insert end points of the input halfedge to the Td_map_item
   // Dag if needed
-  Dag_node p1_node(*(boost::apply_visitor(dag_node_visitor(), p1_item)));
-  //Dag_node p2_node(*(boost::apply_visitor(dag_node_visitor(), p2_item)));// Not in use
+  Dag_node p1_node(*(std::visit(dag_node_visitor(), p1_item)));
+  //Dag_node p2_node(*(std::visit(dag_node_visitor(), p2_item)));// Not in use
 
   // create the Td_map_item iterator for traveling along the Trapezoids that
   // intersect the input Halfedge, using left-low to right-high order
   In_face_iterator it = follow_curve(p1_node,he,LARGER);
-  boost::optional<Td_active_trapezoid> curr_trp = boost::none;
+  std::optional<Td_active_trapezoid> curr_trp = std::nullopt;
   Td_map_item prev = p1_item;
   Td_map_item prev_bottom_tr = Td_map_item(0); //active_tr
   Td_map_item prev_top_tr = Td_map_item(0); //active_tr
@@ -1539,7 +1539,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
 
   while(!!it) { //this means as long as the iterator is valid
     curr_trp = it.trp();
-    CGAL_assertion(curr_trp != boost::none);
+    CGAL_assertion(curr_trp != std::nullopt);
     prev_bottom_tr = (*curr_trp).lb();
     prev_top_tr = (*curr_trp).lt();
 
@@ -1568,7 +1568,7 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
                      traits->is_active(new_btm_item));
       if (merge_if_possible(prev_bottom_tr, new_btm_item)) {
         Dag_node* left_child_node =
-          boost::apply_visitor(dag_node_visitor(),prev_bottom_tr);
+          std::visit(dag_node_visitor(),prev_bottom_tr);
         node->set_left_child(*left_child_node);
         old_bottom_tr = prev_bottom_tr;
         m_number_of_dag_nodes--; //update number of nodes in the DAG after merge
@@ -1581,13 +1581,13 @@ Trapezoidal_decomposition_2<Td_traits>::insert(Halfedge_const_handle he)
       CGAL_assertion(traits->is_td_trapezoid(new_top_item) &&
                      traits->is_active(new_top_item));
       if (merge_if_possible(prev_top_tr, new_top_item)) {
-        Dag_node* right_child_node = boost::apply_visitor(dag_node_visitor(),
+        Dag_node* right_child_node = std::visit(dag_node_visitor(),
                                                           prev_top_tr);
         node->set_right_child(*right_child_node);
         old_top_tr = prev_top_tr;
         m_number_of_dag_nodes--; //update number of DAG nodes after merge
       }
-      // update trapezoid's left/right neighbouring relations
+      // update trapezoid's left/right neighboring relations
       //MICHAL: if the assertion below fails then we need to check why
       CGAL_assertion(!traits->is_td_trapezoid(prev));
       if (traits->is_td_trapezoid(prev)) {
@@ -1654,14 +1654,14 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
 
   if (lt1 != POINT || lt2 != POINT) return;
 
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), p1_item) != nullptr);
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), p2_item) != nullptr);
+  CGAL_warning(std::visit(dag_node_visitor(), p1_item) != nullptr);
+  CGAL_warning(std::visit(dag_node_visitor(), p2_item) != nullptr);
 
   //retrieve the Dag_nodes of the two point-degenerate trapezoid
-  Dag_node& p1_node = *(boost::apply_visitor(dag_node_visitor(), p1_item));
-  Dag_node& p2_node = *(boost::apply_visitor(dag_node_visitor(), p2_item));
+  Dag_node& p1_node = *(std::visit(dag_node_visitor(), p1_item));
+  Dag_node& p2_node = *(std::visit(dag_node_visitor(), p2_item));
 
-  //calculate the immediate lower, central and upper neighbourhood of
+  //calculate the immediate lower, central and upper neighborhood of
   // the curve in the data structure
   //In_face_iterator btm_it(follow_curve(tt1,he,SMALLER));
   In_face_iterator btm_it(follow_curve(p1_node,he,SMALLER));
@@ -1725,7 +1725,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
     //copy trapezoid data from btm and top trapezoids
     Dag_node& new_node = (new_array.find(sz))->second;
     ++sz;
-    Td_active_trapezoid& tr(boost::get<Td_active_trapezoid>(new_node.get_data()));
+    Td_active_trapezoid& tr(std::get<Td_active_trapezoid>(new_node.get_data()));
     tr.set_dag_node(&new_node);
     tr.set_lb(btm_it_tr.lb());
     tr.set_lt(top_it_tr.lt());
@@ -1741,13 +1741,13 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
     }
     if (!traits->is_empty_item(tr.lb())) {
       Td_map_item lb_item = tr.lb();
-      Td_active_trapezoid& lb_tr(boost::get<Td_active_trapezoid>(lb_item));
+      Td_active_trapezoid& lb_tr(std::get<Td_active_trapezoid>(lb_item));
       lb_tr.set_rb(new_node.get_data());
     }
     if (!traits->is_empty_item(tr.lt()))
     {
       Td_map_item lt_item = tr.lt();
-      Td_active_trapezoid& lt_tr(boost::get<Td_active_trapezoid>(lt_item));
+      Td_active_trapezoid& lt_tr(std::get<Td_active_trapezoid>(lt_item));
       lt_tr.set_rt(new_node.get_data());
     }
 
@@ -1764,28 +1764,28 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
     //curr_it_tr  = *(curr_it.trp());
     end_reached = !btm_it || !top_it;
 
-    //copy neighbouring trapezoids in case top/btm are not the same for the old
+    //copy neighboring trapezoids in case top/btm are not the same for the old
     //  trapezoid and the next trapezoid after incrementing the old one
     if (!btm_it ||
         (inc_btm && !traits->is_trpz_bottom_equal(old_tr_item, *curr_it)))
     {
-      Td_map_item rb(boost::apply_visitor(rb_visitor(), old_tr_item));
+      Td_map_item rb(std::visit(rb_visitor(), old_tr_item));
       if (!traits->is_empty_item(rb)) {
-        boost::apply_visitor(set_lb_visitor(last_new_tr_item), rb);
+        std::visit(set_lb_visitor(last_new_tr_item), rb);
         //rb->set_lb(last_new_tr);
-        boost::apply_visitor(set_rb_visitor(rb), last_new_tr_item);
+        std::visit(set_rb_visitor(rb), last_new_tr_item);
         //last_new_tr->set_rb(rb);
       }
     }
     if (!top_it ||
         (!inc_btm && !traits->is_trpz_top_equal(old_tr_item,*curr_it)))
     {
-      Td_map_item rt(boost::apply_visitor(rt_visitor(), old_tr_item));
+      Td_map_item rt(std::visit(rt_visitor(), old_tr_item));
       if (!traits->is_empty_item(rt))
       {
-        boost::apply_visitor(set_lt_visitor(last_new_tr_item), rt);
+        std::visit(set_lt_visitor(last_new_tr_item), rt);
         //rt->set_lt(last_new_tr);
-        boost::apply_visitor(set_rt_visitor(rt), last_new_tr_item);
+        std::visit(set_rt_visitor(rt), last_new_tr_item);
         //last_new_tr->set_rt(rt);
       }
     }
@@ -1793,7 +1793,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
     //set the no longer relevant trapezoids as removed and add the new nodes
     //  as their replacement
 
-    Dag_node* last_tr_node(boost::apply_visitor(dag_node_visitor(),
+    Dag_node* last_tr_node(std::visit(dag_node_visitor(),
                                                 last_tr_item));
 
     if (prev_inc_btm != inc_btm) {
@@ -1827,7 +1827,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
 
     // update the dag node pointer in the trapezoid
     const Dag_node* real = &last_tr_node->left_child();
-    boost::apply_visitor(set_dag_node_visitor((Dag_node*)real),real->get_data()); //(*real)->set_dag_node((Dag_node*)real);
+    std::visit(set_dag_node_visitor((Dag_node*)real),real->get_data()); //(*real)->set_dag_node((Dag_node*)real);
   }
   while(!end_reached);
 
@@ -1853,18 +1853,18 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
   m_number_of_dag_nodes += num_of_new_nodes; //new node (tmp) was added
 
   const Dag_node* real = &tr.dag_node()->left_child();
-  boost::apply_visitor(set_dag_node_visitor((Dag_node*)real),real->get_data()); //(*real)->set_dag_node((Dag_node*)real);
+  std::visit(set_dag_node_visitor((Dag_node*)real),real->get_data()); //(*real)->set_dag_node((Dag_node*)real);
 
   if (!traits->is_empty_item(rb)) {
-    boost::apply_visitor(set_rb_visitor(rb),last_new_tr_item);
+    std::visit(set_rb_visitor(rb),last_new_tr_item);
     //last_new_tr->set_rb(rb);
-    boost::apply_visitor(set_lb_visitor(last_new_tr_item),rb);
+    std::visit(set_lb_visitor(last_new_tr_item),rb);
     //rb->set_lb(last_new_tr);
   }
   if (!traits->is_empty_item(rt)) {
-    boost::apply_visitor(set_rt_visitor(rt),last_new_tr_item);
+    std::visit(set_rt_visitor(rt),last_new_tr_item);
     //last_new_tr->set_rt(rt);
-    boost::apply_visitor(set_lt_visitor(last_new_tr_item),rt);
+    std::visit(set_lt_visitor(last_new_tr_item),rt);
     //rt->set_lt(last_new_tr);
   }
 
@@ -1876,7 +1876,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
   //Base_trapezoid_iterator last_mid = mid_it;
   Dag_node* e_node = nullptr;
   while (!!++mid_it) {
-    e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it);
+    e_node = std::visit(dag_node_visitor(),*last_edge_fragment_it);
     deactivate_edge(removed_cv_ptr,*e_node); //last_mid->remove();
     last_edge_fragment_it = mid_it;
   }
@@ -1885,7 +1885,7 @@ void Trapezoidal_decomposition_2<Td_traits>::remove(Halfedge_const_handle he)
   //4. remove adjacency at right end point
 
   //remove the final trapezoid representing the removed halfedge
-  e_node = boost::apply_visitor(dag_node_visitor(),*last_edge_fragment_it);
+  e_node = std::visit(dag_node_visitor(),*last_edge_fragment_it);
   deactivate_edge(removed_cv_ptr,*e_node); //last_mid->remove();
 
   //-----------------------------------
@@ -1945,7 +1945,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
        p
        x------x
     */
-    Td_active_trapezoid& tr(boost::get<Td_active_trapezoid>(item));
+    Td_active_trapezoid& tr(std::get<Td_active_trapezoid>(item));
 
     if ((up_direction && !tr.is_on_right_boundary() &&
          (traits->compare_curve_end_x_2_object()
@@ -2114,7 +2114,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  CGAL_warning(old_t.dag_node());
 //
 //#endif
-//  //the DAG node of the curve trapezoid where the spiltting point is
+//  //the DAG node of the curve trapezoid where the splitting point is
 //  Dag_node& old_split_node = *old_t.dag_node();
 //
 //  CGAL_assertion(traits->equal_curve_end_2_object()
@@ -2202,7 +2202,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  In_face_iterator& top_it = *m_before_split.m_p_top_it;
 //  //MICHAL: new end
 //
-//  //the DAG node of the curve trapezoid where the spiltting point is
+//  //the DAG node of the curve trapezoid where the splitting point is
 //  Dag_node& old_split_node = *old_t.dag_node();
 //
 //
@@ -2340,7 +2340,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  }
 //  else // new_left_t is leftmost representative for he
 //  {
-//    //set_neighbours_after_split_halfedge_update (new_left_t, t1, he1, he2); //MICHAL: this method does nothing
+//    //set_neighbors_after_split_halfedge_update (new_left_t, t1, he1, he2); //MICHAL: this method does nothing
 //  }
 //  if (t1.rt()==&old_t) t1.set_rt(&new_left_t);
 //  if (t1.lb()==&old_t) t1.set_lb(&new_left_t);
@@ -2366,7 +2366,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  }
 //  else // new_right_t is rightmost representative for te
 //  {
-//    //set_neighbours_after_split_halfedge_update (new_right_t,t2,he1, he2,false); //MICHAL: this method does nothing
+//    //set_neighbors_after_split_halfedge_update (new_right_t,t2,he1, he2,false); //MICHAL: this method does nothing
 //  }
 //  if (t2.rt()==&old_t) t2.set_rt(&new_right_t);
 //  if (t2.lb()==&old_t) t2.set_lb(&new_right_t);
@@ -2409,7 +2409,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  // update top curves
 //  bottom_tt.left_child()->set_top(left_he);
 //  bottom_tt.right_child()->set_top(right_he);
-//  // left and right are not neighbours.
+//  // left and right are not neighbors.
 //  bottom_tt.left_child()->set_rt(0);
 //  bottom_tt.right_child()->set_lt(0);
 //
@@ -2467,7 +2467,7 @@ vertical_ray_shoot(const Point & p,Locate_type & lt,
 //  // update bottom side
 //  top_tt.left_child()->set_bottom(left_he);
 //  top_tt.right_child()->set_bottom(right_he);
-//  // left and right aren't neighbours
+//  // left and right aren't neighbors
 //  top_tt.left_child()->set_rb(0);
 //  top_tt.right_child()->set_lb(0);
 //
@@ -2637,9 +2637,9 @@ merge_edge(Halfedge_const_handle he1,
   Td_map_item mrgp_item = locate(ce, lt);
 
   //varifying that all trapezoids are not nullptr and are of type POINT
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), leftp_item) != nullptr);
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), rightp_item)!= nullptr);
-  CGAL_warning(boost::apply_visitor(dag_node_visitor(), mrgp_item)  != nullptr);
+  CGAL_warning(std::visit(dag_node_visitor(), leftp_item) != nullptr);
+  CGAL_warning(std::visit(dag_node_visitor(), rightp_item)!= nullptr);
+  CGAL_warning(std::visit(dag_node_visitor(), mrgp_item)  != nullptr);
 
   //define the left curve and the right curve, according
   //  to the common point (that is merged)
@@ -2679,8 +2679,8 @@ merge_edge(Halfedge_const_handle he1,
 #endif
 
   //get the nodes of leftmost point and merge point
-  Dag_node& leftp_node = *(boost::apply_visitor(dag_node_visitor(), leftp_item));
-  Dag_node& mrgp_node = *(boost::apply_visitor(dag_node_visitor(), mrgp_item));
+  Dag_node& leftp_node = *(std::visit(dag_node_visitor(), leftp_item));
+  Dag_node& mrgp_node = *(std::visit(dag_node_visitor(), mrgp_item));
 
   //set iterators for below left curve, on left curve & above left curve
   In_face_iterator
@@ -2760,15 +2760,15 @@ merge_edge(Halfedge_const_handle he1,
   merge_if_possible(below_cv_left, below_cv_right);
 
   // mark older trapezoids as inactive - nodes depth are updated here
-  Dag_node* above_cv_right_node(boost::apply_visitor(dag_node_visitor(),
+  Dag_node* above_cv_right_node(std::visit(dag_node_visitor(),
                                                      above_cv_right));
-  Dag_node* above_cv_left_node(boost::apply_visitor(dag_node_visitor(),
+  Dag_node* above_cv_left_node(std::visit(dag_node_visitor(),
                                                     above_cv_left));
   deactivate_trapezoid( *above_cv_right_node, above_cv_left_node);
   //above_cv_right->remove(above_cv_left->dag_node());
-  Dag_node* below_cv_right_node(boost::apply_visitor(dag_node_visitor(),
+  Dag_node* below_cv_right_node(std::visit(dag_node_visitor(),
                                                      below_cv_right));
-  Dag_node* below_cv_left_node(boost::apply_visitor(dag_node_visitor(),
+  Dag_node* below_cv_left_node(std::visit(dag_node_visitor(),
                                                     below_cv_left));
   deactivate_trapezoid( *below_cv_right_node, below_cv_left_node);
   //below_cv_right->remove(below_cv_left->dag_node());
@@ -2788,7 +2788,7 @@ merge_edge(Halfedge_const_handle he1,
   CGAL_assertion(traits->is_td_edge(on_cv_left) &&
                  traits->is_active(on_cv_left));
 
-  Td_active_edge& e_left(boost::get<Td_active_edge>(on_cv_left));
+  Td_active_edge& e_left(std::get<Td_active_edge>(on_cv_left));
   e_left.set_next(on_cv_right);
 
   CGAL_assertion(traits->is_td_edge(on_cv_right) &&
@@ -2830,17 +2830,17 @@ longest_query_path_length_rec(bool minus_inf, Dag_node& min_node,
   if (!minus_inf && !plus_inf) {
     Td_map_item min_node_item(min_node.get_data());
     if (traits->is_fictitious_vertex(min_node_item)) {
-      const Curve_end min_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),min_node_item)));
+      const Curve_end min_ce(*(std::visit(curve_end_for_fict_vertex_visitor(),min_node_item)));
 
       Td_map_item max_node_item(max_node.get_data());
       if (traits->is_fictitious_vertex(max_node_item)) {
-        const Curve_end max_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),max_node_item)));
+        const Curve_end max_ce(*(std::visit(curve_end_for_fict_vertex_visitor(),max_node_item)));
 
         //min-fict, max-fict
         if (!is_end_point_left_low(min_ce, max_ce)) return 0;
       }
       else {
-        const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),
+        const Point& max_p(std::visit(point_for_vertex_visitor(),
                                                 max_node_item));
 
         //min-fict, max-pt
@@ -2849,18 +2849,18 @@ longest_query_path_length_rec(bool minus_inf, Dag_node& min_node,
       }
     }
     else {
-      const Point& min_p(boost::apply_visitor(point_for_vertex_visitor(),
+      const Point& min_p(std::visit(point_for_vertex_visitor(),
                                               min_node_item));
 
       Td_map_item max_node_item(max_node.get_data());
       if (traits->is_fictitious_vertex(max_node_item)) {
-        const Curve_end max_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),max_node_item)));
+        const Curve_end max_ce(*(std::visit(curve_end_for_fict_vertex_visitor(),max_node_item)));
 
         //min-pt, max-fict
         if (!is_end_point_left_low(min_p, max_ce)) return 0;
       }
       else {
-        const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),
+        const Point& max_p(std::visit(point_for_vertex_visitor(),
                                                 max_node_item));
 
         //min-pt, max-pt
@@ -2893,19 +2893,19 @@ longest_query_path_length_rec(bool minus_inf, Dag_node& min_node,
   if (!minus_inf) {
     Td_map_item min_node_item(min_node.get_data());
     if (traits->is_fictitious_vertex(min_node_item)) {
-      const Curve_end min_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),min_node_item)));
+      const Curve_end min_ce(*(std::visit(curve_end_for_fict_vertex_visitor(),min_node_item)));
       //if smaller than the point represented by min_node
-      //if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_ce)) ||
-      //    (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_ce) ))
+      //if ((is_fict_vtx  && is_end_point_left_low(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), min_ce)) ||
+      //    (!is_fict_vtx && is_end_point_left_low(std::visit(point_for_vertex_visitor(), curr_item), min_ce) ))
       if (is_end_point_right_top(min_ce, node)) {
         new_min_node = min_node;
       }
     }
     else {
-      const Point& min_p(boost::apply_visitor(point_for_vertex_visitor(),min_node_item));
+      const Point& min_p(std::visit(point_for_vertex_visitor(),min_node_item));
       //if smaller than the point represented by min_node
-      //if ((is_fict_vtx  && is_end_point_left_low(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), min_p)) ||
-      //    (!is_fict_vtx && is_end_point_left_low(boost::apply_visitor(point_for_vertex_visitor(), curr_item), min_p) ))
+      //if ((is_fict_vtx  && is_end_point_left_low(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), min_p)) ||
+      //    (!is_fict_vtx && is_end_point_left_low(std::visit(point_for_vertex_visitor(), curr_item), min_p) ))
       if (is_end_point_right_top(min_p, node)) {
         new_min_node = min_node;
       }
@@ -2917,21 +2917,21 @@ longest_query_path_length_rec(bool minus_inf, Dag_node& min_node,
   if (!plus_inf) {
     Td_map_item max_node_item(max_node.get_data());
     if (traits->is_fictitious_vertex(max_node_item)) {
-      const Curve_end max_ce(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),max_node_item)));
+      const Curve_end max_ce(*(std::visit(curve_end_for_fict_vertex_visitor(),max_node_item)));
       //if larger than the point represented by max_node
-      //if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_ce)) ||
-      //    (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_ce) ))
+      //if ((is_fict_vtx  && is_end_point_right_top(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), max_ce)) ||
+      //    (!is_fict_vtx && is_end_point_right_top(std::visit(point_for_vertex_visitor(), curr_item), max_ce) ))
       if (is_end_point_left_low(max_ce, node))
       {
         new_max_node = max_node;
       }
     }
     else {
-      const Point& max_p(boost::apply_visitor(point_for_vertex_visitor(),
+      const Point& max_p(std::visit(point_for_vertex_visitor(),
                                               max_node_item));
       //if smaller than the point represented by min_node
-      //if ((is_fict_vtx  && is_end_point_right_top(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)), max_p)) ||
-      //    (!is_fict_vtx && is_end_point_right_top(boost::apply_visitor(point_for_vertex_visitor(), curr_item), max_p) ))
+      //if ((is_fict_vtx  && is_end_point_right_top(*(std::visit(curve_end_for_fict_vertex_visitor(),curr_item)), max_p)) ||
+      //    (!is_fict_vtx && is_end_point_right_top(std::visit(point_for_vertex_visitor(), curr_item), max_p) ))
       if (is_end_point_left_low(max_p, node)) {
         new_max_node = max_node;
       }

@@ -19,9 +19,7 @@ Models and functions that can be used to compute weights which have a simple ana
 \defgroup PkgWeightsRefUniformWeights Uniform Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/uniform_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/uniform_weights.h}
 
 This weight is always equal to 1.
 
@@ -35,9 +33,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefShepardWeights Shepard Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/shepard_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/shepard_weights.h}
 
 This weight is computed as
 \f$w = \frac{1}{d^a}\f$
@@ -65,9 +61,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefInverseDistanceWeights Inverse Distance Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/inverse_distance_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/inverse_distance_weights.h}
 
 This weight is computed as
 \f$w = \frac{1}{d}\f$
@@ -96,9 +90,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefThreePointFamilyWeights Three Point Family Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/three_point_family_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/three_point_family_weights.h}
 
 This weight is computed as
 \f$w = \frac{d_2^a A_0 - d^a B + d_0^a A_2}{A_0 A_2}\f$
@@ -137,9 +129,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefWachspressWeights Wachspress Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/wachspress_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/wachspress_weights.h}
 
 This weight is computed as
 \f$w = \frac{C}{A_0 A_2}\f$
@@ -170,9 +160,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefAuthalicWeights Authalic Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/authalic_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/authalic_weights.h}
 
 This weight is computed as
 \f$w = 2 \frac{\cot\beta + \cot\gamma}{d^2}\f$
@@ -202,9 +190,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefMeanValueWeights Mean Value Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/mean_value_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/mean_value_weights.h}
 
 This weight is computed as
 \f$w = \pm 2 \sqrt{\frac{2 (d_0 d_2 - D)}{(d d_0 + D_0)(d d_2 + D_2)}}\f$
@@ -241,9 +227,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefTangentWeights Tangent Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/tangent_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/tangent_weights.h}
 
 This weight is computed as
 \f$w = 2 \frac{t_1 + t_2}{d}\f$, where
@@ -278,9 +262,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefDiscreteHarmonicWeights Discrete Harmonic Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/discrete_harmonic_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/discrete_harmonic_weights.h}
 
 This weight is computed as
 \f$w = \frac{d_2^2 A_0 - d^2 B + d_0^2 A_2}{A_0 A_2}\f$
@@ -311,9 +293,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefCotangentWeights Cotangent Weight
 \ingroup PkgWeightsRefAnalytic
 
-\verbatim
-#include <CGAL/Weights/cotangent_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/cotangent_weights.h}
 
 This weight is computed as
 \f$w = 2 (\cot\beta + \cot\gamma)\f$
@@ -348,9 +328,7 @@ to polygons. These weights are then normalized in order to obtain barycentric co
 \defgroup PkgWeightsRefBarycentricWachspressWeights Wachspress Weights
 \ingroup PkgWeightsRefBarycentric
 
-\verbatim
-#include <CGAL/Weights/wachspress_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/wachspress_weights.h}
 
 Wachspress weights which can be computed for a query point with respect to the
 vertices of a strictly convex polygon.
@@ -361,9 +339,7 @@ vertices of a strictly convex polygon.
 \defgroup PkgWeightsRefBarycentricMeanValueWeights Mean Value Weights
 \ingroup PkgWeightsRefBarycentric
 
-\verbatim
-#include <CGAL/Weights/mean_value_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/mean_value_weights.h}
 
 Mean value weights which can be computed for a query point with respect to the
 vertices of a simple polygon.
@@ -374,9 +350,7 @@ vertices of a simple polygon.
 \defgroup PkgWeightsRefBarycentricDiscreteHarmonicWeights Discrete Harmonic Weights
 \ingroup PkgWeightsRefBarycentric
 
-\verbatim
-#include <CGAL/Weights/discrete_harmonic_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/discrete_harmonic_weights.h}
 
 Discrete Harmonic weights which can be computed for a query point with respect to the
 vertices of a strictly convex polygon.
@@ -394,9 +368,7 @@ used to balance other weights.
 \defgroup PkgWeightsRefUniformRegionWeights Uniform Region Weight
 \ingroup PkgWeightsRefRegions
 
-\verbatim
-#include <CGAL/Weights/uniform_region_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/uniform_region_weights.h}
 
 This weight is always equal to 1.
 
@@ -410,9 +382,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefTriangularRegionWeights Triangular Region Weight
 \ingroup PkgWeightsRefRegions
 
-\verbatim
-#include <CGAL/Weights/triangular_region_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/triangular_region_weights.h}
 
 This weight is the area of the shaded region in the figure below. The region is
 the triangle `[p, q, r]`.
@@ -431,9 +401,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefBarycentricRegionWeights Barycentric Region Weight
 \ingroup PkgWeightsRefRegions
 
-\verbatim
-#include <CGAL/Weights/barycentric_region_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/barycentric_region_weights.h}
 
 This weight is the area of the shaded region in the figure below. The region
 is formed by the two midpoints of the edges incident to `q` and the barycenter of
@@ -453,9 +421,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefVoronoiRegionWeights Voronoi Region Weight
 \ingroup PkgWeightsRefRegions
 
-\verbatim
-#include <CGAL/Weights/voronoi_region_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/voronoi_region_weights.h}
 
 This weight is the area of the shaded region in the figure below. The region
 is formed by the two midpoints of the edges incident to `q` and the circumcenter of
@@ -477,9 +443,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \defgroup PkgWeightsRefMixedVoronoiRegionWeights Mixed Voronoi Region Weight
 \ingroup PkgWeightsRefRegions
 
-\verbatim
-#include <CGAL/Weights/mixed_voronoi_region_weights.h>
-\endverbatim
+\cgalInclude{CGAL/Weights/mixed_voronoi_region_weights.h}
 
 This weight is the area of the shaded region in the figure below. The region
 is formed by the two midpoints of the edges incident to `q` and the circumcenter of
@@ -513,7 +477,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 \cgalPkgPicture{weights_logo_120x120.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Dmitry Anisimov}
+\cgalPkgAuthor{Dmitry Anisimov}
 \cgalPkgDesc{Many geometric algorithms rely on weighted constructions. This package
 provides a simple and unified interface to different types of weights. In particular,
 it includes numerous weights with a simple analytic expression, generalized barycentric

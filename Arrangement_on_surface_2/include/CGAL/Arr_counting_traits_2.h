@@ -21,7 +21,7 @@
  * A counting traits-class for the arrangement package.
  * This is a meta-traits class. It is parameterized with another traits class
  * and inherits from it. For each traits method it maintains a counter that
- * counts the number of invokations into the method.
+ * counts the number of invocations into the method.
  */
 
 #include <iostream>

@@ -413,7 +413,7 @@ int   gif89 = 0;
 
 
 
-  /* Start reading the raster data. First we get the intial code size
+  /* Start reading the raster data. First we get the initial code size
    * and compute decompressor constant values, based on this code size.
    */
 

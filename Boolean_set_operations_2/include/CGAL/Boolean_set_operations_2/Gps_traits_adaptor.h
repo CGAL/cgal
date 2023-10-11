@@ -132,7 +132,7 @@ public:
         }
 
         if (from_leftmost == end) {
-          // First occurance
+          // First occurrence
           from_leftmost = from;
           into_leftmost = into;
           into = from;

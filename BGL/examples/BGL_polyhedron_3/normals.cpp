@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 
   // Ad hoc property_map to store normals. Face_index_map is used to
   // map face_descriptors to a contiguous range of indices. See
-  // http://www.boost.org/libs/property_map/doc/vector_property_map.html
+  // https://www.boost.org/libs/property_map/doc/vector_property_map.html
   // for details.
   boost::vector_property_map<Vector, Face_index_map>
     normals(static_cast<unsigned>(num_faces(P)), get(CGAL::face_index, P));

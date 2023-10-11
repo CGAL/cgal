@@ -41,7 +41,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                        C3t3;
 typedef CGAL::Mesh_criteria_3<Tr>                           Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Implicit functions
 FT sphere_function(const Point& p)
@@ -78,11 +78,11 @@ int main(int argc, char** argv)
   Multi_domain_wrapper multi_domain_function(funcs, vps);
   Periodic_mesh_domain domain(multi_domain_function, canonical_cube);
 
-  Periodic_mesh_criteria criteria(facet_angle = 30,
-                                  facet_size = 0.04,
-                                  facet_distance = 0.025,
-                                  cell_radius_edge_ratio = 2.,
-                                  cell_size = 0.04);
+  Periodic_mesh_criteria criteria(params::facet_angle(30)
+                                         .facet_size(0.04)
+                                         .facet_distance(0.025)
+                                         .cell_radius_edge_ratio(2.)
+                                         .cell_size(0.04));
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);

@@ -22,14 +22,14 @@ namespace CGAL {
 template <class K>
 class Sphere_3;
 
-/** Defaut traits class.
+/** Default traits class.
  *  Partial specialization will be in other headers
 */
 template <typename Surface>
 struct Surface_mesh_traits_generator_3
 {
   typedef typename Surface::Surface_mesher_traits_3 Type;
-  typedef Type type; // for Boost compatiblity (meta-programming)
+  typedef Type type; // for Boost compatibility (meta-programming)
 };
 
   // specialization for Kernel::Sphere_3
@@ -37,7 +37,7 @@ template <typename Kernel>
 struct Surface_mesh_traits_generator_3<CGAL::Sphere_3<Kernel> >
 {
   typedef Surface_mesher::Sphere_oracle_3<Kernel> Type;
-  typedef Type type; // for Boost compatiblity (meta-programming)
+  typedef Type type; // for Boost compatibility (meta-programming)
 };
 
 } // end namespace CGAL

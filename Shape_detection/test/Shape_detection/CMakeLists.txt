@@ -6,26 +6,37 @@ project(Shape_detection_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-# Use Eigen.
+create_single_source_cgal_program("test_efficient_RANSAC_cone_connected_component.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_cone_parameters.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_cylinder_connected_component.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_cylinder_parameters.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_plane_connected_component.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_plane_parameters.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_sphere_connected_component.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_sphere_parameters.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_torus_connected_component.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_torus_parameters.cpp")
+create_single_source_cgal_program("test_efficient_RANSAC_scene.cpp")
+
 find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
 include(CGAL_Eigen3_support)
-if(EIGEN3_FOUND)
+if(TARGET CGAL::Eigen3_support)
+
   create_single_source_cgal_program("test_region_growing_basic.cpp")
+  create_single_source_cgal_program("test_region_growing_strict.cpp")
   create_single_source_cgal_program("test_region_growing_on_cube.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_2.cpp")
   create_single_source_cgal_program("test_region_growing_on_point_set_3.cpp")
   create_single_source_cgal_program("test_region_growing_on_polygon_mesh.cpp")
-  create_single_source_cgal_program(
-    "test_region_growing_on_point_set_2_with_sorting.cpp")
-  create_single_source_cgal_program(
-    "test_region_growing_on_point_set_3_with_sorting.cpp")
-  create_single_source_cgal_program(
-    "test_region_growing_on_polygon_mesh_with_sorting.cpp")
-  create_single_source_cgal_program(
-    "test_region_growing_on_degenerated_mesh.cpp")
+  create_single_source_cgal_program("test_region_growing_on_point_set_2_with_sorting.cpp")
+  create_single_source_cgal_program("test_region_growing_on_point_set_3_with_sorting.cpp")
+  create_single_source_cgal_program("test_region_growing_on_polygon_mesh_with_sorting.cpp")
+  create_single_source_cgal_program("test_region_growing_on_degenerated_mesh.cpp")
+
   foreach(
     target
     test_region_growing_basic
+    test_region_growing_strict
     test_region_growing_on_cube
     test_region_growing_on_point_set_2
     test_region_growing_on_point_set_3
@@ -38,7 +49,7 @@ if(EIGEN3_FOUND)
   endforeach()
 
   set(RANSAC_PROTO_DIR CACHE PATH "")
-  if (NOT RANSAC_PROTO_DIR STREQUAL "")
+  if(NOT RANSAC_PROTO_DIR STREQUAL "")
     add_definitions(-DPOINTSWITHINDEX -DCGAL_TEST_RANSAC_PROTOTYPE)
     include_directories(${RANSAC_PROTO_DIR})
     include_directories(${RANSAC_PROTO_DIR}/MiscLib/)
@@ -52,27 +63,6 @@ if(EIGEN3_FOUND)
     target_link_libraries(test_validity_sampled_data CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
   endif()
   cgal_add_test(test_validity_sampled_data)
+else()
+  message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
-
-create_single_source_cgal_program(
-  "test_efficient_RANSAC_cone_connected_component.cpp")
-create_single_source_cgal_program("test_efficient_RANSAC_cone_parameters.cpp")
-
-create_single_source_cgal_program(
-  "test_efficient_RANSAC_cylinder_connected_component.cpp")
-create_single_source_cgal_program(
-  "test_efficient_RANSAC_cylinder_parameters.cpp")
-
-create_single_source_cgal_program(
-  "test_efficient_RANSAC_plane_connected_component.cpp")
-create_single_source_cgal_program("test_efficient_RANSAC_plane_parameters.cpp")
-
-create_single_source_cgal_program(
-  "test_efficient_RANSAC_sphere_connected_component.cpp")
-create_single_source_cgal_program("test_efficient_RANSAC_sphere_parameters.cpp")
-
-create_single_source_cgal_program(
-  "test_efficient_RANSAC_torus_connected_component.cpp")
-create_single_source_cgal_program("test_efficient_RANSAC_torus_parameters.cpp")
-
-create_single_source_cgal_program("test_efficient_RANSAC_scene.cpp")

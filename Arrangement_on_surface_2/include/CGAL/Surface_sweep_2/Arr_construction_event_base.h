@@ -40,10 +40,10 @@ namespace Ss2 = Surface_sweep_2;
  * information is stored, in order to expedite the insertion of curves into the
  * arrangement.
  *
- * The additional infomation contains the following:
+ * The additional information contains the following:
  * - among the left curves of the event, we keep the highest halfedge that
  *   was inserted into the arrangement at any given time and when there are no
- *   left curves, we keep the highest halfedge that was inseted to the right.
+ *   left curves, we keep the highest halfedge that was inserted to the right.
  *
  * \tparam GeometryTraits_2 the geometry traits.
  * \tparam Allocator_ a type of an element that is used to acquire/release
@@ -174,7 +174,7 @@ public:
   }
 
   /*! Return true iff 'curve' is the toppest curve among the halfedges
-   *  to the right fo the event that were already were inserted to the
+   *  to the right of the event that were already were inserted to the
    * arrangement.
    */
   bool is_curve_largest(Subcurve *curve)

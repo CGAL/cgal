@@ -3,7 +3,7 @@ cgal (4.1-1~wheezy1) testing; urgency=low
   * New upstream release.
   * Rename binary package libcgal9 to libcgal10 to reflect SONAME change.
   * Configure CGAL using -DCGAL_ENABLE_PRECONFIG=OFF since we do not want
-    that the accidential presence of optional libraries (for demos and
+    that the accidental presence of optional libraries (for demos and
     examples) influences the build of the library.
   * Move the Qt4 support library and the corresponding headers into new
     binary packages libcgal-qt4-10 and libcgal-qt4-dev (Closes: #683214).

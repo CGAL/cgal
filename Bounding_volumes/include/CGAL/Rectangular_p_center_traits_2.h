@@ -20,7 +20,7 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/basic_constructions_2.h>
 #include <CGAL/pierce_rectangles_2.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -228,21 +228,21 @@ struct Rectangular_p_center_matrix_search_traits_2 {
 
   bool operator()(FT v)
   {
-    CGAL_optimisation_assertion(ld.size() == ld_size);
+    CGAL_assertion(ld.size() == ld_size);
     ld.r = v / FT(2);
     bool ok;
     pf(ld, Wastebasket< Point_2 >(), ok);
-    CGAL_optimisation_assertion(ld.size() == ld_size);
+    CGAL_assertion(ld.size() == ld_size);
     return ok;
   }
 
   template < class OutputIterator >
   OutputIterator operator()(FT v, OutputIterator o, bool& ok)
   {
-    CGAL_optimisation_assertion(ld.size() == ld_size);
+    CGAL_assertion(ld.size() == ld_size);
     ld.r = v / FT(2);
     OutputIterator n = pf(ld, o, ok);
-    CGAL_optimisation_assertion(ld.size() == ld_size);
+    CGAL_assertion(ld.size() == ld_size);
     return n; //pf(ld, o, ok);
   }
 
@@ -250,7 +250,7 @@ protected:
   // data members:
   LD                 ld;
   PiercingFunction   pf;
-  CGAL_optimisation_assertion_code(typename LD::size_type ld_size;)
+  CGAL_assertion_code(typename LD::size_type ld_size;)
 
   // copying this would be too inefficient
   Rectangular_p_center_matrix_search_traits_2(

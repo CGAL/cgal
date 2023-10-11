@@ -22,7 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Projection_traits_xy_3.h>
@@ -434,7 +434,7 @@ void orient(TriangleMesh& tm,
 
   // set the connected component id of each face
   std::size_t nb_cc = connected_components(tm,
-                                           bind_property_maps(fid_map,make_property_map(face_cc)),
+                                           make_compose_property_map(fid_map,make_property_map(face_cc)),
                                            parameters::face_index_map(fid_map));
 
   // extract a vertex with max z coordinate for each connected component
@@ -844,7 +844,7 @@ volume_connected_components(const TriangleMesh& tm,
 
 // set the connected component id of each face
   const std::size_t nb_cc = connected_components(tm,
-                              bind_property_maps(fid_map,make_property_map(face_cc)),
+                              make_compose_property_map(fid_map,make_property_map(face_cc)),
                               parameters::face_index_map(fid_map));
 
   // contains for each CC the CC that are in its bounded side
@@ -953,7 +953,7 @@ volume_connected_components(const TriangleMesh& tm,
 
   // init the main loop
     // similar as above but exclusively contains cc ids included by more that one CC.
-    // The result will be then merged with nested_cc_per_cc but temporarilly we need
+    // The result will be then merged with nested_cc_per_cc but temporarily we need
     // another container to not more than once the inclusion testing (in case a CC is
     // included by more than 2 CC) + associate such CC to only one volume
     std::vector<std::vector<std::size_t> > nested_cc_per_cc_shared(nb_cc);
@@ -1145,7 +1145,7 @@ volume_connected_components(const TriangleMesh& tm,
             if (is_cc_outward_oriented[cc_id]==is_cc_outward_oriented[ncc_id])
             {
               // the surface component has an incorrect orientation wrt to its parent:
-              // we dump it and all included surface components as independant volumes.
+              // we dump it and all included surface components as independent volumes.
               cc_volume_ids[ncc_id] = next_volume_id++;
               error_codes.push_back(INCOMPATIBLE_ORIENTATION);
               if (used_as_a_predicate) return 0;
@@ -1378,7 +1378,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
                               parameters::vertex_point_map(vpm)
                                           .geom_traits(gt)
                                           .nesting_levels(boost::ref(nesting_levels))
-                                          .face_connected_component_map(bind_property_maps(fid_map,make_property_map(face_cc)))
+                                          .face_connected_component_map(make_compose_property_map(fid_map,make_property_map(face_cc)))
                                           .i_used_for_volume_orientation(true)
                                           .do_orientation_tests(true)
                                           .is_cc_outward_oriented(boost::ref(is_cc_outward_oriented))

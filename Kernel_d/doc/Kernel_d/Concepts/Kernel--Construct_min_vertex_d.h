@@ -3,7 +3,7 @@
 \ingroup PkgKernelDKernelConcept
 \cgalConcept
 
-\cgalRefines `AdaptableFunctor` (with one argument)
+\cgalRefines{AdaptableUnaryFunction}
 
 */
 class Kernel_d::Construct_min_vertex_d {

@@ -18,7 +18,8 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-inline bool
+inline
+typename K::Boolean
 do_intersect(const typename K::Iso_cuboid_3& icub1,
              const typename K::Iso_cuboid_3& icub2,
              const K&)

@@ -22,25 +22,20 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 
 include(${CGAL_USE_FILE})
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS
-      "NOTICE: This project requires the Eigen library, and will not be compiled."
-  )
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
 
 find_package(IPE 7)
-
 if(IPE_FOUND)
-  if ( NOT ${IPE_VERSION} EQUAL "7")
-    message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 7 is).")
+  if(NOT ${IPE_VERSION} EQUAL "7")
+    message("NOTICE: ${IPE_VERSION} is not a supported version of IPE (only 7 is).")
     set(IPE_FOUND FALSE)
   endif()
 endif()
-
 
 if(IPE_FOUND AND IPE_VERSION)
   message("-- Using IPE version ${IPE_VERSION} compatibility.")
@@ -119,5 +114,5 @@ if(IPE_FOUND AND IPE_VERSION)
   cgal_add_compilation_test(simple_triangulation)
 
 else()
-  message(STATUS "NOTICE: This program requires the Ipe include files and library, and will not be compiled.")
+  message("NOTICE: This project requires the Ipe include files and library, and will not be compiled.")
 endif()

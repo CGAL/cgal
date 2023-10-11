@@ -32,7 +32,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -118,7 +118,7 @@ public:
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
   #else
-  typedef boost::any GenPtr;
+  typedef std::any GenPtr;
   #endif
 
   SNC_const_decorator() : sncp_(0) {}
@@ -303,7 +303,7 @@ public:
       }
       else if(fc.is_svertex()) {
 #ifdef CGAL_USE_TRACE
-        // TODO: is there any warranty that the outter facet cycle enty point is always at first
+        // TODO: is there any warranty that the outer facet cycle entry point is always at first
         // in the cycles list?
         ++fc; while( fc != fce)  { CGAL_assertion( fc.is_svertex()); ++fc; }
         CGAL_NEF_TRACEN( "no adjacent facets were found (but incident edge(s)).");
@@ -369,10 +369,10 @@ public:
         continue;
       }
 
-      // We have to comapare the two skalar products sk0 and sk1. Therefore
+      // We have to comapare the two scalar products sk0 and sk1. Therefore
       // we have to normalize the input vectors vec0 and vec1, which means
       // that we have to divide them by their lengths len0 and len1.
-      // To cicumvent irrational numbers, we sqaure the whole inequality.
+      // To cicumvent irrational numbers, we square the whole inequality.
 
       FT len0 = vec0.x()*vec0.x()+vec0.y()*vec0.y()+vec0.z()*vec0.z();
       FT len1 = vec1.x()*vec1.x()+vec1.y()*vec1.y()+vec1.z()*vec1.z();
@@ -441,7 +441,7 @@ public:
 Objects are marked as done, when placed in the output list.  We have
 to maintain a stack of sface candidates (the spherical rubber sectors
 that provide connectivity at the local graphs of vertices) and facet
-candiates (the plane pieces in three space also providing
+candidates (the plane pieces in three space also providing
 connectivity). Note that we have to take care about the orientation of
 sobjects and facets. We have to take care that (1) the search along
 the shell extends along the whole shell structure (2) does not visit

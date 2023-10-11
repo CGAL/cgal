@@ -20,15 +20,14 @@
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>
+#include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
+
 #include <boost/container/deque.hpp>
 
-
-#include <deque>
 #include <sstream>
 #include <string>
-#include <map>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 503
@@ -249,7 +248,7 @@ public:
       Iterator( const Node_handle root, const Segment_3& s) {
         CGAL_assertion_code( first_segment = true);
         S.push_front( Candidate( root, s));
-        ++(*this); // place the interator in the first intersected cell
+        ++(*this); // place the iterator in the first intersected cell
       }
       Iterator( const Self& i) : S(i.S), node(i.node) {}
       Self& operator++() {
@@ -553,7 +552,7 @@ Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
     non_efective_splits = 0;
 
   if(non_efective_splits > 2) {
-    CGAL_NEF_TRACEN("build_kdtree: non efective splits reached maximum");
+    CGAL_NEF_TRACEN("build_kdtree: non effective splits reached maximum");
     nodes.push_back(Node(V, E, F));
     return &(nodes.back());
   }
@@ -671,10 +670,10 @@ Segment_3 ray_to_segment(const Ray_3& r) const
 {
   CGAL_NEF_TRACEN("Objects_along_ray: input ray: "<<r);
   Vector_3 vec(r.to_vector());
-  /* First of all, we need to find out wheather we are working over an extended
+  /* First of all, we need to find out whether we are working over an extended
    * kernel or on a standard kernel. As precondition we have that ray is oriented
    * in the minus x axis direction.  When having an extended kernel, the ray can
-   * be subtituted by a segment with the endpoint on the 'intersection' between
+   * be substituted by a segment with the endpoint on the 'intersection' between
    * the ray and the bounding infimaximal box.  In the presence of a standard
    * kernel, the intersection is computed with the bounding box with the vertices
    * of the Nef polyhedron.*/
@@ -691,7 +690,7 @@ Segment_3 ray_to_segment(const Ray_3& r) const
    * ray.  When the ray does not intersect the bounding volume, there won't be any
    * object hit, so it is safe to construct a segment that simply lay in the
    * unbounded side of the bounding box.  This approach is taken instead of somehow
-   * (efficiently) report that there was no hit object, in order to mantain a clear
+   * (efficiently) report that there was no hit object, in order to maintain a clear
    * interface with the Iterator class.*/
   Plane_3 pl_on_minus_x = K3_tree::construct_splitting_plane(pt_on_minus_x_plane, c, typename Traits::Kernel::Kernel_tag());
   Object o = traits.intersect_object()( pl_on_minus_x, r);

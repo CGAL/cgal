@@ -1,16 +1,3 @@
-// TODO: Add licence
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL:$
-// $Id: $
-//
-//
-// Author(s)     : Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
-//
-// ============================================================================
-
 // It seems that this does not matter. However, I keep it for further testing
 // #define  CGAL_GMPFR_NO_REFCOUNT
 

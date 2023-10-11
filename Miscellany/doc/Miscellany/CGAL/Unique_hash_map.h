@@ -28,7 +28,7 @@ of type `Data` specified in the definition of `map`.
 \cgalHeading{Implementation}
 
 `Unique_hash_map` is implemented via a chained hashing scheme. Access
-operations `map``[i]` take expected time \f$ O(1)\f$. The `table_size`
+operations `map``[i]` take expected time \cgalBigO{1}. The `table_size`
 parameter passed to chained hashing can be used to avoid unnecessary
 rehashing when set to the number of expected elements in the map.
 The design is derived from the \stl `hash_map` and the \leda type
@@ -162,7 +162,7 @@ const Data& operator[](const Key& key) const;
 /*!
 
 inserts all keys from the range `[first1,beyond1)`.
-The data variable for each inserted `key` is initilized with the
+The data variable for each inserted `key` is initialized with the
 corresponding value from the range `[first2, first2 +
 (beyond1-first1))`. Returns `first2 + (beyond1-first1)`.
 \pre The increment operator must be defined for values

@@ -16,7 +16,7 @@
 
 #include <CGAL/license/Triangulation_on_sphere_2.h>
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Triangulation_on_sphere_vertex_base_2.h>
@@ -123,7 +123,7 @@ public:
     _gt.set_radius(radius);
   }
 
-  // Assignement
+  // Assignment
   void swap(Triangulation_on_sphere_2& tr);
   Triangulation_on_sphere_2& operator=(Triangulation_on_sphere_2 tr); // intentional copy
 
@@ -417,7 +417,7 @@ public:
 
   Arc_on_sphere_2 segment_on_sphere(const Face_handle f, int i) const
   {
-    CGAL_triangulation_precondition(!is_ghost(f, i));
+    CGAL_precondition(!is_ghost(f, i));
 
     return geom_traits().construct_arc_on_sphere_2_object()(point(f, ccw(i)), point(f, cw(i)));
   }
@@ -512,7 +512,7 @@ clear()
   _tds.clear();
 }
 
-// Assignement
+// Assignment
 template <typename Gt, typename Tds>
 void
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -695,7 +695,7 @@ typename Triangulation_on_sphere_2<Gt, Tds>::Face_handle
 Triangulation_on_sphere_2<Gt, Tds>::
 march_locate_1D(const Point& p, Locate_type& lt, int& li) const
 {
-  CGAL_triangulation_assertion(dimension() == 1);
+  CGAL_assertion(dimension() == 1);
 
   // Check if p is coplanar with the existing points first three points of the triangulation
   Face_handle f = all_edges_begin()->first;
@@ -743,8 +743,8 @@ march_locate_2D(Face_handle f,
                 Locate_type& lt,
                 int& li) const
 {
-  CGAL_triangulation_precondition(dimension() == 2);
-  CGAL_triangulation_precondition(!is_ghost(f));
+  CGAL_precondition(dimension() == 2);
+  CGAL_precondition(!is_ghost(f));
 
   boost::rand48 rng;
   boost::uniform_smallint<> two(0, 1);
@@ -973,7 +973,7 @@ march_locate_2D(Face_handle f,
       default:
       {
         // impossible
-        CGAL_triangulation_assertion(false);
+        CGAL_assertion(false);
         return f;
       }
     }
@@ -1221,21 +1221,21 @@ check_neighboring_faces() const
   {
     for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
     {
-      CGAL_triangulation_assertion_code(const Face_handle f1 = eit->neighbor(0);)
-      CGAL_triangulation_assertion_code(const Face_handle f2 = eit->neighbor(1);)
-      CGAL_triangulation_assertion(f1->has_neighbor(eit));
-      CGAL_triangulation_assertion(f2->has_neighbor(eit));
+      CGAL_assertion_code(const Face_handle f1 = eit->neighbor(0);)
+      CGAL_assertion_code(const Face_handle f2 = eit->neighbor(1);)
+      CGAL_assertion(f1->has_neighbor(eit));
+      CGAL_assertion(f2->has_neighbor(eit));
     }
   }
 
   for(All_faces_iterator eit=all_faces_begin(); eit!=all_faces_end(); ++eit)
   {
-    CGAL_triangulation_assertion_code(const Face_handle f1 = eit->neighbor(0);)
-    CGAL_triangulation_assertion_code(const Face_handle f2 = eit->neighbor(1);)
-    CGAL_triangulation_assertion_code(const Face_handle f3 = eit->neighbor(2);)
-    CGAL_triangulation_assertion(f1->has_neighbor(eit));
-    CGAL_triangulation_assertion(f2->has_neighbor(eit));
-    CGAL_triangulation_assertion(f3->has_neighbor(eit));
+    CGAL_assertion_code(const Face_handle f1 = eit->neighbor(0);)
+    CGAL_assertion_code(const Face_handle f2 = eit->neighbor(1);)
+    CGAL_assertion_code(const Face_handle f3 = eit->neighbor(2);)
+    CGAL_assertion(f1->has_neighbor(eit));
+    CGAL_assertion(f2->has_neighbor(eit));
+    CGAL_assertion(f3->has_neighbor(eit));
   }
 }
 
@@ -1257,7 +1257,7 @@ is_valid_vertex(Vertex_handle vh, bool verbose, int /*level*/) const
       show_face(vh->face());
     }
 
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return false;
   }
 
@@ -1283,7 +1283,7 @@ is_valid(bool verbose,
     {
       const Orientation s = orientation(point(it1), point(it2), point(it3));
       result = result && (s == COLLINEAR);
-      CGAL_triangulation_assertion(result);
+      CGAL_assertion(result);
       ++it1; ++it2; ++it3;
     }
   }
@@ -1292,7 +1292,7 @@ is_valid(bool verbose,
     for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
     {
       const Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-      CGAL_triangulation_assertion(s == LEFT_TURN || is_ghost(it));
+      CGAL_assertion(s == LEFT_TURN || is_ghost(it));
 
       result = result && (s == LEFT_TURN || is_ghost(it));
     }
@@ -1301,7 +1301,7 @@ is_valid(bool verbose,
     // which does not know the number of components nor the genus
     result = result && (number_of_faces() == (2 * number_of_vertices() - 4));
 
-    CGAL_triangulation_assertion(result);
+    CGAL_assertion(result);
   }
 
   return result;
@@ -1340,7 +1340,7 @@ std::istream&
 operator>>(std::istream& is, Triangulation_on_sphere_2<Gt, Tds>& tr)
 {
   tr.file_input(is);
-  CGAL_triangulation_assertion(tr.is_valid());
+  CGAL_assertion(tr.is_valid());
   return is;
 }
 

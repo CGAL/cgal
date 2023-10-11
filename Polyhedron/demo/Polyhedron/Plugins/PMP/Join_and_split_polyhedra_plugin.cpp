@@ -18,7 +18,6 @@
 
 #include <CGAL/boost/graph/copy_face_graph.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
@@ -218,7 +217,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       item->computeItemColorVectorAutomatically(true);
       item->invalidateOpenGLBuffers();
       item->setProperty("NbPatchIds", nb_patch_ids);
-      scene->itemChanged(item);
+      scene->itemChanged(item); // @todo emits
     }
     else
     {

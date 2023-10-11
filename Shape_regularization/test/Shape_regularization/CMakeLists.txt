@@ -22,7 +22,8 @@ if(TARGET CGAL::OSQP_support)
   test_3_segments
   test_4_segments
   test_100_segments_angles
-  test_100_segments_offsets)
+  test_100_segments_offsets
+  test_cgal_solver)
 
   foreach(osqp_target ${osqp_targets})
     create_single_source_cgal_program("${osqp_target}.cpp")
@@ -31,7 +32,7 @@ if(TARGET CGAL::OSQP_support)
     endif()
   endforeach()
 else()
-  message(NOTICE "OSQP was not found. OSQP tests won't be available.")
+  message(STATUS "NOTICE: OSQP was not found. OSQP tests won't be available.")
 endif()
 
 set(targets

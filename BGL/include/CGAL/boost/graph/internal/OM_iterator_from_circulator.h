@@ -21,7 +21,6 @@
 #include <boost/concept_check.hpp>
 
 #include <boost/mpl/if.hpp>
-#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
@@ -92,12 +91,12 @@ public:
 // templates as a work-around.
 private:
   template <bool Prevent_deref_>
-  typename boost::enable_if_c<Prevent_deref_, reference>::type
+  std::enable_if_t<Prevent_deref_, reference>
   indirection() const {
     return const_cast<Self*>(this)->current;
   }
   template <bool Prevent_deref_>
-  typename boost::disable_if_c<Prevent_deref_, reference>::type
+  std::enable_if_t<!Prevent_deref_, reference>
   indirection() const {
     return *current;
   }
@@ -108,12 +107,12 @@ public:
 
 private:
   template <bool Prevent_deref_>
-  typename boost::disable_if_c<Prevent_deref_, pointer>::type
+  std::enable_if_t<!Prevent_deref_, pointer>
   structure_dereference() {
     return &(*current);
   }
   template <bool Prevent_deref_>
-  typename boost::enable_if_c<Prevent_deref_, pointer>::type
+  std::enable_if_t<Prevent_deref_, pointer>
   structure_dereference() {
     return &current;
   }

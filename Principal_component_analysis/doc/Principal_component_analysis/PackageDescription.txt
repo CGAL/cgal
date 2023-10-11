@@ -21,7 +21,7 @@
 \cgalPkgDescriptionBegin{Principal Component Analysis,PkgPrincipalComponentAnalysisD}
 \cgalPkgPicture{teaserLeastSquaresFitting.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, Sylvain Pion and Ankit Gupta}
+\cgalPkgAuthors{Pierre Alliez, Sylvain Pion, and Ankit Gupta}
 \cgalPkgDesc{This package provides functions to compute global information about the shape of a set of 2D or 3D objects. It provides the computation of axis-aligned bounding boxes for point sets, and barycenters of weighted point sets. In addition, it provides computation of centroids (center of mass) and linear least squares fitting for point sets as well as for sets of other bounded objects. More specifically, it is possible to fit 2D lines to 2D segments, circles, disks, iso rectangles and triangles, as well as to fit 3D lines or 3D planes to 3D segments, triangles, iso cuboids, tetrahedra, spheres and balls. The common interface to these functions takes an iterator range of objects.}
 \cgalPkgManuals{Chapter_Principal_Component_Analysis,PkgPrincipalComponentAnalysisDRef}
 \cgalPkgSummaryEnd

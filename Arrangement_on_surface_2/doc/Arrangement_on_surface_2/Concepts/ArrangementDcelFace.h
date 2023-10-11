@@ -8,7 +8,7 @@
  * (CCB). A face may be unbounded. Otherwise, it has one or more outer CCBs. A
  * face may also be bounded by inner CCBs, and it may contain isolated vertices
  * in its interior. A planar face may have only one outer CCBs and its inner
- * CCBs are refered to as holes.
+ * CCBs are referred to as holes.
  *
  * \sa `ArrangementDcel`
  * \sa `ArrangementDcelVertex`

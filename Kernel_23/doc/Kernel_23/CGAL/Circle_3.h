@@ -7,7 +7,7 @@ An object `c` of type `Circle_3` is a circle in the
 three-dimensional Euclidean space \f$ \E^3\f$. Note that the
 circle can be degenerate, i.e.\ the squared radius may be zero.
 
-\cgalModels `Kernel::Circle_3`
+\cgalModels{Kernel::Circle_3}
 
 */
 template< typename Kernel >
@@ -21,7 +21,7 @@ public:
 introduces a variable `c` of type `Circle_3`.
 It is initialized to the circle of center `center` and
 squared radius `sq_r` in plane `plane`.
-\pre `center` lies in `plane` and                 `sq_r` \f$ \geq\f$ 0.
+\pre `center` lies in `plane` and `sq_r >= 0`.
 */
 Circle_3(const Point_3<Kernel> &center,
          const Kernel::FT &sq_r,
@@ -32,7 +32,7 @@ introduces a variable `c` of type `Circle_3`.
 It is initialized to the circle of center `center` and
 squared radius `sq_r` in a plane normal to
 the vector `n`.
-\pre `sq_r` \f$ \geq\f$ 0.
+\pre `sq_r >= 0`.
 */
 Circle_3(const Point_3<Kernel> & center,
          const Kernel::FT & sq_r,

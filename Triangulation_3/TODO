@@ -7,7 +7,7 @@ TDS
    and it gives 4 cells back).
 - More compact representation [inspired by a CUJ article for lists] :
   instead of having a cell which stores 4 vertex pointers, it only stores the
-  XOR of them.  And a Cell_handle now additionaly stores the 4 vertex pointers
+  XOR of them.  And a Cell_handle now additionally stores the 4 vertex pointers
   of the cell, the "context".
   One problem is the Cell_iterator : it loses the context, so I think that
   one way to work around this is to write the Cell_iterator as based on the

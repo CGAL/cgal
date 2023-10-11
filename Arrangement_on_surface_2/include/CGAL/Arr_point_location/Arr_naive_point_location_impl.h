@@ -52,7 +52,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
       return make_result(hh);
   }
 
-  // Go over all faces an locate the innermost one that contains the query
+  // Go over all faces and locate the innermost one that contains the query
   // point in its interior.
   Face_const_handle f_inner;
   const Face_const_handle invalid_f;

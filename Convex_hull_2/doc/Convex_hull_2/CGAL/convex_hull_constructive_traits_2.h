@@ -11,7 +11,7 @@ in the sidedness tests, lines (of type `R::Line_2`) are constructed,
 which is equivalent to the precomputation of subdeterminants of
 the orientation-determinant for three points.
 
-\cgalModels `ConvexHullTraits_2`
+\cgalModels{ConvexHullTraits_2}
 
 \sa `CGAL::Projection_traits_xy_3<K>`
 \sa `CGAL::Projection_traits_yz_3<K>`
@@ -43,10 +43,10 @@ typedef R::Less_xy_2 Less_xy_2;
 typedef R::Less_yx_2 Less_yx_2;
 
 /*!
-
+This internal functor builds and cache the line on the first call to its `operator()`.
 */
-typedef CGAL::r_Less_dist_to_line<R>
-Less_signed_distance_to_line_2;
+typedef unspecified_type
+Compare_signed_distance_to_line_2;
 
 /*!
 
@@ -91,8 +91,8 @@ Less_yx_2 less_yx_2_object();
 /*!
 
 */
-Less_signed_distance_to_line_2
-less_signed_distance_to_line_2_object();
+Compare_signed_distance_to_line_2
+compare_signed_distance_to_line_2_object();
 
 /*!
 

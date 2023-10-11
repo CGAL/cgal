@@ -28,7 +28,7 @@ MainWindow::initialize_animation_parameters() {
   source = Point(rx1, ry1);
   target = Point(rx2, ry2);
   Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
-  Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
+  Circular_arc_2* carc = std::get_if<Circular_arc_2>(&seg);
 
   source = carc->source();
   target = carc->target();
@@ -118,7 +118,7 @@ Point
 MainWindow::get_image(Point src, Point tgt, double time) {
   //std::cout << "  ..getting image "; std::cout.flush();
   Segment_2 seg = Construct_hyperbolic_segment_2()(src, tgt);
-  Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
+  Circular_arc_2* carc = std::get_if<Circular_arc_2>(&seg);
   Circle_2 crc = carc->supporting_circle();
 
   double sx = CGAL::to_double(((src.x()) - crc.center().x())/sqrt(crc.squared_radius()));
@@ -203,7 +203,7 @@ MainWindow::animate() {
         break;
       }
     }
-    //std::cout << "  DONE! " << (found ? "Fount it!" : "Didn't find it!") << std::endl;
+    //std::cout << "  DONE! " << (found ? "Found it!" : "Didn't find it!") << std::endl;
 
 
     // If the correct translation is NOT one of the generators, it will
@@ -233,7 +233,7 @@ MainWindow::animate() {
     // Correct in case of wrong orientation.
     //std::cout << "  ..making line..." << std::endl;
     Segment_2 seg = Construct_hyperbolic_segment_2()(source, target);
-    Circular_arc_2* carc = boost::get<Circular_arc_2>(&seg);
+    Circular_arc_2* carc = std::get_if<Circular_arc_2>(&seg);
     std::pair<Point,Point> inters = Construct_inexact_intersection_2()(carc->supporting_circle(), poincare);
     if(squared_distance(source, inters.first) < squared_distance(source, inters.second)) {
       source = inters.first;

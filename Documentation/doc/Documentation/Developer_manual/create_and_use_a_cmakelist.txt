@@ -6,7 +6,7 @@ A base can be created using the script `cgal_create_CMakeLists`. Its usage is de
 \section seclink Linking with CGAL
 To link with the \cgal library, use the following:
 \code
-find_package(CGAL)
+find_package(CGAL REQUIRED)
 add_executable(my_executable my_source_file.cpp)
 target_link_libraries(my_executable CGAL::CGAL)
 \endcode

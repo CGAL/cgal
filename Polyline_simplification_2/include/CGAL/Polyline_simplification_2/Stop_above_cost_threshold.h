@@ -28,7 +28,7 @@ namespace Polyline_simplification_2
 /// This class is a stop predicate returning `true` when the cost for
 /// simplifying a vertex is greater than a certain threshold.
 ///
-/// \cgalModels `PolylineSimplificationStopPredicate`.
+/// \cgalModels{PolylineSimplificationStopPredicate}
 class Stop_above_cost_threshold
 {
 public :

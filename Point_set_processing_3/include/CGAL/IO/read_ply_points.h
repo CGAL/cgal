@@ -19,7 +19,6 @@
 #include <CGAL/IO/PLY.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/IO/io.h>
 
@@ -244,7 +243,7 @@ bool read_PLY(std::istream& is,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
+              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
 #endif
               )
 {
@@ -321,7 +320,7 @@ bool read_PLY(const std::string& fname,
               PointOutputIterator output,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
+              , std::enable_if_t<CGAL::is_iterator<PointOutputIterator>::value>* = nullptr
 #endif
               )
 {
@@ -345,14 +344,14 @@ bool read_PLY(const std::string& fname,
 // variants with default output iterator value type
 template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
+              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   return read_PLY<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
+              std::enable_if_t<CGAL::is_iterator<OutputIterator>::value>* = nullptr)
 {
   return read_PLY<typename value_type_traits<OutputIterator>::type>(fname, output, np);
 }

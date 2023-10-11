@@ -644,7 +644,7 @@ bool are_holes_and_boundary_pairwise_disjoint
    *
    * Use sweep to find intersections on the interior of curves (not on vertices)
    * and overlapping edges which are not allowed (note that 0/1 dimension
-   * intersections are not detectes by do_intersect() which only returns the
+   * intersections are not detects by do_intersect() which only returns the
    * 2D intersection polygon if exists)
    * Note that using this sweep alone allows for a hole and an edge to share
    * a vertex and intersect (like illegal input pgn_w_overlap_hole.dat in
@@ -686,7 +686,7 @@ bool are_holes_and_boundary_pairwise_disjoint
     Polygon_2 hole(*hoit);
     hole.reverse_orientation();
     /* gps.join() and gps.insert()requires that the polyon insrted is valid,
-     * and therfore hole orientation must be reversed
+     * and therefore the hole orientation must be reversed
      */
     bool intersect = gps.do_intersect(hole);
     if (intersect) return false;
@@ -760,7 +760,7 @@ bool are_holes_and_boundary_pairwise_disjoint
  * 2 - The PWH is relatively simple polygon (holes are simple...)
  * 3 - Has it's boundary oriented counterclockwise and the holes oriented
  *     clockwise
- * 4 - All the segments (boundry and holes) do not cross or intersect in their
+ * 4 - All the segments (boundary and holes) do not cross or intersect in their
  *     relative interior
  * 5 - The holes are on the interior of the boundary polygon if the boundary
  *     is not empty

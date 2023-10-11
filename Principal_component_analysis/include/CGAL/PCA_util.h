@@ -391,7 +391,7 @@ assemble_covariance_matrix_3(InputIterator first,
                    0.0, radius, 0.0,
                    0.0, 0.0, radius};
     Matrix transformation = init_matrix<FT>(3,delta);
-    FT volume = (FT)(4.0/3.0) * radius * t.squared_radius();
+    FT volume = radius * t.squared_radius();
 
                 // skip zero measure primitives
     if(volume == (FT)0.0)
@@ -400,8 +400,9 @@ assemble_covariance_matrix_3(InputIterator first,
     // Find the 2nd order moment for the sphere wrt to the origin by an affine transformation.
 
     // Transform the standard 2nd order moment using the transformation matrix
-    transformation = (3.0/4.0) * volume * transformation * moment * LA::transpose(transformation);
+    transformation = volume * transformation * moment * LA::transpose(transformation);
 
+    volume *= FT(4.0/3.0);
     // Translate the 2nd order moment to the center of the sphere.
     FT x0 = t.center().x();
     FT y0 = t.center().y();
@@ -476,7 +477,7 @@ assemble_covariance_matrix_3(InputIterator first,
                    0.0,    radius, 0.0,
                    0.0,    0.0,    radius};
     Matrix transformation = init_matrix<FT>(3,delta);
-    FT area = (FT)4.0 * t.squared_radius();
+    FT area = t.squared_radius();
 
                 // skip zero measure primitives
     if(area == (FT)0.0)
@@ -485,8 +486,9 @@ assemble_covariance_matrix_3(InputIterator first,
     // Find the 2nd order moment for the sphere wrt to the origin by an affine transformation.
 
     // Transform the standard 2nd order moment using the transformation matrix
-    transformation = (1.0/4.0) * area * transformation * moment * LA::transpose(transformation);
+    transformation = area * transformation * moment * LA::transpose(transformation);
 
+    area *= FT(4.0);
     // Translate the 2nd order moment to the center of the sphere.
     FT x0 = t.center().x();
     FT y0 = t.center().y();

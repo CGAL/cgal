@@ -3,9 +3,11 @@
 \ingroup PkgCombinatorialMapsConcepts
 \cgalConcept
 
-The concept `CellAttribute` represents a non void attribute associated with a cell of a generic map. It can keep a handle to one dart of its associated cell, and can contain any information.
+The concept `CellAttribute` represents a non void attribute associated with a cell of a generic map. It can keep a descriptor to one dart of its associated cell, and can contain any information.
 
-\cgalHasModel \link CGAL::Cell_attribute `CGAL::Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`\endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{\link CGAL::Cell_attribute `CGAL::Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`\endlink}
+\cgalHasModelsEnd
 
 \sa `GenericMap`
 \sa `GenericMapItems`
@@ -19,14 +21,14 @@ public:
 /// @{
 
 /*!
-%Dart handle type.
+%Dart descriptor type.
 */
-typedef unspecified_type Dart_handle;
+typedef unspecified_type Dart_descriptor;
 
 /*!
-%Dart const handle type.
+%Dart const descriptor type.
 */
-typedef unspecified_type Dart_const_handle;
+typedef unspecified_type Dart_const_descriptor;
 
 /*!
 Type of the information contained in the attribute. If `void`, the cell attribute does not have any information.
@@ -34,7 +36,7 @@ Type of the information contained in the attribute. If `void`, the cell attribut
 typedef unspecified_type Info;
 
 /*!
-Equals to \link CGAL::Tag_true `Tag_true`\endlink to enable the storage of a `Dart_handle` of the associated cell, \link CGAL::Tag_false `Tag_false`\endlink otherwise.
+Equals to \link CGAL::Tag_true `Tag_true`\endlink to enable the storage of a `Dart_descriptor` of the associated cell, \link CGAL::Tag_false `Tag_false`\endlink otherwise.
 */
 typedef unspecified_type Supports_cell_dart;
 
@@ -69,20 +71,19 @@ Cell_attribute(const Info& info);
 /// @{
 
 /*!
-Returns one dart of the cell associated to this attribute. `nullptr` if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_false `Tag_false`\endlink.
+Returns one dart of the cell associated to this attribute, if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_true `Tag_true`\endlink.
 */
-Dart_handle dart();
+Dart_descriptor dart();
 
 /*!
-Returns one dart of the cell associated to this attribute, when it is const. `nullptr` if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_false `Tag_false`\endlink.
+Returns one dart of the cell associated to this attribute, when it is const, if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_true `Tag_true`\endlink.
 */
-Dart_const_handle dart() const;
+Dart_const_descriptor dart() const;
 
 /*!
-Sets the dart of the cell associated to this attribute to `ahandle`, if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_true `Tag_true`\endlink. Otherwise, this method does nothing. \pre `ahandle` belongs to the cell associated to this attribute.
-
+Sets the dart of the cell associated to this attribute to `ah`, if \link Supports_cell_dart `Supports_cell_dart`\endlink is equal to \link CGAL::Tag_true `Tag_true`\endlink. Otherwise, this method does nothing. \pre `d` belongs to the cell associated to this attribute.
 */
-void set_dart(Dart_handle ahandle);
+void set_dart(Dart_descriptor d);
 
 /*!
 Returns the information of this attribute. Defined only if \link Info `Info`\endlink is different from `void`.

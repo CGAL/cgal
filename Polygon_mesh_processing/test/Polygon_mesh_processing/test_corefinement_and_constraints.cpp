@@ -164,11 +164,10 @@ void test_bool_op_no_copy(
   assert( count_constrained_edges(tm1, ecm1)==307 );
   assert( count_constrained_edges(tm2, ecm2)==307 );
 
-  typedef boost::optional<Triangle_mesh*> OTM;
-  Triangle_mesh *ptr = nullptr;
+  typedef std::optional<Triangle_mesh*> OTM;
   const std::array<OTM,4> output =
-    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), boost::make_optional(false,ptr), boost::make_optional(false,ptr))
-            : CGAL::make_array(OTM(&tm1), OTM(&tm2), boost::make_optional(false,ptr), boost::make_optional(false,ptr));
+    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), std::optional<Triangle_mesh*>(), std::optional<Triangle_mesh*>())
+            : CGAL::make_array(OTM(&tm1), OTM(&tm2), std::optional<Triangle_mesh*>(), std::optional<Triangle_mesh*>());
   PMP::corefine_and_compute_boolean_operations(tm1,
                                                tm2,
                                                output,
@@ -176,8 +175,8 @@ void test_bool_op_no_copy(
                                                params::edge_is_constrained_map(ecm2),
                                                std::make_tuple(params::edge_is_constrained_map(ecm_out_union),
                                                                        params::edge_is_constrained_map(ecm_out_inter),
-                                                                       params::no_parameters(params::edge_is_constrained_map(ecm_out_union)),
-                                                                       params::no_parameters(params::edge_is_constrained_map(ecm_out_union))));
+                                                                       params::default_values(),
+                                                                       params::default_values()));
 
   // dump_constrained_edges(*(*output[0]), ecm_out_union, "out_cst_union.cgal");
   // dump_constrained_edges(*(*output[1]), ecm_out_inter, "out_cst_inter.cgal");

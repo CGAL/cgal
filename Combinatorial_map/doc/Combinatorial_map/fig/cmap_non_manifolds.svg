@@ -1,323 +1,134 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: fig2dev Version 3.2.6 -->
-<!-- CreationDate: Mon Nov 21 08:43:35 2016 -->
-<!-- Magnification: 1.050 -->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: fig2dev Version 3.2.8 -->
+<!-- CreationDate: 2022-05-05 19:05:07 -->
+<!-- Magnification: 1.05 -->
 <svg	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
-	width="14.4in" height="3.6in"
-	viewBox="-11333 -810 17266 4314">
-<g style="stroke-width:.025in; fill:none">
+	width="1036pt" height="259pt"
+	viewBox="-10795 -772 16446 4110">
+<g fill="none">
 <!-- Line -->
-<polyline points="4254,-136
-3938,914
-2955,1902
-3053,990
-4254,-136
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#808080;
-"/>
+<polyline points=" 4052,-130 3751,871 2815,1812 2908,943 4052,-130" fill="#808080"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-1616,3481
--1478,2242
--3069,779
--3651,1692
--1616,3481
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#ffffff;
-"/>
+<polyline points=" -1540,3316 -1408,2136 -2924,742 -3478,1612 -1540,3316" fill="#ffffff"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="1643,-54
-1818,987
-645,1989
-146,1091
-1643,-54
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" 1565,-52 1732,941 615,1895 140,1040 1565,-52" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="5233,1817
-4287,2973
-2955,1902
-3938,914
-5233,1817
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#808080;
-"/>
+<polyline points=" 4985,1731 4084,2832 2815,1812 3751,871 4985,1731" fill="#808080"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-3069,779
--4656,1087
--5624,2041
--3651,1692
--3069,779
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#ffffff;
-"/>
+<polyline points=" -2924,742 -4435,1036 -5357,1945 -3478,1612 -2924,742" fill="#ffffff"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="2955,1902
-1787,3076
-645,1989
-1818,987
-2955,1902
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" 2815,1812 1703,2930 615,1895 1732,941 2815,1812" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="5909,890
-5233,1817
-3938,914
-4254,-136
-5909,890
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#808080;
-"/>
+<polyline points=" 5629,848 4985,1731 3751,871 4052,-130 5629,848" fill="#808080"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="3053,990
-2955,1902
-1818,987
-1643,-54
-3053,990
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" 2908,943 2815,1812 1732,941 1565,-52 2908,943" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="5909,890
-5233,1817
-4287,2973
-4775,2265
-5909,890
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#808080;
-"/>
+<polyline points=" 5629,848 4985,1731 4084,2832 4549,2158 5629,848" fill="#808080"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="3053,990
-2955,1902
-1787,3076
-1561,2390
-3053,990
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" 2908,943 2815,1812 1703,2930 1487,2277 2908,943" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-1364,2156
--2965,675
--2977,-787
--1364,2156
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" -1300,2054 -2825,643 -2836,-750 -1300,2054" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-2977,-787
--1364,2156
--1476,3386
--3628,-215
--2977,-787
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" -2836,-750 -1300,2054 -1406,3226 -3456,-205 -2836,-750" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-9413,331
--9343,1371
--11106,1713
--10913,239
--9413,335
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#808080;
-"/>
+<polyline points=" -8966,316 -8900,1306 -10579,1632 -10395,228 -8966,320" fill="#808080"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-8644,2585
--7886,1563
--8363,473
--9061,1454
--8644,2590
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#ffffff;
-"/>
+<polyline points=" -8234,2463 -7512,1489 -7966,451 -8631,1385 -8234,2467" fill="#ffffff"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-1616,3481
--5624,2041
--3651,1692
--1616,3481
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#ffffff;
-"/>
+<polyline points=" -1540,3316 -5357,1945 -3478,1612 -1540,3316" fill="#ffffff"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="-1476,3386
--1364,2156
--1476,3386
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" -1406,3226 -1300,2054 -1406,3226" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="3053,990
-4775,2265
-4287,2973
-2955,1902
-3053,990
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#808080;
-"/>
+<polyline points=" 2908,943 4549,2158 4084,2832 2815,1812 2908,943" fill="#808080"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="146,1091
-1561,2390
-1787,3076
-645,1989
-146,1091
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" 140,1040 1487,2277 1703,2930 615,1895 140,1040" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="4775,2265
-5909,890
-4254,-136
-3053,990
-4775,2265
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#808080;
-"/>
+<polyline points=" 4549,2158 5629,848 4052,-130 2908,943 4549,2158" fill="#808080"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polyline points="1561,2390
-3053,990
-1643,-54
-146,1091
-1561,2390
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" 1487,2277 2908,943 1565,-52 140,1040 1487,2277" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Circle -->
-<circle cx="-9225" cy="1472" r="113"
- style="fill:#000000;stroke:#000000;stroke-width:8;"/>
+<circle cx="-8787" cy="1403" r="108" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Circle -->
-<circle cx="-8699" cy="2810" r="113"
- style="fill:#000000;stroke:#000000;stroke-width:8;"/>
+<circle cx="-8286" cy="2677" r="108" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Circle -->
-<circle cx="-7733" cy="1518" r="113"
- style="fill:#000000;stroke:#000000;stroke-width:8;"/>
+<circle cx="-7366" cy="1446" r="108" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Circle -->
-<circle cx="-8274" cy="303" r="113"
- style="fill:#000000;stroke:#000000;stroke-width:8;"/>
+<circle cx="-7881" cy="289" r="108" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Circle -->
-<circle cx="-9324" cy="221" r="113"
- style="fill:#000000;stroke:#000000;stroke-width:8;"/>
+<circle cx="-8882" cy="211" r="108" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Circle -->
-<circle cx="-11017" cy="128" r="113"
- style="fill:#000000;stroke:#000000;stroke-width:8;"/>
+<circle cx="-10494" cy="122" r="108" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Circle -->
-<circle cx="-11211" cy="1844" r="113"
- style="fill:#000000;stroke:#000000;stroke-width:8;"/>
+<circle cx="-10679" cy="1757" r="108" fill="#000000"
+	stroke="#000000" stroke-width="8px"/>
 <!-- Line -->
-<polyline points="-9225,1315
--9320,396
-" style="stroke:#000000;stroke-width:63;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" -8787,1253 -8878,378"
+	stroke="#000000" stroke-width="60px"/>
 <!-- Line -->
-<polyline points="-8767,2629
--9155,1614
-" style="stroke:#000000;stroke-width:63;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" -8351,2505 -8721,1538"
+	stroke="#000000" stroke-width="60px"/>
 <!-- Line -->
-<polyline points="-11020,1805
--9383,1493
-" style="stroke:#000000;stroke-width:63;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" -10497,1720 -8938,1423"
+	stroke="#000000" stroke-width="60px"/>
 <!-- Line -->
-<polyline points="-10846,134
--9516,217
-" style="stroke:#000000;stroke-width:63;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" -10331,128 -9064,207"
+	stroke="#000000" stroke-width="60px"/>
 <!-- Line -->
-<polyline points="-9137,1321
--8445,359
-" style="stroke:#000000;stroke-width:63;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" -8703,1259 -8044,342"
+	stroke="#000000" stroke-width="60px"/>
 <!-- Line -->
-<polyline points="-8206,439
--7815,1390
-" style="stroke:#000000;stroke-width:63;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" -7817,419 -7444,1324"
+	stroke="#000000" stroke-width="60px"/>
 <!-- Line -->
-<polyline points="-7791,1674
--8551,2697
-" style="stroke:#000000;stroke-width:63;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" -7421,1595 -8145,2569"
+	stroke="#000000" stroke-width="60px"/>
 <!-- Line -->
-<polyline points="-11036,286
--11228,1650
-" style="stroke:#000000;stroke-width:63;
-stroke-linejoin:miter; stroke-linecap:butt;
-"/>
+<polyline points=" -10512,273 -10695,1572"
+	stroke="#000000" stroke-width="60px"/>
 <!-- Line -->
-<polyline points="-3525,1572
--3628,-215
--1476,3386
--3525,1572
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-fill:#dddddd;
-"/>
+<polyline points=" -3358,1498 -3456,-205 -1406,3226 -3358,1498" fill="#dddddd"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
 <!-- Line -->
-<polygon points="-5675,1935
--4725,1022
--5143,-423
--6056,110
--5675,1935
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:miter; stroke-linecap:butt;
-fill:#808080;
-"/>
+<polygon points=" -5406,1844 -4501,974 -4899,-403 -5769,105" fill="#808080"
+	stroke="#000000" stroke-width="15px"/>
 <!-- Line -->
-<polyline points="646,1982
-1825,983
-2957,1902
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:miter; stroke-linecap:butt;
-stroke-dasharray:31 31;"/>
+<polyline points=" 616,1888 1739,937 2817,1812"
+	stroke="#000000" stroke-width="15px" stroke-dasharray="30 30"/>
 <!-- Line -->
-<polyline points="1817,993
-1644,-62
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:miter; stroke-linecap:butt;
-stroke-dasharray:31 31;"/>
+<polyline points=" 1731,946 1566,-60"
+	stroke="#000000" stroke-width="15px" stroke-dasharray="30 30"/>
 <!-- Line -->
-<polyline points="2950,1908
-3938,915
-5167,1773
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:miter; stroke-linecap:butt;
-stroke-dasharray:31 31;"/>
+<polyline points=" 2810,1818 3751,872 4922,1689"
+	stroke="#000000" stroke-width="15px" stroke-dasharray="30 30"/>
 <!-- Line -->
-<polyline points="4253,-130
-3933,933
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:miter; stroke-linecap:butt;
-stroke-dasharray:31 31;"/>
+<polyline points=" 4051,-124 3747,889"
+	stroke="#000000" stroke-width="15px" stroke-dasharray="30 30"/>
 </g>
 </svg>

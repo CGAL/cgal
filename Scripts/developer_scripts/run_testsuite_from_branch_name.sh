@@ -33,7 +33,7 @@ git fetch $USER_REPO
 git checkout $BRANCH_NAME
 git reset --hard $USER_REPO/$BRANCH_NAME
 #setup the list_test_packages
-TMP_LIST=$(git diff --name-only cgal/$BASE_NAME...HEAD |egrep -v /doc |egrep "\.h"\|"\.cpp" |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+TMP_LIST=$(git diff --name-only cgal/$BASE_NAME...HEAD |grep -E -v /doc |grep -E "\.h"\|"\.cpp" |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |grep -E -v Installation||true)
 
 LIST_OF_PKGS=""
 for PKG in $(ls) ; do

@@ -24,7 +24,7 @@
 #include <CGAL/config.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Polygon_2/polygon_assertions.h>
+#include <CGAL/assertions.h>
 
 ///
 namespace CGAL {
@@ -231,7 +231,7 @@ bool is_convex_2(ForwardIterator first,
 ///
 /// The simplicity test is implemented by means of a plane sweep algorithm.
 /// The algorithm is quite robust when used with inexact number types.
-/// The running time is `O(n log n)`, where n is the number of vertices of the
+/// The running time is \cgalBigO{n log n}, where n is the number of vertices of the
 /// polygon.
 ///
 /// \sa `PolygonTraits_2`

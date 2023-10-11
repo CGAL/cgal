@@ -61,7 +61,7 @@ namespace CGAL
 * subdomains throughout the remeshing process.
 *
 * Subdomains are defined by indices that
-* are stored in the cells of the input triangulation, following the `MeshCellBase_3`
+* are stored in the cells of the input triangulation, following the `SimplicialMeshCellBase_3`
 * concept (refined by `RemeshingCellBase_3`).
 * The surfacic interfaces between subdomains are formed by facets whose two incident cells
 * have different subdomain indices.
@@ -302,14 +302,14 @@ void tetrahedral_isotropic_remeshing(
 * @tparam Tr is the underlying triangulation for `Mesh_complex_3_in_triangulation_3`.
 *            It can be instantiated with any 3D regular triangulation of CGAL provided
 *            that its vertex and cell base classes are models of the concepts
-*            `MeshVertexBase_3` (refined by `RemeshingCellBase_3`)
-*            and `MeshCellBase_3` (refined by `RemeshingVertexBase_3`), respectively.
+*            `SimplicialMeshCellBase_3` (refined by `RemeshingCellBase_3`)
+*            and `SimplicialMeshVertexBase_3` (refined by `RemeshingVertexBase_3`), respectively.
 * @tparam CornerIndex is the type of the indices for feature corners.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
-*            the `Corner_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+*            `MeshDomainWithFeatures_3::Corner_index`.
 * @tparam CurveIndex is the type of the indices for feature curves.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
-*            the `Curve_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+*            `MeshDomainWithFeatures_3::Curve_index`.
 *
 * @param c3t3 the complex containing the triangulation to be remeshed.
 */

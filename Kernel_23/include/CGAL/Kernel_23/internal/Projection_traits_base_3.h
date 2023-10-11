@@ -182,12 +182,12 @@ public:
     CGAL_TIME_PROFILER("Construct Projected_intersect_3")
   }
 
-  boost::optional<boost::variant<Point,Segment> >
+  std::optional<std::variant<Point,Segment> >
   operator()(const Segment& s1, const Segment& s2)
   {
     CGAL_PROFILER("Projected_intersect_3::operator()")
     CGAL_TIME_PROFILER("Projected_intersect_3::operator()")
-    typedef boost::variant<Point, Segment> variant_type;
+    typedef std::variant<Point, Segment> variant_type;
     const Vector_3 u1 = cross_product(s1.to_vector(), normal);
     if(u1 == NULL_VECTOR)
       return K().intersect_3_object()(s1.supporting_line(), s2);
@@ -204,9 +204,9 @@ public:
 #ifdef CGAL_T2_PTB_3_DEBUG
       std::cerr << "planes_intersection is empty\n";
 #endif
-      return boost::none;
+      return std::nullopt;
     }
-    if(const Line* line = boost::get<Line>(&*planes_intersection))
+    if(const Line* line = std::get_if<Line>(&*planes_intersection))
     {
       // check if the intersection line intersects both segments by
       // checking if a point on the intersection line is between
@@ -222,7 +222,7 @@ public:
 #ifdef CGAL_T2_PTB_3_DEBUG
         std::cerr << "intersection not inside\n";
 #endif
-        return boost::none;
+        return std::nullopt;
       }
       else
       {
@@ -233,14 +233,14 @@ public:
                                                  cross_product(s1.to_vector(),
                                                                s2.to_vector())));
         if(! inter){
-          return boost::none;
+          return std::nullopt;
         }
-        if(const Point* point = boost::get<Point>(&*inter)){
-          return boost::make_optional(variant_type(*point));
+        if(const Point* point = std::get_if<Point>(&*inter)){
+          return std::make_optional(variant_type(*point));
         }
       }
     }
-    if(boost::get<Plane_3>(&*planes_intersection))
+    if(std::get_if<Plane_3>(&*planes_intersection))
     {
 #ifdef CGAL_T2_PTB_3_DEBUG
       std::cerr << "coplanar supporting lines\n";
@@ -255,50 +255,50 @@ public:
       bool src1_in_s2 = is_inside_segment(s2, s1.source());
       bool tgt1_in_s2 = is_inside_segment(s2, s1.target());
 
-      if (src1_in_s2 && tgt1_in_s2) return boost::make_optional(variant_type(s1));
-      if (src2_in_s1 && tgt2_in_s1) return boost::make_optional(variant_type(s2));
+      if (src1_in_s2 && tgt1_in_s2) return std::make_optional(variant_type(s1));
+      if (src2_in_s1 && tgt2_in_s1) return std::make_optional(variant_type(s2));
 
       if (src1_in_s2)
       {
         if (src2_in_s1)
         {
           if (cross_product(normal, Vector_3(s1.source(), s2.source())) != NULL_VECTOR)
-            return boost::make_optional(variant_type(Segment(s1.source(), s2.source())));
+            return std::make_optional(variant_type(Segment(s1.source(), s2.source())));
           else
-            return boost::make_optional(variant_type((s1.source())));
+            return std::make_optional(variant_type((s1.source())));
         }
         if (tgt2_in_s1)
         {
           if (cross_product(normal, Vector_3(s1.source(), s2.target())) != NULL_VECTOR)
-            return boost::make_optional(variant_type(Segment(s1.source(), s2.target())));
+            return std::make_optional(variant_type(Segment(s1.source(), s2.target())));
           else
-            return boost::make_optional(variant_type(s1.source()));
+            return std::make_optional(variant_type(s1.source()));
         }
         // should never get here with a Kernel with exact constructions
-        return boost::make_optional(variant_type(s1.source()));
+        return std::make_optional(variant_type(s1.source()));
       }
       if (tgt1_in_s2)
       {
         if (src2_in_s1)
         {
           if (cross_product(normal, Vector_3(s1.target(), s2.source())) != NULL_VECTOR)
-            return boost::make_optional(variant_type(Segment(s1.target(), s2.source())));
+            return std::make_optional(variant_type(Segment(s1.target(), s2.source())));
           else
-            return boost::make_optional(variant_type(s1.target()));
+            return std::make_optional(variant_type(s1.target()));
         }
         if (tgt2_in_s1)
         {
           if (cross_product(normal, Vector_3(s1.target(), s2.target())) != NULL_VECTOR)
-            return boost::make_optional(variant_type(Segment(s1.target(), s2.target())));
+            return std::make_optional(variant_type(Segment(s1.target(), s2.target())));
           else
-            return boost::make_optional(variant_type(s1.target()));
+            return std::make_optional(variant_type(s1.target()));
         }
         // should never get here with a Kernel with exact constructions
-        return boost::make_optional(variant_type(s1.target()));
+        return std::make_optional(variant_type(s1.target()));
       }
-      return boost::none;
+      return std::nullopt;
     }
-    return boost::none;
+    return std::nullopt;
   }
 }; // end class Projected_intersect_3
 
@@ -567,7 +567,7 @@ public:
 
   // Special functor, not in the Kernel concept
   class Projection_to_plan {
-    // Remeber: Point_2 is K::Point_3
+    // Remember: Point_2 is K::Point_3
     const Point_2& plane_point;
     const Vector_3& normal;
   public:

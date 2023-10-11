@@ -54,11 +54,11 @@ struct Make_x_monotone_2 :
     public CGAL::cpp98::binary_function<
         typename CurvedKernelViaAnalysis_2::Curve_2,
         CGAL::cpp98::iterator<std::output_iterator_tag,
-                              boost::variant<
+                              std::variant<
                                 typename CurvedKernelViaAnalysis_2::Point_2,
                                 typename CurvedKernelViaAnalysis_2::Arc_2> >,
         CGAL::cpp98::iterator<std::output_iterator_tag,
-                              boost::variant<
+                              std::variant<
                                 typename CurvedKernelViaAnalysis_2::Point_2,
                                 typename CurvedKernelViaAnalysis_2::Arc_2> > >
 {
@@ -116,7 +116,7 @@ struct Make_x_monotone_2 :
 
   //!@}
 
-  //!\name Functor invokation
+  //!\name Functor invocation
   //!@{
 
   // TODO add operator for non-x-monotone arc
@@ -132,7 +132,7 @@ struct Make_x_monotone_2 :
   template <typename OutputIterator>
   OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi)
   {
-    typedef boost::variant<Point_2, Arc_2>      Make_x_monotone_result;
+    typedef std::variant<Point_2, Arc_2>      Make_x_monotone_result;
 
     Construct_arc_2 construct_arc_2 =
       _m_curved_kernel->construct_arc_2_object();
@@ -290,7 +290,7 @@ private:
                                 Coordinate_1 x, std::vector<Point_2> pts,
                                 OutputIterator oi) const
   {
-    typedef boost::variant<Point_2, Arc_2>      Make_x_monotone_result;
+    typedef std::variant<Point_2, Arc_2>      Make_x_monotone_result;
 
     Construct_arc_2 construct_arc_2 =
       _m_curved_kernel->construct_arc_2_object();

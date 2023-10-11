@@ -46,7 +46,7 @@ namespace CGAL {
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
     // The degenerated cases are 2 tangent spheres
     // os 2 non-intersecting spheres
-    // beacause we cannot have infinitely many solutions
+    // because we cannot have infinitely many solutions
     if(e1 == e2) {
       if(tangent<AK>(e1,e3)) {
         Polynomial_1_3 p = plane_from_2_spheres<AK>(e1,e3);

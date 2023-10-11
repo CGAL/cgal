@@ -30,7 +30,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL
 {
@@ -321,15 +321,15 @@ public:
       Cell_handle c = c_i.first;
       const std::array<bool, 4>& f_on_surface = c_i.second;
 
-      boost::optional<Surface_patch_index> patch;
+      std::optional<Surface_patch_index> patch;
       for (int i = 0; i < 4; ++i)
       {
         if (f_on_surface[i])
         {
           Surface_patch_index spi = m_c3t3.surface_patch_index(c, i);
-          if (patch != boost::none && patch != spi)
+          if (patch != std::nullopt && patch != spi)
           {
-            patch = boost::none;
+            patch = std::nullopt;
             break;
           }
           else
@@ -338,7 +338,7 @@ public:
           }
         }
       }
-      if(patch == boost::none)
+      if(patch == std::nullopt)
         continue;
 
       for (int i = 0; i < 4; ++i)
@@ -346,7 +346,7 @@ public:
         if(f_on_surface[i])
           m_c3t3.remove_from_complex(c, i);
         else
-          m_c3t3.add_to_complex(c, i, patch.get());
+          m_c3t3.add_to_complex(c, i, patch.value());
       }
 
       m_c3t3.remove_from_complex(c);

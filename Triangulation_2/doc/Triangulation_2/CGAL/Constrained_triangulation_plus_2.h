@@ -22,11 +22,17 @@ point.
 
 
 The data structure maintains for each input constraint
-the sequence of vertices on this constraint. These vertices are
+the sequence of vertices on this constraint. Note that there is
+not a one-to-one correspondence between an input constraint and
+the sequence of vertices. These vertices are
 either vertices of the input constraint or intersection points.
+Also consecutive identical points in the input constraint
+result in a single vertex in the sequence of vertices on this
+constraint. In case of an input constraint being degenerate
+to a point, this point is inserted but there will not be a
+zero length constraint.
 
-\todo The following description does not match the code
-Two consecutive vertices of an input constraint form a *subconstraint*.
+Two consecutive vertices of a constraint form a *subconstraint*.
 A subconstraint is a pair of vertex handles and corresponds to a constrained edge of the
 triangulation, which is a pair of a face handle and an index.
 
@@ -36,7 +42,8 @@ It further enables the retrieval of the set of input constraints that induce a s
 As it is straightforward to obtain a subconstraint from a constrained edge `e`,
 one can obtain the input constraints which induce `e`.
 
-\tparam Tr must be either a CGAL::Constrained_triangulation_2 or a CGAL::Constrained_Delaunay_triangulation_2
+
+\tparam Tr must be either a `CGAL::Constrained_triangulation_2` or a `CGAL::Constrained_Delaunay_triangulation_2`
 
 \sa `CGAL::Constrained_triangulation_2<Traits,Tds>`
 \sa `CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds>`
@@ -242,12 +249,14 @@ insert(PointIterator first, PointIterator last);
 /*!
 inserts the constraint segment `ab` in the triangulation.
 If the two points are equal the point is inserted but no constraint,
-and the default constructed `Constraint_id` is returned.
+and a default constructed `Constraint_id` is returned.
 */
 Constraint_id insert_constraint(Point a, Point b);
 
 /*!
-inserts the constraint `c`.
+inserts the constraint `c` in the triangulation.
+If the two points are equal the point is inserted but no constraint,
+and a default constructed `Constraint_id` is returned.
 */
   void push_back(const std::pair<Point,Point>& c);
 
@@ -255,7 +264,7 @@ inserts the constraint `c`.
 inserts a constraint whose endpoints are the vertices
 pointed by `va` and `vb` in the triangulation.
 If the two vertex handles are equal no constraint is inserted,
-and the default constructed `Constraint_id` is returned.
+and a default constructed `Constraint_id` is returned.
 */
 Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb);
 
@@ -264,9 +273,10 @@ inserts a polyline defined by the points in the range `[first,last)`
 and returns the constraint id.
 The polyline is considered as a closed curve if the first and last point are equal or if  `close == true`. This enables for example passing the vertex range of a `Polygon_2`.
 When traversing the vertices of a closed polyline constraint with a  `Vertices_in_constraint_iterator` the first and last vertex are the same.
-In case the range is empty `Constraint_id()` is returned.
-In case all points are equal the point is inserted but no constraint,
-and `Constraint_id()` is returned.
+In case the range is empty a default constructed `Constraint_id` is returned.
+In case the range contains only one point or all points are equal the point is inserted but no constraint,
+and a default constructed `Constraint_id` is returned.
+
 \tparam PointIterator must be an `InputIterator` with the value type `Point`.
 */
 template < class PointIterator>
@@ -280,9 +290,12 @@ is used to improve efficiency.
 More precisely, all endpoints are inserted prior to the segments and according to the order provided by the spatial sort.
 Once endpoints have been inserted, the segments are inserted in the order of the input iterator,
 using the vertex handles of its endpoints.
+In case the constraints are degenerate the points are inserted, but no
+constraints.
+
+\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
 
 \return the number of inserted points.
-\tparam ConstraintIterator must be an `InputIterator` with the value type `std::pair<Point,Point>` or `Segment`.
 */
 template <class ConstraintIterator>
 std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last);
@@ -291,7 +304,11 @@ std::size_t insert_constraints(ConstraintIterator first, ConstraintIterator last
 Same as above except that each constraint is given as a pair of indices of the points
 in the range [points_first, points_last). The indices must go from 0 to `std::distance(points_first, points_last)`
 \tparam PointIterator is an `InputIterator` with the value type `Point`.
-\tparam IndicesIterator is an `InputIterator` with `std::pair<Int, Int>` where `Int` is an integral type implicitly convertible to `std::size_t`
+\tparam IndicesIterator is an `InputIterator` with `std::pair<Int,
+Int>` where `Int` is an integral type implicitly convertible to
+`std::size_t`
+\note points are inserted even if they are not endpoint of a constraint.
+\return the number of inserted points.
 */
 template <class PointIterator, class IndicesIterator>
 std::size_t insert_constraints(PointIterator points_first, PointIterator points_last,

@@ -4,11 +4,10 @@
 #include  <CGAL/Three/Scene_item_rendering_helper.h>
 #include "SMesh_type.h"
 
-#include <boost/array.hpp>
-
 #include <iostream>
 
 struct Scene_polygon_soup_item_priv;
+
 struct Polygon_soup
 {
     typedef EPICK::Point_3 Point_3;
@@ -18,7 +17,7 @@ struct Polygon_soup
     //vector containing a pair of indices of points in Points and a set of indices of Polygons
     //containing the edge.
     typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
-    typedef boost::array<std::size_t, 2> Edge;
+    typedef std::array<std::size_t, 2> Edge;
     typedef std::vector<Polygon_3> Polygons;
     typedef std::vector<CGAL::IO::Color> Colors;
     typedef std::set<Edge> Edges;
@@ -154,19 +153,25 @@ public:
     const Edges& non_manifold_edges() const;
     void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
     void computeElements() const Q_DECL_OVERRIDE;
+
     //statistics
-    enum STATS {
-      NB_VERTICES = 0,
-      NB_FACETS,
-      IS_PURE_TRIANGLE,
+    enum STATS
+    {
+      IS_PURE_TRIANGLE = 0,
       IS_PURE_QUAD,
-      NB_DEGENERATED_FACES,
+
+      NB_VERTICES,
+
+      NB_FACETS,
+      NB_DEGENERATE_FACES,
+
       NB_EDGES,
+      NB_DEGENERATE_EDGES,
       MIN_LENGTH,
       MAX_LENGTH,
-      MID_LENGTH,
+      MED_LENGTH,
       MEAN_LENGTH,
-      NB_NULL_LENGTH,
+
       MIN_ANGLE,
       MAX_ANGLE,
       MEAN_ANGLE
@@ -181,6 +186,7 @@ public Q_SLOTS:
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
     void repair(bool erase_dup, bool req_same_orientation);
+    bool triangulate();
 
     void setDisplayNonManifoldEdges(const bool);
     bool displayNonManifoldEdges() const;

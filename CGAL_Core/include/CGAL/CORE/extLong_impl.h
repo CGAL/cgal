@@ -21,7 +21,7 @@
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Sylvain Pion <pion@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -177,7 +177,7 @@ extLong extLong::operator- () const {
 
 // sign
 //    You should check "flag" before calling this, otherwise
-//    you cannot interprete the returned value!
+//    you cannot interpret the returned value!
 CGAL_INLINE_FUNCTION
 int extLong::sign() const {
   if (flag == 2)

@@ -11,8 +11,6 @@
 #include "Plugins/PMP/Scene_facegraph_item_k_ring_selection.h"
 #include "Travel_isolated_components.h"
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <iostream>
@@ -381,7 +379,7 @@ public:
     }
   };
 
-  boost::optional<std::size_t> get_minimum_isolated_component();
+  std::optional<std::size_t> get_minimum_isolated_component();
   template<typename Mesh>
   struct Select_roi_output{
     typedef typename CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
@@ -395,7 +393,7 @@ public:
     M_Deform_mesh* dm;
   };
 
-  boost::optional<std::size_t> select_isolated_components(std::size_t threshold) ;
+  std::optional<std::size_t> select_isolated_components(std::size_t threshold) ;
 
 protected:
   // Deformation related functions //

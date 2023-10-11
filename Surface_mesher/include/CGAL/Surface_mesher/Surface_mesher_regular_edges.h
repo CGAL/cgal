@@ -213,8 +213,8 @@ namespace CGAL {
       if(withBoundary)
         std::cerr << "(boundaries allowed)";
       std::cerr << "...\n";
-#endif
       int n = 0;
+#endif
       for (Finite_edges_iterator eit = SMB::tr.finite_edges_begin(); eit !=
              SMB::tr.finite_edges_end(); ++eit) {
         if ( (SMB::c2t3.face_status(*eit)
@@ -223,7 +223,9 @@ namespace CGAL {
                (SMB::c2t3.face_status(*eit)
                 == C2t3::BOUNDARY) ) ) {
           bad_edges.insert( edge_to_edgevv(*eit) );
+#ifdef CGAL_SURFACE_MESHER_VERBOSE
           ++n;
+#endif
         }
       }
       bad_edges_initialized = true;

@@ -32,7 +32,7 @@ class Sphere_d : public Get_type<typename R_::Kernel_base, Sphere_tag>::type
   typedef typename Get_functor<Kbase, Squared_radius_tag>::type                        SRBase;
 
   typedef Sphere_d                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename Get_type<R_, Sphere_tag>::type>::value));
+  static_assert(std::is_same<Self, typename Get_type<R_, Sphere_tag>::type>::value);
 
 public:
 
@@ -54,7 +54,7 @@ public:
 
   typedef          R_                       R;
 
-  template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Sphere_d> >::value>::type> explicit Sphere_d(U&&...u)
+  template<class...U,class=typename std::enable_if_t<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Sphere_d> >::value>> explicit Sphere_d(U&&...u)
           : Rep(CSBase()(std::forward<U>(u)...)){}
 
 //  // called from Construct_point_d

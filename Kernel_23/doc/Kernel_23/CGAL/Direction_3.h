@@ -13,7 +13,7 @@ or the direction normal to parallel planes that have the same orientation.
 For example, you can ask for the direction
 orthogonal to an oriented plane, or the direction of an oriented line.
 
-\cgalModels `Kernel::Direction_3`
+\cgalModels{Kernel::Direction_3}
 
 */
 template< typename Kernel >
@@ -57,7 +57,7 @@ Direction_3(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z);
 
 /*!
 returns values, such that `d``== Direction_3<Kernel>(delta(0),delta(1),delta(2))`.
-\pre \f$ 0 \leq i \leq2\f$.
+\pre `0 <= i <= 2`.
 */
 Kernel::RT delta(int i) const;
 

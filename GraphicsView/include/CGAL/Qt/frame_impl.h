@@ -717,7 +717,7 @@ bool Frame::settingAsReferenceFrameWillCreateALoop(const Frame *const frame) {
 /*! Returns the Frame coordinates of a point \p src defined in the world
  coordinate system (converts from world to Frame).
 
- inverseCoordinatesOf() performs the inverse convertion. transformOf() converts
+ inverseCoordinatesOf() performs the inverse conversion. transformOf() converts
  3D vectors instead of 3D coordinates.
 
  See the <a href="../examples/frameTransform.html">frameTransform example</a>
@@ -733,7 +733,7 @@ Vec Frame::coordinatesOf(const Vec &src) const {
 /*! Returns the world coordinates of the point whose position in the Frame
   coordinate system is \p src (converts from Frame to world).
 
-  coordinatesOf() performs the inverse convertion. Use inverseTransformOf() to
+  coordinatesOf() performs the inverse conversion. Use inverseTransformOf() to
   transform 3D vectors instead of 3D coordinates. */
 CGAL_INLINE_FUNCTION
 Vec Frame::inverseCoordinatesOf(const Vec &src) const {
@@ -749,7 +749,7 @@ Vec Frame::inverseCoordinatesOf(const Vec &src) const {
 /*! Returns the Frame coordinates of a point \p src defined in the
   referenceFrame() coordinate system (converts from referenceFrame() to Frame).
 
-  localInverseCoordinatesOf() performs the inverse convertion. See also
+  localInverseCoordinatesOf() performs the inverse conversion. See also
   localTransformOf(). */
 CGAL_INLINE_FUNCTION
 Vec Frame::localCoordinatesOf(const Vec &src) const {
@@ -759,7 +759,7 @@ Vec Frame::localCoordinatesOf(const Vec &src) const {
 /*! Returns the referenceFrame() coordinates of a point \p src defined in the
  Frame coordinate system (converts from Frame to referenceFrame()).
 
- localCoordinatesOf() performs the inverse convertion. See also
+ localCoordinatesOf() performs the inverse conversion. See also
  localInverseTransformOf(). */
 CGAL_INLINE_FUNCTION
 Vec Frame::localInverseCoordinatesOf(const Vec &src) const {

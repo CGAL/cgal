@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 namespace CGAL {
 

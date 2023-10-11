@@ -67,7 +67,7 @@ If during the algorithm the program should output some information
 (e.g., during the debugging phase) you can turn on the output
 information by giving the compiler flag <span class="textsc">debug</span>. In the file
 <TT>width_assertions.h</TT> you can turn on/off the output of some
-functions and additional informations by changing the defined values
+functions and additional information by changing the defined values
 from 0 (no output) to 1 (output available). But then it is required
 that the `operator<<()` has to been overloaded for `Point_3`,
 `Plane_3`, `Vector_3` and `RT`.

@@ -10,7 +10,7 @@ using the function `rectangular_p_center_2()`.
 
 \tparam K must be a model for `Kernel`.
 
-\cgalModels `RectangularPCenterTraits_2`
+\cgalModels{RectangularPCenterTraits_2}
 
 \sa `CGAL::rectangular_p_center_2()`
 
@@ -245,7 +245,7 @@ must be a model for `RectangularPCenterTraits_2`.
 \cgalHeading{Implementation}
 
 The runtime is linear for \f$ p \in \{2,\,3\}\f$ and
-\f$ \mathcal{O}(n \cdot \log n)\f$ for \f$ p = 4\f$ where \f$ n\f$ is the number of
+\cgalBigO{n \cdot \log n} for \f$ p = 4\f$ where \f$ n\f$ is the number of
 input points. These runtimes are worst case optimal. The \f$ 3\f$-center
 algorithm uses a prune-and-search technique described in
 \cgalCite{cgal:h-slacr-99}. The \f$ 4\f$-center implementation uses sorted matrix

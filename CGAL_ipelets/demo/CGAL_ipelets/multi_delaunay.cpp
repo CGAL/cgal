@@ -102,14 +102,14 @@ void MdelaunayIpelet::protected_run(int fn)
           pt_list.push_back(pt1);
           vertI_cgal -> info() = pt_list;
       }
-      if(fn==1){//Delauney 2 : just regular triangulation of all midpoints of delaunay segments with weight minus the squared lenght of the edge divided by 4
+      if(fn==1){//Delauney 2 : just regular triangulation of all midpoints of delaunay segments with weight minus the squared length of the edge divided by 4
         draw_in_ipe(rti);
         break;
       }
       if(fn==2 || fn==7){        //Pour l'order 3
         //CAN WE ITERATE OVER DELAUNEY TRIANGLES???
         //WE MAY COUNT SEVERAL TIME SAME TRIANGLE WITH THE FOLLOWING METHOD
-        //iterate over adjacent point in the regular triangulation and compute a new wpoint for those having one commun parent from delaunay
+        //iterate over adjacent point in the regular triangulation and compute a new wpoint for those having one common parent from delaunay
         for (RegularI::Finite_edges_iterator it=rti.finite_edges_begin();it!=rti.finite_edges_end();++it){
           Point_2 pt0_ori0=it->first->vertex(Delaunay::cw(it->second))->info().front();
           Point_2 pt0_ori1=it->first->vertex(Delaunay::cw(it->second))->info().back();

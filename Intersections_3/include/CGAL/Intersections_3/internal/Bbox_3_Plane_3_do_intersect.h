@@ -22,17 +22,19 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Plane_3& plane,
-                  const Bbox_3& bbox,
-                  const K& k)
+typename K::Boolean
+do_intersect(const typename K::Plane_3& plane,
+             const Bbox_3& bbox,
+             const K& k)
 {
   return do_intersect_plane_box(plane, bbox, k);
 }
 
 template <class K>
-bool do_intersect(const Bbox_3& bbox,
-                  const typename K::Plane_3& plane,
-                  const K& k)
+typename K::Boolean
+do_intersect(const Bbox_3& bbox,
+             const typename K::Plane_3& plane,
+             const K& k)
 {
   return do_intersect_plane_box(plane, bbox, k);
 }

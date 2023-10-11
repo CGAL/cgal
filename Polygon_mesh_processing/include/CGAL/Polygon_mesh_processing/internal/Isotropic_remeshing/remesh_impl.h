@@ -43,7 +43,7 @@
 #include <boost/range/join.hpp>
 #include <memory>
 #include <boost/container/flat_set.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/property_map/function_property_map.hpp>
 
 #include <map>
@@ -156,15 +156,15 @@ namespace internal {
     template <class Range>
     bool same_range(const Range& r1, const Range& r2)
     {
-      return boost::begin(r1)==boost::begin(r2) &&
-             boost::end(r1)==boost::end(r2);
+      return std::begin(r1)==std::begin(r2) &&
+             std::end(r1)==std::end(r2);
     }
 
     template <class Range1, class Range2>
     bool same_range(const Range1& r1, const Range2& r2)
     {
-      return std::distance(boost::begin(r1), boost::end(r1)) ==
-             std::distance(boost::begin(r2), boost::end(r2));
+      return std::distance(std::begin(r1), std::end(r1)) ==
+             std::distance(std::begin(r2), std::end(r2));
     }
 
   public:
@@ -384,10 +384,6 @@ namespace internal {
     void split_long_edges(const EdgeRange& edge_range,
                           const double& high)
     {
-      typedef boost::bimap<
-        boost::bimaps::set_of<halfedge_descriptor>,
-        boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
-      typedef typename Boost_bimap::value_type                       long_edge;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")...";
@@ -396,23 +392,30 @@ namespace internal {
       double sq_high = high*high;
 
       //collect long edges
-      Boost_bimap long_edges;
+      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
+        long_edges(
+          [](const H_and_sql& p1, const H_and_sql& p2)
+          { return p1.second > p2.second; }
+        );
       for(edge_descriptor e : edge_range)
       {
         double sqlen = sqlength(e);
         if (sqlen > sq_high)
-          long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+          long_edges.emplace(halfedge(e, mesh_), sqlen);
       }
 
       //split long edges
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_splits = 0;
+#endif
       while (!long_edges.empty())
       {
         //the edge with longest length
-        typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
-        halfedge_descriptor he = eit->second;
-        double sqlen = eit->first;
-        long_edges.right.erase(eit);
+        auto eit = long_edges.begin();
+        halfedge_descriptor he = eit->first;
+        double sqlen = eit->second;
+        long_edges.erase(eit);
 
         //split edge
         Point refinement_point = this->midpoint(he);
@@ -420,7 +423,9 @@ namespace internal {
         // propagate the constrained status
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)));
         CGAL_assertion(he == next(hnew, mesh_));
+#ifdef CGAL_PMP_REMESHING_VERBOSE
         ++nb_splits;
+#endif
 
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
@@ -434,25 +439,31 @@ namespace internal {
         if (sqlen_new > sq_high)
         {
           //if it was more than twice the "long" threshold, insert them
-          long_edges.insert(long_edge(hnew, sqlen_new));
-          long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
+          long_edges.emplace(hnew, sqlen_new);
+          long_edges.emplace(next(hnew, mesh_), sqlen_new);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
         {
+          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(hnew, next(next(hnew, mesh_), mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
         }
 
         //do it again on the other side if we're not on boundary
         halfedge_descriptor hnew_opp = opposite(hnew, mesh_);
         if (!is_border(hnew_opp, mesh_))
         {
+          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 =
             CGAL::Euler::split_face(prev(hnew_opp, mesh_), next(hnew_opp, mesh_), mesh_);
           put(ecmap_, edge(hnew2, mesh_), false);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
         }
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -469,39 +480,42 @@ namespace internal {
     //is split at its midpoint and the two adjacent triangles are bisected (2-4 split)"
     void split_long_edges(const double& high)
     {
-      typedef boost::bimap<
-        boost::bimaps::set_of<halfedge_descriptor>,
-        boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
-      typedef typename Boost_bimap::value_type                       long_edge;
-
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")..." << std::endl;
 #endif
       double sq_high = high*high;
 
       //collect long edges
-      Boost_bimap long_edges;
+      typedef std::pair<halfedge_descriptor, double> H_and_sql;
+      std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
+      long_edges(
+        [](const H_and_sql& p1, const H_and_sql& p2)
+        { return p1.second > p2.second; }
+      );
+
       for(edge_descriptor e : edges(mesh_))
       {
         if (!is_split_allowed(e))
           continue;
         double sqlen = sqlength(e);
         if(sqlen > sq_high)
-          long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+          long_edges.emplace(halfedge(e, mesh_), sqlen);
       }
 
       //split long edges
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_splits = 0;
+#endif
       while (!long_edges.empty())
       {
         //the edge with longest length
-        typename Boost_bimap::right_map::iterator eit = long_edges.right.begin();
-        halfedge_descriptor he = eit->second;
-        double sqlen = eit->first;
-        long_edges.right.erase(eit);
+        auto eit = long_edges.begin();
+        halfedge_descriptor he = eit->first;
+        double sqlen = eit->second;
+        long_edges.erase(eit);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
-        std::cout << "\r\t(" << long_edges.left.size() << " long edges, ";
+        std::cout << "\r\t(" << long_edges.size() << " long edges, ";
         std::cout << nb_splits << " splits)";
         std::cout.flush();
 #endif
@@ -518,8 +532,9 @@ namespace internal {
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)) );
+#ifdef CGAL_PMP_REMESHING_VERBOSE
         ++nb_splits;
-
+#endif
         //move refinement point
         vertex_descriptor vnew = target(hnew, mesh_);
         put(vpmap_, vnew, refinement_point);
@@ -537,8 +552,8 @@ namespace internal {
         if (sqlen_new > sq_high)
         {
           //if it was more than twice the "long" threshold, insert them
-          long_edges.insert(long_edge(hnew,              sqlen_new));
-          long_edges.insert(long_edge(next(hnew, mesh_), sqlen_new));
+          long_edges.emplace(hnew, sqlen_new);
+          long_edges.emplace(next(hnew, mesh_), sqlen_new);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
@@ -560,7 +575,7 @@ namespace internal {
           {
             double sql = sqlength(hnew2);
             if (sql > sq_high)
-              long_edges.insert(long_edge(hnew2, sql));
+              long_edges.emplace(hnew2, sql);
           }
         }
 
@@ -583,7 +598,7 @@ namespace internal {
           {
             double sql = sqlength(hnew2);
             if (sql > sq_high)
-              long_edges.insert(long_edge(hnew2, sql));
+              long_edges.emplace(hnew2, sql);
           }
         }
       }
@@ -636,7 +651,9 @@ namespace internal {
       std::cout << "done." << std::endl;
 #endif
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_collapses = 0;
+#endif
       while (!short_edges.empty())
       {
         //the edge with shortest length
@@ -773,8 +790,9 @@ namespace internal {
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(e, mesh_, ecmap_);
           CGAL_assertion(is_valid(mesh_));
           CGAL_assertion(vkept == vb);//is the constrained point still here
+#ifdef CGAL_PMP_REMESHING_VERBOSE
           ++nb_collapses;
-
+#endif
           //fix constrained case
           CGAL_assertion((is_constrained(vkept) || is_corner(vkept) || is_on_patch_border(vkept)) ==
                          (is_va_constrained || is_vb_constrained || is_va_on_constrained_polyline || is_vb_on_constrained_polyline));
@@ -836,7 +854,9 @@ namespace internal {
 
       const double cap_threshold = std::cos(160. / 180 * CGAL_PI);
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
       unsigned int nb_flips = 0;
+#endif
       for(edge_descriptor e : edges(mesh_))
       {
         //only the patch edges are allowed to be flipped
@@ -900,8 +920,9 @@ namespace internal {
         put(degree, vc, vvc);
         put(degree, vd, vvd);
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
         ++nb_flips;
-
+#endif
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
         std::cout << "\r\t(" << nb_flips << " flips)";
         std::cout.flush();
@@ -950,8 +971,9 @@ namespace internal {
           put(degree, vc, vvc);
           put(degree, vd, vvd);
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
           --nb_flips;
-
+#endif
           CGAL_assertion_code(Halfedge_status s3 = status(he));
           CGAL_assertion(s1 == s3);
           CGAL_assertion(!is_border(he, mesh_));
@@ -1199,7 +1221,7 @@ private:
       halfedge_descriptor hopp = opposite(h, mesh_);
 
       //check whether h is the longest edge in its associated face
-      //overwise refinement will go for an endless loop
+      //otherwise refinement will go into an endless loop
       double sqh = sqlength(h);
       return sqh >= sqlength(next(h, mesh_))
           && sqh >= sqlength(next(next(h, mesh_), mesh_))
@@ -1526,7 +1548,7 @@ private:
       }
 
       // update status using constrained edge map
-      if (!boost::is_same<EdgeIsConstrainedMap,
+      if (!std::is_same<EdgeIsConstrainedMap,
                           Static_boolean_property_map<edge_descriptor, false> >::value)
       {
         for(edge_descriptor e : edges(mesh_))
@@ -1629,8 +1651,6 @@ private:
                               const double& sq_low,
                               const bool collapse_constraints)
     {
-      CGAL_assertion_code(std::size_t nb_done = 0);
-
       std::unordered_set<halfedge_descriptor> degenerate_faces;
       for(halfedge_descriptor h :
           halfedges_around_target(halfedge(v, mesh_), mesh_))
@@ -1689,7 +1709,6 @@ private:
               continue;
 
             CGAL::Euler::flip_edge(hf, mesh_);
-            CGAL_assertion_code(++nb_done);
             done = true;
 
             //update status
@@ -1885,6 +1904,11 @@ private:
         else if(is_an_isolated_constraint(h)) nb_isolated++;
         else CGAL_assertion(false);
       }
+      CGAL_USE(nb_border);
+      CGAL_USE(nb_mesh);
+      CGAL_USE(nb_patch);
+      CGAL_USE(nb_patch_border);
+      CGAL_USE(nb_isolated);
     }
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -1920,7 +1944,7 @@ private:
     bool check_normals(const HalfedgeRange& hedges) const
     {
       std::size_t nb_patches = patch_id_to_index_map.size();
-      //std::vector<boost::optional<Vector_3> > normal_per_patch(nb_patches,boost::none);
+      //std::vector<std::optional<Vector_3> > normal_per_patch(nb_patches,std::nullopt);
       std::vector<bool> initialized(nb_patches,false);
       std::vector<Vector_3> normal_per_patch(nb_patches);
 
@@ -1944,7 +1968,7 @@ private:
             return false;
           }
         }
-        //normal_per_patch[index] = boost::make_optional(n);
+        //normal_per_patch[index] = std::make_optional(n);
         normal_per_patch[index] = n;
         initialized[index] = true;
       }

@@ -465,7 +465,7 @@ private:
    typedef std::vector<Node_id>                                        Node_ids;
    typedef std::unordered_map<face_descriptor,Node_ids>             On_face_map;
    typedef std::unordered_map<edge_descriptor,Node_ids>             On_edge_map;
-   //to keep the correspondance between node_id and vertex_handle in each mesh
+   //to keep the correspondence between node_id and vertex_handle in each mesh
    typedef internal::Node_id_to_vertex<TriangleMesh,
                                        doing_autorefinement||
                                        handle_non_manifold_features>
@@ -818,7 +818,7 @@ public:
         break;
         case ON_VERTEX:
         {
-          //grab original vertex that is on commom intersection
+          //grab original vertex that is on common intersection
           mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
           Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
           if (node_id_to_vertex.size()<=node_id)
@@ -841,7 +841,7 @@ public:
 
     if ( is_target_coplanar )
     {
-      //grab original vertex that is on commom intersection
+      //grab original vertex that is on common intersection
       mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1));
       Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
       if (node_id_to_vertex.size()<=node_id)
@@ -854,7 +854,7 @@ public:
     }
     else{
       if ( is_source_coplanar ){
-        //grab original vertex that is on commom intersection
+        //grab original vertex that is on common intersection
         halfedge_descriptor h_1_opp=opposite(h_1,tm1);
         mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1_opp));
         Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
@@ -1111,7 +1111,7 @@ public:
       Node_ids& node_ids=it2->second;
       CGAL_assertion( std::set<Node_id>(node_ids.begin(), node_ids.end())
                         .size()==node_ids.size() );
-      //sort nodes along the egde to allow consecutive splits
+      //sort nodes along the edge to allow consecutive splits
       sort_vertices_along_hedge(node_ids,hedge,tm,vpm,nodes);
 
       //save original face and nodes for face of hedge (1)
@@ -1438,7 +1438,7 @@ public:
       insert_constrained_edges(node_ids,cdt,id_to_CDT_vh,constrained_edges);
 
       // insert constraints between points that are on the boundary
-      // (not a contrained on the triangle boundary)
+      // (not a constrained on the triangle boundary)
       if (it_fb!=face_boundaries.end()) //is f not a triangle ?
       {
         for (int i=0;i<3;++i)

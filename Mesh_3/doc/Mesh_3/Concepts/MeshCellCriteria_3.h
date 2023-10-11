@@ -9,7 +9,9 @@ that concern either mesh tetrahedra or surface facets.
 The concept `MeshCellCriteria_3` describes the types that
 handle the refinement criteria for mesh tetrahedra.
 
-\cgalHasModel `CGAL::Mesh_cell_criteria_3<Tr>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Mesh_cell_criteria_3<Tr>}
+\cgalHasModelsEnd
 
 \sa `MeshEdgeCriteria_3`
 \sa `MeshFacetCriteria_3`
@@ -26,7 +28,7 @@ public:
 /// @{
 
 /*!
-Handle type for the cells of the
+%Handle type for the cells of the
 triangulation. Must match the `Cell_handle` type in the
 triangulation type used by the mesh generation function.
 */
@@ -48,7 +50,7 @@ the cell is good with regard to the criteria.
 In addition, an object of this type must contain an object of type
 `Cell_quality` if it represents
 a bad cell. `Cell_quality` must be accessible by `operator*()`.
-Note that `boost::optional<Cell_quality>` is a natural model of this concept.
+Note that `std::optional<Cell_quality>` is a natural model of this concept.
 */
 typedef unspecified_type Is_cell_bad;
 

@@ -20,20 +20,21 @@
 
 namespace CGAL {
 
-
 template <class K>
-inline bool do_intersect(
-    const Segment_2<K> &seg,
-    const Bbox_2 &box)
+inline
+typename K::Boolean
+do_intersect(const Segment_2<K>& seg,
+             const Bbox_2& box)
 {
   typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
   return do_intersect(rec, seg);
 }
 
 template <class K>
-inline bool do_intersect(
-    const Bbox_2 &box,
-    const Segment_2<K> &seg)
+inline
+typename K::Boolean
+do_intersect(const Bbox_2& box,
+             const Segment_2<K>& seg)
 {
   return do_intersect(seg, box);
 }
@@ -41,7 +42,8 @@ inline bool do_intersect(
 template<typename K>
 typename Intersection_traits<K, typename K::Segment_2, Bbox_2>::result_type
 intersection(const CGAL::Bbox_2& box,
-             const Segment_2<K>& seg) {
+             const Segment_2<K>& seg)
+             {
   typename K::Iso_rectangle_2 rec(box.xmin(), box.ymin(), box.xmax(), box.ymax());
   return intersection(rec, seg);
 }
@@ -49,9 +51,11 @@ intersection(const CGAL::Bbox_2& box,
 template<typename K>
 typename Intersection_traits<K, typename K::Segment_2, Bbox_2>::result_type
 intersection(const Segment_2<K>& seg,
-             const CGAL::Bbox_2& box) {
+             const CGAL::Bbox_2& box)
+{
   return intersection(box, seg);
 }
 
-}
+} // namespace CGAL
+
 #endif // CGAL_INTERSECTIONS_BBOX_2_SEGMENT_2_H
