@@ -214,7 +214,7 @@ private:
   }
 
 public:
-  FT get_sizing(const vertex_descriptor v) const
+  FT at(const vertex_descriptor v) const
   {
     CGAL_assertion(get(m_vertex_sizing_map, v));
     return get(m_vertex_sizing_map, v);

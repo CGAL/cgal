@@ -31,6 +31,9 @@ typedef unspecified_type FT;
 /// @name Functions
 /// @{
 
+/// a function that returns the sizing value at `v`.
+FT at(const vertex_descriptor v) const;
+
 /// a function controlling edge split and edge collapse,
 /// returning the ratio of the current edge length and the local target edge length between
 /// the points of `va` and `vb` in case the current edge is too long, and `std::nullopt` otherwise.
@@ -47,7 +50,8 @@ Point_3 split_placement(const halfedge_descriptor h,
                         const PolygonMesh& pmesh) const;
 
 /// a function that updates the sizing field value at the vertex `v`.
-void update(const vertex_descriptor v, const PolygonMesh& pmesh);
+void update(const vertex_descriptor v,
+            const PolygonMesh& pmesh);
 
 /// @}
 };

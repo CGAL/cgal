@@ -68,7 +68,8 @@ public:
   *        the input mesh.
   */
   Uniform_sizing_field<PolygonMesh, VPMap>(const FT size, const VPMap& vpmap)
-    : m_sq_short( CGAL::square(4./5. * size))
+    : m_size(size)
+    , m_sq_short( CGAL::square(4./5. * size))
     , m_sq_long(  CGAL::square(4./3. * size))
     , m_vpmap(vpmap)
   {}
@@ -100,6 +101,11 @@ private:
   }
 
 public:
+  FT at(const vertex_descriptor /* v */) const
+  {
+    return m_size;
+  }
+
   std::optional<FT> is_too_long(const vertex_descriptor va, const vertex_descriptor vb) const
   {
     const FT sqlen = sqlength(va, vb);
@@ -130,6 +136,7 @@ public:
   {}
 
 private:
+  const FT m_size;
   const FT m_sq_short;
   const FT m_sq_long;
   const VPMap m_vpmap;
