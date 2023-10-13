@@ -103,7 +103,7 @@ int main(int argc, char** argv)
   Oracle oracle(K{});
   oracle.add_triangle_soup(points, faces, CGAL::parameters::default_values());
 
-  CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle, Delaunay_triangulation> aw3(oracle);
+  CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle, Delaunay_triangulation> aw3(oracle);
   Mesh wrap;
   aw3(alpha, offset, wrap);
 

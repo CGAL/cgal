@@ -35,7 +35,7 @@
 using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Kernel>;
 using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<Kernel, TS_Oracle>;
 using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<Kernel, SS_Oracle>;
-using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle>;
+using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle>;
 
 // Here is the pipeline for the interruption box:
 // - The main window is connected to a wrapping thread, which performs the wrapping.

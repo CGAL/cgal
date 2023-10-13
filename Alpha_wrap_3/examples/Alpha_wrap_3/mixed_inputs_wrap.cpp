@@ -103,7 +103,7 @@ int main(int argc, char** argv)
   oracle.add_segment_soup(segments, CGAL::parameters::default_values());
   oracle.add_point_set(ps_points, CGAL::parameters::default_values());
 
-  CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
+  CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle> aw3(oracle);
 
   Mesh wrap;
   aw3(alpha, offset, wrap);

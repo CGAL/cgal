@@ -21,7 +21,7 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 
 using Oracle = CGAL::Alpha_wraps_3::internal::Triangle_mesh_oracle<Kernel>;
-using Dt = CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle>::Triangulation;
+using Dt = CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle>::Triangulation;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 

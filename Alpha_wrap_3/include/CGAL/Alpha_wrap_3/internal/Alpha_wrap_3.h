@@ -115,7 +115,7 @@ struct Wrapping_default_visitor
 
 template <typename Oracle_,
           typename Triangulation_ = CGAL::Default>
-class Alpha_wrap_3
+class Alpha_wrapper_3
 {
   using Oracle = Oracle_;
 
@@ -183,7 +183,7 @@ protected:
   Alpha_PQ m_queue;
 
 public:
-  Alpha_wrap_3()
+  Alpha_wrapper_3()
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
       // '4096' is an arbitrary, not-too-small value for the largest ID in queue initialization
     : m_queue(4096)
@@ -194,7 +194,7 @@ public:
     static_assert(std::is_floating_point<FT>::value);
   }
 
-  Alpha_wrap_3(const Oracle& oracle)
+  Alpha_wrapper_3(const Oracle& oracle)
     :
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
       m_queue(4096),

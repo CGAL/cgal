@@ -110,7 +110,7 @@ int main(int argc, char** argv)
   t.reset();
 
   using Oracle = CGAL::Alpha_wraps_3::internal::Triangle_mesh_oracle<K>;
-  using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle>;
+  using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle>;
   Wrapper wrapper; // contains the triangulation that is being refined iteratively
 
   for(std::size_t i=0; i<relative_alphas.size(); ++i)
