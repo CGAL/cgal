@@ -1670,7 +1670,7 @@ private:
     auto& cavity_triangulation =  result.cavity_triangulation;
     CGAL::Unique_hash_map<Vertex_handle, Vertex_handle> vertex_map;
 
-    auto insert_new_vertex = [&](Vertex_handle v, [[maybe_unused]] std::string_view extra = "") {
+    auto insert_new_vertex = [&](Vertex_handle v, bool extra_b = false, [[maybe_unused]] std::string_view extra = "") {
       const auto cavity_v = cavity_triangulation.insert(this->point(v));
       vertex_map[v] = cavity_v;
       map_cavity_vertices_to_ambient_vertices[cavity_v] = v;
@@ -1680,7 +1680,7 @@ private:
                                IO::oformat(cavity_v, with_point),
                                IO::oformat(v, with_point));
 #endif
-      ++result.number_of_added_vertices;
+      if(extra_b) ++result.number_of_added_vertices;
       return cavity_v;
     };
 
@@ -1722,7 +1722,7 @@ private:
         const auto v3 = cell->vertex(facet_index);
         auto [_, v3_is_new_vertex] = vertices_of_cavity.insert(v3);
         if(v3_is_new_vertex) {
-          insert_new_vertex(v3, "extra ");
+          insert_new_vertex(v3, true, "extra ");
         }
         for(int i = 0; i < 3; ++i) {
           Facet other_f{cell, this->vertex_triple_index(facet_index, i)};
