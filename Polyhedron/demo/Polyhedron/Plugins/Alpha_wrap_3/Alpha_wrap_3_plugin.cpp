@@ -40,8 +40,8 @@ using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle>;
 // Here is the pipeline for the interruption box:
 // - The main window is connected to a wrapping thread, which performs the wrapping.
 // - The wrapping has a visitor, AW3_interrupter_visitor, which has a shared_ptr to a Boolean
-// - When the user clicks the box, the Boolean is switched to *false*, and the visitor throws
-// - The wrapping thread catches the exception, and creates the wip mesh
+// - When the user clicks the box, the Boolean is switched to *false*
+// - The wrapping thread creates the wip mesh
 
 // Here is the pipeline for the iterative visualization:
 // - The main window is connected to a wrapping thread, which performs the wrapping.
@@ -201,9 +201,6 @@ public:
   }
 };
 
-// Use a throw to get out of the AW3 refinement loop
-class Out_of_patience_exception : public std::exception { };
-
 template <typename BaseVisitor>
 struct AW3_interrupter_visitor
   : BaseVisitor
@@ -215,15 +212,10 @@ struct AW3_interrupter_visitor
     : BaseVisitor(base)
   { }
 
-  // Only overload this one because it gives a better state of the wrap (for other visitor calls,
-  // we often get tetrahedral spikes because there are scaffolding gates in the queue)
-  template <typename Wrapper, typename Point>
-  void before_Steiner_point_insertion(const Wrapper& wrapper, const Point& p)
+  template <typename Wrapper>
+  constexpr bool go_further(const Wrapper& wrapper)
   {
-    if(*should_stop)
-      throw Out_of_patience_exception();
-
-    return BaseVisitor::before_Steiner_point_insertion(wrapper, p);
+    return !(*should_stop);
   }
 };
 
@@ -273,25 +265,14 @@ public:
     QElapsedTimer elapsed_timer;
     elapsed_timer.start();
 
-    // try-catch because the stop visitor currently uses a throw
-    try
-    {
-      wrapper(alpha, offset, wrap,
-              CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
-                               .visitor(visitor));
+    wrapper(alpha, offset, wrap,
+            CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
+                             .visitor(visitor));
 
+    if(wrapper.queue().empty())
       Q_EMIT done(this);
-    }
-    catch(const Out_of_patience_exception&)
-    {
-      if(enforce_manifoldness)
-        wrapper.make_manifold();
-
-      // extract the wrap in its current state
-      wrapper.extract_surface(wrap, CGAL::get(CGAL::vertex_point, wrap), !enforce_manifoldness);
-
+    else
       Q_EMIT interrupted(this);
-    }
 
     std::cout << "Wrapping took " << elapsed_timer.elapsed() / 1000. << "s" << std::endl;
   }
@@ -761,10 +742,6 @@ public Q_SLOTS:
       return;
     }
 
-    // Switch from 'wait' to 'busy'
-    QApplication::restoreOverrideCursor();
-    QApplication::setOverrideCursor(Qt::BusyCursor);
-
     Q_FOREACH(int index, this->scene->selectionIndices())
     {
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
@@ -824,6 +801,10 @@ public Q_SLOTS:
     // Create message box with stop button
     if(use_message_box)
     {
+      // Switch from 'wait' to 'busy'
+      QApplication::restoreOverrideCursor();
+      QApplication::setOverrideCursor(Qt::BusyCursor);
+
       m_message_box = new QMessageBox(QMessageBox::NoIcon,
                                      "Wrapping",
                                      "Wrapping in progress...",
@@ -841,6 +822,8 @@ public Q_SLOTS:
     }
 
     // Actual start
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
     wrapper_thread->start();
 
     CGAL::Three::Three::getMutex()->lock();
