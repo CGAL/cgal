@@ -1398,7 +1398,7 @@ private:
 
     if(nb_of_add_vertices_upper > 0 || nb_of_add_vertices_lower > 0)
     {
-      std::cerr << std::format("!! Cavity has grown and not has {} cells and {} edges, "
+      std::cerr << std::format("!! Cavity has grown and has now {} cells and {} edges, "
                                "{} vertices in upper cavity and {} in lower, "
                                "{} facets in upper cavity and {} in lower\n",
                                intersecting_cells.size(),
