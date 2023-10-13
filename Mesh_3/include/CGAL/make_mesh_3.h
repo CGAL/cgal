@@ -38,10 +38,10 @@ namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
 
-template < typename C3T3, typename MeshDomain, typename MeshCriteria >
+template < typename C3T3, typename MeshDomain, typename MeshCriteria, typename InitialPointsGenerator = Null_functor >
 void
 init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
-          const int nb_initial_points)
+          const int nb_initial_points, InitialPointsGenerator& generator = Null_functor())
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
@@ -49,13 +49,23 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
   typedef typename Initial_points_vector::iterator Ipv_iterator;
   typedef typename C3T3::Vertex_handle Vertex_handle;
 
+  typedef typename
+    CGAL::parameters::internal::Initial_points_generator_generator<
+      std::back_insert_iterator<Initial_points_vector>,
+      MeshDomain,
+      C3T3,
+      InitialPointsGenerator>
+    Initial_points_generator_generator;
+
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
+  auto& generator_wrapped =
+    Initial_points_generator_generator()(generator);
   if (nb_initial_points > -1)
-    domain.construct_initial_points_object()(std::back_inserter(initial_points),
+    generator_wrapped(std::back_inserter(initial_points), domain, c3t3,
                                              nb_initial_points);
   else //use default number of points
-    domain.construct_initial_points_object()(std::back_inserter(initial_points));
+    generator_wrapped(std::back_inserter(initial_points), domain, c3t3);
 
   typename C3T3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
@@ -159,20 +169,22 @@ template < typename C3T3,
            typename MeshDomain,
            typename MeshCriteria,
            bool MeshDomainHasHasFeatures,
-           typename HasFeatures = int>
+           typename HasFeatures = int,
+           typename InitialPointsGenerator = Null_functor>
 struct C3t3_initializer { };
 
 // Partial specialization of C3t3_initializer
 // Handle cases where MeshDomain::Has_features is not a valid type
-template < typename C3T3, typename MD, typename MC, typename HasFeatures >
-struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures >
+template < typename C3T3, typename MD, typename MC, typename HasFeatures, typename InitialPointsGenerator >
+struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures, InitialPointsGenerator >
 {
   typedef parameters::internal::Mesh_3_options Mesh_3_options;
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  Mesh_3_options mesh_options = Mesh_3_options())
+                  Mesh_3_options mesh_options = Mesh_3_options(),
+                  InitialPointsGenerator& generator = Null_functor())
   {
     if ( with_features )
     {
@@ -181,23 +193,24 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures >
     }
 
     init_c3t3(c3t3,domain,criteria,
-              mesh_options.number_of_initial_points);
+              mesh_options.number_of_initial_points, generator);
   }
 };
 
 // Partial specialization of C3t3_initializer
 // Handles cases where MeshDomain::Has_features is a valid type
-template < typename C3T3, typename MD, typename MC, typename HasFeatures >
-struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
+template < typename C3T3, typename MD, typename MC, typename HasFeatures, typename InitialPointsGenerator >
+struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures, InitialPointsGenerator >
 {
   typedef parameters::internal::Mesh_3_options Mesh_3_options;
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  Mesh_3_options mesh_options = Mesh_3_options())
+                  Mesh_3_options mesh_options = Mesh_3_options(),
+                  InitialPointsGenerator& generator = Null_functor())
   {
-    C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features >()
+    C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features, InitialPointsGenerator >()
       (c3t3,domain,criteria,with_features,mesh_options);
   }
 };
@@ -205,8 +218,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
 // Partial specialization of C3t3_initializer
 // Handles cases where MeshDomain::Has_features is a valid type and is defined
 // to CGAL::Tag_true
-template < typename C3T3, typename MD, typename MC >
-struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
+template < typename C3T3, typename MD, typename MC, typename InitialPointsGenerator >
+struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true, InitialPointsGenerator >
   : public C3t3_initializer_base < C3T3, MD, MC >
 {
   virtual ~C3t3_initializer() { }
@@ -216,7 +229,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  Mesh_3_options mesh_options = Mesh_3_options())
+                  Mesh_3_options mesh_options = Mesh_3_options(),
+                  InitialPointsGenerator& generator = Null_functor())
   {
     if ( with_features ) {
       this->initialize_features(c3t3, domain, criteria,mesh_options);
@@ -242,26 +256,27 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
       }
       if(need_more_init) {
         init_c3t3(c3t3, domain, criteria,
-                  mesh_options.number_of_initial_points);
+                  mesh_options.number_of_initial_points, generator);
       }
     }
     else { init_c3t3(c3t3,domain,criteria,
-                     mesh_options.number_of_initial_points); }
+                     mesh_options.number_of_initial_points, generator); }
   }
 };
 
 // Partial specialization of C3t3_initializer
 // Handles cases where MeshDomain::Has_features is a valid type and is defined
 // to CGAL::Tag_false
-template < typename C3T3, typename MD, typename MC >
-struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
+template < typename C3T3, typename MD, typename MC, typename InitialPointsGenerator >
+struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false, InitialPointsGenerator >
 {
   typedef parameters::internal::Mesh_3_options Mesh_3_options;
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  Mesh_3_options mesh_options = Mesh_3_options())
+                  Mesh_3_options mesh_options = Mesh_3_options(),
+                  InitialPointsGenerator& generator = Null_functor())
   {
     if ( with_features )
     {
@@ -270,7 +285,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
     }
 
     init_c3t3(c3t3,domain,criteria,
-              mesh_options.number_of_initial_points);
+              mesh_options.number_of_initial_points, generator);
   }
 };
 
@@ -401,6 +416,31 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                           </UL>}
  *     \cgalParamDefault{`parameters::exude()`}
  *   \cgalParamSectionEnd
+ *   \cgalParamSectionBegin{Mesh initialisation}
+ *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be supplied before the meshing process.
+ *                           It must folow the `InitialPointsGenerator` concept and is specified with the param:
+ *                           <UL>
+ *                             <LI> `parameters::initial_points_generator(generator)`
+ *                           </UL>
+ *
+ *                           The `InitialPointsGenerator` concept is a function object to construct
+ *                           a set of initial points on the surface of the domain. Provides the
+ *                           following operators:
+ *
+ *                           `template <typename OutputIterator, typename MeshDomain, typename C3t3>`
+ *                           <br>
+ *                           `OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)`
+ *
+ *                           `template <typename OutputIterator, typename MeshDomain, typename C3t3>`
+ *                           <br>
+ *                           `OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)`
+ *
+ *                           Those two operators output a set of (`n`) surface points to the
+ *                           output iterator `pts`, as objects of type `std::pair<Point_3,
+ *                           %Index>`. If `n` is not given, the functor must provide enough
+ *                           points to initialize the mesh generation process.}
+ *     \cgalParamDefault{`parameters::initial_points_generator(generator)`}
+ *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd
  *
  * Note that regardless of which optimization processes are activated,
@@ -436,11 +476,13 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
     parameters::internal::Features_options features_param = choose_parameter(get_parameter(np, internal_np::features_options_param), parameters::features(domain).v);
     parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
     parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
+    auto initial_points_generator_param = choose_parameter(get_parameter(np, internal_np::initial_points_generator_param), Null_functor());
 
     make_mesh_3_impl(c3t3, domain, criteria,
             exude_param, perturb_param, odt_param, lloyd_param,
             features_param.features(), mesh_options_param,
-            manifold_options_param);
+            manifold_options_param,
+            initial_points_generator_param);
     return c3t3;
 }
 
@@ -469,7 +511,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria,
  *
  * @return The mesh as a C3T3 object
  */
-template<class C3T3, class MeshDomain, class MeshCriteria>
+template<class C3T3, class MeshDomain, class MeshCriteria, class InitialPointsGenerator = Null_functor>
 void make_mesh_3_impl(C3T3& c3t3,
                       const MeshDomain&   domain,
                       const MeshCriteria& criteria,
@@ -481,7 +523,8 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Mesh_3_options&
                         mesh_options = parameters::internal::Mesh_3_options(),
                       const parameters::internal::Manifold_options&
-                        manifold_options = parameters::internal::Manifold_options())
+                        manifold_options = parameters::internal::Manifold_options(),
+                      InitialPointsGenerator& generator = Null_functor())
 {
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::get_default_random() = CGAL::Random(0);
@@ -492,11 +535,14 @@ void make_mesh_3_impl(C3T3& c3t3,
     C3T3,
     MeshDomain,
     MeshCriteria,
-    ::CGAL::internal::has_Has_features<MeshDomain>::value > () (c3t3,
+    ::CGAL::internal::has_Has_features<MeshDomain>::value,
+    int, /*Type of MeshDomain::Has_features not determined*/
+    InitialPointsGenerator >() (c3t3,
             domain,
             criteria,
             with_features,
-            mesh_options);
+            mesh_options,
+            generator);
 
   CGAL_assertion( c3t3.triangulation().dimension() >= 2 );
 
