@@ -43,6 +43,7 @@ public:
 
 
   void setColor(QColor c) Q_DECL_OVERRIDE;
+  void setUseSubdomainColors(bool use_subdomain_colors);
 
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
 

@@ -1035,6 +1035,8 @@ treat_result(Scene_item& source_item,
                             float((bbox.ymin() + bbox.ymax())/2.f),
                             float((bbox.zmin() + bbox.zmax())/2.f));
 
+    bool input_is_labeled_img = dynamic_cast<Scene_image_item*>(&source_item) != nullptr;
+    result_item->setUseSubdomainColors(input_is_labeled_img);
     result_item->setColor(source_item.color());
     result_item->setRenderingMode(source_item.renderingMode());
     result_item->set_data_item(&source_item);
