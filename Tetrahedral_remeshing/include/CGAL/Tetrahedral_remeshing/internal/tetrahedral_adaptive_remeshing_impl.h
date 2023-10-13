@@ -399,6 +399,11 @@ private:
     //update number_of_cells and number_of_facets in c3t3
     m_c3t3.rescan_after_load_of_triangulation();
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "00-c3t3_vertices_before_init_");
+#endif
+
     //tag cells
     for (Cell_handle cit : tr().finite_cell_handles())
     {
@@ -414,16 +419,17 @@ private:
         ++nbc;
 #endif
       }
-      if (!input_is_c3t3())
+
+      for (int i = 0; i < 4; ++i)
       {
-        for (int i = 0; i < 4; ++i)
-        {
-          if (cit->vertex(i)->in_dimension() == -1)
-            cit->vertex(i)->set_dimension(3);
-        }
+        Vertex_handle vi = cit->vertex(i);
+        if(dimension_is_modifiable(vi))
+          vi->set_dimension(3);
       }
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      else if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
+      //else
+        if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
         ++nbc;
 #endif
     }
@@ -449,9 +455,10 @@ private:
         for (int j = 0; j < 3; ++j)
         {
           Vertex_handle vij = f.first->vertex(Tr::vertex_triple_index(i, j));
-          if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
+          if(dimension_is_modifiable(vij))
             vij->set_dimension(2);
         }
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbf;
 #endif
@@ -482,11 +489,11 @@ private:
         m_c3t3.add_to_complex(e, 1);
 
         Vertex_handle v = e.first->vertex(e.second);
-        if (v->in_dimension() == -1 || v->in_dimension() > 1)
+        if(dimension_is_modifiable(v))
           v->set_dimension(1);
 
         v = e.first->vertex(e.third);
-        if (v->in_dimension() == -1 || v->in_dimension() > 1)
+        if(dimension_is_modifiable(v))
           v->set_dimension(1);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -505,12 +512,10 @@ private:
       if ( vit->in_dimension() == 0
            || nb_incident_complex_edges(vit, m_c3t3) > 2)
       {
-        if(!m_c3t3.is_in_complex(vit))
+        if (!m_c3t3.is_in_complex(vit))
           m_c3t3.add_to_complex(vit, ++corner_id);
 
-        if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
-          vit->set_dimension(0);
-
+        vit->set_dimension(0);
         vit->set_index(corner_id);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -536,6 +541,14 @@ private:
   }
 
 private:
+  bool dimension_is_modifiable(const Vertex_handle& v) const
+  {
+    if (input_is_c3t3()) // feature edges and tip/endpoints vertices are kept
+      return v->in_dimension() != 1 && v->in_dimension() != 0;
+    else
+      return true;
+  }
+
   bool check_vertex_dimensions()
   {
     for (Vertex_handle vit : tr().finite_vertex_handles())
