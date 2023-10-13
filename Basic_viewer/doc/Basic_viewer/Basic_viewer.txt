@@ -18,7 +18,7 @@ draw(XXX)
 
 Graphics_scene_options
 
-\subsection Basic_viewerDoc_3 Graphic storage
+\subsection Basic_viewerDoc_3 Graphic Scene
 
 \subsection Basic_viewerDoc_4 Basic viewer Qt
 

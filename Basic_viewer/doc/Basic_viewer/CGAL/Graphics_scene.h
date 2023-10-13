@@ -12,37 +12,37 @@ The class `Graphics_scene` stores points, segments, triangles, rays and lines. E
 template <typename BufferType=float>
 class Graphics_scene {
 public:
-  /// adds the given point in the storage.
+  /// adds the given point in the scene.
   template <typename KPoint>
   void add_point(const KPoint &p);
 
-  /// adds the given colored point in the storage.
+  /// adds the given colored point in the scene.
   template <typename KPoint>
   void add_point(const KPoint &p, const CGAL::IO::Color &acolor);
 
-  /// adds the given segment in the storage.
+  /// adds the given segment in the scene.
   template <typename KPoint>
   void add_segment(const KPoint &p1, const KPoint &p2);
 
-  /// adds the given colored segment in the storage.
+  /// adds the given colored segment in the scene.
   template <typename KPoint>
   void add_segment(const KPoint &p1, const KPoint &p2,
                    const CGAL::IO::Color &acolor);
 
-  /// adds the given ray in the storage: an half line starting from `p` and having `v` as direction.
+  /// adds the given ray in the scene: an half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v);
 
-  /// adds the given colored ray in the storage: an half line starting from `p` and having `v` as direction.
+  /// adds the given colored ray in the scene: an half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v,
                const CGAL::IO::Color &acolor);
 
-  /// adds the given line in the storage, defined by `p` and `v` as direction.
+  /// adds the given line in the scene, defined by `p` and `v` as direction.
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v);
 
-  /// adds the given colored line in the storage, defined by `p` and `v` as direction.
+  /// adds the given colored line in the scene, defined by `p` and `v` as direction.
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v,
                 const CGAL::IO::Color &acolor);
@@ -69,18 +69,18 @@ public:
   /// @pre `a_face_started()`
   void face_end();
 
-  /// adds the given text at the given position in the storage.
+  /// adds the given text at the given position in the scene.
   template <typename KPoint>
   void add_text(const KPoint &kp, const char *txt);
 
-  /// adds the given text at the given position in the storage.
+  /// adds the given text at the given position in the scene.
   template <typename KPoint>
   void add_text(const KPoint &kp, const std::string &txt);
 
-  /// returns `true` iff the storage has no element.
+  /// returns `true` iff the scene has no element.
   bool empty() const;
 
-  /// clears the storage, i.e., removes all points, segments, triangles and text.
+  /// clears the scene, i.e., removes all points, segments, triangles and text.
   void clear();
 };
 
