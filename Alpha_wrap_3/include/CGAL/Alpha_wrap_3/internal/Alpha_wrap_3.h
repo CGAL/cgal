@@ -167,12 +167,16 @@ private:
   using SC_Iso_cuboid_3 = SC::Iso_cuboid_3;
   using SC2GT = Cartesian_converter<SC, Geom_traits>;
 
+  using Seeds = std::vector<Point_3>;
+
 protected:
   Oracle m_oracle;
   SC_Iso_cuboid_3 m_bbox;
 
   FT m_alpha = FT(-1), m_sq_alpha = FT(-1);
   FT m_offset = FT(-1), m_sq_offset = FT(-1);
+
+  Seeds m_seeds;
 
   Triangulation m_tr;
 
@@ -267,13 +271,7 @@ public:
     Visitor visitor = choose_parameter(get_parameter_reference(in_np, internal_np::visitor), default_visitor);
 
     //
-    using Seeds = typename internal_np::Lookup_named_param_def<
-                    internal_np::seed_points_t,
-                    InputNamedParameters,
-                    std::vector<Point_3> >::reference;
-
-    std::vector<Point_3> no_seeds;
-    Seeds seeds = choose_parameter(get_parameter_reference(in_np, internal_np::seed_points), no_seeds);
+    m_seeds = choose_parameter(get_parameter_reference(in_np, internal_np::seed_points), Seeds());
 
     // Whether or not some cells should be reflagged as "inside" after the refinement+carving loop
     // as ended, as to ensure that the result is not only combinatorially manifold, but also
@@ -299,7 +297,7 @@ public:
 
     visitor.on_alpha_wrapping_begin(*this);
 
-    if(!initialize(alpha, offset, seeds, refining))
+    if(!initialize(alpha, offset, refining))
       return;
 
 #ifdef CGAL_AW3_TIMER
@@ -530,15 +528,14 @@ private:
   //
   // Another way is to simply make faces incident to the seed always traversable, and then
   // we only have to ensure faces opposite of the seed are traversable (i.e., radius ~= 1.65 * alpha)
-  template <typename SeedRange>
-  bool initialize_with_cavities(const SeedRange& seeds)
+  bool initialize_with_cavities()
   {
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
     std::cout << "> Dig cavities" << std::endl;
-    std::cout << seeds.size() << " seed(s)" << std::endl;
+    std::cout << m_seeds.size() << " seed(s)" << std::endl;
 #endif
 
-    CGAL_precondition(!seeds.empty());
+    CGAL_precondition(!m_seeds.empty());
 
     // Get a double value approximating the scaling factors
 //    std::cout << sqrt(3) * sin(2pi / 5) << std::endl;
@@ -547,7 +544,7 @@ private:
     Iso_cuboid_3 bbox = SC2GT()(m_bbox);
 
     std::vector<Vertex_handle> seed_vs;
-    for(const Point_3& seed_p : seeds)
+    for(const Point_3& seed_p : m_seeds)
     {
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
       std::cout << "Initialize from seed " << seed_p << std::endl;
@@ -1241,10 +1238,8 @@ private:
   }
 
 private:
-  template <typename SeedRange>
   bool initialize(const double alpha,
                   const double offset,
-                  const SeedRange& seeds,
                   const bool refining)
   {
 #ifdef CGAL_AW3_DEBUG
@@ -1308,10 +1303,10 @@ private:
 
       insert_bbox_corners();
 
-      if(seeds.empty())
+      if(m_seeds.empty())
         return initialize_from_infinity();
       else
-        return initialize_with_cavities(seeds);
+        return initialize_with_cavities();
     }
   }
 
