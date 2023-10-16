@@ -708,6 +708,91 @@ private:
   }
 
 private:
+  // Manifoldness is tolerated while debugging and extracting at intermediate states
+  // Not the preferred way because it uses 3*nv storage
+  template <typename OutputMesh, typename OVPM>
+  void extract_possibly_non_manifold_surface(OutputMesh& output_mesh,
+                                             OVPM ovpm) const
+  {
+    namespace PMP = Polygon_mesh_processing;
+
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "> Extract possibly non-manifold wrap... ()" << std::endl;
+#endif
+
+    clear(output_mesh);
+
+    CGAL_assertion_code(for(auto cit=m_tr.finite_cells_begin(), cend=m_tr.finite_cells_end(); cit!=cend; ++cit))
+    CGAL_assertion(cit->tds_data().is_clear());
+
+    for(auto cit=m_tr.finite_cells_begin(), cend=m_tr.finite_cells_end(); cit!=cend; ++cit)
+    {
+      Cell_handle seed = cit;
+      if(seed->is_outside() || seed->tds_data().processed())
+        continue;
+
+      std::queue<Cell_handle> to_visit;
+      to_visit.push(seed);
+
+      std::vector<Point_3> points;
+      std::vector<std::vector<size_t> > faces;
+      std::size_t idx = 0;
+
+      while(!to_visit.empty())
+      {
+        const Cell_handle cell = to_visit.front();
+        CGAL_assertion(!cell->is_outside() && !m_tr.is_infinite(cell));
+
+        to_visit.pop();
+
+        if(cell->tds_data().processed())
+          continue;
+
+        cell->tds_data().mark_processed();
+
+        for(int fid=0; fid<4; ++fid)
+        {
+          const Cell_handle neighbor = cell->neighbor(fid);
+          if(neighbor->is_outside())
+          {
+            // There shouldn't be any artificial vertex on the inside/outside boundary
+            // (past initialization)
+//            CGAL_assertion(cell->vertex((fid + 1)&3)->type() == AW3i::Vertex_type:: DEFAULT);
+//            CGAL_assertion(cell->vertex((fid + 2)&3)->type() == AW3i::Vertex_type:: DEFAULT);
+//            CGAL_assertion(cell->vertex((fid + 3)&3)->type() == AW3i::Vertex_type:: DEFAULT);
+
+            points.push_back(m_tr.point(cell, Triangulation::vertex_triple_index(fid, 0)));
+            points.push_back(m_tr.point(cell, Triangulation::vertex_triple_index(fid, 1)));
+            points.push_back(m_tr.point(cell, Triangulation::vertex_triple_index(fid, 2)));
+            faces.push_back({idx, idx + 1, idx + 2});
+            idx += 3;
+          }
+          else
+          {
+            to_visit.push(neighbor);
+          }
+        }
+      }
+
+      CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(faces));
+      PMP::polygon_soup_to_polygon_mesh(points, faces, output_mesh,
+                                        CGAL::parameters::default_values(),
+                                        CGAL::parameters::vertex_point_map(ovpm));
+
+      PMP::stitch_borders(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
+      CGAL_assertion(is_closed(output_mesh));
+    }
+
+    for(auto cit=m_tr.finite_cells_begin(), cend=m_tr.finite_cells_end(); cit!=cend; ++cit)
+      cit->tds_data().clear();
+
+    CGAL_postcondition(!is_empty(output_mesh));
+    CGAL_postcondition(is_valid_polygon_mesh(output_mesh));
+    CGAL_postcondition(is_closed(output_mesh));
+
+    PMP::orient_to_bound_a_volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
+  }
+
   template <typename OutputMesh, typename OVPM>
   void extract_manifold_surface(OutputMesh& output_mesh,
                                 OVPM ovpm) const
@@ -781,189 +866,8 @@ private:
     CGAL_postcondition(is_valid_polygon_mesh(output_mesh));
     CGAL_postcondition(is_closed(output_mesh));
     CGAL_postcondition(PMP::does_bound_a_volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm)));
-  }
 
-  template <typename OutputMesh, typename OVPM>
-  void extract_inside_boundary(OutputMesh& output_mesh,
-                               OVPM ovpm) const
-  {
-    namespace PMP = Polygon_mesh_processing;
-
-    using vertex_descriptor = typename boost::graph_traits<OutputMesh>::vertex_descriptor;
-    using halfedge_descriptor = typename boost::graph_traits<OutputMesh>::halfedge_descriptor;
-    using face_descriptor = typename boost::graph_traits<OutputMesh>::face_descriptor;
-
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "> Extract possibly non-manifold wrap... ()" << std::endl;
-#endif
-
-    clear(output_mesh);
-
-    std::vector<Point_3> points;
-    std::vector<std::array<std::size_t, 3> > polygons;
-
-    // Explode the polygon soup into indepent triangles, and stitch it back
-    // edge by edge by walking along the exterior
-    std::map<Facet, std::size_t> facet_ids;
-    std::size_t idx = 0;
-
-    // Looks identical to the block in extract_manifold_surface(), but there are
-    // two significant differences:
-    // - Boundary considers MANIFOLD outside here
-    // - There is no attempt to re-use the same vertex in multiple faces
-    for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit)
-    {
-      Facet f = *fit;
-      if(f.first->is_inside()) // need f.first to be OUTSIDE or MANIFOLD
-        f = m_tr.mirror_facet(f);
-
-      const Cell_handle ch = f.first;
-      const int s = f.second;
-      const Cell_handle nh = ch->neighbor(s);
-      if(!is_on_inside_boundary(ch, nh)) // MANIFOLD here is outside
-        continue;
-
-      facet_ids[f] = idx / 3;
-
-      points.push_back(m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)));
-      points.push_back(m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)));
-      points.push_back(m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)));
-      polygons.push_back({idx, idx + 1, idx + 2});
-
-      idx += 3;
-    }
-
-#ifdef CGAL_AW3_DEBUG
-    std::cout << "\t" << points.size() << " points" << std::endl;
-    std::cout << "\t" << polygons.size() << " polygons" << std::endl;
-#endif
-
-    if(polygons.empty())
-    {
-#ifdef CGAL_AW3_DEBUG
-      std::cerr << "Warning: empty wrap?..." << std::endl;
-#endif
-      return;
-    }
-
-    CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(polygons));
-
-    std::unordered_map<std::size_t, face_descriptor> i2f;
-    PMP::polygon_soup_to_polygon_mesh(points, polygons, output_mesh,
-                                      CGAL::parameters::polygon_to_face_output_iterator(std::inserter(i2f, i2f.end())),
-                                      CGAL::parameters::vertex_point_map(ovpm));
-
-    auto face_to_facet = get(CGAL::dynamic_face_property_t<Facet>(), output_mesh);
-
-    idx = 0;
-    for(auto fit=m_tr.all_facets_begin(), fend=m_tr.all_facets_end(); fit!=fend; ++fit)
-    {
-      Facet f = *fit;
-      if(f.first->is_inside()) // f.first must be MANIFOLD or OUTSIDE
-        f = m_tr.mirror_facet(f);
-
-      const Cell_handle ch = f.first;
-      const int s = f.second;
-      const Cell_handle nh = ch->neighbor(s);
-      if(!is_on_inside_boundary(ch, nh)) // MANIFOLD here is outside
-        continue;
-
-      put(face_to_facet, i2f[idx++], f);
-    }
-
-    // grab the stitchable halfedges
-    std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > to_stitch;
-
-    for(face_descriptor f : faces(output_mesh))
-    {
-      const Facet& tr_f = get(face_to_facet, f);
-      const Cell_handle ch = tr_f.first;
-      CGAL_assertion(!ch->is_inside()); // OUTSIDE or MANIFOLD
-
-      for(halfedge_descriptor h : halfedges_around_face(halfedge(f, output_mesh), output_mesh))
-      {
-        const vertex_descriptor sv = source(h, output_mesh);
-        const vertex_descriptor tv = target(h, output_mesh);
-
-        // only need the pair of halfedges once
-        if(get(ovpm, sv) > get(ovpm, tv))
-          continue;
-
-        // One could avoid these point comparisons by using the fact that we know that the graph
-        // has faces built in a specific order (through BGL::add_face()), but it's better to make
-        // this code more generic (and it is not very costly).
-        auto graph_descriptor_to_triangulation_handle = [&](const vertex_descriptor v)
-        {
-          const Point_3& p = get(ovpm, v);
-          for(int i=0; i<4; ++i)
-            if(ch->vertex(i)->point() == p)
-              return ch->vertex(i);
-
-          CGAL_assertion(false);
-          return Vertex_handle();
-        };
-
-        const Vertex_handle s_vh = graph_descriptor_to_triangulation_handle(sv);
-        const Vertex_handle t_vh = graph_descriptor_to_triangulation_handle(tv);
-        CGAL_assertion(get(ovpm, sv) == m_tr.point(s_vh));
-        CGAL_assertion(get(ovpm, tv) == m_tr.point(t_vh));
-
-        const int facet_third_id = 6 - (ch->index(s_vh) + ch->index(t_vh) + tr_f.second); // 0 + 1 + 2 + 3 = 6
-        Vertex_handle third_vh = ch->vertex(facet_third_id);
-
-        // walk around the edge (in the exterior of the wrap) till meeting an inside cell
-        Cell_handle start_ch = ch, curr_ch = ch;
-        do
-        {
-          const int i = curr_ch->index(s_vh);
-          const int j = curr_ch->index(t_vh);
-
-          // the facet is incident to the outside cell, and we walk in the exterior
-          const int facet_third_id = 6 - (curr_ch->index(s_vh) + curr_ch->index(t_vh) + curr_ch->index(third_vh));
-          third_vh = curr_ch->vertex(facet_third_id);
-          curr_ch = curr_ch->neighbor(Triangulation::next_around_edge(i,j));
-
-          if(curr_ch->is_inside())
-            break;
-        }
-        while(curr_ch != start_ch);
-
-        CGAL_assertion(curr_ch != start_ch);
-        CGAL_assertion(curr_ch->is_inside());
-
-        const int opp_id = 6 - (curr_ch->index(s_vh) + curr_ch->index(t_vh) + curr_ch->index(third_vh));
-        const Facet tr_f2 = m_tr.mirror_facet(Facet(curr_ch, opp_id));
-        CGAL_assertion(facet_ids.count(Facet(curr_ch, opp_id)) == 0);
-        CGAL_assertion(!tr_f2.first->is_inside());
-        CGAL_assertion(tr_f2.first->neighbor(tr_f2.second) == curr_ch);
-        CGAL_assertion(tr_f2.first->has_vertex(s_vh) && tr_f2.first->has_vertex(t_vh));
-
-        const face_descriptor f2 = i2f[facet_ids.at(tr_f2)];
-        halfedge_descriptor h2 = halfedge(f2, output_mesh), done = h2;
-        while(get(ovpm, target(h2, output_mesh)) != get(ovpm, source(h, output_mesh)))
-        {
-          h2 = next(h2, output_mesh);
-          CGAL_assertion(h2 != done);
-          if(h2 == done)
-            break;
-        }
-
-        CGAL_assertion(get(ovpm, source(h, output_mesh)) == get(ovpm, target(h2, output_mesh)));
-        CGAL_assertion(get(ovpm, target(h, output_mesh)) == get(ovpm, source(h2, output_mesh)));
-        CGAL_assertion(get(ovpm, target(next(h2, output_mesh), output_mesh)) == m_tr.point(third_vh));
-
-        to_stitch.emplace_back(opposite(h, output_mesh), opposite(h2, output_mesh));
-      }
-    }
-
-    PMP::internal::stitch_halfedge_range(to_stitch, output_mesh, ovpm);
-
-    collect_garbage(output_mesh);
-
-    CGAL_postcondition(!is_empty(output_mesh));
-    CGAL_postcondition(is_valid_polygon_mesh(output_mesh));
-    CGAL_postcondition(is_closed(output_mesh));
-    CGAL_postcondition(PMP::does_bound_a_volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm)));
+    PMP::orient_to_bound_a_volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
   }
 
 public:
@@ -973,7 +877,7 @@ public:
                        const bool tolerate_non_manifoldness = false) const
   {
     if(tolerate_non_manifoldness)
-      extract_inside_boundary(output_mesh, ovpm);
+      extract_possibly_non_manifold_surface(output_mesh, ovpm);
     else
       extract_manifold_surface(output_mesh, ovpm);
   }
