@@ -211,7 +211,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures, InitialPointsGenerato
                   InitialPointsGenerator& generator = Null_functor())
   {
     C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features, InitialPointsGenerator >()
-      (c3t3,domain,criteria,with_features,mesh_options);
+      (c3t3,domain,criteria,with_features,mesh_options,generator);
   }
 };
 
