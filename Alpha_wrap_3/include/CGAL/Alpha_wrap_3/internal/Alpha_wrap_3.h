@@ -1000,10 +1000,11 @@ private:
       "Traversable facet"
     };
 
-    if(status > status_count || status < 0)
+    const std::size_t status_id = static_cast<std::size_t>(status);
+    if(status_id > status_count || status_id < 0)
       return "Unknown status";
     else
-      return message[status];
+      return message[status_id];
   }
 
 public:
