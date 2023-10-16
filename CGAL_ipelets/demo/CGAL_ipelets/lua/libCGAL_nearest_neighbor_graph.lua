@@ -17,7 +17,7 @@ function run(model, num)
 end
 
 methods = {
-  { label="kNNG" },
+  { label="k-nearest-neighbor graph" },
   { label="Help" },
 }
 

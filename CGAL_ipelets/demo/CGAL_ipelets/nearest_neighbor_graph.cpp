@@ -19,7 +19,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Delaunay_triangulation_2<Kernel>              Triangulation;
 
 const std::string Slab[] = {
-  "kNNG", "Help"
+    "k-nearest-neighbor graph", "Help"
 };
 
 const std::string Hmsg[] = {
@@ -28,7 +28,7 @@ const std::string Hmsg[] = {
 
 struct nngIpelet
   : CGAL::Ipelet_base<Kernel, 2> {
-  nngIpelet() : CGAL::Ipelet_base<Kernel, 2>("Nearest-neighbor graph", Slab, Hmsg){}
+  nngIpelet() : CGAL::Ipelet_base<Kernel, 2>("k-nearest-neighbor graph", Slab, Hmsg){}
   void protected_run(int);
 };
 
