@@ -188,8 +188,8 @@ struct Initial_points_generator_wrapper
   }
 
 private:
-  std::function<OutputIterator(OutputIterator,MeshDomain,C3t3)> initial_points_generator_default_;
-  std::function<OutputIterator(OutputIterator,MeshDomain,C3t3,int)> initial_points_generator_;
+  const std::function<OutputIterator(OutputIterator,MeshDomain,C3t3)> initial_points_generator_default_;
+  const std::function<OutputIterator(OutputIterator,MeshDomain,C3t3,int)> initial_points_generator_;
 };
 template <typename OutputIterator, typename MeshDomain, typename C3t3>
 struct Initial_points_generator_default

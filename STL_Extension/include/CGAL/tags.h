@@ -53,6 +53,9 @@ struct Null_functor {
   typedef Null_tag result_type;
   typedef Null_tag second_argument_type;
 };
+namespace Null_functor_internal {
+  static Null_functor default_null_functor;
+}
 
 // For concurrency
 struct Sequential_tag {};
