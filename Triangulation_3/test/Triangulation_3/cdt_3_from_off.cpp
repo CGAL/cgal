@@ -45,42 +45,46 @@ using vertex_descriptor = boost::graph_traits<Mesh>::vertex_descriptor;
 using edge_descriptor   = boost::graph_traits<Mesh>::edge_descriptor;
 using face_descriptor   = boost::graph_traits<Mesh>::face_descriptor;
 
-int go(Mesh, std::string);
+struct CDT_options
+{
+  bool merge_facets = false;
+  double ratio = 0.;
+  std::string filename = CGAL::data_file_path("meshes/mpi.off");
+  std::string output_filename{"dump.off"};
+};
 
-bool merge_facets = false;
-double ratio = 0.;
-std::string filename = CGAL::data_file_path("meshes/mpi.off");
-std::string output_filename{"dump.off"};
+int go(Mesh, CDT_options);
 
 int main(int argc, char* argv[])
 {
   std::cerr.precision(17);
   std::cout.precision(17);
 
+  CDT_options options;
   int positional = 0;
 
   for(int i = 1; i < argc; ++i) {
     std::string arg = argv[i];
     if(arg == "--merge-facets") {
-      merge_facets = true;
+      options.merge_facets = true;
     } else if(arg == "--ratio") {
       assert(i + 1 < argc);
-      ratio = std::stod(argv[++i]);
+      options.ratio = std::stod(argv[++i]);
     } else if(arg[0] == '-') {
       std::cerr << "Unknown option: " << arg << '\n';
       return 1;
     } else {
       switch(positional) {
         case 0:
-          filename = arg;
+          options.filename = arg;
           ++positional;
           break;
         case 1:
-          output_filename = arg;
+          options.output_filename = arg;
           ++positional;
           break;
         case 2:
-          ratio = std::stod(arg);
+          options.ratio = std::stod(arg);
           ++positional;
           break;
         default:
@@ -90,26 +94,26 @@ int main(int argc, char* argv[])
     }
   }
 
-  std::ifstream input(filename);
+  std::ifstream input(options.filename);
   Mesh mesh;
-  const bool ok = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh);
+  const bool ok = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(options.filename, mesh);
   if (!ok)
   {
     std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
 
-  if(ratio == 0.) {
-    return go(std::move(mesh), output_filename);
+  if(options.ratio == 0.) {
+    return go(std::move(mesh), std::move(options));
   }
-  auto nb_buckets = static_cast<int>(std::floor(1 / ratio)) + 1;
-  std::cerr << "RATIO: " << ratio << '\n';
+  auto nb_buckets = static_cast<int>(std::floor(1 / options.ratio)) + 1;
+  std::cerr << "RATIO: " << options.ratio << '\n';
 
   const Mesh orig_mesh{mesh};
   Mesh bad_mesh{mesh};
   for(int bucket = 0; bucket < nb_buckets;) {
     const auto nb_faces = mesh.number_of_faces();
-    auto nb_to_skip = static_cast<int>(std::round(nb_faces * ratio));
+    auto nb_to_skip = static_cast<int>(std::round(nb_faces * options.ratio));
     if(nb_to_skip < 1) {
       nb_to_skip = 1;
       nb_buckets = nb_faces;
@@ -143,7 +147,7 @@ int main(int argc, char* argv[])
         current.close();
 
     try {
-      go(mesh, output_filename);
+      go(mesh, options);
     } catch(CGAL::Failure_exception& e) {
       if(e.expression().find(std::string("orientation")) != std::string::npos)
       {
@@ -206,7 +210,7 @@ auto segment_soup_to_polylines(Range_of_segments&& segment_soup) {
   return polylines;
 }
 
-int go(Mesh mesh, std::string output_filename) {
+int go(Mesh mesh, CDT_options options) {
   CDT cdt;
   auto pmap = get(CGAL::vertex_point, mesh);
 
@@ -216,7 +220,7 @@ int go(Mesh mesh, std::string output_filename) {
   assert(ok2); CGAL_USE(ok2);
   int nb_patches = 0;
   std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
-  if(merge_facets) {
+  if(options.merge_facets) {
     for(auto f: faces(mesh))
     {
       if(get(patch_id_map, f) >= 0) continue;
@@ -264,13 +268,13 @@ int go(Mesh mesh, std::string output_filename) {
 
   int exit_code = EXIT_SUCCESS;
 
-  auto finally = [&cdt,output_filename]() {
+  auto finally = [&cdt, &options]() {
     {
       std::ofstream dump("dump.binary.cgal");
       CGAL::IO::save_binary_file(dump, cdt);
     }
     {
-      std::ofstream dump(output_filename);
+      std::ofstream dump(options.output_filename);
       dump.precision(17);
       cdt.write_facets(dump, cdt, std::views::filter(cdt.finite_facets(), [&](auto f) {
           return cdt.is_constrained(f);
@@ -294,7 +298,7 @@ int go(Mesh mesh, std::string output_filename) {
   };
 
   for(auto v: vertices(mesh)) {
-    if(merge_facets && false == get(v_selected_map, v)) continue;
+    if(options.merge_facets && false == get(v_selected_map, v)) continue;
     cdt.insert(get(pmap, v));
   }
   if(cdt.dimension() < 3) {
@@ -319,7 +323,7 @@ int go(Mesh mesh, std::string output_filename) {
   }
   int poly_id = 0;
   CDT_3_try {
-    if(merge_facets) {
+    if(options.merge_facets) {
       for(int i = 0; i < nb_patches; ++i) {
         auto& edges = patch_edges[i];
         auto polylines = segment_soup_to_polylines(edges);
