@@ -620,7 +620,7 @@ private:
       m_tr.incident_cells(seed_v, std::back_inserter(inc_cells));
 
       for(Cell_handle ch : inc_cells)
-        ch->label() = cavity_cell_label(ch);
+        ch->set_label(cavity_cell_label(ch));
     }
 
     // Should be cheap enough to go through the full triangulation as only seeds have been inserted
@@ -656,13 +656,13 @@ private:
     {
       if(m_tr.is_infinite(ch))
       {
-        ch->label() = Cell_label::OUTSIDE;
+        ch->set_label(Cell_label::OUTSIDE);
         const int inf_index = ch->index(m_tr.infinite_vertex());
         push_facet(std::make_pair(ch, inf_index));
       }
       else
       {
-        ch->label() = Cell_label::INSIDE;
+        ch->set_label(Cell_label::INSIDE);
       }
     }
 
@@ -671,9 +671,10 @@ private:
 
   void reset_manifold_labels()
   {
+    // No erase counter increment, or it will mess up with a possibly non-empty queue.
     for(Cell_handle ch : m_tr.all_cell_handles())
       if(ch->label() == Cell_label::MANIFOLD)
-        ch->label() = Cell_label::OUTSIDE;
+        ch->set_label(Cell_label::OUTSIDE);
   }
 
   // This function is used in the case of resumption of a previous run: m_tr is not cleared,
@@ -1266,7 +1267,10 @@ private:
 
       if(m_tr.is_infinite(nh))
       {
-        nh->label() = Cell_label::OUTSIDE;
+        nh->set_label(Cell_label::OUTSIDE);
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+        nh->increment_erase_counter();
+#endif
         continue;
       }
 
@@ -1330,7 +1334,7 @@ private:
         for(const Cell_handle& new_ch : new_cells)
         {
           // std::cout << "new cell has time stamp " << new_ch->time_stamp() << std::endl;
-          new_ch->label() = m_tr.is_infinite(new_ch) ? Cell_label::OUTSIDE : Cell_label::INSIDE;
+          new_ch->set_label(m_tr.is_infinite(new_ch) ? Cell_label::OUTSIDE : Cell_label::INSIDE);
         }
 
         // Push all new boundary facets to the queue.
@@ -1359,7 +1363,10 @@ private:
       }
       else // no need for a Steiner point, carve through and continue
       {
-        nh->label() = Cell_label::OUTSIDE;
+        nh->set_label(Cell_label::OUTSIDE);
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+        nh->increment_erase_counter();
+#endif
 
         // for each finite facet of neighbor, push it to the queue
         const int mi = m_tr.mirror_index(ch, s);
@@ -1445,7 +1452,10 @@ private:
     {
       if(ch->tds_data().is_clear() && ch->is_outside())
       {
-        ch->label() = Cell_label::INSIDE;
+        ch->set_label(Cell_label::INSIDE);
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+        ch->increment_erase_counter();
+#endif
         ++label_change_counter;
       }
     }
@@ -1762,7 +1772,7 @@ public:
         CGAL_assertion(!m_tr.is_infinite(ic) && ic->is_outside());
 
         // This is where new material is added
-        ic->label() = Cell_label::MANIFOLD;
+        ic->set_label(Cell_label::MANIFOLD);
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
         static int i = 0;

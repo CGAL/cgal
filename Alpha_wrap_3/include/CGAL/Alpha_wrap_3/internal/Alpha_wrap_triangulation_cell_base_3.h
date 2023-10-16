@@ -73,7 +73,7 @@ public:
 
 public:
   Cell_label label() const { return m_label; }
-  Cell_label& label() { return m_label; }
+  void set_label(const Cell_label label) { m_label = label; }
   bool is_inside() const { return m_label == Cell_label::INSIDE; }
   bool is_outside() const { return m_label == Cell_label::OUTSIDE; }
 
