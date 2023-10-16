@@ -276,8 +276,8 @@ dependencies.
 \section sec-win-demo Trying CGAL algorithms using a Precompiled Demo
 \cgal provides a few demos offering a graphical user interface for some \cgal algorithms.
 All precompiled demos are available for download on the \ref packages page.
-Two links are provided in the column on the right: the demo itself (under **Windows Demo**) and a set of dlls (under **Common Demo Dlls**)
-that contains dlls files that must be placed in the same directory as the `.exe` of the demo.
+A link is provided in the column on the right, to download an archive. It contains the demo executable itself,
+and a set of dll files that must remain in the same directory as the `.exe` of the demo.
 See for example the \ref PkgConvexHull3 package.
 
 */
