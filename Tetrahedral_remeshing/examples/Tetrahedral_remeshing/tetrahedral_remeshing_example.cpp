@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
   const std::size_t nbv = (argc > 2) ? atoi(argv[2]) : 1000;
 
   Remeshing_triangulation tr;
-  CGAL::Tetrahedral_remeshing::insert_random_points_in_sphere(nbv, tr);
+  CGAL::Tetrahedral_remeshing::insert_random_points_in_cube(nbv, tr);
 
   /// A subdomain index 0 is considered outside and is not remeshed
   /// so we set finite cells to a non-zero `Subdomain_index`

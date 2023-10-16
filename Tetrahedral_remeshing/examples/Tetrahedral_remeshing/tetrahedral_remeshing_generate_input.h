@@ -22,7 +22,7 @@ namespace CGAL
 namespace Tetrahedral_remeshing
 {
   template<typename Tr>
-  void insert_random_points_in_sphere(const std::size_t& nbv, Tr& tr)
+  void insert_random_points_in_cube(const std::size_t& nbv, Tr& tr)
   {
     CGAL::Random rng;
     typedef typename Tr::Point Point;

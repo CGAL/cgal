@@ -1,3 +1,5 @@
+#define CGAL_DUMP_REMESHING_STEPS
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
@@ -58,7 +60,7 @@ int main(int argc, char* argv[])
 
   /// Create a randomly generated triangulation of a sphere
   Remeshing_triangulation tr;
-  CGAL::Tetrahedral_remeshing::insert_random_points_in_sphere(nbv, tr);
+  CGAL::Tetrahedral_remeshing::insert_random_points_in_cube(nbv, tr);
 
   /// A subdomain index 0 is considered outside and is not remeshed
   /// so we set finite cells to a non-zero `Subdomain_index`
