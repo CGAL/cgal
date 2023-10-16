@@ -1426,7 +1426,6 @@ private:
     }
     else // typical flooding from outside
     {
-      std::stack<Cell_handle> cells_to_visit;
       cells_to_visit.push(m_tr.infinite_vertex()->cell());
     }
 
