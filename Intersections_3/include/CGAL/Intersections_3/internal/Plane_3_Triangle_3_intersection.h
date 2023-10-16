@@ -19,6 +19,8 @@
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
 
+#include <boost/next_prior.hpp>
+
 namespace CGAL {
 namespace Intersections {
 namespace internal {
