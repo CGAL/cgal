@@ -1632,7 +1632,7 @@ public:
     auto wrap_volume = [&]()
     {
       FT vol = 0;
-      for(Cell_handle ch : m_tr.all_cell_handles())
+      for(Cell_handle ch : m_tr.finite_cell_handles())
         if(!ch->is_outside())
           vol += volume(m_tr.point(ch, 0), m_tr.point(ch, 1), m_tr.point(ch, 2), m_tr.point(ch, 3));
 
