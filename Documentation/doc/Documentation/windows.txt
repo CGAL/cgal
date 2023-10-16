@@ -277,7 +277,7 @@ dependencies.
 \cgal provides a few demos offering a graphical user interface for some \cgal algorithms.
 All precompiled demos are available for download on the \ref packages page.
 A link is provided in the column on the right, to download an archive. It contains the demo executable itself,
-and a set of dll files that must be placed in the same directory as the `.exe` of the demo.
+and a set of dll files that must remain in the same directory as the `.exe` of the demo.
 See for example the \ref PkgConvexHull3 package.
 
 */
