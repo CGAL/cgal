@@ -792,6 +792,8 @@ private:
     CGAL_postcondition(is_closed(output_mesh));
 
     PMP::orient_to_bound_a_volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
+
+    collect_garbage(output_mesh);
   }
 
   template <typename OutputMesh, typename OVPM>
