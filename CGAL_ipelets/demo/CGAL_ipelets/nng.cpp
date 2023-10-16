@@ -11,17 +11,19 @@
 #include <CGAL/nearest_neighbor_delaunay_2.h>
 #include <CGAL/CGAL_Ipelet_base.h>
 
+#include <boost/format.hpp>
+
 namespace CGAL_nng {
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Delaunay_triangulation_2<Kernel>              Triangulation;
 
 const std::string Slab[] = {
-  "NNG", "Help"
+  "kNNG", "Help"
 };
 
 const std::string Hmsg[] = {
-  "Draw the nearest-neighbor graph of a set of points"
+  "Draw the k-nearest-neighbor graph of a set of points"
 };
 
 struct nngIpelet
@@ -45,15 +47,28 @@ void nngIpelet::protected_run(int /*fn*/)
     return;
   }
 
+  int ret_val;
+  int kNeighbors=1;
+
+  boost::tie(ret_val,kNeighbors)=request_value_from_user<int>((boost::format("Number of nearest neighbors (default : k=%1%)") % kNeighbors).str() );
+  if (ret_val == -1) return;
+  if (ret_val == 0) kNeighbors=1;
+
   Triangulation t(pt_list.begin(), pt_list.end());
 
   for(auto v = t.finite_vertices_begin();
        v != t.finite_vertices_end();
        ++v){
 
-    auto nn = CGAL::nearest_neighbor(t, v);
-    draw_in_ipe(Kernel::Segment_2(v->point(), nn->point()));
+    std::vector<Triangulation::Vertex_handle> kNN;
+    CGAL::nearest_neighbors(t, v, kNeighbors+1, std::back_inserter(kNN)); // +1 as v itself counts as its nearest neigbhor for CGAL::nearest_neighbors
+
+    for(const auto & nn : kNN) {
+      draw_in_ipe(Kernel::Segment_2(v->point(), nn->point()));
+    }
   }
+
+  group_selected_objects_();
 }
 }
 

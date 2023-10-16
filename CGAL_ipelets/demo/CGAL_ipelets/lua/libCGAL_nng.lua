@@ -2,7 +2,7 @@
 -- CGAL NNG ipelet description
 ----------------------------------------------------------------------
 
-label = "Nearest-neighbor graph"
+label = "k-nearest-neighbor graph"
 
 about = [[
 This ipelet is part of the CGAL_ipelet package. See www.cgal.org.
@@ -17,7 +17,7 @@ function run(model, num)
 end
 
 methods = {
-  { label="NNG" },
+  { label="kNNG" },
   { label="Help" },
 }
 
