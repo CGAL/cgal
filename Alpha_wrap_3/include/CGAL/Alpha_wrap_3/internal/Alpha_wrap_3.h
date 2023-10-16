@@ -324,52 +324,17 @@ public:
 
     if(do_enforce_manifoldness)
     {
-#ifdef CGAL_AW3_DEBUG
-      extract_surface(output_mesh, ovpm, true /*tolerate non manifoldness*/);
-
- #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-      dump_triangulation_faces("carved_tr.off", false /*only_boundary_faces*/);
-      IO::write_polygon_mesh("carved_wrap.off", output_mesh,
-                             CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
- #endif
-
-      FT base_vol = 0;
-      if(is_closed(output_mesh)) // might not be due to manifoldness
-        base_vol = PMP::volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
-      else
-        std::cerr << "Warning: couldn't compute volume before manifoldness fixes (mesh is not closed)" << std::endl;
-#endif
-
       make_manifold();
+
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+      dump_triangulation_faces("manifold_wrap.off", true /*only_boundary_faces*/);
+#endif
 
 #ifdef CGAL_AW3_TIMER
       t.stop();
       std::cout << "Manifoldness post-processing took: " << t.time() << " s." << std::endl;
       t.reset();
       t.start();
-#endif
-
-#ifdef CGAL_AW3_DEBUG
-      if(!is_zero(base_vol))
-      {
-        extract_surface(output_mesh, ovpm, false /*do not tolerate non-manifoldness*/);
-
-        const FT manifold_vol = PMP::volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
-        const FT ratio = manifold_vol / base_vol;
-
-        std::cout << "Volumes post-manifoldness fix:\n"
-                  << "before: " << base_vol << "\n"
-                  << "after:  " << manifold_vol << "\n"
-                  << "ratio:  " << ratio << std::endl;
-        if(ratio > 1.1) // more than 10% extra volume
-          std::cerr << "Warning: large increase of volume after manifoldness resolution" << std::endl;
-      }
-
-      std::size_t nm_cells_counter = 0;
-      for(Cell_handle ch : m_tr.all_cell_handles())
-        if(ch->label() == Cell_label::MANIFOLD)
-          ++nm_cells_counter;
-      std::cout << "Number of added cells: " << nm_cells_counter << std::endl;
 #endif
     }
 
@@ -1655,10 +1620,26 @@ public:
   // Not the best complexity, but it's very cheap compared to the rest of the algorithm.
   void make_manifold()
   {
-    namespace PMP = Polygon_mesh_processing;
-
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Make manifold..." << std::endl;
+
+    auto wrap_volume = [&]()
+    {
+      FT vol = 0;
+      for(Cell_handle ch : m_tr.all_cell_handles())
+        if(!ch->is_outside())
+          vol += volume(m_tr.point(ch, 0), m_tr.point(ch, 1), m_tr.point(ch, 2), m_tr.point(ch, 3));
+
+      return vol;
+    };
+
+ #ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    dump_triangulation_faces("carved_tr.off", true /*only_boundary_faces*/);
+ #endif
+
+    FT base_vol = wrap_volume();
+    if(!is_positive(base_vol))
+      std::cerr << "Warning: empty wrap?" << std::endl;
 #endif
 
     // This seems more harmful than useful after the priority queue has been introduced since
@@ -1813,6 +1794,27 @@ public:
 
     CGAL_assertion_code(for(Vertex_handle v : m_tr.finite_vertex_handles()))
     CGAL_assertion(!is_non_manifold(v));
+
+#ifdef CGAL_AW3_DEBUG
+    std::size_t nm_cells_counter = 0;
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      if(ch->label() == Cell_label::MANIFOLD)
+        ++nm_cells_counter;
+    std::cout << "Number of added cells: " << nm_cells_counter << std::endl;
+
+    if(!is_zero(base_vol))
+    {
+      const FT manifold_vol = wrap_volume();
+      const FT ratio = manifold_vol / base_vol;
+
+      std::cout << "Volumes post-manifoldness fix:\n"
+                << "before: " << base_vol << "\n"
+                << "after:  " << manifold_vol << "\n"
+                << "ratio:  " << ratio << std::endl;
+      if(ratio > 1.1) // more than 10% extra volume
+        std::cerr << "Warning: large increase of volume after manifoldness resolution" << std::endl;
+    }
+#endif
   }
 
 private:
