@@ -38,6 +38,23 @@ namespace Tetrahedral_remeshing
     tr.insert(pts.begin(), pts.end());
   }
 
+  template<typename Plane, typename Tr>
+  void insert_points_on_plane(const Plane& plane, const std::size_t& nbv, Tr& tr)
+  {
+    CGAL::Random rng;
+    typedef typename Tr::Point Point;
+    std::vector<Point> pts;
+    while (pts.size() < nbv)
+    {
+      const double x = rng.get_double(-1., 1.);
+      const double y = rng.get_double(-1., 1.);
+      const double z = rng.get_double(-1., 1.);
+
+      pts.push_back(plane.projection(Point(x, y, z)));
+    }
+    tr.insert(pts.begin(), pts.end());
+  }
+
   template<typename Tr>
   void add_edge(typename Tr::Vertex_handle v1,
     typename Tr::Vertex_handle v2,

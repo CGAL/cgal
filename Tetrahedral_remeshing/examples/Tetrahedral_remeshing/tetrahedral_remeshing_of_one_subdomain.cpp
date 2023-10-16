@@ -62,10 +62,13 @@ int main(int argc, char* argv[])
   Remeshing_triangulation tr;
   CGAL::Tetrahedral_remeshing::insert_random_points_in_cube(nbv, tr);
 
+  /// Use vertical plane to split the mesh into two subdomains
+  const K::Plane_3 plane(0, 0, 1, 0);
+  CGAL::Tetrahedral_remeshing::insert_points_on_plane(plane, 0.1*nbv, tr);
+
   /// A subdomain index 0 is considered outside and is not remeshed
   /// so we set finite cells to a non-zero `Subdomain_index`
   /// (depending on the side of the plane they are on)
-  const K::Plane_3 plane(0, 0, 1, 0);
   for (auto cell : tr.finite_cell_handles())
   {
     const K::Point_3 cc = centroid(cell);
