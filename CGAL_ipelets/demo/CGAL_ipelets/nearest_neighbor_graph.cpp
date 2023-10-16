@@ -32,8 +32,14 @@ struct nngIpelet
   void protected_run(int);
 };
 
-void nngIpelet::protected_run(int /*fn*/)
+void nngIpelet::protected_run(int fn)
 {
+
+  if(fn == 1){
+    show_help();
+    return;
+  }
+
   std::list<Point_2> pt_list;
 
   read_active_objects(
