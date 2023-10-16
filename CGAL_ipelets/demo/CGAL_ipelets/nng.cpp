@@ -56,6 +56,7 @@ void nngIpelet::protected_run(int /*fn*/)
 
   Triangulation t(pt_list.begin(), pt_list.end());
 
+  bool edgesDrawn = false;
   for(auto v = t.finite_vertices_begin();
        v != t.finite_vertices_end();
        ++v){
@@ -64,11 +65,17 @@ void nngIpelet::protected_run(int /*fn*/)
     CGAL::nearest_neighbors(t, v, kNeighbors+1, std::back_inserter(kNN)); // +1 as v itself counts as its nearest neigbhor for CGAL::nearest_neighbors
 
     for(const auto & nn : kNN) {
-      draw_in_ipe(Kernel::Segment_2(v->point(), nn->point()));
+      if(v->point() != nn->point()) {
+        draw_in_ipe(Kernel::Segment_2(v->point(), nn->point()));
+        edgesDrawn = true;
+      }
     }
   }
 
-  group_selected_objects_();
+  if(edgesDrawn) {
+    group_selected_objects_();
+    // don't create an empty group if no edges are drawn
+  }
 }
 }
 
