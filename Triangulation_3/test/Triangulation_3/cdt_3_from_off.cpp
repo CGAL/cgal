@@ -49,8 +49,10 @@ struct CDT_options
 {
   bool merge_facets = false;
   double ratio = 0.;
-  std::string filename = CGAL::data_file_path("meshes/mpi.off");
+  std::string input_filename = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename{"dump.off"};
+  std::string dump_patches_after_merge_filename{};
+  std::string dump_patches_borders_prefix{};
 };
 
 int go(Mesh, CDT_options);
@@ -70,13 +72,19 @@ int main(int argc, char* argv[])
     } else if(arg == "--ratio") {
       assert(i + 1 < argc);
       options.ratio = std::stod(argv[++i]);
+    } else if(arg == "--dump-patches-after-merge") {
+      assert(i + 1 < argc);
+      options.dump_patches_after_merge_filename = argv[++i];
+    } else if(arg == "--dump-patches-borders-prefix") {
+      assert(i + 1 < argc);
+      options.dump_patches_borders_prefix = argv[++i];
     } else if(arg[0] == '-') {
       std::cerr << "Unknown option: " << arg << '\n';
       return 1;
     } else {
       switch(positional) {
         case 0:
-          options.filename = arg;
+          options.input_filename = arg;
           ++positional;
           break;
         case 1:
@@ -94,9 +102,8 @@ int main(int argc, char* argv[])
     }
   }
 
-  std::ifstream input(options.filename);
   Mesh mesh;
-  const bool ok = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(options.filename, mesh);
+  const bool ok = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(options.input_filename, mesh);
   if (!ok)
   {
     std::cerr << "Not a valid input file." << std::endl;
@@ -262,8 +269,34 @@ int go(Mesh mesh, CDT_options options) {
       }
       ++nb_patches;
     }
-    std::ofstream out("dump_patches.ply");
-    CGAL::IO::write_PLY(out, mesh);
+    if(!options.dump_patches_after_merge_filename.empty()) {
+      std::ofstream out(options.dump_patches_after_merge_filename);
+      CGAL::IO::write_PLY(out, mesh);
+    }
+  }
+  if(!options.dump_patches_borders_prefix.empty()) {
+    for(int i = 0; i < nb_patches; ++i) {
+      std::stringstream ss;
+      ss << options.dump_patches_borders_prefix << i << ".polylines.txt";
+      std::ofstream out(ss.str());
+      out.precision(17);
+      const auto& edges = patch_edges[i];
+      std::cerr << "Patch p#" << i << " has " << edges.size() << " edges\n";
+      const auto polylines = segment_soup_to_polylines(edges);
+      for(const auto& polyline: polylines) {
+        out << polyline.size() << "    ";
+        for(auto v: polyline) {
+          out << get(pmap, v) << "  ";
+        }
+        out << '\n';
+      }
+      out.close();
+      std::cerr << "  " << polylines.size() << " polylines\n";
+      for(const auto& polyline: polylines) {
+        std::cerr << "    - " << polyline.size() << " vertices\n";
+        assert(polyline.front() == polyline.back());
+      }
+    }
   }
 
   int exit_code = EXIT_SUCCESS;
