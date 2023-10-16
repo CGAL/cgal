@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
   std::cout << "Input: " << num_vertices(input) << " vertices, " << num_faces(input) << " faces" << std::endl;
 
-  const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 30.;
+  const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 40.;
   const double relative_offset = (argc > 3) ? std::stod(argv[3]) : 600.;
 
   // Compute the alpha and offset values
@@ -66,7 +66,11 @@ int main(int argc, char** argv)
   std::cout << "Took " << t.time() << " s." << std::endl;
 
   // Save the result
-  const std::string output_name = generate_output_name(filename, relative_alpha, relative_offset);
+  std::string input_name = std::string(filename);
+  input_name = input_name.substr(input_name.find_last_of("/") + 1, input_name.length() - 1);
+  input_name = input_name.substr(0, input_name.find_last_of("."));
+  std::string output_name = input_name + "_cavity_" + std::to_string(static_cast<int>(relative_alpha))
+                            + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
   std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
