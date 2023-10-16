@@ -41,7 +41,7 @@ namespace internal {
 template < typename C3T3, typename MeshDomain, typename MeshCriteria, typename InitialPointsGenerator = Null_functor >
 void
 init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
-          const int nb_initial_points, InitialPointsGenerator& generator = Null_functor_internal::default_null_functor)
+          const int nb_initial_points, InitialPointsGenerator& generator = Null_functor())
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
@@ -59,7 +59,7 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
 
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
-  auto& generator_wrapped =
+  auto generator_wrapped =
     Initial_points_generator_generator()(generator);
   if (nb_initial_points > -1)
     generator_wrapped(std::back_inserter(initial_points), domain, c3t3,
@@ -184,7 +184,7 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures, InitialPointsGenerat
                   const MC& criteria,
                   bool with_features,
                   Mesh_3_options mesh_options = Mesh_3_options(),
-                  InitialPointsGenerator& generator = Null_functor_internal::default_null_functor)
+                  InitialPointsGenerator& generator = Null_functor())
   {
     if ( with_features )
     {
@@ -208,7 +208,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures, InitialPointsGenerato
                   const MC& criteria,
                   bool with_features,
                   Mesh_3_options mesh_options = Mesh_3_options(),
-                  InitialPointsGenerator& generator = Null_functor_internal::default_null_functor)
+                  InitialPointsGenerator& generator = Null_functor())
   {
     C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features, InitialPointsGenerator >()
       (c3t3,domain,criteria,with_features,mesh_options,generator);
@@ -230,7 +230,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true, InitialPointsGener
                   const MC& criteria,
                   bool with_features,
                   Mesh_3_options mesh_options = Mesh_3_options(),
-                  InitialPointsGenerator& generator = Null_functor_internal::default_null_functor)
+                  InitialPointsGenerator& generator = Null_functor())
   {
     if ( with_features ) {
       this->initialize_features(c3t3, domain, criteria,mesh_options);
@@ -276,7 +276,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false, InitialPointsGene
                   const MC& criteria,
                   bool with_features,
                   Mesh_3_options mesh_options = Mesh_3_options(),
-                  InitialPointsGenerator& generator = Null_functor_internal::default_null_functor)
+                  InitialPointsGenerator& generator = Null_functor())
   {
     if ( with_features )
     {
@@ -524,7 +524,7 @@ void make_mesh_3_impl(C3T3& c3t3,
                         mesh_options = parameters::internal::Mesh_3_options(),
                       const parameters::internal::Manifold_options&
                         manifold_options = parameters::internal::Manifold_options(),
-                      InitialPointsGenerator& generator = Null_functor_internal::default_null_functor)
+                      InitialPointsGenerator& generator = Null_functor())
 {
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::get_default_random() = CGAL::Random(0);

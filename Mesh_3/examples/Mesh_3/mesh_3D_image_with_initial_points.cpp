@@ -46,8 +46,8 @@ int main()
   Mesh_criteria criteria(params::facet_angle(30).facet_size(3).facet_distance(1).
                          cell_radius_edge_ratio(3).cell_size(3));
 
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-    params::initial_points_generator(Construct_initial_points_labeled_image(image))
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria
+    , params::initial_points_generator(Construct_initial_points_labeled_image(image))
   );
   /// [Meshing]
 
