@@ -9,6 +9,10 @@
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
 
+// Since we want to do visualization and interruption, it's better to use the sorted priority queue,
+// even if it is slower
+#define CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+
 #include <CGAL/alpha_wrap_3.h>
 
 #include <QAction>
