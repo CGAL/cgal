@@ -307,13 +307,21 @@ public:
     t.start();
 #endif
 
-#ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-    extract_surface(output_mesh, ovpm, true /*tolerate non manifoldness*/);
-    CGAL::IO::write_polygon_mesh("starting_wrap.off", output_mesh,
-                                 CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    dump_triangulation_faces("starting_wrap.off", true /*only_boundary_faces*/);
 #endif
 
     alpha_flood_fill(visitor);
+
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    dump_triangulation_faces("flood_filled_wrap.off", true /*only_boundary_faces*/);
+#endif
+
+    purge_inner_islands();
+
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    dump_triangulation_faces("purged_wrap.off", true /*only_boundary_faces*/);
+#endif
 
 #ifdef CGAL_AW3_TIMER
     t.stop();
@@ -328,6 +336,12 @@ public:
 
 #ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
       dump_triangulation_faces("manifold_wrap.off", true /*only_boundary_faces*/);
+#endif
+
+      purge_inner_islands();
+
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+      dump_triangulation_faces("purged_manifold_wrap.off", true /*only_boundary_faces*/);
 #endif
 
 #ifdef CGAL_AW3_TIMER
@@ -349,8 +363,8 @@ public:
     std::cout << "Alpha wrap vertices:  " << vertices(output_mesh).size() << std::endl;
     std::cout << "Alpha wrap faces:     " << faces(output_mesh).size() << std::endl;
 
- #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-    IO::write_polygon_mesh("final.off", output_mesh, CGAL::parameters::stream_precision(17));
+ #ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    IO::write_polygon_mesh("final_wrap.off", output_mesh, CGAL::parameters::stream_precision(17));
     dump_triangulation_faces("final_tr.off", false /*only_boundary_faces*/);
  #endif
 #endif
@@ -1465,6 +1479,82 @@ private:
     CGAL_postcondition_code(})
 
     return true;
+  }
+
+  // Any outside cell that isn't reachable from infinity is a cavity that can
+  // be discarded. This also removes some difficult non-manifoldness onfigurations
+  std::size_t purge_inner_islands()
+  {
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "> Purge inner islands..." << std::endl;
+#endif
+
+    std::size_t label_change_counter = 0;
+
+    std::stack<Cell_handle> cells_to_visit;
+
+    if(!m_seeds.empty())
+    {
+      for(const Point_3& seed : m_seeds)
+      {
+        Locate_type lt;
+        int li, lj;
+        Cell_handle ch = m_tr.locate(seed, lt, li, lj);
+
+        if(!ch->is_outside())
+        {
+          std::cerr << "Warning: cell containing seed is not outside?!" << std::endl;
+          continue;
+        }
+
+        cells_to_visit.push(ch);
+      }
+    }
+    else // typical flooding from outside
+    {
+      std::stack<Cell_handle> cells_to_visit;
+      cells_to_visit.push(m_tr.infinite_vertex()->cell());
+    }
+
+    while(!cells_to_visit.empty())
+    {
+      Cell_handle curr_c = cells_to_visit.top();
+      cells_to_visit.pop();
+
+      CGAL_assertion(curr_c->is_outside());
+
+      if(curr_c->tds_data().processed())
+        continue;
+      curr_c->tds_data().mark_processed();
+
+      for(int j=0; j<4; ++j)
+      {
+        Cell_handle neigh_c = curr_c->neighbor(j);
+        if(neigh_c->tds_data().processed() || !neigh_c->is_outside())
+          continue;
+
+        cells_to_visit.push(neigh_c);
+      }
+    }
+
+    for(Cell_handle ch : m_tr.all_cell_handles())
+    {
+      if(ch->tds_data().is_clear() && ch->is_outside())
+      {
+        ch->label() = Cell_label::INSIDE;
+        ++label_change_counter;
+      }
+    }
+
+    // reset the conflict flags
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      ch->tds_data().clear();
+
+#ifdef CGAL_AW3_DEBUG
+    std::cout << label_change_counter << " label changes" << std::endl;
+#endif
+
+    return label_change_counter;
   }
 
 private:
