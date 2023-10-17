@@ -20,7 +20,7 @@ Different arrangement and labelling heuristics are possible, but
 currently only the odd-even heuristic is implemented in the package.
 This heuristic results in areas that are alternately assigned as polygon
 interiors and exterior/holes each time that an input edge is passed.
-It doesn't distinguish between edges that are part of outer boundaries
+It does not distinguish between edges that are part of outer boundaries
 from those of inner boundaries.
 
 \section SectionPolygonRepair_Definitions Definitions
