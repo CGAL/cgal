@@ -28,7 +28,7 @@
 namespace CGAL {
 
         /*!
-        \ingroup PkgPolygonalSurfaceReconstruction
+        \ingroup PkgPolygonalSurfaceReconstructionRef
 
         \brief
 
