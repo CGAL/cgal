@@ -212,8 +212,8 @@ struct Initial_points_generator_options
   }
 
 private:
-  const std::function<OutputIterator(OutputIterator,MeshDomain,C3t3)> initial_points_generator_no_number_of_points_;
-  const std::function<OutputIterator(OutputIterator,MeshDomain,C3t3,int)> initial_points_generator_;
+  const std::function<OutputIterator(OutputIterator&,const MeshDomain&,const C3t3&)> initial_points_generator_no_number_of_points_;
+  const std::function<OutputIterator(OutputIterator&,const MeshDomain&,const C3t3&,int)> initial_points_generator_;
 };
 
 // -----------------------------------
