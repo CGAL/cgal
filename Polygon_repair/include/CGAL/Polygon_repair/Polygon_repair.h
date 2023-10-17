@@ -8,7 +8,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ken Arroyo Ohori
-//                 Guillaume Damiand
 
 #ifndef CGAL_POLYGON_REPAIR_H
 #define CGAL_POLYGON_REPAIR_H
