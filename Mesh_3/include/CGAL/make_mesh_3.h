@@ -42,7 +42,7 @@ template < typename C3T3, typename MeshDomain, typename MeshCriteria >
 void
 init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
           const int nb_initial_points,
-          const parameters::internal::Initial_points_generator_options<MeshDomain, C3T3>& generator = parameters::internal::Initial_points_generator_options<MeshDomain, C3T3>()())
+          const parameters::internal::Initial_points_generator_options<MeshDomain, C3T3>& generator = parameters::internal::Initial_points_generator_generator<MeshDomain, C3T3>()())
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
@@ -416,9 +416,11 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *   \cgalParamSectionEnd
  *   \cgalParamSectionBegin{Mesh initialisation}
  *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be supplied before the meshing process.
- *                           It must folow the `InitialPointsGenerator` concept and is specified with the param:
+ *                           It must folow the `InitialPointsGenerator` concept.
+ *                           The following two named parameters control this option:
  *                           <UL>
  *                             <LI> `parameters::initial_points_generator(generator)`
+ *                             <LI> `parameters::default_initial_points_generation()`
  *                           </UL>
  *
  *                           The `InitialPointsGenerator` concept is a function object to construct
@@ -437,7 +439,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                           output iterator `pts`, as objects of type `std::pair<Point_3,
  *                           %Index>`. If `n` is not given, the functor must provide enough
  *                           points to initialize the mesh generation process.}
- *     \cgalParamDefault{`parameters::initial_points_generator(generator)`}
+ *     \cgalParamDefault{`parameters::default_initial_points_generation()`}
  *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd
  *
@@ -532,12 +534,13 @@ void make_mesh_3_impl(C3T3& c3t3,
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::get_default_random() = CGAL::Random(0);
 #endif
+
   // Initialize c3t3
   Mesh_3::internal::C3t3_initializer<
     C3T3,
     MeshDomain,
     MeshCriteria,
-    ::CGAL::internal::has_Has_features<MeshDomain>::value>() (c3t3,
+    ::CGAL::internal::has_Has_features<MeshDomain>::value >() (c3t3,
             domain,
             criteria,
             with_features,
