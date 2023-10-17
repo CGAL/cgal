@@ -4,8 +4,6 @@
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
  * A model of this concept represents a multipolygon with holes.
- * The concept requires the ability to store the polygons with holes
- * that the multipolygon is composed of.
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Multipolygon_with_holes_2<Polygon>}
