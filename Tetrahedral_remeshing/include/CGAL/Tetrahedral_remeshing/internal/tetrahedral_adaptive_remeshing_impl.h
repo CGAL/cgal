@@ -91,6 +91,7 @@ class Adaptive_remesher
 
   typedef typename C3t3::Cell_handle         Cell_handle;
   typedef typename C3t3::Vertex_handle       Vertex_handle;
+  typedef typename C3t3::Edge                Edge;
   typedef typename C3t3::Subdomain_index     Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Curve_index         Curve_index;
@@ -261,8 +262,7 @@ public:
     FT sqmax = emax * emax;
     FT sqmin = emin * emin;
 
-    typedef typename Tr::Edge Edge;
-    for (Edge e : tr().finite_edges())
+    for (const Edge& e : tr().finite_edges())
     {
       // skip protected edges
       if (m_protect_boundaries)
@@ -468,9 +468,7 @@ private:
 #endif
 
     //tag edges
-    const typename C3t3::Curve_index default_curve_id = default_curve_index();
-
-    typedef typename Tr::Edge Edge;
+    const Curve_index default_curve_id = default_curve_index();
     for (const Edge& e : tr().finite_edges())
     {
       if (m_c3t3.is_in_complex(e))
@@ -608,28 +606,39 @@ private:
     patch = (s1 < s2) ? std::make_pair(s1, s2) : std::make_pair(s2, s1);
   }
 
-  Subdomain_index default_subdomain_index() const
+  Subdomain_index max_subdomain_index() const
   {
-    Subdomain_index max_index(1);
-    for(Cell_handle cit : tr().finite_cell_handles())
+    Subdomain_index max_index
+      = (std::numeric_limits<Subdomain_index>::min)();
+    for (Cell_handle cit : tr().finite_cell_handles())
     {
       const Subdomain_index cid = cit->subdomain_index();
-      if(cid > max_index)
+      if (cid > max_index && cid != Subdomain_index())
+        max_index = cid;
+    }
+    return max_index;
+  }
+
+  Subdomain_index default_subdomain_index() const
+  {
+    return max_subdomain_index() + 1;
+  }
+
+  Curve_index max_curve_index() const
+  {
+    Curve_index max_index = (std::numeric_limits<Curve_index>::min)();
+    for (const Edge& e : m_c3t3.edges_in_complex())
+    {
+      const Curve_index cid = m_c3t3.curve_index(e);
+      if (cid > max_index)
         max_index = cid;
     }
     return max_index + 1;
   }
 
-  typename C3t3::Curve_index default_curve_index() const
+  Curve_index default_curve_index() const
   {
-    typename C3t3::Curve_index max_index(1);
-    for (const typename C3t3::Edge& e : m_c3t3.edges_in_complex())
-    {
-      const typename C3t3::Curve_index cid = m_c3t3.curve_index(e);
-      if (cid > max_index)
-        max_index = cid;
-    }
-    return max_index + 1;
+    return max_curve_index() + 1;
   }
 
 public:
