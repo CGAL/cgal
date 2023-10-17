@@ -278,6 +278,10 @@ public:
     // geometrically manifold.
     const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
+    // Whether to keep pockets of OUTSIDE cells that are not connected to the exterior (or to the
+    // initial cavities, if used).
+    const bool keep_inner_ccs = choose_parameter(get_parameter(in_np, internal_np::keep_inner_connected_components), true);
+
     // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
     // the same input for multiple values of alpha (and typically the same offset values).
     // /!\ Warning /!\
@@ -317,12 +321,6 @@ public:
     dump_triangulation_faces("flood_filled_wrap.off", true /*only_boundary_faces*/);
 #endif
 
-    purge_inner_islands();
-
-#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
-    dump_triangulation_faces("purged_wrap.off", true /*only_boundary_faces*/);
-#endif
-
 #ifdef CGAL_AW3_TIMER
     t.stop();
     std::cout << "Flood filling took: " << t.time() << " s." << std::endl;
@@ -338,17 +336,22 @@ public:
       dump_triangulation_faces("manifold_wrap.off", true /*only_boundary_faces*/);
 #endif
 
-      purge_inner_islands();
-
-#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
-      dump_triangulation_faces("purged_manifold_wrap.off", true /*only_boundary_faces*/);
-#endif
-
 #ifdef CGAL_AW3_TIMER
       t.stop();
       std::cout << "Manifoldness post-processing took: " << t.time() << " s." << std::endl;
       t.reset();
       t.start();
+#endif
+    }
+
+    if(!keep_inner_ccs)
+    {
+      // We could purge *before* manifold enforcement, but making the mesh manifold is
+      // very cheap in most cases, so it is better to keep the code simpler.
+      purge_inner_connected_components();
+
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+      dump_triangulation_faces("purged_wrap.off", true /*only_boundary_faces*/);
 #endif
     }
 
@@ -1395,12 +1398,17 @@ private:
     return true;
   }
 
-  // Any outside cell that isn't reachable from infinity is a cavity that can
-  // be discarded. This also removes some difficult non-manifoldness onfigurations
-  std::size_t purge_inner_islands()
+  // Any outside cell that isn't reachable from infinity is a cavity that can be discarded.
+  std::size_t purge_inner_connected_components()
   {
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Purge inner islands..." << std::endl;
+
+    std::size_t pre_counter = 0;
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      if(ch->is_outside())
+        ++pre_counter;
+    std::cout << pre_counter << " / " << m_tr.all_cell_handles().size() << " (pre purge)" << std::endl;
 #endif
 
     std::size_t label_change_counter = 0;
@@ -1467,6 +1475,12 @@ private:
       ch->tds_data().clear();
 
 #ifdef CGAL_AW3_DEBUG
+    std::size_t post_counter = 0;
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      if(ch->is_outside())
+        ++post_counter;
+    std::cout << post_counter << " / " << m_tr.all_cell_handles().size() << " (pre purge)" << std::endl;
+
     std::cout << label_change_counter << " label changes" << std::endl;
 #endif
 
