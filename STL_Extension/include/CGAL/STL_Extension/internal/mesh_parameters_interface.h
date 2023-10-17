@@ -368,3 +368,20 @@ features(const MeshDomain& /*domain*/)
   typedef Named_function_parameters<::CGAL::parameters::internal::Features_options, ::CGAL::internal_np::features_option_param_t, CGAL_NP_BASE> Param;
   return CGAL_NP_BUILD(Param,Generator()());
 }
+
+// -----------------------------------
+// Initial_points_generator_options
+// -----------------------------------
+inline Named_function_parameters<::CGAL::parameters::internal::Initial_points_generator_options_holder<>, ::CGAL::internal_np::initial_points_generator_options_param_t, CGAL_NP_BASE>
+default_initial_points_generation() {
+  typedef Named_function_parameters<::CGAL::parameters::internal::Initial_points_generator_options_holder<>, ::CGAL::internal_np::initial_points_generator_options_param_t, CGAL_NP_BASE> Param;
+  return CGAL_NP_BUILD(Param, ::CGAL::parameters::internal::Initial_points_generator_options_holder<>());
+}
+
+template <typename InitialPointsGenerator>
+inline Named_function_parameters<::CGAL::parameters::internal::Initial_points_generator_options_holder<InitialPointsGenerator>, ::CGAL::internal_np::initial_points_generator_options_param_t, CGAL_NP_BASE>
+initial_points_generator(const InitialPointsGenerator& generator)
+{
+  typedef Named_function_parameters<::CGAL::parameters::internal::Initial_points_generator_options_holder<InitialPointsGenerator>, ::CGAL::internal_np::initial_points_generator_options_param_t, CGAL_NP_BASE> Param;
+  return CGAL_NP_BUILD(Param, ::CGAL::parameters::internal::Initial_points_generator_options_holder<InitialPointsGenerator>(generator));
+}

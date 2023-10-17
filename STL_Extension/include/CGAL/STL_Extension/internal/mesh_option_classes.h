@@ -168,40 +168,52 @@ private:
 };
 
 // Initial points generator
-template <typename OutputIterator, typename MeshDomain, typename C3t3>
-struct Initial_points_generator_wrapper
+// options_holder has two roles.
+// 1 : determine if the default value is passed
+// 2 : if not the default value, hold the user's generator
+template <typename Initial_points_generator = nullptr_t>
+struct Initial_points_generator_options_holder
 {
+  static constexpr bool is_default = false;
+
+  Initial_points_generator_options_holder(const Initial_points_generator& generator)
+    : generator_(generator)
+  { }
+
+  const Initial_points_generator& generator_;
+};
+
+template <>
+struct Initial_points_generator_options_holder<nullptr_t>
+{
+  static constexpr bool is_default = true;
+};
+
+// options is holding the generator (default or the user's one)
+template <typename MeshDomain, typename C3t3>
+struct Initial_points_generator_options
+{
+  typedef typename std::back_insert_iterator<std::vector<std::pair<typename MeshDomain::Point_3, typename MeshDomain::Index>>> OutputIterator;
+
   template <typename Initial_points_generator>
-  Initial_points_generator_wrapper(Initial_points_generator& generator)
-    : initial_points_generator_default_(generator)
+  Initial_points_generator_options(const Initial_points_generator& generator)
+    : initial_points_generator_no_number_of_points_(generator)
     , initial_points_generator_(generator)
   { }
 
-  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)
+  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3) const
   {
-    return initial_points_generator_default_(pts, domain, c3t3);
+    return initial_points_generator_no_number_of_points_(pts, domain, c3t3);
   }
 
-  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)
+  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n) const
   {
     return initial_points_generator_(pts, domain, c3t3, n);
   }
 
 private:
-  const std::function<OutputIterator(OutputIterator,MeshDomain,C3t3)> initial_points_generator_default_;
+  const std::function<OutputIterator(OutputIterator,MeshDomain,C3t3)> initial_points_generator_no_number_of_points_;
   const std::function<OutputIterator(OutputIterator,MeshDomain,C3t3,int)> initial_points_generator_;
-};
-template <typename OutputIterator, typename MeshDomain, typename C3t3>
-struct Initial_points_generator_default
-{
-  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)
-  {
-    return domain.construct_initial_points_object()(pts);
-  }
-  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)
-  {
-    return domain.construct_initial_points_object()(pts, n);
-  }
 };
 
 // -----------------------------------
@@ -246,22 +258,43 @@ struct Domain_features_generator< MeshDomain, true >
   }
 };
 
-// struct Initial_points_generator_generator
-template <typename OutputIterator, typename MeshDomain, typename C3t3, typename Initial_points_generator>
+// struct Initial_points_generator_generator evaluate the options_holder
+// and returns the appropriate options.
+template <typename MeshDomain, typename C3t3>
 struct Initial_points_generator_generator
 {
-  auto operator()(Initial_points_generator& generator)
-  {
-    return Initial_points_generator_wrapper<OutputIterator, MeshDomain, C3t3>(generator);
-  }
-};
+  typedef typename std::back_insert_iterator<std::vector<std::pair<typename MeshDomain::Point_3, typename MeshDomain::Index>>> OutputIterator;
 
-template <typename OutputIterator, typename MeshDomain, typename C3t3>
-struct Initial_points_generator_generator<OutputIterator, MeshDomain, C3t3, Null_functor>
-{
-  auto operator()(Null_functor&)
+  typedef Initial_points_generator_options<MeshDomain, C3t3> Initial_points_generator_options;
+
+  struct Initial_points_generator_domain_traductor
   {
-    return Initial_points_generator_default<OutputIterator, MeshDomain, C3t3>();
+    OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)
+    {
+      return domain.construct_initial_points_object()(pts);
+    }
+    OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)
+    {
+      return domain.construct_initial_points_object()(pts, n);
+    }
+  };
+
+  template <typename Initial_points_generator_options_holder>
+  Initial_points_generator_options operator()(const Initial_points_generator_options_holder& initial_points_generator_options_holder_param)
+  {
+    if constexpr (Initial_points_generator_options_holder::is_default)
+    {
+      return operator()();
+    }
+    else
+    {
+      return Initial_points_generator_options(initial_points_generator_options_holder_param.generator_);
+    }
+  }
+
+  Initial_points_generator_options operator()()
+  {
+    return Initial_points_generator_options(Initial_points_generator_domain_traductor());
   }
 };
 
