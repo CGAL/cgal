@@ -479,7 +479,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
 
     parameters::internal::Initial_points_generator_options<MeshDomain, C3T3> initial_points_generator_options_param =
         parameters::internal::Initial_points_generator_generator<MeshDomain, C3T3>()
-        (choose_parameter(get_parameter(np, internal_np::initial_points_generator_options_param), parameters::default_initial_points_generation()));
+        (choose_parameter(get_parameter(np, internal_np::initial_points_generator_options_param), parameters::default_initial_points_generation().v));
 
     make_mesh_3_impl(c3t3, domain, criteria,
             exude_param, perturb_param, odt_param, lloyd_param,
