@@ -886,7 +886,7 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
   typedef Indices::size_type size_type;
 
   const size_type nb_patch_indices = surface_patch_indices_.size();
-  double i = 0;
+  double i = -1;
   double patch_hsv_value = use_subdomain_colors ? fmod(c.valueF() + .5, 1.) : c.valueF();
   for (Indices::iterator it = surface_patch_indices_.begin(),
        end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
@@ -896,18 +896,18 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
     colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
   }
 
+  const size_type nb_domains = subdomain_indices_.size();
+  i = -1;
+  for (Indices::iterator it = subdomain_indices_.begin(),
+         end = subdomain_indices_.end(); it != end; ++it, i += 1.)
+  {
+    double hue = c.hueF() + 1. / double(nb_domains) * i;
+    if (hue > 1) { hue -= 1.; }
+    colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
+  }
+
   if (use_subdomain_colors)
   {
-    const size_type nb_domains = subdomain_indices_.size();
-    i = 0;
-    for (Indices::iterator it = subdomain_indices_.begin(),
-           end = subdomain_indices_.end(); it != end; ++it, i += 1.)
-    {
-      double hue = c.hueF() + 1. / double(nb_domains) * i;
-      if (hue > 1) { hue -= 1.; }
-      colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
-    }
-
     for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
          end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
     {
