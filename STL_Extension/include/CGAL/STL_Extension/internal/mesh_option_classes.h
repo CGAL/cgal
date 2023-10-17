@@ -265,7 +265,7 @@ struct Initial_points_generator_generator
 {
   typedef typename std::back_insert_iterator<std::vector<std::pair<typename MeshDomain::Point_3, typename MeshDomain::Index>>> OutputIterator;
 
-  typedef Initial_points_generator_options<MeshDomain, C3t3> Initial_points_generator_options;
+  typedef typename CGAL::parameters::internal::Initial_points_generator_options<MeshDomain, C3t3> Initial_points_generator_options;
 
   struct Initial_points_generator_domain_traductor
   {
