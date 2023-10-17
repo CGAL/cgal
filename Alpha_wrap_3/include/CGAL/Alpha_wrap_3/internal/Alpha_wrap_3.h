@@ -1431,7 +1431,7 @@ public:
       // one would need to sort again after each modification of is_outside() statuses.
       auto comparer = [&](Cell_handle l, Cell_handle r) -> bool
       {
-        CGAL_precondition(!m_dt.is_infinite(l) && !m_dt.is_infinite(r));
+        CGAL_precondition(!m_tr.is_infinite(l) && !m_tr.is_infinite(r));
 
         if(has_artificial_vertex(l) != has_artificial_vertex(r))
           return has_artificial_vertex(r);
