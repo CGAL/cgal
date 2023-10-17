@@ -765,7 +765,7 @@ Construct_initial_points::operator()(OutputIterator pts,
 
     for(const Point_with_index& pp : projected_points)
     {
-      FT min_distance = FT(std::numeric_limits<double>::max());
+      FT min_distance = FT((std::numeric_limits<double>::max)());
       for(const Point_with_index& ip : initial_points)
         min_distance = (std::min)(min_distance, CGAL::squared_distance(pp.first, ip.first));
 
