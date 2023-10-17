@@ -125,7 +125,7 @@ class Alpha_wrapper_3
 
   using Default_Vb = Alpha_wrap_triangulation_vertex_base_3<Default_Gt>;
   using Default_Cb = Alpha_wrap_triangulation_cell_base_3<Default_Gt>;
-  using Default_Cbt = Cell_base_with_timestamp<Default_Cb>; // determinism
+  using Default_Cbt = Cell_base_with_timestamp<Default_Cb>; // for determinism
   using Default_Tds = CGAL::Triangulation_data_structure_3<Default_Vb, Default_Cbt>;
   using Default_Triangulation = CGAL::Delaunay_triangulation_3<Default_Gt, Default_Tds, Fast_location>;
 
@@ -143,12 +143,13 @@ private:
 
   using Gate = internal::Gate<Triangulation>;
 
-  // A sorted queue is a priority queue sorted by circumradius, and is experimentally much slower,
-  // but intermediate results are visually nice: somewhat uniform meshes.
+  // A sorted queue is a priority queue sorted by circumradius, and is experimentally significantly
+  // slower. However, intermediate results are usable: at each point of the algorithm, the wrap
+  // has a somewhat uniform mesh element size.
   //
   // An unsorted queue is a LIFO queue, and is experimentally much faster (~35%),
-  // but intermediate results are not useful: a LIFO will mean carving is done very deep
-  // before than wide
+  // but intermediate results are not useful: a LIFO carves deep before than wide,
+  // and can thus for example leave scaffolding faces till almost the end of the refinement.
 #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
   using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Triangulation>, CGAL_BOOST_PAIRING_HEAP>;
 #else
@@ -270,7 +271,7 @@ public:
     Wrapping_default_visitor default_visitor;
     Visitor visitor = choose_parameter(get_parameter_reference(in_np, internal_np::visitor), default_visitor);
 
-    //
+    // Points used to create initial cavities
     m_seeds = choose_parameter(get_parameter_reference(in_np, internal_np::seed_points), Seeds());
 
     // Whether or not some cells should be reflagged as "inside" after the refinement+carving loop
@@ -278,16 +279,16 @@ public:
     // geometrically manifold.
     const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
-    // Whether to keep pockets of OUTSIDE cells that are not connected to the exterior (or to the
+    // Whether to keep pockets of "outside" cells that are not connected to the exterior (or to the
     // initial cavities, if used).
     const bool keep_inner_ccs = choose_parameter(get_parameter(in_np, internal_np::keep_inner_connected_components), true);
 
     // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
     // the same input for multiple values of alpha (and typically the same offset values).
-    // /!\ Warning /!\
     //
-    // If this is enabled, the 3D triangulation will NOT be re-initialized
-    // at launch. This means that the triangulation is NOT cleared, even if:
+    // /!\ Warning /!\
+    // If this is enabled, the 3D triangulation will NOT be re-initialized at launch.
+    // This means that the triangulation is NOT cleared, even if:
     // - you use an alpha value that is greater than what was used in a previous run; you will
     //   obtain the same result as the last run.
     // - you use a different offset value between runs, you might then get points that are not
@@ -423,12 +424,12 @@ private:
   // boundary considers them inside.
   bool is_on_inside_boundary(Cell_handle ch, Cell_handle nh) const
   {
-    return (ch->is_inside() != nh->is_inside()); // one is INSIDE, the other is not
+    return (ch->is_inside() != nh->is_inside()); // one is "inside", the other is not
   }
 
   bool is_on_outside_boundary(Cell_handle ch, Cell_handle nh) const
   {
-    return (ch->is_outside() != nh->is_outside()); // one is OUTSIDE, the other is not
+    return (ch->is_outside() != nh->is_outside()); // one is "outside", the other is not
   }
 
 private:
@@ -552,7 +553,7 @@ private:
         continue;
       }
 
-      // Mark the seeds and icosahedron vertices as "scaffolding vertices" such that the facets
+      // Mark the seeds and icosahedron vertices as "scaffolding" vertices such that the facets
       // incident to these vertices are always traversable regardless of their circumcenter.
       // This is done because otherwise some cavities can appear on the mesh: non-traversable facets
       // with two vertices on the offset, and the third being a deeper inside seed / ico_seed.
@@ -633,7 +634,7 @@ private:
         continue;
 
       // When the algorithm starts from a manually dug hole, infinite cells are initialized
-      // as INSIDE such that they do not appear on the boundary
+      // as "inside" such that they do not appear on the boundary
       CGAL_assertion(!m_tr.is_infinite(ch));
 
       for(int i=0; i<4; ++i)
@@ -651,7 +652,7 @@ private:
     return true;
   }
 
-  // tag all infinite cells OUTSIDE and all finite cells INSIDE
+  // tag all infinite cells "outside" and all finite cells "inside"
   // init queue with all convex hull facets
   bool initialize_from_infinity()
   {
@@ -688,9 +689,6 @@ private:
     std::cout << "Restart from a DT of " << m_tr.number_of_cells() << " cells" << std::endl;
 #endif
 
-    Real_timer t;
-    t.start();
-
     for(Cell_handle ch : m_tr.all_cell_handles())
     {
       if(ch->is_inside())
@@ -698,15 +696,11 @@ private:
 
       for(int i=0; i<4; ++i)
       {
-        if(ch->neighbor(i)->is_outside())
-          continue;
+        if(ch->neighbor(i)->is_inside())
+          push_facet(std::make_pair(ch, i));
 
-        push_facet(std::make_pair(ch, i));
       }
     }
-
-    t.stop();
-    std::cout << t.time() << " for scanning a queue of size " << m_queue.size() << std::endl;
 
     return true;
   }
@@ -751,7 +745,6 @@ private:
 
         if(cell->tds_data().processed())
           continue;
-
         cell->tds_data().mark_processed();
 
         for(int fid=0; fid<4; ++fid)
@@ -1024,12 +1017,12 @@ public:
               << m_tr.point(f.first, Triangulation::vertex_triple_index(f.second, 2)) << std::endl;
 #endif
 
-    // skip if neighbor is OUTSIDE or infinite
+    // skip if neighbor is "outside" or infinite
     const Cell_handle ch = f.first;
     const int id = f.second;
     CGAL_precondition(ch->label() == Cell_label::INSIDE || ch->label() == Cell_label::OUTSIDE);
 
-    if(!ch->is_outside()) // INSIDE or MANIFOLD
+    if(!ch->is_outside()) // "inside" or "manifold"
     {
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
       std::cout << "Facet is inside" << std::endl;
@@ -1168,6 +1161,10 @@ private:
     // and we can resume with the current queue
     if(resuming)
     {
+#ifdef CGAL_AW3_DEBUG
+      std::cout << "Resuming with a queue of size: " << m_queue.size() << std::endl;
+#endif
+
       reset_manifold_labels();
       return true;
     }
@@ -1181,7 +1178,7 @@ private:
     if(refining)
     {
       // If we are re-using the triangulation, change the label of the extra elements
-      // that we have added to ensure a manifold result back to external (MANIFOLD -> OUTSIDE)
+      // that we have added to ensure a manifold result back to external ("manifold" -> "outside")
       reset_manifold_labels();
 
       return initialize_from_existing_triangulation();
@@ -1189,7 +1186,6 @@ private:
     else
     {
       m_tr.clear();
-
 
       insert_bbox_corners();
 
@@ -1512,7 +1508,7 @@ private:
       if(ic->is_outside())
         outside_start = ic;
       else if(inside_start == Cell_handle())
-        inside_start = ic; // can be INSIDE or MANIFOLD
+        inside_start = ic; // can be "inside" or "manifold"
     }
 
     // fully inside / outside
@@ -1659,12 +1655,12 @@ public:
 
     FT base_vol = wrap_volume();
     if(!is_positive(base_vol))
-      std::cerr << "Warning: empty wrap?" << std::endl;
+      std::cerr << "Warning: wrap with non-positive volume?" << std::endl;
 #endif
 
-    // This seems more harmful than useful after the priority queue has been introduced since
-    // it adds a lot of flat cells into the triangulation, which then get added to the mesh
-    // during manifoldness fixing.
+    // This ends up more harmful than useful after the priority queue has been introduced since
+    // it usually results in a lot of flat cells into the triangulation, which then get added
+    // to the mesh during manifoldness fixing.
 //    remove_bbox_vertices();
 
     std::stack<Vertex_handle> non_manifold_vertices; // @todo sort somehow?
@@ -1694,8 +1690,8 @@ public:
       return false;
     };
 
-    // This seemed like a good idea, but in the end it can have strong cascading issues,
-    // whereas some cells with much lower volume would have solved the non-manifoldness.
+    // This originally seemed like a good idea, but in the end it can have strong cascading issues,
+    // whereas some cells with much smaller volume could have solved the non-manifoldness.
 //    auto is_on_boundary = [](Cell_handle c, int i) -> bool
 //    {
 //      return is_on_outside_boundary(c, c->neighbor(i));
@@ -1716,14 +1712,14 @@ public:
 //      return boundary_facets;
 //    };
 
-    // longest edge works better
+    // Experimentally, longest edge works better
 //    auto sq_circumradius = [&](Cell_handle c) -> FT
 //    {
 //      const Point_3& cc = circumcenter(c);
 //      return geom_traits().compute_squared_distance_3_object()(m_tr.point(c, 0), cc);
 //    };
 
-    // the reasoning behind using longest edge rather than volume is that we want to avoid
+    // The reasoning behind using longest edge rather than volume is that we want to avoid
     // spikes (which would have a small volume), and can often happen since we do not spend
     // any care on the quality of tetrahedra.
     auto sq_longest_edge = [&](Cell_handle c) -> FT
@@ -1756,9 +1752,9 @@ public:
       // - cells without bbox vertices
       // - small cells when equal number of boundary facets
       //
-      // Note that these are properties that do not depend on where the surface is, so we can
-      // sort once. However, if a criterion such as the number of inside cells were added,
-      // one would need to sort again after each modification of is_outside() statuses.
+      // Note that these are properties that do not depend on the cell labels, and so we only need
+      // to sort once. However, if a criterion such as the number of incident inside cells were added,
+      // we would need to sort after each modification of "inside"/"outside" labels.
       auto comparer = [&](Cell_handle l, Cell_handle r) -> bool
       {
         CGAL_precondition(!m_tr.is_infinite(l) && !m_tr.is_infinite(r));
@@ -1780,7 +1776,7 @@ public:
 
       // 'std::stable_sort' to have determinism without having to write something like:
       //     if(longest_edge(l) == longest_edge(r)) return ...
-      // in the comparer. It's a small range, so the cost does not matter.
+      // in the comparer. It's almost always a small range, so the extra cost does not matter.
       std::stable_sort(finite_outside_inc_cells.begin(), finite_outside_inc_cells.end(), comparer);
 
       for(Cell_handle ic : finite_outside_inc_cells)
@@ -1803,6 +1799,8 @@ public:
 
       CGAL_assertion(!is_non_manifold(v));
 
+      // Check if the new material has not created a non-manifold configuration.
+      // @speed this could be done on only the vertices of cells whose labels have changed.
       std::vector<Vertex_handle> adj_vertices;
       adj_vertices.reserve(64);
       m_tr.finite_adjacent_vertices(v, std::back_inserter(adj_vertices));

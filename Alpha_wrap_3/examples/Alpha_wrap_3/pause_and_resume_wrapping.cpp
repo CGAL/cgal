@@ -2,7 +2,7 @@
 // and how to resume afterwards.
 //
 // -------------------------------- !! Warning !! --------------------------------------------------
-// By default, the wrap uses an unsorted LIFO queue of faces to refine. This means that
+// By default, the wrapper uses an unsorted LIFO queue of faces to refine. This means that
 // the intermediate result is not very useful because the algorithm carves deep and not wide
 // (somewhat like a DFS vs a BFS).
 //

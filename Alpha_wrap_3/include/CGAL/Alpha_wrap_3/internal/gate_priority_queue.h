@@ -70,12 +70,12 @@ struct Less_gate
   template <typename Tr>
   bool operator()(const Gate<Tr>& a, const Gate<Tr>& b) const
   {
-    // If one is permissive and the other is not, give priority to the permissive facet
+    // If one is permissive and the other is not, give priority to the permissive facet.
     //
     // The permissive facet are given highest priority because they need to be treated
     // regardless of their circumradius. Treating them first allow the part that depends
-    // on alpha to be treated uniformly in a way: whatever the alpha, all scaffolding faces
-    // will first be treated
+    // on alpha to be treated uniformly in a way: whatever the alpha, all permissive faces
+    // will first be treated.
     if(a.is_permissive_facet() != b.is_permissive_facet())
       return a.is_permissive_facet();
 
