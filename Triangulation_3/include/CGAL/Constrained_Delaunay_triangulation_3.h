@@ -577,7 +577,9 @@ public:
       face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
       face_constraint_misses_subfaces.resize(face_cdt_2.size());
     }
-
+#if CGAL_DEBUG_CDT_3 & 2
+    std::cerr << "insert_constrained_face return the polygon_contraint_id: " << polygon_contraint_id << '\n';
+#endif
     return polygon_contraint_id;
   }
 
@@ -1502,7 +1504,7 @@ private:
                                          upper_inner_map,
                                          Emptyset_iterator{});
     }
-#if CGAL_DEBUG_CDT_3 & 128
+#if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# glu the lower triangulation of the cavity\n";
 #endif // CGAL_DEBUG_CDT_3
 
@@ -1751,8 +1753,24 @@ private:
     std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
                              IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
                              IO::oformat(vb_3d, with_point_and_info));
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_DEBUG_CDT_3 & 64
     auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+    if(std::next(contexts.begin()) != contexts.end()) {
+      std::cerr << "ERROR: Edge is constrained by more than one constraint\n";
+      for(const auto& c : contexts) {
+        std::cerr << std::format("  - {} with {} vertices\n", IO::oformat(c.id().vl_ptr()),
+                                                              c.number_of_vertices());
+        for(auto vh_it = c.vertices_begin(), end = c.vertices_end(), current = c.current();
+            vh_it != end; ++vh_it)
+        {
+          std::cerr << std::format("    {} {}\n",
+                                   (vh_it == current) ? '>' : '-',
+                                   IO::oformat(*vh_it, with_point_and_info));
+        }
+      }
+    }
+#endif // CGAL_DEBUG_CDT_3 & 64
     CGAL_assertion(std::next(contexts.begin()) == contexts.end());
     const auto& context = *contexts.begin();
     const auto constraint_id = context.id();
@@ -1766,6 +1784,7 @@ private:
     // this->study_bug = false;
     // assert(is_valid(true));
   }
+
   std::optional<std::pair<Vertex_handle, Vertex_handle>>
   return_encroached_constrained_edge([[maybe_unused]] CDT_3_face_index face_index,
                                       const CDT_2& cdt_2,
@@ -1798,13 +1817,17 @@ private:
     const auto& cdt_2 = non_const_cdt_2;
     auto steiner_pt = CGAL::centroid(cdt_2.triangle(fh_2d));
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-    std::cerr << std::format("Inserting Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
+    std::cerr << std::format("Trying to insert Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
                              IO::oformat(cdt_2.triangle(fh_2d)));
 #endif // CGAL_DEBUG_CDT_3
     auto encroached_edge_opt = return_encroached_constrained_edge(face_index, cdt_2, steiner_pt);
     if(encroached_edge_opt) {
       return encroached_edge_opt;
     }
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+    std::cerr << std::format("Inserting Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
+                             IO::oformat(cdt_2.triangle(fh_2d)));
+#endif // CGAL_DEBUG_CDT_3
 
     const auto ch = this->locate(steiner_pt);
     boost::container::small_vector<Cell_handle,32> cells;
@@ -1867,7 +1890,7 @@ private:
     // this->study_bug = true;
     const auto v = this->insert(steiner_pt, Cell_handle{}, false); // TODO: find a hint
     // this->study_bug = false;
-    assert(is_valid(true));
+    // assert(is_valid(true));
     v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
     typename CDT_2::Locate_type lt;
     int i;
