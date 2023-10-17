@@ -497,6 +497,7 @@ int go(Mesh mesh, CDT_options options) {
 
     std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << '\n';
     assert(cdt.is_conforming());
+    assert(cdt.Delaunay::is_valid(true));
     assert(cdt.is_valid(true));
     if(exit_code == EXIT_SUCCESS) {
       try {
