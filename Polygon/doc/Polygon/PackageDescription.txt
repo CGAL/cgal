@@ -54,7 +54,7 @@
 - `CGAL::Polygon_2<PolygonTraits_2, Container>`
 - `CGAL::Polygon_with_holes_2<PolygonTraits_2,Container>`
 - `CGAL::General_polygon_with_holes_2<Polygon>`
-- `CGAL::Multipolygon_with_holes_2<Polygon>`
+- `CGAL::Multipolygon_with_holes_2<PolygonTraits_2,Container>`
 
 \cgalCRPSection{Global Functions}
 - `CGAL::area_2()`
