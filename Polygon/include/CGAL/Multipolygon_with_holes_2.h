@@ -21,7 +21,7 @@
 
 namespace CGAL {
 
-/*! \ingroup PkgPolygonRepairRef
+/*! \ingroup PkgPolygon2Ref
  *
  * The class `Multipolygon_with_holes_2` models the concept `MultipolygonWithHoles_2`.
  * It is parameterized with two types (`Kernel` and `Container`) that are used to instantiate
