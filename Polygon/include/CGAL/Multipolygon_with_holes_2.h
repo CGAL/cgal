@@ -51,6 +51,7 @@ public:
   using Polygon_iterator = typename Polygons_container::iterator;
   using Polygon_const_iterator = typename Polygons_container::const_iterator;
 
+  /// the size type
   using Size = unsigned int;
 
   /*! %Default constructor. */

@@ -29,6 +29,9 @@ typedef unspecified_type Polygon_const_iterator;
 //! range type for iterating over holes.
 typedef unspecified_type Polygons_container;
 
+//! size type
+typedef unsigned int Size;
+
 /// @}
 
 /// \name Creation
