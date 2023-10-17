@@ -20,8 +20,8 @@ int main(int argc, char* argv[]) {
   Polygon_with_holes_2 p2(Polygon_2(p2_outer, p2_outer+4));
 
   Multipolygon_with_holes_2 mp;
-  mp.add_polygon(p1);
-  mp.add_polygon(p2);
+  mp.add_polygon_with_holes(p1);
+  mp.add_polygon_with_holes(p2);
 
   for (auto const& p: mp.polygons()) {
     std::cout << p << std::endl;
