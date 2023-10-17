@@ -581,7 +581,8 @@ public:
     return polygon_contraint_id;
   }
 
-  auto sequence_of_Steiner_vertices(Vertex_handle va, Vertex_handle vb) const
+  std::optional<std::vector<Vertex_handle>>
+  sequence_of_Steiner_vertices(Vertex_handle va, Vertex_handle vb) const
   {
     std::vector<Vertex_handle> steiner_vertices;
     const auto c_id = this->constraint_from_extremities(va, vb);
@@ -613,9 +614,9 @@ public:
         }
       }
     } else {
-      CGAL_error();
+      return std::nullopt;
     }
-    return steiner_vertices;
+    return {std::move(steiner_vertices)};
   }
 
 private:

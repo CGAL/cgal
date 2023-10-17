@@ -53,9 +53,25 @@ struct CDT_options
   std::string output_filename{"dump.off"};
   std::string dump_patches_after_merge_filename{};
   std::string dump_patches_borders_prefix{};
+  std::string dump_after_conforming_filename{};
 };
 
 int go(Mesh, CDT_options);
+
+void help(std::ostream& out) {
+  out << R"(
+Usage: cdt_3_from_off [options] input.off output.off
+
+  input.off: input mesh
+  output.off: output mesh
+
+  --merge-facets: merge facets into patches
+  --ratio: ratio of faces to remove (default: 0)
+  --dump-patches-after-merge: dump patches after merging facets
+  --dump-patches-borders-prefix: dump patches borders
+  --dump-after-conforming: dump mesh after conforming
+)";
+}
 
 int main(int argc, char* argv[])
 {
@@ -78,8 +94,15 @@ int main(int argc, char* argv[])
     } else if(arg == "--dump-patches-borders-prefix") {
       assert(i + 1 < argc);
       options.dump_patches_borders_prefix = argv[++i];
+    } else if(arg == "--dump-after-conforming") {
+      assert(i + 1 < argc);
+      options.dump_after_conforming_filename = argv[++i];
+    } else if(arg == "--help") {
+      help(std::cout);
+      return 0;
     } else if(arg[0] == '-') {
       std::cerr << "Unknown option: " << arg << '\n';
+      help(std::cerr);
       return 1;
     } else {
       switch(positional) {
@@ -445,29 +468,32 @@ int go(Mesh mesh, CDT_options options) {
       }
     } // not merge_facets
     cdt.restore_Delaunay();
-    // for(auto e: edges(mesh)) {
-    //   auto he = halfedge(e, mesh);
-    //   auto p1 = get(pmap, target(he, mesh));
-    //   auto p2 = get(pmap, source(he, mesh));
-    //   auto n = cdt.number_of_vertices();
-    //   auto v1 = cdt.insert(p1);
-    //   auto v2 = cdt.insert(p2);
-    //   CGAL_assertion(n == cdt.number_of_vertices());
-    //   auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
-    //   for(auto v: steiner_vertices) {
-    //     he = CGAL::Euler::split_edge(he, mesh);
-    //     put(pmap, target(he, mesh), v->point());
-    //   }
-    // }
-    // std::ofstream out_mesh("out-conforming.off");
-    // out_mesh.precision(17);
-    // out_mesh << mesh;
-    // out_mesh.close();
-    // {
-    //   std::ofstream all_edges("dump_all_segments.polylines.txt");
-    //   all_edges.precision(17);
-    //   cdt.write_all_segments_file(all_edges);
-    // }
+
+    if(!options.dump_after_conforming_filename.empty()) {
+      for(auto e: edges(mesh)) {
+        auto he = halfedge(e, mesh);
+        auto vd1 = target(he, mesh);
+        auto vd2 = source(he, mesh);
+        if(!get(v_selected_map, vd1) || !get(v_selected_map, vd2)) continue;
+        auto p1 = get(pmap, vd1);
+        auto p2 = get(pmap, vd2);
+        auto n = cdt.number_of_vertices();
+        auto v1 = cdt.insert(p1);
+        auto v2 = cdt.insert(p2);
+        std::cerr << std::format("edge  {}  {}\n", CGAL::IO::oformat(p1), CGAL::IO::oformat(p2));
+        CGAL_assertion(n == cdt.number_of_vertices());
+        auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
+        if(!steiner_vertices) continue;
+        for(auto v: *steiner_vertices) {
+          he = CGAL::Euler::split_edge(he, mesh);
+          put(pmap, target(he, mesh), v->point());
+        }
+      }
+      std::ofstream out_mesh(options.dump_after_conforming_filename);
+      out_mesh.precision(17);
+      out_mesh << mesh;
+      out_mesh.close();
+    }
 
     std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << '\n';
     assert(cdt.is_conforming());
