@@ -42,34 +42,34 @@ int main(int argc, char* argv[]) {
   ofs << "{" << std::endl;
   ofs << "\t\"type\": \"MultiPolygon\"," << std::endl;
   ofs << "\t\"coordinates\": [" << std::endl;
-  for (int i = 0; i < rmp.polygons().size(); ++i) {
+  for (int i = 0; i < rmp.polygons_with_holes().size(); ++i) {
     ofs << "\t\t[" << std::endl;
 
     ofs << "\t\t\t[" << std::endl;
-    for (int j = 0; j < rmp.polygons()[i].outer_boundary().size(); ++j) {
-      ofs << "\t\t\t\t[" << rmp.polygons()[i].outer_boundary()[j].x() <<
-      ", " << rmp.polygons()[i].outer_boundary()[j].y() << "]";
-      if (j < rmp.polygons()[i].outer_boundary().size()-1) ofs << ",";
+    for (int j = 0; j < rmp.polygons_with_holes()[i].outer_boundary().size(); ++j) {
+      ofs << "\t\t\t\t[" << rmp.polygons_with_holes()[i].outer_boundary()[j].x() <<
+      ", " << rmp.polygons_with_holes()[i].outer_boundary()[j].y() << "]";
+      if (j < rmp.polygons_with_holes()[i].outer_boundary().size()-1) ofs << ",";
       ofs << std::endl;
     } ofs << "\t\t\t]";
-    if (rmp.polygons()[i].number_of_holes() > 0) ofs << ",";
+    if (rmp.polygons_with_holes()[i].number_of_holes() > 0) ofs << ",";
     ofs << std::endl;
 
-    for (int j = 0; j < rmp.polygons()[i].holes().size(); ++j) {
+    for (int j = 0; j < rmp.polygons_with_holes()[i].holes().size(); ++j) {
       ofs << "\t\t\t[" << std::endl;
-      for (int k = 0; k < rmp.polygons()[i].holes()[j].size(); ++k) {
-        ofs << "\t\t\t\t[" << rmp.polygons()[i].holes()[j][k].x() <<
-        ", " << rmp.polygons()[i].holes()[j][k].y() << "]";
-        if (k < rmp.polygons()[i].holes()[j].size()-1) ofs << ",";
+      for (int k = 0; k < rmp.polygons_with_holes()[i].holes()[j].size(); ++k) {
+        ofs << "\t\t\t\t[" << rmp.polygons_with_holes()[i].holes()[j][k].x() <<
+        ", " << rmp.polygons_with_holes()[i].holes()[j][k].y() << "]";
+        if (k < rmp.polygons_with_holes()[i].holes()[j].size()-1) ofs << ",";
         ofs << std::endl;
       }
       ofs << "\t\t\t]";
-      if (j < rmp.polygons()[i].holes().size()-1) ofs << ",";
+      if (j < rmp.polygons_with_holes()[i].holes().size()-1) ofs << ",";
       ofs << std::endl;
     }
 
     ofs << "\t\t]";
-    if (i < rmp.polygons().size()-1) ofs << ",";
+    if (i < rmp.polygons_with_holes().size()-1) ofs << ",";
     ofs << std::endl;
   } ofs << "\t]" << std::endl;
   ofs << "}" << std::endl;

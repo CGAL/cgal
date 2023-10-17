@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     } CGAL_assertion(ref == out);
 
     // Test orientations
-    for (auto const& polygon: rmp.polygons()) {
+    for (auto const& polygon: rmp.polygons_with_holes()) {
       CGAL_assertion(polygon.outer_boundary().orientation() == CGAL::COUNTERCLOCKWISE);
       for (auto const &hole: polygon.holes()) {
         CGAL_assertion(hole.orientation() == CGAL::CLOCKWISE);

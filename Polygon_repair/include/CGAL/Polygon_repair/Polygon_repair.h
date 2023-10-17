@@ -427,7 +427,7 @@ public:
   void add_to_triangulation_odd_even(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon) {
 
     // Get unique edges
-    for (auto const& polygon: multipolygon.polygons()) {
+    for (auto const& polygon: multipolygon.polygons_with_holes()) {
       for (auto const& edge: polygon.outer_boundary().edges()) {
         if (edge.source() == edge.target()) continue;
         std::pair<typename Kernel::Point_2, typename Kernel::Point_2> pair = (edge.source() < edge.target())?
@@ -637,7 +637,7 @@ public:
     }
     for (auto const& polygon: ordered_polygons) {
       // std::cout << "Adding polygon " << polygon << std::endl;
-      mp.add_polygon(polygon);
+      mp.add_polygon_with_holes(polygon);
     }
   }
 

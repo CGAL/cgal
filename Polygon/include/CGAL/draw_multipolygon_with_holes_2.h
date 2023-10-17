@@ -69,7 +69,7 @@ public:
                          const char* title = "Basic Multipolygon_with_holes_2 Viewer") :
     Base(parent, title, true, true, true, false, false),
     m_mpwh(mpwh) {
-    if (mpwh.number_of_polygons() == 0) return;
+    if (mpwh.number_of_polygons_with_holes() == 0) return;
 
     // mimic the computation of Camera::pixelGLRatio()
     auto bbox = bounding_box();
@@ -99,8 +99,8 @@ public:
    */
   CGAL::Bbox_2 bounding_box() {
     Bbox_2 bbox;
-    if (m_mpwh.number_of_polygons() > 0) bbox = m_mpwh.polygons().front().outer_boundary().bbox();
-    for (auto const& pwh: m_mpwh.polygons()) {
+    if (m_mpwh.number_of_polygons_with_holes() > 0) bbox = m_mpwh.polygons_with_holes().front().outer_boundary().bbox();
+    for (auto const& pwh: m_mpwh.polygons_with_holes()) {
       bbox += pwh.outer_boundary().bbox();
     }
     return bbox;
@@ -111,7 +111,7 @@ public:
   void add_elements() {
     clear();
 
-    for (auto const& p: m_mpwh.polygons()) {
+    for (auto const& p: m_mpwh.polygons_with_holes()) {
       CGAL::IO::Color c(rand()%255,rand()%255,rand()%255);
       face_begin(c);
 

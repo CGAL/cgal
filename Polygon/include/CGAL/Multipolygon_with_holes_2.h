@@ -46,10 +46,10 @@ public:
 
   /// @}
 
-  using Polygons_container = std::deque<Polygon_with_holes_2>;
+  using Polygon_with_holes_container = std::deque<Polygon_with_holes_2>;
 
-  using Polygon_iterator = typename Polygons_container::iterator;
-  using Polygon_const_iterator = typename Polygons_container::const_iterator;
+  using Polygon_with_holes_iterator = typename Polygon_with_holes_container::iterator;
+  using Polygon_with_holes_const_iterator = typename Polygon_with_holes_container::const_iterator;
 
   /// the size type
   using Size = unsigned int;
@@ -64,32 +64,32 @@ public:
     m_polygons(p_begin, p_end)
   {}
 
-  Polygons_container& polygons() { return m_polygons; }
+  Polygon_with_holes_container& polygons_with_holes() { return m_polygons; }
 
-  const Polygons_container& polygons() const { return m_polygons; }
+  const Polygon_with_holes_container& polygons_with_holes() const { return m_polygons; }
 
-  Polygon_iterator polygons_begin() { return m_polygons.begin(); }
+  Polygon_with_holes_iterator polygons_with_holes_begin() { return m_polygons.begin(); }
 
-  Polygon_iterator polygons_end() { return m_polygons.end(); }
+  Polygon_with_holes_iterator polygons_with_holes_end() { return m_polygons.end(); }
 
-  Polygon_const_iterator polygons_begin() const { return m_polygons.begin(); }
+  Polygon_with_holes_const_iterator polygons_with_holes_begin() const { return m_polygons.begin(); }
 
-  Polygon_const_iterator polygons_end() const { return m_polygons.end(); }
+  Polygon_with_holes_const_iterator polygons_with_holes_end() const { return m_polygons.end(); }
 
   void add_polygon(const Polygon_2& pgn) { m_polygons.push_back(Polygon_with_holes_2(pgn)); }
 
-  void add_polygon(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
+  void add_polygon_with_holes(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 
-  void add_polygon(Polygon_with_holes_2&& pgn) { m_polygons.emplace_back(std::move(pgn)); }
+  void add_polygon_with_holes(Polygon_with_holes_2&& pgn) { m_polygons.emplace_back(std::move(pgn)); }
 
-  void erase_polygon(Polygon_iterator pit) { m_polygons.erase(pit); }
+  void erase_polygon_with_holes(Polygon_with_holes_iterator pit) { m_polygons.erase(pit); }
 
   void clear() { m_polygons.clear(); }
 
-  Size number_of_polygons() const { return static_cast<Size>(m_polygons.size()); }
+  Size number_of_polygons_with_holes() const { return static_cast<Size>(m_polygons.size()); }
 
 protected:
-  Polygons_container m_polygons;
+  Polygon_with_holes_container m_polygons;
 };
 
 /*!
@@ -113,26 +113,26 @@ order.
 template <class Kernel, class Container>
 std::ostream& operator<<(std::ostream& os,
                          const Multipolygon_with_holes_2<Kernel, Container>& mp) {
-  typename Multipolygon_with_holes_2<Kernel, Container>::Polygon_const_iterator i;
+  typename Multipolygon_with_holes_2<Kernel, Container>::Polygon_with_holes_const_iterator i;
 
   switch(IO::get_mode(os)) {
     case IO::ASCII :
       os << mp.number_of_polygons() << ' ';
-      for (i = mp.polygons_begin(); i != mp.polygons_end(); ++i) {
+      for (i = mp.polygon_with_holes_begin(); i != mp.polygon_with_holes_end(); ++i) {
         os << *i << ' ';
       }
       return os;
 
     case IO::BINARY :
-      os << mp.number_of_polygons();
-      for (i = mp.polygons_begin(); i != mp.polygons_end(); ++i) {
+      os << mp.number_of_polygons_with_holes();
+      for (i = mp.polygons_with_holes_begin(); i != mp.polygons_with_holes_end(); ++i) {
         os << *i ;
       }
       return os;
 
     default:
       os << "Multipolygon_with_holes_2(" << std::endl;
-      for (i = mp.polygons_begin(); i != mp.polygons_end(); ++i) {
+      for (i = mp.polygons_with_holes_begin(); i != mp.polygons_with_holes_end(); ++i) {
         os << " " << *i << std::endl;
       }
 

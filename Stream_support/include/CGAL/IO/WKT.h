@@ -351,7 +351,7 @@ template<typename Kernel, typename Container>
 bool read_multi_polygon_WKT(std::istream& in,
                             Multipolygon_with_holes_2<Kernel,Container>& mp)
 {
-  return read_multi_polygon_WKT(in, mp.polygons());
+  return read_multi_polygon_WKT(in, mp.polygons_with_holes());
 }
 
 
@@ -359,7 +359,7 @@ template<typename Kernel, typename Container>
 std::ostream& write_multi_polygon_WKT(std::ostream& out,
                                       Multipolygon_with_holes_2<Kernel,Container>& mp)
 {
-  return write_multi_polygon_WKT(out, mp.polygons());
+  return write_multi_polygon_WKT(out, mp.polygons_with_holes());
 }
 
 //! \ingroup PkgStreamSupportIoFuncsWKT

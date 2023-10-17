@@ -82,9 +82,9 @@ int main(int argc, char* argv[]) {
       pr.reconstruct_multipolygon();
     } Multipolygon_with_holes_2 mp = pr.multipolygon();
 
-    if (mp.number_of_polygons() > 0) {
-      CGAL::Bbox_2 bbox = mp.polygons().front().bbox();
-      for (auto const& polygon: mp.polygons()) {
+    if (mp.number_of_polygons_with_holes() > 0) {
+      CGAL::Bbox_2 bbox = mp.polygons_with_holes().front().bbox();
+      for (auto const& polygon: mp.polygons_with_holes()) {
         bbox += polygon.outer_boundary().bbox();
       } Kernel::Vector_2 translate(-bbox.xmin(), -bbox.ymin());
       double scale = desired_width/(bbox.xmax()-bbox.xmin());
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
       std::ofstream ofs(folder_out + "/" + std::string(file.path().stem()) + ".svg");
       ofs << "<svg viewBox=\"0 0 " << desired_width << " " << scale*(bbox.ymax()-bbox.ymin()) << "\" xmlns=\"http://www.w3.org/2000/svg\">" << std::endl;
 
-      for (auto const& polygon: mp.polygons()) {
+      for (auto const& polygon: mp.polygons_with_holes()) {
         // std::cout << polygon << std::endl;
         ofs << "\t<polygon points=\"";
         for (auto const& vertex: polygon.outer_boundary()) {
