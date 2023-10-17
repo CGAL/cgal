@@ -107,7 +107,6 @@ vertices(const typename Tr::Cell_handle c, const Tr&)
                c->vertex(3)};
 }
 
-// returns angle in degrees
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,
                                const Point& q,
