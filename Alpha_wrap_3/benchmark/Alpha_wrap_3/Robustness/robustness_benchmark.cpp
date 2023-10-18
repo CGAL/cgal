@@ -21,14 +21,15 @@ enum Robustness_benchmark_exit_code
   VALID_SOLID_OUTPUT = 0,
 
   // Failure
-  OUTPUT_IS_NOT_TRIANGLE_MESH = 1,
-  OUTPUT_IS_COMBINATORIAL_NON_MANIFOLD = 2,
-  OUTPUT_HAS_BORDERS = 3,
-  OUTPUT_HAS_DEGENERATED_FACES = 4,
-  OUTPUT_HAS_GEOMETRIC_SELF_INTERSECTIONS = 5,
-  OUTPUT_DOES_NOT_BOUND_VOLUME = 6,
-  OUTPUT_DOES_NOT_CONTAIN_INPUT = 7,
-  OUTPUT_DISTANCE_IS_TOO_LARGE = 8,
+  INTPUT_IS_INVALID = 1,
+  OUTPUT_IS_NOT_TRIANGLE_MESH = 2,
+  OUTPUT_IS_COMBINATORIAL_NON_MANIFOLD = 3,
+  OUTPUT_HAS_BORDERS = 4,
+  OUTPUT_HAS_DEGENERATED_FACES = 5,
+  OUTPUT_HAS_GEOMETRIC_SELF_INTERSECTIONS = 6,
+  OUTPUT_DOES_NOT_BOUND_VOLUME = 7,
+  OUTPUT_DOES_NOT_CONTAIN_INPUT = 8,
+  OUTPUT_DISTANCE_IS_TOO_LARGE = 9,
 };
 
 } // namespace
@@ -58,14 +59,18 @@ int main(int argc, char** argv)
   }
 
   if(argc < 3 || relative_alpha_ratio <= 0.)
-    return AW3i::VALID_SOLID_OUTPUT;
+    return AW3i::INTPUT_IS_INVALID;
 
   Mesh input_mesh;
   if(!PMP::IO::read_polygon_mesh(entry_name_ptr, input_mesh) ||
      is_empty(input_mesh) ||
-     !is_triangle_mesh(input_mesh))
+     !is_triangle_mesh(input_mesh)
+#ifndef CGAL_ALPHA_WRAP_3_TOLERATE_DEGENERACIES
+     || AW3i::has_degenerated_faces(input_mesh)
+#endif
+     )
   {
-    return AW3i::VALID_SOLID_OUTPUT;
+    return AW3i::INTPUT_IS_INVALID;
   }
 
   const CGAL::Bbox_3 bbox = PMP::bbox(input_mesh);
