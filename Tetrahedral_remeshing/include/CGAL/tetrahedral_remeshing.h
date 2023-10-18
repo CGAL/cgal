@@ -392,7 +392,6 @@ void tetrahedral_isotropic_remeshing(
     = choose_parameter(get_parameter(np, internal_np::smooth_constrained_edges),
       false);
 
-  typedef typename Tr::Cell_handle Cell_handle;
   typedef typename internal_np::Lookup_named_param_def <
               internal_np::cell_selector_t,
               NamedParameters,
