@@ -1109,9 +1109,9 @@ protected:
         vao[VAO_COLORED_LINES].bind();
         if (m_use_mono_color)
         {
-            color.setRgbF((double)m_rays_mono_color.red()/(double)255,
-                          (double)m_rays_mono_color.green()/(double)255,
-                          (double)m_rays_mono_color.blue()/(double)255);
+            color.setRgbF((double)m_lines_mono_color.red()/(double)255,
+                          (double)m_lines_mono_color.green()/(double)255,
+                          (double)m_lines_mono_color.blue()/(double)255);
             rendering_program_p_l.disableAttributeArray("color");
             rendering_program_p_l.setAttributeValue("color",color);
         }
