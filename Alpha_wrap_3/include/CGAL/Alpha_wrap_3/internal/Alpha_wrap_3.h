@@ -281,6 +281,9 @@ public:
 
     // Whether to keep pockets of "outside" cells that are not connected to the exterior (or to the
     // initial cavities, if used).
+    //
+    // /!\ Warning /!\
+    // If you refine or pause while removing pockets, you will get valid but different wraps.
     const bool keep_inner_ccs = choose_parameter(get_parameter(in_np, internal_np::keep_inner_connected_components), true);
 
     // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
