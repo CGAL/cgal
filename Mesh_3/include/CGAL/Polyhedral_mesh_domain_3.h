@@ -747,7 +747,7 @@ Construct_initial_points::operator()(OutputIterator pts,
     projected_points.emplace(cp_and_p.first, index);
   }
 
-  CGAL_warning(projected_points.size() > n);
+  CGAL_warning(projected_points.size() > static_cast<std::size_t>(n));
 
   // n farthest points
   std::vector<Point_with_index> initial_points;
