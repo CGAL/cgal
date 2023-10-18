@@ -51,20 +51,20 @@
 
 \cgalCRPSubsection{Fill Graphics Scene for Different Packages}
 
-- Constrained_triangulation_2 \link PkgDrawTriangulation2 CGAL::add_in_graphics_scene<CT2>() \endlink
-- Linear_cell_complex \link PkgDrawLinearCellComplex CGAL::add_in_graphics_scene<LCC>() \endlink
-- Nef_polyhedron_3 \link PkgDrawNef3 CGAL::add_in_graphics_scene<Nef3>() \endlink
-- Periodic_2_Triangulation_2 \link PkgDrawPeriodic2Triangulation2 CGAL::add_in_graphics_scene<P2T2>() \endlink
-- Point_set_3 \link PkgDrawPointSet3D CGAL::add_in_graphics_scene<PS>() \endlink
-- Polygon_2 \link PkgDrawPolygon2 CGAL::add_in_graphics_scene<P2>() \endlink
-- Polygon_set_2 \link PkgDrawPolygonSet2 CGAL::add_in_graphics_scene<PS>() \endlink
-- Polygon_with_holes_2 \link PkgDrawPolygonWithHoles2 CGAL::add_in_graphics_scene<PH2>() \endlink
-- Polyhedron_3 \link PkgDrawPolyhedron CGAL::add_in_graphics_scene<POLY>() \endlink
-- Surface_mesh \link PkgDrawSurfaceMesh CGAL::add_in_graphics_scene<SM>() \endlink
-- Surface_mesh_topology \link PkgDrawFaceGraphWithPaths CGAL::add_in_graphics_scene<SMT>() \endlink
-- Triangulation_2 \link PkgDrawTriangulation2 CGAL::add_in_graphics_scene<T2>() \endlink
-- Triangulation_3 \link PkgDrawTriangulation3 CGAL::add_in_graphics_scene<T3>() \endlink
-- Voronoi_diagram_2 \link PkgDrawVoronoiDiagram2 CGAL::add_in_graphics_scene<V2>() \endlink
+- Constrained_triangulation_2 \link PkgDrawTriangulation2 CGAL::add_to_graphics_scene<CT2>() \endlink
+- Linear_cell_complex \link PkgDrawLinearCellComplex CGAL::add_to_graphics_scene<LCC>() \endlink
+- Nef_polyhedron_3 \link PkgDrawNef3 CGAL::add_to_graphics_scene<Nef3>() \endlink
+- Periodic_2_Triangulation_2 \link PkgDrawPeriodic2Triangulation2 CGAL::add_to_graphics_scene<P2T2>() \endlink
+- Point_set_3 \link PkgDrawPointSet3D CGAL::add_to_graphics_scene<PS>() \endlink
+- Polygon_2 \link PkgDrawPolygon2 CGAL::add_to_graphics_scene<P2>() \endlink
+- Polygon_set_2 \link PkgDrawPolygonSet2 CGAL::add_to_graphics_scene<PS>() \endlink
+- Polygon_with_holes_2 \link PkgDrawPolygonWithHoles2 CGAL::add_to_graphics_scene<PH2>() \endlink
+- Polyhedron_3 \link PkgDrawPolyhedron CGAL::add_to_graphics_scene<POLY>() \endlink
+- Surface_mesh \link PkgDrawSurfaceMesh CGAL::add_to_graphics_scene<SM>() \endlink
+- Surface_mesh_topology \link PkgDrawFaceGraphWithPaths CGAL::add_to_graphics_scene<SMT>() \endlink
+- Triangulation_2 \link PkgDrawTriangulation2 CGAL::add_to_graphics_scene<T2>() \endlink
+- Triangulation_3 \link PkgDrawTriangulation3 CGAL::add_to_graphics_scene<T3>() \endlink
+- Voronoi_diagram_2 \link PkgDrawVoronoiDiagram2 CGAL::add_to_graphics_scene<V2>() \endlink
 
 */
 
