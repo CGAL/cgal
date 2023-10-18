@@ -30,7 +30,7 @@ output iterator `pts`, as objects of type `std::pair<Point_3,
 @tparam OutputIterator an `OutputIterator` of points of type
 `std::pair<MeshDomain::Point_3, MeshDomain::Index>`
 @tparam MeshDomain a model of `MeshDomain_3`
-@tparam C3t3 a model of `MeshDomainField_3`
+@tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
 
 */
 template <typename OutputIterator, typename MeshDomain, typename C3t3>
@@ -45,7 +45,7 @@ points to initialize the mesh generation process.
 @tparam OutputIterator an `OutputIterator` of points of type
 `std::pair<MeshDomain::Point_3, MeshDomain::Index>`
 @tparam MeshDomain a model of `MeshDomain_3`
-@tparam C3t3 a model of `MeshDomainField_3`
+@tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
 
 */
 template <typename OutputIterator, typename MeshDomain, typename C3t3>
