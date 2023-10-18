@@ -68,19 +68,19 @@ public:
   std::function<bool(const DS &, VolumeDescriptor)> volume_wireframe;
 
   /// `std::function` that returns the color of the given vertex.
-  /// nullptr by default.
+  /// `nullptr` by default.
   std::function<CGAL::IO::Color(const DS &, VertexDescriptor)> vertex_color;
 
   /// `std::function` that returns the color of the given edge.
-  /// nullptr by default.
+  /// `nullptr` by default.
   std::function<CGAL::IO::Color(const DS &, EdgeDescriptor)> edge_color;
 
   /// `std::function` that returns the color of the given face.
-  /// nullptr by default.
+  /// `nullptr` by default.
   std::function<CGAL::IO::Color(const DS &, FaceDescriptor)> face_color;
 
   /// `std::function` that returns the color of the given volume.
-  /// nullptr by default.
+  /// `nullptr` by default.
   /// Exists only if `VolumeDescriptor` is not `void`.
   std::function<CGAL::IO::Color(const DS &, VolumeDescriptor)> volume_color;
 
