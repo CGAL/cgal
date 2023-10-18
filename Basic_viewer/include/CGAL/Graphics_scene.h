@@ -128,7 +128,7 @@ public:
 
   const CGAL::Bbox_3 &get_bounding_box() const { return m_bounding_box; }
 
-  std::vector<float> &get_array_of_index(int index) { return arrays[index]; }
+  std::vector<BufferType> &get_array_of_index(int index) { return arrays[index]; }
 
   int get_size_of_index(int index) const
   { return static_cast<int>(arrays[index].size()*sizeof(BufferType)); }
@@ -410,7 +410,7 @@ protected:
 
   std::vector<std::tuple<Local_point, QString>> m_texts;
 
-  std::vector<float> arrays[LAST_INDEX];
+  std::vector<BufferType> arrays[LAST_INDEX];
 
   CGAL::Bbox_3 m_bounding_box;
 };
