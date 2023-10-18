@@ -80,7 +80,7 @@ public:
   /// returns `true` iff the scene has no element.
   bool empty() const;
 
-  /// clears the scene, i.e., removes all points, segments, triangles and text.
+  /// clears the scene, i.e., removes all points, segments, triangles, and text.
   void clear();
 };
 
