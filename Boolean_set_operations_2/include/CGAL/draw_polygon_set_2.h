@@ -40,16 +40,82 @@ void draw(const PS& aps);
 } /* namespace CGAL */
 #endif
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
-#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polygon_set_2.h>
 
 namespace CGAL {
 
-template <typename PolygonSet_2>
-class Polygon_set_2_basic_viewer_qt : public Basic_viewer_qt<float> {
-  using Base = Basic_viewer_qt<float>;
+namespace draw_function_for_boolean_set_2 {
+  
+template <typename BufferType=float, typename PS2, class GSOptions>
+void compute_loop(const typename PS2::Polygon_2& p, bool hole,
+                  CGAL::Graphics_scene<BufferType>& gs,
+                  const GSOptions& gso)
+{
+  if (hole)
+  { gs.add_point_in_face(p.vertex(p.size()-1)); }
+  
+  auto prev = p.vertices_begin();
+  auto it = prev;
+  gs.add_point(*it);
+  gs.add_point_in_face(*it);
+  for (++it; it != p.vertices_end(); ++it)
+  {
+    gs.add_point(*it);           // add vertex
+    gs.add_segment(*prev, *it);  // add segment with previous point
+    gs.add_point_in_face(*it);   // add point in face
+    prev = it;
+  }
+  
+  // Add the last segment between the last point and the first one
+  gs.add_segment(*prev, *(p.vertices_begin()));
+}
+
+/// Compute the elements of a polygon with holes.
+template <typename BufferType=float, typename PWH, class GSOptions>
+void compute_elements(const PWH& pwh,
+                      CGAL::Graphics_scene<BufferType>& gs,
+                      const GSOptions& gso)
+{
+  if (!gso.draw_unbounded() && pwh.outer_boundary().is_empty()) return;
+  
+  CGAL::IO::Color c(75,160,255);
+  gs.face_begin(c);
+  
+  const typename PWH::Point_2* point_in_face;
+  if (pwh.outer_boundary().is_empty())
+  {
+    typename PWH::Polygon_2 pgn;
+    pgn.push_back(Pnt(-gso.width(), -gso.height()));
+    pgn.push_back(Pnt(gso.width(), -gso.height()));
+    pgn.push_back(Pnt(gso.width(), gso.height()));
+    pgn.push_back(Pnt(-gso.width(), gso.height()));
+    compute_loop(pgn, false, gs);
+    point_in_face = &(pgn.vertex(pgn.size()-1));
+  }
+  else
+  {
+    const auto& outer_boundary = pwh.outer_boundary();
+    compute_loop(outer_boundary, false, gs);
+    point_in_face = &(outer_boundary.vertex(outer_boundary.size()-1));
+  }
+
+  for (auto it = pwh.holes_begin(); it != pwh.holes_end(); ++it)
+  {
+    compute_loop(*it, true, gs);
+    gs.add_point_in_face(*point_in_face);
+  }
+  
+  gs.face_end();
+}
+  
+} // End namespace draw_function_for_boolean_set_2
+  
+#ifdef CGAL_USE_BASIC_VIEWER
+
+template <typename PolygonSet_2, typename BufferType=float, class GSOptions>
+class Polygon_set_2_basic_viewer_qt : public Basic_viewer_qt<BufferType>
+{
+  using Base = Basic_viewer_qt<BufferType>;
   using Ps = PolygonSet_2;
   using Pwh = typename Ps::Polygon_with_holes_2;
   using Pgn = typename Ps::Polygon_2;
@@ -57,6 +123,8 @@ class Polygon_set_2_basic_viewer_qt : public Basic_viewer_qt<float> {
 
 public:
   Polygon_set_2_basic_viewer_qt(QWidget* parent, const Ps& ps,
+                                Graphics_scene<BufferType>& gs,
+                                GSOptions& gs_options,
                                 const char* title = "Basic Polygon_set_2 Viewer",
                                 bool draw_unbounded = false,
                                 bool draw_vertices = false) :
@@ -81,26 +149,27 @@ public:
     m_width = width;
     m_height = height;
     CGAL::qglviewer::Vec p;
-    auto ratio = camera()->pixelGLRatio(p);
+    auto ratio = this->camera()->pixelGLRatio(p);
     if (ratio != m_pixel_ratio) {
       m_pixel_ratio = ratio;
       add_elements();
     }
   }
 
-  /*! Compute the elements of a polygon set.
-   */
-  virtual void add_elements() {
-    clear();
-
-    std::vector<Pwh> pwhs;
-    m_ps.polygons_with_holes(std::back_inserter(pwhs));
-    for (const auto& pwh : pwhs) add_elements(pwh);
-  }
-
   /*! Obtain the pixel ratio.
    */
   double pixel_ratio() const { return m_pixel_ratio; }
+
+  /*! Compute the elements of a polygon set.
+   */
+  virtual void add_elements()
+  {
+    this->clear();
+    std::vector<Pwh> pwhs;
+    m_ps.polygons_with_holes(std::back_inserter(pwhs));
+    for (const auto& pwh : pwhs)
+    { compute_elements(pwh, graphics_scene, graphics_scene_options); }
+  }
 
   /*! Compute the bounding box.
    */
@@ -119,57 +188,6 @@ public:
     return bbox;
   }
 
-protected:
-  /*! Compute the elements of a polygon with holes.
-   */
-  void add_elements(const Pwh& pwh) {
-    if (! m_draw_unbounded && pwh.outer_boundary().is_empty()) return;
-
-    CGAL::IO::Color c(75,160,255);
-    face_begin(c);
-
-    const Pnt* point_in_face;
-    if (pwh.outer_boundary().is_empty()) {
-      Pgn pgn;
-      pgn.push_back(Pnt(-m_width, -m_height));
-      pgn.push_back(Pnt(m_width, -m_height));
-      pgn.push_back(Pnt(m_width, m_height));
-      pgn.push_back(Pnt(-m_width, m_height));
-      compute_loop(pgn, false);
-      point_in_face = &(pgn.vertex(pgn.size()-1));
-    }
-    else {
-      const auto& outer_boundary = pwh.outer_boundary();
-      compute_loop(outer_boundary, false);
-      point_in_face = &(outer_boundary.vertex(outer_boundary.size()-1));
-    }
-
-    for (auto it = pwh.holes_begin(); it != pwh.holes_end(); ++it) {
-      compute_loop(*it, true);
-      add_point_in_face(*point_in_face);
-    }
-
-    face_end();
-  }
-
-  void compute_loop(const Pgn& p, bool hole) {
-    if (hole) add_point_in_face(p.vertex(p.size()-1));
-
-    auto prev = p.vertices_begin();
-    auto it = prev;
-    add_point(*it);
-    add_point_in_face(*it);
-    for (++it; it != p.vertices_end(); ++it) {
-      add_point(*it);           // add vertex
-      add_segment(*prev, *it);  // add segment with previous point
-      add_point_in_face(*it);   // add point in face
-      prev = it;
-    }
-
-    // Add the last segment between the last point and the first one
-    add_segment(*prev, *(p.vertices_begin()));
-  }
-
 private:
   //! The window width in pixels.
   int m_width = CGAL_BASIC_VIEWER_INIT_SIZE_X;
@@ -185,8 +203,6 @@ private:
 
   //! Indicates whether to draw unbounded polygons with holes.
   bool m_draw_unbounded = false;
-
-  Graphics_scene<float> gs;
 };
 
 // Specialization of draw function.
@@ -202,16 +218,20 @@ void draw(const CGAL::Polygon_set_2<T, C, D>& ps,
   bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
-  if (! cgal_test_suite) {
+  if (! cgal_test_suite) 
+  {
     using Ps = CGAL::Polygon_set_2<T, C, D>;
     using Viewer = Polygon_set_2_basic_viewer_qt<Ps>;
     CGAL::Qt::init_ogl_context(4,3);
     int argc = 1;
     const char* argv[2] = {"t2_viewer", nullptr};
     QApplication app(argc, const_cast<char**>(argv));
-    Viewer mainwindow(app.activeWindow(), ps, title, draw_unbounded, draw_vertices);
-    mainwindow.add_elements();
-    mainwindow.show();
+    Graphics_scene<float> gs;
+    Graphics_scene_options<Ps> gs;
+    Viewer basic_viewer(app.activeWindow(), ps, gs, gso,
+                        title, draw_unbounded, draw_vertices);
+    basic_viewer.add_elements();
+    basic_viewer.show();
     app.exec();
   }
 }
