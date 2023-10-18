@@ -18,7 +18,7 @@ public:
 
   /// adds the given colored point in the scene.
   template <typename KPoint>
-  void add_point(const KPoint &p, const CGAL::IO::Color &acolor);
+  void add_point(const KPoint &p, const CGAL::IO::Color &color);
 
   /// adds the given segment in the scene.
   template <typename KPoint>
@@ -27,7 +27,7 @@ public:
   /// adds the given colored segment in the scene.
   template <typename KPoint>
   void add_segment(const KPoint &p1, const KPoint &p2,
-                   const CGAL::IO::Color &acolor);
+                   const CGAL::IO::Color &color);
 
   /// adds the given ray in the scene: a half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
@@ -36,7 +36,7 @@ public:
   /// adds the given colored ray in the scene: a half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v,
-               const CGAL::IO::Color &acolor);
+               const CGAL::IO::Color &color);
 
   /// adds the given line in the scene, defined by `p` and `v` as direction.
   template <typename KPoint, typename KVector>
@@ -45,13 +45,13 @@ public:
   /// adds the given colored line in the scene, defined by `p` and `v` as direction.
   template <typename KPoint, typename KVector>
   void add_line(const KPoint &p, const KVector &v,
-                const CGAL::IO::Color &acolor);
+                const CGAL::IO::Color &color);
 
   /// starts a new face.
   void face_begin();
 
   /// starts a new colored face.
-  void face_begin(const CGAL::IO::Color &acolor);
+  void face_begin(const CGAL::IO::Color &color);
 
   /// return `true` iff a face is started.
   bool a_face_started() const;
