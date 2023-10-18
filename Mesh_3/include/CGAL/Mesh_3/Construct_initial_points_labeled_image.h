@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ange Clement
+// Author(s)     : Laurent Rineau and Ange Clement
 
 #ifndef CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_FROM_LABELED_IMAGE_H
 #define CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_FROM_LABELED_IMAGE_H
