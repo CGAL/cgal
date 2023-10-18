@@ -40,7 +40,7 @@ public:
   /// enables or disables the drawing of texts.
   void draw_text(bool b);
 
-  /// sets the color used for vertices in mono_color mode.
+  /// sets the color used for vertices in mono color mode.
   void vertices_mono_color(const CGAL::IO::Color& c);
 
   /// sets the color used for edges in mono_color mode.
