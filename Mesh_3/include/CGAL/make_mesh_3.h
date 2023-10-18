@@ -421,7 +421,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                           <UL>
  *                             <LI> `parameters::initial_points_generator()`
  *                             <LI> `parameters::default_initial_points_generation()`
- *                           </UL>
+ *                           </UL>}
  *     \cgalParamDefault{`parameters::default_initial_points_generation()`}
  *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd
