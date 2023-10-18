@@ -35,7 +35,7 @@ adds the vertices, edges and faces of `at2` into the given graphic scene `gs`. P
 
 */
 template<class T2, typename BufferType=float>
-void add_in_graphics_scene(const T2& at2,
+void add_to_graphics_scene(const T2& at2,
                            CGAL::Graphics_scene<BufferType>& gs,
                            const CGAL::Graphics_scene_options<T2,
                            typename T2::Vertex_handle,
