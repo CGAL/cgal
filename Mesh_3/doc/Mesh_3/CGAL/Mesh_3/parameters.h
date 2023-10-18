@@ -493,7 +493,6 @@ unspecified_type default_initial_points_generation();
  *
  * \sa `CGAL::parameters::default_initial_points_generation()`
  * \sa `CGAL::make_mesh_3()`
- * \sa `MeshDomain_3::Construct_initial_points`
  *
  */
 template <typename InitialPointsGenerator>
