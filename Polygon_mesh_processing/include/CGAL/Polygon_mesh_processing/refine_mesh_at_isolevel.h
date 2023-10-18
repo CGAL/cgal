@@ -41,7 +41,7 @@ namespace Polygon_mesh_processing {
  *
  * @param pm the polygon mesh to be refined.
  * @param value_map the property map containing a value at each vertex for a given function defined over the mesh.
- * @param isovalue the value used to defined
+ * @param isovalue the value used to refine
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
