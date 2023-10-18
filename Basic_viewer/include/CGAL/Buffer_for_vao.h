@@ -459,31 +459,31 @@ public:
 
   /// adds `kp` coordinates to `buffer`
   template<typename KPoint>
-  static void add_point_in_buffer(const KPoint& kp, std::vector<float>& buffer)
+  static void add_point_in_buffer(const KPoint& kp, std::vector<BufferType>& buffer)
   {
     Local_point p=get_local_point(kp);
-    buffer.push_back(static_cast<float>(p.x()));
-    buffer.push_back(static_cast<float>(p.y()));
-    buffer.push_back(static_cast<float>(p.z()));
+    buffer.push_back(static_cast<BufferType>(p.x()));
+    buffer.push_back(static_cast<BufferType>(p.y()));
+    buffer.push_back(static_cast<BufferType>(p.z()));
   }
 
   /// adds `kv` coordinates to `buffer`
   template<typename KVector>
-  static void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer,
+  static void add_normal_in_buffer(const KVector& kv, std::vector<BufferType>& buffer,
                                    bool inverse_normal=false)
   {
     Local_vector n=(inverse_normal?-get_local_vector(kv):get_local_vector(kv));
-    buffer.push_back(static_cast<float>(n.x()));
-    buffer.push_back(static_cast<float>(n.y()));
-    buffer.push_back(static_cast<float>(n.z()));
+    buffer.push_back(static_cast<BufferType>(n.x()));
+    buffer.push_back(static_cast<BufferType>(n.y()));
+    buffer.push_back(static_cast<BufferType>(n.z()));
   }
 
   ///adds `acolor` RGB components to `buffer`
-  static void add_color_in_buffer(const CGAL::IO::Color& acolor, std::vector<float>& buffer)
+  static void add_color_in_buffer(const CGAL::IO::Color& acolor, std::vector<BufferType>& buffer)
   {
-    buffer.push_back((float)acolor.red()/(float)255);
-    buffer.push_back((float)acolor.green()/(float)255);
-    buffer.push_back((float)acolor.blue()/(float)255);
+    buffer.push_back((BufferType)acolor.red()/(BufferType)255);
+    buffer.push_back((BufferType)acolor.green()/(BufferType)255);
+    buffer.push_back((BufferType)acolor.blue()/(BufferType)255);
   }
 
   /// @return true iff the points of 'facet' form a convex face
