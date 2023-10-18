@@ -43,7 +43,7 @@ public:
   /// sets the color used for vertices in mono color mode.
   void vertices_mono_color(const CGAL::IO::Color& c);
 
-  /// sets the color used for edges in mono_color mode.
+  /// sets the color used for edges in mono color mode.
   void edges_mono_color(const CGAL::IO::Color& c);
 
   /// sets the color used for rays in mono color mode.
