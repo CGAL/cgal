@@ -65,7 +65,7 @@ public:
   template <typename KPoint, typename KVector>
   bool add_point_in_face(const KPoint &kp, const KVector &p_normal);
 
-  /// end the current face.
+  /// ends the current face.
   /// @pre `a_face_started()`
   void face_end();
 
