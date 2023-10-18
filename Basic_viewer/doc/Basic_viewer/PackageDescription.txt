@@ -9,7 +9,7 @@
 \cgalPkgPicture{basic_viewer_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand, Mostafa Ashraf}
-\cgalPkgDesc{This package implements basic viewer class.}
+\cgalPkgDesc{This package provides a basic viewer class.}
 \cgalPkgManuals{Chapter_Basic_viewer,PkgBasicViewerRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
