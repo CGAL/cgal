@@ -455,7 +455,7 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * \ingroup PkgMesh3Parameters
  *
  * The function `parameters::default_initial_points_generation()` enables the user to tell the mesh generation function
- * `make_mesh_3()` that the domlain's construct_initial_points_object will be called for the points initialization.
+ * `make_mesh_3()` that the domain's `construct_initial_points_object()` will be called for the points initialization.
  *
  * \cgalHeading{Example}
  *
@@ -466,9 +466,11 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  *                               parameters::default_initial_points_generation());
  * \endcode
  *
- * \sa `CGAL::parameters::initial_points_generator(generator)`
+ * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
  * \sa `MeshDomain_3::construct_initial_points_object()`
+ * \sa `MeshDomain_3`
+ * \sa `construct_initial_points_object()`
  *
  */
 unspecified_type default_initial_points_generation();
@@ -484,12 +486,12 @@ unspecified_type default_initial_points_generation();
  * // Mesh generation from labelled image with connexity checks.
  * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
  *                               criteria,
- *                               parameters::initial_points_generator(Construct_initial_points_labeled_image(image)));
+ *                               parameters::initial_points_generator(CGAL::Construct_initial_points_labeled_image(image)));
  * \endcode
  *
  * \sa `CGAL::parameters::default_initial_points_generation()`
  * \sa `CGAL::make_mesh_3()`
- * \sa `Construct_initial_points_labeled_image()`
+ * \sa `CGAL::Construct_initial_points_labeled_image()`
  *
  */
 template <typename InitialPointsGenerator>

@@ -416,29 +416,12 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *   \cgalParamSectionEnd
  *   \cgalParamSectionBegin{Mesh initialization}
  *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be supplied before the meshing process.
- *                           It must folow the `InitialPointsGenerator` concept.
+ *                           It must follow the `InitialPointsGenerator` concept.
  *                           The following two named parameters control this option:
  *                           <UL>
- *                             <LI> `parameters::initial_points_generator(generator)`
+ *                             <LI> `parameters::initial_points_generator()`
  *                             <LI> `parameters::default_initial_points_generation()`
  *                           </UL>
- *
- *                           The `InitialPointsGenerator` concept is a function object to construct
- *                           a set of initial points on the surface of the domain. Provides the
- *                           following operators:
- *
- *                           `template <typename OutputIterator, typename MeshDomain, typename C3t3>`
- *                           <br>
- *                           `OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)`
- *
- *                           `template <typename OutputIterator, typename MeshDomain, typename C3t3>`
- *                           <br>
- *                           `OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)`
- *
- *                           Those two operators output a set of (`n`) surface points to the
- *                           output iterator `pts`, as objects of type `std::pair<Point_3,
- *                           %Index>`. If `n` is not given, the functor must provide enough
- *                           points to initialize the mesh generation process.}
  *     \cgalParamDefault{`parameters::default_initial_points_generation()`}
  *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd

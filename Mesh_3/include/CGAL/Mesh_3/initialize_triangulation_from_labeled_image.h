@@ -16,7 +16,7 @@
 #include <CGAL/license/Mesh_3.h>
 #include <CGAL/make_mesh_3.h>
 
-#include <CGAL/Mesh_3/Construct_initial_points_from_labeled_image.h>
+#include <CGAL/Mesh_3/Construct_initial_points_labeled_image.h>
 
 template<class C3T3, class MeshDomain, class MeshCriteria>
 void init_tr_from_labeled_image_call_init_features(C3T3&,
@@ -73,7 +73,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
 
   std::vector<ConstructedPoint> constructedPoints;
 
-  Construct_initial_points_labeled_image construct(image);
+  CGAL::Construct_initial_points_labeled_image construct(image);
   construct(std::back_inserter(constructedPoints), domain, c3t3);
 
   std::cout << "  " << constructedPoints.size() << " constructed points" << std::endl;

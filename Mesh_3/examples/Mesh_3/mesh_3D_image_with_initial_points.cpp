@@ -5,7 +5,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Mesh_3/Construct_initial_points_from_labeled_image.h>
+#include <CGAL/Mesh_3/Construct_initial_points_labeled_image.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
@@ -48,7 +48,7 @@ int main()
   );
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria
-    , params::initial_points_generator(Construct_initial_points_labeled_image(image))
+    , params::initial_points_generator(CGAL::Construct_initial_points_labeled_image(image))
   );
   /// [Meshing]
 

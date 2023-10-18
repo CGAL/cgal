@@ -10,8 +10,8 @@
 //
 // Author(s)     : Laurent Rineau and Ange Clement
 
-#ifndef CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_FROM_LABELED_IMAGE_H
-#define CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_FROM_LABELED_IMAGE_H
+#ifndef CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_LABELED_IMAGE_H
+#define CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_LABELED_IMAGE_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -21,6 +21,14 @@
 #include <CGAL/point_generators_3.h>
 
 #include <CGAL/Image_3.h>
+
+namespace CGAL
+{
+
+namespace Mesh_3
+{
+namespace internal
+{
 
 template <typename Point>
 struct Get_point
@@ -59,28 +67,28 @@ struct Get_point
   }
 };
 
+} // end namespace internal
+} // end namespace Mesh_3
+
 /*!
-* \ingroup PkgMesh3Functions
+* \ingroup PkgMesh3Initializers
 *
 * Functor for initial points generation in labeled images.
 * This functor is a model of concept `InitialPointsGenerator`,
 * and thus can be passed to `CGAL::make_mesh_3` with the parameter
-* `CGAL::parameters::initial_points_generator(generator)`
+* `CGAL::parameters::initial_points_generator()`
 *
 * It is constructed using the API of the mesh domain, as follows.
 * First the functor `construct_intersect` is created
 *
-* \dontinclude CGAL/Mesh_3/Construct_initial_points_labeled_image.h
-* \skip Construct_intersection construct_intersection =
-* \until construct_intersection_object
-* then the `%MeshDomain_3::Intersection` object (a `%tuple` with three
+* \snippet this construct intersection
+* then the `%Mesh_domain::Intersection` object (a `%tuple` with three
 * elements) is constructed using a call to the functor `construct_intersection`
-* \skip Intersection intersect
-* \until construct_intersection
+* \snippet this use construct intersection
 * and eventually `%index` is the element \#1 of `%intersect`.
-* \skipline get<1>(intersect)
+* \snippet this get construct intersection
 *
-* \sa `CGAL::parameters::initial_points_generator(generator)`
+* \sa `CGAL::parameters::initial_points_generator()`
 * \sa `CGAL::make_mesh_3()`
 */
 struct Construct_initial_points_labeled_image
@@ -127,7 +135,7 @@ struct Construct_initial_points_labeled_image
     using Seeds = std::vector<Seed>;
 
     Seeds seeds;
-    Get_point<Point_3> get_point(&image);
+    Mesh_3::internal::Get_point<Point_3> get_point(&image);
     std::cout << "Searching for connected components..." << std::endl;
     CGAL_IMAGE_IO_CASE(image.image(), search_for_connected_components_in_labeled_image(image,
                                                      std::back_inserter(seeds),
@@ -158,8 +166,10 @@ struct Construct_initial_points_labeled_image
 
       const double radius = double(seed.radius + 1)* max_v;
       CGAL::Random_points_on_sphere_3<Point_3> points_on_sphere_3(radius);
+      /// [construct intersection]
       typename MeshDomain::Construct_intersection construct_intersection =
           domain.construct_intersection_object();
+      /// [construct intersection]
 
       std::vector<Vector_3> directions;
       if(seed.radius < 2) {
@@ -183,13 +193,17 @@ struct Construct_initial_points_labeled_image
         const Point_3 test = seed_point + v;
         const Segment_3 test_segment = Segment_3(seed_point, test);
 
+        /// [use construct intersection]
         const typename MeshDomain::Intersection intersect =
             construct_intersection(test_segment);
+        /// [use construct intersection]
         if (std::get<2>(intersect) != 0)
         {
-          const Point_3& bpi = std::get<0>(intersect);
-          const Index index = std::get<1>(intersect);
-          Weighted_point pi = Weighted_point(bpi);
+          /// [get construct intersection]
+          const Point_3& intersect_point = std::get<0>(intersect);
+          const Index& intersect_index = std::get<1>(intersect);
+          /// [get construct intersection]
+          Weighted_point pi = Weighted_point(intersect_point);
 
           // This would cause trouble to optimizers
           // check pi will not be hidden
@@ -241,8 +255,8 @@ struct Construct_initial_points_labeled_image
             if (cwsr(cv_wp, FT(0)) == CGAL::EQUAL) // 0 == wp's weight
               continue;
 
-            // if the (squared) distance between bpi and cv is smaller or equal than cv's weight
-            if (cwsr(cv_wp, - tr.min_squared_distance(bpi, cp(cv_wp))) != CGAL::LARGER)
+            // if the (squared) distance between intersect_point and cv is smaller or equal than cv's weight
+            if (cwsr(cv_wp, - tr.min_squared_distance(intersect_point, cp(cv_wp))) != CGAL::LARGER)
             {
               pi_inside_protecting_sphere = true;
               break;
@@ -251,7 +265,7 @@ struct Construct_initial_points_labeled_image
           if (pi_inside_protecting_sphere)
             continue;
 
-          *pts++ = std::make_pair(bpi, index);
+          *pts++ = std::make_pair(intersect_point, intersect_index);
         }
       }
     }
@@ -259,4 +273,6 @@ struct Construct_initial_points_labeled_image
   }
 };
 
-#endif // CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_FROM_LABELED_IMAGE_H
+} // end namespace CGAL
+
+#endif // CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_LABELED_IMAGE_H
