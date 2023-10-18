@@ -33,7 +33,7 @@ public:
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v);
 
-  /// adds the given colored ray in the scene: an half line starting from `p` and having `v` as direction.
+  /// adds the given colored ray in the scene: a half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v,
                const CGAL::IO::Color &acolor);
