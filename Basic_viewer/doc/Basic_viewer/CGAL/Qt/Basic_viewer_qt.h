@@ -94,7 +94,7 @@ public:
   /// returns `true` if mono color mode is used.
   bool use_mono_color() const;
 
-  /// returns `true` if normal are reversed.
+  /// returns `true` if normals are reversed.
   bool reverse_normal() const;
 
   /// returns `true` if text are drawn.
