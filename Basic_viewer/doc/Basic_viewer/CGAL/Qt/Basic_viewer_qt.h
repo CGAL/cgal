@@ -16,7 +16,7 @@ public:
   /// Constructor given a pointer on a `QWidget` (can be a `nullptr`) and a `Graphics_scene`.
   /// `title` will be the title of the window.
   Basic_viewer_qt(QWidget* parent,
-                  Graphics_scene<BufferType>& buf,
+                  Graphics_scene<BufferType>& scene,
                   const char* title="");
 
   /// enables or disables the drawing of vertices.
