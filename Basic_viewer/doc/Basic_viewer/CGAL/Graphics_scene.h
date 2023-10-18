@@ -29,7 +29,7 @@ public:
   void add_segment(const KPoint &p1, const KPoint &p2,
                    const CGAL::IO::Color &acolor);
 
-  /// adds the given ray in the scene: an half line starting from `p` and having `v` as direction.
+  /// adds the given ray in the scene: a half line starting from `p` and having `v` as direction.
   template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v);
 
