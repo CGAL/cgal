@@ -49,7 +49,7 @@ public:
   /// sets the color used for rays in mono_color mode.
   void rays_mono_color(const CGAL::IO::Color& c);
 
-  /// sets the color used for lines in mono_color mode.
+  /// sets the color used for lines in mono color mode.
   void lines_mono_color(const CGAL::IO::Color& c);
 
   /// sets the color used for faces in mono_color mode.
