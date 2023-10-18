@@ -78,16 +78,6 @@ struct Get_point
 * and thus can be passed to `CGAL::make_mesh_3` with the parameter
 * `CGAL::parameters::initial_points_generator()`
 *
-* It is constructed using the API of the mesh domain, as follows.
-* First the functor `construct_intersect` is created
-*
-* \snippet this construct intersection
-* then the `%Mesh_domain::Intersection` object (a `%tuple` with three
-* elements) is constructed using a call to the functor `construct_intersection`
-* \snippet this use construct intersection
-* and eventually `%index` is the element \#1 of `%intersect`.
-* \snippet this get construct intersection
-*
 * \sa `CGAL::parameters::initial_points_generator()`
 * \sa `CGAL::make_mesh_3()`
 */
@@ -99,6 +89,22 @@ struct Construct_initial_points_labeled_image
       : image(image_)
   { }
 
+  /*!
+   * \brief operator () The points are constructed using the API of the mesh domain, as follows.
+   * First the functor `construct_intersect` is created
+   *
+   * \snippet this construct intersection
+   * then the `%Mesh_domain::Intersection` object (a `%tuple` with three
+   * elements) is constructed using a call to the functor `construct_intersection`
+   * \snippet this use construct intersection
+   * and eventually `%index` is the element \#1 of `%intersect`.
+   * \snippet this get construct intersection
+   *
+   * @tparam OutputIterator an `OutputIterator` of points of type
+   * `std::pair<MeshDomain::Point_3, MeshDomain::Index>`
+   * @tparam MeshDomain a model of `MeshDomain_3`
+   * @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
+   */
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
   {
