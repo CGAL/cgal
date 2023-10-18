@@ -772,11 +772,11 @@ points in the `%c3t3` object, with the calls to
 
 The value of `index` must be consistent with the possible values of
 `Mesh_domain::Index`. In \ref
-CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h, it is
+CGAL/Mesh_3/Construct_initial_points_labeled_image.h, it is
 constructed using the API of the mesh domain, as follows. First the functor
 `construct_intersect` is created
 
-\dontinclude CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h
+\dontinclude CGAL/Mesh_3/Construct_initial_points_labeled_image.h
 \skip Construct_intersection construct_intersection =
 \until construct_intersection_object
 then the `%Mesh_domain::Intersection` object (a `%tuple` with three

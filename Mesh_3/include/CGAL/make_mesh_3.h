@@ -414,7 +414,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                           </UL>}
  *     \cgalParamDefault{`parameters::exude()`}
  *   \cgalParamSectionEnd
- *   \cgalParamSectionBegin{Mesh initialisation}
+ *   \cgalParamSectionBegin{Mesh initialization}
  *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be supplied before the meshing process.
  *                           It must folow the `InitialPointsGenerator` concept.
  *                           The following two named parameters control this option:

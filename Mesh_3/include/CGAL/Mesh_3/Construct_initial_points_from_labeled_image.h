@@ -59,6 +59,30 @@ struct Get_point
   }
 };
 
+/*!
+* \ingroup PkgMesh3Functions
+*
+* Functor for initial points generation in labeled images.
+* This functor is a model of concept `InitialPointsGenerator`,
+* and thus can be passed to `CGAL::make_mesh_3` with the parameter
+* `CGAL::parameters::initial_points_generator(generator)`
+*
+* It is constructed using the API of the mesh domain, as follows.
+* First the functor `construct_intersect` is created
+*
+* \dontinclude CGAL/Mesh_3/Construct_initial_points_labeled_image.h
+* \skip Construct_intersection construct_intersection =
+* \until construct_intersection_object
+* then the `%MeshDomain_3::Intersection` object (a `%tuple` with three
+* elements) is constructed using a call to the functor `construct_intersection`
+* \skip Intersection intersect
+* \until construct_intersection
+* and eventually `%index` is the element \#1 of `%intersect`.
+* \skipline get<1>(intersect)
+*
+* \sa `CGAL::parameters::initial_points_generator(generator)`
+* \sa `CGAL::make_mesh_3()`
+*/
 struct Construct_initial_points_labeled_image
 {
   const CGAL::Image_3 & image;

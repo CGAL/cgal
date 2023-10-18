@@ -103,13 +103,6 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
     std::cout << "  -> " << tr.number_of_vertices() << " initial points." << std::endl;
   }
   std::cout << "  " << tr.number_of_vertices() << " initial points." << std::endl;
-  if ( c3t3.triangulation().dimension() != 3 )
-  {
-    std::cout << "  not enough points: triangulation.dimension() == "
-              << c3t3.triangulation().dimension() << std::endl;
-    CGAL::Mesh_3::internal::init_c3t3(c3t3, domain, criteria, 20);
-    std::cout << "  -> " << tr.number_of_vertices() << " initial points." << std::endl;
-  }
 }
 
 #endif // CGAL_MESH_3_INITIALIZE_TRIANGULATION_FROM_LABELED_IMAGE_H
