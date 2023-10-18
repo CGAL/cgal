@@ -23,16 +23,16 @@ struct Edge_distance_test_helper
 
   template <typename C3t3, typename Mesh_Domain>
   std::tuple<FT, FT, FT> compute_stats(const C3t3 & c3t3, const Mesh_Domain & domain) {
-    C3t3::Edges_in_complex_iterator edge_begin = c3t3.edges_in_complex_begin();
+    typename C3t3::Edges_in_complex_iterator edge_begin = c3t3.edges_in_complex_begin();
     FT min_edge_size = CGAL::sqrt(
       CGAL::squared_distance(edge_begin->first->vertex( edge_begin->second )->point(), edge_begin->first->vertex( edge_begin->third )->point())
       );
     FT avg_edge_size = 0;
     FT sum_approx_error = 0;
     int nbEdges = 0;
-    for (C3t3::Edges_in_complex_iterator eit = edge_begin ; eit != c3t3.edges_in_complex_end(); ++eit ) {
-      const C3t3::Vertex_handle& va = eit->first->vertex(eit->second);
-      const C3t3::Vertex_handle& vb = eit->first->vertex(eit->third);
+    for (typename C3t3::Edges_in_complex_iterator eit = edge_begin ; eit != c3t3.edges_in_complex_end(); ++eit ) {
+      const typename C3t3::Vertex_handle& va = eit->first->vertex(eit->second);
+      const typename C3t3::Vertex_handle& vb = eit->first->vertex(eit->third);
 
       // Get edge distance
 
@@ -47,7 +47,7 @@ struct Edge_distance_test_helper
 
       // Get edge approximation error
 
-      C3t3::Curve_index curve_index = domain.curve_index((va->in_dimension() < vb->in_dimension()) ? vb->index() : va->index());
+      typename C3t3::Curve_index curve_index = domain.curve_index((va->in_dimension() < vb->in_dimension()) ? vb->index() : va->index());
 
       K::Point_3 pa = va->point().point();
       K::Point_3 pb = vb->point().point();
