@@ -1,5 +1,3 @@
-#define CGAL_DUMP_REMESHING_STEPS
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
@@ -75,15 +73,13 @@ int main(int argc, char* argv[])
     cell->set_subdomain_index(subdomain_on_side_of_plane(cc, plane));
   }
 
-  std::ofstream os0("before_remeshing.mesh");
-  CGAL::IO::write_MEDIT(os0, tr);
-
   /// Remesh only the cells of subdomain 2
-  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);// ,
-//      CGAL::parameters::cell_is_selected_map(
-//        Cells_of_subdomain_pmap<Remeshing_triangulation>{2}));
+  CGAL::tetrahedral_isotropic_remeshing(tr,
+      target_edge_length,
+      CGAL::parameters::cell_is_selected_map(
+        Cells_of_subdomain_pmap<Remeshing_triangulation>{2}));
 
-  std::ofstream os("after_remeshing.mesh");
+  std::ofstream os("out.mesh");
   CGAL::IO::write_MEDIT(os, tr);
 
   return EXIT_SUCCESS;
