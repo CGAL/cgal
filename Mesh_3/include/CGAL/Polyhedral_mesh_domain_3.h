@@ -707,7 +707,7 @@ Construct_initial_points::operator()(OutputIterator pts,
   // - Keep the n farthest points
 
   const int n_prime = 10 * n;
-  const int n_dir = std::ceil(std::cbrt(n_prime));
+  const int n_dir = static_cast<int>(std::ceil(std::cbrt(n_prime)));
 
   std::vector<Point_3> grid_points;
   grid_points.reserve(n_dir * n_dir * n_dir);
@@ -754,7 +754,7 @@ Construct_initial_points::operator()(OutputIterator pts,
 
   // start with a random point
   auto it = projected_points.begin();
-  std::advance(it, rng.get_int(0, projected_points.size()));
+  std::advance(it, rng.get_int(0, static_cast<int>(projected_points.size())));
   initial_points.push_back(*it);
 
   // for each next initial point, take the point farthest from all existing initial points
