@@ -76,6 +76,7 @@
 #include <unordered_map>
 #include <utility>
 #include <stack>
+#include <array>
 
 #define CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
 
@@ -1917,6 +1918,33 @@ public:
   Points points() const
   {
     return Points(points_begin(),points_end());
+  }
+
+  /// Vertex ranges defining a simplex
+  std::array<Vertex_handle, 1> vertices(const Vertex_handle v) const
+  {
+    return std::array<Vertex_handle, 1>{v};
+  }
+  std::array<Vertex_handle, 2> vertices(const Edge& e) const
+  {
+    return std::array<Vertex_handle, 2>{
+             e.first->vertex(e.second),
+             e.first->vertex(e.third)};
+  }
+  std::array<Vertex_handle, 3> vertices(const Facet& f) const
+  {
+    return std::array<Vertex_handle, 3>{
+             f.first->vertex(vertex_triple_index(f.second, 0)),
+             f.first->vertex(vertex_triple_index(f.second, 1)),
+             f.first->vertex(vertex_triple_index(f.second, 2))};
+  }
+  std::array<Vertex_handle, 4> vertices(const Cell_handle c) const
+  {
+    return std::array<Vertex_handle, 4>{
+             c->vertex(0),
+             c->vertex(1),
+             c->vertex(2),
+             c->vertex(3)};
   }
 
   // cells around an edge
