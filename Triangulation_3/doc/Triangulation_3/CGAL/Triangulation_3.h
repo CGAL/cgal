@@ -1304,6 +1304,26 @@ Finite_vertex_handles finite_vertex_handles() const;
 Points points() const;
 
 /*!
+* returns an array of `Vertex_handle`s containing `v`
+*/
+std::array<Vertex_handle, 1> vertices(const Vertex_handle v) const;
+
+/*!
+* returns an array of `Vertex_handle`s containing the end-vertices of `e`
+*/
+std::array<Vertex_handle, 2> vertices(const Edge& e) const;
+
+/*!
+* returns an array of `Vertex_handle`s containing the vertices of `f`
+*/
+std::array<Vertex_handle, 3> vertices(const Facet& f) const;
+
+/*!
+* returns an array of `Vertex_handle`s containing the vertices of `c`
+*/
+std::array<Vertex_handle, 4> vertices(const Cell_handle c) const;
+
+/*!
   returns a range of iterators over the cells intersected by a line segment
 */
 Segment_traverser_cell_handles segment_traverser_cell_handles() const;
