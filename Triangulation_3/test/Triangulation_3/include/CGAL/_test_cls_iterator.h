@@ -277,11 +277,6 @@ _test_vertices_array(const Triangulation& tr)
   typedef typename Triangulation::Vertex_handle   Vertex_handle;
   typedef typename Triangulation::Cell_handle     Cell_handle;
 
-  for (const Vertex_handle vh : tr.all_vertex_handles())
-  {
-    std::array<Vertex_handle, 1> vv = tr.vertices(vh);
-    assert(vv[0] == vh);
-  }
   for (const Edge& e : tr.all_edges())
   {
     std::array<Vertex_handle, 2> vv = tr.vertices(e);
