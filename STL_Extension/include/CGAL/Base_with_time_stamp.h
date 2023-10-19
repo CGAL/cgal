@@ -22,11 +22,6 @@ class Base_with_time_stamp : public Base {
 public:
   using Base::Base;
 
-  Base_with_time_stamp(const Base_with_time_stamp& other) :
-    Base(other),
-    time_stamp_(other.time_stamp_)
-  {}
-
   typedef CGAL::Tag_true Has_timestamp;
 
   std::size_t time_stamp() const {
