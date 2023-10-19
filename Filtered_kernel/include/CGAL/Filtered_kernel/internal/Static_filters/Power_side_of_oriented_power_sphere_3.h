@@ -371,47 +371,45 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         if( max5 < aqx_rx ) max5 = aqx_rx;
         double max6 = CGAL::abs(qy_ry);
         if( max6 < apy_ry ) max6 = apy_ry;
-        //if( (cmp != 0) )
-        {
-            int int_tmp_result_FFWKCAA;
-            double double_tmp_result;
-            double_tmp_result = ((px_rx * qy_ry) - (qx_rx * py_ry));
-            lower_bound_1 = max5;
-            upper_bound_1 = max5;
-            if( (max6 < lower_bound_1) ) lower_bound_1 = max6;
+
+        int int_tmp_result_FFWKCAA;
+        double double_tmp_result;
+        double_tmp_result = ((px_rx * qy_ry) - (qx_rx * py_ry));
+        lower_bound_1 = max5;
+        upper_bound_1 = max5;
+        if( (max6 < lower_bound_1) ) lower_bound_1 = max6;
+        else
+          {
+            if( (max6 > upper_bound_1) ) upper_bound_1 = max6;
+          }
+        if( (lower_bound_1 < 5.00368081960964690982e-147) )
+          {
+            CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+            return Base::operator()(p,q,r,t);
+          }
+        else
+          {
+            if( (upper_bound_1 > 7.23700557733225980357e+75) )
+              {
+                CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+                return Base::operator()(p,q,r,t);
+              }
+            double eps = (8.88720573725927976811e-16 * (max5 * max6));
+            if( (double_tmp_result > eps) ) int_tmp_result_FFWKCAA = 1;
             else
-            {
-                if( (max6 > upper_bound_1) ) upper_bound_1 = max6;
-            }
-            if( (lower_bound_1 < 5.00368081960964690982e-147) )
-            {
-              CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-              return Base::operator()(p,q,r,t);
-            }
-            else
-            {
-                if( (upper_bound_1 > 7.23700557733225980357e+75) )
-                {
-                  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-                  return Base::operator()(p,q,r,t);
-                }
-                double eps = (8.88720573725927976811e-16 * (max5 * max6));
-                if( (double_tmp_result > eps) ) int_tmp_result_FFWKCAA = 1;
+              {
+                if( (double_tmp_result < -eps) )
+                  {
+                    int_tmp_result_FFWKCAA = -1;
+                  }
                 else
-                {
-                    if( (double_tmp_result < -eps) )
-                    {
-                        int_tmp_result_FFWKCAA = -1;
-                    }
-                    else
-                    {
-                      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
-                      return Base::operator()(p,q,r,t);
-                    }
-                }
-            }
-            return static_cast<result_type>(cmp * int_tmp_result_FFWKCAA);
-        }
+                  {
+                    CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+                    return Base::operator()(p,q,r,t);
+                  }
+              }
+          }
+        return static_cast<result_type>(cmp * int_tmp_result_FFWKCAA);
       }
       else
         return Base::operator()(p,q,r,t);
