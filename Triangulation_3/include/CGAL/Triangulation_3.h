@@ -1921,10 +1921,6 @@ public:
   }
 
   /// Vertex ranges defining a simplex
-  std::array<Vertex_handle, 1> vertices(const Vertex_handle v) const
-  {
-    return std::array<Vertex_handle, 1>{v};
-  }
   std::array<Vertex_handle, 2> vertices(const Edge& e) const
   {
     return std::array<Vertex_handle, 2>{
