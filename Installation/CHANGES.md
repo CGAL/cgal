@@ -14,6 +14,7 @@ Release date: October 2023
 - **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
 
+
 #### 2D Arrangements
 
 - **Breaking change**: The type of the result of point location queries changed to
@@ -51,6 +52,10 @@ Release date: October 2023
 -   **Breaking change**: The template parameters of
     `CGAL::Simplicial_mesh_cell_base_3`
     have been modified to enable passing a geometric traits and a custom cell base class.
+
+### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
+- **Breaking change**: LSCM_parameterizer_3 needs Eigen
+
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
