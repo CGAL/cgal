@@ -77,10 +77,7 @@ namespace Surface_mesh_parameterization {
 /// \code
 ///   CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT< Eigen::SparseMatrix<double> > >
 /// \endcode
-///         Otherwise, it uses CGAL's wrapping function to the OpenNL library:
-/// \code
-///   OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
-/// \endcode
+///
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
@@ -103,8 +100,6 @@ public:
     // is always used...
     CGAL::Eigen_solver_traits<
             Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
-  #else
-    OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
   #endif
   >::type                                                     Solver_traits;
 #else

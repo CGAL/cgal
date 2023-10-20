@@ -31,12 +31,6 @@
 #ifndef __OPENNL_LINEAR_SOLVER__
 #define __OPENNL_LINEAR_SOLVER__
 
-#include <CGAL/OpenNL/conjugate_gradient.h>
-#include <CGAL/OpenNL/bicgstab.h>
-#include <CGAL/OpenNL/preconditioner.h>
-#include <CGAL/OpenNL/sparse_matrix.h>
-#include <CGAL/OpenNL/full_vector.h>
-
 #include <vector>
 #include <iostream>
 #include <cstdlib>
@@ -46,128 +40,6 @@
 namespace OpenNL {
 
 
-
-// Class DefaultLinearSolverTraits
-// is a traits class for solving general sparse linear systems.
-// It uses BICGSTAB solver with Jacobi preconditioner.
-//
-// Concept: Model of the SparseLinearAlgebraTraits_d concept.
-
-template
-<
-    class COEFFTYPE,                        // type of matrix and vector coefficients
-    class MATRIX = SparseMatrix<COEFFTYPE>, // model of SparseLinearSolverTraits_d::Matrix
-    class VECTOR = FullVector<COEFFTYPE>    // model of SparseLinearSolverTraits_d::Vector
->
-class DefaultLinearSolverTraits
-{
-// Public types
-public:
-    typedef COEFFTYPE                       CoeffType ;
-    typedef COEFFTYPE                       NT;
-    typedef MATRIX                          Matrix ;
-    typedef VECTOR                          Vector ;
-
-// Private types
-private:
-    typedef Jacobi_Preconditioner<NT>       Preconditioner ;
-    typedef Solver_preconditioned_BICGSTAB<Matrix, Preconditioner, Vector>
-                                            Preconditioned_solver ;
-    typedef Solver_BICGSTAB<Matrix, Vector> Solver ;
-
-// Public operations
-public:
-    // Default constructor, copy constructor, operator=() and destructor are fine
-
-    // Solve the sparse linear system "A*X = B"
-    // Return true on success. The solution is then (1/D) * X.
-    //
-    // Preconditions:
-    // - A.row_dimension()    == B.dimension()
-    // - A.column_dimension() == X.dimension()
-    bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
-    {
-        D = 1;              // OpenNL does not support homogeneous coordinates
-
-        // Solve using BICGSTAB solver with preconditioner
-        Preconditioned_solver preconditioned_solver ;
-        NT omega = 1.5;
-        Preconditioner C(A, omega);
-        X = B;
-        if (preconditioned_solver.solve(A, C, B, X))
-            return true;
-
-        // On error, solve using BICGSTAB solver without preconditioner
-#ifdef DEBUG_TRACE
-        std::cerr << "  Failure of BICGSTAB solver with Jacobi preconditioner. "
-                  << "Trying BICGSTAB." << std::endl;
-#endif
-        Solver solver ;
-        X = B;
-        return solver.solve(A, B, X) ;
-    }
-} ;
-
-// Class SymmetricLinearSolverTraits
-// is a traits class for solving symmetric positive definite sparse linear systems.
-// It uses Conjugate Gradient solver with Jacobi preconditioner.
-//
-// Concept: Model of the SparseLinearAlgebraTraits_d concept.
-
-template
-<
-    class COEFFTYPE,                        // type of matrix and vector coefficients
-    class MATRIX = SparseMatrix<COEFFTYPE>, // model of SparseLinearSolverTraits_d::Matrix
-    class VECTOR = FullVector<COEFFTYPE>    // model of SparseLinearSolverTraits_d::Vector
->
-class SymmetricLinearSolverTraits
-{
-// Public types
-public:
-    typedef COEFFTYPE                       CoeffType ;
-    typedef COEFFTYPE                       NT;
-    typedef MATRIX                          Matrix ;
-    typedef VECTOR                          Vector ;
-
-// Private types
-private:
-    typedef Jacobi_Preconditioner<NT>       Preconditioner ;
-    typedef Solver_preconditioned_CG<Matrix, Preconditioner, Vector>
-                                            Preconditioned_solver ;
-    typedef Solver_CG<Matrix, Vector>       Solver ;
-
-// Public operations
-public:
-    // Default constructor, copy constructor, operator=() and destructor are fine
-
-    // Solve the sparse linear system "A*X = B"
-    // Return true on success. The solution is then (1/D) * X.
-    //
-    // Preconditions:
-    // - A.row_dimension()    == B.dimension()
-    // - A.column_dimension() == X.dimension()
-    bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
-    {
-        D = 1;              // OpenNL does not support homogeneous coordinates
-
-        // Solve using Conjugate Gradient solver with preconditioner
-        Preconditioned_solver preconditioned_solver ;
-        NT omega = 1.5;
-        Preconditioner C(A, omega);
-        X = B;
-        if (preconditioned_solver.solve(A, C, B, X))
-            return true;
-
-        // On error, solve using Conjugate Gradient solver without preconditioner
-#ifdef DEBUG_TRACE
-        std::cerr << "  Failure of Conjugate Gradient solver with Jacobi preconditioner. "
-                  << "Trying Conjugate Gradient." << std::endl;
-#endif
-        Solver solver ;
-        X = B;
-        return solver.solve(A, B, X) ;
-    }
-};
 
 
 /*
@@ -280,11 +152,6 @@ public:
         bk_ = 0 ;
     }
 
-    void set_right_hand_side(double b) {
-        check_state(IN_ROW) ;
-        bk_ = b ;
-    }
-
     void add_coefficient(unsigned int iv, double a) {
         check_state(IN_ROW) ;
         Variable& v = variable(iv) ;
@@ -297,34 +164,6 @@ public:
         }
     }
 
-    void normalize_row(CoeffType weight = 1) {
-        check_state(IN_ROW) ;
-        CoeffType norm = 0.0 ;
-        unsigned int nf = af_.size() ;
-        for(unsigned int i=0; i<nf; i++) {
-            norm += af_[i] * af_[i] ;
-        }
-        unsigned int nl = al_.size() ;
-        for(unsigned int i=0; i<nl; i++) {
-            norm += al_[i] * al_[i] ;
-        }
-        norm = sqrt(norm) ;
-        CGAL_assertion( fabs(norm)>1e-40 );
-        scale_row(weight / norm) ;
-    }
-
-    void scale_row(CoeffType s) {
-        check_state(IN_ROW) ;
-        unsigned int nf = af_.size() ;
-         for(unsigned int i=0; i<nf; i++) {
-             af_[i] *= s ;
-         }
-         unsigned int nl = al_.size() ;
-         for(unsigned int i=0; i<nl; i++) {
-             al_[i] *= s ;
-         }
-         bk_ *= s ;
-    }
 
     void end_row() {
         if(least_squares_) {
@@ -410,24 +249,6 @@ protected:
     }
 
     // ----------- Finite state automaton (checks that calling sequence is respected) ---------
-
-    std::string state_to_string(State s) {
-            switch(s) {
-            case INITIAL:
-                return "initial" ;
-            case IN_SYSTEM:
-                return "in system" ;
-            case IN_ROW:
-                return "in row" ;
-            case CONSTRUCTED:
-                return "constructed" ;
-            case SOLVED:
-                return "solved" ;
-            }
-            // Should not go there.
-            CGAL_error();
-            return "undefined" ;
-    }
 
     void check_state(State s) {
             CGAL_USE(s);
