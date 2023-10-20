@@ -16,7 +16,7 @@ public:
   /// Constructor given a pointer on a `QWidget` (can be a `nullptr`) and a `Graphics_scene`.
   /// `title` will be the title of the window.
   Basic_viewer_qt(QWidget* parent,
-                  Graphics_scene<BufferType>& scene,
+                  const Graphics_scene<BufferType>& scene,
                   const char* title="");
 
   /// enables or disables the drawing of vertices.
@@ -115,97 +115,17 @@ public:
   /// returns the mono color used for faces.
   const CGAL::IO::Color& faces_mono_color() const;
 
-  /// clears the basic viewer, i.e., remove all its elements.
-  void clear();
-
-  /// returns `true` if the viewer is empty.
-  bool empty() const;
-
-  /// returns the bounding box of all the elements in the viewer.
-  const CGAL::Bbox_3& bounding_box() const;
-
   /// returns `true` if the clipping plane is enabled.
   bool clipping_plane_enabled() const;
 
   /// returns the clipping plane when it is enabled.
   CGAL::Exact_predicates_inexact_constructions_kernel::Plane_3 clipping_plane() const;
 
-  /// adds the given point in the viewer.
-  template <typename KPoint>
-  void add_point(const KPoint &p);
-
-  /// adds the given colored point in the viewer.
-  template <typename KPoint>
-  void add_point(const KPoint &p, const CGAL::IO::Color &color);
-
-  /// adds the given segment in the viewer.
-  template <typename KPoint>
-  void add_segment(const KPoint &p1, const KPoint &p2);
-
-  /// adds the given colored segment in the viewer.
-  template <typename KPoint>
-  void add_segment(const KPoint &p1, const KPoint &p2,
-                   const CGAL::IO::Color &color);
-
-  /// adds the given ray in the viewer: a half line starting from `p` and having `v` as direction.
-  template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v);
-
-  /// adds the given colored ray in the viewer: an half line starting from `p` and having `v` as direction.
-  template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v,
-               const CGAL::IO::Color &color);
-
-  /// adds the given line in the viewer, defined by `p` and `v` as direction.
-  template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v);
-
-  /// adds the given colored line in the viewer, defined by `p` and `v` as direction.
-  template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v,
-                const CGAL::IO::Color &color);
-
-  /// starts a new face.
-  void face_begin();
-
-  /// starts a new colored face.
-  void face_begin(const CGAL::IO::Color &color);
-
-  /// returns `true` iff a face is started.
-  bool a_face_started() const;
-
-  /// adds the given point in the current face.
-  /// @pre `a_face_started()`
-  template <typename KPoint> bool add_point_in_face(const KPoint &kp);
-
-  /// adds the given point in the current face, having the vertex normal.
-  /// @pre `a_face_started()`
-  template <typename KPoint, typename KVector>
-  bool add_point_in_face(const KPoint &kp, const KVector &p_normal);
-
-  /// ends the current face.
-  /// @pre `a_face_started()`
-  void face_end();
-
-  /// adds the given text at the given position in the viewer.
-  template <typename KPoint>
-  void add_text(const KPoint &kp, const char *txt);
-
-  /// adds the given text at the given position in the viewer.
-  template <typename KPoint>
-  void add_text(const KPoint &kp, const std::string &txt);
-
   /// returns the graphics scene of the viewer.
-  Graphics_scene<BufferType>& graphics_scene();
-
-  /// returns the graphics scene of the viewer, const version.
   const Graphics_scene<BufferType>& graphics_scene() const;
 
   /// reverses all normals of vertices and faces.
   void reverse_all_normals();
-
-  /// returns `true` if the data structure in in 2D, i.e., lies on a plane.
-  bool two_dimensional() const;
 
   /// draws the viewer without recomputing all internal buffers.
   virtual void draw();
@@ -233,7 +153,7 @@ class QApplication_and_basic_viewer
 {
 public:
   /// Constructor given a `Graphics_scene` and possibly a title.
-  QApplication_and_basic_viewer(CGAL::Graphics_scene<BufferType>& buffer,
+  QApplication_and_basic_viewer(const CGAL::Graphics_scene<BufferType>& buffer,
                                 const char* title="CGAL Basic Viewer");
 
   /// runs the `QApplication`, i.e., open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
@@ -248,7 +168,7 @@ public:
   opens a new window and draws the given `Graphics_scene` (which must have been filled before). `title` will be the title of the window.  A call to this method is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition CGAL_USE_BASIC_VIEWER.
 */
 template <typename BufferType=float>
-void draw_graphics_scene(Graphics_scene<BufferType>& graphic_buffer,
+void draw_graphics_scene(const Graphics_scene<BufferType>& graphic_buffer,
                          const char *title="CGAL Basic Viewer")
 {}
 
