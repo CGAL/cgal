@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
           basic_viewer->displayMessage
             (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
-          basic_viewer->clear();
+          buffer.clear();
           add_in_graphics_scene(sm, buffer, gsosm);
           basic_viewer->redraw();
         }
@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
           basic_viewer->displayMessage
             (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
-          basic_viewer->clear();
+          buffer.clear();
           add_in_graphics_scene(sm, buffer, gsosm);
           basic_viewer->redraw();
         }
