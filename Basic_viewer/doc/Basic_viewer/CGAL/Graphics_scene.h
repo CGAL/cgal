@@ -86,7 +86,7 @@ public:
   /// returns the bounding box of all the elements in the scene.
   const CGAL::Bbox_3& bounding_box() const;
 
-  /// returns `true` if the scene is in 2D, i.e., lies on XY or XZ or YZ plane.
+  /// returns `true` if the scene is in 2D, i.e., lies on the XY or XZ or YZ plane.
   bool two_dimensional() const;
 };
 
