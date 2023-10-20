@@ -46,7 +46,7 @@ namespace Polygon_mesh_processing {
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
- *     \cgalParamDescription{an output property map associating `true` to all new edges connecting vertices on the isolevel,
+ *     \cgalParamDescription{an output property map associating `true` to all edges connecting vertices on the isolevel,
  *                           and `false` for all other edges.}
  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
@@ -55,7 +55,7 @@ namespace Polygon_mesh_processing {
  *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
- *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
