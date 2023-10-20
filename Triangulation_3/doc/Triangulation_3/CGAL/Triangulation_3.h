@@ -1304,17 +1304,17 @@ Finite_vertex_handles finite_vertex_handles() const;
 Points points() const;
 
 /*!
-* returns an array of `Vertex_handle`s containing the end-vertices of `e`
+* returns an array containing the vertices of `e`
 */
 std::array<Vertex_handle, 2> vertices(const Edge& e) const;
 
 /*!
-* returns an array of `Vertex_handle`s containing the vertices of `f`
+* returns an array containing the vertices of `f`
 */
 std::array<Vertex_handle, 3> vertices(const Facet& f) const;
 
 /*!
-* returns an array of `Vertex_handle`s containing the vertices of `c`
+* returns an array containing the vertices of `c`
 */
 std::array<Vertex_handle, 4> vertices(const Cell_handle c) const;
 
