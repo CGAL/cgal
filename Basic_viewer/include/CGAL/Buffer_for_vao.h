@@ -204,11 +204,10 @@ public:
   bool has_zero_z() const
   { return m_zero_z; }
 
-  void negate_normals()
+  void negate_normals() const
   {
     m_inverse_normal=!m_inverse_normal;
-    for (std::vector<BufferType>*array=m_flat_normal_buffer; array!=nullptr;
-         array=(array==m_gouraud_normal_buffer?nullptr:m_gouraud_normal_buffer))
+    for (std::vector<BufferType>*array: {m_flat_normal_buffer, m_gouraud_normal_buffer})
     {
       for (std::size_t i=0; i<array->size(); ++i)
       { (*array)[i]=-(*array)[i]; }
@@ -899,8 +898,8 @@ protected:
   std::vector<BufferType>* m_pos_buffer;
   std::vector<IndexType>* m_index_buffer;
   std::vector<BufferType>* m_color_buffer;
-  std::vector<BufferType>* m_flat_normal_buffer;
-  std::vector<BufferType>* m_gouraud_normal_buffer;
+  mutable std::vector<BufferType>* m_flat_normal_buffer;
+  mutable std::vector<BufferType>* m_gouraud_normal_buffer;
 
   CGAL::Bbox_3* m_bb;
 
@@ -908,7 +907,7 @@ protected:
   bool m_zero_y; /// True iff all points have y==0
   bool m_zero_z; /// True iff all points have z==0
 
-  bool m_inverse_normal;
+  mutable bool m_inverse_normal;
 
   // Local variables, used when we started a new face.g
   bool m_face_started;
