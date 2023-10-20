@@ -46,7 +46,8 @@ namespace Polygon_mesh_processing {
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{edge_is_constrained_map}
- *     \cgalParamDescription{an output property map associating `true` to all new edges added by the cut, and `false` to input edges.}
+ *     \cgalParamDescription{an output property map associating `true` to all new edges connecting vertices on the isolevel,
+ *                           and `false` for all other edges.}
  *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *                    as key type and `bool` as value type}
  *     \cgalParamDefault{No marks on edges will be put}
