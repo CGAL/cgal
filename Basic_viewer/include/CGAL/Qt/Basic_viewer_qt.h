@@ -72,7 +72,7 @@ public:
 
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
-                  Graphics_scene<BufferType>& buf,
+                  const Graphics_scene<BufferType>& buf,
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
@@ -161,7 +161,7 @@ public:
   ~Basic_viewer_qt()
   {
     makeCurrent();
-    for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
+    for (unsigned int i=0; i<NB_GL_BUFFERS; ++i)
       buffers[i].destroy();
 
     for (unsigned int i=0; i<NB_VAO_BUFFERS; ++i)
@@ -237,33 +237,6 @@ public:
   const CGAL::IO::Color& get_faces_mono_color() const
   { return m_faces_mono_color; }
 
-  void clear()
-  {
-    for (unsigned int i=0; i<GS::LAST_INDEX; ++i)
-    {
-      if (i!=GS::POS_CLIPPING_PLANE)
-      { gBuffer.get_array_of_index(i).clear(); }
-    }
-
-    gBuffer.initiate_bounding_box(CGAL::Bbox_3());
-    gBuffer.m_texts_clear();
-  }
-
-  bool is_empty() const
-  { return gBuffer.is_empty(); }
-
-  const CGAL::Bbox_3& bounding_box() const
-  { return gBuffer.get_bounding_box(); }
-
-  bool has_zero_x() const
-  { return gBuffer.has_zero_x(); }
-
-  bool has_zero_y() const
-  { return gBuffer.has_zero_y(); }
-
-  bool has_zero_z() const
-  { return gBuffer.has_zero_z(); }
-
   Local_kernel::Plane_3 clipping_plane() const
   {
     CGAL::qglviewer::Vec n=m_frame_plane->inverseTransformOf
@@ -275,97 +248,6 @@ public:
   bool is_clipping_plane_enabled() const
   { return (m_use_clipping_plane!=CLIPPING_PLANE_OFF); }
 
-  template<typename KPoint>
-  void add_point(const KPoint& p)
-  { gBuffer.add_point(p); }
-
-  template<typename KPoint>
-  void add_point(const KPoint& p, const CGAL::IO::Color& acolor)
-  { gBuffer.add_point(p, acolor); }
-
-  template<typename KPoint>
-  void add_segment(const KPoint& p1, const KPoint& p2)
-  { gBuffer.add_segment(p1, p2);}
-
-  template<typename KPoint>
-  void add_segment(const KPoint& p1, const KPoint& p2,
-                   const CGAL::IO::Color& acolor)
-  { gBuffer.add_segment(p1, p2, acolor);}
-
-  template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v)
-  { gBuffer.add_ray(p, v); }
-
-  template <typename KPoint, typename KVector>
-  void add_ray(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
-  { gBuffer.add_ray(p, v, acolor); }
-
-  template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v)
-  { gBuffer.add_line(p, v); }
-
-  template <typename KPoint, typename KVector>
-  void add_line(const KPoint &p, const KVector &v, const CGAL::IO::Color &acolor)
-  { gBuffer.add_line(p, v, acolor); }
-
-  template<typename KPoint>
-  void add_text(const KPoint& kp, const QString& txt)
-  { gBuffer.add_text(kp, txt); }
-
-  template<typename KPoint>
-  void add_text(const KPoint& kp, const char* txt)
-  { gBuffer.add_text(kp, txt); }
-
-  template<typename KPoint>
-  void add_text(const KPoint& kp, const std::string& txt)
-  { gBuffer.add_text(kp, txt.c_str()); }
-
-  template <typename KPoint, typename KVector>
-  void update_bounding_box_for_ray(const KPoint &p, const KVector &v)
-  {
-    Local_point lp = get_local_point(p);
-    Local_vector lv = get_local_vector(v);
-    CGAL::Bbox_3 b = (lp + lv).bbox();
-    gBuffer.update_bounding_box(b);
-  }
-
-  template <typename KPoint, typename KVector>
-  void update_bounding_box_for_line(const KPoint &p, const KVector &v,
-                                    const KVector &pv)
-  {
-    Local_point lp = get_local_point(p);
-    Local_vector lv = get_local_vector(v);
-    Local_vector lpv = get_local_vector(pv);
-
-    CGAL::Bbox_3 b = lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox();
-    gBuffer.update_bounding_box(b);
-  }
-
-  bool is_a_face_started() const
-  {
-    return gBuffer.get_buffer_for_mono_faces().is_a_face_started() ||
-      gBuffer.get_buffer_for_colored_faces().is_a_face_started();
-  }
-
-  void face_begin()
-  { gBuffer.face_begin(); }
-
-  void face_begin(const CGAL::IO::Color& acolor)
-  { gBuffer.face_begin(acolor); }
-
-  template <typename KPoint>
-  bool add_point_in_face(const KPoint &kp)
-  { return gBuffer.add_point_in_face(kp); }
-
-  template <typename KPoint, typename KVector>
-  bool add_point_in_face(const KPoint &kp, const KVector &p_normal)
-  { return gBuffer.add_point_in_face(kp, p_normal); }
-
-  void face_end()
-  { gBuffer.face_end(); }
-
-  Graphics_scene<BufferType>& get_graphics_scene()
-  { return gBuffer; }
   const Graphics_scene<BufferType>& get_graphics_scene() const
   { return gBuffer; }
 
@@ -373,20 +255,6 @@ public:
   {
     initialize_buffers();
     update();
-  }
-
-  // Shortcuts to simplify function calls.
-  template<typename KPoint>
-  static Local_point get_local_point(const KPoint& p)
-  {
-    return internal::Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel>::
-      get_local_point(p);
-  }
-  template<typename KVector>
-  static Local_vector get_local_vector(const KVector& v)
-  {
-    return internal::Geom_utils<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel>::
-      get_local_vector(v);
   }
 
   void negate_all_normals()
@@ -397,10 +265,7 @@ public:
 
   // Returns true if the data structure lies on a plane
   bool is_two_dimensional() const
-  {
-    return (!is_empty() && !m_no_2D_mode &&
-            (has_zero_x() || has_zero_y() || has_zero_z()));
-  }
+  { return !m_no_2D_mode && gBuffer.is_two_dimensional(); }
 
 protected:
   void compile_shaders()
@@ -410,7 +275,7 @@ protected:
     rendering_program_clipping_plane.removeAllShaders();
 
     // Create the buffers
-    for (unsigned int i=0; i<NB_VBO_BUFFERS; ++i)
+    for (unsigned int i=0; i<NB_GL_BUFFERS; ++i)
     {
       if(!buffers[i].isCreated() && !buffers[i].create())
       { std::cerr<<"VBO Creation number "<<i<<" FAILED"<<std::endl; }
@@ -531,7 +396,7 @@ protected:
     vao[VAO_MONO_POINTS].bind();
 
     unsigned int bufn = 0;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_POINTS).data(),
                            gBuffer.get_size_of_index(GS::POS_MONO_POINTS));
@@ -550,7 +415,7 @@ protected:
     vao[VAO_COLORED_POINTS].bind();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_POINTS).data(),
                            gBuffer.get_size_of_index(GS::POS_COLORED_POINTS));
@@ -559,7 +424,7 @@ protected:
     buffers[bufn].release();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_POINTS).data(),
                            gBuffer.get_size_of_index(GS::COLOR_POINTS));
@@ -575,7 +440,7 @@ protected:
     vao[VAO_MONO_SEGMENTS].bind();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_SEGMENTS).data(),
                            gBuffer.get_size_of_index(GS::POS_MONO_SEGMENTS));
@@ -592,7 +457,7 @@ protected:
     vao[VAO_COLORED_SEGMENTS].bind();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_SEGMENTS).data(),
                            gBuffer.get_size_of_index(GS::POS_COLORED_SEGMENTS));
@@ -602,7 +467,7 @@ protected:
     buffers[bufn].release();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_SEGMENTS).data(),
                            gBuffer.get_size_of_index(GS::COLOR_SEGMENTS));
@@ -620,7 +485,7 @@ protected:
     vao[VAO_MONO_RAYS].bind();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_RAYS).data(),
                            gBuffer.get_size_of_index(GS::POS_MONO_RAYS));
@@ -638,7 +503,7 @@ protected:
     vao[VAO_COLORED_RAYS].bind();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_RAYS).data(),
                            gBuffer.get_size_of_index(GS::POS_COLORED_RAYS));
@@ -648,7 +513,7 @@ protected:
     buffers[bufn].release();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_RAYS).data(),
                            gBuffer.get_size_of_index(GS::COLOR_RAYS));
@@ -665,7 +530,7 @@ protected:
     vao[VAO_MONO_LINES].bind();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_LINES).data(),
                            gBuffer.get_size_of_index(GS::POS_MONO_LINES));
@@ -683,7 +548,7 @@ protected:
     vao[VAO_COLORED_LINES].bind();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_LINES).data(),
                            gBuffer.get_size_of_index(GS::POS_COLORED_LINES));
@@ -693,7 +558,7 @@ protected:
     buffers[bufn].release();
 
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_LINES).data(),
                            gBuffer.get_size_of_index(GS::COLOR_LINES));
@@ -713,7 +578,7 @@ protected:
 
     // 5.1.1) points of the mono faces
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_FACES).data(),
                            gBuffer.get_size_of_index(GS::POS_MONO_FACES));
@@ -724,7 +589,7 @@ protected:
 
     // 5.1.2) normals of the mono faces
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     if (m_flatShading)
     {
@@ -750,7 +615,7 @@ protected:
 
     // 5.2.1) points of the color faces
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_FACES).data(),
                            gBuffer.get_size_of_index(GS::POS_COLORED_FACES));
@@ -761,7 +626,7 @@ protected:
 
     // 5.2.2) normals of the color faces
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     if (m_flatShading)
     {
@@ -780,7 +645,7 @@ protected:
 
     // 5.2.3) colors of the faces
     ++bufn;
-    CGAL_assertion(bufn<NB_VBO_BUFFERS);
+    CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
     buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_FACES).data(),
                            gBuffer.get_size_of_index(GS::COLOR_FACES));
@@ -803,10 +668,10 @@ protected:
 
       vao[VAO_CLIPPING_PLANE].bind();
       ++bufn;
-      CGAL_assertion(bufn < NB_VBO_BUFFERS);
+      CGAL_assertion(bufn < NB_GL_BUFFERS);
       buffers[bufn].bind();
-      buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_CLIPPING_PLANE).data(),
-                             gBuffer.get_size_of_index(GS::POS_CLIPPING_PLANE));
+      buffers[bufn].allocate(m_array_for_clipping_plane.data(),
+                             static_cast<int>(m_array_for_clipping_plane.size()*sizeof(BufferType)));
       rendering_program_clipping_plane.enableAttributeArray("vertex");
       rendering_program_clipping_plane.setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
 
@@ -845,13 +710,13 @@ protected:
                         1.0f );
 
     CGAL::Bbox_3 bb;
-    if (bb==bounding_box()) // Case of "empty" bounding box
+    if (bb==gBuffer.bounding_box()) // Case of "empty" bounding box
     {
       bb=Local_point(CGAL::ORIGIN).bbox();
       bb=bb + Local_point(1,1,1).bbox(); // To avoid a warning from Qglviewer
     }
     else
-    { bb=bounding_box(); }
+    { bb=gBuffer.bounding_box(); }
 
     QVector4D position((bb.xmax()-bb.xmin())/2,
                        (bb.ymax()-bb.ymin())/2,
@@ -909,9 +774,9 @@ protected:
       constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
 
       double cx=0., cy=0., cz=0.;
-      if (has_zero_x())      { cx=1.; }
-      else if (has_zero_y()) { cy=1.; }
-      else                   { cz=1.; }
+      if (gBuffer.has_zero_x())      { cx=1.; }
+      else if (gBuffer.has_zero_y()) { cy=1.; }
+      else                           { cz=1.; }
 
       camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
       constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
@@ -1185,7 +1050,7 @@ protected:
         rendering_program_clipping_plane.bind();
         vao[VAO_CLIPPING_PLANE].bind();
         glLineWidth(0.1f);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_CLIPPING_PLANE)));
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>((m_array_for_clipping_plane.size()/3)));
         glLineWidth(1.0f);
         vao[VAO_CLIPPING_PLANE].release();
         rendering_program_clipping_plane.release();
@@ -1287,13 +1152,13 @@ protected:
     compile_shaders();
 
     CGAL::Bbox_3 bb;
-    if (bb==bounding_box()) // Case of "empty" bounding box
+    if (bb==gBuffer.bounding_box()) // Case of "empty" bounding box
     {
       bb=Local_point(CGAL::ORIGIN).bbox();
       bb=bb + Local_point(1,1,1).bbox(); // To avoid a warning from Qglviewer
     }
     else
-    { bb=bounding_box(); }
+    { bb=gBuffer.bounding_box(); }
     this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(),
                                                        bb.ymin(),
                                                        bb.zmin()),
@@ -1308,12 +1173,12 @@ protected:
 
   void generate_clipping_plane()
   {
-    qreal size=((bounding_box().xmax() - bounding_box().xmin()) +
-                (bounding_box().ymax() - bounding_box().ymin()) +
-                (bounding_box().zmax() - bounding_box().zmin()));
+    qreal size=((gBuffer.bounding_box().xmax()-gBuffer.bounding_box().xmin()) +
+                (gBuffer.bounding_box().ymax()-gBuffer.bounding_box().ymin()) +
+                (gBuffer.bounding_box().zmax()-gBuffer.bounding_box().zmin()));
     const unsigned int nbSubdivisions=30;
 
-    auto& array = gBuffer.get_array_of_index(GS::POS_CLIPPING_PLANE);
+    auto& array = m_array_for_clipping_plane;
     array.clear();
     for (unsigned int i=0; i<=nbSubdivisions; ++i)
     {
@@ -1595,7 +1460,7 @@ public:
   std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<BufferType> *)> on_key_pressed;
 
 protected:
-  Graphics_scene<BufferType>& gBuffer;
+  const Graphics_scene<BufferType>& gBuffer;
 
   bool m_draw_vertices;
   bool m_draw_edges;
@@ -1619,6 +1484,10 @@ protected:
   int m_use_clipping_plane=CLIPPING_PLANE_OFF;
   CGAL::qglviewer::ManipulatedFrame* m_frame_plane=nullptr;
 
+  // Buffer for clipping plane is not stored in the scene because it is not
+  // filled by users but by the basic viewer.
+  std::vector<BufferType> m_array_for_clipping_plane;
+
   double m_size_points;
   double m_size_edges;
   double m_size_rays;
@@ -1636,10 +1505,10 @@ protected:
   // CGAL::qglviewer::LocalConstraint constraint;
   CGAL::qglviewer::WorldConstraint constraint;
 
-  static const unsigned int NB_VBO_BUFFERS=(GS::END_POS-GS::BEGIN_POS)+
-    (GS::END_COLOR-GS::BEGIN_COLOR)+2; // +2 for 2 vectors of normals
+  static const unsigned int NB_GL_BUFFERS=(GS::END_POS-GS::BEGIN_POS)+
+    (GS::END_COLOR-GS::BEGIN_COLOR)+3; // +2 for normals (mono and color), +1 for clipping plane
 
-  QGLBuffer buffers[NB_VBO_BUFFERS];
+  QGLBuffer buffers[NB_GL_BUFFERS]; // +1 for the vbo buffer of clipping plane
 
   // The following enum gives the indices of the different vao.
   enum
@@ -1669,8 +1538,8 @@ protected:
 };
 
 template <typename BufferType=float>
-void draw_graphics_scene(Graphics_scene<BufferType>& graphics_scene,
-                 const char *title="CGAL Basic Viewer")
+void draw_graphics_scene(const Graphics_scene<BufferType>& graphics_scene,
+                         const char *title="CGAL Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
@@ -1698,7 +1567,7 @@ template <typename BufferType=float>
 class QApplication_and_basic_viewer
 {
 public:
-  QApplication_and_basic_viewer(CGAL::Graphics_scene<BufferType>& buffer,
+  QApplication_and_basic_viewer(const CGAL::Graphics_scene<BufferType>& buffer,
                                 const char* title="CGAL Basic Viewer"):
     m_application(nullptr),
     m_basic_viewer(nullptr),

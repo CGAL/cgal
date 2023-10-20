@@ -123,12 +123,10 @@ public:
   const Buffer_for_vao<BufferType> &get_buffer_for_colored_faces() const
   { return m_buffer_for_colored_faces; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_clipping_plane() const
-  { return m_buffer_for_clipping_plane; }
+  const CGAL::Bbox_3 &bounding_box() const { return m_bounding_box; }
 
-  const CGAL::Bbox_3 &get_bounding_box() const { return m_bounding_box; }
-
-  std::vector<BufferType> &get_array_of_index(int index) { return arrays[index]; }
+  const std::vector<BufferType> &get_array_of_index(int index) const
+  { assert(index<LAST_INDEX); return arrays[index]; }
 
   int get_size_of_index(int index) const
   { return static_cast<int>(arrays[index].size()*sizeof(BufferType)); }
@@ -136,12 +134,30 @@ public:
   unsigned int number_of_elements(int index) const
   { return static_cast<unsigned int>(arrays[index].size()/3); }
 
-  void update_bounding_box(const CGAL::Bbox_3 &box) { m_bounding_box+=box; }
-
   void initiate_bounding_box(const CGAL::Bbox_3& new_bounding_box)
   { m_bounding_box = new_bounding_box; }
 
-  void negate_all_normals()
+  void update_bounding_box(const CGAL::Bbox_3 &box) { m_bounding_box+=box; }
+
+  template <typename KPoint, typename KVector>
+  void update_bounding_box_for_ray(const KPoint &p, const KVector &v)
+  {
+    Local_point lp = get_local_point(p);
+    Local_vector lv = get_local_vector(v);
+    update_bounding_box((lp + lv).bbox());
+  }
+
+  template <typename KPoint, typename KVector>
+  void update_bounding_box_for_line(const KPoint &p, const KVector &v,
+                                    const KVector &pv)
+  {
+    Local_point lp = get_local_point(p);
+    Local_vector lv = get_local_vector(v);
+    Local_vector lpv = get_local_vector(pv);
+    update_bounding_box(lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox());
+  }
+
+  void negate_all_normals() const
   {
     m_buffer_for_mono_faces.negate_normals();
     m_buffer_for_colored_faces.negate_normals();
@@ -308,6 +324,12 @@ public:
            m_buffer_for_colored_lines.has_zero_z();
   }
 
+  // Returns true if the data structure lies on a XY or XZ or YZ plane
+  bool is_two_dimensional() const
+  {
+    return (!is_empty() && (has_zero_x() || has_zero_y() || has_zero_z()));
+  }
+
   void clear()
   {
     m_buffer_for_mono_points.clear();
@@ -320,7 +342,6 @@ public:
     m_buffer_for_colored_lines.clear();
     m_buffer_for_mono_faces.clear();
     m_buffer_for_colored_faces.clear();
-    m_buffer_for_clipping_plane.clear();
     m_texts.clear();
     m_bounding_box=CGAL::Bbox_3();
   }
@@ -356,10 +377,10 @@ public:
   void m_texts_clear()
   { m_texts.clear(); }
 
-  int m_texts_size()
+  int m_texts_size() const
   { return m_texts.size(); }
 
-  std::vector<std::tuple<Local_point, QString>>& get_m_texts()
+  const std::vector<std::tuple<Local_point, QString>>& get_m_texts() const
   { return m_texts; }
 
 public:
@@ -377,7 +398,6 @@ public:
     POS_COLORED_LINES,
     POS_MONO_FACES,
     POS_COLORED_FACES,
-    POS_CLIPPING_PLANE,
     END_POS,
     BEGIN_COLOR = END_POS,
     COLOR_POINTS = BEGIN_COLOR,
@@ -406,7 +426,6 @@ protected:
   Buffer_for_vao<BufferType> m_buffer_for_colored_lines;
   Buffer_for_vao<BufferType> m_buffer_for_mono_faces;
   Buffer_for_vao<BufferType> m_buffer_for_colored_faces;
-  Buffer_for_vao<BufferType> m_buffer_for_clipping_plane;
 
   std::vector<std::tuple<Local_point, QString>> m_texts;
 

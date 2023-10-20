@@ -53,7 +53,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
   scene = scene_;
 
   if (scene->lcc!=nullptr)
-  { CGAL::add_in_graphics_scene(*scene->lcc, gBuffer, m_gs_options); }
+  { CGAL::add_in_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options); }
 
   if (doredraw)
   { Base::redraw(); }
@@ -61,16 +61,16 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
 
 void Viewer::sceneChanged()
 {
-  gBuffer.clear();
-  CGAL::add_in_graphics_scene(*scene->lcc, gBuffer, m_gs_options);
+  m_graphic_buffer.clear();
+  CGAL::add_in_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options);
 
   this->camera()->setSceneBoundingBox(
-      CGAL::qglviewer::Vec(gBuffer.get_bounding_box().xmin(),
-                           gBuffer.get_bounding_box().ymin(),
-                           gBuffer.get_bounding_box().zmin()),
-      CGAL::qglviewer::Vec(gBuffer.get_bounding_box().xmax(),
-                           gBuffer.get_bounding_box().ymax(),
-                           gBuffer.get_bounding_box().zmax()));
+      CGAL::qglviewer::Vec(gBuffer.bounding_box().xmin(),
+                           gBuffer.bounding_box().ymin(),
+                           gBuffer.bounding_box().zmin()),
+      CGAL::qglviewer::Vec(gBuffer.bounding_box().xmax(),
+                           gBuffer.bounding_box().ymax(),
+                           gBuffer.bounding_box().zmax()));
   Base::redraw();
   if (m_previous_scene_empty)
   { this->showEntireScene(); }
