@@ -43,29 +43,29 @@ public:
 
   /// `std::function` that returns `true` if the given vertex is colored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, VertexDescriptor)> colored_vertex;
+  std::function<bool(const DS &, VertexDescriptor)> is_vertex_colored;
 
   /// `std::function` that returns `true` if the given edge is colored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, EdgeDescriptor)> colored_edge;
+  std::function<bool(const DS &, EdgeDescriptor)> is_edge_colored;
 
   /// `std::function` that returns `true` if the given face is colored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, FaceDescriptor)> colored_face;
+  std::function<bool(const DS &, FaceDescriptor)> is_face_colored;
 
   /// `std::function` that returns `true` if the given volume is colored, `false` otherwise.
   /// Returns `false` by default.
   /// Exists only if `VolumeDescriptor` is not `void`.
-  std::function<bool(const DS &, VolumeDescriptor)> colored_volume;
+  std::function<bool(const DS &, VolumeDescriptor)> is_volume_colored;
 
   /// `std::function` that returns `true` if the given face is in wireframe, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, FaceDescriptor)> face_wireframe;
+  std::function<bool(const DS &, FaceDescriptor)> is_face_wireframe;
 
   /// `std::function` that returns `true` if the given volume is in wireframe, `false` otherwise.
   /// Returns `false` by default.
   /// Exists only if `VolumeDescriptor` is not `void`.
-  std::function<bool(const DS &, VolumeDescriptor)> volume_wireframe;
+  std::function<bool(const DS &, VolumeDescriptor)> is_volume_wireframe;
 
   /// `std::function` that returns the color of the given vertex.
   /// `nullptr` by default.
