@@ -92,6 +92,11 @@ public:
     BorderParameterizer_,
     Two_vertices_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
 
+#if !defined(CGAL_EIGEN3_ENABLED)
+  static_assert(!(std::is_same<SolverTraits_, Default>::value),
+                            "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
+  #endif
+
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
@@ -100,6 +105,8 @@ public:
     // is always used...
     CGAL::Eigen_solver_traits<
             Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
+  #else
+    SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;
 #else
