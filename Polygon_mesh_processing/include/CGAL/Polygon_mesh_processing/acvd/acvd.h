@@ -82,6 +82,82 @@ struct ClusterData {
   }
 };
 
+template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
+void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_descriptor;
+  typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
+    NamedParameters,
+    Default_principal_map>::type VPCDM;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::is_default_parameter;
+
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                         get_property_map(CGAL::vertex_point, pmesh));
+
+  // get curvature related parameters
+  const typename VPCDM vpcd_map =
+    choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map),
+      Default_principal_map());
+
+  // unordered_set of old vertices
+  std::unordered_set<Vertex_descriptor> old_vertices;
+
+//  // make a copy of the property map
+//  typename VPCDM vpcd_map_new = get(CGAL::dynamic_vertex_property_t<Principal_curvatures_and_directions<GT>>(), pmesh);
+
+
+  bool curvatures_available = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value;
+
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
+  Upsample_mask_3<PolygonMesh,VPM> mask(&pmesh, vpm);
+
+  for (unsigned int i = 0; i < step; i++){
+    for (Vertex_descriptor vd : vertices(pmesh))
+      old_vertices.insert(vd);
+
+    Subdivision_method_3::internal::PTQ_1step(pmesh, vpm, mask);
+    // interpolate curvature values
+    if (curvatures_available)
+    {
+      for (Vertex_descriptor vd : vertices(pmesh))
+      {
+        if (old_vertices.find(vd) == old_vertices.end())
+        {
+          Principal_curvatures_and_directions<GT> pcd;
+          pcd.min_curvature = 0;
+          pcd.max_curvature = 0;
+          pcd.min_direction = GT::Vector_3(0, 0, 0);
+          pcd.max_direction = GT::Vector_3(0, 0, 0);
+          for (Halfedge_descriptor hd : halfedges_around_target(vd, pmesh))
+          {
+            Vertex_descriptor v1 = source(hd, pmesh);
+            if (old_vertices.find(v1) != old_vertices.end())
+            {
+              Principal_curvatures_and_directions<GT> pcd1 = get(vpcd_map, v1);
+              pcd.min_curvature += pcd1.min_curvature;
+              pcd.max_curvature += pcd1.max_curvature;
+              pcd.min_direction += pcd1.min_direction;
+              pcd.max_direction += pcd1.max_direction;
+            }
+          }
+          pcd.min_curvature = pcd.min_curvature / 2;
+          pcd.max_curvature = pcd.max_curvature / 2;
+          pcd.min_direction = pcd.min_direction / sqrt(pcd.min_direction.squared_length());
+          pcd.max_direction = pcd.max_direction / sqrt(pcd.max_direction.squared_length());
+          put(vpcd_map, vd, pcd);
+        }
+      }
+    }
+  }
+}
+
+
 
 // To provide the functionality remeshing (not just simplification), we might need to
 // subdivide the mesh before clustering
@@ -111,7 +187,7 @@ void acvd_subdivide_if_needed(
 
     if (subdivide_steps > 0)
     {
-      Subdivision_method_3::Upsample_subdivision(
+      upsample_subdivision_property(
         pmesh,
         np.number_of_iterations(subdivide_steps)
       );
@@ -140,9 +216,9 @@ PolygonMesh acvd_simplification(
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor Face_descriptor;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
+  typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<bool> >::type VertexVisitedMap;
   typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
-  typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_halfedge_property_t<bool> >::type HalfedgeVisitedMap;
-    typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
+  typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
     NamedParameters,
     Default_principal_map>::type Vertex_principal_curvatures_and_directions_map;
@@ -167,8 +243,9 @@ PolygonMesh acvd_simplification(
 
   // TODO: handle cases where the mesh is not a triangle mesh
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
-  
+
   // TODO: copy the mesh in order to not modify the original mesh
+  //PolygonMesh pmesh = pmesh_org;
   int nb_vertices = num_vertices(pmesh);
 
   // To provide the functionality remeshing (not just simplification), we might need to
@@ -194,7 +271,7 @@ PolygonMesh acvd_simplification(
         );
       else // adaptive clustering
         // TODO: need to interpolate curvature values
-        Subdivision_method_3::Upsample_subdivision(
+        upsample_subdivision_property(
           pmesh,
           CGAL::parameters::number_of_iterations(subdivide_steps).vertex_principal_curvatures_and_directions_map(vpcd_map)
         );
@@ -206,6 +283,7 @@ PolygonMesh acvd_simplification(
   // initial random clusters
   // property map from vertex_descriptor to cluster index
   VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
+  VertexVisitedMap vertex_visited_pmap = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh);
   VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
   std::vector<ClusterData<GT>> clusters(nb_clusters);
   std::queue<Halfedge_descriptor> clusters_edges_active;
@@ -215,6 +293,7 @@ PolygonMesh acvd_simplification(
   for (Vertex_descriptor vd : vertices(pmesh))
   {
     put(vertex_weight_pmap, vd, 0);
+    put(vertex_visited_pmap, vd, false);
     put(vertex_cluster_pmap, vd, -1);
   }
 
@@ -233,11 +312,12 @@ PolygonMesh acvd_simplification(
         typename GT::FT k1 = get(vpcd_map, vd).min_curvature;
         typename GT::FT k2 = get(vpcd_map, vd).max_curvature;
         typename GT::FT k_sq = (k1 * k1 + k2 * k2);
-        vertex_weight += weight * (1 + pow(k_sq, gradation_factor / 2.0));  // /2.0 because k_sq is squared
+        vertex_weight += weight * (/*`eps * avg_curvature` instead of */ 1 + pow(k_sq, gradation_factor / 2.0));  // /2.0 because k_sq is squared
       }
       put(vertex_weight_pmap, vd, vertex_weight);
     }
   }
+  // TODO: clamp the weights up and below by a ratio (like 10,000) * avg_weights
 
   for (int ci = 0; ci < nb_clusters; ci++)
   {
@@ -279,11 +359,11 @@ PolygonMesh acvd_simplification(
 
   int nb_modifications = 0;
   int nb_disconnected = 0;
-  int iteration = 0;
 
   do
   {
     nb_disconnected = 0;
+    int iteration = 0;
     do
     {
       nb_modifications = 0;
@@ -408,7 +488,21 @@ PolygonMesh acvd_simplification(
       std::cout << "iteration: " << iteration << ", # Modifications: " << nb_modifications << "\n";
 
       clusters_edges_active.swap(clusters_edges_new);
-    } while (nb_modifications > 0/* && iteration < 100*/);
+    } while (nb_modifications > 0 && (iteration < 50 || nb_modifications > 0.001 * nb_vertices));
+
+    // to test the following: make all clusters belonging to c2 to belong to c1 instead
+
+    //for (Vertex_descriptor vd : vertices(pmesh))
+    //{
+    //  int c = get(vertex_cluster_pmap, vd);
+    //  if (c == 2) {
+    //    put(vertex_cluster_pmap, vd, 1);
+    //    typename GT::Point_3 vp = get(vpm, vd);
+    //    typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
+    //    clusters[1].add_vertex(vpv, get(vertex_weight_pmap, vd));
+    //    clusters[2].remove_vertex(vpv, get(vertex_weight_pmap, vd));
+    //  }
+    //}
 
     // clean clusters here
       // the goal is to delete clusters with multiple connected components
@@ -416,30 +510,25 @@ PolygonMesh acvd_simplification(
       // we need to keep the largest connected component for each cluster
       // and set the other connected components to -1 (empty cluster), would also need to update clusters_edges_new
 
-    // TODO: This visited array should be a property map for generalization
-    std::vector<bool> visited(num_vertices(pmesh), false);
-    // std::vector<bool> visited_clusters(nb_clusters, false);
-    // [cluster][component_index][vertex_index]
     std::vector<std::vector<std::vector<Vertex_descriptor>>> cluster_components(nb_clusters, std::vector<std::vector<Vertex_descriptor>>());
 
     std::queue<Vertex_descriptor> q;
 
     // loop over vertices
+    int cou = 0;
     for (Vertex_descriptor vd : vertices(pmesh))
     {
-      if (visited[vd]) continue;
+      if (get(vertex_visited_pmap, vd)) continue;
       int c = get(vertex_cluster_pmap, vd);
       if (c != -1)
       {
         // first component of this cluster
-        if (cluster_components[c].size() == 0)
-          cluster_components[c].push_back(std::vector<Vertex_descriptor>());
-
+        cluster_components[c].push_back(std::vector<Vertex_descriptor>());
         int component_i = cluster_components[c].size() - 1;
 
         // visited_clusters[c] = true;
         q.push(vd);
-        visited[vd] = true;
+        put(vertex_visited_pmap, vd, true);
         while (!q.empty())
         {
           Vertex_descriptor v = q.front();
@@ -450,16 +539,15 @@ PolygonMesh acvd_simplification(
           {
             Vertex_descriptor v2 = target(hd, pmesh);
             int c2 = get(vertex_cluster_pmap, v2);
-            if (c2 == c && !visited[v2])
+            if (c2 == c && !get(vertex_visited_pmap, v2))
             {
               q.push(v2);
-              visited[v2] = true;
+              put(vertex_visited_pmap, v2, true);
             }
           }
         }
       }
     }
-
     // for (int c = 0; c < nb_clusters; c++)
     // {
     //   std::cout << "cluster " << c << " has " << cluster_components[c].size() << " components\n";
@@ -513,7 +601,6 @@ PolygonMesh acvd_simplification(
     std::cout << "nb_disconnected: " << nb_disconnected << "\n";
   } while (nb_disconnected > 0);
 
-  // TODO: Move out the disconnected clustering check (& cleaning)
 
   VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), pmesh);
 
@@ -545,7 +632,7 @@ PolygonMesh acvd_simplification(
   CGAL::IO::write_OFF(name, pmesh, CGAL::parameters::vertex_color_map(vcm));
   std::cout << "kak2" << std::endl;
 
-  /// Construct new Mesh 
+  /// Construct new Mesh
   std::vector<int> valid_cluster_map(nb_clusters, -1);
   std::vector<typename GT::Point_3> points;
   Point_set_3<typename GT::Point_3> point_set;
@@ -564,7 +651,7 @@ PolygonMesh acvd_simplification(
       point_set.insert(center_p);
     }
   }
-   
+
   // extract boundary cycles
   std::vector<Halfedge_descriptor> border_hedges;
   extract_boundary_cycles(pmesh, std::back_inserter(border_hedges));
