@@ -1304,17 +1304,22 @@ Finite_vertex_handles finite_vertex_handles() const;
 Points points() const;
 
 /*!
-* returns an array containing the vertices of `e`
+* returns an array containing the vertices of `e`,
+* in the order of their indices `e.second` and `e.third`
+* in the cell `e.first`.
 */
 std::array<Vertex_handle, 2> vertices(const Edge& e) const;
 
 /*!
-* returns an array containing the vertices of `f`
+* returns an array containing the vertices of `f`,
+* in counterclockwise order on the face of `f.first`
+* opposite to vertex `f.first->vertex(f.second)`.
 */
 std::array<Vertex_handle, 3> vertices(const Facet& f) const;
 
 /*!
-* returns an array containing the vertices of `c`
+* returns an array containing the vertices of `c`,
+* in the same order as the indices of `c`.
 */
 std::array<Vertex_handle, 4> vertices(const Cell_handle c) const;
 
