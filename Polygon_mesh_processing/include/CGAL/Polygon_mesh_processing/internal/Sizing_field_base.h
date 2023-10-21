@@ -28,7 +28,7 @@ namespace internal
 {
 /*!
 * \ingroup PMP_meshing_grp
-* pure virtual class serving as a base for sizing field classes utilized in isotropic
+* pure virtual class serving as a base for sizing field classes used in isotropic
 * remeshing.
 *
 * \cgalModels{PMPSizingField}
@@ -39,8 +39,8 @@ namespace internal
 *
 * @tparam PolygonMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
-* @tparam VPMap a property map associating points to the vertices of `pmesh`.
-*         It is a a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+* @tparam VPMap property map associating points to the vertices of `pmesh`,
+*         model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *         as key type and `%Point_3` as value type. Default is `boost::get(CGAL::vertex_point, pmesh)`.
 */
 template <class PolygonMesh,

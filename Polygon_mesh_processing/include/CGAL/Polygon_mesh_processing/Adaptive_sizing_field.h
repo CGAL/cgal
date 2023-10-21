@@ -29,14 +29,14 @@ namespace Polygon_mesh_processing
 {
 /*!
 * \ingroup PMP_meshing_grp
-* provides criteria for isotropic remeshing to achieve variable mesh edge lengths as a function
-* of local discrete curvatures.
-*
-* The local discrete curvatures are calculated using the
+* a sizing field describing variable target mesh edge lengths for
+* `CGAL::Polygon_mesh_processing::isotropic_remeshing()`.
+* This adaptive sizing field is a function of local discrete curvatures,
+* computed using the
 * `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` function.
 *
-* Edges longer than the local target edge length are split in two, while
-* edges shorter than the local target edge length are collapsed.
+* Edges too long with respect to the local target edge length are split in two, while
+* edges that are too short are collapsed.
 *
 * \cgalModels{PMPSizingField}
 *

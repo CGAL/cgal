@@ -25,7 +25,8 @@ namespace Polygon_mesh_processing
 {
 /*!
 * \ingroup PMP_meshing_grp
-* provides criteria for isotropic remeshing to achieve uniform mesh edge lengths.
+* a sizing field describing a uniform target edge length for
+* `CGAL::Polygon_mesh_processing::isotropic_remeshing()`.
 *
 * Edges longer than 4/3 of the target edge length will be split in half, while
 * edges shorter than 4/5 of the target edge length will be collapsed.
@@ -37,9 +38,9 @@ namespace Polygon_mesh_processing
 *
 * @tparam PolygonMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
-* @tparam VPMap a property map associating points to the vertices of `pmesh`.
-*         It is a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*          as key type and `%Point_3` as value type. Default is `boost::get(CGAL::vertex_point, pmesh)`.
+* @tparam VPMap property map associating points to the vertices of `pmesh`,
+*         model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*         as key type and `%Point_3` as value type. Default is `boost::get(CGAL::vertex_point, pmesh)`.
 */
 template <class PolygonMesh,
           class VPMap =  typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::const_type>
