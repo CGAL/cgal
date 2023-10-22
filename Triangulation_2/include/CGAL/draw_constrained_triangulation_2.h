@@ -26,8 +26,8 @@ namespace CGAL
 // Specialization of draw function.
 #define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
 
-template <class Gt, class Tds, class Itag, class InDomainPmap, typename BufferType=float>
-void add_in_graphics_scene(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
+template <class Gt, class Tds, class Itag, class InDomainPmap>
+void add_to_graphics_scene(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
                             CGAL::Graphics_scene& graphics_scene)
 {
   using BASET2=CGAL::Triangulation_2<Gt, Tds>;
@@ -54,15 +54,15 @@ void add_in_graphics_scene(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
     [&ipm](const BASET2&, typename CGAL_T2_TYPE::Finite_faces_iterator fh) -> CGAL::IO::Color
   { return get(ipm, fh)? CGAL::IO::yellow() : CGAL::IO::white(); };
 
-  add_in_graphics_scene(at2, graphics_scene, drawingFunctor);
+  add_to_graphics_scene(at2, graphics_scene, drawingFunctor);
 }
 
-template <class Gt, class Tds, class Itag, typename BufferType=float>
-void add_in_graphics_scene(const CGAL_T2_TYPE& at2,
+template <class Gt, class Tds, class Itag>
+void add_to_graphics_scene(const CGAL_T2_TYPE& at2,
                             CGAL::Graphics_scene& graphics_scene)
 {
   internal::In_domain<CGAL_T2_TYPE> in_domain;
-  add_in_graphics_scene(at2, in_domain, graphics_scene);
+  add_to_graphics_scene(at2, in_domain, graphics_scene);
 }
 
 template<class Gt, class Tds, class Itag, class InDomainPmap>
@@ -70,7 +70,7 @@ void draw(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
           const char *title="Constrained Triangulation_2 Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(at2, ipm, buffer);
+  add_to_graphics_scene(at2, ipm, buffer);
   draw_graphics_scene(buffer, title);
 }
 

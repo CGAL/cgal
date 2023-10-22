@@ -45,15 +45,15 @@ void draw(const PS& aps);
 namespace CGAL {
 
 namespace draw_function_for_boolean_set_2 {
-  
-template <typename BufferType=float, typename PS2, class GSOptions>
+
+template <typename PS2, class GSOptions>
 void compute_loop(const typename PS2::Polygon_2& p, bool hole,
                   CGAL::Graphics_scene& gs,
                   const GSOptions& gso)
 {
   if (hole)
   { gs.add_point_in_face(p.vertex(p.size()-1)); }
-  
+
   auto prev = p.vertices_begin();
   auto it = prev;
   gs.add_point(*it);
@@ -65,22 +65,22 @@ void compute_loop(const typename PS2::Polygon_2& p, bool hole,
     gs.add_point_in_face(*it);   // add point in face
     prev = it;
   }
-  
+
   // Add the last segment between the last point and the first one
   gs.add_segment(*prev, *(p.vertices_begin()));
 }
 
 /// Compute the elements of a polygon with holes.
-template <typename BufferType=float, typename PWH, class GSOptions>
+template <typename PWH, class GSOptions>
 void compute_elements(const PWH& pwh,
                       CGAL::Graphics_scene& gs,
                       const GSOptions& gso)
 {
   if (!gso.draw_unbounded() && pwh.outer_boundary().is_empty()) return;
-  
+
   CGAL::IO::Color c(75,160,255);
   gs.face_begin(c);
-  
+
   const typename PWH::Point_2* point_in_face;
   if (pwh.outer_boundary().is_empty())
   {
@@ -104,12 +104,12 @@ void compute_elements(const PWH& pwh,
     compute_loop(*it, true, gs);
     gs.add_point_in_face(*point_in_face);
   }
-  
+
   gs.face_end();
 }
-  
+
 } // End namespace draw_function_for_boolean_set_2
-  
+
 #ifdef CGAL_USE_BASIC_VIEWER
 
 template <typename PolygonSet_2, class GSOptions>
@@ -218,7 +218,7 @@ void draw(const CGAL::Polygon_set_2<T, C, D>& ps,
   bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
-  if (! cgal_test_suite) 
+  if (! cgal_test_suite)
   {
     using Ps = CGAL::Polygon_set_2<T, C, D>;
     using Viewer = Polygon_set_2_basic_viewer_qt<Ps>;

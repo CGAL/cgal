@@ -69,7 +69,7 @@ void compute_elements(const PointSet& pointset,
 } // namespace draw_function_for_PointSet
 
 template <class P, class V, class GSOptions>
-void add_in_graphics_scene(const Point_set_3<P, V>& apointset,
+void add_to_graphics_scene(const Point_set_3<P, V>& apointset,
                             Graphics_scene& graphics_scene,
                             const GSOptions& gs_options)
 {
@@ -79,13 +79,13 @@ void add_in_graphics_scene(const Point_set_3<P, V>& apointset,
 }
 
 template <class P, class V>
-void add_in_graphics_scene(const Point_set_3<P, V>& apointset,
+void add_to_graphics_scene(const Point_set_3<P, V>& apointset,
                             Graphics_scene& graphics_scene)
 {
   CGAL::Graphics_scene_options<Point_set_3<P, V>,
                                typename Point_set_3<P, V>::const_iterator,
                                int, int> gs_options;
-  add_in_graphics_scene(apointset, graphics_scene, gs_options);
+  add_to_graphics_scene(apointset, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -97,7 +97,7 @@ void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
   Graphics_scene buffer;
-  add_in_graphics_scene(apointset, buffer, gs_options);
+  add_to_graphics_scene(apointset, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
 
@@ -106,7 +106,7 @@ void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
   Graphics_scene buffer;
-  add_in_graphics_scene(apointset, buffer);
+  add_to_graphics_scene(apointset, buffer);
   draw_graphics_scene(buffer, title);
 }
 

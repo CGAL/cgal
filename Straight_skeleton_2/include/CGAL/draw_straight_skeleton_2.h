@@ -24,7 +24,7 @@ namespace CGAL {
 
 namespace draw_function_for_ss2 {
 
-template <typename BufferType=float, class SS2, class GSOptions>
+template <class SS2, class GSOptions>
 void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
                   CGAL::Graphics_scene& graphics_scene,
                   const GSOptions& gs_options)
@@ -45,7 +45,7 @@ void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
   }
 }
 
-template<typename BufferType=float, class SS2, class GSOptions>
+template<class SS2, class GSOptions>
 void print_halfedge_labels(const SS2& ss2,
                            typename SS2::Halfedge_const_handle h,
                            CGAL::Graphics_scene& graphics_scene,
@@ -65,7 +65,7 @@ void print_halfedge_labels(const SS2& ss2,
       label.str());
 }
 
-template <typename BufferType = float, class SS2, class GSOptions>
+template <class SS2, class GSOptions>
 void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
                     CGAL::Graphics_scene& graphics_scene,
                     const GSOptions& gs_options)
@@ -81,7 +81,7 @@ void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
   { graphics_scene.add_point(vh->point()); }
 }
 
-template <typename BufferType=float, class SS2, class GSOptions>
+template <class SS2, class GSOptions>
 void print_vertex_label(const SS2& ss2,
                         typename SS2::Vertex_const_handle vh,
                         CGAL::Graphics_scene& graphics_scene,
@@ -96,7 +96,7 @@ void print_vertex_label(const SS2& ss2,
   graphics_scene.add_text(vh->point(), label.str());
 }
 
-template <typename BufferType=float, class SS2, class GSOptions>
+template <class SS2, class GSOptions>
 void compute_elements(const SS2& ss2,
                       CGAL::Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
@@ -129,8 +129,8 @@ void compute_elements(const SS2& ss2,
 
 #define CGAL_SS_TYPE CGAL::Straight_skeleton_2<K>
 
-template <typename BufferType=float, class K, class GSOptions>
-void add_in_graphics_scene(const CGAL_SS_TYPE &ass2,
+template <class K, class GSOptions>
+void add_to_graphics_scene(const CGAL_SS_TYPE &ass2,
                            CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gs_options)
 {
@@ -138,8 +138,8 @@ void add_in_graphics_scene(const CGAL_SS_TYPE &ass2,
                                           gs_options);
 }
 
-template <typename BufferType=float, class K>
-void add_in_graphics_scene(const CGAL_SS_TYPE& ass2,
+template <class K>
+void add_to_graphics_scene(const CGAL_SS_TYPE& ass2,
                            CGAL::Graphics_scene& graphics_scene)
 {
   Graphics_scene_options<CGAL_SS_TYPE,
@@ -176,7 +176,7 @@ void add_in_graphics_scene(const CGAL_SS_TYPE& ass2,
      return CGAL::IO::Color(10, 180, 10); // green, but not flashy
   };
 
-  add_in_graphics_scene(ass2, graphics_scene, drawingFunctor);
+  add_to_graphics_scene(ass2, graphics_scene, drawingFunctor);
 }
 
 // Specialization of draw function.
@@ -187,7 +187,7 @@ void draw(const CGAL_SS_TYPE &ass2, const GSOptions &gs_options,
           const char *title="Straight Skeleton Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(ass2, buffer, gs_options);
+  add_to_graphics_scene(ass2, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
 
@@ -196,7 +196,7 @@ void draw(const CGAL_SS_TYPE &ass2,
           const char *title="Straight Skeleton Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(ass2, buffer);
+  add_to_graphics_scene(ass2, buffer);
   draw_graphics_scene(buffer, title);
 }
 

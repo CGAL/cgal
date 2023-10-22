@@ -57,7 +57,7 @@ struct LCC_geom_utils<LCC, Local_kernel, 2>
   }
 };
 
-template <typename BufferType=float, class LCC, class GSOptionsLCC>
+template <class LCC, class GSOptionsLCC>
 void compute_face(const LCC& lcc,
                   typename LCC::Dart_const_handle dh,
                   typename LCC::Dart_const_handle voldh,
@@ -102,7 +102,7 @@ void compute_face(const LCC& lcc,
   graphics_scene.face_end();
 }
 
-template <typename BufferType=float, class LCC, class GSOptions>
+template <class LCC, class GSOptions>
 void compute_edge(const LCC& lcc,
                   typename LCC::Dart_const_handle dh,
                   CGAL::Graphics_scene& graphics_scene,
@@ -126,7 +126,7 @@ void compute_edge(const LCC& lcc,
   }
 }
 
-template <typename BufferType=float, class LCC, class GSOptionsLCC>
+template <class LCC, class GSOptionsLCC>
 void compute_vertex(const LCC& lcc,
                     typename LCC::Dart_const_handle dh,
                     CGAL::Graphics_scene& graphics_scene,
@@ -145,7 +145,7 @@ void compute_vertex(const LCC& lcc,
   { graphics_scene.add_point(lcc.point(dh)); }
 }
 
-template <typename BufferType=float, class LCC, class GSOptions>
+template <class LCC, class GSOptions>
 void compute_elements(const LCC& lcc,
                       CGAL::Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
@@ -232,14 +232,14 @@ void compute_elements(const LCC& lcc,
   CGAL::Linear_cell_complex_base<d_, ambient_dim, Traits_, Items_, Alloc_,     \
                                  Map, Refs, Storage_>
 
-// add_in_graphics_scene: to add a LCC in the given graphic buffer, with a
+// add_to_graphics_scene: to add a LCC in the given graphic buffer, with a
 // graphics scene options.
 template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_,
-         typename BufferType=float, class GSOptions>
-void add_in_graphics_scene(const CGAL_LCC_TYPE& alcc,
+         class GSOptions>
+void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
                            CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gs_options)
 {
@@ -247,13 +247,13 @@ void add_in_graphics_scene(const CGAL_LCC_TYPE& alcc,
                                           graphics_scene, gs_options);
 }
 
-// add_in_graphics_scene: to add a LCC in the given graphic buffer, without a
+// add_to_graphics_scene: to add a LCC in the given graphic buffer, without a
 // graphics scene options. Use default drawing values.
 template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class Items_, class Alloc_,
          template <unsigned int, class, class, class, class> class Map,
-         class Refs, class Storage_, typename BufferType=float>
-void add_in_graphics_scene(const CGAL_LCC_TYPE& alcc,
+         class Refs, class Storage_>
+void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
                            CGAL::Graphics_scene& graphics_scene)
 {
   CGAL::Graphics_scene_options<CGAL_LCC_TYPE,
@@ -274,7 +274,7 @@ void add_in_graphics_scene(const CGAL_LCC_TYPE& alcc,
     return get_random_color(random);
   };
 
-  add_in_graphics_scene(alcc, graphics_scene, gs_options);
+  add_to_graphics_scene(alcc, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -289,7 +289,7 @@ void draw(const CGAL_LCC_TYPE& alcc, const GSOptions& gs_options,
           const char *title="LCC Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(alcc, buffer, gs_options);
+  add_to_graphics_scene(alcc, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
 
@@ -301,7 +301,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
 void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(alcc, buffer);
+  add_to_graphics_scene(alcc, buffer);
   draw_graphics_scene(buffer, title);
 }
 
