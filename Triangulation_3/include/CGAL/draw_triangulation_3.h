@@ -28,7 +28,7 @@ namespace draw_function_for_t3
 template <typename BufferType=float, class T3, class GSOptions>
 void compute_face(typename T3::Finite_facets_iterator fh,
                   const GSOptions& gs_options,
-                  CGAL::Graphics_scene<BufferType>& graphics_scene, const T3 *t3)
+                  CGAL::Graphics_scene& graphics_scene, const T3 *t3)
 {
   if(!gs_options.draw_face(*t3, fh))
   { return; }
@@ -50,7 +50,7 @@ void compute_face(typename T3::Finite_facets_iterator fh,
 
 template <typename BufferType=float, class T3, class GSOptions>
 void compute_edge(typename T3::Finite_edges_iterator eh,
-                  CGAL::Graphics_scene<BufferType>& graphics_scene,
+                  CGAL::Graphics_scene& graphics_scene,
                   const GSOptions& gs_options, const T3* t3)
 {
   if(!gs_options.draw_edge(*t3, eh))
@@ -70,7 +70,7 @@ void compute_edge(typename T3::Finite_edges_iterator eh,
 
 template <typename BufferType=float, class T3, class GSOptions>
 void compute_vertex(typename T3::Vertex_handle vh,
-                    CGAL::Graphics_scene<BufferType>& graphics_scene,
+                    CGAL::Graphics_scene& graphics_scene,
                     const GSOptions& gs_options, const T3* t3)
 {
   if(!gs_options.draw_vertex(*t3, vh))
@@ -86,7 +86,7 @@ void compute_vertex(typename T3::Vertex_handle vh,
 
 template <typename BufferType=float, class T3, class GSOptions>
 void compute_elements(const T3* t3,
-                      CGAL::Graphics_scene<BufferType>& graphics_scene,
+                      CGAL::Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
 {
   if (gs_options.are_faces_enabled())
@@ -118,7 +118,7 @@ void compute_elements(const T3* t3,
 template <class Gt, class Tds, class Lock_data_structure,
           typename BufferType=float, class GSOptions>
 void add_in_graphics_scene(const CGAL_T3_TYPE& at3,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene,
+                           CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gs_options)
 {
   draw_function_for_t3::compute_elements(&at3, graphics_scene, gs_options);
@@ -127,7 +127,7 @@ void add_in_graphics_scene(const CGAL_T3_TYPE& at3,
 template <class Gt, class Tds, class Lock_data_structure,
           typename BufferType=float>
 void add_in_graphics_scene(const CGAL_T3_TYPE& at3,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene)
+                           CGAL::Graphics_scene& graphics_scene)
 {
   CGAL::Graphics_scene_options<CGAL_T3_TYPE,
                        typename CGAL_T3_TYPE::Vertex_handle,
@@ -161,7 +161,7 @@ template<class Gt, class Tds, class Lock_data_structure, class GSOptions>
 void draw(const CGAL_T3_TYPE &at3, const GSOptions &gs_options,
           const char *title="T3 Basic Viewer")
 {
-  CGAL::Graphics_scene<float> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(at3, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
@@ -169,7 +169,7 @@ void draw(const CGAL_T3_TYPE &at3, const GSOptions &gs_options,
 template <class Gt, class Tds, class Lock_data_structure>
 void draw(const CGAL_T3_TYPE &at3, const char *title="T3 Basic Viewer")
 {
-  CGAL::Graphics_scene<float> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(at3, buffer);
   draw_graphics_scene(buffer, title);
 }

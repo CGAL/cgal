@@ -55,7 +55,7 @@ namespace draw_function_for_ph2_with_holes {
 template <typename BufferType=float, class P2, class GSOptions>
 void compute_one_loop_elements(const P2& ap2,
                                const typename P2::General_polygon_2& aloop,
-                               Graphics_scene<BufferType> &graphics_scene,
+                               Graphics_scene &graphics_scene,
                                bool hole,
                                const GSOptions& gs_options)
 {
@@ -98,7 +98,7 @@ void compute_one_loop_elements(const P2& ap2,
 }
 
 template <typename BufferType=float, class P2, class GSOptions>
-void compute_elements(const P2& p2, Graphics_scene<BufferType> &graphics_scene,
+void compute_elements(const P2& p2, Graphics_scene &graphics_scene,
                       const GSOptions& gs_options)
 {
   if (p2.outer_boundary().is_empty()) return;
@@ -134,7 +134,7 @@ void compute_elements(const P2& p2, Graphics_scene<BufferType> &graphics_scene,
 
 template <class T, class C, typename BufferType=float, class GSOptions>
 void add_in_graphics_scene(const CGAL_P2_WITH_HOLES_TYPE& p2,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene,
+                           CGAL::Graphics_scene& graphics_scene,
                            const GSOptions &gs_options)
 {
   draw_function_for_ph2_with_holes::compute_elements(p2, graphics_scene,
@@ -143,7 +143,7 @@ void add_in_graphics_scene(const CGAL_P2_WITH_HOLES_TYPE& p2,
 
 template <class T, class C, typename BufferType=float>
 void add_in_graphics_scene(const CGAL_P2_WITH_HOLES_TYPE& p2,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene)
+                           CGAL::Graphics_scene& graphics_scene)
 {
   Graphics_scene_options<CGAL_P2_WITH_HOLES_TYPE,
                   typename CGAL_P2_WITH_HOLES_TYPE::General_polygon_2::Vertex_const_iterator,
@@ -160,7 +160,7 @@ template<class T, class C, typename BufferType=float, class GSOptions>
 void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2, const GSOptions &gs_options,
           const char* title="Polygon with Holes Basic Viewer")
 {
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(ap2, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
@@ -169,7 +169,7 @@ template<class T, class C, typename BufferType=float>
 void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
           const char* title="Polygon with Holes Basic Viewer")
 {
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(ap2, buffer);
   draw_graphics_scene(buffer, title);
 }

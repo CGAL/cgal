@@ -48,7 +48,7 @@ namespace draw_function_for_boolean_set_2 {
   
 template <typename BufferType=float, typename PS2, class GSOptions>
 void compute_loop(const typename PS2::Polygon_2& p, bool hole,
-                  CGAL::Graphics_scene<BufferType>& gs,
+                  CGAL::Graphics_scene& gs,
                   const GSOptions& gso)
 {
   if (hole)
@@ -73,7 +73,7 @@ void compute_loop(const typename PS2::Polygon_2& p, bool hole,
 /// Compute the elements of a polygon with holes.
 template <typename BufferType=float, typename PWH, class GSOptions>
 void compute_elements(const PWH& pwh,
-                      CGAL::Graphics_scene<BufferType>& gs,
+                      CGAL::Graphics_scene& gs,
                       const GSOptions& gso)
 {
   if (!gso.draw_unbounded() && pwh.outer_boundary().is_empty()) return;
@@ -123,7 +123,7 @@ class Polygon_set_2_basic_viewer_qt : public Basic_viewer_qt<BufferType>
 
 public:
   Polygon_set_2_basic_viewer_qt(QWidget* parent, const Ps& ps,
-                                Graphics_scene<BufferType>& gs,
+                                Graphics_scene& gs,
                                 GSOptions& gs_options,
                                 const char* title = "Basic Polygon_set_2 Viewer",
                                 bool draw_unbounded = false,
@@ -226,7 +226,7 @@ void draw(const CGAL::Polygon_set_2<T, C, D>& ps,
     int argc = 1;
     const char* argv[2] = {"t2_viewer", nullptr};
     QApplication app(argc, const_cast<char**>(argv));
-    Graphics_scene<float> gs;
+    Graphics_scene gs;
     Graphics_scene_options<Ps> gs;
     Viewer basic_viewer(app.activeWindow(), ps, gs, gso,
                         title, draw_unbounded, draw_vertices);

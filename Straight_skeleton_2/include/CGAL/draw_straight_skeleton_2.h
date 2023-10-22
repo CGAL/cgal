@@ -26,7 +26,7 @@ namespace draw_function_for_ss2 {
 
 template <typename BufferType=float, class SS2, class GSOptions>
 void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
-                  CGAL::Graphics_scene<BufferType>& graphics_scene,
+                  CGAL::Graphics_scene& graphics_scene,
                   const GSOptions& gs_options)
 {
   if (!gs_options.draw_edge(ss2, eh))
@@ -48,7 +48,7 @@ void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
 template<typename BufferType=float, class SS2, class GSOptions>
 void print_halfedge_labels(const SS2& ss2,
                            typename SS2::Halfedge_const_handle h,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene,
+                           CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gs_options)
 {
   // TODO? an option different from draw_edge to allow to show only some labels ??
@@ -67,7 +67,7 @@ void print_halfedge_labels(const SS2& ss2,
 
 template <typename BufferType = float, class SS2, class GSOptions>
 void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
-                    CGAL::Graphics_scene<BufferType>& graphics_scene,
+                    CGAL::Graphics_scene& graphics_scene,
                     const GSOptions& gs_options)
 {
   if (!gs_options.draw_vertex(ss2, vh))
@@ -84,7 +84,7 @@ void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
 template <typename BufferType=float, class SS2, class GSOptions>
 void print_vertex_label(const SS2& ss2,
                         typename SS2::Vertex_const_handle vh,
-                        CGAL::Graphics_scene<BufferType>& graphics_scene,
+                        CGAL::Graphics_scene& graphics_scene,
                         const GSOptions& gs_options)
 {
   // TODO? an option different from draw_vertex to allow to show only some labels ??
@@ -98,7 +98,7 @@ void print_vertex_label(const SS2& ss2,
 
 template <typename BufferType=float, class SS2, class GSOptions>
 void compute_elements(const SS2& ss2,
-                      CGAL::Graphics_scene<BufferType>& graphics_scene,
+                      CGAL::Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
 {
   if (!gs_options.are_edges_enabled())
@@ -131,7 +131,7 @@ void compute_elements(const SS2& ss2,
 
 template <typename BufferType=float, class K, class GSOptions>
 void add_in_graphics_scene(const CGAL_SS_TYPE &ass2,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene,
+                           CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gs_options)
 {
   draw_function_for_ss2::compute_elements(ass2, graphics_scene,
@@ -140,7 +140,7 @@ void add_in_graphics_scene(const CGAL_SS_TYPE &ass2,
 
 template <typename BufferType=float, class K>
 void add_in_graphics_scene(const CGAL_SS_TYPE& ass2,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene)
+                           CGAL::Graphics_scene& graphics_scene)
 {
   Graphics_scene_options<CGAL_SS_TYPE,
                   typename CGAL_SS_TYPE::Vertex_const_handle,
@@ -186,7 +186,7 @@ template <class K, class GSOptions>
 void draw(const CGAL_SS_TYPE &ass2, const GSOptions &gs_options,
           const char *title="Straight Skeleton Basic Viewer")
 {
-  CGAL::Graphics_scene<float> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(ass2, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
@@ -195,7 +195,7 @@ template <class K>
 void draw(const CGAL_SS_TYPE &ass2,
           const char *title="Straight Skeleton Basic Viewer")
 {
-  CGAL::Graphics_scene<float> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(ass2, buffer);
   draw_graphics_scene(buffer, title);
 }
