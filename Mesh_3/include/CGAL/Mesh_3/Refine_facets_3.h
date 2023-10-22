@@ -1148,9 +1148,9 @@ number_of_bad_elements_impl()
         const Subdomain mc_subdomain = this->r_oracle_.is_in_domain_object()(this->r_tr_.dual(mc));
 
         std::cerr << "*** Is in complex? c is marked in domain: " << this->r_c3t3_.is_in_complex(c)
-          << " / c is really in subdomain: " << oformat(c_subdomain)
+          << " / c is really in subdomain: " << IO::oformat(c_subdomain)
           << " / mc is marked in domain: " << this->r_c3t3_.is_in_complex(mc)
-          << " / mc is really in subdomain: " << oformat(mc_subdomain)
+          << " / mc is really in subdomain: " << IO::oformat(mc_subdomain)
           << std::endl;
 
 
