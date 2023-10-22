@@ -6,10 +6,7 @@ namespace CGAL {
 
 The class `Graphics_scene` stores points, segments, triangles, rays and lines. Elements can be added, possibly with associated colors. Non triangular faces can be directly added and are triangulated internally.
 
-\tparam BufferType the number type used for point coordinates: `float` by default.
-
 */
-template <typename BufferType=float>
 class Graphics_scene {
 public:
   /// adds the given point in the scene.

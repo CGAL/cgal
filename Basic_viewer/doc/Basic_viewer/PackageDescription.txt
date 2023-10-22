@@ -1,5 +1,8 @@
 /// \defgroup PkgBasicViewerRef Basic Viewer Reference
 
+/// \defgroup PkgBasicViewerConcepts Concepts
+/// \ingroup PkgBasicViewerRef
+
 /// \defgroup PkgBasicViewerClasses Classes
 /// \ingroup PkgBasicViewerRef
 
@@ -20,6 +23,10 @@
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `GraphicsSceneOptions`
+- `GraphicsSceneOptionsWithVolumes`
 
 \cgalCRPSection{Classes}
 - `CGAL::Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor, VolumeDescriptor>`
