@@ -50,7 +50,7 @@ struct Default_color_generator {
 // Viewer class for`< Polygon_2
 template <typename ArrangementOnSurface_2,
           typename ColorGenerator = Default_color_generator>
-class Aos_2_basic_viewer_qt : public Basic_viewer_qt<float> {
+class Aos_2_basic_viewer_qt : public Basic_viewer_qt {
   using Aos = ArrangementOnSurface_2;
   using Color_generator = ColorGenerator;
   using Base = Basic_viewer_qt;

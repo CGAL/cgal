@@ -247,7 +247,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
   {
     // Here we define the std::function to capture key pressed.
     app.basic_viewer().on_key_pressed=
-      [&ap2t2, &gs_options] (QKeyEvent* e, CGAL::Basic_viewer_qt<float>* basic_viewer) -> bool
+      [&ap2t2, &gs_options] (QKeyEvent* e, CGAL::Basic_viewer_qt* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
