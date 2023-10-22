@@ -36,7 +36,7 @@ adds the vertices, edges and faces of `at2` into the given graphic scene `gs`. P
 */
 template<class Gt, class Tds, class GSOptions>
 void add_to_graphics_scene(const CGAL::Triangulation_2<Gt, Tds>& at2,
-                           CGAL::Graphics_scene<BufferType>& gs,
+                           CGAL::Graphics_scene& gs,
                            const GSOptions& gso={});
 
 } /* namespace CGAL */

@@ -30,7 +30,7 @@ Add in the given graphics scene the elements of alcc.
 
 */
   template<class LCC, class BufferType, class GSOptions>
-  void add_in_graphics_scene(const LCC& alcc, CGAL::Graphics_scene<BufferType>& graphics_scene,
+  void add_in_graphics_scene(const LCC& alcc, CGAL::Graphics_scene& graphics_scene,
                              const GSOptions& gs_options=GSOptions());
 
 } /* namespace CGAL */

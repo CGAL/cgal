@@ -28,7 +28,7 @@ namespace CGAL
 
 template <class Gt, class Tds, class Itag, class InDomainPmap, typename BufferType=float>
 void add_in_graphics_scene(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
-                            CGAL::Graphics_scene<BufferType>& graphics_scene)
+                            CGAL::Graphics_scene& graphics_scene)
 {
   using BASET2=CGAL::Triangulation_2<Gt, Tds>;
 
@@ -59,7 +59,7 @@ void add_in_graphics_scene(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
 
 template <class Gt, class Tds, class Itag, typename BufferType=float>
 void add_in_graphics_scene(const CGAL_T2_TYPE& at2,
-                            CGAL::Graphics_scene<BufferType>& graphics_scene)
+                            CGAL::Graphics_scene& graphics_scene)
 {
   internal::In_domain<CGAL_T2_TYPE> in_domain;
   add_in_graphics_scene(at2, in_domain, graphics_scene);
@@ -69,7 +69,7 @@ template<class Gt, class Tds, class Itag, class InDomainPmap>
 void draw(const CGAL_T2_TYPE& at2, InDomainPmap ipm,
           const char *title="Constrained Triangulation_2 Basic Viewer")
 {
-  CGAL::Graphics_scene<float> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(at2, ipm, buffer);
   draw_graphics_scene(buffer, title);
 }

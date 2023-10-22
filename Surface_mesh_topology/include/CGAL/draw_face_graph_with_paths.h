@@ -145,7 +145,7 @@ template <typename Mesh, typename BufferType=float, class GSOptions>
 void compute_face(const Mesh& mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
-                  CGAL::Graphics_scene<BufferType>& graphics_scene,
+                  CGAL::Graphics_scene& graphics_scene,
                   GSOptions& gs_options)
 {
   if(!gs_options.draw_face(lcc, dh))
@@ -193,7 +193,7 @@ void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                   typename Get_map<Mesh, Mesh>::type::size_type m_amark,
-                  CGAL::Graphics_scene<BufferType>& graphics_scene,
+                  CGAL::Graphics_scene& graphics_scene,
                   GSOptions& gs_options,
                   bool draw_marked_darts=true)
 {
@@ -224,7 +224,7 @@ void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                   const CGAL::IO::Color& color,
-                  CGAL::Graphics_scene<BufferType>& graphics_scene)
+                  CGAL::Graphics_scene& graphics_scene)
 {
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
   typedef typename LCC::Dart_const_descriptor     Dart_const_descriptor;
@@ -241,7 +241,7 @@ void compute_edge(const Mesh &mesh,
 template <typename Mesh, typename BufferType = float>
 void compute_vertex(const Mesh &mesh,
                     typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
-                    CGAL::Graphics_scene<BufferType>& graphics_scene,
+                    CGAL::Graphics_scene& graphics_scene,
                     GSOptions& gs_options)
 {
   typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
@@ -253,7 +253,7 @@ void compute_vertex(const Mesh &mesh,
 template <typename Mesh, typename BufferType = float>
 void compute_path(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
-                  CGAL::Graphics_scene<BufferType> &graphics_scene,
+                  CGAL::Graphics_scene &graphics_scene,
                   const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
                   std::size_t i,
                   typename Get_map<Mesh, Mesh>::type::size_type amark)
@@ -282,7 +282,7 @@ void compute_path(const Mesh &mesh,
 
 template <class Mesh, class GSOptions, typename BufferType = float>
 void compute_elements(const Mesh &mesh,
-                      CGAL::Graphics_scene<BufferType> &graphics_scene,
+                      CGAL::Graphics_scene &graphics_scene,
                       const GSOptions &m_gs_options,
                       const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* m_paths,
                       typename Get_map<Mesh, Mesh>::type::size_type amark)
@@ -371,7 +371,7 @@ void compute_elements(const Mesh &mesh,
 
 template <typename BufferType=float, class Mesh, class GSOptions>
 void add_in_graphics_scene(const Mesh& mesh,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene,
+                           CGAL::Graphics_scene& graphics_scene,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
                            const GSOptions& gs_options,
                            typename Get_map<Mesh, Mesh>::type::size_type amark=
@@ -385,7 +385,7 @@ void add_in_graphics_scene(const Mesh& mesh,
 
 template <typename BufferType = float, class Mesh>
 void add_in_graphics_scene(const Mesh& mesh,
-                           CGAL::Graphics_scene<BufferType>& graphics_scene,
+                           CGAL::Graphics_scene& graphics_scene,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
                            typename Get_map<Mesh, Mesh>::type::size_type amark=
                            typename Get_map<Mesh, Mesh>::type::INVALID_MARK)
@@ -409,7 +409,7 @@ void draw(const Mesh& mesh,
           (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
           const char* title="Mesh Viewer With Path")
 {
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(mesh, buffer, &paths, amark);
   draw_graphics_scene(buffer, title);
 }
@@ -422,7 +422,7 @@ void draw(const Mesh& mesh,
           (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
           const char* title="Mesh Viewer With Path")
 {
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(mesh, buffer, gs_options, &paths, amark);
   draw_graphics_scene(buffer, title);
 }
@@ -435,7 +435,7 @@ void draw(const Mesh& mesh,
           const char* title="Mesh Viewer With Path")
 {
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(mesh, buffer, &paths, amark);
   draw_graphics_scene(buffer, title);
 }
