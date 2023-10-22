@@ -55,10 +55,11 @@ inline CGAL::IO::Color get_random_color(CGAL::Random& random)
 //------------------------------------------------------------------------------
 // This class is responsible for dealing with available CGAL data structures and
 // handling buffers.
-template <typename BufferType = float>
 class Graphics_scene
 {
 public:
+  using BufferType=float;
+
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3 Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
@@ -93,34 +94,34 @@ public:
                                    &arrays[SMOOTH_NORMAL_COLORED_FACES])
   {}
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_points() const
+  const Buffer_for_vao &get_buffer_for_mono_points() const
   { return m_buffer_for_mono_points; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_points() const
+  const Buffer_for_vao &get_buffer_for_colored_points() const
   { return m_buffer_for_colored_points; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_segments() const
+  const Buffer_for_vao &get_buffer_for_mono_segments() const
   { return m_buffer_for_mono_segments; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_segments() const
+  const Buffer_for_vao &get_buffer_for_colored_segments() const
   { return m_buffer_for_colored_segments; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_rays() const
+  const Buffer_for_vao &get_buffer_for_mono_rays() const
   { return m_buffer_for_mono_rays; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_rays() const
+  const Buffer_for_vao &get_buffer_for_colored_rays() const
   { return m_buffer_for_colored_rays; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_lines() const
+  const Buffer_for_vao &get_buffer_for_mono_lines() const
   { return m_buffer_for_mono_lines; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_lines() const
+  const Buffer_for_vao &get_buffer_for_colored_lines() const
   { return m_buffer_for_colored_lines; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_mono_faces() const
+  const Buffer_for_vao &get_buffer_for_mono_faces() const
   { return m_buffer_for_mono_faces; }
 
-  const Buffer_for_vao<BufferType> &get_buffer_for_colored_faces() const
+  const Buffer_for_vao &get_buffer_for_colored_faces() const
   { return m_buffer_for_colored_faces; }
 
   const CGAL::Bbox_3 &bounding_box() const { return m_bounding_box; }
@@ -416,16 +417,16 @@ public:
   };
 
 protected:
-  Buffer_for_vao<BufferType> m_buffer_for_mono_points;
-  Buffer_for_vao<BufferType> m_buffer_for_colored_points;
-  Buffer_for_vao<BufferType> m_buffer_for_mono_segments;
-  Buffer_for_vao<BufferType> m_buffer_for_colored_segments;
-  Buffer_for_vao<BufferType> m_buffer_for_mono_rays;
-  Buffer_for_vao<BufferType> m_buffer_for_colored_rays;
-  Buffer_for_vao<BufferType> m_buffer_for_mono_lines;
-  Buffer_for_vao<BufferType> m_buffer_for_colored_lines;
-  Buffer_for_vao<BufferType> m_buffer_for_mono_faces;
-  Buffer_for_vao<BufferType> m_buffer_for_colored_faces;
+  Buffer_for_vao m_buffer_for_mono_points;
+  Buffer_for_vao m_buffer_for_colored_points;
+  Buffer_for_vao m_buffer_for_mono_segments;
+  Buffer_for_vao m_buffer_for_colored_segments;
+  Buffer_for_vao m_buffer_for_mono_rays;
+  Buffer_for_vao m_buffer_for_colored_rays;
+  Buffer_for_vao m_buffer_for_mono_lines;
+  Buffer_for_vao m_buffer_for_colored_lines;
+  Buffer_for_vao m_buffer_for_mono_faces;
+  Buffer_for_vao m_buffer_for_colored_faces;
 
   std::vector<std::tuple<Local_point, QString>> m_texts;
 

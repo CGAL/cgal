@@ -42,9 +42,9 @@ namespace CGAL {
 
 namespace draw_function_for_PointSet {
 
-template <typename BufferType=float, class PointSet, class GSOptions>
+template <class PointSet, class GSOptions>
 void compute_elements(const PointSet& pointset,
-                      Graphics_scene<BufferType>& graphics_scene,
+                      Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
 {
   if (!gs_options.are_vertices_enabled())
@@ -68,9 +68,9 @@ void compute_elements(const PointSet& pointset,
 
 } // namespace draw_function_for_PointSet
 
-template <class P, class V, typename BufferType=float, class GSOptions>
+template <class P, class V, class GSOptions>
 void add_in_graphics_scene(const Point_set_3<P, V>& apointset,
-                            Graphics_scene<BufferType>& graphics_scene,
+                            Graphics_scene& graphics_scene,
                             const GSOptions& gs_options)
 {
   draw_function_for_PointSet::compute_elements(apointset,
@@ -78,9 +78,9 @@ void add_in_graphics_scene(const Point_set_3<P, V>& apointset,
                                                gs_options);
 }
 
-template <class P, class V, typename BufferType=float>
+template <class P, class V>
 void add_in_graphics_scene(const Point_set_3<P, V>& apointset,
-                            Graphics_scene<BufferType>& graphics_scene)
+                            Graphics_scene& graphics_scene)
 {
   CGAL::Graphics_scene_options<Point_set_3<P, V>,
                                typename Point_set_3<P, V>::const_iterator,
@@ -96,7 +96,7 @@ void draw(const Point_set_3<P, V>& apointset,
           const GSOptions& gs_options,
           const char *title="Point_set_3 Basic Viewer")
 {
-  Graphics_scene<float> buffer;
+  Graphics_scene buffer;
   add_in_graphics_scene(apointset, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
@@ -105,7 +105,7 @@ template <class P, class V>
 void draw(const Point_set_3<P, V>& apointset,
           const char *title="Point_set_3 Basic Viewer")
 {
-  Graphics_scene<float> buffer;
+  Graphics_scene buffer;
   add_in_graphics_scene(apointset, buffer);
   draw_graphics_scene(buffer, title);
 }

@@ -117,10 +117,13 @@ void compute_elements(const T2& t2,
 
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
 
-template <class Gt, class Tds, typename BufferType=float, class GSOptions>
+template<class Gt, class Tds, typename BufferType=float>
 void add_in_graphics_scene(const CGAL_T2_TYPE& at2,
-                            CGAL::Graphics_scene<BufferType>& graphics_scene,
-                            const GSOptions& gs_options)
+                           CGAL::Graphics_scene<BufferType>& graphics_scene,
+                           const CGAL::Graphics_scene_options<T2,
+                           typename T2::Vertex_handle,
+                           typename T2::Finite_edges_iterator,
+                           typename T2::Finite_faces_iterator>& & gs_options)
 {
   draw_function_for_t2::compute_elements(at2, graphics_scene, gs_options);
 }

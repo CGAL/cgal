@@ -99,14 +99,14 @@ int main(int argc, char* argv[])
   { faces_size[fd]=CGAL::Polygon_mesh_processing::face_area(fd, sm); }
 
   Graphics_scene_options_small_faces gsosm(sm);
-  CGAL::Graphics_scene<float> buffer;
+  CGAL::Graphics_scene buffer;
 
   add_in_graphics_scene(sm, buffer, gsosm);
   CGAL::QApplication_and_basic_viewer app(buffer, "Small faces");
   if(app)
   {
     app.basic_viewer().on_key_pressed=
-      [&sm, &gsosm, &buffer] (QKeyEvent* e, CGAL::Basic_viewer_qt<float>* basic_viewer) -> bool
+      [&sm, &gsosm, &buffer] (QKeyEvent* e, CGAL::Basic_viewer_qt* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_I) && (modifiers == ::Qt::NoButton))
