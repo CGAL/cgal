@@ -467,20 +467,23 @@ public:
      */
     Approximate_point_2 operator()(const Point_2& p) const;
 
-    /*! Obtain a polyline that approximates an \f$x\f$-monotone curve. The
-     * polyline is defined by a range of approximate points beginning at
-     * `oi`. The type `OutputIterator` must dereference the type
-     * `Approximate_point_2`. The first and last points in the range are always
-     * the endpoints of the given arc `xcv`. The operator returns a
-     * past-the-end iterator of the destination range.
-     * \param oi An output iterator for the resulting polyline.
-     * \param error The error bound of the polyline approximation. This is
-     *              the Hausdorff distance between the arc and the polyline
-     *              that approximates the arc.
+    /*! approximates a given \f$x\f$-monotone curve. It computes a sequence of
+     * approximate points that represent an approximate polyline, and inserts
+     * them into an output container given through an output iterator.  The
+     * first and last points in the sequence are always approximations of the
+     * endpoints of the given arc.
+     *
+     * \param oi An output iterator for the output container.
+     * \param error The error bound of the polyline approximation. This is the
+     *        Hausdorff distance between the arc and the polyline that
+     *        approximates the arc.
      * \param xcv The exact \f$x\f$-monotone arc.
      * \param l2r A Boolean flag that indicates whether the arc direction is
-     *            left to right.
-     * \return The past-the-end iterator of the output iterator.
+     *        left to right.
+     * \return The past-the-end iterator of the output container.
+     *
+     * \pre Dereferencing `oi` must yield an object of type
+     *      `Arr_conic_traits_2::Approximate_point_2`.
      */
     template <typename OutputIterator>
     OutputIterator operator()(OutputIterator oi, double error,
@@ -521,7 +524,7 @@ public:
   Trim_2 trim_2_object() const;
 
   /*! Obtain an `Approximate_2` functor. */
-  Trim_2 approximate_2_object() const;
+  Approximate_2 approximate_2_object() const;
 
   /// @}
 

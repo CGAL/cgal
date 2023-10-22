@@ -955,7 +955,7 @@ preprocess_weights(WeightRange& weights)
   // Since the max value might not be very close to 90°, take the max between of the large-% weight
   // and the weight corresponding to an angle of 89.9999999°
   const FT weight_of_89d9999999 = 572957787.3425436; // tan(89.9999999°)
-  const FT scaled_max = (std::max)(weight_of_89d9999999, 1e3 * max_value);
+  const FT scaled_max = (std::max)(weight_of_89d9999999, FT(1e3) * max_value);
 
   for(auto& contour_weights : weights)
   {

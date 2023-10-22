@@ -18,6 +18,10 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 find_package(Qt5 QUIET COMPONENTS Widgets)
 include_directories(BEFORE ./include)
 
+find_package(Eigen3 3.1.91 QUIET) #(requires 3.1.91 or greater)
+include(CGAL_Eigen3_support)
+
+if(TARGET CGAL::Eigen3_support)
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -40,7 +44,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Bounding_volumes)
 
   target_link_libraries(Bounding_volumes PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                                 Qt5::Widgets)
+                                                 Qt5::Widgets
+                                         PUBLIC CGAL::Eigen3_support)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Bounding_volumes)
@@ -52,4 +57,7 @@ else()
 
   message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
 
+endif()
+else()
+  message("NOTICE: This demo requires CGAL and Eigen, and will not be compiled.")
 endif()

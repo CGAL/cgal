@@ -22,6 +22,7 @@ Point_set_3
 Point_set_processing_3
 Polygon
 Polygonal_surface_reconstruction
+Polygon_mesh_processing
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools

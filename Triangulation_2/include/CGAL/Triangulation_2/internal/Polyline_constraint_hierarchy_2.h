@@ -865,7 +865,7 @@ insert_constraint(T va, T vb){
   using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "C_hierachy.insert_constraint( "
-            << oformat(va) << ", " << oformat(vb) << ")\n";
+            << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -900,7 +900,7 @@ insert_constraint_old_API(T va, T vb){
   using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "C_hierachy.insert_constraint_old_API( "
-            << oformat(va) << ", " << oformat(vb) << ")\n";
+            << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -933,7 +933,7 @@ append_constraint(Constraint_id cid, T va, T vb){
   using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "C_hierachy.append_constraint( ..., "
-            << oformat(va) << ", " << oformat(vb) << ")\n";
+            << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -1050,7 +1050,7 @@ add_Steiner(T va, T vb, T vc){
   using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
             << "C_hierachy.add_Steinter( "
-            << oformat(va) << ", " << oformat(vb) << ", " << oformat(vc)
+            << IO::oformat(va) << ", " << IO::oformat(vb) << ", " << IO::oformat(vc)
             << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Context_list* hcl=nullptr;

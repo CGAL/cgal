@@ -85,7 +85,7 @@ pre_html=r"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <link rel="icon" type="image/png" href="../Manual/g-196x196-doc.png"/>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+<link href="cgal_stylesheet.css" rel="stylesheet" type="text/css" />
 <title>CGAL ${CGAL_CREATED_VERSION_NUM} - Manual: Acknowledging CGAL</title>
 </head>
 <body>

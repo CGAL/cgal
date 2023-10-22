@@ -131,6 +131,13 @@ public:
     return Vector_3(v*m.r0(), v*m.r1(), v*m.r2());
   }
 
+  friend std::ostream& operator<<(std::ostream & os, const MatrixC33& m)
+{
+  return os << m.r0() << std::endl
+            << m.r1() << std::endl
+            << m.r2() << std::endl;
+}
+
   RT determinant() const
   {
     return CGAL::determinant(r0().x(), r0().y(), r0().z(),

@@ -134,15 +134,15 @@ bool read_XYZ(std::istream& is,
     {
       iss.clear();
       iss.str(line);
-      if (iss >> iformat(x) >> iformat(y) >> iformat(z))
+      if (iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z))
       {
         Point point(x,y,z);
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
-        if (iss >> iformat(nx))
+        if (iss >> IO::iformat(nx))
         {
           // In case we could read one number, we expect that there are two more
-          if(iss >> iformat(ny) >> iformat(nz)){
+          if(iss >> IO::iformat(ny) >> IO::iformat(nz)){
             normal = Vector(nx,ny,nz);
           } else {
             std::cerr << "Error line " << lineNumber << " of file (incomplete normal coordinates)" << std::endl;

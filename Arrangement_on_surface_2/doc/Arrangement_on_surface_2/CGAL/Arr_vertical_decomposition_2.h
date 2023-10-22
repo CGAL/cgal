@@ -2,51 +2,51 @@ namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
- * Produces the symbolic vertical decomposition of a given arrangement,
- * performing a batched vertical ray-shooting query from all arrangement
- * vertices, such that every vertex is associated with a pair of objects, one
- * corresponds to the arrangement feature that lies below it, and the other
- * corresponds to the feature that lies above it.  The output of this function
- * can be readily used for inserting vertical walls and physically decomposing
- * the arrangement into pseudo-trapezoids. To do this, it is convenient to
- * process the vertices in an ascending \f$ xy\f$-lexicographic order. The
- * visible objects are therefore returned through an output iterator, which
- * pairs each finite arrangement vertex with the two features it "sees", such
- * that the vertices are given in ascending \f$ xy\f$-lexicographic order.
+ * produces the symbolic vertical decomposition of a given arrangement. More
+ * precisely, this function performs a batched vertical ray-shooting query from
+ * every arrangement vertex, and pairs each vertex with a pair of polymorphic
+ * objects, one corresponds to the arrangement feature that lies below it, and
+ * the other corresponds to the feature that lies above it.
  *
- * Produces the symbolic vertical decomposition of the `arr` arrangement.  More
- * precisely, it performs a batched vertical ray-shooting query from all
- * arrangement vertices, such that every vertex is associated with a pair of
- * objects, one corresponding to the arrangement feature that lies below it,
- * while the other corresponds to the feature that lies above it.  The query
- * results are returned through the output iterator, which pairs each finite
- * arrangement vertex with a pair of objects, the first represents the feature
- * below the vertex, and the second represents the feature that lies above
- * it. Each object is an optional variant that wraps a handle to an arrangement
- * feature. If the vertex is the top end-vertex of a vertical edge, we say that
+ * The finite arrangement vertices and the features they "see", if exist,
+ * that are, the query results, are inserted in ascending \f$xy\f$-lexicographic
+ * order (of the query vertex) into an output container given through an output
+ * iterator. If the vertex is the top end-vertex of a vertical edge, we say that
  * there is no feature below it; similarly, if it is the bottom end-vertex of a
- * vertical edge, we say that there is no feature above it. In these cases the
- * optional object is set to be empty; otherwise it is set as follows:
+ * vertical edge, we say that there is no feature above it.  Each feature, if
+ * exists, is represented by a discriminated union container that holds an
+ * object of one of the following types:
+ *
  * <UL>
- * <LI>`Halfedge_const_handle`, if the vertex is located above (or below) an
- * edge. The given halfedge is always directed from right to left.  In case
- * there is no concrete edge below (or above) the vertex, and the arrangement
- * is unbounded, then the object returned is a <I>fictitious</I> halfedge.
- * <LI>`Face_const_handle`, in case there is no edge below (or above)
- * the vertex, and the arrangement is bounded.
- * <LI>`Vertex_const_handle`, in case the vertex is located vertically above
- * (or below) another arrangement vertex.
- * </UL> The function returns a past-the-end iterator for its output sequence.
+ * <LI> `Arrangement_on_surface_2::Halfedge_const_handle`, if the vertex is
+ *      located above (or below) an edge. The given halfedge is always directed
+ *      from right to left.  In case there is no concrete edge below (or above)
+ *      the vertex, and the arrangement is unbounded, then the object returned
+ *      is a <I>fictitious</I> halfedge.
+ * <LI> `Arrangement_on_surface_2::Face_const_handle`, in case there is no edge
+ *      below (or above) the vertex, and the arrangement is bounded.
+ * <LI> `Arrangement_on_surface_2::Vertex_const_handle`, in case the vertex is
+ *      located vertically above (or below) another arrangement vertex.
+ * </UL>
+ *
+ * The output of this function can be readily used for inserting vertical walls
+ * and physically decomposing the arrangement into pseudo-trapezoids.
+ *
+ * \param arr The arrangement.
+ * \param oi The output iterator that points at the output container.
+ * \return The past-the-end iterator of the output container.
  *
  * \cgalHeading{Requirements}
  *
- * `OutputIterator::value_type` must be
- * `pair<Arrangement_2::Vertex_const_handle, pair<Object, Object> >`.
- *
+ * \pre Dereferencing `oi` must yield an object of type
+ * `std::pair<Arrangement_on_surface_2::Vertex_const_handle,
+ *            std::pair<std::optional<Type,std::optional<Type>>>`,
+ * where `Type` is
+ * `std::variant<Arrangement_on_surface_2::Vertex_const_handle, Arrangement_on_surface_2::Halfedge_const_handle, Arrangement_on_surface_2::Face_const_handle>`.
  */
-template<typename Traits, typename Dcel,
-typename OutputIterator>
-OutputIterator decompose (const Arrangement_2<Traits,Dcel>& arr,
-OutputIterator oi);
+template <typename Traits, typename TopologyTraits, typename OutputIterator>
+OutputIterator
+decompose(const Arrangement_on_surface_2<GeometryTraits,TopologyTraits>& arr,
+          OutputIterator oi);
 
 } /* namespace CGAL */

@@ -238,9 +238,10 @@ in \cgal programs, the executables should be linked with the CMake
 imported target `CGAL::LASLIB_support` provided in
 `CGAL_LASLIB_support.cmake`.
 
-The \laslib web site is <a
-href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \laslib
-is usually distributed along with LAStools: for simplicity, \cgal
+\laslib information can be obtained from
+<a href="https://lastools.github.io/">https://lastools.github.io/</a> and
+<a href="https://rapidlasso.de/product-overview/">https://rapidlasso.de/product-overview/</a>.
+\laslib is usually distributed along with LAStools: for simplicity, \cgal
 provides <a href="https://github.com/CGAL/LAStools">a fork with a
 CMake based install procedure</a>.
 

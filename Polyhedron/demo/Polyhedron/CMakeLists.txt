@@ -231,7 +231,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   endmacro(add_item)
 
   add_item(scene_triangulation_3_item Scene_triangulation_3_item.cpp)
-  target_link_libraries(scene_triangulation_3_item PUBLIC scene_basic_objects)
+  target_link_libraries(scene_triangulation_3_item PUBLIC scene_basic_objects scene_edit_box_item)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(

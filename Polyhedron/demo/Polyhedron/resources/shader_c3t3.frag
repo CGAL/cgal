@@ -2,6 +2,7 @@
 in vec4 color;
 in vec4 fP; 
 in vec3 fN; 
+in float dist[6];
 flat in vec2 subdomain_out;
 uniform vec4 light_pos;  
 uniform vec4 light_diff; 
@@ -10,6 +11,7 @@ uniform vec4 light_amb;
 uniform float spec_power ;
 uniform int is_two_side; 
 uniform bool is_selected;
+uniform bool is_clipbox_on;
 uniform float near;
 uniform float far;
 uniform float width;
@@ -28,7 +30,19 @@ float depth(float z)
   return (2 * near) / (far + near - z * (far - near));
 }
 
-void main(void) {
+bool compute_clip_visibility() {
+  if(is_clipbox_on)
+    return dist[0]>0.0 ||
+      dist[1]>0.0 ||
+      dist[2]>0.0 ||
+      dist[3]>0.0 ||
+      dist[4]>0.0 ||
+      dist[5]>0.0;
+  else
+    return false;
+}
+
+bool compute_filtering_visibility() {
   if(is_filterable)
   {
     uint domain1 = uint(subdomain_out.x);
@@ -37,10 +51,15 @@ void main(void) {
     uint i2 = domain2/25u;
     uint visible1 = uint(is_visible_bitset[i1]);
     uint visible2 = uint(is_visible_bitset[i2]);
-    if((visible1>>(domain1%25u))%2u == 0u && (visible2>>(domain2%25u))%2u == 0u)
-    {
-      discard;
-    }
+    return (visible1>>(domain1%25u))%2u == 0u && (visible2>>(domain2%25u))%2u == 0u;
+  }
+  else
+    return false;
+}
+
+void main(void) {
+  if (compute_clip_visibility() || compute_filtering_visibility()) {
+    discard;
   }
   float d = depth(gl_FragCoord.z);
   float test = texture(sampler, vec2(gl_FragCoord.x/width, gl_FragCoord.y/height)).r;

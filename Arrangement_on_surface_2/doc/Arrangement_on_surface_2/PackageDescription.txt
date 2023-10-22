@@ -236,6 +236,7 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
+- `CGAL::CORE_algebraic_number_traits`
 
 \cgalCRPSection{Functions}
 
