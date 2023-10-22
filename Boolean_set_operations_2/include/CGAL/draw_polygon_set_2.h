@@ -112,10 +112,10 @@ void compute_elements(const PWH& pwh,
   
 #ifdef CGAL_USE_BASIC_VIEWER
 
-template <typename PolygonSet_2, typename BufferType=float, class GSOptions>
-class Polygon_set_2_basic_viewer_qt : public Basic_viewer_qt<BufferType>
+template <typename PolygonSet_2, class GSOptions>
+class Polygon_set_2_basic_viewer_qt : public Basic_viewer_qt
 {
-  using Base = Basic_viewer_qt<BufferType>;
+  using Base = Basic_viewer_qt;
   using Ps = PolygonSet_2;
   using Pwh = typename Ps::Polygon_with_holes_2;
   using Pgn = typename Ps::Polygon_2;
