@@ -32,10 +32,9 @@ template<class PolyhedronTraits_3,
          template < class T, class I, class A>
          class T_HDS,
          class Alloc,
-         typename BufferType=float,
          class GSOptions>
 void add_in_graphics_scene(const CGAL_POLY_TYPE& apoly,
-                           CGAL::Graphics_scene<BufferType> &graphics_scene,
+                           CGAL::Graphics_scene &graphics_scene,
                            const GSOptions &gs_options)
 { add_in_graphics_scene_for_fg(apoly, graphics_scene, gs_options); }
 
@@ -43,10 +42,9 @@ template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
          template < class T, class I, class A>
          class T_HDS,
-         class Alloc,
-         typename BufferType=float>
+         class Alloc>
 void add_in_graphics_scene(const CGAL_POLY_TYPE& apoly,
-                           CGAL::Graphics_scene<BufferType> &graphics_scene)
+                           CGAL::Graphics_scene &graphics_scene)
 { add_in_graphics_scene_for_fg(apoly, graphics_scene); }
 
 // Specialization of draw function: require Qt and the CGAL basic viewer.
@@ -56,12 +54,11 @@ template<class PolyhedronTraits_3,
          class PolyhedronItems_3,
          template < class T, class I, class A>
          class T_HDS,
-         class Alloc,
-         typename BufferType=float>
+         class Alloc>
 void draw(const CGAL_POLY_TYPE& apoly,
           const char* title="Polyhedron Basic Viewer")
 {
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene_for_fg(apoly, buffer);
   draw_graphics_scene(buffer, title);
 }
@@ -71,13 +68,12 @@ template<class PolyhedronTraits_3,
          template < class T, class I, class A>
          class T_HDS,
          class Alloc,
-         typename BufferType=float,
          class GSOptions>
 void draw(const CGAL_POLY_TYPE& apoly,
           const GSOptions &gs_options,
           const char* title="Polyhedron Basic Viewer")
 {
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene_for_fg(apoly, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }

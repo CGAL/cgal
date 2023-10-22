@@ -94,36 +94,36 @@ private:
   typename SM::template Property_map<face_descriptor, CGAL::IO::Color> fcolors;
 };
 
-template<class K, typename BufferType=float,  class GSOptions>
+template<class K,  class GSOptions>
 void add_in_graphics_scene(const Surface_mesh<K>& amesh,
-                            CGAL::Graphics_scene<BufferType> &graphics_scene,
-                            const GSOptions &gs_options)
+                           CGAL::Graphics_scene &graphics_scene,
+                           const GSOptions &gs_options)
 { add_in_graphics_scene_for_fg(amesh, graphics_scene, gs_options); }
 
-template<class K, typename BufferType=float>
+template<class K>
 void add_in_graphics_scene(const Surface_mesh<K>& amesh,
-                           CGAL::Graphics_scene<BufferType> &graphics_scene)
+                           CGAL::Graphics_scene &graphics_scene)
 { add_in_graphics_scene_for_fg(amesh, graphics_scene,
                                 Graphics_scene_options_surface_mesh<K>(amesh)); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
   // Specialization of draw function.
-template<class K, typename BufferType=float>
+template<class K>
 void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(amesh, buffer);
   draw_graphics_scene(buffer, title);
 }
 
-template<class K, typename BufferType=float, class GSOptions>
+template<class K, class GSOptions>
 void draw(const Surface_mesh<K>& amesh,
           const GSOptions &gs_options,
           const char* title="Surface_mesh Basic Viewer")
 {
-  CGAL::Graphics_scene<BufferType> buffer;
+  CGAL::Graphics_scene buffer;
   add_in_graphics_scene(amesh, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }

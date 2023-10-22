@@ -24,9 +24,9 @@ namespace CGAL {
 
 namespace draw_function_for_FG {
 
-template <typename BufferType=float, typename FG, typename GSOptions>
+template <typename FG, typename GSOptions>
 void compute_elements(const FG &fg,
-                      CGAL::Graphics_scene<BufferType> &graphics_scene,
+                      CGAL::Graphics_scene &graphics_scene,
                       const GSOptions &m_gs_options)
 {
   using Point=typename boost::property_map_value<FG, CGAL::vertex_point_t>::type;
@@ -118,17 +118,17 @@ void compute_elements(const FG &fg,
 
 } // draw_function_for_FG
 
-template <typename BufferType=float, class FG, class GSOptions>
+template <class FG, class GSOptions>
 void add_in_graphics_scene_for_fg(const FG &fg,
-                                   CGAL::Graphics_scene<BufferType> &graphics_scene,
+                                   CGAL::Graphics_scene &graphics_scene,
                                    const GSOptions &gs_options)
 {
   draw_function_for_FG::compute_elements(fg, graphics_scene, gs_options);
 }
 
-template <typename BufferType=float, class FG>
+template <class FG>
 void add_in_graphics_scene_for_fg(const FG &fg,
-                                   CGAL::Graphics_scene<BufferType> &graphics_scene)
+                                   CGAL::Graphics_scene &graphics_scene)
 {
   Graphics_scene_options<FG,
                          typename boost::graph_traits<FG>::vertex_descriptor,

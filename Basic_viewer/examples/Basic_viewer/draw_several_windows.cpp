@@ -47,7 +47,7 @@ int main(void)
   for(Pwn& it: points)
   { point_set.insert(it.first); }
 
-  CGAL::Graphics_scene<float> graphic_buffer1, graphic_buffer2;
+  CGAL::Graphics_scene graphic_buffer1, graphic_buffer2;
   CGAL::add_in_graphics_scene(point_set, graphic_buffer1);
   CGAL::add_in_graphics_scene(output_mesh, graphic_buffer2);
 

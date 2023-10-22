@@ -61,18 +61,18 @@
 namespace CGAL {
 
 //------------------------------------------------------------------------------
-template <typename BufferType=float>
 class Basic_viewer_qt : public CGAL::QGLViewer
 {
 public:
+  using BufferType=float;
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
-  using GS=Graphics_scene<BufferType>;
+  using GS=Graphics_scene;
 
   // Constructor/Destructor
   Basic_viewer_qt(QWidget* parent,
-                  const Graphics_scene<BufferType>& buf,
+                  const Graphics_scene& buf,
                   const char* title="",
                   bool draw_vertices=false,
                   bool draw_edges=true,
@@ -248,7 +248,7 @@ public:
   bool is_clipping_plane_enabled() const
   { return (m_use_clipping_plane!=CLIPPING_PLANE_OFF); }
 
-  const Graphics_scene<BufferType>& get_graphics_scene() const
+  const Graphics_scene& get_graphics_scene() const
   { return gBuffer; }
 
   virtual void redraw()
@@ -1457,10 +1457,10 @@ protected:
     return text;
   }
 public:
-  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt<BufferType> *)> on_key_pressed;
+  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt *)> on_key_pressed;
 
 protected:
-  const Graphics_scene<BufferType>& gBuffer;
+  const Graphics_scene& gBuffer;
 
   bool m_draw_vertices;
   bool m_draw_edges;
@@ -1537,8 +1537,7 @@ protected:
 
 };
 
-template <typename BufferType=float>
-void draw_graphics_scene(const Graphics_scene<BufferType>& graphics_scene,
+void draw_graphics_scene(const Graphics_scene& graphics_scene,
                          const char *title="CGAL Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
@@ -1554,8 +1553,8 @@ void draw_graphics_scene(const Graphics_scene<BufferType>& graphics_scene,
     int argc = 1;
     const char *argv[2] = {title, nullptr};
     QApplication app(argc, const_cast<char **>(argv));
-    Basic_viewer_qt<BufferType> basic_viewer(app.activeWindow(),
-                                             graphics_scene, title);
+    Basic_viewer_qt basic_viewer(app.activeWindow(),
+                                 graphics_scene, title);
 
     basic_viewer.show();
     app.exec();
@@ -1563,11 +1562,10 @@ void draw_graphics_scene(const Graphics_scene<BufferType>& graphics_scene,
 }
 
 //------------------------------------------------------------------------------
-template <typename BufferType=float>
 class QApplication_and_basic_viewer
 {
 public:
-  QApplication_and_basic_viewer(const CGAL::Graphics_scene<BufferType>& buffer,
+  QApplication_and_basic_viewer(const CGAL::Graphics_scene& buffer,
                                 const char* title="CGAL Basic Viewer"):
     m_application(nullptr),
     m_basic_viewer(nullptr),
@@ -1588,8 +1586,8 @@ public:
 
     Qt::init_ogl_context(4, 3);
     m_application=new QApplication(m_argc, const_cast<char **>(m_argv));
-    m_basic_viewer=new Basic_viewer_qt<BufferType>(m_application->activeWindow(),
-                                                   buffer, title);
+    m_basic_viewer=new Basic_viewer_qt(m_application->activeWindow(),
+                                       buffer, title);
   }
 
   ~QApplication_and_basic_viewer()
@@ -1611,7 +1609,7 @@ public:
     }
   }
 
-  Basic_viewer_qt<BufferType>& basic_viewer()
+  Basic_viewer_qt& basic_viewer()
   {
     CGAL_assertion(m_basic_viewer!=nullptr);
     return *m_basic_viewer;
@@ -1619,7 +1617,7 @@ public:
 
 protected:
   QApplication* m_application;
-  Basic_viewer_qt<BufferType>* m_basic_viewer;
+  Basic_viewer_qt* m_basic_viewer;
   char *m_argv[2];
   int m_argc;
 };

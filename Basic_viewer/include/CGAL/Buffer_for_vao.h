@@ -128,10 +128,11 @@ namespace internal
 } // End namespace internal
 
 //------------------------------------------------------------------------------
-template<typename BufferType=float, typename IndexType=std::size_t>
 class Buffer_for_vao
 {
 public:
+  using BufferType=float;
+  using IndexType=std::size_t;
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
