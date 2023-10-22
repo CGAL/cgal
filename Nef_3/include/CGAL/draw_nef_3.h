@@ -81,7 +81,7 @@ Local_vector get_vertex_normal(typename Nef_Polyhedron::Vertex_const_handle vh)
 }
 
 // Visitor class to iterate through shell objects
-template <typename Nef_Polyhedron, typename GSOptions, typename BufferType = float>
+template <typename Nef_Polyhedron, typename GSOptions>
 class Nef_Visitor {
 
   typedef typename Nef_Polyhedron::Halfedge_const_handle     Halfedge_const_handle;
@@ -212,7 +212,7 @@ protected:
   const Nef_Polyhedron& nef;
 };
 
-template <typename BufferType=float, class Nef_Polyhedron, class GSOptions>
+template <class Nef_Polyhedron, class GSOptions>
 void compute_elements(const Nef_Polyhedron &nef,
                       CGAL::Graphics_scene &graphics_scene,
                       const GSOptions &gs_options)
@@ -223,7 +223,7 @@ void compute_elements(const Nef_Polyhedron &nef,
   typedef typename Nef_Polyhedron::SFace_const_handle         SFace_const_handle;
 
   Volume_const_iterator c;
-  Nef_Visitor<Nef_Polyhedron, GSOptions, BufferType>
+  Nef_Visitor<Nef_Polyhedron, GSOptions>
     V(nef, graphics_scene, gs_options);
   CGAL_forall_volumes(c, nef)
   {
@@ -239,10 +239,10 @@ void compute_elements(const Nef_Polyhedron &nef,
 
 #define CGAL_NEF3_TYPE Nef_polyhedron_3<Kernel_, Items_, Mark_>
 
-// add_in_graphics_scene
+// add_to_graphics_scene
 template <typename Kernel_, typename Items_, typename Mark_,
-          typename BufferType=float, class GSOptions>
-void add_in_graphics_scene(const CGAL_NEF3_TYPE &anef,
+          class GSOptions>
+void add_to_graphics_scene(const CGAL_NEF3_TYPE &anef,
                            CGAL::Graphics_scene &graphics_scene,
                            const GSOptions &gs_options)
 {
@@ -251,9 +251,8 @@ void add_in_graphics_scene(const CGAL_NEF3_TYPE &anef,
                                                      gs_options);
 }
 
-template <typename Kernel_, typename Items_, typename Mark_,
-          typename BufferType=float>
-void add_in_graphics_scene(const CGAL_NEF3_TYPE &anef,
+template <typename Kernel_, typename Items_, typename Mark_>
+void add_to_graphics_scene(const CGAL_NEF3_TYPE &anef,
                            CGAL::Graphics_scene &graphics_scene)
 {
   // Default graphics view options.
@@ -277,30 +276,29 @@ void add_in_graphics_scene(const CGAL_NEF3_TYPE &anef,
     return get_random_color(random);
   };
 
-  add_in_graphics_scene(anef, graphics_scene, gs_options);
+  add_to_graphics_scene(anef, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 // Specialization of draw function
 template <typename Kernel_, typename Items_, typename Mark_,
-          typename BufferType=float, class GSOptions>
+          class GSOptions>
 void draw(const CGAL_NEF3_TYPE &anef,
           const GSOptions &gs_options,
           const char *title="Nef Polyhedron Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(anef, buffer, gs_options);
+  add_to_graphics_scene(anef, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
 
-template <typename Kernel_, typename Items_, typename Mark_,
-          typename BufferType=float>
+template <typename Kernel_, typename Items_, typename Mark_>
 void draw(const CGAL_NEF3_TYPE &anef,
           const char *title="Nef Polyhedron Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(anef, buffer);
+  add_to_graphics_scene(anef, buffer);
   draw_graphics_scene(buffer, title);
 }
 

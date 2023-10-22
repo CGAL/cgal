@@ -66,7 +66,7 @@ protected:
 namespace draw_function_for_P2T2
 {
 
-template <typename BufferType=float, class P2T2, class GSOptions>
+template <class P2T2, class GSOptions>
 void compute_vertex(const P2T2 &p2t2,
                     typename P2T2::Periodic_point_iterator pi,
                     CGAL::Graphics_scene& graphics_scene,
@@ -83,7 +83,7 @@ void compute_vertex(const P2T2 &p2t2,
   { graphics_scene.add_point(p2t2.point(*pi)); }
 }
 
-template <typename BufferType=float, class P2T2, class GSOptions>
+template <class P2T2, class GSOptions>
 void compute_edge(const P2T2 &p2t2,
                   typename P2T2::Periodic_segment_iterator si,
                   CGAL::Graphics_scene& graphics_scene,
@@ -101,7 +101,7 @@ void compute_edge(const P2T2 &p2t2,
   { graphics_scene.add_segment(s[0], s[1]); }
 }
 
-template <typename BufferType=float, class P2T2, class GSOptions>
+template <class P2T2, class GSOptions>
 void compute_face(const P2T2 &p2t2,
                   typename P2T2::Periodic_triangle_iterator ti,
                   CGAL::Graphics_scene& graphics_scene,
@@ -124,7 +124,7 @@ void compute_face(const P2T2 &p2t2,
   graphics_scene.face_end();
 }
 
-template <typename BufferType=float, class P2T2, class GSOptions>
+template <class P2T2, class GSOptions>
 void compute_domain(const P2T2& p2t2,
                     CGAL::Graphics_scene& graphics_scene,
                     const GSOptions& gs_options)
@@ -153,7 +153,7 @@ void compute_domain(const P2T2& p2t2,
   }
 }
 
-template <typename BufferType=float, class P2T2, class GSOptions>
+template <class P2T2, class GSOptions>
 void compute_elements(const P2T2& p2t2,
                       CGAL::Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
@@ -196,16 +196,16 @@ void compute_elements(const P2T2& p2t2,
 
 #define CGAL_P2T2_TYPE CGAL::Periodic_2_triangulation_2<Gt, Tds >
 
-template <typename BufferType=float, class Gt, class Tds, class GSOptions>
-void add_in_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
+template <class Gt, class Tds, class GSOptions>
+void add_to_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
                            CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gs_options)
 {
   draw_function_for_P2T2::compute_elements(p2t2, graphics_scene, gs_options);
 }
 
-template <typename BufferType=float, class Gt, class Tds>
-void add_in_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
+template <class Gt, class Tds>
+void add_to_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
                            CGAL::Graphics_scene& graphics_scene)
 {
   CGAL::Graphics_scene_options_periodic_2_triangulation_2
@@ -214,23 +214,23 @@ void add_in_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
      typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
 
-  add_in_graphics_scene(p2t2, graphics_scene, gs_options);
+  add_to_graphics_scene(p2t2, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 // Specialization of draw function
-template<class Gt, class Tds, class BufferType=float, class GSOptions>
+template<class Gt, class Tds, class GSOptions>
 void draw(const CGAL_P2T2_TYPE& ap2t2,
           const GSOptions& gs_options,
           const char* title="2D Periodic Triangulation Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(ap2t2, buffer, gs_options);
+  add_to_graphics_scene(ap2t2, buffer, gs_options);
   draw_graphics_scene(buffer);
 }
 
-template<class Gt, class Tds, class BufferType=float>
+template<class Gt, class Tds>
 void draw(const CGAL_P2T2_TYPE& ap2t2,
           const char* title="2D Periodic Triangulation Viewer")
 {
@@ -241,7 +241,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
      typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
 
-  add_in_graphics_scene(ap2t2, buffer, gs_options);
+  add_to_graphics_scene(ap2t2, buffer, gs_options);
   QApplication_and_basic_viewer app(buffer, title);
   if(app)
   {

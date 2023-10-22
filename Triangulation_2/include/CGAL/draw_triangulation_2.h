@@ -24,7 +24,7 @@ namespace CGAL {
 
 namespace draw_function_for_t2 {
 
-template <typename BufferType=float, class T2, class GSOptions>
+template <class T2, class GSOptions>
 void compute_face(const T2& t2,
                   typename T2::Finite_faces_iterator fh,
                   CGAL::Graphics_scene& graphics_scene,
@@ -45,7 +45,7 @@ void compute_face(const T2& t2,
   graphics_scene.face_end();
 }
 
-template <typename BufferType=float, class T2, class GSOptions>
+template <class T2, class GSOptions>
 void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
                   CGAL::Graphics_scene& graphics_scene,
                   const GSOptions& gs_options)
@@ -68,7 +68,7 @@ void compute_edge(const T2& t2, typename T2::Finite_edges_iterator eh,
   }
 }
 
-template <typename BufferType=float, class T2, class GSOptions>
+template <class T2, class GSOptions>
 void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
                     CGAL::Graphics_scene& graphics_scene,
                     const GSOptions& gs_options)
@@ -86,7 +86,7 @@ void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
   }
 }
 
-template <typename BufferType=float, class T2, class GSOptions>
+template <class T2, class GSOptions>
 void compute_elements(const T2& t2,
                       CGAL::Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
@@ -117,8 +117,8 @@ void compute_elements(const T2& t2,
 
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
 
-template<class Gt, class Tds, typename BufferType=float>
-void add_in_graphics_scene(const CGAL_T2_TYPE& at2,
+template<class Gt, class Tds>
+void add_to_graphics_scene(const CGAL_T2_TYPE& at2,
                            CGAL::Graphics_scene& graphics_scene,
                            const CGAL::Graphics_scene_options<T2,
                            typename T2::Vertex_handle,
@@ -128,8 +128,8 @@ void add_in_graphics_scene(const CGAL_T2_TYPE& at2,
   draw_function_for_t2::compute_elements(at2, graphics_scene, gs_options);
 }
 
-template <class Gt, class Tds, typename BufferType=float>
-void add_in_graphics_scene(const CGAL_T2_TYPE& at2,
+template <class Gt, class Tds>
+void add_to_graphics_scene(const CGAL_T2_TYPE& at2,
                             CGAL::Graphics_scene& graphics_scene)
 {
   Graphics_scene_options<CGAL_T2_TYPE,
@@ -149,7 +149,7 @@ void add_in_graphics_scene(const CGAL_T2_TYPE& at2,
         return get_random_color(random);
       };
 
-  add_in_graphics_scene(at2, graphics_scene, drawingFunctor);
+  add_to_graphics_scene(at2, graphics_scene, drawingFunctor);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -160,7 +160,7 @@ void draw(const CGAL_T2_TYPE &at2, const GSOptions &gs_options,
           const char *title="Triangulation_2 Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(at2, buffer, gs_options);
+  add_to_graphics_scene(at2, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
 
@@ -169,7 +169,7 @@ void draw(const CGAL_T2_TYPE& at2,
           const char *title="Triangulation_2 Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(at2, buffer);
+  add_to_graphics_scene(at2, buffer);
   draw_graphics_scene(buffer, title);
 }
 

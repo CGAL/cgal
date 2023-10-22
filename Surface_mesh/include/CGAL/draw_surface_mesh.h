@@ -95,15 +95,15 @@ private:
 };
 
 template<class K,  class GSOptions>
-void add_in_graphics_scene(const Surface_mesh<K>& amesh,
+void add_to_graphics_scene(const Surface_mesh<K>& amesh,
                            CGAL::Graphics_scene &graphics_scene,
                            const GSOptions &gs_options)
-{ add_in_graphics_scene_for_fg(amesh, graphics_scene, gs_options); }
+{ add_to_graphics_scene_for_fg(amesh, graphics_scene, gs_options); }
 
 template<class K>
-void add_in_graphics_scene(const Surface_mesh<K>& amesh,
+void add_to_graphics_scene(const Surface_mesh<K>& amesh,
                            CGAL::Graphics_scene &graphics_scene)
-{ add_in_graphics_scene_for_fg(amesh, graphics_scene,
+{ add_to_graphics_scene_for_fg(amesh, graphics_scene,
                                 Graphics_scene_options_surface_mesh<K>(amesh)); }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -114,7 +114,7 @@ void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(amesh, buffer);
+  add_to_graphics_scene(amesh, buffer);
   draw_graphics_scene(buffer, title);
 }
 
@@ -124,7 +124,7 @@ void draw(const Surface_mesh<K>& amesh,
           const char* title="Surface_mesh Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(amesh, buffer, gs_options);
+  add_to_graphics_scene(amesh, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
 

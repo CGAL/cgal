@@ -119,7 +119,7 @@ void compute_elements(const FG &fg,
 } // draw_function_for_FG
 
 template <class FG, class GSOptions>
-void add_in_graphics_scene_for_fg(const FG &fg,
+void add_to_graphics_scene_for_fg(const FG &fg,
                                    CGAL::Graphics_scene &graphics_scene,
                                    const GSOptions &gs_options)
 {
@@ -127,7 +127,7 @@ void add_in_graphics_scene_for_fg(const FG &fg,
 }
 
 template <class FG>
-void add_in_graphics_scene_for_fg(const FG &fg,
+void add_to_graphics_scene_for_fg(const FG &fg,
                                    CGAL::Graphics_scene &graphics_scene)
 {
   Graphics_scene_options<FG,
@@ -150,7 +150,7 @@ void add_in_graphics_scene_for_fg(const FG &fg,
     return get_random_color(CGAL::get_default_random());
   };
 
-  add_in_graphics_scene_for_fg(fg, graphics_scene, gs_options);
+  add_to_graphics_scene_for_fg(fg, graphics_scene, gs_options);
 }
 
 } // End namespace CGAL

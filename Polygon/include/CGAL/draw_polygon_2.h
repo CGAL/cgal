@@ -46,7 +46,7 @@ namespace CGAL {
 
 namespace draw_function_for_p2 {
 
-template <typename BufferType=float, class P2, class GSOptions>
+template <class P2, class GSOptions>
 void compute_elements(const P2& p2,
                       CGAL::Graphics_scene &graphics_scene,
                       const GSOptions& gs_options)
@@ -99,16 +99,16 @@ void compute_elements(const P2& p2,
 
 #define CGAL_P2_TYPE CGAL::Polygon_2<T, C>
 
-// Specializations of add_in_graphics_scene function
+// Specializations of add_to_graphics_scene function
 
-template<typename BufferType=float, class T, class C, class GSOptions>
-void add_in_graphics_scene(const CGAL_P2_TYPE& ap2,
+template<class T, class C, class GSOptions>
+void add_to_graphics_scene(const CGAL_P2_TYPE& ap2,
                            CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gs_options)
 { draw_function_for_p2::compute_elements(ap2, graphics_scene, gs_options); }
 
-template<typename BufferType=float, class T, class C>
-void add_in_graphics_scene(const CGAL_P2_TYPE& ap2,
+template<class T, class C>
+void add_to_graphics_scene(const CGAL_P2_TYPE& ap2,
                            CGAL::Graphics_scene &graphics_scene)
 {
   CGAL::Graphics_scene_options<CGAL_P2_TYPE,
@@ -127,7 +127,7 @@ void draw(const CGAL_P2_TYPE &ap2,
           const char *title="Polygon_2 Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(ap2, buffer);
+  add_to_graphics_scene(ap2, buffer);
   draw_graphics_scene(buffer, title);
 }
 
@@ -137,7 +137,7 @@ void draw(const CGAL_P2_TYPE &ap2,
           const char *title="Polygon_2 Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(ap2, buffer, gs_options);
+  add_to_graphics_scene(ap2, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
 

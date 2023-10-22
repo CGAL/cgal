@@ -69,7 +69,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef Local_kernel::Point_3  Local_point;
 typedef Local_kernel::Vector_3 Local_vector;
 
-template <typename BufferType=float, class V2, class GSOptions>
+template <class V2, class GSOptions>
 void compute_vertex(const V2& v2,
                     typename V2::Vertex_iterator vh,
                     CGAL::Graphics_scene& graphics_scene,
@@ -84,14 +84,14 @@ void compute_vertex(const V2& v2,
   { graphics_scene.add_point(vh->point()); }
 }
 
-template <typename BufferType=float, class V2, class GSOptions>
+template <class V2, class GSOptions>
 void compute_dual_vertex(const V2& /*v2*/,
                          typename V2::Delaunay_graph::Finite_vertices_iterator vi,
                          CGAL::Graphics_scene &graphics_scene,
                          const GSOptions& gs_options)
 { graphics_scene.add_point(vi->point(), gs_options.dual_vertex_color); }
 
-template <typename BufferType=float, class V2, class GSOptions>
+template <class V2, class GSOptions>
 void add_segments_and_update_bounding_box(const V2& v2,
                                           typename V2::Halfedge_iterator he,
                                           CGAL::Graphics_scene& graphics_scene,
@@ -221,7 +221,7 @@ Local_kernel::Point_2 get_second_point(typename V2::Halfedge_handle ray,
 }
 
 // Halfedge_const_handle
-template <typename BufferType=float, class V2, class GSOptions>
+template <class V2, class GSOptions>
 void compute_rays_and_bisectors(const V2&,
                                 typename V2::Halfedge_iterator he,
                                 CGAL::Graphics_scene& graphics_scene,
@@ -251,7 +251,7 @@ void compute_rays_and_bisectors(const V2&,
   }
 }
 
-template <typename BufferType=float, class V2, class GSOptions>
+template <class V2, class GSOptions>
 void compute_face(const V2& v2,
                   typename V2::Face_iterator fh,
                   CGAL::Graphics_scene& graphics_scene,
@@ -286,7 +286,7 @@ void compute_face(const V2& v2,
   //        }
 }
 
-template <typename BufferType=float, class V2, class GSOptions>
+template <class V2, class GSOptions>
 void compute_elements(const V2& v2,
                       CGAL::Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
@@ -335,17 +335,16 @@ void compute_elements(const V2& v2,
 
 #define CGAL_VORONOI_TYPE CGAL::Voronoi_diagram_2 <DG, AT, AP>
 
-template <class DG, class AT, class AP,
-          typename BufferType=float, class GSOptions>
-void add_in_graphics_scene(const CGAL_VORONOI_TYPE &v2,
+template <class DG, class AT, class AP, class GSOptions>
+void add_to_graphics_scene(const CGAL_VORONOI_TYPE &v2,
                            CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& m_gs_options)
 {
   draw_function_for_v2::compute_elements(v2, graphics_scene, m_gs_options);
 }
 
-template <class DG, class AT, class AP, typename BufferType=float>
-void add_in_graphics_scene(const CGAL_VORONOI_TYPE& v2,
+template <class DG, class AT, class AP>
+void add_to_graphics_scene(const CGAL_VORONOI_TYPE& v2,
                            CGAL::Graphics_scene& graphics_scene)
 {
   // Default graphics view options.
@@ -355,24 +354,23 @@ void add_in_graphics_scene(const CGAL_VORONOI_TYPE& v2,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
     gs_options;
 
-  add_in_graphics_scene(v2, graphics_scene, gs_options);
+  add_to_graphics_scene(v2, graphics_scene, gs_options);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
 // Specialization of draw function.
-template<class DG, class AT, class AP,
-         typename BufferType=float, class GSOptions>
+template<class DG, class AT, class AP, class GSOptions>
 void draw(const CGAL_VORONOI_TYPE& av2,
           const GSOptions& gs_options,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(av2, buffer, gs_options);
+  add_to_graphics_scene(av2, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
 
-template<class DG, class AT, class AP, typename BufferType=float>
+template<class DG, class AT, class AP>
 void draw(const CGAL_VORONOI_TYPE& av2,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
@@ -384,7 +382,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
     gs_options;
 
-  add_in_graphics_scene(av2, buffer, gs_options);
+  add_to_graphics_scene(av2, buffer, gs_options);
 
   QApplication_and_basic_viewer app(buffer, title);
   if(app)

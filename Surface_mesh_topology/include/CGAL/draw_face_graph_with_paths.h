@@ -141,7 +141,7 @@ const typename CGAL::Get_traits<Mesh>::Point& get_point
   return CGAL::Get_traits<Mesh>::get_point(mesh, dh);
 }
 
-template <typename Mesh, typename BufferType=float, class GSOptions>
+template <typename Mesh, class GSOptions>
 void compute_face(const Mesh& mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
@@ -188,7 +188,7 @@ void compute_face(const Mesh& mesh,
   graphics_scene.face_end();
 }
 
-template <typename Mesh, typename BufferType=float, class GSOptions>
+template <typename Mesh, class GSOptions>
 void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
@@ -219,7 +219,7 @@ void compute_edge(const Mesh &mesh,
   }
 }
 
-template <typename Mesh, typename BufferType = float>
+template <typename Mesh>
 void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
@@ -238,7 +238,7 @@ void compute_edge(const Mesh &mesh,
   { graphics_scene.add_segment(p1, get_point(mesh, d2), color); }
 }
 
-template <typename Mesh, typename BufferType = float>
+template <typename Mesh>
 void compute_vertex(const Mesh &mesh,
                     typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                     CGAL::Graphics_scene& graphics_scene,
@@ -250,7 +250,7 @@ void compute_vertex(const Mesh &mesh,
   graphics_scene.add_point(get_point(mesh, dh));
 }
 
-template <typename Mesh, typename BufferType = float>
+template <typename Mesh>
 void compute_path(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   CGAL::Graphics_scene &graphics_scene,
@@ -280,7 +280,7 @@ void compute_path(const Mesh &mesh,
   }
 }
 
-template <class Mesh, class GSOptions, typename BufferType = float>
+template <class Mesh, class GSOptions>
 void compute_elements(const Mesh &mesh,
                       CGAL::Graphics_scene &graphics_scene,
                       const GSOptions &m_gs_options,
@@ -311,19 +311,19 @@ void compute_elements(const Mesh &mesh,
   if (m_current_dart!=lcc.darts().end())
   { // We want to draw only one dart
     Dart_const_descriptor selected_dart=m_current_dart; //lcc.dart_handle(m_current_dart);
-    compute_edge<Mesh, BufferType>(selected_dart, CGAL::IO::Color(255,0,0), mesh, graphics_scene, lcc);
+    compute_edge<Mesh>(selected_dart, CGAL::IO::Color(255,0,0), mesh, graphics_scene, lcc);
     lcc.template mark_cell<1>(selected_dart, markedges);
-    compute_vertex<Mesh, BufferType>(selected_dart, mesh, graphics_scene);
+    compute_vertex<Mesh>(selected_dart, mesh, graphics_scene);
 
     if ( !m_nofaces )
-    { compute_face<Mesh, BufferType>(selected_dart, mesh, graphics_scene, lcc); }
+    { compute_face<Mesh>(selected_dart, mesh, graphics_scene, lcc); }
 
     for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
           itend=lcc.darts().end(); it!=itend; ++it )
     {
       if ( !lcc.is_marked(it, markedges) )
       {
-        compute_edge<Mesh, BufferType>(it, mesh, graphics_scene, lcc, m_amark, m_draw_marked_darts);
+        compute_edge<Mesh>(it, mesh, graphics_scene, lcc, m_amark, m_draw_marked_darts);
         lcc.template mark_cell<1>(it, markedges);
       }
     }
@@ -333,10 +333,10 @@ void compute_elements(const Mesh &mesh,
     if (m_current_path==m_paths->size())
     {
       for (std::size_t i=0; i<m_paths->size(); ++i)
-      { compute_path<Mesh, BufferType>(i, markedges, mesh, graphics_scene, m_paths, lcc); }
+      { compute_path<Mesh>(i, markedges, mesh, graphics_scene, m_paths, lcc); }
     }
     else if (m_current_path!=m_paths->size()+1)
-    { compute_path<Mesh, BufferType>(m_current_path, markedges, mesh, graphics_scene, m_paths, lcc); }
+    { compute_path<Mesh>(m_current_path, markedges, mesh, graphics_scene, m_paths, lcc); }
 
     for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
           itend=lcc.darts().end(); it!=itend; ++it )
@@ -344,19 +344,19 @@ void compute_elements(const Mesh &mesh,
       if (!m_nofaces && !lcc.is_marked(it, markfaces) &&
           !lcc.is_perforated(it) && lcc.is_marked(it, m_oriented_mark))
       {
-        compute_face<Mesh, BufferType>(it, mesh, graphics_scene, lcc);
+        compute_face<Mesh>(it, mesh, graphics_scene, lcc);
         lcc.template mark_cell<2>(it, markfaces);
       }
 
       if ( !lcc.is_marked(it, markedges) )
       {
-        compute_edge<Mesh, BufferType>(it, mesh, graphics_scene, lcc, m_amark, m_draw_marked_darts);
+        compute_edge<Mesh>(it, mesh, graphics_scene, lcc, m_amark, m_draw_marked_darts);
         lcc.template mark_cell<1>(it, markedges);
       }
 
       if ( !lcc.is_marked(it, markvertices) )
       {
-        compute_vertex<Mesh, BufferType>(it, mesh, graphics_scene);
+        compute_vertex<Mesh>(it, mesh, graphics_scene);
         lcc.template mark_cell<0>(it, markvertices);
       }
     }
@@ -369,8 +369,8 @@ void compute_elements(const Mesh &mesh,
 
 } // namespace draw_function_for_face_graph_with_paths
 
-template <typename BufferType=float, class Mesh, class GSOptions>
-void add_in_graphics_scene(const Mesh& mesh,
+template <class Mesh, class GSOptions>
+void add_to_graphics_scene(const Mesh& mesh,
                            CGAL::Graphics_scene& graphics_scene,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
                            const GSOptions& gs_options,
@@ -383,8 +383,8 @@ void add_in_graphics_scene(const Mesh& mesh,
                                                             paths, amark);
 }
 
-template <typename BufferType = float, class Mesh>
-void add_in_graphics_scene(const Mesh& mesh,
+template <class Mesh>
+void add_to_graphics_scene(const Mesh& mesh,
                            CGAL::Graphics_scene& graphics_scene,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
                            typename Get_map<Mesh, Mesh>::type::size_type amark=
@@ -397,12 +397,12 @@ void add_in_graphics_scene(const Mesh& mesh,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor /*fh*/>
       gs_options;
 
-  add_in_graphics_scene(mesh, graphics_scene, gs_options, paths, amark);
+  add_to_graphics_scene(mesh, graphics_scene, gs_options, paths, amark);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-template<typename Mesh, typename BufferType=float>
+template<typename Mesh>
 void draw(const Mesh& mesh,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           typename Get_map<Mesh, Mesh>::type::size_type amark=
@@ -410,11 +410,11 @@ void draw(const Mesh& mesh,
           const char* title="Mesh Viewer With Path")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(mesh, buffer, &paths, amark);
+  add_to_graphics_scene(mesh, buffer, &paths, amark);
   draw_graphics_scene(buffer, title);
 }
 
-template<typename Mesh, typename GSOptions, typename BufferType=float>
+template<typename Mesh, typename GSOptions>
 void draw(const Mesh& mesh,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const GSOptions& gs_options,
@@ -423,11 +423,11 @@ void draw(const Mesh& mesh,
           const char* title="Mesh Viewer With Path")
 {
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(mesh, buffer, gs_options, &paths, amark);
+  add_to_graphics_scene(mesh, buffer, gs_options, &paths, amark);
   draw_graphics_scene(buffer, title);
 }
 
-template<class Mesh, typename BufferType=float >
+template<class Mesh>
 void draw(const Mesh& mesh,
           std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
           typename Get_map<Mesh, Mesh>::type::size_type amark=
@@ -436,7 +436,7 @@ void draw(const Mesh& mesh,
 {
   std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
   CGAL::Graphics_scene buffer;
-  add_in_graphics_scene(mesh, buffer, &paths, amark);
+  add_to_graphics_scene(mesh, buffer, &paths, amark);
   draw_graphics_scene(buffer, title);
 }
 
@@ -447,7 +447,7 @@ void draw(const Mesh& mesh,
 namespace CGAL
 {
 
-  template<class Mesh, typename BufferType=float>
+  template<class Mesh>
   void draw(const Mesh&,
             const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >&,
             typename Get_map<Mesh, Mesh>::type::size_type=
@@ -457,7 +457,7 @@ namespace CGAL
     std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }
 
-  template<class Mesh, typename GSOptions, typename BufferType=float>
+  template<class Mesh, typename GSOptions>
   void draw(const Mesh&,
             const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >&,
             const GSOptions&,
@@ -468,7 +468,7 @@ namespace CGAL
     std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }
 
-  template<class Mesh, typename BufferType=float>
+  template<class Mesh>
   void draw(const Mesh&,
             std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>>,
             const char* ="",
