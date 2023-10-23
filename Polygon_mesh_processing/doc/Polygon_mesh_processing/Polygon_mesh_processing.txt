@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katriopla, Sébastien Loriot, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -944,7 +944,7 @@ Corrected Curvatures on Polyhedral Surfaces \cgalCite{cgal:lrtc-iccmps-20}. This
 Gaussian curvature, principal curvatures and directions. These can be computed on triangle meshes,
 quad meshes, and meshes with n-gon faces (for n-gons, the centroid must be inside the n-gon face).
 The algorithms used prove to work well in general. Also, on meshes with noise on vertex positions,
-they give accurate results, on the condition that the correct vertex normals are provided.
+they give accurate results, under the condition that the correct vertex normals are provided.
 
 \subsection ICCBackground Brief Background
 
@@ -959,7 +959,7 @@ The algorithms are based on the two papers \cgalCite{cgal:lrt-ccm-22} and \cgalC
 introduce a new way to compute curvatures on polygonal meshes. The main idea in \cgalCite{cgal:lrt-ccm-22} is
 based on decoupling the normal information from the position information, which is useful for dealing with
 digital surfaces, or meshes with noise on vertex positions. \cgalCite{cgal:lrtc-iccmps-20} introduces some
-extensions to this framework. As it uses linear interpolation on the corrected normal vector field
+extensions to this framework, as it uses linear interpolation on the corrected normal vector field
 to derive new closed form equations for the corrected curvature measures. These <b>interpolated</b>
 curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
 with vertices \a i, \a j, \a k:
@@ -984,7 +984,7 @@ solver.
 
 The interpolated curvature measures are then computed for each vertex \f$ v \f$ as the sum of
 the curvature measures of the faces in a ball around \f$ v \f$ weighted by the inclusion ratio of the
-triangle in the ball. if the ball radius is not specified, the sum is instead over the incident faces
+triangle in the ball. If the ball radius is not specified, the sum is instead computed over the incident faces
 of \f$ v \f$.
 
 To get the final curvature value for a vertex \f$ v \f$, the respective interpolated curvature measure
@@ -1000,14 +1000,14 @@ The implementation is generic in terms of mesh data structure. It can be used on
 `Polyhedron_3` and other polygonal mesh structures based on the concept `FaceGraph`.
 
 These computations are performed using (on all vertices of the mesh) `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
-where function named parameters are use to select the curvatures (and possibly directions) to be computed. An overlay with the same named
-but accepting and accepting a given vertex is also available in case the computation should be done only for that vertex.
+where function named parameters are used to select the curvatures (and possibly directions) to be computed. An overlay with the same name
+but taking a given vertex is also available in case the computation should be done only for that vertex.
 
 \subsection ICCResults Results & Performance
 
 **To be updated**
 
-First, \cgalFigureRef{icc_measures} first illustrates various curvature measure on a triangular mesh.
+First, \cgalFigureRef{icc_measures} illustrates various curvature measures on a triangular mesh.
 
 \cgalFigureAnchor{icc_measures}
 <center>
@@ -1024,7 +1024,7 @@ First, \cgalFigureRef{icc_measures} first illustrates various curvature measure 
 
 
 \cgalFigureCaptionBegin{icc_measures}
-Mean curvature, Gaussian curvature, minimal principal curvature direction and minimal principal curvature direction on a mesh (ball radius set to 0.04).
+Mean curvature, Gaussian curvature, minimal principal curvature direction and maximal principal curvature direction on a mesh (ball radius set to 0.04).
 \cgalFigureCaptionEnd
 
 \cgalFigureAnchor{icc_various_ball_radii}
@@ -1073,7 +1073,7 @@ not provide storage for the curvatures.
 \subsection ICCExampleSV Interpolated Corrected Curvatures on a Vertex Example
 
 The following example illustrates how to
-compute the curvatures on a specific vertex
+compute the curvatures on a specific vertex.
 
 \cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp}
 

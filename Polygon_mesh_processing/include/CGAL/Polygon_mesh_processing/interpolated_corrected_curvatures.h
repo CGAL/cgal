@@ -1135,7 +1135,7 @@ void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
 *
 * @param pmesh the polygon mesh.
 * @param v the vertex of `pmesh` to compute the curvatures at.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
 * \cgalNamedParamsBegin
@@ -1153,7 +1153,7 @@ void interpolated_corrected_curvatures(const PolygonMesh& pmesh,
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_principal_curvatures_and_directions}
-*     \cgalParamDescription{a reference to an`Principal_curvatures_and_directions<GT>` object to store the principal curvatures and directions at the vertex `v`.}
+*     \cgalParamDescription{a reference to a `Principal_curvatures_and_directions<GT>` object to store the principal curvatures and directions at the vertex `v`.}
 *     \cgalParamType{`std::reference_wrapper<Principal_curvatures_and_directions<GT>>`.}
 *     \cgalParamExtra{If this parameter is omitted, principal curvatures and directions will not be computed.}
 *  \cgalParamNEnd
