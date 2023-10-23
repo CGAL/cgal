@@ -1,5 +1,19 @@
+// Copyright (c) 20XX,20XX GeometryFactory
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Ange Clément
+
+
 #ifndef CGAL_TRIANGULATION_RAW_IOSTREAM_3_H
 #define CGAL_TRIANGULATION_RAW_IOSTREAM_3_H
+
+#include <CGAL/license/Triangulation_3.h>
 
 #include <iostream>
 #include <vector>
