@@ -4,17 +4,17 @@ namespace CGAL {
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `Basic_viewer_qt` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements can either be added directly in the viewer or through the scene. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+The class `Basic_viewer` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements can either be added directly in the viewer or through the scene. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 */
-class Basic_viewer_qt : public CGAL::QGLViewer
+class Basic_viewer : public CGAL::QGLViewer
 {
 public:
   /// Constructor given a pointer on a `QWidget` (can be a `nullptr`) and a `Graphics_scene`.
   /// `title` will be the title of the window.
-  Basic_viewer_qt(QWidget* parent,
-                  const Graphics_scene& scene,
-                  const char* title="");
+  Basic_viewer(QWidget* parent,
+               const Graphics_scene& scene,
+               const char* title="");
 
   /// enables or disables the drawing of vertices.
   void draw_vertices(bool b);
@@ -132,7 +132,7 @@ public:
 
   /// Function called when a key is pressed. Users can define their own function in order
   /// to add specific behavior.
-  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt *)> on_key_pressed;
+  std::function<bool(QKeyEvent *, CGAL::Basic_viewer *)> on_key_pressed;
 };
 
 
@@ -140,7 +140,7 @@ public:
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `QApplication_and_basic_viewer` regroups a `Basic_viewer_qt` and Qt `QApplication`. The `QApplication` is created in the constructor, but started by the `run()` method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer_qt` to define their own behavior. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+The class `QApplication_and_basic_viewer` regroups a `Basic_viewer` and Qt `QApplication`. The `QApplication` is created in the constructor, but started by the `run()` method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer` to define their own behavior. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 */
 class QApplication_and_basic_viewer
@@ -153,8 +153,8 @@ public:
   /// runs the `QApplication`, i.e., open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
   void run();
 
-  /// returns a reference to the `Basic_viewer_qt` associated with this.
-  Basic_viewer_qt& basic_viewer();
+  /// returns a reference to the `Basic_viewer` associated with this.
+  Basic_viewer& basic_viewer();
 };
 
 //------------------------------------------------------------------------------
