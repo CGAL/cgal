@@ -68,7 +68,7 @@ public:
   * \param vpmap is the input vertex point map that associates points to the vertices of
   *        the input mesh.
   */
-  Uniform_sizing_field<PolygonMesh, VPMap>(const FT size, const VPMap& vpmap)
+  Uniform_sizing_field(const FT size, const VPMap& vpmap)
     : m_size(size)
     , m_sq_short( CGAL::square(4./5. * size))
     , m_sq_long(  CGAL::square(4./3. * size))
@@ -83,7 +83,7 @@ public:
   * @param pmesh a polygon mesh with triangulated surface patches to be remeshed. The default
   *        vertex point map of `pmesh` is used to construct the class.
   */
-  Uniform_sizing_field<PolygonMesh, VPMap>(const FT size, const PolygonMesh& pmesh)
+  Uniform_sizing_field(const FT size, const PolygonMesh& pmesh)
     : Uniform_sizing_field(size, get(CGAL::vertex_point, pmesh))
   {}
 
