@@ -17,7 +17,7 @@ Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with
 
 */
 template<class T2>
-void draw(const T2& at2);
+void draw(const T2& at2, TODO);
 
   /*!
 \ingroup PkgDrawConstrainedTriangulation2
