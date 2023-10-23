@@ -9,18 +9,32 @@ A call to this function blocks the execution of the program until the drawing wi
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalAdvancedBegin
-The code of this function is not templated by a class `T2`, but by the template parameters of a `CGAL::Triangulation_2` in order to take directly the `CGAL::Triangulation_2` as parameter and thus allow mixing several drawings of different data structures in the same code. This is not documented here to avoid too many technical details.
+The real declaration of this function template is:
+
+<code>
+ template<class Gt, class Tds, class GSOptions>
+
+ void CGAL::draw(const Triangulation_2<Gt, Tds>&  at2, const GSOptions& gso);
+</code>
 \cgalAdvancedEnd
 
 \tparam T2 which must be an instanciation of a `CGAL::Triangulation_2<...>`.
-\tparam GSOptions a model of `GraphicsSceneOptions` concept, `Graphics_scene_options` by defafult.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param at2 the triangulation to draw.
-\param gso the graphics scene options parameter, `GSOptions()` by default.
+\param gso the graphics scene options parameter.
 
 */
   template<class T2, class GSOptions>
-  void draw(const T2& at2, const GSOptions& gso={});
+  void draw(const T2& at2, const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawTriangulation2
+
+A shortcut to `draw(at2, Graphics_scene_options{})`.
+*/
+  template<class T2>
+  void draw(const T2& at2);
 
 /*!
 \ingroup PkgDrawTriangulation2
@@ -28,19 +42,34 @@ The code of this function is not templated by a class `T2`, but by the template 
 adds the vertices, edges and faces of `at2` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
 \cgalAdvancedBegin
-The code of this function is not templated by a class `T2`, but by the template parameters of a `CGAL::Triangulation_2` in order to take directly the `CGAL::Triangulation_2` as parameter and thus allow mixing several drawings of different data structures in the same code. This is not documented here to avoid too many technical details.
+The real declaration of this function template is:
+
+<code>
+ template<class Gt, class Tds, class GSOptions>
+
+ void CGAL::add_to_graphics_scene(const Triangulation_2<Gt, Tds>&  at2, CGAL::Graphics_scene& gs, const GSOptions& gso);
+</code>
 \cgalAdvancedEnd
 
 \tparam T2 which must be an instanciation of a `CGAL::Triangulation_2<...>`.
-\tparam GSOptions a model of `GraphicsSceneOptions` concept, `Graphics_scene_options` by defafult.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param at2 the triangulation to draw.
 \param gs the graphic scene to fill.
-\param gso the graphics scene options parameter, `GSOptions()` by default.
+\param gso the graphics scene options parameter.
 */
 template<class T2, class GSOptions>
 void add_to_graphics_scene(const T2& at2,
                            CGAL::Graphics_scene& gs,
-                           const GSOptions& gso={});
+                           const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawTriangulation2
+
+A shortcut to `add_to_graphics_scene(at2, gs, Graphics_scene_options{})`.
+*/
+template<class T2>
+void add_to_graphics_scene(const T2& at2,
+                           CGAL::Graphics_scene& gs);
 
 } /* namespace CGAL */
