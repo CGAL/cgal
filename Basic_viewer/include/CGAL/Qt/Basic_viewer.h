@@ -11,8 +11,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
-#ifndef CGAL_BASIC_VIEWER_QT_H
-#define CGAL_BASIC_VIEWER_QT_H
+#ifndef CGAL_BASIC_VIEWER_H
+#define CGAL_BASIC_VIEWER_H
 
 #include <CGAL/license/GraphicsView.h>
 #include <iostream>
@@ -61,7 +61,7 @@
 namespace CGAL {
 
 //------------------------------------------------------------------------------
-class Basic_viewer_qt : public CGAL::QGLViewer
+class Basic_viewer : public CGAL::QGLViewer
 {
 public:
   using BufferType=float;
@@ -71,18 +71,18 @@ public:
   using GS=Graphics_scene;
 
   // Constructor/Destructor
-  Basic_viewer_qt(QWidget* parent,
-                  const Graphics_scene& buf,
-                  const char* title="",
-                  bool draw_vertices=false,
-                  bool draw_edges=true,
-                  bool draw_faces=true,
-                  bool use_mono_color=false,
-                  bool inverse_normal=false,
-                  bool draw_rays=true,
-                  bool draw_lines=true,
-                  bool draw_text=true,
-                  bool no_2D_mode=false) :
+  Basic_viewer(QWidget* parent,
+               const Graphics_scene& buf,
+               const char* title="",
+               bool draw_vertices=false,
+               bool draw_edges=true,
+               bool draw_faces=true,
+               bool use_mono_color=false,
+               bool inverse_normal=false,
+               bool draw_rays=true,
+               bool draw_lines=true,
+               bool draw_text=true,
+               bool no_2D_mode=false) :
     CGAL::QGLViewer(parent),
     gBuffer(buf),
     m_draw_vertices(draw_vertices),
@@ -158,7 +158,7 @@ public:
     { negate_all_normals(); }
   }
 
-  ~Basic_viewer_qt()
+  ~Basic_viewer()
   {
     makeCurrent();
     for (unsigned int i=0; i<NB_GL_BUFFERS; ++i)
@@ -1457,7 +1457,7 @@ protected:
     return text;
   }
 public:
-  std::function<bool(QKeyEvent *, CGAL::Basic_viewer_qt *)> on_key_pressed;
+  std::function<bool(QKeyEvent *, CGAL::Basic_viewer *)> on_key_pressed;
 
 protected:
   const Graphics_scene& gBuffer;
@@ -1553,7 +1553,7 @@ void draw_graphics_scene(const Graphics_scene& graphics_scene,
     int argc = 1;
     const char *argv[2] = {title, nullptr};
     QApplication app(argc, const_cast<char **>(argv));
-    Basic_viewer_qt basic_viewer(app.activeWindow(),
+    Basic_viewer basic_viewer(app.activeWindow(),
                                  graphics_scene, title);
 
     basic_viewer.show();
@@ -1586,8 +1586,8 @@ public:
 
     Qt::init_ogl_context(4, 3);
     m_application=new QApplication(m_argc, const_cast<char **>(m_argv));
-    m_basic_viewer=new Basic_viewer_qt(m_application->activeWindow(),
-                                       buffer, title);
+    m_basic_viewer=new Basic_viewer(m_application->activeWindow(),
+                                    buffer, title);
   }
 
   ~QApplication_and_basic_viewer()
@@ -1609,7 +1609,7 @@ public:
     }
   }
 
-  Basic_viewer_qt& basic_viewer()
+  Basic_viewer& basic_viewer()
   {
     CGAL_assertion(m_basic_viewer!=nullptr);
     return *m_basic_viewer;
@@ -1617,7 +1617,7 @@ public:
 
 protected:
   QApplication* m_application;
-  Basic_viewer_qt* m_basic_viewer;
+  Basic_viewer* m_basic_viewer;
   char *m_argv[2];
   int m_argc;
 };
@@ -1639,4 +1639,4 @@ namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
 
-#endif // CGAL_BASIC_VIEWER_QT_H
+#endif // CGAL_BASIC_VIEWER_H

@@ -11,7 +11,7 @@
 \cgalPkgDescriptionBegin{Basic Viewer,PkgBasicViewer}
 \cgalPkgPicture{basic_viewer_logo.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Guillaume Damiand, Mostafa Ashraf}
+\cgalPkgAuthor{Guillaume Damiand}
 \cgalPkgDesc{This package provides a basic viewer class.}
 \cgalPkgManuals{Chapter_Basic_viewer,PkgBasicViewerRef}
 \cgalPkgSummaryEnd
@@ -29,10 +29,10 @@
 - `GraphicsSceneOptionsWithVolumes`
 
 \cgalCRPSection{Classes}
+- `CGAL::Basic_viewer`
+- `CGAL::Graphics_scene`
 - `CGAL::Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor, VolumeDescriptor>`
-- `CGAL::Graphics_scene<BufferType>`
-- `CGAL::Basic_viewer_qt<BufferType>`
-- `CGAL::QApplication_and_basic_viewer<BufferType>`
+- `CGAL::QApplication_and_basic_viewer`
 
 \cgalCRPSubsection{Draw a Graphics Scene}
 
