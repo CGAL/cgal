@@ -1,20 +1,16 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_TEST_H
 #define CGAL_APOLLONIUS_GRAPH_2_TEST_H
 
+#include <CGAL/Apollonius_graph_2.h>
+#include <CGAL/Apollonius_graph_hierarchy_2.h>
+#include <CGAL/Apollonius_graph_traits_2.h>
+#include <CGAL/Apollonius_graph_filtered_traits_2.h>
+
 #include <cassert>
 #include <CGAL/enum.h>
 #include <CGAL/use.h>
 #include <CGAL/Random.h>
 
-#include <CGAL/Vector_2.h> // this is done in order to avoid error
-// when the  Segment_2_Segment_2_intersection.h file is included from
-// the Triangulation_euclidean_traits_2.h file.
-
-#include <CGAL/Apollonius_graph_2.h>
-#include <CGAL/Apollonius_graph_hierarchy_2.h>
-#include <CGAL/Apollonius_graph_traits_2.h>
-#include <CGAL/Apollonius_graph_filtered_traits_2.h>
-//#include <CGAL/new_traits/Apollonius_graph_new_filtered_traits_2.h>
 
 #include "IO/Null_output_stream.h"
 
