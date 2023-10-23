@@ -130,15 +130,12 @@ bool read_vertices(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vec
   vertices_handles.resize(n+1);
   vertices_handles[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
 
-  std::cout << tr.dimension() << " " << n << std::endl;
   for(std::size_t i=1; i <= n; i++)
   {
     vertices_handles[i] = tr.tds().create_vertex();
     if(!(is >> *vertices_handles[i]))
       return false;
-    std::cout << i << " : " << vertices_handles[i]->in_dimension() << " " << vertices_handles[i]->point().x() << std::endl;
   }
-  std::cout << tr.dimension() << " " << n << std::endl;
 
   return (bool)is;
 }
@@ -288,7 +285,7 @@ bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds
 
 
 template < class GT, class Tds, class Lds >
-bool import_triangulation_3(std::istream& is, const Triangulation_3<GT, Tds, Lds>& tr)
+bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
 {
   std::vector<typename Tds::Vertex_handle > vertices_handles;
   return import_triangulation_3(is, tr, vertices_handles);
@@ -319,7 +316,7 @@ bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
              && internal::read_vertices(is, tr, vertices_handles)
              && internal::read_cells(is, tr, vertices_handles);
 
-  CGAL_assertion(tr.is_valid(true));
+  CGAL_assertion(tr.is_valid(false));
   return result;
 }
 
