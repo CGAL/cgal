@@ -45,6 +45,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
 
+#include <CGAL/IO/Triangulation_raw_iostream_3.h>
+
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -81,9 +83,11 @@
 
 namespace CGAL {
 
+#ifndef CGAL_TRIANGULATION_RAW_IOSTREAM_3_H
 template < class GT, class Tds = Default,
            class Lock_data_structure = Default >
 class Triangulation_3;
+#endif
 
 template < class GT, class Tds, class Lds > std::istream& operator>>
 (std::istream& is, Triangulation_3<GT,Tds,Lds>& tr);
@@ -2385,54 +2389,8 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
   //   of vertices, plus the non combinatorial information on each cell
   // - the neighbors of each cell by their index in the preceding list of cells
   // - when dimension < 3 : the same with faces of maximal dimension
-
-  typedef Triangulation_3<GT, Tds>               Triangulation;
-  typedef typename Triangulation::Vertex_handle  Vertex_handle;
-  typedef typename Triangulation::Cell_handle    Cell_handle;
-
-  tr._tds.clear(); // infinite vertex deleted
-  tr.infinite = tr._tds.create_vertex();
-
-  std::size_t n;
-  int d;
-  if(IO::is_ascii(is))
-  {
-    is >> d >> n;
-  }
-  else
-  {
-    read(is, d);
-    read(is, n);
-  }
-  if(!is)
-    return is;
-
-  std::vector< Vertex_handle > V;
-  if(d > 3 || d < -2 || (n+1) > V.max_size()) {
+  if (!CGAL::IO::import_triangulation_3(is, tr))
     is.setstate(std::ios_base::failbit);
-    return is;
-  }
-  tr._tds.set_dimension(d);
-  V.resize(n+1);
-  V[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
-
-  for(std::size_t i=1; i <= n; i++)
-  {
-    V[i] = tr._tds.create_vertex();
-    if(!(is >> *V[i]))
-      return is;
-  }
-
-  std::vector< Cell_handle > C;
-
-  std::size_t m;
-  tr._tds.read_cells(is, V, m, C);
-
-  for(std::size_t j=0 ; j < m; j++)
-    if(!(is >> *(C[j])))
-      return is;
-
-  CGAL_assertion(tr.is_valid(false));
   return is;
 }
 
@@ -2448,91 +2406,9 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   //   of vertices, plus the non combinatorial information on each cell
   // - the neighbors of each cell by their index in the preceding list of cells
   // - when dimension < 3 : the same with faces of maximal dimension
-
-  typedef Triangulation_3<GT, Tds>                 Triangulation;
-  typedef typename Triangulation::size_type        size_type;
-  typedef typename Triangulation::Vertex_handle    Vertex_handle;
-  typedef typename Triangulation::Vertex_iterator  Vertex_iterator;
-  typedef typename Triangulation::Cell_iterator    Cell_iterator;
-  typedef typename Triangulation::Edge_iterator    Edge_iterator;
-  typedef typename Triangulation::Facet_iterator   Facet_iterator;
-
-  // outputs dimension and number of vertices
-  size_type n = tr.number_of_vertices();
-  if(IO::is_ascii(os))
-  {
-    os << tr.dimension() << std::endl << n << std::endl;
-  }
-  else
-  {
-    write(os, tr.dimension());
-    write(os, n);
-  }
-
-  if(n == 0)
-    return os;
-
-  std::vector<Vertex_handle> TV(n+1);
-  size_type i = 0;
-
-  // write the vertices
-  for(Vertex_iterator it = tr.vertices_begin(), end = tr.vertices_end(); it != end; ++it)
-    TV[i++] = it;
-
-  CGAL_assertion(i == n+1);
-  CGAL_assertion(tr.is_infinite(TV[0]));
-
-  Unique_hash_map<Vertex_handle, std::size_t > V;
-  V[tr.infinite_vertex()] = 0;
-  for(i=1; i <= n; i++)
-  {
-    os << *TV[i];
-    V[TV[i]] = i;
-    if(IO::is_ascii(os))
-      os << std::endl;
-  }
-
-  // Asks the tds for the combinatorial information
-  tr.tds().print_cells(os, V);
-
-  // Write the non combinatorial information on the cells
-  // using the << operator of Cell.
-  // Works because the iterator of the tds traverses the cells in the
-  // same order as the iterator of the triangulation
-  switch(tr.dimension())
-  {
-    case 3:
-    {
-      for(Cell_iterator it = tr.cells_begin(), end = tr.cells_end(); it != end; ++it)
-      {
-        os << *it; // other information
-        if(IO::is_ascii(os))
-          os << std::endl;
-      }
-      break;
-    }
-    case 2:
-    {
-      for(Facet_iterator it = tr.facets_begin(), end = tr.facets_end(); it != end; ++it)
-      {
-        os << *((*it).first); // other information
-        if(IO::is_ascii(os))
-          os << std::endl;
-      }
-      break;
-    }
-    case 1:
-    {
-      for(Edge_iterator it = tr.edges_begin(), end = tr.edges_end(); it != end; ++it)
-      {
-        os << *((*it).first); // other information
-        if(IO::is_ascii(os))
-          os << std::endl;
-      }
-      break;
-    }
-  }
-  return os ;
+  if (!CGAL::IO::export_triangulation_3(os, tr))
+    os.setstate(std::ios_base::failbit);
+  return os;
 }
 
 template < class GT, class Tds, class Lds >

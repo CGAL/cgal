@@ -1205,6 +1205,12 @@ public:
   std::istream& operator>>(std::istream& is,
     Mesh_complex_3_in_triangulation_3<Tr2, CoI, CuI>& c3t3);
 
+  template <typename Tr2, typename CoI, typename CuI>
+  friend
+  std::ostream & operator<<(std::ostream& os,
+    const Mesh_complex_3_in_triangulation_3<Tr2, CoI, CuI> &c3t3);
+
+
   static std::string io_signature()
   {
     return Get_io_signature<Tr>()();
@@ -2071,8 +2077,69 @@ std::ostream &
 operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
-  // TODO: implement edge saving
-  return os << c3t3.triangulation();
+  /* Writes:
+   * [Triangulation]
+   *   [Header]
+   *     - the dimension
+   *   [Vertices]
+   *     - the number of finite vertices
+   *     - the non combinatorial information on vertices (point, etc)
+   *   [Cells]
+   *     - the number of cells
+   *     - the cells by the indices of their vertices in the preceding list
+   *       of vertices, plus the non combinatorial information on each cell
+   *   [Cells combinatorial information]
+   *     - the neighbors of each cell by their index in the preceding list of cells
+   *   [Cells other info]
+   *     - when dimension < 3 : the same with faces of maximal dimension
+   * [1D features]
+   *   - the number of edges
+   *   - the edges by the indices of their vertices and their curve_index
+   */
+  using C3t3          = Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>;
+  using Vertex_handle = typename C3t3::Vertex_handle;
+  using Curve_index   = typename C3t3::Curve_index;
+
+  // Writes triangulation
+  Unique_hash_map<Vertex_handle, std::size_t> vertices_map;
+  if (!CGAL::IO::export_triangulation_3(os, c3t3.triangulation(), vertices_map))
+  {
+    os.setstate(std::ios_base::failbit);
+    return os;
+  }
+
+  // Writes 1D features
+  std::size_t nEdges = c3t3.edges_.size();
+  if(IO::is_ascii(os))
+  {
+    os << nEdges << '\n';
+  }
+  else
+  {
+    write(os, nEdges);
+  }
+
+  if (!os)
+    return os;
+
+  for ( typename C3t3::Edge_map::const_iterator it = c3t3.edges_.begin(),
+       end = c3t3.edges_.end() ; it != end ; ++it )
+  {
+    const Vertex_handle& v1  = it->left;
+    const Vertex_handle& v2  = it->right;
+    const std::size_t& iv1   = vertices_map[v1];
+    const std::size_t& iv2   = vertices_map[v2];
+    const Curve_index& index = it->info;
+    if (IO::is_ascii(os))
+      os << iv1 << ' ' << iv2 << ' ' << index << '\n';
+    else {
+      write(os, iv1);
+      write(os, iv2);
+      write(os, index);
+    }
+  }
+
+  return os;
 }
 
 
@@ -2081,13 +2148,70 @@ std::istream &
 operator>> (std::istream& is,
             Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
-  // TODO: implement edge loading
-  c3t3.clear();
-  is >> c3t3.triangulation();
+  /* Reads:
+   * [Triangulation]
+   *   [Header]
+   *     - the dimension
+   *   [Vertices]
+   *     - the number of finite vertices
+   *     - the non combinatorial information on vertices (point, etc)
+   *   [Cells]
+   *     - the number of cells
+   *     - the cells by the indices of their vertices in the preceding list
+   *       of vertices, plus the non combinatorial information on each cell
+   *   [Cells combinatorial information]
+   *     - the neighbors of each cell by their index in the preceding list of cells
+   *   [Cells other info]
+   *     - when dimension < 3 : the same with faces of maximal dimension
+   * [1D features]
+   *   - the number of edges
+   *   - the edges by the indices of their vertices and their curve_index
+   */
+  using C3t3          = Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>;
+  using Vertex_handle = typename C3t3::Vertex_handle;
+  using Curve_index   = typename C3t3::Curve_index;
+  using Internal_edge = typename C3t3::Internal_edge;
 
-  if (!is) {
+  c3t3.clear();
+
+  // Reads triangulation
+  std::vector< Vertex_handle > vertices_handles;
+  if (!CGAL::IO::import_triangulation_3(is, c3t3.triangulation(), vertices_handles))
+  {
     c3t3.clear();
+    is.setstate(std::ios_base::failbit);
     return is;
+  }
+
+  // Reads 1D features
+  std::size_t nEdges;
+  if(IO::is_ascii(is))
+  {
+    is >> nEdges;
+  }
+  else
+  {
+    read(is, nEdges);
+  }
+  // If the file did not have edges
+  if (!is) {
+    return is;
+  }
+
+  for (std::size_t i = 0; i < nEdges; i++)
+  {
+    std::size_t iv1;
+    std::size_t iv2;
+    Curve_index index;
+    if (IO::is_ascii(is))
+      is >> iv1 >> iv2 >> index;
+    else {
+      read(is, iv1);
+      read(is, iv2);
+      read(is, index);
+    }
+    Internal_edge edge(vertices_handles[iv1], vertices_handles[iv2]);
+    c3t3.add_to_complex(edge, index);
   }
 
   c3t3.rescan_after_load_of_triangulation();
