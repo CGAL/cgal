@@ -1319,7 +1319,7 @@ std::array<Vertex_handle, 3> vertices(const Facet& f) const;
 
 /*!
 * returns an array containing the vertices of `c`,
-* in the same order as the indices of `c`.
+* in the same order as the indices in `c`.
 */
 std::array<Vertex_handle, 4> vertices(const Cell_handle c) const;
 
