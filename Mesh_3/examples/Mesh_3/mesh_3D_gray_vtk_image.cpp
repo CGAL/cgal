@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  vtkImageData* vtk_image;
+  vtkImageData* vtk_image = nullptr;
   Image_word_type iso = (argc>2)? boost::lexical_cast<Image_word_type>(argv[2]): 1;
   double fs = (argc>3)? boost::lexical_cast<double>(argv[3]): 1;
   double fd = (argc>4)? boost::lexical_cast<double>(argv[4]): 0.1;
@@ -69,9 +69,8 @@ int main(int argc, char* argv[])
     std::cout << "regular file" << std::endl;
     if (path.has_extension()){
       fs::path stem = path.stem();
-      if ((path.extension() == "nii") || (stem.has_extension() && (stem.extension() == "nii") && (path.extension() == "gz"))) {
-
-        vtkNew<vtkNIFTIImageReader> reader;
+      if ((path.extension() == ".nii") || (stem.has_extension() && (stem.extension() == ".nii") && (path.extension() == ".gz"))) {
+        vtkNIFTIImageReader* reader = vtkNIFTIImageReader::New();
         reader->SetFileName(argv[1]);
         reader->Update();
         vtk_image = reader->GetOutput();
@@ -94,8 +93,12 @@ int main(int argc, char* argv[])
     smoother->SetStandardDeviations(1., 1., 1.);
     smoother->SetInputConnection(dicom_reader->GetOutputPort());
     smoother->Update();
-    vtkImageData* vtk_image = smoother->GetOutput();
+    vtk_image = smoother->GetOutput();
     vtk_image->Print(std::cerr);
+  }
+  if(vtk_image == nullptr){
+    std::cout << "No image loaded" << std::endl;
+    return 0;
   }
   CGAL::Image_3 image = CGAL::IO::read_vtk_image_data(vtk_image);
   if(image.image() == nullptr){
