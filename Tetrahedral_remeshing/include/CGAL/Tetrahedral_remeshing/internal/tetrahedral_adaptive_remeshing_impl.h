@@ -178,7 +178,7 @@ public:
   {
     CGAL_assertion(check_vertex_dimensions());
 
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN);
+    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
     const FT emax = FT(4)/FT(3) * target_edge_length;
     split_long_edges(m_c3t3, emax, m_protect_boundaries,
                      m_cell_selector, m_visitor);
@@ -201,7 +201,7 @@ public:
   {
     CGAL_assertion(check_vertex_dimensions());
 
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN);
+    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
     FT emin = FT(4)/FT(5) * target_edge_length;
     FT emax = FT(4)/FT(3) * target_edge_length;
     collapse_short_edges(m_c3t3, emin, emax, m_protect_boundaries,
@@ -254,7 +254,7 @@ public:
 
   bool resolution_reached()
   {
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN);
+    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
 
     FT emax = FT(4) / FT(3) * target_edge_length;
     FT emin = FT(4) / FT(5) * target_edge_length;
