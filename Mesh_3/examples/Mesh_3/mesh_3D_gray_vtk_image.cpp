@@ -1,6 +1,8 @@
 
+#include <vtkNew.h>
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
+#include <vtkNIFTIImageReader.h>
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkDemandDrivenPipeline.h>
@@ -18,6 +20,8 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/functional.hpp>
+
+#include <filesystem>
 
 typedef short Image_word_type;
 
@@ -43,36 +47,56 @@ public:
   }
 };
 
+namespace fs = std::filesystem;
+
 int main(int argc, char* argv[])
 {
   // Loads image
   if(argc == 1){
-    std::cerr << "Usage:  " << argv[0] << " <directory with dicom data> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1\n";
+    std::cerr << "Usage:  " << argv[0] << " <nii file or dicom directory> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1\n";
     return 0;
   }
 
+  vtkImageData* vtk_image;
   Image_word_type iso = (argc>2)? boost::lexical_cast<Image_word_type>(argv[2]): 1;
   double fs = (argc>3)? boost::lexical_cast<double>(argv[3]): 1;
   double fd = (argc>4)? boost::lexical_cast<double>(argv[4]): 0.1;
   double cs = (argc>5)? boost::lexical_cast<double>(argv[5]): 1;
 
-  vtkDICOMImageReader*dicom_reader = vtkDICOMImageReader::New();
-  dicom_reader->SetDirectoryName(argv[1]);
+  fs::path path(argv[1]);
 
-  vtkDemandDrivenPipeline*executive =
-    vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
-  if (executive)
-    {
-      executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
+  if(fs::is_regular_file(path)){
+    std::cout << "regular file" << std::endl;
+    if (path.has_extension()){
+      fs::path stem = path.stem();
+      if ((path.extension() == "nii") || (stem.has_extension() && (stem.extension() == "nii") && (path.extension() == "gz"))) {
+
+        vtkNew<vtkNIFTIImageReader> reader;
+        reader->SetFileName(argv[1]);
+        reader->Update();
+        vtk_image = reader->GetOutput();
+        vtk_image->Print(std::cerr);
+      }
     }
+  }
+  else if (fs::is_directory(path)) {
+    vtkDICOMImageReader* dicom_reader = vtkDICOMImageReader::New();
+    dicom_reader->SetDirectoryName(argv[1]);
 
-  vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
-  smoother->SetStandardDeviations(1., 1., 1.);
-  smoother->SetInputConnection(dicom_reader->GetOutputPort());
-  smoother->Update();
-  vtkImageData* vtk_image = smoother->GetOutput();
-  vtk_image->Print(std::cerr);
+    vtkDemandDrivenPipeline* executive =
+      vtkDemandDrivenPipeline::SafeDownCast(dicom_reader->GetExecutive());
+    if (executive)
+      {
+        executive->SetReleaseDataFlag(0, 0); // where 0 is the port index
+      }
 
+    vtkImageGaussianSmooth* smoother = vtkImageGaussianSmooth::New();
+    smoother->SetStandardDeviations(1., 1., 1.);
+    smoother->SetInputConnection(dicom_reader->GetOutputPort());
+    smoother->Update();
+    vtkImageData* vtk_image = smoother->GetOutput();
+    vtk_image->Print(std::cerr);
+  }
   CGAL::Image_3 image = CGAL::IO::read_vtk_image_data(vtk_image);
   if(image.image() == nullptr){
     std::cerr << "could not create a CGAL::Image_3 from the vtk image\n";
