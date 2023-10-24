@@ -15,8 +15,5 @@
                 <output>Periodic_3_triangulation_3.qch</output>
                 </file>
             </generate>
-        <register>
-            <file>Periodic_3_triangulation_3.qch</file>
-            </register>
         </docFiles>
     </QHelpCollectionProject>
