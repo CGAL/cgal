@@ -174,13 +174,40 @@ public:
     return m_c3t3_pbackup != NULL;
   }
 
+  bool is_too_long(const Edge& e) const
+  {
+    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
+    const FT emax = FT(4)/FT(3) * target_edge_length;
+    return tr().segment(e).squared_length() > CGAL::square(emax * emax);
+  }
+
+  bool is_too_short(const Edge& e) const
+  {
+    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
+    const FT emin = FT(4)/FT(5) * target_edge_length;
+    return tr().segment(e).squared_length() < CGAL::square(emin * emin);
+  }
+
+  bool is_too_long_or_too_short(const Edge& e) const
+  {
+    const FT sqlen = tr().segment(e).squared_length();
+
+    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
+    const FT sq_emax = CGAL::square(FT(4)/FT(3) * target_edge_length);
+    if(sqlen > sq_emax)
+      return true;
+
+    const FT sq_emin = CGAL::square(FT(4)/FT(5) * target_edge_length);
+    if (sqlen < sq_emin)
+      return true;
+
+    return false;
+  }
+
   void split()
   {
     CGAL_assertion(check_vertex_dimensions());
-
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
-    const FT emax = FT(4)/FT(3) * target_edge_length;
-    split_long_edges(m_c3t3, emax, m_protect_boundaries,
+    split_long_edges(m_c3t3, m_sizing, m_protect_boundaries,
                      m_cell_selector, m_visitor);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -200,11 +227,7 @@ public:
   void collapse()
   {
     CGAL_assertion(check_vertex_dimensions());
-
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
-    FT emin = FT(4)/FT(5) * target_edge_length;
-    FT emax = FT(4)/FT(3) * target_edge_length;
-    collapse_short_edges(m_c3t3, emin, emax, m_protect_boundaries,
+    collapse_short_edges(m_c3t3, m_sizing, m_protect_boundaries,
                          m_cell_selector, m_visitor);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -254,14 +277,6 @@ public:
 
   bool resolution_reached()
   {
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
-
-    FT emax = FT(4) / FT(3) * target_edge_length;
-    FT emin = FT(4) / FT(5) * target_edge_length;
-
-    FT sqmax = emax * emax;
-    FT sqmin = emin * emin;
-
     for (const Edge& e : tr().finite_edges())
     {
       // skip protected edges
@@ -272,11 +287,13 @@ public:
           continue;
       }
 
-      FT sqlen = tr().segment(e).squared_length();
-      if (sqlen < sqmin || sqlen > sqmax)
+      if(is_too_long_or_too_short(e))
         return false;
     }
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Resolution reached" << std::endl;
+#endif
     return true;
   }
 
