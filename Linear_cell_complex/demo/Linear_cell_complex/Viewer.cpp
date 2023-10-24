@@ -20,7 +20,7 @@ Viewer::Viewer(QWidget *parent)
     m_previous_scene_empty(true)
 {
   m_gs_options.face_color=[](const LCC & alcc,
-                                    Dart_const_descriptor dh)->CGAL::IO::Color
+                             Dart_const_descriptor dh)->CGAL::IO::Color
   {
     if(alcc.template is_free<3>(dh))
     { return alcc.template info<3>(dh).color(); }
@@ -53,7 +53,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
   scene = scene_;
 
   if (scene->lcc!=nullptr)
-  { CGAL::add_in_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options); }
+  { CGAL::add_to_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options); }
 
   if (doredraw)
   { Base::redraw(); }
@@ -62,7 +62,7 @@ void Viewer::setScene(Scene *scene_, bool doredraw)
 void Viewer::sceneChanged()
 {
   m_graphic_buffer.clear();
-  CGAL::add_in_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options);
+  CGAL::add_to_graphics_scene(*scene->lcc, m_graphic_buffer, m_gs_options);
 
   this->camera()->setSceneBoundingBox(
       CGAL::qglviewer::Vec(gBuffer.bounding_box().xmin(),

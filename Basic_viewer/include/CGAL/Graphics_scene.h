@@ -158,7 +158,7 @@ public:
     update_bounding_box(lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox());
   }
 
-  void negate_all_normals() const
+  void reverse_normals() const
   {
     m_buffer_for_mono_faces.negate_normals();
     m_buffer_for_colored_faces.negate_normals();

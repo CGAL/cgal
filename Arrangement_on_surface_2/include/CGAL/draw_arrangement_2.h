@@ -23,7 +23,7 @@
 #include <cstdlib>
 #include <random>
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -50,10 +50,10 @@ struct Default_color_generator {
 // Viewer class for`< Polygon_2
 template <typename ArrangementOnSurface_2,
           typename ColorGenerator = Default_color_generator>
-class Aos_2_basic_viewer_qt : public Basic_viewer_qt {
+class Aos_2_basic_viewer_qt : public Basic_viewer {
   using Aos = ArrangementOnSurface_2;
   using Color_generator = ColorGenerator;
-  using Base = Basic_viewer_qt;
+  using Base = Basic_viewer;
   using Gt = typename Aos::Geometry_traits_2;
   using Point = typename Aos::Point_2;
   using X_monotone_curve = typename Aos::X_monotone_curve_2;
@@ -185,7 +185,7 @@ public:
   void add_elements() {
     // std::cout << "add_elements()\n";
     // std::cout << "ratio: " << this->pixel_ratio() << std::endl;
-    clear();
+    m_graphics_scene.clear();
     m_visited.clear();
 
     if (m_aos.is_empty()) return;
@@ -276,8 +276,8 @@ protected:
     auto it = polyline.begin();
     auto prev = it++;
     for (; it != polyline.end(); prev = it++) {
-      this->add_segment(*prev, *it);
-      this->add_point_in_face(*prev);
+      m_graphics_scene.add_segment(*prev, *it);
+      m_graphics_scene.add_point_in_face(*prev);
     }
   }
 
@@ -383,7 +383,7 @@ protected:
      * For now we use C++14 features.
      */
     auto color = m_color_generator(circ->face());
-    this->face_begin(color);
+    m_graphics_scene.face_begin(color);
 
     const auto* traits = this->m_aos.geometry_traits();
     auto ext = find_smallest(circ, *traits);
@@ -396,7 +396,7 @@ protected:
       curr = curr->next();
     } while (curr != ext);
 
-    this->face_end();
+    m_graphics_scene.face_end();
   }
 
   /*! Draw a curve using aproximate coordinates.
@@ -414,7 +414,7 @@ protected:
     if (polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
-    for (; it != polyline.end(); prev = it++) this->add_segment(*prev, *it);
+    for (; it != polyline.end(); prev = it++) m_graphics_scene.add_segment(*prev, *it);
   }
 
   /*! Compile time dispatching
@@ -534,7 +534,7 @@ protected:
 #else
   template <typename T>
   void draw_point_impl1(const Point& p, T const& traits, int)
-  { add_point(traits.approximate_2_object()(p)); }
+  { m_graphics_scene.add_point(traits.approximate_2_object()(p)); }
 #endif
 
   template <typename Kernel_, int AtanX, int AtanY>

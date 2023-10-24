@@ -16,13 +16,13 @@
 
 #include "typedefs.h"
 #include <CGAL/draw_linear_cell_complex.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 
-class Viewer : public CGAL::Basic_viewer_qt<float>
+class Viewer : public CGAL::Basic_viewer
 {
   Q_OBJECT
 
-  typedef CGAL::Basic_viewer_qt<float> Base;
+  typedef CGAL::Basic_viewer Base;
 
 public:
   Viewer(QWidget* parent);
@@ -35,11 +35,11 @@ public Q_SLOTS:
 
 private:
   CGAL::Graphics_scene_options<LCC,
-                                         Dart_const_descriptor,
-                                         Dart_const_descriptor,
-                                         Dart_const_descriptor,
-                                         Dart_const_descriptor> m_gs_options;
-  CGAL::Graphics_scene<float> m_graphic_buffer;
+                               Dart_const_descriptor,
+                               Dart_const_descriptor,
+                               Dart_const_descriptor,
+                               Dart_const_descriptor> m_gs_options;
+  CGAL::Graphics_scene m_graphic_buffer;
   Scene* scene;
   bool m_previous_scene_empty;
 };
