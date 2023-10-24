@@ -31,7 +31,7 @@ void test()
   std::size_t nb_runs   = 2;
   unsigned int nb_lloyd = 2;
   unsigned int nb_odt   = 2;
-  double perturb_bound  = 10.;
+  double perturb_bound  = 9.;
   double exude_bound    = 15.;
 
   // Domain
