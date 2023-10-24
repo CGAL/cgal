@@ -155,7 +155,7 @@ public:
     resize(CGAL_BASIC_VIEWER_INIT_SIZE_X, CGAL_BASIC_VIEWER_INIT_SIZE_Y);
 
     if (inverse_normal)
-    { negate_all_normals(); }
+    { reverse_normals(); }
   }
 
   ~Basic_viewer()
@@ -168,73 +168,73 @@ public:
       vao[i].destroy();
   }
 
-  void set_draw_vertices(bool b)
+  void draw_vertices(bool b)
   { m_draw_vertices = b; }
-  void set_draw_edges(bool b)
+  void draw_edges(bool b)
   { m_draw_edges = b; }
-  void set_draw_rays(bool b)
+  void draw_rays(bool b)
   { m_draw_rays = b; }
-  void set_draw_lines(bool b)
+  void draw_lines(bool b)
   { m_draw_lines = b; }
-  void set_draw_faces(bool b)
+  void draw_faces(bool b)
   { m_draw_faces = b; }
-  void set_use_mono_color(bool b)
+  void use_mono_color(bool b)
   { m_use_mono_color = b; }
-  void set_draw_text(bool b)
+  void draw_text(bool b)
   { m_draw_text = b; }
 
-  void set_vertices_mono_color(const CGAL::IO::Color& c)
+  void vertices_mono_color(const CGAL::IO::Color& c)
   { m_vertices_mono_color=c; }
-  void set_edges_mono_color(const CGAL::IO::Color& c)
+  void edges_mono_color(const CGAL::IO::Color& c)
   { m_edges_mono_color=c; }
-  void set_rays_mono_color(const CGAL::IO::Color& c)
+  void rays_mono_color(const CGAL::IO::Color& c)
   { m_rays_mono_color=c; }
-  void set_lines_mono_color(const CGAL::IO::Color& c)
+  void lines_mono_color(const CGAL::IO::Color& c)
   { m_lines_mono_color=c; }
-  void set_faces_mono_color(const CGAL::IO::Color& c)
+  void faces_mono_color(const CGAL::IO::Color& c)
   { m_faces_mono_color=c; }
 
-  void negate_draw_vertices()
+  void toggle_draw_vertices()
   { m_draw_vertices = !m_draw_vertices; }
-  void negate_draw_edges()
+  void toggle_draw_edges()
   { m_draw_edges = !m_draw_edges; }
-  void negate_draw_rays()
+  void toggle_draw_rays()
   { m_draw_rays = !m_draw_rays; }
-  void negate_draw_lines()
+  void toggle_draw_lines()
   { m_draw_lines = !m_draw_lines; }
-  void negate_draw_faces()
+  void toggle_draw_faces()
   { m_draw_faces = !m_draw_faces; }
-  void negate_use_mono_color()
+  void toggle_use_mono_color()
   { m_use_mono_color = !m_use_mono_color; }
-  void negate_draw_text()
+  void toggle_draw_text()
   { m_draw_text = !m_draw_text; }
 
-  bool get_draw_vertices() const
+  bool draw_vertices() const
   { return m_draw_vertices; }
-  bool get_draw_edges() const
+  bool draw_edges() const
   { return m_draw_edges; }
-  bool get_draw_rays() const
+  bool draw_rays() const
   { return m_draw_rays; }
-  bool get_draw_lines() const
+  bool draw_lines() const
   { return m_draw_lines; }
-  bool get_draw_faces() const
+  bool draw_faces() const
   { return m_draw_faces; }
-  bool get_use_mono_color() const
+  bool use_mono_color() const
   { return m_use_mono_color; }
-  bool get_inverse_normal() const
+  bool reverse_normal() const
   { return m_inverse_normal; }
-  bool get_draw_text() const
+  bool draw_text() const
   { return m_draw_text; }
 
-  const CGAL::IO::Color& get_vertices_mono_color() const
+  const CGAL::IO::Color& vertices_mono_color() const
   { return m_vertices_mono_color; }
-  const CGAL::IO::Color& get_edges_mono_color() const
+  const CGAL::IO::Color& edges_mono_color() const
   { return m_edges_mono_color; }
-  const CGAL::IO::Color& get_rays_mono_color() const
+  const CGAL::IO::Color& rays_mono_color() const
   { return m_rays_mono_color; }
-  const CGAL::IO::Color& get_lines_mono_color() const
+  const CGAL::IO::Color& lines_mono_color() const
   { return m_lines_mono_color; }
-  const CGAL::IO::Color& get_faces_mono_color() const
+  const CGAL::IO::Color& faces_mono_color() const
   { return m_faces_mono_color; }
 
   Local_kernel::Plane_3 clipping_plane() const
@@ -245,10 +245,10 @@ public:
     return Local_kernel::Plane_3(n[0], n[1], n[2], -n*pos);
   }
 
-  bool is_clipping_plane_enabled() const
+  bool clipping_plane_enabled() const
   { return (m_use_clipping_plane!=CLIPPING_PLANE_OFF); }
 
-  const Graphics_scene& get_graphics_scene() const
+  const Graphics_scene& graphics_scene() const
   { return gBuffer; }
 
   virtual void redraw()
@@ -257,10 +257,10 @@ public:
     update();
   }
 
-  void negate_all_normals()
+  void reverse_normals()
   {
     m_inverse_normal=!m_inverse_normal;
-    gBuffer.negate_all_normals();
+    gBuffer.reverse_normals();
   }
 
   // Returns true if the data structure lies on a plane
@@ -1254,7 +1254,7 @@ protected:
       }
       else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
       {
-        negate_all_normals();
+        reverse_normals();
         displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
         redraw();
       }
@@ -1537,6 +1537,7 @@ protected:
 
 };
 
+inline
 void draw_graphics_scene(const Graphics_scene& graphics_scene,
                          const char *title="CGAL Basic Viewer")
 {
@@ -1553,8 +1554,7 @@ void draw_graphics_scene(const Graphics_scene& graphics_scene,
     int argc = 1;
     const char *argv[2] = {title, nullptr};
     QApplication app(argc, const_cast<char **>(argv));
-    Basic_viewer basic_viewer(app.activeWindow(),
-                                 graphics_scene, title);
+    Basic_viewer basic_viewer(app.activeWindow(), graphics_scene, title);
 
     basic_viewer.show();
     app.exec();
