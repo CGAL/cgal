@@ -3,13 +3,23 @@
 const int number_of_bitset = 4;
 
 in vec4 color;
+in float dist[6];
 flat in vec2 subdomain_out;
+uniform bool is_clipbox_on;
 uniform bool is_surface;
 uniform bool is_filterable;
 uniform int is_visible_bitset[number_of_bitset];
 out vec4 out_color;
 void main(void) 
 { 
+  if(is_clipbox_on)
+    if(dist[0]>0.0 ||
+      dist[1]>0.0 ||
+      dist[2]>0.0 ||
+      dist[3]>0.0 ||
+      dist[4]>0.0 ||
+      dist[5]>0.0)
+        discard;
   if(is_filterable)
   {
     uint domain1 = uint(subdomain_out.x);

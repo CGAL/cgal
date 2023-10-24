@@ -216,7 +216,7 @@ boxes and approximated geometry, which is the case here. It saves us
 the extra space that was needed for the explicit `id`-number in
 the previous example.
 
-We run the self intersection algorithm with the `report_inters`
+We run the self intersection algorithm with the `report_inters()`
 function as callback. This callback reports the intersecting boxes. It
 uses the `handle` and the global `triangles` vector to
 calculate the triangle numbers. Then it checks the triangles
@@ -480,4 +480,3 @@ however, we learned too late about this implementation.
 
 */
 } /* namespace CGAL */
-

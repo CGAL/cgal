@@ -122,6 +122,9 @@ public:
 
   void data_item_destroyed();
 
+  void check_new_item(int id);
+  void check_deleted_item(Scene_interface::Item_id id);
+
   void reset_spheres();
 
   void reset_intersection_item();
@@ -129,6 +132,7 @@ public:
   void show_grid(bool b);
   void show_spheres(bool b);
   void computeIntersection();
+  void set_cut_edge(bool b);
 
   virtual QPixmap graphicalToolTip() const Q_DECL_OVERRIDE;
 
