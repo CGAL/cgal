@@ -172,7 +172,7 @@ void tetrahedral_isotropic_remeshing(
   tetrahedral_isotropic_remeshing(
     tr,
     [target_edge_length]
-      (const typename Triangulation::Point& /* p */, const Index&, const int&)
+      (const typename Traits::Point_3& /* p */, const Index&, const int&)
         {return target_edge_length; },
     np);
 }
@@ -189,7 +189,7 @@ void tetrahedral_isotropic_remeshing(
   tetrahedral_isotropic_remeshing(
     tr,
     [target_edge_length]
-      (const typename Triangulation::Point& /* p */, const Index&, const int&)
+      (const typename Traits::Point_3& /* p */, const Index&, const int&)
         {return target_edge_length;},
     np);
 }

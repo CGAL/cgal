@@ -176,14 +176,20 @@ public:
 
   bool is_too_long(const Edge& e) const
   {
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
+    const FT target_edge_length
+      = m_sizing(CGAL::midpoint(tr().segment(e)),
+                 0,
+                 0);
     const FT emax = FT(4)/FT(3) * target_edge_length;
     return tr().segment(e).squared_length() > CGAL::square(emax * emax);
   }
 
   bool is_too_short(const Edge& e) const
   {
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
+    const FT target_edge_length
+      = m_sizing(CGAL::midpoint(tr().segment(e)),
+                 0,
+                 0);
     const FT emin = FT(4)/FT(5) * target_edge_length;
     return tr().segment(e).squared_length() < CGAL::square(emin * emin);
   }
@@ -191,8 +197,11 @@ public:
   bool is_too_long_or_too_short(const Edge& e) const
   {
     const FT sqlen = tr().segment(e).squared_length();
+    const FT target_edge_length
+      = m_sizing(CGAL::midpoint(tr().segment(e)),
+                 0,
+                 0);
 
-    const FT target_edge_length = m_sizing(CGAL::ORIGIN, 0, 0);
     const FT sq_emax = CGAL::square(FT(4)/FT(3) * target_edge_length);
     if(sqlen > sq_emax)
       return true;
