@@ -1181,10 +1181,12 @@ bool can_be_collapsed(const typename C3T3::Edge& e,
   }
 }
 
-template<typename C3T3, typename CellSelector, typename Visitor>
+template<typename C3T3,
+         typename Sizing,
+         typename CellSelector,
+         typename Visitor>
 void collapse_short_edges(C3T3& c3t3,
-                          const typename C3T3::Triangulation::Geom_traits::FT& low,
-                          const typename C3T3::Triangulation::Geom_traits::FT& high,
+                          const Sizing& sizing,
                           const bool protect_boundaries,
                           CellSelector cell_selector,
                           Visitor& visitor)
@@ -1206,13 +1208,17 @@ void collapse_short_edges(C3T3& c3t3,
   typename Gt::Compute_squared_length_3 sql
     = tr.geom_traits().compute_squared_length_3_object();
 
+  const FT target_edge_length = sizing(CGAL::ORIGIN, 0, 0);
+  const FT low = FT(4) / FT(5) * target_edge_length;
+  const FT high = FT(4) / FT(3) * target_edge_length;
+  const FT sq_low = low*low;
+  const FT sq_high = high*high;
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Collapse short edges (" << low << ", " << high << ")...";
   std::cout.flush();
   std::size_t nb_collapses = 0;
 #endif
-  const FT sq_low = low*low;
-  const FT sq_high = high*high;
 
   //collect long edges
   Boost_bimap short_edges;

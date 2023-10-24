@@ -168,10 +168,12 @@ void tetrahedral_isotropic_remeshing(
   const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
+  typedef typename TDS::Vertex::Index Index;
   tetrahedral_isotropic_remeshing(
     tr,
-    [target_edge_length](const typename Triangulation::Point& /* p */)
-                        {return target_edge_length;},
+    [target_edge_length]
+      (const typename Triangulation::Point& /* p */, const Index&, const int&)
+        {return target_edge_length; },
     np);
 }
 
@@ -183,10 +185,12 @@ void tetrahedral_isotropic_remeshing(
   const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
+  typedef typename TDS::Vertex::Index Index;
   tetrahedral_isotropic_remeshing(
     tr,
-    [target_edge_length](const typename Triangulation::Point& /* p */)
-                        {return target_edge_length; },
+    [target_edge_length]
+      (const typename Triangulation::Point& /* p */, const Index&, const int&)
+        {return target_edge_length;},
     np);
 }
 

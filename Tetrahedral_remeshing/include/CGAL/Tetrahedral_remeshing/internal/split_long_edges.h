@@ -234,9 +234,12 @@ bool can_be_split(const typename C3T3::Edge& e,
   }
 }
 
-template<typename C3T3, typename CellSelector, typename Visitor>
+template<typename C3T3,
+         typename Sizing,
+         typename CellSelector,
+         typename Visitor>
 void split_long_edges(C3T3& c3t3,
-                      const typename C3T3::Triangulation::Geom_traits::FT& high,
+                      const Sizing& sizing,
                       const bool protect_boundaries,
                       CellSelector cell_selector,
                       Visitor& visitor)
@@ -253,6 +256,9 @@ void split_long_edges(C3T3& c3t3,
   boost::bimaps::set_of<Edge_vv>,
         boost::bimaps::multiset_of<FT, std::greater<FT> > >  Boost_bimap;
   typedef typename Boost_bimap::value_type               long_edge;
+
+  const FT target_edge_length = sizing(CGAL::ORIGIN, 0, 0);
+  const FT high = FT(4) / FT(3) * target_edge_length;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Split long edges (" << high << ")...";
