@@ -47,6 +47,7 @@ int main()
                          .cell_radius_edge_ratio(3).cell_size(3)
   );
 
+  /// [Meshing]
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria
     , params::initial_points_generator(CGAL::Construct_initial_points_labeled_image(image))
   );

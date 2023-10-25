@@ -20,6 +20,16 @@
 
 #include <CGAL/tags.h>
 
+/**
+ * @brief initialize_triangulation_from_gray_image Initialize a c3t3 by detecting all connected components in the 3D gray image segmented around isovalue
+ * @param c3t3 The c3t3 to initialize (output)
+ * @param domain The domain, see concept `MeshDomain_3`
+ * @param image The gray image
+ * @param criteria The initial meshing criteria
+ * @param iso_value The surface's value
+ * @param image_values_to_subdomain_indices An optional functor used to segment the gray image (default is using isovalue).
+ * @param protect_features Whether protect_features is called or not (default is false)
+ */
 template<class C3T3, class MeshDomain, class MeshCriteria,
          typename FT,
          typename Image_word_type,

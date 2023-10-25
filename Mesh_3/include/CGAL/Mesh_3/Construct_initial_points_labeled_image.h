@@ -89,7 +89,7 @@ struct Construct_initial_points_labeled_image
       : image(image_)
   { }
 
-  /*!
+    /*!
    * \brief operator () The points are constructed using the API of the mesh domain, as follows.
    * First the functor `construct_intersect` is created
    *
@@ -107,6 +107,13 @@ struct Construct_initial_points_labeled_image
    */
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
+  {
+    CGAL_IMAGE_IO_CASE(image.image(), operator()(pts, domain, CGAL::Identity<Word>(), c3t3, n));
+    return pts;
+  }
+
+  template <typename OutputIterator, typename MeshDomain, typename C3t3, typename TransformOperator>
+  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, TransformOperator transform, const C3t3& c3t3, int n = 20) const
   {
     typedef typename MeshDomain::Subdomain     Subdomain;
     typedef typename MeshDomain::Point_3       Point_3;
@@ -146,7 +153,7 @@ struct Construct_initial_points_labeled_image
     CGAL_IMAGE_IO_CASE(image.image(), search_for_connected_components_in_labeled_image(image,
                                                      std::back_inserter(seeds),
                                                      CGAL::Emptyset_iterator(),
-                                                     CGAL::Identity<Word>(),
+                                                     transform,
                                                      Word()));
     std::cout << "  " << seeds.size() << " components were found." << std::endl;
     std::cout << "Construct initial points..." << std::endl;

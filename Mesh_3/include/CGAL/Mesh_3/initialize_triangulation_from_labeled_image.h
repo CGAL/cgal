@@ -38,6 +38,15 @@ void init_tr_from_labeled_image_call_init_features(C3T3& c3t3,
             << " initial points on 1D-features" << std::endl;
 }
 
+/**
+ * @brief initialize_triangulation_from_labeled_image Initialize a c3t3 by detecting all connected components in the 3D segmented image
+ * @param c3t3 The c3t3 to initialize (output)
+ * @param domain The domain, see concept `MeshDomain_3`
+ * @param image The segmented image
+ * @param criteria The initial meshing criteria
+ * @param protect_features Whether protect_features is called or not (default is false)
+ * @param transform An optional functor used to transform the image's value (default is no transformation).
+ */
 template<class C3T3, class MeshDomain, class MeshCriteria,
          typename Image_word_type,
          typename TransformOperator = CGAL::Identity<Image_word_type> >
@@ -74,7 +83,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   std::vector<ConstructedPoint> constructedPoints;
 
   CGAL::Construct_initial_points_labeled_image construct(image);
-  construct(std::back_inserter(constructedPoints), domain, c3t3);
+  construct(std::back_inserter(constructedPoints), domain, transform, c3t3);
 
   std::cout << "  " << constructedPoints.size() << " constructed points" << std::endl;
 
