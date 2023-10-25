@@ -31,6 +31,8 @@
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
 
+#include <optional>
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -980,6 +982,74 @@ bool topology_test(const typename C3t3::Edge& edge,
   } while (++fcirc != fdone);
 
   return true;
+}
+
+template<typename Tr, typename Sizing>
+typename Tr::Geom_traits::FT
+squared_upper_size_bound(const typename Tr::Edge& e,
+                         const Sizing& sizing,
+                         const Tr& tr)
+{
+  using FT = typename Tr::Geom_traits::FT;
+
+  const FT target_edge_length
+    = sizing(CGAL::midpoint(tr.segment(e)),
+             0,
+             0);
+  const FT emax = FT(4) / FT(3) * target_edge_length;
+  return CGAL::square(emax);
+}
+
+template<typename Tr, typename Sizing>
+typename Tr::Geom_traits::FT
+squared_lower_size_bound(const typename Tr::Edge& e,
+                         const Sizing& sizing,
+                         const Tr& tr)
+{
+  using FT = typename Tr::Geom_traits::FT;
+
+  const FT target_edge_length
+    = sizing(CGAL::midpoint(tr.segment(e)),
+             0,
+             0);
+  const FT emin = FT(4) / FT(5) * target_edge_length;
+  return CGAL::square(emin);
+}
+
+template<typename Tr, typename Sizing>
+std::optional<typename Tr::Geom_traits::FT>
+is_too_long(const typename Tr::Edge& e,
+            const Sizing& sizing,
+            const Tr& tr)
+{
+  using FT = typename Tr::Geom_traits::FT;
+  auto sql = tr.geom_traits().compute_squared_length_3_object();
+
+  const FT sq_max = squared_upper_size_bound(e, sizing, tr);
+  const FT sqlen = sql(tr.segment(e));
+
+  if (sqlen > sq_max)
+    return sqlen;
+  else
+    return std::nullopt;
+}
+
+template<typename Tr, typename Sizing>
+std::optional<typename Tr::Geom_traits::FT>
+is_too_short(const typename Tr::Edge& e,
+             const Sizing& sizing,
+             const Tr& tr)
+{
+  using FT = typename Tr::Geom_traits::FT;
+  auto sql = tr.geom_traits().compute_squared_length_3_object();
+
+  const FT sq_min = squared_lower_size_bound(e, sizing, tr);
+  const FT sqlen = sql(tr.segment(e));
+
+  if (sqlen < sq_min)
+    return sqlen;
+  else
+    return std::nullopt;
 }
 
 template<typename C3t3>
