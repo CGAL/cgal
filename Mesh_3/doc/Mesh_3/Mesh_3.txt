@@ -760,7 +760,7 @@ that call is replaced by:
 
 The code of the function `initialize_triangulation_from_labeled_image()` is
 in the header \ref
-CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h. It get points from
+CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h. It gets points from
 \ref CGAL/Mesh_3/Construct_initial_points_labeled_image.h and insert them
 in the triangulation. The code of the Construct_initial_points_labeled_image
 function is rather complicated. The following lines show how to insert new
