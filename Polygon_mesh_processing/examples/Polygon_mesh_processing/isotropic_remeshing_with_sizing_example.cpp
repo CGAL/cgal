@@ -33,8 +33,8 @@ int main(int argc, char* argv[])
       faces(mesh),
       sizing_field,
       mesh,
-      PMP::number_of_iterations(nb_iter)
-          .number_of_relaxation_steps(3)
+      CGAL::parameters::number_of_iterations(nb_iter)
+                       .number_of_relaxation_steps(3)
       );
 
   CGAL::IO::write_polygon_mesh("out.off", mesh, CGAL::parameters::stream_precision(17));
