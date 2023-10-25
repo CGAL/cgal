@@ -59,7 +59,7 @@
 #define CGAL_BASIC_VIEWER_INIT_SIZE_Y 450
 
 namespace CGAL {
-
+namespace Qt {
 //------------------------------------------------------------------------------
 class Basic_viewer : public CGAL::QGLViewer
 {
@@ -1457,7 +1457,7 @@ protected:
     return text;
   }
 public:
-  std::function<bool(QKeyEvent *, CGAL::Basic_viewer *)> on_key_pressed;
+  std::function<bool(QKeyEvent *, CGAL::Qt::Basic_viewer *)> on_key_pressed;
 
 protected:
   const Graphics_scene& gBuffer;
@@ -1537,30 +1537,6 @@ protected:
 
 };
 
-inline
-void draw_graphics_scene(const Graphics_scene& graphics_scene,
-                         const char *title="CGAL Basic Viewer")
-{
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite = true;
-#else
-  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite)
-  {
-    Qt::init_ogl_context(4, 3);
-
-    int argc = 1;
-    const char *argv[2] = {title, nullptr};
-    QApplication app(argc, const_cast<char **>(argv));
-    Basic_viewer basic_viewer(app.activeWindow(), graphics_scene, title);
-
-    basic_viewer.show();
-    app.exec();
-  }
-}
-
 //------------------------------------------------------------------------------
 class QApplication_and_basic_viewer
 {
@@ -1621,6 +1597,36 @@ protected:
   char *m_argv[2];
   int m_argc;
 };
+
+} // End namespace Qt
+
+// A shortcut to use directly CGAL::Basic_viewer instead of CGAL::Qt::Basic_viewer.
+// Can be changed later if we have several viewers.
+using Qt::Basic_viewer;
+
+inline
+void draw_graphics_scene(const Graphics_scene& graphics_scene,
+                         const char *title="CGAL Basic Viewer")
+{
+#if defined(CGAL_TEST_SUITE)
+  bool cgal_test_suite = true;
+#else
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+#endif
+
+  if (!cgal_test_suite)
+  {
+    Qt::init_ogl_context(4, 3);
+
+    int argc = 1;
+    const char *argv[2] = {title, nullptr};
+    QApplication app(argc, const_cast<char **>(argv));
+    Basic_viewer basic_viewer(app.activeWindow(), graphics_scene, title);
+
+    basic_viewer.show();
+    app.exec();
+  }
+}
 
 } // End namespace CGAL
 
