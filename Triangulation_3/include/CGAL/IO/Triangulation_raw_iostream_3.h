@@ -233,7 +233,6 @@ bool write_cells(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr, cons
   return false;
 }
 
-
 template < class GT, class Tds, class Lds >
 bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::vector< typename Tds::Vertex_handle >& vertices_handles)
 {
@@ -267,13 +266,6 @@ bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::
 
 
 template < class GT, class Tds, class Lds >
-bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
-{
-  Unique_hash_map<typename Tds::Vertex_handle, std::size_t> vertices_map;
-  return export_triangulation_3(os, tr, vertices_map);
-}
-
-template < class GT, class Tds, class Lds >
 bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr, Unique_hash_map<typename Tds::Vertex_handle, std::size_t>& vertices_map)
 {
   // Writes:
@@ -297,13 +289,13 @@ bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds
       && internal::write_cells(os, tr, vertices_map);
 }
 
-
 template < class GT, class Tds, class Lds >
-bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
+bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
 {
-  std::vector<typename Tds::Vertex_handle > vertices_handles;
-  return import_triangulation_3(is, tr, vertices_handles);
+  Unique_hash_map<typename Tds::Vertex_handle, std::size_t> vertices_map;
+  return export_triangulation_3(os, tr, vertices_map);
 }
+
 
 template < class GT, class Tds, class Lds >
 bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector<typename Tds::Vertex_handle >& vertices_handles)
@@ -334,6 +326,12 @@ bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
   return result;
 }
 
+template < class GT, class Tds, class Lds >
+bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
+{
+  std::vector<typename Tds::Vertex_handle > vertices_handles;
+  return import_triangulation_3(is, tr, vertices_handles);
+}
 
 
 } // end namespace IO
