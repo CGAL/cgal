@@ -417,12 +417,12 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *   \cgalParamSectionBegin{Mesh initialization}
  *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be supplied before the meshing process.
  *                           It must follow the `InitialPointsGenerator` concept.
- *                           The following two named parameters control this option:
+ *                           The following named parameter control this option:
  *                           <UL>
  *                             <LI> `parameters::initial_points_generator()`
- *                             <LI> `parameters::default_initial_points_generation()`
  *                           </UL>}
- *     \cgalParamDefault{`parameters::default_initial_points_generation()`}
+ *     \cgalParamDefault{empty `parameters::initial_points_generator()`, the domain's `construct_initial_points_object()`
+ * will be called for the points initialization.}
  *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd
  *
@@ -462,7 +462,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
 
     parameters::internal::Initial_points_generator_options<MeshDomain, C3T3> initial_points_generator_options_param =
         parameters::internal::Initial_points_generator_generator<MeshDomain, C3T3>()
-        (choose_parameter(get_parameter(np, internal_np::initial_points_generator_options_param), parameters::default_initial_points_generation().v));
+        (choose_parameter(get_parameter(np, internal_np::initial_points_generator_options_param), parameters::initial_points_generator().v));
 
     make_mesh_3_impl(c3t3, domain, criteria,
             exude_param, perturb_param, odt_param, lloyd_param,

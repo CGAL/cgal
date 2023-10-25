@@ -7,6 +7,7 @@ a set of initial points on the surface of the domain.
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Construct_initial_points_labeled_image}
+\cgalHasModels{CGAL::Construct_initial_points_gray_image}
 \cgalHasModelsEnd
 
 \sa `MeshCellCriteria_3`

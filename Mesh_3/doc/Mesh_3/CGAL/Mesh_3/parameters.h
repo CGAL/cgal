@@ -454,33 +454,13 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::default_initial_points_generation()` enables the user to
- * tell the mesh generation function `make_mesh_3()`
- * that the domain's `construct_initial_points_object()`
- * will be called for the points initialization.
- *
- * \cgalHeading{Example}
- *
- * \code{.cpp}
- * // Mesh generation using the domlain's construct_initial_points_object
- * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
- *                               criteria,
- *                               parameters::default_initial_points_generation());
- * \endcode
- *
- * \sa `CGAL::parameters::initial_points_generator()`
- * \sa `CGAL::make_mesh_3()`
- * \sa `MeshDomain_3::Construct_initial_points`
- *
- */
-unspecified_type default_initial_points_generation();
-/*!
- * \ingroup PkgMesh3Parameters
- *
  * The function `parameters::initial_points_generator()` enables the user to
  * specify a Functor of the `InitialPointsGenerator` concept
  * to the mesh generation function `make_mesh_3()`.
  * The functor will be called for the points initialization.
+ * If this parameter is specified without argument, the default behaviour is executed,
+ * i.e. the domain's `construct_initial_points_object()`
+ * will be called for the points initialization.
  *
  * \cgalHeading{Example}
  *
@@ -491,8 +471,8 @@ unspecified_type default_initial_points_generation();
  *                               parameters::initial_points_generator(CGAL::Construct_initial_points_labeled_image(image)));
  * \endcode
  *
- * \sa `CGAL::parameters::default_initial_points_generation()`
  * \sa `CGAL::make_mesh_3()`
+ * \sa `MeshDomain_3::Construct_initial_points`
  *
  */
 template <typename InitialPointsGenerator>

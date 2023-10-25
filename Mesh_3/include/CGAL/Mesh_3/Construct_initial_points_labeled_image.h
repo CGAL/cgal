@@ -80,6 +80,7 @@ struct Get_point
 *
 * \sa `CGAL::parameters::initial_points_generator()`
 * \sa `CGAL::make_mesh_3()`
+* \sa `CGAL::Construct_initial_points_gray_image()`
 */
 struct Construct_initial_points_labeled_image
 {
@@ -89,8 +90,8 @@ struct Construct_initial_points_labeled_image
       : image(image_)
   { }
 
-    /*!
-   * \brief operator () The points are constructed using the API of the mesh domain, as follows.
+   /*!
+   * \brief Constructs the points using the API of the mesh domain, as follows.
    * First the functor `construct_intersect` is created
    *
    * \snippet this construct intersection
@@ -112,6 +113,20 @@ struct Construct_initial_points_labeled_image
     return pts;
   }
 
+  /*!
+   * \brief Same as above, but a `TransformOperator` is used
+   *
+   * @tparam OutputIterator an `OutputIterator` of points of type
+   * `std::pair<MeshDomain::Point_3, MeshDomain::Index>`
+   * @tparam MeshDomain a model of `MeshDomain_3`
+   * @tparam TransformOperator a functor to transform values of the image.
+   * It must provides the following type:<br>
+   * `result_type`<br>
+   * and the following operator:<br>
+   * `template<typename FT>`<br>
+   * `result_type operator()(FT v)`
+   * @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
+   */
   template <typename OutputIterator, typename MeshDomain, typename C3t3, typename TransformOperator>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, TransformOperator transform, const C3t3& c3t3, int n = 20) const
   {
@@ -179,10 +194,10 @@ struct Construct_initial_points_labeled_image
 
       const double radius = double(seed.radius + 1)* max_v;
       CGAL::Random_points_on_sphere_3<Point_3> points_on_sphere_3(radius);
-      /// [construct intersection]
+      /// \noop [construct intersection]
       typename MeshDomain::Construct_intersection construct_intersection =
           domain.construct_intersection_object();
-      /// [construct intersection]
+      /// \noop [construct intersection]
 
       std::vector<Vector_3> directions;
       if(seed.radius < 2) {
@@ -206,16 +221,16 @@ struct Construct_initial_points_labeled_image
         const Point_3 test = seed_point + v;
         const Segment_3 test_segment = Segment_3(seed_point, test);
 
-        /// [use construct intersection]
+        /// \noop [use construct intersection]
         const typename MeshDomain::Intersection intersect =
             construct_intersection(test_segment);
-        /// [use construct intersection]
+        /// \noop [use construct intersection]
         if (std::get<2>(intersect) != 0)
         {
-          /// [get construct intersection]
+          /// \noop [get construct intersection]
           const Point_3& intersect_point = std::get<0>(intersect);
           const Index& intersect_index = std::get<1>(intersect);
-          /// [get construct intersection]
+          /// \noop [get construct intersection]
           Weighted_point pi = Weighted_point(intersect_point);
 
           // This would cause trouble to optimizers

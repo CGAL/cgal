@@ -117,6 +117,7 @@ The following functors are available for feature detection:
 The following functors are available for mesh initialization:
 
 - `CGAL::Construct_initial_points_labeled_image`
+- `CGAL::Construct_initial_points_gray_image`
 
 \cgalCRPSection{Function Templates}
 
