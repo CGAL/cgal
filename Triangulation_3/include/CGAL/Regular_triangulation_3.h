@@ -2066,7 +2066,7 @@ Regular_triangulation_3<Gt,Tds,Lds>::
 side_of_power_sphere(Cell_handle c, const Weighted_point& p, bool perturb) const
 {
   CGAL_precondition(dimension() == 3);
-  int i3;
+  int i3=3;
   if(! c->has_vertex(infinite_vertex(), i3))
   {
     return Bounded_side(side_of_oriented_power_sphere(c->vertex(0)->point(),
@@ -2175,7 +2175,7 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
                      bool perturb) const
 {
   CGAL_precondition(dimension() >= 2);
-  int i3 = 5;
+  int i3 = 3;
   if(dimension() == 2)
   {
     CGAL_precondition(i == 3);
