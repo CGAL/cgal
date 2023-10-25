@@ -293,7 +293,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         double drt = (((square( drx ) + square( dry )) + square( drz )) + twt_rwt);
         int cmp;
         int int_tmp_result;
-        double eps;
         double RT_tmp_result = CGAL::determinant( dpx, dpy, dpt, dqx, dqy, dqt, drx, dry, drt );
 
         double max7 = CGAL::abs(dpz);
