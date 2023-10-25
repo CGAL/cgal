@@ -145,7 +145,6 @@ The following functors are available for mesh initialization:
 - `CGAL::parameters::manifold_with_boundary()`
 - `CGAL::parameters::non_manifold()`
 - `CGAL::parameters::initial_points_generator()`
-- `CGAL::parameters::default_initial_points_generation()`
 
 \cgalCRPSection{Enumerations}
 
