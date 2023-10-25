@@ -1,10 +1,11 @@
 namespace CGAL {
+  namespace Qt {
 
 //------------------------------------------------------------------------------
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `Basic_viewer` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements can either be added directly in the viewer or through the scene. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+The class `Basic_viewer` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements are added through the scene. This class requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 */
 class Basic_viewer : public CGAL::QGLViewer
@@ -132,7 +133,7 @@ public:
 
   /// Function called when a key is pressed. Users can define their own function in order
   /// to add specific behavior.
-  std::function<bool(QKeyEvent *, CGAL::Basic_viewer *)> on_key_pressed;
+  std::function<bool(QKeyEvent *, CGAL::Qt::Basic_viewer *)> on_key_pressed;
 };
 
 
@@ -156,6 +157,8 @@ public:
   /// returns a reference to the `Basic_viewer` associated with this.
   Basic_viewer& basic_viewer();
 };
+
+} // End namespace Qt
 
 //------------------------------------------------------------------------------
 /*!
