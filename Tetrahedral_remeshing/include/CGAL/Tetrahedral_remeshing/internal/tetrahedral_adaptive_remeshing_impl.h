@@ -174,16 +174,6 @@ public:
     return m_c3t3_pbackup != NULL;
   }
 
-  bool is_too_long(const Edge& e) const
-  {
-    const FT target_edge_length
-      = m_sizing(CGAL::midpoint(tr().segment(e)),
-                 0,
-                 0);
-    const FT emax = FT(4)/FT(3) * target_edge_length;
-    return tr().segment(e).squared_length() > CGAL::square(emax * emax);
-  }
-
   bool is_too_short(const Edge& e) const
   {
     const FT target_edge_length

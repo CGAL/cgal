@@ -1031,10 +1031,13 @@ bool is_cells_set_manifold(const C3t3&,
   return true;
 }
 
-template<typename C3t3, typename CellSelector, typename Visitor>
+template<typename C3t3,
+         typename Sizing,
+         typename CellSelector,
+         typename Visitor>
 typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     C3t3& c3t3,
-    const typename C3t3::Triangulation::Geom_traits::FT& sqhigh,
+    const Sizing& sizing,
     const bool /* protect_boundaries */,
     CellSelector cell_selector,
     Visitor& )
@@ -1105,6 +1108,8 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
       return Vertex_handle();
     }
   }
+
+  const auto sqhigh = squared_upper_size_bound(edge, sizing, c3t3.triangulation());
 
   if (are_edge_lengths_valid(edge, c3t3, new_pos, sqhigh, cell_selector/*, adaptive = false*/)
     && collapse_preserves_surface_star(edge, c3t3, new_pos, cell_selector))
@@ -1205,17 +1210,9 @@ void collapse_short_edges(C3T3& c3t3,
   typedef typename Boost_bimap::value_type            short_edge;
 
   T3& tr = c3t3.triangulation();
-  typename Gt::Compute_squared_length_3 sql
-    = tr.geom_traits().compute_squared_length_3_object();
-
-  const FT target_edge_length = sizing(CGAL::ORIGIN, 0, 0);
-  const FT low = FT(4) / FT(5) * target_edge_length;
-  const FT high = FT(4) / FT(3) * target_edge_length;
-  const FT sq_low = low*low;
-  const FT sq_high = high*high;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << "Collapse short edges (" << low << ", " << high << ")...";
+  std::cout << "Collapse short edges...";
   std::cout.flush();
   std::size_t nb_collapses = 0;
 #endif
@@ -1227,9 +1224,9 @@ void collapse_short_edges(C3T3& c3t3,
     if (!can_be_collapsed(e, c3t3, protect_boundaries, cell_selector))
       continue;
 
-    FT sqlen = sql(tr.segment(e));
-    if (sqlen < sq_low)
-      short_edges.insert(short_edge(make_vertex_pair<T3>(e), sqlen));
+    const auto sqlen = is_too_short(e, sizing, tr);
+    if(sqlen != std::nullopt)
+      short_edges.insert(short_edge(make_vertex_pair<T3>(e), sqlen.value()));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -1254,12 +1251,13 @@ void collapse_short_edges(C3T3& c3t3,
     std::cout << nb_collapses << " collapses)";
     std::cout.flush();
 #endif
+
     Cell_handle cell;
     int i1, i2;
     if ( tr.tds().is_vertex(e.first)
          && tr.tds().is_vertex(e.second)
          && tr.tds().is_edge(e.first, e.second, cell, i1, i2)
-         && tr.segment(Edge(cell, i1, i2)).squared_length() < sq_low)
+         && is_too_short(Edge(cell, i1, i2), sizing, tr))
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       const typename T3::Point p1 = e.first->point();
@@ -1276,7 +1274,7 @@ void collapse_short_edges(C3T3& c3t3,
         continue;
       }
 
-      Vertex_handle vh = collapse_edge(edge, c3t3, sq_high,
+      Vertex_handle vh = collapse_edge(edge, c3t3, sizing,
                                        protect_boundaries, cell_selector,
                                        visitor);
       if (vh != Vertex_handle())
@@ -1289,9 +1287,9 @@ void collapse_short_edges(C3T3& c3t3,
           if (!can_be_collapsed(eshort, c3t3, protect_boundaries, cell_selector))
             continue;
 
-          const FT sqlen = sql(tr.segment(eshort));
-          if (sqlen < sq_low)
-            short_edges.insert(short_edge(make_vertex_pair<T3>(eshort), sqlen));
+          const auto sqlen = is_too_short(eshort, sizing, tr);
+          if (sqlen != std::nullopt)
+            short_edges.insert(short_edge(make_vertex_pair<T3>(eshort), sqlen.value()));
         }
 
         //debug::dump_c3t3(c3t3, "dump_after_collapse");
