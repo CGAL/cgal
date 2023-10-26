@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 
   /// Use vertical plane to split the mesh into two subdomains
   const K::Plane_3 plane(0, 0, 1, 0);
-  CGAL::Tetrahedral_remeshing::insert_points_on_plane(plane, 0.1*nbv, tr);
+  CGAL::Tetrahedral_remeshing::insert_points_on_plane(plane, nbv/10, tr);
 
   /// A subdomain index 0 is considered outside and is not remeshed
   /// so we set finite cells to a non-zero `Subdomain_index`
