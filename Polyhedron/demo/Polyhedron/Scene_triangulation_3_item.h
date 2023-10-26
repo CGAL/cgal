@@ -31,6 +31,7 @@ using namespace CGAL::Three;
   Q_OBJECT
 public:
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
+  static const int number_of_bitset = 4; // also defined in "shader_c3t3.frag" and "shader_c3t3_edges.frag"
 
   Scene_triangulation_3_item(bool display_elements = true);
   Scene_triangulation_3_item(const T3 t3, bool display_elements = true);
@@ -141,7 +142,9 @@ public:
 
   QColor get_histogram_color(const double v) const;
 
+  void resetVisibleSubdomain();
   void switchVisibleSubdomain(int);
+  bool isVisibleSubdomain(int) const;
 
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 

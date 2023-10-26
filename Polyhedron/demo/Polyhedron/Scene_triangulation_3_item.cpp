@@ -353,6 +353,7 @@ struct Scene_triangulation_3_item_priv {
     is_aabb_tree_built = false;
     alphaSlider = NULL;
     is_filterable = true;
+    visible_bitset.fill(0xFFFFFFFF);
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -492,7 +493,7 @@ struct Scene_triangulation_3_item_priv {
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
-  std::bitset<24> bs[4] = {16777215, 16777215, 16777215, 16777215};
+  std::array<std::bitset<32>, Scene_triangulation_3_item::number_of_bitset> visible_bitset;
   bool show_tetrahedra;
   bool is_aabb_tree_built;
   bool last_intersection;
@@ -659,7 +660,7 @@ Scene_triangulation_3_item::triangulation_changed()
   }
   const int max_subdomain_index = max;
   d->visible_subdomain.resize(max_subdomain_index+1, true);
-  d->is_filterable &=( d->subdomain_ids.size() < 96);
+  d->is_filterable &=( d->subdomain_indices_.size() < 32*number_of_bitset-1);
   for (Tr::Finite_facets_iterator fit = triangulation().finite_facets_begin(),
        end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
@@ -972,8 +973,11 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     program->bind();
     if(d->is_filterable)
     {
-      QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
-      program->setUniformValue("is_visible_bitset", visible_bitset);
+      std::array<GLuint, number_of_bitset> visible_bitset_ulong;
+      std::transform(d->visible_bitset.cbegin(), d->visible_bitset.cend(), visible_bitset_ulong.begin(),
+                     [](const std::bitset<32>& bitset) { return bitset.to_ulong(); }
+                     );
+      program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong.data(), number_of_bitset);
     }
     program->setUniformValue("is_filterable", d->is_filterable);
     program->release();
@@ -1051,8 +1055,11 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
         program->bind();
         if(d->is_filterable)
         {
-          QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
-          program->setUniformValue("is_visible_bitset", visible_bitset);
+          std::array<GLuint, number_of_bitset> visible_bitset_ulong;
+          std::transform(d->visible_bitset.cbegin(), d->visible_bitset.cend(), visible_bitset_ulong.begin(),
+                         [](const std::bitset<32>& bitset) { return bitset.to_ulong(); }
+                         );
+          program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong.data(), number_of_bitset);
         }
         program->setUniformValue("is_filterable", d->is_filterable);
         program->release();
@@ -2043,6 +2050,12 @@ QColor Scene_triangulation_3_item::getSubdomainIndexColor(int i) const
   return d->colors_subdomains[i];
 }
 
+void Scene_triangulation_3_item::resetVisibleSubdomain()
+{
+  d->visible_subdomain.set();
+  d->visible_bitset.fill(0xFFFFFFFF);
+}
+
 void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
 {
   d->visible_subdomain[id] = !d->visible_subdomain[id];
@@ -2050,7 +2063,12 @@ void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
   int i = compact_id/32;
   int j = compact_id%32;
 
-  d->bs[i][j] = d->visible_subdomain[id];
+  d->visible_bitset[i][j] = d->visible_subdomain[id];
+}
+
+bool Scene_triangulation_3_item::isVisibleSubdomain(int id) const
+{
+  return d->visible_subdomain[id];
 }
 
 void Scene_triangulation_3_item::computeIntersection()
