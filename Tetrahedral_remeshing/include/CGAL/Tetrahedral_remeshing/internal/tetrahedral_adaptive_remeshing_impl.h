@@ -174,20 +174,6 @@ public:
     return m_c3t3_pbackup != NULL;
   }
 
-  bool is_too_long_or_too_short(const Edge& e) const
-  {
-    const FT sqlen = squared_edge_length(e, tr());
-    const FT sq_emax = squared_upper_size_bound(e, m_sizing, tr());
-    if(sqlen > sq_emax)
-      return true;
-
-    const FT sq_emin = squared_lower_size_bound(e, m_sizing, tr());
-    if (sqlen < sq_emin)
-      return true;
-
-    return false;
-  }
-
   void split()
   {
     CGAL_assertion(check_vertex_dimensions());
@@ -271,7 +257,8 @@ public:
           continue;
       }
 
-      if(is_too_long_or_too_short(e))
+      if(  is_too_long(e, m_sizing, tr())
+        || is_too_short(e, m_sizing, tr()))
         return false;
     }
 
