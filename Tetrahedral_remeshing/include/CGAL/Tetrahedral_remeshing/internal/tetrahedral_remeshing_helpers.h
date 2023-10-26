@@ -956,6 +956,13 @@ bool topology_test(const typename C3t3::Edge& edge,
   return true;
 }
 
+template<typename Tr>
+typename Tr::Geom_traits::FT
+squared_edge_length(const typename Tr::Edge& e, const Tr& tr)
+{
+  return tr.geom_traits().compute_squared_length_3_object()(tr.segment(e));
+}
+
 template<typename Tr, typename Sizing>
 typename Tr::Geom_traits::FT
 squared_upper_size_bound(const typename Tr::Edge& e,
@@ -963,36 +970,19 @@ squared_upper_size_bound(const typename Tr::Edge& e,
                          const Tr& tr)
 {
   using FT = typename Tr::Geom_traits::FT;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using P = typename Tr::Geom_traits::Point_3;
 
-  const FT target_edge_length
-    = sizing(CGAL::midpoint(tr.segment(e)),
-             0,
-             0);
-  const FT emax = FT(4) / FT(3) * target_edge_length;
-  return CGAL::square(emax);
-}
+  const Vertex_handle u = e.first->vertex(e.second);
+  const Vertex_handle v = e.first->vertex(e.third);
 
-template<typename Tr, typename Sizing>
-typename Tr::Geom_traits::FT
-squared_lower_size_bound(const typename Tr::Edge& e,
-                         const Sizing& sizing,
-                         const Tr& tr)
-{
-  using FT = typename Tr::Geom_traits::FT;
+  const FT size_at_u = sizing(P(u->point()), u->in_dimension(), u->index());
+  const FT size_at_v = sizing(P(v->point()), v->in_dimension(), v->index());
 
-  const FT target_edge_length
-    = sizing(CGAL::midpoint(tr.segment(e)),
-             0,
-             0);
-  const FT emin = FT(4) / FT(5) * target_edge_length;
-  return CGAL::square(emin);
-}
+  const FT sq_max_u = CGAL::square(FT(4) / FT(3) * size_at_u);
+  const FT sq_max_v = CGAL::square(FT(4) / FT(3) * size_at_v);
 
-template<typename Tr>
-typename Tr::Geom_traits::FT
-squared_edge_length(const typename Tr::Edge& e, const Tr& tr)
-{
-  return tr.geom_traits().compute_squared_length_3_object()(tr.segment(e));
+  return (std::max)(sq_max_u, sq_max_v);
 }
 
 template<typename Tr, typename Sizing>
@@ -1003,13 +993,35 @@ is_too_long(const typename Tr::Edge& e,
 {
   using FT = typename Tr::Geom_traits::FT;
 
-  const FT sq_max = squared_upper_size_bound(e, sizing, tr);
   const FT sqlen = squared_edge_length(e, tr);
+  const FT sqmax = squared_upper_size_bound(e, sizing, tr);
 
-  if (sqlen > sq_max)
+  if (sqlen > sqmax)
     return sqlen;
   else
     return std::nullopt;
+}
+
+template<typename Tr, typename Sizing>
+typename Tr::Geom_traits::FT
+squared_lower_size_bound(const typename Tr::Edge& e,
+                         const Sizing& sizing,
+                         const Tr& tr)
+{
+  using FT = typename Tr::Geom_traits::FT;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using P = typename Tr::Geom_traits::Point_3;
+
+  const Vertex_handle u = e.first->vertex(e.second);
+  const Vertex_handle v = e.first->vertex(e.third);
+
+  const FT size_at_u = sizing(P(u->point()), u->in_dimension(), u->index());
+  const FT size_at_v = sizing(P(v->point()), v->in_dimension(), v->index());
+
+  const FT sq_min_u = CGAL::square(FT(4) / FT(5) * size_at_u);
+  const FT sq_min_v = CGAL::square(FT(4) / FT(5) * size_at_v);
+
+  return (std::min)(sq_min_u, sq_min_v);
 }
 
 template<typename Tr, typename Sizing>
@@ -1019,12 +1031,11 @@ is_too_short(const typename Tr::Edge& e,
              const Tr& tr)
 {
   using FT = typename Tr::Geom_traits::FT;
-  auto sql = tr.geom_traits().compute_squared_length_3_object();
 
-  const FT sq_min = squared_lower_size_bound(e, sizing, tr);
   const FT sqlen = squared_edge_length(e, tr);
+  const FT sqmin = squared_lower_size_bound(e, sizing, tr);
 
-  if (sqlen < sq_min)
+  if (sqlen < sqmin)
     return sqlen;
   else
     return std::nullopt;
