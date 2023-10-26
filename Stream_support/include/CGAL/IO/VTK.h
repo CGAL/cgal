@@ -123,7 +123,7 @@ bool read_VTP(const std::string& fname,
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                    whose value type is the point type
+ *                    whose `value_type` is the point type
  * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
@@ -179,7 +179,7 @@ bool read_VTK(const std::string& fname,
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                    whose value type is the point type
+ *                    whose `value_type` is the point type
  * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
@@ -402,7 +402,7 @@ void write_soup_polys_points(std::ostream& os,
  *
  * \brief writes the content of `points` and `polygons` in `out`, using the \ref IOStreamVTK.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose `value_type` is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
@@ -490,7 +490,7 @@ bool write_VTP(std::ostream& os,
  *
  * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamVTK.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose `valuetype` is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
