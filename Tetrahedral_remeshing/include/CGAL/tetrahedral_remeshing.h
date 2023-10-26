@@ -172,7 +172,7 @@ void tetrahedral_isotropic_remeshing(
   tetrahedral_isotropic_remeshing(
     tr,
     [target_edge_length]
-      (const typename Traits::Point_3& /* p */, const Index&, const int&)
+      (const typename Traits::Point_3& /* p */, const int&, const Index&)
         {return target_edge_length; },
     np);
 }
@@ -189,7 +189,7 @@ void tetrahedral_isotropic_remeshing(
   tetrahedral_isotropic_remeshing(
     tr,
     [target_edge_length]
-      (const typename Traits::Point_3& /* p */, const Index&, const int&)
+      (const typename Traits::Point_3& /* p */, const int&, const Index&)
         {return target_edge_length;},
     np);
 }
@@ -351,10 +351,13 @@ void tetrahedral_isotropic_remeshing(
   const double& target_edge_length,
   const NamedParameters& np = parameters::default_values())
 {
+  using P = typename Tr::Geom_traits::Point_3;
+  using Index = typename Tr::Triangulation_data_structure::Vertex::Index;
   tetrahedral_isotropic_remeshing(
     c3t3,
-    [target_edge_length](const typename Tr::Point& /* p */)
-                        {return target_edge_length; },
+    [target_edge_length]
+      (const P& /* p */, const int&, const Index&)
+        { return target_edge_length; },
     np);
 }
 
@@ -366,10 +369,13 @@ void tetrahedral_isotropic_remeshing(
   const float& target_edge_length,
   const NamedParameters& np = parameters::default_values)
 {
+  using P = typename Tr::Geom_traits::Point_3;
+  using Index = typename Tr::Triangulation_data_structure::Vertex::Index;
   tetrahedral_isotropic_remeshing(
     c3t3,
-    [target_edge_length](const typename Tr::Point& /*p*/)
-                        {return target_edge_length; },
+    [target_edge_length]
+      (const P& /* p */, const int&, const Index&)
+        { return target_edge_length; },
     np);
 }
 
