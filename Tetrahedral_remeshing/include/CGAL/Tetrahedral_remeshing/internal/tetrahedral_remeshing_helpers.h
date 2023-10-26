@@ -988,6 +988,13 @@ squared_lower_size_bound(const typename Tr::Edge& e,
   return CGAL::square(emin);
 }
 
+template<typename Tr>
+typename Tr::Geom_traits::FT
+squared_edge_length(const typename Tr::Edge& e, const Tr& tr)
+{
+  return tr.geom_traits().compute_squared_length_3_object()(tr.segment(e));
+}
+
 template<typename Tr, typename Sizing>
 std::optional<typename Tr::Geom_traits::FT>
 is_too_long(const typename Tr::Edge& e,
@@ -995,10 +1002,9 @@ is_too_long(const typename Tr::Edge& e,
             const Tr& tr)
 {
   using FT = typename Tr::Geom_traits::FT;
-  auto sql = tr.geom_traits().compute_squared_length_3_object();
 
   const FT sq_max = squared_upper_size_bound(e, sizing, tr);
-  const FT sqlen = sql(tr.segment(e));
+  const FT sqlen = squared_edge_length(e, tr);
 
   if (sqlen > sq_max)
     return sqlen;
@@ -1016,7 +1022,7 @@ is_too_short(const typename Tr::Edge& e,
   auto sql = tr.geom_traits().compute_squared_length_3_object();
 
   const FT sq_min = squared_lower_size_bound(e, sizing, tr);
-  const FT sqlen = sql(tr.segment(e));
+  const FT sqlen = squared_edge_length(e, tr);
 
   if (sqlen < sq_min)
     return sqlen;

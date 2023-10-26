@@ -174,29 +174,14 @@ public:
     return m_c3t3_pbackup != NULL;
   }
 
-  bool is_too_short(const Edge& e) const
-  {
-    const FT target_edge_length
-      = m_sizing(CGAL::midpoint(tr().segment(e)),
-                 0,
-                 0);
-    const FT emin = FT(4)/FT(5) * target_edge_length;
-    return tr().segment(e).squared_length() < CGAL::square(emin * emin);
-  }
-
   bool is_too_long_or_too_short(const Edge& e) const
   {
-    const FT sqlen = tr().segment(e).squared_length();
-    const FT target_edge_length
-      = m_sizing(CGAL::midpoint(tr().segment(e)),
-                 0,
-                 0);
-
-    const FT sq_emax = CGAL::square(FT(4)/FT(3) * target_edge_length);
+    const FT sqlen = squared_edge_length(e, tr());
+    const FT sq_emax = squared_upper_size_bound(e, m_sizing, tr());
     if(sqlen > sq_emax)
       return true;
 
-    const FT sq_emin = CGAL::square(FT(4)/FT(5) * target_edge_length);
+    const FT sq_emin = squared_lower_size_bound(e, m_sizing, tr());
     if (sqlen < sq_emin)
       return true;
 
