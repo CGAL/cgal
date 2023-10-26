@@ -274,7 +274,7 @@ void split_long_edges(C3T3& c3t3,
     if (!can_be_split(e, c3t3, protect_boundaries, cell_selector))
       continue;
 
-    const std::optional<FT> sqlen = is_too_long<T3>(e, sizing, tr);
+    const std::optional<FT> sqlen = is_too_long(e, sizing, tr);
     if(sqlen != std::nullopt)
       long_edges.insert(long_edge(make_vertex_pair<T3>(e), sqlen.value()));
   }
