@@ -441,7 +441,7 @@ private:
 #endif
       }
 
-      for (Vertex_handle vi : CGAL::Tetrahedral_remeshing::vertices(cit, tr()))
+      for (Vertex_handle vi : tr().vertices(cit))
         set_dimension(vi, 3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -471,7 +471,7 @@ private:
           m_c3t3.remove_from_complex(f);
         m_c3t3.add_to_complex(f, patch);
 
-        for (Vertex_handle vij : CGAL::Tetrahedral_remeshing::vertices(f, tr()))
+        for (Vertex_handle vij : tr().vertices(f))
           set_dimension(vij, 2);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -510,7 +510,7 @@ private:
           m_c3t3.remove_from_complex(e);
         m_c3t3.add_to_complex(e, curve_id);
 
-        for (Vertex_handle v : CGAL::Tetrahedral_remeshing::vertices(e, tr()))
+        for (Vertex_handle v : tr().vertices(e))
           set_dimension(v, 1);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
