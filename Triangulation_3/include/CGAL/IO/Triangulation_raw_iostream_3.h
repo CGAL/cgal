@@ -120,14 +120,30 @@ bool write_vertices(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
   return (bool)os;
 }
 
-template < class GT, class Tds, class Lds >
-bool read_vertices(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector< typename Tds::Vertex_handle >& vertices_handles)
+struct IdentityConvertVertex
+{
+  template <class V>
+  void operator()(const V& v_input, V& v_output)
+  {
+    auto time_stamp_ = v_output.time_stamp();
+    v_output = v_input;
+    v_output.set_time_stamp(time_stamp_);
+  }
+};
+
+template < class GT, class Tds, class Lds,
+           typename Tr_src = Triangulation_3<GT, Tds, Lds>,
+           typename ConvertVertex = IdentityConvertVertex >
+bool read_vertices(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector< typename Tds::Vertex_handle >& vertices_handles,
+                   ConvertVertex convert_vertex = ConvertVertex())
 {
   // Reads:
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
   typedef Triangulation_3<GT, Tds>                 Triangulation;
   typedef typename Triangulation::size_type        size_type;
+
+  typedef typename Tr_src::Vertex Vertex1;
 
   size_type n;
   if(IO::is_ascii(is))
@@ -146,9 +162,11 @@ bool read_vertices(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vec
 
   for(std::size_t i=1; i <= n; i++)
   {
-    vertices_handles[i] = tr.tds().create_vertex();
-    if(!(is >> *vertices_handles[i]))
+    Vertex1 v;
+    if(!(is >> v))
       return false;
+    vertices_handles[i] = tr.tds().create_vertex();
+    convert_vertex(v, *vertices_handles[i]);
   }
 
   return (bool)is;
@@ -233,8 +251,23 @@ bool write_cells(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr, cons
   return false;
 }
 
-template < class GT, class Tds, class Lds >
-bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::vector< typename Tds::Vertex_handle >& vertices_handles)
+struct IdentityConvertCell
+{
+  template <class C>
+  void operator()(const C& c_input, C& c_output)
+  {
+    c_output.set_subdomain_index(c_input.subdomain_index());
+    for(int i = 0; i < 4; ++i) {
+      c_output.set_surface_patch_index(i, c_input.surface_patch_index(i));
+    }
+  }
+};
+
+template < class GT, class Tds, class Lds,
+           typename Tr_src = Triangulation_3<GT, Tds, Lds>,
+           typename ConvertCell = IdentityConvertCell >
+bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::vector< typename Tds::Vertex_handle >& vertices_handles,
+                ConvertCell convert_cell = ConvertCell())
 {
   // Writes:
   // [Call to Tds::print_cells]
@@ -248,6 +281,8 @@ bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::
   typedef Triangulation_3<GT, Tds>                 Triangulation;
   typedef typename Triangulation::Cell_handle      Cell_handle;
 
+  typedef typename Tr_src::Cell Cell1;
+
   std::vector< Cell_handle > C;
 
   std::size_t m;
@@ -256,8 +291,12 @@ bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::
     return false;
 
   for(std::size_t i=0 ; i < m; i++)
-    if(!(is >> *(C[i])))
+  {
+    Cell1 c;
+    if(!(is >> c))
       return false;
+    convert_cell(c, *C[i]);
+  }
 
   return (bool)is;
 }
@@ -289,16 +328,26 @@ bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds
       && internal::write_cells(os, tr, vertices_map);
 }
 
-template < class GT, class Tds, class Lds >
-bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
+template < class GT, class Tds, class Lds,
+           typename Tr_src = Triangulation_3<GT, Tds, Lds>,
+           typename ConvertVertex = internal::IdentityConvertVertex,
+           typename ConvertCell = internal::IdentityConvertCell >
+bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr,
+                            ConvertVertex convert_vertex = ConvertVertex(),
+                            ConvertCell convert_cell = ConvertCell())
 {
   Unique_hash_map<typename Tds::Vertex_handle, std::size_t> vertices_map;
-  return export_triangulation_3(os, tr, vertices_map);
+  return export_triangulation_3(os, tr, vertices_map, convert_vertex, convert_cell);
 }
 
 
-template < class GT, class Tds, class Lds >
-bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector<typename Tds::Vertex_handle >& vertices_handles)
+template < class GT, class Tds, class Lds,
+           typename Tr_src = Triangulation_3<GT, Tds, Lds>,
+           typename ConvertVertex = internal::IdentityConvertVertex,
+           typename ConvertCell = internal::IdentityConvertCell >
+bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector<typename Tds::Vertex_handle >& vertices_handles,
+                            ConvertVertex convert_vertex = ConvertVertex(),
+                            ConvertCell convert_cell = ConvertCell())
 {
   // Reads:
   // [Header]
@@ -322,15 +371,20 @@ bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
              && internal::read_vertices(is, tr, vertices_handles)
              && internal::read_cells(is, tr, vertices_handles);
 
-  CGAL_assertion(tr.is_valid(false));
+  CGAL_assertion(result && tr.is_valid(true));
   return result;
 }
 
-template < class GT, class Tds, class Lds >
-bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
+template < class GT, class Tds, class Lds,
+           typename Tr_src = Triangulation_3<GT, Tds, Lds>,
+           typename ConvertVertex = internal::IdentityConvertVertex,
+           typename ConvertCell = internal::IdentityConvertCell >
+bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
+                            ConvertVertex convert_vertex = ConvertVertex(),
+                            ConvertCell convert_cell = ConvertCell())
 {
   std::vector<typename Tds::Vertex_handle > vertices_handles;
-  return import_triangulation_3(is, tr, vertices_handles);
+  return import_triangulation_3(is, tr, vertices_handles, convert_vertex, convert_cell);
 }
 
 
