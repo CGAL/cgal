@@ -510,7 +510,7 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
     }
   }
   if(binary) CGAL::IO::set_binary_mode(is);
-  if(c3t3.triangulation().file_input<
+  if(c3t3.file_input<
        Fake_CDT_3,
        Update_vertex_from_CDT_3<Fake_CDT_3, C3t3::Triangulation>,
        Update_cell_from_CDT_3>(is))
@@ -597,7 +597,7 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
   }
   if(binary) CGAL::IO::set_binary_mode(is);
   else CGAL::IO::set_ascii_mode(is);
-  std::istream& f_is = c3t3.triangulation().file_input<
+  std::istream& f_is = c3t3.file_input<
                          Fake_c3t3::Triangulation,
                          Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
                          Update_cell>(is);

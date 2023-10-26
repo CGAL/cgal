@@ -1216,6 +1216,79 @@ public:
     return Get_io_signature<Tr>()();
   }
 
+  std::istream& read_edges(std::istream& is, const std::vector< Vertex_handle >& vertices_handles)
+  {
+    // Reads 1D features
+    std::size_t nEdges;
+    if(IO::is_ascii(is))
+    {
+      is >> nEdges;
+    }
+    else
+    {
+      read(is, nEdges);
+    }
+    // If the file did not have edges
+    if (!is) {
+      return is;
+    }
+
+    for (std::size_t i = 0; i < nEdges; i++)
+    {
+      std::size_t iv1;
+      std::size_t iv2;
+      Curve_index index;
+      if (IO::is_ascii(is))
+        is >> iv1 >> iv2 >> index;
+      else {
+        read(is, iv1);
+        read(is, iv2);
+        read(is, index);
+      }
+      Internal_edge edge(vertices_handles[iv1], vertices_handles[iv2]);
+      add_to_complex(edge, index);
+    }
+    return is;
+  }
+
+  template <typename Tr_src,
+            typename ConvertVertex,
+            typename ConvertCell>
+  std::istream& file_input(std::istream& is,
+                           ConvertVertex convert_vertex = ConvertVertex(),
+                           ConvertCell convert_cell = ConvertCell())
+  {
+    // Reads:
+    // - the dimension
+    // - the number of finite vertices
+    // - the non combinatorial information on vertices (point, etc)
+    // - the number of cells
+    // - the cells by the indices of their vertices in the preceding list
+    //   of vertices, plus the non combinatorial information on each cell
+    // - the neighbors of each cell by their index in the preceding list of cells
+    // - when dimension < 3 : the same with faces of maximal dimension
+    // - the number of edges
+    // - the edges by the indices of their vertices and their curve_index
+
+    // If this is used for a TDS, the vertices are processed from 0 to n.
+    // Else, we make V[0] the infinite vertex and work from 1 to n+1.
+
+    // Reads triangulation
+    std::vector< Vertex_handle > vertices_handles;
+    if (!tr_.template file_input<Tr_src, ConvertVertex, ConvertCell>
+                                (is, vertices_handles, convert_vertex, convert_cell))
+    {
+      clear();
+      is.setstate(std::ios_base::failbit);
+      return is;
+    }
+
+    // Reads 1D Features
+    read_edges(is, vertices_handles);
+
+    return is;
+  }
+
   /**
    * @cond SKIP_IN_MANUAL
    * creates an `Internal_edge` object (i.e a pair of ordered `Vertex_handle`)
@@ -2183,36 +2256,9 @@ operator>> (std::istream& is,
     return is;
   }
 
-  // Reads 1D features
-  std::size_t nEdges;
-  if(IO::is_ascii(is))
-  {
-    is >> nEdges;
-  }
-  else
-  {
-    read(is, nEdges);
-  }
-  // If the file did not have edges
-  if (!is) {
+  c3t3.read_edges(is, vertices_handles);
+  if (!is)
     return is;
-  }
-
-  for (std::size_t i = 0; i < nEdges; i++)
-  {
-    std::size_t iv1;
-    std::size_t iv2;
-    Curve_index index;
-    if (IO::is_ascii(is))
-      is >> iv1 >> iv2 >> index;
-    else {
-      read(is, iv1);
-      read(is, iv2);
-      read(is, index);
-    }
-    Internal_edge edge(vertices_handles[iv1], vertices_handles[iv2]);
-    c3t3.add_to_complex(edge, index);
-  }
 
   c3t3.rescan_after_load_of_triangulation();
   return is;

@@ -2308,7 +2308,7 @@ public:
   template <typename Tr_src,
             typename ConvertVertex,
             typename ConvertCell>
-  std::istream& file_input(std::istream& is,
+  std::istream& file_input(std::istream& is, std::vector< Vertex_handle >& vertices_handles,
                            ConvertVertex convert_vertex = ConvertVertex(),
                            ConvertCell convert_cell = ConvertCell())
   {
@@ -2327,8 +2327,21 @@ public:
 
     if (!CGAL::IO::import_triangulation_3<GT, Tds_, Lock_data_structure_,
                                           Tr_src, ConvertVertex, ConvertCell>
-                                         (is, *this, convert_vertex, convert_cell))
+                                         (is, *this, vertices_handles, convert_vertex, convert_cell))
       is.setstate(std::ios_base::failbit);
+    return is;
+  }
+
+  //IO
+  template <typename Tr_src,
+            typename ConvertVertex,
+            typename ConvertCell>
+  std::istream& file_input(std::istream& is,
+                           ConvertVertex convert_vertex = ConvertVertex(),
+                           ConvertCell convert_cell = ConvertCell())
+  {
+    std::vector< Vertex_handle > vertices_handles;
+    file_input<Tr_src, ConvertVertex, ConvertCell>(is, vertices_handles, convert_vertex, convert_cell);
     return is;
   }
 };

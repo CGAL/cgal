@@ -332,12 +332,10 @@ template < class GT, class Tds, class Lds,
            typename Tr_src = Triangulation_3<GT, Tds, Lds>,
            typename ConvertVertex = internal::IdentityConvertVertex,
            typename ConvertCell = internal::IdentityConvertCell >
-bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr,
-                            ConvertVertex convert_vertex = ConvertVertex(),
-                            ConvertCell convert_cell = ConvertCell())
+bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
 {
   Unique_hash_map<typename Tds::Vertex_handle, std::size_t> vertices_map;
-  return export_triangulation_3(os, tr, vertices_map, convert_vertex, convert_cell);
+  return export_triangulation_3(os, tr, vertices_map);
 }
 
 
@@ -368,8 +366,10 @@ bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
   tr.set_infinite_vertex(tr.tds().create_vertex());
 
   bool result = internal::read_header(is, tr)
-             && internal::read_vertices(is, tr, vertices_handles)
-             && internal::read_cells(is, tr, vertices_handles);
+             && internal::read_vertices<GT, Tds, Lds, Tr_src, ConvertVertex>
+                                       (is, tr, vertices_handles, convert_vertex)
+             && internal::read_cells<GT, Tds, Lds, Tr_src, ConvertCell>
+                                    (is, tr, vertices_handles, convert_cell);
 
   CGAL_assertion(result && tr.is_valid(true));
   return result;
@@ -384,7 +384,8 @@ bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
                             ConvertCell convert_cell = ConvertCell())
 {
   std::vector<typename Tds::Vertex_handle > vertices_handles;
-  return import_triangulation_3(is, tr, vertices_handles, convert_vertex, convert_cell);
+  return import_triangulation_3<GT, Tds, Lds, Tr_src, ConvertVertex, ConvertCell>
+                               (is, tr, vertices_handles, convert_vertex, convert_cell);
 }
 
 
