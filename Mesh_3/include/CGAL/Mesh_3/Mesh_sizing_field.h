@@ -89,8 +89,8 @@ class Mesh_sizing_field
 {
   // Types
   typedef typename Tr::Geom_traits              GT;
-  typedef typename Tr::Bare_point               Bare_point;
-  typedef typename Tr::Weighted_point           Weighted_point;
+  typedef typename Tr::Geom_traits::Point_3     Bare_point;
+  typedef typename Tr::Point                    Weighted_point;
   typedef typename GT::FT                       FT;
 
   typedef typename Tr::Vertex_handle            Vertex_handle;
@@ -107,8 +107,13 @@ public:
   Mesh_sizing_field(Tr& tr);
 
   /**
-   * Fills sizing field, using size associated to point in `value_map`
+   * Fills sizing field, using size associated to points in `tr_`
    */
+  void fill();
+
+  /**
+  * Fills sizing field, using size associated to point in `value_map`
+  */
   void fill(const std::map<Bare_point, FT>& value_map);
 
   /**
@@ -134,6 +139,10 @@ public:
    */
   FT operator()(const Bare_point& p, const std::pair<Cell_handle, bool>& c) const;
 
+  template <typename Index>
+  FT operator()(const Bare_point& p, const int& dim, const Index& i) const
+  { return this->operator()(p); }
+
 private:
   /**
    * Returns size at point `p`, by interpolation into tetrahedron.
@@ -148,6 +157,9 @@ private:
   FT interpolate_on_facet_vertices(const Bare_point& p,
                                    const Cell_handle& cell) const;
 
+  FT sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const;
+  FT average_circumradius_length(const Vertex_handle& v) const;
+
 private:
   /// The triangulation
   Tr& tr_;
@@ -159,8 +171,54 @@ Mesh_sizing_field<Tr,B>::
 Mesh_sizing_field(Tr& tr)
   : tr_(tr)
 {
+  set_last_cell(tr.infinite_vertex()->cell());
 }
 
+template <typename Tr, bool B>
+void
+Mesh_sizing_field<Tr, B>::
+fill()
+{
+  std::map<Bare_point, FT> value_map;
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    typedef tbb::enumerable_thread_specific<
+      std::vector< std::pair<Bare_point, FT> > > Local_list;
+    Local_list local_lists;
+
+    tbb::parallel_for_each(
+      tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
+      Compute_sizing_field_value<Self, Local_list>(*this, tr_.geom_traits(), local_lists)
+    );
+
+    for (typename Local_list::iterator it_list = local_lists.begin();
+      it_list != local_lists.end();
+      ++it_list)
+    {
+      value_map.insert(it_list->begin(), it_list->end());
+    }
+  }
+  else
+#endif //CGAL_LINKED_WITH_TBB
+  {
+    typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
+    // Fill map with local size
+    for (typename Tr::Finite_vertices_iterator vit = tr_.finite_vertices_begin();
+         vit != tr_.finite_vertices_end();
+         ++vit)
+    {
+      const Weighted_point& position = tr_.point(vit);
+      value_map.insert(std::make_pair(cp(position), average_circumradius_length(vit)));
+    }
+  }
+
+  // do the filling
+  fill(value_map);
+}
 
 template <typename Tr, bool B>
 void
@@ -316,6 +374,82 @@ interpolate_on_facet_vertices(const Bare_point& p, const Cell_handle& cell) cons
     return (va+vb+vc)/3.;
 
   return ( (abp*vc + acp*vb + bcp*va ) / (abp+acp+bcp) );
+}
+
+template <typename Tr, bool B>
+typename Mesh_sizing_field<Tr, B>::FT
+Mesh_sizing_field<Tr, B>::
+sq_circumradius_length(const Cell_handle& cell, const Vertex_handle& v) const
+{
+  typename GT::Construct_point_3 cp
+    = tr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_distance_3 sq_distance
+    = tr_.geom_traits().compute_squared_distance_3_object();
+  typename GT::Construct_circumcenter_3 cc
+    = tr_.geom_traits().construct_circumcenter_3_object();
+
+  const auto t = tr_.tetrahedron(cell);
+  const Bare_point circumcenter = cc(t[0], t[1], t[2], t[3]);
+  const Weighted_point& position = tr_.point(cell, cell->index(v));
+
+  return (sq_distance(cp(position), circumcenter));
+}
+
+template <typename Tr, bool B>
+typename Mesh_sizing_field<Tr, B>::FT
+Mesh_sizing_field<Tr, B>::
+average_circumradius_length(const Vertex_handle& v) const
+{
+  std::vector<Cell_handle> incident_cells;
+  incident_cells.reserve(64);
+
+#ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tr_.incident_cells_threadsafe(v, std::back_inserter(incident_cells));
+  }
+  else
+#endif //CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(v, std::back_inserter(incident_cells));
+  }
+
+  using SI = typename Tr::Triangulation_data_structure::Cell::Subdomain_index;
+
+  FT sum_len(0);
+  unsigned int nb = 0;
+
+  for (Cell_handle c : incident_cells)
+  {
+    if (c->subdomain_index() != SI())
+    {
+      sum_len += CGAL::approximate_sqrt(sq_circumradius_length(c, v));
+      ++nb;
+    }
+  }
+
+  // nb == 0 could happen if there is an isolated point.
+  if (0 != nb)
+  {
+    return sum_len / nb;
+  }
+  else
+  {
+    // Use outside cells to compute size of point
+    for (Cell_handle c : incident_cells)
+    {
+      if (!tr_.is_infinite(c))
+      {
+        sum_len += CGAL::approximate_sqrt(sq_circumradius_length(c, v));
+        ++nb;
+      }
+    }
+
+    CGAL_assertion(nb != 0);
+    CGAL_assertion(sum_len != 0);
+    return sum_len / nb;
+  }
 }
 
 } // end namespace Mesh_3
