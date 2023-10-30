@@ -133,7 +133,7 @@ public:
     if(points.empty() || faces.empty())
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Warning: Input is empty " << std::endl;
+      std::cout << "Warning: Input is empty (TS)" << std::endl;
 #endif
       return;
     }
@@ -190,7 +190,21 @@ public:
   void add_triangle_soup(const TriangleRange& triangles,
                          const CGAL_NP_CLASS& /*np*/ = CGAL::parameters::default_values())
   {
+    if(triangles.empty())
+    {
+#ifdef CGAL_AW3_DEBUG
+      std::cout << "Warning: Input is empty (TS)" << std::endl;
+#endif
+      return;
+    }
+
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "Insert into AABB Tree (triangles)..." << std::endl;
+#endif
+
     typename Geom_traits::Is_degenerate_3 is_degenerate = this->geom_traits().is_degenerate_3_object();
+
+    Splitter_base::reserve(triangles.size());
 
     for(const Triangle_3& tr : triangles)
     {

@@ -687,8 +687,8 @@ public Q_SLOTS:
 
     const bool use_message_box = ui.enableMessageBox->isChecked();
 
-    std::cout << "Wrapping edges? " << std::boolalpha << wrap_segments << std::endl;
     std::cout << "Wrapping faces? " << std::boolalpha << wrap_triangles << std::endl;
+    std::cout << "Wrapping edges? " << std::boolalpha << wrap_segments << std::endl;
 
     if(!wrap_triangles)
     {
@@ -740,7 +740,7 @@ public Q_SLOTS:
 
     if(alpha <= 0. || offset <= 0.)
     {
-      print_message("Warning: alpha/offset must be strictly positive - nothing to wrap");
+      print_message("Warning: alpha/offset must be strictly positive");
       QApplication::restoreOverrideCursor();
       return;
     }

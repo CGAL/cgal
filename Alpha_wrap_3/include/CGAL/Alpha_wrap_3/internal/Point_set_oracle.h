@@ -106,7 +106,7 @@ public:
     if(points.empty())
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Warning: Input is empty " << std::endl;
+      std::cout << "Warning: Input is empty (PS)" << std::endl;
 #endif
       return;
     }

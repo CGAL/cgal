@@ -135,7 +135,7 @@ public:
     if(is_empty(tmesh))
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Warning: Input is empty " << std::endl;
+      std::cout << "Warning: Input is empty (TM)" << std::endl;
 #endif
       return;
     }
