@@ -547,8 +547,6 @@ public Q_SLOTS:
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
-
-          m_wrap_bbox += triangles.back().bbox();
         }
 
         continue;
@@ -571,8 +569,6 @@ public Q_SLOTS:
           triangles.emplace_back(soup_item->points()[p[0]],
                                  soup_item->points()[p[1]],
                                  soup_item->points()[p[2]]);
-
-          m_wrap_bbox += triangles.back().bbox();
         }
 
         continue;
@@ -599,8 +595,6 @@ public Q_SLOTS:
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
-
-          m_wrap_bbox += triangles.back().bbox();
         }
 
         segments.reserve(segments.size() + selection_item->selected_edges.size());
@@ -608,16 +602,12 @@ public Q_SLOTS:
         {
           segments.emplace_back(get(vpm, target(halfedge(e, *pMesh), *pMesh)),
                                 get(vpm, target(opposite(halfedge(e, *pMesh), *pMesh), *pMesh)));
-
-          m_wrap_bbox += segments.back().bbox();
         }
 
         points.reserve(points.size() + selection_item->selected_vertices.size());
         for(const auto& v : selection_item->selected_vertices)
         {
           points.push_back(get(vpm, v));
-
-          m_wrap_bbox += points.back().bbox();
         }
 
         continue;
@@ -655,6 +645,15 @@ public Q_SLOTS:
     std::cout << triangles.size() << " triangles" << std::endl;
     std::cout << segments.size() << " edges" << std::endl;
     std::cout << points.size() << " points" << std::endl;
+
+    for(const Kernel::Triangle_3& tr : triangles)
+      m_wrap_bbox += tr.bbox();
+    for(const Kernel::Segment_3& sg : segments)
+      m_wrap_bbox += sg.bbox();
+    for(const Kernel::Point_3& pt : points)
+      m_wrap_bbox += pt.bbox();
+
+    std::cout << "Bbox:\n" << m_wrap_bbox << std::endl;
 
     // The relative value uses the bbox of the full scene and not that of selected items to wrap
     // This is intentional, both because it's tedious to make it otherwise, and because it seems
