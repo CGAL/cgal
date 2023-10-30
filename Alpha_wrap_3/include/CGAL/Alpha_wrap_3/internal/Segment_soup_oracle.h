@@ -28,6 +28,7 @@
 #include <iostream>
 #include <iterator>
 #include <functional>
+#include <memory>
 #include <vector>
 
 namespace CGAL {
@@ -42,6 +43,7 @@ struct SS_oracle_traits
 
   using Segment = typename GT_::Segment_3;
   using Segments = std::vector<Segment>;
+  using Segments_ptr = std::shared_ptr<Segments>;
   using SR_iterator = typename Segments::const_iterator;
 
   using Primitive = AABB_primitive<SR_iterator,
@@ -71,26 +73,29 @@ public:
 private:
   using Segment = typename SSOT::Segment;
   using Segments = typename SSOT::Segments;
+  using Segments_ptr = typename SSOT::Segments_ptr;
   using AABB_tree = typename SSOT::AABB_tree;
   using Oracle_base = AABB_tree_oracle<Geom_traits, AABB_tree, CGAL::Default, BaseOracle>;
 
 private:
-  Segments m_segments;
+  Segments_ptr m_segments_ptr;
 
 public:
   // Constructors
-  Segment_soup_oracle()
-    : Oracle_base(BaseOracle(), Base_GT())
-  { }
-
   Segment_soup_oracle(const BaseOracle& base_oracle,
                       const Base_GT& gt = Base_GT())
     : Oracle_base(base_oracle, gt)
-  { }
+  {
+    m_segments_ptr = std::make_shared<Segments>();
+  }
 
   Segment_soup_oracle(const Base_GT& gt,
                       const BaseOracle& base_oracle = BaseOracle())
-    : Oracle_base(base_oracle, gt)
+    : Segment_soup_oracle(base_oracle, gt)
+  { }
+
+  Segment_soup_oracle()
+    : Segment_soup_oracle(BaseOracle(), Base_GT())
   { }
 
 public:
@@ -109,7 +114,7 @@ public:
 
     typename Geom_traits::Is_degenerate_3 is_degenerate = this->geom_traits().is_degenerate_3_object();
 
-    const std::size_t old_size = m_segments.size();
+    const std::size_t old_size = m_segments_ptr->size();
 
     for(const Segment& s : segments)
     {
@@ -121,13 +126,13 @@ public:
         continue;
       }
 
-      m_segments.push_back(s);
+      m_segments_ptr->push_back(s);
     }
 
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Insert into AABB tree (segments)..." << std::endl;
 #endif
-    this->tree().insert(std::next(std::cbegin(m_segments), old_size), std::cend(m_segments));
+    this->tree().insert(std::next(std::cbegin(*m_segments_ptr), old_size), std::cend(*m_segments_ptr));
 
     // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
     // it will be done at the first treatment of a facet that needs a Steiner point.
@@ -135,7 +140,7 @@ public:
     // to accelerate the tree.
     this->tree().accelerate_distance_queries();
 
-    CGAL_postcondition(this->tree().size() == m_segments.size());
+    CGAL_postcondition(this->tree().size() == m_segments_ptr->size());
   }
 };
 
