@@ -55,6 +55,7 @@ int main(int argc, char* argv[])
 {
   const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.05;
   const std::size_t nbv = (argc > 2) ? atoi(argv[2]) : 1000;
+  const std::size_t nbv_on_plane = (argc > 3) ? atoi(argv[3]) : 100;
 
   /// Create a randomly generated triangulation of a sphere
   Remeshing_triangulation tr;
@@ -62,7 +63,7 @@ int main(int argc, char* argv[])
 
   /// Use vertical plane to split the mesh into two subdomains
   const K::Plane_3 plane(0, 0, 1, 0);
-  CGAL::Tetrahedral_remeshing::insert_points_on_plane(plane, nbv/10, tr);
+  CGAL::Tetrahedral_remeshing::insert_points_on_plane(plane, nbv_on_plane, tr);
 
   /// A subdomain index 0 is considered outside and is not remeshed
   /// so we set finite cells to a non-zero `Subdomain_index`
