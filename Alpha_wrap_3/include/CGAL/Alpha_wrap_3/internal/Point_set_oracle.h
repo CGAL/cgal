@@ -89,7 +89,7 @@ public:
 
   Point_set_oracle(const Base_GT& gt,
                    const BaseOracle& base_oracle = BaseOracle())
-    : Point_set_oracle(gt, base_oracle)
+    : Point_set_oracle(base_oracle, gt)
   { }
 
   Point_set_oracle()
