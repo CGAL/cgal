@@ -143,6 +143,8 @@ public:
   FT operator()(const Bare_point& p, const int& dim, const Index& i) const
   { return this->operator()(p); }
 
+  void set_triangulation(Tr& tr) { tr_ = tr; }
+
 private:
   /**
    * Returns size at point `p`, by interpolation into tetrahedron.
@@ -170,9 +172,7 @@ template <typename Tr, bool B>
 Mesh_sizing_field<Tr,B>::
 Mesh_sizing_field(Tr& tr)
   : tr_(tr)
-{
-  set_last_cell(tr.infinite_vertex()->cell());
-}
+{}
 
 template <typename Tr, bool B>
 void

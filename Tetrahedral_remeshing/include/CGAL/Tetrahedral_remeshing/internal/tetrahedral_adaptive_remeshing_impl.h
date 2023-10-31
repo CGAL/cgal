@@ -30,6 +30,8 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
+#include <CGAL/Mesh_3/Mesh_sizing_field.h>
+
 #include <optional>
 
 namespace CGAL
@@ -38,6 +40,7 @@ namespace Tetrahedral_remeshing
 {
 namespace internal
 {
+
 class Default_remeshing_visitor
 {
 public:
@@ -72,6 +75,20 @@ struct All_cells_selected
   {} //nothing to do : subdomain indices are updated in remeshing};
 };
 
+template<typename SF, typename Tr>
+struct Update_sizing_field
+{
+  void operator()(SF&, Tr&) const {};
+};
+template<typename Tr>
+struct Update_sizing_field<CGAL::Mesh_3::Mesh_sizing_field<Tr>, Tr>
+{
+  void operator()(CGAL::Mesh_3::Mesh_sizing_field<Tr>& sf, Tr& tr) const
+  {
+    sf.set_triangulation(tr);
+    sf.fill();
+  }
+};
 
 template<typename Triangulation
          , typename SizingFunction
@@ -101,7 +118,7 @@ class Adaptive_remesher
 
 private:
   C3t3 m_c3t3;
-  const SizingFunction& m_sizing;
+  SizingFunction& m_sizing;
   const bool m_protect_boundaries;
   CellSelector m_cell_selector;
   Visitor& m_visitor;
@@ -112,7 +129,7 @@ private:
 
 public:
   Adaptive_remesher(Triangulation& tr
-                    , const SizingFunction& sizing
+                    , SizingFunction& sizing
                     , const bool protect_boundaries
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
@@ -141,7 +158,7 @@ public:
   }
 
   Adaptive_remesher(C3t3& c3t3
-                    , const SizingFunction& sizing
+                    , SizingFunction& sizing
                     , const bool protect_boundaries
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
@@ -172,6 +189,12 @@ public:
   bool input_is_c3t3() const
   {
     return m_c3t3_pbackup != NULL;
+  }
+
+  void update_adaptive_mode()
+  {
+    Update_sizing_field<SizingFunction, Tr> update;
+    update(m_sizing, tr());
   }
 
   void split()
@@ -700,6 +723,51 @@ public:
   }
 
 };//end class Adaptive_remesher
+
+
+template<typename Triangulation,
+         typename SizingFunction,
+         typename NamedParameters,
+         typename CornerIndex = int,
+         typename CurveIndex = int>
+struct Adaptive_remesher_type_generator
+{
+  using Tr = Triangulation;
+
+  using Default_Selection_functor = All_cells_selected<Tr>;
+  using SelectionFunctor = typename internal_np::Lookup_named_param_def<
+    internal_np::cell_selector_t,
+    NamedParameters,
+    Default_Selection_functor//default
+  >::type;
+
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
+  using Default_ECMap = Constant_property_map<Edge_vv, bool>;
+  using ECMap = typename internal_np::Lookup_named_param_def<
+    internal_np::edge_is_constrained_t,
+    NamedParameters,
+    Default_ECMap//default
+  >::type;
+
+  using Facet = typename Tr::Facet;
+  using Default_FCMap = Constant_property_map<Facet, bool>;
+  using FCMap = typename internal_np::Lookup_named_param_def<
+    internal_np::facet_is_constrained_t,
+    NamedParameters,
+    Default_FCMap//default
+  >::type;
+
+  using Default_Visitor = Default_remeshing_visitor;
+  using Visitor = typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Default_Visitor//default
+  >::type;
+
+  using type = Adaptive_remesher<
+    Tr, SizingFunction, ECMap, FCMap, SelectionFunctor, Visitor>;
+};
 
 }//end namespace internal
 }//end namespace Tetrahedral_remeshing
