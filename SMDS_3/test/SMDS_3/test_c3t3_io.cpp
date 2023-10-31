@@ -389,8 +389,8 @@ struct Test_c3t3_io {
       filename += "_new";
       if(binary) filename += ".binary";
       filename += ".cgal";
-      std::ofstream output(filename.c_str(),
-                           binary ? (std::ios_base::out | std::ios_base::binary)
+      std::ostringstream output(binary
+                           ? (std::ios_base::out | std::ios_base::binary)
                            : std::ios_base::out);
       CGAL::IO::save_binary_file(output, c3t3_bis, binary);
     }
