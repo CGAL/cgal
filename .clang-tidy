@@ -1,5 +1,4 @@
 ---
-Checks:          '-clang-diagnostic*,-clang-analyzer*,modernize-use-nullptr,google-readability-casting'
-HeaderFilterRegex: 'CGAL/*'
+Checks: '-*,modernize-use-nullptr,google-readability-casting'
+HeaderFilterRegex: '.*CGAL/.*'
 ...
-
