@@ -27,7 +27,8 @@
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
-#include <CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h>
+#include <CGAL/Mesh_3/Construct_initial_points_labeled_image.h>
+#include <CGAL/Mesh_3/Construct_initial_points_gray_image.h>
 
 #include "C3t3_type.h"
 #include "Meshing_thread.h"
@@ -39,6 +40,19 @@
 namespace CGAL {
   class Image_3;
 }
+
+struct Compare_to_isovalue {
+  double iso_value;
+  bool less;
+  typedef bool result_type;
+
+  Compare_to_isovalue(double iso_value, bool less)
+    : iso_value(iso_value), less(less) {}
+
+  bool operator()(double x) const {
+    return (x < iso_value) == less;
+  }
+};
 
 struct Mesh_parameters
 {
@@ -54,6 +68,8 @@ struct Mesh_parameters
   double edge_min_sizing;
   bool protect_features;
   bool detect_connected_components;
+  float iso_value;
+  bool inside_is_less;
   int manifold;
   const CGAL::Image_3* image_3_ptr;
   const CGAL::Image_3* weights_ptr;
@@ -110,6 +126,7 @@ private:
 
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag);
+  void initialize(const Mesh_criteria& criteria, Mesh_fnt::Gray_image_domain_tag);
 
   Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Domain_tag);
   Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Polyhedral_domain_tag);
@@ -204,16 +221,60 @@ Mesh_function<D_,Tag>::
 initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag)
 // for a labeled image
 {
-  if(p_.detect_connected_components) {
-    CGAL_IMAGE_IO_CASE(p_.image_3_ptr->image(),
-            initialize_triangulation_from_labeled_image(c3t3_
-                                                        , *domain_
-                                                        , *p_.image_3_ptr
-                                                        , criteria
-                                                        , Word()
-                                                        , p_.protect_features);
-                       );
-  } else {
+  namespace p = CGAL::parameters;
+  // Initialization of the labeled image, either with the protection of sharp
+  // features, or with the initial points (or both).
+  if (p_.detect_connected_components)
+  {
+    CGAL::Mesh_3::internal::C3t3_initializer<
+      C3t3,
+      Domain,
+      Mesh_criteria,
+      CGAL::internal::has_Has_features<Domain>::value >()
+      (c3t3_,
+       *domain_,
+       criteria,
+       p_.protect_features,
+       p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
+                         p::nonlinear_growth_of_balls = true).v,
+       p::internal::Initial_points_generator_generator<D_, C3t3>()
+          (p::initial_points_generator(
+            CGAL::Construct_initial_points_labeled_image(*p_.image_3_ptr)).v));
+  }
+  else
+  {
+    initialize(criteria, Mesh_fnt::Domain_tag());
+  }
+}
+
+template < typename D_, typename Tag >
+void
+Mesh_function<D_,Tag>::
+initialize(const Mesh_criteria& criteria, Mesh_fnt::Gray_image_domain_tag)
+// for a gray image
+{
+  namespace p = CGAL::parameters;
+  // Initialization of the gray image, either with the protection of sharp
+  // features, or with the initial points (or both).
+  if (p_.detect_connected_components)
+  {
+    CGAL::Mesh_3::internal::C3t3_initializer<
+        C3t3,
+        Domain,
+        Mesh_criteria,
+        CGAL::internal::has_Has_features<Domain>::value >()
+        (c3t3_,
+         *domain_,
+         criteria,
+         p_.protect_features,
+         p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
+                           p::nonlinear_growth_of_balls = true).v,
+         p::internal::Initial_points_generator_generator<D_, C3t3>()
+           (p::initial_points_generator(
+             CGAL::Construct_initial_points_gray_image(*p_.image_3_ptr, p_.iso_value, Compare_to_isovalue(p_.iso_value, p_.inside_is_less))).v));
+  }
+  else
+  {
     initialize(criteria, Mesh_fnt::Domain_tag());
   }
 }
@@ -227,8 +288,7 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
   namespace p = CGAL::parameters;
   // Initialization of the mesh, either with the protection of sharp
   // features, or with the initial points (or both).
-  // If `detect_connected_components==true`, the initialization is
-  // already done.
+
   CGAL::Mesh_3::internal::C3t3_initializer<
     C3t3,
     Domain,

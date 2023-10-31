@@ -737,44 +737,21 @@ without the weights (left, 25563 vertices) and with the weights (right, 19936 ve
 
 \subsubsection Mesh_3DomainsFrom3DImagesWithCustomInitialization Domains From 3D Images, with a Custom Initialization
 
-The example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp is a modification
+The example \ref Mesh_3/mesh_3D_image_with_initial_points.cpp is a modification
 of \ref Mesh_3/mesh_3D_image.cpp. The goal of that example is to show how
 the default initialization of the triangulation, using random rays, can be
 replaced by a new implementation. In this case, the initialization detects
 all connected components in the 3D segmented image, and inserts points in
 the triangulation for each connected component.
 
-For the meshing, in the previous example (\ref Mesh_3/mesh_3D_image.cpp), we called `make_mesh_3()` as follows.
+\snippet Mesh_3/mesh_3D_image_with_initial_points.cpp Meshing
 
-\snippet Mesh_3/mesh_3D_image.cpp Meshing
-
-In the example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp,
-that call is replaced by:
-  -# the creation of an empty `%c3t3` object,
-  -# a call to the function
-    `initialize_triangulation_from_labeled_image()` that inserts points in
-    the triangulation,
-  -# then the call to `refine_mesh_3()`.
-
-\snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp Meshing
-
-The code of the function `initialize_triangulation_from_labeled_image()` is
-in the header \ref
-CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h. It gets points from
-\ref CGAL/Mesh_3/Construct_initial_points_labeled_image.h and inserts them
-in the triangulation. The code of the `Construct_initial_points_labeled_image`
-functor is rather complicated. The following lines show how to insert new
-points in the `%c3t3` object, with the calls to
-`MeshVertexBase_3::set_dimension()` and
-`MeshVertexBase_3::set_index()`.
-
-\snippet CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h insert initial points
-
-The value of `index` must be consistent with the possible values of
-`Mesh_domain::Index`. In \ref
-CGAL/Mesh_3/Construct_initial_points_labeled_image.h, it is
-constructed using the API of the mesh domain, as follows. First the functor
-`construct_intersect` is created
+The parameter `CGAL::parameters::initial_points_generator` is used.
+It expects a functor that returns a set of points for the mesh
+initialization (concept `InitialPointsGenerator`). The functor
+\ref CGAL/Mesh_3/Construct_initial_points_labeled_image.h is used.
+It constructs points using the API of the mesh domain, as follows.
+First the functor `construct_intersect` is created
 
 \snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h construct intersection
 then the `%Mesh_domain::Intersection` object (a `%tuple` with three
@@ -807,39 +784,56 @@ the center is meshed
 Right: the mesh generated after the initialization of all connected components
 \cgalFigureCaptionEnd
 
-
 Note that the example \ref
-Mesh_3/mesh_3D_image_with_custom_initialization.cpp also shows how to
+Mesh_3/mesh_3D_image_with_initial_points.cpp also shows how to
 create a 3D image using the undocumented API of CGAL_ImageIO.
 
-\snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp Create the image
+\snippet Mesh_3/mesh_3D_image_with_initial_points.cpp Create the image
 
 The code of the function `%random_labeled_image()` is in the header file \ref
 Mesh_3/random_labeled_image.h.
 
 
+The example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp features
+another way to achieve these results. It is a modification
+of \ref Mesh_3/mesh_3D_image.cpp.
+
+For the meshing, in the previous example (\ref Mesh_3/mesh_3D_image.cpp), we called `make_mesh_3()` as follows.
+
+\snippet Mesh_3/mesh_3D_image.cpp Meshing
+
+In the example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp,
+that call is replaced by:
+  -# the creation of an empty `%c3t3` object,
+  -# a call to the function
+    `initialize_triangulation_from_labeled_image()` that inserts points in
+    the triangulation,
+  -# then the call to `refine_mesh_3()`.
+
+\snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp Meshing
+
+The function `initialize_triangulation_from_labeled_image()` gets points from
+\ref CGAL/Mesh_3/Construct_initial_points_labeled_image.h and inserts them
+in the triangulation. The following lines show how to insert new
+points in the `%c3t3` object, with the calls to
+`MeshVertexBase_3::set_dimension()` and
+`MeshVertexBase_3::set_index()`.
+
+\snippet CGAL/Mesh_3/mesh_3D_image_with_custom_initialization.cpp insert initial points
+
+The value of `index` must be consistent with the possible values of
+`Mesh_domain::Index`.
+
 The example \ref Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp is another
 custom initialization example, for meshing of 3D gray-level images. Similarly to
 the segmented image example above, the code consists in:
   -# the creation of an empty `%c3t3` object,
-  -# a call to a non-documented function
+  -# a call to the function
     `initialize_triangulation_from_gray_image()` that inserts points in
     the triangulation,
   -# then the call to `refine_mesh_3()`.
 
 \snippet Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp Meshing
-
-The code of the function `initialize_triangulation_from_gray_image()` is
-in the header \ref
-CGAL/Mesh_3/initialize_triangulation_from_gray_image.h.
-
-The example \ref Mesh_3/mesh_3D_image_with_initial_points.cpp is another
-way to achieve the same results. Instead of a custom initialization,
-it uses the parameter `CGAL::parameters::initial_points_generator` for the function
-`CGAL::make_mesh_3`. This parameter expects a functor that returns a set of points for
-the mesh initialization (concept `InitialPointsGenerator`).
-
-\snippet Mesh_3/mesh_3D_image_with_initial_points.cpp Meshing
 
 \subsection Mesh_3UsingVariableSizingField Using Variable Sizing Field
 
