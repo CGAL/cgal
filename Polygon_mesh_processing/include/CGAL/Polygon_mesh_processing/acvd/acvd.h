@@ -40,6 +40,7 @@
 #include <iostream>
 
 #define CGAL_CLUSTERS_TO_VERTICES_THRESHOLD 0.1
+#define CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD 10000
 
 namespace CGAL {
 
@@ -48,12 +49,53 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 template <typename GT>
-struct ClusterData {
+struct IsotropicClusterData {
   typename GT::Vector_3 site_sum;
   typename GT::FT weight_sum;
   typename GT::FT energy;
 
-  ClusterData() : site_sum(0, 0, 0), weight_sum(0), energy(0) {}
+  IsotropicClusterData() : site_sum(0, 0, 0), weight_sum(0), energy(0) {}
+
+  void add_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
+  {
+    this->site_sum += vertex_position * weight;
+    this->weight_sum += weight;
+  }
+
+  void remove_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
+  {
+    this->site_sum -= vertex_position * weight;
+    this->weight_sum -= weight;
+  }
+
+  typename GT::FT compute_energy()
+  {
+    this->energy = - (this->site_sum).squared_length() / this->weight_sum;
+    return this->energy;
+  }
+
+  typename GT::Vector_3 compute_centroid()
+  {
+    if (this->weight_sum > 0)
+      return (this->site_sum) / this->weight_sum;
+    else
+      return typename GT::Vector_3 (-1, -1, -1); // TODO: Change this
+  }
+};
+
+template <typename GT>
+struct QEMClusterData {
+  typename GT::Vector_3 site_sum;
+  typename GT::Vector_3 q_centroid;
+  typename GT::FT weight_sum;
+  typename GT::FT energy;
+  typename GT::FT qem[9];
+  char rank_deficiency;
+
+  QEMClusterData() : site_sum(0, 0, 0), weight_sum(0), energy(0), rank_deficiency(0), q_centroid(0, 0, 0) {
+    for (int i = 0; i < 9; i++)
+      qem[i] = 0;
+  }
 
   void add_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
@@ -166,43 +208,42 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
 // do the following while nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
 // That is, because the subdivision steps heuristic is not 100% guaranteed to produce
 // the desired number of vertices.
-template <typename PolygonMesh,
-  typename NamedParameters = parameters::Default_named_parameters>
-void acvd_subdivide_if_needed(
-  PolygonMesh& pmesh,
-  const int nb_clusters,
-  const NamedParameters& np = parameters::default_values()
-)
-{
-  int nb_vertices = num_vertices(pmesh);
-  if (nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
-    return;
+// template <typename PolygonMesh,
+//   typename NamedParameters = parameters::Default_named_parameters>
+// void acvd_subdivide_if_needed(
+//   PolygonMesh& pmesh,
+//   const int nb_clusters,
+//   const NamedParameters& np = parameters::default_values()
+// )
+// {
+//   int nb_vertices = num_vertices(pmesh);
+//   if (nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
+//     return;
 
-  while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
-  {
-    double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
-    int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
+//   while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
+//   {
+//     double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
+//     int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
 
-    std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
+//     std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
 
-    if (subdivide_steps > 0)
-    {
-      upsample_subdivision_property(
-        pmesh,
-        np.number_of_iterations(subdivide_steps)
-      );
-    }
-  }
-  return;
-}
+//     if (subdivide_steps > 0)
+//     {
+//       upsample_subdivision_property(
+//         pmesh,
+//         np.number_of_iterations(subdivide_steps)
+//       );
+//     }
+//   }
+//   return;
+// }
 
 
 // provide a property map for principal curvatures as a named parameter for adaptive clustering
 // provide a gradation factor as a named parameter for adaptive clustering
-
 template <typename PolygonMesh, /*ClusteringMetric,*/
   typename NamedParameters = parameters::Default_named_parameters>
-PolygonMesh acvd_simplification(
+PolygonMesh acvd_isotropic(
     PolygonMesh& pmesh,
     const int nb_clusters,
     const NamedParameters& np = parameters::default_values()
@@ -270,7 +311,6 @@ PolygonMesh acvd_simplification(
           CGAL::parameters::number_of_iterations(subdivide_steps)
         );
       else // adaptive clustering
-        // TODO: need to interpolate curvature values
         upsample_subdivision_property(
           pmesh,
           CGAL::parameters::number_of_iterations(subdivide_steps).vertex_principal_curvatures_and_directions_map(vpcd_map)
@@ -285,7 +325,7 @@ PolygonMesh acvd_simplification(
   VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
   VertexVisitedMap vertex_visited_pmap = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh);
   VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
-  std::vector<ClusterData<GT>> clusters(nb_clusters);
+  std::vector<IsotropicClusterData<GT>> clusters(nb_clusters);
   std::queue<Halfedge_descriptor> clusters_edges_active;
   std::queue<Halfedge_descriptor> clusters_edges_new;
 
@@ -298,6 +338,7 @@ PolygonMesh acvd_simplification(
   }
 
   // compute vertex weights (dual area)
+  typename GT::FT weight_avg = 0;
   for (Face_descriptor fd : faces(pmesh))
   {
     typename GT::FT weight = abs(CGAL::Polygon_mesh_processing::face_area(fd, pmesh)) / 3;
@@ -312,12 +353,23 @@ PolygonMesh acvd_simplification(
         typename GT::FT k1 = get(vpcd_map, vd).min_curvature;
         typename GT::FT k2 = get(vpcd_map, vd).max_curvature;
         typename GT::FT k_sq = (k1 * k1 + k2 * k2);
-        vertex_weight += weight * (/*`eps * avg_curvature` instead of */ 1 + pow(k_sq, gradation_factor / 2.0));  // /2.0 because k_sq is squared
+        vertex_weight += weight * (/*`eps * avg_curvature` instead of 1 +*/ pow(k_sq, gradation_factor / 2.0));  // /2.0 because k_sq is squared
       }
+      weight_avg += vertex_weight;
       put(vertex_weight_pmap, vd, vertex_weight);
     }
   }
-  // TODO: clamp the weights up and below by a ratio (like 10,000) * avg_weights
+  weight_avg /= nb_vertices;
+
+  // clamp the weights up and below by a ratio (like 10,000) * avg_weights
+  for (Vertex_descriptor vd : vertices(pmesh))
+  {
+    typename GT::FT vertex_weight = get(vertex_weight_pmap, vd);
+    if (vertex_weight > CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg)
+      put(vertex_weight_pmap, vd, CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg);
+    else if (vertex_weight < 1.0 / CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg)
+      put(vertex_weight_pmap, vd, 1.0 / CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg);
+  }
 
   for (int ci = 0; ci < nb_clusters; ci++)
   {
@@ -800,7 +852,22 @@ PolygonMesh acvd_isotropic_simplification(
     const NamedParameters& np = parameters::default_values()
   )
 {
-  return internal::acvd_simplification<PolygonMesh, /*IsotropicMetric,*/ NamedParameters>(
+  return internal::acvd_isotropic<PolygonMesh, /*IsotropicMetric,*/ NamedParameters>(
+    pmesh,
+    nb_vertices,
+    np
+    );
+}
+
+template <typename PolygonMesh,
+  typename NamedParameters = parameters::Default_named_parameters>
+PolygonMesh acvd_q  acve_qem_simplification(
+    PolygonMesh& pmesh,
+    const int& nb_vertices,
+    const NamedParameters& np = parameters::default_values()
+  )
+{
+  return internal::acve_qem<PolygonMesh, /*IsotropicMetric,*/ NamedParameters>(
     pmesh,
     nb_vertices,
     np
