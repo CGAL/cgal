@@ -333,7 +333,7 @@ template<typename Tr,
          typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-  double target_edge_length,
+  double& target_edge_length,
   const NamedParameters& np = parameters::default_values())
 {
   using P = typename Tr::Geom_traits::Point_3;
@@ -351,7 +351,7 @@ template<typename Tr,
          typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-  float target_edge_length,
+  float& target_edge_length,
   const NamedParameters& np = parameters::default_values())
 {
   using P = typename Tr::Geom_traits::Point_3;
