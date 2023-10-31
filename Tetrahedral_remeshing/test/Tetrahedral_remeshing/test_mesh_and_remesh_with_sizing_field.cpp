@@ -1,3 +1,5 @@
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -8,6 +10,8 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/tetrahedral_remeshing.h>
+
+#include <CGAL/IO/File_medit.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -65,15 +69,23 @@ int main()
 
   std::cout << "Meshing done." << std::endl;
 
+  std::ofstream os("out_meshing.mesh");
+  CGAL::IO::write_MEDIT(os, c3t3);
+  os.close();
+
   //Remeshing : extract triangulation
   T3_remeshing t3 = CGAL::convert_to_triangulation_3(c3t3);
 
   //Remeshing : coarsen
-  double target_edge_length = 15.;
+  //double target_edge_length = 0.15;//for uniform
   CGAL::tetrahedral_isotropic_remeshing(t3, size,
       number_of_iterations(2).smooth_constrained_edges(true));
 
   std::cout << "Remeshing done." << std::endl;
+
+  std::ofstream os_remeshing("out_remeshing.mesh");
+  CGAL::IO::write_MEDIT(os_remeshing, t3);
+  os_remeshing.close();
 
   return 0;
 }

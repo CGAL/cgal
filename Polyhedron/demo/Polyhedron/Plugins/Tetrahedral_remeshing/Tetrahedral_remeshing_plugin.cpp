@@ -96,6 +96,7 @@ public Q_SLOTS:
         return;
       }
       double target_length = ui.edgeLength_dspinbox->value();
+      bool adaptive_sizing = ui.adaptiveSizing_checkbox->isChecked();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
       bool smooth_edges = ui.smoothEdges_checkBox->isChecked();
@@ -106,13 +107,23 @@ public Q_SLOTS:
       QElapsedTimer time;
       time.start();
 
-      CGAL::tetrahedral_isotropic_remeshing(
+      if (adaptive_sizing)
+      {
+        CGAL::tetrahedral_adaptive_remeshing(
+          c3t3_item->c3t3(),
+          CGAL::parameters::remesh_boundaries(!protect)
+          .number_of_iterations(nb_iter)
+          .smooth_constrained_edges(smooth_edges));
+      }
+      else
+      {
+        CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
           target_length,
           CGAL::parameters::remesh_boundaries(!protect)
           .number_of_iterations(nb_iter)
           .smooth_constrained_edges(smooth_edges));
-
+      }
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
 
       c3t3_item->invalidateOpenGLBuffers();
@@ -193,6 +204,7 @@ private:
     ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
                                      2.   * diago_length);//max
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
+    ui.adaptiveSizing_checkbox->setChecked(false);
 
     std::ostringstream oss;
     oss << "Diagonal length of the Bbox of the triangulation to remesh is ";
@@ -209,6 +221,8 @@ private:
 
     connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
             ui.smoothEdges_checkBox, SLOT(setDisabled(bool)));
+    connect(ui.adaptiveSizing_checkbox, SIGNAL(toggled(bool)),
+            ui.edgeLength_dspinbox, SLOT(setDisabled(bool)));
 
     return ui;
   }
