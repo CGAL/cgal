@@ -46,7 +46,7 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
-  typedef std::vector<std::pair<Point_3, Index> > Initial_points_vector;
+  typedef std::vector<std::tuple<Point_3, int, Index> > Initial_points_vector;
   typedef typename Initial_points_vector::iterator Ipv_iterator;
   typedef typename C3T3::Vertex_handle Vertex_handle;
 
@@ -66,13 +66,13 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
        it != initial_points.end() ;
        ++it )
   {
-    Vertex_handle v = c3t3.triangulation().insert(cwp(it->first));
+    Vertex_handle v = c3t3.triangulation().insert(cwp(std::get<0>(*it)));
 
     // v could be null if point is hidden
     if ( v != Vertex_handle() )
     {
-      c3t3.set_dimension(v,2); // by construction, points are on surface
-      c3t3.set_index(v,it->second);
+      c3t3.set_dimension(v,std::get<1>(*it));
+      c3t3.set_index(v,std::get<2>(*it));
     }
   }
 }
@@ -523,7 +523,7 @@ void make_mesh_3_impl(C3T3& c3t3,
     C3T3,
     MeshDomain,
     MeshCriteria,
-    ::CGAL::internal::has_Has_features<MeshDomain>::value >() (c3t3,
+    ::CGAL::internal::has_Has_features<MeshDomain>::value > () (c3t3,
             domain,
             criteria,
             with_features,

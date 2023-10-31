@@ -819,7 +819,7 @@ points in the `%c3t3` object, with the calls to
 `MeshVertexBase_3::set_dimension()` and
 `MeshVertexBase_3::set_index()`.
 
-\snippet CGAL/Mesh_3/mesh_3D_image_with_custom_initialization.cpp insert initial points
+\snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp insert initial points
 
 The value of `index` must be consistent with the possible values of
 `Mesh_domain::Index`.

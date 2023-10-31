@@ -1,4 +1,4 @@
-// Copyright (c) 20XX,20XX GeometryFactory
+// Copyright (c) 2015,2016 GeometryFactory
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Laurent Rineau and Ange Clement
+// Author(s)     : Laurent Rineau, Jane Tournois and Ange Clement
 
 #ifndef CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_GRAY_IMAGE_H
 #define CGAL_MESH_3_CONSTRUCT_INITIAL_POINTS_GRAY_IMAGE_H
@@ -54,7 +54,7 @@ struct Construct_initial_points_gray_image
    * \brief Constructs the initial points using the gray image.
    *
    * @tparam OutputIterator an `OutputIterator` of points of type
-   * `std::pair<MeshDomain::Point_3, MeshDomain::Index>`
+   * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
    * @tparam MeshDomain a model of `MeshDomain_3`
    * @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
    */

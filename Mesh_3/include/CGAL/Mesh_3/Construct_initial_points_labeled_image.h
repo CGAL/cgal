@@ -1,4 +1,4 @@
-// Copyright (c) 20XX,20XX GeometryFactory
+// Copyright (c) 2015,2016 GeometryFactory
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -102,7 +102,7 @@ struct Construct_initial_points_labeled_image
    * \snippet this get construct intersection
    *
    * @tparam OutputIterator an `OutputIterator` of points of type
-   * `std::pair<MeshDomain::Point_3, MeshDomain::Index>`
+   * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
    * @tparam MeshDomain a model of `MeshDomain_3`
    * @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
    */
@@ -117,7 +117,7 @@ struct Construct_initial_points_labeled_image
    * \brief Same as above, but a `TransformOperator` is used
    *
    * @tparam OutputIterator an `OutputIterator` of points of type
-   * `std::pair<MeshDomain::Point_3, MeshDomain::Index>`
+   * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
    * @tparam MeshDomain a model of `MeshDomain_3`
    * @tparam TransformOperator a functor to transform values of the image.
    * It must provides the following type:<br>
@@ -293,7 +293,7 @@ struct Construct_initial_points_labeled_image
           if (pi_inside_protecting_sphere)
             continue;
 
-          *pts++ = std::make_pair(intersect_point, intersect_index);
+          *pts++ = std::make_tuple(intersect_point, 2, intersect_index); // dimension 2 by construction, points are on surface
         }
       }
     }

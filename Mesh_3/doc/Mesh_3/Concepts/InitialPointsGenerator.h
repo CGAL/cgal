@@ -25,11 +25,14 @@ public:
 
 /*!
 Output a set of (`n`) surface points to the
-output iterator `pts`, as objects of type `std::pair<Point_3,
-%Index>`.
+output iterator `pts`, as objects of type
+`std::tuple<Point_3, int, Index>` where
+`Point_3` is the point's position,
+`int` is the point's dimension and
+`Index` is the point's index.
 
 @tparam OutputIterator an `OutputIterator` of points of type
-`std::pair<MeshDomain::Point_3, MeshDomain::Index>`
+`std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
 @tparam MeshDomain a model of `MeshDomain_3`
 @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
 
@@ -39,12 +42,16 @@ OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3
 
 /*!
 Output a set of surface points to the
-output iterator `pts`, as objects of type `std::pair<Point_3,
-%Index>`. As `n` is not given, the functor must provide enough
+output iterator `pts`, as objects of type
+`std::tuple<Point_3, int, Index>` where
+`Point_3` is the point's position,
+`int` is the point's dimension and
+`Index` is the point's index.
+As `n` is not given, the functor must provide enough
 points to initialize the mesh generation process.
 
 @tparam OutputIterator an `OutputIterator` of points of type
-`std::pair<MeshDomain::Point_3, MeshDomain::Index>`
+`std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
 @tparam MeshDomain a model of `MeshDomain_3`
 @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
 

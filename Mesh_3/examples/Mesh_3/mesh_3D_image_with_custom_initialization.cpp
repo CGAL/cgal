@@ -45,7 +45,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
   typedef typename MeshDomain::Point_3       Point_3;
   typedef typename MeshDomain::Index         Index;
 
-  typedef typename std::pair<Point_3, Index> ConstructedPoint;
+  typedef typename std::tuple<Point_3, int, Index> ConstructedPoint;
 
   Tr& tr = c3t3.triangulation();
 
@@ -61,8 +61,9 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
 
   for (const ConstructedPoint & constructedPoint : constructedPoints)
   {
-    const Point_3& point = constructedPoint.first;
-    const Index&   index = constructedPoint.second;
+    const Point_3& point = std::get<0>(constructedPoint);
+    const int& dimension = std::get<1>(constructedPoint);
+    const Index&   index = std::get<2>(constructedPoint);
 
     Weighted_point pi = cwp(point);
 
@@ -71,7 +72,7 @@ void initialize_triangulation_from_labeled_image(C3T3& c3t3,
     Vertex_handle v = tr.insert(pi);
     // `v` could be null if `pi` is hidden by other vertices of `tr`.
     CGAL_assertion(v != Vertex_handle());
-    c3t3.set_dimension(v, 2); // by construction, points are on surface
+    c3t3.set_dimension(v, dimension);
     c3t3.set_index(v, index);
     /// [insert initial points]
   }
