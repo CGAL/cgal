@@ -11,10 +11,10 @@
 // Author(s)     : Hossam Saeed
 //
 
-// #ifndef CGAL_POLYGON_MESH_PROCESSING_<>
-// #define CGAL_POLYGON_MESH_PROCESSING_<>
-
-// #include <CGAL/license/Polygon_mesh_processing/<>>
+/// TODO:
+// #ifndef CGAL_<>
+// #define CGAL_<>
+// #include <CGAL/license/<>>
 
 #include <CGAL/assertions.h>
 #include <CGAL/IO/Color.h>
@@ -859,20 +859,20 @@ PolygonMesh acvd_isotropic_simplification(
     );
 }
 
-template <typename PolygonMesh,
-  typename NamedParameters = parameters::Default_named_parameters>
-PolygonMesh acvd_q  acve_qem_simplification(
-    PolygonMesh& pmesh,
-    const int& nb_vertices,
-    const NamedParameters& np = parameters::default_values()
-  )
-{
-  return internal::acve_qem<PolygonMesh, /*IsotropicMetric,*/ NamedParameters>(
-    pmesh,
-    nb_vertices,
-    np
-    );
-}
+// template <typename PolygonMesh,
+//   typename NamedParameters = parameters::Default_named_parameters>
+// PolygonMesh acvd_qem_simplification(
+//     PolygonMesh& pmesh,
+//     const int& nb_vertices,
+//     const NamedParameters& np = parameters::default_values()
+//   )
+// {
+//   return internal::acve_qem<PolygonMesh, /*IsotropicMetric,*/ NamedParameters>(
+//     pmesh,
+//     nb_vertices,
+//     np
+//     );
+// }
 
 } // namespace Polygon_mesh_processing
 
