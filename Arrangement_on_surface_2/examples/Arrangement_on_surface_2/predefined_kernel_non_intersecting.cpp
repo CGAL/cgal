@@ -2,12 +2,13 @@
 // Constructing an arrangement of non-intersecting line segments using the
 // predefined kernel with exact predicates.
 
+#include <list>
+#include <fstream>
+#include <chrono>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Timer.h>
-#include <list>
-#include <fstream>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Number_type = Kernel::FT;
@@ -52,20 +53,19 @@ int main(int argc, char* argv[]) {
 
   // Construct the arrangement by aggregately inserting all segments.
   Arrangement_2 arr;
-  CGAL::Timer timer;
 
   std::cout << "Performing aggregated insertion of " << n << " segments.\n";
 
-  timer.start();
+  auto start = std::chrono::system_clock::now();
   insert_non_intersecting_curves (arr, segments.begin(), segments.end());
-  timer.stop();
+  std::chrono::duration<double> secs = std::chrono::system_clock::now() - start;
 
   // Print the arrangement dimensions.
   std::cout << "V = " << arr.number_of_vertices()
             << ", E = " << arr.number_of_edges()
             << ", F = " << arr.number_of_faces() << std::endl;
 
-  std::cout << "Construction took " << timer.time() << " seconds.\n";
+  std::cout << "Construction took " << secs.count() << " seconds.\n";
 
   return 0;
 }
