@@ -15,8 +15,8 @@
 #include "arr_exact_construction_segments.h"
 #include "Edge_length.h"
 
-typedef CGAL::Arr_vertex_index_map<Arrangement>  Vertex_index_map;
-typedef Edge_length<Arrangement>                 My_edge_length;
+using Vertex_index_map = CGAL::Arr_vertex_index_map<Arrangement>;
+using My_edge_length = Edge_length<Arrangement>;
 
 int main() {
   // Construct an arrangement of seven intersecting line segments.
