@@ -742,8 +742,8 @@ The class `Regular_triangulation_2<Traits, Tds>`
 is designed to maintain the
 regular triangulation of a set of \f$ 2d\f$ weighted points.
 It derives from the class `Triangulation_2<Traits, Tds>`.
-The functions `insert` and
-`remove` are overwritten to handle weighted points
+The functions `insert()` and
+`remove()` are overwritten to handle weighted points
 and maintain the regular
 property.
 The function `move()` is not
@@ -1184,7 +1184,7 @@ classes.
 
 The class `Triangulation_hierarchy_2<Tr>` inherits from the
 triangulation type passed as template parameter `Tr`.
-The `insert`, `move`, and `remove` member functions
+The `insert()`, `move()`, and `remove()` member functions
 are overwritten to update the data structure at each operation.
 The locate queries are also overwritten to take advantage of the data
 structure for a fast processing.
@@ -1327,7 +1327,7 @@ data structure.
 
 The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator
-range over (weighted) points to the insert function. However, an iterator range of
+range over (weighted) points to the `insert()` function. However, an iterator range of
 (weighted) points does not allow the user to set different information to each vertex.
 To solve this problem, in the case the vertex type of the triangulation
 is a model of the concept `TriangulationVertexBaseWithInfo_2`
@@ -1339,7 +1339,7 @@ of the corresponding point given in the range.
 \subsection Triangulation_2UsinganIteratorOverPairs Using an Iterator Over Pairs
 
 Each point and its information are gathered into a pair. We provide
-the `insert` function of the triangulation with a range of such pairs.
+the `insert()` function of the triangulation with a range of such pairs.
 \cgalExample{Triangulation_2/info_insert_with_pair_iterator_2.cpp}
 
 \subsection Triangulation_2UsingtheBoostZipIterator Using the Boost Zip Iterator

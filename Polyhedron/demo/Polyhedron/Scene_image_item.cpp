@@ -24,7 +24,7 @@ template <typename Word_type>
 class Image_accessor
 {
 public:
-  Image_accessor(const Image& im, int dx=1, int dy=1, int dz=1);
+  Image_accessor(const Image& im, int dx=1, int dy=1, int dz=1, const QColor& default_color = QColor());
 
   bool is_vertex_active(std::size_t i, std::size_t j, std::size_t k) const;
   const QColor& vertex_color(std::size_t i, std::size_t j, std::size_t k) const;
@@ -64,12 +64,12 @@ private:
 };
 
 template <typename Word_type>
-Image_accessor<Word_type>::Image_accessor(const Image& im, int dx, int dy, int dz)
+Image_accessor<Word_type>::Image_accessor(const Image& im, int dx, int dy, int dz, const QColor& default_color)
 : im_(&im)
 , dx_(dx)
 , dy_(dy)
 , dz_(dz)
-, default_color_()
+, default_color_(default_color)
 , colors_()
 {
   const std::size_t xdim = im_->xdim();
@@ -88,14 +88,15 @@ Image_accessor<Word_type>::Image_accessor(const Image& im, int dx, int dy, int d
     }
   }
 
-  double i=0;
-  const double starting_hue = 45./360.; // magenta
+  const double nb_Colors = colors_.size()+1;
+  double i=1;
+  const double starting_hue = default_color.hueF();
   for ( auto it = colors_.begin(),
        end = colors_.end() ; it != end ; ++it, i += 1.)
   {
-    double hue =  starting_hue + 1./double(colors_.size()) * i;
+    double hue =  starting_hue + 1./nb_Colors * i;
     if ( hue > 1. ) { hue -= 1.; }
-    it->second = QColor::fromHsvF(hue, .75, .75);
+    it->second = QColor::fromHsvF(hue, default_color.saturationF(), default_color.valueF());
   }
 }
 
@@ -113,15 +114,7 @@ is_vertex_active(std::size_t i, std::size_t j, std::size_t k) const
   Word_type v7 = image_data(i    , j    , k-dz_);
   Word_type v8 = image_data(i    , j    , k  );
 
-  // don't draw interior vertices
-  if ( v1 != 0 && v2 != 0 && v3 != 0 && v4 != 0 &&
-       v5 != 0 && v6 != 0 && v7 != 0 && v8 != 0 )
-  {
-    return false;
-  }
-
-  return ( v1 != 0 || v2 != 0 || v3 != 0 || v4 != 0 ||
-           v5 != 0 || v6 != 0 || v7 != 0 || v8 != 0 );
+  return v1 != v2 || v1 != v3 || v1 != v4 || v1 != v5 || v1 != v6 || v1 != v7 || v1 != v8;
 }
 template <typename Word_type>
 const QColor&
@@ -755,12 +748,18 @@ void Scene_image_item::drawEdges(Viewer_interface *viewer) const
     getEdgeContainer(0)->setWidth(3.0f);
   }
   getEdgeContainer(0)->setColor(QColor(Qt::black));
+  getEdgeContainer(0)->setClipping(false);
   viewer->glDepthRangef(0.00001f, 0.99999f);
   getEdgeContainer(0)->draw(viewer, true);
   viewer->glDepthRangef(0.0f, 1.0f);
 }
 
 bool Scene_image_item::isGray() { return d->is_hidden;}
+
+void Scene_image_item::setColor(QColor c) {
+  color_ = c;
+  invalidateOpenGLBuffers();
+}
 
 void Scene_image_item::invalidateOpenGLBuffers()
 {
@@ -788,9 +787,9 @@ void Scene_image_item::initializeBuffers(Viewer_interface *v) const
 
 template <typename Word_type>
 internal::Vertex_buffer_helper*
-init_helper(const Image &im, int dx, int dy, int dz, bool is_ogl_4_3)
+init_helper(const Image &im, int dx, int dy, int dz, bool is_ogl_4_3, const QColor& default_color = QColor())
 {
-  internal::Image_accessor<Word_type> image_data_accessor(im, dx, dy, dz);
+  internal::Image_accessor<Word_type> image_data_accessor(im, dx, dy, dz, default_color);
   return new internal::Vertex_buffer_helper_impl<Word_type>(std::move(image_data_accessor),
                                                             is_ogl_4_3);
 }
@@ -809,7 +808,8 @@ void Scene_image_item::computeElements() const
     CGAL_IMAGE_IO_CASE(m_image->image(),
                        d->helper = init_helper<Word>(*m_image,
                                                      d->m_voxel_scale, d->m_voxel_scale, d->m_voxel_scale,
-                                                     d->is_ogl_4_3));
+                                                     d->is_ogl_4_3,
+                                                     color_));
     d->helper->fill_buffer_data();
     getTriangleContainer(0)->allocate(
           Tc::Smooth_vertices,

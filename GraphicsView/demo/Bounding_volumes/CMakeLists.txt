@@ -7,6 +7,15 @@ project(Bounding_volumes_Demo)
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 find_package(Qt6 QUIET COMPONENTS Widgets)
+
+find_package(Eigen3 3.1.91 QUIET) #(requires 3.1.91 or greater)
+include(CGAL_Eigen3_support)
+
+if(NOT TARGET CGAL::Eigen3_support)
+  message("NOTICE: This demo requires CGAL and Eigen, and will not be compiled.")
+  return()
+endif()
+
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -21,7 +30,8 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Bounding_volumes)
 
   target_link_libraries(Bounding_volumes PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
-                                                 Qt6::Widgets)
+                                                 Qt6::Widgets
+                                                 CGAL::Eigen3_support)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Bounding_volumes)
