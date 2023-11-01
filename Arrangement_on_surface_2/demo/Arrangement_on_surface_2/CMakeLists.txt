@@ -17,7 +17,7 @@ find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if (CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_compile_definitions(QT_NO_KEYWORDS)
-  include_directories( BEFORE ./ )
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   # Arrangement package includes
   add_definitions(-DQT_NO_KEYWORDS)
