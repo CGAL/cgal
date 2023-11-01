@@ -56,10 +56,7 @@ bool compute_filtering_visibility() {
     uint j2 = domain2%32u;
     uint visible1 = uint(is_visible_bitset[i1]);
     uint visible2 = uint(is_visible_bitset[i2]);
-    if(((visible1>>j1)&1u) == 0u && ((visible2>>j2)&1u) == 0u)
-    {
-      discard;
-    }
+    return ((visible1>>j1)&1u) == 0u && ((visible2>>j2)&1u) == 0u;
   }
   else
     return false;

@@ -370,7 +370,7 @@ struct Scene_triangulation_3_item_priv {
     is_aabb_tree_built = false;
     alphaSlider = NULL;
     is_filterable = true;
-    memset(visible_biteset, 0xFFFF, Scene_triangulation_3_item::number_of_bitset * sizeof(uint)); // all bits set to 1
+    visible_bitset.fill(0xFFFFFFFF);
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -528,7 +528,7 @@ struct Scene_triangulation_3_item_priv {
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
-  std::bitset<32> visible_biteset[Scene_triangulation_3_item::number_of_bitset];
+  std::array<std::bitset<32>, Scene_triangulation_3_item::number_of_bitset> visible_bitset;
   bool show_tetrahedra;
   bool cut_plane_enabled;
   bool is_aabb_tree_built;
@@ -1054,9 +1054,11 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     program->bind();
     if(d->is_filterable)
     {
-      GLuint visible_bitset_ulong[number_of_bitset];
-      memcpy(visible_bitset_ulong, d->visible_biteset, number_of_bitset * sizeof(uint));
-      program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong, number_of_bitset);
+      std::array<GLuint, number_of_bitset> visible_bitset_ulong;
+      std::transform(d->visible_bitset.cbegin(), d->visible_bitset.cend(), visible_bitset_ulong.begin(),
+                     [](const std::bitset<32>& bitset) { return bitset.to_ulong(); }
+                     );
+      program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong.data(), number_of_bitset);
     }
     program->setUniformValue("is_filterable", d->is_filterable);
     program->release();
@@ -1142,9 +1144,11 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
         program->bind();
         if(d->is_filterable)
         {
-          GLuint visible_bitset_ulong[number_of_bitset];
-          memcpy(visible_bitset_ulong, d->visible_biteset, number_of_bitset * sizeof(uint));
-          program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong, number_of_bitset);
+          std::array<GLuint, number_of_bitset> visible_bitset_ulong;
+          std::transform(d->visible_bitset.cbegin(), d->visible_bitset.cend(), visible_bitset_ulong.begin(),
+                         [](const std::bitset<32>& bitset) { return bitset.to_ulong(); }
+                         );
+          program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong.data(), number_of_bitset);
         }
         program->setUniformValue("is_filterable", d->is_filterable);
         program->release();
@@ -2154,7 +2158,7 @@ QColor Scene_triangulation_3_item::getSubdomainIndexColor(int i) const
 void Scene_triangulation_3_item::resetVisibleSubdomain()
 {
   d->visible_subdomain.set();
-  memset(d->visible_biteset, 0xFFFF, number_of_bitset * sizeof(uint));
+  d->visible_bitset.fill(0xFFFFFFFF);
 }
 
 void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
@@ -2164,7 +2168,7 @@ void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
   int i = compact_id/32;
   int j = compact_id%32;
 
-  d->visible_biteset[i][j] = d->visible_subdomain[id];
+  d->visible_bitset[i][j] = d->visible_subdomain[id];
 }
 
 bool Scene_triangulation_3_item::isVisibleSubdomain(int id) const
