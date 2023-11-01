@@ -141,15 +141,15 @@ public:
 
   /*! Obtain the rational kernel.
    */
-  Shared_rat_kernel rat_kernel() { return m_rat_kernel; }
+  Shared_rat_kernel rat_kernel() const { return m_rat_kernel; }
 
   /*! Obtain the algebraic kernel.
    */
-  Shared_alg_kernel alg_kernel() { return m_alg_kernel; }
+  Shared_alg_kernel alg_kernel() const { return m_alg_kernel; }
 
   /*! Obtain the nt traits.
    */
-  Shared_nt_traits nt_traits() { return m_nt_traits; }
+  Shared_nt_traits nt_traits() const { return m_nt_traits; }
 
   /*! Obtain the next conic index. */
   static size_t get_index() {
