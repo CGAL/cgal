@@ -48,13 +48,8 @@ endif()
 
 
 if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL Windows)
-  add_executable(display_dll_version_info display_dll_version_info.cpp)
-  target_link_libraries(display_dll_version_info PRIVATE version)
-  add_executable(test_gmp_mpfr_dll test_gmp_mpfr_dll.cpp)
+  create_single_source_cgal_program(test_gmp_mpfr_dll.cpp)
   target_link_libraries(test_gmp_mpfr_dll PRIVATE version)
-  use_CGAL_GMP_support(test_gmp_mpfr_dll)
-  CGAL_add_test(test_gmp_mpfr_dll)
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS test_gmp_mpfr_dll )
   string(RANDOM RDM_DIR)#5 random chars to avoid conflicts in parallel testsuites
   set(NON_STANDARD_INSTALL_PREFIX $ENV{TEMP}/${RDM_DIR})
 else()
