@@ -11,7 +11,6 @@
 //                 Sylvain Pion
 //                 Clement Jamin
 
-
 #ifndef CGAL_IO_TRIANGULATION_RAW_IOSTREAM_3_H
 #define CGAL_IO_TRIANGULATION_RAW_IOSTREAM_3_H
 
@@ -438,7 +437,7 @@ bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& t
              && internal::read_cells<GT, Tds_, Lds_, Tr_src, ConvertCell>
                                     (is, tr, vertices_handles, convert_cell);
 
-  CGAL_assertion(result && tr.is_valid(true));
+  CGAL_assertion(result && tr.is_valid(false));
   return result;
 }
 
