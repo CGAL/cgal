@@ -499,9 +499,6 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
   }
   std::getline(is, s);
   if(s != "") {
-    if(s[s.size()-1] == '\r') { // deal with Windows EOL
-      s.resize(s.size() - 1);
-    }
     if(s != std::string(" ") + CGAL::Get_io_signature<Fake_CDT_3>()()) {
       std::cerr << "load_binary_file:"
                 << "\n  expected format: " << CGAL::Get_io_signature<Fake_CDT_3>()()
@@ -585,9 +582,6 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
   }
   std::getline(is, s);
   if(s != "") {
-    if(s[s.size()-1] == '\r') { // deal with Windows EOL
-      s.resize(s.size() - 1);
-    }
     if(s != std::string(" ") + CGAL::Get_io_signature<Fake_c3t3>()()) {
       std::cerr << "Polyhedron_demo_c3t3_binary_io_plugin::try_load_other_binary_format:"
                 << "\n  expected format: " << CGAL::Get_io_signature<Fake_c3t3>()()
