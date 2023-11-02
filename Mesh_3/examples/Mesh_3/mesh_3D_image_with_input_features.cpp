@@ -13,8 +13,6 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 
-#include <CGAL/IO/File_binary_mesh_3.h>
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
 typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
@@ -64,84 +62,21 @@ int main(int argc, char* argv[])
   /// [Domain creation]
 
   /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
-  Mesh_criteria criteria(params::edge_size = 6//,
-//    params::facet_angle = 30,
-//    params::facet_size = 6,
-//    params::facet_distance = 4,
-//    params::cell_radius_edge_ratio = 3,
-//    params::cell_size = 8
-    );
+  Mesh_criteria criteria(params::edge_size = 6,
+    params::facet_angle = 30,
+    params::facet_size = 6,
+    params::facet_distance = 4,
+    params::cell_radius_edge_ratio = 3,
+    params::cell_size = 8);
   /// [Mesh criteria]
 
   // Meshing
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
   // Output
-//  std::ofstream medit_file("out.mesh");
-//  CGAL::IO::write_MEDIT(medit_file, c3t3);
-//  medit_file.close();
-//  CGAL::dump_c3t3(c3t3, "out");
-
-  std::cout << "Saving" << std::endl;
-  std::ofstream output_file("out.mesh");
-  CGAL::IO::save_binary_file(output_file, c3t3, /*binary=*/false);
-//  output_file << c3t3;
-  output_file.close();
-  std::cout << "Saved" << std::endl;
-
-  std::cout << "Saving binary" << std::endl;
-  std::ofstream output_bin_file("out_bin.mesh", std::ios_base::binary);
-  CGAL::IO::save_binary_file(output_bin_file, c3t3, /*binary=*/true);
-  output_bin_file.close();
-  std::cout << "Saved" << std::endl;
-
-  std::cout << "Reading" << std::endl;
-  C3t3 readC3t3;
-  std::ifstream read_file("out.mesh", std::ios_base::binary);
-  CGAL::IO::load_binary_file(read_file, readC3t3);
-//  read_file >> readC3t3;
-  read_file.close();
-  std::cout << "Read" << std::endl;
-
-  std::cout << "Saveing the read" << std::endl;
-  std::ofstream output_read_file("out_read.mesh");
-  CGAL::IO::save_binary_file(output_read_file, readC3t3, /*binary=*/false);
-//  output_read_file << readC3t3;
-  output_read_file.close();
-  std::cout << "Saved the read" << std::endl;
-
-  std::cout << "Compare original and read" << std::endl;
-  std::ifstream read_file_wr("out.mesh");
-  std::ifstream read_file_re("out_read.mesh");
-  int line = 0;
-  int col = 0;
-  while (read_file_wr && read_file_re)
-  {
-    char c1;
-    char c2;
-    read_file_wr >> c1;
-    read_file_re >> c2;
-    if (c1 != c2)
-    {
-      std::cout << "Different (" << line << ", " << col << " ): "
-        << c1 << " (" << (int)c1 << ") != "
-        << c2 << " (" << (int)c2 << ")" << std::endl;
-      return EXIT_FAILURE;
-    }
-    if (c1 == '\n') {
-      line++;
-      col = 0;
-    }
-    else {
-      col++;
-    }
-  }
-  if (read_file_wr || read_file_re)
-  {
-    std::cout << "Different : not same length" << std::endl;
-    return EXIT_FAILURE;
-  }
-  std::cout << "All good" << std::endl;
+  std::ofstream medit_file("out.mesh");
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return EXIT_SUCCESS;
 }
