@@ -1,17 +1,20 @@
-// Copyright (c) 20XX,20XX GeometryFactory
+// Copyright (c) 1999-2003  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org)
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ange Clément
+// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//                 Sylvain Pion
+//                 Clement Jamin
+//                 Ange Clement
 
 
-#ifndef CGAL_TRIANGULATION_RAW_IOSTREAM_3_H
-#define CGAL_TRIANGULATION_RAW_IOSTREAM_3_H
+#ifndef CGAL_IO_TRIANGULATION_RAW_IOSTREAM_3_H
+#define CGAL_IO_TRIANGULATION_RAW_IOSTREAM_3_H
 
 #include <CGAL/license/Triangulation_3.h>
 
@@ -19,14 +22,10 @@
 #include <vector>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Default.h>
 #include <CGAL/IO/io.h>
+#include <CGAL/Mesh_3/Triangulation_3_fwd.h>
 
 namespace CGAL {
-
-template < class GT, class Tds = Default,
-         class Lock_data_structure = Default >
-class Triangulation_3;
 
 namespace IO {
 
@@ -393,4 +392,4 @@ bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
 
 } // end namespace CGAL
 
-#endif // CGAL_TRIANGULATION_RAW_IOSTREAM_3_H
+#endif // CGAL_IO_TRIANGULATION_RAW_IOSTREAM_3_H
