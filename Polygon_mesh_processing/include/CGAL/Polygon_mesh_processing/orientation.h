@@ -150,7 +150,7 @@ namespace internal{
  * where its sequence of vertices is seen counterclockwise.
  *
  * @pre `CGAL::is_closed``(tm)`
- * @pre '\link CGAL::is_closed `CGAL::is_closed(tm)` \endlink
+ * @pre \link CGAL::is_closed `CGAL::is_closed(tm)` \endlink
  * @pre `CGAL::is_triangle_mesh(tm)`
  * @pre If `tm` contains several connected components, they are oriented consistently.
  *      In other words, the answer to this predicate would be the same for each
