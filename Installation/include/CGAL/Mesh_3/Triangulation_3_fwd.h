@@ -1,15 +1,11 @@
-// Copyright (c) 1999-2003  INRIA Sophia-Antipolis (France).
-// All rights reserved.
+// Copyright (C) 2023  GeometryFactory Sarl
 //
-// This file is part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//                 Sylvain Pion
-//                 Clement Jamin
 
 #ifndef CGAL_MESH_3_TRIANGULATION_3_FWD_H
 #define CGAL_MESH_3_TRIANGULATION_3_FWD_H
