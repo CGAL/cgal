@@ -54,7 +54,7 @@ if(TARGET CGAL::Eigen3_support)
                            ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
     target_link_libraries(remesh_planar_patches_plugin PUBLIC scene_surface_mesh_item CGAL::Eigen3_support)
 
-    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+    if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
         "compilation of  extrude_plugin"
         "compilation of  fairing_plugin"
@@ -159,7 +159,7 @@ target_link_libraries(
   engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item
                              scene_polylines_item)
 
-if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(
     "compilation of  join_and_split_plugin"
     "compilation of  selection_plugin"

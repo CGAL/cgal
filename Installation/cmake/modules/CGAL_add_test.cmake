@@ -3,9 +3,9 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
-option(BUILD_TESTING "Build the testing tree." OFF)
+option(CGAL_ENABLE_TESTING "Build the testing tree." OFF)
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   enable_testing()
 endif()
 

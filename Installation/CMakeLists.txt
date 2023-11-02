@@ -105,9 +105,9 @@ else(CGAL_BRANCH_BUILD)
       "${CGAL_SOURCE_DIR}"
       CACHE INTERNAL "Directory containing the GraphicsView package")
 
-  # Enable testing with BUILD_TESTING
-  option(BUILD_TESTING "Build the testing tree." OFF)
-  if(BUILD_TESTING)
+  # Enable testing with CGAL_ENABLE_TESTING
+  option(CGAL_ENABLE_TESTING "Build the testing tree." OFF)
+  if(CGAL_ENABLE_TESTING)
     enable_testing()
   endif()
 endif(CGAL_BRANCH_BUILD)

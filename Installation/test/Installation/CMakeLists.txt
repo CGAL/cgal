@@ -43,7 +43,7 @@ create_single_source_cgal_program("deprecation_warning.cpp")
 create_single_source_cgal_program("test_use_h.cpp")
 
 create_single_source_cgal_program(will_fail.cpp will_fail_aux.cpp)
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_property(TEST "execution   of  will_fail" PROPERTY WILL_FAIL TRUE)
 endif()
 

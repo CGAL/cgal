@@ -112,7 +112,7 @@ if(TARGET CGAL::TBB_support)
     endif()
   endforeach()
 
-  if(BUILD_TESTING)
+  if(CGAL_ENABLE_TESTING)
     set_property(TEST
       "execution   of  test_meshing_verbose"
       "execution   of  test_meshing_polyhedron_with_features"
@@ -141,7 +141,7 @@ if(TARGET ITT::ITT)
   target_compile_definitions(test_meshing_verbose PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
 endif()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  test_meshing_polyhedron_with_features"
     "execution   of  test_meshing_verbose"
