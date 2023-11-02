@@ -77,8 +77,7 @@ public:
                     parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_distance_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_min_size_param), FT(0))),
-    cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param),
-                                                parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_param), FT(0))),
+    cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param), FT(0)),
                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_size_param), FT(0)),
                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_min_size_param), FT(0)))
   { }
