@@ -26,6 +26,7 @@
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Mesh_3/Triangulation_3_fwd.h>
 #include <CGAL/Triangulation_utils_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -82,12 +83,6 @@
 #define CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
 
 namespace CGAL {
-
-#ifndef CGAL_TRIANGULATION_RAW_IOSTREAM_3_H
-template < class GT, class Tds = Default,
-           class Lock_data_structure = Default >
-class Triangulation_3;
-#endif
 
 template < class GT, class Tds, class Lds > std::istream& operator>>
 (std::istream& is, Triangulation_3<GT,Tds,Lds>& tr);
