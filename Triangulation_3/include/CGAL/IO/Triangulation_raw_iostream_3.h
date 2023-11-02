@@ -119,20 +119,58 @@ bool write_vertices(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
   return (bool)os;
 }
 
-struct IdentityConvertVertex
+template < class GT, class Tds, class Lds,
+           typename Tr_src = Triangulation_3<GT, Tds, Lds>,
+           typename ConvertVertex = Nullptr_t >
+struct read_vertices_functor
 {
-  template <class V>
-  void operator()(const V& v_input, V& v_output)
+  bool operator()(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector< typename Tds::Vertex_handle >& vertices_handles,
+                  typename Triangulation_3<GT, Tds>::size_type n,
+                  ConvertVertex convert_vertex = ConvertVertex())
   {
-    auto time_stamp_ = v_output.time_stamp();
-    v_output = v_input;
-    v_output.set_time_stamp(time_stamp_);
+    // Reads:
+    // - the non combinatorial information on vertices (point, etc)
+    // The vertices are read with the type Tr_src::Vertex
+    // and converted to type Triangulation_3<GT, Tds, Lds>::Vertex
+    // using the ConvertVertex convertor.
+    typedef typename Tr_src::Vertex Vertex1;
+
+    for(std::size_t i=1; i <= n; i++)
+    {
+      Vertex1 v;
+      if(!(is >> v))
+        return false;
+      vertices_handles[i] = tr.tds().create_vertex();
+      convert_vertex(v, *vertices_handles[i]);
+    }
+
+    return (bool)is;
   }
 };
 
+template < class GT, class Tds, class Lds, class Tr_src >
+struct read_vertices_functor < GT, Tds, Lds, Tr_src, Nullptr_t >
+{
+  bool operator()(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector< typename Tds::Vertex_handle >& vertices_handles,
+                  typename Triangulation_3<GT, Tds>::size_type n,
+                  Nullptr_t _ = Nullptr_t())
+  {
+    // Reads:
+    // - the non combinatorial information on vertices (point, etc)
+    for(std::size_t i=1; i <= n; i++)
+    {
+      vertices_handles[i] = tr.tds().create_vertex();
+      if(!(is >> *vertices_handles[i]))
+        return false;
+    }
+    return (bool)is;
+  }
+};
+
+
 template < class GT, class Tds, class Lds,
            typename Tr_src = Triangulation_3<GT, Tds, Lds>,
-           typename ConvertVertex = IdentityConvertVertex >
+           typename ConvertVertex = Nullptr_t >
 bool read_vertices(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector< typename Tds::Vertex_handle >& vertices_handles,
                    ConvertVertex convert_vertex = ConvertVertex())
 {
@@ -141,8 +179,6 @@ bool read_vertices(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vec
   // - the non combinatorial information on vertices (point, etc)
   typedef Triangulation_3<GT, Tds>                 Triangulation;
   typedef typename Triangulation::size_type        size_type;
-
-  typedef typename Tr_src::Vertex Vertex1;
 
   size_type n;
   if(IO::is_ascii(is))
@@ -159,14 +195,8 @@ bool read_vertices(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vec
   vertices_handles.resize(n+1);
   vertices_handles[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
 
-  for(std::size_t i=1; i <= n; i++)
-  {
-    Vertex1 v;
-    if(!(is >> v))
-      return false;
-    vertices_handles[i] = tr.tds().create_vertex();
-    convert_vertex(v, *vertices_handles[i]);
-  }
+  if (!read_vertices_functor<GT, Tds, Lds, Tr_src, ConvertVertex>()(is, tr, vertices_handles, n, convert_vertex))
+    return false;
 
   return (bool)is;
 }
@@ -250,26 +280,64 @@ bool write_cells(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr, cons
   return false;
 }
 
-struct IdentityConvertCell
+
+template < class GT, class Tds, class Lds,
+           typename Tr_src = Triangulation_3<GT, Tds, Lds>,
+           typename ConvertCell = Nullptr_t >
+struct read_cells_functor
 {
-  template <class C>
-  void operator()(const C& c_input, C& c_output)
+  bool operator()(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::vector< typename Tds::Vertex_handle >& vertices_handles,
+                  typename Triangulation_3<GT, Tds>::size_type m, std::vector< typename Triangulation_3<GT, Tds>::Cell_handle >& C,
+                  ConvertCell convert_cell = ConvertCell())
   {
-    c_output.set_subdomain_index(c_input.subdomain_index());
-    for(int i = 0; i < 4; ++i) {
-      c_output.set_surface_patch_index(i, c_input.surface_patch_index(i));
+    // Reads:
+    // [Cells other info]
+    // - when dimension < 3 : the same with faces of maximal dimension
+    // The cell are read with the type Tr_src::Cell
+    // and converted to type Triangulation_3<GT, Tds, Lds>::Cell
+    // using the ConvertCell convertor.
+
+    typedef typename Tr_src::Cell Cell1;
+
+    for(std::size_t i=0 ; i < m; i++)
+    {
+      Cell1 c;
+      if(!(is >> c))
+        return false;
+      convert_cell(c, *C[i]);
     }
+
+    return (bool)is;
+  }
+};
+
+template < class GT, class Tds, class Lds, class Tr_src >
+struct read_cells_functor < GT, Tds, Lds, Tr_src, Nullptr_t >
+{
+  bool operator()(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::vector< typename Tds::Vertex_handle >& vertices_handles,
+                  typename Triangulation_3<GT, Tds>::size_type m, std::vector< typename Triangulation_3<GT, Tds>::Cell_handle >& C,
+                  Nullptr_t _ = Nullptr_t())
+  {
+    // Reads:
+    // - the non combinatorial information on vertices (point, etc)
+    for(std::size_t i=0 ; i < m; i++)
+    {
+      if(!(is >> *C[i]))
+        return false;
+    }
+
+    return (bool)is;
   }
 };
 
 template < class GT, class Tds, class Lds,
            typename Tr_src = Triangulation_3<GT, Tds, Lds>,
-           typename ConvertCell = IdentityConvertCell >
+           typename ConvertCell = Nullptr_t >
 bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::vector< typename Tds::Vertex_handle >& vertices_handles,
                 ConvertCell convert_cell = ConvertCell())
 {
-  // Writes:
-  // [Call to Tds::print_cells]
+  // Reads:
+  // [Call to Tds::read_cells]
   // - the number of cells
   // - the cells by the indices of their vertices in the preceding list
   //   of vertices, plus the non combinatorial information on each cell
@@ -280,8 +348,6 @@ bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::
   typedef Triangulation_3<GT, Tds>                 Triangulation;
   typedef typename Triangulation::Cell_handle      Cell_handle;
 
-  typedef typename Tr_src::Cell Cell1;
-
   std::vector< Cell_handle > C;
 
   std::size_t m;
@@ -289,13 +355,8 @@ bool read_cells(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, const std::
   if(!is)
     return false;
 
-  for(std::size_t i=0 ; i < m; i++)
-  {
-    Cell1 c;
-    if(!(is >> c))
-      return false;
-    convert_cell(c, *C[i]);
-  }
+  if (!read_cells_functor<GT, Tds, Lds, Tr_src, ConvertCell>()(is, tr, vertices_handles, m, C, convert_cell))
+    return false;
 
   return (bool)is;
 }
@@ -327,10 +388,7 @@ bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds
       && internal::write_cells(os, tr, vertices_map);
 }
 
-template < class GT, class Tds, class Lds,
-           typename Tr_src = Triangulation_3<GT, Tds, Lds>,
-           typename ConvertVertex = internal::IdentityConvertVertex,
-           typename ConvertCell = internal::IdentityConvertCell >
+template < class GT, class Tds, class Lds >
 bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds>& tr)
 {
   Unique_hash_map<typename Tds::Vertex_handle, std::size_t> vertices_map;
@@ -340,8 +398,8 @@ bool export_triangulation_3(std::ostream& os, const Triangulation_3<GT, Tds, Lds
 
 template < class GT, class Tds, class Lds,
            typename Tr_src = Triangulation_3<GT, Tds, Lds>,
-           typename ConvertVertex = internal::IdentityConvertVertex,
-           typename ConvertCell = internal::IdentityConvertCell >
+           typename ConvertVertex = Nullptr_t,
+           typename ConvertCell = Nullptr_t >
 bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr, std::vector<typename Tds::Vertex_handle >& vertices_handles,
                             ConvertVertex convert_vertex = ConvertVertex(),
                             ConvertCell convert_cell = ConvertCell())
@@ -376,8 +434,8 @@ bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
 
 template < class GT, class Tds, class Lds,
            typename Tr_src = Triangulation_3<GT, Tds, Lds>,
-           typename ConvertVertex = internal::IdentityConvertVertex,
-           typename ConvertCell = internal::IdentityConvertCell >
+           typename ConvertVertex = Nullptr_t,
+           typename ConvertCell = Nullptr_t >
 bool import_triangulation_3(std::istream& is, Triangulation_3<GT, Tds, Lds>& tr,
                             ConvertVertex convert_vertex = ConvertVertex(),
                             ConvertCell convert_cell = ConvertCell())

@@ -1302,6 +1302,14 @@ public:
 
     // Reads 1D Features
     read_edges(is, vertices_handles);
+    // To keep compatibility with previous files,
+    // the istream errors should be cleared and the progress reversed
+    if (!is)
+    {
+      is.clear();
+      edges_.clear();
+      return is;
+    }
 
     return is;
   }
@@ -2266,8 +2274,6 @@ operator>> (std::istream& is,
    */
   using C3t3          = Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>;
   using Vertex_handle = typename C3t3::Vertex_handle;
-  using Curve_index   = typename C3t3::Curve_index;
-  using Internal_edge = typename C3t3::Internal_edge;
 
   c3t3.clear();
 
@@ -2281,8 +2287,14 @@ operator>> (std::istream& is,
   }
 
   c3t3.read_edges(is, vertices_handles);
+  // To keep compatibility with previous files,
+  // the istream errors should be cleared and the progress reversed
   if (!is)
+  {
+    is.clear();
+    c3t3.edges_.clear();
     return is;
+  }
 
   c3t3.rescan_after_load_of_triangulation();
   return is;
