@@ -46,6 +46,10 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_vector.h>
+#if TBB_INTERFACE_VERSION < 12010 && !defined(TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS)
+#define CGAL_HAS_DEFINED_TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS
+#define TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS
+#endif
 #include <tbb/concurrent_map.h>
 #include <tbb/parallel_for.h>
 #ifdef SET_POINT_IDS_USING_MUTEX
@@ -1769,5 +1773,11 @@ autorefine(      TriangleMesh& tm,
 
 
 } } // end of CGAL::Polygon_mesh_processing
+
+#ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_HAS_DEFINED_TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS
+#undef TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS
+#endif
+#endif
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_AUTOREFINEMENT_H
