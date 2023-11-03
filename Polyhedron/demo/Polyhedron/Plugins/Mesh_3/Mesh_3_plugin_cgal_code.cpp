@@ -135,7 +135,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.edge_min_sizing = edge_min_size;
-  param.edge_distancing = edge_distance;
+  param.edge_distance = edge_distance;
   param.manifold = manifold;
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = polylines.empty() && protect_features;
@@ -243,7 +243,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.edge_min_sizing = edge_min_size;
-  param.edge_distancing = edge_distance;
+  param.edge_distance = edge_distance;
   param.manifold = manifold;
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = protect_features;
@@ -300,7 +300,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.edge_min_sizing = edge_min_size;
-  param.edge_distancing = edge_distance;
+  param.edge_distance = edge_distance;
   param.manifold = manifold;
   param.detect_connected_components = false; // to avoid random values
                                              // in the debug displays
@@ -360,7 +360,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_min_sizing = tet_min_sizing;
   param.edge_sizing = edge_size;
   param.edge_min_sizing = edge_min_size;
-  param.edge_distancing = edge_distance;
+  param.edge_distance = edge_distance;
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;

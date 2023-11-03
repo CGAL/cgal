@@ -445,23 +445,19 @@ private:
     return c3t3_.in_dimension(v);
   }
 
-  /// Query the sizing field and return its value at the point `p`, or
-  /// `minimal_size` if the latter is greater.
-  FT query_size(const Bare_point& p, int dim, const Index& index) const
+  template <typename Field>
+  FT query_field(const Bare_point& p, int dim, const Index& index, const Field& field) const
   {
     // Convert the dimension if it was set to a
     // negative value (marker for special balls).
     if(dim < 0)
       dim = -1 - dim;
 
-    const FT s = size_(p, dim, index);
-    // if(minimal_size_ != FT() && s < minimal_size_)
-    //   return minimal_size_;
-    // else
+    const FT s = field(p, dim, index);
     if(s <= FT(0)) {
       std::stringstream msg;
       msg.precision(17);
-      msg << "Error: the sizing field is null at ";
+      msg << "Error: the field is null at ";
       if(dim == 0) msg << "corner (";
       else msg << "point (";
       msg << p << ")";
@@ -477,27 +473,23 @@ private:
     return s;
   }
 
+  /// Query the sizing field and return its value at the point `p`, or
+  /// `minimal_size` if the latter is greater.
+  FT query_size(const Bare_point& p, int dim, const Index& index) const
+  {
+    FT s = query_field(p, dim, index, size_);
+
+    // if(minimal_size_ != FT() && s < minimal_size_)
+    //   return minimal_size_;
+    // else
+    return s;
+  }
+
   /// Query the sizing field for edge distance and return its value at the point `p`
   FT query_distance(const Bare_point& p, int dim, const Index& index) const
   {
-    const FT d = edge_distance_(p, dim, index);
-    if(d <= FT(0)) {
-      std::stringstream msg;
-      msg.precision(17);
-      msg << "Error: the sizing field is null at ";
-      if(dim == 0) msg << "corner (";
-      else msg << "point (";
-      msg << p << ")";
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
-      CGAL_error_msg(([this, str = msg.str()](){
-          dump_c3t3(this->c3t3_, "dump-bug");
-          return str.c_str();
-      }()));
-#else // not CGAL_MESH_3_PROTECTION_DEBUG & 4
-      CGAL_error_msg(msg.str().c_str());
-#endif
-    }
-    return d;
+    FT ed = query_field(p, dim, index, edge_distance_);
+    return ed;
   }
 
 private:
@@ -1553,8 +1545,8 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 
 template <typename C3T3, typename MD, typename Sf, typename Df>
 bool
-    Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
-    approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb) const
+Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
+approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb) const
 {
   if ( ! c3t3_.is_in_complex(va, vb) )
   {

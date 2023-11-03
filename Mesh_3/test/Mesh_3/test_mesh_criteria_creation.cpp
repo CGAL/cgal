@@ -97,13 +97,13 @@ int main()
   assert( ec7.edge_criteria_object().sizing_field(bp1,1,index) == 8. );
 
   Mc ec8(edge_distance = 8.);
-  assert( ec8.edge_criteria_object().distance_bound_field(bp1, 1, index) == 8. );
+  assert( ec8.edge_criteria_object().distance_field(bp1, 1, index) == 8. );
 
   Mc ec9(edge_distance_sizing_field = 9.);
-  assert( ec9.edge_criteria_object().distance_bound_field(bp1, 1, index) == 9.);
+  assert( ec9.edge_criteria_object().distance_field(bp1, 1, index) == 9.);
 
   Mc ec10(edge_distance_sizing_field = Esf(10.));
-  assert( ec10.edge_criteria_object().distance_bound_field(bp1, 1, index) == 10.);
+  assert( ec10.edge_criteria_object().distance_field(bp1, 1, index) == 10.);
 
 
   // -----------------------------------

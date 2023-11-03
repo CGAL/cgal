@@ -141,18 +141,18 @@ public:
   *
   * \note If one parameter is set to 0, then its corresponding criterion is ignored.
   *
-  * @tparam SizingField and @tparam SizingField2 are models of `MeshDomainField_3`
+  * @tparam SizingField and @tparam DistanceField are models of `MeshDomainField_3`
   */
-  template < typename SizingField, typename SizingField2 = FT >
+  template < typename SizingField, typename DistanceField = FT >
   Mesh_edge_criteria_3(const SizingField& length_bound,
                        const FT& min_length_bound = 0,
-                       const SizingField2& distance_bound = FT(DBL_MAX))
+                       const DistanceField& distance_bound = FT(DBL_MAX))
       : min_length_bound_(min_length_bound)
   {
     init_p_size(length_bound,
                   Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>());
     init_distance_bound(distance_bound,
-                  Mesh_3::Is_mesh_domain_field_3<Tr, SizingField2>());
+                  Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>());
   }
 
   /// @}
@@ -175,7 +175,7 @@ public:
   FT sizing_field(const Point_3& p, const int dim, const Index& index) const
   { return (*p_size_)(p,dim,index); }
 
-  FT distance_bound_field(const Point_3& p, const int dim, const Index& index) const
+  FT distance_field(const Point_3& p, const int dim, const Index& index) const
   { return (*distance_bound_)(p,dim,index); }
 
 public:

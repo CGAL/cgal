@@ -1038,7 +1038,7 @@ The following example shows how to generate a mesh with an approximation error c
 This enables the subdivision of edges that are too far away from the corresponding input sharp features.
 It may result in an output mesh with shorter edges along the input polyline features.
 
-\cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_distancing.cpp}
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_distance.cpp}
 
 \cgalFigureAnchor{mesh3edge_distance}
 <center>
@@ -1052,7 +1052,7 @@ It may result in an output mesh with shorter edges along the input polyline feat
 \cgalFigureCaptionBegin{mesh3edge_distance}
 Left: the mesh without the `%edge_distance` criterion.
 
-Right: the mesh with the `%edge_distance` criterion.
+Right: the mesh with the `%edge_distance` criterion set to the same value as `%facet_distance`.
 \cgalFigureCaptionEnd
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization

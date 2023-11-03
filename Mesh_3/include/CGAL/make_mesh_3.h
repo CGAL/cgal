@@ -101,7 +101,7 @@ struct Edge_criteria_distance_field_wrapper
 
   Edge_criteria_distance_field_wrapper(const EdgeCriteria& ec) : ec_(ec) {}
   FT operator()(const Point_3& p, const int dim, const Index& index) const
-  { return ec_.distance_bound_field(p,dim,index); }
+  { return ec_.distance_field(p,dim,index); }
 
   private:
   // No need to copy EdgeCriteria here

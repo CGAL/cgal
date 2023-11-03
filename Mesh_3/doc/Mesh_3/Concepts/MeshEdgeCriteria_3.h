@@ -67,7 +67,7 @@ const FT& min_length_bound() const;
 
 Returns the value of the distance field (i.e., the maximum edge distance) at point `p` of dimension `dim` and index `index`.
 */
-FT distance_bound_field(const Point_3& p, const int dim, const Index& index);
+FT distance_field(const Point_3& p, const int dim, const Index& index);
 
 /// @}
 

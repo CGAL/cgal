@@ -61,7 +61,7 @@ int main(int argc, char*argv[])
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
     // Output
-    CGAL::dump_c3t3(c3t3, "out");
+    //CGAL::dump_c3t3(c3t3, "out");
 
     return EXIT_SUCCESS;
 }

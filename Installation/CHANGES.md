@@ -35,7 +35,7 @@ Release date: October 2023
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
--   Added new meshing criterion `edge_min_size`, an upper bound for the distance from the edge to the 1D feature.
+-   Added new meshing criterion `distance_bound`, an upper bound for the distance from the edge to the 1D feature.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,

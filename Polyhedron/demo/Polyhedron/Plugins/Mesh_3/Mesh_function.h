@@ -52,7 +52,7 @@ struct Mesh_parameters
   double tet_min_sizing;
   double edge_sizing;
   double edge_min_sizing;
-  double edge_distancing;
+  double edge_distance;
   bool protect_features;
   bool detect_connected_components;
   int manifold;
@@ -142,7 +142,7 @@ log() const
   return QStringList()
   << QString("edge max size: %1").arg(edge_sizing)
   << QString("edge min size: %1").arg(edge_min_sizing)
-  << QString("edge max distance: %1").arg(edge_distancing)
+  << QString("edge max distance: %1").arg(edge_distance)
   << QString("facet min angle: %1").arg(facet_angle)
   << QString("facet max size: %1").arg(facet_sizing)
   << QString("facet min size: %1").arg(facet_min_sizing)
@@ -302,7 +302,7 @@ launch()
   // Create mesh criteria
   Mesh_criteria criteria(edge_criteria(p_.edge_sizing,
                                        p_.edge_min_sizing,
-                                       p_.edge_distancing,
+                                       p_.edge_distance,
                                        Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
