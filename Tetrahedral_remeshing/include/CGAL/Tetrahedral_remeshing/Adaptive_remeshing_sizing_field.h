@@ -84,7 +84,7 @@ public:
          it++)
     {
       const auto& pt_size = it->first;
-      return CGAL::approximate_sqrt(boost::get<1>(pt_size));
+      return boost::get<1>(pt_size);
       //std::cout << " d(q, nearest neighbor)=  "
       //  << tr_dist.inverse_of_transformed_distance(it->second) << " "
       //  << boost::get<0>(it->first) << " " << boost::get<1>(it->first) << std::endl;
