@@ -1,22 +1,20 @@
-//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-//#define CGAL_MESH_3_VERBOSE 1
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#define CGAL_MESH_3_VERBOSE 1
 //#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 //#define CGAL_DUMP_REMESHING_STEPS
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Mesh_triangulation_3.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_criteria_3.h>
-
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/tetrahedral_remeshing.h>
 
-#include <map>
-#include <vector>
+#include <CGAL/tetrahedral_remeshing.h>
+#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
 
 #include <CGAL/IO/File_medit.h>
 
@@ -30,7 +28,6 @@ using Mesh_domain = CGAL::Polyhedral_mesh_domain_3<Polyhedron, K>;
 // Triangulation for Meshing
 using Tr = CGAL::Mesh_triangulation_3<Mesh_domain>::type;
 using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
-using Vertex_handle = Tr::Vertex_handle;
 
 // Criteria
 using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
@@ -94,11 +91,12 @@ int main(int argc, char* argv[])
   std::cout << "Remeshing...";
   std::cout.flush();
 
-  CGAL::tetrahedral_adaptive_remeshing(tr,
-    CGAL::parameters::number_of_iterations(10));
+  CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<T3>
+    adaptive_field(tr);
 
-//  CGAL::tetrahedral_isotropic_remeshing(tr, 1.,//0.2
-//    CGAL::parameters::number_of_iterations(3));
+  CGAL::tetrahedral_isotropic_remeshing(tr,
+    adaptive_field,
+    CGAL::parameters::number_of_iterations(2));
 
   std::cout << "\rRemeshing done." << std::endl;
 

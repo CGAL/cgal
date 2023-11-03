@@ -30,7 +30,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
-#include <CGAL/Mesh_3/Mesh_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
 
 #include <optional>
 
@@ -81,9 +81,9 @@ struct Update_sizing_field
   void operator()(SF&, Tr&) const {};
 };
 template<typename Tr>
-struct Update_sizing_field<CGAL::Mesh_3::Mesh_sizing_field<Tr>, Tr>
+struct Update_sizing_field<CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<Tr>, Tr>
 {
-  void operator()(CGAL::Mesh_3::Mesh_sizing_field<Tr>& sf, Tr& tr) const
+  void operator()(CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<Tr>& sf, Tr& tr) const
   {
     sf.set_triangulation(tr);
     sf.fill();

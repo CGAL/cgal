@@ -18,8 +18,8 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
-#include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
@@ -431,6 +431,10 @@ void tetrahedral_isotropic_remeshing(
     cell_select, "statistics_begin.txt");
 #endif
 
+  bool adaptive = choose_parameter(get_parameter(np, internal_np::adaptive_sizing_field), false);
+  if (adaptive)
+    remesher.update_adaptive_mode();
+
   // perform remeshing
   std::size_t nb_extra_iterations = 3;
   remesher.remesh(max_it, nb_extra_iterations);
@@ -459,7 +463,7 @@ void tetrahedral_adaptive_remeshing(
   const NamedParameters& np = parameters::default_values())
 {
   using Tr = CGAL::Triangulation_3<Traits, TDS, SLDS>;
-  CGAL::Mesh_3::Mesh_sizing_field<Tr> sizing(tr);
+  CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<Tr> sizing(tr);
   tetrahedral_isotropic_remeshing(tr, sizing, np.adaptive_sizing_field(true));
 }
 
@@ -470,7 +474,7 @@ void tetrahedral_adaptive_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const NamedParameters& np = parameters::default_values())
 {
-  CGAL::Mesh_3::Mesh_sizing_field<Tr> sizing(c3t3.triangulation());
+  CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<Tr> sizing(c3t3.triangulation());
   tetrahedral_isotropic_remeshing(c3t3, sizing, np.adaptive_sizing_field(true));
 }
 
