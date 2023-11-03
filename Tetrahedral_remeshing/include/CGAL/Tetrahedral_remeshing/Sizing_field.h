@@ -32,7 +32,7 @@ public:
 
 public:
   template<typename Index>
-  FT operator()(const Point_3& p, const int dim, const Index& i) const = 0;
+  FT operator()(const Point_3& p, const int dim, const Index& i) const;
 };
 
 }//end namespace Tetrahedral_remeshing
