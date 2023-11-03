@@ -253,7 +253,6 @@ void split_long_edges(C3T3& c3t3,
   typedef typename T3::Vertex_handle         Vertex_handle;
   typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
-  typedef typename T3::Geom_traits     Gt;
   typedef typename T3::Geom_traits::FT FT;
   typedef boost::bimap<
         boost::bimaps::set_of<Edge_vv>,
