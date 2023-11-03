@@ -30,6 +30,8 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
+#include <CGAL/Mesh_3/Mesh_sizing_field.h>
+
 #include <optional>
 
 namespace CGAL
@@ -101,7 +103,7 @@ class Adaptive_remesher
 
 private:
   C3t3 m_c3t3;
-  const SizingFunction& m_sizing;
+  SizingFunction& m_sizing;
   const bool m_protect_boundaries;
   CellSelector m_cell_selector;
   Visitor& m_visitor;
@@ -112,7 +114,7 @@ private:
 
 public:
   Adaptive_remesher(Triangulation& tr
-                    , const SizingFunction& sizing
+                    , SizingFunction& sizing
                     , const bool protect_boundaries
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
@@ -141,7 +143,7 @@ public:
   }
 
   Adaptive_remesher(C3t3& c3t3
-                    , const SizingFunction& sizing
+                    , SizingFunction& sizing
                     , const bool protect_boundaries
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
@@ -172,6 +174,12 @@ public:
   bool input_is_c3t3() const
   {
     return m_c3t3_pbackup != NULL;
+  }
+
+  void update_adaptive_mode()
+  {
+    Update_sizing_field<SizingFunction, Tr> update;
+    update(m_sizing, tr());
   }
 
   void split()

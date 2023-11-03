@@ -198,7 +198,7 @@ template<typename Traits, typename TDS, typename SLDS,
          typename NamedParameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
-  const SizingFunction& sizing,
+  SizingFunction& sizing,
   const NamedParameters& np)
 {
   CGAL_assertion(tr.is_valid());
@@ -253,6 +253,10 @@ void tetrahedral_isotropic_remeshing(
                   , smooth_constrained_edges
                   , cell_select
                   , visitor);
+
+  bool adaptive = choose_parameter(get_parameter(np, internal_np::adaptive_sizing_field), false);
+  if(adaptive)
+    remesher.update_adaptive_mode();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "done." << std::endl;
@@ -365,7 +369,7 @@ template<typename Tr,
          typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-  const SizingFunction& sizing,
+  SizingFunction& sizing,
   const NamedParameters& np = parameters::default_values())
 {
   CGAL_assertion(c3t3.triangulation().tds().is_valid());
@@ -441,6 +445,32 @@ void tetrahedral_isotropic_remeshing(
     c3t3.triangulation(),
     cell_select, "statistics_end.txt");
 #endif
+}
+
+/*!
+* \ingroup PkgTetrahedralRemeshingRef
+* remeshes a tetrahedral mesh with an adaptive si
+*/
+template<typename Traits, typename TDS, typename SLDS,
+  typename NamedParameters = parameters::Default_named_parameters>
+void tetrahedral_adaptive_remeshing(
+  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
+  const NamedParameters& np = parameters::default_values())
+{
+  using Tr = CGAL::Triangulation_3<Traits, TDS, SLDS>;
+  CGAL::Mesh_3::Mesh_sizing_field<Tr> sizing(tr);
+  tetrahedral_isotropic_remeshing(tr, sizing, np.adaptive_sizing_field(true));
+}
+
+template<typename Tr,
+         typename CornerIndex, typename CurveIndex,
+         typename NamedParameters = parameters::Default_named_parameters>
+void tetrahedral_adaptive_remeshing(
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
+  const NamedParameters& np = parameters::default_values())
+{
+  CGAL::Mesh_3::Mesh_sizing_field<Tr> sizing(c3t3.triangulation());
+  tetrahedral_isotropic_remeshing(c3t3, sizing, np.adaptive_sizing_field(true));
 }
 
 }//end namespace CGAL
