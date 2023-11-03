@@ -1,5 +1,3 @@
-#define CGAL_MESH_3_VERBOSE 1
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -78,13 +76,8 @@ int main()
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
     params::no_perturb(), params::no_exude(),
-    params::manifold(),
-    params::mesh_3_dump());
+    params::manifold());
 
-  // Output
-  std::ofstream medit_file("out.mesh");
-  CGAL::IO::write_MEDIT(medit_file, c3t3);
-  medit_file.close();
 
   return EXIT_SUCCESS;
 }
