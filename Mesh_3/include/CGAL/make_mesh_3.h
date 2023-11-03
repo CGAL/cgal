@@ -415,13 +415,13 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *     \cgalParamDefault{`parameters::exude()`}
  *   \cgalParamSectionEnd
  *   \cgalParamSectionBegin{Mesh initialization}
- *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be supplied before the meshing process.
+ *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be provided to start the meshing process.
  *                           It must follow the `InitialPointsGenerator` concept.
- *                           The following named parameter control this option:
+ *                           The following named parameter controls this option:
  *                           <UL>
  *                             <LI> `parameters::initial_points_generator()`
  *                           </UL>}
- *     \cgalParamDefault{empty `parameters::initial_points_generator()`, the domain's `construct_initial_points_object()`
+ *     \cgalParamDefault{`CGAL::Null_Functor()`, the domain's `construct_initial_points_object()`
  * will be called for the points initialization.}
  *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd

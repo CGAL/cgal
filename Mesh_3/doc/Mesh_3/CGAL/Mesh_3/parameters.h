@@ -455,12 +455,12 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * \ingroup PkgMesh3Parameters
  *
  * The function `parameters::initial_points_generator()` enables the user to
- * specify a Functor of the `InitialPointsGenerator` concept
+ * specify a functor following the `InitialPointsGenerator` concept
  * to the mesh generation function `make_mesh_3()`.
- * The functor will be called for the points initialization.
+ * The functor will be called for initialization of the meshing process.
  * If this parameter is specified without argument, the default behaviour is executed,
  * i.e. the domain's `construct_initial_points_object()`
- * will be called for the points initialization.
+ * is called for the initialization of the meshing process.
  *
  * \cgalHeading{Example}
  *

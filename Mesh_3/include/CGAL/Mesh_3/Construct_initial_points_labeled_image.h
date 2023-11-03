@@ -80,7 +80,7 @@ struct Get_point
 *
 * \sa `CGAL::parameters::initial_points_generator()`
 * \sa `CGAL::make_mesh_3()`
-* \sa `CGAL::Construct_initial_points_gray_image()`
+* \sa `CGAL::Construct_initial_points_gray_image`
 */
 struct Construct_initial_points_labeled_image
 {
@@ -91,20 +91,13 @@ struct Construct_initial_points_labeled_image
   { }
 
    /*!
-   * \brief Constructs the points using the API of the mesh domain, as follows.
-   * First the functor `construct_intersect` is created
+   * \brief Constructs points by collecting them in all connected components.
+   * This guarantees to initialize them all.
    *
-   * \snippet this construct intersection
-   * then the `%Mesh_domain::Intersection` object (a `%tuple` with three
-   * elements) is constructed using a call to the functor `construct_intersection`
-   * \snippet this use construct intersection
-   * and eventually `%index` is the element \#1 of `%intersect`.
-   * \snippet this get construct intersection
-   *
-   * @tparam OutputIterator an `OutputIterator` of points of type
+   * @tparam OutputIterator model of `OutputIterator`, containing points of type
    * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
-   * @tparam MeshDomain a model of `MeshDomain_3`
-   * @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
+   * @tparam MeshDomain model of `MeshDomain_3`
+   * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
    */
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
@@ -116,16 +109,16 @@ struct Construct_initial_points_labeled_image
   /*!
    * \brief Same as above, but a `TransformOperator` is used
    *
-   * @tparam OutputIterator an `OutputIterator` of points of type
+   * @tparam OutputIterator model of `OutputIterator`, containing points of type
    * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
-   * @tparam MeshDomain a model of `MeshDomain_3`
-   * @tparam TransformOperator a functor to transform values of the image.
-   * It must provides the following type:<br>
+   * @tparam MeshDomain model of `MeshDomain_3`
+   * @tparam TransformOperator functor that transforms values of the image.
+   * It must provide the following type:<br>
    * `result_type`<br>
    * and the following operator:<br>
    * `template<typename FT>`<br>
    * `result_type operator()(FT v)`
-   * @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
+   * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
    */
   template <typename OutputIterator, typename MeshDomain, typename C3t3, typename TransformOperator>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, TransformOperator transform, const C3t3& c3t3, int n = 20) const

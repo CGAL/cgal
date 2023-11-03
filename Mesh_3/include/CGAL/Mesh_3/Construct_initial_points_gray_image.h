@@ -33,12 +33,13 @@ namespace CGAL
 *
 * \sa `CGAL::parameters::initial_points_generator()`
 * \sa `CGAL::make_mesh_3()`
+* \sa `CGAL::Construct_initial_points_labeled_image`
 */
 template <typename Functor = CGAL::Null_functor>
 struct Construct_initial_points_gray_image
 {
   const CGAL::Image_3 & image_;
-  double iso_value_;
+  const double iso_value_;
   Functor image_values_to_subdomain_indices_;
 
   template <typename FT>

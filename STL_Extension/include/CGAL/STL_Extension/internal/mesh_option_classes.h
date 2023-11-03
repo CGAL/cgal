@@ -167,27 +167,6 @@ private:
   bool b_;
 };
 
-// Initial points generator
-// options_holder has two roles.
-// 1 : determine if the default value is passed
-// 2 : if not the default value, hold the user's generator
-template <typename Initial_points_generator = nullptr_t>
-struct Initial_points_generator_options_holder
-{
-  static constexpr bool is_default = false;
-
-  Initial_points_generator_options_holder(const Initial_points_generator& generator)
-    : generator_(generator)
-  { }
-
-  const Initial_points_generator& generator_;
-};
-
-template <>
-struct Initial_points_generator_options_holder<nullptr_t>
-{
-  static constexpr bool is_default = true;
-};
 
 // options is holding the generator (default or the user's one)
 template <typename MeshDomain, typename C3t3>
@@ -271,25 +250,42 @@ struct Initial_points_generator_generator
   {
     OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)
     {
-      return domain.construct_initial_points_object()(pts);
+      typedef typename MeshDomain::Point_3       Point_3;
+      typedef typename MeshDomain::Index         Index;
+      typedef typename std::pair<Point_3, Index> Domain_generated_point;
+      std::vector<Domain_generated_point> domain_generated_points;
+      domain.construct_initial_points_object()(std::back_inserter(domain_generated_points));
+      for (Domain_generated_point domain_generated_point : domain_generated_points)
+      {
+        *pts++ = std::make_tuple(domain_generated_point.first, 2, domain_generated_point.second);
+      }
+      return pts;
     }
     OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)
     {
-      return domain.construct_initial_points_object()(pts, n);
+      typedef typename MeshDomain::Point_3       Point_3;
+      typedef typename MeshDomain::Index         Index;
+      typedef typename std::pair<Point_3, Index> Domain_generated_point;
+      std::vector<Domain_generated_point> domain_generated_points;
+      domain.construct_initial_points_object()(std::back_inserter(domain_generated_points), n);
+      for (Domain_generated_point domain_generated_point : domain_generated_points)
+      {
+        *pts++ = std::make_tuple(domain_generated_point.first, 2, domain_generated_point.second);
+      }
+      return pts;
     }
   };
 
-  template <typename Initial_points_generator_options_holder>
-  Initial_points_generator_options operator()(const Initial_points_generator_options_holder& initial_points_generator_options_holder_param)
+  template <typename InitialPointsGenerator>
+  Initial_points_generator_options operator()(const InitialPointsGenerator& initial_points_generator)
   {
-    if constexpr (Initial_points_generator_options_holder::is_default)
-    {
-      return operator()();
-    }
-    else
-    {
-      return Initial_points_generator_options(initial_points_generator_options_holder_param.generator_);
-    }
+    return Initial_points_generator_options(initial_points_generator);
+  }
+
+  template <>
+  Initial_points_generator_options operator()(const Null_functor&)
+  {
+    return operator()();
   }
 
   Initial_points_generator_options operator()()
