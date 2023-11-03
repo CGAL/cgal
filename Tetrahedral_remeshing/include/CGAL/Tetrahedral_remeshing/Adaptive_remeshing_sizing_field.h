@@ -29,6 +29,7 @@
 #include <boost/iterator/zip_iterator.hpp>
 
 #include <vector>
+#include <array>
 
 
 namespace CGAL
@@ -66,6 +67,7 @@ public:
   * Constructor
   */
   Adaptive_remeshing_sizing_field(const Tr& tr)
+    : m_gt(tr.geom_traits())
   {
     build_kd_tree(tr);
   }
@@ -78,18 +80,17 @@ public:
   {
     // Find nearest vertex
     Distance tr_dist;
-    K_neighbor_search search(m_kd_tree, p, 1/*nb nearest neighbors*/);
+    K_neighbor_search search(m_kd_tree, p, 4/*nb nearest neighbors*/);
+    std::array<Point_and_size, 4> vertices;
+    int vi = 0;
     for (typename K_neighbor_search::iterator it = search.begin();
          it != search.end();
-         it++)
+         ++it, ++vi)
     {
       const auto& pt_size = it->first;
-      return boost::get<1>(pt_size);
-      //std::cout << " d(q, nearest neighbor)=  "
-      //  << tr_dist.inverse_of_transformed_distance(it->second) << " "
-      //  << boost::get<0>(it->first) << " " << boost::get<1>(it->first) << std::endl;
+      vertices[vi] = pt_size;
     }
-    return FT(0);
+    return interpolate_on_four_vertices(p, vertices);
   }
 
 private:
@@ -98,11 +99,12 @@ private:
   */
   void build_kd_tree(const Tr& tr);
 
-  ///**
-  // * Returns size at point `p`, by interpolation into tetrahedron.
-  // */
-  //FT interpolate_on_cell_vertices(const Bare_point& p,
-  //                                const Cell_handle& cell) const;
+  /**
+   * Returns size at point `p`, by interpolation into tetrahedron.
+   */
+  FT interpolate_on_four_vertices(
+    const Bare_point& p,
+    const std::array<Point_and_size, 4>& vertices) const;
 
   ///**
   // * Returns size at point `p`, by interpolation into facet (`cell` is assumed
@@ -116,6 +118,7 @@ private:
 
 private:
   Tree m_kd_tree;
+  const GT& m_gt;
 };
 
 
@@ -124,7 +127,7 @@ void
 Adaptive_remeshing_sizing_field<Tr>::
 build_kd_tree(const Tr& tr)
 {
-  auto cp = tr.geom_traits().construct_point_3_object();
+  auto cp = m_gt.construct_point_3_object();
 
   std::vector<Bare_point> points;
   std::vector<FT>         sizes;
@@ -140,43 +143,40 @@ build_kd_tree(const Tr& tr)
   m_kd_tree.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), sizes.begin())),
                    boost::make_zip_iterator(boost::make_tuple(points.end(), sizes.end())));
 }
-//
-//template <typename Tr>
-//typename Adaptive_remeshing_sizing_field<Tr>::FT
-//Adaptive_remeshing_sizing_field<Tr>::
-//interpolate_on_cell_vertices(const Bare_point& p, const Cell_handle& cell) const
-//{
-//  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
-//  typename GT::Compute_volume_3 volume = tr_.geom_traits().compute_volume_3_object();
-//
-//  // Interpolate value using tet vertices values
-//  const FT& va = cell->vertex(0)->meshing_info();
-//  const FT& vb = cell->vertex(1)->meshing_info();
-//  const FT& vc = cell->vertex(2)->meshing_info();
-//  const FT& vd = cell->vertex(3)->meshing_info();
-//
-//  const Tr_point& wa = tr_.point(cell, 0);
-//  const Tr_point& wb = tr_.point(cell, 1);
-//  const Tr_point& wc = tr_.point(cell, 2);
-//  const Tr_point& wd = tr_.point(cell, 3);
-//  const Bare_point& a = cp(wa);
-//  const Bare_point& b = cp(wb);
-//  const Bare_point& c = cp(wc);
-//  const Bare_point& d = cp(wd);
-//
-//  const FT abcp = CGAL::abs(volume(a,b,c,p));
-//  const FT abdp = CGAL::abs(volume(a,d,b,p));
-//  const FT acdp = CGAL::abs(volume(a,c,d,p));
-//  const FT bcdp = CGAL::abs(volume(b,d,c,p));
-//
-//  // If volume is 0, then compute the average value
-//  if ( is_zero(abcp+abdp+acdp+bcdp) )
-//    return (va+vb+vc+vd) / 4.;
-//
-//  return ( (abcp*vd + abdp*vc + acdp*vb + bcdp*va) / (abcp+abdp+acdp+bcdp) );
-//}
-//
-//
+
+template <typename Tr>
+typename Adaptive_remeshing_sizing_field<Tr>::FT
+Adaptive_remeshing_sizing_field<Tr>::
+interpolate_on_four_vertices(
+  const Bare_point& p,
+  const std::array<Point_and_size, 4>& vertices) const
+{
+  auto volume = m_gt.compute_volume_3_object();
+
+  // Interpolate value using tet vertices values
+  const FT& va = boost::get<1>(vertices[0]);
+  const FT& vb = boost::get<1>(vertices[1]);
+  const FT& vc = boost::get<1>(vertices[2]);
+  const FT& vd = boost::get<1>(vertices[3]);
+
+  const Bare_point& a = boost::get<0>(vertices[0]);
+  const Bare_point& b = boost::get<0>(vertices[1]);
+  const Bare_point& c = boost::get<0>(vertices[2]);
+  const Bare_point& d = boost::get<0>(vertices[3]);
+
+  const FT abcp = CGAL::abs(volume(a,b,c,p));
+  const FT abdp = CGAL::abs(volume(a,d,b,p));
+  const FT acdp = CGAL::abs(volume(a,c,d,p));
+  const FT bcdp = CGAL::abs(volume(b,d,c,p));
+
+  // If volume is 0, then compute the average value
+  if ( is_zero(abcp+abdp+acdp+bcdp) )
+    return (va+vb+vc+vd) / 4.;
+
+  return ( (abcp*vd + abdp*vc + acdp*vb + bcdp*va) / (abcp+abdp+acdp+bcdp) );
+}
+
+
 //template <typename Tr>
 //typename Adaptive_remeshing_sizing_field<Tr>::FT
 //Adaptive_remeshing_sizing_field<Tr>::
