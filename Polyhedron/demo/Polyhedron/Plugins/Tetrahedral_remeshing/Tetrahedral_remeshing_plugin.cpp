@@ -12,6 +12,8 @@
 #include "C3t3_type.h"
 
 #include <CGAL/tetrahedral_remeshing.h>
+#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
 
 #include <unordered_map>
 #include <memory>
@@ -95,11 +97,11 @@ public Q_SLOTS:
         std::cout << "Remeshing aborted" << std::endl;
         return;
       }
-      double target_length = ui.edgeLength_dspinbox->value();
-      bool adaptive_sizing = ui.adaptiveSizing_checkbox->isChecked();
-      unsigned int nb_iter = ui.nbIterations_spinbox->value();
-      bool protect = ui.protect_checkbox->isChecked();
-      bool smooth_edges = ui.smoothEdges_checkBox->isChecked();
+      const double target_length = ui.edgeLength_dspinbox->value();
+      const bool adaptive_sizing = ui.adaptiveSizing_checkbox->isChecked();
+      const unsigned int nb_iter = ui.nbIterations_spinbox->value();
+      const bool protect = ui.protect_checkbox->isChecked();
+      const bool smooth_edges = ui.smoothEdges_checkBox->isChecked();
 
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -107,10 +109,14 @@ public Q_SLOTS:
       QElapsedTimer time;
       time.start();
 
+      using ASizing = CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<Tr>;
+      using USizing = CGAL::Tetrahedral_remeshing::Uniform_sizing_field<Geom_traits>;
+
       if (adaptive_sizing)
       {
-        CGAL::tetrahedral_adaptive_remeshing(
+        CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
+          ASizing(c3t3_item->c3t3().triangulation()),
           CGAL::parameters::remesh_boundaries(!protect)
           .number_of_iterations(nb_iter)
           .smooth_constrained_edges(smooth_edges));
@@ -119,7 +125,7 @@ public Q_SLOTS:
       {
         CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
-          target_length,
+          USizing(target_length),
           CGAL::parameters::remesh_boundaries(!protect)
           .number_of_iterations(nb_iter)
           .smooth_constrained_edges(smooth_edges));
