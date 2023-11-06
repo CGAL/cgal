@@ -64,7 +64,7 @@ namespace Ss2 = Surface_sweep_2;
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation, typename ZoneVisitor>
@@ -135,7 +135,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -409,7 +409,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
@@ -463,7 +463,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
@@ -1524,7 +1524,7 @@ zone(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_on_surface_2<>&,
-// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>
@@ -1562,7 +1562,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // error: no matching function for call to
 // `do_intersect(Arrangement_on_surface_2<>&,
-// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>

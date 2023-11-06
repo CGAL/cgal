@@ -206,7 +206,7 @@ public:
     // Tag_true if COEFF and ROOT are exact
     typedef std::conditional_t<
        std::is_same_v<typename CGAL::Algebraic_structure_traits<ROOT_ >::Is_exact,::CGAL::Tag_true> &&
-       std::is_same<typename CGAL::Algebraic_structure_traits<COEFF_>::Is_exact,::CGAL::Tag_true>
+       std::is_same_v<typename CGAL::Algebraic_structure_traits<COEFF_>::Is_exact,::CGAL::Tag_true>
            ,::CGAL::Tag_true,::CGAL::Tag_false> Is_exact;
 
     typedef typename Algebraic_structure_traits<COEFF_>::Is_numerical_sensitive

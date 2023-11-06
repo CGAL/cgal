@@ -58,11 +58,11 @@ public:
 
 private:
 
-  typedef std::conditional<
+  typedef std::conditional_t<
        std::is_same_v< Arr_smaller_implementation_tag, Arr_use_traits_tag >,
        std::true_type, std::false_type > Smaller_traits;
 
-  typedef std::conditional_t_<
+  typedef std::conditional_t<
        std::is_same_v< Arr_larger_implementation_tag, Arr_use_traits_tag >,
        std::true_type, std::false_type > Larger_traits;
 
@@ -71,7 +71,8 @@ public:
   //! the result type (if one side asks for traits, then ask traits!
   //! Or vice versa: If both ask for dummy, then dummy!)
   typedef std::conditional_t<
-              Smaller_traits, Larger_traits >::value || Arr_use_traits_tag::value,
+              Smaller_traits::value || Larger_traits::value,
+              Arr_use_traits_tag,
               Arr_use_dummy_tag > type;
 
 };

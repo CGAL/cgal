@@ -252,7 +252,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_oblivious {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_oblivious_side_tag>        Is_same;
-  typedef std::conditional<Is_same::value, Arr_true, Arr_false> result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -260,7 +260,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_open {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_open_side_tag>             Is_same;
-  typedef std::conditional<Is_same,::value Arr_true, Arr_false> result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -268,7 +268,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_identified {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_identified_side_tag>       Is_same;
-  typedef std::conditional<Is_same::value, Arr_true, Arr_false> result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -276,7 +276,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_contracted {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_contracted_side_tag>       Is_same;
-  typedef std::conditional<Is_same::value, Arr_true, Arr_false> result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -284,7 +284,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_closed {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_closed_side_tag>           Is_same;
-  typedef std::conditional<Is_same::value, Arr_true, Arr_false> result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -423,11 +423,12 @@ struct Arr_sane_identified_tagging {
   typedef boost::mpl::or_<LR_ide, LR_not_ide>           LR_ok;
   typedef boost::mpl::or_<BT_ide, BT_not_ide>           BT_ok;
 
-  /*! Boolean tag that is bool_<true> if opposite sides are either
+  /*! Boolean tag that is bool_constant<true> if opposite sides are either
    * both identified or both not-identified,
-   * otherwise bool_<false>
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::and_<LR_ok, BT_ok>                result;
+  typedef std::bool_constant<LR_ok::value &&
+                             BT_ok::value>              result;
   static constexpr bool value = result::value;
 };
 
@@ -447,10 +448,10 @@ struct Arr_has_identified_sides {
   typedef typename Arr_is_side_identified<Side_one_cat>::result Side_one_ide;
   typedef typename Arr_is_side_identified<Side_two_cat>::result Side_two_ide;
 
-  /*! Boolean tag that is bool_<true> if one side is identified,
-   * otherwise bool_<false>
+  /*! Boolean tag that is bool_constant<true> if one side is identified,
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::or_<Side_one_ide, Side_two_ide>   result;
+  typedef std::bool_constant<Side_one_ide::value || Side_two_ide::value> result;
 };
 
 /*! Checks whether one of two boundary sides are contracted
@@ -463,10 +464,11 @@ struct Arr_has_contracted_sides_two {
   typedef typename Arr_is_side_contracted<Side_one_cat>::result Side_one_con;
   typedef typename Arr_is_side_contracted<Side_two_cat>::result Side_two_con;
 
-  /*!\ Boolean tag that is bool_<true> if one side is identified,
-   * otherwise bool_<false>
+  /*!\ Boolean tag that is bool_constant<true> if one side is identified,
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::or_<Side_one_con, Side_two_con>           result;
+  typedef std::bool_constant<Side_one_con::value ||
+                             Side_two_con::value>               result;
 };
 
 /*! Checks whether one of two boundary sides are closed
@@ -479,10 +481,11 @@ struct Arr_has_closed_sides_two {
   typedef typename Arr_is_side_closed<Side_one_cat>::result     Side_one_clo;
   typedef typename Arr_is_side_closed<Side_two_cat>::result     Side_two_clo;
 
-  /*! Boolean tag that is bool_<true> if one side is identified,
-   * otherwise bool_<false>
+  /*! Boolean tag that is bool_constant<true> if one side is identified,
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::or_<Side_one_clo, Side_two_clo>           result;
+  typedef std::bool_constant<Side_one_clo::value ||
+                             Side_two_clo::value>               result;
 };
 
 /*! Checks whether one of two boundary sides are open
@@ -495,10 +498,11 @@ struct Arr_has_open_sides_two {
   typedef typename Arr_is_side_open<Side_one_cat>::result       Side_one_ope;
   typedef typename Arr_is_side_open<Side_two_cat>::result       Side_two_ope;
 
-  /*! Boolean tag that is bool_<true> if one side is identified,
-   * otherwise bool_<false>
+  /*! Boolean tag that is bool_constant<true> if one side is identified,
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::or_<Side_one_ope, Side_two_ope>           result;
+  typedef std::bool_constant<Side_one_ope::value ||
+                             Side_two_ope::value>               result;
 };
 
 /*! Categorizes two boundary sides:

@@ -50,8 +50,8 @@ void resize(Container& CGAL_assertion_code(array), std::size_t CGAL_assertion_co
 template <class Container>
 void resize(Container&, std::size_t,
             std::enable_if_t<
-              !boost::mpl::or_<has_resize<Container>,
-                               has_size<Container> >::value >* = nullptr)
+              !(has_resize<Container>::value ||
+                has_size<Container>::value)>* = nullptr)
 {
 }
 

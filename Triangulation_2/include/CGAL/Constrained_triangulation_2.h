@@ -95,9 +95,10 @@ namespace internal {
 
 template <typename K>
 struct Itag {
-  typedef std::conditional_t<(typename Algebraic_structure_traits<typename K::FT>::Is_exact)::value,
-                                   Exact_intersections_tag,
-                                   Exact_predicates_tag> type;
+  using Is_exact = typename Algebraic_structure_traits<typename K::FT>::Is_exact;
+  typedef std::conditional_t<Is_exact::value,
+                             Exact_intersections_tag,
+                             Exact_predicates_tag> type;
 };
 
 } // namespace internal

@@ -140,7 +140,7 @@ struct Point_accessor<Handle, ValueType, ConstReference, true>
   typedef ValueType                      value_type;
   typedef Handle                         key_type;
 
-  typedef std::conditional_t< std::is_reference<ConstReference>,
+  typedef std::conditional_t< std::is_reference_v<ConstReference>,
                               ValueType&,
                               ValueType > Reference;
 

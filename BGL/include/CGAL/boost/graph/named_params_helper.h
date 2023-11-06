@@ -46,9 +46,9 @@ public:
                              typename boost::property_map<PolygonMesh, PropertyTag>::type,
                              typename boost::cgal_no_property::type> type;
   typedef std::conditional_t<Has_internal_pmap::value,
-                                    typename boost::property_map<PolygonMesh, PropertyTag>::const_type,
-                                    typename boost::cgal_no_property::const_type
-                                    >::type const_type;
+                             typename boost::property_map<PolygonMesh, PropertyTag>::const_type,
+                             typename boost::cgal_no_property::const_type
+                             > const_type;
 
   type get_pmap(const PropertyTag& p, PolygonMesh& pmesh)
   {
