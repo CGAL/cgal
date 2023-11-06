@@ -17,7 +17,9 @@
 #ifndef CGAL_DRAW_POLYGON_SET_2_H
 #define CGAL_DRAW_POLYGON_SET_2_H
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Graphics_scene.h>
+#include <CGAL/Graphics_scene_options.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -112,10 +114,10 @@ void compute_elements(const PWH& pwh,
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-template <typename PolygonSet_2, class GSOptions>
-class Polygon_set_2_basic_viewer_qt : public Basic_viewer_qt
+template <typename PolygonSet_2>
+class Polygon_set_2_basic_viewer_qt : public Basic_viewer
 {
-  using Base = Basic_viewer_qt;
+  using Base = Basic_viewer;
   using Ps = PolygonSet_2;
   using Pwh = typename Ps::Polygon_with_holes_2;
   using Pgn = typename Ps::Polygon_2;
@@ -123,12 +125,10 @@ class Polygon_set_2_basic_viewer_qt : public Basic_viewer_qt
 
 public:
   Polygon_set_2_basic_viewer_qt(QWidget* parent, const Ps& ps,
-                                Graphics_scene& gs,
-                                GSOptions& gs_options,
                                 const char* title = "Basic Polygon_set_2 Viewer",
                                 bool draw_unbounded = false,
                                 bool draw_vertices = false) :
-    Base(parent, gs, title, draw_vertices),
+    Base(parent, graphics_scene, title, draw_vertices),
     m_ps(ps),
     m_draw_unbounded(draw_unbounded)
   {
@@ -203,6 +203,9 @@ private:
 
   //! Indicates whether to draw unbounded polygons with holes.
   bool m_draw_unbounded = false;
+
+  Graphics_scene graphics_scene;
+  Graphics_scene_options<Ps> graphics_scene_options;
 };
 
 // Specialization of draw function.
@@ -226,9 +229,7 @@ void draw(const CGAL::Polygon_set_2<T, C, D>& ps,
     int argc = 1;
     const char* argv[2] = {"t2_viewer", nullptr};
     QApplication app(argc, const_cast<char**>(argv));
-    Graphics_scene gs;
-    Graphics_scene_options<Ps> gs;
-    Viewer basic_viewer(app.activeWindow(), ps, gs, gso,
+    Viewer basic_viewer(app.activeWindow(), ps,
                         title, draw_unbounded, draw_vertices);
     basic_viewer.add_elements();
     basic_viewer.show();

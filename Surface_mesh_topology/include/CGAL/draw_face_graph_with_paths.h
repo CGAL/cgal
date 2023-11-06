@@ -50,7 +50,7 @@ struct Graphics_scene_options_face_graph_with_paths :
     { return true; }
   }
 
-  std::function<CGAL::IO::COLOR(std::size_t)> color_of_path;
+  std::function<CGAL::IO::Color(std::size_t)> color_of_path;
   std::function<bool(std::size_t)> draw_path;
 
 protected:
@@ -192,7 +192,7 @@ template <typename Mesh, class GSOptions>
 void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
-                  typename Get_map<Mesh, Mesh>::type::size_type m_amark,
+                  typename Get_map<Mesh, Mesh>::type::size_type aamark,
                   CGAL::Graphics_scene& graphics_scene,
                   GSOptions& gs_options,
                   bool draw_marked_darts=true)
@@ -211,8 +211,8 @@ void compute_edge(const Mesh &mesh,
   Dart_const_descriptor d2 = lcc.other_extremity(dh);
   if (d2!=LCC::null_descriptor)
   {
-    if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
-        (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.opposite2(dh), m_amark)))
+    if (draw_marked_darts && amark!=LCC::INVALID_MARK &&
+        (lcc.is_marked(dh, amark) || lcc.is_marked(lcc.opposite2(dh), amark)))
     { graphics_scene.add_segment(p1, get_point(mesh, d2), CGAL::IO::Color(0, 0, 255)); }
     else
     { graphics_scene.add_segment(p1, get_point(mesh, d2)); }
@@ -238,7 +238,7 @@ void compute_edge(const Mesh &mesh,
   { graphics_scene.add_segment(p1, get_point(mesh, d2), color); }
 }
 
-template <typename Mesh>
+template <typename Mesh, class GSOptions>
 void compute_vertex(const Mesh &mesh,
                     typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
                     CGAL::Graphics_scene& graphics_scene,
@@ -299,7 +299,7 @@ void compute_elements(const Mesh &mesh,
   typename LCC::Dart_range::const_iterator m_current_dart = lcc.darts().end();
   typename LCC::size_type m_oriented_mark = lcc.get_new_mark();
   std::size_t m_current_path = m_paths->size();
-  typename LCC::size_type m_amark=amark==(std::numeric_limits<size_type>::max)()?
+  typename LCC::size_type amark=amark==(std::numeric_limits<size_type>::max)()?
             LCC::INVALID_MARK:amark; // If !=INVALID_MARK, show darts marked with this mark
 
   lcc.orient(m_oriented_mark);
@@ -323,7 +323,7 @@ void compute_elements(const Mesh &mesh,
     {
       if ( !lcc.is_marked(it, markedges) )
       {
-        compute_edge<Mesh>(it, mesh, graphics_scene, lcc, m_amark, m_draw_marked_darts);
+        compute_edge<Mesh>(it, mesh, graphics_scene, lcc, amark, draw_marked_darts);
         lcc.template mark_cell<1>(it, markedges);
       }
     }
@@ -350,7 +350,7 @@ void compute_elements(const Mesh &mesh,
 
       if ( !lcc.is_marked(it, markedges) )
       {
-        compute_edge<Mesh>(it, mesh, graphics_scene, lcc, m_amark, m_draw_marked_darts);
+        compute_edge<Mesh>(it, mesh, graphics_scene, lcc, amark, draw_marked_darts);
         lcc.template mark_cell<1>(it, markedges);
       }
 
