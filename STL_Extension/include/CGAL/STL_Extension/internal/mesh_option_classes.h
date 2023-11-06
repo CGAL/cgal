@@ -282,7 +282,6 @@ struct Initial_points_generator_generator
     return Initial_points_generator_options(initial_points_generator);
   }
 
-  template <>
   Initial_points_generator_options operator()(const Null_functor&)
   {
     return operator()();
