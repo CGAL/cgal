@@ -5,7 +5,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Handle_hash_function.h>

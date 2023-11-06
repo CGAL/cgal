@@ -39,11 +39,7 @@
 
 #include <CGAL/property_map.h>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h> // work around a
-                                                      // bug in boost
-                                                      // 1.54
-
-
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 
 #if defined(BOOST_MSVC)
