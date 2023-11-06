@@ -87,8 +87,11 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
   }
   std::getline(is, s);
   if(!s.empty()) {
-    if(s[s.size()-1] == '\r') { // deal with Windows EOL
-      s.resize(s.size() - 1);
+    if(s.back() == '\r') { // Windows EOL if the file was written without the ios_base::binary flag.
+      is.setstate(std::ios_base::failbit);
+      std::cerr << "load_binary_file:"
+                << "\n  Unexpected char : '\\r'. The file's content was probably written without the ios_base::binary flag." << std::endl;
+      return false;
     }
     if(s != std::string(" ") + CGAL::Get_io_signature<C3T3>()()) {
       std::cerr << "load_binary_file:"

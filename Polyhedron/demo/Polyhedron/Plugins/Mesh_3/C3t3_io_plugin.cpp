@@ -499,6 +499,12 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
   }
   std::getline(is, s);
   if(s != "") {
+    if(s.back() == '\r') { // Windows EOL if the file was written without the ios_base::binary flag.
+      is.setstate(std::ios_base::failbit);
+      std::cerr << "load_binary_file:"
+                << "\n  Unexpected char : '\\r'. The file's content was probably written without the ios_base::binary flag." << std::endl;
+      return false;
+    }
     if(s != std::string(" ") + CGAL::Get_io_signature<Fake_CDT_3>()()) {
       std::cerr << "load_binary_file:"
                 << "\n  expected format: " << CGAL::Get_io_signature<Fake_CDT_3>()()
@@ -582,6 +588,12 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
   }
   std::getline(is, s);
   if(s != "") {
+    if(s.back() == '\r') { // Windows EOL if the file was written without the ios_base::binary flag.
+      is.setstate(std::ios_base::failbit);
+      std::cerr << "Polyhedron_demo_c3t3_binary_io_plugin::try_load_other_binary_format:"
+                << "\n  Unexpected char : '\\r'. The file's content was probably written without the ios_base::binary flag." << std::endl;
+      return false;
+    }
     if(s != std::string(" ") + CGAL::Get_io_signature<Fake_c3t3>()()) {
       std::cerr << "Polyhedron_demo_c3t3_binary_io_plugin::try_load_other_binary_format:"
                 << "\n  expected format: " << CGAL::Get_io_signature<Fake_c3t3>()()
