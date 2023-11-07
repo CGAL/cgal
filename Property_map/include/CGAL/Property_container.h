@@ -21,7 +21,7 @@
 
 #ifndef DOXYGEN_RUNNING
 
-namespace CGAL::Properties {
+namespace CGAL::Properties::Experimental {
 
 template <typename Index>
 class Property_array_base {
@@ -494,7 +494,7 @@ public:
       // Determine if the group fits
       if (std::distance(unused_begin, m_active_indices.end()) >= n)
         unused_end = std::find_if(
-          unused_begin, std::min(unused_begin + n, m_active_indices.end()),
+          unused_begin, (std::min)(unused_begin + n, m_active_indices.end()),
           [](bool used) { return used; }
       );
 

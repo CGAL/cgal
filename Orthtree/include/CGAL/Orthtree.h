@@ -110,7 +110,7 @@ public:
   using Maybe_node_index = std::optional<Node_index>;
 
   // todo: maybe this could be private?
-  using Node_property_container = Properties::Property_container<Node_index>;
+  using Node_property_container = Properties::Experimental::Property_container<Node_index>;
 
   /*!
     \brief Set of bits representing this node's relationship to its parent.
@@ -205,10 +205,10 @@ public:
     // Determine dimensions of the root bbox
     Bbox_dimensions size;
     for (int i = 0; i < Dimension::value; ++i)
-      size[i] = bbox.max()[i] - bbox.min()[i];
+      size[i] = (bbox.max)()[i] - (bbox.min)()[i];
 
     // save orthtree attributes
-    m_bbox_min = bbox.min();
+    m_bbox_min = (bbox.min)();
     m_side_per_depth.push_back(size);
     data(root()) = m_traits.construct_root_node_contents_object()();
   }
