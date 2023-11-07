@@ -84,7 +84,7 @@ function(tbb_extract_real_library library real_library)
   set(_elf_magic "7f454c46")
   file(READ ${library} _hex_data OFFSET 0 LIMIT 4 HEX)
   if(_hex_data STREQUAL _elf_magic)
-    #we have opened a elf binary so this is what
+    #we have opened an elf binary so this is what
     #we should link to
     set(${real_library} "${library}" PARENT_SCOPE)
     return()

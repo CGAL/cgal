@@ -91,7 +91,7 @@ namespace Surface_mesh_topology {
     /// Number type of the weights.
     using Weight_t=double;
 
-    /// creates an Euclidean_length_weight_functor given a mesh.
+    /// creates a Euclidean_length_weight_functor given a mesh.
     Euclidean_length_weight_functor(const Mesh& m);
   };
 

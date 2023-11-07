@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <CGAL/iterator.h>
 #include <CGAL/assertions.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/basic.h>
 #include <CGAL/config.h>
@@ -359,7 +359,7 @@ public:
        Unary_compose(const Unary_compose& other) = default;
        Unary_compose& operator=(const Unary_compose& other) = default;
 
-       Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
+       Unary_compose() : _inner(::std::nullopt),_outer(::std::nullopt) {}
 
        typedef typename InnerFunctor::argument_type argument_type;
        typedef typename OuterFunctor::result_type result_type;
@@ -368,11 +368,11 @@ public:
        result_type operator() (const argument_type& arg) const {
          CGAL_assertion(bool(_inner));
          CGAL_assertion(bool(_outer));
-         return _outer.get()(_inner.get()(arg));
+         return _outer.value()(_inner.value()(arg));
        }
     private:
-       ::boost::optional<InnerFunctor> _inner;
-       ::boost::optional<OuterFunctor> _outer;
+       ::std::optional<InnerFunctor> _inner;
+       ::std::optional<OuterFunctor> _outer;
     };
 
     template<typename InnerFunctor,typename OuterFunctor>

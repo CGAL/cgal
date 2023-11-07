@@ -387,7 +387,7 @@ public:
     }
   };
 
-  /*! Get a Equal_2 functor object. */
+  /*! Get an `Equal_2` functor object. */
   Equal_2 equal_2_object() const
   {
     return Equal_2(m_base_traits->equal_2_object());

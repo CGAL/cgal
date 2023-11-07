@@ -4,7 +4,7 @@
 \cgalConcept
 
 This `AdaptableFunctor` returns whether a
-`PolynomialTraits_d::Polynomial_d` \f$ p\f$ is zero at a given Cartesian point,
+`PolynomialTraits_d::Polynomial_d` \f$ p\f$ is zero at a given %Cartesian point,
 which is represented as an iterator range.
 
 \cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
@@ -32,7 +32,7 @@ typedef bool result_type;
 
 /*!
 
-Computes whether \f$ p\f$ is zero at the Cartesian point given by the iterator range,
+Computes whether \f$ p\f$ is zero at the %Cartesian point given by the iterator range,
 where `begin` is referring to the innermost variable.
 
 \pre (end-begin == `PolynomialTraits_d::d`)
@@ -47,4 +47,3 @@ InputIterator end );
 /// @}
 
 }; /* end PolynomialTraits_d::IsZeroAt */
-

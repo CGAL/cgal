@@ -12,7 +12,7 @@ caches the results of the edge and face rejectors and results in a
 Voronoi diagram that has no degenerate features, i.e., no Voronoi
 edges of zero length and no Voronoi faces of zero area.
 
-\cgalModels `AdaptationPolicy_2`
+\cgalModels{AdaptationPolicy_2}
 
 \sa `AdaptationTraits_2`
 \sa `DelaunayGraph_2`
@@ -51,7 +51,7 @@ results in a Voronoi diagram that has no degenerate features,
 i.e., it has no Voronoi edges of zero length and no Voronoi faces of
 zero area.
 
-\cgalModels `AdaptationPolicy_2`
+\cgalModels{AdaptationPolicy_2}
 
 \sa `AdaptationTraits_2`
 \sa `DelaunayGraph_2`

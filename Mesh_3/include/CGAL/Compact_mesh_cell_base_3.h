@@ -437,7 +437,7 @@ public:
 
   // CHECKING
 
-  // the following trivial is_valid allows
+  // the following trivial is_valid enables
   // the user of derived cell base classes
   // to add their own purpose checking
   bool is_valid(bool = false, int = 0) const
@@ -724,7 +724,7 @@ belong. That parameter is only used by the rebind mechanism (see
 `::TriangulationDSCellBase_3::Rebind_TDS`). Users should always use the
 default parameter value `void`.
 
-\cgalModels `MeshCellBase_3`
+\cgalModels{MeshCellBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 \sa `CGAL::Mesh_cell_base_3<GT, MD, Cb>`

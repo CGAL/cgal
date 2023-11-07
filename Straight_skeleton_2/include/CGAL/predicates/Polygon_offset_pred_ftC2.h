@@ -17,7 +17,7 @@
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/Uncertain.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -37,7 +37,7 @@ compare_offset_against_isec_timeC2 ( typename K::FT const& t,
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
 
-  typedef boost::optional<Rational> Optional_rational ;
+  typedef std::optional<Rational> Optional_rational ;
 
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 

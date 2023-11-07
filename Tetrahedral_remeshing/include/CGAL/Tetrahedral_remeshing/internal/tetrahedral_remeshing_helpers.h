@@ -24,6 +24,7 @@
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/utility.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
 
@@ -74,8 +75,8 @@ inline int indices(const int& i, const int& j)
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)
     return indices_table[i][j];
-  else
-    return -1;
+  CGAL_error_msg("Invalid indices provided");
+  return 0;
 }
 
 template<typename Gt, typename Point>
@@ -535,7 +536,7 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     v->set_index(typename C3t3::Curve_index(1));
     break;
   case 0:
-    v->set_index(boost::get<typename C3t3::Corner_index>(v->index()));
+    v->set_index(Mesh_3::internal::get_index<typename C3t3::Corner_index>(v->index()));
     break;
   default:
     CGAL_assertion(false);

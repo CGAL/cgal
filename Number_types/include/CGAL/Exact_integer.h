@@ -30,8 +30,7 @@ It is a typedef of another number type. Its exact definition depends on
 the availability the third-party libraries \gmp, \core, and \leda. \cgal must
 be configured with at least one of those libraries.
 
-\cgalModels `EuclideanRing`
-\cgalModels `RealEmbeddable`
+\cgalModels{EuclideanRing,RealEmbeddable}
 
 */
 #if DOXYGEN_RUNNING
@@ -40,7 +39,7 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
-typedef internal::Exact_ring_selector<int>::Type Exact_integer;
+using Exact_integer = internal::Exact_NT_backend<internal::Default_exact_nt_backend>::Integer;
 
 #endif // not DOXYGEN_RUNNING
 

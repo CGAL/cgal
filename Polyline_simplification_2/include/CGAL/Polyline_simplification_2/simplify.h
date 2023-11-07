@@ -211,7 +211,7 @@ public:
         it != pct.vertices_in_constraint_end(cid);
         ++it){
       if((*it)->is_removable()){
-        boost::optional<FT> dist = cost(pct, it);
+        std::optional<FT> dist = cost(pct, it);
         if(dist){
           (*it)->set_cost(*dist);
           if(! (*mpq).contains(*it)){
@@ -326,7 +326,7 @@ operator()()
     pct.simplify(vit);
 
     if((*u)->is_removable()){
-      boost::optional<FT> dist = cost(pct, u);
+      std::optional<FT> dist = cost(pct, u);
       if(! dist){
         // cost is undefined
         if( mpq->contains(*u) ){
@@ -344,7 +344,7 @@ operator()()
     }
 
     if((*w)->is_removable()){
-      boost::optional<FT> dist = cost(pct, w);
+      std::optional<FT> dist = cost(pct, w);
       if(! dist){
         // cost is undefined
         if( mpq->contains(*w) ){

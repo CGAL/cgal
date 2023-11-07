@@ -9,7 +9,9 @@ The concept `StraightSkeletonVertex_2` describes the requirements for the vertex
 with support for storage of the incident halfedge. The `StraightSkeletonVertex_2` concept
 requires the geometric embedding to be a 2D point.
 
-\cgalHasModel `CGAL::Straight_skeleton_vertex_base_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Straight_skeleton_vertex_base_2}
+\cgalHasModelsEnd
 
 \sa `StraightSkeletonHalfedge_2`
 \sa `StraightSkeletonFace_2`
@@ -26,7 +28,7 @@ The type of the 2D point being the geometric embedding of the vertex
 typedef unspecified_type Point_2;
 
 /*!
-A model of the `FieldWithSqrt` concept representing the time of a vertex (an Euclidean distance)
+A model of the `FieldWithSqrt` concept representing the time of a vertex (a Euclidean distance)
 */
 typedef unspecified_type FT;
 

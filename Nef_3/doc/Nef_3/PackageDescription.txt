@@ -4,9 +4,7 @@
 /// \ingroup PkgNef3Ref
 
 /*! Draw.
-  \code
-  #include <CGAL/draw_nef_3.h>
-  \endcode
+\cgalInclude{CGAL/draw_nef_3.h}
 */
 /// \defgroup PkgDrawNef3 Draw a Nef Polyhedron
 /// \ingroup PkgNef3Ref

@@ -148,6 +148,10 @@ namespace CGAL {
       { return mmap.mdarts.is_used(i); }
       bool owns(size_type i) const
       { return mmap.mdarts.owns(i); }
+      size_type capacity() const
+      { return mmap.mdarts.capacity(); }
+      size_type upper_bound() const
+      { return mmap.mdarts.upper_bound(); }
     private:
       Self & mmap;
     };
@@ -444,7 +448,7 @@ namespace CGAL {
         (mattribute_containers).upper_bound();
     }
 
-    protected:
+  protected:
     // Set the handle on the i th attribute
     template<unsigned int i>
     void basic_set_dart_attribute(Dart_descriptor dh,

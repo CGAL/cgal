@@ -15,7 +15,7 @@ the angle bisector of the reflex vertex. The algorithm operates in
 \cgalBigO{n^2} time and takes \cgalBigO{n} space at the worst case, where
 \f$ n\f$ is the size of the input polygon.
 
-\cgalModels `PolygonConvexDecomposition_2`
+\cgalModels{PolygonConvexDecomposition_2}
 
 */
 template <typename Kernel, typename Container>

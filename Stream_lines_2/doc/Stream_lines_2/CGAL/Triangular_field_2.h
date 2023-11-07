@@ -12,7 +12,7 @@ vertices of the face `f`.
 
 \tparam StreamLinesTraits_2 has to be instantiated by a model of the concept `StreamLinesTraits_2`.
 
-\cgalModels `VectorField_2`
+\cgalModels{VectorField_2}
 
 \sa `Regular_grid_2<StreamLinesTraits_2>`
 

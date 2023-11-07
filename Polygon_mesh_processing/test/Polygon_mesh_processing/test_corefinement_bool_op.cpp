@@ -97,7 +97,7 @@ void run_boolean_operations(
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 
-  typedef boost::optional<Surface_mesh*> OSM;
+  typedef std::optional<Surface_mesh*> OSM;
 
   std::array<OSM,4> output;
 

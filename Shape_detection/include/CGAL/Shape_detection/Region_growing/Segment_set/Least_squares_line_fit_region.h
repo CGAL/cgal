@@ -47,7 +47,7 @@ namespace Segment_set {
     a model of `ReadablePropertyMap` whose key type is `Item`
     and value type is `Kernel::Segment_2` or `Kernel::Segment_3`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,

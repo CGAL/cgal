@@ -157,7 +157,7 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   typedef CircularKernel::Line_arc_2                                      Line_arc_2;
   typedef CGAL::Variant_traits<CircularKernel,Line_arc_2,Circular_arc_2>  CircularK_Variant_Traits;
 
-  typedef boost::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
+  typedef std::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
   typedef std::vector<CircularKVarArc>                        CircularKVarArcContainer;
 
   bench.kernel("Circular kernel  Variant traits");

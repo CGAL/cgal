@@ -66,11 +66,11 @@ int main() {
     ctr(boost::range::join(CGAL::make_range(points.begin(), points.end()),
                            CGAL::make_single(*points.begin())));
   General_pgn gpgn2;
-  using Make_x_monotone_result = boost::variant<Point_2, X_monotone_curve_2>;
+  using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
   make_x_mtn(curve2,
              boost::make_function_output_iterator
              ([&](const Make_x_monotone_result& obj)
-              { gpgn2.push_back(*(boost::get<X_monotone_curve_2>(&obj))); }));
+              { gpgn2.push_back(*(std::get_if<X_monotone_curve_2>(&obj))); }));
   std::cout << "gpgn2: " << gpgn2 << std::endl;
 
   // Case 3: Polyline-based GPS from polyline of segments
@@ -81,7 +81,7 @@ int main() {
   make_x_mtn(curve3,
              boost::make_function_output_iterator
              ([&](const Make_x_monotone_result& obj)
-              { gpgn3.push_back(*(boost::get<X_monotone_curve_2>(&obj))); }));
+              { gpgn3.push_back(*(std::get_if<X_monotone_curve_2>(&obj))); }));
   std::cout << "gpgn3: " << gpgn3 << std::endl;
 
   if (! eql(gpgn2, gpgn3)) {

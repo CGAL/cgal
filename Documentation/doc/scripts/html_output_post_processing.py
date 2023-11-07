@@ -70,7 +70,7 @@ def clean_doc():
     duplicate_files=list(package_glob('./*/jquery.js'))
     duplicate_files.extend(package_glob('./*/dynsections.js'))
     duplicate_files.extend(package_glob('./*/resize.js'))
-    duplicate_files.extend(package_glob('./*/stylesheet.css'))
+    duplicate_files.extend(package_glob('./*/cgal_stylesheet.css'))
     # kill _all_, including the one in CGAL tabs.css files
     duplicate_files.extend(glob.glob('./*/tabs.css'))
     # left-over by doxygen?

@@ -45,19 +45,102 @@ void trace_display_msg(const char* msg)
 #endif
 }
 
-template<typename LCC,
-         typename Map=typename LCC::Combinatorial_data_structure>
-struct Alpha1
+template<typename Map, int i, typename Info=
+         typename Map::template Attribute_type<i>::type::Info>
+struct SetInfoIfNonVoid
 {
-  static typename LCC::Dart_descriptor run(LCC&, typename LCC::Dart_descriptor dh)
-  { return dh; }
+  static void run(Map& map,
+                  typename Map::template Attribute_descriptor<i>::type attr,
+                  long long int nb)
+  {
+    map.template info_of_attribute<i>(attr)=
+      typename Map::template Attribute_type<i>::type::Info(nb);
+  }
 };
-template<typename LCC>
-struct Alpha1<LCC, CGAL::Generalized_map_tag>
+template<typename Map, int i>
+struct SetInfoIfNonVoid<Map, i, void>
 {
-  static typename LCC::Dart_descriptor run(LCC& lcc, typename LCC::Dart_descriptor dh)
-  { return lcc.template alpha<1>(dh); }
+  static void run(Map&, typename Map::template Attribute_descriptor<i>::type,
+                  long long int)
+  {}
 };
+
+template<typename Map, unsigned int i, typename Attr=typename Map::
+         template Attribute_type<i>::type>
+struct CreateAttributes
+{
+  static void run(Map& map)
+  {
+    long long int nb=0;
+    for(typename Map::Dart_range::iterator it=map.darts().begin(),
+        itend=map.darts().end(); it!=itend; ++it)
+    {
+      if ( map.template attribute<i>(it)==map.null_descriptor )
+      {
+        map.template set_attribute<i>(it, map.template create_attribute<i>());
+        SetInfoIfNonVoid<Map, i>::run(map, map.template attribute<i>(it), ++nb);
+      }
+    }
+  }
+};
+
+template<typename Map, typename Attr>
+struct CreateAttributes<Map, 0, Attr>
+{
+  static void run(Map& amap)
+  {
+    long long int nb=0;
+    for ( typename Map::template Attribute_range<0>::type::iterator
+          it=amap.template attributes<0>().begin(),
+          itend=amap.template attributes<0>().end(); it!=itend; ++it )
+      SetInfoIfNonVoid<Map, 0>::run(amap, it, ++nb);
+  }
+};
+
+template<typename Map, unsigned int i>
+struct CreateAttributes<Map, i, CGAL::Void>
+{
+  static void run(Map&)
+  {}
+};
+
+template<typename Map>
+struct CreateAttributes<Map, 0, CGAL::Void>
+{
+  static void run(Map&)
+  {}
+};
+
+template<typename Map, typename Info=typename Map::Dart_info>
+struct InitDartInfo
+{
+  static void run(Map& map)
+  {
+    long long int nb=0;
+    for(typename Map::Dart_range::iterator it=map.darts().begin(),
+        itend=map.darts().end(); it!=itend; ++it)
+    {
+      nb=CGAL::get_default_random().get_int(0,20000);
+      map.info(it)=Info(nb);
+    }
+  }
+};
+
+template<typename Map>
+struct InitDartInfo<Map, CGAL::Void>
+{
+  static void run(Map&)
+  {}
+};
+
+template<typename Map>
+void create_attributes_2(Map& map)
+{
+  CreateAttributes<Map, 0>::run(map);
+  CreateAttributes<Map, 1>::run(map);
+  CreateAttributes<Map, 2>::run(map);
+  InitDartInfo<Map>::run(map);
+}
 
 // Test orientation specialized below only for CMap. For GMap return true.
 template<typename LCC, typename Map=typename LCC::Combinatorial_data_structure>

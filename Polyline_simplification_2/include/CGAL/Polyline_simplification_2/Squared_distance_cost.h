@@ -34,7 +34,7 @@ namespace Polyline_simplification_2
 
 /// This class is a cost function which calculates the cost as the square of the distance between the original and simplified polylines.
 ///
-/// \cgalModels `PolylineSimplificationCostFunction`.
+/// \cgalModels{PolylineSimplificationCostFunction}
 class Squared_distance_cost
 {
 
@@ -50,7 +50,7 @@ public:
   /// is model of  `PolylineSimplificationVertexBase_2`.
 
     template<class CDT>
-    boost::optional<typename CDT::Geom_traits::FT>
+    std::optional<typename CDT::Geom_traits::FT>
     operator()(const Constrained_triangulation_plus_2<CDT>& pct
                , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq)const
   {

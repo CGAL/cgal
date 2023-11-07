@@ -90,7 +90,7 @@ be used in such a case. (For exact number types
 Currently, we require `Traits::FT` to be either an exact number
 type or `double` or `float`; other inexact number types are
 not supported at this time. Also, the current implementation only
-handles spheres with Cartesian coordinates; homogeneous representation
+handles spheres with %Cartesian coordinates; homogeneous representation
 is not supported yet.
 
 \cgalHeading{Example}

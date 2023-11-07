@@ -467,11 +467,11 @@ To construct a set of inward offset contours the user must:
   <li>Construct the straight skeleton of the source polygon.</li>
   <li>Instantiate the polygon offset builder passing in the straight skeleton as a parameter.</li>
   <li>Call `Polygon_offset_builder_2::construct_offset_contours()` passing the desired offset
-      distance and an output iterator that can store a `boost::shared_ptr` of `Container` instances
+      distance and an output iterator that can store a `std::shared_ptr` of `Container` instances
       into a resulting sequence (typically, a back insertion iterator)</li>
 </ol>
 
-Each element in the resulting sequence is an <I>offset contour</I>, given by a `boost::shared_ptr`
+Each element in the resulting sequence is an <I>offset contour</I>, given by a `std::shared_ptr`
 holding a dynamically allocated instance of the Container type. Such a container can be any model
 of the `SequenceContainer` concept, for example, a `CGAL::Polygon_2`, or just a `std::vector` of 2D points.
 
