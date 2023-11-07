@@ -211,7 +211,10 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
 // provide a gradation factor as a named parameter for adaptive clustering
 template <typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
-PolygonMesh acvd_isotropic(
+std::pair<
+  std::vector<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3>,
+  std::vector<std::vector<int>>
+> acvd_isotropic(
     PolygonMesh& pmesh,
     const int nb_clusters,
     const NamedParameters& np = parameters::default_values()
@@ -591,7 +594,7 @@ PolygonMesh acvd_isotropic(
   std::vector<typename GT::Point_3> points;
   Point_set_3<typename GT::Point_3> point_set;
 
-  std::vector<std::vector<int> > polygons;
+  std::vector<std::vector<int>> polygons;
   PolygonMesh simplified_mesh;
 
   for (int i = 0; i < nb_clusters; i++) //should i =1 ?
@@ -692,9 +695,8 @@ PolygonMesh acvd_isotropic(
   }
 
   orient_polygon_soup(points, polygons);
-  polygon_soup_to_polygon_mesh(points, polygons, simplified_mesh);
 
-  return simplified_mesh;
+  return std::make_pair(points, polygons);
 }
 
 
@@ -739,7 +741,10 @@ PolygonMesh acvd_isotropic(
 
 template <typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
-PolygonMesh acvd_isotropic_simplification_polygon_soup(
+std::pair<
+  std::vector<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3>,
+  std::vector<std::vector<int>>
+>  acvd_isotropic_simplification_polygon_soup(
     PolygonMesh& pmesh,
     const int& nb_vertices,
     const NamedParameters& np = parameters::default_values()
@@ -803,9 +808,9 @@ PolygonMesh acvd_isotropic_simplification(
     np
   );
 
-  //PolygonMesh simplified_mesh;
-  //polygon_soup_to_polygon_mesh(points, polygons, simplified_mesh);
-  return ps;
+  PolygonMesh simplified_mesh;
+  polygon_soup_to_polygon_mesh(ps.first, ps.second, simplified_mesh);
+  return simplified_mesh;
 }
 
 // template <typename PolygonMesh,
