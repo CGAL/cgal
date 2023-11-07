@@ -5,17 +5,19 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Mesh_3/Construct_initial_points_labeled_image.h>
-
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 
 #include <CGAL/SMDS_3/Dump_c3t3.h>
 
+
+#include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
+
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
+typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
 
 #ifdef CGAL_CONCURRENT_MESH_3
 typedef CGAL::Parallel_tag Concurrency_tag;
@@ -33,70 +35,57 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 namespace params = CGAL::parameters;
 
-template<class C3T3, class MeshDomain>
-void initialize_triangulation_from_labeled_image(C3T3& c3t3,
-      const MeshDomain&   domain,
-      const CGAL::Image_3& image)
+struct Custom_Initial_points_generator
 {
-  typedef typename C3T3::Triangulation       Tr;
-  typedef typename Tr::Geom_traits           GT;
-  typedef typename Tr::Weighted_point        Weighted_point;
-  typedef typename Tr::Vertex_handle         Vertex_handle;
-  typedef typename MeshDomain::Point_3       Point_3;
-  typedef typename MeshDomain::Index         Index;
+  CGAL::Image_3& image_;
+  Custom_Initial_points_generator(CGAL::Image_3& image) : image_(image) { }
 
-  typedef typename std::tuple<Point_3, int, Index> ConstructedPoint;
-
-  Tr& tr = c3t3.triangulation();
-
-  typename GT::Construct_weighted_point_3 cwp =
-    tr.geom_traits().construct_weighted_point_3_object();
-
-  std::vector<ConstructedPoint> constructedPoints;
-
-  CGAL::Construct_initial_points_labeled_image construct(image);
-  construct(std::back_inserter(constructedPoints), domain, c3t3);
-
-  std::cout << "  " << constructedPoints.size() << " constructed points" << std::endl;
-
-  for (const ConstructedPoint & constructedPoint : constructedPoints)
+  template <typename OutputIterator, typename MeshDomain, typename C3t3>
+  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 1) const
   {
-    const Point_3& point = std::get<0>(constructedPoint);
-    const int& dimension = std::get<1>(constructedPoint);
-    const Index&   index = std::get<2>(constructedPoint);
+    typedef typename C3t3::Triangulation::Geom_traits::Point_3 Point_3;
 
-    Weighted_point pi = cwp(point);
+    typename C3t3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
+        c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
-    /// The following lines show how to insert initial points in the
-    /// `c3t3` object. [insert initial points]
-    Vertex_handle v = tr.insert(pi);
-    // `v` could be null if `pi` is hidden by other vertices of `tr`.
-    CGAL_assertion(v != Vertex_handle());
-    c3t3.set_dimension(v, dimension);
-    c3t3.set_index(v, index);
-    /// [insert initial points]
+    // Add points along the segment from
+    // (  0.0 50.0 66.66) to
+    // (100.0 50.0 66.66)
+    double edge_size = 5;
+    std::size_t nb = static_cast<int>(100.0 / edge_size);
+    for (std::size_t i = 1; i < nb; i++)
+    {
+      *pts++ = std::make_tuple(
+         cwp(Point_3(i*edge_size, 50.0, 66.66), edge_size*edge_size), 1, 0);
+    }
+    return pts;
   }
-}
+};
 
 int main()
 {
-  /// [Create the image]
-  CGAL::Image_3 image = random_labeled_image();
-  /// [Create the image]
+  const std::string fname = CGAL::data_file_path("images/420.inr");
+  // Loads image
+  CGAL::Image_3 image;
+  if(!image.read(fname)){
+    std::cerr << "Error: Cannot read file " <<  fname << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // Domain
-  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image
+      , params::features_detector(CGAL::Mesh_3::Detect_features_on_image_bbox())
+  );
 
   // Mesh criteria
-  Mesh_criteria criteria(params::facet_angle(30).facet_size(3).facet_distance(1).
-                         cell_radius_edge_ratio(3).cell_size(3));
+  Mesh_criteria criteria(params::facet_angle(30).facet_size(3).facet_distance(1).edge_size(3)
+                         .cell_radius_edge_ratio(3).cell_size(3)
+  );
 
   /// [Meshing]
-  C3t3 c3t3;
-  initialize_triangulation_from_labeled_image(c3t3,
-                                              domain,
-                                              image);
-  CGAL::refine_mesh_3(c3t3, domain, criteria);
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria
+    , params::initial_points_generator(Custom_Initial_points_generator(image))
+  );
   /// [Meshing]
 
   // Output

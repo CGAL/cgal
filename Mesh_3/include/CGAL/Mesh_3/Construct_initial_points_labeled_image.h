@@ -286,7 +286,7 @@ struct Construct_initial_points_labeled_image
           if (pi_inside_protecting_sphere)
             continue;
 
-          *pts++ = std::make_tuple(intersect_point, 2, intersect_index); // dimension 2 by construction, points are on surface
+          *pts++ = std::make_tuple(cwp(intersect_point), 2, intersect_index); // dimension 2 by construction, points are on surface
         }
       }
     }

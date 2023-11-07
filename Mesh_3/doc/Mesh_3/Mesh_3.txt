@@ -795,45 +795,10 @@ Mesh_3/random_labeled_image.h.
 
 
 The example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp features
-another way to achieve these results. It is a modification
-of \ref Mesh_3/mesh_3D_image.cpp.
+a custom functor that initialize the triangulation.
 
-For the meshing, in the previous example (\ref Mesh_3/mesh_3D_image.cpp), we called `make_mesh_3()` as follows.
-
-\snippet Mesh_3/mesh_3D_image.cpp Meshing
-
-In the example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp,
-that call is replaced by:
-  -# the creation of an empty `%c3t3` object,
-  -# a call to the function
-    `initialize_triangulation_from_labeled_image()` that inserts points in
-    the triangulation,
-  -# then the call to `refine_mesh_3()`.
-
-\snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp Meshing
-
-The function `initialize_triangulation_from_labeled_image()` gets points from
-\ref CGAL/Mesh_3/Construct_initial_points_labeled_image.h and inserts them
-in the triangulation. The following lines show how to insert new
-points in the `%c3t3` object, with the calls to
-`MeshVertexBase_3::set_dimension()` and
-`MeshVertexBase_3::set_index()`.
-
-\snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp insert initial points
-
-The value of `index` must be consistent with the possible values of
-`Mesh_domain::Index`.
-
-The example \ref Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp is another
-custom initialization example, for meshing of 3D gray-level images. Similarly to
-the segmented image example above, the code consists in:
-  -# the creation of an empty `%c3t3` object,
-  -# a call to the function
-    `initialize_triangulation_from_gray_image()` that inserts points in
-    the triangulation,
-  -# then the call to `refine_mesh_3()`.
-
-\snippet Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp Meshing
+A struct `Custom_Initial_points_generator` that places 1D-feature points
+alongside a line is created.
 
 \subsection Mesh_3UsingVariableSizingField Using Variable Sizing Field
 

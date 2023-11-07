@@ -1,7 +1,6 @@
 /*!
 \example Mesh_3/implicit_functions.cpp
 \example Mesh_3/mesh_3D_image.cpp
-\example Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp
 \example Mesh_3/mesh_3D_image_with_features.cpp
 \example Mesh_3/mesh_3D_image_with_custom_initialization.cpp
 \example Mesh_3/mesh_3D_image_with_initial_points.cpp

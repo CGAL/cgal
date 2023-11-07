@@ -44,10 +44,9 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
           const int nb_initial_points,
           const parameters::internal::Initial_points_generator_options<MeshDomain, C3T3>& generator = parameters::internal::Initial_points_generator_generator<MeshDomain, C3T3>()())
 {
-  typedef typename MeshDomain::Point_3 Point_3;
+  typedef typename C3T3::Triangulation::Geom_traits::Weighted_point_3 Weighted_point_3;
   typedef typename MeshDomain::Index Index;
-  typedef std::vector<std::tuple<Point_3, int, Index> > Initial_points_vector;
-  typedef typename Initial_points_vector::iterator Ipv_iterator;
+  typedef std::vector<std::tuple<Weighted_point_3, int, Index> > Initial_points_vector;
   typedef typename C3T3::Vertex_handle Vertex_handle;
 
   // Mesh initialization : get some points and add them to the mesh
@@ -58,21 +57,15 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
   else //use default number of points
     generator(std::back_inserter(initial_points), domain, c3t3);
 
-  typename C3T3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
-      c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
-
   // Insert points and set their index and dimension
-  for ( Ipv_iterator it = initial_points.begin() ;
-       it != initial_points.end() ;
-       ++it )
-  {
-    Vertex_handle v = c3t3.triangulation().insert(cwp(std::get<0>(*it)));
+  for (const auto& [weighted_point_3, dimension, index] : initial_points) {
+    Vertex_handle v = c3t3.triangulation().insert(weighted_point_3);
 
     // v could be null if point is hidden
     if ( v != Vertex_handle() )
     {
-      c3t3.set_dimension(v,std::get<1>(*it));
-      c3t3.set_index(v,std::get<2>(*it));
+      c3t3.set_dimension(v,dimension);
+      c3t3.set_index(v,index);
     }
   }
 }
@@ -234,7 +227,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
       // If c3t3 initialization is not sufficient (may happen if there is only
       // a planar curve as feature for example), add some surface points
 
-      bool need_more_init = c3t3.triangulation().dimension() != 3;
+      bool need_more_init = c3t3.triangulation().dimension() != 3 || !generator.is_default();
       if(!need_more_init) {
         CGAL::Mesh_3::C3T3_helpers<C3T3, MD> helper(c3t3, domain);
         helper.update_restricted_facets();

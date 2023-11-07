@@ -14,6 +14,7 @@
 #include <functional>
 
 #include <CGAL/STL_Extension/internal/Has_features.h>
+#include <boost/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -172,12 +173,15 @@ private:
 template <typename MeshDomain, typename C3t3>
 struct Initial_points_generator_options
 {
-  typedef typename std::back_insert_iterator<std::vector<std::tuple<typename MeshDomain::Point_3, int, typename MeshDomain::Index>>> OutputIterator;
+  typedef typename C3t3::Triangulation::Geom_traits::Weighted_point_3 Weighted_point_3;
+  typedef typename MeshDomain::Index Index;
+  typedef typename std::back_insert_iterator<std::vector<std::tuple<Weighted_point_3, int, Index>>> OutputIterator;
 
   template <typename Initial_points_generator>
-  Initial_points_generator_options(const Initial_points_generator& generator)
+  Initial_points_generator_options(const Initial_points_generator& generator, bool is_default = false)
     : initial_points_generator_no_number_of_points_(generator)
     , initial_points_generator_(generator)
+    , is_default_(is_default)
   { }
 
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3) const
@@ -190,7 +194,10 @@ struct Initial_points_generator_options
     return initial_points_generator_(pts, domain, c3t3, n);
   }
 
+  bool is_default() const { return is_default_; }
+
 private:
+  const bool is_default_;
   const std::function<OutputIterator(OutputIterator&,const MeshDomain&,const C3t3&)> initial_points_generator_no_number_of_points_;
   const std::function<OutputIterator(OutputIterator&,const MeshDomain&,const C3t3&,int)> initial_points_generator_;
 };
@@ -242,7 +249,9 @@ struct Domain_features_generator< MeshDomain, true >
 template <typename MeshDomain, typename C3t3>
 struct Initial_points_generator_generator
 {
-  typedef typename std::back_insert_iterator<std::vector<std::tuple<typename MeshDomain::Point_3, int, typename MeshDomain::Index>>> OutputIterator;
+  typedef typename C3t3::Triangulation::Geom_traits::Weighted_point_3 Weighted_point_3;
+  typedef typename MeshDomain::Index Index;
+  typedef typename std::back_insert_iterator<std::vector<std::tuple<Weighted_point_3, int, Index>>> OutputIterator;
 
   typedef typename CGAL::parameters::internal::Initial_points_generator_options<MeshDomain, C3t3> Initial_points_generator_options;
 
@@ -250,28 +259,26 @@ struct Initial_points_generator_generator
   {
     OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)
     {
-      typedef typename MeshDomain::Point_3       Point_3;
-      typedef typename MeshDomain::Index         Index;
-      typedef typename std::pair<Point_3, Index> Domain_generated_point;
-      std::vector<Domain_generated_point> domain_generated_points;
-      domain.construct_initial_points_object()(std::back_inserter(domain_generated_points));
-      for (Domain_generated_point domain_generated_point : domain_generated_points)
-      {
-        *pts++ = std::make_tuple(domain_generated_point.first, 2, domain_generated_point.second);
-      }
+      // Use boost to easily create an output iterator.
+      // This iterator take the domain's construct_initial_points_object output : an std::pair<Point_3, Index>
+      // and outputs an std::tuple<Weighted_point_3, dimension, Index>
+      // As points are on the surfaces by construction, dimension is always 2.
+      typename C3t3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
+          c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
+      domain.construct_initial_points_object()(
+             boost::make_function_output_iterator([&](const auto& domain_generated_point) {
+               *pts++ = std::make_tuple(cwp(domain_generated_point.first), 2, domain_generated_point.second);
+             }));
       return pts;
     }
     OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)
     {
-      typedef typename MeshDomain::Point_3       Point_3;
-      typedef typename MeshDomain::Index         Index;
-      typedef typename std::pair<Point_3, Index> Domain_generated_point;
-      std::vector<Domain_generated_point> domain_generated_points;
-      domain.construct_initial_points_object()(std::back_inserter(domain_generated_points), n);
-      for (Domain_generated_point domain_generated_point : domain_generated_points)
-      {
-        *pts++ = std::make_tuple(domain_generated_point.first, 2, domain_generated_point.second);
-      }
+      typename C3t3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
+          c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
+      domain.construct_initial_points_object()(
+             boost::make_function_output_iterator([&](const auto& domain_generated_point) {
+               *pts++ = std::make_tuple(cwp(domain_generated_point.first), 2, domain_generated_point.second);
+             }), n);
       return pts;
     }
   };
@@ -279,7 +286,7 @@ struct Initial_points_generator_generator
   template <typename InitialPointsGenerator>
   Initial_points_generator_options operator()(const InitialPointsGenerator& initial_points_generator)
   {
-    return Initial_points_generator_options(initial_points_generator);
+    return Initial_points_generator_options(initial_points_generator, false);
   }
 
   Initial_points_generator_options operator()(const Null_functor&)
@@ -289,7 +296,7 @@ struct Initial_points_generator_generator
 
   Initial_points_generator_options operator()()
   {
-    return Initial_points_generator_options(Initial_points_generator_domain_traductor());
+    return Initial_points_generator_options(Initial_points_generator_domain_traductor(), true);
   }
 };
 
