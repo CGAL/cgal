@@ -24,16 +24,20 @@ int main(int argc, char* argv[])
     CGAL::data_file_path(argv[1]) :
     CGAL::data_file_path("meshes/cactus.off");
 
-  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 20;
-
-  const double gradation_factor = (argc > 3) ? atof(argv[3]) : 0;
-
+  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 100;
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
+
+  /// Uniform Isotropic ACVD Remeshing
+
+  auto acvd_mesh = PMP::acvd_isotropic_simplification(smesh, nb_clusters);
+  CGAL::IO::write_OFF("acvd_mesh.off", acvd_mesh);
+
+  /// Adaptive Isotropic ACVD Remeshing
 
   bool created = false;
   Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
@@ -48,17 +52,18 @@ int main(int argc, char* argv[])
 
   PMP::interpolated_corrected_principal_curvatures_and_directions(smesh, principal_curvatures_and_directions_map);
 
-  PMP::acvd_isotropic_simplification(
-    smesh,
-    nb_clusters,
-    CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
-      .gradation_factor(gradation_factor)
-      );
-  // std::cout << "kak3" << std::endl;
+  const double gradation_factor = (argc > 3) ? atof(argv[3]) : 0;
+
+  auto adaptive_acvd_mesh =
+    PMP::acvd_isotropic_simplification(
+      smesh,
+      nb_clusters,
+      CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
+        .gradation_factor(gradation_factor)
+    );
+
+  CGAL::IO::write_OFF("acvd_mesh_adaptive.off", adaptive_acvd_mesh);
+
   return 0;
-
-  // Output the simplified mesh, use write_OFF()
-  //CGAL::IO::write_OFF("sphere966_clustered_0.off", smesh, CGAL::parameters::stream_precision(17).vertex_color_map(vcm));
-
 }
 
