@@ -1,70 +1,76 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedral_mesh_domain_3.h>
-
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
+
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/tetrahedral_remeshing.h>
 #include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
 
-#include <CGAL/IO/File_medit.h>
+#ifdef CGAL_CONCURRENT_MESH_3
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
 
 // Domain
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Point = K::Point_3;
-using FT = K::FT;
-using Polyhedron = CGAL::Polyhedron_3<K>;
-using Mesh_domain = CGAL::Polyhedral_mesh_domain_3<Polyhedron, K>;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef K::FT FT;
+typedef K::Point_3 Point;
+typedef FT (Function)(const Point&);
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
-// Triangulation for Meshing
-using Tr = CGAL::Mesh_triangulation_3<Mesh_domain>::type;
-using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
+// Triangulation
+typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria
-using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 // Triangulation for Remeshing
 using T3 = CGAL::Triangulation_3<Tr::Geom_traits,
                                  Tr::Triangulation_data_structure>;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
-int main(int argc, char* argv[])
+// Sizing field
+struct Spherical_sizing_field
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elk.off");
-  std::ifstream input(fname);
-  Polyhedron polyhedron;
-  input >> polyhedron;
-  if (input.fail()) {
-    std::cerr << "Error: Cannot read file " << fname << std::endl;
-    return EXIT_FAILURE;
+  typedef ::FT FT;
+  typedef Point Point_3;
+  typedef Mesh_domain::Index Index;
+
+  FT operator()(const Point_3& p, const int, const Index&) const
+  {
+    FT sq_d_to_origin = CGAL::squared_distance(p, Point(CGAL::ORIGIN));
+    return CGAL::abs(CGAL::sqrt(sq_d_to_origin) - 0.5) / 5. + 0.025;
   }
+};
 
-  if (!CGAL::is_triangle_mesh(polyhedron)) {
-    std::cerr << "Input geometry is not triangulated." << std::endl;
-    return EXIT_FAILURE;
-  }
+// Function
+FT sphere_function (const Point& p)
+{
+  return CGAL::squared_distance(p, Point(CGAL::ORIGIN)) - 1;
+}
 
-  // Create domain
-  Mesh_domain domain(polyhedron);
-
-  std::cout << "Meshing...";
-  std::cout.flush();
+int main()
+{
+  /// [Domain creation] (Warning: Sphere_3 constructor uses squared radius !)
+  Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain
+  (sphere_function, K::Sphere_3(CGAL::ORIGIN, K::FT(2))
+  );
+  /// [Domain creation]
 
   // Mesh criteria
-  Mesh_criteria criteria(facet_angle = 25,
-                         facet_distance = 0.2,
-                         cell_radius_edge_ratio = 3);
+  Spherical_sizing_field size;
+  Mesh_criteria criteria(params::facet_angle(30).facet_size(0.1).facet_distance(0.025).
+    cell_radius_edge_ratio(2).cell_size(size));
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb().no_exude());
-
-  std::cout << "\rMeshing done." << std::endl;
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::no_exude().no_perturb());
 
   T3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3));
   //note we use the move semantic, with std::move(c3t3),
@@ -77,12 +83,7 @@ int main(int argc, char* argv[])
   std::cout << "Remeshing...";
   std::cout.flush();
 
-  CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<T3>
-    adaptive_field(tr);
-
-  CGAL::tetrahedral_isotropic_remeshing(tr,
-    adaptive_field,
-    CGAL::parameters::number_of_iterations(5));
+  CGAL::tetrahedral_isotropic_remeshing(tr, size);
 
   std::cout << "\rRemeshing done." << std::endl;
 
