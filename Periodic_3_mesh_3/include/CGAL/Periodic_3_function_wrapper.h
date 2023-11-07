@@ -47,7 +47,7 @@ public:
 private:
   typedef std::conditional_t<std::is_function_v<Function_>,
                              Function_*,
-                             Function_>:                       Stored_function;
+                             Function_>                       Stored_function;
 
   /// Function to wrap
   Stored_function f_;
