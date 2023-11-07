@@ -79,20 +79,22 @@ public:
   FT operator()(const Bare_point& p, const int& dim, const Index& i) const
   {
     // Find nearest vertex
-    Distance tr_dist;
-    K_neighbor_search search(m_kd_tree, p, 4/*nb nearest neighbors*/);
-    std::array<Point_and_size, 4> vertices;
-    int vi = 0;
-    for (typename K_neighbor_search::iterator it = search.begin();
-         it != search.end();
-         ++it, ++vi)
-    {
-      const auto& [pi, size] = it->first;
-      if (pi == p)
-        return size;
-      vertices[vi] = {pi, size};
-    }
-    return interpolate_on_four_vertices(p, vertices);
+    K_neighbor_search search(m_kd_tree, p, 1/*nb nearest neighbors*/);
+    const auto & [pi, size] = search.begin()->first;
+    return size;
+
+//    std::array<Point_and_size, 4> vertices;
+//    int vi = 0;
+//    for (typename K_neighbor_search::iterator it = search.begin();
+//         it != search.end();
+//         ++it, ++vi)
+//    {
+//      const auto& [pi, size] = it->first;
+//      if (pi == p)
+//        return size;
+//      vertices[vi] = {pi, size};
+//    }
+//    return interpolate_on_four_vertices(p, vertices);
   }
 
 private:
@@ -109,7 +111,7 @@ private:
     const std::array<Point_and_size, 4>& vertices) const;
 
   FT sq_circumradius_length(const Cell_handle cell, const Vertex_handle v, const Tr& tr) const;
-  FT average_circumradius_length(const Vertex_handle v, const Tr& tr) const;
+  FT average_circumradius_around(const Vertex_handle v, const Tr& tr) const;
 
 private:
   Tree m_kd_tree;
@@ -132,7 +134,7 @@ build_kd_tree(const Tr& tr)
   {
     const Tr_point& position = tr.point(v);
     points.push_back(cp(position));
-    sizes.push_back(average_circumradius_length(v, tr));
+    sizes.push_back(average_circumradius_around(v, tr));
   }
 
   m_kd_tree.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), sizes.begin())),
@@ -239,7 +241,7 @@ sq_circumradius_length(const Cell_handle cell,
 template <typename Tr>
 typename Adaptive_remeshing_sizing_field<Tr>::FT
 Adaptive_remeshing_sizing_field<Tr>::
-average_circumradius_length(const Vertex_handle v, const Tr& tr) const
+average_circumradius_around(const Vertex_handle v, const Tr& tr) const
 {
   std::vector<Cell_handle> incident_cells;
   incident_cells.reserve(64);
