@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Orthtree
 
 \cgalAutoToc
-\authors Jackson Campolattaro, Simon Giraudot, Cedric Portaneri, Tong Zhao, Pierre Alliez
+\authors Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, Pierre Alliez
 
 \section Section_Orthtree_Introduction Introduction
 
