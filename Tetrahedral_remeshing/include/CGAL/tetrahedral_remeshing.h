@@ -199,7 +199,7 @@ template<typename Traits, typename TDS, typename SLDS,
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const SizingFunction& sizing,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   CGAL_assertion(tr.is_valid());
 
