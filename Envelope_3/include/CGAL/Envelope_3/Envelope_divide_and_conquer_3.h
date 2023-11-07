@@ -37,7 +37,7 @@
 #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 #include <CGAL/Arr_face_index_map.h>
 #include <CGAL/graph_traits_dual_arrangement_on_surface_2.h>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #endif
 
 // this base divide & conquer algorithm splits the input into 2 groups,

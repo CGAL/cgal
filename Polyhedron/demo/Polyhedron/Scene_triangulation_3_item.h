@@ -31,6 +31,7 @@ using namespace CGAL::Three;
   Q_OBJECT
 public:
   typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
+  static const int number_of_bitset = 4; // also defined in "shader_c3t3.frag" and "shader_c3t3_edges.frag"
 
   Scene_triangulation_3_item(bool display_elements = true);
   Scene_triangulation_3_item(const T3 t3, bool display_elements = true);
@@ -43,6 +44,7 @@ public:
 
 
   void setColor(QColor c) Q_DECL_OVERRIDE;
+  void setUseSubdomainColors(bool use_subdomain_colors);
 
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
 
@@ -121,6 +123,9 @@ public:
 
   void data_item_destroyed();
 
+  void check_new_item(int id);
+  void check_deleted_item(Scene_interface::Item_id id);
+
   void reset_spheres();
 
   void reset_intersection_item();
@@ -128,6 +133,7 @@ public:
   void show_grid(bool b);
   void show_spheres(bool b);
   void computeIntersection();
+  void set_cut_edge(bool b);
 
   virtual QPixmap graphicalToolTip() const Q_DECL_OVERRIDE;
 
@@ -141,7 +147,9 @@ public:
 
   QColor get_histogram_color(const double v) const;
 
+  void resetVisibleSubdomain();
   void switchVisibleSubdomain(int);
+  bool isVisibleSubdomain(int) const;
 
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 

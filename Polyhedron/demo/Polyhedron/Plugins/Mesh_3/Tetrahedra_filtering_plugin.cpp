@@ -11,6 +11,7 @@
 #include <CGAL/double.h>
 
 #include "Scene_c3t3_item.h"
+#include "Scene_triangulation_3_item.h"
 #include "Scene_tetrahedra_item.h"
 #include "Messages_interface.h"
 #include "CGAL_double_edit.h"
@@ -58,6 +59,10 @@ public :
     addDockWidget(dock_widget);
 
     connect(dock_widget->resetButton, &QPushButton::clicked, [this](){
+      if(!tet_item)
+          return;
+      tet_item->c3t3_item()->resetVisibleSubdomain();
+      tet_item->c3t3_item()->computeIntersection();
       filter();
     });
   }
@@ -129,6 +134,7 @@ public Q_SLOTS:
     connect(dock_widget->minEdit, &DoubleEdit::editingFinished, tet_item, QOverload<>::of(&Scene_tetrahedra_item::setMinThreshold));
     connect(dock_widget->maxEdit, &DoubleEdit::editingFinished, tet_item, QOverload<>::of(&Scene_tetrahedra_item::setMaxThreshold));
 
+    onFilterIndexChanged(dock_widget->filterBox->currentIndex());
     dock_widget->show();
   }
 
@@ -150,14 +156,25 @@ public Q_SLOTS:
     if(!tet_item)
       return;
     Scene_c3t3_item* c3t3_item = tet_item->c3t3_item();
-    if(c3t3_item->subdomain_indices().size() > 96)
+    unsigned int max_number_of_item = 32*Scene_triangulation_3_item::number_of_bitset-1;
+    if(c3t3_item->subdomain_indices().size() >= max_number_of_item)
     {
-      QMessageBox::warning(nullptr, "Warning", tr("The filtering is only available for items with less than 96 subdomains, and this one has %1").arg(c3t3_item->subdomain_indices().size()));
+      QString message = tr("The filtering is only available for items with less than %1 subdomains, and this one has %2")
+                            .arg(max_number_of_item)
+                            .arg(c3t3_item->subdomain_indices().size());
+      QMessageBox::warning(nullptr, "Warning", message);
       return;
     }
     int counter = 0;
     int limit = static_cast<int>(std::ceil(CGAL::approximate_sqrt(EPICK::FT(c3t3_item->subdomain_indices().size()))));
     QGridLayout *layout = dock_widget->gridLayout;
+    //delete all items (see https://stackoverflow.com/questions/4272196/qt-remove-all-widgets-from-layout)
+    QLayoutItem* item;
+    while ((item = layout->takeAt(0)))
+    {
+      delete item->widget();
+      delete item;
+    }
     for (std::set<int>::iterator it = c3t3_item->subdomain_indices().begin(),
          end = c3t3_item->subdomain_indices().end(); it != end; ++it)
     {
@@ -165,7 +182,7 @@ public Q_SLOTS:
       QPushButton* button = new QPushButton(tr("%1").arg(index));
       buttons.push_back(button);
       button->setCheckable(true);
-      button->setChecked(true);
+      button->setChecked(c3t3_item->isVisibleSubdomain(index));
       QColor color = c3t3_item->getSubdomainIndexColor(index);
       QString s("QPushButton { font-weight: bold; background: #"
                 + QString::number(90,16)

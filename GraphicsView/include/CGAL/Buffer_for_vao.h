@@ -746,17 +746,23 @@ protected:
         fit->info().is_process = false;
       }
       // (2.2) We check if the facet is external or internal
-      std::queue<typename CDT::Face_handle> face_queue;
-      typename CDT::Face_handle face_internal = nullptr;
+      std::queue<typename CDT::Face_handle> face_queue, faces_internal;
       if (cdt.infinite_vertex()->face()!=nullptr)
-      { face_queue.push(cdt.infinite_vertex()->face()); }
+      {
+        typename CDT::Face_circulator
+          incident_faces(cdt.infinite_vertex()), end_incident_faces(incident_faces);
+        do
+        { face_queue.push(incident_faces); }
+        while(++incident_faces!=end_incident_faces);
+      }
+      // std::cout<<"# faces PUSHED "<<face_queue.size()<<std::endl;
       while(!face_queue.empty())
       {
-        typename CDT::Face_handle fh = face_queue.front();
+        typename CDT::Face_handle fh=face_queue.front();
         face_queue.pop();
         if(!fh->info().is_process)
         {
-          fh->info().is_process = true;
+          fh->info().is_process=true;
           for(int i=0; i<3; ++i)
           {
             if(!cdt.is_constrained(std::make_pair(fh, i)))
@@ -764,21 +770,16 @@ protected:
               if (fh->neighbor(i)!=nullptr)
               { face_queue.push(fh->neighbor(i)); }
             }
-            else if (face_internal==nullptr)
-            {
-              face_internal = fh->neighbor(i);
-            }
+            else
+            { faces_internal.push(fh->neighbor(i)); }
           }
         }
       }
 
-      if ( face_internal!=nullptr )
-      { face_queue.push(face_internal); }
-
-      while(!face_queue.empty())
+      while(!faces_internal.empty())
       {
-        typename CDT::Face_handle fh = face_queue.front();
-        face_queue.pop();
+        typename CDT::Face_handle fh=faces_internal.front();
+        faces_internal.pop();
         if(!fh->info().is_process)
         {
           fh->info().is_process = true;
@@ -788,7 +789,7 @@ protected:
             if(!cdt.is_constrained(std::make_pair(fh, i)))
             {
               if (fh->neighbor(i)!=nullptr)
-              { face_queue.push(fh->neighbor(i)); }
+              { faces_internal.push(fh->neighbor(i)); }
             }
           }
         }
