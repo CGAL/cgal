@@ -75,13 +75,17 @@ namespace CGAL
 *             and vertex base model of `RemeshingVertexBase_3`.
 * @tparam SLDS is an optional parameter for `Triangulation_3`, that
 *             specifies the type of the spatial lock data structure.
+* @tparam SizingFunction a sizing field functional,
+*             model of `SizingField_3`, or type convertible to `double`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tr the triangulation to be remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
 *           `Remeshing_triangulation` is a helper class that satisfies all the requirements
 *           of its template parameters.
-* @param target_edge_length the uniform target edge length. This parameter provides a
+* @param sizing the target edge length. This parameter provides a
 *          mesh density target for the remeshing algorithm.
+*          It can be a number convertible to `double`,
+*          or an instance of a model of `SizingField_3`.
 * @param np optional sequence of \ref bgl_namedparameters "Named Parameters"
 *          among the ones listed below
 *
@@ -156,46 +160,10 @@ namespace CGAL
 *  \cgalNamedParamsEnd
 *
 * \sa `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
-*
-* @todo implement non-uniform sizing field instead of uniform target edge length
 */
 template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters = parameters::Default_named_parameters>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
-  const double target_edge_length,
-  const NamedParameters& np = parameters::default_values())
-{
-  typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
-  typedef typename TDS::Vertex::Index Index;
-  tetrahedral_isotropic_remeshing(
-    tr,
-    [target_edge_length]
-      (const typename Traits::Point_3& /* p */, const int&, const Index&)
-        {return target_edge_length; },
-    np);
-}
-
-template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters = parameters::Default_named_parameters>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
-  const float target_edge_length,
-  const NamedParameters& np = parameters::default_values())
-{
-  typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
-  typedef typename TDS::Vertex::Index Index;
-  tetrahedral_isotropic_remeshing(
-    tr,
-    [target_edge_length]
-      (const typename Traits::Point_3& /* p */, const int&, const Index&)
-        {return target_edge_length;},
-    np);
-}
-
-template<typename Traits, typename TDS, typename SLDS,
          typename SizingFunction,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const SizingFunction& sizing,
@@ -274,6 +242,41 @@ void tetrahedral_isotropic_remeshing(
     cell_select, "statistics_end.txt");
 #endif
 }
+
+template<typename Traits, typename TDS, typename SLDS,
+         typename NamedParameters = parameters::Default_named_parameters>
+void tetrahedral_isotropic_remeshing(
+  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
+  const double target_edge_length,
+  const NamedParameters& np = parameters::default_values())
+{
+  typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
+  typedef typename TDS::Vertex::Index Index;
+  tetrahedral_isotropic_remeshing(
+    tr,
+    [target_edge_length]
+      (const typename Traits::Point_3& /* p */, const int&, const Index&)
+        {return target_edge_length; },
+    np);
+}
+
+template<typename Traits, typename TDS, typename SLDS,
+         typename NamedParameters = parameters::Default_named_parameters>
+void tetrahedral_isotropic_remeshing(
+  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
+  const float target_edge_length,
+  const NamedParameters& np = parameters::default_values())
+{
+  typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
+  typedef typename TDS::Vertex::Index Index;
+  tetrahedral_isotropic_remeshing(
+    tr,
+    [target_edge_length]
+      (const typename Traits::Point_3& /* p */, const int&, const Index&)
+        {return target_edge_length;},
+    np);
+}
+
 
 /*!
 * \ingroup PkgTetrahedralRemeshingRef
