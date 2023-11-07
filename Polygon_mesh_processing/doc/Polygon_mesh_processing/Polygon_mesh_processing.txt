@@ -52,7 +52,7 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
-- \ref PMPacvd : methods to simplify or remesh a polygon mesh using approximated centroidal Voronoi diagrams
+- \ref PMPACVD : methods to simplify or remesh a polygon mesh using approximated centroidal Voronoi diagrams
   as described in \cgalCite{cgal:vcp-grtmmdvd-08} and preceeding work.
 
 \subsection PMPIO Reading and Writing Polygon Meshes
@@ -1022,6 +1022,31 @@ which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
 
+\section PMPACVD ACVD Simplification and Remeshing
+
+The Approximated Centroidal Voronoi Diagram (ACVD) package is a set of vertex-clustering-based tools to simplify
+and remesh a polygon mesh. It is based on the method introduced in \cgalCite{cgal:vc-acvdupmc-04} and extended
+in \cgalCite{cgal:vkc-apmsdcvd-05} and \cgalCite{cgal:vcp-grtmmdvd-08}.
+
+\subsection ACVDBackground Brief Background
+
+WIP
+
+\subsection ACVDAPI API
+
+WIP
+
+\subsection ACVDResults Results
+
+WIP
+
+\subsection ACVDExample Usage Example
+
+The example below shows the usage of the `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification()` function
+and how the extra named parameters can be passed.
+
+\cgalExample{Polygon_mesh_processing/acvd_example.cpp}
+
 \section PMPDistance Hausdorff Distance
 
 This package provides methods to compute (approximate) distances between meshes and point sets.
@@ -1149,7 +1174,6 @@ The ACVD Simplification and Remeshing methods were implemented during GSoC 2023.
 supervision of Sébastien Valette and Sébastien Loriot. The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
 preceeding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
 used as a reference during the project.
-
 
 */
 } /* namespace CGAL */
