@@ -632,9 +632,7 @@ private:
     return shape_idx;
   }
 
-  void store_convex_hull_shape(const std::string &filename,
-    const std::vector<std::size_t>& region, const Plane_3& plane) {
-
+  void store_convex_hull_shape(const std::vector<std::size_t>& region, const Plane_3& plane, std::vector<std::vector<Point_3> >& polys) {
     std::vector<Point_2> points;
     points.reserve(region.size());
     for (const std::size_t idx : region) {
@@ -655,7 +653,7 @@ private:
       polygon.push_back(point);
     }
 
-    KSR_3::dump_polygon(polygon, filename);
+    polys.push_back(polygon);
   }
 
   std::pair<int, int> make_canonical_pair(int i, int j)
@@ -952,7 +950,7 @@ private:
           pts_idx.push_back(m_regions[p].second[j]);
         }
       }
-      m_kinetic_partition.map_points_to_regularized_polygons(i, pts, mapping);
+      m_kinetic_partition.map_points_to_polygons(i, pts, mapping);
 
       // Still need to calculate the area
       // Remap from mapping to m_face_inliers
@@ -966,13 +964,13 @@ private:
       }
 
       std::vector<KSP::Index> faces;
-      m_kinetic_partition.faces_of_regularized_polygon(i, std::back_inserter(faces));
+      m_kinetic_partition.faces_of_polygon(i, std::back_inserter(faces));
 
       std::vector<std::vector<std::size_t> > faces2d(faces.size());
       std::vector<std::vector<std::size_t> > indices; // Adjacent faces for each vertex
       std::map<KSP::Index, std::size_t> idx2pts; // Mapping of vertices to pts vector
 
-      Plane_3 pl = from_exact(m_kinetic_partition.regularized_plane(i));
+      Plane_3 pl = from_exact(m_kinetic_partition.plane(i));
 
       for (std::size_t j = 0; j < faces.size(); j++) {
         std::size_t idx = m_face2index[faces[j]];
@@ -1180,6 +1178,23 @@ private:
       m_points, sorting.ordered(), neighbor_query, region_type);
     region_growing.detect(std::back_inserter(m_regions));
 
+    std::size_t unassigned = 0;
+    region_growing.unassigned_items(m_points, boost::make_function_output_iterator([&](const auto&) { ++unassigned; }));
+
+    std::vector<std::vector<Point_3> > polys_debug;
+
+    for (std::size_t i = 0; i < m_regions.size(); i++) {
+
+      Indices region;
+      for (auto& j : m_regions[i].second)
+        region.push_back(j);
+
+      store_convex_hull_shape(region, m_regions[i].first, polys_debug);
+      //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
+    }
+
+    KSR_3::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
+
     // Convert indices.
     m_planar_regions.clear();
     m_planar_regions.reserve(m_regions.size());
@@ -1190,6 +1205,8 @@ private:
       planes[i] = m_regions[i].first;
 
     auto range = m_regions | boost::adaptors::transformed([](typename Region_growing::Primitive_and_region& pr)->Plane_3& {return pr.first; });
+
+    std::size_t num_shapes = m_regions.size();
 
     const bool regularize_axis_symmetry = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::regularize_axis_symmetry), false);
@@ -1205,6 +1222,7 @@ private:
       parameters::get_parameter(np, internal_np::maximum_offset), 0.01);
 
     // Regularize detected planes.
+
 /*
     CGAL::Shape_regularization::Planes::regularize_planes(range, m_points,
       CGAL::parameters::plane_index_map(region_growing.region_map())
@@ -1216,30 +1234,59 @@ private:
       .maximum_angle(angle_tolerance)
       .maximum_offset(maximum_offset));*/
 
+
+    polys_debug.clear();
+
+    for (std::size_t i = 0; i < m_regions.size(); i++) {
+
+      Indices region;
+      for (auto& j : m_regions[i].second)
+        region.push_back(j);
+
+      store_convex_hull_shape(region, m_regions[i].first, polys_debug);
+      //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
+    }
+
+    KSR_3::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
+
     // Merge coplanar regions
     for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
       for (std::size_t j = i + 1; j < m_regions.size(); j++) {
         if (m_regions[i].first == m_regions[j].first || m_regions[i].first.opposite() == m_regions[j].first) {
-          std::move(m_regions[j].second.begin(), m_regions[j].second.begin(), std::back_inserter(m_regions[i].second));
-          m_regions.remove(m_regions.begin() + j);
-          j--
+          std::move(m_regions[j].second.begin(), m_regions[j].second.end(), std::back_inserter(m_regions[i].second));
+          m_regions.erase(m_regions.begin() + j);
+          j--;
         }
       }
     }
 
+    polys_debug.clear();
+
+    for (std::size_t i = 0; i < m_regions.size(); i++) {
+
+      Indices region;
+      for (auto& j : m_regions[i].second)
+        region.push_back(j);
+
+      store_convex_hull_shape(region, m_regions[i].first, polys_debug);
+      //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
+    }
+
+    KSR_3::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
+
     std::vector<Plane_3> pl;
 
     std::size_t idx = 0;
-    for (const auto& p : range) {
+    for (const auto& p : m_regions) {
       bool exists = false;
       for (std::size_t i = 0; i < pl.size(); i++)
-        if (pl[i] == p || pl[i].opposite() == p) {
+        if (pl[i] == p.first || pl[i].opposite() == p.first) {
           //merged[i].push_back(idx);
           exists = true;
         }
 
       if (!exists) {
-        pl.push_back(p);
+        pl.push_back(p.first);
       }
       idx++;
     }
@@ -1256,11 +1303,7 @@ private:
     }
     CGAL_assertion(m_planar_regions.size() == m_regions.size());
 
-    std::size_t unassigned = 0;
-
-    region_growing.unassigned_items(m_points, boost::make_function_output_iterator([&](const auto&) { ++unassigned; }));
-
-    std::cout << "found " << m_polygons.size() << " planar shapes regularized into " << pl.size() << std::endl;
+    std::cout << "found " << num_shapes << " planar shapes regularized into " << m_planar_regions.size() << std::endl;
     std::cout << "from " << m_points.size() << " input points " << unassigned << " remain unassigned" << std::endl;
   }
 
