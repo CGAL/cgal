@@ -87,8 +87,10 @@ public:
          it != search.end();
          ++it, ++vi)
     {
-      const auto& pt_size = it->first;
-      vertices[vi] = pt_size;
+      const auto& [pi, size] = it->first;
+      if (pi == p)
+        return size;
+      vertices[vi] = {pi, size};
     }
     return interpolate_on_four_vertices(p, vertices);
   }
@@ -105,13 +107,6 @@ private:
   FT interpolate_on_four_vertices(
     const Bare_point& p,
     const std::array<Point_and_size, 4>& vertices) const;
-
-  ///**
-  // * Returns size at point `p`, by interpolation into facet (`cell` is assumed
-  // * to be an infinite cell).
-  // */
-  //FT interpolate_on_facet_vertices(const Bare_point& p,
-  //                                 const Cell_handle& cell) const;
 
   FT sq_circumradius_length(const Cell_handle cell, const Vertex_handle v, const Tr& tr) const;
   FT average_circumradius_length(const Vertex_handle v, const Tr& tr) const;
@@ -151,9 +146,7 @@ interpolate_on_four_vertices(
   const Bare_point& p,
   const std::array<Point_and_size, 4>& vertices) const
 {
-  auto volume = m_gt.compute_volume_3_object();
-
-  // Interpolate value using tet vertices values
+  // Interpolate value using values at vertices
   const FT& va = boost::get<1>(vertices[0]);
   const FT& vb = boost::get<1>(vertices[1]);
   const FT& vc = boost::get<1>(vertices[2]);
@@ -164,16 +157,16 @@ interpolate_on_four_vertices(
   const Bare_point& c = boost::get<0>(vertices[2]);
   const Bare_point& d = boost::get<0>(vertices[3]);
 
-  const FT abcp = CGAL::abs(volume(a,b,c,p));
-  const FT abdp = CGAL::abs(volume(a,d,b,p));
-  const FT acdp = CGAL::abs(volume(a,c,d,p));
-  const FT bcdp = CGAL::abs(volume(b,d,c,p));
+  const FT wa = 1. / CGAL::squared_distance(a, p);
+  const FT wb = 1. / CGAL::squared_distance(b, p);
+  const FT wc = 1. / CGAL::squared_distance(c, p);
+  const FT wd = 1. / CGAL::squared_distance(d, p);
 
-  // If volume is 0, then compute the average value
-  if ( is_zero(abcp+abdp+acdp+bcdp) )
-    return (va+vb+vc+vd) / 4.;
-
-  return ( (abcp*vd + abdp*vc + acdp*vb + bcdp*va) / (abcp+abdp+acdp+bcdp) );
+  // If den is 0, then compute the average value
+  if (is_zero(wa + wb + wc + wd))
+    return (va + vb + vc + vd) / 4.;
+  else
+    return (wa * va + wb * vb + wc * vc + wd * vd) / (wa + wb + wc + wd);
 }
 
 
