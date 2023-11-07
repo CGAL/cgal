@@ -429,7 +429,7 @@ template <typename P>
 typename boost::graph_traits<CGAL::Surface_mesh<P> >::faces_size_type
 num_faces(const CGAL::Surface_mesh<P>& sm)
 {
-  return sm.number_of_faces();
+  return sm.num_faces();
 }
 
 template <typename P>

@@ -33,22 +33,20 @@ void OpenOFF(int i)
   assert(in && !surface_mesh.is_empty());
 
 
-  auto [fcolors, created_fcolors] = surface_mesh.add_property_map<face_descriptor, CGAL::IO::Color >("f:color");
-  auto [vcolors, created_vcolors] = surface_mesh.add_property_map<vertex_descriptor, CGAL::IO::Color >("v:color");
+  SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
+      surface_mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
 
-  // Both color maps should have already existed, because they were loaded from the file
-  assert(!created_fcolors);
-  assert(!created_vcolors);
+  SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
+    surface_mesh.property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
+  CGAL::IO::Color c = fcolors[*(surface_mesh.faces().begin())];
+  assert(c== CGAL::IO::Color(229,0,0));
+  c = fcolors[*(--surface_mesh.faces().end())];
+  assert(c== CGAL::IO::Color(0,0,229));
 
-  auto first_fcolor = fcolors[*(surface_mesh.faces().begin())];
-  assert(first_fcolor == CGAL::IO::Color(229, 0, 0));
-  auto last_fcolor = fcolors[*(--surface_mesh.faces().end())];
-  assert(last_fcolor == CGAL::IO::Color(0, 0, 229));
-
-  auto first_vcolor = vcolors[*(surface_mesh.vertices().begin())];
-  assert((first_vcolor == CGAL::IO::Color(229, 0, 0)));
-  auto last_vcolor = vcolors[*(--surface_mesh.vertices().end())];
-  assert((last_vcolor == CGAL::IO::Color(0, 0, 229)));
+  c = vcolors[*(surface_mesh.vertices().begin())];
+  assert((c== CGAL::IO::Color(229,0,0)));
+  c = vcolors[*(--surface_mesh.vertices().end())];
+  assert((c== CGAL::IO::Color(0,0,229)));
 }
 
 
@@ -57,6 +55,6 @@ int main()
   OpenOFF(1);
   OpenOFF(2);
   OpenOFF(3);
-  std::cout << "done" << std::endl;
+  std::cerr << "done" << std::endl;
   return 0;
 }

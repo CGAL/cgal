@@ -448,7 +448,11 @@ struct ROI_faces_pmap<SMesh>
   SMesh::Property_map<sm_face_descriptor,bool> irmap;
 
   ROI_faces_pmap(std::map<key_type, value_type>*, SMesh* mesh)
-    : mesh(mesh), irmap(mesh->add_property_map<sm_face_descriptor, bool>("f:is_roi", false).first) {}
+    :mesh(mesh)
+  {
+    //add a is_ROI property_map to mesh
+    irmap = mesh->add_property_map<sm_face_descriptor,bool>("f:is_roi",false).first;
+  }
 
   friend value_type get(const ROI_faces_pmap<SMesh>&pmap, const key_type& f)
   {
@@ -531,9 +535,14 @@ struct Is_constrained_map<SMesh>
   SMesh::Property_map<sm_vertex_descriptor,int> icmap;
   SMesh* mesh;
 
+  Is_constrained_map()
+  {}
   Is_constrained_map(std::vector<int>* vec, SMesh* mesh)
-    : mesh(mesh), icmap(mesh->add_property_map<sm_vertex_descriptor, int>("v:is_control", -1).first) {
-    for (unsigned int i = 0; i < vec->size(); ++i) {
+    :mesh(mesh)
+  {
+    icmap = mesh->add_property_map<sm_vertex_descriptor,int>("v:is_control", -1).first;
+    for(unsigned int i=0; i<vec->size(); ++i)
+    {
       icmap[sm_vertex_descriptor(i)] = (*vec)[i];
     }
   }

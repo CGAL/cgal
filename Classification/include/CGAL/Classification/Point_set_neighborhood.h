@@ -69,7 +69,7 @@ class Point_set_neighborhood
     using key_type = std::uint32_t;
     using category = boost::readable_property_map_tag;
 
-    //My_point_property_map () { }
+    My_point_property_map () { }
     My_point_property_map (const PointRange *input, PointMap point_map)
       : input (input), point_map (point_map) { }
 
@@ -88,7 +88,7 @@ class Point_set_neighborhood
   using Knn = Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree>;
 
   std::shared_ptr<Tree> m_tree;
-  std::optional<Distance> m_distance;
+  Distance m_distance;
 
 public:
 
@@ -300,7 +300,7 @@ private:
   void k_neighbors (const Point& query, const unsigned int k, OutputIterator output) const
   {
     CGAL_assertion (m_tree != nullptr);
-    Knn search (*m_tree, query, k, 0, true, m_distance.value());
+    Knn search (*m_tree, query, k, 0, true, m_distance);
     for (typename Knn::iterator it = search.begin(); it != search.end(); ++ it)
       *(output ++) = it->first;
   }

@@ -102,10 +102,10 @@ public:
 
     // Construct the graph
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(CGAL::vertex_point, g));
-    VNM vnm = choose_parameter<VNM>(get_parameter(np, internal_np::vertex_normal_map));
-    VCM vcm = choose_parameter<VCM>(get_parameter(np, internal_np::vertex_color_map));
-    VTM vtm = choose_parameter<VTM>(get_parameter(np, internal_np::vertex_texture_map));
-    FCM fcm = choose_parameter<FCM>(get_parameter(np, internal_np::face_color_map));
+    VNM vnm = choose_parameter(get_parameter(np, internal_np::vertex_normal_map), VNM());
+    VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
+    VTM vtm = choose_parameter(get_parameter(np, internal_np::vertex_texture_map), VTM());
+    FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
 
     const bool has_vertex_normals = (is_vnm_requested && !(vertex_normals.empty()));
     const bool has_vertex_colors = (is_vcm_requested && !(vertex_colors.empty()));

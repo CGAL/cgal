@@ -125,12 +125,13 @@ class Cluster_classification : public Item_classification_base
   {
     typedef typename Point_set::template Property_map<Type> Pmap;
     bool okay = false;
-    auto pmap = m_points->point_set()->template property_map<Type>(name.c_str());
-    if (pmap)
+    Pmap pmap;
+    boost::tie (pmap, okay) = m_points->point_set()->template property_map<Type>(name.c_str());
+    if (okay)
       feature_set.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
-        (*(m_points->point_set()), pmap.value(), name.c_str());
+        (*(m_points->point_set()), pmap, name.c_str());
 
-    return pmap.has_value();
+    return okay;
   }
 
   void add_selection_to_training_set (std::size_t label)
@@ -138,7 +139,7 @@ class Cluster_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
     {
-      int cid = m_cluster_id.value()[*it];
+      int cid = m_cluster_id[*it];
       if (cid != -1)
       {
         m_clusters[cid].training() = int(label);
@@ -164,7 +165,7 @@ class Cluster_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
     {
-      int cid = m_cluster_id.value()[*it];
+      int cid = m_cluster_id[*it];
       if (cid != -1)
       {
         m_clusters[cid].training() = -1;
@@ -186,7 +187,7 @@ class Cluster_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->first_selected();
          it != m_points->point_set()->end(); ++ it)
     {
-      int cid = m_cluster_id.value()[*it];
+      int cid = m_cluster_id[*it];
       if (cid != -1)
         m_clusters[cid].training() = m_clusters[cid].label();
     }
@@ -211,7 +212,7 @@ class Cluster_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
-      int cid = m_cluster_id.value()[*it];
+      int cid = m_cluster_id[*it];
       if (cid != -1)
       {
         int c = m_clusters[cid].label();
@@ -237,7 +238,7 @@ class Cluster_classification : public Item_classification_base
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->end(); ++ it)
     {
-      int cid = m_cluster_id.value()[*it];
+      int cid = m_cluster_id[*it];
       if (cid != -1)
       {
         int c = m_clusters[cid].label();
@@ -375,10 +376,13 @@ class Cluster_classification : public Item_classification_base
 
   std::vector<Cluster> m_clusters;
 
-  std::optional<Point_set::Property_map<CGAL::IO::Color>> m_color;
-  std::optional<Point_set::Property_map<int>> m_cluster_id;
-  std::optional<Point_set::Property_map<int>> m_training;
-  std::optional<Point_set::Property_map<int>> m_classif;
+  Point_set::Property_map<unsigned char> m_red;
+  Point_set::Property_map<unsigned char> m_green;
+  Point_set::Property_map<unsigned char> m_blue;
+  Point_set::Property_map<CGAL::IO::Color> m_color;
+  Point_set::Property_map<int> m_cluster_id;
+  Point_set::Property_map<int> m_training;
+  Point_set::Property_map<int> m_classif;
 
   std::vector<std::vector<float> > m_label_probabilities;
 

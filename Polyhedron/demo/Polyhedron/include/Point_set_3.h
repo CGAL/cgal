@@ -78,13 +78,13 @@ private:
 
   bool m_radii_are_uptodate;
 
-  std::optional<Double_map> m_radius;
-  std::optional<Byte_map> m_red;
-  std::optional<Byte_map> m_green;
-  std::optional<Byte_map> m_blue;
-  std::optional<Double_map> m_fred;
-  std::optional<Double_map> m_fgreen;
-  std::optional<Double_map> m_fblue;
+  Double_map m_radius;
+  Byte_map m_red;
+  Byte_map m_green;
+  Byte_map m_blue;
+  Double_map m_fred;
+  Double_map m_fgreen;
+  Double_map m_fblue;
 
   mutable CGAL::Iterator_range<const_iterator> m_const_range;
   CGAL::Iterator_range<iterator> m_range;
@@ -134,36 +134,38 @@ public:
 
   bool add_radius()
   {
-    auto [radius_map, out] = this->template add_property_map<double> ("radius", 0.);
-    m_radius = {radius_map};
+    bool out = false;
+    boost::tie (m_radius, out) = this->template add_property_map<double> ("radius", 0.);
     return out;
   }
-  double& radius (const Index& index) { return m_radius.value()[index]; }
-  const double& radius (const Index& index) const { return m_radius.value()[index]; }
+  double& radius (const Index& index) { return m_radius[index]; }
+  const double& radius (const Index& index) const { return m_radius[index]; }
 
   bool check_colors()
   {
-    m_red = this->template property_map<unsigned char>("red");
-    if (!m_red)
+    bool found = false;
+
+    boost::tie (m_red, found) = this->template property_map<unsigned char>("red");
+    if (!found)
       {
-        m_red = this->template property_map<unsigned char>("r");
-        if (!m_red)
+        boost::tie (m_red, found) = this->template property_map<unsigned char>("r");
+        if (!found)
           return get_float_colors();
       }
 
-    m_green = this->template property_map<unsigned char>("green");
-    if (!m_green)
+    boost::tie (m_green, found) = this->template property_map<unsigned char>("green");
+    if (!found)
       {
-        m_green = this->template property_map<unsigned char>("g");
-        if (!m_green)
+        boost::tie (m_green, found) = this->template property_map<unsigned char>("g");
+        if (!found)
           return false;
       }
 
-    m_blue = this->template property_map<unsigned char>("blue");
-    if (!m_blue)
+    boost::tie (m_blue, found) = this->template property_map<unsigned char>("blue");
+    if (!found)
       {
-        m_blue = this->template property_map<unsigned char>("b");
-        if (!m_blue)
+        boost::tie (m_blue, found) = this->template property_map<unsigned char>("b");
+        if (!found)
           return false;
       }
 
@@ -174,26 +176,29 @@ public:
   {
     bool found = false;
 
-    m_fred = this->template property_map<double>("red");
-    if (!m_fred) {
-      m_fred = this->template property_map<double>("r");
-      if (!m_fred)
-        return get_las_colors();
-    }
+    boost::tie (m_fred, found) = this->template property_map<double>("red");
+    if (!found)
+      {
+        boost::tie (m_fred, found) = this->template property_map<double>("r");
+        if (!found)
+          return get_las_colors();
+      }
 
-    m_fgreen = this->template property_map<double>("green");
-    if (!m_fgreen) {
-      m_fgreen = this->template property_map<double>("g");
-      if (!m_fgreen)
-        return false;
-    }
+    boost::tie (m_fgreen, found) = this->template property_map<double>("green");
+    if (!found)
+      {
+        boost::tie (m_fgreen, found) = this->template property_map<double>("g");
+        if (!found)
+          return false;
+      }
 
-    m_fblue = this->template property_map<double>("blue");
-    if (!m_fblue) {
-      m_fblue = this->template property_map<double>("b");
-      if (!m_fblue)
-        return false;
-    }
+    boost::tie (m_fblue, found) = this->template property_map<double>("blue");
+    if (!found)
+      {
+        boost::tie (m_fblue, found) = this->template property_map<double>("b");
+        if (!found)
+          return false;
+      }
     return true;
   }
 
@@ -202,24 +207,25 @@ public:
     bool found = false;
 
     typedef typename Base::template Property_map<unsigned short> Ushort_map;
+    Ushort_map red, green, blue;
 
-    auto red = this->template property_map<unsigned short>("R");
-    if (!red)
+    boost::tie (red, found) = this->template property_map<unsigned short>("R");
+    if (!found)
       return false;
 
-    auto green = this->template property_map<unsigned short>("G");
-    if (!green)
+    boost::tie (green, found) = this->template property_map<unsigned short>("G");
+    if (!found)
       return false;
 
-    auto blue = this->template property_map<unsigned short>("B");
-    if (!blue)
+    boost::tie (blue, found) = this->template property_map<unsigned short>("B");
+    if (!found)
       return false;
 
     unsigned int bit_short_to_char = 0;
     for (iterator it = begin(); it != end(); ++ it)
-      if (get(*red, *it) > 255
-          || get(*green, *it) > 255
-          || get(*blue, *it) > 255)
+      if (get(red, *it) > 255
+          || get(green, *it) > 255
+          || get(blue, *it) > 255)
         {
           bit_short_to_char = 8;
           break;
@@ -230,25 +236,25 @@ public:
     m_blue = this->template add_property_map<unsigned char>("b").first;
     for (iterator it = begin(); it != end(); ++ it)
       {
-        put (*m_red, *it, (unsigned char)((get(*red, *it) >> bit_short_to_char)));
-        put (*m_green, *it, (unsigned char)((get(*green, *it) >> bit_short_to_char)));
-        put (*m_blue, *it, (unsigned char)((get(*blue, *it) >> bit_short_to_char)));
+        put (m_red, *it, (unsigned char)((get(red, *it) >> bit_short_to_char)));
+        put (m_green, *it, (unsigned char)((get(green, *it) >> bit_short_to_char)));
+        put (m_blue, *it, (unsigned char)((get(blue, *it) >> bit_short_to_char)));
       }
-    this->remove_property_map(*red);
-    this->remove_property_map(*green);
-    this->remove_property_map(*blue);
+    this->remove_property_map(red);
+    this->remove_property_map(green);
+    this->remove_property_map(blue);
 
     return true;
   }
 
   bool has_colors() const
   {
-    return (m_blue || m_fblue);
+    return (m_blue != Byte_map() || m_fblue != Double_map());
   }
 
   bool has_byte_colors() const
   {
-    return (m_blue);
+    return (m_blue != Byte_map());
   }
 
   bool add_colors ()
@@ -265,47 +271,47 @@ public:
 
   void remove_colors()
   {
-    if (m_blue)
+    if (m_blue != Byte_map())
       {
-        this->template remove_property_map<unsigned char>(*m_red);
-        this->template remove_property_map<unsigned char>(*m_green);
-        this->template remove_property_map<unsigned char>(*m_blue);
+        this->template remove_property_map<unsigned char>(m_red);
+        this->template remove_property_map<unsigned char>(m_green);
+        this->template remove_property_map<unsigned char>(m_blue);
       }
-    if (m_fblue)
+    if (m_fblue != Double_map())
       {
-        this->template remove_property_map<double>(*m_fred);
-        this->template remove_property_map<double>(*m_fgreen);
-        this->template remove_property_map<double>(*m_fblue);
+        this->template remove_property_map<double>(m_fred);
+        this->template remove_property_map<double>(m_fgreen);
+        this->template remove_property_map<double>(m_fblue);
       }
   }
 
   double red (const Index& index) const
-  { return (m_red) ? m_fred.value()[index]  : double(m_red.value()[index]) / 255.; }
+  { return (m_red == Byte_map()) ? m_fred[index]  : double(m_red[index]) / 255.; }
   double green (const Index& index) const
-  { return (m_green) ? m_fgreen.value()[index]  : double(m_green.value()[index]) / 255.; }
+  { return (m_green == Byte_map()) ? m_fgreen[index]  : double(m_green[index]) / 255.; }
   double blue (const Index& index) const
-  { return (m_blue) ? m_fblue.value()[index]  : double(m_blue.value()[index]) / 255.; }
+  { return (m_blue == Byte_map()) ? m_fblue[index]  : double(m_blue[index]) / 255.; }
 
   void set_color (const Index& index, unsigned char r = 0, unsigned char g = 0, unsigned char b = 0)
   {
-    m_red.value()[index] = r;
-    m_green.value()[index] = g;
-    m_blue.value()[index] = b;
+    m_red[index] = r;
+    m_green[index] = g;
+    m_blue[index] = b;
   }
 
   void set_color (const Index& index, const QColor& color)
   {
-    m_red.value()[index] = color.red();
-    m_green.value()[index] = color.green();
-    m_blue.value()[index] = color.blue();
+    m_red[index] = color.red();
+    m_green[index] = color.green();
+    m_blue[index] = color.blue();
   }
 
   template <typename ColorRange>
   void set_color (const Index& index, const ColorRange& color)
   {
-    m_red.value()[index] = color[0];
-    m_green.value()[index] = color[1];
-    m_blue.value()[index] = color[2];
+    m_red[index] = color[0];
+    m_green[index] = color[1];
+    m_blue[index] = color[2];
   }
 
 
@@ -491,20 +497,18 @@ public:
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
 
   CGAL::Named_function_parameters
-    <Kernel,
-      CGAL::internal_np::geom_traits_t,
-      CGAL::Named_function_parameters<
-        typename Base::template Property_map<Vector>,
-        CGAL::internal_np::normal_t,
-        CGAL::Named_function_parameters<
-          typename Base::template Property_map<Point>,
-          CGAL::internal_np::point_t
-        >
-      >
-    >
-  inline parameters() const {
+  <Kernel,
+   CGAL::internal_np::geom_traits_t,
+   CGAL::Named_function_parameters
+   <typename Base::template Property_map<Vector>,
+    CGAL::internal_np::normal_t,
+    CGAL::Named_function_parameters
+    <typename Base::template Property_map<Point>,
+     CGAL::internal_np::point_t> > >
+  inline parameters() const
+  {
     return CGAL::parameters::point_map (this->m_points).
-      normal_map (this->m_normals.value()).
+      normal_map (this->m_normals).
       geom_traits (Kernel());
   }
 

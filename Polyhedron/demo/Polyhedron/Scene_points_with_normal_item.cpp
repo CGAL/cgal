@@ -77,21 +77,21 @@ struct Scene_points_with_normal_item_priv
   }
 
   Scene_points_with_normal_item_priv(Scene_points_with_normal_item* parent)
-    : m_points()
+    : m_points(new Point_set)
   {
     init_values(parent);
   }
 
   Scene_points_with_normal_item_priv(const Scene_points_with_normal_item& toCopy,
                                      Scene_points_with_normal_item* parent)
-    : m_points(toCopy.d->m_points)
+    : m_points(new Point_set(*toCopy.d->m_points))
   {
     init_values(parent);
   }
 
   Scene_points_with_normal_item_priv(const SMesh& input_mesh,
                                      Scene_points_with_normal_item* parent)
-    : m_points()
+    : m_points(new Point_set)
   {
     using vertex_descriptor = typename boost::graph_traits<SMesh>::vertex_descriptor;
 
@@ -110,7 +110,8 @@ struct Scene_points_with_normal_item_priv
   {
     if(m_points)
     {
-      m_points.reset();
+      delete m_points;
+      m_points = nullptr;
     }
     delete normal_Slider;
     delete point_Slider;
@@ -118,9 +119,9 @@ struct Scene_points_with_normal_item_priv
 
   bool isPointSliderMoving() { return is_point_slider_moving; }
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
-  void compute_normals_and_vertices();
+  void compute_normals_and_vertices() const;
 
-  std::optional<Point_set> m_points;
+  Point_set* m_points;
   std::string m_comments;
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
@@ -285,7 +286,7 @@ initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
   colors_points               .shrink_to_fit();
 }
 
-void Scene_points_with_normal_item_priv::compute_normals_and_vertices()
+void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
 {
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first())->offset();
@@ -330,9 +331,9 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices()
       positions_lines.resize(m_points->size() * 3);
     }
 
-    Fill_buffers fill_buffers (&m_points.value(), indices, positions_lines, positions_normals,
+    Fill_buffers fill_buffers (m_points, indices, positions_lines, positions_normals,
                                item->has_normals(), offset, normal_length * length_factor);
-    Fill_buffers fill_buffers_2 (&m_points.value(), indices, positions_lines, positions_selected_normals,
+    Fill_buffers fill_buffers_2 (m_points, indices, positions_lines, positions_selected_normals,
                                  item->has_normals(), offset, normal_length * length_factor,
                                  m_points->first_selected() - m_points->begin());
 
@@ -547,7 +548,7 @@ void Scene_points_with_normal_item::selectDuplicates()
 // Loads point set from .PLY file
 bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
 
@@ -575,7 +576,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 // Write point set to .PLY file
 bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bool binary) const
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
@@ -591,7 +592,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
 // Loads point set from .OFF file
 bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
   bool ok = CGAL::IO::read_OFF(stream, *(d->m_points)) && !isEmpty();
@@ -604,7 +605,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
 // Write point set to .OFF file
 bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) const
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
@@ -614,7 +615,7 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 // Loads point set from .XYZ file
 bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
 
@@ -628,7 +629,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 // Write point set to .XYZ file
 bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) const
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
@@ -638,7 +639,7 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
 QString
 Scene_points_with_normal_item::toolTip() const
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
 
   return QObject::tr("<p><b>%1</b> (color: %4)<br />"
                      "<i>Point_set_3</i></p>"
@@ -748,13 +749,13 @@ drawPoints(CGAL::Three::Viewer_interface* viewer) const
 // Gets wrapped point set
 Point_set* Scene_points_with_normal_item::point_set()
 {
-  Q_ASSERT(d->m_points);
-  return &d->m_points.value();
+  Q_ASSERT(d->m_points != nullptr);
+  return d->m_points;
 }
 const Point_set* Scene_points_with_normal_item::point_set() const
 {
-  Q_ASSERT(d->m_points);
-  return &d->m_points.value();
+  Q_ASSERT(d->m_points != nullptr);
+  return d->m_points;
 }
 
 // Gets wrapped point set
@@ -770,14 +771,14 @@ const std::string& Scene_points_with_normal_item::comments() const
 bool
 Scene_points_with_normal_item::isEmpty() const
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
   return d->m_points->empty();
 }
 
 void
 Scene_points_with_normal_item::compute_bbox()const
 {
-  Q_ASSERT(d->m_points);
+  Q_ASSERT(d->m_points != nullptr);
 
   Kernel::Iso_cuboid_3 bbox = d->m_points->bounding_box();
   setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
@@ -949,7 +950,8 @@ void Scene_points_with_normal_item::itemAboutToBeDestroyed(Scene_item *item)
   Scene_item::itemAboutToBeDestroyed(item);
   if(d && d->m_points && item == this)
   {
-    d->m_points.reset();
+    delete d->m_points;
+    d->m_points = nullptr;
   }
 }
 
