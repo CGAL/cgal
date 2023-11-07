@@ -43,4 +43,5 @@
 \example Polygon_mesh_processing/cc_compatible_orientations.cpp
 \example Polygon_mesh_processing/remesh_planar_patches.cpp
 \example Polygon_mesh_processing/remesh_almost_planar_patches.cpp
+\example Polygon_mesh_processing/acvd_example.cpp
 */

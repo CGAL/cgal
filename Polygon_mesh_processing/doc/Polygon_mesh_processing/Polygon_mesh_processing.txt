@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz
+\authors Sébastien Loriot, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -52,6 +52,8 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
+- \ref PMPacvd : methods to simplify or remesh a polygon mesh using approximated centroidal Voronoi diagrams
+  as described in \cgalCite{cgal:vcp-grtmmdvd-08} and preceeding work.
 
 \subsection PMPIO Reading and Writing Polygon Meshes
 
@@ -1142,6 +1144,11 @@ version of <a href="https://github.com/wangbolun300/fast-envelope">https://githu
 available on 7th of October 2020.  It only uses the high level algorithm of checking that a query
 is covered by a set of prisms, where each prism is an offset for an input triangle.
 That is, the implementation in \cgal does not use indirect predicates.
+
+The ACVD Simplification and Remeshing methods were implemented during GSoC 2023. This was implemented by Hossam Saeed and under
+supervision of Sébastien Valette and Sébastien Loriot. The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
+preceeding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
+used as a reference during the project.
 
 
 */
