@@ -1,8 +1,3 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_MESH_3_VERBOSE 1
-//#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
-//#define CGAL_DUMP_REMESHING_STEPS
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
@@ -71,16 +66,7 @@ int main(int argc, char* argv[])
 
   std::cout << "\rMeshing done." << std::endl;
 
-  std::ofstream os("out_meshing.mesh");
-  CGAL::IO::write_MEDIT(os, c3t3);
-  os.close();
-
-  std::cout << "Dimension before move = " << c3t3.triangulation().dimension() << std::endl;
-
   T3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3));
-
-  std::cout << "Dimension after move = " << tr.dimension() << std::endl;
-
   //note we use the move semantic, with std::move(c3t3),
   //  to avoid a copy of the triangulation by the function
   //  `CGAL::convert_to_triangulation_3()`
@@ -96,7 +82,7 @@ int main(int argc, char* argv[])
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
     adaptive_field,
-    CGAL::parameters::number_of_iterations(2));
+    CGAL::parameters::number_of_iterations(5));
 
   std::cout << "\rRemeshing done." << std::endl;
 
