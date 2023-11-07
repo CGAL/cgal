@@ -158,10 +158,6 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
   // unordered_set of old vertices
   std::unordered_set<Vertex_descriptor> old_vertices;
 
-//  // make a copy of the property map
-//  typename VPCDM vpcd_map_new = get(CGAL::dynamic_vertex_property_t<Principal_curvatures_and_directions<GT>>(), pmesh);
-
-
   bool curvatures_available = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value;
 
   unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
@@ -703,7 +699,7 @@ std::pair<
 } // namespace internal
 
 /**
-* \ingroup ACVD_grp
+* \ingroup PMP_acvd_grp
 *
 * Performs uniform (isotropic) centroidal voronoi diagram simplification on a polygon mesh.
 * This can also be used for remeshing by setting the number of clusters to the desired number of vertices.
@@ -718,6 +714,23 @@ std::pair<
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
 * \cgalNamedParamsBegin
+*
+*   \cgalParamNBegin{vertex_principal_curvatures_and_directions_map}
+*     \cgalParamDescription{a property map associating principal curvatures and directions to the vertices of `pmesh`, used for adaptive clustering.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with
+*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `Principal_curvatures_and_directions<GT>` as value type.}
+*     \cgalParamExtra{If this parameter is omitted, but `gradation_factor` is not (and is > 0), an internal property map
+*                     will be created and curvature values will be computed.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{gradation_factor}
+*     \cgalParamDescription{a factor used to gradate the weights of the vertices based on their curvature values.}
+*     \cgalParamType{`GT::FT`}
+*     \cgalParamDefault{0}
+*     \cgalParamExtra{If this parameter is omitted, no adaptive clustering will be performed.}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{vertex_point_map}
 *       \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
 *       \cgalParamType{a class model of `ReadablePropertyMap` with
@@ -737,6 +750,8 @@ std::pair<
 *
 * \cgalNamedParamsEnd
 *
+* @pre only triangle meshes are supported for now
+* @return a pair of vectors of points and polygons representing the simplified mesh as a polygon soup
 */
 
 template <typename PolygonMesh,
@@ -758,7 +773,7 @@ std::pair<
 }
 
 /**
-* \ingroup ACVD_grp
+* \ingroup PMP_acvd_grp
 *
 * Performs uniform (isotropic) centroidal voronoi diagram simplification on a polygon mesh.
 * This can also be used for remeshing by setting the number of clusters to the desired number of vertices.
@@ -773,6 +788,23 @@ std::pair<
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
 * \cgalNamedParamsBegin
+*
+*   \cgalParamNBegin{vertex_principal_curvatures_and_directions_map}
+*     \cgalParamDescription{a property map associating principal curvatures and directions to the vertices of `pmesh`, used for adaptive clustering.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with
+*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `Principal_curvatures_and_directions<GT>` as value type.}
+*     \cgalParamExtra{If this parameter is omitted, but `gradation_factor` is not (and is > 0), an internal property map
+*                     will be created and curvature values will be computed.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{gradation_factor}
+*     \cgalParamDescription{a factor used to gradate the weights of the vertices based on their curvature values.}
+*     \cgalParamType{`GT::FT`}
+*     \cgalParamDefault{0}
+*     \cgalParamExtra{If this parameter is omitted, no adaptive clustering will be performed.}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{vertex_point_map}
 *       \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
 *       \cgalParamType{a class model of `ReadablePropertyMap` with
@@ -792,6 +824,8 @@ std::pair<
 *
 * \cgalNamedParamsEnd
 *
+* @pre only triangle meshes are supported for now
+* @return the simplified mesh as a PolygonMesh
 */
 
 template <typename PolygonMesh,

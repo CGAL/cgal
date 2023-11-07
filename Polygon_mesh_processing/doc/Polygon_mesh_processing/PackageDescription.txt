@@ -12,6 +12,10 @@
 /// Functions to fill holes given as a range of halfedges or as range of points.
 /// \ingroup PkgPolygonMeshProcessingRef
 
+/// \defgroup PMP_acvd_grp ACVD Simplification
+/// Functions to simplify and remesh triangle meshes based on Approximated Centroidal Voronoi Diagrams (ACVD) with a variety of metrics.
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /// \defgroup PMP_meshing_grp Meshing
 /// Functions to triangulate faces, and to refine and fair regions of a polygon mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
@@ -75,7 +79,7 @@
 \cgalPkgPicture{hole_filling_ico.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, and Ilker %O. Yaz}
+\cgalPkgAuthors{Sébastien Loriot, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, and Ilker %O. Yaz}
 \cgalPkgDesc{This package provides a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms such as
 Boolean operations, remeshing, repairing, collision and intersection detection, and more.}
@@ -129,6 +133,10 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::tangential_relaxation()`
 - `CGAL::Polygon_mesh_processing::smooth_shape()`
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
+
+\cgalCRPSection{ACVD Simplification Functions}
+- \link PMP_acvd_grp `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification()` \endlink
+- \link PMP_acvd_grp `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification_polygon_soup()` \endlink
 
 \cgalCRPSection{Orientation Functions}
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`

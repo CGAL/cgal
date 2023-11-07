@@ -60,6 +60,7 @@ Polygon_mesh_processing/geometric_repair Polygon Mesh Processing - Geometric Rep
 Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
 Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
+Polygon_mesh_processing/remeshing Polygon Mesh Processing - ACVD Simplification and Remeshing
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
