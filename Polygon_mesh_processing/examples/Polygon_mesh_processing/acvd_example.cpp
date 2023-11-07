@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     CGAL::data_file_path(argv[1]) :
     CGAL::data_file_path("meshes/cactus.off");
 
-  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 100;
+  const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 400;
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
@@ -39,6 +39,8 @@ int main(int argc, char* argv[])
 
   /// Adaptive Isotropic ACVD Remeshing
 
+  const double gradation_factor = (argc > 3) ? atof(argv[3]) : 1;
+
   bool created = false;
   Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
     principal_curvatures_and_directions_map;
@@ -51,8 +53,6 @@ int main(int argc, char* argv[])
   assert(created);
 
   PMP::interpolated_corrected_principal_curvatures_and_directions(smesh, principal_curvatures_and_directions_map);
-
-  const double gradation_factor = (argc > 3) ? atof(argv[3]) : 0;
 
   auto adaptive_acvd_mesh =
     PMP::acvd_isotropic_simplification(

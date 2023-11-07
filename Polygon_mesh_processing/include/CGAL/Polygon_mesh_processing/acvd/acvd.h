@@ -58,19 +58,22 @@ struct IsotropicClusterData {
   typename GT::Vector_3 site_sum;
   typename GT::FT weight_sum;
   typename GT::FT energy;
+  size_t nb_vertices;
 
-  IsotropicClusterData() : site_sum(0, 0, 0), weight_sum(0), energy(0) {}
+  IsotropicClusterData() : site_sum(0, 0, 0), weight_sum(0), energy(0), nb_vertices(0) {}
 
   void add_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
     this->site_sum += vertex_position * weight;
     this->weight_sum += weight;
+    this->nb_vertices++;
   }
 
   void remove_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight)
   {
     this->site_sum -= vertex_position * weight;
     this->weight_sum -= weight;
+    this->nb_vertices--;
   }
 
   typename GT::FT compute_energy()
@@ -204,45 +207,6 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
   }
 }
 
-
-
-// To provide the functionality remeshing (not just simplification), we might need to
-// subdivide the mesh before clustering
-// in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-
-// do the following while nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-// That is, because the subdivision steps heuristic is not 100% guaranteed to produce
-// the desired number of vertices.
-// template <typename PolygonMesh,
-//   typename NamedParameters = parameters::Default_named_parameters>
-// void acvd_subdivide_if_needed(
-//   PolygonMesh& pmesh,
-//   const int nb_clusters,
-//   const NamedParameters& np = parameters::default_values()
-// )
-// {
-//   int nb_vertices = num_vertices(pmesh);
-//   if (nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
-//     return;
-
-//   while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
-//   {
-//     double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
-//     int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
-
-//     std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
-
-//     if (subdivide_steps > 0)
-//     {
-//       upsample_subdivision_property(
-//         pmesh,
-//         np.number_of_iterations(subdivide_steps)
-//       );
-//     }
-//   }
-//   return;
-// }
-
 // provide a property map for principal curvatures as a named parameter for adaptive clustering
 // provide a gradation factor as a named parameter for adaptive clustering
 template <typename PolygonMesh,
@@ -305,7 +269,7 @@ PolygonMesh acvd_isotropic(
     double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
     int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
 
-    std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
+    //std::cout << "subdivide_steps: " << subdivide_steps << std::endl;
 
     if (subdivide_steps > 0)
     {
@@ -393,33 +357,12 @@ PolygonMesh acvd_isotropic(
       clusters_edges_active.push(hd);
   }
 
-  // frequency of each cluster
-  std::vector<int> cluster_frequency (nb_clusters, 0);
-
-  for (Vertex_descriptor vd : vertices(pmesh))
-  {
-    int c = get(vertex_cluster_pmap, vd);
-    if (c != -1)  cluster_frequency[c]++;
-  }
-
-  int nb_empty = 0;
-  for (int i = 0; i < nb_clusters; i++)
-  {
-    if (cluster_frequency[i] == 0)
-    {
-      nb_empty++;
-    }
-  }
-
-  std::cout << "nb_empty before: " << nb_empty << std::endl;
-
   int nb_modifications = 0;
   int nb_disconnected = 0;
 
   do
   {
     nb_disconnected = 0;
-    int iteration = 0;
     do
     {
       nb_modifications = 0;
@@ -483,8 +426,6 @@ PolygonMesh acvd_isotropic(
 
           typename GT::FT e_v1_to_c2 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
-          typename GT::FT c1_weight_threshold = clusters[c1].weight_sum;
-
           // reset to no change
           clusters[c1].add_vertex(vpv1, v1_weight);
           clusters[c2].remove_vertex(vpv1, v1_weight);
@@ -495,10 +436,7 @@ PolygonMesh acvd_isotropic(
 
           typename GT::FT e_v2_to_c1 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
 
-          typename GT::FT c2_weight_threshold = clusters[c2].weight_sum;
-
-
-          if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 && c2_weight_threshold > 0)
+          if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 && clusters[c2].nb_vertices > 0) // > 0 as 1 vertex was removed from c2
           {
             // move v2 to c1
             put(vertex_cluster_pmap, v2, c1);
@@ -511,7 +449,7 @@ PolygonMesh acvd_isotropic(
               clusters_edges_new.push(hd);
             nb_modifications++;
           }
-          else if (e_v1_to_c2 < e_no_change && c1_weight_threshold > 0)
+          else if (e_v1_to_c2 < e_no_change && clusters[c1].nb_vertices > 2) // > 2 as 1 vertex was added to c1
           {
             // move v1 to c2
             put(vertex_cluster_pmap, v1, c2);
@@ -539,12 +477,10 @@ PolygonMesh acvd_isotropic(
           }
         }
       }
-
-      iteration++;
-      std::cout << "iteration: " << iteration << ", # Modifications: " << nb_modifications << "\n";
+      // std::cout << "# Modifications: " << nb_modifications << "\n";
 
       clusters_edges_active.swap(clusters_edges_new);
-    } while (nb_modifications > 0 && (iteration < 50 || nb_modifications > 0.001 * nb_vertices));
+    } while (nb_modifications > 0);
 
     // clean clusters here
     // the goal is to delete clusters with multiple connected components
@@ -554,10 +490,9 @@ PolygonMesh acvd_isotropic(
 
     std::vector<std::vector<std::vector<Vertex_descriptor>>> cluster_components(nb_clusters, std::vector<std::vector<Vertex_descriptor>>());
 
-    std::queue<Vertex_descriptor> q;
+    std::queue<Vertex_descriptor> vertex_queue;
 
     // loop over vertices
-    int cou = 0;
     for (Vertex_descriptor vd : vertices(pmesh))
     {
       if (get(vertex_visited_pmap, vd)) continue;
@@ -569,12 +504,12 @@ PolygonMesh acvd_isotropic(
         int component_i = cluster_components[c].size() - 1;
 
         // visited_clusters[c] = true;
-        q.push(vd);
+        vertex_queue.push(vd);
         put(vertex_visited_pmap, vd, true);
-        while (!q.empty())
+        while (!vertex_queue.empty())
         {
-          Vertex_descriptor v = q.front();
-          q.pop();
+          Vertex_descriptor v = vertex_queue.front();
+          vertex_queue.pop();
           cluster_components[c][component_i].push_back(v);
 
           for (Halfedge_descriptor hd : halfedges_around_source(v, pmesh))
@@ -583,7 +518,7 @@ PolygonMesh acvd_isotropic(
             int c2 = get(vertex_cluster_pmap, v2);
             if (c2 == c && !get(vertex_visited_pmap, v2))
             {
-              q.push(v2);
+              vertex_queue.push(v2);
               put(vertex_visited_pmap, v2, true);
             }
           }
@@ -632,38 +567,24 @@ PolygonMesh acvd_isotropic(
       }
     }
 
-    std::cout << "nb_disconnected: " << nb_disconnected << "\n";
   } while (nb_disconnected > 0);
 
 
   VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), pmesh);
 
-  // frequency of each cluster
-  cluster_frequency = std::vector<int>(nb_clusters, 0);
+  // // frequency of each cluster
+  // cluster_frequency = std::vector<int>(nb_clusters, 0);
 
-  for (Vertex_descriptor vd : vertices(pmesh))
-  {
-    int c = get(vertex_cluster_pmap, vd);
-    cluster_frequency[c]++;
-    CGAL::IO::Color color(255 - (c * 255 / nb_clusters), (c * c % 7) * 255 / 7, (c * c * c % 31) * 255 / 31);
-    put(vcm, vd, color);
-  }
+  // for (Vertex_descriptor vd : vertices(pmesh))
+  // {
+  //   int c = get(vertex_cluster_pmap, vd);
+  //   cluster_frequency[c]++;
+  //   CGAL::IO::Color color(255 - (c * 255 / nb_clusters), (c * c % 7) * 255 / 7, (c * c * c % 31) * 255 / 31);
+  //   put(vcm, vd, color);
+  // }
 
-  nb_empty = 0;
-  for (int i = 0; i < nb_clusters; i++)
-  {
-    if (cluster_frequency[i] == 0)
-    {
-      nb_empty++;
-    }
-  }
-
-  std::cout << "nb_empty: " << nb_empty << std::endl;
-
-  std::cout << "kak1" << std::endl;
-  std::string name = std::to_string(nb_clusters) + ".off";
-  CGAL::IO::write_OFF(name, pmesh, CGAL::parameters::vertex_color_map(vcm));
-  std::cout << "kak2" << std::endl;
+  // std::string name = std::to_string(nb_clusters) + ".off";
+  // CGAL::IO::write_OFF(name, pmesh, CGAL::parameters::vertex_color_map(vcm));
 
   /// Construct new Mesh
   std::vector<int> valid_cluster_map(nb_clusters, -1);
@@ -746,9 +667,6 @@ PolygonMesh acvd_isotropic(
     polygons[polygons.size() - 1][2] = cb_first;
   }
 
-  name = std::to_string(nb_clusters) + "_points.off";
-  CGAL::IO::write_point_set(name, point_set);
-
   for (Face_descriptor fd : faces(pmesh))
   {
     Halfedge_descriptor hd1 = halfedge(fd, pmesh);
@@ -773,13 +691,8 @@ PolygonMesh acvd_isotropic(
     }
   }
 
-  std::cout << "are polygons a valid mesh ? : " << is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
   orient_polygon_soup(points, polygons);
   polygon_soup_to_polygon_mesh(points, polygons, simplified_mesh);
-
-  name = std::to_string(nb_clusters) + "_simped.off";
-  CGAL::IO::write_OFF(name, simplified_mesh);
-  std::cout << "kak3" << std::endl;
 
   return simplified_mesh;
 }
@@ -826,7 +739,7 @@ PolygonMesh acvd_isotropic(
 
 template <typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
-PolygonMesh acvd_isotropic_simplification(
+PolygonMesh acvd_isotropic_simplification_polygon_soup(
     PolygonMesh& pmesh,
     const int& nb_vertices,
     const NamedParameters& np = parameters::default_values()
@@ -837,6 +750,62 @@ PolygonMesh acvd_isotropic_simplification(
     nb_vertices,
     np
   );
+}
+
+/**
+* \ingroup ACVD_grp
+*
+* Performs uniform (isotropic) centroidal voronoi diagram simplification on a polygon mesh.
+* This can also be used for remeshing by setting the number of clusters to the desired number of vertices.
+* The number of clusters is the number of vertices in the output mesh.
+*
+* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
+*
+* @param pmesh input polygon mesh
+* @param nb_vertices number of target vertices in the output mesh
+* @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{vertex_point_map}
+*       \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
+*       \cgalParamType{a class model of `ReadablePropertyMap` with
+*                      `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                      as key type and `GT::Point_3` as value type.}
+*       \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
+*       \cgalParamExtra{If this parameter is omitted, an internal property map for
+*                       `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*      \cgalParamDescription{an instance of a geometric traits class.}
+*      \cgalParamType{a class model of `Kernel`}
+*      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
+*      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+* \cgalNamedParamsEnd
+*
+*/
+
+template <typename PolygonMesh,
+  typename NamedParameters = parameters::Default_named_parameters>
+PolygonMesh acvd_isotropic_simplification(
+    PolygonMesh& pmesh,
+    const int& nb_vertices,
+    const NamedParameters& np = parameters::default_values()
+  )
+{
+  auto ps = acvd_isotropic_simplification_polygon_soup(
+    pmesh,
+    nb_vertices,
+    np
+  );
+
+  //PolygonMesh simplified_mesh;
+  //polygon_soup_to_polygon_mesh(points, polygons, simplified_mesh);
+  return ps;
 }
 
 // template <typename PolygonMesh,
