@@ -30,6 +30,9 @@ output iterator `pts`, as objects of type
 `std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>`
 @tparam MeshDomain model of `MeshDomain_3`
 @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+@param pts the output points
+@param domain the input domain
+@param c3t3 the input complex
 @param n an estimation of the number of points to output
 
 */
