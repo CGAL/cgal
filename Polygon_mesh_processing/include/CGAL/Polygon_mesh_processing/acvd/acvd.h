@@ -619,7 +619,7 @@ std::pair<
             // remove vd from cluster c
             typename GT::Point_3 vp = get(vpm, vd);
             typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
-            clusters[c].remove_vertex(vpv, get(vertex_weight_pmap, vd), get(vertex_qem_pmap, vd));
+            clusters[c].remove_vertex(vpv, get(vertex_weight_pmap, vd));
             // add all halfedges around v except hi to the queue
             for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
             {
