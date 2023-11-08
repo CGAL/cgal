@@ -349,7 +349,7 @@ std::pair<
   while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
   {
     double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
-    int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
+    int subdivide_steps = (std::max)((int)ceil(log(curr_factor) / log(4)), 0);
 
     if (subdivide_steps > 0)
     {
@@ -836,7 +836,7 @@ std::pair<
   while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
   {
     double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
-    int subdivide_steps = max((int)ceil(log(curr_factor) / log(4)), 0);
+    int subdivide_steps = (std::max)((int)ceil(log(curr_factor) / log(4)), 0);
 
     if (subdivide_steps > 0)
     {
