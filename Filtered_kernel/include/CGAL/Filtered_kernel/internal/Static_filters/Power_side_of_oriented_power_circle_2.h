@@ -55,24 +55,15 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
           )
         {
           CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-          double dpx;
-          dpx = (px - tx);
-          double dpy;
-          dpy = (py - ty);
-          double dpz;
-          dpz = (((square( dpx ) + square( dpy )) - pwt) + twt);
-          double dqx;
-          dqx = (qx - tx);
-          double dqy;
-          dqy = (qy - ty);
-          double dqz;
-          dqz = (((square( dqx ) + square( dqy )) - qwt) + twt);
-          double drx;
-          drx = (rx - tx);
-          double dry;
-          dry = (ry - ty);
-          double drz;
-          drz = (((square( drx ) + square( dry )) - rwt) + twt);
+          double dpx = (px - tx);
+          double dpy = (py - ty);
+          double dpz = (((square( dpx ) + square( dpy )) - pwt) + twt);
+          double dqx = (qx - tx);
+          double dqy = (qy - ty);
+          double dqz = (((square( dqx ) + square( dqy )) - qwt) + twt);
+          double drx = (rx - tx);
+          double dry = (ry - ty);
+          double drz = (((square( drx ) + square( dry )) - rwt) + twt);
           result_type int_tmp_result;
           double RT_tmp_result;
           double eps;
@@ -135,12 +126,14 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
             }
           if( ((lower_bound_1 < 2.99168207048872973507e-74) || (max4 < 8.95016161088373414772e-148)) )
             {
+              CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return  Base::operator()(p,q,r,t);
             }
           else
             {
               if( ((upper_bound_1 > 1.44740111546645180002e+76) || (max4 > 2.09496998905352916869e+152)) )
                 {
+                  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return  Base::operator()(p,q,r,t);
                 }
               eps = (2.77768297369183927919e-14 * ((max2 * max3) * (CGAL::max)( max4, (max1 * max1) )));
@@ -156,6 +149,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                     }
                   else
                     {
+                      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                       return Base::operator()(p,q,r,t);
                     }
                 }
@@ -187,18 +181,12 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
           )
         {
           CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-          double dpx;
-          dpx = (px - tx);
-          double dpy;
-          dpy = (py - ty);
-          double dpz;
-          dpz = (((square( dpx ) + square( dpy )) - pwt) + twt);
-          double dqx;
-          dqx = (qx - tx);
-          double dqy;
-          dqy = (qy - ty);
-          double dqz;
-          dqz = (((square( dqx ) + square( dqy )) - qwt) + twt);
+          double dpx = (px - tx);
+          double dpy = (py - ty);
+          double dpz = (((square( dpx ) + square( dpy )) - pwt) + twt);
+          double dqx = (qx - tx);
+          double dqy = (qy - ty);
+          double dqz = (((square( dqx ) + square( dqy )) - qwt) + twt);
           int cmpx;
           cmpx = ((px > qx) ? 1 : ((px < qx) ? -1 : 0));
           double eps;
@@ -249,12 +237,14 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                 }
               if( ((lower_bound_1 < 1.54785988882306922244e-98) || (max3 < 2.39587023542736329316e-196)) )
                 {
+                  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return  Base::operator()(p,q,t);
                 }
               else
                 {
                   if( ((upper_bound_1 > 5.59936185544450866143e+101) || (max3 > 3.13528531882069741921e+203)) )
                     {
+                      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                       return  Base::operator()(p,q,t);
                     }
                   eps = (5.99997572250729588410e-15 * (max2 * (CGAL::max)( max3, (max1 * max1) )));
@@ -270,6 +260,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                         }
                       else
                         {
+                          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                           return  Base::operator()(p,q,t);
                         }
                     }
@@ -295,12 +286,14 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
             }
           if( ((lower_bound_1 < 1.54785988882306922244e-98) || (max3 < 2.39587023542736329316e-196)) )
             {
+              CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return  Base::operator()(p,q,t);
             }
           else
             {
               if( ((upper_bound_1 > 5.59936185544450866143e+101) || (max3 > 3.13528531882069741921e+203)) )
                 {
+                  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return  Base::operator()(p,q,t);
                 }
               eps = (5.99997572250729588410e-15 * (max4 * (CGAL::max)( max3, (max1 * max1) )));
@@ -316,6 +309,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                     }
                   else
                     {
+                      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                       return  Base::operator()(p,q,t);
                     }
                 }
