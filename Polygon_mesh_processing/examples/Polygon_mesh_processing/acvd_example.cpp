@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
     CGAL::data_file_path(argv[1]) :
-    CGAL::data_file_path("meshes/cactus.off");
+    CGAL::data_file_path("meshes/S52k.stl");
 
   const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 400;
 
@@ -32,12 +32,19 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  /// Uniform Isotropic ACVD Remeshing
+  /// Uniform Isotropic ACVD
+
+  std::cout << "Uniform Isotropic ACVD ...." << std::endl;
 
   auto acvd_mesh = PMP::acvd_isotropic_simplification(smesh, nb_clusters);
   CGAL::IO::write_OFF("acvd_mesh.off", acvd_mesh);
 
-  /// Adaptive Isotropic ACVD Remeshing
+  std::cout << "Completed" << std::endl;
+
+
+  /// Adaptive Isotropic ACVD
+
+  std::cout << "Adaptive Isotropic ACVD ...." << std::endl;
 
   const double gradation_factor = (argc > 3) ? atof(argv[3]) : 1;
 
@@ -63,6 +70,8 @@ int main(int argc, char* argv[])
     );
 
   CGAL::IO::write_OFF("acvd_mesh_adaptive.off", adaptive_acvd_mesh);
+
+  std::cout << "Completed" << std::endl;
 
   return 0;
 }
