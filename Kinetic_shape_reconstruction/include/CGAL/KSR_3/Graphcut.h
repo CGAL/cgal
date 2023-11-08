@@ -67,32 +67,6 @@ namespace KSR_3 {
       }
       compute_graphcut(edges, edge_weights, cost_matrix, labels);
     }
-    /*
-
-    void compute(std::vector<Volume_cell>& volumes, std::size_t inliers) {
-
-      if (volumes.size() == 0) return;
-
-      std::vector<Wrapper> wrappers;
-      create_pface_wrappers(wrappers);
-
-      compute_weights(wrappers, inliers);
-      compute_weights(volumes);
-
-      std::vector< std::pair<std::size_t, std::size_t> > edges;
-      std::vector<double> edge_costs;
-      set_graph_edges(wrappers, edges, edge_costs);
-
-      std::vector< std::vector<double> > cost_matrix;
-      set_cost_matrix(volumes, cost_matrix);
-
-      std::vector<std::size_t> labels;
-      set_initial_labels(volumes, labels);
-
-      compute_graphcut(edges, edge_costs, cost_matrix, labels);
-      apply_new_labels(labels, volumes);
-    }
-*/
 
   private:
     const FT m_lambda;
@@ -165,7 +139,7 @@ namespace KSR_3 {
       std::cout << "sum inside: " << sum_inside << std::endl;
       std::cout << "sum outside: " << sum_outside << std::endl;
 
-      CGAL::alpha_expansion_graphcut(edges, edge_costs_lambda, cost_matrix, labels);
+      CGAL::alpha_expansion_graphcut(edges, edge_costs_lambda, cost_matrix_lambda, labels);
       /*
       CGAL::min_cut(
             edges, edge_costs, cost_matrix, labels, CGAL::parameters::implementation_tag(CGAL::Alpha_expansion_MaxFlow_tag()));*/

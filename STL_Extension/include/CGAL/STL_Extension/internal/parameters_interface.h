@@ -266,6 +266,8 @@ CGAL_add_named_parameter(distance_tolerance_t, distance_tolerance, distance_tole
 CGAL_add_named_parameter(angle_tolerance_t, angle_tolerance, angle_tolerance)
 CGAL_add_named_parameter(debug_t, debug, debug)
 CGAL_add_named_parameter(graphcut_beta_t, graphcut_beta, graphcut_beta)
+CGAL_add_named_parameter(max_octree_depth_t, max_octree_depth, max_octree_depth)
+CGAL_add_named_parameter(max_octree_node_size_t, max_octree_node_size, max_octree_node_size)
 
 // List of named parameters used in Shape_detection package
 CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)

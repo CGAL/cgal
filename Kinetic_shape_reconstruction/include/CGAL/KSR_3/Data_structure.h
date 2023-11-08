@@ -255,7 +255,6 @@ public:
     const Type1& t1, const Type2& t2, ResultType& result) {
 
     const auto inter = CGAL::intersection(t1, t2);
-
     if (!inter) return false;
     if (CGAL::assign(result, inter))
       return true;
@@ -266,34 +265,6 @@ public:
   /*******************************
   **      INITIALIZATION        **
   ********************************/
-
-/*
-  template<typename InputRange, typename PolygonRange,
-    typename NamedParameters = parameters::Default_named_parameters >
-  void add_input_shape(InputRange input_range, PolygonRange polygon_range, const NamedParameters& np = CGAL::parameters::default_values()) {
-    for (auto poly : polygon_range) {
-      std::vector<Point_3> pts;
-      pts.reserve(poly.size());
-      for (auto it : poly)
-        pts.push_back(*(input_range.begin() + it));
-
-      Plane_3 pl;
-      CGAL::linear_least_squares_fitting_3(pts.begin(), pts.end(), pl, CGAL::Dimension_tag<0>());
-
-      std::vector<Point_2> pts2d(pts.size());
-      for (std::size_t i = 0; i < pts.size(); i++)
-        pts2d[i] = pl.to_2d(pts[i]);
-
-      std::vector<Point_2> ch;
-      CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
-
-      m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
-
-      for (std::size_t i = 0; i < ch.size(); i++)
-        m_input_polygons.back()[i] = pl.to_3d(ch[i]);
-    }
-  }
-*/
 
   void clear() {
     m_support_planes.clear();
@@ -419,6 +390,11 @@ public:
     Point_2 centroid = sp.data().centroid;
 
     typename Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
+
+    if (kinetic_interval.size() != 0) {
+      int a;
+      a = 3;
+    }
 
     Point_2 s = sp.to_2d(from_exact(point_3(m_intersection_graph.source(edge))));
     Point_2 t = sp.to_2d(from_exact(point_3(m_intersection_graph.target(edge))));
@@ -574,11 +550,10 @@ public:
     }
 
     if (kinetic_interval.size() > 4) {
-      for (std::size_t i = 1; i < kinetic_interval.size(); i++)
-        if (kinetic_interval[i].first > kinetic_interval[i - 1].first) {
-          int a;
-          a = 2;
-        }
+      if (kinetic_interval[2].first > kinetic_interval[1].first) {
+        int a;
+        a = 2;
+      }
     }
 
     CGAL_assertion(0 <= event.intersection_bary && event.intersection_bary <= 1);
@@ -1724,41 +1699,6 @@ public:
   }
 
   /*******************************
-  **          PREDICATES        **
-  ********************************/
-
-  std::pair<bool, bool> is_occupied(
-    const PVertex& pvertex, const IVertex& ivertex, const IEdge& query_iedge) const {
-
-    const auto pair = is_occupied(pvertex, query_iedge);
-    const bool has_polygon = pair.first;
-    const bool is_bbox_reached = pair.second;
-
-    if (is_bbox_reached) return std::make_pair(true, true);
-    CGAL_assertion(!is_bbox_reached);
-    if (!has_polygon) {
-      // std::cout << "NO POLYGON DETECTED" << std::endl;
-      return std::make_pair(false, false);
-    }
-    CGAL_assertion(has_polygon);
-
-    CGAL_assertion(ivertex != null_ivertex());
-    std::set<PEdge> pedges;
-    get_occupied_pedges(pvertex, query_iedge, pedges);
-    for (const auto& pedge : pedges) {
-      CGAL_assertion(pedge != null_pedge());
-      // std::cout << "PEDGE: " << segment_3(pedge) << std::endl;
-
-      const auto source = this->source(pedge);
-      const auto target = this->target(pedge);
-      if (this->ivertex(source) == ivertex || this->ivertex(target) == ivertex) {
-        return std::make_pair(true, false);
-      }
-    }
-    return std::make_pair(false, false);
-  }
-
-  /*******************************
   **    CHECKING PROPERTIES     **
   ********************************/
 
@@ -1859,7 +1799,6 @@ public:
     bool success = true;
 
     std::vector<PFace> nfaces;
-    std::size_t idx = 0;
     for (const auto edge : m_intersection_graph.edges()) {
       incident_faces(edge, nfaces);
       if (nfaces.size() == 1) {
@@ -1870,7 +1809,6 @@ public:
         "ERROR: EDGE MUST HAVE 0 OR AT LEAST 2 NEIGHBORS!");
         success = false;
       }
-      idx++;
     }
     return success;
   }

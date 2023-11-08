@@ -106,7 +106,6 @@ public:
     if (m_parameters.debug) {
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-partition-sp" + std::to_string(sp));
-        std::cout << sp << " has " << m_data.support_plane(sp).data().mesh.number_of_faces() << " faces" << std::endl;
       }
     }
 
@@ -120,24 +119,12 @@ public:
 
     create_volumes();
 
-    if (m_parameters.debug) {
 /*
-      boost::filesystem::path dir("volumes");
-
-      if (!boost::filesystem::exists(dir) && !boost::filesystem::create_directory(dir)) {
-        std::cout << "Could not create volumes folder to export volumes from partition!" << std::endl;
-      }*/
-
-      if (boost::filesystem::is_directory("volumes/")) {
-        for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it) {
-          boost::filesystem::remove_all(it->path());
-        }
-
+    if (m_parameters.debug) {
         for (const auto& v : m_data.volumes())
           dump_volume(m_data, v.pfaces, "volumes/" + m_data.prefix() + std::to_string(v.index), true, v.index);
-      }
-    }
-    CGAL_assertion(m_data.check_faces());
+    }*/
+    (m_data.check_faces());
   }
 
 private:
@@ -260,6 +247,8 @@ private:
         volume.pface_oriented_outwards[i] = ((m_data.point_3(vtx) - volume.centroid) * m_data.support_plane(volume.pfaces[i]).plane().orthogonal_vector() < 0);
       }
     }
+
+    remove_collinear_vertices();
   }
 
   void segment_adjacent_volumes(const PFace& pface,
@@ -567,18 +556,26 @@ private:
     // Purpose: merge facets between the same volumes. Every pair of volumes can have at most one contact polygon (which also has to be convex)
     // Precondition: all volumes are convex, the contact area between each pair of volumes is empty or convex
 
-    std::vector<E_constraint_map> edge_constraint_maps;
+    std::vector<E_constraint_map> edge_constraint_maps(m_data.number_of_support_planes());
 
     for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
       //dump_2d_surface_mesh(m_data, sp, "face_merge/" + m_data.prefix() + std::to_string(sp) + "-before");
       typename Support_plane::Mesh& mesh = m_data.support_plane(sp).mesh();
 
-      edge_constraint_maps.push_back(mesh.template add_property_map<typename Support_plane::Edge_index, bool>("e:keep", true).first);
+      edge_constraint_maps[sp] = mesh.template add_property_map<typename Support_plane::Edge_index, bool>("e:keep", true).first;
       F_component_map fcm = mesh.template add_property_map<typename Support_plane::Face_index, typename boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>("f:component", 0).first;
+
+      std::size_t num = 0;
 
       for (auto e : mesh.edges()) {
         IEdge iedge = m_data.iedge(PEdge(sp, e));
-        edge_constraint_maps[sp][e] = is_occupied(iedge, sp);
+
+        if (is_occupied(iedge, sp)) {
+          edge_constraint_maps[sp][e] = true;
+          num++;
+        }
+        else
+          edge_constraint_maps[sp][e] = false;
       }
 
       CGAL::Polygon_mesh_processing::connected_components(mesh, fcm, CGAL::parameters::edge_is_constrained_map(edge_constraint_maps[sp]));
@@ -586,9 +583,6 @@ private:
       merge_connected_components(sp, mesh, fcm, edge_constraint_maps[sp]);
 
       mesh.collect_garbage();
-
-      // Use a face property map? easier to copy to 3d mesh
-      //dump_2d_surface_mesh(m_data, sp, "face_merge/" + m_data.prefix() + std::to_string(sp) + "-after");
     }
   }
 
@@ -620,7 +614,6 @@ private:
       std::vector<Point_3> pts;
       pts.push_back(s);
       pts.push_back(t);
-      
       if (visited_halfedges[h])
         continue;
 
@@ -661,8 +654,6 @@ private:
           else
             n = mesh.next(mesh.opposite(n));
 
-          Halfedge p = mesh.prev(n);
-
           //Point_3 tn2 = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
           visited_halfedges[n] = true;
 
@@ -673,12 +664,11 @@ private:
           if (f_other == mesh.null_face())
             break;
           c_other = fcm[f_other];
-          if (c0 == c_other && ecm[Edge_index(n>>1)])
+          if (c0 == c_other && ecm[Edge_index(n >> 1)])
             std::cout << "edge and face constraint map inconsistent1" << std::endl;
 
           if (c0 != c_other && !ecm[Edge_index(n >> 1)])
             std::cout << "edge and face constraint map inconsistent2" << std::endl;
-
         } while (c0 == c_other && n != h);
 
         if (n == h) {
@@ -692,37 +682,6 @@ private:
         remove_vertices[mesh.target(n)] = false;
         h = n;
       } while (h != first);
-
-      // Loop complete
-      /*
-      const std::string vfilename = "face_merge/" + std::to_string(sp) + "-" + std::to_string(c0) + ".polylines.txt";
-      std::ofstream vout(vfilename);
-      vout.precision(20);
-      vout << std::to_string(loop.size());
-      for (Halfedge n : loop) {
-        vout << " " << m_data.support_plane(sp).to_3d(mesh.point(mesh.target(n)));
-      }
-      vout << std::endl;
-      vout.close();*/
-    }
-
-    bool empty = true;
-    for (std::size_t i = 0; i < remove_vertices.size(); i++)
-      if (remove_vertices[i]) {
-        empty = false;
-        break;
-      }
-
-    if (!empty) {
-      const std::string vfilename2 = "face_merge/" + std::to_string(sp_idx) + "-remove.xyz";
-      std::ofstream vout2(vfilename2);
-      vout2.precision(20);
-      std::size_t i = 0;
-      for (auto v : mesh.vertices()) {
-        if (remove_vertices[i++])
-          vout2 << sp.to_3d(mesh.point(v)) << std::endl;
-      }
-      vout2.close();
     }
 
     // Remove all vertices in remove_vertices and all edges marked in constrained list
@@ -744,7 +703,7 @@ private:
     }
 
     if (!mesh.is_valid(true)) {
-      std::cout << "mesh is not valid after merging faces of sp " << sp_idx << " in " << m_data.prefix() << std::endl;
+      std::cout << "mesh is not valid after merging faces of sp " << sp_idx << std::endl;
     }
   }
 
@@ -753,6 +712,8 @@ private:
     for (std::size_t j : planes) {
       if (sp == j)
         continue;
+
+      m_data.support_plane(j).mesh().is_valid(true);
 
       for (auto e2 : m_data.support_plane(j).mesh().edges()) {
         if (iedge == m_data.iedge(PEdge(j, e2))) {
@@ -822,6 +783,40 @@ private:
         }
         else if (!face_filled)
           face2vertices[cell.faces[f]].push_back(ivertex2vertex[ivertex]);
+      }
+    }
+  }
+
+  void remove_collinear_vertices() {
+    auto& vertices = m_data.face_to_vertices();
+    std::vector<bool> coll(m_data.exact_vertices().size(), true);
+    std::unordered_map<std::size_t, std::vector<std::size_t> > vtx2face;
+
+      for (std::size_t f = 0; f < vertices.size(); f++) {
+        for (std::size_t i = 0; i < vertices[f].size(); i++) {
+          if (!coll[vertices[f][i]])
+            continue;
+          const typename Intersection_kernel::Point_3& a = m_data.exact_vertices()[vertices[f][(i - 1 + vertices[f].size()) % vertices[f].size()]];
+          const typename Intersection_kernel::Point_3& b = m_data.exact_vertices()[vertices[f][i]];
+          const typename Intersection_kernel::Point_3& c = m_data.exact_vertices()[vertices[f][(i + 1) % vertices[f].size()]];
+          if (!CGAL::collinear(a, b, c))
+            coll[vertices[f][i]] = false;
+          else
+            vtx2face[vertices[f][i]].push_back(f);
+        }
+      }
+
+    for (std::size_t i = 0; i < coll.size(); i++) {
+      if (!coll[i])
+        continue;
+      const auto& f = vtx2face[i];
+      for (std::size_t j = 0; j < f.size(); j++) {
+        for (std::size_t v = 0; v < vertices[f[j]].size(); v++) {
+          if (vertices[f[j]][v] == i) {
+            vertices[f[j]].erase(vertices[f[j]].begin() + v);
+            break;
+          }
+        }
       }
     }
   }

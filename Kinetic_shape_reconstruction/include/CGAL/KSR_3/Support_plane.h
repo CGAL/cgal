@@ -125,6 +125,8 @@ public:
     FT distance_tolerance;
     FT angle_tolerance;
 
+    std::size_t actual_input_polygon;
+
     int k;
   };
 
@@ -151,7 +153,6 @@ public:
     const std::size_t n = points.size();
     CGAL_assertion(n == polygon.size());
 
-
     /*
         Vector_3 normal = CGAL::NULL_VECTOR;
         for (std::size_t i = 0; i < n; ++i) {
@@ -174,6 +175,7 @@ public:
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
     m_data->angle_tolerance = 0;
+    m_data->actual_input_polygon = -1;
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -220,6 +222,7 @@ public:
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
     m_data->angle_tolerance = 0;
+    m_data->actual_input_polygon = -1;
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -254,6 +257,7 @@ public:
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
     m_data->angle_tolerance = 0;
+    m_data->actual_input_polygon = -1;
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -266,6 +270,7 @@ public:
   }
 
   void add_property_maps() {
+
     m_data->v_ivertex_map  = m_data->mesh.template add_property_map<Vertex_index, IVertex>("v:ivertex", Intersection_graph::null_ivertex()).first;
     m_data->v_iedge_map    = m_data->mesh.template add_property_map<Vertex_index, IEdge>("v:iedge", Intersection_graph::null_iedge()).first;
     m_data->e_iedge_map    = m_data->mesh.template add_property_map<Edge_index, IEdge>("e:iedge", Intersection_graph::null_iedge()).first;
@@ -480,6 +485,10 @@ public:
 
   void set_crossed_line(std::size_t line) {
     m_data->crossed_lines.insert(line);
+  }
+
+  void set_input_polygon(std::size_t input_polygon_idx) {
+    m_data->actual_input_polygon = input_polygon_idx;
   }
 
   template<typename Pair>

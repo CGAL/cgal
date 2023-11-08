@@ -55,24 +55,14 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   // Required parameters.
   parser.add_str_parameter("-data", parameters.data);
 
-  // Label indices.
-  parser.add_str_parameter("-gi", parameters.gi);
-  parser.add_str_parameter("-bi", parameters.bi);
-  parser.add_str_parameter("-ii", parameters.ii);
-  parser.add_str_parameter("-vi", parameters.vi);
-
-  // Main parameters.
-  parser.add_val_parameter("-scale", parameters.scale);
-  parser.add_val_parameter("-noise", parameters.noise);
-
-  // Update.
-  parameters.update_dependent();
-
   // Shape detection.
   parser.add_val_parameter("-kn"   , parameters.k_neighbors);
   parser.add_val_parameter("-dist" , parameters.distance_threshold);
   parser.add_val_parameter("-angle", parameters.angle_threshold);
   parser.add_val_parameter("-minp" , parameters.min_region_size);
+
+  parser.add_val_parameter("-odepth", parameters.max_octree_depth);
+  parser.add_val_parameter("-osize", parameters.max_octree_node_size);
 
   // Shape regularization.
   parser.add_bool_parameter("-regularize", parameters.regularize);
@@ -147,25 +137,24 @@ int main(const int argc, const char** argv) {
     .distance_tolerance(parameters.distance_threshold * 0.025)
     .debug(parameters.debug)
     .verbose(parameters.verbose)
+    .max_octree_depth(parameters.max_octree_depth)
+    .max_octree_node_size(parameters.max_octree_node_size)
     .regularize_parallelism(true)
     .regularize_coplanarity(true)
     .regularize_orthogonality(false)
     .regularize_axis_symmetry(false)
     .angle_tolerance(10)
-    .maximum_offset(0.01);
+    .maximum_offset(0.02);
 
   // Algorithm.
   KSR ksr(point_set, param);
 
-/*
-  auto rm = point_set. template property_map<int>("region");
-
-  const Region_map region_map = point_set. template property_map<int>("region").value();
-  const bool is_segmented = point_set. template property_map<int>("region").second;*/
+  const Region_map region_map = point_set. template property_map<int>("region").first;
+  const bool is_segmented = point_set. template property_map<int>("region").second;
 
   Timer timer;
   timer.start();
-  std::size_t num_shapes = ksr.detect_planar_shapes(param);
+  std::size_t num_shapes = ksr.detect_planar_shapes(false, param);
 
   std::cout << num_shapes << " detected planar shapes" << std::endl;
 
@@ -195,6 +184,7 @@ int main(const int argc, const char** argv) {
 
   FT after_energyterms = timer.time();
 
+
   ksr.reconstruct(parameters.graphcut_beta);
   FT after_reconstruction = timer.time();
 
@@ -205,7 +195,8 @@ int main(const int argc, const char** argv) {
   std::vector<std::vector<std::size_t> > polylist;
   ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
 
-  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist");
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist");
 
   ksr.reconstruct(0.3);
 
@@ -213,31 +204,141 @@ int main(const int argc, const char** argv) {
   polylist.clear();
   ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
 
-  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.3");
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.3");
   ksr.reconstruct(0.5);
 
   vtx.clear();
   polylist.clear();
   ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
 
-  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.5");
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.5");
+  ksr.reconstruct(0.6);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.6");
   ksr.reconstruct(0.7);
 
   vtx.clear();
   polylist.clear();
   ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
 
-  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.7");
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.7");
+  ksr.reconstruct(0.8);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.8");
   ksr.reconstruct(0.95);
 
   vtx.clear();
   polylist.clear();
   ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
 
-  CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.95");
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.95");
+
+  ksr.reconstruct(0.97);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.97");
+  ksr.reconstruct(0.99);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.99");
+  ksr.reconstruct(1.0);
+
+  vtx.clear();
+  polylist.clear();
+  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+
+  if (polylist.size() > 0)
+    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b1.0");
 
   // Output.
-  //ksr.partition().get_linear_cell_complex();
+  ksr.partition().get_linear_cell_complex();
+/*
+
+  // Vertices.
+  std::vector<Point_3> all_vertices;
+  ksp.output_partition_vertices(
+    std::back_inserter(all_vertices), -1);
+
+  // Edges.
+  std::vector<Segment_3> all_edges;
+  ksp.output_partition_edges(
+    std::back_inserter(all_edges), -1);
+
+  // Faces.
+  std::vector< std::vector<std::size_t> > all_faces;
+  ksp.output_partition_faces(
+    std::back_inserter(all_faces), -1, 6);
+
+  // Model.
+  std::vector<Point_3> output_vertices;
+  std::vector< std::vector<std::size_t> > output_faces;
+  ksp.output_reconstructed_model(
+    std::back_inserter(output_vertices),
+    std::back_inserter(output_faces));
+  const std::size_t num_vertices = output_vertices.size();
+  const std::size_t num_faces    = output_faces.size();
+
+  std::cout << std::endl;
+  std::cout << "--- OUTPUT STATS: " << std::endl;
+  std::cout << "* number of vertices: " << num_vertices << std::endl;
+  std::cout << "* number of faces: "    << num_faces    << std::endl;
+
+  // Export.
+  std::cout << std::endl;
+  std::cout << "--- EXPORT: " << std::endl;
+
+  // Edges.
+  std::string output_filename = "partition-edges.polylines.txt";
+  std::ofstream output_file_edges(output_filename);
+  output_file_edges.precision(20);
+  for (const auto& output_edge : all_edges)
+    output_file_edges << "2 " << output_edge << std::endl;
+  output_file_edges.close();
+  std::cout << "* partition edges exported successfully" << std::endl;
+
+  // Faces.
+  output_filename = "partition-faces.ply";
+  std::ofstream output_file_faces(output_filename);
+  output_file_faces.precision(20);
+  if (!CGAL::IO::write_PLY(output_file_faces, all_vertices, all_faces)) {
+    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  output_file_faces.close();
+  std::cout << "* partition faces exported successfully" << std::endl;
+
+  // Model.
+  output_filename = "reconstructed-model.ply";
+  std::ofstream output_file_model(output_filename);
+  output_file_model.precision(20);
+  if (!CGAL::IO::write_PLY(output_file_model, output_vertices, output_faces)) {
+    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  output_file_model.close();
+  std::cout << "* the reconstructed model exported successfully" << std::endl;*/
 
   std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;
   std::cout << "Kinetic partition:      " << (after_partition - after_shape_detection) << " seconds!" << std::endl;

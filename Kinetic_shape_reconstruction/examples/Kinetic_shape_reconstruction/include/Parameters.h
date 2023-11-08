@@ -25,19 +25,8 @@ namespace KSR {
     // Path to the input data file.
     std::string data; // required!
 
-    // Label indices defined in the ply header:
-    // ground (gi),
-    // building boundary (bi),
-    // building interior (ii),
-    // vegetation (vi).
-    std::string gi, bi, ii, vi;
-
-    // Main parameters.
-    FT scale; // meters
-    FT noise; // meters
-
     // Boolean tags.
-    const bool with_normals; // do we use normals
+    bool with_normals; // do we use normals
     bool verbose;// verbose basic info
     bool debug; // verbose more info
 
@@ -52,43 +41,35 @@ namespace KSR {
     // Partitioning.
     // See KSR/parameters.h
     unsigned int k_intersections;
-    const unsigned int n_subdivisions;
-    const FT enlarge_bbox_ratio;
-    const bool reorient;
+    FT enlarge_bbox_ratio;
+    bool reorient;
+
+    std::size_t max_octree_depth;
+    std::size_t max_octree_node_size;
 
     // Reconstruction.
     FT graphcut_beta; // magic parameter between 0 and 1
 
     // Constructor.
     All_parameters() :
-    data(""),
-    gi("0"), bi("1"), ii("2"), vi("3"), // semantic labels mapping
-    // main parameters
-    scale(FT(4)),
-    noise(FT(2)),
-    // boolean tags
-    with_normals(true),
-    verbose(false),
-    debug(false),
-    // shape detection / shape regularization
-    k_neighbors(12),
-    distance_threshold(noise / FT(2)),
-    angle_threshold(FT(25)),
-    min_region_size(100),
-    regularize(false),
-    // partition
-    k_intersections(1),
-    n_subdivisions(0),
-    enlarge_bbox_ratio(FT(11) / FT(10)),
-    reorient(false),
-    // reconstruction
-    graphcut_beta(FT(1) / FT(2))
+      data(""),
+      // boolean tags
+      with_normals(true),
+      verbose(false),
+      debug(false),
+      // shape detection / shape regularization
+      k_neighbors(12),
+      min_region_size(100),
+      max_octree_node_size(40),
+      max_octree_depth(3),
+      // partition
+      k_intersections(1),
+      enlarge_bbox_ratio(FT(11) / FT(10)),
+      reorient(false),
+      // reconstruction
+      graphcut_beta(FT(1) / FT(2))
     { }
 
-    // Update all parameters, which depend on scale and noise.
-    void update_dependent() {
-      distance_threshold = noise / FT(2);
-    }
   };
 
 } // KSR

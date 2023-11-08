@@ -144,10 +144,11 @@ public:
 
     m_data.initialization_done();
 
+
     if (m_parameters.debug) {
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "before-partition-sp" + std::to_string(sp));
-        std::cout << sp << " has " << m_data.support_plane(sp).data().mesh.number_of_faces() << " faces" << std::endl;
+        //std::cout << sp << " has " << m_data.support_plane(sp).data().mesh.number_of_faces() << " faces" << std::endl;
       };
     }
   }
@@ -396,7 +397,6 @@ private:
       if (sp.is_bbox())
         continue;
 
-      // Until here the mesh of each support plane contains the input polygon.
       sp.mesh().clear_without_removing_property_maps();
 
       std::map<std::size_t, std::vector<IEdge> > line2edges;
@@ -661,6 +661,7 @@ private:
     for (std::size_t i = 0; i < 6; i++)
       for (std::size_t j = 0; j < m_input_planes.size(); j++)
           if (m_data.support_plane(i).exact_plane() == m_input_planes[j] || m_data.support_plane(i).exact_plane() == m_input_planes[j].opposite()) {
+            m_data.support_plane(i).set_input_polygon(j);
             m_data.input_polygon_map()[j] = i;
             remove[j] = true;
           }
@@ -702,16 +703,15 @@ private:
     std::map< std::size_t, std::pair<Polygon_2, Indices> > polygons;
     preprocess_polygons(polygons);
 
-    for (const auto& item : polygons) {
+    for (const auto &item : polygons) {
       const std::size_t support_plane_idx = item.first;
       const auto& pair = item.second;
       const Polygon_2& polygon = pair.first;
       const Indices& input_indices = pair.second;
       m_data.add_input_polygon(support_plane_idx, input_indices, polygon);
+      m_data.support_plane(support_plane_idx).set_input_polygon(static_cast<int>(item.first) - 6);
     }
-
-    //if (m_parameters.debug)
-      dump_polygons(m_data, polygons, m_data.prefix() + "inserted-polygons.ply");
+    //dump_polygons(m_data, polygons, m_data.prefix() + "inserted-polygons");
 
     CGAL_assertion(m_data.number_of_support_planes() >= 6);
     if (m_parameters.verbose) {

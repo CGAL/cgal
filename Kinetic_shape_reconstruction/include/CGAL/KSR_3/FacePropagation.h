@@ -114,11 +114,6 @@ private:
   ********************************/
 
   void initialize_queue() {
-
-    if (m_parameters.debug) {
-      std::cout << "initializing queue" << std::endl;
-    }
-
     m_data.fill_event_queue(m_face_queue);
   }
 
@@ -148,12 +143,7 @@ private:
   ********************************/
 
   void apply(const Face_event& event, std::size_t iteration) {
-    if (m_parameters.verbose)
-      std::cout << "support plane: " << event.support_plane << " edge: " << event.crossed_edge << " t: " << event.time << std::endl;
     if (m_data.igraph().face(event.face).part_of_partition) {
-
-      if (m_parameters.verbose)
-        std::cout << " face already crossed, skipping event" << std::endl;
       return;
     }
 

@@ -360,7 +360,7 @@ public:
     typedef typename boost::graph_traits<MutableFaceGraph>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<MutableFaceGraph>::face_descriptor face_descriptor;
 
-    CGAL_static_assertion((CGAL::graph_has_property<MutableFaceGraph, boost::vertex_point_t>::value));
+    static_assert((CGAL::graph_has_property<MutableFaceGraph, boost::vertex_point_t>::value));
     typedef typename property_map_selector<MutableFaceGraph, CGAL::vertex_point_t>::type VPMap;
     VPMap vpm = get_property_map(boost::vertex_point, mesh);
 

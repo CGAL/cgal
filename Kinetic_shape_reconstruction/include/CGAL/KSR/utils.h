@@ -127,10 +127,10 @@ inline bool intersection(
 
   const auto inter = intersection(t1, t2);
   if (!inter) return false;
-  if (const ResultType* typed_inter = boost::get<ResultType>(&*inter)) {
-    result = *typed_inter;
+
+  if (CGAL::assign(result, inter))
     return true;
-  }
+
   return false;
 }
 

@@ -467,7 +467,7 @@ public:
     Bbox_dimensions size = m_side_per_depth[depth(n)];
     for (int i = 0; i < Dimension::value; i++) {
       min_corner[i] = m_bbox_min[i] + (global_coordinates(n)[i] * size[i]);
-      max_corner[i] = min_corner[i] + size[i];
+      max_corner[i] = m_bbox_min[i] + ((global_coordinates(n)[i] + 1) * size[i]);
     }
     return {std::apply(m_traits.construct_point_d_object(), min_corner),
             std::apply(m_traits.construct_point_d_object(), max_corner)};

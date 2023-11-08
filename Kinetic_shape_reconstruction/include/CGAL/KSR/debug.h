@@ -38,10 +38,12 @@
 namespace CGAL {
 namespace KSR_3 {
 
-const CGAL::Color get_idx_color(std::size_t idx) {
+const std::tuple<unsigned char, unsigned char, unsigned char>
+get_idx_color(std::size_t idx) {
 
   CGAL::Random rand(static_cast<unsigned int>(idx));
-  return CGAL::Color(static_cast<unsigned char>(rand.get_int(32, 192)),
+  return std::make_tuple(
+    static_cast<unsigned char>(rand.get_int(32, 192)),
     static_cast<unsigned char>(rand.get_int(32, 192)),
     static_cast<unsigned char>(rand.get_int(32, 192)));
 }
@@ -106,11 +108,12 @@ void dump_2d_surface_mesh(
   using Mesh         = CGAL::Surface_mesh<Point_3>;
   using Face_index   = typename Mesh::Face_index;
   using Vertex_index = typename Mesh::Vertex_index;
-
-  using Color_map = typename Mesh::template Property_map<Face_index, CGAL::Color>;
+  using Uchar_map    = typename Mesh::template Property_map<Face_index, unsigned char>;
 
   Mesh mesh;
-  Color_map color = mesh.template add_property_map<Face_index, CGAL::Color>("f:color", CGAL::IO::white()).first;
+  Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
+  Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
+  Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
 
   std::vector<Vertex_index> vertices;
   std::vector<Vertex_index> map_vertices;
@@ -137,8 +140,8 @@ void dump_2d_surface_mesh(
       std::cout << "could not dump mesh " << tag << std::endl;
       return;
     }
-
-    color[face] = get_idx_color((support_plane_idx + 1) * (pface.second + 1));
+    std::tie(red[face], green[face], blue[face]) =
+      get_idx_color((support_plane_idx + 1) * (pface.second + 1));
   }
 
   const std::string filename = (tag != std::string() ? tag + "-" : "") + "polygons.ply";
@@ -155,13 +158,17 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
   using Mesh         = CGAL::Surface_mesh<Point_3>;
   using Face_index   = typename Mesh::Face_index;
   using Vertex_index = typename Mesh::Vertex_index;
-  using Color_map = typename Mesh::template Property_map<Face_index, CGAL::Color>;
+  using Uchar_map    = typename Mesh::template Property_map<Face_index, unsigned char>;
 
   Mesh mesh;
-  Color_map color = mesh.template add_property_map<Face_index, CGAL::Color>("f:color", CGAL::IO::white()).first;
+  Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
+  Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
+  Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
 
   Mesh bbox_mesh;
-  Color_map bbox_color = bbox_mesh.template add_property_map<Face_index, CGAL::Color>("f:color", CGAL::IO::white()).first;
+  Uchar_map bbox_red   = bbox_mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
+  Uchar_map bbox_green = bbox_mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
+  Uchar_map bbox_blue  = bbox_mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
 
   std::vector<Vertex_index> vertices;
   std::vector<Vertex_index> map_vertices;
@@ -186,7 +193,8 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
         CGAL_assertion(vertices.size() >= 3);
         const auto face = bbox_mesh.add_face(vertices);
         CGAL_assertion(face != Mesh::null_face());
-        bbox_color[face] = get_idx_color((i + 1) * (pface.second + 1));
+        std::tie(bbox_red[face], bbox_green[face], bbox_blue[face]) =
+          get_idx_color((i + 1) * (pface.second + 1));
       }
 
     } else {
@@ -208,8 +216,8 @@ void dump_polygons(const DS& data, const std::string tag = std::string()) {
         CGAL_assertion(vertices.size() >= 3);
         const auto face = mesh.add_face(vertices);
         CGAL_assertion(face != Mesh::null_face());
-
-        color[face] = get_idx_color(i * (pface.second + 1));
+        std::tie(red[face], green[face], blue[face]) =
+          get_idx_color(i * (pface.second + 1));
       }
     }
   }
@@ -297,6 +305,12 @@ void dump(const DS& data, const std::string tag = std::string()) {
 
   dump_polygons(data, tag);
   dump_intersection_edges(data, tag);
+}
+
+template<typename LCC>
+void dump_lcc(const LCC& lcc, const std::string tag = std::string()) {
+  std::map<CGAL::Epeck::Point_3, std::size_t> pt2idx;
+  std::vector<CGAL::Epeck::Point_3> pts;
 }
 
 template<typename GeomTraits>
@@ -867,6 +881,40 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
 
     const std::string file_name =
       (tag != std::string() ? tag + "-" : "") + std::to_string(i);
+    saver.export_polygon_soup_3(polygons, colors, file_name);
+  }
+}
+
+template<typename KSP>
+void dump_volumes_ksp(const KSP& ksp, const std::string tag = std::string()) {
+  using Point_3 = typename KSP::Point_3;
+  using Index = typename KSP::Index;
+  std::vector< std::vector<Point_3> > polygons;
+  std::vector<Color> colors;
+
+  std::vector<Index> faces_of_volume;
+  std::vector<Point_3> pts_of_face;
+
+  Saver<typename KSP::Kernel> saver;
+  for (std::size_t i = 0; i < ksp.number_of_volumes(); ++i) {
+    faces_of_volume.clear();
+    polygons.clear();
+    colors.clear();
+
+    const auto color = saver.get_idx_color(i);
+    ksp.faces(i, std::back_inserter(faces_of_volume));
+
+    colors.clear();
+    polygons.clear();
+    for (const Index& f : faces_of_volume) {
+      pts_of_face.clear();
+      ksp.vertices(f, std::back_inserter(pts_of_face));
+
+      polygons.push_back(pts_of_face);
+      colors.push_back(color);
+    }
+
+    const std::string file_name = tag + std::to_string(i);
     saver.export_polygon_soup_3(polygons, colors, file_name);
   }
 }

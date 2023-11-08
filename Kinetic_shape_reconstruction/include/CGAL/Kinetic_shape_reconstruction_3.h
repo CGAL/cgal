@@ -27,6 +27,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
+#include <CGAL/bounding_box.h>
 
 #include <boost/filesystem.hpp>
 #include <boost/range/adaptor/transformed.hpp>
@@ -35,6 +36,8 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/boost/graph/helpers.h>
+
+//#define WITH_LCC
 
 namespace CGAL
 {
@@ -88,7 +91,7 @@ public:
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_reconstruction_3(PointSet& ps,
-    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(ps), m_kinetic_partition(np), m_point_map(ps.point_map()), m_normal_map(ps.normal_map()) {}
+    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(ps), m_ground_polygon_index(-1), m_kinetic_partition(np), m_lcc(m_kinetic_partition.get_linear_cell_complex()) {}
 
   /*!
     \brief Detects shapes in the provided point cloud
@@ -133,7 +136,7 @@ public:
   */
   template<
     typename CGAL_NP_TEMPLATE_PARAMETERS>
-  std::size_t detect_planar_shapes(
+  std::size_t detect_planar_shapes(bool estimate_ground = false,
     const CGAL_NP_CLASS& np = parameters::default_values()) {
 
     if (m_verbose)
@@ -146,7 +149,7 @@ public:
     m_point_map = Point_set_processing_3_np_helper<Point_set, CGAL_NP_CLASS, Point_map>::get_point_map(m_points, np);
     m_normal_map = Point_set_processing_3_np_helper<Point_set, CGAL_NP_CLASS, Normal_map>::get_normal_map(m_points, np);
 
-    create_planar_shapes(np);
+    create_planar_shapes(estimate_ground, np);
 
     CGAL_assertion(m_planes.size() == m_polygons.size());
     CGAL_assertion(m_polygons.size() == m_region_map.size());
@@ -256,10 +259,17 @@ public:
   bool setup_energyterms() {
     CGAL::Timer timer;
     timer.start();
-    if (m_kinetic_partition.number_of_volumes() == 0) {
-      if (m_verbose) std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
+#ifdef WITH_LCC
+    if (m_lcc.one_dart_per_cell<3>().size() == 0) {
+      std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
       return false;
     }
+#else
+    if (m_kinetic_partition.number_of_volumes() == 0) {
+      std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
+      return false;
+    }
+#endif
 
     m_faces.clear();
     m_face2index.clear();
@@ -268,12 +278,34 @@ public:
     m_face_inliers.clear();
     m_face_neighbors.clear();
 
+#ifdef WITH_LCC
+    auto face_range = m_lcc.one_dart_per_cell<2>();
+    m_faces_lcc.reserve(face_range.size());
+    for (auto& d : face_range) {
+      KSP::LCC::Dart_const_descriptor dh;
+      dh = m_lcc.dart_descriptor(d);
+
+      auto a = m_lcc.attribute<3>(dh);
+
+      if (m_lcc.is_attribute_used<3>(a))
+        m_faces_lcc.push_back(dh);
+      else
+        std::cout << "face dart skipped" << std::endl;
+    };
+
+#else
+#endif
     m_kinetic_partition.unique_faces(std::back_inserter(m_faces));
-    std::cout << "Found " << m_faces.size() << " faces between volumes" << std::endl;
+    std::cout << "Found " << m_faces.size() << " / " << m_faces_lcc.size() << " faces between volumes" << std::endl;
     timer.reset();
 
+#ifdef WITH_LCC
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++)
+      m_face2index_lcc[m_faces_lcc[i]] = i;
+#else
     for (std::size_t i = 0; i < m_faces.size(); i++)
       m_face2index[m_faces[i]] = i;
+#endif
 
     // Create value arrays for graph cut
     m_face_inliers.resize(m_faces.size());
@@ -286,6 +318,13 @@ public:
 
     std::cout << "* computing visibility ... ";
 
+#ifdef WITH_LCC
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
+      const typename KSP::LCC::Dart_const_descriptor &d = m_faces_lcc[i];
+      // Filter whether faces have properties or not. -> after fixing the creation, all faces should have properties.
+      m_lcc.is_attribute_used<3>(m_lcc.attribute<3>(d));
+    }
+#else
     for (std::size_t i = 0; i < m_faces.size(); i++) {
       // Shift by 6 for accommodate outside volumes
       // Map negative numbers -1..-6 to 0..5
@@ -296,6 +335,8 @@ public:
       else
         m_face_neighbors[i] = std::make_pair(p.first + 6, p.second + 6);
     }
+#endif
+    check_ground();
 
     timer.reset();
     collect_points_for_faces3();
@@ -577,11 +618,18 @@ private:
   std::map<std::size_t, Indices> m_region_map;
   double m_detection_distance_tolerance;
 
+  std::size_t m_ground_polygon_index;
+  Plane_3 m_ground_plane;
+
   std::vector<Plane_3> m_planes;
   std::vector<Point_3> m_polygon_pts;
   std::vector<std::vector<std::size_t> > m_polygon_indices;
   std::vector<Polygon_3> m_polygons;
   KSP m_kinetic_partition;
+
+  const typename KSP::LCC &m_lcc;
+  std::vector<typename KSP::LCC::Dart_const_descriptor> m_faces_lcc;
+  std::map<typename KSP::LCC::Dart_const_descriptor, std::size_t> m_face2index_lcc;
 
   // Face indices are now of type Indices and are not in a range 0 to n
   std::vector<typename KSP::Index> m_faces;
@@ -591,6 +639,7 @@ private:
   std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors;
 
   std::vector<std::pair<std::size_t, std::size_t> > m_volume_votes; // pair<inside, outside> votes
+  std::vector<bool> m_volume_below_ground;
   std::vector<std::vector<double> > m_cost_matrix;
   std::vector<FT> m_volumes; // normalized volume of each kinetic volume
   std::vector<std::size_t> m_labels;
@@ -632,7 +681,8 @@ private:
     return shape_idx;
   }
 
-  void store_convex_hull_shape(const std::vector<std::size_t>& region, const Plane_3& plane, std::vector<std::vector<Point_3> >& polys) {
+  void store_convex_hull_shape(const std::vector<std::size_t>& region, const Plane_3& plane, std::vector<std::vector<Point_3> > &polys) {
+
     std::vector<Point_2> points;
     points.reserve(region.size());
     for (const std::size_t idx : region) {
@@ -927,24 +977,37 @@ private:
   }
 */
 
+  void check_ground() {
+    std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
+    // Set all volumes to not be below the ground, this leads to the standard 6 outside node connection.
+    m_volume_below_ground.resize(num_volumes, false);
+
+    if (m_ground_polygon_index != -1)
+      for (std::size_t i = 0; i < num_volumes; i++) {
+        // Evaluate if volume centroid is below or above ground plane
+        const Point_3& centroid = m_kinetic_partition.volume_centroid(i);
+        m_volume_below_ground[i] = (centroid - m_regions[m_ground_polygon_index].first.projection(centroid)).z() < 0;
+      }
+  }
+
   void collect_points_for_faces3() {
     FT total_area = 0;
     m_total_inliers = 0;
     From_exact from_exact;
-    auto& reg2input = m_kinetic_partition.regularized_input_mapping();
-    std::cout << reg2input.size() << std::endl;
+    auto& inputmap = m_kinetic_partition.input_mapping();
+    std::cout << inputmap.size() << std::endl;
     std::size_t next = 0, step = 1;
-    for (std::size_t i = 0; i < reg2input.size(); i++) {
+    for (std::size_t i = 0; i < inputmap.size(); i++) {
 
       std::vector<std::pair<KSP::Index, std::vector<std::size_t> > > mapping;
       std::size_t fusioned_input_regions = 0;
-      for (const auto& p : reg2input[i])
+      for (const auto& p : inputmap[i])
         fusioned_input_regions += m_regions[p].second.size();
 
       std::vector<Point_3> pts;
       std::vector<std::size_t> pts_idx;
       pts.reserve(fusioned_input_regions);
-      for (const auto& p : reg2input[i]) {
+      for (const auto& p : inputmap[i]) {
         for (std::size_t j = 0; j < m_regions[p].second.size(); j++) {
           pts.emplace_back(get(m_point_map, m_regions[p].second[j]));
           pts_idx.push_back(m_regions[p].second[j]);
@@ -964,13 +1027,13 @@ private:
       }
 
       std::vector<KSP::Index> faces;
-      m_kinetic_partition.faces_of_polygon(i, std::back_inserter(faces));
+      m_kinetic_partition.faces_of_input_polygon(i, std::back_inserter(faces));
 
       std::vector<std::vector<std::size_t> > faces2d(faces.size());
       std::vector<std::vector<std::size_t> > indices; // Adjacent faces for each vertex
       std::map<KSP::Index, std::size_t> idx2pts; // Mapping of vertices to pts vector
 
-      Plane_3 pl = from_exact(m_kinetic_partition.plane(i));
+      Plane_3 pl = from_exact(m_kinetic_partition.input_plane(i));
 
       for (std::size_t j = 0; j < faces.size(); j++) {
         std::size_t idx = m_face2index[faces[j]];
@@ -1032,13 +1095,23 @@ private:
 
     for (std::size_t i = 0; i < m_faces.size(); i++) {
       // Check boundary faces and if the outside node has a defined value, if not, set area to 0.
-
       if (m_face_neighbors[i].second < 6 && m_cost_matrix[0][m_face_neighbors[i].second] == m_cost_matrix[1][m_face_neighbors[i].second]) {
         m_face_area[i] = 0;
       }
       else
         m_face_area[i] = m_face_area[i] * 2.0 * m_total_inliers / total_area;
     }
+
+    std::size_t redirected = 0;
+    for (std::size_t i = 0; i < m_face_neighbors.size(); i++) {
+      // Check if the face is on a bbox face besides the top face.
+      // If so and the connected volume is below the ground, redirect the face to the bottom face node.
+      if (m_face_neighbors[i].second < 5 && m_volume_below_ground[m_face_neighbors[i].first - 6]) {
+        redirected++;
+        m_face_neighbors[i].second = 0;
+      }
+    }
+    std::cout << redirected << " faces redirected to below ground" << std::endl;
   }
 
   void count_volume_votes() {
@@ -1051,7 +1124,6 @@ private:
     std::size_t count_points = 0;
 
     m_volumes.resize(num_volumes, 0);
-    std::size_t next = 0, step = num_volumes / 100;
     for (std::size_t i = 0; i < num_volumes; i++) {
 
       std::vector<Index> faces;
@@ -1140,7 +1212,7 @@ private:
   }
 
   template<typename NamedParameters>
-  void create_planar_shapes(const NamedParameters& np) {
+  void create_planar_shapes(bool estimate_ground, const NamedParameters& np) {
 
     if (m_points.size() < 3) {
       if (m_verbose) std::cout << "* no points found, skipping" << std::endl;
@@ -1193,7 +1265,7 @@ private:
       //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSR_3::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    //KSR_3::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     // Convert indices.
     m_planar_regions.clear();
@@ -1223,7 +1295,6 @@ private:
 
     // Regularize detected planes.
 
-/*
     CGAL::Shape_regularization::Planes::regularize_planes(range, m_points,
       CGAL::parameters::plane_index_map(region_growing.region_map())
       .point_map(m_point_map)
@@ -1232,8 +1303,7 @@ private:
       .regularize_parallelism(regularize_parallelism)
       .regularize_coplanarity(regularize_coplanarity)
       .maximum_angle(angle_tolerance)
-      .maximum_offset(maximum_offset));*/
-
+      .maximum_offset(maximum_offset));
 
     polys_debug.clear();
 
@@ -1247,7 +1317,7 @@ private:
       //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSR_3::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    //KSR_3::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     // Merge coplanar regions
     for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
@@ -1260,6 +1330,67 @@ private:
       }
     }
 
+    if (estimate_ground) {
+      // How to estimate ground plane? Find low z peak
+      std::vector<std::size_t> candidates;
+      FT low_z_peak = (std::numeric_limits<FT>::max)();
+      FT bbox_min[] = { (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)() };
+      FT bbox_max[] = { -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)() };
+      for (const auto& p : m_points) {
+        const auto& point = get(m_point_map, p);
+        for (std::size_t i = 0; i < 3; i++) {
+          bbox_min[i] = (std::min)(point[i], bbox_min[i]);
+          bbox_max[i] = (std::max)(point[i], bbox_max[i]);
+        }
+      }
+
+      FT bbox_center[] = { 0.5 * (bbox_min[0] + bbox_max[0]), 0.5 * (bbox_min[1] + bbox_max[1]), 0.5 * (bbox_min[2] + bbox_max[2]) };
+
+      for (std::size_t i = 0; i < m_regions.size(); i++) {
+        Vector_3 d = m_regions[i].first.orthogonal_vector();
+        if (abs(d.z()) > 0.98) {
+          candidates.push_back(i);
+          FT z = m_regions[i].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
+          low_z_peak = (std::min<FT>)(z, low_z_peak);
+        }
+      }
+
+      m_ground_polygon_index = -1;
+      std::vector<std::size_t> other_ground;
+      for (std::size_t i = 0; i < candidates.size(); i++) {
+        Vector_3 d = m_regions[candidates[i]].first.orthogonal_vector();
+        FT z = m_regions[candidates[i]].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
+        if (z - low_z_peak < max_distance_to_plane) {
+          if (m_ground_polygon_index == -1)
+            m_ground_polygon_index = candidates[i];
+          else
+            other_ground.push_back(candidates[i]);
+        }
+      }
+
+      for (std::size_t i = 0; i < other_ground.size(); i++)
+        std::move(m_regions[other_ground[i]].second.begin(), m_regions[other_ground[i]].second.end(), std::back_inserter(m_regions[m_ground_polygon_index].second));
+
+      std::cout << "ground polygon " << m_ground_polygon_index << ", merging other polygons";
+      while (other_ground.size() != 0) {
+        m_regions.erase(m_regions.begin() + other_ground.back());
+        std::cout << " " << other_ground.back();
+        other_ground.pop_back();
+      }
+      std::cout << std::endl;
+
+      std::vector<Point_3> ground_plane;
+      ground_plane.reserve(m_regions[m_ground_polygon_index].second.size());
+      for (std::size_t i = 0; i < m_regions[m_ground_polygon_index].second.size(); i++) {
+        ground_plane.push_back(get(m_point_map, m_regions[m_ground_polygon_index].second[i]));
+      }
+
+      CGAL::linear_least_squares_fitting_3(ground_plane.begin(), ground_plane.end(), m_regions[m_ground_polygon_index].first, CGAL::Dimension_tag<0>());
+
+      if (m_regions[m_ground_polygon_index].first.orthogonal_vector().z() < 0)
+        m_regions[m_ground_polygon_index].first = m_regions[m_ground_polygon_index].first.opposite();
+    }
+
     polys_debug.clear();
 
     for (std::size_t i = 0; i < m_regions.size(); i++) {
@@ -1272,7 +1403,7 @@ private:
       //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSR_3::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    //KSR_3::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     std::vector<Plane_3> pl;
 
@@ -1342,18 +1473,32 @@ private:
     // 4 xmin
     // 5 zmax
     const std::size_t force = m_total_inliers * 3;
+    // 0 - cost for labelled as outside
     cost_matrix[0][0] = 0;
     cost_matrix[0][1] = 0;
     cost_matrix[0][2] = 0;
     cost_matrix[0][3] = 0;
     cost_matrix[0][4] = 0;
     cost_matrix[0][5] = 0;
+    // 1 - cost for labelled as inside
     cost_matrix[1][0] = 0;
     cost_matrix[1][1] = 0;
     cost_matrix[1][2] = 0;
     cost_matrix[1][3] = 0;
     cost_matrix[1][4] = 0;
     cost_matrix[1][5] = 0;
+
+    if (m_ground_polygon_index != -1) {
+      std::cout << "using estimated ground plane for reconstruction" << std::endl;
+      cost_matrix[0][1] = 0;
+      cost_matrix[0][2] = 0;
+      cost_matrix[0][3] = 0;
+      cost_matrix[0][4] = 0;
+      cost_matrix[1][1] = force;
+      cost_matrix[1][2] = force;
+      cost_matrix[1][3] = force;
+      cost_matrix[1][4] = force;
+    }
   }
 
   void dump_volume(std::size_t i, const std::string& filename, const CGAL::Color &color) const {
