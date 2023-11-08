@@ -1034,7 +1034,24 @@ WIP
 
 \subsection ACVDAPI API
 
-WIP
+The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`, `Polyhedron_3` and
+other triangle mesh structures based on the concept `FaceGraph`.
+
+The main function is `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification()`. It takes as input a triangle mesh and
+a target number of vertices and returns a remeshed version of the input mesh with the target number of vertices.
+
+The returned mesh can be triangle mesh in the same data structure as the input mesh representing a `FaceGraph`.
+Or a polygon (triangle) soup (as a `pair<std::vector<GT::Point_3>, std::vector<std::vector<int>>>)`. For the latter,
+use the function `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification_polygon_soup()` instead. The reason for
+having a polygon soup version is that there are no guarantees that the output mesh is manifold.
+
+To enable Adaptive Remeshing, the named parameter `gradation_factor` can be used. It controls the sensitivity of the
+clustering algorithm to curvature. If a value of 0 is used, the algorithm is not adaptive. Moreover, the named parameter
+`vertex_principal_curvatures_and_directions_map` can be used to provide a user-defined principal curvature map.
+
+For Clustering based on QEM, the function `CGAL::Polygon_mesh_processing::acvd_qem_simplification()` and
+`CGAL::Polygon_mesh_processing::acvd_qem_simplification_polygon_soup()` can be used. THIS IS NOT 100% WORKING YET.
+
 
 \subsection ACVDResults Results
 
