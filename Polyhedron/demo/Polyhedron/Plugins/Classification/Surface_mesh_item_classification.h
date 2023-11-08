@@ -200,9 +200,8 @@ protected:
   Scene_polyhedron_selection_item* m_selection;
   Mesh::Property_map<face_descriptor, std::size_t> m_training;
   Mesh::Property_map<face_descriptor, std::size_t> m_classif;
-
-  std::optional<Mesh::Property_map<face_descriptor, CGAL::IO::Color>> m_color;
-  std::optional<Mesh::Property_map<face_descriptor, CGAL::IO::Color>> m_real_color;
+  Mesh::Property_map<face_descriptor, CGAL::IO::Color> m_color;
+  Mesh::Property_map<face_descriptor, CGAL::IO::Color> m_real_color;
 
   std::vector<std::vector<float> > m_label_probabilities;
 

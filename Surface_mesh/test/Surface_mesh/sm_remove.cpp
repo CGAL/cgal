@@ -82,14 +82,17 @@ int main()
     auto l_eremoved = m.property_map<Edge_index, bool>("e:removed").first;
     auto l_fremoved = m.property_map<Face_index, bool>("f:removed").first;
 
-    assert( vconn == l_vconn );
-    assert( hconn == l_hconn );
-    assert( fconn == l_fconn );
-    assert( vpoint == l_vpoint );
-    assert( vprop == l_vprop );
-    assert( hprop == l_hprop );
-    assert( fprop == l_fprop );
-    assert( eprop == l_eprop );
+    assert( &vconn.array() == &l_vconn.array() );
+    assert( &hconn.array() == &l_hconn.array() );
+    assert( &fconn.array() == &l_fconn.array() );
+    assert( &vpoint.array() == &l_vpoint.array() );
+    assert( &vremoved.array() == &l_vremoved.array() );
+    assert( &eremoved.array() == &l_eremoved.array() );
+    assert( &fremoved.array() == &l_fremoved.array() );
+    assert( &vprop.array() == &l_vprop.array() );
+    assert( &hprop.array() == &l_hprop.array() );
+    assert( &fprop.array() == &l_fprop.array() );
+    assert( &eprop.array() == &l_eprop.array() );
   }
 
   {
@@ -103,10 +106,13 @@ int main()
     auto l_eremoved = m.property_map<Edge_index, bool>("e:removed").first;
     auto l_fremoved = m.property_map<Face_index, bool>("f:removed").first;
 
-    assert( vconn == l_vconn );
-    assert( hconn == l_hconn );
-    assert( fconn == l_fconn );
-    assert( vpoint == l_vpoint );
+    assert( &vconn.array() == &l_vconn.array() );
+    assert( &hconn.array() == &l_hconn.array() );
+    assert( &fconn.array() == &l_fconn.array() );
+    assert( &vpoint.array() == &l_vpoint.array() );
+    assert( &vremoved.array() == &l_vremoved.array() );
+    assert( &eremoved.array() == &l_eremoved.array() );
+    assert( &fremoved.array() == &l_fremoved.array() );
   }
 
   return 0;

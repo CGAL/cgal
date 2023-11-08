@@ -23,8 +23,6 @@
 
 #include <CGAL/IO/PLY.h>
 
-#include <optional>
-
 namespace CGAL {
 namespace IO {
 namespace internal {
@@ -59,7 +57,10 @@ private:
 
   public:
     PLY_property_to_surface_mesh_property(Surface_mesh& sm, const std::string& name)
-      : m_name(name), m_map(sm.template add_property_map<Simplex, Type>(prefix(Simplex()) + name).first){}
+      : m_name(name)
+    {
+      m_map = sm.template add_property_map<Simplex, Type>(prefix(Simplex()) + name).first;
+    }
 
     virtual void assign(PLY_element& element, size_type index)
     {
@@ -78,11 +79,11 @@ private:
   std::vector<Vertex_index> m_map_v2v;
   bool m_use_floats;
   int m_normals;
-  std::optional<typename Surface_mesh::template Property_map<Vertex_index, Vector>> m_normal_map;
+  typename Surface_mesh::template Property_map<Vertex_index, Vector> m_normal_map;
   int m_vcolors;
-  std::optional<typename Surface_mesh::template Property_map<Vertex_index, CGAL::IO::Color>> m_vcolor_map;
+  typename Surface_mesh::template Property_map<Vertex_index, CGAL::IO::Color> m_vcolor_map;
   int m_fcolors;
-  std::optional<typename Surface_mesh::template Property_map<Face_index, CGAL::IO::Color>> m_fcolor_map;
+  typename Surface_mesh::template Property_map<Face_index, CGAL::IO::Color> m_fcolor_map;
   bool m_use_int32_t;
   std::string m_index_tag;
   std::vector<Abstract_ply_property_to_surface_mesh_property*> m_vertex_properties;
@@ -124,7 +125,7 @@ public:
     {
       ++ m_normals;
       if(m_normals == 3)
-        m_normal_map.emplace(m_mesh.template add_property_map<Vertex_index, Vector>("v:normal").first);
+        m_normal_map = m_mesh.template add_property_map<Vertex_index, Vector>("v:normal").first;
       return true;
     }
     if(name == "red" ||
@@ -133,7 +134,7 @@ public:
     {
       ++ m_vcolors;
       if(m_vcolors == 3)
-        m_vcolor_map.emplace(m_mesh.template add_property_map<Vertex_index, CGAL::IO::Color>("v:color").first);
+        m_vcolor_map = m_mesh.template add_property_map<Vertex_index, CGAL::IO::Color>("v:color").first;
       return true;
     }
     return false;
@@ -156,7 +157,7 @@ public:
     {
       ++ m_fcolors;
       if(m_fcolors == 3)
-        m_fcolor_map.emplace(m_mesh.template add_property_map<Face_index, CGAL::IO::Color>("f:color").first);
+        m_fcolor_map = m_mesh.template add_property_map<Face_index, CGAL::IO::Color>("f:color").first;
       return true;
     }
 
@@ -282,7 +283,7 @@ public:
       element.assign(ny, "ny");
       element.assign(nz, "nz");
       Vector normal(nx, ny, nz);
-      (*m_normal_map)[vi] = normal;
+      m_normal_map[vi] = normal;
     }
 
     if(m_vcolors == 3)
@@ -303,7 +304,7 @@ public:
         g = static_cast<unsigned char>(std::floor(gf*255));
         b = static_cast<unsigned char>(std::floor(bf*255));
       }
-      (*m_vcolor_map)[vi] = CGAL::IO::Color(r, g, b);
+      m_vcolor_map[vi] = CGAL::IO::Color(r, g, b);
     }
   }
 
@@ -357,7 +358,7 @@ public:
         g = static_cast<unsigned char>(std::floor(gf*255));
         b = static_cast<unsigned char>(std::floor(bf*255));
       }
-      (*m_fcolor_map)[fi] = CGAL::IO::Color(r, g, b);
+      m_fcolor_map[fi] = CGAL::IO::Color(r, g, b);
     }
   }
 
@@ -459,10 +460,12 @@ bool fill_simplex_specific_header(std::ostream& os,
     return true;
   }
 
+  bool okay = false;
   if(prop == "v:normal")
   {
-    auto pmap = sm.template get_property_map<VIndex, Vector>(prop);
-    if(pmap)
+    Vector_map pmap;
+    std::tie(pmap, okay) = sm.template property_map<VIndex, Vector>(prop);
+    if(okay)
     {
       if(std::is_same<FT, float>::value)
       {
@@ -476,22 +479,23 @@ bool fill_simplex_specific_header(std::ostream& os,
            << "property double ny" << std::endl
            << "property double nz" << std::endl;
       }
-      printers.push_back(new Property_printer<VIndex, Vector_map>(pmap.value()));
+      printers.push_back(new Property_printer<VIndex, Vector_map>(pmap));
       return true;
     }
   }
 
   if(prop == "v:color")
   {
-    auto pmap = sm.template get_property_map<VIndex, Color>(prop);
-    if(pmap)
+    Vcolor_map pmap;
+    std::tie(pmap, okay) = sm.template property_map<VIndex, Color>(prop);
+    if(okay)
     {
       os << "property uchar red" << std::endl
          << "property uchar green" << std::endl
          << "property uchar blue" << std::endl
          << "property uchar alpha" << std::endl;
 
-      printers.push_back(new Property_printer<VIndex, Vcolor_map>(pmap.value()));
+      printers.push_back(new Property_printer<VIndex, Vcolor_map>(pmap));
       return true;
     }
   }
@@ -513,17 +517,19 @@ bool fill_simplex_specific_header(std::ostream& os,
   if(prop == "f:connectivity" || prop == "f:removed")
     return true;
 
+  bool okay = false;
   if(prop == "f:color")
   {
-    auto pmap = sm.template get_property_map<FIndex, Color>(prop);
-    if(pmap)
+    Fcolor_map pmap;
+    std::tie(pmap, okay) = sm.template property_map<FIndex, Color>(prop);
+    if(okay)
     {
       os << "property uchar red" << std::endl
          << "property uchar green" << std::endl
          << "property uchar blue" << std::endl
          << "property uchar alpha" << std::endl;
 
-      printers.push_back(new Property_printer<FIndex, Fcolor_map>(pmap.value()));
+      printers.push_back(new Property_printer<FIndex, Fcolor_map>(pmap));
       return true;
     }
   }
@@ -635,25 +641,28 @@ void fill_header_impl(std::tuple<T,TN...>,
                       std::vector<Abstract_property_printer<Simplex>*>& printers)
 {
   constexpr std::size_t cid = s-std::tuple_size<std::tuple<T,TN...>>::value;
+  bool okay = false;
   {
     typedef typename Surface_mesh<Point>::template Property_map<Simplex, T>   Pmap;
-    std::optional<Pmap> pmap = sm.template get_property_map<Simplex,T>(pname);
-    if(pmap)
+    Pmap pmap;
+    std::tie(pmap, okay) = sm.template property_map<Simplex,T>(pname);
+    if(okay)
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_printer<Simplex,Pmap>(pmap.value()));
+      printers.push_back(new internal::Simple_property_printer<Simplex,Pmap>(pmap));
       return;
     }
   }
   {
     typedef typename Surface_mesh<Point>::template Property_map<Simplex, std::vector<T>>   Pmap;
-    std::optional<Pmap> pmap = sm.template get_property_map<Simplex,std::vector<T>>(pname);
-    if(pmap)
+    Pmap pmap;
+    std::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<T>>(pname);
+    if(okay)
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property list uchar " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_vector_printer<Simplex,Pmap>(pmap.value()));
+      printers.push_back(new internal::Simple_property_vector_printer<Simplex,Pmap>(pmap));
       return;
     }
   }
@@ -688,40 +697,41 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
   typedef typename Surface_mesh<Point>::Vertex_index VIndex;
 
   using VCM = typename internal_np::Lookup_named_param_def<
-    internal_np::vertex_color_map_t, CGAL_NP_CLASS,
-    typename Surface_mesh<Point>::template Property_map<VIndex, CGAL::IO::Color>
-  >::type;
-  using FCM = typename internal_np::Lookup_named_param_def<
-    internal_np::face_color_map_t, CGAL_NP_CLASS,
-    typename Surface_mesh<Point>::template Property_map<FIndex, CGAL::IO::Color>
-  >::type;
+    internal_np::vertex_color_map_t,
+    CGAL_NP_CLASS,
+    typename Surface_mesh<Point>::template Property_map<VIndex, CGAL::IO::Color> >::type;
 
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  constexpr bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
-  constexpr bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
+  VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
+  bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
+
+  using FCM = typename internal_np::Lookup_named_param_def<
+    internal_np::face_color_map_t,
+    CGAL_NP_CLASS,
+    typename Surface_mesh<Point>::template Property_map<FIndex, CGAL::IO::Color> >::type;
+  FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
+  bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
 
   std::vector<std::string> prop = sm.template properties<Simplex>();
 
-  if constexpr (std::is_same<Simplex, FIndex>::value && has_fcolor) {
+  if (std::is_same<Simplex, FIndex>::value && has_fcolor) {
     os << "property uchar red" << std::endl
       << "property uchar green" << std::endl
       << "property uchar blue" << std::endl
       << "property uchar alpha" << std::endl;
-    FCM fcm = get_parameter(np, internal_np::face_color_map);
     add_color_map<Point, Simplex, FIndex>()(printers, fcm);
   }
 
-  if constexpr (std::is_same<Simplex, VIndex>::value && has_vcolor)
+  if (std::is_same<Simplex, VIndex>::value && has_vcolor)
   {
     os << "property uchar red" << std::endl
       << "property uchar green" << std::endl
       << "property uchar blue" << std::endl
       << "property uchar alpha" << std::endl;
 
-    VCM vcm = get_parameter(np, internal_np::vertex_color_map);
     add_color_map<Point, Simplex, VIndex>()(printers, vcm);
   }
 

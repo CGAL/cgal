@@ -32,7 +32,7 @@ namespace CGAL {
 namespace Shape_detection {
 
 // Forward declaration needed for automatic traits detection without
-// including the deprecated header itself…
+// including the deprecated header itself
 template <typename Gt, typename IR, typename IPM, typename INM>
 struct Shape_detection_traits;
 

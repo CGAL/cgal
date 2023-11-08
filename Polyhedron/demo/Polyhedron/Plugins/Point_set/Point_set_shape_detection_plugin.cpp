@@ -274,13 +274,13 @@ private:
     }
     std::string& comments = item->comments();
 
-    std::optional<Point_set::Property_map<int>> shape_id;
+    Point_set::Property_map<int> shape_id;
     if (dialog.add_property()) {
-      auto [shape_id_pmap, added] = points->template add_property_map<int> ("shape", -1);
-      shape_id = shape_id_pmap;
+      bool added = false;
+      boost::tie(shape_id, added) = points->template add_property_map<int> ("shape", -1);
       if (!added) {
         for (auto it = points->begin(); it != points->end(); ++ it)
-          shape_id.value()[*it] = -1;
+          shape_id[*it] = -1;
       }
 
       // Remove previously detected shapes from comments.
@@ -382,8 +382,8 @@ private:
 
       for (auto &item : regions[index].second) {
         point_item->point_set()->insert(points->point(item));
-        if (dialog.add_property() && shape_id)
-          shape_id.value()[item] = index;
+        if (dialog.add_property())
+          shape_id[item] = index;
       }
 
       unsigned char r, g, b;
@@ -559,13 +559,15 @@ private:
 
     std::string& comments = item->comments();
 
-    std::optional<Point_set::Property_map<int>> shape_id;
-    if (dialog.add_property()) {
-      auto [shape_id_pmap, added] = points->template add_property_map<int> ("shape", -1);
-      shape_id = shape_id_pmap;
-      if (!added) {
-        for (auto it = points->begin(); it != points->end(); ++ it)
-          shape_id.value()[*it] = -1;
+    Point_set::Property_map<int> shape_id;
+    if (dialog.add_property())
+    {
+      bool added = false;
+      boost::tie (shape_id, added) = points->template add_property_map<int> ("shape", -1);
+      if (!added)
+      {
+        for (Point_set::iterator it = points->begin(); it != points->end(); ++ it)
+          shape_id[*it] = -1;
       }
 
       // Remove previously detected shapes from comments
@@ -694,8 +696,8 @@ private:
       for(std::size_t i : shape->indices_of_assigned_points())
       {
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
-        if (dialog.add_property() && shape_id)
-          shape_id.value()[*(points->begin()+i)] = index;
+        if (dialog.add_property())
+          shape_id[*(points->begin()+i)] = index;
       }
 
       unsigned char r, g, b;

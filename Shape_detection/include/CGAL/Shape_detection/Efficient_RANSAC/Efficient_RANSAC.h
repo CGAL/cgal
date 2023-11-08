@@ -498,9 +498,9 @@ public:
     // Use bounding box diagonal as reference for default values
     auto bbox = m_global_octree->boundingBox();
     FT bbox_diagonal = (FT) CGAL::sqrt(
-            (bbox.max()[0] - bbox.min()[0]) * (bbox.max()[0] - bbox.min()[0])
-            + (bbox.max()[1] - bbox.min()[1]) * (bbox.max()[1] - bbox.min()[1])
-            + (bbox.max()[2] - bbox.min()[2]) * (bbox.max()[2] - bbox.min()[2]));
+            (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
+            + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())
+            + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
 
     // Epsilon or cluster_epsilon have been set by the user?
     // If not, derive from bounding box diagonal

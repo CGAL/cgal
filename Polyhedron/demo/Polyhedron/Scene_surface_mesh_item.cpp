@@ -276,11 +276,11 @@ struct Scene_surface_mesh_item_priv{
   mutable QOpenGLShaderProgram *program;
   Scene_surface_mesh_item *item;
 
-  mutable std::optional<SMesh::Property_map<face_descriptor,int>> fpatch_id_map;
+  mutable SMesh::Property_map<face_descriptor,int> fpatch_id_map;
   mutable int min_patch_id;
-  mutable std::optional<SMesh::Property_map<vertex_descriptor,int>> v_selection_map;
-  mutable std::optional<SMesh::Property_map<face_descriptor,int>> f_selection_map;
-  mutable std::optional<SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool>> e_is_feature_map;
+  mutable SMesh::Property_map<vertex_descriptor,int> v_selection_map;
+  mutable SMesh::Property_map<face_descriptor,int> f_selection_map;
+  mutable SMesh::Property_map<boost::graph_traits<SMesh>::edge_descriptor, bool> e_is_feature_map;
 
   mutable Color_vector colors_;
   double volume, area;
@@ -358,7 +358,7 @@ Scene_surface_mesh_item::vertex_selection_map()
   if(! d->v_selection_map){
     d->v_selection_map = d->smesh_->add_property_map<vertex_descriptor,int>("v:selection").first;
   }
-  return d->v_selection_map.value();
+  return d->v_selection_map;
 }
 
 Scene_surface_mesh_item::Face_selection_map
@@ -367,7 +367,7 @@ Scene_surface_mesh_item::face_selection_map()
   if(! d->f_selection_map){
     d->f_selection_map = d->smesh_->add_property_map<face_descriptor,int>("f:selection").first;
   }
-  return d->f_selection_map.value();
+  return d->f_selection_map;
 }
 
 std::vector<QColor>&
@@ -514,7 +514,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       idx_edge_data_.push_back(source(ed, *smesh_));
       idx_edge_data_.push_back(target(ed, *smesh_));
       if(has_feature_edges &&
-         get(*e_is_feature_map, ed))
+         get(e_is_feature_map, ed))
       {
         idx_feature_edge_data_.push_back(source(ed, *smesh_));
         idx_feature_edge_data_.push_back(target(ed, *smesh_));
@@ -556,7 +556,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
           {
             //The sharp features detection produces patch ids >=1, this
             //is meant to insure the wanted id is in the range [min,max]
-            QColor c = item->color_vector()[fpatch_id_map.value()[fd] - min_patch_id];
+            QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id];
             CGAL::IO::Color color(c.red(),c.green(),c.blue());
             CPF::add_color_in_buffer(color, f_colors);
           }
@@ -585,7 +585,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         CGAL::IO::Color *c;
         if(has_fpatch_id)
         {
-          QColor color = item->color_vector()[fpatch_id_map.value()[fd] - min_patch_id];
+          QColor color = item->color_vector()[fpatch_id_map[fd] - min_patch_id];
           c = new CGAL::IO::Color(color.red(),color.green(),color.blue());
         }
         else if(has_fcolors)
@@ -724,8 +724,8 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
   int max = 0;
   min_patch_id = (std::numeric_limits<int>::max)();
   for(face_descriptor fd : faces(*smesh_)){
-    max = (std::max)(max, fpatch_id_map.value()[fd]);
-    min_patch_id = (std::min)(min_patch_id, fpatch_id_map.value()[fd]);
+    max = (std::max)(max, fpatch_id_map[fd]);
+    min_patch_id = (std::min)(min_patch_id, fpatch_id_map[fd]);
   }
   if(item->property("recompute_colors").toBool())
   {
@@ -911,7 +911,7 @@ void Scene_surface_mesh_item_priv::triangulate_convex_facet(face_descriptor fd,
       CGAL::IO::Color* color;
       if(has_fpatch_id)
       {
-        QColor c = item->color_vector()[fpatch_id_map.value()[fd] - min_patch_id];
+        QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id];
         color = new CGAL::IO::Color(c.red(),c.green(),c.blue());
       }
       else if(has_fcolors)
@@ -1003,7 +1003,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
       CGAL::IO::Color* color;
       if(has_fpatch_id)
       {
-        QColor c= item->color_vector()[fpatch_id_map.value()[fd] - min_patch_id];
+        QColor c= item->color_vector()[fpatch_id_map[fd] - min_patch_id];
         color = new CGAL::IO::Color(c.red(),c.green(),c.blue());
       }
       else if(has_fcolors)
@@ -1447,23 +1447,31 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
 }
 void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
 {
-  if (b) {
-    d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor, int>("f:patch_id", 1).first;
+  if(b)
+  {
+    d->fpatch_id_map = d->smesh_->add_property_map<face_descriptor,int>("f:patch_id", 1).first;
     d->has_fcolors = true;
-  } else {
-    d->fpatch_id_map = d->smesh_->get_property_map<face_descriptor, int>("f:patch_id");
-    if (d->fpatch_id_map) {
-      d->smesh_->remove_property_map(d->fpatch_id_map.value());
+  }
+  else
+  {
+    if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+    {
+      d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
+      d->smesh_->remove_property_map(d->fpatch_id_map);
       d->has_fcolors = false;
     }
-    auto fcolormap = d->smesh_->get_property_map<face_descriptor, CGAL::IO::Color>("f:color");
-    if (fcolormap) {
-      d->smesh_->remove_property_map(*fcolormap);
+    if(d->smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").second)
+    {
+     SMesh::Property_map<face_descriptor, CGAL::IO::Color> pmap =
+         d->smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
+         d->smesh_->remove_property_map(pmap);
       d->has_fcolors = false;
     }
-    auto vcolormap = d->smesh_->get_property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
-    if (vcolormap) {
-      d->smesh_->remove_property_map(*vcolormap);
+    if(d->smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").second)
+    {
+      SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> pmap =
+          d->smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
+          d->smesh_->remove_property_map(pmap);
       d->has_vcolors = false;
     }
     this->setProperty("NbPatchIds", 0); //for the joinandsplit_plugin
@@ -1573,10 +1581,12 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
 bool
 Scene_surface_mesh_item::save_obj(std::ostream& out) const
 {
-  auto vnormals = d->smesh_->template get_property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
+  SMesh::template Property_map<SMesh::Vertex_index, EPICK::Vector_3> vnormals;
+  bool has_normals = false;
+  boost::tie(vnormals, has_normals) = d->smesh_->template property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
 
-  if(vnormals)
-    return CGAL::IO::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(*vnormals));
+  if(has_normals)
+    return CGAL::IO::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(vnormals));
   else
     return CGAL::IO::write_OBJ(out, *(d->smesh_));
 }
@@ -1990,7 +2000,7 @@ void Scene_surface_mesh_item::resetColors()
   setItemIsMulticolor(false);
   if(d->has_feature_edges){
     for(boost::graph_traits<SMesh>::edge_descriptor e : edges(*d->smesh_)){
-      put(d->e_is_feature_map.value(), e, false);
+      put(d->e_is_feature_map, e, false);
     }
     d->has_feature_edges = false;
   }

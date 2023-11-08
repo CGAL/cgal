@@ -30,8 +30,9 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 
   backup_existing_colors_and_add_new();
 
-  auto m_cluster_id = m_points->point_set()->property_map<int>("shape");
-  if (!m_cluster_id)
+  bool cluster_found = false;
+  boost::tie (m_cluster_id, cluster_found) = m_points->point_set()->property_map<int>("shape");
+  if (!cluster_found)
   {
     std::cerr << "Error! Cluster not found!" << std::endl;
     abort();
@@ -39,7 +40,7 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 
   CGAL::Classification::create_clusters_from_indices (*(m_points->point_set()),
                                                       m_points->point_set()->point_map(),
-                                                      m_cluster_id.value(),
+                                                      m_cluster_id,
                                                       m_clusters);
 
   std::cerr << m_clusters.size() << " cluster(s) found" << std::endl;
@@ -56,20 +57,20 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 
   if (!classif_found)
   {
-    auto las_classif = m_points->point_set()->property_map<unsigned char>("classification");
-    las_found = las_classif.has_value();
-    if (las_classif)
+    Point_set::Property_map<unsigned char> las_classif;
+    boost::tie (las_classif, las_found) = m_points->point_set()->property_map<unsigned char>("classification");
+    if (las_found)
     {
       m_input_is_las = true;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
       {
-        unsigned char uc = las_classif.value()[*it];
-        m_classif.value()[*it] = int(uc);
+        unsigned char uc = las_classif[*it];
+        m_classif[*it] = int(uc);
         if (!training_found)
-          m_training.value()[*it] = int(uc);
+          m_training[*it] = int(uc);
       }
-      m_points->point_set()->remove_property_map (las_classif.value());
+      m_points->point_set()->remove_property_map (las_classif);
       classif_found = true;
       training_found = true;
     }
@@ -84,7 +85,7 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
     {
       if (training_found)
       {
-        int l = m_training.value()[*it];
+        int l = m_training[*it];
         if (l >= 0)
         {
           if (std::size_t(l) >= used_indices.size())
@@ -94,7 +95,7 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
       }
       if (classif_found)
       {
-        int l = m_classif.value()[*it];
+        int l = m_classif[*it];
         if (l >= 0)
         {
           if (std::size_t(l) >= used_indices.size())
@@ -124,31 +125,31 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
     {
-      int c = m_cluster_id.value()[*it];
+      int c = m_cluster_id[*it];
 
       if (training_found)
       {
         if (std::size_t(current_idx) != used_indices.size()) // Empty indices -> reorder indices in point set
         {
-          if (las_found && (m_training.value()[*it] == 0 || m_training.value()[*it] == 1)) // Unclassified class in LAS
-            m_training.value()[*it] = -1;
-          else if (m_training.value()[*it] != -1)
-            m_training.value()[*it] = used_indices[std::size_t(m_training.value()[*it])];
+          if (las_found && (m_training[*it] == 0 || m_training[*it] == 1)) // Unclassified class in LAS
+            m_training[*it] = -1;
+          else if (m_training[*it] != -1)
+            m_training[*it] = used_indices[std::size_t(m_training[*it])];
         }
-        if (c != -1 && m_training.value()[*it] != -1)
-          m_clusters[c].training() = m_training.value()[*it];
+        if (c != -1 && m_training[*it] != -1)
+          m_clusters[c].training() = m_training[*it];
       }
       if (classif_found)
       {
         if (std::size_t(current_idx) != used_indices.size()) // Empty indices -> reorder indices in point set
         {
-          if (las_found && (m_classif.value()[*it] == 0 || m_classif.value()[*it] == 1)) // Unclassified class in LAS
-            m_classif.value()[*it] = -1;
-          else if (m_classif.value()[*it] != -1)
-            m_classif.value()[*it] = used_indices[std::size_t(m_classif.value()[*it])];
+          if (las_found && (m_classif[*it] == 0 || m_classif[*it] == 1)) // Unclassified class in LAS
+            m_classif[*it] = -1;
+          else if (m_classif[*it] != -1)
+            m_classif[*it] = used_indices[std::size_t(m_classif[*it])];
         }
-        if (c != -1 && m_classif.value()[*it] != -1)
-          m_clusters[c].label() = m_classif.value()[*it];
+        if (c != -1 && m_classif[*it] != -1)
+          m_clusters[c].label() = m_classif[*it];
       }
     }
 
@@ -239,11 +240,11 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
   Delaunay dt (boost::make_transform_iterator
                (m_points->point_set()->begin(),
                 Point_set_with_cluster_info (m_points->point_set(),
-                                             m_cluster_id.value())),
+                                             m_cluster_id)),
                 boost::make_transform_iterator
                (m_points->point_set()->end(),
                 Point_set_with_cluster_info (m_points->point_set(),
-                                             m_cluster_id.value())));
+                                             m_cluster_id)));
 
   std::set<std::pair<int, int> > adjacencies;
 
@@ -293,16 +294,16 @@ Cluster_classification::~Cluster_classification()
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
     {
-      int c = m_cluster_id.value()[*it];
+      int c = m_cluster_id[*it];
       if (c != -1)
       {
-        m_training.value()[*it] = m_clusters[c].training();
-        m_classif.value()[*it] = m_clusters[c].label();
+        m_training[*it] = m_clusters[c].training();
+        m_classif[*it] = m_clusters[c].label();
       }
       else
       {
-        m_training.value()[*it] = -1;
-        m_classif.value()[*it] = -1;
+        m_training[*it] = -1;
+        m_classif[*it] = -1;
       }
     }
 
@@ -358,22 +359,22 @@ Cluster_classification::~Cluster_classification()
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->end(); ++ it)
       {
-        int c = m_classif.value()[*it];
+        int c = m_classif[*it];
         unsigned char lc = 1; // unclassified in LAS standard
         if (c != -1)
           lc = label_indices[std::size_t(c)];
 
         las_classif[*it] = lc;
 
-        int t = m_training.value()[*it];
+        int t = m_training[*it];
         unsigned char lt = 1; // unclassified in LAS standard
         if (t != -1)
           lt = label_indices[std::size_t(t)];
 
-        m_training.value()[*it] = int(lt);
+        m_training[*it] = int(lt);
       }
 
-      m_points->point_set()->remove_property_map (m_classif.value());
+      m_points->point_set()->remove_property_map (m_classif);
     }
 
 
@@ -390,7 +391,7 @@ void Cluster_classification::backup_existing_colors_and_add_new()
     m_color = m_points->point_set()->add_property_map<CGAL::IO::Color>("real_color").first;
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
-      m_color.value()[*it] = CGAL::IO::Color ((unsigned char)(255 * m_points->point_set()->red(*it)),
+      m_color[*it] = CGAL::IO::Color ((unsigned char)(255 * m_points->point_set()->red(*it)),
                                   (unsigned char)(255 * m_points->point_set()->green(*it)),
                                   (unsigned char)(255 * m_points->point_set()->blue(*it)));
 
@@ -402,15 +403,15 @@ void Cluster_classification::backup_existing_colors_and_add_new()
 
 void Cluster_classification::reset_colors()
 {
-  if (!m_color)
+  if (m_color == Point_set::Property_map<CGAL::IO::Color>())
     m_points->point_set()->remove_colors();
   else
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
-      m_points->point_set()->set_color(*it, m_color.value()[*it]);
+      m_points->point_set()->set_color(*it, m_color[*it]);
 
-    m_points->point_set()->remove_property_map(m_color.value());
+    m_points->point_set()->remove_property_map(m_color);
   }
 }
 
@@ -437,7 +438,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
 
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
-        m_points->point_set()->set_color(*it, m_color.value()[*it]);
+        m_points->point_set()->set_color(*it, m_color[*it]);
     }
     else if (index_color == 1) // classif
     {
@@ -445,7 +446,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
            it != m_points->point_set()->first_selected(); ++ it)
       {
         QColor color (0, 0, 0);
-        int cid = m_cluster_id.value()[*it];
+        int cid = m_cluster_id[*it];
         if (cid != -1)
         {
           std::size_t c = m_clusters[cid].label();
@@ -463,7 +464,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
            it != m_points->point_set()->first_selected(); ++ it)
       {
         QColor color (0, 0, 0);
-        int cid = m_cluster_id.value()[*it];
+        int cid = m_cluster_id[*it];
         float div = 1;
 
         if (cid != -1)
@@ -485,7 +486,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
       {
-        int cid = m_cluster_id.value()[*it];
+        int cid = m_cluster_id[*it];
 
         if (cid != -1)
         {
@@ -515,7 +516,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
           for (Point_set::const_iterator it = m_points->point_set()->begin();
                it != m_points->point_set()->first_selected(); ++ it)
           {
-            int cid = m_cluster_id.value()[*it];
+            int cid = m_cluster_id[*it];
             if (cid != -1)
             {
               float v = (std::max) (0.f, (std::min)(1.f, m_label_probabilities[corrected_index][cid]));
@@ -552,7 +553,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
           for (Point_set::const_iterator it = m_points->point_set()->begin();
                it != m_points->point_set()->first_selected(); ++ it)
           {
-            int cid = m_cluster_id.value()[*it];
+            int cid = m_cluster_id[*it];
             if (cid != -1)
             {
               if (feature->value(cid) > max)
@@ -566,7 +567,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
         for (Point_set::const_iterator it = m_points->point_set()->begin();
              it != m_points->point_set()->first_selected(); ++ it)
         {
-          int cid = m_cluster_id.value()[*it];
+          int cid = m_cluster_id[*it];
           if (cid != -1)
           {
             float v = (feature->value(cid) - min) / (max - min);
@@ -597,14 +598,15 @@ int Cluster_classification::real_index_color() const
 {
   int out = m_index_color;
 
-  if (out == 0 && !m_color)
+  if (out == 0 && m_color == Point_set::Property_map<CGAL::IO::Color>())
     out = -1;
   return out;
 }
 
 void Cluster_classification::reset_indices ()
 {
-  auto indices = m_points->point_set()->property_map<Point_set::Index>("index").value();
+  Point_set::Property_map<Point_set::Index> indices
+    = m_points->point_set()->property_map<Point_set::Index>("index").first;
 
   m_points->point_set()->unselect_all();
   Point_set::Index idx;
@@ -627,16 +629,18 @@ void Cluster_classification::compute_features (std::size_t nb_scales, float voxe
 
   m_features.clear();
 
-  std::optional<Point_set::Vector_map> normal_map;
+  Point_set::Vector_map normal_map;
   bool normals = m_points->point_set()->has_normal_map();
   if (normals)
     normal_map = m_points->point_set()->normal_map();
 
-  bool colors = m_color.has_value();
+  bool colors = (m_color != Point_set::Property_map<CGAL::IO::Color>());
 
-  auto echo_map = m_points->point_set()->template property_map<std::uint8_t>("echo");
-  if (!echo_map)
-    echo_map = m_points->point_set()->template property_map<std::uint8_t>("number_of_returns").value();
+  Point_set::Property_map<std::uint8_t> echo_map;
+  bool echo;
+  boost::tie (echo_map, echo) = m_points->point_set()->template property_map<std::uint8_t>("echo");
+  if (!echo)
+    boost::tie (echo_map, echo) = m_points->point_set()->template property_map<std::uint8_t>("number_of_returns");
 
   Feature_set pointwise_features;
 
@@ -651,11 +655,11 @@ void Cluster_classification::compute_features (std::size_t nb_scales, float voxe
 
   generator.generate_point_based_features(pointwise_features);
   if (normals)
-    generator.generate_normal_based_features (pointwise_features, normal_map.value());
+    generator.generate_normal_based_features (pointwise_features, normal_map);
   if (colors)
-    generator.generate_color_based_features (pointwise_features, m_color.value());
-  if (echo_map)
-    generator.generate_echo_based_features (pointwise_features, echo_map.value());
+    generator.generate_color_based_features (pointwise_features, m_color);
+  if (echo)
+    generator.generate_echo_based_features (pointwise_features, echo_map);
 
 #ifdef CGAL_LINKED_WITH_TBB
   pointwise_features.end_parallel_additions();

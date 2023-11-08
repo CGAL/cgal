@@ -16,7 +16,7 @@ typedef Edge_container Ec;
 struct Scene_textured_surface_mesh_item_priv
 {
   Scene_textured_surface_mesh_item_priv(Scene_textured_surface_mesh_item* parent)
-    :sm()
+    :sm(new SMesh)
   {
     item = parent;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
@@ -24,7 +24,7 @@ struct Scene_textured_surface_mesh_item_priv
     vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
   Scene_textured_surface_mesh_item_priv(const SMesh& p, Scene_textured_surface_mesh_item* parent)
-    : sm(p)
+    : sm(new SMesh(p))
 
   {
     item = parent;
@@ -32,8 +32,8 @@ struct Scene_textured_surface_mesh_item_priv
     umap = sm->add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
     vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
-  Scene_textured_surface_mesh_item_priv(SMesh* const p, Scene_textured_surface_mesh_item* parent)
-    :sm(*p)
+  Scene_textured_surface_mesh_item_priv(SMesh* const p,Scene_textured_surface_mesh_item* parent)
+    :sm(p)
   {
     item = parent;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
@@ -41,12 +41,17 @@ struct Scene_textured_surface_mesh_item_priv
     vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
   }
 
-  void compute_normals_and_vertices(void);
+  ~Scene_textured_surface_mesh_item_priv()
+  {
+    delete sm;
+  }
 
-  std::optional<SMesh> sm;
+  void compute_normals_and_vertices(void) const;
+
+  SMesh* sm;
   ::Texture texture;
-  std::optional<SMesh::Property_map<halfedge_descriptor, float>> umap;
-  std::optional<SMesh::Property_map<halfedge_descriptor, float>> vmap;
+  SMesh::Property_map<halfedge_descriptor, float> umap;
+  SMesh::Property_map<halfedge_descriptor, float> vmap;
 
   //[Px][Py][Pz][Nx][Ny][Nz][u][v]
   mutable std::vector<float> faces_buffer;
@@ -64,7 +69,7 @@ struct Scene_textured_surface_mesh_item_priv
   typedef Scene_textured_surface_mesh_item I;
 };
 void
-Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void)
+Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
 {
   faces_buffer.resize(0);
 
@@ -76,7 +81,7 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void)
   SMesh::Property_map<vertex_descriptor, Point> positions =
       sm->points();
   SMesh::Property_map<face_descriptor, EPICK::Vector_3 > fnormals =
-      sm->add_property_map<face_descriptor, EPICK::Vector_3>("f:normal").first;
+      sm->add_property_map<face_descriptor, EPICK::Vector_3 >("f:normal").first;
   CGAL::Polygon_mesh_processing::compute_face_normals(*sm,fnormals);
 
   for(face_iterator f = faces(*sm).begin();
@@ -99,8 +104,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void)
       faces_buffer.push_back(n[1]);
       faces_buffer.push_back(n[2]);
       //uvs [2]
-      const float u = get(*umap, *he);
-      const float v = get(*vmap, *he);
+      const float u = get(umap, *he);
+      const float v = get(vmap, *he);
       faces_buffer.push_back(u);
       faces_buffer.push_back(v);
     }
@@ -124,8 +129,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void)
       edges_buffer.push_back(a.y() + offset.y);
       edges_buffer.push_back(a.z() + offset.z);
     //uvs [2]
-      float u = get(*umap, halfedge(*he, *sm));
-      float v = get(*vmap, halfedge(*he, *sm));
+      float u = get(umap, halfedge(*he, *sm));
+      float v = get(vmap, halfedge(*he, *sm));
 
       edges_buffer.push_back(u);
       edges_buffer.push_back(v);
@@ -135,8 +140,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void)
       edges_buffer.push_back(b.z() + offset.z);
 
       //uvs [2]
-       u = get(*umap, opposite(halfedge(*he, *sm), *sm));
-       v = get(*vmap, opposite(halfedge(*he, *sm), *sm));
+       u = get(umap, opposite(halfedge(*he, *sm), *sm));
+       v = get(vmap, opposite(halfedge(*he, *sm), *sm));
 
       edges_buffer.push_back(u);
       edges_buffer.push_back(v);
@@ -283,13 +288,13 @@ void Scene_textured_surface_mesh_item::drawEdges(
 
 
 SMesh*
-Scene_textured_surface_mesh_item::textured_face_graph()       { return &d->sm.value(); }
+Scene_textured_surface_mesh_item::textured_face_graph()       { return d->sm; }
 const SMesh*
-Scene_textured_surface_mesh_item::textured_face_graph() const { return &d->sm.value(); }
+Scene_textured_surface_mesh_item::textured_face_graph() const { return d->sm; }
 
 bool
 Scene_textured_surface_mesh_item::isEmpty() const {
-  return (!d->sm) || d->sm->is_empty();
+  return (d->sm == nullptr) || d->sm->is_empty();
 }
 
 void

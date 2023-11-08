@@ -75,8 +75,8 @@ inline int indices(const int& i, const int& j)
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)
     return indices_table[i][j];
-  else
-    return -1;
+  CGAL_error_msg("Invalid indices provided");
+  return 0;
 }
 
 template<typename Gt, typename Point>

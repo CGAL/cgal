@@ -747,7 +747,7 @@ namespace CGAL {
                         if (v == Polygon_mesh::null_vertex())        // failed splitting edge
                                 return Polygon_mesh::null_halfedge();
 
-                        auto &coords = mesh.points();
+                        typename Polygon_mesh::template Property_map<Vertex_descriptor, Point>& coords = mesh.points();
                         coords[v] = *ep.pos;
 
                         Edge_descriptor e1 = mesh.edge(h);

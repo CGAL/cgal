@@ -192,7 +192,7 @@ The `PLY` file format, using the file extension `.ply`, is an \ascii or binary f
 conceived to store the data obtained during 3D scans. Objects are stored
 as a simple list of polygons and external properties can be stored.
 
-A precise specification of those formats is available <a href="http://paulbourke.net/dataformats/ply/">here</a>.
+A precise specification of those formats is available <a href="https://paulbourke.net/dataformats/ply/">here</a>.
 
 <table class="iotable">
   <tr>
@@ -327,7 +327,7 @@ of its coordinates and other properties. Only coordinates and normals are curren
 The `GOCAD` format, using the file extension `.ts`, is an \ascii file format
 that enables a range of primitive types to be imported into the GOCAD package.
 
-A precise specification of the format is available <a href="http://paulbourke.net/dataformats/gocad/gocad.pdf"> here</a>.
+A precise specification of the format is available <a href="https://paulbourke.net/dataformats/gocad/gocad.pdf"> here</a>.
 
 <table class="iotable">
   <tr>
@@ -370,7 +370,7 @@ The `3MF`, using the file extension `.3mf`, is an open source file format create
 It is an XML-based format that aims to enhance the \ref IOStreamSTL by adding means to include
 extra information such as colors.
 
-A precise specification of the format is available at <a href="https://3mf.io/specification/">3mf.io</a>;
+A precise specification of the format is available at <a href="https://3mf.io/3mf-specification/">3mf.io</a>;
 note that only versions `1.x` are currently supported in \cgal.
 
 <table class="iotable">
@@ -495,7 +495,7 @@ A precise specification of the format is available
 The Medit format, using file extension `.mesh`, is a format used by the Medit software.
 In \cgal, it is used to represent 3D meshes.
 
-A precise specification of the format is available <a href="https://hal.inria.fr/inria-00069921/document">in this report</a>,
+A precise specification of the format is available <a href="https://inria.hal.science/inria-00069921/document">in this report</a>,
 in the appendices (section 7.2.1, page 36).
 
 Only the `CGAL::Mesh_complex_3_in_triangulation_3` \cgal data structure can be exported into `.mesh`

@@ -151,8 +151,8 @@ public :
     pen.setWidth(0);
     painter->setPen(pen);
     painter->setBrush(brush);
-    std::optional<SMesh::Property_map<halfedge_descriptor, float>> u;
-    std::optional<SMesh::Property_map<halfedge_descriptor, float>> v;
+    SMesh::Property_map<halfedge_descriptor, float> u;
+    SMesh::Property_map<halfedge_descriptor, float> v;
 
     u = graph->add_property_map<halfedge_descriptor, float>
         ("h:u", 0.0f).first;
@@ -167,11 +167,11 @@ public :
       boost::graph_traits<SMesh>::face_descriptor f(*fi);
       QPointF points[3];
       boost::graph_traits<SMesh>::halfedge_descriptor h = halfedge(f, *graph);;
-      points[0] = QPointF(get(*u, h), -get(*v, h));
+      points[0] = QPointF(get(u, h), -get(v, h));
       h = next(halfedge(f, *graph), *graph);
-      points[1] = QPointF(get(*u, h), -get(*v, h));
+      points[1] = QPointF(get(u, h), -get(v, h));
       h = next(next(halfedge(f, *graph), *graph), *graph);
-      points[2] = QPointF(get(*u, h), -get(*v, h));
+      points[2] = QPointF(get(u, h), -get(v, h));
       painter->drawPolygon(points,3);
     }
 
@@ -515,7 +515,7 @@ public Q_SLOTS:
           sm->add_property_map<SMesh::Vertex_index, Point_3>("v:uv3").first;
       for(SMesh::Vertex_index v : sm->vertices())
       {
-        uv_map_3.value()[v] = Point_3(uv_map[v][0], uv_map[v]
+        uv_map_3[v] = Point_3(uv_map[v][0], uv_map[v]
             [1], 0);
         if(uv_map[v][0] > xmax)
           xmax = uv_map[v][0];
@@ -582,7 +582,7 @@ public Q_SLOTS:
       }
 
     // build AABB-tree for face location queries
-    Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3.value());
+    Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
 
     visu_item = new Scene_polylines_item;
     connect(visu_item, &Scene_polylines_item::aboutToBeDestroyed, this,
@@ -609,7 +609,7 @@ public Q_SLOTS:
 
         Face_location loc = Surface_mesh_shortest_path::locate(
               Point_3(p_2.x(), p_2.y(), 0),
-              aabb_tree, *sm, uv_map_3.value());
+              aabb_tree, *sm, uv_map_3);
         visu_item->polylines.back().push_back(
               Surface_mesh_shortest_path::point(loc.first, loc.second,  *sm, sm->points()));
       }
@@ -630,8 +630,12 @@ public Q_SLOTS:
       {
         component->insert(*bfit);
       }
-      auto umap = sm->add_property_map<halfedge_descriptor, float>("h:u", 0.0f).first;
-      auto vmap = sm->add_property_map<halfedge_descriptor, float>("h:v", 0.0f).first;
+      SMesh::Property_map<halfedge_descriptor, float> umap;
+      SMesh::Property_map<halfedge_descriptor, float> vmap;
+      umap = sm->add_property_map<halfedge_descriptor, float>
+        ("h:u", 0.0f).first;
+      vmap = sm->add_property_map<halfedge_descriptor, float>
+        ("h:v", 0.0f).first;
       SMesh::Halfedge_iterator it;
       SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
           sm->property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
@@ -882,7 +886,7 @@ private:
                           TriangleMesh& tm)
   {
 
-    Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3.value());
+    Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
     typedef std::map<typename CDT::Vertex_handle, vertex_descriptor> Map;
@@ -903,7 +907,7 @@ private:
           const EPICK::Point_2& pt=fit->vertex(i)->point();
           Face_location loc = Surface_mesh_shortest_path::locate(
                 Point_3(pt.x(), pt.y(), 0),
-                aabb_tree, *sm, uv_map_3.value());
+                aabb_tree, *sm, uv_map_3);
           it->second = add_vertex(Surface_mesh_shortest_path::point(loc.first, loc.second,
                                                                     *sm, sm->points()), tm);
         }
@@ -951,7 +955,7 @@ private:
   EPICK::Vector_2 translation;
   EPICK::Aff_transformation_2 transfo;
   std::vector<std::vector<EPICK::Point_2> > polylines;
-  std::optional<SMesh::Property_map<SMesh::Vertex_index, Point_3>> uv_map_3;
+  SMesh::Property_map<SMesh::Vertex_index, Point_3> uv_map_3;
   SMesh* sm;
   float xmin, xmax, ymin, ymax;
   int pointsize;

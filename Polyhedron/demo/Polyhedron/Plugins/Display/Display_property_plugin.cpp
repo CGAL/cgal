@@ -616,9 +616,11 @@ private:
       return;
 
     // Here we only target the property maps added by this plugin, so 'double' is fine
-    auto property = sm->get_property_map<face_descriptor, double>(property_name);
-    if(property)
-      sm->remove_property_map(property.value());
+    SMesh::Property_map<face_descriptor, double> property;
+    bool found;
+    std::tie(property, found) = sm->property_map<face_descriptor, double>(property_name);
+    if(found)
+      sm->remove_property_map(property);
   }
 
   void removeDisplayPluginProperties(Scene_item* item)
@@ -667,14 +669,18 @@ private:
                                       return sector_angle;
                                     };
 
-    auto [fangle, fangle_created] = sm->add_property_map<face_descriptor, double>(
-      (extremum == MIN_VALUE ? "f:display_plugin_smallest_angle" : "f:display_plugin_largest_angle"), 0
-    );
+    bool not_initialized;
+    SMesh::Property_map<face_descriptor, double> fangle;
+
+    if(extremum == MIN_VALUE)
+      std::tie(fangle, not_initialized) = sm->add_property_map<face_descriptor, double>("f:display_plugin_smallest_angle", 0);
+    else
+      std::tie(fangle, not_initialized) = sm->add_property_map<face_descriptor, double>("f:display_plugin_largest_angle", 0);
 
     SMesh& mesh = *sm;
     auto vpm = get(boost::vertex_point, mesh);
 
-    if(fangle_created)
+    if(not_initialized)
     {
       for(face_descriptor f : faces(mesh))
       {
@@ -747,9 +753,11 @@ private:
     if(sm == nullptr)
       return;
 
-    auto [fjacobian, fjacobian_created] = sm->add_property_map<face_descriptor, double>("f:display_plugin_scaled_jacobian", 0);
+    bool not_initialized;
+    SMesh::Property_map<face_descriptor, double> fjacobian;
+    std::tie(fjacobian, not_initialized) = sm->add_property_map<face_descriptor, double>("f:display_plugin_scaled_jacobian", 0);
 
-    if(fjacobian_created)
+    if(not_initialized)
     {
       for(face_descriptor f : faces(*sm))
         fjacobian[f] = scaled_jacobian(f, *sm);
@@ -788,9 +796,11 @@ private:
     if(sm == nullptr)
       return;
 
-    auto [farea, farea_created] = sm->add_property_map<face_descriptor, double>("f:display_plugin_area", 0);
+    bool not_initialized;
+    SMesh::Property_map<face_descriptor, double> farea;
+    std::tie(farea, not_initialized) = sm->add_property_map<face_descriptor, double>("f:display_plugin_area", 0);
 
-    if(farea_created)
+    if(not_initialized)
     {
       for(face_descriptor f : faces(*sm))
         farea[f] = area(f, *sm);
@@ -1328,26 +1338,26 @@ call_on_PS_property(const std::string& name,
                     const Point_set& ps,
                     const Functor& functor) const
 {
-  if(ps.template property_map<std::int8_t>(name))
-    return functor(ps.template property_map<std::int8_t>(name).value());
-  else if(ps.template property_map<std::uint8_t>(name))
-    return functor(ps.template property_map<std::uint8_t>(name).value());
-  else if(ps.template property_map<std::int16_t>(name))
-    return functor(ps.template property_map<std::int16_t>(name).value());
-  else if(ps.template property_map<std::uint16_t>(name))
-    return functor(ps.template property_map<std::uint16_t>(name).value());
-  else if(ps.template property_map<std::int32_t>(name))
-    return functor(ps.template property_map<std::int32_t>(name).value());
-  else if(ps.template property_map<std::uint32_t>(name))
-    return functor(ps.template property_map<std::uint32_t>(name).value());
-  else if(ps.template property_map<std::int64_t>(name))
-    return functor(ps.template property_map<std::int64_t>(name).value());
-  else if(ps.template property_map<std::uint64_t>(name))
-    return functor(ps.template property_map<std::uint64_t>(name).value());
-  else if(ps.template property_map<float>(name))
-    return functor(ps.template property_map<float>(name).value());
-  else if(ps.template property_map<double>(name))
-    return functor(ps.template property_map<double>(name).value());
+  if(ps.template property_map<std::int8_t>(name).second)
+    return functor(ps.template property_map<std::int8_t>(name).first);
+  else if(ps.template property_map<std::uint8_t>(name).second)
+    return functor(ps.template property_map<std::uint8_t>(name).first);
+  else if(ps.template property_map<std::int16_t>(name).second)
+    return functor(ps.template property_map<std::int16_t>(name).first);
+  else if(ps.template property_map<std::uint16_t>(name).second)
+    return functor(ps.template property_map<std::uint16_t>(name).first);
+  else if(ps.template property_map<std::int32_t>(name).second)
+    return functor(ps.template property_map<std::int32_t>(name).first);
+  else if(ps.template property_map<std::uint32_t>(name).second)
+    return functor(ps.template property_map<std::uint32_t>(name).first);
+  else if(ps.template property_map<std::int64_t>(name).second)
+    return functor(ps.template property_map<std::int64_t>(name).first);
+  else if(ps.template property_map<std::uint64_t>(name).second)
+    return functor(ps.template property_map<std::uint64_t>(name).first);
+  else if(ps.template property_map<float>(name).second)
+    return functor(ps.template property_map<float>(name).first);
+  else if(ps.template property_map<double>(name).second)
+    return functor(ps.template property_map<double>(name).first);
 
   return false;
 }

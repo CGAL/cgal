@@ -18,7 +18,7 @@
 
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/Property_container.h>
+#include <CGAL/Surface_mesh/Properties.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
@@ -59,7 +59,7 @@ namespace CGAL {
     class SM_Index
     {
     public:
-        typedef std::uint32_t size_type;
+    typedef std::uint32_t size_type;
         /// Constructor. %Default construction creates an invalid index.
         /// We write -1, which is <a href="https://en.cppreference.com/w/cpp/types/numeric_limits">
         /// <tt>(std::numeric_limits<size_type>::max)()</tt></a>
@@ -238,10 +238,9 @@ namespace CGAL {
     class SM_Edge_index
     {
     public:
-        // todo: why does Edge_index use a different size type from other indices?
-        typedef std::size_t size_type;
+        typedef std::uint32_t size_type;
 
-        SM_Edge_index() = default;
+        SM_Edge_index() : halfedge_((std::numeric_limits<size_type>::max)()) { }
 
         explicit SM_Edge_index(size_type idx) : halfedge_(idx * 2) { }
 
@@ -310,7 +309,7 @@ namespace CGAL {
         }
 
     private:
-        SM_Halfedge_index halfedge_{};
+        SM_Halfedge_index halfedge_;
     };
 #endif
 
@@ -341,15 +340,19 @@ class Surface_mesh
 public:
 
 #ifndef DOXYGEN_RUNNING
-  template <typename I>
-  using Property_container = Properties::Property_container<I>;
+  template <class I, class T>
+  struct Property_map : Properties::Property_map_base<I, T, Property_map<I, T> >
+  {
+    typedef Properties::Property_map_base<I, T, Property_map<I, T> > Base;
+    typedef typename Base::reference reference;
+    Property_map() = default;
+    Property_map(const Base& pm): Base(pm) {}
+  };
 
-  template <typename I, typename T>
-  using Property_array = Properties::Property_array<I, T>;
-
-  template <typename I, typename T>
-  using Property_map = Properties::Property_array_handle<I, T>;
-
+  template <typename Key, typename T>
+  struct Get_property_map {
+    typedef Property_map<Key, T> type;
+  };
 #endif // DOXYGEN_RUNNING
 
     /// \name Basic Types
@@ -903,39 +906,10 @@ public:
     ///@{
 
     /// %Default constructor.
-    Surface_mesh() :
-      vconn_(vprops_.add_property<Vertex_connectivity>("v:connectivity")),
-      hconn_(hprops_.add_property<Halfedge_connectivity>("h:connectivity")),
-      fconn_(fprops_.add_property<Face_connectivity>("f:connectivity")),
-      vpoint_(vprops_.add_property<Point>("v:point")),
-      vremoved_(vprops_.add_property<bool>("v:removed")),
-      eremoved_(eprops_.add_property<bool>("e:removed")),
-      fremoved_(fprops_.add_property<bool>("f:removed")),
-      anonymous_property_(0) {}
+    Surface_mesh();
 
     /// Copy constructor: copies `rhs` to `*this`. Performs a deep copy of all properties.
-    Surface_mesh(const Surface_mesh& rhs) :
-      vprops_(rhs.vprops_)
-      , hprops_(rhs.hprops_)
-      , fprops_(rhs.fprops_)
-      , eprops_(rhs.eprops_)
-      , vpoint_(vprops_.get_property<Point>("v:point"))
-      , vconn_(vprops_.get_property<Vertex_connectivity>("v:connectivity"))
-      , hconn_(hprops_.get_property<Halfedge_connectivity>("h:connectivity"))
-      , fconn_(fprops_.get_property<Face_connectivity>("f:connectivity"))
-      , vremoved_(vprops_.get_property<bool>("v:removed"))
-      , eremoved_(eprops_.get_property<bool>("e:removed"))
-      , fremoved_(fprops_.get_property<bool>("f:removed"))
-      , removed_vertices_(rhs.removed_vertices_)
-      , removed_edges_(rhs.removed_edges_)
-      , removed_faces_(rhs.removed_faces_)
-      , vertices_freelist_(rhs.vertices_freelist_)
-      , edges_freelist_(rhs.edges_freelist_)
-      , faces_freelist_(rhs.faces_freelist_)
-      , garbage_(rhs.garbage_)
-      , recycle_(rhs.recycle_)
-      , anonymous_property_(rhs.anonymous_property_)
-    {}
+    Surface_mesh(const Surface_mesh& rhs) { *this = rhs; }
 
     /// Move constructor.
     Surface_mesh(Surface_mesh&& sm)
@@ -943,13 +917,13 @@ public:
       , hprops_(std::move(sm.hprops_))
       , eprops_(std::move(sm.eprops_))
       , fprops_(std::move(sm.fprops_))
-      , vpoint_(vprops_.get_property<Point>("v:point"))
-      , vconn_(vprops_.get_property<Vertex_connectivity>("v:connectivity"))
-      , hconn_(hprops_.get_property<Halfedge_connectivity>("h:connectivity"))
-      , fconn_(fprops_.get_property<Face_connectivity>("f:connectivity"))
-      , vremoved_(vprops_.get_property<bool>("v:removed"))
-      , eremoved_(eprops_.get_property<bool>("e:removed"))
-      , fremoved_(fprops_.get_property<bool>("f:removed"))
+      , vconn_(std::move(sm.vconn_))
+      , hconn_(std::move(sm.hconn_))
+      , fconn_(std::move(sm.fconn_))
+      , vremoved_(std::move(sm.vremoved_))
+      , eremoved_(std::move(sm.eremoved_))
+      , fremoved_(std::move(sm.fremoved_))
+      , vpoint_(std::move(sm.vpoint_))
       , removed_vertices_(std::exchange(sm.removed_vertices_, 0))
       , removed_edges_(std::exchange(sm.removed_edges_, 0))
       , removed_faces_(std::exchange(sm.removed_faces_, 0))
@@ -967,13 +941,31 @@ public:
     /// move assignment
     Surface_mesh& operator=(Surface_mesh&& sm)
     {
-      // Moving properties also moves their contents without invalidating references
       vprops_ = std::move(sm.vprops_);
       hprops_ = std::move(sm.hprops_);
       eprops_ = std::move(sm.eprops_);
       fprops_ = std::move(sm.fprops_);
+      vconn_ = std::move(sm.vconn_);
+      hconn_ = std::move(sm.hconn_);
+      fconn_ = std::move(sm.fconn_);
+      vremoved_ = std::move(sm.vremoved_);
+      eremoved_ = std::move(sm.eremoved_);
+      fremoved_ = std::move(sm.fremoved_);
+      vpoint_ = std::move(sm.vpoint_);
+      removed_vertices_ = std::exchange(sm.removed_vertices_, 0);
+      removed_edges_ = std::exchange(sm.removed_edges_, 0);
+      removed_faces_ = std::exchange(sm.removed_faces_, 0);
+      vertices_freelist_ = std::exchange(sm.vertices_freelist_, (std::numeric_limits<size_type>::max)());
+      edges_freelist_ = std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)());
+      faces_freelist_ = std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)());
+      garbage_ = std::exchange(sm.garbage_, false);
+      recycle_ = std::exchange(sm.recycle_, true);
+      anonymous_property_ = std::exchange(sm.anonymous_property_, 0);
       return *this;
     }
+
+    /// assigns `rhs` to `*this`. Does not copy custom properties.
+    Surface_mesh& assign(const Surface_mesh& rhs);
 
     ///@}
 
@@ -994,7 +986,8 @@ public:
         vprops_.reset(Vertex_index(idx));
         return Vertex_index(idx);
       } else {
-        return Vertex_index(vprops_.emplace_back());
+        vprops_.push_back();
+        return Vertex_index(num_vertices()-1);
       }
     }
 
@@ -1027,8 +1020,11 @@ public:
         eprops_.reset(Edge_index(Halfedge_index(idx)));
         return Halfedge_index(idx);
       } else {
-        eprops_.emplace_back();
-        return Halfedge_index(hprops_.emplace_group_back(2));
+        eprops_.push_back();
+        hprops_.push_back();
+        hprops_.push_back();
+
+        return Halfedge_index(num_halfedges()-2);
       }
     }
 
@@ -1061,7 +1057,8 @@ public:
         fremoved_[Face_index(idx)] = false;
         return Face_index(idx);
       } else {
-        return Face_index(fprops_.emplace_back());
+        fprops_.push_back();
+        return Face_index(num_faces()-1);
       }
     }
 
@@ -1179,25 +1176,12 @@ public:
   }
 
   /// removes all vertices, halfedge, edges and faces. Collects garbage but keeps all property maps.
-  void clear_without_removing_property_maps()
-  {
-    vprops_.reserve(0);
-    hprops_.reserve(0);
-    eprops_.reserve(0);
-    fprops_.reserve(0);
-  }
+  void clear_without_removing_property_maps();
 
     /// removes all vertices, halfedge, edges and faces. Collects garbage and removes all property maps added by a call to `add_property_map()` for all simplex types.
     ///
     /// After calling this method, the object is the same as a newly constructed object. The additional property maps are also removed and must thus be re-added if needed.
-    void clear()
-    {
-      clear_without_removing_property_maps();
-      vprops_.remove_all_properties_except({"v:connectivity", "v:point"});
-      hprops_.remove_all_properties_except({"h:connectivity"});
-      fprops_.remove_all_properties_except({"f:connectivity"});
-      eprops_.remove_all_properties_except({});
-    }
+    void clear();
 
 
     /// reserves space for vertices, halfedges, edges, faces, and their currently
@@ -1228,15 +1212,17 @@ public:
   /// the copied simplices get the default value of the property.
   bool join(const Surface_mesh& other)
   {
-
-    // Record the original sizes of the property maps
-    const size_type nv = number_of_vertices(), nh = number_of_halfedges(), nf = number_of_faces();
+    // increase capacity
+    const size_type nv = num_vertices(), nh = num_halfedges(), nf = num_faces();
+    resize(num_vertices()+  other.num_vertices(),
+            num_edges()+  other.num_edges(),
+            num_faces()+  other.num_faces());
 
     // append properties in the free space created by resize
-    vprops_.append(other.vprops_);
-    hprops_.append(other.hprops_);
-    fprops_.append(other.fprops_);
-    eprops_.append(other.eprops_);
+    vprops_.transfer(other.vprops_);
+    hprops_.transfer(other.hprops_);
+    fprops_.transfer(other.fprops_);
+    eprops_.transfer(other.eprops_);
 
     // translate halfedge index in vertex -> halfedge
     for(size_type i = nv; i < nv+other.num_vertices(); i++){
@@ -1416,10 +1402,10 @@ public:
     /// upon addition of new elements.
     /// When set to `true` (default value), new elements are first picked in the garbage (if any)
     /// while if set to `false` only new elements are created.
-    void set_recycle_garbage(bool b) { recycle_ = b; }
+    void set_recycle_garbage(bool b);
 
     /// Getter
-    bool does_recycle_garbage() const { return recycle_; }
+    bool does_recycle_garbage() const;
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// removes unused memory from vectors. This shrinks the storage
@@ -2004,30 +1990,48 @@ public:
 
 private: //--------------------------------------------------- property handling
 
-  template <typename Index>
-  Property_container<Index>& get_property_container() {
-    if constexpr (std::is_same_v<Index, Vertex_index>)
-      return vprops_;
-    if constexpr (std::is_same_v<Index, Halfedge_index>)
-      return hprops_;
-    if constexpr (std::is_same_v<Index, Edge_index>)
-      return eprops_;
-    if constexpr (std::is_same_v<Index, Face_index>)
-      return fprops_;
-  }
+  // Property_selector maps an index type to a property_container, the
+  // dummy is necessary to make it a partial specialization (full
+  // specializations are only allowed at namespace scope).
+  template<typename, bool = true>
+  struct Property_selector {};
 
-  template <typename Index>
-  const Property_container<Index>& get_property_container() const {
-    if constexpr (std::is_same_v<Index, Vertex_index>)
-      return vprops_;
-    if constexpr (std::is_same_v<Index, Halfedge_index>)
-      return hprops_;
-    if constexpr (std::is_same_v<Index, Edge_index>)
-      return eprops_;
-    if constexpr (std::is_same_v<Index, Face_index>)
-      return fprops_;
-  }
-
+  template<bool dummy>
+  struct Property_selector<typename CGAL::Surface_mesh<P>::Vertex_index, dummy> {
+    CGAL::Surface_mesh<P>* m_;
+    Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
+    Properties::Property_container<Self,
+                                   typename CGAL::Surface_mesh<P>::Vertex_index>&
+    operator()() { return m_->vprops_; }
+    void resize_property_array() { m_->vprops_.resize_property_array(3); }
+  };
+  template<bool dummy>
+  struct Property_selector<typename CGAL::Surface_mesh<P>::Halfedge_index, dummy> {
+    CGAL::Surface_mesh<P>* m_;
+    Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
+    Properties::Property_container<Self,
+                                   typename CGAL::Surface_mesh<P>::Halfedge_index>&
+    operator()() { return m_->hprops_; }
+    void resize_property_array() { m_->hprops_.resize_property_array(1); }
+  };
+  template<bool dummy>
+  struct Property_selector<typename CGAL::Surface_mesh<P>::Edge_index, dummy> {
+    CGAL::Surface_mesh<P>* m_;
+    Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
+    Properties::Property_container<Self,
+                                   typename CGAL::Surface_mesh<P>::Edge_index>&
+    operator()() { return m_->eprops_; }
+    void resize_property_array() { m_->eprops_.resize_property_array(1); }
+  };
+  template<bool dummy>
+  struct Property_selector<typename CGAL::Surface_mesh<P>::Face_index, dummy> {
+    CGAL::Surface_mesh<P>* m_;
+    Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
+    Properties::Property_container<Self,
+                                   typename CGAL::Surface_mesh<P>::Face_index>&
+    operator()() { return m_->fprops_; }
+    void resize_property_array() { m_->fprops_.resize_property_array(2); }
+  };
 
     public:
 
@@ -2056,57 +2060,56 @@ private: //--------------------------------------------------- property handling
     /// for index type `I`. Returns the property map together with a Boolean
     /// that is `true` if a new map was created. In case it already exists
     /// the existing map together with `false` is returned.
+
+
     template<class I, class T>
     std::pair<Property_map<I, T>, bool>
     add_property_map(std::string name=std::string(), const T t=T()) {
       if(name.empty()){
-        // todo: maybe this should be done by the property container itself?
         std::ostringstream oss;
         oss << "anonymous-property-" << anonymous_property_++;
         name = std::string(oss.str());
       }
-      auto [array, created] =
-        const_cast<Surface_mesh<P>*>(this)->get_property_container<I>().template get_or_add_property<T>(name, t);
-      return {{array.get()}, created};
+      return Property_selector<I>(this)().template add<T>(name, t);
     }
 
     /// returns a property map named `name` with key type `I` and value type `T`,
-    /// and a Boolean that is `true` if the property was created.
+    /// and a Boolean that is `true` if the property exists.
+    /// In case it does not exist the Boolean is `false` and the behavior of
+    /// the property map is undefined.
     template <class I, class T>
-    std::pair<Property_map<I, T>, bool>
-    property_map(const std::string& name) const {
-      auto [array, created] =
-        const_cast<Surface_mesh<P>*>(this)->get_property_container<I>().template get_or_add_property<T>(name);
-      return {{array.get()}, created};
-    }
-
-    /// returns a property map named `name` with key type `I` and value type `T`,
-    /// if such a property map exists
-    template <class I, class T>
-    std::optional<Property_map<I, T>>
-    get_property_map(const std::string& name) {
-      auto maybe_property_map = get_property_container<I>().template get_property_if_exists<T>(name);
-      if (!maybe_property_map) return {};
-      else return {{maybe_property_map.value()}};
-    }
-
-    template<class I, class T>
-    std::optional<Property_map<I, T>>
-    get_property_map(const std::string& name) const {
-      auto maybe_property_map = const_cast<Surface_mesh<P>*>(this)->get_property_container<I>().template get_property_if_exists<T>(name);
-      if (!maybe_property_map) return {};
-      else return {{maybe_property_map.value()}};
+    std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
+    {
+      return Property_selector<I>(const_cast<Surface_mesh*>(this))().template get<T>(name);
     }
 
 
     /// removes property map `p`. The memory allocated for that property map is
     /// freed.
-    template <class I, class T>
-    void remove_property_map(Property_map<I, T> p) {
-      // Maybe this could be replaced with removal by name?
-      const_cast<Surface_mesh<P>*>(this)->get_property_container<I>().template remove_property(p.array());
+    template<class I, class T>
+    void remove_property_map(Property_map<I, T>& p)
+    {
+      (Property_selector<I>(this)()).template remove<T>(p);
     }
 
+
+    /// removes all property maps for index type `I` added by a call to `add_property_map<I>()`.
+    /// The memory allocated for those property maps is freed.
+    template<class I>
+    void remove_property_maps()
+    {
+        Property_selector<I>(this).resize_property_array();
+    }
+
+    /// removes all property maps for all index types added by a call to `add_property_map()`.
+    /// The memory allocated for those property maps is freed.
+    void remove_all_property_maps()
+    {
+        remove_property_maps<Vertex_index>();
+        remove_property_maps<Face_index>();
+        remove_property_maps<Edge_index>();
+        remove_property_maps<Halfedge_index>();
+    }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
     /// returns the std::type_info of the value type of the
@@ -2118,7 +2121,7 @@ private: //--------------------------------------------------- property handling
     template<class I>
     const std::type_info& property_type(const std::string& name)
     {
-      return get_property_container<I>().property_type(name);
+      return Property_selector<I>(this)().get_type(name);
     }
     /// @endcond
 
@@ -2127,16 +2130,14 @@ private: //--------------------------------------------------- property handling
     template<class I>
     std::vector<std::string> properties() const
     {
-      return get_property_container<I>().properties();
+      return Property_selector<I>(const_cast<Self*>(this))().properties();
     }
 
     /// returns the property for the string "v:point".
-    // todo: shouldn't this return a const pmap?
-    // In the original version, there was no difference between const & non-const maps
-    Property_array<Vertex_index, Point>&
+    Property_map<Vertex_index, Point>
     points() const { return vpoint_; }
 
-    Property_array<Vertex_index, Point>&
+    Property_map<Vertex_index, Point>&
     points() { return vpoint_; }
 
     /// returns the point associated to vertex `v`.
@@ -2207,31 +2208,30 @@ private: //--------------------------------------------------- helper functions
     void adjust_incoming_halfedge(Vertex_index v);
 
 private: //------------------------------------------------------- private data
+    Properties::Property_container<Self, Vertex_index> vprops_;
+    Properties::Property_container<Self, Halfedge_index> hprops_;
+    Properties::Property_container<Self, Edge_index> eprops_;
+    Properties::Property_container<Self, Face_index> fprops_;
 
-    Property_container<Vertex_index> vprops_;
-    Property_container<Halfedge_index> hprops_;
-    Property_container<Edge_index> eprops_;
-    Property_container<Face_index> fprops_;
+    Property_map<Vertex_index, Vertex_connectivity>      vconn_;
+    Property_map<Halfedge_index, Halfedge_connectivity>  hconn_;
+    Property_map<Face_index, Face_connectivity>          fconn_;
 
-    Property_array<Vertex_index, Vertex_connectivity>& vconn_;
-    Property_array<Halfedge_index, Halfedge_connectivity>& hconn_;
-    Property_array<Face_index, Face_connectivity>& fconn_;
+    Property_map<Vertex_index, bool>  vremoved_;
+    Property_map<Edge_index, bool>    eremoved_;
+    Property_map<Face_index, bool>    fremoved_;
 
-    Property_array<Vertex_index, bool>  &vremoved_;
-    Property_array<Edge_index, bool>    &eremoved_;
-    Property_array<Face_index, bool>    &fremoved_;
+    Property_map<Vertex_index, Point>   vpoint_;
 
-    Property_array<Vertex_index, Point>& vpoint_;
+    size_type removed_vertices_;
+    size_type removed_edges_;
+    size_type removed_faces_;
 
-    size_type removed_vertices_ = 0;
-    size_type removed_edges_ = 0;
-    size_type removed_faces_ = 0;
-
-    size_type vertices_freelist_ = std::numeric_limits<size_type>::max();
-    size_type edges_freelist_ = std::numeric_limits<size_type>::max();
-    size_type faces_freelist_ = std::numeric_limits<size_type>::max();
-    bool garbage_ = false;
-    bool recycle_ = true;
+    size_type vertices_freelist_;
+    size_type edges_freelist_;
+    size_type faces_freelist_;
+    bool garbage_;
+    bool recycle_;
 
     size_type anonymous_property_;
 };
@@ -2280,6 +2280,27 @@ private: //------------------------------------------------------- private data
 
  /*! @} */
 
+template <typename P>
+Surface_mesh<P>::
+Surface_mesh()
+{
+    // allocate standard properties
+    // same list is used in operator=() and assign()
+    vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+    hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+    fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+    vpoint_   = add_property_map<Vertex_index, Point>("v:point").first;
+    vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
+    eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
+    fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
+
+    removed_vertices_ = removed_edges_ = removed_faces_ = 0;
+    vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
+    garbage_ = false;
+    recycle_ = true;
+    anonymous_property_ = 0;
+}
+
 
 //-----------------------------------------------------------------------------
 template <typename P>
@@ -2295,19 +2316,114 @@ operator=(const Surface_mesh<P>& rhs)
         eprops_ = rhs.eprops_;
         fprops_ = rhs.fprops_;
 
-        // Property array refs don't need to be reassigned,
-        // because the deep copy updated the values they point to
-
+        // property handles contain pointers, have to be reassigned
+        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity").first;
+        vremoved_ = property_map<Vertex_index, bool>("v:removed").first;
+        eremoved_ = property_map<Edge_index, bool>("e:removed").first;
+        fremoved_ = property_map<Face_index, bool>("f:removed").first;
+        vpoint_   = property_map<Vertex_index, P>("v:point").first;
 
         // how many elements are removed?
+        removed_vertices_  = rhs.removed_vertices_;
+        removed_edges_     = rhs.removed_edges_;
+        removed_faces_     = rhs.removed_faces_;
         vertices_freelist_ = rhs.vertices_freelist_;
         edges_freelist_    = rhs.edges_freelist_;
         faces_freelist_    = rhs.faces_freelist_;
+        garbage_           = rhs.garbage_;
         recycle_           = rhs.recycle_;
         anonymous_property_ = rhs.anonymous_property_;
     }
 
     return *this;
+}
+
+
+//-----------------------------------------------------------------------------
+template <typename P>
+Surface_mesh<P>&
+Surface_mesh<P>::
+assign(const Surface_mesh<P>& rhs)
+{
+    if (this != &rhs)
+    {
+        // clear properties
+        vprops_.clear();
+        hprops_.clear();
+        eprops_.clear();
+        fprops_.clear();
+
+        // allocate standard properties
+        vconn_    = add_property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
+        hconn_    = add_property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
+        fconn_    = add_property_map<Face_index, Face_connectivity>("f:connectivity").first;
+        vpoint_   = add_property_map<Vertex_index, P>("v:point").first;
+        vremoved_ = add_property_map<Vertex_index, bool>("v:removed", false).first;
+        eremoved_ = add_property_map<Edge_index, bool>("e:removed", false).first;
+        fremoved_ = add_property_map<Face_index, bool>("f:removed", false).first;
+
+        // copy properties from other mesh
+        vconn_.array()     = rhs.vconn_.array();
+        hconn_.array()     = rhs.hconn_.array();
+        fconn_.array()     = rhs.fconn_.array();
+        vpoint_.array()    = rhs.vpoint_.array();
+        vremoved_.array()  = rhs.vremoved_.array();
+        eremoved_.array()  = rhs.eremoved_.array();
+        fremoved_.array()  = rhs.fremoved_.array();
+
+        // resize (needed by property containers)
+        vprops_.resize(rhs.num_vertices());
+        hprops_.resize(rhs.num_halfedges());
+        eprops_.resize(rhs.num_edges());
+        fprops_.resize(rhs.num_faces());
+
+        // how many elements are removed?
+        removed_vertices_  = rhs.removed_vertices_;
+        removed_edges_     = rhs.removed_edges_;
+        removed_faces_     = rhs.removed_faces_;
+        vertices_freelist_ = rhs.vertices_freelist_;
+        edges_freelist_    = rhs.edges_freelist_;
+        faces_freelist_    = rhs.faces_freelist_;
+        garbage_           = rhs.garbage_;
+        recycle_           = rhs.recycle_;
+        anonymous_property_ = rhs.anonymous_property_;
+    }
+
+    return *this;
+}
+
+//-----------------------------------------------------------------------------
+template <typename P>
+void
+Surface_mesh<P>::
+clear()
+{
+  clear_without_removing_property_maps();
+  remove_all_property_maps();
+}
+
+template <typename P>
+void
+Surface_mesh<P>::
+clear_without_removing_property_maps()
+{
+  vprops_.resize(0);
+  hprops_.resize(0);
+  eprops_.resize(0);
+  fprops_.resize(0);
+
+  vprops_.shrink_to_fit();
+  hprops_.shrink_to_fit();
+  eprops_.shrink_to_fit();
+  fprops_.shrink_to_fit();
+
+  removed_vertices_ = removed_edges_ = removed_faces_ = 0;
+  vertices_freelist_ = edges_freelist_ = faces_freelist_ = (std::numeric_limits<size_type>::max)();
+  garbage_ = false;
+  recycle_ = true;
+  anonymous_property_ = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -2464,7 +2580,7 @@ collect_garbage(Visitor &visitor)
       return;
     }
 
-    std::uint32_t i, i0, i1,
+    int  i, i0, i1,
     nV(num_vertices()),
     nE(num_edges()),
     nH(num_halfedges()),
@@ -2521,9 +2637,9 @@ collect_garbage(Visitor &visitor)
             if (i0 >= i1) break;
 
             // swap
-            eprops_.swap(SM_Edge_index{i0}, SM_Edge_index{i1});
-            hprops_.swap(SM_Halfedge_index{2*i0},   SM_Halfedge_index{2*i1});
-            hprops_.swap(SM_Halfedge_index{2*i0+1}, SM_Halfedge_index{2*i1+1});
+            eprops_.swap(i0, i1);
+            hprops_.swap(2*i0,   2*i1);
+            hprops_.swap(2*i0+1, 2*i1+1);
         };
 
         // remember new size
@@ -2545,7 +2661,7 @@ collect_garbage(Visitor &visitor)
             if (i0 >= i1) break;
 
             // swap
-            fprops_.swap(SM_Face_index{i0}, SM_Face_index{i1});
+            fprops_.swap(i0, i1);
         };
 
         // remember new size
@@ -2617,6 +2733,25 @@ collect_garbage()
   collect_garbage_internal::Dummy_visitor visitor;
   collect_garbage(visitor);
 }
+
+
+template <typename P>
+void
+Surface_mesh<P>::
+set_recycle_garbage(bool b)
+{
+  recycle_ = b;
+}
+
+
+template <typename P>
+bool
+Surface_mesh<P>::
+does_recycle_garbage() const
+{
+  return recycle_;
+}
+
 
 namespace internal{
   namespace handle {

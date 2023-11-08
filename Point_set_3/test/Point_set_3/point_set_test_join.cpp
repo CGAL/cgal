@@ -30,7 +30,9 @@ void test (bool expr, const char* msg)
 void print_point_set (const Point_set& ps, const char* msg)
 
 {
-  auto intensity = ps.property_map<int>("intensity");
+  Point_set::Property_map<int> intensity;
+  bool has_intensity;
+  boost::tie (intensity, has_intensity) = ps.property_map<int>("intensity");
 
   std::cerr << msg << std::endl;
   for (Point_set::const_iterator it = ps.begin(); it != ps.end(); ++ it)
@@ -38,8 +40,8 @@ void print_point_set (const Point_set& ps, const char* msg)
     std::cerr << *it << ": " << ps.point(*it);
     if (ps.has_normal_map())
       std::cerr << ", normal " << ps.normal(*it);
-    if (intensity.has_value())
-      std::cerr << ", intensity " << intensity.value()[*it];
+    if (has_intensity)
+      std::cerr << ", intensity " << intensity[*it];
     std::cerr << std::endl;
   }
 }
@@ -68,7 +70,10 @@ int main (int, char**)
   Point_set ps3;
   ps3.add_normal_map();
 
-  auto [intensity, okay] = ps3.add_property_map<int>("intensity", 0);
+  Point_set::Property_map<int> intensity;
+  bool okay;
+
+  boost::tie (intensity, okay) = ps3.add_property_map<int>("intensity", 0);
   assert (okay);
 
   Point_set::iterator it = ps3.insert (Point (double(0), double(1), double(2)),
