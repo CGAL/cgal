@@ -151,7 +151,7 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
                          get_property_map(CGAL::vertex_point, pmesh));
 
   // get curvature related parameters
-  const typename VPCDM vpcd_map =
+  const VPCDM vpcd_map =
     choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map),
       Default_principal_map());
 
@@ -178,8 +178,8 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
           Principal_curvatures_and_directions<GT> pcd;
           pcd.min_curvature = 0;
           pcd.max_curvature = 0;
-          pcd.min_direction = GT::Vector_3(0, 0, 0);
-          pcd.max_direction = GT::Vector_3(0, 0, 0);
+          pcd.min_direction = typename GT::Vector_3(0, 0, 0);
+          pcd.max_direction = typename GT::Vector_3(0, 0, 0);
           for (Halfedge_descriptor hd : halfedges_around_target(vd, pmesh))
           {
             Vertex_descriptor v1 = source(hd, pmesh);
@@ -240,7 +240,7 @@ std::pair<
 
   // get curvature related parameters
   const typename GT::FT gradation_factor = choose_parameter(get_parameter(np, internal_np::gradation_factor), 0);
-  const typename Vertex_principal_curvatures_and_directions_map vpcd_map =
+  const Vertex_principal_curvatures_and_directions_map vpcd_map =
     choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map),
       Default_principal_map());
 
