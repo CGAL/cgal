@@ -32,9 +32,6 @@
 
 #include <CGAL/subdivision_method_3.h>
 
-#include <CGAL/Point_set_3/IO.h>
-#include <CGAL/Point_set_3.h>
-
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
 
@@ -332,20 +329,15 @@ std::pair<
     is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
     interpolated_corrected_principal_curvatures_and_directions(pmesh, vpcd_map);
 
-
-  // TODO: handle cases where the mesh is not a triangle mesh
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
   // TODO: copy the mesh in order to not modify the original mesh
   //PolygonMesh pmesh = pmesh_org;
   int nb_vertices = num_vertices(pmesh);
 
-  // To provide the functionality remeshing (not just simplification), we might need to
-  // subdivide the mesh before clustering
-  // in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-  // do the following while nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-  // That is, because the subdivision steps heuristic is not 100% guaranteed to produce
-  // the desired number of vertices.
+  // For remeshing, we might need to subdivide the mesh before clustering
+  // This shoould always hold: nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+  // So do the following till the condition is met
   while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
   {
     double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
@@ -418,6 +410,7 @@ std::pair<
       put(vertex_weight_pmap, vd, 1.0 / CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg);
   }
 
+  // randomly initialize clusters
   for (int ci = 0; ci < nb_clusters; ci++)
   {
     int vi;
@@ -436,9 +429,9 @@ std::pair<
       clusters_edges_active.push(hd);
   }
 
+  // the energy minimization loop (clustering loop)
   int nb_modifications = 0;
   int nb_disconnected = 0;
-
   do
   {
     nb_disconnected = 0;
@@ -561,28 +554,23 @@ std::pair<
       clusters_edges_active.swap(clusters_edges_new);
     } while (nb_modifications > 0);
 
-    // clean clusters here
-    // the goal is to delete clusters with multiple connected components
-    // for each cluster, do a BFS from a vertex in the cluster
-    // we need to keep the largest connected component for each cluster
-    // and set the other connected components to -1 (empty cluster), would also need to update clusters_edges_new
+    // Disconnected clusters handling
+    // the goal is to delete clusters with multiple connected components and only keep the largest connected component of each cluster
+    // For each cluster, do a BFS from a vertex in the cluster
 
     std::vector<std::vector<std::vector<Vertex_descriptor>>> cluster_components(nb_clusters, std::vector<std::vector<Vertex_descriptor>>());
-
     std::queue<Vertex_descriptor> vertex_queue;
 
-    // loop over vertices
+    // loop over vertices to compute cluster components
     for (Vertex_descriptor vd : vertices(pmesh))
     {
       if (get(vertex_visited_pmap, vd)) continue;
       int c = get(vertex_cluster_pmap, vd);
       if (c != -1)
       {
-        // first component of this cluster
         cluster_components[c].push_back(std::vector<Vertex_descriptor>());
         int component_i = cluster_components[c].size() - 1;
 
-        // visited_clusters[c] = true;
         vertex_queue.push(vd);
         put(vertex_visited_pmap, vd, true);
         while (!vertex_queue.empty())
@@ -605,7 +593,7 @@ std::pair<
       }
     }
 
-    // loop over clusters
+    // loop over clusters to delete disconnected components except the largest one
     for (int c = 0; c < nb_clusters; c++)
     {
       if (cluster_components[c].size() <= 1) continue; // only one component, no need to do anything
@@ -631,7 +619,7 @@ std::pair<
             // remove vd from cluster c
             typename GT::Point_3 vp = get(vpm, vd);
             typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
-            clusters[c].remove_vertex(vpv, get(vertex_weight_pmap, vd));
+            clusters[c].remove_vertex(vpv, get(vertex_weight_pmap, vd), get(vertex_qem_pmap, vd));
             // add all halfedges around v except hi to the queue
             for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
             {
@@ -668,11 +656,11 @@ std::pair<
   /// Construct new Mesh
   std::vector<int> valid_cluster_map(nb_clusters, -1);
   std::vector<typename GT::Point_3> points;
-  Point_set_3<typename GT::Point_3> point_set;
 
   std::vector<std::vector<int>> polygons;
   PolygonMesh simplified_mesh;
 
+  // create a point for each cluster
   for (int i = 0; i < nb_clusters; i++)
   {
     if (clusters[i].weight_sum > 0)
@@ -681,7 +669,6 @@ std::pair<
       typename GT::Vector_3 center_v = clusters[i].compute_centroid();
       typename GT::Point_3 center_p(center_v.x(), center_v.y(), center_v.z());
       points.push_back(center_p);
-      point_set.insert(center_p);
     }
   }
 
@@ -700,7 +687,6 @@ std::pair<
     {
       // 1- get the target and source vertices vt, vs
       // 2- if the target and source vertices are in different clusters, create a new vertex vb between them vb = (vt + vs) / 2
-      // it is also added to the point_set
       // 3- make a new face with the new vertex vb and the centers of the clusters of vt and vs
       // 4- also make a new face with vb, the next vb, and the center of the cluster of vt
 
@@ -721,7 +707,6 @@ std::pair<
         typename GT::Point_3 vb_p(vb_v.x(), vb_v.y(), vb_v.z());
 
         points.push_back(vb_p);
-        point_set.insert(vb_p);
 
         int cb = points.size() - 1;
 
@@ -746,6 +731,7 @@ std::pair<
     polygons[polygons.size() - 1][2] = cb_first;
   }
 
+  // create a triangle for each face with all vertices in 3 different clusters
   for (Face_descriptor fd : faces(pmesh))
   {
     Halfedge_descriptor hd1 = halfedge(fd, pmesh);
@@ -775,7 +761,8 @@ std::pair<
   return std::make_pair(points, polygons);
 }
 
-
+/// QEM  is WIP (TODO)
+/// Also, TODO, need to break down both functions for modularity and DRY
 template <typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 std::pair<
@@ -819,20 +806,16 @@ std::pair<
     is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
     interpolated_corrected_principal_curvatures_and_directions(pmesh, vpcd_map);
 
-
-  // TODO: handle cases where the mesh is not a triangle mesh
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
   // TODO: copy the mesh in order to not modify the original mesh
   //PolygonMesh pmesh = pmesh_org;
+
   int nb_vertices = num_vertices(pmesh);
 
-  // To provide the functionality remeshing (not just simplification), we might need to
-  // subdivide the mesh before clustering
-  // in either case, nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-  // do the following while nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
-  // That is, because the subdivision steps heuristic is not 100% guaranteed to produce
-  // the desired number of vertices.
+  // For remeshing, we might need to subdivide the mesh before clustering
+  // This shoould always hold: nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+  // So do the following till the condition is met
   while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
   {
     double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
@@ -928,6 +911,7 @@ std::pair<
       put(vertex_weight_pmap, vd, 1.0 / CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg);
   }
 
+  // randomly initialize clusters
   for (int ci = 0; ci < nb_clusters; ci++)
   {
     int vi;
@@ -946,9 +930,9 @@ std::pair<
       clusters_edges_active.push(hd);
   }
 
+  // the energy minimization loop (clustering loop)
   int nb_modifications = 0;
   int nb_disconnected = 0;
-
   do
   {
     nb_disconnected = 0;
@@ -1069,28 +1053,23 @@ std::pair<
       clusters_edges_active.swap(clusters_edges_new);
     } while (nb_modifications > 0);
 
-    // clean clusters here
-    // the goal is to delete clusters with multiple connected components
-    // for each cluster, do a BFS from a vertex in the cluster
-    // we need to keep the largest connected component for each cluster
-    // and set the other connected components to -1 (empty cluster), would also need to update clusters_edges_new
+    // Disconnected clusters handling
+    // the goal is to delete clusters with multiple connected components and only keep the largest connected component of each cluster
+    // For each cluster, do a BFS from a vertex in the cluster
 
     std::vector<std::vector<std::vector<Vertex_descriptor>>> cluster_components(nb_clusters, std::vector<std::vector<Vertex_descriptor>>());
-
     std::queue<Vertex_descriptor> vertex_queue;
 
-    // loop over vertices
+    // loop over vertices to compute cluster components
     for (Vertex_descriptor vd : vertices(pmesh))
     {
       if (get(vertex_visited_pmap, vd)) continue;
       int c = get(vertex_cluster_pmap, vd);
       if (c != -1)
       {
-        // first component of this cluster
         cluster_components[c].push_back(std::vector<Vertex_descriptor>());
         int component_i = cluster_components[c].size() - 1;
 
-        // visited_clusters[c] = true;
         vertex_queue.push(vd);
         put(vertex_visited_pmap, vd, true);
         while (!vertex_queue.empty())
@@ -1113,7 +1092,7 @@ std::pair<
       }
     }
 
-    // loop over clusters
+    // loop over clusters to delete disconnected components except the largest one
     for (int c = 0; c < nb_clusters; c++)
     {
       if (cluster_components[c].size() <= 1) continue; // only one component, no need to do anything
@@ -1163,6 +1142,7 @@ std::pair<
   std::vector<std::vector<int>> polygons;
   PolygonMesh simplified_mesh;
 
+  // create a point for each cluster
   for (int i = 0; i < nb_clusters; i++)
   {
     if (clusters[i].weight_sum > 0)
@@ -1233,6 +1213,7 @@ std::pair<
     polygons[polygons.size() - 1][2] = cb_first;
   }
 
+  // create a triangle for each face with all vertices in 3 different clusters
   for (Face_descriptor fd : faces(pmesh))
   {
     Halfedge_descriptor hd1 = halfedge(fd, pmesh);
@@ -1414,6 +1395,7 @@ PolygonMesh acvd_isotropic_simplification(
   return simplified_mesh;
 }
 
+/// QEM  is WIP (TODO)
 template <typename PolygonMesh,
   typename NamedParameters = parameters::Default_named_parameters>
   std::pair<
