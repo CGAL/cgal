@@ -1326,7 +1326,7 @@ private:
       // dump_facets_of_cavity(face_index, region_count, "upper", original_facets_of_upper_cavity);
     }
 #endif // CGAL_DEBUG_CDT_3
-    auto register_internal_constrained_facet =
+    auto register_internal_constrained_facet = // @TODO extract this lambda to a fct
         [&](Facet f) {
           const auto [cell, facet_index] = f;
           const auto polygon_contraint_id = cell->face_constraint_index(facet_index);
@@ -1339,16 +1339,18 @@ private:
 #if CGAL_DEBUG_CDT_3 & 128
     std::cerr << "# upper cavity\n";
 #endif // CGAL_DEBUG_CDT_3
-    const auto [upper_cavity_triangulation, vertices_of_upper_cavity, map_upper_cavity_vertices_to_ambient_vertices,
-                facets_of_upper_cavity, interior_constrained_faces_upper, nb_of_added_vertices_upper] =
+    [[maybe_unused]] const auto [upper_cavity_triangulation, vertices_of_upper_cavity,
+                                 map_upper_cavity_vertices_to_ambient_vertices, facets_of_upper_cavity,
+                                 interior_constrained_faces_upper, nb_of_added_vertices_upper] =
         triangulate_cavity(intersecting_cells, original_facets_of_upper_cavity, original_vertices_of_upper_cavity);
     std::for_each(interior_constrained_faces_upper.begin(), interior_constrained_faces_upper.end(),
                   register_internal_constrained_facet);
 #if CGAL_DEBUG_CDT_3 & 128
     std::cerr << "# lower cavity\n";
 #endif // CGAL_DEBUG_CDT_3
-    const auto [lower_cavity_triangulation, vertices_of_lower_cavity, map_lower_cavity_vertices_to_ambient_vertices,
-                facets_of_lower_cavity, interior_constrained_faces_lower, nb_of_added_vertices_lower] =
+    [[maybe_unused]] const auto [lower_cavity_triangulation, vertices_of_lower_cavity,
+                                 map_lower_cavity_vertices_to_ambient_vertices, facets_of_lower_cavity,
+                                 interior_constrained_faces_lower, nb_of_added_vertices_lower] =
         triangulate_cavity(intersecting_cells, original_facets_of_lower_cavity, original_vertices_of_lower_cavity);
     std::for_each(interior_constrained_faces_lower.begin(), interior_constrained_faces_lower.end(),
                   register_internal_constrained_facet);
@@ -1444,7 +1446,8 @@ private:
     fill_outer_map_of_cavity(upper_cavity_triangulation, facets_of_upper_cavity);
 
     auto add_pseudo_cells_to_outer_map = [&](const auto& tr, const auto& map_cavity_vertices_to_ambient_vertices,
-                                             bool is_upper_cavity) {
+                                             bool is_upper_cavity) { // @TODO: comment this piece of code
+                                             // @TODO: this should not be a lambda
       std::vector<std::pair<Cell_handle, CDT_2_face_handle>> pseudo_cells;
       for(auto f : tr.finite_facets()) {
         if(!is_facet_of_polygon(tr, f))
@@ -1550,7 +1553,7 @@ private:
       this->copy_triangulation_into_hole(map_lower_cavity_vertices_to_ambient_vertices, std::move(outer_map), lower_inner_map,
                                          Emptyset_iterator{});
     }
-    for(auto c : intersecting_cells) {
+    for(auto c : intersecting_cells) { // @TODO bug? what about new cells of the extended cavity?
       this->tds().delete_cell(c);
     }
 
@@ -1668,7 +1671,7 @@ private:
 
   auto triangulate_cavity(std::set<Cell_handle> cells_of_cavity,
                           const std::set<Facet>& orig_facets_of_cavity_border,
-                          const std::set<Vertex_handle>& orig_vertices_of_cavity) const ///@TODO: not deterministic
+                          const std::set<Vertex_handle>& orig_vertices_of_cavity) const ///@TODO: not deterministic, without time stamps
   {
     using Vertex_map = T_3::Vertex_handle_unique_hash_map;
     struct {
@@ -1688,11 +1691,11 @@ private:
     auto& map_cavity_vertices_to_ambient_vertices = result.vertices_to_ambient_vertices;
     auto& vertices_of_cavity = result.vertices;
     auto& facets_of_cavity_border = result.facets_of_cavity_border_;
-    CGAL::Unique_hash_map<Vertex_handle, Vertex_handle> vertex_map;
+    CGAL::Unique_hash_map<Vertex_handle, Vertex_handle> map_ambient_vertices_to_cavity_vertices;
 
     auto insert_new_vertex = [&](Vertex_handle v, bool extra_b = false, [[maybe_unused]] std::string_view extra = "") {
       const auto cavity_v = cavity_triangulation.insert(this->point(v));
-      vertex_map[v] = cavity_v;
+      map_ambient_vertices_to_cavity_vertices[v] = cavity_v;
       map_cavity_vertices_to_ambient_vertices[cavity_v] = v;
 #if CGAL_DEBUG_CDT_3 & 128
       std::cerr << std::format("inserted {}cavity vertex {:.6} -> {:.6}\n",
@@ -1709,7 +1712,7 @@ private:
     }
 
     std::vector<Facet> missing_faces;
-    while(true) {
+    do {
       missing_faces.clear();
       for(auto f : facets_of_cavity_border) {
         if(cells_of_cavity.contains(f.first)) {
@@ -1719,19 +1722,20 @@ private:
         const auto [v0, v1, v2] = this->make_vertex_triple(f);
         Cell_handle c;
         int i, j, k;
-        if(!cavity_triangulation.is_facet(vertex_map[v0], vertex_map[v1], vertex_map[v2], c, i, j, k)) {
+        if(!cavity_triangulation.is_facet(map_ambient_vertices_to_cavity_vertices[v0],
+                                          map_ambient_vertices_to_cavity_vertices[v1],
+                                          map_ambient_vertices_to_cavity_vertices[v2], c, i, j, k))
+        {
           missing_faces.push_back(f);
         }
       }
-      if(missing_faces.empty()) {
-        break;
-      }
       for(auto [cell, facet_index] : missing_faces) {
+        facets_of_cavity_border.erase({cell, facet_index});
         {
           if(cell->is_facet_constrained(facet_index)) {
             result.interior_constrained_faces.emplace_back(cell, facet_index);
           }
-          auto [_, is_new_cell] = cells_of_cavity.insert(cell);
+          auto [_, is_new_cell] = cells_of_cavity.insert(cell); // @TODO use .second instead of struct. bindings
           if(!is_new_cell)
             continue;
         }
@@ -1748,12 +1752,14 @@ private:
           }
         }
       }
-    }
+    } while(!missing_faces.empty());
     CGAL_assertion(std::all_of(facets_of_cavity_border.begin(), facets_of_cavity_border.end(), [&](const auto& f) {
       const auto [v0, v1, v2] = this->make_vertex_triple(f);
       Cell_handle c;
       int i, j, k;
-      return cavity_triangulation.is_facet(vertex_map[v0], vertex_map[v1], vertex_map[v2], c, i, j, k);
+      return cavity_triangulation.is_facet(map_ambient_vertices_to_cavity_vertices[v0],
+                                           map_ambient_vertices_to_cavity_vertices[v1],
+                                           map_ambient_vertices_to_cavity_vertices[v2], c, i, j, k);
     }));
     return result;
   }
@@ -1901,7 +1907,7 @@ private:
 
     // assert(is_valid(true));
     // this->study_bug = true;
-    const auto v = this->insert(steiner_pt, Cell_handle{}, false); // TODO: find a hint
+    const auto v = this->insert(steiner_pt, Cell_handle{}, false); // TODO: find a hint, TODO: use "insert in hole"
     // this->study_bug = false;
     // assert(is_valid(true));
     v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
