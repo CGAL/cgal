@@ -1765,46 +1765,6 @@ private:
     return result;
   }
 
-  void insert_mid_point_in_constrained_edge(Vertex_handle va_3d, Vertex_handle vb_3d) {
-    const auto a = this->point(va_3d);
-    const auto b = this->point(vb_3d);
-    const auto mid = CGAL::midpoint(a, b);
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-    std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
-                             IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
-                             IO::oformat(vb_3d, with_point_and_info));
-#endif // CGAL_DEBUG_CDT_3 & 64
-    auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-    if(std::next(contexts.begin()) != contexts.end()) {
-      std::cerr << "ERROR: Edge is constrained by more than one constraint\n";
-      for(const auto& c : contexts) {
-        std::cerr << std::format("  - {} with {} vertices\n", IO::oformat(c.id().vl_ptr()),
-                                                              c.number_of_vertices());
-        for(auto vh_it = c.vertices_begin(), end = c.vertices_end(), current = c.current();
-            vh_it != end; ++vh_it)
-        {
-          std::cerr << std::format("    {} {}\n",
-                                   (vh_it == current) ? '>' : '-',
-                                   IO::oformat(*vh_it, with_point_and_info));
-        }
-      }
-    }
-#endif // CGAL_DEBUG_CDT_3 & 64
-    CGAL_assertion(std::next(contexts.begin()) == contexts.end());
-    const auto& context = *contexts.begin();
-    const auto constraint_id = context.id();
-    CGAL_assertion(constraint_id != Constraint_id{});
-    // this->study_bug = true;
-    Locate_type mid_lt;
-    int mid_li, min_lj;
-    Cell_handle mid_c = tr.locate(mid, mid_lt, mid_li, min_lj, va_3d->cell());
-    CGAL_assertion(mid_lt != Locate_type::VERTEX);
-    this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d}, constraint_id, insert_in_conflict_visitor);
-    // this->study_bug = false;
-    // assert(is_valid(true));
-  }
-
   std::optional<std::pair<Vertex_handle, Vertex_handle>>
   return_encroached_constrained_edge([[maybe_unused]] CDT_3_face_index face_index,
                                       const CDT_2& cdt_2,
@@ -1925,6 +1885,46 @@ private:
     } while(++f_circ != end);
     search_for_missing_subfaces(face_index);
     return std::nullopt;
+  }
+
+  void insert_mid_point_in_constrained_edge(Vertex_handle va_3d, Vertex_handle vb_3d) {
+    const auto a = this->point(va_3d);
+    const auto b = this->point(vb_3d);
+    const auto mid = CGAL::midpoint(a, b);
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+    std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
+                             IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
+                             IO::oformat(vb_3d, with_point_and_info));
+#endif // CGAL_DEBUG_CDT_3 & 64
+    auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
+#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+    if(std::next(contexts.begin()) != contexts.end()) {
+      std::cerr << "ERROR: Edge is constrained by more than one constraint\n";
+      for(const auto& c : contexts) {
+        std::cerr << std::format("  - {} with {} vertices\n", IO::oformat(c.id().vl_ptr()),
+                                                              c.number_of_vertices());
+        for(auto vh_it = c.vertices_begin(), end = c.vertices_end(), current = c.current();
+            vh_it != end; ++vh_it)
+        {
+          std::cerr << std::format("    {} {}\n",
+                                   (vh_it == current) ? '>' : '-',
+                                   IO::oformat(*vh_it, with_point_and_info));
+        }
+      }
+    }
+#endif // CGAL_DEBUG_CDT_3 & 64
+    CGAL_assertion(std::next(contexts.begin()) == contexts.end());
+    const auto& context = *contexts.begin();
+    const auto constraint_id = context.id();
+    CGAL_assertion(constraint_id != Constraint_id{});
+    // this->study_bug = true;
+    Locate_type mid_lt;
+    int mid_li, min_lj;
+    Cell_handle mid_c = tr.locate(mid, mid_lt, mid_li, min_lj, va_3d->cell());
+    CGAL_assertion(mid_lt != Locate_type::VERTEX);
+    this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d}, constraint_id, insert_in_conflict_visitor);
+    // this->study_bug = false;
+    // assert(is_valid(true));
   }
 
   bool restore_face(CDT_3_face_index face_index) {
