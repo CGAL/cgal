@@ -1476,14 +1476,15 @@ private:
     const auto pseudo_cells =
         add_pseudo_cells_to_outer_map(upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, true);
 
-    auto inner_map_of_cavity = [&](const auto& tr, const auto& map_cavity_vertices_to_ambient_vertices) {
+    auto inner_map_of_cavity = [&self = std::as_const(*this)](
+                                   const auto& tr, const auto& map_cavity_vertices_to_ambient_vertices) {
       typename T_3::Vertex_triple_Facet_map inner_map;
       auto add_facet_to_inner_map = [&](Facet f) {
-        const auto vt_aux = this->make_vertex_triple(f);
+        const auto vt_aux = T_3::make_vertex_triple(f);
         typename T_3::Vertex_triple vt(map_cavity_vertices_to_ambient_vertices[vt_aux.first],
                                        map_cavity_vertices_to_ambient_vertices[vt_aux.third],
                                        map_cavity_vertices_to_ambient_vertices[vt_aux.second]);
-        this->make_canonical_oriented_triple(vt);
+        self.make_canonical_oriented_triple(vt);
 #if CGAL_DEBUG_CDT_3 & 128
         CGAL_assertion(vt.first != vt.second);
         CGAL_assertion(vt.first != vt.third);
@@ -1497,7 +1498,7 @@ private:
       };
       for(auto f : tr.finite_facets()) {
         add_facet_to_inner_map(f);
-        add_facet_to_inner_map(this->mirror_facet(f));
+        add_facet_to_inner_map(self.mirror_facet(f));
       }
       return inner_map;
     };
