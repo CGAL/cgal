@@ -546,7 +546,7 @@ public:
     } while(circ != circ_end);
 
     if(face_index < 0) {
-      const auto accumulated_normal = [&] {
+      const auto accumulated_normal = std::invoke([&] {
         const auto last_it = std::next(first_it, size - 1);
         const auto &last_point = tr.point(*last_it);
 
@@ -572,7 +572,7 @@ public:
           accumulated_normal = - accumulated_normal;
         }
         return accumulated_normal;
-      }();
+      });
 
       face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
       face_constraint_misses_subfaces.resize(face_cdt_2.size());
@@ -627,7 +627,7 @@ private:
 #if CGAL_DEBUG_CDT_3 & 4
     std::cerr << "Polygon #" << polygon_contraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
 #endif // CGAL_DEBUG_CDT_3
-    const auto vec_of_handles = [this, polygon_contraint_id]() {
+    const auto vec_of_handles = std::invoke([this, polygon_contraint_id]() {
       std::vector<std::vector<Vertex_handle>> vec_of_handles;
       for(const auto& border : this->face_borders[polygon_contraint_id]) {
         auto& handles = vec_of_handles.emplace_back();
@@ -653,7 +653,7 @@ private:
         CGAL_assertion(handles.front() == handles.back());
       }
       return vec_of_handles;
-    }();
+    });
 
 #if CGAL_DEBUG_CDT_3 & 4
     std::cerr << "  points\n";
@@ -1132,14 +1132,14 @@ private:
     const auto& cdt_2 = non_const_cdt_2;
     const auto& fh_region = non_const_fh_region;
     const auto border_edges = brute_force_border_3_of_region(face_index, region_count, cdt_2, fh_region);
-    const auto polygon_vertices = [&]() {
+    const auto polygon_vertices = std::invoke([&]() {
       std::set<Vertex_handle> vertices;
       for(const auto& [c, i, j]: border_edges) {
         vertices.insert(c->vertex(i));
         vertices.insert(c->vertex(j));
       }
       return vertices;
-    }();
+    });
 #if CGAL_CDT_3_DEBUG_REGION
     std::cerr << "polygon_vertices.size() = " << polygon_vertices.size() << "\n";
     for(auto v : polygon_vertices) {
@@ -1282,13 +1282,13 @@ private:
         construct_cavities(face_index, region_count, cdt_2, fh_region, polygon_vertices, first_intersecting_edge);
 
     const std::set<Cell_handle> intersecting_cells{intersecting_cells_vector.begin(), intersecting_cells_vector.end()};
-    const std::set<Point_3> polygon_points = [&](){
+    const std::set<Point_3> polygon_points = std::invoke([&](){
       std::set<Point_3> polygon_points;
       for(auto vh : polygon_vertices) {
         polygon_points.insert(this->point(vh));
       }
       return polygon_points;
-    }();
+    });
 
     auto is_facet_of_polygon = [&](const auto& tr, Facet f) {
       const auto [c, facet_index] = f;
