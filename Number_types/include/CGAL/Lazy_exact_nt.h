@@ -382,9 +382,9 @@ public :
 
   // Also check that ET and AT are constructible from T?
   template<class T>
-  Lazy_exact_nt (T i, std::enable_if_t<boost::mpl::and_<
-      boost::mpl::or_<std::is_arithmetic<T>, std::is_enum<T> >,
-      boost::mpl::not_<std::is_same<T,ET> > >::value,void*> = 0)
+  Lazy_exact_nt (T i, std::enable_if_t<
+      (std::is_arithmetic_v<T> || std::is_enum_v<T>) &&
+      !std::is_same_v<T,ET>,void*> = 0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
   Lazy_exact_nt (const ET & e)

@@ -273,6 +273,10 @@ struct Arr_is_side_identified {
 };
 
 template <typename ArrSideCategory>
+inline constexpr bool Arr_is_side_identified_v =
+  Arr_is_side_identified<ArrSideCategory>::type::value;
+
+template <typename ArrSideCategory>
 struct Arr_is_side_contracted {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_contracted_side_tag>       Is_same;
@@ -403,33 +407,27 @@ struct Arr_sane_identified_tagging {
   typedef ArrBottomSideCategory                         Bot_side_cat;
   typedef ArrTopSideCategory                            Top_side_cat;
 
-  typedef typename Arr_is_side_identified<Lef_side_cat>::result Lef_ide;
-  typedef typename Arr_is_side_identified<Rig_side_cat>::result Rig_ide;
-  typedef typename Arr_is_side_identified<Bot_side_cat>::result Bot_ide;
-  typedef typename Arr_is_side_identified<Top_side_cat>::result Top_ide;
+  static inline constexpr bool lef_ide = Arr_is_side_identified_v<Lef_side_cat>;
+  static inline constexpr bool rig_ide = Arr_is_side_identified_v<Rig_side_cat>;
+  static inline constexpr bool bot_ide = Arr_is_side_identified_v<Bot_side_cat>;
+  static inline constexpr bool top_ide = Arr_is_side_identified_v<Top_side_cat>;
 
-  typedef boost::mpl::and_<Lef_ide, Rig_ide>            LR_ide;
-  typedef boost::mpl::and_<Bot_ide, Top_ide>            BT_ide;
+  static inline constexpr bool lr_ide = lef_ide && rig_ide;
+  static inline constexpr bool bt_ide = bot_ide && top_ide;
 
-  typedef boost::mpl::not_<Lef_ide>                     Lef_not_ide;
-  typedef boost::mpl::not_<Rig_ide>                     Rig_not_ide;
-  typedef boost::mpl::not_<Bot_ide>                     Bot_not_ide;
-  typedef boost::mpl::not_<Top_ide>                     Top_not_ide;
+  static inline constexpr bool lr_not_ide = !lef_ide && !rig_ide;
 
-  typedef boost::mpl::and_<Lef_not_ide, Rig_not_ide>    LR_not_ide;
+  static inline constexpr bool bt_not_ide = !bot_ide && !top_ide;
 
-  typedef boost::mpl::and_<Bot_not_ide, Top_not_ide>    BT_not_ide;
-
-  typedef boost::mpl::or_<LR_ide, LR_not_ide>           LR_ok;
-  typedef boost::mpl::or_<BT_ide, BT_not_ide>           BT_ok;
+  static inline constexpr bool lr_ok = lr_ide || lr_not_ide;
+  static inline constexpr bool bt_ok = bt_ide || bt_not_ide;
 
   /*! Boolean tag that is bool_constant<true> if opposite sides are either
    * both identified or both not-identified,
    * otherwise bool_constant<false>
    */
-  typedef std::bool_constant<LR_ok::value &&
-                             BT_ok::value>              result;
-  static constexpr bool value = result::value;
+  typedef std::bool_constant<lr_ok && bt_ok>              result;
+  static inline constexpr bool value = result::value;
 };
 
 /*! Checks whether one of two boundary sides are identified

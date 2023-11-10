@@ -64,16 +64,16 @@ namespace CGAL {
           : Has_type_different_from<Get_functor<Kernel, Tg, O>, Null_functor> {};
 
         template<class K, class List, bool=boost::mpl::empty<List>::type::value>
-        struct Provides_functors : boost::mpl::and_ <
-                                   Provides_functor<K, typename boost::mpl::front<List>::type>,
-                                   Provides_functors<K, typename boost::mpl::pop_front<List>::type> > {};
+        struct Provides_functors : std::bool_constant<
+                                   Provides_functor<K, typename boost::mpl::front<List>::type>::value &&
+                                   Provides_functors<K, typename boost::mpl::pop_front<List>::type>::value > {};
         template<class K, class List>
         struct Provides_functors<K, List, true> : std::true_type {};
 
         template<class K, class List, bool=boost::mpl::empty<List>::type::value>
-        struct Provides_types : boost::mpl::and_ <
-                                   Provides_type<K, typename boost::mpl::front<List>::type>,
-                                   Provides_types<K, typename boost::mpl::pop_front<List>::type> > {};
+        struct Provides_types : std::bool_constant<
+                                   Provides_type<K, typename boost::mpl::front<List>::type>::value &&
+                                   Provides_types<K, typename boost::mpl::pop_front<List>::type>::value > {};
         template<class K, class List>
         struct Provides_types<K, List, true> : std::true_type {};
 
