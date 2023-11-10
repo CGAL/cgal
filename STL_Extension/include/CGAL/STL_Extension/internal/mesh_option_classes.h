@@ -319,9 +319,16 @@ struct Initial_points_generator_generator
     return Initial_points_generator_options(initial_points_generator, input_features, false);
   }
 
+  template <typename InitialPointsGenerator>
+  Initial_points_generator_options operator()(const InitialPointsGenerator& initial_points_generator)
+  {
+    Initial_points empty_input_features;
+    return operator()(initial_points_generator, empty_input_features);
+  }
+
   // Without a custom InitialPointsGenerator
   template <typename InitalPointsRange>
-  Initial_points_generator_options operator()(const InitalPointsRange& input_features)
+  Initial_points_generator_options operator()(const Null_functor&, const InitalPointsRange& input_features)
   {
     // The domain's construct_initial_points_object is called only if input_features is empty
     if (input_features.size() == 0) {
@@ -330,16 +337,10 @@ struct Initial_points_generator_generator
     return Initial_points_generator_options(Initial_points_generator_empty(), input_features, true);
   }
 
-  template <typename InitalPointsRange>
-  Initial_points_generator_options operator()(const Null_functor&, const InitalPointsRange& input_features)
-  {
-    return operator()(input_features);
-  }
-
+  // Default construction
   Initial_points_generator_options operator()()
   {
-    Initial_points empty_input_features;
-    return operator()(empty_input_features);
+    return operator()(Null_functor());
   }
 };
 
