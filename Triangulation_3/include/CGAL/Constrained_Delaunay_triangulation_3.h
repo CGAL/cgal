@@ -384,7 +384,7 @@ protected:
         const bool is_edge = cdt_2.is_edge(va_2d, v_Steiner_2d, fh_2d, edge_index);
         CGAL_assume(is_edge);
 
-        auto fc = cdt_2.incident_faces(v_Steiner_2d, fh_2d), fcbegin(fc);
+        auto fc = cdt_2.incident_faces(v_Steiner_2d, fh_2d), fc_begin(fc);
         // circulators are counter-clockwise, so we start at the right of [va,v]
         do {
           fc->info().is_outside_the_face = outside_on_right;
@@ -395,15 +395,15 @@ protected:
         do {
           fc->info().is_outside_the_face = outside_on_left;
           fc->info().is_in_region = in_region_on_left;
-        } while(++fc != fcbegin);
+        } while(++fc != fc_begin);
         fc = cdt_2.incident_faces(v_Steiner_2d, fh_2d);
-        fcbegin  = fc;
+        fc_begin  = fc;
         do {
           fc->info().missing_subface = true;
           const auto v_Steiner_index = fc->index(v_Steiner_2d);
           const auto other_edge = cdt_2.mirror_edge({fc, v_Steiner_index});
           fc->info().is_edge_also_in_3d_triangulation.set(other_edge.first->info().is_edge_also_in_3d_triangulation.test(other_edge.second));
-        } while(++fc != fcbegin);
+        } while(++fc != fc_begin);
 
         self.face_constraint_misses_subfaces.set(poly_id);
       }
@@ -1012,8 +1012,8 @@ private:
 
     auto new_vertex = make__new_element_functor(visited_vertices);
     auto new_cell = make__new_element_functor(visited_cells);
-    auto new_edge = [&](Vertex_handle v0, Vertex_handle v1, bool does_insersect) {
-      return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_insersect);
+    auto new_edge = [&](Vertex_handle v0, Vertex_handle v1, bool does_intersect) {
+      return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_intersect);
     };
 
     intersecting_edges.push_back(first_intersecting_edge);
@@ -2037,7 +2037,7 @@ public:
           {
             if(!it->is_facet_constrained(i) && this->side_of_sphere(it, n->vertex(n_index)->point()) == ON_BOUNDED_SIDE) {
               if(verbose) {
-                std::cerr << "non-empty sphere at non-constrainted facet (" << IO::oformat(Cell_handle(it))
+                std::cerr << "non-empty sphere at non-constrained facet (" << IO::oformat(Cell_handle(it))
                           << ", " << i << ") the cell is:\n  "
                           << IO::oformat(it->vertex(0), with_point) << "\n  "
                           << IO::oformat(it->vertex(1), with_point) << "\n  "

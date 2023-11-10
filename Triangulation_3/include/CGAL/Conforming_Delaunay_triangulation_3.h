@@ -410,7 +410,7 @@ protected:
     return c_id;
   }
 
-  auto constraint_extremitites(Constraint_id c_id) const {
+  auto constraint_extremities(Constraint_id c_id) const {
       CGAL_assertion(std::find(this->constraint_hierarchy.c_begin(),
                                this->constraint_hierarchy.c_end(), c_id) != this->constraint_hierarchy.c_end());
       CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
@@ -430,7 +430,7 @@ protected:
 
   Constraint_id constraint_around(Vertex_handle va, Vertex_handle vb, bool expensive = true) const {
     auto constraint_id_goes_to_vb = [this, va, vb](Constraint_id c_id) {
-      const auto [c_va, c_vb] = constraint_extremitites(c_id);
+      const auto [c_va, c_vb] = constraint_extremities(c_id);
       if (va == c_va && vb == c_vb)
         return true;
       if (vb == c_va && va == c_vb)
@@ -590,8 +590,8 @@ protected:
     if(reference_vertex->is_Steiner_vertex_on_edge()) {
       CGAL_assertion(reference_vertex->nb_of_incident_constraints == 1);
       const auto ref_constraint_id = reference_vertex->constraint_id(*this);
-      const auto [ref_va, ref_vb] = constraint_extremitites(ref_constraint_id);
-      const auto [orig_va, orig_vb] = constraint_extremitites(constraint_id);
+      const auto [ref_va, ref_vb] = constraint_extremities(ref_constraint_id);
+      const auto [orig_va, orig_vb] = constraint_extremities(constraint_id);
       const auto& orig_pa = tr.point(orig_va);
       const auto& orig_pb = tr.point(orig_vb);
       const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
