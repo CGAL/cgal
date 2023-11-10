@@ -334,17 +334,17 @@ private:
   typedef typename Arr_is_side_open<Bot_side_cat>::result       Bot_ope;
   typedef typename Arr_is_side_open<Top_side_cat>::result       Top_ope;
 
-  typedef boost::mpl::not_<Lef_ope>                             Lef_not_ope;
-  typedef boost::mpl::not_<Rig_ope>                             Rig_not_ope;
-  typedef boost::mpl::not_<Bot_ope>                             Bot_not_ope;
-  typedef boost::mpl::not_<Top_ope>                             Top_not_ope;
+  static inline constexpr bool lef_not_ope = !Lef_ope::value;
+  static inline constexpr bool rig_not_ope = !Rig_ope::value;
+  static inline constexpr bool bot_not_ope = !Bot_ope::value;
+  static inline constexpr bool top_not_ope = !Top_ope::value;
 
 public:
   /*! Boolean tag that is Arr_all_sides_not_open_tag if all sides are not-open,
    * otherwise Arr_not_all_sides_not_open_tag
    */
-  typedef std::conditional_t<Lef_not_ope::value && Rig_not_ope::value &&
-                             Bot_not_ope::value && Top_not_ope::value,
+  typedef std::conditional_t<lef_not_ope && rig_not_ope &&
+                             bot_not_ope && top_not_ope,
                              Arr_all_sides_not_open_tag,
                              Arr_not_all_sides_not_open_tag>
     result;
