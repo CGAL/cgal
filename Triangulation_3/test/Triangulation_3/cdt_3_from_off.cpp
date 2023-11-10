@@ -31,7 +31,18 @@
 # define CDT_3_throw_exception_again throw
 #endif
 
+#if CGAL_CDT_3_USE_EPECK
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+using K = CGAL::Exact_predicates_exact_constructions_kernel;
+
+#else // use Epick
+
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+
+#endif // use Epick
+
 using Vb = CGAL::Base_with_time_stamp<CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>>;
 using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
 using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
