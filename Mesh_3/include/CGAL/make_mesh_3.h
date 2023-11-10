@@ -407,7 +407,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                           </UL>}
  *     \cgalParamDefault{`parameters::exude()`}
  *   \cgalParamSectionEnd
- *   \cgalParamSectionBegin{Mesh initialization}
+ *   \cgalParamSectionBegin{Mesh initialization with a functor}
  *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be provided to start the meshing process.
  *                           It must follow the `InitialPointsGenerator` concept.
  *                           The following named parameter controls this option:
@@ -415,7 +415,24 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                             <LI> `parameters::initial_points_generator()`
  *                           </UL>}
  *     \cgalParamDefault{`CGAL::Null_Functor()`, the domain's `construct_initial_points_object()`
- * will be called for the points initialization.}
+ *                       will be called for the points initialization.}
+ *   \cgalParamSectionBegin{Mesh initialization with points}
+ *    \cgalParamDescription{a `std::vector` of initial points, represented as
+ *                          `std::vector<std::tuple<Weighted_point_3, int, Index>>` can optionally
+ *                          be provided to start the meshing process.
+ *                          `Weighted_point_3` is the point's position and weight,
+ *                          `int` is the dimension of the minimal dimension subcomplex on which
+ *                          the point lies, and
+ *                          `Index` is the underlying subcomplex index.
+ *                          The following named parameter controls this option:
+ *                          <UL>
+ *                            <LI> `parameters::initial_points()`
+ *                          </UL>}
+ *    \cgalParamDefault{`std::vector<std::tuple<Weighted_point_3, int, Index>>()`}
+ *    \cgalParamExtra{If this parameter is set,
+ *                    the domain's `construct_initial_points_object()` will not be called.}
+ *    \cgalParamExtra{If the parameter `parameters::initial_points_generator()` is set,
+ *                    the points will be inserted before calling the functor.}
  *   \cgalParamSectionEnd
  * \cgalNamedParamsEnd
  *
@@ -444,6 +461,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::get_parameter_reference;
     C3T3 c3t3;
     parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude().v);
     parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb().v);
@@ -453,9 +471,16 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
     parameters::internal::Mesh_3_options mesh_options_param = choose_parameter(get_parameter(np, internal_np::mesh_param), parameters::internal::Mesh_3_options());
     parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
 
-    parameters::internal::Initial_points_generator_options<MeshDomain, C3T3> initial_points_generator_options_param =
-        parameters::internal::Initial_points_generator_generator<MeshDomain, C3T3>()
-        (choose_parameter(get_parameter(np, internal_np::initial_points_generator_options_param), parameters::initial_points_generator().v));
+    using Initial_points_generator_generator = parameters::internal::Initial_points_generator_generator<MeshDomain, C3T3>;
+    using Initial_points = typename Initial_points_generator_generator::Initial_points;
+    Initial_points empty_vec;
+    const Initial_points& initial_points
+          = choose_parameter(get_parameter_reference(np, internal_np::initial_points_param), empty_vec);
+    parameters::internal::Initial_points_generator_options initial_points_generator_options_param =
+        Initial_points_generator_generator()
+        (choose_parameter(get_parameter(np, internal_np::initial_points_generator_options_param),
+                                        parameters::initial_points_generator().v),
+         initial_points);
 
     make_mesh_3_impl(c3t3, domain, criteria,
             exude_param, perturb_param, odt_param, lloyd_param,

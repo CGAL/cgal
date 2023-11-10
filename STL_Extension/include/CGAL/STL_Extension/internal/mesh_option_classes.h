@@ -175,31 +175,54 @@ struct Initial_points_generator_options
 {
   typedef typename C3t3::Triangulation::Geom_traits::Weighted_point_3 Weighted_point_3;
   typedef typename MeshDomain::Index Index;
-  typedef typename std::back_insert_iterator<std::vector<std::tuple<Weighted_point_3, int, Index>>> OutputIterator;
+  typedef typename std::vector<std::tuple<Weighted_point_3, int, Index>> Initial_points;
+  typedef typename std::back_insert_iterator<Initial_points> OutputIterator;
 
   template <typename Initial_points_generator>
-  Initial_points_generator_options(const Initial_points_generator& generator, bool is_default = false)
+  Initial_points_generator_options(const Initial_points_generator& generator, const Initial_points& initial_points, bool is_default = false)
     : initial_points_generator_no_number_of_points_(generator)
     , initial_points_generator_(generator)
-    , is_default_(is_default)
-  { }
+    , is_default_(is_default && initial_points.size() == 0)
+  {
+    if (initial_points.size() == 0)
+    {
+      initial_points_ = nullptr;
+    }
+    else
+    {
+      initial_points_ = &initial_points;
+    }
+  }
 
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3) const
   {
+    add_initial_points(pts);
     return initial_points_generator_no_number_of_points_(pts, domain, c3t3);
   }
 
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n) const
   {
+    add_initial_points(pts);
     return initial_points_generator_(pts, domain, c3t3, n);
+  }
+
+  OutputIterator add_initial_points(OutputIterator pts) const
+  {
+    if (initial_points_ != nullptr)
+    {
+      for (const auto& point_tuple : *initial_points_)
+        *pts++ = point_tuple;
+    }
+    return pts;
   }
 
   bool is_default() const { return is_default_; }
 
 private:
-  const bool is_default_;
   const std::function<OutputIterator(OutputIterator&,const MeshDomain&,const C3t3&)> initial_points_generator_no_number_of_points_;
   const std::function<OutputIterator(OutputIterator&,const MeshDomain&,const C3t3&,int)> initial_points_generator_;
+  const Initial_points* initial_points_;
+  const bool is_default_;
 };
 
 // -----------------------------------
@@ -249,11 +272,9 @@ struct Domain_features_generator< MeshDomain, true >
 template <typename MeshDomain, typename C3t3>
 struct Initial_points_generator_generator
 {
-  typedef typename C3t3::Triangulation::Geom_traits::Weighted_point_3 Weighted_point_3;
-  typedef typename MeshDomain::Index Index;
-  typedef typename std::back_insert_iterator<std::vector<std::tuple<Weighted_point_3, int, Index>>> OutputIterator;
-
   typedef typename CGAL::parameters::internal::Initial_points_generator_options<MeshDomain, C3t3> Initial_points_generator_options;
+  typedef typename Initial_points_generator_options::Initial_points Initial_points;
+  typedef typename Initial_points_generator_options::OutputIterator OutputIterator;
 
   struct Initial_points_generator_domain_traductor
   {
@@ -283,20 +304,42 @@ struct Initial_points_generator_generator
     }
   };
 
-  template <typename InitialPointsGenerator>
-  Initial_points_generator_options operator()(const InitialPointsGenerator& initial_points_generator)
+  struct Initial_points_generator_empty
   {
-    return Initial_points_generator_options(initial_points_generator, false);
+    OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)
+    { return pts; }
+    OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)
+    { return pts; }
+  };
+
+  // With a custom InitialPointsGenerator
+  template <typename InitialPointsGenerator, typename InitalPointsRange>
+  Initial_points_generator_options operator()(const InitialPointsGenerator& initial_points_generator, const InitalPointsRange& input_features)
+  {
+    return Initial_points_generator_options(initial_points_generator, input_features, false);
   }
 
-  Initial_points_generator_options operator()(const Null_functor&)
+  // Without a custom InitialPointsGenerator
+  template <typename InitalPointsRange>
+  Initial_points_generator_options operator()(const InitalPointsRange& input_features)
   {
-    return operator()();
+    // The domain's construct_initial_points_object is called only if input_features is empty
+    if (input_features.size() == 0) {
+      return Initial_points_generator_options(Initial_points_generator_domain_traductor(), input_features, true);
+    }
+    return Initial_points_generator_options(Initial_points_generator_empty(), input_features, true);
+  }
+
+  template <typename InitalPointsRange>
+  Initial_points_generator_options operator()(const Null_functor&, const InitalPointsRange& input_features)
+  {
+    return operator()(input_features);
   }
 
   Initial_points_generator_options operator()()
   {
-    return Initial_points_generator_options(Initial_points_generator_domain_traductor(), true);
+    Initial_points empty_input_features;
+    return operator()(empty_input_features);
   }
 };
 
