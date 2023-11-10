@@ -46,9 +46,10 @@ option(
 
 message("== CMake setup (DONE) ==\n")
 
-# Enable testing with CGAL_ENABLE_TESTING. Historically, users would enable the tests
-# by specifying BUILD_TESTING so if CGAL_ENABLE_TESTING is not enabled, we will set it
-# to the value of BUILD_TESTING
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
 option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
 if(CGAL_ENABLE_TESTING AND NOT POLICY CMP0064)
   message(
