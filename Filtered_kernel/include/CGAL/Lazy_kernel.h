@@ -198,9 +198,9 @@ private:
                                               boost::mpl::eval_if< std::is_same< typename internal::Lazy_result_type<Construction>::type,
                                                                                    CGAL::Object >,
                                                                    boost::mpl::int_<OBJECT>,
-                                                                   boost::mpl::eval_if< boost::mpl::or_<
-                                                                                          std::is_same< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_2 >,
-                                                                                          std::is_same< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_3 > >,
+                                                                   boost::mpl::eval_if< std::bool_constant<
+                                                                                          std::is_same_v< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_2 > ||
+                                                                                          std::is_same_v< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_3 > >,
                                                                                         boost::mpl::int_<BBOX>,
                                                                                         boost::mpl::int_<NONE> > > >,
                          boost::mpl::int_<NONE> >::type {};

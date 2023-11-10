@@ -89,7 +89,7 @@ inline constexpr bool is_Range_v = is_Range<T>::value;
 // For polygon meshes
 template <typename T>
 struct is_Point_set_or_Range_or_Iterator
-  : public bool_constant<is_Point_set_3<T>::value || is_Range<T>::value || is_iterator<T>::value >
+  : public std::bool_constant<is_Point_set_3<T>::value || is_Range<T>::value || is_iterator<T>::value >
 { };
 
 template <class T>

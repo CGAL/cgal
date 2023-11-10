@@ -377,15 +377,15 @@ private:
   typedef typename Arr_is_side_open<Bot_side_cat>::result       Bot_ope;
   typedef typename Arr_is_side_open<Top_side_cat>::result       Top_ope;
 
-  typedef boost::mpl::or_<Lef_obl, Lef_ope>                     Lef_obl_or_ope;
-  typedef boost::mpl::or_<Rig_obl, Rig_ope>                     Rig_obl_or_ope;
-  typedef boost::mpl::or_<Bot_obl, Bot_ope>                     Bot_obl_or_ope;
-  typedef boost::mpl::or_<Top_obl, Top_ope>                     Top_obl_or_ope;
+  static inline constexpr bool lef_obl_or_ope = Lef_obl::value || Lef_ope::value;
+  static inline constexpr bool rig_obl_or_ope = Rig_obl::value || Rig_ope::value;
+  static inline constexpr bool bot_obl_or_ope = Bot_obl::value || Bot_ope::value;
+  static inline constexpr bool top_obl_or_ope = Top_obl::value || Top_ope::value;
 
-  typedef std::conditional_t<Lef_obl_or_ope::value &&
-                             Rig_obl_or_ope::value &&
-                             Bot_obl_or_ope::value &&
-                             Top_obl_or_ope::value,
+  typedef std::conditional_t<lef_obl_or_ope &&
+                             rig_obl_or_ope &&
+                             bot_obl_or_ope &&
+                             top_obl_or_ope,
                              Arr_all_sides_not_finite_tag,
                              Arr_not_all_sides_not_finite_tag>
     tmp;
