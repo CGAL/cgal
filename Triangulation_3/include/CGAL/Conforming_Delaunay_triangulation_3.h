@@ -150,6 +150,10 @@ protected:
                                             [[maybe_unused]] Vertex_handle v_Steiner) const
     {
     }
+
+    Vertex_handle insert_in_triangulation(const Point& p, Locate_type lt, Cell_handle c, int li, int lj) {
+      return self.insert_impl_do_not_split(p, lt, c, li, lj, *this);
+    }
   };
 
   auto make_subconstraint(Vertex_handle va, Vertex_handle vb) {
@@ -356,7 +360,7 @@ protected:
     Locate_type lt;
     int li, lj;
     const Cell_handle c = tr.locate(steiner_pt, lt, li, lj, hint);
-    const Vertex_handle v = this->insert_impl_do_not_split(steiner_pt, lt, c, li, lj, visitor);
+    const Vertex_handle v = visitor.insert_in_triangulation(steiner_pt, lt, c, li, lj);
     v->set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
     if(lt != T_3::VERTEX) {
       v->nb_of_incident_constraints = 1;

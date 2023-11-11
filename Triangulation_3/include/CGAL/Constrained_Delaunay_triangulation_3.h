@@ -417,6 +417,10 @@ protected:
       }
       conforming_dt_visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v_Steiner);
     }
+
+    Vertex_handle insert_in_triangulation(const Point_3& p, Locate_type lt, Cell_handle c, int li, int lj) {
+      return self.insert_in_cdt_3(p, lt, c, li, lj);
+    }
   };
 
   auto inner_map_of_cavity(const auto& cavity_triangulation,
@@ -454,6 +458,92 @@ public:
       Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
     }
     return v;
+  }
+
+  Vertex_handle insert_in_cdt_3(const Point_3& p, [[maybe_unused]] Locate_type lt, Cell_handle ch, int, int)
+  {
+    CGAL_assertion(lt != Locate_type::VERTEX);
+    std::set<Cell_handle> cells;
+    std::set<Facet> facets;
+    switch(tr.dimension()) {
+    case 3: {
+      typename T_3::Conflict_tester_3 tester(p, this);
+      this->find_conflicts(ch,
+                           tester,
+                           make_triple(
+                             std::inserter(facets, facets.begin()),
+                             std::inserter(cells, cells.begin()),
+                             Emptyset_iterator()));
+      break;
+    } // dim 3
+    case 2: {
+      typename T_3::Conflict_tester_2 tester(p, this);
+      this->find_conflicts(ch,
+                           tester,
+                           make_triple(
+                             std::inserter(facets, facets.begin()),
+                             std::inserter(cells, cells.begin()),
+                             Emptyset_iterator()));
+      break;
+    } // dim 2
+    default: CGAL_error();
+    }
+
+    // cleanup of tds_data after T_3::find_conflicts
+    for(Cell_handle ch : cells) {
+      ch->tds_data().clear();
+    }
+    for(auto& [ch, i] : facets) {
+      ch->neighbor(i)->tds_data().clear();
+    }
+
+    std::set<Vertex_handle> vertices;
+    for(Cell_handle ch : cells) {
+      for(int i = 0; i < 4; ++i) {
+        vertices.insert(ch->vertex(i));
+      }
+    }
+    // add one extra vertex for p:
+    auto p_vh = this->tds().create_vertex();
+    p_vh->set_point(p);
+    vertices.insert(p_vh);
+
+    [[maybe_unused]] const auto [cavity_triangulation, vertices_of_cavity,
+                                 map_cavity_vertices_to_ambient_vertices, facets_of_cavity,
+                                 interior_constrained_faces, nb_of_added_vertices] =
+        triangulate_cavity(cells, facets, vertices);
+
+    for(auto f: interior_constrained_faces) {
+      this->register_facet_to_be_constrained(f);
+    }
+
+    typename T_3::Vertex_triple_Facet_map outer_map;
+    for(auto f: facets_of_cavity) {
+      typename T_3::Vertex_triple vt = this->make_vertex_triple(f);
+      this->make_canonical_oriented_triple(vt);
+      outer_map[vt] = f;
+    }
+
+    const auto inner_map = inner_map_of_cavity(cavity_triangulation,
+                                               map_cavity_vertices_to_ambient_vertices);
+
+    this->copy_triangulation_into_hole(map_cavity_vertices_to_ambient_vertices,
+                                       std::move(outer_map),
+                                       inner_map,
+                                       Emptyset_iterator{});
+
+    for(auto outside_facet : facets_of_cavity) {
+      const auto [outside_cell, outside_face_index] = outside_facet;
+      const auto mirror_facet = this->mirror_facet(outside_facet);
+      if(outside_cell->is_facet_constrained(outside_face_index)) {
+        const auto poly_id = outside_cell->face_constraint_index(outside_face_index);
+        const CDT_2& cdt_2 = face_cdt_2[poly_id];
+        const auto f2d = outside_cell->face_2(cdt_2, outside_face_index);
+        set_facet_constrained(mirror_facet, poly_id, f2d);
+      }
+    }
+
+    return p_vh;
   }
 
   Vertex_handle insert(const Point_3 &p, Cell_handle start = {}, bool restore_Delaunay = true) {
@@ -1809,7 +1899,10 @@ private:
                              IO::oformat(cdt_2.triangle(fh_2d)));
 #endif // CGAL_DEBUG_CDT_3
 
-    const auto ch = this->locate(steiner_pt);
+    Locate_type lt;
+    int li, lj;
+    const auto ch = this->locate(steiner_pt, lt, li, lj);
+
     boost::container::small_vector<Cell_handle,32> cells;
     boost::container::small_vector<Facet,32> facets;
     auto cleanup = [&cells, &facets] {
@@ -1868,13 +1961,13 @@ private:
 
     // assert(is_valid(true));
     // this->study_bug = true;
-    const auto v = this->insert(steiner_pt, Cell_handle{}, false); // TODO: find a hint, TODO: use "insert in hole"
+    const auto v = this->insert_in_cdt_3(steiner_pt, lt, ch, li, lj);// TODO: use "insert in hole"
     // this->study_bug = false;
     // assert(is_valid(true));
     v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
-    typename CDT_2::Locate_type lt;
+    [[maybe_unused]] typename CDT_2::Locate_type lt_2;
     int i;
-    auto fh = cdt_2.locate(steiner_pt, lt, i, fh_2d);
+    auto fh = cdt_2.locate(steiner_pt, lt_2, i, fh_2d);
     CGAL_assertion(!fh->info().is_outside_the_face); CGAL_USE(fh);
     const auto v_2d = non_const_cdt_2.insert(steiner_pt, fh_2d);
     v_2d->info().vertex_handle_3d = v;
