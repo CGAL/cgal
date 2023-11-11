@@ -303,6 +303,20 @@ protected:
   using Constraint_id = typename Constraint_hierarchy::Constraint_id;
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
+  void register_facet_to_be_constrained(Cell_handle cell, int facet_index) {
+    const auto face_id = static_cast<std::size_t>(cell->face_constraint_index(facet_index));
+    this->face_constraint_misses_subfaces.set(face_id);
+    auto fh_2 = cell->face_2(this->face_cdt_2[face_id], facet_index);
+    fh_2->info().facet_3d = {};
+    fh_2->info().missing_subface = true;
+    this->set_facet_constrained({cell, facet_index}, -1, {});
+  }
+
+  void register_facet_to_be_constrained(Facet f) {
+    const auto [cell, facet_index] = f;
+    register_facet_to_be_constrained(cell, facet_index);
+  }
+
   class Insert_in_conflict_visitor {
     Constrained_Delaunay_triangulation_3<T_3> &self;
     typename Conforming_Dt::Insert_in_conflict_visitor conforming_dt_visitor;
@@ -319,17 +333,11 @@ protected:
         auto c = *cell_it;
         for(int li = first_li; li < 4; ++li) {
           if(c->is_facet_constrained(li)) {
-            const auto face_id = static_cast<std::size_t>(c->face_constraint_index(li));
-            self.face_constraint_misses_subfaces.set(face_id);
-            auto fh_2 = c->face_2(self.face_cdt_2[face_id], li);
-            fh_2->info().facet_3d = {};
-            self.set_facet_constrained({c, li}, -1, {});
+            self.register_facet_to_be_constrained(c, li);
 #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
             std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
             self.write_2d_triangle(std::cerr, fh_2);
 #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
-
-            fh_2->info().missing_subface = true;
           }
         }
       }
@@ -1326,15 +1334,7 @@ private:
       // dump_facets_of_cavity(face_index, region_count, "upper", original_facets_of_upper_cavity);
     }
 #endif // CGAL_DEBUG_CDT_3
-    auto register_internal_constrained_facet = // @TODO extract this lambda to a fct
-        [&](Facet f) {
-          const auto [cell, facet_index] = f;
-          const auto polygon_contraint_id = cell->face_constraint_index(facet_index);
-          auto f2d = cell->face_2(cdt_2, facet_index); /// @TODO bug: not the right cdt_2!
-          f2d->info().missing_subface = true;
-          CGAL_assertion(polygon_contraint_id != face_index);
-          face_constraint_misses_subfaces.set(static_cast<std::size_t>(polygon_contraint_id));
-        };
+    auto register_internal_constrained_facet = [this](Facet f) { this->register_facet_to_be_constrained(f); };
 
 #if CGAL_DEBUG_CDT_3 & 128
     std::cerr << "# upper cavity\n";
