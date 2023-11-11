@@ -1563,6 +1563,7 @@ private:
       const auto mirror_facet = this->mirror_facet(outside_facet);
       if(outside_cell->is_facet_constrained(outside_face_index)) {
         const auto poly_id = outside_cell->face_constraint_index(outside_face_index);
+        const CDT_2& cdt_2 = face_cdt_2[poly_id];
         const auto f2d = outside_cell->face_2(cdt_2, outside_face_index);
         set_facet_constrained(mirror_facet, poly_id, f2d);
       }
