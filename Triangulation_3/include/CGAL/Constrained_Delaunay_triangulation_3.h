@@ -419,6 +419,32 @@ protected:
     }
   };
 
+  auto inner_map_of_cavity(const auto& cavity_triangulation,
+                           const auto& map_cavity_vertices_to_ambient_vertices) const
+  {
+    typename T_3::Vertex_triple_Facet_map inner_map;
+    auto add_facet_to_inner_map = [&](Facet f) {
+      const auto vt_aux = T_3::make_vertex_triple(f);
+      typename T_3::Vertex_triple vt(map_cavity_vertices_to_ambient_vertices[vt_aux.first],
+                                     map_cavity_vertices_to_ambient_vertices[vt_aux.third],
+                                     map_cavity_vertices_to_ambient_vertices[vt_aux.second]);
+      this->make_canonical_oriented_triple(vt);
+#if CGAL_DEBUG_CDT_3 & 128
+      CGAL_assertion(vt.first != vt.second);
+      CGAL_assertion(vt.first != vt.third);
+      CGAL_assertion(vt.second != vt.third);
+      std::cerr << std::format("inner map: Adding triple ({:.6}, {:.6}, {:.6})\n", IO::oformat(vt.first, with_point),
+                               IO::oformat(vt.second, with_point), IO::oformat(vt.third, with_point));
+#endif // CGAL_DEBUG_CDT_3
+      inner_map[vt] = f;
+    };
+    for(auto f : cavity_triangulation.finite_facets()) {
+      add_facet_to_inner_map(f);
+      add_facet_to_inner_map(this->mirror_facet(f));
+    }
+    return inner_map;
+  }
+
 public:
   Vertex_handle insert(const Point_3 &p, Locate_type lt, Cell_handle c,
                        int li, int lj, bool restore_Delaunay = true)
@@ -1475,33 +1501,6 @@ private:
     };
     const auto pseudo_cells =
         add_pseudo_cells_to_outer_map(upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, true);
-
-    auto inner_map_of_cavity = [&self = std::as_const(*this)](
-                                   const auto& tr, const auto& map_cavity_vertices_to_ambient_vertices) {
-      typename T_3::Vertex_triple_Facet_map inner_map;
-      auto add_facet_to_inner_map = [&](Facet f) {
-        const auto vt_aux = T_3::make_vertex_triple(f);
-        typename T_3::Vertex_triple vt(map_cavity_vertices_to_ambient_vertices[vt_aux.first],
-                                       map_cavity_vertices_to_ambient_vertices[vt_aux.third],
-                                       map_cavity_vertices_to_ambient_vertices[vt_aux.second]);
-        self.make_canonical_oriented_triple(vt);
-#if CGAL_DEBUG_CDT_3 & 128
-        CGAL_assertion(vt.first != vt.second);
-        CGAL_assertion(vt.first != vt.third);
-        CGAL_assertion(vt.second != vt.third);
-        std::cerr << std::format("inner map: Adding triple ({:.6}, {:.6}, {:.6})\n",
-                                 IO::oformat(vt.first, with_point),
-                                 IO::oformat(vt.second, with_point),
-                                 IO::oformat(vt.third, with_point));
-#endif // CGAL_DEBUG_CDT_3
-        inner_map[vt] = f;
-      };
-      for(auto f : tr.finite_facets()) {
-        add_facet_to_inner_map(f);
-        add_facet_to_inner_map(self.mirror_facet(f));
-      }
-      return inner_map;
-    };
 
     {
 // #if CGAL_DEBUG_CDT_3 & 64
