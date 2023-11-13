@@ -1011,10 +1011,10 @@ First, \cgalFigureRef{icc_measures} illustrates various curvature measures on a 
 <center>
 <table border=0>
 <tr>
-<td><img src="bimba-mean0.040000-0.000000.png" style="width:100%;"/></td>
-<td><img src="bimba-gaussian0.040000-0.000000.png" style="width:100%;"/></td>
-<td><img src="bimba-dmin0.040000-0.000000.png" style="width:100%;"/></td>
-<td><img src="bimba-dmax0.040000-0.000000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-gaussian0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-dmin0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-dmax0.040000-0.000000.jpg" style="width:100%;"/></td>
 </tr>
 <tr align="center"><td>(a)</td><td>(b)</td></tr>
 </table>
@@ -1029,16 +1029,16 @@ Mean curvature, Gaussian curvature, minimal principal curvature direction and ma
 <center>
 <table border=0>
 <tr>
-<td><img src="bimba-mean0.020000-0.000000.png" style="width:100%;"/></td>
-<td><img src="bimba-mean0.030000-0.000000.png" style="width:100%;"/></td>
-<td><img src="bimba-mean0.040000-0.000000.png" style="width:100%;"/></td>
-<td><img src="bimba-mean0.050000-0.000000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.020000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.030000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.050000-0.000000.jpg" style="width:100%;"/></td>
 </tr>
 <tr>
-<td><img src="bimba-mean0.020000-0.002000.png" style="width:100%;"/></td>
-<td><img src="bimba-mean0.030000-0.002000.png" style="width:100%;"/></td>
-<td><img src="bimba-mean0.040000-0.002000.png" style="width:100%;"/></td>
-<td><img src="bimba-mean0.050000-0.002000.png" style="width:100%;"/></td>
+<td><img src="bimba-mean0.020000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.030000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.050000-0.002000.jpg" style="width:100%;"/></td>
 </tr>
 <tr align="center"><td>(a)</td><td>(b)</td></tr>
 </table>
