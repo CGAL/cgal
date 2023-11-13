@@ -171,16 +171,20 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_variable_size
                           PUBLIC CGAL::Eigen3_support)
 
-    find_package(ITK NAMES ITK InsightToolkit QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+    find_package(ITK NAMES ITK InsightToolkit
+                     QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)
-      include(CGAL_ITK_support)
+      message(STATUS "ITK found")
+      include(${ITK_USE_FILE})
+      set(ITK_LIBS ITKCommon ITKSmoothing ITKImageIntensity)
+
       create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
       target_link_libraries(mesh_3D_weighted_image
-                            PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
+                            PUBLIC CGAL::Eigen3_support ${ITK_LIBS})
 
       create_single_source_cgal_program("mesh_3D_weighted_image_with_detection_of_features.cpp")
       target_link_libraries(mesh_3D_weighted_image_with_detection_of_features
-                            PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
+                            PUBLIC CGAL::Eigen3_support ${ITK_LIBS})
     else(ITK_FOUND)
       message(STATUS "NOTICE: The examples that need ITK will not be compiled.")
     endif(ITK_FOUND)

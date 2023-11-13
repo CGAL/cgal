@@ -28,10 +28,14 @@ target_link_libraries(
          ${OPENGL_gl_LIBRARY})
 target_include_directories(mesh_3_plugin PRIVATE include)
 
-find_package(ITK NAMES ITK InsightToolkit QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+find_package(ITK NAMES ITK InsightToolkit
+                 QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
 if(ITK_FOUND)
-  include(CGAL_ITK_support)
-  target_link_libraries(mesh_3_plugin PUBLIC CGAL::ITK_support)
+  include(${ITK_USE_FILE})
+  set(ITK_LIBS ITKCommon ITKSmoothing ITKImageIntensity)
+
+  target_link_libraries(mesh_3_plugin PUBLIC ${ITK_LIBS})
+  target_compile_definitions(mesh_3_plugin PUBLIC CGAL_USE_ITK)
 endif(ITK_FOUND)
 
 find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage vtkIOXML NO_MODULE)
