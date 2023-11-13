@@ -47,9 +47,9 @@ int main(void)
   for(Pwn& it: points)
   { point_set.insert(it.first); }
 
-  CGAL::Graphics_scene graphic_buffer1, graphic_buffer2;
-  CGAL::add_to_graphics_scene(point_set, graphic_buffer1);
-  CGAL::add_to_graphics_scene(output_mesh, graphic_buffer2);
+  CGAL::Graphics_scene scene1, scene2;
+  CGAL::add_to_graphics_scene(point_set, scene1);
+  CGAL::add_to_graphics_scene(output_mesh, scene2);
 
   /// (2) Qt code that create windows, add them in a layout, and create app.
 
@@ -69,8 +69,8 @@ int main(void)
   QWidget *centralWidget = new QWidget(mainWindow);
   QHBoxLayout* layout = new QHBoxLayout(mainWindow);
 
-  CGAL::Qt::Basic_viewer bv1(mainWindow, graphic_buffer1);
-  CGAL::Qt::Basic_viewer bv2(mainWindow, graphic_buffer2);
+  CGAL::Qt::Basic_viewer bv1(mainWindow, scene1);
+  CGAL::Qt::Basic_viewer bv2(mainWindow, scene2);
   bv1.set_draw_vertices(true);
 
   layout->addWidget(&bv1);
