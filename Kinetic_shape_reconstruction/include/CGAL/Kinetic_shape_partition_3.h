@@ -812,9 +812,9 @@ public:
   /*!
    \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map` using a model of `KineticLCCProperties` as items, e.g., `LCC_Base_Properties`.
 
-   Volume and face properties defined in the model `KineticLCCProperties` are filled. The volume index is in the range [0, #volumes -1]
+   Volume and face properties defined in the model `KineticLCCProperties` are filled. The volume index is in the range [0, number of volumes -1]
 
-   \return linear cell complex of kinetic partition.
+   \param lcc instance of `Linear_cell_complex_for_combinatorial_map` to be filled with the kinetic partition.
 
    \pre created partition
   */
