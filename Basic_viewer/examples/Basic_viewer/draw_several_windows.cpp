@@ -5,7 +5,7 @@
 #include <CGAL/draw_polyhedron.h>
 #include <CGAL/draw_point_set_3.h>
 #include <CGAL/Graphics_scene_options.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 #include <QMainWindow>
 
 #include <vector>
@@ -69,8 +69,8 @@ int main(void)
   QWidget *centralWidget = new QWidget(mainWindow);
   QHBoxLayout* layout = new QHBoxLayout(mainWindow);
 
-  CGAL::Basic_viewer_qt bv1(mainWindow, graphic_buffer1);
-  CGAL::Basic_viewer_qt bv2(mainWindow, graphic_buffer2);
+  CGAL::Qt::Basic_viewer bv1(mainWindow, graphic_buffer1);
+  CGAL::Qt::Basic_viewer bv2(mainWindow, graphic_buffer2);
   bv1.set_draw_vertices(true);
 
   layout->addWidget(&bv1);
