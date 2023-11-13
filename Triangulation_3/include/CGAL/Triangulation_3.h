@@ -4989,7 +4989,7 @@ create_triangulation_inner_map(const Triangulation& t,
       {
         Facet f = std::pair<Cell_handle,int>(it,index);
         Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt(vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]);
+        Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
         make_canonical_oriented_triple(vt);
         inner_map[vt] = f;
       }
@@ -5003,7 +5003,7 @@ create_triangulation_inner_map(const Triangulation& t,
       {
         Facet f = std::pair<Cell_handle,int>(it,index);
         Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt(vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]);
+        Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
         make_canonical_oriented_triple(vt);
         inner_map[vt] = f;
       }
