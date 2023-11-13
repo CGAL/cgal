@@ -1000,7 +1000,7 @@ The implementation is generic in terms of mesh data structure. It can be used on
 `Polyhedron_3` and other polygonal mesh structures based on the concept `FaceGraph`.
 
 These computations are performed using (on all vertices of the mesh) `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
-where function named parameters are used to select the curvatures (and possibly directions) to be computed. An overlay with the same name
+where function named parameters are used to select the curvatures (and possibly directions) to be computed. An overload function with the same name
 but taking a given vertex is also available in case the computation should be done only for that vertex.
 
 \subsection ICCResults Results & Performance
