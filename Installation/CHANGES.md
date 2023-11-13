@@ -35,6 +35,10 @@ Release date: October 2023
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` which can be used to compute
+    the mean and Gaussian curvatures, as well as the principal curvature and directions.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
