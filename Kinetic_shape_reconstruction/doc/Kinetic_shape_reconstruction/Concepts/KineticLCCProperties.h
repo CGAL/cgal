@@ -33,12 +33,12 @@ struct KineticLCCProperties {
     int input_polygon_index; // Stores the index of the input polygon the provided that support plane of this face. Indices -1 till -6 correspond to bbox faces, -7 to faces from octree
     typename Intersection_kernel::Plane_3 plane; // Support plane of the face derived from the corresponding input polygon or from octree nodes used for subdivision.
     bool part_of_initial_polygon; // Does this face overlap with the corresponding input polygon.
-  };
+  } Face_property;
 
   struct Volume_property {
     typename Intersection_kernel::Point_3 barycenter; // Contains the bary_cernter of the volume.
     std::size_t volume_id; // 0-based volume id.
-  };
+  } Volume_property;
 
   template<class LCC>
   struct Dart_wrapper
@@ -48,5 +48,5 @@ struct KineticLCCProperties {
     typedef CGAL::Cell_attribute< LCC, Volume_property > Volume_attribute;
 
     typedef std::tuple<Vertex_attribute, void, Face_attribute, Volume_attribute> Attributes;
-  };
+  } Dart_wrapper;
 };
