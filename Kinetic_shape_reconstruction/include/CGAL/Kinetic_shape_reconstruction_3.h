@@ -29,7 +29,6 @@
 #include <CGAL/Shape_regularization/regularize_planes.h>
 #include <CGAL/bounding_box.h>
 
-#include <boost/filesystem.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -297,7 +296,7 @@ public:
 
       auto& finf = m_lcc.info<2>(m_faces_lcc[i]);
 
-      int first = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_index;
+      int first = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id;
       auto& inf1 = m_lcc.info<3>(m_lcc.dart_descriptor(*it++));
 
       auto inf2 = inf1;
@@ -306,10 +305,10 @@ public:
 
       int second;
       if (n.size() == 2)
-        second = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_index;
+        second = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id;
 
       if (n.size() == 2)
-        m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_index + 6);
+        m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id + 6);
       else
         m_face_neighbors_lcc[i] = std::make_pair(first + 6, -m_lcc.info<2>(m_faces_lcc[i]).input_polygon_index - 1);
 
@@ -1030,7 +1029,7 @@ private:
       for (const auto &vd : m_lcc.one_dart_per_cell<3>()) {
         const auto& info = m_lcc.info<3>(m_lcc.dart_descriptor(vd));
 
-        m_volume_below_ground[info.volume_index] = (from_exact(info.barycenter) - m_regions[m_ground_polygon_index].first.projection(from_exact(info.barycenter))).z() < 0;
+        m_volume_below_ground[info.volume_id] = (from_exact(info.barycenter) - m_regions[m_ground_polygon_index].first.projection(from_exact(info.barycenter))).z() < 0;
       }
   }
 
@@ -1275,7 +1274,7 @@ private:
       std::size_t idx = 0;
       for (auto& vd : m_lcc.one_dart_per_incident_cell<3, 2>(m_faces_lcc[i])) {
         typename LCC::Dart_descriptor vdh = m_lcc.dart_descriptor(vd);
-        v[idx] = m_lcc.info<3>(vdh).volume_index;
+        v[idx] = m_lcc.info<3>(vdh).volume_id;
         c[idx] = from_exact(m_lcc.info<3>(vdh).barycenter);
         idx++;
       }
@@ -1309,7 +1308,7 @@ private:
 
       std::vector<Point_3> volume_vertices;
 
-      std::size_t volume_index = m_lcc.info<3>(dh).volume_index;
+      std::size_t volume_index = m_lcc.info<3>(dh).volume_id;
 
       // Collect all vertices of volume to calculate volume
       for (auto &fd : m_lcc.one_dart_per_incident_cell<2, 3>(dh)) {

@@ -31,12 +31,13 @@ struct KineticLCCProperties {
 
   struct Face_property {
     int input_polygon_index; // Stores the index of the input polygon the provided that support plane of this face. Indices -1 till -6 correspond to bbox faces, -7 to faces from octree
-    typename Intersection_kernel::Plane_3 plane;
-    bool part_of_initial_polygon;
+    typename Intersection_kernel::Plane_3 plane; // Support plane of the face derived from the corresponding input polygon or from octree nodes used for subdivision.
+    bool part_of_initial_polygon; // Does this face overlap with the corresponding input polygon.
   };
 
   struct Volume_property {
-    typename Intersection_kernel::Point_3 barycenter;
+    typename Intersection_kernel::Point_3 barycenter; // Contains the bary_cernter of the volume.
+    std::size_t volume_id; // 0-based volume id.
   };
 
   template<class LCC>

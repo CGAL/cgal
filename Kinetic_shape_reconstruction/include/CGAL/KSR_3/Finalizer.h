@@ -15,7 +15,6 @@
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-//#include <boost/filesystem.hpp>
 
 // Internal includes.
 #include <CGAL/KSR/utils.h>
@@ -23,7 +22,6 @@
 #include <CGAL/KSR/parameters.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
-#include <boost/filesystem.hpp>
 
 namespace CGAL {
 namespace KSR_3 {

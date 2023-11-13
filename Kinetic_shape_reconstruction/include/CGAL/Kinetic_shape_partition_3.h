@@ -88,7 +88,7 @@ public:
 
     struct Volume_property {
       typename Intersection_kernel::Point_3 barycenter;
-      std::size_t volume_index;
+      std::size_t volume_id;
     };
 
     template<class LCC>
@@ -810,7 +810,9 @@ public:
   }
 
   /*!
-   \brief Exports the kinetic partition into a `Linear_Cell_Complex` using a model of `` as items, e.g., `LCC_Base_Properties`.
+   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map` using a model of `KineticLCCProperties` as items, e.g., `LCC_Base_Properties`.
+
+   Volume and face properties defined in the model `KineticLCCProperties` are filled. The volume index is in the range [0, #volumes -1]
 
    \return linear cell complex of kinetic partition with filled in `LCC_Base_Properties::Volume_property` and `LCC_Base_Properties::Face_property`.
 
@@ -1017,7 +1019,7 @@ public:
 
       lcc.set_attribute<3>(d, lcc.create_attribute<3>());
       lcc.info<3>(d).barycenter = centroid;
-      lcc.info<3>(d).volume_index = v;
+      lcc.info<3>(d).volume_id = v;
 
       std::size_t unused = 0;
 
