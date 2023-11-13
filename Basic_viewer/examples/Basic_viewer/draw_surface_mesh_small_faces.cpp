@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
   CGAL::Graphics_scene buffer;
 
   add_in_graphics_scene(sm, buffer, gsosm);
-  CGAL::QApplication_and_basic_viewer app(buffer, "Small faces");
+  CGAL::Qt::QApplication_and_basic_viewer app(buffer, "Small faces");
   if(app)
   {
     app.basic_viewer().on_key_pressed=

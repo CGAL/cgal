@@ -29,10 +29,10 @@
 - `GraphicsSceneOptionsWithVolumes`
 
 \cgalCRPSection{Classes}
-- `CGAL::Basic_viewer`
+- `CGAL::Qt::Basic_viewer`
 - `CGAL::Graphics_scene`
 - `CGAL::Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor, VolumeDescriptor>`
-- `CGAL::QApplication_and_basic_viewer`
+- `CGAL::Qt::QApplication_and_basic_viewer`
 
 \cgalCRPSubsection{Draw a Graphics Scene}
 
@@ -73,4 +73,3 @@
 - Voronoi_diagram_2 \link PkgDrawVoronoiDiagram2 CGAL::add_to_graphics_scene<V2>() \endlink
 
 */
-
