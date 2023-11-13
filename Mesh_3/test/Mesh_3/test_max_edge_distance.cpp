@@ -49,9 +49,9 @@ struct Edge_distance_test_helper
 
       typename C3t3::Curve_index curve_index = domain.curve_index((va->in_dimension() < vb->in_dimension()) ? vb->index() : va->index());
 
-      K::Point_3 pa = va->point().point();
-      K::Point_3 pb = vb->point().point();
-      K::Point_3 segment_middle = CGAL::midpoint(pa, pb);
+      const K::Point_3& pa = va->point().point();
+      const K::Point_3& pb = vb->point().point();
+      const K::Point_3& segment_middle = CGAL::midpoint(pa, pb);
       // Obtain the geodesic middle point
       FT signed_geodesic_distance = domain.signed_geodesic_distance(pa, pb, curve_index);
       K::Point_3 geodesic_middle;

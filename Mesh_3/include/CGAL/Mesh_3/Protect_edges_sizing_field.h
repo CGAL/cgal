@@ -473,15 +473,10 @@ private:
     return s;
   }
 
-  /// Query the sizing field and return its value at the point `p`, or
-  /// `minimal_size` if the latter is greater.
+  /// Query the sizing field and return its value at the point `p`
   FT query_size(const Bare_point& p, int dim, const Index& index) const
   {
     FT s = query_field(p, dim, index, size_);
-
-    // if(minimal_size_ != FT() && s < minimal_size_)
-    //   return minimal_size_;
-    // else
     return s;
   }
 
@@ -1556,9 +1551,9 @@ approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb) const
 
   Curve_index curve_index = domain_.curve_index((va->in_dimension() < vb->in_dimension()) ? vb->index() : va->index());
 
-  Point_3 pa = va->point().point();
-  Point_3 pb = vb->point().point();
-  Point_3 segment_middle = CGAL::midpoint(pa, pb);
+  const Point_3& pa = va->point().point();
+  const Point_3& pb = vb->point().point();
+  const Point_3& segment_middle = CGAL::midpoint(pa, pb);
   // Obtain the geodesic middle point
   FT signed_geodesic_distance = domain_.signed_geodesic_distance(pa, pb, curve_index);
   Point_3 geodesic_middle;
