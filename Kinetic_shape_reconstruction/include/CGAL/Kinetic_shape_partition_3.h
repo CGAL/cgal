@@ -75,16 +75,21 @@ public:
 
   using Index = std::pair<std::size_t, std::size_t>;
 
-  typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
-
-  struct LCC_Properties
+  struct LCC_Base_Properties
   {
     typedef CGAL::Tag_true Use_index;
+    typedef std::uint32_t Index_type;
+
+    struct Vertex_property {
+      Index vtx;
+    };
 
     struct Face_property {
-      int input_polygon_index; // negative indices correspond to bbox sides
+      int input_polygon_index; // -1 till -6 correspond to bbox faces, -7 to faces from octree
+      typename Intersection_kernel::Plane_3 plane;
       bool part_of_initial_polygon;
-      Index face_index;
+      int n1, n2;
+      Index face_index; // Only for debugging/comparison with Index-interface
     };
 
     struct Volume_property {
@@ -95,7 +100,7 @@ public:
     template<class LCC>
     struct Dart_wrapper
     {
-      typedef CGAL::Cell_attribute_with_point< LCC > Vertex_attribute;
+      typedef CGAL::Cell_attribute_with_point< LCC, Vertex_property > Vertex_attribute;
       typedef CGAL::Cell_attribute< LCC, Face_property > Face_attribute;
       typedef CGAL::Cell_attribute< LCC, Volume_property > Volume_attribute;
 
@@ -103,7 +108,8 @@ public:
     };
   };
 
-  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, LCC_Properties>;
+
+  //using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, LCC_Properties>;
 
 private:
   using FT = typename Kernel::FT;
@@ -242,8 +248,6 @@ private:
   std::map<Index, std::size_t> m_index2volume;
 
   std::set<Index> duplicates;
-
-  LCC m_lcc;
 
 public:
   /// \name Initialization
@@ -750,7 +754,8 @@ public:
     }
 
     //make it specific to some subnodes?
-    //check_tjunctions();
+    if (m_parameters.verbose)
+      check_tjunctions();
 
     // Clear unused data structures
     for (std::size_t i = 0; i < m_partitions.size(); i++) {
@@ -759,8 +764,6 @@ public:
       m_partition_nodes[i].m_data->face_to_index().clear();
       m_partition_nodes[i].m_data->face_to_volumes().clear();
     }
-
-    create_linear_cell_complex();
 
     return;
   }
@@ -1061,8 +1064,8 @@ public:
     }
   }
 
-  const typename Intersection_kernel::Plane_3 &input_plane(std::size_t polygon_index) const {
-    return m_input_planes[polygon_index];
+  const std::vector<typename Intersection_kernel::Plane_3> &input_planes() const {
+    return m_input_planes;
   }
 
   const std::vector<std::vector<std::size_t> > &input_mapping() const {
@@ -1254,8 +1257,395 @@ public:
    \pre successful partition
   */
 
-  const LCC& get_linear_cell_complex() const {
-    return m_lcc;
+  template<class LCC>
+  void get_linear_cell_complex(LCC &lcc) const {
+    lcc.clear();
+
+    std::map<Index, std::size_t> mapped_vertices;
+    std::map<typename Intersection_kernel::Point_3, std::size_t> mapped_points;
+    std::vector<typename Intersection_kernel::Point_3> vtx;
+    std::vector<Index> vtx_index;
+
+    From_exact to_inexact;
+    To_exact to_exact;
+
+    std::vector<Index> faces_of_volume, vtx_of_face;
+    std::vector<typename Intersection_kernel::Point_3> pts_of_face;
+
+    for (std::size_t i = 0; i < number_of_volumes(); i++) {
+      faces(i, std::back_inserter(faces_of_volume));
+
+      for (const Index& f : faces_of_volume) {
+        exact_vertices(f, std::back_inserter(pts_of_face), std::back_inserter(vtx_of_face));
+
+        for (std::size_t j = 0; j < pts_of_face.size(); j++) {
+          auto pit = mapped_points.emplace(pts_of_face[j], vtx.size());
+          if (pit.second) {
+            mapped_vertices[vtx_of_face[j]] = vtx.size();
+            vtx.push_back(pts_of_face[j]);
+            vtx_index.push_back(vtx_of_face[j]);
+          }
+          else mapped_vertices[vtx_of_face[j]] = pit.first->second;
+        }
+
+        pts_of_face.clear();
+        vtx_of_face.clear();
+      }
+      faces_of_volume.clear();
+    }
+
+    CGAL::Linear_cell_complex_incremental_builder_3<LCC> ib(lcc);
+    for (std::size_t i = 0; i < vtx.size(); i++) {
+      auto vah = ib.add_vertex(vtx[i]);
+      lcc.info_of_attribute<0>(vah).vtx = vtx_index[i];
+    }
+
+    std::size_t num_faces = 0;
+    std::size_t num_vols = 0;
+    std::size_t num_vtx = 0;
+
+    typename LCC::Dart_descriptor d;
+
+    std::vector<bool> used_vertices(mapped_vertices.size(), false);
+    std::vector<bool> added_volumes(number_of_volumes(), false);
+    std::deque<std::size_t> queue;
+    queue.push_back(0);
+    while (!queue.empty()) {
+      std::size_t v = queue.front();
+      queue.pop_front();
+
+      if (added_volumes[v])
+        continue;
+
+      if (!can_add_volume_to_lcc(v, added_volumes, mapped_vertices, used_vertices)) {
+        queue.push_back(v);
+        continue;
+      }
+
+      added_volumes[v] = true;
+
+      ib.begin_surface();
+      //std::cout << v << " inserting:";
+      num_vols++;
+      faces(v, std::back_inserter(faces_of_volume));
+
+      typename Intersection_kernel::Point_3 centroid = to_exact(m_partition_nodes[m_volumes[v].first].m_data->volumes()[m_volumes[v].second].centroid);
+
+      /*
+            std::ofstream vout3(std::to_string(v) + ".xyz");
+            vout3.precision(20);
+            vout3 << " " << m_partition_nodes[m_volumes[v].first].m_data->volumes()[m_volumes[v].second].centroid << std::endl;
+            vout3 << std::endl;
+            vout3.close();*/
+
+            // How to order faces accordingly?
+            // First take faces of adjacent volumes and collect all added edges
+            // Then pick from the remaining faces and take those which have already inserted edges
+            // Repeat the last step until all are done.
+      //       std::set<std::pair<std::size_t, std::size_t> > edges;
+      //       for (std::size_t j=0;)
+            // Try easy way and remove cells, I did not add after every loop?
+
+      for (std::size_t j = 0; j < faces_of_volume.size(); j++) {
+        vertex_indices(faces_of_volume[j], std::back_inserter(vtx_of_face));
+
+        auto pair = neighbors(faces_of_volume[j]);
+
+        if (pair.first != v && !added_volumes[pair.first])
+          queue.push_back(pair.first);
+        if (pair.second != v && pair.second >= 0 && !added_volumes[pair.second])
+          queue.push_back(pair.second);
+
+        //auto vertex_range = m_data.pvertices_of_pface(vol.pfaces[i]);
+        ib.begin_facet();
+        num_faces++;
+
+        //std::cout << "(";
+
+        //Sub_partition& p = m_partition_nodes[faces_of_volume[j].first];
+
+        typename Intersection_kernel::Vector_3 norm;
+        std::size_t i = 0;
+        do {
+          std::size_t n = (i + 1) % vtx_of_face.size();
+          std::size_t nn = (n + 1) % vtx_of_face.size();
+          norm = CGAL::cross_product(vtx[mapped_vertices[vtx_of_face[n]]] - vtx[mapped_vertices[vtx_of_face[i]]], vtx[mapped_vertices[vtx_of_face[nn]]] - vtx[mapped_vertices[vtx_of_face[n]]]);
+          i++;
+        } while (to_inexact(norm.squared_length()) == 0 && i < vtx_of_face.size());
+
+        FT len = sqrt(to_inexact(norm.squared_length()));
+        if (len != 0)
+          len = 1.0 / len;
+        norm = norm * to_exact(len);
+        typename Kernel::Vector_3 n1 = to_inexact(norm);
+
+        bool outwards_oriented = (vtx[mapped_vertices[vtx_of_face[0]]] - centroid) * norm < 0;
+        //outward[std::make_pair(v, j)] = outwards_oriented;
+
+        if (!outwards_oriented)
+          std::reverse(vtx_of_face.begin(), vtx_of_face.end());
+
+        /*
+                auto p1 = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face[0]], mapped_vertices[vtx_of_face[1]]), std::make_pair(v, j)));
+                if (!p1.second) {
+                  std::size_t first = mapped_vertices[vtx_of_face[0]];
+                  std::size_t second = mapped_vertices[vtx_of_face[1]];
+                  auto p = edge_to_volface[std::make_pair(first, second)];
+                  auto o1 = outward[p];
+                  auto o2 = outward[std::make_pair(v, j)];
+                }
+
+                for (std::size_t k = 1; k < vtx_of_face.size() - 1; k++) {
+                  auto p = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face[k]], mapped_vertices[vtx_of_face[k + 1]]), std::make_pair(v, j)));
+                  if (!p.second) {
+                    std::size_t first = mapped_vertices[vtx_of_face[k]];
+                    std::size_t second = mapped_vertices[vtx_of_face[k + 1]];
+                    auto p = edge_to_volface[std::make_pair(first, second)];
+                    auto o1 = outward[p];
+                    auto o2 = outward[std::make_pair(v, j)];
+                  }
+                }
+
+                auto p2 = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face.back()], mapped_vertices[vtx_of_face[0]]), std::make_pair(v, j)));
+                if (!p2.second) {
+                  std::size_t first = mapped_vertices[vtx_of_face.back()];
+                  std::size_t second = mapped_vertices[vtx_of_face[0]];
+                  auto p = edge_to_volface[std::make_pair(first, second)];
+                  auto o1 = outward[p];
+                  auto o2 = outward[std::make_pair(v, j)];
+                }*/
+
+        for (const auto& v : vtx_of_face) {
+          ib.add_vertex_to_facet(static_cast<std::size_t>(mapped_vertices[v]));
+          //std::cout << " " << mapped_vertices[v];
+          if (!used_vertices[mapped_vertices[v]]) {
+            used_vertices[mapped_vertices[v]] = true;
+            num_vtx++;
+          }
+        }
+
+        //std::cout << ")";
+        auto face_dart = ib.end_facet(); // returns a dart to the face
+        if (lcc.attribute<2>(face_dart) == lcc.null_descriptor) {
+          lcc.set_attribute<2>(face_dart, lcc.create_attribute<2>());
+          // How to handle bbox planes that coincide with input polygons? Check support plane
+          std::size_t sp = m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second];
+
+          // There are three different cases:
+          // 1. face belongs to a plane from an input polygon
+          // 2. face originates from octree splitting (and does not have an input plane)
+          // 3. face lies on the bbox
+          int ip = m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(sp).data().actual_input_polygon;
+          if (ip != -1)
+            lcc.info<2>(face_dart).input_polygon_index = m_partition_nodes[faces_of_volume[j].first].input_polygons[ip];
+          else {
+            // If there is no input polygon, I need to check whether it has two neighbors
+            auto n = neighbors(faces_of_volume[j]);
+            if (n.second >= 0)
+              lcc.info<2>(face_dart).input_polygon_index = -7;
+            else
+              lcc.info<2>(face_dart).input_polygon_index = n.second;
+          }
+          lcc.info<2>(face_dart).part_of_initial_polygon = m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second];
+          lcc.info<2>(face_dart).face_index = faces_of_volume[j];
+          lcc.info<2>(face_dart).plane = m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second]).exact_plane();
+
+
+          auto n = neighbors(faces_of_volume[j]);
+          lcc.info<2>(face_dart).n1 = n.first;
+          lcc.info<2>(face_dart).n2 = n.second;
+        }
+        else {
+          assert(lcc.info<2>(face_dart).part_of_initial_polygon == m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second]);
+          if (lcc.info<2>(face_dart).face_index.first > faces_of_volume[j].first)
+            lcc.info<2>(face_dart).face_index = faces_of_volume[j];
+        }
+
+        /*
+                if (!lcc.is_valid())
+                  std::cout << "LCC is not valid" << std::endl;*/
+
+        vtx_of_face.clear();
+      }
+
+      d = ib.end_surface(); // returns a dart to the volume
+      //std::cout << std::endl;
+      /*
+      std::size_t current_num_vols = lcc.one_dart_per_cell<3>().size();
+      std::size_t current_num_faces = lcc.one_dart_per_cell<2>().size();
+      std::size_t current_num_vtx = lcc.one_dart_per_cell<0>().size();
+
+      //CGAL::draw(lcc);
+
+/*
+      if (!lcc.is_valid())
+        std::cout << "LCC is not valid" << std::endl;
+
+      if (current_num_vtx != num_vtx || current_num_vols != num_vols) {
+        std::cout << "number of vertices increased" << std::endl;
+        std::cout << "num_vtx: " << num_vtx << " current_num_vtx: " << current_num_vtx << std::endl;
+        std::cout << "num_faces: " << num_faces << " current_num_faces: " << current_num_faces << std::endl;
+        std::cout << "num_vols: " << num_vols << " current_num_vols: " << current_num_vols << std::endl;
+
+        std::ofstream vout("dart-76.xyz");
+        vout.precision(20);
+        typename LCC::Dart_descriptor vdd(76);
+        Point_3 p = to_inexact(lcc.point(vdd));
+        vout << " " << p;
+        vout.close();
+
+        //CGAL::draw(lcc);
+      }*/
+
+      lcc.set_attribute<3>(d, lcc.create_attribute<3>());
+      lcc.info<3>(d).barycenter = centroid;
+      lcc.info<3>(d).volume_index = v;
+
+      std::size_t unused = 0;
+
+      faces_of_volume.clear();
+
+      //edge_to_volface.clear();
+    }
+
+    // Todo: Remove check if all volumes were added
+    for (std::size_t i = 0; i < added_volumes.size(); i++)
+      if (!added_volumes[i])
+        std::cout << "volume " << i << " has not been added" << std::endl;
+
+    std::cout << "lcc #volumes: " << lcc.one_dart_per_cell<3>().size() << " ksp #volumes: " << number_of_volumes() << std::endl;
+    std::cout << "lcc #faces: " << lcc.one_dart_per_cell<2>().size() << " ksp #faces: " << num_faces << std::endl;
+    std::cout << "lcc #n-edges: " << lcc.one_dart_per_cell<1>().size() << std::endl;
+    std::cout << "lcc #vtx: " << lcc.one_dart_per_cell<0>().size() << " ksp #vtx: " << vtx.size() << std::endl;
+
+    // Verification
+    // Check attributes in each dart
+    for (auto& d : lcc.one_dart_per_cell<0>()) {
+      if (!lcc.is_dart_used(lcc.dart_descriptor(d))) {
+        std::cout << "unused dart in 0" << std::endl;
+      }
+    }
+    for (auto& d : lcc.one_dart_per_cell<1>()) {
+      if (!lcc.is_dart_used(lcc.dart_descriptor(d))) {
+        std::cout << "unused dart in 1" << std::endl;
+      }
+    }
+    for (auto& d : lcc.one_dart_per_cell<2>()) {
+      if (!lcc.is_dart_used(lcc.dart_descriptor(d))) {
+        std::cout << "unused dart in 2" << std::endl;
+      }
+    }
+    for (auto& d : lcc.one_dart_per_cell<3>()) {
+      if (!lcc.is_dart_used(lcc.dart_descriptor(d))) {
+        std::cout << "unused dart in 3" << std::endl;
+      }
+    }
+
+    // Check neighbors of faces
+    std::set<Index> check;
+    for (auto& d : lcc.one_dart_per_cell<2>()) {
+      LCC::Dart_const_descriptor dh;
+      dh = lcc.dart_descriptor(d);
+
+      auto& inf = lcc.info<2>(dh);
+
+      int n1 = lcc.info<2>(dh).n1;
+      int n2 = lcc.info<2>(dh).n2;
+      auto n3 = neighbors(inf.face_index);
+
+      assert(((n1 == n3.first) && (n2 == n3.second)) || ((n1 == n3.second) && (n2 == n3.first)));
+
+      auto n = lcc.one_dart_per_incident_cell<3, 2>(dh);
+
+      int neighbors = n.size();
+
+      assert(n.size() >= 1);
+      auto it = n.begin();
+
+      int first = lcc.info<3>(lcc.dart_descriptor(*it++)).volume_index;
+      int second = -1;
+      if (n.size() == 2)
+        second = lcc.info<3>(lcc.dart_descriptor(*it)).volume_index;
+      else
+        second = inf.input_polygon_index;
+
+      if (n1 < n2)
+        check.insert(Index(n1, n2));
+      else
+        check.insert(Index(n2, n1));
+
+      assert(((n1 == first) && (n2 == second)) || ((n1 == second) && (n2 == first)));
+      int a;
+      a = 32;
+    }
+
+    for (std::size_t i = 0; i < m_partition_nodes.size(); i++)
+      for (std::size_t j = 0; j < m_partition_nodes[i].face_neighbors.size(); j++) {
+        auto n = neighbors(Index(i, j));
+        if (n.first < n.second) {
+          assert(check.find(n) != check.end());
+        }
+        else {
+          assert(check.find(Index(n.second, n.first)) != check.end());
+        }
+      }
+
+    /*for (auto& d : lcc.one_dart_per_cell<3>()) {
+      typename LCC::Dart_descriptor dh = lcc.dart_descriptor(d);
+      auto a = lcc.attribute<3>(dh);
+
+      if (a != lcc.null_descriptor)
+        continue;
+
+      std::string filename = std::to_string(dh) + ((a == lcc.null_descriptor) ? "n" : "") + ".polylines.txt";
+
+      std::ofstream vout(filename);
+      vout.precision(20);
+
+      std::size_t unused = 0;
+      std::vector<Point_3> pts;
+      for (auto& fd : lcc.one_dart_per_incident_cell<2, 3>(dh)) {
+        typename LCC::Dart_descriptor fdd = lcc.dart_descriptor(fd);
+        std::size_t num_vertices = lcc.one_dart_per_incident_cell<0, 2>(fdd).size() + 1;
+        vout << num_vertices;
+        for (auto& vd : lcc.one_dart_per_incident_cell<0, 2>(fdd)) {
+          typename LCC::Dart_descriptor vdd = lcc.dart_descriptor(vd);
+          Point_3 p = to_inexact(lcc.point(vdd));
+          vout << " " << p;
+          pts.push_back(p);
+        }
+        vout << " " << to_inexact(lcc.point(lcc.dart_descriptor(*lcc.one_dart_per_incident_cell<0, 2>(fdd).begin())));
+        vout << std::endl;
+      }
+
+      vout.close();
+    }*/
+
+    lcc.display_characteristics(std::cout) << std::endl;
+
+    if (!lcc.is_valid())
+      std::cout << "LCC is not valid" << std::endl;
+
+    /*
+        for (auto it = ra.begin(),
+                   itend = ra.end(); it != itend; ++it)
+        {
+          lcc.info<3>(it);
+        }*/
+        /*for (auto vold : lcc.one_dart_per_cell<3>()) {
+          auto d1 = vold;
+          d1 = d1;
+          lcc.is_dart_used(d1);
+
+    / *
+          if (!lcc.is_dart_used(vold)) {
+            std::cout << "x" << std::endl;
+            continue;
+          }
+          if (!lcc.template is_attribute_used<3>(lcc.template attribute<3>(vold))) {
+            std::cout << "." << std::endl;
+          }* /
+        }*/
   }
 
   /// @}
@@ -2441,391 +2831,6 @@ private:
     }
 
     return true;
-  }
-
-  void create_linear_cell_complex() {
-    m_lcc.clear();
-    //m_lcc.set_automatic_attributes_management(true);
-
-    std::map<Index, std::size_t> mapped_vertices;
-    std::map<typename Intersection_kernel::Point_3, std::size_t> mapped_points;
-    std::vector<typename Intersection_kernel::Point_3> vtx;
-
-    From_exact to_inexact;
-    To_exact to_exact;
-
-    std::vector<Index> faces_of_volume, vtx_of_face;
-    std::vector<typename Intersection_kernel::Point_3> pts_of_face;
-
-    for (std::size_t i = 0;i<number_of_volumes();i++) {
-      faces(i, std::back_inserter(faces_of_volume));
-
-      for (const Index& f : faces_of_volume) {
-        exact_vertices(f, std::back_inserter(pts_of_face), std::back_inserter(vtx_of_face));
-
-        for (std::size_t j = 0; j < pts_of_face.size(); j++) {
-          auto pit = mapped_points.emplace(pts_of_face[j], vtx.size());
-          if (pit.second) {
-            mapped_vertices[vtx_of_face[j]] = vtx.size();
-            vtx.push_back(pts_of_face[j]);
-          }
-          else mapped_vertices[vtx_of_face[j]] = pit.first->second;
-        }
-
-        pts_of_face.clear();
-        vtx_of_face.clear();
-      }
-      faces_of_volume.clear();
-    }
-
-    //std::cout << "#mapped_vertices: " << mapped_vertices.size() << " #mapped_points: " << mapped_points.size() << " " << " #vtx: " << vtx.size() << std::endl;
-
-    // Debug output of vertices
-/*
-    if (boost::filesystem::is_directory("vertices/"))
-      for (boost::filesystem::directory_iterator end_dir_it, it("vertices/"); it != end_dir_it; ++it)
-        boost::filesystem::remove_all(it->path());
-
-    if (boost::filesystem::is_directory("faces/"))
-      for (boost::filesystem::directory_iterator end_dir_it, it("faces/"); it != end_dir_it; ++it)
-        boost::filesystem::remove_all(it->path());
-
-    for (std::size_t i = 0; i < vtx.size(); i++) {
-      std::ofstream vout("vertices/" + std::to_string(i) + ".xyz");
-      vout.precision(20);
-      vout << vtx[i] << std::endl;
-      vout.close();
-    }*/
-
-    CGAL::Linear_cell_complex_incremental_builder_3<LCC> ib(m_lcc);
-    for (const auto& p : vtx)
-      ib.add_vertex(p);
-
-    std::size_t num_faces = 0;
-    std::size_t num_vols = 0;
-    std::size_t num_vtx = 0;
-
-    std::map<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> > edge_to_volface;
-    std::map<std::pair<std::size_t, std::size_t>, bool> outward;
-
-    typename LCC::Dart_descriptor d;
-
-    std::vector<bool> used_vertices(mapped_vertices.size(), false);
-    std::vector<bool> added_volumes(number_of_volumes(), false);
-    std::deque<std::size_t> queue;
-    queue.push_back(0);
-    while (!queue.empty()) {
-      std::size_t v = queue.front();
-      queue.pop_front();
-
-      if (added_volumes[v])
-        continue;
-
-      if (!can_add_volume_to_lcc(v, added_volumes, mapped_vertices, used_vertices)) {
-        queue.push_back(v);
-        continue;
-      }
-
-      added_volumes[v] = true;
-
-      ib.begin_surface();
-      //std::cout << v << " inserting:";
-      num_vols++;
-      faces(v, std::back_inserter(faces_of_volume));
-
-      typename Intersection_kernel::Point_3 centroid = to_exact(m_partition_nodes[m_volumes[v].first].m_data->volumes()[m_volumes[v].second].centroid);
-
-      /*
-            std::ofstream vout3(std::to_string(v) + ".xyz");
-            vout3.precision(20);
-            vout3 << " " << m_partition_nodes[m_volumes[v].first].m_data->volumes()[m_volumes[v].second].centroid << std::endl;
-            vout3 << std::endl;
-            vout3.close();*/
-
-      // How to order faces accordingly?
-      // First take faces of adjacent volumes and collect all added edges
-      // Then pick from the remaining faces and take those which have already inserted edges
-      // Repeat the last step until all are done.
-//       std::set<std::pair<std::size_t, std::size_t> > edges;
-//       for (std::size_t j=0;)
-      // Try easy way and remove cells, I did not add after every loop?
-
-      for (std::size_t j = 0; j < faces_of_volume.size(); j++) {
-        vertex_indices(faces_of_volume[j], std::back_inserter(vtx_of_face));
-
-        auto pair = neighbors(faces_of_volume[j]);
-
-        if (pair.first != v && !added_volumes[pair.first])
-          queue.push_back(pair.first);
-        if (pair.second != v && pair.second >= 0 && !added_volumes[pair.second])
-          queue.push_back(pair.second);
-
-        //auto vertex_range = m_data.pvertices_of_pface(vol.pfaces[i]);
-        ib.begin_facet();
-        num_faces++;
-
-        //std::cout << "(";
-
-        //Sub_partition& p = m_partition_nodes[faces_of_volume[j].first];
-
-        typename Intersection_kernel::Vector_3 norm;
-        std::size_t i = 0;
-        do {
-          std::size_t n = (i + 1) % vtx_of_face.size();
-          std::size_t nn = (n + 1) % vtx_of_face.size();
-          norm = CGAL::cross_product(vtx[mapped_vertices[vtx_of_face[n]]] - vtx[mapped_vertices[vtx_of_face[i]]], vtx[mapped_vertices[vtx_of_face[nn]]] - vtx[mapped_vertices[vtx_of_face[n]]]);
-          i++;
-        } while (to_inexact(norm.squared_length()) == 0 && i < vtx_of_face.size());
-
-        FT len = sqrt(to_inexact(norm.squared_length()));
-        if (len != 0)
-          len = 1.0 / len;
-        norm = norm * to_exact(len);
-        typename Kernel::Vector_3 n1 = to_inexact(norm);
-
-        /*
-                std::ofstream vout(std::to_string(v) + " " + std::to_string(j) + ".polylines.txt");
-                vout.precision(20);
-                vout << (vtx_of_face.size() + 1) << " ";
-                for (const auto &v : vtx_of_face) {
-                  vout << to_inexact(vtx[mapped_vertices[v]]) << " " << std::endl;
-                }
-                vout << to_inexact(vtx[mapped_vertices[vtx_of_face[0]]]) << std::endl;
-                vout << std::endl;
-                vout.close();*/
-
-                //bool outwards_oriented = (to_inexact(vtx[mapped_vertices[vtx_of_face[0]]]) - p.m_data->volumes()[faces_of_volume[j].second].centroid) * p.m_data->support_plane(p.m_data->face_to_support_plane()[faces_of_volume[j].second]).plane().orthogonal_vector() < 0;
-        bool outwards_oriented = (vtx[mapped_vertices[vtx_of_face[0]]] - centroid) * norm < 0;
-        outward[std::make_pair(v, j)] = outwards_oriented;
-
-        /*
-                std::ofstream vout2(std::to_string(v) + " " + std::to_string(j) + "-" + std::to_string(outwards_oriented) + "-normal.polylines.txt");
-                vout2.precision(20);
-                vout2 << "2 ";
-                vout2 << to_inexact(vtx[mapped_vertices[vtx_of_face[0]]]) << " " << std::endl;
-                vout2 << to_inexact(vtx[mapped_vertices[vtx_of_face[0]]] + norm) << std::endl;
-
-                vout2 << std::endl;
-                vout2.close();*/
-
-        if (!outwards_oriented)
-          std::reverse(vtx_of_face.begin(), vtx_of_face.end());
-
-        /*std::ofstream vout("faces/" + std::to_string(v)  + "-" + std::to_string(j) + ".polylines.txt");
-        vout.precision(20);
-        vout << (vtx_of_face.size() + 1) << " ";
-        for (const auto& v : vtx_of_face) {
-          vout << vtx[mapped_vertices[v]] << " " << std::endl;
-        }
-        vout << (vtx[mapped_vertices[vtx_of_face[0]]]) << std::endl;
-        vout << std::endl;
-        vout.close();*/
-
-        auto p1 = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face[0]], mapped_vertices[vtx_of_face[1]]), std::make_pair(v, j)));
-        if (!p1.second) {
-          std::size_t first = mapped_vertices[vtx_of_face[0]];
-          std::size_t second = mapped_vertices[vtx_of_face[1]];
-          auto p = edge_to_volface[std::make_pair(first, second)];
-          auto o1 = outward[p];
-          auto o2 = outward[std::make_pair(v, j)];
-        }
-
-        for (std::size_t k = 1; k < vtx_of_face.size() - 1; k++) {
-          auto p = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face[k]], mapped_vertices[vtx_of_face[k + 1]]), std::make_pair(v, j)));
-          if (!p.second) {
-            std::size_t first = mapped_vertices[vtx_of_face[k]];
-            std::size_t second = mapped_vertices[vtx_of_face[k + 1]];
-            auto p = edge_to_volface[std::make_pair(first, second)];
-            auto o1 = outward[p];
-            auto o2 = outward[std::make_pair(v, j)];
-          }
-        }
-
-        auto p2 = edge_to_volface.emplace(std::make_pair(std::make_pair(mapped_vertices[vtx_of_face.back()], mapped_vertices[vtx_of_face[0]]), std::make_pair(v, j)));
-        if (!p2.second) {
-          std::size_t first = mapped_vertices[vtx_of_face.back()];
-          std::size_t second = mapped_vertices[vtx_of_face[0]];
-          auto p = edge_to_volface[std::make_pair(first, second)];
-          auto o1 = outward[p];
-          auto o2 = outward[std::make_pair(v, j)];
-        }
-
-        for (const auto& v : vtx_of_face) {
-          ib.add_vertex_to_facet(static_cast<std::size_t>(mapped_vertices[v]));
-          //std::cout << " " << mapped_vertices[v];
-          if (!used_vertices[mapped_vertices[v]]) {
-            used_vertices[mapped_vertices[v]] = true;
-            num_vtx++;
-          }
-        }
-
-        //std::cout << ")";
-        auto face_dart = ib.end_facet(); // returns a dart to the face
-        m_lcc.set_attribute<2>(face_dart, m_lcc.create_attribute<2>());
-        // How to handle bbox planes that coincide with input polygons? Check support plane
-        std::size_t sp = m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second];
-        int ip = m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(sp).data().actual_input_polygon;
-        if (ip != -1)
-          m_lcc.info<2>(face_dart).input_polygon_index = static_cast<std::size_t>(ip);
-        else
-          m_lcc.info<2>(face_dart).input_polygon_index = static_cast<int>(sp) - 6;
-        m_lcc.info<2>(face_dart).part_of_initial_polygon = m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second];
-        m_lcc.info<2>(face_dart).face_index = faces_of_volume[j];
-
-        /*
-                if (!m_lcc.is_valid())
-                  std::cout << "LCC is not valid" << std::endl;*/
-
-        vtx_of_face.clear();
-      }
-
-      d = ib.end_surface(); // returns a dart to the volume
-      //std::cout << std::endl;
-      /*
-      std::size_t current_num_vols = m_lcc.one_dart_per_cell<3>().size();
-      std::size_t current_num_faces = m_lcc.one_dart_per_cell<2>().size();
-      std::size_t current_num_vtx = m_lcc.one_dart_per_cell<0>().size();
-
-      //CGAL::draw(m_lcc);
-
-/*
-      if (!m_lcc.is_valid())
-        std::cout << "LCC is not valid" << std::endl;
-
-      if (current_num_vtx != num_vtx || current_num_vols != num_vols) {
-        std::cout << "number of vertices increased" << std::endl;
-        std::cout << "num_vtx: " << num_vtx << " current_num_vtx: " << current_num_vtx << std::endl;
-        std::cout << "num_faces: " << num_faces << " current_num_faces: " << current_num_faces << std::endl;
-        std::cout << "num_vols: " << num_vols << " current_num_vols: " << current_num_vols << std::endl;
-
-        std::ofstream vout("dart-76.xyz");
-        vout.precision(20);
-        typename LCC::Dart_descriptor vdd(76);
-        Point_3 p = to_inexact(m_lcc.point(vdd));
-        vout << " " << p;
-        vout.close();
-
-        //CGAL::draw(m_lcc);
-      }*/
-
-      m_lcc.set_attribute<3>(d, m_lcc.create_attribute<3>());
-      m_lcc.info<3>(d).barycenter = centroid;
-      m_lcc.info<3>(d).volume_index = v;
-
-      std::size_t unused = 0;
-
-      faces_of_volume.clear();
-
-      edge_to_volface.clear();
-    }
-
-    // Todo: Remove check if all volumes were added
-    for (std::size_t i = 0; i < added_volumes.size(); i++)
-      if (!added_volumes[i])
-      std::cout << "volume " << i << " has not been added" << std::endl;
-
-    // Remove all unused volumes.
-/*
-    for (auto& d : m_lcc.one_dart_per_cell<3>()) {
-      typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
-
-      assert(dh != m_lcc.null_dart_descriptor);
-
-      auto a = m_lcc.attribute<3>(dh);
-      if (a == m_lcc.null_descriptor) {
-        std::cout << "attempting to remove 3-cell" << std::endl;
-        for (auto fd : m_lcc.one_dart_per_incident_cell<2, 3>(dh))
-          if (!m_lcc.is_free<2>(m_lcc.dart_descriptor(fd)))
-            m_lcc.unsew<3>(m_lcc.dart_descriptor(fd));
-
-        m_lcc.remove_cell<3>(dh);
-      }
-    }*/
-
-    std::cout << "lcc #volumes: " << m_lcc.one_dart_per_cell<3>().size() << " ksp #volumes: " << number_of_volumes() << std::endl;
-    std::cout << "lcc #faces: " << m_lcc.one_dart_per_cell<2>().size() << " ksp #faces: " << num_faces << std::endl;
-    std::cout << "lcc #vtx: " << m_lcc.one_dart_per_cell<0>().size() << " ksp #vtx: " << vtx.size() << std::endl;
-
-    std::vector<Point_3> additional_vtx;
-
-    for (auto& d : m_lcc.one_dart_per_cell<0>()) {
-      typename LCC::Dart_descriptor d1 = m_lcc.dart_descriptor(d);
-      if (!m_lcc.is_dart_used(d1)) {
-        std::cout << "unused dart in 0" << std::endl;
-      }
-    }
-    for (auto& d : m_lcc.one_dart_per_cell<1>()) {
-      if (!m_lcc.is_dart_used(m_lcc.dart_descriptor(d))) {
-        std::cout << "unused dart in 1" << std::endl;
-      }
-    }
-    for (auto& d : m_lcc.one_dart_per_cell<2>()) {
-      if (!m_lcc.is_dart_used(m_lcc.dart_descriptor(d))) {
-        std::cout << "unused dart in 2" << std::endl;
-      }
-    }
-    for (auto& d : m_lcc.one_dart_per_cell<3>()) {
-      if (!m_lcc.is_dart_used(m_lcc.dart_descriptor(d))) {
-        std::cout << "unused dart in 3" << std::endl;
-      }
-    }
-
-    for (auto& d : m_lcc.one_dart_per_cell<3>()) {
-      typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
-      auto a = m_lcc.attribute<3>(dh);
-
-      if (a != m_lcc.null_descriptor)
-        continue;
-
-      std::string filename = std::to_string(dh) + ((a == m_lcc.null_descriptor) ? "n" : "") + ".polylines.txt";
-
-      std::ofstream vout(filename);
-      vout.precision(20);
-
-      std::size_t unused = 0;
-      std::vector<Point_3> pts;
-      for (auto& fd : m_lcc.one_dart_per_incident_cell<2, 3>(dh)) {
-        typename LCC::Dart_descriptor fdd = m_lcc.dart_descriptor(fd);
-        std::size_t num_vertices = m_lcc.one_dart_per_incident_cell<0, 2>(fdd).size() + 1;
-        vout << num_vertices;
-        for (auto& vd : m_lcc.one_dart_per_incident_cell<0, 2>(fdd)) {
-          typename LCC::Dart_descriptor vdd = m_lcc.dart_descriptor(vd);
-          Point_3 p = to_inexact(m_lcc.point(vdd));
-          vout << " " << p;
-          pts.push_back(p);
-        }
-        vout << " " << to_inexact(m_lcc.point(m_lcc.dart_descriptor(*m_lcc.one_dart_per_incident_cell<0, 2>(fdd).begin())));
-        vout << std::endl;
-      }
-
-      vout.close();
-    }
-
-    m_lcc.display_characteristics(std::cout) << std::endl;
-
-    if (!m_lcc.is_valid())
-      std::cout << "LCC is not valid" << std::endl;
-
-/*
-    for (auto it = ra.begin(),
-               itend = ra.end(); it != itend; ++it)
-    {
-      m_lcc.info<3>(it);
-    }*/
-    /*for (auto vold : m_lcc.one_dart_per_cell<3>()) {
-      auto d1 = vold;
-      d1 = d1;
-      m_lcc.is_dart_used(d1);
-
-/ *
-      if (!m_lcc.is_dart_used(vold)) {
-        std::cout << "x" << std::endl;
-        continue;
-      }
-      if (!m_lcc.template is_attribute_used<3>(m_lcc.template attribute<3>(vold))) {
-        std::cout << "." << std::endl;
-      }* /
-    }*/
   }
 
   void merge_partitions(std::size_t idx) {

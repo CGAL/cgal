@@ -184,7 +184,6 @@ int main(const int argc, const char** argv) {
 
   FT after_energyterms = timer.time();
 
-
   ksr.reconstruct(parameters.graphcut_beta);
   FT after_reconstruction = timer.time();
 
@@ -197,6 +196,8 @@ int main(const int argc, const char** argv) {
 
   if (polylist.size() > 0)
     CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist");
+
+  ksr.reconstructed_model_polylist_lcc(std::back_inserter(vtx), std::back_inserter(polylist));
 
   ksr.reconstruct(0.3);
 
@@ -273,7 +274,8 @@ int main(const int argc, const char** argv) {
     CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b1.0");
 
   // Output.
-  ksr.partition().get_linear_cell_complex();
+  //LCC lcc;
+  //ksr.partition().get_linear_cell_complex(lcc);
 /*
 
   // Vertices.

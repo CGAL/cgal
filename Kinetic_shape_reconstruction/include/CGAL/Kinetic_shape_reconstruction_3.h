@@ -37,7 +37,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/boost/graph/helpers.h>
 
-//#define WITH_LCC
+#define WITH_LCC
 
 namespace CGAL
 {
@@ -91,7 +91,7 @@ public:
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_reconstruction_3(PointSet& ps,
-    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(ps), m_ground_polygon_index(-1), m_kinetic_partition(np), m_lcc(m_kinetic_partition.get_linear_cell_complex()) {}
+    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(ps), m_ground_polygon_index(-1), m_kinetic_partition(np) {}
 
   /*!
     \brief Detects shapes in the provided point cloud
@@ -234,6 +234,8 @@ public:
   void partition(std::size_t k, FT& partition_time, FT& finalization_time, FT& conformal_time) {
     m_kinetic_partition.partition(k, partition_time, finalization_time, conformal_time);
     std::cout << "Bounding box partitioned into " << m_kinetic_partition.number_of_volumes() << " volumes" << std::endl;
+
+    m_kinetic_partition.get_linear_cell_complex(m_lcc);
   }
 
   /*!
@@ -257,19 +259,16 @@ public:
   \pre `successful initialization`
   */
   bool setup_energyterms() {
-    CGAL::Timer timer;
-    timer.start();
 #ifdef WITH_LCC
     if (m_lcc.one_dart_per_cell<3>().size() == 0) {
       std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
       return false;
     }
-#else
+#endif
     if (m_kinetic_partition.number_of_volumes() == 0) {
       std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
       return false;
     }
-#endif
 
     m_faces.clear();
     m_face2index.clear();
@@ -281,36 +280,31 @@ public:
 #ifdef WITH_LCC
     auto face_range = m_lcc.one_dart_per_cell<2>();
     m_faces_lcc.reserve(face_range.size());
+
     for (auto& d : face_range) {
-      KSP::LCC::Dart_const_descriptor dh;
-      dh = m_lcc.dart_descriptor(d);
+      m_faces_lcc.push_back(m_lcc.dart_descriptor(d));
 
-      auto a = m_lcc.attribute<3>(dh);
+      std::size_t id = m_lcc.attribute<2>(m_faces_lcc.back());
 
-      if (m_lcc.is_attribute_used<3>(a))
-        m_faces_lcc.push_back(dh);
-      else
-        std::cout << "face dart skipped" << std::endl;
-    };
-
-#else
+      auto p = m_attrib2index_lcc.emplace(std::make_pair(m_lcc.attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
+      CGAL_assertion(p.second);
+    }
 #endif
     m_kinetic_partition.unique_faces(std::back_inserter(m_faces));
     std::cout << "Found " << m_faces.size() << " / " << m_faces_lcc.size() << " faces between volumes" << std::endl;
-    timer.reset();
 
 #ifdef WITH_LCC
-    for (std::size_t i = 0; i < m_faces_lcc.size(); i++)
-      m_face2index_lcc[m_faces_lcc[i]] = i;
-#else
+    assert(m_faces.size() == m_faces_lcc.size());
+#endif
     for (std::size_t i = 0; i < m_faces.size(); i++)
       m_face2index[m_faces[i]] = i;
-#endif
 
     // Create value arrays for graph cut
     m_face_inliers.resize(m_faces.size());
     m_face_area.resize(m_faces.size());
+    m_face_area_lcc.resize(m_faces.size());
     m_face_neighbors.resize(m_faces.size(), std::pair<int, int>(-1, -1));
+    m_face_neighbors_lcc.resize(m_faces.size());
 
     m_cost_matrix.resize(2);
     m_cost_matrix[0].resize(m_kinetic_partition.number_of_volumes() + 6);
@@ -318,13 +312,6 @@ public:
 
     std::cout << "* computing visibility ... ";
 
-#ifdef WITH_LCC
-    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
-      const typename KSP::LCC::Dart_const_descriptor &d = m_faces_lcc[i];
-      // Filter whether faces have properties or not. -> after fixing the creation, all faces should have properties.
-      m_lcc.is_attribute_used<3>(m_lcc.attribute<3>(d));
-    }
-#else
     for (std::size_t i = 0; i < m_faces.size(); i++) {
       // Shift by 6 for accommodate outside volumes
       // Map negative numbers -1..-6 to 0..5
@@ -334,18 +321,67 @@ public:
         m_face_neighbors[i] = std::make_pair(p.first + 6, std::size_t(-p.second - 1));
       else
         m_face_neighbors[i] = std::make_pair(p.first + 6, p.second + 6);
+
+      if (m_face_neighbors[i].first > m_face_neighbors[i].second)
+        m_face_neighbors[i] = std::make_pair(m_face_neighbors[i].second, m_face_neighbors[i].first);
+
+      if (m_face_neighbors[i].first < m_face_neighbors[i].second) {
+        auto it = m_neighbors2index.emplace(std::make_pair(m_face_neighbors[i], i));
+        assert(it.second);
+      }
+    }
+
+#ifdef WITH_LCC
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
+      auto n = m_lcc.one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
+
+      assert(n.size() == 1 || n.size() == 2);
+      auto it = n.begin();
+
+      auto& finf = m_lcc.info<2>(m_faces_lcc[i]);
+
+      int first = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_index;
+      auto& inf1 = m_lcc.info<3>(m_lcc.dart_descriptor(*it++));
+
+      auto inf2 = inf1;
+      if (n.size() == 2)
+        inf2 = m_lcc.info<3>(m_lcc.dart_descriptor(*it));
+
+      int second;
+      if (n.size() == 2)
+        second = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_index;
+
+      if (n.size() == 2)
+        m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_index + 6);
+      else
+        m_face_neighbors_lcc[i] = std::make_pair(first + 6, -m_lcc.info<2>(m_faces_lcc[i]).input_polygon_index - 1);
+
+      if (m_face_neighbors_lcc[i].first > m_face_neighbors_lcc[i].second)
+        m_face_neighbors_lcc[i] = std::make_pair(m_face_neighbors_lcc[i].second, m_face_neighbors_lcc[i].first);
+
+      if (m_face_neighbors_lcc[i].first < m_face_neighbors_lcc[i].second) {
+        auto it = m_neighbors2index_lcc.emplace(std::make_pair(m_face_neighbors_lcc[i], i));
+        assert(it.second);
+      }
     }
 #endif
+
     check_ground();
 
-    timer.reset();
-    collect_points_for_faces3();
-    timer.reset();
-
-    std::cout << "* computing data term ... ";
-
+#ifdef WITH_LCC
+//    for (std::size_t i = 0; i < m_faces.size(); i++)
+//      std::cout << "(" << m_faces[i].first << ", " << m_faces[i].second << ") " << m_face_inliers[i].size() << std::endl;
+    m_face_inliers.clear();
+    m_face_inliers.resize(m_faces.size());
+    collect_points_for_faces_lcc();
+    count_volume_votes_lcc();
+//    for (std::size_t i = 0; i < m_attrib2index_lcc.size(); i++)
+//      std::cout << "(" << m_lcc.info_of_attribute<2>(m_attrib2index_lcc[i]).face_index.first << ", " << m_lcc.info_of_attribute<2>(m_attrib2index_lcc[i]).face_index.second << ") " << m_face_inliers[i].size() << std::endl;
+#else
+    collect_points_for_faces();
     count_volume_votes();
-    timer.reset();
+#endif
+    std::cout << "* computing data term ... ";
 
     std::size_t max_inside = 0, max_outside = 0;
     for (std::size_t i = 0; i < m_volumes.size(); i++) {
@@ -437,7 +473,11 @@ public:
   */
   bool reconstruct(FT lambda) {
     KSR_3::Graphcut<Kernel> gc(lambda);
+#ifdef WITH_LCC
+    gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
+#else
     gc.solve(m_face_neighbors, m_face_area, m_cost_matrix, m_labels);
+#endif
 
     return true;
   }
@@ -490,8 +530,8 @@ public:
     for (std::size_t i = 0; i < m_faces.size(); i++) {
       const auto& n = m_face_neighbors[i];
       // Do not extract boundary faces.
-       if (n.second < 6)
-         continue;
+      if (n.second < 6)
+        continue;
       if (m_labels[n.first] != m_labels[n.second]) {
         std::vector<Point_3> face;
         m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
@@ -508,6 +548,71 @@ public:
         *polyit++ = std::move(indices);
       }
     }
+  }
+
+
+  /*!
+  \brief Provides the reconstructed surface as a list of indexed polygons.
+
+  \param pit
+  an output iterator taking Point_3.
+
+  \param triit
+  an output iterator taking std::vector<std::size_t>.
+
+  \pre `successful reconstruction`
+  */
+  template<class OutputPointIterator, class OutputPolygonIterator>
+  void reconstructed_model_polylist_lcc(OutputPointIterator pit, OutputPolygonIterator polyit) {
+    if (m_labels.empty())
+      return;
+
+    From_exact from_exact;
+
+    std::map<Point_3, std::size_t> pt2idx;
+
+    std::vector<int> region_index(m_faces_lcc.size(), -1);
+    std::size_t region = 0;
+
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
+      const auto& n = m_face_neighbors_lcc[i];
+      if (n.second < 6)
+        continue;
+      if (m_labels[n.first] != m_labels[n.second]) {
+        Face_attribute fa = m_lcc.attribute<2>(m_faces_lcc[i]);
+
+        if (region_index[fa] == -1) {
+          collect_connected_component(m_faces_lcc[i], region_index, region++);
+        }
+      }
+    }
+
+
+    /*
+
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
+      const auto& n = m_face_neighbors_lcc[i];
+      // Do not extract boundary faces.
+      if (n.second < 6)
+        continue;
+      if (m_labels[n.first] != m_labels[n.second]) {
+        std::vector<Point_3> face;
+
+        for (const auto& vd : m_lcc.one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
+          face.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
+
+        std::vector<std::size_t> indices(face.size());
+
+        for (std::size_t i = 0; i < face.size(); i++) {
+          auto p = pt2idx.emplace(face[i], pt2idx.size());
+          if (p.second)
+            *pit++ = face[i];
+          indices[i] = p.first->second;
+        }
+
+        *polyit++ = std::move(indices);
+      }
+    }*/
   }
 
   /*!
@@ -556,7 +661,6 @@ public:
   }
 
 private:
-
   struct Vertex_info { FT z = FT(0); };
   struct Face_info { };
 
@@ -603,8 +707,14 @@ private:
   typedef typename CDTplus::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename CDTplus::Finite_faces_iterator    Finite_faces_iterator;
 
+  typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
+  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::LCC_Base_Properties>;
+  using Dart_descriptor = typename LCC::Dart_descriptor;
+  using Dart = typename LCC::Dart;
+
   //using Visibility = KSR_3::Visibility<Kernel, Intersection_kernel, Point_map, Normal_map>;
   using Index = typename KSP::Index;
+  using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
 
   bool m_verbose;
   bool m_debug;
@@ -627,16 +737,21 @@ private:
   std::vector<Polygon_3> m_polygons;
   KSP m_kinetic_partition;
 
-  const typename KSP::LCC &m_lcc;
-  std::vector<typename KSP::LCC::Dart_const_descriptor> m_faces_lcc;
-  std::map<typename KSP::LCC::Dart_const_descriptor, std::size_t> m_face2index_lcc;
+  LCC m_lcc;
+  std::vector<typename LCC::Dart_const_descriptor> m_faces_lcc;
+  std::map<Face_attribute, std::size_t> m_attrib2index_lcc;
+  std::vector<std::size_t> lcc2index;
+  std::vector<std::size_t> index2lcc;
 
   // Face indices are now of type Indices and are not in a range 0 to n
   std::vector<typename KSP::Index> m_faces;
   std::map<typename KSP::Index, std::size_t> m_face2index;
   std::vector<Indices> m_face_inliers;
-  std::vector<FT> m_face_area;
+  std::vector<FT> m_face_area, m_face_area_lcc;
   std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors;
+  std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors_lcc;
+  std::map<std::pair<std::size_t, std::size_t>, std::size_t> m_neighbors2index;
+  std::map<std::pair<std::size_t, std::size_t>, std::size_t> m_neighbors2index_lcc;
 
   std::vector<std::pair<std::size_t, std::size_t> > m_volume_votes; // pair<inside, outside> votes
   std::vector<bool> m_volume_below_ground;
@@ -990,12 +1105,102 @@ private:
       }
   }
 
-  void collect_points_for_faces3() {
+  void collect_connected_component(typename LCC::Dart_descriptor face, std::vector<int> &region_index, std::size_t region) {
+    // What does the caller have to manage? a map from face_attrib to bool to collect treated faces?
+
+    std::queue<std::size_t> face_queue;
+    face_queue.push(face);
+
+    From_exact from_exact;
+
+    std::vector<Dart_descriptor> border_edges;
+
+    std::vector<Point_3> pts;
+
+    int ip = m_lcc.info<2>(face).input_polygon_index;
+    typename Intersection_kernel::Plane_3 pl = m_lcc.info<2>(face).plane;
+
+    while (!face_queue.empty()) {
+      Dart_descriptor cur_fdh(face_queue.front());
+      Face_attribute cur_fa = m_lcc.attribute<2>(cur_fdh);
+      face_queue.pop();
+
+      if (region_index[cur_fa] == region)
+        continue;
+
+      region_index[cur_fa] = region;
+
+      // Iterate over edges of face.
+      for (auto& ed : m_lcc.one_dart_per_incident_cell<1, 2>(cur_fdh)) {
+        Dart_descriptor edh = m_lcc.dart_descriptor(ed);
+
+        for (auto &fd : m_lcc.one_dart_per_incident_cell<2, 1, 3>(edh)) {
+          Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
+          Face_attribute fa = m_lcc.attribute<2>(fdh);
+          auto& inf = m_lcc.info<2>(fdh);
+          bool added = false;
+
+          const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
+
+          // Do not segment bbox surface
+          if (n.second < 6)
+            continue;
+
+          // Belongs to reconstruction?
+          if (m_labels[n.first] == m_labels[n.second])
+            continue;
+
+          // Already segmented?
+          if (region_index[fa] != -1)
+            continue;
+
+          if (ip != -7) {
+            if (m_lcc.info<2>(fdh).input_polygon_index == ip) {
+              added = true;
+              face_queue.push(fdh);
+            }
+          }
+          else
+            if (m_lcc.info<2>(fdh).plane == pl) {
+              added = true;
+              face_queue.push(fdh);
+            }
+
+          if (!added)
+            border_edges.push_back(edh);
+        }
+      }
+    }
+
+    pts.clear();
+    for (Dart_descriptor &edh : border_edges)
+      for (auto& vd : m_lcc.one_dart_per_incident_cell<0, 1>(edh)) {
+        pts.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
+      }
+
+    std::ofstream vout(std::to_string(region) + ".xyz");
+    for (Point_3& p : pts) {
+      vout << p.x() << " " << p.y() << " " << p.z() << std::endl;
+    }
+    vout << std::endl;
+    vout.close();
+
+    // Iterate over all edges and collect all face descriptors and border edges.
+    // For each edge, find neighbor face m_lcc.one_dart_of_incident_cell<2, 1>
+     // To find neighbor face, m_lcc.one_dart_of_incident_cell<1, 2>?
+      // Exclude faces by region_index (including own face)
+    // Identifying other face by comparing input_polygon (special case -7)
+    // Two sets -> faces set<attribute_descriptor> and edges std::set?
+
+    // After collecting faces, I can collect border edges and just start from one to get the loop.
+  }
+
+  void collect_points_for_faces() {
     FT total_area = 0;
     m_total_inliers = 0;
     From_exact from_exact;
     auto& inputmap = m_kinetic_partition.input_mapping();
-    std::cout << inputmap.size() << std::endl;
+
     std::size_t next = 0, step = 1;
     for (std::size_t i = 0; i < inputmap.size(); i++) {
 
@@ -1018,6 +1223,7 @@ private:
       // Still need to calculate the area
       // Remap from mapping to m_face_inliers
       for (auto p : mapping) {
+        m_face_inliers[m_face2index[p.first]].clear();
         assert(m_face_inliers[m_face2index[p.first]].size() == 0);
         m_face_inliers[m_face2index[p.first]].resize(p.second.size());
         for (std::size_t i = 0; i < p.second.size(); i++)
@@ -1029,29 +1235,18 @@ private:
       std::vector<KSP::Index> faces;
       m_kinetic_partition.faces_of_input_polygon(i, std::back_inserter(faces));
 
-      std::vector<std::vector<std::size_t> > faces2d(faces.size());
-      std::vector<std::vector<std::size_t> > indices; // Adjacent faces for each vertex
-      std::map<KSP::Index, std::size_t> idx2pts; // Mapping of vertices to pts vector
-
-      Plane_3 pl = from_exact(m_kinetic_partition.input_plane(i));
+      Plane_3 pl = from_exact(m_kinetic_partition.input_planes()[i]);
 
       for (std::size_t j = 0; j < faces.size(); j++) {
         std::size_t idx = m_face2index[faces[j]];
+        m_face_area[idx] = 0;
         std::vector<Point_3> face;
         m_kinetic_partition.vertices(faces[j], std::back_inserter(face));
 
-        //multiple regions per input polygon
-
-        FT max_dist1 = 0, max_dist2 = 0;
-
         Delaunay_2 tri;
-        std::vector<Point_2> f2d;
 
-        for (const Point_3& p : face) {
-          max_dist1 = (std::max<double>)(sqrt((pl.to_3d(pl.to_2d(p)) - p).squared_length()), max_dist1);
-          f2d.push_back(pl.to_2d(p));
+        for (const Point_3& p : face)
           tri.insert(pl.to_2d(p));
-        }
 
         // Get area
         for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
@@ -1069,6 +1264,7 @@ private:
 
     // Handling face generated by the octree partition. They are not associated with an input polygon.
     for (std::size_t i = 0; i < m_faces.size(); i++) {
+      //m_face_area[i] = 0;
       if (m_face_area[i] == 0) {//}&& m_face_neighbors[i].second > 6) {
         std::vector<Point_3> face;
         m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
@@ -1077,8 +1273,8 @@ private:
         CGAL::linear_least_squares_fitting_3(face.begin(), face.end(), pl, CGAL::Dimension_tag<0>());
 
         Delaunay_2 tri;
-        for (const Point_3& p : face)
-          tri.insert(pl.to_2d(p));
+        for (std::size_t i = 0; i < face.size();i++)
+          tri.insert(pl.to_2d(face[i]));
 
         // Get area
         for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
@@ -1092,15 +1288,136 @@ private:
         total_area += m_face_area[i];
       }
     }
+    for (std::size_t i = 0; i < m_faces.size(); i++)
+      m_face_area[i] = m_face_area[i] * 2.0 * m_total_inliers / total_area;
 
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      // Check boundary faces and if the outside node has a defined value, if not, set area to 0.
-      if (m_face_neighbors[i].second < 6 && m_cost_matrix[0][m_face_neighbors[i].second] == m_cost_matrix[1][m_face_neighbors[i].second]) {
-        m_face_area[i] = 0;
+    std::size_t redirected = 0;
+    for (std::size_t i = 0; i < m_face_neighbors.size(); i++) {
+      // Check if the face is on a bbox face besides the top face.
+      // If so and the connected volume is below the ground, redirect the face to the bottom face node.
+      if (m_face_neighbors[i].second < 5 && m_volume_below_ground[m_face_neighbors[i].first - 6]) {
+        redirected++;
+        m_face_neighbors[i].second = 0;
       }
-      else
-        m_face_area[i] = m_face_area[i] * 2.0 * m_total_inliers / total_area;
     }
+    std::cout << redirected << " faces redirected to below ground" << std::endl;
+  }
+
+  void collect_points_for_faces_lcc() {
+    FT total_area = 0;
+    m_total_inliers = 0;
+    From_exact from_exact;
+    auto& inputmap = m_kinetic_partition.input_mapping();
+
+    std::vector<std::vector<Dart_descriptor> > poly2faces(m_kinetic_partition.input_planes().size());
+    std::vector<Dart_descriptor> other_faces;
+    for (auto& d : m_lcc.one_dart_per_cell<2>()) {
+      Dart_descriptor dh = m_lcc.dart_descriptor(d);
+      if (m_lcc.info<2>(dh).input_polygon_index >= 0)
+        poly2faces[m_lcc.info<2>(dh).input_polygon_index].push_back(dh);
+      else
+        other_faces.push_back(dh); // Contains faces originating from the octree decomposition as well as bbox faces
+    }
+
+    std::size_t next = 0, step = 1;
+    for (std::size_t i = 0; i < m_kinetic_partition.input_planes().size(); i++) {
+
+      std::vector<std::pair<Dart_descriptor, std::vector<std::size_t> > > mapping;
+      std::size_t fusioned_input_regions = 0;
+      for (const auto& p : inputmap[i])
+        fusioned_input_regions += m_regions[p].second.size();
+
+      std::vector<Point_3> pts;
+      std::vector<std::size_t> pts_idx;
+      pts.reserve(fusioned_input_regions);
+      for (const auto& p : inputmap[i]) {
+        for (std::size_t j = 0; j < m_regions[p].second.size(); j++) {
+          pts.emplace_back(get(m_point_map, m_regions[p].second[j]));
+          pts_idx.push_back(m_regions[p].second[j]);
+        }
+      }
+      map_points_to_faces(i, pts, mapping);
+
+      // Still need to calculate the area
+      // Remap from mapping to m_face_inliers
+      for (auto p : mapping) {
+        //m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]].clear();
+        Face_attribute& f = m_lcc.attribute<2>(p.first);
+        std::size_t id = m_attrib2index_lcc[f];
+        assert(m_face_inliers[id].size() == 0);
+
+        m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]].resize(p.second.size());
+        for (std::size_t i = 0; i < p.second.size(); i++)
+          m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]][i] = pts_idx[p.second[i]];
+
+        m_total_inliers += p.second.size();
+      }
+
+      Plane_3 pl = from_exact(m_kinetic_partition.input_planes()[i]);
+
+      for (std::size_t j = 0; j < poly2faces[i].size(); j++) {
+        std::size_t idx = m_attrib2index_lcc[m_lcc.attribute<2>(poly2faces[i][j])];
+        m_face_area_lcc[idx] = 0;
+
+        //multiple regions per input polygon
+
+        Delaunay_2 tri;
+
+        Dart_descriptor n = poly2faces[i][j];
+        do {
+          tri.insert(pl.to_2d(from_exact(m_lcc.point(n))));
+          n = m_lcc.beta(n, 0);
+        } while (n != poly2faces[i][j]);
+
+        // Get area
+        for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+          const Triangle_2 triangle(
+            fit->vertex(0)->point(),
+            fit->vertex(1)->point(),
+            fit->vertex(2)->point());
+          m_face_area_lcc[idx] += triangle.area();
+        }
+
+        total_area += m_face_area_lcc[idx];
+      }
+    }
+
+    set_outside_volumes(m_cost_matrix);
+
+    // Handling face generated by the octree partition. They are not associated with an input polygon.
+    for (std::size_t i = 0; i < other_faces.size(); i++) {
+      std::vector<Point_3> face;
+      std::size_t idx = m_attrib2index_lcc[m_lcc.attribute<2>(other_faces[i])];
+
+      Dart_descriptor n = other_faces[i];
+      do {
+        face.push_back(from_exact(m_lcc.point(n)));
+        n = m_lcc.beta(n, 0);
+      } while (n != other_faces[i]);
+
+      Plane_3 pl;
+      CGAL::linear_least_squares_fitting_3(face.begin(), face.end(), pl, CGAL::Dimension_tag<0>());
+
+      Delaunay_2 tri;
+      for (const Point_3& p : face)
+        tri.insert(pl.to_2d(p));
+
+      // Get area
+      for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+        const Triangle_2 triangle(
+          fit->vertex(0)->point(),
+          fit->vertex(1)->point(),
+          fit->vertex(2)->point());
+        m_face_area_lcc[idx] += triangle.area();
+      }
+
+      total_area += m_face_area_lcc[idx];
+    }
+
+    m_face_area_lcc.resize(m_faces_lcc.size(), 0);
+
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++)
+      m_face_area_lcc[i] = m_face_area_lcc[i] * 2.0 * m_total_inliers / total_area;
 
     std::size_t redirected = 0;
     for (std::size_t i = 0; i < m_face_neighbors.size(); i++) {
@@ -1190,25 +1507,119 @@ private:
       m_cost_matrix[0][i + 6] = static_cast<double>(in_count);
       m_cost_matrix[1][i + 6] = static_cast<double>(out_count);
 
-      if (i == debug_volume) {
-        std::vector<CGAL::Color> colors;
-        colors.resize(inside.size(), CGAL::Color(0, 255, 0));
-        colors.resize(outside.size() + inside.size(), CGAL::Color(0, 0, 255));
-        inside.reserve(inside.size() + outside.size());
-        std::copy(outside.begin(), outside.end(), std::back_inserter(inside));
-        insideN.reserve(inside.size() + outside.size());
-        std::copy(outsideN.begin(), outsideN.end(), std::back_inserter(insideN));
-        CGAL::KSR_3::dump_points(inside, insideN, colors, std::to_string(i) + "-votes");
-      }
+//       if (i == debug_volume) {
+//         std::vector<CGAL::Color> colors;
+//         colors.resize(inside.size(), CGAL::Color(0, 255, 0));
+//         colors.resize(outside.size() + inside.size(), CGAL::Color(0, 0, 255));
+//         inside.reserve(inside.size() + outside.size());
+//         std::copy(outside.begin(), outside.end(), std::back_inserter(inside));
+//         insideN.reserve(inside.size() + outside.size());
+//         std::copy(outsideN.begin(), outsideN.end(), std::back_inserter(insideN));
+//         CGAL::KSR_3::dump_points(inside, insideN, colors, std::to_string(i) + "-votes");
+//       }
     }
 
     // Normalize volumes
     for (FT& v : m_volumes)
       v /= total_volume;
+
+//     for (std::size_t i = 0; i < m_volumes.size(); i++)
+//       std::cout << i << " i: " << m_cost_matrix[0][i] << " \to: " << m_cost_matrix[1][i] << " \tv: " << m_volumes[i] << std::endl;
   }
 
-  FT calculate_volume(std::size_t volume_index) const {
-    return 0;
+  void count_volume_votes_lcc() {
+    const int debug_volume = -1;
+    FT total_volume = 0;
+    std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
+    m_volume_votes.clear();
+    m_volume_votes.resize(num_volumes, std::make_pair(0, 0));
+
+    m_volumes.resize(num_volumes, 0);
+
+    for (std::size_t i = 0; i < num_volumes; i++) {
+      m_cost_matrix[0][i] = m_cost_matrix[1][i] = 0;
+      m_volumes[i] = 0;
+    }
+
+    std::size_t count_faces = 0;
+    std::size_t count_points = 0;
+
+    From_exact from_exact;
+
+    std::size_t idx = 0;
+
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
+      std::size_t v[] = { -1, -1 };
+      Point_3 c[2];
+      std::size_t in[] = {0, 0}, out[] = {0, 0};
+
+      std::size_t idx = 0;
+      for (auto& vd : m_lcc.one_dart_per_incident_cell<3, 2>(m_faces_lcc[i])) {
+        typename LCC::Dart_descriptor vdh = m_lcc.dart_descriptor(vd);
+        v[idx] = m_lcc.info<3>(vdh).volume_index;
+        c[idx] = from_exact(m_lcc.info<3>(vdh).barycenter);
+        idx++;
+      }
+
+      for (std::size_t p : m_face_inliers[i]) {
+        const auto& point = get(m_point_map, p);
+        const auto& normal = get(m_normal_map, p);
+
+        count_points++;
+
+        for (std::size_t j = 0; j < idx; j++) {
+          const Vector_3 vec(point, c[j]);
+          const FT dot_product = vec * normal;
+          if (dot_product < FT(0))
+            in[j]++;
+          else
+            out[j]++;
+        }
+      }
+
+      for (std::size_t j = 0; j < idx; j++) {
+        m_volume_votes[v[j]].first += in[j];
+        m_volume_votes[v[j]].second += out[j];
+        m_cost_matrix[0][v[j] + 6] += static_cast<double>(in[j]);
+        m_cost_matrix[1][v[j] + 6] += static_cast<double>(out[j]);
+      }
+    }
+
+    for (auto &d : m_lcc.one_dart_per_cell<3>()) {
+      typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
+
+      std::vector<Point_3> volume_vertices;
+
+      std::size_t volume_index = m_lcc.info<3>(dh).volume_index;
+
+      // Collect all vertices of volume to calculate volume
+      for (auto &fd : m_lcc.one_dart_per_incident_cell<2, 3>(dh)) {
+        typename LCC::Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
+
+        for (const auto &vd : m_lcc.one_dart_per_incident_cell<0, 2>(fdh))
+          volume_vertices.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
+
+      }
+
+      Delaunay_3 tri;
+      for (const Point_3& p : volume_vertices)
+        tri.insert(p);
+
+      m_volumes[volume_index] = FT(0);
+      for (auto cit = tri.finite_cells_begin(); cit != tri.finite_cells_end(); ++cit) {
+        const auto& tet = tri.tetrahedron(cit);
+        m_volumes[volume_index] += tet.volume();
+      }
+
+      total_volume += m_volumes[volume_index];
+    }
+
+    // Normalize volumes
+    for (FT& v : m_volumes)
+      v /= total_volume;
+
+//     for (std::size_t i = 0; i < m_volumes.size(); i++)
+//       std::cout << i << ": " << m_cost_matrix[0][i] << " o: " << m_cost_matrix[1][i] << " v: " << m_volumes[i] << std::endl;
   }
 
   template<typename NamedParameters>
@@ -1438,6 +1849,77 @@ private:
     std::cout << "from " << m_points.size() << " input points " << unassigned << " remain unassigned" << std::endl;
   }
 
+  void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
+    std::vector<Index> faces;
+
+    if (polygon_index >= m_kinetic_partition.input_planes().size())
+      assert(false);
+
+    From_exact from_exact;
+
+    const typename Intersection_kernel::Plane_3& pl = m_kinetic_partition.input_planes()[polygon_index];
+    const Plane_3 inexact_pl = from_exact(pl);
+    std::vector<Point_2> pts2d;
+    pts2d.reserve(pts.size());
+
+    for (const Point_3& p : pts)
+      pts2d.push_back(inexact_pl.to_2d(p));
+
+    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
+    //ToDo I need to check whether the current way provides all faces as some faces may have been added during the make_conformal step
+
+    // Iterate over all faces of the lcc
+    for (Dart& d : m_lcc.one_dart_per_cell<2>()) {
+      Dart_descriptor dd = m_lcc.dart_descriptor(d);
+      if (m_lcc.info<2>(m_lcc.dart_descriptor(d)).input_polygon_index != polygon_index || !m_lcc.info<2>(m_lcc.dart_descriptor(d)).part_of_initial_polygon)
+        continue;
+
+      // No filtering of points per partition
+
+      face_to_points.push_back(std::make_pair(m_lcc.dart_descriptor(d), std::vector<std::size_t>()));
+
+      Index f = m_lcc.info<2>(m_lcc.dart_descriptor(d)).face_index;
+      auto& info = m_lcc.info<2>(m_lcc.dart_descriptor(d));
+
+      std::vector<Point_2> vts2d;
+      vts2d.reserve(m_lcc.one_dart_per_incident_cell<0, 2>(m_lcc.dart_descriptor(d)).size());
+
+      typename LCC::Dart_descriptor n = dd;
+      do {
+        vts2d.push_back(inexact_pl.to_2d(from_exact(m_lcc.point(n))));
+        n = m_lcc.beta(n, 0);
+      } while (n != dd);
+
+      Polygon_2<Kernel> poly(vts2d.begin(), vts2d.end());
+      if (poly.is_clockwise_oriented())
+        std::reverse(vts2d.begin(), vts2d.end());
+
+      for (std::size_t i = 0; i < pts2d.size(); i++) {
+        const auto& pt = pts2d[i];
+        bool outside = false;
+
+        // poly, vertices and edges in IFace are oriented ccw
+        std::size_t idx = 0;
+        for (std::size_t i = 0; i < vts2d.size(); i++) {
+          Vector_2 ts = (vts2d[(i + vts2d.size() - 1) % vts2d.size()]) - pt;
+          Vector_2 tt = (vts2d[i]) - pt;
+
+          bool ccw = (tt.x() * ts.y() - tt.y() * ts.x()) <= 0;
+          if (!ccw) {
+            outside = true;
+            break;
+          }
+        }
+
+        if (outside)
+          continue;
+
+        face_to_points.back().second.push_back(i);
+      }
+    }
+  }
+
+/*
   const Plane_3 fit_plane(const std::vector<std::size_t>& region) const {
 
     std::vector<Point_3> points;
@@ -1462,6 +1944,7 @@ private:
       static_cast<FT>(fitted_plane.d()));
     return plane;
   }
+*/
 
   void set_outside_volumes(std::vector<std::vector<double> >& cost_matrix) const {
     // Setting preferred outside label for bbox plane nodes
