@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-#include <fstream>
+#include <iostream>
 #include <string>
 #include <cassert>
 #include <CGAL/draw_surface_mesh.h>
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
   Graphics_scene_options_small_faces gsosm(sm);
   CGAL::Graphics_scene buffer;
 
-  add_in_graphics_scene(sm, buffer, gsosm);
+  add_to_graphics_scene(sm, buffer, gsosm);
   CGAL::Qt::QApplication_and_basic_viewer app(buffer, "Small faces");
   if(app)
   {
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
             (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
           buffer.clear();
-          add_in_graphics_scene(sm, buffer, gsosm);
+          add_to_graphics_scene(sm, buffer, gsosm);
           basic_viewer->redraw();
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
             (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
           buffer.clear();
-          add_in_graphics_scene(sm, buffer, gsosm);
+          add_to_graphics_scene(sm, buffer, gsosm);
           basic_viewer->redraw();
         }
         else

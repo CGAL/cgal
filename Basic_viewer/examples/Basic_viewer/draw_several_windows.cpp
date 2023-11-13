@@ -9,7 +9,7 @@
 #include <QMainWindow>
 
 #include <vector>
-#include <fstream>
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
@@ -48,8 +48,8 @@ int main(void)
   { point_set.insert(it.first); }
 
   CGAL::Graphics_scene graphic_buffer1, graphic_buffer2;
-  CGAL::add_in_graphics_scene(point_set, graphic_buffer1);
-  CGAL::add_in_graphics_scene(output_mesh, graphic_buffer2);
+  CGAL::add_to_graphics_scene(point_set, graphic_buffer1);
+  CGAL::add_to_graphics_scene(output_mesh, graphic_buffer2);
 
   /// (2) Qt code that create windows, add them in a layout, and create app.
 
