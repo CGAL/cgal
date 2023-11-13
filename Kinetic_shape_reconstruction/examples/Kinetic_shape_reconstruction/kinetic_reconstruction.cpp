@@ -31,7 +31,6 @@ using Parameters      = CGAL::KSR::All_parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
 using Timer = CGAL::Real_timer;
 
-
 double add_polys = 0, intersections = 0, iedges = 0, ifaces = 0, mapping = 0;
 
 template <typename T>
@@ -187,160 +186,29 @@ int main(const int argc, const char** argv) {
   ksr.reconstruct(parameters.graphcut_beta);
   FT after_reconstruction = timer.time();
 
-  timer.stop();
-  const FT time = static_cast<FT>(timer.time());
-
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
+
   ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
 
   if (polylist.size() > 0)
     CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist");
 
-  ksr.reconstructed_model_polylist_lcc(std::back_inserter(vtx), std::back_inserter(polylist));
+  timer.stop();
+  const FT time = static_cast<FT>(timer.time());
 
-  ksr.reconstruct(0.3);
+  std::vector<FT> betas{0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99};
 
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
+  for (FT b : betas) {
+    ksr.reconstruct(b);
 
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.3");
-  ksr.reconstruct(0.5);
+    vtx.clear();
+    polylist.clear();
+    ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
 
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.5");
-  ksr.reconstruct(0.6);
-
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.6");
-  ksr.reconstruct(0.7);
-
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.7");
-  ksr.reconstruct(0.8);
-
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.8");
-  ksr.reconstruct(0.95);
-
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.95");
-
-  ksr.reconstruct(0.97);
-
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.97");
-  ksr.reconstruct(0.99);
-
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b0.99");
-  ksr.reconstruct(1.0);
-
-  vtx.clear();
-  polylist.clear();
-  ksr.reconstructed_model_polylist(std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (polylist.size() > 0)
-    CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_b1.0");
-
-  // Output.
-  //LCC lcc;
-  //ksr.partition().get_linear_cell_complex(lcc);
-/*
-
-  // Vertices.
-  std::vector<Point_3> all_vertices;
-  ksp.output_partition_vertices(
-    std::back_inserter(all_vertices), -1);
-
-  // Edges.
-  std::vector<Segment_3> all_edges;
-  ksp.output_partition_edges(
-    std::back_inserter(all_edges), -1);
-
-  // Faces.
-  std::vector< std::vector<std::size_t> > all_faces;
-  ksp.output_partition_faces(
-    std::back_inserter(all_faces), -1, 6);
-
-  // Model.
-  std::vector<Point_3> output_vertices;
-  std::vector< std::vector<std::size_t> > output_faces;
-  ksp.output_reconstructed_model(
-    std::back_inserter(output_vertices),
-    std::back_inserter(output_faces));
-  const std::size_t num_vertices = output_vertices.size();
-  const std::size_t num_faces    = output_faces.size();
-
-  std::cout << std::endl;
-  std::cout << "--- OUTPUT STATS: " << std::endl;
-  std::cout << "* number of vertices: " << num_vertices << std::endl;
-  std::cout << "* number of faces: "    << num_faces    << std::endl;
-
-  // Export.
-  std::cout << std::endl;
-  std::cout << "--- EXPORT: " << std::endl;
-
-  // Edges.
-  std::string output_filename = "partition-edges.polylines.txt";
-  std::ofstream output_file_edges(output_filename);
-  output_file_edges.precision(20);
-  for (const auto& output_edge : all_edges)
-    output_file_edges << "2 " << output_edge << std::endl;
-  output_file_edges.close();
-  std::cout << "* partition edges exported successfully" << std::endl;
-
-  // Faces.
-  output_filename = "partition-faces.ply";
-  std::ofstream output_file_faces(output_filename);
-  output_file_faces.precision(20);
-  if (!CGAL::IO::write_PLY(output_file_faces, all_vertices, all_faces)) {
-    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
-    return EXIT_FAILURE;
+    if (polylist.size() > 0)
+      CGAL::KSR_3::dump_indexed_polygons(vtx, polylist, "polylist_" + std::to_string(b));
   }
-  output_file_faces.close();
-  std::cout << "* partition faces exported successfully" << std::endl;
-
-  // Model.
-  output_filename = "reconstructed-model.ply";
-  std::ofstream output_file_model(output_filename);
-  output_file_model.precision(20);
-  if (!CGAL::IO::write_PLY(output_file_model, output_vertices, output_faces)) {
-    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
-    return EXIT_FAILURE;
-  }
-  output_file_model.close();
-  std::cout << "* the reconstructed model exported successfully" << std::endl;*/
 
   std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;
   std::cout << "Kinetic partition:      " << (after_partition - after_shape_detection) << " seconds!" << std::endl;

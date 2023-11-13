@@ -259,25 +259,14 @@ public:
   \pre `successful initialization`
   */
   bool setup_energyterms() {
-#ifdef WITH_LCC
     if (m_lcc.one_dart_per_cell<3>().size() == 0) {
       std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
       return false;
     }
-#endif
-    if (m_kinetic_partition.number_of_volumes() == 0) {
-      std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
-      return false;
-    }
-
-    m_faces.clear();
-    m_face2index.clear();
 
     m_face_area.clear();
     m_face_inliers.clear();
-    m_face_neighbors.clear();
 
-#ifdef WITH_LCC
     auto face_range = m_lcc.one_dart_per_cell<2>();
     m_faces_lcc.reserve(face_range.size());
 
@@ -289,49 +278,17 @@ public:
       auto p = m_attrib2index_lcc.emplace(std::make_pair(m_lcc.attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
       CGAL_assertion(p.second);
     }
-#endif
-    m_kinetic_partition.unique_faces(std::back_inserter(m_faces));
-    std::cout << "Found " << m_faces.size() << " / " << m_faces_lcc.size() << " faces between volumes" << std::endl;
-
-#ifdef WITH_LCC
-    assert(m_faces.size() == m_faces_lcc.size());
-#endif
-    for (std::size_t i = 0; i < m_faces.size(); i++)
-      m_face2index[m_faces[i]] = i;
 
     // Create value arrays for graph cut
-    m_face_inliers.resize(m_faces.size());
-    m_face_area.resize(m_faces.size());
-    m_face_area_lcc.resize(m_faces.size());
-    m_face_neighbors.resize(m_faces.size(), std::pair<int, int>(-1, -1));
-    m_face_neighbors_lcc.resize(m_faces.size());
+    m_face_inliers.resize(m_faces_lcc.size());
+    m_face_area.resize(m_faces_lcc.size());
+    m_face_area_lcc.resize(m_faces_lcc.size());
+    m_face_neighbors_lcc.resize(m_faces_lcc.size(), std::pair<int, int>(-1, -1));
 
     m_cost_matrix.resize(2);
     m_cost_matrix[0].resize(m_kinetic_partition.number_of_volumes() + 6);
     m_cost_matrix[1].resize(m_kinetic_partition.number_of_volumes() + 6);
 
-    std::cout << "* computing visibility ... ";
-
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      // Shift by 6 for accommodate outside volumes
-      // Map negative numbers -1..-6 to 0..5
-      std::pair<int, int> p = m_kinetic_partition.neighbors(m_faces[i]);
-      assert(p.second >= -6);
-      if (p.second < 0)
-        m_face_neighbors[i] = std::make_pair(p.first + 6, std::size_t(-p.second - 1));
-      else
-        m_face_neighbors[i] = std::make_pair(p.first + 6, p.second + 6);
-
-      if (m_face_neighbors[i].first > m_face_neighbors[i].second)
-        m_face_neighbors[i] = std::make_pair(m_face_neighbors[i].second, m_face_neighbors[i].first);
-
-      if (m_face_neighbors[i].first < m_face_neighbors[i].second) {
-        auto it = m_neighbors2index.emplace(std::make_pair(m_face_neighbors[i], i));
-        assert(it.second);
-      }
-    }
-
-#ifdef WITH_LCC
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       auto n = m_lcc.one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
 
@@ -364,23 +321,14 @@ public:
         assert(it.second);
       }
     }
-#endif
 
     check_ground();
 
-#ifdef WITH_LCC
-//    for (std::size_t i = 0; i < m_faces.size(); i++)
-//      std::cout << "(" << m_faces[i].first << ", " << m_faces[i].second << ") " << m_face_inliers[i].size() << std::endl;
     m_face_inliers.clear();
-    m_face_inliers.resize(m_faces.size());
+    m_face_inliers.resize(m_faces_lcc.size());
     collect_points_for_faces_lcc();
     count_volume_votes_lcc();
-//    for (std::size_t i = 0; i < m_attrib2index_lcc.size(); i++)
-//      std::cout << "(" << m_lcc.info_of_attribute<2>(m_attrib2index_lcc[i]).face_index.first << ", " << m_lcc.info_of_attribute<2>(m_attrib2index_lcc[i]).face_index.second << ") " << m_face_inliers[i].size() << std::endl;
-#else
-    collect_points_for_faces();
-    count_volume_votes();
-#endif
+
     std::cout << "* computing data term ... ";
 
     std::size_t max_inside = 0, max_outside = 0;
@@ -390,6 +338,7 @@ public:
     }
 
     // Dump volumes colored by votes
+/*
     if (false) {
       namespace fs = boost::filesystem;
       for (fs::directory_iterator end_dir_it, it("gc/i"); it != end_dir_it; ++it) {
@@ -433,6 +382,7 @@ public:
         }
       }
     }
+*/
 
     return true;
   }
@@ -525,16 +475,20 @@ public:
     if (m_labels.empty())
       return;
 
+    From_exact from_exact;
+
     std::map<Point_3, std::size_t> pt2idx;
 
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      const auto& n = m_face_neighbors[i];
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
+      const auto& n = m_face_neighbors_lcc[i];
       // Do not extract boundary faces.
       if (n.second < 6)
         continue;
       if (m_labels[n.first] != m_labels[n.second]) {
         std::vector<Point_3> face;
-        m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
+
+        for (const auto& vd : m_lcc.one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
+          face.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
 
         std::vector<std::size_t> indices(face.size());
 
@@ -590,29 +544,7 @@ public:
 
     /*
 
-    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
-      const auto& n = m_face_neighbors_lcc[i];
-      // Do not extract boundary faces.
-      if (n.second < 6)
-        continue;
-      if (m_labels[n.first] != m_labels[n.second]) {
-        std::vector<Point_3> face;
-
-        for (const auto& vd : m_lcc.one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
-          face.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
-
-        std::vector<std::size_t> indices(face.size());
-
-        for (std::size_t i = 0; i < face.size(); i++) {
-          auto p = pt2idx.emplace(face[i], pt2idx.size());
-          if (p.second)
-            *pit++ = face[i];
-          indices[i] = p.first->second;
-        }
-
-        *polyit++ = std::move(indices);
-      }
-    }*/
+    */
   }
 
   /*!
@@ -744,13 +676,9 @@ private:
   std::vector<std::size_t> index2lcc;
 
   // Face indices are now of type Indices and are not in a range 0 to n
-  std::vector<typename KSP::Index> m_faces;
-  std::map<typename KSP::Index, std::size_t> m_face2index;
   std::vector<Indices> m_face_inliers;
   std::vector<FT> m_face_area, m_face_area_lcc;
-  std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors;
   std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors_lcc;
-  std::map<std::pair<std::size_t, std::size_t>, std::size_t> m_neighbors2index;
   std::map<std::pair<std::size_t, std::size_t>, std::size_t> m_neighbors2index_lcc;
 
   std::vector<std::pair<std::size_t, std::size_t> > m_volume_votes; // pair<inside, outside> votes
@@ -1096,12 +1024,13 @@ private:
     std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
     // Set all volumes to not be below the ground, this leads to the standard 6 outside node connection.
     m_volume_below_ground.resize(num_volumes, false);
+    From_exact from_exact;
 
     if (m_ground_polygon_index != -1)
-      for (std::size_t i = 0; i < num_volumes; i++) {
-        // Evaluate if volume centroid is below or above ground plane
-        const Point_3& centroid = m_kinetic_partition.volume_centroid(i);
-        m_volume_below_ground[i] = (centroid - m_regions[m_ground_polygon_index].first.projection(centroid)).z() < 0;
+      for (const auto &vd : m_lcc.one_dart_per_cell<3>()) {
+        const auto& info = m_lcc.info<3>(m_lcc.dart_descriptor(vd));
+
+        m_volume_below_ground[info.volume_index] = (from_exact(info.barycenter) - m_regions[m_ground_polygon_index].first.projection(from_exact(info.barycenter))).z() < 0;
       }
   }
 
@@ -1195,119 +1124,10 @@ private:
     // After collecting faces, I can collect border edges and just start from one to get the loop.
   }
 
-  void collect_points_for_faces() {
-    FT total_area = 0;
-    m_total_inliers = 0;
-    From_exact from_exact;
-    auto& inputmap = m_kinetic_partition.input_mapping();
-
-    std::size_t next = 0, step = 1;
-    for (std::size_t i = 0; i < inputmap.size(); i++) {
-
-      std::vector<std::pair<KSP::Index, std::vector<std::size_t> > > mapping;
-      std::size_t fusioned_input_regions = 0;
-      for (const auto& p : inputmap[i])
-        fusioned_input_regions += m_regions[p].second.size();
-
-      std::vector<Point_3> pts;
-      std::vector<std::size_t> pts_idx;
-      pts.reserve(fusioned_input_regions);
-      for (const auto& p : inputmap[i]) {
-        for (std::size_t j = 0; j < m_regions[p].second.size(); j++) {
-          pts.emplace_back(get(m_point_map, m_regions[p].second[j]));
-          pts_idx.push_back(m_regions[p].second[j]);
-        }
-      }
-      m_kinetic_partition.map_points_to_polygons(i, pts, mapping);
-
-      // Still need to calculate the area
-      // Remap from mapping to m_face_inliers
-      for (auto p : mapping) {
-        m_face_inliers[m_face2index[p.first]].clear();
-        assert(m_face_inliers[m_face2index[p.first]].size() == 0);
-        m_face_inliers[m_face2index[p.first]].resize(p.second.size());
-        for (std::size_t i = 0; i < p.second.size(); i++)
-          m_face_inliers[m_face2index[p.first]][i] = pts_idx[p.second[i]];
-
-        m_total_inliers += p.second.size();
-      }
-
-      std::vector<KSP::Index> faces;
-      m_kinetic_partition.faces_of_input_polygon(i, std::back_inserter(faces));
-
-      Plane_3 pl = from_exact(m_kinetic_partition.input_planes()[i]);
-
-      for (std::size_t j = 0; j < faces.size(); j++) {
-        std::size_t idx = m_face2index[faces[j]];
-        m_face_area[idx] = 0;
-        std::vector<Point_3> face;
-        m_kinetic_partition.vertices(faces[j], std::back_inserter(face));
-
-        Delaunay_2 tri;
-
-        for (const Point_3& p : face)
-          tri.insert(pl.to_2d(p));
-
-        // Get area
-        for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-          const Triangle_2 triangle(
-            fit->vertex(0)->point(),
-            fit->vertex(1)->point(),
-            fit->vertex(2)->point());
-          m_face_area[idx] += triangle.area();
-        }
-        total_area += m_face_area[idx];
-      }
-    }
-
-    set_outside_volumes(m_cost_matrix);
-
-    // Handling face generated by the octree partition. They are not associated with an input polygon.
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      //m_face_area[i] = 0;
-      if (m_face_area[i] == 0) {//}&& m_face_neighbors[i].second > 6) {
-        std::vector<Point_3> face;
-        m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
-
-        Plane_3 pl;
-        CGAL::linear_least_squares_fitting_3(face.begin(), face.end(), pl, CGAL::Dimension_tag<0>());
-
-        Delaunay_2 tri;
-        for (std::size_t i = 0; i < face.size();i++)
-          tri.insert(pl.to_2d(face[i]));
-
-        // Get area
-        for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-          const Triangle_2 triangle(
-            fit->vertex(0)->point(),
-            fit->vertex(1)->point(),
-            fit->vertex(2)->point());
-          m_face_area[i] += triangle.area();
-        }
-
-        total_area += m_face_area[i];
-      }
-    }
-    for (std::size_t i = 0; i < m_faces.size(); i++)
-      m_face_area[i] = m_face_area[i] * 2.0 * m_total_inliers / total_area;
-
-    std::size_t redirected = 0;
-    for (std::size_t i = 0; i < m_face_neighbors.size(); i++) {
-      // Check if the face is on a bbox face besides the top face.
-      // If so and the connected volume is below the ground, redirect the face to the bottom face node.
-      if (m_face_neighbors[i].second < 5 && m_volume_below_ground[m_face_neighbors[i].first - 6]) {
-        redirected++;
-        m_face_neighbors[i].second = 0;
-      }
-    }
-    std::cout << redirected << " faces redirected to below ground" << std::endl;
-  }
-
   void collect_points_for_faces_lcc() {
     FT total_area = 0;
     m_total_inliers = 0;
     From_exact from_exact;
-    auto& inputmap = m_kinetic_partition.input_mapping();
 
     std::vector<std::vector<Dart_descriptor> > poly2faces(m_kinetic_partition.input_planes().size());
     std::vector<Dart_descriptor> other_faces;
@@ -1319,26 +1139,21 @@ private:
         other_faces.push_back(dh); // Contains faces originating from the octree decomposition as well as bbox faces
     }
 
+    assert(m_kinetic_partition.input_planes().size() == m_regions.size());
+
     std::size_t next = 0, step = 1;
     for (std::size_t i = 0; i < m_kinetic_partition.input_planes().size(); i++) {
 
       std::vector<std::pair<Dart_descriptor, std::vector<std::size_t> > > mapping;
-      std::size_t fusioned_input_regions = 0;
-      for (const auto& p : inputmap[i])
-        fusioned_input_regions += m_regions[p].second.size();
 
       std::vector<Point_3> pts;
-      std::vector<std::size_t> pts_idx;
-      pts.reserve(fusioned_input_regions);
-      for (const auto& p : inputmap[i]) {
-        for (std::size_t j = 0; j < m_regions[p].second.size(); j++) {
-          pts.emplace_back(get(m_point_map, m_regions[p].second[j]));
-          pts_idx.push_back(m_regions[p].second[j]);
-        }
-      }
+      pts.reserve(m_regions[i].second.size());
+
+      for (std::size_t j = 0; j < m_regions[i].second.size(); j++)
+        pts.emplace_back(get(m_point_map, m_regions[i].second[j]));
+
       map_points_to_faces(i, pts, mapping);
 
-      // Still need to calculate the area
       // Remap from mapping to m_face_inliers
       for (auto p : mapping) {
         //m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]].clear();
@@ -1347,8 +1162,8 @@ private:
         assert(m_face_inliers[id].size() == 0);
 
         m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]].resize(p.second.size());
-        for (std::size_t i = 0; i < p.second.size(); i++)
-          m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]][i] = pts_idx[p.second[i]];
+        for (std::size_t k = 0; k < p.second.size(); k++)
+          m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]][k] = m_regions[i].second[p.second[k]];
 
         m_total_inliers += p.second.size();
       }
@@ -1420,111 +1235,15 @@ private:
       m_face_area_lcc[i] = m_face_area_lcc[i] * 2.0 * m_total_inliers / total_area;
 
     std::size_t redirected = 0;
-    for (std::size_t i = 0; i < m_face_neighbors.size(); i++) {
+    for (std::size_t i = 0; i < m_face_neighbors_lcc.size(); i++) {
       // Check if the face is on a bbox face besides the top face.
       // If so and the connected volume is below the ground, redirect the face to the bottom face node.
-      if (m_face_neighbors[i].second < 5 && m_volume_below_ground[m_face_neighbors[i].first - 6]) {
+      if (m_face_neighbors_lcc[i].second < 5 && m_volume_below_ground[m_face_neighbors_lcc[i].first - 6]) {
         redirected++;
-        m_face_neighbors[i].second = 0;
+        m_face_neighbors_lcc[i].second = 0;
       }
     }
     std::cout << redirected << " faces redirected to below ground" << std::endl;
-  }
-
-  void count_volume_votes() {
-    const int debug_volume = -1;
-    FT total_volume = 0;
-    std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
-    m_volume_votes.resize(num_volumes, std::make_pair(0, 0));
-
-    std::size_t count_faces = 0;
-    std::size_t count_points = 0;
-
-    m_volumes.resize(num_volumes, 0);
-    for (std::size_t i = 0; i < num_volumes; i++) {
-
-      std::vector<Index> faces;
-      m_kinetic_partition.faces(i, std::back_inserter(faces));
-      const Point_3& centroid = m_kinetic_partition.volume_centroid(i);
-      std::size_t in_count = 0;
-      std::size_t out_count = 0;
-
-      std::vector<Point_3> inside, outside;
-      std::vector<Vector_3> insideN, outsideN;
-
-      // Count votes based on points on faces and their normals
-      for (const Index& f : faces) {
-        auto it = m_face2index.find(f);
-
-        // If the face is not contained, it belongs to the bounding box and can be skipped.
-        if (it == m_face2index.end())
-          continue;
-
-        count_faces++;
-
-        std::size_t idx = it->second;
-
-        for (std::size_t p : m_face_inliers[idx]) {
-          const auto& point = get(m_point_map, p);
-          const auto& normal = get(m_normal_map, p);
-
-          count_points++;
-
-          const Vector_3 vec(point, centroid);
-          const FT dot_product = vec * normal;
-          if (dot_product < FT(0)) {
-            inside.push_back(point);
-            insideN.push_back(normal);
-            in_count++;
-          }
-          else {
-            outside.push_back(point);
-            outsideN.push_back(normal);
-            out_count++;
-          }
-        }
-      }
-
-      // Calculate volume
-      std::vector<Point_3> volume_vertices;
-
-      for (const Index& f : faces)
-        m_kinetic_partition.vertices(f, std::back_inserter(volume_vertices));
-
-      Delaunay_3 tri;
-      for (const Point_3& p : volume_vertices)
-        tri.insert(p);
-
-      m_volumes[i] = FT(0);
-      for (auto cit = tri.finite_cells_begin(); cit != tri.finite_cells_end(); ++cit) {
-        const auto& tet = tri.tetrahedron(cit);
-        m_volumes[i] += tet.volume();
-      }
-
-      total_volume += m_volumes[i];
-
-      m_volume_votes[i] = std::make_pair(in_count, out_count);
-      m_cost_matrix[0][i + 6] = static_cast<double>(in_count);
-      m_cost_matrix[1][i + 6] = static_cast<double>(out_count);
-
-//       if (i == debug_volume) {
-//         std::vector<CGAL::Color> colors;
-//         colors.resize(inside.size(), CGAL::Color(0, 255, 0));
-//         colors.resize(outside.size() + inside.size(), CGAL::Color(0, 0, 255));
-//         inside.reserve(inside.size() + outside.size());
-//         std::copy(outside.begin(), outside.end(), std::back_inserter(inside));
-//         insideN.reserve(inside.size() + outside.size());
-//         std::copy(outsideN.begin(), outsideN.end(), std::back_inserter(insideN));
-//         CGAL::KSR_3::dump_points(inside, insideN, colors, std::to_string(i) + "-votes");
-//       }
-    }
-
-    // Normalize volumes
-    for (FT& v : m_volumes)
-      v /= total_volume;
-
-//     for (std::size_t i = 0; i < m_volumes.size(); i++)
-//       std::cout << i << " i: " << m_cost_matrix[0][i] << " \to: " << m_cost_matrix[1][i] << " \tv: " << m_volumes[i] << std::endl;
   }
 
   void count_volume_votes_lcc() {
@@ -1598,7 +1317,6 @@ private:
 
         for (const auto &vd : m_lcc.one_dart_per_incident_cell<0, 2>(fdh))
           volume_vertices.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
-
       }
 
       Delaunay_3 tri;
@@ -1878,7 +1596,6 @@ private:
 
       face_to_points.push_back(std::make_pair(m_lcc.dart_descriptor(d), std::vector<std::size_t>()));
 
-      Index f = m_lcc.info<2>(m_lcc.dart_descriptor(d)).face_index;
       auto& info = m_lcc.info<2>(m_lcc.dart_descriptor(d));
 
       std::vector<Point_2> vts2d;
@@ -1984,6 +1701,7 @@ private:
     }
   }
 
+/*
   void dump_volume(std::size_t i, const std::string& filename, const CGAL::Color &color) const {
     std::vector<KSP::Index> faces;
     m_kinetic_partition.faces(i, std::back_inserter(faces));
@@ -2000,7 +1718,7 @@ private:
   void dump_face(std::size_t i, const std::string& filename, const CGAL::Color& color) const {
     std::vector<Point_3> face;
     m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
-  }
+  }*/
 };
 
 #endif

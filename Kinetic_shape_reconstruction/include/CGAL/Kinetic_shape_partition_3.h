@@ -80,16 +80,10 @@ public:
     typedef CGAL::Tag_true Use_index;
     typedef std::uint32_t Index_type;
 
-    struct Vertex_property {
-      Index vtx;
-    };
-
     struct Face_property {
       int input_polygon_index; // -1 till -6 correspond to bbox faces, -7 to faces from octree
       typename Intersection_kernel::Plane_3 plane;
       bool part_of_initial_polygon;
-      int n1, n2;
-      Index face_index; // Only for debugging/comparison with Index-interface
     };
 
     struct Volume_property {
@@ -100,16 +94,13 @@ public:
     template<class LCC>
     struct Dart_wrapper
     {
-      typedef CGAL::Cell_attribute_with_point< LCC, Vertex_property > Vertex_attribute;
+      typedef CGAL::Cell_attribute_with_point< LCC, void > Vertex_attribute;
       typedef CGAL::Cell_attribute< LCC, Face_property > Face_attribute;
       typedef CGAL::Cell_attribute< LCC, Volume_property > Volume_attribute;
 
       typedef std::tuple<Vertex_attribute, void, Face_attribute, Volume_attribute> Attributes;
     };
   };
-
-
-  //using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, LCC_Properties>;
 
 private:
   using FT = typename Kernel::FT;
@@ -304,7 +295,7 @@ public:
   an instance of `InputRange` with 3D points and corresponding 3D normal vectors
 
   \param polygon_range
-  a range of polygons defined by a range of indices into `input_range`
+  a range of non-coplanar polygons defined by a range of indices into `input_range`
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -366,7 +357,7 @@ public:
   }
 
   /*!
-  \brief inserts polygons, requires initialize() afterwards to have effect.
+  \brief inserts non-coplanar polygons, requires initialize() afterwards to have effect.
 
   \tparam InputRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
@@ -381,7 +372,7 @@ public:
   an instance of `InputRange` with 3D points
 
   \param polygon_range
-  a range of polygons defined by a range of indices into `input_range`
+  a range of non-coplanar polygons defined by a range of indices into `input_range`
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -394,7 +385,6 @@ public:
      \cgalParamNEnd
   \cgalNamedParamsEnd
   */
-
   template<typename InputRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
   void insert(
     const InputRange& input_range,
@@ -569,20 +559,21 @@ public:
     }
   }
 
-  void partition(std::size_t k) {
-    FT a, b, c;
-    partition(k, a, b, c);
-  }
-
   /*!
   \brief propagates the kinetic polygons in the initialized partition.
 
   \param k
    maximum number of allowed intersections for each input polygon before its expansion stops.
 
-  \pre successful initialization and k != 0
+  \pre initialized partition and k != 0
   */
-  void partition(std::size_t k, FT &partition_time, FT &finalization_time, FT &conformal_time) {
+  void partition(std::size_t k) {
+    FT a, b, c;
+    partition(k, a, b, c);
+  }
+
+#ifndef DOXYGEN_RUNNING
+  void partition(std::size_t k, FT& partition_time, FT& finalization_time, FT& conformal_time) {
     m_volumes.clear();
     Timer timer;
     timer.start();
@@ -590,10 +581,11 @@ public:
     finalization_time = 0;
     conformal_time = 0;
 
-    if (m_parameters.debug)
-      if (boost::filesystem::is_directory("volumes/"))
-        for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
-          boost::filesystem::remove_all(it->path());
+    /*
+        if (m_parameters.debug)
+          if (boost::filesystem::is_directory("volumes/"))
+            for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
+              boost::filesystem::remove_all(it->path());*/
 
     for (std::size_t idx : m_partitions) {
       Sub_partition& partition = m_partition_nodes[idx];
@@ -646,7 +638,7 @@ public:
         bool initial = false;
         typename Data_structure::Support_plane& sp = partition.m_data->support_plane(i);
 
-        for (const auto &f : sp.mesh().faces())
+        for (const auto& f : sp.mesh().faces())
           if (sp.is_initial(f)) {
             initial = true;
             break;
@@ -725,35 +717,37 @@ public:
 
     timer.stop();
 
-    if (m_parameters.debug) {
-    if (boost::filesystem::is_directory("volumes/"))
-      for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
-        boost::filesystem::remove_all(it->path());
+    /*
+        if (m_parameters.debug) {
+          if (boost::filesystem::is_directory("volumes/"))
+            for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
+              boost::filesystem::remove_all(it->path());
 
-      KSR_3::dump_volumes_ksp(*this, "volumes/");
-      for (std::size_t i = 1; i < m_volumes.size(); i++)
-        if (m_volumes[i].first != m_volumes[i - 1].first)
-          std::cout << i << " " << m_volumes[i - 1].first << std::endl;
-      std::cout << m_volumes.size() << " " << m_volumes.back().first << std::endl;
-    }
+          KSR_3::dump_volumes_ksp(*this, "volumes/");
+          for (std::size_t i = 1; i < m_volumes.size(); i++)
+            if (m_volumes[i].first != m_volumes[i - 1].first)
+              std::cout << i << " " << m_volumes[i - 1].first << std::endl;
+          std::cout << m_volumes.size() << " " << m_volumes.back().first << std::endl;
+        }*/
 
     timer.reset();
     timer.start();
     make_conformal(0);
     conformal_time = timer.time();
 
-    if (m_parameters.debug) {
-      if (boost::filesystem::is_directory("volumes_after/"))
-      for (boost::filesystem::directory_iterator end_dir_it, it("volumes_after/"); it != end_dir_it; ++it)
-        boost::filesystem::remove_all(it->path());
-      KSR_3::dump_volumes_ksp(*this, "volumes_after/");
-      for (std::size_t i = 1; i < m_volumes.size(); i++)
-        if (m_volumes[i].first != m_volumes[i - 1].first)
-          std::cout << i << " " << m_volumes[i - 1].first << std::endl;
-      std::cout << m_volumes.size() << " " << m_volumes.back().first << std::endl;
-    }
+    /*
+        if (m_parameters.debug) {
+          if (boost::filesystem::is_directory("volumes_after/"))
+          for (boost::filesystem::directory_iterator end_dir_it, it("volumes_after/"); it != end_dir_it; ++it)
+            boost::filesystem::remove_all(it->path());
+          KSR_3::dump_volumes_ksp(*this, "volumes_after/");
+          for (std::size_t i = 1; i < m_volumes.size(); i++)
+            if (m_volumes[i].first != m_volumes[i - 1].first)
+              std::cout << i << " " << m_volumes[i - 1].first << std::endl;
+          std::cout << m_volumes.size() << " " << m_volumes.back().first << std::endl;
+        }*/
 
-    //make it specific to some subnodes?
+        //make it specific to some subnodes?
     if (m_parameters.verbose)
       check_tjunctions();
 
@@ -767,17 +761,7 @@ public:
 
     return;
   }
-
-  void set_k(std::size_t input_polygon_index, std::size_t k) {
-    for (std::size_t i = 0; i < m_partition_nodes.size(); i++) {
-      Sub_partition& p = m_partition_nodes[i];
-      for (std::size_t j = 0; j < p.input_polygons.size(); j++) {
-        if (p.input_polygons[j] == input_polygon_index)
-          p.m_data->support_plane(p.m_data->support_plane_index(input_polygon_index)).k = k;
-      }
-    }
-  }
-
+#endif
   /// @}
 
   /*******************************
@@ -789,7 +773,7 @@ public:
   /*!
   \brief returns the number of vertices in the kinetic partition.
 
-  \pre successful partition
+  \pre created partition
   */
   std::size_t number_of_vertices() const {
     return m_data.vertices().size();
@@ -798,7 +782,7 @@ public:
   /*!
   \brief returns the number of faces in the kinetic partition.
 
-  \pre successful partition
+  \pre created partition
   */
   std::size_t number_of_faces() const {
     return m_data.face_to_vertices().size();
@@ -807,456 +791,31 @@ public:
   /*!
   \brief returns the number of volumes created by the kinetic partition.
 
-  \pre successful partition
+  \pre created partition
   */
   std::size_t number_of_volumes() const {
     return m_volumes.size();
   }
 
-  const Point_3 &volume_centroid(std::size_t volume_index) const {
-    assert(volume_index < m_volumes.size());
-    auto p = m_volumes[volume_index];
-    return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
-  }
-  /*
+  /*!
+  \brief Provides the support planes of the partition derived from the input polygons
 
-  template<class OutputIterator>
-  void faces_of_input_polygon(const std::size_t input_polygon_index, OutputIterator it) const {
-    if (input_polygon_index >= m_input2regularized.size()) {
-      assert(false);
-    }
+  @return
+   vector of planes.
 
-    std::cout << "switch to hjk Data_structure::m_face2sp" << std::endl;
-
-    std::size_t mapped_input = m_input2regularized[input_polygon_index];
-    for (std::size_t idx : m_partitions) {
-      const Sub_partition& p = m_partition_nodes[idx];
-      // Check if it contains this input polygon and get support plane index
-      int sp_idx = -1;
-      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
-        if (p.input_polygons[i] == mapped_input) {
-          sp_idx = p.m_data->support_plane_index(i);
-          break;
-        }
-      }
-
-      // Continue if the partition does not contain this input polygon.
-      if (sp_idx == -1)
-        continue;
-
-      auto pfaces = p.m_data->pfaces(sp_idx);
-      auto f2i = p.m_data->face_to_index();
-
-      for (const auto& f : pfaces) {
-        assert(f.first == sp_idx);
-        auto fit = f2i.find(f);
-        assert(fit != f2i.end());
-
-        *it++ = std::make_pair(idx, fit->second);
-      }
-    }
-  }
-*/
-
-  template<class OutputIterator>
-  void faces_of_input_polygon(const std::size_t polygon_index, OutputIterator it) const {
-    if (polygon_index >= m_input_planes.size()) {
-      assert(false);
-    }
-
-    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
-
-    for (std::size_t idx : m_partitions) {
-      const Sub_partition& p = m_partition_nodes[idx];
-      // Check if it contains this input polygon and get support plane index
-      int sp_idx = -1;
-      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
-        if (p.input_polygons[i] == polygon_index) {
-          sp_idx = p.m_data->support_plane_index(i);
-          break;
-        }
-      }
-
-      // Continue if the partition does not contain this input polygon.
-      if (sp_idx == -1)
-        continue;
-
-      auto pfaces = p.m_data->pfaces(sp_idx);
-      auto f2i = p.m_data->face_to_index();
-      const auto& f2sp = p.m_data->face_to_support_plane();
-
-      for (std::size_t i = 0; i < f2sp.size(); i++) {
-        if (f2sp[i] == sp_idx)
-          *it++ = std::make_pair(idx, i);
-      }
-    }
-  }
-
-  void map_points_to_polygons(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<Index, std::vector<std::size_t> > > &mapping) {
-    std::vector<Index> faces;
-
-    if (polygon_index >= m_input_planes.size()) {
-      assert(false);
-    }
-
-    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
-    //ToDo I need to check whether the current way provides all faces as some faces may have been added during the make_conformal step
-
-    for (std::size_t idx : m_partitions) {
-      const Sub_partition& p = m_partition_nodes[idx];
-      // Check if it contains this input polygon and get support plane index
-      std::size_t sp_idx = -1;
-      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
-        if (p.input_polygons[i] == polygon_index) {
-          sp_idx = p.m_data->support_plane_index(i);
-          break;
-        }
-      }
-
-      // Continue if the partition does not contain this input polygon.
-      if (sp_idx == -1)
-        continue;
-
-      // Filter points
-      From_exact from_exact;
-      std::array<FT, 3> bbmin = { from_exact(p.bbox[0][0]), from_exact(p.bbox[0][1]), from_exact(p.bbox[0][2]) };
-      std::array<FT, 3> bbmax = { from_exact(p.bbox[7][0]), from_exact(p.bbox[7][1]), from_exact(p.bbox[7][2]) };
-      assert(bbmin[0] < bbmax[0]);
-      assert(bbmin[1] < bbmax[1]);
-      assert(bbmin[2] < bbmax[2]);
-
-      std::vector<Point_2> pts2d;
-      std::vector<std::size_t> idx2d;
-      auto sp = p.m_data->support_plane(sp_idx);
-
-      for (std::size_t i = 0; i < pts.size(); i++) {
-        if (bbmin[0] <= pts[i][0] && pts[i][0] <= bbmax[0]
-          && bbmin[1] <= pts[i][1] && pts[i][1] <= bbmax[1]
-          && bbmin[2] <= pts[i][2] && pts[i][2] <= bbmax[2]) {
-          pts2d.push_back(sp.to_2d(pts[i]));
-          idx2d.push_back(i);
-        }
-      }
-
-      /*auto writer = pts.end()--;
-      auto reader = pts.begin();
-      while (reader < writer) {
-        while ((*reader[0] < bbmin[0] || bbmax[0] < *reader[0]
-          || *reader[1] < bbmin[1] || bbmax[1] < *reader[1]
-          || *reader[2] < bbmin[2] || bbmax[2] < *reader[2]) && reader < writer)
-          reader++;
-
-        while ((*bbmin[0] <= *writer[0] && *writer[0] <= bbmax[0]
-          && *bbmin[1] <= *writer[1] && *writer[0] <= bbmax[1]
-          && *bbmin[2] <= *writer[2] && *writer[0] <= bbmax[2]) && reader < writer)
-          writer--;
-
-        if (writer >= reader)
-          break;
-
-        auto tmp = *writer;
-        *writer = *reader;
-        *reader = tmp;
-
-        reader++;
-        writer--;
-      };*/
-
-      const auto& initial = p.m_data->face_is_part_of_input_polygon();
-      for (std::size_t f = 0; f < p.m_data->face_to_support_plane().size();f++) {
-        if (p.m_data->face_to_support_plane()[f] != sp_idx || !initial[f])
-          continue;
-
-        mapping.resize(mapping.size() + 1);
-        auto& m = mapping.back();
-        m.first = Index(idx, f);
-
-        std::vector<Point_3> vts;
-        std::vector<Point_2> vts2d;
-
-        vertices(m.first, std::back_inserter(vts));
-        vts2d.reserve(vts.size());
-
-        for (const auto& v : vts)
-          vts2d.push_back(sp.to_2d(v));
-
-        // Todo: Remove check if vts are ccw
-        Polygon_2<Kernel> poly(vts2d.begin(), vts2d.end());
-        if (poly.is_clockwise_oriented())
-          std::reverse(vts2d.begin(), vts2d.end());
-
-        for (std::size_t i = 0;i<pts2d.size();i++) {
-          const auto& pt = pts2d[i];
-          bool outside = false;
-
-          // poly, vertices and edges in IFace are oriented ccw
-          std::size_t idx = 0;
-          for (std::size_t i = 0; i < vts2d.size(); i++) {
-            Vector_2 ts = (vts2d[(i + vts2d.size() - 1) % vts2d.size()]) - pt;
-            Vector_2 tt = (vts2d[i]) - pt;
-
-            bool ccw = (tt.x() * ts.y() - tt.y() * ts.x()) <= 0;
-            if (!ccw) {
-              outside = true;
-              break;
-            }
-          }
-
-          if (outside)
-            continue;
-
-          m.second.push_back(idx2d[i]);
-        }
-      }
-
-      // Order of the vertices should be ccw
-      /*IFace face = IFace(-1);
-      for (auto& f : initial_faces) {
-        Face_property& fp = m_data.igraph().face(f);
-
-        for (const auto& p : pts) {
-
-          typename Intersection_kernel::Point_2& p = to_exact(sp.data().centroid);
-          bool outside = false;
-
-          // poly, vertices and edges in IFace are oriented ccw
-          std::size_t idx = 0;
-          for (std::size_t i = 0; i < fp.pts.size(); i++) {
-            typename Intersection_kernel::Vector_2 ts = fp.pts[(i + fp.pts.size() - 1) % fp.pts.size()] - p;
-            typename Intersection_kernel::Vector_2 tt = fp.pts[i] - p;
-
-            bool ccw = (tt.x() * ts.y() - tt.y() * ts.x()) <= 0;
-            if (!ccw) {
-              outside = true;
-              break;
-            }
-          }
-          if (!outside) {
-            if (face == -1)
-              face = f;
-            else {
-              std::cout << "Two faces found for " << sp_idx << " sp, f1 " << face << " f2 " << f << std::endl;
-            }
-          }
-        }
-      }
-      if (face != -1) {
-
-        if (!m_data.igraph().face(face).part_of_partition) {
-          m_data.add_iface_to_mesh(sp_idx, face);
-          sp.data().initial_ifaces.push_back(face);
-        }
-      }
-      else
-        std::cout << "No IFace found for sp " << sp_idx << std::endl;*/
-
-
-      /*auto pfaces = p.m_data->pfaces(sp_idx);
-      auto f2i = p.m_data->face_to_index();
-
-      for (const auto& f : pfaces) {
-        assert(f.first == sp_idx);
-        auto fit = f2i.find(f);
-        assert(fit != f2i.end());
-
-        *it++ = std::make_pair(idx, fit->second);
-      }*/
-    }
-  }
-
+  \pre inserted polygons
+  */
   const std::vector<typename Intersection_kernel::Plane_3> &input_planes() const {
     return m_input_planes;
   }
 
-  const std::vector<std::vector<std::size_t> > &input_mapping() const {
-    return m_regularized2input;
-  }
-
-#ifndef DOXYGEN_RUNNING
   /*!
-  \brief Mapping of a vertex index to its position.
+   \brief Exports the kinetic partition into a `Linear_Cell_Complex` using a model of `` as items, e.g., `LCC_Base_Properties`.
 
-  @return
-   vector of points.
+   \return linear cell complex of kinetic partition with filled in `LCC_Base_Properties::Volume_property` and `LCC_Base_Properties::Face_property`.
 
-    \pre successful partition
+   \pre created partition
   */
-  const Point_3& vertex(const Index& vertex_index) const {
-    return m_partition_nodes[vertex_index.first].m_data->vertices()[vertex_index.second];
-  }
-
-  /*!
-  \brief Mapping of a vertex index to its exact position.
-
-  @return
-   vector of points.
-
-    \pre successful partition
-  */
-  const typename Intersection_kernel::Point_3& exact_vertex(const Index& vertex_index) const {
-    return m_partition_nodes[vertex_index.first].m_data->exact_vertices()[vertex_index.second];
-  }
-
-  /*!
-  \brief Vertices of a face.
-
-  \param volume_index
-   index of the query volume.
-
-  @return
-   vector of face indices.
-
-  \pre successful partition
-  */
-  template<class OutputIterator>
-  void vertices(const Index& face_index, OutputIterator it) const {
-    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second])
-      *it++ = m_partition_nodes[p.first].m_data->vertices()[p.second];
-  }
-
-  template<class OutputIterator>
-  void vertex_indices(const Index& face_index, OutputIterator it) const {
-    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second])
-    *it++ = p;
-  }
-
-  /*!
-  \brief Vertices of a face.
-
-  \param volume_index
-   index of the query volume.
-
-  @return
-   vector of face indices.
-
-  \pre successful partition
-  */
-  template<class OutputIterator>
-  void exact_vertices(const Index& face_index, OutputIterator it) const {
-
-    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second])
-      *it++ = m_partition_nodes[p.first].m_data->exact_vertices()[p.second];
-  }
-
-  template<class OutputIterator, class IndexOutputIterator>
-  void exact_vertices(const Index& face_index, OutputIterator pit, IndexOutputIterator iit) const {
-    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second]) {
-      *iit++ = p;
-      *pit++ = m_partition_nodes[p.first].m_data->exact_vertices()[p.second];
-    }
-  }
-
-  /*!
-  \brief Vertex indices of face.
-
-  \param face_index
-   index of the query face.
-
-  @return
-   vector of vertex indices.
-
-  \pre successful partition
-  */
-  /*const std::vector<Index>& vertices(const Index &face_index) const {
-    return m_data.face_to_vertices()[face_index];
-  }*/
-
-  /*!
-  \brief Face indices of the volume.
-
-  \param volume_index
-   index of the query volume.
-
-  @return
-   vector of face indices.
-
-  \pre successful partition
-  */
-  template<class OutputIterator>
-  void faces(std::size_t volume_index, OutputIterator it) const {
-    CGAL_assertion(m_volumes.size() > volume_index);
-    auto p = m_volumes[volume_index];
-
-    for (std::size_t i : m_partition_nodes[p.first].m_data->volumes()[p.second].faces)
-      *it++ = std::make_pair(p.first, i);
-  }
-
-  template<class OutputIterator>
-  void unique_faces(OutputIterator it) const {
-    for (std::size_t i = 0; i < m_partition_nodes.size(); i++) {
-      const Sub_partition& p = m_partition_nodes[i];
-      for (std::size_t j = 0; j < p.face_neighbors.size(); j++) {
-        if (p.face_neighbors[j].second.first == i)
-          *it++ = Index(i, j);
-        else if (i < p.face_neighbors[j].second.first)
-          *it++ = Index(i, j);
-      }
-    }
-  }
-
-  /*!
-  \brief Indices of adjacent volumes. Negative indices correspond to the empty spaces behind the sides of the bounding box.
-
-    \param face_index
-    index of the query face.
-
-    @return
-    pair of adjacent volumes.
-
-    -1 zmin
-    -2 ymin
-    -3 xmax
-    -4 ymax
-    -5 xmin
-    -6 zmax
-
-    \pre successful partition
-  */
-  std::pair<int, int> neighbors(const Index &face_index) const {
-    const auto &p = m_partition_nodes[face_index.first].face_neighbors[face_index.second];
-    if (p.second.second >= std::size_t(-6)) { // Faces on the boundary box are neighbors with an infinite outside volume
-      auto it = m_index2volume.find(p.first);
-      assert(it != m_index2volume.end());
-      return std::pair<int, int>(static_cast<int>(it->second), static_cast<int>(p.second.second));
-    }
-    else {
-      auto it1 = m_index2volume.find(p.first);
-      assert(it1 != m_index2volume.end());
-      auto it2 = m_index2volume.find(p.second);
-      assert(it2 != m_index2volume.end());
-      return std::pair<int, int>(static_cast<int>(it1->second), static_cast<int>(it2->second));
-    }
-    //const auto& p = m_partition_nodes[face_index.first].m_data->face_to_volumes()[face_index.second];
-    //return std::pair<Index, Index>(std::make_pair(face_index.first, p.first), std::make_pair(face_index.first, p.second));// m_data.face_to_volumes()[face_index];
-  }
-
-  /*!
-  \brief Retrieves the support plane generated from the input polygon.
-
-  \param input_polygon_index
-   index of the input polygon.
-
-  @return
-   index into polygon_map provided on initialization.
-
-  \pre successful partition
-  */
-  std::size_t support_plane_index(const std::size_t input_polygon_index) const {
-      const int support_plane_idx = m_data.support_plane_index(input_polygon_index);
-      CGAL_assertion(support_plane_idx >= 6);
-      return support_plane_idx;
-  }
-
-#endif
-
-  /*!
-   \brief returns a linear cell complex from the kinetic partition.
-
-   \return linear cell complex of kinetic partition with `LCC_Properties::Volume_property` and `LCC_Properties::Face_property`.
-
-   \pre successful partition
-  */
-
   template<class LCC>
   void get_linear_cell_complex(LCC &lcc) const {
     lcc.clear();
@@ -1295,10 +854,8 @@ public:
     }
 
     CGAL::Linear_cell_complex_incremental_builder_3<LCC> ib(lcc);
-    for (std::size_t i = 0; i < vtx.size(); i++) {
-      auto vah = ib.add_vertex(vtx[i]);
-      lcc.info_of_attribute<0>(vah).vtx = vtx_index[i];
-    }
+    for (std::size_t i = 0; i < vtx.size(); i++)
+      ib.add_vertex(vtx[i]);
 
     std::size_t num_faces = 0;
     std::size_t num_vols = 0;
@@ -1447,55 +1004,16 @@ public:
               lcc.info<2>(face_dart).input_polygon_index = n.second;
           }
           lcc.info<2>(face_dart).part_of_initial_polygon = m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second];
-          lcc.info<2>(face_dart).face_index = faces_of_volume[j];
           lcc.info<2>(face_dart).plane = m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second]).exact_plane();
-
-
-          auto n = neighbors(faces_of_volume[j]);
-          lcc.info<2>(face_dart).n1 = n.first;
-          lcc.info<2>(face_dart).n2 = n.second;
         }
         else {
           assert(lcc.info<2>(face_dart).part_of_initial_polygon == m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second]);
-          if (lcc.info<2>(face_dart).face_index.first > faces_of_volume[j].first)
-            lcc.info<2>(face_dart).face_index = faces_of_volume[j];
         }
-
-        /*
-                if (!lcc.is_valid())
-                  std::cout << "LCC is not valid" << std::endl;*/
 
         vtx_of_face.clear();
       }
 
-      d = ib.end_surface(); // returns a dart to the volume
-      //std::cout << std::endl;
-      /*
-      std::size_t current_num_vols = lcc.one_dart_per_cell<3>().size();
-      std::size_t current_num_faces = lcc.one_dart_per_cell<2>().size();
-      std::size_t current_num_vtx = lcc.one_dart_per_cell<0>().size();
-
-      //CGAL::draw(lcc);
-
-/*
-      if (!lcc.is_valid())
-        std::cout << "LCC is not valid" << std::endl;
-
-      if (current_num_vtx != num_vtx || current_num_vols != num_vols) {
-        std::cout << "number of vertices increased" << std::endl;
-        std::cout << "num_vtx: " << num_vtx << " current_num_vtx: " << current_num_vtx << std::endl;
-        std::cout << "num_faces: " << num_faces << " current_num_faces: " << current_num_faces << std::endl;
-        std::cout << "num_vols: " << num_vols << " current_num_vols: " << current_num_vols << std::endl;
-
-        std::ofstream vout("dart-76.xyz");
-        vout.precision(20);
-        typename LCC::Dart_descriptor vdd(76);
-        Point_3 p = to_inexact(lcc.point(vdd));
-        vout << " " << p;
-        vout.close();
-
-        //CGAL::draw(lcc);
-      }*/
+      d = ib.end_surface();
 
       lcc.set_attribute<3>(d, lcc.create_attribute<3>());
       lcc.info<3>(d).barycenter = centroid;
@@ -1504,8 +1022,6 @@ public:
       std::size_t unused = 0;
 
       faces_of_volume.clear();
-
-      //edge_to_volface.clear();
     }
 
     // Todo: Remove check if all volumes were added
@@ -1541,111 +1057,10 @@ public:
       }
     }
 
-    // Check neighbors of faces
-    std::set<Index> check;
-    for (auto& d : lcc.one_dart_per_cell<2>()) {
-      LCC::Dart_const_descriptor dh;
-      dh = lcc.dart_descriptor(d);
-
-      auto& inf = lcc.info<2>(dh);
-
-      int n1 = lcc.info<2>(dh).n1;
-      int n2 = lcc.info<2>(dh).n2;
-      auto n3 = neighbors(inf.face_index);
-
-      assert(((n1 == n3.first) && (n2 == n3.second)) || ((n1 == n3.second) && (n2 == n3.first)));
-
-      auto n = lcc.one_dart_per_incident_cell<3, 2>(dh);
-
-      int neighbors = n.size();
-
-      assert(n.size() >= 1);
-      auto it = n.begin();
-
-      int first = lcc.info<3>(lcc.dart_descriptor(*it++)).volume_index;
-      int second = -1;
-      if (n.size() == 2)
-        second = lcc.info<3>(lcc.dart_descriptor(*it)).volume_index;
-      else
-        second = inf.input_polygon_index;
-
-      if (n1 < n2)
-        check.insert(Index(n1, n2));
-      else
-        check.insert(Index(n2, n1));
-
-      assert(((n1 == first) && (n2 == second)) || ((n1 == second) && (n2 == first)));
-      int a;
-      a = 32;
-    }
-
-    for (std::size_t i = 0; i < m_partition_nodes.size(); i++)
-      for (std::size_t j = 0; j < m_partition_nodes[i].face_neighbors.size(); j++) {
-        auto n = neighbors(Index(i, j));
-        if (n.first < n.second) {
-          assert(check.find(n) != check.end());
-        }
-        else {
-          assert(check.find(Index(n.second, n.first)) != check.end());
-        }
-      }
-
-    /*for (auto& d : lcc.one_dart_per_cell<3>()) {
-      typename LCC::Dart_descriptor dh = lcc.dart_descriptor(d);
-      auto a = lcc.attribute<3>(dh);
-
-      if (a != lcc.null_descriptor)
-        continue;
-
-      std::string filename = std::to_string(dh) + ((a == lcc.null_descriptor) ? "n" : "") + ".polylines.txt";
-
-      std::ofstream vout(filename);
-      vout.precision(20);
-
-      std::size_t unused = 0;
-      std::vector<Point_3> pts;
-      for (auto& fd : lcc.one_dart_per_incident_cell<2, 3>(dh)) {
-        typename LCC::Dart_descriptor fdd = lcc.dart_descriptor(fd);
-        std::size_t num_vertices = lcc.one_dart_per_incident_cell<0, 2>(fdd).size() + 1;
-        vout << num_vertices;
-        for (auto& vd : lcc.one_dart_per_incident_cell<0, 2>(fdd)) {
-          typename LCC::Dart_descriptor vdd = lcc.dart_descriptor(vd);
-          Point_3 p = to_inexact(lcc.point(vdd));
-          vout << " " << p;
-          pts.push_back(p);
-        }
-        vout << " " << to_inexact(lcc.point(lcc.dart_descriptor(*lcc.one_dart_per_incident_cell<0, 2>(fdd).begin())));
-        vout << std::endl;
-      }
-
-      vout.close();
-    }*/
-
     lcc.display_characteristics(std::cout) << std::endl;
 
     if (!lcc.is_valid())
       std::cout << "LCC is not valid" << std::endl;
-
-    /*
-        for (auto it = ra.begin(),
-                   itend = ra.end(); it != itend; ++it)
-        {
-          lcc.info<3>(it);
-        }*/
-        /*for (auto vold : lcc.one_dart_per_cell<3>()) {
-          auto d1 = vold;
-          d1 = d1;
-          lcc.is_dart_used(d1);
-
-    / *
-          if (!lcc.is_dart_used(vold)) {
-            std::cout << "x" << std::endl;
-            continue;
-          }
-          if (!lcc.template is_attribute_used<3>(lcc.template attribute<3>(vold))) {
-            std::cout << "." << std::endl;
-          }* /
-        }*/
   }
 
   /// @}
@@ -1667,6 +1082,183 @@ private:
     std::size_t volume;
     Index vA, vB;
   };
+
+  const Point_3& volume_centroid(std::size_t volume_index) const {
+    assert(volume_index < m_volumes.size());
+    auto p = m_volumes[volume_index];
+    return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
+  }
+
+
+  template<class OutputIterator>
+  void faces_of_input_polygon(const std::size_t polygon_index, OutputIterator it) const {
+    if (polygon_index >= m_input_planes.size()) {
+      assert(false);
+    }
+
+    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
+
+    for (std::size_t idx : m_partitions) {
+      const Sub_partition& p = m_partition_nodes[idx];
+      // Check if it contains this input polygon and get support plane index
+      int sp_idx = -1;
+      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
+        if (p.input_polygons[i] == polygon_index) {
+          sp_idx = p.m_data->support_plane_index(i);
+          break;
+        }
+      }
+
+      // Continue if the partition does not contain this input polygon.
+      if (sp_idx == -1)
+        continue;
+
+      auto pfaces = p.m_data->pfaces(sp_idx);
+      auto f2i = p.m_data->face_to_index();
+      const auto& f2sp = p.m_data->face_to_support_plane();
+
+      for (std::size_t i = 0; i < f2sp.size(); i++) {
+        if (f2sp[i] == sp_idx)
+          *it++ = std::make_pair(idx, i);
+      }
+    }
+  }
+
+  const std::vector<std::vector<std::size_t> >& input_mapping() const {
+    return m_regularized2input;
+  }
+
+  /*!
+  \brief Face indices of the volume.
+
+  \param volume_index
+   index of the query volume.
+
+  @return
+   vector of face indices.
+
+  \pre created partition
+  */
+  template<class OutputIterator>
+  void faces(std::size_t volume_index, OutputIterator it) const {
+    CGAL_assertion(m_volumes.size() > volume_index);
+    auto p = m_volumes[volume_index];
+
+    for (std::size_t i : m_partition_nodes[p.first].m_data->volumes()[p.second].faces)
+      *it++ = std::make_pair(p.first, i);
+  }
+
+
+  /*!
+  \brief Mapping of a vertex index to its position.
+
+  @return
+   vector of points.
+
+    \pre created partition
+  */
+  const Point_3& vertex(const Index& vertex_index) const {
+    return m_partition_nodes[vertex_index.first].m_data->vertices()[vertex_index.second];
+  }
+
+  /*!
+  \brief Mapping of a vertex index to its exact position.
+
+  @return
+   vector of points.
+
+    \pre created partition
+  */
+  const typename Intersection_kernel::Point_3& exact_vertex(const Index& vertex_index) const {
+    return m_partition_nodes[vertex_index.first].m_data->exact_vertices()[vertex_index.second];
+  }
+
+  /*!
+  \brief Vertices of a face.
+
+  \param volume_index
+   index of the query volume.
+
+  @return
+   vector of face indices.
+
+  \pre successful partition
+  */
+  template<class OutputIterator>
+  void vertices(const Index& face_index, OutputIterator it) const {
+    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second])
+      *it++ = m_partition_nodes[p.first].m_data->vertices()[p.second];
+  }
+
+  template<class OutputIterator>
+  void vertex_indices(const Index& face_index, OutputIterator it) const {
+    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second])
+      *it++ = p;
+  }
+
+  /*!
+  \brief Vertices of a face.
+
+  \param volume_index
+   index of the query volume.
+
+  @return
+   vector of face indices.
+
+  \pre successful partition
+  */
+  template<class OutputIterator>
+  void exact_vertices(const Index& face_index, OutputIterator it) const {
+
+    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second])
+      *it++ = m_partition_nodes[p.first].m_data->exact_vertices()[p.second];
+  }
+
+  template<class OutputIterator, class IndexOutputIterator>
+  void exact_vertices(const Index& face_index, OutputIterator pit, IndexOutputIterator iit) const {
+    for (auto& p : m_partition_nodes[face_index.first].face2vertices[face_index.second]) {
+      *iit++ = p;
+      *pit++ = m_partition_nodes[p.first].m_data->exact_vertices()[p.second];
+    }
+  }
+
+
+  /*!
+  \brief Indices of adjacent volumes. Negative indices correspond to the empty spaces behind the sides of the bounding box.
+
+    \param face_index
+    index of the query face.
+
+    @return
+    pair of adjacent volumes.
+
+    -1 zmin
+    -2 ymin
+    -3 xmax
+    -4 ymax
+    -5 xmin
+    -6 zmax
+
+    \pre successful partition
+  */
+  std::pair<int, int> neighbors(const Index &face_index) const {
+    const auto &p = m_partition_nodes[face_index.first].face_neighbors[face_index.second];
+    if (p.second.second >= std::size_t(-6)) { // Faces on the boundary box are neighbors with an infinite outside volume
+      auto it = m_index2volume.find(p.first);
+      assert(it != m_index2volume.end());
+      return std::pair<int, int>(static_cast<int>(it->second), static_cast<int>(p.second.second));
+    }
+    else {
+      auto it1 = m_index2volume.find(p.first);
+      assert(it1 != m_index2volume.end());
+      auto it2 = m_index2volume.find(p.second);
+      assert(it2 != m_index2volume.end());
+      return std::pair<int, int>(static_cast<int>(it1->second), static_cast<int>(it2->second));
+    }
+    //const auto& p = m_partition_nodes[face_index.first].m_data->face_to_volumes()[face_index.second];
+    //return std::pair<Index, Index>(std::make_pair(face_index.first, p.first), std::make_pair(face_index.first, p.second));// m_data.face_to_volumes()[face_index];
+  }
+
 
   void create_bounding_box(
     const FT enlarge_bbox_ratio,
