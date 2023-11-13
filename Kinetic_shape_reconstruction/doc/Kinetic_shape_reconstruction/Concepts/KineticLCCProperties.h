@@ -11,7 +11,7 @@
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
 /*!
-\ingroup PkgKineticShapeReconstructionRef
+\ingroup PkgKineticShapePartitionConcepts
 \cgalConcept
 
 The concept `KineticLCCProperties` refines the concept of `LinearCellComplexItems`. It describes the item properties of the Linear_Cell_Complex used to store the resulting partition of `CGAL::Kinetic_shape_partition_3`.
