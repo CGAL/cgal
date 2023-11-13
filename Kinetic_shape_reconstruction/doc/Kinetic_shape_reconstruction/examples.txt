@@ -1,6 +1,5 @@
 /*!
 \example Kinetic_shape_reconstruction/kinetic_2d.cpp
 \example Kinetic_shape_reconstruction/kinetic_precomputed_shapes.cpp
-\example Kinetic_shape_reconstruction/kinetic_random_shapes.cpp
 \example Kinetic_shape_reconstruction/kinetic_reconstruction.cpp
 */

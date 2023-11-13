@@ -12,7 +12,7 @@
 
 #ifndef CGAL_KINETIC_SHAPE_PARTITION_3_H
 #define CGAL_KINETIC_SHAPE_PARTITION_3_H
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -814,7 +814,7 @@ public:
 
    Volume and face properties defined in the model `KineticLCCProperties` are filled. The volume index is in the range [0, #volumes -1]
 
-   \return linear cell complex of kinetic partition with filled in `LCC_Base_Properties::Volume_property` and `LCC_Base_Properties::Face_property`.
+   \return linear cell complex of kinetic partition.
 
    \pre created partition
   */
