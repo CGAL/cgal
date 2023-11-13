@@ -1005,8 +1005,6 @@ but taking a given vertex is also available in case the computation should be do
 
 \subsection ICCResults Results & Performance
 
-**To be updated**
-
 First, \cgalFigureRef{icc_measures} illustrates various curvature measures on a triangular mesh.
 
 \cgalFigureAnchor{icc_measures}
