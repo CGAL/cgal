@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_surface_mesh.h>
 #include <CGAL/Graphics_scene_options.h>
-#include <fstream>
+#include <iostream>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3                Point;

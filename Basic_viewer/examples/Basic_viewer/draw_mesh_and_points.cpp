@@ -7,7 +7,7 @@
 #include <CGAL/Graphics_scene_options.h>
 
 #include <vector>
-#include <fstream>
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
@@ -55,8 +55,8 @@ int main(void)
     { point_set.insert(it.first); }
 
     CGAL::Graphics_scene graphic_buffer;
-    CGAL::add_in_graphics_scene(point_set, graphic_buffer, Graphics_scene_options_green_points());
-    CGAL::add_in_graphics_scene(output_mesh, graphic_buffer);
+    CGAL::add_to_graphics_scene(point_set, graphic_buffer, Graphics_scene_options_green_points());
+    CGAL::add_to_graphics_scene(output_mesh, graphic_buffer);
     CGAL::draw_graphics_scene(graphic_buffer);
   }
   else
