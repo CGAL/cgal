@@ -25,14 +25,15 @@ The concept `KineticLCCProperties` refines the concept of `LinearCellComplexItem
 */
 
 struct KineticLCCProperties {
-  // Using the index-based version of the `Linear_Cell_Complex`.
+  /// Using the index-based version of the `Linear_Cell_Complex`.
   typedef CGAL::Tag_true Use_index;
   typedef std::uint32_t Index_type;
 
-  struct Face_property {} Face_property; // Model of `KineticLCCFaceProperty` concept.
-
-  struct Volume_property {} Volume_property;// Model of `KineticLCCVolumeProperty` concept.
-
+  /// Model of `KineticLCCFaceProperty` concept.
+  struct Face_property {} Face_property;
+  /// Model of `KineticLCCVolumeProperty` concept.
+  struct Volume_property {} Volume_property;
+  /// Model of `KineticLCCDartWrapper` concept
   template<class LCC>
-  struct Dart_wrapper {} Dart_wrapper; // Model of `KineticLCCDartWrapper` concept.
+  struct Dart_wrapper {} Dart_wrapper; .
 };

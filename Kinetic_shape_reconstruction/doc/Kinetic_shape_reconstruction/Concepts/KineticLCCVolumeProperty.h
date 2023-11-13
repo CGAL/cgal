@@ -25,6 +25,8 @@ The concept `KineticLCCVolumeProperty` is part of the item properties of the `Li
 */
 
 struct KineticLCCVolumeProperty {
-    typename Intersection_kernel::Point_3 barycenter; // Contains the bary_cernter of the volume.
-    std::size_t volume_id; // 0-based volume id.
+  /// Contains the bary_cernter of the volume.
+  typename Intersection_kernel::Point_3 barycenter;
+  /// 0-based volume id.
+  std::size_t volume_id;
 };

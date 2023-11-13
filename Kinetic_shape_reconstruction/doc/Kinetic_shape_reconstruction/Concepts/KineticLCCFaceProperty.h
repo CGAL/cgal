@@ -25,7 +25,10 @@ The concept `KineticLCCFaceProperty` is part of the item properties of the `Line
 */
 
 struct KineticLCCFaceProperty {
-    int input_polygon_index; // Stores the index of the input polygon the provided that support plane of this face. Indices -1 till -6 correspond to bbox faces, -7 to faces from octree
-    typename Intersection_kernel::Plane_3 plane; // Support plane of the face derived from the corresponding input polygon or from octree nodes used for subdivision.
-    bool part_of_initial_polygon; // Does this face overlap with the corresponding input polygon.
+  /// Stores the index of the input polygon the provided that support plane of this face. Indices -1 till -6 correspond to bbox faces, -7 to faces from octree
+  int input_polygon_index;
+  /// Support plane of the face derived from the corresponding input polygon or from octree nodes used for subdivision.
+  typename Intersection_kernel::Plane_3 plane;
+  /// Does this face overlap with the corresponding input polygon.
+  bool part_of_initial_polygon;
 };

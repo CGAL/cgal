@@ -25,9 +25,13 @@ The concept `KineticLCCDartWrapper` is part of the item properties of the `Linea
 */
 
 struct KineticLCCDartWrapper {
+    /// A Cell_attribute_with_point is required as the vertex property, but an additional type can be specified as the second template parameter.
     typedef CGAL::Cell_attribute_with_point< LCC, void> Vertex_attribute;
+    /// Using a model of the concept `KineticLCCFaceProperty`
     typedef CGAL::Cell_attribute< LCC, Face_property > Face_attribute;
+    /// Using a model of the concept `KineticLCCVolumeProperty`
     typedef CGAL::Cell_attribute< LCC, Volume_property > Volume_attribute;
 
+    /// The Attributes tuple contains the Properties for the 0,1,2 and 3-cells, i.e., vertex, dart, face and volume properties.
     typedef std::tuple<Vertex_attribute, void, Face_attribute, Volume_attribute> Attributes;
 };
