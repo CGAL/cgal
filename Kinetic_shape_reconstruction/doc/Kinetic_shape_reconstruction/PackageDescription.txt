@@ -4,6 +4,7 @@
 /// \defgroup PkgKineticShapePartitionConcepts Concepts
 /// \ingroup PkgKineticShapePartitionRef
 
+\addtogroup PkgKineticShapePartitionRef
 \cgalPkgDescriptionBegin{Kinetic Shape Partition, PkgKineticShapePartition}
 \cgalPkgPicture{kinetic_logo.png}
 
