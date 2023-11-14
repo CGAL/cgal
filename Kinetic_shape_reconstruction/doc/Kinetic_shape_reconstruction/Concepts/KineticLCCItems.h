@@ -20,8 +20,8 @@ The third type in Attributes tuple must be a model of the `KineticLCCFaceAttribu
 The fourth type in Attributes tuple must be a model of the `KineticLCCVolumeAttribute` concept.
 
 \sa `CGAL::Kinetic_shape_partition_3`
-\sa `CGAL::KineticLCCFaceAttribute`
-\sa `CGAL::KineticLCCVolumeAttribute`
+\sa `KineticLCCFaceAttribute`
+\sa `KineticLCCVolumeAttribute`
 \sa `LinearCellComplexItems`
 */
 

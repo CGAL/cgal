@@ -1,13 +1,16 @@
 /*!
-\defgroup PkgKineticShapeReconstructionRef Kinetic Shape Partition Reference
+\defgroup PkgKineticShapePartitionRef Kinetic Shape Partition Reference
 
-\cgalPkgDescriptionBegin{Kinetic Shape Partition, PkgKineticShapeReconstruction}
+/// \defgroup PkgKineticShapePartitionConcepts Concepts
+/// \ingroup PkgKineticShapePartitionRef
+
+\cgalPkgDescriptionBegin{Kinetic Shape Partition, PkgKineticShapePartition}
 \cgalPkgPicture{kinetic_logo.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot}
 \cgalPkgDesc{This package implements kinetic shape partition. Based on a set of planar input shapes the bounding box of the input data is split into convex volumes. The complexity of the partition can be adjusted with a single parameter.}
-\cgalPkgManuals{Chapter_Kinetic_Shape_Partition, PkgKineticShapeReconstructionRef}
+\cgalPkgManuals{Chapter_Kinetic_Shape_Partition, PkgKineticShapePartitionRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
