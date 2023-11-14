@@ -28,7 +28,7 @@ The fourth type in Attributes tuple must be a model of the `KineticLCCVolumeAttr
 struct KineticLCCItems {
 /// \name Types
 /// @{
-  /// Using the index-based version of the `Linear_Cell_Complex`.
+  /// Using the index-based version of the `LinearCellComplex` concept.
   typedef CGAL::Tag_true Use_index;
   typedef std::uint32_t Index_type;
 /// @}
