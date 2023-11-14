@@ -29,7 +29,7 @@ struct KineticLCCFaceAttribute {
 /// @{
   /// 3D plane type compatible with `Kinetic_shape_partition_3::Intersection_kernel`
   typedef unspecified_type Plane_3;
-  /// Stores the index of the input polygon the provided that support plane of this face. Indices -1 till -6 correspond to bbox faces, -7 to faces from octree
+  /// Stores the index of the input polygon the provided that support plane of this face. Negative numbers correspond to the values defined in the enum `Kinetic_shape_partition_3::Face_support`.
   int input_polygon_index;
   /// Support plane of the face derived from the corresponding input polygon or from octree nodes used for subdivision.
   Plane_3 plane;

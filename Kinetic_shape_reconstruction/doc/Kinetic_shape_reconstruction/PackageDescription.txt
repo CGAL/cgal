@@ -15,8 +15,8 @@
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.6}
-\cgalPkgDependsOn{\ref PkgSurfaceMesh, \ref PkgPolygonMeshProcessing, \ref PkgLinearCellComplex, \ref PkgConvexHull2 and \ref PkgPrincipalComponentAnalysisD}
+\cgalPkgSince{6.0}
+\cgalPkgDependsOn{\ref PkgSurfaceMesh, \ref PkgLinearCellComplex}
 \cgalPkgBib{cgal:ol-kinetic}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
@@ -25,7 +25,15 @@
 
 \cgalClassifedRefPages
 
+\cgalCRPSection{Concepts}
 
-## Kinetic Shape Partition ##
+- `KineticShapePartitionTraits_3`
+- `KineticLCCItems`
+- `KineticLCCFaceAttribute`
+- `KineticLCCVolumeAttribute`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Kinetic_shape_partition_3`
 
 */

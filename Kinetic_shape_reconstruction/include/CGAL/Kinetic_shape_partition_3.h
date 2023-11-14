@@ -99,13 +99,13 @@ public:
     typedef std::uint32_t Index_type;
 
     struct Face_attribute {
-      Face_support input_polygon_index; // Positive number represent the index of the input polygon. Negative numbers correspond to the values defined in the enum `Face_support`.
+      Face_support input_polygon_index; // Non-negative numbers represent the index of the input polygon. Negative numbers correspond to the values defined in the enum `Face_support`.
       typename Intersection_kernel::Plane_3 plane;
       bool part_of_initial_polygon;
     };
 
     struct Volume_attribute {
-      typename Intersection_kernel::Point_3 barycenter;
+      typename Intersection_kernel::Point_3 bary_center;
       std::size_t volume_id;
     };
 
@@ -290,11 +290,7 @@ public:
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
     m_num_events(0),
-    m_input2regularized()
-  {
-    m_parameters.angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 0);
-    m_parameters.distance_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::distance_tolerance), 0);
-  }
+    m_input2regularized() {}
 
   /*!
   \brief constructs a kinetic shape partition object and initializes it.
@@ -338,16 +334,6 @@ public:
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
     \cgalParamNEnd
-    \cgalParamNBegin{angle_tolerance}
-      \cgalParamDescription{The tolerance angle to snap the planes of two input polygons into one plane.}
-      \cgalParamType{FT}
-      \cgalParamDefault{5}
-    \cgalParamNEnd
-    \cgalParamNBegin{distance_tolerance}
-      \cgalParamDescription{The tolerance distance to snap the planes of two input polygons into one plane.}
-      \cgalParamType{FT}
-      \cgalParamDefault{1% of the bounding box diagonal}
-    \cgalParamNEnd
   \cgalNamedParamsEnd
 
 
@@ -369,8 +355,6 @@ public:
     m_num_events(0),
     m_input2regularized()
   {
-    m_parameters.angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 0);
-    m_parameters.distance_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::distance_tolerance), 0);
     insert(input_range, polygon_range, np);
     initialize(np);
   }
@@ -473,16 +457,6 @@ public:
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
     \cgalParamNEnd
-    \cgalParamNBegin{angle_tolerance}
-      \cgalParamDescription{The tolerance angle to snap the planes of two input polygons into one plane.}
-      \cgalParamType{FT}
-      \cgalParamDefault{5}
-    \cgalParamNEnd
-    \cgalParamNBegin{distance_tolerance}
-      \cgalParamDescription{The tolerance distance to snap the planes of two input polygons into one plane.}
-      \cgalParamType{FT}
-      \cgalParamDefault{0.5}
-    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \pre input data has been provided via `insert()`.
@@ -496,10 +470,6 @@ public:
     Timer timer;
     m_parameters.bbox_dilation_ratio = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::bbox_dilation_ratio), FT(11) / FT(10));
-    m_parameters.angle_tolerance = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::angle_tolerance), FT(0) / FT(10));
-    m_parameters.distance_tolerance = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::distance_tolerance), FT(0) / FT(10));
     m_parameters.reorient_bbox = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::reorient_bbox), false);
     m_parameters.max_octree_depth = parameters::choose_parameter(
@@ -1033,7 +1003,7 @@ public:
       d = ib.end_surface();
 
       lcc.set_attribute<3>(d, lcc.create_attribute<3>());
-      lcc.info<3>(d).barycenter = centroid;
+      lcc.info<3>(d).bary_center = centroid;
       lcc.info<3>(d).volume_id = v;
 
       std::size_t unused = 0;
@@ -3470,69 +3440,6 @@ private:
 
     std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
   }
-
-  bool within_tolerance(const Plane_3& p1, const Point_2 &c1, const Plane_3& p2, const Point_2& c2) const {
-    using FT = typename GeomTraits::FT;
-
-    const auto va = p1.orthogonal_vector();
-    const auto vb = p2.orthogonal_vector();
-
-    // Are the planes parallel?
-    // const FT vtol = KSR::vector_tolerance<FT>();
-    // const FT aval = CGAL::abs(va * vb);
-
-    // std::cout << "aval: " << aval << " : " << vtol << std::endl;
-    // if (aval < vtol) {
-    //   return false;
-    // }
-
-    FT aval = approximate_angle(va, vb);
-    CGAL_assertion(aval >= FT(0) && aval <= FT(180));
-    if (aval >= FT(90))
-      aval = FT(180) - aval;
-
-    if (aval >= m_parameters.angle_tolerance) {
-      return false;
-    }
-
-    const auto pa1 = p1.to_3d(c1);
-    const auto pb1 = p2.projection(pa1);
-    const auto pb2 = p2.to_3d(c2);
-    const auto pa2 = p1.projection(pb2);
-
-    const FT bval1 = KSR::distance(pa1, pb1);
-    const FT bval2 = KSR::distance(pa2, pb2);
-    const FT bval = (CGAL::max)(bval1, bval2);
-    CGAL_assertion(bval >= FT(0));
-
-    if (bval >= m_parameters.distance_tolerance)
-      return false;
-
-    return true;
-  }
-
-  /*
-
-  template<typename FaceOutputIterator>
-  FaceOutputIterator output_partition_faces(
-    FaceOutputIterator faces, KSR::Indexer<IVertex>& indexer,
-    const std::size_t sp_idx) const {
-
-    std::vector<std::size_t> face;
-    const auto all_pfaces = m_data.pfaces(sp_idx);
-    for (const auto pface : all_pfaces) {
-      face.clear();
-      const auto pvertices = m_data.pvertices_of_pface(pface);
-      for (const auto pvertex : pvertices) {
-        CGAL_assertion(m_data.has_ivertex(pvertex));
-        const auto ivertex = m_data.ivertex(pvertex);
-        const std::size_t idx = indexer(ivertex);
-        face.push_back(idx);
-      }
-      *(faces++) = face;
-    }
-    return faces;
-  }*/
 };
 
 } // namespace CGAL

@@ -1021,7 +1021,7 @@ private:
       for (const auto &vd : m_lcc.one_dart_per_cell<3>()) {
         const auto& info = m_lcc.info<3>(m_lcc.dart_descriptor(vd));
 
-        m_volume_below_ground[info.volume_id] = (from_exact(info.barycenter) - m_regions[m_ground_polygon_index].first.projection(from_exact(info.barycenter))).z() < 0;
+        m_volume_below_ground[info.volume_id] = (from_exact(info.bary_center) - m_regions[m_ground_polygon_index].first.projection(from_exact(info.bary_center))).z() < 0;
       }
   }
 
@@ -1267,7 +1267,7 @@ private:
       for (auto& vd : m_lcc.one_dart_per_incident_cell<3, 2>(m_faces_lcc[i])) {
         typename LCC::Dart_descriptor vdh = m_lcc.dart_descriptor(vd);
         v[idx] = m_lcc.info<3>(vdh).volume_id;
-        c[idx] = from_exact(m_lcc.info<3>(vdh).barycenter);
+        c[idx] = from_exact(m_lcc.info<3>(vdh).bary_center);
         idx++;
       }
 

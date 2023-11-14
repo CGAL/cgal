@@ -16,6 +16,7 @@
 
 The concept `KineticLCCItems` refines the concept of `LinearCellComplexItems` by adding 2-attributes and 3-attributes to store information from the kinetic partition.
 
+The first type in Attributes tuple must be a model of the `CellAttributeWithPoint` concept.
 The third type in Attributes tuple must be a model of the `KineticLCCFaceAttribute` concept.
 The fourth type in Attributes tuple must be a model of the `KineticLCCVolumeAttribute` concept.
 
