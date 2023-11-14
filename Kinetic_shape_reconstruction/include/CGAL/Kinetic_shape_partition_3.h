@@ -1014,14 +1014,14 @@ public:
           // 3. face lies on the bbox
           int ip = m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(sp).data().actual_input_polygon;
           if (ip != -1)
-            lcc.info<2>(face_dart).input_polygon_index = m_partition_nodes[faces_of_volume[j].first].input_polygons[ip];
+            lcc.info<2>(face_dart).input_polygon_index = static_cast<Face_support>(m_partition_nodes[faces_of_volume[j].first].input_polygons[ip]);
           else {
             // If there is no input polygon, I need to check whether it has two neighbors
             auto n = neighbors(faces_of_volume[j]);
             if (n.second >= 0)
-              lcc.info<2>(face_dart).input_polygon_index = -7;
+              lcc.info<2>(face_dart).input_polygon_index = static_cast<Face_support>(-7);
             else
-              lcc.info<2>(face_dart).input_polygon_index = n.second;
+              lcc.info<2>(face_dart).input_polygon_index = static_cast<Face_support>(n.second);
           }
           lcc.info<2>(face_dart).part_of_initial_polygon = m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second];
           lcc.info<2>(face_dart).plane = m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second]).exact_plane();
