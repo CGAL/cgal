@@ -1,8 +1,8 @@
 /*!
 \defgroup PkgKineticShapePartitionRef Kinetic Shape Partition Reference
 
-/// \defgroup PkgKineticShapePartitionConcepts Concepts
-/// \ingroup PkgKineticShapePartitionRef
+\defgroup PkgKineticShapePartitionConcepts Concepts
+\ingroup PkgKineticShapePartitionRef
 
 \addtogroup PkgKineticShapePartitionRef
 \cgalPkgDescriptionBegin{Kinetic Shape Partition, PkgKineticShapePartition}
