@@ -12,7 +12,8 @@
 
 #ifndef CGAL_KINETIC_SHAPE_PARTITION_3_H
 #define CGAL_KINETIC_SHAPE_PARTITION_3_H
-#include <CGAL/license/Kinetic_shape_reconstruction.h>
+
+//#include <CGAL/license/Kinetic_shape_partition_3.h>
 
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -56,7 +57,8 @@ namespace CGAL {
 
 /*!
 * \ingroup PkgKineticShapeReconstructionRef
-  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3()` to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use `Kinetic_shape_partition_3()`
+  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3` to create an empty object, `insert` to provide input data and `initialize` to prepare the partition or use Kinetic_shape_partition_3(
+    const InputRange& input_range, const PolygonRange polygon_range, const NamedParameters &np)
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -75,7 +77,7 @@ public:
 
   using Index = std::pair<std::size_t, std::size_t>;
 
-  struct LCC_Base_Properties
+  struct LCC_Base_Items
   {
     typedef CGAL::Tag_true Use_index;
     typedef std::uint32_t Index_type;
@@ -97,6 +99,8 @@ public:
       typedef CGAL::Cell_attribute_with_point< LCC, void > Vertex_attribute;
       typedef CGAL::Cell_attribute< LCC, Face_property > Face_attribute;
       typedef CGAL::Cell_attribute< LCC, Volume_property > Volume_attribute;
+
+      int this_is_a_test;
 
       typedef std::tuple<Vertex_attribute, void, Face_attribute, Volume_attribute> Attributes;
     };
@@ -244,7 +248,7 @@ public:
   /// \name Initialization
   /// @{
   /*!
-  \brief constructs an empty kinetic shape partition object. Use `insert()` afterwards to insert polygons into the partition and `initialize()` to initialize the partition.
+  \brief constructs an empty kinetic shape partition object. Use `insert` afterwards to insert polygons into the partition and `initialize` to initialize the partition.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -341,7 +345,7 @@ public:
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
     const InputRange& input_range,
-    const PolygonRange polygon_range,
+    const PolygonRange &polygon_range,
     const NamedParameters & np = CGAL::parameters::default_values()) :
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
@@ -388,7 +392,7 @@ public:
   template<typename InputRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
   void insert(
     const InputRange& input_range,
-    const PolygonRange polygon_range,
+    const PolygonRange &polygon_range,
     const NamedParameters& np = CGAL::parameters::default_values()) {
     To_exact to_exact;
     From_exact from_exact;
@@ -810,11 +814,11 @@ public:
   }
 
   /*!
-   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map` using a model of `KineticLCCProperties` as items, e.g., `LCC_Base_Properties`.
+   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Lcc_min_items`.
 
-   Volume and face properties defined in the model `KineticLCCProperties` are filled. The volume index is in the range [0, number of volumes -1]
+   Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 
-   \param lcc instance of `Linear_cell_complex_for_combinatorial_map` to be filled with the kinetic partition.
+   \param lcc instance of `Linear_cell_complex_for_combinatorial_map<3, 3>` to be filled with the kinetic partition.
 
    \pre created partition
   */

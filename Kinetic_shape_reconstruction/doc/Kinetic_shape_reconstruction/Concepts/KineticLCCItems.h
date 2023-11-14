@@ -19,6 +19,10 @@ The concept `KineticLCCItems` refines the concept of `LinearCellComplexItems` by
 The third type in Attributes tuple must be a model of the `KineticLCCFaceAttribute` concept.
 The fourth type in Attributes tuple must be a model of the `KineticLCCVolumeAttribute` concept.
 
+\cgalHasModelsBegin
+\cgalHasModelsBare{`CGAL::Kinetic_shape_partition_3::Lcc_min_items`}
+\cgalHasModelsEnd
+
 \sa `CGAL::Kinetic_shape_partition_3`
 \sa `KineticLCCFaceAttribute`
 \sa `KineticLCCVolumeAttribute`

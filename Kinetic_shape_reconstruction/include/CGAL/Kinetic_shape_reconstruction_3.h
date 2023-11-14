@@ -252,15 +252,12 @@ public:
   /*!
   \brief Creates the visibility (data-) and regularity energy terms from the input point cloud and the kinetic partition.
 
-  @return
-  success.
-
   \pre `successful initialization`
   */
-  bool setup_energyterms() {
+  void setup_energyterms() {
     if (m_lcc.one_dart_per_cell<3>().size() == 0) {
       std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
-      return false;
+      return;
     }
 
     m_face_area.clear();
@@ -382,8 +379,6 @@ public:
       }
     }
 */
-
-    return true;
   }
 
   /*!
@@ -539,11 +534,6 @@ public:
         }
       }
     }
-
-
-    /*
-
-    */
   }
 
   /*!
@@ -639,7 +629,7 @@ private:
   typedef typename CDTplus::Finite_faces_iterator    Finite_faces_iterator;
 
   typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
-  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::LCC_Base_Properties>;
+  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Lcc_min_items>;
   using Dart_descriptor = typename LCC::Dart_descriptor;
   using Dart = typename LCC::Dart;
 
