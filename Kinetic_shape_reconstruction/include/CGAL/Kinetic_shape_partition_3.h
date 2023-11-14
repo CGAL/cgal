@@ -57,8 +57,8 @@ namespace CGAL {
 
 /*!
 * \ingroup PkgKineticShapeReconstructionRef
-  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3` to create an empty object, `insert` to provide input data and `initialize` to prepare the partition or use Kinetic_shape_partition_3(
-    const InputRange& input_range, const PolygonRange polygon_range, const NamedParameters &np)
+  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3::Kinetic_shape_partition_3` to create an empty object, `Kinetic_shape_partition_3::insert` to provide input data and `Kinetic_shape_partition_3::initialize` to prepare the partition or use `Kinetic_shape_partition_3::Kinetic_shape_partition_3(
+    const InputRange& input_range, const PolygonRange polygon_range, const NamedParameters &np)`.
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -77,8 +77,7 @@ public:
 
   using Index = std::pair<std::size_t, std::size_t>;
 
-  struct LCC_Base_Items
-  {
+  struct LCC_min_items {
     typedef CGAL::Tag_true Use_index;
     typedef std::uint32_t Index_type;
 
@@ -94,8 +93,7 @@ public:
     };
 
     template<class LCC>
-    struct Dart_wrapper
-    {
+    struct Dart_wrapper {
       typedef CGAL::Cell_attribute_with_point< LCC, void > Vertex_attribute;
       typedef CGAL::Cell_attribute< LCC, Face_property > Face_attribute;
       typedef CGAL::Cell_attribute< LCC, Volume_property > Volume_attribute;
