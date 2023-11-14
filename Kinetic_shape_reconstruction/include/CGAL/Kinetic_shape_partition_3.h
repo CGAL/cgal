@@ -317,8 +317,6 @@ public:
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
-  \pre !input_range.empty() and !polygon_map.empty()
-
   \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}
        \cgalParamDescription{a property map associating points to the elements of the `input_range`}
@@ -351,6 +349,10 @@ public:
       \cgalParamDefault{1% of the bounding box diagonal}
     \cgalParamNEnd
   \cgalNamedParamsEnd
+
+
+  \pre ! input_range.empty() and ! polygon_map.empty()
+
   */
   template<
     typename InputRange,
@@ -460,8 +462,6 @@ public:
   a sequence of \ref bgl_namedparameters "Named Parameters"
   among the ones listed below
 
-  \pre input data has been provided via `insert()`.
-
   \cgalNamedParamsBegin
     \cgalParamNBegin{reorient_bbox}
       \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
@@ -484,6 +484,8 @@ public:
       \cgalParamDefault{0.5}
     \cgalParamNEnd
   \cgalNamedParamsEnd
+
+  \pre input data has been provided via `insert()`.
   */
 
   template<
@@ -578,7 +580,7 @@ public:
   \param k
    maximum number of allowed intersections for each input polygon before its expansion stops.
 
-  \pre initialized partition and k != 0
+  \pre initialized partition and `k != 0`
   */
   void partition(std::size_t k) {
     FT a, b, c;
