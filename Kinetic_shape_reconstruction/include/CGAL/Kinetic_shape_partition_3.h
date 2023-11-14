@@ -56,7 +56,7 @@
 namespace CGAL {
 
 /*!
-* \ingroup PkgKineticShapeReconstructionRef
+* \ingroup PkgKineticShapePartitionRef
   \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3::Kinetic_shape_partition_3` to create an empty object, `Kinetic_shape_partition_3::insert` to provide input data and `Kinetic_shape_partition_3::initialize` to prepare the partition or use `Kinetic_shape_partition_3::Kinetic_shape_partition_3(
     const InputRange& input_range, const PolygonRange polygon_range, const NamedParameters &np)`.
 
