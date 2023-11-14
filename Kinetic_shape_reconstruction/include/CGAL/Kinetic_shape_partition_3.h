@@ -57,9 +57,8 @@ namespace CGAL {
 
 /*!
 * \ingroup PkgKineticShapePartitionRef
-  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use \link CGAL::Kinetic_shape_partition_3::Kinetic_shape_partition_3() `Kinetic_shape_partition_3()`\endlink
-   to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use \link CGAL::Kinetic_shape_partition_3::Kinetic_shape_partition_3()
-  `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)`\endlink .
+  \brief creates the kinetic partition of the bounding box of the polygons given as input data. The kinetic partition can either be initialized
+  by using the default parameter \link CGAL::Kinetic_shape_partition_3::Kinetic_shape_partition_3() `Kinetic_shape_partition_3()`\endlink, `insert()` to provide input data and `initialize()` to prepare the partition or by using the constructor with input parameters.
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -79,7 +78,7 @@ public:
   using Index = std::pair<std::size_t, std::size_t>;
 
    /*!
-   Identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a positive number, a side of the bounding box or a face of the octree used to partition the scene.
+   identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a positive number, a side of the bounding box or a face of the octree used to partition the scene.
    */
   enum Face_support : int {
     ZMIN        = -1,
@@ -262,7 +261,7 @@ public:
   /// \name Initialization
   /// @{
   /*!
-  \brief Constructs an empty kinetic shape partition object. Use `insert()` afterwards to insert polygons into the partition and `initialize()` to initialize the partition.
+  \brief constructs an empty kinetic shape partition object. Use `insert()` afterwards to insert polygons into the partition and `initialize()` to initialize the partition.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -461,7 +460,7 @@ public:
   a sequence of \ref bgl_namedparameters "Named Parameters"
   among the ones listed below
 
-  \pre Input data has been provided via `insert()`.
+  \pre input data has been provided via `insert()`.
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{reorient_bbox}
@@ -812,7 +811,7 @@ public:
   }
 
   /*!
-  \brief Provides the support planes of the partition derived from the input polygons
+  \brief provides the support planes of the partition derived from the input polygons
 
   @return
    vector of planes.
@@ -824,7 +823,7 @@ public:
   }
 
   /*!
-   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_shape_partition_3::Linear_cell_complex_min_items`.
+   \brief exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_shape_partition_3::Linear_cell_complex_min_items`.
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 
