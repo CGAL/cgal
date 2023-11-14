@@ -34,7 +34,7 @@ Left: Intersection graph with 4 input polygons. Right: three columns with propag
 
 \subsection Ksp_parameters Parameters
 
-The algorithm has five parameters:
+The algorithm has three parameters:
 
 - `k`:
 The main parameter of this method is `k`, the maximum number of intersections that can occur for a polygon before its expansion stops. The initial intersections of the original input polygons are not considered. Thus increasing the `k` leads to a higher complexity of the partitioning, i.e., a higher number of facets and a higher number of volumes. For a certain `k` the partition can be considered to be complete and an increase in `k` will not further increase the complexity of the partition.
@@ -44,9 +44,6 @@ The default bounding box of the partition is axis-aligned. Setting `reorient_bbo
 
 - `bbox_dilation_ratio`:
 By default the size bounding box of the input data is increased by 10% to avoid that input polygons are coplanar with the sides of the bounding box.
-
-- `angle_tolerance` and `distance_tolerance`:
-The input polygons can be clustered to reduce the number of very thin and very small cells. Two polygons are clustered into one if the deviation between their plane normals is below `angle_tolerance` and the maximum distance of one polygons centroid to the others plane is less than `distance_tolerance`. The default values are 5 degrees for the `angle_tolerance` and a distance of 0.5 for `distance_tolerance`.
 
 \section Ksp_result Result
 The kinetic partition can be accessed as a `LinearCellComplex` via `CGAL::Kinetic_shape_partition_3::get_linear_cell_complex()`.
