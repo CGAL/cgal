@@ -58,8 +58,8 @@ namespace CGAL {
 /*!
 * \ingroup PkgKineticShapePartitionRef
   \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3()`
-   to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use \link Kinetic_shape_partition_3::Kinetic_shape_partition_3()
-  `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)` \endlink .
+   to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use \link CGAL::Kinetic_shape_partition_3::Kinetic_shape_partition_3()
+  `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)`\endlink .
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -824,7 +824,7 @@ public:
   }
 
   /*!
-   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Linear_cell_complex_min_items`.
+   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Kinetic_shape_partition_3::Linear_cell_complex_min_items`.
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 
@@ -2240,7 +2240,7 @@ private:
           collect_faces(idx, 5, faces, plane);
           break;
         }
-		
+
       return;
     }
     else {
@@ -2939,7 +2939,7 @@ private:
         faces(volume, std::back_inserter(faces_of_volume));
 
         int starting_volume = volume;
-		
+
         Index portal = Index(-1, -1);
         std::size_t idx, idx2;
         auto p = find_portal(volume, -7, c[f][e].vA, c[f][e].vB, idx);

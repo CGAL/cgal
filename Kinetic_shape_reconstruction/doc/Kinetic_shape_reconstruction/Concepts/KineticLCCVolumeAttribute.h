@@ -17,7 +17,7 @@
 The concept `KineticLCCVolumeAttribute` refines `CellAttribute` to store the barycenter and an id.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`Cell_attribute<LCC, CGAL::Kinetic_shape_partition_3::Linear_cell_complex_min_items::Volume_attribute>`}
+\cgalHasModelsBare{\link CGAL::Cell_attribute `Cell_attribute<LCC, CGAL::Kinetic_shape_partition_3::Linear_cell_complex_min_items::Volume_attribute>`\endlink}
 \cgalHasModelsEnd
 
 \sa `CGAL::Kinetic_shape_partition_3`
