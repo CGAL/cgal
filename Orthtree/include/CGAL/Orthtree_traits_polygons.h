@@ -13,6 +13,8 @@
 #ifndef CGAL_ORTHREE_TRAITS_POLYGONS_H
 #define CGAL_ORTHREE_TRAITS_POLYGONS_H
 
+#include <CGAL/license/Orthtree.h>
+
 #include <CGAL/Dimension.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Orthtree_traits_3_base.h>
