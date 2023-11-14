@@ -1803,12 +1803,14 @@ private:
       insert_new_vertex(v);
     }
 
-    std::vector<Facet> missing_faces;
+    boost::container::small_vector<Facet, 32> missing_faces;
     do {
       missing_faces.clear();
+      boost::container::small_vector<Facet, 32> internal_facets;
       for(auto f : facets_of_cavity_border) {
         if(cells_of_cavity.contains(f.first)) {
           // internal facet, due to cavity growing
+          internal_facets.push_back(f);
           continue;
         }
         const auto [v0, v1, v2] = this->make_vertex_triple(f);
@@ -1820,6 +1822,9 @@ private:
         {
           missing_faces.push_back(f);
         }
+      }
+      for(auto f : internal_facets) {
+        facets_of_cavity_border.erase(f);
       }
       for(auto [cell, facet_index] : missing_faces) {
         facets_of_cavity_border.erase({cell, facet_index});
