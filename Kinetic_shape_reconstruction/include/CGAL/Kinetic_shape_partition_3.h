@@ -57,9 +57,9 @@ namespace CGAL {
 
 /*!
 * \ingroup PkgKineticShapePartitionRef
-  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3()` to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use \link Kinetic_shape_partition_3()
-  `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)`\endlink
-    .
+  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3()`
+   to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use \link Kinetic_shape_partition_3()
+  `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)`\endlink .
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -78,30 +78,45 @@ public:
 
   using Index = std::pair<std::size_t, std::size_t>;
 
-  struct LCC_min_items {
+   /*!
+   Identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a positive number, a side of the bounding box or a face of the octree used to partition the scene.
+   */
+  enum Face_support : int {
+    ZMIN        = -1,
+    YMIN        = -2,
+    XMAX        = -3,
+    YMAX        = -4,
+    XMIN        = -5,
+    ZMAX        = -6,
+    OCTREE_FACE = -7,
+  };
+
+  /*!
+  \brief this class provides a minimal model of `KineticLCCItems`. It adds attributes to faces and volumes and defines the use of index-based `LinearCellComplex`.
+  */
+  class Linear_cell_complex_min_items {
+  public:
     typedef CGAL::Tag_true Use_index;
     typedef std::uint32_t Index_type;
 
-    struct Face_property {
-      int input_polygon_index; // -1 till -6 correspond to bbox faces, -7 to faces from octree
+    struct Face_attribute {
+      Face_support input_polygon_index; // Positive number represent the index of the input polygon. Negative numbers correspond to the values defined in the enum `Face_support`.
       typename Intersection_kernel::Plane_3 plane;
       bool part_of_initial_polygon;
     };
 
-    struct Volume_property {
+    struct Volume_attribute {
       typename Intersection_kernel::Point_3 barycenter;
       std::size_t volume_id;
     };
 
     template<class LCC>
     struct Dart_wrapper {
-      typedef CGAL::Cell_attribute_with_point< LCC, void > Vertex_attribute;
-      typedef CGAL::Cell_attribute< LCC, Face_property > Face_attribute;
-      typedef CGAL::Cell_attribute< LCC, Volume_property > Volume_attribute;
+      typedef CGAL::Cell_attribute_with_point< LCC, void > Vertex_cell_attribute;
+      typedef CGAL::Cell_attribute< LCC, Face_attribute > Face_cell_attribute;
+      typedef CGAL::Cell_attribute< LCC, Volume_attribute > Volume_cell_attribute;
 
-      int this_is_a_test;
-
-      typedef std::tuple<Vertex_attribute, void, Face_attribute, Volume_attribute> Attributes;
+      typedef std::tuple<Vertex_cell_attribute, void, Face_cell_attribute, Volume_cell_attribute> Attributes;
     };
   };
 
@@ -813,7 +828,7 @@ public:
   }
 
   /*!
-   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Lcc_min_items`.
+   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Línear_cell_complex_min_items`.
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 

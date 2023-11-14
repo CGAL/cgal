@@ -631,7 +631,7 @@ private:
   typedef typename CDTplus::Finite_faces_iterator    Finite_faces_iterator;
 
   typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
-  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Lcc_min_items>;
+  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Linear_cell_complex_min_items>;
   using Dart_descriptor = typename LCC::Dart_descriptor;
   using Dart = typename LCC::Dart;
 

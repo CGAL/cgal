@@ -20,7 +20,7 @@ The third type in Attributes tuple must be a model of the `KineticLCCFaceAttribu
 The fourth type in Attributes tuple must be a model of the `KineticLCCVolumeAttribute` concept.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Kinetic_shape_partition_3::Lcc_min_items`}
+\cgalHasModelsBare{`CGAL::Kinetic_shape_partition_3::Linear_cell_complex_min_items`}
 \cgalHasModelsEnd
 
 \sa `CGAL::Kinetic_shape_partition_3`

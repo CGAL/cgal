@@ -17,7 +17,7 @@
 The concept `KineticLCCFaceAttribute` refines `CellAttribute` to store additional information for each face related to its associated input polygon.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CellAttribute<LCC, CGAL::Kinetic_shape_partition_3::Lcc_min_items::Face_attribute>`}
+\cgalHasModelsBare{\link Cell_attribute `Cell_attribute<LCC, CGAL::Kinetic_shape_partition_3::Linear_cell_complex_min_items::Face_attribute>`\endlink}
 \cgalHasModelsEnd
 
 \sa `CGAL::Kinetic_shape_partition_3`
