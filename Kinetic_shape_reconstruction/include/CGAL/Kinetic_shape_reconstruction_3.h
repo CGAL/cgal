@@ -54,8 +54,8 @@ namespace CGAL
 template<typename GeomTraits, typename PointSet, typename PointMap, typename NormalMap, typename IntersectionKernel = CGAL::Exact_predicates_exact_constructions_kernel>
 class Kinetic_shape_reconstruction_3 {
 public:
-  using Kernel = typename GeomTraits;
-  using Intersection_kernel = typename IntersectionKernel;
+  using Kernel = GeomTraits;
+  using Intersection_kernel = IntersectionKernel;
 
   using FT = typename Kernel::FT;
 
@@ -72,8 +72,8 @@ public:
 
   using KSP = Kinetic_shape_partition_3<Kernel, Intersection_kernel>;
 
-  using Point_map = typename PointMap;
-  using Normal_map = typename NormalMap;
+  using Point_map = PointMap;
+  using Normal_map = NormalMap;
 
   using Region_type = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_set>;
   using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set>;

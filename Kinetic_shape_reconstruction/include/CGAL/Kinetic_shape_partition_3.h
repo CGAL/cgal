@@ -956,7 +956,7 @@ public:
         //std::cout << ")";
         auto face_dart = ib.end_facet(); // returns a dart to the face
         if (lcc.attribute<2>(face_dart) == lcc.null_descriptor) {
-          lcc.set_attribute<2>(face_dart, (lcc.create_attribute<2>)());
+          lcc.set_attribute<2>(face_dart, lcc.template create_attribute<2>());
           // How to handle bbox planes that coincide with input polygons? Check support plane
           std::size_t sp = m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second];
 
@@ -987,7 +987,8 @@ public:
 
       d = ib.end_surface();
 
-      lcc.set_attribute<3>(d, lcc.create_attribute<3>());
+      auto ah = lcc.create_attribute<3>();
+      lcc.set_attribute<3>(d, ah);
       lcc.info<3>(d).bary_center = centroid;
       lcc.info<3>(d).volume_id = v;
 
@@ -1001,7 +1002,7 @@ public:
       if (!added_volumes[i])
         std::cout << "volume " << i << " has not been added" << std::endl;
 
-    std::cout << "lcc #volumes: " << lcc.one_dart_per_cell<3>().size() << " ksp #volumes: " << number_of_volumes() << std::endl;
+    std::cout << "lcc #volumes: " << (lcc.one_dart_per_cell<3>()).size() << " ksp #volumes: " << number_of_volumes() << std::endl;
     std::cout << "lcc #faces: " << lcc.one_dart_per_cell<2>().size() << " ksp #faces: " << num_faces << std::endl;
     std::cout << "lcc #n-edges: " << lcc.one_dart_per_cell<1>().size() << std::endl;
     std::cout << "lcc #vtx: " << lcc.one_dart_per_cell<0>().size() << " ksp #vtx: " << vtx.size() << std::endl;

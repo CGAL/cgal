@@ -42,7 +42,7 @@ namespace KSR_3 {
   class Graphcut {
 
   public:
-    using Kernel = typename GeomTraits;
+    using Kernel = GeomTraits;
 
     using FT          = typename Kernel::FT;
     using Point_3    = typename Kernel::Point_3;
