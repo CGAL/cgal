@@ -485,7 +485,7 @@ public:
     p_vh->set_point(p);
     vertices_of_original_cavity.insert(p_vh);
 
-    // compute facets of the border of the cavity, seen from the
+    // compute facets of the border of the cavity, seen from the exterior
     std::vector<Facet> orig_facets_of_cavity;
     orig_facets_of_cavity.reserve(exterior_border_facets_of_original_cavity.size());
     for(auto f: exterior_border_facets_of_original_cavity) {
@@ -506,6 +506,8 @@ public:
     for(auto f: interior_constrained_faces) {
       this->register_facet_to_be_constrained(f);
     }
+
+    visitor.process_cells_in_conflict(cells_of_cavity.begin(), cells_of_cavity.end());
 
     typename T_3::Vertex_triple_Facet_map outer_map;
     for(auto f: facets_of_cavity) {
@@ -533,7 +535,6 @@ public:
       }
     }
 
-    visitor.process_cells_in_conflict(cells_of_cavity.begin(), cells_of_cavity.end());
     for(auto c: cells_of_cavity) {
       this->tds().delete_cell(c);
     }

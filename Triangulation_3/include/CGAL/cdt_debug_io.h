@@ -40,7 +40,8 @@ namespace CGAL {
     std::vector<std::array<std::size_t, 3>> facets;
     facets.reserve(size);
 
-    for(std::size_t i = 0; const auto& [cell, facet_index] : facets_range) {
+    std::size_t i = 0;
+    for(const auto& [cell, facet_index] : facets_range) {
       const auto v0 = cell->vertex(Tr::vertex_triple_index(facet_index, 0));
       const auto v1 = cell->vertex(Tr::vertex_triple_index(facet_index, 1));
       const auto v2 = cell->vertex(Tr::vertex_triple_index(facet_index, 2));
