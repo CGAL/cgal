@@ -14,7 +14,7 @@
 #define CGAL_DRAW_VORONOI_DIAGRAM_2_H
 
 #include <CGAL/license/Voronoi_diagram_2.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Triangulation_utils_2.h>
@@ -389,7 +389,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
   {
     // Here we define the std::function to capture key pressed.
     app.basic_viewer().on_key_pressed=
-      [&av2, &gs_options] (QKeyEvent* e, CGAL::Basic_viewer_qt* basic_viewer) -> bool
+      [&av2, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_R) && (modifiers == ::Qt::NoButton))

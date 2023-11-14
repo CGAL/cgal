@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 

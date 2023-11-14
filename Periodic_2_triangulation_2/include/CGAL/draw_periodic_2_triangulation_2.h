@@ -14,7 +14,7 @@
 #define DRAW_PERIODIC_2_TRIANGULATION_2_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -247,7 +247,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
   {
     // Here we define the std::function to capture key pressed.
     app.basic_viewer().on_key_pressed=
-      [&ap2t2, &gs_options] (QKeyEvent* e, CGAL::Basic_viewer_qt* basic_viewer) -> bool
+      [&ap2t2, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))

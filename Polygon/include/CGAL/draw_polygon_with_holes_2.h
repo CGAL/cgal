@@ -18,7 +18,7 @@
 #ifndef CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 #define CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polygon_with_holes_2.h>
