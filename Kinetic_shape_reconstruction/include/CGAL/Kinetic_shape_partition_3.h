@@ -57,8 +57,9 @@ namespace CGAL {
 
 /*!
 * \ingroup PkgKineticShapePartitionRef
-  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3::Kinetic_shape_partition_3` to create an empty object, `Kinetic_shape_partition_3::insert` to provide input data and `Kinetic_shape_partition_3::initialize` to prepare the partition or use `Kinetic_shape_partition_3::Kinetic_shape_partition_3(
-    const InputRange& input_range, const PolygonRange polygon_range, const NamedParameters &np)`.
+  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3()` to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use \link Kinetic_shape_partition_3()
+  `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)`\endlink
+    .
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -246,7 +247,7 @@ public:
   /// \name Initialization
   /// @{
   /*!
-  \brief constructs an empty kinetic shape partition object. Use `insert` afterwards to insert polygons into the partition and `initialize` to initialize the partition.
+  \brief Constructs an empty kinetic shape partition object. Use `insert()` afterwards to insert polygons into the partition and `initialize()` to initialize the partition.
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -359,10 +360,10 @@ public:
   }
 
   /*!
-  \brief inserts non-coplanar polygons, requires initialize() afterwards to have effect.
+  \brief inserts non-coplanar polygons, requires `initialize()` afterwards to have effect.
 
   \tparam InputRange
-  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
+  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is `GeomTraits::Point_3`.
 
   \tparam PolygonRange
   contains index ranges to form polygons by providing indices into InputRange
