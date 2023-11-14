@@ -13,7 +13,7 @@
 #ifndef CGAL_KSR_ENUM_H
 #define CGAL_KSR_ENUM_H
 
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 namespace CGAL {
 namespace KSR {

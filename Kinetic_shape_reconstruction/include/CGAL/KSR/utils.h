@@ -13,7 +13,7 @@
 #ifndef CGAL_KSR_UTILS_H
 #define CGAL_KSR_UTILS_H
 
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 // STL includes.
 #include <set>

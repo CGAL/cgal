@@ -13,7 +13,7 @@
 #ifndef CGAL_KSR_DEBUG_H
 #define CGAL_KSR_DEBUG_H
 
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 #if defined(WIN32) || defined(_WIN32)
 #define _NL_ "\r\n"

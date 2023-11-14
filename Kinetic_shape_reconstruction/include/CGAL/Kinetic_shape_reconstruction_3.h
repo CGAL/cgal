@@ -13,7 +13,7 @@
 #ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 #define CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 
-#include <CGAL/license/Kinetic_shape_partition_3.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 #include <CGAL/Kinetic_shape_partition_3.h>
 #include <CGAL/KSR_3/GraphCut.h>

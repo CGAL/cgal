@@ -13,7 +13,7 @@
 #ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_2_H
 #define CGAL_KINETIC_SHAPE_RECONSTRUCTION_2_H
 
-//#include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 #include <CGAL/box_intersection_d.h>
 
