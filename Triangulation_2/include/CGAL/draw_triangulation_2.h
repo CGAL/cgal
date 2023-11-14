@@ -14,7 +14,7 @@
 #define CGAL_DRAW_T2_H
 
 #include <CGAL/license/Triangulation_2.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Triangulation_2.h>

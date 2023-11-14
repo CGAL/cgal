@@ -18,7 +18,7 @@
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/draw_face_graph.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 
 namespace CGAL
 {
