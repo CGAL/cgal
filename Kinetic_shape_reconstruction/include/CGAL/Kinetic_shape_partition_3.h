@@ -59,7 +59,7 @@ namespace CGAL {
 * \ingroup PkgKineticShapePartitionRef
   \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3()`
    to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use \link Kinetic_shape_partition_3::Kinetic_shape_partition_3()
-  `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)`\endlink .
+  `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)` \endlink .
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -359,8 +359,8 @@ public:
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
     const InputRange& input_range,
-    const PolygonRange &polygon_range,
-    const NamedParameters & np = CGAL::parameters::default_values()) :
+    const PolygonRange& polygon_range,
+    const NamedParameters& np = CGAL::parameters::default_values()) :
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
@@ -406,7 +406,7 @@ public:
   template<typename InputRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
   void insert(
     const InputRange& input_range,
-    const PolygonRange &polygon_range,
+    const PolygonRange& polygon_range,
     const NamedParameters& np = CGAL::parameters::default_values()) {
     To_exact to_exact;
     From_exact from_exact;
@@ -505,10 +505,6 @@ public:
       parameters::get_parameter(np, internal_np::max_octree_depth), 3);
     m_parameters.max_octree_node_size = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::max_octree_node_size), 40);
-
-
-    //CGAL_add_named_parameter(max_octree_depth_t, max_octree_depth, max_octree_depth)
-    //CGAL_add_named_parameter(max_octree_node_size_t, max_octree_node_size, max_octree_node_size)
 
     std::cout.precision(20);
     if (m_input_polygons.size() == 0) {
@@ -828,7 +824,7 @@ public:
   }
 
   /*!
-   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Línear_cell_complex_min_items`.
+   \brief Exports the kinetic partition into a `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems` as items, e.g., `Linear_cell_complex_min_items`.
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 
@@ -1518,7 +1514,7 @@ private:
     return std::make_pair(i, j);
   }
 
-  double build_cdt(CDTplus& cdt, std::vector<Index>& faces, std::vector<std::vector<Constraint_info> >&constraints, const typename Intersection_kernel::Plane_3& plane) {
+  double build_cdt(CDTplus& cdt, std::vector<Index>& faces, std::vector<std::vector<Constraint_info> >& constraints, const typename Intersection_kernel::Plane_3& plane) {
     double area = 0;
     From_exact from_exact;
     To_exact to_exact;
@@ -1951,21 +1947,6 @@ private:
             vertices[i]->info().input |= tmp.input;
           }*/
 
-/*
-          if (vertices.size() > 2) {
-            for (std::size_t j = 2; j < vertices.size(); j++)
-              if (!CGAL::collinear(vertices[j - 2]->point(), vertices[j - 1]->point(), vertices[j]->point())) {
-                Point_2 a = from_exact(vertices[j - 2]->point());
-                Point_2 b = from_exact(vertices[j - 1]->point());
-                Point_2 c = from_exact(vertices[j]->point());
-                std::cout << from_exact(vertices[j - 2]->point()) << std::endl;
-                std::cout << from_exact(vertices[j - 1]->point()) << std::endl;
-                std::cout << from_exact(vertices[j]->point()) << std::endl;
-                std::cout << ((a.x() - b.x()) / (a.x() - c.x())) << " " << ((a.y() - b.y()) / (a.y() - c.y())) << std::endl;
-                std::cout << "constraints not linear" << std::endl;
-              }
-          }*/
-
           constraints_b[i][j][k].id_overlay = cdtC.insert_constraint(vertices[0], vertices.back());
 
           vertices.clear();
@@ -2184,16 +2165,6 @@ private:
     for (std::size_t i = 0; i < f2sp.size(); i++)
       if (f2sp[i] == sp_idx)
         faces.push_back(std::make_pair(partition_idx, i));
-
-/*
-    for (std::size_t i = 0; i < p.m_data->volumes().size(); i++) {
-      typename Data_structure::Volume_cell& v = p.m_data->volumes()[i];
-      for (std::size_t j = 0; j < v.faces.size(); j++) {
-        if (v.pfaces[j].first == sp_idx) {
-          faces.push_back(std::make_pair(partition_idx, v.faces[j]));
-        }
-      }
-    }*/
   }
 
   void check_faces(std::size_t partition_idx, std::size_t sp_idx) {
@@ -2230,7 +2201,7 @@ private:
     std::copy(pl.begin(), pl.end(), std::back_inserter(planes));
   }
 
-  void collect_faces(Octree_node node, std::size_t dimension, bool lower, std::vector<Index>& faces, typename Intersection_kernel::Plane_3 &plane) {
+  void collect_faces(Octree_node node, std::size_t dimension, bool lower, std::vector<Index>& faces, typename Intersection_kernel::Plane_3& plane) {
     // Collects boundary faces of node from its children.
     // dimension specifies the axis of the boundary face and lower determines if it is the lower of upper face of the cube on the axis.
 
@@ -2269,12 +2240,7 @@ private:
           collect_faces(idx, 5, faces, plane);
           break;
         }
-
-
-      // Is Index as type for faces sufficient?
-      // Partition/face id
-      // Access to volumes via Data_structure->face_to_volumes()
-      // However, the Data_structure::m_face2volumes needs to have std::pair<Index, Index> type to reference two volumes (pair<int, Index> would also be possible as only one volume can lie outside
+		
       return;
     }
     else {
@@ -2399,17 +2365,6 @@ private:
   }
 
   bool can_add_volume_to_lcc(std::size_t volume, const std::vector<bool>& added_volumes, const std::map<Index, std::size_t> &vtx2index, const std::vector<bool>& added_vertices) const {
-    // get faces
-    // check neighbors of face and check whether the neighboring volumes have already been added
-
-    // added vertices that are not adjacent to an inserted face cause non-manifold configurations
-    //
-    // go through all faces and check whether the neighbor volume has been added
-    //  if so insert all vertices into vertices_of_volume
-    // go again through all faces and only consider faces where the neighbor volume has not been added
-    //  check if the vertex is in vertices_of_volume
-    //   if not, but the vertex is flagged in added_vertices return false
-    // return true
     std::set<Index> vertices_of_volume;
     std::vector<Index> faces_of_volume;
     faces(volume, std::back_inserter(faces_of_volume));
@@ -2970,28 +2925,11 @@ private:
           else vertices_of_edge.push_back((*vi)->info().idA2);
         }
 
-        /*if (it == constraint2edge.end())
-          std::cout << ".";
-
-        if (it != constraint2edge.end() && it->second.size() > vertices_of_edge.size())
-          std::cout << f << " " << e << " (" << c[f][e].vA.first << "," << c[f][e].vA.second << ") (" << c[f][e].vB.first << "," << c[f][e].vB.second << ") cs " << it->second.size() << " " << vertices_of_edge.size() << std::endl;
-*/
-
         // Not necessary, as I am replacing vertices anyway?
         if (vertices_of_edge.size() == 2)
           continue;
 
         not_skipped++;
-
-/*
-        for (std::size_t i = 2; i < vertices_of_edge.size(); i++) {
-          typename Intersection_kernel::Point_3& a = m_partition_nodes[vertices_of_edge[0].first].m_data->exact_vertices()[vertices_of_edge[0].second];
-          typename Intersection_kernel::Point_3& b = m_partition_nodes[vertices_of_edge[1].first].m_data->exact_vertices()[vertices_of_edge[1].second];
-          typename Intersection_kernel::Point_3& c = m_partition_nodes[vertices_of_edge[i].first].m_data->exact_vertices()[vertices_of_edge[i].second];
-          if (!CGAL::collinear(a, b, c)) {
-            std::cout << "edge is not collinear " << f << " " << e << std::endl;
-          }
-        }*/
 
         // Check length of constraint
         // size 2 means it has not been split, thus there are no t-junctions.
@@ -3001,14 +2939,7 @@ private:
         faces(volume, std::back_inserter(faces_of_volume));
 
         int starting_volume = volume;
-
-        // Looping around edge until either the full loop has been made or a non connected face is encountered (either between not yet connected octree nodes or due to face on bbox)
-        // Looping in both directions necessary? (only possible if edge.size is 2) How to handle? If I do both directions, I will not find an edge in handling the other side.
-        // Looping in other partition may not work as I won't find the edge on the other side (as it uses different vertices!)
-        // How to detect if a volume is in another partition? auto p = m_volumes[volume_index];
-        // After the internal make_conformal call, the connected nodes should have unique vertices, i.e., no two vertices with the same position
-        // make_conformal can contain plenty of nodes at once. How do I make sure that the vertices are unique? Is automatically taken care of during the process?
-        // Edges inside the face will make a full loop. It is possible (or probably always the case), that once traversing the side, the next portal cannot be found due to changed vertex indices
+		
         Index portal = Index(-1, -1);
         std::size_t idx, idx2;
         auto p = find_portal(volume, -7, c[f][e].vA, c[f][e].vB, idx);
@@ -3025,7 +2956,7 @@ private:
         if (idx != -7) {
           // Check if the portal idx is traversing.
           // The neighbors of a portal can be negative if it is not in the current face between the octree nodes.
-          //auto n = neighbors(faces_of_volume[idx]);
+
           if (idx2 < -7 && m_volumes[volume].first != m_volumes[other].first) {
             idx = idx2;
             p = p2;
@@ -3039,15 +2970,6 @@ private:
           continue;
 
         std::size_t numVtx = m_partition_nodes[faces_of_volume[idx].first].face2vertices[faces_of_volume[idx].second].size();
-
-        // Replace first and last vertex
-        //m_partition_nodes[faces_of_volume[idx].first].face2vertices[faces_of_volume[idx].second][p.first] = vertices_of_edge[0];
-        //m_partition_nodes[faces_of_volume[idx].first].face2vertices[faces_of_volume[idx].second][(p.first + p.second + numVtx) % numVtx] = vertices_of_edge.back();
-/*
-
-        if (!check_face(faces_of_volume[idx])) {
-          std::cout << "face is not coplanar before " << f << " " << e << std::endl;
-        }*/
 
         std::vector<Index> tmp = m_partition_nodes[faces_of_volume[idx].first].face2vertices[faces_of_volume[idx].second];
 
@@ -3077,11 +2999,6 @@ private:
           if (idx == -7)
             break;
 
-          //Do I need to make sure I find both faces for the first volume?
-          //  -> In some cases there will be two faces and IN some cases there won't (edge split or vertex from other side -> only one face)
-          // for the first volume, I need to search completely and go both ways, but also check for loop
-          //How to verify that I replaced all?
-
           // Insert vertices in between
           if (p.second == 1)
             for (std::size_t i = 1; i < vertices_of_edge.size() - 1; i++)
@@ -3105,16 +3022,7 @@ private:
   }
 
   void make_conformal(std::vector<Index>& a, std::vector<Index>& b, typename Intersection_kernel::Plane_3& plane) {
-    // partition ids are in a[0].first and b[0].first
-    // volume and face in volume ids are not available
-    // there is face2volume and one of those volume indices will be an outside volume, e.g. std::size_t(-1) to std::size_t(-6)
 
-    // Indices in a and b come from different partitions. Each face only has vertices from the same partition
-    // Constraints in the cdt should have matching vertices and edges from different partitions -> opportunity to match vertices and faces between partitions
-
-    // buildCDT needs only Index and exact_vertices for the points and Index for faces
-
-    // Sorting the faces from sides a and b into partition nodes
     std::unordered_map<std::size_t, std::vector<Index> > a_sets, b_sets;
     for (const Index& i : a)
       a_sets[i.first].push_back(i);
@@ -3140,18 +3048,7 @@ private:
     for (auto& p : a_sets) {
       partitions.insert(p.first);
       build_cdt(a_cdts[idx], p.second, a_constraints[idx], plane);
-/*
-      newpts = 0;
-      for (Vertex_handle v : a_cdts[idx].finite_vertex_handles()) {
-        if (v->info().idA2 == Index(-1, -1))
-          newpts++;
-      }
 
-      if (newpts > 0)
-        std::cout << newpts << " vertices without references found in a_cdts" << idx << std::endl;
-
-      if (check_cdt(a_cdts[idx], plane) != 0)
-        std::cout << "lower " << p.first << ": " << p.second.size() << " " << a_cdts[idx].number_of_faces() << " with " << check_cdt(a_cdts[idx], plane) << " missing ids" << std::endl;*/
       idx++;
     }
 
@@ -3160,132 +3057,18 @@ private:
     for (auto& p : b_sets) {
       partitions.insert(p.first);
       build_cdt(b_cdts[idx], p.second, b_constraints[idx], plane);
-/*
-      newpts = 0;
-      for (Vertex_handle v : b_cdts[idx].finite_vertex_handles()) {
-        if (v->info().idA2 == Index(-1, -1))
-          newpts++;
-      }
 
-      if (newpts > 0)
-        std::cout << newpts << " vertices without references found in b_cdts" << idx << std::endl;
-
-
-      if (check_cdt(b_cdts[idx], plane) != 0)
-        std::cout << "upper " << p.first << ": " << p.second.size() << " " << b_cdts[idx].number_of_faces() << " with " << check_cdt(b_cdts[idx], plane) << " missing ids" << std::endl;*/
       idx++;
     }
 
     CDTplus cdtA, cdtB, cdtC;
     build_cdt(cdtA, a_cdts, a_constraints, plane);
 
-    // ToDo: remove checks
-/*
-    std::size_t missing = check_cdt(cdtA, plane);
-    if (missing > 0)
-      std::cout << "lower: " << a.size() << " " << cdtA.number_of_faces() << " faces " << cdtA.number_of_vertices() << " vertices with " << missing << " missing ids" << std::endl;
-*/
-
-    /*
-        std::ofstream vout("cdtA.polylines.txt");
-        vout.precision(20);
-        for (typename CDTplus::Face_handle fh : cdtA.finite_face_handles()) {
-          vout << "4 ";
-          vout << " " << from_exact(fh->vertex(0)->info().point_3);
-          vout << " " << from_exact(fh->vertex(1)->info().point_3);
-          vout << " " << from_exact(fh->vertex(2)->info().point_3);
-          vout << " " << from_exact(fh->vertex(0)->info().point_3);
-          vout << std::endl;
-        }
-        vout << std::endl;
-        vout.close();*/
-
-        /*
-            for (Vertex_handle v : cdtA.finite_vertex_handles()) {
-              if (v->info().idA2 == g && v->info().idB2 == g)
-                newpts++;
-            }
-
-            std::cout << newpts << " vertices without references found in cdtA" << std::endl;*/
-
     build_cdt(cdtB, b_cdts, b_constraints, plane);
-
-    // ToDo: remove checks
-/*
-    missing = check_cdt(cdtB, plane);
-    if (missing > 0)
-      std::cout << "upper: " << b.size() << " " << cdtB.number_of_faces() << " faces " << cdtB.number_of_vertices() << " vertices with " << missing << " missing ids" << std::endl;
-*/
-
-    /*
-        std::ofstream vout2("cdtB.polylines.txt");
-        vout2.precision(20);
-        for (typename CDTplus::Face_handle fh : cdtB.finite_face_handles()) {
-          vout2 << "4 ";
-          vout2 << " " << from_exact(fh->vertex(0)->info().point_3);
-          vout2 << " " << from_exact(fh->vertex(1)->info().point_3);
-          vout2 << " " << from_exact(fh->vertex(2)->info().point_3);
-          vout2 << " " << from_exact(fh->vertex(0)->info().point_3);
-          vout2 << std::endl;
-        }
-        vout2 << std::endl;
-        vout2.close();*/
-
-        /*
-            newpts = 0;
-            for (Vertex_handle v : cdtB.finite_vertex_handles()) {
-              if (v->info().idA2 == g && v->info().idB2 == g)
-                newpts++;
-            }
-
-            std::cout << newpts << " vertices without references found in cdtB" << std::endl;*/
 
     overlay(cdtC, cdtA, a_constraints, cdtB, b_constraints, plane);
 
-    //std::map<std::pair<Index, Index>, std::vector<Vertex_handle> > constraint2edge;
-    // Use the adjacent set for the two vertices. That should allow to identify two faces
-
-/*
-    check for constraints IN the cdtC that have at least 3 vertices and create a map before with start and end vertices to volume
-      like this I ran recover missing constraints
-      check whether all constraints are collinear?*/
-
-/*
-                idx = 0;
-          std::vector<Vertex_handle> vertices;
-          typename CDTplus::Constraint_id id28, id84;
-          for (typename CDTplus::Constraint_iterator ci = cdtC.constraints_begin(); ci != cdtC.constraints_end(); ++ci) {
-            for (typename CDTplus::Vertices_in_constraint_iterator vi = cdtC.vertices_in_constraint_begin(*ci); vi != cdtC.vertices_in_constraint_end(*ci); vi++) {
-              vertices.push_back(*vi);
-            }
-
-            if (vertices[0]->info().idA2.first == -1 || vertices.back()->info().idA2.first == -1)
-              continue;
-
-            if (!vertices[0]->info().input || !vertices.back()->info().input)
-              continue;
-
-            if (vertices.size() > 2) {
-              if (vertices[0]->info().idA2 < vertices.back()->info().idA2)
-                constraint2edge[std::make_pair(vertices[0]->info().idA2, vertices.back()->info().idA2)] = vertices;
-              else
-                constraint2edge[std::make_pair(vertices.back()->info().idA2, vertices[0]->info().idA2)] = vertices;
-            }
-
-            idx++;
-            vertices.clear();
-          }*/
-
     adapt_faces(cdtC, a, b, plane);
-
-    // Are two functions needed to treat each side? I can also do a set intersection of the adjacent faces set of both end vertices of each constraint
-    //std::cout << constraint2edge.size() << std::endl;
-
-/*
-    Provide checks here that plot some data around conflicting edges from a/b_constraints as well as from constraint2edge
-    I can also make check_tjunctions more specific, now they provide many hits for a single case
-    check for a case which edge is longer. Like this I have an indication which edge has not been split
-    it may certainly be another case of CDT copy instead of inserting constraints*/
 
     idx = 0;
     for (auto& p : a_sets) {
@@ -3298,36 +3081,6 @@ private:
       adapt_internal_edges(b_cdts[idx], cdtC, p.second, b_constraints[idx]);
       idx++;
     }
-
-    // Is there linkage between the cdts? I could create a map of vertex Index to cdt vertices
-    // I can create an unordered map from face Index to vector of cdt_face iterator
-
-    // Each input face can be split into several faces
-    // Updating the neighbor volumes does not seem difficult but not completely trivial either as it has to be done after the face extraction (due to the neighbors array in volumes)
-    // -> each face extracted has the same volume ids (or the same face ids on both sides)
-
-    // Walk around the edges to identify faces
-    // - segment by identical face ids on both sides
-    // How to keep track of the face vector in volumes? I can change the first face in place
-
-    // How to identify edges that are split? Can I add a property on edges to mark that they have been added? Seems difficult, because the vertex can be part of plenty new edges.
-    // Can it? The overlay is a fusion of 2 cdts, so if there are more than two edges intersecting in a vertex, there were already two edges intersecting in one of the cdts
-    // So no, each new vertex can only be part of 2 edges
-
-    // Adjusting edges part of faces that are not part of the splitting plane is basically a function of split_edge(Index_head, Index_tail, new_mid_vertex)
-    // Identifying the faces based on the vertices seems costly. PEdge to PFaces exists, check for PFace to volume
-    // // -> does not work for newly inserted edges! Newly inserted edges do not have PEdge!
-    // Otherwise it is possible to find adjacent volumes based on the participating faces. However, an edge on the boundary can be part of many faces/volumes
-
-    // Approach:
-    // Loop over finite faces of fusioned cdt
-    // check if face was already handled (-> reuse field in face info?)
-    // check if face is on border to face of another index pair
-    //  start face extraction
-    //   follow border and build up polygon vector
-    //   check if there is a vertex index in the vertex info, if not insert vertex into partition.data_structure and update
-    //   create map for boundary vertices correspondences
-    //  check if replace face in data structure or create new one (set which contains replaced ones?)
   }
 
   void make_conformal(Octree_node node)  {
@@ -3357,21 +3110,6 @@ private:
 
       make_conformal(lower, upper, plane);
 
-/*
-      lower.clear();
-      upper.clear();
-      // Todo: remove check
-      collect_opposing_faces(node, dim, lower, upper, plane);
-
-      for (std::size_t i = 0; i < lower.size(); i++) {
-        auto n = neighbors(lower[i]);
-        assert(n.first >= 0 && n.second >= 0);
-      }
-
-      for (std::size_t i = 0; i < upper.size(); i++) {
-        auto n = neighbors(upper[i]);
-        assert(n.first >= 0 && n.second >= 0);
-      }*/
     }
   }
 
