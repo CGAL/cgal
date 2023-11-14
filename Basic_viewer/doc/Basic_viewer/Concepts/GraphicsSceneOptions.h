@@ -20,57 +20,57 @@ public:
   /*!
     A descriptor of vertices of `DS`
   */
-  typedef unspecified_type VertexDescriptor;
+  typedef unspecified_type vertex_descriptor;
 
   /*!
     A descriptor of edges of `DS`
   */
-  typedef unspecified_type EdgeDescriptor;
+  typedef unspecified_type edge_descriptor;
 
   /*!
     A descriptor of faces of `DS`
   */
- typedef unspecified_type FaceDescriptor;
+ typedef unspecified_type face_descriptor;
 
   /// `std::function` that returns `true` if the given vertex must be ignored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, VertexDescriptor)> ignore_vertex;
+  std::function<bool(const DS &, vertex_descriptor)> ignore_vertex;
 
   /// `std::function` that returns `true` if the given edge must be ignored, `false` otherwise.
   /// Returns `true` by default.
-  std::function<bool(const DS &, EdgeDescriptor)> ignore_edge;
+  std::function<bool(const DS &, edge_descriptor)> ignore_edge;
 
   /// `std::function` that returns `true` if the given face must be ignored, `false` otherwise.
   /// Returns `true` by default.
-  std::function<bool(const DS &, FaceDescriptor)> ignore_face;
+  std::function<bool(const DS &, face_descriptor)> ignore_face;
 
   /// `std::function` that returns `true` if the given vertex is colored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, VertexDescriptor)> is_vertex_colored;
+  std::function<bool(const DS &, vertex_descriptor)> is_vertex_colored;
 
   /// `std::function` that returns `true` if the given edge is colored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, EdgeDescriptor)> is_edge_colored;
+  std::function<bool(const DS &, edge_descriptor)> is_edge_colored;
 
   /// `std::function` that returns `true` if the given face is colored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, FaceDescriptor)> is_face_colored;
+  std::function<bool(const DS &, face_descriptor)> is_face_colored;
 
   /// `std::function` that returns `true` if the given face is in wireframe, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, FaceDescriptor)> is_face_wireframe;
+  std::function<bool(const DS &, face_descriptor)> is_face_wireframe;
 
   /// `std::function` that returns the color of the given vertex.
   /// `nullptr` by default.
-  std::function<CGAL::IO::Color(const DS &, VertexDescriptor)> vertex_color;
+  std::function<CGAL::IO::Color(const DS &, vertex_descriptor)> vertex_color;
 
   /// `std::function` that returns the color of the given edge.
   /// `nullptr` by default.
-  std::function<CGAL::IO::Color(const DS &, EdgeDescriptor)> edge_color;
+  std::function<CGAL::IO::Color(const DS &, edge_descriptor)> edge_color;
 
   /// `std::function` that returns the color of the given face.
   /// `nullptr` by default.
-  std::function<CGAL::IO::Color(const DS &, FaceDescriptor)> face_color;
+  std::function<CGAL::IO::Color(const DS &, face_descriptor)> face_color;
 
   /// ignores all vertices when `b` is `true`; otherwise ignores only vertices for which `ignore_vertex()` returns `true`.
   void ignore_all_vertices(bool b);
@@ -101,23 +101,23 @@ public:
   /*!
     %A descriptor of volumes of `DS`.
   */
-  typedef unspecified_type VolumeDescriptor;
+  typedef unspecified_type volume_descriptor;
 
   /// `std::function` that returns `true` if the given volume must be ignored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, VolumeDescriptor)> ignore_volume;
+  std::function<bool(const DS &, volume_descriptor)> ignore_volume;
 
   /// `std::function` that returns `true` if the given volume is colored, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, VolumeDescriptor)> is_volume_colored;
+  std::function<bool(const DS &, volume_descriptor)> is_volume_colored;
 
   /// `std::function` that returns `true` if the given volume is in wireframe, `false` otherwise.
   /// Returns `false` by default.
-  std::function<bool(const DS &, VolumeDescriptor)> is_volume_wireframe;
+  std::function<bool(const DS &, volume_descriptor)> is_volume_wireframe;
 
   /// `std::function` that returns the color of the given volume.
   /// `nullptr` by default.
-  std::function<CGAL::IO::Color(const DS &, VolumeDescriptor)> volume_color;
+  std::function<CGAL::IO::Color(const DS &, volume_descriptor)> volume_color;
 
   /// ignores all volumes when `b` is `true`; otherwise ignore only volumes for which `ignore_volume()` returns `true`.
   void ignore_all_volumes(bool b);
