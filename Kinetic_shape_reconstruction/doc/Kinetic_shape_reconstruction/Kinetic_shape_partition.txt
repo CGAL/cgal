@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_Kinetic_Shape_Partition
 \cgalAutoToc
 
-\authors Sven Oesau, Florent Lafarge, Dmitry Anisimov and Simon Giraudot
+\authors Sven Oesau and Florent Lafarge
 
 \section Ksp_introduction Introduction
 
@@ -58,5 +58,10 @@ The following example reads a set of polygons from a file and creates a kinetic 
 \cgalExample{Kinetic_shape_reconstruction/kinetic_precomputed_shapes.cpp}
 
 */
+
+\section Ksp_history Design and Implementation History
+
+This package is an implementation of  Bauchet et. al \cgalCite{bauchet2020kinetic}.
+A proof of concept of the kinetic partition was developed by Simon Giraudot and Dmitry Anisimov.
 
 } /* namespace CGAL */

@@ -9,7 +9,7 @@
 \cgalPkgPicture{kinetic_logo.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot}
+\cgalPkgAuthors{Sven Oesau and Florent Lafarge}
 \cgalPkgDesc{This package implements kinetic shape partition. Based on a set of planar input shapes the bounding box of the input data is split into convex volumes. The complexity of the partition can be adjusted with a single parameter.}
 \cgalPkgManuals{Chapter_Kinetic_Shape_Partition, PkgKineticShapePartitionRef}
 \cgalPkgSummaryEnd
@@ -17,7 +17,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.6}
 \cgalPkgDependsOn{\ref PkgSurfaceMesh, \ref PkgPolygonMeshProcessing, \ref PkgLinearCellComplex, \ref PkgConvexHull2 and \ref PkgPrincipalComponentAnalysisD}
-\cgalPkgBib{cgal:olag-kinetic}
+\cgalPkgBib{cgal:ol-kinetic}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 

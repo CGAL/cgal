@@ -13,7 +13,7 @@
 #ifndef CGAL_KINETIC_SHAPE_PARTITION_3_H
 #define CGAL_KINETIC_SHAPE_PARTITION_3_H
 
-//#include <CGAL/license/Kinetic_shape_partition_3.h>
+#include <CGAL/license/Kinetic_shape_partition_3.h>
 
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
