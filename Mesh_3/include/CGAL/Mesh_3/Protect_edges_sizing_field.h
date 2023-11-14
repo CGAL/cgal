@@ -1456,7 +1456,7 @@ refine_balls()
     dump_c3t3_edges(c3t3_, "dump-before-check_and_repopulate_edges");
 #endif
     // Check edges
-    if(!forced_stop()) {
+    if(!forced_stop() && minimal_size_ == FT()) {
       check_and_repopulate_edges();
     }
   }
