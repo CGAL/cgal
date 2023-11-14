@@ -74,10 +74,8 @@ public:
   m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
 
-  const std::pair<std::size_t, std::size_t> propagate(std::size_t k) {
-    std::size_t num_queue_calls = 0;
+  std::size_t propagate(std::size_t k) {
     std::size_t num_events = 0;
-
     m_data.reset_to_initialization();
 
     for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i)
@@ -85,13 +83,10 @@ public:
 
     initialize_queue();
 
-    while (!m_face_queue.empty()) {
-      num_events = run(num_events);
+    while (!m_face_queue.empty())
+      run(num_events);
 
-      ++num_queue_calls;
-    }
-
-    return std::make_pair(num_queue_calls, num_events);
+    return num_events;
   }
 
   void clear() {

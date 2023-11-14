@@ -154,20 +154,13 @@ private:
       : input(false), idA2(-1, -1), idB2(-1, -1)
     {}
 
-    void set_index(std::size_t i) {
-      idx = i;
-    }
-
-    void set_point(const typename Intersection_kernel::Point_3& p)
-    {
+    void set_point(const typename Intersection_kernel::Point_3& p) {
       point_3 = p;
       input = true;
     }
 
     typename Intersection_kernel::Point_3 point_3;
-    //std::size_t idx;  // ivertex?
     std::set<Index> adjacent;
-    //std::set<Index> ids;
     Index idA2, idB2;
     bool input;
   };
@@ -241,7 +234,6 @@ private:
   std::array<Point_3, 8> m_bbox;
   std::vector<Sub_partition> m_partition_nodes; // Tree of partitions.
   std::vector<std::size_t> m_partitions; // Contains the indices of the leaf nodes, the actual partitions to be calculated.
-  std::size_t m_num_events;
   std::vector<Point_3> m_points;
   std::vector<std::vector<std::size_t> > m_polygons;
   std::vector<std::vector<Point_3> > m_input_polygons;
@@ -289,7 +281,6 @@ public:
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
-    m_num_events(0),
     m_input2regularized() {}
 
   /*!
@@ -351,10 +342,7 @@ public:
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
-    m_data(m_parameters),
-    m_num_events(0),
-    m_input2regularized()
-  {
+    m_input2regularized() {
     insert(input_range, polygon_range, np);
     initialize(np);
   }
@@ -596,16 +584,13 @@ public:
       }
 
       // Propagation.
-      std::size_t num_queue_calls = 0;
-
       Propagation propagation(*partition.m_data, m_parameters);
-      std::tie(num_queue_calls, m_num_events) = propagation.propagate(k);
+      std::size_t m_num_events = propagation.propagate(k);
 
       partition_time += timer.time();
 
       if (m_parameters.verbose) {
         std::cout << "* propagation finished" << std::endl;
-        std::cout << "* number of queue calls: " << num_queue_calls << std::endl;
         std::cout << "* number of events handled: " << m_num_events << std::endl;
       }
 
@@ -755,23 +740,23 @@ public:
 
   /// \name Access
   /// @{
-  /*!
-  \brief returns the number of vertices in the kinetic partition.
-
-  \pre created partition
-  */
-  std::size_t number_of_vertices() const {
-    return m_data.vertices().size();
-  }
-
-  /*!
-  \brief returns the number of faces in the kinetic partition.
-
-  \pre created partition
-  */
-  std::size_t number_of_faces() const {
-    return m_data.face_to_vertices().size();
-  }
+//   /*!
+//   \brief returns the number of vertices in the kinetic partition.
+//
+//   \pre created partition
+//   */
+//   std::size_t number_of_vertices() const {
+//     return m_data.vertices().size();
+//   }
+//
+//   /*!
+//   \brief returns the number of faces in the kinetic partition.
+//
+//   \pre created partition
+//   */
+//   std::size_t number_of_faces() const {
+//     return m_data.face_to_vertices().size();
+//   }
 
   /*!
   \brief returns the number of volumes created by the kinetic partition.
@@ -971,7 +956,7 @@ public:
         //std::cout << ")";
         auto face_dart = ib.end_facet(); // returns a dart to the face
         if (lcc.attribute<2>(face_dart) == lcc.null_descriptor) {
-          lcc.set_attribute<2>(face_dart, lcc.create_attribute<2>());
+          lcc.set_attribute<2>(face_dart, (lcc.create_attribute<2>)());
           // How to handle bbox planes that coincide with input polygons? Check support plane
           std::size_t sp = m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second];
 
@@ -1051,17 +1036,6 @@ public:
   }
 
   /// @}
-
-  /*******************************
-  **           MEMORY           **
-  ********************************/
-  /*!
-   \brief clears all input data and the kinetic partition.
-   */
-  void clear() {
-    m_data.clear();
-    m_num_events = 0;
-  }
 
 private:
   struct Constraint_info {
@@ -1591,7 +1565,7 @@ private:
       }
     }
 
-    for (CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+    for (typename CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
 #ifdef OVERLAY_2_CHECK
       Point_2 p = from_exact(fit->vertex(0)->point());
       Point_2 q = from_exact(fit->vertex(1)->point());
@@ -1782,7 +1756,7 @@ private:
 
     //std::cout << newpts << " new vertices added in build_cdt from cdts" << std::endl;
 
-    for (CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+    for (typename CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
 #ifdef OVERLAY_2_CHECK
       Point_2 p = from_exact(fit->vertex(0)->point());
       Point_2 q = from_exact(fit->vertex(1)->point());
@@ -2786,52 +2760,6 @@ private:
     return std::make_pair(-1, -1);
   }
 
-  bool find_portals(const std::vector<Index>& faces, const Index& vA, const Index& vB, Index& a, Index& b) const {
-    // ToDo: restrict to two faces?
-    std::size_t count = 0;
-    for (std::size_t f = 0; f < faces.size(); f++) {
-      if (faces[f] == entry)
-        continue;
-
-      Index& face = faces[f];
-
-      std::size_t idxA = -1;
-      std::size_t numVtx = m_partition_nodes[face.first].face2vertices[face.second].size();
-      for (std::size_t v = 0; v < numVtx; v++)
-        if (m_partition_nodes[face.first].face2vertices[face.second][v] == c[f][e].vA) {
-          idxA = v;
-          break;
-        }
-      // If vertex wasn't found, skip to next face.
-      if (idxA == -1)
-        continue;
-
-      std::size_t idxB = -1;
-      int dir = 0;
-      if (m_partition_nodes[face.first].face2vertices[face.second][(idxA + 1) % numVtx] == c[f][e].vB) {
-        dir = 1;
-        idxB = (idxA + 1) % numVtx;
-      }
-      else if (m_partition_nodes[face.first].face2vertices[face.second][(idxA + numVtx - 1) % numVtx] == c[f][e].vB) {
-        dir = -1;
-        idxB = (idxA + numVtx - 1) % numVtx;
-      }
-
-      // If only the first vertex was found, it is just an adjacent face.
-      if (idxB == -1)
-        continue;
-
-      if (count == 0)
-        a = face;
-      else if (count == 1)
-        b = face;
-      else return false;
-
-      count++;
-    }
-    return count == 2;
-  }
-
   bool check_face(const Index& f) const {
     const std::vector<Index>& face = m_partition_nodes[f.first].face2vertices[f.second];
 
@@ -3343,7 +3271,7 @@ private:
     std::size_t leaf_count = 0;
     std::size_t max_count = 0;
 
-    for (Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree))) {
+    for (typename Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree))) {
       if (m_octree->is_leaf(node))
         leaf_count++;
       else
@@ -3356,7 +3284,7 @@ private:
     m_node2partition.resize(max_count + 1, std::size_t(-1));
 
     std::size_t idx = 0;
-    for (Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree)))
+    for (typename Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree)))
       if (m_octree->is_leaf(node)) {
         // Creating bounding box
         CGAL::Iso_cuboid_3<Kernel> box = m_octree->bbox(node);

@@ -16,7 +16,7 @@
 #include <CGAL/license/Kinetic_shape_partition.h>
 
 #include <CGAL/Kinetic_shape_partition_3.h>
-#include <CGAL/KSR_3/GraphCut.h>
+#include <CGAL/KSR_3/Graphcut.h>
 
 #include <CGAL/IO/PLY.h>
 #include <CGAL/Point_set_3.h>
@@ -37,8 +37,6 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/boost/graph/helpers.h>
-
-#define WITH_LCC
 
 namespace CGAL
 {
@@ -419,11 +417,8 @@ public:
   */
   bool reconstruct(FT lambda) {
     KSR_3::Graphcut<Kernel> gc(lambda);
-#ifdef WITH_LCC
+
     gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
-#else
-    gc.solve(m_face_neighbors, m_face_area, m_cost_matrix, m_labels);
-#endif
 
     return true;
   }

@@ -234,7 +234,6 @@ public:
     add_property_maps();
   }
 
-  template<>
   Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox, std::size_t idx) :
     m_data(std::make_shared<Data>()) {
     From_exact from_exact;
