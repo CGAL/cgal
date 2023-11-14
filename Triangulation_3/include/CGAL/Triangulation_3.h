@@ -4972,35 +4972,22 @@ create_triangulation_inner_map(const Triangulation& t,
                                const Vertex_handle_unique_hash_map& vmap,
                                bool all_cells) {
   Vertex_triple_Facet_map inner_map;
+  auto create_triangulation_inner_map_aux = [&](const auto& cells_range) {
+    for(auto ch : cells_range) {
+      for(unsigned int index = 0; index < 4; index++) {
+        Facet f = std::pair<Cell_handle, int>(ch, index);
+        Vertex_triple vt_aux = make_vertex_triple(f);
+        Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
+        make_canonical_oriented_triple(vt);
+        inner_map[vt] = f;
+      }
+    }
+  };
 
-  if(all_cells)
-  {
-    for(All_cells_iterator it = t.all_cells_begin(),
-                           end = t.all_cells_end(); it != end; ++it)
-    {
-      for(unsigned int index=0; index < 4; index++)
-      {
-        Facet f = std::pair<Cell_handle,int>(it,index);
-        Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
-        make_canonical_oriented_triple(vt);
-        inner_map[vt] = f;
-      }
-    }
-  } else
-  {
-    for(Finite_cells_iterator it = t.finite_cells_begin(),
-                              end = t.finite_cells_end(); it != end; ++it)
-    {
-      for(unsigned int index=0; index < 4; index++)
-      {
-        Facet f = std::pair<Cell_handle,int>(it,index);
-        Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
-        make_canonical_oriented_triple(vt);
-        inner_map[vt] = f;
-      }
-    }
+  if(all_cells) {
+    create_triangulation_inner_map_aux(t.all_cell_handles());
+  } else {
+    create_triangulation_inner_map_aux(t.finite_cell_handles());
   }
   return inner_map;
 }

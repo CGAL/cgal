@@ -419,35 +419,9 @@ protected:
     }
 
     Vertex_handle insert_in_triangulation(const Point_3& p, Locate_type lt, Cell_handle c, int li, int lj) {
-      return self.insert_in_cdt_3(p, lt, c, li, lj);
+      return self.insert_in_cdt_3(p, lt, c, li, lj, *this);
     }
   };
-
-  auto inner_map_of_cavity(const auto& cavity_triangulation,
-                           const auto& map_cavity_vertices_to_ambient_vertices) const
-  {
-    typename T_3::Vertex_triple_Facet_map inner_map;
-    auto add_facet_to_inner_map = [&](Facet f) {
-      const auto vt_aux = T_3::make_vertex_triple(f);
-      typename T_3::Vertex_triple vt(map_cavity_vertices_to_ambient_vertices[vt_aux.first],
-                                     map_cavity_vertices_to_ambient_vertices[vt_aux.third],
-                                     map_cavity_vertices_to_ambient_vertices[vt_aux.second]);
-      this->make_canonical_oriented_triple(vt);
-#if CGAL_DEBUG_CDT_3 & 128
-      CGAL_assertion(vt.first != vt.second);
-      CGAL_assertion(vt.first != vt.third);
-      CGAL_assertion(vt.second != vt.third);
-      std::cerr << std::format("inner map: Adding triple ({:.6}, {:.6}, {:.6})\n", IO::oformat(vt.first, with_point),
-                               IO::oformat(vt.second, with_point), IO::oformat(vt.third, with_point));
-#endif // CGAL_DEBUG_CDT_3
-      inner_map[vt] = f;
-    };
-    for(auto f : cavity_triangulation.finite_facets()) {
-      add_facet_to_inner_map(f);
-      add_facet_to_inner_map(this->mirror_facet(f));
-    }
-    return inner_map;
-  }
 
 public:
   Vertex_handle insert(const Point_3 &p, Locate_type lt, Cell_handle c,
@@ -460,58 +434,74 @@ public:
     return v;
   }
 
-  Vertex_handle insert_in_cdt_3(const Point_3& p, [[maybe_unused]] Locate_type lt, Cell_handle ch, int, int)
+  template <typename Visitor>
+  Vertex_handle insert_in_cdt_3(const Point_3& p, [[maybe_unused]] Locate_type lt, Cell_handle ch, int, int,
+                                Visitor& visitor)
   {
     CGAL_assertion(lt != Locate_type::VERTEX);
-    std::set<Cell_handle> cells;
-    std::set<Facet> facets;
+    boost::container::small_vector<Cell_handle,64> cells_of_original_cavity;
+    boost::container::small_vector<Facet,64> exterior_border_facets_of_original_cavity;
     switch(tr.dimension()) {
     case 3: {
       typename T_3::Conflict_tester_3 tester(p, this);
-      this->find_conflicts(ch,
-                           tester,
-                           make_triple(
-                             std::inserter(facets, facets.begin()),
-                             std::inserter(cells, cells.begin()),
-                             Emptyset_iterator()));
+      this->find_conflicts(ch, tester,
+                           make_triple(std::back_inserter(exterior_border_facets_of_original_cavity),
+                                       std::back_inserter(cells_of_original_cavity),
+                                       Emptyset_iterator()));
       break;
     } // dim 3
     case 2: {
       typename T_3::Conflict_tester_2 tester(p, this);
-      this->find_conflicts(ch,
-                           tester,
-                           make_triple(
-                             std::inserter(facets, facets.begin()),
-                             std::inserter(cells, cells.begin()),
-                             Emptyset_iterator()));
+      this->find_conflicts(ch, tester,
+                           make_triple(std::back_inserter(exterior_border_facets_of_original_cavity),
+                                       std::back_inserter(cells_of_original_cavity),
+                                       Emptyset_iterator()));
       break;
     } // dim 2
     default: CGAL_error();
     }
 
     // cleanup of tds_data after T_3::find_conflicts
-    for(Cell_handle ch : cells) {
+    for(Cell_handle ch : cells_of_original_cavity) {
       ch->tds_data().clear();
     }
-    for(auto& [ch, i] : facets) {
+    for(auto& [ch, i] : exterior_border_facets_of_original_cavity) {
       ch->neighbor(i)->tds_data().clear();
     }
 
-    std::set<Vertex_handle> vertices;
-    for(Cell_handle ch : cells) {
+    bool the_infinite_vertex_is_in_the_cavity = false;
+    std::set<Vertex_handle> vertices_of_original_cavity;
+    for(Cell_handle ch : cells_of_original_cavity) {
       for(int i = 0; i < 4; ++i) {
-        vertices.insert(ch->vertex(i));
+        auto v = ch->vertex(i);
+        if(tr.is_infinite(v)) {
+          the_infinite_vertex_is_in_the_cavity = true;
+        }
+        vertices_of_original_cavity.insert(v);
       }
     }
     // add one extra vertex for p:
     auto p_vh = this->tds().create_vertex();
     p_vh->set_point(p);
-    vertices.insert(p_vh);
+    vertices_of_original_cavity.insert(p_vh);
+
+    // compute facets of the border of the cavity, seen from the
+    std::vector<Facet> orig_facets_of_cavity;
+    orig_facets_of_cavity.reserve(exterior_border_facets_of_original_cavity.size());
+    for(auto f: exterior_border_facets_of_original_cavity) {
+      auto opposite_f = tr.mirror_facet(f);
+      auto& [c, index] = opposite_f;
+      for(int i = 0; i < 3; ++i) {
+        auto v = c->vertex(tr.vertex_triple_index(index, i));
+        v->set_cell(c);
+      }
+      orig_facets_of_cavity.push_back(opposite_f);
+    }
 
     [[maybe_unused]] const auto [cavity_triangulation, vertices_of_cavity,
                                  map_cavity_vertices_to_ambient_vertices, facets_of_cavity,
-                                 interior_constrained_faces, nb_of_added_vertices] =
-        triangulate_cavity(cells, facets, vertices);
+                                 interior_constrained_faces, cells_of_cavity] =
+        triangulate_cavity(cells_of_original_cavity, orig_facets_of_cavity, vertices_of_original_cavity);
 
     for(auto f: interior_constrained_faces) {
       this->register_facet_to_be_constrained(f);
@@ -524,8 +514,8 @@ public:
       outer_map[vt] = f;
     }
 
-    const auto inner_map = inner_map_of_cavity(cavity_triangulation,
-                                               map_cavity_vertices_to_ambient_vertices);
+    const auto inner_map = tr.create_triangulation_inner_map(
+        cavity_triangulation, map_cavity_vertices_to_ambient_vertices, the_infinite_vertex_is_in_the_cavity);
 
     this->copy_triangulation_into_hole(map_cavity_vertices_to_ambient_vertices,
                                        std::move(outer_map),
@@ -541,6 +531,11 @@ public:
         const auto f2d = outside_cell->face_2(cdt_2, outside_face_index);
         set_facet_constrained(mirror_facet, poly_id, f2d);
       }
+    }
+
+    visitor.process_cells_in_conflict(cells_of_cavity.begin(), cells_of_cavity.end());
+    for(auto c: cells_of_cavity) {
+      this->tds().delete_cell(c);
     }
 
     return p_vh;
@@ -1108,7 +1103,7 @@ private:
     struct Outputs
     {
       std::vector<Edge> intersecting_edges;
-      std::set<Cell_handle> intersecting_cells;
+      std::set<Cell_handle> intersecting_cells; // TODO: all those std::set could be vectors
       std::set<Vertex_handle> vertices_of_upper_cavity;
       std::set<Vertex_handle> vertices_of_lower_cavity;
       std::set<Facet> facets_of_upper_cavity;
@@ -1401,11 +1396,10 @@ private:
     CGAL_assertion(found_edge_opt != std::nullopt);
 
     const auto first_intersecting_edge = *found_edge_opt;
-    const auto [intersecting_edges, intersecting_cells_vector, original_vertices_of_upper_cavity,
+    const auto [intersecting_edges, original_intersecting_cells, original_vertices_of_upper_cavity,
                  original_vertices_of_lower_cavity, original_facets_of_upper_cavity, original_facets_of_lower_cavity] =
         construct_cavities(face_index, region_count, cdt_2, fh_region, polygon_vertices, first_intersecting_edge);
 
-    const std::set<Cell_handle> intersecting_cells{intersecting_cells_vector.begin(), intersecting_cells_vector.end()};
     const std::set<Point_3> polygon_points = std::invoke([&](){
       std::set<Point_3> polygon_points;
       for(auto vh : polygon_vertices) {
@@ -1429,13 +1423,13 @@ private:
     std::cerr << std::format("Cavity has {} cells and {} edges, "
                              "{} vertices in upper cavity and {} in lower, "
                              "{} facets in upper cavity and {} in lower\n",
-                             intersecting_cells.size(),
+                             original_intersecting_cells.size(),
                              intersecting_edges.size(),
                              original_vertices_of_upper_cavity.size(),
                              original_vertices_of_lower_cavity.size(),
                              original_facets_of_upper_cavity.size(),
                              original_facets_of_lower_cavity.size());
-    if(intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
+    if(original_intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
       std::cerr << "!! Interesting case !!\n";
       // dump_region(face_index, region_count, cdt_2);
       // {
@@ -1457,8 +1451,8 @@ private:
 #endif // CGAL_DEBUG_CDT_3
     [[maybe_unused]] const auto [upper_cavity_triangulation, vertices_of_upper_cavity,
                                  map_upper_cavity_vertices_to_ambient_vertices, facets_of_upper_cavity,
-                                 interior_constrained_faces_upper, nb_of_added_vertices_upper] =
-        triangulate_cavity(intersecting_cells, original_facets_of_upper_cavity, original_vertices_of_upper_cavity);
+                                 interior_constrained_faces_upper, cells_of_upper_cavity] =
+        triangulate_cavity(original_intersecting_cells, original_facets_of_upper_cavity, original_vertices_of_upper_cavity);
     std::for_each(interior_constrained_faces_upper.begin(), interior_constrained_faces_upper.end(),
                   register_internal_constrained_facet);
 #if CGAL_DEBUG_CDT_3 & 128
@@ -1466,8 +1460,8 @@ private:
 #endif // CGAL_DEBUG_CDT_3
     [[maybe_unused]] const auto [lower_cavity_triangulation, vertices_of_lower_cavity,
                                  map_lower_cavity_vertices_to_ambient_vertices, facets_of_lower_cavity,
-                                 interior_constrained_faces_lower, nb_of_added_vertices_lower] =
-        triangulate_cavity(intersecting_cells, original_facets_of_lower_cavity, original_vertices_of_lower_cavity);
+                                 interior_constrained_faces_lower, cells_of_lower_cavity] =
+        triangulate_cavity(original_intersecting_cells, original_facets_of_lower_cavity, original_vertices_of_lower_cavity);
     std::for_each(interior_constrained_faces_lower.begin(), interior_constrained_faces_lower.end(),
                   register_internal_constrained_facet);
 
@@ -1525,7 +1519,8 @@ private:
 #if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# glu the upper triangulation of the cavity\n";
 
-    if(nb_of_added_vertices_upper > 0 || nb_of_added_vertices_lower > 0)
+    if(cells_of_lower_cavity.size() > original_intersecting_cells.size() ||
+       cells_of_upper_cavity.size() > original_intersecting_cells.size())
     {
       std::cerr << std::format("!! Cavity has grown and has now "
                                "{} vertices in upper cavity and {} in lower, "
@@ -1599,8 +1594,8 @@ private:
 //       write_facets(out, *this, std::ranges::views::values(outer_map));
 //       out.close();
 // #endif // CGAL_DEBUG_CDT_3
-      const auto upper_inner_map =
-          inner_map_of_cavity(upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices);
+      const auto upper_inner_map = tr.create_triangulation_inner_map(
+          upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, false);
 
       this->copy_triangulation_into_hole(map_upper_cavity_vertices_to_ambient_vertices,
                                          std::move(outer_map),
@@ -1625,8 +1620,8 @@ private:
     }
     fill_outer_map_of_cavity(lower_cavity_triangulation, facets_of_lower_cavity);
     {
-      const auto lower_inner_map =
-          inner_map_of_cavity(lower_cavity_triangulation, map_lower_cavity_vertices_to_ambient_vertices);
+      const auto lower_inner_map = tr.create_triangulation_inner_map(
+          lower_cavity_triangulation, map_lower_cavity_vertices_to_ambient_vertices, false);
 #if CGAL_DEBUG_CDT_3 & 128
       std::cerr << "outer_map:\n";
       for(auto [vt, _] : outer_map) {
@@ -1643,7 +1638,9 @@ private:
       this->copy_triangulation_into_hole(map_lower_cavity_vertices_to_ambient_vertices, std::move(outer_map), lower_inner_map,
                                          Emptyset_iterator{});
     }
-    for(auto c : intersecting_cells) { // @TODO bug? what about new cells of the extended cavity?
+    std::set<Cell_handle> cells_to_remove{cells_of_lower_cavity.begin(), cells_of_lower_cavity.end()};
+    cells_to_remove.insert(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
+    for(auto c : cells_to_remove) {
       this->tds().delete_cell(c);
     }
 
@@ -1760,9 +1757,10 @@ private:
       return {std::nullopt};
   };
 
-  auto triangulate_cavity(std::set<Cell_handle> cells_of_cavity,
-                          const std::set<Facet>& orig_facets_of_cavity_border,
-                          const std::set<Vertex_handle>& orig_vertices_of_cavity) const ///@TODO: not deterministic, without time stamps
+  template <typename Cell_range, typename Facets_range, typename Vertices_range>
+  auto triangulate_cavity(const Cell_range& orig_cells_of_cavity,
+                          const Facets_range& orig_facets_of_cavity_border,
+                          const Vertices_range& orig_vertices_of_cavity) const ///@TODO: not deterministic, without time stamps
   {
     using Vertex_map = T_3::Vertex_handle_unique_hash_map;
     struct {
@@ -1771,21 +1769,24 @@ private:
       Vertex_map vertices_to_ambient_vertices;
       std::set<Facet> facets_of_cavity_border_;
       std::vector<Facet> interior_constrained_faces;
-      std::size_t number_of_added_vertices = 0;
+      std::set<Cell_handle> cell_of_cavity_;
     } result{ {},
               {orig_vertices_of_cavity.begin(), orig_vertices_of_cavity.end()},
               {},
               {orig_facets_of_cavity_border.begin(), orig_facets_of_cavity_border.end()},
-              {}
+              {},
+              {orig_cells_of_cavity.begin(), orig_cells_of_cavity.end()}
         };
     auto& cavity_triangulation =  result.cavity_triangulation;
     auto& map_cavity_vertices_to_ambient_vertices = result.vertices_to_ambient_vertices;
     auto& vertices_of_cavity = result.vertices;
     auto& facets_of_cavity_border = result.facets_of_cavity_border_;
+    auto& cells_of_cavity = result.cell_of_cavity_;
     CGAL::Unique_hash_map<Vertex_handle, Vertex_handle> map_ambient_vertices_to_cavity_vertices;
 
-    auto insert_new_vertex = [&](Vertex_handle v, bool extra_b = false, [[maybe_unused]] std::string_view extra = "") {
-      const auto cavity_v = cavity_triangulation.insert(this->point(v));
+    auto insert_new_vertex = [&](Vertex_handle v, [[maybe_unused]] std::string_view extra = "") {
+      const auto cavity_v =
+          tr.is_infinite(v) ? cavity_triangulation.infinite_vertex() : cavity_triangulation.insert(this->point(v));
       map_ambient_vertices_to_cavity_vertices[v] = cavity_v;
       map_cavity_vertices_to_ambient_vertices[cavity_v] = v;
 #if CGAL_DEBUG_CDT_3 & 128
@@ -1794,7 +1795,6 @@ private:
                                IO::oformat(cavity_v, with_point),
                                IO::oformat(v, with_point));
 #endif
-      if(extra_b) ++result.number_of_added_vertices;
       return cavity_v;
     };
 
@@ -1826,14 +1826,14 @@ private:
           if(cell->is_facet_constrained(facet_index)) {
             result.interior_constrained_faces.emplace_back(cell, facet_index);
           }
-          auto [_, is_new_cell] = cells_of_cavity.insert(cell); // @TODO use .second instead of struct. bindings
+          auto [_, is_new_cell] = cells_of_cavity.insert(cell);
           if(!is_new_cell)
             continue;
         }
         const auto v3 = cell->vertex(facet_index);
         auto [_, v3_is_new_vertex] = vertices_of_cavity.insert(v3);
         if(v3_is_new_vertex) {
-          insert_new_vertex(v3, true, "extra ");
+          insert_new_vertex(v3, "extra ");
         }
         for(int i = 0; i < 3; ++i) {
           Facet other_f{cell, this->vertex_triple_index(facet_index, i)};
@@ -1961,7 +1961,7 @@ private:
 
     // assert(is_valid(true));
     // this->study_bug = true;
-    const auto v = this->insert_in_cdt_3(steiner_pt, lt, ch, li, lj);// TODO: use "insert in hole"
+    const auto v = this->insert_in_cdt_3(steiner_pt, lt, ch, li, lj, insert_in_conflict_visitor);// TODO: use "insert in hole"
     // this->study_bug = false;
     // assert(is_valid(true));
     v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
