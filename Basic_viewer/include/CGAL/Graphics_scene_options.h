@@ -34,6 +34,11 @@ template <typename DS,
           typename FaceHandle>
 struct Graphics_scene_options<DS, VertexHandle, EdgeHandle, FaceHandle, void>
 {
+
+  typedef VertexHandle vertex_descriptor;
+  typedef EdgeHandle edge_descriptor;
+  typedef FaceHandle face_descriptor;
+
   Graphics_scene_options(): m_enabled_vertices(true),
                             m_enabled_edges(true),
                             m_enabled_faces(true)
@@ -92,6 +97,11 @@ template <typename DS,
 struct Graphics_scene_options:
     public Graphics_scene_options<DS, VertexHandle, EdgeHandle, FaceHandle>
 {
+  typedef VertexHandle vertex_descriptor;
+  typedef EdgeHandle edge_descriptor;
+  typedef FaceHandle face_descriptor;
+  typedef VolumeHandle volume_descriptor;
+
   Graphics_scene_options() : m_enabled_volumes(true)
   {
     draw_volume=[](const DS &, VolumeHandle)->bool { return true; };

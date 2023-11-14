@@ -27,6 +27,11 @@ template <typename DS,
 struct Graphics_scene_options
 {
 public:
+  typedef VertexDescriptor vertex_descriptor;
+  typedef EdgeDescriptor edge_descriptor;
+  typedef FaceDescriptor face_descriptor;
+  typedef VolumeDescriptor volume_descriptor;
+
 };
 
 } // End namespace CGAL
