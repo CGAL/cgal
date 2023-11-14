@@ -57,7 +57,7 @@ namespace CGAL {
 
 /*!
 * \ingroup PkgKineticShapePartitionRef
-  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use `Kinetic_shape_partition_3()`
+  \brief creates the kinetic partition of the bounding box of the polygons given as input data. Use \link CGAL::Kinetic_shape_partition_3::Kinetic_shape_partition_3() `Kinetic_shape_partition_3()`\endlink
    to create an empty object, `insert()` to provide input data and `initialize()` to prepare the partition or use \link CGAL::Kinetic_shape_partition_3::Kinetic_shape_partition_3()
   `Kinetic_shape_partition_3(const InputRange&, const PolygonRange&, const NamedParameters)`\endlink .
 
@@ -828,7 +828,7 @@ public:
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 
-   \param lcc instance of `Linear_cell_complex_for_combinatorial_map<3, 3>` to be filled with the kinetic partition.
+   \param lcc instance of `Linear_cell_complex_for_combinatorial_map<3, 3>` to be filled with the kinetic partition. Any contained data contained in `lcc` will be cleared before.
 
    \pre created partition
   */
