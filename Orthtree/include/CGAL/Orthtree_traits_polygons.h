@@ -186,12 +186,6 @@ struct Orthtree_traits_polygons : public Orthtree_traits_3_base<GeomTraits>
     };
   }
 
-  auto get_element_object() const {
-    return [&](const Node_data_element& index) -> typename Self::Point_d {
-      return get(m_point_map, index);
-    };
-  }
-
   Node_data m_polygons;
   const std::vector<Point_d>& m_points;
   FT bbox_dilation;
