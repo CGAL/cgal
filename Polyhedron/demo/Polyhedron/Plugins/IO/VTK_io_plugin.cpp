@@ -39,7 +39,8 @@
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/IO/output_to_vtu.h>
-#include <CGAL/boost/graph/io.h>
+#include <CGAL/boost/graph/IO/VTK.h>
+#include <CGAL/IO/VTK.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkDataSetReader.h>
@@ -352,10 +353,23 @@ public:
 
     if(is_polygon_mesh)
     {
-      FaceGraph* poly = new FaceGraph();
+      auto poly = std::make_unique<FaceGraph>();
+      Scene_item* poly_item = nullptr;
       if (CGAL::IO::internal::vtkPointSet_to_polygon_mesh(data, *poly, CGAL::parameters::default_values()))
       {
-        Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
+        poly_item = new Scene_facegraph_item(poly.release());
+      } else {
+        poly.reset(nullptr);
+        std::vector<Point_3> points;
+        std::vector<std::vector<std::size_t> > polygons;
+        if (CGAL::IO::internal::vtkPointSet_to_polygon_soup(data, points, polygons, CGAL::parameters::default_values()))
+        {
+          auto soup_item = new Scene_polygon_soup_item();
+          soup_item->load(points, polygons);
+          poly_item = soup_item;
+        }
+      }
+      if(poly_item) {
         if(group)
         {
           poly_item->setName(QString("%1_faces").arg(fileinfo.baseName()));
