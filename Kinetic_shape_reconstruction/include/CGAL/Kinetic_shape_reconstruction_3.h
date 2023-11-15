@@ -255,7 +255,7 @@ public:
   \pre `successful initialization`
   */
   void setup_energyterms() {
-    if (m_lcc.one_dart_per_cell<3>().size() == 0) {
+    if (m_lcc.template one_dart_per_cell<3>().size() == 0) {
       std::cout << "Kinetic partition is not constructed or does not have volumes" << std::endl;
       return;
     }
@@ -263,7 +263,7 @@ public:
     m_face_area.clear();
     m_face_inliers.clear();
 
-    auto face_range = m_lcc.one_dart_per_cell<2>();
+    auto face_range = m_lcc.template one_dart_per_cell<2>();
     m_faces_lcc.reserve(face_range.size());
 
     for (auto& d : face_range) {
@@ -286,7 +286,7 @@ public:
     m_cost_matrix[1].resize(m_kinetic_partition.number_of_volumes() + 6);
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
-      auto n = m_lcc.one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
+      auto n = m_lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
 
       assert(n.size() == 1 || n.size() == 2);
       auto it = n.begin();
@@ -424,33 +424,6 @@ public:
   }
 
   /*!
-  \brief Provides the reconstructed surface as a list of polygons.
-
-  \param it
-  an output iterator taking std::vector<Point_3>.
-
-  \pre `successful reconstruction`
-  */
-  template<class OutputIterator>
-  void reconstructed_model(OutputIterator it) {
-    if (m_labels.empty())
-      return;
-
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      const auto& n = m_face_neighbors[i];
-      // Do not extract boundary faces.
-      if (n.second < 6)
-        continue;
-
-      if (m_labels[n.first] != m_labels[n.second]) {
-        std::vector<Point_3> face;
-        m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
-        *it++ = std::move(face);
-      }
-    }
-  }
-
-  /*!
   \brief Provides the reconstructed surface as a list of indexed polygons.
 
   \param pit
@@ -551,14 +524,14 @@ public:
 
     std::map<Point_3, std::size_t> pt2idx;
 
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      const auto& n = m_face_neighbors[i];
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
+      const auto& n = m_face_neighbors_lcc[i];
       // Do not extract boundary faces.
       if (n.second < 6)
         continue;
       if (m_labels[n.first] != m_labels[n.second]) {
         std::vector<Point_3> face;
-        m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
+        m_kinetic_partition.vertices(m_faces_lcc[i], std::back_inserter(face));
 
         std::vector<std::size_t> indices(face.size());
 
@@ -804,7 +777,7 @@ private:
       }
     }
 
-    for (CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
+    for (typename CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
       std::set<std::size_t> a, b, c;
       std::copy(fit->vertex(0)->info().idx.begin(), fit->vertex(0)->info().idx.end(), std::inserter(a, a.begin()));
       std::copy(fit->vertex(1)->info().idx.begin(), fit->vertex(0)->info().idx.end(), std::inserter(b, b.begin()));
@@ -1013,7 +986,7 @@ private:
     From_exact from_exact;
 
     if (m_ground_polygon_index != -1)
-      for (const auto &vd : m_lcc.one_dart_per_cell<3>()) {
+      for (const auto &vd : m_lcc.template one_dart_per_cell<3>()) {
         const auto& info = m_lcc.info<3>(m_lcc.dart_descriptor(vd));
 
         m_volume_below_ground[info.volume_id] = (from_exact(info.bary_center) - m_regions[m_ground_polygon_index].first.projection(from_exact(info.bary_center))).z() < 0;
@@ -1046,10 +1019,10 @@ private:
       region_index[cur_fa] = region;
 
       // Iterate over edges of face.
-      for (auto& ed : m_lcc.one_dart_per_incident_cell<1, 2>(cur_fdh)) {
+      for (auto& ed : m_lcc.template one_dart_per_incident_cell<1, 2>(cur_fdh)) {
         Dart_descriptor edh = m_lcc.dart_descriptor(ed);
 
-        for (auto &fd : m_lcc.one_dart_per_incident_cell<2, 1, 3>(edh)) {
+        for (auto &fd : m_lcc.template one_dart_per_incident_cell<2, 1, 3>(edh)) {
           Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
           Face_attribute fa = m_lcc.attribute<2>(fdh);
           auto& inf = m_lcc.info<2>(fdh);
@@ -1089,7 +1062,7 @@ private:
 
     pts.clear();
     for (Dart_descriptor &edh : border_edges)
-      for (auto& vd : m_lcc.one_dart_per_incident_cell<0, 1>(edh)) {
+      for (auto& vd : m_lcc.template one_dart_per_incident_cell<0, 1>(edh)) {
         pts.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
       }
 
@@ -1117,7 +1090,7 @@ private:
 
     std::vector<std::vector<Dart_descriptor> > poly2faces(m_kinetic_partition.input_planes().size());
     std::vector<Dart_descriptor> other_faces;
-    for (auto& d : m_lcc.one_dart_per_cell<2>()) {
+    for (auto& d : m_lcc.template one_dart_per_cell<2>()) {
       Dart_descriptor dh = m_lcc.dart_descriptor(d);
       if (m_lcc.info<2>(dh).input_polygon_index >= 0)
         poly2faces[m_lcc.info<2>(dh).input_polygon_index].push_back(dh);
@@ -1290,7 +1263,7 @@ private:
       }
     }
 
-    for (auto &d : m_lcc.one_dart_per_cell<3>()) {
+    for (auto &d : m_lcc.template one_dart_per_cell<3>()) {
       typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
 
       std::vector<Point_3> volume_vertices;
@@ -1526,14 +1499,12 @@ private:
     for (const auto& p : m_regions) {
       bool exists = false;
       for (std::size_t i = 0; i < pl.size(); i++)
-        if (pl[i] == p.first || pl[i].opposite() == p.first) {
-          //merged[i].push_back(idx);
+        if (pl[i] == p.first || pl[i].opposite() == p.first)
           exists = true;
-        }
 
-      if (!exists) {
+      if (!exists)
         pl.push_back(p.first);
-      }
+
       idx++;
     }
 
@@ -1542,7 +1513,7 @@ private:
       for (auto& i : pair.second)
         region.push_back(i);
       m_planar_regions.push_back(region);
-      //const auto plane = fit_plane(region);
+
       const std::size_t shape_idx = add_convex_hull_shape(region, pair.first);
       CGAL_assertion(shape_idx != std::size_t(-1));
       m_region_map[shape_idx] = region;
@@ -1569,11 +1540,8 @@ private:
     for (const Point_3& p : pts)
       pts2d.push_back(inexact_pl.to_2d(p));
 
-    //std::cout << "switch to Data_structure::m_face2sp" << std::endl;
-    //ToDo I need to check whether the current way provides all faces as some faces may have been added during the make_conformal step
-
     // Iterate over all faces of the lcc
-    for (Dart& d : m_lcc.one_dart_per_cell<2>()) {
+    for (Dart& d : m_lcc.template one_dart_per_cell<2>()) {
       Dart_descriptor dd = m_lcc.dart_descriptor(d);
       if (m_lcc.info<2>(m_lcc.dart_descriptor(d)).input_polygon_index != polygon_index || !m_lcc.info<2>(m_lcc.dart_descriptor(d)).part_of_initial_polygon)
         continue;

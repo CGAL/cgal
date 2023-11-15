@@ -987,7 +987,7 @@ public:
 
       d = ib.end_surface();
 
-      auto ah = lcc.create_attribute<3>();
+      auto ah = lcc.template create_attribute<3>();
       lcc.set_attribute<3>(d, ah);
       lcc.info<3>(d).bary_center = centroid;
       lcc.info<3>(d).volume_id = v;
@@ -1002,29 +1002,29 @@ public:
       if (!added_volumes[i])
         std::cout << "volume " << i << " has not been added" << std::endl;
 
-    std::cout << "lcc #volumes: " << (lcc.one_dart_per_cell<3>()).size() << " ksp #volumes: " << number_of_volumes() << std::endl;
-    std::cout << "lcc #faces: " << lcc.one_dart_per_cell<2>().size() << " ksp #faces: " << num_faces << std::endl;
-    std::cout << "lcc #n-edges: " << lcc.one_dart_per_cell<1>().size() << std::endl;
-    std::cout << "lcc #vtx: " << lcc.one_dart_per_cell<0>().size() << " ksp #vtx: " << vtx.size() << std::endl;
+    std::cout << "lcc #volumes: " << lcc.template one_dart_per_cell<3>().size() << " ksp #volumes: " << number_of_volumes() << std::endl;
+    std::cout << "lcc #faces: " << lcc.template one_dart_per_cell<2>().size() << " ksp #faces: " << num_faces << std::endl;
+    std::cout << "lcc #n-edges: " << lcc.template one_dart_per_cell<1>().size() << std::endl;
+    std::cout << "lcc #vtx: " << lcc.template one_dart_per_cell<0>().size() << " ksp #vtx: " << vtx.size() << std::endl;
 
     // Verification
     // Check attributes in each dart
-    for (auto& d : lcc.one_dart_per_cell<0>()) {
+    for (auto& d : lcc.template one_dart_per_cell<0>()) {
       if (!lcc.is_dart_used(lcc.dart_descriptor(d))) {
         std::cout << "unused dart in 0" << std::endl;
       }
     }
-    for (auto& d : lcc.one_dart_per_cell<1>()) {
+    for (auto& d : lcc.template one_dart_per_cell<1>()) {
       if (!lcc.is_dart_used(lcc.dart_descriptor(d))) {
         std::cout << "unused dart in 1" << std::endl;
       }
     }
-    for (auto& d : lcc.one_dart_per_cell<2>()) {
+    for (auto& d : lcc.template one_dart_per_cell<2>()) {
       if (!lcc.is_dart_used(lcc.dart_descriptor(d))) {
         std::cout << "unused dart in 2" << std::endl;
       }
     }
-    for (auto& d : lcc.one_dart_per_cell<3>()) {
+    for (auto& d : lcc.template one_dart_per_cell<3>()) {
       if (!lcc.is_dart_used(lcc.dart_descriptor(d))) {
         std::cout << "unused dart in 3" << std::endl;
       }
