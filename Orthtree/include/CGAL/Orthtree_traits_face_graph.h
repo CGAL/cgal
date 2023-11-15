@@ -17,6 +17,7 @@
 
 #include <CGAL/Orthtree_traits_base_for_dimension.h>
 
+#include <boost/graph/graph_traits.hpp>
 #include <CGAL/Dimension.h>
 #include <CGAL/Bbox_3.h>
 
