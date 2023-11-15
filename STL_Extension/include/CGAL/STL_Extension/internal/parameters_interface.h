@@ -263,6 +263,7 @@ CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, m
 CGAL_add_named_parameter(bbox_dilation_ratio_t, bbox_dilation_ratio, bbox_dilation_ratio)
 CGAL_add_named_parameter(reorient_bbox_t, reorient_bbox, reorient_bbox)
 CGAL_add_named_parameter(debug_t, debug, debug)
+CGAL_add_named_parameter(angle_tolerance_t, angle_tolerance, angle_tolerance)
 CGAL_add_named_parameter(max_octree_depth_t, max_octree_depth, max_octree_depth)
 CGAL_add_named_parameter(max_octree_node_size_t, max_octree_node_size, max_octree_node_size)
 
