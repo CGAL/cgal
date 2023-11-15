@@ -78,6 +78,34 @@ inline int indices(const int& i, const int& j)
   return 0;
 }
 
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 2>
+vertices(const typename Tr::Edge& e , const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 2>{
+               e.first->vertex(e.second),
+               e.first->vertex(e.third)};
+}
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 3>
+vertices(const typename Tr::Facet& f, const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 3>{
+               f.first->vertex(Tr::vertex_triple_index(f.second, 0)),
+               f.first->vertex(Tr::vertex_triple_index(f.second, 1)),
+               f.first->vertex(Tr::vertex_triple_index(f.second, 2))};
+}
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 4>
+vertices(const typename Tr::Cell_handle c, const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 4>{
+               c->vertex(0),
+               c->vertex(1),
+               c->vertex(2),
+               c->vertex(3)};
+}
+
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,
                                const Point& q,
@@ -529,6 +557,8 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     v->set_index(v->cell()->subdomain_index());
     break;
   case 2:
+    CGAL_assertion(surface_patch_index(v, c3t3)
+                  != typename C3t3::Surface_patch_index());
     v->set_index(surface_patch_index(v, c3t3));
     break;
   case 1:
