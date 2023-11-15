@@ -18,6 +18,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
+#include <CGAL/Orthtree.h>
 
 namespace CGAL {
 

@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_Orthtree
 
 \cgalAutoToc
-\authors Jackson Campolattaro, Simon Giraudot, Cedric Portaneri, Tong Zhao, Pierre Alliez
+\authors Jackson Campolattaro, Simon Giraudot, Cédric Portaneri, Tong Zhao, Pierre Alliez
 
 \section Section_Orthtree_Introduction Introduction
 
@@ -285,7 +285,7 @@ For nontrivial point counts, the naive approach's calculation time dwarfs that o
 \section Section_Orthtree_History History
 
 A prototype code was implemented by Pierre Alliez and improved by Tong
-Zhao and Cedric Portaneri. From this prototype code, the package was
+Zhao and Cédric Portaneri. From this prototype code, the package was
 developed by Jackson Campolatarro as part of the Google Summer of Code
 2020. Simon Giraudot, supervisor of the GSoC internship, completed and
 finalized the package for integration in CGAL 5.3. Pierre Alliez
