@@ -693,7 +693,7 @@ public:
             for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
               boost::filesystem::remove_all(it->path());
 
-          KSR_3::dump_volumes_ksp(*this, "volumes/");
+          KSP_3::dump_volumes_ksp(*this, "volumes/");
           for (std::size_t i = 1; i < m_volumes.size(); i++)
             if (m_volumes[i].first != m_volumes[i - 1].first)
               std::cout << i << " " << m_volumes[i - 1].first << std::endl;
@@ -710,7 +710,7 @@ public:
           if (boost::filesystem::is_directory("volumes_after/"))
           for (boost::filesystem::directory_iterator end_dir_it, it("volumes_after/"); it != end_dir_it; ++it)
             boost::filesystem::remove_all(it->path());
-          KSR_3::dump_volumes_ksp(*this, "volumes_after/");
+          KSP_3::dump_volumes_ksp(*this, "volumes_after/");
           for (std::size_t i = 1; i < m_volumes.size(); i++)
             if (m_volumes[i].first != m_volumes[i - 1].first)
               std::cout << i << " " << m_volumes[i - 1].first << std::endl;
@@ -1294,13 +1294,13 @@ private:
       bbox[i] = point;
     }
 
-    const FT bbox_length_1 = KSR::distance(bbox[0], bbox[1]);
-    const FT bbox_length_2 = KSR::distance(bbox[0], bbox[3]);
-    const FT bbox_length_3 = KSR::distance(bbox[0], bbox[5]);
+    const FT bbox_length_1 = KSP::distance(bbox[0], bbox[1]);
+    const FT bbox_length_2 = KSP::distance(bbox[0], bbox[3]);
+    const FT bbox_length_3 = KSP::distance(bbox[0], bbox[5]);
     CGAL_assertion(bbox_length_1 >= FT(0));
     CGAL_assertion(bbox_length_2 >= FT(0));
     CGAL_assertion(bbox_length_3 >= FT(0));
-    const FT tol = KSR::tolerance<FT>();
+    const FT tol = KSP::tolerance<FT>();
     if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
       if (m_parameters.verbose) {
         std::cout << "* warning: optimal bounding box is flat, reverting ..." << std::endl;
@@ -1335,13 +1335,13 @@ private:
       Point_3(box.xmax(), box.ymin(), box.zmax()),
       Point_3(box.xmax(), box.ymax(), box.zmax()) };
 
-    const FT bbox_length_1 = KSR::distance(bbox[0], bbox[1]);
-    const FT bbox_length_2 = KSR::distance(bbox[0], bbox[3]);
-    const FT bbox_length_3 = KSR::distance(bbox[0], bbox[5]);
+    const FT bbox_length_1 = KSP::distance(bbox[0], bbox[1]);
+    const FT bbox_length_2 = KSP::distance(bbox[0], bbox[3]);
+    const FT bbox_length_3 = KSP::distance(bbox[0], bbox[5]);
     CGAL_assertion(bbox_length_1 >= FT(0));
     CGAL_assertion(bbox_length_2 >= FT(0));
     CGAL_assertion(bbox_length_3 >= FT(0));
-    const FT tol = KSR::tolerance<FT>();
+    const FT tol = KSP::tolerance<FT>();
     if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
       const FT d = 0.1;
 
@@ -1415,7 +1415,7 @@ private:
     std::array<Point_3, 8>& bbox) const {
 
     FT enlarge_ratio = enlarge_bbox_ratio;
-    const FT tol = KSR::tolerance<FT>();
+    const FT tol = KSP::tolerance<FT>();
     if (enlarge_bbox_ratio == FT(1)) {
       enlarge_ratio += FT(2) * tol;
     }
