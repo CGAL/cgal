@@ -28,13 +28,11 @@ struct Parameters_3 {
   unsigned int max_octree_node_size = 40;
 
   FT bbox_dilation_ratio = FT(11) / FT(10); // ratio to enlarge bbox
-  FT angle_tolerance = FT(5);
-  FT distance_tolerance =  FT(5) / FT(10); // distance tolerance between planes
 
   bool reorient_bbox = false; // true - optimal bounding box, false - axis aligned
 
   // All files are saved in the current build directory.
-  bool verbose    =  true; // print basic verbose information
+  bool verbose    =  false; // print basic verbose information
   bool debug      = false; // print all steps and substeps + export initial and final configurations
 
   // See also global tolerance inside utils.h! (set to 0)

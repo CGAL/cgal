@@ -310,6 +310,11 @@ public:
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
        \cgalParamDefault{`CGAL::Identity_property_map<GeomTraits::Point_3>`}
      \cgalParamNEnd
+    \cgalParamNBegin{debug}
+      \cgalParamDescription{Export of intermediate results.}
+      \cgalParamType{bool}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
     \cgalParamNBegin{verbose}
       \cgalParamDescription{Write timing and internal information to std::cout.}
       \cgalParamType{bool}
@@ -324,6 +329,16 @@ public:
       \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
+    \cgalParamNEnd
+    \cgalParamNBegin{max_octree_depth}
+      \cgalParamDescription{The maximal depth of the octree for subdividing the kinetic partition before initialization.}
+      \cgalParamType{std::size_t}
+      \cgalParamDefault{3}
+    \cgalParamNEnd
+    \cgalParamNBegin{max_octree_node_size}
+      \cgalParamDescription{A node in the octree is only split if the contained number of primitives is larger and the maximal depth is not yet reached.}
+      \cgalParamType{std::size_t}
+      \cgalParamDefault{40}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -408,9 +423,9 @@ public:
           break;
         }
       }
+
       if (skip)
         continue;
-
 
       m_input2regularized.push_back(m_input_planes.size());
       m_regularized2input.push_back(std::vector<std::size_t>());
@@ -444,6 +459,16 @@ public:
       \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
+    \cgalParamNEnd
+    \cgalParamNBegin{max_octree_depth}
+      \cgalParamDescription{The maximal depth of the octree for subdividing the kinetic partition before initialization.}
+      \cgalParamType{std::size_t}
+      \cgalParamDefault{3}
+    \cgalParamNEnd
+    \cgalParamNBegin{max_octree_node_size}
+      \cgalParamDescription{A node in the octree is only split if the contained number of primitives is larger and the maximal depth is not yet reached.}
+      \cgalParamType{std::size_t}
+      \cgalParamDefault{40}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -510,19 +535,12 @@ public:
 
     for (std::size_t idx : m_partitions) {
       Sub_partition& partition = m_partition_nodes[idx];
-      std::cout << idx << ". " << partition.input_polygons.size() << " polygons " << std::flush;
       partition.index = idx;
 
       partition.m_data = std::make_shared<Data_structure>(m_parameters, std::to_string(idx) + "-");
 
-/*
-      std::vector<std::vector<Point_3> > input_polygons(partition.input_polygons.size());
-      for (std::size_t i = 0; i < partition.input_polygons.size(); i++)
-        input_polygons[i] = m_input_polygons[partition.input_polygons[i]];*/
-
       Initializer initializer(partition.clipped_polygons, partition.m_input_planes, *partition.m_data, m_parameters);
       initializer.initialize(partition.bbox, partition.input_polygons);
-      std::cout << std::endl;
     }
 
     // Timing.
