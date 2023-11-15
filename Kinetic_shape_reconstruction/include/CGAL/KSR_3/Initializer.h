@@ -22,6 +22,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/intersections.h>
+#include <CGAL/min_quadrilateral_2.h>
+#include <CGAL/Aff_transformation_2.h>
 #include <boost/optional/optional_io.hpp>
 
 // Internal includes.

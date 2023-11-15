@@ -52,7 +52,7 @@ The kinetic partition can be accessed as a `LinearCellComplex` via `CGAL::Kineti
 
 The following example reads a set of polygons from a file and creates a kinetic partition. Increasing the `k` parameter to 2 or 3 leads to a more detailed kinetic partition. Increasing beyond 3 does not lead to more volumes as there are only few input polygons.
 
-\cgalExample{Kinetic_shape_reconstruction/kinetic_precomputed_shapes.cpp}
+\cgalExample{Kinetic_shape_reconstruction/kinetic_partition.cpp}
 
 */
 

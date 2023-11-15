@@ -58,7 +58,7 @@ namespace CGAL {
 /*!
 * \ingroup PkgKineticShapePartitionRef
   \brief creates the kinetic partition of the bounding box of the polygons given as input data. The kinetic partition can either be initialized
-  by using the default parameter \link CGAL::Kinetic_shape_partition_3::Kinetic_shape_partition_3() `Kinetic_shape_partition_3()`\endlink, `insert()` to provide input data and `initialize()` to prepare the partition or by using the constructor with input parameters.
+  by using the default constructor \link CGAL::Kinetic_shape_partition_3::Kinetic_shape_partition_3() `Kinetic_shape_partition_3()`\endlink, `insert()` to provide input data and `initialize()` to prepare the partition or by using the constructor with input parameters.
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -78,7 +78,7 @@ public:
   using Index = std::pair<std::size_t, std::size_t>;
 
    /*!
-   identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a positive number, a side of the bounding box or a face of the octree used to partition the scene.
+   identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a positive number, a side of the reoriented bounding box or a face of the octree used to partition the scene.
    */
   enum Face_support : int {
     ZMIN        = -1,
@@ -784,7 +784,7 @@ public:
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 
-   \param lcc instance of `Linear_cell_complex_for_combinatorial_map<3, 3>` to be filled with the kinetic partition. Any contained data contained in `lcc` will be cleared before.
+   \param lcc instance of `Linear_cell_complex_for_combinatorial_map<3, 3>` to be filled with the kinetic partition. Any data contained in `lcc` will be cleared before.
 
    \pre created partition
   */

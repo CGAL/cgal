@@ -20,11 +20,7 @@ if(Boost_FOUND)
     message(STATUS "Found Eigen")
     include(CGAL_Eigen_support)
 
-    set(targets
-    kinetic_2d
-    kinetic_precomputed_shapes
-    kinetic_reconstruction
-)
+    set(targets kinetic_partition)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)
