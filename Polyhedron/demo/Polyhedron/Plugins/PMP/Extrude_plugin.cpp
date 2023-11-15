@@ -91,7 +91,7 @@ public :
   }
   void invalidateOpenGLBuffers() Q_DECL_OVERRIDE
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer =
           static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -419,7 +419,7 @@ private Q_SLOTS:
     oliver_queen->manipulatedFrame()->setConstraint(&constraint);
     oliver_queen->setColor(QColor(Qt::green));
     oliver_queen->setName("Extrude item");
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
       viewer->installEventFilter(oliver_queen);
     mw->installEventFilter(oliver_queen);
     scene->addItem(oliver_queen);

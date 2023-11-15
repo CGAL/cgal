@@ -992,7 +992,7 @@ meshing_done(Meshing_thread* thread)
     .arg(source_item_name_)
     .arg(thread->time());
 
-  Q_FOREACH( QString param, thread->parameters_log() )
+  for( QString param : thread->parameters_log() )
   {
     str.append(QString("( %1 )<br>").arg(param));
   }
@@ -1042,7 +1042,7 @@ treat_result(Scene_item& source_item,
     result_item->setRenderingMode(source_item.renderingMode());
     result_item->set_data_item(&source_item);
 
-    Q_FOREACH(int ind, scene->selectionIndices()) {
+    for(int ind : scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -1056,7 +1056,7 @@ treat_result(Scene_item& source_item,
     Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
     CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
     new_item->setName(tr("%1 [Remeshed]").arg(source_item_name_));
-    Q_FOREACH(int ind, scene->selectionIndices()) {
+    for(int ind : scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();

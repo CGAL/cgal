@@ -73,7 +73,7 @@ public:
       return qobject_cast<Scene_polylines_item*>(scene->item(
                                                    scene->mainSelectionIndex()));
     bool all_polylines_selected = true;
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if (!qobject_cast<Scene_polylines_item*>(scene->item(index)))
       {

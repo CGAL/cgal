@@ -1636,7 +1636,7 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
           return;
         }
       bool found = false;
-      Q_FOREACH(Scene_polyhedron_selection_item_priv::vertex_on_path vop, d->path)
+      for(Scene_polyhedron_selection_item_priv::vertex_on_path vop : d->path)
       {
         if(vop.vertex == vh)
         {
@@ -1843,7 +1843,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 Scene_polyhedron_selection_item::~Scene_polyhedron_selection_item()
 {
   delete d;
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
     CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
     viewer->setBindingSelect();
   }
@@ -1887,7 +1887,7 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
       getPointContainer(Priv::Temp_points)->reset_vbos(ALL);
       getPointContainer(Priv::Fixed_points)->reset_vbos(ALL);
 
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -1907,14 +1907,14 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
 
 void Scene_polyhedron_selection_item::add_to_selection()
 {
-  Q_FOREACH(fg_edge_descriptor ed, temp_selected_edges)
+  for(fg_edge_descriptor ed : temp_selected_edges)
   {
     selected_edges.insert(ed);
     temp_selected_edges.erase(ed);
   }
   on_Ctrlz_pressed();
   invalidateOpenGLBuffers();
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     v->update();
   d->tempInstructions("Path added to selection.",
                    "Select two vertices to create the path between them. (1/2)");
@@ -2217,7 +2217,7 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
     redraw();
   });
   d->manipulated_frame = new ManipulatedFrame();
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     v->installEventFilter(this);
   mw->installEventFilter(this);
   connect(mw, SIGNAL(newViewerCreated(QObject*)),
@@ -2241,12 +2241,12 @@ void Scene_polyhedron_selection_item::selection_changed(bool)
        Three::scene()->item(Three::scene()->mainSelectionIndex())))
     do_bind_select = false;
   if(do_bind_select)
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       viewer->setBindingSelect();
     }
     else
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       viewer->setNoBinding();
     }

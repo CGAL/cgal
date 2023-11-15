@@ -317,7 +317,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   accepted_keywords.clear();
 
   // Setup the submenu of the View menu that can toggle the dockwidgets
-  Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
+  for(QDockWidget* widget : findChildren<QDockWidget*>()) {
     widget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
     ui->menuDockWindows->addAction(widget->toggleViewAction());
   }
@@ -342,7 +342,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   actionResetDefaultLoaders = new QAction("Reset Default Loaders",this);
 
   // evaluate_script("print(plugins);");
-  Q_FOREACH(QAction* action, findChildren<QAction*>()) {
+  for(QAction* action : findChildren<QAction*>()) {
     if(action->objectName() != "") {
       QJSValue objectValue = script_engine->newQObject(action);
       script_engine->globalObject().setProperty(action->objectName(),
@@ -372,11 +372,11 @@ void addActionToMenu(QAction* action, QMenu* menu)
 void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
 {
   QList<QAction*> buffer;
-  Q_FOREACH(QAction* action, menu->actions())
+  for(QAction* action : menu->actions())
     buffer.append(action);
 
   while(!buffer.isEmpty()){
-    Q_FOREACH(QAction* action, buffer) {
+    for(QAction* action : buffer) {
       if(QMenu* submenu = action->menu())
       {
         bool keep = true;
@@ -384,7 +384,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
           keep = submenu->menuAction()->text().contains(filter, Qt::CaseInsensitive);
           if(!keep)
           {
-            Q_FOREACH(QAction* subaction, submenu->actions())
+            for(QAction* subaction : submenu->actions())
             {
               submenu->removeAction(subaction);
               buffer.append(subaction);
@@ -421,23 +421,23 @@ void MainWindow::filterOperations(bool)
     ui->menuOperations->hide();
 #endif
   //return actions to their true menu
-  Q_FOREACH(QMenu* menu, action_menu_map.values())
+  for(QMenu* menu : action_menu_map.values())
   {
-    Q_FOREACH(QAction* action, menu->actions())
+    for(QAction* action : menu->actions())
     {
       if(action != searchAction)
         menu->removeAction(action);
     }
   }
 
-  Q_FOREACH(QAction* action, action_menu_map.keys())
+  for(QAction* action : action_menu_map.keys())
   {
     QMenu* menu = action_menu_map[action];
     addActionToMenu(action, menu);
   }
   QString filter=operationSearchBar.text();
-  Q_FOREACH(const PluginNamePair& p, plugins) {
-    Q_FOREACH(QAction* action, p.first->actions()) {
+  for(const PluginNamePair& p : plugins) {
+    for(QAction* action : p.first->actions()) {
       action->setVisible( p.first->applicable(action)
                           && (action->text().remove("&").contains(filter, Qt::CaseInsensitive)
                               || action->property("subMenuName")
@@ -579,7 +579,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     bool do_load = accepted_keywords.empty();
     if(!do_load)
     {
-      Q_FOREACH(QString k, s_keywords)
+      for(QString k : s_keywords)
       {
         if(accepted_keywords.contains(k))
         {
@@ -621,7 +621,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
 
 void MainWindow::loadPlugins()
 {
-  Q_FOREACH(QObject *obj, QPluginLoader::staticInstances())
+  for(QObject *obj : QPluginLoader::staticInstances())
   {
     initPlugin(obj);
     initIOPlugin(obj);
@@ -637,7 +637,7 @@ void MainWindow::loadPlugins()
   QFileInfoList filist = QDir(dirPath).entryInfoList();
   filist << msvc_dir.entryInfoList();
 
-  Q_FOREACH(QFileInfo fileinfo, filist)
+  for(QFileInfo fileinfo : filist)
   {
     //checks if the path leads to a directory
     if(fileinfo.baseName().contains("Plugins"))
@@ -645,7 +645,7 @@ void MainWindow::loadPlugins()
       QString plugins_dir = fileinfo.absolutePath();
       plugins_dir.append("/").append(fileinfo.baseName());
 
-      Q_FOREACH(QString package_dir,
+      for(QString package_dir :
                 QDir(plugins_dir).entryList(QDir::Dirs))
       {
         QString package_dir_path(plugins_dir);
@@ -677,7 +677,7 @@ void MainWindow::loadPlugins()
     QByteArray new_path = path.append(env_path.prepend(separator)).toUtf8();
     qputenv("PATH", new_path);
 #endif
-    Q_FOREACH (QString pluginsDir,
+    for (QString pluginsDir :
                env_path.split(separator, CGAL_QT_SKIP_EMPTY_PARTS)) {
       QDir dir(pluginsDir);
       if(dir.isReadable())
@@ -686,11 +686,11 @@ void MainWindow::loadPlugins()
   }
 
   QSet<QString> loaded;
-  Q_FOREACH (QDir pluginsDir, plugins_directories) {
+  for (QDir pluginsDir : plugins_directories) {
     if(verbose)
       qDebug("# Looking for plugins in directory \"%s\"...",
              qPrintable(pluginsDir.absolutePath()));
-    Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
+    for(QString fileName : pluginsDir.entryList(QDir::Files))
     {
       QString abs_name = pluginsDir.absoluteFilePath(fileName);
       if(loaded.find(abs_name) == loaded.end())
@@ -708,7 +708,7 @@ void MainWindow::loadPlugins()
 void MainWindow::updateMenus()
 {
   QList<QAction*> as = ui->menuOperations->actions();
-  Q_FOREACH(QAction* a, as)
+  for(QAction* a : as)
   {
     QString menuPath = a->property("subMenuName").toString();
     setMenus(menuPath, ui->menuOperations->title(), a);
@@ -724,7 +724,7 @@ void MainWindow::updateMenus()
 
 bool MainWindow::hasPlugin(const QString& pluginName) const
 {
-  Q_FOREACH(const PluginNamePair& p, plugins) {
+  for(const PluginNamePair& p : plugins) {
     if(p.second == pluginName) return true;
   }
   return false;
@@ -741,7 +741,7 @@ bool MainWindow::initPlugin(QObject* obj)
     plugin->init(this, this->scene, this);
     plugins << qMakePair(plugin, obj->objectName());
 
-    Q_FOREACH(QAction* action, plugin->actions()) {
+    for(QAction* action : plugin->actions()) {
       // If action does not belong to the menus, add it to "Operations" menu
       if(!childs.contains(action)) {
         ui->menuOperations->addAction(action);
@@ -771,7 +771,7 @@ bool MainWindow::initIOPlugin(QObject* obj)
 
 void MainWindow::clearMenu(QMenu* menu)
 {
-  Q_FOREACH(QAction* action, menu->actions())
+  for(QAction* action : menu->actions())
   {
     QMenu* menu = action->menu();
     if(menu) {
@@ -805,7 +805,7 @@ void MainWindow::addAction(QString actionName,
                            QString actionText,
                            QString menuName) {
   QMenu* menu = nullptr;
-  Q_FOREACH(QAction* action, findChildren<QAction*>()) {
+  for(QAction* action : findChildren<QAction*>()) {
     if(!action->menu()) continue;
     QString menuText = action->menu()->title();
     if(menuText != menuName) continue;
@@ -894,7 +894,7 @@ void MainWindow::updateViewersBboxes(bool recenter)
   {
   CGAL::qglviewer::Vec min, max;
   computeViewerBBox(min, max);
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     if(v == nullptr)
       continue;
@@ -939,7 +939,7 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& vmin, CGAL::qglviewer::
     }
   if(offset != viewer->offset())
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       if(v == nullptr)
         continue;
@@ -959,7 +959,7 @@ void MainWindow::reloadItem() {
 
   Scene_item* item = nullptr;
 
-  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  for(Scene::Item_id id : scene->selectionIndices())
   {
     item = scene->item(id);
     if(!item)//secure items like selection items that get deleted when their "parent" item is reloaded.
@@ -1017,7 +1017,7 @@ void MainWindow::reloadItem() {
 }
 
 CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::findLoader(const QString& loader_name) const {
-  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin,
+  for(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin :
             io_plugins) {
     if(io_plugin->name() == loader_name) {
       return io_plugin;
@@ -1037,7 +1037,7 @@ bool MainWindow::file_matches_filter(const QString& filters,
   QRegularExpression all_filters_rx("\\((.*)\\)");
 
   QStringList split_filters = filters.split(";;");
-  Q_FOREACH(const QString& filter, split_filters) {
+  for(const QString& filter : split_filters) {
       QRegularExpressionMatch match = all_filters_rx.match(filter);
       if(match.hasMatch()){
         for (const QString& pattern : match.captured(1).split(' ')) {
@@ -1322,7 +1322,7 @@ QList<int> MainWindow::getSelectedSceneItemIndices() const
 {
   QModelIndexList selectedIndices = sceneView->selectionModel()->selectedIndexes();
   QList<int> result;
-  Q_FOREACH(QModelIndex index, selectedIndices) {
+  for(QModelIndex index : selectedIndices) {
     int temp = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
     if(!result.contains(temp))
       result<<temp;
@@ -1335,7 +1335,7 @@ void MainWindow::selectionChanged()
   scene->setSelectedItemIndex(getSelectedSceneItemIndex());
   scene->setSelectedItemIndices(getSelectedSceneItemIndices());
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
-  Q_FOREACH(CGAL::QGLViewer* vi, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* vi : CGAL::QGLViewer::QGLViewerPool())
   {
     if(vi == nullptr)
       continue;
@@ -1346,7 +1346,7 @@ void MainWindow::selectionChanged()
       vi->setManipulatedFrame(nullptr);
     }
     if(vi->manipulatedFrame() == nullptr) {
-      Q_FOREACH(CGAL::Three::Scene_item* item, scene->entries()) {
+      for(CGAL::Three::Scene_item* item : scene->entries()) {
         if(item->manipulatable() && item->manipulatedFrame() != nullptr) {
           if(vi->manipulatedFrame() != nullptr) {
             // there are at least two possible frames
@@ -1444,7 +1444,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QVector<QMenu*> slider_menus;
         bool has_stats = false;
         bool has_reload = false;
-        Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+        for(Scene::Item_id id : scene->selectionIndices())
         {
           if(!scene->item(id)->property("source filename").toString().isEmpty())
           {
@@ -1452,7 +1452,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
             break;
           }
         }
-        Q_FOREACH(QAction* action, scene->item(main_index)->contextMenu()->actions())
+        for(QAction* action : scene->item(main_index)->contextMenu()->actions())
         {
           if(action->property("is_groupable").toBool())
           {
@@ -1476,7 +1476,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           }
 
         }
-        Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
+        for(Scene::Item_id index : scene->selectionIndices())
         {
           if(index == main_index)
             continue;
@@ -1490,7 +1490,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QMenu menu;
         menu.addAction(actionAddToGroup);
         menu.insertSeparator(nullptr);
-        Q_FOREACH(QString name, menu_actions.keys())
+        for(QString name : menu_actions.keys())
         {
           if(name == QString("alpha slider")
              || name == QString("points slider")
@@ -1512,10 +1512,10 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
 
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
-              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              for(Scene::Item_id id : scene->selectionIndices())
               {
                 Scene_item* item = scene->item(id);
-                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                for(QAction* action : item->contextMenu()->actions())
                 {
                   if(action->text() == "Alpha value")
                   {
@@ -1547,10 +1547,10 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
 
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
-              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              for(Scene::Item_id id : scene->selectionIndices())
               {
                 Scene_item* item = scene->item(id);
-                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                for(QAction* action : item->contextMenu()->actions())
                 {
                   if(action->text() == "Points Size")
                   {
@@ -1582,10 +1582,10 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
 
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
-              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              for(Scene::Item_id id : scene->selectionIndices())
               {
                 Scene_item* item = scene->item(id);
-                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                for(QAction* action : item->contextMenu()->actions())
                 {
                   if(action->text() == "Normals Length")
                   {
@@ -1625,10 +1625,10 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
 
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
-              Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+              for(Scene::Item_id id : scene->selectionIndices())
               {
                 Scene_item* item = scene->item(id);
-                Q_FOREACH(QAction* action, item->contextMenu()->actions())
+                for(QAction* action : item->contextMenu()->actions())
                 {
                   if(action->text() == "Line Width")
                   {
@@ -1652,7 +1652,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         }
         if(!slider_menus.empty())
         {
-          Q_FOREACH(QMenu* m, slider_menus){
+          for(QMenu* m : slider_menus){
             menu.addMenu(m);
           }
           menu.insertSeparator(nullptr);
@@ -1744,7 +1744,7 @@ void MainWindow::readSettings()
           settings.value("default_ps_rm", "points").toString());
     // read plugin blacklist
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
-    Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
+    for(QString name :blacklist){ plugin_blacklist.insert(name); }
     def_save_dir = settings.value("default_saveas_dir", QDir::homePath()).toString();
     this->default_point_size = settings.value("points_size").toInt();
     this->default_normal_length = settings.value("normals_length").toInt();
@@ -1758,7 +1758,7 @@ void MainWindow::writeSettings()
   {
     //setting plugin blacklist
     QStringList blacklist;
-    Q_FOREACH(QString name,plugin_blacklist){ blacklist << name; }
+    for(QString name :plugin_blacklist){ blacklist << name; }
     if ( !blacklist.isEmpty() ) settings.setValue("plugin_blacklist",blacklist);
     else settings.remove("plugin_blacklist");
   }
@@ -1838,7 +1838,7 @@ void MainWindow::on_actionLoad_triggered()
 
   for(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin : io_plugins) {
     QStringList split_filters = plugin->loadNameFilters().split(";;");
-    Q_FOREACH(const QString& filter, split_filters) {
+    for(const QString& filter : split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
         if(verbose)
@@ -1881,7 +1881,7 @@ void MainWindow::on_actionLoad_triggered()
                     std::back_inserter(colors_));
   std::size_t nb_item = -1;
 
-  Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
+  for(const QString& filename : dialog.selectedFiles()) {
 
     CGAL::Three::Scene_item* item = nullptr;
     if(selectedPlugin) {
@@ -2002,9 +2002,9 @@ void MainWindow::on_actionSaveAs_triggered()
     filename_ext.push_front(".");
 
     QStringList final_extensions;
-    Q_FOREACH(QString string, filter_exts)
+    for(QString string : filter_exts)
     {
-      Q_FOREACH(QString s, string.split(" ")){// in case of syntax like (*.a *.b)
+      for(QString s : string.split(" ")){// in case of syntax like (*.a *.b)
         s.remove(")");
         s.remove("(");
         //remove *
@@ -2099,7 +2099,7 @@ void MainWindow::on_actionDuplicate_triggered()
 void MainWindow::on_actionShowHide_triggered()
 {
   scene->setUpdatesEnabled(false);
-  Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
+  for(QModelIndex index : sceneView->selectionModel()->selectedRows())
   {
     int i = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
     CGAL::Three::Scene_item* item = scene->item(i);
@@ -2216,7 +2216,7 @@ void MainWindow::on_actionPreferences_triggered()
       ignoredBrush(Qt::lightGray);
 
   //add blacklisted plugins
-  Q_FOREACH (QString name, PathNames_map.keys())
+  for (QString name : PathNames_map.keys())
   {
     QTreeWidgetItem *item = new QTreeWidgetItem(prefdiag.treeWidget);
     item->setText(1, name);
@@ -2245,7 +2245,7 @@ void MainWindow::on_actionPreferences_triggered()
     detdiag.setupUi(&dialog);
     QTreeWidgetItem *header = new QTreeWidgetItem(titles);
     detdiag.treeWidget->setHeaderItem(header);
-    Q_FOREACH(QTreeWidgetItem* plugin_item, prefdiag.treeWidget->selectedItems())
+    for(QTreeWidgetItem* plugin_item : prefdiag.treeWidget->selectedItems())
     {
       QString name = plugin_item->text(1);
       QString keywords = plugin_metadata_map[name].first.join(", ");
@@ -2379,7 +2379,7 @@ void MainWindow::setBackgroundColor()
 {
   QColor c =  QColorDialog::getColor();
   if(c.isValid()) {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       if(v == nullptr)
         continue;
@@ -2456,7 +2456,7 @@ void MainWindow::on_actionLoadPlugin_triggered()
         this,
         tr("Select the directory containing your plugins:"),
         ".",filters);
-  Q_FOREACH(QString name, paths)
+  for(QString name : paths)
     load_plugin(name, false);
 
   updateMenus();
@@ -2549,7 +2549,7 @@ QString MainWindow::get_item_stats()
 {
   //1st step : get all classnames of the selected items
   QList<QString> classnames;
-  Q_FOREACH(int id, scene->selectionIndices())
+  for(int id : scene->selectionIndices())
   {
     Scene_item* item = scene->item(id);
     QString classname = item->property("classname").toString();
@@ -2561,7 +2561,7 @@ QString MainWindow::get_item_stats()
   //2nd step : separate the selection in lists corresponding to their classname
   QVector< QList<Scene_item*> > items;
   items.resize(classnames.size());
-  Q_FOREACH(int id, scene->selectionIndices())
+  for(int id : scene->selectionIndices())
   {
     Scene_item* s_item = scene->item(id);
     for(int i=0; i<items.size(); i++)
@@ -2588,7 +2588,7 @@ QString MainWindow::get_item_stats()
     {
       //1st row : item names
       str.append("<html> <table border=1>""<tr><td colspan = 2></td>");
-      Q_FOREACH(Scene_item* sit, items[i])
+      for(Scene_item* sit : items[i])
       {
         str.append(QString("<td>%1</td>").arg(sit->name()));
       }
@@ -2602,7 +2602,7 @@ QString MainWindow::get_item_stats()
                    .arg(data.categories[j].first));
         titles_limit+=data.categories[j].second;
         str.append(QString("<td> %1 </td>").arg(data.titles.at(title)));
-        Q_FOREACH(Scene_item* sit, items[i])
+        for(Scene_item* sit : items[i])
         {
           str.append(QString("<td>%1</td>").arg(sit->computeStats(title)));
         }
@@ -2610,7 +2610,7 @@ QString MainWindow::get_item_stats()
         for(;title<titles_limit; title++)
         {
           str.append(QString("</tr><tr><td> %1 </td>").arg(data.titles.at(title)));
-          Q_FOREACH(Scene_item* sit, items[i])
+          for(Scene_item* sit : items[i])
           {
             str.append(QString("<td>%1</td>").arg(sit->computeStats(title)));
           }
@@ -2703,7 +2703,7 @@ void MainWindow::colorItems()
                     std::back_inserter(colors_));
 
   std::size_t nb_item = -1;
-  Q_FOREACH(int id, scene->selectionIndices())
+  for(int id : scene->selectionIndices())
   {
     scene->item(id)->setColor(colors_[++nb_item]);
   }
@@ -2715,7 +2715,7 @@ void MainWindow::colorItems()
 void MainWindow::exportStatistics()
 {
   std::vector<Scene_item*> items;
-  Q_FOREACH(int id, getSelectedSceneItemIndices())
+  for(int id : getSelectedSceneItemIndices())
   {
     Scene_item* s_item = scene->item(id);
     items.push_back(s_item);
@@ -2767,10 +2767,10 @@ void MainWindow::propagate_action()
   QAction* sender = qobject_cast<QAction*>(this->sender());
   if(!sender) return;
   QString name = sender->text();
-  Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
+  for(Scene::Item_id id : scene->selectionIndices())
   {
     Scene_item* item = scene->item(id);
-    Q_FOREACH(QAction* action, item->contextMenu()->actions())
+    for(QAction* action : item->contextMenu()->actions())
     {
       if(action->text() == name)
       {
@@ -3163,7 +3163,7 @@ void MainWindow::toggleFullScreen()
   QList<QDockWidget *> dockWidgets = findChildren<QDockWidget *>();
   if(visibleDockWidgets.isEmpty())
   {
-    Q_FOREACH(QDockWidget * dock, dockWidgets)
+    for(QDockWidget * dock : dockWidgets)
     {
       if(dock->isVisible())
       {
@@ -3174,7 +3174,7 @@ void MainWindow::toggleFullScreen()
   }
   else
   {
-    Q_FOREACH(QDockWidget * dock, visibleDockWidgets){
+    for(QDockWidget * dock : visibleDockWidgets){
       dock->show();
     }
     visibleDockWidgets.clear();
@@ -3538,7 +3538,7 @@ void SubViewer::changeEvent(QEvent *event)
     if(isMaximized())
     {
       QMenu* menu = mw->findChild<QMenu*>("menuView");
-      Q_FOREACH(QAction* action, viewMenu->actions())
+      for(QAction* action : viewMenu->actions())
       {
         menu->addAction(action);
       }
@@ -3556,7 +3556,7 @@ void SubViewer::changeEvent(QEvent *event)
     else
     {
       QMenu* menu = mw->findChild<QMenu*>("menuView");
-      Q_FOREACH(QAction* action, viewMenu->actions())
+      for(QAction* action : viewMenu->actions())
       {
         menu->removeAction(action);
       }
@@ -3605,10 +3605,10 @@ void MainWindow::test_all_actions()
 {
   int nb_items = scene->numberOfEntries();
   selectSceneItem(0);
-  Q_FOREACH(PluginNamePair pnp, plugins)
+  for(PluginNamePair pnp : plugins)
   {
     Polyhedron_demo_plugin_interface* plugin = pnp.first;
-    Q_FOREACH(QAction* action, plugin->actions()){
+    for(QAction* action : plugin->actions()){
       if(plugin->applicable(action)){
         qDebug()<<"Testing "<<pnp.second<<"and "<<action->text()<<" on";
         qDebug()<<scene->item(scene->mainSelectionIndex())->name()<<"...";

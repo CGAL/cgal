@@ -1631,7 +1631,7 @@ void Viewer_impl::showDistance(QPoint pixel)
                                              QString(" distance: %1").arg(dist), true, font, Qt::red, true);
 
         distance_text.append(centerCoord);
-        Q_FOREACH(TextItem* ti, distance_text)
+        for(TextItem* ti : distance_text)
           textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
                   .arg(APoint.x/scaler.x()-viewer->offset().x)
@@ -1648,7 +1648,7 @@ void Viewer_impl::showDistance(QPoint pixel)
 void Viewer_impl::clearDistancedisplay()
 {
   distance_is_displayed = false;
-  Q_FOREACH(TextItem* ti, distance_text)
+  for(TextItem* ti : distance_text)
   {
     textRenderer->removeText(ti);
     delete ti;

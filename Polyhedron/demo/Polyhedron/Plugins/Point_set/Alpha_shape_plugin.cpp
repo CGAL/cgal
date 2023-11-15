@@ -363,7 +363,7 @@ void Scene_alpha_shape_item::invalidateOpenGLBuffers()
 {
   getTriangleContainer(0)->reset_vbos(ALL);
   setBuffersFilled(false);
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     Viewer_interface* viewer = static_cast<Viewer_interface*>(v);
     if(viewer == NULL)

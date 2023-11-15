@@ -112,7 +112,7 @@ public:
   void setEditMode(bool b)
   {
     is_edit_mode = b;
-    Q_FOREACH(CGAL::QGLViewer* viewer,CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* viewer :CGAL::QGLViewer::QGLViewerPool()){
       //for highlighting
       viewer->setMouseTracking(true);
     }
@@ -132,7 +132,7 @@ public:
     is_ready_to_paint_select = true;
     is_lasso_active = false;
 
-    Q_FOREACH(CGAL::QGLViewer* viewer,CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* viewer :CGAL::QGLViewer::QGLViewerPool()){
       viewer->installEventFilter(this);
       viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
     }

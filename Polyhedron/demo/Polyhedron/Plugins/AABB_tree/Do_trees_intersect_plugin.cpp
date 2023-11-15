@@ -42,7 +42,7 @@ public:
   {
     if(scene->selectionIndices().size() <2)
       return false;
-    Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
+    for(Scene::Item_id i : scene->selectionIndices())
     {
       if(! qobject_cast<Scene_surface_mesh_item*>(scene->item(i)))
         return false;
@@ -76,7 +76,7 @@ private Q_SLOTS:
   void start()
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
+    for(Scene::Item_id i : scene->selectionIndices())
     {
       Scene_surface_mesh_item* item=qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
       if (!CGAL::is_triangle_mesh(*item->face_graph()))
@@ -96,7 +96,7 @@ private Q_SLOTS:
       group_item = nullptr;});
 
     scene->addItem(group_item);
-    Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
+    for(Scene::Item_id i : scene->selectionIndices())
     {
       Scene_surface_mesh_item* item=qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
       connect(item, &Scene_surface_mesh_item::aboutToBeDestroyed,
@@ -147,7 +147,7 @@ public Q_SLOTS:
   {
     if(items.empty())
       return;
-    Q_FOREACH(Scene_movable_sm_item* item, items)
+    for(Scene_movable_sm_item* item : items)
       item->setColor(QColor(Qt::green));
 
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(
@@ -158,7 +158,7 @@ public Q_SLOTS:
 
     std::size_t mesh_id = 0;
     std::size_t sel_id = 0;
-    Q_FOREACH(Scene_movable_sm_item* item, items)
+    for(Scene_movable_sm_item* item : items)
     {
       if(item == sel_item)
       {
@@ -168,7 +168,7 @@ public Q_SLOTS:
       ++mesh_id;
     }
     mesh_id = 0;
-    Q_FOREACH(Scene_movable_sm_item* item, items)
+    for(Scene_movable_sm_item* item : items)
     {
       if(mesh_id == sel_id)
       {
@@ -251,7 +251,7 @@ public Q_SLOTS:
 
     std::size_t mesh_id = 0;
     std::size_t sel_id = 0;
-    Q_FOREACH(Scene_movable_sm_item* item, items)
+    for(Scene_movable_sm_item* item : items)
     {
       if(item == sel_item)
       {

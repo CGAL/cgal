@@ -568,7 +568,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->addItem(d->spheres);
           scene->changeGroup(d->spheres, this);
           lockChild(d->spheres);
-          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+          for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
           {
             d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
           }

@@ -313,7 +313,7 @@ public:
       // Look for action just after "Load..." action
       QAction* actionAfterLoad = nullptr;
       for(QList<QAction*>::iterator it_action = menuFileActions.begin(),
-          end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
+          end = menuFileActions.end() ; it_action != end ; ++ it_action ) //for( QAction* action : menuFileActions)
       {
         if(NULL != *it_action && (*it_action)->text().contains("Load..."))
         {
@@ -594,7 +594,7 @@ public Q_SLOTS:
 
   void connectNewViewer(QObject* o)
   {
-    Q_FOREACH(Controls c, group_map.values())
+    for(Controls c : group_map.values())
     {
       o->installEventFilter(c.x_item);
       o->installEventFilter(c.y_item);
@@ -827,7 +827,7 @@ private:
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));
     z_item->setColor(QColor("blue"));
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     {
       viewer->installEventFilter(x_item);
       viewer->installEventFilter(y_item);
@@ -927,7 +927,7 @@ private Q_SLOTS:
     CGAL::Three::Scene_group_item* group_item = qobject_cast<CGAL::Three::Scene_group_item*>(sender());
     if(group_item)
     {
-      Q_FOREACH(CGAL::Three::Scene_item* key, group_map.keys())
+      for(CGAL::Three::Scene_item* key : group_map.keys())
       {
         if(group_map[key].group == group_item)
         {
@@ -966,7 +966,7 @@ private Q_SLOTS:
       group_map.remove(img_item);
 
       QList<int> deletion;
-      Q_FOREACH(Scene_interface::Item_id id, group->getChildren())
+      for(Scene_interface::Item_id id : group->getChildren())
       {
         Scene_item* child = group->getChild(id);
         group->unlockChild(child);

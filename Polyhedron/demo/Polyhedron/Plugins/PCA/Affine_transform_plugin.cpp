@@ -126,7 +126,7 @@ public:
 
     QList<QLineEdit*> lineEdits;
     lineEdits << ui.lineEditA << ui.lineEditX << ui.lineEditY << ui.lineEditZ;
-    Q_FOREACH(QLineEdit* widget, lineEdits)
+    for(QLineEdit* widget : lineEdits)
     {
       QSizePolicy sp_retain = widget->sizePolicy();
       sp_retain.setRetainSizeWhenHidden(true);

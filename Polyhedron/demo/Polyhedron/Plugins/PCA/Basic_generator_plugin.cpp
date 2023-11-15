@@ -128,7 +128,7 @@ public :
             this, SLOT(on_actionPolyline_triggered()));
     _actions << actionPolyline;
 
-    Q_FOREACH(QAction* action, _actions)
+    for(QAction* action : _actions)
     {
       menu->addAction(action);
     }
@@ -689,7 +689,7 @@ void Basic_generator_plugin::generatePoints()
     return;
   }
 
-  Q_FOREACH(QString s, list)
+  for(QString s : list)
   {
     if(!s.isEmpty())
     {
@@ -754,7 +754,7 @@ void Basic_generator_plugin::generateLines()
     msgBox->exec();
     return;
   }
-  Q_FOREACH(QString s, list)
+  for(QString s : list)
   {
     if(!s.isEmpty())
     {

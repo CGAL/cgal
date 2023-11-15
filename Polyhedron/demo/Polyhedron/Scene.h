@@ -185,7 +185,7 @@ public Q_SLOTS:
   void setSelectedItem(CGAL::Three::Scene_item* item_to_select)
   {
     int i=0;
-    Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+    for(CGAL::Three::Scene_item* item : m_entries)
     {
       if (item==item_to_select)
       {
@@ -200,14 +200,14 @@ public Q_SLOTS:
   const QList<int>& setSelectedItemIndices(QList<int> l,
                                            const bool do_emit = true)
   {
-    Q_FOREACH(int i,l)
+    for(int i :l)
     {
        CGAL::Three::Scene_group_item* group =
                qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
        if(group)
        {
          QList<int> list;
-         Q_FOREACH(Item_id id, group->getChildrenForSelection())
+         for(Item_id id : group->getChildrenForSelection())
            list << id;
          l << setSelectedItemIndices(list, false /*do not emit*/);
        }
@@ -223,14 +223,14 @@ public Q_SLOTS:
   const QList<int>& setSelectedItemList(QList<int> l,
                                         const bool do_emit = true)
   {
-    Q_FOREACH(int i,l)
+    for(int i :l)
     {
        CGAL::Three::Scene_group_item* group =
                qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
        if(group)
        {
          QList<int> list;
-         Q_FOREACH(Item_id id, group->getChildrenForSelection())
+         for(Item_id id : group->getChildrenForSelection())
            list << id;
          l << setSelectedItemList(list, false /*do not emit*/);
        }
@@ -373,5 +373,3 @@ private:
 }; // end class SceneDelegate
 
 #endif // SCENE_H
-
-

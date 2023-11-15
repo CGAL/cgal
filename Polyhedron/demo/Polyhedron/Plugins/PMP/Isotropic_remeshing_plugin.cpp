@@ -228,7 +228,7 @@ public:
 
     bool ok(true), found_poly(false);
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if (!qobject_cast<Scene_facegraph_item*>(scene->item(index)))
         ok = false;

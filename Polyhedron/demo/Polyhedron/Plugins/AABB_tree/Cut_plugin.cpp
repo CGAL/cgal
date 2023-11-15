@@ -398,7 +398,7 @@ private:
 
     FT diag = scene_diag();
     std::vector<SM_Tree*> closed_sm_trees;
-    Q_FOREACH(SM_Tree *sm_tree, sm_trees->values())
+    for(SM_Tree *sm_tree : sm_trees->values())
       if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
         closed_sm_trees.push_back(sm_tree);
 #ifndef CGAL_LINKED_WITH_TBB
@@ -1063,7 +1063,7 @@ public Q_SLOTS:
   }
   void uncheckActions()
   {
-   Q_FOREACH(QAction* action, _actions)
+    for(QAction* action : _actions)
     if(action->isChecked())
     {
       action->setChecked(false);
@@ -1129,11 +1129,11 @@ private:
 
 Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
 {
-  Q_FOREACH(Facet_sm_tree *tree, facet_sm_trees.values())
+  for(Facet_sm_tree *tree : facet_sm_trees.values())
   {
     delete tree;
   }
-    Q_FOREACH(Edge_sm_tree *tree, edge_sm_trees.values())
+  for(Edge_sm_tree *tree : edge_sm_trees.values())
     {
       delete tree;
     }
@@ -1182,7 +1182,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
   QActionGroup *group = new QActionGroup(mainWindow);
   group->setExclusive(true);
 
-  Q_FOREACH(QAction *action, _actions)
+  for(QAction *action : _actions)
   {
     action->setActionGroup(group);
     action->setCheckable(true);

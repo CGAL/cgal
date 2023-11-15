@@ -1957,7 +1957,7 @@ void Scene_triangulation_3_item::invalidateOpenGLBuffers()
   getEdgeContainer(T3_edges)->reset_vbos(ALL);
   getEdgeContainer(Grid_edges)->reset_vbos(ALL);
 
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(viewer == NULL)
@@ -2192,4 +2192,3 @@ void Scene_triangulation_3_item::set_cut_edge(bool b)
 }
 
 #include "Scene_triangulation_3_item.moc"
-
