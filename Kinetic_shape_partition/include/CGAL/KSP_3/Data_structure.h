@@ -13,7 +13,7 @@
 #ifndef CGAL_KSP_3_DATA_STRUCTURE_H
 #define CGAL_KSP_3_DATA_STRUCTURE_H
 
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/function.hpp>

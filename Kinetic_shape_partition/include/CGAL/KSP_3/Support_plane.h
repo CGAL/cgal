@@ -13,7 +13,7 @@
 #ifndef CGAL_KSP_3_SUPPORT_PLANE_H
 #define CGAL_KSP_3_SUPPORT_PLANE_H
 
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 // CGAL includes.
 #include <CGAL/Surface_mesh.h>

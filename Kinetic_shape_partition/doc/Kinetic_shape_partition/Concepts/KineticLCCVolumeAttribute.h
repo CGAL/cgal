@@ -30,7 +30,7 @@ struct KineticLCCVolumeAttribute {
   /// 3D point type compatible with `Kinetic_shape_partition_3::Intersection_kernel`
   typedef unspecified_type Point_3;
   /// Contains the barycenter of the volume.
-  Point_3 bary_center;
+  Point_3 barycenter;
   /// 0-based volume id.
   std::size_t volume_id;
 /// @}

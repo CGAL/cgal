@@ -13,7 +13,7 @@
 #ifndef CGAL_KSP_2_SEGMENT_H
 #define CGAL_KSP_2_SEGMENT_H
 
-//#include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 namespace CGAL
 {

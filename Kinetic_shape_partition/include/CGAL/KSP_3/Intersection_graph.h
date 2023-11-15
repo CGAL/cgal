@@ -13,7 +13,7 @@
 #ifndef CGAL_KSP_3_INTERSECTION_GRAPH_H
 #define CGAL_KSP_3_INTERSECTION_GRAPH_H
 
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 // Boost includes.
 #include <boost/graph/adjacency_list.hpp>

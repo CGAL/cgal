@@ -78,7 +78,7 @@ public:
   using Index = std::pair<std::size_t, std::size_t>;
 
    /*!
-   identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a positive number, a side of the reoriented bounding box or a face of the octree used to partition the scene.
+   identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a non-negative number, a side of the bounding box in the rotated coordinate system or a face of the octree used to partition the scene.
    */
   enum Face_support : int {
     ZMIN        = -1,
@@ -105,7 +105,7 @@ public:
     };
 
     struct Volume_attribute {
-      typename Intersection_kernel::Point_3 bary_center;
+      typename Intersection_kernel::Point_3 barycenter;
       std::size_t volume_id;
     };
 
@@ -286,28 +286,28 @@ public:
   /*!
   \brief constructs a kinetic shape partition object and initializes it.
 
-  \tparam InputRange
+  \tparam PointRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is Point_3.
 
   \tparam PolygonRange
-  contains index ranges to form polygons by providing indices into InputRange
+  contains index ranges to form polygons by providing indices into PointRange
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param input_range
-  an instance of `InputRange` with 3D points and corresponding 3D normal vectors
+  \param points
+  an instance of `PointRange` with 3D points and corresponding 3D normal vectors
 
-  \param polygon_range
-  a range of non-coplanar polygons defined by a range of indices into `input_range`
+  \param polygons
+  a range of non-coplanar polygons defined by a range of indices into `points`
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the `input_range`}
-       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `InputRange` and whose value type is `GeomTraits::Point_3`}
+       \cgalParamDescription{a property map associating points to the elements of the `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
        \cgalParamDefault{`CGAL::Identity_property_map<GeomTraits::Point_3>`}
      \cgalParamNEnd
     \cgalParamNBegin{verbose}
@@ -328,70 +328,70 @@ public:
   \cgalNamedParamsEnd
 
 
-  \pre ! input_range.empty() and ! polygon_map.empty()
+  \pre ! points.empty() and ! polygons.empty()
 
   */
   template<
-    typename InputRange,
+    typename PointRange,
     typename PolygonRange,
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
-    const InputRange& input_range,
+    const PointRange& point_range,
     const PolygonRange& polygon_range,
     const NamedParameters& np = CGAL::parameters::default_values()) :
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
     m_input2regularized() {
-    insert(input_range, polygon_range, np);
+    insert(point_range, polygon_range, np);
     initialize(np);
   }
 
   /*!
   \brief inserts non-coplanar polygons, requires `initialize()` afterwards to have effect.
 
-  \tparam InputRange
+  \tparam PointRange
   must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and whose value type is `GeomTraits::Point_3`.
 
   \tparam PolygonRange
-  contains index ranges to form polygons by providing indices into InputRange
+  contains index ranges to form polygons by providing indices into PointRange
 
   \tparam NamedParameters
   a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  \param input_range
-  an instance of `InputRange` with 3D points
+  \param points
+  an instance of `PointRange` with 3D points
 
-  \param polygon_range
-  a range of non-coplanar polygons defined by a range of indices into `input_range`
+  \param polygons
+  a range of non-coplanar polygons defined by a range of indices into `points`
 
   \param np
   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the `input_range`}
-       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `InputRange` and whose value type is `GeomTraits::Point_3`}
+       \cgalParamDescription{a property map associating points to the elements of the `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
        \cgalParamDefault{`CGAL::Identity_property_map<GeomTraits::Point_3>`}
      \cgalParamNEnd
   \cgalNamedParamsEnd
   */
-  template<typename InputRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
+  template<typename PointRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
   void insert(
-    const InputRange& input_range,
-    const PolygonRange& polygon_range,
+    const PointRange& points,
+    const PolygonRange& polygons,
     const NamedParameters& np = CGAL::parameters::default_values()) {
     To_exact to_exact;
     From_exact from_exact;
     std::size_t offset = m_input2regularized.size();
 
-    for (std::size_t p = 0; p < polygon_range.size();p++) {
-      auto& poly = polygon_range[p];
+    for (std::size_t p = 0; p < polygons.size();p++) {
+      auto& poly = polygons[p];
 
       std::vector<Point_3> pts;
       pts.reserve(poly.size());
       for (auto it : poly)
-        pts.push_back(*(input_range.begin() + it));
+        pts.push_back(*(points.begin() + it));
       Plane_3 pl;
       Point_2 c;
       std::vector<Point_2> ch;
@@ -740,23 +740,6 @@ public:
 
   /// \name Access
   /// @{
-//   /*!
-//   \brief returns the number of vertices in the kinetic partition.
-//
-//   \pre created partition
-//   */
-//   std::size_t number_of_vertices() const {
-//     return m_data.vertices().size();
-//   }
-//
-//   /*!
-//   \brief returns the number of faces in the kinetic partition.
-//
-//   \pre created partition
-//   */
-//   std::size_t number_of_faces() const {
-//     return m_data.face_to_vertices().size();
-//   }
 
   /*!
   \brief returns the number of volumes created by the kinetic partition.
@@ -989,7 +972,7 @@ public:
 
       auto ah = lcc.template create_attribute<3>();
       lcc.set_attribute<3>(d, ah);
-      lcc.info<3>(d).bary_center = centroid;
+      lcc.info<3>(d).barycenter = centroid;
       lcc.info<3>(d).volume_id = v;
 
       std::size_t unused = 0;

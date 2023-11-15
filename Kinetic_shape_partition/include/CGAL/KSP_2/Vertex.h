@@ -13,7 +13,7 @@
 #ifndef CGAL_KSP_2_VERTEX_H
 #define CGAL_KSP_2_VERTEX_H
 
-//#include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 #include <CGAL/KSP/utils.h>
 

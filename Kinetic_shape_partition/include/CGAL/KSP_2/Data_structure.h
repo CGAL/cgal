@@ -13,7 +13,7 @@
 #ifndef CGAL_KSP_2_DATA_STRUCTURE_H
 #define CGAL_KSP_2_DATA_STRUCTURE_H
 
-//#include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 
 #include <CGAL/KSP/utils.h>
 #include <CGAL/KSP_2/Support_line.h>
