@@ -142,10 +142,7 @@ public:
     //m_data.set_limit_lines();
     m_data.precompute_iedge_data();
     const double time_to_precompute = timer.time();
-    CGAL_assertion(m_data.check_intersection_graph());
-
-    m_data.initialization_done();
-
+        m_data.initialization_done();
 
     if (m_parameters.debug) {
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
@@ -752,9 +749,9 @@ private:
     for (std::size_t i = 0;i<m_input_polygons.size();i++) {
 
       bool is_added = true;
-      std::size_t support_plane_idx = KSR::no_element();
+      std::size_t support_plane_idx = KSP::no_element();
       std::tie(support_plane_idx, is_added) = m_data.add_support_plane(m_input_polygons[i], false, m_input_planes[i]);
-      CGAL_assertion(support_plane_idx != KSR::no_element());
+      CGAL_assertion(support_plane_idx != KSP::no_element());
       convert_polygon(support_plane_idx, m_input_polygons[i], polygon_2);
 
       if (is_added) {
@@ -937,7 +934,7 @@ private:
       for (auto it_b = map_p2vv.begin(); it_b != map_p2vv.end(); ++it_b) {
         const auto& set_b = it_b->first;
 
-        std::size_t common_plane_idx = KSR::no_element();
+        std::size_t common_plane_idx = KSP::no_element();
         const std::function<void(const std::size_t idx)> lambda =
           [&](const std::size_t idx) {
             common_plane_idx = idx;
@@ -949,7 +946,7 @@ private:
           boost::make_function_output_iterator(lambda)
         );
 
-        if (common_plane_idx != KSR::no_element()) {
+        if (common_plane_idx != KSP::no_element()) {
           auto union_set = set_a;
           union_set.insert(set_b.begin(), set_b.end());
           if (!done.insert(union_set).second) {

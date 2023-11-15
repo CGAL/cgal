@@ -19,7 +19,6 @@
 #include <boost/function.hpp>
 
 // Internal includes.
-#include <CGAL/KSP/enum.h>
 #include <CGAL/KSP/utils.h>
 #include <CGAL/KSP/debug.h>
 #include <CGAL/KSP/parameters.h>
@@ -178,8 +177,6 @@ public:
 
   using IEdge_set = typename Intersection_graph::IEdge_set;
 
-  using Visibility_label = KSR::Visibility_label;
-
   using Index = std::pair<std::size_t, std::size_t>; // first is partition index, second is volume index. Partition -1 indicates outside. 0-5 indicate which side of the bbox
 
   struct Volume_cell {
@@ -191,7 +188,6 @@ public:
     std::size_t index = std::size_t(-1);
     Point_3 centroid;
 
-    Visibility_label visibility = Visibility_label::INSIDE;
     FT inside  = FT(1);
     FT outside = FT(0);
     FT weight  = FT(0);
@@ -626,7 +622,7 @@ public:
 
     const Support_plane new_support_plane(
       polygon, is_bbox, plane, number_of_support_planes());
-    std::size_t support_plane_idx = KSR::no_element();
+    std::size_t support_plane_idx = KSP::no_element();
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (new_support_plane == support_plane(i)) {
@@ -635,7 +631,7 @@ public:
       }
     }
 
-    if (support_plane_idx == KSR::no_element()) {
+    if (support_plane_idx == KSP::no_element()) {
       support_plane_idx = number_of_support_planes();
       m_support_planes.push_back(new_support_plane);
     }
@@ -654,7 +650,7 @@ public:
 
     const Support_plane new_support_plane(
       polygon, is_bbox, number_of_support_planes());
-    std::size_t support_plane_idx = KSR::no_element();
+    std::size_t support_plane_idx = KSP::no_element();
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (new_support_plane == support_plane(i)) {
@@ -663,7 +659,7 @@ public:
       }
     }
 
-    if (support_plane_idx == KSR::no_element()) {
+    if (support_plane_idx == KSP::no_element()) {
       support_plane_idx = number_of_support_planes();
       m_support_planes.push_back(new_support_plane);
     }
@@ -703,7 +699,7 @@ public:
 
     std::vector<Pair> polygon;
     polygon.reserve(3);
-    const FT ptol = KSR::point_tolerance<FT>();
+    const FT ptol = KSP::point_tolerance<FT>();
     const auto all_iedges = m_intersection_graph.edges();
     for (const auto iedge : all_iedges) {
       const auto segment = segment_3(iedge);
@@ -713,8 +709,8 @@ public:
 
       const auto isource = source(iedge);
       const auto itarget = target(iedge);
-      const bool is_isource = KSR::distance(point, point_3(isource)) == 0;// (dist1 < ptol);
-      const bool is_itarget = KSR::distance(point, point_3(itarget)) == 0;// (dist2 < ptol);
+      const bool is_isource = KSP::distance(point, point_3(isource)) == 0;// (dist1 < ptol);
+      const bool is_itarget = KSP::distance(point, point_3(itarget)) == 0;// (dist2 < ptol);
 
       std::vector<IEdge> iedges;
       if (is_isource) {
@@ -802,13 +798,13 @@ public:
       const auto& iplanes0 = all_iplanes[i];
       const auto& iplanes1 = all_iplanes[ip];
 
-      std::size_t common_bbox_plane_idx = KSR::no_element();
+      std::size_t common_bbox_plane_idx = KSP::no_element();
       bool dump = false;
       const std::function<void(const std::size_t& idx)> lambda =
         [&](const std::size_t& idx) {
         if (idx < 6) {
 
-          if (common_bbox_plane_idx != KSR::no_element())
+          if (common_bbox_plane_idx != KSP::no_element())
             dump = true;
             common_bbox_plane_idx = idx;
           }
@@ -832,11 +828,11 @@ public:
         vout.close();
       }
 
-      CGAL_assertion(common_bbox_plane_idx != KSR::no_element());
+      CGAL_assertion(common_bbox_plane_idx != KSP::no_element());
       common_bbox_planes_idx.push_back(common_bbox_plane_idx);
 
       const auto pair = map_lines_idx.insert(
-        std::make_pair(common_bbox_plane_idx, KSR::no_element()));
+        std::make_pair(common_bbox_plane_idx, KSP::no_element()));
       const bool is_inserted = pair.second;
       if (is_inserted) {
         typename Intersection_kernel::Line_3 line;
@@ -899,10 +895,10 @@ public:
   void add_bbox_polygon(const PointRange& polygon, const typename Intersection_kernel::Plane_3& plane) {
 
     bool is_added = true;
-    std::size_t support_plane_idx = KSR::no_element();
+    std::size_t support_plane_idx = KSP::no_element();
     std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true, plane);
     CGAL_assertion(is_added);
-    CGAL_assertion(support_plane_idx != KSR::no_element());
+    CGAL_assertion(support_plane_idx != KSP::no_element());
 
     std::array<IVertex, 4> ivertices;
     std::array<Point_2, 4> points;
@@ -932,10 +928,10 @@ public:
   void add_bbox_polygon(const PointRange& polygon) {
 
     bool is_added = true;
-    std::size_t support_plane_idx = KSR::no_element();
+    std::size_t support_plane_idx = KSP::no_element();
     std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true);
     CGAL_assertion(is_added);
-    CGAL_assertion(support_plane_idx != KSR::no_element());
+    CGAL_assertion(support_plane_idx != KSP::no_element());
 
     std::array<IVertex, 4> ivertices;
     std::array<Point_2, 4> points;
@@ -986,7 +982,7 @@ public:
   template<typename Pair>
   void preprocess(
     std::vector<Pair>& points,
-    const FT min_dist = KSR::tolerance<FT>(),
+    const FT min_dist = KSP::tolerance<FT>(),
     const FT min_angle = FT(10)) const {
 
     remove_equal_points(points, min_dist);
@@ -1007,7 +1003,7 @@ public:
         const auto& p = points[i].first;
         const std::size_t ip = (i + 1) % n;
         const auto& q = points[ip].first;
-        const FT distance = from_exact(KSR::distance(p, q));
+        const FT distance = from_exact(KSP::distance(p, q));
         const bool is_small = (distance <= min_dist);
         if (ip == 0 && is_small) break;
         if (is_small) {
@@ -1037,12 +1033,12 @@ public:
 
       Vector_2 vec1(q, r);
       Vector_2 vec2(q, p);
-      vec1 = KSR::normalize(vec1);
-      vec2 = KSR::normalize(vec2);
+      vec1 = KSP::normalize(vec1);
+      vec2 = KSP::normalize(vec2);
 
       const Direction_2 dir1(vec1);
       const Direction_2 dir2(vec2);
-      const FT angle = KSR::angle_2(dir1, dir2);
+      const FT angle = KSP::angle_2(dir1, dir2);
 
       if (angle > min_angle) polygon.push_back(points[i]);
     }
@@ -1074,9 +1070,9 @@ public:
   **        PSimplices          **
   ********************************/
 
-  static PVertex null_pvertex() { return PVertex(KSR::no_element(), Vertex_index()); }
-  static PEdge   null_pedge()   { return   PEdge(KSR::no_element(),   Edge_index()); }
-  static PFace   null_pface()   { return   PFace(KSR::no_element(),   Face_index()); }
+  static PVertex null_pvertex() { return PVertex(KSP::no_element(), Vertex_index()); }
+  static PEdge   null_pedge()   { return   PEdge(KSP::no_element(),   Edge_index()); }
+  static PFace   null_pface()   { return   PFace(KSP::no_element(),   Face_index()); }
 
   const PVertices pvertices(const std::size_t support_plane_idx) const {
     return PVertices(
@@ -1149,8 +1145,8 @@ public:
 
   const PVertex add_pvertex(const std::size_t support_plane_idx, const Point_2& point) {
 
-    CGAL_assertion(support_plane_idx != KSR::uninitialized());
-    CGAL_assertion(support_plane_idx != KSR::no_element());
+    CGAL_assertion(support_plane_idx != KSP::uninitialized());
+    CGAL_assertion(support_plane_idx != KSP::no_element());
 
     auto& m = mesh(support_plane_idx);
     const auto vi = m.add_vertex(point);
@@ -1162,8 +1158,8 @@ public:
   const PFace add_pface(const VertexRange& pvertices) {
 
     const auto support_plane_idx = pvertices.front().first;
-    CGAL_assertion(support_plane_idx != KSR::uninitialized());
-    CGAL_assertion(support_plane_idx != KSR::no_element());
+    CGAL_assertion(support_plane_idx != KSP::uninitialized());
+    CGAL_assertion(support_plane_idx != KSP::no_element());
 
     auto& m = mesh(support_plane_idx);
     const auto range = CGAL::make_range(
@@ -1546,7 +1542,7 @@ public:
   bool is_zero_length_iedge(const IVertex& a, const IVertex& b) const {
     const auto& p = m_intersection_graph.point_3(a);
     const auto& q = m_intersection_graph.point_3(b);
-    return KSR::distance(p, q) == 0;
+    return KSP::distance(p, q) == 0;
   }
 
   bool is_iedge(const IVertex& source, const IVertex& target) const {
@@ -1826,30 +1822,6 @@ public:
             "ERROR: FACE MUST HAVE 1 OR 2 NEIGHBORS!");
           success = false;
         }
-      }
-    }
-
-    return success;
-  }
-
-  bool check_intersection_graph() const {
-    bool success = true;
-
-    std::cout.precision(20);
-    const FT ptol = KSR::point_tolerance<FT>();
-    const auto iedges = m_intersection_graph.edges();
-    for (const auto iedge : iedges) {
-      const auto isource = source(iedge);
-      const auto itarget = target(iedge);
-      const auto source_p = point_3(isource);
-      const auto target_p = point_3(itarget);
-      const FT distance = from_exact(KSR::distance(source_p, target_p));
-      if (distance < ptol) {
-        std::cout << "ERROR: FOUND ZERO-LENGTH IEDGE: "
-        << str(iedge) << ", " << distance << ", " << segment_3(iedge) << std::endl;
-        CGAL_assertion_msg(distance >= ptol,
-        "ERROR: INTERSECTION GRAPH HAS ZERO-LENGTH IEDGES!");
-        success = false;
       }
     }
 

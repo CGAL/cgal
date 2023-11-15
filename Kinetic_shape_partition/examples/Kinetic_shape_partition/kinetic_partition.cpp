@@ -24,36 +24,6 @@ using Timer        = CGAL::Real_timer;
 
 double add_polys = 0, intersections = 0, iedges = 0, ifaces = 0, mapping = 0;
 
-void get_affine_transformation(std::vector<Point_3>& pts, std::vector<std::vector<std::size_t> >& polys) {
-  // Projection in 2d
-
-  FT minz = (std::numeric_limits<FT>::max)(), maxz = -(std::numeric_limits<FT>::max)();
-  std::vector<bool> used_pts(pts.size(), false);
-  std::size_t count = 0;
-  for (std::size_t i = 0; i < polys.size(); i++)
-    for (std::size_t j = 0; j < polys[i].size(); j++) {
-      if (!used_pts[polys[i][j]]) {
-        used_pts[polys[i][j]] = true;
-        count++;
-      }
-    }
-
-  std::vector<Point_2> pts2d;
-  pts2d.reserve(count);
-
-  for (std::size_t i = 0; i < used_pts.size(); i++) {
-    if (used_pts[i])
-      pts2d.push_back(Point_2(pts[i].x(), pts[i].y()));
-  }
-
-  std::vector<Point_2> ch;
-  CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
-
-  std::vector<Point_2> bbox;
-  bbox.reserve(8);
-  CGAL::min_rectangle_2(ch.begin(), ch.end(), std::back_inserter(bbox));
-}
-
 int main(const int argc, const char** argv) {
 
   // Reading polygons from file

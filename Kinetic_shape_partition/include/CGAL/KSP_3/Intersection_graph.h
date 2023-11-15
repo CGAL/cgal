@@ -61,7 +61,7 @@ public:
     std::set<std::size_t> planes;
     std::set<std::size_t> crossed;
     std::map<std::size_t, Kinetic_interval> intervals; // Maps support plane index to the kinetic interval. std::pair<FT, FT> is the barycentric coordinate and intersection time.
-    Edge_property() : line(KSR::no_element()), order(edge_counter++) { }
+    Edge_property() : line(KSP::no_element()), order(edge_counter++) { }
 
     const Edge_property& operator=(const Edge_property& other) {
       line = other.line;

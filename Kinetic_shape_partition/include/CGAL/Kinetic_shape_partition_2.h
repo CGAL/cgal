@@ -162,21 +162,21 @@ public:
     {
       const Segment& segment = m_data.segment(i);
 
-      if (segment.source_idx() == KSR::no_element())
+      if (segment.source_idx() == KSP::no_element())
       {
         if (verbose)
           std::cerr << "ERROR: Segment[" << i
                     << "] has source Vertex[-1]" << std::endl;
         return false;
       }
-      if (segment.target_idx() == KSR::no_element())
+      if (segment.target_idx() == KSP::no_element())
       {
         if (verbose)
           std::cerr << "ERROR: Segment[" << i
                     << "] has source Vertex[-1]" << std::endl;
         return false;
       }
-      if (segment.support_line_idx() == KSR::no_element())
+      if (segment.support_line_idx() == KSP::no_element())
       {
         if (verbose)
           std::cerr << "ERROR: Segment[" << i
@@ -209,8 +209,8 @@ public:
                     << "] acting both as source and target" << std::endl;
         return false;
       }
-      if (m_data.source_of_segment(segment).meta_vertex_idx() != KSR::no_element()
-          && m_data.target_of_segment(segment).meta_vertex_idx() != KSR::no_element()
+      if (m_data.source_of_segment(segment).meta_vertex_idx() != KSP::no_element()
+          && m_data.target_of_segment(segment).meta_vertex_idx() != KSP::no_element()
           && m_data.source_of_segment(segment).meta_vertex_idx() == m_data.target_of_segment(segment).meta_vertex_idx())
       {
         if (verbose)
@@ -261,7 +261,7 @@ public:
     {
       const Vertex& vertex = m_data.vertex(i);
 
-      if (vertex.segment_idx() == KSR::no_element())
+      if (vertex.segment_idx() == KSP::no_element())
       {
         if (verbose)
           std::cerr << "ERROR: Vertex[" << i

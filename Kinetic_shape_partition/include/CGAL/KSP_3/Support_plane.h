@@ -217,7 +217,7 @@ public:
     CGAL_assertion(n != 0);
 
     m_data->k = 0;
-    m_data->plane = Plane_3(points[0], KSR::normalize(normal));
+    m_data->plane = Plane_3(points[0], KSP::normalize(normal));
     m_data->exact_plane = to_exact(m_data->plane);
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
@@ -391,7 +391,7 @@ public:
     CGAL_assertion(fi != Mesh::null_face());
     auto& input_vec = m_data->input_map[fi];
     CGAL_assertion(input_vec.empty());
-    input_vec.push_back(KSR::no_element());
+    input_vec.push_back(KSP::no_element());
     return vertices;
   }
 
@@ -496,7 +496,7 @@ public:
       const std::size_t ip = (i + 1) % polygon.size();
       const auto& p = polygon[i].first;
       const auto& q = polygon[ip].first;
-      const bool is_equal_zero = (KSR::distance(p, q) == 0);
+      const bool is_equal_zero = (KSP::distance(p, q) == 0);
       CGAL_assertion_msg(!is_equal_zero,
       "ERROR: WE HAVE EQUAL POINTS IN THE INPUT POLYGON!");
       if (is_equal_zero) return false;
@@ -845,7 +845,7 @@ bool operator==(const Support_plane<GeomTraits, IntersectionKernel>& a, const Su
   const auto vb = planeb.orthogonal_vector();
 
   // Are the planes parallel?
-  // const FT vtol = KSR::vector_tolerance<FT>();
+  // const FT vtol = KSP::vector_tolerance<FT>();
   // const FT aval = CGAL::abs(va * vb);
 
   // std::cout << "aval: " << aval << " : " << vtol << std::endl;
@@ -867,8 +867,8 @@ bool operator==(const Support_plane<GeomTraits, IntersectionKernel>& a, const Su
   const auto pb2 = b.to_3d(b.centroid());
   const auto pa2 = planea.projection(pb2);
 
-  const FT bval1 = KSR::distance(pa1, pb1);
-  const FT bval2 = KSR::distance(pa2, pb2);
+  const FT bval1 = KSP::distance(pa1, pb1);
+  const FT bval2 = KSP::distance(pa2, pb2);
   const FT bval = (CGAL::max)(bval1, bval2);
   CGAL_assertion(bval >= FT(0));
 
