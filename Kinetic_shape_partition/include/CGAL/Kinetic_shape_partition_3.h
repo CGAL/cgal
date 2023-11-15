@@ -336,14 +336,14 @@ public:
     typename PolygonRange,
     typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_shape_partition_3(
-    const PointRange& point_range,
-    const PolygonRange& polygon_range,
+    const PointRange& points,
+    const PolygonRange& polygons,
     const NamedParameters& np = CGAL::parameters::default_values()) :
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
     m_input2regularized() {
-    insert(point_range, polygon_range, np);
+    insert(points, polygons, np);
     initialize(np);
   }
 
