@@ -43,15 +43,15 @@ public:
   typedef typename Kernel::Ray_2 Ray_2;
   typedef typename Kernel::Vector_2 Vector_2;
 
-  typedef KSR_2::Data_structure<Kernel> Data;
+  typedef KSP_2::Data_structure<Kernel> Data;
   typedef typename Data::Support_line Support_line;
   typedef typename Data::Segment Segment;
   typedef typename Data::Vertex Vertex;
 
   typedef typename Data::Meta_vertex Meta_vertex;
 
-  typedef KSR_2::Event<Kernel> Event;
-  typedef KSR_2::Event_queue<Kernel> Event_queue;
+  typedef KSP_2::Event<Kernel> Event;
+  typedef KSP_2::Event_queue<Kernel> Event_queue;
 
 private:
 
@@ -124,7 +124,7 @@ public:
       const Support_line& support_line = m_data.support_line(i);
       for (std::size_t s : support_line.segments_idx())
       {
-        if (s == KSR::no_element())
+        if (s == KSP::no_element())
         {
           if (verbose)
             std::cerr << "ERROR: Support_line[" << i
@@ -268,7 +268,7 @@ public:
                     << "] is on Segment[-1]" << std::endl;
         return false;
       }
-      // if (vertex.meta_vertex_idx() == KSR::no_element())
+      // if (vertex.meta_vertex_idx() == KSP::no_element())
       // {
       //   if (verbose)
       //     std::cerr << "ERROR: Vertex[" << i
@@ -618,7 +618,7 @@ private:
                          != m_data.segment(segment_idx_b).support_line_idx());
 
          Point_2 point;
-         if (!KSR::intersection(segments_2[segment_idx_a], segments_2[segment_idx_b], point))
+         if (!KSP::intersection(segments_2[segment_idx_a], segments_2[segment_idx_b], point))
            return;
 
          todo.push_back (std::make_tuple (point,
@@ -712,7 +712,7 @@ private:
             continue;
 
           Point_2 point;
-          if (!KSR::intersection(si, segments_2[segment_idx], point))
+          if (!KSP::intersection(si, segments_2[segment_idx], point))
             continue;
 
           Support_line& sli = m_data.support_line_of_vertex(vertex);
@@ -896,7 +896,7 @@ private:
       m_data.vertex(ev.vertex_idx()).remaining_intersections() --;
 
     // If there are still intersections to be made, propagate
-    std::size_t new_vertex_idx = KSR::no_element();
+    std::size_t new_vertex_idx = KSP::no_element();
     if (m_data.vertex(ev.vertex_idx()).remaining_intersections() != 0)
       new_vertex_idx = m_data.propagate_segment (ev.vertex_idx());
     else
@@ -912,7 +912,7 @@ private:
     std::vector<Event> events;
     m_queue.erase_vertex_events (old_vertex, events);
 
-    if (new_vertex != KSR::no_element())
+    if (new_vertex != KSP::no_element())
       for (Event& ev : events)
       {
         ev.vertex_idx() = new_vertex;
@@ -934,13 +934,13 @@ private:
 
       CGAL_assertion (support_line.meta_vertices_idx().size() > 1);
 
-      std::size_t beginning = KSR::no_element();
-      std::size_t end = KSR::no_element();
+      std::size_t beginning = KSP::no_element();
+      std::size_t end = KSP::no_element();
 
       for (std::size_t segment_idx : support_line.segments_idx())
       {
         // New segment
-        if (beginning == KSR::no_element())
+        if (beginning == KSP::no_element())
         {
           beginning = m_data.source_of_segment(segment_idx).meta_vertex_idx();
           end = m_data.target_of_segment(segment_idx).meta_vertex_idx();

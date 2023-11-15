@@ -10,15 +10,15 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KSR_2_SEGMENT_H
-#define CGAL_KSR_2_SEGMENT_H
+#ifndef CGAL_KSP_2_SEGMENT_H
+#define CGAL_KSP_2_SEGMENT_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 namespace CGAL
 {
 
-namespace KSR_2
+namespace KSP_2
 {
 
 class Segment
@@ -48,7 +48,7 @@ public:
 };
 
 
-}} // namespace CGAL::KSR_2
+}} // namespace CGAL::KSP_2
 
 
-#endif // CGAL_KSR_2_POLYGON_H
+#endif // CGAL_KSP_2_POLYGON_H

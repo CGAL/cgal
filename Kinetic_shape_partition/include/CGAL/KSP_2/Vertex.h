@@ -10,17 +10,17 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KSR_2_VERTEX_H
-#define CGAL_KSR_2_VERTEX_H
+#ifndef CGAL_KSP_2_VERTEX_H
+#define CGAL_KSP_2_VERTEX_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
-#include <CGAL/KSR/utils.h>
+#include <CGAL/KSP/utils.h>
 
 namespace CGAL
 {
 
-namespace KSR_2
+namespace KSP_2
 {
 
 template <typename FT>
@@ -39,13 +39,13 @@ public:
   Vertex () { }
 
   Vertex (FT point,
-          std::size_t segment_idx = KSR::no_element(),
+          std::size_t segment_idx = KSP::no_element(),
           unsigned int remaining_intersections = 0)
     : m_point (point)
     , m_direction (0)
     , m_segment_idx (segment_idx)
     , m_remaining_intersections(remaining_intersections)
-    , m_meta_vertex_idx (KSR::no_element())
+    , m_meta_vertex_idx (KSP::no_element())
   {
   }
 
@@ -82,7 +82,7 @@ public:
 };
 
 
-}} // namespace CGAL::KSR_2
+}} // namespace CGAL::KSP_2
 
 
-#endif // CGAL_KSR_2_VERTEX_H
+#endif // CGAL_KSP_2_VERTEX_H

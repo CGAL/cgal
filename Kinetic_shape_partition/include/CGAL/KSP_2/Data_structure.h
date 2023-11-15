@@ -10,22 +10,22 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KSR_2_DATA_STRUCTURE_H
-#define CGAL_KSR_2_DATA_STRUCTURE_H
+#ifndef CGAL_KSP_2_DATA_STRUCTURE_H
+#define CGAL_KSP_2_DATA_STRUCTURE_H
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR_2/Support_line.h>
-#include <CGAL/KSR_2/Segment.h>
-#include <CGAL/KSR_2/Vertex.h>
+#include <CGAL/KSP/utils.h>
+#include <CGAL/KSP_2/Support_line.h>
+#include <CGAL/KSP_2/Segment.h>
+#include <CGAL/KSP_2/Vertex.h>
 
-#include <CGAL/KSR_2/Meta_vertex.h>
+#include <CGAL/KSP_2/Meta_vertex.h>
 
 namespace CGAL
 {
 
-namespace KSR_2
+namespace KSP_2
 {
 
 template <typename GeomTraits>
@@ -41,11 +41,11 @@ public:
   typedef typename Kernel::Line_2 Line_2;
   typedef typename Kernel::Segment_2 Segment_2;
 
-  typedef KSR_2::Support_line<Kernel> Support_line;
-  typedef KSR_2::Segment Segment;
-  typedef KSR_2::Vertex<FT> Vertex;
+  typedef KSP_2::Support_line<Kernel> Support_line;
+  typedef KSP_2::Segment Segment;
+  typedef KSP_2::Vertex<FT> Vertex;
 
-  typedef KSR_2::Meta_vertex<Point_2> Meta_vertex;
+  typedef KSP_2::Meta_vertex<Point_2> Meta_vertex;
 
   typedef std::vector<Support_line> Support_lines;
   typedef std::vector<Segment> Segments;
@@ -109,7 +109,7 @@ public:
   std::string segment_str (std::size_t segment_idx) const
   {
     return "Segment[" + std::to_string(segment_idx)
-      + " from " + (segment(segment_idx).input_idx() == KSR::no_element() ?
+      + " from " + (segment(segment_idx).input_idx() == KSP::no_element() ?
                     "bbox" : std::to_string(segment(segment_idx).input_idx()))
       + "](v" + std::to_string(segment(segment_idx).source_idx())
       + "->v" + std::to_string(segment(segment_idx).target_idx())
@@ -213,7 +213,7 @@ public:
   { return meta_vertex_of_vertex(m_vertices[vertex_idx]); }
 
   bool has_meta_vertex (const Vertex& vertex) const
-  { return vertex.meta_vertex_idx() != KSR::no_element(); }
+  { return vertex.meta_vertex_idx() != KSP::no_element(); }
   bool has_meta_vertex (std::size_t vertex_idx) const
   { return has_meta_vertex (m_vertices[vertex_idx]); }
 
@@ -290,7 +290,7 @@ public:
 
   bool is_bbox_meta_edge (std::size_t source_idx, std::size_t target_idx) const
   {
-    std::size_t common_line_idx = KSR::no_element();
+    std::size_t common_line_idx = KSP::no_element();
 
     for (std::size_t support_line_idx : meta_vertex(source_idx).support_lines_idx())
       if (m_meta_vertices[target_idx].support_lines_idx().find(support_line_idx)
@@ -300,7 +300,7 @@ public:
         break;
       }
 
-    CGAL_assertion (common_line_idx != KSR::no_element());
+    CGAL_assertion (common_line_idx != KSP::no_element());
 
     return is_bbox_support_line (common_line_idx);
   }
@@ -363,11 +363,11 @@ public:
     return std::size_t(m_support_lines.size() - 1);
   }
 
-  Segment& add_segment (const Segment_2 segment, std::size_t input_idx = KSR::no_element())
+  Segment& add_segment (const Segment_2 segment, std::size_t input_idx = KSP::no_element())
   {
     // Check if support line exists first
     Support_line new_support_line (segment);
-    std::size_t support_line_idx = KSR::no_element();
+    std::size_t support_line_idx = KSP::no_element();
     for (std::size_t i = 0; i < number_of_support_lines(); ++ i)
       if (new_support_line == support_line(i))
       {
@@ -375,12 +375,12 @@ public:
         break;
       }
 
-    if (support_line_idx == KSR::no_element())
+    if (support_line_idx == KSP::no_element())
     {
       support_line_idx = number_of_support_lines();
       m_support_lines.push_back (new_support_line);
 
-      if (input_idx == KSR::no_element())
+      if (input_idx == KSP::no_element())
       {
         m_support_lines.back().minimum() = m_support_lines.back().to_1d (segment.source());
         m_support_lines.back().maximum() = m_support_lines.back().to_1d (segment.target());
@@ -393,7 +393,7 @@ public:
         for (std::size_t i = 0; i < 4; ++ i)
         {
           Point_2 point;
-          if (!KSR::intersection(m_support_lines[i].line(), m_support_lines.back().line(), point))
+          if (!KSP::intersection(m_support_lines[i].line(), m_support_lines.back().line(), point))
             continue;
 
           FT position = m_support_lines.back().to_1d (point);
@@ -436,7 +436,7 @@ public:
 
   std::size_t add_meta_vertex (const Point_2& point,
                                std::size_t support_line_idx_0,
-                               std::size_t support_line_idx_1 = KSR::no_element())
+                               std::size_t support_line_idx_1 = KSP::no_element())
   {
     // Avoid several points almost equal
     Point_2 p (1e-10 * std::floor(CGAL::to_double(point.x()) / 1e-10),
@@ -452,7 +452,7 @@ public:
 
     for (std::size_t support_line_idx : { support_line_idx_0, support_line_idx_1 })
     {
-      if (support_line_idx != KSR::no_element())
+      if (support_line_idx != KSP::no_element())
       {
         meta_vertex(meta_vertex_idx).support_lines_idx().insert (support_line_idx);
 
@@ -464,7 +464,7 @@ public:
     }
 
     // Special case = meta vertex is deadend of one line
-    if (support_line_idx_1 == KSR::no_element())
+    if (support_line_idx_1 == KSP::no_element())
     {
       meta_vertex(meta_vertex_idx).make_deadend_of (support_line_idx_0);
     }
@@ -585,7 +585,7 @@ public:
     m_vertices[source_idx].freeze(m_current_time);
 
     // Release other end
-    m_vertices[target_idx].meta_vertex_idx() = KSR::no_element();
+    m_vertices[target_idx].meta_vertex_idx() = KSP::no_element();
 
     return target_idx;
   }
@@ -598,7 +598,7 @@ public:
 };
 
 
-}} // namespace CGAL::KSR_3
+}} // namespace CGAL::KSP_2
 
 
-#endif // CGAL_KSR_3_DATA_STRUCTURE_H
+#endif // CGAL_KSP_2_DATA_STRUCTURE_H
