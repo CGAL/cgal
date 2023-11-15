@@ -38,14 +38,14 @@
 #include <CGAL/draw_linear_cell_complex.h>
 
 // Internal includes.
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/debug.h>
-#include <CGAL/KSR/parameters.h>
+#include <CGAL/KSP/utils.h>
+#include <CGAL/KSP/debug.h>
+#include <CGAL/KSP/parameters.h>
 
-#include <CGAL/KSR_3/Data_structure.h>
-#include <CGAL/KSR_3/Initializer.h>
-#include <CGAL/KSR_3/FacePropagation.h>
-#include <CGAL/KSR_3/Finalizer.h>
+#include <CGAL/KSP_3/Data_structure.h>
+#include <CGAL/KSP_3/Initializer.h>
+#include <CGAL/KSP_3/FacePropagation.h>
+#include <CGAL/KSP_3/Finalizer.h>
 
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree_traits_polygons.h>
@@ -129,7 +129,7 @@ private:
   using Triangle_2 = typename Kernel::Triangle_2;
   using Transform_3 = CGAL::Aff_transformation_3<Kernel>;
 
-  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_kernel>;
+  using Data_structure = KSP_3::Data_structure<Kernel, Intersection_kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
@@ -137,13 +137,13 @@ private:
   using From_exact = typename CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
   using To_exact = typename CGAL::Cartesian_converter<Kernel, Intersection_kernel>;
 
-  using Initializer = KSR_3::Initializer<Kernel, Intersection_kernel>;
-  using Propagation = KSR_3::FacePropagation<Kernel, Intersection_kernel>;
-  using Finalizer   = KSR_3::Finalizer<Kernel, Intersection_kernel>;
+  using Initializer = KSP_3::Initializer<Kernel, Intersection_kernel>;
+  using Propagation = KSP_3::FacePropagation<Kernel, Intersection_kernel>;
+  using Finalizer   = KSP_3::Finalizer<Kernel, Intersection_kernel>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Timer        = CGAL::Real_timer;
-  using Parameters = KSR::Parameters_3<FT>;
+  using Parameters = KSP::Parameters_3<FT>;
 
   using Octree = CGAL::Orthtree<CGAL::Orthtree_traits_polygons<Kernel> >;
   using Octree_node = typename Octree::Node_index;
@@ -496,12 +496,12 @@ public:
 
       // Initialization.
       timer.reset();
-      timer.start();
+      timer.start(); 
     }
 
     if (m_parameters.debug) {
       for (std::size_t i = 0; i < m_input_polygons.size(); i++)
-        KSR_3::dump_polygon(m_input_polygons[i], std::to_string(i) + "-input_polygon");
+        KSP_3::dump_polygon(m_input_polygons[i], std::to_string(i) + "-input_polygon");
     }
 
     split_octree();
@@ -3362,7 +3362,7 @@ private:
           vout << std::endl;
           vout.close();
 
-          KSR_3::dump_polygons(m_partition_nodes[idx].clipped_polygons, std::to_string(idx) + "-polys.ply");
+          KSP_3::dump_polygons(m_partition_nodes[idx].clipped_polygons, std::to_string(idx) + "-polys.ply");
         }
         idx++;
       }

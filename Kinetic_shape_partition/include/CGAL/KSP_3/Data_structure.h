@@ -10,8 +10,8 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-#ifndef CGAL_KSR_3_DATA_STRUCTURE_H
-#define CGAL_KSR_3_DATA_STRUCTURE_H
+#ifndef CGAL_KSP_3_DATA_STRUCTURE_H
+#define CGAL_KSP_3_DATA_STRUCTURE_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
@@ -19,16 +19,16 @@
 #include <boost/function.hpp>
 
 // Internal includes.
-#include <CGAL/KSR/enum.h>
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/debug.h>
-#include <CGAL/KSR/parameters.h>
+#include <CGAL/KSP/enum.h>
+#include <CGAL/KSP/utils.h>
+#include <CGAL/KSP/debug.h>
+#include <CGAL/KSP/parameters.h>
 
-#include <CGAL/KSR_3/Support_plane.h>
-#include <CGAL/KSR_3/Intersection_graph.h>
+#include <CGAL/KSP_3/Support_plane.h>
+#include <CGAL/KSP_3/Intersection_graph.h>
 
 namespace CGAL {
-namespace KSR_3 {
+namespace KSP_3 {
 
 #ifdef DOXYGEN_RUNNING
 #else
@@ -40,8 +40,8 @@ public:
   using Kernel = GeomTraits;
   using Intersection_kernel = IntersectionKernel;
 
-  using Support_plane = KSR_3::Support_plane<Kernel, Intersection_kernel>;
-  using Intersection_graph = KSR_3::Intersection_graph<Kernel, Intersection_kernel>;
+  using Support_plane = KSP_3::Support_plane<Kernel, Intersection_kernel>;
+  using Intersection_graph = KSP_3::Intersection_graph<Kernel, Intersection_kernel>;
   using Face_event = typename Support_plane::Face_event;
 
   using FT = typename Kernel::FT;
@@ -62,7 +62,7 @@ public:
   using Plane_3     = typename Kernel::Plane_3;
 
   using Polygon_2  = CGAL::Polygon_2<Kernel>;
-  using Parameters = KSR::Parameters_3<FT>;
+  using Parameters = KSP::Parameters_3<FT>;
 
   using To_exact = CGAL::Cartesian_converter<Kernel, Intersection_kernel>;
   using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
@@ -1910,7 +1910,7 @@ public:
 
 #endif //DOXYGEN_RUNNING
 
-} // namespace KSR_3
+} // namespace KSP_3
 } // namespace CGAL
 
-#endif // CGAL_KSR_3_DATA_STRUCTURE_H
+#endif // CGAL_KSP_3_DATA_STRUCTURE_H

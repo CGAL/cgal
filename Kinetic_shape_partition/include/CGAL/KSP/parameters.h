@@ -10,13 +10,13 @@
 //
 // Author(s)     : Simon Giraudot, Dmitry Anisimov
 
-#ifndef CGAL_KSR_PARAMETERS_H
-#define CGAL_KSR_PARAMETERS_H
+#ifndef CGAL_KSP_PARAMETERS_H
+#define CGAL_KSP_PARAMETERS_H
 
 #include <CGAL/license/Kinetic_shape_partition.h>
 
 namespace CGAL {
-namespace KSR {
+namespace KSP {
 
 template<typename FT>
 struct Parameters_3 {
@@ -42,7 +42,7 @@ struct Parameters_3 {
   verbose(v), debug(d) { }
 };
 
-} // namespace KSR
+} // namespace KSP
 } // namespace CGAL
 
-#endif // CGAL_KSR_PARAMETERS_H
+#endif // CGAL_KSP_PARAMETERS_H

@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Kinetic_shape_reconstruction_2.h>
+#include <CGAL/Kinetic_shape_partition_2.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Surface_mesh.h>
@@ -19,7 +19,7 @@ using Segment_2 = typename Kernel::Segment_2;
 
 using Transform    = CGAL::Aff_transformation_2<Kernel>;
 using Surface_mesh = CGAL::Surface_mesh<Point_2>;
-using KSR          = CGAL::Kinetic_shape_reconstruction_2<Kernel>;
+using KSP          = CGAL::Kinetic_shape_partition_2<Kernel>;
 
 void add_regular_case(std::vector<Segment_2>& segments, CGAL::Random& rand) {
 
@@ -80,34 +80,34 @@ int main(int argc, char** argv) {
     input_file << "2 " << segment.source() << " 0 " << segment.target() << " 0" << std::endl;
   }
 
-  KSR ksr;
-  ksr.partition(segments, CGAL::Identity_property_map<Segment_2>(), k, 2);
+  KSP ksp;
+  ksp.partition(segments, CGAL::Identity_property_map<Segment_2>(), k, 2);
 
   segments.clear();
-  ksr.output_raw_partition_edges_to_segment_soup(std::back_inserter(segments));
+  ksp.output_raw_partition_edges_to_segment_soup(std::back_inserter(segments));
   std::ofstream raw_output_file("output_raw.polylines.txt");
   for (const Segment_2& segment : segments) {
     raw_output_file << "2 " << segment.source() << " 0 " << segment.target() << " 0" << std::endl;
   }
 
   segments.clear();
-  ksr.output_partition_edges_to_segment_soup(std::back_inserter(segments));
+  ksp.output_partition_edges_to_segment_soup(std::back_inserter(segments));
   std::ofstream output_file("output.polylines.txt");
   for (const Segment_2& segment : segments) {
     output_file << "2 " << segment.source() << " 0 " << segment.target() << " 0" << std::endl;
   }
 
-  if (!ksr.check_integrity(true)) {
-    std::cerr << "ERROR: KSR INTEGRITY FAILED!" << std::endl;
+  if (!ksp.check_integrity(true)) {
+    std::cerr << "ERROR: KSP INTEGRITY FAILED!" << std::endl;
     return EXIT_FAILURE;
   }
 
   Surface_mesh mesh;
-  if (ksr.output_partition_cells_to_face_graph(mesh)) {
+  if (ksp.output_partition_cells_to_face_graph(mesh)) {
     std::cout << mesh.number_of_vertices() <<
     " vertices and " << mesh.number_of_faces() << " faces" << std::endl;
 
-    std::ofstream output_shapes_file("ksr.ply");
+    std::ofstream output_shapes_file("ksp.ply");
     output_shapes_file << "ply" << std::endl
       << "format ascii 1.0" << std::endl
       << "element vertex " << mesh.number_of_vertices() << std::endl

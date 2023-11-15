@@ -10,8 +10,8 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-#ifndef CGAL_KSR_3_SUPPORT_PLANE_H
-#define CGAL_KSR_3_SUPPORT_PLANE_H
+#ifndef CGAL_KSP_3_SUPPORT_PLANE_H
+#define CGAL_KSP_3_SUPPORT_PLANE_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
@@ -20,11 +20,11 @@
 #include <CGAL/centroid.h>
 
 // Internal includes.
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR_3/Intersection_graph.h>
+#include <CGAL/KSP/utils.h>
+#include <CGAL/KSP_3/Intersection_graph.h>
 
 namespace CGAL {
-namespace KSR_3 {
+namespace KSP_3 {
 
 #ifdef DOXYGEN_RUNNING
 #else
@@ -52,7 +52,7 @@ public:
   using Triangle_2  = typename Kernel::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
-  using Intersection_graph = KSR_3::Intersection_graph<Kernel, Intersection_kernel>;
+  using Intersection_graph = KSP_3::Intersection_graph<Kernel, Intersection_kernel>;
   using Bbox_2 = CGAL::Bbox_2;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
@@ -880,7 +880,7 @@ bool operator==(const Support_plane<GeomTraits, IntersectionKernel>& a, const Su
 
 #endif //DOXYGEN_RUNNING
 
-} // namespace KSR_3
+} // namespace KSP_3
 } // namespace CGAL
 
-#endif // CGAL_KSR_3_SUPPORT_LINE_H
+#endif // CGAL_KSP_3_SUPPORT_LINE_H

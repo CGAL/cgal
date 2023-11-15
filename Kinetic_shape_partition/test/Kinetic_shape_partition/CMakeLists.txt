@@ -3,11 +3,11 @@
 
 cmake_minimum_required(VERSION 3.1...3.15)
 
-project(Kinetic_shape_reconstruction_Examples)
+project(Kinetic_shape_partition_Tests)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(CGAL REQUIRED COMPONENTS Core)
+find_package(CGAL QUIET COMPONENTS Core)
 include(${CGAL_USE_FILE})
 include(CGAL_CreateSingleSourceCGALProgram)
 
@@ -20,7 +20,10 @@ if(Boost_FOUND)
     message(STATUS "Found Eigen")
     include(CGAL_Eigen_support)
 
-    set(targets kinetic_partition)
+    set(targets
+    kinetic_2d_stress_test
+    kinetic_3d_test_all
+    kinetic_3d_rg)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)

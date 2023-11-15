@@ -10,21 +10,21 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-#ifndef CGAL_KSR_3_FINALIZER_H
-#define CGAL_KSR_3_FINALIZER_H
+#ifndef CGAL_KSP_3_FINALIZER_H
+#define CGAL_KSP_3_FINALIZER_H
 
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+#include <CGAL/license/Kinetic_shape_partition.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 // Internal includes.
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/debug.h>
-#include <CGAL/KSR/parameters.h>
+#include <CGAL/KSP/utils.h>
+#include <CGAL/KSP/debug.h>
+#include <CGAL/KSP/parameters.h>
 
-#include <CGAL/KSR_3/Data_structure.h>
+#include <CGAL/KSP_3/Data_structure.h>
 
 namespace CGAL {
-namespace KSR_3 {
+namespace KSP_3 {
 
 #ifdef DOXYGEN_RUNNING
 #else
@@ -50,7 +50,7 @@ private:
 
   using From_exact = CGAL::Cartesian_converter<IntersectionKernel, Kernel>;
 
-  using Data_structure = KSR_3::Data_structure<Kernel, IntersectionKernel>;
+  using Data_structure = KSP_3::Data_structure<Kernel, IntersectionKernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge = typename Data_structure::IEdge;
@@ -87,12 +87,12 @@ private:
     std::size_t index;
     std::size_t input;
     Face_info() :
-      index(KSR::uninitialized()),
-      input(KSR::uninitialized())
+      index(KSP::uninitialized()),
+      input(KSP::uninitialized())
     { }
   };
 
-  using Parameters = KSR::Parameters_3<FT>;
+  using Parameters = KSP::Parameters_3<FT>;
 
 public:
   Finalizer(Data_structure& data, const Parameters& parameters) :
@@ -436,7 +436,7 @@ private:
 
     const Segment_3 segment = m_data.segment_3(pedge);
     Vector_3 norm(segment.source(), segment.target());
-    norm = KSR::normalize(norm);
+    norm = KSP::normalize(norm);
     const Plane_3 plane(segment.source(), norm);
     Point_2 source2d = plane.to_2d(segment.source());
 
@@ -822,7 +822,7 @@ private:
 
 #endif //DOXYGEN_RUNNING
 
-} // namespace KSR_3
+} // namespace KSP_3
 } // namespace CGAL
 
-#endif // CGAL_KSR_3_FINALIZER_H
+#endif // CGAL_KSP_3_FINALIZER_H

@@ -10,8 +10,8 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-#ifndef CGAL_KSR_DEBUG_H
-#define CGAL_KSR_DEBUG_H
+#ifndef CGAL_KSP_DEBUG_H
+#define CGAL_KSP_DEBUG_H
 
 #include <CGAL/license/Kinetic_shape_partition.h>
 
@@ -33,10 +33,10 @@
 #include <CGAL/IO/Color.h>
 
 // Internal includes.
-#include <CGAL/KSR/utils.h>
+#include <CGAL/KSP/utils.h>
 
 namespace CGAL {
-namespace KSR_3 {
+namespace KSP_3 {
 
 const std::tuple<unsigned char, unsigned char, unsigned char>
 get_idx_color(std::size_t idx) {
@@ -72,7 +72,7 @@ void dump_segmented_edges(const DS& data, const std::string tag = std::string())
   }
 
   for (const auto iedge : data.iedges()) {
-    CGAL_assertion(data.line_idx(iedge) != KSR::no_element());
+    CGAL_assertion(data.line_idx(iedge) != KSP::no_element());
     *(out[data.line_idx(iedge)]) << "2 " << data.segment_3(iedge) << std::endl;
   }
 
@@ -1142,7 +1142,7 @@ void dump_cdt(
 
     const auto face = mesh.add_face(vertices);
     CGAL::Random rand(fit->info().index);
-    if (fit->info().index != KSR::no_element()) {
+    if (fit->info().index != KSP::no_element()) {
       red[face]   = (unsigned char)(rand.get_int(32, 192));
       green[face] = (unsigned char)(rand.get_int(32, 192));
       blue[face]  = (unsigned char)(rand.get_int(32, 192));
@@ -1180,7 +1180,7 @@ void dump(const InputRange input_range, PointMap point_map, NormalMap normal_map
   saver.export_regions_3(pts, normals, region_index, file_name);*/
 }
 
-} // namespace KSR_3
+} // namespace KSP_3
 } // namespace CGAL
 
-#endif // CGAL_KSR_DEBUG_H
+#endif // CGAL_KSP_DEBUG_H

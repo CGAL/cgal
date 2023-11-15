@@ -10,20 +10,20 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-#ifndef CGAL_KSR_3_FACEPROPAGATION_H
-#define CGAL_KSR_3_FACEPROPAGATION_H
+#ifndef CGAL_KSP_3_FACEPROPAGATION_H
+#define CGAL_KSP_3_FACEPROPAGATION_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // Internal includes.
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/debug.h>
-#include <CGAL/KSR/parameters.h>
+#include <CGAL/KSP/utils.h>
+#include <CGAL/KSP/debug.h>
+#include <CGAL/KSP/parameters.h>
 
-#include <CGAL/KSR_3/Data_structure.h>
+#include <CGAL/KSP_3/Data_structure.h>
 
 namespace CGAL {
-namespace KSR_3 {
+namespace KSP_3 {
 
 #ifdef DOXYGEN_RUNNING
 #else
@@ -43,7 +43,7 @@ private:
   using Direction_2 = typename Kernel::Direction_2;
   using Line_2      = typename Kernel::Line_2;
 
-  using Data_structure = KSR_3::Data_structure<Kernel, Intersection_kernel>;
+  using Data_structure = KSP_3::Data_structure<Kernel, Intersection_kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge   = typename Data_structure::IEdge;
@@ -56,7 +56,7 @@ private:
   using Bbox_2     = CGAL::Bbox_2;
   using Face_index = typename Data_structure::Face_index;
 
-  using Parameters     = KSR::Parameters_3<FT>;
+  using Parameters     = KSP::Parameters_3<FT>;
 
   using Face_event      = typename Data_structure::Support_plane::Face_event;
 
@@ -223,7 +223,7 @@ private:
 
 #endif //DOXYGEN_RUNNING
 
-} // namespace KSR_3
+} // namespace KSP_3
 } // namespace CGAL
 
-#endif // CGAL_KSR_3_FACEPROPAGATION_H
+#endif // CGAL_KSP_3_FACEPROPAGATION_H

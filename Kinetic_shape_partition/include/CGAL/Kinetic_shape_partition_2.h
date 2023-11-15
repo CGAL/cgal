@@ -11,15 +11,15 @@
 // Author(s)     : Simon Giraudot
 
 #ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_2_H
-#define CGAL_KINETIC_SHAPE_RECONSTRUCTION_2_H
+#define CGAL_KINETIC_SHAPE_PARTITION_2_H
 
 #include <CGAL/license/Kinetic_shape_partition.h>
 
 #include <CGAL/box_intersection_d.h>
 
-#include <CGAL/KSR_2/Data_structure.h>
-#include <CGAL/KSR_2/Event.h>
-#include <CGAL/KSR_2/Event_queue.h>
+#include <CGAL/KSP_2/Data_structure.h>
+#include <CGAL/KSP_2/Event.h>
+#include <CGAL/KSP_2/Event_queue.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <boost/graph/graph_traits.hpp>
@@ -30,7 +30,7 @@ namespace CGAL
 {
 
 template <typename GeomTraits>
-class Kinetic_shape_reconstruction_2
+class Kinetic_shape_partition_2
 {
 public:
 
@@ -60,11 +60,7 @@ private:
 
 public:
 
-  Kinetic_shape_reconstruction_2()
-  {
-
-  }
-
+  Kinetic_shape_partition_2() {}
 
   template <typename SegmentRange, typename SegmentMap>
   void partition (const SegmentRange& segments, SegmentMap segment_map,
@@ -119,13 +115,6 @@ public:
                            < m_data.source_of_segment(b).point(m_data.current_time()));
                  });
     }
-  }
-
-
-  template <typename PointRange, typename PointMap, typename VectorMap>
-  void reconstruct (const PointRange& /* points */, PointMap /* point_map */, VectorMap /* normal_map */)
-  {
-    // TODO
   }
 
   bool check_integrity(bool verbose = false) const

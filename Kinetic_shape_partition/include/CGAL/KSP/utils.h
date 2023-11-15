@@ -10,8 +10,8 @@
 //
 // Author(s)     : Simon Giraudot, Dmitry Anisimov
 
-#ifndef CGAL_KSR_UTILS_H
-#define CGAL_KSR_UTILS_H
+#ifndef CGAL_KSP_UTILS_H
+#define CGAL_KSP_UTILS_H
 
 #include <CGAL/license/Kinetic_shape_partition.h>
 
@@ -47,7 +47,7 @@
 #include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
-namespace KSR {
+namespace KSP {
 
 #ifdef DOXYGEN_RUNNING
 #else
@@ -352,7 +352,7 @@ private:
 
 #endif
 
-} // namespace KSR
+} // namespace KSP
 } // namespace CGAL
 
-#endif // CGAL_KSR_UTILS_H
+#endif // CGAL_KSP_UTILS_H

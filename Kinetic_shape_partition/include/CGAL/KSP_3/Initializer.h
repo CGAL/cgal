@@ -10,8 +10,8 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-#ifndef CGAL_KSR_3_INITIALIZER_H
-#define CGAL_KSR_3_INITIALIZER_H
+#ifndef CGAL_KSP_3_INITIALIZER_H
+#define CGAL_KSP_3_INITIALIZER_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
@@ -27,18 +27,18 @@
 #include <boost/optional/optional_io.hpp>
 
 // Internal includes.
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/debug.h>
-#include <CGAL/KSR/parameters.h>
+#include <CGAL/KSP/utils.h>
+#include <CGAL/KSP/debug.h>
+#include <CGAL/KSP/parameters.h>
 
-#include <CGAL/KSR_3/Data_structure.h>
+#include <CGAL/KSP_3/Data_structure.h>
 
 #include <CGAL/Real_timer.h>
 
 extern double add_polys, intersections, iedges, ifaces, mapping;
 
 namespace CGAL {
-namespace KSR_3 {
+namespace KSP_3 {
 
 #ifdef DOXYGEN_RUNNING
 #else
@@ -61,7 +61,7 @@ private:
   using Transform_3 = CGAL::Aff_transformation_3<Kernel>;
   using Direction_2 = typename Kernel::Direction_2;
 
-  using Data_structure     = KSR_3::Data_structure<Kernel, Intersection_kernel>;
+  using Data_structure     = KSP_3::Data_structure<Kernel, Intersection_kernel>;
   using Support_plane      = typename Data_structure::Support_plane;
   using IEdge              = typename Data_structure::IEdge;
   using IFace              = typename Data_structure::IFace;
@@ -77,7 +77,7 @@ private:
   using Bbox_3     = CGAL::Bbox_3;
   using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
 
-  using Parameters        = KSR::Parameters_3<FT>;
+  using Parameters        = KSP::Parameters_3<FT>;
 
   using Timer = CGAL::Real_timer;
 
@@ -136,7 +136,7 @@ public:
       std::cout << "done" << std::endl;
 
     if (m_parameters.debug)
-      KSR_3::dump(m_data, m_data.prefix() + "intersected");
+      KSP_3::dump(m_data, m_data.prefix() + "intersected");
 
     CGAL_assertion(m_data.check_bbox());
     //m_data.set_limit_lines();
@@ -1037,7 +1037,7 @@ private:
 
 #endif //DOXYGEN_RUNNING
 
-} // namespace KSR_3
+} // namespace KSP_3
 } // namespace CGAL
 
-#endif // CGAL_KSR_3_INITIALIZER_H
+#endif // CGAL_KSP_3_INITIALIZER_H

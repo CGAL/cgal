@@ -1,3 +1,0 @@
-/*!
-\example Kinetic_shape_reconstruction/kinetic_partition.cpp
-*/

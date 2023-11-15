@@ -10,8 +10,8 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-#ifndef CGAL_KSR_3_INTERSECTION_GRAPH_H
-#define CGAL_KSR_3_INTERSECTION_GRAPH_H
+#ifndef CGAL_KSP_3_INTERSECTION_GRAPH_H
+#define CGAL_KSP_3_INTERSECTION_GRAPH_H
 
 // #include <CGAL/license/Kinetic_shape_reconstruction.h>
 
@@ -23,10 +23,10 @@
 #include <CGAL/Polygon_2.h>
 
 // Internal includes.
-#include <CGAL/KSR/utils.h>
+#include <CGAL/KSP/utils.h>
 
 namespace CGAL {
-namespace KSR_3 {
+namespace KSP_3 {
 
 #ifdef DOXYGEN_RUNNING
 #else
@@ -408,7 +408,7 @@ template<typename GeomTraits, typename IntersectionKernel> std::size_t Intersect
 
 #endif //DOXYGEN_RUNNING
 
-} // namespace KSR_3
+} // namespace KSP_3
 } // namespace CGAL
 
-#endif // CGAL_KSR_3_INTERSECTION_GRAPH_H
+#endif // CGAL_KSP_3_INTERSECTION_GRAPH_H
