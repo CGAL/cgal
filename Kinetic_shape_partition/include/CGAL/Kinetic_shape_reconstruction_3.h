@@ -115,11 +115,6 @@ public:
       \cgalParamType{`std::size_t`}
       \cgalParamDefault{12}
     \cgalParamNEnd
-    \cgalParamNBegin{distance_tolerance}
-      \cgalParamDescription{maximum distance from a point to a planar shape}
-      \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{1}
-    \cgalParamNEnd
     \cgalParamNBegin{angle_tolerance}
       \cgalParamDescription{maximum angle in degrees between the normal of a point and the plane normal}
       \cgalParamType{`GeomTraits::FT`}
@@ -200,11 +195,6 @@ public:
     \cgalParamNEnd
     \cgalParamNBegin{angle_tolerance}
       \cgalParamDescription{The tolerance angle to snap the planes of two input polygons into one plane.}
-      \cgalParamType{FT}
-      \cgalParamDefault{5}
-    \cgalParamNEnd
-    \cgalParamNBegin{distance_tolerance}
-      \cgalParamDescription{The tolerance distance to snap the planes of two input polygons into one plane.}
       \cgalParamType{FT}
       \cgalParamDefault{5}
     \cgalParamNEnd
