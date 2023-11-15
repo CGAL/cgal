@@ -496,7 +496,7 @@ public:
 
       // Initialization.
       timer.reset();
-      timer.start(); 
+      timer.start();
     }
 
     if (m_parameters.debug) {
