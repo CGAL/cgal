@@ -52,6 +52,10 @@ Release date: October 2023
     `CGAL::Simplicial_mesh_cell_base_3`
     have been modified to enable passing a geometric traits and a custom cell base class.
 
+### [3D Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulation3)
+-   Added three functions `vertices()` to the class `Triangulation_3`.
+    Each of them returns an array containing the vertices of the given triangulation simplex.
+
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
