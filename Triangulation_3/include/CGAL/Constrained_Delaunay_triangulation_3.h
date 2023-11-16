@@ -1102,11 +1102,11 @@ private:
     struct Outputs
     {
       std::vector<Edge> intersecting_edges;
-      std::set<Cell_handle> intersecting_cells; // TODO: all those std::set could be vectors
-      std::set<Vertex_handle> vertices_of_upper_cavity;
-      std::set<Vertex_handle> vertices_of_lower_cavity;
-      std::set<Facet> facets_of_upper_cavity;
-      std::set<Facet> facets_of_lower_cavity;
+      std::set<Cell_handle> intersecting_cells;
+      std::vector<Vertex_handle> vertices_of_upper_cavity;
+      std::vector<Vertex_handle> vertices_of_lower_cavity;
+      std::vector<Facet> facets_of_upper_cavity;
+      std::vector<Facet> facets_of_lower_cavity;
     } outputs{
         {}, {}, {polygon_vertices.begin(), polygon_vertices.end()}, {polygon_vertices.begin(), polygon_vertices.end()},
         {}, {}};
@@ -1149,10 +1149,10 @@ private:
       CGAL_assertion(false == polygon_vertices.contains(v_above));
       CGAL_assertion(false == polygon_vertices.contains(v_below));
       if(new_vertex(v_above)) {
-        vertices_of_upper_cavity.insert(v_above);
+        vertices_of_upper_cavity.push_back(v_above);
       }
       if(new_vertex(v_below)) {
-        vertices_of_lower_cavity.insert(v_below);
+        vertices_of_lower_cavity.push_back(v_below);
       }
       auto facet_circ = this->incident_facets(intersecting_edge);
       const auto facet_circ_end = facet_circ;
@@ -1220,10 +1220,10 @@ private:
         const auto cell_above = cell->neighbor(index_v_below);
         const auto cell_below = cell->neighbor(index_v_above);
         if(!intersecting_cells.contains(cell_above)) {
-          facets_of_upper_cavity.emplace(cell_above, cell_above->index(cell));
+          facets_of_upper_cavity.emplace_back(cell_above, cell_above->index(cell));
         }
         if(!intersecting_cells.contains(cell_below)) {
-          facets_of_lower_cavity.emplace(cell_below, cell_below->index(cell));
+          facets_of_lower_cavity.emplace_back(cell_below, cell_below->index(cell));
         }
       } while(++cell_circ != end);
     }
