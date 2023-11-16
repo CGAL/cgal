@@ -528,6 +528,7 @@ struct Scene_triangulation_3_item_priv {
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
+  bool use_subdomain_colors = false;
   std::array<std::bitset<32>, Scene_triangulation_3_item::number_of_bitset> visible_bitset;
   bool show_tetrahedra;
   bool cut_plane_enabled;
@@ -944,8 +945,19 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
 {
   typedef Indices::size_type size_type;
 
+  const size_type nb_patch_indices = surface_patch_indices_.size();
+  double i = -1;
+  double patch_hsv_value = use_subdomain_colors ? fmod(c.valueF() + .5, 1.) : c.valueF();
+  for (Indices::iterator it = surface_patch_indices_.begin(),
+       end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
+  {
+    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
+    if (hue > 1) { hue -= 1.; }
+    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
+  }
+
   const size_type nb_domains = subdomain_indices_.size();
-  double i = 0;
+  i = -1;
   for (Indices::iterator it = subdomain_indices_.begin(),
          end = subdomain_indices_.end(); it != end; ++it, i += 1.)
   {
@@ -953,21 +965,14 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
     if (hue > 1) { hue -= 1.; }
     colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
-  const size_type nb_patch_indices = surface_patch_indices_.size();
-  i = 0;
-  double patch_hsv_value = fmod(c.valueF() + .5, 1.);
-  for (Indices::iterator it = surface_patch_indices_.begin(),
-         end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
-  {
-    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
-    if (hue > 1) { hue -= 1.; }
-    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
-  }
 
-  for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
-       end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
+  if (use_subdomain_colors)
   {
-    colors[it->first] = colors_subdomains[it->second];
+    for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
+         end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
+    {
+      colors[it->first] = colors_subdomains[it->second];
+    }
   }
 }
 
@@ -1616,6 +1621,12 @@ Scene_triangulation_3_item::setColor(QColor c)
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     d->are_intersection_buffers_filled[viewer] = false;
   }
+}
+
+void
+Scene_triangulation_3_item::setUseSubdomainColors(bool b)
+{
+  d->use_subdomain_colors = b;
 }
 
 void Scene_triangulation_3_item::show_grid(bool b)
