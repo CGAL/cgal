@@ -441,21 +441,24 @@ public:
     CGAL_assertion(lt != Locate_type::VERTEX);
     boost::container::small_vector<Cell_handle,64> cells_of_original_cavity;
     boost::container::small_vector<Facet,64> exterior_border_facets_of_original_cavity;
+
+    auto output_iterator_to_facets = boost::make_function_output_iterator(
+        [&](Facet f) { exterior_border_facets_of_original_cavity.push_back(tr.mirror_facet(f)); });
+
+    auto triple_of_output_iterators = make_triple(
+        output_iterator_to_facets,
+        std::back_inserter(cells_of_original_cavity),
+        Emptyset_iterator{});
+
     switch(tr.dimension()) {
     case 3: {
       typename T_3::Conflict_tester_3 tester(p, this);
-      this->find_conflicts(ch, tester,
-                           make_triple(std::back_inserter(exterior_border_facets_of_original_cavity),
-                                       std::back_inserter(cells_of_original_cavity),
-                                       Emptyset_iterator()));
+      this->find_conflicts(ch, tester, triple_of_output_iterators);
       break;
     } // dim 3
     case 2: {
       typename T_3::Conflict_tester_2 tester(p, this);
-      this->find_conflicts(ch, tester,
-                           make_triple(std::back_inserter(exterior_border_facets_of_original_cavity),
-                                       std::back_inserter(cells_of_original_cavity),
-                                       Emptyset_iterator()));
+      this->find_conflicts(ch, tester, triple_of_output_iterators);
       break;
     } // dim 2
     default: CGAL_error();
@@ -465,8 +468,8 @@ public:
     for(Cell_handle ch : cells_of_original_cavity) {
       ch->tds_data().clear();
     }
-    for(auto& [ch, i] : exterior_border_facets_of_original_cavity) {
-      ch->neighbor(i)->tds_data().clear();
+    for(auto [ch, _] : exterior_border_facets_of_original_cavity) {
+      ch->tds_data().clear();
     }
 
     bool the_infinite_vertex_is_in_the_cavity = false;
@@ -485,23 +488,18 @@ public:
     p_vh->set_point(p);
     vertices_of_original_cavity.insert(p_vh);
 
-    // compute facets of the border of the cavity, seen from the exterior
-    std::vector<Facet> orig_facets_of_cavity;
-    orig_facets_of_cavity.reserve(exterior_border_facets_of_original_cavity.size());
-    for(auto f: exterior_border_facets_of_original_cavity) {
-      auto opposite_f = tr.mirror_facet(f);
-      auto& [c, index] = opposite_f;
+    // vertices of the border of the cavity should point to cells outside of it
+    for(auto [c, index]: exterior_border_facets_of_original_cavity) {
       for(int i = 0; i < 3; ++i) {
         auto v = c->vertex(tr.vertex_triple_index(index, i));
         v->set_cell(c);
       }
-      orig_facets_of_cavity.push_back(opposite_f);
     }
 
-    [[maybe_unused]] const auto [cavity_triangulation, vertices_of_cavity,
-                                 map_cavity_vertices_to_ambient_vertices, facets_of_cavity,
-                                 interior_constrained_faces, cells_of_cavity] =
-        triangulate_cavity(cells_of_original_cavity, orig_facets_of_cavity, vertices_of_original_cavity);
+    const auto [cavity_triangulation, vertices_of_cavity, map_cavity_vertices_to_ambient_vertices,
+                facets_of_cavity, interior_constrained_faces, cells_of_cavity] =
+        triangulate_cavity(cells_of_original_cavity, exterior_border_facets_of_original_cavity,
+                           vertices_of_original_cavity);
 
     for(auto f: interior_constrained_faces) {
       this->register_facet_to_be_constrained(f);
@@ -1832,7 +1830,7 @@ private:
           if(cell->is_facet_constrained(facet_index)) {
             result.interior_constrained_faces.emplace_back(cell, facet_index);
           }
-          auto [_, is_new_cell] = cells_of_cavity.insert(cell);
+          auto [_, is_new_cell] = cells_of_cavity.insert(cell); // TODO: use .second
           if(!is_new_cell)
             continue;
         }
