@@ -232,6 +232,7 @@ private:
 
   Parameters m_parameters;
   std::array<Point_3, 8> m_bbox;
+  CGAL::Aff_transformation_3<Kernel> m_transform;
   std::vector<Sub_partition> m_partition_nodes; // Tree of partitions.
   std::vector<std::size_t> m_partitions; // Contains the indices of the leaf nodes, the actual partitions to be calculated.
   std::vector<Point_3> m_points;
@@ -451,7 +452,7 @@ public:
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{reorient_bbox}
-      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
+      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box. While the z direction is maintained, the x axis is aligned with the largest variation in the horizontal plane.}
       \cgalParamType{bool}
       \cgalParamDefault{false}
     \cgalParamNEnd
@@ -785,7 +786,9 @@ public:
 
    Volume and face attributes defined in the model `KineticLCCItems` are filled. The volume index is in the range [0, number of volumes -1]
 
-   \param lcc instance of `Linear_cell_complex_for_combinatorial_map<3, 3>` to be filled with the kinetic partition. Any data contained in `lcc` will be cleared before.
+   \tparam LCC must be a model of `Linear_cell_complex_for_combinatorial_map<3, 3>` using a model of `KineticLCCItems`.
+
+   \param lcc instance of LCC to be filled with the kinetic partition. Any data contained in `lcc` will be cleared before.
 
    \pre created partition
   */
@@ -2347,6 +2350,69 @@ private:
     return true;
   }
 
+  CGAL::Aff_transformation_3<Kernel> get_obb2abb(const std::vector<std::vector<Point_3> > &polys) const {
+
+    std::vector<Point_2> pts2d;
+    std::size_t size = 0;
+
+    for (std::size_t i = 0; i < polys.size(); i++)
+      size += polys[i].size();
+    pts2d.reserve(size);
+
+    FT minz = (std::numeric_limits<FT>::max)(), maxz = -(std::numeric_limits<FT>::max)();
+    for (std::size_t i = 0; i < polys.size(); i++)
+      for (std::size_t j = 0; j < polys[i].size(); j++) {
+      pts2d.push_back(Point_2(polys[i][j].x(), polys[i][j].y()));
+      minz = (std::min<FT>)(minz, polys[i][j].z());
+      maxz = (std::max<FT>)(maxz, polys[i][j].z());
+    }
+
+    std::vector<Point_2> ch;
+    CGAL::convex_hull_2(pts2d.begin(), pts2d.end(), std::back_inserter(ch));
+
+    std::vector<Point_2> bbox;
+    bbox.reserve(4);
+    CGAL::min_rectangle_2(ch.begin(), ch.end(), std::back_inserter(bbox));
+
+    Vector_2 axis1 = bbox[0] - bbox[1];
+    Vector_2 axis2 = bbox[1] - bbox[2];
+    FT la = CGAL::sqrt(axis1.squared_length());
+    axis1 = axis1 * (1.0 / la);
+    FT lb = CGAL::sqrt(axis2.squared_length());
+    axis2 = axis2 * (1.0 / lb);
+    FT a = (axis1[0] * axis2[1]) - (axis1[1] * axis2[0]);
+
+    if (CGAL::abs(axis1.x()) < CGAL::abs(axis2.x())) {
+      Vector_2 tmp = axis1;
+      axis1 = axis2;
+      axis2 = tmp;
+    }
+
+    if (0 > axis1.x())
+      axis1 = -axis1;
+
+    axis2 = Vector_2(-axis1.y(), axis1.x());
+
+    FT rot[9];
+    rot[0] = axis1.x();
+    rot[1] = axis1.y();
+    rot[2] = 0.0;
+    rot[3] = -axis1.y();
+    rot[4] = axis1.x();
+    rot[5] = 0;
+    rot[6] = 1.0;
+    rot[7] = 0;
+    rot[8] = 0;
+
+    CGAL::Aff_transformation_3<Kernel> R(axis1.x(), axis1.y(), 0,
+                                        -axis1.y(), axis1.x(), 0,
+                                                 0,         0, 1.0);
+
+    CGAL::Aff_transformation_3<Kernel> T(CGAL::TRANSLATION, -Kernel::Vector_3((bbox[0].x() + bbox[2].x()) * 0.5, (bbox[0].y() + bbox[2].y()) * 0.5, (maxz + minz) * 0.5));
+
+    return R * T;
+  }
+
   void merge_partitions(std::size_t idx) {
     From_exact from_exact;
     if (!m_partition_nodes[idx].children.empty()) {
@@ -3260,11 +3326,28 @@ private:
     m_points.reserve(count);
     m_polygons.reserve(m_input_polygons.size());
 
-    for (const auto& p : m_input_polygons) {
-      std::size_t idx = m_points.size();
-      std::copy(p.begin(), p.end(), std::back_inserter(m_points));
-      m_polygons.push_back(std::vector<std::size_t>(p.size()));
-      std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
+    if (m_parameters.reorient_bbox) {
+
+      m_transform = get_obb2abb(m_input_polygons);
+
+      for (const auto& p : m_input_polygons) {
+        std::size_t idx = m_points.size();
+        for (const Point_3& pt : p)
+          m_points.push_back(m_transform.transform(pt));
+
+        m_polygons.push_back(std::vector<std::size_t>(p.size()));
+        std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
+      }
+    }
+    else {
+      m_transform = CGAL::Aff_transformation_3<Kernel>(CGAL::IDENTITY);
+
+      for (const auto& p : m_input_polygons) {
+        std::size_t idx = m_points.size();
+        std::copy(p.begin(), p.end(), std::back_inserter(m_points));
+        m_polygons.push_back(std::vector<std::size_t>(p.size()));
+        std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
+      }
     }
 
     m_octree = std::make_unique<Octree>(CGAL::Orthtree_traits_polygons<Kernel>(m_points, m_polygons, m_parameters.bbox_dilation_ratio));
@@ -3285,7 +3368,11 @@ private:
 
     m_node2partition.resize(max_count + 1, std::size_t(-1));
 
+    From_exact from_exact;
+    To_exact to_exact;
+
     std::size_t idx = 0;
+    CGAL::Aff_transformation_3<Kernel> inv = m_transform.inverse();
     for (typename Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree)))
       if (m_octree->is_leaf(node)) {
         // Creating bounding box
@@ -3299,16 +3386,9 @@ private:
         m_partition_nodes[idx].bbox[6] = typename Intersection_kernel::Point_3(box.xmax(), box.ymin(), box.zmax());
         m_partition_nodes[idx].bbox[7] = typename Intersection_kernel::Point_3(box.xmax(), box.ymax(), box.zmax());
 
-/*
-        auto bbox = m_octree->bbox(i);
-        m_partition_nodes[idx].bbox[0] = Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin());
-        m_partition_nodes[idx].bbox[1] = Point_3(bbox.xmax(), bbox.ymin(), bbox.zmin());
-        m_partition_nodes[idx].bbox[2] = Point_3(bbox.xmax(), bbox.ymax(), bbox.zmin());
-        m_partition_nodes[idx].bbox[3] = Point_3(bbox.xmin(), bbox.ymax(), bbox.zmin());
-        m_partition_nodes[idx].bbox[4] = Point_3(bbox.xmin(), bbox.ymax(), bbox.zmax());
-        m_partition_nodes[idx].bbox[5] = Point_3(bbox.xmin(), bbox.ymin(), bbox.zmax());
-        m_partition_nodes[idx].bbox[6] = Point_3(bbox.xmax(), bbox.ymin(), bbox.zmax());
-        m_partition_nodes[idx].bbox[7] = Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax());*/
+        if (m_parameters.reorient_bbox)
+          for (std::size_t i = 0; i < 8; i++)
+            m_partition_nodes[idx].bbox[i] = to_exact(inv.transform(from_exact(m_partition_nodes[idx].bbox[i])));
 
         // Get consistent Plane_3 from Octree to generate exact planes
 
@@ -3322,7 +3402,7 @@ private:
         for (std::size_t i = 0; i < polys.size(); i++) {
           m_partition_nodes[idx].clipped_polygons[i].resize(polys[i].second.size());
           for (std::size_t j = 0; j < polys[i].second.size(); j++)
-            m_partition_nodes[idx].clipped_polygons[i][j] = polys[i].second[j];
+            m_partition_nodes[idx].clipped_polygons[i][j] = inv.transform(polys[i].second[j]);
         }
 
         // set node index

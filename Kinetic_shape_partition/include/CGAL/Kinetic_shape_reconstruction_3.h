@@ -16,7 +16,7 @@
 #include <CGAL/license/Kinetic_shape_partition.h>
 
 #include <CGAL/Kinetic_shape_partition_3.h>
-#include <CGAL/KSR_3/Graphcut.h>
+#include <CGAL/KSP_3/Graphcut.h>
 
 #include <CGAL/IO/PLY.h>
 #include <CGAL/Point_set_3.h>
@@ -27,7 +27,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/KSR/debug.h>
+#include <CGAL/KSP/debug.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
 #include <CGAL/bounding_box.h>
 
@@ -1343,7 +1343,7 @@ private:
       //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    //KSR_3::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    KSP_3::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     // Convert indices.
     m_planar_regions.clear();

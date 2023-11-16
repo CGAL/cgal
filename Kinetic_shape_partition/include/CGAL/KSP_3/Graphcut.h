@@ -26,11 +26,9 @@
 #include <CGAL/Cartesian_converter.h>
 
 // Internal includes.
-#include <CGAL/KSR/enum.h>
-#include <CGAL/KSR/utils.h>
-#include <CGAL/KSR/debug.h>
-#include <CGAL/KSR/property_map.h>
-#include <CGAL/KSR_3/Data_structure.h>
+#include <CGAL/KSP/utils.h>
+#include <CGAL/KSP/debug.h>
+#include <CGAL/KSP_3/Data_structure.h>
 
 namespace CGAL {
 namespace KSR_3 {

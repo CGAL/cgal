@@ -42,10 +42,7 @@ int main(const int argc, const char** argv) {
     return EXIT_FAILURE;
   }
 
-  std::cout << std::endl;
-  std::cout << "--- INPUT STATS: " << std::endl;
-  std::cout << "* used kernel: "        << kernel_name        << std::endl;
-  std::cout << "* number of polygons: " << input_faces.size() << std::endl;
+  std::cout << "--- INPUT STATS: \n* number of polygons: " << input_faces.size() << std::endl;
 
   // Parameters.
   const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
@@ -78,8 +75,8 @@ int main(const int argc, const char** argv) {
   std::vector<unsigned int> cells = { 0, 2, 3 }, count;
   count = lcc.count_cells(cells);
 
-  std::cout << "For k = " << k << ":" << std::endl << " vertices: " << count[0] << std::endl << " faces: " << count[2] << std::endl << " volumes: " << count[3] << std::endl;
+  std::cout << "For k = " << k << ":\n" << " vertices: " << count[0] << "\n faces: " << count[2] << "\n volumes: " << count[3] << std::endl;
 
-  std::cout << std::endl << "3D kinetic partition created in " << time << " seconds!" << std::endl << std::endl;
+  std::cout << "\n3D kinetic partition created in " << time << " seconds!" << std::endl;
   return EXIT_SUCCESS;
 }
