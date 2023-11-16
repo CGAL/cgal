@@ -12,7 +12,7 @@ sudo apt-get install -y \
  qtbase5-dev libqt5sql5-sqlite libqt5opengl5-dev qtscript5-dev libqt5websockets5-dev \
  libqt5svg5-dev qttools5-dev qttools5-dev-tools \
  libboost-dev libboost-serialization-dev libboost-iostreams-dev libboost-filesystem-dev libboost-filesystem-dev \
- libvtk9-dev \
+ libvtk9-dev libunwind-dev \
  libinsighttoolkit4-dev \
  libceres-dev \
  libglpk-dev \
