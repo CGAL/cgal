@@ -4,6 +4,13 @@
 /// The concept `PMPSizingField` defines the requirements for the sizing field
 /// used in `CGAL::Polygon_mesh_processing::isotropic_remeshing()` to define
 /// the target length for every individual edge during the remeshing process.
+///
+/// \cgalHasModelsBegin
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Uniform_sizing_field}
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Adaptive_sizing_field}
+/// \cgalHasModelsEnd
+///
+
 
 class PMPSizingField{
 public:
