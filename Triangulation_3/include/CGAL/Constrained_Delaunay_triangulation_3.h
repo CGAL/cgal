@@ -1534,13 +1534,13 @@ private:
                                          [[maybe_unused]] std::string_view extra = {}) {
       outer_map[vt] = f;
 #if CGAL_DEBUG_CDT_3 & 128
-      CGAL_assertion(vt.first != vt.second);
-      CGAL_assertion(vt.first != vt.third);
-      CGAL_assertion(vt.second != vt.third);
+      CGAL_assertion(vt[0] != vt[1]);
+      CGAL_assertion(vt[0] != vt[2]);
+      CGAL_assertion(vt[1] != vt[2]);
       std::cerr << std::format("outer map: Adding {}triple ({:.6}, {:.6}, {:.6})\n", extra,
-                               IO::oformat(vt.first, with_point),
-                               IO::oformat(vt.second, with_point),
-                               IO::oformat(vt.third, with_point));
+                               IO::oformat(vt[0], with_point),
+                               IO::oformat(vt[1], with_point),
+                               IO::oformat(vt[2], with_point));
 #endif // CGAL_DEBUG_CDT_3
     };
     auto fill_outer_map_of_cavity = [&](const auto&, const auto& facets) {
@@ -1566,16 +1566,16 @@ private:
         const auto [fh_2d, reverse_orientation] = *is_facet;
 
         const auto vt_aux = this->make_vertex_triple(f);
-        typename T_3::Vertex_triple vt(map_cavity_vertices_to_ambient_vertices[vt_aux.first],
-                                       map_cavity_vertices_to_ambient_vertices[vt_aux.second],
-                                       map_cavity_vertices_to_ambient_vertices[vt_aux.third]);
+        typename T_3::Vertex_triple vt{map_cavity_vertices_to_ambient_vertices[vt_aux[0]],
+                                       map_cavity_vertices_to_ambient_vertices[vt_aux[1]],
+                                       map_cavity_vertices_to_ambient_vertices[vt_aux[2]]};
         this->make_canonical_oriented_triple(vt);
         if(reverse_orientation == is_upper_cavity) {
-          std::swap(vt.second, vt.third);
+          std::swap(vt[1], vt[2]);
         }
         auto new_cell = this->tds().create_cell();
         pseudo_cells.emplace_back(new_cell, fh_2d);
-        new_cell->set_vertices(vt.first, vt.second, vt.third, this->infinite_vertex());
+        new_cell->set_vertices(vt[0], vt[1], vt[2], this->infinite_vertex());
         CGAL_assertion(static_cast<bool>(facet_is_facet_of_cdt_2(*this, {new_cell, 3}, cdt_2)));
         add_to_outer_map(vt, {new_cell, 3}, "extra ");
       }
@@ -1623,9 +1623,9 @@ private:
       std::cerr << "outer_map:\n";
       for(auto [vt, _] : outer_map) {
         std::cerr << std::format("  {:.6}, {:.6}, {:.6})\n",
-                                 IO::oformat(vt.first,  with_point),
-                                 IO::oformat(vt.second, with_point),
-                                 IO::oformat(vt.third,  with_point));
+                                 IO::oformat(vt[0], with_point),
+                                 IO::oformat(vt[1], with_point),
+                                 IO::oformat(vt[2], with_point));
       }
       std::ofstream out("dump_lower_outer_map.off");
       out.precision(17);
