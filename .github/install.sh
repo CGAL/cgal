@@ -13,7 +13,7 @@ sudo apt-get install -y \
  libqt5svg5-dev qttools5-dev qttools5-dev-tools \
  libboost-dev libboost-serialization-dev libboost-iostreams-dev libboost-filesystem-dev libboost-filesystem-dev \
  libvtk9-dev libunwind-dev \
- libinsighttoolkit4-dev \
+ libinsighttoolkit5-dev \
  libceres-dev \
  libglpk-dev \
  libopencv-dev \

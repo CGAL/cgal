@@ -33,7 +33,11 @@ find_package(ITK NAMES ITK InsightToolkit
 if(ITK_FOUND)
   include(${ITK_USE_FILE})
   set(ITK_LIBS ITKCommon ITKSmoothing ITKImageIntensity)
-
+  foreach(lib ${ITK_LIBS})
+    if(NOT TARGET ${lib})
+      message(STATUS "ITK library ${lib} not found")
+    endif()
+  endforeach()
   target_link_libraries(mesh_3_plugin PUBLIC ${ITK_LIBS})
   target_compile_definitions(mesh_3_plugin PUBLIC CGAL_USE_ITK)
 endif(ITK_FOUND)
