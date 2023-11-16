@@ -97,7 +97,7 @@ if(IPE_FOUND AND IPE_VERSION)
     cgal_add_compilation_test(CGAL_${IPELET})
   endforeach(IPELET)
   if(CGAL_Core_FOUND)
-    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core
+    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL CGAL::CGAL_Core
                                                      CGAL::Eigen3_support)
   endif()
   #example in doc not installed
