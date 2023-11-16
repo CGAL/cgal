@@ -41,7 +41,7 @@ the mathematical theory of the Heat method. The last section is about the \ref s
 
 Note that this package depends on the third party \ref thirdpartyEigen library (3.3 or greater), or another
 model of the concept `SparseLinearAlgebraWithFactorTraits_d`.
-This implementation is based on \cgalCite{cgal:cww-ghnac-13} and \cgalCite{cgal:fsbs-acidt-06}
+This implementation is based on \cgalCite{cgal:cww-ghnac-13} , \cgalCite{cgal:fsbs-acidt-06} , and \cgalCite{cgal:sc-lntm-20}
 
 This package is related to the package \ref PkgSurfaceMeshShortestPath. Both deal with geodesic distances.
 The heat method package computes for every vertex of a mesh an approximate distance to one or several source vertices.

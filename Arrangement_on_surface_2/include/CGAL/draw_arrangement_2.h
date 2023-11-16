@@ -29,7 +29,9 @@
 
 #include <type_traits>
 #include <CGAL/Qt/init_ogl_context.h>
+#include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 
 namespace CGAL {
 
@@ -46,32 +48,32 @@ struct Default_color_generator {
 };
 
 // Viewer class for`< Polygon_2
-template <typename Arrangement_2_,
+template <typename ArrangementOnSurface_2,
           typename ColorGenerator = Default_color_generator>
-class Arr_2_basic_viewer_qt : public Basic_viewer_qt {
-  using Arr = Arrangement_2_;
+class Aos_2_basic_viewer_qt : public Basic_viewer_qt {
+  using Aos = ArrangementOnSurface_2;
   using Color_generator = ColorGenerator;
   using Base = Basic_viewer_qt;
-  using Gt = typename Arr::Geometry_traits_2;
-  using Point = typename Arr::Point_2;
-  using X_monotone_curve = typename Arr::X_monotone_curve_2;
-  using Vertex_const_handle = typename Arr::Vertex_const_handle;
-  using Halfedge_const_handle = typename Arr::Halfedge_const_handle;
-  using Face_const_handle = typename Arr::Face_const_handle;
+  using Gt = typename Aos::Geometry_traits_2;
+  using Point = typename Aos::Point_2;
+  using X_monotone_curve = typename Aos::X_monotone_curve_2;
+  using Vertex_const_handle = typename Aos::Vertex_const_handle;
+  using Halfedge_const_handle = typename Aos::Halfedge_const_handle;
+  using Face_const_handle = typename Aos::Face_const_handle;
   using Ccb_halfedge_const_circulator =
-    typename Arr::Ccb_halfedge_const_circulator;
+    typename Aos::Ccb_halfedge_const_circulator;
 
 public:
   /// Construct the viewer.
   /// @param arr the arrangement to view
   /// @param title the title of the window
-  Arr_2_basic_viewer_qt(QWidget* parent, const Arr& arr,
+  Aos_2_basic_viewer_qt(QWidget* parent, const Aos& aos,
                         Color_generator color_generator,
                         const char* title = "2D Arrangement Basic Viewer",
                         bool draw_vertices = false) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
     Base(parent, title, draw_vertices, true, true, false, false),
-    m_arr(arr),
+    m_aos(aos),
     m_color_generator(color_generator)
   {
     // mimic the computation of Camera::pixelGLRatio()
@@ -154,32 +156,47 @@ public:
    */
   CGAL::Bbox_2 bounding_box() {
     CGAL::Bbox_2 bbox;
-    const auto* traits = this->m_arr.geometry_traits();
+    const auto* traits = this->m_aos.geometry_traits();
     // At this point we assume that the arrangement is not open, and thus the
     // bounding box is defined by the vertices.
-    for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it)
+    for (auto it = m_aos.vertices_begin(); it != m_aos.vertices_end(); ++it)
       bounding_box_impl1(bbox, it->point(), *traits, 0);
     return bbox;
   }
 
+  /*! Add all faces.
+   */
+  template <typename Traits>
+  void add_faces(const Traits&) {
+    for (auto it = m_aos.unbounded_faces_begin();
+         it != m_aos.unbounded_faces_end(); ++it)
+      add_face(it);
+  }
+
+  /*! Add all faces.
+   */
+  template <typename Kernel_, int AtanX, int AtanY>
+  void
+  add_faces(Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const&)
+  { add_face(m_aos.faces_begin()); }
+
   /*! Add all elements to be drawn.
    */
   void add_elements() {
+    // std::cout << "add_elements()\n";
     // std::cout << "ratio: " << this->pixel_ratio() << std::endl;
     clear();
     m_visited.clear();
 
-    if (m_arr.is_empty()) return;
-    for (auto it = m_arr.unbounded_faces_begin();
-         it != m_arr.unbounded_faces_end(); ++it)
-      add_face(it);
+    if (m_aos.is_empty()) return;
+    add_faces(*(this->m_aos.geometry_traits()));
 
-    // Add edges that do not separe faces.
-    for (auto it = m_arr.edges_begin(); it != m_arr.edges_end(); ++it)
+    // Add edges that do not separate faces.
+    for (auto it = m_aos.edges_begin(); it != m_aos.edges_end(); ++it)
       if (it->face() == it->twin()->face()) draw_curve(it->curve());
 
     // Add all points
-    for (auto it = m_arr.vertices_begin(); it != m_arr.vertices_end(); ++it)
+    for (auto it = m_aos.vertices_begin(); it != m_aos.vertices_end(); ++it)
       draw_point(it->point());
 
     m_visited.clear();
@@ -190,11 +207,20 @@ public:
   double pixel_ratio() const { return m_pixel_ratio; }
 
 protected:
+  template <typename Kernel, int AtanX, int AtanY>
+  Halfedge_const_handle
+  find_smallest(Ccb_halfedge_const_circulator circ,
+                Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY> const&)
+  { return circ; }
+
   /*! Find the halfedge incident to the lexicographically smallest vertex
    * along the CCB, such that there is no other halfedge underneath.
    */
-  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ) {
-    const auto* traits = this->m_arr.geometry_traits();
+  template <typename Traits>
+  Halfedge_const_handle find_smallest(Ccb_halfedge_const_circulator circ,
+                                      const Traits&) {
+    // std::cout << "find_smallest()\n";
+    const auto* traits = this->m_aos.geometry_traits();
     auto cmp_xy = traits->compare_xy_2_object();
     auto cmp_y = traits->compare_y_at_x_right_2_object();
 
@@ -241,6 +267,7 @@ protected:
   template <typename Approximate>
   void draw_approximate_region(Halfedge_const_handle curr,
                                const Approximate& approx) {
+    // std::cout << "draw_approximate_region()\n";
     std::vector<typename Gt::Approximate_point_2> polyline;
     double error(this->pixel_ratio());
     bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
@@ -258,7 +285,7 @@ protected:
    */
   template <typename XMonotoneCurve>
   void draw_exact_curve(const XMonotoneCurve& curve) {
-    const auto* traits = this->m_arr.geometry_traits();
+    const auto* traits = this->m_aos.geometry_traits();
     auto ctr_min = traits->construct_min_vertex_2_object();
     auto ctr_max = traits->construct_max_vertex_2_object();
     this->add_segment(ctr_min(curve), ctr_max(curve));
@@ -267,7 +294,7 @@ protected:
   /*! Draw an exact region.
    */
   void draw_exact_region(Halfedge_const_handle curr) {
-    this->add_point_in_face(curr->source()->point());
+    // this->add_point_in_face(curr->source()->point());
     draw_exact_curve(curr->curve());
   }
 
@@ -300,9 +327,46 @@ protected:
   { draw_approximate_region(curr, traits.approximate_2_object()); }
 #endif
 
+  template <typename Kernel_, int AtanX, int AtanY>
+  void draw_region_impl1
+  (Halfedge_const_handle curr,
+   Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
+   int) {
+    // std::cout << "draw_region_impl1()\n";
+    auto approx = traits.approximate_2_object();
+    using Kernel = Kernel_;
+    using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>;
+    using Ak = typename Traits::Approximate_kernel;
+    using Ap = typename Traits::Approximate_point_2;
+    using Approx_point_3 = typename Ak::Point_3;
+
+    std::vector<Ap> polyline;
+    double error(0.01);
+    bool l2r = curr->direction() == ARR_LEFT_TO_RIGHT;
+    approx(curr->curve(), error, std::back_inserter(polyline), l2r);
+    if (polyline.empty()) return;
+    auto it = polyline.begin();
+    auto x = it->dx();
+    auto y = it->dy();
+    auto z = it->dz();
+    auto l = std::sqrt(x*x + y*y + z*z);
+    Approx_point_3 prev(x/l, y/l, z/l);
+    for (++it; it != polyline.end(); ++it) {
+      auto x = it->dx();
+      auto y = it->dy();
+      auto z = it->dz();
+      auto l = std::sqrt(x*x + y*y + z*z);
+      Approx_point_3 next(x/l, y/l, z/l);
+      this->add_segment(prev, next);
+      prev = next;
+      // this->add_point_in_face(*prev);
+    }
+  }
+
   /*! Draw a region.
    */
   void draw_region(Ccb_halfedge_const_circulator circ) {
+    // std::cout << "draw_region()\n";
     /* Check whether the traits has a member function called
      * approximate_2_object() and if so check whether the return type, namely
      * `Approximate_2` has an appropriate operator.
@@ -321,8 +385,8 @@ protected:
     auto color = m_color_generator(circ->face());
     this->face_begin(color);
 
-    const auto* traits = this->m_arr.geometry_traits();
-    auto ext = find_smallest(circ);
+    const auto* traits = this->m_aos.geometry_traits();
+    auto ext = find_smallest(circ, *traits);
     auto curr = ext;
 
     do {
@@ -382,6 +446,37 @@ protected:
   { draw_approximate_curve(xcv, traits.approximate_2_object()); }
 #endif
 
+  template <typename Kernel_, int AtanX, int AtanY>
+  void draw_curve_impl1
+  (const X_monotone_curve& xcv,
+   Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
+   int) {
+    auto approx = traits.approximate_2_object();
+    using Kernel = Kernel_;
+    using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, AtanX, AtanY>;
+    using Ak = typename Traits::Approximate_kernel;
+    using Ap = typename Traits::Approximate_point_2;
+    using Approx_point_3 = typename Ak::Point_3;
+    std::vector<Ap> apoints;
+    double error(0.01);
+    approx(xcv, error, std::back_inserter(apoints));
+    auto it = apoints.begin();
+    auto x = it->dx();
+    auto y = it->dy();
+    auto z = it->dz();
+    auto l = std::sqrt(x*x + y*y + z*z);
+    Approx_point_3 prev(x/l, y/l, z/l);
+    for (++it; it != apoints.end(); ++it) {
+      auto x = it->dx();
+      auto y = it->dy();
+      auto z = it->dz();
+      auto l = std::sqrt(x*x + y*y + z*z);
+      Approx_point_3 next(x/l, y/l, z/l);
+      this->add_segment(prev, next);
+      prev = next;
+    }
+  }
+
   /*! Draw a curve.
    */
   template <typename XMonotoneCurve>
@@ -404,14 +499,14 @@ protected:
 #if 0
     if constexpr (std::experimental::is_detected_v<approximate_2_object_t, Gt>)
     {
-      const auto* traits = this->m_arr.geometry_traits();
+      const auto* traits = this->m_aos.geometry_traits();
       auto approx = traits->approximate_2_object();
       draw_approximate_curve(curve, approx);
       return;
     }
     draw_exact_curve(curve);
 #else
-    const auto* traits = this->m_arr.geometry_traits();
+    const auto* traits = this->m_aos.geometry_traits();
     draw_curve_impl1(curve, *traits, 0);
 #endif
   }
@@ -442,16 +537,35 @@ protected:
   { add_point(traits.approximate_2_object()(p)); }
 #endif
 
+  template <typename Kernel_, int AtanX, int AtanY>
+  void draw_point_impl1
+  (const Point& p,
+   Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
+   int) {
+    auto approx = traits.approximate_2_object();
+    using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>;
+    using Ak = typename Traits::Approximate_kernel;
+    using Approx_point_3 = typename Ak::Point_3;
+    auto ap = approx(p);
+    auto x = ap.dx();
+    auto y = ap.dy();
+    auto z = ap.dz();
+    auto l = std::sqrt(x*x + y*y + z*z);
+    Approx_point_3 p3(x/l, y/l, z/l);
+    add_point(p3);
+  }
+
   /*! Draw a point.
    */
   void draw_point(const Point& p) {
-    const auto* traits = m_arr.geometry_traits();
+    const auto* traits = m_aos.geometry_traits();
     draw_point_impl1(p, *traits, 0);
   }
 
   /*! Add a Connected Component of the Boundary.
    */
   void add_ccb(Ccb_halfedge_const_circulator circ) {
+    // std::cout << "add_ccb()\n";
     auto curr = circ;
     do {
       auto new_face = curr->twin()->face();
@@ -464,8 +578,9 @@ protected:
   /*! Add a face.
    */
   void add_face(Face_const_handle face) {
-    using Inner_ccb_const_iterator = typename Arr::Inner_ccb_const_iterator;
-    using Outer_ccb_const_iterator = typename Arr::Outer_ccb_const_iterator;
+    // std::cout << "add_face()\n";
+    using Inner_ccb_const_iterator = typename Aos::Inner_ccb_const_iterator;
+    using Outer_ccb_const_iterator = typename Aos::Outer_ccb_const_iterator;
 
     for (Inner_ccb_const_iterator it = face->inner_ccbs_begin();
          it != face->inner_ccbs_end(); ++it)
@@ -505,7 +620,7 @@ protected:
   double m_pixel_ratio = 1;
 
   //! The arrangement to draw.
-  const Arr& m_arr;
+  const Aos& m_aos;
 
   //! The color generator.
   Color_generator m_color_generator;
@@ -514,31 +629,62 @@ protected:
 };
 
 //! Basic viewer of a 2D arrangement.
-template <typename Arrangement_2_,
+template <typename ArrangementOnSurface_2,
           typename ColorGenerator = Default_color_generator>
-class Arr_2_viewer_qt : public Arr_2_basic_viewer_qt<Arrangement_2_,
+class Aos_2_viewer_qt : public Aos_2_basic_viewer_qt<ArrangementOnSurface_2,
                                                      ColorGenerator> {
 public:
-  using Arr = Arrangement_2_;
+  using Aos = ArrangementOnSurface_2;
   using Color_generator = ColorGenerator;
-  using Base = Arr_2_basic_viewer_qt<Arr, Color_generator>;
-  using Point = typename Arr::Point_2;
-  using X_monotone_curve = typename Arr::X_monotone_curve_2;
-  using Halfedge_const_handle = typename Arr::Halfedge_const_handle;
-  using Face_const_handle = typename Arr::Face_const_handle;
+  using Base = Aos_2_basic_viewer_qt<Aos, Color_generator>;
+  using Point = typename Aos::Point_2;
+  using X_monotone_curve = typename Aos::X_monotone_curve_2;
+  using Halfedge_const_handle = typename Aos::Halfedge_const_handle;
+  using Face_const_handle = typename Aos::Face_const_handle;
   using Ccb_halfedge_const_circulator =
-    typename Arr::Ccb_halfedge_const_circulator;
+    typename Aos::Ccb_halfedge_const_circulator;
 
   /// Construct the viewer.
   /// @param arr the arrangement to view
   /// @param title the title of the window
-  Arr_2_viewer_qt(QWidget* parent, const Arr& arr,
+  Aos_2_viewer_qt(QWidget* parent, const Aos& aos,
                   Color_generator color_generator,
-                  const char* title = "2D Arrangement Basic Viewer",
+                  const char* title = "2D Arrangement on Surface Basic Viewer",
                   bool draw_vertices = false) :
-    Base(parent, arr, color_generator, title, draw_vertices)
+    Base(parent, aos, color_generator, title, draw_vertices)
   {}
 };
+
+/*! Draw an arrangement on surface.
+ */
+template <typename GeometryTraits_2, typename TopologyTraits>
+void draw(const Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& aos,
+          const char* title = "2D Arrangement on Surface Basic Viewer",
+          bool draw_vertices = false) {
+#if defined(CGAL_TEST_SUITE)
+  bool cgal_test_suite=true;
+#else
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+#endif
+
+  if (cgal_test_suite) return;
+  using Gt = GeometryTraits_2;
+  using Tt = TopologyTraits;
+  using Aos = CGAL::Arrangement_on_surface_2<Gt, Tt>;
+  using Viewer = Aos_2_viewer_qt<Aos, Default_color_generator>;
+
+  CGAL::Qt::init_ogl_context(4,3);
+
+  int argc = 1;
+  const char* argv[2] = {"t2_viewer", nullptr};
+  QApplication app(argc, const_cast<char**>(argv));
+  Default_color_generator color_generator;
+  Viewer mainwindow(app.activeWindow(), aos, color_generator, title,
+                    draw_vertices);
+  mainwindow.add_elements();
+  mainwindow.show();
+  app.exec();
+}
 
 /*! Draw an arrangement.
  */
@@ -555,7 +701,7 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
   if (cgal_test_suite) return;
   using Gt = GeometryTraits_2;
   using Arr = CGAL::Arrangement_2<Gt, Dcel>;
-  using Viewer = Arr_2_viewer_qt<Arr, Default_color_generator>;
+  using Viewer = Aos_2_viewer_qt<Arr, Default_color_generator>;
 
   CGAL::Qt::init_ogl_context(4,3);
 
@@ -589,7 +735,7 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr,
   using Color_generator = ColorGenerator;
   using Gt = GeometryTraits_2;
   using Arr = CGAL::Arrangement_2<Gt, Dcel>;
-  using Viewer = Arr_2_viewer_qt<Arr, Color_generator>;
+  using Viewer = Aos_2_viewer_qt<Arr, Color_generator>;
 
   CGAL::Qt::init_ogl_context(4,3);
 

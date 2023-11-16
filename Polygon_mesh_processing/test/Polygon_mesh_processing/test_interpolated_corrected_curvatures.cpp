@@ -95,31 +95,14 @@ void test_average_curvatures(std::string mesh_path,
     <PolygonMesh, CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>>::type
       principal_curvatures_and_directions_map =
         get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>(), pmesh);
-  // test_info.expansion_radius -> test if no radius is provided by user.
-  if (test_info.expansion_radius < 0) {
-    PMP::interpolated_corrected_mean_curvature(pmesh, mean_curvature_map);
-    PMP::interpolated_corrected_Gaussian_curvature(pmesh, gaussian_curvature_map);
-    PMP::interpolated_corrected_principal_curvatures_and_directions(pmesh, principal_curvatures_and_directions_map);
-  }
-  else {
-    PMP::interpolated_corrected_mean_curvature(
-      pmesh,
-      mean_curvature_map,
-      CGAL::parameters::ball_radius(test_info.expansion_radius)
-    );
 
-    PMP::interpolated_corrected_Gaussian_curvature(
-      pmesh,
-      gaussian_curvature_map,
-      CGAL::parameters::ball_radius(test_info.expansion_radius)
-    );
-
-    PMP::interpolated_corrected_principal_curvatures_and_directions(
-      pmesh,
-      principal_curvatures_and_directions_map,
-      CGAL::parameters::ball_radius(test_info.expansion_radius)
-    );
-  }
+  PMP::interpolated_corrected_curvatures(
+    pmesh,
+    CGAL::parameters::ball_radius(test_info.expansion_radius)
+    .vertex_mean_curvature_map(mean_curvature_map)
+    .vertex_Gaussian_curvature_map(gaussian_curvature_map)
+    .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
+  );
 
   Epic_kernel::FT mean_curvature_avg = 0, gaussian_curvature_avg = 0, principal_curvature_avg = 0;
 
@@ -138,15 +121,6 @@ void test_average_curvatures(std::string mesh_path,
   assert(passes_comparison(mean_curvature_avg, test_info.mean_curvature_avg, test_info.tolerance));
   assert(passes_comparison(gaussian_curvature_avg, test_info.gaussian_curvature_avg, test_info.tolerance));
   assert(passes_comparison(principal_curvature_avg, test_info.principal_curvature_avg, test_info.tolerance));
-
-  // computing curvatures together from interpolated_corrected_curvatures()
-  PMP::interpolated_corrected_curvatures(
-    pmesh,
-    CGAL::parameters::ball_radius(test_info.expansion_radius)
-    .vertex_mean_curvature_map(mean_curvature_map)
-    .vertex_Gaussian_curvature_map(gaussian_curvature_map)
-    .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
-  );
 
   Epic_kernel::FT new_mean_curvature_avg = 0, new_Gaussian_curvature_avg = 0, new_principal_curvature_avg = 0;
 
@@ -178,9 +152,9 @@ void test_average_curvatures(std::string mesh_path,
     PMP::Principal_curvatures_and_directions<Epic_kernel> p;
 
     for (vertex_descriptor v : vertices(pmesh)) {
-      PMP::interpolated_corrected_curvatures_one_vertex(
-        pmesh,
+      PMP::interpolated_corrected_curvatures(
         v,
+        pmesh,
         CGAL::parameters::vertex_Gaussian_curvature(std::ref(g))
         .vertex_mean_curvature(std::ref(h))
         .vertex_principal_curvatures_and_directions(std::ref(p))

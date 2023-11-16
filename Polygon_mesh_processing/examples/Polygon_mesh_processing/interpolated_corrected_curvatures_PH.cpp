@@ -28,6 +28,7 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
+  // define property map to store curvature value and directions
   boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<Epic_kernel::FT>>::type
     mean_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron),
     Gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
@@ -36,29 +37,13 @@ int main(int argc, char* argv[])
     principal_curvatures_and_directions_map =
     get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>(), polyhedron);
 
-  PMP::interpolated_corrected_mean_curvature(polyhedron, mean_curvature_map);
-
-  PMP::interpolated_corrected_Gaussian_curvature(polyhedron, Gaussian_curvature_map);
-
-  PMP::interpolated_corrected_principal_curvatures_and_directions(polyhedron, principal_curvatures_and_directions_map);
-
-  // uncomment this to compute a curvature while specifying named parameters
-  // Example: an expansion ball radius of 0.5 and a vertex normals map (does not have to depend on positions)
-
-  /*std::unordered_map<vertex_descriptor, Epic_Kernel::Vector_3> vnm;
-
-  PMP::interpolated_corrected_mean_curvature(
-      polyhedron,
-      mean_curvature_map,
-      CGAL::parameters::ball_radius(0.5).vertex_normal_map(boost::make_assoc_property_map(vnm))
-  );*/
-
-  // This function can be used to compute multiple curvature types by specifiying them as named parameters
-  // This is more efficient than computing each one separately (shared computations).
-  PMP::interpolated_corrected_curvatures(
-    polyhedron,
+  PMP::interpolated_corrected_curvatures(polyhedron,
     CGAL::parameters::vertex_mean_curvature_map(mean_curvature_map)
-    .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map));
+                     .vertex_Gaussian_curvature_map(Gaussian_curvature_map)
+                     .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
+  // uncomment to use an expansion ball radius of 0.5 to estimate the curvatures
+  //                 .ball_radius(0.5)
+  );
 
   int i = 0;
   for (vertex_descriptor v : vertices(polyhedron))

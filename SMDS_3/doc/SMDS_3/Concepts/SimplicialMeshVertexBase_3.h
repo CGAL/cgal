@@ -4,7 +4,7 @@
 
 The concept `SimplicialMeshVertexBase_3` describes the requirements
 for the `Vertex` type of the triangulation
-used in the 3D simplicial mesh data structure. The type `SimplicialMeshVertexBase_3`
+used in a 3D simplicial mesh data structure. The type `SimplicialMeshVertexBase_3`
 refines the concept `TriangulationVertexBase_3`.
 It provides additional members to store and retrieve
 information about the location of the vertex with respect

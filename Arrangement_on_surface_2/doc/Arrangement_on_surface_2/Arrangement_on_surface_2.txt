@@ -5651,10 +5651,24 @@ must model the basic concept `ArrangementBasicTopologyTraits`. A model
 of this basic concept holds the (\dcel) data structure used to
 represent the arrangement cells (i.e., vertices, edges, and facets)
 and the incidence relations between them. At this point we do not
-expose the concepts that refine the basic concept. The package
-contains one topology traits, namely,
-`Arr_spherical_topology_traits_2`. It can serve as a topology traits
-for an arrangement embedded on a sphere. More precisely, for an
+expose the concepts that refine the basic concept.  The package
+contains three topology traits class templates, namely,
+`Arr_bounded_planar_topology_traits_2`,
+`Arr_unb_planar_topology_traits_2`, and
+`Arr_spherical_topology_traits_2`. The first two are internally used
+to define any instance of the class template
+`Arrangement_2<GeometryTraits_2, Dcel>`. In particular, an instance
+`Arrangement_2<Geometry_traits_2, Dcel_>` is derived from the instance
+`Arrangement_on_surface_2<Geometry_traits_2,Topology_traits>`, where
+the `Topology_traits` type is selected based on the provided geometry
+traits `Geometry_traits_2`, or more precisely, on the boundary
+conditions defined by the geometry traits. If all sides of the
+boundary of the parameter space are closed, the instance
+`Arr_bounded_planar_topology_traits_2<Geometry_traits_2,Dcel_>` is
+selected; otherwise the instance
+`Arr_unb_planar_topology_traits_2<Geometry_traits_2,Dcel_>` is
+selected.  The third topology traits serves as a topology traits for
+an arrangement embedded on a sphere. More precisely, for an
 arrangement embedded on a sphere defined over a parameter space, the
 left and right boundary sides of which are identified, and the top and
 bottom boundary sides are contracted.

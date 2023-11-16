@@ -21,7 +21,7 @@ Release date: October 2023
     has been removed.
 
 #### Envelopes of Surfaces in 3D
-- ** Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
+- **Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
 
 ### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps) and [Generalized Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgGeneralizedMaps)
 
@@ -35,6 +35,31 @@ Release date: October 2023
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+### [Polygon Mesh Processing](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` which can be used to compute
+    the mean and Gaussian curvatures, as well as the principal curvature and directions.
+    
+### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
+-   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
+    when inserting an arc that lies on the identification curve.
+
+### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
+-   **Breaking change**: The template parameters of
+    `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
+    have been modified, reverting changes introduced in CGAL 5.6.
+-   **Breaking change**: The vertex base of
+    `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3`
+    must now be a model of the concept ` SimplicialMeshVertexBase_3` (and not only `TriangulationVertexBase_3`).
+
+### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/6.0/Manual/packages.html#PkgSMDS3)
+-   **Breaking change**: The template parameters of
+    `CGAL::Simplicial_mesh_cell_base_3`
+    have been modified to enable passing a geometric traits and a custom cell base class.
+
+### [3D Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulation3)
+-   Added three functions `vertices()` to the class `Triangulation_3`.
+    Each of them returns an array containing the vertices of the given triangulation simplex.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------

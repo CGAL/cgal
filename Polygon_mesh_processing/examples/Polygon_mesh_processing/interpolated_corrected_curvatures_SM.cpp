@@ -51,38 +51,14 @@ int main(int argc, char* argv[])
         Epic_kernel::Vector_3(0,0,0) });
   assert(created);
 
-  // user can call these fucntions to compute a specfic curvature type on each vertex.
-  // (Note: if no ball radius is specified, the measure expansion of each vertex happens by
-  // summing measures on faces adjacent to each vertex.)
-  PMP::interpolated_corrected_mean_curvature(smesh, mean_curvature_map);
-
-  PMP::interpolated_corrected_Gaussian_curvature(smesh, Gaussian_curvature_map);
-
-  PMP::interpolated_corrected_principal_curvatures_and_directions(smesh, principal_curvatures_and_directions_map);
-
-  // uncomment this to compute a curvature while specifying named parameters
-  // Example: an expansion ball radius of 0.5 and a vertex normals map (does not have to depend on positions)
-
-  /*Surface_Mesh::Property_map<vertex_descriptor, Epic_kernel::Vector_3> vnm;
-  boost::tie(vnm, created) = smesh.add_property_map<vertex_descriptor, Epic_kernel::Vector_3>(
-      "v:vnm", Epic_kernel::Vector_3(0, 0, 0)
-  );
-
-  assert(created);
-
-  PMP::interpolated_corrected_mean_curvature(
-      smesh,
-      mean_curvature_map,
-      CGAL::parameters::ball_radius(0.5).vertex_normal_map(vnm)
-  );*/
-
-  // This function can be used to compute multiple curvature types by specifiying them as named parameters
-  // This is more efficient than computing each one separately (shared computations).
-  PMP::interpolated_corrected_curvatures(
-    smesh,
+  PMP::interpolated_corrected_curvatures(smesh,
     CGAL::parameters::vertex_mean_curvature_map(mean_curvature_map)
-    .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
+                     .vertex_Gaussian_curvature_map(Gaussian_curvature_map)
+                     .vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
+  // uncomment to use an expansion ball radius of 0.5 to estimate the curvatures
+  //                 .ball_radius(0.5)
   );
+
 
   for (vertex_descriptor v : vertices(smesh))
   {
