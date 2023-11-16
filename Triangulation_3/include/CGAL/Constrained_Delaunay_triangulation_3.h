@@ -1111,10 +1111,8 @@ private:
         {}, {}, {polygon_vertices.begin(), polygon_vertices.end()}, {polygon_vertices.begin(), polygon_vertices.end()},
         {}, {}};
 
-    auto& [_, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
+    auto& [intersecting_edges, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
            facets_of_upper_cavity, facets_of_lower_cavity] = outputs;
-
-    auto& intersecting_edges = outputs.intersecting_edges;
 
     // marker for already visited elements
     std::set<Vertex_handle> visited_vertices;
