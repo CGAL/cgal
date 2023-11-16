@@ -70,6 +70,10 @@ The only required parameter is a given target edge length that drives the remesh
 towards a high-quality tetrahedral mesh with improved dihedral angles, and a more
 uniform mesh, with edge lengths getting closer to the input parameter value.
 
+By default, the cells with a non-zero `Subdomain_index` are
+selected for remeshing. The cells with `Subdomain_index` equal to zero
+are ignored by the remeshing algorithm.
+
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_example.cpp }
 
 
@@ -80,6 +84,10 @@ control on the remeshing process. In this example, a triangulation with two subd
 (defined by indices stored in cells) is given as input, but only one
 (defined by the `Subdomain_index` 2)
 of its subdomains is remeshed.
+
+Only the cells with a non-zero `Subdomain_index` will be remeshed.
+The named parameter `cell_is_selected_map` can be used to change this
+behavior.
 
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_of_one_subdomain.cpp }
 

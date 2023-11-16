@@ -334,6 +334,8 @@ void Scene_c3t3_item::drawEdges(Viewer_interface *viewer) const
 {
   Scene_triangulation_3_item::drawEdges(viewer);
 //add cnc
+  if(!visible())
+    return;
   if(d->cnc_are_shown)
   {
     getEdgeContainer(CNC)->setColor(QColor(Qt::black));
