@@ -1824,16 +1824,14 @@ private:
       }
       for(auto [cell, facet_index] : missing_faces) {
         facets_of_cavity_border.erase({cell, facet_index});
-        {
-          if(cell->is_facet_constrained(facet_index)) {
-            result.interior_constrained_faces.emplace_back(cell, facet_index);
-          }
-          auto [_, is_new_cell] = cells_of_cavity.insert(cell); // TODO: use .second
-          if(!is_new_cell)
-            continue;
+        if(cell->is_facet_constrained(facet_index)) {
+          result.interior_constrained_faces.emplace_back(cell, facet_index);
         }
+        auto is_new_cell = cells_of_cavity.insert(cell).second;
+        if(!is_new_cell)
+          continue;
         const auto v3 = cell->vertex(facet_index);
-        auto [_, v3_is_new_vertex] = vertices_of_cavity.insert(v3);
+        auto v3_is_new_vertex = vertices_of_cavity.insert(v3).second;
         if(v3_is_new_vertex) {
           insert_new_vertex(v3, "extra ");
         }
@@ -1945,7 +1943,7 @@ private:
         for(int j = i + 1; j < 4; ++j) {
           auto pair = make_sorted_pair(c->vertex(i),
                                        c->vertex(j));
-          auto [_, is_a_new_edge] = visited_edges.insert(pair);
+          auto is_a_new_edge = visited_edges.insert(pair).second;
           if(!is_a_new_edge)
             continue;
           auto [va, vb] = pair;
