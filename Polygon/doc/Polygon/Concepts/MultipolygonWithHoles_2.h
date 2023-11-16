@@ -22,6 +22,11 @@ typedef unspecified_type Polygon_with_holes_2;
 /*! a bidirectional iterator over the polygons with holes.
  * Its value type is `Polygon_with_holes_2`.
  */
+typedef unspecified_type Polygon_with_holes_iterator;
+
+/*! a bidirectional const iterator over the polygons with holes.
+ * Its value type is `Polygon_with_holes_2`.
+ */
 typedef unspecified_type Polygon_with_holes_const_iterator;
 
 //! range type for iterating over polygons with holes.
@@ -56,6 +61,14 @@ Size number_of_polygons_wih_holes();
 
 /*! returns the begin iterator of the polygons with holes.
  */
+Polygon_with_holes_iterator polygons_with_holes_begin();
+
+/*! returns the past-the-end iterator of the polygons with holes.
+ */
+  Polygon_with_holes_iterator polygons_with_holes_end();
+
+/*! returns the begin iterator of the polygons with holes.
+ */
 Polygon_with_holes_const_iterator polygons_with_holes_begin() const;
 
 /*! returns the past-the-end iterator of the polygons with holes.
@@ -77,7 +90,7 @@ void add_polygon_with_holes(const Polygon_with_holes_2& polygon);
 
 /*! erases the specified polygon.
  */
-void erase_polygon_with_holes(Polygon_iterator pit);
+void erase_polygon_with_holes(Polygon_with_holes_const_iterator pit);
 
 /*! removes all the polygons with holes.
  */
