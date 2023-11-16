@@ -68,6 +68,7 @@
 #endif
 
 #include <CGAL/Three/Three.h>
+#include <CGAL/use.h>
 
 #include <boost/type_traits.hpp>
 #include <optional>
@@ -92,6 +93,8 @@ load_vtk_file(QFileInfo fileinfo, Image* image)
     *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
     return true;
 #else
+    CGAL_USE(fileinfo);
+    CGAL_USE(image);
     return false;
 #endif
 }

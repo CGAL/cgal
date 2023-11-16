@@ -50,9 +50,6 @@ auto make_not_null(T&& t) {
 
 using namespace CGAL::Three;
 
-// Constants
-const QColor default_mesh_color(45,169,70);
-
 #include "Mesh_3_plugin_cgal_code.h" // declare functions `cgal_code_mesh_3`
 #include "split_polylines.h"
 #include <CGAL/Mesh_facet_topology.h>
