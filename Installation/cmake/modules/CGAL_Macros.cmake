@@ -579,15 +579,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
 endif()
 
-
 function(process_CGAL_subdirectory entry subdir type_name)
   # For example, subdir can be "examples", type_name "example", and entry "Mesh_2"
-
-  if ( CGAL_BRANCH_BUILD )
-    string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/.*/${subdir}/" "" ENTRY_DIR_NAME "${entry}" )
-  else()
-    string( REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" ENTRY_DIR_NAME "${entry}" )
-  endif()
+  get_filename_component(ENTRY_DIR_NAME "${entry}" NAME)
 
   if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
     make_directory("${CMAKE_BINARY_DIR}/${subdir}/${ENTRY_DIR_NAME}")
