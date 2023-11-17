@@ -46,13 +46,16 @@ public:
 
   /// `std::function` that returns `true` if the given vertex is colored, `false` otherwise.
   /// Returns `false` by default.
+  /// For non colored vertices, this is the role of the user of a graphic scene to decide which color must be used (cf. for example `Basic_viewer`, `vertices_mono_color`).
   std::function<bool(const DS &, vertex_descriptor)> is_vertex_colored;
 
   /// `std::function` that returns `true` if the given edge is colored, `false` otherwise.
+  /// For non colored edges, this is the role of the user of a graphic scene to decide which color must be used (cf. for example `Basic_viewer`, `edges_mono_color`).
   /// Returns `false` by default.
   std::function<bool(const DS &, edge_descriptor)> is_edge_colored;
 
   /// `std::function` that returns `true` if the given face is colored, `false` otherwise.
+  /// For non colored faces, this is the role of the user of a graphic scene to decide which color must be used (cf. for example `Basic_viewer`, `faces_mono_color`).
   /// Returns `false` by default.
   std::function<bool(const DS &, face_descriptor)> is_face_colored;
 
@@ -108,6 +111,7 @@ public:
   std::function<bool(const DS &, volume_descriptor)> ignore_volume;
 
   /// `std::function` that returns `true` if the given volume is colored, `false` otherwise.
+  /// For non colored volumes, this is the role of the user of a graphic scene to decide which color must be used (cf. for example `Basic_viewer`, `faces_mono_color`).
   /// Returns `false` by default.
   std::function<bool(const DS &, volume_descriptor)> is_volume_colored;
 
