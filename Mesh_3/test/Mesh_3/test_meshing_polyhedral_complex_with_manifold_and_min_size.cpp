@@ -71,7 +71,7 @@ int main()
   // Mesh criteria
   Mesh_criteria criteria(params::edge_size(1.0).edge_min_size(0.1)
     //.facet_distance(0.1)
-    .facet_min_size(0.01)
+    .facet_min_size(0.05)
     //.facet_topology(CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH)
     //.cell_radius_edge_ratio(3.)
     );
