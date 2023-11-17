@@ -5,7 +5,7 @@ import sys
 from urllib.parse import quote
 
 parser = argparse.ArgumentParser()
-parser.add_argument("filename", help="the Mardown file to process")
+parser.add_argument("filename", help="the Markdown file to process")
 parser.add_argument(
     "--codebase",
     help="for a Markdown file of Codebase instead of Github",
@@ -83,48 +83,52 @@ def get_toc_entry(s):
 
 
 # now the main
-filename = args.filename
+def main():
+    filename = args.filename
 
-f = codecs.open(filename, "r", encoding="utf-8")
+    f = codecs.open(filename, "r", encoding="utf-8")
 
-if not f:
-    print("Cannot open " + input + "\n")
-    sys.exit()
+    if not f:
+        print("Cannot open " + input + "\n")
+        sys.exit()
 
-# look for <!--TOC--> the begin of the file
-line = f.readline()
-if line.find("<!--TOC-->") == -1:
-    sys.exit()
-
-# skip current TOC
-line = f.readline()
-while line and line.find("<!--TOC-->") == -1:
+    # look for <!--TOC--> the begin of the file
     line = f.readline()
+    if line.find("<!--TOC-->") == -1:
+        sys.exit()
 
-if not line:
-    sys.exit()
+    # skip current TOC
+    line = f.readline()
+    while line and line.find("<!--TOC-->") == -1:
+        line = f.readline()
 
-buffer = ""
-TOC = "<!--TOC-->\n\n# Table of Contents\n"
+    if not line:
+        sys.exit()
 
-verbatim_mode = False  # to ignore verbatim mode while looking for sections
-TOC_empty = True
-for line in f.readlines():
-    buffer += line
-    if verbatim_mode:
-        if line[:3] == "```":
-            verbatim_mode = False
-    else:
-        if line[:3] == "```":
-            verbatim_mode = True
+    buffer = ""
+    toc = "<!--TOC-->\n\n# Table of Contents\n"
+
+    verbatim_mode = False  # to ignore verbatim mode while looking for sections
+    toc_empty = True
+    for line in f.readlines():
+        buffer += line
+        if verbatim_mode:
+            if line[:3] == "```":
+                verbatim_mode = False
         else:
-            if line[0] == "#" and get_level(line) <= args.max_level:
-                TOC += get_toc_entry(line) + "\n"
-                TOC_empty = False
-TOC += "\n<!--TOC-->\n"
+            if line[:3] == "```":
+                verbatim_mode = True
+            else:
+                if line[0] == "#" and get_level(line) <= args.max_level:
+                    toc += get_toc_entry(line) + "\n"
+                    toc_empty = False
+    toc += "\n<!--TOC-->\n"
 
-if not TOC_empty:
-    f.close()
-    f = codecs.open(filename, "w", encoding="utf-8")
-    f.write(TOC)
-    f.write(buffer)
+    if not toc_empty:
+        f.close()
+        f = codecs.open(filename, "w", encoding="utf-8")
+        f.write(toc)
+        f.write(buffer)
+
+if __name__ == "__main__":
+    main()
