@@ -10,6 +10,9 @@
 #include <cstdlib>
 #include <cassert>
 
+#include <fstream>
+#include <CGAL/IO/File_medit.h>
+
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
@@ -34,7 +37,7 @@ const char* const filenames[] = {
   "meshes/polyhedral_complex_of_spheres/Sphere2.off",
   "meshes/polyhedral_complex_of_spheres/Sphere3.off",
   "meshes/polyhedral_complex_of_spheres/Intersection12.off",
-  "meshes/polyhedral_complex_of_spheres/Intersection23.off"
+  "meshes/polyhedral_complex_of_spheres/Intersection13.off"
 };
 
 const std::pair<int, int> incident_subdomains[] = {
@@ -42,7 +45,7 @@ const std::pair<int, int> incident_subdomains[] = {
   std::make_pair(2, 0),
   std::make_pair(3, 0),
   std::make_pair(1, 2),
-  std::make_pair(3, 2)
+  std::make_pair(1, 3)
 };
 
 int main()
@@ -67,7 +70,7 @@ int main()
 
   // Mesh criteria
   Mesh_criteria criteria(params::edge_size(1.0).edge_min_size(0.1)
-    .facet_distance(0.1)
+    //.facet_distance(0.1)
     .facet_min_size(0.01)
     //.facet_topology(CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH)
     //.cell_radius_edge_ratio(3.)
@@ -78,6 +81,9 @@ int main()
     params::no_perturb(), params::no_exude(),
     params::manifold());
 
+  std::ofstream medit_file("out.mesh");
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return EXIT_SUCCESS;
 }
