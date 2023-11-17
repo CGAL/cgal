@@ -119,7 +119,7 @@ public:
   /// Returns `false` by default.
   std::function<bool(const DS &, volume_descriptor)> is_volume_wireframe;
 
-  /// `std::function` that returns the color of the given volume.
+  /// `std::function` that returns the color of the given volume, i.e. the color of all the faces of this volume.
   /// `nullptr` by default.
   std::function<CGAL::IO::Color(const DS &, volume_descriptor)> volume_color;
 
