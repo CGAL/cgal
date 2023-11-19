@@ -135,14 +135,19 @@ qt5_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui SelfSnapDialog.ui)
 polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
 target_link_libraries(repair_polyhedron_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item)
 
-qt5_wrap_ui(isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
-polyhedron_demo_plugin(isotropic_remeshing_plugin Isotropic_remeshing_plugin
-                       ${isotropicRemeshingUI_FILES} KEYWORDS PMP)
-target_link_libraries(isotropic_remeshing_plugin PUBLIC scene_surface_mesh_item
-                                                        scene_selection_item)
+if(TARGET CGAL::Eigen3_support)
+  qt5_wrap_ui(isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
+  polyhedron_demo_plugin(isotropic_remeshing_plugin Isotropic_remeshing_plugin
+          ${isotropicRemeshingUI_FILES} KEYWORDS PMP)
+  target_link_libraries(isotropic_remeshing_plugin PUBLIC scene_surface_mesh_item
+          scene_selection_item CGAL::Eigen3_support)
 
-if(TARGET CGAL::TBB_support)
-  target_link_libraries(isotropic_remeshing_plugin PUBLIC CGAL::TBB_support)
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(isotropic_remeshing_plugin PUBLIC CGAL::TBB_support)
+  endif()
+
+else()
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Isotropic remeshing plugin will not be available.")
 endif()
 
 polyhedron_demo_plugin(distance_plugin Distance_plugin KEYWORDS PMP)
