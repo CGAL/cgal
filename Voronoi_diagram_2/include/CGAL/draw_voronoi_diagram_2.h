@@ -384,19 +384,19 @@ void draw(const CGAL_VORONOI_TYPE& av2,
 
   add_to_graphics_scene(av2, buffer, gs_options);
 
-  QApplication_and_basic_viewer app(buffer, title);
+  CGAL::Qt::QApplication_and_basic_viewer app(buffer, title);
   if(app)
   {
     // Here we define the std::function to capture key pressed.
     app.basic_viewer().on_key_pressed=
-      [&av2, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
+      [&av2, &buffer, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_R) && (modifiers == ::Qt::NoButton))
         {
           basic_viewer->toggle_draw_rays();
           basic_viewer->displayMessage
-            (QString("Draw rays=%1.").arg(basic_viewer->get_draw_rays()?"true":"false"));
+            (QString("Draw rays=%1.").arg(basic_viewer->draw_rays()?"true":"false"));
 
           basic_viewer->redraw();
         }
@@ -410,10 +410,8 @@ void draw(const CGAL_VORONOI_TYPE& av2,
             (QString("Voronoi vertices=%1.").
              arg(gs_options.are_voronoi_vertices_enabled()?"true":"false"));
 
-          basic_viewer->clear();
-          draw_function_for_v2::compute_elements(av2,
-                                                 basic_viewer->get_graphics_scene(),
-                                                 gs_options);
+          buffer.clear();
+          draw_function_for_v2::compute_elements(av2, buffer, gs_options);
           basic_viewer->redraw();
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
@@ -425,10 +423,8 @@ void draw(const CGAL_VORONOI_TYPE& av2,
           basic_viewer->displayMessage(QString("Dual vertices=%1.").
                                        arg(gs_options.are_dual_vertices_enabled()?"true":"false"));
 
-          basic_viewer->clear();
-          draw_function_for_v2::compute_elements(av2,
-                                                 basic_viewer->get_graphics_scene(),
-                                                 gs_options);
+          buffer.clear();
+          draw_function_for_v2::compute_elements(av2, buffer, gs_options);
           basic_viewer->redraw();
         }
         else
