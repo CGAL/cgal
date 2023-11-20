@@ -13,7 +13,7 @@
 #ifndef CGAL_GRAPHICS_SCENE_H
 #define CGAL_GRAPHICS_SCENE_H
 
-#include <CGAL/license/GraphicsView.h>
+// TODO #include <CGAL/license/GraphicsView.h>
 #include <QString>
 
 #include <iostream>
@@ -231,7 +231,7 @@ public:
     return false;
   }
 
-  bool is_a_face_started() const
+  bool a_face_started() const
   {
     return m_buffer_for_mono_faces.is_a_face_started() ||
            m_buffer_for_colored_faces.is_a_face_started();
@@ -269,7 +269,21 @@ public:
     { m_buffer_for_colored_faces.face_end(); }
   }
 
-  bool is_empty() const
+  template <typename KPoint>
+  void add_text(const KPoint &kp, const QString &txt)
+  {
+    Local_point p = get_local_point(kp);
+    m_texts.push_back(std::make_tuple(p, txt));
+  }
+
+  template <typename KPoint> void add_text(const KPoint &kp, const char *txt)
+  { add_text(kp, QString(txt)); }
+
+  template <typename KPoint>
+  void add_text(const KPoint &kp, const std::string &txt)
+  { add_text(kp, txt.c_str()); }
+
+  bool empty() const
   {
     return (m_buffer_for_mono_points.is_empty() &&
             m_buffer_for_colored_points.is_empty() &&
@@ -360,20 +374,6 @@ public:
     return internal::Geom_utils<typename CGAL::Kernel_traits<KVector>::Kernel,
                                 Local_kernel>::get_local_vector(v);
   }
-
-  template <typename KPoint>
-  void add_text(const KPoint &kp, const QString &txt)
-  {
-    Local_point p = get_local_point(kp);
-    m_texts.push_back(std::make_tuple(p, txt));
-  }
-
-  template <typename KPoint> void add_text(const KPoint &kp, const char *txt)
-  { add_text(kp, QString(txt)); }
-
-  template <typename KPoint>
-  void add_text(const KPoint &kp, const std::string &txt)
-  { add_text(kp, txt.c_str()); }
 
   void m_texts_clear()
   { m_texts.clear(); }
