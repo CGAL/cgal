@@ -71,7 +71,7 @@ int main(void)
 
   CGAL::Qt::Basic_viewer bv1(mainWindow, scene1);
   CGAL::Qt::Basic_viewer bv2(mainWindow, scene2);
-  bv1.set_draw_vertices(true);
+  bv1.draw_vertices(true);
 
   layout->addWidget(&bv1);
   layout->addWidget(&bv2);

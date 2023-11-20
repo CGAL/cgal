@@ -232,7 +232,7 @@ void compute_elements(const Nef_Polyhedron &nef,
     { nef.visit_shell_objects(SFace_const_handle(it), V); }
   }
 
-  graphics_scene.negate_all_normals();
+  graphics_scene.reverse_all_normals();
 }
 
 } // namespace draw_function_for_nef_polyhedron
