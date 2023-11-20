@@ -38,6 +38,8 @@ namespace Polygon_mesh_processing
 * Edges too long with respect to the local target edge length are split in two, while
 * edges that are too short are collapsed.
 *
+* This class depends on the Eigen library.
+*
 * \cgalModels{PMPSizingField}
 *
 * \sa `isotropic_remeshing()`
