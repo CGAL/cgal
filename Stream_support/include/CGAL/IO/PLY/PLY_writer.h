@@ -253,6 +253,29 @@ public:
   }
 };
 
+template <typename Index, typename PropertyMap>
+class Double_coordinate_printer
+    : public Abstract_property_printer<Index>
+{
+    PropertyMap m_pmap;
+public:
+    Double_coordinate_printer(const PropertyMap& pmap) : m_pmap(pmap) { }
+
+    virtual void print(std::ostream& stream, const Index& index)
+    {
+        write(stream, to_double(get(m_pmap, index).x())); 
+        if (get_mode(stream) == CGAL::IO::ASCII) {
+            stream << " ";
+        }
+        write(stream, to_double(get(m_pmap, index).y()));
+        if (get_mode(stream) == CGAL::IO::ASCII) {
+            stream << " ";
+        }
+        write(stream, to_double(get(m_pmap, index).z()));
+    }
+};
+
+
 template <typename Index,
           typename PropertyMap,
           typename Type = typename boost::property_traits<PropertyMap>::value_type>
