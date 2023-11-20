@@ -20,56 +20,56 @@
 namespace CGAL {
 
 template <typename DS,
-          typename VertexHandle,
-          typename EdgeHandle,
-          typename FaceHandle,
-          typename VolumeHandle=void>
+          typename VertexDescriptor,
+          typename EdgeDescriptor,
+          typename FaceDescriptor,
+          typename VolumeDescriptor=void>
 struct Graphics_scene_options;
 
 // Drawing functor for a 2D combinatorial data structure
 // (with vertices, edges and faces)
 template <typename DS,
-          typename VertexHandle,
-          typename EdgeHandle,
-          typename FaceHandle>
-struct Graphics_scene_options<DS, VertexHandle, EdgeHandle, FaceHandle, void>
+          typename VertexDescriptor,
+          typename EdgeDescriptor,
+          typename FaceDescriptor>
+struct Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor, void>
 {
 
-  typedef VertexHandle vertex_descriptor;
-  typedef EdgeHandle edge_descriptor;
-  typedef FaceHandle face_descriptor;
+  typedef VertexDescriptor vertex_descriptor;
+  typedef EdgeDescriptor edge_descriptor;
+  typedef FaceDescriptor face_descriptor;
 
   Graphics_scene_options(): m_enabled_vertices(true),
                             m_enabled_edges(true),
                             m_enabled_faces(true)
   {
-    draw_vertex=[](const DS &, VertexHandle)->bool { return true; };
-    draw_edge=[](const DS &, EdgeHandle)->bool { return true; };
-    draw_face=[](const DS &, FaceHandle)->bool { return true; };
+    draw_vertex=[](const DS &, vertex_descriptor)->bool { return true; };
+    draw_edge=[](const DS &, edge_descriptor)->bool { return true; };
+    draw_face=[](const DS &, face_descriptor)->bool { return true; };
 
-    colored_vertex=[](const DS &, VertexHandle)->bool { return false; };
-    colored_edge=[](const DS &, EdgeHandle)->bool { return false; };
-    colored_face=[](const DS &, FaceHandle)->bool { return false; };
+    colored_vertex=[](const DS &, vertex_descriptor)->bool { return false; };
+    colored_edge=[](const DS &, edge_descriptor)->bool { return false; };
+    colored_face=[](const DS &, face_descriptor)->bool { return false; };
 
-    face_wireframe=[](const DS &, FaceHandle)->bool { return false; };
+    face_wireframe=[](const DS &, face_descriptor)->bool { return false; };
   }
 
   // The seven following functions should not be null
-  std::function<bool(const DS &, VertexHandle)> draw_vertex;
-  std::function<bool(const DS &, EdgeHandle)>   draw_edge;
-  std::function<bool(const DS &, FaceHandle)>   draw_face;
+  std::function<bool(const DS &, vertex_descriptor)> draw_vertex;
+  std::function<bool(const DS &, edge_descriptor)>   draw_edge;
+  std::function<bool(const DS &, face_descriptor)>   draw_face;
 
-  std::function<bool(const DS &, VertexHandle)> colored_vertex;
-  std::function<bool(const DS &, EdgeHandle)>   colored_edge;
-  std::function<bool(const DS &, FaceHandle)>   colored_face;
+  std::function<bool(const DS &, vertex_descriptor)> colored_vertex;
+  std::function<bool(const DS &, edge_descriptor)>   colored_edge;
+  std::function<bool(const DS &, face_descriptor)>   colored_face;
 
-  std::function<bool(const DS &, FaceHandle)> face_wireframe;
+  std::function<bool(const DS &, face_descriptor)> face_wireframe;
 
   // These functions must be non null if the corresponding colored_XXX function
   // returns true.
-  std::function<CGAL::IO::Color(const DS &, VertexHandle)> vertex_color;
-  std::function<CGAL::IO::Color(const DS &, EdgeHandle)>   edge_color;
-  std::function<CGAL::IO::Color(const DS &, FaceHandle)>   face_color;
+  std::function<CGAL::IO::Color(const DS &, vertex_descriptor)> vertex_color;
+  std::function<CGAL::IO::Color(const DS &, edge_descriptor)>   edge_color;
+  std::function<CGAL::IO::Color(const DS &, face_descriptor)>   face_color;
 
   void disable_vertices() { m_enabled_vertices=false; }
   void enable_vertices() { m_enabled_vertices=true; }
@@ -90,29 +90,29 @@ protected:
 // Drawing functor for a 3D combinatorial data structure
 // (with vertices, edges, faces and volumes)
 template <typename DS,
-          typename VertexHandle,
-          typename EdgeHandle,
-          typename FaceHandle,
-          typename VolumeHandle>
+          typename VertexDescriptor,
+          typename EdgeDescriptor,
+          typename FaceDescriptor,
+          typename VolumeDescriptor>
 struct Graphics_scene_options:
-    public Graphics_scene_options<DS, VertexHandle, EdgeHandle, FaceHandle>
+    public Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor>
 {
-  typedef VertexHandle vertex_descriptor;
-  typedef EdgeHandle edge_descriptor;
-  typedef FaceHandle face_descriptor;
-  typedef VolumeHandle volume_descriptor;
+  typedef VertexDescriptor vertex_descriptor;
+  typedef EdgeDescriptor edge_descriptor;
+  typedef FaceDescriptor face_descriptor;
+  typedef VolumeDescriptor volume_descriptor;
 
   Graphics_scene_options() : m_enabled_volumes(true)
   {
-    draw_volume=[](const DS &, VolumeHandle)->bool { return true; };
-    colored_volume=[](const DS &, VolumeHandle)->bool { return false; };
-    volume_wireframe=[](const DS &, VolumeHandle)->bool { return false; };
+    draw_volume=[](const DS &, volume_descriptor)->bool { return true; };
+    colored_volume=[](const DS &, volume_descriptor)->bool { return false; };
+    volume_wireframe=[](const DS &, volume_descriptor)->bool { return false; };
   }
 
-  std::function<bool(const DS &, VolumeHandle)>            draw_volume;
-  std::function<bool(const DS &, VolumeHandle)>            colored_volume;
-  std::function<bool(const DS &, VolumeHandle)>            volume_wireframe;
-  std::function<CGAL::IO::Color(const DS &, VolumeHandle)> volume_color;
+  std::function<bool(const DS &, volume_descriptor)>            draw_volume;
+  std::function<bool(const DS &, volume_descriptor)>            colored_volume;
+  std::function<bool(const DS &, volume_descriptor)>            volume_wireframe;
+  std::function<CGAL::IO::Color(const DS &, volume_descriptor)> volume_color;
 
   void disable_volumes() { m_enabled_volumes=false; }
   void enable_volumes() { m_enabled_volumes=true; }
