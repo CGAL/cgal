@@ -242,12 +242,12 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
      typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
 
   add_to_graphics_scene(ap2t2, buffer, gs_options);
-  QApplication_and_basic_viewer app(buffer, title);
+  CGAL::Qt::QApplication_and_basic_viewer app(buffer, title);
   if(app)
   {
     // Here we define the std::function to capture key pressed.
     app.basic_viewer().on_key_pressed=
-      [&ap2t2, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
+      [&ap2t2, &buffer, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
@@ -258,10 +258,8 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
                                              (gs_options.current_display_type()==1?"Unique":
                                               (gs_options.current_display_type()==2?"Stored cover":
                                                "Unique cover"))));
-          basic_viewer->clear();
-          draw_function_for_P2T2::compute_elements(ap2t2,
-                                                   basic_viewer->get_graphics_scene(),
-                                                   gs_options);
+          buffer.clear();
+          draw_function_for_P2T2::compute_elements(ap2t2, buffer, gs_options);
           basic_viewer->redraw();
         }
         else
