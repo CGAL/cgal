@@ -19,14 +19,12 @@ struct My_sizing_field
 {
   double min_size, max_size;
   double ymin, ymax;
-  const Mesh& mesh;
 
-  My_sizing_field(double min_size, double max_size, double ymin, double ymax, const Mesh& mesh)
+  My_sizing_field(double min_size, double max_size, double ymin, double ymax)
     : min_size(min_size)
     , max_size(max_size)
     , ymin(ymin)
     , ymax(ymax)
-    , mesh(mesh)
   {}
 
   double at(K::Point_3 p) const
@@ -34,10 +32,11 @@ struct My_sizing_field
     double y=p.y();
     return CGAL::square( (y-ymin)/(ymax-ymin) * (min_size - max_size) + max_size );
   }
-  double at(const Mesh::Vertex_index v) const { return at(mesh.point(v)); }
+  double at(const Mesh::Vertex_index v, const Mesh& mesh) const { return at(mesh.point(v)); }
 
   std::optional<double> is_too_long(const Mesh::Vertex_index va,
-                                    const Mesh::Vertex_index vb) const
+                                    const Mesh::Vertex_index vb,
+                                    const Mesh& mesh) const
   {
     // TODO: no mesh as parameters?
     K::Point_3 mp = CGAL::midpoint(mesh.point(va), mesh.point(vb));
@@ -49,7 +48,7 @@ struct My_sizing_field
   }
 
   std::optional<double> is_too_short(const Mesh::Halfedge_index h,
-                                     const Mesh&) const
+                                     const Mesh& mesh) const
   {
     K::Point_3 mp = CGAL::midpoint(mesh.point(source(h, mesh)), mesh.point(target(h, mesh)));
     double sql_at = at(mp);
@@ -60,12 +59,12 @@ struct My_sizing_field
   }
 
   K::Point_3 split_placement(const Mesh::Halfedge_index h,
-                          const Mesh&) const
+                             const Mesh& mesh) const
   {
     return CGAL::midpoint(mesh.point(source(h, mesh)), mesh.point(target(h, mesh)));
   }
 
-  void update(const Mesh::Vertex_index, const Mesh&) {}
+  void register_split_vertex(const Mesh::Vertex_index, const Mesh&) {}
 };
 
 
@@ -83,7 +82,7 @@ int main(int argc, char* argv[])
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   CGAL::Bbox_3 bb = PMP::bbox(mesh);
-  My_sizing_field sizing_field(0.1, 30, bb.ymin(), bb.ymax(), mesh);
+  My_sizing_field sizing_field(0.1, 30, bb.ymin(), bb.ymax());
   unsigned int nb_iter = 5;
 
   PMP::isotropic_remeshing(
