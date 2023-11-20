@@ -46,12 +46,12 @@ struct Graphics_scene_options_voronoi :
   void disable_voronoi_vertices() { m_draw_voronoi_vertices=false; }
   void enable_voronoi_vertices() { m_draw_voronoi_vertices=true; }
   bool are_voronoi_vertices_enabled() const { return m_draw_voronoi_vertices; }
-  void negate_draw_voronoi_vertices() { m_draw_voronoi_vertices=!m_draw_voronoi_vertices; }
+  void toggle_draw_voronoi_vertices() { m_draw_voronoi_vertices=!m_draw_voronoi_vertices; }
 
   void disable_dual_vertices() { m_draw_dual_vertices=false; }
   void enable_dual_vertices() { m_draw_dual_vertices=true; }
   bool are_dual_vertices_enabled() const { return m_draw_dual_vertices; }
-  void negate_draw_dual_vertices() { m_draw_dual_vertices=!m_draw_dual_vertices; }
+  void toggle_draw_dual_vertices() { m_draw_dual_vertices=!m_draw_dual_vertices; }
 
   CGAL::IO::Color dual_vertex_color;
   CGAL::IO::Color ray_color;
@@ -394,7 +394,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_R) && (modifiers == ::Qt::NoButton))
         {
-          basic_viewer->negate_draw_rays();
+          basic_viewer->toggle_draw_rays();
           basic_viewer->displayMessage
             (QString("Draw rays=%1.").arg(basic_viewer->get_draw_rays()?"true":"false"));
 

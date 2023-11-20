@@ -155,7 +155,7 @@ public:
     resize(CGAL_BASIC_VIEWER_INIT_SIZE_X, CGAL_BASIC_VIEWER_INIT_SIZE_Y);
 
     if (inverse_normal)
-    { reverse_normals(); }
+    { reverse_all_normals(); }
   }
 
   ~Basic_viewer()
@@ -1254,7 +1254,7 @@ protected:
       }
       else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::NoButton))
       {
-        reverse_normals();
+        reverse_all_normals();
         displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
         redraw();
       }

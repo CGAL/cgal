@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
   if(app)
   {
     app.basic_viewer().on_key_pressed=
-      [&sm, &gsosm, &buffer] (QKeyEvent* e, CGAL::Basic_viewer_qt* basic_viewer) -> bool
+      [&sm, &gsosm, &buffer] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_I) && (modifiers == ::Qt::NoButton))

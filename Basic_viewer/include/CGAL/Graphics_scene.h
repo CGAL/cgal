@@ -239,7 +239,7 @@ public:
 
   void face_begin()
   {
-    if (is_a_face_started())
+    if (a_face_started())
     {
       std::cerr
           << "You cannot start a new face before to finish the previous one."
@@ -251,7 +251,7 @@ public:
 
   void face_begin(const CGAL::IO::Color &acolor)
   {
-    if (is_a_face_started())
+    if (a_face_started())
     {
       std::cerr
           << "You cannot start a new face before to finish the previous one."
@@ -342,7 +342,7 @@ public:
   // Returns true if the data structure lies on a XY or XZ or YZ plane
   bool is_two_dimensional() const
   {
-    return (!is_empty() && (has_zero_x() || has_zero_y() || has_zero_z()));
+    return (!empty() && (has_zero_x() || has_zero_y() || has_zero_z()));
   }
 
   void clear()

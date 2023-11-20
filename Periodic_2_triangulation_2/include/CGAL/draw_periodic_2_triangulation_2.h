@@ -41,7 +41,7 @@ struct Graphics_scene_options_periodic_2_triangulation_2 :
   { return m_draw_domain; }
   void set_draw_domain(bool b)
   { m_draw_domain=b; }
-  void negate_draw_domain()
+  void toggle_draw_domain()
   { m_draw_domain=!m_draw_domain; }
 
   typename DS::Iterator_type current_display_type() const

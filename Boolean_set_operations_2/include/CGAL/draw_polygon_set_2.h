@@ -164,7 +164,7 @@ public:
    */
   virtual void add_elements()
   {
-    this->clear();
+    graphics_scene.clear();
     std::vector<Pwh> pwhs;
     m_ps.polygons_with_holes(std::back_inserter(pwhs));
     for (const auto& pwh : pwhs)
