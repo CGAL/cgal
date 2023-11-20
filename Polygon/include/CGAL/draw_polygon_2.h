@@ -49,17 +49,17 @@ namespace draw_function_for_p2 {
 template <class P2, class GSOptions>
 void compute_elements(const P2& p2,
                       CGAL::Graphics_scene &graphics_scene,
-                      const GSOptions& gs_options)
+                      const GSOptions& gso)
 {
   if (p2.is_empty())
     return;
 
   typename P2::Point_2 prev=p2.vertex(p2.size()-1);
 
-  if (gs_options.are_faces_enabled())
+  if (gso.are_faces_enabled())
   {
-    if(gs_options.colored_face(p2, nullptr))
-    { graphics_scene.face_begin(gs_options.face_color(p2, nullptr)); }
+    if(gso.colored_face(p2, nullptr))
+    { graphics_scene.face_begin(gso.face_color(p2, nullptr)); }
     else
     { graphics_scene.face_begin(); }
   }
@@ -67,31 +67,31 @@ void compute_elements(const P2& p2,
   for (typename P2::Vertex_const_iterator i=p2.vertices_begin();
        i!=p2.vertices_end(); ++i)
   {
-    if(gs_options.are_vertices_enabled() &&
-       gs_options.draw_vertex(p2, i))
+    if(gso.are_vertices_enabled() &&
+       gso.draw_vertex(p2, i))
     { // Add vertex
-      if(gs_options.colored_vertex(p2, i))
-      { graphics_scene.add_point(*i, gs_options.vertex_color(p2, i)); }
+      if(gso.colored_vertex(p2, i))
+      { graphics_scene.add_point(*i, gso.vertex_color(p2, i)); }
       else
       { graphics_scene.add_point(*i); }
     }
 
-    if(gs_options.are_edges_enabled() &&
-       gs_options.draw_edge(p2, i))
+    if(gso.are_edges_enabled() &&
+       gso.draw_edge(p2, i))
     { // Add edge with previous point
-      if(gs_options.colored_vertex(p2, i))
-      { graphics_scene.add_segment(prev, *i, gs_options.edge_color(p2, i)); }
+      if(gso.colored_edge(p2, i))
+      { graphics_scene.add_segment(prev, *i, gso.edge_color(p2, i)); }
       else
       { graphics_scene.add_segment(prev, *i); }
     }
 
-    if(gs_options.are_faces_enabled())
+    if(gso.are_faces_enabled())
     { graphics_scene.add_point_in_face(*i); } // Add point in face
 
     prev = *i;
   }
 
-  if (gs_options.are_faces_enabled())
+  if (gso.are_faces_enabled())
   { graphics_scene.face_end(); }
 }
 
@@ -100,12 +100,11 @@ void compute_elements(const P2& p2,
 #define CGAL_P2_TYPE CGAL::Polygon_2<T, C>
 
 // Specializations of add_to_graphics_scene function
-
 template<class T, class C, class GSOptions>
 void add_to_graphics_scene(const CGAL_P2_TYPE& ap2,
                            CGAL::Graphics_scene& graphics_scene,
-                           const GSOptions& gs_options)
-{ draw_function_for_p2::compute_elements(ap2, graphics_scene, gs_options); }
+                           const GSOptions& gso)
+{ draw_function_for_p2::compute_elements(ap2, graphics_scene, gso); }
 
 template<class T, class C>
 void add_to_graphics_scene(const CGAL_P2_TYPE& ap2,
@@ -114,14 +113,13 @@ void add_to_graphics_scene(const CGAL_P2_TYPE& ap2,
   CGAL::Graphics_scene_options<CGAL_P2_TYPE,
                         typename CGAL_P2_TYPE::Vertex_const_iterator,
                         typename CGAL_P2_TYPE::Vertex_const_iterator,
-                        void*> gs_options;
-  draw_function_for_p2::compute_elements(ap2, graphics_scene, gs_options);
+                        void*> gso;
+  draw_function_for_p2::compute_elements(ap2, graphics_scene, gso);
 }
-
-// Specialization of draw function.
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+// Specialization of draw function.
 template <class T, class C>
 void draw(const CGAL_P2_TYPE &ap2,
           const char *title="Polygon_2 Basic Viewer")
@@ -133,11 +131,11 @@ void draw(const CGAL_P2_TYPE &ap2,
 
 template <class T, class C, class GSOptions>
 void draw(const CGAL_P2_TYPE &ap2,
-          const GSOptions& gs_options,
+          const GSOptions& gso,
           const char *title="Polygon_2 Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_to_graphics_scene(ap2, buffer, gs_options);
+  add_to_graphics_scene(ap2, buffer, gso);
   draw_graphics_scene(buffer, title);
 }
 
