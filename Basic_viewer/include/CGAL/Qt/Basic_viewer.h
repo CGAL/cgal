@@ -260,7 +260,7 @@ public:
   void reverse_all_normals()
   {
     m_inverse_normal=!m_inverse_normal;
-    gBuffer.reverse_normals();
+    gBuffer.reverse_all_normals();
   }
 
   // Returns true if the data structure lies on a plane
