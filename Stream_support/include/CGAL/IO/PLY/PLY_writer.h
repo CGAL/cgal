@@ -263,7 +263,7 @@ public:
 
     virtual void print(std::ostream& stream, const Index& index)
     {
-        write(stream, to_double(get(m_pmap, index).x())); 
+        write(stream, to_double(get(m_pmap, index).x()));
         if (get_mode(stream) == CGAL::IO::ASCII) {
             stream << " ";
         }
