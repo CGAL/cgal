@@ -16,6 +16,8 @@
 #include <vector>
 #include <fstream>
 
+#include <CGAL/Timer.h>
+
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -32,18 +34,19 @@ typedef CGAL::Surface_mesh_default_triangulation_3 STr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
-int main(void)
+int main(int argc, char* argv[])
 {
     // Poisson options
     FT sm_angle = 20.0; // Min triangle angle in degrees.
-    FT sm_radius = 30; // Max triangle size w.r.t. point set average spacing.
-    FT sm_distance = 0.375; // Surface Approximation error w.r.t. point set average spacing.
+    FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
+    FT sm_distance = 0.25; // Surface Approximation error w.r.t. point set average spacing.
 
     // Reads the point set file in points[].
     // Note: read_points() requires an iterator over points
     // + property maps to access each point's position and normal.
     PointList points;
-    if(!CGAL::IO::read_points(CGAL::data_file_path("points_3/kitten.xyz"), std::back_inserter(points),
+    char* filename = argv[1];
+    if(!CGAL::IO::read_points(filename, std::back_inserter(points),
                           CGAL::parameters::point_map(Point_map())
                                            .normal_map (Normal_map())))
     {
@@ -51,11 +54,15 @@ int main(void)
       return EXIT_FAILURE;
     }
 
+    CGAL::Timer total_time;
+    total_time.start();
+
     // Creates implicit function from the read points using the default solver.
 
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
-    Poisson_reconstruction_function function(points.begin(), points.end(), Point_map(), Normal_map());
+    Poisson_reconstruction_function function(points.begin(), points.end(),
+                                             Point_map(), Normal_map());
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
@@ -73,10 +80,17 @@ int main(void)
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
+    std::cout << "inner_point = " << inner_point << std::endl;
+    std::cout << "bsphere = " << bsphere.center()
+                  << "\tsqr = " << bsphere.squared_radius() << std::endl;
+    std::cout << "radius = " << radius << std::endl;
+
     // Defines the implicit surface: requires defining a
     // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
+    std::cout << "dichotomy error = " << sm_dichotomy_error << std::endl;
+
     Surface_3 surface(function,
                       Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
                       sm_dichotomy_error/sm_sphere_radius);
@@ -101,8 +115,11 @@ int main(void)
     std::ofstream out("kitten_poisson-20-30-0.375.off");
     Polyhedron output_mesh;
     CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
-    out << output_mesh;
 
+    total_time.stop();
+    std::cout << "Total time : " << total_time.time() << " seconds." << std::endl;
+
+    out << output_mesh;
 
     /// [PMP_distance_snippet]
     // computes the approximation error of the reconstruction
