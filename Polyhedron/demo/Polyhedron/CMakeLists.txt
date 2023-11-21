@@ -179,6 +179,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Viewer_interface_moc.cpp
     Scene_item_moc.cpp
     Scene_item.cpp
+    Scene_item_with_properties.cpp
     Triangle_container.cpp
     Edge_container.cpp
     Point_container.cpp

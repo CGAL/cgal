@@ -9,6 +9,20 @@ else()
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
 endif()
 
+if(TARGET CGAL::Eigen3_support)
+
+  polyhedron_demo_plugin(interpolated_corrected_principal_curvatures_plugin Interpolated_corrected_principal_curvatures_plugin)
+  target_link_libraries(
+    interpolated_corrected_principal_curvatures_plugin PUBLIC scene_surface_mesh_item scene_polylines_item
+                              CGAL::Eigen3_support)
+
+else()
+  message(
+    STATUS
+      "NOTICE: Eigen 3.1 (or greater) was not found. Interpolated corrected principal curvatures plugin will not be available."
+  )
+endif()
+
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item
                                             scene_selection_item)
@@ -121,14 +135,19 @@ qt5_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui SelfSnapDialog.ui)
 polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
 target_link_libraries(repair_polyhedron_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item)
 
-qt5_wrap_ui(isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
-polyhedron_demo_plugin(isotropic_remeshing_plugin Isotropic_remeshing_plugin
-                       ${isotropicRemeshingUI_FILES} KEYWORDS PMP)
-target_link_libraries(isotropic_remeshing_plugin PUBLIC scene_surface_mesh_item
-                                                        scene_selection_item)
+if(TARGET CGAL::Eigen3_support)
+  qt5_wrap_ui(isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
+  polyhedron_demo_plugin(isotropic_remeshing_plugin Isotropic_remeshing_plugin
+          ${isotropicRemeshingUI_FILES} KEYWORDS PMP)
+  target_link_libraries(isotropic_remeshing_plugin PUBLIC scene_surface_mesh_item
+          scene_selection_item CGAL::Eigen3_support)
 
-if(TARGET CGAL::TBB_support)
-  target_link_libraries(isotropic_remeshing_plugin PUBLIC CGAL::TBB_support)
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(isotropic_remeshing_plugin PUBLIC CGAL::TBB_support)
+  endif()
+
+else()
+  message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Isotropic remeshing plugin will not be available.")
 endif()
 
 polyhedron_demo_plugin(distance_plugin Distance_plugin KEYWORDS PMP)
