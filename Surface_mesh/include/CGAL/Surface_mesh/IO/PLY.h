@@ -449,7 +449,6 @@ bool fill_simplex_specific_header(std::ostream& os,
       os << "property float x" << std::endl
          << "property float y" << std::endl
          << "property float z" << std::endl;
-
       printers.push_back(new Property_printer<VIndex, Point_map>(sm.points()));
     }
     else
@@ -457,8 +456,6 @@ bool fill_simplex_specific_header(std::ostream& os,
       os << "property double x" << std::endl
          << "property double y" << std::endl
          << "property double z" << std::endl;
-
-
       printers.push_back(new Double_coordinate_printer<VIndex, Point_map>(sm.points()));
     }
 

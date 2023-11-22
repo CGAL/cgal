@@ -263,15 +263,15 @@ public:
 
     virtual void print(std::ostream& stream, const Index& index)
     {
+      if (get_mode(stream) == CGAL::IO::ASCII) {
+        stream << to_double(get(m_pmap, index).x()) << " "
+               << to_double(get(m_pmap, index).y()) << " "
+               << to_double(get(m_pmap, index).z());
+      }else{
         write(stream, to_double(get(m_pmap, index).x()));
-        if (get_mode(stream) == CGAL::IO::ASCII) {
-            stream << " ";
-        }
         write(stream, to_double(get(m_pmap, index).y()));
-        if (get_mode(stream) == CGAL::IO::ASCII) {
-            stream << " ";
-        }
         write(stream, to_double(get(m_pmap, index).z()));
+      }
     }
 };
 
