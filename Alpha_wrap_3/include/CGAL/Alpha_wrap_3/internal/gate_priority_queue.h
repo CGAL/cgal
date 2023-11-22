@@ -121,7 +121,7 @@ public:
 public:
   const Facet& facet() const { return m_facet; }
 
-  const bool is_zombie() const
+  bool is_zombie() const
   {
     return (m_facet.first->erase_counter() != m_erase_counter_mem) ||
            (m_mirror_facet.first->erase_counter() != m_mirror_erase_counter_mem);

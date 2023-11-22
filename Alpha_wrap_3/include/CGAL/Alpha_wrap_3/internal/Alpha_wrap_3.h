@@ -95,7 +95,7 @@ struct Wrapping_default_visitor
   void on_flood_fill_begin(const AlphaWrapper&) { }
 
   template <typename Wrapper>
-  constexpr bool go_further(const Wrapper& wrapper) { return true; }
+  constexpr bool go_further(const Wrapper&) { return true; }
 
   template <typename AlphaWrapper, typename Gate>
   void before_facet_treatment(const AlphaWrapper&, const Gate&) { }
