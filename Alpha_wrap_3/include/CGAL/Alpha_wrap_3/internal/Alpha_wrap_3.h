@@ -197,11 +197,11 @@ public:
 
   Alpha_wrapper_3(const Oracle& oracle)
     :
-#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
-      m_queue(4096),
-#endif
       m_oracle(oracle),
       m_tr(Geom_traits(oracle.geom_traits()))
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      , m_queue(4096)
+#endif
   {
     static_assert(std::is_floating_point<FT>::value);
   }
