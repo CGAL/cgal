@@ -32,8 +32,8 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = K::Point_3;
 
 using Points = std::vector<Point_3>;
-using Polygon = std::array<std::size_t, 3>;
-using Polygons = std::vector<Polygon>;
+using Face = std::array<std::size_t, 3>;
+using Faces = std::vector<Face>;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;
 using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
@@ -83,14 +83,14 @@ int main(int argc, char** argv)
 
   // = read the soup
   Points points;
-  Polygons polygons;
-  if(!CGAL::IO::read_polygon_soup(filename, points, polygons) || polygons.empty())
+  Faces faces;
+  if(!CGAL::IO::read_polygon_soup(filename, points, faces) || faces.empty())
   {
     std::cerr << "Invalid soup input: " << filename << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::cout << "Input: " << points.size() << " points, " << polygons.size() << " faces" << std::endl;
+  std::cout << "Input: " << points.size() << " points, " << faces.size() << " faces" << std::endl;
 
   // Compute the alpha and offset values
   const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : rng.get_double(150., 200.);
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
   // Build the wrapper
   using Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<K>;
   Oracle oracle(alpha);
-  oracle.add_triangle_soup(points, polygons, CGAL::parameters::default_values());
+  oracle.add_triangle_soup(points, faces, CGAL::parameters::default_values());
   CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle> aw3(oracle);
 
   // --- Launch the wrapping, and pause when the algorithm has spent 1s flooding
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
 
   // --- Get the final wrap, in one go:
   Mesh single_pass_wrap;
-  CGAL::alpha_wrap_3(points, polygons, alpha, offset, single_pass_wrap);
+  CGAL::alpha_wrap_3(points, faces, alpha, offset, single_pass_wrap);
   std::cout << ">>> The final (from scratch) wrap has " << num_vertices(single_pass_wrap) << " vertices" << std::endl;
 
   output_name = generate_output_name(filename, relative_alpha, relative_offset);
