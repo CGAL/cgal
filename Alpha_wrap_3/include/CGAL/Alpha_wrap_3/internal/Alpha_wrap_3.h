@@ -282,14 +282,14 @@ public:
     // Whether to keep pockets of "outside" cells that are not connected to the exterior (or to the
     // initial cavities, if used).
     //
-    // /!\ Warning /!\
+    // -- Warning --
     // If you refine or pause while removing pockets, you will get valid but different wraps.
     const bool keep_inner_ccs = choose_parameter(get_parameter(in_np, internal_np::keep_inner_connected_components), true);
 
     // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
     // the same input for multiple values of alpha (and typically the same offset values).
     //
-    // /!\ Warning /!\
+    // -- Warning --
     // If this is enabled, the 3D triangulation will NOT be re-initialized at launch.
     // This means that the triangulation is NOT cleared, even if:
     // - you use an alpha value that is greater than what was used in a previous run; you will
