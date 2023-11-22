@@ -122,7 +122,7 @@ public Q_SLOTS:
   //! If `b` is true, recenters the scene.
   void updateViewersBboxes(bool recenter);
   //! Opens a script or a file with the default loader if there is.
-  void open(QString) Q_DECL_OVERRIDE;
+  void open(QString) override;
   //! Is called when the up button is pressed.
   void on_upButton_pressed();
   //! Is called when the down button is pressed.
@@ -242,15 +242,15 @@ public Q_SLOTS:
   /*!
    * Displays a text preceded by the mention "INFO :".
    */
-  void message_information(QString) Q_DECL_OVERRIDE;
+  void message_information(QString) override;
   /*!
    * Displays a blue text preceded by the mention "WARNING :".
    */
-  void message_warning(QString) Q_DECL_OVERRIDE;
+  void message_warning(QString) override;
   /*!
    * Displays a red text preceded by the mention "ERROR :".
    */
-  void message_error(QString) Q_DECL_OVERRIDE;
+  void message_error(QString) override;
 
     //!Displays a text in the chosen html color with the chosen html font.
 
@@ -392,7 +392,7 @@ protected:
    * Calls writeSettings() and set the flag accepted for the event.
    * @see writeSettings()
    */
-  void closeEvent(QCloseEvent *event)Q_DECL_OVERRIDE;
+  void closeEvent(QCloseEvent *event)override;
   /*! Returns the currently selected item in the Geometric Objects view. Returns -1
    * if none is selected.
    */
@@ -500,8 +500,8 @@ public Q_SLOTS:
   void lookat();
   void color();
 protected:
-  void closeEvent(QCloseEvent *closeEvent)Q_DECL_OVERRIDE;
-  void changeEvent(QEvent *event) Q_DECL_OVERRIDE;
+  void closeEvent(QCloseEvent *closeEvent)override;
+  void changeEvent(QEvent *event) override;
 private:
   bool is_main;
 };

@@ -109,7 +109,7 @@ private:
   };
 
 public:
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     if(!item)
@@ -119,14 +119,14 @@ public:
            qobject_cast<Scene_points_with_normal_item*>(item);
   }
 
-  QList<QAction*> actions() const Q_DECL_OVERRIDE
+  QList<QAction*> actions() const override
   {
     return QList<QAction*>() << actionDisplayProperties;
   }
 
   void init(QMainWindow* mw,
             Scene_interface* sc,
-            Messages_interface*) Q_DECL_OVERRIDE
+            Messages_interface*) override
   {
     this->scene = sc;
     this->mw = mw;
@@ -215,7 +215,7 @@ private Q_SLOTS:
     dock_widget->raise();
   }
 
-  void closure() Q_DECL_OVERRIDE
+  void closure() override
   {
     dock_widget->hide();
   }

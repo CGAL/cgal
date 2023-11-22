@@ -320,7 +320,7 @@ public :
   }
   void init(QMainWindow*,
             CGAL::Three::Scene_interface*,
-            Messages_interface* m) Q_DECL_OVERRIDE{
+            Messages_interface* m) override{
     //get refs
     this->scene = Three::scene();
     this->mw = Three::mainWindow();
@@ -436,12 +436,12 @@ public :
     dock_widget->graphicsView->installEventFilter(navigation);
     dock_widget->graphicsView->viewport()->installEventFilter(navigation);
   }
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     return qobject_cast<Scene_polyhedron_selection_item*>
         (scene->item(scene->mainSelectionIndex()));
   }
-  QList<QAction*> actions() const Q_DECL_OVERRIDE{
+  QList<QAction*> actions() const override{
     return _actions;
   }
 public Q_SLOTS:
@@ -825,7 +825,7 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
-  void closure()Q_DECL_OVERRIDE
+  void closure()override
   {
     dock_widget->hide();
   }

@@ -25,7 +25,7 @@ class DoTreesIntersectplugin:
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
 
-  bool eventFilter(QObject *, QEvent *event) Q_DECL_OVERRIDE
+  bool eventFilter(QObject *, QEvent *event) override
   {
     if(event->type() != QEvent::KeyPress)
       return false;
@@ -38,7 +38,7 @@ public:
     return false;
   }
 
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     if(scene->selectionIndices().size() <2)
       return false;
@@ -50,13 +50,13 @@ public:
     return (! group_item);
   }
 
-  QList<QAction*> actions() const Q_DECL_OVERRIDE
+  QList<QAction*> actions() const override
   {
     return _actions;
   }
 
 
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi) Q_DECL_OVERRIDE
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface* mi) override
   {
     this->messageInterface = mi;
     this->scene = sc;
