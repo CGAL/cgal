@@ -1087,6 +1087,9 @@ private:
       return false;
 #endif
 
+    // @todo could avoid useless facet_status() calls by doing it after the zombie check
+    // for the unsorted priority queue, but AFAIR, it doesn't save noticeable time (and that
+    // increases the queue size).
     const Facet_status status = facet_status(f);
     if(status == Facet_status::IRRELEVANT)
       return false;
