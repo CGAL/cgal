@@ -1428,12 +1428,12 @@ bool do_intersect(const TriangleMesh& tm,
 #ifndef DOXYGEN_RUNNING
                 , const std::enable_if_t<!(
                       std::is_same_v<TriangleMesh, Polyline> || // Added to please MSVC 2015
-                      !boost::has_range_iterator<Polyline>::type>::value || // not a range
+                      !boost::has_range_iterator<Polyline>::value || // not a range
                       boost::has_range_iterator<
                         typename boost::mpl::eval_if<
                           boost::has_range_iterator<Polyline>,
                           boost::range_value<Polyline>,
-                          std::false_type
+                          std::false_type>::type
                         >::value
                     )
                   >* = 0
