@@ -482,17 +482,108 @@ public:
     std::vector<int> region_index(m_faces_lcc.size(), -1);
     std::size_t region = 0;
 
+    std::vector<std::vector<std::vector<Point_3> > > polygon_regions;
+    std::vector<typename Intersection_kernel::Plane_3> planes;
+
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       const auto& n = m_face_neighbors_lcc[i];
       if (n.second < 6)
         continue;
+
       if (m_labels[n.first] != m_labels[n.second]) {
         Face_attribute fa = m_lcc.attribute<2>(m_faces_lcc[i]);
 
         if (region_index[fa] == -1) {
-          collect_connected_component(m_faces_lcc[i], region_index, region++);
+          std::vector<std::vector<Point_3> > faces;
+
+          collect_connected_component(m_faces_lcc[i], region_index, region++, faces);
+          planes.push_back(m_lcc.info_of_attribute<2>(fa).plane);
+          polygon_regions.push_back(std::move(faces));
         }
       }
+    }
+
+    KSP_3::dump_polygons(polygon_regions, "faces_by_region.ply");
+    std::vector<std::vector<std::size_t> > borders;
+    std::vector<std::vector<std::size_t> > borders_per_region;
+    collect_connected_border(borders, region_index, borders_per_region);
+
+    for (std::size_t i = 0; i < region; i++) {
+      if (borders_per_region[i].size() > 0) {
+        // ToDo: remove after -->
+        std::size_t outer = -1;
+        typename Intersection_kernel::FT min = (std::numeric_limits<double>::max)();
+        for (std::size_t j = 0; j < borders_per_region[i].size(); j++)
+          for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
+            const typename Intersection_kernel::Point_3& p = m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k]));
+            if (p.x() < min) {
+              min = p.x();
+              outer = j;
+            }
+          }
+
+        for (std::size_t j = 0; j < borders_per_region[i].size(); j++) {
+          std::string fn;
+          if (j == outer)
+            fn = std::to_string(i) + "-outer.polylines.txt";
+          else
+            fn = std::to_string(i) + "-" + std::to_string(j) + ".polylines.txt";
+          std::ofstream vout(fn);
+          vout << (borders[borders_per_region[i][j]].size() + 1);
+          for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
+            vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k])));
+          }
+          vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][0]))) << std::endl;
+          vout.close();
+        }
+
+        if (borders_per_region[i].size() > 1) {
+          std::vector<std::vector<std::size_t> > polygons;
+          polygons.reserve(borders_per_region[i].size());
+          for (std::size_t j = 0; j < borders_per_region[i].size(); j++)
+            polygons.push_back(std::move(borders[borders_per_region[i][j]]));
+
+          std::cout << i << std::flush;
+
+          insert_ghost_edges_cdt(polygons, planes[i]);
+          std::cout << std::endl;
+
+          std::ofstream vout(std::to_string(i) + "-merged.polylines.txt");
+          vout << (polygons[0].size() + 1);
+          for (std::size_t k = 0; k < polygons[0].size(); k++) {
+            vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[0][k])));
+          }
+          vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[0][0]))) << std::endl;
+          vout.close();
+
+          borders_per_region[i].resize(1);
+          CGAL_assertion(borders[borders_per_region[i][0]].empty());
+          CGAL_assertion(!polygons[0].empty());
+          borders[borders_per_region[i][0]] = std::move(polygons[0]);
+        }
+      }
+      else {
+        for (std::size_t k = 0;k<region_index.size();k++)
+          if (region_index[k] == i) {
+            write_face(m_lcc.dart_of_attribute<2>(k), std::to_string(i) + "-" + std::to_string(k) + "_missing.ply");
+          }
+      }
+    }
+
+    std::map<std::size_t, std::size_t> attrib2idx;
+    for (std::size_t i = 0; i < borders.size(); i++) {
+      if (borders[i].empty())
+        continue;
+
+      std::vector<std::size_t> indices(borders[i].size());
+      for (std::size_t j = 0; j < borders[i].size(); j++) {
+        auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
+        if (p.second)
+          *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
+        indices[j] = p.first->second;
+      }
+
+      *polyit++ = std::move(indices);
     }
   }
 
@@ -556,46 +647,34 @@ private:
 
   using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
 
-  struct VI
-  {
-    VI()
-      : idx(-1)
-    {}
-
-    void set_index(std::size_t i) {
-      idx = i;
-    }
-    std::vector<std::size_t> idx;
-  };
-
-  struct ID {
-    ID()
-      : id(-1)
-    {}
-
-    std::size_t id;
-  };
-
-  typedef CGAL::Triangulation_vertex_base_with_info_2<VI, Intersection_kernel> Vbi2;
-  typedef CGAL::Triangulation_face_base_with_info_2<ID, Intersection_kernel> Fbi2;
-  typedef CGAL::Constrained_triangulation_face_base_2<Intersection_kernel, Fbi2>    Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vbi2, Fb>       Tds2;
-  typedef CGAL::Exact_intersections_tag                     Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<Intersection_kernel, Tds2, Itag> CDT;
-  typedef CGAL::Constrained_triangulation_plus_2<CDT>       CDTplus;
-  typedef typename CDTplus::Vertex_handle            Vertex_handle;
-  typedef typename CDTplus::Face_handle              Face_handle;
-  typedef typename CDTplus::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename CDTplus::Finite_faces_iterator    Finite_faces_iterator;
-
   typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
   using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Linear_cell_complex_min_items>;
   using Dart_descriptor = typename LCC::Dart_descriptor;
   using Dart = typename LCC::Dart;
 
+  struct VI {
+    VI() : i(-1), j(-1) {}
+    int i, j;
+    Dart_descriptor dh;
+    typename Intersection_kernel::Point_2 p;
+  };
+
+  typedef CGAL::Triangulation_vertex_base_with_info_2<VI, typename Intersection_kernel> Vbi2;
+  typedef CGAL::Constrained_triangulation_face_base_2<typename Intersection_kernel>   Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vbi2, Fb>       Tds2;
+  typedef CGAL::Exact_intersections_tag  Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<typename Intersection_kernel, Tds2, Itag> CDT;
+
+  typedef typename CDT::Vertex_handle            Vertex_handle;
+  typedef typename CDT::Face_handle              Face_handle;
+  typedef typename CDT::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename CDT::Finite_edges_iterator    Finite_edges_iterator;
+  typedef typename CDT::Finite_faces_iterator    Finite_faces_iterator;
+
   //using Visibility = KSR_3::Visibility<Kernel, Intersection_kernel, Point_map, Normal_map>;
   using Index = typename KSP::Index;
   using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
+  using Volume_attribute = typename LCC::Base::template Attribute_descriptor<3>::type;
 
   bool m_verbose;
   bool m_debug;
@@ -704,271 +783,6 @@ private:
     return std::make_pair(i, j);
   }
 
-  double build_cdt(CDTplus& cdt, std::vector<std::vector<std::size_t> >& faces, const std::vector<typename Intersection_kernel::Point_2> &pts, const std::vector<std::vector<std::size_t> > &indices) {
-    double area = 0;
-
-    cdt.clear();
-
-    //check orientation of faces so that they are ccw oriented
-    std::vector<std::vector<Index> > pts_idx(faces.size());
-    //std::vector<std::vector<typename Intersection_kernel::Point_3> > pts(faces.size());
-    for (std::size_t i = 0; i < faces.size(); ++i) {
-
-      CGAL::Orientation res = CGAL::COLLINEAR;
-      bool pos = false;
-      bool neg = false;
-
-      for (std::size_t j = 0; j < faces[i].size(); j++) {
-        std::size_t k = (j + 1) % faces[i].size();
-        std::size_t l = (k + 1) % faces[i].size();
-
-        res = orientation(pts[faces[i][j]], pts[faces[i][k]], pts[faces[i][l]]);
-        if (res == CGAL::LEFT_TURN)
-          pos = true;
-        if (res == CGAL::RIGHT_TURN)
-          neg = true;
-      }
-
-      if (pos && neg)
-        std::cout << "face is not convex" << std::endl;
-
-      if (!pos && !neg)
-        std::cout << "face is degenerated" << std::endl;
-
-      if (neg)
-        std::reverse(faces[i].begin(), faces[i].end());
-    }
-
-    std::vector<Vertex_handle> vertices;
-
-    for (std::size_t v = 0; v < pts.size(); v++) {
-      vertices.push_back(cdt.insert(pts[v]));
-      vertices.back()->info().idx = indices[v];
-    }
-
-    typedef std::set<std::pair<int, int> > Edges;
-    Edges edges;
-
-    for (std::size_t f = 0; f < faces.size(); ++f) {
-      for (std::size_t j = 0; j < faces[f].size(); ++j) {
-        int vj = faces[f][j];
-        int vjj = faces[f][(j + 1) % faces[f].size()];
-        std::pair<Edges::iterator, bool> res = edges.insert(make_canonical_pair(vj, vjj));
-#ifdef OVERLAY_2_DEBUG
-        int vjjj = face2vtx[v[(j + 2) % v.size()]];
-        if (orientation(vertices[vj]->point(), vertices[vjj]->point(), vertices[vjjj]->point()) != CGAL::LEFT_TURN) {
-          std::cerr << "orientation( " << vertices[vj]->point() << ", " << vertices[vjj]->point() << ", " << vertices[vjjj]->point() << std::endl;
-          std::cerr << orientation(vertices[vj]->point(), vertices[vjj]->point(), vertices[vjjj]->point()) << std::endl;
-        }
-#endif
-        if (res.second) {
-          cdt.insert_constraint(vertices[vj], vertices[vjj]);
-        }
-      }
-    }
-
-    for (typename CDTplus::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
-      std::set<std::size_t> a, b, c;
-      std::copy(fit->vertex(0)->info().idx.begin(), fit->vertex(0)->info().idx.end(), std::inserter(a, a.begin()));
-      std::copy(fit->vertex(1)->info().idx.begin(), fit->vertex(0)->info().idx.end(), std::inserter(b, b.begin()));
-      std::copy(fit->vertex(2)->info().idx.begin(), fit->vertex(0)->info().idx.end(), std::inserter(c, c.begin()));
-
-      std::set<std::size_t> res, res2;
-      Index common(std::size_t(-1), std::size_t(-1));
-      std::set_intersection(a.begin(), a.end(), b.begin(), b.end(), std::inserter(res, res.begin()));
-      std::set_intersection(res.begin(), res.end(), c.begin(), c.end(), std::inserter(res2, res2.begin()));
-
-      if (res2.size() != 1) {
-        std::cout << "KSR::build_cdt: face assignment not unique!" << std::endl;
-      }
-      else fit->info().id = *res2.begin();
-    }
-
-    return area;
-  }
-  /*
-
-  void collect_points_for_faces() {
-    FT total_area = 0;
-    m_total_inliers = 0;
-    for (std::size_t i = 0; i < m_polygons.size(); i++) {
-      std::vector<KSP::Index> faces;
-      m_kinetic_partition.faces_of_input_polygon(i, std::back_inserter(faces));
-
-      for (const auto& f : faces)
-        m_face_inliers[m_face2index[f]] = std::vector<std::size_t>();
-
-      for (std::size_t j = 0; j < faces.size(); j++) {
-        std::size_t idx = m_face2index[faces[j]];
-        std::vector<Point_3> face;
-        m_kinetic_partition.vertices(faces[j], std::back_inserter(face));
-
-        //multiple regions per input polygon
-
-        Delaunay_2 tri;
-        std::vector<Point_2> f2d;
-        for (const Point_3& p : face) {
-          f2d.push_back(m_regions[i].first.to_2d(p));
-          tri.insert(m_regions[i].first.to_2d(p));
-        }
-
-        // Get area
-        for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-          const Triangle_2 triangle(
-            fit->vertex(0)->point(),
-            fit->vertex(1)->point(),
-            fit->vertex(2)->point());
-          m_face_area[idx] += triangle.area();
-        }
-
-        total_area += m_face_area[idx];
-
-        for (const std::size_t index : m_regions[i].second) {
-          Point_2 p = m_regions[i].first.to_2d(get(m_point_map, index));
-          const auto fh = tri.locate(p);
-          if (fh != nullptr && !tri.is_infinite(fh)) {
-            m_face_inliers[idx].push_back(index);
-            m_total_inliers++;
-          }
-        }
-      }
-    }
-
-    // Handling face generated by the octree partition. They are not associated with an input polygon.
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      if (m_face_area[i] == 0 && m_face_neighbors[i].second > 6) {
-        std::vector<Point_3> face;
-        m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
-
-        Plane_3 pl;
-        CGAL::linear_least_squares_fitting_3(face.begin(), face.end(), pl, CGAL::Dimension_tag<0>());
-
-        Delaunay_2 tri;
-        for (const Point_3& p : face)
-          tri.insert(pl.to_2d(p));
-
-        // Get area
-        for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-          const Triangle_2 triangle(
-            fit->vertex(0)->point(),
-            fit->vertex(1)->point(),
-            fit->vertex(2)->point());
-          m_face_area[i] += triangle.area();
-        }
-
-        total_area += m_face_area[i];
-      }
-    }
-
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      // If the area is 0 it is a boundary face.
-      if (m_face_area[i] == 0)
-        m_face_area[i] = 2.0 * m_total_inliers;
-      else
-        m_face_area[i] = m_face_area[i] * 2.0 * m_total_inliers / total_area;
-    }
-  }
-
-  void collect_points_for_faces2() {
-    FT total_area = 0;
-    m_total_inliers = 0;
-    From_exact from_exact;
-    auto& reg2input = m_kinetic_partition.regularized_input_mapping();
-    std::cout << reg2input.size() << std::endl;
-    std::size_t next = 0, step = 1;
-    for (std::size_t i = 0; i < reg2input.size(); i++) {
-
-      std::vector<KSP::Index> faces;
-      m_kinetic_partition.faces_of_regularized_polygon(i, std::back_inserter(faces));
-
-      for (const auto& f : faces)
-        m_face_inliers[m_face2index[f]] = std::vector<std::size_t>();
-
-      for (std::size_t j = 0; j < faces.size(); j++) {
-
-        std::size_t idx = m_face2index[faces[j]];
-        std::vector<Point_3> face;
-        m_kinetic_partition.vertices(faces[j], std::back_inserter(face));
-
-        //multiple regions per input polygon
-
-        Plane_3 pl = from_exact(m_kinetic_partition.regularized_plane(i));
-
-        FT max_dist1 = 0, max_dist2 = 0;
-
-        Delaunay_2 tri;
-        std::vector<Point_2> f2d;
-        for (const Point_3& p : face) {
-          max_dist1 = (std::max<double>)(sqrt((pl.to_3d(pl.to_2d(p)) - p).squared_length()), max_dist1);
-          f2d.push_back(pl.to_2d(p));
-          tri.insert(pl.to_2d(p));
-        }
-
-        // Get area
-        for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-          const Triangle_2 triangle(
-            fit->vertex(0)->point(),
-            fit->vertex(1)->point(),
-            fit->vertex(2)->point());
-          m_face_area[idx] += triangle.area();
-        }
-
-        total_area += m_face_area[idx];
-        for (const std::size_t& p : reg2input[i]) {
-          for (const std::size_t index : m_regions[p].second) {
-            Point_2 p = pl.to_2d(get(m_point_map, index));
-
-            max_dist2 = (std::max<double>)(sqrt((pl.to_3d(p) - get(m_point_map, index)).squared_length()), max_dist2);
-            const auto fh = tri.locate(p);
-            if (fh != nullptr && !tri.is_infinite(fh)) {
-              m_face_inliers[idx].push_back(index);
-              m_total_inliers++;
-            }
-          }
-        }
-      }
-    }
-
-    set_outside_volumes(m_cost_matrix);
-
-    // Handling face generated by the octree partition. They are not associated with an input polygon.
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      if (m_face_area[i] == 0) {//}&& m_face_neighbors[i].second > 6) {
-        std::vector<Point_3> face;
-        m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
-
-        Plane_3 pl;
-        CGAL::linear_least_squares_fitting_3(face.begin(), face.end(), pl, CGAL::Dimension_tag<0>());
-
-        Delaunay_2 tri;
-        for (const Point_3& p : face)
-          tri.insert(pl.to_2d(p));
-
-        // Get area
-        for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
-          const Triangle_2 triangle(
-            fit->vertex(0)->point(),
-            fit->vertex(1)->point(),
-            fit->vertex(2)->point());
-          m_face_area[i] += triangle.area();
-        }
-
-        total_area += m_face_area[i];
-      }
-    }
-
-    for (std::size_t i = 0; i < m_faces.size(); i++) {
-      // Check boundary faces and if the outside node has a defined value, if not, set area to 0.
-
-      if (m_face_neighbors[i].second < 6 && m_cost_matrix[0][m_face_neighbors[i].second] == m_cost_matrix[1][m_face_neighbors[i].second]) {
-        m_face_area[i] = 0;
-      }
-      else
-        m_face_area[i] = m_face_area[i] * 2.0 * m_total_inliers / total_area;
-    }
-  }
-*/
-
   void check_ground() {
     std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
     // Set all volumes to not be below the ground, this leads to the standard 6 outside node connection.
@@ -983,20 +797,18 @@ private:
       }
   }
 
-  void collect_connected_component(typename LCC::Dart_descriptor face, std::vector<int> &region_index, std::size_t region) {
-    // What does the caller have to manage? a map from face_attrib to bool to collect treated faces?
-
+  void collect_connected_component(typename LCC::Dart_descriptor face, std::vector<int>& region_index, std::size_t region, std::vector<std::vector<Point_3> > &faces) {
     std::queue<std::size_t> face_queue;
     face_queue.push(face);
 
     From_exact from_exact;
 
-    std::vector<Dart_descriptor> border_edges;
-
-    std::vector<Point_3> pts;
-
+    auto& finfo = m_lcc.info<2>(face);
     int ip = m_lcc.info<2>(face).input_polygon_index;
     typename Intersection_kernel::Plane_3 pl = m_lcc.info<2>(face).plane;
+
+//     if (debug)
+//       std::cout << ip << std::endl;
 
     while (!face_queue.empty()) {
       Dart_descriptor cur_fdh(face_queue.front());
@@ -1006,71 +818,485 @@ private:
       if (region_index[cur_fa] == region)
         continue;
 
+//       if (debug)
+//         write_face(cur_fdh, std::to_string(region) + "-inside-" + std::to_string(cur_fa) + ".ply");
+
       region_index[cur_fa] = region;
 
-      // Iterate over edges of face.
-      for (auto& ed : m_lcc.template one_dart_per_incident_cell<1, 2>(cur_fdh)) {
-        Dart_descriptor edh = m_lcc.dart_descriptor(ed);
+      Dart_descriptor n = cur_fdh;
+      std::vector<Point_3> f;
+      do {
+        f.push_back(from_exact(m_lcc.point(n)));
+        n = m_lcc.beta(n, 1);
+      } while (n != cur_fdh);
+      faces.push_back(std::move(f));
 
-        for (auto &fd : m_lcc.template one_dart_per_incident_cell<2, 1, 3>(edh)) {
-          Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
+      // Iterate over edges of face.
+
+      Dart_descriptor edh = cur_fdh;
+      do {
+        Dart_descriptor fdh = m_lcc.beta<2, 3>(edh);
+        do {
           Face_attribute fa = m_lcc.attribute<2>(fdh);
+
+          if (fa == m_lcc.null_descriptor)
+            break;
+
+          auto& finfo2 = m_lcc.info<2>(fdh);
+          if (fa == cur_fa) {
+            fdh = m_lcc.beta<2, 3>(fdh);
+            continue;
+          }
           auto& inf = m_lcc.info<2>(fdh);
           bool added = false;
 
+//           if (debug)
+//             write_face(fdh, std::to_string(region) + "-" + std::to_string(fa) + ".ply");
+
           const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
 
-          // Do not segment bbox surface
-          if (n.second < 6)
-            continue;
 
           // Belongs to reconstruction?
-          if (m_labels[n.first] == m_labels[n.second])
+          bool internal = m_labels[n.first] == m_labels[n.second];
+          if (m_labels[n.first] == m_labels[n.second]) {
+            fdh = m_lcc.beta<2, 3>(fdh);
             continue;
+          }
 
           // Already segmented?
-          if (region_index[fa] != -1)
+          if (region_index[fa] != -1) {
+            if (!internal)
+              break;
+            fdh = m_lcc.beta<2, 3>(fdh);
             continue;
+          }
+
+          // If the face is part of the reconstruction, but on the inside volume, switch to the mirror face on the outside.
+          if (n.first >= 6 && n.second >= 6 && m_labels[m_lcc.info<3>(fdh).volume_id + 6] == 0) {
+            fdh = m_lcc.beta<3>(fdh);
+            fa = m_lcc.attribute<2>(fdh);
+            finfo2 = m_lcc.info<2>(fdh);
+          }
 
           if (ip != -7) {
             if (m_lcc.info<2>(fdh).input_polygon_index == ip) {
+              if (internal)
+                break;
+
               added = true;
               face_queue.push(fdh);
+
+//               if (debug)
+//                 std::cout << ip << std::endl;
+//
+//               if (debug)
+//                 write_face(fdh, std::to_string(region) + "-inside-" + std::to_string(fa) + ".ply");
             }
+            else
+              if (!internal)
+                break;
           }
           else
-            if (m_lcc.info<2>(fdh).plane == pl) {
+            if (m_lcc.info<2>(fdh).plane == pl || m_lcc.info<2>(fdh).plane == pl.opposite()) {
+              if (internal)
+                break;
+
               added = true;
+              Plane_3 pla = from_exact(pl);
+
+//               if (debug)
+//                 std::cout << ip << " " << pl.a() << " " << pl.b() << " " << pl.c() << " " << pl.d() << std::endl;
+//
+//               if (debug)
+//                 write_face(fdh, std::to_string(region) + "-inside-" + std::to_string(fa) + ".ply");
+
               face_queue.push(fdh);
             }
+            else
+              if (!internal)
+                break;
 
-          if (!added)
-            border_edges.push_back(edh);
+//           if (!added)
+//             border_edges.push_back(edh);
+
+          break;
+        } while (fdh != edh);
+        edh = m_lcc.beta<1>(edh);
+      } while (edh != cur_fdh);
+    }
+  }
+
+  bool is_border_edge(typename LCC::Dart_descriptor dh) {
+    Face_attribute& fa = m_lcc.attribute<2>(dh);
+    auto& finfo = m_lcc.info_of_attribute<2>(fa);
+
+    if (!m_labels[m_lcc.info<3>(dh).volume_id + 6] == 1) {
+      write_face(dh, "flipface.ply");
+      std::cout << "is_border_edge called on dart of outside volume, dh " << dh << " volume_id " << m_lcc.info<3>(dh).volume_id << std::endl;
+    }
+
+    Dart_descriptor edh = m_lcc.beta<2, 3>(dh);
+    do {
+      Face_attribute fa2 = m_lcc.attribute<2>(edh);
+      if (fa2 == m_lcc.null_descriptor)
+        return true;
+
+//       if (debug)
+//         write_face(edh, "cur_is_border.ply");
+
+      if (fa2 == fa) {
+        std::cout << "should not happen" << std::endl;
+        edh = m_lcc.beta<2, 3>(edh);
+        continue;
+      }
+
+      const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa2]];
+      bool internal = (m_labels[n.first] == m_labels[n.second]);
+
+      auto& finfo2 = m_lcc.info_of_attribute<2>(fa2);
+      // Is neighbor face on same support plane?
+      if (finfo2.input_polygon_index != finfo.input_polygon_index)
+        if (!internal)
+          return true;
+        else {
+          edh = m_lcc.beta<2, 3>(edh);
+          continue;
+        }
+
+      if (finfo2.input_polygon_index == -7)
+        if (finfo2.plane != finfo.plane && finfo2.plane != finfo.plane.opposite())
+          if (!internal)
+            return true;
+          else {
+            edh = m_lcc.beta<2, 3>(edh);
+            continue;
+          };
+      return internal;
+    } while (edh != dh);
+
+    // If there is no neighbor face on the same support plane, this is a border edge.
+    return true;
+  }
+
+  void insert_ghost_edges_cdt(std::vector<std::vector<std::size_t> >& polygons, const typename Intersection_kernel::Plane_3 pl) const {
+    CDT cdt;
+    From_exact from_exact;
+
+    std::unordered_map<std::size_t, std::size_t> va2vh;
+    std::vector<Vertex_handle> vertices;
+
+    std::size_t num_vertices = 0;
+
+    for (std::size_t i = 0; i < polygons.size(); i++) {
+      num_vertices += polygons[i].size();
+      for (std::size_t j = 0; j < polygons[i].size(); j++) {
+        vertices.push_back(cdt.insert(pl.to_2d(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[i][j])))));
+        auto it = va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1));
+        CGAL_assertion(it.second);
+
+        vertices.back()->info().i = i;
+        vertices.back()->info().j = j;
+        vertices.back()->info().p = pl.to_2d(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[i][j])));
+        vertices.back()->info().dh = polygons[i][j];
+
+        if (j >= 1)
+          cdt.insert_constraint(vertices[vertices.size() - 2], vertices.back());
+      }
+      cdt.insert_constraint(vertices.back(), vertices[vertices.size() - polygons[i].size()]);
+    }
+    // check infinitive edges for outer polygon
+    int outer = -1;
+    auto& e = *(cdt.incident_edges(cdt.infinite_vertex()));
+    auto a = e.first->vertex((e.second + 1) % 3);
+    auto b = e.first->vertex((e.second + 2) % 3);
+
+    if (a == cdt.infinite_vertex())
+      outer = b->info().i;
+    else
+      outer = a->info().i;
+
+    CGAL_assertion(outer != -1);
+
+    // Distance matrix
+    std::vector<FT> dist(polygons.size()* polygons.size(), (std::numeric_limits<FT>::max)());
+    std::vector<std::pair<std::size_t, std::size_t> > closest_pts(polygons.size() * polygons.size(), std::make_pair(-1, -1));
+
+    for (auto& edge : cdt.finite_edges()) {
+      auto v1 = edge.first->vertex((edge.second + 1) % 3);
+      auto v2 = edge.first->vertex((edge.second + 2) % 3);
+
+      if (v1->info().i != v2->info().i) {
+        std::size_t idx;
+        if (v1->info().i == -1 || v2->info().i == -1)
+          continue;
+        if (v1->info().i < v2->info().i)
+          idx = v1->info().i * polygons.size() + v2->info().i;
+        else
+          idx = v2->info().i * polygons.size() + v1->info().i;
+
+        FT d = from_exact((v1->info().p - v2->info().p).squared_length());
+        if (dist[idx] > d) {
+          dist[idx] = d;
+          closest_pts[idx] = std::make_pair(v1->info().dh, v2->info().dh);
         }
       }
     }
 
-    pts.clear();
-    for (Dart_descriptor &edh : border_edges)
-      for (auto& vd : m_lcc.template one_dart_per_incident_cell<0, 1>(edh)) {
-        pts.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
+    std::vector<bool> merged(polygons.size(), false);
+    for (std::size_t i = 0; i < polygons.size(); i++) {
+      if (i == outer)
+        continue;
+
+      std::size_t idx;
+      if (i < outer)
+        idx = i * polygons.size() + outer;
+      else
+        idx = outer * polygons.size() + i;
+
+      // For now merge all polygons into outer if possible
+      if (dist[idx] < (std::numeric_limits<FT>::max)()) {
+        std::size_t in_target, in_source;
+        for (in_target = 0; in_target < polygons[outer].size(); in_target++)
+          if (polygons[outer][in_target] == closest_pts[idx].first || polygons[outer][in_target] == closest_pts[idx].second)
+            break;
+
+        for (in_source = 0; in_source < polygons[i].size(); in_source++)
+            if (polygons[i][in_source] == closest_pts[idx].first || polygons[i][in_source] == closest_pts[idx].second)
+              break;
+
+        std::size_t former_end = polygons[outer].size() - 1;
+
+        polygons[outer].resize(polygons[outer].size() + polygons[i].size() + 2);
+
+        for (std::size_t j = 0; j != former_end - in_target + 1; j++)
+          polygons[outer][polygons[outer].size() - j - 1] = polygons[outer][former_end - j];
+
+        for (std::size_t j = 0; j < polygons[i].size() + 1; j++) {
+          std::size_t idx = (in_source + j) % polygons[i].size();
+          polygons[outer][in_target + j + 1] = polygons[i][idx];
+        }
+      }
+      else {
+        std::cout << "ghost edge could not be placed" << std::endl;
+        // Do I need a minimum spanning tree? https://www.boost.org/doc/libs/1_75_0/libs/graph/example/kruskal-example.cpp
+      }
+      polygons[i].clear();
+    }
+    if (outer != 0)
+      polygons[0] = std::move(polygons[outer]);
+    polygons.resize(1);
+  }
+
+  typename LCC::Dart_descriptor circulate_vertex_2d(typename LCC::Dart_descriptor dh) {
+    CGAL_assertion(!is_border_edge(dh));
+    //beta3(beta2(dh)) until I am on a face that is on the same input polygon
+    // is_border_edge should handle if there is no coplanar neighbor face
+    // However, the dart should be pointing towards the vertex
+
+    Face_attribute& fa = m_lcc.attribute<2>(dh);
+    auto& finfo = m_lcc.info_of_attribute<2>(fa);
+
+    From_exact from_exact;
+
+    typename LCC::Dart_descriptor dh2 = m_lcc.beta<2>(dh);
+
+    //write_face(dh, std::to_string(dh) + "c0.ply");
+
+    std::size_t idx = 1;
+
+    do {
+      //write_face(dh2, "c" + std::to_string(idx) + ".ply");
+      Face_attribute fa2 = m_lcc.attribute<2>(dh2);
+      auto& finfo2 = m_lcc.info_of_attribute<2>(fa2);
+      if (finfo2.input_polygon_index == finfo.input_polygon_index) {
+        CGAL_assertion(fa != fa2);
+        if (finfo2.input_polygon_index == -7) {
+          if (finfo2.plane == finfo.plane || finfo2.plane == finfo.plane.opposite())
+            return dh2;
+        }
+        else return dh2;
+      }
+      dh2 = m_lcc.beta<3, 2>(dh2);
+      idx++;
+
+    } while (dh2 != dh);
+
+    // dh is a border edge
+    CGAL_assertion(false);
+
+//     std::ofstream vout("c0.polylines.txt");
+//     vout << "2 " << from_exact(m_lcc.point(dh)) << " " << from_exact(m_lcc.point(m_lcc.beta<1>(dh))) << std::endl;
+//     vout.close();
+
+/*
+    typename Face_attribute::Info finfo2;
+
+    do {
+      dh2 = m_lcc.beta<3, 2>(dh2);
+      CGAL_assertion(dh2 != dh); // Should be prevented in is_border_edge
+
+      Face_attribute& fa2 = m_lcc.attribute<2>(dh2);
+      finfo2 = m_lcc.info_of_attribute<2>(fa2);
+    } while (finfo.input_polygon_index == finfo2.input_polygon_index);
+
+    // dh2 is still on the same edge as dh and points in the same direction.
+    // beta3 gives the mirrored dart on the same edge&face, beta1 then proceeds to the next edge of that vertex.
+    dh2 = m_lcc.beta<1, 3>(dh2);
+    CGAL_assertion(dh2 != m_lcc.null_dart_descriptor);*/
+    return dh2;
+  }
+
+  void collect_border(typename LCC::Dart_descriptor dh, std::vector<bool>& processed, std::vector<std::vector<std::size_t> >& borders) {
+    // Iterate clockwise around target vertex of dh
+    // It seems the dart associated with a vertex are pointing away from it
+    // -> beta_1(beta_2(dh)) circulates around a vertex
+    processed[dh] = true;
+
+    From_exact from_exact;
+
+    if (!m_labels[m_lcc.info<3>(dh).volume_id + 6] == 1)
+      std::cout << "collect_border called on dart of outside volume, dh " << dh << " volume_id " << m_lcc.info<3>(dh).volume_id << std::endl;
+
+    std::vector<std::size_t> border;
+    border.push_back(m_lcc.attribute<0>(dh));
+
+//     std::ofstream vout("b.polylines.txt");
+//     vout << "2 " << from_exact(m_lcc.point(dh)) << " " << from_exact(m_lcc.point(m_lcc.beta<1>(dh))) << std::endl;
+//     vout.close();
+
+    Face_attribute& fa = m_lcc.attribute<2>(dh);
+    auto& finfo = m_lcc.info_of_attribute<2>(fa);
+
+    // The central element of the loop is the current edge/vertex?
+    // // dh = beta1(dh) // progressing to the next vertex
+    // while !is_border(dh) do dh = beta1(beta2(dh)) (wrong, this is 2D thinking...beta3(beta2(dh))
+    // add vertex
+    // dh = beta1(dh)
+    // if attribute<0>(dh) is equal to first element in border -> stop
+
+    // How to identify inner loops after this?
+    // Do I need connected component for faces and then also the looping stuff?
+    typename LCC::Dart_descriptor cur = dh;
+    cur = m_lcc.beta<1>(cur);
+
+    std::size_t idx = 0;
+
+    do {
+/*
+      if (debug) {
+        std::ofstream vout("0-" + std::to_string(idx) + ".xyz");
+        for (std::size_t p : border)
+          vout << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(p))) << std::endl;
+        vout.close();
       }
 
-    std::ofstream vout(std::to_string(region) + ".xyz");
-    for (Point_3& p : pts) {
-      vout << p.x() << " " << p.y() << " " << p.z() << std::endl;
-    }
-    vout << std::endl;
+      if (debug)
+        write_edge(cur, "cur.polylines.txt");*/
+
+      if (is_border_edge(cur)) {
+        CGAL_assertion(!processed[cur]);
+        processed[cur] = true;
+        border.push_back(m_lcc.attribute<0>(cur));
+
+        if (!m_labels[m_lcc.info<3>(cur).volume_id + 6] == 1)
+          std::cout << "border collected from dart of outside volume, dh " << cur << " volume_id " << m_lcc.info<3>(cur).volume_id << std::endl;
+      }
+      else
+        cur = circulate_vertex_2d(cur);
+      cur = m_lcc.beta<1>(cur);
+      idx++;
+    } while(cur != dh);
+
+    borders.push_back(std::move(border));
+  }
+
+  void write_face(const typename LCC::Dart_descriptor dh, const std::string& fn) {
+    std::vector<Point_3> face;
+    From_exact from_exact;
+
+    Dart_descriptor n = dh;
+    do {
+      face.push_back(from_exact(m_lcc.point(n)));
+      n = m_lcc.beta(n, 1);
+    } while (n != dh);
+
+    KSP_3::dump_polygon(face, fn);
+  }
+
+  void write_edge(typename LCC::Dart_descriptor dh, const std::string& fn) {
+    From_exact from_exact;
+    std::ofstream vout(fn);
+    vout << "2 " << from_exact(m_lcc.point(dh)) << " " << from_exact(m_lcc.point(m_lcc.beta<1>(dh))) << std::endl;
     vout.close();
+  }
 
-    // Iterate over all edges and collect all face descriptors and border edges.
-    // For each edge, find neighbor face m_lcc.one_dart_of_incident_cell<2, 1>
-     // To find neighbor face, m_lcc.one_dart_of_incident_cell<1, 2>?
-      // Exclude faces by region_index (including own face)
-    // Identifying other face by comparing input_polygon (special case -7)
-    // Two sets -> faces set<attribute_descriptor> and edges std::set?
+  void write_border(std::vector<std::size_t> &border, const std::string& fn) {
+    From_exact from_exact;
+    std::ofstream vout(fn);
+    vout << (border.size() + 1);
+    for (std::size_t k = 0; k < border.size(); k++) {
+      vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(border[k])));
+    }
+    vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(border[0]))) << std::endl;
+    vout.close();
+  }
 
-    // After collecting faces, I can collect border edges and just start from one to get the loop.
+  void collect_connected_border(std::vector<std::vector<std::size_t> >& borders, const std::vector<int> &region_index, std::vector<std::vector<std::size_t> > &borders_per_region) {
+    // Start extraction of a border from each dart (each dart is a 1/n-edge)
+    // Search starting darts by searching faces
+    //borders contains Attribute<0> handles casted to std::size_t
+    std::vector<bool> processed(m_lcc.number_of_darts(), false);
+
+    From_exact from_exact;
+    borders_per_region.resize(region_index.size());
+
+    for (std::size_t i = 0;i<region_index.size();i++) {
+      if (region_index[i] == -1)
+        continue;
+/*
+      if (region_index[i] == 3)
+        std::cout << std::endl;
+
+      if (i == 1043)
+        std::cout << std::endl;*/
+
+      typename LCC::Dart_descriptor dh = m_lcc.dart_of_attribute<2>(i);
+
+      if (m_labels[m_lcc.info<3>(dh).volume_id + 6] == 0)
+        dh = m_lcc.beta<3>(dh);
+
+      Volume_attribute va = m_lcc.attribute<3>(dh);
+      Face_attribute &fa = m_lcc.attribute<2>(dh);
+      auto finfo = m_lcc.info_of_attribute<2>(fa);
+      const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
+
+      // Do not segment bbox surface
+      if (n.second < 6)
+        continue;
+
+      // Belongs to reconstruction?
+      if (m_labels[n.first] == m_labels[n.second]) {
+        std::cout << "face skipped" << std::endl;
+        continue;
+      }
+
+      std::size_t num_edges = m_lcc.template one_dart_per_incident_cell<1, 2>(dh).size();
+
+      typename LCC::Dart_descriptor dh2 = dh;
+
+      do {
+        if (va != m_lcc.attribute<3>(dh2)) {
+          std::cout << "volume attribute mismatch" << std::endl;
+        }
+
+        if (!processed[dh2] && is_border_edge(dh2)) {
+          borders_per_region[region_index[fa]].push_back(borders.size());
+
+          collect_border(dh2, processed, borders);
+        }
+        dh2 = m_lcc.beta<1>(dh2);
+      } while (dh2 != dh);
+    }
   }
 
   void collect_points_for_faces_lcc() {

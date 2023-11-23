@@ -108,12 +108,12 @@ void dump_2d_surface_mesh(
   using Mesh         = CGAL::Surface_mesh<Point_3>;
   using Face_index   = typename Mesh::Face_index;
   using Vertex_index = typename Mesh::Vertex_index;
-  using Uchar_map    = typename Mesh::template Property_map<Face_index, unsigned char>;
+  using Int_map    = typename Mesh::template Property_map<Face_index, int>;
 
   Mesh mesh;
-  Uchar_map red   = mesh.template add_property_map<Face_index, unsigned char>("red", 0).first;
-  Uchar_map green = mesh.template add_property_map<Face_index, unsigned char>("green", 0).first;
-  Uchar_map blue  = mesh.template add_property_map<Face_index, unsigned char>("blue", 0).first;
+  Int_map red   = mesh.template add_property_map<Face_index, int>("red", 0).first;
+  Int_map green = mesh.template add_property_map<Face_index, int>("green", 0).first;
+  Int_map blue  = mesh.template add_property_map<Face_index, int>("blue", 0).first;
 
   std::vector<Vertex_index> vertices;
   std::vector<Vertex_index> map_vertices;
@@ -501,6 +501,40 @@ public:
         stream << i++ << " ";
       stream << get_idx_color(polygon_id) << std::endl;
       ++polygon_id;
+    }
+    save(stream, file_name + ".ply");
+  }
+
+  void export_polygon_soup_3(
+    const std::vector<std::vector< std::vector<Point_3> > >& polygons,
+    const std::string file_name) const {
+
+    std::stringstream stream;
+    initialize(stream);
+
+    std::size_t num_vertices = 0;
+    std::size_t num_faces = 0;
+    for (const auto& region : polygons) {
+      num_faces += region.size();
+      for (const auto& polygon : region)
+        num_vertices += polygon.size();
+    }
+    add_ply_header_mesh(stream, num_vertices, num_faces);
+
+    for (const auto& region : polygons)
+      for(const auto& polygon : region)
+        for (const auto& p : polygon)
+         stream << p << std::endl;
+
+    std::size_t i = 0, region_id = 0;
+    for (const auto& region : polygons) {
+      for (const auto& polygon : region) {
+        stream << polygon.size() << " ";
+        for (std::size_t j = 0; j < polygon.size(); ++j)
+          stream << i++ << " ";
+        stream << get_idx_color(region_id) << std::endl;
+      }
+      ++region_id;
     }
     save(stream, file_name + ".ply");
   }
@@ -937,6 +971,11 @@ void dump_polygona(const std::vector<CGAL::Epick::Point_3>& pts, const std::stri
 }
 
 void dump_polygons(const std::vector<std::vector<CGAL::Epick::Point_3> >& pts, const std::string& filename) {
+  Saver<CGAL::Epick> saver;
+
+  saver.export_polygon_soup_3(pts, filename);
+}
+void dump_polygons(const std::vector<std::vector<std::vector<CGAL::Epick::Point_3> > >& pts, const std::string& filename) {
   Saver<CGAL::Epick> saver;
 
   saver.export_polygon_soup_3(pts, filename);

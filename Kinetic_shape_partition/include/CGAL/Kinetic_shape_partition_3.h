@@ -232,7 +232,7 @@ private:
 
   Parameters m_parameters;
   std::array<Point_3, 8> m_bbox;
-  CGAL::Aff_transformation_3<Kernel> m_transform;
+  CGAL::Aff_transformation_3<Intersection_kernel> m_transform;
   std::vector<Sub_partition> m_partition_nodes; // Tree of partitions.
   std::vector<std::size_t> m_partitions; // Contains the indices of the leaf nodes, the actual partitions to be calculated.
   std::vector<Point_3> m_points;
@@ -1602,15 +1602,6 @@ private:
     }
 
     return area;
-  }
-
-  bool check_index(const Index& a) const {
-    if (a == Index(0, 16) || a == Index(1, 16)
-      || a == Index(0, 17) || a == Index(1, 17)
-      || a == Index(4, 17) || a == Index(5, 12)
-      || a == Index(4, 33) || a == Index(5, 37))
-      return true;
-    return false;
   }
 
   void check_tjunctions() {
@@ -3326,21 +3317,24 @@ private:
     m_points.reserve(count);
     m_polygons.reserve(m_input_polygons.size());
 
+    To_exact to_exact;
+    From_exact from_exact;
+
     if (m_parameters.reorient_bbox) {
 
-      m_transform = get_obb2abb(m_input_polygons);
+      m_transform = to_exact(get_obb2abb(m_input_polygons));
 
       for (const auto& p : m_input_polygons) {
         std::size_t idx = m_points.size();
         for (const Point_3& pt : p)
-          m_points.push_back(m_transform.transform(pt));
+          m_points.push_back(from_exact(m_transform.transform(to_exact(pt))));
 
         m_polygons.push_back(std::vector<std::size_t>(p.size()));
         std::iota(m_polygons.back().begin(), m_polygons.back().end(), idx);
       }
     }
     else {
-      m_transform = CGAL::Aff_transformation_3<Kernel>(CGAL::IDENTITY);
+      m_transform = CGAL::Aff_transformation_3<Intersection_kernel>(CGAL::IDENTITY);
 
       for (const auto& p : m_input_polygons) {
         std::size_t idx = m_points.size();
@@ -3368,11 +3362,8 @@ private:
 
     m_node2partition.resize(max_count + 1, std::size_t(-1));
 
-    From_exact from_exact;
-    To_exact to_exact;
-
     std::size_t idx = 0;
-    CGAL::Aff_transformation_3<Kernel> inv = m_transform.inverse();
+    CGAL::Aff_transformation_3<Intersection_kernel> inv = m_transform.inverse();
     for (typename Octree::Node_index node : m_octree->traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(*m_octree)))
       if (m_octree->is_leaf(node)) {
         // Creating bounding box
@@ -3388,7 +3379,7 @@ private:
 
         if (m_parameters.reorient_bbox)
           for (std::size_t i = 0; i < 8; i++)
-            m_partition_nodes[idx].bbox[i] = to_exact(inv.transform(from_exact(m_partition_nodes[idx].bbox[i])));
+            m_partition_nodes[idx].bbox[i] = inv.transform(m_partition_nodes[idx].bbox[i]);
 
         // Get consistent Plane_3 from Octree to generate exact planes
 
@@ -3402,7 +3393,7 @@ private:
         for (std::size_t i = 0; i < polys.size(); i++) {
           m_partition_nodes[idx].clipped_polygons[i].resize(polys[i].second.size());
           for (std::size_t j = 0; j < polys[i].second.size(); j++)
-            m_partition_nodes[idx].clipped_polygons[i][j] = inv.transform(polys[i].second[j]);
+            m_partition_nodes[idx].clipped_polygons[i][j] = from_exact(inv.transform(to_exact(polys[i].second[j])));
         }
 
         // set node index
