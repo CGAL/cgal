@@ -174,20 +174,20 @@ if(TARGET CGAL::CGAL_ImageIO)
     find_package(ITK NAMES ITK InsightToolkit
                      QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)
+      include(CGAL_ITK_support)
       message(STATUS "ITK found")
       include(${ITK_USE_FILE})
-      set(ITK_LIBS ITKCommon ITKSmoothing ITKImageIntensity)
 
       create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
       target_link_libraries(mesh_3D_weighted_image
-                            PUBLIC CGAL::Eigen3_support ${ITK_LIBS})
+                            PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
 
       create_single_source_cgal_program("mesh_3D_weighted_image_with_detection_of_features.cpp")
       target_link_libraries(mesh_3D_weighted_image_with_detection_of_features
-                            PUBLIC CGAL::Eigen3_support ${ITK_LIBS})
-    else(ITK_FOUND)
+                            PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
+    else()
       message(STATUS "NOTICE: The examples that need ITK will not be compiled.")
-    endif(ITK_FOUND)
+    endif()
 
   else()
     message(STATUS "NOTICE: The examples mesh_3D_image.cpp, mesh_3D_weighted_image.cpp, mesh_3D_image_variable_size.cpp, mesh_optimization_example.cpp and mesh_optimization_lloyd_example.cpp need CGAL_ImageIO to be configured with ZLIB support, and will not be compiled.")
