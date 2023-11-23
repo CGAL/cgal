@@ -68,9 +68,24 @@ tetrahedra edge lengths remain locally close to the local size of simplices in t
 The difference between remeshing with uniform and adaptive
 sizing fields is depicted in \cgalFigureRef{uniform_and_adaptive}.
 
+\cgalFigureBegin{uniform_and_adaptive, uniform_and_adaptive_remeshing.png}
+//Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
+//(Left) Before remeshing, dihedral angles were in the interval [1.3; 177.8].
+//(Right) After remeshing and keeping the same density,
+//dihedral angles are in the interval [12,7; 157.7].
+\cgalFigureEnd
+
+
 The same sizing field can be used for initial tetrahedral mesh generation
 using the \cgal \ref PkgMesh3 package, and consecutive consistent isotropic remeshing,
 as shown by \cgalFigureRef{sphere_sizing_field}.
+
+\cgalFigureBegin{sphere_sizing_field, sphere_sizing_field_remeshing.png}
+//Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
+//(Left) Before remeshing, dihedral angles were in the interval [1.3; 177.8].
+//(Right) After remeshing and keeping the same density,
+//dihedral angles are in the interval [12,7; 157.7].
+\cgalFigureEnd
 
 
 \section secTetRemeshingAPI API
