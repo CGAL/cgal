@@ -159,10 +159,12 @@ interpolate_on_four_vertices(
   const Bare_point& c = boost::get<0>(vertices[2]);
   const Bare_point& d = boost::get<0>(vertices[3]);
 
-  const FT wa = 1. / CGAL::squared_distance(a, p);
-  const FT wb = 1. / CGAL::squared_distance(b, p);
-  const FT wc = 1. / CGAL::squared_distance(c, p);
-  const FT wd = 1. / CGAL::squared_distance(d, p);
+  const auto sqd = FT().compute_squared_distance_3_object();
+
+  const FT wa = 1. / sqd(a, p);
+  const FT wb = 1. / sqd(b, p);
+  const FT wc = 1. / sqd(c, p);
+  const FT wd = 1. / sqd(d, p);
 
   // If den is 0, then compute the average value
   if (is_zero(wa + wb + wc + wd))
