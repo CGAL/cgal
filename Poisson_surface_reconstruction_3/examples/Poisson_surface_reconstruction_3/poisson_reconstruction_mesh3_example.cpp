@@ -23,7 +23,7 @@
 #include <fstream>
 
 #include <type_traits>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -52,13 +52,13 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
   // Poisson options
   FT sm_angle = 20.0; // Min triangle angle in degrees.
-  FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
+  FT sm_radius = 1.; // Max triangle size w.r.t. point set average spacing.
   FT sm_distance = 0.25; // Surface Approximation error w.r.t. point set average spacing.
 
-  CGAL::Timer time;
+  CGAL::Real_timer time;
   time.start();
 
-  CGAL::Timer total_time;
+  CGAL::Real_timer total_time;
   total_time.start();
 
   // Creates implicit function from the read points using the default solver.
@@ -176,15 +176,16 @@ int main(int argc, char* argv[])
       std::cerr << "Error: cannot read file input file!" << std::endl;
       return EXIT_FAILURE;
     }
-    std::cout << "File " << file << " has been read." << std::endl;
+    std::cout << "File " << file << " has been read, "
+      << points.size() << " points." << std::endl;
+
+    std::cout << "\n\n### Sequential mode ###" << std::endl;
+    poisson_reconstruction<CGAL::Sequential_tag>(points, "out_sequential.off");
 
 #ifdef CGAL_LINKED_WITH_TBB
     std::cout << "\n\n### Parallel mode ###" << std::endl;
     poisson_reconstruction<CGAL::Parallel_tag>(points, "out_parallel.off");
 #endif
-
-    std::cout << "\n\n### Sequential mode ###" << std::endl;
-    poisson_reconstruction<CGAL::Sequential_tag>(points, "out_sequential.off");
 
     return EXIT_SUCCESS;
 }

@@ -16,7 +16,7 @@
 #include <vector>
 #include <fstream>
 
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
       return EXIT_FAILURE;
     }
 
-    CGAL::Timer total_time;
+    CGAL::Real_timer total_time;
     total_time.start();
 
     // Creates implicit function from the read points using the default solver.
@@ -94,6 +94,8 @@ int main(int argc, char* argv[])
     Surface_3 surface(function,
                       Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
                       sm_dichotomy_error/sm_sphere_radius);
+
+    std::cout << "Surface created." << std::endl;
 
     // Defines surface mesh generation criteria
     CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
