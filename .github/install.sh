@@ -12,13 +12,13 @@ sudo apt-get install -y \
  qtbase5-dev libqt5sql5-sqlite libqt5opengl5-dev qtscript5-dev libqt5websockets5-dev \
  libqt5svg5-dev qttools5-dev qttools5-dev-tools \
  libboost-dev libboost-serialization-dev libboost-iostreams-dev libboost-filesystem-dev libboost-filesystem-dev \
- libvtk9-dev libunwind-dev \
+ libvtk9-dev libgdcm-tools libvtkgdcm-dev libunwind-dev \
  libinsighttoolkit5-dev \
  libceres-dev \
  libglpk-dev \
  libopencv-dev \
  zsh \
- qt6-base-dev qt6-declarative-dev
+ qt6-base-dev qt6-declarative-dev libqt6svg6-dev libqt6websockets6-dev
 
 #update CMake
 sudo apt purge --auto-remove cmake
