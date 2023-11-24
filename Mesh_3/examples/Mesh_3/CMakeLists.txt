@@ -124,8 +124,7 @@ if(TARGET CGAL::CGAL_ImageIO)
     add_executable(mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp)
     target_link_libraries(
       mesh_3D_gray_vtk_image
-      PUBLIC CGAL::Eigen3_support CGAL::CGAL CGAL::CGAL_ImageIO
-             ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${VTK_LIBRARIES})
+      PUBLIC CGAL::Eigen3_support CGAL::CGAL CGAL::CGAL_ImageIO ${VTK_LIBRARIES})
     cgal_add_test(mesh_3D_gray_vtk_image)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS mesh_3D_gray_vtk_image)
   endif()

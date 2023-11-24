@@ -17,7 +17,8 @@ sudo apt-get install -y \
  libceres-dev \
  libglpk-dev \
  libopencv-dev \
- zsh
+ zsh \
+ qt6-base-dev qt6-declarative-dev
 
 #update CMake
 sudo apt purge --auto-remove cmake

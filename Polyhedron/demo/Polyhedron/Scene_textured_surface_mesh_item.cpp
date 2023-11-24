@@ -326,7 +326,7 @@ Scene_textured_surface_mesh_item::selection_changed(bool p_is_selected)
   if(p_is_selected != is_selected)
   {
     is_selected = p_is_selected;
-    Q_FOREACH(CGAL::QGLViewer*v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer*v : CGAL::QGLViewer::QGLViewerPool())
     {
       setBuffersInit(qobject_cast<Vi*>(v), false);
     }
@@ -421,4 +421,3 @@ void Scene_textured_surface_mesh_item::computeElements() const
   setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
 }
-
