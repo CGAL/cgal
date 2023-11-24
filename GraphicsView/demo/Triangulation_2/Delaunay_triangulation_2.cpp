@@ -412,7 +412,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGAL (QT5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

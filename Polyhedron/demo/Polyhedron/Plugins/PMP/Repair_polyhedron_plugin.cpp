@@ -273,7 +273,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
   {
     std::vector<double> tolerances/* = 0.005, 0.0125, 0.025, 0.05, 0.07 */;
     bool ok;
-    Q_FOREACH(QString tol_text, ui.tolerances->text().split(","))
+    for(QString tol_text : ui.tolerances->text().split(","))
     {
       double d = tol_text.toDouble(&ok);
       if (ok)
