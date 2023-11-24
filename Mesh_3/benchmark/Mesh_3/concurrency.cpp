@@ -69,6 +69,8 @@ const int     TET_SHAPE                = 3;
 
 #ifdef CGAL_CONCURRENT_MESH_3
 
+#include <tbb/task_arena.h>
+
 # ifndef CGAL_LINKED_WITH_TBB
 #   pragma message(" : Warning: CGAL_LINKED_WITH_TBB not defined: EVERYTHING WILL BE SEQUENTIAL.")
 # endif
@@ -450,6 +452,8 @@ bool make_mesh_polyhedron(const std::string &input_filename,
                  double facet_sizing,
                  double cell_sizing)
 {
+  std::cout << "make_mesh_polyhedron" << std::endl;
+
   // Domain
   typedef Kernel K;
 
@@ -477,7 +481,7 @@ bool make_mesh_polyhedron(const std::string &input_filename,
 
   // Create input polyhedron
   Polyhedron polyhedron;
-  std::ifstream input(input_filename.c_str());
+  std::ifstream input(CGAL::data_file_path(input_filename));
   if (!input.is_open())
   {
     std::cerr << "Could not open '" << input_filename << "'" << std::endl;
@@ -886,11 +890,6 @@ int main()
       Concurrent_mesher_config::get().num_work_items_per_batch += 5)*/
 #endif
     {
-#ifdef CGAL_CONCURRENT_MESH_3
-      tbb::task_scheduler_init init(
-        num_threads > 0 ? num_threads : tbb::task_scheduler_init::automatic);
-#endif
-
       std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' found." << std::endl;
       script_file.seekg(0);
       while (script_file.good())
@@ -939,7 +938,7 @@ int main()
 #ifdef CGAL_CONCURRENT_MESH_3
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Num_threads",
-              (num_threads == -1 ? tbb::task_scheduler_init::default_num_threads() : num_threads));
+              (num_threads == -1 ? tbb::this_task_arena::max_concurrency() : num_threads));
             CGAL_MESH_3_SET_PERFORMANCE_DATA(
               "Lockgrid_size",
               Concurrent_mesher_config::get().locking_grid_num_cells_per_axis);
