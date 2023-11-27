@@ -46,7 +46,7 @@ template<typename Concurrency_tag, typename PointSet>
 void poisson_reconstruction(const PointSet& points, const char* output)
 {
   typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
-  typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
+  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
