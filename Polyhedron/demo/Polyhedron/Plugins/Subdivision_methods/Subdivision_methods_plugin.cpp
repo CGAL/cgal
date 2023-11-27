@@ -48,7 +48,7 @@ public:
                << actionCatmullClark
                << actionSqrt3
                << actionDooSabin;
-      Q_FOREACH(QAction* action, _actions)
+      for(QAction* action : _actions)
         action->setProperty("subMenuName", "3D Surface Subdivision Methods");
       autoConnectActions();
 
@@ -95,16 +95,19 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_loop(FaceGraphItem* item,
 void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-
-  Scene_surface_mesh_item* sm_item =
-      qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
   if(!sm_item)
     return;
+
+  bool ok = true;
   int nb_steps = QInputDialog::getInt(mw,
                                       QString("Number of Iterations"),
                                       QString("Choose number of iterations"),
-                                      1,
-                                      1);
+                                      1 /* value */, 1 /* min */, (std::numeric_limits<int>::max)() /* max */, 1 /*step*/,
+                                      &ok);
+  if(!ok)
+    return;
+
   apply_loop(sm_item, nb_steps);
 }
 
@@ -123,18 +126,23 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_catmullclark(FaceGraphIte
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
 }
+
 void Polyhedron_demo_subdivision_methods_plugin::on_actionCatmullClark_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item* sm_item =
-      qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
   if(!sm_item)
     return;
+
+  bool ok = true;
   int nb_steps = QInputDialog::getInt(mw,
                                       QString("Number of Iterations"),
                                       QString("Choose number of iterations"),
-                                      1,
-                                      1);
+                                      1 /* value */, 1 /* min */, (std::numeric_limits<int>::max)() /* max */, 1 /*step*/,
+                                      &ok);
+  if(!ok)
+    return;
+
   apply_catmullclark(sm_item, nb_steps);
 }
 
@@ -157,15 +165,19 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_sqrt3(FaceGraphItem* item
 void Polyhedron_demo_subdivision_methods_plugin::on_actionSqrt3_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Scene_surface_mesh_item* sm_item =
-      qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
   if(!sm_item)
     return;
+
+  bool ok = true;
   int nb_steps = QInputDialog::getInt(mw,
                                       QString("Number of Iterations"),
                                       QString("Choose number of iterations"),
-                                      1,
-                                      1);
+                                      1 /* value */, 1 /* min */, (std::numeric_limits<int>::max)() /* max */, 1 /*step*/,
+                                      &ok);
+  if(!ok)
+    return;
+
   apply_sqrt3(sm_item, nb_steps);
 
 }
@@ -189,16 +201,19 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_doosabin(FaceGraphItem* i
 void Polyhedron_demo_subdivision_methods_plugin::on_actionDooSabin_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-
-  Scene_surface_mesh_item* sm_item =
-      qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
   if(!sm_item)
     return;
+
+  bool ok = true;
   int nb_steps = QInputDialog::getInt(mw,
                                       QString("Number of Iterations"),
                                       QString("Choose number of iterations"),
-                                      1,
-                                      1);
+                                      1 /* value */, 1 /* min */, (std::numeric_limits<int>::max)() /* max */, 1 /*step*/,
+                                      &ok);
+  if(!ok)
+    return;
+
   apply_doosabin(sm_item, nb_steps);
 
 }

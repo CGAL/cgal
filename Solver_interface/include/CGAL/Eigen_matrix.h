@@ -25,7 +25,7 @@ namespace CGAL {
 The class `Eigen_matrix` is a wrapper around `Eigen` matrix type
 <a href="https://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>.
 
-\cgalModels `SvdTraits::Matrix`
+\cgalModels{SvdTraits::Matrix}
 
 \tparam T Number type.
 \tparam D1 Number of rows, or Dynamic

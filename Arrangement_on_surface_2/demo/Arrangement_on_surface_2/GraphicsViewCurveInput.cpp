@@ -24,11 +24,10 @@
 #include <QEvent>
 #include <QKeyEvent>
 
+//
 template <std::size_t I = 0, typename FuncT, typename... Tp>
-inline std::enable_if_t<I == sizeof...(Tp), void>
-for_each(std::tuple<Tp...>&, FuncT)
-{
-}
+inline typename std::enable_if<I == sizeof...(Tp), void>::type
+for_each(std::tuple<Tp...>&, FuncT) {}
 
 template <std::size_t I = 0, typename FuncT, typename... Tp>
   inline std::enable_if_t <
@@ -38,103 +37,95 @@ template <std::size_t I = 0, typename FuncT, typename... Tp>
   for_each<I + 1, FuncT, Tp...>(t, f);
 }
 
-namespace CGAL
-{
-namespace Qt
-{
+namespace CGAL {
+namespace Qt {
 
-GraphicsViewCurveInputBase::GraphicsViewCurveInputBase(
-  QObject* parent, QGraphicsScene* scene) :
-    Callback(parent, scene),
-    inputMethod(nullptr)
-{
-}
+//
+GraphicsViewCurveInputBase::
+GraphicsViewCurveInputBase(QObject* parent, QGraphicsScene* scene) :
+  Callback(parent, scene),
+  inputMethod(nullptr)
+{}
 
+//
 void GraphicsViewCurveInputBase::setInputMethod(CurveInputMethod* inputMethod_)
-{
-  this->inputMethod = inputMethod_;
-}
+{ this->inputMethod = inputMethod_; }
 
-void GraphicsViewCurveInputBase::reset()
-{
-  if (this->inputMethod)
-  {
+//
+void GraphicsViewCurveInputBase::reset() {
+  if (this->inputMethod) {
     this->inputMethod->reset();
     this->inputMethod = nullptr;
   }
 }
 
+//
 bool GraphicsViewCurveInputBase::eventFilter(QObject* obj, QEvent* event)
-{
-  return this->inputMethod->eventFilter(obj, event);
-}
+{ return this->inputMethod->eventFilter(obj, event); }
 
+//
 void GraphicsViewCurveInputBase::setColor(QColor c)
-{
-  this->inputMethod->setColor(c);
-}
+{ this->inputMethod->setColor(c); }
 
+//
 template <typename Arr_>
-GraphicsViewCurveInput<Arr_>::GraphicsViewCurveInput(
-  Arrangement* arrangement_, QObject* parent, QGraphicsScene* scene) :
-    GraphicsViewCurveInputBase(parent, scene),
-    arrangement(arrangement_)
+GraphicsViewCurveInput<Arr_>::
+GraphicsViewCurveInput(Arrangement* arrangement_, QObject* parent,
+                       QGraphicsScene* scene) :
+  GraphicsViewCurveInputBase(parent, scene),
+  arrangement(arrangement_)
 {
-  this->setDefaultInputMethod(
-    std::integral_constant<
-      bool, std::tuple_size<InputMethodTuple>::value != 0>{});
+  this->setDefaultInputMethod(std::integral_constant<bool,
+                              std::tuple_size<InputMethodTuple>::value != 0>{});
   for_each(inputMethods, [&](auto&& it) {
-    it.setScene(scene);
-    it.setCallback(this);
-  });
+                           it.setScene(scene);
+                           it.setCallback(this);
+                         });
   curveGenerator.setTraits(this->arrangement->traits());
 }
 
+//
 template <typename Arr_>
-void GraphicsViewCurveInput<Arr_>::setCurveType(CurveType type)
-{
+void GraphicsViewCurveInput<Arr_>::setCurveType(CurveType type) {
   this->reset();
-  for_each(inputMethods, [&](auto&& it) {
-    if (it.curveType() == type)
-      this->setInputMethod(static_cast<CurveInputMethod*>(&it));
-  });
+  for_each(inputMethods,
+           [&](auto&& it) {
+             if (it.curveType() == type)
+               this->setInputMethod(static_cast<CurveInputMethod*>(&it));
+           });
 }
 
+//
 template <typename Arr_>
 void GraphicsViewCurveInput<Arr_>::setPointSnapper(PointSnapperBase* snapper_)
-{
-  for_each(inputMethods, [&](auto&& it) { it.setPointSnapper(snapper_); });
-}
+{ for_each(inputMethods, [&](auto&& it) { it.setPointSnapper(snapper_); }); }
 
+//
 template <typename Arr_>
 template <typename>
 void GraphicsViewCurveInput<Arr_>::setDefaultInputMethod(std::true_type)
-{
-  this->setInputMethod(&std::get<0>(inputMethods));
-}
+{ this->setInputMethod(&std::get<0>(inputMethods)); }
 
+//
 template <typename Arr_>
 void GraphicsViewCurveInput<Arr_>::setDefaultInputMethod(std::false_type)
-{
-}
+{}
 
+//
 template <typename Arr_>
-void GraphicsViewCurveInput<Arr_>::generate(CGAL::Object o)
-{
-  insertCurve(
-    demo_types::enumFromArrType<Arrangement>(),
-    CGAL::make_object(this->arrangement), o);
+void GraphicsViewCurveInput<Arr_>::generate(CGAL::Object o) {
+  insertCurve(demo_types::enumFromArrType<Arrangement>(),
+              CGAL::make_object(this->arrangement), o);
   Q_EMIT CGAL::Qt::GraphicsViewCurveInputBase::modelChanged();
 }
 
+//
 template <typename Arr_>
-void GraphicsViewCurveInput<Arr_>::curveInputDoneEvent(
-  const std::vector<Point_2>& clickedPoints, CurveType type)
-{
-  boost::optional<Curve_2> cv =
+void GraphicsViewCurveInput<Arr_>::
+curveInputDoneEvent(const std::vector<Point_2>& clickedPoints, CurveType type) {
+  std::optional<Curve_2> cv =
     this->curveGenerator.generate(clickedPoints, type);
-  if (cv)
-  {
+  if (cv) {
     Insert_curve<Arrangement>{}(this->arrangement, *cv);
     Q_EMIT this->modelChanged();
   }
@@ -142,13 +133,12 @@ void GraphicsViewCurveInput<Arr_>::curveInputDoneEvent(
 
 // CurveGeneratorBase
 template <typename ArrTraits_>
-auto CurveGeneratorBase<ArrTraits_>::generate(
-  const std::vector<Point_2>& clickedPoints, CurveType type)
-  -> boost::optional<Curve_2>
+auto CurveGeneratorBase<ArrTraits_>::
+generate(const std::vector<Point_2>& clickedPoints, CurveType type)
+  -> std::optional<Curve_2>
 {
-  boost::optional<Curve_2> res;
-  switch (type)
-  {
+  std::optional<Curve_2> res;
+  switch (type) {
   case CurveType::Segment:
     res = generateSegment(clickedPoints);
     break;
@@ -171,7 +161,7 @@ auto CurveGeneratorBase<ArrTraits_>::generate(
     res = generateThreePointCircularArc(clickedPoints);
     break;
   case CurveType::FivePointConicArc:
-    res = generateFivePointConicArc(clickedPoints);
+   res = generateFivePointConicArc(clickedPoints);
     break;
   case CurveType::Bezier:
     res = generateBezier(clickedPoints);
@@ -181,16 +171,16 @@ auto CurveGeneratorBase<ArrTraits_>::generate(
   return res;
 }
 
+//
 template <typename ArrTraits_>
 void CurveGeneratorBase<ArrTraits_>::setTraits(const ArrTraits* traits_)
-{
-  this->traits = traits_;
-}
+{ this->traits = traits_; }
 
 // Curve Generator Segment Traits
 template <typename Kernel_>
-auto CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::generateSegment(
-  const std::vector<Point_2>& clickedPoints) -> boost::optional<Curve_2>
+auto CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::
+generateSegment(const std::vector<Point_2>& clickedPoints)
+  -> std::optional<Curve_2>
 {
   Curve_2 res{clickedPoints[0], clickedPoints[1]};
   return res;
@@ -200,7 +190,7 @@ auto CurveGenerator<CGAL::Arr_segment_traits_2<Kernel_>>::generateSegment(
 template <typename SegmentTraits>
 auto CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>>::
   generatePolyline(const std::vector<Point_2>& clickedPoints)
-    -> boost::optional<Curve_2>
+    -> std::optional<Curve_2>
 {
   if (clickedPoints.size() < 2) return {};
 
@@ -211,25 +201,25 @@ auto CurveGenerator<CGAL::Arr_polyline_traits_2<SegmentTraits>>::
 
 // Curve Generator Linear Traits
 template <typename Kernel_>
-auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateSegment(
-  const std::vector<Point_2>& points) -> boost::optional<Curve_2>
+auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::
+generateSegment(const std::vector<Point_2>& points) -> std::optional<Curve_2>
 {
   Curve_2 res = Curve_2(Segment_2(points[0], points[1]));
   return res;
 }
 
+//
 template <typename Kernel_>
-auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateRay(
-  const std::vector<Point_2>& points) -> boost::optional<Curve_2>
-{
+auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::
+generateRay(const std::vector<Point_2>& points) -> std::optional<Curve_2> {
   Curve_2 res = Curve_2(Ray_2(points[0], points[1]));
   return res;
 }
 
+//
 template <typename Kernel_>
-auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateLine(
-  const std::vector<Point_2>& points) -> boost::optional<Curve_2>
-{
+auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::
+generateLine(const std::vector<Point_2>& points) -> std::optional<Curve_2> {
   Curve_2 res = Curve_2(Line_2(points[0], points[1]));
   return res;
 }
@@ -237,28 +227,31 @@ auto CurveGenerator<CGAL::Arr_linear_traits_2<Kernel_>>::generateLine(
 // CurveGenerator Conic Traits
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateSegment(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+generateSegment(const std::vector<Point_2>& points)
+  -> std::optional<Curve_2>
 {
-  Curve_2 res = Curve_2(Rat_segment_2(points[0], points[1]));
+  auto ctr_cv = this->traits->construct_curve_2_object();
+  Curve_2 res = ctr_cv(Rat_segment_2(points[0], points[1]));
   return res;
 }
 
+//
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateCircle(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
-{
+generateCircle(const std::vector<Point_2>& points) -> std::optional<Curve_2> {
   auto sq_rad =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
     (points[0].y() - points[1].y()) * (points[0].y() - points[1].y());
-  Curve_2 res = Curve_2(Rat_circle_2(points[0], sq_rad));
+  auto ctr_cv = this->traits->construct_curve_2_object();
+  Curve_2 res = ctr_cv(Rat_circle_2(points[0], sq_rad));
   return res;
 }
 
+//
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateEllipse(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+generateEllipse(const std::vector<Point_2>& points)
+  -> std::optional<Curve_2>
 {
   auto x1 = (CGAL::min)(points[0].x(), points[1].x());
   auto y1 = (CGAL::min)(points[0].y(), points[1].y());
@@ -279,14 +272,16 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   Rat_FT v = -2 * y0 * a_sq;
   Rat_FT ww = x0 * x0 * b_sq + y0 * y0 * a_sq - a_sq * b_sq;
 
-  Curve_2 res = Curve_2(r, s, t, u, v, ww);
+  auto ctr_cv = this->traits->construct_curve_2_object();
+  Curve_2 res = ctr_cv(r, s, t, u, v, ww);
   return res;
 }
 
+//
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateThreePointCircularArc(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+generateThreePointCircularArc(const std::vector<Point_2>& points)
+  -> std::optional<Curve_2>
 {
   auto& qp1 = points[0];
   auto& qp2 = points[1];
@@ -295,22 +290,22 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   Rat_point_2 p2 = Rat_point_2(qp2.x(), qp2.y());
   Rat_point_2 p3 = Rat_point_2(qp3.x(), qp3.y());
   RatKernel ker;
-  if (!ker.collinear_2_object()(p1, p2, p3))
-  {
-    Curve_2 res(p1, p2, p3);
+  if (! ker.collinear_2_object()(p1, p2, p3)) {
+    auto ctr_cv = this->traits->construct_curve_2_object();
+    Curve_2 res = ctr_cv(p1, p2, p3);
     return res;
   }
-  else
-  {
+  else {
     std::cout << "Points don't specify a valid conic." << std::endl;
     return {};
   }
 }
 
+//
 template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
-  generateFivePointConicArc(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+generateFivePointConicArc(const std::vector<Point_2>& points)
+  -> std::optional<Curve_2>
 {
   auto& qp0 = points[0];
   auto& qp1 = points[1];
@@ -322,17 +317,14 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
   Rat_point_2 p2 = Rat_point_2(qp2.x(), qp2.y());
   Rat_point_2 p3 = Rat_point_2(qp3.x(), qp3.y());
   Rat_point_2 p4 = Rat_point_2(qp4.x(), qp4.y());
-  try
-  {
-    Curve_2 res(p0, p1, p2, p3, p4);
-    if (res.is_valid())
-      return res;
-    else
-      std::cout << "Points don't specify a valid conic. Try again!"
-                << std::endl;
+  try {
+    auto ctr_cv = this->traits->construct_curve_2_object();
+    Curve_2 res = ctr_cv(p0, p1, p2, p3, p4);
+    if (res.is_valid()) return res;
+    else std::cout << "Points don't specify a valid conic. Try again!"
+                   << std::endl;
   }
-  catch (...)
-  {
+  catch (...) {
     std::cout << "Points don't specify a valid conic. Try again!" << std::endl;
   }
   return {};
@@ -341,8 +333,7 @@ auto CurveGenerator<Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 // CurveGenerator Algebraic Traits
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateLine(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
-{
+generateLine(const std::vector<Point_2>& points) -> std::optional<Curve_2> {
   RationalTraits ratTraits;
 
   Rational dx = points[1].x() - points[0].x();
@@ -351,8 +342,7 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   Polynomial_2 y = CGAL::shift(Polynomial_2(1), 1, 1);
 
   Polynomial_2 poly;
-  if (dx != 0)
-  {
+  if (dx != 0) {
     Rational mRat = dy / dx;
     Rational cRat = points[0].y() - mRat * points[0].x();
     // y = (a/b) x + (e/f)
@@ -364,8 +354,7 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
     poly = b * f * y - f * a * x - b * e;
   }
   // vertical line
-  else
-  {
+  else {
     Rational xP = points[0].x();
     auto a = ratTraits.numerator(xP);
     auto b = ratTraits.denominator(xP);
@@ -377,10 +366,10 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   return res;
 }
 
+//
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateCircle(const std::vector<Point_2>& points) -> boost::optional<Curve_2>
-{
+generateCircle(const std::vector<Point_2>& points) -> std::optional<Curve_2> {
   auto sq_rad =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) +
     (points[0].y() - points[1].y()) * (points[0].y() - points[1].y());
@@ -389,8 +378,8 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateEllipse(const std::vector<Point_2>& points)
-    -> boost::optional<Curve_2>
+generateEllipse(const std::vector<Point_2>& points)
+  -> std::optional<Curve_2>
 {
   auto rx =
     (points[0].x() - points[1].x()) * (points[0].x() - points[1].x()) / 4.;
@@ -401,10 +390,11 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   return this->generateEllipse_(center, rx, ry);
 }
 
+//
 template <typename Coefficient_>
 auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
-  generateEllipse_(const Point_2& center, Rational rxRat, Rational ryRat)
-    -> boost::optional<Curve_2>
+generateEllipse_(const Point_2& center, Rational rxRat, Rational ryRat)
+  -> std::optional<Curve_2>
 {
   RationalTraits ratTraits;
 
@@ -432,26 +422,23 @@ auto CurveGenerator<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
   return res;
 }
 
-template <
-  typename RatKernel, typename AlgKernel, typename NtTraits,
-  typename BoundingTraits>
-auto CurveGenerator<
-  Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
-  generateBezier(const std::vector<Point_2>& clickedPoints)
-    -> boost::optional<Curve_2>
+//
+template <typename RatKernel, typename AlgKernel, typename NtTraits,
+          typename BoundingTraits>
+auto CurveGenerator
+<Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
+generateBezier(const std::vector<Point_2>& clickedPoints)
+  -> std::optional<Curve_2>
 {
   if (clickedPoints.size() < 2) return {};
   return Curve_2{clickedPoints.begin(), clickedPoints.end()};
 }
 
 // msvc2015 doesn't play well with polymorphic lambdas
-namespace
-{
-struct ExplicitLambda
-{
+namespace {
+struct ExplicitLambda {
   template <typename Arrangement>
-  void operator()(demo_types::TypeHolder<Arrangement>)
-  {
+  void operator()(demo_types::TypeHolder<Arrangement>) {
     Arrangement* arr = nullptr;
     CGAL::assign(arr, arr_obj);
     res = new GraphicsViewCurveInput<Arrangement>(arr, parent, scene);
@@ -464,6 +451,7 @@ struct ExplicitLambda
 };
 } // anonymous namespace
 
+//
 GraphicsViewCurveInputBase* GraphicsViewCurveInputBase::create(
   demo_types::TraitsType tt, CGAL::Object arr_obj, QObject* parent,
   QGraphicsScene* scene)
@@ -478,8 +466,11 @@ GraphicsViewCurveInputBase* GraphicsViewCurveInputBase::create(
 } // namespace CGAL
 
 #ifdef CGAL_USE_CORE
-CGAL::Object algebraicCurveFromExpression(
-  const CGAL::Object& arr_obj, const std::string& exp, bool& is_first_curve)
+
+//
+CGAL::Object algebraicCurveFromExpression(const CGAL::Object& arr_obj,
+                                          const std::string& exp,
+                                          bool& is_first_curve)
 {
   using Polynomial_2 = demo_types::DemoTypes::Alg_seg_traits::Polynomial_2;
   using Alg_seg_arr = demo_types::DemoTypes::Alg_seg_arr;
@@ -498,15 +489,17 @@ CGAL::Object algebraicCurveFromExpression(
   return CGAL::make_object(cv);
 }
 
-CGAL::Object rationalCurveFromExpression(
-  const CGAL::Object& arr_obj, const std::string& numerator,
-  const std::string& denominator, bool& is_first_curve)
+//
+CGAL::Object rationalCurveFromExpression(const CGAL::Object& arr_obj,
+                                         const std::string& numerator,
+                                         const std::string& denominator,
+                                         bool& is_first_curve)
 {
   using Polynomial_1 = demo_types::DemoTypes::Rational_traits::Polynomial_1;
   using Rational_arr = demo_types::DemoTypes::Rational_arr;
 
   Rational_arr* arr;
-  if (!CGAL::assign(arr, arr_obj)) CGAL_error();
+  if (! CGAL::assign(arr, arr_obj)) CGAL_error();
 
   is_first_curve = (arr->number_of_edges() == 0);
 
@@ -521,4 +514,5 @@ CGAL::Object rationalCurveFromExpression(
 
   return CGAL::make_object(cv);
 }
+
 #endif

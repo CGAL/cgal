@@ -62,7 +62,6 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Arithmetic_kernel.h>
 
-#include <boost/array.hpp>
 #include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_2.h>
 
 
@@ -253,8 +252,8 @@ public:
         class Allocator >
     inline void draw(const Arc_2& arc,
             Container< std::vector< Coord_2 >, Allocator >& pts,
-            boost::optional< Coord_2 > *end_pt1 = nullptr,
-            boost::optional< Coord_2 > *end_pt2 = nullptr) {
+            std::optional< Coord_2 > *end_pt1 = nullptr,
+            std::optional< Coord_2 > *end_pt2 = nullptr) {
 
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         Bbox_2 bbox;

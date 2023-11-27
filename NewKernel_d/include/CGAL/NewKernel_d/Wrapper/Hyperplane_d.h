@@ -32,7 +32,7 @@ class Hyperplane_d : public Get_type<typename R_::Kernel_base, Hyperplane_tag>::
   typedef typename Get_functor<Kbase, Hyperplane_translation_tag>::type                        HTBase;
 
   typedef Hyperplane_d                            Self;
-  CGAL_static_assertion((std::is_same<Self, typename Get_type<R_, Hyperplane_tag>::type>::value));
+  static_assert(std::is_same<Self, typename Get_type<R_, Hyperplane_tag>::type>::value);
 
 public:
 

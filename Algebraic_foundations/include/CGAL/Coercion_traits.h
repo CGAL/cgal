@@ -35,9 +35,9 @@
 #define CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, Result_type  ) \
   template < class CT_Type_1, class CT_Type_2 >                         \
   Result_type operator()( const CT_Type_1& x, const CT_Type_2& y ) const { \
-    CGAL_static_assertion((::std::is_same<                              \
+    static_assert(::std::is_same<                              \
             typename Coercion_traits< CT_Type_1, CT_Type_2 >::Type, NT  \
-            >::value));                                                 \
+            >::value) ;                                                 \
                                                                         \
     typename Coercion_traits< CT_Type_1, CT_Type_2 >::Cast cast;        \
     return operator()( cast(x), cast(y) );                              \

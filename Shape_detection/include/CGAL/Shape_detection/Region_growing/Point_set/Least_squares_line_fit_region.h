@@ -50,7 +50,7 @@ namespace Point_set {
     a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Vector_2`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,
@@ -217,12 +217,11 @@ namespace Point_set {
       \param query
       item of the query point
 
-      The first and third parameters are not used in this implementation.
+      The last parameter is not used in this implementation.
 
       \return Boolean `true` or `false`
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region&) const {
 

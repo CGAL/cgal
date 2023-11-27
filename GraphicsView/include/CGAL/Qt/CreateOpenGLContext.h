@@ -13,19 +13,18 @@
 #define CGAL_QT_CREATE_OPENGL_CONTEXT_H
 
 #include <QOpenGLContext>
-#include <QGLContext>
+
 namespace CGAL{
 namespace Qt{
-inline QGLContext* createOpenGLContext()
+inline QOpenGLContext* createOpenGLContext()
 {
     QOpenGLContext *context = new QOpenGLContext();
     QSurfaceFormat format;
     format.setVersion(2,1);
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
     context->setFormat(format);
-    QGLContext *result = QGLContext::fromOpenGLContext(context);
-    result->create();
-    return result;
+    context->create();
+    return context;
 }
 } // namespace Qt
 } // namespace CGAL

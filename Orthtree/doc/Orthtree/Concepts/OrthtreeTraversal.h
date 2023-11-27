@@ -9,10 +9,12 @@
   A traversal is used to iterate on a tree with a user-selected order
   (e.g. preorder, postorder).
 
-  \cgalHasModel `CGAL::Orthtrees::Preorder_traversal`
-  \cgalHasModel `CGAL::Orthtrees::Postorder_traversal`
-  \cgalHasModel `CGAL::Orthtrees::Leaves_traversal`
-  \cgalHasModel `CGAL::Orthtrees::Level_traversal`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Orthtrees::Preorder_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Postorder_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Leaves_traversal}
+  \cgalHasModels{CGAL::Orthtrees::Level_traversal}
+  \cgalHasModelsEnd
  */
 class OrthtreeTraversal {
 

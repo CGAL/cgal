@@ -24,8 +24,7 @@ namespace params = CGAL::parameters;
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
-typedef K::FT FT;
-typedef FT (*Function)(const Point&);
+typedef double (*Function)(const Point&);
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;

@@ -50,7 +50,7 @@ do
     fi
     PKG_DIFF=$(grep -Fxv -f "$pkg_path/package_info/$pkg/dependencies" "$pkg_path/package_info/$pkg/dependencies.old" || true)
     if [ -n "$PKG_DIFF" ]; then
-      TOTAL_RES="Differences in $pkg:\n$PKG_DIFF\mhave disappeared.\n$TOTAL_RES"
+      TOTAL_RES="Differences in $pkg:\n$PKG_DIFF\nhave disappeared.\n$TOTAL_RES"
     fi
     if [ -f $pkg_path/package_info/$pkg/dependencies.old ]; then
       rm $pkg_path/package_info/$pkg/dependencies.old

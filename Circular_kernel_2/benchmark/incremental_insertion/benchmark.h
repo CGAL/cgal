@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <fstream>
 #include "Input_data.h"
-#include <boost/variant.hpp>
+#include <variant>
 
 class Bench
 {
@@ -217,7 +217,7 @@ class Bench
     this->start();
     for (typename ArcContainer::const_iterator it=ac.begin();
          it != ac.end(); ++it) {
-      insert(_pm,*it,_pl,boost::false_type());
+      insert(_pm,*it,_pl,std::false_type());
     };
     this->stop();
   }

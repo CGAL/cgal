@@ -11,7 +11,7 @@ include(CGAL_LASLIB_support)
 polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin KEYWORDS Viewer)
 target_link_libraries(gocad_plugin PUBLIC scene_surface_mesh_item)
 
-qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
+qt6_wrap_ui( funcUI_FILES Function_dialog.ui )
 polyhedron_demo_plugin(io_implicit_function_plugin
   Implicit_function_io_plugin
   ${funcUI_FILES}

@@ -11,7 +11,9 @@ and the primitives stored in the AABB tree.
 
 \cgalRefines{SearchGeomTraits_3}
 
-\cgalHasModel All models of the concept `Kernel`
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
@@ -47,7 +49,7 @@ Provides the operator:
 `return_type operator()(const Query& q, const Primitive::Datum& d)`,
 
 which computes the intersection between `q` and `d`. The type of the returned object
-must be a `boost::optional` of a `boost::variant` of the possible intersection types.
+must be a `std::optional` of a `std::variant` of the possible intersection types.
 */
 typedef unspecified_type Intersect_3;
 

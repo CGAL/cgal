@@ -210,7 +210,7 @@ are trivial:</p>
 <li> `Point_2 max_vertex(Iso_cuboid_3)`
 </ul>
 
-\cgalModels `Kernel`
+\cgalModels{Kernel}
 
 \sa `CGAL::Exact_predicates_exact_constructions_kernel`
 \sa `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`

@@ -41,7 +41,7 @@
 
 #include <CGAL/Identity_policy_2.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
@@ -268,7 +268,7 @@ protected:
 public:
   typedef typename Adaptation_traits::Point_2             Point_2;
 
-  typedef boost::variant<Face_handle,Halfedge_handle,Vertex_handle>
+  typedef std::variant<Face_handle,Halfedge_handle,Vertex_handle>
   Locate_result;
 
 private:
@@ -634,15 +634,15 @@ public:
     Query_result ns_qr = nearest_site(dual_, p);
 
     if ( const Delaunay_vertex_handle* dv =
-         boost::get<Delaunay_vertex_handle>(&ns_qr) ) {
+         std::get_if<Delaunay_vertex_handle>(&ns_qr) ) {
       return Face_handle( Face(this, *dv) );
     } else if ( const Delaunay_face_handle *df =
-                boost::get<Delaunay_face_handle>(&ns_qr) ) {
+                std::get_if<Delaunay_face_handle>(&ns_qr) ) {
       Find_valid_vertex vertex_finder;
       Delaunay_face_handle dfvalid = vertex_finder(this, *df);
       return Vertex_handle( Vertex(this, dfvalid) );
     } else if ( const Delaunay_edge* de =
-                boost::get<Delaunay_edge>(&ns_qr) ) {
+                std::get_if<Delaunay_edge>(&ns_qr) ) {
       CGAL_assertion(  !edge_rejector()(dual_, *de)  );
       if ( dual_.dimension() == 1 ) {
         Delaunay_vertex_handle v1 =

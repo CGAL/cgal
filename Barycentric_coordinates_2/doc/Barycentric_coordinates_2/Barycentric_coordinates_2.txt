@@ -337,7 +337,7 @@ why we highly recommend reading this section in order to learn what can be expec
 each coordinate function. If you want to get more mathematical details about each coordinate
 function as well as the complete history and theory behind barycentric coordinates, you should
 read \cgalCite{cgal:bc:hs-gbcicg-17}. You can also read an overview
-<a href="https://www.anisimovdmitry.com/assets/files/phd_thesis_anisimov.pdf">here</a>
+<a href="https://susi.usi.ch/usi/documents/318813">here</a>
 (chapters 1 and 2).
 
 
@@ -451,10 +451,10 @@ To fix the problem, we modify the weights \f$w_i\f$ as
 </center>
 
 After the above normalization, this gives us the precise algorithm to compute Wachspress coordinates
-but with \f$O(n^2)\f$ performance only. The max speed \f$O(n)\f$ algorithm uses the standard
+but with \cgalBigO{n^2} performance only. The max speed \cgalBigO{n} algorithm uses the standard
 weights \f$w_i\f$. Note that mathematically this modification does not change the coordinates. One should
 be cautious when using the unnormalized Wachspress weights. In that case, you must choose the
-\f$O(n)\f$ type.
+\cgalBigO{n} type.
 
 It is known that for strictly convex polygons the denominator's zero set of the
 Wachspress coordinates (\f$W^{wp} = 0~\f$) is a curve, which (in many cases) lies quite
@@ -507,10 +507,10 @@ To fix the problem, similarly to the previous subsection, we modify the weights 
 </center>
 
 After the above normalization, this yields the precise algorithm to compute discrete harmonic coordinates
-but with \f$O(n^2)\f$ performance only. The max speed \f$O(n)\f$ algorithm uses the standard
+but with \cgalBigO{n^2} performance only. The max speed \cgalBigO{n} algorithm uses the standard
 weights \f$w_i\f$. Again, mathematically this modification does not change the coordinates,
 one should be cautious when using the unnormalized discrete harmonic weights. In that case,
-you must choose the \f$O(n)\f$ type.
+you must choose the \cgalBigO{n} type.
 
 \b Warning: as for Wachspress coordinates, we do not recommend using discrete harmonic coordinates
 for exterior points, because the curve \f$W^{dh} = 0\f$ may have several components,
@@ -563,7 +563,7 @@ After the normalization of these weights as before
 \f$b_i = \frac{w_i}{W^{mv}}\qquad\f$ with \f$\qquad W^{mv} = \sum_{j=1}^n w_j\f$
 </center>
 
-we obtain the max precision \f$O(n^2)\f$ algorithm. The max speed O(n) algorithm computes the
+we obtain the max precision \cgalBigO{n^2} algorithm. The max speed \cgalBigO{n} algorithm computes the
 weights \f$w_i\f$ using the pseudocode from <a href="https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf">here</a>.
 These weights
 
@@ -575,7 +575,7 @@ with \f$\qquad t_i = \frac{\text{det}(d_i, d_{i+1})}{r_ir_{i+1} + d_id_{i+1}}\f$
 are also normalized. Note that they are unstable if a query point is closer than \f$\approx 1.0e-10\f$
 to the polygon boundary, similarly to Wachspress and discrete harmonic coordinates and
 one should be cautious when using the unnormalized mean value weights. In that case, you must choose the
-\f$O(n)\f$ type.
+\cgalBigO{n} type.
 
 
 \anchor compute_hm_coord
@@ -584,7 +584,7 @@ one should be cautious when using the unnormalized mean value weights. In that c
 The harmonic coordinates are computed by solving the Laplace equation
 
 <center>
-\f$\Delta \boldsymbol{b} = \boldsymbol{0}\f$
+\f$\Delta b = 0\f$
 </center>
 
 subject to suitable Dirichlet boundary conditions. Harmonic coordinates are the only coordinates
@@ -654,17 +654,17 @@ The resulting timings for all closed-form coordinates can be found in the figure
 
 \cgalFigureBegin{analytic_timings, analytic_timings.png}
 Time in seconds to compute \f$n\f$ coordinate values for a polygon with \f$n\f$ vertices
-at 1 million query points with the max speed \f$O(n)\f$ algorithms (dashed) and
+at 1 million query points with the max speed \cgalBigO{n} algorithms (dashed) and
 the max precision \f$0(n^2)\f$ algorithms (solid) for Wachspress (blue), discrete
 harmonic (red), and mean value (green) coordinates.
 \cgalFigureEnd
 
-From the figure above we observe that the \f$O(n^2)\f$ algorithm is as fast
-as the \f$O(n)\f$ algorithm if we have a polygon with a small number of vertices.
+From the figure above we observe that the \cgalBigO{n^2} algorithm is as fast
+as the \cgalBigO{n} algorithm if we have a polygon with a small number of vertices.
 But as the number of vertices is increased, the linear algorithm outperforms the squared one,
 as expected. One of the reasons for this behavior is that for a small number of vertices
-the multiplications of \f$n-2\f$ elements inside the \f$O(n^2)\f$ algorithm take almost the
-same time as the corresponding divisions in the \f$O(n)\f$ algorithm. For a polygon with
+the multiplications of \f$n-2\f$ elements inside the \cgalBigO{n^2} algorithm take almost the
+same time as the corresponding divisions in the \cgalBigO{n} algorithm. For a polygon with
 many vertices, these multiplications are substantially slower.
 
 To benchmark harmonic coordinates, we used a MacBook Pro 2018 with 2.2 GHz Intel Core i7 processor (6 cores)

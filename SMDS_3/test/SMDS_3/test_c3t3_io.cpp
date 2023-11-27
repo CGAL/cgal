@@ -4,7 +4,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <string>
 
@@ -48,7 +48,7 @@ struct MD_heterogeneous_types {
   typedef std::pair<int, int> Surface_patch_index;
   typedef int Curve_index;
   typedef double Corner_index;
-  typedef boost::variant<Subdomain_index,
+  typedef std::variant<Subdomain_index,
                          Surface_patch_index,
                          Curve_index,
                          Corner_index> Index;
@@ -63,7 +63,7 @@ struct MD_heterogeneous_types {
 
   static std::string reference_format_string()
   {
-    return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+boost::variant<enum,std::pair<i,i>,i,d>),Cb(enum+RTcb_3+(std::pair<i,i>)[4]))";
+    return "Triangulation_3(Weighted_point<Point_3>,Vb(Tvb_3+i+std::variant<enum,std::pair<i,i>,i,d>),Cb(enum+RTcb_3+(std::pair<i,i>)[4]))";
   }
 };
 
@@ -389,8 +389,8 @@ struct Test_c3t3_io {
       filename += "_new";
       if(binary) filename += ".binary";
       filename += ".cgal";
-      std::ofstream output(filename.c_str(),
-                           binary ? (std::ios_base::out | std::ios_base::binary)
+      std::ostringstream output(binary
+                           ? (std::ios_base::out | std::ios_base::binary)
                            : std::ios_base::out);
       CGAL::IO::save_binary_file(output, c3t3_bis, binary);
     }

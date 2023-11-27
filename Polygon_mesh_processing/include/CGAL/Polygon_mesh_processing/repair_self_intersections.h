@@ -178,7 +178,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
                                             VertexPointMap vpm,
                                             FaceOutputIterator out)
 {
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap>::value_type, Point>::value));
+  static_assert(std::is_same<typename boost::property_traits<VertexPointMap>::value_type, Point>::value);
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
@@ -1150,6 +1150,9 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
     put(local_vpm, v, projector(get(local_vpm, v)));
 
   // The projector can create degenerate faces
+  for (halfedge_descriptor h : border_hedges)
+    if (is_degenerate_triangle_face(face(opposite(h, local_mesh), local_mesh), local_mesh))
+      return !has_SI;
   if(!remove_degenerate_faces(local_mesh))
     return !has_SI;
 
@@ -2031,7 +2034,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT_INTERMEDIATE_FULL_MESH
     fname = "results/mesh_at_step_"+std::to_string(step)+"_CC_"+std::to_string(cc_id)+".off";
-    CGAL::IO::write_polygon_mesh(fname, tmesh, CGAL::parameters::stream_precision);
+    CGAL::IO::write_polygon_mesh(fname, tmesh, CGAL::parameters::stream_precision(17));
 #endif
 
     // expand the region to be filled
@@ -2446,7 +2449,6 @@ bool remove_self_intersections(const FaceRange& face_range,
   std::set<face_descriptor> working_face_range(face_range.begin(), face_range.end());
 
   visitor.start_main_loop();
-  bool self_intersects=false;
   while(++step < max_steps)
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -2485,8 +2487,6 @@ bool remove_self_intersections(const FaceRange& face_range,
 #endif
       break;
     }
-    else
-      self_intersects=true;
 
     visitor.status_update(faces_to_treat);
 
@@ -2517,8 +2517,7 @@ bool remove_self_intersections(const FaceRange& face_range,
   std::ofstream("results/final.off") << std::setprecision(17) << tmesh;
 #endif
 
-  if (self_intersects)
-    self_intersects = does_self_intersect(working_face_range, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
+  bool self_intersects = does_self_intersect(working_face_range, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   if(self_intersects)

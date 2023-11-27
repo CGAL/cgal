@@ -41,8 +41,7 @@ The class `Random_points_in_cube_3` is an input iterator creating points uniform
 distributed in a half-open cube. The default `Creator` is
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_in_square_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_sphere_3<Point_3, Creator>`
@@ -106,8 +105,7 @@ The class `Random_points_in_sphere_3` is an input iterator creating points unifo
 distributed strictly inside a sphere. The default `Creator` is
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
@@ -171,8 +169,7 @@ The class `Random_points_in_triangle_3` is an input iterator creating points uni
 distributed inside a 3D triangle. The default `Creator` is
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
@@ -245,8 +242,7 @@ The class `Random_points_on_segment_3` is an input iterator creating points unif
 distributed on a segment. The default `Creator` is
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
@@ -311,8 +307,7 @@ The class `Random_points_in_tetrahedron_3` is an input iterator creating points 
 distributed inside a tetrahedron. The default `Creator` is
 `Creator_uniform_3<Kernel_traits<Point_3>::Kernel::RT,Point_3>`.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_on_segment_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
@@ -387,8 +382,7 @@ The class `Random_points_in_triangles_3` is an input iterator creating points un
 The triangle range must be valid and unchanged while the iterator is used.
 
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
 \sa `CGAL::Random_points_in_triangle_3<Point_3, Creator>`
@@ -454,8 +448,7 @@ The class `Random_points_in_triangle_mesh_3` is an input iterator creating point
 distributed inside the faces of a triangle mesh model of `FaceListGraph`.
 The triangle mesh must be valid and unchanged while the iterator is used.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
@@ -534,8 +527,7 @@ The tetrahedral mesh must be valid and unchanged while the iterator is used.
 
 \tparam C3T3 must be a model of `Mesh_complex_3_in_triangulation_3`
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
@@ -608,8 +600,7 @@ The tetrahedral mesh must be valid and unchanged while the iterator is used.
 
 \tparam C3T3 must be a model of `Mesh_complex_3_in_triangulation_3`
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_in_disc_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`
@@ -682,8 +673,7 @@ The generated points are computed using floating point arithmetic,
 whatever the Kernel is, thus they are on the circle/sphere only up to
 rounding errors.
 
-\cgalModels `InputIterator`
-\cgalModels `PointGenerator`
+\cgalModels{InputIterator,PointGenerator}
 
 \sa `CGAL::Random_points_on_circle_2<Point_2, Creator>`
 \sa `CGAL::Random_points_in_cube_3<Point_3, Creator>`

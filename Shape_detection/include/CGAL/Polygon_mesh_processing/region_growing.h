@@ -21,6 +21,7 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Segment_set.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -33,14 +34,16 @@ namespace internal
   template <class GT, class Pair, class RegionMap>
   void fill_plane_or_vector_map(const std::vector<Pair>& normals, RegionMap region_map, typename GT::Vector_3)
   {
-    for (std::size_t i = 0 ; i<normals.size(); ++i)
+    typedef typename boost::property_traits<RegionMap>::key_type KT;
+    for (KT i = 0 ; i<static_cast<KT>(normals.size()); ++i)
       put(region_map, i, normals[i].first.orthogonal_vector());
   }
 
   template <class GT, class Pair, class RegionMap>
   void fill_plane_or_vector_map(const std::vector<Pair>& normals, RegionMap region_map, typename GT::Plane_3)
   {
-    for (std::size_t i = 0 ; i<normals.size(); ++i)
+    typedef typename boost::property_traits<RegionMap>::key_type KT;
+    for (KT i = 0; i < static_cast<KT>(normals.size()); ++i)
       put(region_map, i, normals[i].first);
   }
 
@@ -49,6 +52,46 @@ namespace internal
   {
     fill_plane_or_vector_map<GT>(normals, region_map, typename boost::property_traits<RegionMap>::value_type());
   }
+
+template<typename PolygonMesh, typename ECM>
+class One_ring_neighbor_query_with_constraints
+{
+  using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using Face_graph = PolygonMesh;
+public:
+
+  using Item = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+  using Region = std::vector<Item>;
+
+  One_ring_neighbor_query_with_constraints(const PolygonMesh& pmesh, ECM ecm)
+    : m_face_graph(pmesh)
+    , m_ecm(ecm)
+  {}
+
+  void operator()(
+    const Item query,
+    std::vector<Item>& neighbors) const {
+
+    neighbors.clear();
+    const auto query_hedge = halfedge(query, m_face_graph);
+
+    for (halfedge_descriptor h : halfedges_around_face(query_hedge, m_face_graph))
+    {
+      if (get(m_ecm, edge(h, m_face_graph))) continue;
+      face_descriptor f=face(opposite(h,m_face_graph), m_face_graph);
+      if (f != boost::graph_traits<PolygonMesh>::null_face())
+      {
+        neighbors.push_back(f);
+      }
+    }
+  }
+
+private:
+  const Face_graph& m_face_graph;
+  ECM m_ecm;
+};
+
 }
 
 /*!
@@ -138,13 +181,21 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::edge_is_constrained_t,
+      NamedParameters,
+      Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
+    > ::type ECM;
+  ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                             Static_boolean_property_map<edge_descriptor, false>());
 
-  using Neighbor_query = RG_PM::One_ring_neighbor_query<PolygonMesh>;
+  using Neighbor_query = internal::One_ring_neighbor_query_with_constraints<PolygonMesh, ECM>;
   using Region_type = RG_PM::Least_squares_plane_fit_region<Traits, PolygonMesh, VPM>;
   using Sorting = RG_PM::Least_squares_plane_fit_sorting<Traits, PolygonMesh, Neighbor_query, VPM>;
   using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type, RegionMap>;
 
-  Neighbor_query neighbor_query(mesh);
+  Neighbor_query neighbor_query(mesh, ecm);
   Region_type region_type(mesh, np);
   Sorting sorting(mesh, neighbor_query, np);
   sorting.sort();
@@ -195,7 +246,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
         if (candidates.size() == 1)
         {
           Id new_id = *candidates.begin();
-          put(region_map, f0, new_id);
+          put(region_map, f0, static_cast<Id>(new_id));
           tmp[new_id].second.push_back(f0);
           tmp[i].second.clear();
         }
@@ -207,7 +258,7 @@ region_growing_of_planes_on_faces(const PolygonMesh& mesh,
     tmp.erase(last, tmp.end());
 
     //update region map
-    for (std::size_t i=0; i<tmp.size(); ++i)
+    for (Id i=0; i<static_cast<Id>(tmp.size()); ++i)
     {
       for (face_descriptor f : tmp[i].second)
         put(region_map, f, i);
@@ -344,6 +395,12 @@ detect_corners_of_regions(
       put(ecm, e, true);
   }
 
+  //init to -1 by default
+  for(vertex_descriptor v : vertices(mesh))
+  {
+    put(corner_id_map, v, std::size_t(-1));
+  }
+
   // filter trivial edges: incident to a plane with only one face
   // such an edge cannot be removed and its vertices are corners
   std::vector<int> nb_faces_per_patch(nb_regions,0);
@@ -371,15 +428,18 @@ detect_corners_of_regions(
 
   Line_region line_region(np.segment_map(pgraph.segment_map()));
 
-  Line_sorting line_sorting(
-    segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
-  line_sorting.sort();
-
-  RG_lines rg_lines(
-    segment_range, pgraph, line_region);
-
   std::vector< std::pair<typename Line_region::Primitive, std::vector<edge_descriptor> > > subregions; // TODO dump into pmap lines
-  rg_lines.detect(std::back_inserter(subregions));
+  if (!segment_range.empty())
+  {
+    Line_sorting line_sorting(
+      segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
+    line_sorting.sort();
+
+    RG_lines rg_lines(
+      segment_range, pgraph, line_region);
+
+    rg_lines.detect(std::back_inserter(subregions));
+  }
 
 #ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
   std::ofstream debug_corners("corners.xyz");
@@ -414,11 +474,13 @@ detect_corners_of_regions(
     for (vertex_descriptor v : line_vertices)
       if (vertex_count[v]==1)
       {
-#ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
-        debug_corners << mesh.point(v) << "\n";
-#endif
         if (get(corner_id_map, v) == std::size_t(-1))
+        {
+#ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
+          debug_corners << mesh.point(v) << "\n";
+#endif
           put(corner_id_map, v, cid++);
+        }
       }
   }
 
@@ -430,9 +492,19 @@ detect_corners_of_regions(
 #endif
     put(ecm, e, true);
     if (get(corner_id_map, source(e, mesh))==std::size_t(-1))
+    {
+#ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
+      debug_corners << mesh.point(source(e, mesh)) << "\n";
+#endif
       put(corner_id_map, source(e, mesh), cid++);
+    }
     if (get(corner_id_map, target(e, mesh))==std::size_t(-1))
+    {
+#ifdef CGAL_DEBUG_DETECT_CORNERS_OF_REGIONS
+      debug_corners << mesh.point(target(e, mesh)) << "\n";
+#endif
       put(corner_id_map, target(e, mesh), cid++);
+    }
   }
 
   return cid;

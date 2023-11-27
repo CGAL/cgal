@@ -59,7 +59,7 @@ inline void set_use_assertions(bool b)
 }
 }
 
-#else
+#elif !defined(CGAL_USER_DEFINED_USE_ASSERTIONS)
 
 namespace CGAL{
 inline void set_use_assertions(bool){}
@@ -136,12 +136,6 @@ inline bool possibly(Uncertain<bool> c);
 #  else // not def CGAL_UNREACHABLE
 #    define CGAL_unreachable()  CGAL_assertion(false)
 #  endif // CGAL_UNREACHABLE
-
-# define CGAL_static_assertion(EX) \
-     static_assert(EX, #EX)
-
-# define CGAL_static_assertion_msg(EX,MSG) \
-     static_assert(EX, MSG)
 
 #if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_assertion(EX) (static_cast<void>(0))

@@ -46,6 +46,12 @@ namespace ArrTraits {}
 /// \defgroup PkgArrangementOnSurface2Funcs Free Functions
 /// \ingroup PkgArrangementOnSurface2Ref
 
+/*!
+\cgalInclude{CGAL/draw_arrangement_2.h}
+*/
+/// \defgroup PkgArrangementOnSurface2Draw Drawing
+/// \ingroup PkgArrangementOnSurface2Ref
+
 /// \defgroup PkgArrangementOnSurface2Insert CGAL::insert()
 /// \ingroup PkgArrangementOnSurface2Funcs
 
@@ -230,9 +236,7 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
-
-\cgalCRPSection{Macros}
-- \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink
+- `CGAL::CORE_algebraic_number_traits`
 
 \cgalCRPSection{Functions}
 
@@ -251,5 +255,8 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::remove_curve()`
 - \link PkgArrangementOnSurface2op_left_shift `CGAL::operator<<` \endlink
 - \link PkgArrangementOnSurface2op_right_shift `CGAL::operator<<` \endlink
+
+\cgalCRPSection{Draw an `Arrangemen_2` object}
+- \link  PkgArrangementOnSurface2Draw CGAL::draw<>() \endlink
 
 */

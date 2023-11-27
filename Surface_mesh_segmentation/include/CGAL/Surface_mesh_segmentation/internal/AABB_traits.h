@@ -47,7 +47,7 @@ public:
     // activate functions below if K::FT is floating point and fast_bbox_intersection = true
     template <class K>
     std::enable_if_t<
-      boost::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
+      std::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
           bool >
     operator()(const CGAL::Segment_3<K>& segment, const Bounding_box& bbox) const {
       const Point_3& p = segment.source();
@@ -65,7 +65,7 @@ public:
 
     template <class K>
     std::enable_if_t<
-      boost::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
+      std::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
           bool >
     operator()(const CGAL::Ray_3<K>& ray, const Bounding_box& bbox) const {
       const Point_3& p = ray.source();

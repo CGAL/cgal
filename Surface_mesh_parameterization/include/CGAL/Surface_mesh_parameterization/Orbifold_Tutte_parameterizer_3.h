@@ -38,7 +38,6 @@
 #endif
 #endif
 
-#include <boost/array.hpp>
 #include <boost/tuple/tuple.hpp>
 
 #include <unordered_map>
@@ -384,7 +383,7 @@ class Orbifold_Tutte_parameterizer_3
 public:
 #ifndef DOXYGEN_RUNNING
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
+  static_assert(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -839,7 +838,7 @@ private:
     const int big_n = M.row_dimension();
     const std::size_t n = 2 * num_vertices(mesh);
 
-    NT D;
+    double D;
     Vector Xf(big_n);
 
     CGAL::Timer task_timer;

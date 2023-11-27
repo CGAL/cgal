@@ -929,7 +929,7 @@ public:
       // solve linear equations
       // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
       // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-      NT Du = 0, Dv = 0;
+      double Du = 0, Dv = 0;
       if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
          !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
       {

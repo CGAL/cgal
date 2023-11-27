@@ -236,11 +236,10 @@ protected:
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
-#include <CGAL/Implicit_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include <CGAL/Labeled_image_mesh_domain_3.h>
 
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
@@ -579,7 +578,7 @@ bool make_mesh_3D_images(const std::string &input_filename,
   // Domain
   typedef Kernel K;
 
-  typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3, K> Mesh_domain;
+  typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
   // Triangulation
 #ifdef CGAL_CONCURRENT_MESH_3
@@ -600,7 +599,7 @@ bool make_mesh_3D_images(const std::string &input_filename,
   image.read(input_filename.c_str());
 
   // Create domain
-  Mesh_domain domain(image);
+  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
   std::cerr << "done." << std::endl;
 
   Mesh_parameters params;
@@ -686,10 +685,10 @@ bool make_mesh_implicit(double facet_approx,
 {
   // Domain
 #ifdef CGAL_MESH_3_IMPLICIT_WITH_FEATURES
-  typedef CGAL::Implicit_mesh_domain_3<const ImplicitFunction, Kernel> Implicit_domain;
+  typedef CGAL::Labeled_mesh_domain_3<Kernel> Implicit_domain;
   typedef CGAL::Mesh_domain_with_polyline_features_3<Implicit_domain> Mesh_domain;
 #else
-  typedef CGAL::Implicit_mesh_domain_3<ImplicitFunction, Kernel> Mesh_domain;
+  typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
 #endif
 
   // Triangulation
@@ -708,7 +707,11 @@ bool make_mesh_implicit(double facet_approx,
 
   // Create domain
   Sphere bounding_sphere(CGAL::ORIGIN, 10.0 * 10.0);
-  Mesh_domain domain(func, bounding_sphere/*, 1e-7*/);
+
+  namespace p = CGAL::parameters;
+  Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(p::function = func,
+                                                                p::bounding_object = bounding_sphere
+                                                                /*, p::relative_error_bound = 1e-7*/);
 
 #ifdef CGAL_MESH_3_IMPLICIT_WITH_FEATURES
   // Add 12 feature creases

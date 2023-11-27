@@ -66,14 +66,14 @@ TD.requirements A:visited {color: rgb(100%,100%,65%)}
 
 SELECT { font-family: monospace; }
 
-#permalink,#jump_to_results {
+#permalink,#jump_to_results,#compare {
     font-size: 0.5em;
     font-weight: normal;
 }
-#permalink::before,#jump_to_results::before{
+#permalink::before,#jump_to_results::before,#compare::before{
     content: "("
 }
-#permalink::after,#jump_to_results::after{
+#permalink::after,#jump_to_results::after,#compare::after{
     content: ")"
 }
 

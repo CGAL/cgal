@@ -24,7 +24,7 @@ if(TARGET CGAL::Eigen3_support)
     message(STATUS "NOTICE: SCIP and GLPK were not found. Polygonal surface reconstruction will not be available.")
   endif()
 
-  qt5_wrap_ui(surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
+  qt6_wrap_ui(surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
   polyhedron_demo_plugin(
     surface_reconstruction_plugin
     Surface_reconstruction_plugin
@@ -46,7 +46,7 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(surface_reconstruction_plugin PUBLIC CGAL::GLPK_support)
   endif()
 
-  qt5_wrap_ui(point_set_normal_estimationUI_FILES
+  qt6_wrap_ui(point_set_normal_estimationUI_FILES
               Point_set_normal_estimation_plugin.ui)
   polyhedron_demo_plugin(
     point_set_normal_estimation_plugin Point_set_normal_estimation_plugin
@@ -57,7 +57,7 @@ if(TARGET CGAL::Eigen3_support)
     PUBLIC scene_points_with_normal_item scene_callback_signaler
            CGAL::Eigen3_support)
 
-  qt5_wrap_ui(features_detection_pluginUI_FILES Features_detection_plugin.ui)
+  qt6_wrap_ui(features_detection_pluginUI_FILES Features_detection_plugin.ui)
   polyhedron_demo_plugin(
     features_detection_plugin Features_detection_plugin
     ${features_detection_pluginUI_FILES} KEYWORDS PointSetProcessing)
@@ -80,7 +80,7 @@ if(TARGET CGAL::Eigen3_support)
     PUBLIC scene_points_with_normal_item scene_callback_signaler
            CGAL::Eigen3_support)
 
-  qt5_wrap_ui(point_set_shape_detectionUI_FILES
+  qt6_wrap_ui(point_set_shape_detectionUI_FILES
               Point_set_shape_detection_plugin.ui)
   polyhedron_demo_plugin(
     point_set_shape_detection_plugin Point_set_shape_detection_plugin
@@ -97,7 +97,7 @@ if(TARGET CGAL::Eigen3_support)
   include(CGAL_pointmatcher_support)
 
   if(TARGET CGAL::OpenGR_support OR CGAL::pointmatcher_support)
-    qt5_wrap_ui(register_point_setsUI_FILES Register_point_sets_plugin.ui)
+    qt6_wrap_ui(register_point_setsUI_FILES Register_point_sets_plugin.ui)
     polyhedron_demo_plugin(
       register_point_sets_plugin Register_point_sets_plugin
       ${register_point_setsUI_FILES} KEYWORDS PointSetProcessing)
@@ -123,7 +123,7 @@ else()
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Feature detection plugin will not be available.")
 endif()
 
-qt5_wrap_ui(point_set_bilateral_smoothingUI_FILES
+qt6_wrap_ui(point_set_bilateral_smoothingUI_FILES
             Point_set_bilateral_smoothing_plugin.ui)
 polyhedron_demo_plugin(
   point_set_bilateral_smoothing_plugin Point_set_bilateral_smoothing_plugin
@@ -132,7 +132,7 @@ target_link_libraries(
   point_set_bilateral_smoothing_plugin PUBLIC scene_points_with_normal_item
                                               scene_callback_signaler)
 
-qt5_wrap_ui(ps_outliers_removal_UI_FILES Point_set_outliers_removal_plugin.ui)
+qt6_wrap_ui(ps_outliers_removal_UI_FILES Point_set_outliers_removal_plugin.ui)
 polyhedron_demo_plugin(
   point_set_outliers_removal_plugin Point_set_outliers_removal_plugin
   ${ps_outliers_removal_UI_FILES} KEYWORDS PointSetProcessing)
@@ -140,7 +140,7 @@ target_link_libraries(
   point_set_outliers_removal_plugin PUBLIC scene_points_with_normal_item
                                            scene_callback_signaler)
 
-qt5_wrap_ui(point_set_selectionUI_FILES Point_set_selection_widget.ui)
+qt6_wrap_ui(point_set_selectionUI_FILES Point_set_selection_widget.ui)
 polyhedron_demo_plugin(
   point_set_selection_plugin Point_set_selection_plugin
   ${point_set_selectionUI_FILES} KEYWORDS PointSetProcessing Classification)
@@ -148,7 +148,7 @@ target_link_libraries(
   point_set_selection_plugin PUBLIC scene_points_with_normal_item
                                     scene_polylines_item scene_edit_box_item)
 
-qt5_wrap_ui(point_set_simplificationUI_FILES Point_set_simplification_plugin.ui)
+qt6_wrap_ui(point_set_simplificationUI_FILES Point_set_simplification_plugin.ui)
 polyhedron_demo_plugin(
   point_set_simplification_plugin Point_set_simplification_plugin
   ${point_set_simplificationUI_FILES} KEYWORDS PointSetProcessing)
@@ -156,14 +156,14 @@ target_link_libraries(
   point_set_simplification_plugin PUBLIC scene_points_with_normal_item
                                          scene_callback_signaler)
 
-qt5_wrap_ui(point_set_upsamplingUI_FILES Point_set_upsampling_plugin.ui)
+qt6_wrap_ui(point_set_upsamplingUI_FILES Point_set_upsampling_plugin.ui)
 polyhedron_demo_plugin(
   point_set_upsampling_plugin Point_set_upsampling_plugin
   ${point_set_upsamplingUI_FILES} KEYWORDS PointSetProcessing)
 target_link_libraries(point_set_upsampling_plugin
                       PUBLIC scene_points_with_normal_item)
 
-qt5_wrap_ui(point_set_wlopFILES Point_set_wlop_plugin.ui)
+qt6_wrap_ui(point_set_wlopFILES Point_set_wlop_plugin.ui)
 polyhedron_demo_plugin(point_set_wlop_plugin Point_set_wlop_plugin
                        ${point_set_wlopFILES} KEYWORDS PointSetProcessing)
 target_link_libraries(point_set_wlop_plugin PUBLIC scene_points_with_normal_item
@@ -186,13 +186,13 @@ polyhedron_demo_plugin(
 target_link_libraries(point_set_interference_plugin
                       PUBLIC scene_points_with_normal_item)
 
-qt5_wrap_ui(alpha_shapeUI_FILES Alpha_shape_widget.ui)
+qt6_wrap_ui(alpha_shapeUI_FILES Alpha_shape_widget.ui)
 polyhedron_demo_plugin(alpha_shape_plugin Alpha_shape_plugin
                        ${alpha_shapeUI_FILES} KEYWORDS PointSetProcessing)
 target_link_libraries(alpha_shape_plugin PUBLIC scene_points_with_normal_item
                                                 scene_c3t3_item)
 
-qt5_wrap_ui(distanceUI_FILES Point_set_to_mesh_distance_widget.ui)
+qt6_wrap_ui(distanceUI_FILES Point_set_to_mesh_distance_widget.ui)
 polyhedron_demo_plugin(
   point_set_to_mesh_distance_plugin Point_set_to_mesh_distance_plugin
   ${distanceUI_FILES} KEYWORDS PointSetProcessing)

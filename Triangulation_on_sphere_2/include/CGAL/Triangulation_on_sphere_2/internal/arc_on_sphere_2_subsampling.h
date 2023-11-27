@@ -56,7 +56,7 @@ double get_theta(typename Kernel::Point_3& pt,
 #endif
                                 >::type                              Col;
 
-  CGAL_static_assertion_msg(!(std::is_same<Matrix, EigenlessDefault>::value),
+  static_assert(!(std::is_same<Matrix, EigenlessDefault>::value),
                             "Eigen is required to perform arc subsampling!");
 
   auto V1c = V1.cartesian_begin(), V2c = V2.cartesian_begin(), V3c = V3.cartesian_begin();

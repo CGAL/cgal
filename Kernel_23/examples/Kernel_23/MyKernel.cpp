@@ -56,7 +56,7 @@ int main()
 
   K::Intersect_2 intersection;
 
-  const auto intersect = intersection(s1, s2);
+  /* const auto intersect =  */intersection(s1, s2);
 
   K::Construct_cartesian_const_iterator_2 construct_it;
   K::Cartesian_const_iterator_2  cit = construct_it(a);

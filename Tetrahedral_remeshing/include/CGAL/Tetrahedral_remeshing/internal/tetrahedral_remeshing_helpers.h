@@ -24,6 +24,7 @@
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/utility.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
 
@@ -74,8 +75,36 @@ inline int indices(const int& i, const int& j)
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)
     return indices_table[i][j];
-  else
-    return -1;
+  CGAL_error_msg("Invalid indices provided");
+  return 0;
+}
+
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 2>
+vertices(const typename Tr::Edge& e , const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 2>{
+               e.first->vertex(e.second),
+               e.first->vertex(e.third)};
+}
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 3>
+vertices(const typename Tr::Facet& f, const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 3>{
+               f.first->vertex(Tr::vertex_triple_index(f.second, 0)),
+               f.first->vertex(Tr::vertex_triple_index(f.second, 1)),
+               f.first->vertex(Tr::vertex_triple_index(f.second, 2))};
+}
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 4>
+vertices(const typename Tr::Cell_handle c, const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 4>{
+               c->vertex(0),
+               c->vertex(1),
+               c->vertex(2),
+               c->vertex(3)};
 }
 
 template<typename Gt, typename Point>
@@ -529,13 +558,15 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     v->set_index(v->cell()->subdomain_index());
     break;
   case 2:
+    CGAL_assertion(surface_patch_index(v, c3t3)
+                  != typename C3t3::Surface_patch_index());
     v->set_index(surface_patch_index(v, c3t3));
     break;
   case 1:
     v->set_index(typename C3t3::Curve_index(1));
     break;
   case 0:
-    v->set_index(boost::get<typename C3t3::Corner_index>(v->index()));
+    v->set_index(Mesh_3::internal::get_index<typename C3t3::Corner_index>(v->index()));
     break;
   default:
     CGAL_assertion(false);

@@ -16,17 +16,15 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = K::Point_3;
 using Segment_3 = K::Segment_3;
 
-using Face = std::array<std::size_t, 3>;
 using Segments = std::vector<Segment_3>;
 using Points = std::vector<Point_3>;
+using Face = std::array<std::size_t, 3>;
 using Faces = std::vector<Face>;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-
   // Read the inputs
   const std::string ts_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off"); // triangle soup
   const std::string ss_filename = (argc > 2) ? argv[2] : CGAL::data_file_path("images/420.polylines.txt"); // segment soup

@@ -39,10 +39,10 @@
 
 typedef char            CGAL_INT8;
 typedef short           CGAL_INT16;
-typedef boost::int32_t  CGAL_INT32;
+typedef std::int32_t  CGAL_INT32;
 typedef unsigned char   CGAL_UINT8;
 typedef unsigned short  CGAL_UINT16;
-typedef boost::uint32_t CGAL_UINT32;
+typedef std::uint32_t CGAL_UINT32;
 
 /*****************************************************************************
 *

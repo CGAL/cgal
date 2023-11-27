@@ -70,7 +70,7 @@ bool test_sphere_parameters() {
     if (shapes.size() != 1)
       continue;
 
-    boost::shared_ptr<Sphere> sphere = boost::dynamic_pointer_cast<Sphere>((*shapes.first));
+    std::shared_ptr<Sphere> sphere = std::dynamic_pointer_cast<Sphere>((*shapes.first));
 
     // Check: shape detected is a cylinder.
     if (!sphere)

@@ -553,7 +553,6 @@ MainWindow::on_actionLoadConstraints_triggered()
 void
 MainWindow::loadWKT(QString filename)
 {
-  //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
 
   typedef CGAL::Polygon_with_holes_2<K> Polygon;
@@ -924,7 +923,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Constrained_Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGAL (Qt5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

@@ -12,7 +12,7 @@ typedef std::back_insert_iterator<Coordinate_vector> Vector_insert_iterator;
 
 typedef CGAL::Barycentric_coordinates::Triangle_coordinates_2<Kernel> Triangle_coordinates;
 
-typedef boost::optional<Vector_insert_iterator> Output_type;
+typedef std::optional<Vector_insert_iterator> Output_type;
 
 using std::cout; using std::endl; using std::string;
 
@@ -43,7 +43,7 @@ int main()
 
   int count = 0;
   for (int i = 0; i < 5; ++i) {
-    const Output_type result = triangle_coordinates(query_points[i], std::back_inserter(old_coordinates));
+    triangle_coordinates(query_points[i], std::back_inserter(old_coordinates));
     CGAL::Barycentric_coordinates::triangle_coordinates_2(
       first_vertex, second_vertex, third_vertex, query_points[i], std::back_inserter(new_coordinates));
 
