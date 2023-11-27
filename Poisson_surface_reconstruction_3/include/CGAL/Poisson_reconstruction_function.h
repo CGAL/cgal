@@ -285,6 +285,8 @@ private:
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
 
+    get_hint() = Cell_handle{};
+
     // Inserts points in triangulation
     m_tr->insert(
       first,beyond,
