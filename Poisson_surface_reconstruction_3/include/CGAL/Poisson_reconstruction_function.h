@@ -245,26 +245,6 @@ private:
     FT& operator[] (const std::size_t& idx) { return m_bary[idx]; }
   };
 
-  // Wrapper for thread safety of maintained cell hint for fast
-  // locate, with conversions atomic<Cell*>/Cell_handle
-  class Cell_hint
-  {
-    Cell* m_cell;
-  public:
-
-    Cell_hint() : m_cell(nullptr) { }
-
-    // Poisson_reconstruction_function should be copyable, although we
-    // don't need to copy that
-    Cell_hint(const Cell_hint&) : m_cell(nullptr) { }
-
-    Cell_handle get() const
-    {
-      return Triangulation_data_structure::Cell_range::s_iterator_to(*m_cell);
-    }
-    void set (Cell_handle ch) { m_cell = ch.operator->(); }
-  };
-
 // Data members.
 // Warning: the Surface Mesh Generation package makes copies of implicit functions,
 // thus this class must be lightweight and stateless.
@@ -280,14 +260,13 @@ private:
   // contouring and meshing
   Point m_sink; // Point with the minimum value of operator()
 
-  static Cell_hint& get_hint()
+  static Cell_handle& get_hint()
   {
-    static thread_local Cell_hint m_hint; // last cell found = hint for next search
+    static thread_local Cell_handle m_hint{};
     return m_hint;
   }
 
   FT average_spacing;
-
 
   /// function to be used for the different constructors available that are
   /// doing the same thing but with default template parameters
@@ -591,9 +570,8 @@ public:
 
   boost::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
   {
-    Cell_handle hint = get_hint().get();
-    hint = m_tr->locate(p, hint); // no hint when we use hierarchy
-    get_hint().set(hint);
+    Cell_handle& hint = get_hint();
+    hint = m_tr->locate(p, hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());
@@ -618,9 +596,8 @@ public:
   */
   FT operator()(const Point& p) const
   {
-    Cell_handle hint = get_hint().get();
+    Cell_handle& hint = get_hint();
     hint = m_tr->locate(p, hint);
-    get_hint().set(hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());
