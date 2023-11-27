@@ -249,7 +249,7 @@ private:
   // locate, with conversions atomic<Cell*>/Cell_handle
   class Cell_hint
   {
-    std::atomic<Cell*> m_cell;
+    Cell* m_cell;
   public:
 
     Cell_hint() : m_cell(nullptr) { }
@@ -279,7 +279,12 @@ private:
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of operator()
-  mutable Cell_hint m_hint; // last cell found = hint for next search
+
+  static Cell_hint& get_hint()
+  {
+    static thread_local Cell_hint m_hint; // last cell found = hint for next search
+    return m_hint;
+  }
 
   FT average_spacing;
 
@@ -586,9 +591,9 @@ public:
 
   boost::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
   {
-    Cell_handle hint = m_hint.get();
+    Cell_handle hint = get_hint().get();
     hint = m_tr->locate(p, hint); // no hint when we use hierarchy
-    m_hint.set(hint);
+    get_hint().set(hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());
@@ -613,9 +618,9 @@ public:
   */
   FT operator()(const Point& p) const
   {
-    Cell_handle hint = m_hint.get();
+    Cell_handle hint = get_hint().get();
     hint = m_tr->locate(p, hint);
-    m_hint.set(hint);
+    get_hint().set(hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());
