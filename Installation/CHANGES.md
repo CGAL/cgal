@@ -41,7 +41,9 @@ Release date: October 2023
 
 -   Added the function `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` which can be used to compute
     the mean and Gaussian curvatures, as well as the principal curvature and directions.
-    
+-   Added the option to use a variable sizing field for `CGAL::Polygon_mesh_processing::isotropic_remeshing()`,
+    and a sizing function based on a measure of local curvature for adaptive remeshing.
+
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
     when inserting an arc that lies on the identification curve.
