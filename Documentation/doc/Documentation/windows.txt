@@ -114,11 +114,11 @@ not depend on `Qt`. However, one of the examples in the Triangulation_2 package 
 for visualization purposes. If you already have `Qt` installed, you can simply fill in the requested
 CMake variables and paths. Otherwise, you can also install it using `vcpkg`:
 
-    C:\dev\vcpkg> .\vcpkg.exe install qt5
+    C:\dev\vcpkg> .\vcpkg.exe install qt6
 
 Remember to specify `--triplet` or the related environment variable in case you target 64-bit applications.
 
-As Qt5 is modular and as the \cgal examples and demos use only some of these modules
+As Qt6 is modular and as the \cgal examples and demos use only some of these modules
 you can save download and compilation time by specifying an *installation option*:
 
     C:\dev\vcpkg> .\vcpkg.exe install cgal[qt]
@@ -234,11 +234,10 @@ A typical `Qt` installation would consist of the following steps:
 <ul>
 <li>
 Download and install the Qt library for open source development package for your Visual Studio version at
-<a href="https://www.qt.io/download">https://www.qt.io/download</a>
-(here is the direct link to the <a href="https://www.qt.io/offline-installers">offline installers</a>).</li>
-<li>Add the environment variable `QTDIR` pointing to the place you installed Qt, e.g., `C:\dev\Qt\Qt5.13.1`,
+<a href="https://www.qt.io/download-open-source#source">https://www.qt.io/download-open-source#source</a>.</li>
+<li>Add the environment variable `QTDIR` pointing to the place you installed Qt, e.g., `C:\dev\Qt\Qt6.13.1`,
 as this will help `cmake` to find Qt.</li>
-<li>Add the bin directory of Qt, e.g. add  `C:\dev\Qt\Qt5.13.1\msvcXXXX_YY\bin` to `PATH`, where `XXXX_YY` is something like `vc2017_64`.
+<li>Add the bin directory of Qt, e.g. add  `C:\dev\Qt\Qt6.13.1\msvcXXXX_YY\bin` to `PATH`, where `XXXX_YY` is something like `vc2017_64`.
 To avoid any conflict with another dll with the same name from another folder, add this path as the first in the list.</li>
 </ul>
 

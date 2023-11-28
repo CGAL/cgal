@@ -66,14 +66,14 @@ public:
 
   ~Scene_heat_item(){}
 
-  Scene_item* clone() const Q_DECL_OVERRIDE { return nullptr; }
-  QString toolTip() const Q_DECL_OVERRIDE{ return QString(); }
+  Scene_item* clone() const override { return nullptr; }
+  QString toolTip() const override{ return QString(); }
   Scene_surface_mesh_item* getParent() { return parent; }
-  bool isEmpty() const Q_DECL_OVERRIDE { return false; }
+  bool isEmpty() const override { return false; }
 
   SMesh* face_graph() { return sm; }
 
-  void initializeBuffers(Viewer_interface *viewer) const Q_DECL_OVERRIDE
+  void initializeBuffers(Viewer_interface *viewer) const override
   {
     getTriangleContainer(0)->initializeBuffers(viewer);
     getTriangleContainer(0)->setIdxSize(nb_idx);
@@ -88,7 +88,7 @@ public:
     idx.shrink_to_fit();
   }
 
-  void draw(Viewer_interface *viewer) const Q_DECL_OVERRIDE
+  void draw(Viewer_interface *viewer) const override
   {
     if(!visible())
       return;
@@ -112,24 +112,24 @@ public:
     getTriangleContainer(0)->draw(viewer, false);
   }
 
-  void compute_bbox() const Q_DECL_OVERRIDE
+  void compute_bbox() const override
   {
     setBbox(parent->bbox());
   }
 
-  virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE
+  virtual bool supportsRenderingMode(RenderingMode m) const override
   {
     return (m == Gouraud);
   }
 
-  virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE
+  virtual void invalidateOpenGLBuffers() override
   {
     setBuffersFilled(false);
     compute_bbox();
     getTriangleContainer(0)->reset_vbos(NOT_INSTANCED);
   }
 
-  void computeElements() const Q_DECL_OVERRIDE
+  void computeElements() const override
   {
     typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
 
@@ -243,7 +243,7 @@ private:
   std::unordered_map<Scene_surface_mesh_item*, Heat_method_idt*> idt_heat_methods;
 
 public:
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     // Single item => it must be a mesh and the selection item will be created through the plugin's button
     if(scene->selectionIndices().size() == 1)
@@ -265,14 +265,14 @@ public:
     return false;
   }
 
-  QList<QAction*> actions() const Q_DECL_OVERRIDE
+  QList<QAction*> actions() const override
   {
     return QList<QAction*>() << actionHeatMethod;
   }
 
   void init(QMainWindow* mw,
             Scene_interface* sc,
-            Messages_interface*) Q_DECL_OVERRIDE
+            Messages_interface*) override
   {
     this->scene = sc;
     this->mw = mw;
@@ -354,7 +354,7 @@ private Q_SLOTS:
     dock_widget->raise();
   }
 
-  void closure() Q_DECL_OVERRIDE
+  void closure() override
   {
     dock_widget->hide();
   }

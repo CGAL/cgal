@@ -289,7 +289,7 @@ Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
 
   are_buffers_filled = false;
 
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     v->setMouseTracking(true);
   }
@@ -652,7 +652,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       tc->setCenterSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::VERTEX;
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -681,7 +681,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       ec->setFlatDataSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::EDGE;
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -719,7 +719,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       tc->setFlatDataSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::FACE;
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -970,7 +970,7 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 {
   CGAL::qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
   constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
-  Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
+  for(Scene_edit_box_item::vertex*  selected_vertex: selected_vertices )
   {
     int id = selected_vertex->id;
     CGAL_assume(id<8 && id >=0);
