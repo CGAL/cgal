@@ -934,7 +934,7 @@ namespace CommonKernelFunctors {
      const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
      const double y = l_ab * CGAL::to_double(scalar_product(ac,abad));
 
-     return FT(std::atan2(y, x) * 180 / CGAL_PI );
+     return -FT(std::atan2(y, x) * 180 / CGAL_PI );
    }
  };
 
