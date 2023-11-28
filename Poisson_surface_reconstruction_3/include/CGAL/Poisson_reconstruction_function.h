@@ -22,20 +22,14 @@
 #  endif
 #endif
 
-#include <vector>
-#include <deque>
-#include <algorithm>
-#include <cmath>
-#include <iterator>
-#include <type_traits>
-
 #include <CGAL/IO/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
+
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_solver_traits.h>
-#else
+ #include <CGAL/Eigen_solver_traits.h>
 #endif
+
 #include <CGAL/centroid.h>
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
@@ -44,8 +38,19 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 
-#include <memory>
+#ifdef CGAL_LINKED_WITH_TBB
+ #include <tbb/enumerable_thread_specific.h>
+#endif
+
 #include <boost/iterator/indirect_iterator.hpp>
+
+#include <algorithm>
+#include <cmath>
+#include <deque>
+#include <iterator>
+#include <memory>
+#include <type_traits>
+#include <vector>
 
 /*!
   \file Poisson_reconstruction_function.h
@@ -260,11 +265,13 @@ private:
   // contouring and meshing
   Point m_sink; // Point with the minimum value of operator()
 
-  static Cell_handle& get_hint()
-  {
-    static thread_local Cell_handle m_hint{};
-    return m_hint;
-  }
+#ifdef CGAL_LINKED_WITH_TBB
+  mutable tbb::enumerable_thread_specific<Cell_handle> m_hint;
+  Cell_handle& get_hint() const { return m_hint.local(); }
+#else
+  mutable Cell_handle m_hint;
+  Cell_handle& get_hint() const { return m_hint; }
+#endif
 
   FT average_spacing;
 
@@ -284,8 +291,6 @@ private:
   {
     CGAL::Timer task_timer; task_timer.start();
     CGAL_TRACE_STREAM << "Creates Poisson triangulation...\n";
-
-    get_hint() = Cell_handle{};
 
     // Inserts points in triangulation
     m_tr->insert(
