@@ -596,6 +596,12 @@ protected:
       const auto ref_constraint_id = reference_vertex->constraint_id(*this);
       const auto [ref_va, ref_vb] = constraint_extremities(ref_constraint_id);
       const auto [orig_va, orig_vb] = constraint_extremities(constraint_id);
+#if CGAL_CDT_3_DEBUG_CONFORMING
+      std::cerr << "  reference point is on constraint: " << display_vert(ref_va)
+                << "    " << display_vert(ref_vb) << '\n'
+                << "  original constraint:              " << display_vert(orig_va)
+                << "    " << display_vert(orig_vb) << '\n';
+#endif // CGAL_CDT_3_DEBUG_CONFORMING
       const auto& orig_pa = tr.point(orig_va);
       const auto& orig_pb = tr.point(orig_vb);
       const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
@@ -613,7 +619,7 @@ protected:
                                           : inter_point;
 
 #if CGAL_CDT_3_DEBUG_CONFORMING
-            std::cerr << "ref ratio = " << ratio << '\n';
+            std::cerr << "  ref ratio = " << ratio << '\n';
             std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_CDT_3_DEBUG_CONFORMING
             return {result_point, reference_vertex->cell(), reference_vertex};
@@ -640,7 +646,7 @@ protected:
                                   : translate_functor(pa, scaled_vector_functor(vector_ab, lambda));
 
 #if CGAL_CDT_3_DEBUG_CONFORMING
-    std::cerr << "lambda = " << lambda << '\n';
+    std::cerr << "  lambda = " << lambda << '\n';
     std::cerr << "  -> Steiner point: " << result_point << '\n';
 #endif // CGAL_CDT_3_DEBUG_CONFORMING
     return {result_point, reference_vertex->cell(), reference_vertex};
