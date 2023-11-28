@@ -1,15 +1,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Implicit_surface_3.h>
 
 #include <CGAL/Poisson_reconstruction_function.h>
-#include <CGAL/property_map.h>
-#include <CGAL/IO/read_points.h>
-#include <CGAL/compute_average_spacing.h>
 
-#include <CGAL/Polygon_mesh_processing/distance.h>
-
+#include <CGAL/Implicit_surface_3.h>
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -17,13 +12,19 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
+#include <CGAL/compute_average_spacing.h>
+#include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/property_map.h>
+#include <CGAL/Real_timer.h>
+#include <CGAL/IO/read_points.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+
 #include <boost/iterator/transform_iterator.hpp>
 
-#include <vector>
+#include <iostream>
 #include <fstream>
-
 #include <type_traits>
-#include <CGAL/Real_timer.h>
+#include <vector>
 
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -70,21 +71,20 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
   // Computes the Poisson indicator function f()
   // at each vertex of the triangulation.
-  if (!function.compute_implicit_function())
+  if(!function.compute_implicit_function())
   {
     std::cerr << "compute_implicit_function() failed." << std::endl;
     return;
   }
 
   time.stop();
-  std::cout << "Compute_implicit_function : " << time.time() << " seconds." << std::endl;
+  std::cout << "compute_implicit_function() : " << time.time() << " seconds." << std::endl;
   time.reset();
   time.start();
 
   // Computes average spacing
   FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>
-    (points, 6 /* knn = 1 ring */,
-      CGAL::parameters::point_map (Point_map()));
+    (points, 6 /* knn = 1 ring */, params::point_map (Point_map()));
 
   time.stop();
   std::cout << "Average spacing : " << time.time() << " seconds." << std::endl;
@@ -93,8 +93,8 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
   // Gets one point inside the implicit surface
   // and computes implicit function bounding sphere radius.
-  Point inner_point = function.get_inner_point();
-  Sphere bsphere = function.bounding_sphere();
+  const Point inner_point = function.get_inner_point();
+  const Sphere bsphere = function.bounding_sphere();
   FT radius = std::sqrt(bsphere.squared_radius());
 
   // Defines the implicit surface: requires defining a
@@ -105,10 +105,7 @@ void poisson_reconstruction(const PointSet& points, const char* output)
   std::cout << "sm_dichotomy_error / sm_sphere_radius = " << sm_dichotomy_error / sm_sphere_radius << std::endl;
 
   Sphere sm_sphere(inner_point, sm_sphere_radius * sm_sphere_radius);
-
-  Surface_3 surface(function,
-    sm_sphere,
-    sm_dichotomy_error / sm_sphere_radius);
+  Surface_3 surface(function, sm_sphere, sm_dichotomy_error / sm_sphere_radius);
 
   time.stop();
   std::cout << "Surface created in " << time.time() << " seconds." << std::endl;
@@ -117,8 +114,8 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
   // Defines surface mesh generation criteria
   CGAL::Mesh_criteria_3<Tr> criteria(params::facet_angle = sm_angle,
-    params::facet_size = sm_radius * average_spacing,
-    params::facet_distance = sm_distance * average_spacing);
+                                     params::facet_size = sm_radius * average_spacing,
+                                     params::facet_distance = sm_distance * average_spacing);
 
   Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(surface, sm_sphere,
     params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
@@ -127,15 +124,17 @@ void poisson_reconstruction(const PointSet& points, const char* output)
   std::cout << "Start meshing...";
   std::cout.flush();
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-    params::no_exude().no_perturb().manifold_with_boundary());
-  const auto& tr = c3t3.triangulation();
+                                      params::no_exude()
+                                             .no_perturb()
+                                             .manifold_with_boundary());
 
   time.stop();
   std::cout << "\nTet mesh created in " << time.time() << " seconds." << std::endl;
   time.reset();
   time.start();
 
-  if (tr.number_of_vertices() == 0)
+  const auto& tr = c3t3.triangulation();
+  if(tr.number_of_vertices() == 0)
   {
     std::cerr << "Triangulation empty!" << std::endl;
     return;
@@ -153,31 +152,28 @@ void poisson_reconstruction(const PointSet& points, const char* output)
   total_time.stop();
   std::cout << "Total time : " << total_time.time() << " seconds." << std::endl;
 
-  std::ofstream out(output);
-  out << output_mesh;
-  out.close();
+  CGAL::IO::write_polygon_mesh(output, output_mesh, params::stream_precision(17));
   std::cout << "File written " << output << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
-    const std::string file = (argc < 2)
-      ? CGAL::data_file_path("points_3/kitten.xyz")
-      : std::string(argv[1]);
+    const std::string file = (argc < 2) ? CGAL::data_file_path("points_3/kitten.xyz")
+                                        : std::string(argv[1]);
 
     // Reads the point set file in points[].
     // Note: read_points() requires an iterator over points
     // + property maps to access each point's position and normal.
     PointList points;
     if(!CGAL::IO::read_points(file, std::back_inserter(points),
-                          CGAL::parameters::point_map(Point_map())
-                                           .normal_map(Normal_map())))
+                              params::point_map(Point_map())
+                                     .normal_map(Normal_map())))
     {
       std::cerr << "Error: cannot read file input file!" << std::endl;
       return EXIT_FAILURE;
     }
-    std::cout << "File " << file << " has been read, "
-      << points.size() << " points." << std::endl;
+
+    std::cout << "File " << file << " has been read, " << points.size() << " points." << std::endl;
 
     std::cout << "\n\n### Sequential mode ###" << std::endl;
     poisson_reconstruction<CGAL::Sequential_tag>(points, "out_sequential.off");

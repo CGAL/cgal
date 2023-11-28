@@ -28,8 +28,8 @@ if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3
   create_single_source_cgal_program("poisson_reconstruction_example.cpp")
   target_link_libraries(poisson_reconstruction_example PUBLIC CGAL::Eigen3_support)
-  create_single_source_cgal_program("poisson_reconstruction_mesh3_example.cpp")
-  target_link_libraries(poisson_reconstruction_mesh3_example PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("poisson_and_parallel_mesh_3.cpp")
+  target_link_libraries(poisson_and_parallel_mesh_3 PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("poisson_reconstruction.cpp")
   target_link_libraries(poisson_reconstruction PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("poisson_reconstruction_function.cpp")
@@ -46,6 +46,6 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3)
   include(CGAL_TBB_support)
   if(TARGET CGAL::TBB_support)
     add_definitions(-DCGAL_CONCURRENT_MESH_3)
-    target_link_libraries(poisson_reconstruction_mesh3_example PUBLIC CGAL::TBB_support)
+    target_link_libraries(poisson_and_parallel_mesh_3 PUBLIC CGAL::TBB_support)
   endif()#Find TBB
 endif()#Parallelism in Mesh_3
