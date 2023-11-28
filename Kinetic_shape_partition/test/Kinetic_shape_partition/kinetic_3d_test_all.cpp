@@ -48,7 +48,7 @@ bool run_test(
     //std::cout << std::endl << "--INPUT K: " << k << std::endl;
     ksp.partition(ks[i]);
 
-    CGAL::Linear_cell_complex_for_combinatorial_map<3, 3> lcc;
+    CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel>, typename KSP::Linear_cell_complex_min_items> lcc;
     ksp.get_linear_cell_complex(lcc);
 
     std::vector<unsigned int> cells = { 0, 2, 3 }, count;
@@ -64,19 +64,6 @@ bool run_test(
       std::cout << "Result k = " << " vertices : " << count[0] << " faces : " << count[2] << " volumes : " << count[3] << std::endl;
       //assert(false);
     }
-  }
-
-
-  for (std::size_t i = 0; i < ksp.number_of_volumes(); i++) {
-    std::vector<typename KSP::Index> faces;
-    ksp.faces(i, std::back_inserter(faces));
-    std::cout << i << "," << faces[0].first << " (" << faces.size() << ") : ";
-    for (const typename KSP::Index& f : faces) {
-      std::vector<Point_3> pts;
-      ksp.vertices(f, std::back_inserter(pts));
-      std::cout << pts.size() << " ";
-    }
-    std::cout << std::endl;
   }
 
   return true;

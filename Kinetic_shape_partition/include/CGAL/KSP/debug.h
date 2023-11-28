@@ -807,7 +807,7 @@ private:
       "property double y" + std::string(_NL_) + "" <<
       "property double z" + std::string(_NL_) + "" <<
       "element face " << num_faces << "" + std::string(_NL_) + "" <<
-      "property list uchar int vertex_indices" + std::string(_NL_) + "" <<
+      "property list ushort int vertex_indices" + std::string(_NL_) + "" <<
       "end_header" + std::string(_NL_) + "";
   }
 };

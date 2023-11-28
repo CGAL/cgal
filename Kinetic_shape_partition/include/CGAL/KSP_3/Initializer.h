@@ -35,8 +35,6 @@
 
 #include <CGAL/Real_timer.h>
 
-extern double add_polys, intersections, iedges, ifaces, mapping;
-
 namespace CGAL {
 namespace KSP_3 {
 
@@ -97,41 +95,25 @@ public:
 
     std::vector< std::vector<typename Intersection_kernel::Point_3> > bbox_faces;
     bounding_box_to_polygons(bbox, bbox_faces);
-    const double time_to_bbox_poly = timer.time();
     add_polygons(bbox_faces, input_polygons);
-    add_polys += timer.time();
 
     m_data.igraph().finished_bbox();
 
     if (m_parameters.verbose)
       std::cout << "* intersecting input polygons ... ";
 
-    timer.reset();
-
     // Fills in the ivertices on support plane intersections inside the bbox.
     make_polygons_intersection_free();
-    intersections += timer.time();
-    timer.reset();
 
     // Generation of ifaces
     create_ifaces();
-    ifaces += timer.time();
-    timer.reset();
 
     // Splitting the input polygons along intersection lines.
     initial_polygon_iedge_intersections();
-    iedges += timer.time();
-    timer.reset();
-
-    //map_polygon_to_ifaces(faces);
-    mapping += timer.time();
-    timer.reset();
 
     create_bbox_meshes();
 
     // Starting from here the intersection graph is const, it won't change anymore.
-    const double time_to_set_k = timer.time();
-
     if (m_parameters.verbose)
       std::cout << "done" << std::endl;
 
@@ -141,14 +123,12 @@ public:
     CGAL_assertion(m_data.check_bbox());
     //m_data.set_limit_lines();
     m_data.precompute_iedge_data();
-    const double time_to_precompute = timer.time();
-        m_data.initialization_done();
+
+    m_data.initialization_done();
 
     if (m_parameters.debug) {
-      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
+      for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "before-partition-sp" + std::to_string(sp));
-        //std::cout << sp << " has " << m_data.support_plane(sp).data().mesh.number_of_faces() << " faces" << std::endl;
-      };
     }
   }
 
@@ -618,7 +598,6 @@ private:
           }
         }
         if (face != -1) {
-
           if (!m_data.igraph().face(face).part_of_partition) {
             auto pface = m_data.add_iface_to_mesh(sp_idx, face);
             sp.data().initial_ifaces.push_back(face);
@@ -631,10 +610,7 @@ private:
     }
   }
 
-  void bounding_box_to_polygons(
-    const std::array<typename Intersection_kernel::Point_3, 8>& bbox,
-    std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces) const {
-
+  void bounding_box_to_polygons(const std::array<typename Intersection_kernel::Point_3, 8>& bbox, std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces) const {
     bbox_faces.clear();
     bbox_faces.reserve(6);
 
@@ -647,10 +623,7 @@ private:
     CGAL_assertion(bbox_faces.size() == 6);
   }
 
-  void add_polygons(
-    const std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces,
-    std::vector<std::size_t> &input_polygons) {
-
+  void add_polygons(const std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces, std::vector<std::size_t> &input_polygons) {
     add_bbox_faces(bbox_faces);
 
     From_exact from_exact;
@@ -661,7 +634,6 @@ private:
       for (std::size_t j = 0; j < m_input_planes.size(); j++)
           if (m_data.support_plane(i).exact_plane() == m_input_planes[j] || m_data.support_plane(i).exact_plane() == m_input_planes[j].opposite()) {
             m_data.support_plane(i).set_input_polygon(j);
-            m_data.input_polygon_map()[j] = i;
             remove[j] = true;
           }
 
@@ -679,9 +651,7 @@ private:
     add_input_polygons();
   }
 
-  void add_bbox_faces(
-    const std::vector< std::vector<typename Intersection_kernel::Point_3> >& bbox_faces) {
-
+  void add_bbox_faces(const std::vector< std::vector<typename Intersection_kernel::Point_3> >& bbox_faces) {
     for (const auto& bbox_face : bbox_faces)
       m_data.add_bbox_polygon(bbox_face);
 
@@ -695,7 +665,6 @@ private:
   }
 
   void add_input_polygons() {
-
     using Polygon_2 = std::vector<Point_2>;
     using Indices = std::vector<std::size_t>;
 
@@ -720,34 +689,22 @@ private:
   }
 
   template<typename PointRange>
-  void convert_polygon(
-    const std::size_t support_plane_idx,
-    const PointRange& polygon_3,
-    std::vector<Point_2>& polygon_2) {
-
+  void convert_polygon(const std::size_t support_plane_idx, const PointRange& polygon_3, std::vector<Point_2>& polygon_2) {
     polygon_2.clear();
     polygon_2.reserve(polygon_3.size());
     for (const auto& point : polygon_3) {
-      const Point_3 converted(
-        static_cast<FT>(point.x()),
-        static_cast<FT>(point.y()),
-        static_cast<FT>(point.z()));
-      polygon_2.push_back(
-        m_data.support_plane(support_plane_idx).to_2d(converted));
+      const Point_3 converted(static_cast<FT>(point.x()), static_cast<FT>(point.y()), static_cast<FT>(point.z()));
+
+      polygon_2.push_back(m_data.support_plane(support_plane_idx).to_2d(converted));
     }
     CGAL_assertion(polygon_2.size() == polygon_3.size());
   }
 
-  void preprocess_polygons(
-    std::map< std::size_t, std::pair<
-      std::vector<Point_2>,
-      std::vector<std::size_t> > >& polygons) {
-
+  void preprocess_polygons(std::map< std::size_t, std::pair<std::vector<Point_2>, std::vector<std::size_t> > >& polygons) {
     std::size_t input_index = 0;
     std::vector<Point_2> polygon_2;
     std::vector<std::size_t> input_indices;
     for (std::size_t i = 0;i<m_input_polygons.size();i++) {
-
       bool is_added = true;
       std::size_t support_plane_idx = KSP::no_element();
       std::tie(support_plane_idx, is_added) = m_data.add_support_plane(m_input_polygons[i], false, m_input_planes[i]);
@@ -759,8 +716,8 @@ private:
         input_indices.push_back(input_index);
         polygons[support_plane_idx] = std::make_pair(polygon_2, input_indices);
 
-      } else {
-
+      }
+      else {
         CGAL_assertion(polygons.find(support_plane_idx) != polygons.end());
         auto& pair = polygons.at(support_plane_idx);
         auto& other_polygon = pair.first;
@@ -772,11 +729,7 @@ private:
     }
   }
 
-  void merge_polygons(
-    const std::size_t support_plane_idx,
-    const std::vector<Point_2>& polygon_a,
-    std::vector<Point_2>& polygon_b) {
-
+  void merge_polygons(const std::size_t support_plane_idx, const std::vector<Point_2>& polygon_a, std::vector<Point_2>& polygon_b) {
     const bool is_debug = false;
     CGAL_assertion(support_plane_idx >= 6);
     if (is_debug) {
@@ -809,84 +762,13 @@ private:
     polygon_b = merged;
   }
 
-  void create_merged_polygon(
-    const std::size_t support_plane_idx,
-    const std::vector<Point_2>& points,
-    std::vector<Point_2>& merged) const {
-
+  void create_merged_polygon(const std::size_t support_plane_idx, const std::vector<Point_2>& points, std::vector<Point_2>& merged) const {
     merged.clear();
 
     CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(merged) );
 
     CGAL_assertion(merged.size() >= 3);
     //CGAL_assertion(is_polygon_inside_bbox(support_plane_idx, merged));
-  }
-
-  // Check if the newly created polygon goes beyond the bbox.
-  bool is_polygon_inside_bbox(
-    const std::size_t support_plane_idx,
-    const std::vector<Point_2>& merged) const {
-
-    std::vector<Point_2> bbox;
-    create_bbox(support_plane_idx, bbox);
-    CGAL_assertion(bbox.size() == 4);
-
-    for (std::size_t i = 0; i < 4; ++i) {
-      const std::size_t ip = (i + 1) % 4;
-      const auto& pi = bbox[i];
-      const auto& qi = bbox[ip];
-      const Segment_2 edge(pi, qi);
-
-      for (std::size_t j = 0; j < merged.size(); ++j) {
-        const std::size_t jp = (j + 1) % merged.size();
-        const auto& pj = merged[j];
-        const auto& qj = merged[jp];
-        const Segment_2 segment(pj, qj);
-        Point_2 inter;
-        const bool is_intersected = intersection(segment, edge, inter);
-        if (is_intersected)
-          return false;
-      }
-    }
-    return true;
-  }
-
-  void create_bbox(
-    const std::size_t support_plane_idx,
-    std::vector<Point_2>& bbox) const {
-
-    From_exact from_EK;
-
-    CGAL_assertion(support_plane_idx >= 6);
-    const auto& iedges = m_data.support_plane(support_plane_idx).unique_iedges();
-    CGAL_assertion(iedges.size() > 0);
-
-    std::vector<Point_2> points;
-    points.reserve(iedges.size() * 2);
-
-    for (const auto& iedge : iedges) {
-      const auto source = m_data.source(iedge);
-      const auto target = m_data.target(iedge);
-      // std::cout << "2 " <<
-      // m_data.point_3(source) << " " <<
-      // m_data.point_3(target) << std::endl;
-      points.push_back(from_EK(m_data.to_2d(support_plane_idx, source)));
-      points.push_back(from_EK(m_data.to_2d(support_plane_idx, target)));
-    }
-    CGAL_assertion(points.size() == iedges.size() * 2);
-
-    const auto box = CGAL::bbox_2(points.begin(), points.end());
-    const Point_2 p1(box.xmin(), box.ymin());
-    const Point_2 p2(box.xmax(), box.ymin());
-    const Point_2 p3(box.xmax(), box.ymax());
-    const Point_2 p4(box.xmin(), box.ymax());
-
-    bbox.clear();
-    bbox.reserve(4);
-    bbox.push_back(p1);
-    bbox.push_back(p2);
-    bbox.push_back(p3);
-    bbox.push_back(p4);
   }
 
   void create_bbox_meshes() {
@@ -901,7 +783,6 @@ private:
   }
 
   void make_polygons_intersection_free() {
-
     // First, create all transverse intersection lines.
     using Map_p2vv = std::map<std::set<std::size_t>, std::pair<IVertex, IVertex> >;
     Map_p2vv map_p2vv;
@@ -973,55 +854,8 @@ private:
     return;
   }
 
-  void map_polygon_to_ifaces() {
-    using Face_property = typename Data_structure::Intersection_graph::Face_property;
-    using IFace = typename Data_structure::Intersection_graph::Face_descriptor;
-    To_exact to_exact;
-
-    for (std::size_t i = 6; i < m_data.support_planes().size(); i++) {
-      auto& sp = m_data.support_plane(i);
-      //std::cout << "Support plane " << i << " has " << sp.mesh().faces().size() << " faces" << std::endl;
-      CGAL_assertion(sp.mesh().faces().size() == 1);
-
-      // Turn single PFace into Polygon_2
-      std::vector<typename Intersection_kernel::Point_2> pts2d;
-      pts2d.reserve(sp.mesh().vertices().size());
-
-      for (auto v : sp.mesh().vertices()) {
-        pts2d.push_back(to_exact(sp.mesh().point(v)));
-      }
-
-      Polygon_2<Intersection_kernel> p(pts2d.begin(), pts2d.end());
-
-      if (p.orientation() != CGAL::COUNTERCLOCKWISE)
-        p.reverse_orientation();
-
-      CGAL_assertion(p.orientation() == CGAL::COUNTERCLOCKWISE);
-      CGAL_assertion(p.is_convex());
-      CGAL_assertion(p.is_simple());
-
-      sp.mesh().clear_without_removing_property_maps();
-
-      for (auto f : sp.ifaces()) {
-        Face_property& face = m_data.igraph().face(f);
-
-        CGAL_assertion(face.poly.orientation() == CGAL::COUNTERCLOCKWISE);
-        CGAL_assertion(face.poly.is_convex());
-        CGAL_assertion(face.poly.is_simple());
-
-        if (CGAL::do_intersect(p, face.poly)) {
-          if (!face.part_of_partition)
-            m_data.add_iface_to_mesh(i, f);
-        }
-      }
-
-      //std::cout << std::endl;
-    }
-  }
-
   template<typename Type1, typename Type2, typename ResultType>
-  inline bool intersection(
-    const Type1& t1, const Type2& t2, ResultType& result) const {
+  inline bool intersection(const Type1& t1, const Type2& t2, ResultType& result) const {
 
     const auto inter = CGAL::intersection(t1, t2);
     if (!inter) return false;

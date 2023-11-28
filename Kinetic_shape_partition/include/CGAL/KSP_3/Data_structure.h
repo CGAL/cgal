@@ -92,16 +92,14 @@ public:
     }
   };
 
-  using PVertex_iterator =
-    boost::transform_iterator<Make_PSimplex<PVertex>, typename Mesh::Vertex_range::iterator>;
+  // ToDo:: check all kind of iterators/circulators
+  using PVertex_iterator = boost::transform_iterator<Make_PSimplex<PVertex>, typename Mesh::Vertex_range::iterator>;
   using PVertices = CGAL::Iterator_range<PVertex_iterator>;
 
-  using PFace_iterator =
-    boost::transform_iterator<Make_PSimplex<PFace>, typename Mesh::Face_range::iterator>;
+  using PFace_iterator = boost::transform_iterator<Make_PSimplex<PFace>, typename Mesh::Face_range::iterator>;
   using PFaces = CGAL::Iterator_range<PFace_iterator>;
 
-  using PEdge_iterator =
-    boost::transform_iterator<Make_PSimplex<PEdge>, typename Mesh::Edge_range::iterator>;
+  using PEdge_iterator = boost::transform_iterator<Make_PSimplex<PEdge>, typename Mesh::Edge_range::iterator>;
   using PEdges = CGAL::Iterator_range<PEdge_iterator>;
 
   struct Halfedge_to_pvertex {
@@ -121,8 +119,7 @@ public:
     }
   };
 
-  using PVertex_of_pface_iterator =
-    boost::transform_iterator<Halfedge_to_pvertex, CGAL::Halfedge_around_face_iterator<Mesh> >;
+  using PVertex_of_pface_iterator = boost::transform_iterator<Halfedge_to_pvertex, CGAL::Halfedge_around_face_iterator<Mesh> >;
   using PVertices_of_pface = CGAL::Iterator_range<PVertex_of_pface_iterator>;
 
   struct Halfedge_to_pedge {
@@ -159,16 +156,14 @@ public:
     }
   };
 
-  using PEdge_around_pvertex_iterator =
-    boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_target_iterator<Mesh> >;
+  // ToDo:: check all kind of iterators/circulators
+  using PEdge_around_pvertex_iterator = boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_target_iterator<Mesh> >;
   using PEdges_around_pvertex = CGAL::Iterator_range<PEdge_around_pvertex_iterator>;
 
-  using PEdge_of_pface_iterator =
-    boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_face_iterator<Mesh> >;
+  using PEdge_of_pface_iterator = boost::transform_iterator<Halfedge_to_pedge, CGAL::Halfedge_around_face_iterator<Mesh> >;
   using PEdges_of_pface = CGAL::Iterator_range<PEdge_of_pface_iterator>;
 
-  using PFace_around_pvertex_iterator =
-    boost::transform_iterator<Halfedge_to_pface, CGAL::Halfedge_around_target_iterator<Mesh> >;
+  using PFace_around_pvertex_iterator = boost::transform_iterator<Halfedge_to_pface, CGAL::Halfedge_around_target_iterator<Mesh> >;
   using PFaces_around_pvertex = CGAL::Iterator_range<PFace_around_pvertex_iterator>;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
@@ -247,9 +242,7 @@ public:
   Data_structure(const Parameters& parameters, const std::string &prefix) : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix) { }
 
   template<typename Type1, typename Type2, typename ResultType>
-  static bool intersection(
-    const Type1& t1, const Type2& t2, ResultType& result) {
-
+  static bool intersection(const Type1& t1, const Type2& t2, ResultType& result) {
     const auto inter = CGAL::intersection(t1, t2);
     if (!inter) return false;
     if (CGAL::assign(result, inter))
@@ -273,7 +266,6 @@ public:
   }
 
   void precompute_iedge_data() {
-
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       auto& unique_iedges = support_plane(i).unique_iedges();
       CGAL_assertion(unique_iedges.size() > 0);
@@ -317,10 +309,6 @@ public:
   /*******************************
   **           ACCESS           **
   ********************************/
-
-  std::map<std::size_t, std::size_t>& input_polygon_map() {
-    return m_input_polygon_map;
-  }
 
   const std::vector<std::vector<Point_3> >& input_polygons() const {
     return m_input_polygons;
@@ -617,11 +605,8 @@ public:
   }
 
   template<typename PointRange>
-  std::pair<std::size_t, bool> add_support_plane(
-    const PointRange& polygon, const bool is_bbox, const typename Intersection_kernel::Plane_3& plane) {
-
-    const Support_plane new_support_plane(
-      polygon, is_bbox, plane, number_of_support_planes());
+  std::pair<std::size_t, bool> add_support_plane(const PointRange& polygon, const bool is_bbox, const typename Intersection_kernel::Plane_3& plane) {
+    const Support_plane new_support_plane(polygon, is_bbox, plane, number_of_support_planes());
     std::size_t support_plane_idx = KSP::no_element();
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
@@ -645,11 +630,8 @@ public:
   }
 
   template<typename PointRange>
-  std::pair<std::size_t, bool> add_support_plane(
-    const PointRange& polygon, const bool is_bbox) {
-
-    const Support_plane new_support_plane(
-      polygon, is_bbox, number_of_support_planes());
+  std::pair<std::size_t, bool> add_support_plane(const PointRange& polygon, const bool is_bbox) {
+    const Support_plane new_support_plane(polygon, is_bbox, number_of_support_planes());
     std::size_t support_plane_idx = KSP::no_element();
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
@@ -892,41 +874,7 @@ public:
   }
 
   template<typename PointRange>
-  void add_bbox_polygon(const PointRange& polygon, const typename Intersection_kernel::Plane_3& plane) {
-
-    bool is_added = true;
-    std::size_t support_plane_idx = KSP::no_element();
-    std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true, plane);
-    CGAL_assertion(is_added);
-    CGAL_assertion(support_plane_idx != KSP::no_element());
-
-    std::array<IVertex, 4> ivertices;
-    std::array<Point_2, 4> points;
-    for (std::size_t i = 0; i < 4; ++i) {
-      points[i] = support_plane(support_plane_idx).to_2d(polygon[i]);
-      ivertices[i] = m_intersection_graph.add_vertex(to_exact(polygon[i])).first;
-    }
-
-    const auto vertices =
-      support_plane(support_plane_idx).add_bbox_polygon(points, ivertices);
-
-    for (std::size_t i = 0; i < 4; ++i) {
-      const auto pair = m_intersection_graph.add_edge(ivertices[i], ivertices[(i + 1) % 4], support_plane_idx);
-      const auto& iedge = pair.first;
-      const bool is_inserted = pair.second;
-      if (is_inserted) {
-        typename Intersection_kernel::Line_3 line(to_exact(polygon[i]), to_exact(polygon[(i + 1) % 4]));
-        m_intersection_graph.set_line(iedge, m_intersection_graph.add_line(line));
-      }
-
-      support_plane(support_plane_idx).set_iedge(vertices[i], vertices[(i + 1) % 4], iedge);
-      support_plane(support_plane_idx).unique_iedges().insert(iedge);
-    }
-  }
-
-  template<typename PointRange>
   void add_bbox_polygon(const PointRange& polygon) {
-
     bool is_added = true;
     std::size_t support_plane_idx = KSP::no_element();
     std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true);
@@ -957,11 +905,7 @@ public:
     }
   }
 
-  void add_input_polygon(
-    const std::size_t support_plane_idx,
-    const std::vector<std::size_t>& input_indices,
-    const std::vector<Point_2>& polygon) {
-
+  void add_input_polygon( const std::size_t support_plane_idx, const std::vector<std::size_t>& input_indices, const std::vector<Point_2>& polygon) {
     std::vector< std::pair<Point_2, bool> > points;
     points.reserve(polygon.size());
     for (const auto& point : polygon) {
@@ -980,11 +924,7 @@ public:
   }
 
   template<typename Pair>
-  void preprocess(
-    std::vector<Pair>& points,
-    const FT min_dist = KSP::tolerance<FT>(),
-    const FT min_angle = FT(10)) const {
-
+  void preprocess(std::vector<Pair>& points, const FT min_dist = KSP::tolerance<FT>(), const FT min_angle = FT(10)) const {
     remove_equal_points(points, min_dist);
 
     remove_collinear_points(points, min_angle);
@@ -992,7 +932,6 @@ public:
 
   template<typename Pair>
   void remove_equal_points(std::vector<Pair>& points, const FT min_dist) const {
-
     std::vector<Pair> polygon;
     const std::size_t n = points.size();
     for (std::size_t i = 0; i < n; ++i) {
@@ -1020,7 +959,6 @@ public:
 
   template<typename Pair>
   void remove_collinear_points(std::vector<Pair>& points, const FT min_angle) const {
-
     std::vector<Pair> polygon;
     const std::size_t n = points.size();
     for (std::size_t i = 0; i < n; ++i) {
@@ -1070,38 +1008,22 @@ public:
   **        PSimplices          **
   ********************************/
 
-  static PVertex null_pvertex() { return PVertex(KSP::no_element(), Vertex_index()); }
-  static PEdge   null_pedge()   { return   PEdge(KSP::no_element(),   Edge_index()); }
-  static PFace   null_pface()   { return   PFace(KSP::no_element(),   Face_index()); }
-
   const PVertices pvertices(const std::size_t support_plane_idx) const {
     return PVertices(
-      boost::make_transform_iterator(
-        mesh(support_plane_idx).vertices().begin(),
-        Make_PSimplex<PVertex>(support_plane_idx)),
-      boost::make_transform_iterator(
-        mesh(support_plane_idx).vertices().end(),
-        Make_PSimplex<PVertex>(support_plane_idx)));
+      boost::make_transform_iterator(mesh(support_plane_idx).vertices().begin(), Make_PSimplex<PVertex>(support_plane_idx)),
+      boost::make_transform_iterator(mesh(support_plane_idx).vertices().end(), Make_PSimplex<PVertex>(support_plane_idx)));
   }
 
   const PEdges pedges(const std::size_t support_plane_idx) const {
     return PEdges(
-      boost::make_transform_iterator(
-        mesh(support_plane_idx).edges().begin(),
-        Make_PSimplex<PEdge>(support_plane_idx)),
-      boost::make_transform_iterator(
-        mesh(support_plane_idx).edges().end(),
-        Make_PSimplex<PEdge>(support_plane_idx)));
+      boost::make_transform_iterator(mesh(support_plane_idx).edges().begin(), Make_PSimplex<PEdge>(support_plane_idx)),
+      boost::make_transform_iterator(mesh(support_plane_idx).edges().end(), Make_PSimplex<PEdge>(support_plane_idx)));
   }
 
   const PFaces pfaces(const std::size_t support_plane_idx) const {
     return PFaces(
-      boost::make_transform_iterator(
-        mesh(support_plane_idx).faces().begin(),
-        Make_PSimplex<PFace>(support_plane_idx)),
-      boost::make_transform_iterator(
-        mesh(support_plane_idx).faces().end(),
-        Make_PSimplex<PFace>(support_plane_idx)));
+      boost::make_transform_iterator(mesh(support_plane_idx).faces().begin(), Make_PSimplex<PFace>(support_plane_idx)),
+      boost::make_transform_iterator(mesh(support_plane_idx).faces().end(), Make_PSimplex<PFace>(support_plane_idx)));
   }
 
   // Get prev and next pvertices of the free pvertex.
@@ -1112,10 +1034,7 @@ public:
     return PVertex(pvertex.first, support_plane(pvertex).next(pvertex.second));
   }
 
-  void get_and_sort_all_connected_iedges(
-    const std::size_t sp_idx, const IVertex& ivertex,
-    std::vector< std::pair<IEdge, Direction_2> >& iedges) const {
-
+  void get_and_sort_all_connected_iedges(const std::size_t sp_idx, const IVertex& ivertex, std::vector< std::pair<IEdge, Direction_2> >& iedges) const {
     auto inc_iedges = incident_iedges(ivertex);
     const std::function<void(const IEdge& inc_iedge)> lambda =
       [&](const IEdge& inc_iedge) {
@@ -1141,35 +1060,6 @@ public:
       }
     );
     CGAL_assertion(iedges.size() > 0);
-  }
-
-  const PVertex add_pvertex(const std::size_t support_plane_idx, const Point_2& point) {
-
-    CGAL_assertion(support_plane_idx != KSP::uninitialized());
-    CGAL_assertion(support_plane_idx != KSP::no_element());
-
-    auto& m = mesh(support_plane_idx);
-    const auto vi = m.add_vertex(point);
-    CGAL_assertion(vi != typename Support_plane::Mesh::Vertex_index());
-    return PVertex(support_plane_idx, vi);
-  }
-
-  template<typename VertexRange>
-  const PFace add_pface(const VertexRange& pvertices) {
-
-    const auto support_plane_idx = pvertices.front().first;
-    CGAL_assertion(support_plane_idx != KSP::uninitialized());
-    CGAL_assertion(support_plane_idx != KSP::no_element());
-
-    auto& m = mesh(support_plane_idx);
-    const auto range = CGAL::make_range(
-      boost::make_transform_iterator(pvertices.begin(),
-      CGAL::Property_map_to_unary_function<CGAL::Second_of_pair_property_map<PVertex> >()),
-      boost::make_transform_iterator(pvertices.end(),
-      CGAL::Property_map_to_unary_function<CGAL::Second_of_pair_property_map<PVertex> >()));
-    const auto fi = m.add_face(range);
-    CGAL_assertion(fi != Support_plane::Mesh::null_face());
-    return PFace(support_plane_idx, fi);
   }
 
   const IFace add_iface(std::size_t support_plane) {
@@ -1238,14 +1128,7 @@ public:
     }
   }
 
-  PVertex source(const PEdge& pedge) const {
-    return PVertex(pedge.first, mesh(pedge).source(mesh(pedge).halfedge(pedge.second)));
-  }
-  PVertex target(const PEdge& pedge) const {
-    return PVertex(pedge.first, mesh(pedge).target(mesh(pedge).halfedge(pedge.second)));
-  }
   PVertex opposite(const PEdge& pedge, const PVertex& pvertex) const {
-
     if (mesh(pedge).target(mesh(pedge).halfedge(pedge.second)) == pvertex.second) {
       return PVertex(pedge.first, mesh(pedge).source(mesh(pedge).halfedge(pedge.second)));
     }
@@ -1254,7 +1137,6 @@ public:
   }
 
   Point_3 centroid_of_pface(const PFace& pface) const {
-
     const std::function<Point_3(PVertex)> unary_f =
       [&](const PVertex& pvertex) -> Point_3 {
       return point_3(pvertex);
@@ -1266,121 +1148,31 @@ public:
     return CGAL::centroid(polygon.begin(), polygon.end());
   }
 
-  Point_2 centroid_of_pface_2d(const PFace& pface) const {
-
-    const std::function<Point_2(PVertex)> unary_f =
-      [&](const PVertex& pvertex) -> Point_2 {
-      return point_2(pvertex);
-    };
-    const std::vector<Point_2> polygon(
-      boost::make_transform_iterator(pvertices_of_pface(pface).begin(), unary_f),
-      boost::make_transform_iterator(pvertices_of_pface(pface).end(), unary_f));
-    CGAL_assertion(polygon.size() >= 3);
-    return CGAL::centroid(polygon.begin(), polygon.end());
-  }
-
-  Plane_3 plane_of_pface(const PFace& pface) const {
-    Point_3 p[3];
-
-    CGAL_assertion(pvertices_of_pface(pface).size() >= 3);
-
-    auto it = pvertices_of_pface(pface).begin();
-    auto end = pvertices_of_pface(pface).end();
-
-    p[0] = point_3(*it++);
-    p[1] = point_3(*it++);
-    p[2] = point_3(*it++);
-
-    while (collinear(p[0], p[1], p[2])) {
-      CGAL_assertion(it != end);
-      p[2] = point_3(*it++);
-    }
-    return Plane_3(p[0], p[1], p[2]);
-  }
-
-  PFace pface_of_pvertex(const PVertex& pvertex) const {
-    return PFace(pvertex.first, support_plane(pvertex).face(pvertex.second));
-  }
-
-  std::pair<PFace, PFace> pfaces_of_pvertex(const PVertex& pvertex) const {
-
-    std::pair<PFace, PFace> out(null_pface(), null_pface());
-    std::tie(out.first.second, out.second.second) =
-      support_plane(pvertex).faces(pvertex.second);
-    if (out.first.second != Face_index()) {
-      out.first.first = pvertex.first;
-    }
-    if (out.second.second != Face_index()) {
-      out.second.first = pvertex.first;
-    }
-    return out;
-  }
-
-  PFaces_around_pvertex pfaces_around_pvertex(const PVertex& pvertex) const {
-
-    const auto pfaces = PFaces_around_pvertex(
-      boost::make_transform_iterator(
-        halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).begin(),
-        Halfedge_to_pface(pvertex.first, mesh(pvertex))),
-      boost::make_transform_iterator(
-        halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).end(),
-        Halfedge_to_pface(pvertex.first, mesh(pvertex))));
-    CGAL_assertion(pfaces.size() >= 1);
-    return pfaces;
-  }
-
-  void non_null_pfaces_around_pvertex(
-    const PVertex& pvertex, std::vector<PFace>& pfaces) const {
-
-    pfaces.clear();
-    const auto nfaces = pfaces_around_pvertex(pvertex);
-    for (const auto pface : nfaces) {
-      if (pface.second == Support_plane::Mesh::null_face()) continue;
-      pfaces.push_back(pface);
-    }
-  }
-
-  PVertices_of_pface pvertices_of_pface(const PFace& pface) const {
-
-    const auto pvertices = PVertices_of_pface(
-      boost::make_transform_iterator(
-        halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).begin(),
-        Halfedge_to_pvertex(pface.first, mesh(pface))),
-      boost::make_transform_iterator(
-        halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).end(),
-        Halfedge_to_pvertex(pface.first, mesh(pface))));
-    CGAL_assertion(pvertices.size() >= 3);
-    return pvertices;
-  }
-
   PEdges_of_pface pedges_of_pface(const PFace& pface) const {
-
     const auto pedges = PEdges_of_pface(
-      boost::make_transform_iterator(
-        halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).begin(),
-        Halfedge_to_pedge(pface.first, mesh(pface))),
-      boost::make_transform_iterator(
-        halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).end(),
-        Halfedge_to_pedge(pface.first, mesh(pface))));
+      boost::make_transform_iterator(halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).begin(), Halfedge_to_pedge(pface.first, mesh(pface))),
+      boost::make_transform_iterator(halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).end(), Halfedge_to_pedge(pface.first, mesh(pface))));
     CGAL_assertion(pedges.size() >= 3);
     return pedges;
   }
 
   PEdges_around_pvertex pedges_around_pvertex(const PVertex& pvertex) const {
-
     const auto pedges = PEdges_around_pvertex(
-      boost::make_transform_iterator(
-        halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).begin(),
-        Halfedge_to_pedge(pvertex.first, mesh(pvertex))),
-      boost::make_transform_iterator(
-        halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).end(),
-        Halfedge_to_pedge(pvertex.first, mesh(pvertex))));
+      boost::make_transform_iterator(halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).begin(), Halfedge_to_pedge(pvertex.first, mesh(pvertex))),
+      boost::make_transform_iterator(halfedges_around_target(halfedge(pvertex.second, mesh(pvertex)), mesh(pvertex)).end(), Halfedge_to_pedge(pvertex.first, mesh(pvertex))));
     CGAL_assertion(pedges.size() >= 2);
     return pedges;
   }
 
-  std::vector<Volume_cell> incident_volumes(const PFace& query_pface) const {
+  PVertices_of_pface pvertices_of_pface(const PFace& pface) const {
+    const auto pvertices = PVertices_of_pface(
+      boost::make_transform_iterator(halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).begin(), Halfedge_to_pvertex(pface.first, mesh(pface))),
+      boost::make_transform_iterator(halfedges_around_face(halfedge(pface.second, mesh(pface)), mesh(pface)).end(), Halfedge_to_pvertex(pface.first, mesh(pface))));
+    CGAL_assertion(pvertices.size() >= 3);
+    return pvertices;
+  }
 
+  std::vector<Volume_cell> incident_volumes(const PFace& query_pface) const {
     std::vector<Volume_cell> nvolumes;
     for (const auto& volume : m_volumes) {
       for (const auto& pface : volume.pfaces) {
@@ -1391,7 +1183,6 @@ public:
   }
 
   void incident_faces(const IEdge& query_iedge, std::vector<PFace>& nfaces) const {
-
     nfaces.clear();
     for (const auto plane_idx : intersected_planes(query_iedge)) {
       for (const auto pedge : pedges(plane_idx)) {
@@ -1438,7 +1229,6 @@ public:
   std::size_t line_idx(const PVertex& pvertex) const { return line_idx(iedge(pvertex)); }
 
   const IVertex add_ivertex(const IkPoint_3& point, const std::set<std::size_t>& support_planes_idx) {
-
     std::vector<std::size_t> vec_planes;
     std::copy(
       support_planes_idx.begin(),
@@ -1450,7 +1240,6 @@ public:
   }
 
   void add_iedge(const std::set<std::size_t>& support_planes_idx, std::vector<IVertex>& vertices) {
-
     const auto source = m_intersection_graph.point_3(vertices.front());
     std::sort(vertices.begin(), vertices.end(),
       [&](const IVertex& a, const IVertex& b) -> bool {
@@ -1502,20 +1291,15 @@ public:
   const std::vector<IEdge>& iedges(const std::size_t support_plane_idx) const {
     return support_plane(support_plane_idx).iedges();
   }
+
   std::vector<IEdge>& iedges(const std::size_t support_plane_idx) {
     return support_plane(support_plane_idx).iedges();
-  }
-
-  const std::vector<Segment_2>& isegments(const std::size_t support_plane_idx) const {
-    return support_plane(support_plane_idx).isegments();
-  }
-  std::vector<Segment_2>& isegments(const std::size_t support_plane_idx) {
-    return support_plane(support_plane_idx).isegments();
   }
 
   const std::vector<Bbox_2>& ibboxes(const std::size_t support_plane_idx) const {
     return support_plane(support_plane_idx).ibboxes();
   }
+
   std::vector<Bbox_2>& ibboxes(const std::size_t support_plane_idx) {
     return support_plane(support_plane_idx).ibboxes();
   }
@@ -1524,9 +1308,7 @@ public:
     return m_intersection_graph.intersected_planes(iedge);
   }
 
-  const std::set<std::size_t> intersected_planes(
-    const IVertex& ivertex, const bool keep_bbox = true) const {
-
+  const std::set<std::size_t> intersected_planes(const IVertex& ivertex, const bool keep_bbox = true) const {
     std::set<std::size_t> out;
     for (const auto &incident_iedge : incident_iedges(ivertex)) {
       for (const auto &support_plane_idx : intersected_planes(incident_iedge)) {
@@ -1550,7 +1332,6 @@ public:
   }
 
   bool is_bbox_iedge(const IEdge& edge) const {
-
     for (const auto support_plane_idx : m_intersection_graph.intersected_planes(edge)) {
       if (support_plane_idx < 6) {
         return true;
@@ -1563,48 +1344,8 @@ public:
   **          STRINGS           **
   ********************************/
 
-  inline const std::string str(const PVertex& pvertex) const {
-    auto sp = support_plane(pvertex.first);
-    std::string res = "PVertex(" + std::to_string(pvertex.first) + ":v" + std::to_string(pvertex.second);
-
-    if (sp.has_iedge(pvertex.second)) res += " " + this->str(sp.iedge(pvertex.second));
-
-    auto m = support_plane(pvertex.first).mesh();
-    auto h = m.halfedge(pvertex.second);
-    if (h != Mesh::null_halfedge()) {
-      res += " p:" + std::to_string(m.source(h));
-      if ((h = m.next(h)) != Mesh::null_halfedge()) {
-        auto n = m.target(h);
-        res += " n:" + std::to_string(n);
-      }
-    }
-    else res += " isolated";
-    return res + ")";
-  }
-  inline const std::string str(const PEdge& pedge) const {
-    return "PEdge(" + std::to_string(pedge.first) + ":e" + std::to_string(pedge.second) + ")";
-  }
-  inline const std::string str(const PFace& pface) const {
-    return "PFace(" + std::to_string(pface.first) + ":f" + std::to_string(pface.second) + ")";
-  }
-  inline const std::string str(const IVertex& ivertex) const {
-    return "IVertex(" + std::to_string(ivertex) + ")";
-  }
   inline const std::string str(const IEdge& iedge) const {
     std::ostringstream oss; oss << "IEdge" << iedge; return oss.str();
-  }
-
-  inline const std::string lstr(const PFace& pface) const {
-
-    if (pface == null_pface()) {
-      return "PFace(null)";
-    }
-    std::string out = "PFace(" + std::to_string(pface.first) + ":f" + std::to_string(pface.second) + ")[";
-    for (const auto pvertex : pvertices_of_pface(pface)) {
-      out += "v" + std::to_string(pvertex.second);
-    }
-    out += "]";
-    return out;
   }
 
   inline const std::string lstr(const PEdge& pedge) const {
@@ -1624,15 +1365,6 @@ public:
 
   bool has_iedge(const PEdge& pedge) const { return support_plane(pedge).has_iedge(pedge.second); }
   IEdge iedge(const PEdge& pedge) const { return support_plane(pedge).iedge(pedge.second); }
-
-  void connect_pedge(
-    const PVertex& pvertex, const PVertex& pother, const IEdge& iedge) {
-
-    const PEdge pedge(pvertex.first,
-      support_plane(pvertex).edge(pvertex.second, pother.second));
-    connect(pedge, iedge);
-    connect(pother, iedge);
-  }
 
   /*******************************
   **        CONVERSIONS         **
@@ -1699,10 +1431,7 @@ public:
   ********************************/
 
   template<typename Pair>
-  bool is_valid_polygon(
-    const std::size_t sp_idx,
-    const std::vector<Pair>& points) const {
-
+  bool is_valid_polygon(const std::size_t sp_idx, const std::vector<Pair>& points) const {
     std::vector< std::pair<IkPoint_2, bool> > polygon;
     polygon.reserve(points.size());
     for (const auto& pair : points) {
@@ -1729,20 +1458,19 @@ public:
   }
 
   bool check_bbox() const {
-
     for (std::size_t i = 0; i < 6; ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         for (const auto pvertex : pvertices_of_pface(pface)) {
           if (!has_ivertex(pvertex)) {
-            std::cout << "debug pvertex: " << str(pvertex) << std::endl;
+            std::cout << "debug pvertex: " << std::endl;
             CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: BBOX VERTEX IS MISSING AN IVERTEX!");
             return false;
           }
         }
         for (const auto pedge : pedges_of_pface(pface)) {
           if (!has_iedge(pedge)) {
-            std::cout << "debug pedge: " << str(pedge) << std::endl;
+            std::cout << "debug pedge: " << std::endl;
             CGAL_assertion_msg(has_iedge(pedge), "ERROR: BBOX EDGE IS MISSING AN IEDGE!");
             return false;
           }
@@ -1753,20 +1481,19 @@ public:
   }
 
   bool check_interior() const {
-
     for (std::size_t i = 6; i < number_of_support_planes(); ++i) {
       const auto pfaces = this->pfaces(i);
       for (const auto pface : pfaces) {
         for (const auto pvertex : pvertices_of_pface(pface)) {
           if (!has_ivertex(pvertex)) {
-            std::cout << "debug pvertex: " << str(pvertex) << std::endl;
+            std::cout << "debug pvertex " << std::endl;
             CGAL_assertion_msg(has_ivertex(pvertex), "ERROR: INTERIOR VERTEX IS MISSING AN IVERTEX!");
             return false;
           }
         }
         for (const auto pedge : pedges_of_pface(pface)) {
           if (!has_iedge(pedge)) {
-            std::cout << "debug pedge: " << str(pedge) << std::endl;
+            std::cout << "debug pedge " << std::endl;
             CGAL_assertion_msg(has_iedge(pedge), "ERROR: INTERIOR EDGE IS MISSING AN IEDGE!");
             return false;
           }
@@ -1828,37 +1555,7 @@ public:
     return success;
   }
 
-  bool check_volume(
-    const int volume_index,
-    const std::size_t volume_size,
-    const std::map<PFace, std::pair<int, int> >& map_volumes) const {
-
-    std::vector<PFace> pfaces;
-    for (const auto& item : map_volumes) {
-      const auto& pface = item.first;
-      const auto& pair  = item.second;
-      if (pair.first == volume_index || pair.second == volume_index) {
-        pfaces.push_back(pface);
-      }
-    }
-
-    const bool is_broken_volume = is_volume_degenerate(pfaces);
-    if (is_broken_volume) {
-      dump_volume(*this, pfaces, "volumes/degenerate");
-    }
-
-    CGAL_assertion(!is_broken_volume);
-    if (is_broken_volume) return false;
-
-    CGAL_assertion(pfaces.size() == volume_size);
-    if (pfaces.size() != volume_size) return false;
-
-    return true;
-  }
-
-  bool is_volume_degenerate(
-    const std::vector<PFace>& pfaces) const {
-
+  bool is_volume_degenerate(const std::vector<PFace>& pfaces) const {
     for (const auto& pface : pfaces) {
       const auto pedges = pedges_of_pface(pface);
       const std::size_t n = pedges.size();

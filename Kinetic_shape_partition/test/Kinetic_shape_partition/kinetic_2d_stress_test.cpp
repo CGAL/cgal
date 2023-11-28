@@ -7,7 +7,7 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Aff_transformation_2.h>
-#include <CGAL/Kinetic_shape_reconstruction_2.h>
+#include <CGAL/Kinetic_shape_partition_2.h>
 
 using SC = CGAL::Simple_cartesian<double>;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -23,8 +23,8 @@ using Transform = CGAL::Aff_transformation_2<EPECK>;
 using Random = CGAL::Random;
 using Mesh   = CGAL::Surface_mesh<Point_2>;
 
-using Exact_reconstruction   = CGAL::Kinetic_shape_reconstruction_2<EPECK>;
-using Inexact_reconstruction = CGAL::Kinetic_shape_reconstruction_2<EPICK>;
+using Exact_reconstruction   = CGAL::Kinetic_shape_partition_2<EPECK>;
+using Inexact_reconstruction = CGAL::Kinetic_shape_partition_2<EPICK>;
 
 Random cgal_rand;
 
@@ -130,10 +130,10 @@ void test_segments(
   std::vector<typename Kernel::Segment_2> segments;
   get_segments_from_exact<Kernel>(exact_segments, segments);
 
-  CGAL::Kinetic_shape_reconstruction_2<Kernel> reconstruction;
-  reconstruction.partition(segments, CGAL::Identity_property_map<typename Kernel::Segment_2>(), k, 2);
+  CGAL::Kinetic_shape_partition_2<Kernel> ksp;
+  ksp.partition(segments, CGAL::Identity_property_map<typename Kernel::Segment_2>(), k, 2);
   segments.clear();
-  reconstruction.output_partition_edges_to_segment_soup(std::back_inserter(segments));
+  ksp.output_partition_edges_to_segment_soup(std::back_inserter(segments));
 
 #ifdef OUTPUT_FILES
   std::ofstream output_file(
@@ -143,13 +143,13 @@ void test_segments(
   }
 #endif
 
-  if (!reconstruction.check_integrity(true)) {
+  if (!ksp.check_integrity(true)) {
     std::cerr << "ERROR: Integrity of reconstruction failed!" << std::endl;
     return;
   }
 
   CGAL::Surface_mesh<typename Kernel::Point_2> mesh;
-  if (reconstruction.output_partition_cells_to_face_graph(mesh)) {
+  if (ksp.output_partition_cells_to_face_graph(mesh)) {
 #ifdef OUTPUT_FILES
     std::ofstream output_shapes_file(
       test_name + (std::is_same<Kernel, EPECK>::value ? "_exact" : "_inexact") + "_faces.ply");

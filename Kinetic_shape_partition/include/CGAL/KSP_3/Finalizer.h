@@ -100,7 +100,6 @@ public:
   { }
 
   void create_polyhedra() {
-
     if (m_parameters.debug) {
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "after-partition-sp" + std::to_string(sp));
@@ -122,7 +121,7 @@ public:
         for (const auto& v : m_data.volumes())
           dump_volume(m_data, v.pfaces, "volumes/" + m_data.prefix() + std::to_string(v.index), true, v.index);
     }*/
-    (m_data.check_faces());
+    CGAL_assertion(m_data.check_faces());
   }
 
 private:
@@ -249,9 +248,7 @@ private:
     remove_collinear_vertices();
   }
 
-  void segment_adjacent_volumes(const PFace& pface,
-    std::vector<Volume_cell>& volumes,
-    std::map<PFace, std::pair<int, int> >& map_volumes) {
+  void segment_adjacent_volumes(const PFace& pface, std::vector<Volume_cell>& volumes, std::map<PFace, std::pair<int, int> >& map_volumes) {
 
     // Check whether this face is already part of one or two volumes
     auto& pair = map_volumes.at(pface);
@@ -342,11 +339,7 @@ private:
     }
   }
 
-  void propagate_volume(
-    std::queue<std::pair<PFace, Oriented_side> >& queue,
-    std::size_t volume_index,
-    std::vector<Volume_cell>& volumes,
-    std::map<PFace, std::pair<int, int> >& map_volumes) {
+  void propagate_volume(std::queue<std::pair<PFace, Oriented_side> >& queue, std::size_t volume_index, std::vector<Volume_cell>& volumes, std::map<PFace, std::pair<int, int> >& map_volumes) {
     PFace pface;
     Oriented_side seed_side;
     std::tie(pface, seed_side) = queue.front();
@@ -393,9 +386,7 @@ private:
     }
   }
 
-  bool associate(const PFace& pface, std::size_t volume_index, Oriented_side side,
-    std::vector<Volume_cell>& volumes,
-    std::map<PFace, std::pair<int, int> >& map_volumes) {
+  bool associate(const PFace& pface, std::size_t volume_index, Oriented_side side, std::vector<Volume_cell>& volumes, std::map<PFace, std::pair<int, int> >& map_volumes) {
     auto& pair = map_volumes.at(pface);
 
     CGAL_assertion(side != COPLANAR);
@@ -421,13 +412,7 @@ private:
     return false;
   }
 
-  void find_adjacent_faces(
-    const PFace& pface,
-    const PEdge& pedge,
-    const std::vector<PFace>& neighbor_faces,
-    PFace &positive_side,
-    PFace &negative_side) const {
-
+  void find_adjacent_faces(const PFace& pface, const PEdge& pedge, const std::vector<PFace>& neighbor_faces, PFace &positive_side, PFace &negative_side) const {
     CGAL_assertion(neighbor_faces.size() > 2);
 
     // for each face, find vertex that is not collinear with the edge
@@ -553,7 +538,6 @@ private:
   void merge_facets_connected_components() {
     // Purpose: merge facets between the same volumes. Every pair of volumes can have at most one contact polygon (which also has to be convex)
     // Precondition: all volumes are convex, the contact area between each pair of volumes is empty or convex
-
     std::vector<E_constraint_map> edge_constraint_maps(m_data.number_of_support_planes());
 
     for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++) {
@@ -720,31 +704,6 @@ private:
       }
     }
 
-    return false;
-  }
-
-  bool is_boundary_pface(
-    const PFace& pface,
-    const int volume_index,
-    const int num_volumes,
-    const std::map<PFace, std::pair<int, int> >& map_volumes) const {
-
-    CGAL_assertion(volume_index >= 0);
-    if (pface.first < 6) return true;
-    CGAL_assertion(pface.first >= 6);
-    if (num_volumes == 0) return false;
-    CGAL_assertion(num_volumes > 0);
-    CGAL_assertion(volume_index > 0);
-    CGAL_assertion(volume_index >= num_volumes);
-
-    const auto& pair = map_volumes.at(pface);
-    if (pair.first == -1) {
-      CGAL_assertion(pair.second == -1);
-      return false;
-    }
-    CGAL_assertion(pair.first != -1);
-    if (pair.first < num_volumes) return true;
-    CGAL_assertion(pair.first >= num_volumes);
     return false;
   }
 

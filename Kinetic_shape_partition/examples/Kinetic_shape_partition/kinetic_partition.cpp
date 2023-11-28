@@ -22,8 +22,6 @@ using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using KSP          = CGAL::Kinetic_shape_partition_3<EPICK>;
 using Timer        = CGAL::Real_timer;
 
-double add_polys = 0, intersections = 0, iedges = 0, ifaces = 0, mapping = 0;
-
 int main(const int argc, const char** argv) {
 
   // Reading polygons from file

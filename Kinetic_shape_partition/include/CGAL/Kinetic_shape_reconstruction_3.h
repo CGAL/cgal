@@ -522,12 +522,13 @@ public:
             }
           }
 
+/*
         for (std::size_t j = 0; j < borders_per_region[i].size(); j++) {
           std::string fn;
           if (j == outer)
-            fn = std::to_string(i) + "-outer.polylines.txt";
+            fn = "merged_borders/" + std::to_string(i) + "-outer.polylines.txt";
           else
-            fn = std::to_string(i) + "-" + std::to_string(j) + ".polylines.txt";
+            fn = "merged_borders/" + std::to_string(i) + "-" + std::to_string(j) + ".polylines.txt";
           std::ofstream vout(fn);
           vout << (borders[borders_per_region[i][j]].size() + 1);
           for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
@@ -535,7 +536,7 @@ public:
           }
           vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][0]))) << std::endl;
           vout.close();
-        }
+        }*/
 
         if (borders_per_region[i].size() > 1) {
           std::vector<std::vector<std::size_t> > polygons;
@@ -543,18 +544,16 @@ public:
           for (std::size_t j = 0; j < borders_per_region[i].size(); j++)
             polygons.push_back(std::move(borders[borders_per_region[i][j]]));
 
-          std::cout << i << std::flush;
-
           insert_ghost_edges_cdt(polygons, planes[i]);
-          std::cout << std::endl;
 
-          std::ofstream vout(std::to_string(i) + "-merged.polylines.txt");
+/*
+          std::ofstream vout("merged_borders/" + std::to_string(i) + "-merged.polylines.txt");
           vout << (polygons[0].size() + 1);
           for (std::size_t k = 0; k < polygons[0].size(); k++) {
             vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[0][k])));
           }
           vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[0][0]))) << std::endl;
-          vout.close();
+          vout.close();*/
 
           borders_per_region[i].resize(1);
           CGAL_assertion(borders[borders_per_region[i][0]].empty());
@@ -562,12 +561,13 @@ public:
           borders[borders_per_region[i][0]] = std::move(polygons[0]);
         }
       }
+/*
       else {
         for (std::size_t k = 0;k<region_index.size();k++)
           if (region_index[k] == i) {
             write_face(m_lcc.dart_of_attribute<2>(k), std::to_string(i) + "-" + std::to_string(k) + "_missing.ply");
           }
-      }
+      }*/
     }
 
     std::map<std::size_t, std::size_t> attrib2idx;
@@ -575,15 +575,29 @@ public:
       if (borders[i].empty())
         continue;
 
-      std::vector<std::size_t> indices(borders[i].size());
-      for (std::size_t j = 0; j < borders[i].size(); j++) {
-        auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
-        if (p.second)
-          *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
-        indices[j] = p.first->second;
-      }
+/*      if (false) {*/
+        std::vector<std::size_t> indices(borders[i].size());
+        for (std::size_t j = 0; j != borders[i].size(); j++) {
+          auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
+          if (p.second)
+            *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
+          indices[j] = p.first->second;
+        }
 
-      *polyit++ = std::move(indices);
+        *polyit++ = std::move(indices);
+/*
+      }
+      else {
+        std::vector<std::size_t> indices(borders[i].size());
+        for (std::size_t j = borders[i].size() - 1; j != std::size_t(-1); j--) {
+          auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
+          if (p.second)
+            *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
+          indices[j] = p.first->second;
+        }
+
+        *polyit++ = std::move(indices);
+      }*/
     }
   }
 

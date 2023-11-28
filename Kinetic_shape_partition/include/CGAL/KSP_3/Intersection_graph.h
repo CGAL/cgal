@@ -131,8 +131,6 @@ private:
   std::size_t m_nb_lines_on_bbox;
   std::map<Point_3, Vertex_descriptor> m_map_points;
   std::map<std::vector<std::size_t>, Vertex_descriptor> m_map_vertices;
-  std::map<Vertex_descriptor, Vertex_descriptor> m_vmap;
-  std::map<Edge_descriptor, Edge_descriptor> m_emap;
   std::vector<Face_property> m_ifaces;
 
   std::vector<bool> m_initial_part_of_partition;
@@ -154,12 +152,8 @@ public:
     return static_cast<std::size_t>(boost::num_vertices(m_graph));
   }
 
-  const std::map<Vertex_descriptor, Vertex_descriptor>& vmap() const {
-    return m_vmap;
-  }
-
-  const std::map<Edge_descriptor, Edge_descriptor>& emap() const {
-    return m_emap;
+  std::size_t number_of_faces() const {
+    return m_ifaces.size();
   }
 
   static Vertex_descriptor null_ivertex() {
@@ -182,7 +176,6 @@ public:
   std::size_t nb_lines() const { return m_lines.size(); }
 
   const std::pair<Vertex_descriptor, bool> add_vertex(const Point_3& point) {
-
     const auto pair = m_map_points.insert(std::make_pair(point, Vertex_descriptor()));
     const auto is_inserted = pair.second;
     if (is_inserted) {
@@ -194,7 +187,6 @@ public:
 
   const std::pair<Vertex_descriptor, bool> add_vertex(
     const Point_3& point, const std::vector<std::size_t>& intersected_planes) {
-
     const auto pair = m_map_vertices.insert(std::make_pair(intersected_planes, Vertex_descriptor()));
     const auto is_inserted = pair.second;
     if (is_inserted) {
@@ -207,7 +199,6 @@ public:
   const std::pair<Edge_descriptor, bool> add_edge(
     const Vertex_descriptor& source, const Vertex_descriptor& target,
     const std::size_t support_plane_idx) {
-
     const auto out = boost::add_edge(source, target, m_graph);
     m_graph[out.first].planes.insert(support_plane_idx);
 
@@ -218,7 +209,6 @@ public:
   const std::pair<Edge_descriptor, bool> add_edge(
     const Vertex_descriptor& source, const Vertex_descriptor& target,
     const IndexContainer& support_planes_idx) {
-
     const auto out = boost::add_edge(source, target, m_graph);
     for (const auto support_plane_idx : support_planes_idx) {
       m_graph[out.first].planes.insert(support_plane_idx);
@@ -226,8 +216,7 @@ public:
     return out;
   }
 
-  const std::pair<Edge_descriptor, bool> add_edge(
-    const Point_3& source, const Point_3& target) {
+  const std::pair<Edge_descriptor, bool> add_edge(const Point_3& source, const Point_3& target) {
     return add_edge(add_vertex(source).first, add_vertex(target).first);
   }
 
@@ -273,9 +262,13 @@ public:
     m_graph[edge].line = line_idx;
   }
 
-  std::size_t line(const Edge_descriptor& edge) const { return m_graph[edge].line; }
+  std::size_t line(const Edge_descriptor& edge) const {
+    return m_graph[edge].line;
+  }
 
-  const Line_3& line(std::size_t line_idx) const { return m_lines[line_idx]; }
+  const Line_3& line(std::size_t line_idx) const {
+    return m_lines[line_idx];
+  }
 
   bool line_is_on_bbox(std::size_t line_idx) const {
     return line_idx < m_nb_lines_on_bbox;
@@ -353,16 +346,29 @@ public:
     return std::make_pair(sedge, tedge);
   }
 
-  decltype(auto) vertices() const { return CGAL::make_range(boost::vertices(m_graph)); }
+  decltype(auto) vertices() const {
+    return CGAL::make_range(boost::vertices(m_graph));
+  }
+
   decltype(auto) edges() const {
     return CGAL::make_range(boost::edges(m_graph));
   }
 
-  std::vector<Face_descriptor>& faces() { return m_ifaces; }
-  const std::vector<Face_descriptor>& faces() const { return m_ifaces; }
+  std::vector<Face_descriptor>& faces() {
+    return m_ifaces;
+  }
 
-  const Vertex_descriptor source(const Edge_descriptor& edge) const { return boost::source(edge, m_graph); }
-  const Vertex_descriptor target(const Edge_descriptor& edge) const { return boost::target(edge, m_graph); }
+  const std::vector<Face_descriptor>& faces() const {
+    return m_ifaces;
+  }
+
+  const Vertex_descriptor source(const Edge_descriptor& edge) const {
+    return boost::source(edge, m_graph);
+  }
+
+  const Vertex_descriptor target(const Edge_descriptor& edge) const {
+    return boost::target(edge, m_graph);
+  }
 
   bool is_edge(const Vertex_descriptor& source, const Vertex_descriptor& target) const {
     return boost::edge(source, target, m_graph).second;
@@ -376,11 +382,20 @@ public:
     return CGAL::make_range(boost::out_edges(vertex, m_graph));
   }
 
-  const std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) const { return m_graph[edge].planes; }
-  std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) { return m_graph[edge].planes; }
+  const std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) const {
+    return m_graph[edge].planes;
+  }
 
-  const std::pair<Kinetic_interval_iterator, Kinetic_interval_iterator> kinetic_intervals(const Edge_descriptor& edge) { return std::pair<Kinetic_interval_iterator, Kinetic_interval_iterator>(m_graph[edge].intervals.begin(), m_graph[edge].intervals.end()); }
-  Kinetic_interval& kinetic_interval(const Edge_descriptor& edge, std::size_t sp_idx) { return m_graph[edge].intervals[sp_idx]; }
+  std::set<std::size_t>& intersected_planes(const Edge_descriptor& edge) {
+    return m_graph[edge].planes;
+  }
+
+  const std::pair<Kinetic_interval_iterator, Kinetic_interval_iterator> kinetic_intervals(const Edge_descriptor& edge) {
+    return std::pair<Kinetic_interval_iterator, Kinetic_interval_iterator>(m_graph[edge].intervals.begin(), m_graph[edge].intervals.end());
+  }
+  Kinetic_interval& kinetic_interval(const Edge_descriptor& edge, std::size_t sp_idx) {
+    return m_graph[edge].intervals[sp_idx];
+  }
 
   const Point_3& point_3(const Vertex_descriptor& vertex) const {
     return m_graph[vertex].point;
@@ -398,10 +413,14 @@ public:
       m_graph[boost::target(edge, m_graph)].point);
   }
 
-  bool has_crossed(const Edge_descriptor& edge, std::size_t sp_idx) { return m_graph[edge].crossed.count(sp_idx) == 1; }
+  bool has_crossed(const Edge_descriptor& edge, std::size_t sp_idx) {
+    return m_graph[edge].crossed.count(sp_idx) == 1;
+  }
+
   void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) {
     CGAL_assertion(false);
-    m_graph[edge].crossed.insert(sp_idx); }
+    m_graph[edge].crossed.insert(sp_idx);
+  }
 };
 
 template<typename GeomTraits, typename IntersectionKernel> std::size_t Intersection_graph<GeomTraits, IntersectionKernel>::Edge_property::edge_counter = 0;
