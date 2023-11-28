@@ -217,7 +217,7 @@ struct AW3_interrupter_visitor
   { }
 
   template <typename Wrapper>
-  constexpr bool go_further(const Wrapper& wrapper)
+  constexpr bool go_further(const Wrapper&)
   {
     return !(*should_stop);
   }
