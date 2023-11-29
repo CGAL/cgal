@@ -930,11 +930,12 @@ namespace CommonKernelFunctors {
      const Vector_3 ad = vector(a,d);
 
      const Vector_3 abad = cross_product(ab,ad);
-     const double x = CGAL::to_double(scalar_product(cross_product(ab,ac), abad));
+     const Vector_3 abac = cross_product(ab,ac);
      const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
-     const double y = l_ab * CGAL::to_double(scalar_product(ac,abad));
+     const double y = l_ab * CGAL::to_double(scalar_product(abac, abad));
+     const double z = CGAL::to_double(scalar_product(cross_product(ab,abac),abad));
 
-     return -FT(std::atan2(y, x) * 180 / CGAL_PI );
+     return FT(std::atan2(z, y) * 180 / CGAL_PI );
    }
  };
 
