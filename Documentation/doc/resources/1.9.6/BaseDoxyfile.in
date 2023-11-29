@@ -115,7 +115,6 @@ ALIASES                = "cgal=%CGAL" \
                          "taucs=TAUCS" \
                          "lapack=LAPACK" \
                          "blas=BLAS" \
-                         "opennl=OpenNL" \
                          "cpp=C++" \
                          "cpp11=C++11" \
                          "CC=C++" \

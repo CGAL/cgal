@@ -106,7 +106,6 @@ ALIASES                = "cgal=%CGAL" \
                          "taucs=TAUCS" \
                          "lapack=LAPACK" \
                          "blas=BLAS" \
-                         "opennl=OpenNL" \
                          "cpp=C++" \
                          "cpp11=C++11" \
                          "CC=C++" \
@@ -768,4 +767,3 @@ DIRECTORY_GRAPH        = NO
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 INTERACTIVE_SVG        = YES
-

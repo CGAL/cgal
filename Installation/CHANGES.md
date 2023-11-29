@@ -16,6 +16,7 @@ Release date: October 2023
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
 - **Breaking chahge**: The file CMake file `UseCGAL.cmake` has been removed from CGAL. Usages of the CMake variables `${CGAL_USE_FILE}` and `${CGAL_LIBRARIES}` must be replaced by a link to the imported target `CGAL::CGAL`, for example: `target_link_library(the_target PRIVATE CGAL::CGAL)`.
 
+
 #### 2D Arrangements
 
 - **Breaking change**: The type of the result of point location queries changed to
@@ -60,6 +61,9 @@ Release date: October 2023
 -   **Breaking change**: The template parameters of
     `CGAL::Simplicial_mesh_cell_base_3`
     have been modified to enable passing a geometric traits and a custom cell base class.
+
+### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
+- **Breaking change**: LSCM_parameterizer_3 needs Eigen
 
 ### [3D Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulation3)
 -   Added three functions `vertices()` to the class `Triangulation_3`.
