@@ -1040,6 +1040,7 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
 
   }
 }
+
 void delete_aabb_tree(Scene_surface_mesh_item* item)
 {
     QVariant aabb_tree_property = item->property(aabb_property_name);

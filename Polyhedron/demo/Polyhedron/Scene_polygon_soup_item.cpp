@@ -150,6 +150,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
       pointIds.push_back(pointId);
     } while( ++it != it_end );
     //detect degenerated faces
+/*
     std::vector<FT::PointAndId> pid_stack = pointIds;
     for(std::size_t i = 0; i< pointIds.size(); ++i)
     {
@@ -162,7 +163,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
         return;
       }
      }
-    }
+    }*/
     FT triangulation(pointIds,normal);
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors

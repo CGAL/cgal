@@ -726,6 +726,9 @@ bool read_PLY_faces(std::istream& in,
 
   for(std::size_t j = 0; j < element.number_of_items(); ++ j)
   {
+    if (j == 228)
+      std::cout << std::endl;
+
     for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
     {
       PLY_read_number* property = element.property(k);
@@ -757,6 +760,9 @@ bool read_PLY_faces(std::istream& in,
                          std::make_pair(CGAL::make_nth_of_tuple_property_map<0>(new_face),
                                         PLY_property<std::vector<Integer> >(vertex_indices_tag)));
     }
+
+    if (get<0>(new_face).size() == 0)
+      std::cout << "empty face encountered" << std::endl;
 
     polygons.emplace_back();
     ::CGAL::internal::resize(polygons.back(), get<0>(new_face).size());
