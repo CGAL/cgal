@@ -105,9 +105,12 @@ else(CGAL_BRANCH_BUILD)
       "${CGAL_SOURCE_DIR}"
       CACHE INTERNAL "Directory containing the GraphicsView package")
 
-  # Enable testing with BUILD_TESTING
-  option(BUILD_TESTING "Build the testing tree." OFF)
-  if(BUILD_TESTING)
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
+option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
+  if(CGAL_ENABLE_TESTING)
     enable_testing()
   endif()
 endif(CGAL_BRANCH_BUILD)

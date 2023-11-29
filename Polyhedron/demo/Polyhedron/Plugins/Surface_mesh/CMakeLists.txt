@@ -14,7 +14,7 @@ if(NOT CGAL_DISABLE_GMP)
       parameterization_plugin PUBLIC scene_surface_mesh_item scene_textured_item
                                      scene_selection_item CGAL::Eigen3_support)
 
-    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+    if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
         "compilation of  parameterization_plugin"
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
@@ -29,7 +29,7 @@ if(NOT CGAL_DISABLE_GMP)
                          ${segmentationUI_FILES})
   target_link_libraries(mesh_segmentation_plugin PUBLIC scene_surface_mesh_item)
 
-  if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+  if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
     set_tests_properties(
       "compilation of  mesh_segmentation_plugin"
       PROPERTIES RESOURCE_LOCK Selection_test_resources)
