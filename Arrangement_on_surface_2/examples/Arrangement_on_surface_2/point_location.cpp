@@ -8,8 +8,8 @@
 #include "arr_inexact_construction_segments.h"
 #include "point_location_utils.h"
 
-typedef CGAL::Arr_naive_point_location<Arrangement>         Naive_pl;
-typedef CGAL::Arr_landmarks_point_location<Arrangement>     Landmarks_pl;
+using Naive_pl = CGAL::Arr_naive_point_location<Arrangement>;
+using Landmarks_pl = CGAL::Arr_landmarks_point_location<Arrangement>;
 
 int main() {
   // Construct the arrangement.
