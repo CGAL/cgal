@@ -62,10 +62,10 @@ void compute_face(const LCC& lcc,
                   typename LCC::Dart_const_handle dh,
                   typename LCC::Dart_const_handle voldh,
                   CGAL::Graphics_scene& graphics_scene,
-                  const GSOptionsLCC& gs_options)
+                  const GSOptionsLCC& gso)
 {
-  if (!gs_options.are_faces_enabled() ||
-      !gs_options.draw_face(lcc, dh))
+  if (!gso.are_faces_enabled() ||
+      !gso.draw_face(lcc, dh))
   { return; }
 
   // We fill only closed faces.
@@ -78,13 +78,13 @@ void compute_face(const LCC& lcc,
   }
   while (cur!=dh);
 
-  if (gs_options.colored_volume(lcc, voldh))
+  if (gso.colored_volume(lcc, voldh))
   {
-    graphics_scene.face_begin(gs_options.volume_color(lcc, voldh));
+    graphics_scene.face_begin(gso.volume_color(lcc, voldh));
   }
-  else if (gs_options.colored_face(lcc, dh))
+  else if (gso.colored_face(lcc, dh))
   {
-    graphics_scene.face_begin(gs_options.face_color(lcc, dh));
+    graphics_scene.face_begin(gso.face_color(lcc, dh));
   }
   else
   { graphics_scene.face_begin(); }
@@ -106,20 +106,20 @@ template <class LCC, class GSOptions>
 void compute_edge(const LCC& lcc,
                   typename LCC::Dart_const_handle dh,
                   CGAL::Graphics_scene& graphics_scene,
-                  const GSOptions& gs_options)
+                  const GSOptions& gso)
 {
-  if (!gs_options.are_edges_enabled() ||
-      !gs_options.draw_edge(lcc, dh))
+  if (!gso.are_edges_enabled() ||
+      !gso.draw_edge(lcc, dh))
   { return; }
 
   const typename LCC::Point& p1=lcc.point(dh);
   typename LCC::Dart_const_handle d2=lcc.other_extremity(dh);
   if (d2!=LCC::null_descriptor)
   {
-    if (gs_options.colored_edge(lcc, dh))
+    if (gso.colored_edge(lcc, dh))
     {
       graphics_scene.add_segment(p1, lcc.point(d2),
-                                 gs_options.edge_color(lcc, dh));
+                                 gso.edge_color(lcc, dh));
     }
     else
     { graphics_scene.add_segment(p1, lcc.point(d2)); }
@@ -130,16 +130,15 @@ template <class LCC, class GSOptionsLCC>
 void compute_vertex(const LCC& lcc,
                     typename LCC::Dart_const_handle dh,
                     CGAL::Graphics_scene& graphics_scene,
-                    const GSOptionsLCC& gs_options)
+                    const GSOptionsLCC& gso)
 {
-  if (!gs_options.are_vertices_enabled() ||
-      !gs_options.draw_vertex(lcc, dh))
+  if (!gso.are_vertices_enabled() || !gso.draw_vertex(lcc, dh))
   { return; }
 
-  if (gs_options.colored_vertex(lcc, dh))
+  if (gso.colored_vertex(lcc, dh))
   {
     graphics_scene.add_point(lcc.point(dh),
-                             gs_options.vertex_color(lcc, dh));
+                             gso.vertex_color(lcc, dh));
   }
   else
   { graphics_scene.add_point(lcc.point(dh)); }
@@ -148,7 +147,7 @@ void compute_vertex(const LCC& lcc,
 template <class LCC, class GSOptions>
 void compute_elements(const LCC& lcc,
                       CGAL::Graphics_scene& graphics_scene,
-                      const GSOptions& gs_options)
+                      const GSOptions& gso)
 {
   typename LCC::size_type markvolumes = lcc.get_new_mark();
   typename LCC::size_type markfaces = lcc.get_new_mark();
@@ -162,7 +161,7 @@ void compute_elements(const LCC& lcc,
         itend=lcc.darts().end(); it!=itend; ++it)
   {
     if (!lcc.is_marked(it, markvolumes) &&
-        gs_options.draw_volume(lcc, it))
+        gso.draw_volume(lcc, it))
     {
       for(typename LCC::template Dart_of_cell_basic_range<3>::const_iterator
             itv=lcc.template darts_of_cell_basic<3>(it, markvolumes).begin(),
@@ -172,13 +171,13 @@ void compute_elements(const LCC& lcc,
         lcc.mark(itv, markvolumes);
         if (!lcc.is_marked(itv, markfaces) &&
             lcc.is_marked(itv, oriented_mark) &&
-            gs_options.draw_face(lcc, itv))
+            gso.draw_face(lcc, itv))
         {
-          if ((!gs_options.volume_wireframe(lcc, itv) ||
+          if ((!gso.volume_wireframe(lcc, itv) ||
                (!lcc.template is_free<3>(itv) &&
-                !gs_options.volume_wireframe(lcc, lcc.template opposite<3>(itv)))) &&
-              !gs_options.face_wireframe(lcc, itv))
-          { compute_face(lcc, itv, it, graphics_scene, gs_options); }
+                !gso.volume_wireframe(lcc, lcc.template opposite<3>(itv)))) &&
+              !gso.face_wireframe(lcc, itv))
+          { compute_face(lcc, itv, it, graphics_scene, gso); }
           for(typename LCC::template Dart_of_cell_basic_range<2>::const_iterator
                 itf=lcc.template darts_of_cell_basic<2>(itv, markfaces).begin(),
                 itfend=lcc.template darts_of_cell_basic<2>(itv, markfaces).end();
@@ -186,9 +185,9 @@ void compute_elements(const LCC& lcc,
           {
             lcc.mark(itf, markfaces);
             if (!lcc.is_marked(itf, markedges) &&
-                gs_options.draw_edge(lcc, itf))
+                gso.draw_edge(lcc, itf))
             {
-              compute_edge(lcc, itf, graphics_scene, gs_options);
+              compute_edge(lcc, itf, graphics_scene, gso);
               for(typename LCC::template Dart_of_cell_basic_range<1>::const_iterator
                     ite=lcc.template darts_of_cell_basic<1>(itf, markedges).begin(),
                     iteend=lcc.template darts_of_cell_basic<1>(itf, markedges).end();
@@ -196,9 +195,9 @@ void compute_elements(const LCC& lcc,
               {
                 lcc.mark(ite, markedges);
                 if (!lcc.is_marked(ite, markvertices) &&
-                    gs_options.draw_vertex(lcc, ite))
+                    gso.draw_vertex(lcc, ite))
                 {
-                  compute_vertex(lcc, ite, graphics_scene, gs_options);
+                  compute_vertex(lcc, ite, graphics_scene, gso);
                   CGAL::mark_cell<LCC, 0>(lcc, ite, markvertices);
                 }
               }
@@ -241,10 +240,10 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          class GSOptions>
 void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
                            CGAL::Graphics_scene& graphics_scene,
-                           const GSOptions& gs_options)
+                           const GSOptions& gso)
 {
   draw_function_for_lcc::compute_elements(static_cast<const Refs&>(alcc),
-                                          graphics_scene, gs_options);
+                                          graphics_scene, gso);
 }
 
 // add_to_graphics_scene: to add a LCC in the given graphic buffer, without a
@@ -261,20 +260,20 @@ void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
                                typename CGAL_LCC_TYPE::Dart_const_handle,
                                typename CGAL_LCC_TYPE::Dart_const_handle,
                                typename CGAL_LCC_TYPE::Dart_const_handle>
-    gs_options;
+    gso;
 
-  gs_options.colored_volume = [](const CGAL_LCC_TYPE&,
+  gso.colored_volume = [](const CGAL_LCC_TYPE&,
                                  typename CGAL_LCC_TYPE::Dart_const_handle) -> bool
   { return true; };
 
-  gs_options.volume_color =  [] (const CGAL_LCC_TYPE& alcc,
+  gso.volume_color =  [] (const CGAL_LCC_TYPE& alcc,
                                  typename CGAL_LCC_TYPE::Dart_const_handle dh) -> CGAL::IO::Color
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
   };
 
-  add_to_graphics_scene(alcc, graphics_scene, gs_options);
+  add_to_graphics_scene(alcc, graphics_scene, gso);
 }
 
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -285,11 +284,11 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
          template <unsigned int, class, class, class, class> class Map,
          class Refs, class Storage_,
          class GSOptions>
-void draw(const CGAL_LCC_TYPE& alcc, const GSOptions& gs_options,
+void draw(const CGAL_LCC_TYPE& alcc, const GSOptions& gso,
           const char *title="LCC Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_to_graphics_scene(alcc, buffer, gs_options);
+  add_to_graphics_scene(alcc, buffer, gso);
   draw_graphics_scene(buffer, title);
 }
 
