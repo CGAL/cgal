@@ -945,10 +945,10 @@ namespace CommonKernelFunctors {
      //    x = <ab>      * abad
      //    y = <abac>    * abad
      //    z = <ab^abac> * abad
-     // We have x == 0, because abad and ab are orthogonal, and then abad is in
+     // We have x == 0, because abad and ab are orthogonal, and thus abad is in
      // the plane (yz) of the new basis.
      //
-     // In that basic, the dihedral angle is the angle between the y axis and abad
+     // In that basis, the dihedral angle is the angle between the y axis and abad
      // which is the arctan of y/z, or atan2(z, y).
      //
      // (Note that ab^abac is in the plane abc, pointing outside the tetra if
