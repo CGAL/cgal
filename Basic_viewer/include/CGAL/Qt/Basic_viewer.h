@@ -35,7 +35,7 @@
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <QKeyEvent>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 #ifdef __GNUC__
@@ -1508,7 +1508,7 @@ protected:
   static const unsigned int NB_GL_BUFFERS=(GS::END_POS-GS::BEGIN_POS)+
     (GS::END_COLOR-GS::BEGIN_COLOR)+3; // +2 for normals (mono and color), +1 for clipping plane
 
-  QGLBuffer buffers[NB_GL_BUFFERS]; // +1 for the vbo buffer of clipping plane
+  QOpenGLBuffer buffers[NB_GL_BUFFERS]; // +1 for the buffer of clipping plane
 
   // The following enum gives the indices of the different vao.
   enum

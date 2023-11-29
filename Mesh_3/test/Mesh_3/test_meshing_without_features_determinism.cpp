@@ -24,6 +24,7 @@
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
+
 template <typename Concurrency_tag>
 void test()
 {
@@ -31,7 +32,7 @@ void test()
   std::size_t nb_runs   = 2;
   unsigned int nb_lloyd = 2;
   unsigned int nb_odt   = 2;
-  double perturb_bound  = 10.;
+  double perturb_bound  = 7.;
   double exude_bound    = 15.;
 
   // Domain

@@ -43,10 +43,10 @@ Primitive_container::Primitive_container(int program, bool indexed)
 
 Primitive_container::~Primitive_container()
 {
-  Q_FOREACH(Vbo* vbo, d->VBOs)
+  for(Vbo* vbo: d->VBOs)
     if(vbo)
       delete vbo;
-  Q_FOREACH(CGAL::Three::Viewer_interface*viewer, d->VAOs.keys())
+  for(CGAL::Three::Viewer_interface*viewer: d->VAOs.keys())
   {
     removeViewer(viewer);
   }
@@ -72,7 +72,7 @@ void Primitive_container::initializeBuffers(CGAL::Three::Viewer_interface* viewe
     return;
   viewer->makeCurrent();
   d->VAOs[viewer]->bind();
-  Q_FOREACH(CGAL::Three::Vbo* vbo, d->VAOs[viewer]->vbos)
+  for(CGAL::Three::Vbo* vbo: d->VAOs[viewer]->vbos)
   {
     vbo->bind();
     if(vbo->dataSize !=0)
@@ -136,7 +136,7 @@ void Primitive_container::removeViewer(CGAL::Three::Viewer_interface* viewer)
 
 void Primitive_container::reset_vbos(Scene_item_rendering_helper::Gl_data_names name)
 {
-  Q_FOREACH(CGAL::Three::Vbo* vbo, d->VBOs)
+  for(CGAL::Three::Vbo* vbo: d->VBOs)
   {
     if(!vbo)
       continue;

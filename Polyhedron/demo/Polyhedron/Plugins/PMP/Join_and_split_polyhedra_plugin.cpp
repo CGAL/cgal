@@ -62,7 +62,7 @@ public:
 
   bool applicable(QAction* a) const
   {
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if (qobject_cast<Scene_facegraph_item*>(scene->item(index)))
         return true;
@@ -94,7 +94,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
     return;
   }
   std::vector<int> indices_to_remove;
-  Q_FOREACH(int index, scene->selectionIndices()) {
+  for(int index : scene->selectionIndices()) {
     if (index == mainSelectionIndex)
       continue;
 
@@ -113,7 +113,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
 
   //remove the other items
   std::sort(indices_to_remove.begin(), indices_to_remove.end(), std::greater<int>());
-  Q_FOREACH(int index, indices_to_remove)
+  for(int index : indices_to_remove)
   {
     scene->erase(index);
   }
@@ -137,7 +137,7 @@ bool operator()(const FaceGraph& mesh1, const FaceGraph& mesh2)
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_triggered()
 {
-  Q_FOREACH(int index, scene->selectionIndices()) {
+  for(int index : scene->selectionIndices()) {
     Scene_facegraph_item* item =
       qobject_cast<Scene_facegraph_item*>(scene->item(index));
     if(item)
@@ -203,7 +203,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
 
   std::set<Scene_facegraph_item*> to_skip;
 
-  Q_FOREACH(int index, scene->selectionIndices())
+  for(int index : scene->selectionIndices())
   {
     Scene_facegraph_item* item =
       qobject_cast<Scene_facegraph_item*>(scene->item(index));

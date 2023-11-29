@@ -5,8 +5,8 @@ namespace CGAL {
 
 opens a new window and draws a triangulation. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
-A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalAdvancedBegin
 The real declaration of this function template is:

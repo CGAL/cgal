@@ -51,6 +51,7 @@ Polygon_mesh_processing/connected_components Polygon Mesh Processing - Connected
 Polygon_mesh_processing/corefinement Polygon Mesh Processing - Corefinement
 Polygon_mesh_processing/core Polygon Mesh Processing - Core
 Polygon_mesh_processing/distance Polygon Mesh Processing - Distance
+Polygon_mesh_processing/interpolated_corrected_curvatures Polygon Mesh Processing - Interpolated Corrected Curvatures
 Polygon_mesh_processing/measure Polygon Mesh Processing - Geometric Measure
 Polygon_mesh_processing/meshing_hole_filling Polygon Mesh Processing - Meshing and Hole Filling
 Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation

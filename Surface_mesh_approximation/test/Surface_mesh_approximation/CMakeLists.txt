@@ -15,6 +15,9 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
+create_single_source_cgal_program("vsa_border_test.cpp")
+target_link_libraries(vsa_border_test PUBLIC CGAL::Eigen3_support)
+
 create_single_source_cgal_program("vsa_class_interface_test.cpp")
 target_link_libraries(vsa_class_interface_test PUBLIC CGAL::Eigen3_support)
 
