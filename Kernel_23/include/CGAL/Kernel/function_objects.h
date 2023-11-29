@@ -937,11 +937,11 @@ namespace CommonKernelFunctors {
      // (abac points inside the tetra abcd if its orientation is positive and outside otherwise)
      // In order to increase the numerical precision of the computation, we consider the
      // vector abad in the basis defined by (ab, abac, ab^abac).
-     // In this basis, adab=(ab * abad, abac * abad, [ab^abac] * abad), as all basis vector are orthogonal.
-     // We have ab * abad = 0, so in the plane (zy) of the new basis
-     // the dihedral angle is the angle between the z axis and abad
+     // In this basis, adab=(ab * abad, abac * abad, [ab^abac] * abad), as all basis vectors are orthogonal.
+     // We have ab * abad = 0, so in the plane (yz) of the new basis
+     // the dihedral angle is the angle between the y axis and abad
      // which is the arctan of y/z (up to normalization)
-     // (Note that ab^abac is in the plane abc, pointing inside the tetra if its orientation is positive and outside otherwise).
+     // (Note that ab^abac is in the plane abc, pointing outside the tetra if its orientation is positive and inside otherwise).
      // For the normalization, abad appears in both scalar products
      // in the quotient so we can ignore its norm. For the second
      // terms of the scalar products, we are left with ab^abac and abac.
