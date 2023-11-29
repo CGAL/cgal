@@ -411,8 +411,8 @@ void draw(const Mesh& mesh,
   draw_graphics_scene(buffer, title);
 }
 
-} // End namespace CGAL
-
 #endif // CGAL_USE_BASIC_VIEWER
+
+} // End namespace CGAL
 
 #endif // CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
