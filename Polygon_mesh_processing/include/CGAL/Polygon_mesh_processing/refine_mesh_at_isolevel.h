@@ -93,27 +93,24 @@ void refine_mesh_at_isolevel(PolygonMesh& pm,
 
   std::unordered_map<face_descriptor, std::vector<halfedge_descriptor> > faces_to_split;
   std::vector<edge_descriptor> to_split;
+  std::unordered_set<vertex_descriptor> vertices_on_isoline;
   for (edge_descriptor e : edges(pm))
   {
     vertex_descriptor src = source(e, pm), tgt = target(e, pm);
+
     if (get(value_map, src)==isovalue)
     {
-      for (halfedge_descriptor h : halfedges_around_source(halfedge(e, pm), pm))
+      vertices_on_isoline.insert(src);
+      if (get(value_map, tgt)==isovalue)
       {
-        face_descriptor f = face(h, pm);
-        if (f!=boost::graph_traits<PolygonMesh>::null_face())
-          faces_to_split[f].push_back(opposite(h, pm));
+        put(ecm, e, true); // special case for faces entirely on an isovalue
+        continue;
       }
       continue;
     }
     if (get(value_map, tgt)==isovalue)
     {
-      for (halfedge_descriptor h : halfedges_around_target(halfedge(e, pm), pm))
-      {
-        face_descriptor f = face(h, pm);
-        if (f!=boost::graph_traits<PolygonMesh>::null_face())
-          faces_to_split[f].push_back(h);
-      }
+      vertices_on_isoline.insert(tgt);
       continue;
     }
     if ( (get(value_map, tgt) < isovalue) != (get(value_map, src) < isovalue) )
@@ -138,6 +135,16 @@ void refine_mesh_at_isolevel(PolygonMesh& pm,
     f = face(hnew, pm);
     if (f!=boost::graph_traits<PolygonMesh>::null_face())
       faces_to_split[f].push_back(hnew);
+  }
+
+  for (vertex_descriptor vh : vertices_on_isoline)
+  {
+    for (halfedge_descriptor h : halfedges_around_target(vh, pm))
+    {
+      face_descriptor f = face(h, pm);
+      if (f!=boost::graph_traits<PolygonMesh>::null_face())
+        faces_to_split[f].push_back(h);
+    }
   }
 
   for (const auto& p : faces_to_split)
