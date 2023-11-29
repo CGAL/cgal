@@ -30,10 +30,9 @@
 #include <QVector>
 #include <QElapsedTimer>
 #include <QTimer>
-#include <QGLContext>
 #include <QOpenGLWidget>
 #include <QMouseEvent>
-
+#include <QKeyCombination>
 
 class QTabWidget;
 class QImage;
@@ -71,9 +70,6 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
 public:
-  //todo check if this is used. If not remove it
-  explicit QGLViewer(QGLContext* context, QWidget *parent = nullptr,
-                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
   explicit QGLViewer(QOpenGLContext* context, QWidget *parent = nullptr,
                      ::Qt::WindowFlags flags = ::Qt::WindowType(0));
   explicit QGLViewer(QWidget *parent = nullptr,
@@ -841,33 +837,27 @@ compatible with raster mode): use \c glRasterPos3fv() instead. */
   /*! @name Keyboard customization */
   //@{
 public:
-  unsigned int shortcut(qglviewer::KeyboardAction action) const;
+  QKeyCombination shortcut(qglviewer::KeyboardAction action) const;
 
   ::Qt::Key pathKey(unsigned int index) const;
   ::Qt::KeyboardModifiers addKeyFrameKeyboardModifiers() const;
   ::Qt::KeyboardModifiers playPathKeyboardModifiers() const;
 
 public Q_SLOTS:
-  void setShortcut(qglviewer::KeyboardAction action, unsigned int key);
+  void setShortcut(qglviewer::KeyboardAction action, QKeyCombination key);
   void setShortcut(qglviewer::KeyboardAction action, ::Qt::Modifier modifier, ::Qt::Key key)
   {
-    setShortcut(action,
-                static_cast<unsigned int>(modifier)+
-                static_cast<unsigned int>(key));
+    setShortcut(action, QKeyCombination{modifier, key});
   }
 
-  void setKeyDescription(unsigned int key, QString description);
+  void setKeyDescription(QKeyCombination key, QString description);
   void setKeyDescription(::Qt::KeyboardModifier modifier, ::Qt::Key key, QString description)
   {
-    setKeyDescription(static_cast<unsigned int>(modifier) +
-                      static_cast<unsigned int>(key),
-                      description);
+    setKeyDescription(QKeyCombination{modifier, key}, description);
   }
   void setKeyDescription(::Qt::Modifier modifier, ::Qt::Key key, QString description)
   {
-    setKeyDescription(static_cast<unsigned int>(modifier) +
-                      static_cast<unsigned int>(key),
-                      description);
+    setKeyDescription(QKeyCombination{modifier, key}, description);
   }
   void clearShortcuts();
 
@@ -1077,8 +1067,8 @@ protected:
   void setDefaultShortcuts();
   QString cameraPathKeysString() const;
   QMap<qglviewer::KeyboardAction, QString> keyboardActionDescription_;
-  QMap<qglviewer::KeyboardAction, unsigned int> keyboardBinding_;
-  QMap<unsigned int, QString> keyDescription_;
+  QMap<qglviewer::KeyboardAction, QKeyCombination> keyboardBinding_;
+  QHash<QKeyCombination, QString> keyDescription_;
 
   // K e y   F r a m e s   s h o r t c u t s
   QMap< ::Qt::Key, unsigned int> pathIndex_;
@@ -1158,7 +1148,7 @@ protected:
         return modifiers < cbp.modifiers;
       if (button != cbp.button)
         return button < cbp.button;
-      return doubleClick != cbp.doubleClick;
+      return doubleClick < cbp.doubleClick;
     }
   };
 #endif

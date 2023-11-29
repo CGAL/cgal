@@ -1,7 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <QtOpenGL/qgl.h>
 #include <iostream>
 #include <cmath>
 
@@ -77,7 +76,6 @@ private:
     };
 
 public:
-    QGLContext* context;
     void draw(CGAL::QGLViewer*);
     void update_bbox();
     Bbox bbox() { return m_bbox; }
@@ -173,7 +171,7 @@ private:
     void attrib_buffers(CGAL::QGLViewer*);
     void compile_shaders();
     void compute_texture(int, int, Color_ramp, Color_ramp);
-private slots:
+private Q_SLOTS:
     void updateCutPlane();
 
 public:
@@ -255,7 +253,7 @@ public:
 
 
 
-public slots:
+public Q_SLOTS:
     // cutting plane
     void cutting_plane(bool override = false);
     void changed();

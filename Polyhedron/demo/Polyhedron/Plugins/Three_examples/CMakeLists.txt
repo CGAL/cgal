@@ -10,22 +10,19 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 #Find CGAL
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 ImageIO)
-# Find Qt5 itself
-find_package(Qt5 QUIET
-             COMPONENTS OpenGL Script Svg
-             OPTIONAL_COMPONENTS ScriptTools WebSockets)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6 ImageIO)
+# Find Qt6 itself
+find_package(Qt6 QUIET
+             COMPONENTS OpenGLWidgets Svg
+             OPTIONAL_COMPONENTS WebSockets)
 
 if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
-  if(Qt5_FOUND)
-    include(${CGAL_USE_FILE})
-  endif()
   polyhedron_demo_plugin(example_plugin Example_plugin)
 
-  qt5_wrap_ui(basicUI_FILES Basic_dialog.ui)
+  qt6_wrap_ui(basicUI_FILES Basic_dialog.ui)
   polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
 
-  qt5_wrap_ui(dockUI_FILES Basic_dock_widget.ui)
+  qt6_wrap_ui(dockUI_FILES Basic_dock_widget.ui)
   polyhedron_demo_plugin(dock_widget_plugin Dock_widget_plugin ${dockUI_FILES})
 
   polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)

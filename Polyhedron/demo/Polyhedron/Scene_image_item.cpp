@@ -89,7 +89,7 @@ Image_accessor<Word_type>::Image_accessor(const Image& im, int dx, int dy, int d
   }
 
   const double nb_Colors = colors_.size()+1;
-  double i=1;
+  double i=0;
   const double starting_hue = default_color.hueF();
   for ( auto it = colors_.begin(),
        end = colors_.end() ; it != end ; ++it, i += 1.)

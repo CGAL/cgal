@@ -12,7 +12,7 @@ void CGAL::Three::Polyhedron_demo_plugin_helper::addDockWidget(QDockWidget* dock
   dock_widget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
   QList<QDockWidget*> dockWidgets = mw->findChildren<QDockWidget*>();
   int counter = 0;
-  Q_FOREACH(QDockWidget* dock, dockWidgets) {
+  for(QDockWidget* dock : dockWidgets) {
     if( mw->dockWidgetArea(dock) != ::Qt::LeftDockWidgetArea ||
         dock == dock_widget )
     { continue; }
@@ -45,7 +45,7 @@ void CGAL::Three::Polyhedron_demo_plugin_helper::autoConnectActions()
     methods << metaObject->method(i);
   }
 
-  Q_FOREACH(QAction* action, actions())
+  for(QAction* action : actions())
   {
     bool success = false;
 //     qDebug("Autoconnecting action \"%s\"...",

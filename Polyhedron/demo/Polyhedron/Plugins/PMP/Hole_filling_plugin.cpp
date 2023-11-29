@@ -109,7 +109,7 @@ public:
     get_holes();
     active_hole = polyline_data_list.end();
 
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     {
       viewer->installEventFilter(this);
     }
@@ -435,7 +435,7 @@ private:
       ui_widget.Accept_button->setVisible(true);
       ui_widget.Reject_button->setVisible(true);
 
-      Q_FOREACH( QWidget* w, ui_widget.dockWidgetContents->findChildren<QWidget*>() )
+      for( QWidget* w : ui_widget.dockWidgetContents->findChildren<QWidget*>() )
       { w->setEnabled(false); }
 
       ui_widget.Accept_button->setEnabled(true);
@@ -445,7 +445,7 @@ private:
       ui_widget.Accept_button->setVisible(false);
       ui_widget.Reject_button->setVisible(false);
 
-      Q_FOREACH( QWidget* w, ui_widget.dockWidgetContents->findChildren<QWidget*>() )
+      for( QWidget* w : ui_widget.dockWidgetContents->findChildren<QWidget*>() )
       { w->setEnabled(true); }
     }
   }
@@ -882,7 +882,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
     vertices.push_back(target(opposite(b_edges.back(),*poly), *poly));
 
   boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,*poly);
-  Q_FOREACH(fg_vertex_descriptor vh, vertices)
+  for(fg_vertex_descriptor vh : vertices)
   {
     points.push_back(get(vpm,vh));
   }

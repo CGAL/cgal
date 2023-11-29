@@ -30,18 +30,18 @@ class SCENE_TETRAHEDRA_ITEM_EXPORT Scene_tetrahedra_item : public CGAL::Three::S
   Q_OBJECT
 public :
   Scene_tetrahedra_item(Scene_c3t3_item*);
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE {
+  bool supportsRenderingMode(RenderingMode m) const override {
     return (m == Flat);
   }
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
-  void computeElements() const Q_DECL_OVERRIDE;
-  Scene_item* clone() const Q_DECL_OVERRIDE;
-  QString toolTip() const Q_DECL_OVERRIDE{return QString();}
-  bool isEmpty() const Q_DECL_OVERRIDE{ return false;}
-  bool isFinite() const Q_DECL_OVERRIDE{ return true;}
-  void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
-  void compute_bbox() const Q_DECL_OVERRIDE;
+  void draw(CGAL::Three::Viewer_interface* viewer) const override;
+  void invalidateOpenGLBuffers()override;
+  void computeElements() const override;
+  Scene_item* clone() const override;
+  QString toolTip() const override{return QString();}
+  bool isEmpty() const override{ return false;}
+  bool isFinite() const override{ return true;}
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const override;
+  void compute_bbox() const override;
   void setMinMinLabelPointer(QLabel*);
   void setMinMaxLabelPointer(QLabel*);
   void setMaxMinLabelPointer(QLabel*);

@@ -23,6 +23,18 @@ EXCLUDE_SYMBOLS += experimental
 HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/selfintersections.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/mesh_smoothing.png \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/shape_smoothing.png \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-dmax0.040000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-dmin0.040000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-gaussian0.040000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.020000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.020000-0.002000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.030000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.030000-0.002000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.040000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.040000-0.002000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.050000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.050000-0.002000.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_cheese.png \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_colors.png \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_rg_joint.png
+

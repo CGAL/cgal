@@ -31,7 +31,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2Classes
+\ingroup PkgMinkowskiSum2Ref
 
 The `Hertel_Mehlhorn_convex_decomposition_2` class implements the approximation algorithm of Hertel
 and Mehlhorn for decomposing a polygon into convex

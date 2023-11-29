@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Surface_mesh_topology_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # add_definitions(-DCGAL_TRACE_PATH_TESTS)
 # add_definitions(-DCGAL_TRACE_CMAP_TOOLS)
@@ -31,7 +31,7 @@ foreach(cppfile ${SOURCE_FILES})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(edgewidth_lcc PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(edgewidth_surface_mesh PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(facewidth PUBLIC CGAL::CGAL_Basic_viewer)

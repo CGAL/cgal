@@ -11,7 +11,7 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 /**
-* \ingroup PkgSurfaceMeshParameterization
+* \ingroup PkgSurfaceMeshParameterizationRef
 * \file CGAL/surface_mesh_parameterization.h
 * Convenience header file including the headers for all
 * the free functions of this package.
@@ -34,4 +34,3 @@
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Square_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
-

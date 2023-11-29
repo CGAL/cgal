@@ -481,7 +481,7 @@ private:
       ++index;
     }
 
-    Q_FOREACH(Scene_group_item* group, groups)
+    for(Scene_group_item* group : groups)
       if(group && group->getChildren().empty())
         delete group;
 
@@ -841,7 +841,7 @@ private:
 
       ++index;
     }
-    Q_FOREACH(Scene_group_item* group, groups)
+    for(Scene_group_item* group : groups)
       if(group && group->getChildren().empty())
         delete group;
 

@@ -12,11 +12,15 @@ print_backtrace = function(bt, prefix) {
 
 print_exception_and_bt = function(e) {
     print("Caught exception in " + current_filename + ": " + e)
-    print("Backtrace:")
-    print_backtrace(e.backtrace)
+    if(typeof e.backtrace !== 'undefined') {
+console.log("ICI")
+        print("Backtrace:")
+        print_backtrace(e.backtrace)
+    }
 }
 
 quit = main_window.quit
+print = main_window.print
 
 noop = function () {}
 

@@ -34,7 +34,7 @@ using namespace CGAL::Three;
 
     Scene_c3t3_item(bool is_surface = false);
     Scene_c3t3_item(const C3t3& c3t3, bool is_surface = false);
-    ~Scene_c3t3_item();
+    virtual ~Scene_c3t3_item();
 
     Scene_c3t3_item* clone() const  override;
 
@@ -70,7 +70,7 @@ using namespace CGAL::Three;
     //stats
     QString computeStats(int type)  override;
 
-    void copyProperties(Scene_item *) override;
+    virtual void copyProperties(Scene_item *) override;
 
     CGAL::Three::Scene_item::Header_data header() const override;
     bool has_cnc() const;

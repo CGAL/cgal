@@ -26,12 +26,12 @@ link_directories(${OPENMESH_LIBRARY_DIR})
 # Polyhedron
 add_executable(polyhedron_performance performance_2.h polyhedron_performance.h
                                       polyhedron_performance.cpp)
-target_link_libraries(polyhedron_performance ${CGAL_LIBRARIES})
+target_link_libraries(polyhedron_performance CGAL::CGAL)
 
 # LCC_2
 add_executable(lcc_performance_2 performance_2.h lcc_performance_2.h
                                  lcc_performance_2.cpp)
-target_link_libraries(lcc_performance_2 ${CGAL_LIBRARIES})
+target_link_libraries(lcc_performance_2 CGAL::CGAL)
 
 # Surface_mesh
 add_executable(
@@ -80,7 +80,7 @@ add_executable(
 
 target_link_libraries(
   performance_2
-  ${CGAL_LIBRARIES}
+  CGAL::CGAL
   surface_mesh
   algo
   assimp

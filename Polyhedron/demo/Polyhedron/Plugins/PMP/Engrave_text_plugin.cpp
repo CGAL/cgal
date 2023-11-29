@@ -320,7 +320,7 @@ public :
   }
   void init(QMainWindow*,
             CGAL::Three::Scene_interface*,
-            Messages_interface* m) Q_DECL_OVERRIDE{
+            Messages_interface* m) override{
     //get refs
     this->scene = Three::scene();
     this->mw = Three::mainWindow();
@@ -436,12 +436,12 @@ public :
     dock_widget->graphicsView->installEventFilter(navigation);
     dock_widget->graphicsView->viewport()->installEventFilter(navigation);
   }
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     return qobject_cast<Scene_polyhedron_selection_item*>
         (scene->item(scene->mainSelectionIndex()));
   }
-  QList<QAction*> actions() const Q_DECL_OVERRIDE{
+  QList<QAction*> actions() const override{
     return _actions;
   }
 public Q_SLOTS:
@@ -556,8 +556,8 @@ public Q_SLOTS:
     float pxmin(8000),pxmax(-8000),
         pymin(8000), pymax(-8000);
 
-    Q_FOREACH(QPolygonF poly, polys){
-      Q_FOREACH(QPointF pf, poly)
+    for(QPolygonF poly : polys){
+      for(QPointF pf : poly)
       {
         EPICK::Point_2 v = EPICK::Point_2(pf.x(),-pf.y());
         if(v.x() < pxmin)
@@ -570,9 +570,9 @@ public Q_SLOTS:
           pymax = v.y();
       }
     }
-      Q_FOREACH(QPolygonF poly, polys){
+    for(QPolygonF poly : polys){
         polylines.push_back(std::vector<EPICK::Point_2>());
-        Q_FOREACH(QPointF pf, poly)
+        for(QPointF pf : poly)
         {
           EPICK::Point_2 v = EPICK::Point_2(pf.x(),-pf.y());
           polylines.back().push_back(EPICK::Point_2(v.x()*(xmax-xmin)/(pxmax-pxmin) +xmin ,
@@ -705,7 +705,7 @@ public Q_SLOTS:
     CGAL::Bbox_2 bbox= CGAL::bbox_2(local_polylines.front().begin(),
                                     local_polylines.front().end(),
                                     EPICK());
-    Q_FOREACH(const std::vector<EPICK::Point_2>& points,
+    for(const std::vector<EPICK::Point_2>& points :
               local_polylines)
     {
       bbox += CGAL::bbox_2(points.begin(), points.end(), EPICK());
@@ -825,7 +825,7 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
-  void closure()Q_DECL_OVERRIDE
+  void closure()override
   {
     dock_widget->hide();
   }
@@ -965,4 +965,3 @@ private:
   Navigation* navigation = nullptr;
 };
 #include "Engrave_text_plugin.moc"
-

@@ -561,7 +561,7 @@ optimization_done(Optimizer_thread* thread)
                   .arg(thread->time())
                   .arg(translate(return_code));
 
-  Q_FOREACH( QString param, thread->parameters_log() )
+  for( QString param : thread->parameters_log() )
   {
     str.append(QString("( %1 )<br>").arg(param));
   }

@@ -78,18 +78,18 @@ class Scene_alpha_shape_item : public CGAL::Three::Scene_item_rendering_helper
   Q_OBJECT
 public :
   Scene_alpha_shape_item(Scene_points_with_normal_item* , int alpha);
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE {
+  bool supportsRenderingMode(RenderingMode m) const override {
     return (m == Flat);
   }
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-  void drawPoints(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE;
-  void computeElements() const Q_DECL_OVERRIDE;
-  Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
-  QString toolTip() const Q_DECL_OVERRIDE{return QString();}
-  bool isEmpty() const Q_DECL_OVERRIDE{ return false;}
-  bool isFinite() const Q_DECL_OVERRIDE{ return true;}
-  void compute_bbox() const Q_DECL_OVERRIDE {}
+  void draw(CGAL::Three::Viewer_interface* viewer) const override;
+  void drawPoints(CGAL::Three::Viewer_interface* viewer) const override;
+  void invalidateOpenGLBuffers()override;
+  void computeElements() const override;
+  Scene_item* clone() const override{return 0;}
+  QString toolTip() const override{return QString();}
+  bool isEmpty() const override{ return false;}
+  bool isFinite() const override{ return true;}
+  void compute_bbox() const override {}
   Alpha_shape_3 alpha_shape;
   void createPolygonSoup(std::vector<Kernel::Point_3>& points,
                          std::vector<std::vector<std::size_t> >& polys) const;
@@ -99,7 +99,7 @@ public Q_SLOTS:
 private:
   mutable std::vector<float> vertices;
   mutable std::vector<unsigned int> indices;
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const override;
   Point_set point_set;
 }; //end of class Scene_alpha_shape_item
 
@@ -134,7 +134,7 @@ class Q_DECL_EXPORT Alpha_shape_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public :
 
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)Q_DECL_OVERRIDE {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)override {
     this->scene = scene_interface;
     this->mw = mainWindow;
     QAction* actionAlphaShapes= new QAction("Alpha Shapes", mw);
@@ -167,11 +167,11 @@ public :
 
 
   }
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     return qobject_cast<Scene_points_with_normal_item*>( scene->item( scene->mainSelectionIndex() ) );
   }
-  QList<QAction*> actions() const Q_DECL_OVERRIDE {
+  QList<QAction*> actions() const override {
     return _actions;
   }
 public Q_SLOTS:
@@ -260,7 +260,7 @@ public Q_SLOTS:
       dock_widget->poly_itemPushButton->setEnabled(true);
     }
   }
-  void closure() Q_DECL_OVERRIDE
+  void closure() override
   {
     dock_widget->hide();
   }
@@ -363,7 +363,7 @@ void Scene_alpha_shape_item::invalidateOpenGLBuffers()
 {
   getTriangleContainer(0)->reset_vbos(ALL);
   setBuffersFilled(false);
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     Viewer_interface* viewer = static_cast<Viewer_interface*>(v);
     if(viewer == NULL)

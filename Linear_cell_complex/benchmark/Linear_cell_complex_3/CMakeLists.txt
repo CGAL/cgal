@@ -33,7 +33,7 @@ target_link_libraries(
   OpenVolumeMesh
   boost_timer
   boost_system
-  ${CGAL_LIBRARIES}
+  CGAL::CGAL
   algo
   assimp
   container
@@ -65,7 +65,7 @@ target_link_libraries(
 # LCC_3
 add_executable(lcc_performance_3 performance_3.h lcc_performance_3.h
                                  lcc_performance_3.cpp)
-target_link_libraries(lcc_performance_3 ${CGAL_LIBRARIES}
+target_link_libraries(lcc_performance_3 CGAL::CGAL
                       ${MAP_VIEWER_LIBRARIES})
 
 # OpenVolumeMesh

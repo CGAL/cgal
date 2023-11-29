@@ -109,7 +109,7 @@ public Q_SLOTS:
 void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
 {
   Scene_face_graph_item* itemA = nullptr;
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_face_graph_item* itemB =
       qobject_cast<Scene_face_graph_item*>(scene->item(index));
@@ -175,7 +175,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
       std::pair<std::size_t, std::size_t> >  Poly_intersection;
 
   Scene_polylines_item* itemA = nullptr;
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_polylines_item* itemB =
       qobject_cast<Scene_polylines_item*>(scene->item(index));
@@ -196,11 +196,11 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
       QElapsedTimer time;
       time.start();
       std::vector<Polyline_3> polyA, polyB;
-      Q_FOREACH(const Polyline_3& poly, itemA->polylines)
+      for(const Polyline_3& poly : itemA->polylines)
       {
         polyA.push_back(poly);
       }
-      Q_FOREACH(const Polyline_3& poly, itemB->polylines)
+      for(const Polyline_3& poly : itemB->polylines)
       {
         polyB.push_back(poly);
       }
@@ -208,7 +208,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
       std::vector<Poly_intersection> poly_intersections;
       PMP::internal::compute_polylines_polylines_intersection(polyA, polyB,std::back_inserter(poly_intersections) , Kernel());
 
-      Q_FOREACH(const Poly_intersection& inter, poly_intersections)
+      for(const Poly_intersection& inter : poly_intersections)
       {
         Kernel::Segment_3 segA(polyA[inter.first.first][inter.first.second], polyA[inter.first.first][inter.first.second +1]);
         Kernel::Segment_3 segB(polyB[inter.second.first][inter.second.second], polyB[inter.second.first][inter.second.second+1]);
@@ -293,7 +293,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
   time.start();
   Scene_face_graph_item::Face_graph tm = *itemA->face_graph();
   std::vector<face_descriptor> Afaces;
-  Q_FOREACH(face_descriptor f, faces(tm))
+  for(face_descriptor f : faces(tm))
   {
     Afaces.push_back(f);
   }
@@ -302,7 +302,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
 
   std::vector<Polyline_3> polylines;
   //Polyline_3 polyline;
-  Q_FOREACH(const Polyline_3 &pol, itemB->polylines)
+  for(const Polyline_3 &pol : itemB->polylines)
   {
     polylines.push_back(pol);
   }
@@ -313,7 +313,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
                                                      std::back_inserter(poly_intersections),
                                                      CGAL::parameters::default_values());
 
-  Q_FOREACH(const Poly_intersection& inter, poly_intersections)
+  for(const Poly_intersection& inter : poly_intersections)
   {
     Kernel::Segment_3 segment(polylines[inter.second.first][inter.second.second], polylines[inter.second.first][inter.second.second+1]);
 

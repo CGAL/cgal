@@ -52,7 +52,7 @@ void init(QMainWindow* mw,
             << actionIntersection
             << actionDifference
             << actionMinkowskiSum;
-    Q_FOREACH(QAction * action, _actions)
+    for(QAction * action : _actions)
       action->setProperty("subMenuName",
                           "Boolean Operations");
     _actions<< actionConvexDecomposition;

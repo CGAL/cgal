@@ -515,7 +515,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
   updateCurrentCube();
   if(cur_cube != currentCube)
   {
-    Q_FOREACH(CGAL::QGLViewer*v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer*v : CGAL::QGLViewer::QGLViewerPool()){
       v->setProperty("need_update", true);
     }
   }

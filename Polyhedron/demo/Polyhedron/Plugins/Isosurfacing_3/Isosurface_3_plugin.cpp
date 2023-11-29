@@ -270,7 +270,9 @@ private:
 
   Word_type image_data(int i, int j, int k)
   {
-    if ( i>=0 && i<image_->xdim() && j>=0 && j<image_->ydim() && k>=0 && k<image_->zdim() )
+    if ( i>=0 && static_cast<std::size_t>(i)<image_->xdim() &&
+         j>=0 && static_cast<std::size_t>(j)<image_->ydim() &&
+         k>=0 && static_cast<std::size_t>(k)<image_->zdim() )
       return image_->value(i, j, k);
     else
       return 0;

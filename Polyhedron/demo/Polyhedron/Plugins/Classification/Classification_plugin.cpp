@@ -1389,7 +1389,7 @@ public Q_SLOTS:
 
     QAction* add_selection = label_buttons.back().menu->addAction ("Add selection to training set");
 
-    add_selection->setShortcut(Qt::SHIFT | (Qt::Key_A + (label_button.shortcut - 'a')));
+    add_selection->setShortcut(QKeySequence(Qt::SHIFT | (Qt::Key_A + (label_button.shortcut - 'a'))));
 //    add_selection->setShortcut(Qt::Key_0 + label_buttons.size() - 1);
 
     connect(add_selection,  SIGNAL(triggered()), this,

@@ -1146,7 +1146,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
         {
           EPICK::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, *sm);
-          Q_FOREACH(EPICK::Triangle_3 triangle, triangulate_primitive(f,normal))
+          for(EPICK::Triangle_3 triangle : triangulate_primitive(f,normal))
           {
             Primitive primitive(triangle, f);
             tree->insert(primitive);
@@ -1306,7 +1306,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     d->flat_vertex_map_ready = false;
   }
   setBuffersFilled(false);
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(viewer == nullptr)
@@ -2183,7 +2183,7 @@ void Scene_surface_mesh_item::printAllIds()
         s3(printFaceIds());
     if((s1 && s2 && s3))
     {
-      Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool()){
         viewer->update();
       }
       return;
@@ -2230,7 +2230,7 @@ void Scene_surface_mesh_item::showVertices(bool b)
     }
     else
     {
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
         CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
         TextRenderer *renderer = viewer->textRenderer();
         renderer->addTextList(d->textVItems);
@@ -2239,7 +2239,7 @@ void Scene_surface_mesh_item::showVertices(bool b)
     }
   else
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       TextRenderer *renderer = viewer->textRenderer();
       renderer->removeTextList(d->textVItems);
@@ -2260,7 +2260,7 @@ void Scene_surface_mesh_item::showEdges(bool b)
     }
     else
     {
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
         CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
         TextRenderer *renderer = viewer->textRenderer();
         renderer->addTextList(d->textEItems);
@@ -2270,7 +2270,7 @@ void Scene_surface_mesh_item::showEdges(bool b)
   }
   else
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       TextRenderer *renderer = viewer->textRenderer();
       renderer->removeTextList(d->textEItems);
@@ -2291,7 +2291,7 @@ void Scene_surface_mesh_item::showFaces(bool b)
     }
     else
     {
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
         CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
         TextRenderer *renderer = viewer->textRenderer();
         renderer->addTextList(d->textFItems);
@@ -2301,7 +2301,7 @@ void Scene_surface_mesh_item::showFaces(bool b)
   }
   else
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       TextRenderer *renderer = viewer->textRenderer();
       renderer->removeTextList(d->textFItems);

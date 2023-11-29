@@ -91,6 +91,7 @@ class Adaptive_remesher
 
   typedef typename C3t3::Cell_handle         Cell_handle;
   typedef typename C3t3::Vertex_handle       Vertex_handle;
+  typedef typename C3t3::Edge                Edge;
   typedef typename C3t3::Subdomain_index     Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Curve_index         Curve_index;
@@ -261,8 +262,7 @@ public:
     FT sqmax = emax * emax;
     FT sqmin = emin * emin;
 
-    typedef typename Tr::Edge Edge;
-    for (Edge e : tr().finite_edges())
+    for (const Edge& e : tr().finite_edges())
     {
       // skip protected edges
       if (m_protect_boundaries)
@@ -399,31 +399,38 @@ private:
     //update number_of_cells and number_of_facets in c3t3
     m_c3t3.rescan_after_load_of_triangulation();
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "00-c3t3_vertices_before_init_");
+#endif
+
+    const Subdomain_index default_subdomain = default_subdomain_index();
+
     //tag cells
     for (Cell_handle cit : tr().finite_cell_handles())
     {
       if (get(m_cell_selector, cit))
       {
         const Subdomain_index index = cit->subdomain_index();
-        if(!input_is_c3t3())
+        if (m_c3t3.is_in_complex(cit))
           m_c3t3.remove_from_complex(cit);
-        if(Subdomain_index() != index)
-          m_c3t3.add_to_complex(cit, index);
+
+        const Subdomain_index new_index = (Subdomain_index() != index)
+          ? index
+          : default_subdomain;
+        m_c3t3.add_to_complex(cit, new_index);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbc;
 #endif
       }
-      if (!input_is_c3t3())
-      {
-        for (int i = 0; i < 4; ++i)
-        {
-          if (cit->vertex(i)->in_dimension() == -1)
-            cit->vertex(i)->set_dimension(3);
-        }
-      }
+
+      for (Vertex_handle vi : CGAL::Tetrahedral_remeshing::vertices(cit, tr()))
+        set_dimension(vi, 3);
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      else if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
+      //else
+        if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
         ++nbc;
 #endif
     }
@@ -442,16 +449,15 @@ private:
       {
         Surface_patch_index patch = f.first->surface_patch_index(f.second);
         if(patch == Surface_patch_index())
-          set_surface_patch_index_to_default(s1, s2, patch);
+          make_surface_patch_index(s1, s2, patch);
+
+        if(m_c3t3.is_in_complex(f))
+          m_c3t3.remove_from_complex(f);
         m_c3t3.add_to_complex(f, patch);
 
-        const int i = f.second;
-        for (int j = 0; j < 3; ++j)
-        {
-          Vertex_handle vij = f.first->vertex(Tr::vertex_triple_index(i, j));
-          if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
-            vij->set_dimension(2);
-        }
+        for (Vertex_handle vij : CGAL::Tetrahedral_remeshing::vertices(f, tr()))
+          set_dimension(vij, 2);
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbf;
 #endif
@@ -462,7 +468,7 @@ private:
 #endif
 
     //tag edges
-    typedef typename Tr::Edge Edge;
+    const Curve_index default_curve_id = default_curve_index();
     for (const Edge& e : tr().finite_edges())
     {
       if (m_c3t3.is_in_complex(e))
@@ -479,15 +485,17 @@ private:
           || nb_incident_subdomains(e, m_c3t3) > 2
           || nb_incident_surface_patches(e, m_c3t3) > 1)
       {
-        m_c3t3.add_to_complex(e, 1);
+        const bool in_complex = m_c3t3.is_in_complex(e);
+        typename C3t3::Curve_index curve_id = in_complex
+          ? m_c3t3.curve_index(e)
+          : default_curve_id;
 
-        Vertex_handle v = e.first->vertex(e.second);
-        if (v->in_dimension() == -1 || v->in_dimension() > 1)
-          v->set_dimension(1);
+        if (in_complex)
+          m_c3t3.remove_from_complex(e);
+        m_c3t3.add_to_complex(e, curve_id);
 
-        v = e.first->vertex(e.third);
-        if (v->in_dimension() == -1 || v->in_dimension() > 1)
-          v->set_dimension(1);
+        for (Vertex_handle v : CGAL::Tetrahedral_remeshing::vertices(e, tr()))
+          set_dimension(v, 1);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbe;
@@ -505,12 +513,10 @@ private:
       if ( vit->in_dimension() == 0
            || nb_incident_complex_edges(vit, m_c3t3) > 2)
       {
-        if(!m_c3t3.is_in_complex(vit))
+        if (!m_c3t3.is_in_complex(vit))
           m_c3t3.add_to_complex(vit, ++corner_id);
 
-        if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
-          vit->set_dimension(0);
-
+        set_dimension(vit, 0);
         vit->set_index(corner_id);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -519,6 +525,7 @@ private:
       }
     }
 
+    // set all indices depending on underlying dimension
     for (Vertex_handle v : tr().finite_vertex_handles())
       set_index(v, m_c3t3);
 
@@ -530,12 +537,40 @@ private:
     std::cout << "\t vertices = " << nbv << std::endl;
 
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
-      m_c3t3.triangulation(), "c3t3_vertices_");
+      m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
 #endif
   }
 
 private:
+  bool dimension_is_modifiable(const Vertex_handle& v, const int new_dim) const
+  {
+    if (!input_is_c3t3())
+      return true;
+
+    const int vdim = v->in_dimension();
+    // feature edges and tip/endpoints vertices are kept
+    switch (vdim)
+    {
+    case -1: return false;//far points are not modified
+    case 3 : return true;
+    case 2 : return true;//surface vertices may not be part of a triangulation surface
+                        // in this case, we want to be able to set it
+    case 1 : return new_dim == 0; //features can be modified to corners
+    case 0 : return false;// corners remain corners
+    default:
+      return true;
+    }
+    CGAL_unreachable();
+    return true;
+  }
+
+  void set_dimension(Vertex_handle v, const int new_dim)
+  {
+    if (dimension_is_modifiable(v, new_dim))
+      v->set_dimension(new_dim);
+  }
+
   bool check_vertex_dimensions()
   {
     for (Vertex_handle vit : tr().finite_vertex_handles())
@@ -557,21 +592,53 @@ private:
   }
 
   template<typename PatchIndex>
-  void set_surface_patch_index_to_default(const Subdomain_index&,
-                                          const Subdomain_index&,
-                                          PatchIndex& patch)
+  void make_surface_patch_index(const Subdomain_index& s1,
+                                const Subdomain_index& s2,
+                                PatchIndex& patch)
   {
-    if(m_c3t3.number_of_facets() == 0)
-      patch = 1;
-    else
-      patch = m_c3t3.surface_patch_index(*m_c3t3.facets_in_complex_begin());
+    patch = (s1 < s2) ? (s1 * 1000 + s2) : (s2 * 1000 + s1);
   }
 
-  void set_surface_patch_index_to_default(const Subdomain_index& s1,
-                                          const Subdomain_index& s2,
-                                          std::pair<Subdomain_index, Subdomain_index>& patch)
+  void make_surface_patch_index(const Subdomain_index& s1,
+                                const Subdomain_index& s2,
+                                std::pair<Subdomain_index, Subdomain_index>& patch)
   {
     patch = (s1 < s2) ? std::make_pair(s1, s2) : std::make_pair(s2, s1);
+  }
+
+  Subdomain_index max_subdomain_index() const
+  {
+    Subdomain_index max_index
+      = (std::numeric_limits<Subdomain_index>::min)();
+    for (Cell_handle cit : tr().finite_cell_handles())
+    {
+      const Subdomain_index cid = cit->subdomain_index();
+      if (cid > max_index && cid != Subdomain_index())
+        max_index = cid;
+    }
+    return max_index;
+  }
+
+  Subdomain_index default_subdomain_index() const
+  {
+    return max_subdomain_index() + 1;
+  }
+
+  Curve_index max_curve_index() const
+  {
+    Curve_index max_index = (std::numeric_limits<Curve_index>::min)();
+    for (const Edge& e : m_c3t3.edges_in_complex())
+    {
+      const Curve_index cid = m_c3t3.curve_index(e);
+      if (cid > max_index)
+        max_index = cid;
+    }
+    return max_index + 1;
+  }
+
+  Curve_index default_curve_index() const
+  {
+    return max_curve_index() + 1;
   }
 
 public:

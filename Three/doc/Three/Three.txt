@@ -84,7 +84,7 @@ Then select among the template/form choices.
 *  \image html menu_3.png
 Name it Xxxx_yyyy_dialog.ui (you may have to rename it once it is created as QtCreator tends to forget the capital letters), and add it to the project in the CMakeLists :
 
-    qt5_wrap_ui( basicUI_FILES Basic_dialog.ui )
+    qt6_wrap_ui( basicUI_FILES Basic_dialog.ui )
     polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
 
 Add a layout to the dialog with a drag and drop and lay it out.
@@ -121,7 +121,7 @@ Just like with the Dialog, create a new Qt Designer form (file->New file or Proj
 *  \image html menu_6.png
 Add it to the project in the CMakeLists.txt :
 
-    qt5_wrap_ui( dockUI_FILES Basic_dock_widget.ui )
+    qt6_wrap_ui( dockUI_FILES Basic_dock_widget.ui )
     polyhedron_demo_plugin(dock_widget_plugin Dock_widget_plugin ${dockUI_FILES})
 
 Edit the ui file with the editor, then add the following line to your plugin file:
@@ -322,7 +322,7 @@ To create an external plugin, you must make a new Cmake project.\n
 
     project( Example_plugin )
 
-Configure CMake as you desire and fetch the right Qt5 packages :
+Configure CMake as you desire and fetch the right Qt6 packages :
 
     # Find includes in corresponding build directories
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -331,13 +331,12 @@ Configure CMake as you desire and fetch the right Qt5 packages :
     cmake_minimum_required(VERSION 3.1...3.23)
 
     #Find CGAL
-    find_package(CGAL COMPONENTS Qt5)
-    include( ${CGAL_USE_FILE} )
-    # Find Qt5 itself
-    find_package(Qt5
+    find_package(CGAL COMPONENTS Qt6)
+    # Find Qt6 itself
+    find_package(Qt6
                  QUIET
-                 COMPONENTS            OpenGL Script Svg Xml
-                 OPTIONAL_COMPONENTS   ScriptTools)
+                 COMPONENTS            OpenGLWidgets Svg
+                 OPTIONAL_COMPONENTS   WebSockets)
 
 You will probably have to fetch the libraries exported by the Polyhedron_demo, like the Scene_items.
 
@@ -370,15 +369,13 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
     cmake_minimum_required(VERSION 3.1...3.23)
 
     #Find CGAL
-    find_package(CGAL COMPONENTS Qt5)
-    include( ${CGAL_USE_FILE} )
-    # Find Qt5 itself
-    find_package(Qt5
-                 QUIET
-                 COMPONENTS            OpenGL Script Svg Xml
-                 OPTIONAL_COMPONENTS   ScriptTools)
+    find_package(CGAL COMPONENTS Qt6)
+    # Find Qt6 itself
+    find_package(Qt6 QUIET
+                 COMPONENTS OpenGLWidgets Svg
+                 OPTIONAL_COMPONENTS WebSockets)
 
-    if(Qt5_FOUND AND CGAL_FOUND)
+    if(Qt6_FOUND AND CGAL_FOUND)
       find_package(CGAL_polyhedron_demo)
 
     include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )

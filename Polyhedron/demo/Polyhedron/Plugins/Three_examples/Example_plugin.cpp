@@ -29,30 +29,30 @@ public :
                       double cx,double cy, double cz);
 
   // Indicates if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE {
+  bool supportsRenderingMode(RenderingMode m) const override {
     return (m == Flat);
   }
 
   //Displays the item
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
+  void draw(CGAL::Three::Viewer_interface* viewer) const override;
 
   //Specifies that the buffers need to be initialized again.
   //Is mostly called after a change of geometry in the data.
-  void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+  void invalidateOpenGLBuffers() override;
 
   //fills the std::vector
-  void computeElements() const Q_DECL_OVERRIDE;
+  void computeElements() const override;
 
-  Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
-  QString toolTip() const Q_DECL_OVERRIDE {return QString();}
-  void compute_bbox() const Q_DECL_OVERRIDE { _bbox = Bbox(); }
+  Scene_item* clone() const override {return 0;}
+  QString toolTip() const override {return QString();}
+  void compute_bbox() const override { _bbox = Bbox(); }
 
 private:
   //contains the data
   mutable std::vector<float> vertices;
   mutable std::size_t nb_pos;
   //Fills the buffers with data. The buffers allow us to give data to the shaders.
-  void initializeBuffers(Viewer_interface *viewer) const Q_DECL_OVERRIDE;
+  void initializeBuffers(Viewer_interface *viewer) const override;
 }; //end of class Scene_triangle_item
 //! [itemdeclaration]
 Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
@@ -152,7 +152,7 @@ class Q_DECL_EXPORT Polyhedron_demo_example_plugin :
 
 public :
   // Adds an action to the menu and configures the widget
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) Q_DECL_OVERRIDE{
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) override{
     //get the references
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -165,11 +165,11 @@ public :
       _actions << actionDrawTriangle;
     }
   }
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     return true;
   }
-  QList<QAction*> actions() const Q_DECL_OVERRIDE{
+  QList<QAction*> actions() const override{
     return _actions;
   }
 

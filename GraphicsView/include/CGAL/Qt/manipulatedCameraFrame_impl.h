@@ -193,7 +193,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   }
 
   case MOVE_FORWARD: {
-    Quaternion rot = pitchYawQuaternion(event->x(), event->y(), camera);
+    Quaternion rot = pitchYawQuaternion(event->position().x(), event->position().y(), camera);
     rotate(rot);
     //#CONNECTION# wheelEvent MOVE_FORWARD case
     // actual translation is made in flyUpdate().
@@ -202,7 +202,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   }
 
   case MOVE_BACKWARD: {
-    Quaternion rot = pitchYawQuaternion(event->x(), event->y(), camera);
+    Quaternion rot = pitchYawQuaternion(event->position().x(), event->position().y(), camera);
     rotate(rot);
     // actual translation is made in flyUpdate().
     // translate(inverseTransformOf(Vec(0.0, 0.0, flySpeed())));
@@ -210,10 +210,10 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   }
 
   case DRIVE: {
-    Quaternion rot = turnQuaternion(event->x(), camera);
+    Quaternion rot = turnQuaternion(event->position().x(), camera);
     rotate(rot);
     // actual translation is made in flyUpdate().
-    driveSpeed_ = 0.01 * (event->y() - pressPos_.y());
+    driveSpeed_ = 0.01 * (event->position().y() - pressPos_.y());
     break;
   }
 
@@ -223,7 +223,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   }
 
   case LOOK_AROUND: {
-    Quaternion rot = pitchYawQuaternion(event->x(), event->y(), camera);
+    Quaternion rot = pitchYawQuaternion(event->position().x(), event->position().y(), camera);
     rotate(rot);
     break;
   }
@@ -233,9 +233,9 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
     if (rotatesAroundUpVector_) {
       // Multiply by 2.0 to get on average about the same speed as with the
       // deformed ball
-      qreal dx = 2.0 * rotationSensitivity() * (prevPos_.x() - event->x()) /
+      qreal dx = 2.0 * rotationSensitivity() * (prevPos_.x() - event->position().x()) /
                  camera->screenWidth();
-      qreal dy = 2.0 * rotationSensitivity() * (prevPos_.y() - event->y()) /
+      qreal dy = 2.0 * rotationSensitivity() * (prevPos_.y() - event->position().y()) /
                  camera->screenHeight();
       if (constrainedRotationIsReversed_)
         dx = -dx;
@@ -243,7 +243,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
       rot = Quaternion(verticalAxis, dx) * Quaternion(Vec(1.0, 0.0, 0.0), dy);
     } else {
       Vec trans = camera->projectedCoordinatesOf(pivotPoint());
-      rot = deformedBallQuaternion(event->x(), event->y(), trans[0], trans[1],
+      rot = deformedBallQuaternion(event->position().x(), event->position().y(), trans[0], trans[1],
                                    camera);
     }
     //#CONNECTION# These two methods should go together (spinning detection and
@@ -257,7 +257,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
   case SCREEN_ROTATE: {
     Vec trans = camera->projectedCoordinatesOf(pivotPoint());
 
-    const qreal angle = atan2(event->y() - trans[1], event->x() - trans[0]) -
+    const qreal angle = atan2(event->position().y() - trans[1], event->position().x() - trans[0]) -
                         atan2(prevPos_.y() - trans[1], prevPos_.x() - trans[0]);
 
     Quaternion rot(Vec(0.0, 0.0, 1.0), angle);
@@ -272,7 +272,7 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
 
   case ROLL: {
     const qreal angle =
-        CGAL_PI * (event->x() - prevPos_.x()) / camera->screenWidth();
+      CGAL_PI * (event->position().x() - prevPos_.x()) / camera->screenWidth();
     Quaternion rot(Vec(0.0, 0.0, 1.0), angle);
     rotate(rot);
     setSpinningQuaternion(rot);
@@ -284,9 +284,9 @@ void ManipulatedCameraFrame::mouseMoveEvent(QMouseEvent *const event,
     Vec trans;
     int dir = mouseOriginalDirection(event);
     if (dir == 1)
-      trans.setValue(prevPos_.x() - event->x(), 0.0, 0.0);
+      trans.setValue(prevPos_.x() - event->position().x(), 0.0, 0.0);
     else if (dir == -1)
-      trans.setValue(0.0, event->y() - prevPos_.y(), 0.0);
+      trans.setValue(0.0, event->position().y() - prevPos_.y(), 0.0);
 
     switch (camera->type()) {
     case Camera::PERSPECTIVE:

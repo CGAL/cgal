@@ -26,6 +26,7 @@ public:
     {
         setupUi(this);
     }
+    virtual ~Dialog_options();
 
     void set_all_ranges()
     {

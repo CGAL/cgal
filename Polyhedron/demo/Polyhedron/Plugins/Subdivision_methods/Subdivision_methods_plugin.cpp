@@ -48,7 +48,7 @@ public:
                << actionCatmullClark
                << actionSqrt3
                << actionDooSabin;
-      Q_FOREACH(QAction* action, _actions)
+      for(QAction* action : _actions)
         action->setProperty("subMenuName", "3D Surface Subdivision Methods");
       autoConnectActions();
 

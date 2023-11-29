@@ -128,7 +128,7 @@ public :
             this, SLOT(on_actionPolyline_triggered()));
     _actions << actionPolyline;
 
-    Q_FOREACH(QAction* action, _actions)
+    for(QAction* action : _actions)
     {
       menu->addAction(action);
     }
@@ -369,7 +369,7 @@ void Basic_generator_plugin::generateCube()
 
     for(int i=0; i<8; ++i)
     {
-      QStringList list = point_texts[i].split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+      QStringList list = point_texts[i].split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
       if (list.isEmpty()) return;
       if (list.size()!=3){
         QMessageBox *msgBox = new QMessageBox;
@@ -410,7 +410,7 @@ void Basic_generator_plugin::generateCube()
   else
   {
     QString text = dock_widget->extremaEdit->text();
-    QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+    QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=6){
       QMessageBox *msgBox = new QMessageBox;
@@ -461,7 +461,7 @@ void Basic_generator_plugin::generatePrism()
   bool is_closed = dock_widget->prismCheckBox->isChecked();
 
   QString text = dock_widget->prism_lineEdit->text();
-  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+  QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=3){
     QMessageBox *msgBox = new QMessageBox;
@@ -508,7 +508,7 @@ void Basic_generator_plugin::generatePyramid()
   bool is_closed = dock_widget->pyramidCheckBox->isChecked();
 
   QString text = dock_widget->pyramid_lineEdit->text();
-  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+  QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=3){
     QMessageBox *msgBox = new QMessageBox;
@@ -551,7 +551,7 @@ void Basic_generator_plugin::generateSphere()
 {
   int precision = dock_widget->SphereSpinBox->value();
   QString text = dock_widget->center_radius_lineEdit->text();
-  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+  QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=4){
     QMessageBox *msgBox = new QMessageBox;
@@ -601,7 +601,7 @@ void Basic_generator_plugin::generateTetrahedron()
 
     for (int i = 0; i < 4; ++i)
     {
-      QStringList list = point_texts[i].split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+      QStringList list = point_texts[i].split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
       if (list.isEmpty()) return;
       if (list.size() != 3) {
         QMessageBox* msgBox = new QMessageBox;
@@ -635,7 +635,7 @@ void Basic_generator_plugin::generateTetrahedron()
   else
   {
       QString text = dock_widget->point_textEdit_2->toPlainText();
-      QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+      QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
       if (list.isEmpty()) return;
       if (list.size() != 12) {
           QMessageBox* msgBox = new QMessageBox;
@@ -676,7 +676,7 @@ void Basic_generator_plugin::generatePoints()
 {
   QString text = dock_widget->point_textEdit->toPlainText();
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
-  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+  QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   int counter = 0;
   double coord[3];
   bool ok = true;
@@ -689,7 +689,7 @@ void Basic_generator_plugin::generatePoints()
     return;
   }
 
-  Q_FOREACH(QString s, list)
+  for(QString s : list)
   {
     if(!s.isEmpty())
     {
@@ -735,7 +735,7 @@ void Basic_generator_plugin::generateLines()
   std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
   QStringList polylines_metadata;
 
-  QStringList list = text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+  QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   int counter = 0;
   double coord[3];
   bool ok = true;
@@ -754,7 +754,7 @@ void Basic_generator_plugin::generateLines()
     msgBox->exec();
     return;
   }
-  Q_FOREACH(QString s, list)
+  for(QString s : list)
   {
     if(!s.isEmpty())
     {
@@ -867,7 +867,7 @@ void Basic_generator_plugin::generateGrid()
   bool triangulated = dock_widget->grid_checkBox->isChecked();
   points_text= dock_widget->grid_lineEdit->text();
 
-  QStringList list = points_text.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+  QStringList list = points_text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
   if (list.isEmpty()) return;
   if (list.size()!=6){
     QMessageBox *msgBox = new QMessageBox;

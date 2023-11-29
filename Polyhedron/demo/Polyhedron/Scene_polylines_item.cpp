@@ -339,7 +339,7 @@ Scene_polylines_item::clone() const {
     Scene_polylines_item* item = new Scene_polylines_item;
     item->polylines = polylines;
     QVariant metadata_variant = property("polylines metadata");
-    if(metadata_variant.type() == QVariant::StringList)
+    if(metadata_variant.typeId() == QMetaType::QStringList)
     {
         item->setProperty("polylines metadata", metadata_variant);
     }
@@ -568,7 +568,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->addItem(d->spheres);
           scene->changeGroup(d->spheres, this);
           lockChild(d->spheres);
-          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+          for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
           {
             d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
           }
@@ -686,7 +686,7 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
               other_item->polylines.end(),
               std::back_inserter(polylines));
     QVariant other_metadata_variant = other_item->property("polylines metadata");
-    if(other_metadata_variant.type() == QVariant::StringList)
+    if(other_metadata_variant.typeId() == QMetaType::QStringList)
     {
         QStringList metadata = property("polylines metadata").toStringList();
         metadata.append(other_metadata_variant.toStringList());

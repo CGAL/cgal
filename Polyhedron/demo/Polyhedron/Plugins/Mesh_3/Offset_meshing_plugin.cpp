@@ -512,7 +512,7 @@ offset_meshing()
   Scene_polylines_item* polylines_item = nullptr;
 
   bool mesh_or_soup_item_found = false;
-  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  for(Scene_interface::Item_id index : scene->selectionIndices())
   {
     if(!mesh_or_soup_item_found)
     {

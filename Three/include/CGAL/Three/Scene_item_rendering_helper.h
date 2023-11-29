@@ -69,7 +69,7 @@ public:
 #endif
   Q_DECLARE_FLAGS(Gl_data_names, Gl_data_name)
 
-  QMenu* contextMenu() Q_DECL_OVERRIDE;
+  QMenu* contextMenu() override;
 
   /*!
      * \brief processData calls `computeElements()`
@@ -86,13 +86,13 @@ public:
   //! It must be between 0 and 255.
   //! \param alpha the integer value for the alpha channel.
   //!
-  void setAlpha(int alpha) Q_DECL_OVERRIDE;
+  void setAlpha(int alpha) override;
   //! \brief The item's bounding box.
   //!
   //! If the Bbox has never been computed, computes it and
   //! saves the result for further calls.
   //! @returns the item's bounding box.
-  Scene_item::Bbox bbox()const Q_DECL_OVERRIDE;
+  Scene_item::Bbox bbox()const override;
   //!
   //! \brief getTriangleContainer returns the `id`th `Triangle_container`.
   //!
@@ -174,15 +174,15 @@ public:
   //! saves the result for further calls.
   //! @returns the item's bounding box's diagonal length.
   //! @todo must replace the one from Scene_item eventually
-  virtual double bboxDiagonal() const Q_DECL_OVERRIDE;
+  virtual double bboxDiagonal() const override;
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //! \param viewer the new viewer.
   //!
-  void newViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
+  void newViewer(Viewer_interface *viewer) override;
   //! \brief removeViewer removes the Vaos for `viewer`.
   //! \param viewer the viewer to be removed.
-  void removeViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
+  void removeViewer(Viewer_interface *viewer) override;
 protected:
 
 
@@ -194,7 +194,7 @@ protected:
 
   //!Returns the float alpha value of an item.
   //! This value is between 0.0f and 1.0f.
-  float alpha() const Q_DECL_OVERRIDE;
+  float alpha() const override;
 
   /*! Fills the `Vbo`s with data.
      */
@@ -205,7 +205,7 @@ protected:
   //!
   //! Computes the items Bbox and stores the result. Must be overridden.
   //!@todo must replace the one from Scene_item eventually.
-  virtual void compute_bbox() const Q_DECL_OVERRIDE = 0;
+  virtual void compute_bbox() const override = 0;
   //!
   //! \brief setBbox allows to set the Bbox in compute_bbox();
   //! \param b

@@ -1,7 +1,7 @@
 include(polyhedron_demo_macros)
 
 #if the plugin has a UI file
-qt5_wrap_ui(alpha_wrap_3UI_FILES alpha_wrap_3_dialog.ui)
+qt6_wrap_ui(alpha_wrap_3UI_FILES alpha_wrap_3_dialog.ui)
 polyhedron_demo_plugin(alpha_wrap_3_plugin Alpha_wrap_3_plugin ${alpha_wrap_3UI_FILES})
 
 #if the plugin uses external libraries like scene_items

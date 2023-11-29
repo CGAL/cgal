@@ -1,7 +1,6 @@
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
-#include "Scene_polyhedron_selection_item.h"
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer, const QVector3D& scaler)
 {
     QPainter *painter = viewer->getPainter();
@@ -10,14 +9,14 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer, const QVector3D& 
     QRect rect;
     CGAL::qglviewer::Camera* camera = viewer->camera();
     //Display the items textItems
-    Q_FOREACH(TextListItem* list, textItems)
+    for(TextListItem* list : textItems)
     {
       CGAL::Three::Scene_print_item_interface* item =
       qobject_cast<CGAL::Three::Scene_print_item_interface*>(scene->item(scene->mainSelectionIndex()));
       if( item &&
           item->shouldDisplayIds(list->item())
          ){
-        Q_FOREACH(TextItem* item, list->textList())
+        for(TextItem* item : list->textList())
         {
           CGAL::qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
           if(viewer->testDisplayId(src.x, src.y, src.z))
@@ -52,7 +51,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer, const QVector3D& 
     }
 
     //Display the local TextItems
-    Q_FOREACH(TextItem* item, local_textItems)
+    for(TextItem* item : local_textItems)
     {
       CGAL::qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
       if(item->is_3D())
@@ -110,7 +109,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer, const QVector3D& 
 
  void TextRenderer::removeTextList(TextListItem *p_list)
  {
-     Q_FOREACH(TextListItem *list, textItems)
+   for(TextListItem *list : textItems)
          if(list == p_list)
              textItems.removeAll(list);
  }

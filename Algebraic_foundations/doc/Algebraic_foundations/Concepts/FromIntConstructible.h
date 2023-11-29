@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 A model of the concept `FromIntConstructible` is required
@@ -28,4 +28,3 @@ FromIntConstructible(int& i);
 /// @}
 
 }; /* end FromIntConstructible */
-

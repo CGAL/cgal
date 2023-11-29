@@ -57,19 +57,19 @@ public:
 
   ~Scene_aff_transformed_item();
 
-  void itemAboutToBeDestroyed(Scene_item *item) Q_DECL_OVERRIDE;
+  void itemAboutToBeDestroyed(Scene_item *item) override;
 
   void setManipulatable(bool b = true) { d->manipulable = b;}
-  bool manipulatable() const Q_DECL_OVERRIDE { return d->manipulable; }
-  CGAL::Three::Scene_item::ManipulatedFrame* manipulatedFrame() Q_DECL_OVERRIDE { return d->frame; }
+  bool manipulatable() const override { return d->manipulable; }
+  CGAL::Three::Scene_item::ManipulatedFrame* manipulatedFrame() override { return d->frame; }
   void setFMatrix(double matrix[16]);
   const QMatrix4x4& getFMatrix() const { return d->f_matrix; }
 
   // below is defined in the specific aff_transformed items
-  virtual void compute_bbox() const Q_DECL_OVERRIDE = 0;
+  virtual void compute_bbox() const override = 0;
   virtual const CGAL::qglviewer::Vec& center() const = 0;
 
-  virtual bool keyPressEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
+  virtual bool keyPressEvent(QKeyEvent* e) override;
 
 Q_SIGNALS:
   void applyTransformation();

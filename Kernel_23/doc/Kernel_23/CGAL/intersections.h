@@ -12,7 +12,7 @@ function are available.
 
 /*!
 \addtogroup do_intersect_linear_grp
-\ingroup do_intersect
+\ingroup do_intersect_grp
 
 \sa `do_intersect_circular_grp`
 \sa `do_intersect_spherical_grp`
@@ -79,7 +79,7 @@ function are available.
 
 /*!
 \addtogroup intersection_linear_grp
-\ingroup intersection
+\ingroup intersection_grp
 
 */
 /// @{

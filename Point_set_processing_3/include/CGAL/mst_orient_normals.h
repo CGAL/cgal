@@ -39,11 +39,7 @@
 
 #include <CGAL/property_map.h>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h> // work around a
-                                                      // bug in boost
-                                                      // 1.54
-
-
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 
 #if defined(BOOST_MSVC)
@@ -552,9 +548,6 @@ create_mst_graph(
    and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
    For this reason it should not be called on sorted containers.
    It is based on \cgalCite{cgal:hddms-srup-92}.
-
-   \warning This function may fail when Boost version 1.54 is used,
-   because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
 
    \pre Normals must be unit vectors
    \pre `k >= 2`

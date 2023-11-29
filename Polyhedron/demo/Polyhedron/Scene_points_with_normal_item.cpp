@@ -905,7 +905,7 @@ void Scene_points_with_normal_item::invalidateOpenGLBuffers()
     getPointContainer(Priv::Shaded_points)->reset_vbos(Scene_item_rendering_helper::ALL);
     getEdgeContainer(0)->reset_vbos(Scene_item_rendering_helper::ALL);
 
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       if(viewer == nullptr)

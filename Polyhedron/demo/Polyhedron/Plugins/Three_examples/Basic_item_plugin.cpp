@@ -20,18 +20,18 @@ class BasicItemPlugin :
 public:
   //! [applicable]
   //This plugin is only applicable if there is exactly one selected item.
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     return scene->selectionIndices().size() ==1;
   }
   //! [applicable]
   //the list of the actions of the plugin.
-  QList<QAction*> actions() const Q_DECL_OVERRIDE
+  QList<QAction*> actions() const override
   {
     return _actions;
   }
   //this acts like a constructor for the plugin. It gets the references to the mainwindow and the scene, and connects the action.
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) Q_DECL_OVERRIDE
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) override
   {
     //get the references
     this->scene = sc;

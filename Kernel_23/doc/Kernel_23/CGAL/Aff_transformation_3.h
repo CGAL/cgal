@@ -2,7 +2,6 @@ namespace CGAL {
 
 /*!
 \ingroup kernel_classes3
-\ingroup kernel_affine
 
 The class `Aff_transformation_3` represents three-dimensional affine transformations.
 The general form of an affine transformation is based on a homogeneous

@@ -8,5 +8,5 @@ try {
         throw "Wrong exception!"
     good = true
 }
-if(!good) throw "The exception was not caugth!"
+if(!good) throw "The exception was not caught!"
 print("OK in catch_missing_file")

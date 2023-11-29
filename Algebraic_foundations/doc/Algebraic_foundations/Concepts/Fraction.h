@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsFractionsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 A type is considered as a `Fraction`, if there is a reasonable way to
@@ -17,4 +17,3 @@ class Fraction {
 public:
 
 }; /* end Fraction */
-

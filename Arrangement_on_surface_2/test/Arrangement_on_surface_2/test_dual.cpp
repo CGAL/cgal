@@ -5,7 +5,7 @@
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arrangement_2.h>
 
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <CGAL/graph_traits_dual_arrangement_2.h>
 

@@ -112,7 +112,6 @@
      <string>Help</string>
     </property>
     <addaction name="actionDemo_Help"/>
-    <addaction name="actionAbout_T3_demo"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -553,11 +552,6 @@
    </property>
    <property name="statusTip">
     <string>Stop Animation</string>
-   </property>
-  </action>
-  <action name="actionAbout_T3_demo">
-   <property name="text">
-    <string>About T3_demo</string>
    </property>
   </action>
  </widget>

@@ -123,7 +123,7 @@ public:
         Simple_kernel::Vector_3 offset(v_offset.x, v_offset.y, v_offset.z);
         Point query = transfo( Point(x,y,z))-offset;
         FT min = DBL_MAX;
-        Q_FOREACH(SM_Tree *tree, sm_trees)
+        for(SM_Tree *tree: sm_trees)
         {
           FT dist = CGAL::sqrt( tree->squared_distance(query) );
           if(dist < min)
@@ -301,7 +301,7 @@ public:
   {
     this->edge_sm_trees = edge_trees;
   }
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
+  void draw(CGAL::Three::Viewer_interface* viewer) const override
   {
     if(!isInit(viewer))
       initGL(viewer);
@@ -338,7 +338,7 @@ public:
       break;
     }
   }
-  void drawEdges(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
+  void drawEdges(CGAL::Three::Viewer_interface *viewer) const override
   {
     if(!isInit(viewer))
       initGL(viewer);
@@ -364,7 +364,7 @@ public:
     ec->draw(viewer, true);
   }
 
-  void invalidateOpenGLBuffers()Q_DECL_OVERRIDE
+  void invalidateOpenGLBuffers()override
   {
     setBuffersFilled(false);
     getTriangleContainer(0)->reset_vbos(ALL);
@@ -398,7 +398,7 @@ private:
 
     FT diag = scene_diag();
     std::vector<SM_Tree*> closed_sm_trees;
-    Q_FOREACH(SM_Tree *sm_tree, sm_trees->values())
+    for(SM_Tree *sm_tree : sm_trees->values())
       if(!(is_signed && !CGAL::is_closed(*qobject_cast<Scene_surface_mesh_item*>(sm_trees->key(sm_tree))->polyhedron())))
         closed_sm_trees.push_back(sm_tree);
 #ifndef CGAL_LINKED_WITH_TBB
@@ -449,7 +449,7 @@ private:
   };
 #endif
 
-  void computeElements() const Q_DECL_OVERRIDE
+  void computeElements() const override
   {
     switch(m_cut_plane)
     {
@@ -533,7 +533,7 @@ private:
 
   }
 
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const override
   {
     getTriangleContainer(0)->initializeBuffers(viewer);
     getTriangleContainer(1)->initializeBuffers(viewer);
@@ -940,7 +940,7 @@ public:
 
    ~Polyhedron_demo_cut_plugin();
 
-  bool applicable(QAction*) const Q_DECL_OVERRIDE{
+  bool applicable(QAction*) const override{
     // returns true if one surface_mesh is in the entries
     for (int i=0; i< scene->numberOfEntries(); ++i)
     {
@@ -950,24 +950,24 @@ public:
     return false;
   }
 
-  QString name() const Q_DECL_OVERRIDE
+  QString name() const override
   {
     return "cut-plugin";
   }
 
 
-   QString nameFilters() const Q_DECL_OVERRIDE
+   QString nameFilters() const override
   {
     return "Segment soup file (*.polylines.txt *.cgal)";
   }
 
 
-  bool canLoad(QFileInfo) const Q_DECL_OVERRIDE
+  bool canLoad(QFileInfo) const override
   {
     return false;
   }
 
-  QList<Scene_item*> load(QFileInfo , bool& ok, bool add_to_scene=true) Q_DECL_OVERRIDE
+  QList<Scene_item*> load(QFileInfo , bool& ok, bool add_to_scene=true) override
 
   {
     Q_UNUSED(add_to_scene);
@@ -975,7 +975,7 @@ public:
     return QList<Scene_item*>();
   }
 
-  bool canSave(const CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE
+  bool canSave(const CGAL::Three::Scene_item* item) override
   {
     // This plugin supports edges items
     bool b = qobject_cast<const Scene_edges_item*>(item) != 0;
@@ -983,7 +983,7 @@ public:
   }
 
 
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) Q_DECL_OVERRIDE
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) override
   {
     Scene_item* item = items.front();
     // This plugin supports edges items
@@ -1001,7 +1001,7 @@ public:
     return ok;
   }
 
-  bool isDefaultLoader(const Scene_item* item) const Q_DECL_OVERRIDE{
+  bool isDefaultLoader(const Scene_item* item) const override{
     if(qobject_cast<const Scene_edges_item*>(item))
       return true;
     return false;
@@ -1010,9 +1010,9 @@ public:
   using Polyhedron_demo_io_plugin_interface::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m) override;
-  QList<QAction*> actions() const Q_DECL_OVERRIDE;
+  QList<QAction*> actions() const override;
 
-  bool eventFilter(QObject *, QEvent *event) Q_DECL_OVERRIDE
+  bool eventFilter(QObject *, QEvent *event) override
   {
     if(!plane_item)
       return false;
@@ -1063,7 +1063,7 @@ public Q_SLOTS:
   }
   void uncheckActions()
   {
-   Q_FOREACH(QAction* action, _actions)
+    for(QAction* action : _actions)
     if(action->isChecked())
     {
       action->setChecked(false);
@@ -1129,11 +1129,11 @@ private:
 
 Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
 {
-  Q_FOREACH(Facet_sm_tree *tree, facet_sm_trees.values())
+  for(Facet_sm_tree *tree : facet_sm_trees.values())
   {
     delete tree;
   }
-    Q_FOREACH(Edge_sm_tree *tree, edge_sm_trees.values())
+  for(Edge_sm_tree *tree : edge_sm_trees.values())
     {
       delete tree;
     }
@@ -1182,7 +1182,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
   QActionGroup *group = new QActionGroup(mainWindow);
   group->setExclusive(true);
 
-  Q_FOREACH(QAction *action, _actions)
+  for(QAction *action : _actions)
   {
     action->setActionGroup(group);
     action->setCheckable(true);

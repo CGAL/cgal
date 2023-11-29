@@ -36,7 +36,7 @@ else()
   CGAL_alias_library(CGAL)
   CGAL_alias_library(CGAL_Core)
   CGAL_alias_library(CGAL_ImageIO)
-  CGAL_alias_library(CGAL_Qt5)
+  CGAL_alias_library(CGAL_Qt6)
 endif()
 
 macro(CGAL_set_LIB_LIBRARY_var lib)
@@ -50,7 +50,7 @@ endmacro()
 CGAL_set_LIB_LIBRARY_var(CGAL)
 CGAL_set_LIB_LIBRARY_var(CGAL_Core)
 CGAL_set_LIB_LIBRARY_var(CGAL_ImageIO)
-CGAL_set_LIB_LIBRARY_var(CGAL_Qt5)
+CGAL_set_LIB_LIBRARY_var(CGAL_Qt6)
 
 set(CGAL_CONFIGURED_LIBRARIES "@CGAL_ACTUAL_CONFIGURED_LIBRARIES@")
 
@@ -93,8 +93,6 @@ set(CGAL_ImageIO_USE_ZLIB                 "@CGAL_ImageIO_USE_ZLIB@" )
 
 set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
 
-set(CGAL_USE_FILE "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
-
 if ( CGAL_FIND_REQUIRED )
   set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE        )
   set( CHECK_CGAL_COMPONENT_ERROR_TYPE   FATAL_ERROR )
@@ -120,15 +118,15 @@ macro(check_cgal_component COMPONENT)
   else( "${CGAL_LIB}" STREQUAL "CGAL" )
     if ( WITH_${CGAL_LIB} )
       if(TARGET CGAL::${CGAL_LIB})
-        if ("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
-          
-          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_Qt5Dependencies.cmake")
+        if ("${CGAL_LIB}" STREQUAL "CGAL_Qt6")
 
-          if(CGAL_Qt5_MISSING_DEPS)
-            set( CGAL_Qt5_FOUND FALSE )
-            message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
+          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_Qt6Dependencies.cmake")
+
+          if(CGAL_Qt6_MISSING_DEPS)
+            set( CGAL_Qt6_FOUND FALSE )
+            message(STATUS "libCGAL_Qt6 is missing the dependencies: ${CGAL_Qt6_MISSING_DEPS} cannot be configured.")
           else()
-            set( CGAL_Qt5_FOUND TRUE )
+            set( CGAL_Qt6_FOUND TRUE )
           endif()
         elseif("${CGAL_LIB}" STREQUAL "CGAL_Core")
           include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_CoreDependencies.cmake")
@@ -138,10 +136,10 @@ macro(check_cgal_component COMPONENT)
           else()
             set( CGAL_Core_FOUND TRUE )
           endif()
-        else("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+        else("${CGAL_LIB}" STREQUAL "CGAL_Qt6")
           # Libraries that have no dependencies
           set( ${CGAL_LIB}_FOUND TRUE )
-        endif("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+        endif("${CGAL_LIB}" STREQUAL "CGAL_Qt6")
       else(TARGET CGAL::${CGAL_LIB})
         set( ${CGAL_LIB}_FOUND FALSE )
         set( CHECK_${CGAL_LIB}_ERROR_TAIL " CGAL was configured with WITH_${CGAL_LIB}=ON, but one of the dependencies of ${CGAL_LIB} was not configured properly." )
@@ -169,7 +167,7 @@ foreach( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
 endforeach()
 
 # Starting with cmake 2.6.3, CGAL_FIND_COMPONENTS is cleared out when find_package returns.
-# But we need it within UseCGAL.cmake, so we save it aside into another variable
+# But we need it within CGAL_CreateSingleSourceCGALProgram.cmake, so we save it aside into another variable
 set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
 
 # for preconfigured libs
@@ -214,7 +212,7 @@ if (NOT TARGET CGAL::CGAL_Basic_viewer)
   add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
     set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
       INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
-      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
 endif()
 
 include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

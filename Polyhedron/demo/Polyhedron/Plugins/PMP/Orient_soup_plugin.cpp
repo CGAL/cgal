@@ -34,7 +34,7 @@ public:
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m);
   bool applicable(QAction* action) const {
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()) {
+    for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices()) {
       if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
         return true;
       else
@@ -139,7 +139,7 @@ void set_fcolors(SMesh* smesh, std::vector<CGAL::IO::Color> colors)
 
 void Polyhedron_demo_orient_soup_plugin::orientSM()
 {
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_polygon_soup_item* item =
       qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
@@ -335,4 +335,3 @@ void Polyhedron_demo_orient_soup_plugin::cleanSoup()
   item->itemChanged();
 }
 #include "Orient_soup_plugin.moc"
-

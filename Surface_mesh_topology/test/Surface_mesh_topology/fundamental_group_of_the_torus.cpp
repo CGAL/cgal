@@ -121,7 +121,7 @@ int main()
 /*
 #ifdef CGAL_USE_BASIC_VIEWER
   std::vector<Path_on_surface<SM> > paths={pij, pkl};
-  CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt5
+  CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt6
 #endif // CGAL_USE_BASIC_VIEWER
 */
   for (int i=-4; i<=4; ++i)

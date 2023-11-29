@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.1...3.23)
 project(Point_set_3_Examples)
 
 # CGAL and its components
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 create_single_source_cgal_program("point_set.cpp")
 create_single_source_cgal_program("point_set_property.cpp")
@@ -25,6 +25,6 @@ else()
 endif()
 
 create_single_source_cgal_program("draw_point_set_3.cpp")
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_point_set_3 PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

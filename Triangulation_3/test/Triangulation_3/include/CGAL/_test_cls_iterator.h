@@ -268,4 +268,34 @@ _test_triangulation_iterator( const Triangulation &T )
   return(n-m+f-t);
 }
 
+template < class Triangulation >
+void
+_test_vertices_array(const Triangulation& tr)
+{
+  typedef typename Triangulation::Facet           Facet;
+  typedef typename Triangulation::Edge            Edge;
+  typedef typename Triangulation::Vertex_handle   Vertex_handle;
+  typedef typename Triangulation::Cell_handle     Cell_handle;
+
+  for (const Edge& e : tr.all_edges())
+  {
+    std::array<Vertex_handle, 2> vv = tr.vertices(e);
+    assert(vv[0] != vv[1]);
+  }
+  for (const Facet& f : tr.all_facets())
+  {
+    std::array<Vertex_handle, 3> vv = tr.vertices(f);
+    assert(vv[0] != vv[1]);
+    assert(vv[0] != vv[2]);
+    assert(vv[1] != vv[2]);
+  }
+  for (const Cell_handle c : tr.all_cell_handles())
+  {
+    std::array<Vertex_handle, 4> vv = tr.vertices(c);
+    assert(vv[0] != vv[1] && vv[0] != vv[2] && vv[0] != vv[3]);
+    assert(vv[1] != vv[2] && vv[1] != vv[3]);
+    assert(vv[2] != vv[3]);
+  }
+}
+
 #endif // CGAL_TEST_CLS_ITERATOR_C

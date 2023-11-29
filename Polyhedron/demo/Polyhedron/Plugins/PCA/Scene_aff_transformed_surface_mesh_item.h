@@ -59,8 +59,8 @@ public:
     positions_lines.resize(0);
     for(auto e : edges(*sm_ptr))
     {
-      const Point& a = get(vpm, target(halfedge(e, *sm_ptr), *sm_ptr));
-      const Point& b = get(vpm, target(opposite(halfedge(e, *sm_ptr), *sm_ptr), *sm_ptr));
+      const Point a = get(vpm, target(halfedge(e, *sm_ptr), *sm_ptr));
+      const Point b = get(vpm, target(opposite(halfedge(e, *sm_ptr), *sm_ptr), *sm_ptr));
 
       positions_lines.push_back(a.x() - center_.x);
       positions_lines.push_back(a.y() - center_.y);
@@ -91,23 +91,23 @@ public:
   ~Scene_aff_transformed_surface_mesh_item();
 
   Scene_surface_mesh_item* item() { return d->sm_item; }
-  const CGAL::qglviewer::Vec& center() const Q_DECL_OVERRIDE { return d->center_; }
+  const CGAL::qglviewer::Vec& center() const override { return d->center_; }
 
-  CGAL::Three::Scene_item* clone() const Q_DECL_OVERRIDE { return nullptr; }
-  QString name() const Q_DECL_OVERRIDE { return tr("%1_transformed").arg(d->sm_item->name()); }
-  QString toolTip() const Q_DECL_OVERRIDE;
+  CGAL::Three::Scene_item* clone() const override { return nullptr; }
+  QString name() const override { return tr("%1_transformed").arg(d->sm_item->name()); }
+  QString toolTip() const override;
 
-  bool isEmpty() const Q_DECL_OVERRIDE { return (d->nb_lines == 0); }
+  bool isEmpty() const override { return (d->nb_lines == 0); }
 
   void updateCache();
 
-  virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE { return m == Wireframe ; }
-  virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
-  void initializeBuffers(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+  virtual bool supportsRenderingMode(RenderingMode m) const override { return m == Wireframe ; }
+  virtual void invalidateOpenGLBuffers() override;
+  void initializeBuffers(CGAL::Three::Viewer_interface*) const override;
 
-  void compute_bbox() const Q_DECL_OVERRIDE;
-  void computeElements() const Q_DECL_OVERRIDE;
-  void drawEdges(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+  void compute_bbox() const override;
+  void computeElements() const override;
+  void drawEdges(CGAL::Three::Viewer_interface*) const override;
 };
 
 #endif // SCENE_AFF_TRANSFORMED_SURFACE_MESH_ITEM_H

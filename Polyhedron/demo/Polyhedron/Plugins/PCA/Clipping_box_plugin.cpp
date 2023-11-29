@@ -144,7 +144,7 @@ void Clipping_box_plugin::clipbox()
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
 
-  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     viewer->installEventFilter(item);
 
   scene->addItem(item);
@@ -182,7 +182,7 @@ void Clipping_box_plugin::do_clip(bool b)
   typedef CGAL::Epick Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Mesh;
 
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer =
         qobject_cast<CGAL::Three::Viewer_interface*>(v);

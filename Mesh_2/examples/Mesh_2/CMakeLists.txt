@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Mesh_2_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # create a target per cppfile
 file(
@@ -12,7 +12,7 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(mesh_with_seeds PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(mesh_marked_domain PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

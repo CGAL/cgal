@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup kernel_affine
+\ingroup PkgKernel23Ref
 
 Tag class for affine transformations.
 
@@ -24,7 +24,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup kernel_affine
+\ingroup PkgKernel23Ref
 
 Tag class for affine transformations.
 
@@ -46,7 +46,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup kernel_affine
+\ingroup PkgKernel23Ref
 
 Tag class for affine transformations.
 
@@ -68,7 +68,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup kernel_affine
+\ingroup PkgKernel23Ref
 
 Tag class for affine transformations.
 
@@ -90,7 +90,7 @@ public:
 namespace CGAL {
 
 /*!
-\ingroup kernel_affine
+\ingroup PkgKernel23Ref
 
 Tag class for affine transformations.
 

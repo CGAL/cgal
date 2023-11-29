@@ -16,9 +16,9 @@
 #include <CGAL/export/helpers.h>
 
 #if ( defined(CGAL_BUILD_SHARED_LIBS) && ( ! defined(CGAL_HEADER_ONLY) ) ) \
-  || defined(CGAL_USE_Qt5_RESOURCES)
+  || defined(CGAL_USE_Qt6_RESOURCES)
 
-#  if defined(CGAL_Qt5_EXPORTS) || defined(CGAL_USE_Qt5_RESOURCES)
+#  if defined(CGAL_Qt6_EXPORTS) || defined(CGAL_USE_Qt6_RESOURCES)
 // defined by CMake or in cpp files of the dll
 
 #    define CGAL_QT_EXPORT CGAL_DLL_EXPORT

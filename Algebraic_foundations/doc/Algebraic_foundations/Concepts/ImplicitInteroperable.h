@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsInteroperabilityConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 Two types `A` and `B` are a model of the concept
@@ -29,4 +29,3 @@ class ImplicitInteroperable {
 public:
 
 }; /* end ImplicitInteroperable */
-

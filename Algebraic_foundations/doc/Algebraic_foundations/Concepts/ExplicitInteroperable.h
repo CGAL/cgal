@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsInteroperabilityConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 Two types `A` and `B` are a model of the `ExplicitInteroperable`
@@ -27,4 +27,3 @@ class ExplicitInteroperable {
 public:
 
 }; /* end ExplicitInteroperable */
-

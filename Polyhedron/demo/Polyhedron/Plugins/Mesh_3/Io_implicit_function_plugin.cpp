@@ -104,7 +104,7 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Mes
     // Look for action just after "Load..." action
     QAction* actionAfterLoad = NULL;
     for ( QList<QAction*>::iterator it_action = menuFileActions.begin(),
-         end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
+         end = menuFileActions.end() ; it_action != end ; ++ it_action ) //for( QAction* action : menuFileActions)
     {
       if ( NULL != *it_action && (*it_action)->text().contains("Load") )
       {
@@ -139,7 +139,7 @@ load_function() const
 
   // Add loaded functions to the dialog
   int i=0;
-  Q_FOREACH( Implicit_function_interface* f, functions_ )
+  for( Implicit_function_interface* f : functions_ )
   {
     ui.functionList->insertItem(i++,f->name());
   }
@@ -180,7 +180,7 @@ load_function_plugins()
     if( !pluginsDir.cd(newDir) ) return;
   }
 
-  Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files))
+  for (QString fileName : pluginsDir.entryList(QDir::Files))
   {
     if ( fileName.contains("plugin") && QLibrary::isLibrary(fileName) )
     {

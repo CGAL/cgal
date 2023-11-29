@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project( Straight_skeleton_2_Examples )
 
-find_package(CGAL REQUIRED COMPONENTS Qt5 Core)
+find_package(CGAL REQUIRED COMPONENTS Qt6 Core)
 
 include_directories(BEFORE include)
 
@@ -14,7 +14,7 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program( "${cppfile}" )
 endforeach()
 
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_straight_skeleton_2 PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(exterior_offset_of_multiple_polygons_with_holes PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(Create_straight_skeleton_2 PUBLIC CGAL::CGAL_Basic_viewer)

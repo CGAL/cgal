@@ -33,7 +33,7 @@ class Io_3mf_plugin:
   typedef std::vector<Polygon> PolygonRange;
   typedef std::list<PointRange> PolylineRange;
   typedef std::vector<CGAL::IO::Color> ColorRange;
-  void init() Q_DECL_OVERRIDE
+  void init() override
   {
     QMenu* menuFile = CGAL::Three::Three::mainWindow()->findChild<QMenu*>("menuFile");
 
@@ -58,17 +58,17 @@ class Io_3mf_plugin:
     });
     menuFile->insertAction(CGAL::Three::Three::mainWindow()->findChild<QAction*>("actionSa_ve_Scene_as_Script"), actionSaveSceneTo3mf);
   }
-  QString name() const Q_DECL_OVERRIDE { return "3mf_io_plugin"; }
+  QString name() const override { return "3mf_io_plugin"; }
 
 
-  QString nameFilters() const Q_DECL_OVERRIDE { return
+  QString nameFilters() const override { return
         "3mf files (*.3mf)"; }
 
 
-  bool canLoad(QFileInfo) const Q_DECL_OVERRIDE { return true; }
+  bool canLoad(QFileInfo) const override { return true; }
 
 
-  QList<CGAL::Three::Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) Q_DECL_OVERRIDE {
+  QList<CGAL::Three::Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override {
     namespace PMP = CGAL::Polygon_mesh_processing;
     // Open file
     ok = true;
@@ -135,10 +135,10 @@ class Io_3mf_plugin:
   }
 
 
-  bool canSave(const CGAL::Three::Scene_item*) Q_DECL_OVERRIDE {return false;}
+  bool canSave(const CGAL::Three::Scene_item*) override {return false;}
 
 
-  bool save(QFileInfo fi, QList<CGAL::Three::Scene_item*>& items) Q_DECL_OVERRIDE {
+  bool save(QFileInfo fi, QList<CGAL::Three::Scene_item*>& items) override {
 
     QList<CGAL::Three::Scene_item*> to_return;
     std::vector<Scene_surface_mesh_item*> sm_items;

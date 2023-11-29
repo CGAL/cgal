@@ -153,20 +153,20 @@ In order to find the edge width of the surface, one can make use of the routine 
 
 \cgalExample{Surface_mesh_topology/edgewidth_surface_mesh.cpp}
 
-In these two examples, the mesh and the cycles can be visualized if CGAL_Qt5 is enabled.
+In these two examples, the mesh and the cycles can be visualized if CGAL_Qt6 is enabled.
 
 \subsection SMTopology_Example_IV Compute Face Width
 
-The following example computes the face width, and visualizes it if CGAL_Qt5 is enabled.
+The following example computes the face width, and visualizes it if CGAL_Qt6 is enabled.
 
 \cgalExample{Surface_mesh_topology/facewidth.cpp}
 
 \subsection SMTopology_Example_V Basic Homotopy Test
-The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if CGAL_Qt5 is enabled.
+The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if CGAL_Qt6 is enabled.
 \cgalExample{Surface_mesh_topology/path_homotopy_double_torus.cpp}
 
 \subsection SMTopology_Example_VI Basic Simplicity Test
-The following example shows how to test the simplicity of a closed path on a double torus. The original path is visualized if CGAL_Qt5 is enabled.
+The following example shows how to test the simplicity of a closed path on a double torus. The original path is visualized if CGAL_Qt6 is enabled.
 \cgalExample{Surface_mesh_topology/path_simplicity_double_torus_2.cpp}
 
 \subsection SMTopology_Example_VI_VII Polygonal Schema

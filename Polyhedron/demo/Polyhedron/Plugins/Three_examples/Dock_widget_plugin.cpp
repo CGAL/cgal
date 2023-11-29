@@ -29,18 +29,18 @@ class BasicPlugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   //decides if the plugin's actions will be displayed or not.
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     return true;
   }
   //the list of the actions of the plugin.
-  QList<QAction*> actions() const Q_DECL_OVERRIDE
+  QList<QAction*> actions() const override
   {
     return _actions;
   }
   //! [init]
   //this acts like a constructor for the plugin. It gets the references to the mainwindow and the scene, and connects the action.
-  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) Q_DECL_OVERRIDE
+  void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) override
   {
     //get the references
     this->scene = sc;
@@ -83,7 +83,7 @@ private Q_SLOTS:
   }
   //! [action]
   //! [closure]
-  void closure()Q_DECL_OVERRIDE
+  void closure()override
   {
     dock_widget->hide();
   }

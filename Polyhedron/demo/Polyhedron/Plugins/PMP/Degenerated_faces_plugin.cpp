@@ -112,7 +112,7 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   bool found = false;
   std::vector<Scene_facegraph_item*> selected_polys;
-  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  for(Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_facegraph_item* poly_item =
         qobject_cast<Scene_facegraph_item*>(scene->item(index));
@@ -121,7 +121,7 @@ void Degenerated_faces_plugin::on_actionDegenFaces_triggered()
       selected_polys.push_back(poly_item);
     }
   }
-  Q_FOREACH(Scene_facegraph_item* poly_item, selected_polys)
+  for(Scene_facegraph_item* poly_item : selected_polys)
   {
     Face_graph* pMesh = poly_item->polyhedron();
     std::vector<Face_descriptor> facets;
@@ -174,7 +174,7 @@ void Degenerated_faces_plugin::on_actionDegenEdges_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   bool found = false;
   std::vector<Scene_facegraph_item*> selected_polys;
-  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  for(Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_facegraph_item* poly_item =
         qobject_cast<Scene_facegraph_item*>(scene->item(index));
@@ -183,7 +183,7 @@ void Degenerated_faces_plugin::on_actionDegenEdges_triggered()
       selected_polys.push_back(poly_item);
     }
   }
-  Q_FOREACH(Scene_facegraph_item* poly_item, selected_polys)
+  for(Scene_facegraph_item* poly_item : selected_polys)
   {
     Face_graph* pMesh = poly_item->polyhedron();
     std::vector<edge_descriptor> edges;

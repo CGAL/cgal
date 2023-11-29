@@ -618,7 +618,7 @@ void Scene::draw(CGAL::QGLViewer* viewer)
         vao[0].bind();
         attrib_buffers(viewer);
         rendering_program.bind();
-        color.setRgbF(0.7,0.0,0.0);
+        color.setRgbF(0.7f,0.0f,0.0f);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
         gl->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
@@ -631,7 +631,7 @@ void Scene::draw(CGAL::QGLViewer* viewer)
         vao[1].bind();
         attrib_buffers(viewer);
         rendering_program.bind();
-        color.setRgbF(0.0,0.7,0.0);
+        color.setRgbF(0.0f,0.7f,0.0f);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
         gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
@@ -669,7 +669,7 @@ void Scene::draw(CGAL::QGLViewer* viewer)
             vao[3].bind();
             attrib_buffers(viewer);
             rendering_program.bind();
-            color.setRgbF(1.0,0.0,0.0);
+            color.setRgbF(1.0f,0.0f,0.0f);
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
             gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_cut_segments.size()/3));

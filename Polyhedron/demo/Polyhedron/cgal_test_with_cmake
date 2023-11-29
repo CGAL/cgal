@@ -149,6 +149,7 @@ hole_filling_plugin \
 hole_filling_sm_plugin \
 hole_filling_polyline_plugin \
 inside_out_plugin \
+interpolated_corrected_principal_curvatures_plugin\
 surface_intersection_plugin \
 surface_intersection_sm_plugin \
 io_image_plugin \

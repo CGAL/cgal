@@ -96,23 +96,23 @@ public:
   ~Scene_aff_transformed_polygon_soup_item();
 
   Scene_polygon_soup_item* item() { return d->ps_item; }
-  const CGAL::qglviewer::Vec& center() const Q_DECL_OVERRIDE { return d->center_; }
+  const CGAL::qglviewer::Vec& center() const override { return d->center_; }
 
-  CGAL::Three::Scene_item* clone() const Q_DECL_OVERRIDE { return nullptr; }
-  QString name() const Q_DECL_OVERRIDE { return tr("%1_transformed").arg(d->ps_item->name()); }
-  QString toolTip() const Q_DECL_OVERRIDE;
+  CGAL::Three::Scene_item* clone() const override { return nullptr; }
+  QString name() const override { return tr("%1_transformed").arg(d->ps_item->name()); }
+  QString toolTip() const override;
 
   void updateCache();
 
-  bool isEmpty() const Q_DECL_OVERRIDE { return (d->nb_lines == 0); }
+  bool isEmpty() const override { return (d->nb_lines == 0); }
 
-  virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE { return m == Wireframe ; }
-  virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
-  void initializeBuffers(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+  virtual bool supportsRenderingMode(RenderingMode m) const override { return m == Wireframe ; }
+  virtual void invalidateOpenGLBuffers() override;
+  void initializeBuffers(CGAL::Three::Viewer_interface*) const override;
 
-  void compute_bbox() const Q_DECL_OVERRIDE;
-  void computeElements() const Q_DECL_OVERRIDE;
-  void drawEdges(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+  void compute_bbox() const override;
+  void computeElements() const override;
+  void drawEdges(CGAL::Three::Viewer_interface*) const override;
 };
 
 #endif // SCENE_AFF_TRANSFORMED_POLYGON_SOUP_ITEM_H

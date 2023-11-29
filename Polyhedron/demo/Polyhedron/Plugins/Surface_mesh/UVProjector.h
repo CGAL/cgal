@@ -47,7 +47,7 @@ protected:
     painter.drawRect(QRect(QPoint(0,0), QPoint(this->width(),this->height())));
 
     painter.setPen(QPen(Qt::black));
-    Q_FOREACH(QPointF p, points)
+    for(QPointF p : points)
     {
      /*Translation(-w/2, -h/2) to recenter the scene, then
       * Scaling then Rotation and finally the Translation
