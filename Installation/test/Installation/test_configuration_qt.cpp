@@ -26,7 +26,7 @@ int main(int argc, char**) {
   std::istream_iterator<Point> end;
   Triangulation t;
   t.insert(begin, end);
-  if(argc == 3) // do not test Qt5 at runtime
+  if(argc == 3) // do not test Qt6 at runtime
     CGAL::draw(t);
   std::cout<<"OK."<<std::endl;
   return EXIT_SUCCESS;

@@ -8,5 +8,5 @@ is available in:
         Mikhail Bogdanov, Olivier Devillers, and Monique Teillaud. Hyperbolic
         Delaunay complexes and Voronoi diagrams made practical. Journal of
         Computational Geometry, 5(1):56–85, 2014.
-        URL: https://hal.inria.fr/hal-00961390,
+        URL: https://inria.hal.science/hal-00961390,
         doi:10.20382/jocg.v5i1a4.

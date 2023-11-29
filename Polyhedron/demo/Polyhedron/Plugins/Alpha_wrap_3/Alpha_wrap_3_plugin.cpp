@@ -344,7 +344,7 @@ public:
     if(scene->selectionIndices().empty())
       return false;
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if(!qobject_cast<Scene_polygon_soup_item*>(scene->item(index)) &&
          !qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) &&
@@ -525,7 +525,7 @@ public Q_SLOTS:
     Segments segments;
     Points points;
 
-    Q_FOREACH(int index, this->scene->selectionIndices())
+    for(int index : this->scene->selectionIndices())
     {
       // ---
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
@@ -745,7 +745,7 @@ public Q_SLOTS:
       return;
     }
 
-    Q_FOREACH(int index, this->scene->selectionIndices())
+    for(int index : this->scene->selectionIndices())
     {
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
       if(sm_item != nullptr)

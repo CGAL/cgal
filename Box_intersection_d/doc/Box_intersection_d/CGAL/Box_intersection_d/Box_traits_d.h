@@ -47,12 +47,12 @@ Box_traits_d();
 
 
 /*!
-\ingroup PkgBoxIntersectionDFunctions
+\ingroup PkgBoxIntersectionDEnums
 */
 enum Setting  { COMPLETE, BIPARTITE };
 
 /*!
-\ingroup PkgBoxIntersectionDFunctions
+\ingroup PkgBoxIntersectionDEnums
 */
 enum Topology { HALF_OPEN, CLOSED };
 

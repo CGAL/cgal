@@ -99,9 +99,10 @@ struct Scene_edit_box_item_priv{
     constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(.0,.0,.1));
     frame->setConstraint(&constraint);
     //create the sphere model
-    pool[0] = bb.xmin(); pool[3] = bb.xmax();
-    pool[1] = bb.ymin(); pool[4] = bb.ymax();
-    pool[2] = bb.zmin(); pool[5] = bb.zmax();
+    double eps = 1.e-3;
+    pool[0] = bb.xmin()-eps; pool[3] = bb.xmax()+eps;
+    pool[1] = bb.ymin()-eps; pool[4] = bb.ymax()+eps;
+    pool[2] = bb.zmin()-eps; pool[5] = bb.zmax()+eps;
 
     vertex_spheres.resize(0);
     normal_spheres.resize(0);
@@ -251,6 +252,22 @@ struct Scene_edit_box_item_priv{
   double applyX(int id, double x, double dirx);
   double applyY(int id, double y, double diry);
   double applyZ(int id, double z, double dirz);
+  void reset_vertices()
+  {
+    Scene_item::Bbox bb = scene->bbox();
+    double eps = 1.e-3;
+    pool[0] = bb.xmin()-eps; pool[3] = bb.xmax()+eps;
+    pool[1] = bb.ymin()-eps; pool[4] = bb.ymax()+eps;
+    pool[2] = bb.zmin()-eps; pool[5] = bb.zmax()+eps;
+    double x=(bb.xmin()+bb.xmax())/2;
+    double y=(bb.ymin()+bb.ymax())/2;
+    double z=(bb.zmin()+bb.zmax())/2;
+    center_ = CGAL::qglviewer::Vec(x,y,z);
+    relative_center_ = CGAL::qglviewer::Vec(0,0,0);
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    frame->setPosition(center_+offset);
+    item->invalidateOpenGLBuffers();
+  }
   const Scene_interface* scene;
   Scene_edit_box_item* item;
   QPoint picked_pixel;
@@ -264,6 +281,7 @@ struct Scene_edit_box_item_priv{
 Scene_edit_box_item::Scene_edit_box_item()
 {
   d = nullptr;
+  contextMenu();
 }
 Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
 {
@@ -271,7 +289,7 @@ Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
 
   are_buffers_filled = false;
 
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     v->setMouseTracking(true);
   }
@@ -294,10 +312,24 @@ Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
                             : Vi::PROGRAM_NO_SELECTION,
                             false));
   }
+  contextMenu();
 }
 QString Scene_edit_box_item::toolTip() const {
 
   return QString();
+}
+
+
+QMenu* Scene_edit_box_item::contextMenu()
+{
+  // diasable "Alpha slider" in menu
+  QMenu* resMenu = Scene_item::contextMenu();
+  bool prop = property("menu_changed").toBool();
+  if(!prop)
+  {
+    setProperty("menu_changed", true);
+  }
+  return resMenu;
 }
 
 void Scene_edit_box_item::drawSpheres(Viewer_interface *viewer, const QMatrix4x4 f_matrix ) const
@@ -620,7 +652,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       tc->setCenterSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::VERTEX;
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -649,7 +681,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       ec->setFlatDataSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::EDGE;
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -687,7 +719,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       tc->setFlatDataSize(d->hl_vertex.size());
       //draw
       d->hl_type = Scene_edit_box_item_priv::FACE;
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -938,10 +970,10 @@ void Scene_edit_box_item_priv::remodel_box(const QVector3D &dir)
 {
   CGAL::qglviewer::AxisPlaneConstraint::Type prev_cons = constraint.translationConstraintType();
   constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
-  Q_FOREACH(Scene_edit_box_item::vertex*  selected_vertex, selected_vertices )
+  for(Scene_edit_box_item::vertex*  selected_vertex: selected_vertices )
   {
     int id = selected_vertex->id;
-    CGAL_assume(id<8);
+    CGAL_assume(id<8 && id >=0);
     *selected_vertex->x = applyX(id, last_pool[id][0], dir.x());
     *selected_vertex->y = applyY(id, last_pool[id][1], dir.y());
     *selected_vertex->z = applyZ(id, last_pool[id][2], dir.z());
@@ -1306,4 +1338,9 @@ void Scene_edit_box_item::connectNewViewer(QObject *o)
   if(!viewer)
     return;
   viewer->setMouseTracking(true);
+}
+
+void Scene_edit_box_item::reset()
+{
+  d->reset_vertices();
 }
