@@ -931,6 +931,23 @@ namespace CommonKernelFunctors {
 
      const Vector_3 abad = cross_product(ab,ad);
      const Vector_3 abac = cross_product(ab,ac);
+
+     // The dihedral angle we are interested in is the angle around the edge ab which is
+     // the same as the angle between the vectors abac and abad
+     // (abac points inside the tetra abcd if its orientation is positive and outside otherwise)
+     // In order to increase the numerical precision of the computation, we consider the
+     // vector abad in the basis defined by (ab, abac, ab^abac).
+     // In this basis, adab=(ab * abad, abac * abad, [ab^abac] * abad), as all basis vector are orthogonal.
+     // We have ab * abad = 0, so in the plane (zy) of the new basis
+     // the dihedral angle is the angle between the z axis and abad
+     // which is the arctan of y/z (up to normalization)
+     // (Note that ab^abac is in the plane abc, pointing inside the tetra if its orientation is positive and outside otherwise).
+     // For the normalization, abad appears in both scalar products
+     // in the quotient so we can ignore its norm. For the second
+     // terms of the scalar products, we are left with ab^abac and abac.
+     // Since ab and abac are orthogonal the sinus of the angle between the vector is 1
+     // so the norms are ||ab||.||abac|| vs ||abac||, which is why we have a multiplication by ||ab||
+     // in y below.
      const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
      const double y = l_ab * CGAL::to_double(scalar_product(abac, abad));
      const double z = CGAL::to_double(scalar_product(cross_product(ab,abac),abad));
