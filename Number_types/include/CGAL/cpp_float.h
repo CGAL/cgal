@@ -18,6 +18,7 @@
 #include <CGAL/assertions.h>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <iostream>
+#include <limits>
 
 namespace CGAL {
 
@@ -27,7 +28,13 @@ namespace internal {
   inline int low_bit (boost::uint64_t x) {
 #if defined(_MSC_VER)
     unsigned long ret;
+  #if defined(_M_IX86)
+    CGAL_assertion_msg(x <= static_cast<boost::uint64_t>(std::numeric_limits<unsigned long>::max()),
+      "Using _BitScanForward on input larger than data type");
+    _BitScanForward(&ret, x);
+  #else
     _BitScanForward64(&ret, x);
+  #endif
     return (int)ret;
 #elif defined(__xlC__)
     return __cnttz8 (x);
@@ -39,7 +46,13 @@ namespace internal {
   inline int high_bit (boost::uint64_t x) {
 #if defined(_MSC_VER)
     unsigned long ret;
+  #if defined(_M_IX86)
+    CGAL_assertion_msg(x <= static_cast<boost::uint64_t>(std::numeric_limits<unsigned long>::max()),
+      "Using _BitScanReverse on input larger than data type");
+    _BitScanReverse(&ret, x);
+  #else
     _BitScanReverse64(&ret, x);
+  #endif
     return (int)ret;
 #elif defined(__xlC__)
     // Macro supposedly not defined on z/OS.
