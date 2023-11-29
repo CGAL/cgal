@@ -617,12 +617,11 @@ void set_value(const T&, internal_np::Param_not_found)
 
 // computes selected curvatures for one specific vertex
 template<typename PolygonMesh,
-  typename NamedParameters = parameters::Default_named_parameters>
-  void interpolated_corrected_curvatures_one_vertex(
-    const PolygonMesh& pmesh,
-    const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-    const NamedParameters& np = parameters::default_values()
-  )
+         typename NamedParameters>
+void interpolated_corrected_curvatures_one_vertex(
+  const PolygonMesh& pmesh,
+  const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+  const NamedParameters& np)
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vertex_position_map;
@@ -716,7 +715,7 @@ template<typename PolygonMesh,
 }
 
 
-template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
+template<typename PolygonMesh, class NamedParameters>
 class Interpolated_corrected_curvatures_computer
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
@@ -780,7 +779,6 @@ private:
     mu1_map = get(CGAL::dynamic_face_property_t<FT>(), pmesh);
     mu2_map = get(CGAL::dynamic_face_property_t<FT>(), pmesh);
     muXY_map = get(CGAL::dynamic_face_property_t<std::array<FT, 3 * 3>>(), pmesh);
-
   }
 
   void set_named_params(const NamedParameters& np)
@@ -824,10 +822,8 @@ private:
 
 public:
 
-  Interpolated_corrected_curvatures_computer(const PolygonMesh& pmesh,
-    const NamedParameters& np = parameters::default_values()
-  ) :
-    pmesh(pmesh)
+  Interpolated_corrected_curvatures_computer(const PolygonMesh& pmesh,const NamedParameters& np)
+    : pmesh(pmesh)
   {
     set_named_params(np);
 

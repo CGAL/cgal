@@ -65,7 +65,7 @@ public:
   }
 
   bool applicable(QAction*) const {
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()){
+    for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices()){
       if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) )
         return true;
       if ( qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index)))
@@ -80,7 +80,7 @@ public Q_SLOTS:
    void triangulate()
    {
       QApplication::setOverrideCursor(Qt::WaitCursor);
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+      for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
     {
       Scene_surface_mesh_item* sm_item =
           qobject_cast<Scene_surface_mesh_item*>(scene->item(index));

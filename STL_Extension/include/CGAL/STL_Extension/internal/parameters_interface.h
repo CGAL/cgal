@@ -161,6 +161,7 @@ CGAL_add_named_parameter(vertex_corner_map_t, vertex_corner_map, vertex_corner_m
 CGAL_add_named_parameter(patch_normal_map_t, patch_normal_map, patch_normal_map)
 CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_primitive_map)
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
+CGAL_add_named_parameter(sizing_function_t, sizing_function, sizing_function)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -229,10 +230,12 @@ CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_
 CGAL_add_named_parameter(use_convex_hull_t, use_convex_hull, use_convex_hull)
 
 // meshing parameters
+CGAL_add_named_parameter(boundary_subdivision_ratio_t, boundary_subdivision_ratio, boundary_subdivision_ratio)
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
 CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_chord)
 CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedral_angle)
 CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
+CGAL_add_named_parameter(optimize_boundary_anchor_location_t, optimize_boundary_anchor_location, optimize_boundary_anchor_location)
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 
 // tetrahedral remeshing parameters

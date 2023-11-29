@@ -20,8 +20,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
@@ -99,13 +97,13 @@ if(IPE_FOUND AND IPE_VERSION)
     cgal_add_compilation_test(CGAL_${IPELET})
   endforeach(IPELET)
   if(CGAL_Core_FOUND)
-    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core
+    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL CGAL::CGAL_Core
                                                      CGAL::Eigen3_support)
   endif()
   #example in doc not installed
   add_library(simple_triangulation MODULE simple_triangulation.cpp)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
-  target_link_libraries(simple_triangulation CGAL::Eigen3_support
+  target_link_libraries(simple_triangulation CGAL::CGAL CGAL::Eigen3_support
                         ${IPE_LIBRARIES})
   target_include_directories(simple_triangulation BEFORE PRIVATE ${IPE_INCLUDE_DIR})
   if (WITH_IPE_7)

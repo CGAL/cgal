@@ -1,5 +1,5 @@
 include(polyhedron_demo_macros)
-qt5_wrap_ui(clip_polyhedronUI_FILES Clip_polyhedron_plugin.ui)
+qt6_wrap_ui(clip_polyhedronUI_FILES Clip_polyhedron_plugin.ui)
 polyhedron_demo_plugin(clip_polyhedron_plugin Clip_polyhedron_plugin
                        ${clip_polyhedronUI_FILES})
 target_link_libraries(
@@ -16,12 +16,12 @@ target_link_libraries(
 polyhedron_demo_plugin(diff_between_meshes_plugin Diff_between_meshes_plugin)
 target_link_libraries(diff_between_meshes_plugin PUBLIC scene_surface_mesh_item)
 
- qt5_wrap_ui( animateUI_FILES Animate_widget.ui )
+ qt6_wrap_ui( animateUI_FILES Animate_widget.ui )
  polyhedron_demo_plugin(animate_mesh_plugin Animate_mesh_plugin ${animateUI_FILES})
  target_link_libraries(animate_mesh_plugin PUBLIC scene_surface_mesh_item)
 
  if( TARGET CGAL::METIS_support )
-   qt5_wrap_ui( partitionUI_FILES PartitionDialog.ui )
+   qt6_wrap_ui( partitionUI_FILES PartitionDialog.ui )
    polyhedron_demo_plugin(partition_plugin Partition_graph_plugin ${partitionUI_FILES})
    target_link_libraries(partition_plugin PUBLIC scene_surface_mesh_item CGAL::METIS_support )
 else()

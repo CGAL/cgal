@@ -27,26 +27,26 @@ public:
   Scene_lcc_item(const LCC &lcc);
   ~Scene_lcc_item();
 
-  bool isEmpty()const Q_DECL_OVERRIDE;
-  bool isFinite() const Q_DECL_OVERRIDE { return true; }
+  bool isEmpty()const override;
+  bool isFinite() const override { return true; }
 
-  Scene_lcc_item* clone() const Q_DECL_OVERRIDE ;
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE ;
-  QString toolTip() const Q_DECL_OVERRIDE ;
-  void compute_bbox()const Q_DECL_OVERRIDE;
+  Scene_lcc_item* clone() const override ;
+  bool supportsRenderingMode(RenderingMode m) const override ;
+  QString toolTip() const override ;
+  void compute_bbox()const override;
 
 
-  void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE ;
-  void drawEdges(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE ;
-  void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE ;
+  void draw(CGAL::Three::Viewer_interface*) const override ;
+  void drawEdges(CGAL::Three::Viewer_interface*) const override ;
+  void drawPoints(CGAL::Three::Viewer_interface*) const override ;
 
-  void computeElements() const Q_DECL_OVERRIDE;
-  void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
+  void computeElements() const override;
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const override;
 
-  QMenu* contextMenu() Q_DECL_OVERRIDE ;
+  QMenu* contextMenu() override ;
 
 public Q_SLOTS:
-    void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+    void invalidateOpenGLBuffers() override;
     void randomFaceColors();
     void randomVolumeColors();
     void resetColors();

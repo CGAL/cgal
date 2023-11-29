@@ -437,7 +437,6 @@ bool printVertexIds(const Mesh& mesh,
                     TextListItem* vitems)
 {
   using Ppmap = typename boost::property_map<Mesh, boost::vertex_point_t>::const_type;
-  using Point = typename boost::property_traits<Ppmap>::value_type;
   using IDmap = typename boost::property_map<Mesh, boost::vertex_index_t>::type;
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
@@ -452,7 +451,7 @@ bool printVertexIds(const Mesh& mesh,
   // fills textItems
   for(typename boost::graph_traits<Mesh>::vertex_descriptor vh : vertices(mesh))
   {
-    const Point& p = get(ppmap, vh);
+    const auto p = get(ppmap, vh);
     vitems->append(new TextItem(float(p.x() + offset.x),
                                 float(p.y() + offset.y),
                                 float(p.z() + offset.z),
@@ -479,7 +478,6 @@ bool printEdgeIds(const Mesh& mesh,
                   TextListItem* eitems)
 {
   using Ppmap = typename boost::property_map<Mesh, boost::vertex_point_t>::const_type;
-  using Point = typename boost::property_traits<Ppmap>::value_type;
   using IDmap = typename boost::property_map<Mesh, boost::halfedge_index_t>::type;
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
@@ -493,8 +491,8 @@ bool printEdgeIds(const Mesh& mesh,
 
   for(typename boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
   {
-    const Point& p1 = get(ppmap, source(e, mesh));
-    const Point& p2 = get(ppmap, target(e, mesh));
+    const auto p1 = get(ppmap, source(e, mesh));
+    const auto p2 = get(ppmap, target(e, mesh));
     eitems->append(new TextItem(float((p1.x() + p2.x()) / 2 + offset.x),
                                 float((p1.y() + p2.y()) / 2 + offset.y),
                                 float((p1.z() + p2.z()) / 2 + offset.z),
@@ -631,8 +629,8 @@ int zoomToId(const Mesh& mesh,
       if(get(eidmap, halfedge(e, mesh))/2 == id)
       {
         typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(e, mesh);
-        const Point& p1 = get(ppmap, source(e, mesh));
-        const Point& p2 = get(ppmap, target(e, mesh));
+        const auto p1 = get(ppmap, source(e, mesh));
+        const auto p2 = get(ppmap, target(e, mesh));
         p = Point((float)(p1.x() + p2.x()) / 2 + offset.x,
                   (float)(p1.y() + p2.y()) / 2 + offset.y,
                   (float)(p1.z() + p2.z()) / 2 + offset.z );
