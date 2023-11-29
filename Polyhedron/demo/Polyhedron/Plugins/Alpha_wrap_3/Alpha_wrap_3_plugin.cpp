@@ -646,6 +646,13 @@ public Q_SLOTS:
     std::cout << segments.size() << " edges" << std::endl;
     std::cout << points.size() << " points" << std::endl;
 
+    if(!triangles.empty())
+      m_wrap_bbox = triangles.front().bbox();
+    else if(!segments.empty())
+      m_wrap_bbox = segments.front().bbox();
+    else if(!points.empty())
+      m_wrap_bbox = points.front().bbox();
+
     for(const Kernel::Triangle_3& tr : triangles)
       m_wrap_bbox += tr.bbox();
     for(const Kernel::Segment_3& sg : segments)
