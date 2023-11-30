@@ -60,7 +60,7 @@ bool write_header(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr)
   }
   else
   {
-    write(os, tr.dimension());
+    CGAL::write(os, tr.dimension());
   }
   return (bool)os;
 }
@@ -77,7 +77,7 @@ bool read_header(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr)
   }
   else
   {
-    read(is, dimension);
+    CGAL::read(is, dimension);
   }
   if(dimension > 3 || dimension < -2)
     return false;
@@ -103,7 +103,7 @@ bool write_vertices(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr)
   }
   else
   {
-    write(os, n);
+    CGAL::write(os, n);
   }
 
   if (n == 0)
@@ -120,54 +120,47 @@ bool write_vertices(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr)
 }
 
 template < class GT, class Tds_, class Lds_,
-           typename Tr_src = Triangulation_3<GT, Tds_, Lds_>,
-           typename ConvertVertex = Nullptr_t >
-struct read_vertices_functor
+           typename Tr_src,
+           typename ConvertVertex >
+bool read_vertices_with_convertion(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
+                                   std::vector< typename Triangulation_3<GT, Tds_>::Vertex_handle >& vertices_handles,
+                                   typename Triangulation_3<GT, Tds_>::size_type n,
+                                   ConvertVertex convert_vertex = ConvertVertex())
 {
-  bool operator()(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
-                  std::vector< typename Triangulation_3<GT, Tds_>::Vertex_handle >& vertices_handles,
-                  typename Triangulation_3<GT, Tds_>::size_type n,
-                  ConvertVertex convert_vertex = ConvertVertex())
+  // Reads:
+  // - the non combinatorial information on vertices (point, etc)
+  // The vertices are read with the type Tr_src::Vertex
+  // and converted to type Triangulation_3<GT, Tds_, Lds_>::Vertex
+  // using the ConvertVertex convertor.
+  typedef typename Tr_src::Vertex Vertex1;
+
+  for(std::size_t i=1; i <= n; i++)
   {
-    // Reads:
-    // - the non combinatorial information on vertices (point, etc)
-    // The vertices are read with the type Tr_src::Vertex
-    // and converted to type Triangulation_3<GT, Tds_, Lds_>::Vertex
-    // using the ConvertVertex convertor.
-    typedef typename Tr_src::Vertex Vertex1;
-
-    for(std::size_t i=1; i <= n; i++)
-    {
-      Vertex1 v;
-      if(!(is >> v))
-        return false;
-      vertices_handles[i] = tr.tds().create_vertex();
-      convert_vertex(v, *vertices_handles[i]);
-    }
-
-    return (bool)is;
+    Vertex1 v;
+    if(!(is >> v))
+      return false;
+    vertices_handles[i] = tr.tds().create_vertex();
+    convert_vertex(v, *vertices_handles[i]);
   }
-};
 
-template < class GT, class Tds_, class Lds_, class Tr_src >
-struct read_vertices_functor < GT, Tds_, Lds_, Tr_src, Nullptr_t >
+  return (bool)is;
+}
+
+template < class GT, class Tds_, class Lds_>
+bool read_vertices_without_convertion(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
+                   std::vector< typename Triangulation_3<GT, Tds_>::Vertex_handle >& vertices_handles,
+                   typename Triangulation_3<GT, Tds_>::size_type n)
 {
-  bool operator()(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
-                  std::vector< typename Triangulation_3<GT, Tds_>::Vertex_handle >& vertices_handles,
-                  typename Triangulation_3<GT, Tds_>::size_type n,
-                  Nullptr_t _ = Nullptr_t())
+  // Reads:
+  // - the non combinatorial information on vertices (point, etc)
+  for(std::size_t i=1; i <= n; i++)
   {
-    // Reads:
-    // - the non combinatorial information on vertices (point, etc)
-    for(std::size_t i=1; i <= n; i++)
-    {
-      vertices_handles[i] = tr.tds().create_vertex();
-      if(!(is >> *vertices_handles[i]))
-        return false;
-    }
-    return (bool)is;
+    vertices_handles[i] = tr.tds().create_vertex();
+    if(!(is >> *vertices_handles[i]))
+      return false;
   }
-};
+  return (bool)is;
+}
 
 
 template < class GT, class Tds_, class Lds_,
@@ -190,7 +183,7 @@ bool read_vertices(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
   }
   else
   {
-    read(is, n);
+    CGAL::read(is, n);
   }
   if((n+1) > vertices_handles.max_size())
     return false;
@@ -198,8 +191,16 @@ bool read_vertices(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
   vertices_handles.resize(n+1);
   vertices_handles[0] = tr.infinite_vertex(); // the infinite vertex is numbered 0
 
-  if (!read_vertices_functor<GT, Tds_, Lds_, Tr_src, ConvertVertex>()(is, tr, vertices_handles, n, convert_vertex))
-    return false;
+  if constexpr (std::is_same<ConvertVertex, Nullptr_t>::value)
+  {
+    if (!read_vertices_without_convertion<GT, Tds_, Lds_>(is, tr, vertices_handles, n))
+      return false;
+  }
+  else
+  {
+    if (!read_vertices_with_convertion<GT, Tds_, Lds_, Tr_src, ConvertVertex>(is, tr, vertices_handles, n, convert_vertex))
+      return false;
+  }
 
   return (bool)is;
 }
@@ -286,55 +287,46 @@ bool write_cells(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr,
 
 
 template < class GT, class Tds_, class Lds_,
-           typename Tr_src = Triangulation_3<GT, Tds_, Lds_>,
-           typename ConvertCell = Nullptr_t >
-struct read_cells_functor
+           typename Tr_src,
+           typename ConvertCell >
+bool read_cells_with_convertion(std::istream& is, typename Triangulation_3<GT, Tds_>::size_type m,
+                                std::vector< typename Triangulation_3<GT, Tds_>::Cell_handle >& C,
+                                ConvertCell convert_cell = ConvertCell())
 {
-  bool operator()(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
-                  const std::vector< typename Triangulation_3<GT, Tds_>::Vertex_handle >& vertices_handles,
-                  typename Triangulation_3<GT, Tds_>::size_type m, std::vector< typename Triangulation_3<GT, Tds_>::Cell_handle >& C,
-                  ConvertCell convert_cell = ConvertCell())
+  // Reads:
+  // [Cells other info]
+  // - when dimension < 3 : the same with faces of maximal dimension
+  // The cell are read with the type Tr_src::Cell
+  // and converted to type Triangulation_3<GT, Tds_, Lds_>::Cell
+  // using the ConvertCell convertor.
+
+  typedef typename Tr_src::Cell Cell1;
+
+  for(std::size_t i=0 ; i < m; i++)
   {
-    // Reads:
-    // [Cells other info]
-    // - when dimension < 3 : the same with faces of maximal dimension
-    // The cell are read with the type Tr_src::Cell
-    // and converted to type Triangulation_3<GT, Tds_, Lds_>::Cell
-    // using the ConvertCell convertor.
-
-    typedef typename Tr_src::Cell Cell1;
-
-    for(std::size_t i=0 ; i < m; i++)
-    {
-      Cell1 c;
-      if(!(is >> c))
-        return false;
-      convert_cell(c, *C[i]);
-    }
-
-    return (bool)is;
+    Cell1 c;
+    if(!(is >> c))
+      return false;
+    convert_cell(c, *C[i]);
   }
-};
 
-template < class GT, class Tds_, class Lds_, class Tr_src >
-struct read_cells_functor < GT, Tds_, Lds_, Tr_src, Nullptr_t >
+  return (bool)is;
+}
+
+template < class GT, class Tds_, class Lds_ >
+bool read_cells_without_convertion(std::istream& is, typename Triangulation_3<GT, Tds_>::size_type m,
+                                   std::vector< typename Triangulation_3<GT, Tds_>::Cell_handle >& C)
 {
-  bool operator()(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
-                  const std::vector< typename Triangulation_3<GT, Tds_>::Vertex_handle >& vertices_handles,
-                  typename Triangulation_3<GT, Tds_>::size_type m, std::vector< typename Triangulation_3<GT, Tds_>::Cell_handle >& C,
-                  Nullptr_t _ = Nullptr_t())
+  // Reads:
+  // - the non combinatorial information on vertices (point, etc)
+  for(std::size_t i=0 ; i < m; i++)
   {
-    // Reads:
-    // - the non combinatorial information on vertices (point, etc)
-    for(std::size_t i=0 ; i < m; i++)
-    {
-      if(!(is >> *C[i]))
-        return false;
-    }
-
-    return (bool)is;
+    if(!(is >> *C[i]))
+      return false;
   }
-};
+
+  return (bool)is;
+}
 
 template < class GT, class Tds_, class Lds_,
            typename Tr_src = Triangulation_3<GT, Tds_, Lds_>,
@@ -362,8 +354,16 @@ bool read_cells(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
   if(!is)
     return false;
 
-  if (!read_cells_functor<GT, Tds_, Lds_, Tr_src, ConvertCell>()(is, tr, vertices_handles, m, C, convert_cell))
-    return false;
+  if constexpr (std::is_same<ConvertCell, Nullptr_t>::value)
+  {
+    if (!read_cells_without_convertion<GT, Tds_, Lds_>(is, m, C))
+      return false;
+  }
+  else
+  {
+    if (!read_cells_with_convertion<GT, Tds_, Lds_, Tr_src, ConvertCell>(is, m, C, convert_cell))
+      return false;
+  }
 
   return (bool)is;
 }
