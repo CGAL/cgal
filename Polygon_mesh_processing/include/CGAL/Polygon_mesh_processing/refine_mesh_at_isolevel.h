@@ -17,7 +17,8 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-
+#include <unordered_set>
+#include <unordered_map>
 #include <unordered_map>
 
 namespace CGAL {
