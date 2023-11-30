@@ -1415,6 +1415,7 @@ protected:
           if (is_two_dimensional())
           { displayMessage(QString("Viewer is in 2D mode.")); }
           else { displayMessage(QString("Viewer is in 3D mode.")); }
+          set_camera_mode();
           update();
         }
       }
