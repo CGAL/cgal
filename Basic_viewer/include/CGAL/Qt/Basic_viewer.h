@@ -598,7 +598,8 @@ public:
                                 std::get<0>(m_texts_vec[i]).y(),
                                 std::get<0>(m_texts_vec[i]).z()));
 
-        drawText((int)screenPos[0], (int)screenPos[1], std::get<1>(m_texts_vec[i]));
+        drawText((int)screenPos[0], (int)screenPos[1],
+                 QString(std::get<1>(m_texts_vec[i]).c_str()));
       }
       glEnable(GL_LIGHTING);
     }

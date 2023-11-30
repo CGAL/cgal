@@ -14,7 +14,6 @@
 #define CGAL_GRAPHICS_SCENE_H
 
 // TODO #include <CGAL/license/GraphicsView.h>
-#include <QString>
 
 #include <iostream>
 #include <map>
@@ -270,18 +269,15 @@ public:
   }
 
   template <typename KPoint>
-  void add_text(const KPoint &kp, const QString &txt)
+  void add_text(const KPoint &kp, const std::string &txt)
   {
     Local_point p = get_local_point(kp);
     m_texts.push_back(std::make_tuple(p, txt));
   }
 
-  template <typename KPoint> void add_text(const KPoint &kp, const char *txt)
-  { add_text(kp, QString(txt)); }
-
   template <typename KPoint>
-  void add_text(const KPoint &kp, const std::string &txt)
-  { add_text(kp, txt.c_str()); }
+  void add_text(const KPoint &kp, const char *txt)
+  { add_text(kp, std::string(txt)); }
 
   bool empty() const
   {
@@ -381,7 +377,7 @@ public:
   int m_texts_size() const
   { return m_texts.size(); }
 
-  const std::vector<std::tuple<Local_point, QString>>& get_m_texts() const
+  const std::vector<std::tuple<Local_point, std::string>>& get_m_texts() const
   { return m_texts; }
 
 public:
@@ -428,7 +424,7 @@ protected:
   Buffer_for_vao m_buffer_for_mono_faces;
   Buffer_for_vao m_buffer_for_colored_faces;
 
-  std::vector<std::tuple<Local_point, QString>> m_texts;
+  std::vector<std::tuple<Local_point, std::string>> m_texts;
 
   std::vector<BufferType> arrays[LAST_INDEX];
 
