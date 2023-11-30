@@ -30,7 +30,7 @@ void sign_test()
 }
 
 auto almost_equal_angle(double a, double b) {
-  return std::min(std::abs(a - b), std::abs(a + 360 - b)) < 0.1;
+  return (std::min)(std::abs(a - b), std::abs(a + 360 - b)) < 0.1;
 }
 
 void test_regular_tetrahedron()
