@@ -64,7 +64,7 @@ target_compile_definitions(test_CDT_3_insert_constrained_edge_from_OFF_file PUBL
 cgal_add_test(test_CDT_3_insert_constrained_edge_from_OFF_file)
 
 function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
-  set(options)
+  set(options ONLY_MERGE_FACETS)
   set(oneValueArgs DATA_FILENAME TIMEOUT)
   set(multiValueArgs LABELS)
   cmake_parse_arguments(PARSE_ARGV 2 "MY" "${options}" "${oneValueArgs}"
@@ -74,9 +74,19 @@ function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
   else()
     set(data_filename ${MY_DATA_FILENAME})
   endif()
-  add_test(NAME "execution   of  cdt_3_from_off ${data_name}" COMMAND cdt_3_from_off ${data_dir}/${data_filename} ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
+  add_test(NAME "execution   of  cdt_3_from_off ${data_name}"
+      COMMAND cdt_3_from_off
+      ${data_dir}/${data_filename}
+      ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
+  if(MY_ONLY_MERGE_FACETS)
+    set_property(TEST "execution   of  cdt_3_from_off ${data_name}" PROPERTY DISABLED TRUE)
+  endif()
   cgal_setup_test_properties("execution   of  cdt_3_from_off ${data_name}" cdt_3_from_off)
-  add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}" COMMAND cdt_3_from_off --merge-facets ${data_dir}/${data_filename} ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}--merge-facets.off)
+  add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}"
+      COMMAND cdt_3_from_off
+       --merge-facets
+      ${data_dir}/${data_filename}
+      ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}--merge-facets.off)
   cgal_setup_test_properties("execution   of  cdt_3_from_off --merge-facets ${data_name}" cdt_3_from_off)
   if(MY_LABELS)
     set_property(TEST
