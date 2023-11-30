@@ -122,7 +122,7 @@ bool write_vertices(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr)
 template < class GT, class Tds_, class Lds_,
            typename Tr_src,
            typename ConvertVertex >
-bool read_vertices_with_convertion(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
+bool read_vertices_with_conversion(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
                                    std::vector< typename Triangulation_3<GT, Tds_>::Vertex_handle >& vertices_handles,
                                    typename Triangulation_3<GT, Tds_>::size_type n,
                                    ConvertVertex convert_vertex = ConvertVertex())
@@ -147,7 +147,7 @@ bool read_vertices_with_convertion(std::istream& is, Triangulation_3<GT, Tds_, L
 }
 
 template < class GT, class Tds_, class Lds_>
-bool read_vertices_without_convertion(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
+bool read_vertices_without_conversion(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
                    std::vector< typename Triangulation_3<GT, Tds_>::Vertex_handle >& vertices_handles,
                    typename Triangulation_3<GT, Tds_>::size_type n)
 {
@@ -193,12 +193,12 @@ bool read_vertices(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
 
   if constexpr (std::is_same<ConvertVertex, Nullptr_t>::value)
   {
-    if (!read_vertices_without_convertion<GT, Tds_, Lds_>(is, tr, vertices_handles, n))
+    if (!read_vertices_without_conversion<GT, Tds_, Lds_>(is, tr, vertices_handles, n))
       return false;
   }
   else
   {
-    if (!read_vertices_with_convertion<GT, Tds_, Lds_, Tr_src, ConvertVertex>(is, tr, vertices_handles, n, convert_vertex))
+    if (!read_vertices_with_conversion<GT, Tds_, Lds_, Tr_src, ConvertVertex>(is, tr, vertices_handles, n, convert_vertex))
       return false;
   }
 
@@ -289,7 +289,7 @@ bool write_cells(std::ostream& os, const Triangulation_3<GT, Tds_, Lds_>& tr,
 template < class GT, class Tds_, class Lds_,
            typename Tr_src,
            typename ConvertCell >
-bool read_cells_with_convertion(std::istream& is, typename Triangulation_3<GT, Tds_>::size_type m,
+bool read_cells_with_conversion(std::istream& is, typename Triangulation_3<GT, Tds_>::size_type m,
                                 std::vector< typename Triangulation_3<GT, Tds_>::Cell_handle >& C,
                                 ConvertCell convert_cell = ConvertCell())
 {
@@ -314,7 +314,7 @@ bool read_cells_with_convertion(std::istream& is, typename Triangulation_3<GT, T
 }
 
 template < class GT, class Tds_, class Lds_ >
-bool read_cells_without_convertion(std::istream& is, typename Triangulation_3<GT, Tds_>::size_type m,
+bool read_cells_without_conversion(std::istream& is, typename Triangulation_3<GT, Tds_>::size_type m,
                                    std::vector< typename Triangulation_3<GT, Tds_>::Cell_handle >& C)
 {
   // Reads:
@@ -356,12 +356,12 @@ bool read_cells(std::istream& is, Triangulation_3<GT, Tds_, Lds_>& tr,
 
   if constexpr (std::is_same<ConvertCell, Nullptr_t>::value)
   {
-    if (!read_cells_without_convertion<GT, Tds_, Lds_>(is, m, C))
+    if (!read_cells_without_conversion<GT, Tds_, Lds_>(is, m, C))
       return false;
   }
   else
   {
-    if (!read_cells_with_convertion<GT, Tds_, Lds_, Tr_src, ConvertCell>(is, m, C, convert_cell))
+    if (!read_cells_with_conversion<GT, Tds_, Lds_, Tr_src, ConvertCell>(is, m, C, convert_cell))
       return false;
   }
 
