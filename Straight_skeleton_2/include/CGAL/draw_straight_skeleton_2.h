@@ -88,12 +88,12 @@ void print_vertex_label(const SS2& ss2,
                         const GSOptions& gs_options)
 {
   // TODO? an option different from draw_vertex to allow to show only some labels ??
-  if (!gs_options.draw_vertex(ss2, vh))
-  { return; }
-
-  std::stringstream label;
-  label << "V" << vh->id() << std::ends;
-  graphics_scene.add_text(vh->point(), label.str());
+  if (gs_options.draw_vertex(ss2, vh))
+  {
+    std::stringstream label;
+    label << "V" << vh->id() << std::ends;
+    graphics_scene.add_text(vh->point(), label.str());
+  }
 }
 
 template <class SS2, class GSOptions>
@@ -101,7 +101,7 @@ void compute_elements(const SS2& ss2,
                       CGAL::Graphics_scene& graphics_scene,
                       const GSOptions& gs_options)
 {
-  if (!gs_options.are_edges_enabled())
+  if (gs_options.are_edges_enabled())
   {
     for (typename SS2::Halfedge_const_iterator it=ss2.halfedges_begin();
          it != ss2.halfedges_end(); ++it)
@@ -114,7 +114,7 @@ void compute_elements(const SS2& ss2,
     }
   }
 
-  if (!gs_options.are_vertices_enabled())
+  if (gs_options.are_vertices_enabled())
   {
     for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin();
          it!=ss2.vertices_end(); ++it)
