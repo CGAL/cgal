@@ -54,8 +54,6 @@ void compute_elements(const P2& p2,
   if (p2.is_empty())
     return;
 
-  typename P2::Point_2 prev=p2.vertex(p2.size()-1);
-
   if (gso.are_faces_enabled())
   {
     if(gso.colored_face(p2, nullptr))
@@ -64,6 +62,7 @@ void compute_elements(const P2& p2,
     { graphics_scene.face_begin(); }
   }
 
+  typename P2::Vertex_const_iterator prev=p2.vertices_end(); --prev;
   for (typename P2::Vertex_const_iterator i=p2.vertices_begin();
        i!=p2.vertices_end(); ++i)
   {
@@ -77,18 +76,18 @@ void compute_elements(const P2& p2,
     }
 
     if(gso.are_edges_enabled() &&
-       gso.draw_edge(p2, i))
+       gso.draw_edge(p2, prev))
     { // Add edge with previous point
-      if(gso.colored_edge(p2, i))
-      { graphics_scene.add_segment(prev, *i, gso.edge_color(p2, i)); }
+      if(gso.colored_edge(p2, prev))
+      { graphics_scene.add_segment(*prev, *i, gso.edge_color(p2, prev)); }
       else
-      { graphics_scene.add_segment(prev, *i); }
+      { graphics_scene.add_segment(*prev, *i); }
     }
 
     if(gso.are_faces_enabled())
     { graphics_scene.add_point_in_face(*i); } // Add point in face
 
-    prev = *i;
+    prev=i;
   }
 
   if (gso.are_faces_enabled())
@@ -140,6 +139,8 @@ void draw(const CGAL_P2_TYPE &ap2,
 }
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#undef CGAL_P2_TYPE
 
 } // End namespace CGAL
 

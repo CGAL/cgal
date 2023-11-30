@@ -27,7 +27,7 @@ namespace draw_function_for_FG {
 template <typename FG, typename GSOptions>
 void compute_elements(const FG &fg,
                       CGAL::Graphics_scene &graphics_scene,
-                      const GSOptions &m_gs_options)
+                      const GSOptions &gs_options)
 {
   using Point=typename boost::property_map_value<FG, CGAL::vertex_point_t>::type;
   using Kernel = typename CGAL::Kernel_traits<Point>::Kernel;
@@ -58,15 +58,17 @@ void compute_elements(const FG &fg,
     put(vnormals, v, n / i);
   }
 
-  if (m_gs_options.are_faces_enabled())
+  if (gs_options.are_faces_enabled())
   {
     for (auto fh : faces(fg))
     {
       if (fh != boost::graph_traits<FG>::null_face() && // face exists
-          !m_gs_options.face_wireframe(fg, fh) && // face is not wireframe
-          m_gs_options.colored_face(fg, fh)) // and face is colored
+          gs_options.draw_face(fg, fh)) // face is drawn
       {
-        graphics_scene.face_begin(m_gs_options.face_color(fg, fh));
+        if(gs_options.colored_face(fg, fh)) // face is colored
+        { graphics_scene.face_begin(gs_options.face_color(fg, fh)); }
+        else
+        { graphics_scene.face_begin(); }
         auto hd = halfedge(fh, fg);
         const auto first_hd = hd;
         do
@@ -81,15 +83,15 @@ void compute_elements(const FG &fg,
     }
   }
 
-  if(m_gs_options.are_edges_enabled())
+  if(gs_options.are_edges_enabled())
   {
     for (auto e : edges(fg))
     {
-      if(m_gs_options.colored_edge(fg, e)) // edge is colored
+      if(gs_options.colored_edge(fg, e)) // edge is colored
       {
         graphics_scene.add_segment(get(point_pmap, source(halfedge(e, fg), fg)),
                                    get(point_pmap, target(halfedge(e, fg), fg)),
-                                   m_gs_options.edge_color(fg, e));
+                                   gs_options.edge_color(fg, e));
       }
       else
       {
@@ -99,14 +101,14 @@ void compute_elements(const FG &fg,
     }
   }
 
-  if(m_gs_options.are_vertices_enabled())
+  if(gs_options.are_vertices_enabled())
   {
     for (auto v : vertices(fg))
     {
-      if(m_gs_options.colored_vertex(fg, v)) // vertex is colored
+      if(gs_options.colored_vertex(fg, v)) // vertex is colored
       {
         graphics_scene.add_point(get(point_pmap, v),
-                                 m_gs_options.vertex_color(fg, v));
+                                 gs_options.vertex_color(fg, v));
       }
       else
       {
@@ -120,15 +122,15 @@ void compute_elements(const FG &fg,
 
 template <class FG, class GSOptions>
 void add_to_graphics_scene_for_fg(const FG &fg,
-                                   CGAL::Graphics_scene &graphics_scene,
-                                   const GSOptions &gs_options)
+                                  CGAL::Graphics_scene &graphics_scene,
+                                  const GSOptions &gs_options)
 {
   draw_function_for_FG::compute_elements(fg, graphics_scene, gs_options);
 }
 
 template <class FG>
 void add_to_graphics_scene_for_fg(const FG &fg,
-                                   CGAL::Graphics_scene &graphics_scene)
+                                  CGAL::Graphics_scene &graphics_scene)
 {
   Graphics_scene_options<FG,
                          typename boost::graph_traits<FG>::vertex_descriptor,

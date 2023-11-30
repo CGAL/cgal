@@ -70,8 +70,8 @@ void compute_elements(const PointSet& pointset,
 
 template <class P, class V, class GSOptions>
 void add_to_graphics_scene(const Point_set_3<P, V>& apointset,
-                            Graphics_scene& graphics_scene,
-                            const GSOptions& gs_options)
+                           Graphics_scene& graphics_scene,
+                           const GSOptions& gs_options)
 {
   draw_function_for_PointSet::compute_elements(apointset,
                                                graphics_scene,
@@ -80,7 +80,7 @@ void add_to_graphics_scene(const Point_set_3<P, V>& apointset,
 
 template <class P, class V>
 void add_to_graphics_scene(const Point_set_3<P, V>& apointset,
-                            Graphics_scene& graphics_scene)
+                           Graphics_scene& graphics_scene)
 {
   CGAL::Graphics_scene_options<Point_set_3<P, V>,
                                typename Point_set_3<P, V>::const_iterator,

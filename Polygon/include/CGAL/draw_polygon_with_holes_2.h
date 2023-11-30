@@ -68,19 +68,18 @@ void compute_one_loop_elements(const P2& ap2,
   {
     if(gs_options.are_vertices_enabled() &&
        gs_options.draw_vertex(ap2, i))
-     { // Add vertex
-        if(gs_options.colored_vertex(ap2, i))
+    { // Add vertex
+      if(gs_options.colored_vertex(ap2, i))
       { graphics_scene.add_point(*i, gs_options.vertex_color(ap2, i)); }
       else
       { graphics_scene.add_point(*i); }
-     }
+    }
 
     if(i!=aloop.vertices_begin() &&
-       gs_options.are_edges_enabled() &&
-       gs_options.draw_edge(ap2, i))
+       gs_options.are_edges_enabled() && gs_options.draw_edge(ap2, prev))
     { // Add segment with previous point
-          if(gs_options.colored_vertex(ap2, i))
-      { graphics_scene.add_segment(*prev, *i, gs_options.edge_color(ap2, i)); }
+      if(gs_options.colored_edge(ap2, prev))
+      { graphics_scene.add_segment(*prev, *i, gs_options.edge_color(ap2, prev)); }
       else
       { graphics_scene.add_segment(*prev, *i); }
     }
@@ -94,7 +93,13 @@ void compute_one_loop_elements(const P2& ap2,
   // Add the last segment between the last point and the first one
   if(gs_options.are_edges_enabled() &&
      gs_options.draw_edge(ap2, aloop.vertices_begin()))
-  { graphics_scene.add_segment(*prev, *(aloop.vertices_begin())); }
+  {
+    if(gs_options.colored_edge(ap2, prev))
+    { graphics_scene.add_segment(*prev, *(aloop.vertices_begin()),
+                                 gs_options.edge_color(ap2, prev)); }
+    else
+    { graphics_scene.add_segment(*prev, *(aloop.vertices_begin())); }
+  }
 }
 
 template <class P2, class GSOptions>
@@ -175,6 +180,8 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
 }
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#undef CGAL_P2_WITH_HOLES_TYPE
 
 } // End namespace CGAL
 
