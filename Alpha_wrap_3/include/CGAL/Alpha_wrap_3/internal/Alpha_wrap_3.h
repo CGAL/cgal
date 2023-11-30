@@ -94,6 +94,7 @@ struct Wrapping_default_visitor
   template <typename AlphaWrapper>
   void on_flood_fill_begin(const AlphaWrapper&) { }
 
+  // Whether the flood filling process should continue
   template <typename Wrapper>
   constexpr bool go_further(const Wrapper&) { return true; }
 
@@ -277,6 +278,10 @@ public:
     // Whether or not some cells should be reflagged as "inside" after the refinement+carving loop
     // as ended, as to ensure that the result is not only combinatorially manifold, but also
     // geometrically manifold.
+    //
+    // -- Warning --
+    // Manifoldness postprocessing will be performed even if the wrapping is interrupted (and
+    // this option is enabled).
     const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
     // Whether to keep pockets of "outside" cells that are not connected to the exterior (or to the
