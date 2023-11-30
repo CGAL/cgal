@@ -18,6 +18,8 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#include <unordered_map>
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
