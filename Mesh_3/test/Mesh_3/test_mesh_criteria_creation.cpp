@@ -93,7 +93,6 @@ int main()
                                               cp(tr.point(ch, k+3))));
 
   FT facet_size_ok = radius_facet*FT(10);
-  FT facet_size_nok = radius_facet/FT(10);
 
   Mc fc1(facet_size = facet_size_ok);
   assert( ! fc1.facet_criteria_object()(tr, f) );
@@ -134,7 +133,6 @@ int main()
                                              cp(tr.point(ch, 3))));
 
   FT cell_size_ok = radius_cell*FT(10);
-  FT cell_size_nok = radius_cell/FT(10);
 
   Mc cc1(cell_size = cell_size_ok);
   assert( ! cc1.cell_criteria_object()(tr, ch) );
