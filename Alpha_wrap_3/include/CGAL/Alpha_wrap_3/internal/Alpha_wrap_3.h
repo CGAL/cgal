@@ -283,8 +283,9 @@ public:
     // initial cavities, if used).
     //
     // -- Warning --
-    // If you refine or pause while removing pockets, you will get valid but different wraps.
-    const bool keep_inner_ccs = choose_parameter(get_parameter(in_np, internal_np::keep_inner_connected_components), true);
+    // Pockets of "outside" cells will be purged even if the wrapping is interrupted (and
+    // this option is enabled).
+    const bool keep_inner_ccs = choose_parameter(get_parameter(in_np, internal_np::keep_inner_connected_components), false);
 
     // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
     // the same input for multiple values of alpha (and typically the same offset values).
