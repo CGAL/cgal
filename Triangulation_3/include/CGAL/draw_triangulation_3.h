@@ -27,8 +27,8 @@ namespace draw_function_for_t3
 
 template <class T3, class GSOptions>
 void compute_face(typename T3::Finite_facets_iterator fh,
-                  const GSOptions& gs_options,
-                  CGAL::Graphics_scene& graphics_scene, const T3 *t3)
+                  CGAL::Graphics_scene& graphics_scene,
+                  const GSOptions& gs_options, const T3 *t3)
 {
   if(!gs_options.draw_face(*t3, fh))
   { return; }
@@ -62,7 +62,8 @@ void compute_edge(typename T3::Finite_edges_iterator eh,
                                eh->first->vertex(eh->third)->point(),
                                gs_options.edge_color(*t3, eh));
   }
-  else {
+  else
+  {
     graphics_scene.add_segment(eh->first->vertex(eh->second)->point(),
                                eh->first->vertex(eh->third)->point());
   }
@@ -93,14 +94,14 @@ void compute_elements(const T3* t3,
   {
     for (typename T3::Finite_facets_iterator it=t3->finite_facets_begin();
          it!=t3->finite_facets_end(); ++it)
-    { compute_face(it, gs_options, graphics_scene, t3); }
+    { compute_face(it, graphics_scene, gs_options, t3); }
   }
 
   if (gs_options.are_edges_enabled())
   {
     for (typename T3::Finite_edges_iterator it=t3->finite_edges_begin();
          it!=t3->finite_edges_end(); ++it)
-    { compute_edge(it, graphics_scene,gs_options, t3); }
+    { compute_edge(it, graphics_scene, gs_options, t3); }
   }
 
   if (gs_options.are_vertices_enabled())
