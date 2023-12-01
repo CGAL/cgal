@@ -16,6 +16,7 @@
 #define CGAL_IO_STL_H
 
 #include <CGAL/IO/STL/STL_reader.h>
+#include <CGAL/IO/STL/split.h>
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/Named_function_parameters.h>
@@ -79,7 +80,7 @@ bool read_STL(std::istream& is,
               )
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
-
+  const bool unique = parameters::choose_parameter(parameters::get_parameter(np, internal_np::unique), true);
   if(!is.good())
   {
     if(verbose)
@@ -123,7 +124,7 @@ bool read_STL(std::istream& is,
   // If the first word is not 'solid', the file must be binary
   if(s != "solid" || (word[5] !='\n' && word[5] !='\r' && word[5] != ' '))
   {
-    if(internal::parse_binary_STL(is, points, facets, verbose))
+    if(internal::parse_binary_STL(is, points, facets, verbose, unique))
     {
       return true;
     }
@@ -133,7 +134,7 @@ bool read_STL(std::istream& is,
       // The file does not start with 'solid' anyway, so it's fine to reset it.
       is.clear();
       is.seekg(0, std::ios::beg);
-      return internal::parse_ASCII_STL(is, points, facets, verbose);
+      return internal::parse_ASCII_STL(is, points, facets, verbose, unique);
     }
 
   }
@@ -148,7 +149,7 @@ bool read_STL(std::istream& is,
   else// Failed to read the ASCII file
   {
     // It might have actually have been a binary file... ?
-    return internal::parse_binary_STL(is, points, facets, verbose);
+    return internal::parse_binary_STL(is, points, facets, verbose, unique);
   }
 }
 
@@ -200,6 +201,7 @@ bool read_STL(const std::string& fname,
   using parameters::choose_parameter;
   using parameters::get_parameter;
   const bool binary = parameters::choose_parameter(parameters::get_parameter(np, internal_np::use_binary_mode), true);
+  const bool unique = parameters::choose_parameter(parameters::get_parameter(np, internal_np::unique), true);
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
@@ -215,7 +217,7 @@ bool read_STL(const std::string& fname,
   CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   bool v = choose_parameter(get_parameter(np, internal_np::verbose),
                             false);
-  return read_STL(is, points, facets, CGAL::parameters::verbose(v).use_binary_mode(false));
+  return read_STL(is, points, facets, CGAL::parameters::verbose(v).use_binary_mode(false).unique(unique));
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
