@@ -9,18 +9,16 @@ public:
     : QDoubleValidator(parent)
   {
     setLocale(QLocale::C);
-    setNotation(QDoubleValidator::StandardNotation);
   }
 
   void fixup ( QString & input ) const
   {
     input.replace(".", locale().decimalPoint());
     input.replace(",", locale().decimalPoint());
-//    QDoubleValidator::fixup(input);
+    QDoubleValidator::fixup(input);
   }
   QValidator::State validate ( QString & input, int & pos ) const
   {
-    fixup(input);
     return QDoubleValidator::validate(input, pos);
   }
 };
