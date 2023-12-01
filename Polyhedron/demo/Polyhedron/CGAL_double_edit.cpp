@@ -9,13 +9,14 @@ public:
     : QDoubleValidator(parent)
   {
     setLocale(QLocale::C);
+    setNotation(QDoubleValidator::StandardNotation);
   }
 
   void fixup ( QString & input ) const
   {
     input.replace(".", locale().decimalPoint());
     input.replace(",", locale().decimalPoint());
-    QDoubleValidator::fixup(input);
+//    QDoubleValidator::fixup(input);
   }
   QValidator::State validate ( QString & input, int & pos ) const
   {
@@ -59,7 +60,7 @@ public:
 
   void DoubleEdit::setRange(double rmin, double rmax)
   {
-    this->validator->setRange(rmin, rmax, this->validator->decimals());
+    this->validator->setRange(rmin, rmax, -1);
   }
 
   double DoubleEdit::getValue()
