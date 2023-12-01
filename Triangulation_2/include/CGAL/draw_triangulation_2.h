@@ -77,13 +77,9 @@ void compute_vertex(const T2& t2, typename T2::Vertex_handle vh,
   { return; }
 
   if (gs_options.colored_vertex(t2, vh))
-  {
-    graphics_scene.add_point(vh->point(), gs_options.vertex_color(t2, vh));
-  }
+  { graphics_scene.add_point(vh->point(), gs_options.vertex_color(t2, vh)); }
   else
-  {
-    graphics_scene.add_point(vh->point());
-  }
+  { graphics_scene.add_point(vh->point()); }
 }
 
 template <class T2, class GSOptions>
@@ -117,7 +113,7 @@ void compute_elements(const T2& t2,
 
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
 
-  template<class Gt, class Tds, class GSOptions>
+template<class Gt, class Tds, class GSOptions>
 void add_to_graphics_scene(const CGAL_T2_TYPE& at2,
                            CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gs_options)
@@ -125,9 +121,9 @@ void add_to_graphics_scene(const CGAL_T2_TYPE& at2,
   draw_function_for_t2::compute_elements(at2, graphics_scene, gs_options);
 }
 
-  template <class Gt, class Tds>
+template <class Gt, class Tds>
 void add_to_graphics_scene(const CGAL_T2_TYPE& at2,
-                            CGAL::Graphics_scene& graphics_scene)
+                           CGAL::Graphics_scene& graphics_scene)
 {
   Graphics_scene_options<CGAL_T2_TYPE,
                   typename CGAL_T2_TYPE::Vertex_handle,
