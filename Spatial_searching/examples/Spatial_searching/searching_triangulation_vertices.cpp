@@ -19,7 +19,7 @@ struct Project {
   typedef Vertex_handle   argument_type;
   typedef const Point_3&  Point;
   typedef Point           result_type;
-  const Point& operator()( Vertex_handle  v) const { return v->point(); }
+  Point operator()( Vertex_handle  v) const { return v->point(); }
 };
 
 
