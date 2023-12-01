@@ -64,8 +64,7 @@ void compute_face(const LCC& lcc,
                   CGAL::Graphics_scene& graphics_scene,
                   const GSOptionsLCC& gso)
 {
-  if (!gso.are_faces_enabled() ||
-      !gso.draw_face(lcc, dh))
+  if(!gso.are_faces_enabled() || !gso.draw_face(lcc, dh))
   { return; }
 
   // We fill only closed faces.
@@ -79,13 +78,9 @@ void compute_face(const LCC& lcc,
   while (cur!=dh);
 
   if (gso.colored_volume(lcc, voldh))
-  {
-    graphics_scene.face_begin(gso.volume_color(lcc, voldh));
-  }
+  { graphics_scene.face_begin(gso.volume_color(lcc, voldh)); }
   else if (gso.colored_face(lcc, dh))
-  {
-    graphics_scene.face_begin(gso.face_color(lcc, dh));
-  }
+  { graphics_scene.face_begin(gso.face_color(lcc, dh)); }
   else
   { graphics_scene.face_begin(); }
 
@@ -108,8 +103,7 @@ void compute_edge(const LCC& lcc,
                   CGAL::Graphics_scene& graphics_scene,
                   const GSOptions& gso)
 {
-  if (!gso.are_edges_enabled() ||
-      !gso.draw_edge(lcc, dh))
+  if(!gso.are_edges_enabled() || !gso.draw_edge(lcc, dh))
   { return; }
 
   const typename LCC::Point& p1=lcc.point(dh);
@@ -263,11 +257,11 @@ void add_to_graphics_scene(const CGAL_LCC_TYPE& alcc,
     gso;
 
   gso.colored_volume = [](const CGAL_LCC_TYPE&,
-                                 typename CGAL_LCC_TYPE::Dart_const_handle) -> bool
+                          typename CGAL_LCC_TYPE::Dart_const_handle) -> bool
   { return true; };
 
   gso.volume_color =  [] (const CGAL_LCC_TYPE& alcc,
-                                 typename CGAL_LCC_TYPE::Dart_const_handle dh) -> CGAL::IO::Color
+                          typename CGAL_LCC_TYPE::Dart_const_handle dh) -> CGAL::IO::Color
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
     return get_random_color(random);
