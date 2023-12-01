@@ -76,7 +76,7 @@ namespace CGAL
 * @tparam SLDS is an optional parameter for `Triangulation_3`, that
 *             specifies the type of the spatial lock data structure.
 * @tparam SizingFunction a sizing field functional,
-*             model of `SizingField_3`, or type convertible to `double`.
+*             model of `RemeshingSizingField_3`, or type convertible to `double`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tr the triangulation to be remeshed, of type `Triangulation_3<Traits, TDS, SLDS>`.
