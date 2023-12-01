@@ -1,8 +1,6 @@
 #ifndef DRAW_FACEWIDTH_H
 #define DRAW_FACEWIDTH_H
 
-#include <iostream>
-
 #ifdef CGAL_USE_BASIC_VIEWER
 
 #include <CGAL/draw_linear_cell_complex.h>

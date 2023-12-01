@@ -184,42 +184,10 @@ template <typename Mesh, class GSOptions>
 void compute_edge(const Mesh &mesh,
                   const typename Get_map<Mesh, Mesh>::storage_type& lcc,
                   typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
-                  typename Get_map<Mesh, Mesh>::type::size_type amark,
                   CGAL::Graphics_scene& graphics_scene,
-                  GSOptions& gso)
-{
-  if(!gso.are_edges_enabled() || !gso.draw_edge(mesh, dh))
-  { return; }
-
-  typedef typename Get_map<Mesh, Mesh>::type     LCC;
-  typedef typename LCC::Dart_const_descriptor    Dart_const_descriptor;
-  typedef typename CGAL::Get_traits<Mesh>::Point Point;
-
-  Point p1=get_point(mesh, dh);
-  Dart_const_descriptor d2 = lcc.other_extremity(dh);
-  if (d2!=LCC::null_descriptor)
-  {
-    if (amark!=LCC::INVALID_MARK &&
-        (lcc.is_marked(dh, amark) || lcc.is_marked(lcc.opposite2(dh), amark)))
-    { graphics_scene.add_segment(p1, get_point(mesh, d2), gso.color_of_marked_edges()); }
-    else
-    {
-      if(gso.colored_edge(mesh, dh))
-      { graphics_scene.add_segment(p1, get_point(mesh, d2),
-                                   gso.edge_color(mesh, dh)); }
-      else
-      { graphics_scene.add_segment(p1, get_point(mesh, d2)); }
-    }
-  }
-}
-
-template <typename Mesh, class GSOptions>
-void compute_edge(const Mesh &mesh,
-                  const typename Get_map<Mesh, Mesh>::storage_type& lcc,
-                  typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
-                  const CGAL::IO::Color& color,
-                  CGAL::Graphics_scene& graphics_scene,
-                  GSOptions& gso)
+                  GSOptions& gso,
+                  bool colored=false,
+                  const CGAL::IO::Color& color=CGAL::IO::black())
 {
   if(!gso.are_edges_enabled() || !gso.draw_edge(mesh, dh))
   { return; }
@@ -231,7 +199,36 @@ void compute_edge(const Mesh &mesh,
   Point p1=get_point(mesh, dh);
   Dart_const_descriptor d2=lcc.other_extremity(dh);
   if (d2!=LCC::null_descriptor)
-  { graphics_scene.add_segment(p1, get_point(mesh, d2), color); }
+  {
+    if(colored)
+    { graphics_scene.add_segment(p1, get_point(mesh, d2), color); }
+    else
+    { graphics_scene.add_segment(p1, get_point(mesh, d2)); }
+  }
+}
+
+template <typename Mesh, class GSOptions>
+void compute_edge(const Mesh &mesh,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
+                  CGAL::Graphics_scene& graphics_scene,
+                  GSOptions& gso,
+                  typename Get_map<Mesh, Mesh>::type::size_type amark)
+{
+  if(!gso.are_edges_enabled() || !gso.draw_edge(mesh, dh))
+  { return; }
+
+  if (amark!=Get_map<Mesh, Mesh>::type::INVALID_MARK &&
+      (lcc.is_marked(dh, amark) || lcc.is_marked(lcc.opposite2(dh), amark)))
+  { compute_edge(mesh, lcc, dh, graphics_scene, gso, true, gso.color_of_marked_edges()); }
+  else
+  {
+    if(gso.colored_edge(mesh, dh))
+    { compute_edge(mesh, lcc, dh, graphics_scene, gso, true,
+                   gso.edge_color(mesh, dh)); }
+    else
+    { compute_edge(mesh, lcc, dh, graphics_scene, gso, false); }
+  }
 }
 
 template <typename Mesh, class GSOptions>
@@ -271,7 +268,7 @@ void compute_path(const Mesh &mesh,
   {
     if (!lcc.is_marked( (*paths)[i].get_ith_dart(j), amark))
     {
-      compute_edge(mesh, lcc, (*paths)[i].get_ith_dart(j), color, graphics_scene, gso);
+      compute_edge(mesh, lcc, (*paths)[i].get_ith_dart(j), graphics_scene, gso, true, color);
       lcc.template mark_cell<1>((*paths)[i].get_ith_dart(j), amark);
     }
   }
@@ -324,7 +321,7 @@ void compute_elements(const Mesh &mesh,
 
     if ( !lcc.is_marked(it, markedges) )
     {
-      compute_edge(mesh, lcc, it, amark, graphics_scene, gso);
+      compute_edge(mesh, lcc, it, graphics_scene, gso, amark);
       lcc.template mark_cell<1>(it, markedges);
     }
 
@@ -347,8 +344,8 @@ void add_to_graphics_scene(const Mesh& mesh,
                            CGAL::Graphics_scene& graphics_scene,
                            const GSOptions& gso,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
-                           typename Get_map<Mesh, Mesh>::type::size_type amark=0)
-//TODO typename Get_map<Mesh, Mesh>::type::INVALID_MARK)
+                           typename Get_map<Mesh, Mesh>::type::size_type amark=
+                           Get_map<Mesh, Mesh>::type::INVALID_MARK)
 {
   draw_function_for_face_graph_with_paths::compute_elements(mesh, graphics_scene,
                                                             gso, paths, amark);
@@ -358,8 +355,8 @@ template <class Mesh>
 void add_to_graphics_scene(const Mesh& mesh,
                            CGAL::Graphics_scene& graphics_scene,
                            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>* paths,
-                           typename Get_map<Mesh, Mesh>::type::size_type amark=0)
-                           // TODO                    typename Get_map<Mesh, Mesh>::type::INVALID_MARK)
+                           typename Get_map<Mesh, Mesh>::type::size_type amark=
+                           Get_map<Mesh, Mesh>::type::INVALID_MARK)
 {
   // Default graphics view options.
   Graphics_scene_options_face_graph_with_paths<Mesh,
