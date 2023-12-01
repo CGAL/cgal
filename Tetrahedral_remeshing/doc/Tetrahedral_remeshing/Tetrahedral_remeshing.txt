@@ -66,9 +66,9 @@ With `CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field`,
 tetrahedra edge lengths remain locally close to the local size of simplices in the input mesh.
 
 The difference between remeshing with uniform and adaptive
-sizing fields is depicted in \cgalFigureRef{uniform_and_adaptive}.
+sizing fields is depicted in \cgalFigureRef{uniform_and_adaptive_tet}.
 
-\cgalFigureBegin{uniform_and_adaptive, uniform_and_adaptive_remeshing.png}
+\cgalFigureBegin{uniform_and_adaptive_tet, uniform_and_adaptive_remeshing.png}
 Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
 (Left) Before remeshing;
         dihedral angles in the interval [0.1; 179.8],
