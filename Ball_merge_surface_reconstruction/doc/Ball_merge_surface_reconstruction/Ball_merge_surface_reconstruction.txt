@@ -1,0 +1,33 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Ball_merge_surface_reconstruction
+
+\cgalAutoToc
+\author NN
+
+This chapter describes the ...
+
+\section secBMSRdefinitions Definitions
+
+Section on definitions here ...
+
+\section secBMSRexamples Examples
+
+\subsection BMSRFirstExample First Example
+
+The following example shows ...
+
+\cgalExample{ }
+
+\cgalFigureBegin{figBMSR,benchBMSR.png}
+Left: ...
+\cgalFigureEnd
+
+\section secBMSRhistory  Implementation History
+
+This package is based on a prototype code .....
+
+*/
+} /* namespace CGAL */

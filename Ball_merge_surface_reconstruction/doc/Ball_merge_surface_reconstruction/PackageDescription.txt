@@ -1,0 +1,41 @@
+// PRETTY BallMerge NAME should equal the project title in Doxyfile.in
+
+/// \defgroup PkgBallMerge Ball Merge Surface Reconstruction Reference
+/// \defgroup PkgBallMergeConcepts Concepts
+/// \ingroup PkgBallMerge
+
+/// \defgroup PkgBallMergeAlgorithmClasses Algorithm Classes
+/// \ingroup PkgBallMerge
+
+/// \defgroup PkgBallMergeTraitsClasses Traits Classes
+/// \ingroup PkgBallMerge
+
+/*!
+\addtogroup PkgBallMerge
+\todo check generated documentation
+
+\cgalPkgDescriptionBegin{BallMerge Ball Merge Surface Reconstruction,PkgBallMerge}
+\cgalPkgPicture{pkgBMR-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{NN}
+\cgalPkgDesc{The package provides ... }
+\cgalPkgManuals{Chapter_Ball_merge_surface_reconstruction,PkgBallMergeRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.1}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgBib{cgal:x-x}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+\cgalCRPSection{Classes}
+- `CGAL::Ball_merge_surface_reconstruction<Traits,ConcurrencyTag>`
+*/
