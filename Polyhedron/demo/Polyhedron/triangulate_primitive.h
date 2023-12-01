@@ -121,7 +121,7 @@ private:
     P_traits cdt_traits(normal);
     cdt = new CDT(cdt_traits);
 
-    std::map<std::pair<Point_3, Point_3>, std::size_t> edge_map;
+    std::map<std::pair<Point, Point>, std::size_t> edge_map;
     std::vector<bool> skip(idPoints.size(), false);
 
     for (std::size_t i = 0; i < idPoints.size(); i++) {
@@ -205,7 +205,7 @@ private:
     P_traits cdt_traits(normal);
     cdt = new CDT(cdt_traits);
 
-    std::map<std::pair<Point_3, Point_3>, std::size_t> edge_map;
+    std::map<std::pair<Point, Point>, std::size_t> edge_map;
     std::vector<bool> skip(idPoints.size(), false);
 
     for (std::size_t i = 0; i < idPoints.size(); i++) {
