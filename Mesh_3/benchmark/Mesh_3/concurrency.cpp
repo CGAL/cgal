@@ -33,7 +33,7 @@ const char * const BENCHMARK_SCRIPT_FILENAME = "concurrency_script.txt";
 // BENCHMARK GENERAL PARAMETERS
 // ==========================================================================
 
-//#define BENCHMARK_WITH_1_TO_MAX_THREADS
+#define BENCHMARK_WITH_1_TO_MAX_THREADS
 //#define CGAL_MESH_3_POLYHEDRON_WITH_FEATURES
 //#define CGAL_MESH_3_IMPLICIT_WITH_FEATURES
 //#define CGAL_MESH_3_BENCHMARK_EXPORT_TO_MAYA
@@ -84,7 +84,7 @@ const int     TET_SHAPE                = 3;
   // Verbose
   // ==========================================================================
 
-# define CGAL_CONCURRENT_MESH_3_VERBOSE
+//# define CGAL_CONCURRENT_MESH_3_VERBOSE
 //# define CGAL_CONCURRENT_MESH_3_VERY_VERBOSE
 
   // ==========================================================================
@@ -195,6 +195,7 @@ protected:
     subelements.push_back("Cells_scan_time");
     subelements.push_back("Cells_refin_time");
     subelements.push_back("Lloyd_optim_time");
+    subelements.push_back("Refinement_time_total");
     subelements.push_back("Odt_optim_time");
     subelements.push_back("Perturber_optim_time");
     subelements.push_back("Exuder_optim_time");
@@ -452,7 +453,8 @@ bool make_mesh_polyhedron(const std::string &input_filename,
                  double facet_sizing,
                  double cell_sizing)
 {
-  std::cout << "make_mesh_polyhedron" << std::endl;
+  std::cout << "make_mesh_polyhedron("
+    << input_filename  << ")" << std::endl;
 
   // Domain
   typedef Kernel K;
@@ -531,6 +533,9 @@ bool make_mesh_polyhedron(const std::string &input_filename,
   double sliverbound = 2;
 #endif
 
+  CGAL::Real_timer t;
+  t.start();
+
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
 # ifdef CGAL_MESH_3_BENCHMARK_LLOYD
@@ -552,7 +557,9 @@ bool make_mesh_polyhedron(const std::string &input_filename,
                                      , no_exude()
 #endif
                                      );
+  t.stop();
 
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Refinement_time_total", t.time());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
@@ -637,6 +644,9 @@ bool make_mesh_3D_images(const std::string &input_filename,
   double sliverbound = 2;
 #endif
 
+  CGAL::Real_timer t;
+  t.start();
+
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
 # ifdef CGAL_MESH_3_BENCHMARK_LLOYD
@@ -659,6 +669,8 @@ bool make_mesh_3D_images(const std::string &input_filename,
 #endif
                                      );
 
+  t.stop();
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Refinement_time_total", t.time());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
@@ -778,6 +790,9 @@ bool make_mesh_implicit(double facet_approx,
   double sliverbound = 2;
 #endif
 
+  CGAL::Real_timer t;
+  t.start();
+
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>( domain
                                      , criteria
 # ifdef CGAL_MESH_3_BENCHMARK_LLOYD
@@ -800,6 +815,8 @@ bool make_mesh_implicit(double facet_approx,
 #endif
                                      );
 
+  t.stop();
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Refinement_time_total", t.time());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("V", c3t3.triangulation().number_of_vertices());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("F", c3t3.number_of_facets_in_complex());
   CGAL_MESH_3_SET_PERFORMANCE_DATA("T", c3t3.number_of_cells_in_complex());
@@ -881,8 +898,9 @@ int main()
     int i = 1;
 #ifdef CGAL_CONCURRENT_MESH_3
 # ifdef BENCHMARK_WITH_1_TO_MAX_THREADS
+    int max_nb_threads = tbb::this_task_arena::max_concurrency();
     for(num_threads = 1 ;
-          num_threads <= tbb::task_scheduler_init::default_num_threads() ;
+          num_threads <= max_nb_threads ;
           ++num_threads)
 # endif
     /*for (Concurrent_mesher_config::get().num_work_items_per_batch = 5 ;
@@ -965,7 +983,7 @@ int main()
 
             if (input == "Klein_function")
               make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Klein_function(), input);
-            /*else if (input == "Tanglecube_function")
+            else if (input == "Tanglecube_function")
               make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Tanglecube_function(), input);
             else if (input == "Sphere_function")
               make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, Sphere_function(1.), input);
@@ -978,7 +996,7 @@ int main()
             {
               Cylinder_function f(3., 0.1);
               make_mesh_implicit(facet_approx, facet_sizing, cell_sizing, f, input);
-            }*/
+            }
             else
             {
               size_t dot_position = input.find_last_of('.');

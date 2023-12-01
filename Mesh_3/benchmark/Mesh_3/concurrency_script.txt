@@ -21,9 +21,9 @@
 #########################################################
 ##### Benchmark for refinement+optim
 #########################################################
-#meshes/elephant.off                                  0.05  0.04          0.04  10000
-#meshes/elephant.off                                  0.01  0.004          0.004  10000
-#meshes/elephant.off                                  0.0068  0.002          0.0025  10000 # typical timing (11 thr): 4.4 2.3 9.9
+#meshes/elephant.off                                  0.05  0.04          0.04  100
+meshes/elephant.off                                  0.01  0.004          0.004  1000
+#meshes/elephant.off                                  0.0068  0.002          0.0025  10 # typical timing (11 thr): 4.4 2.3 9.9
 #meshes/elephant.off       0.0068  0.002          0.0025  10000
 #meshes/fandisk.off        0.0068  0.003          0.006          1     # typical timing (11 thr): 2.4 1.0 2.9
 #D:/INRIA/Data/_Models/BigOFF/lucy-100kt.off                              0.0068  0.0015  0.003          1
@@ -190,9 +190,9 @@
 #Klein_function                                                           0.0068  0.033          0.10          1
 
 #Tanglecube_function                                                      0.0068  0.01          0.03          1
-#Tanglecube_function                                                      0.0068  0.012          0.035          1
-#Tanglecube_function                                                      0.0068  0.013   0.04          1
-#Tanglecube_function                                                      0.0068  0.017          0.05          1
+Tanglecube_function                                                      0.0068  0.012          0.035          1
+Tanglecube_function                                                      0.0068  0.013   0.04          1
+Tanglecube_function                                                      0.0068  0.017          0.05          1
 #Tanglecube_function                                                      0.0068  0.02           0.06          1
 #Tanglecube_function                                                      0.0068  0.023   0.07          1
 #Tanglecube_function                                                      0.0068  0.027          0.08          1
