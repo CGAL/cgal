@@ -610,6 +610,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.approx->setRange(diag * 10e-7, // min
                       diag);        // max
   ui.approx->setValue(approx);
+  ui.approx->setToolTip(tr("Approximation error: in [%1; %2]")
+                       .arg(diag * 10e-7).arg(diag));
 
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
