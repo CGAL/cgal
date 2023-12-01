@@ -58,7 +58,7 @@ int main( )
   assert(count > 0);
   assert(count < cdt.number_of_faces());
 
-  CGAL::Polygon_triangulation_gs_options<CDT> myfunctor(in_domain);
-  CGAL::draw(cdt, myfunctor);
+  Polygon_triangulation_gs_options<CDT> gso(in_domain);
+  CGAL::draw(cdt, gso);
   return 0;
 }
