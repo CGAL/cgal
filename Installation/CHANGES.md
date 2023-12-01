@@ -10,9 +10,12 @@ Release date: October 2023
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
+- The demos as well as the `draw()` functions using the `Basic_viewer` are based on Qt6
 - **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
 - **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
+- **Breaking chahge**: The file CMake file `UseCGAL.cmake` has been removed from CGAL. Usages of the CMake variables `${CGAL_USE_FILE}` and `${CGAL_LIBRARIES}` must be replaced by a link to the imported target `CGAL::CGAL`, for example: `target_link_library(the_target PRIVATE CGAL::CGAL)`.
+
 
 #### 2D Arrangements
 
@@ -39,7 +42,9 @@ Release date: October 2023
 
 -   Added the function `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` which can be used to compute
     the mean and Gaussian curvatures, as well as the principal curvature and directions.
-    
+-   Added the option to use a variable sizing field for `CGAL::Polygon_mesh_processing::isotropic_remeshing()`,
+    and a sizing function based on a measure of local curvature for adaptive remeshing.
+
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
     when inserting an arc that lies on the identification curve.
@@ -56,6 +61,9 @@ Release date: October 2023
 -   **Breaking change**: The template parameters of
     `CGAL::Simplicial_mesh_cell_base_3`
     have been modified to enable passing a geometric traits and a custom cell base class.
+
+### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
+- **Breaking change**: LSCM_parameterizer_3 needs Eigen
 
 ### [3D Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulation3)
 -   Added three functions `vertices()` to the class `Triangulation_3`.
