@@ -4,39 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Mesh_3_benchmark)
 
-# Creates a new CMake option, turned ON by default
-option(ACTIVATE_MSVC_PRECOMPILED_HEADERS "Activate precompiled headers in MSVC"
-       OFF)
-
-# Macro to add precompiled headers for MSVC
-# This function does two things:
-# 1. Enable precompiled headers on each file which is listed in "SourcesVar".
-# 2. Add the content of "PrecompiledSource" (e.g. "StdAfx.cpp") to "SourcesVar".
-macro(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource
-      SourcesVar)
-  if(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
-    get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
-    set(Sources ${${SourcesVar}})
-
-    set_source_files_properties(
-      ${PrecompiledSource} PROPERTIES COMPILE_FLAGS
-                                      "/Yc\"${PrecompiledHeader}\"")
-    set_source_files_properties(
-      ${Sources}
-      PROPERTIES COMPILE_FLAGS
-                 "/Yu\"${PrecompiledHeaders}\" /FI\"${PrecompiledHeader}\"")
-    # Add precompiled header to SourcesVar
-    list(APPEND ${SourcesVar} ${PrecompiledSource})
-  endif(MSVC AND ACTIVATE_MSVC_PRECOMPILED_HEADERS)
-endmacro(ADD_MSVC_PRECOMPILED_HEADER)
-# The compiler might need more memory because of precompiled headers
-if(MSVC
-   AND ACTIVATE_MSVC_PRECOMPILED_HEADERS
-   AND NOT (MSVC_VERSION LESS 1310))
-  set(CGAL_C_FLAGS "${CGAL_C_FLAGS} /Zm1000")
-  set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} /Zm1000")
-endif()
-
 include_directories(../../../Triangulation_3/include)
 include_directories(../../../STL_Extension/include)
 include_directories(../../../AABB_tree/include)
