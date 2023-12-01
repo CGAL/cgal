@@ -56,18 +56,18 @@ def compute_robustness_benchmark_data(execname, filename, alpha, max_time):
 
     for output_line in output.split("\n"):
       if output_line == "Command terminated by signal 11":
-        exit_code = 9
-        continue
-      elif output_line == "Command terminated by signal 6":
         exit_code = 10
         continue
-      elif output_line == "Command terminated by signal 8":
+      elif output_line == "Command terminated by signal 6":
         exit_code = 11
+        continue
+      elif output_line == "Command terminated by signal 8":
+        exit_code = 12
         continue
 
   except subprocess.TimeoutExpired:
     os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
-    exit_code = 12
+    exit_code = 13
     output = "process ran too long"
 
   print(exit_codes[exit_code])
