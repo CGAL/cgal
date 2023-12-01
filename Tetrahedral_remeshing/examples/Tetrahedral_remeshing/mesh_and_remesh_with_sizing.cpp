@@ -87,9 +87,5 @@ int main()
 
   std::cout << "\rRemeshing done." << std::endl;
 
-  std::ofstream osr("out_remeshing.mesh");
-  CGAL::IO::write_MEDIT(osr, tr);
-  osr.close();
-
   return EXIT_SUCCESS;
 }

@@ -167,6 +167,24 @@ from a polyhedral domain with features.
 \cgalExample{Tetrahedral_remeshing/mesh_and_remesh_polyhedral_domain_with_features.cpp}
 
 
+\subsection ssecEx4a Tetrahedral Remeshing With Sizing Field
+
+The API enables the user to run tetrahedral remeshing with a custom sizing field,
+that is used as a sizing criterion to trigger mesh refinement and decimation.
+The following examples show how to use this type of sizing field.
+
+In the first example, we show how to use the same sizing field as the one used as
+a meshing criterion for tetrahedral mesh generation using the \cgal \ref PkgMesh3 package.
+\cgalExample{Tetrahedral_remeshing/mesh_and_remesh_with_sizing.cpp}
+
+In the second example, we show how to use the provided adaptive sizing field,
+`Adaptive_remeshing_sizing_field`,
+that automatically sets the target edge length to keep a mesh density consistent with
+the density of the input mesh.
+\cgalExample{Tetrahedral_remeshing/mesh_and_remesh_with_adaptive_sizing.cpp}
+
+
+
 \subsection ssecEx5 Tetrahedral Remeshing from Any Tetrahedral Mesh
 
 The following example shows how to read a mesh from a triangulation stored in a
