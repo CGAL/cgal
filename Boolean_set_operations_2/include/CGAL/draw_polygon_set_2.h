@@ -94,8 +94,8 @@ void compute_loop(const typename PS2::Polygon_2& p, bool hole,
   auto prev = p.vertices_begin();
   auto it = prev;
 
-  if (gso.are_vertices_enabled() &&
-      gso.draw_vertex(p, it))
+  // First vertex
+  if (gso.are_vertices_enabled() && gso.draw_vertex(p, it))
   {
     if(gso.colored_vertex(p, it))
     { gs.add_point(*it, gso.vertex_color(p, it)); }
@@ -106,10 +106,10 @@ void compute_loop(const typename PS2::Polygon_2& p, bool hole,
   if (gso.are_faces_enabled())
   { gs.add_point_in_face(*it); }
 
+  // Other vertices
   for (++it; it!=p.vertices_end(); ++it)
   {
-    if (gso.are_vertices_enabled() &&
-       gso.draw_vertex(p, it))
+    if (gso.are_vertices_enabled() && gso.draw_vertex(p, it))
     { // Add point
       if(gso.colored_vertex(p, it))
       { gs.add_point(*it, gso.vertex_color(p, it)); }
@@ -117,8 +117,7 @@ void compute_loop(const typename PS2::Polygon_2& p, bool hole,
       { gs.add_point(*it); }
     }
 
-    if (gso.are_edges_enabled() &&
-        gso.draw_edge(p, prev))
+    if (gso.are_edges_enabled() && gso.draw_edge(p, prev))
     { // Add segment with previous point
       if(gso.colored_edge(p, prev))
       { gs.add_segment(*prev, *it, gso.edge_color(p, prev)); }
@@ -131,9 +130,9 @@ void compute_loop(const typename PS2::Polygon_2& p, bool hole,
     prev = it;
   }
 
-  if (gso.are_edges_enabled() &&
-      gso.draw_edge(p, prev))
-  { // Add the last segment between the last point and the first one
+  // Last segment (between last and first point)
+  if (gso.are_edges_enabled() && gso.draw_edge(p, prev))
+  {
     if(gso.colored_edge(p, prev))
     { gs.add_segment(*prev, *(p.vertices_begin()), gso.edge_color(p, prev)); }
     else
@@ -154,15 +153,18 @@ void compute_elements(const PWH& pwh,
 
   using Pnt=typename PWH::Polygon_2::Point_2;
   const Pnt* point_in_face=nullptr;
-  if (pwh.outer_boundary().is_empty() && (gso.width()!=0 || gso.height()!=0))
+  if (pwh.outer_boundary().is_empty())
   {
-    typename PWH::Polygon_2 pgn;
-    pgn.push_back(Pnt(-gso.width(), -gso.height()));
-    pgn.push_back(Pnt(gso.width(), -gso.height()));
-    pgn.push_back(Pnt(gso.width(), gso.height()));
-    pgn.push_back(Pnt(-gso.width(), gso.height()));
-    draw_function_for_boolean_set_2::compute_loop<PWH>(pgn, false, gs, gso);
-    point_in_face = &(pgn.vertex(pgn.size()-1));
+    if(gso.width()!=0 && gso.height()!=0)
+    {
+      typename PWH::Polygon_2 pgn;
+      pgn.push_back(Pnt(-gso.width(), -gso.height()));
+      pgn.push_back(Pnt(gso.width(), -gso.height()));
+      pgn.push_back(Pnt(gso.width(), gso.height()));
+      pgn.push_back(Pnt(-gso.width(), gso.height()));
+      draw_function_for_boolean_set_2::compute_loop<PWH>(pgn, false, gs, gso);
+      point_in_face = &(pgn.vertex(pgn.size()-1));
+    }
   }
   else
   {
@@ -174,12 +176,12 @@ void compute_elements(const PWH& pwh,
   for (auto it = pwh.holes_begin(); it != pwh.holes_end(); ++it)
   {
     draw_function_for_boolean_set_2::compute_loop<PWH>(*it, true, gs, gso);
-    if (gso.are_faces_enabled())
+    if (gso.are_faces_enabled() && point_in_face && point_in_face!=nullptr)
     { gs.add_point_in_face(*point_in_face); }
   }
 
-    if (gso.are_faces_enabled())
-    { gs.face_end(); }
+  if (gso.are_faces_enabled())
+  { gs.face_end(); }
 }
 
 } // End namespace draw_function_for_boolean_set_2
@@ -203,6 +205,9 @@ public:
     m_ps(ps),
     gso(gs_options)
   {
+    gso.width(CGAL_BASIC_VIEWER_INIT_SIZE_X);
+    gso.height(CGAL_BASIC_VIEWER_INIT_SIZE_Y);
+
     if (ps.is_empty()) return;
 
     // mimic the computation of Camera::pixelGLRatio()
@@ -210,7 +215,7 @@ public:
     CGAL::qglviewer::Vec minv(bbox.xmin(), bbox.ymin(), 0);
     CGAL::qglviewer::Vec maxv(bbox.xmax(), bbox.ymax(), 0);
     auto diameter = (maxv - minv).norm();
-    m_pixel_ratio = diameter / m_height;
+    m_pixel_ratio = diameter / gso.height();
   }
 
   /*! Intercept the resizing of the window.
@@ -261,12 +266,6 @@ public:
   }
 
 private:
-  //! The window width in pixels.
-  int m_width = CGAL_BASIC_VIEWER_INIT_SIZE_X;
-
-  //! The window height in pixels.
-  int m_height = CGAL_BASIC_VIEWER_INIT_SIZE_Y;
-
   //! The ratio between pixel and opengl units (in world coordinate system).
   double m_pixel_ratio = 1;
 
@@ -341,6 +340,8 @@ void draw(const CGAL_PS2_TYPE& ps,
 }
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#undef CGAL_PS2_TYPE
 
 } // End namespace CGAL
 
