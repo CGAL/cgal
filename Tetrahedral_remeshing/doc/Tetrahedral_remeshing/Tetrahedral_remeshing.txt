@@ -69,10 +69,17 @@ The difference between remeshing with uniform and adaptive
 sizing fields is depicted in \cgalFigureRef{uniform_and_adaptive}.
 
 \cgalFigureBegin{uniform_and_adaptive, uniform_and_adaptive_remeshing.png}
-//Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
-//(Left) Before remeshing, dihedral angles were in the interval [1.3; 177.8].
-//(Right) After remeshing and keeping the same density,
-//dihedral angles are in the interval [12,7; 157.7].
+Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
+(Left) Before remeshing;
+        dihedral angles in the interval [0.1; 179.8],
+        33,936 vertices.
+(Middle) After remeshing with uniform sizing field,
+        targetting the average edge length of input (left) mesh;
+        dihedral angles in the interval [5.4; 163.7],
+        245,522 vertices.
+(Right) After remeshing with adaptive sizing field;
+        dihedral angles in the interval [4.4; 170.7],
+        41,032 vertices.
 \cgalFigureEnd
 
 It is also possible to use a custom sizing function, like for example
@@ -84,7 +91,7 @@ This happens because here, the sizing field is used both as a lower and an upper
 edge lengths, though in mesh generation it is used only as an upper bound
 on simplices sizes.
 
-\cgalFigureBegin{sphere_sizing_field, sphere__with_sizing.png}
+\cgalFigureBegin{sphere_sizing_field, sphere_with_sizing.png}
 Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
 (Left) Before remeshing, dihedral angles were in the interval `[0.2; 179.7]`.
 (Middle) After remeshing with a uniform target edge length equal to the average edge
