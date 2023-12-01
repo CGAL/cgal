@@ -7,6 +7,4 @@
 \example Tetrahedral_remeshing/mesh_and_remesh_with_adaptive_sizing.cpp
 \example Tetrahedral_remeshing/mesh_and_remesh_with_sizing.cpp
 \example Tetrahedral_remeshing/tetrahedral_remeshing_from_mesh.cpp
-\example Tetrahedral_remeshing/mesh_and_remesh_with_sizing.cpp
-\example Tetrahedral_remeshing/mesh_and_remesh_with_adaptive_sizing.cpp
 */
