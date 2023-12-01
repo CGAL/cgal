@@ -223,8 +223,7 @@ void compute_elements(const Nef_Polyhedron &nef,
   typedef typename Nef_Polyhedron::SFace_const_handle         SFace_const_handle;
 
   Volume_const_iterator c;
-  Nef_Visitor<Nef_Polyhedron, GSOptions>
-    V(nef, graphics_scene, gs_options);
+  Nef_Visitor<Nef_Polyhedron, GSOptions> V(nef, graphics_scene, gs_options);
   CGAL_forall_volumes(c, nef)
   {
     Shell_entry_const_iterator it;
@@ -262,12 +261,12 @@ void add_to_graphics_scene(const CGAL_NEF3_TYPE &anef,
                   typename CGAL_NEF3_TYPE::Halffacet_const_handle /*fh*/>
       gs_options;
 
-  gs_options.colored_face = [] (const CGAL_NEF3_TYPE&,
-                                     typename CGAL_NEF3_TYPE::Halffacet_const_handle) -> bool
+  gs_options.colored_face=[](const CGAL_NEF3_TYPE&,
+                             typename CGAL_NEF3_TYPE::Halffacet_const_handle) -> bool
   { return true; };
 
-  gs_options.face_color = [] (const CGAL_NEF3_TYPE&,
-                                   typename CGAL_NEF3_TYPE::Halffacet_const_handle fh) -> CGAL::IO::Color
+  gs_options.face_color=[](const CGAL_NEF3_TYPE&,
+                           typename CGAL_NEF3_TYPE::Halffacet_const_handle fh) -> CGAL::IO::Color
   {
     if (fh==nullptr) // use to get the mono color
     { return CGAL::IO::Color(100, 125, 200); }
@@ -303,6 +302,8 @@ void draw(const CGAL_NEF3_TYPE &anef,
 }
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#undef CGAL_NEF3_TYPE
 
 } // End namespace CGAL
 
