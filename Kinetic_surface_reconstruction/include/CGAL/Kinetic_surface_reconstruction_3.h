@@ -192,10 +192,8 @@ public:
   \cgalNamedParamsEnd
 
   */
-  template<
-    typename CGAL_NP_TEMPLATE_PARAMETERS>
-  std::size_t detect_planar_shapes(bool estimate_ground = false,
-    const CGAL_NP_CLASS& np = parameters::default_values()) {
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  std::size_t detect_planar_shapes(const CGAL_NP_CLASS& np = parameters::default_values()) {
 
     if (m_verbose)
       std::cout << std::endl << "--- DETECTING PLANAR SHAPES: " << std::endl;

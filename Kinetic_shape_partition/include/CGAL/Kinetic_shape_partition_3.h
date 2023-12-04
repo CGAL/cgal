@@ -1036,6 +1036,21 @@ public:
   }
 
   /// @}
+
+private:
+  struct Constraint_info {
+    typename CDTplus::Constraint_id id_single, id_merged, id_overlay;
+    std::size_t volume;
+    Index vA, vB;
+  };
+
+  const Point_3& volume_centroid(std::size_t volume_index) const {
+    assert(volume_index < m_volumes.size());
+    auto p = m_volumes[volume_index];
+    return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
+  }
+
+
   /*!
   \brief Face indices of the volume.
 
@@ -1128,20 +1143,6 @@ public:
       *iit++ = p;
       *pit++ = m_partition_nodes[p.first].m_data->exact_vertices()[p.second];
     }
-  }
-
-
-private:
-  struct Constraint_info {
-    typename CDTplus::Constraint_id id_single, id_merged, id_overlay;
-    std::size_t volume;
-    Index vA, vB;
-  };
-
-  const Point_3& volume_centroid(std::size_t volume_index) const {
-    assert(volume_index < m_volumes.size());
-    auto p = m_volumes[volume_index];
-    return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
   }
 
 
