@@ -10,8 +10,8 @@
 //
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
-#ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
-#define CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
+#ifndef CGAL_KINETIC_SURFACE_RECONSTRUCTION_3_H
+#define CGAL_KINETIC_SURFACE_RECONSTRUCTION_3_H
 
 #include <CGAL/license/Kinetic_shape_partition.h>
 
@@ -40,9 +40,8 @@
 
 namespace CGAL
 {
-#ifndef DOXYGEN_RUNNING
 /*!
-* \ingroup PkgKineticSurfaceReconstruction
+* \ingroup PkgKineticSurfaceReconstructionRef
   \brief Piece-wise planar surface reconstruction via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam GeomTraits
@@ -61,7 +60,7 @@ namespace CGAL
     must be a model of `Kernel` using exact computations. Defaults to `CGAL::Exact_predicates_exact_constructions_kernel`. Used for the internal kinetic shape partition.
 */
 template<typename GeomTraits, typename PointSet, typename PointMap, typename NormalMap, typename IntersectionKernel = CGAL::Exact_predicates_exact_constructions_kernel>
-class Kinetic_shape_reconstruction_3 {
+class Kinetic_surface_reconstruction_3 {
 public:
   using Kernel = GeomTraits;
   using Intersection_kernel = IntersectionKernel;
@@ -1966,9 +1965,7 @@ private:
   }*/
 };
 
-#endif
-
 } // namespace CGAL
 
 
-#endif // CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
+#endif // CGAL_KINETIC_SURFACE_RECONSTRUCTION_3_H

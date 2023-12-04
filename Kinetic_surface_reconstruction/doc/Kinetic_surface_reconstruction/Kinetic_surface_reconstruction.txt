@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_Kinetic_Surface_reconstruction
+\anchor Chapter_Kinetic_Surface_Reconstruction
 \cgalAutoToc
 
 \authors Sven Oesau and Florent Lafarge

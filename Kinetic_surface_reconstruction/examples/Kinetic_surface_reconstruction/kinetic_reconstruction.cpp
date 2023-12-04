@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Kinetic_shape_reconstruction_3.h>
+#include <CGAL/Kinetic_surface_reconstruction_3.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Real_timer.h>
@@ -23,11 +23,8 @@ using Segment_3 = typename Kernel::Segment_3;
 using Point_set    = CGAL::Point_set_3<Point_3>;
 using Point_map    = typename Point_set::Point_map;
 using Normal_map   = typename Point_set::Vector_map;
-using Label_map    = typename Point_set:: template Property_map<int>;
-using Region_map   = typename Point_set:: template Property_map<int>;
 
-
-using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel, Point_set, Point_map, Normal_map>;
+using KSR = CGAL::Kinetic_surface_reconstruction_3<Kernel, Point_set, Point_map, Normal_map>;
 
 using Parameters      = CGAL::KSR::All_parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
@@ -173,9 +170,6 @@ int main(const int argc, const char** argv) {
 
   // Algorithm.
   KSR ksr(point_set, param);
-
-  const Region_map region_map = point_set. template property_map<int>("region").first;
-  const bool is_segmented = point_set. template property_map<int>("region").second;
 
   Timer timer;
   timer.start();
