@@ -918,7 +918,6 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
     saver.export_polygon_soup_3(polygons, colors, file_name);
   }
 }
-/*
 
 template<typename KSP>
 void dump_volumes_ksp(const KSP& ksp, const std::string tag = std::string()) {
@@ -953,7 +952,7 @@ void dump_volumes_ksp(const KSP& ksp, const std::string tag = std::string()) {
     saver.export_polygon_soup_3(polygons, colors, file_name);
   }
 }
-*/
+
 
 void dump_polygon(const std::vector<CGAL::Epick::Point_3>& pts, const std::string& filename) {
   Saver<CGAL::Epick> saver;

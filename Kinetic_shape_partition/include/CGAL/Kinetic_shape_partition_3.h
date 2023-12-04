@@ -18,6 +18,7 @@
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
+#include <boost/filesystem.hpp>
 
 #include <algorithm>
 #include <numeric>
@@ -701,13 +702,36 @@ public:
 
     timer.stop();
 
+    if (m_parameters.debug) {
+      if (boost::filesystem::is_directory("volumes/"))
+        for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
+          boost::filesystem::remove_all(it->path());
+
+      KSP_3::dump_volumes_ksp(*this, "volumes/");
+      for (std::size_t i = 1; i < m_volumes.size(); i++)
+        if (m_volumes[i].first != m_volumes[i - 1].first)
+          std::cout << i << " " << m_volumes[i - 1].first << std::endl;
+      std::cout << m_volumes.size() << " " << m_volumes.back().first << std::endl;
+    }
+
     timer.reset();
     timer.start();
     make_conformal(0);
     conformal_time = timer.time();
 
-//     if (m_parameters.verbose)
-//       check_tjunctions();
+    if (m_parameters.debug) {
+      if (boost::filesystem::is_directory("volumes_after/"))
+        for (boost::filesystem::directory_iterator end_dir_it, it("volumes_after/"); it != end_dir_it; ++it)
+          boost::filesystem::remove_all(it->path());
+      KSP_3::dump_volumes_ksp(*this, "volumes_after/");
+      for (std::size_t i = 1; i < m_volumes.size(); i++)
+        if (m_volumes[i].first != m_volumes[i - 1].first)
+          std::cout << i << " " << m_volumes[i - 1].first << std::endl;
+      std::cout << m_volumes.size() << " " << m_volumes.back().first << std::endl;
+    }
+
+    if (m_parameters.verbose)
+      check_tjunctions();
 
     // Clear unused data structures
     for (std::size_t i = 0; i < m_partitions.size(); i++) {
@@ -1010,57 +1034,6 @@ public:
   }
 
   /// @}
-
-private:
-  struct Constraint_info {
-    typename CDTplus::Constraint_id id_single, id_merged, id_overlay;
-    std::size_t volume;
-    Index vA, vB;
-  };
-
-  const Point_3& volume_centroid(std::size_t volume_index) const {
-    assert(volume_index < m_volumes.size());
-    auto p = m_volumes[volume_index];
-    return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
-  }
-
-
-  template<class OutputIterator>
-  void faces_of_input_polygon(const std::size_t polygon_index, OutputIterator it) const {
-    if (polygon_index >= m_input_planes.size()) {
-      assert(false);
-    }
-
-    for (std::size_t idx : m_partitions) {
-      const Sub_partition& p = m_partition_nodes[idx];
-      // Check if it contains this input polygon and get support plane index
-      int sp_idx = -1;
-      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
-        if (p.input_polygons[i] == polygon_index) {
-          sp_idx = p.m_data->support_plane_index(i);
-          break;
-        }
-      }
-
-      // Continue if the partition does not contain this input polygon.
-      if (sp_idx == -1)
-        continue;
-
-      auto pfaces = p.m_data->pfaces(sp_idx);
-      auto f2i = p.m_data->face_to_index();
-      const auto& f2sp = p.m_data->face_to_support_plane();
-
-      for (std::size_t i = 0; i < f2sp.size(); i++) {
-        if (f2sp[i] == sp_idx)
-          *it++ = std::make_pair(idx, i);
-      }
-    }
-  }
-
-  const std::vector<std::vector<std::size_t> >& input_mapping() const {
-    return m_regularized2input;
-  }
-
   /*!
   \brief Face indices of the volume.
 
@@ -1155,6 +1128,56 @@ private:
     }
   }
 
+
+private:
+  struct Constraint_info {
+    typename CDTplus::Constraint_id id_single, id_merged, id_overlay;
+    std::size_t volume;
+    Index vA, vB;
+  };
+
+  const Point_3& volume_centroid(std::size_t volume_index) const {
+    assert(volume_index < m_volumes.size());
+    auto p = m_volumes[volume_index];
+    return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
+  }
+
+
+  template<class OutputIterator>
+  void faces_of_input_polygon(const std::size_t polygon_index, OutputIterator it) const {
+    if (polygon_index >= m_input_planes.size()) {
+      assert(false);
+    }
+
+    for (std::size_t idx : m_partitions) {
+      const Sub_partition& p = m_partition_nodes[idx];
+      // Check if it contains this input polygon and get support plane index
+      int sp_idx = -1;
+      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
+        if (p.input_polygons[i] == polygon_index) {
+          sp_idx = p.m_data->support_plane_index(i);
+          break;
+        }
+      }
+
+      // Continue if the partition does not contain this input polygon.
+      if (sp_idx == -1)
+        continue;
+
+      auto pfaces = p.m_data->pfaces(sp_idx);
+      auto f2i = p.m_data->face_to_index();
+      const auto& f2sp = p.m_data->face_to_support_plane();
+
+      for (std::size_t i = 0; i < f2sp.size(); i++) {
+        if (f2sp[i] == sp_idx)
+          *it++ = std::make_pair(idx, i);
+      }
+    }
+  }
+
+  const std::vector<std::vector<std::size_t> >& input_mapping() const {
+    return m_regularized2input;
+  }
 
   /*!
   \brief Indices of adjacent volumes. Negative indices correspond to the empty spaces behind the sides of the bounding box.

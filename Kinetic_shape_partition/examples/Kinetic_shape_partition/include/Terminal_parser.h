@@ -188,14 +188,6 @@ namespace KSR {
     void set_parameters(
       Input_parameters& input_parameters,
       const std::vector<std::string>& required) {
-
-      if (!are_required_parameters_set(input_parameters, required)) {
-        std::cerr << std::endl <<
-          "ERROR: SEVERAL REQUIRED PARAMETERS ARE MISSING!"
-        << std::endl << std::endl;
-        exit(EXIT_FAILURE);
-      }
-
       if (parameters_should_be_loaded(input_parameters))
         load_parameters_from_file(input_parameters);
       m_parameters = input_parameters;

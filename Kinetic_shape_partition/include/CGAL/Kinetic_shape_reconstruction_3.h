@@ -487,11 +487,30 @@ public:
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       const auto& n = m_face_neighbors_lcc[i];
-      if (n.second < 6)
-        continue;
+//       if (n.first < 6 || n.second < 6)
+//         continue;
 
       if (m_labels[n.first] != m_labels[n.second]) {
         Face_attribute fa = m_lcc.attribute<2>(m_faces_lcc[i]);
+
+        if (fa == m_lcc.null_dart_descriptor)
+          std::cout << "null dart 1" << std::endl;
+
+        if (m_labels[m_lcc.info<3>(m_faces_lcc[i]).volume_id + 6] == 0) {
+          Dart_descriptor dh = m_lcc.beta<3>(m_faces_lcc[i]);
+          if (dh == m_lcc.null_dart_descriptor)
+            continue;
+          if (m_lcc.attribute<3>(m_faces_lcc[i]) == m_lcc.null_descriptor)
+            continue;
+          m_faces_lcc[i] = dh;
+        }
+
+        fa = m_lcc.attribute<2>(m_faces_lcc[i]);
+
+        if (fa == m_lcc.null_descriptor) {
+          std::cout << "null dart 2" << std::endl;
+          continue;
+        }
 
         if (region_index[fa] == -1) {
           std::vector<std::vector<Point_3> > faces;
@@ -503,6 +522,15 @@ public:
       }
     }
 
+    for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
+      Face_attribute fa = m_lcc.attribute<2>(m_faces_lcc[i]);
+      if (region_index[fa] == -1)
+        continue;
+
+      if (m_labels[m_lcc.info<3>(m_faces_lcc[i]).volume_id + 6] == 0)
+        std::cout << "outside face" << std::endl;
+    }
+
     KSP_3::dump_polygons(polygon_regions, "faces_by_region.ply");
     std::vector<std::vector<std::size_t> > borders;
     std::vector<std::vector<std::size_t> > borders_per_region;
@@ -510,34 +538,6 @@ public:
 
     for (std::size_t i = 0; i < region; i++) {
       if (borders_per_region[i].size() > 0) {
-        // ToDo: remove after -->
-        std::size_t outer = -1;
-        typename Intersection_kernel::FT min = (std::numeric_limits<double>::max)();
-        for (std::size_t j = 0; j < borders_per_region[i].size(); j++)
-          for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
-            const typename Intersection_kernel::Point_3& p = m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k]));
-            if (p.x() < min) {
-              min = p.x();
-              outer = j;
-            }
-          }
-
-/*
-        for (std::size_t j = 0; j < borders_per_region[i].size(); j++) {
-          std::string fn;
-          if (j == outer)
-            fn = "merged_borders/" + std::to_string(i) + "-outer.polylines.txt";
-          else
-            fn = "merged_borders/" + std::to_string(i) + "-" + std::to_string(j) + ".polylines.txt";
-          std::ofstream vout(fn);
-          vout << (borders[borders_per_region[i][j]].size() + 1);
-          for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
-            vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k])));
-          }
-          vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][0]))) << std::endl;
-          vout.close();
-        }*/
-
         if (borders_per_region[i].size() > 1) {
           std::vector<std::vector<std::size_t> > polygons;
           polygons.reserve(borders_per_region[i].size());
@@ -546,28 +546,12 @@ public:
 
           insert_ghost_edges_cdt(polygons, planes[i]);
 
-/*
-          std::ofstream vout("merged_borders/" + std::to_string(i) + "-merged.polylines.txt");
-          vout << (polygons[0].size() + 1);
-          for (std::size_t k = 0; k < polygons[0].size(); k++) {
-            vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[0][k])));
-          }
-          vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[0][0]))) << std::endl;
-          vout.close();*/
-
           borders_per_region[i].resize(1);
           CGAL_assertion(borders[borders_per_region[i][0]].empty());
           CGAL_assertion(!polygons[0].empty());
           borders[borders_per_region[i][0]] = std::move(polygons[0]);
         }
       }
-/*
-      else {
-        for (std::size_t k = 0;k<region_index.size();k++)
-          if (region_index[k] == i) {
-            write_face(m_lcc.dart_of_attribute<2>(k), std::to_string(i) + "-" + std::to_string(k) + "_missing.ply");
-          }
-      }*/
     }
 
     std::map<std::size_t, std::size_t> attrib2idx;
@@ -821,8 +805,8 @@ private:
     int ip = m_lcc.info<2>(face).input_polygon_index;
     typename Intersection_kernel::Plane_3 pl = m_lcc.info<2>(face).plane;
 
-//     if (debug)
-//       std::cout << ip << std::endl;
+    if (m_labels[m_lcc.info<3>(face).volume_id + 6] == 0)
+      std::cout << "collect_connected_component called on outside face" << std::endl;
 
     while (!face_queue.empty()) {
       Dart_descriptor cur_fdh(face_queue.front());
@@ -868,7 +852,6 @@ private:
 //             write_face(fdh, std::to_string(region) + "-" + std::to_string(fa) + ".ply");
 
           const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
-
 
           // Belongs to reconstruction?
           bool internal = m_labels[n.first] == m_labels[n.second];
@@ -1274,10 +1257,11 @@ private:
       if (i == 1043)
         std::cout << std::endl;*/
 
-      typename LCC::Dart_descriptor dh = m_lcc.dart_of_attribute<2>(i);
+      typename LCC::Dart_descriptor dh = m_faces_lcc[i];
 
+/*
       if (m_labels[m_lcc.info<3>(dh).volume_id + 6] == 0)
-        dh = m_lcc.beta<3>(dh);
+        dh = m_lcc.beta<3>(dh);*/
 
       Volume_attribute va = m_lcc.attribute<3>(dh);
       Face_attribute &fa = m_lcc.attribute<2>(dh);
@@ -1425,11 +1409,25 @@ private:
 
     std::size_t redirected = 0;
     for (std::size_t i = 0; i < m_face_neighbors_lcc.size(); i++) {
+      std::size_t lower, upper;
+      if (m_face_neighbors_lcc[i].first < m_face_neighbors_lcc[i].second) {
+        lower = m_face_neighbors_lcc[i].first;
+        upper = m_face_neighbors_lcc[i].second - 6;
+      }
+      else {
+        lower = m_face_neighbors_lcc[i].second;
+        upper = m_face_neighbors_lcc[i].first - 6;
+      }
       // Check if the face is on a bbox face besides the top face.
       // If so and the connected volume is below the ground, redirect the face to the bottom face node.
-      if (m_face_neighbors_lcc[i].second < 5 && m_volume_below_ground[m_face_neighbors_lcc[i].first - 6]) {
+      if ((lower < 6) && m_volume_below_ground[upper]) {
         redirected++;
-        m_face_neighbors_lcc[i].second = 0;
+
+        if (m_face_neighbors_lcc[i].second < 6)
+          m_face_neighbors_lcc[i].second = 0;
+
+        if (m_face_neighbors_lcc[i].first < 6)
+          m_face_neighbors_lcc[i].first = 0;
       }
     }
     std::cout << redirected << " faces redirected to below ground" << std::endl;
@@ -1444,7 +1442,7 @@ private:
 
     m_volumes.resize(num_volumes, 0);
 
-    for (std::size_t i = 0; i < num_volumes; i++) {
+    for (std::size_t i = 6; i < num_volumes; i++) {
       m_cost_matrix[0][i] = m_cost_matrix[1][i] = 0;
       m_volumes[i] = 0;
     }
@@ -1635,7 +1633,7 @@ private:
       //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    //KSR_3::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    KSP_3::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     // Merge coplanar regions
     for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
@@ -1718,10 +1716,10 @@ private:
         region.push_back(j);
 
       store_convex_hull_shape(region, m_regions[i].first, polys_debug);
-      //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
+      //KSP_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    //KSR_3::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    KSP_3::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     std::vector<Plane_3> pl;
 
@@ -1858,7 +1856,7 @@ private:
     // 5 zmax
     const std::size_t force = m_total_inliers * 3;
     // 0 - cost for labelled as outside
-    cost_matrix[0][0] = 0;
+    cost_matrix[0][0] = force;
     cost_matrix[0][1] = 0;
     cost_matrix[0][2] = 0;
     cost_matrix[0][3] = 0;
@@ -1866,18 +1864,20 @@ private:
     cost_matrix[0][5] = 0;
     // 1 - cost for labelled as inside
     cost_matrix[1][0] = 0;
-    cost_matrix[1][1] = 0;
-    cost_matrix[1][2] = 0;
-    cost_matrix[1][3] = 0;
-    cost_matrix[1][4] = 0;
-    cost_matrix[1][5] = 0;
+    cost_matrix[1][1] = force;
+    cost_matrix[1][2] = force;
+    cost_matrix[1][3] = force;
+    cost_matrix[1][4] = force;
+    cost_matrix[1][5] = force;
 
     if (m_ground_polygon_index != -1) {
       std::cout << "using estimated ground plane for reconstruction" << std::endl;
+      cost_matrix[0][0] = force;
       cost_matrix[0][1] = 0;
       cost_matrix[0][2] = 0;
       cost_matrix[0][3] = 0;
       cost_matrix[0][4] = 0;
+      cost_matrix[1][0] = 0;
       cost_matrix[1][1] = force;
       cost_matrix[1][2] = force;
       cost_matrix[1][3] = force;

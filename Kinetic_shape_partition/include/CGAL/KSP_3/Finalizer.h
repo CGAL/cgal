@@ -116,11 +116,6 @@ public:
 
     create_volumes();
 
-/*
-    if (m_parameters.debug) {
-        for (const auto& v : m_data.volumes())
-          dump_volume(m_data, v.pfaces, "volumes/" + m_data.prefix() + std::to_string(v.index), true, v.index);
-    }*/
     CGAL_assertion(m_data.check_faces());
   }
 

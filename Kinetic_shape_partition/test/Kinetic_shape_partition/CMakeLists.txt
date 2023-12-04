@@ -22,8 +22,7 @@ if(Boost_FOUND)
 
     set(targets
     kinetic_2d_stress_test
-    kinetic_3d_test_all
-    kinetic_3d_rg)
+    kinetic_3d_test_all)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)

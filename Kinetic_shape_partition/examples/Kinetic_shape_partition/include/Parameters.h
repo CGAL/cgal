@@ -59,9 +59,11 @@ namespace KSR {
       debug(false),
       // shape detection / shape regularization
       k_neighbors(12),
-      min_region_size(100),
+      min_region_size(0),
       max_octree_node_size(40),
       max_octree_depth(3),
+      distance_threshold(0),
+      angle_threshold(10),
       // partition
       k_intersections(1),
       enlarge_bbox_ratio(FT(11) / FT(10)),
