@@ -33,15 +33,29 @@ template <typename DS,
           typename vertex_handle,
           typename edge_handle,
           typename face_handle>
-struct Graphics_scene_options_voronoi :
+struct Graphics_scene_options_voronoi_2 :
     public CGAL::Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle>
 {
-  Graphics_scene_options_voronoi() : m_draw_voronoi_vertices(true),
-                              m_draw_dual_vertices(true),
-                              dual_vertex_color(CGAL::IO::Color(50, 100, 180)),
-                              ray_color(CGAL::IO::Color(100, 0, 0)),
-                              bisector_color(CGAL::IO::Color(0, 100, 0))
+  Graphics_scene_options_voronoi_2() : m_dual_vertex_color(50, 100, 180),
+                                       m_ray_color(100, 0, 0),
+                                       m_bisector_color(0, 100, 0),
+                                       m_draw_voronoi_vertices(true),
+                                       m_draw_dual_vertices(true)
   {}
+
+  const CGAL::IO::Color& dual_vertex_color() const
+  { return m_dual_vertex_color; }
+  const CGAL::IO::Color& ray_color() const
+  { return m_ray_color; }
+  const CGAL::IO::Color& bisector_color() const
+  { return m_bisector_color; }
+
+  void dual_vertex_color(const CGAL::IO::Color& c)
+  { m_dual_vertex_color=c; }
+  void ray_color(const CGAL::IO::Color& c)
+  { m_ray_color=c; }
+  void bisector_color(const CGAL::IO::Color& c)
+  { m_bisector_color=c; }
 
   void disable_voronoi_vertices() { m_draw_voronoi_vertices=false; }
   void enable_voronoi_vertices() { m_draw_voronoi_vertices=true; }
@@ -53,11 +67,10 @@ struct Graphics_scene_options_voronoi :
   bool are_dual_vertices_enabled() const { return m_draw_dual_vertices; }
   void toggle_draw_dual_vertices() { m_draw_dual_vertices=!m_draw_dual_vertices; }
 
-  CGAL::IO::Color dual_vertex_color;
-  CGAL::IO::Color ray_color;
-  CGAL::IO::Color bisector_color;
-
 protected:
+  CGAL::IO::Color m_dual_vertex_color;
+  CGAL::IO::Color m_ray_color;
+  CGAL::IO::Color m_bisector_color;
   bool m_draw_voronoi_vertices;
   bool m_draw_dual_vertices;
 };
@@ -89,7 +102,7 @@ void compute_dual_vertex(const V2& /*v2*/,
                          typename V2::Delaunay_graph::Finite_vertices_iterator vi,
                          CGAL::Graphics_scene &graphics_scene,
                          const GSOptions& gs_options)
-{ graphics_scene.add_point(vi->point(), gs_options.dual_vertex_color); }
+{ graphics_scene.add_point(vi->point(), gs_options.dual_vertex_color()); }
 
 template <class V2, class GSOptions>
 void add_segments_and_update_bounding_box(const V2& v2,
@@ -102,14 +115,17 @@ void add_segments_and_update_bounding_box(const V2& v2,
 
   if (he->is_segment())
   {
-    if(gs_options.colored_edge(v2, he))
+    if(gs_options.draw_edge(v2, he))
     {
-      graphics_scene.add_segment(he->source()->point(), he->target()->point(),
-                                 gs_options.edge_color(v2, he));
-    }
-    else
-    {
-      graphics_scene.add_segment(he->source()->point(), he->target()->point());
+      if(gs_options.colored_edge(v2, he))
+      {
+        graphics_scene.add_segment(he->source()->point(), he->target()->point(),
+                                   gs_options.edge_color(v2, he));
+      }
+      else
+      {
+        graphics_scene.add_segment(he->source()->point(), he->target()->point());
+      }
     }
   }
   else
@@ -240,14 +256,14 @@ void compute_rays_and_bisectors(const V2&,
     if (he->has_source())
     {
       // add_ray_segment(he->source()->point(), get_second_point(he, graphics_scene.get_bounding_box()));
-      graphics_scene.add_ray(he->source()->point(), direction, gs_options.ray_color);
+      graphics_scene.add_ray(he->source()->point(), direction, gs_options.ray_color());
     }
   }
   else if (he->is_bisector())
   {
     Kernel::Point_2 pointOnLine((v1->point().x() + v2->point().x()) / 2,
                                 (v1->point().y() + v2->point().y()) / 2);
-    graphics_scene.add_line(pointOnLine, direction, gs_options.bisector_color);
+    graphics_scene.add_line(pointOnLine, direction, gs_options.bisector_color());
   }
 }
 
@@ -348,7 +364,7 @@ void add_to_graphics_scene(const CGAL_VORONOI_TYPE& v2,
                            CGAL::Graphics_scene& graphics_scene)
 {
   // Default graphics view options.
-  CGAL::Graphics_scene_options_voronoi<CGAL_VORONOI_TYPE,
+  CGAL::Graphics_scene_options_voronoi_2<CGAL_VORONOI_TYPE,
                                 typename CGAL_VORONOI_TYPE::Vertex_iterator,
                                 typename CGAL_VORONOI_TYPE::Halfedge_iterator,
                                 typename CGAL_VORONOI_TYPE::Face_iterator>
@@ -362,26 +378,10 @@ void add_to_graphics_scene(const CGAL_VORONOI_TYPE& v2,
 // Specialization of draw function.
 template<class DG, class AT, class AP, class GSOptions>
 void draw(const CGAL_VORONOI_TYPE& av2,
-          const GSOptions& gs_options,
+          GSOptions& gs_options,
           const char *title="2D Voronoi Diagram Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  add_to_graphics_scene(av2, buffer, gs_options);
-  draw_graphics_scene(buffer, title);
-}
-
-template<class DG, class AT, class AP>
-void draw(const CGAL_VORONOI_TYPE& av2,
-          const char *title="2D Voronoi Diagram Basic Viewer")
-{
-  CGAL::Graphics_scene buffer;
-
-  CGAL::Graphics_scene_options_voronoi<CGAL_VORONOI_TYPE,
-                                typename CGAL_VORONOI_TYPE::Vertex_iterator,
-                                typename CGAL_VORONOI_TYPE::Halfedge_iterator,
-                                typename CGAL_VORONOI_TYPE::Face_iterator>
-    gs_options;
-
   add_to_graphics_scene(av2, buffer, gs_options);
 
   CGAL::Qt::QApplication_and_basic_viewer app(buffer, title);
@@ -443,6 +443,18 @@ void draw(const CGAL_VORONOI_TYPE& av2,
     // Then we run the app
     app.run();
   }
+}
+
+template<class DG, class AT, class AP>
+void draw(const CGAL_VORONOI_TYPE& av2,
+          const char *title="2D Voronoi Diagram Basic Viewer")
+{
+  CGAL::Graphics_scene_options_voronoi_2<CGAL_VORONOI_TYPE,
+                                typename CGAL_VORONOI_TYPE::Vertex_iterator,
+                                typename CGAL_VORONOI_TYPE::Halfedge_iterator,
+                                typename CGAL_VORONOI_TYPE::Face_iterator>
+    gs_options;
+  draw(av2, gs_options, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER
