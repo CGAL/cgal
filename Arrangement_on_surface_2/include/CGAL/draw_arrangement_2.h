@@ -156,6 +156,9 @@ namespace draw_function_for_arrangement_2
      Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
      int)
     {
+      if(!m_gso.draw_edge(m_aos, curr))
+      {  return; }
+
       // std::cout << "draw_region_impl1()\n";
       auto approx = traits.approximate_2_object();
       using Kernel = Kernel_;
@@ -181,9 +184,14 @@ namespace draw_function_for_arrangement_2
         auto z = it->dz();
         auto l = std::sqrt(x*x + y*y + z*z);
         Approx_point_3 next(x/l, y/l, z/l);
-        this->add_segment(prev, next);
+
+        if(m_gso.colored_edge(m_aos, curr))
+        { m_gs.add_segment(prev, next, m_gso.edge_color(m_aos, curr)); }
+        else
+        { m_gs.add_segment(prev, next); }
+
         prev = next;
-        // this->add_point_in_face(*prev);
+        // m_gs.add_point_in_face(*prev);
       }
     }
 
@@ -206,7 +214,13 @@ namespace draw_function_for_arrangement_2
       auto it = polyline.begin();
       auto prev = it++;
       for (; it != polyline.end(); prev = it++) {
-        m_gs.add_segment(*prev, *it);
+        if(m_gso.draw_edge(m_aos, curr))
+        {
+          if(m_gso.colored_edge(m_aos, curr))
+          { m_gs.add_segment(*prev, *it, m_gso.edge_color(m_aos, curr)); }
+          else
+          { m_gs.add_segment(*prev, *it); }
+        }
         m_gs.add_point_in_face(*prev);
       }
     }
@@ -218,7 +232,7 @@ namespace draw_function_for_arrangement_2
       const auto* traits = this->m_aos.geometry_traits();
       auto ctr_min = traits->construct_min_vertex_2_object();
       auto ctr_max = traits->construct_max_vertex_2_object();
-      this->add_segment(ctr_min(curve), ctr_max(curve));
+      m_gs.add_segment(ctr_min(curve), ctr_max(curve));
     }
 
     /// Draw an exact region.
@@ -244,15 +258,15 @@ namespace draw_function_for_arrangement_2
     /// Compile time dispatching
 #if 0
     template <typename T>
-    void draw_point_impl2(const Point& p, T const&, long) { add_point(p); }
+    void draw_point_impl2(const Point& p, T const&, long) { m_gs.add_point(p); }
 
     template <typename T>
     auto draw_point_impl2(const Point& p, T const& approx, int) ->
       decltype(approx.operator()(p), void())
-    { add_point(approx(p)); }
+    { m_gs.add_point(approx(p)); }
 
     template <typename T>
-    void draw_point_impl1(const Point& p, T const&, long) { add_point(p); }
+    void draw_point_impl1(const Point& p, T const&, long) { m_gs.add_point(p); }
 
     template <typename T>
     auto draw_point_impl1(const Point& p, T const& traits, int) ->
@@ -262,15 +276,23 @@ namespace draw_function_for_arrangement_2
     }
 #else
     template <typename T>
-    void draw_point_impl1(const Point& p, T const& traits, int)
-    { m_gs.add_point(traits.approximate_2_object()(p)); }
+    void draw_point_impl1(const Point& p, T const& traits, int,
+                          bool colored, const CGAL::IO::Color& color)
+    {
+      if(colored)
+      { m_gs.add_point(traits.approximate_2_object()(p), color); }
+      else
+      { m_gs.add_point(traits.approximate_2_object()(p)); }
+    }
 #endif
 
     template <typename Kernel_, int AtanX, int AtanY>
     void draw_point_impl1
     (const Point& p,
      Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
-     int)
+     int,
+     bool colored,
+     const CGAL::IO::Color& color)
     {
       auto approx = traits.approximate_2_object();
       using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY>;
@@ -282,14 +304,24 @@ namespace draw_function_for_arrangement_2
       auto z = ap.dz();
       auto l = std::sqrt(x*x + y*y + z*z);
       Approx_point_3 p3(x/l, y/l, z/l);
-      add_point(p3);
+      if(colored)
+      { m_gs.add_point(p3, color); }
+      else
+      { m_gs.add_point(p3); }
     }
 
     /// Draw a point.
-    void draw_point(const Point& p)
+    void draw_point(Vertex_const_handle vh)
     {
       const auto* traits = m_aos.geometry_traits();
-      draw_point_impl1(p, *traits, 0);
+      if(m_gso.draw_vertex(m_aos, vh))
+      {
+        if(m_gso.colored_vertex(m_aos, vh))
+        { draw_point_impl1(vh->point(), *traits, 0, true,
+                           m_gso.vertex_color(m_aos, vh)); }
+        else
+        { draw_point_impl1(vh->point(), *traits, 0, false, CGAL::IO::Color()); } // color will be unused
+      }
     }
 
     template <typename Kernel, int AtanX, int AtanY>
@@ -351,15 +383,33 @@ namespace draw_function_for_arrangement_2
     m_visited.clear();
 
     if (m_aos.is_empty()) return;
-    add_faces(*(this->m_aos.geometry_traits()));
+
+    if(m_gso.are_faces_enabled())
+    { add_faces(*(this->m_aos.geometry_traits())); }
 
     // Add edges that do not separate faces.
-    for (auto it = m_aos.edges_begin(); it != m_aos.edges_end(); ++it)
-    { if (it->face() == it->twin()->face()) draw_curve(it->curve()); }
+    if(m_gso.are_edges_enabled())
+    {
+      for (auto it = m_aos.edges_begin(); it != m_aos.edges_end(); ++it)
+      { if (it->face()==it->twin()->face())
+        {
+          if(m_gso.draw_edge(m_aos, it))
+          {
+            if(m_gso.colored_edge(m_aos, it))
+            { draw_curve(it->curve(), true, m_gso.edge_color(m_aos, it)); }
+            else
+            { draw_curve(it->curve(), false, CGAL::IO::Color()); }
+          }
+        }
+      }
+    }
 
     // Add all points
-    for (auto it = m_aos.vertices_begin(); it != m_aos.vertices_end(); ++it)
-    { draw_point(it->point()); }
+    if(m_gso.are_vertices_enabled())
+    {
+      for (auto it = m_aos.vertices_begin(); it != m_aos.vertices_end(); ++it)
+      { draw_point(it); }
+    }
 
     m_visited.clear();
   }
@@ -372,14 +422,23 @@ namespace draw_function_for_arrangement_2
    */
   template <typename XMonotoneCurve, typename Approximate>
   void draw_approximate_curve(const XMonotoneCurve& curve,
-                              const Approximate& approx) {
+                              const Approximate& approx,
+                               bool colored, const CGAL::IO::Color& c)
+    {
     std::vector<typename Gt::Approximate_point_2> polyline;
     double error(0.01); // TODO? (this->pixel_ratio());
     approx(curve, error, std::back_inserter(polyline));
     if (polyline.empty()) return;
     auto it = polyline.begin();
     auto prev = it++;
-    for (; it != polyline.end(); prev = it++) m_gs.add_segment(*prev, *it);
+    for (; it != polyline.end(); prev = it++)
+    {
+      if(colored)
+      { m_gs.add_segment(*prev, *it, c); }
+      else
+      { m_gs.add_segment(*prev, *it); }
+    }
+
   }
 
   /*! Compile time dispatching
@@ -407,15 +466,17 @@ namespace draw_function_for_arrangement_2
     }
 #else
     template <typename T>
-    void draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, int)
-    { draw_approximate_curve(xcv, traits.approximate_2_object()); }
+    void draw_curve_impl1(const X_monotone_curve& xcv, T const& traits, int,
+                          bool colored, const CGAL::IO::Color& c)
+    { draw_approximate_curve(xcv, traits.approximate_2_object(), colored, c); }
 #endif
 
     template <typename Kernel_, int AtanX, int AtanY>
     void draw_curve_impl1
     (const X_monotone_curve& xcv,
      Arr_geodesic_arc_on_sphere_traits_2<Kernel_, AtanX, AtanY> const& traits,
-     int)
+     int,
+     bool colored, const CGAL::IO::Color& c)
     {
       auto approx = traits.approximate_2_object();
       using Kernel = Kernel_;
@@ -438,14 +499,18 @@ namespace draw_function_for_arrangement_2
         auto z = it->dz();
         auto l = std::sqrt(x*x + y*y + z*z);
         Approx_point_3 next(x/l, y/l, z/l);
-        this->add_segment(prev, next);
+        if(colored)
+        { m_gs.add_segment(prev, next, c); }
+        else
+        { m_gs.add_segment(prev, next); }
         prev = next;
       }
     }
 
     /// Draw a curve.
     template <typename XMonotoneCurve>
-    void draw_curve(const XMonotoneCurve& curve)
+    void draw_curve(const XMonotoneCurve& curve,
+                    bool colored, const CGAL::IO::Color& c)
     {
       /* Check whether the traits has a member function called
        * approximate_2_object() and if so check whether the return type, namely
@@ -473,7 +538,7 @@ namespace draw_function_for_arrangement_2
       draw_exact_curve(curve);
 #else
       const auto* traits = this->m_aos.geometry_traits();
-      draw_curve_impl1(curve, *traits, 0);
+      draw_curve_impl1(curve, *traits, 0, colored, c);
 #endif
     }
 
