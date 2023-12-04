@@ -32,35 +32,38 @@ struct Graphics_scene_options_periodic_2_triangulation_2 :
     public CGAL::Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle>
 {
   Graphics_scene_options_periodic_2_triangulation_2():
-    domain_color(CGAL::IO::Color(96, 104, 252)),
+    m_domain_color(CGAL::IO::Color(96, 104, 252)),
     m_draw_domain(true),
-    m_current_display_type(DS::STORED)
+    m_display_type(DS::STORED)
   {}
 
-  bool get_draw_domain() const
+  bool draw_domain() const
   { return m_draw_domain; }
-  void set_draw_domain(bool b)
+  void draw_domain(bool b)
   { m_draw_domain=b; }
   void toggle_draw_domain()
   { m_draw_domain=!m_draw_domain; }
 
-  typename DS::Iterator_type current_display_type() const
-  { return m_current_display_type; }
+  typename DS::Iterator_type display_type() const
+  { return m_display_type; }
 
-  void increase_current_display_type()
+  void increase_display_type()
   {
-    if(m_current_display_type==DS::UNIQUE_COVER_DOMAIN)
-    { m_current_display_type=DS::STORED; }
+    if(m_display_type==DS::UNIQUE_COVER_DOMAIN)
+    { m_display_type=DS::STORED; }
     else
-    { m_current_display_type=typename DS::Iterator_type(static_cast<int>(m_current_display_type)+1); }
+    { m_display_type=typename DS::Iterator_type(static_cast<int>(m_display_type)+1); }
   }
 
-public:
-  CGAL::IO::Color domain_color;
+  const CGAL::IO::Color& domain_color() const
+  { return m_domain_color; }
+  void domain_color(const CGAL::IO::Color& c)
+  { m_domain_color=c; }
 
 protected:
+  CGAL::IO::Color m_domain_color;
   bool m_draw_domain;
-  typename DS::Iterator_type m_current_display_type;
+  typename DS::Iterator_type m_display_type;
 };
 
 namespace draw_function_for_P2T2
@@ -145,10 +148,10 @@ void compute_domain(const P2T2& p2t2,
       Kernel::Point_2 p3(orig_domain.xmax(), orig_domain.ymin());
       Kernel::Point_2 p4((orig_domain.max)());
 
-      graphics_scene.add_segment(p1 + shift, p2 + shift, gs_options.domain_color);
-      graphics_scene.add_segment(p1 + shift, p3 + shift, gs_options.domain_color);
-      graphics_scene.add_segment(p2 + shift, p4 + shift, gs_options.domain_color);
-      graphics_scene.add_segment(p3 + shift, p4 + shift, gs_options.domain_color);
+      graphics_scene.add_segment(p1 + shift, p2 + shift, gs_options.domain_color());
+      graphics_scene.add_segment(p1 + shift, p3 + shift, gs_options.domain_color());
+      graphics_scene.add_segment(p2 + shift, p4 + shift, gs_options.domain_color());
+      graphics_scene.add_segment(p3 + shift, p4 + shift, gs_options.domain_color());
     }
   }
 }
@@ -161,7 +164,7 @@ void compute_elements(const P2T2& p2t2,
   // Get the display type, iterate through periodic elements according
   // to the display type
   typedef typename P2T2::Iterator_type Iterator_type;
-  Iterator_type it_type = (Iterator_type)gs_options.current_display_type();
+  Iterator_type it_type = (Iterator_type)gs_options.display_type();
 
   // Iterate through vertices, edges and faces, add elements to buffer
   if(gs_options.are_vertices_enabled())
@@ -185,7 +188,7 @@ void compute_elements(const P2T2& p2t2,
     { compute_face(p2t2, it, graphics_scene, gs_options); }
   }
 
-  if(gs_options.get_draw_domain())
+  if(gs_options.draw_domain())
   {
     // Compute the (9-sheet covering space) domain of the periodic triangulation
     compute_domain(p2t2, graphics_scene, gs_options);
@@ -222,44 +225,29 @@ void add_to_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
 // Specialization of draw function
 template<class Gt, class Tds, class GSOptions>
 void draw(const CGAL_P2T2_TYPE& ap2t2,
-          const GSOptions& gs_options,
+          GSOptions& gs_options,
           const char* title="2D Periodic Triangulation Viewer")
 {
-  CGAL::Graphics_scene buffer;
-  add_to_graphics_scene(ap2t2, buffer, gs_options);
-  draw_graphics_scene(buffer);
-}
-
-template<class Gt, class Tds>
-void draw(const CGAL_P2T2_TYPE& ap2t2,
-          const char* title="2D Periodic Triangulation Viewer")
-{
-  CGAL::Graphics_scene buffer;
-  CGAL::Graphics_scene_options_periodic_2_triangulation_2
-    <CGAL_P2T2_TYPE,
-     typename CGAL_P2T2_TYPE::Periodic_point_iterator,
-     typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
-     typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
-
-  add_to_graphics_scene(ap2t2, buffer, gs_options);
-  CGAL::Qt::QApplication_and_basic_viewer app(buffer, title);
+  CGAL::Graphics_scene gs;
+  add_to_graphics_scene(ap2t2, gs, gs_options);
+  CGAL::Qt::QApplication_and_basic_viewer app(gs, title);
   if(app)
   {
     // Here we define the std::function to capture key pressed.
     app.basic_viewer().on_key_pressed=
-      [&ap2t2, &buffer, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
+      [&ap2t2, &gs, &gs_options] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
         {
-          gs_options.increase_current_display_type();
+          gs_options.increase_display_type();
           basic_viewer->displayMessage
-            (QString("Display type=%1.").arg(gs_options.current_display_type()==0?"Stored":
-                                             (gs_options.current_display_type()==1?"Unique":
-                                              (gs_options.current_display_type()==2?"Stored cover":
+            (QString("Display type=%1.").arg(gs_options.display_type()==0?"Stored":
+                                             (gs_options.display_type()==1?"Unique":
+                                              (gs_options.display_type()==2?"Stored cover":
                                                "Unique cover"))));
-          buffer.clear();
-          draw_function_for_P2T2::compute_elements(ap2t2, buffer, gs_options);
+          gs.clear();
+          add_to_graphics_scene(ap2t2, gs, gs_options);
           basic_viewer->redraw();
         }
         else
@@ -276,6 +264,18 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
     // Then we run the app
     app.run();
   }
+}
+
+template<class Gt, class Tds>
+void draw(const CGAL_P2T2_TYPE& ap2t2,
+          const char* title="2D Periodic Triangulation Viewer")
+{
+  CGAL::Graphics_scene_options_periodic_2_triangulation_2
+    <CGAL_P2T2_TYPE,
+     typename CGAL_P2T2_TYPE::Periodic_point_iterator,
+     typename CGAL_P2T2_TYPE::Periodic_segment_iterator,
+     typename CGAL_P2T2_TYPE::Periodic_triangle_iterator> gs_options;
+  draw(ap2t2, gs_options, title);
 }
 
 #endif // CGAL_USE_BASIC_VIEWER
