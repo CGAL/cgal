@@ -103,6 +103,7 @@
 \package_listing{Advancing_front_surface_reconstruction}
 \package_listing{Polygonal_surface_reconstruction}
 \package_listing{Kinetic_shape_partition}
+\package_listing{Kinetic_surface_reconstruction}
 \package_listing{Optimal_transportation_reconstruction_2}
 
 \cgalPackageSection{PartGeometryProcessing,Geometry Processing}

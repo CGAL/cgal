@@ -42,14 +42,23 @@ namespace CGAL
 {
 #ifndef DOXYGEN_RUNNING
 /*!
-* \ingroup PkgKineticShapePartition
-  \brief Piece-wise linear reconstruction via inside/outside labeling of a kinetic partition using graph cut.
+* \ingroup PkgKineticSurfaceReconstruction
+  \brief Piece-wise planar surface reconstruction via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam GeomTraits
-    must be a model of `KineticPartitionTraits`.
+    must be a model of `KineticShapePartitionTraits_3`.
+
+  \tparam PointSet
+    must be a range of 3D points and corresponding 3D normal vectors whose iterator type is `RandomAccessIterator`.
+
+  \tparam PointMap
+    a model of `ReadablePropertyMap` whose key type is the value type of the `PointSet` and value type is `GeomTraits::Point_3`
 
   \tparam NormalMap
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`. It must map the elements in `KineticShapePartitionTraits_3::Input_range` to `Vector_3`.
+    a model of `ReadablePropertyMap` whose key type is the value type of the `PointSet` and value type is `GeomTraits::Vector_3`
+
+  \tparam IntersectionKernel
+    must be a model of `Kernel` using exact computations. Defaults to `CGAL::Exact_predicates_exact_constructions_kernel`. Used for the internal kinetic shape partition.
 */
 template<typename GeomTraits, typename PointSet, typename PointMap, typename NormalMap, typename IntersectionKernel = CGAL::Exact_predicates_exact_constructions_kernel>
 class Kinetic_shape_reconstruction_3 {
@@ -84,13 +93,23 @@ public:
   /*!
   \brief Creates a Kinetic_shape_reconstruction_3 object.
 
-  \param ps
-  an instance of `InputRange` with 3D points and corresponding 3D normal vectors.
+  \param points
+   an instance of `PointSet` with 3D points and corresponding 3D normal vectors.
 
+  \param np
+   a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{point_map}
+      \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Point_3`}
+          \cgalParamDefault{`PointMap()`}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
-  Kinetic_shape_reconstruction_3(PointSet& ps,
-    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(ps), m_ground_polygon_index(-1), m_kinetic_partition(np) {}
+  Kinetic_shape_reconstruction_3(PointSet& points,
+    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {}
 
   /*!
     \brief Detects shapes in the provided point cloud
@@ -103,19 +122,25 @@ public:
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{point_map}
-      \cgalParamDescription{a property map associating points to the elements of `input_range`}
-      \cgalParamDefault{`PointMap()`}
+      \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Point_3`}
+          \cgalParamDefault{`PointMap()`}
     \cgalParamNEnd
     \cgalParamNBegin{normal_map}
-      \cgalParamDescription{a property map associating normals to the elements of `input_range`}
+      \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Vector_3`}
       \cgalParamDefault{`NormalMap()`}
-    \cgalParamNEnd
-    \cgalParamNBegin{k_neighbors}
-      \cgalParamDescription{the number of returned neighbors per each query point}
+   \cgalParamNBegin{k_neighbors}
+     \cgalParamDescription{the number of neighbors for each point considered during region growing}
       \cgalParamType{`std::size_t`}
       \cgalParamDefault{12}
     \cgalParamNEnd
-    \cgalParamNBegin{angle_tolerance}
+    \cgalParamNBegin{maximum_offset}
+      \cgalParamDescription{maximum angle in degrees between the normal of a point and the plane normal}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{25 degrees}
+    \cgalParamNEnd
+    \cgalParamNBegin{maximum_angle}
       \cgalParamDescription{maximum angle in degrees between the normal of a point and the plane normal}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{25 degrees}
@@ -123,7 +148,47 @@ public:
     \cgalParamNBegin{minimum_region_size}
       \cgalParamDescription{minimum number of 3D points a region must have}
       \cgalParamType{`std::size_t`}
-      \cgalParamDefault{5}
+      \cgalParamDefault{1% of input points}
+    \cgalParamNEnd
+    \cgalParamNBegin{angle_tolerance}
+      \cgalParamDescription{maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{5 degrees}
+    \cgalParamNEnd
+    \cgalParamNBegin{maximum_offset}
+      \cgalParamDescription{maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{0.02 unit length}
+    \cgalParamNEnd
+    \cgalParamNBegin{regularize_parallelism}
+      \cgalParamDescription{indicates whether parallelism should be regularized or not}
+      \cgalParamType{boolean}
+      \cgalParamDefault{true}
+    \cgalParamNEnd
+    \cgalParamNBegin{regularize_orthogonality}
+      \cgalParamDescription{indicates whether orthogonality should be regularized or not}
+      \cgalParamType{boolean}
+      \cgalParamDefault{true}
+    \cgalParamNEnd
+    \cgalParamNBegin{regularize_coplanarity}
+      \cgalParamDescription{indicates whether coplanarity should be regularized or not}
+      \cgalParamType{boolean}
+      \cgalParamDefault{true}
+    \cgalParamNEnd
+    \cgalParamNBegin{regularize_axis_symmetry}
+      \cgalParamDescription{indicates whether axis symmetry should be regularized or not}
+      \cgalParamType{boolean}
+      \cgalParamDefault{true}
+    \cgalParamNEnd
+    \cgalParamNBegin{symmetry_direction}
+      \cgalParamDescription{an axis for symmetry regularization}
+      \cgalParamType{`GeomTraits::Vector_3`}
+      \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
+    \cgalParamNEnd
+    \cgalParamNBegin{estimate_ground}
+      \cgalParamDescription{Estimates a horizontal ground plane within the detected shapes. Cells in the partition below the ground plane receive a weight to be labelled as solid. The z axis is considered as vertical upwards pointing.}
+      \cgalParamType{bool}
+      \cgalParamDefault{false}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -157,7 +222,7 @@ public:
   @return
   vector with a plane equation for each detected planar shape.
 
-  \pre `successful shape detection`
+  \pre `shape detection performed`
   */
   const std::vector<Plane_3>& detected_planar_shapes() {
     return m_planes;
@@ -166,10 +231,10 @@ public:
   /*!
   \brief Retrieves the indices of detected shapes.
 
-    @return
-    indices into `input_range` for each detected planar shape in vectors.
+  @return
+  indices into `input_range` for each detected planar shape.
 
-    \pre `successful shape detection`
+  \pre `shape detection performed`
   */
   const std::vector<std::vector<std::size_t> >& detected_planar_shape_indices() {
     return m_planar_regions;
@@ -193,14 +258,9 @@ public:
       \cgalParamType{FT}
       \cgalParamDefault{1.1}
     \cgalParamNEnd
-    \cgalParamNBegin{angle_tolerance}
-      \cgalParamDescription{The tolerance angle to snap the planes of two input polygons into one plane.}
-      \cgalParamType{FT}
-      \cgalParamDefault{5}
-    \cgalParamNEnd
   \cgalNamedParamsEnd
 
-    \pre `successful shape detection`
+    \pre `shape detection performed`
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   void initialize_partition(const CGAL_NP_CLASS& np = parameters::default_values()) {
@@ -215,16 +275,16 @@ public:
   \param k
   maximum number of allowed intersections for each input polygon before its expansion stops.
 
-  @return
-  success of kinetic partition.
-
-  \pre `successful initialization`
+  \pre `shape detection performed`
   */
-  void partition(std::size_t k, FT& partition_time, FT& finalization_time, FT& conformal_time) {
+  void partition(std::size_t k) {
+    FT partition_time, finalization_time, conformal_time;
     m_kinetic_partition.partition(k, partition_time, finalization_time, conformal_time);
     std::cout << "Bounding box partitioned into " << m_kinetic_partition.number_of_volumes() << " volumes" << std::endl;
 
     m_kinetic_partition.get_linear_cell_complex(m_lcc);
+
+    setup_energyterms();
   }
 
   /*!
@@ -233,11 +293,126 @@ public:
   @return
   created kinetic partition data structure
 
-  \pre `successful partition`
+  \pre `partition created`
   */
   const Kinetic_shape_partition_3<Kernel, Intersection_kernel>& partition() const {
     return m_kinetic_partition;
   }
+
+  /*!
+  \brief Uses graph-cut to solve an solid/empty labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+
+  \tparam OutputPointIterator
+  an output iterator taking Point_3.
+
+  \tparam OutputPolygonIterator
+  an output iterator taking polygon indices std::vector<std::size_t>.
+
+  \param beta
+  trades the impact of the data term for impact of the regularization term. Should be in the range [0, 1).
+
+  \param pit
+  output iterator to receive the vertices of the reconstructed surface.
+
+  \param polyit
+  output iterator to store all polygonal faces of the reconstructed surface.
+
+  \pre `partition created`
+  */
+  template<class OutputPointIterator, class OutputPolygonIterator>
+  void reconstruct(FT beta, OutputPointIterator pit, OutputPolygonIterator polyit) {
+    KSR_3::Graphcut<Kernel> gc(beta);
+
+    gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
+
+    reconstructed_model_polylist_lcc(pit, polyit);
+  }
+
+private:
+  struct Vertex_info { FT z = FT(0); };
+  struct Face_info { };
+
+  using Fbi = CGAL::Triangulation_face_base_with_info_2<Face_info, Kernel>;
+  //using Fb = CGAL::Alpha_shape_face_base_2<Kernel, Fbi>;
+
+  using Vbi = CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, Kernel>;
+  //using Vb = CGAL::Alpha_shape_vertex_base_2<Kernel, Vbi>;
+
+  using Tds = CGAL::Triangulation_data_structure_2<Vbi, Fbi>;
+  using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel, Tds>;
+
+  using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
+
+  typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
+  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Linear_cell_complex_min_items>;
+  using Dart_descriptor = typename LCC::Dart_descriptor;
+  using Dart = typename LCC::Dart;
+
+  struct VI {
+    VI() : i(-1), j(-1) {}
+    int i, j;
+    Dart_descriptor dh;
+    typename Intersection_kernel::Point_2 p;
+  };
+
+  typedef CGAL::Triangulation_vertex_base_with_info_2<VI, typename Intersection_kernel> Vbi2;
+  typedef CGAL::Constrained_triangulation_face_base_2<typename Intersection_kernel>   Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vbi2, Fb>       Tds2;
+  typedef CGAL::Exact_intersections_tag  Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<typename Intersection_kernel, Tds2, Itag> CDT;
+
+  typedef typename CDT::Vertex_handle            Vertex_handle;
+  typedef typename CDT::Face_handle              Face_handle;
+  typedef typename CDT::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename CDT::Finite_edges_iterator    Finite_edges_iterator;
+  typedef typename CDT::Finite_faces_iterator    Finite_faces_iterator;
+
+  //using Visibility = KSR_3::Visibility<Kernel, Intersection_kernel, Point_map, Normal_map>;
+  using Index = typename KSP::Index;
+  using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
+  using Volume_attribute = typename LCC::Base::template Attribute_descriptor<3>::type;
+
+  bool m_verbose;
+  bool m_debug;
+
+  Point_set &m_points;
+  Point_map m_point_map;
+  Normal_map m_normal_map;
+
+  std::vector<std::vector<std::size_t> > m_planar_regions;
+  std::vector<typename Region_growing::Primitive_and_region> m_regions;
+  std::map<std::size_t, Indices> m_region_map;
+  double m_detection_distance_tolerance;
+
+  std::size_t m_ground_polygon_index;
+  Plane_3 m_ground_plane;
+
+  std::vector<Plane_3> m_planes;
+  std::vector<Point_3> m_polygon_pts;
+  std::vector<std::vector<std::size_t> > m_polygon_indices;
+  std::vector<Polygon_3> m_polygons;
+  KSP m_kinetic_partition;
+
+  LCC m_lcc;
+  std::vector<typename LCC::Dart_const_descriptor> m_faces_lcc;
+  std::map<Face_attribute, std::size_t> m_attrib2index_lcc;
+  std::vector<std::size_t> lcc2index;
+  std::vector<std::size_t> index2lcc;
+
+  // Face indices are now of type Indices and are not in a range 0 to n
+  std::vector<Indices> m_face_inliers;
+  std::vector<FT> m_face_area, m_face_area_lcc;
+  std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors_lcc;
+  std::map<std::pair<std::size_t, std::size_t>, std::size_t> m_neighbors2index_lcc;
+
+  std::vector<std::pair<std::size_t, std::size_t> > m_volume_votes; // pair<inside, outside> votes
+  std::vector<bool> m_volume_below_ground;
+  std::vector<std::vector<double> > m_cost_matrix;
+  std::vector<FT> m_volumes; // normalized volume of each kinetic volume
+  std::vector<std::size_t> m_labels;
+
+  std::size_t m_total_inliers;
+
 
   /*!
   \brief Creates the visibility (data-) and regularity energy terms from the input point cloud and the kinetic partition.
@@ -395,41 +570,20 @@ public:
     const std::vector< std::vector<double> >& cost_matrix);
 
   /*!
-  \brief Uses graph-cut to solve an solid/empty labeling of the volumes of the kinetic partition.
-
-  \param lambda
-  trades the impact of the data term for impact of the regularization term. Should be in the range [0, 1).
-
-  @return
-  success of reconstruction.
-
-  \pre `successful initialization`
-  */
-  bool reconstruct(FT lambda) {
-    KSR_3::Graphcut<Kernel> gc(lambda);
-
-    gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
-
-    return true;
-  }
-
-  /*!
-  \brief Provides the reconstructed surface as a list of indexed polygons.
+  \brief Provides the reconstructed surface as a list of indexed triangles.
 
   \param pit
   an output iterator taking Point_3.
 
   \param triit
-  an output iterator taking std::vector<std::size_t>.
+  an output iterator taking std::size_t.
 
   \pre `successful reconstruction`
   */
-  template<class OutputPointIterator, class OutputPolygonIterator>
-  void reconstructed_model_polylist(OutputPointIterator pit, OutputPolygonIterator polyit) {
+  template<class OutputPointIterator, class OutputTriangleIterator>
+  void reconstructed_model_trilist(OutputPointIterator pit, OutputTriangleIterator triit) {
     if (m_labels.empty())
       return;
-
-    From_exact from_exact;
 
     std::map<Point_3, std::size_t> pt2idx;
 
@@ -440,9 +594,7 @@ public:
         continue;
       if (m_labels[n.first] != m_labels[n.second]) {
         std::vector<Point_3> face;
-
-        for (const auto& vd : m_lcc.one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
-          face.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
+        m_kinetic_partition.vertices(m_faces_lcc[i], std::back_inserter(face));
 
         std::vector<std::size_t> indices(face.size());
 
@@ -453,11 +605,14 @@ public:
           indices[i] = p.first->second;
         }
 
-        *polyit++ = std::move(indices);
+        for (std::size_t i = 2; i < face.size(); i++) {
+          *triit++ = indices[0];
+          *triit++ = indices[i - 1];
+          *triit++ = indices[i];
+        }
       }
     }
   }
-
 
   /*!
   \brief Provides the reconstructed surface as a list of indexed polygons.
@@ -487,8 +642,8 @@ public:
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       const auto& n = m_face_neighbors_lcc[i];
-//       if (n.first < 6 || n.second < 6)
-//         continue;
+      //       if (n.first < 6 || n.second < 6)
+      //         continue;
 
       if (m_labels[n.first] != m_labels[n.second]) {
         Face_attribute fa = m_lcc.attribute<2>(m_faces_lcc[i]);
@@ -559,47 +714,50 @@ public:
       if (borders[i].empty())
         continue;
 
-/*      if (false) {*/
-        std::vector<std::size_t> indices(borders[i].size());
-        for (std::size_t j = 0; j != borders[i].size(); j++) {
-          auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
-          if (p.second)
-            *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
-          indices[j] = p.first->second;
-        }
-
-        *polyit++ = std::move(indices);
-/*
+      /*      if (false) {*/
+      std::vector<std::size_t> indices(borders[i].size());
+      for (std::size_t j = 0; j != borders[i].size(); j++) {
+        auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
+        if (p.second)
+          *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
+        indices[j] = p.first->second;
       }
-      else {
-        std::vector<std::size_t> indices(borders[i].size());
-        for (std::size_t j = borders[i].size() - 1; j != std::size_t(-1); j--) {
-          auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
-          if (p.second)
-            *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
-          indices[j] = p.first->second;
-        }
 
-        *polyit++ = std::move(indices);
-      }*/
+      *polyit++ = std::move(indices);
+      /*
+            }
+            else {
+              std::vector<std::size_t> indices(borders[i].size());
+              for (std::size_t j = borders[i].size() - 1; j != std::size_t(-1); j--) {
+                auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
+                if (p.second)
+                  *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
+                indices[j] = p.first->second;
+              }
+
+              *polyit++ = std::move(indices);
+            }*/
     }
   }
 
+
   /*!
-  \brief Provides the reconstructed surface as a list of indexed triangles.
+  \brief Provides the reconstructed surface as a list of indexed polygons.
 
   \param pit
   an output iterator taking Point_3.
 
   \param triit
-  an output iterator taking std::size_t.
+  an output iterator taking std::vector<std::size_t>.
 
   \pre `successful reconstruction`
   */
-  template<class OutputPointIterator, class OutputTriangleIterator>
-  void reconstructed_model_trilist(OutputPointIterator pit, OutputTriangleIterator triit) {
+  template<class OutputPointIterator, class OutputPolygonIterator>
+  void reconstructed_model_polylist(OutputPointIterator pit, OutputPolygonIterator polyit) {
     if (m_labels.empty())
       return;
+
+    From_exact from_exact;
 
     std::map<Point_3, std::size_t> pt2idx;
 
@@ -610,7 +768,9 @@ public:
         continue;
       if (m_labels[n.first] != m_labels[n.second]) {
         std::vector<Point_3> face;
-        m_kinetic_partition.vertices(m_faces_lcc[i], std::back_inserter(face));
+
+        for (const auto& vd : m_lcc.one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
+          face.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
 
         std::vector<std::size_t> indices(face.size());
 
@@ -621,99 +781,10 @@ public:
           indices[i] = p.first->second;
         }
 
-        for (std::size_t i = 2; i < face.size(); i++) {
-          *triit++ = indices[0];
-          *triit++ = indices[i - 1];
-          *triit++ = indices[i];
-        }
+        *polyit++ = std::move(indices);
       }
     }
   }
-
-private:
-  struct Vertex_info { FT z = FT(0); };
-  struct Face_info { };
-
-  using Fbi = CGAL::Triangulation_face_base_with_info_2<Face_info, Kernel>;
-  //using Fb = CGAL::Alpha_shape_face_base_2<Kernel, Fbi>;
-
-  using Vbi = CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, Kernel>;
-  //using Vb = CGAL::Alpha_shape_vertex_base_2<Kernel, Vbi>;
-
-  using Tds = CGAL::Triangulation_data_structure_2<Vbi, Fbi>;
-  using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel, Tds>;
-
-  using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
-
-  typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
-  using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Linear_cell_complex_min_items>;
-  using Dart_descriptor = typename LCC::Dart_descriptor;
-  using Dart = typename LCC::Dart;
-
-  struct VI {
-    VI() : i(-1), j(-1) {}
-    int i, j;
-    Dart_descriptor dh;
-    typename Intersection_kernel::Point_2 p;
-  };
-
-  typedef CGAL::Triangulation_vertex_base_with_info_2<VI, typename Intersection_kernel> Vbi2;
-  typedef CGAL::Constrained_triangulation_face_base_2<typename Intersection_kernel>   Fb;
-  typedef CGAL::Triangulation_data_structure_2<Vbi2, Fb>       Tds2;
-  typedef CGAL::Exact_intersections_tag  Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<typename Intersection_kernel, Tds2, Itag> CDT;
-
-  typedef typename CDT::Vertex_handle            Vertex_handle;
-  typedef typename CDT::Face_handle              Face_handle;
-  typedef typename CDT::Finite_vertices_iterator Finite_vertices_iterator;
-  typedef typename CDT::Finite_edges_iterator    Finite_edges_iterator;
-  typedef typename CDT::Finite_faces_iterator    Finite_faces_iterator;
-
-  //using Visibility = KSR_3::Visibility<Kernel, Intersection_kernel, Point_map, Normal_map>;
-  using Index = typename KSP::Index;
-  using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
-  using Volume_attribute = typename LCC::Base::template Attribute_descriptor<3>::type;
-
-  bool m_verbose;
-  bool m_debug;
-
-  Point_set &m_points;
-  Point_map m_point_map;
-  Normal_map m_normal_map;
-
-  std::vector<std::vector<std::size_t> > m_planar_regions;
-  std::vector<typename Region_growing::Primitive_and_region> m_regions;
-  std::map<std::size_t, Indices> m_region_map;
-  double m_detection_distance_tolerance;
-
-  std::size_t m_ground_polygon_index;
-  Plane_3 m_ground_plane;
-
-  std::vector<Plane_3> m_planes;
-  std::vector<Point_3> m_polygon_pts;
-  std::vector<std::vector<std::size_t> > m_polygon_indices;
-  std::vector<Polygon_3> m_polygons;
-  KSP m_kinetic_partition;
-
-  LCC m_lcc;
-  std::vector<typename LCC::Dart_const_descriptor> m_faces_lcc;
-  std::map<Face_attribute, std::size_t> m_attrib2index_lcc;
-  std::vector<std::size_t> lcc2index;
-  std::vector<std::size_t> index2lcc;
-
-  // Face indices are now of type Indices and are not in a range 0 to n
-  std::vector<Indices> m_face_inliers;
-  std::vector<FT> m_face_area, m_face_area_lcc;
-  std::vector<std::pair<std::size_t, std::size_t> > m_face_neighbors_lcc;
-  std::map<std::pair<std::size_t, std::size_t>, std::size_t> m_neighbors2index_lcc;
-
-  std::vector<std::pair<std::size_t, std::size_t> > m_volume_votes; // pair<inside, outside> votes
-  std::vector<bool> m_volume_below_ground;
-  std::vector<std::vector<double> > m_cost_matrix;
-  std::vector<FT> m_volumes; // normalized volume of each kinetic volume
-  std::vector<std::size_t> m_labels;
-
-  std::size_t m_total_inliers;
 
   std::size_t add_convex_hull_shape(
     const std::vector<std::size_t>& region, const Plane_3& plane) {
@@ -1537,14 +1608,10 @@ private:
     if (m_verbose) std::cout << "* getting planar shapes using region growing" << std::endl;
 
     // Parameters.
-    const std::size_t k = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::k_neighbors), 12);
-    const FT max_distance_to_plane = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
-    const FT max_accepted_angle = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::maximum_angle), FT(15));
-    const std::size_t min_region_size = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::minimum_region_size), 50);
+    const std::size_t k = parameters::choose_parameter(parameters::get_parameter(np, internal_np::k_neighbors), 12);
+    const FT max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
+    const FT max_accepted_angle = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_angle), FT(15));
+    const std::size_t min_region_size = parameters::choose_parameter(parameters::get_parameter(np, internal_np::minimum_region_size), 50);
 
     m_detection_distance_tolerance = max_distance_to_plane;
 
@@ -1596,18 +1663,12 @@ private:
 
     std::size_t num_shapes = m_regions.size();
 
-    const bool regularize_axis_symmetry = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize_axis_symmetry), false);
-    const bool regularize_coplanarity = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize_coplanarity), false);
-    const bool regularize_orthogonality = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize_orthogonality), false);
-    const bool regularize_parallelism = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize_parallelism), false);
-    const FT angle_tolerance = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::angle_tolerance), 25);
-    const FT maximum_offset = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::maximum_offset), 0.01);
+    const bool regularize_axis_symmetry = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_axis_symmetry), false);
+    const bool regularize_coplanarity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_coplanarity), false);
+    const bool regularize_orthogonality = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_orthogonality), false);
+    const bool regularize_parallelism = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_parallelism), false);
+    const FT angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 25);
+    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), 0.01);
 
     // Regularize detected planes.
 
@@ -1856,14 +1917,14 @@ private:
     // 5 zmax
     const std::size_t force = m_total_inliers * 3;
     // 0 - cost for labelled as outside
-    cost_matrix[0][0] = force;
+    cost_matrix[0][0] = 0;
     cost_matrix[0][1] = 0;
     cost_matrix[0][2] = 0;
     cost_matrix[0][3] = 0;
     cost_matrix[0][4] = 0;
     cost_matrix[0][5] = 0;
     // 1 - cost for labelled as inside
-    cost_matrix[1][0] = 0;
+    cost_matrix[1][0] = force;
     cost_matrix[1][1] = force;
     cost_matrix[1][2] = force;
     cost_matrix[1][3] = force;

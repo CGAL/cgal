@@ -52,7 +52,7 @@ namespace KSR_3 {
     using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
 
     Graphcut(
-      const FT lambda) : m_lambda(lambda) { }
+      const FT beta) : m_beta(beta) { }
 
     void solve(const std::vector<std::pair<std::size_t, std::size_t> >& edges, const std::vector<FT>& edge_weights, const std::vector<std::vector<double> > &cost_matrix, std::vector<std::size_t> &labels) {
       assert(edges.size() == edge_weights.size());
@@ -67,7 +67,7 @@ namespace KSR_3 {
     }
 
   private:
-    const FT m_lambda;
+    const FT m_beta;
 
     double get_face_cost(
       const FT face_prob, const FT face_weight) const {
@@ -87,18 +87,18 @@ namespace KSR_3 {
       std::vector<std::size_t>& labels) const {
       std::vector<std::size_t> tmp = labels;
 
-      std::cout << std::endl << "beta" << m_lambda << std::endl;
+      std::cout << std::endl << "beta" << m_beta << std::endl;
 
       std::vector<FT> edge_costs_lambda(edge_costs.size());
       std::vector<std::vector<double> > cost_matrix_lambda(2);
 
       for (std::size_t i = 0; i < edge_costs.size(); i++)
-        edge_costs_lambda[i] = edge_costs[i] * m_lambda;
+        edge_costs_lambda[i] = edge_costs[i] * m_beta;
 
       for (std::size_t i = 0; i < cost_matrix.size(); i++) {
         cost_matrix_lambda[i].resize(cost_matrix[i].size());
         for (std::size_t j = 0; j < cost_matrix[i].size(); j++)
-          cost_matrix_lambda[i][j] = cost_matrix[i][j] * (1.0 - m_lambda);
+          cost_matrix_lambda[i][j] = cost_matrix[i][j] * (1.0 - m_beta);
       }
 
 
@@ -108,7 +108,7 @@ namespace KSR_3 {
       for (std::size_t i = 0; i < edge_costs.size(); i++) {
         min = (std::min<double>)(edge_costs[i], min);
         max = (std::max<double>)(edge_costs[i], max);
-        edge_sum += edge_costs[i] * m_lambda;
+        edge_sum += edge_costs[i] * m_beta;
       }
 
       std::cout << "edge costs" << std::endl;

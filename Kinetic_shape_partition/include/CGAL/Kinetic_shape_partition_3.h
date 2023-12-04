@@ -18,7 +18,7 @@
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
-#include <boost/filesystem.hpp>
+//#include <boost/filesystem.hpp>
 
 #include <algorithm>
 #include <numeric>
@@ -703,9 +703,10 @@ public:
     timer.stop();
 
     if (m_parameters.debug) {
+/*
       if (boost::filesystem::is_directory("volumes/"))
         for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
-          boost::filesystem::remove_all(it->path());
+          boost::filesystem::remove_all(it->path());*/
 
       KSP_3::dump_volumes_ksp(*this, "volumes/");
       for (std::size_t i = 1; i < m_volumes.size(); i++)
@@ -720,9 +721,10 @@ public:
     conformal_time = timer.time();
 
     if (m_parameters.debug) {
+/*
       if (boost::filesystem::is_directory("volumes_after/"))
         for (boost::filesystem::directory_iterator end_dir_it, it("volumes_after/"); it != end_dir_it; ++it)
-          boost::filesystem::remove_all(it->path());
+          boost::filesystem::remove_all(it->path());*/
       KSP_3::dump_volumes_ksp(*this, "volumes_after/");
       for (std::size_t i = 1; i < m_volumes.size(); i++)
         if (m_volumes[i].first != m_volumes[i - 1].first)

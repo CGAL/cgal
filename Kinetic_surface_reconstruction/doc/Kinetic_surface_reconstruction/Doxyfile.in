@@ -1,0 +1,8 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Kinetic Surface Reconstruction"
+EXTRACT_ALL                =  NO
+HIDE_UNDOC_MEMBERS         =  YES
+HIDE_UNDOC_CLASSES         =  YES
+WARN_IF_UNDOCUMENTED       =  NO
+PREDEFINED                 +=  DOXYGEN_RUNNING

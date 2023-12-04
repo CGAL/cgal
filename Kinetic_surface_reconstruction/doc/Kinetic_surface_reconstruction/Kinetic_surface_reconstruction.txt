@@ -1,0 +1,25 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Kinetic_Surface_reconstruction
+\cgalAutoToc
+
+\authors Sven Oesau and Florent Lafarge
+
+This chapter describes the ...
+
+\section secmydefinitions Definitions
+
+Section on definitions here ...
+
+\section secmyexamples Examples
+
+\subsection myFirstExample First Example
+
+The following example shows ...
+
+\cgalExample{Kinetic_surface_reconstruction/kinetic_reconstruction.cpp}
+
+*/
+} /* namespace CGAL */
