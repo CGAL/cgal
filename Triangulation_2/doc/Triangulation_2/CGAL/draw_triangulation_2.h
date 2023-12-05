@@ -31,7 +31,7 @@ The real declaration of this function template is:
 /*!
 \ingroup PkgDrawTriangulation2
 
-A shortcut to `draw(at2, Graphics_scene_options{})`.
+A shortcut to `CGAL::draw(at2, Graphics_scene_options{})`.
 */
   template<class T2>
   void draw(const T2& at2);
@@ -66,7 +66,7 @@ void add_to_graphics_scene(const T2& at2,
 /*!
 \ingroup PkgDrawTriangulation2
 
-A shortcut to `add_to_graphics_scene(at2, gs, Graphics_scene_options{})`.
+A shortcut to `CGAL::add_to_graphics_scene(at2, gs, Graphics_scene_options{})`.
 */
 template<class T2>
 void add_to_graphics_scene(const T2& at2,
