@@ -35,10 +35,10 @@ struct Triangulation_utils_base_3
 
 template < class T >
 const char Triangulation_utils_base_3<T>::tab_next_around_edge[4][4] = {
-      {5, 2, 3, 1},
-      {3, 5, 0, 2},
-      {1, 3, 5, 0},
-      {2, 0, 1, 5} };
+      {-0, 2, 3, 1},
+      {3, -0, 0, 2},
+      {1, 3, -0, 0},
+      {2, 0, 1, -0} };
 
 template < class T >
 const int Triangulation_utils_base_3<T>::tab_vertex_triple_index[4][3] = {
