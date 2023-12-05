@@ -29,15 +29,73 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawPolygon2
 
-opens a new window and draws `ap`, an instance of the `CGAL::Polygon_2` class. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
-\tparam P an instance of the `CGAL::Polygon_2` class.
-\param ap the polygon to draw.
+opens a new window and draws a 2D polygon. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class T, class C, class GSOptions>
+
+ void CGAL::draw(const CGAL::Polygon_2<T, C>& p, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+
+\tparam P which must be an instanciation of a `CGAL::Polygon_2<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param p the polygon to draw.
+\param gso the graphics scene options parameter.
+*/
+template<class P, class GSOptions>
+void draw(const P& p, const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawPolygon2
+
+A shortcut to `draw(p, Graphics_scene_options{})`.
+*/
+  template<class P>
+  void draw(const P& p);
+
+/*!
+\ingroup PkgDrawPolygon2
+
+adds the vertices, edges and faces of `p` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class T, class C, class GSOptions>
+
+ void CGAL::add_to_graphics_scene(const Polygon_2<T, C>& p, CGAL::Graphics_scene& gs, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+
+\tparam P which must be an instanciation of a `CGAL::Polygon_2<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param p the 2D polygon to draw.
+\param gs the graphic scene to fill.
+\param gso the graphics scene options parameter.
+*/
+template<class P, class GSOptions>
+void add_to_graphics_scene(const P& p,
+                           CGAL::Graphics_scene& gs,
+                           const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawPolygon2
+
+A shortcut to `add_to_graphics_scene(p, gs, Graphics_scene_options{})`.
 */
 template<class P>
-void draw(const P& ap);
-
+void add_to_graphics_scene(const P& p,
+                           CGAL::Graphics_scene& gs);
 } /* namespace CGAL */
 
 #endif

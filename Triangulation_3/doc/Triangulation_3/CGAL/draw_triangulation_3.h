@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawTriangulation3
 
-\opens a new window and draws a 3D triangulation. Parameters of the drawing are taken from the optional graphics scene options parameter.
+opens a new window and draws a 3D triangulation. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
@@ -14,7 +14,7 @@ The real declaration of this function template is:
 <code>
  template<class Gt, class Tds, class LDS, class GSOptions>
 
- void CGAL::draw(const Triangulation_3<Gt, Tds, LDS>& at3, const GSOptions& gso);
+ void CGAL::draw(const CGAL::Triangulation_3<Gt, Tds, LDS>& at3, const GSOptions& gso);
 </code>
 \cgalAdvancedEnd
 
@@ -46,7 +46,7 @@ The real declaration of this function template is:
 <code>
  template<class Gt, class Tds, class LDS, class GSOptions>
 
- void CGAL::add_to_graphics_scene(const Triangulation_3<Gt, Tds, LDS>&  at3, CGAL::Graphics_scene& gs, const GSOptions& gso);
+ void CGAL::add_to_graphics_scene(const CGAL::Triangulation_3<Gt, Tds, LDS>&  at3, CGAL::Graphics_scene& gs, const GSOptions& gso);
 </code>
 \cgalAdvancedEnd
 
