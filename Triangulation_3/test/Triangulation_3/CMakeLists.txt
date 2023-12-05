@@ -100,6 +100,7 @@ function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
       "execution   of  cdt_3_from_off --merge-facets ${data_name}"
       PROPERTIES TIMEOUT "${MY_TIMEOUT}")
   endif()
+  set_property(TEST "execution   of  cdt_3_from_off ${data_name}" APPEND PROPERTY LABELS CDT_3_WITHOUT_MERGE_FACETS)
 endfunction()
 
 function(CGAL_add_cdt3_from_off_test data_name)

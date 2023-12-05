@@ -10,10 +10,64 @@ find_path(THINGI10K_DATA_DIR NAME 132423.stl
 include(./thingi10k_max_10k_solid.cmake)
 
 set(thingi10k_BLACKLIST_WITHOUT_MERGE_FACETS
-    106789.stl
+    #106789.stl
     # At point 4.0163683382116631 -2.094120689431076 0
     # There is a edge of the input mesh that is infinitely close to a vertex.
     )
+
+set(thingi10k_FAILED_WITH_MERGE_FACETS
+    1053875.stl
+    112926.stl
+    1147177.stl
+    118295.stl
+    123787.stl
+    126284.stl
+    135777.stl
+    1452672.stl
+    1514900.stl
+    1514901.stl
+    1514903.stl
+    1514904.stl
+    162100.stl
+    162336.stl
+    1743322.stl
+    186554.stl
+    186559.stl
+    237737.stl
+    239182.stl
+    255657.stl
+    285604.stl
+    285605.stl
+    288353.stl
+    288354.stl
+    288355.stl
+    383022.stl
+    43663.stl
+    45550.stl
+    464846.stl
+    472002.stl
+    472004.stl
+    472050.stl
+    472190.stl
+    500116.stl
+    520645.stl
+    54467.stl
+    55278.stl
+    57811.stl
+    57812.stl
+    59229.stl
+    67817.stl
+    69260.stl
+    71920.stl
+    74780.stl
+    90224.stl
+    904476.stl
+    904480.stl
+    96046.stl
+    96457.stl
+    96659.stl
+    97503.stl
+)
 
 function(CGAL_add_cdt3_test_from_Thingi10k data_name data_filename)
   set(options "ONLY_MERGE_FACETS")
@@ -38,10 +92,18 @@ function(CGAL_add_cdt3_test_from_Thingi10k data_name data_filename)
 endfunction()
 
 foreach(thingi_file_name ${thingi10k_max_10k_solid})
+
   if(thingi_file_name IN_LIST thingi10k_BLACKLIST_WITHOUT_MERGE_FACETS)
     set(MY_ONLY_MERGE_FACETS ONLY_MERGE_FACETS)
+
+    unset(MY_ONLY_MERGE_FACETS)
+  endif()
+  if(thingi_file_name IN_LIST thingi10k_FAILED_WITH_MERGE_FACETS)
+    set(MY_EXTRA_LABEL "Thingi10K_FAIL")
+  else()
+    unset(MY_EXTRA_LABEL)
   endif()
   get_filename_component(thingi_ID "${thingi_file_name}" NAME_WE)
   CGAL_add_cdt3_test_from_Thingi10k(Thingi10K_${thingi_ID} ${thingi_file_name}
-      TIMEOUT 600 LABELS Thing10K_max_10k_solid ${MY_ONLY_MERGE_FACETS})
+      TIMEOUT 600 LABELS Thingi10K_max_10k_solid ${MY_EXTRA_LABEL} ${MY_ONLY_MERGE_FACETS})
 endforeach()
