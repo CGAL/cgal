@@ -72,7 +72,7 @@ The real declaration of this function template is:
 <code>
  template<class T, class C, class GSOptions>
 
- void CGAL::add_to_graphics_scene(const Polygon_with_holes_2<T, C>& ph, CGAL::Graphics_scene& gs, const GSOptions& gso);
+ void CGAL::add_to_graphics_scene(const CGAL::Polygon_with_holes_2<T, C>& ph, CGAL::Graphics_scene& gs, const GSOptions& gso);
 </code>
 \cgalAdvancedEnd
 
