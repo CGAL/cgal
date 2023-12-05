@@ -310,8 +310,25 @@ void tetrahedral_isotropic_remeshing(
 * @tparam CurveIndex is the type of the indices for feature curves.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
 *            `MeshDomainWithFeatures_3::Curve_index`.
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param c3t3 the complex containing the triangulation to be remeshed.
+* @param np optional sequence of \ref bgl_namedparameters "Named Parameters"
+*          among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of
+*                     `c3t3.triangulation()`.
+*                     For each edge `e` for which `c3t3.is_in_complex(e)` returns `true`,
+*                     the constrained status of `e` is set to `true`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap`
+*         with `std::pair<Triangulation_3::Vertex_handle, Triangulation_3::Vertex_handle>`
+*         as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edge is constrained}
+*   \cgalParamNEnd
+*
+* \cgalNamedParamsEnd
 */
 
 template<typename Tr,
