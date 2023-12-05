@@ -18,14 +18,73 @@
 /*!
 \ingroup PkgDrawSurfaceMesh
 
-Open a new window and draw `asm`, an instance of the `CGAL::Surface_mesh` class. The function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
-\tparam SM an instance of the `CGAL::Surface_mesh` class.
-\param asm the surface mesh to draw.
+opens a new window and draws a surface mesh. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class K, class GSOptions>
+
+ void CGAL::draw(const CGAL::Surface_mesh<K>& sm, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+
+\tparam SM which must be an instanciation of a `CGAL::Surface_mesh<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param sm the surface mesh to draw.
+\param gso the graphics scene options parameter.
+*/
+template<class SM, class GSOptions>
+void draw(const SM& sm, const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawSurfaceMesh
+
+A shortcut to `CGAL::draw(sm, Graphics_scene_options{})`.
+*/
+  template<class SM>
+  void draw(const SM& sm);
+
+/*!
+\ingroup PkgDrawSurfaceMesh
+
+adds the vertices, edges and faces of `sm` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class K, class GSOptions>
+
+ void CGAL::add_to_graphics_scene(const CGAL::Surface_mesh<K>& sm, CGAL::Graphics_scene& gs, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+
+\tparam SM which must be an instanciation of a `CGAL::Surface_mesh<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param sm the surface mesh to draw.
+\param gs the graphic scene to fill.
+\param gso the graphics scene options parameter.
+*/
+template<class SM, class GSOptions>
+void add_to_graphics_scene(const SM& sm,
+                           CGAL::Graphics_scene& gs,
+                           const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawSurfaceMesh
+
+A shortcut to `CGAL::add_to_graphics_scene(sm, gs, Graphics_scene_options{})`.
 */
 template<class SM>
-void draw(const SM& asm);
+void add_to_graphics_scene(const SM& sm,
+                           CGAL::Graphics_scene& gs);
 
 #else // DOXYGEN_RUNNING
 
