@@ -34,6 +34,12 @@ opens a new window and draws a 2D polygon with holes. Parameters of the drawing 
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
+\tparam PH which must be an instanciation of a `CGAL::Polygon_with_holes_2<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param ph the polygon with holes to draw.
+\param gso the graphics scene options parameter.
+
 \cgalAdvancedBegin
 The real declaration of this function template is:
 
@@ -43,12 +49,6 @@ The real declaration of this function template is:
  void CGAL::draw(const CGAL::Polygon_with_holes_2<T, C>& ph, const GSOptions& gso);
 </code>
 \cgalAdvancedEnd
-
-\tparam PH which must be an instanciation of a `CGAL::Polygon_with_holes_2<...>`.
-\tparam GSOptions a model of `GraphicsSceneOptions` concept.
-
-\param ph the polygon with holes to draw.
-\param gso the graphics scene options parameter.
  */
 template <typename PH, class GSOptions>
 void draw(const PH& ph, const GSOptions& gso);
@@ -66,6 +66,13 @@ A shortcut to `CGAL::draw(ph, Graphics_scene_options{})`.
 
 adds the vertices, edges and faces of `ph` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
+\tparam PH which must be an instanciation of a `CGAL::Polygon_with_holes_2<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param ph the polygon with holes to draw.
+\param gs the graphic scene to fill.
+\param gso the graphics scene options parameter.
+
 \cgalAdvancedBegin
 The real declaration of this function template is:
 
@@ -75,13 +82,6 @@ The real declaration of this function template is:
  void CGAL::add_to_graphics_scene(const CGAL::Polygon_with_holes_2<T, C>& ph, CGAL::Graphics_scene& gs, const GSOptions& gso);
 </code>
 \cgalAdvancedEnd
-
-\tparam PH which must be an instanciation of a `CGAL::Polygon_with_holes_2<...>`.
-\tparam GSOptions a model of `GraphicsSceneOptions` concept.
-
-\param ph the polygon with holes to draw.
-\param gs the graphic scene to fill.
-\param gso the graphics scene options parameter.
 */
 template<class PH, class GSOptions>
 void add_to_graphics_scene(const PH& ph,
