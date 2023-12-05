@@ -42,7 +42,7 @@ namespace CGAL
 {
 /*!
 * \ingroup PkgKineticSurfaceReconstructionRef
-  \brief Piece-wise planar surface reconstruction via inside/outside labeling of a kinetic partition using graph cut.
+  \brief Reconstruction pipeline for piece-wise planar surface reconstruction from a point cloud via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -66,28 +66,14 @@ public:
   using Intersection_kernel = IntersectionKernel;
 
   using FT = typename Kernel::FT;
-
-  using Point_2 = typename Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
-  using Vector_3 = typename Kernel::Vector_3;
   using Plane_3 = typename Kernel::Plane_3;
-  using Triangle_2 = typename Kernel::Triangle_2;
-
   using Point_set = PointSet;
-
-  using Indices = std::vector<std::size_t>;
-  using Polygon_3 = std::vector<Point_3>;
 
   using KSP = Kinetic_shape_partition_3<Kernel, Intersection_kernel>;
 
   using Point_map = PointMap;
   using Normal_map = NormalMap;
-
-  using Region_type = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_set>;
-  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set>;
-  using Sorting = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting_for_point_set<Point_set, Neighbor_query>;
-  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
-  using From_exact = typename CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
   /*!
   \brief Creates a Kinetic_shape_reconstruction_3 object.
@@ -130,64 +116,59 @@ public:
       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Vector_3`}
       \cgalParamDefault{`NormalMap()`}
    \cgalParamNBegin{k_neighbors}
-     \cgalParamDescription{the number of neighbors for each point considered during region growing}
+     \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
       \cgalParamType{`std::size_t`}
       \cgalParamDefault{12}
     \cgalParamNEnd
-    \cgalParamNBegin{maximum_offset}
-      \cgalParamDescription{maximum angle in degrees between the normal of a point and the plane normal}
+    \cgalParamNBegin{maximum_distance}
+      \cgalParamDescription{Shape detection: the maximum distance from a point to a plane}
       \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{25 degrees}
+      \cgalParamDefault{2% of bounding box diagonal}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_angle}
-      \cgalParamDescription{maximum angle in degrees between the normal of a point and the plane normal}
+      \cgalParamDescription{Shape detection: maximum angle in degrees between the normal of a point and the plane normal}
       \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{25 degrees}
+      \cgalParamDefault{15 degrees}
     \cgalParamNEnd
     \cgalParamNBegin{minimum_region_size}
-      \cgalParamDescription{minimum number of 3D points a region must have}
+      \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
       \cgalParamType{`std::size_t`}
       \cgalParamDefault{1% of input points}
     \cgalParamNEnd
     \cgalParamNBegin{angle_tolerance}
-      \cgalParamDescription{maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
+      \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
       \cgalParamType{`GeomTraits::FT`}
       \cgalParamDefault{5 degrees}
     \cgalParamNEnd
     \cgalParamNBegin{maximum_offset}
-      \cgalParamDescription{maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar}
+      \cgalParamDescription{Shape regularization: maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar}
       \cgalParamType{`GeomTraits::FT`}
-      \cgalParamDefault{0.02 unit length}
+      \cgalParamDefault{0.5% of bounding box diagonal}
     \cgalParamNEnd
     \cgalParamNBegin{regularize_parallelism}
-      \cgalParamDescription{indicates whether parallelism should be regularized or not}
+      \cgalParamDescription{Shape regularization: indicates whether parallelism should be regularized or not}
       \cgalParamType{boolean}
-      \cgalParamDefault{true}
+      \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{regularize_orthogonality}
-      \cgalParamDescription{indicates whether orthogonality should be regularized or not}
+      \cgalParamDescription{Shape regularization: indicates whether orthogonality should be regularized or not}
       \cgalParamType{boolean}
-      \cgalParamDefault{true}
+      \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{regularize_coplanarity}
-      \cgalParamDescription{indicates whether coplanarity should be regularized or not}
+      \cgalParamDescription{Shape regularization: indicates whether coplanarity should be regularized or not}
       \cgalParamType{boolean}
       \cgalParamDefault{true}
     \cgalParamNEnd
     \cgalParamNBegin{regularize_axis_symmetry}
-      \cgalParamDescription{indicates whether axis symmetry should be regularized or not}
+      \cgalParamDescription{Shape regularization: indicates whether axis symmetry should be regularized or not}
       \cgalParamType{boolean}
-      \cgalParamDefault{true}
+      \cgalParamDefault{false}
     \cgalParamNEnd
     \cgalParamNBegin{symmetry_direction}
-      \cgalParamDescription{an axis for symmetry regularization}
+      \cgalParamDescription{Shape regularization: an axis for symmetry regularization}
       \cgalParamType{`GeomTraits::Vector_3`}
       \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
-    \cgalParamNEnd
-    \cgalParamNBegin{estimate_ground}
-      \cgalParamDescription{Estimates a horizontal ground plane within the detected shapes. Cells in the partition below the ground plane receive a weight to be labelled as solid. The z axis is considered as vertical upwards pointing.}
-      \cgalParamType{bool}
-      \cgalParamDefault{false}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -205,7 +186,7 @@ public:
     m_point_map = Point_set_processing_3_np_helper<Point_set, CGAL_NP_CLASS, Point_map>::get_point_map(m_points, np);
     m_normal_map = Point_set_processing_3_np_helper<Point_set, CGAL_NP_CLASS, Normal_map>::get_normal_map(m_points, np);
 
-    create_planar_shapes(estimate_ground, np);
+    create_planar_shapes(np);
 
     CGAL_assertion(m_planes.size() == m_polygons.size());
     CGAL_assertion(m_polygons.size() == m_region_map.size());
@@ -214,10 +195,10 @@ public:
   }
 
   /*!
-  \brief Retrieves the detected shapes.
+  \brief Retrieves the support planes of the detected shapes.
 
   @return
-  vector with a plane equation for each detected planar shape.
+  vector with a `Plane_3` for each detected planar shape.
 
   \pre `shape detection performed`
   */
@@ -229,7 +210,7 @@ public:
   \brief Retrieves the indices of detected shapes.
 
   @return
-  indices into `input_range` for each detected planar shape.
+  indices into `points` for each detected planar shape.
 
   \pre `shape detection performed`
   */
@@ -292,12 +273,14 @@ public:
 
   \pre `partition created`
   */
-  const Kinetic_shape_partition_3<Kernel, Intersection_kernel>& partition() const {
+  const Kinetic_shape_partition_3<Kernel, Intersection_kernel>& kinetic_partition() const {
     return m_kinetic_partition;
   }
 
   /*!
-  \brief Uses graph-cut to solve an solid/empty labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+  \brief Uses graph-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+  Estimates a horizontal ground plane within the detected shapes. Cells in the partition below the ground plane receive a weight to be labeled as inside.
+  The z axis is considered as vertical upwards pointing.
 
   \tparam OutputPointIterator
   an output iterator taking Point_3.
@@ -317,8 +300,46 @@ public:
   \pre `partition created`
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
-  void reconstruct(FT beta, OutputPointIterator pit, OutputPolygonIterator polyit) {
+  void reconstruct_with_ground(FT beta, OutputPointIterator pit, OutputPolygonIterator polyit) {
     KSR_3::Graphcut<Kernel> gc(beta);
+
+    // add ground consideration here
+
+    gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
+
+    reconstructed_model_polylist_lcc(pit, polyit);
+  }
+
+  /*!
+  \brief Uses graph-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+  The `external_nodes` parameter allows to indicate the preferred labels for faces on the bounding box.
+
+  \tparam OutputPointIterator
+  an output iterator taking `Point_3`.
+
+  \tparam OutputPolygonIterator
+  an output iterator taking polygon indices `std::vector<std::size_t>`.
+
+  \param beta
+  trades the impact of the data term for impact of the regularization term. Should be in the range [0, 1).
+
+  \param external_nodes
+  adds label preference for the faces on the bounding box. Bounding box sides without preset label are chosen by the graph-cut.
+  Setting `external_nodes[ZMIN] = true` sets the inside label as the prefered label for the ZMIN side of the bounding box.
+
+  \param pit
+  output iterator to receive the vertices of the reconstructed surface.
+
+  \param polyit
+  output iterator to store all polygonal faces of the reconstructed surface.
+
+  \pre `partition created`
+  */
+  template<class OutputPointIterator, class OutputPolygonIterator>
+  void reconstruct(FT beta, std::map<typename KSP::Face_support, bool> external_nodes, OutputPointIterator pit, OutputPolygonIterator polyit) {
+    KSR_3::Graphcut<Kernel> gc(beta);
+
+    // add node consideration here
 
     gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
 
@@ -326,6 +347,19 @@ public:
   }
 
 private:
+  using Point_2 = typename Kernel::Point_2;
+  using Vector_3 = typename Kernel::Vector_3;
+  using Triangle_2 = typename Kernel::Triangle_2;
+
+  using Indices = std::vector<std::size_t>;
+  using Polygon_3 = std::vector<Point_3>;
+
+  using Region_type = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_set>;
+  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set>;
+  using Sorting = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting_for_point_set<Point_set, Neighbor_query>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
+  using From_exact = typename CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
+
   struct Vertex_info { FT z = FT(0); };
   struct Face_info { };
 
@@ -1596,7 +1630,7 @@ private:
   }
 
   template<typename NamedParameters>
-  void create_planar_shapes(bool estimate_ground, const NamedParameters& np) {
+  void create_planar_shapes(const NamedParameters& np) {
 
     if (m_points.size() < 3) {
       if (m_verbose) std::cout << "* no points found, skipping" << std::endl;
@@ -1704,8 +1738,8 @@ private:
       }
     }
 
+    // Estimate ground plane by finding a low mostly horizontal plane
     if (estimate_ground) {
-      // How to estimate ground plane? Find low z peak
       std::vector<std::size_t> candidates;
       FT low_z_peak = (std::numeric_limits<FT>::max)();
       FT bbox_min[] = { (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)() };

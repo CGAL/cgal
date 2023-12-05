@@ -173,7 +173,7 @@ int main(const int argc, const char** argv) {
 
   Timer timer;
   timer.start();
-  std::size_t num_shapes = ksr.detect_planar_shapes(false, param);
+  std::size_t num_shapes = ksr.detect_planar_shapes(param);
 
   std::cout << num_shapes << " detected planar shapes" << std::endl;
 
@@ -190,7 +190,7 @@ int main(const int argc, const char** argv) {
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
 
-  ksr.reconstruct(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
+  ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)

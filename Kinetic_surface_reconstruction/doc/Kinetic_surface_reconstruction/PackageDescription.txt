@@ -1,25 +1,19 @@
 /*!
 \defgroup PkgKineticSurfaceReconstructionRef Kinetic Surface Reconstruction Reference
 
-\defgroup PkgKineticSurfaceReconstructionConcepts Concepts
-\ingroup PkgKineticSurfaceReconstructionRef
-
-\defgroup PkgKineticSurfaceReconstructionClasses Classes
-\ingroup PkgKineticSurfaceReconstructionRef
-
 \addtogroup PkgKineticSurfaceReconstructionRef
 \cgalPkgDescriptionBegin{Kinetic Surface Reconstruction, PkgKineticSurfaceReconstruction}
 \cgalPkgPicture{kinetic_logo.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sven Oesau and Florent Lafarge}
-\cgalPkgDesc{This package implements kinetic shape partition. Based on a set of planar input shapes the bounding box of the input data is split into convex volumes. The complexity of the partition can be adjusted with a single parameter.}
+\cgalPkgDesc{The package implements a piece-wise planar surface reconstruction pipeline from point clouds combining methods from the Shape Detection, Shape Regularization and Kinetic Shape Partition packages and graph-cut.}
 \cgalPkgManuals{Chapter_Kinetic_Surface_Reconstruction, PkgKineticSurfaceReconstructionRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.0}
-\cgalPkgDependsOn{\ref PkgSurfaceMesh, \ref PkgLinearCellComplex}
+\cgalPkgDependsOn{\ref PkgKineticShapePartition, \ref PkgSurfaceMesh, \ref PkgLinearCellComplex, \ref PkgShapeDetection}
 \cgalPkgBib{cgal:ol-kinetic}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
