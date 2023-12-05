@@ -3,7 +3,7 @@
 
 \addtogroup PkgKineticSurfaceReconstructionRef
 \cgalPkgDescriptionBegin{Kinetic Surface Reconstruction, PkgKineticSurfaceReconstruction}
-\cgalPkgPicture{kinetic_logo.png}
+\cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Sven Oesau and Florent Lafarge}
