@@ -14,7 +14,7 @@ The real declaration of this function template is:
 <code>
  template<class Gt, class Tds, class GSOptions>
 
- void CGAL::draw(const Triangulation_2<Gt, Tds>&  at2, const GSOptions& gso);
+ void CGAL::draw(const CGAL::Triangulation_2<Gt, Tds>&  at2, const GSOptions& gso);
 </code>
 \cgalAdvancedEnd
 
@@ -47,7 +47,7 @@ The real declaration of this function template is:
 <code>
  template<class Gt, class Tds, class GSOptions>
 
- void CGAL::add_to_graphics_scene(const Triangulation_2<Gt, Tds>&  at2, CGAL::Graphics_scene& gs, const GSOptions& gso);
+ void CGAL::add_to_graphics_scene(const CGAL::Triangulation_2<Gt, Tds>&  at2, CGAL::Graphics_scene& gs, const GSOptions& gso);
 </code>
 \cgalAdvancedEnd
 
