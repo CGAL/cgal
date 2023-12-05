@@ -3,34 +3,73 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawLinearCellComplex
 
-opens a new window and draws `alcc`, a model of the `LinearCellComplex` concept. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+opens a new window and draws a linear cell complex. Parameters of the drawing are taken from the optional graphics scene options parameter.
+
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
-\tparam LCC a model of the `LinearCellComplex` concept.
-\tparam GSOptions a class having the same methods than `Graphics_scene_options`: `Graphics_scene_options` by default.
 
-\param alcc the linear cell complex to draw.
-\param gs_options graphics scene options.
+\tparam LCC which must be an instanciation of a `CGAL::Linear_cell_complex_for_combinatorial_map<...>` or `CGAL::Linear_cell_complex_for_generalized_map<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
+\param lcc the linear cell complex to draw.
+\param gso the graphics scene options parameter.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<unsigned int d, unsigned int ad, class T, class I, class M, class R, class S, class GSOptions>
+
+ void CGAL::draw(const CGAL::Linear_cell_complex_base<d, ad, T, I, A, M, R, S>& lcc, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
 */
   template<class LCC, class GSOptions>
-  void draw(const LCC& alcc, const GSOptions& gs_options=GSOptions());
+  void draw(const LCC& lcc, const GSOptions& gso);
 
 /*!
 \ingroup PkgDrawLinearCellComplex
 
-Add in the given graphics scene the elements of alcc.
-
-\tparam LCC a model of the `LinearCellComplex` concept.
-\tparam GSOptions a class having the same methods than `Graphics_scene_options`: `Graphics_scene_options` by default.
-
-\param alcc the linear cell complex to draw.
-\param graphics_scene the graphics scene.
-\param gs_options graphics scene options.
-
+A shortcut to `CGAL::draw(lcc, Graphics_scene_options{})`.
 */
-  template<class LCC, class GSOptions>
-  void add_to_graphics_scene(const LCC& alcc, CGAL::Graphics_scene& graphics_scene,
-                             const GSOptions& gs_options=GSOptions());
+  template<class LCC>
+  void draw(const LCC& lcc);
+
+/*!
+\ingroup PkgDrawLinearCellComplex
+
+adds the vertices, edges and faces of `lcc` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+
+\tparam LCC which must be an instanciation of a `CGAL::Linear_cell_complex_for_combinatorial_map<...>` or `CGAL::Linear_cell_complex_for_generalized_map<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param lcc the linear cell complex to draw.
+\param gs the graphic scene to fill.
+\param gso the graphics scene options parameter.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<unsigned int d, unsigned int ad, class T, class I, class M, class R, class S, class GSOptions>
+
+ void CGAL::add_to_graphics_scene(const CGAL::Linear_cell_complex_base<d, ad, T, I, A, M, R, S>& lcc, CGAL::Graphics_scene& gs, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+*/
+template<class LCC, class GSOptions>
+void add_to_graphics_scene(const LCC& lcc,
+                           CGAL::Graphics_scene& gs,
+                           const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawLinearCellComplex
+
+A shortcut to `CGAL::add_to_graphics_scene(lcc, gs, Graphics_scene_options{})`.
+*/
+template<class LCC>
+void add_to_graphics_scene(const LCC& lcc,
+                           CGAL::Graphics_scene& gs);
 
 } /* namespace CGAL */
 
