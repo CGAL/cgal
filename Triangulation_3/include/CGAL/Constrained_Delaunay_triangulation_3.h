@@ -427,6 +427,7 @@ public:
   Vertex_handle insert(const Point_3 &p, Locate_type lt, Cell_handle c,
                        int li, int lj, bool restore_Delaunay = true)
   {
+    this->update_bbox(p);
     auto v = Conforming_Dt::insert_impl(p, lt, c, li, lj, insert_in_conflict_visitor);
     if(restore_Delaunay) {
       Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);

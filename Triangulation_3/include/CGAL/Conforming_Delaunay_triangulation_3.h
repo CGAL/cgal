@@ -83,6 +83,7 @@ public:
   using Facet = typename T_3::Facet;
   using Cell_handle = typename T_3::Cell_handle;
   using Point = typename T_3::Point;
+  using Line = typename T_3::Geom_traits::Line_3;
   using Locate_type = typename T_3::Locate_type;
 
 protected:
@@ -242,10 +243,26 @@ protected:
     return new_vertex;
   }
 
+  void update_bbox(const Point& p) {
+    bbox = bbox + p.bbox();
+    if(max_bbox_edge_length) {
+      update_max_bbox_edge_length();
+    }
+  }
+
+  void update_max_bbox_edge_length() {
+    double d_x = bbox.xmax() - bbox.xmin();
+    double d_y = bbox.ymax() - bbox.ymin();
+    double d_z = bbox.zmax() - bbox.zmin();
+
+    max_bbox_edge_length = (std::max)(d_x, (std::max)(d_y, d_z));
+  }
+
 public:
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
                        int li, int lj)
   {
+    update_bbox(p);
     auto v = insert_impl(p, lt, c, li, lj, insert_in_conflict_visitor);
     restore_Delaunay(insert_in_conflict_visitor);
     return v;
@@ -482,6 +499,9 @@ protected:
     const Vertex_handle vb = subconstraint.second;
     const auto& pa = tr.point(va);
     const auto& pb = tr.point(vb);
+    const auto [orig_va, orig_vb] = constraint_extremities(constraint_id);
+    const auto& orig_pa = tr.point(orig_va);
+    const auto& orig_pb = tr.point(orig_vb);
 
     if(this->dimension() < 2) {
       std::cerr << "dim < 2: midpoint\n";
@@ -589,21 +609,19 @@ protected:
 #endif // CGAL_CDT_3_DEBUG_CONFORMING
     const auto reference_vertex = *reference_vertex_it;
     const auto& reference_point = tr.point(reference_vertex);
+
     const auto vector_ab = vector_functor(pa, pb);
 
     if(reference_vertex->is_Steiner_vertex_on_edge()) {
       CGAL_assertion(reference_vertex->nb_of_incident_constraints == 1);
       const auto ref_constraint_id = reference_vertex->constraint_id(*this);
       const auto [ref_va, ref_vb] = constraint_extremities(ref_constraint_id);
-      const auto [orig_va, orig_vb] = constraint_extremities(constraint_id);
 #if CGAL_CDT_3_DEBUG_CONFORMING
       std::cerr << "  reference point is on constraint: " << display_vert(ref_va)
                 << "    " << display_vert(ref_vb) << '\n'
                 << "  original constraint:              " << display_vert(orig_va)
                 << "    " << display_vert(orig_vb) << '\n';
 #endif // CGAL_CDT_3_DEBUG_CONFORMING
-      const auto& orig_pa = tr.point(orig_va);
-      const auto& orig_pb = tr.point(orig_vb);
       const auto vector_orig_ab = vector_functor(orig_pa, orig_pb);
       const auto length_ab = CGAL::approximate_sqrt(sq_length_functor(vector_ab));
       auto return_orig_result_point =
@@ -637,6 +655,24 @@ protected:
         const auto lambda = length_orig_b_ref / length_orig_ab;
         return return_orig_result_point(lambda, orig_pb, orig_pa);
       }
+    } else {
+      auto epsilon = 1e-8;
+      if(epsilon > 0) {
+        if(!max_bbox_edge_length) {
+          update_max_bbox_edge_length();
+        }
+        auto sq_dist = squared_distance(reference_point, Line{orig_pa, orig_pb});
+        if(sq_dist < CGAL::square(epsilon * *max_bbox_edge_length)) {
+          std::stringstream ss;
+          ss.precision(std::cerr.precision());
+          ss << "A constrained segment is too close to a vertex.\n";
+          ss << "  -> vertex " << display_vert(reference_vertex) << '\n';
+          ss << "  -> constrained segment " << display_vert(orig_va) << "  -  " << display_vert(orig_vb) << '\n';
+          ss << "  -> distance = " << CGAL::approximate_sqrt(sq_dist) << '\n';
+          ss << "  -> max_bbox_edge_length = " << *max_bbox_edge_length << '\n';
+          throw std::runtime_error(ss.str());
+        }
+      }
     }
     // compute the projection of the reference point
     const auto vector_a_ref = vector_functor(pa, reference_point);
@@ -656,6 +692,8 @@ protected:
   T_3& tr = *this;
   Compare_vertex_handle comp = {this};
   Constraint_hierarchy constraint_hierarchy = {comp};
+  Bbox_3 bbox{};
+  std::optional<double> max_bbox_edge_length;
   std::map<std::pair<Vertex_handle, Vertex_handle>, Constraint_id> pair_of_vertices_to_cid;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
 

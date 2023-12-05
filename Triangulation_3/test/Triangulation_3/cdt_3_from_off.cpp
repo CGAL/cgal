@@ -368,13 +368,14 @@ int go(Mesh mesh, CDT_options options) {
     if(options.merge_facets && false == get(v_selected_map, v)) continue;
     cdt.insert(get(pmap, v));
   }
-  if(cdt.dimension() < 3) {
-    const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
-    double d_x = bbox.xmax() - bbox.xmin();
-    double d_y = bbox.ymax() - bbox.ymin();
-    double d_z = bbox.zmax() - bbox.zmin();
+  const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
+  double d_x = bbox.xmax() - bbox.xmin();
+  double d_y = bbox.ymax() - bbox.ymin();
+  double d_z = bbox.zmax() - bbox.zmin();
 
-    const double max_d = (std::max)(d_x, (std::max)(d_y, d_z));
+  const double max_d = (std::max)(d_x, (std::max)(d_y, d_z));
+
+  if(cdt.dimension() < 3) {
     if(d_x == 0) d_x = max_d;
     if(d_y == 0) d_y = max_d;
     if(d_z == 0) d_z = max_d;
@@ -387,6 +388,17 @@ int go(Mesh mesh, CDT_options options) {
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
+  }
+  {
+    double espilon = 1e-6;
+    auto min_distance = CGAL::approximate_sqrt(std::ranges::min(
+        cdt.finite_edges() | std::views::transform([&](auto edge) { return cdt.segment(edge).squared_length(); })));
+    std::cout << "Min distance between vertices: " << min_distance << '\n';
+    if(min_distance < espilon * max_d) {
+      std::cerr << "ERROR: min distance between vertices is too small\n";
+      exit_code = EXIT_FAILURE;
+      return exit_code;
+    }
   }
   int poly_id = 0;
   CDT_3_try {
@@ -507,9 +519,9 @@ int go(Mesh mesh, CDT_options options) {
     }
 
     std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << '\n';
-    assert(cdt.is_conforming());
     assert(cdt.Delaunay::is_valid(true));
     assert(cdt.is_valid(true));
+    assert(cdt.is_conforming());
     if(exit_code == EXIT_SUCCESS) {
       try {
         cdt.restore_constrained_Delaunay();
