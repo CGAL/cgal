@@ -30,7 +30,7 @@ void draw(const T3& at3, const GSOptions& gso);
 
 /*!
 \ingroup PkgDrawTriangulation3
- A shortcut to `draw(at3, Graphics_scene_options{})`.
+ A shortcut to `CGAL::draw(at3, Graphics_scene_options{})`.
 */
   template<class T3>
   void draw(const T3& at3);
@@ -65,7 +65,7 @@ void add_to_graphics_scene(const T3& at3,
 /*!
 \ingroup PkgDrawTriangulation3
 
-A shortcut to `add_to_graphics_scene(at3, gs, Graphics_scene_options{})`.
+A shortcut to `CGAL::add_to_graphics_scene(at3, gs, Graphics_scene_options{})`.
 */
 template<class T3>
 void add_to_graphics_scene(const T3& at3,

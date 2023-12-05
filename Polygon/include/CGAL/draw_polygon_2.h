@@ -56,7 +56,7 @@ void draw(const P& p, const GSOptions& gso);
 /*!
 \ingroup PkgDrawPolygon2
 
-A shortcut to `draw(p, Graphics_scene_options{})`.
+A shortcut to `CGAL::draw(p, Graphics_scene_options{})`.
 */
   template<class P>
   void draw(const P& p);
@@ -91,7 +91,7 @@ void add_to_graphics_scene(const P& p,
 /*!
 \ingroup PkgDrawPolygon2
 
-A shortcut to `add_to_graphics_scene(p, gs, Graphics_scene_options{})`.
+A shortcut to `CGAL::add_to_graphics_scene(p, gs, Graphics_scene_options{})`.
 */
 template<class P>
 void add_to_graphics_scene(const P& p,
