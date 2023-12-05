@@ -316,14 +316,36 @@ void tetrahedral_isotropic_remeshing(
 
 template<typename Tr,
          typename CornerIndex,
-         typename CurveIndex>
+         typename CurveIndex,
+         typename NamedParameters = parameters::Default_named_parameters>
 CGAL::Triangulation_3<typename Tr::Geom_traits,
                       typename Tr::Triangulation_data_structure>
 convert_to_triangulation_3(
-  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3)
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3,
+  const NamedParameters& np = parameters::default_values())
 {
   using GT   = typename Tr::Geom_traits;
   using TDS  = typename Tr::Triangulation_data_structure;
+
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
+  using Default_pmap = Constant_property_map<Edge_vv, bool>;
+  using ECMap = typename internal_np::Lookup_named_param_def <
+                internal_np::edge_is_constrained_t,
+                NamedParameters,
+                Default_pmap
+                >::type;
+  ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                                 Default_pmap(false));
+
+  if (!std::is_same_v<ECMap, Default_pmap>)
+  {
+    for (auto e : c3t3.edges_in_complex())
+    {
+      const Edge_vv evv{e.first->vertex(e.second), e.first->vertex(e.third)};
+      put(ecmap, evv, true);
+    }
+  }
 
   CGAL::Triangulation_3<GT, TDS> tr;
   tr.swap(c3t3.triangulation());
