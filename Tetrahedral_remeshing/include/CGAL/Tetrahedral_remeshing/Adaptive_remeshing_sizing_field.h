@@ -76,7 +76,7 @@ public:
   * Returns size at point `p`
   */
   template <typename Index>
-  FT operator()(const Bare_point& p, const int& dim, const Index& i) const
+  FT operator()(const Bare_point& p, const int& /* dim */, const Index& /* i */) const
   {
     // Find nearest vertex
     K_neighbor_search search(m_kd_tree, p, 1/*nb nearest neighbors*/);
