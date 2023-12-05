@@ -23,7 +23,6 @@ The real declaration of this function template is:
  void CGAL::draw(const CGAL::Polyhedron_3<PT, PI, HDS, Alloc>& p, const GSOptions& gso);
 </code>
 \cgalAdvancedEnd
-
 */
 template<class P, class GSOptions>
 void draw(const P& p, const GSOptions& gso);
