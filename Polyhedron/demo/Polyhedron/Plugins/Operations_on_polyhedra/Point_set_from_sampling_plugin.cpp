@@ -94,10 +94,11 @@ void Polyhedron_demo_point_set_from_sampling_plugin::createPointSet()
                                                         soup_item->polygons(),
                                                         std::back_inserter(pts));
   }
+  points->point_set()->reserve(pts.size());
   for (std::size_t i = 0; i < pts.size(); ++i){
     points->point_set()->insert(pts[i]);
   }
-    scene->addItem(points);
+  scene->addItem(points);
   QApplication::restoreOverrideCursor();
 }
 
