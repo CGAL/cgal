@@ -27,14 +27,14 @@ The real declaration of this function template is:
 \cgalAdvancedEnd
 */
   template<class CT2, class InDomainPMap, class GSOptions>
-  void draw(const CT2& act2, InDomainPMap ipm, const GSOptions& gso);
+  void draw(const CT2& ct2, InDomainPMap ipm, const GSOptions& gso);
 
 /*!
 \ingroup PkgDrawConstrainedTriangulation2
 
-A shortcut to `CGAL::draw(at2, ipm, Graphics_scene_options{})`.
+A shortcut to `CGAL::draw(ct2, ipm, Graphics_scene_options{})`.
 */
-  template<class T2, class InDomainPMap>
-  void draw(const T2& at2, InDomainPMap ipm);
+  template<class CT2, class InDomainPMap>
+  void draw(const CT2& ct2, InDomainPMap ipm);
 
 } /* namespace CGAL */
