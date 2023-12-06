@@ -26,14 +26,73 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawPointSet3D
 
-opens a new window and draws `aps`, an instance of the `CGAL::Point_set_3` class. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
-\tparam PS an instance of the `CGAL::Point_set_3` class.
-\param aps the point set to draw.
+opens a new window and draws a point set. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+
+\tparam PS which must be an instanciation of a `CGAL::Point_set_3<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param ps the point set to draw.
+\param gso the graphics scene options parameter.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class P, class V, class GSOptions>
+
+ void CGAL::draw(const CGAL::Point_set_3<P, V>& ps, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+*/
+  template<class PS, class GSOptions>
+  void draw(const PS& ps, const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawPointSet3D
+
+A shortcut to `CGAL::draw(ps, Graphics_scene_options{})`.
+*/
+  template<class PS>
+  void draw(const PS& ps);
+
+/*!
+\ingroup PkgDrawPointSet3D
+
+adds the vertices, edges and faces of `ps` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+
+\tparam PS which must be an instanciation of a `CGAL::Point_set_3<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param ps the point set to draw.
+\param gs the graphic scene to fill.
+\param gso the graphics scene options parameter.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class P, class V, class GSOptions>
+
+ void CGAL::add_to_graphics_scene(const CGAL::Point_set_3<P, V>& ps, CGAL::Graphics_scene& gs, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+*/
+template<class PS, class GSOptions>
+void add_to_graphics_scene(const PS& ps,
+                           CGAL::Graphics_scene& gs,
+                           const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawPointSet3D
+
+A shortcut to `CGAL::add_to_graphics_scene(ps, gs, Graphics_scene_options{})`.
 */
 template<class PS>
-void draw(const PS& aps);
+void add_to_graphics_scene(const PS& ps,
+                           CGAL::Graphics_scene& gs);
 
 } /* namespace CGAL */
 #endif
