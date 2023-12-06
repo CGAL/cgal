@@ -40,6 +40,8 @@ include(CGAL_TBB_support)
 create_single_source_cgal_program( "example_classification.cpp" )
 create_single_source_cgal_program( "example_ethz_random_forest.cpp" )
 create_single_source_cgal_program( "example_feature.cpp" )
+create_single_source_cgal_program( "example_alpha_feature.cpp" )
+create_single_source_cgal_program( "example_pcl_feature.cpp" )
 create_single_source_cgal_program( "example_generation_and_training.cpp" )
 create_single_source_cgal_program( "example_mesh_classification.cpp" )
 create_single_source_cgal_program( "example_cluster_classification.cpp" )
@@ -61,6 +63,8 @@ foreach(target
     example_classification
     example_ethz_random_forest
     example_feature
+    example_alpha_feature
+    example_pcl_feature
     example_generation_and_training
     example_mesh_classification
     example_cluster_classification
@@ -76,3 +80,21 @@ foreach(target
     endif()
   endif()
 endforeach()
+
+
+find_package(PCL CONFIG)
+if(PCL_FOUND)
+    include_directories(${PCL_INCLUDE_DIRS})
+
+    # [C/C++]>[Preprocessor]>[Preprocessor Definitions]
+    add_definitions(${PCL_DEFINITIONS})
+  
+    # Uncomment to not use pre-compiled features 
+    #add_definitions( -DPCL_NO_PRECOMPILE )
+
+    # [Linker]>[General]>[Additional Library Directories]
+    link_directories(${PCL_LIBRARY_DIRS})
+
+    # [Linker]>[Input]>[Additional Dependencies]
+    target_link_libraries(example_pcl_feature PUBLIC ${PCL_LIBRARIES})
+endif()
