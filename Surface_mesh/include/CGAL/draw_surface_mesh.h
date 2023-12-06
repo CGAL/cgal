@@ -53,7 +53,7 @@ A shortcut to `CGAL::draw(sm, Graphics_scene_options{})`.
 /*!
 \ingroup PkgDrawSurfaceMesh
 
-adds the vertices, edges and faces of `sm` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+adds the vertices, edges and faces of `sm` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
 \tparam SM which must be an instanciation of a `CGAL::Surface_mesh<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.

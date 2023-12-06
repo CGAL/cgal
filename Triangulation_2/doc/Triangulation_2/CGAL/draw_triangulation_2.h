@@ -38,7 +38,7 @@ A shortcut to `CGAL::draw(at2, Graphics_scene_options{})`.
 /*!
 \ingroup PkgDrawTriangulation2
 
-adds the vertices, edges and faces of `at2` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+adds the vertices, edges and faces of `at2` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
 \tparam T2 which must be an instanciation of a `CGAL::Triangulation_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.

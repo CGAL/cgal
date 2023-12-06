@@ -37,7 +37,7 @@ void draw(const T3& at3, const GSOptions& gso);
 /*!
 \ingroup PkgDrawTriangulation3
 
-adds the vertices, edges and faces of `at3` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+adds the vertices, edges and faces of `at3` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
 \tparam T3 which must be an instanciation of a `CGAL::Triangulation_3<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
