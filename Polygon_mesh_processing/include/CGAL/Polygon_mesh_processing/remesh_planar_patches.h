@@ -299,12 +299,12 @@ template <typename Kernel,
           typename VertexPointMap>
 void
 mark_constrained_edges(
-  TriangleMesh& tm,
+  const TriangleMesh& tm,
   EdgeIsConstrainedMap edge_is_constrained,
   double coplanar_cos_threshold,
   const VertexPointMap& vpm)
 {
-  for(typename boost::graph_traits<std::remove_const_t<TriangleMesh>>::edge_descriptor e : edges(tm))
+  for(typename boost::graph_traits<TriangleMesh>::edge_descriptor e : edges(tm))
   {
     if (!get(edge_is_constrained,e))
       if (!is_edge_between_coplanar_faces<Kernel>(e, tm, coplanar_cos_threshold, vpm))
@@ -319,13 +319,13 @@ template <typename Kernel,
           typename VertexCornerIdMap>
 std::size_t
 mark_corner_vertices(
-  TriangleMesh& tm,
+  const TriangleMesh& tm,
   EdgeIsConstrainedMap& edge_is_constrained,
   VertexCornerIdMap& vertex_corner_id,
   double coplanar_cos_threshold,
   const VertexPointMap& vpm)
 {
-  typedef boost::graph_traits<std::remove_const_t<TriangleMesh>> graph_traits;
+  typedef boost::graph_traits<TriangleMesh> graph_traits;
   std::size_t corner_id = 0;
   for(typename graph_traits::edge_descriptor e : edges(tm))
   {
@@ -546,14 +546,14 @@ template <typename Kernel,
           typename FaceCCIdMap,
           typename VertexPointMap>
 std::pair<std::size_t, std::size_t>
-tag_corners_and_constrained_edges(TriangleMesh& tm,
+tag_corners_and_constrained_edges(const TriangleMesh& tm,
                                   double coplanar_cos_threshold,
                                   VertexCornerIdMap& vertex_corner_id,
                                   EdgeIsConstrainedMap& edge_is_constrained,
                                   FaceCCIdMap& face_cc_ids,
                                   const VertexPointMap& vpm)
 {
-  typedef typename boost::graph_traits<std::remove_const_t<TriangleMesh>> graph_traits;
+  typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   // mark constrained edges
   mark_constrained_edges<Kernel>(tm, edge_is_constrained, coplanar_cos_threshold, vpm);
 
