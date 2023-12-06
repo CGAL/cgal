@@ -64,7 +64,7 @@ A shortcut to `CGAL::draw(p, Graphics_scene_options{})`.
 /*!
 \ingroup PkgDrawPolygon2
 
-adds the vertices, edges and faces of `p` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+adds the vertices, edges and faces of `p` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
 \tparam P which must be an instanciation of a `CGAL::Polygon_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.

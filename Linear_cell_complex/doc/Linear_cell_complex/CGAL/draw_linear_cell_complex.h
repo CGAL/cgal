@@ -38,7 +38,7 @@ A shortcut to `CGAL::draw(lcc, Graphics_scene_options{})`.
 /*!
 \ingroup PkgDrawLinearCellComplex
 
-adds the vertices, edges and faces of `lcc` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso` . Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+adds the vertices, edges and faces of `lcc` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
 \tparam LCC which must be an instanciation of a `CGAL::Linear_cell_complex_for_combinatorial_map<...>` or `CGAL::Linear_cell_complex_for_generalized_map<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
