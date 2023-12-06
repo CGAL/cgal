@@ -27,7 +27,7 @@ namespace internal {
 
 //  triple plane intersection
 template <class K>
-boost::optional<typename K::Point_3>
+typename K::Point_3
 intersection_point(const typename K::Plane_3& plane1,
                    const typename K::Plane_3& plane2,
                    const typename K::Plane_3& plane3,
@@ -55,10 +55,6 @@ intersection_point(const typename K::Plane_3& plane1,
 
   const FT den = minor_0*m22 - minor_1*m12 + minor_2*m02; // determinant of M
 
-  if(is_zero(den)){
-    return boost::none;
-  }
-
   const FT num3 = minor_0*b2 - minor_1*b1 + minor_2*b0;  // determinant of M with M[x:2] swapped with [b0,b1,b2]
 
   // Minors common to two determinants
@@ -70,7 +66,7 @@ intersection_point(const typename K::Plane_3& plane1,
   const FT num1 = - minor_3*m21 + minor_4*m11 - minor_5*m01;  // determinant of M with M[x:0] swapped with [b0,b1,b2]
   const FT num2 = minor_3*m20 - minor_4*m10 + minor_5*m00;  // determinant of M with M[x:1] swapped with [b0,b1,b2]
 
-  return boost::make_optional(typename K::Point_3(num1/den, num2/den, num3/den));
+  return typename K::Point_3(num1/den, num2/den, num3/den);
 }
 
 template <class K>
@@ -92,7 +88,7 @@ intersection(const typename K::Plane_3& plane1,
                           plane2.a(), plane2.b(), plane2.c(),
                           plane3.a(), plane3.b(), plane3.c())))
   {
-    return intersection_point(plane1,plane2,plane3, k);
+    return result_type(intersection_point(plane1,plane2,plane3, k));
   }
 
   // Intersection between plane1 and plane2 can either be
