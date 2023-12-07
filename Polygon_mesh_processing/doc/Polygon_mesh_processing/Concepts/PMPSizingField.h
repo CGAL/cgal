@@ -60,7 +60,7 @@ Point_3 split_placement(const halfedge_descriptor h,
                         const PolygonMesh& pmesh) const;
 
 /// function called after the addition of the split vertex `v` in `pmesh`.
-/// This function can be used for exemple to update a pre-computed sizing field.
+/// This function can be used for example to update a pre-computed sizing field.
 void register_split_vertex(const vertex_descriptor v,
                            const PolygonMesh& pmesh);
 
