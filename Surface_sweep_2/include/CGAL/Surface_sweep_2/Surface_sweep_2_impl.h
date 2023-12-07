@@ -110,28 +110,19 @@ void Surface_sweep_2<Vis>::_handle_left_curves()
         this->m_currentEvent->push_back_curve_to_right(sc);
       }
       else {
+        this->m_currentEvent->push_back_curve_to_left(sc);
         this->m_currentEvent->set_weak_intersection();
-        auto status_line_it = this->m_status_line_insert_hint;
-        do{
-          this->m_currentEvent->push_back_curve_to_left(sc);
-          this->m_visitor->update_event(this->m_currentEvent, sc);
-          _add_curve_to_right(this->m_currentEvent, sc);
-          ++status_line_it;
-          if (status_line_it==this->m_statusLine.end()) break;
-          if (this->m_statusLineCurveLess(this->m_currentEvent->point(), *status_line_it)!=EQUAL)
-            break;
-          sc = *status_line_it;
-        }
-        while(true); // the loop is only needed in case there are overlapping curve in right curves
+        this->m_visitor->update_event(this->m_currentEvent, sc);
+        _add_curve_to_right(this->m_currentEvent, sc);
       }
 
-      // some subcurves have been addded on the left
+      // sc is now on the left
       CGAL_SS_PRINT_TEXT("Event after update:");
       CGAL_SS_PRINT_EOL();
       CGAL_SS_PRINT_EVENT_INFO(this->m_currentEvent);
       CGAL_SS_PRINT_EOL();
       CGAL_assertion(std::distance(this->m_currentEvent->left_curves_begin(),
-                                   this->m_currentEvent->left_curves_end())!=0);
+                                   this->m_currentEvent->left_curves_end())==1);
     }
     else {
       // The event is not located on any subcurve.
