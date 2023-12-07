@@ -116,7 +116,7 @@ bool read_VTP(const std::string& fname,
 }
 
 /*!
- * \ingroup PkgStreamSupportIoFuncsVTP
+ * \ingroup PkgStreamSupportIoFuncsVTK
  *
  * \brief reads the content of the input file into `points` and `polygons`, using the \ref IOStreamVTK.
  *
@@ -172,7 +172,7 @@ bool read_VTK(const std::string& fname,
 }
 
 /*!
- * \ingroup PkgStreamSupportIoFuncsVTP
+ * \ingroup PkgStreamSupportIoFuncsVTK
  *
  * \brief reads the content of the input file into `points` and `polygons`, using the legacy file format of the \ref IOStreamVTK.
  *
@@ -398,7 +398,7 @@ void write_soup_polys_points(std::ostream& os,
 } // namespace internal
 
 /*!
- * \ingroup PkgStreamSupportIoFuncsVTP
+ * \ingroup PkgStreamSupportIoFuncsVTK
  *
  * \brief writes the content of `points` and `polygons` in `out`, using the \ref IOStreamVTK.
  *
@@ -486,7 +486,7 @@ bool write_VTP(std::ostream& os,
 }
 
 /*!
- * \ingroup PkgStreamSupportIoFuncsVTP
+ * \ingroup PkgStreamSupportIoFuncsVTK
  *
  * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamVTK.
  *

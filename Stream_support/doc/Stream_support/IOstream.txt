@@ -386,7 +386,7 @@ their indices per face (i.e a vector of 3 integers represent a triangle face).
       <td>\link PkgStreamSupportIoFuncsOBJ `read_OBJ()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsSTL `read_STL()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsPLY `read_PLY()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsVTP `read_VTP()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsVTK `read_VTP()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsGOCAD `read_GOCAD()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsWKT `read_WKT()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncs3MF `read_3MF()` \endlink</td>
@@ -398,7 +398,7 @@ their indices per face (i.e a vector of 3 integers represent a triangle face).
       <td>\link PkgStreamSupportIoFuncsOBJ `write_OBJ()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsSTL `write_STL()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsPLY `write_PLY()` \endlink</td>
-      <td>\link PkgStreamSupportIoFuncsVTP `write_VTP()` \endlink</td>
+      <td>\link PkgStreamSupportIoFuncsVTK `write_VTP()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsGOCAD `write_GOCAD()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsWKT `write_WKT()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncs3MF `write_3MF()` \endlink</td>

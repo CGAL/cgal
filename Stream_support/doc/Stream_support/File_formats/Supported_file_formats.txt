@@ -442,7 +442,7 @@ The VTK libraries use different file formats to handle data structures, but we o
   In the <a href="https://vtk.org/"> VTK Libraries</a>, it is the format
   reserved to store `PolyData`, and in \cgal, we use it to store polygon meshes.
 
-We additionally provide a read function for the legacy non-XML file `VTK` file format for polygon meshes.
+We additionally provide a read function for the legacy non-XML `VTK` file format for polygon meshes.
 
 A precise specification of those formats is available at
 <a href="https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf">vtk.org</a>.
@@ -455,23 +455,23 @@ A precise specification of those formats is available at
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="800">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
+    <td width="800">\link PkgBGLIoFuncsVTK CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTP(const std::string&, PointRange&, PolygonRange&)\endlink, <BR> \link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTK(const std::string&, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsVTK CGAL::IO::read_VTP(const std::string&, PointRange&, PolygonRange&)\endlink, <BR> \link PkgStreamSupportIoFuncsVTK CGAL::IO::read_VTK(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="1">Polygon Mesh</td>
     <td>Any model of `FaceGraph`</td>
-    <td>\link PkgBGLIoFuncsVTP CGAL::IO::write_VTP(const std::string&, Graph&)\endlink</td>
+    <td>\link PkgBGLIoFuncsVTK CGAL::IO::write_VTP(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::write_VTP(const std::string&, const PointRange&, const PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsVTK CGAL::IO::write_VTP(const std::string&, const PointRange&, const PolygonRange&)\endlink</td>
   </tr>
 </table>
 
