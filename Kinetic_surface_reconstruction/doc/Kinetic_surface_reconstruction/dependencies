@@ -10,6 +10,6 @@ Property_map
 Polygon_mesh_processing
 Shape_detection
 Shape_regularization
-Scale_space_reconstruction
+Scale_space_reconstruction_3
 Advancing_front_surface_reconstruction
-Poisson_surface_reconstruction
+Poisson_surface_reconstruction_3
