@@ -307,6 +307,14 @@ void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves()
 template <typename Vis>
 void Surface_sweep_2<Vis>::_handle_right_curves()
 {
+
+  for(Event_subcurve_iterator sc_it = this->m_currentEvent->right_curves_begin(),
+                              sc_it_end = this->m_currentEvent->right_curves_end();
+                              sc_it!=sc_it_end; ++sc_it)
+  {
+    (*sc_it)->reset_left_event();
+  }
+
   CGAL_SS_PRINT_START("handling right curves at (");
   CGAL_SS_DEBUG(this->PrintEvent(this->m_currentEvent));
   CGAL_SS_PRINT_TEXT(")");
