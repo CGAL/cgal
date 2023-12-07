@@ -32,7 +32,7 @@ void draw(const Mesh& amesh,
 /*!
 \ingroup PkgDrawFaceGraphWithPaths
 
-Same function than <a href="#XXXX"><b>draw()</b></a> but taking the paths from a list instead from an std::vector.
+Same function than <a href="#gaef57f5480a700871bda6a50502338a66"><b>draw()</b></a> but taking the paths from a list instead from an std::vector.
 */
 template<class Mesh, class GSOptions>
 void draw(const Mesh& amesh,
@@ -42,7 +42,7 @@ void draw(const Mesh& amesh,
 /*!
 \ingroup PkgDrawFaceGraphWithPaths
 
-Same function than <a href="#XXXX"><b>draw()</b></a> but taking the paths from a list instead from as std::vector.
+A shortcut to `CGAL::draw(amesh, apaths, Graphics_scene_options_face_graph_with_paths{})`.
 */
 template<class Mesh>
 void draw(const Mesh& amesh,
@@ -80,7 +80,7 @@ void add_to_graphics_scene(const Mesh& amesh,
 /*!
 \ingroup PkgDrawFaceGraphWithPaths
 
-Same function than <a href="#XXXX"><b>add_to_graphics_scene()</b></a> but taking the paths from a list instead from an std::vector.
+Same function than <a href="#gaa011d277d42130437c8665030ea12f97"><b>add_to_graphics_scene()</b></a> but taking the paths from a list instead from an std::vector.
 */
 template <class Mesh, class GSOptions>
 void add_to_graphics_scene(const Mesh& amesh,
@@ -91,7 +91,7 @@ void add_to_graphics_scene(const Mesh& amesh,
 /*!
 \ingroup PkgDrawFaceGraphWithPaths
 
-Same function than <a href="#XXXX"><b>add_to_graphics_scene()</b></a> but taking the paths from a list instead from an std::vector.
+A shortcut to `CGAL::add_to_graphics_scene(amesh, gs, Graphics_scene_options_face_graph_with_paths{}, apaths)`.
 */
 template <class Mesh>
 void add_to_graphics_scene(const Mesh& amesh,
