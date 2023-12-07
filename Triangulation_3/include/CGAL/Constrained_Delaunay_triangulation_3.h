@@ -1265,12 +1265,12 @@ private:
 #endif // CGAL_CDT_3_DEBUG_REGION
     for(auto v: polygon_vertices) {
       v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
-      CGAL_assertion(v->nb_of_incident_constraints < 0);
+      CGAL_assertion(v->is_Steiner_vertex_in_face() || v->nb_of_incident_constraints < 0);
     }
     const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, border_edges);
     for(auto v: polygon_vertices) {
       v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
-      CGAL_assertion(v->nb_of_incident_constraints > 0);
+      CGAL_assertion(v->is_Steiner_vertex_in_face() || v->nb_of_incident_constraints > 0);
     }
 
     [[maybe_unused]] auto try_flip_region_size_4 = [&] {
