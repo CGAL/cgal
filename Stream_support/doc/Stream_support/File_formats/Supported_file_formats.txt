@@ -117,23 +117,23 @@ A precise specification of the format is available <a href="https://www.martinre
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsOBJ CGAL::IO::read_OBJ(const char*, Graph&)\endlink</td>
+    <td width="500">\link PkgBGLIoFuncsOBJ CGAL::IO::read_OBJ(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsOBJ CGAL::IO::read_OBJ(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOBJ CGAL::IO::read_OBJ(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="1">Polygon Mesh</td>
     <td>Any model of `FaceGraph`</td>
-    <td>\link PkgBGLIoFuncsOBJ CGAL::IO::write_OBJ(const char*, Graph&)\endlink</td>
+    <td>\link PkgBGLIoFuncsOBJ CGAL::IO::write_OBJ(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsOBJ CGAL::IO::write_OBJ(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsOBJ CGAL::IO::write_OBJ(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
 </table>
 
@@ -158,23 +158,23 @@ A precise specification of those formats is available <a href="https://www.fabbe
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsSTL CGAL::IO::read_STL(const char*, Graph&)\endlink</td>
+    <td width="500">\link PkgBGLIoFuncsSTL CGAL::IO::read_STL(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsSTL CGAL::IO::read_STL(const char*, PointRange&, TriangleRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsSTL CGAL::IO::read_STL(const std::string&, PointRange&, TriangleRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="1">Polygon Mesh</td>
     <td>Any model of `FaceGraph`</td>
-    <td>\link PkgBGLIoFuncsSTL CGAL::IO::write_STL(const char*, Graph&)\endlink</td>
+    <td>\link PkgBGLIoFuncsSTL CGAL::IO::write_STL(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsSTL CGAL::IO::write_STL(const char*, PointRange&, TriangleRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsSTL CGAL::IO::write_STL(const std::string&, PointRange&, TriangleRange&)\endlink</td>
   </tr>
 </table>
 
@@ -202,49 +202,49 @@ A precise specification of those formats is available <a href="https://paulbourk
     <td rowspan="5" width="75">Input</td>
     <td rowspan="2" width="175">Polygon Mesh</td>
     <td width="250">`CGAL::Surface_mesh`</td>
-    <td width="500">\link PkgSurfaceMeshIOFuncPLY CGAL::IO::read_PLY(const char*, CGAL::Surface_mesh&)\endlink</td>
+    <td width="500">\link PkgSurfaceMeshIOFuncPLY CGAL::IO::read_PLY(const std::string&, CGAL::Surface_mesh&)\endlink</td>
   </tr>
   <tr>
     <td>Any model of `MutableFaceGraph`</td>
-    <td>\link PkgBGLIoFuncsPLY CGAL::IO::read_PLY(const char*, Graph&)\endlink</td>
+    <td>\link PkgBGLIoFuncsPLY CGAL::IO::read_PLY(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Point Set</td>
     <td>`CGAL::Point_set_3`</td>
-    <td>\link PkgPointSet3IOPLY CGAL::IO::read_PLY(const char*, CGAL::Point_set_3&)\endlink</td>
+    <td>\link PkgPointSet3IOPLY CGAL::IO::read_PLY(const std::string&, CGAL::Point_set_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOPly CGAL::IO::read_PLY(const char*, PointRange&)\endlink</td>
+    <td>\link PkgPointSetProcessing3IOPly CGAL::IO::read_PLY(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::read_PLY(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::read_PLY(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="5">Output</td>
     <td rowspan="2">Polygon Mesh</td>
     <td>`CGAL::Surface_mesh`</td>
-    <td>\link PkgSurfaceMeshIOFuncPLY CGAL::IO::write_PLY(const char*, CGAL::Surface_mesh&)\endlink</td>
+    <td>\link PkgSurfaceMeshIOFuncPLY CGAL::IO::write_PLY(const std::string&, CGAL::Surface_mesh&)\endlink</td>
   </tr>
   <tr>
     <td>Any model of `FaceGraph`</td>
-    <td>\link PkgBGLIoFuncsPLY CGAL::IO::write_PLY(const char*, Graph&)\endlink</td>
+    <td>\link PkgBGLIoFuncsPLY CGAL::IO::write_PLY(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Point Set</td>
     <td>`CGAL::Point_set_3`</td>
-    <td>\link PkgPointSet3IOPLY CGAL::IO::write_PLY(const char*, CGAL::Point_set_3&)\endlink</td>
+    <td>\link PkgPointSet3IOPLY CGAL::IO::write_PLY(const std::string&, CGAL::Point_set_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOPly CGAL::IO::write_PLY(const char*, PointRange&)\endlink</td>
+    <td>\link PkgPointSetProcessing3IOPly CGAL::IO::write_PLY(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::write_PLY(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsPLY CGAL::IO::write_PLY(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
 </table>
 
@@ -270,21 +270,21 @@ A precise specification of those formats is available
     <td rowspan="2" width="75">Input</td>
     <td rowspan="2" width="175">Point Set</td>
     <td width="250">`CGAL::Point_set_3`</td>
-    <td width="500">\link PkgPointSet3IOLAS CGAL::IO::read_LAS(const char*, CGAL::Point_set_3&)\endlink</td>
+    <td width="500">\link PkgPointSet3IOLAS CGAL::IO::read_LAS(const std::string&, CGAL::Point_set_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOLas CGAL::IO::read_LAS(const char*, PointRange&)\endlink</td>
+    <td>\link PkgPointSetProcessing3IOLas CGAL::IO::read_LAS(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="2">Point Set</td>
     <td>`CGAL::Point_set_3`</td>
-    <td>\link PkgPointSet3IOLAS CGAL::IO::write_LAS(const char*, CGAL::Point_set_3&)\endlink</td>
+    <td>\link PkgPointSet3IOLAS CGAL::IO::write_LAS(const std::string&, CGAL::Point_set_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOLas CGAL::IO::write_LAS(const char*, PointRange&)\endlink</td>
+    <td>\link PkgPointSetProcessing3IOLas CGAL::IO::write_LAS(const std::string&, PointRange&)\endlink</td>
   </tr>
 </table>
 
@@ -303,21 +303,21 @@ of its coordinates and other properties. Only coordinates and normals are curren
     <td rowspan="2" width="75">Input</td>
     <td rowspan="2" width="175">Point Set</td>
     <td width="250">`CGAL::Point_set_3`</td>
-    <td width="500">\link PkgPointSet3IOXYZ CGAL::IO::read_XYZ(const char*, CGAL::Point_set_3&)\endlink</td>
+    <td width="500">\link PkgPointSet3IOXYZ CGAL::IO::read_XYZ(const std::string&, CGAL::Point_set_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOXyz CGAL::IO::read_XYZ(const char*, PointRange&)\endlink</td>
+    <td>\link PkgPointSetProcessing3IOXyz CGAL::IO::read_XYZ(const std::string&, PointRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="2">Point Set</td>
     <td>`CGAL::Point_set_3`</td>
-    <td>\link PkgPointSet3IOXYZ CGAL::IO::write_XYZ(const char*, CGAL::Point_set_3&)\endlink</td>
+    <td>\link PkgPointSet3IOXYZ CGAL::IO::write_XYZ(const std::string&, CGAL::Point_set_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any point range</td>
-    <td>\link PkgPointSetProcessing3IOXyz CGAL::IO::write_XYZ(const char*, PointRange&)\endlink</td>
+    <td>\link PkgPointSetProcessing3IOXyz CGAL::IO::write_XYZ(const std::string&, PointRange&)\endlink</td>
   </tr>
 </table>
 
@@ -337,23 +337,23 @@ A precise specification of the format is available <a href="https://paulbourke.n
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsGOCAD CGAL::IO::read_GOCAD(const char*, Graph&)\endlink</td>
+    <td width="500">\link PkgBGLIoFuncsGOCAD CGAL::IO::read_GOCAD(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsGOCAD CGAL::IO::read_GOCAD(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsGOCAD CGAL::IO::read_GOCAD(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="1">Polygon Mesh</td>
     <td>Any model of `FaceGraph`</td>
-    <td>\link PkgBGLIoFuncsGOCAD CGAL::IO::write_GOCAD(const char*, Graph&)\endlink</td>
+    <td>\link PkgBGLIoFuncsGOCAD CGAL::IO::write_GOCAD(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsGOCAD CGAL::IO::write_GOCAD(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsGOCAD CGAL::IO::write_GOCAD(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
 </table>
 
@@ -381,23 +381,23 @@ note that only versions `1.x` are currently supported in \cgal.
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">`CGAL::Surface_mesh`</td>
-    <td width="500">\link PkgSurfaceMeshIOFunc3MF CGAL::IO::read_3MF(const char*, Surface_meshRange&)\endlink</td>
+    <td width="500">\link PkgSurfaceMeshIOFunc3MF CGAL::IO::read_3MF(const std::string&, Surface_meshRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncs3MF CGAL::IO::read_3MF(const char*, PointRanges&, PolygonRanges&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncs3MF CGAL::IO::read_3MF(const std::string&, PointRanges&, PolygonRanges&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="1">Polygon Mesh</td>
     <td>Any model of `FaceGraph`</td>
-    <td>\link PkgBGLIoFuncs3MF CGAL::IO::write_3MF(const char*, GraphRange&)\endlink</td>
+    <td>\link PkgBGLIoFuncs3MF CGAL::IO::write_3MF(const std::string&, GraphRange&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncs3MF CGAL::IO::write_3MF(const char*, PointRanges&, PolygonRanges&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncs3MF CGAL::IO::write_3MF(const std::string&, PointRanges&, PolygonRanges&)\endlink</td>
   </tr>
 </table>
 
@@ -416,13 +416,13 @@ A precise specification of the format is available <a href="http://gun.teipir.gr
 
 <table class="iotable">
   <tr>
-    <th colspan="4">3D Manufacturing Format (3MF)</th>
+    <th colspan="4">3D VRML Format (WRL)</th>
   </tr>
   <tr>
     <td rowspan="1" width="75">Output</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `FaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsWRL CGAL::IO::write_WRL(const char*, Graph&)\endlink</td>
+    <td width="500">\link PkgBGLIoFuncsWRL CGAL::IO::write_WRL(const std::string&, Graph&)\endlink</td>
   </tr>
 </table>
 
@@ -447,23 +447,18 @@ A precise specification of those formats is available at
 
 <table class="iotable">
   <tr>
-    <th colspan="4">VTK (VTU / VTP) File Formats</th>
+    <th colspan="4">VTK (VTU / VTP / legacy) File Formats</th>
   </tr>
   <tr>
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
+    <td width="800">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTP(const std::string&, PointRange&, PolygonRange&)\endlink</td>
-  </tr>
-  <tr>
-    <td>Polygon Soup</td>
-    <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTK(const std::string&, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTP(const std::string&, PointRange&, PolygonRange&)\endlink, <BR> \link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTK(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
