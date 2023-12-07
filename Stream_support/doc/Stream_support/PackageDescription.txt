@@ -20,7 +20,7 @@
 /// I/O Functions for the \ref IOStreamOFF
 /// \ingroup IOstreamFunctions
 
-/// \defgroup PkgStreamSupportIoFuncsVTP VTP I/O Functions
+/// \defgroup PkgStreamSupportIoFuncsVTP VTK I/O Functions
 /// I/O Functions for the \ref IOStreamVTK
 /// \ingroup IOstreamFunctions
 
@@ -101,4 +101,3 @@ the printing mode.
 - \link PkgStreamSupportIoFuncsWKT I/O for WKT files \endlink
 
 */
-

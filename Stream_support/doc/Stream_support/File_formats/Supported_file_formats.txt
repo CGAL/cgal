@@ -453,23 +453,28 @@ A precise specification of those formats is available at
     <td rowspan="2" width="75">Input</td>
     <td rowspan="1" width="175">Polygon Mesh</td>
     <td width="250">Any model of `MutableFaceGraph`</td>
-    <td width="500">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const char*, Graph&)\endlink</td>
+    <td width="500">\link PkgBGLIoFuncsVTP CGAL::IO::read_VTP(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTP(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTP(const std::string&, PointRange&, PolygonRange&)\endlink</td>
+  </tr>
+  <tr>
+    <td>Polygon Soup</td>
+    <td>Any point + polygon range</td>
+    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::read_VTK(const std::string&, PointRange&, PolygonRange&)\endlink</td>
   </tr>
   <tr>
     <td rowspan="2">Output</td>
     <td rowspan="1">Polygon Mesh</td>
     <td>Any model of `FaceGraph`</td>
-    <td>\link PkgBGLIoFuncsVTP CGAL::IO::write_VTP(const char*, Graph&)\endlink</td>
+    <td>\link PkgBGLIoFuncsVTP CGAL::IO::write_VTP(const std::string&, Graph&)\endlink</td>
   </tr>
   <tr>
     <td>Polygon Soup</td>
     <td>Any point + polygon range</td>
-    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::write_VTP(const char*, PointRange&, PolygonRange&)\endlink</td>
+    <td>\link PkgStreamSupportIoFuncsVTP CGAL::IO::write_VTP(const std::string&, const PointRange&, const PolygonRange&)\endlink</td>
   </tr>
 </table>
 
