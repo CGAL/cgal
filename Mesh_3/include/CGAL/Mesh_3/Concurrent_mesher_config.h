@@ -35,7 +35,8 @@ class Concurrent_mesher_config
 {
   // Private constructor (singleton)
   Concurrent_mesher_config()
-  : locking_grid_num_cells_per_axis(50),
+  : num_threads(-1),
+    locking_grid_num_cells_per_axis(50),
     first_grid_lock_radius(0),
     work_stats_grid_num_cells_per_axis(5),
     num_work_items_per_batch(50),
@@ -64,6 +65,7 @@ public:
   //=============== PUBLIC PARAMETERS ==============
 
   // From config file (or default)
+  int     num_threads;
   int     locking_grid_num_cells_per_axis;
   int     first_grid_lock_radius;
   int     work_stats_grid_num_cells_per_axis;
@@ -104,6 +106,7 @@ protected:
       // Declare the supported options.
       po::options_description desc("Allowed options");
       desc.add_options()
+        ("num_threads", po::value<int>(), "")
         ("locking_grid_num_cells_per_axis", po::value<int>(), "")
         ("first_grid_lock_radius", po::value<int>(), "")
         ("work_stats_grid_num_cells_per_axis", po::value<int>(), "")
@@ -125,6 +128,8 @@ protected:
       return false;
     }
 
+    num_threads =
+      get_config_file_option_value<int>("num_threads");
     locking_grid_num_cells_per_axis =
       get_config_file_option_value<int>("locking_grid_num_cells_per_axis");
     first_grid_lock_radius =
