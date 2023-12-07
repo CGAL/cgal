@@ -49,14 +49,14 @@ class Concurrent_mesher_config
   {}
 
 public:
-  static Concurrent_mesher_config &get()
+  static Concurrent_mesher_config& get()
   {
     static Concurrent_mesher_config singleton;
     return singleton;
   }
 
   static bool load_config_file(const char *filename,
-    bool reload_if_already_loaded = false)
+                               bool reload_if_already_loaded = false)
   {
     return get().load_file(filename, reload_if_already_loaded);
   }
@@ -83,9 +83,8 @@ public:
 
 protected:
 
-  bool load_file(
-    const char *filename,
-    bool reload_if_already_loaded = false)
+  bool load_file(const char *filename,
+                 bool reload_if_already_loaded = false)
   {
     CGAL_USE(reload_if_already_loaded);
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
