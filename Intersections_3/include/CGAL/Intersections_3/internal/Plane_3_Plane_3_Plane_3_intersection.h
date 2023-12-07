@@ -88,7 +88,7 @@ intersection(const typename K::Plane_3& plane1,
   typedef typename K::Plane_3      Plane_3;
 
   auto res = intersection_point(plane1,plane2,plane3, k);
-  if (res != boost::none)
+  if (res)
     return result_type(*res);
 
   // Intersection between plane1 and plane2 can either be
