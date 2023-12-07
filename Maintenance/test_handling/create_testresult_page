@@ -474,7 +474,7 @@ sub print_platform_descriptions()
 <th>BOOST</th>
 <th>MPFR</th>
 <th>GMP</th>
-<th>QT5</th>
+<th>QT</th>
 <th>LEDA</th>
 <th>CXXFLAGS</th>
 <th>LDFLAGS</th>
