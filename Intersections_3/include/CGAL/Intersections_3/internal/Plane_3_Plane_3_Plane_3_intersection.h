@@ -80,7 +80,6 @@ intersection(const typename K::Plane_3& plane1,
                                                   typename K::Line_3,
                                                   typename K::Plane_3> > result_type;
 
-  typedef typename K::Point_3      Point_3;
   typedef typename K::Line_3       Line_3;
   typedef typename K::Plane_3      Plane_3;
 
