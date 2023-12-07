@@ -23,7 +23,7 @@ void draw(const Mesh& amesh,
 /*!
 \ingroup PkgDrawFaceGraphWithPaths
 
-A shortcut to `CGAL::draw(mesh, paths, Graphics_scene_options_face_graph_with_paths{})`.
+A shortcut to `CGAL::draw(amesh, apaths, Graphics_scene_options_face_graph_with_paths{})`.
 */
 template<class Mesh>
 void draw(const Mesh& amesh,
@@ -62,20 +62,20 @@ adds the vertices, edges and faces of `amesh`, either a 2D linear cell complex o
 \param apaths the paths to draw, which should lie on `amesh`.
 */
 template <class Mesh, class GSOptions>
-void add_to_graphics_scene(const Mesh& mesh,
-                           CGAL::Graphics_scene& graphics_scene,
+void add_to_graphics_scene(const Mesh& amesh,
+                           CGAL::Graphics_scene& gs,
                            const GSOptions& gso,
-                           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>& paths);
+                           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>& apaths);
 
 /*!
 \ingroup PkgDrawFaceGraphWithPaths
 
-A shortcut to `CGAL::add_to_graphics_scene(mesh, graphics_scene, Graphics_scene_options_face_graph_with_paths{}, paths)`.
+A shortcut to `CGAL::add_to_graphics_scene(amesh, gs, Graphics_scene_options_face_graph_with_paths{}, apaths)`.
 */
 template <class Mesh>
-void add_to_graphics_scene(const Mesh& mesh,
-                           CGAL::Graphics_scene& graphics_scene,
-                           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>& paths);
+void add_to_graphics_scene(const Mesh& amesh,
+                           CGAL::Graphics_scene& gs,
+                           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>& apaths);
 
 /*!
 \ingroup PkgDrawFaceGraphWithPaths
@@ -83,8 +83,8 @@ void add_to_graphics_scene(const Mesh& mesh,
 Same function than <a href="#XXXX"><b>add_to_graphics_scene()</b></a> but taking the paths from a list instead from an std::vector.
 */
 template <class Mesh, class GSOptions>
-void add_to_graphics_scene(const Mesh& mesh,
-                           CGAL::Graphics_scene& graphics_scene,
+void add_to_graphics_scene(const Mesh& amesh,
+                           CGAL::Graphics_scene& gs,
                            const GSOptions& gso,
                            std::initializer_list<Path_on_surface<Mesh> > apaths);
 
@@ -94,8 +94,8 @@ void add_to_graphics_scene(const Mesh& mesh,
 Same function than <a href="#XXXX"><b>add_to_graphics_scene()</b></a> but taking the paths from a list instead from an std::vector.
 */
 template <class Mesh>
-void add_to_graphics_scene(const Mesh& mesh,
-                           CGAL::Graphics_scene& graphics_scene,
+void add_to_graphics_scene(const Mesh& amesh,
+                           CGAL::Graphics_scene& gs,
                            std::initializer_list<Path_on_surface<Mesh> > apaths);
 
 } /* namespace CGAL */
