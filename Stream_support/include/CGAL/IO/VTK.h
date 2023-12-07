@@ -174,7 +174,7 @@ bool read_VTK(const std::string& fname,
 /*!
  * \ingroup PkgStreamSupportIoFuncsVTP
  *
- * \brief reads the content of the input file into `points` and `polygons`, using the \ref IOStreamVTK.
+ * \brief reads the content of the input file into `points` and `polygons`, using the legacy file format of the \ref IOStreamVTK.
  *
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *

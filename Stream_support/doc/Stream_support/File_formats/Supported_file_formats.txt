@@ -426,7 +426,7 @@ A precise specification of the format is available <a href="http://gun.teipir.gr
   </tr>
 </table>
 
-\section IOStreamVTK VTK (VTU / VTP) File Formats
+\section IOStreamVTK VTK (VTU / VTP / legacy) File Formats
 
 \attention \cgal needs to be configured with the VTK Libraries for this function to be available.
 
@@ -440,7 +440,9 @@ The VTK libraries use different file formats to handle data structures, but we o
 
 - The `VTP` format can be used to store collections of points, lines, and triangles.
   In the <a href="https://vtk.org/"> VTK Libraries</a>, it is the format
-  reserved to store `PolyData`, and in \cgal, we use it to store Polygon Meshes.
+  reserved to store `PolyData`, and in \cgal, we use it to store polygon meshes.
+
+We additionally provide a read function for the legacy non-XML file `VTK` file format for polygon meshes.
 
 A precise specification of those formats is available at
 <a href="https://vtk.org/wp-content/uploads/2015/04/file-formats.pdf">vtk.org</a>.
