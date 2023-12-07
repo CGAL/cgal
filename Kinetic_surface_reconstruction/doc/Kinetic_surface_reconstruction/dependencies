@@ -8,3 +8,8 @@ Combinatorial_map
 Surface_mesh
 Property_map
 Polygon_mesh_processing
+Shape_detection
+Shape_regularization
+Scale_space_reconstruction
+Advancing_front_surface_reconstruction
+Poisson_surface_reconstruction

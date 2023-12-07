@@ -7,19 +7,94 @@ namespace CGAL {
 
 \authors Sven Oesau and Florent Lafarge
 
-This chapter describes the ...
+\section ksrIntroduction Introduction
+Reconstruction of man-made objects from point clouds pose a challenge to traditional surface reconstruction methods that often produce a smooth surface, e.g., by meshing a fitted implicit function, see \ref PkgPoissonSurfaceReconstruction3 "Poisson Surface Reconstruction", or by interpolation, see \ref PkgAdvancingFrontSurfaceReconstruction "Advancing Front Surface Reconstruction" and \ref PkgScaleSpaceReconstruction3 "Scale Space Surface Reconstruction".
+The kinetic surface reconstruction package implements the pipeline proposed by Bauchet et. al \cgalCite{bauchet2020kinetic}. At the core is the \ref PkgKineticShapePartition "Kinetic shape partition" which efficiently decomposes the bounding box into a set of convex polyhedra. The decomposition is guided by a set of planar shapes which are aforehand abstracted from an input point cloud. The final surface is obtained via an energy formulation trading data faithfulness for low complexity which is solved via min-cut.  The output is a polygonal watertight mesh.
 
-\section secmydefinitions Definitions
+The method overcomes the major limitation of similar approaches which decompose the bounding box using planar shapes. By partitioning the space into fewer cells using the kinetic approach and aforehand splitting of input data via an adaptive octree the method beats the common full decomposition of the bounding box which has a complexity of \cgalBigO{n^3}. This allows for effective handling of large scenes. At the same time the kinetic approach of decomposing the bounding box limits the number of tiny cells in the partition. Tiny cells are often responsible for small artifacts and at the same time increase the memory requirements and running time.
 
-Section on definitions here ...
+\section ksrAlgorithm Algorithm
+The method takes as input a point cloud with oriented normals. In a first step, \ref PkgShapeDetection "Shape Detection" is used to abstract planar shapes from the point cloud. The optional regularization of shapes, see \ref PkgShapeRegularization "Shape regularization", can not just improve the accuracy of the data by aligning parallel, coplanar and orthogonal shapes, but provides in the same time a reduction in complexity.
+Before inserting the planar shapes into the kinetic shape partition, coplanar shapes are merged into a single shape and the 2d convex hull of each shape is constructed.
+The reconstruction is posed as an energy minimization labeling the convex volumes of the kinetic shape partition as inside or outside. The optimal surface separating the differently labeled volumes is found via min-cut. A graph is embedded into the kinetic partition representing every volume by a vertex and every face between to volumes by an edge connecting the corresponding vertices.
+<table border="0">
+  <tr>
+    <td>
+\f$\DeclareMathOperator*{\argmin}{arg\,min} \argmin\limits_{l \in {\{0, 1\}}^n} E(l) = (1 - \lambda) D(x) + \lambda U(x)\f$
+
+\f$D(x) = \sum\limits_{i \in C}\sum\limits_{p \in I_i}d_i(p, l_i)\f$
+
+\f$U(x) = \frac{I}{A}\sum\limits_{i\mathtt{\sim} j}a_{ij} \cdot (1-\delta{l_i,l_j})\f$
+    </td>
+    <td>
+    The energy function trads data term for regularization term via parameter \f$\lambda\f$
+    
+    The data term counts votes from the points \f$p \in I_i\f$ based on their associated normal pointing towards or away from each volume \f$i \in C\f$.
+    
+    The regularization term penalizes the total surface area and thus favors surfaces with low complexity.
+    </td>
+  </tr>
+</table>
+
+The labels \f$l \in {\{0, 1\}}^n\f$ denote the label for the \f$n\f$ volumes of the kinetic shape partition. The data term measures the coherence of the labeled volumes with the orientation of normals of the input points. The prefered label for a volume is determined by a voting of the input points and their associated normals.
+For each volume \f$i \in C\f$ the inliers from the shape detection associated with the faces of the volume \f$p \in I_i\f$ either vote inside or outside for the volume. The vote is inside \f$d_i(p, inside) = 1 and d_i(p, outside = 0)\f$ if the normal associated to the point is directed to the outwards of the volume or outside \f$d_i(p, inside) = 0 and d_i(p, outside = 1)\f$ if the normal is oriented inwards.
+The regularization term is a common choice penalizing the total surface area of the surface and thus favoring less complex surfaces. To put the data term and regularization term into balance, area of all faces is normalized by the total area of all faces \f$A\f$ and scaled by twice the total number of inliners \f$I\f$ from the shape detection.
+
+Thus the reconstruction is guaranteed to be watertight as it equals a union of volumes. However, the reconstruction may consist of several components and is not guaranteed to be 2-manifold as different components may share a vertex or an edge.
+
+\cgalFigureBegin{Kspr_pipelinefig,ksr_pipeline_small.png}
+Kinetic surface reconstruction pipeline.\n From left to right: 1. input point cloud with 382k points 2. 98 detected planar shapes 3. 63 regularized shapes 4. kinetic shape partition with 1,487 cells 5. reconstructed polygonal mesh with 131 faces.
+\cgalFigureEnd
+
+\section ksrParameters Parameters
+The parameters of the method include the parameters from other packages which are used internally:
+- \ref PkgShapeDetection "Shape detection": *k_neighbors*, *maximum_distance*, *maximum_angle* and *minimum_region_size*
+- \ref PkgShapeRegularization "Shape regularization for planes": *maximum_offset*, *regularize_parallelism*, *regularize_coplanarity*, *regularize_orthogonality*, *regularize_axis_symmetry*, *symmetry_direction* and *angle_tolerance* 
+ - *angle_tolerance* is replacing *maximum_angle* from Shape regularization due to a name collision with Shape detection
+- \ref Chapter_Kinetic_Shape_Partition "Kinetic shape partition": *k*, *reorient_bbox* and *bbox_dilation_ratio*
+
+The reconstruction adds two new parameters:
+- *external_nodes*:
+The graph cut formulation embeds a vertex into each volume and connects all vertices if the corresponding volumes share a common face. While each face inside the kinetic shape partition is exactly between two volumes, faces on the boundary have to be considered. Thus, 6 external vertices are inserted into the graph representing a volume on each side of the bounding box. The parameter *external_nodes* allows the user to either provide a fixed label *inside* or *outside* for each node or leave the label up to the energy minimization. Typical choices for this parameter are to choose all external nodes as outside for scanned objects, e.g., as in \cgalFigureRef{Kspr_pipelinefig}, or the *ZMIN* node *inside* and all other nodes *outside* as for exterior scans of buildings. The default value for this parameter is to leave the labels of the external nodes up to the energy minimization.
+
+- \f$\lambda\f$:
+The \f$\lambda\f$ parameter trades the data faithfulness of the energy minimization for low complexity. The parameter has to be choosen in the range of \f$[0,1)\f$. 0 indicates the only the voting of input points are considered in the energy minimization, while the default value of \f$0,5\f$ gives an equal weight to data faithfulness and low complexity. The value should be choosen according to the quality of the input data. If the point cloud is accurate, low in noise and complete a low value can be chosen.
+
+\section ksrParameterChoice Choice of parameters
+The kinetic shape partition determines all possible reconstructions as the energy formulation only decides about the labels for the volumes, but cannot change the volumes themselves. Thus, the first stage of the pipeline, \ref PkgShapeDetection "Shape Detection" and \ref PkgShapeRegularization "Shape Regularization" have a large impact on the final reconstruction.
+
+to be finished
+
+- how to use
+-> show how to save intermediate results
+-> tune Shape detection first
+-> kinetic partition defines the solution space for graph-cut
+- ground_estimation
 
 \section secmyexamples Examples
 
-\subsection myFirstExample First Example
+\subsection myBasicExample Basic example
+This minimal example shows the import of a simple synthetic point cloud and an reconstruction using mostly default parameters.
 
-The following example shows ...
+\cgalExample{Kinetic_surface_reconstruction/basic.cpp}
 
-\cgalExample{Kinetic_surface_reconstruction/kinetic_reconstruction.cpp}
+\subsection myBuildingExample Building example
+This example shows the import of an acquired point cloud of a building and a reconstruction using a common choice of parameters for building reconstruction. The input point cloud is reoriented to be axis-aligned and regularization is used to simplify the detected shapes before reconstruction.
+The actual reconstruction method is actually fast. To avoid running the full shape detection and kinetic partition just to try different values for beta, several reconstructions are performed and exported into ply format.
+
+\cgalExample{Kinetic_surface_reconstruction/building.cpp}
+
+\subsection myParametersExample Parameters example
+This example provides a command line version of the kinetic surface reconstruction allowing to configure the input point cloud filename and most parameters. 
+
+\cgalExample{Kinetic_surface_reconstruction/parameters.cpp}
+
+\section ksrPerformance Performance
+todo:
+
+- Show some examples (Meetingroom, etc.)
+
+- Performance
 
 */
 } /* namespace CGAL */

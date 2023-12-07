@@ -14,7 +14,6 @@
 #include "include/Terminal_parser.h"
 
 using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
-using EPECK     = CGAL::Exact_predicates_exact_constructions_kernel;
 using FT        = typename Kernel::FT;
 using Point_3   = typename Kernel::Point_3;
 using Vector_3  = typename Kernel::Vector_3;
@@ -60,7 +59,10 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   parser.add_val_parameter("-osize", parameters.max_octree_node_size);
 
   // Shape regularization.
-  parser.add_bool_parameter("-regularize", parameters.regularize);
+  parser.add_bool_parameter("-regparallel", parameters.regparallel);
+  parser.add_bool_parameter("-regcoplanar", parameters.regcoplanar);
+  parser.add_bool_parameter("-regorthogonal", parameters.regorthogonal);
+  parser.add_bool_parameter("-regsymmetric", parameters.regsymmetric);
 
   // Shape regularization.
   parser.add_bool_parameter("-reorient", parameters.reorient);
@@ -103,16 +105,9 @@ int main(const int argc, const char** argv) {
 
   // Input.
   Point_set point_set(parameters.with_normals);
-  std::ifstream segmented_file(base);
-  if (segmented_file.is_open()) {
-    segmented_file >> point_set;
-    segmented_file.close();
-  }
-  else {
-    std::ifstream input_file(parameters.data, std::ios_base::binary);
-    input_file >> point_set;
-    input_file.close();
-  }
+  std::ifstream input_file(parameters.data, std::ios_base::binary);
+  input_file >> point_set;
+  input_file.close();
 
   if (!point_set.has_normal_map()) {
     point_set.add_normal_map();
@@ -161,10 +156,10 @@ int main(const int argc, const char** argv) {
     .max_octree_depth(parameters.max_octree_depth)
     .max_octree_node_size(parameters.max_octree_node_size)
     .reorient_bbox(false)
-    .regularize_parallelism(false)
-    .regularize_coplanarity(false)
-    .regularize_orthogonality(false)
-    .regularize_axis_symmetry(false)
+    .regularize_parallelism(parameters.regparallel)
+    .regularize_coplanarity(parameters.regcoplanar)
+    .regularize_orthogonality(parameters.regorthogonal)
+    .regularize_axis_symmetry(parameters.regsymmetric)
     .angle_tolerance(5)
     .maximum_offset(0.02);
 
@@ -190,7 +185,9 @@ int main(const int argc, const char** argv) {
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
 
-  ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
+  std::map<typename KSR::KSP::Face_support, bool> external_nodes;
+
+  ksr.reconstruct(parameters.graphcut_beta, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)
@@ -208,10 +205,10 @@ int main(const int argc, const char** argv) {
     vtx.clear();
     polylist.clear();
 
-    ksr.reconstruct(b, std::back_inserter(vtx), std::back_inserter(polylist));
+    ksr.reconstruct(b, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
 
     if (polylist.size() > 0)
-      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_beta), vtx, polylist);
+      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(b), vtx, polylist);
   }
 
   std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;

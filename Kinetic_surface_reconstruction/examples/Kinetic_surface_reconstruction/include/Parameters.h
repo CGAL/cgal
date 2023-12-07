@@ -36,7 +36,7 @@ namespace KSR {
     FT distance_threshold;
     FT angle_threshold;
     std::size_t min_region_size;
-    bool regularize;
+    bool regparallel, regcoplanar, regorthogonal, regsymmetric;
 
     // Partitioning.
     // See KSR/parameters.h
@@ -64,6 +64,10 @@ namespace KSR {
       max_octree_depth(3),
       distance_threshold(0),
       angle_threshold(10),
+      regparallel(false),
+      regcoplanar(true),
+      regorthogonal(false),
+      regsymmetric(false),
       // partition
       k_intersections(1),
       enlarge_bbox_ratio(FT(11) / FT(10)),
