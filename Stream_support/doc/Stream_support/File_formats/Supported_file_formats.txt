@@ -43,7 +43,7 @@ The following table lists some \cgal data structures that have I/O functions com
     <td rowspan="6" width="75">Input</td>
     <td rowspan="3" width="175">Polygon Mesh</td>
     <td width="250">`CGAL::Surface_mesh`</td>
-    <td width="500">\link PkgSurfaceMeshIOFuncOFF CGAL::IO::read_OFF(const char*, CGAL::Surface_mesh&)\endlink</td>
+    <td width="500">\link PkgSurfaceMeshIOFuncOFF CGAL::IO::read_OFF(const std::string&, CGAL::Surface_mesh&)\endlink</td>
   </tr>
   <tr>
     <td>`CGAL::Polyhedron_3`</td>
@@ -71,11 +71,11 @@ The following table lists some \cgal data structures that have I/O functions com
     <td rowspan="6">Output</td>
     <td rowspan="3">Polygon Mesh</td>
     <td>`CGAL::Surface_mesh`</td>
-    <td>\link PkgSurfaceMeshIOFuncOFF CGAL::IO::write_OFF(const char*, CGAL::Surface_mesh&)\endlink</td>
+    <td>\link PkgSurfaceMeshIOFuncOFF CGAL::IO::write_OFF(const std::string, CGAL::Surface_mesh&)\endlink</td>
   </tr>
   <tr>
     <td>`CGAL::Polyhedron_3`</td>
-    <td>\link PkgPolyhedronIOFunc CGAL::IO::write_OFF(const char*, const CGAL::Polyhedron_3&)\endlink</td>
+    <td>\link PkgPolyhedronIOFunc CGAL::IO::write_OFF(const std::string&, const CGAL::Polyhedron_3&)\endlink</td>
   </tr>
   <tr>
     <td>Any model of `FaceGraph`</td>
