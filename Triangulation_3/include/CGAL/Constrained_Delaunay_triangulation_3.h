@@ -2048,10 +2048,6 @@ private:
     int region_count = 0;
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
-      CGAL_assertion(tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
-                                 fh->vertex(1)->info().vertex_handle_3d,
-                                 fh->vertex(2)->info().vertex_handle_3d) ||
-                     (fh->info().missing_subface == true));
       if(false == fh->info().missing_subface) {
         continue;
       }
