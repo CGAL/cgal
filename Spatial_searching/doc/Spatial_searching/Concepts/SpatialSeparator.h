@@ -11,7 +11,9 @@ space is said to be on the negative side of the separator and the
 other part of space is said to be on the positive side of the
 separator.
 
-\cgalHasModel `CGAL::Plane_separator<FT>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Plane_separator<FT>}
+\cgalHasModelsEnd
 
 */
 

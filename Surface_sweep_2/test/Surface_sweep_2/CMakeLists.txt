@@ -31,7 +31,7 @@ endfunction()
 
 function(compile_and_run_sweep name source_file point_location traits data_set)
   compile(${ARGV})
-  if(NOT BUILD_TESTING)
+  if(NOT CGAL_ENABLE_TESTING)
     return()
   endif()
   cgal_add_compilation_test(${name})

@@ -61,7 +61,7 @@ namespace Surface_mesh_parameterization {
 /// `TriangleMesh` class and does not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
@@ -398,7 +398,7 @@ public:
 ///            if an input border vertex has valence `1` and if it is mapped to the same edge of the square
 ///            as its two adjacent (border) vertices, for example.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_parameterizer_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_arc_length_parameterizer_3<TriangleMesh>`
@@ -470,7 +470,7 @@ protected:
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_parameterizer_3<TriangleMesh>`
 /// \sa `CGAL::Surface_mesh_parameterization::Square_border_uniform_parameterizer_3<TriangleMesh>`

@@ -118,7 +118,7 @@ load_function() const
 
   // Add loaded functions to the dialog
   int i=0;
-  Q_FOREACH( Implicit_function_interface* f, functions_ )
+  for( Implicit_function_interface* f : functions_ )
   {
     ui.functionList->insertItem(i++,f->name());
   }
@@ -159,7 +159,7 @@ load_function_plugins()
     if( !pluginsDir.cd(newDir) ) return;
   }
 
-  Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files))
+  for (QString fileName : pluginsDir.entryList(QDir::Files))
   {
     if ( fileName.contains("plugin") && QLibrary::isLibrary(fileName) )
     {

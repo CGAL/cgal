@@ -81,7 +81,7 @@ struct Incrementer {
  *
  *        \tparam Tr_ is the triangulation type to traverse.
  *
- *  \cgalModels{ForwardIterator}
+ *        \cgalModels{ForwardIterator}
  *
  *        \sa `Triangulation_3`
  *        \sa `Forward_circulator_base`

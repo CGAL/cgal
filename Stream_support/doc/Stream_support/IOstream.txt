@@ -69,7 +69,7 @@ as a sequence of four byte. The format depends on the machine.
 The mode `PRETTY`
 serves mainly for debugging as the type of the geometric
 object is written, as well as the data defining the object. For example
-for a point at the origin with Cartesian double coordinates, the output
+for a point at the origin with %Cartesian double coordinates, the output
 would be `PointC2(0.0, 0.0)`. At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
 is in \ascii mode.
@@ -519,4 +519,3 @@ which might look as follows:
 
 */
 } /* namespace CGAL */
-

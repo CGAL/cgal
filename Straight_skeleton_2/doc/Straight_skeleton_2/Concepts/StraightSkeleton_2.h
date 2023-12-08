@@ -9,7 +9,9 @@ used to represent a straight skeleton. It refines the concept
 `HalfedgeDS` and adds additional requirements on the nested types
 `Vertex`, `Halfedge`, and `Face` of the halfedge data structure.
 
-\cgalHasModel `CGAL::Straight_skeleton_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Straight_skeleton_2}
+\cgalHasModelsEnd
 
 \attention This concept explicitly protects all the modifying
 operations of the base `HalfedgeDS` concept. Only the algorithm

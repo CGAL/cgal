@@ -80,7 +80,7 @@ instantiated with a model of the concept
 
 \tparam Polyhedron stands for the type of the input polyhedral surface(s), model of `FaceListGraph`.
 
-\cgalModels `MeshDomainWithFeatures_3`
+\cgalModels{MeshDomainWithFeatures_3}
 
 \sa `CGAL::Mesh_domain_with_polyline_features_3<MD>`
 \sa `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT>`

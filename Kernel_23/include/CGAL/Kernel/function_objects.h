@@ -287,6 +287,7 @@ namespace CommonKernelFunctors {
 
       const Vector_3 abac1 = xproduct(ab1, ac1);
       const Vector_3 abad1 = xproduct(ab1, ad1);
+      if (abac1==NULL_VECTOR || abad1==NULL_VECTOR) return SMALLER;
       const FT sc_prod_1 = abac1 * abad1;
 
       CGAL_kernel_assertion_msg( abac1 != NULL_VECTOR,

@@ -15,7 +15,9 @@ functor the version without offsets.
 
 \cgalRefines{Periodic_3TriangulationTraits_3,RegularTriangulationTraits_3}
 
-\cgalHasModel `CGAL::Periodic_3_regular_triangulation_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_3_regular_triangulation_traits_3}
+\cgalHasModelsEnd
 
 In addition to the requirements described for the traits class
 RegularTriangulationTraits_3, the geometric traits class of a

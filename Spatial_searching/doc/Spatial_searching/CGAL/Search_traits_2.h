@@ -9,8 +9,7 @@ and the search classes.
 \tparam SearchGeomTraits must be a model of the concept `SearchGeomTraits_2`,
 for example `Simple_cartesian<double>` or `Simple_cartesian<Gmpq>`.
 
-\cgalModels `SearchTraits`
-\cgalModels `RangeSearchTraits`
+\cgalModels{SearchTraits,RangeSearchTraits}
 
 \sa `Search_traits_3<SearchGeomTraits_2>`
 \sa `Search_traits<NT,Point,CartesianConstIterator,ConstructCartesianConstIterator,Dim>`

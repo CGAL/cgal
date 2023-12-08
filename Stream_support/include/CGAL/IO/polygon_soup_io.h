@@ -100,7 +100,7 @@ bool read_polygon_soup(const std::string& fname,
   else if(ext == "ts")
     return read_GOCAD(fname, points, polygons, np);
 #ifdef CGAL_USE_VTK
-  else if(ext == "ts")
+  else if(ext == "vtp")
     return read_VTP(fname, points, polygons, np);
 #endif
 

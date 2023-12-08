@@ -17,7 +17,7 @@ a <I>negative</I> side.
 The boundary of a tetrahedron splits the space in two open regions, a
 bounded one and an unbounded one.
 
-\cgalModels `Kernel::Tetrahedron_3`
+\cgalModels{Kernel::Tetrahedron_3}
 
 */
 template< typename Kernel >
@@ -29,6 +29,7 @@ public:
 
 /*!
 introduces a tetrahedron `t` with vertices `p0`, `p1`, `p2` and `p3`.
+\cgalEpicExact
 */
 Tetrahedron_3(const Point_3<Kernel> &p0,
 const Point_3<Kernel> &p1,
@@ -54,11 +55,13 @@ bool operator!=(const Tetrahedron_3<Kernel> &t2) const;
 
 /*!
 returns the i'th vertex modulo 4 of `t`.
+\cgalEpicExact
 */
 Point_3<Kernel> vertex(int i) const;
 
 /*!
 returns `vertex(int i)`.
+\cgalEpicExact
 */
 Point_3<Kernel> operator[](int i) const;
 
@@ -129,6 +132,7 @@ Kernel::FT volume() const;
 
 /*!
 returns a bounding box containing `t`.
+\cgalEpicExact
 */
 Bbox_3 bbox() const;
 

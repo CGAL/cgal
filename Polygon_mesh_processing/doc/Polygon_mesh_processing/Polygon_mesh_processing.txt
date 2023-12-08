@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -49,6 +49,7 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPCombinatorialRepair :  repair of polygon meshes and polygon soups.
 - \ref PMPGeometricRepair :  repair of the geometry of polygon meshes.
 - \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
+- \ref PMPICC : computing curvatures (mean, gaussian, principal) on a polygon mesh.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
@@ -115,10 +116,18 @@ to the original surface to keep a good approximation of the input.
 
 A triangulated region of a polygon mesh can be remeshed using the function
 `CGAL::Polygon_mesh_processing::isotropic_remeshing()`, as illustrated
-by \cgalFigureRef{iso_remeshing}. The algorithm has only two parameters :
-the target edge length for the remeshed surface patch, and
-the number of iterations of the abovementioned sequence of operations. The bigger
-this number, the smoother and closer to target edge length the mesh will be.
+by \cgalFigureRef{iso_remeshing}. The algorithm has two parameters:
+the sizing field object for the remeshed surface patch, and
+the number of iterations of the abovementioned sequence of operations.
+
+The sizing field establishes the local target edge length for the remeshed surface. Two sizing fields are
+provided: a uniform and a curvature-adaptive sizing field. With `CGAL::Polygon_mesh_processing::Uniform_sizing_field`,
+all triangle edges are targeted to have equal lengths. With `CGAL::Polygon_mesh_processing::Adaptive_sizing_field`, triangle edge lengths depend on the local curvature --
+shorter edges appear in regions with a higher curvature and vice versa. The outline of the adaptive sizing
+field algorithm is available in \cgalCite{dunyach2013curvRemesh}. The distinction between uniform and adaptive
+sizing fields is depicted in figure \cgalFigureRef{uniform_and_adaptive}.
+
+As the number of iterations increases, the mesh tends to be smoother and closer to the target edge length.
 
 An additional option has been added to \e protect (\e i.\e e. not modify) some given polylines.
 In some cases, those polylines are too long, and reaching the desired target edge length while protecting them is not
@@ -131,6 +140,12 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (b) Surface uniformly and entirely remeshed.
 (c) Selection of a range of faces to be remeshed.
 (d) Surface mesh with the selection uniformly remeshed.
+\cgalFigureEnd
+
+\cgalFigureBegin{uniform_and_adaptive, uniform_and_adaptive.png}
+Sizing fields in isotropic remeshing.
+(a) Uniform sizing field.
+(b) Curvature-based adaptive sizing field.
 \cgalFigureEnd
 
 \paragraph Delaunay-Based Surface Remeshing
@@ -948,6 +963,144 @@ not provide storage for the normals.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp}
 
+****************************************
+\section PMPICC Computing Curvatures
+
+This package provides methods to compute curvatures on polygonal meshes based on Interpolated
+Corrected Curvatures on Polyhedral Surfaces \cgalCite{cgal:lrtc-iccmps-20}. This includes mean curvature,
+Gaussian curvature, principal curvatures and directions. These can be computed on triangle meshes,
+quad meshes, and meshes with n-gon faces (for n-gons, the centroid must be inside the n-gon face).
+The algorithms used prove to work well in general. Also, on meshes with noise on vertex positions,
+they give accurate results, under the condition that the correct vertex normals are provided.
+
+\subsection ICCBackground Brief Background
+
+Surface curvatures are quantities that describe the local geometry of a surface. They are important in many
+geometry processing applications. As surfaces are 2-dimensional objects (embedded in 3D), they can bend
+in 2 independent directions. These directions are called principal directions, and the amount of bending
+in each direction is called the principal curvature: \f$ k_1 \f$ and \f$ k_2 \f$ (denoting max and min
+curvatures). Curvature is usually expressed as scalar quantities like the mean curvature \f$ H \f$ and
+the Gaussian curvature \f$ K \f$ which are defined in terms of the principal curvatures.
+
+The algorithms are based on the two papers \cgalCite{cgal:lrt-ccm-22} and \cgalCite{cgal:lrtc-iccmps-20}. They
+introduce a new way to compute curvatures on polygonal meshes. The main idea in \cgalCite{cgal:lrt-ccm-22} is
+based on decoupling the normal information from the position information, which is useful for dealing with
+digital surfaces, or meshes with noise on vertex positions. \cgalCite{cgal:lrtc-iccmps-20} introduces some
+extensions to this framework, as it uses linear interpolation on the corrected normal vector field
+to derive new closed form equations for the corrected curvature measures. These <b>interpolated</b>
+curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
+with vertices \a i, \a j, \a k:
+
+\f[
+  \begin{align*}
+  \mu^{(0)}(\tau_{ijk}) = &\frac{1}{2} \langle \bar{\mathbf{u}} \mid (\mathbf{x}_j - \mathbf{x}_i) \times (\mathbf{x}_k - \mathbf{x}_i) \rangle, \\
+  \mu^{(1)}(\tau_{ijk}) = &\frac{1}{2} \langle \bar{\mathbf{u}} \mid (\mathbf{u}_k - \mathbf{u}_j) \times \mathbf{x}_i + (\mathbf{u}_i - \mathbf{u}_k) \times \mathbf{x}_j + (\mathbf{u}_j - \mathbf{u}_i) \times \mathbf{x}_k \rangle, \\
+  \mu^{(2)}(\tau_{ijk}) = &\frac{1}{2} \langle \mathbf{u}_i \mid \mathbf{u}_j \times \mathbf{u}_k \rangle, \\
+  \mu^{\mathbf{X},\mathbf{Y}}(\tau_{ijk}) = & \frac{1}{2} \big\langle \bar{\mathbf{u}} \big| \langle \mathbf{Y} | \mathbf{u}_k -\mathbf{u}_i \rangle \mathbf{X} \times (\mathbf{x}_j - \mathbf{x}_i) \big\rangle
+    -\frac{1}{2} \big\langle \bar{\mathbf{u}} \big| \langle \mathbf{Y} | \mathbf{u}_j -\mathbf{u}_i \rangle \mathbf{X} \times (\mathbf{x}_k - \mathbf{x}_i) \big\rangle,
+  \end{align*}
+\f]
+where \f$ \langle \cdot \mid \cdot \rangle \f$ denotes the usual scalar product,
+\f$ \bar{\mathbf{u}}=\frac{1}{3}( \mathbf{u}_i + \mathbf{u}_j + \mathbf{u}_k )\f$.
+
+The first measure \f$ \mu^{(0)} \f$ is the area measure of the triangle, and the measures \f$ \mu^{(1)} \f$ and
+\f$ \mu^{(2)} \f$ are the mean and Gaussian corrected curvature measures of the triangle. The last measure
+\f$ \mu^{\mathbf{X},\mathbf{Y}} \f$ is the anisotropic corrected curvature measure of the triangle. The
+anisotropic measure is later used to compute the principal curvatures and directions through an eigenvalue
+solver.
+
+The interpolated curvature measures are then computed for each vertex \f$ v \f$ as the sum of
+the curvature measures of the faces in a ball around \f$ v \f$ weighted by the inclusion ratio of the
+triangle in the ball. If the ball radius is not specified, the sum is instead computed over the incident faces
+of \f$ v \f$.
+
+To get the final curvature value for a vertex \f$ v \f$, the respective interpolated curvature measure
+is divided by the interpolated area measure.
+
+\f[
+\mu^{(k)}( B ) = \sum_{\tau : \text{triangle} } \mu^{(k)}( \tau ) \frac{\mathrm{Area}( \tau \cap B )}{\mathrm{Area}(\tau)}.
+\f]
+
+\subsection ICCAPI API
+
+The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`,
+`Polyhedron_3` and other polygonal mesh structures based on the concept `FaceGraph`.
+
+These computations are performed using (on all vertices of the mesh) `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
+where function named parameters are used to select the curvatures (and possibly directions) to be computed. An overload function with the same name
+but taking a given vertex is also available in case the computation should be done only for that vertex.
+
+\subsection ICCResults Results & Performance
+
+First, \cgalFigureRef{icc_measures} illustrates various curvature measures on a triangular mesh.
+
+\cgalFigureAnchor{icc_measures}
+<center>
+<table border=0>
+<tr>
+<td><img src="bimba-mean0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-gaussian0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-dmin0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-dmax0.040000-0.000000.jpg" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
+</center>
+
+
+\cgalFigureCaptionBegin{icc_measures}
+Mean curvature, Gaussian curvature, minimal principal curvature direction and maximal principal curvature direction on a mesh (ball radius set to 0.04).
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{icc_various_ball_radii}
+<center>
+<table border=0>
+<tr>
+<td><img src="bimba-mean0.020000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.030000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.050000-0.000000.jpg" style="width:100%;"/></td>
+</tr>
+<tr>
+<td><img src="bimba-mean0.020000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.030000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.050000-0.002000.jpg" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{icc_various_ball_radii}
+When changing the integration ball radius, we obtain a scale space of curvature measure that can be used to tackle possible noise in the input as illustrated in the second row (mean curvature only with fixed colormap ranges and ball radii in {0.02,0.03,0.04,0.05}).
+\cgalFigureCaptionEnd
+
+
+\ref BGLPropertyMaps are used to record the computed curvatures as shown in examples. In the following examples, for each property map, we associate
+a curvature value to each vertex.
+
+\subsection ICCExampleSM Interpolated Corrected Curvatures on a Surface Mesh Example
+
+The following example illustrates how to
+compute the curvatures on vertices
+and store them in the property maps provided by the class `Surface_mesh`.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_SM.cpp}
+
+\subsection ICCExamplePH Interpolated Corrected Curvatures on a Polyhedron Example
+
+The following example illustrates how to
+compute the curvatures on vertices
+and store them in dynamic property maps as the class `Polyhedron_3` does
+not provide storage for the curvatures.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_PH.cpp}
+
+\subsection ICCExampleSV Interpolated Corrected Curvatures on a Vertex Example
+
+The following example illustrates how to
+compute the curvatures on a specific vertex.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp}
 
 ****************************************
 \section PMPSlicer Slicer
@@ -1156,6 +1309,12 @@ available on 7th of October 2020.  It only uses the high level algorithm of chec
 is covered by a set of prisms, where each prism is an offset for an input triangle.
 That is, the implementation in \cgal does not use indirect predicates.
 
+The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under
+supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{cgal:lrtc-iccmps-20}.
+<a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
+used as a reference during the project.
+
+The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
 
 */
 } /* namespace CGAL */

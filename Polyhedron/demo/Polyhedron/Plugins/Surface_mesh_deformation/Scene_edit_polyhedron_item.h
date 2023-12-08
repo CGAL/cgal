@@ -26,9 +26,9 @@
 #include <CGAL/Surface_mesh_deformation.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <QGLBuffer>
-#include <QGLShader>
-#include <QGLShaderProgram>
+#include <QOpenGLBuffer>
+#include <QOpenGLShader>
+#include <QOpenGLShaderProgram>
 
 
 typedef boost::graph_traits<SMesh>::vertex_descriptor sm_vertex_descriptor;

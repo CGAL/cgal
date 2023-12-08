@@ -153,13 +153,13 @@ public:
     for(auto fit=wrapper.triangulation().finite_facets_begin(), fend=wrapper.triangulation().finite_facets_end(); fit!=fend; ++fit)
     {
       Facet f = *fit;
-      if(!f.first->info().is_outside)
+      if(!f.first->is_outside())
         f = wrapper.triangulation().mirror_facet(f);
 
       const Cell_handle c = f.first;
       const int s = f.second;
       const Cell_handle nh = c->neighbor(s);
-      if(c->info().is_outside == nh->info().is_outside)
+      if(c->is_outside() == nh->is_outside())
         continue;
 
       std::array<std::size_t, 3> ids;
@@ -359,7 +359,7 @@ public:
     if(scene->selectionIndices().empty())
       return false;
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if(!qobject_cast<Scene_polygon_soup_item*>(scene->item(index)) &&
          !qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) &&
@@ -540,7 +540,7 @@ public Q_SLOTS:
     Segments segments;
     Points points;
 
-    Q_FOREACH(int index, this->scene->selectionIndices())
+    for(int index : this->scene->selectionIndices())
     {
       // ---
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
@@ -765,7 +765,7 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
-    Q_FOREACH(int index, this->scene->selectionIndices())
+    for(int index : this->scene->selectionIndices())
     {
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
       if(sm_item != nullptr)

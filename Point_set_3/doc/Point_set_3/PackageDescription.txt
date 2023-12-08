@@ -1,9 +1,7 @@
 /// \defgroup PkgPointSet3Ref 3D Point Set Reference
 
 /*!
-  \code
-   #include <CGAL/draw_point_set_3.h>
-  \endcode
+\cgalInclude{CGAL/draw_point_set_3.h}
 */
 /// \defgroup PkgDrawPointSet3D Draw a 3D Point Set
 /// \ingroup PkgPointSet3Ref

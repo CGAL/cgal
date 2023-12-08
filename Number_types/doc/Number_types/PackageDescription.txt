@@ -18,9 +18,6 @@
 /// \defgroup nt_cgal CGAL Number Types
 /// \ingroup PkgNumberTypesRef
 
-/// \defgroup nt_cgal CGAL Number Types
-/// \ingroup PkgNumberTypesRef
-
 /// \defgroup nt_rrational Relates Rational
 /// \ingroup PkgNumberTypesRef
 
