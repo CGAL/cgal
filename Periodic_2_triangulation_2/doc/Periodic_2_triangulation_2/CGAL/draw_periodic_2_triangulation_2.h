@@ -20,12 +20,7 @@ template <typename DS,
           typename EdgeDescriptor,
           typename FaceDescriptor>
 struct Graphics_scene_options_periodic_2_triangulation_2: public CGAL::Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescriptor>
-{
-public:
-  typedef VertexDescriptor vertex_descriptor;
-  typedef EdgeDescriptor edge_descriptor;
-  typedef FaceDescriptor face_descriptor;
-};
+{};
 
 /*!
 \ingroup PkgDrawPeriodic2Triangulation2

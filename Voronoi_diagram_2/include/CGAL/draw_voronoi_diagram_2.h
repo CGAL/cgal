@@ -57,14 +57,12 @@ struct Graphics_scene_options_voronoi_2 :
   void bisector_color(const CGAL::IO::Color& c)
   { m_bisector_color=c; }
 
-  void disable_voronoi_vertices() { m_draw_voronoi_vertices=false; }
-  void enable_voronoi_vertices() { m_draw_voronoi_vertices=true; }
-  bool are_voronoi_vertices_enabled() const { return m_draw_voronoi_vertices; }
+  void draw_voronoi_vertices(bool b) { m_draw_voronoi_vertices=b; }
+  bool draw_voronoi_vertices() const { return m_draw_voronoi_vertices; }
   void toggle_draw_voronoi_vertices() { m_draw_voronoi_vertices=!m_draw_voronoi_vertices; }
 
-  void disable_dual_vertices() { m_draw_dual_vertices=false; }
-  void enable_dual_vertices() { m_draw_dual_vertices=true; }
-  bool are_dual_vertices_enabled() const { return m_draw_dual_vertices; }
+  void draw_dual_vertices(bool b) { m_draw_dual_vertices=b; }
+  bool draw_dual_vertices() const { return m_draw_dual_vertices; }
   void toggle_draw_dual_vertices() { m_draw_dual_vertices=!m_draw_dual_vertices; }
 
 protected:
@@ -310,7 +308,7 @@ void compute_elements(const V2& v2,
   if(gs_options.are_vertices_enabled())
   {
     // Draw the voronoi vertices
-    if (gs_options.are_voronoi_vertices_enabled())
+    if (gs_options.draw_voronoi_vertices())
     {
       for (typename V2::Vertex_iterator it=v2.vertices_begin();
            it!=v2.vertices_end(); ++it)
@@ -318,7 +316,7 @@ void compute_elements(const V2& v2,
     }
 
     // Draw the dual vertices
-    if (gs_options.are_dual_vertices_enabled())
+    if (gs_options.draw_dual_vertices())
     {
       for (typename V2::Delaunay_graph::Finite_vertices_iterator
              it=v2.dual().finite_vertices_begin();
@@ -402,13 +400,10 @@ void draw(const CGAL_VORONOI_TYPE& av2,
         }
         else if ((e->key() == ::Qt::Key_V) && (modifiers == ::Qt::ShiftModifier))
         {
-          if(gs_options.are_voronoi_vertices_enabled())
-          { gs_options.disable_voronoi_vertices(); }
-          else { gs_options.enable_voronoi_vertices(); }
-
+          gs_options.toggle_draw_voronoi_vertices();
           basic_viewer->displayMessage
             (QString("Voronoi vertices=%1.").
-             arg(gs_options.are_voronoi_vertices_enabled()?"true":"false"));
+             arg(gs_options.draw_voronoi_vertices()?"true":"false"));
 
           buffer.clear();
           draw_function_for_v2::compute_elements(av2, buffer, gs_options);
@@ -416,12 +411,9 @@ void draw(const CGAL_VORONOI_TYPE& av2,
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
         {
-          if(gs_options.are_dual_vertices_enabled())
-          { gs_options.disable_dual_vertices(); }
-          else { gs_options.enable_dual_vertices(); }
-
+          gs_options.toggle_draw_dual_vertices();
           basic_viewer->displayMessage(QString("Dual vertices=%1.").
-                                       arg(gs_options.are_dual_vertices_enabled()?"true":"false"));
+                                       arg(gs_options.draw_dual_vertices()?"true":"false"));
 
           buffer.clear();
           draw_function_for_v2::compute_elements(av2, buffer, gs_options);
