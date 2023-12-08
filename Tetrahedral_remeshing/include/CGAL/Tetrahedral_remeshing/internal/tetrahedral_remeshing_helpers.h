@@ -568,6 +568,8 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
   case 0:
     v->set_index(Mesh_3::internal::get_index<typename C3t3::Corner_index>(v->index()));
     break;
+  case -1://far points from concurrent Mesh_3
+    break;
   default:
     CGAL_assertion(false);
   }
@@ -1289,6 +1291,18 @@ void check_surface_patch_indices(const C3t3& c3t3)
   }
 }
 
+template<typename C3t3>
+void count_far_points(const C3t3& c3t3)
+{
+  std::size_t count = 0;
+  for (auto v : c3t3.triangulation().finite_vertex_handles())
+  {
+    if(c3t3.in_dimension(v) == -1)
+      ++count;
+  }
+  std::cout << "Nb far points : " << count << std::endl;
+}
+
 template<typename Tr>
 bool are_cell_orientations_valid(const Tr& tr)
 {
@@ -1699,13 +1713,17 @@ void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
   typedef typename Tr::Vertex_handle Vertex_handle;
   std::vector< std::vector<Vertex_handle> > vertices_per_dimension(4);
 
+  std::size_t nb_far_points = 0;
   for (typename Tr::Finite_vertices_iterator
        vit = tr.finite_vertices_begin();
        vit != tr.finite_vertices_end();
        ++vit)
   {
     if (vit->in_dimension() == -1)
+    {
+      ++nb_far_points;
       continue;//far point
+    }
     CGAL_assertion(vit->in_dimension() >= 0 && vit->in_dimension() < 4);
 
     vertices_per_dimension[vit->in_dimension()].push_back(vit);
@@ -1733,6 +1751,7 @@ void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
 
     ofs.close();
   }
+  std::cout << "Nb far points : " << nb_far_points << std::endl;
 }
 
 template<typename Tr>
