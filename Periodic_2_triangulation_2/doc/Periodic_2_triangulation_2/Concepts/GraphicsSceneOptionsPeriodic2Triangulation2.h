@@ -13,7 +13,7 @@ The concept `GraphicsSceneOptionsPeriodic2Triangulation2` defines data and metho
 class GraphicsSceneOptionsPeriodic2Triangulation2
 {
 public:
-  /// returns `true` if the domain of the Periodic_2_triangulation_2 must be ignored, `false` otherwise.
+  /// returns `true` if the domain of the Periodic_2_triangulation_2 must be drawn, `false` otherwise.
   /// Returns `false` by default.
   bool draw_domain() const;
 
