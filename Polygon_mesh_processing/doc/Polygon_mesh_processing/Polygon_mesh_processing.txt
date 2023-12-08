@@ -998,7 +998,7 @@ solver.
 
 The interpolated curvature measures are then computed for each vertex \f$ v \f$ as the sum of
 the curvature measures of the faces in a ball around \f$ v \f$ weighted by the inclusion ratio of the
-triangle in the ball. If the ball radius is not specified, the sum is instead computed over the incident faces
+triangle in the ball. If the ball radius is not specified (or negative), the sum is instead computed over the incident faces
 of \f$ v \f$.
 
 To get the final curvature value for a vertex \f$ v \f$, the respective interpolated curvature measure
