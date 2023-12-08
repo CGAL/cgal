@@ -42,7 +42,7 @@ namespace CGAL
 {
 /*!
 * \ingroup PkgKineticSurfaceReconstructionRef
-  \brief Reconstruction pipeline for piece-wise planar surface reconstruction from a point cloud via inside/outside labeling of a kinetic partition using graph cut.
+  \brief Reconstruction pipeline for piecewise planar surface reconstruction from a point cloud via inside/outside labeling of a kinetic partition using graph cut.
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
