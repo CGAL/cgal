@@ -974,7 +974,7 @@ introduce a new way to compute curvatures on polygonal meshes. The main idea in 
 based on decoupling the normal information from the position information, which is useful for dealing with
 digital surfaces, or meshes with noise on vertex positions. \cgalCite{cgal:lrtc-iccmps-20} introduces some
 extensions to this framework, as it uses linear interpolation on the corrected normal vector field
-to derive new closed form equations for the corrected curvature measures. These <b>interpolated</b>
+to derive new closed-form equations for the corrected curvature measures. These <b>interpolated</b>
 curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
 with vertices \a i, \a j, \a k:
 
