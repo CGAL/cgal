@@ -6,7 +6,9 @@
 /// the creation of new triangles.
 ///
 /// \cgalRefines{CopyConstructible}
-/// \cgalHasModel `CGAL::Polygon_mesh_processing::Autorefinement::Default_visitor`.
+/// \cgalHasModelsBegin
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Autorefinement::Default_visitor}
+/// \cgalHasModelsEnd
 
 class PMPAutorefinementVisitor{
 public:
