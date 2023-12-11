@@ -1,5 +1,3 @@
-//TODO: add for soup face the id of the input face. not sure it is easy to report intersection edge as a pair of vertex id
-//TODO: only return intersection segments (pay attention to degenerate triangles that are currently ignored)
 // Copyright (c) 2023 GeometryFactory (France).
 // All rights reserved.
 //
@@ -735,8 +733,6 @@ void generate_subtriangles(std::size_t ti,
     CGAL_assertion(points.size()==point_id_map.size());
   }
 
-  // TODO: sorted pair to be constructed when pushing_back
-  // TODO: only needed in case of coplanar segments?
   for (std::pair<std::size_t, size_t>& s : segments)
     if (s.second < s.first)
       std::swap(s.first,s.second);
@@ -853,7 +849,9 @@ void autorefine_triangle_soup(PointRange& soup_points,
   typedef std::size_t Input_TID;
   typedef std::pair<Input_TID, Input_TID> Pair_of_triangle_ids;
 
-  std::vector<Pair_of_triangle_ids> si_pairs; // TODO: check std::vector is fine with Parallel_tag
+  // no need for a concurrent vector as the called function itself
+  // takes care of sequentially writing into the output iterator
+  std::vector<Pair_of_triangle_ids> si_pairs;
 
   // collect intersecting pairs of triangles
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
@@ -909,8 +907,8 @@ void autorefine_triangle_soup(PointRange& soup_points,
   Real_timer t;
   t.start();
 #endif
-  std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles; // TODO replace with vector<boost::flat_set<>>>
-  std::set<std::pair<std::size_t, std::size_t> > coplanar_triangles; // TODO replace with vector<boost::flat_set<>>>
+  std::set<std::pair<std::size_t, std::size_t> > intersecting_triangles;
+  std::set<std::pair<std::size_t, std::size_t> > coplanar_triangles;
   //TODO: PARALLEL_FOR #2
   for (const Pair_of_triangle_ids& p : si_pairs)
   {
@@ -1096,7 +1094,6 @@ void autorefine_triangle_soup(PointRange& soup_points,
   CGAL_PMP_AUTOREFINE_VERBOSE("create output soup");
 
   Cartesian_converter<EK, GT> to_input;
-  // TODO: reuse the fact that maps per triangle are already sorted
 
 #ifdef CGAL_LINKED_WITH_TBB
   typedef std::conditional_t<parallel_execution,
@@ -1175,9 +1172,11 @@ void autorefine_triangle_soup(PointRange& soup_points,
   std::string mode = "parallel";
 #endif
 
-  //TODO: 100 should be fined tune and depends on #threads
+// It might be possible to optimise the hardcoded value below
+// but the less triangles the faster will anyway be the operation.
+// So it's probably not critical.
 #ifdef CGAL_LINKED_WITH_TBB
-  if(parallel_execution && new_triangles.size() > 100)
+  if(parallel_execution && new_triangles.size() > 50)
   {
 #ifdef CGAL_AUTOREF_SET_POINT_IDS_USING_MUTEX
     //option 1 (using a mutex)
@@ -1336,6 +1335,8 @@ void autorefine_triangle_soup(PointRange& soup_points,
  * @param tm input triangulated surface mesh
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
+ * @warning `clear(tm)` will be called before filling `tm` with the refined mesh.
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{concurrency_tag}
  *     \cgalParamDescription{a tag indicating if the task should be done using one or several threads.}
@@ -1378,7 +1379,7 @@ autorefine(      TriangleMesh& tm,
 
   autorefine_triangle_soup(soup_points, soup_triangles, np);
 
-  clear(tm); //TODO: keep properties
+  clear(tm);
   repair_polygon_soup(soup_points, soup_triangles);
 
   duplicate_non_manifold_edges_in_polygon_soup(soup_points, soup_triangles);
