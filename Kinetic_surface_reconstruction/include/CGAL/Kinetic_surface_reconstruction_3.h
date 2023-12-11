@@ -289,7 +289,7 @@ public:
   an output iterator taking polygon indices std::vector<std::size_t>.
 
   \param beta
-  trades the impact of the data term for impact of the regularization term. Should be in the range [0, 1).
+  trades the impact of the data term for impact of the regularization term. Must be in the range `[0, 1)`.
 
   \param pit
   output iterator to receive the vertices of the reconstructed surface.
