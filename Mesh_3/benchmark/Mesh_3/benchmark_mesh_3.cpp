@@ -221,6 +221,18 @@ Exit_code make_mesh(const Domain& domain,
     return OUTPUT_IS_INVALID;
   }
 
+  if(c3t3.number_of_facets_in_complex() == 0)
+  {
+    std::cerr << "Error: no facets in output" << std::endl;
+    return OUTPUT_IS_INVALID;
+  }
+
+  if(c3t3.number_of_cells_in_complex() == 0)
+  {
+    std::cerr << "Error: no cells in output" << std::endl;
+    return OUTPUT_IS_INVALID;
+  }
+
   generate_quality_metrics(c3t3);
 
   return VALID_OUTPUT;

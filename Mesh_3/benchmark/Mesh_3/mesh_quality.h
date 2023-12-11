@@ -161,6 +161,7 @@ void generate_volume_quality_metrics(const C3t3& c3t3,
   volume_quality.biggest_v_sma = 0;
 
   // volume
+  if(c3t3.number_of_cells_in_complex() > 0)
   {
     std::vector<double> volumes;
 
@@ -185,6 +186,7 @@ void generate_volume_quality_metrics(const C3t3& c3t3,
   }
 
   // dihedral angle
+  if(c3t3.number_of_cells_in_complex() > 0)
   {
     std::vector<double> dihedral_angles;
 
@@ -217,7 +219,8 @@ void generate_volume_quality_metrics(const C3t3& c3t3,
     volume_quality.mean_dihedral_angle = std::accumulate(dihedral_angles.begin(), dihedral_angles.end(), 0.) / dihedral_angles.size();
   }
 
-  // smallest edge radius ratio
+  // smallest edge-radius ratio
+  if(c3t3.number_of_cells_in_complex() > 0)
   {
     auto cell_it = c3t3.cells_in_complex_begin(),
          end = c3t3.cells_in_complex_end();
