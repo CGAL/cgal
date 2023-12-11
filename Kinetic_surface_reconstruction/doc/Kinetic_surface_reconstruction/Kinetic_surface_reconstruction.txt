@@ -27,9 +27,9 @@ The reconstruction is posed as an energy minimization labeling the convex volume
 \f$U(x) = \frac{I}{A}\sum\limits_{i\mathtt{\sim} j}a_{ij} \cdot (1-\delta{l_i,l_j})\f$
     </td>
     <td>The energy function trads data term for regularization term via parameter \f$\lambda\f$
-    
+
     The data term counts votes from the points \f$p \in I_i\f$ based on their associated normal pointing towards or away from each volume \f$i \in C\f$.
-    
+
     The regularization term penalizes the total surface area and thus favors surfaces with low complexity.
     </td>
   </tr>
@@ -49,7 +49,7 @@ Kinetic surface reconstruction pipeline.\n From left to right: 1. input point cl
 \section ksrParameters Parameters
 The parameters of the method include the parameters from other packages which are used internally:
 - \ref PkgShapeDetection "Shape detection": *k_neighbors*, *maximum_distance*, *maximum_angle* and *minimum_region_size*
-- \ref PkgShapeRegularization "Shape regularization for planes": *maximum_offset*, *regularize_parallelism*, *regularize_coplanarity*, *regularize_orthogonality*, *regularize_axis_symmetry*, *symmetry_direction* and *angle_tolerance* 
+- \ref PkgShapeRegularization "Shape regularization for planes": *maximum_offset*, *regularize_parallelism*, *regularize_coplanarity*, *regularize_orthogonality*, *regularize_axis_symmetry*, *symmetry_direction* and *angle_tolerance*
  - *angle_tolerance* is replacing *maximum_angle* from Shape regularization due to a name collision with Shape detection
 - \ref Chapter_Kinetic_Shape_Partition "Kinetic shape partition": *k*, *reorient_bbox* and *bbox_dilation_ratio*
 
@@ -85,7 +85,7 @@ The actual reconstruction method is actually fast. To avoid running the full sha
 \cgalExample{Kinetic_surface_reconstruction/building.cpp}
 
 \subsection ksrParametersExample Parameters Example
-This example provides a command line version of the kinetic surface reconstruction allowing to configure the input point cloud filename and most parameters. 
+This example provides a command line version of the kinetic surface reconstruction allowing to configure the input point cloud filename and most parameters.
 
 \cgalExample{Kinetic_surface_reconstruction/parameters.cpp}
 
