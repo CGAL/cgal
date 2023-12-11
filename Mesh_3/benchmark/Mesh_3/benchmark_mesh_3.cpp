@@ -141,7 +141,7 @@ enum Exit_code
   VALID_OUTPUT = 0,
 
   // Failure
-  INTPUT_IS_INVALID = 1,
+  INPUT_IS_INVALID = 1,
   OUTPUT_IS_INVALID = 2
 };
 
@@ -308,7 +308,7 @@ Exit_code make_mesh_polyhedron(const std::string& input_filename,
   if(!CGAL::IO::read_polygon_mesh(input_filename, polyhedron))
   {
     std::cerr << "Error: Could not read '" << input_filename << "'" << std::endl;
-    return INTPUT_IS_INVALID;
+    return INPUT_IS_INVALID;
   }
 
   if(is_empty(polyhedron) ||
@@ -317,7 +317,7 @@ Exit_code make_mesh_polyhedron(const std::string& input_filename,
      PMP::does_self_intersect(polyhedron))
   {
     std::cerr << "Error: input has defects" << std::endl;
-    return INTPUT_IS_INVALID;
+    return INPUT_IS_INVALID;
   }
 
   std::cout << "Building AABB tree... " << std::endl;
@@ -628,7 +628,7 @@ int main(int argc, char** argv)
                   >> num_iteration))
         {
           std::cerr << "Error: failed to read input" << std::endl;
-          return INTPUT_IS_INVALID;
+          return INPUT_IS_INVALID;
         }
 
         res = run(input,
