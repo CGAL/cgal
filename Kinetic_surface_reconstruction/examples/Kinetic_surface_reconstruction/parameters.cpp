@@ -147,6 +147,8 @@ int main(const int argc, const char** argv) {
   std::cout << "k " << parameters.k_intersections << std::endl;
   std::cout << "graphcut_beta " << parameters.graphcut_beta << std::endl;
 
+  std::cout << parameters.regorthogonal << " " << parameters.regsymmetric << std::endl;
+
   auto param = CGAL::parameters::maximum_distance(parameters.distance_threshold)
     .maximum_angle(parameters.angle_threshold)
     .k_neighbors(parameters.k_neighbors)
@@ -156,12 +158,14 @@ int main(const int argc, const char** argv) {
     .max_octree_depth(parameters.max_octree_depth)
     .max_octree_node_size(parameters.max_octree_node_size)
     .reorient_bbox(false)
-    .regularize_parallelism(parameters.regparallel)
-    .regularize_coplanarity(parameters.regcoplanar)
+    .regularize_parallelism(true)
+    .regularize_coplanarity(true)
+    //.regularize_parallelism(parameters.regparallel)
+    //.regularize_coplanarity(parameters.regcoplanar)
     .regularize_orthogonality(parameters.regorthogonal)
     .regularize_axis_symmetry(parameters.regsymmetric)
-    .angle_tolerance(5)
-    .maximum_offset(0.02);
+    .angle_tolerance(3)
+    .maximum_offset(0.05);
 
   // Algorithm.
   KSR ksr(point_set, param);
@@ -191,12 +195,12 @@ int main(const int argc, const char** argv) {
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_beta), vtx, polylist);
+    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_beta) + ".off", vtx, polylist);
 
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
 
-  std::vector<FT> betas{0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99};
+  std::vector<FT> betas{0.3, 0.5, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99};
 
   for (FT b : betas) {
     if (b == parameters.graphcut_beta)
@@ -208,7 +212,7 @@ int main(const int argc, const char** argv) {
     ksr.reconstruct(b, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
 
     if (polylist.size() > 0)
-      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(b), vtx, polylist);
+      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(b) + ".off", vtx, polylist);
   }
 
   std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;

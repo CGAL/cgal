@@ -5,9 +5,6 @@
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
-#include "include/Parameters.h"
-#include "include/Terminal_parser.h"
-
 using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT        = typename Kernel::FT;
 using Point_3   = typename Kernel::Point_3;
@@ -29,12 +26,9 @@ int main(const int argc, const char** argv) {
   input_file >> point_set;
   input_file.close();
 
-  auto param = CGAL::parameters::maximum_distance(parameters.distance_threshold)
-    .maximum_angle(parameters.angle_threshold)
-    .k_neighbors(parameters.k_neighbors)
-    .minimum_region_size(parameters.min_region_size)
-    .max_octree_depth(parameters.max_octree_depth)
-    .max_octree_node_size(parameters.max_octree_node_size)
+  auto param = CGAL::parameters::maximum_distance(0.1)
+    .maximum_angle(10)
+    .minimum_region_size(100)
     .reorient_bbox(true)
     .regularize_parallelism(true)
     .regularize_coplanarity(true)
@@ -48,7 +42,7 @@ int main(const int argc, const char** argv) {
 
   ksr.initialize_partition(param);
 
-  ksr.partition(parameters.k_intersections);
+  ksr.partition(2);
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;

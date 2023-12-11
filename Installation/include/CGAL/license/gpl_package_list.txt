@@ -25,6 +25,7 @@ Inscribed_areas Inscribed Areas
 Interpolation 2D and Surface Function Interpolation
 Interval_skip_list Interval Skip List
 Jet_fitting_3 Estimation of Local Differential Properties of Point-Sampled Surfaces
+Kinetic_surface_reconstruction Kinetic Surface Reconstruction
 Matrix_search Monotone and Sorted Matrix Search
 Mesh_2 2D Conforming Triangulations and Meshes
 Mesh_3 3D Mesh Generation

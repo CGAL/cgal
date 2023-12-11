@@ -13,7 +13,7 @@
 #ifndef CGAL_KINETIC_SURFACE_RECONSTRUCTION_3_H
 #define CGAL_KINETIC_SURFACE_RECONSTRUCTION_3_H
 
-#include <CGAL/license/Kinetic_shape_partition.h>
+#include <CGAL/license/Kinetic_surface_reconstruction.h>
 
 #include <CGAL/Kinetic_shape_partition_3.h>
 #include <CGAL/KSP_3/Graphcut.h>
@@ -93,7 +93,7 @@ public:
   \cgalNamedParamsEnd
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
-  Kinetic_shape_reconstruction_3(PointSet& points,
+  Kinetic_surface_reconstruction_3(PointSet& points,
     const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {}
 
   /*!
@@ -304,8 +304,44 @@ public:
     KSR_3::Graphcut<Kernel> gc(beta);
 
     // add ground consideration here
+    // m_cost_matrix and m_face_neighbors_lcc should contain the original values without consideration of ground/preset cell labels
+    // Create copy here if necessary and fill both vectors according to parameters of reconstruction
 
-    gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
+    set_outside_volumes(true, m_cost_matrix);
+
+    std::vector<std::pair<std::size_t, std::size_t> > edges(m_face_neighbors_lcc.size());
+
+    std::size_t redirected = 0;
+    for (std::size_t i = 0; i < m_face_neighbors_lcc.size(); i++) {
+      std::size_t lower, upper;
+      if (m_face_neighbors_lcc[i].first < m_face_neighbors_lcc[i].second) {
+        lower = m_face_neighbors_lcc[i].first;
+        upper = m_face_neighbors_lcc[i].second - 6;
+      }
+      else {
+        lower = m_face_neighbors_lcc[i].second;
+        upper = m_face_neighbors_lcc[i].first - 6;
+      }
+      // Check if the face is on a bbox face besides the top face.
+      // If so and the connected volume is below the ground, redirect the face to the bottom face node.
+      if ((lower < 6) && m_volume_below_ground[upper]) {
+        redirected++;
+
+        if (m_face_neighbors_lcc[i].second < 6) {
+          edges[i].first = m_face_neighbors_lcc[i].first;
+          edges[i].second = 0;
+        }
+
+        if (m_face_neighbors_lcc[i].first < 6) {
+          m_face_neighbors_lcc[i].first = 0;
+          edges[i].second = m_face_neighbors_lcc[i].second;
+        }
+      }
+      else edges[i] = m_face_neighbors_lcc[i];
+    }
+    std::cout << redirected << " faces redirected to below ground" << std::endl;
+
+    gc.solve(edges, m_face_area_lcc, m_cost_matrix, m_labels);
 
     reconstructed_model_polylist_lcc(pit, polyit);
   }
@@ -340,8 +376,16 @@ public:
     KSR_3::Graphcut<Kernel> gc(beta);
 
     // add node consideration here
+    set_outside_volumes(false, m_cost_matrix);
 
     gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
+
+    std::size_t in = 0, out = 0;
+    for (std::size_t i : m_labels)
+      if (i == 0) out++;
+      else in++;
+
+    std::cout << "total labels: " << m_labels.size() << " 0: " << out << " 1: " << in << std::endl;
 
     reconstructed_model_polylist_lcc(pit, polyit);
   }
@@ -463,9 +507,19 @@ private:
     m_faces_lcc.reserve(face_range.size());
 
     for (auto& d : face_range) {
-      m_faces_lcc.push_back(m_lcc.dart_descriptor(d));
+      typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
 
-      std::size_t id = m_lcc.attribute<2>(m_faces_lcc.back());
+      Face_attribute fa = m_lcc.attribute<2>(dh);
+      if (fa == m_lcc.null_descriptor) {
+        dh = m_lcc.beta<3>(dh);
+        fa = m_lcc.attribute<2>(dh);
+      }
+
+      if (fa == m_lcc.null_descriptor) {
+        std::cout << "null dart 1 " << m_lcc.template one_dart_per_incident_cell<3, 2>(dh).size() << std::endl;
+      }
+
+      m_faces_lcc.push_back(dh);
 
       auto p = m_attrib2index_lcc.emplace(std::make_pair(m_lcc.attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
       CGAL_assertion(p.second);
@@ -478,8 +532,8 @@ private:
     m_face_neighbors_lcc.resize(m_faces_lcc.size(), std::pair<int, int>(-1, -1));
 
     m_cost_matrix.resize(2);
-    m_cost_matrix[0].resize(m_kinetic_partition.number_of_volumes() + 6);
-    m_cost_matrix[1].resize(m_kinetic_partition.number_of_volumes() + 6);
+    m_cost_matrix[0].resize(m_kinetic_partition.number_of_volumes() + 6, 0);
+    m_cost_matrix[1].resize(m_kinetic_partition.number_of_volumes() + 6, 0);
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       auto n = m_lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
@@ -489,18 +543,36 @@ private:
 
       auto& finf = m_lcc.info<2>(m_faces_lcc[i]);
 
+      bool skipped = false;
+
+      Volume_attribute va = m_lcc.attribute<3>(m_lcc.dart_descriptor(*it));
+      if (va == m_lcc.null_descriptor) {
+        skipped = true;
+        it++;
+      }
+
+      if (it == n.end()) {
+        std::cout << "face not connected to a volume" << std::endl;
+        continue;
+      }
+
+      va = m_lcc.attribute<3>(m_lcc.dart_descriptor(*it));
+      if (va == m_lcc.null_descriptor) {
+        write_face(m_lcc.dart_descriptor(*it), "face_wo_volume.ply");
+      }
+
       int first = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id;
       auto& inf1 = m_lcc.info<3>(m_lcc.dart_descriptor(*it++));
 
       auto inf2 = inf1;
-      if (n.size() == 2)
+      if (n.size() == 2 && it != n.end())
         inf2 = m_lcc.info<3>(m_lcc.dart_descriptor(*it));
 
       int second;
-      if (n.size() == 2)
+      if (n.size() == 2 && it != n.end())
         second = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id;
 
-      if (n.size() == 2)
+      if (n.size() == 2 && it != n.end())
         m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id + 6);
       else
         m_face_neighbors_lcc[i] = std::make_pair(first + 6, -m_lcc.info<2>(m_faces_lcc[i]).input_polygon_index - 1);
@@ -679,7 +751,7 @@ private:
       if (m_labels[n.first] != m_labels[n.second]) {
         Face_attribute fa = m_lcc.attribute<2>(m_faces_lcc[i]);
 
-        if (fa == m_lcc.null_dart_descriptor)
+        if (fa == m_lcc.null_descriptor)
           std::cout << "null dart 1" << std::endl;
 
         if (m_labels[m_lcc.info<3>(m_faces_lcc[i]).volume_id + 6] == 0) {
@@ -717,13 +789,47 @@ private:
         std::cout << "outside face" << std::endl;
     }
 
-    KSP_3::dump_polygons(polygon_regions, "faces_by_region.ply");
+    std::cout << "polygon regions " << polygon_regions.size() << std::endl;
+
+    static bool saved = false;
+
+    if (!saved) {
+      KSP_3::dump_polygons(polygon_regions, "faces_by_region.ply");
+      saved = true;
+    }
+
     std::vector<std::vector<std::size_t> > borders;
     std::vector<std::vector<std::size_t> > borders_per_region;
     collect_connected_border(borders, region_index, borders_per_region);
 
     for (std::size_t i = 0; i < region; i++) {
       if (borders_per_region[i].size() > 0) {
+        /*std::size_t outer = -1;
+        typename Intersection_kernel::FT min = (std::numeric_limits<double>::max)();
+        for (std::size_t j = 0; j < borders_per_region[i].size(); j++)
+          for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
+            const typename Intersection_kernel::Point_3& p = m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k]));
+            if (p.x() < min) {
+              min = p.x();
+              outer = j;
+            }
+          }
+
+        for (std::size_t j = 0; j < borders_per_region[i].size(); j++) {
+          std::string fn;
+          if (j == outer)
+            fn = std::to_string(i) + "-outer.polylines.txt";
+          else
+            fn = std::to_string(i) + "-" + std::to_string(j) + ".polylines.txt";
+          std::ofstream vout(fn);
+          vout << (borders[borders_per_region[i][j]].size() + 1);
+          for (std::size_t k = 0; k < borders[borders_per_region[i][j]].size(); k++) {
+            vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][k])));
+          }
+          vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[borders_per_region[i][j]][0]))) << std::endl;
+          vout.close();
+        }*/
+
         if (borders_per_region[i].size() > 1) {
           std::vector<std::vector<std::size_t> > polygons;
           polygons.reserve(borders_per_region[i].size());
@@ -745,7 +851,6 @@ private:
       if (borders[i].empty())
         continue;
 
-      /*      if (false) {*/
       std::vector<std::size_t> indices(borders[i].size());
       for (std::size_t j = 0; j != borders[i].size(); j++) {
         auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
@@ -754,23 +859,12 @@ private:
         indices[j] = p.first->second;
       }
 
-      *polyit++ = std::move(indices);
-      /*
-            }
-            else {
-              std::vector<std::size_t> indices(borders[i].size());
-              for (std::size_t j = borders[i].size() - 1; j != std::size_t(-1); j--) {
-                auto p = attrib2idx.emplace(borders[i][j], attrib2idx.size());
-                if (p.second)
-                  *pit++ = from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(borders[i][j])));
-                indices[j] = p.first->second;
-              }
+      if (true)
+        std::reverse(indices.begin(), indices.end());
 
-              *polyit++ = std::move(indices);
-            }*/
+      *polyit++ = std::move(indices);
     }
   }
-
 
   /*!
   \brief Provides the reconstructed surface as a list of indexed polygons.
@@ -918,8 +1012,7 @@ private:
       if (region_index[cur_fa] == region)
         continue;
 
-//       if (debug)
-//         write_face(cur_fdh, std::to_string(region) + "-inside-" + std::to_string(cur_fa) + ".ply");
+      //write_face(cur_fdh, std::to_string(region) + "-inside-" + std::to_string(cur_fa) + ".ply");
 
       region_index[cur_fa] = region;
 
@@ -939,8 +1032,14 @@ private:
         do {
           Face_attribute fa = m_lcc.attribute<2>(fdh);
 
-          if (fa == m_lcc.null_descriptor)
-            break;
+          if (fa == m_lcc.null_descriptor) {
+            // fdh is outside of the bbox, switching back inside to check the face on the boundary
+            fdh = m_lcc.beta<3>(fdh);
+            fa = m_lcc.attribute<2>(fdh);
+
+            if (fa == m_lcc.null_descriptor)
+              break;
+          }
 
           auto& finfo2 = m_lcc.info<2>(fdh);
           if (fa == cur_fa) {
@@ -950,15 +1049,18 @@ private:
           auto& inf = m_lcc.info<2>(fdh);
           bool added = false;
 
-//           if (debug)
-//             write_face(fdh, std::to_string(region) + "-" + std::to_string(fa) + ".ply");
+          //write_face(fdh, std::to_string(region) + "-" + std::to_string(fa) + ".ply");
 
           const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
 
           // Belongs to reconstruction?
           bool internal = m_labels[n.first] == m_labels[n.second];
           if (m_labels[n.first] == m_labels[n.second]) {
-            fdh = m_lcc.beta<2, 3>(fdh);
+            fdh = m_lcc.beta<2>(fdh);
+            Dart_descriptor fdh2 = m_lcc.beta<3>(fdh);
+            if (fdh2 != m_lcc.null_dart_descriptor)
+              fdh = fdh2;
+
             continue;
           }
 
@@ -966,7 +1068,12 @@ private:
           if (region_index[fa] != -1) {
             if (!internal)
               break;
-            fdh = m_lcc.beta<2, 3>(fdh);
+
+            fdh = m_lcc.beta<2>(fdh);
+            Dart_descriptor fdh2 = m_lcc.beta<3>(fdh);
+            if (fdh2 != m_lcc.null_dart_descriptor)
+              fdh = fdh2;
+
             continue;
           }
 
@@ -1058,7 +1165,12 @@ private:
         if (!internal)
           return true;
         else {
-          edh = m_lcc.beta<2, 3>(edh);
+
+          edh = m_lcc.beta<2>(edh);
+          Dart_descriptor edh2 = m_lcc.beta<3>(edh);
+          if (edh2 != m_lcc.null_dart_descriptor)
+            edh = edh2;
+
           continue;
         }
 
@@ -1067,7 +1179,11 @@ private:
           if (!internal)
             return true;
           else {
-            edh = m_lcc.beta<2, 3>(edh);
+            edh = m_lcc.beta<2>(edh);
+            Dart_descriptor edh2 = m_lcc.beta<3>(edh);
+            if (edh2 != m_lcc.null_dart_descriptor)
+              edh = edh2;
+
             continue;
           };
       return internal;
@@ -1282,15 +1398,12 @@ private:
 
     do {
 /*
-      if (debug) {
-        std::ofstream vout("0-" + std::to_string(idx) + ".xyz");
-        for (std::size_t p : border)
-          vout << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(p))) << std::endl;
-        vout.close();
-      }
+      std::ofstream vout("0-" + std::to_string(idx) + ".xyz");
+      for (std::size_t p : border)
+        vout << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(p))) << std::endl;
+      vout.close();
 
-      if (debug)
-        write_edge(cur, "cur.polylines.txt");*/
+      write_edge(cur, "cur.polylines.txt");*/
 
       if (is_border_edge(cur)) {
         CGAL_assertion(!processed[cur]);
@@ -1370,10 +1483,6 @@ private:
       auto finfo = m_lcc.info_of_attribute<2>(fa);
       const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
 
-      // Do not segment bbox surface
-      if (n.second < 6)
-        continue;
-
       // Belongs to reconstruction?
       if (m_labels[n.first] == m_labels[n.second]) {
         std::cout << "face skipped" << std::endl;
@@ -1388,6 +1497,8 @@ private:
         if (va != m_lcc.attribute<3>(dh2)) {
           std::cout << "volume attribute mismatch" << std::endl;
         }
+
+        //write_edge(dh2, std::to_string(i) + "-starting edge");
 
         if (!processed[dh2] && is_border_edge(dh2)) {
           borders_per_region[region_index[fa]].push_back(borders.size());
@@ -1472,7 +1583,7 @@ private:
       }
     }
 
-    set_outside_volumes(m_cost_matrix);
+    //set_outside_volumes(m_cost_matrix);
 
     // Handling face generated by the octree partition. They are not associated with an input polygon.
     for (std::size_t i = 0; i < other_faces.size(); i++) {
@@ -1508,31 +1619,6 @@ private:
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++)
       m_face_area_lcc[i] = m_face_area_lcc[i] * 2.0 * m_total_inliers / total_area;
-
-    std::size_t redirected = 0;
-    for (std::size_t i = 0; i < m_face_neighbors_lcc.size(); i++) {
-      std::size_t lower, upper;
-      if (m_face_neighbors_lcc[i].first < m_face_neighbors_lcc[i].second) {
-        lower = m_face_neighbors_lcc[i].first;
-        upper = m_face_neighbors_lcc[i].second - 6;
-      }
-      else {
-        lower = m_face_neighbors_lcc[i].second;
-        upper = m_face_neighbors_lcc[i].first - 6;
-      }
-      // Check if the face is on a bbox face besides the top face.
-      // If so and the connected volume is below the ground, redirect the face to the bottom face node.
-      if ((lower < 6) && m_volume_below_ground[upper]) {
-        redirected++;
-
-        if (m_face_neighbors_lcc[i].second < 6)
-          m_face_neighbors_lcc[i].second = 0;
-
-        if (m_face_neighbors_lcc[i].first < 6)
-          m_face_neighbors_lcc[i].first = 0;
-      }
-    }
-    std::cout << redirected << " faces redirected to below ground" << std::endl;
   }
 
   void count_volume_votes_lcc() {
@@ -1557,7 +1643,7 @@ private:
     std::size_t idx = 0;
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
-      std::size_t v[] = { -1, -1 };
+      std::size_t v[] = { std::size_t(-1), std::size_t(-1) };
       Point_3 c[2];
       std::size_t in[] = {0, 0}, out[] = {0, 0};
 
@@ -1739,7 +1825,7 @@ private:
     }
 
     // Estimate ground plane by finding a low mostly horizontal plane
-    if (estimate_ground) {
+    {
       std::vector<std::size_t> candidates;
       FT low_z_peak = (std::numeric_limits<FT>::max)();
       FT bbox_min[] = { (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)() };
@@ -1937,7 +2023,7 @@ private:
   }
 */
 
-  void set_outside_volumes(std::vector<std::vector<double> >& cost_matrix) const {
+  void set_outside_volumes(bool ground, std::vector<std::vector<double> >& cost_matrix) const {
     // Setting preferred outside label for bbox plane nodes
     // Order:
     // 0 zmin
@@ -1955,14 +2041,14 @@ private:
     cost_matrix[0][4] = 0;
     cost_matrix[0][5] = 0;
     // 1 - cost for labelled as inside
-    cost_matrix[1][0] = force;
-    cost_matrix[1][1] = force;
-    cost_matrix[1][2] = force;
-    cost_matrix[1][3] = force;
-    cost_matrix[1][4] = force;
-    cost_matrix[1][5] = force;
+    cost_matrix[1][0] = 0;
+    cost_matrix[1][1] = 0;
+    cost_matrix[1][2] = 0;
+    cost_matrix[1][3] = 0;
+    cost_matrix[1][4] = 0;
+    cost_matrix[1][5] = 0;
 
-    if (m_ground_polygon_index != -1) {
+    if (m_ground_polygon_index != -1 && ground) {
       std::cout << "using estimated ground plane for reconstruction" << std::endl;
       cost_matrix[0][0] = force;
       cost_matrix[0][1] = 0;

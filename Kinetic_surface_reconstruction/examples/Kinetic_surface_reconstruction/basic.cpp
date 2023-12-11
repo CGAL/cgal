@@ -39,15 +39,15 @@ int main(const int argc, const char** argv) {
 
   ksr.initialize_partition(param);
 
-  ksr.partition(parameters.k_intersections);
+  ksr.partition(1);
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
 
-  ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
+  ksr.reconstruct_with_ground(0.5, std::back_inserter(vtx), std::back_inserter(polylist));
 
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_beta), vtx, polylist);
+    ;// CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_beta), vtx, polylist);
   else
     return EXIT_FAILURE;
 
