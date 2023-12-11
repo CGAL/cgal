@@ -42,7 +42,6 @@ int main(int argc, char* argv[]) {
 
   std::size_t n;
   in_file >> n;
-  unsigned int i;
   for (std::size_t i = 0; i < n; ++i) {
     double sx, sy, tx, ty;
     in_file >> sx >> sy >> tx >> ty;
