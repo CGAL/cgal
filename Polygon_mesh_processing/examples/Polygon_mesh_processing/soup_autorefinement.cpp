@@ -13,8 +13,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
 
-typedef CGAL::Surface_mesh<Point>                           Mesh;
-
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)

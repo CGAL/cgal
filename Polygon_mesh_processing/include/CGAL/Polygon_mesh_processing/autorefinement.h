@@ -1126,7 +1126,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   }
 
   TriangleRange soup_triangles_out;
-  soup_triangles_out.reserve(soup_triangles.size()); // TODO: remove #deg tri?
+  soup_triangles_out.reserve(soup_triangles.size());
 
   visitor.number_of_output_triangles(soup_triangles.size()+new_triangles.size());
 
