@@ -96,7 +96,7 @@ protected:
   typedef typename Minimization_diagram_2::Dcel::Dcel_data_iterator
                                                         Envelope_data_iterator;
 
-  typedef Arr_observer<Minimization_diagram_2>          Md_observer;
+  typedef typename Minimization_diagram_2::Observer     Md_observer;
   typedef Arr_accessor<Minimization_diagram_2>          Md_accessor;
 
   typedef typename Topology_traits::Default_point_location_strategy

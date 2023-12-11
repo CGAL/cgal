@@ -77,9 +77,9 @@ private:
 
   // An arrangement observer, used to receive notifications of face splits and
   // face mergers.
-  class My_observer : public CGAL::Arr_observer<Arrangement_2> {
+  class My_observer : public Arrangement_2::Observer {
   public:
-    My_observer(Arrangement_2& arr) : Arr_observer<Arrangement_2>(arr) {}
+    My_observer(Arrangement_2& arr) : Arrangement_2::Observer(arr) {}
 
     virtual void after_split_face(Face_handle f, Face_handle new_f,
                                   bool /* is_hole */)

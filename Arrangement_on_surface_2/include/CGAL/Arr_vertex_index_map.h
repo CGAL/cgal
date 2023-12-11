@@ -22,7 +22,6 @@
 /*! \file
  * Definition of the Arr_vertex_index_map<Arrangement> class.
  */
-#include <CGAL/Arr_observer.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/property_map.h>
 
@@ -36,8 +35,7 @@ namespace CGAL {
  * of vertices in the arrangement.
  */
 template <class Arrangement_>
-class Arr_vertex_index_map : public Arr_observer<Arrangement_>
-{
+class Arr_vertex_index_map : public Arrangement_::Observer {
 public:
 
   typedef Arrangement_                            Arrangement_2;
@@ -52,7 +50,7 @@ public:
 private:
 
   typedef Arr_vertex_index_map<Arrangement_2>     Self;
-  typedef Arr_observer<Arrangement_2>             Base;
+  typedef typename Arrangement_2::Observer        Base;
 
   typedef Unique_hash_map<Vertex_handle, unsigned int>     Index_map;
 
@@ -67,21 +65,21 @@ public:
 
   /*! Default constructor. */
   Arr_vertex_index_map () :
-    Base (),
+    Base(),
     n_vertices (0),
     rev_map (MIN_REV_MAP_SIZE)
   {}
 
   /*! Constructor with an associated arrangement. */
   Arr_vertex_index_map (const Arrangement_2& arr) :
-    Base (const_cast<Arrangement_2&> (arr))
+    Base(const_cast<Arrangement_2&>(arr))
   {
     _init();
   }
 
   /*! Copy constructor. */
   Arr_vertex_index_map (const Self& other) :
-    Base (const_cast<Arrangement_2&> (*(other.arrangement())))
+    Base(const_cast<typename Base::Arrangement_2&> (*(other.arrangement())))
   {
     _init();
   }
@@ -93,7 +91,7 @@ public:
       return (*this);
 
     this->detach();
-    this->attach (const_cast<Arrangement_2&> (*(other.arrangement())));
+    this->attach (const_cast<typename Base::Arrangement_2&> (*(other.arrangement())));
 
     return (*this);
   }

@@ -5,7 +5,6 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_observer.h>
 #include <CGAL/Arr_enums.h>
 
 #include <iostream>
@@ -57,14 +56,11 @@ void compare_results(std::string str)
 
 // An arrangement observer, used to receive notifications of face splits and
 // face mergers.
-class Test_observer : public CGAL::Arr_observer<Arrangement_2>
-{
+class Test_observer : public Arrangement_2::Observer {
 
 public:
 
-  Test_observer (Arrangement_2& arr) :
-    CGAL::Arr_observer<Arrangement_2> (arr)
-  {}
+  Test_observer(Arrangement_2& arr) : Arrangement_2::Observer(arr) {}
 
   /// \name Notification functions on global arrangement operations.
   //@{

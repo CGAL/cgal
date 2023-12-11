@@ -5706,17 +5706,19 @@ changes when they occur. In our case observers can be attached to an
 arrangement object. An attached observer receives notifications about
 the changes this arrangement undergoes.
 
-An observer object, the type of which is an instance of the
-`Arr_observer<Arrangement>` class template, stores a pointer to an
-arrangement object. When the `Arr_observer<Arrangement>` class
-template is instantiated, the `Arrangement` parameter must be
-substituted with the type of the arrangement object. The observer
-receives notifications <em>just before</em> a structural change occurs
-in the arrangement and <em>immediately after</em> such a change takes
-place. `Arr_observer` serves as a base class for other
-observer classes and defines a set of virtual notification
-functions, with default empty implementations. The set of functions
-can be divided into three categories, as follows:
+An observer object that observes changes that an arrangement object of
+type `Arrangement` undergoes must be of a type derived from
+`Arrangement::Observer`. The observer object stores a pointer to the
+observed arrangement object. The observer receives notifications
+<em>just before</em> a structural change occurs in the arrangement and
+<em>immediately after</em> such a change takes place.
+`Arrangement::Observer` is an alias to
+`Arr_observer<CGAL::Arrangement_on_surface_2<>>`, where
+`CGAL::Arrangement_on_surface_2<>` is the type of the arrangement
+object or its base type. It serves as a base type for other observer
+classes and defines a set of virtual notification functions, with
+default empty implementations. The set of functions can be divided
+into three categories, as follows:
 
 <OL>
 

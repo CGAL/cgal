@@ -28,7 +28,6 @@
 #include <time.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/Arr_observer.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 #include <CGAL/Envelope_3/Envelope_overlay_2.h>
 #include <CGAL/Envelope_3/Envelope_element_visitor_3.h>
@@ -134,7 +133,8 @@ protected:
   typedef typename Minimization_diagram_2::Inner_ccb_iterator
     Inner_ccb_iterator;
 
-  typedef Arr_observer<Minimization_diagram_2>          Md_observer;
+  typedef typename Minimization_diagram_2::Observer
+    Md_observer;
   typedef typename Minimization_diagram_2::Dcel::Dcel_data_iterator
     Envelope_data_iterator;
 

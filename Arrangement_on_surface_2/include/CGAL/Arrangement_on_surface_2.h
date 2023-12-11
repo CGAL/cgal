@@ -109,6 +109,8 @@ public:
   typedef typename Topology_traits::Dcel            Dcel;
   typedef typename Dcel::Size                       Size;
 
+  typedef Arr_observer<Self>                        Observer;
+
 protected:
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
@@ -892,7 +894,6 @@ protected:
   typedef CGAL_ALLOCATOR(Point_2)                 Points_alloc;
   typedef CGAL_ALLOCATOR(X_monotone_curve_2)      Curves_alloc;
 
-  typedef Arr_observer<Self>                      Observer;
   typedef std::list<Observer*>                    Observers_container;
   typedef typename Observers_container::iterator  Observers_iterator;
 

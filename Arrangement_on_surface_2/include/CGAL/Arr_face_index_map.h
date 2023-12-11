@@ -21,7 +21,6 @@
  * Definition of the Arr_face_index_map<Arrangement> class.
  */
 
-#include <CGAL/Arr_observer.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/property_map.h>
 
@@ -35,8 +34,7 @@ namespace CGAL {
  * of faces in the arrangement.
  */
 template <class Arrangement_>
-class Arr_face_index_map : public Arr_observer<Arrangement_>
-{
+class Arr_face_index_map : public Arrangement_::Observer {
 public:
 
   typedef Arrangement_                            Arrangement_2;
@@ -51,7 +49,7 @@ public:
 private:
 
   typedef Arr_face_index_map<Arrangement_2>       Self;
-  typedef Arr_observer<Arrangement_2>             Base;
+  typedef typename Arrangement_2::Observer        Base;
 
   typedef Unique_hash_map<Face_handle, unsigned int>     Index_map;
 
@@ -73,14 +71,14 @@ public:
 
   /*! Constructor with an associated arrangement. */
   Arr_face_index_map (const Arrangement_2& arr) :
-    Base (const_cast<Arrangement_2&> (arr))
+    Base(const_cast<Arrangement_2&>(arr))
   {
     _init();
   }
 
   /*! Copy constructor. */
   Arr_face_index_map (const Self& other) :
-    Base (const_cast<Arrangement_2&> (*(other.arrangement())))
+    Base(const_cast<typename Base::Arrangement_2&>(*(other.arrangement())))
   {
     _init();
   }
@@ -92,7 +90,7 @@ public:
       return (*this);
 
     this->detach();
-    this->attach (const_cast<Arrangement_2&> (*(other.arrangement())));
+    this->attach(const_cast<typename Base::Arrangement_2&>(*(other.arrangement())));
 
     return (*this);
   }

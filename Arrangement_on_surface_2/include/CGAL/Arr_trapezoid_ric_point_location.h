@@ -26,7 +26,6 @@
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <CGAL/Arr_point_location/Td_traits.h>
-#include <CGAL/Arr_observer.h>
 
 namespace CGAL {
 
@@ -36,7 +35,7 @@ namespace CGAL {
  * The Arrangement parameter corresponds to an arrangement instantiation.
  */
 template <typename Arrangement_>
-class Arr_trapezoid_ric_point_location : public Arr_observer <Arrangement_> {
+class Arr_trapezoid_ric_point_location : public Arrangement_::Observer {
 public:
   //type of arrangement on surface
   typedef Arrangement_                          Arrangement_on_surface_2;
@@ -148,8 +147,8 @@ public:
                            bool with_guarantees = true,
                            double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD,
                            double size_thrs = CGAL_TD_DEFAULT_SIZE_THRESHOLD) :
-    Arr_observer<Arrangement_on_surface_2>
-              (const_cast<Arrangement_on_surface_2 &>(arr)),
+    Arrangement_on_surface_2::
+    Observer(const_cast<Arrangement_on_surface_2&>(arr)),
     m_with_guarantees(with_guarantees)
   {
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
@@ -352,7 +351,7 @@ protected:
     std::vector<Halfedge_const_handle> he_container;
     Edge_const_iterator eit;
     Halfedge_const_handle he_cst;
-    Arrangement_on_surface_2 *arr = this->arrangement();
+    auto* arr = this->arrangement();
     //collect the arrangement halfedges
     for (eit = arr->edges_begin(); eit != arr->edges_end(); ++eit)
     {

@@ -39,8 +39,7 @@ namespace CGAL {
  * triangulation algorithm.
  */
 template <typename Arrangement_>
-class Arr_triangulation_point_location : public Arr_observer<Arrangement_>
-{
+class Arr_triangulation_point_location : public Arrangement_::Observer {
 public:
   typedef Arrangement_                                  Arrangement_2;
 
@@ -129,7 +128,7 @@ public:
    * \param arr (in) The arrangement.
    */
   Arr_triangulation_point_location(const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2>(const_cast<Arrangement_2&>(arr)),
+    Arrangement_2::Observer(const_cast<Arrangement_2&>(arr)),
     m_traits(static_cast<const Traits_adaptor_2*>(arr.geometry_traits())),
     m_ignore_notifications(false),
     m_ignore_remove_edge(false)

@@ -26,7 +26,6 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
-#include <CGAL/Arr_observer.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Arrangement_2/Arr_with_history_accessor.h>
 
@@ -75,10 +74,7 @@ public:
   typedef typename Geometry_traits_2::Curve_2             Curve_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
-  typedef Arr_observer<Self>                              Observer;
-
 protected:
-  friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
   friend class Arr_with_history_accessor<Self>;
 
@@ -582,24 +578,6 @@ public:
   //@}
 
 protected:
-
-  /// \name Managing and notifying the arrangement observers.
-  //@{
-
-  /*!
-   * Register a new observer (so it starts receiving notifications).
-   * \param p_obs A pointer to the observer object.
-   */
-  void _register_observer (Observer *p_obs);
-
-  /*!
-   * Unregister an observer (so it stops receiving notifications).
-   * \param p_obs A pointer to the observer object.
-   * \return Whether the observer was successfully unregistered.
-   */
-  bool _unregister_observer (Observer *p_obs);
-  //@}
-
   /// \name Curve insertion and deletion.
   //@{
 

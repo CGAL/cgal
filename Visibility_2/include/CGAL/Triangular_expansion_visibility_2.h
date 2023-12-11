@@ -21,7 +21,6 @@
 #include <memory>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Arr_observer.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
@@ -86,10 +85,10 @@ private:
   };
 
   // Observer to track any changes of the attached arrangement.
-  class Observer : public Arr_observer<Arrangement_2>
+  class Observer : public Arrangement_2::Observer
   {
 
-      typedef Arr_observer<Arrangement_2>                           Base;
+      typedef typename Arrangement_2::Observer                      Base;
       typedef Observer                                              Self;
 
 

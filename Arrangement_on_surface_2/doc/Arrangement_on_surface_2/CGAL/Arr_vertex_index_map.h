@@ -21,12 +21,11 @@ to dynamically maintain the mapping of vertex handles to indices.
 
 \cgalModels{DefaultConstructible,CopyConstructible,Assignable,ReadablePropertyMap}
 
-\sa `Arr_observer<Arrangement>`
 \sa `Arr_face_index_map<Arrangement>`
 */
 
 template< typename Arrangement >
-class Arr_vertex_index_map: public Arr_observer<Arrangement> {
+class Arr_vertex_index_map: public Arrangement::Observer {
 public:
 
 /// \name Types
@@ -74,9 +73,3 @@ Arr_vertex_index_map(Arrangement_2& arr);
 
 }; /* end Arr_accessor */
 } /* end namespace CGAL */
-
-
-
-
-
-

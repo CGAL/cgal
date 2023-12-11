@@ -3,7 +3,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_extended_dcel.h>
-#include <CGAL/Arr_observer.h>
 
 #include "arr_exact_construction_segments.h"
 
@@ -12,15 +11,16 @@ using Ex_arrangement = CGAL::Arrangement_2<Traits, Dcel>;
 
 // An arrangement observer, used to receive notifications of face splits and
 // to update the indices of the newly created faces.
-class Face_index_observer : public CGAL::Arr_observer<Ex_arrangement> {
+class Face_index_observer : public Ex_arrangement::Observer {
 private:
   size_t n_faces;                       // the current number of faces
 
 public:
   Face_index_observer(Ex_arrangement& arr) :
-    CGAL::Arr_observer<Ex_arrangement>(arr), n_faces(0)
+    Ex_arrangement::Observer(arr),
+    n_faces(0)
   {
-    CGAL_precondition (arr.is_empty());
+    CGAL_precondition(arr.is_empty());
     arr.unbounded_face()->set_data (0);
   }
 
