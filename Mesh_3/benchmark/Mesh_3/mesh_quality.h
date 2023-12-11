@@ -6,9 +6,25 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <limits>
 #include <vector>
+
+template <typename TriangleMesh,
+          typename NamedParameters = CGAL::parameters::Default_named_parameters>
+bool has_degenerate_faces(const TriangleMesh& mesh,
+                          const NamedParameters& np = CGAL::parameters::default_values())
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
+  for(auto f : faces(mesh))
+    if(CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, mesh, np))
+      return true;
+
+  return false;
+}
 
 struct Surface_quality
 {

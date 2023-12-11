@@ -314,6 +314,7 @@ Exit_code make_mesh_polyhedron(const std::string& input_filename,
   if(is_empty(polyhedron) ||
      !is_triangle_mesh(polyhedron) ||
      !is_closed(polyhedron) ||
+     has_degenerate_faces(polyhedron) ||
      PMP::does_self_intersect(polyhedron))
   {
     std::cerr << "Error: input has defects" << std::endl;
