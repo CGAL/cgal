@@ -117,7 +117,7 @@ bool has_expected_Hausdorff_distance(const TriangleMesh& wrap,
 
 template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool is_valid_wrap(const TriangleMesh& wrap,
-                   const bool check_manifoldness = true,
+                   const bool check_manifoldness,
                    const NamedParameters& np = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
@@ -201,6 +201,13 @@ bool is_valid_wrap(const TriangleMesh& wrap,
   }
 
   return true;
+}
+
+template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
+bool is_valid_wrap(const TriangleMesh& wrap,
+                   const NamedParameters& np = parameters::default_values())
+{
+  return is_valid_wrap(wrap, true /*consider manifoldness*/, np);
 }
 
 template <typename InputTriangleMesh, typename OutputTriangleMesh,

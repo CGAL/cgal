@@ -247,6 +247,8 @@ CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, s
 // List of named parameters used in Alpha_wrap_3
 CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
 CGAL_add_named_parameter(seed_points_t, seed_points, seed_points)
+CGAL_add_named_parameter(refine_triangulation_t, refine_triangulation, refine_triangulation)
+CGAL_add_named_parameter(keep_inner_connected_components_t, keep_inner_connected_components, keep_inner_connected_components)
 
 // SMDS_3 parameters
 CGAL_add_named_parameter(surface_facets_t, surface_facets, surface_facets)
