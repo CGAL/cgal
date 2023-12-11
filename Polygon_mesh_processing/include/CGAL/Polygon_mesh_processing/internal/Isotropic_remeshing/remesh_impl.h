@@ -246,7 +246,7 @@ namespace internal {
             get(ecmap, e) ||
             get(fpm, face(h,pmesh))!=get(fpm, face(opposite(h,pmesh),pmesh)) )
       {
-        if (sizing.is_too_long(source(h, pmesh), target(h, pmesh)))
+        if (sizing.is_too_long(source(h, pmesh), target(h, pmesh), pmesh))
         {
           return false;
         }
@@ -400,7 +400,7 @@ namespace internal {
       for(edge_descriptor e : edge_range)
       {
         const halfedge_descriptor he = halfedge(e, mesh_);
-        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_));
+        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
         if(sqlen != std::nullopt)
           long_edges.emplace(he, sqlen.value());
       }
@@ -433,16 +433,16 @@ namespace internal {
         std::cout << "   refinement point : " << refinement_point << std::endl;
 #endif
         //update sizing field with the new point
-        sizing.update(vnew, mesh_);
+        sizing.register_split_vertex(vnew, mesh_);
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_));
+        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
         if(sqlen_new != std::nullopt)
           long_edges.emplace(hnew, sqlen_new.value());
 
         const halfedge_descriptor hnext = next(hnew, mesh_);
-        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_));
+        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_), mesh_);
         if (sqlen_new != std::nullopt)
           long_edges.emplace(hnext, sqlen_new.value());
 
@@ -500,7 +500,7 @@ namespace internal {
         if (!is_split_allowed(e))
           continue;
         const halfedge_descriptor he = halfedge(e, mesh_);
-        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_));
+        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
         if(sqlen != std::nullopt)
           long_edges.emplace(halfedge(e, mesh_), sqlen.value());
       }
@@ -550,16 +550,16 @@ namespace internal {
         halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
         //update sizing field with the new point
-        sizing.update(vnew, mesh_);
+        sizing.register_split_vertex(vnew, mesh_);
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_));
+        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
         if(sqlen_new != std::nullopt)
           long_edges.emplace(hnew, sqlen_new.value());
 
         const halfedge_descriptor hnext = next(hnew, mesh_);
-        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_));
+        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_), mesh_);
         if (sqlen_new != std::nullopt)
           long_edges.emplace(hnext, sqlen_new.value());
 
@@ -580,7 +580,7 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_));
+            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
             if(sql != std::nullopt)
               long_edges.emplace(hnew2, sql.value());
           }
@@ -603,7 +603,7 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_));
+            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
             if (sql != std::nullopt)
               long_edges.emplace(hnew2, sql.value());
           }
@@ -747,7 +747,7 @@ namespace internal {
         for(halfedge_descriptor ha : halfedges_around_target(va, mesh_))
         {
           vertex_descriptor va_i = source(ha, mesh_);
-          std::optional<double> sqha = sizing.is_too_long(vb, va_i);
+          std::optional<double> sqha = sizing.is_too_long(vb, va_i, mesh_);
           if (sqha != std::nullopt)
           {
             collapse_ok = false;
