@@ -17,17 +17,16 @@ The method overcomes the major limitation of similar approaches which decompose 
 The method takes as input a point cloud with oriented normals. In a first step, \ref PkgShapeDetection "Shape Detection" is used to abstract planar shapes from the point cloud. The optional regularization of shapes, see \ref PkgShapeRegularization "Shape regularization", can not just improve the accuracy of the data by aligning parallel, coplanar and orthogonal shapes, but provides in the same time a reduction in complexity.
 Before inserting the planar shapes into the kinetic shape partition, coplanar shapes are merged into a single shape and the 2d convex hull of each shape is constructed.
 The reconstruction is posed as an energy minimization labeling the convex volumes of the kinetic shape partition as inside or outside. The optimal surface separating the differently labeled volumes is found via min-cut. A graph is embedded into the kinetic partition representing every volume by a vertex and every face between to volumes by an edge connecting the corresponding vertices.
-<table border="0">
-  <tr>
-    <td>
+<center>
+<table class="center-table" border="0">
+<tr><td>
 \f$\DeclareMathOperator*{\argmin}{arg\,min} \argmin\limits_{l \in {\{0, 1\}}^n} E(l) = (1 - \lambda) D(x) + \lambda U(x)\f$
 
 \f$D(x) = \sum\limits_{i \in C}\sum\limits_{p \in I_i}d_i(p, l_i)\f$
 
 \f$U(x) = \frac{I}{A}\sum\limits_{i\mathtt{\sim} j}a_{ij} \cdot (1-\delta{l_i,l_j})\f$
     </td>
-    <td>
-    The energy function trads data term for regularization term via parameter \f$\lambda\f$
+    <td>The energy function trads data term for regularization term via parameter \f$\lambda\f$
     
     The data term counts votes from the points \f$p \in I_i\f$ based on their associated normal pointing towards or away from each volume \f$i \in C\f$.
     
@@ -35,6 +34,7 @@ The reconstruction is posed as an energy minimization labeling the convex volume
     </td>
   </tr>
 </table>
+</center>
 
 The labels \f$l \in {\{0, 1\}}^n\f$ denote the label for the \f$n\f$ volumes of the kinetic shape partition. The data term measures the coherence of the labeled volumes with the orientation of normals of the input points. The prefered label for a volume is determined by a voting of the input points and their associated normals.
 For each volume \f$i \in C\f$ the inliers from the shape detection associated with the faces of the volume \f$p \in I_i\f$ either vote inside or outside for the volume. The vote is inside \f$d_i(p, inside) = 1 and d_i(p, outside = 0)\f$ if the normal associated to the point is directed to the outwards of the volume or outside \f$d_i(p, inside) = 0 and d_i(p, outside = 1)\f$ if the normal is oriented inwards.
@@ -42,8 +42,8 @@ The regularization term is a common choice penalizing the total surface area of 
 
 Thus the reconstruction is guaranteed to be watertight as it equals a union of volumes. However, the reconstruction may consist of several components and is not guaranteed to be 2-manifold as different components may share a vertex or an edge.
 
-\cgalFigureBegin{Kspr_pipelinefig,ksr_pipeline_small.png}
-Kinetic surface reconstruction pipeline.\n From left to right: 1. input point cloud with 382k points 2. 98 detected planar shapes 3. 63 regularized shapes 4. kinetic shape partition with 1,487 cells 5. reconstructed polygonal mesh with 131 faces.
+\cgalFigureBegin{Ksr_pipelinefig,ksr_pipeline_small.png}
+Kinetic surface reconstruction pipeline.\n From left to right: 1. input point cloud with 382k points 2. 98 detected planar shapes 3. 63 regularized convex shapes 4. kinetic shape partition with 1,487 cells 5. reconstructed polygonal mesh with 131 faces.
 \cgalFigureEnd
 
 \section ksrParameters Parameters
@@ -55,36 +55,36 @@ The parameters of the method include the parameters from other packages which ar
 
 The reconstruction adds two new parameters:
 - *external_nodes*:
-The graph cut formulation embeds a vertex into each volume and connects all vertices if the corresponding volumes share a common face. While each face inside the kinetic shape partition is exactly between two volumes, faces on the boundary have to be considered. Thus, 6 external vertices are inserted into the graph representing a volume on each side of the bounding box. The parameter *external_nodes* allows the user to either provide a fixed label *inside* or *outside* for each node or leave the label up to the energy minimization. Typical choices for this parameter are to choose all external nodes as outside for scanned objects, e.g., as in \cgalFigureRef{Kspr_pipelinefig}, or the *ZMIN* node *inside* and all other nodes *outside* as for exterior scans of buildings. The default value for this parameter is to leave the labels of the external nodes up to the energy minimization.
+The graph cut formulation embeds a vertex into each volume and connects all vertices if the corresponding volumes share a common face. While each face inside the kinetic shape partition is exactly between two volumes, faces on the boundary have to be considered. Thus, 6 external vertices are inserted into the graph representing a volume on each side of the bounding box. The parameter *external_nodes* allows the user to either provide a fixed label *inside* or *outside* for each node or leave the label up to the energy minimization. Typical choices for this parameter are to choose all external nodes as outside for scanned objects, e.g., as in \cgalFigureRef{Ksr_pipelinefig}, or the *ZMIN* node *inside* and all other nodes *outside* as for exterior scans of buildings. The default value for this parameter is to leave the labels of the external nodes up to the energy minimization.
 
-- \f$\lambda\f$:
-The \f$\lambda\f$ parameter trades the data faithfulness of the energy minimization for low complexity. The parameter has to be choosen in the range of \f$[0,1)\f$. 0 indicates the only the voting of input points are considered in the energy minimization, while the default value of \f$0,5\f$ gives an equal weight to data faithfulness and low complexity. The value should be choosen according to the quality of the input data. If the point cloud is accurate, low in noise and complete a low value can be chosen.
+- *lambda*:
+The *lambda* parameter trades the data faithfulness of the energy minimization for low complexity. The parameter has to be choosen in the range of \f$[0,1)\f$. 0 indicates the only the voting of input points are considered in the energy minimization, while the default value of \f$0,5\f$ gives an equal weight to data faithfulness and low complexity. The value should be choosen according to the quality of the input data. If the point cloud is accurate, low in noise and complete a low value can be chosen.
 
-\section ksrParameterChoice Choice of parameters
-The kinetic shape partition determines all possible reconstructions as the energy formulation only decides about the labels for the volumes, but cannot change the volumes themselves. Thus, the first stage of the pipeline, \ref PkgShapeDetection "Shape Detection" and \ref PkgShapeRegularization "Shape Regularization" have a large impact on the final reconstruction.
+\section ksrParameterChoice Choice of Parameters
+The kinetic shape partition determines all possible reconstructions as the energy formulation only decides about the labels for the volumes, but cannot change the volumes themselves. Thus, the first stage of the pipeline, \ref PkgShapeDetection "Shape Detection" and \ref PkgShapeRegularization "Shape Regularization" have a large impact on the final reconstruction. In the simple case of a cube, one missing side would depending on the chosen *lambda* parameter either make the cube expand on that side towards the bounding box or make the full cube disappear. A proper parameterization of the \ref PkgShapeDetection "Shape Detection" to detect all relevant shapes may have a large impact. The *debug* parameter allows to export intermediate results for inspection. This is especially helpful for larger scenes, where the time for the whole reconstruction requires more computational effort.
 
-to be finished
+However, in many cases a point cloud may not cover all shapes. The method offers two parameters to handle missing data. The *k* parameter of the kinetic shape partition can extend the convex polygons further in the partition and thus may make up for missing shapes.  The *external_nodes* parameter allows to preset an *inside* or *outside* label for bounding box sides. This is especially helpful for scanned buildings, where no points have been collect on the bottom side of the building, partial scans or scans where the orientation is inverted, e.g., inside an apartment.
 
-- how to use
--> show how to save intermediate results
--> tune Shape detection first
--> kinetic partition defines the solution space for graph-cut
-- ground_estimation
+The *lambda* parameter allows to trade data faithfulness for low complexity. The best choice may depend on the individual point cloud and object. However, the actual reconstruction using graph-cut only makes up a small fraction from the whole pipeline. Performing several reconstructions with different values of *lambda* is a reasonal approach, see \ref ksrParametersExample.
 
-\section secmyexamples Examples
+\cgalFigureBegin{Ksr_parametersfig,ksr_parameters_gray_small.png}
+Impact of parameters on the reconstruction of the rotated lans model.\n From left to right: 1. & 2. Reconstruction with using \f$\lambda = 0.7\f$ and \f$\lambda = 0.8\f$. A higher value of lambda removes some details on the roof as well as the chimney. As no planar shape was detected at the top of the chimney, the kinetic space partition does not offer a volume that well covers the point cloud. The volume of the chimney is either to large for \f$\lambda = 0.7\f$ or gets cut completely for \f$\lambda = 0.8\f$ 3. Reconstruction of the model without reorienting the bbox. For the reconstruction to succeed it is necessary to set the external_node for *ZMIN* to *inside* as the point cloud does not close the church from below. 4. Reconstruction as in 3., but without setting external_node for *ZMIN*.
+\cgalFigureEnd
 
-\subsection myBasicExample Basic example
+\section ksrExamples Examples
+
+\subsection ksrBasicExample Basic Example
 This minimal example shows the import of a simple synthetic point cloud and an reconstruction using mostly default parameters.
 
 \cgalExample{Kinetic_surface_reconstruction/basic.cpp}
 
-\subsection myBuildingExample Building example
+\subsection ksrBuildingExample Building Example
 This example shows the import of an acquired point cloud of a building and a reconstruction using a common choice of parameters for building reconstruction. The input point cloud is reoriented to be axis-aligned and regularization is used to simplify the detected shapes before reconstruction.
 The actual reconstruction method is actually fast. To avoid running the full shape detection and kinetic partition just to try different values for beta, several reconstructions are performed and exported into ply format.
 
 \cgalExample{Kinetic_surface_reconstruction/building.cpp}
 
-\subsection myParametersExample Parameters example
+\subsection ksrParametersExample Parameters Example
 This example provides a command line version of the kinetic surface reconstruction allowing to configure the input point cloud filename and most parameters. 
 
 \cgalExample{Kinetic_surface_reconstruction/parameters.cpp}

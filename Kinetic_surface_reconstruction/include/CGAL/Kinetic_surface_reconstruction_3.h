@@ -59,7 +59,7 @@ namespace CGAL
   \tparam IntersectionKernel
     must be a model of `Kernel` using exact computations. Defaults to `CGAL::Exact_predicates_exact_constructions_kernel`. Used for the internal kinetic shape partition.
 */
-template<typename GeomTraits, typename PointSet, typename PointMap, typename NormalMap, typename IntersectionKernel = CGAL::Exact_predicates_exact_constructions_kernel>
+template<typename GeomTraits, typename PointRange, typename PointMap, typename NormalMap, typename IntersectionKernel = CGAL::Exact_predicates_exact_constructions_kernel>
 class Kinetic_surface_reconstruction_3 {
 public:
   using Kernel = GeomTraits;
@@ -68,7 +68,7 @@ public:
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
   using Plane_3 = typename Kernel::Plane_3;
-  using Point_set = PointSet;
+  using Point_range = PointRange;
 
   using KSP = Kinetic_shape_partition_3<Kernel, Intersection_kernel>;
 
@@ -93,7 +93,7 @@ public:
   \cgalNamedParamsEnd
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
-  Kinetic_surface_reconstruction_3(PointSet& points,
+  Kinetic_surface_reconstruction_3(Point_range& points,
     const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {}
 
   /*!
@@ -183,8 +183,8 @@ public:
     m_polygons.clear();
     m_region_map.clear();
 
-    m_point_map = Point_set_processing_3_np_helper<Point_set, CGAL_NP_CLASS, Point_map>::get_point_map(m_points, np);
-    m_normal_map = Point_set_processing_3_np_helper<Point_set, CGAL_NP_CLASS, Normal_map>::get_normal_map(m_points, np);
+    m_point_map = Point_set_processing_3_np_helper<Point_range, CGAL_NP_CLASS, Point_map>::get_point_map(m_points, np);
+    m_normal_map = Point_set_processing_3_np_helper<Point_range, CGAL_NP_CLASS, Normal_map>::get_normal_map(m_points, np);
 
     create_planar_shapes(np);
 
@@ -398,9 +398,9 @@ private:
   using Indices = std::vector<std::size_t>;
   using Polygon_3 = std::vector<Point_3>;
 
-  using Region_type = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_set>;
-  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_set>;
-  using Sorting = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting_for_point_set<Point_set, Neighbor_query>;
+  using Region_type = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_range>;
+  using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query_for_point_set<Point_range>;
+  using Sorting = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting_for_point_set<Point_range, Neighbor_query>;
   using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
   using From_exact = typename CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
@@ -450,7 +450,7 @@ private:
   bool m_verbose;
   bool m_debug;
 
-  Point_set &m_points;
+  Point_range &m_points;
   Point_map m_point_map;
   Normal_map m_normal_map;
 
