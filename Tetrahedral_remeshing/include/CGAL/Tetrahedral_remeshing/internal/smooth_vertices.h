@@ -412,6 +412,19 @@ private:
     }
   }
 
+  template<typename Tr>
+  auto vertex_id_map(const Tr& tr)
+  {
+    using Vertex_handle = typename Tr::Vertex_handle;
+    std::unordered_map<Vertex_handle, std::size_t> vertex_id;
+    std::size_t id = 0;
+    for (const Vertex_handle v : tr.finite_vertex_handles())
+    {
+      vertex_id[v] = id++;
+    }
+    return vertex_id;
+  }
+
 public:
   template<typename C3T3, typename CellSelector>
   void smooth_vertices(C3T3& c3t3,
@@ -451,17 +464,13 @@ public:
 
     //smooth()
     const std::size_t nbv = tr.number_of_vertices();
-    std::unordered_map<Vertex_handle, std::size_t> vertex_id;
     std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
     std::vector<int> neighbors(nbv, -1);
     std::vector<bool> free_vertex(nbv, false);//are vertices free to move? indices are in `vertex_id`
 
     //collect ids
-    std::size_t id = 0;
-    for (const Vertex_handle v : tr.finite_vertex_handles())
-    {
-      vertex_id[v] = id++;
-    }
+    const std::unordered_map<Vertex_handle, std::size_t> vertex_id
+      = vertex_id_map(tr);
 
     //collect incident cells
     std::vector<boost::container::small_vector<Cell_handle, 40> >
@@ -472,7 +481,7 @@ public:
 
       for (int i = 0; i < 4; ++i)
       {
-        const std::size_t idi = vertex_id[c->vertex(i)];
+        const std::size_t idi = vertex_id.at(c->vertex(i));
         inc_cells[idi].push_back(c);
         if(cell_is_selected)
           free_vertex[idi] = true;
