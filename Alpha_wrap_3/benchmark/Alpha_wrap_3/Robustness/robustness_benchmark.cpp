@@ -21,7 +21,7 @@ enum Robustness_benchmark_exit_code
   VALID_SOLID_OUTPUT = 0,
 
   // Failure
-  INTPUT_IS_INVALID = 1,
+  INPUT_IS_INVALID = 1,
   OUTPUT_IS_NOT_TRIANGLE_MESH = 2,
   OUTPUT_IS_COMBINATORIAL_NON_MANIFOLD = 3,
   OUTPUT_HAS_BORDERS = 4,
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   }
 
   if(argc < 3 || relative_alpha_ratio <= 0.)
-    return AW3i::INTPUT_IS_INVALID;
+    return AW3i::INPUT_IS_INVALID;
 
   Mesh input_mesh;
   if(!PMP::IO::read_polygon_mesh(entry_name_ptr, input_mesh) ||
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 #endif
      )
   {
-    return AW3i::INTPUT_IS_INVALID;
+    return AW3i::INPUT_IS_INVALID;
   }
 
   const CGAL::Bbox_3 bbox = PMP::bbox(input_mesh);
