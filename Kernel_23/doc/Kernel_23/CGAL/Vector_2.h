@@ -65,6 +65,7 @@ Vector_2(int x, int y);
 
 /*!
 introduces a vector `v` initialized to `(x,y)`.
+\cgalEpicExact
 */
 Vector_2(double x, double y);
 
@@ -76,6 +77,7 @@ Vector_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1
 
 /*!
 introduces a vector `v` initialized to `(x,y)`.
+\cgalEpicExact
 */
 Vector_2(const Kernel::FT &x, const Kernel::FT &y);
 
@@ -106,11 +108,13 @@ Kernel::RT hw() const;
 
 /*!
 returns the `x`-coordinate of `v`, that is `hx()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT x() const;
 
 /*!
 returns the `y`-coordinate of `v`, that is `hy()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT y() const;
 
@@ -132,12 +136,16 @@ Kernel::RT homogeneous(int i) const;
 /*!
 returns the i'th %Cartesian coordinate of `v`.
 \pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
 \pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::FT operator[](int i) const;
 
@@ -160,6 +168,7 @@ int dimension() const;
 
 /*!
 returns the direction which passes through `v`.
+\cgalEpicExact
 */
 Direction_2<Kernel> direction() const;
 
@@ -215,6 +224,7 @@ Vector_2<Kernel>& operator-=(const Vector_2<Kernel> &w);
 
 /*!
 returns the opposite vector.
+\cgalEpicExact
 */
 Vector_2<Kernel> operator-() const;
 

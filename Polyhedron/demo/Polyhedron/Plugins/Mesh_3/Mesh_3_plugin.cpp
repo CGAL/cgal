@@ -50,9 +50,6 @@ auto make_not_null(T&& t) {
 
 using namespace CGAL::Three;
 
-// Constants
-const QColor default_mesh_color(45,169,70);
-
 #include "Mesh_3_plugin_cgal_code.h" // declare functions `cgal_code_mesh_3`
 #include "split_polylines.h"
 #include <CGAL/Mesh_facet_topology.h>
@@ -368,9 +365,9 @@ std::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
   {
     auto poly_items_ptr = std::get_if<Polyhedral_mesh_items>(&items.value());
     auto image_items_ptr = std::get_if<Image_mesh_items>(&items.value());
-    if(poly_items_ptr && poly_items_ptr == nullptr)
+    if(poly_items_ptr != nullptr)
       poly_items_ptr->polylines_item = polylines_item;
-    else if(image_items_ptr && image_items_ptr == nullptr)
+    else if(image_items_ptr != nullptr )
       image_items_ptr->polylines_item = polylines_item;
   }
 
@@ -508,6 +505,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.facetMinSizing,
           SLOT(setEnabled(bool)));
 
+  connect(ui.noFacetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.sizingMinLabel,
+          SLOT(setEnabled(bool)));
+
   connect(
       ui.noAngle, SIGNAL(toggled(bool)), ui.facetAngle, SLOT(setEnabled(bool)));
 
@@ -519,6 +521,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   connect(ui.noTetMinSizing,
           SIGNAL(toggled(bool)),
           ui.tetMinSizing,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.noTetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.tetMinSizingLabel,
           SLOT(setEnabled(bool)));
 
   connect(ui.noTetShape,
@@ -602,6 +609,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                            diag); // max
   ui.facetSizing->setValue(facets_sizing);
   ui.facetMinSizing->setValue(facets_min_sizing);
+  ui.facetMinSizing->setEnabled(false);
+  ui.noFacetMinSizing->setChecked(false);
   ui.edgeSizing->setValue(edges_sizing);
   ui.edgeMinSizing->setValue(edges_min_sizing);
 
@@ -609,6 +618,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                          diag);        // max
   ui.tetSizing->setValue(tets_sizing); // default value
   ui.tetMinSizing->setValue(tets_min_sizing);
+  ui.tetMinSizing->setEnabled(false);
+  ui.noTetMinSizing->setChecked(false);
 
   ui.approx->setRange(diag * 10e-7, // min
                       diag);        // max
@@ -663,6 +674,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         ui.protectEdges->addItem(boundary_only.first, v(boundary_only.second));
       } else
         ui.protectEdges->addItem(sharp_edges.first, v(sharp_edges.second));
+      if (polylines_item != nullptr)
+        ui.protectEdges->addItem(input_polylines.first, v(input_polylines.second));
     } else if (items->index() == IMAGE_MESH_ITEMS) {
       if (polylines_item != nullptr) {
         ui.protectEdges->addItem(input_polylines.first, QVariant::fromValue(input_polylines.second));
@@ -729,6 +742,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   const auto pe_flags = ui.protectEdges->currentData().value<Protection_flags>();
   protect_borders = ui.protect->isChecked() && pe_flags.testFlag(BORDERS);
   protect_features = ui.protect->isChecked() && pe_flags.testFlag(FEATURES);
+  const bool protect_polylines = ui.protect->isChecked() && polylines_item != nullptr;
 
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = (ui.manifoldCheckBox->isChecked() ? 1 : 0) +
@@ -775,7 +789,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       sm_items.removeAll(make_not_null(bounding_sm_item));
     }
 
-    Scene_polylines_item::Polylines_container plc;
+    Scene_polylines_item::Polylines_container polylines_empty_container;
     SMesh* bounding_polyhedron = (bounding_sm_item == nullptr)
                                      ? nullptr
                                      : bounding_sm_item->polyhedron();
@@ -811,7 +825,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     {
       thread = cgal_code_mesh_3(
         polyhedrons,
-        (polylines_item == nullptr) ? plc : polylines_item->polylines,
+        protect_polylines ? polylines_item->polylines : polylines_empty_container,
         bounding_polyhedron,
         item_name,
         angle,
@@ -878,11 +892,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       ? image_item->image_weights()
       : nullptr;
 
-    Scene_polylines_item::Polylines_container plc;
+    Scene_polylines_item::Polylines_container polylines_empty_container;
 
     thread = cgal_code_mesh_3(
         pImage,
-        (img_polylines_item == nullptr) ? plc : img_polylines_item->polylines,
+        (img_polylines_item == nullptr) ? polylines_empty_container : img_polylines_item->polylines,
         angle,
         facets_sizing,
         facets_min_sizing,
@@ -989,7 +1003,7 @@ meshing_done(Meshing_thread* thread)
     .arg(source_item_name_)
     .arg(thread->time());
 
-  Q_FOREACH( QString param, thread->parameters_log() )
+  for( QString param : thread->parameters_log() )
   {
     str.append(QString("( %1 )<br>").arg(param));
   }
@@ -1035,11 +1049,13 @@ treat_result(Scene_item& source_item,
                             float((bbox.ymin() + bbox.ymax())/2.f),
                             float((bbox.zmin() + bbox.zmax())/2.f));
 
+    bool input_is_labeled_img = dynamic_cast<Scene_image_item*>(&source_item) != nullptr;
+    result_item->setUseSubdomainColors(input_is_labeled_img);
     result_item->setColor(source_item.color());
     result_item->setRenderingMode(source_item.renderingMode());
     result_item->set_data_item(&source_item);
 
-    Q_FOREACH(int ind, scene->selectionIndices()) {
+    for(int ind : scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -1053,7 +1069,7 @@ treat_result(Scene_item& source_item,
     Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
     CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
     new_item->setName(tr("%1 [Remeshed]").arg(source_item_name_));
-    Q_FOREACH(int ind, scene->selectionIndices()) {
+    for(int ind : scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();

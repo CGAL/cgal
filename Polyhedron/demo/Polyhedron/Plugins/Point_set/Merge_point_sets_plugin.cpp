@@ -39,7 +39,7 @@ public:
     if (scene->selectionIndices().size() < 2)
       return false;
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
       {
         if ( qobject_cast<Scene_points_with_normal_item*>(scene->item(index)) )
           return true;
@@ -62,7 +62,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
     = qobject_cast<Scene_points_with_normal_item*>(scene->item(mainSelectionIndex));
 
   QList<int> indices_to_remove;
-  Q_FOREACH(int index, scene->selectionIndices())
+  for(int index : scene->selectionIndices())
     {
       if (index == mainSelectionIndex)
         continue;
@@ -82,7 +82,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
   scene->itemChanged(mainSelectionIndex);
 
   //remove the other items
-  Q_FOREACH(int index, indices_to_remove)
+  for(int index : indices_to_remove)
   {
     scene->erase(index);
   }

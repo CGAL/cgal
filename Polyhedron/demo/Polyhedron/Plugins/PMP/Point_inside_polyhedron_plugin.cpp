@@ -108,7 +108,7 @@ public Q_SLOTS:
     std::vector<Point_inside_smesh*>inside_smesh_testers;
 
     std::vector<Point_set*> point_sets;
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
+    for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices()) {
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
       if (sm_item){
         inside_smesh_testers.push_back(new Point_inside_smesh(*(sm_item->polyhedron())));
@@ -171,7 +171,7 @@ public Q_SLOTS:
 
     bool found = false;
     // for repaint
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
+    for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) {
         found = true;
@@ -196,7 +196,7 @@ public Q_SLOTS:
     //   warning about '*bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
+    for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices()) {
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
       if(sm_item) {
         if(!bbox) {
@@ -254,7 +254,7 @@ public Q_SLOTS:
 private Q_SLOTS:
   void resetGeneratedPoints(QObject* o)
   {
-    Q_FOREACH(Scene_points_with_normal_item* item , generated_points)
+    for(Scene_points_with_normal_item* item  : generated_points)
     if(item == o)
     {
       generated_points.removeAll(item);

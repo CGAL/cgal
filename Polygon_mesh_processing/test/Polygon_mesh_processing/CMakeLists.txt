@@ -80,8 +80,12 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("delaunay_remeshing_test.cpp")
   target_link_libraries(delaunay_remeshing_test PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("test_interpolated_corrected_curvatures.cpp")
+  target_link_libraries(test_interpolated_corrected_curvatures PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("test_decimation_of_planar_patches.cpp")
   target_link_libraries(test_decimation_of_planar_patches PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("remeshing_quality_test.cpp" )
+  target_link_libraries(remeshing_quality_test PUBLIC CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Tests that use the Eigen library will not be compiled.")
 endif()
@@ -125,7 +129,7 @@ else()
   message(STATUS "NOTICE: Tests are not using Ceres.")
 endif()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  triangulate_hole_Polyhedron_3_no_delaunay_test"
     "execution   of  triangulate_hole_Polyhedron_3_test"

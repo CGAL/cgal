@@ -61,7 +61,7 @@ See the page
 | :-------- | :------------- | :------------ | :----------- |
 |   \cgal   | none           | Main library  | \gmp, \mpfr, \boost (headers) |
 | `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \zlib, \vtk (optional) |
-| `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \qt5-based demos | \qt5 |
+| `CGAL_Qt6`  | `WITH_CGAL_Qt6` | `QGraphicsView` support for \qt6-based demos | \qt6 |
 
 \subsection installation_examples CGAL Examples and Demos
 

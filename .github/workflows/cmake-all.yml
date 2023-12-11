@@ -17,10 +17,10 @@ jobs:
     - name: configure all
       run: |
         set -e
-        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DBUILD_TESTING=ON ..
+        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DCGAL_ENABLE_TESTING=ON ..
         ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)
 
-  cmake-testsuite-with-qt5:
+  cmake-testsuite-with-qt:
 
     runs-on: ubuntu-latest
 
@@ -31,5 +31,5 @@ jobs:
     - name: configure all
       run: |
         set -e
-        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DBUILD_TESTING=ON ..
+        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DCGAL_ENABLE_TESTING=ON ..
         ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)

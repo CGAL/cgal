@@ -70,8 +70,8 @@ template <typename Geom_traits,
 class Weighted_PCA_smoother
 {
 public:
-  typedef typename Geom_traits::FT FT; ///< defines the point type.
-  typedef typename Geom_traits::Point_3 Point; ///< defines the point typ.e
+  typedef typename Geom_traits::FT FT; ///< defines the field number type.
+  typedef typename Geom_traits::Point_3 Point; ///< defines the point type.
   typedef typename Geom_traits::Vector_3 Vector; ///< defines the vector type.
 private:
 

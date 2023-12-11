@@ -64,7 +64,7 @@ public slots:
     const Point_3 center(0,0,0);
     const QString infos = QInputDialog::getText(nullptr, "Sphere", "Enter the sphere's information : (Radius center.x center.y center.z):",
                                                 QLineEdit::Normal,"100.0 0.0 0.0 0.0");
-    QStringList list = infos.split(QRegExp("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+    QStringList list = infos.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=4){
       QMessageBox *msgBox = new QMessageBox;

@@ -891,7 +891,7 @@ Polyhedron_demo_mean_curvature_flow_skeleton_plugin::createContractedItem(Scene_
 Scene_mcf_item*
 Polyhedron_demo_mean_curvature_flow_skeleton_plugin::getMCFItem()
 {
-  Q_FOREACH(int index, scene->selectionIndices())
+  for(int index : scene->selectionIndices())
   {
     Scene_mcf_item* mcf = qobject_cast<Scene_mcf_item*>(scene->item(index));
     if(mcf)
