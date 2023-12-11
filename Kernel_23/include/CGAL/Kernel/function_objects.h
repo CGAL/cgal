@@ -978,11 +978,42 @@ namespace CommonKernelFunctors {
      const Vector_3 ad = vector(a,d);
 
      const Vector_3 abad = cross_product(ab,ad);
-     const double x = CGAL::to_double(scalar_product(cross_product(ab,ac), abad));
-     const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
-     const double y = l_ab * CGAL::to_double(scalar_product(ac,abad));
+     const Vector_3 abac = cross_product(ab,ac);
 
-     return FT(std::atan2(y, x) * 180 / CGAL_PI );
+     // The dihedral angle we are interested in is the angle around the oriented
+     // edge ab which is the same (in absolute value) as the angle between the
+     // vectors ab^ac and ab^ad (cross-products).
+     // (abac points inside the tetra abcd if its orientation is positive and outside otherwise)
+     //
+     // We consider the vector abad in the basis defined by the three vectors
+     //    (<ab>, <abac>, <ab^abac>)
+     // where <u> denote the normalized vector u/|u|.
+     //
+     // In this orthonormal basis, the vector adab has the coordinates
+     //    x = <ab>      * abad
+     //    y = <abac>    * abad
+     //    z = <ab^abac> * abad
+     // We have x == 0, because abad and ab are orthogonal, and thus abad is in
+     // the plane (yz) of the new basis.
+     //
+     // In that basis, the dihedral angle is the angle between the y axis and abad
+     // which is the arctan of y/z, or atan2(z, y).
+     //
+     // (Note that ab^abac is in the plane abc, pointing outside the tetra if
+     //  its orientation is positive and inside otherwise).
+     //
+     // For the normalization, abad appears in both scalar products
+     // in the quotient so we can ignore its norm. For the second
+     // terms of the scalar products, we are left with ab^abac and abac.
+     // Since ab and abac are orthogonal, the sinus of the angle between the
+     // two vectors is 1.
+     // So the norms are |ab|.|abac| vs |abac|, which is why we have a
+     // multiplication by |ab| in y below.
+     const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
+     const double y = l_ab * CGAL::to_double(scalar_product(abac, abad));
+     const double z = CGAL::to_double(scalar_product(cross_product(ab,abac),abad));
+
+     return FT(std::atan2(z, y) * 180 / CGAL_PI );
    }
  };
 
