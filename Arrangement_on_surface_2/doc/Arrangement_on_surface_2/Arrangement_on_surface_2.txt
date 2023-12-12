@@ -5719,9 +5719,9 @@ its base type. An instance of `Aos_observer<>` serves as a base type
 for other observer classes and defines a set of virtual notification
 functions, with default empty implementations.  You can also use the
 template alias `Arr_observer<Arrangement_2>`, where `Arrangement_2` is
-the type of the arrangement object in case it is derived from
-`Arrangement_on_surface_2`.  The set of functions can be divided into
-three categories, as follows:
+the type of the arrangement object in case it is derived from an
+instance of the template `Arrangement_on_surface_2`.  The set of
+functions can be divided into three categories, as follows:
 
 <OL>
 

@@ -1,33 +1,17 @@
 // Copyright (c) 2023 Tel-Aviv University (Israel).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-//
-// Author(s): Efi Fogel            <efifogel@gmail.com>
-
-#ifndef CGAL_ARR_OBSERVER_H
-#define CGAL_ARR_OBSERVER_H
-
-/*! \file
- * Definition of the Arr_observer<Arrangement> base class mainly for backward compatibility.
- */
-
-#include <CGAL/license/Arrangement_on_surface_2.h>
-
-#include <CGAL/disable_warnings.h>
-
 namespace CGAL {
+
+/*! \ingroup PkgArrangementOnSurface2Ref
+ *
+ * \anchor arr_refarr_obs
+ *
+ * `Arr_observer<Arrangement_2>` is an alias for Aos_observer<Arrangement_on_surface_2>`,
+ * where `Arrangement_2` derives from `Arrangement_on_surface_2` and the latter is an
+ * instance of the template
+ * `CGAL::Arrangement_on_surface_2<GeometryTraits, TopologyTraits>`.
+ */
 
 template <typename Arrangement_>
 using Arr_observer = typename Arrangement_::Observer;
 
 } // namespace CGAL
-
-#include <CGAL/enable_warnings.h>
-
-#endif

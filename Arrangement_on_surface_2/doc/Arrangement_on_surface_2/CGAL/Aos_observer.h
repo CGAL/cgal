@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Ref
  *
- * \anchor arr_refarr_obs
+ * \anchor arr_refaos_obs
  *
  * `Aos_observer` serves as an abstract base class for all observer classes that
  * are attached to an arrangement instance of type `Arrangement` and receive
