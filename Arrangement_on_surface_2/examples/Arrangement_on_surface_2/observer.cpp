@@ -2,14 +2,15 @@
 // Using a simple arrangement observer.
 
 #include <CGAL/basic.h>
+#include <CGAL/Arr_observer.h>
 
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 
 // An observer that receives notifications of face splits and face mergers.
-class My_observer : public Arrangement::Observer {
+class My_observer : public CGAL::Arr_observer<Arrangement> {
 public:
-  My_observer(Arrangement& arr) : Arrangement::Observer(arr) {}
+  My_observer(Arrangement& arr) : CGAL::Arr_observer<Arrangement>(arr) {}
 
   virtual void before_split_face(Face_handle, Halfedge_handle e) {
     std::cout << "-> The insertion of :  [ " << e->curve()

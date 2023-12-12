@@ -40,7 +40,7 @@
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Arr_default_dcel.h>
-#include <CGAL/Arr_observer.h>
+#include <CGAL/Aos_observer.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/function_objects.h>
@@ -109,10 +109,10 @@ public:
   typedef typename Topology_traits::Dcel            Dcel;
   typedef typename Dcel::Size                       Size;
 
-  typedef Arr_observer<Self>                        Observer;
+  typedef Aos_observer<Self>                        Observer;
 
 protected:
-  friend class Arr_observer<Self>;
+  friend class Aos_observer<Self>;
   friend class Arr_accessor<Self>;
 
   // Internal DCEL types:

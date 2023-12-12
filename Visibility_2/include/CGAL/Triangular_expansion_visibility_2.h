@@ -102,7 +102,7 @@ private:
           : Base(const_cast<Arrangement_2&>(arr)), has_changed(false)
       {}
 
-      // Arr_observer interface
+      // Aos_observer interface
 
       void after_attach() { has_changed = false; }
 

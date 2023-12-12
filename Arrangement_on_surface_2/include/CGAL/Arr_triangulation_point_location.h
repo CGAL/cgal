@@ -21,7 +21,6 @@
  * Definition of the Arr_triangulation_point_location<Arrangement> template.
  */
 
-#include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location_result.h>
 

@@ -272,7 +272,7 @@ protected:
    * involving edges and updates the list of halfedges associated with the
    * input curves accordingly.
    */
-  class Curve_halfedges_observer : public Arr_observer<Base_arr_2> {
+  class Curve_halfedges_observer : public Base_arr_2::Observer {
   public:
 
     typedef typename Base_arr_2::Halfedge_handle     Halfedge_handle;

@@ -20,7 +20,6 @@
 #include <CGAL/enum.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Arr_observer.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_naive_point_location.h>
