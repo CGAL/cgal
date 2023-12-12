@@ -8,9 +8,9 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
-#ifndef CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
-#define CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
+#ifndef CGAL_IO_POLYGON_MESH_IO_H
+#define CGAL_IO_POLYGON_MESH_IO_H
 
 #include <CGAL/boost/graph/io.h>
 
-#endif // CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H
+#endif // CGAL_IO_POLYGON_MESH_IO_H
