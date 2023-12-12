@@ -36,23 +36,25 @@ typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surfac
 
 int main(int argc, char* argv[])
 {
-  // Poisson options
-  FT sm_angle = 20.0; // Min triangle angle in degrees.
-  FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
-  FT sm_distance = 0.25; // Surface Approximation error w.r.t. point set average spacing.
+  const std::string file = (argc > 1) ? std::string(argv[1])
+                                      : CGAL::data_file_path("points_3/kitten.xyz");
 
   // Reads the point set file in points[].
   // Note: read_points() requires an iterator over points
   // + property maps to access each point's position and normal.
   PointList points;
-  char* filename = argv[1];
-  if(!CGAL::IO::read_points(filename, std::back_inserter(points),
-                        CGAL::parameters::point_map(Point_map())
-                                          .normal_map (Normal_map())))
+  if(!CGAL::IO::read_points(file, std::back_inserter(points),
+                            CGAL::parameters::point_map(Point_map())
+                                             .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file input file!" << std::endl;
     return EXIT_FAILURE;
   }
+
+  // Poisson options
+  FT sm_angle = 20.0; // Min triangle angle in degrees.
+  FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
+  FT sm_distance = 0.25; // Surface Approximation error w.r.t. point set average spacing.
 
   CGAL::Real_timer total_time;
   total_time.start();
@@ -114,7 +116,7 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
 
   // saves reconstructed surface mesh
-  std::ofstream out("kitten_poisson-20-30-0.375.off");
+  std::ofstream out("poisson_surface.off");
   Polyhedron output_mesh;
   CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
 
