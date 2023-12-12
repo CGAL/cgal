@@ -447,8 +447,7 @@ bool collect_intersections(const std::array<typename K::Point_3, 3>& t1,
 }
 
 template <class EK,
-          class PointVector
->
+          class PointVector>
 void generate_subtriangles(std::size_t ti,
                            std::vector<std::pair<std::size_t, std::size_t>>& segments,
                            std::vector<typename EK::Point_3>& points,
@@ -896,7 +895,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
   // init the vector of triangles used for the autorefinement of triangles
   typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
-  std::vector< std::array<typename EK::Point_3, 3> > triangles(tiid+1);
+  std::vector< std::array<EK::Point_3, 3> > triangles(tiid+1);
   Cartesian_converter<GT, EK> to_exact;
 
   for(Input_TID f : intersected_faces)
@@ -926,14 +925,14 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
     if (i1==-1 || i2==-1) continue; //skip degenerate faces
 
-    const std::array<typename EK::Point_3, 3>& t1 = triangles[i1];
-    const std::array<typename EK::Point_3, 3>& t2 = triangles[i2];
+    const std::array<EK::Point_3, 3>& t1 = triangles[i1];
+    const std::array<EK::Point_3, 3>& t2 = triangles[i2];
 
-    std::vector<typename EK::Point_3> inter_pts;
+    std::vector<EK::Point_3> inter_pts;
     bool triangles_are_coplanar = autorefine_impl::collect_intersections<EK>(t1, t2, inter_pts);
 
     CGAL_assertion(
-      CGAL::do_intersect(typename EK::Triangle_3(t1[0], t1[1], t1[2]), typename EK::Triangle_3(t2[0], t2[1], t2[2]))
+      CGAL::do_intersect(EK::Triangle_3(t1[0], t1[1], t1[2]), EK::Triangle_3(t2[0], t2[1], t2[2]))
       != inter_pts.empty());
 
     if (!inter_pts.empty())
@@ -985,7 +984,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
       std::map<EK::Point_3, std::size_t> point_id_map;
 
 
-      auto get_point_id = [&](const typename EK::Point_3& pt)
+      auto get_point_id = [&](const EK::Point_3& pt)
       {
         auto insert_res = point_id_map.insert(std::make_pair(pt, all_points[ti].size()));
         if (insert_res.second)
@@ -1010,8 +1009,8 @@ void autorefine_triangle_soup(PointRange& soup_points,
       std::set<std::pair<std::size_t, std::size_t>> segset;
       for (std::size_t si=0; si<nbs; ++si)
       {
-        EK::Point_3 src = all_segments[ti][si][0],
-                    tgt = all_segments[ti][si][1];
+        const EK::Point_3& src = all_segments[ti][si][0];
+        const EK::Point_3& tgt = all_segments[ti][si][1];
         std::size_t src_id = get_point_id(src), tgt_id=get_point_id(tgt);
         if (segset.insert(
               CGAL::make_sorted_pair(src_id, tgt_id)).second)
@@ -1169,7 +1168,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   // import refined triangles
 
   // Lambda to retrieve the id of intersection points
-  auto get_point_id = [&](const typename EK::Point_3& pt)
+  auto get_point_id = [&](const EK::Point_3& pt)
   {
     auto insert_res = point_id_map.insert(std::make_pair(pt, soup_points.size()));
     if (insert_res.second)
@@ -1201,7 +1200,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
     //option 1 (using a mutex)
     CGAL_MUTEX point_container_mutex;
     /// Lambda concurrent_get_point_id()
-    auto concurrent_get_point_id = [&](const typename EK::Point_3& pt)
+    auto concurrent_get_point_id = [&](const EK::Point_3& pt)
     {
       auto insert_res = point_id_map.insert(std::make_pair(pt, -1));
 
@@ -1244,7 +1243,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
     //option 2 (without mutex)
     /// Lambda concurrent_get_point_id()
     tbb::concurrent_vector<typename Point_id_map::iterator> iterators;
-    auto concurrent_get_point_id = [&](const typename EK::Point_3& pt)
+    auto concurrent_get_point_id = [&](const EK::Point_3& pt)
     {
       auto insert_res = point_id_map.insert(std::make_pair(pt, -1));
       if (insert_res.second)
