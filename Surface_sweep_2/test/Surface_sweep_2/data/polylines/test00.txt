@@ -30,8 +30,7 @@
 7 0
 8 0
 # No. of intersection points followed by points
-4
-2 0
+3
 4 0
 6 0
 7 0
