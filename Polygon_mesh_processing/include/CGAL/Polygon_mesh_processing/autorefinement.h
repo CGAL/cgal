@@ -1200,7 +1200,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
     //option 1 (using a mutex)
     CGAL_MUTEX point_container_mutex;
     /// Lambda concurrent_get_point_id()
-    auto concurrent_get_point_id = [&](const typename EK::Point_3 pt)
+    auto concurrent_get_point_id = [&](const typename EK::Point_3& pt)
     {
       auto insert_res = point_id_map.insert(std::make_pair(pt, -1));
 
@@ -1243,7 +1243,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
     //option 2 (without mutex)
     /// Lambda concurrent_get_point_id()
     tbb::concurrent_vector<typename Point_id_map::iterator> iterators;
-    auto concurrent_get_point_id = [&](const typename EK::Point_3 pt)
+    auto concurrent_get_point_id = [&](const typename EK::Point_3& pt)
     {
       auto insert_res = point_id_map.insert(std::make_pair(pt, -1));
       if (insert_res.second)
