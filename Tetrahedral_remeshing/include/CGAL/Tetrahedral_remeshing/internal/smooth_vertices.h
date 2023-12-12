@@ -488,82 +488,46 @@ private:
       if (!free_vertex[vid])
         continue;
 
-      if (neighbors[vid] > 1)
+      Vector_3 final_position;
+      const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
+      const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(v);
+      const std::size_t count = v_surface_indices.size();
+
+      const std::size_t nb_neighbors = neighbors[vid];
+
+      const Vector_3 smoothed_position = (nb_neighbors > 1)
+                                       ? smoothed_positions[vid] / static_cast<FT>(nb_neighbors)
+                                       : current_pos;
+
+      for (const Surface_patch_index& si : v_surface_indices)
       {
-        Vector_3 smoothed_position = smoothed_positions[vid] / neighbors[vid];
-        Vector_3 final_position = CGAL::NULL_VECTOR;
+        const Vector_3 projection_vector = (nb_neighbors > 1)
+          ? project_on_tangent_plane(smoothed_position, current_pos, vertices_normals.at(v).at(si))
+          : smoothed_position;
 
-        std::size_t count = 0;
-        const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
+        //Check if the mls surface exists to avoid degenerated cases
+        std::optional<Vector_3> mls_projection = project(si, projection_vector);
 
-        const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(v);
-        for (const Surface_patch_index& si : v_surface_indices)
-        {
-          Vector_3 normal_projection
-            = project_on_tangent_plane(smoothed_position, current_pos, vertices_normals.at(v).at(si));
-
-          //Check if the mls surface exists to avoid degenerated cases
-          if (std::optional<Vector_3> mls_projection = project(si, normal_projection)) {
-            final_position = final_position + *mls_projection;
-          }
-          else {
-            final_position = final_position + normal_projection;
-          }
-          count++;
-        }
-
-        if (count > 0)
-          final_position = final_position / static_cast<FT>(count);
+        if (mls_projection != std::nullopt)
+          final_position = final_position + *mls_projection;
         else
-          final_position = smoothed_position;
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        os_surf << "2 " << current_pos << " " << final_position << std::endl;
-#endif
-        // move vertex
-        const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
-        if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-          nb_done_1d++;
-#endif
-        }
+          final_position = final_position + projection_vector;
       }
-      else if (neighbors[vid] > 0)
-      {
-        Vector_3 final_position = CGAL::NULL_VECTOR;
 
-        int count = 0;
-        const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
-
-        const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(v);
-        for (const Surface_patch_index& si : v_surface_indices)
-        {
-          //Check if the mls surface exists to avoid degenerated cases
-
-          if (std::optional<Vector_3> mls_projection = project(si, current_pos)) {
-            final_position = final_position + *mls_projection;
-          }
-          else {
-            final_position = final_position + current_pos;
-          }
-          count++;
-        }
-
-        if (count > 0)
-          final_position = final_position / static_cast<FT>(count);
-        else
-          final_position = current_pos;
+      if (count > 0)
+        final_position = final_position / static_cast<FT>(count);
+      else
+        final_position = smoothed_position;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        os_surf << "2 " << current_pos << " " << final_position << std::endl;
+      os_surf << "2 " << current_pos << " " << final_position << std::endl;
 #endif
-        // move vertex
-        const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
-        if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+      // move vertex
+      const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
+      if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-          nb_done_1d++;
+        nb_done_1d++;
 #endif
-        }
       }
     }
   }
