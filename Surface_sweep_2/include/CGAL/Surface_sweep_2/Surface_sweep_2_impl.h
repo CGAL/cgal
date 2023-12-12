@@ -573,10 +573,12 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
       Event* left_event = first_parent->left_event();
       Event* right_event = first_parent->right_event();
 
-      if (! second_parent->is_start_point(left_event))
-        left_event->add_curve_to_left(second_parent);
-      else
-        left_event->remove_curve_from_right(second_parent);
+      if (left_event != nullptr) {
+        if (! second_parent->is_start_point(left_event))
+          left_event->add_curve_to_left(second_parent);
+        else
+          left_event->remove_curve_from_right(second_parent);
+      }
 
       CGAL_SS_PRINT_CURVE(c1);
       CGAL_SS_PRINT_TEXT(" + ");
@@ -596,7 +598,8 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
 
       // add the overlapping curve kept of the right of the left end
       right_event->add_curve_to_left(first_parent);
-      _add_curve_to_right(left_event, first_parent);
+      if (left_event != nullptr)
+        _add_curve_to_right(left_event, first_parent);
 
       this->m_visitor->found_overlap(c1, c2, first_parent);
 
