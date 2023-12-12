@@ -996,9 +996,10 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
       if (!all_points[ti].empty())
       {
-        std::vector<typename EK::Point_3> tmp;
+        using EPoint_3 = EK::Point_3; // workaround for MSVC 2022 bug
+        std::vector<EPoint_3> tmp;
         tmp.swap(all_points[ti]);
-        for (const typename EK::Point_3& pt : tmp)
+        for (const EPoint_3& pt : tmp)
           get_point_id(pt);
       }
 
