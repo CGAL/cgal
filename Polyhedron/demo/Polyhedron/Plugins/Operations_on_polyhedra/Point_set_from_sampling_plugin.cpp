@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QtDebug>
+#include <QInputDialog>
 
 #include "Scene_points_with_normal_item.h"
 #include "Scene_surface_mesh_item.h"
@@ -69,7 +70,7 @@ void Polyhedron_demo_point_set_from_sampling_plugin::createPointSet()
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* points = new Scene_points_with_normal_item();
-  std::vector<Kernel::Point_3> pts;
+
 
   if (points){
     points->setColor(Qt::blue);
@@ -80,24 +81,50 @@ void Polyhedron_demo_point_set_from_sampling_plugin::createPointSet()
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
   if (sm_item){
+    int nf = num_faces(*sm_item->polyhedron());
+
+    bool ok;
+    int nb = 0;
+    nb = QInputDialog::getInt(QApplication::activeWindow(), "Sampling",
+                              "Enter number of sample points:",
+                              nf , 0, (std::numeric_limits<int>::max)(), 1, &ok);
+
     points->setName(QString("%1 (sampled)").arg(sm_item->name()));
-    CGAL::Polygon_mesh_processing::sample_triangle_mesh(*sm_item->polyhedron(),
-                                                        std::back_inserter(pts));
+    if( ok & (nb > 0)){
+      points->point_set()->reserve(nb);
+      CGAL::Polygon_mesh_processing::sample_triangle_mesh(*sm_item->polyhedron(),
+                                                          points->point_set()->point_back_inserter(),
+                                                          CGAL::parameters::number_of_points_on_faces(nb)
+                                                          .point_map(points->point_set()->point_push_map())
+                                                          .do_sample_vertices(false)
+                                                          .do_sample_edges(false));
+    }
   }
 
   Scene_polygon_soup_item* soup_item =
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
   if (soup_item){
+    int nf = soup_item->polygons().size();
+
+    bool ok;
+    int nb = 0;
+    nb = QInputDialog::getInt(QApplication::activeWindow(), "Sampling",
+                              "Enter number of sample points:",
+                              nf , 0, (std::numeric_limits<int>::max)(), 1, &ok);
     points->setName(QString("%1 (sampled)").arg(soup_item->name()));
-    CGAL::Polygon_mesh_processing::sample_triangle_soup(soup_item->points(),
-                                                        soup_item->polygons(),
-                                                        std::back_inserter(pts));
+    if( ok & (nb > 0)){
+      points->point_set()->reserve(nb);
+      CGAL::Polygon_mesh_processing::sample_triangle_soup(soup_item->points(),
+                                                          soup_item->polygons(),
+                                                          points->point_set()->point_back_inserter(),
+                                                          CGAL::parameters::number_of_points_on_faces(nb)
+                                                          .point_map(points->point_set()->point_push_map())
+                                                          .do_sample_vertices(false)
+                                                          .do_sample_edges(false));
+    }
   }
-  points->point_set()->reserve(pts.size());
-  for (std::size_t i = 0; i < pts.size(); ++i){
-    points->point_set()->insert(pts[i]);
-  }
+
   scene->addItem(points);
   QApplication::restoreOverrideCursor();
 }
