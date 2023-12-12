@@ -967,7 +967,7 @@ template<typename Tr, typename Sizing>
 typename Tr::Geom_traits::FT
 squared_upper_size_bound(const typename Tr::Edge& e,
                          const Sizing& sizing,
-                         const Tr& tr)
+                         const Tr& /* tr */)
 {
   using FT = typename Tr::Geom_traits::FT;
   using Vertex_handle = typename Tr::Vertex_handle;
@@ -1006,7 +1006,7 @@ template<typename Tr, typename Sizing>
 typename Tr::Geom_traits::FT
 squared_lower_size_bound(const typename Tr::Edge& e,
                          const Sizing& sizing,
-                         const Tr& tr)
+                         const Tr& /* tr */)
 {
   using FT = typename Tr::Geom_traits::FT;
   using Vertex_handle = typename Tr::Vertex_handle;
