@@ -46,7 +46,7 @@
 #include <tbb/concurrent_vector.h>
 #if TBB_INTERFACE_VERSION < 12010 && !defined(TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS)
 #define CGAL_HAS_DEFINED_TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS
-#define TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS
+#define TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS 1
 #endif
 #include <tbb/concurrent_map.h>
 #include <tbb/parallel_for.h>
@@ -857,7 +857,16 @@ void autorefine_triangle_soup(PointRange& soup_points,
   CGAL_PMP_AUTOREFINE_VERBOSE("collect intersecting pairs");
   triangle_soup_self_intersections<Concurrency_tag>(soup_points, soup_triangles, std::back_inserter(si_pairs), np);
 
-  if (si_pairs.empty()) return;
+  if (si_pairs.empty())
+  {
+    if constexpr (!std::is_same_v<Autorefinement::Default_visitor, Visitor>)
+    {
+      visitor.number_of_output_triangles(soup_triangles.size());
+      for(std::size_t i=0; i<soup_triangles.size(); ++i)
+        visitor.verbatim_triangle_copy(i, i);
+    }
+    return;
+  }
 
   // mark degenerate faces so that we can ignore them
   std::vector<bool> is_degen(soup_triangles.size(), false);
@@ -1125,7 +1134,16 @@ void autorefine_triangle_soup(PointRange& soup_points,
   TriangleRange soup_triangles_out;
   soup_triangles_out.reserve(soup_triangles.size());
 
-  visitor.number_of_output_triangles(soup_triangles.size()+new_triangles.size());
+  if constexpr (!std::is_same_v<Autorefinement::Default_visitor, Visitor>)
+  {
+    std::size_t nbt=0;
+    for (Input_TID f=0; f<soup_triangles.size(); ++f)
+    {
+      int tiid = tri_inter_ids[f];
+      if (tiid == -1) ++nbt;
+    }
+    visitor.number_of_output_triangles(nbt+new_triangles.size());
+  }
 
   // raw copy of input triangles with no intersection
   std::vector<std::size_t> tri_inter_ids_inverse(triangles.size());
@@ -1136,7 +1154,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
     int tiid = tri_inter_ids[f];
     if (tiid == -1)
     {
-      visitor.verbatim_triangle_copy(soup_triangles.size(), f);
+      visitor.verbatim_triangle_copy(soup_triangles_out.size(), f);
       soup_triangles_out.push_back(
         {soup_triangles[f][0], soup_triangles[f][1], soup_triangles[f][2]}
       );
@@ -1200,7 +1218,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
     soup_triangles_out.resize(offset + new_triangles.size());
     //use map iterator triple for triangles to create them concurrently and safely
-    std::vector<std::array<tbb::concurrent_map<EK::Point_3, std::size_t>::iterator, 3>> triangle_buffer(new_triangles.size());
+    std::vector<std::array<typename Point_id_map::iterator, 3>> triangle_buffer(new_triangles.size());
     tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
       [&](const tbb::blocked_range<size_t>& r) {
         for (size_t ti = r.begin(); ti != r.end(); ++ti) {
@@ -1238,10 +1256,8 @@ void autorefine_triangle_soup(PointRange& soup_points,
     std::vector<std::array<typename Point_id_map::iterator, 3>> triangle_buffer(new_triangles.size());
     tbb::parallel_for(tbb::blocked_range<size_t>(0, new_triangles.size()),
       [&](const tbb::blocked_range<size_t>& r) {
-        for (size_t ti = r.begin(); ti != r.end(); ++ti) {
-          if (offset + ti > soup_triangles_out.size()) {
-              std::cout << "ti = " << ti << std::endl;
-          }
+        for (size_t ti = r.begin(); ti != r.end(); ++ti)
+        {
           const std::array<EK::Point_3, 3>& t = new_triangles[ti].first;
           visitor.new_subtriangle(offset+ti, tri_inter_ids_inverse[new_triangles[ti].second]);
           triangle_buffer[ti] = CGAL::make_array(concurrent_get_point_id(t[0]), concurrent_get_point_id(t[1]), concurrent_get_point_id(t[2]));
