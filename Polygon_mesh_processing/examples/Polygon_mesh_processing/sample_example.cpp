@@ -34,7 +34,9 @@ int main(int argc, char* argv[])
 
   std::vector<Point> points;
 
-  PMP::sample_triangle_mesh(mesh, std::back_inserter(points), CGAL::parameters::number_of_points_per_face(points_per_face));
+  PMP::sample_triangle_mesh(mesh,
+                            std::back_inserter(points),
+                            CGAL::parameters::number_of_points_per_face(points_per_face));
 
   std::cout.precision(17);
   for(const Point& p : points){
@@ -43,8 +45,7 @@ int main(int argc, char* argv[])
 
   Point_set point_set;
   PMP::sample_triangle_mesh(mesh,
-                            point_set.point_back_inserter(),
-                            CGAL::parameters::point_map(point_set.point_push_map()));
+                            point_set.point_back_inserter());
 
   std::cout << point_set.number_of_points() << std::endl;
   return 0;

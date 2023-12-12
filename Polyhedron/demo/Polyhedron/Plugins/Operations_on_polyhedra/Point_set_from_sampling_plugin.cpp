@@ -1,3 +1,5 @@
+
+#include <CGAL/Three/Three.h>
 #include <QApplication>
 #include <QAction>
 #include <QList>
@@ -14,6 +16,7 @@
 #include "Messages_interface.h"
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/boost/graph/helpers.h>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_from_sampling_plugin :
@@ -52,7 +55,7 @@ void Polyhedron_demo_point_set_from_sampling_plugin::init(QMainWindow* mainWindo
                                                           Messages_interface*)
 {
   scene = scene_interface;
-  actionPointSetFromSampling = new QAction(tr("&Create Point Set from Sampling"), mainWindow);
+  actionPointSetFromSampling = new QAction(tr("Create Point Set from Sampling"), mainWindow);
   actionPointSetFromSampling->setObjectName("actionPointSetFromSampling");
   connect(actionPointSetFromSampling, SIGNAL(triggered()),
           this, SLOT(createPointSet()));
@@ -75,18 +78,24 @@ void Polyhedron_demo_point_set_from_sampling_plugin::createPointSet()
   if (points){
     points->setColor(Qt::blue);
   }else{
+    QApplication::restoreOverrideCursor();
     return;
   }
   Scene_surface_mesh_item* sm_item =
     qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
 
   if (sm_item){
+    if(! CGAL::is_triangle_mesh(*sm_item->polyhedron())){
+      CGAL::Three::Three::error(QString("The mesh must have triangle faces"));
+      QApplication::restoreOverrideCursor();
+      return;
+    }
     int nf = num_faces(*sm_item->polyhedron());
 
     bool ok;
     int nb = 0;
     nb = QInputDialog::getInt(QApplication::activeWindow(), "Sampling",
-                              "Enter number of sample points:",
+                              "Number of sample points:",
                               nf , 0, (std::numeric_limits<int>::max)(), 1, &ok);
 
     points->setName(QString("%1 (sampled)").arg(sm_item->name()));
@@ -95,9 +104,9 @@ void Polyhedron_demo_point_set_from_sampling_plugin::createPointSet()
       CGAL::Polygon_mesh_processing::sample_triangle_mesh(*sm_item->polyhedron(),
                                                           points->point_set()->point_back_inserter(),
                                                           CGAL::parameters::number_of_points_on_faces(nb)
-                                                          .point_map(points->point_set()->point_push_map())
                                                           .do_sample_vertices(false)
                                                           .do_sample_edges(false));
+      scene->addItem(points);
     }
   }
 
@@ -107,10 +116,18 @@ void Polyhedron_demo_point_set_from_sampling_plugin::createPointSet()
   if (soup_item){
     int nf = soup_item->polygons().size();
 
+    for(const auto& f : soup_item->polygons()){
+      if(f.size() != 3){
+        CGAL::Three::Three::error(QString("The polygons must be triangles"));
+        QApplication::restoreOverrideCursor();
+        return;
+      }
+    }
+
     bool ok;
     int nb = 0;
     nb = QInputDialog::getInt(QApplication::activeWindow(), "Sampling",
-                              "Enter number of sample points:",
+                              "Number of sample points:",
                               nf , 0, (std::numeric_limits<int>::max)(), 1, &ok);
     points->setName(QString("%1 (sampled)").arg(soup_item->name()));
     if( ok & (nb > 0)){
@@ -119,13 +136,13 @@ void Polyhedron_demo_point_set_from_sampling_plugin::createPointSet()
                                                           soup_item->polygons(),
                                                           points->point_set()->point_back_inserter(),
                                                           CGAL::parameters::number_of_points_on_faces(nb)
-                                                          .point_map(points->point_set()->point_push_map())
                                                           .do_sample_vertices(false)
                                                           .do_sample_edges(false));
+      scene->addItem(points);
     }
   }
 
-  scene->addItem(points);
+
   QApplication::restoreOverrideCursor();
 }
 
