@@ -345,7 +345,7 @@ The file formats supported for `CGAL::Point_set_3` are detailed in the table bel
     </tr>
     <tr>
       <td>Input</td>
-      <td>`read_point_set()`</td>
+      <td>`CGAL::IO::read_point_set()`</td>
       <td>\link PkgPointSet3IOOFF `read_OFF()` \endlink</td>
       <td>\link PkgPointSet3IOXYZ `read_XYZ()` \endlink</td>
       <td>\link PkgPointSet3IOPLY `read_PLY()` \endlink</td>
@@ -353,7 +353,7 @@ The file formats supported for `CGAL::Point_set_3` are detailed in the table bel
     </tr>
     <tr>
       <td>Output</td>
-      <td>`write_point_set()`</td>
+      <td>`CGAL::IO::write_point_set()`</td>
       <td>\link PkgPointSet3IOOFF `write_OFF()` \endlink</td>
       <td>\link PkgPointSet3IOXYZ `write_XYZ()` \endlink</td>
       <td>\link PkgPointSet3IOPLY `write_PLY()` \endlink</td>
@@ -381,7 +381,7 @@ their indices per face (i.e a vector of 3 integers represent a triangle face).
     </tr>
     <tr>
       <td>Input</td>
-      <td>`read_polygon_soup()`</td>
+      <td>`CGAL::IO::read_polygon_soup()`</td>
       <td>\link PkgStreamSupportIoFuncsOFF `read_OFF()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsOBJ `read_OBJ()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsSTL `read_STL()` \endlink</td>
@@ -393,7 +393,7 @@ their indices per face (i.e a vector of 3 integers represent a triangle face).
     </tr>
     <tr>
       <td>Output</td>
-      <td>`write_polygon_soup()`</td>
+      <td>`CGAL::IO::write_polygon_soup()`</td>
       <td>\link PkgStreamSupportIoFuncsOFF `write_OFF()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsOBJ `write_OBJ()` \endlink</td>
       <td>\link PkgStreamSupportIoFuncsSTL `write_STL()` \endlink</td>
@@ -424,7 +424,7 @@ The table above only lists the functions that work with any polygon mesh.
     </tr>
     <tr>
       <td>Input</td>
-      <td>`read_polygon_mesh()`</td>
+      <td>`CGAL::IO::read_polygon_mesh()`</td>
       <td>`read_OFF()`</td>
       <td>`read_STL()`</td>
       <td>`read_VTP()`</td>
@@ -434,7 +434,7 @@ The table above only lists the functions that work with any polygon mesh.
     </tr>
     <tr>
       <td>Output</td>
-      <td>`write_polygon_mesh()`</td>
+      <td>``CGAL::IO::write_polygon_mesh()`</td>
       <td>`write_OFF()`</td>
       <td>`write_STL()`</td>
       <td>`write_VTP()`</td>
@@ -478,17 +478,17 @@ from the standard \cgal I/O functions.
 </tr>
 <tr>
 <td>Input</td>
-<td>read_WKT()</td>
-<td>read_multi_point_WKT()</td>
-<td>read_multi_linestring_WKT()</td>
-<td>read_multi_polygon_WKT()</td>
+<td>`CGAL::IO::read_WKT()`</td>
+<td>`CGAL::IO::read_multi_point_WKT()`</td>
+<td>`CGAL::IO::read_multi_linestring_WKT()`</td>
+<td>`CGAL::IO::read_multi_polygon_WKT()`</td>
 </tr>
 <tr>
 <td>Output</td>
 <td><center> - </center></td>
-<td>write_multi_point_WKT()</td>
-<td>write_multi_linestring_WKT()</td>
-<td>write_multi_polygon_WKT()</td>
+<td>`CGAL::IO::write_multi_point_WKT()`</td>
+<td>`CGAL::IO::write_multi_linestring_WKT()`</td>
+<td>`CGAL::IO::write_multi_polygon_WKT()`</td>
 </tr>
 </table>
 
