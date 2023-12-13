@@ -440,7 +440,7 @@ The table above only lists the functions that work with any polygon mesh.
       <td>`CGAL::IO::write_VTP()`</td>
       <td>`CGAL::IO::write_OBJ()`</td>
       <td>`CGAL::IO::write_GOCAD()`</td>
-      <td>`write_WRL()`</td>
+      <td>\link CGAL::IO::write_WRL() `write_WRL()`\endlink</td>
     </tr>
 </table>
 
