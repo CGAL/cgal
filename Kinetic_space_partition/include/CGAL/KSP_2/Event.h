@@ -13,15 +13,13 @@
 #ifndef CGAL_KSP_2_EVENT_H
 #define CGAL_KSP_2_EVENT_H
 
-#include <CGAL/license/Kinetic_shape_partition.h>
+#include <CGAL/license/Kinetic_space_partition.h>
 
 #include <CGAL/KSP/utils.h>
 
-namespace CGAL
-{
-
-namespace KSP_2
-{
+namespace CGAL {
+namespace KSP_2 {
+namespace internal {
 
 template <typename GeomTraits>
 class Event_queue;
@@ -45,10 +43,10 @@ private:
 
 public:
 
-  Event () { }
+  Event() { }
 
-  Event (std::size_t vertex_idx, std::size_t meta_vertex_idx, FT time)
-    : m_vertex_idx (vertex_idx), m_meta_vertex_idx (meta_vertex_idx), m_time (time)
+  Event(std::size_t vertex_idx, std::size_t meta_vertex_idx, FT time)
+    : m_vertex_idx(vertex_idx), m_meta_vertex_idx(meta_vertex_idx), m_time(time)
   { }
 
   const std::size_t& vertex_idx() const { return m_vertex_idx; }
@@ -61,14 +59,15 @@ public:
   friend std::ostream& operator<< (std::ostream& os, const Event& ev)
   {
     os << "Event at t=" << ev.m_time << " between vertex " << ev.m_vertex_idx
-       << " and meta vertex " << ev.m_meta_vertex_idx;
+      << " and meta vertex " << ev.m_meta_vertex_idx;
     return os;
   }
 
 };
 
-
-}} // namespace CGAL::KSP_2
+} // namespace internal
+} // namespace KSP_2
+} // namespace CGAL
 
 
 #endif // CGAL_KSP_2_EVENT_H

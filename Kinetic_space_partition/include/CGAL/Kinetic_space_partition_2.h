@@ -10,10 +10,10 @@
 //
 // Author(s)     : Simon Giraudot
 
-#ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_2_H
-#define CGAL_KINETIC_SHAPE_PARTITION_2_H
+#ifndef CGAL_KINETIC_SPACE_PARTITION_2_H
+#define CGAL_KINETIC_SPACE_PARTITION_2_H
 
-#include <CGAL/license/Kinetic_shape_partition.h>
+#include <CGAL/license/Kinetic_space_partition.h>
 
 #include <CGAL/box_intersection_d.h>
 
@@ -30,7 +30,7 @@ namespace CGAL
 {
 
 template <typename GeomTraits>
-class Kinetic_shape_partition_2
+class Kinetic_space_partition_2
 {
 public:
 
@@ -43,15 +43,15 @@ public:
   typedef typename Kernel::Ray_2 Ray_2;
   typedef typename Kernel::Vector_2 Vector_2;
 
-  typedef KSP_2::Data_structure<Kernel> Data;
+  typedef KSP_2::internal::Data_structure<Kernel> Data;
   typedef typename Data::Support_line Support_line;
   typedef typename Data::Segment Segment;
   typedef typename Data::Vertex Vertex;
 
   typedef typename Data::Meta_vertex Meta_vertex;
 
-  typedef KSP_2::Event<Kernel> Event;
-  typedef KSP_2::Event_queue<Kernel> Event_queue;
+  typedef KSP_2::internal::Event<Kernel> Event;
+  typedef KSP_2::internal::Event_queue<Kernel> Event_queue;
 
 private:
 
@@ -60,7 +60,7 @@ private:
 
 public:
 
-  Kinetic_shape_partition_2() {}
+  Kinetic_space_partition_2() {}
 
   template <typename SegmentRange, typename SegmentMap>
   void partition (const SegmentRange& segments, SegmentMap segment_map,
@@ -124,7 +124,7 @@ public:
       const Support_line& support_line = m_data.support_line(i);
       for (std::size_t s : support_line.segments_idx())
       {
-        if (s == KSP::no_element())
+        if (s == std::size_t(-1))
         {
           if (verbose)
             std::cerr << "ERROR: Support_line[" << i
@@ -162,21 +162,21 @@ public:
     {
       const Segment& segment = m_data.segment(i);
 
-      if (segment.source_idx() == KSP::no_element())
+      if (segment.source_idx() == std::size_t(-1))
       {
         if (verbose)
           std::cerr << "ERROR: Segment[" << i
                     << "] has source Vertex[-1]" << std::endl;
         return false;
       }
-      if (segment.target_idx() == KSP::no_element())
+      if (segment.target_idx() == std::size_t(-1))
       {
         if (verbose)
           std::cerr << "ERROR: Segment[" << i
                     << "] has source Vertex[-1]" << std::endl;
         return false;
       }
-      if (segment.support_line_idx() == KSP::no_element())
+      if (segment.support_line_idx() == std::size_t(-1))
       {
         if (verbose)
           std::cerr << "ERROR: Segment[" << i
@@ -209,8 +209,8 @@ public:
                     << "] acting both as source and target" << std::endl;
         return false;
       }
-      if (m_data.source_of_segment(segment).meta_vertex_idx() != KSP::no_element()
-          && m_data.target_of_segment(segment).meta_vertex_idx() != KSP::no_element()
+      if (m_data.source_of_segment(segment).meta_vertex_idx() != std::size_t(-1)
+          && m_data.target_of_segment(segment).meta_vertex_idx() != std::size_t(-1)
           && m_data.source_of_segment(segment).meta_vertex_idx() == m_data.target_of_segment(segment).meta_vertex_idx())
       {
         if (verbose)
@@ -261,14 +261,14 @@ public:
     {
       const Vertex& vertex = m_data.vertex(i);
 
-      if (vertex.segment_idx() == KSP::no_element())
+      if (vertex.segment_idx() == std::size_t(-1))
       {
         if (verbose)
           std::cerr << "ERROR: Vertex[" << i
                     << "] is on Segment[-1]" << std::endl;
         return false;
       }
-      // if (vertex.meta_vertex_idx() == KSP::no_element())
+      // if (vertex.meta_vertex_idx() == std::size_t(-1))
       // {
       //   if (verbose)
       //     std::cerr << "ERROR: Vertex[" << i
@@ -618,7 +618,7 @@ private:
                          != m_data.segment(segment_idx_b).support_line_idx());
 
          Point_2 point;
-         if (!KSP::intersection(segments_2[segment_idx_a], segments_2[segment_idx_b], point))
+         if (!KSP::internal::intersection(segments_2[segment_idx_a], segments_2[segment_idx_b], point))
            return;
 
          todo.push_back (std::make_tuple (point,
@@ -712,7 +712,7 @@ private:
             continue;
 
           Point_2 point;
-          if (!KSP::intersection(si, segments_2[segment_idx], point))
+          if (!KSP::internal::intersection(si, segments_2[segment_idx], point))
             continue;
 
           Support_line& sli = m_data.support_line_of_vertex(vertex);
@@ -896,7 +896,7 @@ private:
       m_data.vertex(ev.vertex_idx()).remaining_intersections() --;
 
     // If there are still intersections to be made, propagate
-    std::size_t new_vertex_idx = KSP::no_element();
+    std::size_t new_vertex_idx = std::size_t(-1);
     if (m_data.vertex(ev.vertex_idx()).remaining_intersections() != 0)
       new_vertex_idx = m_data.propagate_segment (ev.vertex_idx());
     else
@@ -912,7 +912,7 @@ private:
     std::vector<Event> events;
     m_queue.erase_vertex_events (old_vertex, events);
 
-    if (new_vertex != KSP::no_element())
+    if (new_vertex != std::size_t(-1))
       for (Event& ev : events)
       {
         ev.vertex_idx() = new_vertex;
@@ -934,13 +934,13 @@ private:
 
       CGAL_assertion (support_line.meta_vertices_idx().size() > 1);
 
-      std::size_t beginning = KSP::no_element();
-      std::size_t end = KSP::no_element();
+      std::size_t beginning = std::size_t(-1);
+      std::size_t end = std::size_t(-1);
 
       for (std::size_t segment_idx : support_line.segments_idx())
       {
         // New segment
-        if (beginning == KSP::no_element())
+        if (beginning == std::size_t(-1))
         {
           beginning = m_data.source_of_segment(segment_idx).meta_vertex_idx();
           end = m_data.target_of_segment(segment_idx).meta_vertex_idx();
@@ -974,4 +974,4 @@ private:
 } // namespace CGAL
 
 
-#endif // CGAL_KINETIC_SHAPE_RECONSTRUCTION_2_H
+#endif // CGAL_KINETIC_SPACE_PARTITION_2_H

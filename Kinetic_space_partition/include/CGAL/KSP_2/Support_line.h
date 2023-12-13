@@ -13,16 +13,14 @@
 #ifndef CGAL_KSP_2_SUPPORT_LINE_H
 #define CGAL_KSP_2_SUPPORT_LINE_H
 
-#include <CGAL/license/Kinetic_shape_partition.h>
+#include <CGAL/license/Kinetic_space_partition.h>
 
 #include <CGAL/KSP/utils.h>
 #include <CGAL/KSP_2/Vertex.h>
 
-namespace CGAL
-{
-
-namespace KSP_2
-{
+namespace CGAL {
+namespace KSP_2 {
+namespace internal {
 
 template <typename GeomTraits>
 class Support_line
@@ -47,18 +45,18 @@ private:
 
 public:
 
-  Support_line () { }
+  Support_line() { }
 
-  Support_line (const Segment_2& segment)
-    : m_minimum ((std::numeric_limits<FT>::max)())
-    , m_maximum (-(std::numeric_limits<FT>::max)())
+  Support_line(const Segment_2& segment)
+    : m_minimum((std::numeric_limits<FT>::max)())
+    , m_maximum(-(std::numeric_limits<FT>::max)())
     , m_connected_components(1)
   {
-    m_origin = CGAL::midpoint (segment.source(), segment.target());
-    m_vector = KSP::normalize (Vector_2 (segment.source(), segment.target()));
+    m_origin = CGAL::midpoint(segment.source(), segment.target());
+    m_vector = KSP::internal::normalize(Vector_2(segment.source(), segment.target()));
   }
 
-  Line_2 line() const { return Line_2 (m_origin, m_vector); }
+  Line_2 line() const { return Line_2(m_origin, m_vector); }
 
   const Point_2& origin() const { return m_origin; }
   const Vector_2& vector() const { return m_vector; }
@@ -73,14 +71,14 @@ public:
 
   CGAL::Bbox_2 bbox() const
   {
-    Point_2 pmin = to_2d (m_minimum);
-    Point_2 pmax = to_2d (m_maximum);
+    Point_2 pmin = to_2d(m_minimum);
+    Point_2 pmax = to_2d(m_maximum);
     return pmin.bbox() + pmax.bbox();
   }
 
   Segment_2 segment_2() const
   {
-    return Segment_2 (to_2d (m_minimum), to_2d (m_maximum));
+    return Segment_2(to_2d(m_minimum), to_2d(m_maximum));
   }
 
   const std::vector<std::size_t>& segments_idx() const { return m_segments_idx; }
@@ -89,12 +87,12 @@ public:
   const std::vector<std::size_t>& meta_vertices_idx() const { return m_meta_vertices_idx; }
   std::vector<std::size_t>& meta_vertices_idx() { return m_meta_vertices_idx; }
 
-  FT to_1d (const Point_2& point) const
+  FT to_1d(const Point_2& point) const
   {
-    return m_vector * Vector_2 (m_origin, point);
+    return m_vector * Vector_2(m_origin, point);
   }
 
-  Point_2 to_2d (const FT& point) const { return m_origin + point * m_vector; }
+  Point_2 to_2d(const FT& point) const { return m_origin + point * m_vector; }
 
 };
 
@@ -107,7 +105,7 @@ bool operator== (const Support_line<Kernel>& a, const Support_line<Kernel>& b)
   if (CGAL::abs(va * vb) < 0.99999)
     return false;
 
-  return (CGAL::approximate_sqrt(CGAL::squared_distance (b.origin(), a.line())) < 1e-10);
+  return (CGAL::approximate_sqrt(CGAL::squared_distance(b.origin(), a.line())) < 1e-10);
 }
 
 
@@ -115,13 +113,15 @@ bool operator== (const Support_line<Kernel>& a, const Support_line<Kernel>& b)
 template <>
 bool operator==<CGAL::Exact_predicates_exact_constructions_kernel>
 (const Support_line<CGAL::Exact_predicates_exact_constructions_kernel>& a,
- const Support_line<CGAL::Exact_predicates_exact_constructions_kernel>& b)
+  const Support_line<CGAL::Exact_predicates_exact_constructions_kernel>& b)
 {
   return (a.line() == b.line());
 }
 #endif
 
-}} // namespace CGAL::KSP_2
+} // namespace internal
+} // namespace KSP_2
+} // namespace CGAL
 
 
 #endif // CGAL_KSP_2_SUPPORT_LINE_H

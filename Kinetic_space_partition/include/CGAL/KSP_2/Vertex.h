@@ -13,15 +13,13 @@
 #ifndef CGAL_KSP_2_VERTEX_H
 #define CGAL_KSP_2_VERTEX_H
 
-#include <CGAL/license/Kinetic_shape_partition.h>
+#include <CGAL/license/Kinetic_space_partition.h>
 
 #include <CGAL/KSP/utils.h>
 
-namespace CGAL
-{
-
-namespace KSP_2
-{
+namespace CGAL {
+namespace KSP_2 {
+namespace internal {
 
 template <typename FT>
 class Vertex
@@ -36,16 +34,16 @@ private:
 
 public:
 
-  Vertex () { }
+  Vertex() { }
 
-  Vertex (FT point,
-          std::size_t segment_idx = KSP::no_element(),
-          unsigned int remaining_intersections = 0)
-    : m_point (point)
-    , m_direction (0)
-    , m_segment_idx (segment_idx)
+  Vertex(FT point,
+    std::size_t segment_idx = std::size_t(-1),
+    unsigned int remaining_intersections = 0)
+    : m_point(point)
+    , m_direction(0)
+    , m_segment_idx(segment_idx)
     , m_remaining_intersections(remaining_intersections)
-    , m_meta_vertex_idx (KSP::no_element())
+    , m_meta_vertex_idx(std::size_t(-1))
   {
   }
 
@@ -55,7 +53,7 @@ public:
   FT point(FT time) const { return m_point + time * m_direction; }
   const FT& direction() const { return m_direction; }
   FT& direction() { return m_direction; }
-  FT speed() const { return CGAL::abs (m_direction); }
+  FT speed() const { return CGAL::abs(m_direction); }
 
   const unsigned int& remaining_intersections() const { return m_remaining_intersections; }
   unsigned int& remaining_intersections() { return m_remaining_intersections; }
@@ -74,15 +72,15 @@ public:
   friend std::ostream& operator<< (std::ostream& os, const Vertex& vertex)
   {
     os << "vertex(" << vertex.m_point << "," << vertex.m_direction << ") on segment " << vertex.m_segment_idx
-       << " and meta vertex " << vertex.meta_vertex_idx() << " with "
-       << vertex.m_remaining_intersections << " remaining intersection(s)";
+      << " and meta vertex " << vertex.meta_vertex_idx() << " with "
+      << vertex.m_remaining_intersections << " remaining intersection(s)";
     return os;
   }
 
 };
 
-
-}} // namespace CGAL::KSP_2
-
+} // namespace internal
+} // namespace KSP_2
+} // namespace CGAL
 
 #endif // CGAL_KSP_2_VERTEX_H

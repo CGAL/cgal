@@ -7,7 +7,7 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Aff_transformation_2.h>
-#include <CGAL/Kinetic_shape_partition_2.h>
+#include <CGAL/Kinetic_space_partition_2.h>
 
 using SC = CGAL::Simple_cartesian<double>;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
@@ -23,8 +23,8 @@ using Transform = CGAL::Aff_transformation_2<EPECK>;
 using Random = CGAL::Random;
 using Mesh   = CGAL::Surface_mesh<Point_2>;
 
-using Exact_reconstruction   = CGAL::Kinetic_shape_partition_2<EPECK>;
-using Inexact_reconstruction = CGAL::Kinetic_shape_partition_2<EPICK>;
+using Exact_reconstruction   = CGAL::Kinetic_space_partition_2<EPECK>;
+using Inexact_reconstruction = CGAL::Kinetic_space_partition_2<EPICK>;
 
 Random cgal_rand;
 
@@ -130,7 +130,7 @@ void test_segments(
   std::vector<typename Kernel::Segment_2> segments;
   get_segments_from_exact<Kernel>(exact_segments, segments);
 
-  CGAL::Kinetic_shape_partition_2<Kernel> ksp;
+  CGAL::Kinetic_space_partition_2<Kernel> ksp;
   ksp.partition(segments, CGAL::Identity_property_map<typename Kernel::Segment_2>(), k, 2);
   segments.clear();
   ksp.output_partition_edges_to_segment_soup(std::back_inserter(segments));

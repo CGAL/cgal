@@ -13,13 +13,11 @@
 #ifndef CGAL_KSP_2_SEGMENT_H
 #define CGAL_KSP_2_SEGMENT_H
 
-#include <CGAL/license/Kinetic_shape_partition.h>
+#include <CGAL/license/Kinetic_space_partition.h>
 
-namespace CGAL
-{
-
-namespace KSP_2
-{
+namespace CGAL {
+namespace KSP_2 {
+namespace internal {
 
 class Segment
 {
@@ -32,10 +30,10 @@ private:
 
 public:
 
-  Segment () { }
+  Segment() { }
 
-  Segment (std::size_t input_idx, std::size_t support_line_idx)
-    : m_input_idx (input_idx), m_support_line_idx (support_line_idx) { }
+  Segment(std::size_t input_idx, std::size_t support_line_idx)
+    : m_input_idx(input_idx), m_support_line_idx(support_line_idx) { }
 
   const std::size_t& input_idx() const { return m_input_idx; }
   std::size_t& input_idx() { return m_input_idx; }
@@ -47,8 +45,9 @@ public:
   std::size_t& support_line_idx() { return m_support_line_idx; }
 };
 
-
-}} // namespace CGAL::KSP_2
+} // namespace internal
+} // namespace KSP_2
+} // namespace CGAL
 
 
 #endif // CGAL_KSP_2_POLYGON_H

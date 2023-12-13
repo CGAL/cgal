@@ -13,7 +13,7 @@
 #ifndef CGAL_KSP_2_DATA_STRUCTURE_H
 #define CGAL_KSP_2_DATA_STRUCTURE_H
 
-#include <CGAL/license/Kinetic_shape_partition.h>
+#include <CGAL/license/Kinetic_space_partition.h>
 
 #include <CGAL/KSP/utils.h>
 #include <CGAL/KSP_2/Support_line.h>
@@ -38,11 +38,11 @@ public:
   typedef typename Kernel::Line_2 Line_2;
   typedef typename Kernel::Segment_2 Segment_2;
 
-  typedef KSP_2::Support_line<Kernel> Support_line;
-  typedef KSP_2::Segment Segment;
-  typedef KSP_2::Vertex<FT> Vertex;
+  typedef Support_line<Kernel> Support_line;
+  typedef Segment Segment;
+  typedef Vertex<FT> Vertex;
 
-  typedef KSP_2::Meta_vertex<Point_2> Meta_vertex;
+  typedef Meta_vertex<Point_2> Meta_vertex;
 
   typedef std::vector<Support_line> Support_lines;
   typedef std::vector<Segment> Segments;
@@ -460,7 +460,7 @@ public:
         for (std::size_t i = 0; i < 4; ++i)
         {
           Point_2 point;
-          if (!KSP::intersection(m_support_lines[i].line(), m_support_lines.back().line(), point))
+          if (!KSP::internal::intersection(m_support_lines[i].line(), m_support_lines.back().line(), point))
             continue;
 
           FT position = m_support_lines.back().to_1d(point);

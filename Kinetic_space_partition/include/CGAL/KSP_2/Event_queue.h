@@ -13,7 +13,7 @@
 #ifndef CGAL_KSP_2_EVENT_QUEUE_H
 #define CGAL_KSP_2_EVENT_QUEUE_H
 
-#include <CGAL/license/Kinetic_shape_partition.h>
+#include <CGAL/license/Kinetic_space_partition.h>
 
 #include <CGAL/KSP/utils.h>
 #include <CGAL/KSP_2/Event.h>
@@ -23,11 +23,9 @@
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
 
-namespace CGAL
-{
-
-namespace KSP_2
-{
+namespace CGAL {
+namespace KSP_2 {
+namespace internal {
 
 template <typename GeomTraits>
 class Event_queue
@@ -36,19 +34,19 @@ public:
   typedef GeomTraits Kernel;
   typedef typename Kernel::FT FT;
 
-  typedef KSP_2::Event<GeomTraits> Event;
+  typedef Event<GeomTraits> Event;
 
 private:
 
   typedef boost::multi_index_container
-  <Event,
-   boost::multi_index::indexed_by<
-     boost::multi_index::ordered_non_unique
-     <boost::multi_index::member<Event, FT, &Event::m_time> >,
-     boost::multi_index::ordered_non_unique
-     <boost::multi_index::member<Event, std::size_t, &Event::m_vertex_idx> >
-     >
-   > Queue;
+    <Event,
+    boost::multi_index::indexed_by<
+    boost::multi_index::ordered_non_unique
+    <boost::multi_index::member<Event, FT, &Event::m_time> >,
+    boost::multi_index::ordered_non_unique
+    <boost::multi_index::member<Event, std::size_t, &Event::m_vertex_idx> >
+    >
+    > Queue;
 
   typedef typename Queue::iterator Queue_iterator;
   typedef typename Queue::template nth_index<0>::type Queue_by_time;
@@ -65,9 +63,9 @@ public:
   bool empty() const { return m_queue.empty(); }
   std::size_t size() const { return m_queue.size(); }
 
-  void push (const Event& ev)
+  void push(const Event& ev)
   {
-    m_queue.insert (ev);
+    m_queue.insert(ev);
   }
 
   const Queue_by_time& queue_by_time() const { return m_queue.template get<0>(); }
@@ -75,7 +73,7 @@ public:
   Queue_by_time& queue_by_time() { return m_queue.template get<0>(); }
   Queue_by_event_idx& queue_by_event_idx() { return m_queue.template get<1>(); }
 
-  Event pop ()
+  Event pop()
   {
     Queue_iterator iter = queue_by_time().begin();
     Event out = *iter;
@@ -89,19 +87,20 @@ public:
       std::cerr << e << std::endl;
   }
 
-  void erase_vertex_events (std::size_t vertex_idx, std::vector<Event>& events)
+  void erase_vertex_events(std::size_t vertex_idx, std::vector<Event>& events)
   {
     std::pair<Queue_by_event_idx_iterator, Queue_by_event_idx_iterator>
       range = queue_by_event_idx().equal_range(vertex_idx);
 
-    std::copy (range.first, range.second, std::back_inserter (events));
-    queue_by_event_idx().erase (range.first, range.second);
+    std::copy(range.first, range.second, std::back_inserter(events));
+    queue_by_event_idx().erase(range.first, range.second);
   }
 
 };
 
-
-}} // namespace CGAL::KSP_2
+} // namespace internal
+} // namespace KSP_2
+} // namespace CGAL
 
 
 #endif // CGAL_KSP_2_EVENT_QUEUE_H
