@@ -259,6 +259,10 @@ protected:
   }
 
 public:
+  void set_segment_vertex_epsilon(double epsilon) {
+    segment_vertex_epsilon = epsilon;
+  }
+
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
                        int li, int lj)
   {
@@ -656,13 +660,12 @@ protected:
         return return_orig_result_point(lambda, orig_pb, orig_pa);
       }
     } else {
-      auto epsilon = 1e-8;
-      if(epsilon > 0) {
+      if(segment_vertex_epsilon > 0) {
         if(!max_bbox_edge_length) {
           update_max_bbox_edge_length();
         }
         auto sq_dist = squared_distance(reference_point, Line{orig_pa, orig_pb});
-        if(sq_dist < CGAL::square(epsilon * *max_bbox_edge_length)) {
+        if(sq_dist < CGAL::square(segment_vertex_epsilon * *max_bbox_edge_length)) {
           std::stringstream ss;
           ss.precision(std::cerr.precision());
           ss << "A constrained segment is too close to a vertex.\n";
@@ -693,6 +696,7 @@ protected:
   Compare_vertex_handle comp = {this};
   Constraint_hierarchy constraint_hierarchy = {comp};
   Bbox_3 bbox{};
+  double segment_vertex_epsilon = 1e-8;
   std::optional<double> max_bbox_edge_length;
   std::map<std::pair<Vertex_handle, Vertex_handle>, Constraint_id> pair_of_vertices_to_cid;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};

@@ -60,6 +60,8 @@ struct CDT_options
 {
   bool merge_facets = false;
   double ratio = 0.;
+  double vertex_vertex_epsilon = 1e-6;
+  double segment_vertex_epsilon = 1e-8;
   std::string input_filename = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename{"dump.off"};
   std::string dump_patches_after_merge_filename{};
@@ -81,6 +83,8 @@ Usage: cdt_3_from_off [options] input.off output.off
   --dump-patches-after-merge: dump patches after merging facets
   --dump-patches-borders-prefix: dump patches borders
   --dump-after-conforming: dump mesh after conforming
+  --vertex-vertex-epsilon: epsilon for vertex-vertex min distance (default: 1e-6)
+  --segment-vertex-epsilon: epsilon for segment-vertex min distance (default: 0)
 )";
 }
 
@@ -108,6 +112,12 @@ int main(int argc, char* argv[])
     } else if(arg == "--dump-after-conforming") {
       assert(i + 1 < argc);
       options.dump_after_conforming_filename = argv[++i];
+    } else if(arg == "--vertex-vertex-epsilon") {
+      assert(i + 1 < argc);
+      options.vertex_vertex_epsilon = std::stod(argv[++i]);
+    } else if(arg == "--segment-vertex-epsilon") {
+      assert(i + 1 < argc);
+      options.segment_vertex_epsilon = std::stod(argv[++i]);
     } else if(arg == "--help") {
       help(std::cout);
       return 0;
@@ -253,6 +263,7 @@ auto segment_soup_to_polylines(Range_of_segments&& segment_soup) {
 
 int go(Mesh mesh, CDT_options options) {
   CDT cdt;
+  cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
   auto pmap = get(CGAL::vertex_point, mesh);
 
   auto [patch_id_map, ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -1);
@@ -390,11 +401,10 @@ int go(Mesh mesh, CDT_options options) {
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
   }
   {
-    double espilon = 1e-6;
+    double epsilon = options.vertex_vertex_epsilon;
     auto min_distance = CGAL::approximate_sqrt(std::ranges::min(
         cdt.finite_edges() | std::views::transform([&](auto edge) { return cdt.segment(edge).squared_length(); })));
-    std::cout << "Min distance between vertices: " << min_distance << '\n';
-    if(min_distance < espilon * max_d) {
+    if(min_distance < epsilon * max_d) {
       std::cerr << "ERROR: min distance between vertices is too small\n";
       exit_code = EXIT_FAILURE;
       return exit_code;
