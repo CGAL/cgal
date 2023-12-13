@@ -51,12 +51,10 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 
   // Shape detection.
   parser.add_val_parameter("-kn"   , parameters.k_neighbors);
-  parser.add_val_parameter("-dist" , parameters.distance_threshold);
-  parser.add_val_parameter("-angle", parameters.angle_threshold);
+  parser.add_val_parameter("-dist" , parameters.maximum_distance);
+  parser.add_val_parameter("-angle", parameters.maximum_angle);
   parser.add_val_parameter("-minp" , parameters.min_region_size);
 
-  parser.add_val_parameter("-odepth", parameters.max_octree_depth);
-  parser.add_val_parameter("-osize", parameters.max_octree_node_size);
 
   // Shape regularization.
   parser.add_bool_parameter("-regparallel", parameters.regparallel);
@@ -64,13 +62,19 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   parser.add_bool_parameter("-regorthogonal", parameters.regorthogonal);
   parser.add_bool_parameter("-regsymmetric", parameters.regsymmetric);
 
+  parser.add_val_parameter("-regoff", parameters.maximum_offset);
+  parser.add_val_parameter("-regangle", parameters.angle_tolerance);
+
   // Shape regularization.
   parser.add_bool_parameter("-reorient", parameters.reorient);
 
   // Partitioning.
   parser.add_val_parameter("-k", parameters.k_intersections);
+  parser.add_val_parameter("-odepth", parameters.max_octree_depth);
+  parser.add_val_parameter("-osize", parameters.max_octree_node_size);
 
   // Reconstruction.
+  parser.add_val_parameter("-lambda", parameters.graphcut_beta);
   parser.add_val_parameter("-beta", parameters.graphcut_beta);
 
   // Debug.
@@ -94,20 +98,12 @@ int main(const int argc, const char** argv) {
   parse_terminal(parser, parameters);
 
   // If no input data is provided, use input from data directory.
-  if (parameters.data.empty()) {
+  if (parameters.data.empty())
     parameters.data = CGAL::data_file_path("points_3/building.ply");
-  }
-
-  // Check if segmented point cloud already exists.
-  std::string filename = parameters.data.substr(parameters.data.find_last_of("/\\") + 1);
-  std::string base = filename.substr(0, filename.find_last_of("."));
-  base = base + "_" + to_stringp(parameters.distance_threshold, 2) + "_" + to_stringp(parameters.angle_threshold, 2) + "_" + std::to_string(parameters.min_region_size) + ".ply";
 
   // Input.
   Point_set point_set(parameters.with_normals);
-  std::ifstream input_file(parameters.data, std::ios_base::binary);
-  input_file >> point_set;
-  input_file.close();
+  CGAL::IO::read_point_set(parameters.data, point_set);
 
   if (!point_set.has_normal_map()) {
     point_set.add_normal_map();
@@ -121,7 +117,7 @@ int main(const int argc, const char** argv) {
       std::cout << "point " << i << " does not have a proper normal" << std::endl;
   }
 
-  if (parameters.distance_threshold == 0) {
+  if (parameters.maximum_distance == 0) {
     CGAL::Bbox_3 bbox = CGAL::bbox_3(CGAL::make_transform_iterator_from_property_map(point_set.begin(), point_set.point_map()),
       CGAL::make_transform_iterator_from_property_map(point_set.end(), point_set.point_map()));
 
@@ -130,7 +126,7 @@ int main(const int argc, const char** argv) {
       + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())
       + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
 
-    parameters.distance_threshold = d * 0.03;
+    parameters.maximum_distance = d * 0.03;
   }
 
   if (parameters.min_region_size == 0)
@@ -141,31 +137,29 @@ int main(const int argc, const char** argv) {
   std::cout << "* number of points: " << point_set.size() << std::endl;
 
   std::cout << "verbose " << parameters.verbose << std::endl;
-  std::cout << "distance_threshold " << parameters.distance_threshold << std::endl;
-  std::cout << "angle_threshold " << parameters.angle_threshold << std::endl;
+  std::cout << "maximum_distance " << parameters.maximum_distance << std::endl;
+  std::cout << "maximum_angle " << parameters.maximum_angle << std::endl;
   std::cout << "min_region_size " << parameters.min_region_size << std::endl;
   std::cout << "k " << parameters.k_intersections << std::endl;
   std::cout << "graphcut_beta " << parameters.graphcut_beta << std::endl;
 
   std::cout << parameters.regorthogonal << " " << parameters.regsymmetric << std::endl;
 
-  auto param = CGAL::parameters::maximum_distance(parameters.distance_threshold)
-    .maximum_angle(parameters.angle_threshold)
+  auto param = CGAL::parameters::maximum_distance(parameters.maximum_distance)
+    .maximum_angle(parameters.maximum_angle)
     .k_neighbors(parameters.k_neighbors)
     .minimum_region_size(parameters.min_region_size)
     .debug(parameters.debug)
     .verbose(parameters.verbose)
     .max_octree_depth(parameters.max_octree_depth)
     .max_octree_node_size(parameters.max_octree_node_size)
-    .reorient_bbox(false)
-    .regularize_parallelism(true)
-    .regularize_coplanarity(true)
-    //.regularize_parallelism(parameters.regparallel)
-    //.regularize_coplanarity(parameters.regcoplanar)
+    .reorient_bbox(parameters.reorient)
+    .regularize_parallelism(parameters.regparallel)
+    .regularize_coplanarity(parameters.regcoplanar)
     .regularize_orthogonality(parameters.regorthogonal)
     .regularize_axis_symmetry(parameters.regsymmetric)
-    .angle_tolerance(3)
-    .maximum_offset(0.05);
+    .angle_tolerance(parameters.angle_tolerance)
+    .maximum_offset(parameters.maximum_offset);
 
   // Algorithm.
   KSR ksr(point_set, param);
@@ -191,7 +185,10 @@ int main(const int argc, const char** argv) {
 
   std::map<typename KSR::KSP::Face_support, bool> external_nodes;
 
-  ksr.reconstruct(parameters.graphcut_beta, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
+  external_nodes[KSR::KSP::Face_support::ZMIN] = true;
+
+  //ksr.reconstruct(parameters.graphcut_beta, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
+  ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)
@@ -209,7 +206,8 @@ int main(const int argc, const char** argv) {
     vtx.clear();
     polylist.clear();
 
-    ksr.reconstruct(b, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
+    //ksr.reconstruct(b, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
+    ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
 
     if (polylist.size() > 0)
       CGAL::IO::write_polygon_soup("polylist_" + std::to_string(b) + ".off", vtx, polylist);

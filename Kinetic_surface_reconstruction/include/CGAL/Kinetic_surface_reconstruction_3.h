@@ -218,6 +218,13 @@ public:
     return m_planar_regions;
   }
 
+  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
+  void detection_and_partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
+    detect_planar_shapes(np);
+    initialize_partition(np);
+    partition(k);
+  }
+
   /*!
   \brief initializes the kinetic partition.
 
@@ -238,7 +245,7 @@ public:
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-    \pre `shape detection performed`
+    \pre shape detection performed
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   void initialize_partition(const CGAL_NP_CLASS& np = parameters::default_values()) {
@@ -253,7 +260,7 @@ public:
   \param k
   maximum number of allowed intersections for each input polygon before its expansion stops.
 
-  \pre `shape detection performed`
+  \pre shape detection performed
   */
   void partition(std::size_t k) {
     FT partition_time, finalization_time, conformal_time;
@@ -271,7 +278,7 @@ public:
   @return
   created kinetic partition data structure
 
-  \pre `partition created`
+  \pre partition created
   */
   const Kinetic_shape_partition_3<Kernel, Intersection_kernel>& kinetic_partition() const {
     return m_kinetic_partition;
@@ -297,7 +304,7 @@ public:
   \param polyit
   output iterator to store all polygonal faces of the reconstructed surface.
 
-  \pre `partition created`
+  \pre partition created
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstruct_with_ground(FT beta, OutputPointIterator pit, OutputPolygonIterator polyit) {
@@ -343,7 +350,7 @@ public:
 
     gc.solve(edges, m_face_area_lcc, m_cost_matrix, m_labels);
 
-    reconstructed_model_polylist_lcc(pit, polyit);
+    reconstructed_model_polylist_lcc(pit, polyit, beta);
   }
 
   /*!
@@ -369,7 +376,7 @@ public:
   \param polyit
   output iterator to store all polygonal faces of the reconstructed surface.
 
-  \pre `partition created`
+  \pre partition created
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstruct(FT beta, std::map<typename KSP::Face_support, bool> external_nodes, OutputPointIterator pit, OutputPolygonIterator polyit) {
@@ -377,6 +384,19 @@ public:
 
     // add node consideration here
     set_outside_volumes(false, m_cost_matrix);
+
+    const std::size_t force = m_total_inliers * 3;
+    for (auto& p : external_nodes) {
+      int idx = -p.first - 1;
+      if (p.second) {
+        m_cost_matrix[0][idx] = force;
+        m_cost_matrix[1][idx] = 0;
+      }
+      else {
+        m_cost_matrix[0][idx] = 0;
+        m_cost_matrix[1][idx] = force;
+      }
+    }
 
     gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
 
@@ -387,7 +407,7 @@ public:
 
     std::cout << "total labels: " << m_labels.size() << " 0: " << out << " 1: " << in << std::endl;
 
-    reconstructed_model_polylist_lcc(pit, polyit);
+    reconstructed_model_polylist_lcc(pit, polyit, beta);
   }
 
 private:
@@ -729,7 +749,7 @@ private:
   \pre `successful reconstruction`
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
-  void reconstructed_model_polylist_lcc(OutputPointIterator pit, OutputPolygonIterator polyit) {
+  void reconstructed_model_polylist_lcc(OutputPointIterator pit, OutputPolygonIterator polyit, FT beta) {
     if (m_labels.empty())
       return;
 
@@ -794,7 +814,7 @@ private:
     static bool saved = false;
 
     if (!saved) {
-      KSP_3::dump_polygons(polygon_regions, "faces_by_region.ply");
+      KSP_3::dump_polygons(polygon_regions, "faces_by_region" + std::to_string(beta) + ".ply");
       saved = true;
     }
 

@@ -9,14 +9,14 @@ namespace CGAL {
 
 \section ksrIntroduction Introduction
 Reconstruction of man-made objects from point clouds pose a challenge to traditional surface reconstruction methods that often produce a smooth surface, e.g., by meshing a fitted implicit function, see \ref PkgPoissonSurfaceReconstruction3 "Poisson Surface Reconstruction", or by interpolation, see \ref PkgAdvancingFrontSurfaceReconstruction "Advancing Front Surface Reconstruction" and \ref PkgScaleSpaceReconstruction3 "Scale Space Surface Reconstruction".
-The kinetic surface reconstruction package implements the pipeline proposed by Bauchet et. al \cgalCite{bauchet2020kinetic}. At the core is the \ref PkgKineticShapePartition "Kinetic shape partition" which efficiently decomposes the bounding box into a set of convex polyhedra. The decomposition is guided by a set of planar shapes which are aforehand abstracted from an input point cloud. The final surface is obtained via an energy formulation trading data faithfulness for low complexity which is solved via min-cut.  The output is a polygonal watertight mesh.
+The kinetic surface reconstruction package implements the pipeline proposed by Bauchet et. al \cgalCite{bauchet2020kinetic}. At the core is the \ref PkgKineticShapePartition "Kinetic space partition" which efficiently decomposes the bounding box into a set of convex polyhedra. The decomposition is guided by a set of planar shapes which are aforehand abstracted from an input point cloud. The final surface is obtained via an energy formulation trading data faithfulness for low complexity which is solved via min-cut.  The output is a polygonal watertight mesh.
 
 The method overcomes the major limitation of similar approaches which decompose the bounding box using planar shapes. By partitioning the space into fewer cells using the kinetic approach and aforehand splitting of input data via an adaptive octree the method beats the common full decomposition of the bounding box which has a complexity of \cgalBigO{n^3}. This allows for effective handling of large scenes. At the same time the kinetic approach of decomposing the bounding box limits the number of tiny cells in the partition. Tiny cells are often responsible for small artifacts and at the same time increase the memory requirements and running time.
 
 \section ksrAlgorithm Algorithm
 The method takes as input a point cloud with oriented normals. In a first step, \ref PkgShapeDetection "Shape Detection" is used to abstract planar shapes from the point cloud. The optional regularization of shapes, see \ref PkgShapeRegularization "Shape regularization", can not just improve the accuracy of the data by aligning parallel, coplanar and orthogonal shapes, but provides in the same time a reduction in complexity.
-Before inserting the planar shapes into the kinetic shape partition, coplanar shapes are merged into a single shape and the 2d convex hull of each shape is constructed.
-The reconstruction is posed as an energy minimization labeling the convex volumes of the kinetic shape partition as inside or outside. The optimal surface separating the differently labeled volumes is found via min-cut. A graph is embedded into the kinetic partition representing every volume by a vertex and every face between to volumes by an edge connecting the corresponding vertices.
+Before inserting the planar shapes into the kinetic space partition, coplanar shapes are merged into a single shape and the 2d convex hull of each shape is constructed.
+The reconstruction is posed as an energy minimization labeling the convex volumes of the kinetic space partition as inside or outside. The optimal surface separating the differently labeled volumes is found via min-cut. A graph is embedded into the kinetic partition representing every volume by a vertex and every face between to volumes by an edge connecting the corresponding vertices.
 <center>
 <table class="center-table" border="0">
 <tr><td>
@@ -36,40 +36,45 @@ The reconstruction is posed as an energy minimization labeling the convex volume
 </table>
 </center>
 
-The labels \f$l \in {\{0, 1\}}^n\f$ denote the label for the \f$n\f$ volumes of the kinetic shape partition. The data term measures the coherence of the labeled volumes with the orientation of normals of the input points. The prefered label for a volume is determined by a voting of the input points and their associated normals.
+The labels \f$l \in {\{0, 1\}}^n\f$ denote the label for the \f$n\f$ volumes of the kinetic space partition. The data term measures the coherence of the labeled volumes with the orientation of normals of the input points. The prefered label for a volume is determined by a voting of the input points and their associated normals.
 For each volume \f$i \in C\f$ the inliers from the shape detection associated with the faces of the volume \f$p \in I_i\f$ either vote inside or outside for the volume. The vote is inside \f$d_i(p, inside) = 1 and d_i(p, outside = 0)\f$ if the normal associated to the point is directed to the outwards of the volume or outside \f$d_i(p, inside) = 0 and d_i(p, outside = 1)\f$ if the normal is oriented inwards.
 The regularization term is a common choice penalizing the total surface area of the surface and thus favoring less complex surfaces. To put the data term and regularization term into balance, area of all faces is normalized by the total area of all faces \f$A\f$ and scaled by twice the total number of inliners \f$I\f$ from the shape detection.
 
 Thus the reconstruction is guaranteed to be watertight as it equals a union of volumes. However, the reconstruction may consist of several components and is not guaranteed to be 2-manifold as different components may share a vertex or an edge.
 
 \cgalFigureBegin{Ksr_pipelinefig,ksr_pipeline_small.png}
-Kinetic surface reconstruction pipeline.\n From left to right: 1. input point cloud with 382k points 2. 98 detected planar shapes 3. 63 regularized convex shapes 4. kinetic shape partition with 1,487 cells 5. reconstructed polygonal mesh with 131 faces.
+Kinetic surface reconstruction pipeline.\n From left to right: 1. input point cloud with 382k points 2. 98 detected planar shapes 3. 63 regularized convex shapes 4. kinetic space partition with 1,487 cells 5. reconstructed polygonal mesh with 131 faces.
 \cgalFigureEnd
 
 \section ksrParameters Parameters
 The parameters of the method include the parameters from other packages which are used internally:
-- \ref PkgShapeDetection "Shape detection": *k_neighbors*, *maximum_distance*, *maximum_angle* and *minimum_region_size*
-- \ref PkgShapeRegularization "Shape regularization for planes": *maximum_offset*, *regularize_parallelism*, *regularize_coplanarity*, *regularize_orthogonality*, *regularize_axis_symmetry*, *symmetry_direction* and *angle_tolerance*
+- \ref Shape_detection_RegionGrowingPoints_parameters "Shape detection": *k_neighbors*, *maximum_distance*, *maximum_angle* and *minimum_region_size*
+- `CGAL::Shape_regularization::Planes::regularize_planes`: *maximum_offset*, *regularize_parallelism*, *regularize_coplanarity*, *regularize_orthogonality*, *regularize_axis_symmetry*, *symmetry_direction* and *angle_tolerance*
  - *angle_tolerance* is replacing *maximum_angle* from Shape regularization due to a name collision with Shape detection
-- \ref Chapter_Kinetic_Shape_Partition "Kinetic shape partition": *k*, *reorient_bbox* and *bbox_dilation_ratio*
+- \ref Ksp_parameters "Kinetic space partition": *k*, *reorient_bbox* and *bbox_dilation_ratio*
 
 The reconstruction adds two new parameters:
 - *external_nodes*:
-The graph cut formulation embeds a vertex into each volume and connects all vertices if the corresponding volumes share a common face. While each face inside the kinetic shape partition is exactly between two volumes, faces on the boundary have to be considered. Thus, 6 external vertices are inserted into the graph representing a volume on each side of the bounding box. The parameter *external_nodes* allows the user to either provide a fixed label *inside* or *outside* for each node or leave the label up to the energy minimization. Typical choices for this parameter are to choose all external nodes as outside for scanned objects, e.g., as in \cgalFigureRef{Ksr_pipelinefig}, or the *ZMIN* node *inside* and all other nodes *outside* as for exterior scans of buildings. The default value for this parameter is to leave the labels of the external nodes up to the energy minimization.
+The graph cut formulation embeds a vertex into each volume and connects all vertices if the corresponding volumes share a common face. While each face inside the kinetic space partition is exactly between two volumes, faces on the boundary have to be considered. Thus, 6 external vertices are inserted into the graph representing a volume on each side of the bounding box. The parameter *external_nodes* allows the user to either provide a fixed label *inside* or *outside* for each node or leave the label up to the energy minimization. Typical choices for this parameter are to choose all external nodes as outside for scanned objects, e.g., as in \cgalFigureRef{Ksr_pipelinefig}, or the *ZMIN* node *inside* and all other nodes *outside* as for exterior scans of buildings, e.g., as in \cgalFigureRef{Ksr_parametersfig}. The default value for this parameter is to leave the labels of the external nodes up to the energy minimization.
 
 - *lambda*:
 The *lambda* parameter trades the data faithfulness of the energy minimization for low complexity. The parameter has to be choosen in the range of \f$[0,1)\f$. 0 indicates the only the voting of input points are considered in the energy minimization, while the default value of \f$0,5\f$ gives an equal weight to data faithfulness and low complexity. The value should be choosen according to the quality of the input data. If the point cloud is accurate, low in noise and complete a low value can be chosen.
 
 \section ksrParameterChoice Choice of Parameters
-The kinetic shape partition determines all possible reconstructions as the energy formulation only decides about the labels for the volumes, but cannot change the volumes themselves. Thus, the first stage of the pipeline, \ref PkgShapeDetection "Shape Detection" and \ref PkgShapeRegularization "Shape Regularization" have a large impact on the final reconstruction. In the simple case of a cube, one missing side would depending on the chosen *lambda* parameter either make the cube expand on that side towards the bounding box or make the full cube disappear. A proper parameterization of the \ref PkgShapeDetection "Shape Detection" to detect all relevant shapes may have a large impact. The *debug* parameter allows to export intermediate results for inspection. This is especially helpful for larger scenes, where the time for the whole reconstruction requires more computational effort.
+The kinetic space partition determines all possible reconstructions as the energy formulation only decides about the labels for the volumes, but cannot change the volumes themselves. Thus, the first stage of the pipeline, \ref PkgShapeDetection "Shape Detection" and \ref PkgShapeRegularization "Shape Regularization" have a large impact on the final reconstruction. In the simple case of a cube, one missing side would depending on the chosen *lambda* parameter either make the cube expand on that side towards the bounding box or make the full cube disappear. A proper parameterization of the \ref PkgShapeDetection "Shape Detection" to detect all relevant shapes may have a large impact. The *debug* parameter allows to export intermediate results for inspection. This is especially helpful for larger scenes, where the time for the whole reconstruction requires more computational effort.
 
-However, in many cases a point cloud may not cover all shapes. The method offers two parameters to handle missing data. The *k* parameter of the kinetic shape partition can extend the convex polygons further in the partition and thus may make up for missing shapes.  The *external_nodes* parameter allows to preset an *inside* or *outside* label for bounding box sides. This is especially helpful for scanned buildings, where no points have been collect on the bottom side of the building, partial scans or scans where the orientation is inverted, e.g., inside an apartment.
+However, in many cases a point cloud may not cover all shapes. The method offers two parameters to handle missing data. The *k* parameter of the kinetic space partition can extend the convex polygons further in the partition and thus may make up for missing shapes.  The *external_nodes* parameter allows to preset an *inside* or *outside* label for bounding box sides. This is especially helpful for scanned buildings, where no points have been collect on the bottom side of the building, partial scans or scans where the orientation is inverted, e.g., inside an apartment.
 
-The *lambda* parameter allows to trade data faithfulness for low complexity. The best choice may depend on the individual point cloud and object. However, the actual reconstruction using graph-cut only makes up a small fraction from the whole pipeline. Performing several reconstructions with different values of *lambda* is a reasonal approach, see \ref ksrParametersExample.
+The *lambda* parameter allows to trade data faithfulness for low complexity. The best choice may depend on the individual point cloud and object. \cgalFigureRef{Ksr_parametersfig} shows the lower complexity of the reconstruction with a higher *lambda* value.
+However, the actual reconstruction using graph-cut only makes up a small fraction from the whole pipeline. Performing several reconstructions with different values of *lambda* is a reasonal approach, see \ref ksrParametersExample.
 
-\cgalFigureBegin{Ksr_parametersfig,ksr_parameters_gray_small.png}
+\cgalFigureAnchor{Ksr_parametersfig}
+<center>
+<img src="ksr_parameters_gray_small.png" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{Ksr_parametersfig}
 Impact of parameters on the reconstruction of the rotated lans model.\n From left to right: 1. & 2. Reconstruction with using \f$\lambda = 0.7\f$ and \f$\lambda = 0.8\f$. A higher value of lambda removes some details on the roof as well as the chimney. As no planar shape was detected at the top of the chimney, the kinetic space partition does not offer a volume that well covers the point cloud. The volume of the chimney is either to large for \f$\lambda = 0.7\f$ or gets cut completely for \f$\lambda = 0.8\f$ 3. Reconstruction of the model without reorienting the bbox. For the reconstruction to succeed it is necessary to set the external_node for *ZMIN* to *inside* as the point cloud does not close the church from below. 4. Reconstruction as in 3., but without setting external_node for *ZMIN*.
-\cgalFigureEnd
+\cgalFigureCaptionEnd
 
 \section ksrExamples Examples
 
@@ -90,11 +95,202 @@ This example provides a command line version of the kinetic surface reconstructi
 \cgalExample{Kinetic_surface_reconstruction/parameters.cpp}
 
 \section ksrPerformance Performance
-todo:
 
-- Show some examples (Meetingroom, etc.)
+Kinetic surface reconstruction is aimed at reconstructing piece-wise planar objects, e.g., man-made objects and architecture. Reconstruction results on point clouds acquired from architecture in different qualities are shown in figure \cgalFigureRef{ksr_result_small} in the first and last row. Synthetic point clouds from a CAD model and a fractal object are shown in rows 2 and three.
+However, also smooth surface can be reconstructed to a certain level of detail as is shown on the fourth row. While the scales of the dragon are not replicated with their smooth boundary, each scale can still be recognized in the final model.
 
-- Performance
+\cgalFigureAnchor{ksr_result_small}
+<center>
+<img src="ksr_result_small.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{ksr_result_small}
+Results of kinetic surface reconstruction.\n From left to right: 1. input point cloud 2. reconstructed polygon mesh 3. overlay of input and result 4. detail view.\n
+From top to bottom: 1. *Meeting room*. Reconstruction of the roof framework is not perfect due to missing data. 2. *Full Thing*. Synthetic point cloud sampled from a CAD model. All details are well reconstructed 3. *Hilbert cube*. Synthetic point cloud from a fractal object. 4. *Asian Dragon*. Acquired point cloud from the Stanford 3D Scanning Repository. 5. *Building_C*. Point Cloud from multi view stereo.
+\cgalFigureCaptionEnd
+
+The running time of the method depends mostly on the shape detection and the kinetic space partition steps. While the shape detection mostly depends on the complexity of the point cloud, the kinetic space partition depends on the number of input polygons. The running time of the shape regularization and the graph cut have not been listed, as they are <1 seconds in all cases besides the *Asian Dragon* with 2,75s.
+
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+Data set
+<TD class="math" ALIGN=CENTER NOWRAP>
+Points
+<TD class="math" ALIGN=CENTER NOWRAP>
+Detected shapes
+<TD class="math" ALIGN=CENTER NOWRAP>
+Regularized shapes
+<TD class="math" ALIGN=CENTER NOWRAP>
+Volumes in partition
+<TD class="math" ALIGN=CENTER NOWRAP>
+Polygons in reconstruction
+<TD class="math" ALIGN=CENTER NOWRAP>
+Vertices in reconstruction
+<TD class="math" ALIGN=CENTER NOWRAP>
+Shape Detection
+<TD class="math" ALIGN=CENTER NOWRAP>
+Kinetic Space Partition
+<TD class="math" ALIGN=CENTER NOWRAP>
+Total Time
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Foam_box
+<TD class="math" ALIGN=RIGHT NOWRAP>
+382.059
+<TD class="math" ALIGN=RIGHT NOWRAP>
+98
+<TD class="math" ALIGN=RIGHT NOWRAP>
+64
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.537
+<TD class="math" ALIGN=RIGHT NOWRAP>
+148
+<TD class="math" ALIGN=RIGHT NOWRAP>
+605
+<TD class="math" ALIGN=RIGHT NOWRAP>
+6,6
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2,6
+<TD class="math" ALIGN=RIGHT NOWRAP>
+9.2
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Lans
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.220.459
+<TD class="math" ALIGN=RIGHT NOWRAP>
+324
+<TD class="math" ALIGN=RIGHT NOWRAP>
+166
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2.629
+<TD class="math" ALIGN=RIGHT NOWRAP>
+288
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.136
+<TD class="math" ALIGN=RIGHT NOWRAP>
+26,2
+<TD class="math" ALIGN=RIGHT NOWRAP>
+5,9
+<TD class="math" ALIGN=RIGHT NOWRAP>
+32,1
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Meeting Room
+<TD class="math" ALIGN=RIGHT NOWRAP>
+3.074.625
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.652
+<TD class="math" ALIGN=RIGHT NOWRAP>
+777
+<TD class="math" ALIGN=RIGHT NOWRAP>
+31.757
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2.970
+<TD class="math" ALIGN=RIGHT NOWRAP>
+12.161
+<TD class="math" ALIGN=RIGHT NOWRAP>
+39,8
+<TD class="math" ALIGN=RIGHT NOWRAP>
+79,3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+120,1
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Full Thing
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.377.666
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.947
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.793
+<TD class="math" ALIGN=RIGHT NOWRAP>
+20.628
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.989
+<TD class="math" ALIGN=RIGHT NOWRAP>
+9.764
+<TD class="math" ALIGN=RIGHT NOWRAP>
+9,3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+200,7
+<TD class="math" ALIGN=RIGHT NOWRAP>
+210,9
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Hilbert cube
+<TD class="math" ALIGN=RIGHT NOWRAP>
+144.092
+<TD class="math" ALIGN=RIGHT NOWRAP>
+674
+<TD class="math" ALIGN=RIGHT NOWRAP>
+48
+<TD class="math" ALIGN=RIGHT NOWRAP>
+4163
+<TD class="math" ALIGN=RIGHT NOWRAP>
+986
+<TD class="math" ALIGN=RIGHT NOWRAP>
+4.124
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,7
+<TD class="math" ALIGN=RIGHT NOWRAP>
+8,0
+<TD class="math" ALIGN=RIGHT NOWRAP>
+8,8
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Asian Dragon
+<TD class="math" ALIGN=RIGHT NOWRAP>
+3.609.455
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2.842
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2.842
+<TD class="math" ALIGN=RIGHT NOWRAP>
+82.417
+<TD class="math" ALIGN=RIGHT NOWRAP>
+10.257
+<TD class="math" ALIGN=RIGHT NOWRAP>
+33.260
+<TD class="math" ALIGN=RIGHT NOWRAP>
+34,2
+<TD class="math" ALIGN=RIGHT NOWRAP>
+605,0
+<TD class="math" ALIGN=RIGHT NOWRAP>
+642
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Building_C
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1.000.000
+<TD class="math" ALIGN=RIGHT NOWRAP>
+221
+<TD class="math" ALIGN=RIGHT NOWRAP>
+175
+<TD class="math" ALIGN=RIGHT NOWRAP>
+3.922
+<TD class="math" ALIGN=RIGHT NOWRAP>
+631
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2.337
+<TD class="math" ALIGN=RIGHT NOWRAP>
+40,7
+<TD class="math" ALIGN=RIGHT NOWRAP>
+15,6
+<TD class="math" ALIGN=RIGHT NOWRAP>
+56,4
+<TR>
+<TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
+</TABLE>
 
 */
 } /* namespace CGAL */

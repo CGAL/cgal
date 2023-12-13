@@ -2,7 +2,6 @@
 #include <CGAL/Kinetic_surface_reconstruction_3.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
-#include <CGAL/IO/PLY.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
 using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -19,12 +18,9 @@ using KSR = CGAL::Kinetic_surface_reconstruction_3<Kernel, Point_set, Point_map,
 
 int main(const int argc, const char** argv) {
   // Input.
-  std::string filename = CGAL::data_file_path("points_3/building.ply");
 
   Point_set point_set;
-  std::ifstream input_file(filename, std::ios_base::binary);
-  input_file >> point_set;
-  input_file.close();
+  CGAL::IO::read_point_set(CGAL::data_file_path("points_3/building.ply"), point_set);
 
   auto param = CGAL::parameters::maximum_distance(0.1)
     .maximum_angle(10)
@@ -38,25 +34,21 @@ int main(const int argc, const char** argv) {
   // Algorithm.
   KSR ksr(point_set, param);
 
-  ksr.detect_planar_shapes(param);
-
-  ksr.initialize_partition(param);
-
-  ksr.partition(2);
+  ksr.detection_and_partition(2, param);
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
 
-  std::vector<FT> betas{0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99};
+  std::vector<FT> lambdas{0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99};
 
-  for (FT b : betas) {
+  for (FT l : lambdas) {
     vtx.clear();
     polylist.clear();
 
-    ksr.reconstruct_with_ground(b, std::back_inserter(vtx), std::back_inserter(polylist));
+    ksr.reconstruct_with_ground(l, std::back_inserter(vtx), std::back_inserter(polylist));
 
     if (polylist.size() > 0)
-      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(b), vtx, polylist);
+      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + ".ply", vtx, polylist);
   }
 
   return EXIT_SUCCESS;

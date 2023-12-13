@@ -33,10 +33,13 @@ namespace KSR {
     // Shape detection / Shape regularization.
     // See the corresponding CGAL packages.
     std::size_t k_neighbors;
-    FT distance_threshold;
-    FT angle_threshold;
+    FT maximum_distance;
+    FT maximum_angle;
     std::size_t min_region_size;
+
     bool regparallel, regcoplanar, regorthogonal, regsymmetric;
+    FT angle_tolerance;
+    FT maximum_offset;
 
     // Partitioning.
     // See KSR/parameters.h
@@ -62,12 +65,14 @@ namespace KSR {
       min_region_size(0),
       max_octree_node_size(40),
       max_octree_depth(3),
-      distance_threshold(0),
-      angle_threshold(10),
+      maximum_distance(0),
+      maximum_angle(10),
       regparallel(false),
       regcoplanar(true),
       regorthogonal(false),
       regsymmetric(false),
+      angle_tolerance(5),
+      maximum_offset(0),
       // partition
       k_intersections(1),
       enlarge_bbox_ratio(FT(11) / FT(10)),
