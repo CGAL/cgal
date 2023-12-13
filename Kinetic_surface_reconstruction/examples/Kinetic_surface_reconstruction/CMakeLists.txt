@@ -8,7 +8,6 @@ project(Kinetic_surface_reconstruction_Examples)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
-include(${CGAL_USE_FILE})
 include(CGAL_CreateSingleSourceCGALProgram)
 
 find_package(Boost REQUIRED)
