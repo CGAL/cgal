@@ -62,6 +62,7 @@ struct CDT_options
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
   double segment_vertex_epsilon = 1e-8;
+  std::string failure_assertion_expression{};
   std::string input_filename = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename{"dump.off"};
   std::string dump_patches_after_merge_filename{};
@@ -80,6 +81,7 @@ Usage: cdt_3_from_off [options] input.off output.off
 
   --merge-facets: merge facets into patches
   --ratio: ratio of faces to remove (default: 0)
+  --failure-expression: expression to detect bad mesh (to use with --ratio)
   --dump-patches-after-merge: dump patches after merging facets
   --dump-patches-borders-prefix: dump patches borders
   --dump-after-conforming: dump mesh after conforming
@@ -100,6 +102,9 @@ int main(int argc, char* argv[])
     std::string arg = argv[i];
     if(arg == "--merge-facets") {
       options.merge_facets = true;
+    } else if(arg == "--failure-expression") {
+      assert(i + 1 < argc);
+      options.failure_assertion_expression = argv[++i];
     } else if(arg == "--ratio") {
       assert(i + 1 < argc);
       options.ratio = std::stod(argv[++i]);
@@ -200,7 +205,7 @@ int main(int argc, char* argv[])
     try {
       go(mesh, options);
     } catch(CGAL::Failure_exception& e) {
-      if(e.expression().find(std::string("orientation")) != std::string::npos)
+      if(e.expression().find(options.failure_assertion_expression) != std::string::npos)
       {
         std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
         std::ofstream bad("bad_mesh.off");
