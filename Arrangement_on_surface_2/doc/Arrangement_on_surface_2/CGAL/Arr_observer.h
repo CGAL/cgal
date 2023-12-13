@@ -1,4 +1,3 @@
-// Copyright (c) 2023 Tel-Aviv University (Israel).
 namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Ref
