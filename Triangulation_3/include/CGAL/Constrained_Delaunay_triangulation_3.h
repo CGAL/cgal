@@ -2202,7 +2202,11 @@ public:
       catch(PLC_error& e) {
         std::cerr << std::string("ERROR: PLC error with face #F") << std::to_string(e.face_index) + "\n";
         i = face_constraint_misses_subfaces.find_next(i);
-        if(i == npos) throw;
+        if(i == npos) {
+          std::cerr << "ERROR: No more missing face to restore after a PLC error\n";
+          throw;
+        }
+        std::cerr << "Next face is face #F " << i << '\n';
         continue;
       }
       i = face_constraint_misses_subfaces.find_first();
