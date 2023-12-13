@@ -21,7 +21,7 @@
 #include <CGAL/Arr_enums.h>
 
 /*! \file
- * Definition of the Aos_observer<Arrangement> base class.
+ * Definition of the `Aos_observer<Arrangement>` base class.
  */
 
 namespace CGAL {
@@ -31,8 +31,7 @@ namespace CGAL {
  * The Arrangement parameter corresponds to an arrangement instantiation.
  */
 template <typename Arrangement_>
-class Aos_observer
-{
+class Aos_observer {
 public:
   typedef Arrangement_                                     Arrangement_2;
   typedef Aos_observer<Arrangement_2>                      Self;
@@ -44,7 +43,7 @@ public:
   typedef typename Arrangement_2::Halfedge_handle          Halfedge_handle;
   typedef typename Arrangement_2::Face_handle              Face_handle;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
-                                                      Ccb_halfedge_circulator;
+    Ccb_halfedge_circulator;
 
 private:
   Arrangement_2* p_arr;           // The associated arrangement.
@@ -81,7 +80,7 @@ public:
   /// \name Modifying the associated arrangement.
   //@{
 
-  /*! Get the associated arrangement (non-const version). */
+  /*! Get the associated arrangement (const version). */
   const Arrangement_2* arrangement() const { return (p_arr); }
 
   /*! Get the associated arrangement (non-const version). */
@@ -160,7 +159,7 @@ public:
   //@{
 
   /*! Notification before the observer is attached to an arrangement.
-   * \param arr The arrangement we are about to attach the observer to.
+   * \param arr The arrangement that is about to attach the observer.
    */
   virtual void before_attach(const Arrangement_2& /* arr */) {}
 
@@ -170,17 +169,16 @@ public:
   /*! Notification before the observer is detached from the arrangement. */
   virtual void before_detach() {}
 
-  /*! Notification after the observer has been detached to the arrangement. */
+  /*! Notification after the observer has been detached from the arrangement. */
   virtual void after_detach() {}
   //@}
 
   /// \name Notification functions on local changes in the arrangement.
   //@{
 
-  /*!
-   * Notification before the creation of a new vertex.
+  /*! Notification before the creation of a new vertex.
    * \param p The point to be associated with the vertex.
-   *          This point cannot lies on the surface boundaries.
+   *          This point cannot lie on the surface boundaries.
    */
   virtual void before_create_vertex(const Point_2& /* p */) {}
 
@@ -191,7 +189,7 @@ public:
   {}
 
   /*! Notification before the creation of a new boundary vertex.
-   * \param p The on the surface boundary.
+   * \param p The point on the surface boundary.
    * \param ps_x The boundary condition of the vertex in x.
    * \param ps_y The boundary condition of the vertex in y.
    */
@@ -218,7 +216,7 @@ public:
   virtual void after_create_boundary_vertex(Vertex_handle /* v */) {}
 
   /*! Notification before the creation of a new edge.
-   * \param c The x-monotone curve to be associated with the edge.
+   * \param c The \f$x\f$-monotone curve to be associated with the edge.
    * \param v1 A handle to the first end-vertex of the edge.
    * \param v2 A handle to the second end-vertex of the edge.
    */
@@ -247,7 +245,7 @@ public:
 
   /*! Notification before the modification of an existing edge.
    * \param e A handle to one of the twin halfedges to be updated.
-   * \param c The x-monotone curve to be associated with the edge.
+   * \param c The \f$x\f$-monotone curve to be associated with the edge.
    */
   virtual void before_modify_edge(Halfedge_handle /* e */,
                                   const X_monotone_curve_2& /* c */)
@@ -261,8 +259,8 @@ public:
   /*! Notification before the splitting of an edge into two.
    * \param e A handle to one of the existing halfedges.
    * \param v A vertex representing the split point.
-   * \param c1 The x-monotone curve to be associated with the first edge.
-   * \param c2 The x-monotone curve to be associated with the second edge.
+   * \param c1 The \f$x\f$-monotone curve to be associated with the first edge.
+   * \param c2 The \f$x\f$-monotone curve to be associated with the second edge.
    */
   virtual void before_split_edge(Halfedge_handle /* e */,
                                  Vertex_handle /* v */,
@@ -394,7 +392,7 @@ public:
   /*! Notification before the merging of two edges.
    * \param e1 A handle to one of the halfedges forming the first edge.
    * \param e2 A handle to one of the halfedges forming the second edge.
-   * \param c The x-monotone curve to be associated with the merged edge.
+   * \param c The \f$x\f$-monotone curve to be associated with the merged edge.
    */
   virtual void before_merge_edge(Halfedge_handle /* e1 */,
                                  Halfedge_handle /* e2 */,

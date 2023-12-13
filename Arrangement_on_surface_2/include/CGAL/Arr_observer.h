@@ -14,7 +14,8 @@
 #define CGAL_ARR_OBSERVER_H
 
 /*! \file
- * Definition of the Arr_observer<Arrangement> base class mainly for backward compatibility.
+ * Definition of the `Arr_observer<Arrangement>` base class mainly for backward
+ * compatibility.
  */
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
