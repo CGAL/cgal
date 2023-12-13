@@ -44,7 +44,7 @@ private:
   using Direction_2 = typename Kernel::Direction_2;
   using Line_2 = typename Kernel::Line_2;
 
-  using Data_structure = Data_structure<Kernel, Intersection_kernel>;
+  using Data_structure = CGAL::KSP_3::internal::Data_structure<Kernel, Intersection_kernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge = typename Data_structure::IEdge;

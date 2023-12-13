@@ -53,7 +53,7 @@ public:
   using Triangle_2 = typename Kernel::Triangle_2;
 
   using Mesh = CGAL::Surface_mesh<Point_2>;
-  using Intersection_graph = Intersection_graph<Kernel, Intersection_kernel>;
+  using Intersection_graph = CGAL::KSP_3::internal::Intersection_graph<Kernel, Intersection_kernel>;
   using Bbox_2 = CGAL::Bbox_2;
 
   using IVertex = typename Intersection_graph::Vertex_descriptor;
@@ -218,7 +218,7 @@ public:
     CGAL_assertion(n != 0);
 
     m_data->k = 0;
-    m_data->plane = Plane_3(points[0], KSP::normalize(normal));
+    m_data->plane = Plane_3(points[0], KSP::internal::normalize(normal));
     m_data->exact_plane = to_exact(m_data->plane);
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;

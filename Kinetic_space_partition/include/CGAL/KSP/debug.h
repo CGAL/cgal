@@ -73,7 +73,7 @@ void dump_segmented_edges(const DS& data, const std::string tag = std::string())
   }
 
   for (const auto iedge : data.iedges()) {
-    CGAL_assertion(data.line_idx(iedge) != KSP::no_element());
+    CGAL_assertion(data.line_idx(iedge) != std::size_t(-1));
     *(out[data.line_idx(iedge)]) << "2 " << data.segment_3(iedge) << std::endl;
   }
 
@@ -1182,7 +1182,7 @@ void dump_cdt(
 
     const auto face = mesh.add_face(vertices);
     CGAL::Random rand(fit->info().index);
-    if (fit->info().index != KSP::no_element()) {
+    if (fit->info().index != std::size_t(-1)) {
       red[face]   = (unsigned char)(rand.get_int(32, 192));
       green[face] = (unsigned char)(rand.get_int(32, 192));
       blue[face]  = (unsigned char)(rand.get_int(32, 192));

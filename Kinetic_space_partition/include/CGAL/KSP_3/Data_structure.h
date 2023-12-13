@@ -40,8 +40,8 @@ public:
   using Kernel = GeomTraits;
   using Intersection_kernel = IntersectionKernel;
 
-  using Support_plane = Support_plane<Kernel, Intersection_kernel>;
-  using Intersection_graph = Intersection_graph<Kernel, Intersection_kernel>;
+  using Support_plane = CGAL::KSP_3::internal::Support_plane<Kernel, Intersection_kernel>;
+  using Intersection_graph = CGAL::KSP_3::internal::Intersection_graph<Kernel, Intersection_kernel>;
   using Face_event = typename Support_plane::Face_event;
 
   using FT = typename Kernel::FT;

@@ -51,7 +51,7 @@ private:
 
   using From_exact = CGAL::Cartesian_converter<IntersectionKernel, Kernel>;
 
-  using Data_structure = Data_structure<Kernel, IntersectionKernel>;
+  using Data_structure = CGAL::KSP_3::internal::Data_structure<Kernel, IntersectionKernel>;
 
   using IVertex = typename Data_structure::IVertex;
   using IEdge = typename Data_structure::IEdge;
