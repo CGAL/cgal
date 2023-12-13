@@ -30,18 +30,13 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  const double points_per_face = (argc > 2) ? atof(argv[2]) : 10;
+  const int points_per_face = (argc > 2) ? std::stoi(argv[2]) : 10;
 
   std::vector<Point> points;
-
   PMP::sample_triangle_mesh(mesh,
                             std::back_inserter(points),
                             CGAL::parameters::number_of_points_per_face(points_per_face));
 
-  std::cout.precision(17);
-  for(const Point& p : points){
-    std::cout << p << std::endl;
-  }
 
   Point_set point_set;
   PMP::sample_triangle_mesh(mesh,
