@@ -19,6 +19,7 @@
 #include <string>
 #include <ranges>
 #include <optional>
+#include <chrono>
 
 #if NO_TRY_CATCH
 # define CDT_3_try      if (true)
@@ -58,6 +59,7 @@ using face_descriptor   = boost::graph_traits<Mesh>::face_descriptor;
 
 struct CDT_options
 {
+  bool quiet = false;
   bool merge_facets = false;
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
@@ -79,7 +81,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   input.off: input mesh
   output.off: output mesh
 
-  --merge-facets: merge facets into patches
+  --merge-facets: merge facets into patches (unset by default)
   --ratio: ratio of faces to remove (default: 0)
   --failure-expression: expression to detect bad mesh (to use with --ratio)
   --dump-patches-after-merge: dump patches after merging facets
@@ -87,6 +89,8 @@ Usage: cdt_3_from_off [options] input.off output.off
   --dump-after-conforming: dump mesh after conforming
   --vertex-vertex-epsilon: epsilon for vertex-vertex min distance (default: 1e-6)
   --segment-vertex-epsilon: epsilon for segment-vertex min distance (default: 0)
+  --quiet: do not print anything
+  --help: print this help
 )";
 }
 
@@ -123,6 +127,8 @@ int main(int argc, char* argv[])
     } else if(arg == "--segment-vertex-epsilon") {
       assert(i + 1 < argc);
       options.segment_vertex_epsilon = std::stod(argv[++i]);
+    } else if(arg == "--quiet") {
+      options.quiet = true;
     } else if(arg == "--help") {
       help(std::cout);
       return 0;
@@ -151,6 +157,8 @@ int main(int argc, char* argv[])
     }
   }
 
+  auto start_time = std::chrono::high_resolution_clock::now();
+
   Mesh mesh;
   const bool ok = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(options.input_filename, mesh);
   if (!ok)
@@ -158,9 +166,21 @@ int main(int argc, char* argv[])
     std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
+  if(!options.quiet) {
+    std::cout << "[timings] read mesh in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    std::cout << "Number of vertices: " << mesh.number_of_vertices() << '\n';
+    std::cout << "Number of edges: " << mesh.number_of_edges() << '\n';
+    std::cout << "Number of faces: " << mesh.number_of_faces() << "\n\n";
+  }
 
   if(options.ratio == 0.) {
-    return go(std::move(mesh), std::move(options));
+    auto exit_code = go(std::move(mesh), std::move(options));
+    if(!options.quiet) {
+      std::cout << "[timings] total time: " << std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    }
+    return exit_code;
   }
   auto nb_buckets = static_cast<int>(std::floor(1 / options.ratio)) + 1;
   std::cerr << "RATIO: " << options.ratio << '\n';
@@ -278,6 +298,7 @@ int go(Mesh mesh, CDT_options options) {
   int nb_patches = 0;
   std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
   if(options.merge_facets) {
+    auto start_time = std::chrono::high_resolution_clock::now();
     for(auto f: faces(mesh))
     {
       if(get(patch_id_map, f) >= 0) continue;
@@ -322,6 +343,11 @@ int go(Mesh mesh, CDT_options options) {
     if(!options.dump_patches_after_merge_filename.empty()) {
       std::ofstream out(options.dump_patches_after_merge_filename);
       CGAL::IO::write_PLY(out, mesh);
+    }
+    if(!options.quiet) {
+      std::cout << "[timings] merged facets in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+      std::cout << "Number of facets after --merge_facets: " << mesh.number_of_faces() << "\n\n";
     }
   }
   if(!options.dump_patches_borders_prefix.empty()) {
@@ -380,9 +406,15 @@ int go(Mesh mesh, CDT_options options) {
     }
   };
 
+  auto start_time = std::chrono::high_resolution_clock::now();
   for(auto v: vertices(mesh)) {
     if(options.merge_facets && false == get(v_selected_map, v)) continue;
     cdt.insert(get(pmap, v));
+  }
+  if(!options.quiet) {
+    std::cout << "[timings] inserted vertices in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    std::cout << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
   }
   const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
   double d_x = bbox.xmax() - bbox.xmin();
@@ -392,6 +424,9 @@ int go(Mesh mesh, CDT_options options) {
   const double max_d = (std::max)(d_x, (std::max)(d_y, d_z));
 
   if(cdt.dimension() < 3) {
+    if(!options.quiet) {
+      std::cout << "current is 2D... inserting the 8 vertices of an extended bounding box\n";
+    }
     if(d_x == 0) d_x = max_d;
     if(d_y == 0) d_y = max_d;
     if(d_z == 0) d_z = max_d;
@@ -409,6 +444,12 @@ int go(Mesh mesh, CDT_options options) {
     double epsilon = options.vertex_vertex_epsilon;
     auto min_distance = CGAL::approximate_sqrt(std::ranges::min(
         cdt.finite_edges() | std::views::transform([&](auto edge) { return cdt.segment(edge).squared_length(); })));
+    if(!options.quiet) {
+      std::cout << "Min distance between vertices: " << min_distance << '\n'
+                << "Bbox width: " << max_d << '\n'
+                << "Ratio: " << min_distance / max_d << '\n'
+                << "Epsilon: " << epsilon << "\n\n";
+    }
     if(min_distance < epsilon * max_d) {
       std::cerr << "ERROR: min distance between vertices is too small\n";
       exit_code = EXIT_FAILURE;
@@ -417,6 +458,7 @@ int go(Mesh mesh, CDT_options options) {
   }
   int poly_id = 0;
   CDT_3_try {
+    start_time = std::chrono::high_resolution_clock::now();
     if(options.merge_facets) {
       for(int i = 0; i < nb_patches; ++i) {
         auto& edges = patch_edges[i];
@@ -505,7 +547,16 @@ int go(Mesh mesh, CDT_options options) {
         // CGAL::Mesh_3::save_binary_file(dump, cdt);
       }
     } // not merge_facets
+    if(!options.quiet) {
+      std::cout << "[timings] registered facets in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    }
+    start_time = std::chrono::high_resolution_clock::now();
     cdt.restore_Delaunay();
+    if(!options.quiet) {
+      std::cout << "[timings] restored Delaunay (conforming of facets borders) in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    }
 
     if(!options.dump_after_conforming_filename.empty()) {
       for(auto e: edges(mesh)) {
@@ -533,14 +584,21 @@ int go(Mesh mesh, CDT_options options) {
       out_mesh.close();
     }
 
-    std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << '\n';
+    if(!options.quiet) {
+      std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
+    }
     assert(cdt.Delaunay::is_valid(true));
     assert(cdt.is_valid(true));
     assert(cdt.is_conforming());
     if(exit_code == EXIT_SUCCESS) {
       try {
+        start_time = std::chrono::high_resolution_clock::now();
         cdt.restore_constrained_Delaunay();
-        std::cerr << "Number of vertices after CDT: " << cdt.number_of_vertices() << '\n';
+        if(!options.quiet) {
+          std::cout << "[timings] restored constrained Delaunay in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+              std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+          std::cout << "Number of vertices after CDT: " << cdt.number_of_vertices() << "\n\n";
+        }
       } catch(int error) {
         exit_code = error;
       }
