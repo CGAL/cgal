@@ -217,10 +217,10 @@ int main(int argc, char* argv[])
     };
 
     simplify(mesh);
-        std::ofstream current("current_mesh.off");
-        current.precision(17);
-        current << mesh;
-        current.close();
+    std::ofstream current("current_mesh.off");
+    current.precision(17);
+    current << mesh;
+    current.close();
 
     try {
       go(mesh, options);
