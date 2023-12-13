@@ -8,7 +8,6 @@ project(Kinetic_space_partition_Tests)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(CGAL QUIET COMPONENTS Core)
-include(${CGAL_USE_FILE})
 include(CGAL_CreateSingleSourceCGALProgram)
 
 find_package(Boost REQUIRED)
@@ -20,10 +19,7 @@ if(Boost_FOUND)
     message(STATUS "Found Eigen")
     include(CGAL_Eigen_support)
 
-    set(targets
-    kinetic_2d_stress_test
-    kinetic_3d_test_all
-    kinetic_3d_rg)
+    set(targets kinetic_2d_stress_test kinetic_3d_test_all)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)

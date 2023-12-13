@@ -8,7 +8,6 @@ project(Kinetic_space_partition_Examples)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
-include(${CGAL_USE_FILE})
 include(CGAL_CreateSingleSourceCGALProgram)
 
 find_package(Boost REQUIRED)
