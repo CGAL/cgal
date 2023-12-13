@@ -114,7 +114,7 @@ void Polyhedron_demo_point_set_from_sampling_plugin::createPointSet()
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
   if (soup_item){
-    int nf = soup_item->polygons().size();
+    int nf = static_cast<int>(soup_item->polygons().size());
 
     for(const auto& f : soup_item->polygons()){
       if(f.size() != 3){
