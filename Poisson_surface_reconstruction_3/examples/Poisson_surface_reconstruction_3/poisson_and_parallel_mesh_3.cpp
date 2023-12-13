@@ -113,9 +113,9 @@ void poisson_reconstruction(const PointSet& points, const char* output)
   time.start();
 
   // Defines surface mesh generation criteria
-  CGAL::Mesh_criteria_3<Tr> criteria(params::facet_angle = sm_angle,
-                                     params::facet_size = sm_radius * average_spacing,
-                                     params::facet_distance = sm_distance * average_spacing);
+  Mesh_criteria criteria(params::facet_angle = sm_angle,
+                         params::facet_size = sm_radius * average_spacing,
+                         params::facet_distance = sm_distance * average_spacing);
 
   Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(surface, sm_sphere,
     params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
