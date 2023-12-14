@@ -26,8 +26,8 @@ struct Colored_faces_given_height:
         { m_min_z=sm.point(vi).z(); m_max_z=m_min_z; first=false; }
         else
         {
-          m_min_z=std::min(m_min_z, sm.point(vi).z());
-          m_max_z=std::max(m_max_z, sm.point(vi).z());
+          m_min_z=(std::min)(m_min_z, sm.point(vi).z());
+          m_max_z=(std::max)(m_max_z, sm.point(vi).z());
         }
       }
     }
