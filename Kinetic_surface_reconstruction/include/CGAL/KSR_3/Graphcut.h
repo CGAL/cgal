@@ -13,7 +13,7 @@
 #ifndef CGAL_KSR_3_GRAPHCUT_H
 #define CGAL_KSR_3_GRAPHCUT_H
 
-// #include <CGAL/license/Kinetic_shape_reconstruction.h>
+//#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
@@ -40,16 +40,7 @@ namespace KSR_3 {
   class Graphcut {
 
   public:
-    using Kernel = GeomTraits;
-
-    using FT          = typename Kernel::FT;
-    using Point_3    = typename Kernel::Point_3;
-    using Triangle_2 = typename Kernel::Triangle_2;
-    using Triangle_3 = typename Kernel::Triangle_3;
-    using Indices    = std::vector<std::size_t>;
-
-    using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel>;
-    using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
+    using FT          = typename GeomTraits::FT;
 
     Graphcut(
       const FT beta) : m_beta(beta) { }
@@ -84,10 +75,11 @@ namespace KSR_3 {
       const std::vector< std::pair<std::size_t, std::size_t> >& edges,
       const std::vector<FT>& edge_costs,
       const std::vector< std::vector<double> >& cost_matrix,
-      std::vector<std::size_t>& labels) const {
+      std::vector<std::size_t>& labels, bool verbose = false) const {
       std::vector<std::size_t> tmp = labels;
 
-      std::cout << std::endl << "beta" << m_beta << std::endl;
+      if (verbose)
+        std::cout << std::endl << "beta " << m_beta << std::endl;
 
       std::vector<FT> edge_costs_lambda(edge_costs.size());
       std::vector<std::vector<double> > cost_matrix_lambda(2);
@@ -101,76 +93,45 @@ namespace KSR_3 {
           cost_matrix_lambda[i][j] = cost_matrix[i][j] * (1.0 - m_beta);
       }
 
+      if (verbose) {
+        double min = (std::numeric_limits<double>::max)();
+        double max = -min;
+        double edge_sum = 0;
+        for (std::size_t i = 0; i < edge_costs.size(); i++) {
+          min = (std::min<double>)(edge_costs[i], min);
+          max = (std::max<double>)(edge_costs[i], max);
+          edge_sum += edge_costs[i] * m_beta;
+        }
 
-      double min = 10000000000;
-      double max = -min;
-      double edge_sum = 0;
-      for (std::size_t i = 0; i < edge_costs.size(); i++) {
-        min = (std::min<double>)(edge_costs[i], min);
-        max = (std::max<double>)(edge_costs[i], max);
-        edge_sum += edge_costs[i] * m_beta;
+        std::cout << "edge costs" << std::endl;
+        std::cout << "sum: " << edge_sum << std::endl;
+        std::cout << "min: " << min << std::endl;
+        std::cout << "max: " << max << std::endl;
+
+        min = (std::numeric_limits<double>::max)();
+        max = -min;
+
+        std::size_t sum_inside = 0;
+        std::size_t sum_outside = 0;
+
+        for (std::size_t i = 6; i < cost_matrix[0].size(); i++) {
+          sum_inside += cost_matrix[0][i];
+          sum_outside += cost_matrix[1][i];
+          min = (std::min<double>)(cost_matrix[0][i], min);
+          min = (std::min<double>)(cost_matrix[1][i], min);
+          max = (std::max<double>)(cost_matrix[0][i], max);
+          max = (std::max<double>)(cost_matrix[1][i], max);
+        }
+
+        std::cout << "label costs" << std::endl;
+        std::cout << "min: " << min << std::endl;
+        std::cout << "max: " << max << std::endl;
+        std::cout << "sum inside: " << sum_inside << std::endl;
+        std::cout << "sum outside: " << sum_outside << std::endl;
       }
-
-      std::cout << "edge costs" << std::endl;
-      std::cout << "sum: " << edge_sum << std::endl;
-      std::cout << "min: " << min << std::endl;
-      std::cout << "max: " << max << std::endl;
-
-      min = 1000000000;
-      max = -min;
-
-      std::size_t sum_inside = 0;
-      std::size_t sum_outside = 0;
-
-      for (std::size_t i = 6; i < cost_matrix[0].size(); i++) {
-        sum_inside += cost_matrix[0][i];
-        sum_outside += cost_matrix[1][i];
-        min = (std::min<double>)(cost_matrix[0][i], min);
-        min = (std::min<double>)(cost_matrix[1][i], min);
-        max = (std::max<double>)(cost_matrix[0][i], max);
-        max = (std::max<double>)(cost_matrix[1][i], max);
-      }
-
-      std::cout << "label costs" << std::endl;
-      std::cout << "min: " << min << std::endl;
-      std::cout << "max: " << max << std::endl;
-      std::cout << "sum inside: " << sum_inside << std::endl;
-      std::cout << "sum outside: " << sum_outside << std::endl;
 
       CGAL::alpha_expansion_graphcut(edges, edge_costs_lambda, cost_matrix_lambda, labels);
-      /*
-      CGAL::min_cut(
-            edges, edge_costs, cost_matrix, labels, CGAL::parameters::implementation_tag(CGAL::Alpha_expansion_MaxFlow_tag()));*/
-
-/*
-      bool difference = false;
-      for (std::size_t i = 0; i < labels.size(); i++) {
-        if (tmp[i] != labels[i]) {
-          difference = true;
-          break;
-        }
-      }
-
-      std::cout << "Labels changed: " << difference << std::endl;*/
     }
-
-/*
-    void apply_new_labels(
-      const std::vector<std::size_t>& labels,
-      std::vector<Volume_cell>& volumes) const {
-
-      CGAL_assertion((volumes.size() + 6) == labels.size());
-      for (std::size_t i = 0; i < volumes.size(); ++i) {
-        const std::size_t label = labels[i + 6];
-        auto& volume = volumes[i];
-
-        if (label == 0) {
-          volume.visibility = Visibility_label::INSIDE;
-        } else {
-          volume.visibility = Visibility_label::OUTSIDE;
-        }
-      }
-    }*/
   };
 
 #endif //DOXYGEN_RUNNING

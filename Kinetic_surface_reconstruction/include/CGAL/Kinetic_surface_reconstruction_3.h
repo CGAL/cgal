@@ -16,7 +16,7 @@
 #include <CGAL/license/Kinetic_surface_reconstruction.h>
 
 #include <CGAL/Kinetic_shape_partition_3.h>
-#include <CGAL/KSP_3/Graphcut.h>
+#include <CGAL/KSR_3/Graphcut.h>
 
 #include <CGAL/IO/PLY.h>
 #include <CGAL/Point_set_3.h>
