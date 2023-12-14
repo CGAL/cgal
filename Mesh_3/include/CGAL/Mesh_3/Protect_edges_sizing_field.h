@@ -459,6 +459,13 @@ private:
   {
     return minimal_size_ != FT(-1);
   }
+  Weight minimal_weight() const
+  {
+    if (use_minimal_size())
+      return minimal_weight_;
+    else
+      return Weight(0);
+  }
 
 private:
   C3T3& c3t3_;
@@ -822,16 +829,16 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
         const FT sq_d = tr.min_squared_distance(p, cp(c3t3_.triangulation().point(v)));
 
-        if(use_minimal_size() && sq_d < minimal_weight_) {
+        if(use_minimal_size() && sq_d < minimal_weight()) {
           insert_a_special_ball = true;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
           nearest_point = c3t3_.triangulation().point(v);
 #endif
-          min_sq_d = minimal_weight_;
+          min_sq_d = minimal_weight();
           if(! is_special(v))
           {
             *out++ = v;
-            ch = change_ball_size(v, minimal_weight_, true)->cell(); // special ball
+            ch = change_ball_size(v, minimal_weight(), true)->cell(); // special ball
           }
         }
         else
@@ -881,10 +888,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
       {
         bool special_ball = false;
-        if(use_minimal_size() && sq_d < minimal_weight_)
+        if(use_minimal_size() && sq_d < minimal_weight())
         {
-          sq_d = minimal_weight_;
-          w = minimal_weight_;
+          sq_d = minimal_weight();
+          w = minimal_weight();
           special_ball = true;
           insert_a_special_ball = true;
         }
@@ -938,13 +945,13 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     add_handle_to_unchecked = true;
   }
 
-  if( w < minimal_weight_) {
+  if( w < minimal_weight()) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     std::cerr << "smart_insert_point: weight " << w
-              << " was smaller than minimal weight (" << minimal_weight_ << ")\n";
+              << " was smaller than minimal weight (" << minimal_weight() << ")\n";
 #endif
 
-    w = minimal_weight_;
+    w = minimal_weight();
     insert_a_special_ball = true;
   }
   Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball);
@@ -1179,7 +1186,7 @@ insert_balls(const Vertex_handle& vp,
 
   const FT d_signF = static_cast<FT>(d_sign);
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
-  // if( minimal_weight_ != 0 && n == 0 ) return;
+  // if( minimal_weight() != 0 && n == 0 ) return;
 
   if(nonlinear_growth_of_balls && refine_balls_iteration_nb < 3)
   {
@@ -1188,7 +1195,7 @@ insert_balls(const Vertex_handle& vp,
     // balls at corner. When the curve segment is long enough, pick a point
     // at the middle and choose a new size.
     if(n >= internal::max_nb_vertices_to_reevaluate_size &&
-       d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
+       d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight())) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       const Weighted_point& vq_wp = c3t3_.triangulation().point(vq);
       std::cerr << "Number of to-be-inserted balls is: "
@@ -1443,7 +1450,7 @@ refine_balls()
       // Set size of the ball to new value
       if(use_minimal_size() && new_size < minimal_size_) {
         if(!is_special(v)) {
-          change_ball_size(v, minimal_weight_, true); // special ball
+          change_ball_size(v, minimal_weight(), true); // special ball
 
           // Loop will have to be run again
           restart = true;
