@@ -532,6 +532,122 @@ private:
     }
   }
 
+
+template<typename C3t3, typename VertexIdMap, typename Neighbors,
+         typename PositionsVector, typename VertexBoolMap, typename SurfaceIndices,
+         typename IncidentCells, typename NormalsMap, typename CellSelector>
+void smooth_vertices_on_surfaces(C3t3& c3t3,
+                                 const VertexIdMap& vertex_id,
+                                 Neighbors& neighbors,
+                                 PositionsVector& smoothed_positions,
+                                 const VertexBoolMap& free_vertex,
+                                 const SurfaceIndices& vertices_surface_indices,
+                                 const IncidentCells& inc_cells,
+                                 const NormalsMap& vertices_normals,
+                                 const CellSelector& cell_selector,
+                                 typename C3t3::Triangulation::FT& total_move
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+                                 , std::ofstream& os_surf
+#endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+                                 , std::size_t& nb_done_2d
+#endif
+                               )
+{
+  using Edge = typename C3t3::Triangulation::Edge;
+
+  auto& tr = c3t3.triangulation();
+
+  for (const Edge& e : tr.finite_edges())
+  {
+    if (!c3t3.is_in_complex(e) && is_boundary(c3t3, e, cell_selector))
+    {
+      const Vertex_handle vh0 = e.first->vertex(e.second);
+      const Vertex_handle vh1 = e.first->vertex(e.third);
+
+      const std::size_t& i0 = vertex_id.at(vh0);
+      const std::size_t& i1 = vertex_id.at(vh1);
+
+      const bool on_feature_v0 = is_on_feature(vh0);
+      const bool on_feature_v1 = is_on_feature(vh1);
+
+      if (!on_feature_v0)
+        neighbors[i0] = (std::max)(0, neighbors[i0]);
+      if (!on_feature_v1)
+        neighbors[i1] = (std::max)(0, neighbors[i1]);
+
+      if (!on_feature_v0)
+      {
+        const Point_3& p1 = point(vh1->point());
+        smoothed_positions[i0] = smoothed_positions[i0] + Vector_3(p1.x(), p1.y(), p1.z());
+        neighbors[i0]++;
+      }
+      if (!on_feature_v1)
+      {
+        const Point_3& p0 = point(vh0->point());
+        smoothed_positions[i1] = smoothed_positions[i1] + Vector_3(p0.x(), p0.y(), p0.z());
+        neighbors[i1]++;
+      }
+    }
+  }
+
+  for (Vertex_handle v : tr.finite_vertex_handles())
+  {
+    const std::size_t& vid = vertex_id.at(v);
+    if (!free_vertex[vid] || v->in_dimension() != 2)
+      continue;
+
+    if (neighbors[vid] > 1)
+    {
+      Vector_3 smoothed_position = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
+      const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
+      Vector_3 final_position = CGAL::NULL_VECTOR;
+
+      const Surface_patch_index si = surface_patch_index(v, c3t3);
+      CGAL_assertion(si != Surface_patch_index());
+
+      Vector_3 normal_projection = project_on_tangent_plane(smoothed_position,
+        current_pos,
+        vertices_normals.at(v).at(si));
+
+      if (std::optional<Vector_3> mls_projection = project(si, normal_projection))
+        final_position = final_position + *mls_projection;
+      else
+        final_position = smoothed_position;
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+      os_surf << "2 " << current_pos << " " << final_position << std::endl;
+#endif
+      const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
+      if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+        nb_done_2d++;
+#endif
+      }
+    }
+    else if (neighbors[vid] > 0)
+    {
+      const Surface_patch_index si = surface_patch_index(v, c3t3);
+      CGAL_assertion(si != Surface_patch_index());
+
+      const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
+
+      if (std::optional<Vector_3> mls_projection = project(si, current_pos))
+      {
+        const typename Tr::Point new_pos(CGAL::ORIGIN + *mls_projection);
+        if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+          nb_done_2d++;
+#endif
+        }
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        os_surf0 << "2 " << current_pos << " " << new_pos << std::endl;
+#endif
+      }
+    }
+  }
+}
+
 public:
   template<typename C3T3, typename CellSelector>
   void smooth_vertices(C3T3& c3t3,
@@ -614,95 +730,16 @@ public:
     /////////////// EDGES ON SURFACE, BUT NOT IN COMPLEX //////////////////
     if (!protect_boundaries)
     {
-      for (const Edge& e : tr.finite_edges())
-      {
-        if (!c3t3.is_in_complex(e) && is_boundary(c3t3, e, cell_selector))
-        {
-          const Vertex_handle vh0 = e.first->vertex(e.second);
-          const Vertex_handle vh1 = e.first->vertex(e.third);
-
-          const std::size_t& i0 = vertex_id.at(vh0);
-          const std::size_t& i1 = vertex_id.at(vh1);
-
-          const bool on_feature_v0 = is_on_feature(vh0);
-          const bool on_feature_v1 = is_on_feature(vh1);
-
-          if (!on_feature_v0)
-            neighbors[i0] = (std::max)(0, neighbors[i0]);
-          if (!on_feature_v1)
-            neighbors[i1] = (std::max)(0, neighbors[i1]);
-
-          if (!on_feature_v0)
-          {
-            const Point_3& p1 = point(vh1->point());
-            smoothed_positions[i0] = smoothed_positions[i0] + Vector_3(p1.x(), p1.y(), p1.z());
-            neighbors[i0]++;
-          }
-          if (!on_feature_v1)
-          {
-            const Point_3& p0 = point(vh0->point());
-            smoothed_positions[i1] = smoothed_positions[i1] + Vector_3(p0.x(), p0.y(), p0.z());
-            neighbors[i1]++;
-          }
-        }
-      }
-
-      for (Vertex_handle v : tr.finite_vertex_handles())
-      {
-        const std::size_t& vid = vertex_id.at(v);
-        if (!free_vertex[vid] || v->in_dimension() != 2)
-          continue;
-
-        if (neighbors[vid] > 1)
-        {
-          Vector_3 smoothed_position = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
-          const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
-          Vector_3 final_position = CGAL::NULL_VECTOR;
-
-          const Surface_patch_index si = surface_patch_index(v, c3t3);
-          CGAL_assertion(si != Surface_patch_index());
-
-          Vector_3 normal_projection = project_on_tangent_plane(smoothed_position,
-                                       current_pos,
-                                       vertices_normals[v][si]);
-
-          if (std::optional<Vector_3> mls_projection = project(si, normal_projection))
-            final_position = final_position + *mls_projection;
-          else
-            final_position = smoothed_position;
-
+      smooth_vertices_on_surfaces(c3t3, vertex_id, neighbors, smoothed_positions, free_vertex,
+                                  vertices_surface_indices, inc_cells, vertices_normals,
+                                  cell_selector, total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-          os_surf << "2 " << current_pos << " " << final_position << std::endl;
+                                , os_surf
 #endif
-          const typename Tr::Point new_pos(final_position.x(), final_position.y(), final_position.z());
-          if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-            nb_done_2d++;
+                                , nb_done_2d
 #endif
-          }
-        }
-        else if (neighbors[vid] > 0)
-        {
-          const Surface_patch_index si = surface_patch_index(v, c3t3);
-          CGAL_assertion(si != Surface_patch_index());
-
-          const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
-
-          if (std::optional<Vector_3> mls_projection = project(si, current_pos))
-          {
-            const typename Tr::Point new_pos(CGAL::ORIGIN + *mls_projection);
-            if(check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-              nb_done_2d++;
-#endif
-            }
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-            os_surf0 << "2 " << current_pos << " " << new_pos << std::endl;
-#endif
-          }
-        }
-      }
+      );
     }
     CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
     ////   end if(!protect_boundaries)
