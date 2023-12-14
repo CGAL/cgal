@@ -139,7 +139,7 @@ public:
   Protect_edges_sizing_field(C3T3& c3t3,
                              const MeshDomain& domain,
                              SizingFunction size=SizingFunction(),
-                             const FT minimal_size = FT(),
+                             const FT minimal_size = FT(-1),
                              std::size_t maximal_number_of_vertices = 0,
                              Mesh_error_code* error_code = 0
 #ifndef CGAL_NO_ATOMIC
@@ -455,12 +455,17 @@ private:
     return s;
   }
 
+  bool use_minimal_size() const
+  {
+    return minimal_size_ != FT(-1);
+  }
+
 private:
   C3T3& c3t3_;
   const MeshDomain& domain_;
   SizingFunction size_;
-  FT minimal_size_;
-  Weight minimal_weight_;
+  const FT minimal_size_;
+  const Weight minimal_weight_;
   std::set<Curve_index> treated_edges_;
   Vertex_set unchecked_vertices_;
   int refine_balls_iteration_nb;
@@ -540,7 +545,7 @@ operator()(const bool refine)
     std::cerr << "refine_balls() done. Nb of points in triangulation: "
               << c3t3_.triangulation().number_of_vertices() << std::endl;
 #endif
-    CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
+    CGAL_assertion(use_minimal_size() || c3t3_.is_valid());
  }
 
   // debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
@@ -760,10 +765,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     while ( ! is_special(nearest_vh) &&
             cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
-      CGAL_assertion( minimal_size_ > 0 || sq_d > 0 );
+      CGAL_assertion( use_minimal_size() || sq_d > 0);
 
       bool special_ball = false;
-      if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
+      if(use_minimal_size() && sq_d < minimal_weight_)
       {
         sq_d = minimal_weight_;
         w = minimal_weight_;
@@ -817,7 +822,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
         const FT sq_d = tr.min_squared_distance(p, cp(c3t3_.triangulation().point(v)));
 
-        if(minimal_weight_ != Weight() && sq_d < minimal_weight_) {
+        if(use_minimal_size() && sq_d < minimal_weight_) {
           insert_a_special_ball = true;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
           nearest_point = c3t3_.triangulation().point(v);
@@ -876,7 +881,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
       {
         bool special_ball = false;
-        if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
+        if(use_minimal_size() && sq_d < minimal_weight_)
         {
           sq_d = minimal_weight_;
           w = minimal_weight_;
@@ -1436,7 +1441,7 @@ refine_balls()
       const Vertex_handle v = it->first;
       const FT new_size = it->second;
       // Set size of the ball to new value
-      if(minimal_size_ != FT() && new_size < minimal_size_) {
+      if(use_minimal_size() && new_size < minimal_size_) {
         if(!is_special(v)) {
           change_ball_size(v, minimal_weight_, true); // special ball
 
@@ -1456,7 +1461,7 @@ refine_balls()
     dump_c3t3_edges(c3t3_, "dump-before-check_and_repopulate_edges");
 #endif
     // Check edges
-    if(!forced_stop() && minimal_size_ == FT()) {
+    if(!forced_stop() && !use_minimal_size()) {
       check_and_repopulate_edges();
     }
   }
