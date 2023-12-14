@@ -450,11 +450,11 @@ private:
     typename Intersection_kernel::Point_2 p;
   };
 
-  typedef CGAL::Triangulation_vertex_base_with_info_2<VI, typename Intersection_kernel> Vbi2;
-  typedef CGAL::Constrained_triangulation_face_base_2<typename Intersection_kernel>   Fb;
+  typedef CGAL::Triangulation_vertex_base_with_info_2<VI, Intersection_kernel> Vbi2;
+  typedef CGAL::Constrained_triangulation_face_base_2<Intersection_kernel>   Fb;
   typedef CGAL::Triangulation_data_structure_2<Vbi2, Fb>       Tds2;
   typedef CGAL::Exact_intersections_tag  Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<typename Intersection_kernel, Tds2, Itag> CDT;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<Intersection_kernel, Tds2, Itag> CDT;
 
   typedef typename CDT::Vertex_handle            Vertex_handle;
   typedef typename CDT::Face_handle              Face_handle;
@@ -1048,7 +1048,7 @@ private:
 
       Dart_descriptor edh = cur_fdh;
       do {
-        Dart_descriptor fdh = m_lcc.beta<2, 3>(edh);
+        Dart_descriptor fdh = m_lcc.beta(edh, 2, 3);
         do {
           Face_attribute fa = m_lcc.attribute<2>(fdh);
 
