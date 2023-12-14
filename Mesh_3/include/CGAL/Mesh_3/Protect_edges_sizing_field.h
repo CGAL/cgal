@@ -140,7 +140,7 @@ public:
                              const MeshDomain& domain,
                              SizingFunction size=SizingFunction(),
                              const FT minimal_size = FT(-1),
-                             std::size_t maximal_number_of_vertices = 0,
+                             const std::size_t maximal_number_of_vertices = 0,
                              Mesh_error_code* error_code = 0
 #ifndef CGAL_NO_ATOMIC
                              , std::atomic<bool>* stop_ptr = 0
@@ -470,7 +470,7 @@ private:
   Vertex_set unchecked_vertices_;
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
-  std::size_t maximal_number_of_vertices_;
+  const std::size_t maximal_number_of_vertices_;
   Mesh_error_code* const error_code_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
@@ -483,7 +483,7 @@ template <typename C3T3, typename MD, typename Sf>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
                            Sf size, const FT minimal_size,
-                           std::size_t maximal_number_of_vertices,
+                           const std::size_t maximal_number_of_vertices,
                            Mesh_error_code* error_code
 #ifndef CGAL_NO_ATOMIC
                            , std::atomic<bool>* stop_ptr
