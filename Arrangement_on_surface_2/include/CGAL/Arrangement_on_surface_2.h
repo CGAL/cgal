@@ -109,7 +109,8 @@ public:
   typedef typename Topology_traits::Dcel            Dcel;
   typedef typename Dcel::Size                       Size;
 
-  typedef Aos_observer<Self>                        Observer;
+  using Observer = Aos_observer<Self>;
+  using Base_aos = Self;
 
 protected:
   friend class Aos_observer<Self>;

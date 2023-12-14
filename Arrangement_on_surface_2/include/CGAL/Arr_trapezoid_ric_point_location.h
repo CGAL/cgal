@@ -38,7 +38,8 @@ template <typename Arrangement_>
 class Arr_trapezoid_ric_point_location : public Arrangement_::Observer {
 public:
   //type of arrangement on surface
-  typedef Arrangement_                          Arrangement_on_surface_2;
+  using Arrangement_on_surface_2 = Arrangement_;
+  using Base_aos = typename Arrangement_on_surface_2::Base_aos;
 
   //type of geometry traits
   typedef typename Arrangement_on_surface_2::Geometry_traits_2
@@ -238,8 +239,13 @@ public:
   //        base observer.
   //@{
 
-  virtual void before_assign (const Arrangement_on_surface_2& arr)
-  {
+  /*! Notification before the arrangement is assigned with the content of another
+   * arrangement.
+   * \param arr The other arrangement. Notice that the arrangement type is the type used to
+   *            instantiate the observer, which is conveniently defined as
+   *            `Arrangement_2::Base_aos`.
+   */
+  virtual void before_assign(const Base_aos& arr) {
     td.clear();
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     td.init_arrangement_and_traits(&arr, false);
@@ -260,8 +266,13 @@ public:
     _construct_td();
   }
 
-  virtual void before_attach (const Arrangement_on_surface_2& arr)
-  {
+  /*! Notification before the observer is attached to an arrangement.
+   * \param arr The arrangement that is about to attach the observer. Notice
+   *        that the arrangement type is the type used to instantiate the
+   *        observer, which is conveniently defined as
+   *        `Arrangement_2::Base_aos`.
+   */
+  virtual void before_attach(const Base_aos& arr) {
     td.clear();
     m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     td.init_arrangement_and_traits(&arr);

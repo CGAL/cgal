@@ -77,10 +77,13 @@ public:
   /// \name Notifications on Global Arrangement Operations
   /// @{
 
-  /*! issued just before the attached arrangement is assigned with the contents
-   * of another arrangement `arr`.
+  /*! issued just before the attached arrangement is assigned with the contents of another
+   * arrangement.
+   * \param arr The other arrangement. Notice that the arrangement type is the type used to
+   *            instantiate the observer, which is conveniently defined as
+   *            `Arrangement_2::Base_aos`.
    */
-  virtual void before_assign(const Arrangement_2& arr);
+  virtual void before_assign(const typename Arrangement_2::Base_aos& arr);
 
   /*! issued immediately after the attached arrangement has been assigned with
    * the contents of another arrangement.
@@ -115,9 +118,12 @@ public:
 
   /*! issued just before the observer is attached to the arrangement instance
    * `arr`.
-   * \param arr The arrangement that is about to attach the observer.
+   * \param arr The arrangement that is about to attach the observer. Notice
+   *        that the arrangement type is the type used to instantiate the
+   *        observer, which is conveniently defined as
+   *        `Arrangement_2::Base_aos`.
    */
-  virtual void before_attach(const Arrangement_2& arr);
+  virtual void before_attach(const typename Arrangement_2::Base_aos& arr);
 
   /*! issued immediately after the observer has been attached to an arrangement
    * instance.

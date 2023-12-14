@@ -45,7 +45,9 @@ template <typename Arrangement_,
             Arr_landmarks_nearest_neighbor<Arrangement_> >
 class Arr_landmarks_generator_base : public Arrangement_::Observer {
 public:
-  typedef Arrangement_                                Arrangement_2;
+  using Arrangement_2 = Arrangement_;
+  using Base_aos = typename Arrangement_2::Base_aos;
+
   typedef Nearest_neighbor_                           Nearest_neighbor;
 
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
@@ -161,13 +163,13 @@ public:
   /// \name Overloaded observer functions on global changes.
   //@{
 
-  /*!
-   * Notification before the arrangement is assigned with another
+  /*! Notification before the arrangement is assigned with the content of another
    * arrangement.
-   * \param arr The arrangement to be copied.
+   * \param arr The other arrangement. Notice that the arrangement type is the type used to
+   *            instantiate the observer, which is conveniently defined as
+   *            `Arrangement_2::Base_aos`.
    */
-  virtual void before_assign(const Arrangement_2& arr)
-  {
+  virtual void before_assign(const Base_aos& arr) {
     this->clear_landmark_set();
     m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
     m_ignore_notifications = true;
@@ -185,7 +187,7 @@ public:
   /*! Notification before the observer is attached to an arrangement.
    * \param arr The arrangement we are about to attach the observer to.
    */
-  virtual void before_attach(const Arrangement_2& arr)
+  virtual void before_attach(const Base_aos& arr)
   {
     this->clear_landmark_set();
     m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());

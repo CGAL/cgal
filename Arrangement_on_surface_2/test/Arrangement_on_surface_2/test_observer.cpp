@@ -59,21 +59,21 @@ void compare_results(std::string str)
 class Test_observer : public Arrangement_2::Observer {
 
 public:
+  using Base_aos = typename Arrangement_2::Base_aos;
 
   Test_observer(Arrangement_2& arr) : Arrangement_2::Observer(arr) {}
 
   /// \name Notification functions on global arrangement operations.
   //@{
 
-  /*!
-   * Notification before the arrangement is assigned with another
+  /*! Notification before the arrangement is assigned with the content of another
    * arrangement.
-   * \param arr The arrangement to be copied.
+   * \param arr The other arrangement. Notice that the arrangement type is the type used to
+   *            instantiate the observer, which is conveniently defined as
+   *            `Arrangement_2::Base_aos`.
    */
-  virtual void before_assign (const Arrangement_2& /* arr */)
-  {
-    compare_results("before_assign");
-  }
+  virtual void before_assign (const Base_aos& /* arr */)
+  { compare_results("before_assign"); }
 
   /*!
    * Notification after the arrangement has been assigned with another
@@ -118,7 +118,7 @@ public:
    * Notification before the observer is attached to an arrangement.
    * \param arr The arrangement we are about to attach the observer to.
    */
-  virtual void before_attach (const Arrangement_2& /* arr */)
+  virtual void before_attach (const Base_aos& /* arr */)
   {
     compare_results("before_attach");
   }
