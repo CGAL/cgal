@@ -26,10 +26,8 @@
 
 namespace CGAL {
 
-#ifndef DOXYGEN_RUNNING
 template <typename Point, typename Vector>
 class Point_set_3;
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +161,8 @@ bool read_point_set(const std::string& fname,
   \param ps the point set
 
   \return `os`
+
+  \relates Point_set_3
 */
 template <typename Point, typename Vector>
 std::ostream& operator<<(std::ostream& os,

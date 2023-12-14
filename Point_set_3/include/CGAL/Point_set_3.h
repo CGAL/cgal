@@ -133,7 +133,6 @@ public:
     Index (const std::size_t& value) : value (static_cast<size_type>(value)) { }
     Index () : value (static_cast<size_type>(-1)) { }
     Index operator= (const Index& index) { value = index.value; return *this; }
-    /// \cond SKIP_IN_MANUAL
     operator std::size_t() const { return static_cast<std::size_t>(value); }
     bool operator== (const Index& index) const { return value == index.value; }
     bool operator!= (const Index& index) const { return value != index.value; }
@@ -694,7 +693,6 @@ public:
     \sa `number_of_removed_points()`
   */
   std::size_t garbage_size () const { return number_of_removed_points(); }
-  /// \endcond
 
   /*!  \brief returns `true` if there are elements marked as removed,
     `false` otherwise.
