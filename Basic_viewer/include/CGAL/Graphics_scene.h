@@ -374,7 +374,7 @@ public:
   void m_texts_clear()
   { m_texts.clear(); }
 
-  int m_texts_size() const
+  std::size_t m_texts_size() const
   { return m_texts.size(); }
 
   const std::vector<std::tuple<Local_point, std::string>>& get_m_texts() const
