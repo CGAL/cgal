@@ -420,7 +420,7 @@ self_intersections_impl(const FaceRange& face_range,
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`.
- *    It does need to be thread-safe.
+ *    It does not need to be thread-safe.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param face_range the range of faces to check for self-intersection.
@@ -487,7 +487,7 @@ self_intersections(const FaceRange& face_range,
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`.
- *    It does need to be thread-safe.
+ *    It does not need to be thread-safe.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tmesh the triangulated surface mesh to be checked
