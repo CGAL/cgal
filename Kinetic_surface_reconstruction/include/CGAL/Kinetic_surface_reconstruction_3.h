@@ -1161,7 +1161,7 @@ private:
       std::cout << "is_border_edge called on dart of outside volume, dh " << dh << " volume_id " << m_lcc.info<3>(dh).volume_id << std::endl;
     }
 
-    Dart_descriptor edh = m_lcc.beta<2, 3>(dh);
+    Dart_descriptor edh = m_lcc.beta(dh, 2, 3);
     do {
       Face_attribute fa2 = m_lcc.attribute<2>(edh);
       if (fa2 == m_lcc.null_descriptor)
