@@ -425,18 +425,16 @@ private:
     return vertex_id;
   }
 
-  template<typename VertexIdMap, typename Neighbors,
-           typename PositionsVector, typename VertexBoolMap, typename SurfaceIndices,
+  template<typename VertexIdMap,
+           typename VertexBoolMap, typename SurfaceIndices,
            typename IncidentCells, typename NormalsMap>
   std::size_t smooth_edges_in_complex(C3t3& c3t3,
                                       const VertexIdMap& vertex_id,
-                                      Neighbors& neighbors,
-                                      PositionsVector& smoothed_positions,
                                       const VertexBoolMap& free_vertex,
                                       const SurfaceIndices& vertices_surface_indices,
                                       const IncidentCells& inc_cells,
                                       const NormalsMap& vertices_normals,
-                                      typename C3t3::Triangulation::FT& total_move
+                                      FT& total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                                     , std::ofstream& os_surf
 #endif
@@ -444,6 +442,10 @@ private:
   {
     std::size_t nb_done_1d = 0;
     auto& tr = c3t3.triangulation();
+
+    const std::size_t nbv = tr.number_of_vertices();
+    std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
+    std::vector<int> neighbors(nbv, -1);
 
     //collect neighbors
     for (const Edge& e : c3t3.edges_in_complex())
@@ -480,7 +482,7 @@ private:
       if (!free_vertex[vid])
         continue;
 
-      Vector_3 final_position;
+      Vector_3 final_position = CGAL::NULL_VECTOR;
       const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
       const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(v);
       const std::size_t count = v_surface_indices.size();
@@ -524,19 +526,17 @@ private:
   }
 
 
-template<typename VertexIdMap, typename Neighbors,
-         typename PositionsVector, typename VertexBoolMap, typename SurfaceIndices,
+template<typename VertexIdMap,
+         typename VertexBoolMap, typename SurfaceIndices,
          typename IncidentCells, typename NormalsMap, typename CellSelector>
 std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
                                         const VertexIdMap& vertex_id,
-                                        Neighbors& neighbors,
-                                        PositionsVector& smoothed_positions,
                                         const VertexBoolMap& free_vertex,
                                         const SurfaceIndices& vertices_surface_indices,
                                         const IncidentCells& inc_cells,
                                         const NormalsMap& vertices_normals,
                                         const CellSelector& cell_selector,
-                                        typename C3t3::Triangulation::FT& total_move
+                                        FT& total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                                       , std::ofstream& os_surf
                                       , std::ofstream& os_surf0
@@ -545,6 +545,10 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 {
   std::size_t nb_done_2d = 0;
   auto& tr = c3t3.triangulation();
+
+  const std::size_t nbv = tr.number_of_vertices();
+  std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
+  std::vector<int> neighbors(nbv, -1);
 
   for (const Edge& e : tr.finite_edges())
   {
@@ -622,19 +626,17 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   return nb_done_2d;
 }
 
-template<typename VertexIdMap, typename Neighbors,
-         typename PositionsVector, typename VertexBoolMap, typename SurfaceIndices,
+template<typename VertexIdMap,
+         typename VertexBoolMap, typename SurfaceIndices,
          typename IncidentCells, typename NormalsMap, typename CellSelector>
 std::size_t smooth_internal_vertices(C3t3& c3t3,
                                      const VertexIdMap& vertex_id,
-                                     Neighbors& neighbors,
-                                     PositionsVector& smoothed_positions,
                                      const VertexBoolMap& free_vertex,
                                      const SurfaceIndices& vertices_surface_indices,
                                      const IncidentCells& inc_cells,
                                      const NormalsMap& vertices_normals,
                                      const CellSelector& cell_selector,
-                                     typename C3t3::Triangulation::FT& total_move
+                                     FT& total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                                    , std::ofstream& os_vol
 #endif
@@ -642,6 +644,10 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 {
   std::size_t nb_done_3d = 0;
   auto& tr = c3t3.triangulation();
+
+  const std::size_t nbv = tr.number_of_vertices();
+  std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
+  std::vector<int> neighbors(nbv, 0);/*for dim 3 vertices, start counting directly from 0*/
 
   for (const Edge& e : tr.finite_edges())
   {
@@ -694,13 +700,12 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 }
 
 public:
-  template<typename C3T3, typename CellSelector>
-  void smooth_vertices(C3T3& c3t3,
+  template<typename CellSelector>
+  void smooth_vertices(C3t3& c3t3,
                        const bool protect_boundaries,
                        const CellSelector& cell_selector)
   {
-    typedef typename C3T3::Cell_handle            Cell_handle;
-    typedef typename Gt::FT              FT;
+    typedef typename C3t3::Cell_handle            Cell_handle;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::ofstream os_surf("smooth_surfaces.polylines.txt");
@@ -731,13 +736,11 @@ public:
     compute_vertices_normals(c3t3, vertices_normals, cell_selector);
 
     //collect ids
-    const std::unordered_map<Vertex_handle, std::size_t> vertex_id
-      = vertex_id_map(tr);
+    const std::unordered_map<Vertex_handle, std::size_t>
+      vertex_id = vertex_id_map(tr);
 
     //smooth()
     const std::size_t nbv = tr.number_of_vertices();
-    std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
-    std::vector<int> neighbors(nbv, -1);
     std::vector<bool> free_vertex(nbv, false);//are vertices free to move? indices are in `vertex_id`
 
     //collect incident cells
@@ -762,15 +765,13 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       nb_done_1d =
 #endif
-      smooth_edges_in_complex(c3t3, vertex_id, neighbors, smoothed_positions, free_vertex,
+      smooth_edges_in_complex(c3t3, vertex_id, free_vertex,
                               vertices_surface_indices, inc_cells, vertices_normals, total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                               , os_surf
 #endif
       );
     }
-    smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
-    neighbors.assign(nbv, -1);
 
     /////////////// EDGES ON SURFACE, BUT NOT IN COMPLEX //////////////////
     if (!protect_boundaries)
@@ -778,7 +779,7 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       nb_done_2d =
 #endif
-       smooth_vertices_on_surfaces(c3t3, vertex_id, neighbors, smoothed_positions, free_vertex,
+       smooth_vertices_on_surfaces(c3t3, vertex_id, free_vertex,
                                   vertices_surface_indices, inc_cells, vertices_normals,
                                   cell_selector, total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -789,14 +790,11 @@ public:
     CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
     ////   end if(!protect_boundaries)
 
-    smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
-    neighbors.assign(nbv, 0/*for dim 3 vertices, start counting directly from 0*/);
-
     ////////////// INTERNAL VERTICES ///////////////////////
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     nb_done_3d =
 #endif
-    smooth_internal_vertices(c3t3, vertex_id, neighbors, smoothed_positions, free_vertex,
+    smooth_internal_vertices(c3t3, vertex_id, free_vertex,
                              vertices_surface_indices, inc_cells, vertices_normals,
                              cell_selector, total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
