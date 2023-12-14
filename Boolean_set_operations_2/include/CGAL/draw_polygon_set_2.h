@@ -38,7 +38,7 @@ struct Graphics_scene_options_polygon_set_2 :
 
   bool draw_unbounded() const
   { return m_draw_unbounded; }
-  void draw_unbounded(bool b) const
+  void draw_unbounded(bool b)
   { m_draw_unbounded=b; }
   void toggle_draw_unbounded()
   { m_draw_unbounded=!m_draw_unbounded; }
