@@ -755,8 +755,27 @@ public:
       {
         const std::size_t idi = vertex_id.at(c->vertex(i));
         inc_cells[idi].push_back(c);
-        if(cell_is_selected)
+        if (!cell_is_selected)
+          continue;
+
+        const int dim = c3t3.in_dimension(c->vertex(i));
+        switch (dim)
+        {
+        case 3:
           free_vertex[idi] = true;
+          break;
+        case 2:
+          free_vertex[idi] = !protect_boundaries;
+          break;
+        case 1:
+          free_vertex[idi] = !protect_boundaries && m_smooth_constrained_edges;
+          break;
+        case 0:
+          free_vertex[idi] = false;
+          break;
+        default:
+          CGAL_unreachable();
+        }
       }
     }
 
