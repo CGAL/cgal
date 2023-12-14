@@ -8,7 +8,6 @@ project(Kinetic_shape_partition_Tests)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(CGAL QUIET COMPONENTS Core)
-include(${CGAL_USE_FILE})
 include(CGAL_CreateSingleSourceCGALProgram)
 
 find_package(Boost REQUIRED)
