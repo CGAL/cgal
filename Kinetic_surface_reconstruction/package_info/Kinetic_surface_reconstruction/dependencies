@@ -1,3 +1,4 @@
+AABB_tree
 Algebraic_foundations
 Arithmetic_kernel
 Arrangement_on_surface_2
@@ -38,12 +39,18 @@ Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
 Random_numbers
+Shape_detection
+Shape_regularization
 STL_Extension
 Solver_interface
+Spatial_searching
 Spatial_sorting
 Stream_support
 Surface_mesh
+Surface_mesh_segmentation
 Surface_sweep_2
 TDS_2
+TDS_3
 Triangulation_2
+Triangulation_3
 Union_find
