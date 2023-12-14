@@ -102,6 +102,9 @@ int main(int argc, char* argv[])
   CGAL::Graphics_scene buffer;
 
   add_to_graphics_scene(sm, buffer, gsosm);
+
+#ifdef CGAL_USE_BASIC_VIEWER
+
   CGAL::Qt::QApplication_and_basic_viewer app(buffer, "Small faces");
   if(app)
   {
@@ -146,6 +149,8 @@ int main(int argc, char* argv[])
     // Then we run the app
     app.run();
   }
+
+#endif
 
   sm.remove_property_map(faces_size);
 
