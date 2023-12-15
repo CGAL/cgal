@@ -222,9 +222,10 @@ bool read_xcurves(std::ifstream& inp, X_monotone_curves& xcurves,
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
 
-void read_curve(std::ifstream& is, Curve_2& cv) {
+void read_curve(std::ifstream& is, Curve_2& cv, const Traits& traits) {
   // Read a line from the input file.
   char one_line[128];
+  auto ctr_curve_2 = traits.construct_curve_2_object();
 
   is >> skip_comment;
   is.getline(one_line, 128);
@@ -273,8 +274,8 @@ void read_curve(std::ifstream& is, Curve_2& cv) {
 
     if (type == 'f' || type == 'F') {
       // Create a full ellipse (or circle).
-      if (is_circle) cv = Curve_2 (circle);
-      else cv = Curve_2(r, s, t, u, v, w);
+      if (is_circle) cv = ctr_curve_2(circle);
+      else cv = ctr_curve_2(r, s, t, u, v, w);
     }
     else {
       // Read the endpointd of the arc.
@@ -286,8 +287,8 @@ void read_curve(std::ifstream& is, Curve_2& cv) {
       Point_2 target = Point_2(Algebraic(x2), Algebraic(y2));
 
         // Create the arc. Note that it is always clockwise oriented.
-      if (is_circle) cv = Curve_2(circle, CGAL::CLOCKWISE, source, target);
-      else cv = Curve_2(r, s, t, u, v, w, CGAL::CLOCKWISE, source, target);
+      if (is_circle) cv = ctr_curve_2(circle, CGAL::CLOCKWISE, source, target);
+      else cv = ctr_curve_2(r, s, t, u, v, w, CGAL::CLOCKWISE, source, target);
     }
   }
   else if (type == 's' || type == 'S') {
@@ -300,7 +301,7 @@ void read_curve(std::ifstream& is, Curve_2& cv) {
     Rat_point_2 source = Rat_point_2 (Rational(x1), Rational(y1));
     Rat_point_2 target = Rat_point_2 (Rational(x2), Rational(y2));
 
-    cv = Curve_2(Rat_segment_2 (source, target));
+    cv = ctr_curve_2(Rat_segment_2 (source, target));
   }
 
   // std::cout << cv << std::endl;
@@ -308,7 +309,7 @@ void read_curve(std::ifstream& is, Curve_2& cv) {
 
 /*! Read curves.
  */
-bool read_curves(std::ifstream& inp, Curves& curves, const Traits&) {
+bool read_curves(std::ifstream& inp, Curves& curves, const Traits& traits) {
   // auto ctr_cv = traits.construct_curve_2_object();
   int count;
   inp >> skip_comment >> count;
@@ -316,7 +317,7 @@ bool read_curves(std::ifstream& inp, Curves& curves, const Traits&) {
   char dummy[256];
   inp.getline(dummy, sizeof(dummy));
   for (int i = 0; i < count; ++i) {
-    read_curve(inp, cv);
+    read_curve(inp, cv, traits);
     curves.push_back(cv);
   }
   return true;
@@ -401,11 +402,11 @@ bool test_conic(std::ifstream& inp, Curves& curves,
                 const X_monotone_curves& curves_no_overlap_out,
                 const Points& points_with_ends_out,
                 const Points& points_no_ends_out,
-                const Traits&) {
-
-  CGAL::Bbox_2 bbox = curves.front().bbox();
+                const Traits& traits) {
+  auto ctr_bbox_2 = traits.construct_bbox_2_object();
+  CGAL::Bbox_2 bbox = ctr_bbox_2(curves.front());
   for (auto it = std::next(curves.begin()); it != curves.end(); ++it)
-    bbox = bbox + it->bbox();
+    bbox = bbox + ctr_bbox_2(*it);
 
   // generate the string for the output
   std::stringstream out1;
