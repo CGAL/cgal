@@ -1468,7 +1468,7 @@ refine_balls()
     dump_c3t3_edges(c3t3_, "dump-before-check_and_repopulate_edges");
 #endif
     // Check edges
-    if(!forced_stop() && !use_minimal_size()) {
+    if(!forced_stop()) {
       check_and_repopulate_edges();
     }
   }
@@ -1771,7 +1771,9 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
   const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
 
-  FT arc_length = domain_.curve_segment_length(cp(v1_wp),
+  FT arc_length = use_minimal_size()
+                ? compute_distance(v1, v2) //curve polyline may not be consistent
+                : domain_.curve_segment_length(cp(v1_wp),
                                                cp(v2_wp),
                                                curve_index,
                                                orientation);
