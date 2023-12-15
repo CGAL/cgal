@@ -52,6 +52,8 @@ namespace KSR {
 
     // Reconstruction.
     FT graphcut_beta; // magic parameter between 0 and 1
+    bool use_ground;
+    //std::map<typename KSP::Face_support, bool> external_nodes;
 
     // Constructor.
     All_parameters() :
@@ -77,6 +79,7 @@ namespace KSR {
       k_intersections(1),
       enlarge_bbox_ratio(FT(11) / FT(10)),
       reorient(false),
+      use_ground(false),
       // reconstruction
       graphcut_beta(FT(1) / FT(2))
     { }

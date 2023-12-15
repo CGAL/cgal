@@ -75,7 +75,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
 
   // Reconstruction.
   parser.add_val_parameter("-lambda", parameters.graphcut_beta);
-  parser.add_val_parameter("-beta", parameters.graphcut_beta);
+  parser.add_val_parameter("-ground", parameters.use_ground);
 
   // Debug.
   parser.add_bool_parameter("-debug", parameters.debug);
@@ -187,8 +187,11 @@ int main(const int argc, const char** argv) {
 
   external_nodes[KSR::KSP::Face_support::ZMIN] = true;
 
-  //ksr.reconstruct(parameters.graphcut_beta, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
-  ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
+  if (parameters.use_ground)
+    ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
+  else
+    ksr.reconstruct(parameters.graphcut_beta, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
+
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)
@@ -197,20 +200,24 @@ int main(const int argc, const char** argv) {
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
 
-  std::vector<FT> betas{0.3, 0.5, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99};
+  std::vector<FT> lambdas{0.3, 0.5, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99};
 
-  for (FT b : betas) {
-    if (b == parameters.graphcut_beta)
+  for (FT l : lambdas) {
+    if (l == parameters.graphcut_beta)
       continue;
 
     vtx.clear();
     polylist.clear();
 
-    //ksr.reconstruct(b, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
-    ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
+
+    if (parameters.use_ground)
+      ksr.reconstruct_with_ground(l, std::back_inserter(vtx), std::back_inserter(polylist));
+    else
+      ksr.reconstruct(l, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
+
 
     if (polylist.size() > 0)
-      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(b) + ".off", vtx, polylist);
+      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + ".off", vtx, polylist);
   }
 
   std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;
