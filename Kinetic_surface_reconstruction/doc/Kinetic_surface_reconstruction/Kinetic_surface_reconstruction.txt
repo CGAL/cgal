@@ -42,9 +42,13 @@ The regularization term is a common choice penalizing the total surface area of 
 
 Thus the reconstruction is guaranteed to be watertight as it equals a union of volumes. However, the reconstruction may consist of several components and is not guaranteed to be 2-manifold as different components may share a vertex or an edge.
 
-\cgalFigureBegin{Ksr_pipelinefig,ksr_pipeline_small.png}
+\cgalFigureAnchor{Ksr_pipelinefig}
+<center>
+<img src="ksr_pipeline_small.png" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{Ksr_pipelinefig}
 Kinetic surface reconstruction pipeline.\n From left to right: 1. input point cloud with 382k points 2. 98 detected planar shapes 3. 63 regularized convex shapes 4. kinetic space partition with 1,487 cells 5. reconstructed polygonal mesh with 131 faces.
-\cgalFigureEnd
+\cgalFigureCaptionEnd
 
 \section ksrParameters Parameters
 The parameters of the method include the parameters from other packages which are used internally:
@@ -55,7 +59,7 @@ The parameters of the method include the parameters from other packages which ar
 
 The reconstruction adds two new parameters:
 - *external_nodes*:
-The graph cut formulation embeds a vertex into each volume and connects all vertices if the corresponding volumes share a common face. While each face inside the kinetic space partition is exactly between two volumes, faces on the boundary have to be considered. Thus, 6 external vertices are inserted into the graph representing a volume on each side of the bounding box. The parameter *external_nodes* allows the user to either provide a fixed label *inside* or *outside* for each node or leave the label up to the energy minimization. Typical choices for this parameter are to choose all external nodes as outside for scanned objects, e.g., as in \cgalFigureRef{Ksr_pipelinefig}, or the *ZMIN* node *inside* and all other nodes *outside* as for exterior scans of buildings, e.g., as in \cgalFigureRef{Ksr_parametersfig}. The default value for this parameter is to leave the labels of the external nodes up to the energy minimization.
+The graph-cut formulation embeds a vertex into each volume and connects all vertices if the corresponding volumes share a common face. While each face inside the kinetic space partition is exactly between two volumes, faces on the boundary have to be considered. Thus, 6 external vertices are inserted into the graph representing a volume on each side of the bounding box. The parameter *external_nodes* allows the user to either provide a fixed label *inside* or *outside* for each node or leave the label up to the energy minimization. Typical choices for this parameter are to choose all external nodes as outside for scanned objects, e.g., as in \cgalFigureRef{Ksr_pipelinefig}, or the *ZMIN* node *inside* and all other nodes *outside* as for exterior scans of buildings, e.g., as in \cgalFigureRef{Ksr_parametersfig}. The default value for this parameter is to leave the labels of the external nodes up to the energy minimization. The alternative method `reconstruct_with_ground` estimates a ground plane within the detected shapes and sets up all faces on the bounding box below that ground plane to be connected to an external node set as *inside* while all other faces on the outside are connected to external nodes set to *outside*. It assumes the z-axis to be the upward pointing vertical direction.
 
 - *lambda*:
 The *lambda* parameter trades the data faithfulness of the energy minimization for low complexity. The parameter has to be choosen in the range of \f$[0,1)\f$. 0 indicates the only the voting of input points are considered in the energy minimization, while the default value of \f$0,5\f$ gives an equal weight to data faithfulness and low complexity. The value should be choosen according to the quality of the input data. If the point cloud is accurate, low in noise and complete a low value can be chosen.
@@ -97,7 +101,8 @@ This example provides a command line version of the kinetic surface reconstructi
 \section ksrPerformance Performance
 
 Kinetic surface reconstruction is aimed at reconstructing piece-wise planar objects, e.g., man-made objects and architecture. Reconstruction results on point clouds acquired from architecture in different qualities are shown in figure \cgalFigureRef{ksr_result_small} in the first and last row. Synthetic point clouds from a CAD model and a fractal object are shown in rows 2 and three.
-However, also smooth surface can be reconstructed to a certain level of detail as is shown on the fourth row. While the scales of the dragon are not replicated with their smooth boundary, each scale can still be recognized in the final model.
+
+However, also smooth surfaces can be reconstructed to a certain level of detail as is shown on the fourth row. While the scales of the dragon are not replicated with their smooth boundary, each scale can still be recognized in the final model.
 
 \cgalFigureAnchor{ksr_result_small}
 <center>
@@ -108,7 +113,7 @@ Results of kinetic surface reconstruction.\n From left to right: 1. input point 
 From top to bottom: 1. *Meeting room*. Reconstruction of the roof framework is not perfect due to missing data. 2. *Full Thing*. Synthetic point cloud sampled from a CAD model. All details are well reconstructed 3. *Hilbert cube*. Synthetic point cloud from a fractal object. 4. *Asian Dragon*. Acquired point cloud from the Stanford 3D Scanning Repository. 5. *Building_C*. Point Cloud from multi view stereo.
 \cgalFigureCaptionEnd
 
-The running time of the method depends mostly on the shape detection and the kinetic space partition steps. While the shape detection mostly depends on the complexity of the point cloud, the kinetic space partition depends on the number of input polygons. The running time of the shape regularization and the graph cut have not been listed, as they are <1 seconds in all cases besides the *Asian Dragon* with 2,75s.
+The running time of the method depends mostly on the shape detection and the kinetic space partition steps. While running time of the shape detection scales with the complexity of the point cloud, the kinetic space partition depends on the number of input polygons. The running time of the shape regularization and the graph-cut have not been listed, as they are <1 seconds in all cases besides the Asian Dragon with 2,75s for the graph-cut.
 
 <TABLE CELLSPACING=5 >
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
