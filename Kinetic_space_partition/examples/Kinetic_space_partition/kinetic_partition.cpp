@@ -36,7 +36,7 @@ int main(const int argc, const char** argv) {
   // Parameters.
   const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
 
-  // Initialization of Kinetic_shape_partition_3 object.
+  // Initialization of Kinetic_space_partition_3 object.
   // 'debug' set to true exports intermediate results into files in the working directory.
   // The resulting volumes are exported into a volumes folder, if the folder already exists.
   KSP ksp(CGAL::parameters::verbose(true).debug(true));
