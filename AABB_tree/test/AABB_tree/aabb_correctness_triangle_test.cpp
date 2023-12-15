@@ -65,7 +65,7 @@ int test()
     return EXIT_FAILURE;
   }
 
-  boost::optional<Object_and_primitive_id> any;
+  std::optional<Object_and_primitive_id> any;
   any = tree.any_intersection(pq);
   if(!any)
   {

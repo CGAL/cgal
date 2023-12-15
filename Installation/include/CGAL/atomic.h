@@ -33,7 +33,7 @@ using std::memory_order_seq_cst;
 using std::atomic_thread_fence;
 } }
 #else
-#  define CGAL_NO_ATOMIC "No atomic because CGAL_NO_THREADS is defined."
+#  define CGAL_NO_ATOMIC "No atomic because CGAL_HAS_NO_THREADS is defined."
 #endif // CGAL_HAS_THREADS
 
 #endif // CGAL_ATOMIC_H

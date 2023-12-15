@@ -37,7 +37,7 @@ public:
     void delegate( Modifier_base<int>& modifier) {
         modifier(i);
         // check validity
-        CGAL_postcondition( i > 0);
+        assert( i > 0);
     }
     int get_i() const { return i;}  // read access
 };

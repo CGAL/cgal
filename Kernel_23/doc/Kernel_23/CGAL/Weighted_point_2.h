@@ -13,8 +13,7 @@ to `NT`, and `Kernel::FT` is equal to `Quotient<NT>`.
 
 \sa `Point_2<Kernel>`
 
-\cgalModels `Kernel::WeightedPoint_2`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::WeightedPoint_2,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >
@@ -43,11 +42,13 @@ public:
 
   /*!
   introduces a weighted point with %Cartesian coordinates `(0,0)` and weight `0`.
+  \cgalEpicExact
   */
   Weighted_point_2(const Origin &ORIGIN);
 
   /*!
   introduces a weighted point from point `p` and weight `0`.
+  \cgalEpicExact
 
   \warning The `explicit` keyword is used to avoid accidental implicit conversions
            between Point_2 and Weighted_point_2.
@@ -56,11 +57,13 @@ public:
 
   /*!
   introduces a weighted point from point `p` and weight `w`.
+  \cgalEpicExact
   */
   Weighted_point_2(const Point_2<Kernel>& p, Kernel::FT& w);
 
   /*!
   introduces a weighted point with coordinates `x`, `y`, and weight `0`.
+  \cgalEpicExact
   */
   Weighted_point_2(const Kernel::FT& x, const Kernel::FT& y);
 
@@ -71,11 +74,13 @@ public:
 
   /*!
   returns the point of the weighted point.
+  \cgalEpicExact
   */
   Point_2<Kernel> point() const;
 
   /*!
   returns the weight of the weighted point.
+  \cgalEpicExact
   */
   Kernel::FT weight() const;
   /// @}
@@ -129,11 +134,13 @@ public:
 
   /*!
   returns the %Cartesian \f$ x\f$ coordinate, that is `hx()`/`hw()`.
+  \cgalEpicExact
   */
   Kernel::FT x() const;
 
   /*!
   returns the %Cartesian \f$ y\f$ coordinate, that is `hy()`/`hw()`.
+  \cgalEpicExact
   */
   Kernel::FT y() const;
 
@@ -147,19 +154,23 @@ public:
 
   /*!
   returns the i'th homogeneous coordinate of `p`.
-  \pre \f$ 0\leq i \leq2\f$.
+  \pre  `0 <= i <= 2`
   */
   Kernel::RT homogeneous(int i) const;
 
   /*!
   returns the i'th %Cartesian coordinate of `p`.
-  \pre \f$ 0\leq i \leq1\f$.
+  \pre  `0 <= i <= 1`
+
+  \cgalEpicExact
   */
   Kernel::FT cartesian(int i) const;
 
   /*!
   returns `cartesian(i)`.
-  \pre \f$ 0\leq i \leq1\f$.
+  \pre  `0 <= i <= 1`
+
+  \cgalEpicExact
   */
   Kernel::FT operator[](int i) const;
 
@@ -182,6 +193,7 @@ public:
 
   /*!
   returns a bounding box containing `p`.
+  \cgalEpicExact
   */
   Bbox_2 bbox() const;
 

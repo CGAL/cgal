@@ -1,13 +1,15 @@
 #ifndef IS_IN_X_RANGE_H
 #define IS_IN_X_RANGE_H
 
+#include <cassert>
+
 // Check whether the given point is in the x-range of the given curve that
 // represents a great-circle arc.
 template <typename GeometryTraits>
 bool is_in_x_range(const typename GeometryTraits::X_monotone_curve_2& c,
                    const typename GeometryTraits::Point_2& p,
                    const GeometryTraits& traits) {
-  CGAL_assertion(! traits.is_on_y_identification_2_object()(p));
+  assert(! traits.is_on_y_identification_2_object()(p));
 
   if (traits.is_on_y_identification_2_object()(c)) return false;
 

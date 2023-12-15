@@ -9,8 +9,8 @@
 //
 // Author: Marc Glisse <marc.glisse@inria.fr>
 
-#ifndef CGAL_GMPXX_ARITHMETIC_KERNEL_H
-#define CGAL_GMPXX_ARITHMETIC_KERNEL_H
+#ifndef CGAL_BOOST_MP_ARITHMETIC_KERNEL_H
+#define CGAL_BOOST_MP_ARITHMETIC_KERNEL_H
 
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>

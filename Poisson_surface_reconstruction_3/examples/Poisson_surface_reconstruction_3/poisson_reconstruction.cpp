@@ -104,12 +104,12 @@ int main(int argc, char * argv[])
     //***************************************
 
     // usage
-    if (argc-1 < 2)
+    if(argc == 1)
     {
       std::cerr << "Reads a point set or a mesh's set of vertices, reconstructs a surface using Poisson,\n";
       std::cerr << "and saves the surface.\n";
       std::cerr << "\n";
-      std::cerr << "Usage: " << argv[0] << " file_in file_out [options]\n";
+      std::cerr << "Usage: " << argv[0] << " [file_in] [file_out] [options]\n";
       std::cerr << "Input file formats are .off (mesh) and .xyz or .pwn (point set).\n";
       std::cerr << "Output file format is .off.\n";
       std::cerr << "Options:\n";
@@ -127,8 +127,8 @@ int main(int argc, char * argv[])
     double average_spacing_ratio = 5;
 
     // decode parameters
-    std::string input_filename  = argc == 1 ? CGAL::data_file_path("points_3/kitten.xyz") : argv[1];
-    std::string output_filename = argc == 1 ? "kitten_poisson-20-100-0.5.off" : argv[2];
+    std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
+    std::string output_filename = (argc > 2) ? argv[2] : "kitten_poisson-20-100-0.5.off";
     for (int i=3; i+1<argc ; ++i)
     {
       if (std::string(argv[i])=="-sm_radius")

@@ -52,7 +52,7 @@ void test(const char* f1, const char* f2)
   std::size_t nbv2_before=vertices(sm2).size();
   std::size_t nb_v_before = num_vertices(sm1) + num_vertices(sm2);
   CGAL::Polygon_mesh_processing::corefine(sm1, sm2,
-    CGAL::Polygon_mesh_processing::parameters::visitor(sm_v));
+    CGAL::parameters::visitor(sm_v));
   std::size_t nb_v_after = num_vertices(sm1) + num_vertices(sm2);
 
   assert(sm1.is_valid());
@@ -74,7 +74,7 @@ void test(const char* f1, const char* f2)
 
   nb_v_before = num_vertices(P) + num_vertices(Q);
   CGAL::Polygon_mesh_processing::corefine(P, Q,
-    CGAL::Polygon_mesh_processing::parameters::visitor(sm_p));
+    CGAL::parameters::visitor(sm_p));
   nb_v_after = num_vertices(P) + num_vertices(Q);
 
   assert((*(sm_p.i) != 0)  == (nb_v_before!=nb_v_after));

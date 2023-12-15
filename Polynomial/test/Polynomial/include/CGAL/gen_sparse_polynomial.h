@@ -5,6 +5,7 @@
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Random.h>
 #include <cmath>
+#include <cassert>
 
 namespace CGAL {
 
@@ -36,7 +37,7 @@ generate_sparse_random_polynomial(CGAL::Random random, int max_degree = 6){
         Monom_rep monom_rep;
         monom_rep.push_back(Monom(exps,c));
         result += construct(monom_rep.begin(), monom_rep.end());
-        CGAL_postcondition(result.degree() >= 0);
+        assert(result.degree() >= 0);
     }
     // std::cout << result << std::endl;
     return result;

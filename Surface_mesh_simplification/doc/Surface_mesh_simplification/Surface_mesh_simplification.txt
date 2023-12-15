@@ -82,7 +82,7 @@ This package provides two cost-driven methods. The first cost-driven method impl
 namely Lindstrom&Turk, is mainly based on \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99},
 with contributions from \cgalCite{hddms-mo-93}, \cgalCite{gh-ssqem-97} and \cgalCite{degn-tpec-98}.
 The second cost-driven method implemented in this package, namely Garland&Heckbert, is mainly based on
-\cgalCite{gh-ssqem-97}.
+\cgalCite{gh-ssqem-97}, with enhancements from Trettner and Kobbelt \cgalCite{tk-frqmpq-20}.
 
 The algorithm proceeds in two stages. In the first stage, called <I>collection stage</I>,
 an initial <I>collapse cost</I> is assigned to each and every edge in the surface mesh.
@@ -116,9 +116,8 @@ passed to the algorithm.
 
 The current version of the package provides a set of policies implementing
 three strategies: the Lindstrom-Turk strategy, which is the default,
-the Garland-Heckbert strategy, and
-a strategy consisting of an edge-length cost with an optional
-midpoint placement (much faster but less accurate).
+the Garland-Heckbert family of strategies, and a strategy consisting of an edge-length cost
+with an optional midpoint placement (much faster but less accurate).
 
 \subsection SurfaceMeshSimplificationLindstromTurkStrategy Lindstrom-Turk Cost and Placement Strategy
 
@@ -159,29 +158,46 @@ the end a global change reasonably close to the absolute minimum.
 
 \subsection SurfaceMeshSimplificationGarlandHeckbertStrategy Garland-Heckbert Cost and Placement Strategy
 
-As in the case of the Lindstrom-Turk strategy, the Garland-Heckbert strategy presented in \cgalCite{gh-ssqem-97}
+As in the case of the Lindstrom-Turk strategy, the Garland-Heckbert strategy introduced in \cgalCite{gh-ssqem-97}
 does not compare the resulting mesh with the original mesh and does not depend on
-history of local changes. Instead, it encodes approximate distance to the original
+an history of local changes. Instead, it encodes approximate distance to the original
 mesh by using quadric matrices that it assigns to each vertex.
 
-In the beginning, a quadric matrix \f$ Q \f$ is assigned to each vertex \f$ v \f$ and encodes the total
+In its classic version, a quadric matrix \f$ Q \f$ is assigned to each vertex \f$ v \f$ and encodes the total
 squared distance that any point \f$ p \f$ has to \f$ v \f$'s neighboring faces, which is given by the matrix
 product \f$ p'Qp \f$.
 At each step, the edge which minimizes the cost of collapsing is selected for
 the collapse operation. The cost of collapsing an edge is calculated by
 minimizing the error function \f$ p'Qp \f$ where \f$ Q \f$ is the combined quadric
-matrices of the edge's endpoints
-and \f$ p \f$ is the point that minimizes the cost (i.e., decision variables). The point
-\f$ p \f$ that minimizes the objective function is picked as the new placement point.
+matrices of the edge's endpoints and \f$ p \f$ is the point that minimizes the cost (i.e., decision variables).
+The point \f$ p \f$ that minimizes the objective function is picked as the new placement point.
 Since the error function is quadratic, finding its minimum can be done by simply calculating
 the gradient and equating it to zero. If this fails due to a singularity, the optimal point
 and the cost are found on the edge.
 After placing the new vertex, a new quadric matrix is assigned to it by simply summing the
 quadric matrices of the two extremities of the edge that has been collapsed.
-
 Additional pseudo-faces that are perpendicular to neighboring faces
 are added to quadric matrices of border vertices in order to preserve sharp borders of
 the mesh as much as possible.
+
+An extension of the Garland-Heckbert was proposed by Trettner and Kobbelt \cgalCite{tk-frqmpq-20},
+who proposed the concept of probabilistic quadrics. In this new approach, the energy minimization
+is no longer performed using distances to input planes or polygons as in the classic version;
+instead, input geometry is made uncertain by introducing Gaussian noise in the input (vertex positions and
+face normals). This variance naturally deteriorates the tightness of the result, but on the other
+hand it enables creating more uniform triangulations and the approach is more tolerant to noise,
+while still maintaining feature sensitivity.
+
+\cgalFigureAnchor{SurfaceMeshSimplification_GH}
+<center>
+<img src="sappho.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{SurfaceMeshSimplification_GH}
+<a href="https://ten-thousand-models.appspot.com/detail.html?file_id=72286">Sappho's Head</a> model (leftmost, 34882 vertices).
+From left to right, simplified output (1745 vertices) and symmetric Hausdorff distance
+for the four Garland-Heckbert variations: plane (0.217912), probabilistic
+plane (0.256801), triangle (0.268872), and probabilistic triangle (0.490846).
+\cgalFigureCaptionEnd
 
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
@@ -290,7 +306,7 @@ int r = edge_collapse(surface_mesh, stop_predicate,
                                        .edge_is_border_map(ebmap)
                                        .get_cost(cf)
                                        .get_placement(pf)
-                                       .filter(filter
+                                       .filter(filter)
                                        .visitor(vis));
 
 \endcode
@@ -353,7 +369,7 @@ Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While t
 The class `Surface_mesh_simplification::Bounded_normal_change_filter` checks if
 a placement would invert the normal of a face around the stars of the
 two vertices of an edge that is candidate for an edge collapse.  It then
-rejects this placement by returning `boost::none`.
+rejects this placement by returning `std::nullopt`.
 
 \note This filter class replaces the usage of the class `Surface_mesh_simplification::Bounded_normal_change_placement`.
 Using the filter is faster as it is only performed on the edge to be collapsed next,
@@ -373,8 +389,6 @@ with a sphere of radius \f$\epsilon\f$, but which are outside the polyhedral env
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_envelope.cpp}
 
-
-
 \subsection Surface_mesh_simplificationExamplewithVisitor Example with Visitor
 
 The last example shows how to use a visitor with callbacks that are called at the different
@@ -384,12 +398,12 @@ steps of the simplification algorithm.
 
 \subsection Surface_mesh_simplificationExampleWithGarlandHeckbertUsingAPolyhedron Example Using Garland-Heckbert Policies
 
-Garland-Heckbert simplification policies are implemented with a single class,
-`Surface_mesh_simplification::GarlandHeckbert_policies`, that regroups both a cost and
-a placement policy class: this is because either of these policies requires the other one to function properly.
-Note that it is still possible to wrap either policy: for example, it is possible to use
-behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_placement`
-with the Garland-Heckbert placement policy.
+Each Garland-Heckbert simplification strategy is implemented with a single class that regroups
+both the cost and the placement policies, which must be used together as they share vertex quadric data.
+The classic strategy of using plane-based quadric error metrics is implemented with the class
+`Surface_mesh_simplification::GarlandHeckbert_plane_policies`.
+Although both policies must be used together, it is still possible to wrap either policy
+using behavior modifiers such as `Surface_mesh_simplification::Bounded_normal_change_placement`.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp}
 
@@ -398,13 +412,13 @@ Note that these policies depend on the third party \ref thirdpartyEigen library.
 \section SimplificationDesign Design and Implementation History
 
 The core of the package, as well as most of the simplification strategies, are the work of Fernando Cacciola,
-betwen 2006 and 2009.
+between 2006 and 2009.
 
-Andreas Fabri added the `Bounded_normal_change_placement` functionality in \cgal 4.11.
+Andreas Fabri added the `Surface_mesh_simplification::Bounded_normal_change_placement` functionality in \cgal 4.11.
 
 The implementation of the Garland-Heckbert simplification policies is the result of the work
-of Baskın Şenbaşlar during the 2019 season of the Google Summer of Code.
-He was mentored by Mael Rouxel-Labbé, who also contributed to the code and to the documentation.
+of Baskın Şenbaşlar (Google Summer of Code 2019), and Julian Komaromy (Google Summer of Code 2021)
+They both were mentored by Mael Rouxel-Labbé, who also contributed to the code and to the documentation.
 
 */
 } /* namespace CGAL */

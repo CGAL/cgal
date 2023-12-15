@@ -5,7 +5,8 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <iostream>
-#include <fstream>
+#include <set>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
@@ -37,8 +38,8 @@ int main(int argc, char* argv[])
   CGAL::Boolean_property_map<std::set<Mesh::Vertex_index> > vcmap(constrained_vertices);
 
   std::cout << "Smoothing shape... (" << nb_iterations << " iterations)" << std::endl;
-  PMP::smooth_shape(mesh, time, PMP::parameters::number_of_iterations(nb_iterations)
-                                                .vertex_is_constrained_map(vcmap));
+  PMP::smooth_shape(mesh, time, CGAL::parameters::number_of_iterations(nb_iterations)
+                                                 .vertex_is_constrained_map(vcmap));
 
   CGAL::IO::write_polygon_mesh("mesh_shape_smoothed.off", mesh, CGAL::parameters::stream_precision(17));
 

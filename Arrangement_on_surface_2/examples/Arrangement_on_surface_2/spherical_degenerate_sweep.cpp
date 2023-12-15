@@ -5,6 +5,7 @@
 // #define CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE 1
 // #define CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE 1
 
+#include <cassert>
 #include <vector>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -14,31 +15,30 @@
 
 #include "arr_print.h"
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 
 #if 0
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>  Geom_traits_2;
+using Geom_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>;
 #elif 0
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7> Geom_traits_2;
+using Geom_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7>;
 #else
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>  Geom_traits_2;
+using Geom_traits_2 = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>;
 #endif
 
-typedef Geom_traits_2::Point_2                             Point_2;
-typedef Geom_traits_2::X_monotone_curve_2                  X_monotone_curve_2;
-typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits_2> Topol_traits_2;
-typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
-                                                           Arrangement_2;
-typedef Arrangement_2::Vertex_handle                       Vertex_handle;
+using Point_2 = Geom_traits_2::Point_2;
+using X_monotone_curve_2 = Geom_traits_2::X_monotone_curve_2;
+using Topol_traits_2 = CGAL::Arr_spherical_topology_traits_2<Geom_traits_2>;
+using Arrangement_2 =
+  CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>;
+using Vertex_handle = Arrangement_2::Vertex_handle;
 
 int main() {
   Geom_traits_2 traits;
-  Geom_traits_2::Construct_point_2 ctr_p = traits.construct_point_2_object();
-  Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
-    traits.construct_x_monotone_curve_2_object();
+  auto ctr_p = traits.construct_point_2_object();
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
 
-  std::vector< Point_2 > points;
-  std::vector< X_monotone_curve_2 > xcvs;
+  std::vector<Point_2> points;
+  std::vector<X_monotone_curve_2> xcvs;
 
   CGAL::IO::set_pretty_mode(std::cout);
 
@@ -57,26 +57,26 @@ int main() {
   X_monotone_curve_2 xcv_sp1 = ctr_xcv(sp, p1);
   X_monotone_curve_2 xcv_sp2 = ctr_xcv(sp, p2);
   X_monotone_curve_2 xcv_sp3 = ctr_xcv(sp, p3);
-  CGAL_assertion(xcv_sp1.is_vertical());
-  CGAL_assertion(xcv_sp2.is_vertical());
-  CGAL_assertion(xcv_sp3.is_vertical());
+  assert(xcv_sp1.is_vertical());
+  assert(xcv_sp2.is_vertical());
+  assert(xcv_sp3.is_vertical());
   xcvs.push_back(xcv_sp1);      // 0
   xcvs.push_back(xcv_sp2);      // 1
   xcvs.push_back(xcv_sp3);      // 2
 
   X_monotone_curve_2 xcv_12 = ctr_xcv(p1, p2);
   X_monotone_curve_2 xcv_23 = ctr_xcv(p2, p3);
-  CGAL_assertion(!xcv_12.is_vertical());
-  CGAL_assertion(!xcv_23.is_vertical());
+  assert(!xcv_12.is_vertical());
+  assert(!xcv_23.is_vertical());
   xcvs.push_back(xcv_12);       // 3
   xcvs.push_back(xcv_23);       // 4
 
   X_monotone_curve_2 xcv_np1 = ctr_xcv(np, p1);
   X_monotone_curve_2 xcv_np2 = ctr_xcv(np, p2);
   X_monotone_curve_2 xcv_np3 = ctr_xcv(np, p3);
-  CGAL_assertion(xcv_np1.is_vertical());
-  CGAL_assertion(xcv_np2.is_vertical());
-  CGAL_assertion(xcv_np3.is_vertical());
+  assert(xcv_np1.is_vertical());
+  assert(xcv_np2.is_vertical());
+  assert(xcv_np3.is_vertical());
   xcvs.push_back(xcv_np1);      // 5
   xcvs.push_back(xcv_np2);      // 6
   xcvs.push_back(xcv_np3);      // 7

@@ -13,12 +13,12 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAPPING_HELPER_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAPPING_HELPER_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -42,12 +42,12 @@ void vertices_as_halfedges(const VertexRange& vertex_range,
 template <typename HalfedgeRange,
           typename ToleranceMap,
           typename PolygonMesh,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge_range,
                                                    ToleranceMap& tolerance_map,
                                                    const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT tolerance,
                                                    PolygonMesh& mesh,
-                                                   const NamedParameters& np)
+                                                   const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
@@ -90,17 +90,6 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge
 #endif
     put(tolerance_map, vd, CGAL::min<FT>(0.9 * CGAL::approximate_sqrt(min_sq_dist), tolerance));
   }
-}
-
-template <typename HalfedgeRange,
-          typename ToleranceMap,
-          typename PolygonMesh>
-void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge_range,
-                                                   ToleranceMap& tolerance_map,
-                                                   const typename GetGeomTraits<PolygonMesh>::type::FT tolerance,
-                                                   PolygonMesh& mesh)
-{
-  return assign_tolerance_with_local_edge_length_bound(halfedge_range, tolerance_map, tolerance, mesh, CGAL::parameters::all_default());
 }
 
 template <typename GeomTraits>
@@ -232,6 +221,10 @@ struct Snapping_default_visitor
   // Called after a new vertex has been created, splitting an edge.
   template <typename Vertex, typename Mesh>
   void after_vertex_edge_snap(const Vertex /*new_vertex*/, const Mesh&) { }
+
+  // Called after CGAL::Euler::split_face(h1, h2, tm)
+  template <typename Halfedge_descriptor, typename Mesh>
+  void after_split_face(const Halfedge_descriptor /*h1*/, const Halfedge_descriptor /*h2*/, const Mesh& /*tm*/) { }
 
   // ------------------------------- Two passes (segmentation or not) ------------------------------
 

@@ -46,6 +46,12 @@ namespace ArrTraits {}
 /// \defgroup PkgArrangementOnSurface2Funcs Free Functions
 /// \ingroup PkgArrangementOnSurface2Ref
 
+/*!
+\cgalInclude{CGAL/draw_arrangement_2.h}
+*/
+/// \defgroup PkgArrangementOnSurface2Draw Drawing
+/// \ingroup PkgArrangementOnSurface2Ref
+
 /// \defgroup PkgArrangementOnSurface2Insert CGAL::insert()
 /// \ingroup PkgArrangementOnSurface2Funcs
 
@@ -117,12 +123,12 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementBasicTopologyTraits`
 - `ArrangementBasicTraits_2`
 - `ArrangementConstructXMonotoneCurveTraits_2`
+- `ArrangementConstructCurveTraits_2`
 - `ArrangementLandmarkTraits_2`
 - `ArrangementXMonotoneTraits_2`
 - `ArrangementTraits_2`
 - `ArrangementHorizontalSideTraits_2`
 - `ArrangementVerticalSideTraits_2`
-- `ArrangementClosedIdentifiedVerticalTraits_2`
 - `ArrangementIdentifiedVerticalTraits_2`
 - `ArrangementIdentifiedHorizontalTraits_2`
 - `ArrangementOpenBoundaryTraits_2`
@@ -176,6 +182,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::CompareYOnBoundary_2`
 - `ArrTraits::CompareXNearBoundary_2`
 - `ArrTraits::CompareYNearBoundary_2`
+- `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`
 - `ArrTraits::Intersect_2`
 - `ArrTraits::Split_2`
 - `ArrTraits::AreMergeable_2`
@@ -183,6 +190,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::MakeXMonotone_2`
 - `ArrTraits::Approximate_2`
 - `ArrTraits::ConstructXMonotoneCurve_2`
+- `ArrTraits::ConstructCurve_2`
 
 \cgalCRPSection{Classes}
 
@@ -228,9 +236,7 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
-
-\cgalCRPSection{Macros}
-- \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink
+- `CGAL::CORE_algebraic_number_traits`
 
 \cgalCRPSection{Functions}
 
@@ -249,5 +255,8 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::remove_curve()`
 - \link PkgArrangementOnSurface2op_left_shift `CGAL::operator<<` \endlink
 - \link PkgArrangementOnSurface2op_right_shift `CGAL::operator<<` \endlink
+
+\cgalCRPSection{Draw an `Arrangemen_2` object}
+- \link  PkgArrangementOnSurface2Draw CGAL::draw<>() \endlink
 
 */

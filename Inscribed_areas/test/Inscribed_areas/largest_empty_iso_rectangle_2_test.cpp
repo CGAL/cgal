@@ -202,7 +202,7 @@ int test(std::ifstream& is_ptr, const std::string& expected)
          empty_rectangle1.get_left_bottom_right_top();
   output << "test left_bottom_right_top is " << q.first << ",  " << q.second << ",  " << q.third << ",  " << q.fourth << std::endl;
 
-  // comapre output with expected
+  // compare output with expected
   std::string outputstring = output.str();
 
   std::cout << outputstring << std::endl;

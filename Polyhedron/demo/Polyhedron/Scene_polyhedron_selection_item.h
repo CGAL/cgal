@@ -21,11 +21,10 @@
 #include <CGAL/Three/Viewer_interface.h>
 
 #include <fstream>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 #include <boost/property_map/vector_property_map.hpp>
 
 #include <CGAL/boost/graph/selection.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
 #include <CGAL/Qt/manipulatedFrame.h>
@@ -253,9 +252,9 @@ protected:
   void set_is_insert(bool i) { is_insert = i; }
 
 public:
-  typedef boost::unordered_set<fg_vertex_descriptor, CGAL::Handle_hash_function>    Selection_set_vertex;
-  typedef boost::unordered_set<fg_face_descriptor, CGAL::Handle_hash_function>      Selection_set_facet;
-  typedef boost::unordered_set<fg_edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
+  typedef std::unordered_set<fg_vertex_descriptor>    Selection_set_vertex;
+  typedef std::unordered_set<fg_face_descriptor>      Selection_set_facet;
+  typedef std::unordered_set<fg_edge_descriptor>    Selection_set_edge;
 
   Vertex_selection_map vertex_selection_map()
   {
@@ -289,16 +288,14 @@ public:
   void compute_bbox() const
   {
     // Workaround a bug in g++-4.8.3:
-    //   http://stackoverflow.com/a/21755207/1728537
-    // Using boost::make_optional to copy-initialize 'item_bbox' hides the
+    //   https://stackoverflow.com/a/21755207/1728537
+    // Using std::make_optional to copy-initialize 'item_bbox' hides the
     //   warning about '*item_bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 
     constVPmap vpm = get(CGAL::vertex_point, *polyhedron());
 
-    boost::optional<CGAL::Bbox_3> item_bbox
-      = boost::make_optional(false, CGAL::Bbox_3());
-
+    std::optional<CGAL::Bbox_3> item_bbox;
 
     for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin();
         v_it != selected_vertices.end(); ++v_it) {
@@ -489,7 +486,7 @@ public:
     clear<fg_edge_descriptor>();
   }
 
-  boost::optional<std::size_t> get_minimum_isolated_component() {
+  std::optional<std::size_t> get_minimum_isolated_component() {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
       return get_minimum_isolated_component<fg_vertex_descriptor>();
@@ -500,7 +497,7 @@ public:
     }
   }
   template<class HandleType> // use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor
-  boost::optional<std::size_t> get_minimum_isolated_component() {
+  std::optional<std::size_t> get_minimum_isolated_component() {
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     Travel_isolated_components<Face_graph>::Minimum_visitor visitor;
     Travel_isolated_components<Face_graph>(*polyhedron()).travel<HandleType>
@@ -508,7 +505,7 @@ public:
     return visitor.minimum;
   }
 
-  boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
+  std::optional<std::size_t> select_isolated_components(std::size_t threshold) {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
       return select_isolated_components<fg_vertex_descriptor>(threshold);
@@ -519,7 +516,7 @@ public:
     }
   }
   template<class HandleType> // use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor
-  boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
+  std::optional<std::size_t> select_isolated_components(std::size_t threshold) {
     typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
     typedef std::insert_iterator<typename Tr::Container> Output_iterator;
@@ -967,8 +964,8 @@ template<typename HandleRange>
         get_face(*selection.begin()),
         *polyhedron(),
         std::back_inserter(selected_cc),
-        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
-                                                                           Is_selected_property_map<fg_edge_descriptor,PM>(mark, get(boost::edge_index,*polyhedron()))));
+        CGAL::parameters::edge_is_constrained_map(
+                            Is_selected_property_map<fg_edge_descriptor,PM>(mark, get(boost::edge_index,*polyhedron()))));
        treat_selection(selected_cc);
     }
     else
@@ -1086,18 +1083,24 @@ protected :
 
 public:
   //statistics
-  enum STATS {
-    NB_VERTICES = 0,
-    NB_CONNECTED_COMPOS,
-    NB_BORDER_EDGES,
+  enum STATS
+  {
+    // Properties
+    NB_CONNECTED_COMPOS = 0,
+    NB_HOLES,
+    GENUS,
     IS_PURE_TRIANGLE,
     IS_PURE_QUAD,
-    NB_DEGENERATED_FACES,
-    HOLES,
     AREA,
     VOLUME,
     SELFINTER,
+
+    // Vertices
+    NB_VERTICES,
+
+    // Facets
     NB_FACETS,
+    NB_DEGENERATE_FACES,
     MIN_AREA,
     MAX_AREA,
     MED_AREA,
@@ -1106,13 +1109,17 @@ public:
     MIN_ASPECT_RATIO,
     MAX_ASPECT_RATIO,
     MEAN_ASPECT_RATIO,
-    GENUS,
+
+    // Edges
     NB_EDGES,
+    NB_BORDER_EDGES,
+    NB_DEGENERATE_EDGES,
     MIN_LENGTH,
     MAX_LENGTH,
-    MID_LENGTH,
+    MED_LENGTH,
     MEAN_LENGTH,
-    NB_NULL_LENGTH,
+
+    // Angles
     MIN_ANGLE,
     MAX_ANGLE,
     MEAN_ANGLE

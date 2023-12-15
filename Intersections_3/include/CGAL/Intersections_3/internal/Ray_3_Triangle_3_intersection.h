@@ -90,13 +90,13 @@ t3r3_intersection_coplanar_aux(const typename K::Point_3& a,
 
   const Point_3& p = point_on(r,0);
 
-  // A ray is not symetric, 2 cases depending on isolated side of c
+  // A ray is not symmetric, 2 cases depending on isolated side of c
   Orientation cap = negative_side ? coplanar_orientation(c,a,p)
                                   : coplanar_orientation(b,c,p);
 
   switch ( cap ) {
     case NEGATIVE:
-      // p is bellow [c,a]
+      // p is below [c,a]
       return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
 
     case COLLINEAR:
@@ -111,7 +111,7 @@ t3r3_intersection_coplanar_aux(const typename K::Point_3& a,
       Point_3 p_side_end_point(p);
       Point_3 q_side_end_point;
 
-      // A ray is not symetric, 2 cases depending on isolated side of c
+      // A ray is not symmetric, 2 cases depending on isolated side of c
       if ( negative_side )
       {
         if ( NEGATIVE == coplanar_orientation(b,c,p) )
@@ -396,7 +396,7 @@ intersection_coplanar(const typename K::Triangle_3& t,
 
 template <class K>
 inline
-typename boost::optional<typename K::Point_3>
+typename std::optional<typename K::Point_3>
 t3r3_intersection_aux(const typename K::Triangle_3& t,
                       const typename K::Ray_3& r,
                       const K& k)
@@ -410,7 +410,7 @@ t3r3_intersection_aux(const typename K::Triangle_3& t,
       return *p;
   }
 
-  return boost::optional<typename K::Point_3>();
+  return std::optional<typename K::Point_3>();
 }
 
 template <class K>
@@ -455,7 +455,7 @@ intersection(const typename K::Triangle_3& t,
           if ( orientation(p,q,a,b) != POSITIVE
               && orientation(p,q,b,c) != POSITIVE
                && orientation(p,q,c,a) != POSITIVE ) {
-            boost::optional<Point_3> op = t3r3_intersection_aux(t,r,k);
+            std::optional<Point_3> op = t3r3_intersection_aux(t,r,k);
             if(op) return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(*op);
             else return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
           }
@@ -476,7 +476,7 @@ intersection(const typename K::Triangle_3& t,
           if ( orientation(q,p,a,b) != POSITIVE
               && orientation(q,p,b,c) != POSITIVE
                && orientation(q,p,c,a) != POSITIVE ) {
-            boost::optional<Point_3> op = t3r3_intersection_aux(t,r,k);
+            std::optional<Point_3> op = t3r3_intersection_aux(t,r,k);
             if(op) return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(*op);
             else return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
           }
@@ -502,7 +502,7 @@ intersection(const typename K::Triangle_3& t,
               && orientation(q,p,b,c) != POSITIVE
               && orientation(q,p,c,a) != POSITIVE )
           {
-            boost::optional<Point_3> op = t3r3_intersection_aux(t,r,k);
+            std::optional<Point_3> op = t3r3_intersection_aux(t,r,k);
             if(op) return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(*op);
             else return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
           }
@@ -515,7 +515,7 @@ intersection(const typename K::Triangle_3& t,
               && orientation(p,q,b,c) != POSITIVE
               && orientation(p,q,c,a) != POSITIVE )
           {
-            boost::optional<Point_3> op = t3r3_intersection_aux(t,r,k);
+            std::optional<Point_3> op = t3r3_intersection_aux(t,r,k);
             if(op) return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>(*op);
             else return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Ray_3>();
           }

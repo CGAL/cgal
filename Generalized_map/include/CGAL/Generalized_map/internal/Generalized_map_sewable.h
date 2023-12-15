@@ -28,8 +28,8 @@ template<typename GMap, unsigned int i, unsigned int dim=GMap::dimension>
 struct GMap_is_sewable_functor
 {
   static bool run( const GMap& amap,
-                   typename GMap::Dart_const_handle adart1,
-                   typename GMap::Dart_const_handle adart2 )
+                   typename GMap::Dart_const_descriptor adart1,
+                   typename GMap::Dart_const_descriptor adart2 )
   {
     CGAL_assertion( i<=GMap::dimension );
     if ( !amap.template is_free<i>(adart1) ||
@@ -43,8 +43,8 @@ struct GMap_is_sewable_functor
     }
 
     // hash map to build the isomorphism between the two i-cells.
-    CGAL::Unique_hash_map<typename GMap::Dart_const_handle,
-        typename GMap::Dart_const_handle,
+    CGAL::Unique_hash_map<typename GMap::Dart_const_descriptor,
+        typename GMap::Dart_const_descriptor,
         typename GMap::Hash_function> bijection;
 
     typename GMap::size_type m1 = amap.get_new_mark();

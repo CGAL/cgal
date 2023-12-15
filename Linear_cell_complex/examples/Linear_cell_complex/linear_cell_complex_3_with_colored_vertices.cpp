@@ -25,11 +25,11 @@ struct Myitem
 typedef CGAL::Linear_cell_complex_traits
 <3, CGAL::Exact_predicates_inexact_constructions_kernel> Traits;
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,Traits,Myitem> LCC_3;
-typedef LCC_3::Dart_handle                               Dart_handle;
-typedef LCC_3::Point                                     Point;
-typedef LCC_3::FT                                        FT;
+typedef LCC_3::Dart_descriptor Dart_descriptor;
+typedef LCC_3::Point           Point;
+typedef LCC_3::FT              FT;
 
-Dart_handle make_iso_cuboid(LCC_3& lcc, const Point& basepoint, FT lg)
+Dart_descriptor make_iso_cuboid(LCC_3& lcc, const Point& basepoint, FT lg)
 {
   return lcc.make_hexahedron(basepoint,
                              Traits::Construct_translated_point()
@@ -53,8 +53,8 @@ int main()
   LCC_3 lcc;
 
   // Create two iso_cuboids.
-  Dart_handle d1 = make_iso_cuboid(lcc, Point(-2, 0, 0), 1);
-  Dart_handle d2 = make_iso_cuboid(lcc, Point(0, 0, 0), 1);
+  Dart_descriptor d1 = make_iso_cuboid(lcc, Point(-2, 0, 0), 1);
+  Dart_descriptor d2 = make_iso_cuboid(lcc, Point(0, 0, 0), 1);
 
   // Set the "color" of all vertices of the first cube to 1.
   for (LCC_3::One_dart_per_incident_cell_range<0, 3>::iterator
@@ -72,7 +72,7 @@ int main()
   lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
 
   // Barycentric triangulation of the facet between the two cubes.
-  Dart_handle d3=lcc.insert_barycenter_in_cell<2>(lcc.beta(d2, 2));
+  Dart_descriptor d3=lcc.insert_barycenter_in_cell<2>(lcc.beta(d2, 2));
 
   // Set the color of the new vertex to 5.
   lcc.info<0>(d3)=5;

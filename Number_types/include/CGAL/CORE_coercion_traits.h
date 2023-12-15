@@ -138,7 +138,7 @@ template <> struct Coercion_traits< ::CORE::Expr, CORE::BigFloat >
 
 
 
-// not provieded by CORE
+// not provided by CORE
 // Note that this is not symmetric to LEDA
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::BigInt)
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::CORE::BigRat)

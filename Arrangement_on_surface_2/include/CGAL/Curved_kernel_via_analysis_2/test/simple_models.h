@@ -472,7 +472,7 @@ public:
     }
 
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     Status_line_CA_1(Rep rep) :
         Base(rep) {
@@ -630,7 +630,7 @@ public:
     }
 
     /*!\brief
-     * constructsa curve analysis from a given represenation
+     * constructs a curve analysis from a given representation
      */
     Curve_analysis_2(Rep rep) :
         Base(rep) {
@@ -776,7 +776,7 @@ public:
     }
 
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     Status_line_CPA_1(Rep rep) :
         Base(rep) {

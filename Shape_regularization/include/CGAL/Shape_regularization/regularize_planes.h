@@ -28,7 +28,7 @@
 // Boost includes.
 /// \cond SKIP_IN_MANUAL
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 /// \endcond
 
 // Shape detection includes.
@@ -282,23 +282,23 @@ namespace Planes {
   typename PlaneMap,
   typename PointRange,
   typename PointMap,
-  typename NamedParameters>
+  typename NamedParameters = parameters::Default_named_parameters>
   void regularize_planes(
     PlaneRange& planes,
     const PlaneMap plane_map,
     const PointRange& points,
     const PointMap point_map,
-    const NamedParameters& np) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using parameters::get_parameter;
     using parameters::choose_parameter;
-    using PlaneIndexMap = typename CGAL::Point_set_processing_3::
-      GetPlaneIndexMap<NamedParameters>::type;
+    using parameters::is_default_parameter;
 
-    CGAL_static_assertion_msg(
-      !(boost::is_same<PlaneIndexMap,
-      typename CGAL::Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
-      "Error: no index map found!");
+    using PlaneIndexMap = typename CGAL::Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type;
+
+    static_assert(!is_default_parameter<NamedParameters, internal_np::plane_index_t>::value,
+                              "Error: no plane index map");
+
     const PlaneIndexMap index_map =
       choose_parameter(get_parameter(np, internal_np::plane_index_map), PlaneIndexMap());
 
@@ -336,21 +336,6 @@ namespace Planes {
       points, point_map, planes, plane_map, index_map, kernel,
       reg_prll, reg_orth, reg_copl, reg_symm,
       tol_angle, tol_copln, sym_dir);
-  }
-
-  template<
-  typename PlaneRange,
-  typename PlaneMap,
-  typename PointRange,
-  typename PointMap>
-  void regularize_planes(
-    PlaneRange& planes,
-    const PlaneMap plane_map,
-    const PointRange& points,
-    const PointMap point_map) {
-
-    regularize_planes(
-      planes, plane_map, points, point_map, CGAL::parameters::all_default());
   }
   /// \endcond
 
@@ -391,9 +376,7 @@ namespace Planes {
     for more details
 
     \param np
-    an optional sequence of \ref bgl_namedparameters "Named Parameters"
-    among the ones listed below; this parameter can be omitted,
-    the default values are then used
+    a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{plane_map}
@@ -411,7 +394,7 @@ namespace Planes {
           in the `points` range to the index of a plane in the `planes` range (-1 if
           point is not assigned to a plane)}
         \cgalParamType{a model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
-        \cgalParamDefault{`PlaneIndexMap()`}
+        \cgalParamDefault{There is no default, this parameters is mandatory}
       \cgalParamNEnd
       \cgalParamNBegin{maximum_angle}
         \cgalParamDescription{maximum allowed angle in degrees between plane normals used
@@ -476,18 +459,6 @@ namespace Planes {
 
     regularize_planes(planes, plane_map, points, point_map, np);
   }
-
-  /// \cond SKIP_IN_MANUAL
-  template<
-  typename PlaneRange,
-  typename PointRange>
-  void regularize_planes(
-    PlaneRange& planes, const PointRange& points) {
-
-    regularize_planes(
-      planes, points, CGAL::parameters::all_default());
-  }
-  /// \endcond
 
 } // namespace Planes
 } // namespace Shape_regularization

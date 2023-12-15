@@ -8,6 +8,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Envelope_diagram_1.h>
 #include <CGAL/envelope_2.h>
+#include <cassert>
 
 typedef CGAL::Exact_rational                          Number_type;
 typedef CGAL::Cartesian<Number_type>                  Kernel;
@@ -42,7 +43,7 @@ void print_diagram (const Diagram_1& diag)
 
     e = v->right();
   }
-  CGAL_assertion (e->is_empty());
+  assert(e->is_empty());
   std::cout << "Edge: [empty]" << std::endl;
 
   return;

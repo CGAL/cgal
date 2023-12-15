@@ -3,7 +3,7 @@
 \ingroup PkgSegmentDelaunayGraph2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDSVertexBase_2`
+\cgalRefines{TriangulationDSVertexBase_2}
 
 The concept `SegmentDelaunayGraphVertexBase_2` describes the
 requirements for the vertex base class of the
@@ -11,7 +11,9 @@ requirements for the vertex base class of the
 site of the segment Delaunay graph and provides access to one of its
 incident faces through a `Face_handle`.
 
-\cgalHasModel `CGAL::Segment_Delaunay_graph_vertex_base_2<St>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Segment_Delaunay_graph_vertex_base_2<St>}
+\cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphTraits_2`
 \sa `SegmentDelaunayGraphSite_2`

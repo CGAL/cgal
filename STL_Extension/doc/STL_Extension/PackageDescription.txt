@@ -41,10 +41,8 @@
 - `CGAL::Multiset<Type,Compare,Allocator>`
 
 \cgalCRPSection{Generic Algorithms}
-- `CGAL::copy_n`
 - `CGAL::min_max_element`
-- `CGAL::predecessor`
-- `CGAL::successor`
+- `CGAL::cpp98::random_shuffle`
 
 \cgalCRPSection{Iterators and Iterator/Circulator Adaptors}
 - `CGAL::Dispatch_output_iterator<V,O>`
@@ -117,6 +115,8 @@
 - `CGAL::Fast_location`
 - `CGAL::Compact_location`
 - `CGAL::value_type_traits<T>`
+- `CGAL::parameters::Default_named_parameters`
+- `CGAL::parameters::default_values()`
 
 */
 

@@ -637,7 +637,7 @@ add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc)
 #endif
   }
 
-  // Update the last event with the inserted halfegde (if necessary)
+  // Update the last event with the inserted halfedge (if necessary)
   // and check if we have to update the auxiliary information on the location
   // of holes.
   if ((last_event->number_of_left_curves() == 0) &&
@@ -747,7 +747,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
 #endif
 
   // Use the helper class to determine whether the order of predecessor
-  // halfedges should be swaped, to that the edge directed from prev1->target()
+  // halfedges should be swapped, to that the edge directed from prev1->target()
   // to prev2->target() is incident to the new face (in case a new face is
   // created).
   Halfedge_handle res;

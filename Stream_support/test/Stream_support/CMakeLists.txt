@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Stream_support_Tests)
 find_package(CGAL REQUIRED)
 find_path(
@@ -27,10 +27,7 @@ foreach(cppfile ${cppfiles})
       create_single_source_cgal_program("${cppfile}")
       target_link_libraries(test_3mf_to_sm PRIVATE ${3MF_LIBRARIES})
     else()
-      message(
-        STATUS
-          "NOTICE : This program requires the lib3MF library, and will not be compiled."
-      )
+      message(STATUS "NOTICE: Some tests require the lib3MF library, and will not be compiled.")
     endif()
   else()
     create_single_source_cgal_program("${cppfile}")

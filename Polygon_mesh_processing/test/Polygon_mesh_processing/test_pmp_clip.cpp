@@ -12,7 +12,7 @@
 #include <sstream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
@@ -63,7 +63,7 @@ void test()
               params::throw_on_self_intersection(true),
               params::do_not_modify(true));
     std::vector<TriangleMesh> meshes;
-    PMP::split_connected_components(tm1, meshes, params::all_default());
+    PMP::split_connected_components(tm1, meshes, params::default_values());
     assert(meshes.size() == 2);
     //if the order is not deterministc, put the num_vertices in a list and check
     //if the list does contain all those numbers.
@@ -576,7 +576,7 @@ void test_split_plane()
   PMP::split(tm1,K::Plane_3(0,0,1,0));
 
   std::vector<Mesh> meshes;
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -600,7 +600,7 @@ void test_split_plane()
   input.close();
 
   PMP::split(tm1,K::Plane_3(0,0,1,-1));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 281);
 
   CGAL::clear(tm1);
@@ -619,7 +619,7 @@ void test_split_plane()
   input.close();
 
   PMP::split(tm1,K::Plane_3(0,-1,0,0.3));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 2);
 
   CGAL::clear(tm1);
@@ -637,7 +637,7 @@ void test_split_plane()
   PMP::split(tm1, K::Plane_3(0,0,1,-0.5),
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -687,7 +687,7 @@ void test_split()
   TriangleMesh, CGAL::dynamic_face_property_t<faces_size_type> >::type
       pidmap = get(CGAL::dynamic_face_property_t<faces_size_type>(), tm1);
   CGAL::Polygon_mesh_processing::connected_components(
-        tm1, pidmap, CGAL::parameters::all_default());
+        tm1, pidmap, CGAL::parameters::default_values());
   PMP::split_connected_components(tm1,
                                   meshes,
                                   params::face_patch_map(pidmap));
@@ -734,7 +734,7 @@ void test_split()
   PMP::split(tm1, tm2);
   PMP::split_connected_components(tm1,
                                   meshes,
-                                  params::all_default());
+                                  params::default_values());
 
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
@@ -761,7 +761,7 @@ void test_split()
   PMP::split(tm1, tm2,
              params::throw_on_self_intersection(true),
              params::do_not_modify(true));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -829,7 +829,7 @@ void test_isocuboid()
   PMP::split(tm, splitter,
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm, meshes, params::all_default());
+  PMP::split_connected_components(tm, meshes, params::default_values());
   assert(meshes.size() == 4);
 
   std::set<std::size_t> sizes;
@@ -848,7 +848,7 @@ void test_isocuboid()
   PMP::clip(tm, splitter,
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm, meshes, params::all_default());
+  PMP::split_connected_components(tm, meshes, params::default_values());
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.

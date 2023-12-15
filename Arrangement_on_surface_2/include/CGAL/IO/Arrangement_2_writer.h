@@ -63,7 +63,7 @@ namespace CGAL {
     typedef std::map<const DVertex*, int>                 Vertex_index_map;
     typedef std::map<const DHalfedge*, int>               Halfedge_index_map;
 
-    // Data memebrs:
+    // Data members:
     const Arrangement_2&   m_arr;
     const Dcel*            m_dcel;
     int                    m_curr_v;
@@ -307,7 +307,7 @@ namespace CGAL {
       return (pos->second);
     }
 
-    /*! Get the mapped index of a given halfegde. */
+    /*! Get the mapped index of a given halfedge. */
     int _index(const DHalfedge* he) const
     {
       typename Halfedge_index_map::const_iterator  pos = m_he_index.find(he);

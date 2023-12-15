@@ -73,7 +73,7 @@ seems that the points are collinear, or perform a right turn.
 
 If you must ensure that your numbers get interpreted at their full precision
 you can use a \cgal kernel that performs exact predicates and
-extract constructions.
+exact constructions.
 
 \cgalExample{Kernel_23/exact.cpp}
 
@@ -241,8 +241,8 @@ ch_graham_andrew( InputIterator  first,
 There are two obvious questions: What can be used as argument for
 this template parameter? And why do we have template parameters at all?
 
-To answer the first question, any model of the \cgal concept `Kernel` provides
-what is required by the concept `ConvexHullTraits_2`.
+To answer the first question, any \em model of the \cgal \em concept `Kernel`
+provides what is required by the concept `ConvexHullTraits_2`.
 
 As for the second question, think about an application where we want to
 compute the convex hull of 3D points projected into the `yz` plane. Using
@@ -265,8 +265,8 @@ given by a direction, which is hardwired in the class
 
 \section intro_concept Concepts and Models
 
-In the previous section, we wrote that "Any model of the CGAL concept
-Kernel provides what is required by the concept `ConvexHullTraits_2`.
+In the previous section, we wrote that: any \em model of the \cgal \em concept
+`Kernel` provides what is required by the concept `ConvexHullTraits_2`.
 
 A \em concept is a set of requirements on a type, namely that it has
 certain nested types, certain member functions, or comes with certain
@@ -287,7 +287,7 @@ duplicate(T t)
 If you want to instantiate this function with a class `C`, this
 class must at least provide a copy constructor, and we
 say that class `C` must be a model of `CopyConstructible`.
-A singleton class does not fulfill this requirment.
+A singleton class does not fulfill this requirement.
 
 Another example is the function:
 

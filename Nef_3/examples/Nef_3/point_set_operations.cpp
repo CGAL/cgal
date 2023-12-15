@@ -1,6 +1,7 @@
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
+#include <cassert>
 
 typedef CGAL::Extended_homogeneous<CGAL::Exact_integer>  Kernel;
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
@@ -22,11 +23,11 @@ int main() {
   Cube1 *= !I3;
   Nef_polyhedron Cube2 = N1 * N2 * N3 * N4 * N5 * N6;
 
-  CGAL_assertion(Cube1 == Cube2);  // both are closed cube
-  CGAL_assertion(Cube1 == Cube1.closure());
-  CGAL_assertion(Cube1 == Cube1.regularization());
-  CGAL_assertion((N1 - N1.boundary()) == N1.interior());
-  CGAL_assertion(I1.closure() == I1.complement().interior().complement());
-  CGAL_assertion(I1.regularization() == I1.interior().closure());
+  assert(Cube1 == Cube2);  // both are closed cube
+  assert(Cube1 == Cube1.closure());
+  assert(Cube1 == Cube1.regularization());
+  assert((N1 - N1.boundary()) == N1.interior());
+  assert(I1.closure() == I1.complement().interior().complement());
+  assert(I1.regularization() == I1.interior().closure());
   return 0;
 }

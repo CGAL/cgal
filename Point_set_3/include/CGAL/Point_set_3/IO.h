@@ -24,11 +24,6 @@
 #include <fstream>
 #include <string>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
 template <typename Point, typename Vector>
@@ -123,10 +118,10 @@ namespace IO {
 
   \return `true` if the reading was successful, `false` otherwise.
  */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_point_set(const std::string& fname,
                     CGAL::Point_set_3<Point, Vector>& ps,
-                    const CGAL_BGL_NP_CLASS& np)
+                    const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const std::string ext = internal::get_file_extension(fname);
 
@@ -143,15 +138,6 @@ bool read_point_set(const std::string& fname,
 
   return false;
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& ps)
-{
-  return read_point_set(fname, ps, parameters::all_default());
-}
-/// \endcond
 
 } // namespace IO
 
@@ -175,6 +161,8 @@ bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& 
   \param ps the point set
 
   \return `os`
+
+  \relates Point_set_3
 */
 template <typename Point, typename Vector>
 std::ostream& operator<<(std::ostream& os,
@@ -225,10 +213,10 @@ namespace IO {
 
   \return `true` if the writing was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_point_set(const std::string& fname,
                      CGAL::Point_set_3<Point, Vector>& ps,
-                     const CGAL_BGL_NP_CLASS& np)
+                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const std::string ext = internal::get_file_extension(fname);
 
@@ -245,16 +233,6 @@ bool write_point_set(const std::string& fname,
 
   return false;
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& ps)
-{
-  return write_point_set(fname, ps, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 

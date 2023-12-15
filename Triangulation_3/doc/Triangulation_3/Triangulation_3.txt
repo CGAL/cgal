@@ -543,7 +543,7 @@ be hidden and do not result in vertices in the triangulation.
 \subsubsection Triangulation_3RegularTriangulationInfo Regular Triangulation with Custom Vertex
 
 This example shows that one must use the class `Regular_triangulation_vertex_base_3` as vertex base class,
-if one has to specifiy the template parameter.
+if one has to specify the template parameter.
 
 \cgalExample{Triangulation_3/regular_with_info_3.cpp}
 
@@ -569,8 +569,8 @@ A 3D triangulation can be visualized by calling the \link PkgDrawTriangulation3 
 
 \cgalExample{Triangulation_3/draw_triangulation_3.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_triangulation_3,draw_triangulation_3.png}
 Result of the run of the draw_triangulation_3 program. A window shows the 3D triangulation and allows to navigate through the 3D scene.
@@ -841,7 +841,7 @@ system when clearing or destroying the triangulation. This can be important
 for algorithms like simplifications of data sets which will produce fragmented
 memory usage (doing fresh copies of the data structures are one way out in such
 cases). The asymptotic memory overhead of `Compact_container` for its
-internal bookkeeping is otherwise on the order of \f$ O(\sqrt{n})\f$.
+internal bookkeeping is otherwise on the order of \cgalBigO{\sqrt{n}}.
 
 \cgalFigureRef{Triangulation3figmemory} shows the number of bytes used per
 points, as measured empirically using `Memory_sizer` for large triangulations

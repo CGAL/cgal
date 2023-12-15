@@ -129,7 +129,7 @@ int main()
   fct<Arrangement_2, boost::graph_traits<Arrangement_2>::vertex_descriptor>(A);
   fct<Arrangement_2, boost::graph_traits<Arrangement_2>::edge_descriptor>(A);
 
-  Kernel::Point_3 p3;
+  Kernel::Point_3 p3(CGAL::ORIGIN);
   Polyhedron P;
   CGAL::make_triangle(p3,p3,p3,P);
   fct4(P);
@@ -155,5 +155,3 @@ int main()
 
   return 0;
 }
-
-

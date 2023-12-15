@@ -195,6 +195,11 @@ make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
           typename boost::graph_traits<Graph>::vertex_descriptor v3,
           Graph& g)
 {
+  CGAL_precondition(is_valid_vertex_descriptor(v0, g) &&
+                    is_valid_vertex_descriptor(v1, g) &&
+                    is_valid_vertex_descriptor(v2, g) &&
+                    is_valid_vertex_descriptor(v3, g));
+
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
   halfedge_descriptor h0 = halfedge(add_edge(g), g);

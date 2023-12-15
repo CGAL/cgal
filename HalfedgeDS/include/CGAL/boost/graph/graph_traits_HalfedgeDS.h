@@ -15,12 +15,11 @@
 #include <functional>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/type_traits/remove_const.hpp>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -155,7 +154,8 @@ struct HDS_graph_traits
 private:
   struct HDS_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                         public virtual boost::vertex_list_graph_tag,
-                                        public virtual boost::edge_list_graph_tag
+                                        public virtual boost::edge_list_graph_tag,
+                                        public virtual boost::adjacency_graph_tag
   {};
 
 public:
@@ -178,6 +178,8 @@ public:
   typedef Out_edge_iterator<HDS> out_edge_iterator;
 
   typedef In_edge_iterator<HDS> in_edge_iterator;
+
+  typedef Vertex_around_target_iterator<HDS> adjacency_iterator;
 
   typedef boost::undirected_tag             directed_category;
   typedef boost::disallow_parallel_edge_tag edge_parallel_category;

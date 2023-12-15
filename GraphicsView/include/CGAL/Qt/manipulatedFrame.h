@@ -308,7 +308,7 @@ protected:
                                     const Camera *const camera);
 
   MouseAction action_;
-  Constraint *previousConstraint_; // When manipulation is without Contraint.
+  Constraint *previousConstraint_; // When manipulation is without Constraint.
 
   virtual void startAction(
       int ma,

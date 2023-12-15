@@ -7,4 +7,5 @@
 \example Convex_hull_3/quickhull_any_dim_3.cpp
 \example Convex_hull_3/extreme_points_3_sm.cpp
 \example Convex_hull_3/extreme_indices_3.cpp
+\example Convex_hull_3/quickhull_indexed_triangle_set_3.cpp
 */

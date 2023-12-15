@@ -20,7 +20,7 @@
 #include <CGAL/Point_set_processing_3/internal/Voronoi_covariance_3/voronoi_covariance_3.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_3.h>
@@ -29,7 +29,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Default_diagonalize_traits.h>
@@ -257,23 +257,24 @@ vcm_convolve (ForwardIterator first,
 
 */
 template <typename PointRange,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 void
 compute_vcm (const PointRange& points,
              std::vector< std::array<double, 6> > &ccov,
              double offset_radius,
              double convolution_radius,
-             const NamedParameters& np)
+             const NamedParameters& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
     // basic geometric types
-    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Const_point_map PointMap;
+    typedef typename NP_helper::Geom_traits Kernel;
 
-    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-    Kernel kernel;
+    PointMap point_map = NP_helper::get_const_point_map(points, np);
+    Kernel kernel = NP_helper::get_geom_traits(points, np);
 
     // First, compute the VCM for each point
     std::vector< std::array<double, 6> > cov;
@@ -299,21 +300,6 @@ compute_vcm (const PointRange& points,
 }
 
 /// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-void
-compute_vcm (const PointRange& points,
-             std::vector< std::array<double, 6> > &ccov,
-             double offset_radius,
-             double convolution_radius)
-{
-  compute_vcm (points, ccov, offset_radius, convolution_radius,
-               CGAL::Point_set_processing_3::parameters::all_default (points));
-}
-
-/// \endcond
-
-/// \cond SKIP_IN_MANUAL
 template <typename PointRange,
           typename NamedParameters
 >
@@ -329,17 +315,16 @@ vcm_estimate_normals_internal (PointRange& points,
     using parameters::get_parameter;
 
     // basic geometric types
-    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
-    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Point_map PointMap;
+    typedef typename NP_helper::Normal_map NormalMap;
+    typedef typename NP_helper::Geom_traits Kernel;
     typedef typename GetDiagonalizeTraits<NamedParameters, double, 3>::type DiagonalizeTraits;
 
-    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
-                              "Error: no normal map");
+    CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
 
-    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+    PointMap point_map = NP_helper::get_point_map(points, np);
+    NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
     typedef std::array<double, 6> Covariance;
 
@@ -439,33 +424,17 @@ vcm_estimate_normals_internal (PointRange& points,
    \cgalNamedParamsEnd
 */
 template <typename PointRange,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 void
 vcm_estimate_normals (PointRange& points,
                       double offset_radius,
                       double convolution_radius,
-                      const NamedParameters& np
+                      const NamedParameters& np = parameters::default_values()
 )
 {
   vcm_estimate_normals_internal(points, offset_radius, convolution_radius, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-void
-vcm_estimate_normals (PointRange& points,
-                      double offset_radius, ///< offset radius.
-                      double convolution_radius) ///< convolution radius.
-{
-  return vcm_estimate_normals
-    (points, offset_radius, convolution_radius,
-     CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-
-/// \endcond
-
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
@@ -514,33 +483,17 @@ vcm_estimate_normals (PointRange& points,
    \cgalNamedParamsEnd
 */
 template < typename PointRange,
-           typename NamedParameters
+           typename NamedParameters = parameters::Default_named_parameters
 >
 void
 vcm_estimate_normals (PointRange& points,
                       double offset_radius,
                       unsigned int k,
-                      const NamedParameters& np
+                      const NamedParameters& np = parameters::default_values()
 )
 {
   vcm_estimate_normals_internal(points, offset_radius, 0, np, k);
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-void
-vcm_estimate_normals (PointRange& points,
-                      double offset_radius, ///< offset radius.
-                      unsigned int k)
-{
-  return vcm_estimate_normals
-    (points, offset_radius, k,
-     CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-
-
-/// \endcond
 
 } // namespace CGAL
 

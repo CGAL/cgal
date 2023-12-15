@@ -19,6 +19,7 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <unordered_map>
+#include <set>
 #include <stack>
 
 namespace CGAL{

@@ -5,6 +5,7 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <vector>
+#include <cassert>
 
 const int N = 1000;                       // number of spheres
 const int LOW = 0, HIGH = 10000;          // range of coordinates and radii
@@ -30,5 +31,5 @@ int main () {
   }
 
   Min_sphere ms(S.begin(),S.end());       // check in the spheres
-  CGAL_assertion(ms.is_valid());
+  assert(ms.is_valid());
 }

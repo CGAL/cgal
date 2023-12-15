@@ -6,73 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>392</width>
-    <height>249</height>
+    <width>361</width>
+    <height>286</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Simplification</string>
   </property>
   <layout class="QGridLayout" columnstretch="0,1" columnminimumwidth="0,1">
-   <item row="2" column="0">
-    <widget class="QRadioButton" name="Random">
+   <item row="9" column="1">
+    <widget class="DoubleEdit" name="m_maximumSurfaceVariation">
      <property name="text">
-      <string>Random</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="QSpinBox" name="m_maximumClusterSize">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>2147483647</number>
-     </property>
-     <property name="value">
-      <number>10</number>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Grid Cell Size</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QDoubleSpinBox" name="m_randomSimplificationPercentage">
-     <property name="suffix">
-      <string> %</string>
-     </property>
-     <property name="decimals">
-      <number>2</number>
-     </property>
-     <property name="minimum">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="maximum">
-      <double>100.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="value">
-      <double>50.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Maximum Surface Variation</string>
+      <string>0.333333</string>
      </property>
     </widget>
    </item>
@@ -101,7 +46,48 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0">
+   <item row="4" column="0">
+    <widget class="QRadioButton" name="Grid">
+     <property name="text">
+      <string>Grid</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QRadioButton" name="Random">
+     <property name="text">
+      <string>Random</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Grid Cell Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QRadioButton" name="Hierarchy">
+     <property name="text">
+      <string>Hierarchy</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -114,10 +100,33 @@
      </property>
     </spacer>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
       <string>Maximum Cluster Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QSpinBox" name="m_maximumClusterSize">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>2147483647</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Maximum Surface Variation</string>
      </property>
     </widget>
    </item>
@@ -128,34 +137,45 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QRadioButton" name="Grid">
-     <property name="text">
-      <string>Grid</string>
+   <item row="3" column="1">
+    <widget class="QDoubleSpinBox" name="m_randomSimplificationPercentage">
+     <property name="suffix">
+      <string> %</string>
+     </property>
+     <property name="decimals">
+      <number>2</number>
+     </property>
+     <property name="minimum">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>100.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>50.000000000000000</double>
      </property>
     </widget>
    </item>
    <item row="6" column="0">
-    <widget class="QRadioButton" name="Hierarchy">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>Hierarchy</string>
+      <string>Minimum points per cell</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="6" column="1">
+    <widget class="QSpinBox" name="m_minPointsPerCell">
+     <property name="enabled">
+      <bool>false</bool>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="minimum">
+      <number>1</number>
      </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="DoubleEdit" name="m_maximumSurfaceVariation">
-     <property name="text">
-      <string>0.333333</string>
+     <property name="maximum">
+      <number>400000000</number>
      </property>
     </widget>
    </item>

@@ -90,7 +90,7 @@ Build_tetrahedron<HDS>:: operator()( HDS& target) {
 
 // A polyhedron modifier that creates a tetrahedron using the
 // incremental builder, but in two steps with a second incr. builder
-// continueing what the first one started.
+// continuing what the first one started.
 template < class HDS >
 class Build_tetrahedron_2 : public CGAL::Modifier_base<HDS> {
 public:
@@ -221,7 +221,7 @@ typename Poly::Halfedge_handle make_cube_3( Poly& P) {
     Halfedge_handle e = P.split_edge( f);
     e->vertex()->point() = Point( 1, 1, 1);                        // Fig. (e)
     P.split_facet( e, f->next()->next());                          // Fig. (f)
-    CGAL_postcondition( P.is_valid());
+    assert( P.is_valid());
     return h;
 }
 

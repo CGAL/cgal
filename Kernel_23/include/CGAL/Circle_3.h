@@ -23,7 +23,6 @@
 #define CGAL_CIRCLE_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/representation_tags.h>
@@ -44,7 +43,7 @@ template <class R_>
   typedef typename R_::Direction_3           Direction_3;
 
   typedef Circle_3                           Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Circle_3>::value));
+  static_assert(std::is_same<Self, typename R_::Circle_3>::value);
 
 public:
 

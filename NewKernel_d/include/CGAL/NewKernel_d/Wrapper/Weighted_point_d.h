@@ -16,7 +16,6 @@
 #include <ostream>
 #include <CGAL/IO/io.h>
 #include <CGAL/representation_tags.h>
-#include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
@@ -35,7 +34,7 @@ class Weighted_point_d : public Get_type<typename R_::Kernel_base, Weighted_poin
   typedef typename Get_functor<Kbase, Point_weight_tag>::type                        PWBase;
 
   typedef Weighted_point_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Weighted_point_tag>::type>::value));
+  BOOST_STATIC_ASSERT((std::is_same<Self, typename Get_type<R_, Weighted_point_tag>::type>::value));
 
 public:
 
@@ -57,7 +56,7 @@ public:
 
   typedef          R_                       R;
 
-  template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Weighted_point_d> >::value>::type> explicit Weighted_point_d(U&&...u)
+  template<class...U,class=std::enable_if_t<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Weighted_point_d> >::value>> explicit Weighted_point_d(U&&...u)
           : Rep(CWPBase()(std::forward<U>(u)...)){}
 
 //  // called from Construct_point_d

@@ -21,7 +21,7 @@
  * A counting traits-class for the arrangement package.
  * This is a meta-traits class. It is parameterized with another traits class
  * and inherits from it. For each traits method it maintains a counter that
- * counts the number of invokations into the method.
+ * counts the number of invocations into the method.
  */
 
 #include <iostream>
@@ -85,18 +85,17 @@ public:
   typedef Arr_counting_traits_2<Base>           Self;
 
   /*! Construct default */
-  Arr_counting_traits_2() : Base()
+  template<typename ... Args>
+  Arr_counting_traits_2(Args ... args) :
+    Base(args...)
   {
     clear_counters();
     increment();
   }
 
-  /*! Construct copy */
-  Arr_counting_traits_2(const Arr_counting_traits_2& other) : Base(other)
-  {
-    clear_counters();
-    increment();
-  }
+  /*! Disable copy constructor.
+   */
+  Arr_counting_traits_2(const Arr_counting_traits_2&) = delete;
 
   /*! Obtain the counter of the given operation */
   size_t count(Operation_id id) const

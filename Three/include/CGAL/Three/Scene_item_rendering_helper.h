@@ -41,7 +41,7 @@ struct Point_container;
 //! be rendered.
 //!
 class DEMO_FRAMEWORK_EXPORT Scene_item_rendering_helper
-    :public Scene_item
+  : public Scene_item
 {
   Q_OBJECT
 public:
@@ -51,7 +51,7 @@ public:
   //!
   //! \brief The `Gl_data_name` enum is used as a flag to specify what should be
   //! re-computed during `computeElements()`. The flag corresponding to this enum is
-  //! `Gl_data_names`, and multiple flags can be combined whith the operator `|`.
+  //! `Gl_data_names`, and multiple flags can be combined with the operator `|`.
   //! For instance, you can use `GEOMETRY|COLORS` as a single value.
   //! @todo Review Laurent Rineau We need to find a better name. 1. Do not refer to OpenGL. 2. Why "name"?
   //!
@@ -69,7 +69,7 @@ public:
 #endif
   Q_DECLARE_FLAGS(Gl_data_names, Gl_data_name)
 
-  QMenu* contextMenu() Q_DECL_OVERRIDE;
+  QMenu* contextMenu() override;
 
   /*!
      * \brief processData calls `computeElements()`
@@ -86,13 +86,13 @@ public:
   //! It must be between 0 and 255.
   //! \param alpha the integer value for the alpha channel.
   //!
-  void setAlpha(int alpha) Q_DECL_OVERRIDE;
+  void setAlpha(int alpha) override;
   //! \brief The item's bounding box.
   //!
   //! If the Bbox has never been computed, computes it and
   //! saves the result for further calls.
   //! @returns the item's bounding box.
-  Scene_item::Bbox bbox()const Q_DECL_OVERRIDE;
+  Scene_item::Bbox bbox()const override;
   //!
   //! \brief getTriangleContainer returns the `id`th `Triangle_container`.
   //!
@@ -100,11 +100,11 @@ public:
   //!
   //! \brief getEdgeContainer returns the `id`th `Edge_container`.
   //!
-  CGAL::Three::Edge_container* getEdgeContainer(std::size_t id)const;
+  CGAL::Three::Edge_container* getEdgeContainer(std::size_t id) const;
   //!
   //! \brief getPointContainer returns the `id`th `Point_container`.
   //!
-  CGAL::Three::Point_container* getPointContainer(std::size_t id)const;
+  CGAL::Three::Point_container* getPointContainer(std::size_t id) const;
 
   //!
   //! \brief setTriangleContainer sets the `id`th `Triangle_container` to `tc`.
@@ -134,7 +134,7 @@ public:
   //! decreasingly.
   //!
   void setPointContainer(std::size_t id,
-                        Point_container* tc);
+                         Point_container* tc);
 
   //!
   //! \brief setBuffersFilled specifies if the data should be re-computed.
@@ -149,13 +149,13 @@ public:
   //! \brief getBuffersFilled returns `false` if the item rendering data needs to be re-computed.,
   //! `true` otherwise.
   //! \see `setBuffersFilled()`
-  bool getBuffersFilled()const;
+  bool getBuffersFilled() const;
 
   //!
   //! \brief getBuffersInit returns true if the `Vao`s of `viewer` are ready
   //! for rendering.
   //!
-  bool getBuffersInit(Viewer_interface *viewer)const;
+  bool getBuffersInit(Viewer_interface *viewer) const;
 
   //!
   //! \brief setBuffersInit specifies if the `Vbo`s need to be initialized.
@@ -174,15 +174,15 @@ public:
   //! saves the result for further calls.
   //! @returns the item's bounding box's diagonal length.
   //! @todo must replace the one from Scene_item eventually
-  virtual double diagonalBbox() const Q_DECL_OVERRIDE;
+  virtual double bboxDiagonal() const override;
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //! \param viewer the new viewer.
   //!
-  void newViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
+  void newViewer(Viewer_interface *viewer) override;
   //! \brief removeViewer removes the Vaos for `viewer`.
   //! \param viewer the viewer to be removed.
-  void removeViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
+  void removeViewer(Viewer_interface *viewer) override;
 protected:
 
 
@@ -190,29 +190,30 @@ protected:
   QSlider* alphaSlider();
 
   //!Returns`true` if `initGL()` was called for `viewer`.
-  bool isInit(CGAL::Three::Viewer_interface* viewer)const;
+  bool isInit(CGAL::Three::Viewer_interface* viewer) const;
 
   //!Returns the float alpha value of an item.
   //! This value is between 0.0f and 1.0f.
-  float alpha() const Q_DECL_OVERRIDE;
+  float alpha() const override;
 
   /*! Fills the `Vbo`s with data.
      */
-  virtual void initializeBuffers(Viewer_interface*)const{}
+  virtual void initializeBuffers(Viewer_interface*) const {}
 
   //!Creates the VAOs and VBOs for viewer.
   virtual void initGL(CGAL::Three::Viewer_interface* viewer) const;
   //!
   //! Computes the items Bbox and stores the result. Must be overridden.
   //!@todo must replace the one from Scene_item eventually.
-  virtual void compute_bbox() const Q_DECL_OVERRIDE = 0;
+  virtual void compute_bbox() const override = 0;
   //!
   //! \brief setBbox allows to set the Bbox in compute_bbox();
   //! \param b
   //!
-  void setBbox(Bbox b)const ;
+  void setBbox(Bbox b) const;
 
-  virtual void computeElements()const{}
+  virtual void computeElements() const {}
+
 protected:
   friend struct PRIV;
   mutable PRIV* priv;

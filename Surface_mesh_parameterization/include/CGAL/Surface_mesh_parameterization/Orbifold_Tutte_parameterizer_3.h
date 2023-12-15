@@ -26,7 +26,6 @@
 #include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/assertions.h>
 
-#include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Default.h>
 #include <CGAL/Timer.h>
@@ -34,23 +33,22 @@
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
-#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+#ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
 #include <Eigen/UmfPackSupport>
 #endif
 #endif
 
-#include <boost/array.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <utility>
+#include <type_traits>
 
 /// \file Orbifold_Tutte_parameterizer_3.h
 
@@ -65,8 +63,8 @@ namespace Surface_mesh_parameterization {
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// reads a serie of cones from an input stream. Cones are passed as an
-/// integer value that is the index of a vertex handle in the mesh tm`, using
+/// reads a series of cones from an input stream. Cones are passed as an
+/// integer value that is the index of a vertex handle in the mesh `tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
 /// \attention The mesh is here `tm`, it is the base mesh of the `CGAL::Seam_mesh`
@@ -152,7 +150,7 @@ Error_code read_cones(const TriangleMesh& tm, std::ifstream& in, ConeOutputItera
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor TM_vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator   TM_vertex_iterator;
 
-  boost::unordered_map<TM_vertex_descriptor, int> m;
+  std::unordered_map<TM_vertex_descriptor, int> m;
   int counter = 0;
 
   TM_vertex_iterator vit, end;
@@ -369,7 +367,7 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 ///   CGAL::Eigen_solver_traits<
 ///           Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
 /// \endcode
-///         Moreover, if SparseSuite solvers are available, which is greatly preferable for speed,
+///         Moreover, if SuiteSparse solvers are available, which is greatly preferable for speed,
 ///         then the default parameter is:
 /// \code
 ///   CGAL::Eigen_solver_traits<
@@ -385,14 +383,14 @@ class Orbifold_Tutte_parameterizer_3
 public:
 #ifndef DOXYGEN_RUNNING
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+  static_assert(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
-    #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+    #ifdef CGAL_SMP_USE_SUITESPARSE_SOLVERS
       CGAL::Eigen_solver_traits<
         Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
     #else
@@ -502,7 +500,7 @@ private:
     // ( L A' ) ( Xf ) = ( C )
     // ( A 0  ) ( Xf ) = ( 0 )
 
-    // Iterate on both rows ot the 2x2 matrix T
+    // Iterate on both rows of the 2x2 matrix T
     for(int vert_ind=0; vert_ind<2; ++vert_ind) {
       // building up the equations by summing up the terms
 
@@ -840,7 +838,7 @@ private:
     const int big_n = M.row_dimension();
     const std::size_t n = 2 * num_vertices(mesh);
 
-    NT D;
+    double D;
     Vector Xf(big_n);
 
     CGAL::Timer task_timer;
@@ -892,8 +890,8 @@ public:
   /// \param cmap a mapping of the `vertex_descriptor`s of `mesh` that are cones
   ///             to their respective \link PkgSurfaceMeshParameterizationEnums Cone_type \endlink
   ///             classification.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The underlying mesh of `mesh` is a topological ball.

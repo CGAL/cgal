@@ -47,7 +47,7 @@ public:
   typedef typename Base::Polygon_2                        Polygon_2;
   typedef typename Base::Polygon_with_holes_2             Polygon_with_holes_2;
 
-  // default costructor
+  // default constructor
   General_polygon_set_2() : Base() {}
 
   // constructor from a traits object

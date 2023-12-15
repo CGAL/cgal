@@ -1,68 +1,38 @@
+// Copyright (c) 2015  GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Laurent Rineau, Jane Tournois
+
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <array>
 
-#include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/IO/File_avizo.h>
 
-//a material is composed of an material Id and a material name.
-typedef std::pair<int, std::string> material;
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
-struct MaterialData
-{
-  material innerRegion;
-  material outerRegion;
-};
+namespace CGAL {
+
 
 std::string to_lower_case(const std::string& str)
 {
   std::string r = str;
   std::transform(r.begin(), r.end(), r.begin(), ::tolower);
   return r;
-}
-
-bool get_material_metadata(std::istream& input,
-                           std::string& line,
-                           material& _material,
-                           int material_id)
-{
-  std::istringstream iss;
-  iss.str(line);
-
-  iss >> _material.second;//name
-
-  while (std::getline(input, line))
-  {
-    std::string prop; //property
-    iss.clear();
-    iss.str(line);
-    iss >> prop;
-
-    if (prop.compare("Id") == 0)
-    {
-      int tmp_id;
-      iss >> tmp_id;
-      _material.first = material_id;
-
-      if ((0 == to_lower_case(_material.second).compare("exterior"))
-          && _material.first != 0)
-      {
-        std::cerr << "Exterior should have index 0. ";
-        std::cerr << "In this file it has index " << _material.first << "." << std::endl;
-        std::cerr << "Reader failed, because Meshing will fail to terminate." << std::endl;
-        return false;
-      }
-    }
-    else if (prop.compare("}") == 0)
-      return true; //end of this material
-  }
-  return false;
 }
 
 bool line_starts_with(const std::string& line, const char* cstr)
@@ -75,26 +45,6 @@ bool line_starts_with(const std::string& line, const char* cstr)
 
 namespace IO{
 namespace internal{
-
-bool treat_surf_materials(std::istream& input,
-                          std::vector<material>& materials,
-                          int& material_id)
-{
-  std::string line;
-  while(std::getline(input, line))
-  {
-    if(line_starts_with(line, "}"))
-      break;
-    else
-    {
-      material _material;
-      if (!get_material_metadata(input, line, _material, material_id++))
-        return false;
-      materials.push_back(_material);
-    }
-  }
-  return true;
-}
 
 void treat_surf_grid_box(const std::string& line,
                         CGAL::Bbox_3& grid_box)
@@ -388,13 +338,13 @@ bool build_binary_surf_patch(DuplicatedPointsOutIterator& out,
  * read_surf reads a file which extension is .surf and fills `output` with one `Mesh` per patch.
  * Mesh is a model of FaceListGraph.
  */
-template<class Mesh, typename DuplicatedPointsOutIterator, class NamedParameters>
+template<class Mesh, typename DuplicatedPointsOutIterator, class NamedParameters = CGAL::parameters::Default_named_parameters>
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
-    std::vector<MaterialData>& metadata,
+    std::vector<CGAL::IO::internal::MaterialData>& metadata,
     CGAL::Bbox_3& grid_box,
     std::array<unsigned int, 3>& grid_size,
     DuplicatedPointsOutIterator out,
-    const NamedParameters&)
+    const NamedParameters& = CGAL::parameters::default_values())
 {
   typedef typename CGAL::GetGeomTraits<Mesh, NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;
@@ -402,7 +352,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::vector<Point_3> points;
   std::string line;
   std::size_t nb_vertices(0);
-  std::vector<material> materials;
+  std::vector < CGAL::IO::internal::material > materials;
   //ignore header
   int material_id = 0;
   int nb_patches = 0;
@@ -572,14 +522,4 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
   return true;
 }
 
-template<class Mesh, typename DuplicatedPointsOutIterator>
-bool read_surf(std::istream& input, std::vector<Mesh>& output,
-  std::vector<MaterialData>& metadata,
-  CGAL::Bbox_3& grid_box,
-  std::array<unsigned int, 3>& grid_size,
-  DuplicatedPointsOutIterator out)
-{
-  return read_surf(input, output, metadata, grid_box, grid_size, out,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
+}//end namespace CGAL

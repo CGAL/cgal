@@ -38,8 +38,8 @@ protected:
 public:
   Generic_facegraph_builder(std::istream& in_) : m_is(in_) { }
 
-  template <typename NamedParameters>
-  bool operator()(Graph& g, const NamedParameters& np)
+  template <typename NamedParameters = parameters::Default_named_parameters>
+  bool operator()(Graph& g, const NamedParameters& np = parameters::default_values())
   {
     typedef typename GetK<Graph, NamedParameters>::Kernel                              Kernel;
     typedef typename Kernel::Vector_3                                                  Vector;
@@ -49,10 +49,10 @@ public:
     typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::type             VPM;
 
     // usually will be true, but might not be the case if using custom type points
-//    CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
-//                                        typename boost::property_traits<VPM>::value_type>::value));
-//    CGAL_static_assertion((std::is_same<typename Kernel::Point_3,
-//                                        typename boost::range_value<Point_container>::type>::value));
+//    static_assert(std::is_same<typename Kernel::Point_3,
+//                                        typename boost::property_traits<VPM>::value_type>::value);
+//    static_assert(std::is_same<typename Kernel::Point_3,
+//                                        typename boost::range_value<Point_container>::type>::value);
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_normal_map_t, NamedParameters,
@@ -76,10 +76,10 @@ public:
     using parameters::is_default_parameter;
     using parameters::get_parameter;
 
-    const bool is_vnm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
-    const bool is_vcm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
-    const bool is_vtm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
-    const bool is_fcm_requested = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+    const bool is_vnm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value);
+    const bool is_vcm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_color_map_t>::value);
+    const bool is_vtm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_texture_map_t>::value);
+    const bool is_fcm_requested = !(is_default_parameter<NamedParameters, internal_np::face_color_map_t>::value);
 
     std::vector<Vertex_normal> vertex_normals;
     std::vector<Vertex_color> vertex_colors;
@@ -153,8 +153,6 @@ public:
 
     return is_valid(g);
   }
-
-  bool operator()(Graph& g) { return operator()(g, parameters::all_default()); }
 
 protected:
   std::istream& m_is;

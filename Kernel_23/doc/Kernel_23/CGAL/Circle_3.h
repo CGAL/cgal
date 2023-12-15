@@ -7,7 +7,7 @@ An object `c` of type `Circle_3` is a circle in the
 three-dimensional Euclidean space \f$ \E^3\f$. Note that the
 circle can be degenerate, i.e.\ the squared radius may be zero.
 
-\cgalModels `Kernel::Circle_3`
+\cgalModels{Kernel::Circle_3}
 
 */
 template< typename Kernel >
@@ -21,7 +21,9 @@ public:
 introduces a variable `c` of type `Circle_3`.
 It is initialized to the circle of center `center` and
 squared radius `sq_r` in plane `plane`.
-\pre `center` lies in `plane` and                 `sq_r` \f$ \geq\f$ 0.
+\pre `center` lies in `plane` and `sq_r >= 0`.
+
+\cgalEpicExact
 */
 Circle_3(const Point_3<Kernel> &center,
          const Kernel::FT &sq_r,
@@ -32,7 +34,7 @@ introduces a variable `c` of type `Circle_3`.
 It is initialized to the circle of center `center` and
 squared radius `sq_r` in a plane normal to
 the vector `n`.
-\pre `sq_r` \f$ \geq\f$ 0.
+\pre `sq_r >= 0`.
 */
 Circle_3(const Point_3<Kernel> & center,
          const Kernel::FT & sq_r,
@@ -60,7 +62,7 @@ It is initialized to the circle along which the sphere and the
 plane intersect.
 \pre The sphere and the plane intersect along a circle.
 */
-  Circle_3(constSphere_3<Kernel> & sphere,
+  Circle_3(const Sphere_3<Kernel> & sphere,
            const Plane_3<Kernel> & plane);
 
 /*!
@@ -80,24 +82,28 @@ Circle_3(const Plane_3<Kernel> & plane,
 /*!
 
 returns the center of `c`.
+\cgalEpicExact
 */
 const Point_3<Kernel> & center( ) const;
 
 /*!
 
 returns the squared radius of `c`.
+\cgalEpicExact
 */
 const Kernel::FT & squared_radius( ) const;
 
 /*!
 
 returns the supporting plane of `c`.
+\cgalEpicExact
 */
 const Plane_3<Kernel> & supporting_plane( ) const;
 
 /*!
 
 returns the diametral sphere of `c`.
+\cgalEpicExact
 */
 const Sphere_3<Kernel> & diametral_sphere( ) const;
 

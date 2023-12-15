@@ -16,9 +16,7 @@
 /// \ingroup PkgPeriodic2Triangulation2Ref
 
 /*! Draw.
-  \code
-   #include <CGAL/draw_periodic_2_triangulation_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_periodic_2_triangulation_2.h}
 */
 /// \defgroup PkgDrawPeriodic2Triangulation2 Draw a 2D Periodic Triangulation
 /// \ingroup PkgPeriodic2Triangulation2Ref
@@ -65,10 +63,10 @@ concepts `Periodic_2TriangulationFaceBase_2` and
 A triangulation is stored as a collection of vertices and faces that
 are linked together through incidence and adjacency relations. Each
 face gives access to its three incident vertices and to its three
-adjacent cells. Each vertex gives access to one of its incident
+adjacent faces. Each vertex gives access to one of its incident
 faces.
 
-The three vertices of a cell are indexed with 0, 1, and 2 in positive
+The three vertices of a face are indexed with 0, 1, and 2 in positive
 orientation, the positive orientation being defined by the orientation
 of the underlying space \f$ \mathbb T_c^3\f$. The neighbors of a face are
 also indexed with 0, 1, 2 in such a way that the neighbor indexed

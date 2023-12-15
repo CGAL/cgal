@@ -15,14 +15,14 @@
 
 #include <CGAL/license/Convex_hull_2.h>
 
-
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
-#include <CGAL/Convex_hull_2/ch_assertions.h>
-#include <queue>
-#include <iterator>
+#include <CGAL/assertions.h>
+
+#include <algorithm>
+#include <deque>
 
 namespace CGAL {
 
@@ -37,19 +37,19 @@ ch_melkman( InputIterator first, InputIterator last,
   typename Traits::Left_turn_2 left_turn  = ch_traits.left_turn_2_object();
   Equal_2  equal_points = ch_traits.equal_2_object();
 
-  CGAL_ch_assertion_code( \
+  CGAL_assertion_code( \
   typename Traits::Less_xy_2 less       = ch_traits.less_xy_2_object(); )
 
   std::deque< Point> Q;
 
-  CGAL_ch_expensive_postcondition_code( std::deque< Point> IN; )
+  CGAL_expensive_postcondition_code( std::deque< Point> IN; )
   if (first == last) return result;           // 0 elements
   Point p = *first;
-  CGAL_ch_expensive_postcondition_code( IN.push_back(p); )
+  CGAL_expensive_postcondition_code( IN.push_back(p); )
   if (++first == last)
   { *result = p; ++result; return result; }   // 1 element
   Point q = *first;
-  CGAL_ch_expensive_postcondition_code( IN.push_back(q); )
+  CGAL_expensive_postcondition_code( IN.push_back(q); )
   if (++first == last)                        // 2 elements
   {
     *result = p; ++result;
@@ -63,11 +63,11 @@ ch_melkman( InputIterator first, InputIterator last,
   while (first != last)
   {
     r = *first;
-    CGAL_ch_expensive_postcondition_code( IN.push_back(r); )
+    CGAL_expensive_postcondition_code( IN.push_back(r); )
     // visited input sequence =  p,..., q, r
     if ( left_turn(p,q,r)) { Q.push_back( q);  break; }
     if ( left_turn(q,p,r)) { Q.push_front( q); break; }
-    CGAL_ch_assertion( less( p, q) ? less (p, r) : less( r, p));
+    CGAL_assertion( less( p, q) ? less (p, r) : less( r, p));
     q = r;
     ++first;
   }
@@ -84,7 +84,7 @@ ch_melkman( InputIterator first, InputIterator last,
     while ( ++first != last)
     {
       r = *first;
-      CGAL_ch_expensive_postcondition_code( IN.push_back(r); )
+      CGAL_expensive_postcondition_code( IN.push_back(r); )
       if (left_turn( current, r, Q.front()) ||
           left_turn( Q.back(), r, current))
       // r outside cone Q.front(), current, Q.back() <=>
@@ -110,9 +110,9 @@ ch_melkman( InputIterator first, InputIterator last,
 
 
   Q.push_back( current);       // add last point to Q
-  CGAL_ch_postcondition( \
+  CGAL_postcondition( \
   is_ccw_strongly_convex_2( Q.begin(), Q.end(), ch_traits));
-  CGAL_ch_expensive_postcondition( \
+  CGAL_expensive_postcondition( \
   ch_brute_force_check_2( IN.begin(),IN.end(), Q.begin(),Q.end(), ch_traits));
   std::copy( Q.begin(), Q.end(), result);
   return result;

@@ -33,6 +33,7 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item:
     }
 
     QString toolTip() const;
+    QMenu* contextMenu();
 
     bool eventFilter(QObject *, QEvent *);
     // Indicate if rendering mode is supported
@@ -59,6 +60,7 @@ public Q_SLOTS:
     void highlight(CGAL::Three::Viewer_interface* viewer);
     void clearHL();
     void connectNewViewer(QObject* o);
+    void reset();
 protected:
     friend struct Scene_edit_box_item_priv;
     Scene_edit_box_item_priv* d;

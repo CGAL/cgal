@@ -1,0 +1,67 @@
+body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
+
+P {
+width: 80ex
+}
+
+A {
+    text-decoration: none;
+}
+
+TABLE.result { font-weight: bold; background-color: white; padding: 1em; table-layout: fixed;}
+
+TABLE.summary TD { white-space: nowrap }
+TABLE.result,TABLE.summary { border-collapse: collapse; }
+TABLE.result TD,TABLE.summary TD { border-width: 1px; border-style: solid; }
+TABLE.result TD { padding: 0;}
+TABLE.result TD > a { font-weight: normal; font-family: monospace; display: block; padding: 0.2ex 0.5ex 0.2ex 0.5ex;}
+
+TD.highlight {background-color: rgb(80%,80%,80%)}
+TD.os64bits {font-style:italic}
+.cmaketag {font-weight: bold; color: rgb(100%,20%,20%);}
+
+
+TD.ok {background-color: rgb(50%,100%,50%)}
+TD.warning {background-color: rgb(100%,100%,50%)}
+TD.error {background-color: rgb(100%,50%,50%)}
+TD.na {background-color: white;}
+TD.requirements { background-color: rgb(65%,65%,100%) }
+
+TH.ok {background-color: rgb(50%,100%,50%)}
+TH.warning {background-color: rgb(100%,100%,50%)}
+TH.error {background-color: rgb(100%,50%,50%)}
+TH.requirements { background-color: rgb(65%,65%,100%) }
+
+TD.ok A {font-size:large; text-decoration: none}
+TD.ok A:link {color: rgb(0%,0%,100%)}
+TD.ok A:visited {color: rgb(0%,80%,100%)}
+
+TD.warning A {font-size:large; text-decoration: none}
+TD.warning A:link {color: rgb(0%,0%,100%)}
+TD.warning A:visited {color: rgb(80%,80%,100%)}
+
+TD.error A {font-size: large; text-decoration: none}
+TD.error A:link {color: rgb(0%,0%,100%)}
+TD.error A:visited {color: rgb(80%,0%,100%)}
+
+TD.requirements A {font-size: large; text-decoration: none}
+TD.requirements A:link {color: rgb(0%,0%,100%)}
+TD.requirements A:visited {color: rgb(100%,100%,65%)}
+
+SELECT { font-family: monospace; }
+
+#permalink,#jump_to_results {
+    font-size: 0.5em;
+    font-weight: normal;
+}
+#permalink::before,#jump_to_results::before{
+    content: "("
+}
+#permalink::after,#jump_to_results::after{
+    content: ")"
+}
+
+TABLE.result TD > a.package_name {
+    color: black;
+    font-weight: bold;
+}

@@ -100,7 +100,7 @@ namespace CGAL {
         ///
         /// The variable of a mixed integer program.
         ///
-        /// \cgalModels `MixedIntegerProgramVariable`
+        /// \cgalModels{MixedIntegerProgramVariable}
         template <typename FT>
         class Variable : public Solver_entry<FT>, public Bound<FT>
         {
@@ -199,7 +199,7 @@ namespace CGAL {
         ///
         /// The linear constraint of a mixed integer program.
         ///
-        /// \cgalModels `MixedIntegerProgramLinearConstraint`
+        /// \cgalModels{MixedIntegerProgramLinearConstraint}
         template <typename FT>
         class Linear_constraint : public Linear_expression<FT>, public Bound<FT>
         {
@@ -231,7 +231,7 @@ namespace CGAL {
         ///
         /// The linear objective of a mixed integer program.
         ///
-        /// \cgalModels `MixedIntegerProgramLinearObjective`
+        /// \cgalModels{MixedIntegerProgramLinearObjective}
         ///
         template <typename FT>
         class Linear_objective : public Linear_expression<FT>
@@ -273,7 +273,7 @@ namespace CGAL {
         ///       classes, i.e., `CGAL::GLPK_mixed_integer_program_traits` or
         ///                  `CGAL::SCIP_mixed_integer_program_traits`. Alternatively, use
         ///       `CGAL::Mixed_integer_program_traits` as a base to derive a new model
-        ///       (using e.g., <a href = "https://projects.coin-or.org/Cbc"> CBC </a>,
+        ///       (using e.g., <a href = "https://github.com/coin-or/Cbc"> CBC </a>,
         ///       <a href = "https://www.gurobi.com/"> Gurobi </a> for better
         ///       performance).
         ///
@@ -281,7 +281,7 @@ namespace CGAL {
         /// \tparam FT Number type
         /// \endcond
         ///
-        /// \cgalModels `MixedIntegerProgramTraits`
+        /// \cgalModels{MixedIntegerProgramTraits}
         template <typename FT>
         class Mixed_integer_program_traits
         {

@@ -10,10 +10,13 @@ defined by \f$ l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}\f$.
 For the purpose of the distance computations it is more efficient to compute
 the transformed distance \f$ {\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}\f$ instead of the actual distance.
 
+\note As this distance involves the computation of a power it is not
+done exact but with floating point arithmetic.
+
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `Search_traits_2`.
 
-\cgalModels `OrthogonalDistance`
+\cgalModels{OrthogonalDistance}
 
 \sa `OrthogonalDistance`
 \sa `CGAL::Euclidean_distance<Traits>`

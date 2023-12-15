@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <cassert>
 
 // A modifier creating a triangle with the incremental builder.
 template <class HDS>
@@ -33,6 +34,6 @@ int main() {
     Polyhedron P;
     Build_triangle<HalfedgeDS> triangle;
     P.delegate( triangle);
-    CGAL_assertion( P.is_triangle( P.halfedges_begin()));
+    assert( P.is_triangle( P.halfedges_begin()));
     return 0;
 }

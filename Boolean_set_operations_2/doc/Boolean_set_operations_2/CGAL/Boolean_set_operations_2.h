@@ -737,7 +737,7 @@ namespace CGAL {
 /*! determines whether two polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Kernel, typename Container>
@@ -755,7 +755,7 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
  *         bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Kernel, typename Container, typename UsePolylines>
@@ -766,7 +766,7 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
 /*! determines whether two polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Kernel, typename Container>
@@ -785,7 +785,7 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
  *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Kernel, typename Container, typename UsePolylines>
@@ -796,7 +796,7 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
 /*! determines whether two polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Kernel, typename Container>
@@ -815,7 +815,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *         information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Kernel, typename Container, typename UsePolylines>
@@ -826,7 +826,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 /*! determines whether two polygons with holes intersect in their interior.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Kernel, typename Container>
@@ -844,7 +844,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  *         \ref bso_ssectraits_sel for more information.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Kernel, typename Container, typename UsePolylines>
@@ -855,7 +855,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
 /*! determines whether two general polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
  *      `ArrangementDirectionalXMonotoneTraits_2`.
@@ -867,7 +867,7 @@ bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
 /*! determines whether two general polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
  *      `ArrangementDirectionalXMonotoneTraits_2`.
@@ -880,7 +880,7 @@ do_intersect(const General_polygon_2<ArrTraits>& pgn1,
 /*! determines whether two general polygons intersect in their interior.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `%ArrTraits` must be a model of the concept
  *      `ArrangementDirectionalXMonotoneTraits_2`.
@@ -893,7 +893,7 @@ bool do_intersect(const General_polygon_with_holes_2<General_polygon_2<ArrTraits
  * interior.
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  */
 template <typename Polygon>
@@ -1001,7 +1001,7 @@ bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
@@ -1014,7 +1014,7 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
@@ -1028,7 +1028,7 @@ bool do_intersect(const Polygon_2<Kernel, Container>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
@@ -1041,7 +1041,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
@@ -1054,7 +1054,7 @@ bool do_intersect(const Polygon_with_holes_2<Kernel, Container>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
@@ -1069,7 +1069,7 @@ bool do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
@@ -1085,7 +1085,7 @@ do_intersect(const General_polygon_2<ArrTraits>& pgn1,
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `%ArrTraits` must be a model of the concept
@@ -1102,7 +1102,7 @@ do_intersect(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& p
  * \param pgn1 the 1st input polygon.
  * \param pgn2 the 2nd input polygon.
  * \param traits a traits object.
- * \return `true` if `pgn1` and `pgn2` intersect in their interiro and `false`
+ * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.

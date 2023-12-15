@@ -1,9 +1,7 @@
 /// \defgroup PkgPointSet3Ref 3D Point Set Reference
 
 /*!
-  \code
-   #include <CGAL/draw_point_set_3.h>
-  \endcode
+\cgalInclude{CGAL/draw_point_set_3.h}
 */
 /// \defgroup PkgDrawPointSet3D Draw a 3D Point Set
 /// \ingroup PkgPointSet3Ref
@@ -11,13 +9,13 @@
 /// \defgroup PkgPointSet3IO Input/Output
 /// \ingroup PkgPointSet3Ref
 ///
-/// This module offers convenience overloads of input/ouput
+/// This module offers convenience overloads of input/output
 /// functions available in the \ref PkgPointSetProcessing3 package.
 /// These overloads, available after including `CGAL/Point_set_3/IO.h`,
 /// allow the user to call point set processing algorithms without having
 /// to handle manually property maps and iterators.
 ///
-/// Input functions instanciate all the necessary property maps:
+/// Input functions instantiate all the necessary property maps:
 ///
 /// - if found in the input, normal vectors are stored in the usual
 /// `CGAL::Point_set_3` property `normal` with template type `Vector`
@@ -55,7 +53,7 @@
 \cgalPkgDescriptionBegin{3D Point Set, PkgPointSet3}
 \cgalPkgPicture{point_set_3.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot}
+\cgalPkgAuthor{Simon Giraudot}
 \cgalPkgDesc{This component provides the user with a flexible 3D point set data structure. The user can define any additional property needed such as normal vectors, colors or labels. \cgal algorithms can be easily applied to this data structure.}
 \cgalPkgManuals{Chapter_Point_Set_3, PkgPointSet3Ref}
 \cgalPkgSummaryEnd
@@ -77,7 +75,7 @@
 
 \cgalCRPSection{I/O Functions}
 This package offers convenience overloads for the class `CGAL::Point_set_3`
-of the input/ouput functions available in the \ref PkgPointSetProcessing3 package.
+of the input/output functions available in the \ref PkgPointSetProcessing3 package.
 These overloads, available after including `CGAL/Point_set_3/IO.h`,
 allow the user to call point set processing algorithms without having
 to handle manually property maps and iterators.

@@ -18,14 +18,14 @@
 
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/OpenGR/compute_registration_transformation.h>
 
-#include <boost/type_traits/is_same.hpp>
-
 #include <Eigen/Dense>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -196,7 +196,7 @@ register_point_sets(const PointRange1& range1,    PointRange2& range2,
      \cgalParamNEnd
 
      \cgalParamNBegin{normal_map}
-       \cgalParamDescription{a property map associating normals to the elements of the poing set `point_set_2`}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `point_set_2`}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
                       of the iterator of `PointRange2` and whose value type is `geom_traits::Vector_3`}
        \cgalParamDefault{Normals are computed and stored internally.}
@@ -206,35 +206,38 @@ register_point_sets(const PointRange1& range1,    PointRange2& range2,
    \return the registration score.
 */
 template <class PointRange1, class PointRange2,
-          class NamedParameters1, class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 double
 register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
-                     const NamedParameters1& np1, const NamedParameters2& np2)
+                     const NamedParameters1& np1 = parameters::default_values(),
+                     const NamedParameters2& np2 = parameters::default_values())
 {
-  namespace PSP = CGAL::Point_set_processing_3;
   namespace GR = gr;
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // property map types
-  typedef typename CGAL::GetPointMap<PointRange1, NamedParameters1>::type PointMap1;
-  typedef typename CGAL::GetPointMap<PointRange2, NamedParameters2>::type PointMap2;
-  CGAL_static_assertion_msg((boost::is_same< typename boost::property_traits<PointMap1>::value_type,
-                                             typename boost::property_traits<PointMap2>::value_type> ::value),
+  typedef Point_set_processing_3_np_helper<PointRange1, NamedParameters1> NP_helper1;
+  typedef Point_set_processing_3_np_helper<PointRange2, NamedParameters2> NP_helper2;
+  typedef typename NP_helper1::Const_point_map PointMap1;
+  typedef typename NP_helper2::Const_point_map PointMap2;
+  static_assert(std::is_same< typename boost::property_traits<PointMap1>::value_type,
+                                           typename boost::property_traits<PointMap2>::value_type> ::value,
                             "The point type of input ranges must be the same");
 
-  typedef typename PSP::GetNormalMap<PointRange1, NamedParameters1>::type NormalMap1;
-  typedef typename PSP::GetNormalMap<PointRange2, NamedParameters2>::type NormalMap2;
-  CGAL_static_assertion_msg((boost::is_same< typename boost::property_traits<NormalMap1>::value_type,
-                                             typename boost::property_traits<NormalMap2>::value_type> ::value),
+  typedef typename NP_helper1::Normal_map NormalMap1;
+  typedef typename NP_helper2::Normal_map NormalMap2;
+  static_assert(std::is_same< typename boost::property_traits<NormalMap1>::value_type,
+                                           typename boost::property_traits<NormalMap2>::value_type> ::value,
                             "The vector type of input ranges must be the same");
 
-  typedef typename PSP::GetK<PointRange1, NamedParameters1>::Kernel Kernel;
+  typedef typename NP_helper1::Geom_traits Kernel;
 
-  PointMap1 point_map1 = choose_parameter(get_parameter(np1, internal_np::point_map), PointMap1());
-  NormalMap1 normal_map1 = choose_parameter(get_parameter(np1, internal_np::normal_map), NormalMap1());
-  PointMap1 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
-  NormalMap2 normal_map2 = choose_parameter(get_parameter(np2, internal_np::normal_map), NormalMap2());
+  PointMap1 point_map1 = NP_helper1::get_const_point_map(point_set_1, np1);
+  NormalMap1 normal_map1 = NP_helper1::get_normal_map(point_set_1, np1);
+  PointMap2 point_map2 = NP_helper2::get_const_point_map(point_set_2, np2);
+  NormalMap2 normal_map2 = NP_helper2::get_normal_map(point_set_2, np2);
 
   Options<Kernel> options;
   options.sample_size = choose_parameter(get_parameter(np1, internal_np::number_of_samples), 200);
@@ -250,27 +253,6 @@ register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
                                                point_map1, point_map2,
                                                normal_map1, normal_map2,
                                                options);
-}
-
-// convenience overloads
-template <class PointRange1, class PointRange2,
-          class NamedParameters1>
-double
-register_point_sets(const PointRange1& point_set_1, PointRange2& point_set_2,
-                    const NamedParameters1& np1)
-{
-  namespace params = CGAL::Point_set_processing_3::parameters;
-  return register_point_sets(point_set_1, point_set_2, np1, params::all_default(point_set_1));
-}
-
-template <class PointRange1, class PointRange2>
-double
-register_point_sets(const PointRange1& point_set_1, PointRange2& point_set_2)
-{
-  namespace params = CGAL::Point_set_processing_3::parameters;
-  return register_point_sets(point_set_1, point_set_2,
-                             params::all_default(point_set_1),
-                             params::all_default(point_set_2));
 }
 
 } } // end of namespace CGAL::OpenGR

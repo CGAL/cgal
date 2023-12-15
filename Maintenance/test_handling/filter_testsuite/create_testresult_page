@@ -35,7 +35,7 @@ my @testresults;
 my $testresult_dir=cwd()."/TESTRESULTS";
 
 # Inspired from
-# http://cpansearch.perl.org/src/EDAVIS/Sort-Versions-1.5/Versions.pm
+# https://metacpan.org/pod/Sort::Versions
 sub sort_releases($$)
 {
     # Take arguments in revert order: one wants to sort from the recent to
@@ -591,7 +591,7 @@ sub print_little_header(){
     my $release_version = substr($release_name, 5);
     print OUTPUT<<"EOF";
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-        "http://www.w3.org/TR/html4/strict.dtd">
+        "https://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -665,7 +665,7 @@ sub main()
      <a href="test_results.log">See the log here</a>.</p>
 
  <p>
-    <a href="http://validator.w3.org/check?uri=https://cgal.geometryfactory.com<!--#echo var="DOCUMENT_URI" -->"><img
+    <a href="https://validator.w3.org/check?uri=https://cgal.geometryfactory.com<!--#echo var="DOCUMENT_URI" -->"><img
         src="valid-html401-blue"
         alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
  </p>

@@ -125,7 +125,7 @@ public:
   {
     std::vector<Scene_points_with_normal_item*> items;
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       Scene_points_with_normal_item* item =
         qobject_cast<Scene_points_with_normal_item*>(scene->item(index));

@@ -141,6 +141,25 @@ public:
   typedef typename Gt::Plane_3       Plane;
   typedef typename Gt::Object_3      Object;
 
+#ifdef CGAL_LINKED_WITH_TBB
+  // For parallel methods, one store a hint (a `Vertex_handle`).
+  // We need to have a copy of the point of that vertex as a cache, because
+  // calls to `hint->point()` might not be thread-safe.
+  struct Vertex_handle_and_point {
+    Vertex_handle_and_point(Vertex_handle v) : vh(v), wpt(v->point())
+    {}
+    Vertex_handle_and_point& operator=(Vertex_handle v)
+    {
+      vh = v;
+      wpt = v->point();
+      return *this;
+    }
+    Vertex_handle vh;
+    Weighted_point wpt;
+  };
+  using Hint = tbb::enumerable_thread_specific<Vertex_handle_and_point>;
+#endif // CGAL_LINKED_WITH_TBB
+
   //Tag to distinguish Delaunay from regular triangulations
   typedef Tag_true                   Weighted_tag;
 
@@ -195,14 +214,14 @@ public:
   Regular_triangulation_3(const Regular_triangulation_3& rt)
     : Tr_Base(rt), hidden_point_visitor(this)
   {
-    CGAL_triangulation_postcondition(is_valid());
+    CGAL_postcondition(is_valid());
   }
 
   Regular_triangulation_3(Regular_triangulation_3&& rt)
     noexcept(noexcept(Tr_Base(std::move(rt))))
     : Tr_Base(std::move(rt)), hidden_point_visitor(this)
   {
-    CGAL_triangulation_postcondition(is_valid());
+    CGAL_postcondition(is_valid());
   }
 
   ~Regular_triangulation_3() = default;
@@ -336,10 +355,10 @@ public:
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
-                        typename boost::enable_if<
-                          boost::is_convertible<
+                        std::enable_if_t<
+                          std::is_convertible<
                           typename std::iterator_traits<InputIterator>::value_type,
-                          Weighted_point> >::type* = nullptr)
+                          Weighted_point>::value >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
@@ -400,7 +419,7 @@ public:
         ++i;
       }
 
-      tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
+      Hint tls_hint(hint->vertex(0));
       tbb::parallel_for(tbb::blocked_range<size_t>(i, num_points),
                         Insert_point<Self>(*this, points, tls_hint));
 
@@ -532,7 +551,7 @@ private:
         ++i;
       }
 
-      tbb::enumerable_thread_specific<Vertex_handle> tls_hint(hint->vertex(0));
+      Hint tls_hint(hint->vertex(0));
       tbb::parallel_for(tbb::blocked_range<size_t>(i, num_points),
                         Insert_point_with_info<Self>(*this, points, infos, indices, tls_hint));
 
@@ -575,12 +594,12 @@ public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first,
                         InputIterator last,
-                        typename boost::enable_if<
-                        boost::is_convertible<
+                        std::enable_if_t<
+                        std::is_convertible<
                         typename std::iterator_traits<InputIterator>::value_type,
                         std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
-                        >
-                        >::type* = nullptr)
+                        >::value
+                        >* = nullptr)
   {
     return insert_with_info<
              std::pair<Weighted_point,
@@ -593,11 +612,11 @@ public:
   std::ptrdiff_t
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
-         typename boost::enable_if<
+         std::enable_if_t<
            boost::mpl::and_<
-           typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
-           typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-         > >::type* =nullptr)
+           typename std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
+           typename std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+         >::value >* =nullptr)
   {
     return insert_with_info<
              boost::tuple<Weighted_point,
@@ -646,7 +665,7 @@ public:
                  const Facet *this_facet_must_be_in_the_cz = nullptr,
                  bool *the_facet_is_in_its_cz = nullptr) const
   {
-    CGAL_triangulation_precondition(dimension() >= 2);
+    CGAL_precondition(dimension() >= 2);
 
     std::vector<Cell_handle> cells;
     cells.reserve(32);
@@ -720,7 +739,7 @@ public:
   OutputIterator vertices_inside_conflict_zone(const Weighted_point&p, Cell_handle c,
                                                OutputIterator res) const
   {
-    CGAL_triangulation_precondition(dimension() >= 2);
+    CGAL_precondition(dimension() >= 2);
 
     // Get the facets on the boundary of the hole, and the cells of the hole
     std::vector<Cell_handle> cells;
@@ -778,7 +797,7 @@ public:
                                                     Cell_handle c,
                                                     OutputIterator res) const
   {
-    CGAL_triangulation_precondition(dimension() >= 2);
+    CGAL_precondition(dimension() >= 2);
 
     // Get the facets on the boundary of the hole.
     std::vector<Facet> facets;
@@ -848,7 +867,7 @@ public:
   template < typename InputIterator >
   size_type remove(InputIterator first, InputIterator beyond)
   {
-    CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
+    CGAL_precondition(!this->does_repeat_in_range(first, beyond));
     size_type n = number_of_vertices();
 
 #ifdef CGAL_TRIANGULATION_3_PROFILING
@@ -900,7 +919,7 @@ public:
     Vertex_remover<Self> remover(tmp);
     Tr_Base::remove_and_give_new_cells(v, remover, cit);
 
-    CGAL_triangulation_expensive_postcondition(is_valid());
+    CGAL_expensive_postcondition(is_valid());
   }
 
   // Displacement works only for regular triangulation
@@ -984,9 +1003,10 @@ public:
 
   void dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const;
   void dual_segment(const Facet& facet, Bare_point& p, Bare_point&q) const;
-  void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const;
   void dual_ray(Cell_handle c, int i, Ray& ray) const;
   void dual_ray(const Facet& facet, Ray& ray) const;
+  void dual_exact(const Facet& facet, const Weighted_point& p, Bare_point&q) const;
+  void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const;
   void dual_ray_exact(const Facet& facet, Ray& ray) const;
 
   template < class Stream>
@@ -1057,7 +1077,7 @@ protected:
                                      Vertex_handle w) const
   {
     // In case of equality, v is returned.
-    CGAL_triangulation_precondition(v != w);
+    CGAL_precondition(v != w);
     if(is_infinite(v))
       return w;
 
@@ -1069,21 +1089,21 @@ protected:
 
   Oriented_side power_test(const Weighted_point& p, const Weighted_point& q) const
   {
-    CGAL_triangulation_precondition(this->equal(p, q));
+    CGAL_precondition(this->equal(p, q));
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q);
   }
 
   Oriented_side power_test(const Weighted_point& p, const Weighted_point& q,
                            const Weighted_point& r) const
   {
-    CGAL_triangulation_precondition(this->collinear(p, q, r));
+    CGAL_precondition(this->collinear(p, q, r));
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r);
   }
 
   Oriented_side power_test(const Weighted_point& p, const Weighted_point& q,
                            const Weighted_point& r, const Weighted_point& s) const
   {
-    CGAL_triangulation_precondition(this->coplanar(p, q, r, s));
+    CGAL_precondition(this->coplanar(p, q, r, s));
     return geom_traits().power_side_of_oriented_power_sphere_3_object()(p, q, r, s);
   }
 
@@ -1243,7 +1263,7 @@ protected:
 
   // Sequential version
   // "dummy" is here to allow the specialization (see below)
-  // See http://groups.google.com/group/comp.lang.c++.moderated/browse_thread/thread/285ab1eec49e1cb6
+  // See https://groups.google.com/group/comp.lang.c++.moderated/browse_thread/thread/285ab1eec49e1cb6
   template<typename Concurrency_tag_, typename dummy = void>
   class Hidden_point_visitor
   {
@@ -1399,13 +1419,13 @@ protected:
 
     RT& m_rt;
     const std::vector<Weighted_point>& m_points;
-    tbb::enumerable_thread_specific<Vertex_handle>& m_tls_hint;
+    Hint& m_tls_hint;
 
   public:
     // Constructor
     Insert_point(RT& rt,
                  const std::vector<Weighted_point>& points,
-                 tbb::enumerable_thread_specific<Vertex_handle>& tls_hint)
+                 Hint& tls_hint)
       : m_rt(rt), m_points(points), m_tls_hint(tls_hint)
     {}
 
@@ -1417,7 +1437,9 @@ protected:
             "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
 
-      Vertex_handle& hint = m_tls_hint.local();
+      auto& vertex_hint_and_point = m_tls_hint.local();
+      Vertex_handle& hint = vertex_hint_and_point.vh;
+      Weighted_point& hint_point_mem = vertex_hint_and_point.wpt;
       Vertex_validity_checker<typename RT::Triangulation_data_structure> vertex_validity_check;
 
       for(size_t i_point = r.begin() ; i_point != r.end() ; ++i_point)
@@ -1431,14 +1453,12 @@ protected:
           // the hint.
           if(!vertex_validity_check(hint, m_rt.tds()))
           {
-            hint = m_rt.finite_vertices_begin();
+            vertex_hint_and_point = m_rt.finite_vertices_begin();
             continue;
           }
 
           // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
           // does not get its position changed to P2 != P1.
-          const Weighted_point hint_point_mem = hint->point();
-
           if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
           {
             // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
@@ -1447,7 +1467,7 @@ protected:
             if(!vertex_validity_check(hint, m_rt.tds()) ||
                hint->point() != hint_point_mem)
             {
-              hint = m_rt.finite_vertices_begin();
+              vertex_hint_and_point = m_rt.finite_vertices_begin();
               m_rt.unlock_all_elements();
               continue;
             }
@@ -1463,7 +1483,7 @@ protected:
 
             if(could_lock_zone)
             {
-              hint = (v == Vertex_handle() ? c->vertex(0) : v);
+              vertex_hint_and_point = (v == Vertex_handle() ? c->vertex(0) : v);
               m_rt.unlock_all_elements();
               success = true;
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_PROFILING
@@ -1502,7 +1522,7 @@ protected:
     const std::vector<Weighted_point>& m_points;
     const std::vector<Info>& m_infos;
     const std::vector<std::size_t>& m_indices;
-    tbb::enumerable_thread_specific<Vertex_handle>& m_tls_hint;
+    Hint& m_tls_hint;
 
   public:
     // Constructor
@@ -1510,7 +1530,7 @@ protected:
                            const std::vector<Weighted_point>& points,
                            const std::vector<Info>& infos,
                            const std::vector<std::size_t>& indices,
-                           tbb::enumerable_thread_specific<Vertex_handle>& tls_hint)
+                           Hint& tls_hint)
       : m_rt(rt), m_points(points), m_infos(infos), m_indices(indices),
         m_tls_hint(tls_hint)
     {}
@@ -1523,7 +1543,9 @@ protected:
             "early withdrawals / late withdrawals / successes [Delaunay_tri_3::insert]");
 #endif
 
-      Vertex_handle& hint = m_tls_hint.local();
+      auto& vertex_hint_and_point = m_tls_hint.local();
+      Vertex_handle& hint = vertex_hint_and_point.vh;
+      Weighted_point& hint_point_mem = vertex_hint_and_point.wpt;
       Vertex_validity_checker<typename RT::Triangulation_data_structure> vertex_validity_check;
 
       for(size_t i_idx = r.begin() ; i_idx != r.end() ; ++i_idx)
@@ -1538,14 +1560,12 @@ protected:
           // the hint.
           if(!vertex_validity_check(hint, m_rt.tds()))
           {
-            hint = m_rt.finite_vertices_begin();
+            vertex_hint_and_point = m_rt.finite_vertices_begin();
             continue;
           }
 
           // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
           // does not get its position changed to P2 != P1.
-          const Weighted_point hint_point_mem = hint->point();
-
           if(m_rt.try_lock_point(hint_point_mem) && m_rt.try_lock_point(p))
           {
             // Make sure that the hint is still valid (so that we can safely take hint->cell()) and
@@ -1554,7 +1574,7 @@ protected:
             if(!vertex_validity_check(hint, m_rt.tds()) ||
                hint->point() != hint_point_mem)
             {
-              hint = m_rt.finite_vertices_begin();
+              vertex_hint_and_point = m_rt.finite_vertices_begin();
               m_rt.unlock_all_elements();
               continue;
             }
@@ -1572,12 +1592,12 @@ protected:
             {
               if(v == Vertex_handle())
               {
-                hint = c->vertex(0);
+                vertex_hint_and_point = c->vertex(0);
               }
               else
               {
                 v->info() = m_infos[i_point];
-                hint = v;
+                vertex_hint_and_point = v;
               }
 
               m_rt.unlock_all_elements();
@@ -1669,7 +1689,7 @@ nearest_power_vertex_in_cell(const Bare_point& p, Cell_handle c) const
 // Returns the finite vertex of the cell c with smaller
 // power distance  to p.
 {
-  CGAL_triangulation_precondition(dimension() >= 1);
+  CGAL_precondition(dimension() >= 1);
   Vertex_handle nearest = nearest_power_vertex(p, c->vertex(0), c->vertex(1));
   if(dimension() >= 2)
   {
@@ -1735,8 +1755,8 @@ typename Regular_triangulation_3<Gt,Tds,Lds>::Bare_point
 Regular_triangulation_3<Gt,Tds,Lds>::
 dual(Cell_handle c) const
 {
-  CGAL_triangulation_precondition(dimension()==3);
-  CGAL_triangulation_precondition(! is_infinite(c));
+  CGAL_precondition(dimension()==3);
+  CGAL_precondition(! is_infinite(c));
 
   return c->weighted_circumcenter(geom_traits());
 }
@@ -1767,7 +1787,7 @@ Regular_triangulation_3<Gt,Tds,Lds>::
 dual_ray(Cell_handle c, int i, Ray& ray) const
 {
   Cell_handle n = c->neighbor(i);
-  CGAL_triangulation_precondition((!is_infinite(c) != !is_infinite(n))); // xor
+  CGAL_precondition((!is_infinite(c) != !is_infinite(n))); // xor
   // either n or c is infinite
   int in;
   if(is_infinite(c))
@@ -1806,14 +1826,42 @@ dual_ray(const Facet& facet, Ray& ray) const
   return dual_ray(facet.first, facet.second, ray);
 }
 
-// Exact versions of dual_segment() and dual_ray() for Mesh_3.
+// Exact versions of dual(), dual_segment(), and dual_ray() for Mesh_3.
 // These functions are really dirty: they assume that the point type is nice enough
 // such that EPECK can manipulate it (e.g. convert it to EPECK::Point_3) AND
 // that the result of these manipulations will make sense.
 template < class Gt, class Tds, class Lds >
 void
 Regular_triangulation_3<Gt,Tds,Lds>::
-dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const
+dual_exact(const Facet& f, const Weighted_point& s, Bare_point& cc) const
+{
+  typedef typename Kernel_traits<Bare_point>::Kernel           K;
+  typedef Exact_predicates_exact_constructions_kernel          EK;
+  typedef Cartesian_converter<K, EK>                           To_exact;
+  typedef Cartesian_converter<EK,K>                            Back_from_exact;
+
+  typedef EK                                                   Exact_Rt;
+
+  To_exact to_exact;
+  Back_from_exact back_from_exact;
+  Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
+      Exact_Rt().construct_weighted_circumcenter_3_object();
+
+  const Cell_handle c = f.first;
+  const int i = f.second;
+
+  const typename Exact_Rt::Weighted_point_3& cp = to_exact(c->vertex((i+1)%4)->point());
+  const typename Exact_Rt::Weighted_point_3& cq = to_exact(c->vertex((i+2)%4)->point());
+  const typename Exact_Rt::Weighted_point_3& cr = to_exact(c->vertex((i+3)%4)->point());
+  const typename Exact_Rt::Weighted_point_3& cs = to_exact(s);
+
+  cc = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs));
+}
+
+template < class Gt, class Tds, class Lds >
+void
+Regular_triangulation_3<Gt,Tds,Lds>::
+dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point& q) const
 {
   typedef typename Kernel_traits<Bare_point>::Kernel           K;
   typedef Exact_predicates_exact_constructions_kernel          EK;
@@ -1853,7 +1901,7 @@ dual_ray_exact(const Facet& facet, Ray& ray) const
   Cell_handle c = facet.first;
   int i = facet.second;
   Cell_handle n = c->neighbor(i);
-  CGAL_triangulation_precondition(!is_infinite(c) != !is_infinite(n)); // xor
+  CGAL_precondition(!is_infinite(c) != !is_infinite(n)); // xor
   // either n or c is infinite
   int in;
   if(is_infinite(c))
@@ -1911,12 +1959,12 @@ typename Regular_triangulation_3<Gt,Tds,Lds>::Object
 Regular_triangulation_3<Gt,Tds,Lds>::
 dual(Cell_handle c, int i) const
 {
-  CGAL_triangulation_precondition(dimension()>=2);
-  CGAL_triangulation_precondition(! is_infinite(c,i));
+  CGAL_precondition(dimension()>=2);
+  CGAL_precondition(! is_infinite(c,i));
 
   if(dimension() == 2)
   {
-    CGAL_triangulation_precondition(i == 3);
+    CGAL_precondition(i == 3);
     return construct_object(construct_weighted_circumcenter(c->vertex(0)->point(),
                                                             c->vertex(1)->point(),
                                                             c->vertex(2)->point()));
@@ -1975,7 +2023,7 @@ side_of_oriented_power_sphere(const Weighted_point& p0,
                               const Weighted_point& p3,
                               const Weighted_point& p, bool perturb) const
 {
-  CGAL_triangulation_precondition(orientation(p0, p1, p2, p3) == POSITIVE);
+  CGAL_precondition(orientation(p0, p1, p2, p3) == POSITIVE);
 
   using namespace boost;
 
@@ -2008,7 +2056,7 @@ side_of_oriented_power_sphere(const Weighted_point& p0,
       return o;
   }
 
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return ON_NEGATIVE_SIDE;
 }
 
@@ -2017,8 +2065,8 @@ Bounded_side
 Regular_triangulation_3<Gt,Tds,Lds>::
 side_of_power_sphere(Cell_handle c, const Weighted_point& p, bool perturb) const
 {
-  CGAL_triangulation_precondition(dimension() == 3);
-  int i3;
+  CGAL_precondition(dimension() == 3);
+  int i3=3;
   if(! c->has_vertex(infinite_vertex(), i3))
   {
     return Bounded_side(side_of_oriented_power_sphere(c->vertex(0)->point(),
@@ -2065,7 +2113,7 @@ side_of_bounded_power_circle(const Weighted_point& p0,
                              const Weighted_point& p2,
                              const Weighted_point& p, bool perturb) const
 {
-  CGAL_triangulation_precondition(coplanar_orientation(p0, p1, p2) != 0);
+  CGAL_precondition(coplanar_orientation(p0, p1, p2) != 0);
   if(coplanar_orientation(p0, p1, p2) == POSITIVE)
     return Bounded_side (side_of_oriented_power_circle(p0, p1, p2, p, perturb));
 
@@ -2084,7 +2132,7 @@ side_of_oriented_power_circle(const Weighted_point& p0,
                               const Weighted_point& p2,
                               const Weighted_point& p, bool perturb) const
 {
-  CGAL_triangulation_precondition(coplanar_orientation(p0, p1, p2) == POSITIVE);
+  CGAL_precondition(coplanar_orientation(p0, p1, p2) == POSITIVE);
 
   using namespace boost;
 
@@ -2116,7 +2164,7 @@ side_of_oriented_power_circle(const Weighted_point& p0,
       return o;
   }
 
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return ON_NEGATIVE_SIDE;
 }
 
@@ -2126,11 +2174,11 @@ Regular_triangulation_3<Gt,Tds,Lds>::
 side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
                      bool perturb) const
 {
-  CGAL_triangulation_precondition(dimension() >= 2);
-  int i3 = 5;
+  CGAL_precondition(dimension() >= 2);
+  int i3 = 3;
   if(dimension() == 2)
   {
-    CGAL_triangulation_precondition(i == 3);
+    CGAL_precondition(i == 3);
     // the triangulation is supposed to be valid, ie the facet
     // with vertices 0 1 2 in this order is positively oriented
     if(! c->has_vertex(infinite_vertex(), i3))
@@ -2143,7 +2191,7 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
     // is positively oriented
     Vertex_handle v1 = c->vertex(ccw(i3)),
                   v2 = c->vertex(cw(i3));
-    CGAL_triangulation_assertion(
+    CGAL_assertion(
       coplanar_orientation(v1->point(), v2->point(), mirror_vertex(c, i3)->point()) == NEGATIVE);
 
     Orientation o = coplanar_orientation(v1->point(), v2->point(), p);
@@ -2157,7 +2205,7 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
   } // dim 2
 
   // else dimension == 3
-  CGAL_triangulation_precondition((i >= 0) && (i < 4));
+  CGAL_precondition((i >= 0) && (i < 4));
   if((! c->has_vertex(infinite_vertex(),i3)) || (i3 != i))
   {
     // finite facet
@@ -2166,9 +2214,9 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
     int i0 = (i>0) ? 0 : 1;
     int i1 = (i>1) ? 1 : 2;
     int i2 = (i>2) ? 2 : 3;
-    CGAL_triangulation_precondition(this->coplanar(c->vertex(i0)->point(),
-                                                   c->vertex(i1)->point(),
-                                                   c->vertex(i2)->point(), p));
+    CGAL_precondition(this->coplanar(c->vertex(i0)->point(),
+                                     c->vertex(i1)->point(),
+                                     c->vertex(i2)->point(), p));
     return side_of_bounded_power_circle(c->vertex(i0)->point(),
                                         c->vertex(i1)->point(),
                                         c->vertex(i2)->point(),
@@ -2218,7 +2266,7 @@ side_of_bounded_power_segment(const Weighted_point& p0,
       ;
   }
 
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return ON_UNBOUNDED_SIDE;
 }
 
@@ -2227,7 +2275,7 @@ Bounded_side
 Regular_triangulation_3<Gt,Tds,Lds>::
 side_of_power_segment(Cell_handle c, const Weighted_point& p, bool perturb) const
 {
-  CGAL_triangulation_precondition(dimension() == 1);
+  CGAL_precondition(dimension() == 1);
   if(! is_infinite(c,0,1))
     return side_of_bounded_power_segment(c->vertex(0)->point(),
                                          c->vertex(1)->point(),
@@ -2240,7 +2288,7 @@ side_of_power_segment(Cell_handle c, const Weighted_point& p, bool perturb) cons
 
   // Either we compare weights, or we use the finite neighboring edge
   Cell_handle finite_neighbor = c->neighbor(c->index(infinite_vertex()));
-  CGAL_triangulation_assertion(!is_infinite(finite_neighbor,0,1));
+  CGAL_assertion(!is_infinite(finite_neighbor,0,1));
   return side_of_bounded_power_segment(finite_neighbor->vertex(0)->point(),
                                        finite_neighbor->vertex(1)->point(),
                                        p, perturb);
@@ -2269,7 +2317,7 @@ bool
 Regular_triangulation_3<Gt,Tds,Lds>::
 is_Gabriel(Cell_handle c, int i) const
 {
-  CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i));
+  CGAL_precondition(dimension() == 3 && !is_infinite(c,i));
   typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_orthogonal_sphere =
       geom_traits().power_side_of_bounded_power_sphere_3_object();
@@ -2307,7 +2355,7 @@ bool
 Regular_triangulation_3<Gt,Tds,Lds>::
 is_Gabriel(Cell_handle c, int i, int j) const
 {
-  CGAL_triangulation_precondition(dimension() == 3 && !is_infinite(c,i,j));
+  CGAL_precondition(dimension() == 3 && !is_infinite(c,i,j));
   typename Geom_traits::Power_side_of_bounded_power_sphere_3
       side_of_bounded_orthogonal_sphere =
       geom_traits().power_side_of_bounded_power_sphere_3_object();
@@ -2416,7 +2464,7 @@ Regular_triangulation_3<Gt,Tds,Lds>::
 insert_in_hole(const Weighted_point& p, CellIt cell_begin, CellIt cell_end,
                Cell_handle begin, int i)
 {
-  CGAL_triangulation_precondition(cell_begin != cell_end);
+  CGAL_precondition(cell_begin != cell_end);
 
   get_hidden_point_visitor().process_cells_in_conflict(cell_begin,cell_end);
 
@@ -2435,7 +2483,7 @@ Regular_triangulation_3<Gt,Tds,Lds>::
 insert_in_hole(const Weighted_point& p, CellIt cell_begin, CellIt cell_end,
                Cell_handle begin, int i, Vertex_handle newv)
 {
-  CGAL_triangulation_precondition(cell_begin != cell_end);
+  CGAL_precondition(cell_begin != cell_end);
 
   get_hidden_point_visitor().process_cells_in_conflict(cell_begin,cell_end);
 
@@ -2542,7 +2590,7 @@ remove(Vertex_handle v)
     if(hv != Vertex_handle())
       c = hv->cell();
   }
-  CGAL_triangulation_expensive_postcondition(is_valid());
+  CGAL_expensive_postcondition(is_valid());
 }
 
 template < class Gt, class Tds, class Lds >
@@ -2565,8 +2613,17 @@ remove(Vertex_handle v, bool *could_lock_zone)
     if(!vertex_validity_check(v, tds()))
       return true; // vertex is already gone from the TDS, nothing to do
 
-    Vertex_handle hint = v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0);
-
+#ifndef CGAL_LINKED_WITH_TBB
+    using Vertex_handle_and_point = Vertex_handle;
+#endif // not CGAL_LINKED_WITH_TBB
+    Vertex_handle_and_point hint_and_point{v->cell()->vertex(0) == v ? v->cell()->vertex(1) : v->cell()->vertex(0)};
+#ifdef CGAL_LINKED_WITH_TBB
+    const Vertex_handle& hint = hint_and_point.vh;
+    const Weighted_point& hint_point_mem = hint_and_point.wpt;
+#else // not CGAL_LINKED_WITH_TBB
+    const Vertex_handle& hint = hint_and_point;
+    const Weighted_point& hint_point_mem = hint_and_point->point();
+#endif // not CGAL_LINKED_WITH_TBB
     Self tmp;
     Vertex_remover<Self> remover(tmp);
     removed = Tr_Base::remove(v, remover, could_lock_zone);
@@ -2593,13 +2650,12 @@ remove(Vertex_handle v, bool *could_lock_zone)
           // the hint.
           if(!vertex_validity_check(hint, tds()))
           {
-            hint = finite_vertices_begin();
+            hint_and_point = finite_vertices_begin();
             continue;
           }
 
           // We need to make sure that while are locking the position P1 := hint->point(), 'hint'
           // does not get its position changed to P2 != P1.
-          const Weighted_point hint_point_mem = hint->point();
 
           if(this->try_lock_point(hint_point_mem) && this->try_lock_point(wp))
           {
@@ -2609,7 +2665,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
             if(!vertex_validity_check(hint, tds()) ||
                hint->point() != hint_point_mem)
             {
-              hint = finite_vertices_begin();
+              hint_and_point = finite_vertices_begin();
               this->unlock_all_elements();
               continue;
             }
@@ -2620,7 +2676,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
             {
               success = true;
               if(hv != Vertex_handle())
-                hint = hv;
+                hint_and_point = hv;
             }
           }
 
@@ -2629,7 +2685,7 @@ remove(Vertex_handle v, bool *could_lock_zone)
         }
       }
 
-      CGAL_triangulation_expensive_postcondition(is_valid());
+      CGAL_expensive_postcondition(is_valid());
     }
   }
 
@@ -2649,7 +2705,7 @@ move_if_no_collision(Vertex_handle v, const Weighted_point& p)
   Vertex_inserter<Self> inserter(*this);
   Vertex_handle res = Tr_Base::move_if_no_collision(v,p,remover,inserter);
 
-  CGAL_triangulation_expensive_postcondition(is_valid());
+  CGAL_expensive_postcondition(is_valid());
   return res;
 }
 
@@ -2658,7 +2714,7 @@ typename Regular_triangulation_3<Gt,Tds,Lds>::Vertex_handle
 Regular_triangulation_3<Gt,Tds,Lds>::
 move(Vertex_handle v, const Weighted_point& p)
 {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(!is_infinite(v));
   if(v->point() == p)
     return v;
 
@@ -2678,7 +2734,7 @@ is_valid(bool verbose, int level) const
     if(verbose)
       std::cerr << "invalid base triangulation" << std::endl;
 
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return false;
   }
 
@@ -2701,7 +2757,7 @@ is_valid(bool verbose, int level) const
               if(verbose)
                 std::cerr << "non-empty sphere " << std::endl;
 
-              CGAL_triangulation_assertion(false);
+              CGAL_assertion(false);
               return false;
             }
           }
@@ -2727,7 +2783,7 @@ is_valid(bool verbose, int level) const
               if(verbose)
                 std::cerr << "non-empty circle " << std::endl;
 
-              CGAL_triangulation_assertion(false);
+              CGAL_assertion(false);
               return false;
             }
           }
@@ -2755,7 +2811,7 @@ is_valid(bool verbose, int level) const
               if(verbose)
                 std::cerr << "non-empty edge " << std::endl;
 
-              CGAL_triangulation_assertion(false);
+              CGAL_assertion(false);
               return false;
             }
           }

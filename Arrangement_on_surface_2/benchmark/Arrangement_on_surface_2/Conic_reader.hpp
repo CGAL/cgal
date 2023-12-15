@@ -69,7 +69,7 @@ public:
     /*! Is a conivs arc currently being processed? */
     bool m_processing_arc;
 
-    /*! A place holder to store the undelying conic of a conic arc */
+    /*! A place holder to store the underlying conic of a conic arc */
     Curve_2 m_conic;
 
     /*! Last orientation */
@@ -263,7 +263,7 @@ public:
   /*! Read the conic curves or arcs of conic curves  from the input file
    * \param filename the name of the input file
    * \param curves_out the iterator of the container of the read curves
-   * \param bbox the counding box of the read curves
+   * \param bbox the bounding box of the read curves
    */
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator curves_out,

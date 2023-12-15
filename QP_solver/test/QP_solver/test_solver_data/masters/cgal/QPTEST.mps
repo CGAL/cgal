@@ -1,4 +1,4 @@
-* Description: from the benchmarks at http://www.doc.ic.ac.uk/~im/
+* Description: from the benchmarks at https://www.doc.ic.ac.uk/~im/
 NAME          QP example
 ROWS
  N  obj

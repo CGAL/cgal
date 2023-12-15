@@ -19,10 +19,11 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/assertions.h>
 
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -176,7 +177,7 @@ public:
 
 /// \ingroup PkgBGLAdaptors
 ///
-/// This class is a data structure that takes a triangle mesh, further refered
+/// This class is a data structure that takes a triangle mesh, further referred
 /// to as `underlying mesh` and turns some marked edges of that mesh into
 /// virtual boundary edges.
 ///
@@ -184,7 +185,7 @@ public:
 /// a border edge (that is, such that either halfedge or the edge have null_face()
 /// as incident face). Marking a border edge as seam will not do anything.
 ///
-/// \cgalModels `FaceGraph` or `FaceListGraph`, depending on the underlying mesh `TM`.
+/// \cgalModels{FaceGraph or `FaceListGraph` depending on the underlying mesh `TM`.}
 ///
 /// \tparam TM a model of `FaceGraph` or `FaceListGraph`
 /// \tparam SEM a model of `ReadablePropertyMap` with `boost::graph_traits<TM>::%edge_descriptor` as key type and `bool` as value type.
@@ -270,9 +271,7 @@ public:
   /// Implementation note: a halfedge of the seam mesh is represented as a halfedge
   /// of the mesh and a boolean to indicate whether the halfedge is on a seam or not.
   ///
-  /// \cgalModels `Descriptor`
-  /// \cgalModels `LessThanComparable`
-  /// \cgalModels `Hashable`
+  /// \cgalModels{Descriptor,LessThanComparable,Hashable}
   ///
   class halfedge_descriptor
   {
@@ -355,9 +354,7 @@ public:
   /// Implementation note: to properly duplicate vertices that are on seams,
   /// a vertex_descriptor is in fact represented as a halfedge of the seam mesh.
   ///
-  /// \cgalModels `Descriptor`
-  /// \cgalModels `LessThanComparable`
-  /// \cgalModels `Hashable`
+  /// \cgalModels{Descriptor,LessThanComparable,Hashable}
   ///
   class vertex_descriptor
   {
@@ -460,8 +457,7 @@ public:
 #ifdef DOXYGEN_RUNNING
   /// This class represents an edge of the seam mesh.
   ///
-  /// \cgalModels `Descriptor`
-  /// \cgalModels `Hashable`
+  /// \cgalModels{Descriptor,Hashable}
   ///
   class edge_descriptor
   {
@@ -561,7 +557,7 @@ public:
 
   /// This class represents a face of the seam mesh.
   ///
-  /// \cgalModels `Descriptor`
+  /// \cgalModels{Descriptor}
   ///
   typedef typename boost::graph_traits<TM>::face_descriptor     face_descriptor;
 
@@ -934,7 +930,7 @@ public:
 
   void build_TM_vertices_vector(std::vector<TM_vertex_descriptor>& tm_vds) const
   {
-    assert(tm_vds.empty());
+    CGAL_precondition(tm_vds.empty());
 
     // If the input is a list of integers, we need to build a correspondence
     // between vertices and integers.
@@ -1008,7 +1004,7 @@ public:
   TM_halfedge_descriptor add_seams(InputIterator first, InputIterator last)
   {
     // must have an even number of input vertices
-    assert(std::distance(first, last) % 2 == 0);
+    CGAL_precondition(std::distance(first, last) % 2 == 0);
 
     TM_halfedge_descriptor tmhd = boost::graph_traits<TM>::null_halfedge();
     InputIterator it = first;

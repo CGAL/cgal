@@ -48,14 +48,36 @@ protected:
 
   // Data members:
   const Traits_2* m_traits;
-  bool m_own_traits;      // inidicates whether the kernel should be freed up.
+  bool m_own_traits;      // indicates whether the kernel should be freed up.
 
 public:
+  // The pointer to the traits and the flag that indicate ownership should be
+  // replaced with a smart pointer. Meanwhile, the copy constructor and
+  // copy assignment prevent double delition. Notice that once a copy
+  // constructor (assignment) is present, the move constructor (assignment)
+  // is implicitly not generated anyway.
+
   /*! Default constructor. */
   Polygon_decomposition_strategy_adapter() :
     m_traits(nullptr),
     m_own_traits(false)
   { init(); }
+
+  /*! Copy constructor. */
+  Polygon_decomposition_strategy_adapter
+  (const Polygon_decomposition_strategy_adapter& other) :
+    m_traits((other.m_own_traits) ? new Traits_2 : other.m_traits),
+    m_own_traits(other.m_own_traits)
+  { init(); }
+
+  /*! Copy assignment. */
+  Polygon_decomposition_strategy_adapter&
+  operator=(const Polygon_decomposition_strategy_adapter& other) {
+    m_traits = (other.m_own_traits) ? new Traits_2 : other.m_traits;
+    m_own_traits = other.m_own_traits;
+    init();
+    return *this;
+  }
 
   /*! Constructor. */
   Polygon_decomposition_strategy_adapter(const Traits_2& traits) :

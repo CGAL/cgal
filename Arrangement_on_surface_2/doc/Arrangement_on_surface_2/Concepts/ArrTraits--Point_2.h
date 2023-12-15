@@ -5,11 +5,11 @@ namespace ArrTraits {
  *
  * Represents a point in the plane.
  *
- * \cgalRefines DefaultConstructible
- * \cgalRefines CopyConstructible
- * \cgalRefines Assignable
+ * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Point_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::Point_2}
+ * \cgalHasModelsEnd
  */
 class Point_2 {
 public:

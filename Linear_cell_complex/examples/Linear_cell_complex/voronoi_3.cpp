@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 /* // If you want to use exact constructions.
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -12,18 +13,18 @@ typedef CGAL::Linear_cell_complex<3,3,
 */
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<3> LCC_3;
-typedef LCC_3::Dart_handle           Dart_handle;
-typedef LCC_3::Point                 Point;
+typedef LCC_3::Dart_descriptor Dart_descriptor;
+typedef LCC_3::Point           Point;
 
 typedef CGAL::Delaunay_triangulation_3<LCC_3::Traits> Triangulation;
 
 // Function used to display the voronoi diagram.
-void display_voronoi(LCC_3& alcc, Dart_handle adart)
+void display_voronoi(LCC_3& alcc, Dart_descriptor adart)
 {
   // We remove the infinite volume plus all the volumes adjacent to it.
   // Indeed, we cannot view these volumes since they do not have
   // a "correct geometry".
-  std::stack<Dart_handle> toremove;
+  std::stack<Dart_descriptor> toremove;
   LCC_3::size_type mark_toremove=alcc.get_new_mark();
 
   // adart belongs to the infinite volume.
@@ -48,7 +49,7 @@ void display_voronoi(LCC_3& alcc, Dart_handle adart)
     toremove.pop();
   }
 
-  CGAL_assertion(alcc.is_without_boundary(1) && alcc.is_without_boundary(2));
+  assert(alcc.is_without_boundary(1) && alcc.is_without_boundary(2));
 
   std::cout<<"Voronoi subdvision, only finite volumes:"<<std::endl<<"  ";
   alcc.display_characteristics(std::cout) << ", valid="
@@ -59,19 +60,19 @@ void display_voronoi(LCC_3& alcc, Dart_handle adart)
 template<typename LCC, typename TR>
 void transform_dart_to_their_dual(LCC& alcc, LCC& adual,
                                   std::map<typename TR::Cell_handle,
-                                           typename LCC::Dart_handle>& assoc)
+                                           typename LCC::Dart_descriptor>& assoc)
 {
   typename LCC::Dart_range::iterator it1=alcc.darts().begin();
   typename LCC::Dart_range::iterator it2=adual.darts().begin();
 
-  std::map<typename LCC::Dart_handle, typename LCC::Dart_handle> dual;
+  std::map<typename LCC::Dart_descriptor, typename LCC::Dart_descriptor> dual;
 
   for ( ; it1!=alcc.darts().end(); ++it1, ++it2 )
   {
     dual[it1]=it2;
   }
 
-  for ( typename std::map<typename TR::Cell_handle, typename LCC::Dart_handle>
+  for ( typename std::map<typename TR::Cell_handle, typename LCC::Dart_descriptor>
           ::iterator it=assoc.begin(), itend=assoc.end(); it!=itend; ++it)
   {
     assoc[it->first]=dual[it->second];
@@ -81,9 +82,9 @@ void transform_dart_to_their_dual(LCC& alcc, LCC& adual,
 template<typename LCC, typename TR>
 void set_geometry_of_dual(LCC& alcc, TR& tr,
                           std::map<typename TR::Cell_handle,
-                                   typename LCC::Dart_handle>& assoc)
+                                   typename LCC::Dart_descriptor>& assoc)
 {
-  for ( typename std::map<typename TR::Cell_handle, typename LCC::Dart_handle>
+  for ( typename std::map<typename TR::Cell_handle, typename LCC::Dart_descriptor>
           ::iterator it=assoc.begin(), itend=assoc.end(); it!=itend; ++it)
   {
     if ( !tr.is_infinite(it->first) )
@@ -126,14 +127,14 @@ int main(int narg, char** argv)
 
   std::istream_iterator<Point> begin(iFile), end;
   T.insert(begin, end);
-  CGAL_assertion(T.is_valid(false));
+  assert(T.is_valid(false));
 
   // 2) Convert the triangulation into a 3D lcc.
   LCC_3 lcc;
   std::map<Triangulation::Cell_handle,
-           LCC_3::Dart_handle > vol_to_dart;
+           LCC_3::Dart_descriptor > vol_to_dart;
 
-  Dart_handle dh=CGAL::import_from_triangulation_3<LCC_3, Triangulation>
+  Dart_descriptor d=CGAL::import_from_triangulation_3<LCC_3, Triangulation>
     (lcc, T, &vol_to_dart);
 
   std::cout<<"Delaunay triangulation :"<<std::endl<<"  ";
@@ -142,9 +143,9 @@ int main(int narg, char** argv)
 
   // 3) Compute the dual lcc.
   LCC_3 dual_lcc;
-  Dart_handle ddh=lcc.dual(dual_lcc, dh);
+  Dart_descriptor dd=lcc.dual(dual_lcc, d);
   // Here, dual_lcc is the 3D Voronoi diagram.
-  CGAL_assertion(dual_lcc.is_without_boundary());
+  assert(dual_lcc.is_without_boundary());
 
   // 4) We update the geometry of dual_lcc by using the std::map
   //    face_to_dart.
@@ -157,8 +158,7 @@ int main(int narg, char** argv)
   dual_lcc.display_characteristics(std::cout) << ", valid="
                                               << dual_lcc.is_valid()
                                               << std::endl;
-  display_voronoi(dual_lcc, ddh);
+  display_voronoi(dual_lcc, dd);
 
   return EXIT_SUCCESS;
 }
-

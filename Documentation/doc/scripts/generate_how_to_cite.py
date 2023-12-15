@@ -46,7 +46,7 @@ software.
 
 If you want to cite the \cgal Library or project as a whole, please
 
-- cite: \cgal, Computational Geometry Algorithms Library, https://www.cgal.org 
+- cite: \cgal, Computational Geometry Algorithms Library, https://www.cgal.org
 - use the first bibtex entry from the file <a href="how_to_cite_cgal.bib">how_to_cite_cgal.bib</a>.
 
 ## Citing the User and Reference Manual ##
@@ -65,7 +65,7 @@ If you want to refer to \cgal manual, please cite the appropriate
 The \cgal Project.
  <em>\cgal User and Reference Manual</em>.
  \cgal Editorial Board, ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.
-[&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;| 
+[&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;|
 <a href="packages.html">http</a>&nbsp;]
 
 </td>
@@ -85,7 +85,7 @@ pre_html=r"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "htt
 <link rel="icon" type="image/png" href="../Manual/g-196x196-doc.png"/>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<link href="stylesheet.css" rel="stylesheet" type="text/css" />
+<link href="cgal_stylesheet.css" rel="stylesheet" type="text/css" />
 <title>CGAL ${CGAL_CREATED_VERSION_NUM} - Manual: Acknowledging CGAL</title>
 </head>
 <body>
@@ -157,7 +157,7 @@ def protect_upper_case(title):
   return title.replace("dD","{dD}").replace("2D","{2D}").replace("3D","{3D}").replace("CGAL","{CGAL}").replace("Qt","{Qt}").replace("Boost","{Boost}")
 
 def protect_accentuated_letters(authors):
-  res=authors.replace("é",r"{\'e}").replace("è",r"{\`e}").replace("É",r"{\'E}").replace("ä",r"{\"a}").replace("ö",r"{\"o}").replace("ñ",r"{\~n}").replace("ã",r"{\~a}").replace("ë",r"{\"e}").replace("ı",r"{\i}").replace("Ş",r"{\c{S}}").replace("ş",r"{\c{s}}").replace("%","")
+  res=authors.replace("é",r"{\'e}").replace("è",r"{\`e}").replace("É",r"{\'E}").replace("ä",r"{\"a}").replace("ö",r"{\"o}").replace("ñ",r"{\~n}").replace("ã",r"{\~a}").replace("ë",r"{\"e}").replace("ı",r"{\i}").replace("Ş",r"{\c{S}}").replace("ş",r"{\c{s}}").replace("%","").replace("đ",r"{\-d}")
   try:
     res.encode('ascii')
   except UnicodeEncodeError:

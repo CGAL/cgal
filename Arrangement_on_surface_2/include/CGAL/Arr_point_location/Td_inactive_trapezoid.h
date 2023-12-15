@@ -17,11 +17,11 @@
 
 
 /*! \file
- * Defintion of the Td_inactive_trapezoid class.
+ * Definition of the Td_inactive_trapezoid class.
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
-#include <boost/variant.hpp>
+#include <variant>
 
 
 #ifdef CGAL_TD_DEBUG

@@ -6,7 +6,6 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <CGAL/algorithm.h>
-#include <CGAL/assertions.h>
 
 #include <fstream>
 #include <iostream>

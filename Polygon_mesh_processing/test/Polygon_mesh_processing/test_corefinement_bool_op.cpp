@@ -1,5 +1,6 @@
 // #define CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 // #define CGAL_COREFINEMENT_DEBUG
+#define  CGAL_USE_DERIVED_SURFACE_MESH
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -13,9 +14,17 @@
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 
+#include <CGAL/Testsuite/DerivedSurfaceMesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel              Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+typedef Kernel::Point_3 Point_3;
+
+
+#ifdef CGAL_USE_DERIVED_SURFACE_MESH
+typedef CGAL::Testsuite::DerivedSurfaceMesh<Point_3> Surface_mesh;
+#else
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
+#endif
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace CFR = PMP::Corefinement;
@@ -88,7 +97,7 @@ void run_boolean_operations(
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 
-  typedef boost::optional<Surface_mesh*> OSM;
+  typedef std::optional<Surface_mesh*> OSM;
 
   std::array<OSM,4> output;
 

@@ -29,7 +29,7 @@ TDS_2, which don't reside in their own packages in the SCM.
 ### Footnotes ###
 
 A JQuery footnotes plug-in jquery.footnotes is used to handle
-footnotes. The special doxygen command \cgalFootnote expands to the
+footnotes. The special doxygen command `\cgalFootnote` expands to the
 appropriate html marker. Some JavaScript in `header.html` is used to
 append the `<ol div="autoFootnotes0">` to the current doc-content
 div. It is not added to the footer because this would break when tree

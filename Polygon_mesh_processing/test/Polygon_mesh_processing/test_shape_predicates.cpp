@@ -99,13 +99,17 @@ void test_needles_and_caps(const std::string fname)
   res = PMP::is_needle_triangle_face(f, mesh, 20);
   assert(res == boost::graph_traits<Surface_mesh>::null_halfedge());
   res = PMP::is_needle_triangle_face(f, mesh, 10 * CGAL::sqrt(FT(2) - eps));
+  assert(res != boost::graph_traits<Surface_mesh>::null_halfedge());
   assert(mesh.point(target(res, mesh)) == Point_3(1,0,1));
   res = PMP::is_needle_triangle_face(f, mesh, 1);
+  assert(res != boost::graph_traits<Surface_mesh>::null_halfedge());
   assert(mesh.point(target(res, mesh)) == Point_3(1,0,1));
 
   res = PMP::is_cap_triangle_face(f, mesh, 0./*cos(pi/2)*/);
+  assert(res != boost::graph_traits<Surface_mesh>::null_halfedge());
   assert(mesh.point(target(res, mesh)) == Point_3(0,0,1));
   res = PMP::is_cap_triangle_face(f, mesh, std::cos(2 * CGAL_PI / 3));
+  assert(res != boost::graph_traits<Surface_mesh>::null_halfedge());
   assert(mesh.point(target(res, mesh)) == Point_3(0,0,1));
   res = PMP::is_cap_triangle_face(f, mesh, std::cos(0.75 * CGAL_PI));
   assert(res == boost::graph_traits<Surface_mesh>::null_halfedge());
@@ -116,15 +120,17 @@ void test_needles_and_caps(const std::string fname)
   res = PMP::is_needle_triangle_face(f, mesh, 2);
   assert(res == boost::graph_traits<Surface_mesh>::null_halfedge());
   res = PMP::is_needle_triangle_face(f, mesh, 1.9);
+  assert(res != boost::graph_traits<Surface_mesh>::null_halfedge());
   assert(mesh.point(target(res, mesh)) == Point_3(0,0,2) ||
          mesh.point(target(res, mesh)) == Point_3(1,0,2));
   res = PMP::is_needle_triangle_face(f, mesh, 1);
+  assert(res != boost::graph_traits<Surface_mesh>::null_halfedge());
   assert(mesh.point(target(res, mesh)) == Point_3(0,0,2) ||
          mesh.point(target(res, mesh)) == Point_3(1,0,2));
 
   res = PMP::is_cap_triangle_face(f, mesh, 0./*cos(pi/2)*/);
-  assert(res != boost::graph_traits<Surface_mesh>::null_halfedge() &&
-         mesh.point(target(res, mesh)) != Point_3(0,0,2) &&
+  assert(res != boost::graph_traits<Surface_mesh>::null_halfedge());
+  assert(mesh.point(target(res, mesh)) != Point_3(0,0,2) &&
          mesh.point(target(res, mesh)) != Point_3(1,0,2));
   res = PMP::is_cap_triangle_face(f, mesh, std::cos(2 * CGAL_PI / 3));
   assert(res != boost::graph_traits<Surface_mesh>::null_halfedge());

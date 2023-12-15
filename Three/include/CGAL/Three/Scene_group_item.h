@@ -41,9 +41,9 @@ public :
     Scene_group_item(QString name = QString("New group"));
     ~Scene_group_item() { delete children;}
     //!Returns false to avoid disturbing the BBox of the scene.
-    bool isFinite() const Q_DECL_OVERRIDE;
+    bool isFinite() const override;
     //!Returns true to avoid disturbing the BBox of the scene.
-    bool isEmpty() const Q_DECL_OVERRIDE;
+    bool isEmpty() const override;
     /*!
          * \brief locks a child
          *
@@ -92,15 +92,15 @@ public :
     //! @see isExpanded().
     void setExpanded(bool);
     //!Returns an empty Bbox to avoid disturbing the Bbox of the scene.
-    Bbox bbox() const Q_DECL_OVERRIDE;
+    Bbox bbox() const override;
     //!Not supported.
-    Scene_item* clone() const Q_DECL_OVERRIDE {return nullptr;}
+    Scene_item* clone() const override {return nullptr;}
     //! Indicates if the rendering mode is supported.
     //! \returns true for all rendering modes that are shared by
     //! all of the children.
-    bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE;
+    bool supportsRenderingMode(RenderingMode m) const override;
     //!\returns a string containing the number of children.
-    QString toolTip() const Q_DECL_OVERRIDE;
+    QString toolTip() const override;
 
     /// Draw functions
     /// Scene_group_item's children are not drawn by the scene, they are drawn by the group.
@@ -111,21 +111,21 @@ public :
     //! and `Scene_item::drawPoints` for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
-    virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void draw(CGAL::Three::Viewer_interface*) const override;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawEdges()`, then calls `Scene_item::draw()`
     //! and `Scene_item::drawPoints` for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
-    virtual void drawEdges(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawEdges(CGAL::Three::Viewer_interface*) const override;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawPoints()`, then calls `Scene_item::draw()`
     //! and `Scene_item::drawEdges()` for each child if its current
     //! rendering mode is adequat.
     //! @see #RenderingMode
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const override;
     //!
        //! \brief deals with the rendering, selecting and picking of
        //! the group's children.
@@ -152,11 +152,11 @@ public :
     Scene_item* getChild(Scene_interface::Item_id id) { return scene->item(id);}
     Scene_item* getChild(Scene_interface::Item_id id) const{ return scene->item(id);}
     //!Sets all the children to the specified color.
-    void setColor(QColor c) Q_DECL_OVERRIDE;
+    void setColor(QColor c) override;
     //!Sets all the children in the specified rendering mode.
-    void setRenderingMode(RenderingMode m) Q_DECL_OVERRIDE;
+    void setRenderingMode(RenderingMode m) override;
     //!Sets all the children to the specified visibility.
-    void setVisible(bool b) Q_DECL_OVERRIDE;
+    void setVisible(bool b) override;
     //!Sets all the children in points mode.
     void setPointsMode() {
       setRenderingMode(Points);
@@ -190,7 +190,7 @@ public :
       setRenderingMode(PointsPlusNormals);
     }
     //!Sets the alpha value for the froup and all its children.
-        virtual void setAlpha(int) Q_DECL_OVERRIDE;
+        virtual void setAlpha(int) override;
 
     //! \brief returns a list of all the direct children.
     //!
@@ -203,7 +203,7 @@ public :
     //!
     //! When a `Scene_group_item` is added to the selection of the scene,
     //! this function defines which of its children will be added too.
-    //! Typically overriden to allow applying an operation from the
+    //! Typically overridden to allow applying an operation from the
     //! Operation menu only to the parent item and not to its children.
     virtual QList<Scene_interface::Item_id> getChildrenForSelection() const {return *children;}
     //!Removes a Scene_item from the list of children.
@@ -227,7 +227,7 @@ public :
     //!Moves a child down in the list.
     void moveDown(int);
 
-    void compute_bbox() const Q_DECL_OVERRIDE{};
+    void compute_bbox() const override{};
 public Q_SLOTS:
     //!\brief redraws children.
     //!

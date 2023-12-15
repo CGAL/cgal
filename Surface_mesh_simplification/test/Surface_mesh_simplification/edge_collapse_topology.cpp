@@ -8,7 +8,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Surface;
@@ -18,7 +18,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   if(argc!=2){
-    std::cerr << "Please provide only an off-file as input\n";
+    std::cerr << "Please provide only an OFF file as input\n";
     return 1;
   }
 
@@ -36,13 +36,14 @@ int main(int argc, char** argv)
   std::cout << "Initial count " << initial_count << " edges.\n";
 
   // Contract the surface as much as possible
-  SMS::Count_stop_predicate<Surface> stop(0);
+  SMS::Edge_count_stop_predicate<Surface> stop(0);
 
   int r = SMS::edge_collapse
             (surface
             ,stop
              ,CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,surface))
                                .halfedge_index_map  (get(CGAL::halfedge_external_index  ,surface))
+                               .use_relaxed_order(CGAL::Tag_true())
            );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"

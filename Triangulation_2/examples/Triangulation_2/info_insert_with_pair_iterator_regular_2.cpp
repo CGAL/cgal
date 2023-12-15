@@ -28,8 +28,6 @@ int main()
   Regular rt;
   rt.insert( points.begin(),points.end() );
 
-  CGAL_assertion( rt.number_of_vertices() == 6 );
-
   // check that the info was correctly set.
   for (Vertex_handle v : rt.finite_vertex_handles())
     if( points[ v->info() ].first != v->point() ){

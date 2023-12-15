@@ -20,7 +20,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Convex_hull_traits_3.h>
-#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Convex_hull_face_base_2.h>
 #include <CGAL/Convex_hull_vertex_base_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
@@ -29,23 +29,23 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Convex_hull_3/internal/Indexed_triangle_set.h>
 
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/is_iterator.h>
+#include <CGAL/type_traits/is_iterator.h>
 
-#include <boost/next_prior.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/graph/graph_traits.hpp>
+
+#include <type_traits>
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_3.h>
@@ -147,7 +147,7 @@ namespace internal {
 //struct to select the default traits class for computing convex hull
 template< class Point_3,
           class PolygonMesh = Default,
-          class Is_floating_point=typename boost::is_floating_point<typename Kernel_traits<Point_3>::Kernel::FT>::type,
+          class Is_floating_point=typename std::is_floating_point<typename Kernel_traits<Point_3>::Kernel::FT>::type,
           class Has_filtered_predicates_tag=typename Kernel_traits<Point_3>::Kernel::Has_filtered_predicates_tag >
 struct Default_traits_for_Chull_3{
   typedef typename Kernel_traits<Point_3>::Kernel type;
@@ -155,7 +155,7 @@ struct Default_traits_for_Chull_3{
 
 //FT is a floating point type and Kernel is a filtered kernel
 template <class Point_3, class PolygonMesh>
-struct Default_traits_for_Chull_3<Point_3, PolygonMesh, boost::true_type,Tag_true>{
+struct Default_traits_for_Chull_3<Point_3, PolygonMesh, std::true_type,Tag_true>{
   typedef Convex_hull_traits_3< typename Kernel_traits<Point_3>::Kernel, PolygonMesh, Tag_true > type;
 };
 
@@ -172,7 +172,7 @@ struct Default_polyhedron_for_Chull_3<Convex_hull_traits_3<K, P, Tag> >{
 template <class T>
 struct Is_cartesian_kernel
 {
-  typedef boost::false_type type;
+  typedef std::false_type type;
 };
 
 template <class Kernel, class PolygonMesh>
@@ -180,7 +180,7 @@ struct Is_cartesian_kernel< Convex_hull_traits_3<Kernel, PolygonMesh, Tag_true> 
 {
   // Rational here is that Tag_true can only be passed by us since it is not documented
   // so we can assume that Kernel is a CGAL Kernel
-  typedef typename boost::is_same<typename Kernel::Kernel_tag, Cartesian_tag>::type type;
+  typedef typename std::is_same<typename Kernel::Kernel_tag, Cartesian_tag>::type type;
 };
 
 // Predicate internally used as a wrapper around has_on_positive_side
@@ -233,7 +233,7 @@ public:
 //interval arithmetic (the protector must be created before using this predicate)
 //and in case of failure, exact arithmetic is used.
 template <class Kernel, class P>
-class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>, boost::true_type >{
+class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>, std::true_type >{
   typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  Exact_K;
   typedef Simple_cartesian<Interval_nt_advanced >                               Approx_K;
   typedef Convex_hull_traits_3<Kernel, P, Tag_true>                             Traits;
@@ -563,7 +563,7 @@ farthest_outside_point(Face_handle f, std::list<Point>& outside_set,
 {
 
    typedef typename std::list<Point>::iterator Outside_set_iterator;
-   CGAL_ch_assertion(!outside_set.empty());
+   CGAL_assertion(!outside_set.empty());
 
    typename Traits::Plane_3 plane =
        traits.construct_plane_3_object()(f->vertex(0)->point(),
@@ -611,7 +611,7 @@ partition_outside_sets(const std::list<Face_handle>& new_facets,
     }
     if(! point_list.empty()){
       pending_facets.push_back(f);
-      f->it = boost::prior(pending_facets.end());
+      f->it = std::prev(pending_facets.end());
     } else {
       f->it = pending_facets.end();
     }
@@ -680,7 +680,7 @@ ch_quickhull_3_scan(TDS_2& tds,
      border.erase(it);
      while(! border.empty()){
        it = border.find(e.first->vertex(TDS_2::ccw(e.second)));
-       CGAL_ch_assertion(it != border.end());
+       CGAL_assertion(it != border.end());
        e = it->second;
        e.first->info() = 0;
        edges.push_back(e);
@@ -746,7 +746,7 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   for(Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit){
     if (! fit->points.empty()){
       pending_facets.push_back(fit);
-      fit->it = boost::prior(pending_facets.end());
+      fit->it = std::prev(pending_facets.end());
         } else {
       fit->it =  pending_facets.end();
     }
@@ -756,9 +756,9 @@ void non_coplanar_quickhull_3(std::list<typename Traits::Point_3>& points,
   ch_quickhull_3_scan(tds, pending_facets, traits);
 
   //std::cout << "|V(tds)| = " << tds.number_of_vertices() << std::endl;
-//  CGAL_ch_expensive_postcondition(all_points_inside(points.begin(),
+//  CGAL_expensive_postcondition(all_points_inside(points.begin(),
 //                                                    points.end(),P,traits));
-//  CGAL_ch_postcondition(is_strongly_convex_3(P, traits));
+//  CGAL_postcondition(is_strongly_convex_3(P, traits));
 }
 
 template <class InputIterator, class PolygonMesh, class Traits>
@@ -1051,17 +1051,17 @@ template <class InputIterator, class PolygonMesh>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    PolygonMesh& polyhedron,
                    // workaround to avoid ambiguity with next overload.
-                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0)
+                   std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
   typedef typename Convex_hull_3::internal::Default_traits_for_Chull_3<Point_3, PolygonMesh>::type Traits;
   convex_hull_3(first, beyond, polyhedron, Traits());
 }
 
-template <class VertexListGraph, class PolygonMesh, class NamedParameters>
+template <class VertexListGraph, class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void convex_hull_3(const VertexListGraph& g,
                    PolygonMesh& pm,
-                   const NamedParameters& np)
+                   const NamedParameters& np = parameters::default_values())
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
@@ -1076,12 +1076,37 @@ void convex_hull_3(const VertexListGraph& g,
                 boost::make_transform_iterator(vertices(g).end(), v2p), pm);
 }
 
-template <class VertexListGraph, class PolygonMesh>
-void convex_hull_3(const VertexListGraph& g,
-                   PolygonMesh& pm)
+
+
+template <class InputIterator, class PointRange, class TriangleRange>
+void convex_hull_3(InputIterator first, InputIterator beyond,
+                   PointRange& vertices,
+                   TriangleRange& faces,
+                   std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
+                   std::enable_if_t<boost::has_range_iterator<PointRange>::value>* = 0,
+                   std::enable_if_t<boost::has_range_iterator<TriangleRange>::value>* = 0)
 {
-  convex_hull_3(g,pm,CGAL::parameters::all_default());
+  typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::type Traits;
+
+  Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
+  convex_hull_3(first, beyond, its, Traits());
 }
+
+
+template <class InputIterator, class P, class PointRange, class TriangleRange, class Traits>
+void convex_hull_3(InputIterator first, InputIterator beyond,
+                   PointRange& vertices,
+                   TriangleRange& faces,
+                   const Traits& traits,
+                   std::enable_if_t<CGAL::is_iterator<InputIterator>::value>* = 0,
+                   std::enable_if_t<boost::has_range_iterator<PointRange>::value>* = 0,
+                   std::enable_if_t<boost::has_range_iterator<TriangleRange>::value>* = 0)
+{
+  Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
+  convex_hull_3(first, beyond, its, traits);
+}
+
 
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator

@@ -25,14 +25,14 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Object.h>
 #include <CGAL/centroid.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/PCA_util.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Iterator_range.h>
 #include <functional>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
@@ -116,7 +116,7 @@ namespace CGAL {
      and returns an iterator over the first point to remove (see erase-remove idiom).
      For this reason it should not be called on sorted containers.
 
-     \pre `0 < maximum_variation < 1/3`
+     \pre `0 < maximum_variation <= 1/3`
      \pre `size > 0`
 
      \tparam PointRange is a model of `Range`. The value type of
@@ -176,24 +176,25 @@ namespace CGAL {
      \return iterator over the first point to remove.
   */
   template <typename PointRange,
-            typename NamedParameters>
+            typename NamedParameters = parameters::Default_named_parameters>
   typename PointRange::iterator
   hierarchy_simplify_point_set (PointRange& points,
-                                const NamedParameters& np)
+                                const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
     // basic geometric types
-    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Point_map PointMap;
+    typedef typename NP_helper::Geom_traits Kernel;
     typedef typename GetDiagonalizeTraits<NamedParameters, double, 3>::type DiagonalizeTraits;
 
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
     typedef typename Kernel::FT FT;
 
-    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+    PointMap point_map = NP_helper::get_point_map(points, np);
     unsigned int size = choose_parameter(get_parameter(np, internal_np::size), 10);
     double var_max = choose_parameter(get_parameter(np, internal_np::maximum_variation), 1./3.);
     const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
@@ -209,8 +210,8 @@ namespace CGAL {
     typedef typename std::list<cluster>::iterator cluster_iterator;
 
     CGAL_precondition (points.begin() != points.end());
-    CGAL_point_set_processing_precondition (size > 0);
-    CGAL_point_set_processing_precondition (var_max > 0.0);
+    CGAL_precondition (size > 0);
+    CGAL_precondition (var_max > 0.0);
 
     // The first cluster is the whole input point set
     clusters_stack.push_front (cluster (std::list<Input_type>(), Point (0., 0., 0.)));
@@ -241,7 +242,7 @@ namespace CGAL {
           }
 
         // Compute the covariance matrix of the set
-        std::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
+        std::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
 
         for (typename std::list<Input_type>::iterator it = current_cluster->first.begin ();
              it != current_cluster->first.end (); ++ it)
@@ -256,8 +257,8 @@ namespace CGAL {
             covariance[5] += d.z () * d.z ();
           }
 
-        std::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
-        std::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
+        std::array<double, 3> eigenvalues = {{ 0., 0., 0. }};
+        std::array<double, 9> eigenvectors = {{ 0., 0., 0.,
                                               0., 0., 0.,
                                               0., 0., 0. }};
         // Linear algebra = get eigenvalues and eigenvectors for
@@ -278,7 +279,7 @@ namespace CGAL {
             // The plane which splits the point set into 2 point sets:
             //  * Normal to the eigenvector with highest eigenvalue
             //  * Passes through the centroid of the set
-            Vector v (eigenvectors[6], eigenvectors[7], eigenvectors[8]);
+            Vector v (FT(eigenvectors.at(6)), FT(eigenvectors.at(7)), FT(eigenvectors.at(8)));
 
             std::size_t current_cluster_size = 0;
             typename std::list<Input_type>::iterator it = current_cluster->first.begin ();
@@ -371,18 +372,6 @@ namespace CGAL {
     return first_point_to_remove;
 
   }
-
-
-  /// \cond SKIP_IN_MANUAL
-  // variant with default NP
-  template <typename PointRange>
-  typename PointRange::iterator
-  hierarchy_simplify_point_set (PointRange& points)
-  {
-    return hierarchy_simplify_point_set
-      (points, CGAL::Point_set_processing_3::parameters::all_default(points));
-  }
-  /// \endcond
 
 } // namespace CGAL
 

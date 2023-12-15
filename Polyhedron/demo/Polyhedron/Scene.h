@@ -7,7 +7,7 @@
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <CGAL/Three/Viewer_config.h>
 
-#include <QtOpenGL/qgl.h>
+#include <QtOpenGLWidgets>
 #include <QStandardItemModel>
 #include <QString>
 #include <QColor>
@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <iostream>
 #include <cmath>
-#include <boost/variant.hpp>
+#include <variant>
 #include <CGAL/Three/Scene_group_item.h>
 class QEvent;
 class QMouseEvent;
@@ -51,22 +51,22 @@ public:
                  NumberOfColumns = LastColumn + 1};
   Scene(QObject*  parent);
   ~Scene();
-  int addItem(CGAL::Three::Scene_item* item) Q_DECL_OVERRIDE;
-  void addChild(Scene_item* item) Q_DECL_OVERRIDE;
-  Q_INVOKABLE void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) Q_DECL_OVERRIDE;
-  CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) Q_DECL_OVERRIDE;
-  Q_INVOKABLE int erase(int) Q_DECL_OVERRIDE;
+  int addItem(CGAL::Three::Scene_item* item) override;
+  void addChild(Scene_item* item) override;
+  Q_INVOKABLE void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) override;
+  CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false) override;
+  Q_INVOKABLE int erase(int) override;
 
-  int erase(QList<int>) Q_DECL_OVERRIDE;
-  int duplicate(int index) Q_DECL_OVERRIDE;
+  int erase(QList<int>) override;
+  int duplicate(int index) override;
 
   // Accessors (getters)
-  int numberOfEntries() const Q_DECL_OVERRIDE;
+  int numberOfEntries() const override;
   // returns the list of items.
   const QList<CGAL::Three::Scene_item*>& entries() const { return m_entries; }
 
-  Q_INVOKABLE CGAL::Three::Scene_item* item(int) const Q_DECL_OVERRIDE;
-  int item_id(CGAL::Three::Scene_item*) const Q_DECL_OVERRIDE;
+  Q_INVOKABLE CGAL::Three::Scene_item* item(int) const override;
+  int item_id(CGAL::Three::Scene_item*) const override;
 
   //! \todo Replace Index based selection functionality with those
   //! functions.
@@ -77,28 +77,28 @@ public:
   QList<CGAL::Three::Scene_item*> selectionB() const;
   ///@}
 
-  int mainSelectionIndex() const Q_DECL_OVERRIDE;
-  QList<int> selectionIndices() const Q_DECL_OVERRIDE;
-  int selectionAindex() const Q_DECL_OVERRIDE;
-  int selectionBindex() const Q_DECL_OVERRIDE;
-  void initializeGL(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
+  int mainSelectionIndex() const override;
+  QList<int> selectionIndices() const override;
+  int selectionAindex() const override;
+  int selectionBindex() const override;
+  void initializeGL(CGAL::Three::Viewer_interface*) override;
   void initGL(CGAL::Three::Viewer_interface* viewer);
-  void setPickedPixel(const QPoint &p) Q_DECL_OVERRIDE {picked_pixel = p;}
-  void draw(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void drawWithNames(CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  bool keyPressEvent(QKeyEvent* e) Q_DECL_OVERRIDE;
+  void setPickedPixel(const QPoint &p) override {picked_pixel = p;}
+  void draw(CGAL::Three::Viewer_interface*) override;
+  void drawWithNames(CGAL::Three::Viewer_interface*) override;
+  bool keyPressEvent(QKeyEvent* e) override;
   void printPrimitiveId(QPoint point,
-                        CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void printVertexIds() Q_DECL_OVERRIDE;
-  void printEdgeIds() Q_DECL_OVERRIDE;
-  void printFaceIds() Q_DECL_OVERRIDE;
-  void printAllIds() Q_DECL_OVERRIDE;
+                        CGAL::Three::Viewer_interface*) override;
+  void printVertexIds() override;
+  void printEdgeIds() override;
+  void printFaceIds() override;
+  void printAllIds() override;
   //!Re-computes the primitiveIds for `item`
-  void updatePrimitiveIds(Scene_item *item) Q_DECL_OVERRIDE;
-  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) Q_DECL_OVERRIDE;
-  Bbox bbox() const Q_DECL_OVERRIDE;
+  void updatePrimitiveIds(Scene_item *item) override;
+  bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) override;
+  Bbox bbox() const override;
   void computeBbox();
-  double len_diagonal() const Q_DECL_OVERRIDE
+  double len_diagonal() const override
   {
     Bbox box = bbox();
     double dx = box.xmax() - box.xmin();
@@ -114,26 +114,26 @@ public:
   // QStandardItemModel functions
   //Defines the behavior when a name is drag-and-dropped in the Geometric Objects view
   bool dropMimeData(const QMimeData *, Qt::DropAction, int, int,
-                    const QModelIndex &parent) Q_DECL_OVERRIDE;
+                    const QModelIndex &parent) override;
   //Contains the text and icons of an item in the Geometric Objects view
   QVariant data ( const QModelIndex & index,
-                  int role = ::Qt::DisplayRole ) const Q_DECL_OVERRIDE;
+                  int role = ::Qt::DisplayRole ) const override;
   //@returns the type of data correspondind to the role.
   QVariant headerData ( int section, ::Qt::Orientation orientation,
-                        int role = ::Qt::DisplayRole ) const Q_DECL_OVERRIDE;
+                        int role = ::Qt::DisplayRole ) const override;
   //@returns the flags for the item at the target index.
-  ::Qt::ItemFlags flags ( const QModelIndex & index ) const Q_DECL_OVERRIDE;
+  ::Qt::ItemFlags flags ( const QModelIndex & index ) const override;
   // Sets the column data for the target index. Returns false if index is not valid and
   // if role is not EditRole.
   bool setData(const QModelIndex &index, const QVariant &value,
-               int role) Q_DECL_OVERRIDE;
+               int role) override;
 
   //Returns a list of all the items.
   QList<CGAL::Three::Scene_item*> item_entries() const ;
   // auxiliary public function for QMainWindow
   //Selects the row at index i in the sceneView.
   QItemSelection createSelection(int i);
-  //same fo lists
+  //same for lists
   QItemSelection createSelection(QList<int> is);
   //Selects all the rows in the sceneView.
   QItemSelection createSelectionAll();
@@ -142,8 +142,8 @@ public:
   void addGroup(Scene_group_item* group);
 
   void zoomToPosition(QPoint point,
-                        CGAL::Three::Viewer_interface*) Q_DECL_OVERRIDE;
-  void setUpdatesEnabled(bool b) Q_DECL_OVERRIDE
+                        CGAL::Three::Viewer_interface*) override;
+  void setUpdatesEnabled(bool b) override
   {
     dont_emit_changes = !b;
     if(!b)
@@ -157,12 +157,12 @@ public Q_SLOTS:
   void setCollapsed(QModelIndex);
   //!Transmits a CGAL::Three::Scene_item::itemChanged() signal to the scene.
   void itemChanged();
-  void itemChanged(int i) Q_DECL_OVERRIDE;
-  void itemChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
-  void allItemsChanged() Q_DECL_OVERRIDE;
+  void itemChanged(int i) override;
+  void itemChanged(CGAL::Three::Scene_item*) override;
+  void allItemsChanged() override;
   //!Transmits a CGAL::Three::Scene_item::itemVisibilityChanged() signal to the scene.
   void itemVisibilityChanged();
-  void itemVisibilityChanged(CGAL::Three::Scene_item*) Q_DECL_OVERRIDE;
+  void itemVisibilityChanged(CGAL::Three::Scene_item*) override;
   //!Removes `item` from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
   //!Re-organizes the sceneView.
@@ -175,7 +175,7 @@ public Q_SLOTS:
     selected_item = i;
     Q_EMIT itemIndexSelected(i);
   }
-  void setSelectedItem(int i ) Q_DECL_OVERRIDE
+  void setSelectedItem(int i ) override
   {
     selected_item = i;
     Q_EMIT selectionChanged(i);
@@ -185,7 +185,7 @@ public Q_SLOTS:
   void setSelectedItem(CGAL::Three::Scene_item* item_to_select)
   {
     int i=0;
-    Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+    for(CGAL::Three::Scene_item* item : m_entries)
     {
       if (item==item_to_select)
       {
@@ -195,24 +195,51 @@ public Q_SLOTS:
       ++i;
     }
   }
+
   //! Sets the target list of indices as the selected indices.
-  QList<int> setSelectedItemsList(QList<int> l )
+  const QList<int>& setSelectedItemIndices(QList<int> l,
+                                           const bool do_emit = true)
   {
-    Q_FOREACH(int i,l)
+    for(int i :l)
     {
        CGAL::Three::Scene_group_item* group =
                qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
        if(group)
        {
          QList<int> list;
-         Q_FOREACH(Item_id id, group->getChildrenForSelection())
-           list<<id;
-         l << setSelectedItemsList(list);
+         for(Item_id id : group->getChildrenForSelection())
+           list << id;
+         l << setSelectedItemIndices(list, false /*do not emit*/);
        }
 
     }
     selected_items_list = l;
-    return l;
+    if(do_emit)
+      Q_EMIT itemIndicesSelected(selected_items_list);
+    return selected_items_list;
+  }
+
+    //! Sets the target list of indices as the selected indices.
+  const QList<int>& setSelectedItemList(QList<int> l,
+                                        const bool do_emit = true)
+  {
+    for(int i :l)
+    {
+       CGAL::Three::Scene_group_item* group =
+               qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
+       if(group)
+       {
+         QList<int> list;
+         for(Item_id id : group->getChildrenForSelection())
+           list << id;
+         l << setSelectedItemList(list, false /*do not emit*/);
+       }
+    }
+
+    selected_items_list = l;
+    if(do_emit)
+      Q_EMIT selectionChanged(selected_items_list);
+    return selected_items_list;
   }
 
   // Accessors (setters)
@@ -249,6 +276,8 @@ Q_SIGNALS:
   void selectionChanged(QList<int> is);
   //! Used when you don't want to update the selectedItem in the Geometric Objects view.
   void itemIndexSelected(int i);
+  //! Used when you don't want to update the selectedItem in the Geometric Objects view.
+  void itemIndicesSelected(QList<int> is);
   //! Emit this to reset the collapsed state of all groups after the Geometric Objects view has been redrawn.
   void restoreCollapsedState();
   //! Is emitted when draw() is finished.
@@ -344,5 +373,3 @@ private:
 }; // end class SceneDelegate
 
 #endif // SCENE_H
-
-

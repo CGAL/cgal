@@ -23,11 +23,18 @@ int main(int argc, char*argv[])
   }
 
   // simplification by clustering using erase-remove idiom
-  double cell_size = 0.001;
-  points.erase(CGAL::grid_simplify_point_set(points, cell_size), points.end());
+  double cell_size = 0.03;
+  unsigned int min_points_per_cell = 3;
 
-  // Optional: after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-  std::vector<Point>(points).swap(points);
+  auto iterator_to_first_to_remove
+    = CGAL::grid_simplify_point_set
+    (points, cell_size,
+     CGAL::parameters::min_points_per_cell(min_points_per_cell)); // optional
+
+  points.erase(iterator_to_first_to_remove, points.end());
+
+  // Optional: after erase(), shrink_to_fit to trim excess capacity
+  points.shrink_to_fit();
 
   return EXIT_SUCCESS;
 }

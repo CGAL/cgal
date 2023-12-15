@@ -72,9 +72,10 @@ int main(int argc, char*argv[])
   assert(c3t3.triangulation().number_of_vertices() > 200);
   // Output
   mesher.display_number_of_bad_elements();
-  std::ofstream medit_file("out.mesh");
-  c3t3.output_to_medit(medit_file);
-  medit_file.close();
+
+//  std::ofstream medit_file("out.mesh");
+//  CGAL::IO::write_MEDIT(medit_file, c3t3);
+//  medit_file.close();
 
   return EXIT_SUCCESS;
 }

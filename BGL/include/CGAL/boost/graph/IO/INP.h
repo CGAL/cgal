@@ -13,7 +13,7 @@
 #define CGAL_BGL_IO_INP_H
 
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/container/flat_map.hpp>
@@ -27,18 +27,18 @@ namespace IO {
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_INP(std::ostream& os,
                const std::string& name,
                const std::string& type,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                    face_descriptor;
   typedef typename boost::graph_traits<Graph>::vertices_size_type                 vertices_size_type;
 
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::const_type  VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::const_type  VPM;
   typedef typename boost::property_traits<VPM>::reference                         Point_ref;
 
   using parameters::choose_parameter;
@@ -76,45 +76,25 @@ bool write_INP(std::ostream& os,
   return os.good();
 }
 
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_INP(const std::string& fname,
                const std::string& type,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values() )
 {
   std::ofstream os(fname);
   return write_INP(os, fname, type, g, np);
 }
 
-template <typename Graph>
-bool write_INP(std::ostream& os, const std::string& name, const std::string& type, const Graph& g)
-{
-  return write_INP(os, name, type, g, parameters::all_default());
-}
-
-template <typename Graph>
-bool write_INP(const std::string& fname, const std::string& type, const Graph& g)
-{
-  return write_INP(fname, type, g, parameters::all_default());
-}
-
 #ifndef CGAL_NO_DEPRECATED_CODE
-template <typename FaceGraph, typename NamedParameters>
+template <typename FaceGraph, typename NamedParameters = parameters::Default_named_parameters>
 CGAL_DEPRECATED bool write_inp(std::ostream& os,
                const FaceGraph& g,
                std::string name,
                std::string type,
-               const NamedParameters& np)
+               const NamedParameters& np = parameters::default_values())
 {
   return write_INP(os, name, type, g, np);
-}
-template <typename FaceGraph>
-CGAL_DEPRECATED bool write_inp(std::ostream& os,
-               const FaceGraph& g,
-               std::string name,
-               std::string type)
-{
-  return write_INP(os, name, type, g, parameters::all_default());
 }
 #endif
 /// \endcond

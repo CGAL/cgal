@@ -6,7 +6,7 @@
  * identified on the bottom and top sides and curves inserted into the
  * arrangement are expected to reach these boundary sides.
  *
- * \cgalRefines `ArrangementBasicTraits_2`
+ * \cgalRefines{ArrangementBasicTraits_2}
  *
  * \sa `ArrangementIdentifiedVerticalTraits_2`,
  *     `ArrangementOpenBottomTraits_2`,
@@ -34,6 +34,9 @@ public:
   /// \name Functor Types
   /// @{
 
+  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
+  typedef unspecified_type Compare_x_on_boundary_2;
+
   /// models the concept `ArrTraits::IsOnXIdentification_2`.
   typedef unspecified_type Is_on_x_identification_2;
 
@@ -42,5 +45,6 @@ public:
   /// \name Accessing Functor Objects
   /// @{
   Is_on_x_identification_2 is_on_x_identification_2_object() const;
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const;
   /// @}
 }

@@ -278,7 +278,7 @@ public Q_SLOTS:
     filter_operations();
   }
   // If the selection_item or the polyhedron_item associated to the k-ring_selector is currently selected,
-  // set the k-ring_selector as currently selected. (A k-ring_selector tha tis not "currently selected" will
+  // set the k-ring_selector as currently selected. (A k-ring_selector that is not "currently selected" will
   // not process selection events)
   void isCurrentlySelected(Scene_facegraph_item_k_ring_selection* item)
   {
@@ -394,7 +394,7 @@ public Q_SLOTS:
     if (dialog.exec() != QDialog::Accepted)
       return;
 
-    boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
+    std::unordered_map<fg_face_descriptor, bool> is_selected_map;
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
     {
       if(selection_item->selected_facets.find(fh)
@@ -497,7 +497,7 @@ public Q_SLOTS:
       return;
     }
 
-    boost::optional<std::size_t> minimum =
+    std::optional<std::size_t> minimum =
       selection_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
     if(minimum) {
       ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
@@ -512,7 +512,7 @@ public Q_SLOTS:
       print_message("Error: there is no selected polyhedron selection item!");
       return;
     }
-    boost::optional<std::size_t> minimum = selection_item->get_minimum_isolated_component();
+    std::optional<std::size_t> minimum = selection_item->get_minimum_isolated_component();
     if(minimum) {
       ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
     }
@@ -752,8 +752,7 @@ public Q_SLOTS:
         print_message("Error: Please select a selection item with a selection of faces.");
         return;
       }
-      boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
-      int index = 0;
+      std::unordered_map<fg_face_descriptor, bool> is_selected_map;
       for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
         if(selection_item->selected_facets.find(fh)
@@ -763,7 +762,6 @@ public Q_SLOTS:
         {
           is_selected_map[fh]=true;
         }
-        ++index;
       }
       CGAL::expand_face_selection_for_removal(selection_item->selected_facets,
                                               *selection_item->polyhedron(),
@@ -1171,7 +1169,7 @@ private:
   Ui::Selection ui_widget;
   std::map<QString, int> operations_map;
   std::vector<QString> operations_strings;
-typedef boost::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
+  typedef std::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
   int last_mode;
   bool from_plugin;
@@ -1189,7 +1187,7 @@ bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_trait
   // compute self-intersections
   CGAL::Polygon_mesh_processing::self_intersections
     (*mesh, std::back_inserter(faces),
-    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, *mesh)));
+    CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, *mesh)));
 
   std::cout << "ok (" << faces.size() << " triangle pair(s))" << std::endl;
   return !faces.empty();
@@ -1203,7 +1201,7 @@ void Polyhedron_demo_selection_plugin::on_actionSelfIntersection_triggered()
   CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
   bool found = false;
   std::vector<Scene_face_graph_item*> selected_polys;
-  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  for(Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_face_graph_item* poly_item =
         qobject_cast<Scene_face_graph_item*>(scene->item(index));
@@ -1212,7 +1210,7 @@ void Polyhedron_demo_selection_plugin::on_actionSelfIntersection_triggered()
       selected_polys.push_back(poly_item);
     }
   }
-  Q_FOREACH(Scene_face_graph_item* poly_item, selected_polys)
+  for(Scene_face_graph_item* poly_item : selected_polys)
   {
     Face_graph* mesh = poly_item->face_graph();
     std::vector<std::pair<Face_descriptor, Face_descriptor> > faces;

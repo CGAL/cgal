@@ -22,8 +22,6 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/triangulation_assertions.h>
-
 namespace CGAL {
 
 template < class Repres >

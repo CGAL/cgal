@@ -1,0 +1,78 @@
+/// \defgroup PkgSMDS3Ref 3D Simplicial Mesh Data Structures Reference
+
+/// \defgroup PkgSMDS3Concepts Concepts
+/// \ingroup PkgSMDS3Ref
+/// The main concepts of this package.
+
+/// \defgroup PkgSMDS3Classes Classes
+/// \ingroup PkgSMDS3Ref
+/// The classes describing a 3D simplicial mesh data structure.
+
+/// \defgroup PkgSMDS3Functions Functions
+/// \ingroup PkgSMDS3Ref
+/// The functions to work with the 3D mesh data structures.
+
+/// \defgroup PkgSMDS3ExportFunctions Export Functions
+/// \ingroup PkgSMDS3Ref
+/// The free functions that can be used to export meshes to given output file formats.
+
+/// \defgroup PkgSMDS3IOFunctions Input/Output Functions
+/// \ingroup PkgSMDS3Ref
+/// The free functions that can be used to read and write meshes.
+
+/*!
+\addtogroup PkgSMDS3Ref
+\cgalPkgDescriptionBegin{3D Simplicial Mesh Data Structure,PkgSMDS3}
+\cgalPkgPicture{knot_small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, and Mariette Yvinec}
+\cgalPkgDesc{This package provides a data structure to store three-dimensional
+  simplicial meshes and their subcomplexes.
+  It provides an API for tetrahedral meshes generated with %CGAL or not,
+  to be processed with %CGAL 3D mesh generation and remeshing algorithms,
+  along with iterators, IO functions, and additional helper functions.
+  }
+\cgalPkgManuals{Chapter_3D_Simplicial_Mesh_Data_Structure,PkgSMDS3Ref}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.6}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgBib{cgal:ajrtty-mds3}
+\cgalPkgLicense{\ref licensesGPL  "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `MeshComplex_3InTriangulation_3`
+- `MeshComplexWithFeatures_3InTriangulation_3`
+- `SimplicialMeshCellBase_3`
+- `SimplicialMeshVertexBase_3`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Mesh_complex_3_in_triangulation_3`
+- `CGAL::Simplicial_mesh_vertex_base_3`
+- `CGAL::Simplicial_mesh_cell_base_3`
+
+\cgalCRPSection{Function Templates}
+
+- `CGAL::facets_in_complex_3_to_triangle_mesh()`
+- `CGAL::tetrahedron_soup_to_triangulation_3()`
+
+\cgalCRPSection{Input/Output Functions}
+
+- `CGAL::IO::write_MEDIT()`
+- `CGAL::IO::read_MEDIT()`
+- `CGAL::IO::output_to_vtu()`
+- `CGAL::IO::output_to_tetgen()`
+- `CGAL::IO::save_binary_file()`
+- `CGAL::IO::load_binary_file()`
+- `CGAL::IO::output_to_medit()` (deprecated)
+*/
+

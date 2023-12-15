@@ -18,11 +18,13 @@
 #include <utility>
 #include <array>
 #include <iterator>
+#include <unordered_set>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/utility.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
 
@@ -73,8 +75,36 @@ inline int indices(const int& i, const int& j)
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)
     return indices_table[i][j];
-  else
-    return -1;
+  CGAL_error_msg("Invalid indices provided");
+  return 0;
+}
+
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 2>
+vertices(const typename Tr::Edge& e , const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 2>{
+               e.first->vertex(e.second),
+               e.first->vertex(e.third)};
+}
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 3>
+vertices(const typename Tr::Facet& f, const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 3>{
+               f.first->vertex(Tr::vertex_triple_index(f.second, 0)),
+               f.first->vertex(Tr::vertex_triple_index(f.second, 1)),
+               f.first->vertex(Tr::vertex_triple_index(f.second, 2))};
+}
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 4>
+vertices(const typename Tr::Cell_handle c, const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 4>{
+               c->vertex(0),
+               c->vertex(1),
+               c->vertex(2),
+               c->vertex(3)};
 }
 
 template<typename Gt, typename Point>
@@ -528,13 +558,15 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     v->set_index(v->cell()->subdomain_index());
     break;
   case 2:
+    CGAL_assertion(surface_patch_index(v, c3t3)
+                  != typename C3t3::Surface_patch_index());
     v->set_index(surface_patch_index(v, c3t3));
     break;
   case 1:
     v->set_index(typename C3t3::Curve_index(1));
     break;
   case 0:
-    v->set_index(boost::get<typename C3t3::Corner_index>(v->index()));
+    v->set_index(Mesh_3::internal::get_index<typename C3t3::Corner_index>(v->index()));
     break;
   default:
     CGAL_assertion(false);
@@ -616,7 +648,7 @@ std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  boost::unordered_set<Subdomain_index> indices;
+  std::unordered_set<Subdomain_index> indices;
   incident_subdomains(v, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -628,7 +660,7 @@ std::size_t nb_incident_subdomains(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  boost::unordered_set<Subdomain_index> indices;
+  std::unordered_set<Subdomain_index> indices;
   incident_subdomains(e, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -640,7 +672,7 @@ std::size_t nb_incident_surface_patches(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
-  boost::unordered_set<Surface_patch_index> indices;
+  std::unordered_set<Surface_patch_index, boost::hash<Surface_patch_index>> indices;
   incident_surface_patches(e, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -651,7 +683,7 @@ std::size_t nb_incident_complex_edges(const typename C3t3::Vertex_handle v,
                                       const C3t3& c3t3)
 {
   typedef typename C3t3::Edge Edge;
-  boost::unordered_set<Edge> edges;
+  std::unordered_set<Edge> edges;
   c3t3.triangulation().finite_incident_edges(v, std::inserter(edges, edges.begin()));
 
   std::size_t count = 0;
@@ -1312,7 +1344,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
   }
 
   //write facets
-  std::size_t nbf_print = 0;
+  CGAL_assertion_code(std::size_t nbf_print = 0);
   for (Finite_facets_iterator fit = tr.finite_facets_begin();
        fit != tr.finite_facets_end(); ++fit)
   {
@@ -1323,7 +1355,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
       ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
           << vertices.left.at(c->vertex((i + 2) % 4)) << " "
           << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
-      ++nbf_print;
+      CGAL_assertion_code(++nbf_print);
     }
   }
   CGAL_assertion(nbf == nbf_print);
@@ -1341,7 +1373,7 @@ void dump_cells_off(const CellRange& cells, const Tr& /*tr*/, const char* filena
 
   Bimap_t vertices;
   int index = 0;
-  boost::unordered_set<std::array<Vertex_handle, 3> > facets;
+  std::unordered_set<std::array<Vertex_handle, 3>, boost::hash<std::array<Vertex_handle, 3>> > facets;
 
   for (Cell_handle c : cells)
   {
@@ -1580,7 +1612,7 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
   }
 
   //write facets
-  std::size_t nbf_print = 0;
+  CGAL_assertion_code(std::size_t nbf_print = 0);
   for (Facets_in_complex_iterator fit = c3t3.facets_in_complex_begin();
        fit != c3t3.facets_in_complex_end(); ++fit)
   {
@@ -1589,7 +1621,7 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
     ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
         << vertices.left.at(c->vertex((i + 2) % 4)) << " "
         << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
-    ++nbf_print;
+    CGAL_assertion_code(++nbf_print);
   }
   CGAL_assertion(nbf == nbf_print);
 

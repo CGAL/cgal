@@ -203,7 +203,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   for (vit = v_min = this->vertices_begin() ; vit != this->vertices_end(); ++vit)
     if ( K.compare_xy(point(vit), point(v_min))<0 ) v_min = vit;
   CGAL_assertion_msg(!is_isolated(v_min),"Minimal vertex not connected.");
-  Point p_min = point(v_min);
+  const Point& p_min = point(v_min);
   // determine boundary edge incident to v_min:
   Halfedge_const_handle e_boundary_at_v_min = first_out_edge(v_min);
   // all out edges are forward oriented due to minimality
@@ -211,8 +211,8 @@ check_boundary_is_clockwise_weakly_polygon() const
     hvit(e_boundary_at_v_min), hend(hvit);
   do {
     --hvit;
-    Point p1 = point(target(e_boundary_at_v_min));
-    Point p2 = point(target(hvit));
+    const Point& p1 = point(target(e_boundary_at_v_min));
+    const Point& p2 = point(target(hvit));
     if ( K.orientation(p_min,p1,p2) > 0 ) { // left_turn
       e_boundary_at_v_min = hvit;
       break;
@@ -220,7 +220,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   } while (hvit != hend);
   // now e_boundary_at_v_min is highest starting edge in bundle!!
 
-  int winding_around_globally=0;
+  CGAL_assertion_code(int winding_around_globally=0);
   Halfedge_around_face_const_circulator
     hfit(e_boundary_at_v_min),hstart(hfit);
   Halfedge_const_handle e_prev = next(e_boundary_at_v_min);
@@ -229,7 +229,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   Direction d_prev = direction(e_prev);
   CGAL_For_all_backwards(hstart,hfit) {
     Direction d_curr = direction(hfit);
-    if ( d_curr < d_prev ) ++winding_around_globally;
+    CGAL_assertion_code(if ( d_curr < d_prev ) ++winding_around_globally);
     d_prev = d_curr;
   }
   CGAL_assertion(winding_around_globally == 1);
@@ -262,10 +262,10 @@ check_is_triangulation() const
   for( eit = this->halfedges_begin(); eit != this->halfedges_end(); ++eit) {
     if (on_boundary[eit]) continue;
     hit = hend = eit;
-    int edges_in_face_cycle=0;
+    CGAL_assertion_code(int edges_in_face_cycle=0);
     CGAL_For_all(hit,hend) {
       error_status << PE(hit);
-      ++edges_in_face_cycle;
+      CGAL_assertion_code(++edges_in_face_cycle);
     }
     CGAL_assertion_msg(edges_in_face_cycle==3,error_status.str().c_str());
     CGAL_assertion_msg(

@@ -30,7 +30,7 @@
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4345) // Avoid warning  http://msdn.microsoft.com/en-us/library/wewb47ee(VS.80).aspx
+#  pragma warning(disable:4345) // Avoid warning https://learn.microsoft.com/en-us/previous-versions/wewb47ee(v=vs.120)
 #endif
 namespace CGAL {
 

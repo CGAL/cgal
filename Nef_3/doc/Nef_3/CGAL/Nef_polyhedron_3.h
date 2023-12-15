@@ -35,7 +35,7 @@ namespace CGAL {
 
   The second parameter and the third parameter are for future considerations.
   Neither `Nef_polyhedronItems_3` nor `Nef_polyhedronMarks` is
-  specifed, yet. Do not use any other than the default types for these two
+  specified, yet. Do not use any other than the default types for these two
   template parameters.
 
   \sa `CGAL::Nef_polyhedron_3::Vertex`
@@ -74,7 +74,7 @@ public:
   illustrate the incidence of a svertex on a sphere map and of
   a halfedge in the global structure.
 
-  As part of the global incidence structure, the member fuctions `source`
+  As part of the global incidence structure, the member functions `source`
   and `target` return the source and target vertex of an edge. The member
   function `twin()` returns the opposite halfedge.
 

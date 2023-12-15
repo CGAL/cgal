@@ -44,7 +44,7 @@ template <typename C3T3,
 class Lloyd_move
 {
   typedef typename C3T3::Triangulation                        Tr;
-  typedef typename Tr::Geom_traits                            Gt;
+  typedef typename Tr::Geom_traits                            GT;
 
   typedef typename Tr::Vertex_handle                          Vertex_handle;
   typedef typename Tr::Edge                                   Edge;
@@ -57,18 +57,18 @@ class Lloyd_move
   typedef typename std::vector<Facet>                         Facet_vector;
   typedef typename std::vector<Cell_handle>                   Cell_vector;
 
-  typedef typename Gt::FT                                     FT;
-  typedef typename Gt::Point_2                                Point_2;
-  typedef typename Gt::Vector_3                               Vector_3;
-  typedef typename Gt::Tetrahedron_3                          Tetrahedron_3;
-  typedef typename Gt::Plane_3                                Plane_3;
-  typedef typename Gt::Aff_transformation_3                   Aff_transformation_3;
+  typedef typename GT::FT                                     FT;
+  typedef typename GT::Point_2                                Point_2;
+  typedef typename GT::Vector_3                               Vector_3;
+  typedef typename GT::Tetrahedron_3                          Tetrahedron_3;
+  typedef typename GT::Plane_3                                Plane_3;
+  typedef typename GT::Aff_transformation_3                   Aff_transformation_3;
 
 public:
   typedef SizingField                                         Sizing_field;
 
   /**
-   * @brief Return the move to apply on \c v according to Lloyd optimization
+   * @brief Returns the move to apply on `v` according to Lloyd optimization
    * function.
    */
   Vector_3 operator()(const Vertex_handle& v,
@@ -162,7 +162,7 @@ private:
 
 
   /**
-   * Return the move for the inside vertex \c v.
+   * Returns the move for the inside vertex `v`.
    */
   Vector_3 lloyd_move_inside_domain(const Vertex_handle& v,
                                     const Cell_vector& incident_cells,
@@ -210,7 +210,7 @@ private:
   }
 
   /**
-   * Return the move for the on-boundary vertex \c v.
+   * Returns the move for the on-boundary vertex `v`.
    */
   Vector_3 lloyd_move_on_boundary(const Vertex_handle& v,
                                   const C3T3& c3t3,
@@ -254,14 +254,14 @@ private:
 
   /**
    * Returns a vector containing the surface delaunay ball centers of the surface
-   * facets that are incident to vertex \c v.
+   * facets that are incident to vertex `v`.
    */
   std::vector<Bare_point> extract_lloyd_boundary_points(const Vertex_handle& v,
                                                         const C3T3& c3t3) const
   {
     const Tr& tr = c3t3.triangulation();
 
-    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
     Facet_vector incident_facets;
     incident_facets.reserve(64);
@@ -298,7 +298,7 @@ private:
   }
 
   /**
-   * Return the move from \c v to the centroid of the segment [a,b].
+   * Returns the move from `v` to the centroid of the segment `[a,b]`.
    */
   Vector_3 centroid_segment_move(const Vertex_handle& v,
                                  const Bare_point& a,
@@ -306,8 +306,8 @@ private:
                                  const C3T3& c3t3,
                                  const Sizing_field& sizing_field) const
   {
-    typename Gt::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
-    typename Gt::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
+    typename GT::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename GT::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
 
     const Weighted_point position = c3t3.triangulation().point(v);
     const Bare_point& p = cp(position);
@@ -320,7 +320,7 @@ private:
   }
 
   /**
-   * Return the move from \c v to the centroid of triangle [a,b,c].
+   * Returns the move from `v` to the centroid of triangle `[a,b,c]`.
    */
   Vector_3 centroid_triangle_move(const Vertex_handle& v,
                                   const Bare_point& a,
@@ -329,8 +329,8 @@ private:
                                   const C3T3& c3t3,
                                   const Sizing_field& sizing_field) const
   {
-    typename Gt::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
-    typename Gt::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
+    typename GT::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename GT::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
 
     const Weighted_point& position = c3t3.triangulation().point(v);
     const Bare_point& p = cp(position);
@@ -397,7 +397,7 @@ private:
   }
 
   /**
-   * Return the move from \c v to the centroid of polygon[first,last].
+   * Returns the move from `v` to the centroid of polygon `[first,last]`.
    * The polygon has to be convex.
    */
   template <typename ForwardIterator>
@@ -409,10 +409,10 @@ private:
   {
     CGAL_precondition(std::distance(first,last) >= 3);
 
-    typename Gt::Compute_area_3 area = c3t3.triangulation().geom_traits().compute_area_3_object();
-    typename Gt::Construct_centroid_3 centroid = c3t3.triangulation().geom_traits().construct_centroid_3_object();
-    typename Gt::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
-    typename Gt::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
+    typename GT::Compute_area_3 area = c3t3.triangulation().geom_traits().compute_area_3_object();
+    typename GT::Construct_centroid_3 centroid = c3t3.triangulation().geom_traits().construct_centroid_3_object();
+    typename GT::Construct_point_3 cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+    typename GT::Construct_vector_3 vector = c3t3.triangulation().geom_traits().construct_vector_3_object();
 
     // Vertex current position
     const Weighted_point& vertex_weighted_position = c3t3.triangulation().point(v);
@@ -460,8 +460,8 @@ private:
                                                const Bare_point& reference_point,
                                                const C3T3& c3t3) const
   {
-    typename Gt::Construct_base_vector_3 base = c3t3.triangulation().geom_traits().construct_base_vector_3_object();
-    typename Gt::Construct_orthogonal_vector_3 orthogonal_vector = c3t3.triangulation().geom_traits().construct_orthogonal_vector_3_object();
+    typename GT::Construct_base_vector_3 base = c3t3.triangulation().geom_traits().construct_base_vector_3_object();
+    typename GT::Construct_orthogonal_vector_3 orthogonal_vector = c3t3.triangulation().geom_traits().construct_orthogonal_vector_3_object();
 
     Vector_3 u = base(plane, 1);
     u = u / CGAL::sqrt(u*u);
@@ -523,8 +523,8 @@ private:
   }
 
   /**
-   * Turn around the edge \c edge and add the values computed from tets made by
-   * `v` and the circumcenters of cells incident to \c edge.
+   * Turns around the edge `edge` and adds the values computed from tets made by
+   * `v` and the circumcenters of cells incident to `edge`.
    *
    * Note that this function abundantly uses dual() calls and using a cell base
    * which stores the circumcenter thus improves its efficiency.
@@ -542,12 +542,12 @@ private:
 
     const Tr& tr = c3t3.triangulation();
 
-    typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
-    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
-    typename Gt::Construct_tetrahedron_3 tetrahedron = tr.geom_traits().construct_tetrahedron_3_object();
-    typename Gt::Construct_translated_point_3 translate = tr.geom_traits().construct_translated_point_3_object();
-    typename Gt::Construct_vector_3 vector = tr.geom_traits().construct_vector_3_object();
-    typename Gt::Compute_volume_3 volume = tr.geom_traits().compute_volume_3_object();
+    typename GT::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
+    typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename GT::Construct_tetrahedron_3 tetrahedron = tr.geom_traits().construct_tetrahedron_3_object();
+    typename GT::Construct_translated_point_3 translate = tr.geom_traits().construct_translated_point_3_object();
+    typename GT::Construct_vector_3 vector = tr.geom_traits().construct_vector_3_object();
+    typename GT::Compute_volume_3 volume = tr.geom_traits().compute_volume_3_object();
 
     Cell_circulator current_cell = tr.incident_cells(edge);
     Cell_circulator done = current_cell;

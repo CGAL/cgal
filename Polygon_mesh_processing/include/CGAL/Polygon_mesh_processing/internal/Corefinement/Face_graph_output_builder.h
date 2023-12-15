@@ -52,12 +52,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-enum Boolean_operation_type {UNION = 0, INTERSECTION,
-                             TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
-
-namespace PMP=Polygon_mesh_processing;
-namespace params=PMP::parameters;
-
 // extra functions for handling non-documented functions for user visitors
 // with no extra functions
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_extra_functions,
@@ -158,7 +152,7 @@ class Face_graph_output_builder
 // Internal typedefs
   typedef std::size_t                                          Node_id;
   typedef std::pair<Node_id,Node_id>                      Node_id_pair;
-  typedef boost::unordered_set<edge_descriptor>  Intersection_edge_map;
+  typedef std::unordered_set<edge_descriptor>  Intersection_edge_map;
   // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
   // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
   // second is the number of edges -1 in the polyline
@@ -168,9 +162,9 @@ class Face_graph_output_builder
                                std::pair<bool,std::size_t> > >
                                               An_edge_per_polyline_map;
 
-  typedef boost::unordered_map<vertex_descriptor, Node_id> Node_id_map;
-  typedef boost::unordered_map<edge_descriptor,
-                               edge_descriptor>               Edge_map;
+  typedef std::unordered_map<vertex_descriptor, Node_id>   Node_id_map;
+  typedef std::unordered_map<edge_descriptor,
+                             edge_descriptor>                 Edge_map;
 //Data members
   TriangleMesh &tm1, &tm2;
   // property maps of input meshes
@@ -187,7 +181,7 @@ class Face_graph_output_builder
   Node_id_map vertex_to_node_id1, vertex_to_node_id2;
 
   // output meshes
-  const std::array<boost::optional<TriangleMesh*>, 4>& requested_output;
+  const std::array<std::optional<TriangleMesh*>, 4>& requested_output;
   // input meshes closed ?
   /// \todo do we really need this?
   bool is_tm1_closed;
@@ -279,7 +273,7 @@ class Face_graph_output_builder
   };
 
   // detect if a polyline is incident to two patches that won't be imported
-  // for the current operation (polylines skipt are always incident to a
+  // for the current operation (polylines skipped are always incident to a
   // coplanar patch)
   template <class TM, class FIM1, class FIM2>
   static
@@ -417,7 +411,7 @@ public:
                             const VpmOutTuple& output_vpms,
                             EdgeMarkMapTuple& out_edge_mark_maps,
                             UserVisitor& user_visitor,
-                            const std::array<boost::optional<TriangleMesh*>, 4 >& requested_output)
+                            const std::array<std::optional<TriangleMesh*>, 4 >& requested_output)
     : tm1(tm1), tm2(tm2)
     , vpm1(vpm1), vpm2(vpm2)
     , fids1(fids1), fids2(fids2)
@@ -428,8 +422,8 @@ public:
     , requested_output(requested_output)
     , is_tm1_closed( is_closed(tm1))
     , is_tm2_closed( is_closed(tm2))
-    , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1, parameters::vertex_point_map(vpm1)) )
-    , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
+    , is_tm1_inside_out( is_tm1_closed && !is_outward_oriented(tm1, parameters::vertex_point_map(vpm1)) )
+    , is_tm2_inside_out( is_tm2_closed && !is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
     , NID((std::numeric_limits<Node_id>::max)())
     , mesh_to_intersection_edges(tm1, tm2)
     , used_to_clip_a_surface(false)
@@ -519,10 +513,10 @@ public:
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
-    const bool used_to_classify_patches =  requested_output[UNION]==boost::none &&
-                                           requested_output[TM1_MINUS_TM2]==boost::none &&
-                                           requested_output[TM2_MINUS_TM1]==boost::none &&
-                                           requested_output[INTERSECTION]==boost::none;
+    const bool used_to_classify_patches =  requested_output[UNION]==std::nullopt &&
+                                           requested_output[TM1_MINUS_TM2]==std::nullopt &&
+                                           requested_output[TM2_MINUS_TM1]==std::nullopt &&
+                                           requested_output[INTERSECTION]==std::nullopt;
 
     CGAL_assertion( vertex_to_node_id1.size() <= nodes.size() );
     CGAL_assertion( vertex_to_node_id2.size() <= nodes.size() );
@@ -557,8 +551,8 @@ public:
     typename An_edge_per_polyline_map::iterator
       epp_it=input_have_coplanar_faces ? an_edge_per_polyline.begin()
                                        : epp_it_end;
-    boost::unordered_set<edge_descriptor> inter_edges_to_remove1,
-                                          inter_edges_to_remove2;
+    std::unordered_set<edge_descriptor> inter_edges_to_remove1,
+                                        inter_edges_to_remove2;
 
     // Each vector contains a subset of coplanar faces. More particularly only
     // the coplanar faces incident to an intersection edge. Note
@@ -566,6 +560,9 @@ public:
     // edges and some coplanar faces might not be seen as they are
     // the result of the retriangulation.
     std::vector<face_descriptor> tm1_coplanar_faces, tm2_coplanar_faces;
+
+
+    user_visitor.filter_coplanar_edges();
 
     for (;epp_it!=epp_it_end;)
     {
@@ -701,16 +698,18 @@ public:
       intersection_edges2.erase(ed);
     }
 
+    user_visitor.detect_patches();
+
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.
     // ... for tm1
     std::vector<std::size_t> tm1_patch_ids( num_faces(tm1),NID );
     Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
     std::size_t nb_patches_tm1 =
-      PMP::connected_components(tm1,
-                                bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
-                                params::edge_is_constrained_map(is_marked_1)
-                                       .face_index_map(fids1));
+      connected_components(tm1,
+                           make_compose_property_map(fids1,make_property_map(&tm1_patch_ids[0])),
+                           parameters::edge_is_constrained_map(is_marked_1)
+                                      .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)
@@ -720,10 +719,10 @@ public:
     std::vector<std::size_t> tm2_patch_ids( num_faces(tm2),NID );
     Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
     std::size_t nb_patches_tm2 =
-      PMP::connected_components(tm2,
-                                bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
-                                params::edge_is_constrained_map(is_marked_2)
-                                       .face_index_map(fids2));
+      connected_components(tm2,
+                           make_compose_property_map(fids2,make_property_map(&tm2_patch_ids[0])),
+                           parameters::edge_is_constrained_map(is_marked_2)
+                                      .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
     for(Node_id i : tm2_patch_ids)
@@ -731,7 +730,7 @@ public:
         ++tm2_patch_sizes[i];
 
 
-
+    user_visitor.classify_patches();
 
     // (2-a) Use the orientation around an edge to classify a patch
     boost::dynamic_bitset<> is_patch_inside_tm2(nb_patches_tm1, false);
@@ -1052,16 +1051,18 @@ public:
           previous_bitvalue[2] = is_patch_inside_tm1.test(patch_id_q1);
           previous_bitvalue[3] = is_patch_inside_tm1.test(patch_id_q2);
 
-#ifndef CGAL_NDEBUG
+/*
+          // Note that this code is commented as impossible_operation flag could be set thanks to
+          // another polyline and such a `continue` would make us miss it.
           if (is_tm1_closed && is_tm2_closed)
           {
-            if (!patch_status_was_not_already_set[0] &&
-                !patch_status_was_not_already_set[1] &&
-                !patch_status_was_not_already_set[2] &&
-                !patch_status_was_not_already_set[3])
-              continue; // all patches were already classified, no need to redo it
+             if (!patch_status_was_not_already_set[0] &&
+                 !patch_status_was_not_already_set[1] &&
+                 !patch_status_was_not_already_set[2] &&
+                 !patch_status_was_not_already_set[3])
+               continue; // all patches were already classified, no need to redo it
           }
-#endif
+*/
 
           // check incompatibility of patch classifications
           auto inconsistent_classification = [&]()
@@ -1085,6 +1086,25 @@ public:
             }
             return false;
           };
+#ifndef CGAL_NDEBUG
+          auto debug_check_consistency = [&]()
+          {
+            if (!used_to_clip_a_surface && !used_to_classify_patches)
+            {
+              CGAL_assertion( patch_status_was_not_already_set[0] || (previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1]) );
+              CGAL_assertion( patch_status_was_not_already_set[1] || (previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2]) );
+              CGAL_assertion( patch_status_was_not_already_set[2] || (previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1]) );
+              CGAL_assertion( patch_status_was_not_already_set[3] || (previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2]) );
+            }
+          };
+          is_patch_inside_tm2.reset(patch_id_p1);
+          is_patch_inside_tm2.reset(patch_id_p2);
+          is_patch_inside_tm1.reset(patch_id_q1);
+          is_patch_inside_tm1.reset(patch_id_q2);
+#else
+          auto debug_check_consistency = [&](){};
+
+#endif
 
           //indicates that patch status will be updated
           patch_status_not_set_tm1.reset(patch_id_p1);
@@ -1141,6 +1161,7 @@ public:
             if ( q2_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q2); //case 1
             else is_patch_inside_tm2.set(patch_id_p2); //case 2
             if (inconsistent_classification()) return;
+            debug_check_consistency();
             continue;
           }
           else{
@@ -1172,6 +1193,7 @@ public:
                 is_patch_inside_tm2.set(patch_id_p2);
               } //else case 4
               if (inconsistent_classification()) return;
+              debug_check_consistency();
               continue;
             }
             else
@@ -1203,6 +1225,7 @@ public:
                   is_patch_inside_tm2.set(patch_id_p1);
                 } // else case 6
                 if (inconsistent_classification()) return;
+                debug_check_consistency();
                 continue;
               }
               else{
@@ -1232,13 +1255,14 @@ public:
                   if ( q1_is_between_p1p2 ) is_patch_inside_tm1.set(patch_id_q1);  //case 7
                   else is_patch_inside_tm2.set(patch_id_p1); //case 8
                   if (inconsistent_classification()) return;
+                  debug_check_consistency();
                   continue;
                 }
               }
             }
           }
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-          #warning At some point we should have a check if a patch status is already set, what we do is consistant otherwise --> ambiguous
+          #warning At some point we should have a check if a patch status is already set, what we do is consistent otherwise --> ambiguous
 #endif //CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 
           CGAL_assertion(
@@ -1394,13 +1418,7 @@ public:
             }
           }
           if (inconsistent_classification()) return;
-          if (!used_to_clip_a_surface && !used_to_classify_patches)
-          {
-            CGAL_assertion( patch_status_was_not_already_set[0] || previous_bitvalue[0]==is_patch_inside_tm2[patch_id_p1] );
-            CGAL_assertion( patch_status_was_not_already_set[1] || previous_bitvalue[1]==is_patch_inside_tm2[patch_id_p2] );
-            CGAL_assertion( patch_status_was_not_already_set[2] || previous_bitvalue[2]==is_patch_inside_tm1[patch_id_q1] );
-            CGAL_assertion( patch_status_was_not_already_set[3] || previous_bitvalue[3]==is_patch_inside_tm1[patch_id_q2] );
-          }
+          debug_check_consistency();
         }
     }
 
@@ -1437,6 +1455,8 @@ public:
 
     if ( patch_status_not_set_tm1.any() )
     {
+      user_visitor.classify_intersection_free_patches(tm1);
+
       CGAL::Bounded_side in_tm2 = is_tm2_inside_out
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
@@ -1512,6 +1532,8 @@ public:
 
     if ( patch_status_not_set_tm2.any() )
     {
+      user_visitor.classify_intersection_free_patches(tm2);
+
       CGAL::Bounded_side in_tm1 = is_tm1_inside_out
                                 ? ON_UNBOUNDED_SIDE : ON_BOUNDED_SIDE;
 
@@ -1646,7 +1668,7 @@ public:
     typedef Patch_container<TriangleMesh, FaceIdMap1, Intersection_edge_map> Patches1;
     typedef Patch_container<TriangleMesh, FaceIdMap2, Intersection_edge_map> Patches2;
 
-    boost::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
+    std::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
     if (used_to_clip_a_surface)
     {
       if (!is_tm1_closed)
@@ -1658,8 +1680,8 @@ public:
         // special code to handle non-manifold vertices on the boundary
         for (vertex_descriptor vd : vertices(tm1))
         {
-          boost::optional<halfedge_descriptor> op_h = is_border(vd, tm1);
-          if (op_h == boost::none) continue;
+          std::optional<halfedge_descriptor> op_h = is_border(vd, tm1);
+          if (op_h == std::nullopt) continue;
           halfedge_descriptor h = *op_h;
           CGAL_assertion( target(h, tm1) == vd);
           // check if the target of h is a non-manifold vertex
@@ -1800,6 +1822,8 @@ public:
     /// first handle operations in a mesh that is neither tm1 nor tm2
     for(Boolean_operation_type operation : out_of_place_operations)
     {
+      user_visitor.out_of_place_operation(operation);
+
       TriangleMesh& output = *(*requested_output[operation]);
       CGAL_assertion(&tm1!=&output && &tm2!=&output);
 
@@ -1850,6 +1874,8 @@ public:
 
       if ( inplace_operation_tm2!=NONE)
       {
+        user_visitor.in_place_operations(inplace_operation_tm1, inplace_operation_tm2);
+
         // mark intersection edges in tm2 (using output constrained edge map)
         mark_edges(out_edge_mark_maps,
                    mesh_to_intersection_edges[&tm2],
@@ -1965,6 +1991,8 @@ public:
            CGAL::Polygon_mesh_processing::reverse_face_orientations(*&tm1);
       }
       else{
+        user_visitor.in_place_operation(inplace_operation_tm1);
+
         /// handle the operation updating only tm1
         CGAL_assertion( *requested_output[inplace_operation_tm1] == &tm1 );
         Intersection_polylines polylines(
@@ -2030,7 +2058,7 @@ public:
           for(vertex_descriptor vd : border_nm_vertices)
           {
             // first check if at least one incident patch will be kept
-            boost::unordered_set<std::size_t> id_p_rm;
+            std::unordered_set<std::size_t> id_p_rm;
             bool all_removed=true;
             for(halfedge_descriptor h : halfedges_around_target(vd, tm1))
             {
@@ -2135,6 +2163,8 @@ public:
     else
       if ( inplace_operation_tm2!=NONE )
       {
+        user_visitor.in_place_operation(inplace_operation_tm2);
+
         // mark intersection edges in tm2 (using output constrained edge map)
         mark_edges(out_edge_mark_maps,
                    mesh_to_intersection_edges[&tm2],

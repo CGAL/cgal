@@ -43,7 +43,7 @@ operator <<
     typedef std::pair< int, int > Coord_2;
     typedef std::vector< Coord_2 > Coord_vec_2;
 
-    boost::optional < Coord_2 > p1, p2;
+    std::optional < Coord_2 > p1, p2;
     std::list<Coord_vec_2> points;
 
     Bbox_2 bbox (CGAL::to_double(ws.bounding_rect().xmin()),

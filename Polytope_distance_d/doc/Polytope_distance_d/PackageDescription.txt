@@ -19,17 +19,12 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\cgalCRPSection{Assertions}
-The optimization code uses infix `OPTIMISATION` in the assertions,
-e.g. defining the compiler flag
-`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
-checking off, cf. Section  \ref secchecks.
 
 \cgalClassifedRefPages
 
 \cgalCRPSection{All Furthest Neighbors}
 
-- `CGAL::all_furthest_neighbors_2`
+- `CGAL::all_furthest_neighbors_2()`
 - `AllFurthestNeighborsTraits_2`
 
 \cgalCRPSection{Width}
@@ -48,4 +43,3 @@ checking off, cf. Section  \ref secchecks.
 
 
 */
-

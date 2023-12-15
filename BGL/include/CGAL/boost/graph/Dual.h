@@ -44,7 +44,7 @@ error.
 
 \tparam Primal_ must be a model of `FaceGraph`
 
-\cgalModels `FaceGraph`
+\cgalModels{FaceGraph}
 
 */
 template <typename Primal_>
@@ -458,7 +458,7 @@ out_degree(typename boost::graph_traits<Dual<P> >::vertex_descriptor v,
            const Dual<P>& dual)
 {
   const typename Dual<P>::Primal& primal = dual.primal();
-  return boost::distance(halfedges_around_face(halfedge(v,primal),primal));
+  return halfedges_around_face(halfedge(v,primal),primal).size();
 }
 
  template <typename P>

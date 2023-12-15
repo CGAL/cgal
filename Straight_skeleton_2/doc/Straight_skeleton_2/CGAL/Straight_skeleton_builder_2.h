@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup PkgStraightSkeleton2Classes
 
 The class `Dummy_straight_skeleton_builder_2_visitor` provides a model for the
-`StraightSkeletonBuilder_2_Visitor` concept which is the visitor
+concept `StraightSkeletonBuilder_2_Visitor`, which is the visitor
 type required by the `Straight_skeleton_builder_2` algorithm class.
 
 \tparam Ss must be a model of the `StraightSkeleton_2`.
@@ -12,7 +12,7 @@ type required by the `Straight_skeleton_builder_2` algorithm class.
 This class is the default visitor parameter of the straight skeleton builder.
 All its methods are empty.
 
-\cgalModels `StraightSkeletonBuilder_2_Visitor`
+\cgalModels{StraightSkeletonBuilder_2_Visitor}
 
 \sa `Straight_skeleton_builder_2`
 */
@@ -51,7 +51,7 @@ From the perspective of a dynamic system of moving edges, such a distance can be
 <I>instant</I> (in time). Therefore, every distinct position along a bisector corresponds
 to a distinct instant in the offsetting process.
 
-As they move inward, edges can expand or contract w.r.t to the endpoints sharing a vertex.
+As they move inward, edges can expand or contract w.r.t. to the endpoints sharing a vertex.
 If a vertex has an internal angle \f$ <\pi\f$, its incident edges will contract
 but if its internal angle \f$ >\pi\f$, they will expand. The movement of the edges,
 along with their extent change, result in collisions between non-adjacent edges.
@@ -110,7 +110,7 @@ applicable processes it. Processing an event involves connecting edges, adding a
 based on the topological change just introduced. The propagation finishes when there are no new future events.
 
 \sa `Straight_skeleton_builder_traits_2`
-\sa `Straight_skeleton_2`
+\sa `CGAL::Straight_skeleton_2`
 */
 template< typename Traits_,
           typename StraightSkeleton_,
@@ -154,7 +154,7 @@ typedef Traits::Point_2 Point_2;
 /*!
 constructs the builder class.
 */
-Straight_skeleton_builder_2(boost::optional<FT> max_time = boost::none,
+Straight_skeleton_builder_2(std::optional<FT> max_time = std::nullopt,
                             const Traits& traits = Traits(),
                             const Visitor& visitor = Visitor());
 
@@ -188,6 +188,20 @@ template<class InputPointIterator>
 Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPointIterator aEnd );
 
 /*!
+defines the <I>weights</I> of the contour last entered through `enter_contour()`.
+
+\tparam InputPointIterator must be a model `InputIterator` whose `value_type` is `FT`.
+
+\pre `std::distance(aBegin,aEnd)` must be equal to the number of vertices of the contour last entered.
+\pre Weights are (strictly) positive.
+\pre Collinear consecutive contour edges must have equal weights.
+
+\returns `*this`
+*/
+template<class WeightIterator>
+Straight_skeleton_builder_2& enter_contour_weights( WeightIterator aBegin, WeightIterator aEnd );
+
+/*!
 constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined
 by the contours entered first by calling `enter_contour()`. All the contours of the polygon with holes
 must be entered before calling `construct_skeleton()`.
@@ -195,7 +209,7 @@ must be entered before calling `construct_skeleton()`.
 After `construct_skeleton()` completes, you cannot enter more contours and/or call `construct_skeleton()` again.
 If you need another straight skeleton for another polygon you must instantiate and use another builder.
 
-The result is a dynamically allocated instance of the `Ss` class, wrapped in a `boost::shared_ptr`.
+The result is a dynamically allocated instance of the `Ss` class, wrapped in a `std::shared_ptr`.
 
 If the construction process fails for whatever reason (such as a nearly-degenerate vertex whose internal
 or external angle is almost zero), the return value will be <I>null</I>, represented
@@ -204,7 +218,7 @@ by a default constructed `shared_ptr`.
 The algorithm automatically checks the consistency of the result, thus, if it is not <I>nullptr</I>,
 it is guaranteed to be valid.
 */
-boost::shared_ptr<Ss> construct_skeleton();
+std::shared_ptr<Ss> construct_skeleton();
 
 /// @}
 

@@ -75,7 +75,7 @@ public:
 
     // represents x-coordinate of event of rational value over interval
     // computed only by demand
-    mutable boost::optional<Algebraic_real_1> _m_x;
+    mutable std::optional<Algebraic_real_1> _m_x;
 
     // for each event point stores a pair of arcnos of the 1st and 2nd curve
     // or -1 if respective curve is not involved
@@ -208,7 +208,7 @@ public:
 
 protected:
     /*!\brief
-     * constructs from a given represenation
+     * constructs from a given representation
      */
     Status_line_CPA_1(Rep rep) :
         Base(rep) {

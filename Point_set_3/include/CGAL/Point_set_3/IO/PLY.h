@@ -13,7 +13,7 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/io.h>
@@ -21,12 +21,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 
@@ -124,40 +118,40 @@ public:
         continue;
       }
 
-      if(dynamic_cast<PLY_read_typed_number<boost::int8_t>*>(property))
+      if(dynamic_cast<PLY_read_typed_number<std::int8_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::int8_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::int8_t>(m_point_set,
                                                                    name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::uint8_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::uint8_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::uint8_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::uint8_t>(m_point_set,
                                                                     name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::int16_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::int16_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::int16_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::int16_t>(m_point_set,
                                                                     name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::uint16_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::uint16_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::uint16_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::uint16_t>(m_point_set,
                                                                      name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::int32_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::int32_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::int32_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::int32_t>(m_point_set,
                                                                     name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::uint32_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::uint32_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::uint32_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::uint32_t>(m_point_set,
                                                                      name));
       }
       else if(dynamic_cast<PLY_read_typed_number<float>*>(property))
@@ -339,11 +333,11 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname,
               CGAL::Point_set_3<Point, Vector>& point_set,
               std::string& comments,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -361,27 +355,12 @@ bool read_PLY(const std::string& fname,
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, std::string& comments)
-{
-  return read_PLY(fname, point_set, comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::string unused_comments;
   return read_PLY(fname, point_set, unused_comments, np);
 }
-
-template <typename Point, typename Vector>
-bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  std::string unused_comments;
-  return read_PLY(fname, point_set, unused_comments, parameters::all_default());
-}
-
 /// \endcond
 
 } // namespace IO
@@ -467,24 +446,24 @@ namespace IO {
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const CGAL::Point_set_3<Point, Vector>& point_set,
                const std::string& comments,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::Index Index;
   typedef typename Point_set::Point_map Point_map;
   typedef typename Point_set::Vector_map Vector_map;
-  typedef typename Point_set::template Property_map<boost::int8_t> Int8_map;
-  typedef typename Point_set::template Property_map<boost::uint8_t> Uint8_map;
-  typedef typename Point_set::template Property_map<boost::int16_t> Int16_map;
-  typedef typename Point_set::template Property_map<boost::uint16_t> Uint16_map;
-  typedef typename Point_set::template Property_map<boost::int32_t> Int32_map;
-  typedef typename Point_set::template Property_map<boost::uint32_t> Uint32_map;
-  typedef typename Point_set::template Property_map<boost::int64_t> Int64_map;
-  typedef typename Point_set::template Property_map<boost::uint64_t> Uint64_map;
+  typedef typename Point_set::template Property_map<std::int8_t> Int8_map;
+  typedef typename Point_set::template Property_map<std::uint8_t> Uint8_map;
+  typedef typename Point_set::template Property_map<std::int16_t> Int16_map;
+  typedef typename Point_set::template Property_map<std::uint16_t> Uint16_map;
+  typedef typename Point_set::template Property_map<std::int32_t> Int32_map;
+  typedef typename Point_set::template Property_map<std::uint32_t> Uint32_map;
+  typedef typename Point_set::template Property_map<std::int64_t> Int64_map;
+  typedef typename Point_set::template Property_map<std::uint64_t> Uint64_map;
   typedef typename Point_set::template Property_map<float> Float_map;
   typedef typename Point_set::template Property_map<double> Double_map;
 
@@ -526,7 +505,7 @@ bool write_PLY(std::ostream& os,
 
     if(prop[i] == "point")
     {
-      if(boost::is_same<typename Get_FT_from_map<typename Point_set::Point_map>::type, float>::value)
+      if(std::is_same<typename Get_FT_from_map<typename Point_set::Point_map>::type, float>::value)
       {
         os << "property float x" << std::endl
            << "property float y" << std::endl
@@ -543,7 +522,7 @@ bool write_PLY(std::ostream& os,
     }
     if(prop[i] == "normal")
     {
-      if(boost::is_same<typename Get_FT_from_map<typename Point_set::Vector_map>::type, float>::value)
+      if(std::is_same<typename Get_FT_from_map<typename Point_set::Vector_map>::type, float>::value)
       {
         os << "property float nx" << std::endl
            << "property float ny" << std::endl
@@ -562,27 +541,27 @@ bool write_PLY(std::ostream& os,
     bool okay = false;
     {
       Int8_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int8_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::int8_t>(prop[i]);
       if(okay)
       {
         os << "property char " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Int8_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int8_map>(pmap));
         continue;
       }
     }
     {
       Uint8_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint8_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::uint8_t>(prop[i]);
       if(okay)
       {
         os << "property uchar " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Uint8_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint8_map>(pmap));
         continue;
       }
     }
     {
       Int16_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int16_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::int16_t>(prop[i]);
       if(okay)
       {
         os << "property short " << prop[i] << std::endl;
@@ -592,7 +571,7 @@ bool write_PLY(std::ostream& os,
     }
     {
       Uint16_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint16_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::uint16_t>(prop[i]);
       if(okay)
       {
         os << "property ushort " << prop[i] << std::endl;
@@ -602,7 +581,7 @@ bool write_PLY(std::ostream& os,
     }
     {
       Int32_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int32_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::int32_t>(prop[i]);
       if(okay)
       {
         os << "property int " << prop[i] << std::endl;
@@ -612,7 +591,7 @@ bool write_PLY(std::ostream& os,
     }
     {
       Uint32_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint32_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::uint32_t>(prop[i]);
       if(okay)
       {
         os << "property uint " << prop[i] << std::endl;
@@ -622,21 +601,21 @@ bool write_PLY(std::ostream& os,
     }
     {
       Int64_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int64_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::int64_t>(prop[i]);
       if(okay)
       {
         os << "property int " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,std::int32_t>(pmap));
         continue;
       }
     }
     {
       Uint64_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint64_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::uint64_t>(prop[i]);
       if(okay)
       {
         os << "property uint " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,std::uint32_t>(pmap));
         continue;
       }
     }
@@ -684,22 +663,10 @@ bool write_PLY(std::ostream& os,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return write_PLY(os, point_set, std::string(), np);
-}
-
-template <typename Point, typename Vector>
-bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
-{
-  return write_PLY(os, point_set, comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector>
-bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_PLY(os, point_set, std::string(), parameters::all_default());
 }
 
 /// \endcond
@@ -742,11 +709,11 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& fname,
                const CGAL::Point_set_3<Point, Vector>& point_set,
                const std::string& comments,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np)
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -765,23 +732,10 @@ bool write_PLY(const std::string& fname,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Point, typename Vector>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set,
-               const std::string& comments)
-{
-  return write_PLY(fname, point_set, comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return write_PLY(fname, point_set, std::string(), np);
-}
-
-template <typename Point, typename Vector>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_PLY(fname, point_set, std::string(), parameters::all_default());
 }
 
 /// \endcond

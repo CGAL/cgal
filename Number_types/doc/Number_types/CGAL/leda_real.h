@@ -12,9 +12,7 @@ numbers that contains integers, and which is closed by the operations
 Operations and comparisons between objects of this type are guaranteed
 to be exact.
 
-\cgalModels `FieldWithRootOf`
-\cgalModels `RealEmbeddable`
-\cgalModels `FromDoubleConstructible`
+\cgalModels{FieldWithRootOf,RealEmbeddable,FromDoubleConstructible}
 
 For more details on the number types of \leda we refer to the \leda manual \cgalCite{cgal:as-lum}.
 

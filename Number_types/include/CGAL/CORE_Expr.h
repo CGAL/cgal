@@ -173,7 +173,11 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 };
 
-} //namespace CGAL
+inline const CORE::Expr& approx(const CORE::Expr& d) { return d; }
+inline const CORE::Expr& exact(const CORE::Expr& d) { return d; }
+inline int depth(const CORE::Expr&){ return -1; }
+
+} // namespace CGAL
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_BigInt.h>

@@ -42,7 +42,7 @@ namespace Contours {
     range and value type is `GeomTraits::Point_2`. The default is
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
-    \cgalModels `ContourDirections`
+    \cgalModels{ContourDirections}
   */
   template<
   typename GeomTraits,
@@ -95,11 +95,11 @@ namespace Contours {
       \pre input_range.size() >= 3 for closed contours
       \pre input_range.size() >= 2 for open contours
     */
-    template<typename NamedParameters>
+    template<typename NamedParameters = parameters::Default_named_parameters>
     Longest_direction_2(
       const InputRange& input_range,
       const bool is_closed,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())) {
@@ -120,15 +120,6 @@ namespace Contours {
         std::cout << std::endl;
       }
     }
-
-    /// \cond SKIP_IN_MANUAL
-    Longest_direction_2(
-      const InputRange& input_range,
-      const bool is_closed) :
-    Longest_direction_2(
-      input_range, is_closed, CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /// @}
 

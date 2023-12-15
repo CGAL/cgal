@@ -6,93 +6,115 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 using namespace std;
 
+template<unsigned int d, unsigned int ambient_dim,
+         class Traits, class Items>
+using My_lcc_cmap=CGAL::Linear_cell_complex_for_combinatorial_map
+<d, ambient_dim, Traits, Items>;
+
+template<unsigned int d, unsigned int ambient_dim,
+         class Traits, class Items>
+using My_lcc_gmap=CGAL::Linear_cell_complex_for_generalized_map
+<d, ambient_dim, Traits, Items>;
+
+struct Min_items: public CGAL::Linear_cell_complex_min_items
+{
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+};
+
 struct Map_2_dart_items
 {
-  /// Dart_wrapper defines the type of darts used.
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+ /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
-
     typedef std::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
   };
 };
 
 struct Map_2_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef double Dart_info;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-
-    typedef std::tuple<Int_attrib_wp, Int_attrib,
-          Double_attrib> Attributes;
+    typedef double Dart_info;
+    typedef std::tuple<Int_attrib_wp, Int_attrib,Double_attrib> Attributes;
   };
 };
 
 struct Map_3_dart_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef char Dart_info;
-
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
-
-    typedef std::tuple<Double_attrib_wp, void,
-          Int_attrib, Double_attrib> Attributes;
+    typedef char Dart_info;
+    typedef std::tuple<Double_attrib_wp, void,Int_attrib, Double_attrib>
+    Attributes;
   };
 };
 
 struct Map_3_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef char* Dart_info;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-
-    typedef std::tuple<Int_attrib_wp, Int_attrib,
-          Int_attrib, Double_attrib> Attributes;
+    typedef char* Dart_info;
+    typedef std::tuple<Int_attrib_wp, Int_attrib,Int_attrib, Double_attrib>
+    Attributes;
   };
 };
 
-class Another_map_3_dart_items_3
+struct Another_map_3_dart_items_3
 {
-public:
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef int* Dart_info;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-
+    typedef int* Dart_info;
     typedef std::tuple<Int_attrib_wp, void, Int_attrib> Attributes;
   };
 };
 
 struct MonInfo
 {
-  MonInfo(long long int i=0) : mnb(i==0?rand():i),
+  MonInfo(long long int i=0) : mnb(i==0?CGAL::get_default_random().get_int(0,RAND_MAX):i),
                                ptr(reinterpret_cast<char*>(this))
   {}
   long long int mnb;
@@ -105,34 +127,34 @@ struct MonInfo
 
 struct Map_dart_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef MonInfo Dart_info;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-
-    typedef std::tuple<Int_attrib_wp, void,
-          Int_attrib, void, Int_attrib>
+    typedef MonInfo Dart_info;
+    typedef std::tuple<Int_attrib_wp, void, Int_attrib, void, Int_attrib>
     Attributes;
   };
 };
 
 struct Map_dart_max_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef double Dart_info;
-
     typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-
-    typedef std::tuple<Int_attrib_wp, Int_attrib,
-          Int_attrib, Int_attrib, Double_attrib>
+    typedef double Dart_info;
+    typedef std::tuple<Int_attrib_wp, Int_attrib,Int_attrib, Int_attrib, Double_attrib>
     Attributes;
   };
 };
@@ -147,51 +169,42 @@ typedef CGAL::Linear_cell_complex_traits<4> Traits4_a;
 
 // ======================= LCC based on combinatorial maps
 // Point_3, void, void
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a,
-               CGAL::Linear_cell_complex_min_items > CMap1;
+typedef My_lcc_cmap<2,3, Traits3_a, Min_items> CMap1;
 
 // Point_3+double, void, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3,
-               Traits3_a, Map_2_dart_items > CMap2;
+typedef My_lcc_cmap<2,3,Traits3_a, Map_2_dart_items> CMap2;
 
 // Point_3+int, int, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_b,
-               Map_2_dart_max_items_3> CMap3;
+typedef My_lcc_cmap<2,3, Traits3_b, Map_2_dart_max_items_3> CMap3;
 
 // Point_3, void, void, void
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_a,
-               CGAL::Linear_cell_complex_min_items > CMap4;
+typedef My_lcc_cmap<3,3, Traits3_a, Min_items> CMap4;
 
 // Point_3+double, void, int, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
-               Traits3_a, Map_3_dart_items_3> CMap5;
+typedef My_lcc_cmap<3,3, Traits3_a, Map_3_dart_items_3> CMap5;
 
 // Point_3+int, int, int, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
-               Traits3_b, Map_3_dart_max_items_3> CMap6;
+typedef My_lcc_cmap<3,3, Traits3_b, Map_3_dart_max_items_3> CMap6;
 
 // Point_3+int, void, int, void
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
-               Traits3_b, Another_map_3_dart_items_3> CMap7;
+typedef My_lcc_cmap<3,3, Traits3_b, Another_map_3_dart_items_3> CMap7;
 
 // Point_4+int, void, int, void, int
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
-               Traits4_a, Map_dart_items_4> CMap8;
+typedef My_lcc_cmap<4,4, Traits4_a, Map_dart_items_4> CMap8;
 
 // Point_4+int, int, int, int, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
-               Traits4_a, Map_dart_max_items_4> CMap9;
+typedef My_lcc_cmap<4,4, Traits4_a, Map_dart_max_items_4> CMap9;
 
 struct Converter_map9_points_into_map5_points
 {
-  CMap5::Attribute_handle<0>::type operator()
-  (const CMap9& map1, CMap5& map2, CMap9::Dart_const_handle dh1,
-   CMap5::Dart_handle dh2) const
+  CMap5::template Attribute_descriptor<0>::type operator()
+  (const CMap9& map1, CMap5& map2, CMap9::Dart_const_descriptor dh1,
+   CMap5::Dart_descriptor dh2) const
   {
-    CGAL_assertion( map1.attribute<0>(dh1)!=map1.null_handle );
+    assert( map1.attribute<0>(dh1)!=map1.null_descriptor);
 
-    CMap5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
-    if ( res==map2.null_handle )
+    CMap5::Attribute_descriptor<0>::type res = map2.attribute<0>(dh2);
+    if ( res==map2.null_descriptor )
     {
       res = map2.create_attribute<0>();
     }
@@ -204,51 +217,42 @@ struct Converter_map9_points_into_map5_points
 
 // ======================= LCC based on generalized maps
 // Point_3, void, void
-typedef CGAL::Linear_cell_complex_for_generalized_map<2,3, Traits3_a,
-               CGAL::Linear_cell_complex_min_items > GMap1;
+typedef My_lcc_gmap<2,3, Traits3_a, Min_items> GMap1;
 
 // Point_3+double, void, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<2,3,
-               Traits3_a, Map_2_dart_items > GMap2;
+typedef My_lcc_gmap<2,3, Traits3_a, Map_2_dart_items> GMap2;
 
 // Point_3+int, int, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<2,3, Traits3_b,
-               Map_2_dart_max_items_3> GMap3;
+typedef My_lcc_gmap<2,3, Traits3_b, Map_2_dart_max_items_3> GMap3;
 
 // Point_3, void, void, void
-typedef CGAL::Linear_cell_complex_for_generalized_map<3,3, Traits3_a,
-               CGAL::Linear_cell_complex_min_items > GMap4;
+typedef My_lcc_gmap<3,3, Traits3_a, Min_items> GMap4;
 
 // Point_3+double, void, int, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
-               Traits3_a, Map_3_dart_items_3> GMap5;
+typedef My_lcc_gmap<3,3, Traits3_a, Map_3_dart_items_3> GMap5;
 
 // Point_3+int, int, int, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
-               Traits3_b, Map_3_dart_max_items_3> GMap6;
+typedef My_lcc_gmap<3,3, Traits3_b, Map_3_dart_max_items_3> GMap6;
 
 // Point_3+int, void, int, void
-typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
-               Traits3_b, Another_map_3_dart_items_3> GMap7;
+typedef My_lcc_gmap<3,3, Traits3_b, Another_map_3_dart_items_3> GMap7;
 
 // Point_4+int, void, int, void, int
-typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
-               Traits4_a, Map_dart_items_4> GMap8;
+typedef My_lcc_gmap<4,4, Traits4_a, Map_dart_items_4> GMap8;
 
 // Point_4+int, int, int, int, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
-               Traits4_a, Map_dart_max_items_4> GMap9;
+typedef My_lcc_gmap<4,4, Traits4_a, Map_dart_max_items_4> GMap9;
 
 struct Converter_gmap9_points_into_gmap5_points
 {
-  GMap5::Attribute_handle<0>::type operator()
-  (const GMap9& map1, GMap5& map2, GMap9::Dart_const_handle dh1,
-   GMap5::Dart_handle dh2) const
+  GMap5::Attribute_descriptor<0>::type operator()
+  (const GMap9& map1, GMap5& map2, GMap9::Dart_const_descriptor dh1,
+   GMap5::Dart_descriptor dh2) const
   {
-    CGAL_assertion( map1.attribute<0>(dh1)!=map1.null_handle );
+    assert( map1.attribute<0>(dh1)!=map1.null_descriptor );
 
-    GMap5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
-    if ( res==map2.null_handle )
+    GMap5::Attribute_descriptor<0>::type res = map2.attribute<0>(dh2);
+    if ( res==map2.null_descriptor )
     {
       res = map2.create_attribute<0>();
     }
@@ -261,7 +265,7 @@ struct Converter_gmap9_points_into_gmap5_points
 
 /*
 template<typename Map>
-typename Map::Dart_handle getRandomDart(Map& map)
+typename Map::Dart_descriptor getRandomDart(Map& map)
 {
   int nb = rand()%map.number_of_darts();
   typename Map::Dart_range::iterator it=map.darts().begin();
@@ -276,7 +280,7 @@ template<typename Map, int i, typename Info=
 struct SetInfoIfNonVoid
 {
   static void run(Map& map,
-                  typename Map::template Attribute_handle<i>::type attr,
+                  typename Map::template Attribute_descriptor<i>::type attr,
                   long long int nb)
   {
     map.template info_of_attribute<i>(attr)=
@@ -286,7 +290,7 @@ struct SetInfoIfNonVoid
 template<typename Map, int i>
 struct SetInfoIfNonVoid<Map, i, void>
 {
-  static void run(Map&, typename Map::template Attribute_handle<i>::type,
+  static void run(Map&, typename Map::template Attribute_descriptor<i>::type,
                   long long int)
   {}
 };
@@ -301,7 +305,7 @@ struct CreateAttributes
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
-      if ( map.template attribute<i>(it)==map.null_handle )
+      if ( map.template attribute<i>(it)==map.null_descriptor )
       {
         map.template set_attribute<i>(it, map.template create_attribute<i>());
         SetInfoIfNonVoid<Map, i>::run(map, map.template attribute<i>(it), ++nb);
@@ -494,15 +498,17 @@ template<typename Map>
 void create2Dmap(Map& map)
 {
   for ( int i=0; i<15; ++i )
+  {
     map.make_tetrahedron(typename Map::Point(i, 0, 0),
                          typename Map::Point(i, 2, 0),
                          typename Map::Point(i+1, 0, 0),
                          typename Map::Point(i+1, 1, 2));
+  }
   InitDartInfo<Map>::run(map);
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 template<typename Map>
 void create3Dmap(Map& map)
@@ -515,9 +521,9 @@ void create3Dmap(Map& map)
 
   for ( int i=0; i<20; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<3>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
   }
@@ -526,7 +532,7 @@ void create3Dmap(Map& map)
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 
 template<typename LCC>
@@ -551,18 +557,18 @@ void create4Dmap(Map& map)
 
   for ( int i=0; i<40; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<3>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
   }
 
   for ( int i=0; i<20; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<4>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<4>(d1, d2) ) ++d2;
     map.template sew<4>(d1,d2);
   }
@@ -572,7 +578,7 @@ void create4Dmap(Map& map)
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
   CreateAttributes<Map,4>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 
 template<typename Map1,

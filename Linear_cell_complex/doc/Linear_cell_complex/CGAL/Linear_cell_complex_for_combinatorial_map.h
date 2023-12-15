@@ -5,9 +5,9 @@ namespace CGAL {
 \ingroup PkgLinearCellComplexClasses
 
 The class `Linear_cell_complex_for_combinatorial_map` represents a linear cell complex in dimension `d`, in an ambient space of dimension `d2`, using a combinatorial map as underlying combinatorial data-structure.
+Like for `Combinatorial_map`, two versions exist: one where Darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator, and use handles as descriptors; a second one where Darts and non void attributes are stored in an internal std::vector like data-structure, and use indices as descriptors. The choice between the two versions is done through the item class.
 
-\cgalModels `LinearCellComplex`
-\cgalModels `CombinatorialMap`
+\cgalModels{LinearCellComplex,CombinatorialMap}
 
 \tparam d the dimension of the combinatorial map.
 \tparam d2 the dimension of the ambient space. Equal to `d` by default.
@@ -21,10 +21,6 @@ Note that there is an additional, and undocumented, template parameter `CMap` fo
 \sa `CGAL::Combinatorial_map<d,Items,Alloc>`
 \sa `CGAL::Linear_cell_complex_traits<d,K>`
 \sa `CGAL::Linear_cell_complex_min_items<d>`
-
-\deprecated Before CGAL 4.9, this class was named `%Linear_cell_complex`. This old name still exist for backward compatibility.
-
-\deprecated Before CGAL 4.9, `Items` had to define the type of dart used. This is now deprecated, the `Dart` type is no more defined in the item class, but replaced by the `Dart_info` type. See deprecated note in the `Linear_cell_complex_min_items` class. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
 
 */
 

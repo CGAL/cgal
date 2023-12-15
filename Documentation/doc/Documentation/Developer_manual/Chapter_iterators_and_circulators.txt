@@ -42,7 +42,7 @@ Thus we will not give a full description of these concept here
 but only a few hints about how to use and write handle, iterators and circulators in \cgal.  Developers should consult the above-mentioned references to become
 familiar with the iterator, circulator and handle concepts. In
 particular,  the notions of iterator and circulator ranges,
-dereferencable and past-the-end values,
+dereferenceable and past-the-end values,
  mutable and constant iterators and circulators,
 and the different categories (forward, bidirectional, random-access, etc.)
 of iterators and circulators, are fundamental.
@@ -86,9 +86,9 @@ struct iterator_traits<T*> {
 
 \section secinput_and_output_iterators Input and output iterators
 
-<B>Operator * for input and output iterators</B>
+<B>Operator `*` for input and output iterators</B>
 
-The operator * of input and output iterators has a restricted semantics.
+The operator `*` of input and output iterators has a restricted semantics.
 Input iterators are designed for input operations, and it is not
 required that the value type `T`
 of  an input iterator `it` be assignable.

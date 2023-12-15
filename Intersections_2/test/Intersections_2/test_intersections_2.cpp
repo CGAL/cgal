@@ -490,7 +490,7 @@ struct Test
     std::set<double> ds;
     auto test = [&ds](S s1, S s2)
     {
-      P i = boost::get<P>(*CGAL::intersection(s1,s2));
+      P i = std::get<P>(*CGAL::intersection(s1,s2));
       ds.insert(CGAL::to_double(i.x())); ds.insert(CGAL::to_double(i.y()));
       assert(ds.size()==2);
     };
@@ -772,9 +772,9 @@ struct Test
     check_no_intersection  (Rec(p(-2, -6), p( 6, 3)), p(-2, -7));
 
     // point intersection
-    check_intersection     (Rec(p(-1,  4), p(-1, 4)), p(-1, 4), p(-1, 4)); // degenerate rectange (0d)
-    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 6), p(-2, 6)); // degenerate rectange (1d)
-    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 7), p(-2, 7)); // degenerate rectange (1d)
+    check_intersection     (Rec(p(-1,  4), p(-1, 4)), p(-1, 4), p(-1, 4)); // degenerate rectangle (0d)
+    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 6), p(-2, 6)); // degenerate rectangle (1d)
+    check_intersection     (Rec(p(-2,  4), p(-2, 7)), p(-2, 7), p(-2, 7)); // degenerate rectangle (1d)
     check_intersection     (Rec(p(-3,  0), p( 4, 2)), p(-3, 2), p(-3, 2)); // on vertex
     check_intersection     (Rec(p( 7,  8), p( 9, 9)), p( 8, 9), p( 8, 9)); // on edge
     check_intersection     (Rec(p(-2,  0), p( 6, 7)), p( 1, 1), p( 1, 1)); // within
@@ -924,9 +924,9 @@ int main()
 {
   CGAL::Set_ieee_double_precision pfr;
 
-  Test< CGAL::Simple_cartesian<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type > >().run();
   Test< CGAL::Cartesian<double>   >().run();
-  Test< CGAL::Homogeneous<CGAL::internal::Exact_field_selector<void*>::Type > >().run();
+  Test< CGAL::Homogeneous<CGAL::internal::Exact_field_selector<double>::Type > >().run();
   Test< CGAL::Exact_predicates_inexact_constructions_kernel >().run();
   Test< CGAL::Exact_predicates_exact_constructions_kernel >().run();
 }

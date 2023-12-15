@@ -23,7 +23,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/property_map.h>
@@ -61,7 +61,7 @@ namespace CGAL
 * subdomains throughout the remeshing process.
 *
 * Subdomains are defined by indices that
-* are stored in the cells of the input triangulation, following the `MeshCellBase_3`
+* are stored in the cells of the input triangulation, following the `SimplicialMeshCellBase_3`
 * concept (refined by `RemeshingCellBase_3`).
 * The surfacic interfaces between subdomains are formed by facets whose two incident cells
 * have different subdomain indices.
@@ -161,11 +161,11 @@ namespace CGAL
 * @todo implement non-uniform sizing field instead of uniform target edge length
 */
 template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const double& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
   tetrahedral_isotropic_remeshing(
@@ -176,11 +176,11 @@ void tetrahedral_isotropic_remeshing(
 }
 
 template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const float& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
   tetrahedral_isotropic_remeshing(
@@ -272,6 +272,8 @@ void tetrahedral_isotropic_remeshing(
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "done." << std::endl;
+#endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   Tetrahedral_remeshing::internal::compute_statistics(
     remesher.tr(), cell_select, "statistics_begin.txt");
 #endif
@@ -280,22 +282,13 @@ void tetrahedral_isotropic_remeshing(
   std::size_t nb_extra_iterations = 3;
   remesher.remesh(max_it, nb_extra_iterations);
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   const double angle_bound = 5.0;
   Tetrahedral_remeshing::debug::dump_cells_with_small_dihedral_angle(tr,
     angle_bound, cell_select, "bad_cells.mesh");
   Tetrahedral_remeshing::internal::compute_statistics(tr,
     cell_select, "statistics_end.txt");
 #endif
-}
-
-template<typename Traits, typename TDS, typename SLDS>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
-  const double& target_edge_length)
-{
-  tetrahedral_isotropic_remeshing(tr, target_edge_length,
-                                 CGAL::parameters::all_default());
 }
 
 /*!
@@ -309,14 +302,14 @@ void tetrahedral_isotropic_remeshing(
 * @tparam Tr is the underlying triangulation for `Mesh_complex_3_in_triangulation_3`.
 *            It can be instantiated with any 3D regular triangulation of CGAL provided
 *            that its vertex and cell base classes are models of the concepts
-*            `MeshVertexBase_3` (refined by `RemeshingCellBase_3`)
-*            and `MeshCellBase_3` (refined by `RemeshingVertexBase_3`), respectively.
+*            `SimplicialMeshCellBase_3` (refined by `RemeshingCellBase_3`)
+*            and `SimplicialMeshVertexBase_3` (refined by `RemeshingVertexBase_3`), respectively.
 * @tparam CornerIndex is the type of the indices for feature corners.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
-*            the `Corner_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+*            `MeshDomainWithFeatures_3::Corner_index`.
 * @tparam CurveIndex is the type of the indices for feature curves.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
-*            the `Curve_index` type of the model of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+*            `MeshDomainWithFeatures_3::Curve_index`.
 *
 * @param c3t3 the complex containing the triangulation to be remeshed.
 */
@@ -348,11 +341,11 @@ convert_to_triangulation_3(
 ///////
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const double& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
@@ -363,11 +356,11 @@ void tetrahedral_isotropic_remeshing(
 
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const float& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values)
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
@@ -377,23 +370,13 @@ void tetrahedral_isotropic_remeshing(
 }
 
 template<typename Tr,
-         typename CornerIndex, typename CurveIndex>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-  const double& target_edge_length)
-{
-  return tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
-                                        CGAL::parameters::all_default());
-}
-
-template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename SizingFunction,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const SizingFunction& sizing,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   CGAL_assertion(c3t3.triangulation().tds().is_valid());
 
@@ -409,15 +392,14 @@ void tetrahedral_isotropic_remeshing(
     = choose_parameter(get_parameter(np, internal_np::smooth_constrained_edges),
       false);
 
-  typedef typename Tr::Cell_handle Cell_handle;
   typedef typename internal_np::Lookup_named_param_def <
-  internal_np::cell_selector_t,
+              internal_np::cell_selector_t,
               NamedParameters,
-              Constant_property_map<Cell_handle, bool>//default
+              Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
               > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                       Constant_property_map<Cell_handle, bool>(true));
+                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
   typedef typename internal_np::Lookup_named_param_def <

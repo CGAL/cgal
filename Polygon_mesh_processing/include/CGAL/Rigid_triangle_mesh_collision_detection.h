@@ -37,7 +37,7 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PkgPolygonMeshProcessingRef
  * This class provides methods to perform some intersection tests between triangle meshes
  * that undergo affine transformations (rotation, translation, and scaling).
  * Meshes are added to an internal set and are referenced using an id assigned when added to the set.
@@ -244,13 +244,13 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
+  template <class NamedParameters = parameters::Default_named_parameters>
   std::size_t add_mesh(const TriangleMesh& tm,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
   {
     // handle vpm
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion( (boost::is_same<Local_vpm,Vpm>::value) );
+    static_assert(std::is_same<Local_vpm,Vpm>::value);
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -260,7 +260,7 @@ public:
     CGAL_assertion( m_aabb_trees[id] == nullptr );
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = true;
-    Tree* t = new Tree(boost::begin(faces(tm)), boost::end(faces(tm)), tm, vpm);
+    Tree* t = new Tree(std::begin(faces(tm)), std::end(faces(tm)), tm, vpm);
     t->build();
     m_aabb_trees[id] = t;
     m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
@@ -303,8 +303,8 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
-  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm, const NamedParameters& np)
+  template <class NamedParameters = parameters::Default_named_parameters>
+  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm, const NamedParameters& np = parameters::default_values())
   {
     std::size_t id = get_id_for_new_mesh();
     CGAL_assertion( m_aabb_trees[id] == nullptr );
@@ -550,19 +550,19 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
+  template <class NamedParameters = parameters::Default_named_parameters>
   static
   void collect_one_point_per_connected_component(
     const TriangleMesh& tm,
           std::vector<Point_3>& points,
-    const NamedParameters& np)
+    const NamedParameters& np = parameters::default_values())
   {
     const bool maybe_several_cc =
       parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion((boost::is_same<Local_vpm,Vpm>::value));
+    static_assert(std::is_same<Local_vpm,Vpm>::value);
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -579,7 +579,7 @@ public:
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
-          tm, bind_property_maps(fid_map, make_property_map(cc_ids)),
+          tm, make_compose_property_map(fid_map, make_property_map(cc_ids)),
           parameters::face_index_map(fid_map));
       if (nb_cc != 1)
       {
@@ -600,7 +600,7 @@ public:
       }
     }
     // only one CC
-    points.push_back( get(vpm, *boost::begin(vertices(tm))) );
+    points.push_back( get(vpm, *std::begin(vertices(tm))) );
   }
 
  /*!
@@ -628,25 +628,6 @@ public:
     m_points_per_cc[id] = points_per_cc;
 
     return id;
-  }
-
-  // versions without NP
-  static
-  void collect_one_point_per_connected_component(
-    const TriangleMesh& tm,
-          std::vector<typename K::Point_3>& points)
-  {
-    collect_one_point_per_connected_component(tm, points, parameters::all_default());
-  }
-
-  std::size_t add_mesh(const TriangleMesh& tm)
-  {
-    return add_mesh(tm, parameters::all_default());
-  }
-
-  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm)
-  {
-    return add_mesh(tree, tm, parameters::all_default());
   }
 #endif
 };

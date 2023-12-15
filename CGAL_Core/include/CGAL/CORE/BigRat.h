@@ -14,7 +14,7 @@
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -34,7 +34,7 @@ public:
   BigRatRep() {
     mpq_init(mp);
   }
-  // Note : should the copy-ctor be alloed at all ? [Sylvain Pion]
+  // Note : should the copy-ctor be allowed at all ? [Sylvain Pion]
   BigRatRep(const BigRatRep& z)  : RCRepImpl<BigRatRep>() {
     mpq_init(mp);
     mpq_set(mp, z.mp);

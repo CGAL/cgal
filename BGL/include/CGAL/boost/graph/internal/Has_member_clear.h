@@ -19,17 +19,17 @@ template<class T>
 class Has_member_clear
 {
 private:
-  template<class U, U>
-  class check {};
-
-  template<class C>
-  static char f(check<void(C::*)(void), &C::clear>*);
+  template <class C>
+  static auto f(int) -> decltype(std::declval<C>().clear(), char());
 
   template<class C>
   static int f(...);
 public:
   static const bool value = (sizeof(f<T>(0)) == sizeof(char));
 };
+
+template<class T>
+inline constexpr bool Has_member_clear_v = Has_member_clear<T>::value;
 
 }  // internal
 }  // cgal

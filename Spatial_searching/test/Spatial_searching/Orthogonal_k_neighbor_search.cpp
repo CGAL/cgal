@@ -14,7 +14,7 @@ typedef CGAL::Random_points_in_square_2<Point>                          Random_p
 typedef CGAL::Counting_iterator<Random_points_iterator>                 N_Random_points_iterator;
 typedef CGAL::Search_traits_2<K>                                        TreeTraits;
 typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits>                  Neighbor_search;
-//typdefs fo Point_with_info
+//typdefs of Point_with_info
 typedef Point_with_info_helper<Point>::type                                                             Point_with_info;
 typedef Point_property_map<Point>                                                  Ppmap;
 typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,TreeTraits>                        Traits_with_info;

@@ -1,5 +1,7 @@
+#include <cassert>
 #include <iostream>
 #include <string>
+
 #include <CGAL/Surface_mesh_segmentation/internal/K_means_clustering.h>
 typedef CGAL::internal::K_means_clustering K_means;
 /**
@@ -34,7 +36,7 @@ int main(void)
           std::string init_type_s = init_type_enum == K_means::RANDOM_INITIALIZATION ? "Random " :
                                                                                        "Plus plus ";
           std::cerr << "Init type: " << init_type_s << "center size: "  << center_size << std::endl;
-          CGAL_assertion(false);
+          assert(false);
         }
       }
     }

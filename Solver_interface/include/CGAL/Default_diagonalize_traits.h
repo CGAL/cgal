@@ -30,7 +30,7 @@ namespace CGAL {
 /// \tparam FT Number type
 /// \tparam dim Dimension of the matrices and vectors
 ///
-/// \cgalModels `DiagonalizeTraits`
+/// \cgalModels{DiagonalizeTraits}
 template <typename FT, unsigned int dim = 3>
 class Default_diagonalize_traits
 {

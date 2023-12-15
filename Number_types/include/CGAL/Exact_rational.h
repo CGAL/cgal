@@ -14,6 +14,9 @@
 //
 // Author(s)     : Laurent Rineau
 
+#ifndef CGAL_EXACT_RATIONAL_H
+#define CGAL_EXACT_RATIONAL_H
+
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 namespace CGAL {
@@ -27,10 +30,7 @@ It is a typedef of another number type. Its exact definition depends on
 the availability the third-party libraries \gmp, \core, and \leda. \cgal must
 be configured with at least one of those libraries.
 
-\cgalModels `Field`
-\cgalModels `RealEmbeddable`
-\cgalModels `Fraction`
-\cgalModels `FromDoubleConstructible`
+\cgalModels{Field,RealEmbeddable,Fraction,FromDoubleConstructible}
 
 */
 #if DOXYGEN_RUNNING
@@ -39,8 +39,10 @@ typedef unspecified_type Exact_rational;
 
 #else // not DOXYGEN_RUNNING
 
-typedef internal::Exact_field_selector<double>::Type Exact_rational;
+using Exact_rational = internal::Exact_NT_backend<internal::Default_exact_nt_backend>::Rational;
 
 #endif
 
 } /* end namespace CGAL */
+
+#endif // CGAL_EXACT_RATIONAL_H

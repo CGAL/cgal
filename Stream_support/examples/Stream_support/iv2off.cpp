@@ -67,7 +67,6 @@ void iv_file_scanner( istream& in)
                         // point coordinate list starts here
                         offset = points.size();
                         in >> c;
-                        CGAL_assertion( c == '[');
                         in >> c;
                         while ( in && ( c != ']')) {
                             in.putback( c);
@@ -99,7 +98,6 @@ void iv_file_scanner( istream& in)
                     // indices start here
                     std::size_t face_offset = facets.size();
                     in >> c;
-                    CGAL_assertion( c == '[');
                     facets.push_back( Facet());
                     Facet* facet = &facets.back();
                     in >> c;
@@ -133,7 +131,6 @@ void iv_file_scanner( istream& in)
                     // indices start here
                     std::size_t face_offset = facets.size();
                     in >> c;
-                    CGAL_assertion( c == '[');
                     facets.push_back( Facet());
                     Facet* facet = &facets.back();
                     in >> c;

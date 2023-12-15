@@ -54,7 +54,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   std::cout.precision(17);
   std::clog.precision(17);
 
-  // Import resources from libCGAL (Qt5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   this->setOrganizationDomain("geometryfactory.com");
@@ -104,7 +104,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   // On Apple, the first time the application is launched, the menus are unclicable, and
   // the only way you can fix it is to unfocus and re-focus the application.
   // This is a hack that makes the application lose the focus after it is started, to force the user
-  // to re-focus it. (source : http://www.alecjacobson.com/weblog/?p=3910)
+  // to re-focus it. (source: https://www.alecjacobson.com/weblog/?p=3910)
 #ifdef __APPLE__
     system("osascript -e 'tell application \"System Events\" "
       "to keystroke tab using {command down, shift down}'");
@@ -134,7 +134,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   if(!parser.isSet(no_autostart) && autostart_js.exists()) {
     mainWindow.loadScript(autostart_js);
   }
-  Q_FOREACH(QString filename, parser.positionalArguments()) {
+  for(QString filename : parser.positionalArguments()) {
     mainWindow.open(filename);
   }
 
@@ -155,7 +155,7 @@ bool Polyhedron_demo::notify(QObject* receiver, QEvent* event)
       return QApplication::notify(receiver, event);
     } catch (std::exception &e) {
       // find the mainwindow to spawn an error message
-      Q_FOREACH (QWidget *widget, QApplication::topLevelWidgets()) {
+      for (QWidget *widget : QApplication::topLevelWidgets()) {
         if(MainWindow* mw = qobject_cast<MainWindow*>(widget)) {
           QMessageBox::critical(mw,
                                 tr("Unhandled exception"),

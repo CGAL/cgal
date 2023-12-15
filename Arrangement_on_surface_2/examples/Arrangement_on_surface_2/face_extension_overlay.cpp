@@ -1,18 +1,19 @@
 //! \file examples/Arrangement_on_surface_2/face_extension_overlay.cpp
 // A face overlay of two arrangements with extended face records.
 
+#include <cassert>
+
 #include <CGAL/basic.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
 #include "arr_exact_construction_segments.h"
 
-typedef CGAL::Arr_face_extended_dcel<Traits, bool>       Dcel;
-typedef CGAL::Arrangement_2<Traits, Dcel>                Ex_arrangement;
-typedef CGAL::Arr_face_overlay_traits<Ex_arrangement, Ex_arrangement,
-                                      Ex_arrangement,
-                                      std::logical_and<bool> >
-                                                         Overlay_traits;
+using Dcel = CGAL::Arr_face_extended_dcel<Traits, bool>;
+using Ex_arrangement = CGAL::Arrangement_2<Traits, Dcel>;
+using Overlay_traits =
+  CGAL::Arr_face_overlay_traits<Ex_arrangement, Ex_arrangement,
+                                Ex_arrangement, std::logical_and<bool>>;
 
 int main() {
   // Construct the first arrangement, containing a square-shaped face.
@@ -21,7 +22,8 @@ int main() {
   insert_non_intersecting_curve(arr1, Segment(Point(6, 2), Point(6, 6)));
   insert_non_intersecting_curve(arr1, Segment(Point(6, 6), Point(2, 6)));
   insert_non_intersecting_curve(arr1, Segment(Point(2, 6), Point(2, 2)));
-  CGAL_assertion(arr1.number_of_faces() == 2);
+  // 2 because the bounded and the unbounded one
+  assert(arr1.number_of_faces() == 2);
 
   // Mark just the bounded face.
   for (auto fit = arr1.faces_begin(); fit != arr1.faces_end(); ++fit)
@@ -33,7 +35,6 @@ int main() {
   insert_non_intersecting_curve(arr2, Segment(Point(7, 4), Point(4, 7)));
   insert_non_intersecting_curve(arr2, Segment(Point(4, 7), Point(1, 4)));
   insert_non_intersecting_curve(arr2, Segment(Point(1, 4), Point(4, 1)));
-  CGAL_assertion(arr2.number_of_faces() == 2);
 
   for (auto fit = arr2.faces_begin(); fit != arr2.faces_end(); ++fit)
     fit->set_data(fit != arr2.unbounded_face());    // mark the bounded face.

@@ -18,7 +18,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/iterator.h>
 #include <CGAL/utility.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 
 #include <algorithm>
@@ -48,7 +48,7 @@ construct_circumcenter(const typename DT::Facet& f,
                        const typename DT::Geom_traits::Point_3& Q,
                        const typename DT::Geom_traits& gt = typename DT::Geom_traits());
 
-// ====================== Natural Neighbors Querries ==========================
+// ====================== Natural Neighbors Queries ==========================
 // === Definitions
 
 // Given a 3D point Q and a 3D Delaunay triangulation dt,
@@ -79,7 +79,7 @@ laplace_natural_neighbor_coordinates_3(const Dt& dt,
   typedef typename Dt::Locate_type Locate_type;
   typedef typename Gt::FT Coord_type;
 
-  CGAL_triangulation_precondition (dt.dimension() == 3);
+  CGAL_precondition (dt.dimension() == 3);
 
   Locate_type lt;
   int li, lj;
@@ -119,9 +119,9 @@ laplace_natural_neighbor_coordinates_3(const Dt& dt,
     if (dt.is_infinite(cc1))
       return make_triple(nn_out, norm_coeff=Coord_type(1), false);//point outside the convex-hull
 
-    CGAL_triangulation_assertion_code(Cell_handle cc2 = cc1->neighbor(f1.second);)
-    CGAL_triangulation_assertion(std::find(cells.begin(),cells.end(),cc1) != cells.end());//TODO : Delete
-    CGAL_triangulation_assertion(std::find(cells.begin(),cells.end(),cc2) == cells.end());//TODO : Delete
+    CGAL_assertion_code(Cell_handle cc2 = cc1->neighbor(f1.second);)
+    CGAL_assertion(std::find(cells.begin(),cells.end(),cc1) != cells.end());//TODO : Delete
+    CGAL_assertion(std::find(cells.begin(),cells.end(),cc2) == cells.end());//TODO : Delete
 
     Point C_1 = construct_circumcenter<Dt>(f1, Q, dt.geom_traits());
     for(int j=1; j<4; j++)
@@ -137,7 +137,7 @@ laplace_natural_neighbor_coordinates_3(const Dt& dt,
       Cell_handle next = cc3->neighbor(num_next);
       while (std::find(cells.begin(),cells.end(),next) != cells.end())
       {
-        CGAL_triangulation_assertion( next != cc1 );
+        CGAL_assertion( next != cc1 );
         cc3 = next;
         num_next = dt.next_around_edge(cc3->index(vR),cc3->index(vP));
         next = cc3->neighbor(num_next);
@@ -181,7 +181,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
   typedef typename Dt::Locate_type Locate_type;
   typedef typename Gt::FT Coord_type;
 
-  CGAL_triangulation_precondition (dt.dimension()== 3);
+  CGAL_precondition (dt.dimension()== 3);
 
   Locate_type lt;
   int li, lj;
@@ -215,7 +215,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
   {
     // for each cell cc1 in conflict
     Cell_handle cc1 = *cit;
-    CGAL_triangulation_assertion(std::find(cells.begin(),cells.end(),cc1)!=cells.end());//TODO : Delete
+    CGAL_assertion(std::find(cells.begin(),cells.end(),cc1)!=cells.end());//TODO : Delete
 
     if (dt.is_infinite(cc1))
       return make_triple(nn_out,norm_coeff=Coord_type(1), false);//point outside the convex-hull
@@ -245,7 +245,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
 
           while (std::find(cells.begin(),cells.end(),next) != cells.end())
           { //next is in conflict
-            CGAL_triangulation_assertion( next != cc1 );
+            CGAL_assertion( next != cc1 );
             cc3 = next;
             num_next = dt.next_around_edge(cc3->index(vR),cc3->index(vP));
             next = cc3->neighbor(num_next);
@@ -269,7 +269,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
       }
       else // cc2 in the conflict cavity
       {
-        CGAL_triangulation_assertion(std::find(cells.begin(),cells.end(),cc2)!=cells.end());//TODO : Delete
+        CGAL_assertion(std::find(cells.begin(),cells.end(),cc2)!=cells.end());//TODO : Delete
         if (dt.is_infinite(cc2))
         {
           //point outside the convex-hull
@@ -352,13 +352,13 @@ construct_circumcenter(const typename DT::Facet& f,
                        const typename DT::Geom_traits::Point_3& Q,
                        const typename DT::Geom_traits& gt /* = typename DT::Geom_traits() */ )
 {
-  CGAL_triangulation_precondition(//&3 in place of %4
-                                  !gt.coplanar_3_object()(
-                                        f.first->vertex((f.second+1)&3)->point(),
-                                        f.first->vertex((f.second+2)&3)->point(),
-                                        f.first->vertex((f.second+3)&3)->point(),
-                                        Q));
-  // else the facet is not on the enveloppe of the conflict cavity associated to P
+  CGAL_precondition(//&3 in place of %4
+                    !gt.coplanar_3_object()(
+                                            f.first->vertex((f.second+1)&3)->point(),
+                                            f.first->vertex((f.second+2)&3)->point(),
+                                            f.first->vertex((f.second+3)&3)->point(),
+                                            Q));
+  // else the facet is not on the envelope of the conflict cavity associated to P
   return gt.construct_circumcenter_3_object()(
              f.first->vertex((f.second+1)&3)->point(),
              f.first->vertex((f.second+2)&3)->point(),

@@ -13,6 +13,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -38,7 +39,7 @@ void generate_input_one_subdomain(const std::size_t nbv, T3& tr)
   for (typename T3::Cell_handle c : tr.finite_cell_handles())
     c->set_subdomain_index(1);
 
-  CGAL_assertion(tr.is_valid(true));
+  assert(tr.is_valid(true));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
   std::ofstream out("data/triangulation_one_subdomain.binary.cgal",

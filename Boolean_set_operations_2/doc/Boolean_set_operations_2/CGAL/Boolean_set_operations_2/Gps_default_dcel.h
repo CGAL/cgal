@@ -15,7 +15,7 @@ You need to extend this template with auxiliary data only if you intend to
 obtain the underlying arrangement of the general polygon set and process it
 further.
 
-\cgalModels `GeneralPolygonSetDcelFace`
+\cgalModels{GeneralPolygonSetDcelFace}
 
 \sa `Arr_face_base`
 */
@@ -24,9 +24,9 @@ class Gps_face_base : public Arr_face_base {};
 /*!
 \ingroup PkgBooleanSetOperations2Ref
 
-An instance of this teplate serves as a basis type for any halfedge record
+An instance of this template serves as a basis type for any halfedge record
 of the \dcel class used by instances of the
-General_polygon_set_2` and `General_polygon_with_holes_2` class templates.
+`General_polygon_set_2` and `General_polygon_with_holes_2` class templates.
 
 The `X_monotone_curve_2` template parameter is the type of
 \f$ x\f$-monotone curves associated with the halfedges.
@@ -35,7 +35,7 @@ You need to extend this template with auxiliary data only if you intend to
 obtain the underlying arrangement of the general polygon set and process it
 further.
 
-\cgalModels `GeneralPolygonSetDcelHalfedge`
+\cgalModels{GeneralPolygonSetDcelHalfedge}
 
 \sa `Arr_halfedge_base<X_monotone_curve_2>`
 */
@@ -62,7 +62,7 @@ You need to override this default and use a different
 \dcel only if you intend to obtain the underlying
 arrangement of the general polygon set and process it further.
 
-\cgalModels `GeneralPolygonSetDcel`
+\cgalModels{GeneralPolygonSetDcel}
 
 \sa `Arr_dcel_base<V,H,F>`
 \sa `Gps_halfedge_base<X_monotone_curve_2>`

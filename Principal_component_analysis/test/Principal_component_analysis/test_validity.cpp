@@ -30,6 +30,7 @@
 #include <CGAL/Random.h>
 
 #include <fstream>
+#include <cassert>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
@@ -224,9 +225,9 @@ void assert_quality (const std::vector<Point_3>& points, const Fitted& fitted)
 
   std::cerr << "mean distance = " << mean_dist << std::endl;
 
-  CGAL_assertion_code
-    (double limit = 1e-5 * std::sqrt (CGAL::squared_distance (points.front(), points.back())));
-  CGAL_assertion (mean_dist < limit);
+
+  double limit = 1e-5 * std::sqrt (CGAL::squared_distance (points.front(), points.back()));
+  assert (mean_dist < limit);
 }
 
 /*

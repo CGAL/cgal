@@ -1,7 +1,9 @@
+#include "Scene.h"
 #include "config.h"
 #include "Scene_triangulation_3_item.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_spheres_item.h"
+#include "Plugins/PCA/Scene_edit_box_item.h"
 
 #include <QVector>
 #include <QColor>
@@ -20,6 +22,7 @@
 #include <unordered_map>
 #include <bitset>
 
+#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
@@ -38,6 +41,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangulation_3_cell_primitive.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/IO/Color.h>
 
 #include "Scene_polygon_soup_item.h"
 
@@ -75,13 +79,13 @@ public :
     setTriangleContainer(0, new Tc(Vi::PROGRAM_C3T3, false));
     setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   }
-  bool isFinite() const Q_DECL_OVERRIDE{ return false; }
+  bool isFinite() const override{ return false; }
   ~Scene_intersection_item()
   {
     if(alphaSlider)
          delete alphaSlider;
   }
-  void compute_bbox() const Q_DECL_OVERRIDE{}
+  void compute_bbox() const override{}
 
   void gl_initialization(Vi* viewer)
   {
@@ -105,16 +109,16 @@ public :
     barycenters = p_bary;
     subdomain_ids = p_subdomain_ids;
   }
-  void setColor(QColor c) Q_DECL_OVERRIDE
+  void setColor(QColor c) override
   {
     qobject_cast<Scene_triangulation_3_item*>(this->parent())->setColor(c);
     Scene_item::setColor(c);
   }
   // Indicates if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
+  bool supportsRenderingMode(RenderingMode m) const override{
     return (m != Gouraud && m != PointsPlusNormals && m != Points && m != ShadedPoints);
   }
-  void computeElements() const Q_DECL_OVERRIDE
+  void computeElements() const override
   {
     getTriangleContainer(0)->reset_vbos(ALL);
     getEdgeContainer(0)->reset_vbos(ALL);
@@ -133,7 +137,7 @@ public :
                             static_cast<int>(edges->size()*sizeof(float)));
     setBuffersFilled(true);
   }
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const override
   {
     //vao containing the data for the facets
     {
@@ -148,7 +152,7 @@ public :
   }
 
   //Displays the item
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
+  void draw(CGAL::Three::Viewer_interface* viewer) const override
   {
     if(is_fast)
       return;
@@ -170,7 +174,7 @@ public :
     getTriangleContainer(0)->setAlpha(alpha());
     getTriangleContainer(0)->draw(viewer, false);
   }
-  void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const override
   {
     if(is_fast)
       return;
@@ -178,7 +182,15 @@ public :
     QVector4D cp = cgal_plane_to_vector4d(plane);
     getEdgeContainer(0)->setPlane(cp);
     getEdgeContainer(0)->setColor(QColor(Qt::black));
-    getEdgeContainer(0)->draw(viewer, true);
+    if (!cut_edges) {
+      bool clipping = getEdgeContainer(0)->getClipping();
+      getEdgeContainer(0)->setClipping(false);
+      getEdgeContainer(0)->draw(viewer, true);
+      getEdgeContainer(0)->setClipping(clipping);
+    }
+    else {
+      getEdgeContainer(0)->draw(viewer, true);
+    }
 
   }
 
@@ -188,7 +200,7 @@ public :
   }
 
   void addTriangle(const Tr::Bare_point& pa, const Tr::Bare_point& pb,
-                   const Tr::Bare_point& pc, const CGAL::Color color)
+                   const Tr::Bare_point& pc, const CGAL::IO::Color color)
   {
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     Geom_traits::Vector_3 n = cross_product(pb - pa, pc - pa);
@@ -239,9 +251,9 @@ public :
     }
   }
 
-  Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
-  QString toolTip() const Q_DECL_OVERRIDE{return QString();}
-  QMenu* contextMenu() Q_DECL_OVERRIDE
+  Scene_item* clone() const override{return 0;}
+  QString toolTip() const override{return QString();}
+  QMenu* contextMenu() override
   {
     QMenu* menu = Scene_item::contextMenu();
 
@@ -267,15 +279,19 @@ public :
     }
     return menu;
   }
-  float alpha() const Q_DECL_OVERRIDE
+  float alpha() const override
   {
     return m_alpha ;
   }
 
-  void setAlpha(int a) Q_DECL_OVERRIDE
+  void setAlpha(int a) override
   {
     m_alpha = a / 255.0f;
     redraw();
+  }
+  void setCutEdges(bool b)
+  {
+    cut_edges = b;
   }
 private:
 
@@ -289,6 +305,8 @@ private:
   mutable bool is_fast;
   mutable QSlider* alphaSlider;
   mutable float m_alpha ;
+
+  bool cut_edges;
 }; //end of class Scene_triangle_item
 
 
@@ -352,6 +370,7 @@ struct Scene_triangulation_3_item_priv {
     is_aabb_tree_built = false;
     alphaSlider = NULL;
     is_filterable = true;
+    visible_bitset.fill(0xFFFFFFFF);
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -435,12 +454,30 @@ struct Scene_triangulation_3_item_priv {
   Scene_spheres_item *spheres;
   std::vector<Tr::Vertex> tr_vertices;
   Scene_intersection_item *intersection;
+  void set_intersection_enabled(bool b)
+  {
+    if (intersection)
+      intersection->setVisible(b);
+    cut_plane_enabled = b;
+  }
+  bool is_intersection_enabled()
+  {
+    return cut_plane_enabled;
+  }
+  bool is_item_clip_box(int id)
+  {
+    if(dynamic_cast<Scene_edit_box_item*>(CGAL::Three::Three::scene()->item(id)))
+      return true;
+    else
+      return false;
+  }
   bool spheres_are_shown;
   const Scene_item* data_item_;
   QPixmap histogram_;
   typedef std::set<int> Indices;
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
+  std::unordered_map<int, int> visible_surface_patch_to_subdomain;
   std::unordered_map<int, int> id_to_compact;
   QSlider* tet_Slider;
   bool is_filterable;
@@ -491,10 +528,13 @@ struct Scene_triangulation_3_item_priv {
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
-  std::bitset<24> bs[4] = {16777215, 16777215, 16777215, 16777215};
+  bool use_subdomain_colors = false;
+  std::array<std::bitset<32>, Scene_triangulation_3_item::number_of_bitset> visible_bitset;
   bool show_tetrahedra;
+  bool cut_plane_enabled;
   bool is_aabb_tree_built;
   bool last_intersection;
+  bool cut_edges;
 
   void push_normal(std::vector<float>& normals, const EPICK::Vector_3& n) const
   {
@@ -538,6 +578,7 @@ void Scene_triangulation_3_item::common_constructor(bool display_elements)
 
   d->is_grid_shown = display_elements;
   d->show_tetrahedra = display_elements;
+  d->cut_plane_enabled = display_elements;
   d->last_intersection = !d->show_tetrahedra;
 
   setTriangleContainer(T3_faces, new Tc(Vi::PROGRAM_C3T3, false));
@@ -548,6 +589,14 @@ void Scene_triangulation_3_item::common_constructor(bool display_elements)
   {
     v->installEventFilter(this);
   }
+  for(int i = 0, end = scene->numberOfEntries();
+       i < end; ++i)
+  {
+    if (d->is_item_clip_box(i))
+      d->set_intersection_enabled(false);
+  }
+  connect(static_cast<Scene*>(CGAL::Three::Three::scene()), SIGNAL(newItem(int)), this, SLOT(check_new_item(int)));
+  connect(static_cast<Scene*>(CGAL::Three::Three::scene()), SIGNAL(indexErased(Scene_interface::Item_id)), this, SLOT(check_deleted_item(Scene_interface::Item_id)));
 }
 Scene_triangulation_3_item::Scene_triangulation_3_item(bool display_elements)
   : Scene_group_item("unnamed")
@@ -600,6 +649,20 @@ Scene_triangulation_3_item::data_item_destroyed()
   set_data_item(NULL);
 }
 
+void
+Scene_triangulation_3_item::check_new_item(int id)
+{
+  if (d->is_item_clip_box(id))
+    d->set_intersection_enabled(false);
+}
+
+void
+Scene_triangulation_3_item::check_deleted_item(Scene_interface::Item_id id)
+{
+  if (d->is_item_clip_box(id))
+    d->set_intersection_enabled(true);
+}
+
 const T3&
 Scene_triangulation_3_item::triangulation() const {
   return d->triangulation;
@@ -642,6 +705,7 @@ Scene_triangulation_3_item::triangulation_changed()
   // Fill indices map and get max subdomain value
   d->surface_patch_indices_.clear();
   d->subdomain_indices_.clear();
+  d->visible_surface_patch_to_subdomain.clear();
   d->visible_subdomain.clear();
   d->id_to_compact.clear();
 
@@ -658,12 +722,23 @@ Scene_triangulation_3_item::triangulation_changed()
   }
   const int max_subdomain_index = max;
   d->visible_subdomain.resize(max_subdomain_index+1, true);
-  d->is_filterable &=( d->subdomain_ids.size() < 96);
+  d->is_filterable &=( d->subdomain_indices_.size() < 32*number_of_bitset-1);
   for (Tr::Finite_facets_iterator fit = triangulation().finite_facets_begin(),
        end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
     max = (std::max)(max, fit->first->surface_patch_index(fit->second));
-    d->surface_patch_indices_.insert(fit->first->surface_patch_index(fit->second));
+    int index = fit->first->surface_patch_index(fit->second);
+    d->surface_patch_indices_.insert(index);
+    int dom0 = fit->first->subdomain_index();
+    int dom1 = fit->first->neighbor(fit->second)->subdomain_index();
+    if (dom0 == 0) // if cell is not in complex
+    {
+        d->visible_surface_patch_to_subdomain[index] = dom1;
+    }
+    else if (dom1 == 0)  // if opposite cell is not in complex
+    {
+        d->visible_surface_patch_to_subdomain[index] = dom0;
+    }
   }
 
   d->colors.resize(max + 1);
@@ -704,6 +779,9 @@ create_histogram(const T3& triangulation, double& min_value, double& max_value)
     cit != triangulation.finite_cells_end();
     ++cit)
   {
+    if(cit->subdomain_index() == 0)
+      continue;
+
 #ifdef CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
     if (triangulation.in_dimension(cit->vertex(0)) <= 1
       || triangulation.in_dimension(cit->vertex(1)) <= 1
@@ -798,6 +876,8 @@ Scene_triangulation_3_item::build_histogram()
   {
     max_size = (std::max)(max_size, *it);
   }
+  if(max_size == 0)
+    return;
 
   // colored histogram
   int j = 0;
@@ -865,8 +945,19 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
 {
   typedef Indices::size_type size_type;
 
+  const size_type nb_patch_indices = surface_patch_indices_.size();
+  double i = -1;
+  double patch_hsv_value = use_subdomain_colors ? fmod(c.valueF() + .5, 1.) : c.valueF();
+  for (Indices::iterator it = surface_patch_indices_.begin(),
+       end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
+  {
+    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
+    if (hue > 1) { hue -= 1.; }
+    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
+  }
+
   const size_type nb_domains = subdomain_indices_.size();
-  double i = 0;
+  i = -1;
   for (Indices::iterator it = subdomain_indices_.begin(),
          end = subdomain_indices_.end(); it != end; ++it, i += 1.)
   {
@@ -874,19 +965,21 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
     if (hue > 1) { hue -= 1.; }
     colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
-  const size_type nb_patch_indices = surface_patch_indices_.size();
-  i = 0;
-  for (Indices::iterator it = surface_patch_indices_.begin(),
-         end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
+
+  if (use_subdomain_colors)
   {
-    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
-    if (hue > 1) { hue -= 1.; }
-    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
+    for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
+         end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
+    {
+      colors[it->first] = colors_subdomains[it->second];
+    }
   }
 }
 
 Geom_traits::Plane_3 Scene_triangulation_3_item::plane(CGAL::qglviewer::Vec offset) const
 {
+  if (!d->is_intersection_enabled())
+    return Geom_traits::Plane_3(1.0, 0.0, 0.0, std::numeric_limits<float>::max());
   const CGAL::qglviewer::Vec& pos = d->frame->position() - offset;
   const CGAL::qglviewer::Vec& n =
     d->frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
@@ -966,8 +1059,11 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     program->bind();
     if(d->is_filterable)
     {
-      QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
-      program->setUniformValue("is_visible_bitset", visible_bitset);
+      std::array<GLuint, number_of_bitset> visible_bitset_ulong;
+      std::transform(d->visible_bitset.cbegin(), d->visible_bitset.cend(), visible_bitset_ulong.begin(),
+                     [](const std::bitset<32>& bitset) { return bitset.to_ulong(); }
+                     );
+      program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong.data(), number_of_bitset);
     }
     program->setUniformValue("is_filterable", d->is_filterable);
     program->release();
@@ -992,7 +1088,7 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
       d->spheres->setPlane(this->plane());
     }
   }
-  if(d->is_grid_shown)
+  if(d->is_grid_shown && d->is_intersection_enabled())
   {
 
     getEdgeContainer(Grid_edges)->setColor(QColor(Qt::black));
@@ -1000,7 +1096,11 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     for (int i = 0; i<16; i++)
       f_mat.data()[i] = static_cast<float>(d->frame->matrix()[i]);
     getEdgeContainer(Grid_edges)->setFrameMatrix(f_mat);
+    // always draw plane (disable clipping)
+    bool clipping = getEdgeContainer(Grid_edges)->getClipping();
+    getEdgeContainer(Grid_edges)->setClipping(false);
     getEdgeContainer(Grid_edges)->draw(viewer, true);
+    getEdgeContainer(Grid_edges)->setClipping(clipping);
   }
 }
 
@@ -1030,14 +1130,18 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
       computeElements();
       initializeBuffers(viewer);
     }
-    if(renderingMode() == Wireframe && d->is_grid_shown)
+    if(renderingMode() == Wireframe && d->is_grid_shown && d->is_intersection_enabled())
     {
      getEdgeContainer(Grid_edges)->setColor(QColor(Qt::black));
       QMatrix4x4 f_mat;
       for (int i = 0; i<16; i++)
         f_mat.data()[i] = static_cast<float>(d->frame->matrix()[i]);
       getEdgeContainer(Grid_edges)->setFrameMatrix(f_mat);
+      // always draw plane (disable clipping)
+      bool clipping = getEdgeContainer(Grid_edges)->getClipping();
+      getEdgeContainer(Grid_edges)->setClipping(false);
       getEdgeContainer(Grid_edges)->draw(viewer, true);
+      getEdgeContainer(Grid_edges)->setClipping(clipping);
     }
 
     QVector4D cp = cgal_plane_to_vector4d(this->plane());
@@ -1045,15 +1149,26 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
         program->bind();
         if(d->is_filterable)
         {
-          QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
-          program->setUniformValue("is_visible_bitset", visible_bitset);
+          std::array<GLuint, number_of_bitset> visible_bitset_ulong;
+          std::transform(d->visible_bitset.cbegin(), d->visible_bitset.cend(), visible_bitset_ulong.begin(),
+                         [](const std::bitset<32>& bitset) { return bitset.to_ulong(); }
+                         );
+          program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong.data(), number_of_bitset);
         }
         program->setUniformValue("is_filterable", d->is_filterable);
         program->release();
     getEdgeContainer(T3_edges)->setPlane(cp);
     getEdgeContainer(T3_edges)->setIsSurface(is_surface());
     getEdgeContainer(T3_edges)->setColor(QColor(Qt::black));
-    getEdgeContainer(T3_edges)->draw(viewer, true);
+    if (!d->cut_edges) {
+      bool clipping = getEdgeContainer(T3_edges)->getClipping();
+      getEdgeContainer(T3_edges)->setClipping(false);
+      getEdgeContainer(T3_edges)->draw(viewer, true);
+      getEdgeContainer(T3_edges)->setClipping(clipping);
+    }
+    else {
+      getEdgeContainer(T3_edges)->draw(viewer, true);
+    }
 
     if(d->show_tetrahedra){
       if(!d->frame->isManipulated())
@@ -1191,6 +1306,14 @@ QMenu* Scene_triangulation_3_item::contextMenu()
               this, SLOT(show_spheres(bool)));
     }
 
+    QAction* actionToggleCutEdges =
+        menu->addAction(tr("Cut &edges"));
+    actionToggleCutEdges->setCheckable(true);
+    actionToggleCutEdges->setChecked(true);
+    actionToggleCutEdges->setObjectName("actionToggleCutEdges");
+    connect(actionToggleCutEdges, SIGNAL(toggled(bool)),
+            this, SLOT(set_cut_edge(bool)));
+
     menu->setProperty(prop_name, true);
   }
   return menu;
@@ -1253,7 +1376,7 @@ void Scene_triangulation_3_item_priv::computeIntersection(const Primitive& cell)
   const Tr::Bare_point& pc = wp2p(ch->vertex(2)->point());
   const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
-  CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
+  CGAL::IO::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
 
   if(is_filterable)
   {
@@ -1355,7 +1478,7 @@ void Scene_triangulation_3_item_priv::computeSpheres()
     typedef unsigned char UC;
     tr_vertices.push_back(*vit);
     spheres->add_sphere(Geom_traits::Sphere_3(center, radius),s_id++,
-                        CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
+                        CGAL::IO::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
 
   }
   spheres->invalidateOpenGLBuffers();
@@ -1498,6 +1621,12 @@ Scene_triangulation_3_item::setColor(QColor c)
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     d->are_intersection_buffers_filled[viewer] = false;
   }
+}
+
+void
+Scene_triangulation_3_item::setUseSubdomainColors(bool b)
+{
+  d->use_subdomain_colors = b;
 }
 
 void Scene_triangulation_3_item::show_grid(bool b)
@@ -1839,7 +1968,7 @@ void Scene_triangulation_3_item::invalidateOpenGLBuffers()
   getEdgeContainer(T3_edges)->reset_vbos(ALL);
   getEdgeContainer(Grid_edges)->reset_vbos(ALL);
 
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(viewer == NULL)
@@ -2037,6 +2166,12 @@ QColor Scene_triangulation_3_item::getSubdomainIndexColor(int i) const
   return d->colors_subdomains[i];
 }
 
+void Scene_triangulation_3_item::resetVisibleSubdomain()
+{
+  d->visible_subdomain.set();
+  d->visible_bitset.fill(0xFFFFFFFF);
+}
+
 void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
 {
   d->visible_subdomain[id] = !d->visible_subdomain[id];
@@ -2044,7 +2179,12 @@ void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
   int i = compact_id/32;
   int j = compact_id%32;
 
-  d->bs[i][j] = d->visible_subdomain[id];
+  d->visible_bitset[i][j] = d->visible_subdomain[id];
+}
+
+bool Scene_triangulation_3_item::isVisibleSubdomain(int id) const
+{
+  return d->visible_subdomain[id];
 }
 
 void Scene_triangulation_3_item::computeIntersection()
@@ -2055,5 +2195,11 @@ void Scene_triangulation_3_item::computeIntersection()
   }
 }
 
-#include "Scene_triangulation_3_item.moc"
+void Scene_triangulation_3_item::set_cut_edge(bool b)
+{
+  d->cut_edges = b;
+  d->intersection->setCutEdges(b);
+  Q_EMIT redraw();
+}
 
+#include "Scene_triangulation_3_item.moc"

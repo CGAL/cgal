@@ -17,6 +17,7 @@
 #ifdef CGAL_USE_CIMG
 #define cimg_display 0 // To avoid X11 or Windows-GDI dependency
 #include <CImg.h>
+#include <QMessageBox>
 #endif
 #include <utility>      // std::pair
 #include <vector>
@@ -432,19 +433,17 @@ public:
 
     m_pwsrec->list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
 
-    int vertex_count = 0;
+    CGAL_assertion_code(int vertex_count = 0);
     for (std::vector<Point>::iterator it = isolated_points.begin();
       it != isolated_points.end(); it++) {
-      vertex_count++;
+      CGAL_assertion_code(vertex_count++);
       std::cout << *it << std::endl;
     }
     CGAL_assertion(vertex_count == 18);
 
-    int edge_count = 0;
     for (std::vector<Segment>::iterator it = edges.begin();
       it != edges.end(); it++) {
       std::cout << *it << std::endl;
-      edge_count++;
     }
   }
 

@@ -4,6 +4,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <fstream>
 #include <string>
+#include <cassert>
 #include "draw_surface_mesh_small_faces.h"
 
 typedef CGAL::Simple_cartesian<double> K;
@@ -28,7 +29,7 @@ int main(int argc, char* argv[])
   Mesh::Property_map<face_descriptor, FT> faces_size;
   bool created;
   boost::tie(faces_size, created)=sm.add_property_map<face_descriptor, FT>("f:size",0.);
-  CGAL_assertion(created);
+  assert(created);
 
   for(face_descriptor fd : sm.faces())
   { faces_size[fd]=CGAL::Polygon_mesh_processing::face_area(fd, sm); }
@@ -39,4 +40,3 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;
 }
-

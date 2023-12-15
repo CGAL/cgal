@@ -3,7 +3,9 @@
 #ifdef CGAL_USE_CORE
 #include <sstream>
 #include <list>
+#include <cassert>
 #include <cstdlib>
+
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
@@ -30,7 +32,7 @@ void precision_bug()
     sqrtD1D2.approx(53,1075); //force evaluation of sqrtD1D2
     uz.approx(53,1075);
 
-    CGAL_assertion(!uz.isZero());
+    assert(!uz.isZero());
   }
   //computation without forced evaluation of sqrtD1D2
   {
@@ -47,7 +49,7 @@ void precision_bug()
     FT a1a2b1b2 = a1 * a2 + b1 * b2;
     FT uz =  sqrtD1D2 -  a1a2b1b2 ;
 
-    CGAL_assertion(!uz.isZero());
+    assert(!uz.isZero());
   }
   std::cout << "precision bug OK\n";
 }
@@ -667,4 +669,3 @@ int main(){
 int main() { return 0; }
 #endif // CGAL_USE_CORE
 //EOF
-

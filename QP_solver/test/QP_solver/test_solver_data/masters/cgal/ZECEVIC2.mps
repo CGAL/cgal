@@ -1,5 +1,5 @@
-* Description: from the benchmarks at http://www.doc.ic.ac.uk/~im/
-NAME          ZECEVIC2  
+* Description: from the benchmarks at https://www.doc.ic.ac.uk/~im/
+NAME          ZECEVIC2
 ROWS
   N OBJ.FUNC
   L R------1

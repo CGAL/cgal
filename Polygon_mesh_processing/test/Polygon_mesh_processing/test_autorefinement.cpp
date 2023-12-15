@@ -61,7 +61,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
   try{
     My_visitor<Mesh> visitor;
     PMP::experimental::autorefine(mesh,
-      PMP::parameters::visitor(visitor));
+      CGAL::parameters::visitor(visitor));
     mesh.collect_garbage();
     assert( nb_vertices_after_autorefine==num_vertices(mesh));
     assert( (nb_vertices_before_autorefine!=nb_vertices_after_autorefine)== (*(visitor.i) != 0) );

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.22)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Surface_sweep_2_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -31,7 +31,7 @@ endfunction()
 
 function(compile_and_run_sweep name source_file point_location traits data_set)
   compile(${ARGV})
-  if(NOT BUILD_TESTING)
+  if(NOT CGAL_ENABLE_TESTING)
     return()
   endif()
   cgal_add_compilation_test(${name})

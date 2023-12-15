@@ -349,7 +349,7 @@ assert( p == q );
 In order to obtain the point corresponding to a vector \f$ v\f$ you simply
 have to add \f$ v\f$ to `ORIGIN`. If you want to determine
 the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can
-write\cgalFootnote{you might call `midpoint(p_1,p_2)` instead}
+write\cgalFootnote{you might call  \cgalFootnoteCode{midpoint(p_1,p_2)} instead}
 
 \code{.cpp}
 q = p_1 + (p_2 - p_1) / 2.0;
@@ -477,7 +477,7 @@ Intersections on kernel objects currently cover only those objects
 that are part of flats (`R::Segment_d`, `R::Ray_d`,
 `R::Line_d`, and `R::Hyperplane_d`). For any pair of objects
 \f$ o1\f$, \f$ o2\f$ of these types the operation `intersection(o1,o2)`
-returns a `boost::optional< boost::variant< T... > >`
+returns a `std::optional< std::variant< T... > >`
 where `T...` is a list of all possible resulting geometric objects.
 
 The return type of intersecting two objects of the types `Type1` and `Type2` can be
@@ -501,10 +501,10 @@ std::cin >> s1 >> s2;
 auto v = intersection(s1, s2);
 if (v) {
   // not empty
-  if (const Point *p = boost::get<Point>(&*v) ) {
+  if (const Point *p = std::get_if<Point>(&*v) ) {
     // do something with *p
   } else {
-    const Segment *s = boost::get<Segment>(&*v) ) {
+    const Segment *s = std::get_if<Segment>(&*v) ) {
     // do something with *s
   }
 } else {

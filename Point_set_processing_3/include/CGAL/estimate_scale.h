@@ -21,13 +21,12 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
 #include <CGAL/hierarchy_simplify_point_set.h>
 #include <CGAL/random_simplify_point_set.h>
 #include <CGAL/Point_set_2.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
@@ -482,25 +481,26 @@ public:
 template <typename PointRange,
           typename QueryPointRange,
           typename OutputIterator,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 OutputIterator
 estimate_local_k_neighbor_scales(
   const PointRange& points,
   const QueryPointRange& queries,
   OutputIterator output,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
   typedef typename CGAL::GetPointMap<QueryPointRange, NamedParameters, true, internal_np::query_point_t>::const_type QueryPointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   typedef typename boost::property_traits<PointMap>::value_type Point_d;
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
   QueryPointMap query_point_map = choose_parameter<QueryPointMap>(get_parameter(np, internal_np::query_point_map));
 
   // Build multi-scale KD-tree
@@ -515,23 +515,6 @@ estimate_local_k_neighbor_scales(
 
   return output;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange,
-          typename QueryPointRange,
-          typename OutputIterator
->
-OutputIterator
-estimate_local_k_neighbor_scales(
-  const PointRange& points,
-  const QueryPointRange& queries,
-  OutputIterator output)
-{
-  return estimate_local_k_neighbor_scales
-    (points, queries, output, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
@@ -569,34 +552,24 @@ estimate_local_k_neighbor_scales(
    \return The estimated scale in the K nearest neighbors sense.
 */
 template <typename PointRange,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 std::size_t
 estimate_global_k_neighbor_scale(
   const PointRange& points,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
   std::vector<std::size_t> scales;
   estimate_local_k_neighbor_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
   return scales[scales.size() / 2];
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-std::size_t
-estimate_global_k_neighbor_scale(const PointRange& points)
-{
-  return estimate_global_k_neighbor_scale
-    (points, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
@@ -650,25 +623,26 @@ estimate_global_k_neighbor_scale(const PointRange& points)
 template <typename PointRange,
           typename QueryPointRange,
           typename OutputIterator,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 OutputIterator
 estimate_local_range_scales(
   const PointRange& points,
   const QueryPointRange& queries,
   OutputIterator output,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
   typedef typename CGAL::GetPointMap<QueryPointRange, NamedParameters, true, internal_np::query_point_t>::const_type QueryPointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
   typedef typename boost::property_traits<PointMap>::value_type Point_d;
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
   QueryPointMap query_point_map = choose_parameter<QueryPointMap>(get_parameter(np, internal_np::query_point_map));
 
   // Build multi-scale KD-tree
@@ -682,23 +656,6 @@ estimate_local_range_scales(
 
   return output;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange,
-          typename QueryPointRange,
-          typename OutputIterator
->
-OutputIterator
-estimate_local_range_scales(
-  const PointRange& points,
-  const QueryPointRange& queries,
-  OutputIterator output)
-{
-  return estimate_local_range_scales
-    (points, queries, output, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
@@ -740,38 +697,28 @@ estimate_local_range_scales(
    of `points`.
 */
 template <typename PointRange,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 #ifdef DOXYGEN_RUNNING
   FT
 #else
-  typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel::FT
+  typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::FT
 #endif
 estimate_global_range_scale(
   const PointRange& points,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   std::vector<double> scales;
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
   estimate_local_range_scales (points, points, std::back_inserter (scales), np.query_point_map(point_map));
   std::sort (scales.begin(), scales.end());
   return std::sqrt (scales[scales.size() / 2]);
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-typename Point_set_processing_3::GetFT<PointRange>::type
-estimate_global_range_scale(const PointRange& points)
-{
-  return estimate_global_range_scale
-    (points, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
 
 } //namespace CGAL
 

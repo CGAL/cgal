@@ -3,6 +3,7 @@
 // using the arrangement of the dual lines.
 
 #include <cstdlib>
+#include <cassert>
 
 #include "arr_linear.h"
 #include "read_objects.h"
@@ -74,7 +75,7 @@ int main(int argc, char* argv[]) {
       break;
     }
   }
-  CGAL_assertion(found_collinear);
+  assert(found_collinear);
 
   return (0);
 }

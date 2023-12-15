@@ -1,4 +1,4 @@
-// To deactivate statics filters in the 2D/3D case
+// To deactivate static filters in the 2D/3D case
 //#define CGAL_NO_STATIC_FILTERS
 
 #include <CGAL/Epick_d.h>

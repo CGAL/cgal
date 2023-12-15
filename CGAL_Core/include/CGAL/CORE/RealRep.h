@@ -16,7 +16,7 @@
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Sylvain Pion <pion@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -459,7 +459,7 @@ inline unsigned long RealBigFloat::length() const {
   // The BigRat(BigFloat) actually is a
   // conversion operator (defined in BigFloat.h), _NOT_
   // an ordinary class constructor! The C++ language
-  // specify that an intialization is not an assignment
+  // specify that an initialization is not an assignment
   // but a constructor operation!
   // Considering that BigRat(BigFloat) is a conversion
   // operator not really a constructor. The programmer's

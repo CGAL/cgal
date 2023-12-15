@@ -24,7 +24,7 @@
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
 // Boost headers.
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 // CGAL namespace.
 namespace CGAL {
@@ -48,7 +48,7 @@ namespace Barycentric_coordinates {
 
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
-\cgalModels `BarycentricCoordinates_2`
+\cgalModels{BarycentricCoordinates_2}
 
 \pre The provided polygon is strictly convex.
 
@@ -98,7 +98,7 @@ public:
 
     // This function computes discrete harmonic weights (unnormalized coordinates) for a chosen query point.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> weights(const Point_2 &query_point, OutputIterator &output)
+        inline std::optional<OutputIterator> weights(const Point_2 &query_point, OutputIterator &output)
     {
         return weights_2(query_point, output);
     }
@@ -108,7 +108,7 @@ public:
     // This function computes discrete harmonic barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon.
     // \pre The provided polygon is strictly convex.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
+        inline std::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
     {
         switch(type_of_algorithm)
         {
@@ -124,14 +124,14 @@ public:
         // Pointer cannot be here. Something went wrong.
         const bool type_of_algorithm_failure = true;
         CGAL_postcondition( !type_of_algorithm_failure );
-        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
-        else return boost::optional<OutputIterator>();
+        if(!type_of_algorithm_failure) return std::optional<OutputIterator>(output);
+        else return std::optional<OutputIterator>();
     }
 
     // This function computes discrete harmonic barycentric coordinates for a chosen query point on the unbounded side of a strictly convex polygon.
     // \pre The provided polygon is strictly convex.
     template<class OutputIterator>
-        inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm, const bool warning_tag = true)
+        inline std::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm, const bool warning_tag = true)
     {
         switch(type_of_algorithm)
         {
@@ -147,8 +147,8 @@ public:
         // Pointer cannot be here. Something went wrong.
         const bool type_of_algorithm_failure = true;
         CGAL_postcondition( !type_of_algorithm_failure );
-        if(!type_of_algorithm_failure) return boost::optional<OutputIterator>(output);
-        else return boost::optional<OutputIterator>();
+        if(!type_of_algorithm_failure) return std::optional<OutputIterator>(output);
+        else return std::optional<OutputIterator>();
     }
 
     // Information Functions
@@ -184,7 +184,7 @@ private:
 
     // Compute discrete harmonic weights without normalization.
     template<class OutputIterator>
-        boost::optional<OutputIterator> weights_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> weights_2(const Point_2 &query_point, OutputIterator &output)
     {
         // Get the number of vertices in the polygon.
         const int n = int(number_of_vertices);
@@ -217,9 +217,10 @@ private:
 
         CGAL_precondition( A[n-2] != FT(0) && A[n-1] != FT(0) );
         *output = (r[0]*A[n-2] - r[n-1]*B[n-1] + r[n-2]*A[n-1]) / (A[n-2] * A[n-1]);
+        ++output;
 
         // Return weights.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // COORDINATES ON BOUNDED SIDE.
@@ -227,7 +228,7 @@ private:
     // Compute discrete harmonic coordinates on the bounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_bounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_bounded_side_precise_2(const Point_2 &query_point, OutputIterator &output)
     {
         CGAL_precondition( type_of_polygon() == STRICTLY_CONVEX );
 
@@ -277,15 +278,16 @@ private:
             ++output;
         }
         *output = weight[n-1] * inverted_dh_denominator;
+        ++output;
 
         // Return coordinates.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // Compute discrete harmonic coordinates on the bounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_bounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
+        std::optional<OutputIterator> coordinates_on_bounded_side_fast_2(const Point_2 &query_point, OutputIterator &output)
     {
         CGAL_precondition( type_of_polygon() == STRICTLY_CONVEX );
 
@@ -333,9 +335,10 @@ private:
             ++output;
         }
         *output = weight[n-1] * inverted_dh_denominator;
+        ++output;
 
         // Return coordinates.
-        return boost::optional<OutputIterator>(output);
+        return std::optional<OutputIterator>(output);
     }
 
     // COORDINATES ON UNBOUNDED SIDE.
@@ -343,7 +346,7 @@ private:
     // Compute discrete harmonic coordinates on the unbounded side of the polygon with the slow O(n^2) but precise algorithm.
     // Here, n - is the number of the polygon's vertices.
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, OutputIterator &output, bool warning_tag)
+        std::optional<OutputIterator> coordinates_on_unbounded_side_precise_2(const Point_2 &query_point, OutputIterator &output, bool warning_tag)
     {
         if(warning_tag)
             std::cout << std::endl << "ATTENTION: Discrete harmonic coordinates might be not well-defined outside the polygon!" << std::endl;
@@ -355,7 +358,7 @@ private:
     // Compute discrete harmonic coordinates on the unbounded side of the polygon with the fast O(n) but less precise algorithm.
     // Here, n - is the number of the polygon's vertices. Precision is lost near the boundary (~ 1.0e-10 and closer).
     template<class OutputIterator>
-        boost::optional<OutputIterator> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, OutputIterator &output, bool warning_tag)
+        std::optional<OutputIterator> coordinates_on_unbounded_side_fast_2(const Point_2 &query_point, OutputIterator &output, bool warning_tag)
     {
         if(warning_tag)
             std::cout << std::endl << "ATTENTION: Discrete harmonic coordinates might be not well-defined outside the polygon!" << std::endl;

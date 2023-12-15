@@ -5,15 +5,13 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/statistics_helpers.h>
 
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/range.hpp>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
@@ -27,6 +25,8 @@
 #include <utility>
 #include <vector>
 #include <functional>
+#include <unordered_map>
+#include <unordered_set>
 
 #include "triangulate_primitive.h"
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -77,12 +77,9 @@ public:
 struct Scene_polyhedron_selection_item_priv{
 
   typedef Scene_facegraph_item_k_ring_selection::Active_handle Active_handle;
-  typedef boost::unordered_set<fg_vertex_descriptor
-  , CGAL::Handle_hash_function>    Selection_set_vertex;
-  typedef boost::unordered_set<fg_face_descriptor,
-  CGAL::Handle_hash_function>      Selection_set_facet;
-  typedef boost::unordered_set<fg_edge_descriptor,
-  CGAL::Handle_hash_function>    Selection_set_edge;
+  typedef std::unordered_set<fg_vertex_descriptor>    Selection_set_vertex;
+  typedef std::unordered_set<fg_face_descriptor>      Selection_set_facet;
+  typedef std::unordered_set<fg_edge_descriptor>    Selection_set_edge;
   struct vertex_on_path
   {
     fg_vertex_descriptor vertex;
@@ -322,7 +319,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
       return;
 
     VPmap vpm = get(CGAL::vertex_point,*poly);
-    for(Selection_set_facet::iterator
+    for(Selection_set_facet::const_iterator
         it = p_sel_facets.begin(),
         end = p_sel_facets.end();
         it != end; it++)
@@ -348,7 +345,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
 
         for(fg_halfedge_descriptor he : halfedges_around_face(halfedge(f,*polyhedron()), *polyhedron()))
         {
-          const Point& p = get(vpm,target(he,*poly));
+          const Point p = get(vpm,target(he,*poly));
           p_facets.push_back(p.x()+offset.x);
           p_facets.push_back(p.y()+offset.y);
           p_facets.push_back(p.z()+offset.z);
@@ -360,9 +357,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         Vector nf = get(nf_pmap, f);
         {
           //1st half-quad
-          const Point& p0 = get(vpm,target(halfedge(f,*poly),*poly));
-          const Point& p1 = get(vpm,target(next(halfedge(f,*poly),*poly),*poly));
-          const Point& p2 = get(vpm,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
+          const Point p0 = get(vpm,target(halfedge(f,*poly),*poly));
+          const Point p1 = get(vpm,target(next(halfedge(f,*poly),*poly),*poly));
+          const Point p2 = get(vpm,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
 
           push_back_xyz(p0+v_offset, p_facets);
           push_back_xyz(p1+v_offset, p_facets);
@@ -374,9 +371,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         }
         {
           //2nd half-quad
-          const Point& p0 = get(vpm, target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
-          const Point& p1 = get(vpm, target(prev(halfedge(f,*poly),*poly),*poly));
-          const Point& p2 = get(vpm, target(halfedge(f,*poly),*poly));
+          const Point p0 = get(vpm, target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
+          const Point p1 = get(vpm, target(prev(halfedge(f,*poly),*poly),*poly));
+          const Point p2 = get(vpm, target(halfedge(f,*poly),*poly));
 
           push_back_xyz(p0+v_offset, p_facets);
           push_back_xyz(p1+v_offset, p_facets);
@@ -396,9 +393,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
     //The Lines
     {
 
-        for(Selection_set_edge::iterator it = p_sel_edges.begin(); it != p_sel_edges.end(); ++it) {
-          const Point& a = get(vpm, target(halfedge(*it,*poly),*poly));
-          const Point& b = get(vpm, target(opposite((halfedge(*it,*poly)),*poly),*poly));
+        for(Selection_set_edge::const_iterator it = p_sel_edges.begin(); it != p_sel_edges.end(); ++it) {
+          const Point a = get(vpm, target(halfedge(*it,*poly),*poly));
+          const Point b = get(vpm, target(opposite((halfedge(*it,*poly)),*poly),*poly));
             p_lines.push_back(a.x()+offset.x);
             p_lines.push_back(a.y()+offset.y);
             p_lines.push_back(a.z()+offset.z);
@@ -411,7 +408,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
     }
     //The points
     {
-        for(Selection_set_vertex::iterator
+        for(Selection_set_vertex::const_iterator
             it = p_sel_vertices.begin(),
             end = p_sel_vertices.end();
             it != end; ++it)
@@ -464,7 +461,6 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
     const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
     color_fixed_points.clear();
     positions_fixed_points.clear();
-    int i=0;
 
     constVPmap vpm = get(CGAL::vertex_point,*polyhedron());
 
@@ -490,7 +486,6 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
         color_fixed_points.push_back(0.0);
         color_fixed_points.push_back(0.0);
       }
-      i++;
     }
   }
 
@@ -512,10 +507,10 @@ void Scene_polyhedron_selection_item_priv::compute_temp_elements()const
         positions_temp_points.data(),
         static_cast<int>(positions_temp_points.size()*sizeof(float)));
 
-item->getPointContainer(Fixed_points)->allocate(
-      Pc::Vertices,
-      positions_fixed_points.data(),
-      static_cast<int>(positions_fixed_points.size()*sizeof(float)));
+  item->getPointContainer(Fixed_points)->allocate(
+        Pc::Vertices,
+        positions_fixed_points.data(),
+        static_cast<int>(positions_fixed_points.size()*sizeof(float)));
 
   item->getPointContainer(Fixed_points)->allocate(
         Pc::Colors,
@@ -673,7 +668,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_vertex temp_select = selected_vertices;
     select_all();
-    Q_FOREACH(fg_vertex_descriptor vh, temp_select)
+    for(fg_vertex_descriptor vh: temp_select)
     {
       selected_vertices.erase(vh);
     }
@@ -683,7 +678,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_edge temp_select = selected_edges;
     select_all();
-    Q_FOREACH(fg_edge_descriptor ed , temp_select)
+    for(fg_edge_descriptor ed: temp_select)
       selected_edges.erase(ed);
     break;
   }
@@ -691,7 +686,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_facet temp_select = selected_facets;
     select_all();
-    Q_FOREACH(fg_face_descriptor fh, temp_select)
+    for(fg_face_descriptor fh: temp_select)
       selected_facets.erase(fh);
     break;
   }
@@ -1081,9 +1076,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     }
       //Join vertex
     case 0:
-      if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()), *polyhedron())) < 4
+      if(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()), *polyhedron()).size() < 4
            ||
-         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()))< 4)
+         CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()).size()< 4)
         {
           d->tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
                            "Select the edge with extremities you want to join.");
@@ -1122,7 +1117,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
       invalidateOpenGLBuffers();
       poly_item->invalidateOpenGLBuffers();
       compute_normal_maps();
-      d->tempInstructions("Edge splitted.",
+      d->tempInstructions("Edge split.",
                           "Select the edge you want to split.");
       break;
     }
@@ -1182,9 +1177,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     case 6:
 
         //check preconditions
-      if(boost::distance(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron())) == 3
+      if(CGAL::halfedges_around_face(halfedge(ed, *polyhedron()),*polyhedron()).size() == 3
          &&
-         boost::distance(CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron())) == 3
+         CGAL::halfedges_around_face(opposite(halfedge(ed, *polyhedron()),*polyhedron()),*polyhedron()).size() == 3
         && !CGAL::is_border(ed, *polyhedron()))
       {
         SMesh* mesh = polyhedron();
@@ -1404,7 +1399,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_face_des
             set_active_handle_type(static_cast<Active_handle::Type>(0));
             poly_item->resetColors();
             poly_item->invalidateOpenGLBuffers();
-            d->tempInstructions("Vertex splitted.", "Select the vertex you want splitted. (1/3)");
+            d->tempInstructions("Vertex split.", "Select the vertex you want to split. (1/3)");
           }
           else if(h1 == h2)
           {
@@ -1528,7 +1523,7 @@ void Scene_polyhedron_selection_item_priv::computeAndDisplayPath()
   item->temp_selected_edges.clear();
   path.clear();
 
-  typedef boost::unordered_map<fg_vertex_descriptor, fg_vertex_descriptor>     Pred_umap;
+  typedef std::unordered_map<fg_vertex_descriptor, fg_vertex_descriptor>     Pred_umap;
   typedef boost::associative_property_map<Pred_umap>                     Pred_pmap;
 
   Pred_umap predecessor;
@@ -1604,7 +1599,7 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
   static Scene_polyhedron_selection_item_priv::vertex_on_path first;
   if(!d->first_selected)
   {
-    //if the path doesnt exist, add the vertex as the source of the path.
+    //if the path doesn't exist, add the vertex as the source of the path.
     if(!replace)
     {
       d->addVertexToPath(vh, first);
@@ -1641,7 +1636,7 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
           return;
         }
       bool found = false;
-      Q_FOREACH(Scene_polyhedron_selection_item_priv::vertex_on_path vop, d->path)
+      for(Scene_polyhedron_selection_item_priv::vertex_on_path vop : d->path)
       {
         if(vop.vertex == vh)
         {
@@ -1705,11 +1700,11 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
       //get first's index
       for(it = d->path.begin(); it!=d->path.end(); ++it)
       {
-        bool end_of_path_is_prio = true;//makes the end of the path prioritary over the other points when there is a conflict
+        bool end_of_path_is_prio = true;//makes the end of the path priority over the other points when there is a conflict
         if(first.vertex == (d->path.end()-1)->vertex)
           if(it != d->path.end()-1)
             end_of_path_is_prio = false;
-        //makes the end of the path prioritary over the other points when there is a conflict
+        //makes the end of the path priority over the other points when there is a conflict
         if(it->vertex == first.vertex &&
            !(it == d->path.begin())&&// makes the beginning of the path impossible to move
            end_of_path_is_prio)
@@ -1835,7 +1830,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 {
   common_constructor();
   QString sf = poly_item->property("source filename").toString();
-  QRegExp rx("\\.(ts$|off$|obj$|ply$|stl$|surf$|vtk$|vtp$|vtu)");
+  QRegularExpression rx("\\.(ts$|off$|obj$|ply$|stl$|surf$|vtk$|vtp$|vtu)");
   sf.remove(rx);
   if(!sf.isEmpty())
     setProperty("defaultSaveDir", sf);
@@ -1848,7 +1843,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 Scene_polyhedron_selection_item::~Scene_polyhedron_selection_item()
 {
   delete d;
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
     CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
     viewer->setBindingSelect();
   }
@@ -1892,7 +1887,7 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
       getPointContainer(Priv::Temp_points)->reset_vbos(ALL);
       getPointContainer(Priv::Fixed_points)->reset_vbos(ALL);
 
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -1912,14 +1907,14 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
 
 void Scene_polyhedron_selection_item::add_to_selection()
 {
-  Q_FOREACH(fg_edge_descriptor ed, temp_selected_edges)
+  for(fg_edge_descriptor ed : temp_selected_edges)
   {
     selected_edges.insert(ed);
     temp_selected_edges.erase(ed);
   }
   on_Ctrlz_pressed();
   invalidateOpenGLBuffers();
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     v->update();
   d->tempInstructions("Path added to selection.",
                    "Select two vertices to create the path between them. (1/2)");
@@ -2222,7 +2217,7 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
     redraw();
   });
   d->manipulated_frame = new ManipulatedFrame();
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     v->installEventFilter(this);
   mw->installEventFilter(this);
   connect(mw, SIGNAL(newViewerCreated(QObject*)),
@@ -2246,12 +2241,12 @@ void Scene_polyhedron_selection_item::selection_changed(bool)
        Three::scene()->item(Three::scene()->mainSelectionIndex())))
     do_bind_select = false;
   if(do_bind_select)
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       viewer->setBindingSelect();
     }
     else
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       viewer->setNoBinding();
     }
@@ -2363,9 +2358,9 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
   {
   case MIN_LENGTH:
   case MAX_LENGTH:
-  case MID_LENGTH:
+  case MED_LENGTH:
   case MEAN_LENGTH:
-  case NB_NULL_LENGTH:
+  case NB_DEGENERATE_EDGES:
     if(selected_edges.size() == 0)
       return QString("n/a");
     else
@@ -2491,7 +2486,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
   case GENUS:
     return QString("n/a");
     break;
-  case NB_DEGENERATED_FACES:
+  case NB_DEGENERATE_FACES:
   {
     if(is_triangle_mesh(*d->poly))
     {
@@ -2532,11 +2527,11 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
     return QString::number(minl);
   case MAX_LENGTH:
     return QString::number(maxl);
-  case MID_LENGTH:
+  case MED_LENGTH:
     return QString::number(midl);
   case MEAN_LENGTH:
     return QString::number(meanl);
-  case NB_NULL_LENGTH:
+  case NB_DEGENERATE_EDGES:
     return QString::number(number_of_null_length_edges);
 
   case MIN_ANGLE:
@@ -2545,7 +2540,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
     return QString::number(maxi);
   case MEAN_ANGLE:
     return QString::number(ave);
-  case HOLES:
+  case NB_HOLES:
   {
     return QString("n/a");
   }
@@ -2595,24 +2590,26 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_selection_item::header() c
   CGAL::Three::Scene_item::Header_data data;
   //categories
 
-  data.categories.append(std::pair<QString,int>(QString("Properties"),10));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),8));
+  data.categories.append(std::pair<QString,int>(QString("Vertices"),1));
   data.categories.append(std::pair<QString,int>(QString("Faces"),10));
   data.categories.append(std::pair<QString,int>(QString("Edges"),7));
-  data.categories.append(std::pair<QString,int>(QString("Angles"),2));
-
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
   //titles
-  data.titles.append(QString("#Vertices"));
   data.titles.append(QString("#Connected Components"));
-  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("#Connected Components of the Boundary"));
+  data.titles.append(QString("Genus"));
   data.titles.append(QString("Pure Triangle"));
   data.titles.append(QString("Pure Quad"));
-  data.titles.append(QString("#Degenerate Faces"));
-  data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));
   data.titles.append(QString("Volume"));
   data.titles.append(QString("Self-Intersecting"));
+
+  data.titles.append(QString("#Vertices"));
+
   data.titles.append(QString("#Faces"));
+  data.titles.append(QString("#Degenerate Faces"));
   data.titles.append(QString("Min Area"));
   data.titles.append(QString("Max Area"));
   data.titles.append(QString("Median Area"));
@@ -2621,16 +2618,19 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_selection_item::header() c
   data.titles.append(QString("Min Aspect-Ratio"));
   data.titles.append(QString("Max Aspect-Ratio"));
   data.titles.append(QString("Mean Aspect-Ratio"));
-  data.titles.append(QString("Genus"));
+
   data.titles.append(QString("#Edges"));
+  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("#Degenerate Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
   data.titles.append(QString("Median Length"));
   data.titles.append(QString("Mean Length"));
-  data.titles.append(QString("#Degenerate Edges"));
+
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
+
   return data;
 }
 

@@ -9,12 +9,14 @@
  * approach the remaining boundary sides (that is, left and right) are
  * purposeful, and can have models.
  *
- * \cgalRefines `ArrangementBasicTraits_2`
+ * \cgalRefines{ArrangementBasicTraits_2}
  *
- * \cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
- * \cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
- * \cgalHasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
- * \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>`
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arr_linear_traits_2<Kernel>}
+ * \cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
+ * \cgalHasModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
+ * \cgalHasModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>}
+ * \cgalHasModelsEnd
  *
  * \sa `ArrangementVerticalSideTraits_2`
  */
@@ -36,7 +38,7 @@ public:
   /// models the concept `ArrTraits::ParameterSpaceInY_2`.
   typedef unspecified_type Parameter_space_in_y_2;
 
-  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
+  /// models the concept `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`.
   typedef unspecified_type Compare_x_on_boundary_2;
 
   /// models the concept `ArrTraits::CompareXNearBoundary_2`.

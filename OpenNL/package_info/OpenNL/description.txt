@@ -1,1 +1,0 @@
-OpenNL (Open Numerical Library) is a library to easily construct and solve sparse linear systems.

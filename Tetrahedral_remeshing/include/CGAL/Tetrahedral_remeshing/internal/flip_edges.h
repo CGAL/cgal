@@ -20,11 +20,12 @@
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/container/small_vector.hpp>
-#include <boost/optional.hpp>
+#include <optional>
+#include <boost/functional/hash.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <limits>
 #include <queue>
 
@@ -227,8 +228,8 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
 
   //Keep the facets
   typedef CGAL::Triple<Vertex_handle, Vertex_handle, Vertex_handle> Facet_vvv;
-  typedef boost::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
-  boost::unordered_set<Facet> outer_mirror_facets;
+  typedef std::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
+  std::unordered_set<Facet, boost::hash<Facet>> outer_mirror_facets;
 
   FaceMapIndex facet_map_indices;
   std::vector<Facet> mirror_facets;
@@ -316,7 +317,7 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
       }
       ch->vertex(v)->set_cell(ch);
 
-      inc_cells[ch->vertex(v)] = boost::none;
+      inc_cells[ch->vertex(v)] = std::nullopt;
       ch->reset_cache_validity();
     }
   }
@@ -595,8 +596,8 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     if(tr.is_infinite(vh))
       continue;
 
-    boost::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
-    if (o_inc_vh == boost::none)
+    std::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
+    if (o_inc_vh == std::nullopt)
     {
       boost::container::small_vector<Cell_handle, 64> inc_vec;
       tr.incident_cells(vh, std::back_inserter(inc_vec));
@@ -619,7 +620,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                       indices(facet_circulator->second, i));
         if (curr_vertex != vh0  && curr_vertex != vh1)
         {
-          if (is_edge_uv(vh, curr_vertex, boost::get(o_inc_vh)))
+          if (is_edge_uv(vh, curr_vertex, o_inc_vh.value()))
           {
             is_edge = true;
             break;
@@ -760,8 +761,8 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   facet_circulator++;
   facet_circulator++;
 
-  boost::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
-  if (o_inc_vh == boost::none)
+  std::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
+  if (o_inc_vh == std::nullopt)
   {
     boost::container::small_vector<Cell_handle, 64> inc_vec;
     tr.incident_cells(vh, std::back_inserter(inc_vec));
@@ -777,7 +778,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                     indices(facet_circulator->second, i));
       if (curr_vertex != vh0  && curr_vertex != vh1)
       {
-        if (is_edge_uv(vh, curr_vertex, boost::get(o_inc_vh)))
+        if (is_edge_uv(vh, curr_vertex, o_inc_vh.value()))
           return NOT_FLIPPABLE;
       }
     }
@@ -787,7 +788,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   boost::container::small_vector<Cell_handle, 20> to_remove;
 
   //Neighbors that will need to be updated after flip
-  boost::unordered_set<Facet> neighbor_facets;
+  std::unordered_set<Facet, boost::hash<Facet>> neighbor_facets;
 
   //Facets that will be used to create new cells
   // i.e. all the facets opposite to vh1 and don't have vh
@@ -902,7 +903,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   }
 
   typedef CGAL::Triple<Vertex_handle, Vertex_handle, Vertex_handle> Facet_vvv;
-  typedef boost::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
+  typedef std::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
 
   FaceMapIndex facet_map_indices;
   std::vector<Facet> facets;
@@ -947,7 +948,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
       }
       ch->vertex(v)->set_cell(ch);
 
-      inc_cells[ch->vertex(v)] = boost::none;
+      inc_cells[ch->vertex(v)] = std::nullopt;
       ch->reset_cache_validity();
     }
   }
@@ -1102,12 +1103,12 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
   Facet_circulator done = circ;
 
   //Identify the vertices around this edge
-  boost::unordered_set<Vertex_handle> vertices_around_edge;
+  std::unordered_set<Vertex_handle> vertices_around_edge;
   bool boundary_edge = false;
   bool hull_edge = false;
 
-  boost::unordered_set<Vertex_handle> boundary_vertices;
-//  boost::unordered_set<Vertex_handle> hull_vertices;
+  std::unordered_set<Vertex_handle> boundary_vertices;
+//  std::unordered_set<Vertex_handle> hull_vertices;
   do
   {
     //Get the ids of the opposite vertices
@@ -1185,14 +1186,14 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
   Tr& tr = c3t3.triangulation();
 
   std::unordered_map<Vertex_handle,
-    boost::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
+    std::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
 
   std::size_t count = 0;
   for (const VertexPair& vp : edges)
   {
-    boost::optional<boost::container::small_vector<Cell_handle, 64>>&
+    std::optional<boost::container::small_vector<Cell_handle, 64>>&
       o_inc_vh = inc_cells[vp.first];
-    if (o_inc_vh == boost::none)
+    if (o_inc_vh == std::nullopt)
     {
       boost::container::small_vector<Cell_handle, 64> inc_vec;
       tr.incident_cells(vp.first, std::back_inserter(inc_vec));
@@ -1201,7 +1202,7 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
 
     Cell_handle ch;
     int i0, i1;
-    if (is_edge_uv(vp.first, vp.second, boost::get(o_inc_vh), ch, i0, i1))
+    if (is_edge_uv(vp.first, vp.second, o_inc_vh.value(), ch, i0, i1))
     {
       Edge edge(ch, i0, i1);
 
@@ -1252,7 +1253,7 @@ void flip_edges(C3T3& c3t3,
   //compute vertices normals map?
 
   // typedef typename C3T3::Surface_patch_index Surface_patch_index;
-  // typedef boost::unordered_map<Surface_patch_index, unsigned int> Spi_map;
+  // typedef std::unordered_map<Surface_patch_index, unsigned int> Spi_map;
   //if (!protect_boundaries)
   //{
   //  std::cout << "\tBoundary flips" << std::endl;

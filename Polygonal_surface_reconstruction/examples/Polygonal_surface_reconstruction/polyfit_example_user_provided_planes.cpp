@@ -39,9 +39,9 @@ typedef CGAL::Nth_of_tuple_property_map<2, PNI>                                 
 * the point is not assigned to a plane).
 */
 
-int main()
+int main(int argc, char* argv[])
 {
-    const std::string& input_file(CGAL::data_file_path("points_3/ball.ply"));
+  const std::string input_file = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/ball.ply");
   std::ifstream input_stream(input_file.c_str());
 
   std::vector<PNI> points; // store points
@@ -89,7 +89,7 @@ int main()
   }
 
   // Saves the mesh model
-    const std::string& output_file("data/ball_result.off");
+    const std::string& output_file("user_provided_planes_result.off");
     if (CGAL::IO::write_OFF(output_file, model))
         std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
     else {

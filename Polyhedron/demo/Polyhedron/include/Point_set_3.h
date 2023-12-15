@@ -34,7 +34,7 @@
 /// - User is responsible to call invalidate_bounds() after adding, moving or removing points.
 /// - Selecting points changes the order of the points in the
 ///   container. If selection is *not* empty, it becomes invalid after
-///   adding, moving or removing points, user is reponsible to call
+///   adding, moving or removing points, the user is responsible for calling
 ///   unselect_all() in those cases.
 ///
 /// @heading Parameters:
@@ -577,33 +577,13 @@ private:
 
 namespace CGAL
 {
-namespace Point_set_processing_3
-{
-  template<typename Kernel>
-  class GetFT< ::Point_set_3<Kernel> >
-  {
-  public:
-    typedef typename Kernel::FT type;
-  };
 
-  namespace parameters
-  {
-    template <typename Kernel>
-    Named_function_parameters
-    <Kernel,
-     internal_np::geom_traits_t,
-     Named_function_parameters
-     <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Vector_3>,
-      internal_np::normal_t,
-      Named_function_parameters
-      <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Point_3>,
-       internal_np::point_t> > >
-    inline all_default(const ::Point_set_3<Kernel>& ps)
-    {
-      return ps.parameters();
-    }
-  }
-}
+// specialization for default named parameters
+template <typename Gt, typename NamedParameters, typename DPM, typename DVM>
+struct Point_set_processing_3_np_helper<::Point_set_3<Gt>, NamedParameters, DPM, DVM>
+    : public Point_set_processing_3_np_helper<typename ::Point_set_3<Gt>::Base, NamedParameters, DPM, DVM>
+{};
+
 }
 
 #endif // POINT_SET_3_H

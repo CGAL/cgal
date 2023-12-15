@@ -1,19 +1,16 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_TEST_H
 #define CGAL_APOLLONIUS_GRAPH_2_TEST_H
 
-#include <cassert>
-#include <CGAL/enum.h>
-#include <CGAL/use.h>
-
-#include <CGAL/Vector_2.h> // this is done in order to avoid error
-// when the  Segment_2_Segment_2_intersection.h file is included from
-// the Triangulation_euclidean_traits_2.h file.
-
 #include <CGAL/Apollonius_graph_2.h>
 #include <CGAL/Apollonius_graph_hierarchy_2.h>
 #include <CGAL/Apollonius_graph_traits_2.h>
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
-//#include <CGAL/new_traits/Apollonius_graph_new_filtered_traits_2.h>
+
+#include <cassert>
+#include <CGAL/enum.h>
+#include <CGAL/use.h>
+#include <CGAL/Random.h>
+
 
 #include "IO/Null_output_stream.h"
 
@@ -839,24 +836,29 @@ bool test_algo_generic(InputStream& is)
   // file I/O methods
   //--------------------------------------------------------------------
   {
-    std::ofstream ofs("ag_testsuite.tmp");
+    std::string fname  =  "ag_testsuite_" + std::to_string(CGAL::Random().get_seed())  + ".tmp";
+    std::cout << "writing to " << fname << std::endl;
+
+    std::ofstream ofs(fname);
     assert( ofs );
     ag.file_output(ofs);
     ofs.close();
 
-    std::ifstream ifs("ag_testsuite.tmp");
+    std::ifstream ifs(fname);
     assert( ifs );
     ag.file_input(ifs);
     ifs.close();
     assert( ag.is_valid() );
   }
   {
-    std::ofstream ofs("ag_testsuite.tmp");
+    std::string fname = "ag_testsuite_" + std::to_string(CGAL::Random().get_seed()) + ".tmp";
+    std::cout << "writing to " << fname << std::endl;
+    std::ofstream ofs(fname);
     assert( ofs );
     ofs << ag;
     ofs.close();
 
-    std::ifstream ifs("ag_testsuite.tmp");
+    std::ifstream ifs(fname);
     assert( ifs );
     ifs >> ag;
     ifs.close();
@@ -879,7 +881,7 @@ bool test_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>         Agds;
@@ -904,7 +906,7 @@ bool test_hierarchy_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
   typedef Triangulation_face_base_2<Traits>             Fb;
@@ -934,7 +936,7 @@ bool test_filtered_traits_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Triangulation_face_base_2<Traits>             Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>         Agds;
@@ -961,7 +963,7 @@ bool test_filtered_traits_hierarchy_algo(InputStream& is)
   // Patch for the Microsoft compiler so that it does not produce the
   // nasty warning about decorated name length
   // Basically what I do here is create typedefs for the default
-  // template paramaters so as to give them shorter names
+  // template parameters so as to give them shorter names
   typedef Apollonius_graph_vertex_base_2<Traits,true>   Vb;
   typedef Apollonius_graph_hierarchy_vertex_base_2<Vb>  HVb;
   typedef Triangulation_face_base_2<Traits>             Fb;

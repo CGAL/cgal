@@ -14,8 +14,9 @@
 
 #include <CGAL/license/Convex_decomposition_3.h>
 
-
-#include<CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Modifier_base.h>
+#include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Convex_decomposition_3/is_reflex_sedge.h>
 #include <CGAL/Convex_decomposition_3/Single_wall_creator3.h>
 #include <CGAL/Convex_decomposition_3/External_structure_builder.h>
 

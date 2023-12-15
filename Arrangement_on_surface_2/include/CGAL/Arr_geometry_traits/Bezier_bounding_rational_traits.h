@@ -719,7 +719,7 @@ public:
 
   /*!
    * Construct a bounding box for the given control polygon.
-   * \param cp A sequence of control point (the control polgon).
+   * \param cp A sequence of control point (the control polygon).
    * \param bbox Output: The bounding box.
    * \pre cp is not empty.
    */
@@ -776,7 +776,7 @@ private:
     Comparison_result                  res = EQUAL;
 
     // Look for the first pair of consecutive points whose x-coordinate
-    // (or y-coordinate) are not equal. Their comparsion result will be
+    // (or y-coordinate) are not equal. Their comparison result will be
     // set as the "reference" comparison result.
     typename Control_points::const_iterator  pt_curr = cp.begin();
     typename Control_points::const_iterator  pt_end = cp.end();
@@ -1054,7 +1054,7 @@ private:
     const Point_2&  s2 = cp2.front();
     const Point_2&  t2 = cp2.back();
 
-    // Check whether any pair of these endpoints conincide.
+    // Check whether any pair of these endpoints coincide.
     NT      x, y;               // Coordinate of a common endpoint.
     NT      t_val1, t_val2;     // Its respective parameters.
 
@@ -1114,7 +1114,7 @@ private:
   }
 
   /*!
-   * An auxilary recursive function for computing the approximated
+   * An auxiliary recursive function for computing the approximated
    * intersection points between two Bezier curves.
    * \param cp1 The control points of the first curve.
    * \param t_min1 The lower bound of the parameter range of the first curve.
@@ -1264,22 +1264,22 @@ private:
         Control_points  aux_vec;
 
         auto res1 = f_intersect(skew1a, skew2a);
-        const Point_2* p1 = boost::get<Point_2>(&*res1);
+        const Point_2* p1 = std::get_if<Point_2>(&*res1);
         if (! p1) CGAL_error();
         aux_vec.push_back(*p1);
 
         auto res2 = f_intersect(skew1a, skew2b);
-        const Point_2* p2 = boost::get<Point_2>(&*res2);
+        const Point_2* p2 = std::get_if<Point_2>(&*res2);
         if (! p2) CGAL_error();
         aux_vec.push_back(*p2);
 
         auto res3 = f_intersect(skew1b, skew2a);
-        const Point_2* p3 = boost::get<Point_2>(&*res3);
+        const Point_2* p3 = std::get_if<Point_2>(&*res3);
         if (! p3) CGAL_error();
         aux_vec.push_back(*p3);
 
         auto res4 = f_intersect (skew1b, skew2b);
-        const Point_2* p4 = boost::get<Point_2>(&*res4);
+        const Point_2* p4 = std::get_if<Point_2>(&*res4);
         if (! p4) CGAL_error();
         aux_vec.push_back(*p4);
 
@@ -1369,7 +1369,7 @@ private:
   }
 
   /*!
-   * An auxilary recursive function for computing the approximated vertical
+   * An auxiliary recursive function for computing the approximated vertical
    * tangency points of a Bezier curves.
    * \param cp The control points of the curve.
    * \param t_min The lower bound of the parameter range of the curve.

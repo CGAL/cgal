@@ -1,6 +1,3 @@
-#include <boost/config.hpp>
-#include <boost/version.hpp>
-
 #include <iostream>
 #include <fstream>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -56,4 +53,3 @@ int main(int argc, char* argv[])
   }
   return 0;
 }
-

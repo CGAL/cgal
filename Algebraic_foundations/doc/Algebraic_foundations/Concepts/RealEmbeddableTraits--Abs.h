@@ -7,7 +7,7 @@ namespace RealEmbeddableTraits_ {
 
 `AdaptableUnaryFunction` computes the absolute value of a number.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `RealEmbeddableTraits`
 
