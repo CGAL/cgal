@@ -13,7 +13,7 @@
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.0}
-\cgalPkgDependsOn{\ref PkgKineticShapePartition, \ref PkgSurfaceMesh, \ref PkgLinearCellComplex, \ref PkgShapeDetection}
+\cgalPkgDependsOn{\ref PkgKineticSpacePartition, \ref PkgSurfaceMesh, \ref PkgLinearCellComplex, \ref PkgShapeDetection}
 \cgalPkgBib{cgal:ol-kinetic}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
