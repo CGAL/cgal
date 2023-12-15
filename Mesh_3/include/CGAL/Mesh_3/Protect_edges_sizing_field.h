@@ -1763,20 +1763,33 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   FT size_v1 = get_radius(v1);
   FT size_v2 = get_radius(v2);
 
-  CGAL_assertion(get_dimension(v1) != 1 ||
-                 curve_index == domain_.curve_index(v1->index()));
-  CGAL_assertion(get_dimension(v2) != 1 ||
-                 curve_index == domain_.curve_index(v2->index()));
+  bool v1_valid_curve_index = true;
+  bool v2_valid_curve_index = true;
+
+  if(use_minimal_size())
+  {
+    v1_valid_curve_index = (get_dimension(v1) != 1
+                         || curve_index == domain_.curve_index(v1->index()));
+    v2_valid_curve_index = (get_dimension(v2) != 1
+                         || curve_index == domain_.curve_index(v2->index()));
+  }
+  else
+  {
+    CGAL_assertion(get_dimension(v1) != 1 ||
+                   curve_index == domain_.curve_index(v1->index()));
+    CGAL_assertion(get_dimension(v2) != 1 ||
+                   curve_index == domain_.curve_index(v2->index()));
+  }
 
   const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
   const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
 
-  FT arc_length = use_minimal_size()
-                ? compute_distance(v1, v2) //curve polyline may not be consistent
-                : domain_.curve_segment_length(cp(v1_wp),
+  FT arc_length = (v1_valid_curve_index && v2_valid_curve_index)
+                ? domain_.curve_segment_length(cp(v1_wp),
                                                cp(v2_wp),
                                                curve_index,
-                                               orientation);
+                                               orientation)
+                : compute_distance(v1, v2); //curve polyline may not be consistent
 
   // Sufficient condition so that the curve portion between v1 and v2 is
   // inside the union of the two balls.
