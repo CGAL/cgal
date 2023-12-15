@@ -518,6 +518,7 @@ find_visible_set(TDS_2& tds,
         // if haven't already seen this facet
         if (f->info() == 0) {
           f->info() = VISITED;
+          // SL: here we can detect faces that are coplanar with point
           Is_on_positive_side_of_plane_3<Traits> is_on_positive_side(
             traits,f->vertex(0)->point(),f->vertex(2)->point(),f->vertex(1)->point());
           int ind = f->index(*vis_it);

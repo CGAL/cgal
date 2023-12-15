@@ -72,6 +72,7 @@ namespace CGAL
 
 
               std::unordered_map <Facet_const_handle, vertex_descriptor> primal_vertices;
+              std::map<Point_3, vertex_descriptor> all_points;
 
               // First, computing the primal vertices
               for(Facet_const_handle fd : faces(_dual)){
@@ -106,9 +107,14 @@ namespace CGAL
                             origin.y() + pp->y(),
                             origin.z() + pp->z());
 
-                vertex_descriptor vd = add_vertex(primal);
-                primal_vertices[fd] = vd;
-                put(vpm, vd, ppp);
+
+                auto insert_res = all_points.insert(std::make_pair(ppp, vertex_descriptor()));
+                if (insert_res.second)
+                {
+                  insert_res.first->second = add_vertex(primal);
+                  put(vpm, insert_res.first->second, ppp);
+                }
+                primal_vertices[fd] = insert_res.first->second;
               }
 
               // Then, add facets to the primal polyhedron
@@ -118,8 +124,12 @@ namespace CGAL
               for(Vertex_const_descriptor vd : vertices( _dual)) {
                 std::deque<vertex_descriptor> vertices;
                 for(Halfedge_const_descriptor hd : halfedges_around_target(vd, _dual)){
-                  vertices.push_front(primal_vertices[face(hd, _dual)]);
+                  vertex_descriptor vd = primal_vertices[face(hd, _dual)];
+                  if (vertices.empty() || vertices.front()!=vd)
+                    vertices.push_front(vd);
                 }
+                while(vertices.back()==vertices.front())
+                  vertices.pop_front();
                 Euler::add_face(vertices,primal);
               }
             }
