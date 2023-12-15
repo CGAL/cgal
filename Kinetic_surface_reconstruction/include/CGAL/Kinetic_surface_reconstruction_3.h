@@ -94,7 +94,10 @@ public:
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_surface_reconstruction_3(Point_range& points,
-    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {}
+    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {
+    m_verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
+    m_debug = parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false);
+  }
 
   /*!
     \brief Detects shapes in the provided point cloud
@@ -175,6 +178,8 @@ public:
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   std::size_t detect_planar_shapes(const CGAL_NP_CLASS& np = parameters::default_values()) {
+    m_verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), m_verbose);
+    m_debug = parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), m_debug);
 
     if (m_verbose)
       std::cout << std::endl << "--- DETECTING PLANAR SHAPES: " << std::endl;
@@ -346,7 +351,9 @@ public:
       }
       else edges[i] = m_face_neighbors_lcc[i];
     }
-    std::cout << redirected << " faces redirected to below ground" << std::endl;
+
+    if (m_verbose)
+      std::cout << redirected << " faces redirected to below ground" << std::endl;
 
     gc.solve(edges, m_face_area_lcc, m_cost_matrix, m_labels);
 
@@ -399,13 +406,6 @@ public:
     }
 
     gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
-
-    std::size_t in = 0, out = 0;
-    for (std::size_t i : m_labels)
-      if (i == 0) out++;
-      else in++;
-
-    std::cout << "total labels: " << m_labels.size() << " 0: " << out << " 1: " << in << std::endl;
 
     reconstructed_model_polylist_lcc(pit, polyit, beta);
   }
@@ -809,7 +809,8 @@ private:
         std::cout << "outside face" << std::endl;
     }
 
-    std::cout << "polygon regions " << polygon_regions.size() << std::endl;
+    if (m_verbose)
+      std::cout << "polygon regions " << polygon_regions.size() << std::endl;
 
     static bool saved = false;
 
@@ -879,8 +880,7 @@ private:
         indices[j] = p.first->second;
       }
 
-      if (true)
-        std::reverse(indices.begin(), indices.end());
+      std::reverse(indices.begin(), indices.end());
 
       *polyit++ = std::move(indices);
     }
@@ -2069,7 +2069,8 @@ private:
     cost_matrix[1][5] = 0;
 
     if (m_ground_polygon_index != -1 && ground) {
-      std::cout << "using estimated ground plane for reconstruction" << std::endl;
+      if (m_verbose)
+        std::cout << "using estimated ground plane for reconstruction" << std::endl;
       cost_matrix[0][0] = force;
       cost_matrix[0][1] = 0;
       cost_matrix[0][2] = 0;
@@ -2082,25 +2083,6 @@ private:
       cost_matrix[1][4] = force;
     }
   }
-
-/*
-  void dump_volume(std::size_t i, const std::string& filename, const CGAL::Color &color) const {
-    std::vector<KSP::Index> faces;
-    m_kinetic_partition.faces(i, std::back_inserter(faces));
-
-    std::vector<std::vector<Point_3> > pts(faces.size());
-    std::vector<CGAL::Color> col(faces.size(), color);
-    for (std::size_t j = 0; j < faces.size(); j++) {
-      m_kinetic_partition.vertices(faces[j], std::back_inserter(pts[j]));
-    }
-
-    CGAL::KSR_3::dump_polygons(pts, col, filename);
-  }
-
-  void dump_face(std::size_t i, const std::string& filename, const CGAL::Color& color) const {
-    std::vector<Point_3> face;
-    m_kinetic_partition.vertices(m_faces[i], std::back_inserter(face));
-  }*/
 };
 
 } // namespace CGAL
