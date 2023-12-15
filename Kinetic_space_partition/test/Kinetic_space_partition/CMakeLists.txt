@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.1...3.15)
 
 project(Kinetic_space_partition_Tests)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(CGAL QUIET COMPONENTS Core)
 include(CGAL_CreateSingleSourceCGALProgram)
