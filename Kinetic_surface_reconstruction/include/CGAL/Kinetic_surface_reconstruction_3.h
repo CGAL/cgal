@@ -42,7 +42,7 @@ namespace CGAL
 {
 /*!
 * \ingroup PkgKineticSurfaceReconstructionRef
-  \brief Reconstruction pipeline for piecewise planar surface reconstruction from a point cloud via inside/outside labeling of a kinetic partition using graph cut.
+  \brief Pipeline for piecewise planar surface reconstruction from a point cloud via inside/outside labeling of a kinetic partition using min-cut.
 
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
@@ -100,7 +100,7 @@ public:
   }
 
   /*!
-    \brief Detects shapes in the provided point cloud
+    \brief Detects shapes in the provided point cloud and regularizes them.
 
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -200,7 +200,7 @@ public:
   }
 
   /*!
-  \brief Retrieves the support planes of the detected shapes.
+  \brief Retrieves the support planes of the detected and regularized shapes.
 
   @return
   vector with a `Plane_3` for each detected planar shape.
@@ -212,7 +212,7 @@ public:
   }
 
   /*!
-  \brief Retrieves the indices of detected shapes.
+  \brief Retrieves the indices of detected and regularized shapes.
 
   @return
   indices into `points` for each detected planar shape.
@@ -223,6 +223,98 @@ public:
     return m_planar_regions;
   }
 
+  /*!
+    \brief Detects and regularizes shapes in the provided point cloud and creates the kinetic space partition.
+
+    Combines calls of `detect_planar_shapes()`, `initialize_partition()` and `partition()`.
+
+    \tparam NamedParameters
+    a sequence of \ref bgl_namedparameters "Named Parameters"
+
+    \param k
+    maximum number of allowed intersections for each input polygon before its expansion stops.
+
+    \param np
+    an instance of `NamedParameters`.
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{point_map}
+      \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Point_3`}
+          \cgalParamDefault{`PointMap()`}
+    \cgalParamNEnd
+    \cgalParamNBegin{normal_map}
+      \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Vector_3`}
+      \cgalParamDefault{`NormalMap()`}
+   \cgalParamNBegin{k_neighbors}
+     \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
+      \cgalParamType{`std::size_t`}
+      \cgalParamDefault{12}
+    \cgalParamNEnd
+    \cgalParamNBegin{maximum_distance}
+      \cgalParamDescription{Shape detection: the maximum distance from a point to a plane}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{2% of bounding box diagonal}
+    \cgalParamNEnd
+    \cgalParamNBegin{maximum_angle}
+      \cgalParamDescription{Shape detection: maximum angle in degrees between the normal of a point and the plane normal}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{15 degrees}
+    \cgalParamNEnd
+    \cgalParamNBegin{minimum_region_size}
+      \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
+      \cgalParamType{`std::size_t`}
+      \cgalParamDefault{1% of input points}
+    \cgalParamNEnd
+    \cgalParamNBegin{angle_tolerance}
+      \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{5 degrees}
+    \cgalParamNEnd
+    \cgalParamNBegin{maximum_offset}
+      \cgalParamDescription{Shape regularization: maximum allowed orthogonal distance between two parallel planes such that they are considered to be coplanar}
+      \cgalParamType{`GeomTraits::FT`}
+      \cgalParamDefault{0.5% of bounding box diagonal}
+    \cgalParamNEnd
+    \cgalParamNBegin{regularize_parallelism}
+      \cgalParamDescription{Shape regularization: indicates whether parallelism should be regularized or not}
+      \cgalParamType{boolean}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{regularize_orthogonality}
+      \cgalParamDescription{Shape regularization: indicates whether orthogonality should be regularized or not}
+      \cgalParamType{boolean}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{regularize_coplanarity}
+      \cgalParamDescription{Shape regularization: indicates whether coplanarity should be regularized or not}
+      \cgalParamType{boolean}
+      \cgalParamDefault{true}
+    \cgalParamNEnd
+    \cgalParamNBegin{regularize_axis_symmetry}
+      \cgalParamDescription{Shape regularization: indicates whether axis symmetry should be regularized or not}
+      \cgalParamType{boolean}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{symmetry_direction}
+      \cgalParamDescription{Shape regularization: an axis for symmetry regularization}
+      \cgalParamType{`GeomTraits::Vector_3`}
+      \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
+    \cgalParamNEnd
+        \cgalParamNBegin{reorient_bbox}
+      \cgalParamDescription{Use the oriented bounding box instead of the axis-aligned bounding box.}
+      \cgalParamType{bool}
+      \cgalParamDefault{false}
+    \cgalParamNEnd
+    \cgalParamNBegin{bbox_dilation_ratio}
+      \cgalParamDescription{Factor for extension of the bounding box of the input data to be used for the partition.}
+      \cgalParamType{FT}
+      \cgalParamDefault{1.1}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+  */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   void detection_and_partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
     detect_planar_shapes(np);
@@ -265,7 +357,7 @@ public:
   \param k
   maximum number of allowed intersections for each input polygon before its expansion stops.
 
-  \pre shape detection performed
+  \pre partition initialized
   */
   void partition(std::size_t k) {
     FT partition_time, finalization_time, conformal_time;
@@ -290,7 +382,7 @@ public:
   }
 
   /*!
-  \brief Uses graph-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+  \brief Uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
   Estimates a horizontal ground plane within the detected shapes. Cells in the partition below the ground plane receive a weight to be labeled as inside.
   The z axis is considered as vertical upwards pointing.
 
@@ -300,8 +392,8 @@ public:
   \tparam OutputPolygonIterator
   an output iterator taking polygon indices std::vector<std::size_t>.
 
-  \param beta
-  trades the impact of the data term for impact of the regularization term. Must be in the range `[0, 1)`.
+  \param lambda
+  trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
 
   \param pit
   output iterator to receive the vertices of the reconstructed surface.
@@ -312,8 +404,8 @@ public:
   \pre partition created
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
-  void reconstruct_with_ground(FT beta, OutputPointIterator pit, OutputPolygonIterator polyit) {
-    KSR_3::Graphcut<Kernel> gc(beta);
+  void reconstruct_with_ground(FT lambda, OutputPointIterator pit, OutputPolygonIterator polyit) {
+    KSR_3::Graphcut<Kernel> gc(lambda);
 
     // add ground consideration here
     // m_cost_matrix and m_face_neighbors_lcc should contain the original values without consideration of ground/preset cell labels
@@ -357,11 +449,11 @@ public:
 
     gc.solve(edges, m_face_area_lcc, m_cost_matrix, m_labels);
 
-    reconstructed_model_polylist_lcc(pit, polyit, beta);
+    reconstructed_model_polylist_lcc(pit, polyit, lambda);
   }
 
   /*!
-  \brief Uses graph-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+  \brief Uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
   The `external_nodes` parameter allows to indicate the preferred labels for faces on the bounding box.
 
   \tparam OutputPointIterator
@@ -370,12 +462,12 @@ public:
   \tparam OutputPolygonIterator
   an output iterator taking polygon indices `std::vector<std::size_t>`.
 
-  \param beta
-  trades the impact of the data term for impact of the regularization term. Should be in the range [0, 1).
+  \param lambda
+  trades data faithfulness of the reconstruction for low complexity. Should be in the range [0, 1).
 
   \param external_nodes
-  adds label preference for the faces on the bounding box. Bounding box sides without preset label are chosen by the graph-cut.
-  Setting `external_nodes[ZMIN] = true` sets the inside label as the prefered label for the ZMIN side of the bounding box.
+  adds label preference for the faces on the bounding box. Bounding box sides without preset label are chosen by the min-cut.
+  Setting `external_nodes[ZMIN] = true` sets the inside label as the preferred label for the ZMIN side of the bounding box.
 
   \param pit
   output iterator to receive the vertices of the reconstructed surface.
@@ -386,8 +478,8 @@ public:
   \pre partition created
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
-  void reconstruct(FT beta, std::map<typename KSP::Face_support, bool> external_nodes, OutputPointIterator pit, OutputPolygonIterator polyit) {
-    KSR_3::Graphcut<Kernel> gc(beta);
+  void reconstruct(FT lambda, std::map<typename KSP::Face_support, bool> external_nodes, OutputPointIterator pit, OutputPolygonIterator polyit) {
+    KSR_3::Graphcut<Kernel> gc(lambda);
 
     // add node consideration here
     set_outside_volumes(false, m_cost_matrix);
@@ -407,7 +499,7 @@ public:
 
     gc.solve(m_face_neighbors_lcc, m_face_area_lcc, m_cost_matrix, m_labels);
 
-    reconstructed_model_polylist_lcc(pit, polyit, beta);
+    reconstructed_model_polylist_lcc(pit, polyit, lambda);
   }
 
 private:
@@ -670,10 +762,10 @@ private:
   }
 
   /*!
-  \brief Provides the data and regularity energy terms for reconstruction via graph-cut.
+  \brief Provides the data and regularity energy terms for reconstruction via min-cut.
 
   \param edges
-  contains a vector of pairs of volume indices. Indicates which volumes should be connected in the graph cut formulation.
+  contains a vector of pairs of volume indices. Indicates which volumes should be connected in the min-cut formulation.
 
   \param edge_costs
   contains the cost for each edge specified in `edges` for two labels with different labels. For equal labels, the cost is 0. Needs to be index compatible to the `edges` parameter.
@@ -749,7 +841,7 @@ private:
   \pre `successful reconstruction`
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
-  void reconstructed_model_polylist_lcc(OutputPointIterator pit, OutputPolygonIterator polyit, FT beta) {
+  void reconstructed_model_polylist_lcc(OutputPointIterator pit, OutputPolygonIterator polyit, FT lambda) {
     if (m_labels.empty())
       return;
 
@@ -812,12 +904,8 @@ private:
     if (m_verbose)
       std::cout << "polygon regions " << polygon_regions.size() << std::endl;
 
-    static bool saved = false;
-
-    if (!saved) {
-      KSP_3::internal::dump_polygons(polygon_regions, "faces_by_region" + std::to_string(beta) + ".ply");
-      saved = true;
-    }
+    if (m_debug)
+      KSP_3::internal::dump_polygons(polygon_regions, "faces_by_region-" + std::to_string(lambda) + ".ply");
 
     std::vector<std::vector<std::size_t> > borders;
     std::vector<std::vector<std::size_t> > borders_per_region;
@@ -1324,9 +1412,6 @@ private:
 
   typename LCC::Dart_descriptor circulate_vertex_2d(typename LCC::Dart_descriptor dh) {
     CGAL_assertion(!is_border_edge(dh));
-    //beta3(beta2(dh)) until I am on a face that is on the same input polygon
-    // is_border_edge should handle if there is no coplanar neighbor face
-    // However, the dart should be pointing towards the vertex
 
     Face_attribute& fa = m_lcc.attribute<2>(dh);
     auto& finfo = m_lcc.info_of_attribute<2>(fa);
@@ -1335,12 +1420,9 @@ private:
 
     typename LCC::Dart_descriptor dh2 = m_lcc.beta<2>(dh);
 
-    //write_face(dh, std::to_string(dh) + "c0.ply");
-
     std::size_t idx = 1;
 
     do {
-      //write_face(dh2, "c" + std::to_string(idx) + ".ply");
       Face_attribute fa2 = m_lcc.attribute<2>(dh2);
       auto& finfo2 = m_lcc.info_of_attribute<2>(fa2);
       if (finfo2.input_polygon_index == finfo.input_polygon_index) {
@@ -1359,32 +1441,10 @@ private:
     // dh is a border edge
     CGAL_assertion(false);
 
-//     std::ofstream vout("c0.polylines.txt");
-//     vout << "2 " << from_exact(m_lcc.point(dh)) << " " << from_exact(m_lcc.point(m_lcc.beta<1>(dh))) << std::endl;
-//     vout.close();
-
-/*
-    typename Face_attribute::Info finfo2;
-
-    do {
-      dh2 = m_lcc.beta<3, 2>(dh2);
-      CGAL_assertion(dh2 != dh); // Should be prevented in is_border_edge
-
-      Face_attribute& fa2 = m_lcc.attribute<2>(dh2);
-      finfo2 = m_lcc.info_of_attribute<2>(fa2);
-    } while (finfo.input_polygon_index == finfo2.input_polygon_index);
-
-    // dh2 is still on the same edge as dh and points in the same direction.
-    // beta3 gives the mirrored dart on the same edge&face, beta1 then proceeds to the next edge of that vertex.
-    dh2 = m_lcc.beta<1, 3>(dh2);
-    CGAL_assertion(dh2 != m_lcc.null_dart_descriptor);*/
     return dh2;
   }
 
   void collect_border(typename LCC::Dart_descriptor dh, std::vector<bool>& processed, std::vector<std::vector<std::size_t> >& borders) {
-    // Iterate clockwise around target vertex of dh
-    // It seems the dart associated with a vertex are pointing away from it
-    // -> beta_1(beta_2(dh)) circulates around a vertex
     processed[dh] = true;
 
     From_exact from_exact;
@@ -1395,36 +1455,15 @@ private:
     std::vector<std::size_t> border;
     border.push_back(m_lcc.attribute<0>(dh));
 
-//     std::ofstream vout("b.polylines.txt");
-//     vout << "2 " << from_exact(m_lcc.point(dh)) << " " << from_exact(m_lcc.point(m_lcc.beta<1>(dh))) << std::endl;
-//     vout.close();
-
     Face_attribute& fa = m_lcc.attribute<2>(dh);
     auto& finfo = m_lcc.info_of_attribute<2>(fa);
 
-    // The central element of the loop is the current edge/vertex?
-    // // dh = beta1(dh) // progressing to the next vertex
-    // while !is_border(dh) do dh = beta1(beta2(dh)) (wrong, this is 2D thinking...beta3(beta2(dh))
-    // add vertex
-    // dh = beta1(dh)
-    // if attribute<0>(dh) is equal to first element in border -> stop
-
-    // How to identify inner loops after this?
-    // Do I need connected component for faces and then also the looping stuff?
     typename LCC::Dart_descriptor cur = dh;
     cur = m_lcc.beta<1>(cur);
 
     std::size_t idx = 0;
 
     do {
-/*
-      std::ofstream vout("0-" + std::to_string(idx) + ".xyz");
-      for (std::size_t p : border)
-        vout << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(p))) << std::endl;
-      vout.close();
-
-      write_edge(cur, "cur.polylines.txt");*/
-
       if (is_border_edge(cur)) {
         CGAL_assertion(!processed[cur]);
         processed[cur] = true;
@@ -1485,18 +1524,8 @@ private:
     for (std::size_t i = 0;i<region_index.size();i++) {
       if (region_index[i] == -1)
         continue;
-/*
-      if (region_index[i] == 3)
-        std::cout << std::endl;
-
-      if (i == 1043)
-        std::cout << std::endl;*/
 
       typename LCC::Dart_descriptor dh = m_faces_lcc[i];
-
-/*
-      if (m_labels[m_lcc.info<3>(dh).volume_id + 6] == 0)
-        dh = m_lcc.beta<3>(dh);*/
 
       Volume_attribute va = m_lcc.attribute<3>(dh);
       Face_attribute &fa = m_lcc.attribute<2>(dh);
@@ -1517,8 +1546,6 @@ private:
         if (va != m_lcc.attribute<3>(dh2)) {
           std::cout << "volume attribute mismatch" << std::endl;
         }
-
-        //write_edge(dh2, std::to_string(i) + "-starting edge");
 
         if (!processed[dh2] && is_border_edge(dh2)) {
           borders_per_region[region_index[fa]].push_back(borders.size());
@@ -1562,7 +1589,6 @@ private:
 
       // Remap from mapping to m_face_inliers
       for (auto p : mapping) {
-        //m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]].clear();
         Face_attribute& f = m_lcc.attribute<2>(p.first);
         std::size_t id = m_attrib2index_lcc[f];
         assert(m_face_inliers[id].size() == 0);
@@ -1602,8 +1628,6 @@ private:
         total_area += m_face_area_lcc[idx];
       }
     }
-
-    //set_outside_volumes(m_cost_matrix);
 
     // Handling face generated by the octree partition. They are not associated with an input polygon.
     for (std::size_t i = 0; i < other_faces.size(); i++) {
