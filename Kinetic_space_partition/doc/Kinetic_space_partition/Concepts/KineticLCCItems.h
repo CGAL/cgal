@@ -11,7 +11,7 @@
 // Author(s)     : Sven Oesau, Florent Lafarge, Dmitry Anisimov, Simon Giraudot
 
 /*!
-\ingroup PkgKineticShapePartitionConcepts
+\ingroup PkgKineticSpacePartitionConcepts
 \cgalConcept
 
 The concept `KineticLCCItems` refines the concept of `LinearCellComplexItems` by adding 2-attributes and 3-attributes to store information from the kinetic partition.
@@ -21,10 +21,10 @@ The third type in Attributes tuple must be a model of the `KineticLCCFaceAttribu
 The fourth type in Attributes tuple must be a model of the `KineticLCCVolumeAttribute` concept.
 
 \cgalHasModelsBegin
-\cgalHasModelsBare{`CGAL::Kinetic_shape_partition_3::Linear_cell_complex_min_items`}
+\cgalHasModelsBare{`CGAL::Kinetic_space_partition_3::Linear_cell_complex_min_items`}
 \cgalHasModelsEnd
 
-\sa `CGAL::Kinetic_shape_partition_3`
+\sa `CGAL::Kinetic_space_partition_3`
 \sa `KineticLCCFaceAttribute`
 \sa `KineticLCCVolumeAttribute`
 \sa `LinearCellComplexItems`
