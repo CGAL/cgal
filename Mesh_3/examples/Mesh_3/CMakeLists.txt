@@ -10,9 +10,9 @@ endif()
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-find_package(Qt5 COMPONENTS Widgets)
+find_package(Qt6 COMPONENTS Widgets)
 
-find_package(CGAL REQUIRED COMPONENTS ImageIO OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED COMPONENTS ImageIO OPTIONAL_COMPONENTS Qt6)
 
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
@@ -99,13 +99,13 @@ target_link_libraries(remesh_polyhedral_surface PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("remesh_polyhedral_surface_sm.cpp" draw_c3t3_surface.h)
 target_link_libraries(remesh_polyhedral_surface_sm PUBLIC CGAL::Eigen3_support)
 
-if(TARGET CGAL::CGAL_Qt5)
-  target_link_libraries(remesh_polyhedral_surface_sm PUBLIC CGAL::CGAL_Qt5)
+if(TARGET CGAL::CGAL_Qt6)
+  target_link_libraries(remesh_polyhedral_surface_sm PUBLIC CGAL::CGAL_Qt6)
   target_compile_definitions(remesh_polyhedral_surface_sm PUBLIC CGAL_USE_BASIC_VIEWER QT_NO_KEYWORDS)
   target_include_directories(remesh_polyhedral_surface_sm PUBLIC .)
 
   create_single_source_cgal_program( "draw_mesh_surface.cpp" draw_c3t3_surface.h)
-  target_link_libraries(draw_mesh_surface PUBLIC CGAL::Eigen3_support CGAL::CGAL_Qt5)
+  target_link_libraries(draw_mesh_surface PUBLIC CGAL::Eigen3_support CGAL::CGAL_Qt6)
   target_compile_definitions(draw_mesh_surface PUBLIC CGAL_USE_BASIC_VIEWER QT_NO_KEYWORDS)
   target_include_directories(draw_mesh_surface PUBLIC .)
 endif()
