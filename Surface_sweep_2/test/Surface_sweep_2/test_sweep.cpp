@@ -309,7 +309,6 @@ bool read_xcurves(std::ifstream& inp, X_monotone_curves& xcurves,
 bool read_points(std::ifstream& inp, Points& points, const Traits&) {
   int count;
   inp >> skip_comment >> count;
-  char ch;
 
   // std::cout << "read_points " << count << "\n";
   for (int i = 0; i < count; i++) {
