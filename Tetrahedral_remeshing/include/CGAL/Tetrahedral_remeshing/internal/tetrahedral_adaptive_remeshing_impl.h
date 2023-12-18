@@ -471,17 +471,8 @@ private:
     const Curve_index default_curve_id = default_curve_index();
     for (const Edge& e : tr().finite_edges())
     {
-      if (m_c3t3.is_in_complex(e))
-      {
-        CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.second)) <= 1);
-        CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.third)) <= 1);
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        ++nbe;
-#endif
-        continue;
-      }
-
       if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e))
+          || m_c3t3.is_in_complex(e)
           || nb_incident_subdomains(e, m_c3t3) > 2
           || nb_incident_surface_patches(e, m_c3t3) > 1)
       {
@@ -539,6 +530,7 @@ private:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
 #endif
   }
 
