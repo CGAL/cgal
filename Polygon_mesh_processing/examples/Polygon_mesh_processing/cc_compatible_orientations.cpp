@@ -43,7 +43,7 @@ void create_mesh_with_cc_to_orient(Mesh& mesh)
   }
 
   // load the soup into the mesh;
-  mesh.clear();
+  CGAL::clear(mesh);
   PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
 }
 

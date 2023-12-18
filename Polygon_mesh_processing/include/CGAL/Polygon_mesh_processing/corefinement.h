@@ -266,11 +266,11 @@ corefine_and_compute_boolean_operations(
 
     if (output[Corefinement::TM1_MINUS_TM2] != std::nullopt)
       if (&tm1 == *output[Corefinement::TM1_MINUS_TM2])
-        clear(tm1);
+        remove_all_elements(tm1);
 
     if (output[Corefinement::TM2_MINUS_TM1] != std::nullopt)
       if (&tm1 == *output[Corefinement::TM2_MINUS_TM1])
-        clear(tm1);
+        remove_all_elements(tm1);
 
     return CGAL::make_array(true, true, true, true);
   }
@@ -282,7 +282,7 @@ corefine_and_compute_boolean_operations(
     {
       for (int i=0; i<4; ++i)
         if (output[i] != std::nullopt)
-          clear(*(*output[i]));
+          remove_all_elements(*(*output[i]));
       return CGAL::make_array(true, true, true, true);
     }
     // tm2 is not empty
@@ -293,9 +293,9 @@ corefine_and_compute_boolean_operations(
                         parameters::vertex_point_map(vpm2),
                         parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
     if (output[Corefinement::INTERSECTION] != std::nullopt)
-      clear(*(*output[Corefinement::INTERSECTION]));
+      remove_all_elements(*(*output[Corefinement::INTERSECTION]));
     if (output[Corefinement::TM1_MINUS_TM2] != std::nullopt)
-      clear(*(*output[Corefinement::TM1_MINUS_TM2]));
+      remove_all_elements(*(*output[Corefinement::TM1_MINUS_TM2]));
     if (output[Corefinement::TM2_MINUS_TM1] != std::nullopt)
       if (&tm2 != *output[Corefinement::TM2_MINUS_TM1])
         copy_face_graph(tm2,
@@ -315,9 +315,9 @@ corefine_and_compute_boolean_operations(
                           parameters::vertex_point_map(vpm1),
                           parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
       if (output[Corefinement::INTERSECTION] != std::nullopt)
-        clear(*(*output[Corefinement::INTERSECTION]));
+        remove_all_elements(*(*output[Corefinement::INTERSECTION]));
       if (output[Corefinement::TM2_MINUS_TM1] != std::nullopt)
-        clear(*(*output[Corefinement::TM2_MINUS_TM1]));
+        remove_all_elements(*(*output[Corefinement::TM2_MINUS_TM1]));
       if (output[Corefinement::TM1_MINUS_TM2] != std::nullopt)
         if (&tm1 != *output[Corefinement::TM1_MINUS_TM2])
           copy_face_graph(tm1,

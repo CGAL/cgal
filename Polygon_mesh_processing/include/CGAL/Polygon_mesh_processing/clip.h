@@ -738,7 +738,7 @@ bool clip(TriangleMesh& tm,
     case ON_NEGATIVE_SIDE:
       return true; // nothing to clip, the full mesh is on the negative side
     case ON_POSITIVE_SIDE:
-      clear(tm); // clear the mesh that is fully on the positive side
+      remove_all_elements(tm); // clear the mesh that is fully on the positive side
       return true;
     default:
       break;
