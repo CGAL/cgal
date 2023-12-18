@@ -13,6 +13,13 @@ target_link_libraries(
   PUBLIC scene_surface_mesh_item scene_polygon_soup_item
          scene_points_with_normal_item)
 
+polyhedron_demo_plugin(point_set_from_sampling_plugin
+                       Point_set_from_sampling_plugin)
+target_link_libraries(
+  point_set_from_sampling_plugin
+  PUBLIC scene_surface_mesh_item scene_polygon_soup_item
+         scene_points_with_normal_item)
+
 polyhedron_demo_plugin(diff_between_meshes_plugin Diff_between_meshes_plugin)
 target_link_libraries(diff_between_meshes_plugin PUBLIC scene_surface_mesh_item)
 
