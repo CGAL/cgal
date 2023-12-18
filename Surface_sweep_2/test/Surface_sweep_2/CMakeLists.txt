@@ -49,7 +49,7 @@ endfunction()
 
 compile_and_run_sweep(test_sweep test_sweep.cpp ${NAIVE}
                       ${CGAL_SEGMENT_TRAITS} "data/segments_tight")
-compile_and_run_sweep(test_sweep_conic test_sweep.cpp ${NAIVE}
+compile_and_run_sweep(test_sweep_conic test_sweep_conic.cpp ${NAIVE}
                       ${CGAL_CONIC_TRAITS} "data/conics")
 compile_and_run_sweep(test_sweep_polyline test_sweep.cpp ${NAIVE}
                       ${CGAL_POLYLINE_TRAITS} "data/polylines")
