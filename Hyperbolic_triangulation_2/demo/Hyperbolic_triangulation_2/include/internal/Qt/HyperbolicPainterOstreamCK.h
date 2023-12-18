@@ -44,12 +44,12 @@ namespace Qt {
 
     PainterOstream& operator <<(const Hyperbolic_segment_2& s)
       {
-        if(const Line_arc* seg = boost::get<Line_arc>(&s)) {
+        if(const Line_arc* seg = std::get_if<Line_arc>(&s)) {
           operator << (*seg);
           return *this;
         }
 
-        const Circular_arc& arc = boost::get<const Circular_arc&>(s);
+        const Circular_arc& arc = std::get<Circular_arc>(s);
 
         if(arc.squared_radius() > 10)
         {

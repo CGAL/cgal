@@ -41,7 +41,7 @@ that is pure, connected and without boundaries nor singularities. The
 <i>dimension</i> of the triangulation is the dimension of its maximal
 simplices.
 
-<!--- cardinality, i.e., they have the same number of vertices.--->
+<!--- cardinality, i.e., they have the same number of vertices. -->
 In the sequel, we will call these maximal simplices <I>full cells</I>.
 A <I>face</I> of a simplex is a subset of this simplex.
 A <I>proper face</I> of a simplex is a strict subset of this simplex.
@@ -130,22 +130,21 @@ Two full cells \f$ \sigma\f$ and \f$ \sigma'\f$ sharing a facet are called
 <I>neighbors</I>. A full cell has always exactly \f$ d+1\f$ neighbors.
 
 Possible values of \f$d\f$ (the <I>current dimension</I> of the triangulation) include
-<BLOCKQUOTE>
+\par
 <DL>
 <DT><B>\f$d=-2\f$</B><DD> This corresponds to an empty
 triangulation data structure.
 <DT><B>\f$d=-1\f$</B><DD> This corresponds to an abstract simplicial
 complex reduced to a single vertex.
- <!---  and a single full cell. In a geometric triangulation, this vertex corresponds to the vertex at infinity.--->
+ <!---  and a single full cell. In a geometric triangulation, this vertex corresponds to the vertex at infinity. -->
 <DT><B>\f$d=0\f$</B><DD> This corresponds to an abstract simplicial
 complex including two vertices, each corresponding to a full cell;
 the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
-<!--- (geometrically, the finite vertex and the infinite vertex),--->
+<!--- (geometrically, the finite vertex and the infinite vertex), -->
 <DT><B>\f$ 0< d \le D\f$</B><DD> This corresponds to a triangulation of
 the sphere \f$ \mathbb{S}^d\f$.
 </DL>
-</BLOCKQUOTE>
 
 ## The `Triangulation_data_structure` Class ##
 
@@ -260,7 +259,7 @@ Therefore, the reader will make
 the best use of this example by reading it slowly, together with the reference
 manual documentation of the methods that are called (see here:
 `TriangulationDataStructure`) and by trying to understand the various
-`assert(...)` statements.--->
+`assert(...)` statements. -->
 
 \cgalExample{triangulation_data_structure_static.cpp}
 
@@ -347,8 +346,8 @@ ask the triangulation to construct the set of edges
 (\f$ 1\f$ dimensional faces) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
 points. This gives us a handy way to count the convex hull vertices
-(include files <tt>triangulation1.cpp</tt> and
-<tt>triangulation2.cpp</tt> are given and commented below).
+(include files <tt>triangulation1.h</tt> and
+<tt>triangulation2.h</tt> are given and commented below).
 
 \cgalExample{triangulation.cpp}
 
@@ -368,14 +367,14 @@ there are (at least) two possibilities:
 The first is to iterate over the full cells of the triangulation and check if they
 are infinite or not:
 
-\cgalExample{triangulation1.cpp}
+\cgalExample{triangulation1.h}
 
 A second possibility is to ask the triangulation to gather all the full cells
 incident to the infinite vertex: they form precisely the set of infinite
 full cells:
 
 
-\cgalExample{triangulation2.cpp}
+\cgalExample{triangulation2.h}
 
 One important difference between the two examples above is that the first uses
 <I>little</I> memory but traverses <I>all</I> the full cells, while the second
@@ -513,11 +512,11 @@ Then, for each point to insert, it locates it by walking in the triangulation,
 using the previously inserted vertex as a "hint". Finally, the point is
 inserted.
 In the worst case scenario, without spatial sort, the expected complexity is
-\f$ O(n^{\lceil\frac{d}{2}\rceil+1}) \f$.
+\cgalBigO{(n^{\lceil\frac{d}{2}\rceil+1}}$.
 When the algorithm is run on uniformly distributed points, the localization complexity is
-\f$ O(n^{\frac{1}{d}}) \f$ and the size of the triangulation is \f$ O(n) \f$, which gives
-a complexity of \f$ O(n^{1+\frac{1}{d}}) \f$ for the insertion.
-With spatial sort and random points, one can expect a complexity of \f$ O(n\log n) \f$.
+\cgalBigO{(n^{\frac{1}{d}}}$ and the size of the triangulation is \cgalBigO{(n}$, which gives
+a complexity of \cgalBigO{(n^{1+\frac{1}{d}}}$ for the insertion.
+With spatial sort and random points, one can expect a complexity of \cgalBigO{(n\log n}$.
 Please refer to \cgalCite{boissonnat2009Delaunay} for more details.
 
 We provide below (\cgalFigureRef{Triangulationfigbenchmarks100},
@@ -581,7 +580,7 @@ work by Samuel Hornus, Olivier Devillers and Clément Jamin. In 2017, Clément
 Jamin added the regular triangulations.
 
 Clément Jamin's work was supported by the
-<a href="https://cordis.europa.eu/project/rcn/111529/factsheet/en">Advanced Grant of the European Research Council GUDHI</a>
+<a href="https://cordis.europa.eu/project/id/339025">Advanced Grant of the European Research Council GUDHI</a>
 (Geometric Understanding in Higher Dimensions).
 
 

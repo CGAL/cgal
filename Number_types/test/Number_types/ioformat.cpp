@@ -106,7 +106,7 @@ int main()
 
   // CORE
 #ifdef CGAL_USE_CORE
-  CGAL_static_assertion(CGAL::Output_rep<CORE::BigRat>::is_specialized == true);
+  static_assert(CGAL::Output_rep<CORE::BigRat>::is_specialized == true);
   //bug in io for CORE.
   test_it<CORE::BigInt>("CORE::BigInt");
   test_it<CORE::BigRat>("CORE::BigRat");
@@ -116,7 +116,7 @@ int main()
 
   // LEDA based NTs
 #ifdef CGAL_USE_LEDA
-  CGAL_static_assertion(CGAL::Output_rep<leda_rational>::is_specialized == true);
+  static_assert(CGAL::Output_rep<leda_rational>::is_specialized == true);
   test_it<leda_integer>("leda_integer");
   test_it<leda_rational>("leda_rational");
   test_it<leda_bigfloat>("leda_bigfloat");

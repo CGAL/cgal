@@ -68,9 +68,7 @@ The `Segment_Delaunay_graph_hierarchy_2` class derives publicly from the
 the same with its base class. In the sequel only additional types
 and methods defined are documented.
 
-\cgalModels `DefaultConstructible`
-\cgalModels `CopyConstructible`
-\cgalModels `Assignable`
+\cgalModels{DefaultConstructible,CopyConstructible,Assignable}
 
 \sa `CGAL::Segment_Delaunay_graph_2<Gt,St,DS>`
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>`

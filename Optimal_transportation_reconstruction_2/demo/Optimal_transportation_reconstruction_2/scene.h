@@ -17,6 +17,7 @@
 #ifdef CGAL_USE_CIMG
 #define cimg_display 0 // To avoid X11 or Windows-GDI dependency
 #include <CImg.h>
+#include <QMessageBox>
 #endif
 #include <utility>      // std::pair
 #include <vector>

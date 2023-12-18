@@ -2,8 +2,8 @@
 #define USE_SSH_H
 #include <libssh/libsshpp.hpp>
 #include <vector>
+#include <QtCore/qcontainerfwd.h>
 
-class QStringList;
 
 namespace CGAL{
 namespace ssh_internal{

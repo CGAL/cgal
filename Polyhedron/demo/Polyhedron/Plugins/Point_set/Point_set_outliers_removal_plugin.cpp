@@ -26,7 +26,7 @@ struct Outlier_removal_functor
   int nb_neighbors;
   double removed_percentage;
   double distance_threshold;
-  boost::shared_ptr<Point_set::iterator> result;
+  std::shared_ptr<Point_set::iterator> result;
 
   Outlier_removal_functor  (Point_set* points,
                             int nb_neighbors,

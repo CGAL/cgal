@@ -39,9 +39,12 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
+                                 const double edge_min_size,
                                  const double tet_shape,
                                  bool protect_features,
                                  bool protect_borders,
@@ -54,6 +57,7 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
   std::cerr << "  angle: " << facet_angle << std::endl
             << "  edge size bound: " << edge_size << std::endl
+            << "  edge min size bound: " << edge_min_size << std::endl
             << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << facet_approx << std::endl;
   if (!surface_only)
@@ -103,10 +107,12 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
             "<ul>"
             "<li>Angle: %1</li>"
             "<li>Edge size bound: %2</li>"
-            "<li>Facets size bound: %3</li>"
-            "<li>Approximation bound: %4</li>")
+            "<li>Edge min size bound: %3</li>"
+            "<li>Facets size bound: %4</li>"
+            "<li>Approximation bound: %5</li>")
     .arg(facet_angle)
     .arg(edge_size)
+    .arg(edge_min_size)
     .arg(facet_sizing)
     .arg(facet_approx);
   if (!surface_only)
@@ -120,11 +126,16 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.tet_shape = tet_shape;
   param.edge_sizing =  edge_size;
+  param.edge_min_sizing = edge_min_size;
   param.manifold = manifold;
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = polylines.empty() && protect_features;
+  param.image_3_ptr = nullptr;
+  param.weights_ptr = nullptr;
 
   typedef ::Mesh_function<Polyhedral_mesh_domain,
                           Mesh_fnt::Polyhedral_domain_tag> Mesh_function;
@@ -138,9 +149,12 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
                                  QString filename,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
+                                 const double edge_min_size,
                                  const double tet_shape,
                                  bool protect_features,
                                  bool protect_borders,
@@ -153,6 +167,7 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
   std::cerr << "  angle: " << facet_angle << std::endl
     << "  edge size bound: " << edge_size << std::endl
+    << "  edge min size bound: " << edge_min_size << std::endl
     << "  facets size bound: " << facet_sizing << std::endl
     << "  approximation bound: " << facet_approx << std::endl;
   if (!surface_only)
@@ -197,10 +212,12 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
       "<ul>"
       "<li>Angle: %1</li>"
       "<li>Edge size bound: %2</li>"
-      "<li>Facets size bound: %3</li>"
-      "<li>Approximation bound: %4</li>")
+      "<li>Edge min size bound :%3</li>"
+      "<li>Facets size bound: %4</li>"
+      "<li>Approximation bound: %5</li>")
     .arg(facet_angle)
     .arg(edge_size)
+    .arg(edge_min_size)
     .arg(facet_sizing)
     .arg(facet_approx);
   if (!surface_only)
@@ -214,11 +231,16 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
+  param.edge_min_sizing = edge_min_size;
   param.manifold = manifold;
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = protect_features;
+  param.image_3_ptr = nullptr;
+  param.weights_ptr = nullptr;
 
   typedef ::Mesh_function<Polyhedral_complex_mesh_domain,
                           Mesh_fnt::Polyhedral_domain_tag> Mesh_function;
@@ -233,9 +255,12 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
 Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
+                                 const double edge_min_size,
                                  const double tet_shape,
                                  const int manifold,
                                  const bool surface_only)
@@ -261,14 +286,18 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.protect_features = false;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
+  param.edge_min_sizing = edge_min_size;
   param.manifold = manifold;
   param.detect_connected_components = false; // to avoid random values
                                              // in the debug displays
-
+  param.image_3_ptr = nullptr;
+  param.weights_ptr = nullptr;
 
   typedef ::Mesh_function<Function_mesh_domain,
                           Mesh_fnt::Implicit_domain_tag> Mesh_function;
@@ -289,9 +318,12 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const Polylines_container& polylines,
                                  const double facet_angle,
                                  const double facet_sizing,
+                                 const double facet_min_sizing,
                                  const double facet_approx,
                                  const double tet_sizing,
+                                 const double tet_min_sizing,
                                  const double edge_size,
+                                 const double edge_min_size,
                                  const double tet_shape,
                                  bool protect_features, //detect_polylines
                                  const bool protect_borders,//polylines on bbox
@@ -302,7 +334,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  float iso_value,
                                  float value_outside,
                                  bool inside_is_less,
-                                 const Image* pWeights)
+                                 Image* pWeights)
 {
   if (nullptr == pImage) { return nullptr; }
 
@@ -312,9 +344,14 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.detect_connected_components = detect_connected_components;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
+  param.facet_min_sizing = facet_min_sizing;
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
+  param.tet_min_sizing = tet_min_sizing;
+  param.facet_min_sizing = facet_min_sizing;
+  param.tet_min_sizing = tet_min_sizing;
   param.edge_sizing = edge_size;
+  param.edge_min_sizing = edge_min_size;
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;
@@ -325,10 +362,12 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
       "<ul>"
       "<li>Angle: %1</li>"
       "<li>Edge size bound: %2</li>"
-      "<li>Facets size bound: %3</li>"
-      "<li>Approximation bound: %4</li>")
+      "<li>Edge min size bound: %3</li>"
+      "<li>Facets size bound: %4</li>"
+      "<li>Approximation bound: %5</li>")
     .arg(facet_angle)
     .arg(edge_size)
+    .arg(edge_min_size)
     .arg(facet_sizing)
     .arg(facet_approx);
   if (!surface_only)
@@ -345,71 +384,62 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
     namespace p = CGAL::parameters;
 
     Image_mesh_domain* p_domain = nullptr;
-#ifdef CGAL_USE_ITK
-    if(nullptr != pWeights)
+    CGAL::Image_3 null_weights;
+    CGAL::Image_3& weights = (pWeights == nullptr) ? null_weights : *pWeights;
+
+    if (protect_features)
     {
       p_domain = new Image_mesh_domain
-      (Image_mesh_domain::create_labeled_image_mesh_domain
-       (p::image = *pImage,
-        p::weights = *pWeights,
-        p::relative_error_bound = 1e-6,
-        p::construct_surface_patch_index =
-        [](int i, int j) { return (i * 1000 + j); }
-       )
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+        (p::image = *pImage,
+          p::weights = std::ref(weights), //used only if valid
+          p::relative_error_bound = 1e-6,
+          p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); },
+          p::features_detector = CGAL::Mesh_3::Detect_features_in_image(),
+          p::input_features = std::cref(polylines)
+        )
       );
     }
-    else
-#endif
-      if (protect_features)
-      {
-        p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain
-          (p::image = *pImage,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); },
-            p::features_detector = CGAL::Mesh_3::Detect_features_in_image(),
-            p::input_features = std::cref(polylines)
-          )
-        );
-      }
-      else if (protect_borders)//protect polylines on image Bbox
-      {
-        p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain
-          (p::image = *pImage,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); },
-            p::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox(),
-            p::input_features = std::cref(polylines)
-          )
-        );
-      }
-      else if (!polylines.empty())
-      {
-        p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain
-          (p::image = *pImage,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); },
-            p::input_features = std::cref(polylines)
-          )
-        );
-      }
+    else if (protect_borders)//protect polylines on image Bbox
+    {
+      p_domain = new Image_mesh_domain
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+        (p::image = *pImage,
+          p::weights = std::ref(weights), //used only if valid
+          p::relative_error_bound = 1e-6,
+          p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); },
+          p::features_detector = CGAL::Mesh_3::Detect_features_on_image_bbox(),
+          p::input_features = std::cref(polylines)
+        )
+      );
+    }
+    else if (!polylines.empty())
+    {
+      p_domain = new Image_mesh_domain
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+        (p::image = *pImage,
+          p::relative_error_bound = 1e-6,
+          p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); },
+          p::input_features = std::cref(polylines)
+        )
+      );
+    }
 
-      if (p_domain == nullptr)
-      {
-        p_domain = new Image_mesh_domain
-          (Image_mesh_domain::create_labeled_image_mesh_domain
-          (p::image = *pImage,
-            p::relative_error_bound = 1e-6,
-            p::construct_surface_patch_index =
-            [](int i, int j) { return (i * 1000 + j); }
-          )
-        );
-      }
+    if (p_domain == nullptr)
+    {
+      p_domain = new Image_mesh_domain
+        (Image_mesh_domain::create_labeled_image_mesh_domain
+        (p::image = *pImage,
+          p::weights = std::ref(weights), //used only if valid
+          p::relative_error_bound = 1e-6,
+          p::construct_surface_patch_index =
+          [](int i, int j) { return (i * 1000 + j); }
+        )
+      );
+    }
 
     typedef ::Mesh_function<Image_mesh_domain,
                             Mesh_fnt::Labeled_image_domain_tag> Mesh_function;

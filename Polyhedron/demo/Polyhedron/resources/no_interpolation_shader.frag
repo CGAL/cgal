@@ -7,6 +7,7 @@ in GS_OUT
   flat vec4 color[4];
   vec2 uv;
   flat vec4 prob[4];
+  float dist[6];
 } fs_in;
 
 uniform bool is_two_side;
@@ -15,11 +16,20 @@ uniform vec4 light_diff;
 uniform vec4 light_spec;
 uniform vec4 light_amb;
 uniform float spec_power ;
+uniform bool is_clipbox_on;
 
 out vec4 out_color;
 
 void main(void)
 {
+  if(is_clipbox_on)
+    if(fs_in.dist[0]>0.0 ||
+      fs_in.dist[1]>0.0 ||
+      fs_in.dist[2]>0.0 ||
+      fs_in.dist[3]>0.0 ||
+      fs_in.dist[4]>0.0 ||
+      fs_in.dist[5]>0.0)
+        discard;
   vec4 color;
   //find base color of pixel
   vec4 m1 = mix(fs_in.prob[0], fs_in.prob[1], fs_in.uv.y);

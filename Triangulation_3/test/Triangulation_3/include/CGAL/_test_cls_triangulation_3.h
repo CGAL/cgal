@@ -1031,23 +1031,31 @@ _test_cls_triangulation_3(const Triangulation &)
   Point p28(1,3,5);
   v0=T0_1.insert(p28);
 
-  std::cout << "    Testing Iterator   "<< std::endl;
+  std::cout << "    Testing Iterators and Ranges   "<< std::endl;
   _test_vertex_iterator(T0_1);
   _test_triangulation_iterator(T0_1);
+  _test_vertices_array(T0_1);
   _test_vertex_iterator(T0);
   _test_triangulation_iterator(T0);
+  _test_vertices_array(T0);
   _test_vertex_iterator(T2_0);
   _test_triangulation_iterator(T2_0);
+  _test_vertices_array(T2_0);
   _test_vertex_iterator(T1_0);
   _test_triangulation_iterator(T1_0);
+  _test_vertices_array(T1_0);
   _test_vertex_iterator(T3_1);
   _test_triangulation_iterator(T3_1);
+  _test_vertices_array(T3_1);
   _test_vertex_iterator(T3_0);
   _test_triangulation_iterator(T3_0);
+  _test_vertices_array(T3_0);
   _test_vertex_iterator(T3_2);
   _test_triangulation_iterator(T3_2);
+  _test_vertices_array(T3_2);
   _test_vertex_iterator(T3_3);
   _test_triangulation_iterator(T3_3);
+  _test_vertices_array(T3_3);
 
   std::cout << "    Testing Circulator  "<< std::endl;
   _test_circulator(T0);

@@ -43,7 +43,7 @@
 #include <tbb/blocked_range.h>
 #endif // CGAL_LINKED_WITH_TBB
 
-#include <boost/any.hpp>
+#include <any>
 
 #include <unordered_set>
 #include <algorithm>
@@ -155,10 +155,10 @@ double max_distance_to_mesh_impl(const PointRange& sample_points,
   using FT = typename Kernel::FT;
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
-  if(boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+  if(std::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
     Distance_computation<Kernel, AABBTree, PointRange> f(tree, hint, sample_points);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
@@ -481,8 +481,8 @@ struct Triangle_structure_sampler_for_triangle_mesh
   void sample_points()
   {
     Property_map_to_unary_function<Vpm> unary(pmap);
-    this->out = std::copy(boost::make_transform_iterator(boost::begin(vertices(tm)), unary),
-                          boost::make_transform_iterator(boost::end(vertices(tm)), unary),
+    this->out = std::copy(boost::make_transform_iterator(std::begin(vertices(tm)), unary),
+                          boost::make_transform_iterator(std::end(vertices(tm)), unary),
                           this->out);
   }
 
@@ -747,7 +747,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
  * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
- *  the value type of the point type associated to the mesh `tm`, i.e. the value type of the vertex
+ *  the value type of the point type associated to the mesh `tm`, i.e., the value type of the vertex
  *  point map property map, if provided, or the value type of the internal point property map otherwise
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -1037,7 +1037,7 @@ sample_triangle_soup(const PointRange& points,
   typedef typename PointRange::value_type         Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
 
-  CGAL_static_assertion_msg((std::is_same<Point_3, typename GeomTraits::Point_3>::value), "Wrong point type.");
+  static_assert(std::is_same<Point_3, typename GeomTraits::Point_3>::value, "Wrong point type.");
 
   CGAL_precondition(!triangles.empty());
 
@@ -1570,7 +1570,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     candidate_triangles.pop();
 
     // Only process the triangle if it can contribute to the Hausdorff distance,
-    // i.e. if its upper bound is higher than the currently known best lower bound
+    // i.e., if its upper bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user-given error.
     const auto& triangle_bounds = triangle_and_bounds.bounds;
@@ -1818,10 +1818,10 @@ struct Bounded_error_preprocessing
 #ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
 #endif
-  std::vector<boost::any>& tm_wrappers;
+  std::vector<std::any>& tm_wrappers;
 
   // Constructor.
-  Bounded_error_preprocessing(std::vector<boost::any>& tm_wrappers)
+  Bounded_error_preprocessing(std::vector<std::any>& tm_wrappers)
     : tm_wrappers(tm_wrappers)
   { }
 
@@ -1830,8 +1830,8 @@ struct Bounded_error_preprocessing
     : tm_wrappers(s.tm_wrappers)
   { }
 
-  bool is_tm1_wrapper(const boost::any& operand) const { return operand.type() == typeid(TM1Wrapper); }
-  bool is_tm2_wrapper(const boost::any& operand) const { return operand.type() == typeid(TM2Wrapper); }
+  bool is_tm1_wrapper(const std::any& operand) const { return operand.type() == typeid(TM1Wrapper); }
+  bool is_tm2_wrapper(const std::any& operand) const { return operand.type() == typeid(TM2Wrapper); }
 
   // TODO: make AABB tree build parallel!
   void operator()(const tbb::blocked_range<std::size_t>& range)
@@ -1849,12 +1849,12 @@ struct Bounded_error_preprocessing
       auto& tm_wrapper = tm_wrappers[i];
       if(is_tm1_wrapper(tm_wrapper))
       {
-        TM1Wrapper& object = boost::any_cast<TM1Wrapper&>(tm_wrapper);
+        TM1Wrapper& object = std::any_cast<TM1Wrapper&>(tm_wrapper);
         object.build_tree();
       }
       else if(is_tm2_wrapper(tm_wrapper))
       {
-        TM2Wrapper& object = boost::any_cast<TM2Wrapper&>(tm_wrapper);
+        TM2Wrapper& object = std::any_cast<TM2Wrapper&>(tm_wrapper);
         object.build_tree();
       }
       else
@@ -1995,8 +1995,8 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
                                                         OutputIterator& out)
 {
 #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-                            "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
+  static_assert(!std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value,
+                                      "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
 #endif
 
   using FT = typename Kernel::FT;
@@ -2031,7 +2031,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 
   std::vector<TMF> tm1_parts;
   std::vector<TMF_tree> tm1_trees;
-  std::vector<boost::any> tm_wrappers;
+  std::vector<std::any> tm_wrappers;
 #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
 #ifdef CGAL_HAUSDORFF_DEBUG
@@ -2053,7 +2053,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
   std::cout << "* num cores: " << nb_cores << std::endl;
  #endif
 
-  if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
+  if(std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
      nb_cores > 1 &&
      faces(tm1).size() >= min_nb_faces_to_split)
   {
@@ -2207,7 +2207,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 #endif
 
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
-  if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
+  if(std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
      nb_cores > 1 &&
      faces(tm1).size() >= min_nb_faces_to_split)
   {
@@ -2270,8 +2270,8 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
                                                         OutputIterator2& out2)
 {
 #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-                            "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
+  static_assert(!std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value,
+                "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
 #endif
 
   // Optimized version.
@@ -2455,9 +2455,8 @@ bounded_error_squared_Hausdorff_distance_naive_impl(const TriangleMesh1& tm1,
 /**
  * \ingroup PMP_distance_grp
  *
- * returns an estimate on the Hausdorff distance between `tm1` and `tm2` that
- * is at most `error_bound` away from the actual Hausdorff distance between
- * the two given meshes.
+ * returns an estimate on the Hausdorff distance from `tm1` to `tm2` that
+ * is at most `error_bound` away from the actual Hausdorff distance from `tm1` to `tm2`.
  *
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag` and `Parallel_tag`.

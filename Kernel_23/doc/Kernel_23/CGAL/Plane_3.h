@@ -14,7 +14,7 @@ A point `p` with %Cartesian coordinates \f$ (px, py, pz)\f$ is on the
 positive side of `h`, iff \f$ a\, px +b\, py +c\, pz + d > 0\f$.
 It is on the negative side, iff \f$ a\, px +b\, py\, +c\, pz + d < 0\f$.
 
-\cgalModels `Kernel::Plane_3`
+\cgalModels{Kernel::Plane_3}
 
 */
 template< typename Kernel >
@@ -29,6 +29,7 @@ creates a plane `h` defined by the equation
 \f$ a\, px +b\, py +c\, pz + d = 0\f$.
 Notice that `h` is degenerate if
 \f$ a = b = c = 0\f$.
+\cgalEpicExact
 */
 Plane_3(const Kernel::RT &a,
 const Kernel::RT &b,
@@ -84,6 +85,7 @@ const Point_3<Kernel> &p);
 /*!
 introduces a plane `h` that is defined as the plane containing
 the circle.
+\cgalEpicExact
 */
 Plane_3(const Circle_3<Kernel> &c);
 
@@ -105,21 +107,25 @@ bool operator!=(const Plane_3<Kernel> &h2) const;
 
 /*!
 returns the first coefficient of `h`.
+\cgalEpicExact
 */
 Kernel::RT a() const;
 
 /*!
 returns the second coefficient of `h`.
+\cgalEpicExact
 */
 Kernel::RT b() const;
 
 /*!
 returns the third coefficient of `h`.
+\cgalEpicExact
 */
 Kernel::RT c() const;
 
 /*!
 returns the fourth coefficient of `h`.
+\cgalEpicExact
 */
 Kernel::RT d() const;
 
@@ -137,6 +143,7 @@ Point_3<Kernel> projection(const Point_3<Kernel> &p) const;
 
 /*!
 returns the plane with opposite orientation.
+\cgalEpicExact
 */
 Plane_3<Kernel> opposite() const;
 
@@ -148,12 +155,14 @@ Point_3<Kernel> point() const;
 /*!
 returns a vector that is orthogonal to `h` and that
 is directed to the positive side of `h`.
+\cgalEpicExact
 */
 Vector_3<Kernel> orthogonal_vector() const;
 
 /*!
 returns the direction that is orthogonal to `h` and that
 is directed to the positive side of `h`.
+\cgalEpicExact
 */
 Direction_3<Kernel> orthogonal_direction() const;
 

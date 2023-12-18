@@ -67,7 +67,7 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //!
   //! \param viewer the active `Viewer_interface`.
   //!
-  void initGL(Viewer_interface *viewer)  Q_DECL_OVERRIDE;
+  void initGL(Viewer_interface *viewer)  override;
 
   //!
   //! \brief draw is the function that actually renders the data.
@@ -75,9 +75,9 @@ struct DEMO_FRAMEWORK_EXPORT Edge_container :public Primitive_container
   //! \param is_color_uniform must be `false` if `VBOs`[`Colors`] is not empty, `true` otherwise.
   //!
   void draw(CGAL::Three::Viewer_interface* viewer,
-            bool is_color_uniform)  Q_DECL_OVERRIDE;
+            bool is_color_uniform)  override;
 
-  void initializeBuffers(Viewer_interface *viewer) Q_DECL_OVERRIDE;
+  void initializeBuffers(Viewer_interface *viewer) override;
 
   /// \name Getters and Setters for the shaders parameters.
   ///

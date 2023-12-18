@@ -36,11 +36,6 @@
 #  define WIN64
 #endif
 
-#ifdef _MSC_VER
-#define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
-#define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 1
-#endif
-
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
@@ -117,6 +112,7 @@
 #include <boost/version.hpp>
 
 #include <CGAL/version.h>
+#include <CGAL/version_checker.h>
 
 //----------------------------------------------------------------------//
 //  platform specific workaround flags (CGAL_CFG_...)
@@ -147,8 +143,8 @@
 #endif
 
 // Same for C++17
-#if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
-#  define CGAL_CXX17 1
+#if !(__cplusplus >= 201703L || _MSVC_LANG >= 201703L)
+#error "CGAL requires C++ 17"
 #endif
 // Same for C++20
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
@@ -346,7 +342,10 @@ using std::max;
 #define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
-#if __has_cpp_attribute(no_unique_address)
+#if _MSC_VER >= 1929 && _MSVC_LANG >= 202002L
+// see https://devblogs.microsoft.com/cppblog/msvc-cpp20-and-the-std-cpp20-switch/#c20-no_unique_address
+#  define CGAL_NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
+#elif __has_cpp_attribute(no_unique_address)
 #  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else
 #  define CGAL_NO_UNIQUE_ADDRESS
@@ -486,12 +485,6 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
 #else
 #  define CGAL_FALLTHROUGH while(false){}
-#endif
-
-#if CGAL_CXX17
-#  define CGAL_CPP17_INLINE inline
-#else
-#  define CGAL_CPP17_INLINE
 #endif
 
 #ifndef CGAL_NO_ASSERTIONS

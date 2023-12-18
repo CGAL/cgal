@@ -45,7 +45,7 @@ QList<T> findItems(const CGAL::Three::Scene_interface* scene, QString name,
     findItems(scene, reinterpret_cast<T>(0)->staticMetaObject,
               name, fn);
   QList<T> list;
-  Q_FOREACH(CGAL::Three::Scene_item* ptr, void_list) {
+  for(CGAL::Three::Scene_item* ptr : void_list) {
     list << qobject_cast<T>(ptr);
   }
   return list;
@@ -106,7 +106,7 @@ QList<T> findItemsByObjectName(const CGAL::Three::Scene_interface* scene,
 //     scene_findItems(scene, name, fn,
 //                     reinterpret_cast<T>(0)->staticMetaObject());
 //   QList<T> list;
-//   Q_FOREACH(void* ptr, void_list) {
+//   for(void* ptr : void_list) {
 //     list << static_cast<T>(ptr);
 //   }
 //   return list;

@@ -52,7 +52,7 @@ public:
   }
 
   bool applicable(QAction*) const {
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) )
         return true;
@@ -120,7 +120,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_trigger
 
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_triggered()
 {
-  Q_FOREACH(int index, scene->selectionIndices()){
+  for(int index : scene->selectionIndices()){
     on_actionDetectBorders_triggered<Scene_surface_mesh_item>(index);
   }
 }
@@ -142,7 +142,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
 
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_triggered()
 {
-  Q_FOREACH(int index, scene->selectionIndices()){
+  for(int index : scene->selectionIndices()){
     on_actionStitchBorders_triggered<Scene_surface_mesh_item>(index);
   }
 }
@@ -177,14 +177,14 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionMergeReversibleCCs_tr
 
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered()
 {
-  Q_FOREACH(int index, scene->selectionIndices()){
+  for(int index : scene->selectionIndices()){
     on_actionStitchByCC_triggered<Scene_surface_mesh_item>(index);
   }
 }
 
 void Polyhedron_demo_polyhedron_stitching_plugin::on_actionMergeReversibleCCs_triggered()
 {
-  Q_FOREACH(int index, scene->selectionIndices()){
+  for(int index : scene->selectionIndices()){
     on_actionMergeReversibleCCs_triggered<Scene_surface_mesh_item>(index);
   }
 }

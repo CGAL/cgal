@@ -423,7 +423,7 @@ self_intersections_impl(const FaceRange& face_range,
   Throwing_filter throwing_filter(tmesh, vpmap, gt, Throwing_output_iterator());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
@@ -530,7 +530,8 @@ self_intersections_impl(const FaceRange& face_range,
  * @tparam FaceRange a model of `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`.
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
- *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
+ *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`.
+ *    It does not need to be thread-safe.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param face_range the range of faces to check for self-intersection.
@@ -596,7 +597,8 @@ self_intersections(const FaceRange& face_range,
  *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
- *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
+ *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`.
+ *    It does not need to be thread-safe.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tmesh the triangulated surface mesh to be checked

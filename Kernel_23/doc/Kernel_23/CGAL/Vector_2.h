@@ -12,8 +12,7 @@ from \f$ p_1\f$ to \f$ p_2\f$.
 will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros.
 
-\cgalModels `Kernel::Vector_2`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Vector_2,Hashable if `Kernel` is a %Cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >
@@ -25,7 +24,7 @@ public:
 
 /*!
 An iterator for enumerating the
-Cartesian coordinates of a vector.
+%Cartesian coordinates of a vector.
 */
 typedef unspecified_type Cartesian_const_iterator;
 
@@ -66,6 +65,7 @@ Vector_2(int x, int y);
 
 /*!
 introduces a vector `v` initialized to `(x,y)`.
+\cgalEpicExact
 */
 Vector_2(double x, double y);
 
@@ -77,6 +77,7 @@ Vector_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1
 
 /*!
 introduces a vector `v` initialized to `(x,y)`.
+\cgalEpicExact
 */
 Vector_2(const Kernel::FT &x, const Kernel::FT &y);
 
@@ -107,11 +108,13 @@ Kernel::RT hw() const;
 
 /*!
 returns the `x`-coordinate of `v`, that is `hx()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT x() const;
 
 /*!
 returns the `y`-coordinate of `v`, that is `hy()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT y() const;
 
@@ -119,7 +122,7 @@ Kernel::FT y() const;
 
 /// \name Convenience Operators
 /// The following operations are for convenience and for compatibility
-/// with higher dimensional vectors. Again they come in a Cartesian
+/// with higher dimensional vectors. Again they come in a %Cartesian
 /// and homogeneous flavor.
 /// @{
 
@@ -131,25 +134,29 @@ returns the i'th homogeneous coordinate of `v`.
 Kernel::RT homogeneous(int i) const;
 
 /*!
-returns the i'th Cartesian coordinate of `v`.
+returns the i'th %Cartesian coordinate of `v`.
 \pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
 \pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::FT operator[](int i) const;
 
 /*!
-returns an iterator to the Cartesian coordinates
+returns an iterator to the %Cartesian coordinates
 of `v`, starting with the 0th coordinate.
 */
 Cartesian_const_iterator cartesian_begin() const;
 
 /*!
-returns an off the end iterator to the Cartesian
+returns an off the end iterator to the %Cartesian
 coordinates of `v`.
 */
 Cartesian_const_iterator cartesian_end() const;
@@ -161,6 +168,7 @@ int dimension() const;
 
 /*!
 returns the direction which passes through `v`.
+\cgalEpicExact
 */
 Direction_2<Kernel> direction() const;
 
@@ -216,6 +224,7 @@ Vector_2<Kernel>& operator-=(const Vector_2<Kernel> &w);
 
 /*!
 returns the opposite vector.
+\cgalEpicExact
 */
 Vector_2<Kernel> operator-() const;
 

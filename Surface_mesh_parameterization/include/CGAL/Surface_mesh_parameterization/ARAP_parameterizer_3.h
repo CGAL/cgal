@@ -134,7 +134,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// A one-to-one mapping is *not* guaranteed.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
@@ -176,7 +176,7 @@ public:
     Two_vertices_parameterizer_3<TriangleMesh_> >::type       Border_parameterizer;
 
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(std::is_same<SolverTraits_, Default>::value),
+  static_assert(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -1125,7 +1125,7 @@ private:
 
     // Solve "A*Xu = Bu". On success, the solution is (1/Du) * Xu.
     // Solve "A*Xv = Bv". On success, the solution is (1/Dv) * Xv.
-    NT Du, Dv;
+    double Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)) {
       std::cerr << "Could not solve linear system" << std::endl;

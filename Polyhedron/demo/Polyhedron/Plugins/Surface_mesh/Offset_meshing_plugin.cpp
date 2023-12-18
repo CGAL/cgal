@@ -52,8 +52,8 @@ class Offset_function
 public:
 
   Offset_function(TriangleMesh& tm, double offset_distance)
-    : m_tree_ptr(new Tree(boost::begin(faces(tm)),
-                          boost::end(faces(tm)),
+    : m_tree_ptr(new Tree(std::begin(faces(tm)),
+                          std::end(faces(tm)),
                           tm) )
     , m_side_of_ptr( new Side_of(*m_tree_ptr) )
     , m_offset_distance(offset_distance)
@@ -437,7 +437,7 @@ public:
       return false;
     }
 
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+    for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
     {
       if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) ||
            qobject_cast<Scene_polygon_soup_item*>(scene->item(index)) )
@@ -513,7 +513,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
 
   bool mesh_or_soup_item_found = false;
 
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
   {
     if (!mesh_or_soup_item_found)
     {

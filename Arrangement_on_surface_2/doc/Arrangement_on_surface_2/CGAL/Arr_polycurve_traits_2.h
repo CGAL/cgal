@@ -72,10 +72,9 @@ namespace CGAL {
    * set the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
    * included.
    *
-   * \cgalModels `ArrangementTraits_2`
-   * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
-   * \cgalModels `ArrangementApproximateTraits_2` (if the type that substitutes
-   *   the template parameter `SubcurveTraits_2` models the concept as well)
+   * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2,
+   *             ArrangementApproximateTraits_2 (if the type that substitutes
+   *   the template parameter `SubcurveTraits_2` models the concept as well)}
    *
    * \sa `Arr_algebraic_segment_traits_2<Coefficient>`
    * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
@@ -239,17 +238,22 @@ namespace CGAL {
                                     const Point_2& tgt) const;
     };
 
-    /*! Subdivide a given subcurve into x-monotone subcurves and insert them
-     * into a given output iterator.
+    /*! Subdivide a given subcurve into \f$x\f$-monotone subcurves and
+     * isolated points, and insert them into an output container. An object in
+     * the output container is represented by a discriminated union container
+     * that holds either a point or an \f$x\f$-monotone curve.
      */
     class Make_x_monotone_2 {
     public:
-      /*!
-      * \pre if `cv` is not empty then it must be continuous and well-oriented.
+      /*! performs the subdivision.
+       *
       * \param cv the subcurve.
-      * \param oi an output iterator for the result. Its value type is a variant
-      *           that wraps Point_2 or an X_monotone_curve_2 objects.
-      * \return the past-the-end iterator.
+      * \param oi The output iterator that points at the output container.
+      * \return the past-the-end iterator of the output container.
+      *
+      * \pre if `cv` is not empty, then it must be continuous and well-oriented.
+      * \pre Dereferencing `oi` must yield a polymorphic object of type
+      * `std::variant<`\link Arr_polycurve_traits_2::Point_2 `Point_2` \endlink, `X_monotone_curve_2>`.
       */
       template <typename OutputIterator>
       OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const;

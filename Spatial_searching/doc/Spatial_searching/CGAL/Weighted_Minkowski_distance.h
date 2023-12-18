@@ -16,7 +16,7 @@ done exact but with floating point arithmetic.
 \tparam Traits must be a model of the concept
 `SearchTraits`, for example `Search_traits_2`.
 
-\cgalModels `OrthogonalDistance`
+\cgalModels{OrthogonalDistance}
 
 \sa `OrthogonalDistance`
 \sa `CGAL::Euclidean_distance<Traits>`

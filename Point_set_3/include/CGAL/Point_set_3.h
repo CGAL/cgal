@@ -48,7 +48,7 @@ namespace internal {
 #ifdef CGAL_POINT_SET_3_USE_STD_SIZE_T_AS_SIZE_TYPE
     typedef std::size_t size_type;
 #else
-    typedef boost::uint32_t size_type;
+    typedef std::uint32_t size_type;
 #endif
     typedef CGAL::Point_set_3<Point, Vector> Point_set_3;
 
@@ -75,8 +75,8 @@ namespace internal {
     Point_set_3_index operator++ (int) { Point_set_3_index tmp(*this); ++value; return tmp; }
     Point_set_3_index operator-- (int) { Point_set_3_index tmp(*this); --value; return tmp; }
 };
-/// \endcond
 } // namespace internal
+/// \endcond
 
 /*!
 
@@ -114,7 +114,7 @@ namespace internal {
   \tparam Point Point type
   \tparam Vector Normal vector type
 
-  \cgalModels `Range`
+  \cgalModels{Range}
  */
 
 template <typename Point,
@@ -151,9 +151,7 @@ public:
 #ifdef DOXYGEN_RUNNING
    /*!
   \brief This represents a point with associated properties.
-  \cgalModels `::Index`
-  \cgalModels `LessThanComparable`
-  \cgalModels `Hashable`
+  \cgalModels{::Index,LessThanComparable,Hashable}
   */
   class Index;
 #endif
@@ -162,8 +160,8 @@ public:
   typedef Vector Vector_3; ///< The vector type
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` \cgalModels RandomAccessIterator
-  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` \cgalModels RandomAccessIterator
+  typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` is model of `RandomAccessIterator`
+  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` is model of `RandomA.ccessIterator`
 #else
   typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
   typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set

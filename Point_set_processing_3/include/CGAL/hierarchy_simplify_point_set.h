@@ -242,7 +242,7 @@ namespace CGAL {
           }
 
         // Compute the covariance matrix of the set
-        std::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
+        std::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
 
         for (typename std::list<Input_type>::iterator it = current_cluster->first.begin ();
              it != current_cluster->first.end (); ++ it)
@@ -257,8 +257,8 @@ namespace CGAL {
             covariance[5] += d.z () * d.z ();
           }
 
-        std::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
-        std::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
+        std::array<double, 3> eigenvalues = {{ 0., 0., 0. }};
+        std::array<double, 9> eigenvectors = {{ 0., 0., 0.,
                                               0., 0., 0.,
                                               0., 0., 0. }};
         // Linear algebra = get eigenvalues and eigenvectors for
@@ -279,7 +279,7 @@ namespace CGAL {
             // The plane which splits the point set into 2 point sets:
             //  * Normal to the eigenvector with highest eigenvalue
             //  * Passes through the centroid of the set
-            Vector v (eigenvectors[6], eigenvectors[7], eigenvectors[8]);
+            Vector v (FT(eigenvectors.at(6)), FT(eigenvectors.at(7)), FT(eigenvectors.at(8)));
 
             std::size_t current_cluster_size = 0;
             typename std::list<Input_type>::iterator it = current_cluster->first.begin ();

@@ -296,45 +296,33 @@ struct Scene_surface_mesh_item_priv{
 };
 
 const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
+
+void Scene_surface_mesh_item::initialize_priv()
+{
+  CGAL_precondition(d != nullptr);
+
+  d->floated = false;
+  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
+  d->checkFloat();
+  d->textVItems = new TextListItem(this);
+  d->textEItems = new TextListItem(this);
+  d->textFItems = new TextListItem(this);
+
+  are_buffers_filled = false;
+  invalidate(ALL);
+}
+
 Scene_surface_mesh_item::Scene_surface_mesh_item()
 {
   d = new Scene_surface_mesh_item_priv(new SMesh(), this);
-  d->floated = false;
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-
-  are_buffers_filled = false;
-  invalidate(ALL);
+  initialize_priv();
 }
 
-Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
-{
-  d = new Scene_surface_mesh_item_priv(other, this);
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->floated = false;
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-
-  are_buffers_filled = false;
-  invalidate(ALL);
-}
-
-void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
+Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 {
   d = new Scene_surface_mesh_item_priv(sm, this);
-  d->floated = false;
-  setRenderingMode(CGAL::Three::Three::defaultSurfaceMeshRenderingMode());
-  d->checkFloat();
-  d->textVItems = new TextListItem(this);
-  d->textEItems = new TextListItem(this);
-  d->textFItems = new TextListItem(this);
-  are_buffers_filled = false;
-  invalidate(ALL);
+  initialize_priv();
+
   std::size_t isolated_v = 0;
   for(vertex_descriptor v : vertices(*sm))
   {
@@ -344,21 +332,20 @@ void Scene_surface_mesh_item::standard_constructor(SMesh* sm)
     }
   }
   setNbIsolatedvertices(isolated_v);
-
-}
-Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
-{
-  standard_constructor(sm);
 }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(const SMesh& sm)
-{
-  standard_constructor(new SMesh(sm));
-}
+  : Scene_surface_mesh_item(new SMesh(sm))
+{ }
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh&& sm)
+  : Scene_surface_mesh_item(new SMesh(std::move(sm)))
+{ }
+
+Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
 {
-  standard_constructor(new SMesh(std::move(sm)));
+  d = new Scene_surface_mesh_item_priv(other, this);
+  initialize_priv();
 }
 
 Scene_surface_mesh_item*
@@ -751,7 +738,6 @@ void Scene_surface_mesh_item_priv::initialize_colors() const
 
 void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
-
   item->getTriangleContainer(1)->initializeBuffers(viewer);
   item->getTriangleContainer(0)->initializeBuffers(viewer);
   item->getEdgeContainer(1)->initializeBuffers(viewer);
@@ -1160,7 +1146,7 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
         {
           EPICK::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, *sm);
-          Q_FOREACH(EPICK::Triangle_3 triangle, triangulate_primitive(f,normal))
+          for(EPICK::Triangle_3 triangle : triangulate_primitive(f,normal))
           {
             Primitive primitive(triangle, f);
             tree->insert(primitive);
@@ -1189,11 +1175,11 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
 
 void
 Scene_surface_mesh_item::select(double orig_x,
-                              double orig_y,
-                              double orig_z,
-                              double dir_x,
-                              double dir_y,
-                              double dir_z)
+                                double orig_y,
+                                double orig_z,
+                                double dir_x,
+                                double dir_y,
+                                double dir_z)
 {
   SMesh *sm = d->smesh_;
   std::size_t vertex_to_emit = 0;
@@ -1214,9 +1200,9 @@ Scene_surface_mesh_item::select(double orig_x,
     {
 
       const EPICK::Point_3* closest_point =
-          boost::get<EPICK::Point_3>(&(closest->first));
+          std::get_if<EPICK::Point_3>(&(closest->first));
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {
@@ -1225,7 +1211,7 @@ Scene_surface_mesh_item::select(double orig_x,
         }
         else {
           const EPICK::Point_3* it_point =
-              boost::get<EPICK::Point_3>(&it->first);
+              std::get_if<EPICK::Point_3>(&it->first);
           if(it_point &&
              (ray_dir * (*it_point - *closest_point)) < 0)
           {
@@ -1320,7 +1306,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
     d->flat_vertex_map_ready = false;
   }
   setBuffersFilled(false);
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(viewer == nullptr)
@@ -1431,7 +1417,7 @@ bool Scene_surface_mesh_item::intersect_face(double orig_x,
       const EPICK::Point_3* closest_point =
           CGAL::object_cast<EPICK::Point_3>(&closest->first);
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {
@@ -1923,9 +1909,9 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
     if(!intersections.empty()) {
       Intersections::iterator closest = intersections.begin();
       const EPICK::Point_3* closest_point =
-          boost::get<EPICK::Point_3>(&closest->first);
+          std::get_if<EPICK::Point_3>(&closest->first);
       for(Intersections::iterator
-          it = boost::next(intersections.begin()),
+          it = std::next(intersections.begin()),
           end = intersections.end();
           it != end; ++it)
       {
@@ -1934,7 +1920,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
         }
         else {
           const EPICK::Point_3* it_point =
-              boost::get<EPICK::Point_3>(&it->first);
+              std::get_if<EPICK::Point_3>(&it->first);
           if(it_point &&
              (ray_dir * (*it_point - *closest_point)) < 0)
           {
@@ -2019,7 +2005,7 @@ void Scene_surface_mesh_item::resetColors()
     d->has_feature_edges = false;
   }
   invalidate(COLORS);
-  itemChanged();
+  itemChanged(); // @fixme really shouldn't call something that strong
 }
 
 QMenu* Scene_surface_mesh_item::contextMenu()
@@ -2197,7 +2183,7 @@ void Scene_surface_mesh_item::printAllIds()
         s3(printFaceIds());
     if((s1 && s2 && s3))
     {
-      Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool()){
         viewer->update();
       }
       return;
@@ -2244,7 +2230,7 @@ void Scene_surface_mesh_item::showVertices(bool b)
     }
     else
     {
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
         CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
         TextRenderer *renderer = viewer->textRenderer();
         renderer->addTextList(d->textVItems);
@@ -2253,7 +2239,7 @@ void Scene_surface_mesh_item::showVertices(bool b)
     }
   else
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       TextRenderer *renderer = viewer->textRenderer();
       renderer->removeTextList(d->textVItems);
@@ -2274,7 +2260,7 @@ void Scene_surface_mesh_item::showEdges(bool b)
     }
     else
     {
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
         CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
         TextRenderer *renderer = viewer->textRenderer();
         renderer->addTextList(d->textEItems);
@@ -2284,7 +2270,7 @@ void Scene_surface_mesh_item::showEdges(bool b)
   }
   else
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       TextRenderer *renderer = viewer->textRenderer();
       renderer->removeTextList(d->textEItems);
@@ -2305,7 +2291,7 @@ void Scene_surface_mesh_item::showFaces(bool b)
     }
     else
     {
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
         CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
         TextRenderer *renderer = viewer->textRenderer();
         renderer->addTextList(d->textFItems);
@@ -2315,7 +2301,7 @@ void Scene_surface_mesh_item::showFaces(bool b)
   }
   else
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       TextRenderer *renderer = viewer->textRenderer();
       renderer->removeTextList(d->textFItems);
@@ -2397,15 +2383,14 @@ void Scene_surface_mesh_item::setAlpha(int alpha)
 
 QSlider* Scene_surface_mesh_item::alphaSlider() { return d->alphaSlider; }
 
-void Scene_surface_mesh_item::computeElements()const
+void Scene_surface_mesh_item::computeElements() const
 {
   d->compute_elements(ALL);
   setBuffersFilled(true);
-  const_cast<Scene_surface_mesh_item*>(this)->itemChanged();
 }
 
 void
-Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
+Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
 {
   const_cast<Scene_surface_mesh_item*>(this)->//temporary, until the drawing pipeline is not const anymore.
       d->initializeBuffers(viewer);
@@ -2425,8 +2410,9 @@ void Scene_surface_mesh_item::computeItemColorVectorAutomatically(bool b)
   this->setProperty("recompute_colors",b);
 }
 
-void write_in_vbo(Vbo* vbo, cgal_gl_data* data,
-               std::size_t size)
+void write_in_vbo(Vbo* vbo,
+                  cgal_gl_data* data,
+                  std::size_t size)
 {
   vbo->bind();
   vbo->vbo.write(static_cast<int>((3*size)*sizeof(cgal_gl_data)),

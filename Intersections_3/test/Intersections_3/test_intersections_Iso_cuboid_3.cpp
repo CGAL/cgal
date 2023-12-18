@@ -208,7 +208,7 @@ public:
       // face
       auto res = CGAL::intersection(cub, Pl(p(1,1,1), p(1,2,1), p(1,2,2)));
 
-      const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
+      const std::vector<P>* poly = std::get_if<std::vector<P> >(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 4);
       for(const P& pt : *poly)
@@ -217,7 +217,7 @@ public:
       }
       res = CGAL::intersection(cub, Pl(p(1,1,1), p(1,2,1), p(2,2,2)));
 
-      poly = boost::get<std::vector<P> >(&*res);
+      poly = std::get_if<std::vector<P> >(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 4);
       for(const P& pt : *poly) {
@@ -227,7 +227,7 @@ public:
       // other edge
       Pl pln(p(1,1,1), p(1,2,1), P(1.5, 1, 2));
       res = CGAL::intersection(cub, pln);
-      poly = boost::get<std::vector<P> >(&*res);
+      poly = std::get_if<std::vector<P> >(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 4);
       for(const P& pt : *poly) {
@@ -245,7 +245,7 @@ public:
       // random
       pln = Pl(0.265189, 0.902464, 0.33946, -2.47551);
       res = CGAL::intersection(cub, pln);
-      poly = boost::get<std::vector<P> >(&*res);
+      poly = std::get_if<std::vector<P> >(&*res);
       assert(poly != nullptr);
       assert(poly->size() == 5);
       for(const P& pt : *poly) {
@@ -575,7 +575,7 @@ public:
     // face in a tr
     Tr tr(p(-3, -3, 1), p(3, -3, 1), P(1.5, 6, 1));
     Res res = CGAL::intersection(cub, tr);
-    Pol* poly = boost::get<std::vector<P> >(&*res);
+    Pol* poly = std::get_if<std::vector<P> >(&*res);
     assert(poly != nullptr);
     assert(poly->size() == 4);
     if(this->has_exact_c)
@@ -618,7 +618,7 @@ public:
     // tr through
     tr = Tr(p(2, 4, 2), P(1, 3.5, -0.5), p(1, -1, 1));
     res = CGAL::intersection(cub, tr);
-    poly = boost::get<std::vector<P> >(&*res);
+    poly = std::get_if<std::vector<P> >(&*res);
     assert(poly != nullptr);
     assert(poly->size() == 4);
     if(this->has_exact_c)
@@ -635,7 +635,7 @@ public:
     // cutting in half along diagonal (intersection included in triangle)
     tr = Tr(p(1, 1, 10), p(10, 10, 1), p(1, 1, 1));
     res = CGAL::intersection(cub, tr);
-    poly = boost::get<std::vector<P> >(&*res);
+    poly = std::get_if<std::vector<P> >(&*res);
     assert(poly != nullptr);
     assert(poly->size() == 4);
     if(this->has_exact_c)
@@ -647,7 +647,7 @@ public:
     // 6 points intersection
     tr = Tr(P(18.66, -5.4, -11.33), P(-2.41, -7.33, 19.75), P(-10.29, 20.15, -10.33));
     res = CGAL::intersection(cub, tr);
-    poly = boost::get<std::vector<P> >(&*res);
+    poly = std::get_if<std::vector<P> >(&*res);
     assert(poly != nullptr);
     assert(poly->size() == 6);
     if(this->has_exact_c)
@@ -659,7 +659,7 @@ public:
     // triangle clipping a cuboid corner
     tr = Tr(P(1.02, 1.33, 0.62), P(1.95, 2.54, 0.95), P(0.79, 2.36, 1.92));
     res = CGAL::intersection(cub, tr);
-    Tr* tr_res = boost::get<Tr>(&*res);
+    Tr* tr_res = std::get_if<Tr>(&*res);
     assert(tr_res != nullptr);
     if(this->has_exact_c)
     {

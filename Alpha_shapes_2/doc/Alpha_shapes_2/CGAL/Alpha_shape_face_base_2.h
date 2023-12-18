@@ -16,7 +16,7 @@ if `Alpha_shape_face_base_2` is intended to be used with an alpha-shape class ba
 \link Tag_true `Tag_true`\endlink, triggers exact comparisons between alpha values. See the description
 provided in the documentation of `Alpha_shape_2` for more details. The default value is \link Tag_false `Tag_false`\endlink.
 
-\cgalModels `AlphaShapeFace_2`
+\cgalModels{AlphaShapeFace_2}
 
 \sa `Triangulation_face_base_2`
 \sa `Regular_triangulation_face_base_2`

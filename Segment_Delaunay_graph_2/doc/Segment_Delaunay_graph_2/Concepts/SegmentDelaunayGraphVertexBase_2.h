@@ -11,7 +11,9 @@ requirements for the vertex base class of the
 site of the segment Delaunay graph and provides access to one of its
 incident faces through a `Face_handle`.
 
-\cgalHasModel `CGAL::Segment_Delaunay_graph_vertex_base_2<St>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Segment_Delaunay_graph_vertex_base_2<St>}
+\cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphTraits_2`
 \sa `SegmentDelaunayGraphSite_2`

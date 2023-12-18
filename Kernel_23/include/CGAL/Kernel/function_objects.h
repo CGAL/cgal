@@ -287,6 +287,7 @@ namespace CommonKernelFunctors {
 
       const Vector_3 abac1 = xproduct(ab1, ac1);
       const Vector_3 abad1 = xproduct(ab1, ad1);
+      if (abac1==NULL_VECTOR || abad1==NULL_VECTOR) return SMALLER;
       const FT sc_prod_1 = abac1 * abad1;
 
       CGAL_kernel_assertion_msg( abac1 != NULL_VECTOR,
@@ -977,11 +978,42 @@ namespace CommonKernelFunctors {
      const Vector_3 ad = vector(a,d);
 
      const Vector_3 abad = cross_product(ab,ad);
-     const double x = CGAL::to_double(scalar_product(cross_product(ab,ac), abad));
-     const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
-     const double y = l_ab * CGAL::to_double(scalar_product(ac,abad));
+     const Vector_3 abac = cross_product(ab,ac);
 
-     return FT(std::atan2(y, x) * 180 / CGAL_PI );
+     // The dihedral angle we are interested in is the angle around the oriented
+     // edge ab which is the same (in absolute value) as the angle between the
+     // vectors ab^ac and ab^ad (cross-products).
+     // (abac points inside the tetra abcd if its orientation is positive and outside otherwise)
+     //
+     // We consider the vector abad in the basis defined by the three vectors
+     //    (<ab>, <abac>, <ab^abac>)
+     // where <u> denote the normalized vector u/|u|.
+     //
+     // In this orthonormal basis, the vector adab has the coordinates
+     //    x = <ab>      * abad
+     //    y = <abac>    * abad
+     //    z = <ab^abac> * abad
+     // We have x == 0, because abad and ab are orthogonal, and thus abad is in
+     // the plane (yz) of the new basis.
+     //
+     // In that basis, the dihedral angle is the angle between the y axis and abad
+     // which is the arctan of y/z, or atan2(z, y).
+     //
+     // (Note that ab^abac is in the plane abc, pointing outside the tetra if
+     //  its orientation is positive and inside otherwise).
+     //
+     // For the normalization, abad appears in both scalar products
+     // in the quotient so we can ignore its norm. For the second
+     // terms of the scalar products, we are left with ab^abac and abac.
+     // Since ab and abac are orthogonal, the sinus of the angle between the
+     // two vectors is 1.
+     // So the norms are |ab|.|abac| vs |abac|, which is why we have a
+     // multiplication by |ab| in y below.
+     const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
+     const double y = l_ab * CGAL::to_double(scalar_product(abac, abad));
+     const double z = CGAL::to_double(scalar_product(cross_product(ab,abac),abad));
+
+     return FT(std::atan2(z, y) * 180 / CGAL_PI );
    }
  };
 
@@ -1090,7 +1122,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Line_2& l) const
     {
       return l.rep().a();
@@ -1106,7 +1138,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Plane_3& l) const
     {
       return l.rep().a();
@@ -1123,7 +1155,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Line_2& l) const
     {
       return l.rep().b();
@@ -1139,7 +1171,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Plane_3& l) const
     {
       return l.rep().b();
@@ -1156,7 +1188,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Line_2& l) const
     {
       return l.rep().c();
@@ -1172,7 +1204,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Plane_3& l) const
     {
       return l.rep().c();
@@ -1188,7 +1220,7 @@ namespace CommonKernelFunctors {
   public:
     typedef RT               result_type;
 
-    RT
+    const RT&
     operator()(const Plane_3& l) const
     {
       return l.rep().d();
@@ -1764,8 +1796,8 @@ namespace CommonKernelFunctors {
       Line l2 = construct_line(l21, l22);
 
       const auto res = typename K::Intersect_3()(l1,l2);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2172,8 +2204,8 @@ namespace CommonKernelFunctors {
       Line line = construct_line( l1, l2 );
 
       const auto res = typename K::Intersect_3()(plane,line);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2185,8 +2217,8 @@ namespace CommonKernelFunctors {
       Line line = construct_line( l1, l2 );
 
       const auto res = typename K::Intersect_3()(plane,line);
-      CGAL_assertion(res!=boost::none);
-      const Point* e_pt = boost::get<Point>(&(*res));
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
     }
@@ -2227,6 +2259,10 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3    Plane_3;
   public:
     typedef Point_3          result_type;
+
+    const Point_3&
+    operator()( const Line_3& l) const
+    { return l.rep().point(); }
 
     Point_3
     operator()( const Line_3& l, const FT i) const
@@ -3413,7 +3449,7 @@ namespace CommonKernelFunctors {
       const Plane_3& plane = circ.supporting_plane();
       const auto optional = K().intersect_3_object()(plane, Segment_3(a, b));
       CGAL_kernel_assertion_msg(bool(optional) == true, "the segment does not intersect the supporting plane");
-      const Point_3* p = boost::get<Point_3>(&*optional);
+      const Point_3* p = std::get_if<Point_3>(&*optional);
       CGAL_kernel_assertion_msg(p != 0, "the segment intersection with the plane is not a point");
       return squared_distance(circ.center(), *p) < circ.squared_radius();
     }
@@ -3618,7 +3654,7 @@ namespace CommonKernelFunctors {
     operator()(const T1& t1, const T2& t2) const
     { return Intersections::internal::intersection(t1, t2, K() ); }
 
-    boost::optional<boost::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
+    std::optional<std::variant<typename K::Point_3, typename K::Line_3, typename K::Plane_3> >
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
     { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
   };
@@ -3635,7 +3671,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3     Point_3;
     typedef typename K::Line_3      Line_3;
     typedef typename K::Plane_3     Plane_3;
-    typedef typename boost::optional<Point_3> result_type;
+    typedef typename std::optional<Point_3> result_type;
 
     result_type
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3) const

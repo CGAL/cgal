@@ -192,7 +192,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_tri
   QDialog dialog;
   Ui::NeedleDialog ui;
   ui.setupUi(&dialog);
-  ui.collapseBox->setValue(sm_item->diagonalBbox()*0.01);
+  ui.collapseBox->setValue(sm_item->bboxDiagonal()*0.01);
   if(dialog.exec() != QDialog::Accepted)
     return;
   CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces(*sm_item->face_graph(),
@@ -273,7 +273,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
   {
     std::vector<double> tolerances/* = 0.005, 0.0125, 0.025, 0.05, 0.07 */;
     bool ok;
-    Q_FOREACH(QString tol_text, ui.tolerances->text().split(","))
+    for(QString tol_text : ui.tolerances->text().split(","))
     {
       double d = tol_text.toDouble(&ok);
       if (ok)

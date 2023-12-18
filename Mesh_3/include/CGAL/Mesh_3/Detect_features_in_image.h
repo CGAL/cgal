@@ -19,6 +19,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/Image_3.h>
 #include <CGAL/ImageIO.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
@@ -32,6 +33,7 @@
 
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/Mesh_3/features_detection/postprocess_weights.h>
 
 #include <vector>
 #include <array>
@@ -52,11 +54,12 @@ namespace internal
 // not documented.
 template<typename Word_type, typename P>
 std::vector<std::vector<P>>
-detect_features_in_image_with_know_word_type(const CGAL::Image_3& image)
+detect_features_in_image_with_know_word_type(const CGAL::Image_3& image,
+                                             CGAL::Image_3& weights)
 {
-  using Gt = typename CGAL::Kernel_traits<P>::Kernel;
+  using GT = typename CGAL::Kernel_traits<P>::Kernel;
   using Point_3 = P;
-  using Vector_3 = typename Gt::Vector_3;
+  using Vector_3 = typename GT::Vector_3;
   using Polyline_type = std::vector<Point_3>;
   using Polylines = std::vector<Polyline_type>;
 
@@ -78,9 +81,12 @@ detect_features_in_image_with_know_word_type(const CGAL::Image_3& image)
   const float ty = image.ty();
   const float tz = image.tz();
 
+  const bool postprocess_weights = weights.is_valid();
+  std::vector<std::array<std::size_t, 3>> black_voxels;
+
   using CGAL::IMAGEIO::static_evaluate;
 
-  using Del = CGAL::Delaunay_triangulation_3<Gt>;
+  using Del = CGAL::Delaunay_triangulation_3<GT>;
   using Cell_handle = typename Del::Cell_handle;
   using Vertex_handle = typename Del::Vertex_handle;
   Del triangulation;
@@ -159,6 +165,9 @@ detect_features_in_image_with_know_word_type(const CGAL::Image_3& image)
           CGAL::Mesh_3::internal::debug_cerr("Using the function of", Cube(fct_it->first));
 #endif // CGAL_DEBUG_TRIPLE_LINES
 
+          if (postprocess_weights)
+            black_voxels.push_back({ i, j, k });
+
           Polylines cube_features = (fct_it->second)(10);
           if (case_found)
           {
@@ -215,13 +224,19 @@ detect_features_in_image_with_know_word_type(const CGAL::Image_3& image)
                              features_inside.end());
 
   Polylines polylines_on_bbox;
-  CGAL::polylines_to_protect<Point_3, Word_type>(image, polylines_on_bbox,
+  CGAL::polylines_to_protect_on_bbox<Point_3, Word_type>(image, polylines_on_bbox,
                                                  polylines_inside.begin(),
                                                  polylines_inside.end());
 
   polylines_inside.insert(polylines_inside.end(),
                           polylines_on_bbox.begin(),
                           polylines_on_bbox.end());
+
+  if (postprocess_weights)
+  {
+    internal::feature_voxels_on_image_bbox<Word>(image, black_voxels);
+    internal::set_voxels<unsigned char/*Weights_type*/>(weights, black_voxels, 0/*black*/);
+  }
 
 #ifdef CGAL_DEBUG_TRIPLE_LINES
   std::ofstream output_polylines("out-generated.polylines.txt");
@@ -271,8 +286,30 @@ public:
   std::vector<std::vector<Point>>
   operator()(const CGAL::Image_3& image) const
   {
+    CGAL::Image_3 no_weights;
     CGAL_IMAGE_IO_CASE(image.image(),
-      return (internal::detect_features_in_image_with_know_word_type<Word, Point>(image));
+      return (internal::detect_features_in_image_with_know_word_type<Word, Point>(image, no_weights));
+    );
+    CGAL_error_msg("This place should never be reached, because it would mean "
+      "the image word type is a type that is not handled by "
+      "CGAL_ImageIO.");
+
+    return std::vector<std::vector<Point>>();
+  }
+
+  /*!
+  * Similar to the above function,
+  * but modifies `weights` to set the voxels that are
+  * part of a polyline feature to 0.
+  */
+  template<typename Point>
+  std::vector<std::vector<Point>>
+    operator()(const CGAL::Image_3& image, CGAL::Image_3& weights) const
+  {
+    CGAL_assertion(weights.is_valid());
+
+    CGAL_IMAGE_IO_CASE(image.image(),
+      return (internal::detect_features_in_image_with_know_word_type<Word, Point>(image, weights));
     );
     CGAL_error_msg("This place should never be reached, because it would mean "
       "the image word type is a type that is not handled by "

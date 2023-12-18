@@ -34,7 +34,7 @@ To define a line `l` we write:
 Line_2< Cartesian<double> > l(p,q);
 \endcode
 
-\cgalModels `Kernel::Line_2`
+\cgalModels{Kernel::Line_2}
 
 */
 template< typename Kernel >
@@ -47,6 +47,7 @@ public:
 /*!
 introduces a line `l` with the line equation in %Cartesian
 coordinates \f$ ax +by +c = 0\f$.
+\cgalEpicExact
 */
 Line_2(const Kernel::RT &a, const Kernel::RT &b, const Kernel::RT &c);
 
@@ -98,16 +99,19 @@ bool operator!=(const Line_2<Kernel> &h) const;
 
 /*!
 returns the first coefficient of `l`.
+\cgalEpicExact
 */
 Kernel::RT a() const;
 
 /*!
 returns the second coefficient of `l`.
+\cgalEpicExact
 */
 Kernel::RT b() const;
 
 /*!
 returns the third coefficient of `l`.
+\cgalEpicExact
 */
 Kernel::RT c() const;
 
@@ -205,6 +209,7 @@ Direction_2<Kernel> direction() const;
 
 /*!
 returns the line with opposite direction.
+\cgalEpicExact
 */
 Line_2<Kernel> opposite() const;
 

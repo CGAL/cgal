@@ -12,8 +12,6 @@
 #include <CGAL/use.h>
 #include <CGAL/assertions.h>
 
-#include <boost/type_traits/is_base_of.hpp>
-
 #include <CGAL/disable_warnings.h>
 
 template <typename Has_timestamp_ = CGAL::Tag_true>
@@ -324,29 +322,29 @@ int main()
   test_time_stamps<C4>();
 
   // Check the time stamper policies
-  if(! boost::is_base_of<CGAL::Time_stamper<T1>,
+  if(! std::is_base_of<CGAL::Time_stamper<T1>,
      C1::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C1\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::No_time_stamp<T2>,
+  if(! std::is_base_of<CGAL::No_time_stamp<T2>,
      C2::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C2\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::No_time_stamp<T3>,
+  if(! std::is_base_of<CGAL::No_time_stamp<T3>,
      C3::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C3\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::Time_stamper<T2>,
+  if(! std::is_base_of<CGAL::Time_stamper<T2>,
      C4::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C4\n"; return 1;
   }
 
   // Check that Compact_container does not require a complete type.
-  CGAL_static_assertion(sizeof(CGAL::Compact_container<Incomplete_struct>) > 0);
+  static_assert(sizeof(CGAL::Compact_container<Incomplete_struct>) > 0);
 
   // Test increment policy
   CGAL::Compact_container<Node_2, CGAL::Default, CGAL::Constant_size_policy<1024> > C5;

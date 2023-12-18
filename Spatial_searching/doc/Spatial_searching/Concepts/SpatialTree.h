@@ -5,7 +5,9 @@
 The concept `SpatialTree` defines the requirements for a tree supporting
 both neighbor searching and approximate range searching.
 
-\cgalHasModel `CGAL::Kd_tree<Traits,Splitter,UseExtendedNode>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Kd_tree<Traits,Splitter,UseExtendedNode>}
+\cgalHasModelsEnd
 
 */
 

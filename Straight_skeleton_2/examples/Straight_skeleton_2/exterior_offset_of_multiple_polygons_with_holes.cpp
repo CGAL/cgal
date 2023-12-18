@@ -3,10 +3,9 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <CGAL/draw_polygon_with_holes_2.h>
-
 
 #include <vector>
 #include <cassert>
@@ -17,8 +16,8 @@ typedef K::Point_2                    Point ;
 typedef CGAL::Polygon_2<K>            Polygon_2 ;
 typedef CGAL::Polygon_with_holes_2<K> PolygonWithHoles ;
 
-typedef boost::shared_ptr<PolygonWithHoles> PolygonWithHolesPtr ;
-typedef boost::shared_ptr<Polygon_2> PolygonPtr ;
+typedef std::shared_ptr<PolygonWithHoles> PolygonWithHolesPtr ;
+typedef std::shared_ptr<Polygon_2> PolygonPtr ;
 
 typedef std::vector<PolygonWithHolesPtr> PolygonWithHolesPtrVector;
 typedef std::vector<PolygonPtr> PolygonPtrVector;
@@ -31,13 +30,13 @@ exterior_offset_of_disjoint_polygons_with_holes(double lOffset, const std::vecto
     outer_vertices.insert(outer_vertices.end(),
                           pwh.outer_boundary().container().begin(),
                           pwh.outer_boundary().container().end());
-  boost::optional<double> margin = compute_outer_frame_margin(outer_vertices.begin(),
+  std::optional<double> margin = compute_outer_frame_margin(outer_vertices.begin(),
                                                               outer_vertices.end(),
                                                               lOffset);
 
   if ( margin )
   {
-    double lm = CGAL::to_double(*margin);
+    double lm = *margin;
     CGAL::Bbox_2 bbox = bbox_2(outer_vertices.begin(), outer_vertices.end());
 
     double fxmin = bbox.xmin() - lm ;
@@ -61,21 +60,9 @@ exterior_offset_of_disjoint_polygons_with_holes(double lOffset, const std::vecto
     PolygonPtrVector off_polys = CGAL::create_interior_skeleton_and_offset_polygons_2(lOffset,pwh);
 
     // filter outer frame
-    Point xtrm_pt = *(off_polys[0]->begin());
-    std::size_t outer_id=0;
-    for(std::size_t i=0; i<off_polys.size(); ++i)
-      if (off_polys[i]->orientation() == CGAL::COUNTERCLOCKWISE)
-      {
-        for (const Point& p : off_polys[i]->container())
-          if (p < xtrm_pt)
-          {
-            xtrm_pt=p;
-            outer_id=i;
-          }
-      }
-    if (outer_id != (off_polys.size()-1))
-      std::swap(off_polys[outer_id], off_polys.back());
+    std::swap(off_polys[0], off_polys.back());
     off_polys.pop_back();
+
     for (PolygonPtr ptr : off_polys)
       ptr->reverse_orientation();
 
@@ -123,6 +110,7 @@ int main()
   double lOffset = 1.1 ;
 
   PolygonWithHolesPtrVector offset_poly_with_holes = exterior_offset_of_disjoint_polygons_with_holes(lOffset,pwhs);
+  std::cout << offset_poly_with_holes.size() << " offset polygons" << std::endl;
 
   for (PolygonWithHolesPtr ptr : offset_poly_with_holes)
     CGAL::draw(*ptr);

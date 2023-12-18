@@ -15,14 +15,16 @@
 #include <CGAL/license/Straight_skeleton_2.h>
 
 #include <CGAL/compute_outer_frame_margin.h>
+#include <CGAL/Straight_skeleton_2.h>
 #include <CGAL/Straight_skeleton_builder_2.h>
-#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Straight_skeleton_2/Polygon_iterators.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Polygon_2.h>
 
-#include <boost/optional/optional.hpp>
-#include <boost/shared_ptr.hpp>
+#include <optional>
+#include <memory>
 
 #include <algorithm>
 #include <iterator>
@@ -31,7 +33,7 @@
 namespace CGAL {
 
 template<class PointIterator, class HoleIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
+std::shared_ptr< Straight_skeleton_2<K> >
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
                                     , HoleIterator  aHolesBegin
@@ -61,7 +63,7 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
 }
 
 template<class PointIterator, class HoleIterator>
-boost::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
+std::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
 inline
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
@@ -78,7 +80,7 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
 }
 
 template<class PointIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
+std::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
@@ -98,7 +100,7 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
 }
 
 template<class PointIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+std::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
@@ -111,7 +113,7 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
 }
 
 template<class Polygon, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
+std::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_straight_skeleton_2 ( Polygon const& aOutContour,
                                       K const& k,
@@ -125,7 +127,7 @@ create_interior_straight_skeleton_2 ( Polygon const& aOutContour,
 }
 
 template<class Polygon>
-boost::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
+std::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
 inline
 create_interior_straight_skeleton_2 ( Polygon const& aOutContour )
 {
@@ -138,7 +140,7 @@ create_interior_straight_skeleton_2 ( Polygon const& aOutContour )
 /// EXTERIOR
 
 template<class FT, class PointIterator, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
+std::shared_ptr< Straight_skeleton_2<K> >
 create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
                                     , PointIterator  aVerticesBegin
                                     , PointIterator  aVerticesEnd
@@ -151,7 +153,7 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
   typedef typename Kernel_traits<Point_2>::Kernel                    IK;
   typedef typename IK::FT                                            IFT;
 
-  boost::shared_ptr<Straight_skeleton_2<K> > rSkeleton;
+  std::shared_ptr<Straight_skeleton_2<K> > rSkeleton;
 
   // That's because we might not have FT == IK::FT (e.g. `double` and `Core`)
   // Note that we can also have IK != K (e.g. `Simple_cartesian<Core>` and `EPICK`)
@@ -159,22 +161,21 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 
   // @todo This likely should be done in the kernel K rather than the input kernel (i.e. the same
   // converter stuff that is done in `create_partial_exterior_straight_skeleton_2`?).
-  boost::optional<IFT> margin = compute_outer_frame_margin( aVerticesBegin,
+  std::optional<IFT> margin = compute_outer_frame_margin( aVerticesBegin,
                                                             aVerticesEnd,
                                                             lOffset );
 
   if ( margin )
   {
-    const double lm = CGAL::to_double(*margin);
-    Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
+    const IFT lm = *margin;
+    const Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
 
-    FT fxmin = bbox.xmin() - lm ;
-    FT fxmax = bbox.xmax() + lm ;
-    FT fymin = bbox.ymin() - lm ;
-    FT fymax = bbox.ymax() + lm ;
+    const IFT fxmin = IFT(bbox.xmin()) - lm ;
+    const IFT fxmax = IFT(bbox.xmax()) + lm ;
+    const IFT fymin = IFT(bbox.ymin()) - lm ;
+    const IFT fymax = IFT(bbox.ymax()) + lm ;
 
     Point_2 frame[4] ;
-
     frame[0] = Point_2(fxmin,fymin) ;
     frame[1] = Point_2(fxmax,fymin) ;
     frame[2] = Point_2(fxmax,fymax) ;
@@ -195,7 +196,7 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 }
 
 template<class FT, class PointIterator>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+std::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
                                     , PointIterator  aVerticesBegin
@@ -210,7 +211,7 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
 }
 
 template<class FT, class Polygon, class K>
-boost::shared_ptr< Straight_skeleton_2<K> >
+std::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly, K const& k )
 {
@@ -222,7 +223,7 @@ create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly
 }
 
 template<class FT, class Polygon>
-boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
+std::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly )
 {
@@ -232,6 +233,6 @@ create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly
                                             );
 }
 
-} // end namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
+#endif // CGAL_CREATE_STRAIGHT_SKELETON_2_H

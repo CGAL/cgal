@@ -24,7 +24,6 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Random_access_output_iterator.h>
 #include <CGAL/algorithm.h>
@@ -102,7 +101,7 @@ public:
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
   typedef std::pair<Point_2, Multiplicity>              Intersection_point;
-  typedef boost::variant<Intersection_point, X_monotone_curve_2>
+  typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
   typedef std::vector<Intersection_result>              Intersection_vector;
   typedef Random_access_output_iterator<Intersection_vector>
@@ -222,7 +221,7 @@ protected:
    * \param c2 The second curve.
    */
   void _create_intersection_point(const Point_2& xp,
-                                  unsigned int mult,
+                                  Multiplicity mult,
                                   Subcurve*& c1,
                                   Subcurve*& c2);
 };

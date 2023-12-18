@@ -54,7 +54,7 @@ using namespace CGAL::Three;
 
 Viewer_interface* getActiveViewer()
 {
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     if(v->hasFocus())
     {
@@ -332,7 +332,7 @@ class Neighborhood
   typedef CGAL::Fuzzy_sphere<Search_traits> Sphere;
 
   Scene_points_with_normal_item* points_item;
-  boost::shared_ptr<Tree> tree;
+  std::shared_ptr<Tree> tree;
 
 public:
 
@@ -351,7 +351,7 @@ public:
     {
       this->points_item = points_item;
 
-      tree = boost::make_shared<Tree> (points_item->point_set()->begin(),
+      tree = std::make_shared<Tree> (points_item->point_set()->begin(),
                                        points_item->point_set()->end(),
                                        Tree::Splitter(),
                                        Search_traits (points_item->point_set()->point_map()));
@@ -606,7 +606,7 @@ public:
     shift_pressing = false;
     ctrl_pressing = false;
 
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     {
       viewer->installEventFilter(this);
     }
@@ -952,7 +952,7 @@ public Q_SLOTS:
       connect(edit_box, &Scene_edit_box_item::aboutToBeDestroyed,
               this, &Polyhedron_demo_point_set_selection_plugin::reset_editbox);
       scene->addItem(edit_box);
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
         v->installEventFilter(edit_box);
       }
       connect(mw, SIGNAL(newViewerCreated(QObject*)),

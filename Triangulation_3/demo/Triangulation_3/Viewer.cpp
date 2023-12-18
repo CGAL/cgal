@@ -1307,7 +1307,7 @@ void Viewer::draw()
             // draw the rest to-be-inserted vertices
             rendering_program.bind();
             vao[24].bind();
-            color.setRgbF(0.7,0.7,0.7);
+            color.setRgbF(0.7f,0.7f,0.7f);
             rendering_program.setUniformValue(colorLocation[0],color);
             rendering_program.setUniformValue("point_size", 8.0f);
             glDrawArrays(GL_POINTS, 0, incremental_points->size()/3);
@@ -1510,7 +1510,7 @@ void Viewer::draw()
             // draw the rest to-be-inserted vertices
             rendering_program_spheres.bind();
             vao[25].bind();
-            color.setRgbF(0.7,0.7,0.7);
+            color.setRgbF(0.7f,0.7f,0.7f);
             rendering_program_spheres.setUniformValue(colorLocation[1],color);
             glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_points->size()/3);
             vao[25].release();

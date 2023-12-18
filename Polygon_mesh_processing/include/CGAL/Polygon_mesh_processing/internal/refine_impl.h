@@ -42,6 +42,8 @@ template<class PolygonMesh, class VertexPointMap>
 class Refine_Polyhedron_3 {
 //// typedefs
   typedef typename boost::property_traits<VertexPointMap>::value_type     Point_3;
+  typedef typename boost::property_traits<VertexPointMap>::reference      Point_3_ref;
+
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
@@ -88,7 +90,6 @@ private:
   bool relax(halfedge_descriptor h)
   {
 #ifdef CGAL_PMP_REFINE_DEBUG_PP
-    typedef typename boost::property_traits<VertexPointMap>::reference Point_3_ref;
     Point_3_ref p = get(vpmap, source(h,pmesh));
     Point_3_ref q = get(vpmap, target(h,pmesh));
     Point_3_ref r = get(vpmap, target(next(h,pmesh),pmesh));
@@ -227,7 +228,7 @@ private:
                         const std::set<face_descriptor>& interior_map,
                         bool accept_internal_facets)
   {
-    const Point_3& vp = get(vpmap, vh);
+    const Point_3_ref vp = get(vpmap, vh);
     Halfedge_around_target_circulator<PolygonMesh> circ(halfedge(vh,pmesh),pmesh), done(circ);
     int deg = 0;
     double sum = 0;
@@ -239,7 +240,7 @@ private:
         { continue; } // which means current edge is an interior edge and should not be included in scale attribute calculation
       }
 
-      const Point_3& vq = get(vpmap, target(opposite(*circ,pmesh),pmesh));
+      const Point_3_ref vq = get(vpmap, target(opposite(*circ,pmesh),pmesh));
       sum += to_double(CGAL::approximate_sqrt(CGAL::squared_distance(vp, vq)));
       ++deg;
     } while(++circ != done);
@@ -305,7 +306,7 @@ public:
               double alpha)
   {
       // do not use just std::set, the order effects the output (for the same input we want to get same output)
-    std::set<face_descriptor> interior_map(boost::begin(faces), boost::end(faces));
+    std::set<face_descriptor> interior_map(std::begin(faces), std::end(faces));
 
     // store boundary edges - to be used in relax
     std::set<halfedge_descriptor> border_edges;
@@ -324,7 +325,7 @@ public:
     std::map<vertex_descriptor, double> scale_attribute;
     calculate_scale_attribute(faces, interior_map, scale_attribute, accept_internal_facets);
 
-    std::vector<face_descriptor> all_faces(boost::begin(faces), boost::end(faces));
+    std::vector<face_descriptor> all_faces(std::begin(faces), std::end(faces));
     #ifdef CGAL_PMP_REFINE_DEBUG
     CGAL::Timer total_timer; total_timer.start();
     #endif
