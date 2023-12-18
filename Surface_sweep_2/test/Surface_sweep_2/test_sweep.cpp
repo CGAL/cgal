@@ -149,6 +149,7 @@ std::istream& skip_comment(std::istream& in) {
 bool read_points(std::ifstream& inp, Points& points, const Traits&) {
   int count;
   inp >> skip_comment >> count;
+  char ch;
 
   // std::cout << "read_points " << count << "\n";
   for (int i = 0; i < count; i++) {
@@ -329,7 +330,7 @@ bool read_curves(std::ifstream& inp, Curves& curves, const Traits&) {
 #if CGAL_ARR_TEST_TRAITS != CGAL_CONIC_TRAITS
 
 // Test subcurves w/o overlapping
-bool test_curves_no_overlap(std::ifstream& inp, Curves& /* curves */,
+bool test_curves_no_overlap(std::ifstream& inp, Curves& curves,
                             const X_monotone_curves& curves_no_overlap_out,
                             const Traits& tr) {
   X_monotone_curves curves_no_overlap;
@@ -345,7 +346,7 @@ bool test_curves_no_overlap(std::ifstream& inp, Curves& /* curves */,
 }
 
 // Test subcurves w/ overlapping
-bool test_curves_with_overlap(std::ifstream& inp, Curves& /* curves */,
+bool test_curves_with_overlap(std::ifstream& inp, Curves& curves,
                               const X_monotone_curves& curves_with_overlap_out,
                               const Traits& tr) {
   X_monotone_curves curves_with_overlap;
@@ -362,7 +363,7 @@ bool test_curves_with_overlap(std::ifstream& inp, Curves& /* curves */,
 }
 
 // Test intersection points (with endpoints)
-bool test_points_with_ends(std::ifstream& inp, Curves& /* curves */,
+bool test_points_with_ends(std::ifstream& inp, Curves& curves,
                            const Points& points_with_ends_out,
                            const Traits& tr) {
   Points points_with_ends;
@@ -378,7 +379,7 @@ bool test_points_with_ends(std::ifstream& inp, Curves& /* curves */,
 }
 
 // Test intersection points w/o end points
-bool test_points_no_ends(std::ifstream& inp, Curves& /* curves */,
+bool test_points_no_ends(std::ifstream& inp, Curves& curves,
                          const Points& points_no_ends_out,
                          const Traits& tr) {
   Points points_no_ends;
@@ -402,6 +403,7 @@ bool test_conic(std::ifstream& inp, Curves& curves,
                 const Points& points_with_ends_out,
                 const Points& points_no_ends_out,
                 const Traits&) {
+  char dummy[256];
 
   CGAL::Bbox_2 bbox = curves.front().bbox();
   for (auto it = std::next(curves.begin()); it != curves.end(); ++it)
