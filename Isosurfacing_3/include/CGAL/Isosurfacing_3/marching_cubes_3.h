@@ -76,6 +76,7 @@ void marching_cubes(const Domain& domain,
     // and directly write the result to points and triangles
     internal::TMC_functor<Domain, PointRange, TriangleRange> functor(domain, isovalue);
     domain.template iterate_cells<ConcurrencyTag>(functor);
+    functor.to_triangle_soup(points, triangles);
   }
   else
   {
