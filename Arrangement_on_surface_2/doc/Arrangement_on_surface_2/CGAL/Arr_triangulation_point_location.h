@@ -1,7 +1,6 @@
 namespace CGAL {
 
-/*!
- * \ingroup PkgArrangementOnSurface2PointLocation
+/*! \ingroup PkgArrangementOnSurface2PointLocation
  *
  * \anchor arr_reftri_pl
  *
