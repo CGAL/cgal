@@ -91,6 +91,10 @@ public:
             typename Base_traits::Coplanar_3, PointPropertyMap>                Coplanar_3;
   typedef Convex_hull_3::internal::Forward_functor<
             typename Base_traits::Less_distance_to_point_3, PointPropertyMap>  Less_distance_to_point_3;
+  typedef Convex_hull_3::internal::Forward_functor<
+            typename Base_traits::Coplanar_orientation_3, PointPropertyMap>    Coplanar_orientation_3;
+  typedef Convex_hull_3::internal::Forward_functor<
+            typename Base_traits::Orientation_3, PointPropertyMap>             Orientation_3;
 
   class Less_signed_distance_to_plane_3
     : public Base_traits::Less_signed_distance_to_plane_3
@@ -123,6 +127,10 @@ public:
   { return Less_distance_to_point_3(vpm_, static_cast<const Base_traits*>(this)->less_distance_to_point_3_object()); }
   Less_signed_distance_to_plane_3 less_signed_distance_to_plane_3_object() const
   { return Less_signed_distance_to_plane_3(vpm_, static_cast<const Base_traits*>(this)->less_signed_distance_to_plane_3_object()); }
+  Coplanar_orientation_3 coplanar_orientation_3_object() const
+  { return Coplanar_orientation_3(vpm_, static_cast<const Base_traits*>(this)->coplanar_orientation_3_object()); }
+  Orientation_3 orientation_3_object() const
+  { return Orientation_3(vpm_, static_cast<const Base_traits*>(this)->orientation_3_object()); }
 
   class Construct_plane_3
     : public Base_traits::Construct_plane_3

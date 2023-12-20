@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
@@ -42,15 +42,17 @@ int main() {
     in.push_back(K::Plane_3(-get <0> (p), -get <1> (p), -get <2> (p), -R));
 
   {
-  CGAL::Polyhedron_3 <K> hull;
+  // TODO check with EPICK
+  CGAL::Surface_mesh <K::Point_3> hull;
   CGAL::halfspace_intersection_3(in.begin(), in.end(), hull, CGAL::ORIGIN);
   assert(PMP::triangulate_faces(hull));
   assert(!PMP::does_self_intersect(hull));
   }
   {
-  //CGAL::Polyhedron_3 <K> hull;
-  //CGAL::halfspace_intersection_with_constructions_3(in.begin(), in.end(), hull, CGAL::ORIGIN);
-  //assert(PMP::triangulate_faces(hull));
-  //assert(!PMP::does_self_intersect(hull));
+  CGAL::Surface_mesh <K::Point_3> hull;
+  CGAL::halfspace_intersection_with_constructions_3(in.begin(), in.end(), hull, CGAL::ORIGIN);
+  std::ofstream("/tmp/hull.off") << std::setprecision(17) << hull;
+  assert(PMP::triangulate_faces(hull));
+  assert(!PMP::does_self_intersect(hull));
   }
 }

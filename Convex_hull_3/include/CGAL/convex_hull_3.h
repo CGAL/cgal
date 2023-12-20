@@ -117,6 +117,13 @@ template <class OutputIterator>
 void clear(Convex_hull_3::internal::Output_iterator_wrapper<OutputIterator>&)
 {}
 
+namespace Euler
+{
+template <class HD, class OutputIterator>
+void join_face(HD,Convex_hull_3::internal::Output_iterator_wrapper<OutputIterator>&)
+{}
+} // namespace Euler
+
 template <class Point, class OutputIterator>
 void make_tetrahedron(const Point& p0, const Point& p1, const Point& p2, const Point& p3,
                       Convex_hull_3::internal::Output_iterator_wrapper<OutputIterator>& w)
@@ -489,69 +496,121 @@ find_visible_set(TDS_2& tds,
                  typename TDS_2::Face_handle start,
                  std::list<typename TDS_2::Face_handle>& visible,
                  std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge>& outside,
+                 std::vector<typename TDS_2::Vertex_handle>& coplanar_vertices,
                  const Traits& traits)
 {
-   typedef typename TDS_2::Face_handle Face_handle;
-   typedef typename TDS_2::Vertex_handle Vertex_handle;
+  typedef typename TDS_2::Face_handle Face_handle;
+  typedef typename TDS_2::Vertex_handle Vertex_handle;
+  typename Traits::Orientation_3 orientation = traits.orientation_3_object();
+  typename Traits::Collinear_3 collinear = traits.collinear_3_object();
+  typename Traits::Coplanar_orientation_3 coplanar_orientation = traits.coplanar_orientation_3_object();
 
-   std::vector<Vertex_handle> vertices;
-   vertices.reserve(10);
-   int VISITED=1, BORDER=2;
-   visible.clear();
-   typename std::list<Face_handle>::iterator  vis_it;
-   visible.push_back(start);
-   start->info() = VISITED;
-   vertices.push_back(start->vertex(0));
-   vertices.push_back(start->vertex(1));
-   vertices.push_back(start->vertex(2));
-   start->vertex(0)->info() = start->vertex(1)->info() = start->vertex(2)->info() = VISITED;
+  std::vector<Vertex_handle> vertices;
+  vertices.reserve(10);
+  int VISITED=1, BORDER=2;
+  visible.clear();
+  visible.push_back(start);
+  start->info() = VISITED;
+  vertices.push_back(start->vertex(0));
+  vertices.push_back(start->vertex(1));
+  vertices.push_back(start->vertex(2));
 
-   for (vis_it = visible.begin(); vis_it != visible.end(); vis_it++)
-   {
-      // check all the neighbors of the current face to see if they have
-      // already been visited or not and if not whether they are visible
-      // or not.
+#ifdef CGAL_DEBUG_CH3
+  std::cout << "furthest " << point << "\n";
+  std::cout << "furthest v0 " << start->vertex(0)->point() << "\n";
+  std::cout << "furthest v1 " << start->vertex(1)->point() << "\n";
+  std::cout << "furthest v2 " << start->vertex(2)->point() << "\n";
+#endif
 
-      for(int i=0; i < 3; i++) {
-        // the facet on the other side of the current halfedge
-        Face_handle f = (*vis_it)->neighbor(i);
-        // if haven't already seen this facet
-        if (f->info() == 0) {
-          f->info() = VISITED;
-          // SL: here we can detect faces that are coplanar with point
-          Is_on_positive_side_of_plane_3<Traits> is_on_positive_side(
-            traits,f->vertex(0)->point(),f->vertex(2)->point(),f->vertex(1)->point());
-          int ind = f->index(*vis_it);
-          if ( !is_on_positive_side(point) ){  // is visible
-            visible.push_back(f);
-            Vertex_handle vh = f->vertex(ind);
-            if(vh->info() == 0){ vertices.push_back(vh); vh->info() = VISITED;}
-          } else {
-            f->info() = BORDER;
-            f->vertex(TDS_2::cw(ind))->info() = BORDER;
-            f->vertex(TDS_2::ccw(ind))->info() = BORDER;
-            outside.insert(std::make_pair(f->vertex(TDS_2::cw(ind)),
-                                          typename TDS_2::Edge(f,ind)));
+  // TODO this is an extra test that should be avoided
+  // TODO check start cannot be coplanar with point
+  start->vertex(0)->info() = start->vertex(1)->info() = start->vertex(2)->info() = VISITED;
+
+  for (auto fit = visible.begin(); fit!=visible.end(); ++fit)
+  {
+#ifdef CGAL_DEBUG_CH3
+    std::cout << "Main loop\n";
+#endif
+    // check all the neighbors of the current face to see if they have
+    // already been visited or not and if not whether they are visible
+    // or not.
+    for(int i=0; i < 3; i++)
+    {
+#ifdef CGAL_DEBUG_CH3
+      std::cout << "  i=" << i << "\n";
+#endif
+      // the facet on the other side of the current halfedge
+      Face_handle f = (*fit)->neighbor(i);
+      // if haven't already seen this facet
+      if (f->info() == 0)
+      {
+        f->info() = VISITED;
+        auto res = orientation(f->vertex(0)->point(),f->vertex(2)->point(),f->vertex(1)->point(), point);
+#ifdef CGAL_DEBUG_CH3
+        std::cout << "  Looking at " << f->vertex(0)->point() << "\n"
+                  << "             " << f->vertex(2)->point() << "\n"
+                  << "             " << f->vertex(1)->point() << "\n";
+        if (res==ON_ORIENTED_BOUNDARY) std::cout << "  ON_ORIENTED_BOUNDARY\n";
+        if (res==ON_POSITIVE_SIDE) std::cout << "  ON_POSITIVE_SIDE\n";
+        if (res==ON_NEGATIVE_SIDE) std::cout << "  ON_NEGATIVE_SIDE\n";
+#endif
+
+        Is_on_positive_side_of_plane_3<Traits> is_on_positive_side(
+          traits,f->vertex(0)->point(),f->vertex(2)->point(),f->vertex(1)->point());
+
+        assert((res==ON_POSITIVE_SIDE) == is_on_positive_side(point));
+
+        int ind = f->index(*fit);
+        if ( !(res==ON_POSITIVE_SIDE) ){  // is visible
+
+          if (res==ON_ORIENTED_BOUNDARY)
+          {
+            if ( !collinear(point, tds.mirror_vertex(*fit, i)->point(), (*fit)->vertex((i+1)%3)->point()) &&
+                 coplanar_orientation(point, tds.mirror_vertex(*fit, i)->point(),
+                                      (*fit)->vertex((i+1)%3)->point(), (*fit)->vertex((i+2)%3)->point() ) == NEGATIVE )
+            {
+              coplanar_vertices.push_back(tds.mirror_vertex(*fit, i));
+            }
           }
-        } else if(f->info() == BORDER) {
-          int ind = f->index(*vis_it);
+
+          visible.push_back(f);
+          Vertex_handle vh = f->vertex(ind);
+          if(vh->info() == 0){ vertices.push_back(vh); vh->info() = VISITED; }
+        } else {
+          f->info() = BORDER;
           f->vertex(TDS_2::cw(ind))->info() = BORDER;
           f->vertex(TDS_2::ccw(ind))->info() = BORDER;
           outside.insert(std::make_pair(f->vertex(TDS_2::cw(ind)),
                                         typename TDS_2::Edge(f,ind)));
         }
+      } else if(f->info() == BORDER) {
+        int ind = f->index(*fit);
+        f->vertex(TDS_2::cw(ind))->info() = BORDER;
+        f->vertex(TDS_2::ccw(ind))->info() = BORDER;
+        outside.insert(std::make_pair(f->vertex(TDS_2::cw(ind)),
+                                      typename TDS_2::Edge(f,ind)));
       }
-   }
+    }
+  }
 
-   for(typename std::vector<Vertex_handle>::iterator vit =  vertices.begin();
-       vit != vertices.end();
-       ++vit){
-     if((*vit)->info() != BORDER){
-       tds.delete_vertex(*vit);
-     } else {
-       (*vit)->info() = 0;
-     }
-   }
+  if (!coplanar_vertices.empty())
+  {
+    std::vector<Vertex_handle> tmp;
+    for (Vertex_handle vh : coplanar_vertices)
+      if (vh->info()==BORDER)
+        tmp.push_back(vh);
+    tmp.swap(coplanar_vertices);
+  }
+
+  for(typename std::vector<Vertex_handle>::iterator vit =  vertices.begin();
+     vit != vertices.end();
+     ++vit){
+    if((*vit)->info() != BORDER){
+     tds.delete_vertex(*vit);
+    } else {
+     (*vit)->info() = 0;
+    }
+  }
 
 }
 
@@ -653,7 +712,8 @@ ch_quickhull_3_scan(TDS_2& tds,
      Outside_set_iterator farthest_pt_it = farthest_outside_point(f_handle, f_handle->points, traits);
      Point_3 farthest_pt = *farthest_pt_it;
      f_handle->points.erase(farthest_pt_it);
-     find_visible_set(tds, farthest_pt, f_handle, visible_set, border, traits);
+     std::vector<Vertex_handle> coplanar_vertices;
+     find_visible_set(tds, farthest_pt, f_handle, visible_set, border, coplanar_vertices, traits);
 
      // for each visible facet
      for (vis_set_it = visible_set.begin(); vis_set_it != visible_set.end();
@@ -701,12 +761,65 @@ ch_quickhull_3_scan(TDS_2& tds,
          visible_set.pop_back();
        }
      }
+
+     for (Face_handle f : visible_set)
+       f->reset_info();
+
      Vertex_handle vh = tds.star_hole(edges.begin(), edges.end(), visible_set.begin(), visible_set.end());
      vh->point() = farthest_pt;
 
-     // now partition the set of outside set points among the new facets.
+     if (!coplanar_vertices.empty())
+     {
+       std::sort(coplanar_vertices.begin(), coplanar_vertices.end());
+       auto ecirc = tds.incident_edges(vh), start=ecirc;
+       do{
+         typename TDS_2::Face_handle f=ecirc->first;
+         int i = ecirc->second;
+         int j = f->vertex((i+1)%3)==vh?(i+2)%3:(i+1)%3;
+         if (std::find(coplanar_vertices.begin(), coplanar_vertices.end(), f->vertex(j))!=coplanar_vertices.end())
+         {
+           f->edge_is_coplanar[i]=true; // we put it only in one face, this is enough to report it
+         }
+       }while(++ecirc!=start);
+     }
 
-     partition_outside_sets(visible_set, vis_outside_set,
+
+#ifdef CGAL_DEBUG_CH3
+  {
+    static int i=0;
+
+    std::cout << "======================dumping current out to " << "/tmp/hi_"+std::to_string(i)+".off" << "==============================\n";
+
+    CGAL::Surface_mesh<typename Traits::Point_3> sm;
+#if 0
+    copy_face_graph(tds, sm);
+#else
+    using halfedge_descriptor = typename CGAL::Surface_mesh<typename Traits::Point_3>::Halfedge_index;
+    std::vector<halfedge_descriptor> coplanar_edges;
+    auto collect_coplanar_edges = [&coplanar_edges](const std::pair<typename TDS_2::Edge,
+                                                    halfedge_descriptor>& p)
+    {
+      if (p.first.first->edge_is_coplanar[p.first.second])
+        coplanar_edges.push_back(p.second);
+    };
+
+
+    auto out = boost::make_function_output_iterator(collect_coplanar_edges);
+    copy_face_graph(tds, sm, CGAL::parameters::halfedge_to_halfedge_output_iterator(out));
+
+    std::cout << "dump data: coplanar_edges.size()=" << coplanar_edges.size() << "\n";
+
+    for (halfedge_descriptor h : coplanar_edges)
+      CGAL::Euler::join_face(h, sm);
+#endif
+    std::ofstream("/tmp/hi_"+std::to_string(i)+".off") << sm;
+    ++i;
+  }
+#endif
+
+    // now partition the set of outside set points among the new facets.
+
+    partition_outside_sets(visible_set, vis_outside_set,
                             pending_facets, traits);
 
   }
@@ -841,7 +954,21 @@ ch_quickhull_face_graph(std::list<typename Traits::Point_3>& points,
     points.erase(max_it);
     if (!points.empty()){
       non_coplanar_quickhull_3(points, tds, traits);
-      copy_face_graph(tds,P);
+
+      using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+      std::vector<halfedge_descriptor> coplanar_edges;
+
+      auto collect_coplanar_edges = [&coplanar_edges](const std::pair<typename Tds::Edge,
+                                                      halfedge_descriptor>& p)
+      {
+        if (p.first.first->edge_is_coplanar[p.first.second])
+          coplanar_edges.push_back(p.second);
+      };
+
+      auto out = boost::make_function_output_iterator(collect_coplanar_edges);
+      copy_face_graph(tds, P, CGAL::parameters::halfedge_to_halfedge_output_iterator(out));
+      for (halfedge_descriptor h : coplanar_edges)
+        CGAL::Euler::join_face(h, P);
     }
     else{
       CGAL_assertion( traits.has_on_positive_side_3_object()(

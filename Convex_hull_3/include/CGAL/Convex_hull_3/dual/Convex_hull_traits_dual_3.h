@@ -108,6 +108,7 @@ namespace CGAL
           typedef Collinear_3_dual_point<R>                 Collinear_3;
           typedef Coplanar_3_dual_point<R>                  Coplanar_3;
           typedef Has_on_positive_side_3_dual_point<R>      Has_on_positive_side_3;
+          typedef Orientation_3_dual_point<R>               Orientation_3;
           typedef Less_distance_to_point_3_dual_point<R>    Less_distance_to_point_3;
           typedef Less_signed_distance_to_plane_3_dual_point<R> Less_signed_distance_to_plane_3;
 
@@ -138,6 +139,10 @@ namespace CGAL
           Has_on_positive_side_3
               has_on_positive_side_3_object() const
               { return Has_on_positive_side_3(origin); }
+
+          Orientation_3
+              orientation_3_object() const
+              { return Orientation_3(origin); }
 
           Equal_3
               equal_3_object() const

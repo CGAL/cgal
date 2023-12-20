@@ -55,6 +55,11 @@ namespace CGAL
 
         for(face_descriptor fd : faces( primal)){
           halfedge_descriptor h = halfedge(fd,primal);
+
+          assert(!collinear(get(vpm_primal, target(h, primal)),
+                     get(vpm_primal, target(next(h, primal), primal)),
+                     get(vpm_primal, target(next(next(h, primal), primal), primal))));
+
           Plane_3 p (get(vpm_primal, target(h, primal)),
                      get(vpm_primal, target(next(h, primal), primal)),
                      get(vpm_primal, target(next(next(h, primal), primal), primal)));
@@ -123,7 +128,27 @@ namespace CGAL
           }
 
           Polyhedron ch;
+          std::ofstream debug("/tmp/dual.xyz");
+          debug << std::setprecision(17);
+          for (auto p : dual_points)
+            debug << p << "\n";
+          debug.close();
           CGAL::convex_hull_3(dual_points.begin(), dual_points.end(), ch, ch_traits);
+
+          std::ofstream("/tmp/dual.off") << std::setprecision(17) << ch;
+
+//DEBUG
+          for (auto ed : edges(ch))
+          {
+            auto h = halfedge(ed, ch);
+            std::vector<typename Traits::Point_3> pts;
+            pts.push_back(ch.point(source(ed, ch)));
+            pts.push_back(ch.point(target(ed, ch)));
+            pts.push_back(ch.point(target(next(h, ch), ch)));
+            pts.push_back(ch.point(target(next(opposite(h, ch), ch), ch)));
+            assert( orientation(pts[0], pts[1], pts[2], pts[3]) != ON_ORIENTED_BOUNDARY );
+          }
+//
 
           Convex_hull_3::internal::build_dual_polyhedron (ch, P, p_origin);
         }
