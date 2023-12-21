@@ -36,7 +36,7 @@ namespace Tetrahedral_remeshing
 {
 namespace internal
 {
-template<typename C3t3>
+template<typename C3t3, typename SizingFunction>
 class Tetrahedral_remeshing_smoother
 {
   typedef typename C3t3::Triangulation       Tr;
@@ -55,8 +55,13 @@ private:
   std::vector<FMLS> subdomain_FMLS;
   std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
   bool m_smooth_constrained_edges;
+  const SizingFunction& m_sizing;
 
 public:
+  Tetrahedral_remeshing_smoother(const SizingFunction& sizing)
+    : m_sizing(sizing)
+  {}
+
   template<typename CellSelector>
   void init(const C3t3& c3t3,
             const CellSelector& cell_selector,
@@ -412,7 +417,6 @@ private:
     }
   }
 
-  template<typename Tr>
   auto vertex_id_map(const Tr& tr)
   {
     using Vertex_handle = typename Tr::Vertex_handle;
@@ -423,6 +427,23 @@ private:
       vertex_id[v] = id++;
     }
     return vertex_id;
+  }
+
+  std::pair<FT, FT> length_and_mass_along_segment(const Edge& e, const Tr& tr) const
+  {
+    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+
+    const std::array<Vertex_handle, 2> vs = tr.vertices(e);
+
+    const FT len = CGAL::approximate_sqrt(squared_edge_length(e, tr));
+
+    const int dim = 1;//todo
+    const typename C3t3::Index index = 0;//todo
+
+    const FT s = m_sizing(CGAL::midpoint(cp(vs[0]->point()), cp(vs[1]->point())), dim, index);
+    const FT density = 1. / (s * s * s);
+
+    return std::make_pair(len, len* density);
   }
 
   template<typename VertexIdMap,
@@ -648,6 +669,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
   const std::size_t nbv = tr.number_of_vertices();
   std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
   std::vector<int> neighbors(nbv, 0);/*for dim 3 vertices, start counting directly from 0*/
+  std::vector<FT> masses(nbv, 0.);
 
   for (const Edge& e : tr.finite_edges())
   {
@@ -659,17 +681,22 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
       const std::size_t& i0 = vertex_id.at(vh0);
       const std::size_t& i1 = vertex_id.at(vh1);
 
+      const auto len_mass = length_and_mass_along_segment(e, tr);
+      const auto mass = len_mass.second;
+
       if (c3t3.in_dimension(vh0) == 3)
       {
         const Point_3& p1 = point(vh1->point());
-        smoothed_positions[i0] = smoothed_positions[i0] + Vector_3(CGAL::ORIGIN, p1);
+        smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(CGAL::ORIGIN, p1);
         neighbors[i0]++;
+        masses[i0] += mass;
       }
       if (c3t3.in_dimension(vh1) == 3)
       {
         const Point_3& p0 = point(vh0->point());
-        smoothed_positions[i1] = smoothed_positions[i1] + Vector_3(CGAL::ORIGIN, p0);
+        smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(CGAL::ORIGIN, p0);
         neighbors[i1]++;
+        masses[i1] += mass;
       }
     }
   }
@@ -685,7 +712,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       os_vol << "2 " << point(v->point());
 #endif
-      const Vector_3 p = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
+      const Vector_3 p = smoothed_positions[vid] / masses[vid];// static_cast<FT>(neighbors[vid]);
       typename Tr::Point new_pos(p.x(), p.y(), p.z());
       if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
         nb_done_3d++;

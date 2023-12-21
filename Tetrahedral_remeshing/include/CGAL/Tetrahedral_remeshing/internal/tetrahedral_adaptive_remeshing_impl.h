@@ -97,7 +97,7 @@ class Adaptive_remesher
   typedef typename C3t3::Curve_index         Curve_index;
   typedef typename C3t3::Corner_index        Corner_index;
 
-  typedef Tetrahedral_remeshing_smoother<C3t3> Smoother;
+  typedef Tetrahedral_remeshing_smoother<C3t3, SizingFunction> Smoother;
 
 private:
   C3t3 m_c3t3;
@@ -125,6 +125,7 @@ public:
     , m_protect_boundaries(protect_boundaries)
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
+    , m_vertex_smoother(sizing)
     , m_c3t3_pbackup(NULL)
     , m_tr_pbackup(&tr)
   {
@@ -154,6 +155,7 @@ public:
     , m_protect_boundaries(protect_boundaries)
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
+    , m_vertex_smoother(sizing)
     , m_c3t3_pbackup(&c3t3)
     , m_tr_pbackup(NULL)
   {
