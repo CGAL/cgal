@@ -170,34 +170,38 @@ public:
   // of p and store the resulting position in q and normal in n.
   void fastProjectionCPU(const Vector_3& p, Vector_3& q, Vector_3& n) const
   {
+    using Point_3 = typename Gt::Point_3;
+
     double sigma_s = PNScale * MLSRadius;
     double sigma_r = bilateralRange;
 
-    const Vector_3 g = (p - Vector_3(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2])) / sigma_s;
+    const Point_3 gMinMax(grid.getMinMax()[0], grid.getMinMax()[1], grid.getMinMax()[2]);
+    const Point_3 pp(p[0], p[1], p[2]);
+    Vector_3 gv(gMinMax, pp);
+    gv = gv / sigma_s;
 
-    std::array<std::size_t, 3> gxyz;
+    std::array<typename Gt::FT, 3> g{ gv.x(), gv.y(), gv.z() };
     for (int j = 0; j < 3; ++j)
     {
-      if (g[j] < 0.)
-        gxyz[j] = 0;
-      if (g[j] >= grid.getRes()[j])
-        gxyz[j] = grid.getRes()[j] - 1;
-      else
-        gxyz[j] = static_cast<std::size_t>(std::floor(g[j]));
+      g[j] = std::floor(g[j]);
+      if (g[j] < 0.f)
+        g[j] = 0.f;
+      else if (g[j] >= grid.getRes()[j])
+        g[j] = grid.getRes()[j] - 1;
     }
 
     std::array<std::size_t, 3> minIt;
     std::array<std::size_t, 3> maxIt;
     for (std::size_t j = 0; j < 3; ++j)
     {
-      if (gxyz[j] == 0)
+      if (g[j] == 0)
         minIt[j] = 0;
       else
-        minIt[j] = gxyz[j] - 1;
-      if (gxyz[j] == grid.getRes()[j] - 1)
+        minIt[j] = g[j] - 1;
+      if (g[j] == grid.getRes()[j] - 1)
         maxIt[j] = (grid.getRes()[j] - 1);
       else
-        maxIt[j] = gxyz[j] + 1;
+        maxIt[j] = g[j] + 1;
     }
     Vector_3 c = CGAL::NULL_VECTOR;
     double sumW = 0.f;
