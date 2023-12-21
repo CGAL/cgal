@@ -82,13 +82,13 @@ void update_c3t3_facets(C3t3& c3t3,
   }
 }
 
-template<typename C3t3, typename IncCellsVectorMap, typename Cell_selector>
+template<typename C3t3, typename IncCellsVectorMap, typename CellSelector>
 Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
                                   C3t3& c3t3,
                                   const std::vector<typename C3t3::Vertex_handle>& vertices_around_edge,
                                   const Flip_Criterion& criterion,
                                   IncCellsVectorMap& inc_cells,
-                                  Cell_selector& cell_selector)
+                                  CellSelector& cell_selector)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Facet         Facet;
@@ -701,13 +701,13 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
 
 template<typename C3t3,
          typename IncCellsVectorMap,
-         typename Cell_selector,
+         typename CellSelector,
          typename Visitor>
 Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                   typename C3t3::Edge& edge,
                                   typename C3t3::Vertex_handle vh,
                                   IncCellsVectorMap& inc_cells,
-                                  Cell_selector& cell_selector,
+                                  CellSelector& cell_selector,
                                   Visitor& visitor,
                                   bool check_validity = false)
 {
@@ -874,10 +874,16 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   for (const Facet& f : facets_in_complex)
     c3t3.remove_from_complex(f);
 
-  //Subdomain index?
+  //Subdomain index
   typedef typename C3t3::Subdomain_index Subdomain_index;
+  const Subdomain_index subdomain = to_remove[0]->subdomain_index();
   bool selected = get(cell_selector, to_remove[0]);
   visitor.before_flip(to_remove[0]);
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+  for (auto ci : to_remove)
+    CGAL_assertion(subdomain == ci->subdomain_index());
+#endif
 
   std::vector<Cell_handle> cells_to_update;
 
@@ -1086,12 +1092,12 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
   return result;
 }
 
-template<typename C3t3, typename IncCellsVectorMap, typename Cell_selector, typename Visitor>
+template<typename C3t3, typename IncCellsVectorMap, typename CellSelector, typename Visitor>
 Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
                                      C3t3& c3t3,
                                      const Flip_Criterion& criterion,
                                      IncCellsVectorMap& inc_cells,
-                                     Cell_selector& cell_selector,
+                                     CellSelector& cell_selector,
                                      Visitor& visitor)
 {
   typedef typename C3t3::Triangulation        Tr;
@@ -1175,11 +1181,11 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
 }
 
 
-template<typename VertexPair, typename C3t3, typename Cell_selector, typename Visitor>
+template<typename VertexPair, typename C3t3, typename CellSelector, typename Visitor>
 std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
                            C3t3& c3t3,
                            const Flip_Criterion& criterion,
-                           Cell_selector& cell_selector,
+                           CellSelector& cell_selector,
                            Visitor& visitor)
 {
   typedef typename C3t3::Triangulation Tr;
@@ -1378,13 +1384,15 @@ Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
 
 //v0i and v1i are the vertices opposite to `edge`
 //on facets of the surface
-template<typename C3T3, typename IncCellsVectorMap, typename Visitor>
+template<typename C3T3, typename IncCellsVectorMap,
+         typename CellSelector, typename Visitor>
 Sliver_removal_result flip_on_surface(C3T3& c3t3,
                                       typename C3T3::Edge& edge,
                                       typename C3T3::Vertex_handle v0i,
                                       typename C3T3::Vertex_handle v1i,
                                       IncCellsVectorMap& inc_cells,
                                       Flip_Criterion flip_criterion,
+                                      CellSelector& cell_selector,
                                       Visitor& visitor)
 {
   typedef typename C3T3::Triangulation Tr;
@@ -1422,6 +1430,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
         return flip_n_to_m(edge, c3t3, boundary_vertices,
                            flip_criterion,
                            inc_cells,
+                           cell_selector,
                            visitor);
 //      }
     }
@@ -1431,10 +1440,10 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 
 //  nb_surface_44_configs++;
 
-  if(inc_cells[edge.first->vertex(edge.second)] != boost::none)
-    inc_cells[edge.first->vertex(edge.second)].get().clear();
-  if (inc_cells[edge.first->vertex(edge.third)] != boost::none)
-    inc_cells[edge.first->vertex(edge.third)].get().clear();
+  if(inc_cells[edge.first->vertex(edge.second)] != std::nullopt)
+    inc_cells[edge.first->vertex(edge.second)].value().clear();
+  if (inc_cells[edge.first->vertex(edge.third)] != std::nullopt)
+    inc_cells[edge.first->vertex(edge.third)].value().clear();
 
   Cell_handle ch0, ch1, ch2, ch3;
   ch0 = cells_around_edge[0];
@@ -1905,7 +1914,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
   return NOT_FLIPPABLE;
 }
 
-template<typename C3T3, typename SurfaceIndexMapMap, typename Flip_Criterion, typename Visitor>
+template<typename C3T3, typename SurfaceIndexMapMap, typename Flip_Criterion,
+         typename CellSelector, typename Visitor>
 std::size_t flipBoundaryEdges(
   C3T3& c3t3,
   std::vector<typename C3T3::Edge>& boundary_edges,
@@ -1913,6 +1923,7 @@ std::size_t flipBoundaryEdges(
   boost::unordered_map<typename C3T3::Vertex_handle,
                        std::unordered_set<typename C3T3::Subdomain_index> >&  vertices_subdomain_indices,
   Flip_Criterion flip_criterion,
+  CellSelector& cell_selector,
   Visitor& visitor)
 {
   typedef typename C3T3::Vertex_handle Vertex_handle;
@@ -1944,7 +1955,7 @@ std::size_t flipBoundaryEdges(
   }
 
   std::unordered_map<Vertex_handle,
-    boost::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
+    std::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
 
   for (std::size_t ii = 0; ii < candidate_edges_for_flip.size(); ++ii)
   {
@@ -1955,9 +1966,9 @@ std::size_t flipBoundaryEdges(
     const typename C3T3::Triangulation::Point p0 = vh0->point();
     const typename C3T3::Triangulation::Point p1 = vh1->point();
 
-    boost::optional<boost::container::small_vector<Cell_handle, 64>>&
+    std::optional<boost::container::small_vector<Cell_handle, 64>>&
       o_inc_vh = inc_cells[vp.first];
-    if (o_inc_vh == boost::none || o_inc_vh.get().empty())
+    if (o_inc_vh == std::nullopt || o_inc_vh.value().empty())
     {
       boost::container::small_vector<Cell_handle, 64> inc_vec;
       tr.incident_cells(vp.first, std::back_inserter(inc_vec));
@@ -1966,7 +1977,7 @@ std::size_t flipBoundaryEdges(
 
     Cell_handle c;
     int i, j;
-    if (!is_edge_uv(vp.first, vp.second, boost::get(o_inc_vh), c, i, j))
+    if (!is_edge_uv(vp.first, vp.second, o_inc_vh.value(), c, i, j))
       continue;
 
     std::vector<Facet> boundary_facets;
@@ -2058,6 +2069,7 @@ std::size_t flipBoundaryEdges(
           Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
                                                      inc_cells,
                                                      flip_criterion,
+                                                     cell_selector,
                                                      visitor);
           if (db == VALID_FLIP)
           {
@@ -2130,15 +2142,15 @@ void flip_edges(C3T3& c3t3,
                      cell_selector,
                      std::back_inserter(inside_edges));
 
-  //if (criterion == VALENCE_BASED)
-  //  flip_inside_edges(inside_edges);
-  //else
-  //{
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  nb_flips +=
-#endif
-    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, visitor);
-  //}
+//  //if (criterion == VALENCE_BASED)
+//  //  flip_inside_edges(inside_edges);
+//  //else
+//  //{
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//  nb_flips +=
+//#endif
+//    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, visitor);
+//  //}
 
   if (!protect_boundaries)
   {
@@ -2167,7 +2179,8 @@ void flip_edges(C3T3& c3t3,
     nb_flips +=
 #endif
       flipBoundaryEdges(c3t3, boundary_edges, boundary_vertices_valences,
-                        vertices_subdomain_indices, MIN_ANGLE_BASED, visitor);
+                        vertices_subdomain_indices, MIN_ANGLE_BASED,
+                        cell_selector, visitor);
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
