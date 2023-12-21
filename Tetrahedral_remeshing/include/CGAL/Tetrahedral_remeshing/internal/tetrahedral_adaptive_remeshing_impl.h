@@ -481,7 +481,7 @@ private:
         continue;
       }
 
-      if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e))
+      if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair(e))
           || nb_incident_subdomains(e, m_c3t3) > 2
           || nb_incident_surface_patches(e, m_c3t3) > 1)
       {

@@ -418,14 +418,10 @@ std::pair<Vh, Vh> make_vertex_pair(const Vh v1, const Vh v2)
   else         return std::make_pair(v1, v2);
 }
 
-template<typename Tr>
-std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle>
-make_vertex_pair(const typename Tr::Edge& e)
+template<typename Edge>
+auto make_vertex_pair(const Edge& e)
 {
-  typedef typename Tr::Vertex_handle Vertex_handle;
-  Vertex_handle v1 = e.first->vertex(e.second);
-  Vertex_handle v2 = e.first->vertex(e.third);
-  return make_vertex_pair(v1, v2);
+  return make_vertex_pair(e.first->vertex(e.second), e.first->vertex(e.third));
 }
 
 template<typename Vh>
@@ -962,7 +958,7 @@ OutputIterator get_internal_edges(const C3t3& c3t3,
     const typename C3t3::Edge& e = *eit;
     if (is_internal(e, c3t3, cell_selector))
     {
-      *oit++ = make_vertex_pair<typename C3t3::Triangulation>(e);
+      *oit++ = make_vertex_pair(e);
     }
   }
   return oit;

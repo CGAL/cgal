@@ -880,11 +880,6 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   bool selected = get(cell_selector, to_remove[0]);
   visitor.before_flip(to_remove[0]);
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-  for (auto ci : to_remove)
-    CGAL_assertion(subdomain == ci->subdomain_index());
-#endif
-
   std::vector<Cell_handle> cells_to_update;
 
   //Create new cells
@@ -1941,43 +1936,37 @@ std::size_t flipBoundaryEdges(
 
   std::vector<Edge_vv> candidate_edges_for_flip;
 
-  for (std::size_t i = 0; i < boundary_edges.size(); i++)
+  for (const Edge& e : boundary_edges)
   {
-    const Edge& e = boundary_edges[i];
     if (c3t3.is_in_complex(e))
       continue;
     else
-    {
-      const Vertex_handle& vh0 = e.first->vertex(e.second);
-      const Vertex_handle& vh1 = e.first->vertex(e.third);
-      candidate_edges_for_flip.push_back(std::make_pair(vh0, vh1));
-    }
+      candidate_edges_for_flip.push_back(make_vertex_pair(e));
   }
 
   std::unordered_map<Vertex_handle,
     std::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
 
-  for (std::size_t ii = 0; ii < candidate_edges_for_flip.size(); ++ii)
+  for (const std::pair<Vertex_handle, Vertex_handle>& vp : candidate_edges_for_flip)
   {
-    const std::pair<Vertex_handle, Vertex_handle>& vp = candidate_edges_for_flip[ii];
-    const Vertex_handle& vh0 = vp.first;
-    const Vertex_handle& vh1 = vp.second;
+    const Vertex_handle vh0 = vp.first;
+    const Vertex_handle vh1 = vp.second;
 
-    const typename C3T3::Triangulation::Point p0 = vh0->point();
-    const typename C3T3::Triangulation::Point p1 = vh1->point();
+    const typename C3T3::Triangulation::Point& p0 = vh0->point();
+    const typename C3T3::Triangulation::Point& p1 = vh1->point();
 
     std::optional<boost::container::small_vector<Cell_handle, 64>>&
-      o_inc_vh = inc_cells[vp.first];
+      o_inc_vh = inc_cells[vh0];
     if (o_inc_vh == std::nullopt || o_inc_vh.value().empty())
     {
       boost::container::small_vector<Cell_handle, 64> inc_vec;
-      tr.incident_cells(vp.first, std::back_inserter(inc_vec));
+      tr.incident_cells(vh0, std::back_inserter(inc_vec));
       o_inc_vh = inc_vec;
     }
 
     Cell_handle c;
     int i, j;
-    if (!is_edge_uv(vp.first, vp.second, o_inc_vh.value(), c, i, j))
+    if (!is_edge_uv(vh0, vh1, o_inc_vh.value(), c, i, j))
       continue;
 
     std::vector<Facet> boundary_facets;

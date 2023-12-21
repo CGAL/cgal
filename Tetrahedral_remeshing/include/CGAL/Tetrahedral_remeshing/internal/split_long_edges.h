@@ -273,7 +273,7 @@ void split_long_edges(C3T3& c3t3,
       = tr.geom_traits().compute_squared_length_3_object();
     FT sqlen = sql(tr.segment(e));
     if (sqlen > sq_high)
-      long_edges.insert(long_edge(make_vertex_pair<T3>(e), sqlen));
+      long_edges.insert(long_edge(make_vertex_pair(e), sqlen));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG

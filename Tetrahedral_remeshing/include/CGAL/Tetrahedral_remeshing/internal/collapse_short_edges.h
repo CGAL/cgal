@@ -1237,7 +1237,7 @@ void collapse_short_edges(C3T3& c3t3,
 
     FT sqlen = sql(tr.segment(e));
     if (sqlen < sq_low)
-      short_edges.insert(short_edge(make_vertex_pair<T3>(e), sqlen));
+      short_edges.insert(short_edge(make_vertex_pair(e), sqlen));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -1299,7 +1299,7 @@ void collapse_short_edges(C3T3& c3t3,
 
           const FT sqlen = sql(tr.segment(eshort));
           if (sqlen < sq_low)
-            short_edges.insert(short_edge(make_vertex_pair<T3>(eshort), sqlen));
+            short_edges.insert(short_edge(make_vertex_pair(eshort), sqlen));
         }
 
         //debug::dump_c3t3(c3t3, "dump_after_collapse");
