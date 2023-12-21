@@ -429,6 +429,16 @@ private:
     return vertex_id;
   }
 
+  typename C3t3::Index max_dimension_index(const std::array<Vertex_handle, 2> vs) const
+  {
+    const int dim0 = vs[0]->in_dimension();
+    const int dim1 = vs[1]->in_dimension();
+
+    if(dim0 > dim1)       return vs[0]->index();
+    else if(dim1 > dim0)  return vs[1]->index();
+    else                  return vs[0]->index(); //arbitrary choice, any of the two should be fine
+  }
+
   std::pair<FT, FT> length_and_mass_along_segment(const Edge& e, const Tr& tr) const
   {
     typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
@@ -437,13 +447,15 @@ private:
 
     const FT len = CGAL::approximate_sqrt(squared_edge_length(e, tr));
 
-    const int dim = 1;//todo
-    const typename C3t3::Index index = 0;//todo
+    const int dim = (std::max)(vs[0]->in_dimension(), vs[1]->in_dimension());
+    const typename C3t3::Index index = max_dimension_index(vs);
 
     const FT s = m_sizing(CGAL::midpoint(cp(vs[0]->point()), cp(vs[1]->point())), dim, index);
-    const FT density = 1. / (s * s * s);
+    const FT density = 1. / (s * s * s); //density = 1 / size^(dimension + 2)
+                                         //edge dimension is 1, so density = 1 / size^3
+    const FT mass = len * density;
 
-    return std::make_pair(len, len* density);
+    return std::make_pair(len, mass);
   }
 
   template<typename VertexIdMap,
@@ -467,6 +479,7 @@ private:
     const std::size_t nbv = tr.number_of_vertices();
     std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
     std::vector<int> neighbors(nbv, -1);
+    std::vector<FT> masses(nbv, 0.);
 
     //collect neighbors
     for (const Edge& e : c3t3.edges_in_complex())
@@ -477,6 +490,9 @@ private:
       const std::size_t& i0 = vertex_id.at(vh0);
       const std::size_t& i1 = vertex_id.at(vh1);
 
+      const auto len_mass = length_and_mass_along_segment(e, tr);
+      const auto mass = len_mass.second;
+
       if (!c3t3.is_in_complex(vh0))
         neighbors[i0] = (std::max)(0, neighbors[i0]);
       if (!c3t3.is_in_complex(vh1))
@@ -485,14 +501,16 @@ private:
       if (!c3t3.is_in_complex(vh0) && is_on_feature(vh1))
       {
         const Point_3& p1 = point(vh1->point());
-        smoothed_positions[i0] = smoothed_positions[i0] + Vector_3(p1.x(), p1.y(), p1.z());
+        smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(p1.x(), p1.y(), p1.z());
         neighbors[i0]++;
+        masses[i0] += mass;
       }
       if (!c3t3.is_in_complex(vh1) && is_on_feature(vh0))
       {
         const Point_3& p0 = point(vh0->point());
-        smoothed_positions[i1] = smoothed_positions[i1] + Vector_3(p0.x(), p0.y(), p0.z());
+        smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(p0.x(), p0.y(), p0.z());
         neighbors[i1]++;
+        masses[i1] += mass;
       }
     }
 
@@ -511,7 +529,7 @@ private:
       const std::size_t nb_neighbors = neighbors[vid];
 
       const Vector_3 smoothed_position = (nb_neighbors > 1)
-                                       ? smoothed_positions[vid] / static_cast<FT>(nb_neighbors)
+                                       ? smoothed_positions[vid] / static_cast<FT>(masses[vid])//nb_neighbors)
                                        : current_pos;
 
       for (const Surface_patch_index& si : v_surface_indices)
@@ -570,6 +588,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   const std::size_t nbv = tr.number_of_vertices();
   std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
   std::vector<int> neighbors(nbv, -1);
+  std::vector<FT> masses(nbv, 0.);
 
   for (const Edge& e : tr.finite_edges())
   {
@@ -578,21 +597,26 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const Vertex_handle vh0 = e.first->vertex(e.second);
       const Vertex_handle vh1 = e.first->vertex(e.third);
 
+      const auto len_mass = length_and_mass_along_segment(e, tr);
+      const auto mass = len_mass.second;
+
       if (!is_on_feature(vh0))
       {
         const Point_3& p1 = point(vh1->point());
         const std::size_t& i0 = vertex_id.at(vh0);
 
-        smoothed_positions[i0] = smoothed_positions[i0] + Vector_3(p1.x(), p1.y(), p1.z());
+        smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(p1.x(), p1.y(), p1.z());
         neighbors[i0] = (std::max)(1, neighbors[i0] + 1);
+        masses[i0] += mass;
       }
       if (!is_on_feature(vh1))
       {
         const Point_3& p0 = point(vh0->point());
         const std::size_t& i1 = vertex_id.at(vh1);
 
-        smoothed_positions[i1] = smoothed_positions[i1] + Vector_3(p0.x(), p0.y(), p0.z());
+        smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(p0.x(), p0.y(), p0.z());
         neighbors[i1] = (std::max)(1, neighbors[i1] + 1);
+        masses[i1] += mass;
       }
     }
   }
@@ -611,7 +635,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
     if (nb_neighbors > 1)
     {
-      Vector_3 smoothed_position = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
+      Vector_3 smoothed_position = smoothed_positions[vid] / static_cast<FT>(masses[vid]);// neighbors[vid]);
       Vector_3 normal_projection = project_on_tangent_plane(smoothed_position,
                                                             current_pos,
                                                             vertices_normals.at(v).at(si));
