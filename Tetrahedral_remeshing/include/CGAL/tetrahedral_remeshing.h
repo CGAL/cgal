@@ -367,7 +367,7 @@ convert_to_triangulation_3(
     for (auto e : c3t3.edges_in_complex())
     {
       const Edge_vv evv
-        = CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e);//ordered pair
+        = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);//ordered pair
       put(ecmap, evv, true);
     }
   }

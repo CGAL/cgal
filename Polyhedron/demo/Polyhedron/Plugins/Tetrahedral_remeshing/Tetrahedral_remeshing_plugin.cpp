@@ -120,7 +120,7 @@ public Q_SLOTS:
         if (c3t3_item->c3t3().is_in_complex(e)
           || CGAL::Tetrahedral_remeshing::protecting_balls_intersect(e, c3t3))
         {
-          Vertex_pair evv = CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e);
+          Vertex_pair evv = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);
           constraints.insert(evv);
         }
       }
