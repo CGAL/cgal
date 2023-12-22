@@ -460,7 +460,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     // If it's parallel but the refinement is forced to sequential, we don't
     // output the value
 #   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_time", facet_ref_time);
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_refine_time", facet_ref_time);
 #   endif
 # endif
 #endif
@@ -503,7 +503,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     // If it's parallel but the refinement is forced to sequential, we don't
     // output the value
 #   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refin_time", cell_ref_time);
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refine_time", cell_ref_time);
 #   endif
 # endif
 #endif

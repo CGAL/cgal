@@ -427,17 +427,9 @@ public: // methods
               << exudation_time << "s ====" << std::endl;
 #endif
 
-#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
-    if (ret == BOUND_REACHED)
-    {
-      CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", exudation_time);
-    }
-    else
-    {
-      CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time",
-        (ret == CANT_IMPROVE_ANYMORE ?
-        "CANT_IMPROVE_ANYMORE" : "TIME_LIMIT_REACHED"));
-    }
+#if defined(CGAL_MESH_3_EXPORT_PERFORMANCE_DATA) \
+ && defined(CGAL_MESH_3_PROFILING)
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", exudation_time);
 #endif
 
     return ret;
