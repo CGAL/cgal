@@ -1,6 +1,5 @@
 // examples/Pm_with_intersections/example4
 // ---------------------------------------
-#include <CGAL/config.h>
 #include <algorithm>
 #include <list>
 #include <iostream>
@@ -8,10 +7,12 @@
 #include <fstream>
 #include <string>
 
+#include <CGAL/config.h>
+
 #define CGAL_SEGMENT_TRAITS          1
-#define CGAL_SEGMENT_LEDA_TRAITS     2
 #define CGAL_POLYLINE_TRAITS         11
 #define CGAL_CONIC_TRAITS            21
+#define CGAL_POLYCONIC_TRAITS        22
 
 // Picking a default Traits class (this, with the
 // PL flag enables the running of the test independently of cgal_make.)
@@ -19,13 +20,12 @@
 #define CGAL_ARR_TEST_TRAITS CGAL_SEGMENT_TRAITS
 #endif
 
-// Making sure test doesn't fail if LEDA is not installed
-#if ! defined(CGAL_USE_LEDA) && \
-      (CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS || \
-       CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS )
+// Making sure test doesn't fail if CORE is not installed
+#if ! defined(CGAL_USE_CORE) && \
+  ((CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS) ||       \
+   (CGAL_ARR_TEST_TRAITS == CGAL_POLYCONIC_TRAITS))
 
-int main()
-{
+int main() {
   std::cout << "A try to run test with LEDA traits but LEDA is not installed.";
   std::cout << std::endl;
   std::cout << "Test is not performed.";
@@ -33,11 +33,12 @@ int main()
 
   return 0;
 }
-#elif ! defined(CGAL_USE_GMP) && \
-        (CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS)
 
-int main()
-{
+#elif ! defined(CGAL_USE_GMP) && \
+  ((CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS) || \
+   (CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS))
+
+int main() {
   std::cout << "A try to run test with GMP number type but GMP is not installed.";
   std::cout << std::endl;
   std::cout << "Test is not performed.";
@@ -48,252 +49,276 @@ int main()
 
 #else
 
-
-
 // Choose traits
 
 #if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS
 #include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
+#include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include<CGAL/Gmpq.h>
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-#include <CGAL/leda_rational.h>
-#include <CGAL/Pm_segment_traits_leda_kernel_2.h>
-#include <CGAL/Arr_leda_segment_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
+#include <CGAL/Gmpq.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/MP_Float.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
 #include <CGAL/Cartesian.h>
-#include <CGAL/leda_real.h>
 #include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYCONIC_TRAITS
+#include <CGAL/Cartesian.h>
+#include <CGAL/Arr_conic_traits_2.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_polycurve_traits_2.h>
 #else
 #error No traits defined for test
 #endif
 
 #include <list>
 #include <string>
+
 #include <CGAL/Surface_sweep_2_algorithms.h>
-#include "CompareCurveList.h"
 
-#if CGAL_ARR_TEST_TRAITS==CGAL_SEGMENT_TRAITS
-  typedef CGAL::Gmpq                                    NT;
-  typedef CGAL::Cartesian<NT>                           Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>            Traits;
+#include "Compare_curves.h"
 
-#elif CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_LEDA_TRAITS
-  typedef leda_rational                                 NT;
-  typedef CGAL::Pm_segment_traits_leda_kernel_2         Kernel;
-  typedef CGAL::Arr_leda_segment_traits_2<Kernel>       Traits;
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS
+typedef CGAL::Gmpq                                      NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
-  typedef CGAL::Quotient<MP_Float>                      NT;
-  typedef CGAL::Cartesian<NT>                           Kernel;
-  typedef CGAL::Arr_segment_cached_traits_2<Kernel>     Seg_traits;
-  typedef CGAL::Arr_polyline_traits_2<Seg_traits>       Traits;
+typedef CGAL::Gmpq                                      NT;
+typedef CGAL::Cartesian<NT>                             Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Seg_traits;
+typedef CGAL::Arr_polyline_traits_2<Seg_traits>         Traits;
 
 #elif CGAL_ARR_TEST_TRAITS == CGAL_CONIC_TRAITS
-typedef leda_real                                       NT;
-typedef CGAL::Cartesian<NT>                             Kernel;
-typedef CGAL::Arr_conic_traits_2<Kernel>                Traits;
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef Rat_kernel::Point_2                             Rat_point_2;
+typedef Rat_kernel::Segment_2                           Rat_segment_2;
+typedef Rat_kernel::Circle_2                            Rat_circle_2;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Traits_2;
+#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYCURVE_TRAITS
+typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
+typedef Nt_traits::Rational                             Rational;
+typedef Nt_traits::Algebraic                            Algebraic;
+typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+typedef Rat_kernel::Point_2                             Rat_point_2;
+typedef Rat_kernel::Segment_2                           Rat_segment_2;
+typedef Rat_kernel::Circle_2                            Rat_circle_2;
+typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+                                                        Conic_traits;
+typedef CGAL::Arr_polycurve_traits_2<Conic_traits>      Traits;
+
 #endif
 
-typedef Traits::Point_2                     Point_2;
-typedef Traits::X_monotone_curve_2                   X_monotone_curve_2;
+typedef Traits::Point_2                                 Point_2;
+typedef Traits::Curve_2                                 Curve_2;
+typedef Traits::X_monotone_curve_2                      X_monotone_curve_2;
 
-typedef std::list<Point_2> PointList;
-typedef PointList::iterator PointListIter;
+typedef std::list<Point_2>                              Points;
+typedef std::list<Curve_2>                              Curves;
+typedef std::list<X_monotone_curve_2>                   X_monotone_curves;
 
-typedef std::list<X_monotone_curve_2> CurveList;
-typedef CurveList::iterator CurveListIter;
+bool read_curves(std::ifstream& inp, Curves& curves, const Traits& traits);
+bool read_xcurves(std::ifstream& inp, X_monotone_curves& xcurves,
+                            const Traits& traits);
+bool read_points(std::ifstream& inp, Points& points, const Traits& traits);
+bool curves_identical(X_monotone_curves& list1, X_monotone_curves& list2);
+bool points_identical(Points& list1, Points& list2);
 
-void ReadCurveList(std::ifstream &inp, CurveList &clist);
-void ReadCurveListRational(std::ifstream &inp, CurveList &clist);
-void ReadPointList(std::ifstream &inp, PointList &plist);
-bool IsCurveListIdentical(CurveList &list1, CurveList &list2);
-bool IsPointListIdentical(PointList &list1, PointList &list2);
+// istream modifier skips chars until end of line.
+std::istream& skip_until_eol(std::istream& in) {
+  if (in.eof()) return in;
+  char c;
+  while (in.get(c) && (c != '\n'));
+  return in;
+}
 
-int main(int argc, char * argv[])
-{
+// istream modifier that checks for OFF comments and removes them.
+std::istream& skip_comment(std::istream& in) {
+  char c;
+  while ((in >> c) && (c == '#')) in >> skip_until_eol;
+  in.putback(c);
+  return in;
+}
 
-  if ( argc != 2 )
-  {
+int main(int argc, char* argv[]) {
+  if (argc != 2) {
     std::cout << "Specify a file name " << std::endl;
     return -1;
   }
 
   std::ifstream inp(argv[1]);
-  if (!inp.is_open()) {
-    std::cerr << "Cannot open file " << argv[1] << "!" << std::endl;
+  if (! inp.is_open()) {
+    std::cerr << "Error: Cannot open file " << argv[1] << "!" << std::endl;
     return -1;
   }
-
-  CurveList curves;
-  ReadCurveList(inp, curves);
 
   Traits tr;
 
-  // get subcurves w/o overlapping
-  CurveList curves_no_overlap_list_out;
-  CGAL::compute_subcurves(curves.begin(),
-                          curves.end(),
-                          std::back_inserter(curves_no_overlap_list_out));
+  Curves curves;
+  if (! read_curves(inp, curves, tr)) return -1;
+
+  // Test subcurves w/o overlapping
+  X_monotone_curves curves_no_overlap_out;
+  CGAL::compute_subcurves(curves.begin(), curves.end(),
+                          std::back_inserter(curves_no_overlap_out),
+                          false, tr);
 
 
-  // get subcurves w/ overlapping
-  CurveList curves_with_overlap_list_out;
-  CGAL::compute_subcurves(curves.begin(),
-                          curves.end(),
-                          std::back_inserter(curves_with_overlap_list_out),
-                          true);
+  X_monotone_curves curves_no_overlap;
+  if (! read_xcurves(inp, curves_no_overlap, tr)) return -1;
 
-  /*std::copy(curves_no_overlap_list_out.begin(),
-            curves_no_overlap_list_out.end(),
-            std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
-  std::cout<<"\n\n*******************\n\n";
+  if (! compare_lists(curves_no_overlap_out, curves_no_overlap, tr)) {
+    std::cerr << "Curves w/o overlapping do not match!\n";
+    for (const auto& xcv : curves_no_overlap_out) std::cerr << xcv << std::endl;
+    return -1;
+  }
 
-  std::copy(curves_with_overlap_list_out.begin(),
-            curves_with_overlap_list_out.end(),
-            std::ostream_iterator<X_monotone_curve_2>(std::cout, "\n"));
-  return 0;*/
+  // Test intersection points (with endpoints)
+  Points points_with_ends_out;
+  CGAL::compute_intersection_points(curves.begin(), curves.end(),
+                                    std::back_inserter(points_with_ends_out),
+                                    true, tr);
 
-  //std::cout << mylist1.size() << " curves\n";
+  Points points_with_ends;
+  if (! read_points(inp, points_with_ends, tr)) return -1;
 
+  if (! compare_lists(points_with_ends_out, points_with_ends, tr)) {
+    std::cerr << "Endpoints do not match!\n";
+    for (const auto& p : points_with_ends_out) std::cerr << p << std::endl;
+    return -1;
+  }
 
-  // get intersection points (with endpoints)
-  PointList points_with_ends_list_out;
-  CGAL::compute_intersection_points(curves.begin(),
-                                    curves.end(),
-                                    std::back_inserter(points_with_ends_list_out),
-                                    true);
+  // Test intersection points w/o end points
+  Points points_without_ends_out;
+  CGAL::compute_intersection_points(curves.begin(), curves.end(),
+                                    std::back_inserter(points_without_ends_out),
+                                    false, tr);
 
+  Points points_without_ends;
+  if (! read_points(inp, points_without_ends, tr)) return -1;
 
-  // get intersection points w/o end points
-  PointList points_without_ends_list_out;
-  CGAL::compute_intersection_points(curves.begin(),
-                                    curves.end(),
-                                    std::back_inserter(points_without_ends_list_out),
-                                    false);
-  std::cout << points_without_ends_list_out.size()
-            << " points_without_ends_list_out(size)\n";
+  if (! compare_lists(points_without_ends_out, points_without_ends, tr)) {
+    std::cerr << "Intersection points do not match!\n";
+    for (const auto& p : points_without_ends_out) std::cerr << p << std::endl;
+    return -1;
+  }
 
-  // check the do_curves_intersecting method
+  // Test subcurves w/ overlapping
+  X_monotone_curves curves_with_overlap_out;
+  CGAL::compute_subcurves(curves.begin(), curves.end(),
+                          std::back_inserter(curves_with_overlap_out),
+                          true, tr);
+
+  X_monotone_curves curves_with_overlap;
+  if (! read_xcurves(inp, curves_with_overlap, tr)) return -1;
+
+  if (! compare_lists(curves_with_overlap_out, curves_with_overlap, tr)) {
+    std::cerr << "Curves w/ overlapping do not match!\n";
+    for (const auto& xcv : curves_with_overlap_out)
+      std::cerr << xcv << std::endl;
+    return -1;
+  }
+
+  // Test the do_curves_intersecting method
   bool do_intersect_out =
     CGAL::do_curves_intersect(curves.begin(), curves.end());
 
-
-  // read curves and points from file
-  CurveList curves_no_overlap_list;
-  ReadCurveListRational(inp, curves_no_overlap_list);
-
-  PointList points_with_ends_list;
-  ReadPointList(inp, points_with_ends_list);
-
-  PointList points_without_ends_list;
-  ReadPointList(inp, points_without_ends_list);
-
-  int num_faces;
-  inp >> num_faces;
-
-  CurveList curves_with_overlap_list;
-  ReadCurveListRational(inp, curves_with_overlap_list);
-
-  if ( !compare_lists(curves_no_overlap_list_out,
-                      curves_no_overlap_list, tr) )
-    return -1;
-
-  if ( !compare_lists(curves_with_overlap_list_out,
-                      curves_with_overlap_list, tr) )
-    return -1;
-
-  if ( !compare_lists(points_with_ends_list_out,
-                      points_with_ends_list, tr))
-    return -1;
-
-  if ( !compare_lists(points_without_ends_list_out,
-                      points_without_ends_list, tr))
-    return -1;
-
   bool do_intersect = false;
-  if((points_without_ends_list.size() != 0) ||
-     (curves_no_overlap_list_out.size() !=
-      curves_with_overlap_list_out.size()))
+  if ((points_without_ends.size() != 0) ||
+      (curves_no_overlap_out.size() != curves_with_overlap_out.size()))
     do_intersect = true;
 
-  if (do_intersect_out != do_intersect)
+  if (do_intersect_out != do_intersect) {
+    std::cerr << "Error: do_intersect()\n";
     return -1;
+  }
 
-  std::cout<<"OK\n";
+  std::cout << "Passed\n";
   return 0;
 }
 
-void ReadCurveList(std::ifstream& inp, CurveList& clist)
-{
-  int count;
-  inp >> count;
-  //std::cout << "ReadCurveList " << count << "\n";
+#if CGAL_ARR_TEST_TRAITS == CGAL_SEGMENT_TRAITS
 
-  for (int i = 0; i < count; i++) {
+bool read_curves(std::ifstream& inp, Curves& curves, const Traits&) {
+  int count;
+  inp >> skip_comment >> count;
+  std::cout << "read_curves " << count << "\n";
+
+  for (int i = 0; i < count; ++i) {
     NT x0, y0, x1, y1;
-    int ix0, iy0, ix1, iy1;
-    inp >> ix0 >> iy0 >> ix1 >> iy1;
-    x0 = ix0; y0 = iy0; x1 = ix1; y1 = iy1;
-
+    inp >> skip_comment >> x0 >> y0 >> x1 >> y1;
     Point_2 p1(x0, y0);
     Point_2 p2(x1, y1);
-    X_monotone_curve_2 curve(p1, p2);
-    clist.push_back(curve);
-    //std::cout << curve << "\n";
-  }
-}
-
-void ReadCurveListRational(std::ifstream& inp, CurveList& clist)
-{
-  int count;
-  inp >> count;
-  std::cout << "ReadCurveListRational " << count << "\n";
-  char ch;
-
-  for (int i = 0; i < count; i++) {
-    int a, b;
-    inp >> a >> ch >> b;
-    NT x0(a,b);
-    inp >> a >> ch >> b;
-    NT y0(a,b);
-    Point_2 p1(x0, y0);
-
-    inp >> a >> ch >> b;
-    NT x1(a,b);
-    inp >> a >> ch >> b;
-    NT y1(a,b);
-    Point_2 p2(x1, y1);
-
-    X_monotone_curve_2 curve(p1, p2);
-    clist.push_back(curve);
+    Curve_2 curve(p1, p2);
+    curves.push_back(curve);
     std::cout << curve << "\n";
   }
+  return true;
 }
-void ReadPointList(std::ifstream &inp, PointList &plist)
-{
-  int count;
-  inp >> count;
-  char ch;
 
-  std::cout << "ReadPointList " << count << "\n";
-  for (int i = 0; i < count; i++) {
-    int a, b;
-    inp >> a >> ch >> b;
-    NT x0(a,b);
-    inp >> a >> ch >> b;
-    NT y0(a,b);
-    Point_2 p(x0, y0);
-    plist.push_back(p);
+bool read_xcurves(std::ifstream& inp, X_monotone_curves& xcurves,
+                  const Traits& traits)
+{ return read_curves(inp, xcurves, traits); }
+
+#elif CGAL_ARR_TEST_TRAITS == CGAL_POLYLINE_TRAITS
+
+template <typename Curves_, typename Ctr>
+bool read_curves_(std::ifstream& inp, Curves_& curves, const Traits& traits,
+                  const Ctr& ctr) {
+  int count;
+  inp >> skip_comment >> count;
+  // std::cout << "read_curves " << count << "\n";
+  for (int i = 0; i < count; ++i) {
+    Points points;
+    auto rc = read_points(inp, points, traits);
+    if (! rc) return false;
+    auto cv = ctr(points.begin(), points.end());
+    // std::cout << cv << "\n";
+    curves.push_back(cv);
   }
+  return true;
+}
+
+/*! Read curves.
+ */
+bool read_curves(std::ifstream& inp, Curves& curves, const Traits& traits) {
+  auto ctr_cv = traits.construct_curve_2_object();
+  return read_curves_(inp, curves, traits, ctr_cv);
+}
+
+/*! Read x-monotone curves.
+ */
+bool read_xcurves(std::ifstream& inp, X_monotone_curves& xcurves,
+                  const Traits& traits) {
+  auto ctr_xcv = traits.construct_x_monotone_curve_2_object();
+  return read_curves_(inp, xcurves, traits, ctr_xcv);
+}
+
+#else
+#error No traits defined for test
+#endif
+
+bool read_points(std::ifstream& inp, Points& points, const Traits&) {
+  int count;
+  inp >> skip_comment >> count;
+
+  // std::cout << "read_points " << count << "\n";
+  for (int i = 0; i < count; i++) {
+    NT x, y;
+    inp >> skip_comment >> x >> y;
+    Point_2 p(x, y);
+    // std::cout << p << "\n";
+    points.push_back(p);
+  }
+  return true;
 }
 
 #endif
