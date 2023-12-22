@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
   CGAL::dump_c3t3(c3t3, "out_after_meshing");
 
   // Remeshing
-  CGAL::tetrahedral_isotropic_remeshing(c3t3, CellSize * 5.,
+  CGAL::tetrahedral_isotropic_remeshing(c3t3, size,
     CGAL::parameters::number_of_iterations(nb_iter));
   //    .smooth_constrained_edges(true));
 
