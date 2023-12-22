@@ -104,6 +104,17 @@ protected:
 
 
 public:
+
+  void reset_left_event()
+  {
+    this->set_left_event(static_cast<Event*>(nullptr));
+    if (m_orig_subcurve1)
+    {
+      m_orig_subcurve1->reset_left_event();
+      m_orig_subcurve2->reset_left_event();
+    }
+  }
+
   /*! Get the subcurves that originate an overlap. */
   Subcurve* originating_subcurve1() { return m_orig_subcurve1; }
 
