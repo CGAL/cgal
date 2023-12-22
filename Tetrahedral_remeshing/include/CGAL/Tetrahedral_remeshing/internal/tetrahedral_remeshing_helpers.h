@@ -483,16 +483,34 @@ bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
 template<typename C3T3, typename CellSelector>
 bool is_boundary(const C3T3& c3t3,
                  const typename C3T3::Facet& f,
-                 const CellSelector& cell_selector)
+                 const CellSelector& cell_selector,
+                 const bool verbose = false)
 {
-  return c3t3.is_in_complex(f)
-    || get(cell_selector, f.first) != get(cell_selector, f.first->neighbor(f.second));
+  if (c3t3.triangulation().is_infinite(f))
+    return false;
+
+  const auto& mf = c3t3.triangulation().mirror_facet(f);
+  const bool res = c3t3.is_in_complex(f)
+    || get(cell_selector, f.first) != get(cell_selector, mf.first);
+
+  if (verbose && res)
+  {
+    std::cout << "is_boundary(f) :"
+      << "\n\t in_complex        = " << c3t3.is_in_complex(f)
+      << "\n\t selector(f.first) = " << get(cell_selector, f.first)
+      << "\n\t selector(mirror ) = " << get(cell_selector, mf.first)
+      << "\n\t subdomain(f.first)= " << f.first->subdomain_index()
+      << "\n\t subdomain(mirror) = " << mf.first->subdomain_index()
+      << std::endl;
+  }
+
+  return res;
 }
 
 template<typename C3T3, typename CellSelector>
 bool is_boundary(const C3T3& c3t3,
                  const typename C3T3::Triangulation::Edge& e,
-                 CellSelector cell_selector)
+                 const CellSelector& cell_selector)
 {
   typedef typename C3T3::Triangulation   Tr;
   typedef typename Tr::Facet_circulator  Facet_circulator;
@@ -527,6 +545,33 @@ bool is_boundary_edge(const typename C3t3::Vertex_handle& v0,
     return is_boundary(c3t3, Edge(cell, i0, i1), cell_selector);
   else
     return false;
+}
+
+template<typename C3t3, typename CellSelector>
+bool is_boundary_edge(const typename C3t3::Edge& e,
+                      const C3t3& c3t3,
+                      const CellSelector& cell_selector,
+                      std::vector<typename C3t3::Facet>& boundary_facets,
+                      const bool verbose = false)
+{
+  using Facet = typename C3t3::Facet;
+
+  auto fcirc = c3t3.triangulation().incident_facets(e);
+  auto fend = fcirc;
+  bool result = false;
+
+  do
+  {
+    const Facet& f = *fcirc;
+    if (is_boundary(c3t3, f, cell_selector, verbose))
+    {
+      boundary_facets.push_back(f);
+      result = true;
+    }
+  }
+  while (++fcirc != fend);
+
+  return result;
 }
 
 template<typename C3t3, typename CellSelector>
@@ -1203,6 +1248,20 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
+template<typename Tr>
+std::array<typename Tr::Edge, 6>
+cell_edges(const typename Tr::Cell_handle c, const Tr&)
+{
+  using Edge = typename Tr::Edge;
+  std::array<Edge, 6> edges_array = { { Edge(c, 0, 1),
+                                        Edge(c, 0, 2),
+                                        Edge(c, 0, 3),
+                                        Edge(c, 1, 2),
+                                        Edge(c, 1, 3),
+                                        Edge(c, 2, 3) } };
+  return edges_array;
+}
+
 namespace internal
 {
   template<typename C3t3, typename CellSelector>
@@ -1225,6 +1284,9 @@ namespace internal
   {
     //update C3t3
     using Subdomain_index = typename C3t3::Subdomain_index;
+    if(c3t3.is_in_complex(c))
+      c3t3.remove_from_complex(c);
+
     if (Subdomain_index() != subdomain)
       c3t3.add_to_complex(c, subdomain);
     else
@@ -1256,6 +1318,20 @@ void dump_edges(const Bimap& edges, const char* filename)
   ofs.close();
 }
 
+template <typename Edge>
+void dump_edges(const std::vector<Edge>& edges, const char* filename)
+{
+  std::ofstream ofs(filename);
+  ofs.precision(17);
+
+  for (const Edge& e : edges)
+  {
+    ofs << "2 " << point(e.first->vertex(e.second)->point())
+        << " " << point(e.first->vertex(e.third)->point()) << std::endl;
+  }
+  ofs.close();
+}
+
 template<typename Facet, typename OutputStream>
 void dump_facet(const Facet& f, OutputStream& os)
 {
@@ -1276,6 +1352,20 @@ void dump_facets(const FacetRange& facets, const char* filename)
     dump_facet(f, os);
   }
   os.close();
+}
+
+template<typename C3t3, typename CellSelector>
+void dump_facets_from_selection(const C3t3& c3t3,
+  const CellSelector& selector,
+  const char* filename)
+{
+  std::vector<typename C3t3::Facet> facets;
+  for (const auto& f : c3t3.triangulation().finite_facets())
+  {
+    if (get(selector, f.first) != get(selector, f.first->neighbor(f.second)))
+      facets.push_back(f);
+  }
+  dump_facets(facets, filename);
 }
 
 template<typename CellRange>
