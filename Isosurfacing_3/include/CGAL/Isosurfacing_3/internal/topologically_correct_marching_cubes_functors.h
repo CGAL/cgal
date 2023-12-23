@@ -46,11 +46,16 @@
 #include <CGAL/Isosurfacing_3/internal/marching_cubes_functors.h>
 #include <CGAL/Isosurfacing_3/internal/tables.h>
 
+#include <tbb/concurrent_vector.h>
+#include <tbb/concurrent_hash_map.h>
+
 #include <array>
 #include <atomic>
 #include <cmath>
 #include <map>
 #include <mutex>
+#include <atomic>
+#include <optional>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -73,26 +78,45 @@ private:
   using Edge_descriptor = typename Domain::Edge_descriptor;
   using Cell_descriptor = typename Domain::Cell_descriptor;
 
-  using uint = unsigned int;
+  using Point_index = std::size_t;
+  using Edge_index = std::array<std::size_t, 4>;
+
+  struct Hash_compare
+  {
+    static size_t hash(const Edge_index& key)
+    {
+      std::size_t res = 17;
+      res = res * 31 + std::hash<std::size_t>()(key[0]);
+      res = res * 31 + std::hash<std::size_t>()(key[1]);
+      res = res * 31 + std::hash<std::size_t>()(key[2]);
+      res = res * 31 + std::hash<std::size_t>()(key[3]);
+      return res;
+    }
+
+    static bool equal(const Edge_index& key1, const Edge_index& key2)
+    {
+      return key1[0] == key2[0] && key1[1] == key2[1] && key1[2] == key2[2] && key1[3] == key2[3];
+    }
+  };
+
+  using Edge_point_map = tbb::concurrent_hash_map<Edge_index, Point_index, Hash_compare>;
 
 private:
   const Domain& m_domain;
   FT m_isovalue;
 
-  Point_range& m_points;
-  Polygon_range& m_polygons;
+  std::atomic<Point_index> m_point_counter;
+  tbb::concurrent_vector<Point_3> m_points;
 
-  std::mutex mutex;
+  Edge_point_map m_edges;
+
+  tbb::concurrent_vector<std::array<Point_index, 3>> m_triangles;
 
 public:
   TMC_functor(const Domain& domain,
-              const FT isovalue,
-              Point_range& points,
-              Polygon_range& polygons)
+              const FT isovalue)
     : m_domain(domain),
-      m_isovalue(isovalue),
-      m_points(points),
-      m_polygons(polygons)
+      m_isovalue(isovalue)
   { }
 
   void operator()(const Cell_descriptor& cell)
@@ -101,18 +125,19 @@ public:
     std::array<Point_3, 8> corners;
     const int i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
 
-    const int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
-    if(Cube_table::intersected_edges[i_case] == 0 ||
-       Cube_table::intersected_edges[i_case] == all_bits_set)
-    {
-      return;
-    }
-
     // this is the only difference to mc
-    int tcm = int(Cube_table::t_ambig[i_case]);
+    const int tcm = Cube_table::t_ambig[i_case];
     if(tcm == 105)
     {
-      p_slice(cell, m_isovalue, values, corners, i_case);
+      if (p_slice(cell, m_isovalue, values, corners, i_case))
+        return;
+      else
+        std::cerr << "WARNING: the result might not be topologically correct" << std::endl;
+    }
+
+    constexpr int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
+    if(i_case == 0 || i_case == all_bits_set)
+    {
       return;
     }
 
@@ -122,7 +147,6 @@ public:
     // @todo improve triangle generation
 
     // construct triangles
-    std::lock_guard<std::mutex> lock(mutex);
     for(int t=0; t<16; t += 3)
     {
       const int t_index = i_case * 16 + t;
@@ -135,38 +159,90 @@ public:
       const int eg1 = Cube_table::triangle_cases[t_index + 1];
       const int eg2 = Cube_table::triangle_cases[t_index + 2];
 
-      const std::size_t p0_idx = m_points.size();
-
-      m_points.push_back(vertices[eg0]);
-      m_points.push_back(vertices[eg1]);
-      m_points.push_back(vertices[eg2]);
 
       // insert new triangle into list
-      m_polygons.emplace_back();
-      auto& triangle = m_polygons.back();
+      const Point_index p0 = add_point(vertices[eg0], compute_edge_index(cell, eg0));
+      const Point_index p1 = add_point(vertices[eg1], compute_edge_index(cell, eg1));
+      const Point_index p2 = add_point(vertices[eg2], compute_edge_index(cell, eg2));
 
-      triangle.push_back(p0_idx + 2);
-      triangle.push_back(p0_idx + 1);
-      triangle.push_back(p0_idx + 0);
+      add_triangle(p2, p1, p0);
+    }
+  }
+
+  // gets the created triangle list
+  template<typename PointRange, typename TriangleRange>
+  void to_triangle_soup(PointRange& points, TriangleRange& triangles) const
+  {
+    points.insert(points.begin(), m_points.begin(), m_points.end());
+    for (const std::array<Point_index, 3>& tri : m_triangles) {
+      triangles.push_back({ tri[0], tri[1], tri[2] });
     }
   }
 
 private:
-  void add_triangle(const std::size_t p0,
-                    const std::size_t p1,
-                    const std::size_t p2)
+  Edge_index compute_edge_index(const Cell_descriptor& cell, int edge)
   {
-    std::lock_guard<std::mutex> lock(mutex);
+    // edge is in 0 - 11
 
-    m_polygons.emplace_back();
-    auto& triangle = m_polygons.back();
+    // there are 12 edges, assign to each vertex three edges, the global edge numbering
+    // consists of 3*global_vertex_id + edge_offset.
+    const unsigned long long gei_pattern_ = 670526590282893600ull;
 
-    triangle.push_back(p0);
-    triangle.push_back(p1);
-    triangle.push_back(p2);
+    // the edge global index is given by the vertex global index + the edge offset
+    const std::size_t shift = 5 * edge;
+    const std::size_t ix = cell[0] + ((gei_pattern_ >> shift) & 1);        // global_edge_id[edge][0];
+    const std::size_t iy = cell[1] + ((gei_pattern_ >> (shift + 1)) & 1);  // global_edge_id[edge][1];
+    const std::size_t iz = cell[2] + ((gei_pattern_ >> (shift + 2)) & 1);  // global_edge_id[edge][2];
+    const std::size_t off_val =      ((gei_pattern_ >> (shift + 3)) & 3);
+
+    return { ix, iy, iz, off_val };
   }
 
-  void p_slice(const Cell_descriptor& cell,
+  bool find_point(const Edge_index& e, Point_index& i)
+  {
+    Edge_point_map::const_accessor acc;
+    if (m_edges.find(acc, e))
+    {
+      i = acc->second;
+      return true;
+    }
+    return false;
+  }
+
+  Point_index add_point(const Point_3& p, const Edge_index& e)
+  {
+    Edge_point_map::accessor acc;
+    if (!m_edges.insert(acc, e))
+      return acc->second;
+    
+    const Point_index i = m_point_counter++;
+    acc->second = i;
+    acc.release();
+
+    m_points.grow_to_at_least(i + 1);
+    m_points[i] = p;
+
+    return i;
+  }
+
+  Point_index add_point_unchecked(const Point_3& p)
+  {
+    const Point_index i = m_point_counter++;
+
+    m_points.grow_to_at_least(i + 1);
+    m_points[i] = p;
+
+    return i;
+  }
+
+  void add_triangle(const Point_index p0,
+                    const Point_index p1,
+                    const Point_index p2)
+  {
+    m_triangles.push_back({p0, p1, p2});
+  }
+
+  bool p_slice(const Cell_descriptor& cell,
                const FT i0,
                const std::array<FT, 8>& values,
                const std::array<Point_3, 8>& corners,
@@ -177,9 +253,7 @@ private:
     typename Geom_traits::Compute_z_3 z_coord = m_domain.geom_traits().compute_z_3_object();
     typename Geom_traits::Construct_point_3 point = m_domain.geom_traits().construct_point_3_object();
 
-    // there are 12 edges, assign to each vertex three edges, the global edge numbering
-    // consists of 3*global_vertex_id + edge_offset.
-    const unsigned long long gei_pattern_ = 670526590282893600ull;
+    using uint = unsigned int;
 
     // code edge end vertices for each of the 12 edges
     const unsigned char l_edges_[12] = {16, 49, 50, 32, 84, 117, 118, 100, 64, 81, 115, 98};
@@ -191,25 +265,18 @@ private:
 
     // A hexahedron has twelve edges, save the intersection of the isosurface with the edge
     // save global edge and global vertex index of isosurface
-    std::vector<std::size_t> vertices(12);
+    std::vector<Point_index> vertices(12);
 
     // save local coordinate along the edge of intersection point
     std::vector<FT> ecoord{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     // collect vertices
     unsigned short flag{1};
-    for(int eg=0; eg<12; ++eg)
+    for(int eg = 0; eg < 12; ++eg)
     {
       if(flag & Cube_table::intersected_edges[i_case])
       {
-        // the edge global index is given by the vertex global index + the edge offset
-        // uint shift = 5 * eg;
-        // const int ix = i_index + (int)((gei_pattern_ >> shift) & 1);        // global_edge_id[eg][0];
-        // const int iy = j_index + (int)((gei_pattern_ >> (shift + 1)) & 1);  // global_edge_id[eg][1];
-        // const int iz = k_index + (int)((gei_pattern_ >> (shift + 2)) & 1);  // global_edge_id[eg][2];
-        // const int off_val = (int)((gei_pattern_ >> (shift + 3)) & 3);
-
-        // int g_edg = int(m_cell_shift_factor * m_ugrid.global_index(ix, iy, iz) + off_val);
+        
 
         // generate vertex here, do not care at this point if vertex already exists
         uint v0, v1;
@@ -223,22 +290,9 @@ private:
         const FT py = (1 - l) * y_coord(corners[v0]) + l * y_coord(corners[v1]);
         const FT pz = (1 - l) * z_coord(corners[v0]) + l * z_coord(corners[v1]);
 
-        // set vertex in map
-        // set vertex index
-        // auto s_index = m_vertices.find(vertices[eg].g_edg);
-        // if(s_index == m_vertices.end())
-        // {
-          const int g_idx = static_cast<int>(m_points.size());
-          vertices[eg] = g_idx;
-        //   m_vertices[vertices[eg].g_edg] = g_idx;
-          m_points.push_back(point(px, py, pz));
-        //} else {
-        //   vertices[eg] = s_index->second;
-        //}
+        // add vertex and insert to map
+        vertices[eg] = add_point(point(px, py, pz), compute_edge_index(cell, eg));
       }
-      /*else {
-        e_set[eg] = false;
-      }*/
 
       // next edge
       flag <<= 1;
@@ -409,8 +463,8 @@ private:
             }
             else
             {
-              std::cerr << "ERROR: can't correctly triangulate cell's face\n";
-              return;
+              // std::cerr << "ERROR: can't correctly triangulate cell's face\n";
+              return false;
             }
           }
         }
@@ -481,8 +535,8 @@ private:
             }
              else
             {
-              std::cerr << "ERROR: can't correctly triangulate cell's face\n";
-              return;
+              // std::cerr << "ERROR: can't correctly triangulate cell's face\n";
+              return false;
             }
           }
         }
@@ -815,7 +869,7 @@ private:
 
       // compute vertices of inner hexagon, save new vertices in list and compute and keep
       // global vertices index to build triangle connectivity later on.
-      std::size_t tg_idx[6];
+      Point_index tg_idx[6];
       for(int i=0; i<6; ++i)
       {
         const FT u = hvt[i][0];
@@ -834,8 +888,7 @@ private:
                             w * ((1 - v) * (z_coord(corners[4]) + u * (z_coord(corners[5]) - z_coord(corners[4]))) +
                                        v * (z_coord(corners[6]) + u * (z_coord(corners[7]) - z_coord(corners[6]))));
 
-        tg_idx[i] = m_points.size();
-        m_points.push_back(point(px, py, pz));
+        tg_idx[i] = add_point_unchecked(point(px, py, pz));
       }
 
       // triangulate contours with inner hexagon
@@ -1113,10 +1166,10 @@ private:
                             wcoord * ((1 - vcoord) * (z_coord(corners[4]) + ucoord * (z_coord(corners[5]) - z_coord(corners[4]))) +
                                             vcoord * (z_coord(corners[6]) + ucoord * (z_coord(corners[7]) - z_coord(corners[6]))));
 
-        const std::size_t g_index = m_points.size();
+        bool pt_used = false;
+        Point_index g_index = 0;
 
         // loop over the contours
-        bool pt_used = false;
         for(int i=0; i<int(cnt_); ++i)
         {
           const unsigned char cnt_sz = (unsigned char)get_cnt_size(i, c_);
@@ -1126,18 +1179,21 @@ private:
           }
           else
           {
-            pt_used = true;
+            if (!pt_used)
+            {
+              pt_used = true;
+              g_index = add_point_unchecked(point(px, py, pz));
+            }
+            
             for(int t=0; t<cnt_sz; ++t)
             {
               add_triangle(vertices[get_c(i, t, c_)], vertices[get_c(i, (t + 1) % cnt_sz, c_)], g_index);
             }
           }
         }
-
-        if(pt_used)
-          m_points.emplace_back(px, py, pz);
       }
     }
+    return true;
   }
 };
 

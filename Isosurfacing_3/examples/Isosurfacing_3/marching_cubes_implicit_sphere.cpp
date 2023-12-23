@@ -5,6 +5,8 @@
 #include <CGAL/boost/graph/IO/OFF.h>
 #include <vector>
 
+#include <tbb/tick_count.h>
+
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
@@ -32,9 +34,15 @@ int main(int, char**)
   Point_range points;
   Triangle_range triangles;
 
+  const tbb::tick_count start = tbb::tick_count::now();
+
   // execute marching cubes with a given isovalue 
   const FT isovalue = 0.8;
   CGAL::Isosurfacing::marching_cubes(domain, isovalue, points, triangles);
+
+  const tbb::tick_count end = tbb::tick_count::now();
+
+  std::cout << (end - start).seconds() << std::endl;
 
   // save ouput indexed mesh to a file, in the OFF format
   CGAL::IO::write_OFF("output.off", points, triangles);
