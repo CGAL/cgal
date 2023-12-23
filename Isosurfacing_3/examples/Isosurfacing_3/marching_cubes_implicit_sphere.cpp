@@ -24,25 +24,24 @@ int main(int, char**)
 {
   // box domain and spacing vector
   const CGAL::Bbox_3 bbox{ -1.0, -1.0, -1.0,  1.0, 1.0, 1.0 };
-  const FT spacing = 0.04;
+  const FT spacing = 0.05;
   const Vector vec_spacing(spacing, spacing, spacing);
 
   // create domain with sphere function
-  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>(bbox, vec_spacing, sphere_function);
+  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>
+	  (bbox, vec_spacing, sphere_function);
 
   // points and triangles for the output indexed mesh
   Point_range points;
   Triangle_range triangles;
 
-  const tbb::tick_count start = tbb::tick_count::now();
-
-  // execute marching cubes with a given isovalue 
+  // run marching cubes with given isovalue 
+  std::cout << "marching cubes...";
   const FT isovalue = 0.8;
+  const tbb::tick_count start = tbb::tick_count::now();
   CGAL::Isosurfacing::marching_cubes(domain, isovalue, points, triangles);
-
   const tbb::tick_count end = tbb::tick_count::now();
-
-  std::cout << (end - start).seconds() << std::endl;
+  std::cout << "done (" << (end - start).seconds() << "s)" << std::endl;
 
   // save ouput indexed mesh to a file, in the OFF format
   CGAL::IO::write_OFF("output.off", points, triangles);
