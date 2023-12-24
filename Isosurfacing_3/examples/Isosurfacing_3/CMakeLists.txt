@@ -9,7 +9,9 @@ find_package(CGAL REQUIRED)
 create_single_source_cgal_program( "marching_cubes_implicit_sphere.cpp" )
 create_single_source_cgal_program( "marching_cubes_Cartesian_grid_sphere.cpp" )
 create_single_source_cgal_program( "marching_cubes_signed_mesh_offset.cpp" )
+create_single_source_cgal_program( "marching_cubes_multiple_mesh_offsets.cpp" )
 create_single_source_cgal_program( "marching_cubes_inrimage.cpp" )
+
 
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
@@ -28,6 +30,7 @@ if(TARGET CGAL::Eigen3_support)
 
   create_single_source_cgal_program( "dual_contouring_implicit_iwp.cpp" )
   target_link_libraries(dual_contouring_implicit_iwp PRIVATE CGAL::Eigen3_support)
+
 else()
   message(STATUS "NOTICE: Some examples use Eigen, and will not be compiled.")
 endif()
