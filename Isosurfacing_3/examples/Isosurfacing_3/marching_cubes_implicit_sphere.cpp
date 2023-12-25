@@ -3,9 +3,9 @@
 #include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/Timer.h>
 #include <vector>
 
-#include <tbb/tick_count.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;
@@ -38,10 +38,11 @@ int main(int, char**)
   // run marching cubes with given isovalue 
   std::cout << "marching cubes...";
   const FT isovalue = 0.8;
-  const tbb::tick_count start = tbb::tick_count::now();
+  CGAL::Timer timer;
+  timer.start();
   CGAL::Isosurfacing::marching_cubes(domain, isovalue, points, triangles);
-  const tbb::tick_count end = tbb::tick_count::now();
-  std::cout << "done (" << (end - start).seconds() << "s)" << std::endl;
+  timer.stop();
+  std::cout << "done (" << timer.time() << "s, " << triangles.size() << " triangles)" << std::endl;
 
   // save ouput indexed mesh to a file, in the OFF format
   CGAL::IO::write_OFF("output.off", points, triangles);
