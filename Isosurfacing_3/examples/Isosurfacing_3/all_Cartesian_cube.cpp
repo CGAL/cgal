@@ -17,7 +17,7 @@ using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-// return 1.0 if `value` has positive sign, and -1.0 otherwise
+// return 1.0 if value has positive sign, and -1.0 otherwise
 FT sign(FT value)
 {
   return (value > 0.0) - (value < 0.0);
@@ -30,9 +30,9 @@ int main(int, char**)
   Grid grid { 7, 7, 7, bbox };
 
   // calculate the value at all grid points
-  for(std::size_t x=0; x<grid.xdim(); ++x) {
-    for(std::size_t y=0; y<grid.ydim(); ++y) {
-      for(std::size_t z=0; z<grid.zdim(); ++z)
+  for(std::size_t x = 0; x < grid.xdim(); ++x) {
+    for(std::size_t y = 0; y < grid.ydim(); ++y) {
+      for(std::size_t z = 0; z < grid.zdim(); ++z)
       {
         const FT pos_x = x * grid.spacing()[0] + bbox.xmin();
         const FT pos_y = y * grid.spacing()[1] + bbox.ymin();
@@ -48,11 +48,11 @@ int main(int, char**)
   auto cube_gradient = [](const Point& p)
   {
     // the normal depends on the side of the cube
-    const FT max_value = (std::max)({std::abs(p.x()), std::abs(p.y()), std::abs(p.z())});
+    const FT max_value = std::max({ std::abs(p.x()), std::abs(p.y()), std::abs(p.z())});
 
     Vector g(0.0, 0.0, 0.0);
     if(max_value == std::abs(p.x()))
-      g += Vector(sign(p.x()), 0.0, 0.);
+      g += Vector(sign(p.x()), 0.0, 0.0);
 
     if(max_value == std::abs(p.y()))
       g += Vector(0.0, sign(p.y()), 0.0);
@@ -80,8 +80,8 @@ int main(int, char**)
   CGAL::Isosurfacing::dual_contouring(domain, isovalue, points_dc, polygons_dc);
 
   // save output indexed meshes to files, in the OFF format
-  CGAL::IO::write_OFF("result_mc.off", points_mc, polygons_mc);
-  CGAL::IO::write_OFF("result_dc.off", points_dc, polygons_dc);
+  CGAL::IO::write_OFF("output_mc.off", points_mc, polygons_mc);
+  CGAL::IO::write_OFF("output_dc.off", points_dc, polygons_dc);
 
   return EXIT_SUCCESS;
 }

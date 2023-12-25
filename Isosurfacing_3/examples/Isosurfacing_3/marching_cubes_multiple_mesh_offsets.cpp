@@ -40,6 +40,7 @@ inline Kernel::FT distance_to_mesh(const Tree& tree,
   return std::sqrt((p - x).squared_length());
 }
 
+// Usage : marching_cubes_multiple_mesh_offsets input.off
 int main(int argc, char **argv)
 {
   const std::string input_name(argv[1]);
@@ -92,6 +93,8 @@ int main(int argc, char **argv)
   // create domain from the grid
   auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
 
+  // run Marching cubes with a range of offsets, 
+  // and save all output meshes to files "output-index.off"
   int index = 0;
   for(FT offset = 0.0; offset < 0.3; offset += 0.01, index++)
   {

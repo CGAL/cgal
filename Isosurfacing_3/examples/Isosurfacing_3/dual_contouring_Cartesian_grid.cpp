@@ -24,9 +24,9 @@ int main(int, char**)
   Grid grid { 30, 30, 30, bbox };
 
   // compute field values and gradients
-  for(std::size_t x=0; x<grid.xdim(); ++x) {
-    for(std::size_t y=0; y<grid.ydim(); ++y) {
-      for(std::size_t z=0; z<grid.zdim(); ++z)
+  for(std::size_t x = 0; x < grid.xdim(); ++x) {
+    for(std::size_t y = 0; y < grid.ydim(); ++y) {
+      for(std::size_t z = 0; z < grid.zdim(); ++z)
       {
         const FT pos_x = x * grid.spacing()[0] + bbox.xmin();
         const FT pos_y = y * grid.spacing()[1] + bbox.ymin();
@@ -54,7 +54,7 @@ int main(int, char**)
   CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
 
   // write output indexed surface mesh to file, in OFF format
-  CGAL::IO::write_OFF("result.off", points, polygons);
+  CGAL::IO::write_OFF("output.off", points, polygons);
 
   return EXIT_SUCCESS;
 }
