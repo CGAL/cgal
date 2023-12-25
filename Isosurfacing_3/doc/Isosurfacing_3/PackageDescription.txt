@@ -17,7 +17,7 @@
 \cgalPkgPicture{isosurfacing3_ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Julian Stahl, Daniel Zint and Pierre Alliez}
-\cgalPkgDesc{This package implements isosurfacing algorithms to generate a surface mesh from a 3D scalar field. The algorithms provide different guarantees for the output and should hence be chosen depending on each use case. The possible format for the input data is flexible and includes explicit as well as implicit representations. }
+\cgalPkgDesc{This package implements several isosurfacing algorithms (Marching Cubes and its topologically correct variant, and Dual Contouring) to generate a surface mesh from a 3D scalar field. The possible format for the input scalar field is flexible and includes explicit as well as implicit representations. }
 \cgalPkgManuals{Chapter_Isosurfacing3,PkgIsosurfacing3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -28,9 +28,9 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-This package provides algorithms to extract isosurfaces from different inputs.
-The input is represented as a 3D domain: an implicit function, a %Cartesian grid or an octree.
-The output is an indexed face set (coordinate array and face array) that stores an isosurface in the form of a surface mesh. @fixme
+This package provides algorithms to extract isosurfaces from different inputs: Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
+The input is represented as a 3D scalar field defined as an implicit function, a Cartesian grid or an octree.
+The output is a surface mesh represented as an indexed face set (point coordinate and face arrays).
 The provided algorithms include Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
 
 \cgalClassifedRefPages
