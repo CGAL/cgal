@@ -7,15 +7,12 @@ namespace CGAL {
 \cgalAutoToc
 \author Julian Stahl, Daniel Zint, and Pierre Alliez
 
-% [PA] : I recommend to select a more complex example (medical?), use a white background instead
-% of default Meshlab one and superimpose the mesh edges in black.
-
-\cgalFigureAnchor{isosurfacing_bunny_offset}
+\cgalFigureAnchor{isosurfacing_tractor_offset}
 <center>
-<img src="bunny_offset.gif" style="max-width:50%;"/>
+<img src="tractor_offset.gif" style="max-width:50%;"/>
 </center>
-\cgalFigureCaptionBegin{isosurfacing_bunny_offset}
-Isosurfacing with different isovalues for the bunny model.
+\cgalFigureCaptionBegin{isosurfacing_tractor_offset}
+Isosurfacing with different isovalues for the tractor model (courtesy GrabCAD).
 \cgalFigureCaptionEnd
 
 \section secmyintroduction Introduction
