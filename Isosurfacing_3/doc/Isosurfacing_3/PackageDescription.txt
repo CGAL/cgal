@@ -30,7 +30,7 @@
 
 This package provides algorithms to extract isosurfaces from different inputs: Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
 The input is represented as a 3D scalar field defined as an implicit function, a Cartesian grid or an octree.
-The output is a surface mesh represented as an indexed face set (point coordinate and face arrays).
+The output is a surface mesh represented as an indexed face set (container of point coordinates and indexed faces).
 The provided algorithms include Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
 
 \cgalClassifedRefPages
