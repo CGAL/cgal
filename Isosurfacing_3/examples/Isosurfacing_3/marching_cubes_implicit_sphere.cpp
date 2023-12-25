@@ -6,7 +6,6 @@
 #include <CGAL/Timer.h>
 #include <vector>
 
-
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
@@ -14,7 +13,7 @@ using Vector = typename Kernel::Vector_3;
 using Point_range = std::vector<Point>;
 using Triangle_range = std::vector<std::vector<std::size_t> >;
 
-// Sphere = Euclidean distance function to the origin
+// Sphere function = Euclidean distance function to the origin
 auto sphere_function = [&](const Point& p) -> FT
 {
 	return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());

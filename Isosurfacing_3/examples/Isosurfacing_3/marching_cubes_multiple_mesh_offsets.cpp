@@ -37,7 +37,7 @@ inline Kernel::FT distance_to_mesh(const Tree& tree,
                                    const Point& p)
 {
   const Point x = tree.closest_point(p);
-  return sqrt((p - x).squared_length());
+  return std::sqrt((p - x).squared_length());
 }
 
 int main(int argc, char **argv)
@@ -97,11 +97,11 @@ int main(int argc, char **argv)
   {
 	  // containers for the triangle soup output
 	  Point_range points;
-	  Polygon_range polygons;
+	  Polygon_range triangles;
 
 	  // execute marching cubes with an isovalue equating offset
       std::cout << "Marching cubes with offset " << offset << "...";
-      CGAL::Isosurfacing::marching_cubes(domain, offset, points, polygons);
+      CGAL::Isosurfacing::marching_cubes(domain, offset, points, triangles);
       std::cout << "done" << std::endl;
 
 	  // save the output
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
       filename.append(std::to_string(index));
       filename.append(std::string(".off"));
       std::cout << "Save to file " << filename << "...";
-	  CGAL::IO::write_polygon_soup(filename, points, polygons);
+	  CGAL::IO::write_polygon_soup(filename, points, triangles);
       std::cout << "done" << std::endl;
   }
 

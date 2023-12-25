@@ -20,26 +20,26 @@ int main(int, char**)
 
   auto iwp_value = [alpha](const Point& point)
   {
-    const FT x = alpha * (point.x() + 1) * CGAL_PI;
-    const FT y = alpha * (point.y() + 1) * CGAL_PI;
-    const FT z = alpha * (point.z() + 1) * CGAL_PI;
+    const FT x = alpha * (point.x() + FT(1.0)) * CGAL_PI;
+    const FT y = alpha * (point.y() + FT(1.0)) * CGAL_PI;
+    const FT z = alpha * (point.z() + FT(1.0)) * CGAL_PI;
     return cos(x) * cos(y) + cos(y) * cos(z) + cos(z) * cos(x) - cos(x) * cos(y) * cos(z);  // isovalue = 0
   };
 
   auto iwp_gradient = [alpha](const Point& point)
   {
-    const FT x = alpha * (point.x() + 1) * CGAL_PI;
-    const FT y = alpha * (point.y() + 1) * CGAL_PI;
-    const FT z = alpha * (point.z() + 1) * CGAL_PI;
+    const FT x = alpha * (point.x() + FT(1.0)) * CGAL_PI;
+    const FT y = alpha * (point.y() + FT(1.0)) * CGAL_PI;
+    const FT z = alpha * (point.z() + FT(1.0)) * CGAL_PI;
 
-    const FT gx = CGAL_PI * alpha * sin(x) * (cos(y) * (cos(z) - 1.0) - cos(z));
-    const FT gy = CGAL_PI * alpha * sin(y) * (cos(x) * (cos(z) - 1.0) - cos(z));
-    const FT gz = CGAL_PI * alpha * sin(z) * (cos(x) * (cos(y) - 1.0) - cos(y));
+    const FT gx = CGAL_PI * alpha * sin(x) * (cos(y) * (cos(z) - FT(1.0)) - cos(z));
+    const FT gy = CGAL_PI * alpha * sin(y) * (cos(x) * (cos(z) - FT(1.0)) - cos(z));
+    const FT gz = CGAL_PI * alpha * sin(z) * (cos(x) * (cos(y) - FT(1.0)) - cos(y));
     return Vector(gx, gy, gz);
   };
 
-  const CGAL::Bbox_3 bbox{-1.0, -1.0, -1.0, 1.0, 1.0, 1.0};
-  const FT spacing = 0.5;
+  const CGAL::Bbox_3 bbox{-1.0, -1.0, -1.0,  1.0, 1.0, 1.0};
+  const FT spacing = 0.02;
   const Vector vec_spacing(spacing, spacing, spacing);
 
   // create a domain with given bounding box and grid spacing
@@ -49,11 +49,11 @@ int main(int, char**)
   Point_range points;
   Polygon_range polygons;
 
-  // run marching cubes with an isovalue of 0.0
+  // run duak contouring with isovalue set to 0.0
   CGAL::Isosurfacing::dual_contouring(domain, 0.0, points, polygons);
 
-  // save the result in the OFF format
-  CGAL::IO::write_OFF("result.off", points, polygons);
+  // save output to the OFF format
+  CGAL::IO::write_OFF("output.off", points, polygons);
 
   return EXIT_SUCCESS;
 }

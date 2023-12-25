@@ -77,7 +77,7 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
   typename GeomTraits::Compute_z_3 z_coord = gt.compute_z_3_object();
   typename GeomTraits::Construct_point_3 point = gt.construct_point_3_object();
 
-  FT mu = (FT)0.0;
+  FT mu = FT(0.0);
 
   // don't divide by 0
   if(abs(d1 - d0) < 0.000001) // @fixme hardcoded bound
@@ -85,12 +85,12 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
   else
     mu = (isovalue - d0) / (d1 - d0);
 
-  CGAL_assertion(mu >= FT(0) || mu <= FT(1));
+  CGAL_assertion(mu >= FT(0.0) || mu <= FT(1.0));
 
   // linear interpolation
-  return point(x_coord(p1) * mu + x_coord(p0) * (1 - mu),
-               y_coord(p1) * mu + y_coord(p0) * (1 - mu),
-               z_coord(p1) * mu + z_coord(p0) * (1 - mu));
+  return point(x_coord(p1) * mu + x_coord(p0) * (FT(1.0) - mu),
+               y_coord(p1) * mu + y_coord(p0) * (FT(1.0) - mu),
+               z_coord(p1) * mu + z_coord(p0) * (FT(1.0) - mu));
 }
 
 // retrieves the corner vertices and their values of a cell and return the lookup index
@@ -174,7 +174,7 @@ void mc_construct_triangles(const int i_case,
                             TriangleList& triangles)
 {
   // construct triangles
-  for(int t=0; t<16; t+=3)
+  for(int t = 0; t < 16; t += 3)
   {
     const int t_index = i_case * 16 + t;
 
