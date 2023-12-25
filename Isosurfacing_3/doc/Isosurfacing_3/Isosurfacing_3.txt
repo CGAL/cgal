@@ -49,7 +49,19 @@ Different configurations of Marching Cubes in 2D.
 The proposed implementation is generic in that it can process any grid-based data structure that consists of hexahedral cells.
 In case of a conforming grid, MC generates as output a surface triangle mesh that is 2-manifold in most scenarios.
 % PA: reformulate, as it is either strict or not - precise in which cases it is not, and say  whether you talk about just combinatorially 2-manifold, or truly 2-manifold with 3D embedding taken into account
-If the mesh is 2-manifold and the isosurface does not intersect the domain boundaries, then the output mesh is also watertight. % PA : add a figure showing the two cases
+If the mesh is 2-manifold and the isosurface does not intersect the domain boundary, then the output mesh is watertight. Conversely, the output mesh has boundaries when the isosurface intersects the domain boundaries (see Figure below).
+
+\cgalFigureAnchor{isosurfacing_mc_open}
+<center>
+<img src="open.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{isosurfacing_mc_open}
+The output MC mesh has boundaries when the isosurface intersects the domain boundary.
+\cgalFigureCaptionEnd
+
+
+
+
 As MC only proceeds by linear interpolation of the sampled scalar field along the grid edges,
 it can miss details or components that are not captured by the said sampling and interpolation.
 
