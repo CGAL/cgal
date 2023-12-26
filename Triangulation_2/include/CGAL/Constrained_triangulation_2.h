@@ -330,11 +330,11 @@ public:
 #if 1
   template <class Segment_2>
   static decltype(auto) get_source(const Segment_2& segment){
-    return segment.source();
+    return segment[0];
   }
   template <class Segment_2>
   static decltype(auto) get_target(const Segment_2& segment){
-    return segment.target();
+    return segment[1];
   }
 
   static const Point& get_source(const Constraint& cst){
