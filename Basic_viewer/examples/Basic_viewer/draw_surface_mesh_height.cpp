@@ -16,19 +16,18 @@ struct Colored_faces_given_height:
 {
   Colored_faces_given_height(const Mesh& sm)
   {
+    if(sm.is_empty()) return;
+
     double m_min_z, m_max_z;
-    if(!sm.is_empty())
+    bool first=true;
+    for(typename Mesh::Vertex_index vi: sm.vertices())
     {
-      bool first=true;
-      for(typename Mesh::Vertex_index vi: sm.vertices())
+      if(first)
+      { m_min_z=sm.point(vi).z(); m_max_z=m_min_z; first=false; }
+      else
       {
-        if(first)
-        { m_min_z=sm.point(vi).z(); m_max_z=m_min_z; first=false; }
-        else
-        {
-          m_min_z=(std::min)(m_min_z, sm.point(vi).z());
-          m_max_z=(std::max)(m_max_z, sm.point(vi).z());
-        }
+        m_min_z=(std::min)(m_min_z, sm.point(vi).z());
+        m_max_z=(std::max)(m_max_z, sm.point(vi).z());
       }
     }
 
@@ -37,7 +36,7 @@ struct Colored_faces_given_height:
     this->face_color=[m_min_z, m_max_z]
       (const Mesh& sm, typename Mesh::Face_index fi)->CGAL::IO::Color
     {
-      double res;
+      double res=0.;
       std::size_t n=0;
       for(typename Mesh::Vertex_index vi: vertices_around_face(sm.halfedge(fi), sm))
       {
