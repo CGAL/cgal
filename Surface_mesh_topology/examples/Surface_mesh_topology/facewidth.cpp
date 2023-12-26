@@ -35,7 +35,9 @@ int main(int argc, char* argv[])
   {
     std::cout<<"  Number of faces: "<<cycle.size()<<std::endl;
 
+#ifdef CGAL_USE_BASIC_VIEWER
     if (draw) { draw_facewidth(lcc, cycle); }
+#endif
   }
 
   return EXIT_SUCCESS;
