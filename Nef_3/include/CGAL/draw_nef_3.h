@@ -98,9 +98,9 @@ public:
               CGAL::Graphics_scene& _graphics_scene,
               const GSOptions&_gs_options) :
     n_faces(0), n_edges(0),
-    nef(_nef),
     graphics_scene(_graphics_scene),
-    gs_options(_gs_options)
+    gs_options(_gs_options),
+    nef(_nef)
   {}
 
   void visit(Vertex_const_handle vh)
