@@ -15,6 +15,7 @@
 #define CGAL_BASIC_VIEWER_H
 
 // TODO #include <CGAL/license/GraphicsView.h>
+#include <cstring>
 #include <iostream>
 #include <tuple>
 #include <string>
@@ -1550,7 +1551,7 @@ public:
     m_argc(1)
   {
     m_argv[0]=new char[strlen(title)+1];
-    strcpy(m_argv[0], title);
+    strncpy(m_argv[0], title, strlen(title));
     m_argv[1]=nullptr;
 
 #if defined(CGAL_TEST_SUITE)
