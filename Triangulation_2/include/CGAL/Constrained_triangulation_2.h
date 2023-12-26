@@ -34,7 +34,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
@@ -96,9 +95,10 @@ namespace internal {
 
 template <typename K>
 struct Itag {
-  typedef typename boost::mpl::if_<typename Algebraic_structure_traits<typename K::FT>::Is_exact,
-                                   Exact_intersections_tag,
-                                   Exact_predicates_tag>::type type;
+  using Is_exact = typename Algebraic_structure_traits<typename K::FT>::Is_exact;
+  typedef std::conditional_t<Is_exact::value,
+                             Exact_intersections_tag,
+                             Exact_predicates_tag> type;
 };
 
 } // namespace internal
