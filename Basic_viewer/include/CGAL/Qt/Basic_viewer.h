@@ -19,6 +19,7 @@
 #include <iostream>
 #include <tuple>
 #include <string>
+#include <CGAL/Graphics_scene.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -50,7 +51,6 @@
 #include <cfloat>
 
 #include <CGAL/Basic_shaders.h>
-#include <CGAL/Graphics_scene.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
 #include <CGAL/assertions.h>
@@ -1646,7 +1646,7 @@ namespace CGAL
 
   inline
   void draw_graphics_scene(const Graphics_scene&,
-                           const char *="CGAL Basic Viewer")
+                           const char* ="CGAL Basic Viewer")
   {
     std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }
