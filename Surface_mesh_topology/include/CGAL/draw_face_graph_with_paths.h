@@ -284,22 +284,17 @@ void compute_elements(const Mesh &mesh,
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
   typedef typename LCC::size_type                 size_type;
 
-  typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
-  typedef typename CGAL::Get_traits<Mesh>::Point  Point;
-  typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
-  typedef typename LCC::Dart_const_descriptor     Dart_const_descriptor;
-
   typename Get_map<Mesh, Mesh>::storage_type lcc(mesh);
-  typename LCC::size_type oriented_mark = lcc.get_new_mark();
+  size_type oriented_mark = lcc.get_new_mark();
   std::size_t current_path = paths.size();
   typename LCC::size_type amark=mark==(std::numeric_limits<size_type>::max)()?
             LCC::INVALID_MARK:mark; // If !=INVALID_MARK, show darts marked with this mark
 
   lcc.orient(oriented_mark);
 
-  typename LCC::size_type markfaces    = lcc.get_new_mark();
-  typename LCC::size_type markedges    = lcc.get_new_mark();
-  typename LCC::size_type markvertices = lcc.get_new_mark();
+  size_type markfaces    = lcc.get_new_mark();
+  size_type markedges    = lcc.get_new_mark();
+  size_type markvertices = lcc.get_new_mark();
 
   if (current_path==paths.size())
   {
