@@ -44,7 +44,7 @@ struct Colored_faces_given_height:
         ++n;
       }
       // Random color depending on the "height" of the facet
-      CGAL::Random random(30*((res/n)-m_min_z)/(m_max_z-m_min_z));
+      CGAL::Random random(static_cast<unsigned int>(30*((res/n)-m_min_z)/(m_max_z-m_min_z)));
       return CGAL::get_random_color(random);
     };
   }
