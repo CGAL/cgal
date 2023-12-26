@@ -23,7 +23,6 @@
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Time_stamper.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/unordered_set.hpp>
 

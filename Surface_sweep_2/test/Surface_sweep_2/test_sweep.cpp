@@ -8,6 +8,8 @@
 #include <string>
 
 #include <CGAL/config.h>
+#include <CGAL/Arrangement_2.h>
+// #include <CGAL/draw_arrangement_2.h>
 
 #define CGAL_SEGMENT_TRAITS          1
 #define CGAL_POLYLINE_TRAITS         11
@@ -481,6 +483,13 @@ int main(int argc, char* argv[]) {
 
   Curves curves;
   if (! read_curves(inp, curves, tr)) return -1;
+
+  // {
+  //   using Arrangement = CGAL::Arrangement_2<Traits>;
+  //   Arrangement arr(&tr);
+  //   CGAL::insert(arr, curves.begin(), curves.end());
+  //   CGAL::draw(arr, "conics", true);
+  // }
 
   X_monotone_curves curves_no_overlap_out;
   CGAL::compute_subcurves(curves.begin(), curves.end(),
