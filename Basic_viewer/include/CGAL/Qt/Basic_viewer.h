@@ -1550,9 +1550,11 @@ public:
     m_basic_viewer(nullptr),
     m_argc(1)
   {
+#define _CRT_SECURE_NO_WARNINGS
     m_argv[0]=new char[strlen(title)+1];
     strncpy(m_argv[0], title, strlen(title));
     m_argv[1]=nullptr;
+#undef _CRT_SECURE_NO_WARNINGS
 
 #if defined(CGAL_TEST_SUITE)
     bool cgal_test_suite = true;
