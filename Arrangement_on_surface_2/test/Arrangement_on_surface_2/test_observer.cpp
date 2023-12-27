@@ -404,7 +404,7 @@ public:
    * \param h A circulator representing the boundary of the merged component.
    */
   virtual void after_merge_outer_ccb(Face_handle /* f */,
-                                     Ccb_halfedge_circulator /* h */)
+                                     Ccb_halfedge_circulator /* h */) override
   { compare_results("after_merge_outer_ccb"); }
 
   /*! Notification before the merging of two inner CCBs (holes).
