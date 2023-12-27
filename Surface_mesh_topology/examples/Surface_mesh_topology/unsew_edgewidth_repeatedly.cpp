@@ -53,7 +53,7 @@ struct Draw_functor: public CGAL::Graphics_scene_options<LCC_3,
     this->edge_color=[](const LCC_3&, typename LCC_3::Dart_const_handle)->CGAL::IO::Color
     { return CGAL::IO::Color(0, 0, 255); };
 
-    this->colored_face=[this](const LCC_3&, typename LCC_3::Dart_const_handle)->bool
+    this->colored_face=[](const LCC_3&, typename LCC_3::Dart_const_handle)->bool
     { return true; };
     this->face_color=[](const LCC_3&, typename LCC_3::Dart_const_handle)->CGAL::IO::Color
     { return CGAL::IO::Color(211, 211, 211); };
