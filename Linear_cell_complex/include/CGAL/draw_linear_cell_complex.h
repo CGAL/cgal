@@ -138,6 +138,26 @@ void compute_vertex(const LCC& lcc,
   { graphics_scene.add_point(lcc.point(dh)); }
 }
 
+template<class LCC, unsigned int d=LCC::dimension>
+struct Test_opposite_draw_lcc
+{
+  template<class GSOptions>
+  static bool run(const LCC& lcc, const GSOptions& gso,
+                  typename LCC::Dart_const_descriptor dh)
+  { return (!lcc.template is_free<3>(dh) &&
+            !gso.volume_wireframe(lcc, lcc.template opposite<3>(dh))); }
+};
+
+template<class LCC>
+struct Test_opposite_draw_lcc<LCC, 2>
+{
+  template<class GSOptions>
+  static bool run(const LCC&, const GSOptions&,
+                  typename LCC::Dart_const_descriptor)
+  { return true; }
+};
+
+
 template <class LCC, class GSOptions>
 void compute_elements(const LCC& lcc,
                       CGAL::Graphics_scene& graphics_scene,
@@ -168,8 +188,7 @@ void compute_elements(const LCC& lcc,
             gso.draw_face(lcc, itv))
         {
           if ((!gso.volume_wireframe(lcc, itv) ||
-               (!lcc.template is_free<3>(itv) &&
-                !gso.volume_wireframe(lcc, lcc.template opposite<3>(itv)))) &&
+               Test_opposite_draw_lcc<LCC>::run(lcc, gso, itv)) &&
               !gso.face_wireframe(lcc, itv))
           { compute_face(lcc, itv, it, graphics_scene, gso); }
           for(typename LCC::template Dart_of_cell_basic_range<2>::const_iterator
