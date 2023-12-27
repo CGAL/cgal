@@ -531,7 +531,7 @@ EOF
 	    print OUTPUT "<td>$counto</td>\n";
  	    print OUTPUT "<td>$countn</td>\n";
  	    print OUTPUT "<td>$countr</td>\n";
-	    $index = 8;
+	    $index = 9;
 	    while ($index) {
 	        $index--;
 		$_ = $tmp[$index];
@@ -543,7 +543,7 @@ EOF
 	    }
 	} else {
             print OUTPUT ">$pf_short</a>";
-	    my $index = 12;
+	    my $index = 13;
 	    while ($index) {
 		print OUTPUT "<td>?</td>\n";
 	    }
