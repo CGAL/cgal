@@ -14,8 +14,6 @@ int main(int argc, char* argv[])
 {
   std::cout<<"Program facewidth_on_unweighted_map started."<<std::endl;
   std::string filename(argc==1?CGAL::data_file_path("meshes/double-torus-example.off"):argv[1]);
-  bool draw=(argc<3?false:std::string(argv[2])=="-draw");
-
   std::ifstream inp(filename);
   if (inp.fail())
   {
@@ -36,7 +34,8 @@ int main(int argc, char* argv[])
     std::cout<<"  Number of faces: "<<cycle.size()<<std::endl;
 
 #ifdef CGAL_USE_BASIC_VIEWER
-    if (draw) { draw_facewidth(lcc, cycle); }
+    if(argc>=3 && std::string(argv[2])=="-draw")
+    { draw_facewidth(lcc, cycle); }
 #endif
   }
 
