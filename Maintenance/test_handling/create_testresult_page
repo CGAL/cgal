@@ -474,8 +474,7 @@ sub print_platform_descriptions()
 <th>BOOST</th>
 <th>MPFR</th>
 <th>GMP</th>
-<th>QT5</th>
-<th>QT6</th>
+<th>QT</th>
 <th>LEDA</th>
 <th>CXXFLAGS</th>
 <th>LDFLAGS</th>
@@ -512,7 +511,7 @@ EOF
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
 
-	    my $index = 9;
+	    my $index = 8;
 	    my @tmp;
 	    while ($index) {
 	        $index--;
@@ -531,7 +530,7 @@ EOF
 	    print OUTPUT "<td>$counto</td>\n";
  	    print OUTPUT "<td>$countn</td>\n";
  	    print OUTPUT "<td>$countr</td>\n";
-	    $index = 9;
+	    $index = 8;
 	    while ($index) {
 	        $index--;
 		$_ = $tmp[$index];
@@ -543,7 +542,7 @@ EOF
 	    }
 	} else {
             print OUTPUT ">$pf_short</a>";
-	    my $index = 13;
+	    my $index = 12;
 	    while ($index) {
         $index--;
 		print OUTPUT "<td>?</td>\n";
