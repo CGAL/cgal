@@ -578,7 +578,7 @@ void add_to_graphics_scene(const CGAL_ARR_TYPE& aos,
   gso.face_color=[](const CGAL_ARR_TYPE&,
                     typename CGAL_ARR_TYPE::Face_const_handle fh) -> CGAL::IO::Color
   {
-    CGAL::Random random((std::size_t)(&*fh));
+    CGAL::Random random((unsigned int)(&*fh));
     return get_random_color(random);
   };
 
