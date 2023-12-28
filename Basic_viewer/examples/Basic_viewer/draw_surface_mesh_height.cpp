@@ -18,7 +18,7 @@ struct Colored_faces_given_height:
   {
     if(sm.is_empty()) return;
 
-    double m_min_z, m_max_z;
+    double m_min_z=0., m_max_z=0.;
     bool first=true;
     for(typename Mesh::Vertex_index vi: sm.vertices())
     {
