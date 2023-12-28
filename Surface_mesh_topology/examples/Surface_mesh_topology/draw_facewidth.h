@@ -22,7 +22,7 @@ struct Facewidth_graphics_scene_options:
     this->vertex_color=[](const ALCC&, typename ALCC::Dart_const_handle)->CGAL::IO::Color
     { return CGAL::IO::Color(0, 255, 0); };
 
-    this->colored_face=[this](const ALCC&, typename ALCC::Dart_const_handle)->bool
+    this->colored_face=[](const ALCC&, typename ALCC::Dart_const_handle)->bool
     { return true; };
     this->face_color=[this](const ALCC& alcc, typename ALCC::Dart_const_handle dh)->CGAL::IO::Color
     { return alcc.is_marked(dh, m_face_mark)?CGAL::IO::Color(255, 0, 0)
