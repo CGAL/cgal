@@ -14,6 +14,8 @@
 #ifndef CGAL_BASIC_VIEWER_H
 #define CGAL_BASIC_VIEWER_H
 
+#define _CRT_SECURE_NO_WARNINGS
+
 // TODO #include <CGAL/license/GraphicsView.h>
 #include <cstring>
 #include <iostream>
@@ -1550,11 +1552,9 @@ public:
     m_basic_viewer(nullptr),
     m_argc(1)
   {
-#define _CRT_SECURE_NO_WARNINGS
     m_argv[0]=new char[strlen(title)+1];
     strncpy(m_argv[0], title, strlen(title));
     m_argv[1]=nullptr;
-#undef _CRT_SECURE_NO_WARNINGS
 
 #if defined(CGAL_TEST_SUITE)
     bool cgal_test_suite = true;
@@ -1656,5 +1656,7 @@ namespace CGAL
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#undef _CRT_SECURE_NO_WARNINGS
 
 #endif // CGAL_BASIC_VIEWER_H
