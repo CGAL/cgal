@@ -66,6 +66,11 @@ public:
     using Point_3 = typename Geom_traits::Point_3;
     using Vector_3 = typename Geom_traits::Vector_3;
 
+    using Eigen_vector_3 = Eigen::Vector<FT, 3>;
+    using Eigen_vector_x = Eigen::Vector<FT, Eigen::Dynamic>;
+    using Eigen_matrix_3 = Eigen::Matrix<FT, 3, 3>;
+    using Eigen_matrix_x = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
+
     using Vertex_descriptor = typename Domain::Vertex_descriptor;
 
     typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
@@ -116,37 +121,37 @@ public:
       return false;
 
     // SVD QEM
-    Eigen::Matrix3d A;
+    Eigen_matrix_3 A;
     A.setZero();
-    Eigen::Vector3d rhs;
+    Eigen_vector_3 rhs;
     rhs.setZero();
     for(std::size_t i=0; i<edge_intersections.size(); ++i)
     {
-      Eigen::Vector3d n_k { x_coord(edge_intersection_normals[i]),
+      Eigen_vector_3 n_k{ x_coord(edge_intersection_normals[i]),
                             y_coord(edge_intersection_normals[i]),
                             z_coord(edge_intersection_normals[i]) };
-      Eigen::Vector3d p_k { x_coord(edge_intersections[i]),
+      Eigen_vector_3 p_k{ x_coord(edge_intersections[i]),
                             y_coord(edge_intersections[i]),
                             z_coord(edge_intersections[i]) };
-      double d_k = n_k.transpose() * p_k;
+      const FT d_k = n_k.transpose() * p_k;
 
-      Eigen::Matrix3d A_k = n_k * n_k.transpose();
-      Eigen::Vector3d b_k = d_k * n_k;
+      Eigen_matrix_3 A_k = n_k * n_k.transpose();
+      Eigen_vector_3 b_k = d_k * n_k;
       A += A_k;
       rhs += b_k;
     }
 
-    Eigen::JacobiSVD<Eigen::MatrixXd> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    Eigen::JacobiSVD<Eigen_matrix_x> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
     // set threshold as in Peter Lindstrom's paper, "Out-of-Core Simplification of Large Polygonal Models"
     svd.setThreshold(1e-3);
 
     // Init x hat
-    Eigen::Vector3d x_hat;
+    Eigen_vector_3 x_hat;
     x_hat << x_coord(p), y_coord(p), z_coord(p);
 
     // Lindstrom formula for QEM new position for singular matrices
-    Eigen::VectorXd v_svd = x_hat + svd.solve(rhs - A * x_hat);
+    Eigen_vector_x v_svd = x_hat + svd.solve(rhs - A * x_hat);
     p = point(v_svd[0], v_svd[1], v_svd[2]);
 
     // bounding box
@@ -270,7 +275,7 @@ public:
       {
         // current edge is intersected by the isosurface
         const FT u = (val0 - isovalue) / (val0 - val1);
-        const Point_3 p_lerp = CGAL::ORIGIN + ((1.0 - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
+        const Point_3 p_lerp = CGAL::ORIGIN + ((1 - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
         edge_intersections.push_back(p_lerp);
       }
     }
