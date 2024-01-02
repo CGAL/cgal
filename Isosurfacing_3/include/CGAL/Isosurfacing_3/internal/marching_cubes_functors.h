@@ -55,7 +55,6 @@
 
 #include <array>
 #include <bitset>
-#include <mutex>
 
 namespace CGAL {
 namespace Isosurfacing {

@@ -26,7 +26,6 @@
 #include <Eigen/SVD>
 #endif
 
-#include <array>
 #include <map>
 #include <mutex>
 #include <vector>

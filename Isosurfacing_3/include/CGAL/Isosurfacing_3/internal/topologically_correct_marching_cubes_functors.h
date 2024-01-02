@@ -50,12 +50,7 @@
 #include <tbb/concurrent_hash_map.h>
 
 #include <array>
-#include <atomic>
 #include <cmath>
-#include <map>
-#include <mutex>
-#include <atomic>
-#include <optional>
 
 namespace CGAL {
 namespace Isosurfacing {
