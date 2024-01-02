@@ -53,7 +53,6 @@ int main() {
 
   Point_3 a = {0, 0, 0};
   Point_3 b = {0, -1, 0}; // ab is oriented so that it sees the plan xz positively.
-  // c can be any point in the half-plane xy, with x>0
 
   const query queries[] = {
     { {  1, 0,  0},    0.},
@@ -68,6 +67,7 @@ int main() {
 
   auto cnt = 0u;
   for(double yc = -10; yc < 10; yc += 0.1) {
+    // c can be any point in the half-plane xy, with x>0
     Point_3 c{1, yc, 0};
     // std::cout << "c = " << c << '\n';
     for(const auto& query : queries) {
