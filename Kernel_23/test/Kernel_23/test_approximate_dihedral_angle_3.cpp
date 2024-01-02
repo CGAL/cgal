@@ -53,7 +53,6 @@ int main() {
 
   Point_3 a = {0, 0, 0};
   Point_3 b = {0, -1, 0}; // ab is oriented so that it sees the plan xz positively.
-  [[maybe_unused]] Point_3 c = {1, 0, 0};
   // c can be any point in the half-plane xy, with x>0
 
   const query queries[] = {
