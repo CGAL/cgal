@@ -385,7 +385,7 @@ bool test_points_no_ends(std::ifstream& inp, Curves& /* curves */,
                          const Points& points_no_ends_out,
                          const Traits& tr) {
   Points points_no_ends;
-  if (! read_points(inp, points_no_ends, tr)) return -1;
+  if (! read_points(inp, points_no_ends, tr)) return false;
 
   if (! compare_lists(points_no_ends_out, points_no_ends, tr)) {
     std::cerr << "Error: Intersection points do not match!\n";
