@@ -81,7 +81,7 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
 
   // don't divide by 0
   if(abs(d1 - d0) < 0.000001) // @fixme hardcoded bound
-    mu = 0.5;  // if both points have the same value, assume isolevel is in the middle
+    mu = FT(0.5);  // if both points have the same value, assume isolevel is in the middle
   else
     mu = (isovalue - d0) / (d1 - d0);
 

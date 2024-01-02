@@ -109,13 +109,13 @@ public:
     const Vector_3& g111 = m_grid.gradient(min_i + 1, min_j + 1, min_k + 1);
 
     // interpolate along all axes by weighting the corner points
-    const FT lambda000 = (1 - f_i) * (1 - f_j) * (1 - f_k);
-    const FT lambda001 = (1 - f_i) * (1 - f_j) * f_k;
-    const FT lambda010 = (1 - f_i) * f_j * (1 - f_k);
-    const FT lambda011 = (1 - f_i) * f_j * f_k;
-    const FT lambda100 = f_i * (1 - f_j) * (1 - f_k);
-    const FT lambda101 = f_i * (1 - f_j) * f_k;
-    const FT lambda110 = f_i * f_j * (1 - f_k);
+    const FT lambda000 = (FT(1) - f_i) * (FT(1) - f_j) * (FT(1) - f_k);
+    const FT lambda001 = (FT(1) - f_i) * (FT(1) - f_j) * f_k;
+    const FT lambda010 = (FT(1) - f_i) * f_j * (FT(1) - f_k);
+    const FT lambda011 = (FT(1) - f_i) * f_j * f_k;
+    const FT lambda100 = f_i * (FT(1) - f_j) * (FT(1) - f_k);
+    const FT lambda101 = f_i * (FT(1) - f_j) * f_k;
+    const FT lambda110 = f_i * f_j * (FT(1) - f_k);
     const FT lambda111 = f_i * f_j * f_k;
 
     // add weighted corners

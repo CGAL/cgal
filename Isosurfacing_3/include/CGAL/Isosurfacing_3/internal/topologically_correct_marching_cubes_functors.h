@@ -268,7 +268,7 @@ private:
     std::vector<Point_index> vertices(12);
 
     // save local coordinate along the edge of intersection point
-    std::vector<FT> ecoord{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::vector<FT> ecoord(12, FT(0));
 
     // collect vertices
     unsigned short flag{1};
@@ -286,9 +286,9 @@ private:
         ecoord[eg] = l;
 
         // interpolate vertex
-        const FT px = (1 - l) * x_coord(corners[v0]) + l * x_coord(corners[v1]);
-        const FT py = (1 - l) * y_coord(corners[v0]) + l * y_coord(corners[v1]);
-        const FT pz = (1 - l) * z_coord(corners[v0]) + l * z_coord(corners[v1]);
+        const FT px = (FT(1) - l) * x_coord(corners[v0]) + l * x_coord(corners[v1]);
+        const FT py = (FT(1) - l) * y_coord(corners[v0]) + l * y_coord(corners[v1]);
+        const FT pz = (FT(1) - l) * z_coord(corners[v0]) + l * z_coord(corners[v1]);
 
         // add vertex and insert to map
         vertices[eg] = add_point(point(px, py, pz), compute_edge_index(cell, eg));
@@ -437,14 +437,14 @@ private:
 
             if((e_flag >> (f * 2)) & bit_1)
             {
-              ec0 = 1 - ec0;
-              ec2 = 1 - ec2;
+              ec0 = FT(1) - ec0;
+              ec2 = FT(1) - ec2;
             }
 
             if((e_flag >> (f * 2)) & bit_2)
             {
-              ec1 = 1 - ec1;
-              ec3 = 1 - ec3;
+              ec1 = FT(1) - ec1;
+              ec3 = FT(1) - ec3;
             }
 
             if(ec1 < ec3 && ec0 > ec2)
@@ -509,14 +509,14 @@ private:
 
             if((e_flag >> (f * 2)) & bit_1)
             {
-              ec0 = 1 - ec0;
-              ec2 = 1 - ec2;
+              ec0 = FT(1) - ec0;
+              ec2 = FT(1) - ec2;
             }
 
             if((e_flag >> (f * 2)) & bit_2)
             {
-              ec1 = 1 - ec1;
-              ec3 = 1 - ec3;
+              ec1 = FT(1) - ec1;
+              ec3 = FT(1) - ec3;
             }
 
             if(ec1 < ec3 && ec0 > ec2)
@@ -653,85 +653,85 @@ private:
                    (values[4] - values[5]) * (values[2] - values[0]);
     const FT c = (i0 - values[0]) * (values[6] - values[4]) - (i0 - values[4]) * (values[2] - values[0]);
 
-    FT d = b * b - 4 * a * c;
+    FT d = b * b - FT(4) * a * c;
     if(d > 0)
     {
       d = sqrt(d);
 
       // compute u-coord of solutions
-      ui[0] = (-b - d) / (2 * a);
-      ui[1] = (-b + d) / (2 * a);
+      ui[0] = (-b - d) / (FT(2) * a);
+      ui[1] = (-b + d) / (FT(2) * a);
 
       // compute v-coord of solutions
-      FT g1 = values[0] * (1 - ui[0]) + values[1] * ui[0];
-      FT g2 = values[2] * (1 - ui[0]) + values[3] * ui[0];
+      FT g1 = values[0] * (FT(1) - ui[0]) + values[1] * ui[0];
+      FT g2 = values[2] * (FT(1) - ui[0]) + values[3] * ui[0];
       vi[0] = (i0 - g1) / (g2 - g1);
       if(std::isnan(vi[0]) || std::isinf(vi[0]))
-        vi[0] = -1.f;
+        vi[0] = FT(-1);
 
-      g1 = values[0] * (1 - ui[1]) + values[1] * ui[1];
-      g2 = values[2] * (1 - ui[1]) + values[3] * ui[1];
+      g1 = values[0] * (FT(1) - ui[1]) + values[1] * ui[1];
+      g2 = values[2] * (FT(1) - ui[1]) + values[3] * ui[1];
       vi[1] = (i0 - g1) / (g2 - g1);
       if(std::isnan(vi[1]) || std::isinf(vi[1]))
-        vi[1] = -1.f;
+        vi[1] = FT(-1);
 
       // compute w-coordinates of solutions
-      g1 = values[0] * (1 - ui[0]) + values[1] * ui[0];
-      g2 = values[4] * (1 - ui[0]) + values[5] * ui[0];
+      g1 = values[0] * (FT(1) - ui[0]) + values[1] * ui[0];
+      g2 = values[4] * (FT(1) - ui[0]) + values[5] * ui[0];
       wi[0] = (i0 - g1) / (g2 - g1);
-      if(std::isnan(wi[0]) || std::isinf(wi[0])) wi[0] = -1.f;
-      g1 = values[0] * (1 - ui[1]) + values[1] * ui[1];
-      g2 = values[4] * (1 - ui[1]) + values[5] * ui[1];
+      if (std::isnan(wi[0]) || std::isinf(wi[0])) wi[0] = FT(-1);
+      g1 = values[0] * (FT(1) - ui[1]) + values[1] * ui[1];
+      g2 = values[4] * (FT(1) - ui[1]) + values[5] * ui[1];
       wi[1] = (i0 - g1) / (g2 - g1);
       if(std::isnan(wi[1]) || std::isinf(wi[1]))
-        wi[1] = -1.f;
+        wi[1] = FT(-1);
 
       // correct values for roots of quadratic equations
       // in case the asymptotic decider has failed
       if(f_flag[0]) {  // face 1, w = 0;
         if(wi[0] < wi[1])
-          wi[0] = 0;
+          wi[0] = FT(0);
         else
-          wi[1] = 0;
+          wi[1] = FT(0);
       }
 
       if(f_flag[1]) {  // face 2, w = 1
         if(wi[0] > wi[1])
-          wi[1] = 1;
+          wi[1] = FT(1);
         else
-          wi[1] = 1;
+          wi[1] = FT(1);
       }
 
       if(f_flag[2]) {  // face 3, v = 0
         if(vi[0] < vi[1])
-          vi[0] = 0;
+          vi[0] = FT(0);
         else
-          vi[1] = 0;
+          vi[1] = FT(0);
       }
 
       if(f_flag[3]) {  // face 4, v = 1
         if(vi[0] > vi[1])
-          vi[0] = 1;
+          vi[0] = FT(1);
         else
-          vi[1] = 1;
+          vi[1] = FT(1);
       }
 
       if(f_flag[4]) {  // face 5, u = 0
         if(ui[0] < ui[1])
-          ui[0] = 0;
+          ui[0] = FT(0);
         else
-          ui[1] = 0;
+          ui[1] = FT(0);
       }
 
       if(f_flag[5]) {  // face 6, u = 1
         if(ui[0] > ui[1])
-          ui[0] = 1;
+          ui[0] = FT(1);
         else
-          ui[1] = 1;
+          ui[1] = FT(1);
       }
 
       // check solution intervals
-      if(0 < ui[0] && ui[0] < 1)
+      if(FT(0) < ui[0] && ui[0] < FT(1))
         q_sol |= 1;
 
       if(0 < ui[1] && ui[1] < 1)
@@ -842,8 +842,8 @@ private:
         {
           if(get_cnt_size(t, c_) == 3)
           {
-            FT umin = 2;
-            FT umax = -2;
+            FT umin(2);
+            FT umax(-2);
             const uint e0 = get_c(t, 0, c_);
             const uint e1 = get_c(t, 1, c_);
             const uint e2 = get_c(t, 2, c_);
@@ -875,18 +875,18 @@ private:
         const FT u = hvt[i][0];
         const FT v = hvt[i][1];
         const FT w = hvt[i][2];
-        const FT px = (1 - w) * ((1 - v) * (x_coord(corners[0]) + u * (x_coord(corners[1]) - x_coord(corners[0]))) +
-                                       v * (x_coord(corners[2]) + u * (x_coord(corners[3]) - x_coord(corners[2])))) +
-                            w * ((1 - v) * (x_coord(corners[4]) + u * (x_coord(corners[5]) - x_coord(corners[4]))) +
-                                       v * (x_coord(corners[6]) + u * (x_coord(corners[7]) - x_coord(corners[6]))));
-        const FT py = (1 - w) * ((1 - v) * (y_coord(corners[0]) + u * (y_coord(corners[1]) - y_coord(corners[0]))) +
-                                       v * (y_coord(corners[2]) + u * (y_coord(corners[3]) - y_coord(corners[2])))) +
-                            w * ((1 - v) * (y_coord(corners[4]) + u * (y_coord(corners[5]) - y_coord(corners[4]))) +
-                                       v * (y_coord(corners[6]) + u * (y_coord(corners[7]) - y_coord(corners[6]))));
-        const FT pz = (1 - w) * ((1 - v) * (z_coord(corners[0]) + u * (z_coord(corners[1]) - z_coord(corners[0]))) +
-                                       v * (z_coord(corners[2]) + u * (z_coord(corners[3]) - z_coord(corners[2])))) +
-                            w * ((1 - v) * (z_coord(corners[4]) + u * (z_coord(corners[5]) - z_coord(corners[4]))) +
-                                       v * (z_coord(corners[6]) + u * (z_coord(corners[7]) - z_coord(corners[6]))));
+        const FT px = (FT(1) - w) * ((FT(1) - v) * (x_coord(corners[0]) + u * (x_coord(corners[1]) - x_coord(corners[0]))) +
+                                               v * (x_coord(corners[2]) + u * (x_coord(corners[3]) - x_coord(corners[2])))) +
+                                w * ((FT(1) - v) * (x_coord(corners[4]) + u * (x_coord(corners[5]) - x_coord(corners[4]))) +
+                                               v * (x_coord(corners[6]) + u * (x_coord(corners[7]) - x_coord(corners[6]))));
+        const FT py = (FT(1) - w) * ((FT(1) - v) * (y_coord(corners[0]) + u * (y_coord(corners[1]) - y_coord(corners[0]))) +
+                                               v * (y_coord(corners[2]) + u * (y_coord(corners[3]) - y_coord(corners[2])))) +
+                                w * ((FT(1) - v) * (y_coord(corners[4]) + u * (y_coord(corners[5]) - y_coord(corners[4]))) +
+                                               v * (y_coord(corners[6]) + u * (y_coord(corners[7]) - y_coord(corners[6]))));
+        const FT pz = (FT(1) - w) * ((FT(1) - v) * (z_coord(corners[0]) + u * (z_coord(corners[1]) - z_coord(corners[0]))) +
+                                               v * (z_coord(corners[2]) + u * (z_coord(corners[3]) - z_coord(corners[2])))) +
+                                w * ((FT(1) - v) * (z_coord(corners[4]) + u * (z_coord(corners[5]) - z_coord(corners[4]))) +
+                                               v * (z_coord(corners[6]) + u * (z_coord(corners[7]) - z_coord(corners[6]))));
 
         tg_idx[i] = add_point_unchecked(point(px, py, pz));
       }
@@ -902,7 +902,7 @@ private:
           for(int r=0; r<cnt_sz; ++r)
           {
             uint index = -1;
-            FT dist = 1000.;
+            FT dist = std::numeric_limits<FT>::max();
             uint ci = get_c(i, r, c_);
             const FT u_edge = e_vert(ci, 0);
             const FT v_edge = e_vert(ci, 1);
@@ -1153,18 +1153,18 @@ private:
         } // switch(c_faces)
 
         // create inner vertex
-        const FT px = (1 - wcoord) * ((1 - vcoord) * (x_coord(corners[0]) + ucoord * (x_coord(corners[1]) - x_coord(corners[0]))) +
-                                            vcoord * (x_coord(corners[2]) + ucoord * (x_coord(corners[3]) - x_coord(corners[2])))) +
-                            wcoord * ((1 - vcoord) * (x_coord(corners[4]) + ucoord * (x_coord(corners[5]) - x_coord(corners[4]))) +
-                                            vcoord * (x_coord(corners[6]) + ucoord * (x_coord(corners[7]) - x_coord(corners[6]))));
-        const FT py = (1 - wcoord) * ((1 - vcoord) * (y_coord(corners[0]) + ucoord * (y_coord(corners[1]) - y_coord(corners[0]))) +
-                                            vcoord * (y_coord(corners[2]) + ucoord * (y_coord(corners[3]) - y_coord(corners[2])))) +
-                            wcoord * ((1 - vcoord) * (y_coord(corners[4]) + ucoord * (y_coord(corners[5]) - y_coord(corners[4]))) +
-                                            vcoord * (y_coord(corners[6]) + ucoord * (y_coord(corners[7]) - y_coord(corners[6]))));
-        const FT pz = (1 - wcoord) * ((1 - vcoord) * (z_coord(corners[0]) + ucoord * (z_coord(corners[1]) - z_coord(corners[0]))) +
-                                            vcoord * (z_coord(corners[2]) + ucoord * (z_coord(corners[3]) - z_coord(corners[2])))) +
-                            wcoord * ((1 - vcoord) * (z_coord(corners[4]) + ucoord * (z_coord(corners[5]) - z_coord(corners[4]))) +
-                                            vcoord * (z_coord(corners[6]) + ucoord * (z_coord(corners[7]) - z_coord(corners[6]))));
+        const FT px = (FT(1) - wcoord) * ((FT(1) - vcoord) * (x_coord(corners[0]) + ucoord * (x_coord(corners[1]) - x_coord(corners[0]))) +
+                                                    vcoord * (x_coord(corners[2]) + ucoord * (x_coord(corners[3]) - x_coord(corners[2])))) +
+                                wcoord * ((FT(1) - vcoord) * (x_coord(corners[4]) + ucoord * (x_coord(corners[5]) - x_coord(corners[4]))) +
+                                                    vcoord * (x_coord(corners[6]) + ucoord * (x_coord(corners[7]) - x_coord(corners[6]))));
+        const FT py = (FT(1) - wcoord) * ((FT(1) - vcoord) * (y_coord(corners[0]) + ucoord * (y_coord(corners[1]) - y_coord(corners[0]))) +
+                                                    vcoord * (y_coord(corners[2]) + ucoord * (y_coord(corners[3]) - y_coord(corners[2])))) +
+                                wcoord * ((FT(1) - vcoord) * (y_coord(corners[4]) + ucoord * (y_coord(corners[5]) - y_coord(corners[4]))) +
+                                                    vcoord * (y_coord(corners[6]) + ucoord * (y_coord(corners[7]) - y_coord(corners[6]))));
+        const FT pz = (FT(1) - wcoord) * ((FT(1) - vcoord) * (z_coord(corners[0]) + ucoord * (z_coord(corners[1]) - z_coord(corners[0]))) +
+                                                    vcoord * (z_coord(corners[2]) + ucoord * (z_coord(corners[3]) - z_coord(corners[2])))) +
+                                wcoord * ((FT(1) - vcoord) * (z_coord(corners[4]) + ucoord * (z_coord(corners[5]) - z_coord(corners[4]))) +
+                                                    vcoord * (z_coord(corners[6]) + ucoord * (z_coord(corners[7]) - z_coord(corners[6]))));
 
         bool pt_used = false;
         Point_index g_index = 0;

@@ -109,9 +109,9 @@ public:
       {
         // current edge is intersected by the isosurface
         const FT u = (val0 - isovalue) / (val0 - val1);
-        const Point_3 p_lerp = point((1 - u) * x_coord(p0) + u * x_coord(p1),
-                                     (1 - u) * y_coord(p0) + u * y_coord(p1),
-                                     (1 - u) * z_coord(p0) + u * z_coord(p1));
+        const Point_3 p_lerp = point((FT(1) - u) * x_coord(p0) + u * x_coord(p1),
+                                     (FT(1) - u) * y_coord(p0) + u * y_coord(p1),
+                                     (FT(1) - u) * z_coord(p0) + u * z_coord(p1));
         edge_intersections.push_back(p_lerp);
         edge_intersection_normals.push_back(domain.gradient(p_lerp));
       }
@@ -275,7 +275,7 @@ public:
       {
         // current edge is intersected by the isosurface
         const FT u = (val0 - isovalue) / (val0 - val1);
-        const Point_3 p_lerp = CGAL::ORIGIN + ((1 - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
+        const Point_3 p_lerp = CGAL::ORIGIN + ((FT(1) - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
         edge_intersections.push_back(p_lerp);
       }
     }

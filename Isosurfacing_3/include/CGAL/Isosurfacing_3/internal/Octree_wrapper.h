@@ -129,7 +129,7 @@ public:
         Uniform_coords vuc = vertex_uniform_coordinates(node, i);
         const auto lex = lex_index(vuc[0], vuc[1], vuc[2], max_depth_);
         leaf_vertices_set.insert(lex);
-        vertex_values_[lex] = 0;
+        vertex_values_[lex] = FT(0);
       }
 
       // write all leaf edges in a set
@@ -602,8 +602,6 @@ public:
     std::size_t n3_lex = lex_index(n3_uniform_coords[0], n3_uniform_coords[1], n3_uniform_coords[2], max_depth_);
 
     return { n0_lex, n1_lex, n2_lex, n3_lex };
-
-    // return { value( i0, j0, k0 ), value( i1, j1, k1 ) };
   }
 };
 
