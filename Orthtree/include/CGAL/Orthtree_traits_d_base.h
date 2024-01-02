@@ -39,6 +39,7 @@ public:
   /// \name Types
   /// @{
 
+  using Kernel = K;
   using Dimension = DimensionTag;
   using FT = typename K::FT;
   using Point_d = typename K::Point_d;

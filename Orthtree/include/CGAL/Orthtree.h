@@ -20,6 +20,8 @@
 #include <CGAL/Orthtree/Traversal_iterator.h>
 #include <CGAL/Orthtree/IO.h>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Property_container.h>
 #include <CGAL/property_map.h>
 #include <CGAL/intersections.h>
@@ -75,6 +77,7 @@ public:
   /// \name Traits Types
   /// @{
   using Dimension = typename Traits::Dimension; ///< Dimension of the tree
+  using Kernel = typename Traits::Kernel;
   using FT = typename Traits::FT; ///< Number type.
   using Point = typename Traits::Point_d; ///< Point type.
   using Bbox = typename Traits::Bbox_d; ///< Bounding box type.
@@ -163,9 +166,8 @@ private: // data members :
   Node_property_container::Array <Maybe_node_index>& m_node_parents;
   Node_property_container::Array <Maybe_node_index>& m_node_children;
 
-  Point m_bbox_min;                  /* input bounding box min value */
-
-  using Bbox_dimensions = std::array<FT, Dimension::value>;
+  using Bbox_dimensions = std::array<CGAL::Exact_predicates_exact_constructions_kernel::FT, Dimension::value>;
+  Bbox_dimensions m_bbox_min;
   std::vector<Bbox_dimensions> m_side_per_depth;      /* side length per node's depth */
 
   Cartesian_ranges cartesian_range; /* a helper to easily iterate over coordinates of points */
@@ -203,12 +205,14 @@ public:
     auto bbox = m_traits.construct_root_node_bbox_object()();
 
     // Determine dimensions of the root bbox
+
     Bbox_dimensions size;
-    for (int i = 0; i < Dimension::value; ++i)
-      size[i] = (bbox.max)()[i] - (bbox.min)()[i];
+    for (int i = 0; i < Dimension::value; ++i) {
+      m_bbox_min[i] = (bbox.min)()[i];
+      size[i] = CGAL::Exact_predicates_exact_constructions_kernel::FT((bbox.max)()[i]) - m_bbox_min[i];
+    }
 
     // save orthtree attributes
-    m_bbox_min = (bbox.min)();
     m_side_per_depth.push_back(size);
     data(root()) = m_traits.construct_root_node_contents_object()();
   }
@@ -469,9 +473,10 @@ public:
     using Cartesian_coordinate = std::array<FT, Dimension::value>;
     Cartesian_coordinate min_corner, max_corner;
     Bbox_dimensions size = m_side_per_depth[depth(n)];
+    CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, typename Traits::Kernel> conv;
     for (int i = 0; i < Dimension::value; i++) {
-      min_corner[i] = m_bbox_min[i] + (global_coordinates(n)[i] * size[i]);
-      max_corner[i] = min_corner[i] + size[i];
+      min_corner[i] = conv(m_bbox_min[i] + int(global_coordinates(n)[i]) * size[i]);
+      max_corner[i] = conv(m_bbox_min[i] + int(global_coordinates(n)[i] + 1) * size[i]);
     }
     return {std::apply(m_traits.construct_point_d_object(), min_corner),
             std::apply(m_traits.construct_point_d_object(), max_corner)};
@@ -936,7 +941,7 @@ public:
       Bbox_dimensions size = m_side_per_depth.back();
       Bbox_dimensions child_size;
       for (int i = 0; i < Dimension::value; ++i)
-        child_size[i] = size[i] / FT(2);
+        child_size[i] = size[i] * 0.5;
       m_side_per_depth.push_back(child_size);
     }
 
@@ -961,14 +966,16 @@ public:
 
     // Determine the location this node should be split
     Bbox_dimensions bary;
-    std::size_t i = 0;
-    for (const FT& f: cartesian_range(m_bbox_min)) {
-      bary[i] = FT(global_coordinates(n)[i]) * size[i] + size[i] / FT(2) + f;
-      ++i;
-    }
+
+    for (std::size_t i = 0; i < Dimension::value; i++)
+      bary[i] = FT(global_coordinates(n)[i]) * size[i] + size[i] / FT(2) + m_bbox_min[i];
 
     // Convert that location into a point
-    return std::apply(m_traits.construct_point_d_object(), bary);
+    CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, typename Traits::Kernel> conv;
+    std::array<typename Traits::Kernel::FT, Dimension::value> tmp;
+    for (std::size_t i = 0; i < Dimension::value; i++)
+      tmp[i] = conv(bary[i]);
+    return std::apply(m_traits.construct_point_d_object(), tmp);
   }
 
   /*!
