@@ -59,6 +59,15 @@ typedef GMP_arithmetic_kernel Arithmetic_kernel;
 #endif // CGAL_USE_GMP
 #endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
+#ifndef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
+#include <CGAL/BOOST_MP_arithmetic_kernel.h>
+#if defined(CGAL_HAS_BOOST_MP_ARITHMETIC_KERNEL)
+namespace CGAL{
+typedef BOOST_cpp_arithmetic_kernel Arithmetic_kernel;
+}// namespace CGAL
+#define CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL 1
+#endif // CGAL_USE_BOOST_MP
+#endif // CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
 
 // Macro to snap typedefs in Arithmetic_kernel
 #define CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT) \
