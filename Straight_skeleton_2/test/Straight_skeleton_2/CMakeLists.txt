@@ -9,7 +9,7 @@ find_package(LEDA QUIET)
 
 include_directories(BEFORE "include")
 
-create_single_source_cgal_program("issue4533.cpp")")
+create_single_source_cgal_program("issue4533.cpp")
 create_single_source_cgal_program("issue4684.cpp")
 create_single_source_cgal_program("test_sls.cpp")
 create_single_source_cgal_program("test_sls_previous_issues.cpp")

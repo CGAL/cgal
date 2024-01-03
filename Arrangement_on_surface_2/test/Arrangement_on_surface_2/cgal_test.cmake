@@ -72,7 +72,7 @@ if(CGAL_DISABLE_GMP)
 endif()
 
 if(CGAL_DISABLE_GMP)
-  message(STATUS "GMP is disable.)
+  message(STATUS "GMP is disable.")
   if (CGAL_USE_LEDA)
     message(STATUS "Try to use LEDA instead.")
     set(GMPZ_NT ${LEDA_INT_NT})
