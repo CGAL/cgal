@@ -485,39 +485,12 @@ protected:
     Vertex_handle reference_vertex;
   };
 
-  Construct_Steiner_point_return_type
-  construct_Steiner_point(Constraint_id constraint_id, Subconstraint subconstraint)
-  {
+  auto encroaching_vertices(Vertex_handle va, Vertex_handle vb) const {
     auto& gt = tr.geom_traits();
     auto angle_functor = gt.angle_3_object();
-    auto compare_angle_functor = gt.compare_angle_3_object();
-    auto vector_functor = gt.construct_vector_3_object();
-    auto midpoint_functor = gt.construct_midpoint_3_object();
-    auto scaled_vector_functor = gt.construct_scaled_vector_3_object();
-    auto sq_length_functor = gt.compute_squared_length_3_object();
-    auto sc_product_functor = gt.compute_scalar_product_3_object();
-    auto translate_functor = gt.construct_translated_point_3_object();
 
-    const Vertex_handle va = subconstraint.first;
-    const Vertex_handle vb = subconstraint.second;
     const auto& pa = tr.point(va);
     const auto& pb = tr.point(vb);
-    const auto [orig_va, orig_vb] = constraint_extremities(constraint_id);
-    const auto& orig_pa = tr.point(orig_va);
-    const auto& orig_pb = tr.point(orig_vb);
-
-    if(this->dimension() < 2) {
-      std::cerr << "dim < 2: midpoint\n";
-      return {midpoint_functor(pa, pb), va->cell(), va};
-    }
-
-#if CGAL_DEBUG_CDT_3 & 0x10
-    std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
-              << display_vert(vb) << " )\n";
-    auto debug_simplex = [&](auto simplex) {
-      std::cerr << " - " << IO::oformat(simplex, With_point_tag{}) << '\n';
-    };
-#endif // CGAL_DEBUG_CDT_3
 
     namespace bc = boost::container;
     bc::flat_set<Vertex_handle, std::less<Vertex_handle>,
@@ -597,16 +570,66 @@ protected:
                     std::cerr << "    " << this->display_vert(v) << '\n';
                   });
 #endif // CGAL_DEBUG_CDT_3
-    CGAL_assertion(vector_of_encroaching_vertices.begin() != end);
+    vector_of_encroaching_vertices.erase(end, vector_of_encroaching_vertices.end());
+    return vector_of_encroaching_vertices;
+  }
+
+  auto min_distance_and_vertex_between_constraint_and_encroaching_vertex(Vertex_handle va, Vertex_handle vb) const {
+    struct Result {
+      double min_dist = std::numeric_limits<double>::max();
+      Vertex_handle v = {};
+    } result;
+    const auto vector_of_encroaching_vertices = encroaching_vertices(va, vb);
+    for(auto v: vector_of_encroaching_vertices) {
+      const auto dist = CGAL::approximate_sqrt(squared_distance(tr.point(v), Line{tr.point(va), tr.point(vb)}));
+      if(dist < result.min_dist) {
+        result = Result{dist, v};
+      }
+    }
+    return result;
+  }
+
+  Construct_Steiner_point_return_type
+  construct_Steiner_point(Constraint_id constraint_id, Subconstraint subconstraint)
+  {
+    auto& gt = tr.geom_traits();
+    auto compare_angle_functor = gt.compare_angle_3_object();
+    auto vector_functor = gt.construct_vector_3_object();
+    auto midpoint_functor = gt.construct_midpoint_3_object();
+    auto scaled_vector_functor = gt.construct_scaled_vector_3_object();
+    auto sq_length_functor = gt.compute_squared_length_3_object();
+    auto sc_product_functor = gt.compute_scalar_product_3_object();
+    auto translate_functor = gt.construct_translated_point_3_object();
+
+    const Vertex_handle va = subconstraint.first;
+    const Vertex_handle vb = subconstraint.second;
+    const auto& pa = tr.point(va);
+    const auto& pb = tr.point(vb);
+    const auto [orig_va, orig_vb] = constraint_extremities(constraint_id);
+    const auto& orig_pa = tr.point(orig_va);
+    const auto& orig_pb = tr.point(orig_vb);
+
+    if(this->dimension() < 2) {
+      std::cerr << "dim < 2: midpoint\n";
+      return {midpoint_functor(pa, pb), va->cell(), va};
+    }
+
+#if CGAL_DEBUG_CDT_3 & 0x10
+    std::cerr << "construct_Steiner_point( " << display_vert(va) << " , "
+              << display_vert(vb) << " )\n";
+#endif // CGAL_DEBUG_CDT_3
+
+    const auto vector_of_encroaching_vertices = encroaching_vertices(va, vb);
+    CGAL_assertion(vector_of_encroaching_vertices.size() > 0);
 
     const auto reference_vertex_it = std::max_element(
-        vector_of_encroaching_vertices.begin(), end,
+        vector_of_encroaching_vertices.begin(), vector_of_encroaching_vertices.end(),
         [pa, pb, &compare_angle_functor, this](Vertex_handle v1,
                                                Vertex_handle v2) {
           return compare_angle_functor(pa, this->tr.point(v1), pb,
                                        pa, this->tr.point(v2), pb) == SMALLER;
         });
-    CGAL_assertion(reference_vertex_it != end);
+    CGAL_assertion(reference_vertex_it != vector_of_encroaching_vertices.end());
 #if CGAL_CDT_3_DEBUG_CONFORMING
     std::cerr << "  -> reference point: " << display_vert(*reference_vertex_it)
               << '\n';
