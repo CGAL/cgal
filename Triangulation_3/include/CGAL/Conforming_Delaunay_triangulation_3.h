@@ -584,11 +584,11 @@ protected:
     auto end = std::remove_if(vector_of_encroaching_vertices.begin(),
                               vector_of_encroaching_vertices.end(),
                               [va, vb, pa, pb, &angle_functor, this](Vertex_handle v) {
-                               if(va == v || vb == v) return true;
-                               return angle_functor(pa,
+                                if(va == v || vb == v) return true;
+                                return angle_functor(pa,
                                                     this->tr.point(v),
                                                     pb) == ACUTE;
-                             });
+                              });
 #if CGAL_DEBUG_CDT_3 & 0x10
     std::cerr << "  -> vector_of_encroaching_vertices (after filter):\n";
     std::for_each(vector_of_encroaching_vertices.begin(), end,
