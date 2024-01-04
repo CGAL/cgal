@@ -174,6 +174,22 @@ protected:
   Constraint_id insert_constrained_edge_impl(Vertex_handle va, Vertex_handle vb,
                                              Visitor&) {
     if(va != vb) {
+      if(segment_vertex_epsilon != 0.) {
+        if(!max_bbox_edge_length) {
+          update_max_bbox_edge_length();
+        }
+        auto [min_dist, min_vertex] = min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
+        if(min_dist < segment_vertex_epsilon * *max_bbox_edge_length) {
+          std::stringstream ss;
+          ss.precision(std::cerr.precision());
+          ss << "A constrained segment is too close to a vertex.\n";
+          ss << "  -> vertex " << display_vert(min_vertex) << '\n';
+          ss << "  -> constrained segment " << display_vert(va) << "  -  " << display_vert(vb) << '\n';
+          ss << "  -> distance = " << min_dist << '\n';
+          ss << "  -> max_bbox_edge_length = " << *max_bbox_edge_length << '\n';
+          throw std::runtime_error(ss.str());
+        }
+      }
       const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
       pair_of_vertices_to_cid.emplace(make_sorted_pair(va, vb), c_id);
       // traverse all the vertices along [va, vb] and add pairs of consecutive
