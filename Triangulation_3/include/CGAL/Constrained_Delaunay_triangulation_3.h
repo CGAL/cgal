@@ -420,7 +420,10 @@ protected:
     }
 
     Vertex_handle insert_in_triangulation(const Point_3& p, Locate_type lt, Cell_handle c, int li, int lj) {
-      return self.insert_in_cdt_3(p, lt, c, li, lj, *this);
+      if(self.is_Delaunay)
+        return self.insert_impl_do_not_split(p, lt, c, li, lj, *this);
+      else 
+        return self.insert_in_cdt_3(p, lt, c, li, lj, *this);
     }
   };
 
@@ -2187,6 +2190,7 @@ public:
 
   void restore_constrained_Delaunay()
   {
+    is_Delaunay = false;
     for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
       CDT_2& cdt_2 = face_cdt_2[i];
       fill_cdt_2(cdt_2, i);
@@ -2384,6 +2388,7 @@ protected:
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
   std::vector<CDT_2> face_cdt_2;
   bool cdt_2_are_initialized = false;
+  bool is_Delaunay = true;
   struct Face_edge {
     Constraint_id constraint_id;
     bool is_reverse = false;
