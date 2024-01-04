@@ -1675,6 +1675,17 @@ private:
     bool reversed_orientation = false;
   };
 
+  static auto vertex_of_cdt_2_functor(const CDT_2& cdt_2) {
+    return [&, hint = CDT_2_face_handle{}](const auto& p) mutable {
+      int i;
+      typename CDT_2::Locate_type lt;
+      const auto fh = cdt_2.locate(p, lt, i, hint);
+      CGAL_assume(lt == CDT_2::VERTEX);
+      hint = fh;
+      return fh->vertex(i);
+    };
+  }
+
   template <typename Tr>
   static auto facet_is_facet_of_cdt_2(const Tr& tr, typename Tr::Facet f, const CDT_2& cdt_2)
       -> std::optional<Oriented_face_of_cdt_2>
@@ -1684,14 +1695,7 @@ private:
     const auto v1 = c->vertex(Tr::vertex_triple_index(facet_index, 1));
     const auto v2 = c->vertex(Tr::vertex_triple_index(facet_index, 2));
 
-    auto v = [&, hint = CDT_2_face_handle{}](const auto& p) mutable {
-      int i;
-      typename CDT_2::Locate_type lt;
-      const auto fh = cdt_2.locate(p, lt, i, hint);
-      CGAL_assume(lt == CDT_2::VERTEX);
-      hint = fh;
-      return fh->vertex(i);
-    };
+    auto v = vertex_of_cdt_2_functor(cdt_2);
 
     const auto cdt_2_v0 = v(tr.point(v0));
     const auto cdt_2_v1 = v(tr.point(v1));
@@ -1711,14 +1715,8 @@ private:
   auto edge_of_cdt_2(const CDT_2& cdt_2, const Vertex_handle va, const Vertex_handle vb) const
       -> std::optional<typename CDT_2::Edge>
   {
-    auto v = [&, hint = CDT_2_face_handle{}](const auto& p) mutable {
-      int i;
-      typename CDT_2::Locate_type lt;
-      const auto fh = cdt_2.locate(p, lt, i, hint);
-      CGAL_assume(lt == CDT_2::VERTEX);
-      hint = fh;
-      return fh->vertex(i);
-    };
+    auto v = vertex_of_cdt_2_functor(cdt_2);
+
     const auto cdt_2_v0 = v(this->point(va));
     const auto cdt_2_v1 = v(this->point(vb));
     CDT_2_face_handle fh;
