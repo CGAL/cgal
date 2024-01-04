@@ -1,7 +1,7 @@
 // #define CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+//#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
