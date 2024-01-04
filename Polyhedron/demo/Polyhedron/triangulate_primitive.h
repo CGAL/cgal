@@ -143,7 +143,6 @@ private:
     }
 
     Vertex_handle previous, first, last_inserted;
-    std::size_t previd, firstid, lastid;
 
     // Iterate the points of the facet and decide if they must be inserted in the CDT
     typename Kernel::FT x(0), y(0), z(0);
@@ -163,7 +162,6 @@ private:
         v2v[vh] = idPoint.second;
         if (first == Vertex_handle()) {
           first = vh;
-          firstid = idPoint.second;
         }
 
         if(previous != nullptr && previous != vh)
@@ -171,10 +169,8 @@ private:
           if (!skip[i])
             cdt->insert_constraint(previous, vh);
           last_inserted = previous;
-          lastid = previd;
         }
         previous = vh;
-        previd = idPoint.second;
       }
     }
 

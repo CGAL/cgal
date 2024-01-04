@@ -1371,7 +1371,7 @@ QList<EPICK::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(fac
 
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
-  auto f = [&](auto &ffit, auto& v2v) {
+  auto f = [&](auto &ffit, auto&) {
     if (ffit.info().is_external)
       return;
 
