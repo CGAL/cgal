@@ -530,7 +530,7 @@ protected:
     };
     auto fill_encroaching_vertices = [&](const auto simplex) {
 #if CGAL_DEBUG_CDT_3 & 0x10
-      debug_simplex(simplex);
+      std::cerr << " - " << IO::oformat(simplex, With_point_tag{}) << '\n';
 #endif // CGAL_DEBUG_CDT_3
       auto visit_cell = [&](Cell_handle cell) {
         for(int i = 0, end = this->tr.dimension() + 1; i < end; ++i) {
@@ -561,8 +561,9 @@ protected:
       case 0: {
         const auto v = static_cast<Vertex_handle>(simplex);
         if(v != va && v != vb) {
-          std::cerr << "!! The constraint passes through a vertex! ";
-          std::cerr << "  -> " << display_vert(v) << '\n';
+          std::cerr << "!! The constraint passes through a vertex!\n";
+          std::cerr << "  -> constraint " << display_vert(va) << "     " << display_vert(vb) << '\n';
+          std::cerr << "  ->     vertex " << display_vert(v) << '\n';
           debug_dump("bug-through-vertex");
           CGAL_error();
         }
