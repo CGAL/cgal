@@ -12,6 +12,9 @@
 #ifndef CGAL_SLS_IO_PRINT_H
 #define CGAL_SLS_IO_PRINT_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>

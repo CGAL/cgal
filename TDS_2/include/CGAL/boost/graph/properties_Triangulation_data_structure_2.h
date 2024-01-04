@@ -11,6 +11,9 @@
 #ifndef CGAL_PROPERTIES_TRIANGULATION_DATA_STRUCTURE_2_H
 #define CGAL_PROPERTIES_TRIANGULATION_DATA_STRUCTURE_2_H
 
+#include <CGAL/license/TDS_2.h>
+
+
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/internal/graph_traits_2D_TDS_helper.h>
 #include <CGAL/boost/graph/internal/Has_member_id.h>

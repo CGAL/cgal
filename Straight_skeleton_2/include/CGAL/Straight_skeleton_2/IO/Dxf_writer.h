@@ -15,6 +15,9 @@
 #ifndef CGAL_IO_DXF_WRITER_H
 #define CGAL_IO_DXF_WRITER_H
 
+#include <CGAL/license/Straight_skeleton_2.h>
+
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>

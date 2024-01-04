@@ -12,6 +12,9 @@
 #ifndef CGAL_PROPERTIES_POLYHEDRON_3_FEATURES_H
 #define CGAL_PROPERTIES_POLYHEDRON_3_FEATURES_H
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/Polyhedron_3.h>
 #include <set>
 

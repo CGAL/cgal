@@ -13,6 +13,9 @@
 #ifndef CGAL_PCA_SUBITERATOR_H
 #define CGAL_PCA_SUBITERATOR_H
 
+#include <CGAL/license/Principal_component_analysis.h>
+
+
 #include <boost/iterator/iterator_facade.hpp>
 
 namespace CGAL

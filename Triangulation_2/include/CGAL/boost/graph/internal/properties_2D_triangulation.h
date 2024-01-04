@@ -26,6 +26,9 @@
 #ifndef CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
 #define CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 namespace CGAL {
 namespace internal {
 

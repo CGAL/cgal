@@ -11,6 +11,9 @@
 #ifndef CGAL_PROPERTIES_TRIANGULATION_HIERARCHY_2_H
 #define CGAL_PROPERTIES_TRIANGULATION_HIERARCHY_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Triangulation_hierarchy_2.h>
 
 #define CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS typename Tr

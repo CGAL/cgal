@@ -10,6 +10,8 @@
 //                 Andreas Fabri,
 //                 Fernando Cacciola
 
+#include <CGAL/license/Triangulation_2.h>
+
 #ifndef CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS
   #error CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS is not defined
 #endif

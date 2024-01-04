@@ -10,8 +10,11 @@
 //
 // Author(s)     : Radu Ursu
 
-#ifndef CGAL_apply_to_range_h
-#define CGAL_apply_to_range_h
+#ifndef CGAL_APPLY_TO_RANGE_H
+#define CGAL_APPLY_TO_RANGE_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Unique_hash_map.h>
@@ -151,4 +154,4 @@ void apply_to_range(const Tr &t,
 
 }//end namespace
 
-#endif
+#endif //CGAL_APPLY_TO_RANGE_H

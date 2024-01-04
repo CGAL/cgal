@@ -12,6 +12,9 @@
 #ifndef CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/boost/graph/properties_Delaunay_triangulation_2.h>
 

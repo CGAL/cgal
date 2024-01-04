@@ -12,6 +12,9 @@
 #ifndef CGAL_PROPERTIES_POLYHEDRON_3_TIME_STAMP_H
 #define CGAL_PROPERTIES_POLYHEDRON_3_TIME_STAMP_H
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #include <CGAL/Polyhedron_3.h>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS

@@ -13,6 +13,9 @@
 #ifndef CGAL_TRIANGULATION_OFF_OSTREAM_2_H
 #define CGAL_TRIANGULATION_OFF_OSTREAM_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Triangulation_2.h>
 #include <sstream>
 #include <iostream>

@@ -12,6 +12,9 @@
 #ifndef CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_3_H
 #define CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_3_H
 
+#include <CGAL/license/Polyhedron.h>
+
+
 #define CGAL_HDS_TMPLT Gt, class I, CGAL_HDS_PARAM_, class A
 #define CGAL_HDS_CLASS CGAL::Polyhedron_3<Gt,I,HDS,A>
 

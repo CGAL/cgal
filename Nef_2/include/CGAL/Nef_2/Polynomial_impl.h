@@ -11,6 +11,11 @@
 // Author(s)     : Michael Seel
 //                 Andreas Fabri
 
+#ifndef CGAL_NEF_2_POLYNOMIAL_IMPL_H
+#define CGAL_NEF_2_POLYNOMIAL_IMPL_H
+
+#include <CGAL/license/Nef_2.h>
+
 
 namespace CGAL{
 
@@ -202,3 +207,5 @@ Polynomial<double> Polynomial<double>::gcd(
 
 } // end namespace Nef
 }//end namespace CGAL
+
+#endif //CGAL_NEF_2_POLYNOMIAL_IMPL_H

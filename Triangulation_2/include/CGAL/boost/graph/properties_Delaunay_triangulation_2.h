@@ -11,6 +11,9 @@
 #ifndef CGAL_PROPERTIES_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_PROPERTIES_DELAUNAY_TRIANGULATION_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #define CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS typename GT, typename TDS

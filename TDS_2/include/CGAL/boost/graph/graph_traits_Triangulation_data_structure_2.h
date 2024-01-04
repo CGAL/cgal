@@ -12,6 +12,9 @@
 #ifndef CGAL_GRAPH_TRAITS_TRIANGULATION_DATA_STRUCTURE_2_H
 #define CGAL_GRAPH_TRAITS_TRIANGULATION_DATA_STRUCTURE_2_H
 
+#include <CGAL/license/TDS_2.h>
+
+
 // include this to avoid a VC15 warning
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/internal/graph_traits_2D_TDS_helper.h>

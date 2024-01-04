@@ -12,6 +12,9 @@
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
 #define CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
 
+#include <CGAL/license/Surface_mesh.h>
+
+
 #ifndef DOXYGEN_RUNNING
 
 #include <CGAL/Surface_mesh.h>

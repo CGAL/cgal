@@ -13,6 +13,9 @@
 #ifndef CGAL_CIRCULAR_KERNEL_3_INTERSECTION_TRAITS_H
 #define CGAL_CIRCULAR_KERNEL_3_INTERSECTION_TRAITS_H
 
+#include <CGAL/license/Circular_kernel_3.h>
+
+
 #include <CGAL/Intersection_traits.h>
 
 #include <variant>

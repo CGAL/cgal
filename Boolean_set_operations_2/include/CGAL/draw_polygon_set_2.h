@@ -17,6 +17,9 @@
 #ifndef CGAL_DRAW_POLYGON_SET_2_H
 #define CGAL_DRAW_POLYGON_SET_2_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
 #ifdef DOXYGEN_RUNNING

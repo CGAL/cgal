@@ -12,6 +12,9 @@
 #ifndef CGAL_GRAPH_TRAITS_CONSTRAINED_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_CONSTRAINED_TRIANGULATION_2_H
 
+#include <CGAL/license/Triangulation_2.h>
+
+
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/boost/graph/properties_Constrained_triangulation_2.h>
 
