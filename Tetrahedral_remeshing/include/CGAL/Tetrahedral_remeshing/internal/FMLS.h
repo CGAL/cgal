@@ -171,6 +171,7 @@ public:
   void fastProjectionCPU(const Vector_3& p, Vector_3& q, Vector_3& n) const
   {
     using Point_3 = typename Gt::Point_3;
+    using FT = typename Gt::FT;
 
     double sigma_s = PNScale * MLSRadius;
     double sigma_r = bilateralRange;
@@ -180,15 +181,19 @@ public:
     Vector_3 gv(gMinMax, pp);
     gv = gv / sigma_s;
 
-    std::array<typename Gt::FT, 3> g{ gv.x(), gv.y(), gv.z() };
-    for (int j = 0; j < 3; ++j)
-    {
-      g[j] = std::floor(g[j]);
-      if (g[j] < 0.f)
-        g[j] = 0.f;
-      else if (g[j] >= grid.getRes()[j])
-        g[j] = grid.getRes()[j] - 1;
-    }
+    auto snap_to_interval = [this](const FT& x, const int j)->std::size_t
+      {
+        if (x < 0)
+          return 0;
+        else if(x >= grid.getRes()[j])
+          return grid.getRes()[j] - 1;
+        else
+          return static_cast<std::size_t>(std::floor(x));
+      };
+
+    std::array<std::size_t, 3> g{snap_to_interval(gv.x(), 0),
+                                 snap_to_interval(gv.y(), 1),
+                                 snap_to_interval(gv.z(), 2)};
 
     std::array<std::size_t, 3> minIt;
     std::array<std::size_t, 3> maxIt;
