@@ -1230,9 +1230,7 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
     }
   }
 
-  for (typename Tr::Finite_cells_iterator c = tr.finite_cells_begin();
-       c != tr.finite_cells_end();
-       ++c)
+  for (Cell_handle c : tr.finite_cell_handles())
     c->reset_cache_validity();
 
   return count;
@@ -1908,6 +1906,12 @@ std::size_t flipBoundaryEdges(
   CellSelector& cell_selector,
   Visitor& visitor)
 {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+  std::cerr << "\n\tFlipping boundary edges...";
+  std::cerr.flush();
+  std::size_t nb_attempts = 0;
+#endif
+
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef typename C3T3::Cell_handle   Cell_handle;
   typedef typename C3T3::Facet         Facet;
@@ -1936,6 +1940,14 @@ std::size_t flipBoundaryEdges(
 
   for (const std::pair<Vertex_handle, Vertex_handle>& vp : candidate_edges_for_flip)
   {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cerr << "\r\tFlipping boundary edges...("
+      << ++nb_attempts << " attempts, "
+      << nb << " done, "
+      << candidate_edges_for_flip.size() << " candidates)";
+    std::cerr.flush();
+#endif
+
     const Vertex_handle vh0 = vp.first;
     const Vertex_handle vh1 = vp.second;
 
@@ -2094,6 +2106,12 @@ std::size_t flipBoundaryEdges(
     }
   }
   CGAL_assertion(tr.tds().is_valid());
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+  std::cerr << "\r\t Flipping boundary edges done ("
+                     << nb << " flips done)" << std::endl;
+#endif
+
   return nb;
 }
 
