@@ -41,11 +41,12 @@ namespace CGAL {
 enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
 
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
-class Conforming_Delaunay_triangulation_vertex_base_3 : public Vb {
-public:
+struct Conforming_Delaunay_triangulation_vertex_base_3 : public Vb {
   int nb_of_incident_constraints = 0;
   void* c_id = nullptr;
-
+private:
+  CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
+public:
   // To get correct vertex type in TDS
   template < class TDS3 >
   struct Rebind_TDS {
@@ -70,8 +71,6 @@ public:
   static std::string io_signature() {
     return Get_io_signature<Vb>()();
   }
-private:
-  CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
 };
 
 
