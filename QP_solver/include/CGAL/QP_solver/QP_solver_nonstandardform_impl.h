@@ -225,4 +225,4 @@ init_w()
 
 // ===== EOF ==================================================================
 
-#endif CGAL_QP_SOLVER_NONSTANDARDFORM_IMPL_H
+#endif // CGAL_QP_SOLVER_NONSTANDARDFORM_IMPL_H
