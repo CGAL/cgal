@@ -17,7 +17,10 @@
  */
 
 #ifndef CGAL_CKVA_SUBDIVISION_1_H
-#define CGAL_CKVA_SUBDIVISION_1_H 1
+#define CGAL_CKVA_SUBDIVISION_1_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <vector>
 #include <boost/multi_index_container.hpp>

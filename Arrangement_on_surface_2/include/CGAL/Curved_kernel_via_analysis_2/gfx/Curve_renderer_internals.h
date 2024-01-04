@@ -22,7 +22,10 @@
  */
 
 #ifndef CGAL_CKVA_CURVE_RENDERER_INTERNALS_H
-#define CGAL_CKVA_CURVE_RENDERER_INTERNALS_H 1
+#define CGAL_CKVA_CURVE_RENDERER_INTERNALS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <vector>
 #include <stack>

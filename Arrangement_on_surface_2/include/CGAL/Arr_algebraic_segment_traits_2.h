@@ -12,8 +12,11 @@
 //
 // ============================================================================
 
-#ifndef CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
-#define CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
+#ifndef CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS_H
+#define CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/disable_warnings.h>
 
@@ -655,4 +658,4 @@ public:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
+#endif // CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS_H
