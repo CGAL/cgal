@@ -2209,6 +2209,7 @@ public:
         i = face_constraint_misses_subfaces.find_next(i);
         if(i == npos) {
           std::cerr << "ERROR: No more missing face to restore after a PLC error\n";
+          dump_region(e.face_index, e.region_index);
           throw;
         }
         std::cerr << "Next face is face #F " << i << '\n';
@@ -2261,6 +2262,11 @@ public:
     std::ofstream dump_region(std::string("dump_region_") + std::to_string(face_index) + "_" +
                               std::to_string(region_count) + ".off");
     write_region_to_OFF(dump_region, cdt_2);
+  }
+
+  void dump_region(CDT_3_face_index face_index, int region_count) {
+    const auto& cdt_2 = face_cdt_2[face_index];
+    dump_region(face_index, region_count, cdt_2);
   }
 
   void write_triangle(std::ostream &out,
