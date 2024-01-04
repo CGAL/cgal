@@ -19,8 +19,11 @@
 
 namespace CGAL
 {
+namespace Tetrahedral_remeshing
+{
 template <class Kernel>
-class Uniform_sizing_field : Sizing_field<Kernel>
+class Uniform_sizing_field
+  : public Sizing_field<Kernel>
 {
 private:
   typedef Sizing_field<Kernel>        Base;
@@ -32,14 +35,17 @@ public:
     : m_size(size)
   {}
 
-  FT operator()(const Point_3&) const
+  template<typename Index>
+  FT operator()(const Point_3&, const int, const Index&) const
   {
     return m_size;
   }
+
 private:
-  FT m_size;
+  const FT m_size;
 };
 
+}//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
 
 #endif //CGAL_UNIFORM_SIZING_FIELD_H

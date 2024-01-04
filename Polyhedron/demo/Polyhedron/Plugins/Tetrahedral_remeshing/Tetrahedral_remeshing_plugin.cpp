@@ -12,6 +12,8 @@
 #include "C3t3_type.h"
 
 #include <CGAL/tetrahedral_remeshing.h>
+#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <unordered_map>
@@ -97,10 +99,11 @@ public Q_SLOTS:
         std::cout << "Remeshing aborted" << std::endl;
         return;
       }
-      double target_length = ui.edgeLength_dspinbox->value();
-      unsigned int nb_iter = ui.nbIterations_spinbox->value();
-      bool protect = ui.protect_checkbox->isChecked();
-      bool smooth_edges = ui.smoothEdges_checkBox->isChecked();
+      const double target_length = ui.edgeLength_dspinbox->value();
+      const bool adaptive_sizing = ui.adaptiveSizing_checkbox->isChecked();
+      const unsigned int nb_iter = ui.nbIterations_spinbox->value();
+      const bool protect = ui.protect_checkbox->isChecked();
+      const bool smooth_edges = ui.smoothEdges_checkBox->isChecked();
 
       // collect constraints
       using Vertex_handle = Tr::Vertex_handle;
@@ -126,14 +129,29 @@ public Q_SLOTS:
       }
 
       CGAL::tetrahedral_isotropic_remeshing(
-        c3t3_item->c3t3(),
-        target_length,
-        CGAL::parameters::remesh_boundaries(!protect)
-        .number_of_iterations(nb_iter)
+      using ASizing = CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<Tr>;
+      using USizing = CGAL::Tetrahedral_remeshing::Uniform_sizing_field<Geom_traits>;
+
+      if (adaptive_sizing)
+      {
+        CGAL::tetrahedral_isotropic_remeshing(
+          c3t3_item->c3t3(),
+          ASizing(c3t3_item->c3t3().triangulation()),
+          CGAL::parameters::remesh_boundaries(!protect)
+          .number_of_iterations(nb_iter)
         .smooth_constrained_edges(smooth_edges)
         .edge_is_constrained_map(Constraints_pmap(constraints))
       );
-
+      }
+      else
+      {
+        CGAL::tetrahedral_isotropic_remeshing(
+          c3t3_item->c3t3(),
+          USizing(target_length),
+          CGAL::parameters::remesh_boundaries(!protect)
+          .number_of_iterations(nb_iter)
+          .smooth_constrained_edges(smooth_edges));
+      }
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
 
       c3t3_item->invalidateOpenGLBuffers();
@@ -214,6 +232,7 @@ private:
     ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
                                      2.   * diago_length);//max
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
+    ui.adaptiveSizing_checkbox->setChecked(false);
 
     std::ostringstream oss;
     oss << "Diagonal length of the Bbox of the triangulation to remesh is ";
@@ -230,6 +249,8 @@ private:
 
     connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
             ui.smoothEdges_checkBox, SLOT(setDisabled(bool)));
+    connect(ui.adaptiveSizing_checkbox, SIGNAL(toggled(bool)),
+            ui.edgeLength_dspinbox, SLOT(setDisabled(bool)));
 
     return ui;
   }

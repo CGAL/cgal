@@ -31,6 +31,8 @@
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
 
+#include <optional>
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -77,34 +79,6 @@ inline int indices(const int& i, const int& j)
     return indices_table[i][j];
   CGAL_error_msg("Invalid indices provided");
   return 0;
-}
-
-template<typename Tr>
-std::array<typename Tr::Vertex_handle, 2>
-vertices(const typename Tr::Edge& e , const Tr&)
-{
-  return std::array<typename Tr::Vertex_handle, 2>{
-               e.first->vertex(e.second),
-               e.first->vertex(e.third)};
-}
-template<typename Tr>
-std::array<typename Tr::Vertex_handle, 3>
-vertices(const typename Tr::Facet& f, const Tr&)
-{
-  return std::array<typename Tr::Vertex_handle, 3>{
-               f.first->vertex(Tr::vertex_triple_index(f.second, 0)),
-               f.first->vertex(Tr::vertex_triple_index(f.second, 1)),
-               f.first->vertex(Tr::vertex_triple_index(f.second, 2))};
-}
-template<typename Tr>
-std::array<typename Tr::Vertex_handle, 4>
-vertices(const typename Tr::Cell_handle c, const Tr&)
-{
-  return std::array<typename Tr::Vertex_handle, 4>{
-               c->vertex(0),
-               c->vertex(1),
-               c->vertex(2),
-               c->vertex(3)};
 }
 
 template<typename Gt, typename Point>
@@ -1085,6 +1059,91 @@ bool topology_test(const typename C3t3::Edge& edge,
   } while (++fcirc != fdone);
 
   return true;
+}
+
+template<typename Tr>
+typename Tr::Geom_traits::FT
+squared_edge_length(const typename Tr::Edge& e, const Tr& tr)
+{
+  return tr.geom_traits().compute_squared_length_3_object()(tr.segment(e));
+}
+
+template<typename Tr, typename Sizing>
+typename Tr::Geom_traits::FT
+squared_upper_size_bound(const typename Tr::Edge& e,
+                         const Sizing& sizing,
+                         const Tr& /* tr */)
+{
+  using FT = typename Tr::Geom_traits::FT;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using P = typename Tr::Geom_traits::Point_3;
+
+  const Vertex_handle u = e.first->vertex(e.second);
+  const Vertex_handle v = e.first->vertex(e.third);
+
+  const FT size_at_u = sizing(P(u->point()), u->in_dimension(), u->index());
+  const FT size_at_v = sizing(P(v->point()), v->in_dimension(), v->index());
+
+  const FT sq_max_u = CGAL::square(FT(4) / FT(3) * size_at_u);
+  const FT sq_max_v = CGAL::square(FT(4) / FT(3) * size_at_v);
+
+  return (std::max)(sq_max_u, sq_max_v);
+}
+
+template<typename Tr, typename Sizing>
+std::optional<typename Tr::Geom_traits::FT>
+is_too_long(const typename Tr::Edge& e,
+            const Sizing& sizing,
+            const Tr& tr)
+{
+  using FT = typename Tr::Geom_traits::FT;
+
+  const FT sqlen = squared_edge_length(e, tr);
+  const FT sqmax = squared_upper_size_bound(e, sizing, tr);
+
+  if (sqlen > sqmax)
+    return sqlen;
+  else
+    return std::nullopt;
+}
+
+template<typename Tr, typename Sizing>
+typename Tr::Geom_traits::FT
+squared_lower_size_bound(const typename Tr::Edge& e,
+                         const Sizing& sizing,
+                         const Tr& /* tr */)
+{
+  using FT = typename Tr::Geom_traits::FT;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using P = typename Tr::Geom_traits::Point_3;
+
+  const Vertex_handle u = e.first->vertex(e.second);
+  const Vertex_handle v = e.first->vertex(e.third);
+
+  const FT size_at_u = sizing(P(u->point()), u->in_dimension(), u->index());
+  const FT size_at_v = sizing(P(v->point()), v->in_dimension(), v->index());
+
+  const FT sq_min_u = CGAL::square(FT(4) / FT(5) * size_at_u);
+  const FT sq_min_v = CGAL::square(FT(4) / FT(5) * size_at_v);
+
+  return (std::min)(sq_min_u, sq_min_v);
+}
+
+template<typename Tr, typename Sizing>
+std::optional<typename Tr::Geom_traits::FT>
+is_too_short(const typename Tr::Edge& e,
+             const Sizing& sizing,
+             const Tr& tr)
+{
+  using FT = typename Tr::Geom_traits::FT;
+
+  const FT sqlen = squared_edge_length(e, tr);
+  const FT sqmin = squared_lower_size_bound(e, sizing, tr);
+
+  if (sqlen < sqmin)
+    return sqlen;
+  else
+    return std::nullopt;
 }
 
 template<typename C3t3>

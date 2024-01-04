@@ -31,6 +31,12 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "mesh_and_remesh_polyhedral_domain_with_features.cpp" )
   target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen3_support)
 
+  create_single_source_cgal_program( "mesh_and_remesh_with_adaptive_sizing.cpp")
+  target_link_libraries(mesh_and_remesh_with_adaptive_sizing PUBLIC CGAL::Eigen3_support)
+
+  create_single_source_cgal_program( "mesh_and_remesh_with_sizing.cpp")
+  target_link_libraries(mesh_and_remesh_with_sizing PUBLIC CGAL::Eigen3_support)
+
   create_single_source_cgal_program("mesh_and_remesh_c3t3.cpp")
   target_link_libraries(mesh_and_remesh_c3t3 PUBLIC CGAL::Eigen3_support)
 
