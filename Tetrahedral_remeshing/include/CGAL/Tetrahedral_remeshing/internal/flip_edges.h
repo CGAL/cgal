@@ -1904,9 +1904,7 @@ std::size_t flipBoundaryEdges(
   C3T3& c3t3,
   std::vector<typename C3T3::Edge>& boundary_edges,
   SurfaceIndexMapMap& boundary_vertices_valences,
-  boost::unordered_map<typename C3T3::Vertex_handle,
-                       std::unordered_set<typename C3T3::Subdomain_index> >&  vertices_subdomain_indices,
-  Flip_Criterion flip_criterion,
+  const Flip_Criterion& flip_criterion,
   CellSelector& cell_selector,
   Visitor& visitor)
 {
@@ -1940,9 +1938,6 @@ std::size_t flipBoundaryEdges(
   {
     const Vertex_handle vh0 = vp.first;
     const Vertex_handle vh1 = vp.second;
-
-    const typename C3T3::Triangulation::Point& p0 = vh0->point();
-    const typename C3T3::Triangulation::Point& p1 = vh1->point();
 
     std::optional<boost::container::small_vector<Cell_handle, 64>>&
       o_inc_vh = inc_cells[vh0];
@@ -2021,14 +2016,14 @@ std::size_t flipBoundaryEdges(
       {
 //        nb_surface_flip_candidates++;
 
-        int v0 = boundary_vertices_valences[vh0][surfi];
-        int v1 = boundary_vertices_valences[vh1][surfi];
-        int v2 = boundary_vertices_valences[vh2][surfi];
-        int v3 = boundary_vertices_valences[vh3][surfi];
-        int m0 = (boundary_vertices_valences[vh0].size() > 1 ? 4 : 6);
-        int m1 = (boundary_vertices_valences[vh1].size() > 1 ? 4 : 6);
-        int m2 = (boundary_vertices_valences[vh2].size() > 1 ? 4 : 6);
-        int m3 = (boundary_vertices_valences[vh3].size() > 1 ? 4 : 6);
+        int v0 = boundary_vertices_valences.at(vh0)[surfi];
+        int v1 = boundary_vertices_valences.at(vh1)[surfi];
+        int v2 = boundary_vertices_valences.at(vh2)[surfi];
+        int v3 = boundary_vertices_valences.at(vh3)[surfi];
+        int m0 = (boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
+        int m1 = (boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
+        int m2 = (boundary_vertices_valences.at(vh2).size() > 1 ? 4 : 6);
+        int m3 = (boundary_vertices_valences.at(vh3).size() > 1 ? 4 : 6);
 
         int initial_cost = (v0 - m0)*(v0 - m0)
                          + (v1 - m1)*(v1 - m1)
@@ -2046,10 +2041,9 @@ std::size_t flipBoundaryEdges(
                        + (v3 - m3)*(v3 - m3);
         if (initial_cost > final_cost)
         {
-          int nbf = std::distance(c3t3.facets_in_complex_begin(),
-                                  c3t3.facets_in_complex_end());
-
-//          CGAL::dump_c3t3(c3t3, "dump_before_flip_");
+          CGAL_assertion_code(int nbf =
+            std::distance(c3t3.facets_in_complex_begin(),
+                          c3t3.facets_in_complex_end()));
 
           Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
                                                      inc_cells,
@@ -2071,9 +2065,9 @@ std::size_t flipBoundaryEdges(
             CGAL_assertion(b);
             c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
 
-//            std::cout << " done" << std::endl;
-            int nbf_post = std::distance(c3t3.facets_in_complex_begin(),
-                                         c3t3.facets_in_complex_end());
+            CGAL_assertion_code(int nbf_post =
+              std::distance(c3t3.facets_in_complex_begin(),
+                            c3t3.facets_in_complex_end()));
             CGAL_assertion(nbf == nbf_post);
 
 //            nb_surface_flip_done++;
@@ -2166,7 +2160,7 @@ void flip_edges(C3T3& c3t3,
     nb_flips +=
 #endif
       flipBoundaryEdges(c3t3, boundary_edges, boundary_vertices_valences,
-                        vertices_subdomain_indices, MIN_ANGLE_BASED,
+                        MIN_ANGLE_BASED,
                         cell_selector, visitor);
   }
 
