@@ -2,9 +2,6 @@
 
 /// \defgroup PkgPolygonRepairRef 2D Polygon Repair Reference
 
-// \defgroup PkgPolygonRepairConcepts Concepts
-// \ingroup PkgPolygonRepairRef
-
 /// \defgroup PkgPolygonRepairFunctions Functions
 /// \ingroup PkgPolygonRepairRef
 
