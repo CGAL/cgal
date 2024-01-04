@@ -421,15 +421,15 @@ int go(Mesh mesh, CDT_options options) {
   double d_y = bbox.ymax() - bbox.ymin();
   double d_z = bbox.zmax() - bbox.zmin();
 
-  const double max_d = (std::max)(d_x, (std::max)(d_y, d_z));
+  const double bbox_max_width = (std::max)(d_x, (std::max)(d_y, d_z));
 
   if(cdt.dimension() < 3) {
     if(!options.quiet) {
       std::cout << "current is 2D... inserting the 8 vertices of an extended bounding box\n";
     }
-    if(d_x == 0) d_x = max_d;
-    if(d_y == 0) d_y = max_d;
-    if(d_z == 0) d_z = max_d;
+    if(d_x == 0) d_x = bbox_max_width;
+    if(d_y == 0) d_y = bbox_max_width;
+    if(d_z == 0) d_z = bbox_max_width;
 
     cdt.insert(Point(bbox.xmin() - d_x, bbox.ymin() - d_y, bbox.zmin() - d_z));
     cdt.insert(Point(bbox.xmin() - d_x, bbox.ymax() + d_y, bbox.zmin() - d_z));
@@ -442,15 +442,19 @@ int go(Mesh mesh, CDT_options options) {
   }
   {
     double epsilon = options.vertex_vertex_epsilon;
-    auto min_distance = CGAL::approximate_sqrt(std::ranges::min(
-        cdt.finite_edges() | std::views::transform([&](auto edge) { return cdt.segment(edge).squared_length(); })));
+    auto [min_sq_distance, min_edge] = std::ranges::min(
+        cdt.finite_edges() | std::views::transform([&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); }));
+    auto min_distance = CGAL::approximate_sqrt(min_sq_distance);
+    auto vertices_of_min_edge = cdt.vertices(min_edge);
     if(!options.quiet) {
       std::cout << "Min distance between vertices: " << min_distance << '\n'
-                << "Bbox width: " << max_d << '\n'
-                << "Ratio: " << min_distance / max_d << '\n'
-                << "Epsilon: " << epsilon << "\n\n";
+                << "  between vertices:          : " << CGAL::IO::oformat(vertices_of_min_edge[0], CGAL::With_point_tag{})
+                << "    " << CGAL::IO::oformat(vertices_of_min_edge[1], CGAL::With_point_tag{}) << '\n'
+                << "Bbox width                   : " << bbox_max_width << '\n'
+                << "Epsilon                      : " << epsilon << '\n'
+                << "Epsilon * Bbox width         : " << epsilon * bbox_max_width << "\n\n";
     }
-    if(min_distance < epsilon * max_d) {
+    if(min_distance < epsilon * bbox_max_width) {
       std::cerr << "ERROR: min distance between vertices is too small\n";
       exit_code = EXIT_FAILURE;
       return exit_code;
