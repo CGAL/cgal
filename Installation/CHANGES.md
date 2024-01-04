@@ -23,6 +23,11 @@ Release date: October 2023
 #### Envelopes of Surfaces in 3D
 - ** Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
 
+### [Polygon Repair](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonRepair) (new package)
+
+-   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
+    using the odd-even heuristic.
+
 ### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps) and [Generalized Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgGeneralizedMaps)
 
 - Added the function `insert_cell_1_between_two_cells_2()` to the `GenericMap` concept, which enables users to insert an edge between two different faces in order to create faces with holes.
