@@ -535,12 +535,23 @@ protected:
       case 2: {
         const auto [cell, facet_index] = static_cast<Facet>(simplex);
         visit_cell(cell);
-        const auto [other_cell, other_index] = tr.mirror_facet({cell, facet_index});
-        register_vertex(other_cell->vertex(other_index));
+        if(tr.dimension() > 2) {
+          const auto [other_cell, other_index] = tr.mirror_facet({cell, facet_index});
+          register_vertex(other_cell->vertex(other_index));
+        }
         break;
       }
       case 1: {
-        auto circ = tr.incident_cells(static_cast<Edge>(simplex));
+        auto edge = static_cast<Edge>(simplex);
+        if(tr.dimension() < 3) {
+          auto [cell, i, j] = edge;
+          visit_cell(cell);
+          if(tr.dimension() < 2) break;
+          auto neighbor_cell = cell->neighbor(3 - i - j);
+          visit_cell(neighbor_cell);
+          break;
+        }
+        auto circ = tr.incident_cells(edge);
         CGAL_assertion(circ != nullptr);
         const auto end = circ;
         do {

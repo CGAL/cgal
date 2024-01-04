@@ -54,7 +54,7 @@ int main()
     assert(!cdt.is_edge(vertices[0], vertices[1], ch, li, lj));
     cdt.insert_constrained_edge(vertices[0], vertices[1]);
     cdt.insert_constrained_edge(vertices[5], vertices[1]);
-    cdt.insert_constrained_edge(vertices[5], vertices[11]);
+    cdt.insert_constrained_edge(vertices[5], vertices[10]);
     std::cerr << "test1: "
               << (cdt.is_conforming() ? "OK" : "ERROR: NOT CONFORMING")
               << std::endl;
