@@ -30,6 +30,9 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_type_config.h>    // CGAL_PI is defined there
 #include <CGAL/enum.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
+#endif
 #include <CGAL/Aff_transformation_2.h>
 
 namespace CGAL {
