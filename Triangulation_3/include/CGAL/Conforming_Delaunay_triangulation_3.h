@@ -339,7 +339,7 @@ public:
     return Get_io_signature<T_3>()();
   }
 protected:
-  void debug_dump(std::string filename) {
+  void debug_dump(std::string filename) const {
     {
       std::ofstream dump(filename + ".binary.cgal", std::ios::binary);
       CGAL::IO::save_binary_file(dump, *this);
