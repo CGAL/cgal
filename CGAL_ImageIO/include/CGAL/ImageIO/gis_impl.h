@@ -130,10 +130,10 @@ int writeGis( char *name, _image* im) {
             do {
               memset( str, 0, _LGTH_STRING_ );
               for ( j=0; j<n && i<size; j++, i++ ) {
-                sprintf( str+strlen(str), "%d", theBuf[i] );
-                if ( j<n && i<size ) sprintf( str+strlen(str), " " );
+                snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "%d", theBuf[i] );
+                if ( j<n && i<size ) snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), " " );
               }
-              sprintf( str+strlen(str), "\n" );
+              snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "\n" );
               done = ImageIO_write( im, str, strlen( str )  );
               res = (done == strlen( str )) ? int(done) : -1;
               if ( res  <= 0 ) {
@@ -150,10 +150,10 @@ int writeGis( char *name, _image* im) {
             do {
               memset( str, 0, _LGTH_STRING_ );
               for ( j=0; j<n && i<size; j++, i++ ) {
-                sprintf( str+strlen(str), "%d", theBuf[i] );
-                if ( j<n && i<size ) sprintf( str+strlen(str), " " );
+                snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "%d", theBuf[i] );
+                if ( j<n && i<size ) snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), " " );
               }
-              sprintf( str+strlen(str), "\n" );
+              snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "\n" );
               done = ImageIO_write( im, str, strlen( str )  );
               res = (done == strlen( str )) ? int(done) : -1;
               if ( res  <= 0 ) {
@@ -178,10 +178,10 @@ int writeGis( char *name, _image* im) {
             do {
               memset( str, 0, _LGTH_STRING_ );
               for ( j=0; j<n && i<size; j++, i++ ) {
-                sprintf( str+strlen(str), "%d", theBuf[i] );
-                if ( j<n && i<size ) sprintf( str+strlen(str), " " );
+                snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "%d", theBuf[i] );
+                if ( j<n && i<size ) snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), " " );
               }
-              sprintf( str+strlen(str), "\n" );
+              snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "\n" );
               done = ImageIO_write( im, str, strlen( str )  );
               res = (done == strlen( str )) ? int(done) : -1;
               if ( res  <= 0 ) {
@@ -198,10 +198,10 @@ int writeGis( char *name, _image* im) {
             do {
               memset( str, 0, _LGTH_STRING_ );
               for ( j=0; j<n && i<size; j++, i++ ) {
-                sprintf( str+strlen(str), "%d", theBuf[i] );
-                if ( j<n && i<size ) sprintf( str+strlen(str), " " );
+                snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "%d", theBuf[i] );
+                if ( j<n && i<size ) snprintf( str+strlen(str),_LGTH_STRING_ - strlen(str), " " );
               }
-              sprintf( str+strlen(str), "\n" );
+              snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "\n" );
               done = ImageIO_write( im, str, strlen( str )  );
               res = (done == strlen( str )) ? int(done) : -1;
               if ( res  <= 0 ) {

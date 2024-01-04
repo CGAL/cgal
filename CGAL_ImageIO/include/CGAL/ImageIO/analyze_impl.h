@@ -463,60 +463,79 @@ int _readAnalyzeHeader( _image* im, const char* name,
       for ( i=0; i<im->nuser; i++ ) im->user[i] = nullptr;
       i = 0 ;
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("Data lost in the Analyze -> ImageIO conversion:") + 1));
-      sprintf( im->user[i++], "Data lost in the Analyze -> ImageIO conversion:" );
+      size_t buffer_size;
+      buffer_size = strlen("Data lost in the Analyze -> ImageIO conversion:") + 1;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "Data lost in the Analyze -> ImageIO conversion:" );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  descrip: ") + 1 + strlen(analyzeHeader->hist.descrip) ));
-      sprintf( im->user[i++], "  descrip: %s", analyzeHeader->hist.descrip );
+      buffer_size = strlen("  descrip: ") + 1 + strlen(analyzeHeader->hist.descrip);
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  descrip: %s", analyzeHeader->hist.descrip );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  aux_file: ") + 1 + strlen(analyzeHeader->hist.descrip) ));
-      sprintf( im->user[i++], "  aux_file: %s", analyzeHeader->hist.descrip );
+      buffer_size = strlen("  aux_file: ") + 1 + strlen(analyzeHeader->hist.descrip);
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  aux_file: %s", analyzeHeader->hist.descrip );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  orient: ") + 1+ 2));
-      sprintf( im->user[i++], "  orient: %d", analyzeHeader->hist.orient );
+      buffer_size = strlen("  orient: ") + 1+ 2;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  orient: %d", analyzeHeader->hist.orient );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  originator: ") + 1 + strlen(analyzeHeader->hist.originator) ));
-      sprintf( im->user[i++], "  originator: %s", analyzeHeader->hist.originator );
+      buffer_size = strlen("  originator: ") + 1 + strlen(analyzeHeader->hist.originator);
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  originator: %s", analyzeHeader->hist.originator );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  generated: ") + 1 + strlen(analyzeHeader->hist.generated) ));
-      sprintf( im->user[i++], "  generated: %s", analyzeHeader->hist.generated );
+      buffer_size = strlen("  generated: ") + 1 + strlen(analyzeHeader->hist.generated);
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  generated: %s", analyzeHeader->hist.generated );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  scannum: ") + 1 + strlen(analyzeHeader->hist.scannum) ));
-      sprintf( im->user[i++], "  scannum: %s", analyzeHeader->hist.scannum );
+      buffer_size = strlen("  scannum: ") + 1 + strlen(analyzeHeader->hist.scannum);
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  scannum: %s", analyzeHeader->hist.scannum );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  patient_id: ") + 1 + strlen(analyzeHeader->hist.patient_id) ));
-      sprintf( im->user[i++], "  patient_id: %s", analyzeHeader->hist.patient_id );
+      buffer_size = strlen("  patient_id: ") + 1 + strlen(analyzeHeader->hist.patient_id);
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  patient_id: %s", analyzeHeader->hist.patient_id );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  exp_date: ") + 1 + strlen(analyzeHeader->hist.exp_date) ));
-      sprintf( im->user[i++], "  exp_date: %s", analyzeHeader->hist.exp_date );
+      buffer_size = strlen("  exp_date: ") + 1 + strlen(analyzeHeader->hist.exp_date);
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  exp_date: %s", analyzeHeader->hist.exp_date );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  exp_time: ") + 1 + strlen(analyzeHeader->hist.exp_time) ));
-      sprintf( im->user[i++], "  exp_time: %s", analyzeHeader->hist.exp_time );
+      buffer_size = strlen("  exp_time: ") + 1 + strlen(analyzeHeader->hist.exp_time);
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  exp_time: %s", analyzeHeader->hist.exp_time );
 
+      buffer_size = strlen("  views: ") + 11 + 1;
       /* A 32 bit int doesn't print on more than 11 chars */
-      im->user[i] = (char *) ImageIO_alloc((strlen("  views: ") + 11 + 1));
-      sprintf( im->user[i++], "  views: %d", analyzeHeader->hist.views );
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  views: %d", analyzeHeader->hist.views );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  vols_added: ") + 11 + 1));
-      sprintf( im->user[i++], "  vols_added: %d", analyzeHeader->hist.vols_added );
+      buffer_size = strlen("  vols_added: ") + 11 + 1;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  vols_added: %d", analyzeHeader->hist.vols_added );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  start_field: ") + 11 + 1));
-      sprintf( im->user[i++], "  start_field: %d", analyzeHeader->hist.start_field );
+      buffer_size = strlen("  start_field: ") + 11 + 1;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  start_field: %d", analyzeHeader->hist.start_field );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  field_skip: ") + 11 + 1));
-      sprintf( im->user[i++], "  field_skip: %d", analyzeHeader->hist.field_skip );
+      buffer_size = strlen("  field_skip: ") + 11 + 1;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  field_skip: %d", analyzeHeader->hist.field_skip );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  omax: ") + 11 + 1));
-      sprintf( im->user[i++], "  omax: %d", analyzeHeader->hist.omax );
+      buffer_size = strlen("  omax: ") + 11 + 1;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  omax: %d", analyzeHeader->hist.omax );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  omin: ") + 11 + 1));
-      sprintf( im->user[i++], "  omin: %d", analyzeHeader->hist.omin );
+      buffer_size = strlen("  omin: ") + 11 + 1;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  omin: %d", analyzeHeader->hist.omin );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  smax: ") + 11 + 1));
-      sprintf( im->user[i++], "  smax: %d", analyzeHeader->hist.smax );
+      buffer_size = strlen("  smax: ") + 11 + 1;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  smax: %d", analyzeHeader->hist.smax );
 
-      im->user[i] = (char *) ImageIO_alloc((strlen("  smin: ") + 11 + 1));
-      sprintf( im->user[i++], "  smin: %d", analyzeHeader->hist.smin );
+      buffer_size = strlen("  smin: ") + 11 + 1;
+      im->user[i] = (char *) ImageIO_alloc(buffer_size);
+      snprintf( im->user[i++], buffer_size, "  smin: %d", analyzeHeader->hist.smin );
 
 
       /* header is read. close header file and open data file. */
