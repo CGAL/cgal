@@ -25,8 +25,6 @@
 //#include <boost/multiprecision/gmp.hpp>
 //#endif
 
-#define CGAL_HAS_BOOST_MP_ARITHMETIC_KERNEL
-
 // FIXME: the could be several kernels based on Boost.Multiprecision.
 
 namespace CGAL {
