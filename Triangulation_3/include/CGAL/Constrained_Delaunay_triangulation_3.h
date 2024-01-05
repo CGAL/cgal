@@ -2199,6 +2199,7 @@ public:
     cdt_2_are_initialized = true;
     const auto npos = face_constraint_misses_subfaces.npos;
     auto i = face_constraint_misses_subfaces.find_first();
+    bool the_process_made_progress = false;
     while(i != npos) {
       try {
         if(restore_face(i)) {
@@ -2207,6 +2208,7 @@ public:
           std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
           Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
         }
+        the_process_made_progress = true;
       }
       catch(PLC_error& e) {
         std::cerr << std::string("ERROR: PLC error with face #F") << std::to_string(e.face_index) + "\n";
@@ -2219,7 +2221,15 @@ public:
         std::cerr << "Next face is face #F " << i << '\n';
         continue;
       }
-      i = face_constraint_misses_subfaces.find_first();
+      i = face_constraint_misses_subfaces.find_next(i);
+
+      // If we have made progress, we start again from the beginning.
+      // Otherwise, either we are done, or there was a full loop with
+      // only PLC errors.
+      if(i == npos && true == the_process_made_progress) {
+        i = face_constraint_misses_subfaces.find_first();
+        the_process_made_progress = false;
+      }
     }
   }
 
