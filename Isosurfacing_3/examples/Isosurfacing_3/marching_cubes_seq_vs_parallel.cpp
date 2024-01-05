@@ -3,7 +3,7 @@
 #include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/IO/OFF.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -23,7 +23,7 @@ int main(int, char**)
 {
   // box domain and spacing vector
   const CGAL::Bbox_3 bbox{ -1.0, -1.0, -1.0,  1.0, 1.0, 1.0 };
-  const FT spacing = 0.01;
+  const FT spacing = 0.002;
   const Vector vec_spacing(spacing, spacing, spacing);
 
   // create domain with sphere function
@@ -37,7 +37,7 @@ int main(int, char**)
   // run marching cubes sequential
   std::cout << "marching cubes sequential...";
   const FT isovalue = 0.8;
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
   CGAL::Isosurfacing::marching_cubes<CGAL::Sequential_tag>(domain, isovalue, points, triangles);
   timer.stop();
@@ -50,6 +50,7 @@ int main(int, char**)
 
   // run marching cubes parallel
   std::cout << "marching cubes parallel...";
+  timer.reset();
   timer.start();
   CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_tag>(domain, isovalue, points, triangles);
   timer.stop();
