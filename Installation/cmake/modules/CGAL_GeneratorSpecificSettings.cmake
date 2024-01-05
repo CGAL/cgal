@@ -40,6 +40,7 @@ if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
   # From james Bigler, in the cmake users list.
   IF (APPLE)
     execute_process(COMMAND uname -v
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
                     OUTPUT_VARIABLE DARWIN_VERSION)
     string(REGEX MATCH "[0-9]+" DARWIN_VERSION ${DARWIN_VERSION})
     message(STATUS "Running in macOS DARWIN_VERSION=${DARWIN_VERSION}")

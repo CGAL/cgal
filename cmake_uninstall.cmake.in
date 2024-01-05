@@ -14,6 +14,7 @@ foreach(file ${files})
   if(IS_SYMLINK "$ENV{DESTDIR}${file}" OR EXISTS "$ENV{DESTDIR}${file}")
     execute_process(
       COMMAND "@CMAKE_COMMAND@" -E remove "$ENV{DESTDIR}${file}"
+      OUTPUT_STRIP_TRAILING_WHITESPACE
       OUTPUT_VARIABLE rm_out
       RESULT_VARIABLE rm_retval
       )
