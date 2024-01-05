@@ -34,9 +34,9 @@ Minkowski_sum_3 3D Minkowski Sum of Polyhedra
 Nef_2 2D Boolean Operations on Nef Polygons
 Nef_3 3D Boolean Operations on Nef Polyhedra
 Nef_S2 2D Boolean Operations on Nef Polygons Embedded on the Sphere
-Orthtree Quadtrees, Octrees, and Orthtrees
 Optimal_bounding_box Optimal Bounding Box
 Optimal_transportation_reconstruction_2 Optimal Transportation Curve Reconstruction
+Orthtree Quadtrees, Octrees, and Orthtrees
 Partition_2 2D Polygon Partitioning
 Periodic_2_triangulation_2 2D Periodic Triangulations
 Periodic_3_mesh_3 3D Periodic Mesh Generation
@@ -78,15 +78,16 @@ Set_movable_separability_2 2D Movable Separability of Sets
 Shape_detection Shape Detection
 Shape_regularization Shape Regularization
 Skin_surface_3 3D Skin Surface Meshing
+SMDS_3 3D Simplicial Mesh Data Structure
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
 Straight_skeleton_2 2D Straight Skeleton and Polygon Offsetting
 Straight_skeleton_extrusion_2 2D Straight Skeleton Extrusion
 Stream_lines_2 2D Placement of Streamlines
+Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
 Surface_mesher 3D Surface Mesh Generation
 Surface_mesh Surface Mesh
-Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_parameterization Triangulated Surface Mesh Parameterization
 Surface_mesh_segmentation Triangulated Surface Mesh Segmentation
 Surface_mesh_shortest_path Triangulated Surface Mesh Shortest Paths
@@ -96,12 +97,11 @@ Surface_mesh_topology Surface Mesh Topology
 Surface_sweep_2 2D Intersection of Curves
 TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
+Tetrahedral_remeshing Tetrahedral Remeshing
 Three Three
-SMDS_3 3D Simplicial Mesh Data Structure
 Triangulation_2 2D Triangulation
-Triangulation_on_sphere_2 2D Triangulation on Sphere
 Triangulation_3 3D Triangulations
 Triangulation dD Triangulations
+Triangulation_on_sphere_2 2D Triangulation on Sphere
 Visibility_2 2D Visibility Computation
 Voronoi_diagram_2 2D Voronoi Diagram Adaptor
-Tetrahedral_remeshing Tetrahedral Remeshing
