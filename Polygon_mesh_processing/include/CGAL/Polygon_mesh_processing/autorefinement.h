@@ -55,6 +55,10 @@
 #endif
 #endif
 
+#ifdef USE_FIXED_PROJECTION_TRAITS
+#include <CGAL/Kernel_23/internal/Projection_traits_3.h>
+#endif
+
 #include <vector>
 
 //#define CGAL_AUTOREF_USE_DEBUG_PARALLEL_TIMERS
@@ -540,6 +544,9 @@ struct Triangle_data
 };
 
 template <class EK,
+#ifdef USE_FIXED_PROJECTION_TRAITS
+          int dim,
+#endif
           class PointVector>
 void generate_subtriangles(std::size_t ti,
                            Triangle_data& triangle_data,
@@ -813,7 +820,12 @@ void generate_subtriangles(std::size_t ti,
 
 // init CDT + insert points and constraints
   CGAL_AUTOREF_COUNTER_INSTRUCTION(counter.timer3.start();)
+#ifdef USE_FIXED_PROJECTION_TRAITS
+  typedef ::CGAL::internal::Projection_traits_3<EK, dim> P_traits;
+#else
   typedef CGAL::Projection_traits_3<EK> P_traits;
+#endif
+
   typedef CGAL::No_constraint_intersection_tag Itag;
 
   typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits ,Default, Itag> CDT_2;
@@ -821,7 +833,17 @@ void generate_subtriangles(std::size_t ti,
   typedef CDT_2 CDT;
 
   const std::array<typename EK::Point_3,3>& t = triangles[ti];
+  std::vector<typename CDT::Vertex_handle> vhandles(triangle_data.points.size());
 
+#ifdef USE_FIXED_PROJECTION_TRAITS
+  P_traits cdt_traits;
+  bool orientation_flipped = false;
+  CDT cdt(cdt_traits);
+  // TODO: still need to figure out why I can't make the orientation_flipped correctly
+  vhandles[0]=cdt.insert(t[0]);
+  vhandles[1]=cdt.insert(t[1]);
+  vhandles[2]=cdt.insert(t[2]);
+#else
   // positive triangle normal
   typename EK::Vector_3 n = normal(t[0], t[1], t[2]);
   typename EK::Point_3 o(CGAL::ORIGIN);
@@ -832,17 +854,16 @@ void generate_subtriangles(std::size_t ti,
     n=-n;
     orientation_flipped = true;
   }
-
-  std::vector<typename CDT::Vertex_handle> vhandles(triangle_data.points.size());
   P_traits cdt_traits(n);
+
   CDT cdt(cdt_traits);
   vhandles[0]=cdt.insert_outside_affine_hull(t[0]);
   vhandles[1]=cdt.insert_outside_affine_hull(t[1]);
   vhandles[2] = cdt.tds().insert_dim_up(cdt.infinite_vertex(), orientation_flipped);
   vhandles[2]->set_point(t[2]);
+#endif
 
   // insert points and fill vhandles
-
 #if 0
   std::vector<std::size_t> indices(triangle_data.points.size()-3);
   std::iota(indices.begin(), indices.end(), 3);
@@ -1333,7 +1354,24 @@ void autorefine_triangle_soup(PointRange& soup_points,
       new_triangles.push_back({triangles[ti], ti});
     else
     {
+#ifdef USE_FIXED_PROJECTION_TRAITS
+      const std::array<typename EK::Point_3, 3>& t = triangles[ti];
+      typename EK::Vector_3 orth = CGAL::normal(t[0], t[1], t[2]); // TODO::avoid construction?
+      int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
+      c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
+
+      if (c == 0) {
+        autorefine_impl::generate_subtriangles<EK, 0>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+      }
+      else if (c == 1) {
+        autorefine_impl::generate_subtriangles<EK, 1>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+      }
+      else if (c == 2) {
+        autorefine_impl::generate_subtriangles<EK, 2>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+      }
+#else
       autorefine_impl::generate_subtriangles<EK>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+#endif
     }
 
 #ifdef CGAL_AUTOREF_USE_PROGRESS_DISPLAY
