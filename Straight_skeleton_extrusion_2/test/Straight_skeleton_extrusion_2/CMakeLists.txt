@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Straight_skeleton_extrusion_2_Tests)
 
-find_package(CGAL REQUIRED COMPONENTS Qt5 Core)
+find_package(CGAL REQUIRED COMPONENTS Qt6 Core)
 
 include_directories(BEFORE "include")
 
@@ -17,6 +17,6 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(test_sls_extrude PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

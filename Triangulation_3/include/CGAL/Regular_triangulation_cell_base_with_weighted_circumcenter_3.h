@@ -22,7 +22,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 
 namespace CGAL {

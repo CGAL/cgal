@@ -7,8 +7,8 @@
 
 #include "arr_exact_construction_segments.h"
 
-typedef CGAL::Arr_face_extended_dcel<Traits, size_t>       Dcel;
-typedef CGAL::Arrangement_2<Traits, Dcel>                  Ex_arrangement;
+using Dcel = CGAL::Arr_face_extended_dcel<Traits, size_t>;
+using Ex_arrangement = CGAL::Arrangement_2<Traits, Dcel>;
 
 // An arrangement observer, used to receive notifications of face splits and
 // to update the indices of the newly created faces.

@@ -9,7 +9,7 @@
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <fstream>
 #include <cassert>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;

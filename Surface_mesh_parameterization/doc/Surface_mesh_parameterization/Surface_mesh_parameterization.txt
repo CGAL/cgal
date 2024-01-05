@@ -547,6 +547,9 @@ and replaces a wrapper which had a more complicated API.
 Iterative authalic parameterization was added in CGAL 5.2 by Mael Rouxel-Labbé,
 based on a prototype developed by Hardik Jain.
 
+In CGAL 6.0 this package no longer uses the fork of OpenNL that was distributed with CGAL
+and hence was removed.
+
+
 */
 } /* namespace CGAL */
-

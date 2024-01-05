@@ -34,7 +34,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
@@ -96,9 +95,10 @@ namespace internal {
 
 template <typename K>
 struct Itag {
-  typedef typename boost::mpl::if_<typename Algebraic_structure_traits<typename K::FT>::Is_exact,
-                                   Exact_intersections_tag,
-                                   Exact_predicates_tag>::type type;
+  using Is_exact = typename Algebraic_structure_traits<typename K::FT>::Is_exact;
+  typedef std::conditional_t<Is_exact::value,
+                             Exact_intersections_tag,
+                             Exact_predicates_tag> type;
 };
 
 } // namespace internal
@@ -330,11 +330,11 @@ public:
 #if 1
   template <class Segment_2>
   static decltype(auto) get_source(const Segment_2& segment){
-    return segment.source();
+    return segment[0];
   }
   template <class Segment_2>
   static decltype(auto) get_target(const Segment_2& segment){
-    return segment.target();
+    return segment[1];
   }
 
   static const Point& get_source(const Constraint& cst){
@@ -623,7 +623,7 @@ public:
   auto display_vertex(Vertex_handle v) const {
     With_point_tag point_tag;
     using CGAL::IO::oformat;
-    return oformat(v, point_tag);
+    return IO::oformat(v, point_tag);
   }
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
