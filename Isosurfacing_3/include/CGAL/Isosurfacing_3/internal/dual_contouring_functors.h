@@ -19,9 +19,13 @@
 #include <CGAL/centroid.h>
 #include <CGAL/Origin.h>
 
-#include <Eigen/SVD>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_matrix.h>
+#include <CGAL/Eigen_vector.h>
 
-#include <array>
+#include <Eigen/SVD>
+#endif
+
 #include <map>
 #include <mutex>
 #include <vector>
@@ -66,6 +70,11 @@ public:
     using Point_3 = typename Geom_traits::Point_3;
     using Vector_3 = typename Geom_traits::Vector_3;
 
+    using Eigen_vector_3 = Eigen_vector<FT, 3>;
+    using Eigen_vector_x = Eigen_vector<FT>;
+    using Eigen_matrix_3 = Eigen_matrix<FT, 3, 3>;
+    using Eigen_matrix_x = Eigen_matrix<FT>;
+
     using Vertex_descriptor = typename Domain::Vertex_descriptor;
 
     typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
@@ -104,9 +113,9 @@ public:
       {
         // current edge is intersected by the isosurface
         const FT u = (val0 - isovalue) / (val0 - val1);
-        const Point_3 p_lerp = point((1 - u) * x_coord(p0) + u * x_coord(p1),
-                                     (1 - u) * y_coord(p0) + u * y_coord(p1),
-                                     (1 - u) * z_coord(p0) + u * z_coord(p1));
+        const Point_3 p_lerp = point((FT(1) - u) * x_coord(p0) + u * x_coord(p1),
+                                     (FT(1) - u) * y_coord(p0) + u * y_coord(p1),
+                                     (FT(1) - u) * z_coord(p0) + u * z_coord(p1));
         edge_intersections.push_back(p_lerp);
         edge_intersection_normals.push_back(domain.gradient(p_lerp));
       }
@@ -116,37 +125,43 @@ public:
       return false;
 
     // SVD QEM
-    Eigen::Matrix3d A;
+    Eigen_matrix_3 A;
     A.setZero();
-    Eigen::Vector3d rhs;
+    Eigen_vector_3 rhs;
     rhs.setZero();
     for(std::size_t i=0; i<edge_intersections.size(); ++i)
     {
-      Eigen::Vector3d n_k { x_coord(edge_intersection_normals[i]),
-                            y_coord(edge_intersection_normals[i]),
-                            z_coord(edge_intersection_normals[i]) };
-      Eigen::Vector3d p_k { x_coord(edge_intersections[i]),
-                            y_coord(edge_intersections[i]),
-                            z_coord(edge_intersections[i]) };
-      double d_k = n_k.transpose() * p_k;
+      Eigen_vector_3 n_k;
+      n_k.set(0, x_coord(edge_intersection_normals[i]));
+      n_k.set(1, y_coord(edge_intersection_normals[i]));
+      n_k.set(2, z_coord(edge_intersection_normals[i]));
 
-      Eigen::Matrix3d A_k = n_k * n_k.transpose();
-      Eigen::Vector3d b_k = d_k * n_k;
+      Eigen_vector_3 p_k;
+      p_k.set(0, x_coord(edge_intersections[i]));
+      p_k.set(1, y_coord(edge_intersections[i]));
+      p_k.set(2, z_coord(edge_intersections[i]));
+
+      const FT d_k = n_k.transpose() * p_k;
+
+      Eigen_matrix_3 A_k = n_k * n_k.transpose();
+      Eigen_vector_3 b_k;
+      b_k = d_k * n_k;
       A += A_k;
       rhs += b_k;
     }
 
-    Eigen::JacobiSVD<Eigen::MatrixXd> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    Eigen::JacobiSVD<Eigen_matrix_x::EigenType> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
     // set threshold as in Peter Lindstrom's paper, "Out-of-Core Simplification of Large Polygonal Models"
     svd.setThreshold(1e-3);
 
     // Init x hat
-    Eigen::Vector3d x_hat;
+    Eigen_vector_3 x_hat;
     x_hat << x_coord(p), y_coord(p), z_coord(p);
 
     // Lindstrom formula for QEM new position for singular matrices
-    Eigen::VectorXd v_svd = x_hat + svd.solve(rhs - A * x_hat);
+    Eigen_vector_x v_svd;
+    v_svd = x_hat + svd.solve(rhs - A * x_hat);
     p = point(v_svd[0], v_svd[1], v_svd[2]);
 
     // bounding box
@@ -270,7 +285,7 @@ public:
       {
         // current edge is intersected by the isosurface
         const FT u = (val0 - isovalue) / (val0 - val1);
-        const Point_3 p_lerp = CGAL::ORIGIN + ((1.0 - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
+        const Point_3 p_lerp = CGAL::ORIGIN + ((FT(1) - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
         edge_intersections.push_back(p_lerp);
       }
     }

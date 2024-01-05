@@ -5,6 +5,5 @@
 \example Isosurfacing_3/marching_cubes_signed_mesh_offset.cpp
 \example Isosurfacing_3/dual_contouring_Cartesian_grid.cpp
 \example Isosurfacing_3/dual_contouring_mesh_offset.cpp
-\example Isosurfacing_3/dual_contouring_octree.cpp
 \example Isosurfacing_3/all_Cartesian_cube.cpp
 */

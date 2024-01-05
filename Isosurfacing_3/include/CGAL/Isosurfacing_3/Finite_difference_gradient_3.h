@@ -23,7 +23,7 @@ namespace Isosurfacing {
  * \brief Class template for a gradient that is calculated using finite differences.
  *
  * \details This gradient function evaluates an implicit value function at six points
- *          that are a given distance `delta` away from the queried point.
+ *          that are a given distance `delta` away from the queried point along the cartesian axes.
  *
  * \tparam GeomTraits must be a model of `Kernel`.
  * \tparam PointFunction the type of the implicit function. It must be a model of `CopyConstructible` and implement

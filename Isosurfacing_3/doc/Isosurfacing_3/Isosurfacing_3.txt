@@ -101,7 +101,8 @@ Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor
 It generates fewer faces than Marching Cubes, in general.
 Its advantage over MC is its ability to recover sharp creases and corners.
 % PA: add a figure.
-% PA: what about tips, darts, cusps and corners? respectively adjacent to 0, 1, 2 and 3+ creases
+
+
 
 \cgalFigureAnchor{isosurfacing_iwp_dc}
 <center>

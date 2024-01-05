@@ -61,6 +61,9 @@ struct Refine_one_eighth
     if(leaf_coords[1] >= octree_dim_ / 2)
       return false;
 
+    if(leaf_coords[2] >= octree_dim_ / 2)
+      return false;
+
     return true;
   }
 };

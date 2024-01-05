@@ -36,7 +36,11 @@ int main(int, char**)
         const FT distance = CGAL::approximate_sqrt(direction.squared_length());
 
         grid.value(x, y, z) = distance;
-        grid.gradient(x, y, z) = direction / distance; // @todo check division / 0
+
+        if(distance != 0)
+            grid.gradient(x, y, z) = direction / distance;
+        else
+          grid.gradient(x, y, z) = CGAL::NULL_VECTOR;
       }
     }
   }
