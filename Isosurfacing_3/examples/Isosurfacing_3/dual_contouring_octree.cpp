@@ -47,7 +47,6 @@ struct Refine_one_eighth
 
   bool operator()(const Octree_wrapper::Octree::Node& n) const
   {
-    // n.depth()
     if(n.depth() < min_depth_)
       return true;
 
@@ -62,30 +61,27 @@ struct Refine_one_eighth
     if(leaf_coords[1] >= octree_dim_ / 2)
       return false;
 
-    // if(leaf_coords[2] >= octree_dim_ / 2)
-    //   return false;
-
     return true;
   }
 };
 
 int main(int, char**)
 {
-  const CGAL::Bbox_3 bbox{-1., -1., -1., 1., 1., 1.};
+  const CGAL::Bbox_3 bbox{-1., -1., -1.,  1., 1., 1.};
   Octree_wrapper octree_wrap { bbox };
 
-  Refine_one_eighth split_predicate(3, 4);
+  Refine_one_eighth split_predicate(3, 5);
   octree_wrap.refine(split_predicate);
 
   auto sphere_function = [&](const Point& p) -> FT
   {
-    return sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
+    return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
   };
 
   auto sphere_gradient = [&](const Point& p) -> Vector
   {
     const Vector g = p - CGAL::ORIGIN;
-    return g / sqrt(g.squared_length());
+    return g / std::sqrt(g.squared_length());
   };
 
   auto domain = CGAL::Isosurfacing::create_implicit_octree_domain(octree_wrap,
@@ -97,7 +93,7 @@ int main(int, char**)
 
   CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
 
-  CGAL::IO::write_OFF("result.off", points, polygons);
+  CGAL::IO::write_OFF("output.off", points, polygons);
 
   return EXIT_SUCCESS;
 }
