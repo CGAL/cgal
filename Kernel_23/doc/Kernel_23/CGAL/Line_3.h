@@ -25,12 +25,14 @@ Line_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
 /*!
 introduces a line `l` passing through point `p` with
 direction `d`.
+\cgalEpicExact
 */
 Line_3(const Point_3<Kernel> &p, const Direction_3<Kernel>&d);
 
 /*!
 introduces a line `l` passing through point `p` and
 oriented by `v`.
+\cgalEpicExact
 */
 Line_3(const Point_3<Kernel> &p, const Vector_3<Kernel>&v);
 
@@ -100,16 +102,19 @@ Plane_3<Kernel> perpendicular_plane(const Point_3<Kernel> &p) const;
 
 /*!
 returns the line with opposite direction.
+\cgalEpicExact
 */
 Line_3<Kernel> opposite() const;
 
 /*!
 returns a vector having the same direction as `l`.
+\cgalEpicExact
 */
 Vector_3<Kernel> to_vector() const;
 
 /*!
 returns the direction of `l`.
+\cgalEpicExact
 */
 Direction_3<Kernel> direction() const;
 

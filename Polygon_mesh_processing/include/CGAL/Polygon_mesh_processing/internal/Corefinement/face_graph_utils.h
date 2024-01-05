@@ -18,7 +18,6 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
-#include <boost/mpl/if.hpp>
 #include <fstream>
 #include <sstream>
 #include <set>
@@ -388,12 +387,12 @@ struct TweakedGetVertexPointMap
   typedef typename std::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
-  typedef typename boost::mpl::if_<
-    Use_default_tag,
+  typedef std::conditional_t<
+    Use_default_tag::value,
     Default_map,
     Dummy_default_vertex_point_map<Point_3,
       typename boost::graph_traits<PolygonMesh>::vertex_descriptor >
-  >::type type;
+  > type;
 };
 
 template <class PT, class NP, class PM>

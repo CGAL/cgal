@@ -20,6 +20,7 @@ public:
 /*!
 introduces a ray `r`
 with source `p` and passing through point `q`.
+\cgalEpicExact
 */
 Ray_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
 
@@ -59,6 +60,7 @@ bool operator!=(const Ray_3<Kernel> &h) const;
 
 /*!
 returns the source of `r`
+\cgalEpicExact
 */
 Point_3<Kernel> source() const;
 

@@ -178,7 +178,7 @@ template <class A, class B> struct CT_ext_not_to_fwsqrt;
 //<EXT,ANY>
 template <class COEFF, class ROOT, class ACDE_TAG,class FP_TAG, class B>
 struct Coercion_traits_for_level<Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG>, B , CTL_SQRT_EXT>
-:public ::boost::mpl::if_c<
+:public std::conditional_t<
              // if B is fwsqrt
               ::boost::is_base_and_derived<
                   Field_with_sqrt_tag,
@@ -192,7 +192,7 @@ typename Algebraic_structure_traits<B>::Algebraic_category >::value
             ,
             //else take Intern::Coercion_traits not for fwsqrt
             INTERN_CT::CT_ext_not_to_fwsqrt< Sqrt_extension<COEFF,ROOT, ACDE_TAG,FP_TAG> ,B>
-              >::type
+              >
 {};
 
 // <ANY,EXT>

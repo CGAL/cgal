@@ -48,7 +48,6 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
@@ -76,6 +75,7 @@
 #include <unordered_map>
 #include <utility>
 #include <stack>
+#include <array>
 
 #define CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
 
@@ -1223,10 +1223,8 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           std::enable_if_t<
-            boost::mpl::and_<
-              std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-            >::value
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
           >* =NULL)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<
@@ -1653,7 +1651,7 @@ protected:
 
 protected:
   typedef Facet Edge_2D;
-  typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle> Vertex_triple;
+  typedef std::array<Vertex_handle, 3> Vertex_triple;
   typedef typename Base::template Vertex_triple_Facet_map_generator<
   Vertex_triple, Facet>::type Vertex_triple_Facet_map;
   typedef typename Base::template Vertex_handle_unique_hash_map_generator<
@@ -1917,6 +1915,29 @@ public:
   Points points() const
   {
     return Points(points_begin(),points_end());
+  }
+
+  /// Vertex ranges defining a simplex
+  static std::array<Vertex_handle, 2> vertices(const Edge& e)
+  {
+    return std::array<Vertex_handle, 2>{
+             e.first->vertex(e.second),
+             e.first->vertex(e.third)};
+  }
+  static std::array<Vertex_handle, 3> vertices(const Facet& f)
+  {
+    return std::array<Vertex_handle, 3>{
+             f.first->vertex(vertex_triple_index(f.second, 0)),
+             f.first->vertex(vertex_triple_index(f.second, 1)),
+             f.first->vertex(vertex_triple_index(f.second, 2))};
+  }
+  static std::array<Vertex_handle, 4> vertices(const Cell_handle c)
+  {
+    return std::array<Vertex_handle, 4>{
+             c->vertex(0),
+             c->vertex(1),
+             c->vertex(2),
+             c->vertex(3)};
   }
 
   // cells around an edge
@@ -4380,12 +4401,7 @@ typename Triangulation_3<Gt,Tds,Lds>::Vertex_triple
 Triangulation_3<Gt,Tds,Lds>::
 make_vertex_triple(const Facet& f)
 {
-  Cell_handle ch = f.first;
-  int i = f.second;
-
-  return Vertex_triple(ch->vertex(vertex_triple_index(i,0)),
-                       ch->vertex(vertex_triple_index(i,1)),
-                       ch->vertex(vertex_triple_index(i,2)));
+  return vertices(f);
 }
 
 template < class Gt, class Tds, class Lds >
@@ -4393,13 +4409,13 @@ void
 Triangulation_3<Gt,Tds,Lds>::
 make_canonical_oriented_triple(Vertex_triple& t)
 {
-  int i = (t.first < t.second) ? 0 : 1;
+  int i = (t[0] < t[1]) ? 0 : 1;
   if(i==0)
   {
-    i = (t.first < t.third) ? 0 : 2;
+    i = (t[0] < t[2]) ? 0 : 2;
   } else
   {
-    i = (t.second < t.third) ? 1 : 2;
+    i = (t[1] < t[2]) ? 1 : 2;
   }
 
   Vertex_handle tmp;
@@ -4407,16 +4423,16 @@ make_canonical_oriented_triple(Vertex_triple& t)
   {
     case 0: return;
     case 1:
-      tmp = t.first;
-      t.first = t.second;
-      t.second = t.third;
-      t.third = tmp;
+      tmp = t[0];
+      t[0] = t[1];
+      t[1] = t[2];
+      t[2] = tmp;
       return;
     default:
-      tmp = t.first;
-      t.first = t.third;
-      t.third = t.second;
-      t.second = tmp;
+      tmp = t[0];
+      t[0] = t[2];
+      t[2] = t[1];
+      t[1] = tmp;
   }
 }
 
@@ -4970,7 +4986,7 @@ create_triangulation_inner_map(const Triangulation& t,
       {
         Facet f = std::pair<Cell_handle,int>(it,index);
         Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
+        Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
         make_canonical_oriented_triple(vt);
         inner_map[vt] = f;
       }
@@ -4984,7 +5000,7 @@ create_triangulation_inner_map(const Triangulation& t,
       {
         Facet f = std::pair<Cell_handle,int>(it,index);
         Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt(vmap[vt_aux.first], vmap[vt_aux.third], vmap[vt_aux.second]);
+        Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
         make_canonical_oriented_triple(vt);
         inner_map[vt] = f;
       }
@@ -5084,9 +5100,9 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
   while(! outer_map.empty())
   {
     typename Vertex_triple_Facet_map::iterator oit = outer_map.begin();
-    while(is_infinite(oit->first.first) ||
-          is_infinite(oit->first.second) ||
-          is_infinite(oit->first.third))
+    while(is_infinite(oit->first[0]) ||
+          is_infinite(oit->first[1]) ||
+          is_infinite(oit->first[2]))
     {
       ++oit;
       // Otherwise the lookup in the inner_map fails
@@ -5124,12 +5140,12 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
         Facet f = std::pair<Cell_handle, int>(new_ch, index);
         Vertex_triple vt = make_vertex_triple(f);
         make_canonical_oriented_triple(vt);
-        std::swap(vt.second, vt.third);
+        std::swap(vt[1], vt[2]);
 
         typename Vertex_triple_Facet_map::iterator oit2 = outer_map.find(vt);
         if(oit2 == outer_map.end())
         {
-          std::swap(vt.second, vt.third);
+          std::swap(vt[1], vt[2]);
           outer_map[vt] = f;
         }
         else

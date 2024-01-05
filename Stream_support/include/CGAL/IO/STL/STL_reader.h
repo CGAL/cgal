@@ -75,7 +75,7 @@ bool read_ASCII_facet(std::istream& is,
         return false;
       }
 
-      if(!(is >> iformat(x) >> iformat(y) >> iformat(z)))
+      if(!(is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z)))
       {
         if(verbose)
           std::cerr << "Error while reading point coordinates (premature end of file)" << std::endl;

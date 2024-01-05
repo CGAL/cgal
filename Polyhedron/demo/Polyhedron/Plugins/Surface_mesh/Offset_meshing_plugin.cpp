@@ -437,7 +437,7 @@ public:
       return false;
     }
 
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+    for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
     {
       if ( qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) ||
            qobject_cast<Scene_polygon_soup_item*>(scene->item(index)) )
@@ -513,7 +513,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
 
   bool mesh_or_soup_item_found = false;
 
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id index : scene->selectionIndices())
   {
     if (!mesh_or_soup_item_found)
     {

@@ -102,12 +102,14 @@ collinearC3(const FT &px, const FT &py, const FT &pz,
   FT dqx = qx-rx;
   FT dpy = py-ry;
   FT dqy = qy-ry;
-  if (sign_of_determinant(dpx, dqx, dpy, dqy) != ZERO)
+
+  auto is_zero = sign_of_determinant(dpx, dqx, dpy, dqy) == ZERO;
+  if (certainly_not(is_zero))
       return false;
   FT dpz = pz-rz;
   FT dqz = qz-rz;
-  return CGAL_AND( sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO ,
-                   sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO );
+      return is_zero & CGAL_AND( sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO ,
+                                 sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO );
 }
 
 template < class FT >

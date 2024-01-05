@@ -299,7 +299,7 @@ template <typename Kernel,
           typename VertexPointMap>
 void
 mark_constrained_edges(
-  TriangleMesh& tm,
+  const TriangleMesh& tm,
   EdgeIsConstrainedMap edge_is_constrained,
   double coplanar_cos_threshold,
   const VertexPointMap& vpm)
@@ -319,7 +319,7 @@ template <typename Kernel,
           typename VertexCornerIdMap>
 std::size_t
 mark_corner_vertices(
-  TriangleMesh& tm,
+  const TriangleMesh& tm,
   EdgeIsConstrainedMap& edge_is_constrained,
   VertexCornerIdMap& vertex_corner_id,
   double coplanar_cos_threshold,
@@ -546,7 +546,7 @@ template <typename Kernel,
           typename FaceCCIdMap,
           typename VertexPointMap>
 std::pair<std::size_t, std::size_t>
-tag_corners_and_constrained_edges(TriangleMesh& tm,
+tag_corners_and_constrained_edges(const TriangleMesh& tm,
                                   double coplanar_cos_threshold,
                                   VertexCornerIdMap& vertex_corner_id,
                                   EdgeIsConstrainedMap& edge_is_constrained,

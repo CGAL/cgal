@@ -9,7 +9,7 @@
 #include "CGAL/input_helpers.h" // polygon reading, random polygon with weights generation
 #include <CGAL/extrude_skeleton.h>
 
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Random.h>

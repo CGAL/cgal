@@ -46,7 +46,6 @@
 #include <optional>
 #include <boost/optional/optional_io.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/if.hpp>
 #include <CGAL/tuple.h>
 #include <sstream>
 #include <atomic>
@@ -640,9 +639,9 @@ template<class Tr,
          template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2>
             class Base_ = Refine_facets_3_base,
 #ifdef CGAL_LINKED_WITH_TBB
-         class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
+         class Container_ = std::conditional_t // (parallel/sequential?)
          <
-          std::is_convertible<Concurrency_tag, Parallel_tag>::value,
+          std::is_convertible_v<Concurrency_tag, Parallel_tag>,
           // Parallel
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
@@ -679,7 +678,7 @@ template<class Tr,
           Meshes::Double_map_container<typename Tr::Facet,
                                        typename Criteria::Facet_quality>
 # endif
-         >::type // boost::if (parallel/sequential)
+         > // std::conditional (parallel/sequential)
 
 #else // !CGAL_LINKED_WITH_TBB
 
@@ -1148,9 +1147,9 @@ number_of_bad_elements_impl()
         const Subdomain mc_subdomain = this->r_oracle_.is_in_domain_object()(this->r_tr_.dual(mc));
 
         std::cerr << "*** Is in complex? c is marked in domain: " << this->r_c3t3_.is_in_complex(c)
-          << " / c is really in subdomain: " << oformat(c_subdomain)
+          << " / c is really in subdomain: " << IO::oformat(c_subdomain)
           << " / mc is marked in domain: " << this->r_c3t3_.is_in_complex(mc)
-          << " / mc is really in subdomain: " << oformat(mc_subdomain)
+          << " / mc is really in subdomain: " << IO::oformat(mc_subdomain)
           << std::endl;
 
 
