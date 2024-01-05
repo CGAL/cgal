@@ -7,6 +7,7 @@ project( Isosurfacing_3_Examples )
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program( "marching_cubes_implicit_sphere.cpp" )
+create_single_source_cgal_program( "marching_cubes_seq_vs_parallel.cpp" )
 create_single_source_cgal_program( "marching_cubes_Cartesian_grid_sphere.cpp" )
 create_single_source_cgal_program( "marching_cubes_signed_mesh_offset.cpp" )
 create_single_source_cgal_program( "marching_cubes_multiple_mesh_offsets.cpp" )
