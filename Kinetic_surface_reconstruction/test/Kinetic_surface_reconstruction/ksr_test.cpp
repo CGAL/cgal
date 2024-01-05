@@ -25,12 +25,17 @@ int main(const int argc, const char** argv) {
   auto param = CGAL::parameters::maximum_distance(0.05)
     .maximum_angle(10)
     .k_neighbors(12)
-    .minimum_region_size(50);
+    .minimum_region_size(50)
+    .regularize_coplanarity(true)
+    .regularize_parallelism(true)
+    .maximum_offset(0.1);
 
   // Algorithm.
   KSR ksr(point_set, param);
 
   ksr.detection_and_partition(1, param);
+
+  std::cout << ksr.detected_planar_shapes().size() << " planar shapes" << std::endl;
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
@@ -65,6 +70,9 @@ int main(const int argc, const char** argv) {
     std::cerr << "reconstruction with high lambda provided wrong result: #vtx " << vtx.size() << " expected: 0, #polys: " << polylist.size() << " expected: 0" << std::endl;
     failed = true;
   }
+
+  if (!failed)
+    std::cout << "done!";
 
   return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }

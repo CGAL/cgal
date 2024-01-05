@@ -19,7 +19,7 @@ if(Boost_FOUND)
     message(STATUS "Found Eigen")
     include(CGAL_Eigen_support)
 
-    set(targets ksr_test)
+    set(targets ksr_test ksr_reorientation ksr_regularization)
 
     set(project_linked_libraries)
     set(project_compilation_definitions)

@@ -705,7 +705,8 @@ private:
     collect_points_for_faces_lcc();
     count_volume_votes_lcc();
 
-    std::cout << "* computing data term ... ";
+    if (m_verbose)
+      std::cout << "* computing data term ... ";
 
     std::size_t max_inside = 0, max_outside = 0;
     for (std::size_t i = 0; i < m_volumes.size(); i++) {
@@ -1869,47 +1870,50 @@ private:
     }
 
     // Estimate ground plane by finding a low mostly horizontal plane
-    {
-      std::vector<std::size_t> candidates;
-      FT low_z_peak = (std::numeric_limits<FT>::max)();
-      FT bbox_min[] = { (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)() };
-      FT bbox_max[] = { -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)() };
-      for (const auto& p : m_points) {
-        const auto& point = get(m_point_map, p);
-        for (std::size_t i = 0; i < 3; i++) {
-          bbox_min[i] = (std::min)(point[i], bbox_min[i]);
-          bbox_max[i] = (std::max)(point[i], bbox_max[i]);
-        }
+    std::vector<std::size_t> candidates;
+    FT low_z_peak = (std::numeric_limits<FT>::max)();
+    FT bbox_min[] = { (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)(), (std::numeric_limits<FT>::max)() };
+    FT bbox_max[] = { -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)() };
+    for (const auto& p : m_points) {
+      const auto& point = get(m_point_map, p);
+      for (std::size_t i = 0; i < 3; i++) {
+        bbox_min[i] = (std::min)(point[i], bbox_min[i]);
+        bbox_max[i] = (std::max)(point[i], bbox_max[i]);
       }
+    }
 
-      FT bbox_center[] = { 0.5 * (bbox_min[0] + bbox_max[0]), 0.5 * (bbox_min[1] + bbox_max[1]), 0.5 * (bbox_min[2] + bbox_max[2]) };
+    FT bbox_center[] = { 0.5 * (bbox_min[0] + bbox_max[0]), 0.5 * (bbox_min[1] + bbox_max[1]), 0.5 * (bbox_min[2] + bbox_max[2]) };
 
-      for (std::size_t i = 0; i < m_regions.size(); i++) {
-        Vector_3 d = m_regions[i].first.orthogonal_vector();
-        if (abs(d.z()) > 0.98) {
-          candidates.push_back(i);
-          FT z = m_regions[i].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
-          low_z_peak = (std::min<FT>)(z, low_z_peak);
-        }
+    for (std::size_t i = 0; i < m_regions.size(); i++) {
+      Vector_3 d = m_regions[i].first.orthogonal_vector();
+      if (abs(d.z()) > 0.98) {
+        candidates.push_back(i);
+        FT z = m_regions[i].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
+        low_z_peak = (std::min<FT>)(z, low_z_peak);
       }
+    }
 
-      m_ground_polygon_index = -1;
-      std::vector<std::size_t> other_ground;
-      for (std::size_t i = 0; i < candidates.size(); i++) {
-        Vector_3 d = m_regions[candidates[i]].first.orthogonal_vector();
-        FT z = m_regions[candidates[i]].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
-        if (z - low_z_peak < max_distance_to_plane) {
-          if (m_ground_polygon_index == -1)
-            m_ground_polygon_index = candidates[i];
-          else
-            other_ground.push_back(candidates[i]);
-        }
+    m_ground_polygon_index = -1;
+    std::vector<std::size_t> other_ground;
+    for (std::size_t i = 0; i < candidates.size(); i++) {
+      Vector_3 d = m_regions[candidates[i]].first.orthogonal_vector();
+      FT z = m_regions[candidates[i]].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
+      if (z - low_z_peak < max_distance_to_plane) {
+        if (m_ground_polygon_index == -1)
+          m_ground_polygon_index = candidates[i];
+        else
+          other_ground.push_back(candidates[i]);
       }
+    }
+
+    if (m_ground_polygon_index != -1) {
 
       for (std::size_t i = 0; i < other_ground.size(); i++)
         std::move(m_regions[other_ground[i]].second.begin(), m_regions[other_ground[i]].second.end(), std::back_inserter(m_regions[m_ground_polygon_index].second));
 
-      std::cout << "ground polygon " << m_ground_polygon_index << ", merging other polygons";
+      if (m_verbose)
+        std::cout << "ground polygon " << m_ground_polygon_index << ", merging other polygons";
+
       while (other_ground.size() != 0) {
         m_regions.erase(m_regions.begin() + other_ground.back());
         std::cout << " " << other_ground.back();
@@ -1941,7 +1945,8 @@ private:
       //KSP_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSP_3::internal::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    if (m_debug)
+      KSP_3::internal::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     std::vector<Plane_3> pl;
 
@@ -1970,8 +1975,10 @@ private:
     }
     CGAL_assertion(m_planar_regions.size() == m_regions.size());
 
-    std::cout << "found " << num_shapes << " planar shapes regularized into " << m_planar_regions.size() << std::endl;
-    std::cout << "from " << m_points.size() << " input points " << unassigned << " remain unassigned" << std::endl;
+    if (m_verbose) {
+      std::cout << "found " << num_shapes << " planar shapes regularized into " << m_planar_regions.size() << std::endl;
+      std::cout << "from " << m_points.size() << " input points " << unassigned << " remain unassigned" << std::endl;
+    }
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {

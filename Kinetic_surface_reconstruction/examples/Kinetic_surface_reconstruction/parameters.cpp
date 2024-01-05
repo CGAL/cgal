@@ -105,6 +105,11 @@ int main(const int argc, const char** argv) {
   Point_set point_set(parameters.with_normals);
   CGAL::IO::read_point_set(parameters.data, point_set);
 
+  if (point_set.size() == 0) {
+    std::cout << "input file not found or empty!" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   if (!point_set.has_normal_map()) {
     point_set.add_normal_map();
     CGAL::pca_estimate_normals<CGAL::Parallel_if_available_tag>(point_set, 9);
@@ -195,7 +200,7 @@ int main(const int argc, const char** argv) {
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_beta) + ".off", vtx, polylist);
+    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_beta) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
@@ -217,7 +222,7 @@ int main(const int argc, const char** argv) {
 
 
     if (polylist.size() > 0)
-      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + ".off", vtx, polylist);
+      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
   }
 
   std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;
