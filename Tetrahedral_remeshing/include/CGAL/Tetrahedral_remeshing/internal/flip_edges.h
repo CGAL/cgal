@@ -1374,6 +1374,10 @@ Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
     }
   }
 
+  for (Cell_handle c : cells_around_edge)
+    c->reset_cache_validity();
+
+
   return VALID_FLIP;
 }
 
@@ -1552,23 +1556,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     Cell_handle n_ch2_vh1 = ch2->neighbor(ch2->index(vh1));
     Cell_handle n_ch1_vh3 = ch1->neighbor(ch1->index(vh3));
 
-    boost::unordered_map<Edge_uv, typename C3T3::Curve_index> complex_edges;
-    for (Cell_handle c : cells_around_edge)
-    {
-      for (int ii = 0; ii < 4; ++ii)
-      {
-        for (int jj = 0; jj < 4; ++jj)
-        {
-          Edge e(c, ii, jj);
-          if (c3t3.is_in_complex(e))
-          {
-            complex_edges[make_vertex_pair(c->vertex(ii), c->vertex(jj))] = c3t3.curve_index(e);
-            c3t3.remove_from_complex(e);
-          }
-        }
-      }
-    }
-
 //    pre_sliver_Removal_cells.push_back(K::Tetrahedron_3(n_ch3_vh1->vertex(0)->point(), n_ch3_vh1->vertex(1)->point(), n_ch3_vh1->vertex(2)->point(), n_ch3_vh1->vertex(3)->point()));
 //    pre_sliver_Removal_cells.push_back(K::Tetrahedron_3(n_ch0_vh3->vertex(0)->point(), n_ch0_vh3->vertex(1)->point(), n_ch0_vh3->vertex(2)->point(), n_ch0_vh3->vertex(3)->point()));
 //    pre_sliver_Removal_cells.push_back(K::Tetrahedron_3(n_ch2_vh1->vertex(0)->point(), n_ch2_vh1->vertex(1)->point(), n_ch2_vh1->vertex(2)->point(), n_ch2_vh1->vertex(3)->point()));
@@ -1585,10 +1572,10 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       || !is_well_oriented(tr, ch2)
       || !is_well_oriented(tr, ch3))
       db = NOT_FLIPPABLE;
-    else if (curr_max_cosdh < max_cos_dihedral_angle(tr, ch0)
-      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch1)
-      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch2)
-      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch3))
+    else if (curr_max_cosdh < max_cos_dihedral_angle(tr, ch0, false)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch1, false)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch2, false)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch3, false))
       db = NO_BEST_CONFIGURATION;
 
     if(db == NOT_FLIPPABLE || db == NO_BEST_CONFIGURATION)
@@ -1646,23 +1633,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     c3t3.add_to_complex(ch0, ch0->index(vh4), patch);
     c3t3.add_to_complex(ch3, ch3->index(vh4), patch);
 
-    for (Cell_handle c : cells_around_edge)
-    {
-      for (int ii = 0; ii < 4; ++ii)
-      {
-        for (int jj = 0; jj < 4; ++jj)
-        {
-          Edge_uv uv = make_vertex_pair(c->vertex(ii), c->vertex(jj));
-          Edge edge_uv(c, ii, jj);
-          if (complex_edges.find(uv) != complex_edges.end())
-          {
-            if(!c3t3.is_in_complex(edge_uv))
-              c3t3.add_to_complex(edge_uv, complex_edges[uv]);
-          }
-        }
-      }
-    }
-
     for (int i = 0; i < 4; ++i)
     {
       Cell_handle chi = cells_around_edge[i];
@@ -1708,6 +1678,12 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //
 //    if (db == VALID_FLIP) nb_surface_44_flips_done++;
 
+      if (db == VALID_FLIP)
+      {
+        for(Cell_handle c : cells_around_edge)
+          c->reset_cache_validity();
+      }
+
     return db;
   }
   else //Non planar flip
@@ -1741,20 +1717,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       }
     }
 
-    boost::unordered_map<Edge_uv, typename C3T3::Curve_index> complex_edges;
-    for (Cell_handle c : cells_around_edge)
-    {
-      for(Edge e : cell_edges(c, tr))
-      {
-        if (c3t3.is_in_complex(e))
-        {
-          const auto uv = make_vertex_pair(e);
-          complex_edges[uv] = c3t3.curve_index(e);
-          c3t3.remove_from_complex(e);
-        }
-      }
-    }
-
     // Top Flip
     ch3->set_vertex(ch3->index(vh1), vh5);
     ch2->set_vertex(ch2->index(vh3), vh4);
@@ -1767,10 +1729,10 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       || !is_well_oriented(tr, ch2)
       || !is_well_oriented(tr, ch3))
       db = NOT_FLIPPABLE;
-    else if (curr_max_cosdh < max_cos_dihedral_angle(tr, ch0)
-      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch1)
-      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch2)
-      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch3))
+    else if (curr_max_cosdh < max_cos_dihedral_angle(tr, ch0, false)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch1, false)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch2, false)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch3, false))
       db = NO_BEST_CONFIGURATION;
 
     if (db == NOT_FLIPPABLE || db == NO_BEST_CONFIGURATION)
@@ -1834,19 +1796,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     c3t3.add_to_complex(ch0, ch0->index(vh2), patch);
     c3t3.add_to_complex(ch1, ch1->index(vh2), patch);
 
-    for (Cell_handle c : cells_around_edge)
-    {
-      for(const Edge& edge_uv : cell_edges(c, tr))
-      {
-        const Edge_uv uv = make_vertex_pair(edge_uv);
-        if (complex_edges.find(uv) != complex_edges.end())
-        {
-          if (!c3t3.is_in_complex(edge_uv))
-            c3t3.add_to_complex(edge_uv, complex_edges[uv]);
-        }
-      }
-    }
-
     for (Cell_handle chi : cells_around_edge)
     {
       Facet f1(chi, chi->index(vh4));
@@ -1890,6 +1839,12 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //    if(!c3t3_with_info.triangulation().is_valid(n_ch1_vh1, true))
 //    db = CELL_PBS;
 //    */
+
+    if (db == VALID_FLIP)
+    {
+      for (Cell_handle c : cells_around_edge)
+        c->reset_cache_validity();
+    }
     return db;
   }
 
@@ -2060,6 +2015,9 @@ std::size_t flipBoundaryEdges(
         {
           int nbf = std::distance(c3t3.facets_in_complex_begin(),
                                   c3t3.facets_in_complex_end());
+          CGAL_assertion_code(int nbe =
+            std::distance(c3t3.edges_in_complex_begin(),
+                          c3t3.edges_in_complex_end()));
 
 //          CGAL::dump_c3t3(c3t3, "dump_before_flip_");
 
@@ -2087,6 +2045,10 @@ std::size_t flipBoundaryEdges(
             int nbf_post = std::distance(c3t3.facets_in_complex_begin(),
                                          c3t3.facets_in_complex_end());
             CGAL_assertion(nbf == nbf_post);
+            CGAL_assertion_code(int nbe_post =
+              std::distance(c3t3.edges_in_complex_begin(),
+                            c3t3.edges_in_complex_end()));
+            CGAL_assertion(nbe == nbe_post);
 
 //            nb_surface_flip_done++;
             nb++;

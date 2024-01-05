@@ -37,7 +37,7 @@ namespace Tetrahedral_remeshing
 {
 
 enum Subdomain_relation { EQUAL, DIFFERENT, INCLUDED, INCLUDES };
-enum Sliver_removal_result { INVALID_ORIENTATION, INVALID_CELL, INVALID_VERTEX,
+enum Sliver_removal_result { INVALID_ORIENTATION = 1, INVALID_CELL, INVALID_VERTEX,
   NOT_FLIPPABLE, EDGE_PROBLEM, VALID_FLIP, NO_BEST_CONFIGURATION, EXISTING_EDGE };
 
 template<typename K>
@@ -343,9 +343,10 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
 
 template<typename Tr>
 Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
-                                             const typename Tr::Cell_handle c)
+                                             const typename Tr::Cell_handle c,
+                                             const bool use_cache = true)
 {
-  if (c->is_cache_valid())
+  if (use_cache && c->is_cache_valid())
     return Dihedral_angle_cosine(CGAL::sign(c->sliver_value()),
                                  CGAL::abs(c->sliver_value()), 1.);
   else if(tr.is_infinite(c))
@@ -360,7 +361,8 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
                                                         c->vertex(1),
                                                         c->vertex(2),
                                                         c->vertex(3));
-  c->set_sliver_value(cos_dh.signed_square_value());
+  if(use_cache)
+    c->set_sliver_value(cos_dh.signed_square_value());
   return cos_dh;
 }
 
@@ -528,6 +530,23 @@ bool is_boundary(const C3T3& c3t3,
   while (++fcirc != fend);
 
   return false;
+}
+
+template<typename C3T3>
+typename C3T3::Edge get_edge(const typename C3T3::Vertex_handle v0,
+                             const typename C3T3::Vertex_handle v1,
+                             const C3T3& c3t3)
+{
+  typedef typename C3T3::Edge        Edge;
+  typedef typename C3T3::Cell_handle Cell_handle;
+
+  Cell_handle cell;
+  int i0, i1;
+  if (c3t3.triangulation().tds().is_edge(v0, v1, cell, i0, i1))
+    return Edge(cell, i0, i1);
+  else
+    CGAL_assertion(false);
+  return Edge();
 }
 
 template<typename C3t3, typename CellSelector>
@@ -1322,6 +1341,24 @@ namespace internal
 
 namespace debug
 {
+
+template<typename C3t3>
+bool check_facets(const typename C3t3::Vertex_handle vh0,
+                  const typename C3t3::Vertex_handle vh1,
+                  const typename C3t3::Vertex_handle vh2,
+                  const typename C3t3::Vertex_handle vh3,
+                  const C3t3& c3t3)
+{
+  int li, lj, lk;
+  typename C3t3::Cell_handle c;
+
+  bool b1 = c3t3.triangulation().is_facet(vh0, vh1, vh2, c, li, lj, lk);
+  bool b2 = c3t3.is_in_complex(c, (6 - li - lj - lk));
+  bool b3 = c3t3.triangulation().is_facet(vh0, vh1, vh3, c, li, lj, lk);
+  bool b4 = c3t3.is_in_complex(c, (6 - li - lj - lk));
+
+  return b1 && b2 && b3 && b4;
+}
 
 // forward-declaration
 template<typename Tr, typename CellRange>
