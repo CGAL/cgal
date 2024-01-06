@@ -1085,10 +1085,10 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
   <tr>
     <th>Ball <br>Radius</th>
     <th>Computation</th>
-    <th>Spot<br>(<span style="font-weight:bold">6k </span>faces)</th>
-    <th>Bunny<br>(<span style="font-weight:bold">144K </span>faces)</th>
-    <th>Stanford Dragon<br>(<span style="font-weight:bold">871K </span>faces)</th>
-    <th>Old Age or Winter<br>(<span style="font-weight:bold">6M </span>faces)</th>
+    <th>Spot<br>(<span>6k </span>faces)</th>
+    <th>Bunny<br>(<span>144K </span>faces)</th>
+    <th>Stanford Dragon<br>(<span>871K </span>faces)</th>
+    <th>Old Age or Winter<br>(<span>6M </span>faces)</th>
   </tr>
   <tr>
     <td rowspan="4">vertex<br>1-ring faces <br>(default)</td>
@@ -1172,16 +1172,16 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
   </tr>
   <tr>
     <td>All (optimized for shared computations)</td>
-    <td0.025 s</td>
-    <td0.417 s</td>
-    <td3.44 s</td>
-    <td23.93 s</td>
+    <td>0.025 s</td>
+    <td>0.417 s</td>
+    <td>3.44 s</td>
+    <td>23.93 s</td>
   </tr>
 </table>
 </center>
 \cgalFigureCaptionBegin{icc_performance_table}
-Performance of the curvature computation on various meshes (in seconds). The first row shows the performance of the default value for the ball radius,
-which is using the 1-ring of neighboring faces around each vertex, instead of actually approximating the inclusion ratio of the faces in the ball.
+Performance of the curvature computation on various meshes (in seconds). The first 4 rows show the performance of the default value for the ball radius,
+which is using the 1-ring of neighboring faces around each vertex, instead of actually approximating the inclusion ratio of the faces in a ball of certain radius.
 The other rows show a ball radius of 0.1 (and 0.5) scaled by the average edge length of the mesh. It is clear that using the 1-ring of faces
 is much faster, but it might not be as effective when used on a noisy input mesh.
 \cgalFigureCaptionEnd
