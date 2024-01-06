@@ -1080,16 +1080,8 @@ performance of the curvature computation. For the data reported in the following
 Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compiled with Visual Studio 2019.
 
 \cgalFigureAnchor{icc_performance_table}
+<center>
 <table class="tg" style="undefined;table-layout: fixed; width: 952px">
-<colgroup>
-<col style="width: 161px">
-<col style="width: 300px">
-<col style="width: 91px">
-<col style="width: 113px">
-<col style="width: 145px">
-<col style="width: 142px">
-</colgroup>
-<thead>
   <tr>
     <th class="tg-0pky">Ball <br>Radius</th>
     <th class="tg-0pky">Computation</th>
@@ -1098,8 +1090,6 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
     <th class="tg-0pky">Stanford Dragon<br>(<span style="font-weight:bold">871K </span>faces)</th>
     <th class="tg-0pky">Old Age or Winter<br>(<span style="font-weight:bold">6M </span>faces)</th>
   </tr>
-</thead>
-<tbody>
   <tr>
     <td class="tg-0pky" rowspan="4">vertex<br>1-ring faces <br>(default)</td>
     <td class="tg-za14">Mean&nbsp;&nbsp;&nbsp;Curvature</td>
@@ -1187,8 +1177,9 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
     <td class="tg-2b7s">3.44 s</td>
     <td class="tg-2b7s">23.93 s</td>
   </tr>
-</tbody>
 </table>
+</center>
+
 \cgalFigureCaptionBegin{icc_performance_table}
 Performance of the curvature computation on various meshes (in seconds). The first row shows the performance of the default value for the ball radius,
 which is using the 1-ring of neighboring faces around each vertex, instead of actually approximating the inclusion ratio of the faces in the ball.
