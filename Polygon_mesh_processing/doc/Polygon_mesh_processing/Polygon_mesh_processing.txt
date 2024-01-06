@@ -1081,105 +1081,104 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
 
 \cgalFigureAnchor{icc_performance_table}
 <center>
-<table class="tg" style="undefined;table-layout: fixed; width: 952px">
+<table>
   <tr>
-    <th class="tg-0pky">Ball <br>Radius</th>
-    <th class="tg-0pky">Computation</th>
-    <th class="tg-0pky">Spot<br>(<span style="font-weight:bold">6k </span>faces)</th>
-    <th class="tg-0pky">Bunny<br>(<span style="font-weight:bold">144K </span>faces)</th>
-    <th class="tg-0pky">Stanford Dragon<br>(<span style="font-weight:bold">871K </span>faces)</th>
-    <th class="tg-0pky">Old Age or Winter<br>(<span style="font-weight:bold">6M </span>faces)</th>
+    <th>Ball <br>Radius</th>
+    <th>Computation</th>
+    <th>Spot<br>(<span style="font-weight:bold">6k </span>faces)</th>
+    <th>Bunny<br>(<span style="font-weight:bold">144K </span>faces)</th>
+    <th>Stanford Dragon<br>(<span style="font-weight:bold">871K </span>faces)</th>
+    <th>Old Age or Winter<br>(<span style="font-weight:bold">6M </span>faces)</th>
   </tr>
   <tr>
-    <td class="tg-0pky" rowspan="4">vertex<br>1-ring faces <br>(default)</td>
-    <td class="tg-za14">Mean&nbsp;&nbsp;&nbsp;Curvature</td>
-    <td class="tg-dvpl">  &lt; 0.001 s</td>
-    <td class="tg-jkyp">0.019 s</td>
-    <td class="tg-jkyp">0.11 s</td>
-    <td class="tg-jkyp">2.68 s</td>
+    <td rowspan="4">vertex<br>1-ring faces <br>(default)</td>
+    <td>Mean&nbsp;&nbsp;&nbsp;Curvature</td>
+    <td>  &lt; 0.001 s</td>
+    <td>0.019 s</td>
+    <td>0.11 s</td>
+    <td>2.68 s</td>
   </tr>
   <tr>
-    <td class="tg-za14">Gaussian Curvature</td>
-    <td class="tg-dvpl"> &lt; 0.001 s</td>
-    <td class="tg-jkyp">0.017 s</td>
-    <td class="tg-jkyp">0.10 s</td>
-    <td class="tg-jkyp">2.77 s</td>
+    <td>Gaussian Curvature</td>
+    <td> &lt; 0.001 s</td>
+    <td>0.017 s</td>
+    <td>0.10 s</td>
+    <td>2.77 s</td>
   </tr>
   <tr>
-    <td class="tg-za14">Principal Curvature &amp; Directions</td>
-    <td class="tg-jkyp">0.002 s</td>
-    <td class="tg-jkyp">0.044 s</td>
-    <td class="tg-jkyp">0.25 s</td>
-    <td class="tg-jkyp">3.98 s</td>
+    <td>Principal Curvature &amp; Directions</td>
+    <td>0.002 s</td>
+    <td>0.044 s</td>
+    <td>0.25 s</td>
+    <td>3.98 s</td>
   </tr>
   <tr>
-    <td class="tg-za14">All (optimized for shared computations)</td>
-    <td class="tg-jkyp">0.003 s</td>
-    <td class="tg-jkyp">0.049 s</td>
-    <td class="tg-jkyp">0.28 s</td>
-    <td class="tg-jkyp">4.52 s</td>
+    <td>All (optimized for shared computations)</td>
+    <td>0.003 s</td>
+    <td>0.049 s</td>
+    <td>0.28 s</td>
+    <td>4.52 s</td>
   </tr>
   <tr>
-    <td class="tg-0pky" rowspan="4">r = 0.1<br>* avg_edge_length</td>
-    <td class="tg-0pky">Mean   Curvature</td>
-    <td class="tg-jkyp">0.017 s</td>
-    <td class="tg-jkyp">0.401 s</td>
-    <td class="tg-jkyp">2.66 s</td>
-    <td class="tg-jkyp">22.29 s</td>
+    <td rowspan="4">r = 0.1<br>* avg_edge_length</td>
+    <td>Mean   Curvature</td>
+    <td>0.017 s</td>
+    <td>0.401 s</td>
+    <td>2.66 s</td>
+    <td>22.29 s</td>
   </tr>
   <tr>
-    <td class="tg-0pky">Gaussian Curvature</td>
-    <td class="tg-jkyp">0.018 s</td>
-    <td class="tg-jkyp">0.406 s</td>
-    <td class="tg-jkyp">2.63 s</td>
-    <td class="tg-jkyp">21.61 s</td>
+    <td>Gaussian Curvature</td>
+    <td>0.018 s</td>
+    <td>0.406 s</td>
+    <td>2.63 s</td>
+    <td>21.61 s</td>
   </tr>
   <tr>
-    <td class="tg-0pky">Principal Curvature &amp; Directions</td>
-    <td class="tg-jkyp">0.019 s</td>
-    <td class="tg-jkyp">0.430 s</td>
-    <td class="tg-jkyp">2.85 s</td>
-    <td class="tg-jkyp">23.55 s</td>
+    <td>Principal Curvature &amp; Directions</td>
+    <td>0.019 s</td>
+    <td>0.430 s</td>
+    <td>2.85 s</td>
+    <td>23.55 s</td>
   </tr>
   <tr>
-    <td class="tg-0pky">All (optimized for shared computations)</td>
-    <td class="tg-jkyp">0.017 s</td>
-    <td class="tg-jkyp">0.428 s</td>
-    <td class="tg-jkyp">2.89 s</td>
-    <td class="tg-jkyp">24.16 s</td>
+    <td>All (optimized for shared computations)</td>
+    <td>0.017 s</td>
+    <td>0.428 s</td>
+    <td>2.89 s</td>
+    <td>24.16 s</td>
   </tr>
   <tr>
-    <td class="tg-0lax" rowspan="4">r = 0.5<br>* avg_edge_length</td>
-    <td class="tg-0lax">Mean   Curvature</td>
-    <td class="tg-2b7s">0.024 s</td>
-    <td class="tg-2b7s">0.388 s</td>
-    <td class="tg-2b7s">3.18 s</td>
-    <td class="tg-2b7s">22.79 s</td>
+    <td rowspan="4">r = 0.5<br>* avg_edge_length</td>
+    <td>Mean   Curvature</td>
+    <td>0.024 s</td>
+    <td>0.388 s</td>
+    <td>3.18 s</td>
+    <td>22.79 s</td>
   </tr>
   <tr>
-    <td class="tg-0lax">Gaussian Curvature</td>
-    <td class="tg-2b7s">0.024 s</td>
-    <td class="tg-2b7s">0.392 s</td>
-    <td class="tg-2b7s">3.21 s</td>
-    <td class="tg-2b7s">23.58 s</td>
+    <td>Gaussian Curvature</td>
+    <td>0.024 s</td>
+    <td>0.392 s</td>
+    <td>3.21 s</td>
+    <td>23.58 s</td>
   </tr>
   <tr>
-    <td class="tg-0lax">Principal Curvature &amp; Directions</td>
-    <td class="tg-2b7s">0.027 s</td>
-    <td class="tg-2b7s">0.428 s</td>
-    <td class="tg-2b7s">3.41 s</td>
-    <td class="tg-2b7s">24.44 s</td>
+    <td>Principal Curvature &amp; Directions</td>
+    <td>0.027 s</td>
+    <td>0.428 s</td>
+    <td>3.41 s</td>
+    <td>24.44 s</td>
   </tr>
   <tr>
-    <td class="tg-0lax">All (optimized for shared computations)</td>
-    <td class="tg-2b7s">0.025 s</td>
-    <td class="tg-2b7s">0.417 s</td>
-    <td class="tg-2b7s">3.44 s</td>
-    <td class="tg-2b7s">23.93 s</td>
+    <td>All (optimized for shared computations)</td>
+    <td0.025 s</td>
+    <td0.417 s</td>
+    <td3.44 s</td>
+    <td23.93 s</td>
   </tr>
 </table>
 </center>
-
 \cgalFigureCaptionBegin{icc_performance_table}
 Performance of the curvature computation on various meshes (in seconds). The first row shows the performance of the default value for the ball radius,
 which is using the 1-ring of neighboring faces around each vertex, instead of actually approximating the inclusion ratio of the faces in the ball.
