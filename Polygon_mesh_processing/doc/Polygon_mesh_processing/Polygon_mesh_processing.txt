@@ -1027,7 +1027,7 @@ These computations are performed using (on all vertices of the mesh) `CGAL::Poly
 where function named parameters are used to select the curvatures (and possibly directions) to be computed. An overload function with the same name
 but taking a given vertex is also available in case the computation should be done only for that vertex.
 
-\subsection ICCResults Results & Performance
+\subsection ICCResults Results
 
 First, \cgalFigureRef{icc_measures} illustrates various curvature measures on a triangular mesh.
 
@@ -1069,6 +1069,131 @@ Mean curvature, Gaussian curvature, minimal principal curvature direction and ma
 </center>
 \cgalFigureCaptionBegin{icc_various_ball_radii}
 When changing the integration ball radius, we obtain a scale space of curvature measure that can be used to tackle possible noise in the input as illustrated in the second row (mean curvature only with fixed colormap ranges and ball radii in {0.02,0.03,0.04,0.05}).
+\cgalFigureCaptionEnd
+
+
+\subsection ICCPerformance Performance
+
+The implemented algorithms exhibit a linear complexity in the number of faces of the mesh. It is worth noting that
+we pre-computed the vertex normals and passed them as a named parameter to the function to better estimate the
+performance of the curvature computation. For the data reported in the following table, we used a machine with an
+Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compiled with Visual Studio 2019.
+
+\cgalFigureAnchor{icc_performance_table}
+<table class="tg" style="undefined;table-layout: fixed; width: 952px">
+<colgroup>
+<col style="width: 161px">
+<col style="width: 300px">
+<col style="width: 91px">
+<col style="width: 113px">
+<col style="width: 145px">
+<col style="width: 142px">
+</colgroup>
+<thead>
+  <tr>
+    <th class="tg-0pky">Ball <br>Radius</th>
+    <th class="tg-0pky">Computation</th>
+    <th class="tg-0pky">Spot<br>(<span style="font-weight:bold">6k </span>faces)</th>
+    <th class="tg-0pky">Bunny<br>(<span style="font-weight:bold">144K </span>faces)</th>
+    <th class="tg-0pky">Stanford Dragon<br>(<span style="font-weight:bold">871K </span>faces)</th>
+    <th class="tg-0pky">Old Age or Winter<br>(<span style="font-weight:bold">6M </span>faces)</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0pky" rowspan="4">vertex<br>1-ring faces <br>(default)</td>
+    <td class="tg-za14">Mean&nbsp;&nbsp;&nbsp;Curvature</td>
+    <td class="tg-dvpl">  &lt; 0.001 s</td>
+    <td class="tg-jkyp">0.019 s</td>
+    <td class="tg-jkyp">0.11 s</td>
+    <td class="tg-jkyp">2.68 s</td>
+  </tr>
+  <tr>
+    <td class="tg-za14">Gaussian Curvature</td>
+    <td class="tg-dvpl"> &lt; 0.001 s</td>
+    <td class="tg-jkyp">0.017 s</td>
+    <td class="tg-jkyp">0.10 s</td>
+    <td class="tg-jkyp">2.77 s</td>
+  </tr>
+  <tr>
+    <td class="tg-za14">Principal Curvature &amp; Directions</td>
+    <td class="tg-jkyp">0.002 s</td>
+    <td class="tg-jkyp">0.044 s</td>
+    <td class="tg-jkyp">0.25 s</td>
+    <td class="tg-jkyp">3.98 s</td>
+  </tr>
+  <tr>
+    <td class="tg-za14">All (optimized for shared computations)</td>
+    <td class="tg-jkyp">0.003 s</td>
+    <td class="tg-jkyp">0.049 s</td>
+    <td class="tg-jkyp">0.28 s</td>
+    <td class="tg-jkyp">4.52 s</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky" rowspan="4">r = 0.1<br>* avg_edge_length</td>
+    <td class="tg-0pky">Mean   Curvature</td>
+    <td class="tg-jkyp">0.017 s</td>
+    <td class="tg-jkyp">0.401 s</td>
+    <td class="tg-jkyp">2.66 s</td>
+    <td class="tg-jkyp">22.29 s</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">Gaussian Curvature</td>
+    <td class="tg-jkyp">0.018 s</td>
+    <td class="tg-jkyp">0.406 s</td>
+    <td class="tg-jkyp">2.63 s</td>
+    <td class="tg-jkyp">21.61 s</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">Principal Curvature &amp; Directions</td>
+    <td class="tg-jkyp">0.019 s</td>
+    <td class="tg-jkyp">0.430 s</td>
+    <td class="tg-jkyp">2.85 s</td>
+    <td class="tg-jkyp">23.55 s</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">All (optimized for shared computations)</td>
+    <td class="tg-jkyp">0.017 s</td>
+    <td class="tg-jkyp">0.428 s</td>
+    <td class="tg-jkyp">2.89 s</td>
+    <td class="tg-jkyp">24.16 s</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax" rowspan="4">r = 0.5<br>* avg_edge_length</td>
+    <td class="tg-0lax">Mean   Curvature</td>
+    <td class="tg-2b7s">0.024 s</td>
+    <td class="tg-2b7s">0.388 s</td>
+    <td class="tg-2b7s">3.18 s</td>
+    <td class="tg-2b7s">22.79 s</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">Gaussian Curvature</td>
+    <td class="tg-2b7s">0.024 s</td>
+    <td class="tg-2b7s">0.392 s</td>
+    <td class="tg-2b7s">3.21 s</td>
+    <td class="tg-2b7s">23.58 s</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">Principal Curvature &amp; Directions</td>
+    <td class="tg-2b7s">0.027 s</td>
+    <td class="tg-2b7s">0.428 s</td>
+    <td class="tg-2b7s">3.41 s</td>
+    <td class="tg-2b7s">24.44 s</td>
+  </tr>
+  <tr>
+    <td class="tg-0lax">All (optimized for shared computations)</td>
+    <td class="tg-2b7s">0.025 s</td>
+    <td class="tg-2b7s">0.417 s</td>
+    <td class="tg-2b7s">3.44 s</td>
+    <td class="tg-2b7s">23.93 s</td>
+  </tr>
+</tbody>
+</table>
+\cgalFigureCaptionBegin{icc_performance_table}
+Performance of the curvature computation on various meshes (in seconds). The first row shows the performance of the default value for the ball radius,
+which is using the 1-ring of neighboring faces around each vertex, instead of actually approximating the inclusion ratio of the faces in the ball.
+The other rows show a ball radius of 0.1 (and 0.5) scaled by the average edge length of the mesh. It is clear that using the 1-ring of faces
+is much faster, but it might not be as effective when used on a noisy input mesh.
 \cgalFigureCaptionEnd
 
 
