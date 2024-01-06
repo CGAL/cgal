@@ -1092,7 +1092,7 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
   </tr>
   <tr>
     <td rowspan="4">vertex<br>1-ring faces <br>(default)</td>
-    <td>Mean&nbsp;&nbsp;&nbsp;Curvature</td>
+    <td>Mean Curvature</td>
     <td>  &lt; 0.001 s</td>
     <td>0.019 s</td>
     <td>0.11 s</td>
@@ -1106,7 +1106,7 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
     <td>2.77 s</td>
   </tr>
   <tr>
-    <td>Principal Curvature &amp; Directions</td>
+    <td>Principal Curvatures &amp; Directions</td>
     <td>0.002 s</td>
     <td>0.044 s</td>
     <td>0.25 s</td>
@@ -1121,7 +1121,7 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
   </tr>
   <tr>
     <td rowspan="4">r = 0.1<br>* avg_edge_length</td>
-    <td>Mean   Curvature</td>
+    <td>Mean Curvature</td>
     <td>0.017 s</td>
     <td>0.401 s</td>
     <td>2.66 s</td>
@@ -1135,7 +1135,7 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
     <td>21.61 s</td>
   </tr>
   <tr>
-    <td>Principal Curvature &amp; Directions</td>
+    <td>Principal Curvatures &amp; Directions</td>
     <td>0.019 s</td>
     <td>0.430 s</td>
     <td>2.85 s</td>
@@ -1150,7 +1150,7 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
   </tr>
   <tr>
     <td rowspan="4">r = 0.5<br>* avg_edge_length</td>
-    <td>Mean   Curvature</td>
+    <td>Mean Curvature</td>
     <td>0.024 s</td>
     <td>0.388 s</td>
     <td>3.18 s</td>
@@ -1164,7 +1164,7 @@ Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compi
     <td>23.58 s</td>
   </tr>
   <tr>
-    <td>Principal Curvature &amp; Directions</td>
+    <td>Principal Curvatures &amp; Directions</td>
     <td>0.027 s</td>
     <td>0.428 s</td>
     <td>3.41 s</td>
