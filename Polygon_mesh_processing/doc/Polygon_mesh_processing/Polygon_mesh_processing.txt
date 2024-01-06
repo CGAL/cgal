@@ -960,6 +960,11 @@ quad meshes, and meshes with n-gon faces (for n-gons, the centroid must be insid
 The algorithms used prove to work well in general. Also, on meshes with noise on vertex positions,
 they give accurate results, under the condition that the correct vertex normals are provided.
 
+It is worth noting that the Principal Curvatures and Directions can also be estimated using the
+\ref PkgJetFitting3 package, which estimates the local differential quantities of a surface at a point
+using a local polynomial fitting (fitting a d-jet). Unlike the Interpolated Corrected Curvatures,
+the Jet Fitting method discards topological information and thus can be used on point clouds as well.
+
 \subsection ICCBackground Brief Background
 
 Surface curvatures are quantities that describe the local geometry of a surface. They are important in many
@@ -1301,7 +1306,7 @@ available on 7th of October 2020.  It only uses the high level algorithm of chec
 is covered by a set of prisms, where each prism is an offset for an input triangle.
 That is, the implementation in \cgal does not use indirect predicates.
 
-The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under
+The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under the
 supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{cgal:lrtc-iccmps-20}.
 <a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
 used as a reference during the project.
