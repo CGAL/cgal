@@ -227,6 +227,13 @@ struct Dihedral_angle_cosine
       return l.m_sgn == r.m_sgn
          &&  l.m_sq_num * r.m_sq_den == r.m_sq_num * l.m_sq_den;
   }
+
+  void print(std::ostream& os) const
+  {
+    os << "Dihedral_angle_cosine(" << m_sgn << ", " << m_sq_num << ", " << m_sq_den
+      << ", value = "<< value() <<", angle = " << std::acos(value())* 180./CGAL_PI
+      << ")";
+  }
 };
 
 template<typename Gt>
@@ -452,8 +459,12 @@ bool is_well_oriented(const Tr& tr,
 template<typename Tr>
 bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
 {
-  return is_well_oriented(tr, ch->vertex(0), ch->vertex(1),
-                          ch->vertex(2), ch->vertex(3));
+  return tr.is_infinite(ch)
+    || is_well_oriented(tr,
+                        ch->vertex(0),
+                        ch->vertex(1),
+                        ch->vertex(2),
+                        ch->vertex(3));
 }
 
 template<typename C3T3, typename CellSelector>
