@@ -30,7 +30,6 @@
 #include <CGAL/use.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/mpl/if.hpp>
 #include <variant>
 
 #include <array>

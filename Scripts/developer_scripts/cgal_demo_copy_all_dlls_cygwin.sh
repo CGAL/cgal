@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #use this script from inside the build directory of the Polyhedron demo
-#Needs the Qt5_DIR env variable set to <Qt5_ROOT>/lib/cmake/Qt5
+#Needs the Qt6_DIR env variable set to <Qt6_ROOT>/lib/cmake/Qt6
 
 #No config : in autotest_cgal we use NMake as generator
 #If using MSVC Generator, declare config="Release"
@@ -43,4 +43,4 @@ for file in "${files[@]}"; do
   done; #check dependencies
 done #loop over directories
 mkdir -p "$target_directory/platforms"
-cp "$Qt5_INSTALLATION_DIR/plugins/platforms/qwindows.dll" "$target_directory/platforms"
+cp "$Qt6_INSTALLATION_DIR/plugins/platforms/qwindows.dll" "$target_directory/platforms"

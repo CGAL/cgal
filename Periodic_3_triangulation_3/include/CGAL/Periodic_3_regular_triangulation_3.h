@@ -31,7 +31,6 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/utility.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_set.hpp>

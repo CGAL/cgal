@@ -80,6 +80,7 @@ struct Triangulation_utils_3
     CGAL_precondition( ( i >= 0 && i < 4 ) &&
                        ( j >= 0 && j < 4 ) &&
                        ( i != j ) );
+    CGAL_assume(i!=j);
     return tab_next_around_edge[i][j];
   }
 
