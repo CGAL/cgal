@@ -1336,8 +1336,8 @@ Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
 
   typename C3T3::Triangulation& tr = c3t3.triangulation();
 
-  Vertex_handle u = edge.first->vertex(edge.second);
-  Vertex_handle v = edge.first->vertex(edge.third);
+  const Vertex_handle u = edge.first->vertex(edge.second);
+  const Vertex_handle v = edge.first->vertex(edge.third);
 
   typedef std::pair<int, int> IndInCell;
   std::map<Cell_handle, IndInCell> indices;
@@ -1362,7 +1362,7 @@ Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
         //rollback all changes
         for (Cell_handle cc : cells_around_edge)
         {
-          int ii = indices[cc].first;
+          const int ii = indices[cc].first;
           if (cc->vertex(ii) != u)
           {
             cc->set_vertex(ii, u);
@@ -1377,7 +1377,6 @@ Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
   for (Cell_handle c : cells_around_edge)
     c->reset_cache_validity();
 
-
   return VALID_FLIP;
 }
 
@@ -1386,13 +1385,13 @@ Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
 template<typename C3T3, typename IncCellsVectorMap,
          typename CellSelector, typename Visitor>
 Sliver_removal_result flip_on_surface(C3T3& c3t3,
-                                      typename C3T3::Edge& edge,
-                                      typename C3T3::Vertex_handle v0i,
-                                      typename C3T3::Vertex_handle v1i,
-                                      IncCellsVectorMap& inc_cells,
-                                      Flip_Criterion flip_criterion,
-                                      CellSelector& cell_selector,
-                                      Visitor& visitor)
+    typename C3T3::Edge& edge,
+    typename C3T3::Vertex_handle v0i,//v0 of new edge that will replace edge
+    typename C3T3::Vertex_handle v1i,//v1 of new edge that will replace edge
+    IncCellsVectorMap& inc_cells,
+    Flip_Criterion flip_criterion,
+    CellSelector& cell_selector,
+    Visitor& visitor)
 {
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Cell_handle     Cell_handle;
@@ -1421,10 +1420,13 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //        std::vector<Vertex_handle> boundary_vertices;
 //        boundary_vertices.push_back(v0i);
 //        boundary_vertices.push_back(v1i);
-
+#ifdef CGAL_FLIP_ON_SURFACE_DISABLE_NM_FLIP
+        return NOT_FLIPPABLE;
+#else
         return flip_n_to_m_on_surface(edge, c3t3, v0i, v1i,
                                       cells_around_edge, flip_criterion,
                                       cell_selector, visitor);
+#endif
 //////    }
     }
     else
@@ -1432,11 +1434,14 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
   }
 
 //  nb_surface_44_configs++;
+#ifdef CGAL_FLIP_ON_SURFACE_DISABLE_44_FLIP
+  return NOT_FLIPPABLE;
+#endif
 
   if(inc_cells[edge.first->vertex(edge.second)] != std::nullopt)
-    inc_cells[edge.first->vertex(edge.second)].value().clear();
+    inc_cells[edge.first->vertex(edge.second)]->clear();
   if (inc_cells[edge.first->vertex(edge.third)] != std::nullopt)
-    inc_cells[edge.first->vertex(edge.third)].value().clear();
+    inc_cells[edge.first->vertex(edge.third)]->clear();
 
   Cell_handle ch0, ch1, ch2, ch3;
   ch0 = cells_around_edge[0];
@@ -1899,7 +1904,7 @@ std::size_t flipBoundaryEdges(
   {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cerr << "\r\tFlipping boundary edges...("
-      << ++nb_attempts << " attempts, "
+      << nb_attempts << " attempts, "
       << nb << " done, "
       << candidate_edges_for_flip.size() << " candidates)";
     std::cerr.flush();
@@ -1913,7 +1918,7 @@ std::size_t flipBoundaryEdges(
 
     std::optional<boost::container::small_vector<Cell_handle, 64>>&
       o_inc_vh = inc_cells[vh0];
-    if (o_inc_vh == std::nullopt || o_inc_vh.value().empty())
+    if (o_inc_vh == std::nullopt || o_inc_vh->empty())
     {
       boost::container::small_vector<Cell_handle, 64> inc_vec;
       tr.incident_cells(vh0, std::back_inserter(inc_vec));
@@ -2019,8 +2024,9 @@ std::size_t flipBoundaryEdges(
             std::distance(c3t3.edges_in_complex_begin(),
                           c3t3.edges_in_complex_end()));
 
-//          CGAL::dump_c3t3(c3t3, "dump_before_flip_");
-
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+          ++nb_attempts;
+#endif
           Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
                                                      inc_cells,
                                                      flip_criterion,
@@ -2065,7 +2071,7 @@ std::size_t flipBoundaryEdges(
           else if (db == INVALID_CELL || db == INVALID_VERTEX || db == INVALID_ORIENTATION)
           {
 //            std::cout << "Cell problem" << std::endl;
-            return nb;
+            continue;
           }
 //          else
 //            std::cout << "Boundary flip failed" << std::endl;
