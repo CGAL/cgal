@@ -148,7 +148,6 @@ void add_to_graphics_scene_for_fg(const FG &fg,
     if (fh==boost::graph_traits<FG>::null_face())
     { return CGAL::IO::Color(100, 125, 200); }
 
-    // TODO (?) use a seed given fh (cannot directly cast because FG is either a polyhedron or a surface mesh)
     return get_random_color(CGAL::get_default_random());
   };
 
