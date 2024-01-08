@@ -284,7 +284,7 @@ Scene_polyhedron_selection_item_priv::triangulate_facet(fg_face_descriptor fit,c
 
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
-  auto f = [&](auto& ffit, auto& v2v) {
+  auto f = [&](auto& ffit, auto& /* v2v */) {
     if (ffit.info().is_external)
       return;
 
