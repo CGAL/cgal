@@ -106,14 +106,13 @@ void Main_widget::initializeGL() {
 
   // triangulation
   {
-    qDebug() << "loading arr..";
-    //auto arrh = Aos::construct(m_countries);
-    //m_arrh = Aos::load_arr("../../../Data/data/arrangements_3/sphere/ne_110m_admin_0_countries.json");
-    //m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
+    qDebug() << "loading arrangement..";
     m_arrh = Aos::load_arr(m_file_name.toStdString());
     if (m_arrh == nullptr) {
-      qDebug() << "FAILED TO LOAD THE ARRANGEMENT !!!";
-      exit(1);
+      std::string msg("Error: failed to load file ");
+      msg += m_file_name.toStdString();
+      throw std::runtime_error(msg);
+      return;
     }
 
     qDebug() << "generating triangles..";

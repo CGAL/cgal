@@ -14,7 +14,7 @@ endif()
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
 find_package(CGAL COMPONENTS Qt6)
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem)
 
 if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND)
   if (NOT CGAL_FOUND)
@@ -114,6 +114,7 @@ target_link_libraries(earth PRIVATE
   Qt6::OpenGLWidgets
   Qt6::Widgets
   Qt6::Xml
+  Boost::filesystem
   CGAL::CGAL
   nlohmann_json::nlohmann_json)
 
