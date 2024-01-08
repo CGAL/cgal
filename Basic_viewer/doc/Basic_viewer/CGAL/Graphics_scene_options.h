@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Graphics_scene_options` is used to tune the way that the cells of a given data structure of \cgal are considered.
 The different `std::function` can be modified to change for example the behavior of the drawing.
-`VolumeDescriptor` can be `void` for data structures that do not represent volumes. In such a case, all methods about volumes do not exist.
+`VolumeDescriptor` can be `void` for data structures that do not represent volumes.
 
 This class is a model of `GraphicsSceneOptions` when `VolumeDescriptor` is `void`, or a model of `GraphicsSceneOptionsWithVolumes` otherwise (`VolumeDescriptor` non `void`).
 
