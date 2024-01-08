@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -27,22 +27,18 @@
 #include "Tools.h"
 #include "Verification.h"
 
-
-namespace
-{
+namespace {
   // used when dimming / highlighting selected countries
   float s_dimming_factor = 0.4;
 }
 
-Main_widget::~Main_widget()
-{
+Main_widget::~Main_widget() {
   // Make sure the context is current when deleting the texture and the buffers.
   makeCurrent();
   doneCurrent();
 }
 
-void Main_widget::handle_country_picking(QMouseEvent* e)
-{
+void Main_widget::handle_country_picking(QMouseEvent* e) {
   //// handle country selection
   //if (e->button() == Qt::RightButton)
   //{
@@ -128,12 +124,10 @@ void Main_widget::handle_country_picking(QMouseEvent* e)
   //  prev_picked_country = picked_country;
   //}
 }
-void Main_widget::hightlight_country(const std::string& country_name)
-{
+void Main_widget::hightlight_country(const std::string& country_name) {
     static std::string  prev_picked_country;
 
-    if (!prev_picked_country.empty())
-    {
+    if (!prev_picked_country.empty()) {
       // dim the previous country color
       auto& prev_country = m_country_triangles[prev_picked_country];
       auto color = prev_country->get_color();
@@ -142,8 +136,7 @@ void Main_widget::hightlight_country(const std::string& country_name)
       prev_country->set_color(color);
     }
 
-    if (!country_name.empty())
-    {
+    if (! country_name.empty()) {
       // highlight the current country color
       auto& curr_country = m_country_triangles[country_name];
       auto color = curr_country->get_color();
@@ -155,86 +148,81 @@ void Main_widget::hightlight_country(const std::string& country_name)
 
     prev_picked_country = country_name;
 }
-void Main_widget::mousePressEvent(QMouseEvent* e)
-{
+
+void Main_widget::mousePressEvent(QMouseEvent* e) {
   // forward the event to the camera manipulators
   m_camera_manip_rot->mousePressEvent(e);
   m_camera_manip_zoom->mousePressEvent(e);
   m_pick_handler->mousePressEvent(e);
   //handle_country_picking(e);
 }
-void Main_widget::mouseMoveEvent(QMouseEvent* e)
-{
+
+void Main_widget::mouseMoveEvent(QMouseEvent* e) {
   // forward the event to the camera manipulator
   m_camera_manip_rot->mouseMoveEvent(e);
   m_camera_manip_zoom->mouseMoveEvent(e);
   m_pick_handler->mouseMoveEvent(e);
 }
-void Main_widget::mouseReleaseEvent(QMouseEvent* e)
-{
+
+void Main_widget::mouseReleaseEvent(QMouseEvent* e) {
   // forward the event to the camera manipulator
   m_camera_manip_rot->mouseReleaseEvent(e);
   m_camera_manip_zoom->mouseReleaseEvent(e);
   m_pick_handler->mouseReleaseEvent(e);
 }
-void Main_widget::timerEvent(QTimerEvent*)
-{
-  update();
-}
+void Main_widget::timerEvent(QTimerEvent*) { update(); }
 
+void Main_widget::keyPressEvent(QKeyEvent* event) {
+  switch (event->key()) {
+   case Qt::Key_Q:
+    {
+      auto num_arcs =
+        m_country_borders[m_selected_country_index]->get_num_line_strips();
+      if (++m_selected_arc_index == num_arcs) m_selected_arc_index--;
+      qDebug() << "---------------------------------------";
+      qDebug() << "selected arc index = " << m_selected_arc_index;
 
-void Main_widget::keyPressEvent(QKeyEvent* event)
-{
-  switch (event->key())
-  {
-  case Qt::Key_Q:
-  {
-    auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
-    if (++m_selected_arc_index == num_arcs)
-      m_selected_arc_index--;
-    qDebug() << "---------------------------------------";
-    qDebug() << "selected arc index = " << m_selected_arc_index;
-    
-    const auto& arc = m_selected_country_arcs[m_selected_arc_index];
-    std::cout << arc.from << "  TO  " << arc.to << std::endl;
-  }
-    break;
-  case Qt::Key_A:
-  {
-    auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
-    if (--m_selected_arc_index < 0)
-      m_selected_arc_index = 0;
-    std::cout << "selected arc = " << m_selected_arc_index << std::endl;
-  }
+      const auto& arc = m_selected_country_arcs[m_selected_arc_index];
+      std::cout << arc.from << "  TO  " << arc.to << std::endl;
+    }
     break;
 
-  case Qt::Key_Up:
+   case Qt::Key_A:
+    {
+      auto num_arcs =
+        m_country_borders[m_selected_country_index]->get_num_line_strips();
+      if (--m_selected_arc_index < 0) m_selected_arc_index = 0;
+      std::cout << "selected arc = " << m_selected_arc_index << std::endl;
+    }
+    break;
+
+   case Qt::Key_Up:
     m_selected_country_index++;
     if (m_selected_country_index == m_country_names.size())
       m_selected_country_index--;
-    std::cout << m_selected_country_index << ": " 
+    std::cout << m_selected_country_index << ": "
               << m_country_names[m_selected_country_index] << std::endl;
-    
+
     m_selected_arc_index = 0;
     m_selected_country = &m_countries[m_selected_country_index];
     m_selected_country_nodes = m_selected_country->get_all_nodes();
     m_selected_country_arcs = m_selected_country->get_all_arcs();
 
     {
-      auto num_arcs = m_country_borders[m_selected_country_index]->get_num_line_strips();
-      
+      auto num_arcs =
+        m_country_borders[m_selected_country_index]->get_num_line_strips();
+
       qDebug() << "num KML arcs = " << m_selected_country_arcs.size();
       qDebug() << "num arcs = " << num_arcs;
     }
     break;
 
-  case Qt::Key_Down:
+   case Qt::Key_Down:
     m_selected_country_index--;
-    if (m_selected_country_index < 0)
-      m_selected_country_index = 0;
-    std::cout << m_selected_country_index << ": " 
+    if (m_selected_country_index < 0) m_selected_country_index = 0;
+    std::cout << m_selected_country_index << ": "
               << m_country_names[m_selected_country_index] << std::endl;
-    
+
     m_selected_arc_index = 0;
     m_selected_country = &m_countries[m_selected_country_index];
     m_selected_country_nodes = m_selected_country->get_all_nodes();
@@ -242,9 +230,8 @@ void Main_widget::keyPressEvent(QKeyEvent* event)
   }
 }
 
-
-void Main_widget::init_problematic_nodes()
-{
+//!\brief
+void Main_widget::init_problematic_nodes() {
   Kml::Nodes prob_nodes = {
     {23.8058134294668,8.66631887454253},
     {24.1940677211877,8.7286964724039 },
@@ -259,8 +246,7 @@ void Main_widget::init_problematic_nodes()
 
 #include "GUI_country_pick_handler.h"
 
-void Main_widget::initializeGL()
-{
+void Main_widget::initializeGL() {
   m_pick_handler = std::make_unique<GUI_country_pick_handler>(*this);
 
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
@@ -281,17 +267,14 @@ void Main_widget::initializeGL()
   //const auto file_name = data_path + "ne_110m_admin_0_countries_africa.kml";
   const auto file_name = data_path + "ne_110m_admin_0_countries_equatorial_guinea.kml";
   m_countries = Kml::read(file_name);
-  
+
   // find the country with the least number of nodes
-  if(0)
-  {
+  if (0) {
     std::string smallest;
     int min_num_nodes = std::numeric_limits<int>::max();
-    for (auto& p : m_countries)
-    {
+    for (auto& p : m_countries) {
       int num_nodes = p.get_all_nodes_count();
-      if (min_num_nodes > num_nodes)
-      {
+      if (min_num_nodes > num_nodes) {
         min_num_nodes = num_nodes;
         smallest = p.name;
       }
@@ -300,10 +283,10 @@ void Main_widget::initializeGL()
     qDebug() << "smallest = " << smallest;
     exit(0);
   }
-  
+
   auto dup_nodes = Kml::get_duplicates(m_countries);
   //auto all_nodes = Kml::generate_ids(m_countries);
-  qDebug() << "*** KML number of polygons = " << 
+  qDebug() << "*** KML number of polygons = " <<
                                       Kml::get_number_of_polygons(m_countries);
   if(0)
   {
@@ -312,8 +295,7 @@ void Main_widget::initializeGL()
   }
 
   // SAVING ARR
-  if(0)
-  {
+  if(0) {
     std::string dest_path = "C:/work/gsoc2023/";
     //std::string file_name = "ne_110m_admin_0_countries.json";
     //std::string file_name = "ne_110m_admin_0_countries_africa_1.json";
@@ -329,8 +311,7 @@ void Main_widget::initializeGL()
     qDebug() << "loading arr..";
     //auto arrh = Aos::construct(m_countries);
     m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
-    if (m_arrh == nullptr)
-    {
+    if (m_arrh == nullptr) {
       qDebug() << "** FAILED TO LOAD THE ARRANGEMENT!!!";
       exit(1);
     }
@@ -351,8 +332,7 @@ void Main_widget::initializeGL()
     //  QVector4D(1,1,0,1),
     //  QVector4D(1,0,1,1)
     //};
-    for (auto& [country_name, triangle_points] : country_triangles_map)
-    {
+    for (auto& [country_name, triangle_points] : country_triangles_map) {
       auto country_triangles = std::make_unique<Triangles>(triangle_points);
       auto color = QVector4D(rndm(), rndm(), rndm(), 1);
       auto m = std::max(color.x(), std::max(color.y(), color.z()));
@@ -363,30 +343,28 @@ void Main_widget::initializeGL()
       //country_triangles->set_color(colors[color_map[country_name]]);
       m_country_triangles.emplace(country_name, std::move(country_triangles));
     }
-    
+
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
     //m_all_triangles = std::make_unique<Triangles>(triangle_points);
   }
 
-  
+
   // initialize rendering of DUPLICATE VERTICES
-  if(0)
-  {
+  if(0) {
     qDebug() << "identifying duplicate nodes";
     std::vector<QVector3D> vertices;
     for (const auto& node : dup_nodes)
       vertices.push_back(node.get_coords_3f());
-  
+
     m_vertices = std::make_unique<Vertices>(vertices);
   }
-  if(0)
-  {
+
+  if(0) {
     // check the arrangement constructed from the GIS data-set
     auto created_vertices = Aos::ext_check(m_countries);
     //auto created_vertices = Aos::ext_check_id_based(m_countries);
     m_vertices = std::make_unique<Vertices>(created_vertices);
   }
-
 
   initializeOpenGLFunctions();
 
@@ -406,21 +384,19 @@ void Main_widget::initializeGL()
   m_timer.start(12, this);
 }
 
-
-void Main_widget::init_camera()
-{
+void Main_widget::init_camera() {
   m_camera.set_pos(0, 0, 3);
   m_camera_manip_rot = std::make_unique<Camera_manip_rot>(m_camera);
   //m_camera_manip_rot = std::make_unique<Camera_manip_rot_bpa>(m_camera);
   m_camera_manip_zoom = std::make_unique<Camera_manip_zoom>(m_camera);
-  
+
   // this makes z-axes point upwards!
   m_model.rotate(-90, 1, 0, 0);
 
   // register the zoom-changed function
-  Message_manager::add("zoom_changed", [&] 
-    { 
-      qDebug() << "ZOOM CHANGED!!!"; 
+  Message_manager::add("zoom_changed", [&]
+    {
+      qDebug() << "ZOOM CHANGED!!!";
       //const auto error = compute_backprojected_error(0.5);
       //qDebug() << "new error = " << error;
       m_update_approx_error = true;
@@ -428,8 +404,8 @@ void Main_widget::init_camera()
       //init_country_borders(error);
     });
 }
-void Main_widget::init_geometry()
-{
+
+void Main_widget::init_geometry() {
   // SPHERE
   int num_slices, num_stacks;
   num_slices = num_stacks = 64;
@@ -446,16 +422,15 @@ void Main_widget::init_geometry()
   const float axes_length = 2;
   m_world_coord_axes = std::make_unique<World_coord_axes>(axes_length);
 }
-void Main_widget::init_shader_programs()
-{
+
+void Main_widget::init_shader_programs() {
   Shader_program::set_shader_path("shaders/");
   m_sp_smooth.init_with_vs_fs("smooth");;
   m_sp_per_vertex_color.init_with_vs_fs("per_vertex_color");
   m_sp_arc.init_with_vs_fs("arc");
 }
 
-void Main_widget::init_country_borders(float error)
-{
+void Main_widget::init_country_borders(float error) {
   // this part does the same as the code below but using arrangement!
   // NOTE: the old code interferes with some logic (NEEDS REFACTORING!!!)
   {
@@ -474,16 +449,15 @@ void Main_widget::init_country_borders(float error)
   //auto lsa = Aos::get_approx_arcs(error);
   //m_geodesic_arcs = std::make_unique<Line_strips>(lsa);
   m_country_borders.clear();
-  for (const auto& country : m_countries)
-  {
+  for (const auto& country : m_countries) {
     m_country_names.push_back(country.name);
     auto approx_arcs = Aos::get_approx_arcs(country, error);
     auto country_border = std::make_unique<Line_strips>(approx_arcs);
     m_country_borders.push_back(std::move(country_border));
   }
 }
-void Main_widget::init_country_selection()
-{
+
+void Main_widget::init_country_selection() {
   m_selected_country_index = 0;
   //m_selected_country_index = 159; // ANTARCTICA
   m_selected_country = &m_countries[m_selected_country_index];
@@ -492,8 +466,7 @@ void Main_widget::init_country_selection()
   m_selected_arc_index = 0;
 }
 
-float Main_widget::compute_backprojected_error(float pixel_error)
-{
+float Main_widget::compute_backprojected_error(float pixel_error) {
   // compute the back-projected error
   QRect vp(0, 0, m_vp_width, m_vp_height);
   auto proj = m_camera.get_projection_matrix();
@@ -516,12 +489,10 @@ float Main_widget::compute_backprojected_error(float pixel_error)
   return err;
 }
 
-
-void Main_widget::resizeGL(int w, int h)
-{
+void Main_widget::resizeGL(int w, int h) {
   m_camera_manip_rot->resizeGL(w, h);
   m_pick_handler->resizeGL(w, h);
-  
+
   m_vp_width = w;
   m_vp_height = h;
 
@@ -534,22 +505,18 @@ void Main_widget::resizeGL(int w, int h)
   m_update_approx_error = true;
 }
 
-template<typename T>
-void draw_safe(T& ptr)
-{
+template <typename T>
+void draw_safe(T& ptr) {
   if (ptr)
     ptr->draw();
 }
 
-void Main_widget::paintGL()
-{
-  if (m_update_approx_error)
-  {
+void Main_widget::paintGL() {
+  if (m_update_approx_error) {
     const auto error = compute_backprojected_error(0.5);
     qDebug() << "new approx error = " << error;
     qDebug() << "current error = " << m_current_approx_error;
-    if(error < m_current_approx_error)
-    {
+    if(error < m_current_approx_error) {
       init_country_borders(error);
       m_current_approx_error = error;
     }
@@ -563,9 +530,9 @@ void Main_widget::paintGL()
   const auto normal_matrix = model_view.normalMatrix();
 
   // compute the cutting plane
-// remember that we are passing the local vertex positions of the sphere 
-// between the vertex and fragment shader stages, so we need to convert
-// the camera-pos in world coords to sphere's local coords!
+  // remember that we are passing the local vertex positions of the sphere
+  // between the vertex and fragment shader stages, so we need to convert
+  // the camera-pos in world coords to sphere's local coords!
   auto c = m_model.inverted() * m_camera.get_pos();
   const auto d = c.length();
   const auto r = 1.0f;
@@ -589,7 +556,7 @@ void Main_widget::paintGL()
     sp.set_uniform("u_color", sphere_color);
     sp.set_uniform("u_plane", QVector4D(0,0,0,0));
     //sp.set_uniform("u_color", m_sphere->get_color());
-    
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     m_sphere->draw();
 
@@ -644,7 +611,7 @@ void Main_widget::paintGL()
     sp.set_uniform("u_color", QVector4D(0, 1, 1, 1));
     m_identification_curve->draw(m_selected_arc_index);
 
-    // draw all countries 
+    // draw all countries
     float a = 0.0;
     sp.set_uniform("u_color", QVector4D(a, a, a, 1));
     //for(auto& country_border : m_country_borders)
