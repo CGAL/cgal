@@ -40,7 +40,7 @@ class Q_DECL_EXPORT Tetrahedra_filtering_plugin:
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "tetrahedra_filtering_plugin.json")
 public :
 
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)Q_DECL_OVERRIDE {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)override {
     this->scene = scene_interface;
     this->mw = mainWindow;
     this->tet_item = nullptr;
@@ -66,11 +66,11 @@ public :
       filter();
     });
   }
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     return qobject_cast<Scene_c3t3_item*>( scene->item( scene->mainSelectionIndex() ) );
   }
-  QList<QAction*> actions() const Q_DECL_OVERRIDE {
+  QList<QAction*> actions() const override {
     return _actions;
   }
   virtual void closure() override

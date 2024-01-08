@@ -9,6 +9,10 @@
 #include "Scene_polylines_item.h"
 #include "Scene_points_with_normal_item.h"
 
+// Since we want to do visualization and interruption, it's better to use the sorted priority queue,
+// even if it is slower
+#define CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+
 #include <CGAL/alpha_wrap_3.h>
 
 #include <QAction>
@@ -35,13 +39,13 @@
 using TS_Oracle = CGAL::Alpha_wraps_3::internal::Triangle_soup_oracle<Kernel>;
 using SS_Oracle = CGAL::Alpha_wraps_3::internal::Segment_soup_oracle<Kernel, TS_Oracle>;
 using Oracle = CGAL::Alpha_wraps_3::internal::Point_set_oracle<Kernel, SS_Oracle>;
-using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle>;
+using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle>;
 
 // Here is the pipeline for the interruption box:
 // - The main window is connected to a wrapping thread, which performs the wrapping.
 // - The wrapping has a visitor, AW3_interrupter_visitor, which has a shared_ptr to a Boolean
-// - When the user clicks the box, the Boolean is switched to *false*, and the visitor throws
-// - The wrapping thread catches the exception, and creates the wip mesh
+// - When the user clicks the box, the Boolean is switched to *false*
+// - The wrapping thread creates the wip mesh
 
 // Here is the pipeline for the iterative visualization:
 // - The main window is connected to a wrapping thread, which performs the wrapping.
@@ -113,10 +117,10 @@ public:
     if(!points || !faces || !fcolors || !vcolors)
       return;
 
-    // If the next top of the queue has vertices on the bbox, don't draw (as to avoid producing
+    // If the next top of the queue has vertices on the bbox, don't draw (try to avoid producing
     // spikes in the visualization)
 //    const auto& gate = wrapper.queue().top();
-//    if(wrapper.triangulation().number_of_vertices() > 500 && gate.is_artificial_facet())
+//    if(wrapper.triangulation().number_of_vertices() > 500 && gate.is_permissive_facet())
 //      return;
 
     // Skip some...
@@ -201,9 +205,6 @@ public:
   }
 };
 
-// Use a throw to get out of the AW3 refinement loop
-class Out_of_patience_exception : public std::exception { };
-
 template <typename BaseVisitor>
 struct AW3_interrupter_visitor
   : BaseVisitor
@@ -215,15 +216,10 @@ struct AW3_interrupter_visitor
     : BaseVisitor(base)
   { }
 
-  // Only overload this one because it gives a better state of the wrap (for other visitor calls,
-  // we often get tetrahedral spikes because there are artificial gates in the queue)
-  template <typename Wrapper, typename Point>
-  void before_Steiner_point_insertion(const Wrapper& wrapper, const Point& p)
+  template <typename Wrapper>
+  constexpr bool go_further(const Wrapper&)
   {
-    if(*should_stop)
-      throw Out_of_patience_exception();
-
-    return BaseVisitor::before_Steiner_point_insertion(wrapper, p);
+    return !(*should_stop);
   }
 };
 
@@ -273,25 +269,14 @@ public:
     QElapsedTimer elapsed_timer;
     elapsed_timer.start();
 
-    // try-catch because the stop visitor currently uses a throw
-    try
-    {
-      wrapper(alpha, offset, wrap,
-              CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
-                               .visitor(visitor));
+    wrapper(alpha, offset, wrap,
+            CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness)
+                             .visitor(visitor));
 
+    if(wrapper.queue().empty())
       Q_EMIT done(this);
-    }
-    catch(const Out_of_patience_exception&)
-    {
-      if(enforce_manifoldness)
-        wrapper.make_manifold();
-
-      // extract the wrap in its current state
-      wrapper.extract_surface(wrap, CGAL::get(CGAL::vertex_point, wrap), !enforce_manifoldness);
-
+    else
       Q_EMIT interrupted(this);
-    }
 
     std::cout << "Wrapping took " << elapsed_timer.elapsed() / 1000. << "s" << std::endl;
   }
@@ -359,7 +344,7 @@ public:
     if(scene->selectionIndices().empty())
       return false;
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if(!qobject_cast<Scene_polygon_soup_item*>(scene->item(index)) &&
          !qobject_cast<Scene_surface_mesh_item*>(scene->item(index)) &&
@@ -540,7 +525,7 @@ public Q_SLOTS:
     Segments segments;
     Points points;
 
-    Q_FOREACH(int index, this->scene->selectionIndices())
+    for(int index : this->scene->selectionIndices())
     {
       // ---
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
@@ -562,8 +547,6 @@ public Q_SLOTS:
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
-
-          m_wrap_bbox += triangles.back().bbox();
         }
 
         continue;
@@ -586,8 +569,6 @@ public Q_SLOTS:
           triangles.emplace_back(soup_item->points()[p[0]],
                                  soup_item->points()[p[1]],
                                  soup_item->points()[p[2]]);
-
-          m_wrap_bbox += triangles.back().bbox();
         }
 
         continue;
@@ -614,8 +595,6 @@ public Q_SLOTS:
           triangles.emplace_back(get(vpm, target(h, *pMesh)),
                                  get(vpm, target(next(h, *pMesh), *pMesh)),
                                  get(vpm, source(h, *pMesh)));
-
-          m_wrap_bbox += triangles.back().bbox();
         }
 
         segments.reserve(segments.size() + selection_item->selected_edges.size());
@@ -623,16 +602,12 @@ public Q_SLOTS:
         {
           segments.emplace_back(get(vpm, target(halfedge(e, *pMesh), *pMesh)),
                                 get(vpm, target(opposite(halfedge(e, *pMesh), *pMesh), *pMesh)));
-
-          m_wrap_bbox += segments.back().bbox();
         }
 
         points.reserve(points.size() + selection_item->selected_vertices.size());
         for(const auto& v : selection_item->selected_vertices)
         {
           points.push_back(get(vpm, v));
-
-          m_wrap_bbox += points.back().bbox();
         }
 
         continue;
@@ -671,6 +646,22 @@ public Q_SLOTS:
     std::cout << segments.size() << " edges" << std::endl;
     std::cout << points.size() << " points" << std::endl;
 
+    if(!triangles.empty())
+      m_wrap_bbox = triangles.front().bbox();
+    else if(!segments.empty())
+      m_wrap_bbox = segments.front().bbox();
+    else if(!points.empty())
+      m_wrap_bbox = points.front().bbox();
+
+    for(const Kernel::Triangle_3& tr : triangles)
+      m_wrap_bbox += tr.bbox();
+    for(const Kernel::Segment_3& sg : segments)
+      m_wrap_bbox += sg.bbox();
+    for(const Kernel::Point_3& pt : points)
+      m_wrap_bbox += pt.bbox();
+
+    std::cout << "Bbox:\n" << m_wrap_bbox << std::endl;
+
     // The relative value uses the bbox of the full scene and not that of selected items to wrap
     // This is intentional, both because it's tedious to make it otherwise, and because it seems
     // to be simpler to compare between "all wrapped" / "some wrapped"
@@ -703,8 +694,8 @@ public Q_SLOTS:
 
     const bool use_message_box = ui.enableMessageBox->isChecked();
 
-    std::cout << "Wrapping edges? " << std::boolalpha << wrap_segments << std::endl;
     std::cout << "Wrapping faces? " << std::boolalpha << wrap_triangles << std::endl;
+    std::cout << "Wrapping edges? " << std::boolalpha << wrap_segments << std::endl;
 
     if(!wrap_triangles)
     {
@@ -756,16 +747,12 @@ public Q_SLOTS:
 
     if(alpha <= 0. || offset <= 0.)
     {
-      print_message("Warning: alpha/offset must be strictly positive - nothing to wrap");
+      print_message("Warning: alpha/offset must be strictly positive");
       QApplication::restoreOverrideCursor();
       return;
     }
 
-    // Switch from 'wait' to 'busy'
-    QApplication::restoreOverrideCursor();
-    QApplication::setOverrideCursor(Qt::BusyCursor);
-
-    Q_FOREACH(int index, this->scene->selectionIndices())
+    for(int index : this->scene->selectionIndices())
     {
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(this->scene->item(index));
       if(sm_item != nullptr)
@@ -824,6 +811,10 @@ public Q_SLOTS:
     // Create message box with stop button
     if(use_message_box)
     {
+      // Switch from 'wait' to 'busy'
+      QApplication::restoreOverrideCursor();
+      QApplication::setOverrideCursor(Qt::BusyCursor);
+
       m_message_box = new QMessageBox(QMessageBox::NoIcon,
                                      "Wrapping",
                                      "Wrapping in progress...",
@@ -841,6 +832,8 @@ public Q_SLOTS:
     }
 
     // Actual start
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
     wrapper_thread->start();
 
     CGAL::Three::Three::getMutex()->lock();

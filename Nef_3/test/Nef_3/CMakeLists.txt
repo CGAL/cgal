@@ -17,7 +17,7 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  Nef_3_problematic_construction"
     "execution   of  test_nef_3_io_Cartesian"

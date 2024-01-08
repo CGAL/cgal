@@ -29,7 +29,7 @@ public:
   bool applicable(QAction*) const
   {
     bool at_least_one_non_empty = false;
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       Scene_item* item = scene->item(index);
       if(!item->isFinite())
@@ -108,7 +108,7 @@ bbox(bool extended)
   int item_count = 0;
   QString name;
 
-  Q_FOREACH(int index, scene->selectionIndices())
+  for(int index : scene->selectionIndices())
   {
     Scene_item* item = scene->item(index);
     if(item->isFinite() && !item->isEmpty())

@@ -78,7 +78,7 @@ ALIASES                = "cgal=%CGAL" \
                          "gnu=GNU" \
                          "ms=MS" \
                          "qt=Qt" \
-                         "qt5=Qt5" \
+                         "qt6=Qt6" \
                          "eigen=Eigen" \
                          "opengr=OpenGR" \
                          "libpointmatcher=libpointmatcher" \
@@ -106,7 +106,6 @@ ALIASES                = "cgal=%CGAL" \
                          "taucs=TAUCS" \
                          "lapack=LAPACK" \
                          "blas=BLAS" \
-                         "opennl=OpenNL" \
                          "cpp=C++" \
                          "cpp11=C++11" \
                          "CC=C++" \
@@ -204,7 +203,8 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>" \
                          "cgalBigO{1}=\f$O(\1)\f$" \
                          "cgalBigOLarge{1}=\f$O\left(\1\right)\f$" \
-                         "cgalInclude{1}=\#`include<\1>`"
+                         "cgalInclude{1}=\#`include<\1>`" \
+                         "cgalEpicExact=<dl class=\"section note\"><dt>Exactness</dt><dd>This construction is trivial and therefore always exact in `Exact_predicates_inexact_constructions_kernel`.</dd></dl>"
 
 # Doxygen selects the parser to use depending on the extension of the files it
 # parses. With this tag you can assign which parser to use for a given
@@ -768,4 +768,3 @@ DIRECTORY_GRAPH        = NO
 # This tag requires that the tag HAVE_DOT is set to YES.
 
 INTERACTIVE_SVG        = YES
-

@@ -34,7 +34,7 @@
 #include <CGAL/Qt/manipulatedFrame.h>
 #include <QKeyEvent>
 #include <QOpenGLVertexArrayObject>
-#include <QGLBuffer>
+#include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 #ifdef __GNUC__
@@ -1779,7 +1779,7 @@ protected:
   static const unsigned int NB_VBO_BUFFERS=(END_POS-BEGIN_POS)+
     (END_COLOR-BEGIN_COLOR)+2; // +2 for 2 vectors of normals
 
-  QGLBuffer buffers[NB_VBO_BUFFERS];
+  QOpenGLBuffer buffers[NB_VBO_BUFFERS];
 
   // The following enum gives the indices of the different vao.
   enum
