@@ -89,6 +89,28 @@ void test_references(const NamedParameters& np)
   assert(&eim_ref==&default_value);
 }
 
+void test_authorized_options()
+{
+  auto np_ok1 = CGAL::parameters::vertex_point_map(0).edge_index_map(2).face_index_map(3);
+  auto np_ok2 = CGAL::parameters::face_index_map(3).vertex_point_map(0).edge_index_map(4);
+  auto np_ko = CGAL::parameters::face_index_map(3).vertex_point_map(0).edge_index_map(4).halfedge_index_map(4);
+  auto np_default = CGAL::parameters::default_values();
+
+
+  static_assert(CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                     CGAL::internal_np::edge_index_t,
+                                                     CGAL::internal_np::face_index_t>(np_default));
+  static_assert(CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                     CGAL::internal_np::edge_index_t,
+                                                     CGAL::internal_np::face_index_t>(np_ok1));
+  static_assert(CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                     CGAL::internal_np::edge_index_t,
+                                                     CGAL::internal_np::face_index_t>(np_ok2));
+  static_assert(!CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
+                                                      CGAL::internal_np::edge_index_t,
+                                                      CGAL::internal_np::face_index_t>(np_ko));
+}
+
 int main()
 {
   test_values_and_types(params::vertex_index_map(A<0>(0)).visitor(A<1>(1)));
@@ -110,6 +132,8 @@ int main()
   auto d2 = CGAL::Polygon_mesh_processing::parameters::all_default();
   static_assert(std::is_same<decltype(d2),CGAL::parameters::Default_named_parameters>::value);
 #endif
+
+  test_authorized_options();
 
   return EXIT_SUCCESS;
 }
