@@ -1,9 +1,6 @@
 #include "Viewer.h"
 #include "Scene.h"
 #include <QMouseEvent>
-#include <QGLFunctions>
-#include <CGAL/Qt/CreateOpenGLContext.h>
-
 Viewer::Viewer(QWidget* parent)
   : CGAL::QGLViewer(parent),
     m_pScene(nullptr),

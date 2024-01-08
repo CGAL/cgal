@@ -42,11 +42,9 @@
 #include <boost/mpl/clear.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/end.hpp>
-#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/insert.hpp>
 #include <boost/mpl/insert_fwd.hpp>
 #include <boost/mpl/iterator_range.hpp>

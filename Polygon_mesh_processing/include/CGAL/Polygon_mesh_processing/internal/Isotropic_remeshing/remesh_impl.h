@@ -43,7 +43,6 @@
 #include <boost/range/join.hpp>
 #include <memory>
 #include <boost/container/flat_set.hpp>
-#include <optional>
 #include <boost/property_map/function_property_map.hpp>
 
 #include <map>
@@ -54,6 +53,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
+#include <optional>
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -72,7 +72,11 @@
 #endif
 
 namespace CGAL {
+
 namespace Polygon_mesh_processing {
+
+template <typename PM, typename VPMap> class Uniform_sizing_field;
+
 namespace internal {
 
   enum Halfedge_status {
@@ -226,15 +230,13 @@ namespace internal {
 
   template<typename PM,
            typename EdgeConstraintMap,
-           typename VertexPointMap,
-           typename FacePatchMap>
+           typename FacePatchMap,
+           typename SizingFunction>
   bool constraints_are_short_enough(const PM& pmesh,
                                     EdgeConstraintMap ecmap,
-                                    VertexPointMap vpmap,
                                     const FacePatchMap& fpm,
-                                    const double& high)
+                                    const SizingFunction& sizing)
   {
-    double sqh = high*high;
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PM>::edge_descriptor     edge_descriptor;
     for(edge_descriptor e : edges(pmesh))
@@ -244,8 +246,7 @@ namespace internal {
             get(ecmap, e) ||
             get(fpm, face(h,pmesh))!=get(fpm, face(opposite(h,pmesh),pmesh)) )
       {
-        if (sqh < CGAL::squared_distance(get(vpmap, source(h, pmesh)),
-                                         get(vpmap, target(h, pmesh))))
+        if (sizing.is_too_long(source(h, pmesh), target(h, pmesh), pmesh))
         {
           return false;
         }
@@ -377,19 +378,17 @@ namespace internal {
       }
     }
 
-
     // split edges of edge_range that have their length > high
     // Note: only used to split a range of edges provided as input
-    template<typename EdgeRange>
+    template<typename EdgeRange, typename SizingFunction>
     void split_long_edges(const EdgeRange& edge_range,
-                          const double& high)
+                          SizingFunction& sizing)
     {
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Split long edges (" << high << ")...";
+      std::cout << "Split long edges...";
       std::cout.flush();
 #endif
-      double sq_high = high*high;
 
       //collect long edges
       typedef std::pair<halfedge_descriptor, double> H_and_sql;
@@ -400,9 +399,10 @@ namespace internal {
         );
       for(edge_descriptor e : edge_range)
       {
-        double sqlen = sqlength(e);
-        if (sqlen > sq_high)
-          long_edges.emplace(halfedge(e, mesh_), sqlen);
+        const halfedge_descriptor he = halfedge(e, mesh_);
+        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
+        if(sqlen != std::nullopt)
+          long_edges.emplace(he, sqlen.value());
       }
 
       //split long edges
@@ -414,7 +414,6 @@ namespace internal {
         //the edge with longest length
         auto eit = long_edges.begin();
         halfedge_descriptor he = eit->first;
-        double sqlen = eit->second;
         long_edges.erase(eit);
 
         //split edge
@@ -433,15 +432,19 @@ namespace internal {
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
         std::cout << "   refinement point : " << refinement_point << std::endl;
 #endif
+        //update sizing field with the new point
+        sizing.register_split_vertex(vnew, mesh_);
 
         //check sub-edges
-        double sqlen_new = 0.25 * sqlen;
-        if (sqlen_new > sq_high)
-        {
-          //if it was more than twice the "long" threshold, insert them
-          long_edges.emplace(hnew, sqlen_new);
-          long_edges.emplace(next(hnew, mesh_), sqlen_new);
-        }
+        //if it was more than twice the "long" threshold, insert them
+        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
+        if(sqlen_new != std::nullopt)
+          long_edges.emplace(hnew, sqlen_new.value());
+
+        const halfedge_descriptor hnext = next(hnew, mesh_);
+        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_), mesh_);
+        if (sqlen_new != std::nullopt)
+          long_edges.emplace(hnext, sqlen_new.value());
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
@@ -478,13 +481,12 @@ namespace internal {
     // "visits all edges of the mesh
     //if an edge is longer than the given threshold `high`, the edge
     //is split at its midpoint and the two adjacent triangles are bisected (2-4 split)"
-    void split_long_edges(const double& high)
+    template<typename SizingFunction>
+    void split_long_edges(SizingFunction& sizing)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Split long edges (" << high << ")..." << std::endl;
+      std::cout << "Split long edges..." << std::endl;
 #endif
-      double sq_high = high*high;
-
       //collect long edges
       typedef std::pair<halfedge_descriptor, double> H_and_sql;
       std::multiset< H_and_sql, std::function<bool(H_and_sql,H_and_sql)> >
@@ -497,9 +499,10 @@ namespace internal {
       {
         if (!is_split_allowed(e))
           continue;
-        double sqlen = sqlength(e);
-        if(sqlen > sq_high)
-          long_edges.emplace(halfedge(e, mesh_), sqlen);
+        const halfedge_descriptor he = halfedge(e, mesh_);
+        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
+        if(sqlen != std::nullopt)
+          long_edges.emplace(halfedge(e, mesh_), sqlen.value());
       }
 
       //split long edges
@@ -511,7 +514,6 @@ namespace internal {
         //the edge with longest length
         auto eit = long_edges.begin();
         halfedge_descriptor he = eit->first;
-        double sqlen = eit->second;
         long_edges.erase(eit);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
@@ -528,7 +530,7 @@ namespace internal {
         Patch_id patch_id_opp = get_patch_id(face(opposite(he, mesh_), mesh_));
 
         //split edge
-        Point refinement_point = this->midpoint(he);
+        Point refinement_point = sizing.split_placement(he, mesh_);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
         CGAL_assertion(he == next(hnew, mesh_));
         put(ecmap_, edge(hnew, mesh_), get(ecmap_, edge(he, mesh_)) );
@@ -547,14 +549,19 @@ namespace internal {
         halfedge_added(hnew, status(he));
         halfedge_added(hnew_opp, status(opposite(he, mesh_)));
 
+        //update sizing field with the new point
+        sizing.register_split_vertex(vnew, mesh_);
+
         //check sub-edges
-        double sqlen_new = 0.25 * sqlen;
-        if (sqlen_new > sq_high)
-        {
-          //if it was more than twice the "long" threshold, insert them
-          long_edges.emplace(hnew, sqlen_new);
-          long_edges.emplace(next(hnew, mesh_), sqlen_new);
-        }
+        //if it was more than twice the "long" threshold, insert them
+        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
+        if(sqlen_new != std::nullopt)
+          long_edges.emplace(hnew, sqlen_new.value());
+
+        const halfedge_descriptor hnext = next(hnew, mesh_);
+        sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_), mesh_);
+        if (sqlen_new != std::nullopt)
+          long_edges.emplace(hnext, sqlen_new.value());
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
@@ -573,9 +580,9 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            double sql = sqlength(hnew2);
-            if (sql > sq_high)
-              long_edges.emplace(hnew2, sql);
+            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
+            if(sql != std::nullopt)
+              long_edges.emplace(hnew2, sql.value());
           }
         }
 
@@ -596,9 +603,9 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            double sql = sqlength(hnew2);
-            if (sql > sq_high)
-              long_edges.emplace(hnew2, sql);
+            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
+            if (sql != std::nullopt)
+              long_edges.emplace(hnew2, sql.value());
           }
         }
       }
@@ -620,8 +627,8 @@ namespace internal {
     // "collapses and thus removes all edges that are shorter than a
     // threshold `low`. [...] testing before each collapse whether the collapse
     // would produce an edge that is longer than `high`"
-    void collapse_short_edges(const double& low,
-                              const double& high,
+    template<typename SizingFunction>
+    void collapse_short_edges(const SizingFunction& sizing,
                               const bool collapse_constraints)
     {
       typedef boost::bimap<
@@ -630,22 +637,21 @@ namespace internal {
       typedef typename Boost_bimap::value_type                    short_edge;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Collapse short edges (" << low << ", " << high << ")..."
+      std::cout << "Collapse short edges..."
                 << std::endl;
 #endif
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
       std::cout << "Fill bimap...";
       std::cout.flush();
 #endif
-      double sq_low = low*low;
-      double sq_high = high*high;
 
       Boost_bimap short_edges;
       for(edge_descriptor e : edges(mesh_))
       {
-        double sqlen = sqlength(e);
-        if ((sqlen < sq_low) && is_collapse_allowed(e, collapse_constraints))
-          short_edges.insert(short_edge(halfedge(e, mesh_), sqlen));
+        std::optional<double> sqlen = sizing.is_too_short(halfedge(e, mesh_), mesh_);
+        if(sqlen != std::nullopt
+          && is_collapse_allowed(e, collapse_constraints))
+          short_edges.insert(short_edge(halfedge(e, mesh_), sqlen.value()));
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
       std::cout << "done." << std::endl;
@@ -741,7 +747,8 @@ namespace internal {
         for(halfedge_descriptor ha : halfedges_around_target(va, mesh_))
         {
           vertex_descriptor va_i = source(ha, mesh_);
-          if (sqlength(vb, va_i) > sq_high)
+          std::optional<double> sqha = sizing.is_too_long(vb, va_i, mesh_);
+          if (sqha != std::nullopt)
           {
             collapse_ok = false;
             break;
@@ -796,7 +803,7 @@ namespace internal {
           //fix constrained case
           CGAL_assertion((is_constrained(vkept) || is_corner(vkept) || is_on_patch_border(vkept)) ==
                          (is_va_constrained || is_vb_constrained || is_va_on_constrained_polyline || is_vb_on_constrained_polyline));
-          if (fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints))
+          if (fix_degenerate_faces(vkept, short_edges, sizing, collapse_constraints))
           {
 #ifdef CGAL_PMP_REMESHING_DEBUG
             debug_status_map();
@@ -806,9 +813,10 @@ namespace internal {
             //insert new/remaining short edges
             for (halfedge_descriptor ht : halfedges_around_target(vkept, mesh_))
             {
-              double sqlen = sqlength(ht);
-              if ((sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
-                short_edges.insert(short_edge(ht, sqlen));
+              std::optional<double> sqlen = sizing.is_too_short(ht, mesh_);
+              if (sqlen != std::nullopt
+                && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
+                short_edges.insert(short_edge(ht, sqlen.value()));
             }
           }
         }//end if(collapse_ok)
@@ -1006,8 +1014,10 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
+    template <class SizingFunction>
     void tangential_relaxation_impl(const bool relax_constraints/*1d smoothing*/
-                                   , const unsigned int nb_iterations)
+                                  , const unsigned int nb_iterations
+                                  , const SizingFunction& sizing)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Tangential relaxation (" << nb_iterations << " iter.)...";
@@ -1038,16 +1048,41 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      tangential_relaxation(
-        vertices(mesh_),
-        mesh_,
-        CGAL::parameters::number_of_iterations(nb_iterations)
-                         .vertex_point_map(vpmap_)
-                         .geom_traits(gt_)
-                         .edge_is_constrained_map(constrained_edges_pmap)
-                         .vertex_is_constrained_map(constrained_vertices_pmap)
-                         .relax_constraints(relax_constraints)
-      );
+      if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
+      {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << " using tangential relaxation with weights equal to 1";
+        std::cout << std::endl;
+#endif
+        tangential_relaxation(
+          vertices(mesh_),
+          mesh_,
+          CGAL::parameters::number_of_iterations(nb_iterations)
+            .vertex_point_map(vpmap_)
+            .geom_traits(gt_)
+            .edge_is_constrained_map(constrained_edges_pmap)
+            .vertex_is_constrained_map(constrained_vertices_pmap)
+            .relax_constraints(relax_constraints)
+        );
+      }
+      else
+      {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << " using tangential relaxation weighted with the sizing field";
+        std::cout << std::endl;
+#endif
+        tangential_relaxation(
+          vertices(mesh_),
+          mesh_,
+          CGAL::parameters::number_of_iterations(nb_iterations)
+            .vertex_point_map(vpmap_)
+            .geom_traits(gt_)
+            .edge_is_constrained_map(constrained_edges_pmap)
+            .vertex_is_constrained_map(constrained_vertices_pmap)
+            .relax_constraints(relax_constraints)
+            .sizing_function(sizing)
+        );
+      }
 
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 
@@ -1645,10 +1680,10 @@ private:
       // else keep current status for en and eno
     }
 
-    template<typename Bimap>
+    template<typename Bimap, typename SizingFunction>
     bool fix_degenerate_faces(const vertex_descriptor& v,
                               Bimap& short_edges,
-                              const double& sq_low,
+                              const SizingFunction& sizing,
                               const bool collapse_constraints)
     {
       std::unordered_set<halfedge_descriptor> degenerate_faces;
@@ -1726,9 +1761,9 @@ private:
             //insert new edges in 'short_edges'
             if (is_collapse_allowed(edge(hf, mesh_), collapse_constraints))
             {
-              double sqlen = sqlength(hf);
-              if (sqlen < sq_low)
-                short_edges.insert(typename Bimap::value_type(hf, sqlen));
+              std::optional<double> sqlen = sizing.is_too_short(hf, mesh_);
+              if (sqlen != std::nullopt)
+                short_edges.insert(typename Bimap::value_type(hf, sqlen.value()));
             }
 
             if(!is_border(hf, mesh_) &&

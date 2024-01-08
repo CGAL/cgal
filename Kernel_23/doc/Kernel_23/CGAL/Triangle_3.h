@@ -20,6 +20,7 @@ public:
 
 /*!
 introduces a triangle `t` with vertices `p`, `q` and `r`.
+\cgalEpicExact
 */
 Triangle_3(const Point_3<Kernel> &p,
 const Point_3<Kernel> &q,
@@ -44,11 +45,13 @@ bool operator!=(const Triangle_3<Kernel> &t2) const;
 
 /*!
 returns the i'th vertex modulo 3 of `t`.
+\cgalEpicExact
 */
 Point_3<Kernel> vertex(int i) const;
 
 /*!
 returns `vertex(int i)`.
+\cgalEpicExact
 */
 Point_3<Kernel> operator[](int i) const;
 
@@ -86,6 +89,7 @@ Kernel::FT squared_area() const;
 
 /*!
 returns a bounding box containing `t`.
+\cgalEpicExact
 */
 Bbox_3 bbox() const;
 

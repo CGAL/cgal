@@ -10,14 +10,18 @@
 #include <QSettings>
 #include <QHeaderView>
 #include <QClipboard>
+#include <QInputDialog>
 
 #include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget* parent)
-: CGAL::Qt::DemosMainWindow(parent)
+  : CGAL::Qt::DemosMainWindow(parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
+
+  this->addAboutDemo(":/cgal/AABB_demo/about.html");
+  this->addAboutCGAL();
 
   // saves some pointers from ui, for latter use.
   m_pViewer = ui->viewer;
@@ -418,7 +422,3 @@ void MainWindow::on_actionCopy_snapshot_triggered()
   qb->setImage(snapshot);
   QApplication::restoreOverrideCursor();
 }
-
-
-
-

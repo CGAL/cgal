@@ -1,8 +1,0 @@
-#!/bin/sh
-
-rm -rf CMakeCache.txt
-rm -rf CMakeFiles/
-
-. ./setup
-
-cmake ~/CGAL/releases-and-testsuites-with-cmake/CGAL-I -DWITH_examples=OFF -DCMAKE_CXX_FLAGS_DEBUG:STRING="" -DCMAKE_BUILD_TYPE:STRING=Debug
