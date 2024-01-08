@@ -15,8 +15,9 @@
 #include <CGAL/assertions.h>
 
 #include <map>
+#include <optional>
+#include <iterator>
 
-// todo: maybe this could be avoided
 #include <boost/property_map/property_map.hpp>
 
 #ifndef DOXYGEN_RUNNING
@@ -492,14 +493,14 @@ public:
       auto unused_end = unused_begin;
 
       // Determine if the group fits
-      if (std::distance(unused_begin, m_active_indices.end()) >= n)
+      if (std::distance(unused_begin, m_active_indices.end()) >= static_cast<typename std::iterator_traits<std::vector<bool>::iterator>::difference_type>(n))
         unused_end = std::find_if(
           unused_begin, (std::min)(unused_begin + n, m_active_indices.end()),
           [](bool used) { return used; }
       );
 
       // If the discovered range was large enough
-      if (std::distance(unused_begin, unused_end) >= n) {
+      if (std::distance(unused_begin, unused_end) >= static_cast<typename std::iterator_traits<std::vector<bool>::iterator>::difference_type>(n)) {
 
         // Mark the indices as used, and reset the properties of each of them
         // todo: it would be better to provide a function to set a range

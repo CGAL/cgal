@@ -1,7 +1,7 @@
 
 #include <CGAL/Property_container.h>
 
-using namespace CGAL::Properties;
+using namespace CGAL::Properties::Experimental;
 
 void test_property_creation() {
 
