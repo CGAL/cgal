@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -10,14 +10,14 @@
 #ifndef MAIN_WIDGET_H
 #define MAIN_WIDGET_H
 
+#include <functional>
+#include <memory>
+
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
 #include <QQuaternion>
 #include <QVector2D>
 #include <QBasicTimer>
-
-#include <functional>
-#include <memory>
 
 #include <qopenglwidget.h>
 
@@ -35,17 +35,14 @@
 #include "Vertices.h"
 #include "World_coordinate_axes.h"
 
-
-class Main_widget : public QOpenGLWidget, protected OpenGLFunctionsBase
-{
+class Main_widget : public QOpenGLWidget, protected OpenGLFunctionsBase {
   Q_OBJECT
 
 public:
   using QOpenGLWidget::QOpenGLWidget;
-  
+
   Main_widget(const QString& file_name);
   ~Main_widget();
-
 
   auto& get_camera() { return m_camera; }
   auto& get_model_matrix() { return m_model; }
@@ -66,64 +63,63 @@ protected:
   void resizeGL(int w, int h) override;
   void paintGL() override;
 
-    
+
   void init_camera();
-  void init_geometry();  
+  void init_geometry();
   void init_shader_programs();
 
   void init_country_borders(float error);
-  
 
-  // This is called when the required approximation of the arcs is below the 
+  // This is called when the required approximation of the arcs is below the
   // currently required one defined by the zoom level and window size. If you
   // zoom-in or increase the window-size this can be called. But once a minimum
   // approximation error is needed, it will stay there until futher change.
   // SEE the definition of "m_current_approx_error" member variable below!
   float compute_backprojected_error(float pixel_error);
- 
 
 private:
   // COUNTRY ARRANGEMENT SPECIFIC DATA
-  QString           m_file_name;
-  Aos::Arr_handle   m_arrh;
-  std::unique_ptr<Line_strips>   m_gr_all_country_borders;
+  QString m_file_name;
+  Aos::Arr_handle m_arrh;
+  std::unique_ptr<Line_strips> m_gr_all_country_borders;
 
   // used when dimming / highlighting selected countries
-  const float m_dimming_factor = 0.4; 
+  const float m_dimming_factor = 0.4;
 
   // GUI: event handler for picking with right mouse button
-  std::unique_ptr<GUI_event_handler> m_pick_handler;  
+  std::unique_ptr<GUI_event_handler> m_pick_handler;
 
   // These are used to highlight the picked position by right-mouse click
-  std::unique_ptr<Single_vertex>  m_gr_mouse_vertex;
+  std::unique_ptr<Single_vertex> m_gr_mouse_vertex;
 
 
   // TRIANGLES for rendering the countries in solid
-  std::unique_ptr<Triangles>                        m_gr_all_triangles;
+  std::unique_ptr<Triangles> m_gr_all_triangles;
   std::map<std::string, std::unique_ptr<Triangles>> m_gr_country_triangles;
 
 
   // -------------------------------
   // --> COMMON SETUP FOR ALL SCENES
-  
+
   // Basic objects in the scene
-  std::unique_ptr<Sphere>           m_gr_sphere;
+  std::unique_ptr<Sphere> m_gr_sphere;
   std::unique_ptr<World_coord_axes> m_gr_world_coord_axes;
-  std::unique_ptr<Line_strips>      m_gr_identification_curve;
+  std::unique_ptr<Line_strips> m_gr_identification_curve;
 
   // Shaders
-  Shader_program  m_sp_smooth;
-  Shader_program  m_sp_per_vertex_color;
-  Shader_program  m_sp_arc;
-  
+  Shader_program m_sp_smooth;
+  Shader_program m_sp_per_vertex_color;
+  Shader_program m_sp_arc;
+
   // Camera & controls
   Camera  m_camera;
-  std::unique_ptr<GUI_event_handler>  m_camera_manip_rot;
-  std::unique_ptr<GUI_event_handler>  m_camera_manip_zoom;
-  QMatrix4x4  m_model;
+  std::unique_ptr<GUI_event_handler> m_camera_manip_rot;
+  std::unique_ptr<GUI_event_handler> m_camera_manip_zoom;
+  QMatrix4x4 m_model;
 
-  // view-port 
-  int m_vp_width = 0, m_vp_height = 0;
+  // view-port
+  int m_vp_width = 0;
+  int m_vp_height = 0;
 
   // After zooming in or making the viewport larger, the approximation-error
   // needs to be updated and checked against the old value. If a lower approxi-

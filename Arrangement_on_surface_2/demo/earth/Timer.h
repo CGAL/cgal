@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,46 +14,33 @@
 #include <iostream>
 #include <string>
 
-
-class Timer
-{
+class Timer {
 public:
-  Timer()
-  {
-    reset();
-  }
+  Timer() { reset(); }
 
-  void reset()
-  {
-    m_Start = std::chrono::high_resolution_clock::now();
-  }
+  void reset() { m_Start = std::chrono::high_resolution_clock::now(); }
 
-  float elapsed()
-  {
+  float elapsed() {
     return std::chrono::duration_cast<std::chrono::nanoseconds>(
-      std::chrono::high_resolution_clock::now() - m_Start).count() 
+      std::chrono::high_resolution_clock::now() - m_Start).count()
       * 0.001f * 0.001f * 0.001f;
   }
 
-  float elapsed_millis()
-  {
-    return elapsed() * 1000.0f;
-  }
+  float elapsed_millis() { return elapsed() * 1000.0f; }
 
 private:
   std::chrono::time_point<std::chrono::high_resolution_clock> m_Start;
 };
 
-class ScopedTimer
-{
+class ScopedTimer {
 public:
-  ScopedTimer(const std::string& name)
-    : m_Name(name) {}
-  ~ScopedTimer()
-  {
+  ScopedTimer(const std::string& name) : m_Name(name) {}
+
+  ~ScopedTimer() {
     float time = m_Timer.elapsed_millis();
     std::cout << "[TIMER] " << m_Name << " - " << time << "ms\n";
   }
+
 private:
   std::string m_Name;
   Timer m_Timer;

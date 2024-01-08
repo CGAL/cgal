@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -13,10 +13,10 @@
 
 #include "Kml_reader.h"
 
-
-void Verification::find_minimum_projected_error_on_sphere(float we, Camera& cam,
-                                                    int vp_width, int vp_height)
-{
+void Verification::find_minimum_projected_error_on_sphere(float we,
+                                                          Camera& cam,
+                                                          int vp_width,
+                                                          int vp_height) {
   QRect vp(0, 0, vp_width, vp_height);
   auto proj = cam.get_projection_matrix();
   auto view = cam.get_view_matrix();
@@ -33,14 +33,12 @@ void Verification::find_minimum_projected_error_on_sphere(float we, Camera& cam,
 
   const float r1 = 1.f;
   const float r2 = r1 - we;
-  for (int i = 0; i <= num_divs; i++)
-  {
+  for (int i = 0; i <= num_divs; ++i) {
     const float theta = dtheta * i;
     const float cos_theta = std::cos(theta);
     const float sin_theta = std::sin(theta);
 
-    for (int j = 0; j <= num_divs; j++)
-    {
+    for (int j = 0; j <= num_divs; ++j) {
       QVector3D p1, p2;
       const float phi = dphi * j;
       const float cos_phi = std::cos(phi);
@@ -62,8 +60,7 @@ void Verification::find_minimum_projected_error_on_sphere(float we, Camera& cam,
       auto wp2 = p2.project(model_view, proj, vp);
 
       const auto pe = wp1.distanceToPoint(wp2);
-      if (max_err < pe)
-      {
+      if (max_err < pe) {
         max_err = pe;
         max_theta = theta;
         max_phi = phi;
@@ -99,8 +96,8 @@ void Verification::find_minimum_projected_error_on_sphere(float we, Camera& cam,
   //std::cout << QVector3D(0, 0, 0).project(model_view, proj, vp) << std::endl;
 }
 
-void Verification::verify_antarctica_node_is_redundant()
-{
+//! \brief
+void Verification::verify_antarctica_node_is_redundant() {
   Kml::Node n1(178.277211542064, -84.4725179992025),
             n2(180.0, -84.71338),
             n3(-179.942499356179, -84.7214433735525);
@@ -116,7 +113,7 @@ void Verification::verify_antarctica_node_is_redundant()
 
   // 2) check if it is between its neighbors (check if r,s > 0)
   auto det = [](float ax, float ay, float bx, float by)
-  { return ax * by - ay * bx; };
+             { return ax * by - ay * bx; };
   auto D = det(v1.x(), v1.y(), v3.x(), v3.y());
   auto Dr = det(v2.x(), v2.y(), v3.x(), v3.y());
   auto Ds = det(v1.x(), v1.y(), v2.x(), v2.y());

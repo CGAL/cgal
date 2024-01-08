@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -12,22 +12,20 @@
 
 #include <string>
 #include <qmatrix4x4.h>
+
 #include "Common_defs.h"
 
-
-class Shader_program : protected OpenGLFunctionsBase
-{
+class Shader_program : protected OpenGLFunctionsBase {
 public:
-
   static void set_shader_path(const char* path);
 
   bool init();
   bool init(const char* vs, const char* gs, const char* fs);
-  bool init(const std::string& vs, 
-            const std::string& gs, 
+  bool init(const std::string& vs, const std::string& gs,
             const std::string& fs);
-  
-  // initialize with just the vertex and fragment shaders
+
+  /*! Initialize with just the vertex and fragment shaders
+   */
   bool init_with_vs_fs(const char* shader_file_prefix);
 
   void add_shader(const char* shader_code, GLenum shader_type);
@@ -51,8 +49,8 @@ public:
   void set_uniform(const GLchar* name, const QVector4D& v);
 
 private:
-  GLuint  m_program;
-  static std::string  s_shader_path;
+  GLuint m_program;
+  static std::string s_shader_path;
 };
 
 

@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -13,14 +13,12 @@
 #include <iostream>
 #include <vector>
 
-
-std::string read_file(const std::string& file_name)
-{
+//! \brief
+std::string read_file(const std::string& file_name) {
   const auto flags = std::ios::in | std::ios::binary | std::ios::ate;
   std::ifstream ifs(file_name.c_str(), flags);
 
-  if (ifs.is_open() == false)
-  {
+  if (! ifs.is_open()) {
     std::cout << "could not open file: " << file_name << std::endl;
     return "";
   }
@@ -34,18 +32,20 @@ std::string read_file(const std::string& file_name)
   return std::string(&bytes[0], file_size);
 }
 
-std::ostream& operator << (std::ostream& os, const QVector2D& v)
-{
+//! \brief
+std::ostream& operator << (std::ostream& os, const QVector2D& v) {
   os << v.x() << ", " << v.y();
   return os;
 }
-std::ostream& operator << (std::ostream& os, const QVector3D& v)
-{
+
+//! \brief
+std::ostream& operator << (std::ostream& os, const QVector3D& v) {
   os << v.x() << ", " << v.y() << ", " << v.z();
   return os;
 }
-std::ostream& operator << (std::ostream& os, const QVector4D& v)
-{
+
+//! \brief
+std::ostream& operator << (std::ostream& os, const QVector4D& v) {
   os << v.x() << ", " << v.y() << ", " << v.z() << ", " << v.w();
   return os;
 }

@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,18 +15,13 @@
 #include "Main_widget.h"
 #endif
 
-
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
   QApplication app(argc, argv);
-
   auto args = QCoreApplication::arguments();
-  if (2 != args.size())
-  {
-    qDebug() << "Usage: earth <arragement-file.json>";
-    exit(1);
+  if (args.size() > 2) {
+    qDebug() << "Usage: earth [<arragement-file.json>]";
+    return(-1);
   }
-
 
   QSurfaceFormat format;
   format.setVersion(3, 3);
@@ -40,7 +35,8 @@ int main(int argc, char* argv[])
   app.setApplicationName("Earth");
   app.setApplicationVersion("0.1");
 #ifndef QT_NO_OPENGL
-  auto& file_name = args.at(1);
+  const char* file_name = (argc > 1) ? argv[1] :
+    "../../../Data/data/arrangements_3/sphere/ne_110m_admin_0_countries.json";
   //qDebug() << "file name = " << file_name;
   Main_widget widget(file_name);
   widget.show();

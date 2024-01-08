@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -23,92 +23,82 @@
 #include "GUI_country_pick_handler.h"
 #include "Kml_reader.h"
 #include "Message_manager.h"
-#include "Shapefile.h"
 #include "Timer.h"
 #include "Tools.h"
 #include "Verification.h"
 
+//! \brief
+Main_widget::Main_widget(const QString& file_name) : m_file_name(file_name) {}
 
-
-Main_widget::Main_widget(const QString& file_name) : 
-  m_file_name(file_name)
-{
-}
-
-Main_widget::~Main_widget()
-{
+//! \brief
+Main_widget::~Main_widget() {
   // Make sure the context is current when deleting the texture and the buffers.
   makeCurrent();
   doneCurrent();
 }
 
+//! \brief
 void Main_widget::set_mouse_pos(const QVector3D mouse_pos)
-{
-  m_gr_mouse_vertex->set_pos(mouse_pos);
+{ m_gr_mouse_vertex->set_pos(mouse_pos); }
+
+//! \brief
+void Main_widget::hightlight_country(const std::string& country_name) {
+  static std::string  prev_picked_country;
+
+  if (! prev_picked_country.empty()) {
+    // dim the previous country color
+    auto& prev_country = m_gr_country_triangles[prev_picked_country];
+    auto color = prev_country->get_color();
+    color *= m_dimming_factor;
+    color.setW(1);
+    prev_country->set_color(color);
+  }
+
+  if (! country_name.empty()) {
+    // highlight the current country color
+    auto& curr_country = m_gr_country_triangles[country_name];
+    auto color = curr_country->get_color();
+    color /= m_dimming_factor;
+    color.setW(1);
+    curr_country->set_color(color);
+    qDebug() << "SELECTED COUNTRY: " << country_name;
+  }
+
+  prev_picked_country = country_name;
 }
-void Main_widget::hightlight_country(const std::string& country_name)
-{
-    static std::string  prev_picked_country;
 
-    if (!prev_picked_country.empty())
-    {
-      // dim the previous country color
-      auto& prev_country = m_gr_country_triangles[prev_picked_country];
-      auto color = prev_country->get_color();
-      color *= m_dimming_factor;
-      color.setW(1);
-      prev_country->set_color(color);
-    }
-
-    if (!country_name.empty())
-    {
-      // highlight the current country color
-      auto& curr_country = m_gr_country_triangles[country_name];
-      auto color = curr_country->get_color();
-      color /= m_dimming_factor;
-      color.setW(1);
-      curr_country->set_color(color);
-      qDebug() << "SELECTED COUNTRY: " << country_name;
-    }
-
-    prev_picked_country = country_name;
-}
-void Main_widget::mousePressEvent(QMouseEvent* e)
-{
+//! \brief
+void Main_widget::mousePressEvent(QMouseEvent* e) {
   // forward the event to the camera manipulators
   m_camera_manip_rot->mousePressEvent(e);
   m_camera_manip_zoom->mousePressEvent(e);
   m_pick_handler->mousePressEvent(e);
 }
-void Main_widget::mouseMoveEvent(QMouseEvent* e)
-{
+
+//! \brief
+void Main_widget::mouseMoveEvent(QMouseEvent* e) {
   // forward the event to the camera manipulator
   m_camera_manip_rot->mouseMoveEvent(e);
   m_camera_manip_zoom->mouseMoveEvent(e);
   m_pick_handler->mouseMoveEvent(e);
 }
-void Main_widget::mouseReleaseEvent(QMouseEvent* e)
-{
+
+//! \brief
+void Main_widget::mouseReleaseEvent(QMouseEvent* e) {
   // forward the event to the camera manipulator
   m_camera_manip_rot->mouseReleaseEvent(e);
   m_camera_manip_zoom->mouseReleaseEvent(e);
   m_pick_handler->mouseReleaseEvent(e);
 }
-void Main_widget::timerEvent(QTimerEvent*)
-{
-  update();
-}
 
+//! \brief
+void Main_widget::timerEvent(QTimerEvent*) { update(); }
 
-void Main_widget::keyPressEvent(QKeyEvent* event)
-{
-}
+//! \brief
+void Main_widget::keyPressEvent(QKeyEvent* event) {}
 
-
-
-
-void Main_widget::initializeGL()
-{
+//! \brief
+void Main_widget::initializeGL() {
   m_pick_handler = std::make_unique<GUI_country_pick_handler>(*this);
 
   QVector3D initial_mouse_pos(0, -1, 0);
@@ -121,8 +111,7 @@ void Main_widget::initializeGL()
     //m_arrh = Aos::load_arr("../../../Data/data/arrangements_3/sphere/ne_110m_admin_0_countries.json");
     //m_arrh = Aos::load_arr("C:/work/gsoc2023/ne_110m_admin_0_countries.json");
     m_arrh = Aos::load_arr(m_file_name.toStdString());
-    if (m_arrh == nullptr)
-    {
+    if (m_arrh == nullptr) {
       qDebug() << "FAILED TO LOAD THE ARRANGEMENT !!!";
       exit(1);
     }
@@ -136,8 +125,7 @@ void Main_widget::initializeGL()
     //qDebug() << "color map size = " << color_map.size();
     qDebug() << "num countries = " << country_triangles_map.size();
     auto rndm = [] {return rand() / double(RAND_MAX); };
-    for (auto& [country_name, triangle_points] : country_triangles_map)
-    {
+    for (auto& [country_name, triangle_points] : country_triangles_map) {
       auto country_triangles = std::make_unique<Triangles>(triangle_points);
       auto color = QVector4D(rndm(), rndm(), rndm(), 1);
       auto m = std::max(color.x(), std::max(color.y(), color.z()));
@@ -152,7 +140,6 @@ void Main_widget::initializeGL()
     //qDebug() << "num triangles = " << triangle_points.size() / 3;
     //m_gr_all_triangles = std::make_unique<Triangles>(triangle_points);
   }
-
 
   initializeOpenGLFunctions();
 
@@ -171,9 +158,8 @@ void Main_widget::initializeGL()
   m_timer.start(12, this);
 }
 
-
-void Main_widget::init_camera()
-{
+//! \brief
+void Main_widget::init_camera() {
   m_camera.set_pos(0, 0, 3);
   m_camera_manip_rot = std::make_unique<Camera_manip_rot>(m_camera);
   //m_camera_manip_rot = std::make_unique<Camera_manip_rot_bpa>(m_camera);
@@ -183,18 +169,19 @@ void Main_widget::init_camera()
   m_model.rotate(-90, 1, 0, 0);
 
   // register the zoom-changed function
-  Message_manager::add("zoom_changed", [&]
-    {
-      qDebug() << "ZOOM CHANGED!!!";
-      //const auto error = compute_backprojected_error(0.5);
-      //qDebug() << "new error = " << error;
-      m_update_approx_error = true;
-      //qDebug() << "re-initializing the country borders..";
-      //init_country_borders(error);
-    });
+  Message_manager::add("zoom_changed",
+                       [&] {
+                         qDebug() << "ZOOM CHANGED!!!";
+                         //const auto error = compute_backprojected_error(0.5);
+                         //qDebug() << "new error = " << error;
+                         m_update_approx_error = true;
+                         //qDebug() << "re-initializing the country borders..";
+                         //init_country_borders(error);
+                       });
 }
-void Main_widget::init_geometry()
-{
+
+//! \brief
+void Main_widget::init_geometry() {
   // SPHERE
   int num_slices, num_stacks;
   num_slices = num_stacks = 64;
@@ -211,16 +198,17 @@ void Main_widget::init_geometry()
   const float axes_length = 2;
   m_gr_world_coord_axes = std::make_unique<World_coord_axes>(axes_length);
 }
-void Main_widget::init_shader_programs()
-{
+
+//! \brief
+void Main_widget::init_shader_programs() {
   Shader_program::set_shader_path("shaders/");
   m_sp_smooth.init_with_vs_fs("smooth");;
   m_sp_per_vertex_color.init_with_vs_fs("per_vertex_color");
   m_sp_arc.init_with_vs_fs("arc");
 }
 
-void Main_widget::init_country_borders(float error)
-{
+//! \brief
+void Main_widget::init_country_borders(float error) {
   // this part does the same as the code below but using arrangement!
   // NOTE: the old code interferes with some logic (NEEDS REFACTORING!!!)
   m_gr_all_country_borders.reset(nullptr);
@@ -229,9 +217,8 @@ void Main_widget::init_country_borders(float error)
   m_gr_all_country_borders = std::make_unique<Line_strips>(all_approx_arcs);
 }
 
-
-float Main_widget::compute_backprojected_error(float pixel_error)
-{
+//! \brief
+float Main_widget::compute_backprojected_error(float pixel_error) {
   // compute the back-projected error
   QRect vp(0, 0, m_vp_width, m_vp_height);
   auto proj = m_camera.get_projection_matrix();
@@ -254,9 +241,8 @@ float Main_widget::compute_backprojected_error(float pixel_error)
   return err;
 }
 
-
-void Main_widget::resizeGL(int w, int h)
-{
+//! \brief
+void Main_widget::resizeGL(int w, int h) {
   m_camera_manip_rot->resizeGL(w, h);
   m_pick_handler->resizeGL(w, h);
 
@@ -272,22 +258,17 @@ void Main_widget::resizeGL(int w, int h)
   m_update_approx_error = true;
 }
 
+//! \brief
 template<typename T>
-void draw_safe(T& ptr)
-{
-  if (ptr)
-    ptr->draw();
-}
+void draw_safe(T& ptr) { if (ptr) ptr->draw(); }
 
-void Main_widget::paintGL()
-{
-  if (m_update_approx_error)
-  {
+//! \brief
+void Main_widget::paintGL() {
+  if (m_update_approx_error) {
     const auto error = compute_backprojected_error(0.5);
     qDebug() << "new approx error = " << error;
     qDebug() << "current error = " << m_current_approx_error;
-    if(error < m_current_approx_error)
-    {
+    if (error < m_current_approx_error) {
       init_country_borders(error);
       m_current_approx_error = error;
     }

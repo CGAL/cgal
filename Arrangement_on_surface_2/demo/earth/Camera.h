@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -10,15 +10,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-
 #include <qvector3d.h>
 #include <qmatrix4x4.h>
 
-
-class Camera
-{
+class Camera {
 public:
-
   Camera();
 
   void set_pos(const QVector3D& pos) { m_pos = pos; }
@@ -30,7 +26,7 @@ public:
   float get_z_near() const { return m_z_near; }
   QMatrix4x4 get_view_matrix() const;
   QMatrix4x4 get_projection_matrix() const { return m_projection; }
-  
+
   // theta: angle around y-axis
   // phi: angle from the xz-plane (= rotated x-axis after the above rotation)
   void rotate_from_init_config(float theta, float phi);
@@ -58,6 +54,5 @@ private:
 
   QMatrix4x4 m_projection;
 };
-
 
 #endif

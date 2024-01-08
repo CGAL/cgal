@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,25 +7,19 @@
 //
 // Author(s): Engin Deniz Diktas <denizdiktas@gmail.com>
 
-#include "Aos_triangulator.h"
-
 #include <iostream>
 #include <iterator>
 #include <map>
 #include <set>
 #include <vector>
+#include <unordered_map>
+
+#include <boost/property_map/property_map.hpp>
 
 #include <qmath.h>
 #include <qvector3d.h>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::ordered_json;
-
-// Includes for Arrangements on Sphere (AOS)
-#include "Aos_defs.h"
-
-//#include "arr_print.h"
-//#include "Tools.h"
 
 // Includes for Constrained Delaunay Triangulation
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -34,28 +28,27 @@ using json = nlohmann::ordered_json;
 #include <CGAL/mark_domain_in_triangulation.h>
 #include <CGAL/Polygon_2.h>
 //#include <CGAL/Projection_traits_3.h>
-#include <unordered_map>
-#include <boost/property_map/property_map.hpp>
 
+#include "Aos_defs.h"
+#include "Aos_triangulator.h"
+//#include "arr_print.h"
+//#include "Tools.h"
 
+using json = nlohmann::ordered_json;
 
 namespace {
 
   // use this traits everytime you construct an arrangment!
   static Geom_traits s_traits;
 
-
-
   using Dir3 = Kernel::Direction_3;
-  std::ostream& operator << (std::ostream& os, const Dir3& d)
-  {
+  std::ostream& operator << (std::ostream& os, const Dir3& d) {
     os << d.dx() << ", " << d.dy() << ", " << d.dz();
     return os;
   }
 
   using Approximate_point_2 = Geom_traits::Approximate_point_2;
-  std::ostream& operator << (std::ostream& os, const Approximate_point_2& d)
-  {
+  std::ostream& operator << (std::ostream& os, const Approximate_point_2& d) {
     os << d.dx() << ", " << d.dy() << ", " << d.dz();
     return os;
   }
@@ -67,10 +60,8 @@ namespace {
   using Direction_3 = Kernel::Direction_3;
 }
 
-
-
-std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh)
-{
+//! \brief
+std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh) {
   using K     = CGAL::Exact_predicates_inexact_constructions_kernel;
   //using K     = CGAL::Projection_traits_3<K_epic>;
   using Vb    = CGAL::Triangulation_vertex_base_2<K>;
@@ -90,8 +81,7 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh)
 
   std::vector<std::vector<QVector3D>> all_faces;
   // loop on all faces of the arrangement
-  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
-  {
+  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
     // skip any face with no OUTER-CCB
     if (0 == fit->number_of_outer_ccbs())
       continue;
@@ -118,21 +108,17 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh)
   std::cout << "triangulating individual faces\n";
 
   // loop on all approximated faces
-  for (auto& face_points : all_faces)
-  {
+  for (auto& face_points : all_faces) {
     //std::cout << "num face points = " << face_points.size() << std::endl;
     // no need to triangulate if the number of points is 3
-    if (face_points.size() == 3)
-    {
+    if (face_points.size() == 3) {
       triangles.insert(triangles.end(), face_points.begin(), face_points.end());
       continue;
     }
 
-
     // find the centroid of all face-points
     QVector3D centroid(0, 0, 0);
-    for (const auto& fp : face_points)
-      centroid += fp;
+    for (const auto& fp : face_points) centroid += fp;
     centroid /= face_points.size();
     centroid.normalize();
     auto normal = centroid;
@@ -145,8 +131,7 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh)
 
     // project all points onto the plane
     K::Point_3 origin(0, 0, 0);
-    for (const auto& fp : face_points)
-    {
+    for (const auto& fp : face_points) {
       // define a ray through the origin and the current point
       K::Point_3 current_point(fp.x(), fp.y(), fp.z());
       K::Ray_3 ray(origin, current_point);
@@ -162,24 +147,22 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh)
     }
 
     CDT cdt;
-    cdt.insert_constraint(polygon.vertices_begin(), polygon.vertices_end(), true);
+    cdt.insert_constraint(polygon.vertices_begin(), polygon.vertices_end(),
+                          true);
 
     std::unordered_map<Face_handle, bool> in_domain_map;
-    boost::associative_property_map< std::unordered_map<Face_handle, bool> >
+    boost::associative_property_map< std::unordered_map<Face_handle, bool>>
       in_domain(in_domain_map);
 
     //Mark facets that are inside the domain bounded by the polygon
     CGAL::mark_domain_in_triangulation(cdt, in_domain);
 
     // loop on all the triangles ("faces" in triangulation doc)
-    for (Face_handle f : cdt.finite_face_handles())
-    {
+    for (Face_handle f : cdt.finite_face_handles()) {
       // if the current triangles is not inside the polygon -> skip it
-      if (false == get(in_domain, f))
-        continue;
+      if (false == get(in_domain, f)) continue;
 
-      for (int i = 0; i < 3; ++i)
-      {
+      for (int i = 0; i < 3; ++i) {
         auto tp = f->vertex(i)->point();
         auto tp3 = plane.to_3d(tp);
         QVector3D p3(tp3.x(), tp3.y(), tp3.z());
@@ -192,9 +175,8 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh)
   return triangles;
 }
 
-
-Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh)
-{
+//! \brief
+Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
   using K = CGAL::Exact_predicates_inexact_constructions_kernel;
   //using K     = CGAL::Projection_traits_3<K_epic>;
   using Vb = CGAL::Triangulation_vertex_base_2<K>;
@@ -212,8 +194,7 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh)
   // group the faces by their country name
   using Face_ = Countries_arr::Face_handle::value_type;
   std::map<std::string, std::vector<Face_*>>  country_faces_map;
-  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
-  {
+  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
     auto& face = *fit;
     const auto& country_name = fit->data();
     // skipping spherical-face
@@ -223,18 +204,15 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh)
   }
 
   std::cout << "triangulating individual faces\n";
-  Country_triangles_map  result;
-  for (auto& [country_name, faces] : country_faces_map)
-  {
+  Country_triangles_map result;
+  for (auto& [country_name, faces] : country_faces_map) {
     // CONVERT the face-points to QVector3D
     using Face_points = std::vector<QVector3D>;
     using Faces_ = std::vector<Face_points>;
     Faces_  all_faces_of_current_country;
-    for (auto* face : faces)
-    {
+    for (auto* face : faces) {
       // skip any face with no OUTER-CCB
-      if (0 == face->number_of_outer_ccbs())
-        continue;
+      if (0 == face->number_of_outer_ccbs()) continue;
 
       std::vector<QVector3D> face_points;
       // loop on the egdes of the current outer-ccb
@@ -253,13 +231,12 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh)
     // RESULTING TRIANGLE POINTS (every 3 point => triangle)
     auto& triangles = result[country_name];
     // loop on all approximated faces
-    for (auto& face_points : all_faces_of_current_country)
-    {
+    for (auto& face_points : all_faces_of_current_country) {
       //std::cout << "num face points = " << face_points.size() << std::endl;
       // no need to triangulate if the number of points is 3
-      if (face_points.size() == 3)
-      {
-        triangles.insert(triangles.end(), face_points.begin(), face_points.end());
+      if (face_points.size() == 3) {
+        triangles.insert(triangles.end(), face_points.begin(),
+                         face_points.end());
           continue;
       }
 
@@ -279,8 +256,7 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh)
 
       // project all points onto the plane
       K::Point_3 origin(0, 0, 0);
-      for (const auto& fp : face_points)
-      {
+      for (const auto& fp : face_points) {
         // define a ray through the origin and the current point
         K::Point_3 current_point(fp.x(), fp.y(), fp.z());
         K::Ray_3 ray(origin, current_point);
@@ -296,7 +272,8 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh)
       }
 
       CDT cdt;
-      cdt.insert_constraint(polygon.vertices_begin(), polygon.vertices_end(), true);
+      cdt.insert_constraint(polygon.vertices_begin(), polygon.vertices_end(),
+                            true);
 
       std::unordered_map<Face_handle, bool> in_domain_map;
       boost::associative_property_map< std::unordered_map<Face_handle, bool> >
@@ -306,14 +283,11 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh)
       CGAL::mark_domain_in_triangulation(cdt, in_domain);
 
       // loop on all the triangles ("faces" in triangulation doc)
-      for (Face_handle f : cdt.finite_face_handles())
-      {
+      for (Face_handle f : cdt.finite_face_handles()) {
         // if the current triangles is not inside the polygon -> skip it
-        if (false == get(in_domain, f))
-          continue;
+        if (false == get(in_domain, f)) continue;
 
-        for (int i = 0; i < 3; ++i)
-        {
+        for (int i = 0; i < 3; ++i) {
           auto tp = f->vertex(i)->point();
           auto tp3 = plane.to_3d(tp);
           QVector3D p3(tp3.x(), tp3.y(), tp3.z());

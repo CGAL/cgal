@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,9 +15,7 @@
 
 #include "Camera_manip.h"
 
-
-class Camera_manip_rot : public Camera_manip
-{
+class Camera_manip_rot : public Camera_manip {
 public:
   Camera_manip_rot(Camera& camera);
 
@@ -25,7 +23,8 @@ protected:
   virtual void mouse_move_event(QMouseEvent* e) override;
 
 private:
-  float m_theta = 0, m_phi = 0;
+  float m_theta = 0;
+  float m_phi = 0;
 };
 
 #endif

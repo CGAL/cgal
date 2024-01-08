@@ -1,10 +1,19 @@
-#ifndef _PRINT_ARR_H_
-#define _PRINT_ARR_H_
-
-//-----------------------------------------------------------------------------
-// Print all neighboring vertices to a given arrangement vertex.
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
+// All rights reserved.
 //
-template<class Arrangement>
+// This file is part of CGAL (www.cgal.org).
+//
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Engin Deniz Diktas <denizdiktas@gmail.com>
+//          : Efi Fogel <efifogel@gmail.com>
+
+#ifndef PRINT_ARR_H
+#define PRINT_ARR_H
+
+/*! Print all neighboring vertices to a given arrangement vertex.
+ */
+template <typename Arrangement>
 void print_neighboring_vertices(typename Arrangement::Vertex_const_handle v) {
   if (v->is_isolated()) {
     std::cout << "The vertex (" << v->point() << ") is isolated\n";
@@ -19,10 +28,9 @@ void print_neighboring_vertices(typename Arrangement::Vertex_const_handle v) {
   std::cout << std::endl;
 }
 
-//-----------------------------------------------------------------------------
-// Print all vertices (points) and edges (curves) along a connected component
-// boundary.
-//
+/*! Print all vertices (points) and edges (curves) along a connected component
+ * boundary.
+ */
 template <typename Arrangement>
 void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ) {
   std::cout << "(" << circ->source()->point() << ")";
@@ -35,9 +43,8 @@ void print_ccb(typename Arrangement::Ccb_halfedge_const_circulator circ) {
   std::cout << std::endl;
 }
 
-//-----------------------------------------------------------------------------
-// Print the boundary description of an arrangement face.
-//
+/*! Print the boundary description of an arrangement face.
+ */
 template <typename Arrangement>
 void print_face(typename Arrangement::Face_const_handle f) {
   // Print the outer boundary.
@@ -66,9 +73,8 @@ void print_face(typename Arrangement::Face_const_handle f) {
   }
 }
 
-//-----------------------------------------------------------------------------
-// Print the given arrangement.
-//
+/*! Print the given arrangement.
+ */
 template <typename Arrangement>
 void print_arrangement(const Arrangement& arr) {
   CGAL_precondition(arr.is_valid());
@@ -92,9 +98,8 @@ void print_arrangement(const Arrangement& arr) {
     print_face<Arrangement>(fit);
 }
 
-//-----------------------------------------------------------------------------
-// Print the size of the given arrangement.
-//
+/*! Print the size of the given arrangement.
+ */
 template <typename Arrangement>
 void print_arrangement_size(const Arrangement& arr) {
   std::cout << "The arrangement size:\n"
@@ -103,9 +108,8 @@ void print_arrangement_size(const Arrangement& arr) {
             << ",  |F| = " << arr.number_of_faces() << std::endl;
 }
 
-//-----------------------------------------------------------------------------
-// Print the size of the given unbounded arrangement.
-//
+/*! Print the size of the given unbounded arrangement.
+ */
 template <typename Arrangement>
 void print_unbounded_arrangement_size(const Arrangement& arr) {
   std::cout << "The arrangement size:\n"

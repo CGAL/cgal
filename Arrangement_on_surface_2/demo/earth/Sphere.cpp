@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,16 +7,15 @@
 //
 // Author(s): Engin Deniz Diktas <denizdiktas@gmail.com>
 
-#include "Sphere.h"
-
 #include <cmath>
 #include <vector>
 
 #include <qvector3d.h>
 
+#include "Sphere.h"
 
-Sphere::Sphere(int num_slices, int num_stacks, float r)
-{
+//! \brief
+Sphere::Sphere(int num_slices, int num_stacks, float r) {
   initializeOpenGLFunctions();
 
   num_stacks = std::max<int>(2, num_stacks);
@@ -31,15 +30,13 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
   normals.push_back(QVector3D(0, 0, -1));
   int starting_index_of_middle_vertices = vertices.size();
 
-  for (int j = 1; j < num_stacks; ++j)
-  {
+  for (int j = 1; j < num_stacks; ++j) {
     // Calculate the latitude (vertical angle) for the current stack
     float lat = M_PI * j / num_stacks;
     float rxy = r * std::sin(lat);
     float z = r * std::cos(lat);
 
-    for (int i = 0; i < num_slices; ++i)
-    {
+    for (int i = 0; i < num_slices; ++i) {
       // Calculate the longitude (horizontal angle) for the current slice
       float lon = 2 * M_PI * i / num_slices;
 
@@ -56,8 +53,7 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
 
   // strided vertex-data
   std::vector<QVector3D> vertex_data;
-  for (int i = 0; i < vertices.size(); ++i)
-  {
+  for (int i = 0; i < vertices.size(); ++i) {
     vertex_data.push_back(vertices[i]);
     vertex_data.push_back(normals[i]);
   }
@@ -69,8 +65,7 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
   // NORTH CAP
   const int north_vertex_index = 0;
   const int north_cap_vertex_index_start = starting_index_of_middle_vertices;
-  for (int i = 0; i < num_slices; i++)
-  {
+  for (int i = 0; i < num_slices; i++) {
     indices.push_back(north_vertex_index);
     indices.push_back(north_cap_vertex_index_start + i);
     indices.push_back(north_cap_vertex_index_start + (i + 1) % num_slices);
@@ -90,8 +85,7 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
   const int south_vertex_index = 1;
   const int south_cap_index_start = starting_index_of_middle_vertices +
     (num_stacks - 2) * num_slices;
-  for (int i = 0; i < num_slices; ++i)
-  {
+  for (int i = 0; i < num_slices; ++i) {
     const auto vi0 = south_vertex_index;
     const auto vi1 = south_cap_index_start + i;
     const auto vi2 = south_cap_index_start + (i + 1) % num_slices;
@@ -101,13 +95,11 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
   }
 
   // MIDDLE TRIANGLES
-  for (int k = 0; k < num_stacks - 2; ++k)
-  {
+  for (int k = 0; k < num_stacks - 2; ++k) {
     const int stack_start_index = starting_index_of_middle_vertices +
       k * num_slices;
     const int next_stack_start_index = stack_start_index + num_slices;
-    for (int i = 0; i < num_slices; ++i)
-    {
+    for (int i = 0; i < num_slices; ++i) {
       // check why the following code snippet does not work (winding order?)
       //int vi0 = stackStartIndex + i;
       //int vi1 = nextStackStartIndex + i;
@@ -129,7 +121,6 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
   }
   m_num_indices = indices.size();
 
-
   // DEFINE OPENGL BUFFERS
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
@@ -139,41 +130,30 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
   auto indices_size = sizeof(GLuint) * indices.size();
   auto indices_data = reinterpret_cast<const void*>(indices.data());
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-    indices_size,
-    indices_data,
-    GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size, indices_data,
+               GL_STATIC_DRAW);
 
   // Vertex Buffer
   glGenBuffers(1, &m_vbo);
   glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
   auto vertex_buffer_size = sizeof(QVector3D) * vertex_data.size();
   auto vertex_buffer_data = reinterpret_cast<const void*>(vertex_data.data());
-  glBufferData(GL_ARRAY_BUFFER,
-    vertex_buffer_size,
-    vertex_buffer_data,
-    GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertex_buffer_size, vertex_buffer_data,
+               GL_STATIC_DRAW);
 
   // Position Vertex-Attribute
   GLint position_attrib_index = 0;
   const void* position_offset = 0;
   GLsizei stride = 6 * sizeof(float);
-  glVertexAttribPointer(position_attrib_index,
-    3,
-    GL_FLOAT, GL_FALSE,
-    stride,
-    position_offset);
+  glVertexAttribPointer(position_attrib_index, 3, GL_FLOAT, GL_FALSE, stride,
+                        position_offset);
   glEnableVertexAttribArray(position_attrib_index);
 
   // Normal Vertex-Attribute
   GLint normal_attrib_index = 1;
   auto* normal_offset = reinterpret_cast<const void*>(3 * sizeof(float));
-  glVertexAttribPointer(normal_attrib_index,
-    3,
-    GL_FLOAT,
-    GL_FALSE,
-    stride,
-    normal_offset);
+  glVertexAttribPointer(normal_attrib_index, 3, GL_FLOAT, GL_FALSE, stride,
+                        normal_offset);
   glEnableVertexAttribArray(normal_attrib_index);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -182,17 +162,18 @@ Sphere::Sphere(int num_slices, int num_stacks, float r)
   // Note: calling this before glBindVertexArray(0) results in no output!
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+//! \brief
 void Sphere::set_color(float r, float g, float b, float a)
-{
-  m_color = QVector4D(r, g, b, a);
-}
-void Sphere::draw()
-{
+{ m_color = QVector4D(r, g, b, a); }
+
+//! \brief
+void Sphere::draw() {
   // DRAW TRIANGLES
   glBindVertexArray(m_vao);
-  {
-    //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glDrawElements(GL_TRIANGLES, m_num_indices, GL_UNSIGNED_INT, 0);
-  }
+
+  //glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, m_num_indices, GL_UNSIGNED_INT, 0);
+
   glBindVertexArray(0);
 }

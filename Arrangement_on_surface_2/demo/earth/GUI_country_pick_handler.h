@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,19 +16,18 @@
 #include "GUI_event_handler.h"
 #include "Main_widget.h"
 
-
-class GUI_country_pick_handler : public GUI_event_handler
-{
+class GUI_country_pick_handler : public GUI_event_handler {
 public:
   GUI_country_pick_handler(Main_widget& main_widget);
 
 protected:
   virtual void mouse_press_event(QMouseEvent* e) override;
   virtual void resize(int w, int h) override;
-  
-  Main_widget&  m_main_widget;
-  Camera&       m_camera;
-  int           m_vp_width, m_vp_height;
+
+  Main_widget& m_main_widget;
+  Camera& m_camera;
+  int m_vp_width;
+  int m_vp_height;
 };
 
 

@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,9 +15,7 @@
 
 #include "Camera_manip.h"
 
-
-class Camera_manip_rot_bpa : public Camera_manip
-{
+class Camera_manip_rot_bpa : public Camera_manip {
 public:
   Camera_manip_rot_bpa(Camera& camera);
 

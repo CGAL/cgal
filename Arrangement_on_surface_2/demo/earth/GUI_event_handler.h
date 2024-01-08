@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -13,9 +13,7 @@
 #include <qevent.h>
 #include <qvector2d.h>
 
-
-class GUI_event_handler
-{
+class GUI_event_handler {
 public:
   virtual ~GUI_event_handler() {};
 
@@ -31,7 +29,6 @@ protected:
   virtual void mouse_move_event(QMouseEvent* e) {}
   virtual void mouse_release_event(QMouseEvent* e) {}
   virtual void resize(int w, int h) {}
-
 
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;

@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,9 +14,7 @@
 #include <qvector3d.h>
 #include "Common_defs.h"
 
-
-class Single_vertex : protected OpenGLFunctionsBase
-{
+class Single_vertex : protected OpenGLFunctionsBase {
 public:
   Single_vertex(const QVector3D& pos);
 
@@ -27,9 +25,10 @@ public:
   void draw();
 
 private:
-  bool      m_visible;
-  bool      m_update = true; // flag to update the VBO (set_pos sets this)
-  GLuint    m_vao, m_vbo;
+  bool m_visible;
+  bool m_update = true; // flag to update the VBO (set_pos sets this)
+  GLuint m_vao;
+  GLuint m_vbo;
   QVector3D m_pos;
 };
 

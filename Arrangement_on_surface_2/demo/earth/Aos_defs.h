@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,7 +17,6 @@
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 #include <CGAL/Vector_3.h>
-
 
 //#define USE_EPIC
 
@@ -40,9 +39,9 @@ using Vertex_handle = Arrangement::Vertex_handle;
 // COUNTRIES AOS for grouping the faces by the country name
 using Countries_dcel = CGAL::Arr_face_extended_dcel<Geom_traits, std::string>;
 using Countries_topol_traits =
-             CGAL::Arr_spherical_topology_traits_2<Geom_traits, Countries_dcel>;
+  CGAL::Arr_spherical_topology_traits_2<Geom_traits, Countries_dcel>;
 using Countries_arr =
-            CGAL::Arrangement_on_surface_2<Geom_traits, Countries_topol_traits>;
+  CGAL::Arrangement_on_surface_2<Geom_traits, Countries_topol_traits>;
 
 
 #endif

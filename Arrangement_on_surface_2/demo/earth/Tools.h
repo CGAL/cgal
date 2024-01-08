@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,7 +14,6 @@
 
 #include <QVector2D>
 #include <QVector3D>
-
 
 std::string read_file(const std::string& file_name);
 

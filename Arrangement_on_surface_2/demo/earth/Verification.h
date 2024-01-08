@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,23 +15,18 @@
 
 #include "Camera.h"
 
-
-//
 // This class contains code to verify or compute certain hypotheses
 //
-class Verification
-{
+class Verification {
 public:
-
   // Use this to find the approximate of the true minimum projected error.
   // we are ot using this complicated method, but provide it for completeness.
-  static void find_minimum_projected_error_on_sphere(float we, Camera& cam, 
-                                                   int vp_width, int vp_height);
+  static void find_minimum_projected_error_on_sphere(float we, Camera& cam,
+                                                     int vp_width,
+                                                     int vp_height);
 
   // verify that the node (180.0, -84.71338) in Antarctica is redundant
   static void verify_antarctica_node_is_redundant();
-
 };
-
 
 #endif

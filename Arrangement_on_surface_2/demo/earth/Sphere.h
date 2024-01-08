@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -13,9 +13,7 @@
 #include "Common_defs.h"
 #include <qvector4d.h>
 
-
-class Sphere : protected OpenGLFunctionsBase
-{
+class Sphere : protected OpenGLFunctionsBase {
 public:
   Sphere(int num_slices, int num_stacks, float r);
 
@@ -25,7 +23,10 @@ public:
   void draw();
 
 private:
-  GLuint    m_vao, m_vbo, m_ibo, m_num_indices;
+  GLuint m_vao;
+  GLuint m_vbo;
+  GLuint m_ibo;
+  GLuint m_num_indices;
   QVector4D m_color;
 };
 

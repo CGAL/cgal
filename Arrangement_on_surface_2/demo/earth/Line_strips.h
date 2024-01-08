@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,9 +14,7 @@
 #include <qvector3d.h>
 #include "Common_defs.h"
 
-
-class Line_strips : protected OpenGLFunctionsBase
-{
+class Line_strips : protected OpenGLFunctionsBase {
 public:
   Line_strips(std::vector<QVector3D>& line_strip_points);
   Line_strips(std::vector<std::vector<QVector3D>>& arcs);
@@ -25,11 +23,11 @@ public:
   void draw(int line_strip_index);
 
   void draw();
-  
 
 private:
-  GLuint                m_vao, m_vbo;
-  std::vector<GLuint>   m_offsets;
+  GLuint m_vao;
+  GLuint m_vbo;
+  std::vector<GLuint> m_offsets;
 };
 
 

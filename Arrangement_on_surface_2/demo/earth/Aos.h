@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,9 +17,7 @@
 
 #include "Kml_reader.h"
 
-
-class Aos
-{
+class Aos {
 public:
   using Approx_arc = std::vector<QVector3D>;
   using Approx_arcs = std::vector<Approx_arc>;
@@ -32,8 +30,8 @@ public:
   static Approx_arcs get_approx_arcs(double error);
 
   // this is used to construct approximate arcs from KML-Placemark data
-  static Approx_arcs get_approx_arcs(const Kml::Placemark& placemark, double error);
-
+  static Approx_arcs get_approx_arcs(const Kml::Placemark& placemark,
+                                     double error);
 
   static void get_curves();
 
@@ -45,7 +43,7 @@ public:
   // OUTPUT: vertices created during arrangement construction
   static std::vector<QVector3D> ext_check(const Kml::Placemarks& placemarks);
 
-  // Same as above function but works by identifying the duplicate nodes 
+  // Same as above function but works by identifying the duplicate nodes
   static std::vector<QVector3D> ext_check_id_based(Kml::Placemarks& placemarks);
 
   // This function is used to find the newly-created faces during arrangement
@@ -59,7 +57,7 @@ public:
   static Approx_arcs find_new_faces(Kml::Placemarks& placemarks);
 
   // save the arrangement created with EPEC
-  static void save_arr(Kml::Placemarks& placemarks, 
+  static void save_arr(Kml::Placemarks& placemarks,
                        const std::string& file_name);
 
   // loads the arrangement created by the save_arr function
@@ -79,9 +77,8 @@ public:
 
   // this will get the approximate arcs of face-edges from the arrangement
   // NOTE: this is similar to "get_approx_arcs(KML::Placemarks&, float)" above!
-  static Approx_arcs get_approx_arcs_from_faces_edges(Arr_handle arrh, 
+  static Approx_arcs get_approx_arcs_from_faces_edges(Arr_handle arrh,
                                                       float error);
 };
-
 
 #endif

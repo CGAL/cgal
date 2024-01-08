@@ -1,14 +1,20 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(earth LANGUAGES CXX)
 
-if(NOT DEFINED INSTALL_EXAMPLESDIR)
-    set(INSTALL_EXAMPLESDIR "examples")
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
 endif()
 
-set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/opengl/earth")
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
-add_definitions(-DQT_NO_VERSION_TAGGING)
+# if(NOT DEFINED INSTALL_EXAMPLESDIR)
+#     set(INSTALL_EXAMPLESDIR "examples")
+# endif()
+
+# set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/opengl/earth")
 
 # CGAL and its components
 find_package(CGAL QUIET COMPONENTS)
@@ -17,6 +23,9 @@ if (NOT CGAL_FOUND)
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()
 endif()
+
+find_package(Qt6 REQUIRED COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
+add_definitions(-DQT_NO_VERSION_TAGGING)
 
 # Boost and its components
 find_package(Boost REQUIRED)
@@ -44,7 +53,6 @@ source_group("Aos" FILES ${source_files_aos})
 # GIS
 file(GLOB source_files_gis
   Kml_reader.h    Kml_reader.cpp
-  Shapefile.h     Shapefile.cpp
 )
 source_group("GIS" FILES ${source_files_gis})
 

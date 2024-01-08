@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -9,16 +9,15 @@
 
 #include "Camera.h"
 
-
+//! \brief
 Camera::Camera() :
   m_ux(1, 0, 0),
   m_uy(0, 1, 0),
   m_uz(0, 0, 1)
-{
-}
+{}
 
-void Camera::perspective(float fov, float aspect, float z_near, float z_far)
-{
+//! \brief
+void Camera::perspective(float fov, float aspect, float z_near, float z_far) {
   m_z_near = z_near;
   m_z_far = z_far;
 
@@ -26,18 +25,16 @@ void Camera::perspective(float fov, float aspect, float z_near, float z_far)
   m_projection.perspective(fov, aspect, z_near, z_far);
 }
 
-
-QMatrix4x4 Camera::get_view_matrix() const
-{
+//! \brief
+QMatrix4x4 Camera::get_view_matrix() const {
   QMatrix4x4 view;
   const QVector3D center = m_pos - m_uz;
   view.lookAt(m_pos, center, m_uy);
   return view;
 }
 
-
-void Camera::rotate_from_init_config(float theta, float phi)
-{
+//! \brief
+void Camera::rotate_from_init_config(float theta, float phi) {
   // TO-DO: use the following logic to eliminate the QT-deprecation warnings!
   //QMatrix4x4 rot;
   //rot.rotate(theta, m_ux);
@@ -72,32 +69,32 @@ void Camera::rotate_from_init_config(float theta, float phi)
   m_uz = r.map(QVector3D(0, 0, 1));
 }
 
-void Camera::rotate(QMatrix4x4 rot)
-{
+//! \brief
+void Camera::rotate(QMatrix4x4 rot) {
   m_pos = rot.map(m_pos);
   m_ux = rot.map(m_ux);
   m_uy = rot.map(m_uy);
   m_uz = rot.map(m_uz);
 }
 
-void Camera::save_config()
-{
+//! \brief
+void Camera::save_config() {
   m_saved_pos = m_pos;
   m_saved_ux  = m_ux;
   m_saved_uy  = m_uy;
   m_saved_uz  = m_uz;
 }
 
-void Camera::rotate_from_saved_config(QMatrix4x4 rot)
-{
+//! \brief
+void Camera::rotate_from_saved_config(QMatrix4x4 rot) {
   m_pos = rot.map(m_saved_pos);
   m_ux =  rot.map(m_saved_ux);
   m_uy =  rot.map(m_saved_uy);
   m_uz =  rot.map(m_saved_uz);
 }
 
-void Camera::move_forward(float distance)
-{
+//! \brief
+void Camera::move_forward(float distance) {
   // recall that in OpenGL camera model, camera's z-axis points always
   // out of the screen (towards the user).
   m_pos -= distance * m_uz;

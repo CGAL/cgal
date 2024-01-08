@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -10,14 +10,9 @@
 #ifndef COMMON_DEFS_H
 #define COMMON_DEFS_H
 
-
 #include <qopenglfunctions_3_3_core.h>
 //#include <qopenglfunctions_4_5_core.h>
 
-
 using OpenGLFunctionsBase = QOpenGLFunctions_3_3_Core;
-
-
-
 
 #endif

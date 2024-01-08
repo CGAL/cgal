@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,9 +14,7 @@
 #include <qvector3d.h>
 #include "Common_defs.h"
 
-
-class Triangles : protected OpenGLFunctionsBase
-{
+class Triangles : protected OpenGLFunctionsBase {
 public:
   // IMPORTANT: we assume that the triangles are on the sphere!
   // this means that all vertex-normals are actually the normal vector on the
@@ -28,10 +26,11 @@ public:
   const QVector4D& get_color() const;
 
   void draw();
-  
+
 private:
-  GLuint    m_vao, m_vbo;
-  int       m_num_vertices;
+  GLuint m_vao;
+  GLuint m_vbo;
+  int m_num_vertices;
   QVector4D m_color;
 };
 

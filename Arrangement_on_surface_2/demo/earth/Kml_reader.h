@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,24 +16,19 @@
 
 #include <qvector3d.h>
 
-
-class Kml
-{
+class Kml {
 public:
   // double precision 3D-point (QVector3D has float coordinates)
-  struct Vec3d
-  {
+  struct Vec3d {
     double x, y, z;
 
-    friend std::ostream& operator << (std::ostream& os, const Vec3d& v)
-    {
+    friend std::ostream& operator << (std::ostream& os, const Vec3d& v) {
       os << v.x << ", " << v.y << ", " << v.z;
       return os;
     }
   };
 
-  struct Node
-  {
+  struct Node {
     double lon, lat;
 
     Node() : lon(-1111), lat(-1111) {};
@@ -48,14 +43,13 @@ public:
   };
   using Nodes = std::vector<Node>;
 
-  struct Arc
-  {
+  struct Arc {
     Node from, to;
   };
+
   using Arcs = std::vector<Arc>;
 
-  struct LinearRing
-  {
+  struct LinearRing {
     std::vector<Node> nodes;
     std::vector<int>  ids;
 
@@ -64,22 +58,18 @@ public:
   };
   using LinearRings = std::vector<LinearRing>;
 
-
-  struct Polygon
-  {
+  struct Polygon {
     LinearRing outer_boundary;
     LinearRings inner_boundaries;
 
     // when collecting nodes start from the outer boundary and then get nodes
     // from individual inner boundaries in the order
     Nodes get_all_nodes() const;
-  
+
     std::vector<LinearRing*> get_all_boundaries();
   };
- 
 
-  struct Placemark
-  {
+  struct Placemark {
     std::vector<Polygon> polygons;
     std::string name;
 
@@ -89,10 +79,10 @@ public:
 
     Arcs get_all_arcs() const;
   };
+
   using Placemarks = std::vector<Placemark>;
 
   static int get_number_of_polygons(Placemarks& placemarks);
-
 
   static Placemarks read(const std::string& file_name);
 
@@ -106,6 +96,5 @@ public:
   // same as above but by collapsing close-by nodes based on distance bound
   static Nodes generate_ids_approx(Placemarks& placemarks, const double eps);
 };
-
 
 #endif

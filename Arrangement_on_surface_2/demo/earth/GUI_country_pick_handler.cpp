@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -11,19 +11,16 @@
 
 //#include <qvector3d.h>
 
-
+//! \brief
 GUI_country_pick_handler::GUI_country_pick_handler(Main_widget& main_widget) :
   m_main_widget(main_widget),
   m_camera(main_widget.get_camera())
-{
+{}
 
-}
-
-void GUI_country_pick_handler::mouse_press_event(QMouseEvent* e)
-{
+//! \brief
+void GUI_country_pick_handler::mouse_press_event(QMouseEvent* e) {
   // handle country selection
-  if (e->button() == Qt::RightButton)
-  {
+  if (e->button() == Qt::RightButton) {
     auto p = e->pos();
     QVector3D  sp0(p.x(), m_vp_height - p.y(), 0);
     QVector3D  sp1(p.x(), m_vp_height - p.y(), 1);
@@ -51,30 +48,23 @@ void GUI_country_pick_handler::mouse_press_event(QMouseEvent* e)
     auto d = b * b - 4 * a * c;
 
     float ti = -1;
-    if (abs(d) < std::numeric_limits<float>::epsilon())
-    {
+    if (abs(d) < std::numeric_limits<float>::epsilon()) {
       // single intersection
       ti = -b / (2 * a);
     }
-    else
-    {
-      if (d < 0)
-      {
+    else {
+      if (d < 0) {
         // no intersection
         return;
       }
-      else
-      {
+      else {
         // two intersections
         auto sd = sqrt(d);
         auto t1 = (-b - sd) / (2 * a);
         auto t2 = (-b + sd) / (2 * a);
-        if (t1 > 0 && t2 > 0)
-          ti = std::min(t1, t2);
-        else if (t1 > 0)
-          ti = t1;
-        else
-          ti = t2;
+        if (t1 > 0 && t2 > 0) ti = std::min(t1, t2);
+        else if (t1 > 0) ti = t1;
+        else ti = t2;
       }
     }
 
@@ -110,8 +100,9 @@ void GUI_country_pick_handler::mouse_press_event(QMouseEvent* e)
   //  prev_picked_country = picked_country;
   }
 }
-void GUI_country_pick_handler::resize(int w, int h)
-{
+
+//! \brief
+void GUI_country_pick_handler::resize(int w, int h) {
   m_vp_width = w;
   m_vp_height = h;
 }

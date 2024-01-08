@@ -1,4 +1,4 @@
-// Copyright(c) 2012, 2020  Tel - Aviv University(Israel).
+// Copyright(c) 2023, 2024 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -9,22 +9,19 @@
 
 #include "Camera_manip_rot_bpa.h"
 
-
-Camera_manip_rot_bpa::Camera_manip_rot_bpa(Camera& camera) : 
+//! \brief
+Camera_manip_rot_bpa::Camera_manip_rot_bpa(Camera& camera) :
   Camera_manip(camera)
-{
+{}
+
+//! \brief
+void Camera_manip_rot_bpa::mouse_press_event(QMouseEvent* e) {
+  // for the backprojected diff-vector method:
+  if (m_left_mouse_button_down) m_camera.save_config();
 }
 
-void Camera_manip_rot_bpa::mouse_press_event(QMouseEvent* e)
-{
-  // for the backprojected diff-vector method:
-  if (m_left_mouse_button_down)
-  {
-    m_camera.save_config();
-  }
-}
-void Camera_manip_rot_bpa::mouse_move_event(QMouseEvent* e)
-{
+//! \brief
+void Camera_manip_rot_bpa::mouse_move_event(QMouseEvent* e) {
   const float rotation_scale_factor = 0.1f;
 
   // ROTATION AROUND AN AXIS ORTHOGONAL TO THE BACKPROJECTED DIF-VECTOR
@@ -52,14 +49,13 @@ void Camera_manip_rot_bpa::mouse_move_event(QMouseEvent* e)
   rot_matrix.rotate(-rot_angle, rot_axis);
 
   m_camera.rotate_from_saved_config(rot_matrix);
+}
 
-}
-void Camera_manip_rot_bpa::mouse_release_event(QMouseEvent* e)
-{
-}
-void Camera_manip_rot_bpa::resize(int w, int h)
-{
+//! \brief
+void Camera_manip_rot_bpa::mouse_release_event(QMouseEvent* e) {}
+
+//! \brief
+void Camera_manip_rot_bpa::resize(int w, int h) {
   m_vp_width = w;
   m_vp_height = h;
 }
-
