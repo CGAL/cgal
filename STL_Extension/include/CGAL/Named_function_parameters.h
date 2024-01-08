@@ -603,8 +603,12 @@ template <class ... TagsAllowed, class Named_function_parameters>
 constexpr
 bool authorized_options(const Named_function_parameters& np)
 {
+#ifndef CGAL_DISABLE_NAMED_FUNCTION_PARAMETERS_CHECKS
   return authorized_parameters_impl::authorized_options_rec
     <internal_np::all_default_t, TagsAllowed...>(np);
+#else
+  return true;
+#endif
 }
 
 } // end of parameters namespace
