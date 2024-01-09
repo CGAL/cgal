@@ -1,9 +1,5 @@
 #define CGAL_MESH_3_VERBOSE 1
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_DUMP_REMESHING_STEPS
-#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
-#define CGAL_TETRAHEDRAL_REMESHING_NO_EXTRA_ITERATIONS
-//#define PROTECT_ANGLES_FROM_COLLAPSE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -98,12 +94,15 @@ int main(int argc, char* argv[])
     cell_size = size);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);// , no_perturb(), no_exude());
 
   // Output
 //  std::ofstream os(fname_mesh3, std::ios_base::out | std::ios_base::binary);
 //  CGAL::Mesh_3::save_binary_file(os, c3t3);
   CGAL::dump_c3t3(c3t3, "out_after_meshing");
+
+  const double min_dihedral_angle = CGAL::Tetrahedral_remeshing::min_dihedral_angle(c3t3);
+  std::cout << "Min dihedral angle after meshing = " << min_dihedral_angle << std::endl;
 
   // Remeshing
   CGAL::tetrahedral_isotropic_remeshing(c3t3, size,
