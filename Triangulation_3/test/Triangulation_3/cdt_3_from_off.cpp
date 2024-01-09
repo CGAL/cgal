@@ -573,7 +573,6 @@ int go(Mesh mesh, CDT_options options) {
         auto n = cdt.number_of_vertices();
         auto v1 = cdt.insert(p1);
         auto v2 = cdt.insert(p2);
-        std::cerr << std::format("edge  {}  {}\n", CGAL::IO::oformat(p1), CGAL::IO::oformat(p2));
         CGAL_assertion(n == cdt.number_of_vertices());
         auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
         if(!steiner_vertices) continue;

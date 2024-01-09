@@ -372,17 +372,17 @@ protected:
   template <typename Visitor>
   void restore_Delaunay(Visitor& visitor) {
     while(!subconstraints_to_conform.empty()) {
-      auto pair = subconstraints_to_conform.top();
+      const auto [subconstraint, constraint_id] = subconstraints_to_conform.top();
       subconstraints_to_conform.pop();
-      if(!constraint_hierarchy.is_subconstrained_edge(pair.first.first,
-                                                      pair.first.second)) {
+      const auto [va, vb] = subconstraint;
+      if(!constraint_hierarchy.is_subconstrained_edge(va, vb)) {
         continue;
       }
 #if CGAL_DEBUG_CDT_3 & 32
       std::cerr << "tr.subconstraints_to_conform.pop()="
-                << display_subcstr(pair.first) << "\n";
+                << display_subcstr(subconstraint) << "\n";
 #endif // CGAL_DEBUG_CDT_3
-      conform_subconstraint(pair.first, pair.second, visitor);
+      conform_subconstraint(subconstraint, constraint_id, visitor);
     }
   }
 
