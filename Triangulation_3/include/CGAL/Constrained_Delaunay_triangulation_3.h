@@ -329,16 +329,18 @@ protected:
     template <class InputIterator>
     void process_cells_in_conflict(const InputIterator cell_it_begin, const InputIterator end) {
       CGAL_assertion(self.dimension() >= 2);
-      const int first_li = self.dimension() == 2 ? 3 : 0;
-      for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
-        auto c = *cell_it;
-        for(int li = first_li; li < 4; ++li) {
-          if(c->is_facet_constrained(li)) {
-            self.register_facet_to_be_constrained(c, li);
-#if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
-            std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
-            self.write_2d_triangle(std::cerr, fh_2);
-#endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+      if(self.cdt_2_are_initialized) {
+        const int first_li = self.dimension() == 2 ? 3 : 0;
+        for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
+          auto c = *cell_it;
+          for(int li = first_li; li < 4; ++li) {
+            if(c->is_facet_constrained(li)) {
+              self.register_facet_to_be_constrained(c, li);
+  #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+              std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
+              self.write_2d_triangle(std::cerr, fh_2);
+  #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
+            }
           }
         }
       }
