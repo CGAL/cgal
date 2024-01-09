@@ -192,6 +192,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "1-c3t3_vertices_after_split");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "\t Min dihedral angle = " << mdh << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "1-split");
@@ -214,6 +216,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "2-c3t3_vertices_after_collapse");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "\n\t Min dihedral angle = " << mdh << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "2-collapse");
@@ -231,6 +235,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "3-c3t3_vertices_after_flip");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "\n\t Min dihedral angle = " << mdh << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "3-flip");
@@ -247,6 +253,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "4-c3t3_vertices_after_smooth");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "\n\t Min dihedral angle = " << mdh << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "4-smooth");
@@ -455,6 +463,8 @@ private:
     std::cout << "\t facets   = " << nbf << std::endl;
     std::cout << "\t edges    = " << nbe << std::endl;
     std::cout << "\t vertices = " << nbv << std::endl;
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "\t Min dihedral angle = " << mdh << std::endl;
 
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
@@ -600,6 +610,9 @@ public:
       ossi << "statistics_" << it_nb << ".txt";
       Tetrahedral_remeshing::internal::compute_statistics(
         tr(), m_cell_selector, ossi.str().c_str());
+      std::ostringstream oss_it;
+      oss_it << "iteration_" << it_nb;
+      Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, oss_it.str().c_str());
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
