@@ -205,7 +205,7 @@ private:
     std::vector<bool> skip(idPoints.size(), false);
 
     for (std::size_t i = 0; i < idPoints.size(); i++) {
-      int prev = (i - 1 + idPoints.size()) % idPoints.size();
+      std::size_t prev = (i - 1 + idPoints.size()) % idPoints.size();
       if (idPoints[i].first < idPoints[prev].first) {
         auto it = edge_map.emplace(std::make_pair(idPoints[i].first, idPoints[prev].first), i);
         if (!it.second) {

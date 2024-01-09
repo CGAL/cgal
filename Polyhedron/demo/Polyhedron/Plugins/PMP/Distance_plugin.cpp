@@ -204,7 +204,7 @@ private:
         sampled_points.push_back(r);
 
         //triangle facets with sample points for color display
-        auto func = [&](auto& ffit, auto& v2v) {
+        auto func = [&](auto& ffit, auto&) {
           if (ffit.info().is_external)
             return;
 
