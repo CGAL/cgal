@@ -1988,6 +1988,9 @@ std::size_t flipBoundaryEdges(
           CGAL_assertion_code(int nbe =
             std::distance(c3t3.edges_in_complex_begin(),
                           c3t3.edges_in_complex_end()));
+          CGAL_assertion_code(int nbe =
+            std::distance(c3t3.edges_in_complex_begin(),
+                          c3t3.edges_in_complex_end()));
 
 //#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 //          ++nb_attempts;

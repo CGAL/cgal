@@ -82,6 +82,7 @@ inline int indices(const int& i, const int& j)
 }
 
 // returns angle in degrees
+// returns angle in degrees
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,
                                const Point& q,
