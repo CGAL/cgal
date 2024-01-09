@@ -320,7 +320,7 @@ to_image() const
 {
   // select number type
   WORD_KIND wordkind;
-  if(std::is_floating_point<FT>::value)
+  if(std::is_floating_point<FT>::value) // @fixme seems meaningless given that vx vy vz are doubles
     wordkind = WK_FLOAT;
   else
     wordkind = WK_FIXED;

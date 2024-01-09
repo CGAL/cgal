@@ -79,7 +79,7 @@ int main(int, char**)
   CGAL::Isosurfacing::marching_cubes(domain, isovalue, points_mc, polygons_mc);
   CGAL::Isosurfacing::dual_contouring(domain, isovalue, points_dc, polygons_dc);
 
-  // save output indexed meshes to files, in the OFF format
+  // save output indexed meshes to files, in the OFF format @fixme these are not meshes...
   CGAL::IO::write_OFF("output_mc.off", points_mc, polygons_mc);
   CGAL::IO::write_OFF("output_dc.off", points_dc, polygons_dc);
 
