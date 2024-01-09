@@ -21,7 +21,6 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <boost/container/small_vector.hpp>
-#include <optional>
 #include <boost/functional/hash.hpp>
 
 #include <unordered_map>
@@ -311,7 +310,7 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
       }
       ch->vertex(v)->set_cell(ch);
 
-      inc_cells[ch->vertex(v)] = std::nullopt;
+      inc_cells[ch->vertex(v)].clear();
       ch->reset_cache_validity();
     }
   }
@@ -590,13 +589,9 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     if(tr.is_infinite(vh))
       continue;
 
-    std::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
-    if (o_inc_vh == std::nullopt)
-    {
-      boost::container::small_vector<Cell_handle, 64> inc_vec;
-      tr.incident_cells(vh, std::back_inserter(inc_vec));
-      o_inc_vh = inc_vec;
-    }
+    boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vh];
+    if (o_inc_vh.empty())
+      tr.incident_cells(vh, std::back_inserter(o_inc_vh));
 
     Facet_circulator facet_circulator = curr_fcirc;
     Facet_circulator facet_done = curr_fcirc;
@@ -614,7 +609,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                       indices(facet_circulator->second, i));
         if (curr_vertex != vh0  && curr_vertex != vh1)
         {
-          if (is_edge_uv(vh, curr_vertex, o_inc_vh.value()))
+          if (is_edge_uv(vh, curr_vertex, o_inc_vh))
           {
             is_edge = true;
             break;
@@ -765,13 +760,9 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   facet_circulator++;
   facet_circulator++;
 
-  std::optional<boost::container::small_vector<Cell_handle, 64>>& o_inc_vh = inc_cells[vh];
-  if (o_inc_vh == std::nullopt)
-  {
-    boost::container::small_vector<Cell_handle, 64> inc_vec;
-    tr.incident_cells(vh, std::back_inserter(inc_vec));
-    o_inc_vh = inc_vec;
-  }
+  boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vh];
+  if (o_inc_vh.empty())
+    tr.incident_cells(vh, std::back_inserter(o_inc_vh));
 
   do
   {
@@ -782,7 +773,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                     indices(facet_circulator->second, i));
       if (curr_vertex != vh0  && curr_vertex != vh1)
       {
-        if (is_edge_uv(vh, curr_vertex, o_inc_vh.value()))
+        if (is_edge_uv(vh, curr_vertex, o_inc_vh))
           return NOT_FLIPPABLE;
       }
     }
@@ -952,8 +943,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
       }
       ch->vertex(v)->set_cell(ch);
 
-      inc_cells[ch->vertex(v)] = std::nullopt;
-      ch->reset_cache_validity();
+      inc_cells[ch->vertex(v)].clear();
     }
   }
 
@@ -1058,8 +1048,7 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
       find_best_flip_to_improve_dh(c3t3, edge, boundary_vertices[0], boundary_vertices[1],
                                    candidates, curr_max_cosdh);
     else
-      find_best_flip_to_improve_dh(c3t3, edge, candidates, curr_max_cosdh,
-                                   inc_cells);
+      find_best_flip_to_improve_dh(c3t3, edge, candidates, curr_max_cosdh, inc_cells);
 
     bool flip_performed = false;
     while (!candidates.empty() && !flip_performed)
@@ -1176,9 +1165,11 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
 }
 
 
-template<typename VertexPair, typename C3t3, typename CellSelector, typename Visitor>
+template<typename VertexPair, typename C3t3,
+         typename IncidentCellsVectorMap, typename CellSelector, typename Visitor>
 std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
                            C3t3& c3t3,
+                           IncidentCellsVectorMap& inc_cells,
                            const Flip_Criterion& criterion,
                            CellSelector& cell_selector,
                            Visitor& visitor)
@@ -1190,24 +1181,16 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
 
   Tr& tr = c3t3.triangulation();
 
-  std::unordered_map<Vertex_handle,
-    std::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
-
   std::size_t count = 0;
   for (const VertexPair& vp : edges)
   {
-    std::optional<boost::container::small_vector<Cell_handle, 64>>&
-      o_inc_vh = inc_cells[vp.first];
-    if (o_inc_vh == std::nullopt)
-    {
-      boost::container::small_vector<Cell_handle, 64> inc_vec;
-      tr.incident_cells(vp.first, std::back_inserter(inc_vec));
-      o_inc_vh = inc_vec;
-    }
+    boost::container::small_vector<Cell_handle, 64>& o_inc_vh = inc_cells[vp.first];
+    if (o_inc_vh.empty())
+      tr.incident_cells(vp.first, std::back_inserter(o_inc_vh));
 
     Cell_handle ch;
     int i0, i1;
-    if (is_edge_uv(vp.first, vp.second, o_inc_vh.value(), ch, i0, i1))
+    if (is_edge_uv(vp.first, vp.second, o_inc_vh, ch, i0, i1))
     {
       Edge edge(ch, i0, i1);
 
@@ -1438,10 +1421,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
   return NOT_FLIPPABLE;
 #endif
 
-  if(inc_cells[edge.first->vertex(edge.second)] != std::nullopt)
-    inc_cells[edge.first->vertex(edge.second)]->clear();
-  if (inc_cells[edge.first->vertex(edge.third)] != std::nullopt)
-    inc_cells[edge.first->vertex(edge.third)]->clear();
+  inc_cells[edge.first->vertex(edge.second)].clear();
+  inc_cells[edge.first->vertex(edge.third)].clear();
 
   Cell_handle ch0, ch1, ch2, ch3;
   ch0 = cells_around_edge[0];
@@ -1856,23 +1837,23 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
   return NOT_FLIPPABLE;
 }
 
-template<typename C3T3, typename SurfaceIndexMapMap, typename Flip_Criterion,
+template<typename C3T3, typename SurfaceIndexMapMap,
+         typename IncidentCellsVectorMap, typename Flip_Criterion,
          typename CellSelector, typename Visitor>
 std::size_t flipBoundaryEdges(
   C3T3& c3t3,
   std::vector<typename C3T3::Edge>& boundary_edges,
   SurfaceIndexMapMap& boundary_vertices_valences,
-  boost::unordered_map<typename C3T3::Vertex_handle,
-                       std::unordered_set<typename C3T3::Subdomain_index> >&  vertices_subdomain_indices,
-  Flip_Criterion flip_criterion,
+  IncidentCellsVectorMap& inc_cells,
+  const Flip_Criterion& flip_criterion,
   CellSelector& cell_selector,
   Visitor& visitor)
 {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cerr << "\n\tFlipping boundary edges...";
-  std::cerr.flush();
-  std::size_t nb_attempts = 0;
-#endif
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//  std::cerr << "\n\tFlipping boundary edges...";
+//  std::cerr.flush();
+//  std::size_t nb_attempts = 0;
+//#endif
 
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef typename C3T3::Cell_handle   Cell_handle;
@@ -1897,37 +1878,21 @@ std::size_t flipBoundaryEdges(
       candidate_edges_for_flip.push_back(make_vertex_pair(e));
   }
 
-  std::unordered_map<Vertex_handle,
-    std::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
+//  double min_angle = min_dihedral_angle(c3t3);
+//  std::cout << "Min dihedral angle before surface flips = " << min_angle << std::endl;
 
   for (const std::pair<Vertex_handle, Vertex_handle>& vp : candidate_edges_for_flip)
   {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cerr << "\r\tFlipping boundary edges...("
-      << nb_attempts << " attempts, "
-      << nb << " done, "
-      << candidate_edges_for_flip.size() << " candidates)";
-    std::cerr.flush();
-#endif
-
     const Vertex_handle vh0 = vp.first;
     const Vertex_handle vh1 = vp.second;
 
-    const typename C3T3::Triangulation::Point& p0 = vh0->point();
-    const typename C3T3::Triangulation::Point& p1 = vh1->point();
-
-    std::optional<boost::container::small_vector<Cell_handle, 64>>&
-      o_inc_vh = inc_cells[vh0];
-    if (o_inc_vh == std::nullopt || o_inc_vh->empty())
-    {
-      boost::container::small_vector<Cell_handle, 64> inc_vec;
-      tr.incident_cells(vh0, std::back_inserter(inc_vec));
-      o_inc_vh = inc_vec;
-    }
+    boost::container::small_vector<Cell_handle, 64>& inc_vh0 = inc_cells[vh0];
+    if (inc_vh0.empty())
+      tr.incident_cells(vh0, std::back_inserter(inc_vh0));
 
     Cell_handle c;
     int i, j;
-    if (!is_edge_uv(vh0, vh1, o_inc_vh.value(), c, i, j))
+    if (!is_edge_uv(vh0, vh1, inc_vh0, c, i, j))
       continue;
 
     Edge edge(c, i, j);
@@ -2024,9 +1989,9 @@ std::size_t flipBoundaryEdges(
             std::distance(c3t3.edges_in_complex_begin(),
                           c3t3.edges_in_complex_end()));
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-          ++nb_attempts;
-#endif
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//          ++nb_attempts;
+//#endif
           Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
                                                      inc_cells,
                                                      flip_criterion,
@@ -2063,10 +2028,6 @@ std::size_t flipBoundaryEdges(
             boundary_vertices_valences[vh1][surfi]--;
             boundary_vertices_valences[vh2][surfi]++;
             boundary_vertices_valences[vh3][surfi]++;
-
-//            std::cout << "Valid boundary flip" << std::endl;
-//            CGAL::Tetrahedral_remeshing::debug::dump_c3t3(c3t3, "dump_after_flip_");
-//            nb_surface_nm_flips_done++;
           }
           else if (db == INVALID_CELL || db == INVALID_VERTEX || db == INVALID_ORIENTATION)
           {
@@ -2098,6 +2059,7 @@ void flip_edges(C3T3& c3t3,
   CGAL_USE(protect_boundaries);
   typedef typename C3T3::Triangulation       T3;
   typedef typename T3::Vertex_handle         Vertex_handle;
+  typedef typename T3::Cell_handle           Cell_handle;
   typedef typename T3::Edge                  Edge;
   typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
   typedef typename C3T3::Subdomain_index     Subdomain_index;
@@ -2105,7 +2067,8 @@ void flip_edges(C3T3& c3t3,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "Flip edges...";
   std::cout.flush();
-  std::size_t nb_flips = 0;
+  std::size_t nb_flips_in_volume = 0;
+  std::size_t nb_flips_on_surface = 0;
 #endif
 
   //const Flip_Criterion criterion = VALENCE_MIN_DH_BASED;
@@ -2125,6 +2088,13 @@ void flip_edges(C3T3& c3t3,
 //    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, visitor);
 //  //}
 
+  std::unordered_map<Vertex_handle,
+    boost::container::small_vector<Cell_handle, 64> > inc_cells;
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+  nb_flips_in_volume +=
+#endif
+    flip_all_edges(inside_edges, c3t3, inc_cells, MIN_ANGLE_BASED, cell_selector, visitor);
   if (!protect_boundaries)
   {
     typedef typename C3T3::Surface_patch_index Surface_patch_index;
@@ -2149,21 +2119,20 @@ void flip_edges(C3T3& c3t3,
   //    flipBoundaryEdges(boundary_edges, boundary_vertices_valences, VALENCE_BASED);
   //  else
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    nb_flips +=
+   nb_flips_on_surface +=
 #endif
       flipBoundaryEdges(c3t3, boundary_edges, boundary_vertices_valences,
-                        vertices_subdomain_indices, MIN_ANGLE_BASED,
+                        inc_cells,
+                        MIN_ANGLE_BASED,
                         cell_selector, visitor);
   }
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  nb_flips +=
-#endif
-    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, cell_selector, visitor);
   //}
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << " done (" << nb_flips << " flips)." << std::endl;
+  std::cout << "\nFlip edges... done ("
+    << nb_flips_on_surface << "/"
+    << nb_flips_in_volume << " surface/volume flips done)." << std::endl;
 #endif
 }
 
