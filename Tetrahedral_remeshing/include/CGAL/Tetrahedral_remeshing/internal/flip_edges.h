@@ -945,6 +945,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 
       inc_cells[ch->vertex(v)].clear();
     }
+    ch->reset_cache_validity();
   }
 
   // Update c3t3
@@ -954,6 +955,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   for (Cell_handle ch : to_remove)
   {
     treat_before_delete(ch, cell_selector, c3t3);
+    ch->reset_cache_validity();
     tr.tds().delete_cell(ch);
   }
 
@@ -1212,9 +1214,6 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
       }
     }
   }
-
-  for (Cell_handle c : tr.finite_cell_handles())
-    c->reset_cache_validity();
 
   return count;
 }
@@ -2070,6 +2069,10 @@ void flip_edges(C3T3& c3t3,
   std::size_t nb_flips_in_volume = 0;
   std::size_t nb_flips_on_surface = 0;
 #endif
+
+  for (auto c : c3t3.cells_in_complex())
+    c->reset_cache_validity();//we will use sliver_value
+                              //to store the cos_dihedral_angle
 
   //const Flip_Criterion criterion = VALENCE_MIN_DH_BASED;
 
