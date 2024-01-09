@@ -109,7 +109,7 @@ private:
                    polyhedron.planes_begin(), Normal_equation());
   }
 
-  /*! Compute the equation of the undelying plane of a facet */
+  /*! Compute the equation of the underlying plane of a facet */
   struct Plane_equation {
     template <typename Facet>
     typename Facet::Plane_3 operator()(Facet& f) {

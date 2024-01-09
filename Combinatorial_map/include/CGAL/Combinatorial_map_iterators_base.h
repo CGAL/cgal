@@ -18,7 +18,6 @@
 #include <CGAL/Compact_container_with_index.h>
 
 #include <queue>
-#include <boost/mpl/if.hpp>
 
 #include <type_traits>
 
@@ -28,7 +27,7 @@ namespace CGAL {
    * Basic classes that serve as tools for definition of iterators.
    There are 3 classes:
    *  - CMap_dart_iterator<Map,Const> is the basic generic class defining
-   *    what is an interator on darts.
+   *    what is an iterator on darts.
    *  - CMap_extend_iterator<Map,Ite,Bi> to extend the given iterator by adding
    *    the involution Bi.
    *  - CMap_non_basic_iterator<Map_,Ite> to transform the basic iterator Ite
@@ -68,24 +67,24 @@ namespace CGAL {
   class CMap_dart_iterator;
 
   template < typename Map_,bool Const>
-  class CMap_dart_iterator<Map_, Const, Tag_false>: public boost::mpl::if_c< Const,
+  class CMap_dart_iterator<Map_, Const, Tag_false>: public std::conditional_t< Const,
       typename Map_::Dart_container::const_iterator,
-      typename Map_::Dart_container::iterator>::type
+      typename Map_::Dart_container::iterator>
     //public internal::CC_iterator<typename Map_::Dart_container,Const>
   {
   public:
     typedef CMap_dart_iterator<Map_,Const> Self;
 
-    typedef typename boost::mpl::if_c< Const,
+    typedef std::conditional_t< Const,
           typename Map_::Dart_container::const_iterator,
-          typename Map_::Dart_container::iterator>::type Base;
+          typename Map_::Dart_container::iterator> Base;
     // typedef internal::CC_iterator<typename Map_::Dart_container,Const> Base;
 
-    typedef typename boost::mpl::if_c< Const,
-                                       typename Map_::Dart_const_descriptor,
-                                       typename Map_::Dart_descriptor>::type
+    typedef std::conditional_t< Const,
+                                typename Map_::Dart_const_descriptor,
+                                typename Map_::Dart_descriptor>
                                      Dart_descriptor;
-    typedef typename boost::mpl::if_c< Const, const Map_, Map_>::type Map;
+    typedef std::conditional_t< Const, const Map_, Map_> Map;
 
     typedef std::input_iterator_tag iterator_category;
     typedef typename Base::value_type value_type;
@@ -180,25 +179,24 @@ namespace CGAL {
 
   template < typename Map_,bool Const >
   class CMap_dart_iterator<Map_, Const, Tag_true>:
-      /*public boost::mpl::if_c< Const,
+      /*public std::conditional_t< Const,
       typename Map_::Dart_container::const_iterator,
-      typename Map_::Dart_container::iterator>::type*/
+      typename Map_::Dart_container::iterator>*/
     public internal::CC_iterator_with_index<typename Map_::Dart_container,Const>
   {
   public:
     typedef CMap_dart_iterator<Map_,Const> Self;
 
-    /*typedef typename boost::mpl::if_c< Const,
+    /*typedef std::conditional_t< Const,
           typename Map_::Dart_container::const_iterator,
-          typename Map_::Dart_container::iterator>::type Base;*/
+          typename Map_::Dart_container::iterator> Base;*/
     typedef internal::CC_iterator_with_index<typename Map_::Dart_container,Const> Base;
 
-    typedef typename boost::mpl::if_c< Const,
-                                       typename Map_::Dart_const_descriptor,
-                                       typename Map_::Dart_descriptor>::type
+    typedef std::conditional_t< Const,
+                                typename Map_::Dart_const_descriptor,
+                                typename Map_::Dart_descriptor>
                                      Dart_descriptor;
-    typedef typename boost::mpl::if_c< Const, const Map_,
-                                       Map_>::type Map;
+    typedef std::conditional_t< Const, const Map_, Map_> Map;
 
     typedef std::input_iterator_tag iterator_category;
     typedef typename Base::value_type value_type;
@@ -305,8 +303,8 @@ namespace CGAL {
 
     typedef typename Map::size_type size_type;
 
-    CGAL_static_assertion( (Bi<=Map::dimension &&
-                            std::is_same<Ite_has_stack,Tag_false>::value) );
+    static_assert(Bi<=Map::dimension &&
+                            std::is_same<Ite_has_stack,Tag_false>::value);
 
   public:
     /// Main constructor.
@@ -493,8 +491,8 @@ namespace CGAL {
 
     typedef typename Map::size_type size_type;
 
-    CGAL_static_assertion( (std::is_same<typename Base::Basic_iterator,
-                            Tag_true>::value) );
+    static_assert(std::is_same<typename Base::Basic_iterator,
+                            Tag_true>::value);
 
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_descriptor adart1):
@@ -579,8 +577,8 @@ namespace CGAL {
     /// True iff this iterator is basic
     typedef Tag_false Basic_iterator;
 
-    CGAL_static_assertion( (std::is_same<typename Base::Basic_iterator,
-                            Tag_true>::value) );
+    static_assert(std::is_same<typename Base::Basic_iterator,
+                            Tag_true>::value);
 
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_descriptor adart):

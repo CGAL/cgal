@@ -80,6 +80,7 @@ struct Triangulation_utils_3
     CGAL_precondition( ( i >= 0 && i < 4 ) &&
                        ( j >= 0 && j < 4 ) &&
                        ( i != j ) );
+    CGAL_assume(i!=j);
     return tab_next_around_edge[i][j];
   }
 
@@ -87,7 +88,7 @@ struct Triangulation_utils_3
   static int vertex_triple_index(const int i, const int j)
   {
     // indexes of the  jth vertex  of the facet of a cell
-    // opposite to vertx i
+    // opposite to vertex i
       CGAL_precondition( ( i >= 0 && i < 4 ) &&
                          ( j >= 0 && j < 3 ) );
     return tab_vertex_triple_index[i][j];

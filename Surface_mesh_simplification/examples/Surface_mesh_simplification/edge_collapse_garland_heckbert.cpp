@@ -6,7 +6,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <chrono>
 #include <fstream>
@@ -58,7 +58,7 @@ void collapse_gh(Surface_mesh& mesh,
 }
 
 // Usage:
-// ./command [input] [ratio] [policy] [outpout]
+// ./command [input] [ratio] [policy] [output]
 // policy can be "cp" (classic plane), "ct" (classic triangle), "pp" (probabilistic plane), "pt" (probabilistic triangle)
 int main(int argc, char** argv)
 {

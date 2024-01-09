@@ -173,7 +173,7 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
 
   The important invariant to be preserved by all methods is that
   the coefficient sequence does not contain leading zero coefficients
-  (where leading means at the high-degree end), with the excpetion that
+  (where leading means at the high-degree end), with the exception that
   the zero polynomial is represented by a single zero coefficient.
   An empty coefficient sequence denotes an undefined value.
 
@@ -486,9 +486,9 @@ public:
       // and NT would be changed by NTX
       typedef typename Fraction_traits<NTX>::Is_fraction Is_fraction;
       typedef typename Coercion_traits<NT,NTX>::Type Type;
-      typedef typename ::boost::mpl::if_c<
-      ::std::is_same<Type,NT>::value, Is_fraction, CGAL::Tag_false
-        >::type If_decomposable_AND_Type_equals_NT;
+      typedef std::conditional_t<
+      std::is_same_v<Type,NT>, Is_fraction, CGAL::Tag_false
+        > If_decomposable_AND_Type_equals_NT;
 
       return sign_at_(x,If_decomposable_AND_Type_equals_NT());
     }
@@ -545,8 +545,8 @@ public:
      *  Also available as non-member function.
      */
     CGAL::Sign sign() const {
-//        CGAL_static_assertion( (std::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
-//                              CGAL::Tag_true>::value) );
+//        static_assert(std::is_same< typename Real_embeddable_traits<NT>::Is_real_embeddable,
+//                              CGAL::Tag_true>::value);
       return CGAL::sign(lcoeff());
     }
 

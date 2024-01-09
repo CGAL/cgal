@@ -58,12 +58,12 @@ protected:
                                      bool closed = true);
 
 
-  // mousePressEvent returns true iff the event is consummed
+  // mousePressEvent returns true iff the event is consumed
   bool mousePressEvent(QGraphicsSceneMouseEvent *event);
 
   void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
-  // keyPressEvent returns true iff the event is consummed
+  // keyPressEvent returns true iff the event is consumed
   bool keyPressEvent(QKeyEvent *event);
 
   void rubberbands(const QPointF& p);

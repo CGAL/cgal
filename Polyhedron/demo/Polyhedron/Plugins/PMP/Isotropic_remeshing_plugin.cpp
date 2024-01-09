@@ -14,6 +14,7 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/Adaptive_sizing_field.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/utility.h>
 #include <CGAL/property_map.h>
@@ -122,8 +123,8 @@ void split_long_duplicated_edge(const HedgeRange& hedge_range,
 {
   typedef typename HedgeRange::value_type Pair;
   typedef typename Pair::first_type halfedge_descriptor;
-  typedef typename boost::remove_pointer<
-    typename Pair::second_type>::type TriangleMesh;
+  typedef std::remove_pointer_t<
+    typename Pair::second_type> TriangleMesh;
   typedef typename boost::property_map<TriangleMesh,
     CGAL::vertex_point_t>::type PointPMap;
   typedef typename boost::property_traits<PointPMap>::value_type Point_3;
@@ -178,12 +179,13 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef std::unordered_set<edge_descriptor>    Edge_set;
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
-  struct Visitor
+  struct Selection_updater_visitor
+    : public CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor
   {
     typedef typename Scene_polyhedron_selection_item::Selection_set_facet Container;
     Container& faces;
 
-    Visitor(Container& container)
+    Selection_updater_visitor(Container& container)
       : faces(container)
     {}
 
@@ -227,7 +229,7 @@ public:
 
     bool ok(true), found_poly(false);
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if (!qobject_cast<Scene_facegraph_item*>(scene->item(index)))
         ok = false;
@@ -292,9 +294,14 @@ public:
       PMP::triangulate_face(f_and_p.first, *f_and_p.second);
   }
 
-  void do_split_edges(Scene_polyhedron_selection_item* selection_item,
+  void do_split_edges(const int edge_sizing_type,
+                      Scene_polyhedron_selection_item* selection_item,
                       SMesh& pmesh,
-                      double target_length)
+                      const double target_length,
+                      const double error_tol,
+                      const double min_length,
+                      const double max_length,
+                      const double curv_ball_r)
   {
     std::vector<edge_descriptor> p_edges;
     for(edge_descriptor e : edges(pmesh))
@@ -312,12 +319,33 @@ public:
       }
     }
     if (!p_edges.empty())
-      CGAL::Polygon_mesh_processing::split_long_edges(
-            p_edges
-            , target_length
-            , *selection_item->polyhedron()
-            , CGAL::parameters::geom_traits(EPICK())
+    {
+      if (edge_sizing_type == 0)
+      {
+        CGAL::Polygon_mesh_processing::split_long_edges(
+              p_edges
+              , target_length
+              , *selection_item->polyhedron()
+              , CGAL::parameters::geom_traits(EPICK())
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+      }
+      else if (edge_sizing_type == 1)
+      {
+        std::pair<double, double> edge_min_max{min_length, max_length};
+        CGAL::Polygon_mesh_processing::Adaptive_sizing_field<FaceGraph> adaptive_sizing(
+              error_tol
+              , edge_min_max
+              , faces(*selection_item->polyhedron())
+              , *selection_item->polyhedron()
+              , CGAL::parameters::ball_radius(curv_ball_r));
+        CGAL::Polygon_mesh_processing::split_long_edges(
+          p_edges
+          , adaptive_sizing
+          , *selection_item->polyhedron()
+          , CGAL::parameters::geom_traits(EPICK())
             .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+      }
+    }
     else
       std::cout << "No selected or boundary edges to be split" << std::endl;
   }
@@ -347,8 +375,7 @@ public Q_SLOTS:
       }
       // Create dialog box
       QDialog dialog(mw);
-      Ui::Isotropic_remeshing_dialog ui
-        = remeshing_dialog(&dialog, poly_item, selection_item);
+      initialize_remeshing_dialog(&dialog, poly_item, selection_item);
 
       // Get values
       int i = dialog.exec();
@@ -357,13 +384,19 @@ public Q_SLOTS:
         std::cout << "Remeshing aborted" << std::endl;
         return;
       }
+
+      int edge_sizing_type = ui.edgeSizing_type_combo_box->currentIndex();
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
       bool preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
       double target_length = ui.edgeLength_dspinbox->value();
+      double error_tol = ui.errorTol_edit->value();
+      double min_length = ui.minEdgeLength_edit->value();
+      double max_length = ui.maxEdgeLength_edit->value();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
       unsigned int nb_smooth = ui.nbSmoothing_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
       bool smooth_features = ui.smooth1D_checkbox->isChecked();
+      double curv_ball_r = ui.curvSmoothBallR_edit->value();
 
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -395,7 +428,8 @@ public Q_SLOTS:
       {
         if (edges_only)
         {
-          do_split_edges(selection_item, pmesh, target_length);
+          do_split_edges(edge_sizing_type, selection_item, pmesh,
+                         target_length, error_tol, min_length, max_length, curv_ball_r);
         }
         else //not edges_only
         {
@@ -403,9 +437,8 @@ public Q_SLOTS:
                !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                  *selection_item->polyhedron(),
                  selection_item->constrained_edges_pmap(),
-                 get(CGAL::vertex_point, *selection_item->polyhedron()),
                  CGAL::Constant_property_map<face_descriptor, std::size_t>(1),
-                 4. / 3. * target_length))
+                 CGAL::Polygon_mesh_processing::Uniform_sizing_field( 4. / 3. * target_length, pmesh)))
             {
               QApplication::restoreOverrideCursor();
               //If facets are selected, splitting edges will add facets that won't be selected, and it will mess up the rest.
@@ -431,7 +464,8 @@ public Q_SLOTS:
               }
               else
               {
-                do_split_edges(selection_item, pmesh, target_length);
+                do_split_edges(edge_sizing_type, selection_item, pmesh,
+                               target_length, error_tol, min_length, max_length, curv_ball_r);
               }
             }
 
@@ -456,28 +490,62 @@ public Q_SLOTS:
                 }
               }
 
-              if (fpmap_valid)
-                CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
-                   , target_length
-                   , *selection_item->polyhedron()
-                   , CGAL::parameters::number_of_iterations(nb_iter)
-                   .protect_constraints(protect)
-                   .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-                   .relax_constraints(smooth_features)
-                   .number_of_relaxation_steps(nb_smooth)
-                   .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-                   .face_patch_map(fpmap));
-              else
-                CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
-                   , target_length
-                   , *selection_item->polyhedron()
-                   , CGAL::parameters::number_of_iterations(nb_iter)
-                   .protect_constraints(protect)
-                   .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-                   .relax_constraints(smooth_features)
-                   .number_of_relaxation_steps(nb_smooth)
-                   .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-                                                                   );
+              if (edge_sizing_type == 0)
+              {
+                if (fpmap_valid)
+                  CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
+                     , target_length
+                     , *selection_item->polyhedron()
+                     , CGAL::parameters::number_of_iterations(nb_iter)
+                     .protect_constraints(protect)
+                     .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .relax_constraints(smooth_features)
+                     .number_of_relaxation_steps(nb_smooth)
+                     .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                     .face_patch_map(fpmap));
+                else
+                  CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
+                     , target_length
+                     , *selection_item->polyhedron()
+                     , CGAL::parameters::number_of_iterations(nb_iter)
+                     .protect_constraints(protect)
+                     .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .relax_constraints(smooth_features)
+                     .number_of_relaxation_steps(nb_smooth)
+                     .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                                                                     );
+              }
+              else if (edge_sizing_type == 1)
+              {
+                std::pair<double, double> edge_min_max{min_length, max_length};
+                PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
+                                                               , edge_min_max
+                                                               , faces(*selection_item->polyhedron())
+                                                               , *selection_item->polyhedron()
+                                                               , CGAL::parameters::ball_radius(curv_ball_r));
+                if (fpmap_valid)
+                  CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
+                     , adaptive_sizing_field
+                     , *selection_item->polyhedron()
+                     , CGAL::parameters::number_of_iterations(nb_iter)
+                     .protect_constraints(protect)
+                     .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .relax_constraints(smooth_features)
+                     .number_of_relaxation_steps(nb_smooth)
+                     .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                     .face_patch_map(fpmap));
+                else
+                  CGAL::Polygon_mesh_processing::isotropic_remeshing(faces(*selection_item->polyhedron())
+                     , adaptive_sizing_field
+                     , *selection_item->polyhedron()
+                     , CGAL::parameters::number_of_iterations(nb_iter)
+                     .protect_constraints(protect)
+                     .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .relax_constraints(smooth_features)
+                     .number_of_relaxation_steps(nb_smooth)
+                     .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                                                                     );
+              }
             }
             else //selected_facets not empty
             {
@@ -493,7 +561,7 @@ public Q_SLOTS:
                        (QMessageBox::Ok | QMessageBox::Cancel),
                        QMessageBox::Ok))
                   {
-                    Visitor visitor(selection_item->selected_facets);
+                    Selection_updater_visitor visitor(selection_item->selected_facets);
                     CGAL::Polygon_mesh_processing::triangulate_faces(selection_item->selected_facets,
                       pmesh,
                       CGAL::parameters::visitor(visitor));
@@ -506,27 +574,62 @@ public Q_SLOTS:
                 }
               }
 
-              if (fpmap_valid)
-                CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
-                  , target_length
-                  , *selection_item->polyhedron()
-                  , CGAL::parameters::number_of_iterations(nb_iter)
-                  .protect_constraints(protect)
-                  .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-                  .relax_constraints(smooth_features)
-                  .number_of_relaxation_steps(nb_smooth)
-                  .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-                  .face_patch_map(fpmap));
-              else
-                CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
-                  , target_length
-                  , *selection_item->polyhedron()
-                  , CGAL::parameters::number_of_iterations(nb_iter)
-                  .protect_constraints(protect)
-                  .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-                  .relax_constraints(smooth_features)
-                  .number_of_relaxation_steps(nb_smooth)
-                  .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
+              if (edge_sizing_type == 0)
+              {
+                if (fpmap_valid)
+                  CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
+                     , target_length
+                     , *selection_item->polyhedron()
+                     , CGAL::parameters::number_of_iterations(nb_iter)
+                     .protect_constraints(protect)
+                     .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .relax_constraints(smooth_features)
+                     .number_of_relaxation_steps(nb_smooth)
+                     .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                     .face_patch_map(fpmap));
+                else
+                  CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
+                     , target_length
+                     , *selection_item->polyhedron()
+                     , CGAL::parameters::number_of_iterations(nb_iter)
+                     .protect_constraints(protect)
+                     .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .relax_constraints(smooth_features)
+                     .number_of_relaxation_steps(nb_smooth)
+                     .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                                                                     );
+              }
+              else if (edge_sizing_type == 1)
+              {
+                std::pair<double, double> edge_min_max{min_length, max_length};
+                PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
+                                                               , edge_min_max
+                                                               , faces(*selection_item->polyhedron())
+                                                               , *selection_item->polyhedron()
+                                                               , CGAL::parameters::ball_radius(curv_ball_r));
+                if (fpmap_valid)
+                  CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
+                     , adaptive_sizing_field
+                     , *selection_item->polyhedron()
+                     , CGAL::parameters::number_of_iterations(nb_iter)
+                     .protect_constraints(protect)
+                     .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .relax_constraints(smooth_features)
+                     .number_of_relaxation_steps(nb_smooth)
+                     .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                     .face_patch_map(fpmap));
+                else
+                  CGAL::Polygon_mesh_processing::isotropic_remeshing(selection_item->selected_facets
+                     , adaptive_sizing_field
+                     , *selection_item->polyhedron()
+                     , CGAL::parameters::number_of_iterations(nb_iter)
+                     .protect_constraints(protect)
+                     .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                     .relax_constraints(smooth_features)
+                     .number_of_relaxation_steps(nb_smooth)
+                     .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+                                                                     );
+              }
             }
         }
 
@@ -563,6 +666,9 @@ public Q_SLOTS:
           if (!edges_to_split.empty())
           {
             if (fpmap_valid)
+            {
+              if (edge_sizing_type == 0)
+              {
               CGAL::Polygon_mesh_processing::split_long_edges(
                 edges_to_split
                 , target_length
@@ -570,13 +676,51 @@ public Q_SLOTS:
                 , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif)
                 . face_patch_map(fpmap));
+              }
+              else if (edge_sizing_type == 1)
+              {
+                std::pair<double, double> edge_min_max{min_length, max_length};
+                PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
+                                                                , edge_min_max
+                                                                , faces(pmesh)
+                                                                , pmesh
+                                                                , CGAL::parameters::ball_radius(curv_ball_r));
+                CGAL::Polygon_mesh_processing::split_long_edges(
+                  edges_to_split
+                  , target_length
+                  , pmesh
+                  , CGAL::parameters::geom_traits(EPICK())
+                  . edge_is_constrained_map(eif)
+                  . face_patch_map(fpmap));
+              }
+            }
             else
+            {
+              if (edge_sizing_type == 0)
+              {
               CGAL::Polygon_mesh_processing::split_long_edges(
                 edges_to_split
                 , target_length
                 , pmesh
                 , CGAL::parameters::geom_traits(EPICK())
                 . edge_is_constrained_map(eif));
+              }
+              else if (edge_sizing_type == 1)
+              {
+                std::pair<double, double> edge_min_max{min_length, max_length};
+                PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
+                                                                             , edge_min_max
+                                                                             , faces(pmesh)
+                                                                             , pmesh
+                                                                             , CGAL::parameters::ball_radius(curv_ball_r));
+                CGAL::Polygon_mesh_processing::split_long_edges(
+                  edges_to_split
+                  , adaptive_sizing_field
+                  , pmesh
+                  , CGAL::parameters::geom_traits(EPICK())
+                  . edge_is_constrained_map(eif));
+              }
+            }
           }
           else
             std::cout << "No border to be split" << std::endl;
@@ -603,9 +747,8 @@ public Q_SLOTS:
              !CGAL::Polygon_mesh_processing::internal::constraints_are_short_enough(
                pmesh,
                ecm,
-               get(CGAL::vertex_point, pmesh),
                CGAL::Constant_property_map<face_descriptor, std::size_t>(1),
-               4. / 3. * target_length))
+               CGAL::Polygon_mesh_processing::Uniform_sizing_field(4. / 3. * target_length, pmesh)))
           {
             QApplication::restoreOverrideCursor();
             QMessageBox::warning(mw, tr("Error"),
@@ -633,10 +776,42 @@ public Q_SLOTS:
             }
           }
 
-          if (fpmap_valid)
+          if (edge_sizing_type == 0)
+          {
+            if (fpmap_valid)
+              CGAL::Polygon_mesh_processing::isotropic_remeshing(
+                   faces(*poly_item->polyhedron())
+                 , target_length
+                 , *poly_item->polyhedron()
+                 , CGAL::parameters::number_of_iterations(nb_iter)
+                 .protect_constraints(protect)
+                 .number_of_relaxation_steps(nb_smooth)
+                 .edge_is_constrained_map(ecm)
+                 .relax_constraints(smooth_features)
+                 .face_patch_map(fpmap));
+            else
+              CGAL::Polygon_mesh_processing::isotropic_remeshing(
+                   faces(*poly_item->polyhedron())
+                 , target_length
+                 , *poly_item->polyhedron()
+                 , CGAL::parameters::number_of_iterations(nb_iter)
+                 .protect_constraints(protect)
+                 .number_of_relaxation_steps(nb_smooth)
+                 .edge_is_constrained_map(ecm)
+                 .relax_constraints(smooth_features));
+          }
+          else if (edge_sizing_type == 1)
+          {
+            std::pair<double, double> edge_min_max{min_length, max_length};
+            PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol
+                    , edge_min_max
+                    , faces(*poly_item->polyhedron())
+                    , *poly_item->polyhedron()
+                    , CGAL::parameters::ball_radius(curv_ball_r));
+            if (fpmap_valid)
             CGAL::Polygon_mesh_processing::isotropic_remeshing(
                  faces(*poly_item->polyhedron())
-               , target_length
+               , adaptive_sizing_field
                , *poly_item->polyhedron()
                , CGAL::parameters::number_of_iterations(nb_iter)
                .protect_constraints(protect)
@@ -644,16 +819,17 @@ public Q_SLOTS:
                .edge_is_constrained_map(ecm)
                .relax_constraints(smooth_features)
                .face_patch_map(fpmap));
-          else
-            CGAL::Polygon_mesh_processing::isotropic_remeshing(
-                 faces(*poly_item->polyhedron())
-               , target_length
-               , *poly_item->polyhedron()
-               , CGAL::parameters::number_of_iterations(nb_iter)
-               .protect_constraints(protect)
-               .number_of_relaxation_steps(nb_smooth)
-               .edge_is_constrained_map(ecm)
-               .relax_constraints(smooth_features));
+            else
+              CGAL::Polygon_mesh_processing::isotropic_remeshing(
+                   faces(*poly_item->polyhedron())
+                 , adaptive_sizing_field
+                 , *poly_item->polyhedron()
+                 , CGAL::parameters::number_of_iterations(nb_iter)
+                 .protect_constraints(protect)
+                 .number_of_relaxation_steps(nb_smooth)
+                 .edge_is_constrained_map(ecm)
+                 .relax_constraints(smooth_features));
+          }
 
           //recollect sharp edges
           for(edge_descriptor e : edges(pmesh))
@@ -686,7 +862,11 @@ public Q_SLOTS:
   {
     // Remeshing parameters
     bool edges_only = false, preserve_duplicates = false;
+    int edge_sizing_type = 0;
     double target_length = 0.;
+    double error_tol = 0.;
+    double min_length = 0.;
+    double max_length = 0.;
     unsigned int nb_iter = 1;
     bool protect = false;
     bool smooth_features = true;
@@ -710,7 +890,7 @@ public Q_SLOTS:
         if (target_length == 0.)//parameters have not been set yet
         {
         QDialog dialog(mw);
-        Ui::Isotropic_remeshing_dialog ui = remeshing_dialog(&dialog, poly_item);
+        initialize_remeshing_dialog(&dialog, poly_item);
         ui.objectName->setText(QString::number(scene->selectionIndices().size())
           .append(QString(" items to be remeshed")));
         int i = dialog.exec();
@@ -722,7 +902,11 @@ public Q_SLOTS:
 
         edges_only = ui.splitEdgesOnly_checkbox->isChecked();
         preserve_duplicates = ui.preserveDuplicates_checkbox->isChecked();
+        edge_sizing_type = ui.edgeSizing_type_combo_box->currentIndex();
         target_length = ui.edgeLength_dspinbox->value();
+        error_tol = ui.errorTol_edit->value();
+        min_length = ui.minEdgeLength_edit->value();
+        max_length = ui.maxEdgeLength_edit->value();
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
         smooth_features = ui.smooth1D_checkbox->isChecked();
@@ -778,14 +962,18 @@ public Q_SLOTS:
       tbb::parallel_for(
         tbb::blocked_range<std::size_t>(0, selection.size()),
         Remesh_polyhedron_item_for_parallel_for<Remesh_polyhedron_item>(
-                                                                        selection, edges_to_protect, edges_only, target_length, nb_iter, protect, smooth_features));
+                                                                        selection, edges_to_protect, edges_only
+                                                                      , edge_sizing_type, target_length, error_tol
+                                                                      , min_length , max_length, nb_iter
+                                                                      , protect, smooth_features)
+                                                                        );
 
     total_time = time.elapsed();
 
 #else
 
-    Remesh_polyhedron_item remesher(edges_only,
-      target_length, nb_iter, protect, smooth_features);
+    Remesh_polyhedron_item remesher(edges_only, edge_sizing_type,
+      target_length, error_tol, min_length, max_length, nb_iter, protect, smooth_features);
     for(Scene_facegraph_item* poly_item : selection)
     {
       QElapsedTimer time;
@@ -822,11 +1010,16 @@ private:
     typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
     typedef boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
 
+    int edge_sizing_type_;
     bool edges_only_;
     double target_length_;
+    double error_tol_;
+    double min_length_;
+    double max_length_;
     unsigned int nb_iter_;
     bool protect_;
     bool smooth_features_;
+    double curv_ball_r_;
 
   protected:
     void remesh(Scene_facegraph_item* poly_item,
@@ -845,25 +1038,62 @@ private:
         for(halfedge_descriptor h : border)
           border_edges.push_back(edge(h, *poly_item->polyhedron()));
 
+        if (edge_sizing_type_ == 0)
+        {
         CGAL::Polygon_mesh_processing::split_long_edges(
             border_edges
           , target_length_
           , *poly_item->polyhedron());
+        }
+        else if (edge_sizing_type_ == 1)
+        {
+          std::pair<double, double> edge_min_max{min_length_, max_length_};
+          PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol_
+                                                                     , edge_min_max
+                                                                     , faces(*poly_item->polyhedron())
+                                                                     , *poly_item->polyhedron()
+                                                                     , CGAL::parameters::ball_radius(curv_ball_r_));
+          CGAL::Polygon_mesh_processing::split_long_edges(
+            border_edges
+          , target_length_
+          , *poly_item->polyhedron());
+        }
       }
       else
       {
         std::cout << "Isotropic remeshing of "
           << poly_item->name().toStdString() << " started..." << std::endl;
         Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
-        CGAL::Polygon_mesh_processing::isotropic_remeshing(
-            faces(*poly_item->polyhedron())
-          , target_length_
-          , *poly_item->polyhedron()
-          , CGAL::parameters::number_of_iterations(nb_iter_)
-          .protect_constraints(protect_)
-          .edge_is_constrained_map(ecm)
-          .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
-          .relax_constraints(smooth_features_));
+        if (edge_sizing_type_ == 0)
+        {
+          CGAL::Polygon_mesh_processing::isotropic_remeshing(
+              faces(*poly_item->polyhedron())
+            , target_length_
+            , *poly_item->polyhedron()
+            , CGAL::parameters::number_of_iterations(nb_iter_)
+            .protect_constraints(protect_)
+            .edge_is_constrained_map(ecm)
+            .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
+            .relax_constraints(smooth_features_));
+        }
+        else
+        {
+          std::pair<double, double> edge_min_max{min_length_, max_length_};
+          PMP::Adaptive_sizing_field<Face_graph> adaptive_sizing_field(error_tol_
+                                                         , edge_min_max
+                                                         , faces(*poly_item->polyhedron())
+                                                         , *poly_item->polyhedron()
+                                                         , CGAL::parameters::ball_radius(curv_ball_r_));
+          CGAL::Polygon_mesh_processing::isotropic_remeshing(
+              faces(*poly_item->polyhedron())
+            , target_length_
+            , *poly_item->polyhedron()
+            , CGAL::parameters::number_of_iterations(nb_iter_)
+            .protect_constraints(protect_)
+            .edge_is_constrained_map(ecm)
+            .face_patch_map(get(CGAL::face_patch_id_t<int>(), *poly_item->polyhedron()))
+            .relax_constraints(smooth_features_));
+        }
         std::cout << "Isotropic remeshing of "
           << poly_item->name().toStdString() << " done." << std::endl;
       }
@@ -872,20 +1102,32 @@ private:
   public:
     Remesh_polyhedron_item(
       const bool edges_only,
+      const int edge_sizing_type,
       const double target_length,
+      const double error_tol,
+      const double min_length,
+      const double max_length,
       const unsigned int nb_iter,
       const bool protect,
       const bool smooth_features)
-      : edges_only_(edges_only)
+      : edge_sizing_type_(edge_sizing_type)
+      , edges_only_(edges_only)
       , target_length_(target_length)
+      , error_tol_(error_tol)
+      , min_length_(min_length)
+      , max_length_(max_length)
       , nb_iter_(nb_iter)
       , protect_(protect)
       , smooth_features_(smooth_features)
     {}
 
     Remesh_polyhedron_item(const Remesh_polyhedron_item& remesh)
-      : edges_only_(remesh.edges_only_)
+      : edge_sizing_type_(remesh.edge_sizing_type_)
+      , edges_only_(remesh.edges_only_)
       , target_length_(remesh.target_length_)
+      , error_tol_(remesh.error_tol_)
+      , min_length_(remesh.min_length_)
+      , max_length_(remesh.max_length_)
       , nb_iter_(remesh.nb_iter_)
       , protect_(remesh.protect_)
       , smooth_features_(remesh.smooth_features_)
@@ -912,11 +1154,17 @@ private:
       const std::vector<Scene_facegraph_item*>& selection,
       std::map<FaceGraph*,Edge_set >& edges_to_protect,
       const bool edges_only,
+      const int edge_sizing_type,
       const double target_length,
+      const double error_tol,
+      const double min_length,
+      const double max_length,
       const unsigned int nb_iter,
       const bool protect,
       const bool smooth_features)
-      : RemeshFunctor(edges_only, target_length, nb_iter, protect, smooth_features)
+      : RemeshFunctor(edges_only, edge_sizing_type, target_length
+                    , error_tol, min_length, max_length
+                    , nb_iter, protect, smooth_features)
       , selection_(selection), edges_to_protect_(edges_to_protect)
     {}
 
@@ -937,31 +1185,124 @@ private:
   };
 #endif
 
-  Ui::Isotropic_remeshing_dialog
-  remeshing_dialog(QDialog* dialog,
-                   Scene_facegraph_item* poly_item,
-                   Scene_polyhedron_selection_item* selection_item = nullptr)
+public Q_SLOTS:
+  void update_after_protect_checkbox_click()
   {
-    Ui::Isotropic_remeshing_dialog ui;
+    if(ui.protect_checkbox->isChecked())
+    {
+      ui.smooth1D_label->setEnabled(false);
+      ui.smooth1D_checkbox->setEnabled(false);
+      ui.smooth1D_checkbox->setChecked(false);
+    }
+    else
+    {
+      ui.smooth1D_label->setEnabled(true);
+      ui.smooth1D_checkbox->setEnabled(true);
+    }
+  }
+
+  void update_after_splitEdgesOnly_click()
+  {
+    if(ui.splitEdgesOnly_checkbox->isChecked())
+    {
+      ui.nbIterations_label->setEnabled(false);
+      ui.nbIterations_spinbox->setEnabled(false);
+      ui.nbSmoothing_label->setEnabled(false);
+      ui.nbSmoothing_spinbox->setEnabled(false);
+
+      ui.protect_label->setEnabled(false);
+      ui.protect_checkbox->setEnabled(false);
+      ui.protect_checkbox->setChecked(false);
+
+      ui.smooth1D_label->setEnabled(false);
+      ui.smooth1D_checkbox->setEnabled(false);
+      ui.smooth1D_checkbox->setChecked(false);
+    }
+    else
+    {
+      ui.nbIterations_label->setEnabled(true);
+      ui.nbIterations_spinbox->setEnabled(true);
+      ui.nbSmoothing_label->setEnabled(true);
+      ui.nbSmoothing_spinbox->setEnabled(true);
+
+      ui.protect_label->setEnabled(true);
+      ui.protect_checkbox->setEnabled(true);
+
+      ui.smooth1D_label->setEnabled(true);
+      ui.smooth1D_checkbox->setEnabled(true);
+    }
+  }
+
+  void on_edgeSizing_type_combo_box_changed(int index)
+  {
+    if (index == 0)
+    {
+      ui.edgeLength_label->show();
+      ui.edgeLength_dspinbox->show();
+      ui.errorTol_label->hide();
+      ui.errorTol_edit->hide();
+      ui.minEdgeLength_label->hide();
+      ui.minEdgeLength_edit->hide();
+      ui.maxEdgeLength_label->hide();
+      ui.maxEdgeLength_edit->hide();
+      ui.curvSmooth_checkbox->hide();
+      ui.curvSmooth_label->hide();
+      ui.curvSmoothBallR_edit->hide();
+      ui.curvSmoothBallR_label->hide();
+    }
+    else if (index == 1)
+    {
+      ui.edgeLength_label->hide();
+      ui.edgeLength_dspinbox->hide();
+      ui.errorTol_label->show();
+      ui.errorTol_edit->show();
+      ui.minEdgeLength_label->show();
+      ui.minEdgeLength_edit->show();
+      ui.maxEdgeLength_label->show();
+      ui.maxEdgeLength_edit->show();
+      ui.curvSmooth_checkbox->show();
+      ui.curvSmooth_label->show();
+      ui.curvSmoothBallR_edit->show();
+      ui.curvSmoothBallR_label->show();
+    }
+  }
+
+  void update_after_curvSmooth_click()
+  {
+    if (ui.curvSmooth_checkbox->isChecked())
+    {
+      ui.curvSmoothBallR_label->setEnabled(true);
+      ui.curvSmoothBallR_edit->setEnabled(true);
+    }
+    else
+    {
+      ui.curvSmoothBallR_label->setEnabled(false);
+      ui.curvSmoothBallR_edit->setValue(-1);
+      ui.curvSmoothBallR_edit->setEnabled(false);
+    }
+  }
+
+public:
+  void
+  initialize_remeshing_dialog(QDialog* dialog,
+                              Scene_facegraph_item* poly_item,
+                              Scene_polyhedron_selection_item* selection_item = nullptr)
+  {
     ui.setupUi(dialog);
     connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
     connect(ui.buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
 
     //connect checkbox to spinbox
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.protect_checkbox, SLOT(setDisabled(bool)));
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
-    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-            ui.nbSmoothing_spinbox, SLOT(setDisabled(bool)));
-    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
-            ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
     connect(ui.preserveDuplicates_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setChecked(bool)));
     connect(ui.preserveDuplicates_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setDisabled(bool)));
+
+    connect(ui.protect_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_protect_checkbox_click()));
+    connect(ui.splitEdgesOnly_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_splitEdgesOnly_click()));
+    connect(ui.edgeSizing_type_combo_box, SIGNAL(currentIndexChanged(int)),
+      this, SLOT(on_edgeSizing_type_combo_box_changed(int)));
+    connect(ui.curvSmooth_checkbox, SIGNAL(clicked(bool)), this, SLOT(update_after_curvSmooth_click()));
 
     //Set default parameters
     Scene_interface::Bbox bbox = poly_item != nullptr ? poly_item->bbox()
@@ -983,19 +1324,34 @@ private:
 
 
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
+    ui.errorTol_edit->setValue(0.001 * diago_length);
+    ui.minEdgeLength_edit->setValue(0.001 * diago_length);
+    ui.maxEdgeLength_edit->setValue(0.5 * diago_length);
 
-    std::ostringstream oss;
-    oss << "Diagonal length of the Bbox of the selection to remesh is ";
-    oss << diago_length << "." << std::endl;
-    oss << "Default is 5% of it" << std::endl;
-    ui.edgeLength_dspinbox->setToolTip(QString::fromStdString(oss.str()));
+    std::string diag_general_info = "Diagonal length of the Bbox of the selection to remesh is "
+                                    + std::to_string(diago_length) + ".\n";
+    std::string specific_info;
+    specific_info = "Default is 5% of it\n";
+    ui.edgeLength_dspinbox->setToolTip(QString::fromStdString(diag_general_info + specific_info));
+    specific_info = "Default is 0.1% of it\n";
+    ui.errorTol_edit->setToolTip(QString::fromStdString(diag_general_info + specific_info));
+    specific_info = "Default is 0.1% of it\n";
+    ui.minEdgeLength_edit->setToolTip(QString::fromStdString(diag_general_info + specific_info));
+    specific_info = "Default is 50% of it\n";
+    ui.maxEdgeLength_edit->setToolTip(QString::fromStdString(diag_general_info + specific_info));
 
     ui.nbIterations_spinbox->setSingleStep(1);
     ui.nbIterations_spinbox->setRange(1/*min*/, 1000/*max*/);
     ui.nbIterations_spinbox->setValue(1);
 
+    ui.edgeSizing_type_combo_box->setCurrentIndex(0);
+    on_edgeSizing_type_combo_box_changed(0);
     ui.protect_checkbox->setChecked(false);
     ui.smooth1D_checkbox->setChecked(true);
+    ui.curvSmooth_checkbox->setChecked(false);
+    ui.curvSmoothBallR_label->setEnabled(false);
+    ui.curvSmoothBallR_edit->setEnabled(false);
+    ui.curvSmoothBallR_edit->setValue(-1);
 
     if (nullptr != selection_item)
     {
@@ -1003,14 +1359,11 @@ private:
       ui.preserveDuplicates_checkbox->setDisabled(true);
       ui.preserveDuplicates_checkbox->setChecked(false);
     }
-
-    return ui;
   }
-
 
 private:
   QAction* actionIsotropicRemeshing_;
-
+  Ui::Isotropic_remeshing_dialog ui;
 }; // end Polyhedron_demo_isotropic_remeshing_plugin
 
 #include "Isotropic_remeshing_plugin.moc"

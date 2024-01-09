@@ -17,6 +17,7 @@
 
 
 #include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_external_structure.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 
 #undef CGAL_NEF_DEBUG

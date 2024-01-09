@@ -120,7 +120,7 @@ struct Scene_edit_polyhedron_item_priv
 
   double length_of_axis; // for drawing axis at a group of control vertices
 
-  // by interleaving 'viewer's events (check constructor), keep followings:
+  // by interleaving 'viewer's events (check constructor), keep following:
   Mouse_keyboard_state_deformation state;
 
   //For constraint rotation
@@ -1137,7 +1137,7 @@ void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
     }
     getEdgeContainer(2)->reset_vbos(ALL);
     setBuffersFilled(false);
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       if(viewer == nullptr)
@@ -1621,7 +1621,7 @@ void Scene_edit_polyhedron_item::reset_deform_object()
   refresh_all_group_centers();
 }
 
-boost::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_component() {
+std::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_component() {
   Travel_isolated_components<SMesh>::Minimum_visitor visitor;
   Travel_isolated_components<SMesh>(*surface_mesh()).travel<sm_vertex_descriptor>
       (vertices(*surface_mesh()).first, vertices(*surface_mesh()).second,
@@ -1630,7 +1630,7 @@ boost::optional<std::size_t> Scene_edit_polyhedron_item::get_minimum_isolated_co
 }
 
 
-boost::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_components(std::size_t threshold) {
+std::optional<std::size_t> Scene_edit_polyhedron_item::select_isolated_components(std::size_t threshold) {
     typedef boost::function_output_iterator<Select_roi_output<SMesh> > Output_iterator;
     Output_iterator out(d->deform_sm_mesh);
 

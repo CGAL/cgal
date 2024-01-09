@@ -31,7 +31,6 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/utility.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -177,11 +176,11 @@ private:
   };
 
   /// This threshold is chosen such that if all orthosphere radii are shorter
-  /// than this treshold, then we can be sure that there are no self-edges anymore.
+  /// than this threshold, then we can be sure that there are no self-edges anymore.
   FT orthosphere_radius_threshold;
 
   /// This container stores all the cells whose orthosphere radius is larger
-  /// than the treshold `orthosphere_radius_threshold`.
+  /// than the threshold `orthosphere_radius_threshold`.
   boost::unordered_set<Cell_handle, Cell_handle_hash> cells_with_too_big_orthoball;
 
   class Cover_manager
@@ -220,13 +219,20 @@ public:
   };
 
 public:
+  FT compute_cover_threshold() const
+  {
+    FT min_span = (std::min)({ domain().xmax() - domain().xmin(),
+                               domain().ymax() - domain().ymin(),
+                               domain().zmax() - domain().zmin() });
+    return FT(0.015625) * CGAL::square(min_span);
+  }
+
   /** @name Creation */
   Periodic_3_regular_triangulation_3(const Iso_cuboid& domain = Iso_cuboid(0, 0, 0, 1, 1, 1),
                                      const Geometric_traits& gt = Geometric_traits())
     : Tr_Base(domain, gt)
   {
-    orthosphere_radius_threshold = FT(0.015625) * (domain.xmax() - domain.xmin())
-                                                * (domain.xmax() - domain.xmin());
+    orthosphere_radius_threshold = compute_cover_threshold();
   }
 
   template < typename InputIterator >
@@ -236,8 +242,7 @@ public:
                                      bool is_large_point_set = false)
     : Tr_Base(domain, gt)
   {
-    orthosphere_radius_threshold = FT(0.015625) * (domain.xmax() - domain.xmin())
-                                                * (domain.xmax() - domain.xmin());
+    orthosphere_radius_threshold = compute_cover_threshold();
 
     insert(first, last, is_large_point_set);
   }
@@ -383,8 +388,7 @@ public:
 
   virtual void update_cover_data_after_setting_domain ()
   {
-    orthosphere_radius_threshold = FT(0.015625) * (domain().xmax() - domain().xmin())
-                                                * (domain().xmax() - domain().xmin());
+    orthosphere_radius_threshold = compute_cover_threshold();
   }
 
   // the function below is used in `convert_to_1_sheeted_covering()` of P3T3
@@ -609,6 +613,8 @@ public:
     return geom_traits().compare_power_distance_3_object()(p, q, r, o1, o2, o3) == SMALLER;
   }
 
+  // @fixme the overloads with offset might run into an issue if the intermediate construction
+  // does not preserve the orientation... See Robust_periodic_weighted_circumcenter_traits_3.h
   Bare_point construct_weighted_circumcenter(const Weighted_point &p, const Weighted_point &q,
                                              const Weighted_point &r) const
   {
@@ -902,7 +908,7 @@ public:
       std::cout << "four offsets: " << std::endl;
 #endif
 
-      boost::array<int, 4> offsets;
+      std::array<int, 4> offsets;
       for(int i=0; i<4; ++i)
       {
 #ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
@@ -1746,12 +1752,10 @@ operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT, TDS>& tr)
 {
   typedef Periodic_3_regular_triangulation_3<GT,TDS>   P3RT3;
   typedef typename P3RT3::Tr_Base                      Tr_Base;
-  typedef typename GT::FT                              FT;
 
   is >> static_cast<Tr_Base&>(tr);
 
-  tr.orthosphere_radius_threshold = FT(0.015625) * (tr.domain().xmax() - tr.domain().xmin())
-                                                 * (tr.domain().xmax() - tr.domain().xmin());
+  tr.orthosphere_radius_threshold = tr.compute_cover_threshold();
 
   tr.insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
 

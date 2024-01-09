@@ -38,9 +38,8 @@
 
 #include <boost/format.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/optional.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 
+#include <optional>
 #include <algorithm>
 #include <iomanip> // std::setprecision
 #include <iostream> // std::cerr/cout
@@ -107,8 +106,8 @@ protected:
   typedef typename Tr::Vertex_handle                        Vertex_handle;
   typedef typename Tr::Cell_handle                          Cell_handle;
   typedef std::vector<Cell_handle>                          Cell_vector;
-  typedef typename Tr::Geom_traits                          Gt;
-  typedef typename Gt::FT                                   FT;
+  typedef typename Tr::Geom_traits                          GT;
+  typedef typename GT::FT                                   FT;
   typedef typename std::vector<Vertex_handle>               Bad_vertices_vector;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
@@ -197,8 +196,8 @@ protected:
   typedef typename Tr::Vertex_handle                        Vertex_handle;
   typedef typename Tr::Cell_handle                          Cell_handle;
   typedef std::vector<Cell_handle>                          Cell_vector;
-  typedef typename Tr::Geom_traits                          Gt;
-  typedef typename Gt::FT                                   FT;
+  typedef typename Tr::Geom_traits                          GT;
+  typedef typename GT::FT                                   FT;
   typedef typename tbb::concurrent_vector<Vertex_handle>    Bad_vertices_vector;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
@@ -353,9 +352,9 @@ private: // Types
   typedef typename Base::Queue_value_type                    Queue_value_type;
   typedef typename Base::Cell_vector                         Cell_vector;
 
-  typedef typename Tr::Geom_traits                           Gt;
+  typedef typename Tr::Geom_traits                           GT;
   typedef typename Base::FT                                  FT;
-  typedef typename Gt::Tetrahedron_3                         Tetrahedron_3;
+  typedef typename GT::Tetrahedron_3                         Tetrahedron_3;
 
   typedef typename C3T3::Cells_in_complex_iterator           Cell_iterator;
   typedef std::vector<Facet>                                 Facet_vector;
@@ -498,7 +497,7 @@ private:
   /**
    * Returns the umbrella of internal_facets vector
    */
-  boost::optional<Umbrella>
+  std::optional<Umbrella>
   get_umbrella(const Facet_vector& internal_facets,
                const Vertex_handle& v) const;
 
@@ -563,7 +562,7 @@ private:
 
 
   /**
-   * Initialize cells_queue w.r.t sliver_bound_
+   * Initialize cells_queue w.r.t. sliver_bound_
    */
   void initialize_cells_priority_queue()
   {
@@ -623,7 +622,7 @@ private:
   {
 #if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
     // Parallel
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
       enqueue_task<pump_vertices_on_surfaces>(
         ch, this->erase_counter(ch), criterion_value);
     // Sequential
@@ -920,7 +919,7 @@ pump_vertices(FT sliver_criterion_limit,
 
 #if defined( CGAL_LINKED_WITH_TBB ) && ( !defined (BOOST_MSVC) || !defined( _DEBUG ) || !defined (CGAL_TEST_SUITE) )
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     this->create_task_group();
 
@@ -964,9 +963,9 @@ pump_vertices(FT sliver_criterion_limit,
       bool vertex_pumped = false;
       for( int i = 0; i < 4; ++i )
       {
-        // pump_vertices_on_surfaces is a boolean template parameter.  The
-        // following condition is pruned at compiled time, if
-        // pump_vertices_on_surfaces==false.
+        // pump_vertices_on_surfaces is a Boolean template parameter.
+        // The following condition is pruned at compile time,
+        // if pump_vertices_on_surfaces is `false`.
         if( pump_vertices_on_surfaces || c3t3_.in_dimension(c->vertex(i)) > 2 )
         {
           if( pump_vertex<pump_vertices_on_surfaces>(c->vertex(i)) )
@@ -976,7 +975,9 @@ pump_vertices(FT sliver_criterion_limit,
             break;
           }
           else
+          {
             ++num_of_ignored_vertices_;
+          }
 
           ++num_of_treated_vertices_;
         }
@@ -987,14 +988,14 @@ pump_vertices(FT sliver_criterion_limit,
         this->cells_queue_pop_front();
 
       visitor.after_cell_pumped(this->cells_queue_size());
-  #ifdef CGAL_MESH_3_EXUDER_VERBOSE
+#ifdef CGAL_MESH_3_EXUDER_VERBOSE
       std::cerr << boost::format("\r             \r"
                                  "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
         % this->cells_queue_size()
         % num_of_pumped_vertices_
         % num_of_ignored_vertices_
         % (num_of_treated_vertices_ / running_time_.time());
-  #endif // CGAL_MESH_3_EXUDER_VERBOSE
+#endif // CGAL_MESH_3_EXUDER_VERBOSE
     }
   }
 
@@ -1045,21 +1046,21 @@ pump_vertex(const Vertex_handle& pumped_vertex,
   if (could_lock_zone && *could_lock_zone == false)
     return false;
 
-  typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+  typename GT::Compare_weighted_squared_radius_3 compare_sq_radius =
     tr_.geom_traits().compare_weighted_squared_radius_3_object();
 
   // If best_weight <= pumped_vertex weight, nothing to do
   const Weighted_point& pumped_vertex_wp = tr_.point(pumped_vertex);
   if ( compare_sq_radius(pumped_vertex_wp, - best_weight) == CGAL::LARGER ) // best_weight > v's weight
   {
-    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+    typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
-    const Weighted_point& pwp = tr_.point(pumped_vertex);
-    Weighted_point wp(cp(pwp), best_weight);
+    const Weighted_point& old_position = tr_.point(pumped_vertex);
+    Weighted_point new_point(cp(old_position), best_weight);
 
     // Insert weighted point into mesh
     // note it can fail if the mesh is non-manifold at pumped_vertex
-    return update_mesh<pump_vertices_on_surfaces>(wp,
+    return update_mesh<pump_vertices_on_surfaces>(new_point,
                                                   pumped_vertex,
                                                   could_lock_zone);
   }
@@ -1115,8 +1116,8 @@ expand_prestar(const Cell_handle& cell_to_add,
                Pre_star& pre_star,
                Sliver_values& criterion_values) const
 {
-  typename Gt::Compute_weight_3 cw = tr_.geom_traits().compute_weight_3_object();
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Compute_weight_3 cw = tr_.geom_traits().compute_weight_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   // Delete first facet of pre_star
   Facet start_facet = pre_star.front()->second;
@@ -1332,13 +1333,13 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
   } // end while(... can pump...)
 
 #ifdef CGAL_MESH_3_DEBUG_SLIVERS_EXUDER
-  typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+  typename GT::Compare_weighted_squared_radius_3 compare_sq_radius =
     tr_.geom_traits().compare_weighted_squared_radius_3_object();
 
   const Weighted_point& vwp = tr_.point(v);
   if ( compare_sq_radius(vwp, - best_weight) == CGAL::LARGER ) // best_weight > v's weight
   {
-    typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+    typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
     const Weighted_point& wpv = tr_.point(v);
     Weighted_point wp(cp(wpv), best_weight);
     check_pre_star(pre_star_copy, wp, v);
@@ -1351,7 +1352,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
 
 
 template <typename C3T3, typename SC, typename V_>
-boost::optional<typename Slivers_exuder<C3T3,SC,V_>::Umbrella >
+std::optional<typename Slivers_exuder<C3T3,SC,V_>::Umbrella >
 Slivers_exuder<C3T3,SC,V_>::
 get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
              const Vertex_handle& /* v, no longer used */) const
@@ -1387,7 +1388,7 @@ get_umbrella(const Facet_vector& facets, // internal_facets of conflict zone
         {
           std::size_t count = (*uit).second.second;
           if(count == 2) //there will be more than 3 after insertion
-            return boost::none; //non-manifold configuration
+            return std::nullopt; //non-manifold configuration
 
           umbrella.insert(uit,
             std::make_pair(oe,
@@ -1559,12 +1560,12 @@ update_mesh(const Weighted_point& new_point,
   if (could_lock_zone && *could_lock_zone == false)
     return false;
 
-  // Get some datas to restore mesh
+  // Get some data to restore mesh
   Boundary_facets_from_outside boundary_facets_from_outside =
     get_boundary_facets_from_outside(boundary_facets);
 
-  boost::optional<Umbrella> umbrella = get_umbrella(internal_facets, old_vertex);
-  if(umbrella == boost::none)
+  std::optional<Umbrella> umbrella = get_umbrella(internal_facets, old_vertex);
+  if(umbrella == std::nullopt)
     return false; //abort pumping this vertex
 
   // Delete old cells from queue (they aren't in the triangulation anymore)

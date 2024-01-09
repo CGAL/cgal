@@ -27,7 +27,6 @@
 #include <map>
 #include <time.h>
 
-#include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
@@ -38,7 +37,7 @@
 #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 #include <CGAL/Arr_face_index_map.h>
 #include <CGAL/graph_traits_dual_arrangement_on_surface_2.h>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #endif
 
 // this base divide & conquer algorithm splits the input into 2 groups,
@@ -183,7 +182,7 @@ public:
   }
 
   // compute the envelope of surfaces in 3D, using the default arbitrary
-  // dividor
+  // divider
   template <class SurfaceIterator>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2& result)
@@ -193,7 +192,7 @@ public:
   }
 
 
-  // compute the envelope of surfaces in 3D using the given set dividor
+  // compute the envelope of surfaces in 3D using the given set divider
   template <class SurfaceIterator, class SetDividor>
   void construct_lu_envelope(SurfaceIterator begin, SurfaceIterator end,
                              Minimization_diagram_2& result,
@@ -219,7 +218,7 @@ public:
   }
 
   // compute the envelope of xy-monotone surfaces in 3D,
-  // using the default arbitrary dividor
+  // using the default arbitrary divider
   template <class SurfaceIterator>
   void construct_envelope_xy_monotone(SurfaceIterator begin,
                                       SurfaceIterator end,
@@ -230,7 +229,7 @@ public:
   }
 
   // compute the envelope of xy-monotone surfaces in 3D using the given
-  // set dividor
+  // set divider
   template <class SurfaceIterator, class SetDividor>
   void construct_envelope_xy_monotone(SurfaceIterator begin,
                                       SurfaceIterator end,
@@ -307,9 +306,8 @@ protected:
   void deal_with_one_surface(Xy_monotone_surface_3& surf,
                              Minimization_diagram_2& result)
   {
-    typedef std::list<Object>                            Boundary_list;
     typedef std::pair<X_monotone_curve_2, Oriented_side> Boundary_xcurve;
-    typedef Boundary_list::iterator                      Boundary_iterator;
+    typedef std::list<std::variant<Boundary_xcurve,Point_2>> Boundary_list;
 
     Boundary_list     boundary;
     m_geom_traits->
@@ -325,17 +323,15 @@ protected:
       return;
     }
 
-    for (Boundary_iterator boundary_it = boundary.begin();
+    for (auto boundary_it = boundary.begin();
          boundary_it != boundary.end();
          ++boundary_it)
     {
-      const Object& obj = *boundary_it;
-      Boundary_xcurve boundary_cv;
-      if (assign(boundary_cv, obj))
+      if (const Boundary_xcurve* boundary_cv = std::get_if<Boundary_xcurve>(&(*boundary_it)))
       {
-        Oriented_side side = boundary_cv.second;
+        Oriented_side side = boundary_cv->second;
         Halfedge_handle he =
-          insert_non_intersecting_curve(result, boundary_cv.first);
+          insert_non_intersecting_curve(result, boundary_cv->first);
 
         if (side == ON_ORIENTED_BOUNDARY)
         {
@@ -366,7 +362,7 @@ protected:
             he->twin()->face()->set_no_data();
           }
 
-          // init auxiliary data for f and its boundarys.
+          // init auxiliary data for f and its boundaries.
           for(Outer_ccb_iterator ocit = f->outer_ccbs_begin();
               ocit != f->outer_ccbs_end(); ocit++){
             Ccb_halfedge_circulator face_hec = *ocit;
@@ -408,10 +404,9 @@ protected:
       else
       {
         // the xy-surface is an isolated point
-        Point_2 p;
-        CGAL_assertion(assign(p, obj));
-        assign(p, obj);
-        insert_point(result, p);
+        const Point_2* p = std::get_if<Point_2>(&(*boundary_it));
+        CGAL_assertion(p!=nullptr);
+        insert_point(result, *p);
       }
     }
 
@@ -475,7 +470,7 @@ public:
     {
       Halfedge_handle hh = ei;
       // there must be data from at least one map, because all the surfaces
-      // are continous
+      // are continuous
       if (!get_aux_is_set(hh, 0) || !get_aux_is_set(hh, 1))
         continue;
       CGAL_assertion(get_aux_is_set(hh, 0));
@@ -604,7 +599,7 @@ public:
       if (vh->is_decision_set())
         continue;
       // there must be data from at least one map, because all the surfaces
-      // are continous
+      // are continuous
       CGAL_assertion(get_aux_is_set(vh, 0));
       CGAL_assertion(get_aux_is_set(vh, 1));
       CGAL_assertion(!aux_has_no_data(vh, 1) || !aux_has_no_data(vh, 0));

@@ -23,103 +23,149 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgDrawPolygonWithHoles2
+ * \ingroup PkgDrawPolygonWithHoles2
+ *
+ * opens a new window and draws `aph`, an instance of the
+ * `CGAL::Polygon_with_holes_2` class. A call to this function is blocking, that
+ * is the program continues as soon as the user closes the window. This function
+ * requires `CGAL_Qt6`, and is only available if the macro
+ * `CGAL_USE_BASIC_VIEWER` is defined.  Linking with the cmake target
+ * `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition
+ * `CGAL_USE_BASIC_VIEWER`.
+ * \tparam PH an instance of the `CGAL::Polygon_with_holes_2` class.
+ * \param aph the polygon with holes to draw.
+ */
 
-opens a new window and draws `aph`, an instance of the `CGAL::Polygon_with_holes_2` class. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
-\tparam PH an instance of the `CGAL::Polygon_with_holes_2` class.
-\param aph the polygon with holes to draw.
-
-*/
-template<class PH>
+template <typename PH>
 void draw(const PH& aph);
 
 } /* namespace CGAL */
+
 #endif
 
 #ifdef CGAL_USE_BASIC_VIEWER
+
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polygon_with_holes_2.h>
-#include <CGAL/Random.h>
 
-namespace CGAL
-{
+namespace CGAL {
 
 // Viewer class for Polygon_with_holes_2
-template<class P2>
-class SimplePolygonWithHoles2ViewerQt : public Basic_viewer_qt
-{
-  typedef Basic_viewer_qt      Base;
-  typedef typename P2::General_polygon_2::Point_2 Point;
+template <typename PolygonWidthHoles_2>
+class Pwh_2_basic_viewer_qt : public Basic_viewer_qt {
+  using Base = Basic_viewer_qt;
+  using Pwh = PolygonWidthHoles_2;
+  using Pgn = typename Pwh::Polygon_2;
+  using Pnt = typename Pgn::Point_2;
 
 public:
-  /// Construct the viewer without drawing anything.
+  /// Construct the viewer.
+  /// @param parent the active window to draw
+  /// @param pwh the polygon to view
   /// @param title the title of the window
-  SimplePolygonWithHoles2ViewerQt(QWidget* parent,
-                                  const char* title="Basic Polygon_with_holes_2 Viewer") :
-    Base(parent, title, true, true, true, false, false)
+  Pwh_2_basic_viewer_qt(QWidget* parent, const Pwh& pwh,
+                        const char* title = "Basic Polygon_with_holes_2 Viewer") :
+    Base(parent, title, true, true, true, false, false),
+    m_pwh(pwh)
   {
-      clear();
+    if (pwh.is_unbounded() && (0 == pwh.number_of_holes())) return;
+
+    // mimic the computation of Camera::pixelGLRatio()
+    auto bbox = bounding_box();
+    CGAL::qglviewer::Vec minv(bbox.xmin(), bbox.ymin(), 0);
+    CGAL::qglviewer::Vec maxv(bbox.xmax(), bbox.ymax(), 0);
+    auto diameter = (maxv - minv).norm();
+    m_pixel_ratio = diameter / m_height;
   }
 
-  /// Construct the viewer.
-  /// @param ap2 the polygon to view
-  /// @param title the title of the window
-  SimplePolygonWithHoles2ViewerQt(QWidget* parent, const P2& ap2,
-                                  const char* title="Basic Polygon_with_holes_2 Viewer") :
-    // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false)
-  {
+  /*! Intercept the resizing of the window.
+   */
+  virtual void resizeGL(int width, int height) {
+    CGAL::QGLViewer::resizeGL(width, height);
+    m_width = width;
+    m_height = height;
+    CGAL::qglviewer::Vec p;
+    auto ratio = camera()->pixelGLRatio(p);
+    m_pixel_ratio = ratio;
+    add_elements();
+  }
+
+  /*! Obtain the pixel ratio.
+   */
+  double pixel_ratio() const { return m_pixel_ratio; }
+
+  /*! Compute the bounding box.
+   */
+  CGAL::Bbox_2 bounding_box() {
+    if (! m_pwh.is_unbounded()) return m_pwh.outer_boundary().bbox();
+
+    Bbox_2 bbox;
+    for (auto it = m_pwh.holes_begin(); it != m_pwh.holes_end(); ++it)
+      bbox += it->bbox();
+    return bbox;
+  }
+
+  /*! Compute the elements of a polygon with holes.
+   */
+  void add_elements() {
     clear();
-    compute_elements(ap2);
+    CGAL::IO::Color c(75,160,255);
+    face_begin(c);
+
+    const Pnt* point_in_face;
+    if (m_pwh.outer_boundary().is_empty()) {
+      Pgn pgn;
+
+      double x = (double)m_width * 0.5 * m_pixel_ratio;
+      double y = (double)m_height * 0.5 * m_pixel_ratio;
+      pgn.push_back(Pnt(-x, -y));
+      pgn.push_back(Pnt(x, -y));
+      pgn.push_back(Pnt(x, y));
+      pgn.push_back(Pnt(-x, y));
+      compute_loop(pgn, false);
+      point_in_face = &(pgn.vertex(pgn.size()-1));
+    }
+    else {
+      const auto& outer_boundary = m_pwh.outer_boundary();
+      compute_loop(outer_boundary, false);
+      point_in_face = &(outer_boundary.vertex(outer_boundary.size()-1));
+    }
+
+    for (auto it = m_pwh.holes_begin(); it != m_pwh.holes_end(); ++it) {
+      compute_loop(*it, true);
+      add_point_in_face(*point_in_face);
+    }
+
+    face_end();
   }
 
 protected:
-  void compute_one_loop_elements(const typename P2::General_polygon_2& p, bool hole)
-  {
-    if (hole)
-    { add_point_in_face(p.vertex(p.size()-1)); }
+  /*! Compute the face
+   */
+  void compute_loop(const Pgn& p, bool hole) {
+    if (hole) add_point_in_face(p.vertex(p.size()-1));
 
-    typename P2::General_polygon_2::Vertex_const_iterator prev;
-    for (typename P2::General_polygon_2::Vertex_const_iterator i=p.vertices_begin();
-         i!=p.vertices_end(); ++i)
-    {
-      add_point(*i);         // Add vertex
-      if (i!=p.vertices_begin())
-      { add_segment(*prev, *i); } // Add segment with previous point
-      add_point_in_face(*i); // Add point in face
-      prev=i;
+    auto prev = p.vertices_begin();
+    auto it = prev;
+    add_point(*it);
+    add_point_in_face(*it);
+    for (++it; it != p.vertices_end(); ++it) {
+      add_segment(*prev, *it);  // add segment with previous point
+      add_point(*it);
+      add_point_in_face(*it);   // add point in face
+      prev = it;
     }
 
     // Add the last segment between the last point and the first one
     add_segment(*prev, *(p.vertices_begin()));
   }
 
-  void compute_elements(const P2& p2)
-  {
-    if (p2.outer_boundary().is_empty()) return;
-
-    CGAL::IO::Color c(75,160,255);
-    face_begin(c);
-
-    compute_one_loop_elements(p2.outer_boundary(), false);
-
-    for (typename P2::Hole_const_iterator it=p2.holes_begin(); it!=p2.holes_end(); ++it)
-    {
-      compute_one_loop_elements(*it, true);
-      add_point_in_face(p2.outer_boundary().vertex(p2.outer_boundary().size()-1));
-    }
-
-    face_end();
-  }
-
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
+  virtual void keyPressEvent(QKeyEvent* e) {
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
 
-    // Call: * compute_elements() if the model changed, followed by
+    // Call: * add_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
     //                  (eg. type of normal, color/mono)
@@ -128,27 +174,41 @@ protected:
     // Call the base method to process others/classicals key
     Base::keyPressEvent(e);
   }
+
+private:
+  //! The window width in pixels.
+  int m_width = CGAL_BASIC_VIEWER_INIT_SIZE_X;
+
+  //! The window height in pixels.
+  int m_height = CGAL_BASIC_VIEWER_INIT_SIZE_Y;
+
+  //! The ratio between pixel and opengl units (in world coordinate system).
+  double m_pixel_ratio = 1;
+
+  //! The polygon with holes to draw.
+  const Pwh& m_pwh;
 };
 
 // Specialization of draw function.
 template<class T, class C>
-void draw(const CGAL::Polygon_with_holes_2<T, C>& ap2,
-          const char* title="Polygon_with_holes_2 Basic Viewer")
+void draw(const CGAL::Polygon_with_holes_2<T, C>& pwh,
+          const char* title = "Polygon_with_holes_2 Basic Viewer")
 {
 #if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
+  bool cgal_test_suite = true;
 #else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
+  bool cgal_test_suite = qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
-  if (!cgal_test_suite)
-  {
+  if (! cgal_test_suite) {
+    using Pwh = CGAL::Polygon_with_holes_2<T, C>;
+    using Viewer = Pwh_2_basic_viewer_qt<Pwh>;
     CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[2]={"t2_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    SimplePolygonWithHoles2ViewerQt<CGAL::Polygon_with_holes_2<T, C> >
-      mainwindow(app.activeWindow(), ap2, title);
+    int argc = 1;
+    const char* argv[2] = {"t2_viewer", nullptr};
+    QApplication app(argc, const_cast<char**>(argv));
+    Viewer mainwindow(app.activeWindow(), pwh, title);
+    mainwindow.add_elements();
     mainwindow.show();
     app.exec();
   }

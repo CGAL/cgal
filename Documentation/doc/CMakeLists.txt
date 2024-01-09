@@ -26,13 +26,8 @@ else()
   set(CGAL_ROOT "${CMAKE_SOURCE_DIR}")
 endif()
 
-find_package(Doxygen)
+find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-
-if(NOT DOXYGEN_FOUND)
-  message(WARNING "Cannot build the documentation without Doxygen!")
-  return()
-endif()
 
 #starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
 if(TARGET Doxygen::doxygen)
@@ -246,6 +241,18 @@ else()
       "#EXTRACT_ALL_NO_DETAILED_IF_EMPTY = NO")
 endif()
 
+option(CGAL_NO_ADDITIONAL_DETAILS
+       "Use CGAL special doxygen setting NO_ADDITIONAL_DETAILS." ON)
+if(CGAL_NO_ADDITIONAL_DETAILS)
+  set(CGAL_OPT_NO_ADDITIONAL_DETAILS
+      "NO_ADDITIONAL_DETAILS = YES")
+else()
+  # The default is NO, so we could leave it out, but it is better to have a commented out placeholder
+  # this will work for versions with and without the setting.
+  set(CGAL_OPT_NO_ADDITIONAL_DETAILS
+      "#NO_ADDITIONAL_DETAILS = NO")
+endif()
+
 #we use two directories for the generation/reading of tag files to prevent issues
 #if the targets are built in parallel
 set(CGAL_DOC_TAG_GEN_DIR "${CMAKE_BINARY_DIR}/doc_gen_tags")
@@ -256,7 +263,7 @@ set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
 #Setting the resource directory depending on the version of doxygen
-set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.9.3")
+set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.10.0")
 
 #  first look if resources for the specific doxygen version is available, fallback
 #  on the default otherwise
@@ -406,6 +413,15 @@ else()
     set(CGAL_${pkg}_DEMO_DIR "${CGAL_ROOT}/demo")
   endforeach()
 endif()
+
+#special cases
+foreach(pkg "Mesher_level")
+  if(CGAL_BRANCH_BUILD)
+    set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/${pkg}/include")
+  else()
+    set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/include")
+  endif()
+endforeach()
 
 option(CGAL_BUILD_THREE_DOC "Build the documentation of the Three package" OFF)
 

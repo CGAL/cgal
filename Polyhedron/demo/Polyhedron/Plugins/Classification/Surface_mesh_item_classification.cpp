@@ -11,7 +11,6 @@
 #include <set>
 #include <stack>
 #include <algorithm>
-#include <boost/array.hpp>
 
 Surface_mesh_item_classification::Surface_mesh_item_classification(Scene_surface_mesh_item* mesh)
   : m_mesh (mesh),

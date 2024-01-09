@@ -31,8 +31,8 @@ Functions are available for partitioning planar polygons into two
 types of subpolygons (`y`-monotone polygons and convex polygons).
 
 The function that produces a `y`-monotone partitioning is based on the
-algorithm presented in \cgalCite{bkos-cgaa-97} which requires \f$ O(n \log n) \f$ time
-and \f$ O(n) \f$ space for a polygon with \f$ n \f$ vertices and guarantees nothing
+algorithm presented in \cgalCite{bkos-cgaa-97} which requires \cgalBigO{n \log n} time
+and \cgalBigO{n} space for a polygon with \f$ n \f$ vertices and guarantees nothing
 about the number of polygons produced with respect to the optimal number
 Three functions are provided for producing
 convex partitions. Two of these functions produce approximately optimal
@@ -41,12 +41,12 @@ defined in terms of the number of partition polygons.   The two functions
 that implement approximation algorithms are guaranteed to produce no more
 than four times the optimal number of convex pieces.  The optimal partitioning
 function provides an implementation of Greene's dynamic programming algorithm
-\cgalCite{g-dpcp-83}, which requires \f$ O(n^4) \f$ time and \f$ O(n^3) \f$ space to produce a
+\cgalCite{g-dpcp-83}, which requires \cgalBigO{n^4} time and \cgalBigO{n^3} space to produce a
 convex partitioning. One of the approximation algorithms is also due to
-Greene \cgalCite{g-dpcp-83} and requires \f$ O(n \log n) \f$ time and \f$ O(n) \f$ space
+Greene \cgalCite{g-dpcp-83} and requires \cgalBigO{n \log n} time and \cgalBigO{n} space
 to produce a convex partitioning given a `y`-monotone partitioning.  The
 other approximation algorithm is a result of Hertel and
-Mehlhorn \cgalCite{hm-ftsp-83}, which requires \f$ O(n) \f$ time and space to produce
+Mehlhorn \cgalCite{hm-ftsp-83}, which requires \cgalBigO{n} time and space to produce
 a convex partitioning from a triangulation of a polygon.
 Each of the partitioning functions uses a traits class to supply the
 primitive types and predicates used by the algorithms.

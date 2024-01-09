@@ -46,7 +46,7 @@ std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, lo
   v.reserve(elements);
   for(; b != e; ++b) {
     tree.all_intersections(*b, std::back_inserter(v));
-    boost::optional<Obj_type> o = tree.any_intersection(*b);
+    std::optional<Obj_type> o = tree.any_intersection(*b);
     if(o)
       ++counter;
   }
@@ -131,7 +131,7 @@ std::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name) {
         tu = std::make_tuple(intersect(lines.begin(), lines.end(), tree, counter),
                                intersect(rays.begin(), rays.end(), tree, counter),
                                intersect(segments.begin(), segments.end(), tree, counter),
-                               // cant use counter here
+                               // can't use counter here
                                0);
         std::get<3>(tu) = counter;
       }

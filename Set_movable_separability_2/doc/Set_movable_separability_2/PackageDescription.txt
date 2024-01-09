@@ -31,7 +31,7 @@
 \cgalPkgDescriptionBegin{2D Movable Separability of Sets,PkgSetMovableSeparability2}
 \cgalPkgPicture{Casting_2.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Shahar Shamai, Efi Fogel}
+\cgalPkgAuthors{Shahar Shamai and Efi Fogel}
 \cgalPkgDesc{<em>Movable Separability of Sets</em> \cgalCite{t-mss-85} is a
 class of problems that deal with moving sets of objects, such as polygons in
 the plane; the challenge is to avoid collisions between the objects

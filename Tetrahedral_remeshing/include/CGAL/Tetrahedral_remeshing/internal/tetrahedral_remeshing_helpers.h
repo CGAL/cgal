@@ -24,6 +24,7 @@
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/utility.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
 
@@ -74,8 +75,36 @@ inline int indices(const int& i, const int& j)
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)
     return indices_table[i][j];
-  else
-    return -1;
+  CGAL_error_msg("Invalid indices provided");
+  return 0;
+}
+
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 2>
+vertices(const typename Tr::Edge& e , const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 2>{
+               e.first->vertex(e.second),
+               e.first->vertex(e.third)};
+}
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 3>
+vertices(const typename Tr::Facet& f, const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 3>{
+               f.first->vertex(Tr::vertex_triple_index(f.second, 0)),
+               f.first->vertex(Tr::vertex_triple_index(f.second, 1)),
+               f.first->vertex(Tr::vertex_triple_index(f.second, 2))};
+}
+template<typename Tr>
+std::array<typename Tr::Vertex_handle, 4>
+vertices(const typename Tr::Cell_handle c, const Tr&)
+{
+  return std::array<typename Tr::Vertex_handle, 4>{
+               c->vertex(0),
+               c->vertex(1),
+               c->vertex(2),
+               c->vertex(3)};
 }
 
 template<typename Gt, typename Point>
@@ -529,13 +558,17 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     v->set_index(v->cell()->subdomain_index());
     break;
   case 2:
+    CGAL_assertion(surface_patch_index(v, c3t3)
+                  != typename C3t3::Surface_patch_index());
     v->set_index(surface_patch_index(v, c3t3));
     break;
   case 1:
     v->set_index(typename C3t3::Curve_index(1));
     break;
   case 0:
-    v->set_index(boost::get<typename C3t3::Corner_index>(v->index()));
+    v->set_index(Mesh_3::internal::get_index<typename C3t3::Corner_index>(v->index()));
+    break;
+  case -1://far points from concurrent Mesh_3
     break;
   default:
     CGAL_assertion(false);
@@ -556,6 +589,27 @@ bool is_edge_in_complex(const typename C3t3::Vertex_handle& v0,
     return c3t3.is_in_complex(Edge(cell, i0, i1));
   else
     return false;
+}
+
+template<typename C3t3>
+bool protecting_balls_intersect(const typename C3t3::Edge& e,
+                                const C3t3& c3t3)
+{
+  const auto vv = c3t3.triangulation().vertices(e);
+  if(  c3t3.in_dimension(vv[0]) > 1
+    || c3t3.in_dimension(vv[1]) > 1)
+    return false;
+
+  const auto& p0 = vv[0]->point();
+  const auto& p1 = vv[1]->point();
+  if(p0.weight() == 0 || p1.weight() == 0)
+    return false;
+
+  const auto r0 = CGAL::approximate_sqrt(p0.weight());
+  const auto r1 = CGAL::approximate_sqrt(p1.weight());
+  const auto d = CGAL::approximate_sqrt(CGAL::squared_distance(p0, p1));
+
+  return d < r0 + r1;
 }
 
 template<typename C3t3, typename OutputIterator>
@@ -1237,6 +1291,18 @@ void check_surface_patch_indices(const C3t3& c3t3)
   }
 }
 
+template<typename C3t3>
+void count_far_points(const C3t3& c3t3)
+{
+  std::size_t count = 0;
+  for (auto v : c3t3.triangulation().finite_vertex_handles())
+  {
+    if(c3t3.in_dimension(v) == -1)
+      ++count;
+  }
+  std::cout << "Nb far points : " << count << std::endl;
+}
+
 template<typename Tr>
 bool are_cell_orientations_valid(const Tr& tr)
 {
@@ -1313,7 +1379,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
   }
 
   //write facets
-  std::size_t nbf_print = 0;
+  CGAL_assertion_code(std::size_t nbf_print = 0);
   for (Finite_facets_iterator fit = tr.finite_facets_begin();
        fit != tr.finite_facets_end(); ++fit)
   {
@@ -1324,7 +1390,7 @@ void dump_surface_off(const Tr& tr, const char* filename)
       ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
           << vertices.left.at(c->vertex((i + 2) % 4)) << " "
           << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
-      ++nbf_print;
+      CGAL_assertion_code(++nbf_print);
     }
   }
   CGAL_assertion(nbf == nbf_print);
@@ -1581,7 +1647,7 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
   }
 
   //write facets
-  std::size_t nbf_print = 0;
+  CGAL_assertion_code(std::size_t nbf_print = 0);
   for (Facets_in_complex_iterator fit = c3t3.facets_in_complex_begin();
        fit != c3t3.facets_in_complex_end(); ++fit)
   {
@@ -1590,7 +1656,7 @@ void dump_facets_in_complex(const C3t3& c3t3, const char* filename)
     ofs << "3  " << vertices.left.at(c->vertex((i + 1) % 4)) << " "
         << vertices.left.at(c->vertex((i + 2) % 4)) << " "
         << vertices.left.at(c->vertex((i + 3) % 4)) << std::endl;
-    ++nbf_print;
+    CGAL_assertion_code(++nbf_print);
   }
   CGAL_assertion(nbf == nbf_print);
 
@@ -1647,13 +1713,17 @@ void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
   typedef typename Tr::Vertex_handle Vertex_handle;
   std::vector< std::vector<Vertex_handle> > vertices_per_dimension(4);
 
+  std::size_t nb_far_points = 0;
   for (typename Tr::Finite_vertices_iterator
        vit = tr.finite_vertices_begin();
        vit != tr.finite_vertices_end();
        ++vit)
   {
     if (vit->in_dimension() == -1)
+    {
+      ++nb_far_points;
       continue;//far point
+    }
     CGAL_assertion(vit->in_dimension() >= 0 && vit->in_dimension() < 4);
 
     vertices_per_dimension[vit->in_dimension()].push_back(vit);
@@ -1681,6 +1751,7 @@ void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
 
     ofs.close();
   }
+  std::cout << "Nb far points : " << nb_far_points << std::endl;
 }
 
 template<typename Tr>

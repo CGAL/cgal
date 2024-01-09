@@ -25,9 +25,10 @@
 
 #include <fstream>
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
@@ -565,7 +566,7 @@ public:
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       // Wrap the segment with a variant.
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
       *oi++ = Make_x_monotone_result(cv);
       return oi;
@@ -705,8 +706,6 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
 
       // Early ending with Bbox overlapping test
       if (! do_bboxes_overlap(cv1, cv2)) return oi;
@@ -723,7 +722,7 @@ public:
       CGAL_assertion(bool(res));
 
       // Check if we have a single intersection point.
-      const Point_2* ip = boost::get<Point_2>(&*res);
+      const Point_2* ip = std::get_if<Point_2>(&*res);
       if (ip != nullptr) {
         CGAL_assertion(cv1.is_vertical() ?
                        m_traits.is_in_y_range_2_object()(cv1, *ip) :
@@ -732,7 +731,7 @@ public:
                        m_traits.is_in_y_range_2_object()(cv2, *ip) :
                        m_traits.is_in_x_range_2_object()(cv2, *ip));
         Intersection_point ip_mult(*ip, 1);
-        *oi++ = Intersection_result(ip_mult);
+        *oi++ = ip_mult;
         return oi;
       }
 
@@ -753,7 +752,7 @@ public:
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
         Intersection_point ip_mult(p_r, 0);
-        *oi++ = Intersection_result(ip_mult);
+        *oi++ = ip_mult;
         return oi;
       }
 
@@ -764,17 +763,17 @@ public:
         // in the overlap segment
         if (cv1.is_directed_right()) {
           X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
-          *oi++ = Intersection_result(overlap_seg);
+          *oi++ = overlap_seg;
           return oi;
         }
         X_monotone_curve_2 overlap_seg(cv1.line(), p_r, p_l);
-        *oi++ = Intersection_result(overlap_seg);
+        *oi++ = overlap_seg;
         return oi;
       }
       // cv1 and cv2 have opposite directions, the overlap segment
       // will be directed from left to right
       X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
-      *oi++ = Intersection_result(overlap_seg);
+      *oi++ = overlap_seg;
       return oi;
     }
   };
@@ -879,9 +878,24 @@ public:
 
   /// \name Functor definitions for the landmarks point-location strategy.
   //@{
-  typedef double                          Approximate_number_type;
+  typedef double                                        Approximate_number_type;
+  typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
+  typedef Approximate_kernel::Point_2                   Approximate_point_2;
 
   class Approximate_2 {
+  protected:
+    using Traits = Arr_segment_traits_2<Kernel>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits.
+     */
+    Approximate_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_segment_traits_2<Kernel>;
+
   public:
     /*! Obtain an approximation of a point coordinate.
      * \param p the exact point.
@@ -890,15 +904,37 @@ public:
      * \return An approximation of p's x-coordinate (if i == 0), or an
      *         approximation of p's y-coordinate (if i == 1).
      */
-    Approximate_number_type operator()(const Point_2& p, int i) const
-    {
+    Approximate_number_type operator()(const Point_2& p, int i) const {
       CGAL_precondition((i == 0) || (i == 1));
       return (i == 0) ? (CGAL::to_double(p.x())) : (CGAL::to_double(p.y()));
+    }
+
+    /*! Obtain an approximation of a point.
+     */
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
+
+    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+     */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
+                              OutputIterator oi, bool l2r = true) const {
+      auto min_vertex = m_traits.construct_min_vertex_2_object();
+      auto max_vertex = m_traits.construct_max_vertex_2_object();
+      const auto& src = (l2r) ? min_vertex(xcv) : max_vertex(xcv);
+      const auto& trg = (l2r) ? max_vertex(xcv) : min_vertex(xcv);
+      auto xs = CGAL::to_double(src.x());
+      auto ys = CGAL::to_double(src.y());
+      auto xt = CGAL::to_double(trg.x());
+      auto yt = CGAL::to_double(trg.y());
+      *oi++ = Approximate_point_2(xs, ys);
+      *oi++ = Approximate_point_2(xt, yt);
+      return oi;
     }
   };
 
   /*! Obtain an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object() const { return Approximate_2(); }
+  Approximate_2 approximate_2_object() const { return Approximate_2(*this); }
 
   //! Functor
   class Construct_x_monotone_curve_2 {
@@ -1041,7 +1077,7 @@ public:
                              m_traits.compare_y_at_x_2_object());
       Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
 
-      // check whether source and taget are two distinct points and they lie
+      // check whether source and target are two distinct points and they lie
       // on the line.
       CGAL_precondition(!equal(src, tgt));
       CGAL_precondition(compare_y_at_x(src, xcv) == EQUAL);

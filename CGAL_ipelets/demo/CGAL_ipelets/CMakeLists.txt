@@ -20,27 +20,20 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(
-    STATUS
-      "NOTICE: This project requires the Eigen library, and will not be compiled."
-  )
+  message("NOTICE: This project requires the Eigen library, and will not be compiled.")
   return()
 endif()
 
 find_package(IPE 7)
-
 if(IPE_FOUND)
-  if ( NOT ${IPE_VERSION} EQUAL "7")
-    message("-- Error: ${IPE_VERSION} is not a supported version of IPE (only 7 is).")
+  if(NOT ${IPE_VERSION} EQUAL "7")
+    message("NOTICE: ${IPE_VERSION} is not a supported version of IPE (only 7 is).")
     set(IPE_FOUND FALSE)
   endif()
 endif()
-
 
 if(IPE_FOUND AND IPE_VERSION)
   message("-- Using IPE version ${IPE_VERSION} compatibility.")
@@ -70,6 +63,7 @@ if(IPE_FOUND AND IPE_VERSION)
   set(CGAL_IPELETS ${CGAL_IPELETS} mesh_2)
   set(CGAL_IPELETS ${CGAL_IPELETS} minkowski)
   set(CGAL_IPELETS ${CGAL_IPELETS} mst)
+  set(CGAL_IPELETS ${CGAL_IPELETS} nearest_neighbor_graph)
   set(CGAL_IPELETS ${CGAL_IPELETS} multi_delaunay)
   set(CGAL_IPELETS ${CGAL_IPELETS} multi_regular)
   set(CGAL_IPELETS ${CGAL_IPELETS} partition)
@@ -104,13 +98,13 @@ if(IPE_FOUND AND IPE_VERSION)
     cgal_add_compilation_test(CGAL_${IPELET})
   endforeach(IPELET)
   if(CGAL_Core_FOUND)
-    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL_Core
+    target_link_libraries(CGAL_cone_spanners PRIVATE CGAL::CGAL CGAL::CGAL_Core
                                                      CGAL::Eigen3_support)
   endif()
   #example in doc not installed
   add_library(simple_triangulation MODULE simple_triangulation.cpp)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS simple_triangulation)
-  target_link_libraries(simple_triangulation CGAL::Eigen3_support
+  target_link_libraries(simple_triangulation CGAL::CGAL CGAL::Eigen3_support
                         ${IPE_LIBRARIES})
   target_include_directories(simple_triangulation BEFORE PRIVATE ${IPE_INCLUDE_DIR})
   if (WITH_IPE_7)
@@ -119,5 +113,5 @@ if(IPE_FOUND AND IPE_VERSION)
   cgal_add_compilation_test(simple_triangulation)
 
 else()
-  message(STATUS "NOTICE: This program requires the Ipe include files and library, and will not be compiled.")
+  message("NOTICE: This project requires the Ipe include files and library, and will not be compiled.")
 endif()

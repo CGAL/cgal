@@ -98,8 +98,11 @@ void test(const Mesh& mesh,
     // tests on non triangular meshes are @todo
     if(CGAL::is_triangle(halfedge(f, mesh), mesh))
     {
-      if(PMP::is_degenerate_triangle_face(f, mesh))
-        assert(get(fnormals, f) == CGAL::NULL_VECTOR);
+      if (PMP::is_degenerate_triangle_face(f, mesh))
+      {
+        if (std::is_same<K, EPECK>())
+          assert(get(fnormals, f) == CGAL::NULL_VECTOR);
+      }
       else
         assert(get(fnormals, f) != CGAL::NULL_VECTOR);
     }

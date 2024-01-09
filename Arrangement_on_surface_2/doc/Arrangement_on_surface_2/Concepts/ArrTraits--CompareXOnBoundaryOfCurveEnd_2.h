@@ -3,11 +3,13 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableFunctor
+ * \cgalRefines{AdaptableFunctor}
  *
- * \cgalHasModel ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2
- * \cgalHasModel ArrangementOpenBoundaryTraits_2::Compare_x_on_boundary_2
- * \cgalHasModel ArrangementSphericalBoundaryTraits_2::Compare_x_on_boundary_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementHorizontalSideTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{ArrangementOpenBoundaryTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{ArrangementSphericalBoundaryTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModelsEnd
  */
 class CompareXOnBoundaryOfCurveEnd_2 {
 public:
@@ -20,7 +22,7 @@ public:
    * enumeration `ce` that specifies either the minimum or the maximum end of
    * the curve where the curve has a vertical asymptote, compares the \f$
    * x\f$-coordinate of `p` and the \f$x\f$-coordinate of the limit of the
-   * curve at its specificed end. The variable `xcv` identifies the parametric
+   * curve at its specified end. The variable `xcv` identifies the parametric
    * curve \f$c(t) = (x(t), y(t))\f$ defined over an open or half-open interval
    * with endpoints \f$ 0\f$ and \f$ 1\f$. The enumeration `ce` identifies an
    * open end \f$d \in\{0,1\}\f$ of \f$c\f$.  Formally, compares the \f$
@@ -40,7 +42,7 @@ public:
 /*! Given two \f$ x\f$-monotone curves `xcv1` and `xcv2` and two indices `ce1`
  * and `ce2` that specify either the minimum or the maximum ends of `xcv1` and
  * `xcv2`, respectively, where the curves have vertical asymptotes, compares the
- * \f$ x\f$-coordinates of the limits of the curves at their specificed
+ * \f$ x\f$-coordinates of the limits of the curves at their specified
  * ends. The variables `xcv1` and `xcv2` identify the parametric curves \f$
  * c_1(t) = (x_1(t),y_1(t))\f$ and \f$ c_2(t) = (x_2(t),y_2(t))\f$,
  * respectively, defined over open or half-open intervals with endpoints \f$

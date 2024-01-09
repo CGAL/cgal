@@ -94,7 +94,7 @@ private:
   typedef std::vector<Point_info_2>                Point_vector_2;
 
   const Kernel* m_kernel;
-  bool m_own_kernel;    // inidicates whether the kernel should be freed up.
+  bool m_own_kernel;    // indicates whether the kernel should be freed up.
 
   // Data members:
   Equal_2                 f_equal;
@@ -256,7 +256,7 @@ public:
 
 private:
 
-  /*! Return the succesive index of a 'point info' vector. */
+  /*! Return the successive index of a 'point info' vector. */
   inline unsigned int _vec_succ(const Point_vector_2& vec,
                                 unsigned int i) const
   {
@@ -357,7 +357,7 @@ private:
   {
     CGAL_precondition(vec[v_ind].is_reflex);
 
-    // Check whether the visiblity status is already known.
+    // Check whether the visibility status is already known.
     if (vec[v_ind].is_visible(u_ind)) return (true);
     if (vec[v_ind].is_non_visible(u_ind)) return (false);
 

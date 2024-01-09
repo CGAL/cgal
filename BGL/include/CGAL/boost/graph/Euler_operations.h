@@ -437,7 +437,7 @@ split_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
         internal::insert_tip( opposite(inew, g), hnew, g);
         internal::insert_tip( opposite(jnew, g), inew, g);
         internal::insert_tip( opposite(hnew, g), jnew, g);
-        // Make the new incidences with the old stucture.
+        // Make the new incidences with the old structure.
         CGAL_assertion_code( std::size_t termination_count = 0;)
           if ( next(h,g) != i) {
             halfedge_descriptor nh = next(h, g);
@@ -983,7 +983,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
   // disconnect hand-fans (umbrellas being not affected) at non-manifold vertices
   // in case the location on the boundary of the mesh where they are attached is closed.
   // Note that we link the boundary of the hand fans together, making them
-  // independant boundary cycles (even if the non-manifold vertex is not duplicated)
+  // independent boundary cycles (even if the non-manifold vertex is not duplicated)
   if ( !former_border_hedges.empty() )
   {
     std::sort(former_border_hedges.begin(), former_border_hedges.end()); // TODO: is it better to use a dynamic pmap?
@@ -1432,6 +1432,106 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
   return newh;
 }
 
+/**
+ *  \returns `true` if `e` satisfies the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
+ */
+template<typename Graph>
+bool
+does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
+                            const Graph& g)
+{
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
+  typedef CGAL::Halfedge_around_source_iterator<Graph> out_edge_iterator;
+
+  halfedge_descriptor v0_v1 = halfedge(e,g);
+  halfedge_descriptor v1_v0 = opposite(v0_v1,g);
+
+  vertex_descriptor v0 = target(v1_v0,g), v1 = target(v0_v1,g);
+
+  vertex_descriptor vL = target(next(v0_v1,g),g);
+  vertex_descriptor vR = target(next(v1_v0,g),g);
+
+  out_edge_iterator eb1, ee1 ;
+  out_edge_iterator eb2, ee2 ;
+
+  // The following loop checks the link condition for v0_v1.
+  // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
+  //
+  for ( boost::tie(eb1,ee1) = halfedges_around_source(v0,g) ;  eb1 != ee1 ; ++ eb1 )
+  {
+    halfedge_descriptor v0_k = *eb1;
+
+    if ( v0_k != v0_v1 )
+    {
+      vertex_descriptor k = target(v0_k,g);
+
+      for ( boost::tie(eb2,ee2) =  halfedges_around_source(k,g) ; eb2 != ee2 ; ++ eb2 )
+      {
+        halfedge_descriptor k_v1 = *eb2;
+
+        if ( target(k_v1,g) == v1 )
+        {
+          // At this point we know p-q-k are connected and we need to determine if this triangle is a face of the mesh.
+          //
+          // Since the mesh is known to be triangular there are at most two faces sharing the edge p-q.
+          //
+          // If p->q is NOT a border edge, the top face is p->q->t where t is target(next(p->q))
+          // If q->p is NOT a border edge, the bottom face is q->p->b where b is target(next(q->p))
+          //
+          // If k is either t or b then p-q-k *might* be a face of the mesh. It won't be if k==t but p->q is border
+          // or k==b but q->b is a border (because in that case even though there exists triangles p->q->t (or q->p->b)
+          // they are holes, not faces)
+          //
+
+          bool lIsFace =   ( vL == k && (! is_border(v0_v1,g)) )
+            || ( vR == k && (! is_border(v1_v0,g)) ) ;
+
+          if ( !lIsFace )
+          {
+            // CGAL_ECMS_TRACE(3,"  k=V" << get(Vertex_index_map,k) << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
+            return false ;
+          }
+          else
+          {
+            //CGAL_ECMS_TRACE(4,"  k=V" << get(Vertex_index_map,k) << " is in a face with p-q") ;
+          }
+        }
+      }
+    }
+  }
+
+  // detect isolated triangle (or triangle attached to a mesh with non-manifold vertices)
+  if (!is_border(v0_v1,g) && is_border(opposite(next(v0_v1,g), g), g)
+                          && is_border(opposite(prev(v0_v1,g), g), g) ) return false;
+  if (!is_border(v1_v0,g) && is_border(opposite(next(v1_v0,g), g), g)
+                          && is_border(opposite(prev(v1_v0,g), g), g) ) return false;
+
+  if ( !is_border(v0_v1,g) && !is_border(v1_v0,g) )
+  {
+    if ( is_border(v0,g) && is_border(v1,g) )
+    {
+      //CGAL_ECMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge." ) ;
+      return false ;
+    }
+    else
+    {
+      if ( is_tetrahedron(v0_v1,g) )
+      {
+        //CGAL_ECMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge." ) ;
+        return false ;
+      }
+      if ( next(v0_v1, g) == opposite(prev(v1_v0, g), g) &&
+           prev(v0_v1, g) == opposite(next(v1_v0, g), g) )
+      {
+        //CGAL_ECMS_TRACE(3,"  degenerate volume." ) ;
+        return false ;
+      }
+    }
+  }
+
+  return true ;
+}
 
 /**
  * collapses an edge in a graph.
@@ -1464,6 +1564,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor e,
   typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
 
   CGAL_precondition(is_valid_edge_descriptor(e, g));
+  CGAL_precondition(does_satisfy_link_condition(e,g));
 
   halfedge_descriptor pq = halfedge(e,g);
   halfedge_descriptor qp = opposite(pq, g);
@@ -1584,6 +1685,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
 
   CGAL_precondition(is_valid_edge_descriptor(v0v1, g));
+  CGAL_precondition(does_satisfy_link_condition(v0v1,g));
   CGAL_precondition(!get(Edge_is_constrained_map, v0v1));
 
   halfedge_descriptor pq = halfedge(v0v1,g);
@@ -1752,109 +1854,6 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   set_face(nnh,foh,g);
   set_halfedge(fh,h,g);
   set_halfedge(foh,oh,g);
-}
-
-/**
- *  \returns `true` if `e` satisfies the *link condition* \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse.
- */
-template<typename Graph>
-bool
-does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
-                            const Graph& g)
-{
-  typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
-  typedef CGAL::Halfedge_around_source_iterator<Graph> out_edge_iterator;
-
-  CGAL_precondition(is_valid_edge_descriptor(e, g));
-
-  halfedge_descriptor v0_v1 = halfedge(e,g);
-  halfedge_descriptor v1_v0 = opposite(v0_v1,g);
-
-  vertex_descriptor v0 = target(v1_v0,g), v1 = target(v0_v1,g);
-
-  vertex_descriptor vL = target(next(v0_v1,g),g);
-  vertex_descriptor vR = target(next(v1_v0,g),g);
-
-  out_edge_iterator eb1, ee1 ;
-  out_edge_iterator eb2, ee2 ;
-
-  // The following loop checks the link condition for v0_v1.
-  // Specifically, that for every vertex 'k' adjacent to both 'p and 'q', 'pkq' is a face of the mesh.
-  //
-  for ( boost::tie(eb1,ee1) = halfedges_around_source(v0,g) ;  eb1 != ee1 ; ++ eb1 )
-  {
-    halfedge_descriptor v0_k = *eb1;
-
-    if ( v0_k != v0_v1 )
-    {
-      vertex_descriptor k = target(v0_k,g);
-
-      for ( boost::tie(eb2,ee2) =  halfedges_around_source(k,g) ; eb2 != ee2 ; ++ eb2 )
-      {
-        halfedge_descriptor k_v1 = *eb2;
-
-        if ( target(k_v1,g) == v1 )
-        {
-          // At this point we know p-q-k are connected and we need to determine if this triangle is a face of the mesh.
-          //
-          // Since the mesh is known to be triangular there are at most two faces sharing the edge p-q.
-          //
-          // If p->q is NOT a border edge, the top face is p->q->t where t is target(next(p->q))
-          // If q->p is NOT a border edge, the bottom face is q->p->b where b is target(next(q->p))
-          //
-          // If k is either t or b then p-q-k *might* be a face of the mesh. It won't be if k==t but p->q is border
-          // or k==b but q->b is a border (because in that case even though there exists triangles p->q->t (or q->p->b)
-          // they are holes, not faces)
-          //
-
-          bool lIsFace =   ( vL == k && (! is_border(v0_v1,g)) )
-            || ( vR == k && (! is_border(v1_v0,g)) ) ;
-
-          if ( !lIsFace )
-          {
-            // CGAL_ECMS_TRACE(3,"  k=V" << get(Vertex_index_map,k) << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
-            return false ;
-          }
-          else
-          {
-            //CGAL_ECMS_TRACE(4,"  k=V" << get(Vertex_index_map,k) << " is in a face with p-q") ;
-          }
-        }
-      }
-    }
-  }
-
-  // detect isolated triangle (or triangle attached to a mesh with non-manifold vertices)
-  if (!is_border(v0_v1,g) && is_border(opposite(next(v0_v1,g), g), g)
-                          && is_border(opposite(prev(v0_v1,g), g), g) ) return false;
-  if (!is_border(v1_v0,g) && is_border(opposite(next(v1_v0,g), g), g)
-                          && is_border(opposite(prev(v1_v0,g), g), g) ) return false;
-
-  if ( !is_border(v0_v1,g) && !is_border(v1_v0,g) )
-  {
-    if ( is_border(v0,g) && is_border(v1,g) )
-    {
-      //CGAL_ECMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge." ) ;
-      return false ;
-    }
-    else
-    {
-      if ( is_tetrahedron(v0_v1,g) )
-      {
-        //CGAL_ECMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge." ) ;
-        return false ;
-      }
-      if ( next(v0_v1, g) == opposite(prev(v1_v0, g), g) &&
-           prev(v0_v1, g) == opposite(next(v1_v0, g), g) )
-      {
-        //CGAL_ECMS_TRACE(3,"  degenerate volume." ) ;
-        return false ;
-      }
-    }
-  }
-
-  return true ;
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE

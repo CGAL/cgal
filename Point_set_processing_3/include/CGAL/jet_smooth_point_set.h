@@ -200,7 +200,7 @@ jet_smooth_point_set(
   typedef typename NP_helper::Geom_traits Kernel;
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
-  CGAL_static_assertion_msg(!(std::is_same<SvdTraits,
+  static_assert(!(std::is_same<SvdTraits,
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
@@ -223,7 +223,7 @@ jet_smooth_point_set(
   // precondition: at least 2 nearest neighbors
   CGAL_precondition(k >= 2);
 
-  // Instanciate a KD-tree search.
+  // Instantiate a KD-tree search.
   Neighbor_query neighbor_query (points, point_map);
 
   // Iterates over input points and mutates them.

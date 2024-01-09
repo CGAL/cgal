@@ -97,7 +97,7 @@ const BigFloat& BigFloat::getOne() {
 CGAL_INLINE_FUNCTION
 BigFloat::BigFloat(const Expr& E, const extLong& r, const extLong& a)
   : RCBigFloat(new BigFloatRep()) {
-  *this = E.approx(r, a).BigFloatValue(); // lazy implementaion, any other way?
+  *this = E.approx(r, a).BigFloatValue(); // lazy implementation, any other way?
 }
 
 ////////////////////////////////////////////////////////////
@@ -862,7 +862,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
   // the output is an integer (in which case it does not physically appear
   // but conceptually terminates the sequence of digits).
 
-  // First, get the decimal representaion of (m * B^(exp)).
+  // First, get the decimal representation of (m * B^(exp)).
   if (e2 < 0) {
     M *= FiveTo(-e2); // M = x * 10^(-e2)
   } else if (e2 > 0) {
@@ -1077,7 +1077,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
   } while (isspace(c)); /* loop if met end-of-file, or
                                char read in is white-space. */
   // Chen Li, "if (c == EOF)" is unsafe since c is of char type and
-  // EOF is of int tyep with a negative value -1
+  // EOF is of int type with a negative value -1
   if (i.eof()) {
     i.clear(std::ios::eofbit | std::ios::failbit);
     return i;

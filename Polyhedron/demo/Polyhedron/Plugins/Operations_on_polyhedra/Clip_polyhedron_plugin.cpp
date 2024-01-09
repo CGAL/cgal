@@ -157,7 +157,7 @@ if it has a closed contour on the clipping polyhedron. Otherwise, it will be lef
   }
   bool applicable(QAction*) const
   {
-    Q_FOREACH(int id, scene->selectionIndices())
+    for(int id : scene->selectionIndices())
     {
       if(qobject_cast<Scene_surface_mesh_item*>(scene->item(id)))
         return true;
@@ -396,7 +396,7 @@ public Q_SLOTS:
       }
     }
     //apply the clipping function
-    Q_FOREACH(Scene_item* item, polyhedra)
+    for(Scene_item* item : polyhedra)
     {
       Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
       if(!ui_widget.do_not_modify_CheckBox->isChecked() && CGAL::Polygon_mesh_processing::does_self_intersect(*sm_item->face_graph()))
@@ -439,7 +439,7 @@ public Q_SLOTS:
         }
 
         Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(pos_side);
-        new_item->setName(QString("Splitted %1").arg(sm_item->name()));
+        new_item->setName(QString("Split %1").arg(sm_item->name()));
         new_item->setColor(sm_item->color());
         new_item->setRenderingMode(sm_item->renderingMode());
         new_item->setVisible(sm_item->visible());

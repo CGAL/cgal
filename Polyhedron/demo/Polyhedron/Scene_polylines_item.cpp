@@ -248,7 +248,7 @@ Scene_polylines_item_private::computeSpheres()
               colors[2] = 0;
               break;
           default:
-              colors[0] = 200; //fuschia
+              colors[0] = 200; //fuchsia
               colors[1] = 0;
               colors[2] = 200;
           }
@@ -339,7 +339,7 @@ Scene_polylines_item::clone() const {
     Scene_polylines_item* item = new Scene_polylines_item;
     item->polylines = polylines;
     QVariant metadata_variant = property("polylines metadata");
-    if(metadata_variant.type() == QVariant::StringList)
+    if(metadata_variant.typeId() == QMetaType::QStringList)
     {
         item->setProperty("polylines metadata", metadata_variant);
     }
@@ -568,7 +568,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->addItem(d->spheres);
           scene->changeGroup(d->spheres, this);
           lockChild(d->spheres);
-          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+          for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
           {
             d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
           }
@@ -611,9 +611,9 @@ void Scene_polylines_item::split_at_sharp_angles()
         Bare_polyline_container::iterator current_polyline_it =
                 bare_polyline_it;
         Bare_polyline& bare_polyline = *bare_polyline_it;
-        Bare_polyline::iterator it = boost::next(bare_polyline.begin());
+        Bare_polyline::iterator it = std::next(bare_polyline.begin());
 
-        if(boost::next(bare_polyline.begin()) == bare_polyline.end())
+        if(std::next(bare_polyline.begin()) == bare_polyline.end())
         {
             std::cerr << "WARNING: Isolated point in polylines\n";
             bare_polyline_it = bare_polylines.erase(bare_polyline_it);
@@ -622,10 +622,10 @@ void Scene_polylines_item::split_at_sharp_angles()
         else
             ++bare_polyline_it;
         if(it != bare_polyline.end()) {
-            for(; it != boost::prior(bare_polyline.end()); ++it) {
+            for(; it != std::prev(bare_polyline.end()); ++it) {
                 const Point_3 pv = *it;
-                const Point_3 pa = *boost::prior(it);
-                const Point_3 pb = *boost::next(it);
+                const Point_3 pa = *std::prev(it);
+                const Point_3 pb = *std::next(it);
                 const K::Vector_3 av = pv - pa;
                 const K::Vector_3 bv = pv - pb;
                 const K::FT sc_prod = av * bv;
@@ -637,7 +637,7 @@ void Scene_polylines_item::split_at_sharp_angles()
                     std::cerr << "Split polyline (small angle) "
                               <<  std::acos(sqrt(CGAL::square(sc_prod) /
                                                  ((av*av) * (bv*bv)))) * 180 /CGAL_PI
-                               << " degres\n";
+                               << " degrees\n";
 #endif
                     Bare_polyline new_polyline;
                     std::copy(it, bare_polyline.end(),
@@ -647,8 +647,8 @@ void Scene_polylines_item::split_at_sharp_angles()
                         // if the polyline is a cycle, test if its beginning is a sharp
                         // angle...
                         const Point_3 pv = *bare_polyline.begin();
-                        const Point_3 pa = *boost::prior(boost::prior(bare_polyline.end()));
-                        const Point_3 pb = *boost::next(bare_polyline.begin());
+                        const Point_3 pa = *std::prev(std::prev(bare_polyline.end()));
+                        const Point_3 pb = *std::next(bare_polyline.begin());
                         const K::Vector_3 av = pv - pa;
                         const K::Vector_3 bv = pv - pb;
                         const K::FT sc_prod = av * bv;
@@ -657,18 +657,18 @@ void Scene_polylines_item::split_at_sharp_angles()
                                  CGAL::square(sc_prod) < (av * av) * (bv * bv) / 4 ) )
                         {
                             // if its beginning is a sharp angle, then split
-                            bare_polyline.erase(boost::next(it), bare_polyline.end());
+                            bare_polyline.erase(std::next(it), bare_polyline.end());
                         }
                         else {
                             // ...if not, modifies its beginning
-                            std::copy(boost::next(bare_polyline.begin()),
-                                      boost::next(it),
+                            std::copy(std::next(bare_polyline.begin()),
+                                      std::next(it),
                                       std::back_inserter(new_polyline));
                             bare_polylines.erase(current_polyline_it);
                         }
                     }
                     else {
-                        bare_polyline.erase(boost::next(it), bare_polyline.end());
+                        bare_polyline.erase(std::next(it), bare_polyline.end());
                     }
                     bare_polylines.push_back(new_polyline);
                     break;
@@ -686,7 +686,7 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
               other_item->polylines.end(),
               std::back_inserter(polylines));
     QVariant other_metadata_variant = other_item->property("polylines metadata");
-    if(other_metadata_variant.type() == QVariant::StringList)
+    if(other_metadata_variant.typeId() == QMetaType::QStringList)
     {
         QStringList metadata = property("polylines metadata").toStringList();
         metadata.append(other_metadata_variant.toStringList());

@@ -20,7 +20,7 @@
 
 /*! \file
  * This class is the default \dcel{} class used by the General_polygon_set_2
- * and Polygon_set_2} class-templates to represent the undelying internal
+ * and Polygon_set_2} class-templates to represent the underlying internal
  * Arrangement_2 data structure.
  */
 

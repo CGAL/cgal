@@ -34,12 +34,14 @@ of the `SegmentDelaunayGraphLinfTraits_2` concept
 with respect to the
 `SegmentDelaunayGraphTraits_2` concept.
 
-\cgalRefines `SegmentDelaunayGraphTraits_2`
+\cgalRefines{SegmentDelaunayGraphTraits_2}
 
-\cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+\cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphSite_2`
 \sa `CGAL::Segment_Delaunay_graph_Linf_2<Gt,DS>`

@@ -6,17 +6,17 @@
 #include <CGAL/Arr_Bezier_curve_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
-typedef Nt_traits::Rational                             NT;
-typedef Nt_traits::Rational                             Rational;
-typedef Nt_traits::Algebraic                            Algebraic;
-typedef CGAL::Cartesian<Rational>                       Rat_kernel;
-typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
-typedef Rat_kernel::Point_2                             Rat_point;
-typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-                                                        Traits;
-typedef Traits::X_monotone_curve_2                      Bezier_x_monotone_curve;
-typedef Traits::Curve_2                                 Bezier_curve;
-typedef CGAL::Arrangement_2<Traits>                     Arrangement;
+using Nt_traits = CGAL::CORE_algebraic_number_traits;
+using NT = Nt_traits::Rational;
+using Rational = Nt_traits::Rational;
+using Algebraic = Nt_traits::Algebraic;
+using Rat_kernel = CGAL::Cartesian<Rational>;
+using Alg_kernel = CGAL::Cartesian<Algebraic>;
+using Rat_point = Rat_kernel::Point_2;
+using Traits =
+  CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+using Bezier_x_monotone_curve = Traits::X_monotone_curve_2;
+using Bezier_curve = Traits::Curve_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 
 #endif

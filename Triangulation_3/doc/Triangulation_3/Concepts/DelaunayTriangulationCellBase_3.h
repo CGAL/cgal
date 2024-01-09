@@ -9,10 +9,12 @@ the concept `TriangulationCellBase_3` by adding
 in the cell an operator that computes its circumcenter.
 
 
-\cgalRefines `TriangulationCellBase_3`
+\cgalRefines{TriangulationCellBase_3}
 
-\cgalHasModel `CGAL::Delaunay_triangulation_cell_base_3`
-\cgalHasModel `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Delaunay_triangulation_cell_base_3}
+\cgalHasModels{CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3}
+\cgalHasModelsEnd
 
 \sa `DelaunayTriangulationTraits_3`
 

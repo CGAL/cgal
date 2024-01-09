@@ -37,8 +37,6 @@
 
 #include <boost/format.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
 #include <atomic>
 
@@ -173,9 +171,9 @@ template<class Tr,
          class Previous_,
          class Concurrency_tag,
 #ifdef CGAL_LINKED_WITH_TBB
-         class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
+         class Container_ = std::conditional_t // (parallel/sequential?)
          <
-          boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+          std::is_convertible_v<Concurrency_tag, Parallel_tag>,
 
           // Parallel
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
@@ -210,7 +208,7 @@ template<class Tr,
           Meshes::Double_map_container<typename Tr::Cell_handle,
                                        typename Criteria::Cell_quality>
 # endif
-         >::type // boost::if (parallel/sequential)
+         > // std::conditional (parallel/sequential)
 
 #else // !CGAL_LINKED_WITH_TBB
 
@@ -469,6 +467,7 @@ public:
   std::string debug_info_element_impl(const Cell_handle &ch) const
   {
     std::stringstream sstr;
+    sstr.precision(17);
     sstr << "Cell " << (void*)(ch.operator->()) << " { " << std::endl
     << "  " << *ch->vertex(0) << std::endl
     << "  " << *ch->vertex(1) << std::endl
@@ -662,7 +661,7 @@ scan_triangulation_impl()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Ct, Parallel_tag>::value)
+  if (std::is_convertible<Ct, Parallel_tag>::value)
   {
 # if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad cells (in parallel)";
@@ -672,7 +671,7 @@ scan_triangulation_impl()
     typedef typename Tr::All_cells_iterator All_cells_iterator;
 
     // WITH PARALLEL_FOR
-    // Copy cells into an std::vector to allow the use of tbb::parallel_for
+    // Copy cells into an std::vector to enable the use of tbb::parallel_for
     // which requires random-access.
     // Note that we're using all_cells_begin() instead of finite_cells_begin()
     // because it's faster to do the is_infinite() test in parallel.
@@ -749,8 +748,9 @@ int
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 number_of_bad_elements_impl()
 {
-  typedef typename MD::Subdomain Subdomain;
-  typedef typename Tr::Finite_cells_iterator Finite_cell_iterator;
+  typedef typename MD::Subdomain_index        Subdomain_index;
+  typedef std::optional<Subdomain_index>    Subdomain;
+  typedef typename Tr::Finite_cells_iterator  Finite_cell_iterator;
 
   int count = 0;
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
@@ -926,7 +926,7 @@ void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
 treat_new_cell(const Cell_handle& cell)
 {
-  typedef boost::optional<typename MD::Subdomain_index> Subdomain;
+  typedef std::optional<typename MD::Subdomain_index> Subdomain;
 
   // treat cell
   const Subdomain subdomain = r_oracle_.is_in_domain_object()(r_tr_.dual(cell));

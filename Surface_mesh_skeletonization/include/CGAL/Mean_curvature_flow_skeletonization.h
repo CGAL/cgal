@@ -234,6 +234,10 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
 
+  struct Less_id {
+    bool operator()(const edge_descriptor& x, const edge_descriptor& y) const { return x.id() < y.id(); }
+  };
+
   // Get weight from the weight interface.
   typedef CGAL::Weights::Cotangent_weight<mTriangleMesh, mVertexPointMap, Traits> Weight_calculator;
 
@@ -269,9 +273,9 @@ private:
   /** Traits class. */
   Traits m_traits;
 
-  /** Controling the velocity of movement and approximation quality. */
+  /** Controlling the velocity of movement and approximation quality. */
   double m_omega_H;
-  /** Controling the smoothness of the medial approximation. */
+  /** Controlling the smoothness of the medial approximation. */
   double m_omega_P;
   /** Edges with length less than `min_edge_length` will be collapsed. */
   double m_min_edge_length;
@@ -1425,7 +1429,7 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
 {
   std::size_t cnt=0, prev_cnt=0;
 
-  std::set<edge_descriptor> edges_to_collapse, non_topologically_valid_collapses;
+  std::set<edge_descriptor,Less_id> edges_to_collapse, non_topologically_valid_collapses;
 
   for(edge_descriptor ed : edges(m_tmesh))
     if ( edge_should_be_collapsed(ed) )

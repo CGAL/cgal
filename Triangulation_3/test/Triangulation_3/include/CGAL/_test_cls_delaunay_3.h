@@ -14,24 +14,24 @@
 #ifndef CGAL_TEST_CLS_DELAUNAY_C
 #define CGAL_TEST_CLS_DELAUNAY_C
 
+#include "_test_cls_iterator.h"
+#include "_test_cls_circulator.h"
+#include "_test_remove_cluster.h"
+
+#include <CGAL/Testsuite/use.h>
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
+
+#include <boost/mpl/identity.hpp>
+
 #include <cassert>
 #include <iostream>
 #include <fstream>
 #include <list>
 #include <vector>
 #include <type_traits>
-
-#include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
-
-#include "_test_cls_iterator.h"
-#include "_test_cls_circulator.h"
-#include "_test_remove_cluster.h"
-
-#include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
-#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
@@ -92,22 +92,6 @@ nearest_vertex_in_cell(const T&t, const P&p, const typename T::Cell_handle c)
 {
   return nearest_vertex_in_cell(t, p, c, typename T::Weighted_tag());
 }
-
-// Template meta programming if.
-template < typename Cond, typename Then, typename Else >
-struct If;
-
-template < typename Then, typename Else >
-struct If <CGAL::Tag_true, Then, Else>
-{
-  typedef Then type;
-};
-
-template < typename Then, typename Else >
-struct If <CGAL::Tag_false, Then, Else>
-{
-  typedef Else type;
-};
 
 template < typename T, typename P >
 void test_conflicts(T& T3_13, const P *q)
@@ -221,6 +205,10 @@ _test_cls_delaunay_3(const Triangulation &)
   CGAL_USE_TYPE(Cell);
   CGAL_USE_TYPE(Vertex_iterator);
   CGAL_USE_TYPE(Cell_iterator);
+
+  CGAL_USE_TYPE(typename Cls::Periodic_tag);
+  CGAL_USE_TYPE(typename Cls::Weighted_tag);
+
   // +++ We define now some points for building triangulations +++++//
 
 // list of Points for T1_0 , T1_1, T1_2 :
@@ -583,7 +571,7 @@ _test_cls_delaunay_3(const Triangulation &)
     size_type m = Tdel.remove(vertices.begin(), vertices.end());
     assert(m == n - Tdel.number_of_vertices());
     assert(Tdel.is_valid(false));
-    std::cout << "    successfull" << std::endl;
+    std::cout << "    successful" << std::endl;
   }
 
 
@@ -651,7 +639,7 @@ _test_cls_delaunay_3(const Triangulation &)
     std::cout << "    Testing nearest_vertex()" << std::endl;
     // We do a nearest_vertex() and two nearest_vertex_in_cell()
     // queries on all points with integer coordinate
-    // in the cube [-1;6]^3. In each case we check explicitely that the
+    // in the cube [-1;6]^3. In each case we check explicitly that the
     // output is correct by comparing distance to other vertices.
     Cell_handle c1 = T3_13.finite_cells_begin();
     Cell_handle c2 = T3_13.infinite_vertex()->cell();
@@ -947,7 +935,7 @@ _test_cls_delaunay_3(const Triangulation &)
   Vertex_handle tmv1 = TM_0.insert(Point(0,0,0));
   Vertex_handle tmv2 = TM_0.insert(Point(0,1,0));
 
-        TM_0.move_if_no_collision(tmv1, Point(0, 2, 1));
+  TM_0.move_if_no_collision(tmv1, Point(0, 2, 1));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 1);

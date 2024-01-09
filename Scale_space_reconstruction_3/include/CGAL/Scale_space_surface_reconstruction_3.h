@@ -53,21 +53,23 @@ public:
   typedef std::array<std::size_t, 3> Facet;                           ///< defines a facet of the surface (triple of point indices).
 
 #ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                      Point_range;            ///< defines a range points.
   typedef unspecified_type                      Point_iterator;         ///< defines an iterator over the points.
   typedef const unspecified_type                Point_const_iterator;   ///< defines a constant iterator over the points.
 #else
-  typedef typename std::vector<Point>           Point_vector;
-  typedef typename Point_vector::iterator       Point_iterator;
-  typedef typename Point_vector::const_iterator Point_const_iterator;
+  typedef typename std::vector<Point>           Point_range;
+  typedef typename Point_range::iterator        Point_iterator;
+  typedef typename Point_range::const_iterator  Point_const_iterator;
 #endif
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type                      Facet_iterator;         ///< defines an iterator over the points.
-  typedef const unspecified_type                Facet_const_iterator;   ///< defines a constant iterator over the points.
+  typedef unspecified_type                      Facet_range;            ///< defines a range of facets
+  typedef unspecified_type                      Facet_iterator;         ///< defines an iterator over the facets.
+  typedef const unspecified_type                Facet_const_iterator;   ///< defines a constant iterator over the facets.
 #else
-  typedef typename std::vector<Facet>           Facet_vector;
-  typedef typename Facet_vector::iterator       Facet_iterator;
-  typedef typename Facet_vector::const_iterator Facet_const_iterator;
+  typedef typename std::vector<Facet>           Facet_range;
+  typedef typename Facet_range::iterator        Facet_iterator;
+  typedef typename Facet_range::const_iterator  Facet_const_iterator;
 #endif
 
   // Default algorithms used (same as in old API)
@@ -76,8 +78,8 @@ public:
 
 private:
 
-  Point_vector m_points;
-  Facet_vector m_facets;
+  Point_range m_points;
+  Facet_range m_facets;
 
   FT m_internal_squared_radius; // For backward compatibility
 
@@ -233,6 +235,9 @@ public:
   /// gives the number of points of the surface.
   std::size_t number_of_points() const { return m_points.size(); }
 
+  /// gives the range of points
+  const Point_range& points() const { return m_points; }
+
   /// gives an iterator to the first point at the current scale.
   /** \warning Changes to the scale-space do not cause an automatic update to
    *  the surface.
@@ -253,6 +258,9 @@ public:
 
   /// gives the number of facets of the surface.
   std::size_t number_of_facets() const { return m_facets.size(); }
+
+  /// gives the range of facets
+  const Facet_range& facets() const { return m_facets; }
 
   /// gives an iterator to the first triple in the surface.
   /** \warning Changes to the surface may change its topology.
@@ -291,17 +299,5 @@ std::ostream& operator<< (std::ostream& os, const CGAL::Scale_space_surface_reco
 }
 
 } // namespace CGAL
-
-template< typename T >
-std::ostream&
-operator<<( std::ostream& os, const std::array< T, 3 >& t ) {
-    return os << t[0] << " " << t[1] << " " << t[2];
-}
-
-template< typename T >
-std::istream&
-operator>>( std::istream& is, std::array< T, 3 >& t ) {
-    return is >> get<0>(t) >> get<1>(t) >> get<2>(t);
-}
 
 #endif // CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H

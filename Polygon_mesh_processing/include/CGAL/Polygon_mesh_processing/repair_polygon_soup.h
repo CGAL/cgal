@@ -1125,7 +1125,7 @@ struct Polygon_soup_fixer<PointRange, PolygonRange, std::array<PID, N> >
 ///
 /// \tparam PointRange a model of the concepts `SequenceContainer` and `Swappable`
 ///                    and whose value type is the point type.
-/// \tparam PolygonRange a model of the concept `SequenceContainer`.
+/// \tparam PolygonRange a model of the concept `SequenceContainer`
 ///                      whose `value_type` is itself a model of the concepts `SequenceContainer`,
 ///                      `Swappable`, and `ReversibleContainer` whose `value_type` is `std::size_t`.
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Linear_cell_complex_Examples)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
 # For Gprof.
 # ADD_DEFINITIONS("-pg")
@@ -17,6 +17,8 @@ create_single_source_cgal_program("gmap_linear_cell_complex_3.cpp")
 create_single_source_cgal_program("linear_cell_complex_3.cpp")
 create_single_source_cgal_program(
   "linear_cell_complex_3_attributes_management.cpp")
+create_single_source_cgal_program("linear_cell_complex_3_incremental_builder.cpp")
+create_single_source_cgal_program("linear_cell_complex_3_insert.cpp")
 create_single_source_cgal_program("linear_cell_complex_3_operations.cpp")
 create_single_source_cgal_program(
   "linear_cell_complex_3_with_colored_vertices.cpp")
@@ -27,6 +29,8 @@ create_single_source_cgal_program("voronoi_2.cpp")
 create_single_source_cgal_program("voronoi_3.cpp")
 
 create_single_source_cgal_program("draw_linear_cell_complex.cpp")
-if(CGAL_Qt5_FOUND)
+if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_linear_cell_complex PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(linear_cell_complex_3_incremental_builder PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(linear_cell_complex_3_insert PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

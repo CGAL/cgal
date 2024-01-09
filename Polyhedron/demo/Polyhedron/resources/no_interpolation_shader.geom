@@ -8,6 +8,7 @@ in VS_OUT
   vec4 fP;
   vec3 fN;
   vec4 out_color;
+  float dist[6];
 } gs_in[4];
 
 out GS_OUT
@@ -17,6 +18,7 @@ out GS_OUT
   flat vec4 color[4];
   vec2 uv;
   flat vec4 prob[4];
+  float dist[6];
 } gs_out;
 
 void main(void)
@@ -25,19 +27,21 @@ void main(void)
   gs_out.fN = gs_in[0].fN;
   gs_out.fP = gs_in[0].fP;
   gs_out.uv = vec2(0.0, 0.0);
-
+  gs_out.dist = gs_in[0].dist;
   EmitVertex();
 
   gl_Position = gl_in[1].gl_Position;
   gs_out.fN = gs_in[1].fN;
   gs_out.fP = gs_in[1].fP;
   gs_out.uv = vec2(0.0, 1.0);
+  gs_out.dist = gs_in[1].dist;
   EmitVertex();
 
   gl_Position = gl_in[3].gl_Position;
   gs_out.fN = gs_in[3].fN;
   gs_out.fP = gs_in[3].fP;
   gs_out.uv = vec2(1.0, 0.0);
+  gs_out.dist = gs_in[3].dist;
 
   // We're only writing the output color for the last
   // vertex here because they're flat attributes,
@@ -67,18 +71,21 @@ void main(void)
   gs_out.fN = gs_in[1].fN;
   gs_out.fP = gs_in[1].fP;
   gs_out.uv = vec2(0.0, 1.0);
+  gs_out.dist = gs_in[1].dist;
   EmitVertex();
 
   gl_Position = gl_in[2].gl_Position;
   gs_out.fN = gs_in[2].fN;
   gs_out.fP = gs_in[2].fP;
   gs_out.uv = vec2(1.0, 1.0);
+  gs_out.dist = gs_in[2].dist;
   EmitVertex();
 
   gl_Position = gl_in[3].gl_Position;
   gs_out.fN = gs_in[3].fN;
   gs_out.fP = gs_in[3].fP;
   gs_out.uv = vec2(1.0, 0.0);
+  gs_out.dist = gs_in[3].dist;
   // Again, only write the output color for the last vertex
   gs_out.color[0] = gs_in[0].out_color;
   gs_out.color[1] = gs_in[1].out_color;

@@ -18,6 +18,10 @@
 #include <CGAL/Polygonal_surface_reconstruction/internal/hypothesis.h>
 #include <CGAL/Polygonal_surface_reconstruction/internal/compute_confidences.h>
 #include <CGAL/Polygonal_surface_reconstruction/internal/point_set_with_planes.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <unordered_map>
 
@@ -28,7 +32,7 @@
 namespace CGAL {
 
         /*!
-        \ingroup PkgPolygonalSurfaceReconstruction
+        \ingroup PkgPolygonalSurfaceReconstructionRef
 
         \brief
 
@@ -455,7 +459,12 @@ namespace CGAL {
 
                         // Converts from internal data structure to the required `PolygonMesh`.
                         output_mesh.clear();        // make sure it is empty.
-                        CGAL::copy_face_graph(target_mesh, output_mesh);
+                        std::vector<Point> points;
+                        std::vector<std::vector<std::size_t> > polygons;
+                        CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(target_mesh, points, polygons);
+                        CGAL::Polygon_mesh_processing::merge_duplicate_points_in_polygon_soup(points, polygons);
+                        CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
+                        CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, output_mesh);
                 }
                 else {
                         error_message_ = "solving the binary program failed";

@@ -17,30 +17,48 @@
 #include <CGAL/Straight_skeleton_2/debug.h>
 #include <CGAL/Straight_skeleton_2/test.h>
 
-#include <boost/mpl/if.hpp>
+#include <CGAL/Polygon_with_holes_2.h>
+
+#include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/or.hpp>
-#include <boost/none.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include <iostream>
 #include <type_traits>
 
-// The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
 namespace CGAL {
 
 namespace CGAL_SS_i {
 
-template<class K> struct Has_inexact_constructions
+template<class K>
+struct Has_inexact_constructions
 {
   typedef typename K::FT FT ;
 
-  typedef typename boost::mpl::if_< boost::mpl::or_< std::is_same<FT,double>
-                                                   , std::is_same<FT,Interval_nt_advanced>
-                                                   >
-                                  , Tag_true
-                                  , Tag_false
-                                  >::type type ;
+  typedef std::conditional_t< std::is_same_v<FT,double> || std::is_same_v<FT,Interval_nt_advanced>
+                              , Tag_true
+                              , Tag_false
+                              > type ;
 } ;
+
+template <class K>
+struct Segment_2_with_ID
+  : public K::Segment_2
+{
+  typedef typename K::Segment_2 Base;
+  typedef typename K::Point_2 Point_2;
+
+  std::size_t id() const { return mID; }
+
+public:
+  Segment_2_with_ID() : Base(), mID(-1) { }
+  Segment_2_with_ID(Base const& aS) : Base(aS), mID(-1) { }
+  Segment_2_with_ID(Base const& aS, const std::size_t aID) : Base(aS), mID(aID) { }
+  Segment_2_with_ID(Point_2 const& aP, Point_2 const& aQ, const std::size_t aID) : Base(aP, aQ), mID(aID) { }
+
+public:
+  std::size_t mID;
+};
 
 //
 // This record encapsulates the defining contour halfedges for a node (both contour and skeleton)
@@ -153,33 +171,71 @@ private:
   Handle mE[3];
 } ;
 
+template<class U, class V>
+struct Is_same_type { typedef Tag_false type ; } ;
+
+template<class U>
+struct Is_same_type<U,U> { typedef Tag_true type ; } ;
+
+// to distinguish between SequenceContainers of points, and GeneralPolygonWithHoles_2
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Hole_const_iterator)
+
+// The return type of create_(weighted)_interior/exterior_skeleton_and_offset_polygons_2:
+// - if polygon input is a model of 'GeneralPolygonWithHoles_2', the return type
+//   should be the internal (hole-less) polygon type GeneralPolygonWithHoles_2::Polygon_2
+// - if polygon input is just a sequence container of points (e.g. Polygon_2), then the same type
+//   is expected in output
+template <typename Polygon, typename OfK,
+          bool has_holes = CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>
+struct Default_return_polygon_type // Polygon type supports holes
+{
+  typedef typename std::conditional<std::is_same<
+                                      typename Kernel_traits<typename boost::range_value<
+                                        typename Polygon::Polygon_2>::type>::Kernel,
+                                      OfK>::value,
+                                    typename Polygon::Polygon_2, // correct kernel
+                                    CGAL::Polygon_2<OfK> /*incorrect kernel*/ >::type type;
+};
+
+template <typename Polygon, typename OfK>
+struct Default_return_polygon_type<Polygon, OfK, false> // Polygon type does NOT support holes
+{
+  typedef typename std::conditional<std::is_same<
+                                      typename Kernel_traits<typename boost::range_value<Polygon>::type>::Kernel,
+                                      OfK>::value,
+                                    Polygon, // correct kernel
+                                    CGAL::Polygon_2<OfK> /*incorrect kernel*/ >::type type;
+};
+
+// The return type of create_interior/exterior_skeleton_and_offset_polygons_with_holes_2:
+// - if polygon input is a model of 'GeneralPolygonWithHoles_2', the return type should be the same
+// - if polygon input is just a sequence container of points (e.g. Polygon_2), then use
+//   General_polygon_with_holes_2<Polygon>
+template <typename Polygon, typename OfK,
+          bool has_holes = CGAL_SS_i::has_Hole_const_iterator<Polygon>::value>
+struct Default_return_polygon_with_holes_type // Polygon type supports holes
+{
+  typedef typename std::conditional<std::is_same<
+                                      typename Kernel_traits<typename boost::range_value<
+                                        typename Polygon::Polygon_2>::type>::Kernel,
+                                      OfK>::value,
+                                    Polygon, // correct kernel
+                                    CGAL::Polygon_with_holes_2<OfK> /*incorrect kernel*/ >::type type;
+};
+
+template <typename Polygon, typename OfK>
+struct Default_return_polygon_with_holes_type<Polygon, OfK, false> // Polygon type does NOT support holes
+{
+  // Maybe on paper the `conditional<true>` should be `General_polygon_with_holes_2<Polygon>`...
+  typedef typename std::conditional<std::is_same<
+                                      typename Kernel_traits<typename boost::range_value<Polygon>::type>::Kernel,
+                                      OfK>::value,
+                                    CGAL::Polygon_with_holes_2<OfK>, // correct kernel but no holes
+                                    CGAL::Polygon_with_holes_2<OfK> /*incorrect kernel*/ >::type type;
+};
 
 } // namespace CGAL_SS_i
 
-class Ref_counted_base
-{
-private:
-  mutable long mCount ;
-  Ref_counted_base( Ref_counted_base const &);
-  Ref_counted_base& operator=( Ref_counted_base const &);
-protected:
-  Ref_counted_base(): mCount(0) {}
-  virtual ~Ref_counted_base() noexcept(!CGAL_ASSERTIONS_ENABLED) {}
-public:
-    void AddRef() const { ++mCount; }
-    void Release() const
-      {
-        if( --mCount == 0 )
-          delete this;
-      }
-};
-
-inline void intrusive_ptr_add_ref( Ref_counted_base const* p ) { p->AddRef(); }
-inline void intrusive_ptr_release( Ref_counted_base const* p ) { p->Release(); }
 } // namespace CGAL
 
-
-
-#endif // CGAL_STRAIGHT_SKELETON_AUX_H //
-// EOF //
-
+#endif // CGAL_STRAIGHT_SKELETON_AUX_H

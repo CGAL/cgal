@@ -68,7 +68,7 @@ struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT>
 The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
 \ref thirdpartyEigen "Eigen" version 3.1 (or later) must be available on the system.
 
-\cgalModels `SparseLinearAlgebraWithFactorTraits_d` and `NormalEquationSparseLinearAlgebraTraits_d`
+\cgalModels{SparseLinearAlgebraWithFactorTraits_d,NormalEquationSparseLinearAlgebraTraits_d}
 
 \tparam EigenSolverT A sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-conjugate gradient stabilized solver  `Eigen::BiCGSTAB` for `double`.
 
@@ -242,7 +242,12 @@ class Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType
 public:
   typedef EigenSolverT                                                  Solver;
   typedef Scalar                                                        NT;
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type                                              Matrix;
+#else
   typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type             Matrix;
+#endif
+
   typedef Eigen_vector<Scalar>                                          Vector;
 
   // Public operations

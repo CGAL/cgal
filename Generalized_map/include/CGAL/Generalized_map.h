@@ -161,7 +161,7 @@ namespace CGAL {
      */
     Generalized_map_base()
     {
-      CGAL_static_assertion_msg(Helper::nb_attribs<=dimension+1,
+      static_assert(Helper::nb_attribs<=dimension+1,
                   "Too many attributes in the tuple Attributes_enabled");
       this->init_storage();
 
@@ -193,7 +193,7 @@ namespace CGAL {
      *  @param dartinfoconverter functor to transform original information of darts into information of copies
      *  @param pointconverter functor to transform points in original map into points of copies.
      *  @param copy_perforated_darts true to copy also darts marked perforated (if any)
-     *  @param mark_perforated_darts true to mark darts wich are copies of perforated darts (if any)
+     *  @param mark_perforated_darts true to mark darts which are copies of perforated darts (if any)
      *  @post *this is valid.
      */
     template <typename GMap2, typename Dart_descriptor_2,
@@ -689,7 +689,7 @@ namespace CGAL {
     void restricted_set_dart_attribute(Dart_descriptor dh,
                                        typename Attribute_descriptor<i>::type ah)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "set_dart_attribute<i> called but i-attributes are disabled.");
 
       if ( this->template attribute<i>(dh)==ah ) return;
@@ -712,7 +712,7 @@ namespace CGAL {
     void set_dart_attribute(Dart_descriptor dh,
                             typename Attribute_descriptor<i>::type ah)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "set_dart_attribute<i> called but i-attributes are disabled.");
 
       if ( this->template attribute<i>(dh)==ah ) return;
@@ -1038,7 +1038,7 @@ namespace CGAL {
     }
 
     /** Unmark all the darts of the map for a given mark.
-     * If all the darts are marked or unmarked, this operation takes O(1)
+     * If all the darts are marked or unmarked, this operation takes \cgalBigO{1}
      * operations, otherwise it traverses all the darts of the map.
      * @param amark the given mark.
      */
@@ -1347,8 +1347,8 @@ namespace CGAL {
     template < class Ite >
     std::ostream& display_orbits(std::ostream & aos) const
     {
-      CGAL_static_assertion( (std::is_same<typename Ite::Basic_iterator,
-                              Tag_true>::value) );
+      static_assert(std::is_same<typename Ite::Basic_iterator,
+                              Tag_true>::value);
       unsigned int nb = 0;
       size_type amark = get_new_mark();
       for ( typename Dart_range::const_iterator it1(darts().begin()),
@@ -1409,13 +1409,13 @@ namespace CGAL {
     template<unsigned int i, typename ...Args>
     typename Attribute_descriptor<i>::type create_attribute(const Args&... args)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                   "create_attribute<i> but i-attributes are disabled");
      typename Attribute_descriptor<i>::type res=
        std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(args...);
      // Reinitialize the ref counting of the new attribute. This is normally
-     // not required except if create_attribute is used as "copy contructor".
+     // not required except if create_attribute is used as "copy constructor".
      this->template init_attribute_ref_counting<i>(res);
      internal::Init_id<typename Attribute_range<i>::type>::run
          (this->template attributes<i>(), res);
@@ -1427,7 +1427,7 @@ namespace CGAL {
     template<unsigned int i>
     void erase_attribute(typename Attribute_descriptor<i>::type h)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                   "erase_attribute<i> but i-attributes are disabled");
       std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).erase(h);
@@ -1437,7 +1437,7 @@ namespace CGAL {
     template<unsigned int i>
     bool is_attribute_used(typename Attribute_const_descriptor< i >::type ah) const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                                 "is_attribute_used<i> but i-attributes are disabled");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).is_used(ah);
@@ -1447,7 +1447,7 @@ namespace CGAL {
     template <unsigned int i>
     size_type number_of_attributes() const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                   "number_of_attributes<i> but i-attributes are disabled");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).size();
@@ -1461,14 +1461,17 @@ namespace CGAL {
     void set_attribute(Dart_descriptor dh,
                        typename Attribute_descriptor<i>::type ah)
     {
-      CGAL_static_assertion(i<=dimension);
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(i<=dimension);
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                   "set_attribute<i> but i-attributes are disabled");
-      for ( typename Dart_of_cell_range<i>::iterator it(*this, dh);
-            it.cont(); ++it)
+      for (typename Dart_of_cell_range<i>::iterator it(*this, dh);
+           it.cont(); ++it)
       {
         this->template set_dart_attribute<i>(it, ah);
       }
+      if(ah!=null_descriptor)
+      // To ensure that the dart of this attribute is dh
+      { this->template set_dart_of_attribute<i>(ah, dh); }
     }
 
     /// @return a Attributes_range<i> (range through all the
@@ -1476,7 +1479,7 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_range<i>::type & attributes()
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
@@ -1485,7 +1488,7 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_const_range<i>::type & attributes() const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                                 "attributes<i> but i-attributes are disabled");
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers);
@@ -1498,7 +1501,7 @@ namespace CGAL {
                          typename Attribute_type<i>::type&)>&
     onsplit_functor()
     {
-      CGAL_static_assertion_msg
+      static_assert
           (Helper::template Dimension_index<i>::value>=0,
            "onsplit_functor<i> but "
            "i-attributes are disabled");
@@ -1514,7 +1517,7 @@ namespace CGAL {
                                typename Attribute_type<i>::type&)>&
     onsplit_functor() const
     {
-      CGAL_static_assertion_msg
+      static_assert
           (Helper::template Dimension_index<i>::value>=0,
            "onsplit_functor<i> but "
            "i-attributes are disabled");
@@ -1530,7 +1533,7 @@ namespace CGAL {
                                typename Attribute_type<i>::type&)>&
     onmerge_functor()
     {
-      CGAL_static_assertion_msg
+      static_assert
           (Helper::template Dimension_index<i>::value>=0,
            "onsplit_functor<i> but "
            "i-attributes are disabled");
@@ -1545,7 +1548,7 @@ namespace CGAL {
                                typename Attribute_type<i>::type&)>&
     onmerge_functor() const
     {
-      CGAL_static_assertion_msg
+      static_assert
           (Helper::template Dimension_index<i>::value>=0,
            "onsplit_functor<i> but "
            "i-attributes are disabled");
@@ -2632,7 +2635,7 @@ namespace CGAL {
                   <Self, Map2, 0>::run(*this, map2, current, other);
             }
 
-            // We test if the injection is valid with its neighboors.
+            // We test if the injection is valid with its neighbors.
             // We go out as soon as it is not satisfied.
             for (i = 0; match && i <= dimension; ++i)
             {
@@ -3021,7 +3024,7 @@ namespace CGAL {
 
     /** Test if a face is a combinatorial polygon of length alg
      *  (a cycle of alg edges alpha1 links together).
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the face containing adart is a polygon of length alg.
      */
     bool is_face_combinatorial_polygon(Dart_const_descriptor adart,
@@ -3115,7 +3118,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial tetrahedron.
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the volume containing adart is a combinatorial tetrahedron.
      */
     bool is_volume_combinatorial_tetrahedron(Dart_const_descriptor d1) const
@@ -3192,7 +3195,7 @@ namespace CGAL {
     }
 
     /** Test if a volume is a combinatorial hexahedron.
-     * @param adart an intial dart
+     * @param adart an initial dart
      * @return true iff the volume containing adart is a combinatorial hexahedron.
      */
     bool is_volume_combinatorial_hexahedron(Dart_const_descriptor d1) const
@@ -3385,7 +3388,7 @@ namespace CGAL {
     }
 
     /** Insert a vertex in the given 2-cell which is split in triangles,
-     * once for each inital edge of the facet.
+     * once for each initial edge of the facet.
      * @param adart a dart of the facet to triangulate.
      * @return A dart incident to the new vertex.
      */
@@ -3512,7 +3515,9 @@ namespace CGAL {
   bool is_insertable_cell_1_in_cell_2(Dart_const_descriptor adart1,
                                       Dart_const_descriptor adart2)
   {
-    if ( adart1==adart2 || adart1==this->template alpha<0>(adart2) )
+    if (adart2==null_descriptor) return true;
+    if (adart1==adart2 || adart1==this->template alpha<0>(adart2) ||
+        adart1==null_descriptor || this->template is_free<1>(adart2))
       return false;
     for ( CGAL::GMap_dart_const_iterator_of_orbit<Self,0,1> it(*this,adart1);
           it.cont(); ++it )
@@ -3525,29 +3530,104 @@ namespace CGAL {
   /** Insert an edge in a 2-cell between two given darts.
    * @param adart1 a first dart of the facet (!=null_descriptor && !=null_dart_descriptor).
    * @param adart2 a second dart of the facet. If null_descriptor insert a dangling edge.
+   * @param update_attributes a boolean to update the enabled attributes
    * @return a dart of the new edge, and not incident to the
    *         same vertex than adart1.
    */
   Dart_descriptor insert_cell_1_in_cell_2(Dart_descriptor adart1,
-                                      Dart_descriptor adart2,
-                                      bool update_attributes=true,
-                                      typename Attribute_descriptor<0>::type
-                                      ah=null_descriptor)
+                                          Dart_descriptor adart2,
+                                          typename Attribute_descriptor<0>::
+                                          type ah=null_descriptor,
+                                          bool update_attributes=true)
   {
-    if ( adart2!=null_descriptor)
-    {
-      CGAL_assertion(is_insertable_cell_1_in_cell_2(adart1, adart2));
-    }
+    CGAL_assertion(is_insertable_cell_1_in_cell_2(adart1, adart2));
+    return generic_insert_cell_1(adart1, adart2, false, update_attributes, ah);
+  }
 
+  /** Test if an edge can be inserted between two different 2-cells
+   *   between two given darts.
+   * @param adart1 a first dart.
+   * @param adart2 a second dart.
+   * @return true iff an edge can be inserted between adart1 and adart2.
+   */
+  bool is_insertable_cell_1_between_two_cells_2(Dart_const_descriptor adart1,
+                                                Dart_const_descriptor adart2) const
+  {
+    if (adart1==adart2 || adart1==null_descriptor || adart2==null_descriptor)
+    { return false; }
+    for ( CGAL::GMap_dart_const_iterator_of_orbit<Self,0,1> it(*this,adart1);
+          it.cont(); ++it )
+    {
+      if ( it==adart2 )  return false;
+    }
+    for(unsigned int d=3; d<=dimension; ++d)
+    { if(is_free(adart1, d)!=is_free(adart2, d)) { return false; }}
+
+    return true;
+  }
+
+  /** Insert an edge between two different 2-cells, between two given darts.
+   * @param adart1 a first dart of the first facet (!=null_descriptor && !=null_dart_descriptor).
+   * @param adart2 a second dart of the second facet (!=null_descriptor && !=null_dart_descriptor).
+   * @param update_attributes a boolean to update the enabled attributes
+   * @return a dart of the new edge, and not incident to the
+   *         same vertex than adart1.
+   */
+  Dart_descriptor insert_cell_1_between_two_cells_2(Dart_descriptor adart1,
+                                                    Dart_descriptor adart2,
+                                                    bool update_attributes=true)
+  {
+    CGAL_assertion(is_insertable_cell_1_between_two_cells_2(adart1, adart2));
+    return generic_insert_cell_1(adart1, adart2, true, update_attributes);
+  }
+
+  /** Insert an edge between two given darts. If the two darts belong to the same facet, call
+   *  insert_cell_1_in_cell_2, otherwise call insert_cell_1_between_two_cells_2.
+   * @param adart1 a first dart (!=null_descriptor && !=null_dart_descriptor).
+   * @param adart2 a second dart.
+   * @param update_attributes a boolean to update the enabled attributes
+   * @return a dart of the new edge, and not incident to the
+   *         same vertex than adart1.
+   */
+  Dart_descriptor insert_cell_1(Dart_descriptor adart1,
+                                Dart_descriptor adart2,
+                                bool update_attributes=true,
+                                typename Attribute_descriptor<0>::type
+                                ah=null_descriptor)
+  {
+    CGAL_assertion(adart1!=null_descriptor);
+    if(is_insertable_cell_1_in_cell_2(adart1, adart2))
+    { return insert_cell_1_in_cell_2(adart1, adart2, update_attributes, ah); }
+    return insert_cell_1_between_two_cells_2(adart1, adart2, update_attributes);
+  }
+
+  /** Generic method to insert a 1-cell, either in a 2-cell (cf. insert_cell_1_in_cell_2)
+   *  or between two different 2-cells (cf. insert_cell_1_between_two_cells_2).
+   *  Indeed the code is the same, except for the group/degroup attribute.
+   *  merge is true if adart1 and adart2 belongs to two different facets; in this case
+   *        the two facets should be merged (they are now linked by the new edge);
+   *  merge is false it adart1 and adart2 belongs to the same facet; in this case
+   *        the facet is split in two.
+   *  Internal method not supposed to be called by users.
+   */
+  Dart_descriptor generic_insert_cell_1(Dart_descriptor adart1,
+                                        Dart_descriptor adart2,
+                                        bool merge,
+                                        bool update_attributes=true,
+                                        typename Attribute_descriptor<0>::type
+                                        ah=null_descriptor)
+  {
     /* CGAL::GMap_dart_iterator_basic_of_involution<Self,1> will contain all
      * alpha_i except alpha_0, alpha_1 and alpha_2, i.e. this is
      * <alpha_3,...,alpha_d>
      */
+    Dart_descriptor dart2_a1=null_descriptor;
+    if(adart2!=null_descriptor) { dart2_a1=alpha<1>(adart2); }
+
     size_type m1=get_new_mark();
     CGAL::GMap_dart_iterator_basic_of_involution<Self,1> it1(*this, adart1, m1);
-
     size_type m2=get_new_mark();
-    CGAL::GMap_dart_iterator_basic_of_involution<Self,1> it2(*this, adart2, m2);
+    CGAL::GMap_dart_iterator_basic_of_involution<Self,1> it2(*this, dart2_a1, m2);
 
     Dart_descriptor d1=null_descriptor;
     Dart_descriptor d2=null_descriptor;
@@ -3565,13 +3645,13 @@ namespace CGAL {
 
       if (!isfree1)
       {
-        d3 = create_dart();
-        d4 = create_dart();
-        this->template basic_link_alpha<2>(d1, d3);
-        this->template basic_link_alpha<2>(d2, d4);
+      d3 = create_dart();
+      d4 = create_dart();
+      this->template basic_link_alpha<2>(d1, d3);
+      this->template basic_link_alpha<2>(d2, d4);
       }
 
-      for ( unsigned int dim=3; dim<=dimension; ++dim)
+      for (unsigned int dim=3; dim<=dimension; ++dim)
       {
         if ( !is_free(it1, dim) &&
              is_marked(alpha(it1, dim), treated) )
@@ -3598,7 +3678,7 @@ namespace CGAL {
       }
 
       this->template link_alpha<1>(it1, d1);
-      if ( adart2!=null_descriptor )
+      if (adart2!=null_descriptor)
       {
         CGAL_assertion (it2.cont());
         this->template link_alpha<1>(it2, d2);
@@ -3626,9 +3706,25 @@ namespace CGAL {
 
     if (are_attributes_automatically_managed() && update_attributes)
     {
-      if ( !this->template is_free<2>(d1) && d2!=null_descriptor )
-        CGAL::internal::GMap_degroup_attribute_functor_run<Self, 2>::
-          run(*this, d1, this->template alpha<2>(d1));
+      if(merge)
+      { // Here we group all enabled attributes starting from 2 to dimension
+        Helper::template Foreach_enabled_attributes
+          <internal::Group_attribute_functor<Self>, 2>::
+            run(*this, adart1, adart2);
+        // And we need to group also alpha_i(adart1) and alpha_i(adart2) for all
+        // enabled attributes starting from 3 dimension. Indeed when two i-cells
+        // are grouped for adart1 and adart2, this group also all alpha_j two by two
+        // except for alpha_i.
+        Helper::template Foreach_enabled_attributes
+          <internal::Group_neighboor_attribute<Self>, 3>::run(*this, adart1, adart2);
+
+      }
+      else // Here we degroup 2-attributes
+      {
+        if (!this->template is_free<2>(d1) && d2!=null_descriptor)
+        { CGAL::internal::GMap_degroup_attribute_functor_run<Self, 2>::
+              run(*this, d1, this->template alpha<2>(d1)); }
+      }
     }
 
     negate_mark(m1);
@@ -3673,7 +3769,8 @@ namespace CGAL {
                                                 typename Attribute_descriptor<0>::
                                                 type ah=null_descriptor,
                                                 bool update_attributes=true )
-  { return insert_cell_1_in_cell_2(adart1, null_descriptor, update_attributes, ah); }
+  { return insert_cell_1_in_cell_2(adart1, null_descriptor, ah,
+                                   update_attributes); }
 
   /** Test if a 2-cell can be inserted onto a given 3-cell along
    *  a path of edges.

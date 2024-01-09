@@ -76,7 +76,7 @@ The class `Linear_cell_complex_min_items<d>` is a model of `LinearCellComplexIte
 
 \section Linear_cell_complexOperations Operations
 
-Several operations defined in the combinatorial maps or generalized maps package can be used on a linear cell complex. This is the case for all the iteration operations that do not modify the model (see example in Section \ref ssec3Dlcc "A 3D Linear Cell Complex"). This is also the case for all the operations that do not create new 0-cells: `sew`, `unsew`, \link GenericMap::remove_cell `remove_cell`\endlink,  \link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink or \link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3`\endlink. Indeed, all these operations update non `void` attributes, and thus update vertex attributes of a linear cell complex. Note that some existing 0-attributes can be duplicated by the `unsew` method, but these 0-attributes are not new but copies of existing old 0-attributes.
+Several operations defined in the combinatorial maps or generalized maps package can be used on a linear cell complex. This is the case for all the iteration operations that do not modify the model (see example in Section \ref ssec3Dlcc "A 3D Linear Cell Complex"). This is also the case for all the operations that do not create new 0-cells: `sew`, `unsew`, \link GenericMap::remove_cell `remove_cell`\endlink,  \link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink, \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink or \link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3`\endlink. Indeed, all these operations update non `void` attributes, and thus update vertex attributes of a linear cell complex. Note that some existing 0-attributes can be duplicated by the `unsew` method, but these 0-attributes are not new but copies of existing old 0-attributes.
 
 However, operations that create a new 0-cell can not be directly used since the new 0-cell would not be associated with a vertex attribute. Indeed, it is not possible for these operations to automatically decide which point to create. These operations are: \link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1`\endlink, \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink, \link GenericMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2`\endlink, plus all the creation operations. For these operations, new versions are proposed taking some points as additional parameters. Lastly, some new operations are defined, which use the geometry (see sections \ref ssecconstructionsop "Construction Operations" and \ref ssecmodifop "Modification Operations").
 
@@ -140,6 +140,14 @@ Some examples of use of these operations are given in Section \ref ssec5dexample
 \cgalAdvancedBegin
 If \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink is called, all the future insertion or removal operations will not update non void attributes. These attributes will be updated latter by the call to \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink. This can be useful to speed up an algorithm which uses several successive insertion and removal operations. See example \ref ssecAttributesManagement "Automatic attributes management".
 \cgalAdvancedEnd
+
+
+\subsection Linear_cell_complexIncrementalBuilder Incremental Builder
+
+A utility class `Linear_cell_complex_incremental_builder_3` helps in creating 2D and 3D linear cell complexes
+from a list of points followed by a list of facets that are represented as indices into the point list.
+Note that, compared to `Polyhedron_incremental_builder_3` it has only absolute indexing and no rollback
+mechanism.
 
 \section Linear_cell_complexExamples Examples
 
@@ -257,11 +265,27 @@ A linear cell complex can be visualized by calling the \link PkgDrawLinearCellCo
 
 \cgalExample{Linear_cell_complex/draw_linear_cell_complex.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_lcc,draw_lcc.png}
 Result of the run of the draw_linear_cell_complex program. A window shows two 3D cubes and allows to navigate through the 3D scene.
+\cgalFigureEnd
+
+\subsection Linear_cell_complexIncrementalBuilderExample Incremental Builder
+
+The following example shows the incremental builder.
+
+\cgalExample{Linear_cell_complex/linear_cell_complex_3_incremental_builder.cpp}
+
+\subsection Linear_cell_complexInsert Insert an Edge Between Two Different Faces
+
+The following example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation that inserts an edge between two different faces, thus creating an hole in the first face.
+
+\cgalExample{Linear_cell_complex/linear_cell_complex_3_insert.cpp}
+
+\cgalFigureBegin{fig_lcc_insert,lcc_insert_example.png}
+Result of the run of the linear_cell_complex_3_insert program. A window shows the 3D cube where one face has a hole.
 \cgalFigureEnd
 
 \section Linear_cell_complexDesign Design and Implementation History
@@ -270,4 +294,3 @@ This package was developed by Guillaume Damiand, with the help of Andreas Fabri,
 
 */
 } /* namespace CGAL */
-

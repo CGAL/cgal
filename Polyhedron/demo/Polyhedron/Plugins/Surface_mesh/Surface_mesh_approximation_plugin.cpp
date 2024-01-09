@@ -201,7 +201,7 @@ public:
         !(boost::math::isfinite)(fit_plane.d())) {
         // PCA may return plane with NaN efficients
         // we replace it with an inaccurate plane
-        std::cout << "WARNING: Replacing invalide plane." << std::endl;
+        std::cout << "WARNING: Replacing invalid plane." << std::endl;
         fit_plane = EPICK::Plane_3(
           tris.front().vertex(0),
           EPICK::Vector_3(0.0, 0.0, 1.0));
@@ -525,11 +525,11 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSplit_clicked()
   if (!approx.split(ui_widget.split_proxy_idx->value(),
     ui_widget.split_nb_sections->value(),
     ui_widget.split_nb_relaxations->value())) {
-    CGAL::Three::Three::information(QString("No proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
+    CGAL::Three::Three::information(QString("No proxy split, #proxies = %1.").arg(approx.number_of_proxies()));
     QApplication::restoreOverrideCursor();
     return;
   }
-  CGAL::Three::Three::information(QString("One proxy splitted, #proxies = %1.").arg(approx.number_of_proxies()));
+  CGAL::Three::Three::information(QString("One proxy split, #proxies = %1.").arg(approx.number_of_proxies()));
 
   Patch_id_pmap pidmap(get(CGAL::face_patch_id_t<int>(), *pmesh));
   approx.output(CGAL::parameters::face_proxy_map(pidmap));

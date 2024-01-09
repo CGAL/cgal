@@ -37,12 +37,12 @@
     m_elements.back().add_property(new PLY_read_typed_list_with_typed_size< SIZE_TYPE , INDEX_TYPE >(name, format))
 
 #define TRY_TO_GENERATE_LIST_PROPERTY(STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE) \
-  TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uchar", "uint8", boost::uint8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("char", "int8", boost::int8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("ushort", "uint16", boost::uint16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("short", "int16", boost::int16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uint", "uint32", boost::uint32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
-  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("int", "int32", boost::int32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE)
+  TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uchar", "uint8", std::uint8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("char", "int8", std::int8_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("ushort", "uint16", std::uint16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("short", "int16", std::int16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uint", "uint32", std::uint32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
+  else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("int", "int32", std::int32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE)
 
 namespace CGAL {
 
@@ -156,7 +156,7 @@ public:
 
   // The two following functions prevent the stream to only extract
   // ONE character (= what the types char imply) by requiring
-  // explicitely an integer object when reading the stream
+  // explicitly an integer object when reading the stream
   void read_ascii(std::istream& stream, char& c) const
   {
     short s;
@@ -201,7 +201,7 @@ public:
 
   void read_ascii(std::istream& stream, double& t) const
   {
-    if(!(stream >> iformat(t)))
+    if(!(stream >> IO::iformat(t)))
       stream.clear(std::ios::badbit);
   }
 
@@ -529,23 +529,23 @@ public:
               return false;
             }
 
-            TRY_TO_GENERATE_LIST_PROPERTY("char", "int8", boost::int8_t);
-            else TRY_TO_GENERATE_LIST_PROPERTY("uchar", "uint8", boost::uint8_t);
-            else TRY_TO_GENERATE_LIST_PROPERTY("short", "int16", boost::int16_t);
-            else TRY_TO_GENERATE_LIST_PROPERTY("ushort", "uint16", boost::uint16_t);
-            else TRY_TO_GENERATE_LIST_PROPERTY("int", "int32", boost::int32_t);
-            else TRY_TO_GENERATE_LIST_PROPERTY("uint", "uint32", boost::uint32_t);
+            TRY_TO_GENERATE_LIST_PROPERTY("char", "int8", std::int8_t);
+            else TRY_TO_GENERATE_LIST_PROPERTY("uchar", "uint8", std::uint8_t);
+            else TRY_TO_GENERATE_LIST_PROPERTY("short", "int16", std::int16_t);
+            else TRY_TO_GENERATE_LIST_PROPERTY("ushort", "uint16", std::uint16_t);
+            else TRY_TO_GENERATE_LIST_PROPERTY("int", "int32", std::int32_t);
+            else TRY_TO_GENERATE_LIST_PROPERTY("uint", "uint32", std::uint32_t);
             else TRY_TO_GENERATE_LIST_PROPERTY("float", "float32", float);
             else TRY_TO_GENERATE_LIST_PROPERTY("double", "float64", double);
           }
           else
           {
-            TRY_TO_GENERATE_PROPERTY("char", "int8", boost::int8_t);
-            else TRY_TO_GENERATE_PROPERTY("uchar", "uint8", boost::uint8_t);
-            else TRY_TO_GENERATE_PROPERTY("short", "int16", boost::int16_t);
-            else TRY_TO_GENERATE_PROPERTY("ushort", "uint16", boost::uint16_t);
-            else TRY_TO_GENERATE_PROPERTY("int", "int32", boost::int32_t);
-            else TRY_TO_GENERATE_PROPERTY("uint", "uint32", boost::uint32_t);
+            TRY_TO_GENERATE_PROPERTY("char", "int8", std::int8_t);
+            else TRY_TO_GENERATE_PROPERTY("uchar", "uint8", std::uint8_t);
+            else TRY_TO_GENERATE_PROPERTY("short", "int16", std::int16_t);
+            else TRY_TO_GENERATE_PROPERTY("ushort", "uint16", std::uint16_t);
+            else TRY_TO_GENERATE_PROPERTY("int", "int32", std::int32_t);
+            else TRY_TO_GENERATE_PROPERTY("uint", "uint32", std::uint32_t);
             else TRY_TO_GENERATE_PROPERTY("float", "float32", float);
             else TRY_TO_GENERATE_PROPERTY("double", "float64", double);
           }
@@ -711,12 +711,12 @@ bool read_PLY_faces(std::istream& in,
   bool has_colors = false;
   std::string rtag = "r", gtag = "g", btag = "b";
 
-  if((element.has_property<boost::uint8_t>("red") || element.has_property<boost::uint8_t>("r")) &&
-     (element.has_property<boost::uint8_t>("green") || element.has_property<boost::uint8_t>("g")) &&
-     (element.has_property<boost::uint8_t>("blue") || element.has_property<boost::uint8_t>("b")))
+  if((element.has_property<std::uint8_t>("red") || element.has_property<std::uint8_t>("r")) &&
+     (element.has_property<std::uint8_t>("green") || element.has_property<std::uint8_t>("g")) &&
+     (element.has_property<std::uint8_t>("blue") || element.has_property<std::uint8_t>("b")))
   {
     has_colors = true;
-    if(element.has_property<boost::uint8_t>("red"))
+    if(element.has_property<std::uint8_t>("red"))
     {
       rtag = "red";
       gtag = "green";
@@ -735,7 +735,7 @@ bool read_PLY_faces(std::istream& in,
         return false;
     }
 
-    std::tuple<std::vector<Integer>, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_face;
+    std::tuple<std::vector<Integer>, std::uint8_t, std::uint8_t, std::uint8_t> new_face;
 
     if(has_colors)
     {
@@ -743,11 +743,11 @@ bool read_PLY_faces(std::istream& in,
                          std::make_pair(CGAL::make_nth_of_tuple_property_map<0>(new_face),
                                         PLY_property<std::vector<Integer> >(vertex_indices_tag)),
                          std::make_pair(CGAL::make_nth_of_tuple_property_map<1>(new_face),
-                                        PLY_property<boost::uint8_t>(rtag.c_str())),
+                                        PLY_property<std::uint8_t>(rtag.c_str())),
                          std::make_pair(CGAL::make_nth_of_tuple_property_map<2>(new_face),
-                                        PLY_property<boost::uint8_t>(gtag.c_str())),
+                                        PLY_property<std::uint8_t>(gtag.c_str())),
                          std::make_pair(CGAL::make_nth_of_tuple_property_map<3>(new_face),
-                                        PLY_property<boost::uint8_t>(btag.c_str())));
+                                        PLY_property<std::uint8_t>(btag.c_str())));
 
       *fc_out++ = Color_rgb(get<1>(new_face), get<2>(new_face), get<3>(new_face));
     }

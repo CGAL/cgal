@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -38,7 +38,7 @@ The page \ref bgl_namedparameters describes their usage.
 \subsection PMPOutline Outline
 The algorithms described in this manual are organized in sections:
 - \ref PMPMeshing : meshing algorithms, including triangulation of non-triangulated
-meshes, refinement, optimization by fairing, isotropic remeshing of triangulated surface meshes
+meshes, refinement, optimization by fairing, remeshing of triangulated surface meshes
 and smoothing algorithms.
 - \ref Coref_section : methods to corefine triangle meshes and to compute
   boolean operations out of corefined closed triangle meshes.
@@ -49,6 +49,7 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPCombinatorialRepair :  repair of polygon meshes and polygon soups.
 - \ref PMPGeometricRepair :  repair of the geometry of polygon meshes.
 - \ref PMPNormalComp : normal computation at vertices and on faces of a polygon mesh.
+- \ref PMPICC : computing curvatures (mean, gaussian, principal) on a polygon mesh.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
@@ -115,10 +116,18 @@ to the original surface to keep a good approximation of the input.
 
 A triangulated region of a polygon mesh can be remeshed using the function
 `CGAL::Polygon_mesh_processing::isotropic_remeshing()`, as illustrated
-by \cgalFigureRef{iso_remeshing}. The algorithm has only two parameters :
-the target edge length for the remeshed surface patch, and
-the number of iterations of the abovementioned sequence of operations. The bigger
-this number, the smoother and closer to target edge length the mesh will be.
+by \cgalFigureRef{iso_remeshing}. The algorithm has two parameters:
+the sizing field object for the remeshed surface patch, and
+the number of iterations of the abovementioned sequence of operations.
+
+The sizing field establishes the local target edge length for the remeshed surface. Two sizing fields are
+provided: a uniform and a curvature-adaptive sizing field. With `CGAL::Polygon_mesh_processing::Uniform_sizing_field`,
+all triangle edges are targeted to have equal lengths. With `CGAL::Polygon_mesh_processing::Adaptive_sizing_field`, triangle edge lengths depend on the local curvature --
+shorter edges appear in regions with a higher curvature and vice versa. The outline of the adaptive sizing
+field algorithm is available in \cgalCite{dunyach2013curvRemesh}. The distinction between uniform and adaptive
+sizing fields is depicted in figure \cgalFigureRef{uniform_and_adaptive}.
+
+As the number of iterations increases, the mesh tends to be smoother and closer to the target edge length.
 
 An additional option has been added to \e protect (\e i.\e e. not modify) some given polylines.
 In some cases, those polylines are too long, and reaching the desired target edge length while protecting them is not
@@ -131,6 +140,12 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (b) Surface uniformly and entirely remeshed.
 (c) Selection of a range of faces to be remeshed.
 (d) Surface mesh with the selection uniformly remeshed.
+\cgalFigureEnd
+
+\cgalFigureBegin{uniform_and_adaptive, uniform_and_adaptive.png}
+Sizing fields in isotropic remeshing.
+(a) Uniform sizing field.
+(b) Curvature-based adaptive sizing field.
 \cgalFigureEnd
 
 \paragraph Delaunay-Based Surface Remeshing
@@ -152,6 +167,55 @@ An example of how to remesh a given triangulated surface mesh with the Delaunay 
 algorithm while preserving the detected sharp edges
 is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
 
+\paragraph Decimate Remeshing of (Almost) Planar Patches
+When many triangles are used to describe a planar region of a model, one might wish to simplify the mesh
+in this region to use few elements, or even a single large polygonal face when the region makes up a simply connected patch.
+This can be achieved using the function `CGAL::Polygon_mesh_processing::remesh_planar_patches()`.
+This function performs the detection of the planar regions, using geometric predicates for coplanarity and
+collinearity checks. If these tests are performed exactly, the planar regions can be unexpectedly small due to the
+input in fact not being perfectly planar. To palliate this, it is possible to specify a threshold on the angle
+between adjacent faces (resp. segments) such that they are considered coplanar (resp. collinear).
+However, this tolerance threshold is only local and there is no global control, which can have undesired effects, such as in the classic example of a densely sampled circle arc where all points are eventually found
+to be almost collinear). To circumvent this situation, we provide the function
+ `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()` , which expects the segmentation into
+planar patches and corners to be provided by the user. Such segmentation can be obtained using the function
+ `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`, which
+uses the region growing algorithm to detect planar regions in a mesh with global and local criteria.
+Similarly, the function `CGAL::Polygon_mesh_processing::detect_corners_of_regions()` can be used
+to detect corner vertices on the border of the planar regions detected by running the region growing
+algorithm on border segments of the patch.
+
+
+\cgalFigureAnchor{decimate_cheese}
+<center>
+<table border=0>
+<tr>
+<td><img src="decimate_cheese.png" style="width:100%;"/></td>
+<td><img src="decimate_colors.png" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{decimate_cheese}
+Remeshing of planar patches in two models: (a) planar patches in the cheese model are retriangulated
+                                           (b) the remeshed version of this model contains 14 vertices and
+                                               has not been retriangulated, the patch ids have been assigned to the input
+                                               and the output meshes, allowing an identical color scheme.
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{decimate_rg_sphere}
+<center>
+<table border=0>
+<tr>
+<td><img src="decimate_rg_joint.png" style="width:100%;"/></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{decimate_rg_sphere}
+Remeshing of planar patches using region growing for the detection of planar patches.
+From left to right: input mesh, remeshed version, remeshed version using the same angle threshold but larger approximation error.
+\cgalFigureEnd
+
 \subsubsection Smoothing
 
 Smoothing of a triangulated mesh region can be achieved with algorithms that aim at either mesh smoothing or shape smoothing.
@@ -165,7 +229,7 @@ it can try to equalize the angles between incident edges, or (and) move vertices
 Border vertices are considered constrained and do not move at any step of the procedure. No vertices are inserted at any time.
 Angle and area smoothing algorithms are based on Surazhsky and Gotsman \cgalCite{cgal:sg-hqct-04}.
 Since area smoothing considers only areas as a smoothing criterion, it may result in long and skinny
-triangles. To paliate this phenomenon, area smoothing is followed by an (optional) step of Delaunay-based edge flips.
+triangles. To palliate this phenomenon, area smoothing is followed by an (optional) step of Delaunay-based edge flips.
 In any case, area smoothing is guaranteed to improve the spatial distribution of the vertices
 over the area that is being smoothed. A simple example can be found in \ref Polygon_mesh_processing/mesh_smoothing_example.cpp.
 
@@ -385,7 +449,7 @@ depicted in red); (iii) `clip_volume=true`: clipping of the volume bounded by th
 \cgalFigureEnd
 
 \cgalFigureBegin{coref_clip_compact, clip_compact.png}
-Clipping a cube with a halfspace: compacity of the clipper (`clip_volume=false` in both cases).
+Clipping a cube with a halfspace: compactivity of the clipper (`clip_volume=false` in both cases).
 From left to right: (i) initial cube and the plane defining the clipping halfspace,
 note that a whole face of the cube (2 triangles) is exactly contained in the plane;
 (ii) `use_compact_clipper=true`: clipping of the surface mesh with a compact halfspace: coplanar faces are part of the output;
@@ -401,7 +465,7 @@ note that a whole face of the cube (2 triangles) is exactly contained in the pla
 \subsubsection coref_ex_refine_subsec Boolean Operation and Local Remeshing
 
 This example is similar to the previous one, but here we
-substract a volume and update the first input triangulated surface mesh
+subtract a volume and update the first input triangulated surface mesh
 (in-place operation). The edges that are on the intersection of the input
 meshes are marked and the region around them is remeshed isotropically
 while preserving the intersection polyline.
@@ -494,8 +558,8 @@ This can allow a user to stop the algorithm if a timeout needs to be implemented
 
 The hole filling algorithm has a complexity which depends on the
 number of vertices.  While \cgalCite{liepa2003filling} has a running
-time of \f$ O(n^3)\f$ , \cgalCite{zou2013algorithm} in most cases has
-running time of \f$ O(n \log n)\f$. We benchmarked the function
+time of \cgalBigO{n^3} , \cgalCite{zou2013algorithm} in most cases has
+running time of \cgalBigO{n \log n}. We benchmarked the function
 `triangulate_refine_and_fair_hole()` for the two meshes below (as well as two
 more meshes with smaller holes). The machine used was a PC running
 Windows 10 with an Intel Core i7 CPU clocked at 2.70 GHz.
@@ -520,7 +584,7 @@ The following running times were observed:
 ***************************************
 \section PMPPredicates Predicates
 
-This packages provides several predicates to be evaluated with respect to a triangle mesh.
+This package provides several predicates to be evaluated with respect to a triangle mesh.
 
 \subsection PMPDoIntersect Intersections Detection
 Intersection tests between triangle meshes and/or polylines can be done using
@@ -584,7 +648,7 @@ The latter has cylindrical and spherical patches at convex edges and vertices of
 
 Given a distance \f$ \delta =  \epsilon / \sqrt(3)\f$ we can associate  a <em>prism</em> to each triangle by intersecting two halfspaces
 parallel to the triangle, three halfspaces orthogonal to the triangle and parallel to the edges,
-and additionaly halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
+and additionally halfspaces for clipping obtuse angles, with the face normal corresponding to the bisector
 of the angle.  These halfspaces are at distance  \f$ \delta \f$ and
 such that they contain the triangle.
 
@@ -797,7 +861,7 @@ to the input non-manifold vertex.
 
 \subsubsection FixNMVerticeExample Manifoldness Repair Example
 
-In the following example, a non-manifold configuration is artifically created and
+In the following example, a non-manifold configuration is artificially created and
 fixed with the help of the functions described above.
 
 \cgalExample{Polygon_mesh_processing/manifoldness_repair_example.cpp}
@@ -814,6 +878,19 @@ vertices at identical positions, can be used to repair this configuration.
 
 \section PMPGeometricRepair Geometric Repair
 ****************************************
+
+\subsection PMPAutoref Self-intersection Resolution (Autorefinement) in Triangle Soups
+Given a soup of triangles, a self-intersection is defined as the intersection of two triangles from the soup
+such that the intersection is not defined by the convex hull of one, two or three shared vertices.
+In other words, it is an intersection that happens in the interior of one of the two triangles, or in the interior
+of one their edges, except if identical points are associated to different vertices of the triangle soup which
+would then also includes overlaps of duplicated points.
+
+The function `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` provides a way to refine a triangle soup
+using the intersections of the triangles from the soup. In particular, if some points are duplicated they will be
+merged. Note that if a kernel with exact predicates but inexact constructions is used, some new self-intersections
+might be introduced due to rounding issues of points coordinates.
+To guarantee that the triangle soup is free from self-intersections, a kernel with exact constructions must be used.
 
 \subsection PMPRemoveCapsNeedles Removal of Almost Degenerate Triangle Faces
 Triangle faces of a mesh made up of almost collinear points are badly shaped elements that
@@ -886,6 +963,144 @@ not provide storage for the normals.
 
 \cgalExample{Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp}
 
+****************************************
+\section PMPICC Computing Curvatures
+
+This package provides methods to compute curvatures on polygonal meshes based on Interpolated
+Corrected Curvatures on Polyhedral Surfaces \cgalCite{cgal:lrtc-iccmps-20}. This includes mean curvature,
+Gaussian curvature, principal curvatures and directions. These can be computed on triangle meshes,
+quad meshes, and meshes with n-gon faces (for n-gons, the centroid must be inside the n-gon face).
+The algorithms used prove to work well in general. Also, on meshes with noise on vertex positions,
+they give accurate results, under the condition that the correct vertex normals are provided.
+
+\subsection ICCBackground Brief Background
+
+Surface curvatures are quantities that describe the local geometry of a surface. They are important in many
+geometry processing applications. As surfaces are 2-dimensional objects (embedded in 3D), they can bend
+in 2 independent directions. These directions are called principal directions, and the amount of bending
+in each direction is called the principal curvature: \f$ k_1 \f$ and \f$ k_2 \f$ (denoting max and min
+curvatures). Curvature is usually expressed as scalar quantities like the mean curvature \f$ H \f$ and
+the Gaussian curvature \f$ K \f$ which are defined in terms of the principal curvatures.
+
+The algorithms are based on the two papers \cgalCite{cgal:lrt-ccm-22} and \cgalCite{cgal:lrtc-iccmps-20}. They
+introduce a new way to compute curvatures on polygonal meshes. The main idea in \cgalCite{cgal:lrt-ccm-22} is
+based on decoupling the normal information from the position information, which is useful for dealing with
+digital surfaces, or meshes with noise on vertex positions. \cgalCite{cgal:lrtc-iccmps-20} introduces some
+extensions to this framework, as it uses linear interpolation on the corrected normal vector field
+to derive new closed form equations for the corrected curvature measures. These <b>interpolated</b>
+curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
+with vertices \a i, \a j, \a k:
+
+\f[
+  \begin{align*}
+  \mu^{(0)}(\tau_{ijk}) = &\frac{1}{2} \langle \bar{\mathbf{u}} \mid (\mathbf{x}_j - \mathbf{x}_i) \times (\mathbf{x}_k - \mathbf{x}_i) \rangle, \\
+  \mu^{(1)}(\tau_{ijk}) = &\frac{1}{2} \langle \bar{\mathbf{u}} \mid (\mathbf{u}_k - \mathbf{u}_j) \times \mathbf{x}_i + (\mathbf{u}_i - \mathbf{u}_k) \times \mathbf{x}_j + (\mathbf{u}_j - \mathbf{u}_i) \times \mathbf{x}_k \rangle, \\
+  \mu^{(2)}(\tau_{ijk}) = &\frac{1}{2} \langle \mathbf{u}_i \mid \mathbf{u}_j \times \mathbf{u}_k \rangle, \\
+  \mu^{\mathbf{X},\mathbf{Y}}(\tau_{ijk}) = & \frac{1}{2} \big\langle \bar{\mathbf{u}} \big| \langle \mathbf{Y} | \mathbf{u}_k -\mathbf{u}_i \rangle \mathbf{X} \times (\mathbf{x}_j - \mathbf{x}_i) \big\rangle
+    -\frac{1}{2} \big\langle \bar{\mathbf{u}} \big| \langle \mathbf{Y} | \mathbf{u}_j -\mathbf{u}_i \rangle \mathbf{X} \times (\mathbf{x}_k - \mathbf{x}_i) \big\rangle,
+  \end{align*}
+\f]
+where \f$ \langle \cdot \mid \cdot \rangle \f$ denotes the usual scalar product,
+\f$ \bar{\mathbf{u}}=\frac{1}{3}( \mathbf{u}_i + \mathbf{u}_j + \mathbf{u}_k )\f$.
+
+The first measure \f$ \mu^{(0)} \f$ is the area measure of the triangle, and the measures \f$ \mu^{(1)} \f$ and
+\f$ \mu^{(2)} \f$ are the mean and Gaussian corrected curvature measures of the triangle. The last measure
+\f$ \mu^{\mathbf{X},\mathbf{Y}} \f$ is the anisotropic corrected curvature measure of the triangle. The
+anisotropic measure is later used to compute the principal curvatures and directions through an eigenvalue
+solver.
+
+The interpolated curvature measures are then computed for each vertex \f$ v \f$ as the sum of
+the curvature measures of the faces in a ball around \f$ v \f$ weighted by the inclusion ratio of the
+triangle in the ball. If the ball radius is not specified, the sum is instead computed over the incident faces
+of \f$ v \f$.
+
+To get the final curvature value for a vertex \f$ v \f$, the respective interpolated curvature measure
+is divided by the interpolated area measure.
+
+\f[
+\mu^{(k)}( B ) = \sum_{\tau : \text{triangle} } \mu^{(k)}( \tau ) \frac{\mathrm{Area}( \tau \cap B )}{\mathrm{Area}(\tau)}.
+\f]
+
+\subsection ICCAPI API
+
+The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`,
+`Polyhedron_3` and other polygonal mesh structures based on the concept `FaceGraph`.
+
+These computations are performed using (on all vertices of the mesh) `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
+where function named parameters are used to select the curvatures (and possibly directions) to be computed. An overload function with the same name
+but taking a given vertex is also available in case the computation should be done only for that vertex.
+
+\subsection ICCResults Results & Performance
+
+First, \cgalFigureRef{icc_measures} illustrates various curvature measures on a triangular mesh.
+
+\cgalFigureAnchor{icc_measures}
+<center>
+<table border=0>
+<tr>
+<td><img src="bimba-mean0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-gaussian0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-dmin0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-dmax0.040000-0.000000.jpg" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
+</center>
+
+
+\cgalFigureCaptionBegin{icc_measures}
+Mean curvature, Gaussian curvature, minimal principal curvature direction and maximal principal curvature direction on a mesh (ball radius set to 0.04).
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{icc_various_ball_radii}
+<center>
+<table border=0>
+<tr>
+<td><img src="bimba-mean0.020000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.030000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.000000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.050000-0.000000.jpg" style="width:100%;"/></td>
+</tr>
+<tr>
+<td><img src="bimba-mean0.020000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.030000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.040000-0.002000.jpg" style="width:100%;"/></td>
+<td><img src="bimba-mean0.050000-0.002000.jpg" style="width:100%;"/></td>
+</tr>
+<tr align="center"><td>(a)</td><td>(b)</td></tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{icc_various_ball_radii}
+When changing the integration ball radius, we obtain a scale space of curvature measure that can be used to tackle possible noise in the input as illustrated in the second row (mean curvature only with fixed colormap ranges and ball radii in {0.02,0.03,0.04,0.05}).
+\cgalFigureCaptionEnd
+
+
+\ref BGLPropertyMaps are used to record the computed curvatures as shown in examples. In the following examples, for each property map, we associate
+a curvature value to each vertex.
+
+\subsection ICCExampleSM Interpolated Corrected Curvatures on a Surface Mesh Example
+
+The following example illustrates how to
+compute the curvatures on vertices
+and store them in the property maps provided by the class `Surface_mesh`.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_SM.cpp}
+
+\subsection ICCExamplePH Interpolated Corrected Curvatures on a Polyhedron Example
+
+The following example illustrates how to
+compute the curvatures on vertices
+and store them in dynamic property maps as the class `Polyhedron_3` does
+not provide storage for the curvatures.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_PH.cpp}
+
+\subsection ICCExampleSV Interpolated Corrected Curvatures on a Vertex Example
+
+The following example illustrates how to
+compute the curvatures on a specific vertex.
+
+\cgalExample{Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp}
 
 ****************************************
 \section PMPSlicer Slicer
@@ -1094,6 +1309,12 @@ available on 7th of October 2020.  It only uses the high level algorithm of chec
 is covered by a set of prisms, where each prism is an offset for an input triangle.
 That is, the implementation in \cgal does not use indirect predicates.
 
+The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under
+supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{cgal:lrtc-iccmps-20}.
+<a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
+used as a reference during the project.
+
+The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
 
 */
 } /* namespace CGAL */

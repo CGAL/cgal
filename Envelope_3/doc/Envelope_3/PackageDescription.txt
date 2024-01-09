@@ -8,7 +8,7 @@
 \cgalPkgPicture{Envelope_3/fig/Envelope_3.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dan Halperin, Michal Meyerovitch, Ron Wein, and Baruch Zukerman}
-\cgalPkgDesc{This package consits of functions that compute the lower (or upper) envelope of a set of arbitrary surfaces in 3D. The output is represented as an 2D envelope diagram, namely a planar subdivision such that the identity of the surfaces that induce the envelope over each diagram cell is unique.}
+\cgalPkgDesc{This package consists of functions that compute the lower (or upper) envelope of a set of arbitrary surfaces in 3D. The output is represented as an 2D envelope diagram, namely a planar subdivision such that the identity of the surfaces that induce the envelope over each diagram cell is unique.}
 \cgalPkgManuals{Chapter_Envelopes_of_Surfaces_in_3D,PkgEnvelope3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

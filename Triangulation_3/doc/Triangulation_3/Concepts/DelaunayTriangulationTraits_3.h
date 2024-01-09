@@ -8,15 +8,17 @@ The concept `DelaunayTriangulationTraits_3` is the first template parameter of t
 segments...) forming the triangulation together with a few geometric
 predicates and constructions on these objects.
 
-\cgalRefines `TriangulationTraits_3`
+\cgalRefines{TriangulationTraits_3}
 
-\cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)
-\cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel` (recommended for Voronoi)
-\cgalHasModel `CGAL::Filtered_kernel`
-\cgalHasModel `CGAL::Cartesian`
-\cgalHasModel `CGAL::Simple_cartesian`
-\cgalHasModel `CGAL::Homogeneous`
-\cgalHasModel `CGAL::Simple_homogeneous`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Exact_predicates_inexact_constructions_kernel (recommended)}
+\cgalHasModels{CGAL::Exact_predicates_exact_constructions_kernel (recommended for Voronoi)}
+\cgalHasModels{CGAL::Filtered_kernel}
+\cgalHasModels{CGAL::Cartesian}
+\cgalHasModels{CGAL::Simple_cartesian}
+\cgalHasModels{CGAL::Homogeneous}
+\cgalHasModels{CGAL::Simple_homogeneous}
+\cgalHasModelsEnd
 
 In addition to the requirements described for the traits class of
 `CGAL::Triangulation_3`, the geometric traits class of a

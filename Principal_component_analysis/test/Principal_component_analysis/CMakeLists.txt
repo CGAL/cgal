@@ -7,10 +7,10 @@ project(Principal_component_analysis_Tests)
 find_package(CGAL REQUIRED)
 
 # Use Eigen
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
-  message(STATUS  "NOTICE: This project requires Eigen 3.1 (or greater) and will not be compiled.")
+  message("NOTICE: This project requires Eigen 3.1 (or greater), and will not be compiled.")
   return()
 endif()
 

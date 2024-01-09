@@ -9,17 +9,18 @@
  * `CGAL::Arrangement_2<Traits,Dcel>` class template, where the Traits parameter
  * is substituted with a model of this concept.
  *
- * \cgalRefines `ArrangementApproximateTraits_2` and
- * `ArrangementConstructXMonotoneCurveTraits_2`
+ * \cgalRefines{ArrangementApproximateTraits_2,ArrangementConstructXMonotoneCurveTraits_2}
  *
- * \cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
- * \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2`
- * \cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
- * \cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
- * \cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
- * \cgalHasModel `CGAL::Arr_polycurve_traits_2<GeometryTraits_2>`
- * \cgalHasModel `CGAL::Arr_polyline_traits_2<SegmentTraits_2>`
- * \cgalHasModel `CGAL::Arr_rational_function_traits_2`
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
+ * \cgalHasModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2}
+ * \cgalHasModels{CGAL::Arr_linear_traits_2<Kernel>}
+ * \cgalHasModels{CGAL::Arr_non_caching_segment_traits_2<Kernel>}
+ * \cgalHasModels{CGAL::Arr_segment_traits_2<Kernel>}
+ * \cgalHasModels{CGAL::Arr_polycurve_traits_2<GeometryTraits_2>}
+ * \cgalHasModels{CGAL::Arr_polyline_traits_2<SegmentTraits_2>}
+ * \cgalHasModels{CGAL::Arr_rational_function_traits_2}
+ * \cgalHasModelsEnd
  *
  * \sa `ArrangementXMonotoneTraits_2` and
  * `ArrangementTraits_2<AlgebraicKernel_d_1>`

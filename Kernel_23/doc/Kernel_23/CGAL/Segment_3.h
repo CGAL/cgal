@@ -14,8 +14,7 @@ to compute the square of the length, because otherwise we had to
 perform a square root operation which is not defined for all
 number types, which is expensive, and may not be exact.
 
-\cgalModels `Kernel::Segment_3`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Segment_3,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >
@@ -29,6 +28,7 @@ public:
 introduces a segment `s` with source `p`
 and target `q`. It is directed from the source towards
 the target.
+\cgalEpicExact
 */
 Segment_3(const Point_3<Kernel> &p, const Point_3<Kernel> &q);
 
@@ -50,21 +50,25 @@ bool operator!=(const Segment_3<Kernel> &q) const;
 
 /*!
 returns the source of `s`.
+\cgalEpicExact
 */
 Point_3<Kernel> source() const;
 
 /*!
 returns the target of `s`.
+\cgalEpicExact
 */
 Point_3<Kernel> target() const;
 
 /*!
 returns the point of `s` with smallest coordinate (lexicographically).
+\cgalEpicExact
 */
 Point_3<Kernel> min() const;
 
 /*!
 returns the point of `s` with largest coordinate (lexicographically).
+\cgalEpicExact
 */
 Point_3<Kernel> max() const;
 
@@ -73,16 +77,19 @@ returns source or target of `s`: `vertex(0)` returns
 the source, `vertex(1)` returns the target.
 The parameter `i` is taken modulo 2, which gives
 easy access to the other vertex.
+\cgalEpicExact
 */
 Point_3<Kernel> vertex(int i) const;
 
 /*!
 returns `vertex(i)`.
+\cgalEpicExact
 */
 Point_3<Kernel> point(int i) const;
 
 /*!
 returns `vertex(i)`.
+\cgalEpicExact
 */
 Point_3<Kernel> operator[](int i) const;
 
@@ -103,6 +110,7 @@ Direction_3<Kernel> direction() const;
 
 /*!
 returns a segment with source and target interchanged.
+\cgalEpicExact
 */
 Segment_3<Kernel> opposite() const;
 
@@ -126,6 +134,7 @@ bool has_on(const Point_3<Kernel> &p) const;
 
 /*!
 returns a bounding box containing `s`.
+\cgalEpicExact
 */
 Bbox_3 bbox() const;
 

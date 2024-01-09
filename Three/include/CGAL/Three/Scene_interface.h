@@ -58,7 +58,6 @@ namespace Three{
  * */
 class Scene_interface {
 public:
-
   //!A bounding box is a box with each face corresponding to an extremum of its contents.
 
   typedef CGAL::Bbox_3 Bbox;
@@ -94,7 +93,7 @@ public:
    */
   virtual int erase(QList<int>) = 0;
 
-  /*! Creates a copy of the item whith the id `id`.
+  /*! Creates a copy of the item with the id `id`.
    * @returns the index of the new item (-1 on error).
    */
     virtual Item_id duplicate(Item_id id) = 0;
@@ -116,10 +115,10 @@ public:
   //!The id of the currently selected item.
   //!@returns the list of currently selected items indices.
   virtual QList<Item_id> selectionIndices() const = 0;
-  //!Item_A is designated with the column A/B in the Geometric Objetcts widget.
+  //!Item_A is designated with the column A/B in the Geometric Objects widget.
   //!@returns the index of the Item_A
   virtual Item_id selectionAindex() const = 0;
-  //!Item_B is designated with the column A/B in the Geometric Objetcts widget.
+  //!Item_B is designated with the column A/B in the Geometric Objects widget.
   //!@returns the index of the Item_B
   virtual Item_id selectionBindex() const = 0;
 
@@ -146,7 +145,7 @@ public:
   //! \brief ignore data updating.
   //!
   //! This will ignore all the individual calls to `itemChanged()` until
-  //! `setUpdatesEnabled()` is called whith `b` being `true`.
+  //! `setUpdatesEnabled()` is called with `b` being `true`.
   //!
   virtual void setUpdatesEnabled(bool b) =0;
   //!

@@ -8,7 +8,7 @@ the three-dimensional Euclidean space \f$ \E^3\f$. As the triangle is not
 a full-dimensional object there is only a test whether a point lies on
 the triangle or not.
 
-\cgalModels `Kernel::Triangle_3`
+\cgalModels{Kernel::Triangle_3}
 
 */
 template< typename Kernel >
@@ -20,6 +20,7 @@ public:
 
 /*!
 introduces a triangle `t` with vertices `p`, `q` and `r`.
+\cgalEpicExact
 */
 Triangle_3(const Point_3<Kernel> &p,
 const Point_3<Kernel> &q,
@@ -32,7 +33,7 @@ const Point_3<Kernel> &r);
 
 /*!
 Test for equality: two triangles `t1` and `t2` are equal, iff there
-exists a cyclic permutation of the vertices of  t2`, such that
+exists a cyclic permutation of the vertices of `t2`, such that
 they are equal to the vertices of `t1`.
 */
 bool operator==(const Triangle_3<Kernel> &t2) const;
@@ -44,11 +45,13 @@ bool operator!=(const Triangle_3<Kernel> &t2) const;
 
 /*!
 returns the i'th vertex modulo 3 of `t`.
+\cgalEpicExact
 */
 Point_3<Kernel> vertex(int i) const;
 
 /*!
 returns `vertex(int i)`.
+\cgalEpicExact
 */
 Point_3<Kernel> operator[](int i) const;
 
@@ -86,6 +89,7 @@ Kernel::FT squared_area() const;
 
 /*!
 returns a bounding box containing `t`.
+\cgalEpicExact
 */
 Bbox_3 bbox() const;
 

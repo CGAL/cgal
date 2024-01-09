@@ -193,7 +193,7 @@ bool check_cone_validity(const SeamMesh& mesh,
     }
     else {
       if(it->second != Duplicated_cone) {
-        std::cerr << "Error: Unknow cone type: " << it->second << std::endl;
+        std::cerr << "Error: Unknown cone type: " << it->second << std::endl;
         return false;
       }
       ++duplicated_cone_counter;

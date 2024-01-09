@@ -17,7 +17,6 @@
 
 
 #include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/not.hpp>
@@ -59,25 +58,22 @@ public:
 
 private:
 
-  typedef boost::mpl::bool_< true > true_;
-  typedef boost::mpl::bool_< false > false_;
+  typedef std::conditional_t<
+       std::is_same_v< Arr_smaller_implementation_tag, Arr_use_traits_tag >,
+       std::true_type, std::false_type > Smaller_traits;
 
-  typedef boost::mpl::if_<
-       std::is_same< Arr_smaller_implementation_tag, Arr_use_traits_tag >,
-       true_, false_ > Smaller_traits;
-
-  typedef boost::mpl::if_<
-       std::is_same< Arr_larger_implementation_tag, Arr_use_traits_tag >,
-       true_, false_ > Larger_traits;
+  typedef std::conditional_t<
+       std::is_same_v< Arr_larger_implementation_tag, Arr_use_traits_tag >,
+       std::true_type, std::false_type > Larger_traits;
 
 public:
 
   //! the result type (if one side asks for traits, then ask traits!
   //! Or vice versa: If both ask for dummy, then dummy!)
-  typedef typename boost::mpl::if_<
-              boost::mpl::or_< Smaller_traits, Larger_traits >,
+  typedef std::conditional_t<
+              Smaller_traits::value || Larger_traits::value,
               Arr_use_traits_tag,
-              Arr_use_dummy_tag >::type type;
+              Arr_use_dummy_tag > type;
 
 };
 
@@ -258,7 +254,7 @@ namespace Is_on_y_identification_2 {
 
 namespace Compare_y_on_boundary_2 {
 
- // Poitns
+ // Points
  template < class ArrSideTag >
   struct Points {
     typedef Arr_use_dummy_tag type;

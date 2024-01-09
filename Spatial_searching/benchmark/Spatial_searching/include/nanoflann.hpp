@@ -97,7 +97,7 @@ namespace nanoflann
                 {
                         CountType i;
                         for (i=count; i>0; --i) {
-#ifdef NANOFLANN_FIRST_MATCH   // If defined and two poins have the same distance, the one with the lowest-index will be returned first.
+#ifdef NANOFLANN_FIRST_MATCH   // If defined and two points have the same distance, the one with the lowest-index will be returned first.
                                 if ( (dists[i-1]>dist) || ((dist==dists[i-1])&&(indices[i-1]>index)) ) {
 #else
                                 if (dists[i-1]>dist) {
@@ -413,8 +413,8 @@ namespace nanoflann
                         checks(checks_IGNORED_), eps(eps_), sorted(sorted_) {}
 
                 int   checks;  //!< Ignored parameter (Kept for compatibility with the FLANN interface).
-                float eps;  //!< search for eps-approximate neighbours (default: 0)
-                bool sorted; //!< only for radius search, require neighbours sorted by distance (default: true)
+                float eps;  //!< search for eps-approximate neighbors (default: 0)
+                bool sorted; //!< only for radius search, require neighbors sorted by distance (default: true)
         };
         /** @} */
 
@@ -577,7 +577,7 @@ namespace nanoflann
 
         // ----------------  CArray -------------------------
         /** A STL container (as wrapper) for arrays of constant size defined at compile time (class imported from the MRPT project)
-         * This code is an adapted version from Boost, modifed for its integration
+         * This code is an adapted version from Boost, modified for its integration
          *        within MRPT (JLBC, Dec/2009) (Renamed array -> CArray to avoid possible potential conflicts).
          * See
          *      https://www.josuttis.com/cppcode/
@@ -823,7 +823,7 @@ namespace nanoflann
                 };
 
                 /**
-                 * Array of k-d trees used to find neighbours.
+                 * Array of k-d trees used to find neighbors.
                  */
                 NodePtr root_node;
                 typedef BranchStruct<NodePtr, DistanceType> BranchSt;

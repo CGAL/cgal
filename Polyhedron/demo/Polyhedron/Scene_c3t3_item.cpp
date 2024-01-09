@@ -29,6 +29,7 @@
 #include <CGAL/Qt/qglviewer.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/range/empty.hpp>
 
 #include <CGAL/IO/io.h>
 #include <CGAL/AABB_tree.h>
@@ -304,6 +305,17 @@ void Scene_c3t3_item::compute_bbox() const
     }
     _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
                  result.xmax(), result.ymax(), result.zmax());
+
+    if (boost::empty(c3t3().cells_in_complex()))
+    {
+      for (Tr::Vertex_handle v : c3t3().triangulation().finite_vertex_handles())
+      {
+        if(v->in_dimension() != -1) //skip far points
+          result += v->point().bbox();
+      }
+      _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
+                   result.xmax(), result.ymax(), result.zmax());
+    }
   }
 }
 
@@ -322,6 +334,8 @@ void Scene_c3t3_item::drawEdges(Viewer_interface *viewer) const
 {
   Scene_triangulation_3_item::drawEdges(viewer);
 //add cnc
+  if(!visible())
+    return;
   if(d->cnc_are_shown)
   {
     getEdgeContainer(CNC)->setColor(QColor(Qt::black));

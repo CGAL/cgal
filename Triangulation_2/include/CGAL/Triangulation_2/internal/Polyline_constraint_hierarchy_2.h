@@ -25,7 +25,9 @@
 #include <CGAL/assertions.h>
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+#  include <CGAL/IO/io.h>
 #  include <CGAL/Constrained_triangulation_2.h>
+#  include <iostream>
 #endif
 
 namespace CGAL {
@@ -66,7 +68,7 @@ public:
     : public boost::iterator_adaptor<
     Point_it
     , typename Vertex_list::all_iterator
-    , const Point
+    , const Point&
     >
   {
   public:
@@ -83,7 +85,7 @@ public:
     Vertex_it
     , typename Vertex_list::skip_iterator
     , Vertex_handle
-    , boost::use_default
+    , std::bidirectional_iterator_tag
     , Vertex_handle>
   {
   public:
@@ -332,7 +334,7 @@ copy(const Polyline_constraint_hierarchy_2& ch1, std::map<Vertex_handle,Vertex_h
     Vertex_list* hvl2 = new Vertex_list;
     vlmap[hvl1] = hvl2;
     Vertex_it vit = hvl1->skip_begin(), end = hvl1->skip_end();
-    for( ; vit != end; ++vit) hvl2->push_back(Node(vmap[*vit]));
+    for( ; vit != end; ++vit) hvl2->push_back(Node(vmap[*vit], vit.input()));
     constraint_set.insert(hvl2);
   }
   // copy sc_to_c_map
@@ -610,7 +612,7 @@ void Polyline_constraint_hierarchy_2<T,Compare,Point>::simplify(Vertex_it uc,
       // Remove the list item which points to v
       Vertex_list* vertex_list = it->id().vl_ptr();
       Vertex_it vc_in_context = it->current();
-      vc_in_context = boost::next(vc_in_context);
+      vc_in_context = std::next(vc_in_context);
       vertex_list->skip(vc_in_context.base());
       ++it;
     }
@@ -623,7 +625,7 @@ void Polyline_constraint_hierarchy_2<T,Compare,Point>::simplify(Vertex_it uc,
       // Remove the list item which points to v
       Vertex_list* vertex_list = it->id().vl_ptr();
       Vertex_it vc_in_context = it->current();
-      vc_in_context = boost::next(vc_in_context);
+      vc_in_context = std::next(vc_in_context);
       vertex_list->skip(vc_in_context.base());
       ++it;
     }
@@ -860,12 +862,10 @@ insert_constraint(T va, T vb){
   Context_list* fathers;
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.insert_constraint( #"
-              << va->time_stamp()
-              << ", #"
-              << vb->time_stamp()
-              << ")\n";
+            << "C_hierachy.insert_constraint( "
+            << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -897,12 +897,10 @@ insert_constraint_old_API(T va, T vb){
   Context_list* fathers;
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.insert_constraint_old_API( #"
-              << va->time_stamp()
-              << ", #"
-              << vb->time_stamp()
-              << ")\n";
+            << "C_hierachy.insert_constraint_old_API( "
+            << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -932,12 +930,10 @@ append_constraint(Constraint_id cid, T va, T vb){
   Context_list* fathers;
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.append_constraint( ..., #"
-              << va->time_stamp()
-              << ", #"
-              << vb->time_stamp()
-              << ")\n";
+            << "C_hierachy.append_constraint( ..., "
+            << IO::oformat(va) << ", " << IO::oformat(vb) << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   typename Sc_to_c_map::iterator scit = sc_to_c_map.find(he);
   if(scit == sc_to_c_map.end()){
@@ -1051,14 +1047,11 @@ void
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 add_Steiner(T va, T vb, T vc){
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  using CGAL::IO::oformat;
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "C_hierachy.add_Steinter( #"
-              << va->time_stamp()
-              << ", #"
-              << vb->time_stamp()
-              << ", #"
-              << vc->time_stamp()
-              << ")\n";
+            << "C_hierachy.add_Steinter( "
+            << IO::oformat(va) << ", " << IO::oformat(vb) << ", " << IO::oformat(vc)
+            << ")\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Context_list* hcl=nullptr;
   if(!get_contexts(va,vb,hcl)) {

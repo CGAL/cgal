@@ -42,7 +42,7 @@ namespace CORE {
 
 // Note from 2014: does not seem to be used anywhere, and it is not declared
 // in CoreDefs.h so it is not accessible
-// Left here for compatibilty when CGAL_HEADER_ONLY is not defined
+// Left here for compatibility when CGAL_HEADER_ONLY is not defined
 
 int IOErrorFlag = 0;
 

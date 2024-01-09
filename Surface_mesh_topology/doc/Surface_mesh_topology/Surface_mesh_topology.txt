@@ -48,12 +48,12 @@ The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew
 
 \subsection SMTopology_simplicity Simplicity Test
 
-Given a cycle drawn on a surface one can ask if the cycle can be continously deformed to a cycle that does not intersect with itself. Any contractible cycle deforms to a simple cycle but this is not true for more complicated cycles. The algorithm in this section is purely topological and do not assume any geometry on the input surface.
+Given a cycle drawn on a surface one can ask if the cycle can be continuously deformed to a cycle that does not intersect with itself. Any contractible cycle deforms to a simple cycle but this is not true for more complicated cycles. The algorithm in this section is purely topological and do not assume any geometry on the input surface.
 
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following forms:
 - Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is homotopic to a simple one on \f$\cal{M}\f$.
 
-The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-cginc-19}, providing a \f$O(n + l\log{l})\f$-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
+The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-cginc-19}, providing a \cgalBigO{n + l\log{l}}-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
 
 \section SMTopology_HowToUse API Description
 
@@ -62,7 +62,7 @@ The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-
 The main class for this package is `Surface_mesh_topology::Curves_on_surface_topology`. Its constructor takes the input surface. An internal representation of the surface (described below) is computed the first time an homotopy test is called.
 
 Each combinatorial curve on this surface is contained in an instance of the class `Surface_mesh_topology::Path_on_surface`. An object in this class behaves as a list. This list is initially empty and the halfedges corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides four ways for extending a nonempty path.
-- Simply push the next halfedge using the \ref Surface_mesh_topology::Path_on_surface::push_back "push_back()" member function. One can also specify if this halfedge should have its direction flipped so as to satisfy the condition of a `Path_on_surface` (see the description of \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "`can_be_pushed()`" below) This can be done even when the path is empty,
+- Simply push the next halfedge using the \ref Surface_mesh_topology::Path_on_surface::push_back "push_back()" member function. One can also specify if this halfedge should have its direction flipped so as to satisfy the condition of a `Path_on_surface` (see the description of \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "can_be_pushed()" below) This can be done even when the path is empty,
 - The user may push the index of the next halfedge instead of the halfedge itself with the member function \ref Surface_mesh_topology::Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart,
 - The path may be extended with the member function \ref Surface_mesh_topology::Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path. Calling this previous halfedge `h`, extending by a positive one turn is thus equivalent to extend the path with `next(h)`. An analogous member function \ref Surface_mesh_topology::Path_on_surface::extend_negative_turn "extend_negative_turn()" is provided for convenience,
 - Finally, when the input surface is a model of `PolygonalSchema`, which is a model of `GenericMap` with labeled edges as explained in section \ref SMTopology_Schema, the user may push the label of the next halfedge instead of the halfedge itself with the member function \ref Surface_mesh_topology::Path_on_surface::push_back_by_label "push_back_by_label()".
@@ -153,20 +153,20 @@ In order to find the edge width of the surface, one can make use of the routine 
 
 \cgalExample{Surface_mesh_topology/edgewidth_surface_mesh.cpp}
 
-In these two examples, the mesh and the cycles can be visualized if CGAL_Qt5 is enabled.
+In these two examples, the mesh and the cycles can be visualized if CGAL_Qt6 is enabled.
 
 \subsection SMTopology_Example_IV Compute Face Width
 
-The following example computes the face width, and visualizes it if CGAL_Qt5 is enabled.
+The following example computes the face width, and visualizes it if CGAL_Qt6 is enabled.
 
 \cgalExample{Surface_mesh_topology/facewidth.cpp}
 
 \subsection SMTopology_Example_V Basic Homotopy Test
-The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if CGAL_Qt5 is enabled.
+The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if CGAL_Qt6 is enabled.
 \cgalExample{Surface_mesh_topology/path_homotopy_double_torus.cpp}
 
 \subsection SMTopology_Example_VI Basic Simplicity Test
-The following example shows how to test the simplicity of a closed path on a double torus. The original path is visualized if CGAL_Qt5 is enabled.
+The following example shows how to test the simplicity of a closed path on a double torus. The original path is visualized if CGAL_Qt6 is enabled.
 \cgalExample{Surface_mesh_topology/path_simplicity_double_torus_2.cpp}
 
 \subsection SMTopology_Example_VI_VII Polygonal Schema
@@ -322,7 +322,7 @@ As the algorithm inductively builds orderings, it has to determine a relative or
  The red edge is being processed and is compared against the pink edge which is the first edge of the path. The blue and green edges are the first diverging pair when tracing backward. The dashed line means that edges have not been processed yet. Since the green edge lies to the right of the blue edge around the vertex, the red edge must be to the right of the pink edge in the ordering.
     \cgalFigureEnd
 
-The transverse orderings are stored in red-black trees, one for each edge of the quadrangulation. So each insertion or search takes \f$O(\log{l})\f$ time, where \f$l\f$ is the length of the closed curve.
+The transverse orderings are stored in red-black trees, one for each edge of the quadrangulation. So each insertion or search takes \cgalBigO{\log{l}} time, where \f$l\f$ is the length of the closed curve.
 
 \subsubsection SMTopology_Simplicity_Test_Verification Verify Ordering
 After computing a tentative ordering within the edges of the path, we have to verify that such an ordering could result in an intersection free arrangement. Since there is no intersection within an edge, we only need to verify this for each vertex in the quadrangulation. Each vertex is naturally associated with a circular ordering of the incident path edges by concatenating clockwise the orderings computed for every incident edge in the quadrangulation. We consider the two consecutive edges composing a turn (one going in the vertex, one going out of the vertex) at the vertex being verified as a <em>pair</em>. The ordering at the vertex is intersection free if and only if there is no two pairs crossing each other according to the clockwise ordering around the vertex. In other words, for any two pairs \f$(a, a')\f$ and \f$(b, b')\f$, none of the subsequences \f$a, b, a', b'\f$ or \f$a, b', a', b\f$ should appear in the clockwise ordering. This is very similar to verifying balanced parentheses in a string. We traverse clockwise at each vertex and use a stack-based algorithm to verify in linear time that the ordering produces a cycle without self-intersection.

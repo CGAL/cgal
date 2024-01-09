@@ -33,8 +33,7 @@
 #include <CGAL/Time_stamper.h>
 #include <CGAL/Has_member.h>
 #include <CGAL/assertions.h>
-
-#include <boost/mpl/if.hpp>
+#include <CGAL/IO/io.h>
 
 // An STL like container with the following properties :
 // - to achieve compactness, it requires access to a pointer stored in T,
@@ -865,10 +864,10 @@ namespace internal {
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
-    typedef typename boost::mpl::if_c< Const, const value_type*,
-                                       value_type*>::type pointer;
-    typedef typename boost::mpl::if_c< Const, const value_type&,
-                                       value_type&>::type reference;
+    typedef std::conditional_t< Const, const value_type*,
+                                       value_type*>   pointer;
+    typedef std::conditional_t< Const, const value_type&,
+                                        value_type&>  reference;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
     // the initialization with nullptr is required by our Handle concept.
@@ -1152,6 +1151,20 @@ namespace handle {
 } // namespace handle
 
 } // namespace internal
+
+template <class DSC, bool Const >
+class Output_rep<CGAL::internal::CC_iterator<DSC, Const> > {
+protected:
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Compact_container = typename CC_iterator::CC;
+  using Time_stamper = typename Compact_container::Time_stamper;
+  CC_iterator it;
+public:
+  Output_rep( const CC_iterator it) : it(it) {}
+  std::ostream& operator()( std::ostream& out) const {
+    return (out << Time_stamper::display_id(it.operator->()));
+  }
+};
 
 } //namespace CGAL
 

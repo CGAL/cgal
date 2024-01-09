@@ -41,7 +41,7 @@ class Plane_3 : public R_::Kernel_base::Plane_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Plane_3                            Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Plane_3>::value));
+  static_assert(std::is_same<Self, typename R_::Plane_3>::value);
 
 public:
 
@@ -72,6 +72,9 @@ public:
 
   Plane_3(const Point_3& p, const Point_3& q, const Point_3& r)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, q, r)) {}
+
+  Plane_3(Origin o, const Point_3& q, const Point_3& r)
+    : Rep(typename R::Construct_plane_3()(Return_base_tag(), o, q, r)) {}
 
   Plane_3(const Point_3& p, const Direction_3& d)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, d)) {}

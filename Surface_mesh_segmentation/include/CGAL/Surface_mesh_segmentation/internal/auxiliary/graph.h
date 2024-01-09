@@ -56,7 +56,7 @@ Note that any program that incorporates the code under this licence must, under 
 GNU General Public License can be found at https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 2) Proprietary Licence from UCL Business PLC.
-To enable programers to include the MaxFlow software in a proprietary system (which is not allowed by the GNU GPL), this licence gives you the right to incorporate the software in your program and distribute under any licence of your choosing. The full terms of the licence and applicable fee, are available from the Licensors at: http://www.uclb-elicensing.com/optimisation_software/maxflow_computervision.html
+To enable programmers to include the MaxFlow software in a proprietary system (which is not allowed by the GNU GPL), this licence gives you the right to incorporate the software in your program and distribute under any licence of your choosing. The full terms of the licence and applicable fee, are available from the Licensors at: http://www.uclb-elicensing.com/optimisation_software/maxflow_computervision.html
 
 ##################################################################
 
@@ -637,7 +637,7 @@ private:
     arcs_for[MF_ARC_BLOCK_SIZE]; /* all arcs must be at even addresses */
     union {
       arc_forward                        dummy;
-      node                                *LAST_NODE;        /* used in graph consruction */
+      node                                *LAST_NODE;        /* used in graph construction */
     }                                                LAST_NODE;
   } arc_for_block;
 
@@ -651,7 +651,7 @@ private:
     arcs_rev[MF_ARC_BLOCK_SIZE]; /* all arcs must be at even addresses */
     union {
       arc_reverse                        dummy;
-      node                                *LAST_NODE;        /* used in graph consruction */
+      node                                *LAST_NODE;        /* used in graph construction */
     }                                                LAST_NODE;
   } arc_rev_block;
 
@@ -661,7 +661,7 @@ private:
   DBlock<nodeptr>                *nodeptr_block;
 
   void        (*error_function)(const char
-                          *);        /* this function is called if a error occurs,
+                          *);        /* this function is called if an error occurs,
                                                                                    with a corresponding error message
                                                                                    (or exit(1) is called if it's nullptr) */
 

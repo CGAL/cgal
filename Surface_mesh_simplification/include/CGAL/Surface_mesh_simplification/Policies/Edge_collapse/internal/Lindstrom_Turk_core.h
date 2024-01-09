@@ -55,9 +55,9 @@ public:
   typedef typename Geom_traits::FT                                       FT;
   typedef typename Geom_traits::Vector_3                                 Vector;
 
-  typedef boost::optional<FT>                                            Optional_FT;
-  typedef boost::optional<Point>                                         Optional_point;
-  typedef boost::optional<Vector>                                        Optional_vector;
+  typedef std::optional<FT>                                            Optional_FT;
+  typedef std::optional<Point>                                         Optional_point;
+  typedef std::optional<Vector>                                        Optional_vector;
 
   typedef MatrixC33<Geom_traits>                                         Matrix;
 
@@ -119,9 +119,133 @@ private :
   const Geom_traits& geom_traits() const { return mProfile.geom_traits(); }
   const TM& surface() const { return mProfile.surface(); }
 
+#if 0
+  // a*b - c*d
+  // The next two functions are from https://stackoverflow.com/questions/63665010/accurate-floating-point-computation-of-the-sum-and-difference-of-two-products
+  static double diff_of_products_kahan(const double a, const double b, const double c, const double d)
+  {
+    double w = d * c;
+    double e = std::fma(c, -d, w);
+    double f = std::fma(a, b, -w);
+    return f + e;
+  }
+
+  static double diff_of_products_cht(const double a, const double b, const double c, const double d)
+  {
+    double p1 = a * b;
+    double p2 = c * d;
+    double e1 = std::fma (a, b, -p1);
+    double e2 = std::fma (c, -d, p2);
+    double r = p1 - p2;
+    double e = e1 + e2;
+    return r + e;
+  }
+
+  static double diff_of_products(const double a, const double b, const double c, const double d)
+  {
+    // the next two are equivalent in results and speed
+    return diff_of_products_kahan(a, b, c, d);
+    // return diff_of_products_cht(a, b, c, d);
+  }
+
+  template <typename OFT>
+  static OFT diff_of_products(const OFT& a, const OFT& b, const OFT& c, const OFT& d)
+  {
+    return a*b - c*d;
+  }
+#endif
+
+#ifdef __AVX__
+  static Vector SL_cross_product_avx(const Vector& A, const Vector& B)
+  {
+    const FT ax=A.x(), ay=A.y(), az=A.z();
+    const FT bx=B.x(), by=B.y(), bz=B.z();
+
+    __m256d a = _mm256_set_pd(ay, az, ax, 1.0);
+    __m256d b = _mm256_set_pd(bz, bx, by, 1.0);
+    __m256d c = _mm256_set_pd(az, ax, ay, 1.0);
+    __m256d d = _mm256_set_pd(by, bz, bx, 1.0);
+
+    __m256d s1 = _mm256_sub_pd(b, c);
+    __m256d s2 = _mm256_sub_pd(a, d);
+
+    b = _mm256_mul_pd(a, s1);
+    d = _mm256_mul_pd(c, s2);
+    a = _mm256_add_pd(b, d);
+
+    double res[4];
+    _mm256_storeu_pd(res, a);
+
+//            a  * (b  - c ) + c  * ( a - d);
+//    FT x =  ay * (bz - az) + az * (ay - by);
+//    FT y =  az * (bx - ax) + ax * (az - bz);
+//    FT z =  ax * (by - ay) + ay * (ax - bx);
+
+    return Vector(res[3], res[2], res[1]);
+  }
+#endif
+
+  static Vector SL_cross_product(const Vector& a, const Vector& b)
+  {
+    const FT ax=a.x(), ay=a.y(), az=a.z();
+    const FT bx=b.x(), by=b.y(), bz=b.z();
+
+    auto minor = [](double ai, double bi, double aj, double bj)
+    {
+      // The main idea is that we expect ai and bi (and aj and bj) to have roughly the same magnitude
+      // since this function is used to compute the cross product of two vectors that are defined
+      // as (ORIGIN, pa) and (ORIGIN, pb) and pa and pb are part of the same triangle.
+      //
+      // We can abuse this fact to trade 2 extra subtractions to lower the error.
+      return ai * (bj - aj) + aj * (ai - bi);
+    };
+
+    // ay*
+    FT x = minor(ay, by, az, bz);
+    FT y = minor(az, bz, ax, bx);
+    FT z = minor(ax, bx, ay, by);
+
+    return Vector(x, y, z);
+  }
+
+#if 0
+  static Vector exact_cross_product(const Vector& a, const Vector& b)
+  {
+    CGAL::Cartesian_converter<Geom_traits, CGAL::Exact_predicates_exact_constructions_kernel> to_exact;
+    CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, Geom_traits> to_approx;
+    auto exv = cross_product(to_exact(a), to_exact(b));
+    exv.exact();
+    return to_approx(exv);
+  }
+#endif
+
+  static Vector X_product(const Vector& u, const Vector& v)
+  {
+#if 0
+    // this can create large errors and spiky meshes for kernels with inexact constructions
+    return CGAL::cross_product(u,v);
+#elif 0
+    // improves the problem mentioned above a bit, but not enough
+    return { std::fma(u.y(), v.z(), -u.z()*v.y()),
+             std::fma(u.z(), v.x(), -u.x()*v.z()),
+             std::fma(u.x(), v.y(), -u.y()*v.x()) };
+#elif 0
+    // this is the best without resorting to exact, but it inflicts a 20% slowdown
+    return { diff_of_products(u.y(), v.z(), u.z(), v.y()),
+             diff_of_products(u.z(), v.x(), u.x(), v.z()),
+             diff_of_products(u.x(), v.y(), u.y(), v.x()) };
+#elif 1
+    // balanced solution based on abusing the fact that here we expect u and v to have similar coordinates
+    return SL_cross_product(u, v);
+#elif 0
+    // obviously too slow
+    return exact_cross_product(u, v);
+#endif
+  }
+
   static Vector point_cross_product(const Point& a, const Point& b)
   {
-    return cross_product(a-ORIGIN, b-ORIGIN);
+    return X_product(a-ORIGIN, b-ORIGIN);
   }
 
   // This is the (uX)(Xu) product described in the Lindstrom-Turk paper
@@ -152,7 +276,7 @@ private :
   static bool is_finite(const Matrix& m) { return is_finite(m.r0()) && is_finite(m.r1()) && is_finite(m.r2()); }
 
   template<class T>
-  static boost::optional<T> filter_infinity(const T& n) { return is_finite(n) ? boost::optional<T>(n) : boost::optional<T>(); }
+  static std::optional<T> filter_infinity(const T& n) { return is_finite(n) ? std::optional<T>(n) : std::optional<T>(); }
 
 
 private:
@@ -264,7 +388,7 @@ compute_placement()
   // 'Ai' is a (row) vector and 'bi' a scalar.
   //
   // The vertex is completely determined with 3 such constraints,
-  // so is the solution to the folloing system:
+  // so is the solution to the following system:
   //
   //  A.r0(). * v = b0
   //  A1 * v = b1
@@ -298,7 +422,7 @@ compute_placement()
   if(mConstraints_n == 3)
   {
     // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
-    boost::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
+    std::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
     if(lOptional_Ai)
     {
       const Matrix& lAi = *lOptional_Ai;

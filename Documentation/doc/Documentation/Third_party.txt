@@ -6,16 +6,16 @@
 \section seccompilers Supported Compilers
 
 In order to build a program using \cgal, you need a \cpp compiler
-supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
+supporting C++17 or later.
 \cgal \cgalReleaseNumber is supported (continuously tested) for the following compilers/operating systems:
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 13.0.1 |
+| Linux            | \gnu `g++` 11.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 15.0.7 |
 | \ms Windows      | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | \ms Visual `C++` 14.0, 15.9, 16.10, 17.0 (\visualstudio 2015, 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
-| MacOS X          | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | \ms Visual `C++` 15.9, 16.10, 17.0 (\visualstudio 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
+| MacOS X          | \gnu `g++` 11.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
 |                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 13.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
@@ -77,7 +77,7 @@ we recommend that you define the environment variable
 \subsection thirdpartyMPFR GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
 <b>GMP Version 4.2 or later, MPFR Version 2.2.1 or later</b>
 
-The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt5` require
+The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt6` require
 \gmp and \mpfr which are libraries for multi precision integers and rational numbers,
 and for multi precision floating point numbers.
 
@@ -102,19 +102,19 @@ version shipped with \cgal.
 The page \ref configurationvariables lists CMake and environment variables which can be used to specify
 the location of third-party software during configuration.
 
-\subsection thirdpartyQt Qt5
-<b>Version 5.9.0 or later</b>
+\subsection thirdpartyQt Qt6
+<b>Version 6.4 or later</b>
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGAL_Qt5 is essential to run the \cgal demos and basic viewers.
-It requires \qt5 installed on your system.
+The component libCGAL_Qt6 is essential to run the \cgal demos and basic viewers.
+It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
 it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
 
-The exhaustive list of \qt5 components used in demos is:
-`Core`, `Gui`, `Help`, `OpenGL`, `Script`, `ScriptTools`, `Svg`, `Widgets`,
-`qcollectiongenerator` (with `sqlite` driver plugin), and `Xml`.
+The exhaustive list of \qt6 components used in demos is:
+`Core`, `Gui`, `Help`, `OpenGL`, `OpenGLWidgets`, `Qml`, `Svg`, `Widgets`,
+`WebSockets`,  `Network`, and `qcollectiongenerator` (with `sqlite` driver plugin).
 
 \subsection thirdpartyEigen Eigen
 <b>Version 3.3.4 or later</b>
@@ -238,9 +238,10 @@ in \cgal programs, the executables should be linked with the CMake
 imported target `CGAL::LASLIB_support` provided in
 `CGAL_LASLIB_support.cmake`.
 
-The \laslib web site is <a
-href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \laslib
-is usually distributed along with LAStools: for simplicity, \cgal
+\laslib information can be obtained from
+<a href="https://lastools.github.io/">https://lastools.github.io/</a> and
+<a href="https://rapidlasso.de/product-overview/">https://rapidlasso.de/product-overview/</a>.
+\laslib is usually distributed along with LAStools: for simplicity, \cgal
 provides <a href="https://github.com/CGAL/LAStools">a fork with a
 CMake based install procedure</a>.
 
@@ -291,7 +292,7 @@ for more information.
 
 \attention \ceres indicates that `glog` is a recommended dependency. `glog` has `libunwind` as a recommended dependency.
 On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
-If you experience such an issue, we recommand to compile \ceres without `glog` support.
+If you experience such an issue, we recommend to compile \ceres without `glog` support.
 
 \subsection thirdpartyGLPK GLPK
 

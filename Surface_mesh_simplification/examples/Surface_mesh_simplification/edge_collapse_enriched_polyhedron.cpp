@@ -58,7 +58,7 @@ int main(int argc, char** argv)
   // The index maps are not explicitelty passed as in the previous
   // example because the surface mesh items have a proper id() field.
   // On the other hand, we pass here explicit cost and placement
-  // function which differ from the default policies, ommited in
+  // function which differ from the default policies, omitted in
   // the previous example.
   std::cout << "Collapsing edges of mesh: " << filename << ", aiming for " << 100 * ratio << "% of the input edges..." << std::endl;
   int r = SMS::edge_collapse(surface_mesh, stop);

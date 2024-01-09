@@ -52,6 +52,7 @@ Polygon_mesh_processing/connected_components Polygon Mesh Processing - Connected
 Polygon_mesh_processing/corefinement Polygon Mesh Processing - Corefinement
 Polygon_mesh_processing/core Polygon Mesh Processing - Core
 Polygon_mesh_processing/distance Polygon Mesh Processing - Distance
+Polygon_mesh_processing/interpolated_corrected_curvatures Polygon Mesh Processing - Interpolated Corrected Curvatures
 Polygon_mesh_processing/measure Polygon Mesh Processing - Geometric Measure
 Polygon_mesh_processing/meshing_hole_filling Polygon Mesh Processing - Meshing and Hole Filling
 Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation
@@ -61,6 +62,7 @@ Polygon_mesh_processing/geometric_repair Polygon Mesh Processing - Geometric Rep
 Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
 Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
+Polygon_mesh_processing/autorefinement Polygon Mesh Processing - Autorefinement
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
@@ -78,6 +80,7 @@ Skin_surface_3 3D Skin Surface Meshing
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
 Straight_skeleton_2 2D Straight Skeleton and Polygon Offsetting
+Straight_skeleton_extrusion_2 2D Straight Skeleton Extrusion
 Stream_lines_2 2D Placement of Streamlines
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
 Surface_mesher 3D Surface Mesh Generation

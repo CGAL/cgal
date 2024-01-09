@@ -73,7 +73,7 @@ seems that the points are collinear, or perform a right turn.
 
 If you must ensure that your numbers get interpreted at their full precision
 you can use a \cgal kernel that performs exact predicates and
-extract constructions.
+exact constructions.
 
 \cgalExample{Kernel_23/exact.cpp}
 
@@ -287,7 +287,7 @@ duplicate(T t)
 If you want to instantiate this function with a class `C`, this
 class must at least provide a copy constructor, and we
 say that class `C` must be a model of `CopyConstructible`.
-A singleton class does not fulfill this requirment.
+A singleton class does not fulfill this requirement.
 
 Another example is the function:
 

@@ -1371,9 +1371,8 @@ CGAL_3CENTER_REPEAT_CHECK:
 
   // try rho_min
   CGAL_assertion(rho_min <= rho_max);
-  CGAL_assertion(rho_min >= 0);
   FT rad_2 = q_t_q_r_cover_at_rho_min;
-  if (s_at_rho_min != e_at_rho_min) {
+  if (rho_min >= 0 && s_at_rho_min != e_at_rho_min) {
     auto mydist = [&q_t_at_rho_min, &q_r_at_rho_min, &op](const Point& p)
                   { return Min<FT>()( op.distance()(q_t_at_rho_min, p),
                                       op.distance()(q_r_at_rho_min, p)); };
@@ -1387,7 +1386,7 @@ CGAL_3CENTER_REPEAT_CHECK:
   CGAL_assertion(rad_2 == 0 || rad_2 > rho_min);
 
   // if a covering with rho == 0 is possible,
-  // it will be catched in the type1 functions
+  // it will be caught in the type1 functions
   Point q_t, q_r;
   if (rad_2 > rho_max || rho_min == -1) {
     // it is rho_max ...

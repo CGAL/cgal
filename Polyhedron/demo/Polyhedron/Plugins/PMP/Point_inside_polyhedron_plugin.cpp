@@ -23,7 +23,7 @@
 #include <algorithm>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 using namespace CGAL::Three;
 
@@ -108,7 +108,7 @@ public Q_SLOTS:
     std::vector<Point_inside_smesh*>inside_smesh_testers;
 
     std::vector<Point_set*> point_sets;
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
+    for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices()) {
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
       if (sm_item){
         inside_smesh_testers.push_back(new Point_inside_smesh(*(sm_item->polyhedron())));
@@ -171,7 +171,7 @@ public Q_SLOTS:
 
     bool found = false;
     // for repaint
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
+    for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) {
         found = true;
@@ -189,15 +189,14 @@ public Q_SLOTS:
   void on_Sample_random_points_from_bbox() {
 
     // calculate bbox of selected polyhedron items
-    boost::optional<CGAL::Three::Scene_interface::Bbox> bbox
-      = boost::make_optional(false, CGAL::Three::Scene_interface::Bbox());
+    std::optional<CGAL::Three::Scene_interface::Bbox> bbox;
     // Workaround a bug in g++-4.8.3:
     //   https://stackoverflow.com/a/21755207/1728537
-    // Using boost::make_optional to copy-initialize 'bbox' hides the
+    // Using std::make_optional to copy-initialize 'bbox' hides the
     //   warning about '*bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
+    for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices()) {
       Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
       if(sm_item) {
         if(!bbox) {
@@ -228,7 +227,7 @@ public Q_SLOTS:
     if(!ok) { return; }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QApplication::processEvents();
-    // sample random points and constuct item
+    // sample random points and construct item
     Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
     point_item->setName(QString("sample-%1").arg(nb_points));
     CGAL::Random rg(1340818006);
@@ -255,7 +254,7 @@ public Q_SLOTS:
 private Q_SLOTS:
   void resetGeneratedPoints(QObject* o)
   {
-    Q_FOREACH(Scene_points_with_normal_item* item , generated_points)
+    for(Scene_points_with_normal_item* item  : generated_points)
     if(item == o)
     {
       generated_points.removeAll(item);

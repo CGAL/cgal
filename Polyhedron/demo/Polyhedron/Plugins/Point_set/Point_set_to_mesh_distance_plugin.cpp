@@ -133,7 +133,7 @@ public:
       return false;
     Scene_surface_mesh_item* sm = nullptr;
     Scene_points_with_normal_item* pn = nullptr;
-    Q_FOREACH(Scene_interface::Item_id i,scene->selectionIndices())
+    for(Scene_interface::Item_id i :scene->selectionIndices())
     {
       if(!sm)
         sm = qobject_cast<Scene_surface_mesh_item*>(scene->item(i));
@@ -203,7 +203,7 @@ private Q_SLOTS:
   {
     Scene_surface_mesh_item* sm = nullptr;
     Scene_points_with_normal_item* pn = nullptr;
-    Q_FOREACH(Scene_interface::Item_id i,scene->selectionIndices())
+    for(Scene_interface::Item_id i :scene->selectionIndices())
     {
       if(!sm)
         sm = qobject_cast<Scene_surface_mesh_item*>(scene->item(i));

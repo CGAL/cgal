@@ -28,3 +28,4 @@ create_single_source_cgal_program(
   "test_periodic_3_triangulation_traits_SC_3.cpp")
 create_single_source_cgal_program(
   "test_periodic_3_triangulation_traits_SH_3.cpp")
+create_single_source_cgal_program("test_dummy_point_generation.cpp")

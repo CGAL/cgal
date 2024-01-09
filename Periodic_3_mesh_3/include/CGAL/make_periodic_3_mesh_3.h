@@ -30,22 +30,61 @@
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Named_function_parameters.h>
 
+#include <boost/random/random_number_generator.hpp>
+#include <boost/random/linear_congruential.hpp>
+
 namespace CGAL {
 namespace Periodic_3_mesh_3 {
 namespace internal {
 
-template<typename C3T3>
-void mark_dummy_points(C3T3& c3t3)
+template<typename C3T3, typename MeshDomain>
+bool insert_dummy_points(C3T3& c3t3,
+                         const MeshDomain& domain)
 {
-  CGAL_precondition(c3t3.triangulation().is_1_cover());
+  typedef typename C3T3::Triangulation::Vertex_handle                         Vertex_handle;
 
-  typedef typename C3T3::Triangulation::Vertex_iterator       Vertex_iterator;
+  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
+    c3t3.triangulation().geom_traits().construct_point_3_object();
 
-  for(Vertex_iterator vit = c3t3.triangulation().vertices_begin();
-                      vit != c3t3.triangulation().vertices_end(); ++vit)
+  std::vector<Vertex_handle> dummy_vertices = c3t3.triangulation().insert_generic_dummy_points();
+  CGAL_postcondition(c3t3.triangulation().is_1_cover());
+
+  // Abuse the multi cover function to check if cells have a small-enough orthoradius
+  c3t3.triangulation().update_cover_data_after_converting_to_27_sheeted_covering();
+  if(!c3t3.triangulation().can_be_converted_to_1_sheet())
   {
-    c3t3.set_index(vit, 0);
+    std::cerr << "Error: dummy points do not create a 1-cover" << std::endl;
+    CGAL_postcondition(false);
+    return false;
   }
+
+  for(Vertex_handle dvh : dummy_vertices)
+  {
+    dvh->info().is_dummy_vertex = true;
+
+    // @fixme
+    // The real in-dimension of a dummy vertex is impossible to evaluate: it can fall
+    // on a surface or even a curve, but there is no way to know this because the concept (and models)
+    // of MeshDomain_3 do not have a `Patch_index Do_intersect()(Point_3)`.
+    //
+    // It seems that setting the dimension wrongly, to a too-low dimension does not cause
+    // problems, whereas on the other way is problematic: if setting it to '3' but the dummy vertex
+    // is part of the restricted Delaunay, then the refinement will refine until the vertex
+    // is no longer part of the restricted Delaunay, creating ugly spots in the mesh...
+    c3t3.set_dimension(dvh, 0);
+
+    // @fixme
+    // This should be setting patch indices if the dummy vertex is not in dim 3.
+    // Could maybe do it later, re-assigning indices of dummy vertices once the c3t3
+    // has been scanned, but still before refinement starts.
+    auto opt_si = domain.is_in_domain_object()(cp(c3t3.triangulation().point(dvh)));
+    if(opt_si.has_value())
+      c3t3.set_index(dvh, domain.index_from_subdomain_index(*opt_si));
+    else
+      c3t3.set_index(dvh, 0);
+  }
+
+  return true;
 }
 
 template <typename C3T3, typename MeshDomain, typename MeshCriteria>
@@ -60,7 +99,6 @@ void init_c3t3_with_features(C3T3& c3t3,
   CGAL::Periodic_3_mesh_3::Protect_edges_sizing_field<C3T3, MeshDomain, Sizing_field>
     protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()));
   protect_edges.set_nonlinear_growth_of_balls(nonlinear);
-
   protect_edges(true);
 }
 
@@ -85,8 +123,10 @@ struct C3t3_initializer_base
                   const parameters::internal::Mesh_3_options& mesh_options)
   {
     c3t3.triangulation().set_domain(domain.bounding_box());
-    c3t3.triangulation().insert_dummy_points();
-    mark_dummy_points(c3t3);
+
+    // Enforce 1-cover by adding dummy points
+    if(!insert_dummy_points(c3t3, domain))
+      return;
 
     // Call the basic initialization from c3t3, which handles features and
     // adds a bunch of points on the surface
@@ -312,7 +352,7 @@ struct C3t3_initializer<C3T3, MeshDomain, MeshCriteria, true, CGAL::Tag_true>
  * \sa `odt_optimize_mesh_3()`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
-C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
+C3T3 make_periodic_3_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -339,7 +379,7 @@ template<typename C3T3, typename MeshDomain, typename MeshCriteria,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
          typename ... NP>
-C3T3 make_periodic_3_mesh_3(MeshDomain& domain, MeshCriteria& criteria,
+C3T3 make_periodic_3_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria,
                             const CGAL_NP_CLASS_1&  np1,
                             const CGAL_NP_CLASS_2&  np2,
                             const NP& ... nps)

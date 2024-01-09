@@ -7,9 +7,7 @@
 /// \ingroup PkgSurfaceMeshTopologyRef
 
 /*!
-  \code
-   #include <CGAL/draw_face_graph_with_paths.h>
-  \endcode
+\cgalInclude{CGAL/draw_face_graph_with_paths.h}
 */
 /// \defgroup PkgDrawFaceGraphWithPaths Draw a Mesh with Paths
 /// \ingroup PkgSurfaceMeshTopologyRef
@@ -20,7 +18,7 @@
 \cgalPkgDescriptionBegin{Surface Mesh Topology,PkgSurfaceMeshTopology}
 \cgalPkgPicture{surface-mesh-topology-logo.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Guillaume Damiand, Francis Lazarus}
+\cgalPkgAuthors{Guillaume Damiand and Francis Lazarus}
 \cgalPkgDesc{This package provides a toolbox for manipulating curves on a combinatorial surface from the topological point of view. Two main functionalities are proposed. One is the computation of shortest curves that cannot be continuously deformed to a point. This includes the computation of the so-called edge width and face width of the vertex-edge graph of a combinatorial surface. The other functionality is the homotopy test for deciding if two given curves on a combinatorial surface can be continuously deformed one into the other.}
 \cgalPkgManuals{Chapter_Surface_Mesh_Topology,PkgSurfaceMeshTopologyRef}
 \cgalPkgSummaryEnd

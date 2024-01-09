@@ -16,7 +16,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         id: get_round
         with:
          result-encoding: string
@@ -38,7 +38,7 @@ jobs:
              }
            }
            return 'stop'
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         if: steps.get_round.outputs.result != 'stop'
         id: get_pr_number
         with:
@@ -47,9 +47,9 @@ jobs:
            //get pullrequest url
            const pr_number = context.payload.issue.number
            return pr_number
-           
+
       - name: Emoji-comment
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: steps.get_round.outputs.result != 'stop'
         with:
           script: |
@@ -59,14 +59,13 @@ jobs:
               repo: context.repo.repo,
               content: 'rocket'
             })
-            
-      - uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
         name: "checkout branch"
         if: steps.get_round.outputs.result != 'stop'
         with:
            repository: ${{ github.repository }}
            ref: refs/pull/${{ steps.get_pr_number.outputs.result }}/merge
-           token: ${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}
            fetch-depth: 2
 
       - name: install dependencies
@@ -74,9 +73,9 @@ jobs:
         run: |
           set -x
           sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
-          sudo pip install lxml==4.6.3
+          sudo pip install lxml
           sudo pip install pyquery
-          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_8_13_patched/doxygen
+          wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~cgaltest/doxygen_1_9_6_patched/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
           sudo chmod +x /usr/bin/doxygen
           git config --global user.email "cgal@geometryfactory.com"
@@ -137,7 +136,7 @@ jobs:
           fi
 
       - name: Post address
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: ${{ success() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
@@ -155,12 +154,13 @@ jobs:
       - name: Post error
         env:
           ERRORMSG: ${{steps.build_and_run.outputs.DoxygenError}}
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: ${{ failure() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
             const error = process.env.ERRORMSG
-            const msg = "There was an error while building the doc: \n"+error
+            const job_url = `${context.serverUrl}/CGAL/cgal/actions/runs/${context.runId}`
+            const msg = "There was an error while building the doc: \n```\n"+error + "\n```\n" + job_url
             github.rest.issues.createComment({
               owner: "CGAL",
               repo: "cgal",

@@ -32,7 +32,7 @@
 #include <boost/operators.hpp>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Sqrt_extension_fwd.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <CGAL/NT_converter.h>
 
 #include <type_traits>
@@ -92,7 +92,7 @@ template <>
 class Interval_optional_caching< ::CGAL::Tag_true >
 {
 protected:
-  typedef boost::optional< std::pair<double,double> > Cached_interval;
+  typedef std::optional< std::pair<double,double> > Cached_interval;
   mutable Cached_interval interval_;
   void invalidate_interval() {interval_=Cached_interval();}
   bool is_cached() const {return (interval_?true:false);}
@@ -178,10 +178,10 @@ public:
      */
   template <class NTX>
   explicit Sqrt_extension(const NTX& a, const NTX& b, const NTX& c, const bool is_smaller,
-    std::enable_if_t< boost::mpl::and_<
-      std::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
-      std::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
-    >::value >* = 0  )
+    std::enable_if_t<
+      std::is_same_v< typename Fraction_traits<NT>::Numerator_type,NTX > &&
+      std::is_same_v< typename Fraction_traits<ROOT>::Numerator_type,NTX >
+    >* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
     typename Fraction_traits<ROOT>::Compose compose_root;
@@ -595,7 +595,7 @@ CGAL::Comparison_result
       sign_right = ZERO;
   }
 
-  // Check whether on of the terms is zero. In this case, the comparsion
+  // Check whether on of the terms is zero. In this case, the comparison
   // result is simpler:
   if (sign_left == ZERO)
   {
@@ -628,7 +628,7 @@ CGAL::Comparison_result
   // We now square both terms and look at the sign of the one-root number:
   //   ((a1 - a2)^2 - (b12*c1 + b22*c2)) + 2*b1*b2*sqrt(c1*c2)
   //
-  // If both signs are negative, we should swap the comparsion result
+  // If both signs are negative, we should swap the comparison result
   // we eventually compute.
   const NT          A = diff_a0*diff_a0 - (x_sqr + y_sqr);
   const NT          B = 2 * a1_ * y.a1_;
@@ -662,10 +662,6 @@ CGAL::Comparison_result
   // NT
   friend bool operator == (const Sqrt_extension& p, const NT& num)
     { return (p-num).is_zero();}
-  friend bool operator <  (const Sqrt_extension& p, const NT& num)
-    { return ( p.compare(num) == CGAL::SMALLER ); }
-  friend bool operator >  (const Sqrt_extension& p, const NT& num)
-    { return ( p.compare(num) == CGAL::LARGER ); }
 
   //CGAL_int(NT)
   friend bool operator == (const Sqrt_extension& p, CGAL_int(NT) num)
@@ -676,6 +672,19 @@ CGAL::Comparison_result
     { return ( p.compare(num) == CGAL::LARGER ); }
 };
 
+// The two operators are moved out of the class scope (where they were friends)
+// in order to work around a VC2017 compilation problem
+template <class NT, class ROOT_, class ACDE_TAG_, class FP_TAG >
+bool operator <  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
+{
+    return (p.compare(num) == CGAL::SMALLER);
+}
+
+template <class NT, class ROOT_, class ACDE_TAG_, class FP_TAG >
+bool operator >  (const Sqrt_extension<NT, ROOT_, ACDE_TAG_, FP_TAG>& p, const NT& num)
+{
+    return (p.compare(num) == CGAL::LARGER);
+}
 /*!
  * Compute the square of a one-root number.
  */

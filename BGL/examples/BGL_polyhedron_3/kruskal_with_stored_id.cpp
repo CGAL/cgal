@@ -25,7 +25,7 @@ kruskal( const Polyhedron& P)
   // This property map is defined in graph_traits_Polyhedron_3.h
 
   // This function call requires a vertex_index_map named parameter which
-  // when  ommitted defaults to "get(vertex_index,graph)".
+  // when  omitted defaults to "get(vertex_index,graph)".
   // That default works here because the vertex type has an "id()" method
   // field which is used by the vertex_index internal property.
   std::list<edge_descriptor> mst;

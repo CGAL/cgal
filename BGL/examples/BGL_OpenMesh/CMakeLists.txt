@@ -7,38 +7,11 @@ project(BGL_OpenMesh_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# Boost and its components
-find_package(Boost REQUIRED)
-
-if(NOT Boost_FOUND)
-
-  message(
-    STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-find_package(OpenMesh QUIET)
-
+find_package(OpenMesh)
 if(OpenMesh_FOUND)
   include(UseOpenMesh)
-else()
-
-  message(
-    STATUS "NOTICE: These examples require OpenMesh and will not be compiled.")
-  return()
-
-endif()
-
-# include for local directory
-
-# include for local package
-
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
-
-if(OpenMesh_FOUND)
   create_single_source_cgal_program("TriMesh.cpp")
   target_link_libraries(TriMesh PRIVATE ${OPENMESH_LIBRARIES})
+else()
+  message("NOTICE: This project requires OpenMesh and will not be compiled.")
 endif()

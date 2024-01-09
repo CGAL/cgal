@@ -5,7 +5,7 @@
 
 \brief
 
-\cgalRefines `Kernel::ConstructLine_3`
+\cgalRefines{Kernel::ConstructLine_3}
 
 \sa `SphericalKernel::GetEquation`
 

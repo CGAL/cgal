@@ -111,7 +111,7 @@ void init_c3t3_with_features(C3T3& c3t3,
     protect_edges(c3t3,
                   domain,
                   Sizing_field(criteria.edge_criteria_object()),
-                  typename Edge_criteria::FT(),
+                  criteria.edge_criteria_object().min_length_bound(),
                   maximal_number_of_vertices,
                   pointer_to_error_code
 #ifndef CGAL_NO_ATOMIC
@@ -231,6 +231,13 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
 
         if (c3t3.number_of_facets() == 0) {
           need_more_init = true;
+        }
+        else
+        {
+          helper.update_restricted_cells();
+          if(c3t3.number_of_cells() == 0) {
+            need_more_init = true;
+          }
         }
       }
       if(need_more_init) {
@@ -417,7 +424,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  * \sa `odt_optimize_mesh_3()`
  */
 template<typename C3T3, typename MeshDomain, typename MeshCriteria, typename CGAL_NP_TEMPLATE_PARAMETERS>
-C3T3 make_mesh_3(MeshDomain& domain, MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
+C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const CGAL_NP_CLASS& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -443,7 +450,7 @@ template<typename C3T3, typename MeshDomain, typename MeshCriteria,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1,
          typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2,
          typename ... NP>
-C3T3 make_mesh_3(MeshDomain& domain, MeshCriteria& criteria,
+C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria,
                  const CGAL_NP_CLASS_1&  np1,
                  const CGAL_NP_CLASS_2&  np2,
                  const NP& ... nps)

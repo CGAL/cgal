@@ -1,6 +1,3 @@
-# Created by the script cgal_create_cmake_script.
-# This is the CMake script for compiling a CGAL application.
-
 cmake_minimum_required(VERSION 3.1...3.23)
 
 project(Weights_Tests)
@@ -12,16 +9,12 @@ create_single_source_cgal_program("test_shepard_weights.cpp")
 create_single_source_cgal_program("test_inverse_distance_weights.cpp")
 create_single_source_cgal_program("test_three_point_family_weights.cpp")
 create_single_source_cgal_program("test_projected_weights.cpp")
-
 create_single_source_cgal_program("test_wachspress_weights.cpp")
 create_single_source_cgal_program("test_authalic_weights.cpp")
-
 create_single_source_cgal_program("test_mean_value_weights.cpp")
 create_single_source_cgal_program("test_tangent_weights.cpp")
-
 create_single_source_cgal_program("test_discrete_harmonic_weights.cpp")
 create_single_source_cgal_program("test_cotangent_weights.cpp")
-
 create_single_source_cgal_program("test_uniform_region_weights.cpp")
 create_single_source_cgal_program("test_triangular_region_weights.cpp")
 create_single_source_cgal_program("test_barycentric_region_weights.cpp")

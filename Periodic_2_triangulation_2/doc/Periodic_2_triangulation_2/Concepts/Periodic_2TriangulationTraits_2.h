@@ -18,13 +18,15 @@ predicates from `TriangulationTraits_2` can be used
 directly. For efficiency reasons we maintain for each functor the
 version without offsets.
 
-\cgalRefines `TriangulationTraits_2`
+\cgalRefines{TriangulationTraits_2}
 In addition to the requirements described for the traits class
 `TriangulationTraits_2`, the geometric traits class of a
 Periodic triangulation must fulfill the following
 requirements:
 
-\cgalHasModel `CGAL::Periodic_2_triangulation_traits_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_2_triangulation_traits_2}
+\cgalHasModelsEnd
 
 \sa `TriangulationTraits_2`
 \sa `CGAL::Periodic_2_triangulation_2<Traits,Tds>`

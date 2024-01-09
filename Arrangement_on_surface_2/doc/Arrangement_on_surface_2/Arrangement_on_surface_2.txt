@@ -117,8 +117,8 @@ special type of objects. They must, however, supply the relevant
 traits class, which mainly involves algebraic computations. A traits
 class also encapsulates the number types used to represent coordinates
 of geometric objects and to carry out algebraic operations on them. It
-encapsulates the type of coordinate system used (e.g., Cartesian and
-Homogeneous), and the geometric or algebraic computation methods
+encapsulates the type of coordinate system used (e.g., %Cartesian and
+homogeneous), and the geometric or algebraic computation methods
 themselves. The precise minimal sets of requirements the actual traits
 classes must conform to are organized as a hierarchy of concepts; see
 Section \ref aos_sec-geom_traits.
@@ -1223,10 +1223,10 @@ halfedge \f$e_{\mathrm{pred}}\f$ directed toward \f$v\f$, such that
 \f$c\f$ is located between the curves associated with
 \f$e_{\mathrm{pred}}\f$ and the next halfedge in the clockwise order
 in the circular list of halfedges around \f$v\f$; see
-\cgalFigureRef{aos_fig-insert}. This search may take \f$O(d)\f$ time,
+\cgalFigureRef{aos_fig-insert}. This search may take \cgalBigO{d} time,
 where \f$d\f$ is the degree of the vertex \f$v\f$. \cgalFootnote{We
 can store the handles to the halfedges incident to \f$v\f$ in an efficient
-search structure to obtain \f$O(\log d)\f$ access time. However, as
+search structure to obtain \cgalBigO{\log d} access time. However, as
 \f$d\f$ is usually very small, this may lead to a waste of storage
 space without a meaningful improvement in running time in practice.}
 However, if the halfedge \f$e_{\mathrm{pred}}\f$ is known in advance,
@@ -1320,7 +1320,7 @@ Arrangement_on_surface_2::Face_const_handle
 `Face_const_handle`\endlink. Depending on whether the query point is
 located inside a face, lies on an edge, or coincides with a vertex,
 the appropriate handle can be obtained with <em>value retrieval</em>
-by `boost::get` as demonstrated in the example below.
+by `std::get` as demonstrated in the example below.
 
 Note that the handles returned by the \link
 ArrangementPointLocation_2::locate() `locate()`\endlink functions are
@@ -1361,7 +1361,7 @@ The function template `locate_point()` calls an instance of the
 function template `print_point_location()`, which inserts the
 result of the query into the standard output-stream. It is listed
 below, and defined in the header file `point_location_utils.h`.
-Observe how the function `boost::get()` is used to cast the
+Observe how the function `std::get()` is used to cast the
 resulting object into a handle to an arrangement feature. The
 point-location object `pl` is assumed to be already attached
 to an arrangement.
@@ -1383,13 +1383,13 @@ void print_point_location
   const Face_const_handle*     f;
 
   std::cout << "The point (" << q << ") is located ";
-  if (f = boost::get<Face_const_handle>(&obj)) // located inside a face
+  if (f = std::get_if<Face_const_handle>(&obj)) // located inside a face
     std::cout << "inside "
               << (((*f)->is_unbounded()) ? "the unbounded" : "a bounded")
               << " face.\n";
-  else if (e = boost::get<Halfedge_const_handle>(&obj)) // located on an edge
+  else if (e = std::get_if<Halfedge_const_handle>(&obj)) // located on an edge
     std::cout << "on an edge: " << (*e)->curve() << std::endl;
-  else if (v = boost::get<Vertex_const_handle>(&obj)) // located on a vertex
+  else if (v = std::get_if<Vertex_const_handle>(&obj)) // located on a vertex
     std::cout << "on " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
   else CGAL_error_msg("Invalid object.");
@@ -1488,9 +1488,9 @@ keep up-to-date as this arrangement changes.
 As mentioned above, the triangulation strategy is provided only for
 educational purposes, and thus we do not elaborate on this strategy.
 The data structure needed by the landmark and the trapezoidal map RIC
-strategies can be constructed in \f$O(N \log N)\f$ time, where \f$N\f$
+strategies can be constructed in \cgalBigO{N \log N} time, where \f$N\f$
 is the overall number of edges in the arrangement, but the constant
-hidden in the \f$O()\f$ notation for the trapezoidal map RIC strategy
+hidden in the \cgalBigO{&nbsp;} notation for the trapezoidal map RIC strategy
 is much larger. Thus, construction needed by the landmark algorithm is
 in practice significantly faster than the construction needed by the
 trapezoidal map RIC strategy. In addition, although both resulting
@@ -1603,12 +1603,12 @@ void shoot_vertical_ray(const RayShoot& vrs,
   const Face_const_handle* f;
 
   std::cout << "Shooting up from (" << q << ") : ";
-  if (v = boost::get<Vertex_const_handle>(&obj))         // we hit a vertex
+  if (v = std::get_if<Vertex_const_handle>(&obj))         // we hit a vertex
     std::cout << "hit " << (((*v)->is_isolated()) ? "an isolated" : "a")
               << " vertex: " << (*v)->point() << std::endl;
-  else if (e = boost::get<Halfedge_const_handle>(&obj))  // we hit an edge
+  else if (e = std::get_if<Halfedge_const_handle>(&obj))  // we hit an edge
     std::cout << "hit an edge: " << (*e)->curve() << std::endl;
-  else if (f = boost::get<Face_const_handle>(&obj)) {    // we hit nothing
+  else if (f = std::get_if<Face_const_handle>(&obj)) {    // we hit nothing
     CGAL_assertion((*f)->is_unbounded());
     std::cout << "hit nothing.\n";
   }
@@ -1647,7 +1647,7 @@ Section \ref arr_ssecpl. The output pairs are sorted in increasing
 \f$xy\f$-lexicographical order of the query point.
 
 The batched point-location operation is carried out by sweeping the
-arrangement. Thus, it takes \f$O((m+N)\log{(m+N)})\f$ time, where
+arrangement. Thus, it takes \cgalBigO{(m+N)\log{(m+N)}} time, where
 \f$N\f$ is the number of edges in the arrangement. Issuing separate
 queries exploiting a point-location strategy with logarithmic query
 time per query, such as the trapezoidal map RIC strategy (see Section
@@ -2037,11 +2037,11 @@ so it must be construct from scratch.
 
 In the first case, we sweep over the input curves, compute their
 intersection points, and construct the \dcel that represents their
-arrangement. This process is performed in \f$O\left((n + k)\log
-n\right)\f$ time, where \f$k\f$ is the total number of intersection
+arrangement. This process is performed in \cgalBigO{left((n + k)\log
+n\right} time, where \f$k\f$ is the total number of intersection
 points. The running time is asymptotically better than the time needed
 for incremental insertion if the arrangement is relatively sparse
-(when \f$k\f$ is \f$O(\frac{n^2}{\log n}\f$)), but it is recommended
+(when \f$k\f$ is \cgalBigO{\frac{n^2}{\log n}}), but it is recommended
 that this aggregate construction process be used even for dense
 arrangements, since the plane-sweep algorithm performs fewer geometric
 operations compared to the incremental insertion algorithms, and hence
@@ -2058,7 +2058,7 @@ insertion.
 
 The example below shows how to construct the same arrangement of five
 line segments built incrementally in \ref
-Arrangement_on_surface_2/incremental_insertion.cpp` depicted in
+Arrangement_on_surface_2/incremental_insertion.cpp depicted in
 \cgalFigureRef{aos_fig-incremental_insertion} using the aggregate
 insertion function \link CGAL::insert<>() `insert()`\endlink.  Note
 that no point-location object needs to be defined and attached to the
@@ -2266,7 +2266,7 @@ description of geometric objects from a file and constructs them. It
 accepts the name of an input file that contains the plain-text
 description of the geometric objects and an output iterator for
 storing the newly constructed objects.  When the function is
-instantiated, the first template parameter, namely Type`, must be
+instantiated, the first template parameter, namely `Type`, must be
 substituted with the type of objects to read. It is assumed that an
 extractor operator (`>>`) that extracts objects of the given type from
 the input stream is available. The listing of the function template,
@@ -4346,7 +4346,7 @@ a point with respect to an \f$x\f$-monotone polyline, we use binary
 search to locate the relevant segment that contains the point in its
 \f$x\f$-range. Then, we compute the position of the point with respect
 to this segment. Thus, operations on \f$x\f$-monotone polylines of
-size \f$m\f$ typically take \f$O(\log m)\f$ time.
+size \f$m\f$ typically take \cgalBigO{\log m} time.
 
 You are free to choose the underlying segment traits class. Your
 decision could be based, for example, on the number of expected
@@ -4780,7 +4780,7 @@ or line segments. The \link Arr_conic_traits_2::Curve_2
 `Curve_2`\endlink and the derived \link
 Arr_conic_traits_2::X_monotone_curve_2 `X_monotone_curve_2`\endlink
 classes also support basic access functions such as `source()`,
-`target()`, and `orientation()`.
+`target()`, and `%orientation()`.
 
 <!-- ------------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-conics,conics.png}
@@ -4819,21 +4819,19 @@ defined in the header file `arr_conics.h`.
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef Rat_kernel::Point_2                           Rat_point;
-typedef Rat_kernel::Segment_2                         Rat_segment;
-typedef Rat_kernel::Circle_2                          Rat_circle;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
-
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-                                                      Traits;
-typedef Traits::Point_2                               Point;
-typedef Traits::Curve_2                               Conic_arc;
-typedef Traits::X_monotone_curve_2                    X_monotone_conic_arc;
-typedef CGAL::Arrangement_2<Traits>                   Arrangement;
+using Nt_traits = CGAL::CORE_algebraic_number_traits;
+using Rational = Nt_traits::Rational;
+using Rat_kernel = CGAL::Cartesian<Rational>;
+using Rat_point = Rat_kernel::Point_2;
+using Rat_segment = Rat_kernel::Segment_2;
+using Rat_circle = Rat_kernel::Circle_2;
+using Algebraic = Nt_traits::Algebraic;
+using Alg_kernel = CGAL::Cartesian<Algebraic>;
+using Traits = CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
+using Point = Traits::Point_2;
+using Conic_arc = Traits::Curve_2;
+using X_monotone_conic_arc = Traits::X_monotone_curve_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 \endcode
 
 <!-- ------------------------------------------------------------------------- -->
@@ -4953,7 +4951,7 @@ nested type `Algebraic_real_1` of the \f$y\f$-coordinate is only
 computed upon request, as it can be a rather costly operation.
 
 The aforementioned types, `Polynomial_1`, `Coefficient`,
-`Bound, and `Algebraic_real_1`, are conveniently nested in
+`Bound`, and `Algebraic_real_1`, are conveniently nested in
 the `Arr_rational_function_traits_2` class template among
 the others and obtained from there in the type definitions used
 in the examples given in this section and listed below. These types
@@ -5069,7 +5067,7 @@ substitute the template parameters `RatKernel`, `AlgKernel`, and
 the same requirements of the corresponding types used to instantiate
 the `Arr_conic_traits_2` class template. Here, the use of the
 `CORE_algebraic_number_traits` class is also recommended with
-Cartesian kernels instantiated with the `Rational` and `Algebraic`
+%Cartesian kernels instantiated with the `Rational` and `Algebraic`
 number types defined by this class. The examples given in this manual
 use the type definitions listed below. These types are defined in the
 header file `arr_Bezier.h`.
@@ -5510,7 +5508,7 @@ nested types are defined as follows:
   The latter ensures that every instance of the class template
   `Arr_curve_data_traits_2` obtained by substituting the `BaseTraits`
   template parameter with a model of the `ArrangementLandmarkTraits_2`
-  concept models the ArrangementLandmarkTraits_2` concept as well
+  concept models the `ArrangementLandmarkTraits_2` concept as well
 
 </UL>
 
@@ -5653,10 +5651,24 @@ must model the basic concept `ArrangementBasicTopologyTraits`. A model
 of this basic concept holds the (\dcel) data structure used to
 represent the arrangement cells (i.e., vertices, edges, and facets)
 and the incidence relations between them. At this point we do not
-expose the concepts that refine the basic concept. The package
-contains one topology traits, namely,
-`Arr_spherical_topology_traits_2`. It can serve as a topology traits
-for an arrangement embedded on a sphere. More precisely, for an
+expose the concepts that refine the basic concept.  The package
+contains three topology traits class templates, namely,
+`Arr_bounded_planar_topology_traits_2`,
+`Arr_unb_planar_topology_traits_2`, and
+`Arr_spherical_topology_traits_2`. The first two are internally used
+to define any instance of the class template
+`Arrangement_2<GeometryTraits_2, Dcel>`. In particular, an instance
+`Arrangement_2<Geometry_traits_2, Dcel_>` is derived from the instance
+`Arrangement_on_surface_2<Geometry_traits_2,Topology_traits>`, where
+the `Topology_traits` type is selected based on the provided geometry
+traits `Geometry_traits_2`, or more precisely, on the boundary
+conditions defined by the geometry traits. If all sides of the
+boundary of the parameter space are closed, the instance
+`Arr_bounded_planar_topology_traits_2<Geometry_traits_2,Dcel_>` is
+selected; otherwise the instance
+`Arr_unb_planar_topology_traits_2<Geometry_traits_2,Dcel_>` is
+selected.  The third topology traits serves as a topology traits for
+an arrangement embedded on a sphere. More precisely, for an
 arrangement embedded on a sphere defined over a parameter space, the
 left and right boundary sides of which are identified, and the top and
 bottom boundary sides are contracted.
@@ -6599,7 +6611,7 @@ member functions when operating on an arrangement-with-history object.
 \cgalExample{Arrangement_on_surface_2/edge_manipulation_curve_history.cpp}
 
 <!-- ========================================================================= -->
-\section aos_sec-io Input/Output Streams
+\section aos_sec-io Input/Output Streams and Visualization
 <!-- ========================================================================= -->
 
 In some cases, one would like to save an arrangement object
@@ -6743,6 +6755,24 @@ format. The package contains a template called,
 arrangement formatter class (see Section \ref arr_ssecarr_io_aux_data)
 and defines a simple textual input/output format.
 \cgalAdvancedEnd
+
+<!-- ------------------------------------------------------------------------- -->
+\subsection arr_ssecarr_io_vis Drawing an Arrangement
+<!-- ------------------------------------------------------------------------- -->
+
+An arrangement data structure can be visualized by calling the \link PkgArrangementOnSurface2Draw CGAL::draw<arr>() \endlink function as shown in the following example. This function opens a new window showing the given arrangement. A call to this function is blocking; that is, the program continues execution only after the user closes the window.
+
+\cgalExample{Arrangement_on_surface_2/draw_arr.cpp}
+
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+
+\cgalFigureBegin{aos_fig-draw_arr,draw_arr.png}
+A snapshot of the window created by the program
+\ref Arrangement_on_surface_2/draw_arr.cpp. The constructed arrangement consists
+of 14 vertices, 15 edges, and 3 faces. Notice that the colors are generated at random.
+\cgalFigureEnd
+
 
 <!-- ========================================================================= -->
 \section aos_sec-bgl Adapting to Boost Graphs
@@ -6936,7 +6966,7 @@ demonstrates the application of the breadth-first search} (BFS)
 algorithm on a dual arrangement. It uses the functor template
 `Extended_face_property_map<Arrangement, Type>` to directly access
 information stored inside the faces. The functor implements a property
-map that utilizes the `data()` and `set_data() member functions of the
+map that utilizes the `data()` and `set_data()` member functions of the
 extended face to update or obtain the property. When the property map
 is instantiated, the `Type` parameter must be substituted with the
 same type that is used to extend the arrangement face; see Section

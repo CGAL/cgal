@@ -59,7 +59,6 @@
 #include <boost/format.hpp>
 #include <CGAL/Modifiable_priority_queue.h>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 
 #include <boost/unordered_map.hpp>
 
@@ -71,7 +70,7 @@ namespace Mesh_3 {
 
 /**
 * @class PVertex
-* Vertex with associated perturbation datas
+* Vertex with associated perturbation data
 */
 // Sequential
 template< typename FT
@@ -171,7 +170,7 @@ void update_saved_erase_counter() {}
 bool is_zombie() { return false; }
 
 private:
-/// Private datas
+/// Private data
 Vertex_handle vertex_handle_;
 unsigned int incident_sliver_nb_;
 FT min_value_;
@@ -294,7 +293,7 @@ bool operator<(const Self& pv) const
 }
 
 private:
-/// Private datas
+/// Private data
 Vertex_handle vertex_handle_;
 unsigned int vh_erase_counter_when_added_;
 int in_dimension_;
@@ -317,8 +316,8 @@ class Sliver_perturber_base
 {
 protected:
   typedef typename Tr::Vertex_handle                        Vertex_handle;
-  typedef typename Tr::Geom_traits                          Gt;
-  typedef typename Gt::FT                                   FT;
+  typedef typename Tr::Geom_traits                          GT;
+  typedef typename GT::FT                                   FT;
   typedef typename std::vector<Vertex_handle>               Bad_vertices_vector;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
@@ -345,8 +344,8 @@ class Sliver_perturber_base<Tr, Parallel_tag>
 {
 protected:
   typedef typename Tr::Vertex_handle                        Vertex_handle;
-  typedef typename Tr::Geom_traits                          Gt;
-  typedef typename Gt::FT                                   FT;
+  typedef typename Tr::Geom_traits                          GT;
+  typedef typename GT::FT                                   FT;
   typedef typename tbb::concurrent_vector<Vertex_handle>    Bad_vertices_vector;
   typedef typename Tr::Lock_data_structure                  Lock_data_structure;
 
@@ -437,7 +436,7 @@ class Sliver_perturber
     typename C3T3::Triangulation, Concurrency_tag>                      Base;
 
   typedef typename C3T3::Triangulation          Tr;
-  typedef typename Tr::Geom_traits              Gt;
+  typedef typename Tr::Geom_traits              GT;
 
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef typename Base::Vertex_handle          Vertex_handle;
@@ -450,7 +449,7 @@ class Sliver_perturber
   typedef typename std::vector<Vertex_handle>   Vertex_vector;
   typedef typename Base::Bad_vertices_vector    Bad_vertices_vector;
 
-  typedef typename Gt::FT                       FT;
+  typedef typename GT::FT                       FT;
 
   // Helper
   typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
@@ -928,7 +927,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     this->create_task_group();
 
@@ -1032,7 +1031,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
         }
       }
 
-      // Update pqueue in every cases, because pv was poped
+      // Update pqueue in every cases, because pv was popped
       pqueue_size += update_priority_queue(pv, pqueue);
       visitor.end_of_perturbation_iteration(pqueue_size);
 
@@ -1261,7 +1260,7 @@ perturb_vertex( PVertex pv
               , bool *could_lock_zone
               ) const
 {
-  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+  typename GT::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(
@@ -1378,7 +1377,7 @@ perturb_vertex( PVertex pv
       ++bcounter;
 #endif
 
-      // Update pqueue in every cases, because pv was poped
+      // Update pqueue in every cases, because pv was popped
       if (pv.is_perturbable())
       {
         enqueue_task(pv, sliver_bound, visitor, bad_vertices);

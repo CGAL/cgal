@@ -54,7 +54,7 @@ Apollonius_graph_hierarchy_2
 }
 
 
-//Assignement
+//Assignment
 template<class Gt, class Agds, class LTag>
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag> &
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>::

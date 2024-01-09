@@ -325,7 +325,7 @@ public:
     {}
 
     /*! Compare two directional points lexigoraphically: by x, then by y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
@@ -1088,59 +1088,66 @@ public:
   // ArrangementLandmarkTraits concept.
   //@{
 
-#if 0
-  // The following block assumes that the subcurve traits template parameter
-  // is a model of the ArrangementLandmarkTraits concept; in other words, it
-  // defines the nested types Approximate_number_type and Approximate_2 and
-  // the member function approximate_2_object(). It cannot be used as is if
-  // the subcurve traits does not model the ArrangementLandmarkTraits concept.
-  // The functor Construct_x_monotone_curve_2 is provided regardless of the
-  // subcurve traits.
-
-  typedef typename Subcurve_traits_2::Approximate_number_type
-  Approximate_number_type;
-  typedef typename Subcurve_traits_2::Approximate_2    Approximate_2;
-
-  /*! Obtain an Approximate_2 functor object. */
-  Approximate_2 approximate_2_object() const
-  { return subcurve_traits_2()->approximate_2_object(); }
-#else
   // The following block defines the nested types Approximate_number_type and
   // Approximate_2 and the member function approximate_2_object() based on the
   // corresponding types and function definitions of the subcurve traits. If
   // the subcurve traits does not provide these definitions, they are defined
-  // as dummies. Essentially, the polycurve traits becomes a practical model of
-  // the ArrangementLandmarkTraits concept only if the subcurve traits is a
-  // model of this concept.
+  // as dummies. Essentially, the polycurve traits becomes a model of the
+  // ArrangementLandmarkTraits concept only if the subcurve traits is a model
+  // of this concept.
   //
   // The following implementation is inspired by
   // https://stackoverflow.com/a/11816999/1915421
 
-  template <typename T>
-  struct Void {
-    typedef void type;
-  };
+  template <typename... Ts> using void_t = void;
 
-  template <typename T, typename _ = void>
+  template <typename T, typename = void>
   struct has_approximate_2 {
     // Generic implementation
-    typedef void                        Approximate_number_type;
-    typedef void                        Approximate_2;
+    using Approximate_number_type = void;
+    using Approximate_point_2 = void;
+
+    struct Approximate_2 {
+      /*! Obtain an approximation of a point coordinate.
+       * \param p the exact point.
+       * \param i the coordinate index (either 0 or 1).
+       * \pre i is either 0 or 1.
+       * \return An approximation of p's x-coordinate (if i == 0), or an
+       *         approximation of p's y-coordinate (if i == 1).
+       */
+      Approximate_number_type operator()(const Point_2&, int) const
+      { CGAL_error_msg("The subtraits does not define Approximate_2!"); }
+
+      /*! Obtain an approximation of a point.
+       */
+      Approximate_point_2 operator()(const Point_2&) const
+      { CGAL_error_msg("The subtraits does not define Approximate_2!"); }
+
+      /*! Obtain an approximation of an \f$x\f$-monotone curve.
+       */
+      template <typename OutputIterator>
+      OutputIterator operator()(const X_monotone_curve_2&, double,
+                                OutputIterator oi, bool = true) const {
+        CGAL_error_msg("The subtraits does not define Approximate_2!");
+        return oi;
+      }
+    };
   };
 
   template <typename T>
-  struct has_approximate_2<T, typename Void<typename T::Approximate_2>::type>
-  {
+  struct has_approximate_2<T, void_t<typename T::Approximate_2>> {
     // Specialization for types holding a nested type T::Approximate_2
-    typedef typename T::Approximate_number_type
-                                        Approximate_number_type;
-    typedef typename T::Approximate_2   Approximate_2;
+    using Approximate_number_type = typename T::Approximate_number_type;
+    using Approximate_2 = typename T::Approximate_2;
+    using Approximate_point_2 = typename T::Approximate_point_2;
   };
 
-  typedef typename has_approximate_2<Subcurve_traits_2>::Approximate_number_type
-                                        Approximate_number_type;
-  typedef typename has_approximate_2<Subcurve_traits_2>::Approximate_2
-                                        Approximate_2;
+  using Approximate_number_type =
+    typename has_approximate_2<Subcurve_traits_2>::Approximate_number_type;
+  using Approximate_2 =
+    typename has_approximate_2<Subcurve_traits_2>::Approximate_2;
+  using Approximate_point_2 =
+    typename has_approximate_2<Subcurve_traits_2>::Approximate_point_2;
 
   /*! Obtain an Approximate_2 functor object. */
   Approximate_2 approximate_2_object_impl(std::false_type) const
@@ -1148,13 +1155,12 @@ public:
 
   Approximate_2 approximate_2_object_impl(std::true_type) const { }
 
-  Approximate_2 approximate_2_object() const
-  {
-    typedef typename std::is_same<void, Approximate_2>::type      Is_void;
+  Approximate_2 approximate_2_object() const {
+    using Is_void = typename std::is_same<void, Approximate_2>::type;
     return approximate_2_object_impl(Is_void());
   }
-#endif
 
+  //
   class Construct_x_monotone_curve_2 {
   protected:
     typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2>
@@ -1592,7 +1598,7 @@ public:
       // x-value.
       // and also that min end subcurve is always placed at position 0 of the
       // vector.
-      // Comfirm with Eric.
+      // Confirm with Eric.
       return (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
     }
 
@@ -1681,7 +1687,7 @@ public:
       // x-value.
       // and also that min end subcurve is always placed at position 0 of the
       // vector.
-      // Comfirm with Eric.
+      // Confirm with Eric.
       size_type index = (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
       return index;
     }
@@ -2328,7 +2334,7 @@ public:
         target = src;
       }
 
-      // std::cout << "**************the new sourc: " << source
+      // std::cout << "**************the new source: " << source
       //           << "the new target: " << target << std::endl;
       /*
        * Get the source and target subcurve numbers from the polycurve.
@@ -2413,7 +2419,7 @@ protected:
   /*! Obtain the index of the subcurve in the polycurve that contains the
    * point q in its x-range. The function performs a binary search, so if the
    * point q is in the x-range of the polycurve with n subcurves, the subcurve
-   * containing it can be located in O(log n) operations.
+   * containing it can be located in \cgalBigO{log n} operations.
    * \param cv The polycurve curve.
    * \param q The point.
    * \return An index i such that q is in the x-range of cv[i].

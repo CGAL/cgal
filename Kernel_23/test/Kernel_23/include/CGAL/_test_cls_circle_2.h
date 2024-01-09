@@ -77,7 +77,7 @@ _test_cls_circle_2(const R& )
  typename R::Circle_2  ic;
  CGAL::Circle_2<R> c0;
 
- const bool nonexact = std::is_same<FT, double>::value;
+ const bool nonexact = std::is_floating_point<FT>::value;
 
  RT n0 =  0;
  RT n1 = 16;

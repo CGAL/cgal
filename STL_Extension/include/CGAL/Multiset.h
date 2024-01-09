@@ -31,10 +31,10 @@ namespace CGAL {
  * 3. The number of black nodes from every path from the tree root to a leaf
  *    is the same for all tree leaves (it is called the 'black height' of the
  *    tree).
- * Due to propeties 2-3, the height of a red-black tree containing n nodes
+ * Due to properties 2-3, the height of a red-black tree containing n nodes
  * is bounded by 2*log_2(n).
  *
- * The Multiset template requires three template parmeters:
+ * The Multiset template requires three template parameters:
  * - The contained Type class represents the objects stored in the tree.
  *   It has to support the default constructor, the copy constructor and
  *   the assignment operator (operator=).
@@ -42,7 +42,7 @@ namespace CGAL {
  *   class Type: It has to support an operator() that receives two objects from
  *   the Type class and returns SMALLER, EQUAL or LARGER, depending on the
  *   comparison result.
- *   In case the deafult parameter is supplied, the Type class has to support
+ *   In case the default parameter is supplied, the Type class has to support
  *   the less-than (<) and the equal (==) operators.
  * - The Allocator represents an allocator class. By default, it is the CGAL
  *   allocator.
@@ -291,7 +291,7 @@ protected:
 
 public:
 
-  // Forward decleration:
+  // Forward declaration:
   class const_iterator;
 
   /*! \class
@@ -325,7 +325,7 @@ public:
 
   public:
 
-    /*! Deafult constructor. */
+    /*! Default constructor. */
     iterator () :
       nodeP (nullptr)
     {}
@@ -435,7 +435,7 @@ public:
 
   public:
 
-    /*! Deafult constructor. */
+    /*! Default constructor. */
     const_iterator () :
       nodeP (nullptr)
     {}
@@ -544,25 +544,25 @@ public:
   //@{
 
   /*!
-   * Default constructor. [takes O(1) operations]
+   * Default constructor. [takes \cgalBigO{1} operations]
    */
   Multiset ();
 
   /*!
-   * Constructor with a comparison object. [takes O(1) operations]
+   * Constructor with a comparison object. [takes \cgalBigO{1} operations]
    * \param comp A comparison object to be used by the tree.
    */
   Multiset (const Compare& comp);
 
   /*!
-   * Copy constructor. [takes O(n) operations]
+   * Copy constructor. [takes \cgalBigO{n} operations]
    * \param tree The copied tree.
    */
   Multiset (const Self& tree);
 
   /*!
    * Construct a tree that contains all objects in the given range.
-   * [takes O(n log n) operations]
+   * [takes \cgalBigO{n log n} operations]
    * \param first An iterator for the first object in the range.
    * \param last A past-the-end iterator for the range.
    */
@@ -587,18 +587,18 @@ public:
   }
 
   /*!
-   * Destructor. [takes O(n) operations]
+   * Destructor. [takes \cgalBigO{n} operations]
    */
   virtual ~Multiset () noexcept(!CGAL_ASSERTIONS_ENABLED);
 
   /*!
-   * Assignment operator. [takes O(n) operations]
+   * Assignment operator. [takes \cgalBigO{n} operations]
    * \param tree The copied tree.
    */
   Self& operator= (const Self& tree);
 
   /*!
-   * Swap two trees. [takes O(1) operations]
+   * Swap two trees. [takes \cgalBigO{1} operations]
    * \param tree The copied tree.
    */
   void swap (Self& tree);
@@ -608,13 +608,13 @@ public:
   //@{
 
   /*!
-   * Test two trees for equality. [takes O(n) operations]
+   * Test two trees for equality. [takes \cgalBigO{n} operations]
    * \param tree The compared tree.
    */
   bool operator== (const Self& tree) const;
 
   /*!
-   * Check if our tree is lexicographically smaller. [takes O(n) operations]
+   * Check if our tree is lexicographically smaller. [takes \cgalBigO{n} operations]
    * \param tree The compared tree.
    */
   bool operator< (const Self& tree) const;
@@ -624,7 +624,7 @@ public:
   //@{
 
   /*!
-   * Get the comparsion object used by the tree (non-const version).
+   * Get the comparison object used by the tree (non-const version).
    */
   inline Compare& key_comp ()
   {
@@ -632,7 +632,7 @@ public:
   }
 
   /*!
-   * Get the comparsion object used by the tree (non-const version).
+   * Get the comparison object used by the tree (non-const version).
    */
   inline Compare& value_comp ()
   {
@@ -641,7 +641,7 @@ public:
 
 
   /*!
-   * Get the comparsion object used by the tree (const version).
+   * Get the comparison object used by the tree (const version).
    */
   inline const Compare& key_comp () const
   {
@@ -649,7 +649,7 @@ public:
   }
 
   /*!
-   * Get the comparsion object used by the tree (const version).
+   * Get the comparison object used by the tree (const version).
    */
   inline const Compare& value_comp () const
   {
@@ -707,8 +707,8 @@ public:
   }
 
   /*!
-   * Get the size of the tree. [takes O(1) operations, unless the tree
-   * was involved in a split operation, then it may take O(n) time.]
+   * Get the size of the tree. [takes \cgalBigO{1} operations, unless the tree
+   * was involved in a split operation, then it may take \cgalBigO{n} time.]
    * \return The number of objects stored in the tree.
    */
   size_t size () const;
@@ -725,14 +725,14 @@ public:
   /// \name Insertion functions.
 
   /*!
-   * Insert an object into the tree. [takes O(log n) operations]
+   * Insert an object into the tree. [takes \cgalBigO{log n} operations]
    * \param object The object to be inserted.
    * \return An iterator pointing to the inserted object.
    */
   iterator insert (const Type& object);
 
   /*!
-   * Insert a range of k objects into the tree. [takes O(k log n) operations]
+   * Insert a range of k objects into the tree. [takes \cgalBigO{k log n} operations]
    * \param first An iterator for the first object in the range.
    * \param last A past-the-end iterator for the range.
    */
@@ -751,7 +751,7 @@ public:
 
   /*!
    * Insert an object to the tree, with a given hint to its position.
-   * [takes O(log n) operations at worst-case, but only O(1) amortized]
+   * [takes \cgalBigO{log n} operations at worst-case, but only \cgalBigO{1} amortized]
    * \param position A hint for the position of the object.
    * \param object The object to be inserted.
    * \return An iterator pointing to the inserted object.
@@ -761,7 +761,7 @@ public:
 
   /*!
    * Insert an object to the tree, as the successor the given object.
-   * [takes O(log n) operations at worst-case, but only O(1) amortized]
+   * [takes \cgalBigO{log n} operations at worst-case, but only \cgalBigO{1} amortized]
    * \param position Points to the object after which the new object should
    *                 be inserted (or an invalid iterator to insert the object
    *                 as the tree minimum).
@@ -774,7 +774,7 @@ public:
 
   /*!
    * Insert an object to the tree, as the predecessor the given object.
-   * [takes O(log n) operations at worst-case, but only O(1) amortized]
+   * [takes \cgalBigO{log n} operations at worst-case, but only \cgalBigO{1} amortized]
    * \param position Points to the object before which the new object should
    *                 be inserted (or an invalid iterator to insert the object
    *                 as the tree maximum).
@@ -789,7 +789,7 @@ public:
   //@{
 
   /*!
-   * Erase objects from the tree. [takes O(log n) operations]
+   * Erase objects from the tree. [takes \cgalBigO{log n} operations]
    * \param object The object to be removed.
    * \return The number of objects removed from the tree.
    *          Note that all iterators to the erased objects become invalid.
@@ -798,7 +798,7 @@ public:
 
   /*!
    * Remove the object pointed by the given iterator.
-   * [takes O(log n) operations at worst-case, but only O(1) amortized]
+   * [takes \cgalBigO{log n} operations at worst-case, but only \cgalBigO{1} amortized]
    * \param position An iterator pointing the object to be erased.
    * \pre The iterator must be a valid.
    *      Note that all iterators to the erased object become invalid.
@@ -806,7 +806,7 @@ public:
   void erase (iterator position);
 
   /*!
-   * Clear the contents of the tree. [takes O(n) operations]
+   * Clear the contents of the tree. [takes \cgalBigO{n} operations]
    */
   void clear ();
 
@@ -817,7 +817,7 @@ public:
 
   /*!
    * Search the tree for the given key (non-const version).
-   * [takes O(log n) operations]
+   * [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return A iterator pointing to the first equivalent object in the tree,
@@ -843,7 +843,7 @@ public:
 
   /*!
    * Search the tree for the given key (const version).
-   * [takes O(log n) operations]
+   * [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return A iterator pointing to the first equivalent object in the tree,
@@ -869,7 +869,7 @@ public:
 
   /*!
    * Count the number of object in the tree equivalent to a given key.
-   * [takes O(log n + d) operations]
+   * [takes \cgalBigO{log n + d} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The number of equivalent objects.
@@ -905,7 +905,7 @@ public:
 
   /*!
    * Get the first element whose key is not less than a given key
-   * (non-const version). [takes O(log n) operations]
+   * (non-const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The lower bound of the key, or end() if the key is not found
@@ -931,7 +931,7 @@ public:
 
   /*!
    * Get the first element whose key is not less than a given key
-   * (non-const version). [takes O(log n) operations]
+   * (non-const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The lower bound of the key, along with a flag indicating whether
@@ -957,7 +957,7 @@ public:
 
   /*!
    * Get the first element whose key is greater than a given key
-   * (non-const version). [takes O(log n) operations]
+   * (non-const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The upper bound of the key, or end() if the key is not found
@@ -983,7 +983,7 @@ public:
 
   /*!
    * Get the first element whose key is not less than a given key
-   * (const version). [takes O(log n) operations]
+   * (const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The lower bound of the key, or end() if the key is not found
@@ -1009,7 +1009,7 @@ public:
 
   /*!
    * Get the first element whose key is not less than a given key
-   * (const version). [takes O(log n) operations]
+   * (const version). [takes \cgalBigO{log n} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return The lower bound of the key, along with a flag indicating whether
@@ -1035,7 +1035,7 @@ public:
 
   /*!
    * Get the first element whose key is greater than a given key
-   * (const version). [takes O(log n) operations]
+   * (const version). [takes \cgalBigO{log n} operations]
    * \param object The query object.
    * \return The upper bound of the key, or end() if the key is not found
    *         in the tree.
@@ -1060,7 +1060,7 @@ public:
 
   /*!
    * Get the range of objects in the tree that are equivalent to a given key
-   * (non-const version). [takes O(log n + d) operations]
+   * (non-const version). [takes \cgalBigO{log n + d} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return A pair of (lower_bound(key), upper_bound(key)).
@@ -1108,7 +1108,7 @@ public:
 
   /*!
    * Get the range of objects in the tree that are equivalent to a given key
-   * (const version). [takes O(log n + d) operations]
+   * (const version). [takes \cgalBigO{log n + d} operations]
    * \param key The query key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \return A pair of (lower_bound(key), upper_bound(key)).
@@ -1163,7 +1163,7 @@ public:
 
   /*!
    * Replace the object pointed by a given iterator with another object.
-   * [takes O(1) operations]
+   * [takes \cgalBigO{1} operations]
    * \param position An iterator pointing the object to be replaced.
    * \param object The new object.
    * \pre The given iterator is valid.
@@ -1174,7 +1174,7 @@ public:
 
   /*!
    * Swap the location two objects in the tree, given by their positions.
-   * [takes O(1) operations]
+   * [takes \cgalBigO{1} operations]
    * \param pos1 An iterator pointing to the first object.
    * \param pos1 An iterator pointing to the second object.
    * \pre The two iterators are valid.
@@ -1184,7 +1184,7 @@ public:
 
   /*!
    * Catenate the tree with a given tree, whose minimal object is not less
-   * than the maximal object of this tree. [takes O(log n) operations]
+   * than the maximal object of this tree. [takes \cgalBigO{log n} operations]
    * The function clears the other given tree, but all its iterators remain
    * valid and can be used with the catenated tree.
    * \param tree The tree to catenate to out tree.
@@ -1196,7 +1196,7 @@ public:
   /*!
    * Split the tree such that all remaining objects are less than a given
    * key, and all objects greater than (or equal to) this key form
-   * a new output tree. [takes O(log n) operations]
+   * a new output tree. [takes \cgalBigO{log n} operations]
    * \param key The split key.
    * \param comp_key A comparison functor for comparing keys and objects.
    * \param tree Output: The tree that will eventually contain all objects
@@ -1220,7 +1220,7 @@ public:
   /*!
    * Split the tree at a given position, such that it contains all objects
    * in the range [begin, position) and all objects in the range
-   * [position, end) form a new output tree. [takes O(log n) operations]
+   * [position, end) form a new output tree. [takes \cgalBigO{log n} operations]
    * \param position An iterator pointing at the split position.
    * \param tree Output: The output tree.
    * \pre The output tree is initially empty.
@@ -1240,13 +1240,13 @@ public:
   bool is_valid() const;
 
   /*!
-   * Get the height of the tree. [takes O(n) operations]
+   * Get the height of the tree. [takes \cgalBigO{n} operations]
    * \return The length of the longest path from the root to a leaf node.
    */
   size_t height () const;
 
   /*!
-   * Get the black-height of the tree. [takes O(1) operations]
+   * Get the black-height of the tree. [takes \cgalBigO{1} operations]
    * \return The number of black nodes from the root to each leaf node.
    */
   inline size_t black_height () const
@@ -1275,7 +1275,7 @@ protected:
   /*! Check whether a node is black. */
   inline bool _is_black (const Node *nodeP) const
   {
-    // Note that invalid nodes are considered ro be black as well.
+    // Note that invalid nodes are considered to be black as well.
     return (nodeP == nullptr || nodeP->color != Node::RED);
   }
   //@}
@@ -1979,7 +1979,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (iterator positi
       if (k > max_steps)
       {
         // In case the given position is too far away (more than log(n) steps)
-        // from the true poisition of the object, break the loop.
+        // from the true position of the object, break the loop.
         found_pos = false;
         break;
       }
@@ -2003,7 +2003,7 @@ Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (iterator positi
       if (k > max_steps)
       {
         // In case the given position is too far away (more than log(n) steps)
-        // from the true poisition of the object, break the loop.
+        // from the true position of the object, break the loop.
         found_pos = false;
         break;
       }
@@ -2463,7 +2463,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
 
   if (max1_P != rootP)
   {
-    // Splice max1_P from its current poisition in our tree.
+    // Splice max1_P from its current position in our tree.
     // We know it is has no right child, so we just have to connect its
     // left child with its parent.
     max1_P->parentP->rightP = max1_P->leftP;
@@ -2479,7 +2479,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tr
   }
   else if (min2_P != tree.rootP)
   {
-    // Splice min2_P from its current poisition in the other tree.
+    // Splice min2_P from its current position in the other tree.
     // We know it is has no left child, so we just have to connect its
     // right child with its parent.
     if (min2_P->parentP != nullptr)
@@ -2749,7 +2749,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
       if (_is_valid (childP) && rightTree.rootP == nullptr)
       {
-        // Assing T_r to rightTree.
+        // Assign T_r to rightTree.
         rightTree.rootP = childP;
         rightTree.iBlackHeight = iCurrBHeight;
 
@@ -2884,7 +2884,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator po
 
       if (_is_valid (childP) && leftTree.rootP == nullptr)
       {
-        // Assing T_l to leftTree.
+        // Assign T_l to leftTree.
         leftTree.rootP = childP;
         leftTree.iBlackHeight = iCurrBHeight;
 
@@ -3158,7 +3158,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_at (Node* 
 
     // Now physically swap nodeP and its successor. Notice this may temporarily
     // violate the tree properties, but we are going to remove nodeP anyway.
-    // This way we have moved nodeP to a position were it is more convinient
+    // This way we have moved nodeP to a position were it is more convenient
     // to delete it.
     _swap (nodeP, succP);
   }
@@ -3735,7 +3735,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_insert_fixup (Nod
 {
   CGAL_precondition (_is_red (nodeP));
 
-  // Fix the red-black propreties: we may have inserted a red leaf as the
+  // Fix the red-black properties: we may have inserted a red leaf as the
   // child of a red parent - so we have to fix the coloring of the parent
   // recursively.
   Node        *currP = nodeP;
@@ -3895,7 +3895,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Nod
       else
       {
         // In this case, at least one of the sibling's children is red.
-        // It is therfore obvious that the sibling itself is black.
+        // It is therefore obvious that the sibling itself is black.
         if (_is_black (siblingP->rightP))
         {
           // The left child is red: Color it black, and color the sibling red.
@@ -3960,7 +3960,7 @@ void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Nod
       else
       {
         // In this case, at least one of the sibling's children is red.
-        // It is therfore obvious that the sibling itself is black.
+        // It is therefore obvious that the sibling itself is black.
         if (_is_black (siblingP->leftP))
         {
           // The right child is red: Color it black, and color the sibling red.

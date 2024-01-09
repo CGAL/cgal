@@ -12,7 +12,7 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
-// Ouput
+// Output
 #include <CGAL/SMDS_3/Dump_c3t3.h>
 
 // Read 1D features from input file
@@ -99,9 +99,9 @@ public:
   {
     Is_in_domain(const Hybrid_domain& domain) : r_domain_(domain) {}
 
-    boost::optional<Subdomain_index> operator()(const K::Point_3& p) const
+    std::optional<Subdomain_index> operator()(const K::Point_3& p) const
     {
-      boost::optional<Subdomain_index> subdomain_index =
+      std::optional<Subdomain_index> subdomain_index =
         r_domain_.implicit_domain.is_in_domain_object()(p);
       if(subdomain_index) return 2;
       else return r_domain_.polyhedron_domain.is_in_domain_object()(p);

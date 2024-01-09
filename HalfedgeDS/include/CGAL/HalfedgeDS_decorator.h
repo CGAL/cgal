@@ -427,7 +427,7 @@ public:
         insert_tip( inew->opposite(), hnew);
         insert_tip( jnew->opposite(), inew);
         insert_tip( hnew->opposite(), jnew);
-        // Make the new incidences with the old stucture.
+        // Make the new incidences with the old structure.
         CGAL_assertion_code( std::size_t termination_count = 0;)
         if ( h->next() != i) {
             Halfedge_handle g = h->next();

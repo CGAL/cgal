@@ -31,10 +31,11 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
-#include <QGLContext>
+#include <QOpenGLContext>
 #include <QImage>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QPushButton>
 #include <QTabWidget>
 #include <QTextEdit>
@@ -185,6 +186,7 @@ CGAL::QGLViewer::~QGLViewer() {
     helpWidget()->close();
     delete helpWidget_;
   }
+  disconnect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &CGAL::QGLViewer::contextIsDestroyed);
 }
 
 
@@ -194,7 +196,7 @@ This method is automatically called once, before the first call to paintGL().
 
 Overload init() instead of this method to modify viewer specific OpenGL state.
 
-If a 4.3 context could not be set, a ES 2.0 context will be used instead.
+If a 4.3 context could not be set, an ES 2.0 context will be used instead.
  \see `isOpenGL_4_3()`
 */
 CGAL_INLINE_FUNCTION
@@ -1202,7 +1204,7 @@ CGAL_INLINE_FUNCTION
 void Viewer::mouseMoveEvent(QMouseEvent *e)
 {
 if (myMouseBehavior)
-  // Use e->x() and e->y() as you want...
+  // Use e->position().x() and e->position().y() as you want...
 else
   CGAL::QGLViewer::mouseMoveEvent(e);
 }
@@ -1219,7 +1221,7 @@ else
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::mouseMoveEvent(QMouseEvent *e) {
   if (mouseGrabber()) {
-    mouseGrabber()->checkIfGrabsMouse(e->x(), e->y(), camera());
+    mouseGrabber()->checkIfGrabsMouse(e->position().x(), e->position().y(), camera());
     if (mouseGrabber()->grabsMouse())
       if (mouseGrabberIsAManipulatedCameraFrame_)
         (dynamic_cast<qglviewer::ManipulatedFrame *>(mouseGrabber()))
@@ -1247,7 +1249,7 @@ void CGAL::QGLViewer::mouseMoveEvent(QMouseEvent *e) {
         manipulatedFrame()->mouseMoveEvent(e, camera());
     else if (hasMouseTracking()) {
       Q_FOREACH (qglviewer::MouseGrabber *mg, qglviewer::MouseGrabber::MouseGrabberPool()) {
-        mg->checkIfGrabsMouse(e->x(), e->y(), camera());
+        mg->checkIfGrabsMouse(e->position().x(), e->position().y(), camera());
         if (mg->grabsMouse()) {
           setMouseGrabber(mg);
           // Check that MouseGrabber is not disabled
@@ -1276,7 +1278,7 @@ void CGAL::QGLViewer::mouseReleaseEvent(QMouseEvent *e) {
           ->qglviewer::ManipulatedFrame::mouseReleaseEvent(e, camera());
     else
       mouseGrabber()->mouseReleaseEvent(e, camera());
-    mouseGrabber()->checkIfGrabsMouse(e->x(), e->y(), camera());
+    mouseGrabber()->checkIfGrabsMouse(e->position().x(), e->position().y(), camera());
     if (!(mouseGrabber()->grabsMouse()))
       setMouseGrabber(nullptr);
     // update();
@@ -1508,18 +1510,14 @@ QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   return QString();
 }
 
-static QString keyString(unsigned int key) {
-#if QT_VERSION >= 0x040100
-  return QKeySequence(int(key)).toString(QKeySequence::NativeText);
-#else
-  return QString(QKeySequence(key));
-#endif
+static QString keyString(QKeyCombination key) {
+  return QKeySequence(key).toString(QKeySequence::NativeText);
 }
 
 CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::formatClickActionPrivate(ClickBindingPrivate cbp) {
   bool buttonsBefore = cbp.buttonsBefore != ::Qt::NoButton;
-  QString keyModifierString = keyString(cbp.modifiers + cbp.key);
+  QString keyModifierString = keyString(QKeyCombination(cbp.modifiers, cbp.key));
   if (!keyModifierString.isEmpty()) {
 #ifdef Q_OS_MAC
     // modifiers never has a '+' sign. Add one space to clearly separate
@@ -1765,7 +1763,7 @@ QString CGAL::QGLViewer::mouseString() const {
 /*! Defines a custom keyboard shortcut description, that will be displayed in
 the help() window \c Keyboard tab.
 
-The \p key definition is given as an \c int using Qt enumerated values. Set an
+The \p key definition is given as an \c QKeyCombination using Qt enumerated values. Set an
 empty \p description to remove a shortcut description: \code
 setKeyDescription(::Qt::Key_W, "Toggles wireframe display");
 setKeyDescription(::Qt::CTRL+::Qt::Key_L, "Loads a new scene");
@@ -1777,7 +1775,7 @@ See the <a href="../examples/keyboardAndMouse.html">keyboardAndMouse example</a>
 for illustration and the <a href="../keyboard.html">keyboard page</a> for
 details. */
 CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setKeyDescription(unsigned int key, QString description) {
+void CGAL::QGLViewer::setKeyDescription(QKeyCombination key, QString description) {
   if (description.isEmpty())
     keyDescription_.remove(key);
   else
@@ -1869,17 +1867,15 @@ QString CGAL::QGLViewer::keyboardString() const {
                   "Description",
                   "Description column header in help window mouse tab"));
 
-  QMap<unsigned int, QString> keyDescription;
+  QHash<QKeyCombination, QString> keyDescription;
 
   // 1 - User defined key descriptions
-  for (QMap<unsigned int, QString>::ConstIterator kd = keyDescription_.begin(),
-                                                  kdend = keyDescription_.end();
+  for (auto kd = keyDescription_.begin(), kdend = keyDescription_.end();
        kd != kdend; ++kd)
     keyDescription[kd.key()] = kd.value();
 
   // Add to text in sorted order
-  for (QMap<unsigned int, QString>::ConstIterator kb = keyDescription.begin(),
-                                                  endb = keyDescription.end();
+  for (auto kb = keyDescription.begin(), endb = keyDescription.end();
        kb != endb; ++kb)
     text += tableLine(keyString(kb.key()), kb.value());
 
@@ -1892,18 +1888,15 @@ QString CGAL::QGLViewer::keyboardString() const {
   }
 
   // 3 - KeyboardAction bindings description
-  for (QMap<qglviewer::KeyboardAction, unsigned int>::ConstIterator
-           it = keyboardBinding_.begin(),
-           end = keyboardBinding_.end();
+  for (auto it = keyboardBinding_.begin(), end = keyboardBinding_.end();
        it != end; ++it)
-    if ((it.value() != 0) &&
+    if ((it.value() != QKeyCombination{}) &&
         ((!cameraIsInRotateMode()) ||
          ((it.key() != qglviewer::INCREASE_FLYSPEED) && (it.key() != qglviewer::DECREASE_FLYSPEED))))
       keyDescription[it.value()] = keyboardActionDescription_[it.key()];
 
   // Add to text in sorted order
-  for (QMap<unsigned int, QString>::ConstIterator kb2 = keyDescription.begin(),
-                                                  endb2 = keyDescription.end();
+  for (auto kb2 = keyDescription.begin(), endb2 = keyDescription.end();
        kb2 != endb2; ++kb2)
     text += tableLine(keyString(kb2.key()), kb2.value());
 
@@ -1917,15 +1910,15 @@ QString CGAL::QGLViewer::keyboardString() const {
                 .arg(cpks) +
             "</td></tr>\n";
     text += tableLine(
-        keyString(playPathKeyboardModifiers()) + "<i>" +
+        keyString(QKeyCombination(playPathKeyboardModifiers())) + "<i>" +
             CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
         CGAL::QGLViewer::tr("Plays path (or resets saved position)"));
     text += tableLine(
-        keyString(addKeyFrameKeyboardModifiers()) + "<i>" +
+        keyString(QKeyCombination(addKeyFrameKeyboardModifiers())) + "<i>" +
             CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
         CGAL::QGLViewer::tr("Adds a key frame to path (or defines a position)"));
     text += tableLine(
-        keyString(addKeyFrameKeyboardModifiers()) + "<i>" +
+        keyString(QKeyCombination(addKeyFrameKeyboardModifiers())) + "<i>" +
             CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>+<i>" +
             CGAL::QGLViewer::tr("Fx", "Generic function key (F1..F12)") + "</i>",
         CGAL::QGLViewer::tr("Deletes path (or saved position)"));
@@ -2069,11 +2062,8 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
     _first_tick = true;
   }
   const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-  QMap<qglviewer::KeyboardAction, unsigned int>::ConstIterator it = keyboardBinding_
-                                                             .begin(),
-                                                    end =
-                                                        keyboardBinding_.end();
-  const unsigned int target = key | modifiers;
+  auto it = keyboardBinding_.begin(), end = keyboardBinding_.end();
+  const QKeyCombination target{modifiers, key};
   while ((it != end) && (it.value() != target))
     ++it;
 
@@ -2236,17 +2226,17 @@ Here are some examples:
 setShortcut(EXIT_VIEWER, ::Qt::Key_Q);
 
 // Alt+M toggles camera mode
-setShortcut(CAMERA_MODE, ::Qt::ALT + ::Qt::Key_M);
+setShortcut(CAMERA_MODE, ::Qt::ALT | ::Qt::Key_M);
 
 // The DISPLAY_FPS action is disabled
 setShortcut(DISPLAY_FPS, 0);
 \endcode
 
 Only one shortcut can be assigned to a given CGAL::QGLViewer::KeyboardAction (new
-bindings replace previous ones). If several KeyboardAction are binded to the
+bindings replace previous ones). If several KeyboardAction are bound to the
 same shortcut, only one of them is active. */
 CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::setShortcut(qglviewer::KeyboardAction action, unsigned int key) {
+void CGAL::QGLViewer::setShortcut(qglviewer::KeyboardAction action, QKeyCombination key) {
   keyboardBinding_[action] = key;
 }
 
@@ -2268,11 +2258,11 @@ See the <a href="../keyboard.html">keyboard page</a> for details and default
 values and the <a href="../examples/keyboardAndMouse.html">keyboardAndMouse</a>
 example for a practical illustration. */
 CGAL_INLINE_FUNCTION
-unsigned int CGAL::QGLViewer::shortcut(qglviewer::KeyboardAction action) const {
+QKeyCombination CGAL::QGLViewer::shortcut(qglviewer::KeyboardAction action) const {
   if (keyboardBinding_.contains(action))
     return keyboardBinding_[action];
   else
-    return 0;
+    return {};
 }
 
 
@@ -3370,7 +3360,7 @@ void CGAL::QGLViewer::copyBufferToTexture(GLint , GLenum ) {
 Use glBindTexture() to use this texture. Note that this is already done by
 copyBufferToTexture().
 
-Returns \c 0 is copyBufferToTexture() was never called or if the texure was
+Returns \c 0 is copyBufferToTexture() was never called or if the texture was
 deleted using glDeleteTextures() since then. */
 CGAL_INLINE_FUNCTION
 GLuint CGAL::QGLViewer::bufferTextureId() const {

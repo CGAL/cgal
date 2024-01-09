@@ -141,7 +141,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       return *this;
     }
 
-  public:  // arithmetic and comparision:
+  public:  // arithmetic and comparison:
     inline Pair operator+(const Pair& a) const {
       return Pair(this->first+a.first,this->second+a.second);
     }

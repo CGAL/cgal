@@ -35,6 +35,49 @@
 
 namespace CGAL {
 
+template <typename Point,
+          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
+class Point_set_3;
+
+/// \cond SKIP_IN_MANUAL
+namespace internal {
+  template<typename Point, typename Vector>
+  class Point_set_3_index
+  {
+  public:
+#ifdef CGAL_POINT_SET_3_USE_STD_SIZE_T_AS_SIZE_TYPE
+    typedef std::size_t size_type;
+#else
+    typedef std::uint32_t size_type;
+#endif
+    typedef CGAL::Point_set_3<Point, Vector> Point_set_3;
+
+  private:
+    friend class CGAL::Point_set_3<Point, Vector>;
+    friend class Properties::Property_container<Point_set_3, Point_set_3_index>;
+    template <class> friend class Properties::Property_array;
+    template <class> friend struct Property_map;
+    friend class std::vector<Point_set_3_index>;
+    size_type value;
+
+  public:
+    Point_set_3_index(const Point_set_3_index& index) : value(static_cast<size_type>(index)) { }
+    Point_set_3_index(const std::size_t& value) : value(static_cast<size_type>(value)) { }
+    Point_set_3_index() : value(static_cast<size_type>(-1)) { }
+    Point_set_3_index operator= (const Point_set_3_index& index) { value = index.value; return *this; }
+
+    operator std::size_t() const { return static_cast<std::size_t>(value); }
+    bool operator== (const Point_set_3_index& index) const { return value == index.value; }
+    bool operator!= (const Point_set_3_index& index) const { return value != index.value; }
+    bool operator<  (const Point_set_3_index& index) const { return value < index.value; }
+    Point_set_3_index& operator++ () { ++value; return *this; }
+    Point_set_3_index& operator-- () { --value; return *this; }
+    Point_set_3_index operator++ (int) { Point_set_3_index tmp(*this); ++value; return tmp; }
+    Point_set_3_index operator-- (int) { Point_set_3_index tmp(*this); --value; return tmp; }
+};
+} // namespace internal
+/// \endcond
+
 /*!
 
   \ingroup PkgPointSet3Ref
@@ -71,11 +114,11 @@ namespace CGAL {
   \tparam Point Point type
   \tparam Vector Normal vector type
 
-  \cgalModels `Range`
+  \cgalModels{Range}
  */
 
 template <typename Point,
-          typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
+          typename Vector>
 class Point_set_3
 {
 public:
@@ -85,7 +128,7 @@ public:
   typedef Vector Vector_type;
   typedef Point_set_3<Point, Vector> Point_set;
 
-  class Index;
+  using Index = internal::Point_set_3_index<Point, Vector>;
 
   typedef typename Properties::Property_container<Point_set, Index> Base;
 
@@ -105,52 +148,20 @@ public:
   };
   /// \endcond
 
-  /*!
-    \brief This represents a point with associated properties.
-    \cgalModels `::Index`
-    \cgalModels `LessThanComparable`
-    \cgalModels `Hashable`
+#ifdef DOXYGEN_RUNNING
+   /*!
+  \brief This represents a point with associated properties.
+  \cgalModels{::Index,LessThanComparable,Hashable}
   */
-  class Index
-  {
-    /// \cond SKIP_IN_MANUAL
-  public:
-#ifdef CGAL_POINT_SET_3_USE_STD_SIZE_T_AS_SIZE_TYPE
-    typedef std::size_t size_type;
-#else
-    typedef boost::uint32_t size_type;
+  class Index;
 #endif
-  private:
-    friend class Point_set_3;
-    friend class Properties::Property_container<Point_set_3, Index>;
-    template <class> friend class Properties::Property_array;
-    template <class> friend struct Property_map;
-    friend class std::vector<Index>;
-    size_type value;
-
-  public:
-    Index (const Index& index) : value (static_cast<size_type>(index)) { }
-    Index (const std::size_t& value) : value (static_cast<size_type>(value)) { }
-    Index () : value (static_cast<size_type>(-1)) { }
-    Index operator= (const Index& index) { value = index.value; return *this; }
-    /// \cond SKIP_IN_MANUAL
-    operator std::size_t() const { return static_cast<std::size_t>(value); }
-    bool operator== (const Index& index) const { return value == index.value; }
-    bool operator!= (const Index& index) const { return value != index.value; }
-    bool operator<  (const Index& index) const { return value < index.value; }
-    Index& operator++ () { ++ value; return *this; }
-    Index& operator-- () { -- value; return *this; }
-    Index operator++ (int) { Index tmp(*this); ++ value; return tmp; }
-    Index operator-- (int) { Index tmp(*this); -- value; return tmp; }
-    /// \endcond
-  };
 
   typedef Point Point_3; ///< The point type
   typedef Vector Vector_3; ///< The vector type
 
 #ifdef DOXYGEN_RUNNING
-  typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` \cgalModels RandomAccessIterator
-  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` \cgalModels RandomAccessIterator
+  typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` is model of `RandomAccessIterator`
+  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` is model of `RandomA.ccessIterator`
 #else
   typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
   typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
@@ -694,7 +705,6 @@ public:
     \sa `number_of_removed_points()`
   */
   std::size_t garbage_size () const { return number_of_removed_points(); }
-  /// \endcond
 
   /*!  \brief returns `true` if there are elements marked as removed,
     `false` otherwise.
@@ -966,8 +976,8 @@ public:
     - `geom_traits`: contains the kernel `typename Kernel_traits<Point>`::`Kernel`
 
     \warning this method does not check if the normal map was
-    instanciated or not. The normal map named parameter should not be
-    used if this property was not instanciated first.
+    instantiated or not. The normal map named parameter should not be
+    used if this property was not instantiated first.
   */
 #ifdef DOXYGEN_RUNNING
   unspecified_type
@@ -1275,9 +1285,6 @@ private:
 
 }; // end of class Point_set_3
 
-
-
-
 /*!
 
   \brief Append `other` at the end of `ps`.
@@ -1303,8 +1310,8 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
 
 /// \cond SKIP_IN_MANUAL
 // specialization for default named parameters
-template <typename Point, typename Vector, typename NamedParameters, typename NP_TAG>
-struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters, NP_TAG>
+template <typename Point, typename Vector, typename NamedParameters, typename DPM, typename DVM>
+struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters, DPM, DVM>
 {
   typedef typename std::iterator_traits<typename Point_set_3<Point, Vector>::iterator>::value_type Value_type;
 
@@ -1313,9 +1320,9 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
   typedef typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultPMap;
   typedef const typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultConstPMap;
 
-  typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::point_t,
     NamedParameters,DefaultPMap> ::type  Point_map; // public
-  typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::point_t,
     NamedParameters,DefaultConstPMap> ::type  Const_point_map; // public
 
   typedef typename internal_np::Lookup_named_param_def <
@@ -1374,5 +1381,23 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
 
 } // namespace CGAL
 
+namespace boost {
+template <typename Point, typename Vector>
+std::size_t hash_value(const typename CGAL::internal::Point_set_3_index<Point, Vector>& i)
+{
+  return i;
+}
+} // namespace boost
+
+namespace std {
+template <typename Point, typename Vector>
+struct hash< CGAL::internal::Point_set_3_index<Point, Vector> > {
+  std::size_t operator()(const CGAL::internal::Point_set_3_index<Point, Vector>& i) const
+  {
+    std::size_t ret = i;
+    return ret;
+  }
+};
+} // namespace std
 
 #endif // CGAL_POINT_SET_3_H

@@ -113,6 +113,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
   std::set<halfedge_descriptor> edges_to_test(halfedge_range.begin(), halfedge_range.end());
 
   int collapsed_n = 0;
+
   while(!edges_to_test.empty())
   {
     const halfedge_descriptor h = *(edges_to_test.begin());
@@ -133,6 +134,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
     {
       const halfedge_descriptor prev_h = prev(h, tm);
       const halfedge_descriptor next_h = next(h, tm);
+      const halfedge_descriptor prev_oh = prev(opposite(h, tm), tm);
 
       // check that the border has at least 4 edges not to create degenerate volumes
       if(border_size(h, tm) >= 4)
@@ -151,11 +153,43 @@ void simplify_range(HalfedgeRange& halfedge_range,
             new_tolerance += CGAL::approximate_sqrt(CGAL::squared_distance(new_p, pt));
         }
 
-        if (!CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
+        // check that the collapse does not create a new degenerate face
+        bool do_collapse = true;
+        for(halfedge_descriptor he : halfedges_around_target(h, tm))
+        {
+          if(he != prev_oh && // ignore the triangle incident to h that will disappear
+             !is_border(he, tm) &&
+             collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
+          {
+            do_collapse = false;
+            break;
+          }
+        }
+
+        if(!do_collapse)
           continue;
+
+        for(halfedge_descriptor he : halfedges_around_target(opposite(h,tm), tm))
+        {
+          if(he != opposite(h,tm) &&
+             !is_border(he, tm) &&
+             collinear(get(vpm, source(he, tm)), new_p, get(vpm, target(next(he,tm),tm))))
+          {
+            do_collapse = false;
+            break;
+          }
+        }
+
+        if(!do_collapse)
+          continue;
+
+        if(!CGAL::Euler::does_satisfy_link_condition(edge(h, tm), tm))
+          continue;
+
         const halfedge_descriptor opoh = opposite(prev(opposite(h, tm), tm), tm);
-        if (is_border(opoh, tm))
-          edges_to_test.erase( opoh );
+        if(is_border(opoh, tm))
+          edges_to_test.erase(opoh);
+
         vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
 
         put(vpm, v, new_p);
@@ -163,14 +197,13 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
         if(get(range_halfedges, prev_h))
           edges_to_test.insert(prev_h);
-        if(next_h!=opoh && get(range_halfedges, next_h))
+        if(next_h != opoh && get(range_halfedges, next_h))
           edges_to_test.insert(next_h);
-
         ++collapsed_n;
       }
     }
   }
-
+  CGAL_USE(collapsed_n);
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "collapsed " << collapsed_n << " edges" << std::endl;
 #endif
@@ -637,7 +670,6 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
   typedef typename boost::property_traits<VPMS>::value_type                       Point;
   typedef typename boost::property_traits<VPMT>::reference                        Point_ref;
-  typedef typename GeomTraits::Vector_3                                           Vector;
 
   typedef std::pair<halfedge_descriptor, Point>                                   Vertex_with_new_position;
   typedef std::vector<Vertex_with_new_position>                                   Vertices_with_new_position;
@@ -687,7 +719,12 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
       bool do_split = true;
 
-      // Some splits can create degenerate faces, avoid that
+      // In case of self-snapping, avoid degenerate caps
+      const bool is_same_mesh = (&tm_T == &tm_S);
+      if(is_same_mesh && target(next(opposite(h_to_split, tm_T), tm_T), tm_T) == splitter_v)
+        do_split = false;
+
+      // Do not split if it would create a degenerate needle
       if((new_position == get(vpm_T, target(h_to_split, tm_T))) ||
          (new_position == get(vpm_T, source(h_to_split, tm_T))))
         do_split = false;
@@ -695,11 +732,58 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       if(!first_split && new_position == previous_split_position)
         do_split = false;
 
+      // check if the new faces after split will not be degenerate
+      const Point& p0 = new_position;
+      Point_ref p1 = get(vpm_T, source(h_to_split, tm_T));
+      Point_ref p2 = get(vpm_T, target(next(opposite(h_to_split, tm_T), tm_T), tm_T));
+      Point_ref p3 = get(vpm_T, target(h_to_split, tm_T));
+
+      /* Chooses the diagonal that will split the quad in two triangles that maximizes
+       * the scalar product of the un-normalized normals of the two triangles.
+       *
+       * The lengths of the un-normalized normals (computed using cross-products of two vectors)
+       * are proportional to the area of the triangles.
+       * Maximizing the scalar product of the two normals will avoid skinny triangles,
+       * and will also take into account the cosine of the angle between the two normals.
+       *
+       * In particular, if the two triangles are oriented in different directions,
+       * the scalar product will be negative.
+       */
+      auto p1p3 = CGAL::cross_product(p2-p1, p3-p2) * CGAL::cross_product(p0-p3, p1-p0);
+      auto p0p2 = CGAL::cross_product(p1-p0, p1-p2) * CGAL::cross_product(p3-p2, p3-p0);
+      bool first_split_face = (p0p2 > p1p3);
+
+      if(first_split_face)
+      {
+        if(p0p2 <= 0 || collinear(p0,p1,p2) || collinear(p0,p2,p3))
+          do_split = false;
+      }
+      else
+      {
+        if(p1p3 <= 0 || collinear(p0,p1,p3) || collinear(p1,p2,p3))
+          do_split = false;
+      }
+
+      if(do_split && !is_source_mesh_fixed)
+      {
+        for(halfedge_descriptor h : halfedges_around_target(splitter_v, tm_S))
+        {
+          if(!is_border(h,tm_S) && collinear(get(vpm_S, source(h,tm_S)), new_position, get(vpm_S, target(next(h,tm_S),tm_S))))
+          {
+            do_split = false;
+            break;
+          }
+        }
+
+        if(do_split)
+          put(vpm_S, splitter_v, new_position);
+      }
+
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
       std::cout << " -.-.-. Splitting " << edge(h_to_split, tm_T) << " |||| "
                 << " Vs " << source(h_to_split, tm_T) << " (" << tm_T.point(source(h_to_split, tm_T)) << ")"
                 << " --- Vt " << target(h_to_split, tm_T) << " (" << tm_T.point(target(h_to_split, tm_T)) << ")" << std::endl;
-      std::cout << "With point: " << vnp.second << std::endl;
+      std::cout << "With point: " << new_position << " (init: " << vnp.second << ")" << std::endl;
       std::cout << "Actually split? " << do_split << std::endl;
 #endif
 
@@ -715,75 +799,27 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
         visitor.after_vertex_edge_snap(new_v, tm_T);
       }
-
-      if(!is_source_mesh_fixed)
-        put(vpm_S, splitter_v, new_position);
+      else
+      {
+        continue;
+      }
 
       first_split = false;
       previous_split_position = new_position;
       ++snapped_n;
 
-      // Everything below is choosing the diagonal to triangulate the quad formed by the edge split
-      // So, it's only relevant if splitting has been performed
-      if(!do_split)
-        continue;
-
-      /*          new_p
-       *         /   \
-       *    res /     \ h_to_split
-       *       /       \
-       *      /         \
-       *    left       right
-       *     |         /
-       *     |        /
-       *     |       /
-       *     |      /
-       *     |     /
-       *     |    /
-       *      opp
-       */
-
-      const halfedge_descriptor res = prev(h_to_split, tm_T);
-      const Point_ref left_pt = get(vpm_T, source(res, tm_T));
-      const Point_ref right_pt = get(vpm_T, target(h_to_split, tm_T));
-      const Point_ref opp = get(vpm_T, target(next(opposite(res, tm_T), tm_T), tm_T));
-
-      // Check if 'p' is "visible" from 'opp' (i.e. its projection on the plane 'Pl(left, opp, right)'
-      // falls in the cone with apex 'opp' and sides given by 'left' and 'right')
-      const Vector n = gt.construct_orthogonal_vector_3_object()(right_pt, left_pt, opp);
-      const Point trans_left_pt = gt.construct_translated_point_3_object()(left_pt, n);
-      const Point trans_right_pt = gt.construct_translated_point_3_object()(right_pt, n);
-
-      const Point_ref new_p = get(vpm_T, new_v);
-      const bool left_of_left = (gt.orientation_3_object()(trans_left_pt, left_pt, opp, new_p) == CGAL::POSITIVE);
-      const bool right_of_right = (gt.orientation_3_object()(right_pt, trans_right_pt, opp, new_p) == CGAL::POSITIVE);
-
-      const bool is_visible = (!left_of_left && !right_of_right);
-
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << "Left/Right: " << left_of_left << " " << right_of_right << std::endl;
-      std::cout << "visible from " << opp << " ? " << is_visible << std::endl;
-#endif
-
-      // h_to_split is equal to 'next(res)' after splitting
-      const halfedge_descriptor h_to_split_opp = opposite(h_to_split, tm_T);
-
-      if(is_visible)
-      {
-        halfedge_descriptor h2 = prev(prev(h_to_split_opp, tm_T), tm_T);
-        halfedge_descriptor new_hd = CGAL::Euler::split_face(h_to_split_opp,
-                                                             h2, tm_T);
-        h_to_split = opposite(prev(new_hd, tm_T), tm_T);
-        visitor.after_split_face(h_to_split_opp, h2, tm_T);
-      }
+      halfedge_descriptor v0, v1, v2, v3;
+      v0 = opposite(h_to_split, tm_T);
+      v1 = next(v0, tm_T);
+      v2 = next(v1, tm_T);
+      v3 = next(v2, tm_T);
+      // halfedge_descriptor new_hd =
+      first_split_face ? CGAL::Euler::split_face(v0, v2, tm_T)
+                       : CGAL::Euler::split_face(v1, v3, tm_T);
+      if(first_split_face)
+        visitor.after_split_face(v0, v2, tm_T);
       else
-      {
-        halfedge_descriptor h2 = prev(h_to_split_opp, tm_T);
-        halfedge_descriptor new_hd = CGAL::Euler::split_face(opposite(res, tm_T),
-                                                             h2, tm_T);
-        h_to_split = opposite(next(new_hd, tm_T), tm_T);
-        visitor.after_split_face(opposite(res, tm_T), h2, tm_T);
-      }
+        visitor.after_split_face(v1, v3, tm_T);
     }
   }
 
@@ -925,7 +961,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 #endif
 
 #ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else // CGAL_LINKED_WITH_TBB
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
@@ -1405,6 +1441,8 @@ std::size_t snap_borders(TriangleMesh& tm,
                                                       border_vertices, tm, tolerance_map,
                                                       true /*self snapping*/, np, np);
 }
+
+//TODO:add an option to preserve orientation?
 
 } // end namespace experimental
 } // end namespace Polygon_mesh_processing

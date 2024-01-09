@@ -19,6 +19,9 @@
 \example Polygon_mesh_processing/refine_fair_example.cpp
 \example Polygon_mesh_processing/mesh_slicer_example.cpp
 \example Polygon_mesh_processing/isotropic_remeshing_example.cpp
+\example Polygon_mesh_processing/interpolated_corrected_curvatures_SM.cpp
+\example Polygon_mesh_processing/interpolated_corrected_curvatures_PH.cpp
+\example Polygon_mesh_processing/interpolated_corrected_curvatures_vertex.cpp
 \example Polygon_mesh_processing/delaunay_remeshing_example.cpp
 \example Polygon_mesh_processing/compute_normals_example_Polyhedron.cpp
 \example Polygon_mesh_processing/hausdorff_distance_remeshing_example.cpp
@@ -41,4 +44,9 @@
 \example Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp
 \example Polygon_mesh_processing/hausdorff_bounded_error_distance_example.cpp
 \example Polygon_mesh_processing/cc_compatible_orientations.cpp
+\example Polygon_mesh_processing/remesh_planar_patches.cpp
+\example Polygon_mesh_processing/remesh_almost_planar_patches.cpp
+\example Polygon_mesh_processing/sample_example.cpp
+\example Polygon_mesh_processing/soup_autorefinement.cpp
+*/
 */

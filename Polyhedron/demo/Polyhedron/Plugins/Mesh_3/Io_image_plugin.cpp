@@ -54,10 +54,13 @@
 #include <CGAL/IO/read_vtk_image_data.h>
 
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkImageData.h>
+#include <vtkXMLImageDataReader.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkBMPReader.h>
+#include <vtkNIFTIImageReader.h>
 #include <vtkImageReader.h>
 #include <vtkImageGaussianSmooth.h>
 #include <vtkDemandDrivenPipeline.h>
@@ -65,9 +68,10 @@
 #endif
 
 #include <CGAL/Three/Three.h>
+#include <CGAL/use.h>
 
 #include <boost/type_traits.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/filesystem.hpp>
 
 #include <cassert>
@@ -75,6 +79,25 @@
 #include <fstream>
 #include <iostream>
 #include <locale>
+
+template <class vtkReader>
+bool
+load_vtk_file(QFileInfo fileinfo, Image* image)
+{
+#ifdef CGAL_USE_VTK
+    vtkNew<vtkReader> reader;
+    reader->SetFileName(fileinfo.filePath().toUtf8());
+    reader->Update();
+    auto vtk_image = reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    return true;
+#else
+    CGAL_USE(fileinfo);
+    CGAL_USE(image);
+    return false;
+#endif
+}
 
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
@@ -119,13 +142,13 @@ Q_SIGNALS:
   void x(QString);
 
 public:
-  void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
-  void setFC(const DoubleConverter& x) { fc = x; ic = boost::optional<IntConverter>(); }
+  void setIC(const IntConverter& x) { ic = x; fc = std::optional<DoubleConverter>(); }
+  void setFC(const DoubleConverter& x) { fc = x; ic = std::optional<IntConverter>(); }
   void setViewer(Viewer_interface* viewer) { this->viewer = viewer; }
 
 private:
-  boost::optional<IntConverter> ic;
-  boost::optional<DoubleConverter> fc;
+  std::optional<IntConverter> ic;
+  std::optional<DoubleConverter> fc;
   Viewer_interface* viewer;
   void getPixel(const QPoint& e)
   {
@@ -293,7 +316,7 @@ public:
       // Look for action just after "Load..." action
       QAction* actionAfterLoad = nullptr;
       for(QList<QAction*>::iterator it_action = menuFileActions.begin(),
-          end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
+          end = menuFileActions.end() ; it_action != end ; ++ it_action ) //for( QAction* action : menuFileActions)
       {
         if(NULL != *it_action && (*it_action)->text().contains("Load..."))
         {
@@ -574,7 +597,7 @@ public Q_SLOTS:
 
   void connectNewViewer(QObject* o)
   {
-    Q_FOREACH(Controls c, group_map.values())
+    for(Controls c : group_map.values())
     {
       o->installEventFilter(c.x_item);
       o->installEventFilter(c.y_item);
@@ -666,7 +689,7 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
-    QRegExpValidator* validator = new QRegExpValidator(QRegExp("\\d*"), this);
+    QRegularExpressionValidator* validator = new QRegularExpressionValidator(QRegularExpression("\\d*"), this);
     bool show_sliders = true;
     if(x_control == nullptr)
     {
@@ -807,7 +830,7 @@ private:
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));
     z_item->setColor(QColor("blue"));
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     {
       viewer->installEventFilter(x_item);
       viewer->installEventFilter(y_item);
@@ -855,18 +878,18 @@ private:
   template<typename T>
   void switchReaderConverter(std::pair<T, T> minmax)
   {
-    switchReaderConverter(minmax, typename boost::is_integral<T>::type());
+    switchReaderConverter(minmax, typename std::is_integral<T>::type());
   }
 
   template<typename T>
-  void switchReaderConverter(std::pair<T, T> minmax, boost::true_type)
+  void switchReaderConverter(std::pair<T, T> minmax, std::true_type)
   {
     // IntConverter
     IntConverter x = { minmax }; pxr_.setIC(x);
   }
 
   template<typename T>
-  void switchReaderConverter(std::pair<T, T> minmax, boost::false_type)
+  void switchReaderConverter(std::pair<T, T> minmax, std::false_type)
   {
     // IntConverter
     DoubleConverter x = { minmax }; pxr_.setFC(x);
@@ -907,7 +930,7 @@ private Q_SLOTS:
     CGAL::Three::Scene_group_item* group_item = qobject_cast<CGAL::Three::Scene_group_item*>(sender());
     if(group_item)
     {
-      Q_FOREACH(CGAL::Three::Scene_item* key, group_map.keys())
+      for(CGAL::Three::Scene_item* key : group_map.keys())
       {
         if(group_map[key].group == group_item)
         {
@@ -946,7 +969,7 @@ private Q_SLOTS:
       group_map.remove(img_item);
 
       QList<int> deletion;
-      Q_FOREACH(Scene_interface::Item_id id, group->getChildren())
+      for(Scene_interface::Item_id id : group->getChildren())
       {
         Scene_item* child = group->getChild(id);
         group->unlockChild(child);
@@ -1086,9 +1109,11 @@ private Q_SLOTS:
 QString Io_image_plugin::nameFilters() const
 {
   return QString("Inrimage files (*.inr *.inr.gz) ;; "
-                 "Analyze files (*.hdr *.img *img.gz) ;; "
+                 "Analyze files (*.hdr *.img *.img.gz) ;; "
                  "Stanford Exploration Project files (*.H *.HH) ;; "
-                 "NRRD image files (*.nrrd)");
+                 "VTK image files (*.vti) ;; "
+                 "NRRD image files (*.nrrd) ;; "
+                 "NIFTI image files (*.nii *.nii.gz)");
 }
 
 bool Io_image_plugin::canLoad(QFileInfo) const
@@ -1119,6 +1144,7 @@ void convert(Image* image)
   image->image()->wordKind = WK_FLOAT;
 }
 
+
 QList<Scene_item*>
 Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
 {
@@ -1126,20 +1152,39 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
 
-  // read a nrrd file
-  if(fileinfo.suffix() == "nrrd")
+  QString warningMessage;
+  // read a vti file
+  if(fileinfo.suffix() == "vti")
   {
 #ifdef CGAL_USE_VTK
-    vtkNew<vtkNrrdReader> reader;
-    reader->SetFileName(fileinfo.filePath().toUtf8());
-    reader->Update();
-    auto vtk_image = reader->GetOutput();
-    vtk_image->Print(std::cerr);
-    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    ok = load_vtk_file<vtkXMLImageDataReader>(fileinfo, image);
 #else
-    CGAL::Three::Three::warning("VTK is required to read NRRD files");
-    delete image;
-    return QList<Scene_item*>();
+    ok = false;
+    warningMessage = "VTK is required to read VTI files";
+#endif
+  }
+
+  // read a nrrd file
+  else if(fileinfo.suffix() == "nrrd")
+  {
+#ifdef CGAL_USE_VTK
+    ok = load_vtk_file<vtkNrrdReader>(fileinfo, image);
+#else
+    ok = false;
+    warningMessage = "VTK is required to read NRRD files";
+#endif
+  }
+
+  // read a NIFTI file
+  else if(fileinfo.suffix() == "nii"
+    || (   fileinfo.suffix() == "gz"
+        && fileinfo.fileName().endsWith(QString(".nii.gz"), Qt::CaseInsensitive)))
+  {
+#ifdef CGAL_USE_VTK
+    ok = load_vtk_file<vtkNIFTIImageReader>(fileinfo, image);
+#else
+    ok = false;
+    warningMessage = "VTK is required to read NifTI files";
 #endif
   }
 
@@ -1246,9 +1291,14 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     if(!success)
     {
       ok = false;
-      delete image;
-      return QList<Scene_item*>();
     }
+  }
+
+  if (!ok) {
+    if (warningMessage.length() > 0)
+        CGAL::Three::Three::warning(warningMessage);
+    delete image;
+    return QList<Scene_item*>();
   }
 
   // Get display precision
@@ -1337,6 +1387,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
   QApplication::restoreOverrideCursor();
   CGAL::Three::Three::warning("VTK is required to read DCM and BMP files");
   CGAL_USE(dirname);
+  CGAL_USE(ext);
   return false;
 #else
   QFileInfo fileinfo;
@@ -1440,6 +1491,7 @@ Image* Io_image_plugin::createDirectoryImage(const QString& dirname,
   CGAL::Three::Three::warning("VTK is required to read DCM and BMP files");
   CGAL_USE(dirname);
   CGAL_USE(ext);
+  CGAL_USE(smooth);
 #else
   auto create_image = [&](auto&& reader) -> void
   {

@@ -208,7 +208,7 @@ public:
   insert(InputIterator first, InputIterator last,
          bool is_large_point_set = true,
          std::enable_if_t <
-         boost::is_convertible <
+         std::is_convertible <
          typename std::iterator_traits<InputIterator>::value_type,
          Point
          >::value >* = nullptr)
@@ -420,7 +420,7 @@ public:
           InputIterator last,
           bool is_large_point_set = true,
           std::enable_if_t <
-          boost::is_convertible <
+          std::is_convertible <
           typename std::iterator_traits<InputIterator>::value_type,
           std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type>
           >::value >* = nullptr
@@ -435,10 +435,9 @@ public:
           boost::zip_iterator< boost::tuple<InputIterator_1, InputIterator_2> > last,
           bool is_large_point_set = true,
           std::enable_if_t <
-          boost::mpl::and_ <
-          boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-          boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-          >::value >* = nullptr)
+            std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+            std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
+          >* = nullptr)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
   }
@@ -572,7 +571,7 @@ private:
   void propagating_flip(const Face_handle& f, int i);
 #endif
 
-  // auxilliary functions for remove
+  // auxiliary functions for remove
   // returns false if we first need to convert to a 9-cover before the vertex can be removed
   bool remove_single_vertex(Vertex_handle v, const Offset &v_o);
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
@@ -763,7 +762,7 @@ private:
                                    true) ==  ON_POSITIVE_SIDE;
   }
 
-// end of auxilliary functions for remove
+// end of auxiliary functions for remove
 
 
 

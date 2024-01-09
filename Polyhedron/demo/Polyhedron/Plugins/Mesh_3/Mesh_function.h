@@ -34,7 +34,7 @@
 #include <CGAL/make_mesh_3.h> // for C3t3_initializer
 #include <CGAL/use.h>
 
-#include <boost/any.hpp>
+#include <any>
 
 namespace CGAL {
   class Image_3;
@@ -44,11 +44,14 @@ struct Mesh_parameters
 {
   double facet_angle;
   double facet_sizing;
+  double facet_min_sizing;
   double facet_approx;
 
   double tet_shape;
   double tet_sizing;
+  double tet_min_sizing;
   double edge_sizing;
+  double edge_min_sizing;
   bool protect_features;
   bool detect_connected_components;
   int manifold;
@@ -108,13 +111,13 @@ private:
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag);
 
-  Edge_criteria edge_criteria(double b, Mesh_fnt::Domain_tag);
-  Edge_criteria edge_criteria(double b, Mesh_fnt::Polyhedral_domain_tag);
+  Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Domain_tag);
+  Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Polyhedral_domain_tag);
 
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag);
 private:
-  boost::any object_to_destroy;
+  std::any object_to_destroy;
   C3t3& c3t3_;
   Domain* const domain_;
   Mesh_parameters const p_;
@@ -135,16 +138,40 @@ QStringList
 Mesh_parameters::
 log() const
 {
-  return QStringList()
-  << QString("edge max size: %1").arg(edge_sizing)
-  << QString("facet min angle: %1").arg(facet_angle)
-  << QString("facet max size: %1").arg(facet_sizing)
-  << QString("facet approx error: %1").arg(facet_approx)
-  << QString("tet shape (radius-edge): %1").arg(tet_shape)
-  << QString("tet max size: %1").arg(tet_sizing)
-  << QString("detect connected components: %1")
-    .arg(detect_connected_components)
-  << QString("protect features: %1").arg(protect_features);
+  QStringList res("Mesh criteria");
+
+  // doubles
+  if(edge_sizing > 0)
+    res << QString("edge max size: %1").arg(edge_sizing);
+  if(edge_min_sizing > 0)
+    res << QString("edge min size: %1").arg(edge_min_sizing);
+  if(facet_angle > 0)
+    res << QString("facet min angle: %1").arg(facet_angle);
+  if(facet_sizing > 0)
+    res << QString("facet max size: %1").arg(facet_sizing);
+  if(facet_min_sizing > 0)
+    res << QString("facet min size: %1").arg(facet_min_sizing);
+  if(facet_approx > 0)
+    res << QString("facet approx error: %1").arg(facet_approx);
+  if(tet_shape > 0)
+    res << QString("tet shape (radius-edge): %1").arg(tet_shape);
+  if(tet_sizing > 0)
+    res << QString("tet max size: %1").arg(tet_sizing);
+  if(tet_min_sizing > 0)
+    res << QString("tet min size: %1").arg(tet_min_sizing);
+
+  // booleans
+  res << QString("protect features: %1").arg(protect_features);
+  if(image_3_ptr != nullptr)
+  {
+    res << QString("detect connected components: %1")
+             .arg(detect_connected_components);
+    res << QString("use weights: %1").arg(weights_ptr != nullptr);
+  }
+  res << QString("use aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
+  res << QString("manifold: %1").arg(manifold);
+
+  return res;
 }
 
 
@@ -238,22 +265,22 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double b, Mesh_fnt::Domain_tag)
+edge_criteria(double b, double minb, Mesh_fnt::Domain_tag)
 {
-  return Edge_criteria(b);
+  return Edge_criteria(b, minb);
 }
 
-#include <CGAL/Mesh_3/experimental/Sizing_field_with_aabb_tree.h>
+#include <CGAL/Sizing_field_with_aabb_tree.h>
 #include <CGAL/Mesh_3/experimental/Facet_topological_criterion_with_adjacency.h>
 
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
+edge_criteria(double edge_size, double minb, Mesh_fnt::Polyhedral_domain_tag)
 {
   if(p_.use_sizing_field_with_aabb_tree) {
     typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
-    typedef Sizing_field_with_aabb_tree<Kernel, Domain> Mesh_sizing_field; // type of sizing field for 0D and 1D features
+    typedef CGAL::Sizing_field_with_aabb_tree<Kernel, Domain> Mesh_sizing_field; // type of sizing field for 0D and 1D features
     typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
     typedef typename Domain::Curve_index Curve_index;
     const Curve_index max_index = domain_->maximal_curve_index();
@@ -264,22 +291,20 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
       (*patches_ids_vector_p)[curve_id] = domain_->get_incidences(curve_id);
     }
     Mesh_sizing_field* sizing_field_ptr =
-      new Mesh_sizing_field(edge_size,
-                            domain_->aabb_tree(),
-                            *domain_);
+      new Mesh_sizing_field(edge_size, *domain_, domain_->aabb_tree());
     // The sizing field object, as well as the `patch_ids_vector` are
-    // allocated on the heap, and the following `boost::any` object,
+    // allocated on the heap, and the following `std::any` object,
     // containing two shared pointers, is used to make the allocated
     // objects be destroyed at the destruction of the thread object, using
-    // type erasure (`boost::any`).
+    // type erasure (`std::any`).
     object_to_destroy =
       std::make_pair(QSharedPointer<Mesh_sizing_field>(sizing_field_ptr),
                      QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
 
-    std::cerr << "USE SIZING FIELD!\n";
-    return Edge_criteria(*sizing_field_ptr);
+    std::cerr << "Note: Mesh_3 is using a sizing field based on AABB tree.\n";
+    return Edge_criteria(*sizing_field_ptr, minb);
   } else {
-    return Edge_criteria(edge_size);
+    return Edge_criteria(edge_size, minb);
   }
 }
 
@@ -293,12 +318,17 @@ launch()
 #endif
 
   // Create mesh criteria
-  Mesh_criteria criteria(edge_criteria(p_.edge_sizing, Tag()),
+  Mesh_criteria criteria(edge_criteria(p_.edge_sizing,
+                                       p_.edge_min_sizing,
+                                       Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
-                                        p_.facet_approx),
+                                        p_.facet_approx,
+                                        CGAL::FACET_VERTICES_ON_SURFACE,
+                                        p_.facet_min_sizing),
                          Cell_criteria(p_.tet_shape,
-                                       p_.tet_sizing));
+                                       p_.tet_sizing,
+                                       p_.tet_min_sizing));
 
   tweak_criteria(criteria, Tag());
   initialize(criteria, Tag());
@@ -329,7 +359,7 @@ launch()
   std::cerr << "Full refinement time (without fix_c3t3): " << t.time() << " seconds." << std::endl;
 #endif
 
-  // Ensure c3t3 is ok (usefull if process has been stop by the user)
+  // Ensure c3t3 is ok (useful if process has been stop by the user)
   mesher_->fix_c3t3();
   std::cerr<<"Done."<<std::endl;
 }
@@ -342,8 +372,9 @@ tweak_criteria(Mesh_criteria& c, Mesh_fnt::Polyhedral_domain_tag) {
   typedef CGAL::Mesh_3::Facet_topological_criterion_with_adjacency<Tr,
        Domain, typename Facet_criteria::Visitor> New_topo_adj_crit;
 
-  if((int(c.facet_criteria_object().topology()) &
+  if(((int(c.facet_criteria_object().topology()) &
       CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK) != 0)
+    && c.edge_criteria_object().min_length_bound() == 0)
   {
     c.add_facet_criterion(new New_topo_adj_crit(this->domain_));
   }

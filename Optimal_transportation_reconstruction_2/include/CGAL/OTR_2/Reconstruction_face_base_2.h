@@ -16,7 +16,6 @@
 
 
 #include <CGAL/OTR_2/Cost.h>
-#include <CGAL/OTR_2/Sample.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
 #include <vector>
@@ -51,7 +50,7 @@ public:
   typedef typename Traits_::FT    FT;
   typedef OTR_2::Cost<FT>          Cost_;
   typedef OTR_2::Sample<Traits_>   Sample_;
-  typedef std::vector<Sample_*>   Sample_vector;
+  typedef std::vector<int>   Sample_vector;
 
 private:
   Sample_vector m_samples[3];
@@ -176,7 +175,7 @@ public:
   const Sample_vector& samples(int edge) const { return m_samples[edge]; }
   Sample_vector& samples(int edge) { return m_samples[edge]; }
 
-  void add_sample(int edge, Sample_* sample)
+  void add_sample(int edge, int sample)
   {
     m_samples[edge].push_back(sample);
   }

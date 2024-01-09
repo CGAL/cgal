@@ -101,7 +101,7 @@ public:
   /// @param alcc the lcc to view
   /// @param title the title of the window
   /// @param anofaces if true, do not draw faces (faces are not computed;
-  ///     this can be usefull for very big object where this time could be long)
+  ///     this can be useful for very big object where this time could be long)
   Face_graph_with_path_viewer(QWidget* parent,
                               const Mesh& amesh,
                               const std::vector

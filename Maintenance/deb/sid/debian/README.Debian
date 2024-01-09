@@ -22,7 +22,7 @@ Tarballs with demos and examples can be found in /usr/share/doc/libcgal-demo.
 Extract the tarballs somewhere and call "cmake ." to configure the
 demos/examples. Call "make" to build them, either in the top-level directory
 to build all demos/examples (which takes some time and needs quite some disk
-space), or in the subdirectory of the desired demo/exmaple. The cmake option
+space), or in the subdirectory of the desired demo/example. The cmake option
 -DCMAKE_VERBOSE_MAKEFILE=ON is useful to generate verbose makefiles that show
 each executed command.
 

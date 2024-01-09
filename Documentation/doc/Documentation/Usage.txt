@@ -46,7 +46,7 @@ or to build your own project using \cgal, see Section \ref secoptional3rdpartyso
 
 \cgal can be obtained through different channels. We recommend using a package manager as
 this will ensure that all essential third party dependencies are present, and with the correct versions.
-You may also download the sources of \cgal directly, but it is then your responsability to independently
+You may also download the sources of \cgal directly, but it is then your responsibility to independently
 acquire these dependencies.
 
 The examples and demos of \cgal are not included when you install \cgal with a package manager,
@@ -96,11 +96,6 @@ The directories `include/CGAL/CORE` and `src/CGALCore` contain a
 distribution of the <a href="https://cs.nyu.edu/exact/">Core library</a> version 1.7 for
 dealing with algebraic numbers. Note that \core is not part of \cgal and has its
 own license.
-
-The directory `include/CGAL/OpenNL` contains a distribution of the
-<a href="http://alice.loria.fr/index.php/software/4-library/23-opennl.html">Open Numerical Library</a>,
-which provides solvers for sparse linear systems, especially designed for the Computer Graphics community.
-\opennl is not part of \cgal and has its own license.
 
 The only documentation shipped within \cgal sources is the present manual.
 The \cgal manual can also be accessed online at
@@ -166,17 +161,17 @@ if no debugging is intended. Users should thus run:
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # we are here using a release tarball
 
-The package Qt5 on brew is "keg-only", which means it is not "linked" with brew.
-In order to link against Qt5, you need to run:
+The package Qt6 on brew is "keg-only", which means it is not "linked" with brew.
+In order to link against Qt6, you need to run:
 
-    brew link qt@5
+    brew link qt@6
 
-After that, you will have to specify the Qt5_DIR by hand to cmake, using something like
+After that, you will have to specify the Qt6_DIR by hand to cmake, using something like
 
-    -DQt5_DIR=/usr/local/opt/qt5/lib/cmake/Qt5
+    -DQt6_DIR=/usr/local/opt/qt6/lib/cmake/Qt6
 
-where '/usr/local/` is actually your current brew installation directory. Check this directory
-to be sure where the Qt5 is placed on your machine.
+where `/usr/local/` is actually your current brew installation directory. Check this directory
+to be sure where the Qt6 is placed on your machine.
 
 \subsection usage_configuring_cmake_gui Specifying Missing Dependencies
 

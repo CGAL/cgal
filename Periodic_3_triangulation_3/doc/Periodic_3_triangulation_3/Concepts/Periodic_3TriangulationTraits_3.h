@@ -12,9 +12,11 @@ work with point-offset pairs. In most cases the offsets will be
 can be used directly. For efficiency reasons we maintain for each
 functor the version without offsets.
 
-\cgalRefines `TriangulationTraits_3`
+\cgalRefines{TriangulationTraits_3}
 
-\cgalHasModel `CGAL::Periodic_3_triangulation_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_3_triangulation_traits_3}
+\cgalHasModelsEnd
 
 \sa `Periodic_3DelaunayTriangulationTraits_3`
 \sa `Periodic_3RegularTriangulationTraits_3`
@@ -78,6 +80,41 @@ A tetrahedron type. It must be a model
 of `Kernel::Tetrahedron_3`.
 */
 typedef unspecified_type Tetrahedron_3;
+
+/*!
+A predicate object that must provide the function operator
+
+`Comparison_result operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
+
+which returns `SMALLER` (`EQUAL`, `LARGER`) if the x-coordinate of `p` is smaller (equal, larger) than
+the x-coordinate of `q`.
+
+\pre `p`, `q` lie inside the domain.
+*/
+typedef unspecified_type Compare_x_3;
+
+/*!
+A predicate object that must provide the function operator
+
+`Comparison_result operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
+
+which returns `SMALLER` (`EQUAL`, `LARGER`) if the y-coordinate of `p` is smaller (equal, larger) than
+the y-coordinate of `q`.
+\pre `p`, `q` lie inside the domain.
+*/
+typedef unspecified_type Compare_y_3;
+
+/*!
+A predicate object that must provide the function operator
+
+`Comparison_result operator()(Point_3 p, Point_3 q, Periodic_3_offset_3 o_p, Periodic_3_offset_3 o_q)`,
+
+which returns `SMALLER` (`EQUAL`, `LARGER`) if the z-coordinate of `p` is smaller (equal, larger) than
+the z-coordinate of `q`.
+
+\pre `p`, `q` lie inside the domain.
+*/
+typedef unspecified_type Compare_z_3;
 
 /*!
 A predicate object that must provide the function operator

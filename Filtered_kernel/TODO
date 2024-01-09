@@ -2,7 +2,7 @@ Concerning the main code:
 -------------------------
 - Policy for overlapping comparisons : another good (faster) solution
   would be to set a static boolean variable to indicate a buggy comparison
-  happenned (a la IEEE inexact flags).  Drawback is that it's not thread safe,
+  happened (a la IEEE inexact flags).  Drawback is that it's not thread safe,
   but could be made safe with pthread_key_create()...
   Clearly, all this stuff is policy.
     struct overlap_throw {
@@ -108,7 +108,7 @@ except we could merge stuff with Olivier's Fixed !
 - Another approach to consider : Implement predicates taking one or several
   epsilons as additional parameters, and have the functionality found in Open
   CasCade, using sign(a, epsilon).  Then with a special traits or something,
-  we can define sign(a,epsilon) = sign(a), and get the traditionnal template
+  we can define sign(a,epsilon) = sign(a), and get the traditional template
   predicates from that...  So that the epsilons are removed at compile time ?
   It would be nice to know exactly the desired functionality for epsilons...
 

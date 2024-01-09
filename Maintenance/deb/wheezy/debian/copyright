@@ -152,7 +152,7 @@ Copyright (from upstream file LICENSE)
 
    The source code of the CGAL library can be found in the directories
    "src/CGAL", "src/CGALQt", "src/CGALQt4" and "include/CGAL" (with the
-   exception of "include/CGAL/CORE", "include/CGAL/OpenNL").
+   exception of "include/CGAL/CORE").
    It is specified in each file of the CGAL library which
    license applies to it. This is either the GNU General Public License
    or the GNU Lesser General Public License (as published by the Free Software
@@ -168,8 +168,6 @@ Copyright (from upstream file LICENSE)
      licensed under the LGPL (see LICENSE.LGPL).
    - ImageIO, in the directory "src/CGALimageIO", is licensed under the LGPL
      (see LICENSE.LGPL).
-   - OpenNL, in the directory "include/CGAL/OpenNL", is licensed under the LGPL
-    (see LICENSE.LGPL).
 
    All other files that do not have an explicit copyright notice (e.g., all
    examples and some demos) are licensed under a very permissive license. The
@@ -230,8 +228,8 @@ file to file.
 
 
 
-Copright statement for files under the FREE_USE license
-=======================================================
+Copyright statement for files under the FREE_USE license
+========================================================
 
    Copyright (c) 1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007
    Utrecht University (The Netherlands),
@@ -351,26 +349,3 @@ src/CGALimageIO.
 
    These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
    WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-
-
-OpenNL
-======
-
-The following copyright statement applies to the OpenNL library in
-include/CGAL/OpenNL.
-
-   Copyright (c) 2005-2008  Inria Loria (France).
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License version 3 as published by the Free Software Foundation
-
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA

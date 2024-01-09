@@ -25,7 +25,7 @@
 #include <cmath> // for HUGE_VAL
 #endif
 
-// This file specifies some platform dependant functions, regarding the FPU
+// This file specifies some platform dependent functions, regarding the FPU
 // directed rounding modes.  There is only support for double precision.
 //
 // It also contains the definition of the Protect_FPU_rounding<> class,

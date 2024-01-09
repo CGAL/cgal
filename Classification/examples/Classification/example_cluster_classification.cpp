@@ -30,9 +30,9 @@ typedef Point_set::Property_map<int>           Imap;
 typedef Point_set::Property_map<unsigned char> UCmap;
 
 
-typedef CGAL::Shape_detection::Point_set::Sphere_neighbor_query<Kernel, Point_set, Pmap>                Neighbor_query;
-typedef CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Point_set, Pmap, Vmap> Region_type;
-typedef CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>                   Region_growing;
+typedef CGAL::Shape_detection::Point_set::Sphere_neighbor_query_for_point_set<Point_set>                Neighbor_query;
+typedef CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region_for_point_set<Point_set>       Region_type;
+typedef CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>                              Region_growing;
 
 namespace Classification = CGAL::Classification;
 namespace Feature = CGAL::Classification::Feature;
@@ -111,25 +111,24 @@ int main (int argc, char** argv)
   const double max_accepted_angle    = 25.0;
   const std::size_t min_region_size  = 10;
 
-  Neighbor_query neighbor_query (
-    pts,
-    search_sphere_radius,
-    pts.point_map());
-  Region_type region_type (
-    pts,
-    max_distance_to_plane, max_accepted_angle, min_region_size,
-    pts.point_map(), pts.normal_map());
+  Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_sphere_neighbor_query (
+    pts, CGAL::parameters::sphere_radius(search_sphere_radius)
+                          .point_map(pts.point_map()));
+  Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region(
+    pts, CGAL::parameters::maximum_distance(max_distance_to_plane)
+                          .maximum_angle(max_accepted_angle)
+                          .minimum_region_size(min_region_size));
   Region_growing region_growing (
     pts, neighbor_query, region_type);
 
   std::vector<Cluster> clusters;
   region_growing.detect
     (boost::make_function_output_iterator
-     ([&](const std::vector<std::size_t>& region) -> void {
+     ([&](const std::pair<Kernel::Plane_3, std::vector<Point_set::Index>>& region) -> void {
 
         // Create a new cluster.
         Classification::Cluster<Point_set, Pmap> cluster (pts, pts.point_map());
-        for (const std::size_t idx : region)
+        for (Point_set::Index idx : region.second)
           cluster.insert(idx);
         clusters.push_back(cluster);
       }));

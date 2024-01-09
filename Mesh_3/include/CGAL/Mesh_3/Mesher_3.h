@@ -63,7 +63,6 @@
 #endif
 
 #include <boost/format.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <string>
 #include <atomic>
 
@@ -575,7 +574,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   nbsteps = 0;
 
   facets_visitor_.activate();
-  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
+
   std::cerr << "Start volume scan...";
   CGAL_MESH_3_TASK_BEGIN(scan_cells_task_handle);
   cells_mesher_.scan_triangulation();
@@ -584,6 +583,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   std::cerr << "end scan. [Bad tets:" << cells_mesher_.size() << "]";
   std::cerr << std::endl << std::endl;
   elapsed_time += timer.time();
+  dump_c3t3(r_c3t3_, dump_after_refine_surface_prefix);
   timer.stop(); timer.reset(); timer.start();
 
   std::cerr << "Refining...\n";
@@ -652,7 +652,7 @@ initialize()
     defined(CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE)
 
 #ifndef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if(std::is_convertible<Concurrency_tag, Parallel_tag>::value)
 #endif // If that macro is defined, then estimated_bbox must be initialized
   {
     Base::set_bbox(r_oracle_.bbox());
@@ -665,7 +665,7 @@ initialize()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     // we're not multi-thread, yet
     r_c3t3_.triangulation().set_lock_data_structure(0);
@@ -690,7 +690,8 @@ initialize()
 #  ifdef CGAL_CONCURRENT_MESH_3_VERBOSE
       std::cerr << "Adding points on a far sphere (radius = " << radius <<")...";
 #  endif
-      Random_points_on_sphere_3<Bare_point> random_point(radius);
+      CGAL::Random rnd(0);
+      Random_points_on_sphere_3<Bare_point> random_point(radius, rnd);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
         float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
@@ -859,7 +860,7 @@ Mesher_3<C3T3,MC,MD>::
 status() const
 {
 #ifdef CGAL_LINKED_WITH_TBB
-  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value) {
+  if(std::is_convertible<Concurrency_tag, Parallel_tag>::value) {
     return Mesher_status(
 #  if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
                          approximate_number_of_vertices(Concurrency_tag()),

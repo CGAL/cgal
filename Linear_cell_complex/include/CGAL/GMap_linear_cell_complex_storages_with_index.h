@@ -34,7 +34,7 @@ namespace CGAL {
 
   // Storage of darts with compact container, alpha using index
   // Copy of Generalized_map_storage_with_index and add new types related
-  // to geometry (not possible to inherith because we use Self type
+  // to geometry (not possible to inherit because we use Self type
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type).
   template<unsigned int d_, unsigned int ambient_dim, class Traits_,
@@ -239,7 +239,7 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_descriptor<i>::type attribute(Dart_descriptor ADart)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (mdarts[ADart].mattribute_descriptors);
@@ -248,7 +248,7 @@ namespace CGAL {
     typename Attribute_const_descriptor<i>::type
     attribute(Dart_const_descriptor ADart) const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (mdarts[ADart].mattribute_descriptors);
@@ -259,8 +259,15 @@ namespace CGAL {
     typename Attribute_descriptor<i>::type copy_attribute
     (typename Attribute_const_descriptor<i>::type ah)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "copy_attribute<i> called but i-attributes are disabled.");
+      // We need to do a reserve before the emplace in order to avoid a bug of
+      // invalid reference when the container is reallocated.
+      std::get<Helper::template Dimension_index<i>::value>
+          (mattribute_containers).reserve
+          (std::get<Helper::template Dimension_index<i>::value>
+           (mattribute_containers).size()+1);
+
       typename Attribute_descriptor<i>::type res=
         std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(get_attribute<i>(ah));

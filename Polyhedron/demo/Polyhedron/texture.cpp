@@ -253,7 +253,7 @@ int Texture::Extract(int left, int top, int right, int bottom)
       for(k=0;k<BytePerPixel;k++)
         pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(m_Height-1-(j+top))+(i+left)*BytePerPixel+k];
 
-  // Replace datas
+  // Replace data
   delete [] m_pData;
   m_pData = pData;
   m_Width = NewWidth;
@@ -324,7 +324,7 @@ int Texture::DuplicateMirror(int left, int top, int right, int bottom)
       for(k=0;k<BytePerPixel;k++)
         pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(j-NewHeight/2+top)+(right-(i-NewWidth/2+left))*BytePerPixel+k];
 
-  // Replace datas
+  // Replace data
   delete [] m_pData;
   m_pData = pData;
   m_Width = NewWidth;
@@ -382,7 +382,7 @@ int Texture::DuplicateRepeatWidth(int left, int top, int right, int bottom)
       for(k=0;k<BytePerPixel;k++)
         pData[NewWidthByte32*j+i*BytePerPixel+k] = m_pData[m_WidthByte32*(bottom-(j+top))+(i-NewWidth/2+left)*BytePerPixel+k];
 
-  // Replace datas
+  // Replace data
   delete [] m_pData;
   m_pData = pData;
   m_Width = NewWidth;
@@ -523,7 +523,7 @@ int Texture::AddAlphaLayer(unsigned char alpha) // 0 - 255
   // Set new depth
   m_Depth = 32;
 
-  // Replace datas
+  // Replace data
   delete [] m_pData;
   m_pData = pData;
 

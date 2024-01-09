@@ -179,12 +179,6 @@ GraphicsView/demo/Triangulation_2/Makefile
 GraphicsView/demo/Triangulation_2/Regular_triangulation_2
 GraphicsView/demo/Triangulation_2/qrc_*.cxx
 GraphicsView/demo/Triangulation_2/ui_*.h
-GraphicsView/src/CGAL_Qt5/*.dll
-GraphicsView/src/CGAL_Qt5/*.lib
-GraphicsView/src/CGAL_Qt5/*.so
-GraphicsView/src/CGAL_Qt5/Makefile
-GraphicsView/src/CGAL_Qt5/moc_*.cxx
-GraphicsView/src/CGAL_Qt5/qrc_*.cxx
 HalfedgeDS/test/HalfedgeDS/cgal_test_with_cmake
 HalfedgeDS/test/HalfedgeDS/test_hds
 HalfedgeDS/test/HalfedgeDS/test_hds_decorator
@@ -880,7 +874,6 @@ Surface_mesher/demo/Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/.qglviewer.xml
 Surface_mesher/demo/Surface_mesher/Makefile
 Surface_mesher/demo/Surface_mesher/Surface_mesher
-Surface_mesher/demo/Surface_mesher/Surface_mesher_Qt5_Demo
 Surface_mesher/demo/Surface_mesher/VTK/Makefile
 Surface_mesher/demo/Surface_mesher/VTK/mesh_a_3D_image
 Surface_mesher/demo/Surface_mesher/VTK/mesh_a_VTK_3D_image
@@ -895,7 +888,6 @@ Surface_mesher/demo/Surface_mesher/out*.off
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher_with_edges
 Surface_mesher/demo/Surface_mesher/qrc_*.c*
-Surface_mesher/demo/Surface_mesher/qt5-demo
 Surface_mesher/demo/Surface_mesher/ui_*.h
 Surface_mesher/doxygen
 Surface_mesher/examples/Surface_mesher/.*.deps
@@ -1213,3 +1205,4 @@ gmon.*
 Polygonal_surface_reconstruction/examples/build*
 Polygonal_surface_reconstruction/test/build*
 Solver_interface/examples/build*
+/Mesh_3/examples/Mesh_3/indicator_0.inr.gz

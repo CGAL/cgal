@@ -27,24 +27,21 @@ int main()
   // Gets the conflict region of 100 random points
   // in the Delaunay tetrahedralization
   for (int i = 0; i != 100; ++i)
-    {
-      Point p = (*rnd++);
+  {
+    Point p = (*rnd++);
 
-      // Locate the point
-      Delaunay::Locate_type lt;
-      int li;
-      Face_handle f = T.locate(p, lt, li);
-      if (lt == Delaunay::VERTEX)
-        continue; // Point already exists
+    // Locate the point
+    Delaunay::Locate_type lt;
+    int li;
+    Face_handle f = T.locate(p, lt, li);
+    if (lt == Delaunay::VERTEX)
+      continue; // Point already exists
 
-      // Get the cells that conflict with p in a vector V,
-      // and a facet on the boundary of this hole in f.
-      std::vector<Face_handle> V;
+    // Get the faces that conflict with p in a vector V.
+    std::vector<Face_handle> V;
 
-      T.get_conflicts(p,
-                      std::back_inserter(V), // Conflict cells in V
-                      f);
-    }
+    T.get_conflicts(p, std::back_inserter(V), f);
+  }
 
   std::cout << "Final triangulation has " << T.number_of_vertices()
             << " vertices." << std::endl;

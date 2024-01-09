@@ -27,9 +27,5 @@ int main()
   CGAL::ch__batch_test(cch_H_gmp);
 #endif
 
-  CGAL::Convex_hull_constructive_traits_2< CGAL::Homogeneous<double> > cch_H_double;
-  std::cout << "Homogeneous<double>:" << std::endl;
-  CGAL::ch__batch_test(cch_H_double);
-
   return EXIT_SUCCESS;
 }

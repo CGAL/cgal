@@ -326,7 +326,7 @@ void test_implicit_interoperable_one_way() {
   typedef typename CT::Type C;
   typedef typename CT::Are_implicit_interoperable Are_implicit_interoperable;
 
-  CGAL_static_assertion(
+  static_assert(
       (::std::is_same<Are_implicit_interoperable, CGAL::Tag_true>::value));
   assert((::std::is_same<Are_implicit_interoperable, CGAL::Tag_true>::value));
 
@@ -346,9 +346,9 @@ void test_explicit_interoperable_one_way(){
   typedef typename CT::Cast Cast;
   typedef typename Cast::result_type result_type;
   CGAL_USE_TYPE(result_type);
-  CGAL_static_assertion((::std::is_same<result_type,Type>::value));
-  CGAL_static_assertion((::std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
-  CGAL_static_assertion((::std::is_same<Type,RT>::value));
+  static_assert(::std::is_same<result_type,Type>::value);
+  static_assert(::std::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value);
+  static_assert(::std::is_same<Type,RT>::value);
   typename CT::Cast cast;
 
   A a(3);

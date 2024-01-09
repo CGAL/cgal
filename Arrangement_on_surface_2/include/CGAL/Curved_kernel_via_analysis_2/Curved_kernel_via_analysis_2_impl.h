@@ -100,7 +100,7 @@ public:
 
     //!@{
 
-    //! type of inverval arcno cache
+    //! type of interval arcno cache
     typedef internal::Curve_interval_arcno_cache< Curve_kernel_2 >
         Curve_interval_arcno_cache;
 

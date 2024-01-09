@@ -412,7 +412,7 @@ The walk begins at a vertex of the face which
 is given
 as an optional argument or at an arbitrary vertex of the triangulation
 if no optional argument is given. It takes
-time \f$ O(n)\f$ in the worst case for Delaunay Triangulations, but only \f$ O(\sqrt{n})\f$
+time \cgalBigO{n} in the worst case for Delaunay Triangulations, but only \cgalBigO{\sqrt{n}}
 on average if the vertices are distributed uniformly at random.
 The class `Triangulation_hierarchy_2<Traits,Tds>`,
 described in section \ref Section_2D_Triangulations_Hierarchy,
@@ -423,14 +423,14 @@ Insertion of a point is done by locating a face that contains the
 point, and splitting this face into three new faces.
 If the point falls outside the convex hull, the triangulation
 is restored by flips. Apart from the location, insertion takes a
-time \f$ O(1)\f$. This bound is only an amortized bound
+time \cgalBigO{1}. This bound is only an amortized bound
 for points located outside the convex hull.
 
 Removal of a vertex is done by removing all adjacent triangles, and
 re-triangulating the hole. Removal takes a time at most proportional to
 \f$ d^2\f$, where
 \f$ d\f$ is the degree of the removed vertex,
-which is \f$ O(1)\f$ for a random vertex.
+which is \cgalBigO{1} for a random vertex.
 
 Displacement of a vertex is done by: first, verifying if the triangulation embedding
 remains planar after the displacement; if yes the vertex is directly placed at the new location; otherwise, a point is inserted at the new location
@@ -509,8 +509,8 @@ A 2D triangulation can be visualized by calling the \link PkgDrawTriangulation2 
 
 \cgalExample{Triangulation_2/draw_triangulation_2.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_triangulation_2,draw_triangulation_2.png}
 Result of the run of the draw_triangulation_2 program. A window shows the 2D triangulation and allows to navigate through the scene.
@@ -592,18 +592,18 @@ The insertion of a new point in the Delaunay triangulation
 is performed using first the insertion member function
 of the basic triangulation and second
 performing a sequence of flips to restore the Delaunay property.
-The number of flips that have to be performed is \f$ O(d)\f$
+The number of flips that have to be performed is \cgalBigO{d}
 if the new vertex has degree \f$ d\f$ in the updated
 Delaunay triangulation. For
 points distributed uniformly at random,
-each insertion takes time \f$ O(1)\f$ on
+each insertion takes time \cgalBigO{1} on
 average, once the point has been located in the triangulation.
 
 Removal calls the removal in the triangulation and then re-triangulates
 the hole created in such a way that the Delaunay criterion is
 satisfied. Removal of a
-vertex of degree \f$ d\f$ takes time \f$ O(d^2)\f$.
-The degree \f$ d\f$ is \f$ O(1)\f$ for a random
+vertex of degree \f$ d\f$ takes time \cgalBigO{d^2}.
+The degree \f$ d\f$ is \cgalBigO{1} for a random
 vertex in the triangulation.
 When the degree of the removed vertex is small (\f$ \leq7\f$) a special
 procedure is used that allows to decrease global removal time by a factor of 2
@@ -611,14 +611,14 @@ for random points \cgalCite{d-vrtdd-09}.
 
 The displacement of a vertex \f$ v\f$ at a point \f$ p\f$ to a new location \f$ p'\f$, first checks whether the triangulation embedding remains
 planar or not after moving \f$ v\f$ to \f$ p'\f$. If yes, it moves \f$ v\f$ to \f$ p'\f$ and simply performs a sequence of flips
-to restore the Delaunay property, which is \f$ O(d)\f$ where \f$ d\f$ is the degree of the vertex after the displacement.
+to restore the Delaunay property, which is \cgalBigO{d} where \f$ d\f$ is the degree of the vertex after the displacement.
 Otherwise, the displacement is done by inserting a vertex at the new location,
 and removing the obsolete vertex.
-The complexity is \f$ O(n)\f$ in the worst case, but only \f$ O(1 + \delta \sqrt{n})\f$ for evenly distributed vertices in the unit square, where \f$ \delta\f$ is the Euclidean distance between the new and old locations.
+The complexity is \cgalBigO{n} in the worst case, but only \cgalBigO{1 + \delta \sqrt{n}} for evenly distributed vertices in the unit square, where \f$ \delta\f$ is the Euclidean distance between the new and old locations.
 
 After having performed a point location, the
-nearest neighbor of a point is found in time \f$ O(n)\f$ in the
-worst case, but in time \f$ O(1)\f$
+nearest neighbor of a point is found in time \cgalBigO{n} in the
+worst case, but in time \cgalBigO{1}
 for vertices distributed uniformly at random and any query point.
 
 \subsection Subsection_2D_Triangulations_Delaunay_Terrain Example: a Delaunay Terrain
@@ -742,8 +742,8 @@ The class `Regular_triangulation_2<Traits, Tds>`
 is designed to maintain the
 regular triangulation of a set of \f$ 2d\f$ weighted points.
 It derives from the class `Triangulation_2<Traits, Tds>`.
-The functions `insert` and
-`remove` are overwritten to handle weighted points
+The functions `insert()` and
+`remove()` are overwritten to handle weighted points
 and maintain the regular
 property.
 The function `move()` is not
@@ -1184,7 +1184,7 @@ classes.
 
 The class `Triangulation_hierarchy_2<Tr>` inherits from the
 triangulation type passed as template parameter `Tr`.
-The `insert`, `move`, and `remove` member functions
+The `insert()`, `move()`, and `remove()` member functions
 are overwritten to update the data structure at each operation.
 The locate queries are also overwritten to take advantage of the data
 structure for a fast processing.
@@ -1224,7 +1224,7 @@ at the different levels of the hierarchy.
 \cgalExample{Triangulation_2/hierarchy.cpp}
 
 The following program shows how to use
-a triangulation hierarchy in conjunction with a constrained triangulation with a constaint hierarchy.
+a triangulation hierarchy in conjunction with a constrained triangulation with a constraint hierarchy.
 
 \cgalExample{Triangulation_2/constrained_hierarchy_plus.cpp}
 
@@ -1327,7 +1327,7 @@ data structure.
 
 The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator
-range over (weighted) points to the insert function. However, an iterator range of
+range over (weighted) points to the `insert()` function. However, an iterator range of
 (weighted) points does not allow the user to set different information to each vertex.
 To solve this problem, in the case the vertex type of the triangulation
 is a model of the concept `TriangulationVertexBaseWithInfo_2`
@@ -1339,7 +1339,7 @@ of the corresponding point given in the range.
 \subsection Triangulation_2UsinganIteratorOverPairs Using an Iterator Over Pairs
 
 Each point and its information are gathered into a pair. We provide
-the `insert` function of the triangulation with a range of such pairs.
+the `insert()` function of the triangulation with a range of such pairs.
 \cgalExample{Triangulation_2/info_insert_with_pair_iterator_2.cpp}
 
 \subsection Triangulation_2UsingtheBoostZipIterator Using the Boost Zip Iterator

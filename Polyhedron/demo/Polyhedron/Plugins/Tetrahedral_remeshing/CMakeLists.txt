@@ -2,12 +2,12 @@ include(polyhedron_demo_macros)
 
 remove_definitions(-DQT_STATICPLUGIN)
 
-qt5_wrap_cpp(VOLUME_MOC_OUTFILES
+qt6_wrap_cpp(VOLUME_MOC_OUTFILES
              ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h)
-qt5_wrap_cpp(VOLUME_MOC_OUTFILES
+qt6_wrap_cpp(VOLUME_MOC_OUTFILES
              ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_interface.h)
 
-qt5_wrap_ui(tetRemeshingUI_FILES Tetrahedral_remeshing_dialog.ui)
+qt6_wrap_ui(tetRemeshingUI_FILES Tetrahedral_remeshing_dialog.ui)
 polyhedron_demo_plugin(
   tetrahedral_remeshing_plugin Tetrahedral_remeshing_plugin
   ${tetRemeshingUI_FILES} KEYWORDS Tetrahedral_remeshing)

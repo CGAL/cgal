@@ -33,7 +33,10 @@ template <class R_> class Sphere_segment_rep
   typedef Sphere_segment_rep<R_> Rep;
   friend class Sphere_segment<R_>;
 public:
-Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
+
+Sphere_segment_rep() :
+  ps_(), pt_(), c_()
+{}
 
 Sphere_segment_rep(const Point& p1, const Point& p2,
                    bool shorter_arc=true) :
@@ -85,7 +88,7 @@ class Sphere_segment :
   public Handle_for< Sphere_segment_rep<R_> > {
 
 /*{\Mdefinition An object |\Mvar| of type |\Mname| is a segment in the
-surface of a unit sphere that is part of a great circle trough the
+surface of a unit sphere that is part of a great circle through the
 origin. Sphere segments are represented by two sphere points $p$ and
 $q$ plus an oriented plane $h$ that contains $p$ and $q$. The plane
 determines the sphere segment. Let $c$ be the circle in the

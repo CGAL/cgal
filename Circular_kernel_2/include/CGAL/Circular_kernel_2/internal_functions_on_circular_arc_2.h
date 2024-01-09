@@ -536,17 +536,15 @@ namespace CircularFunctors {
                const typename CK::Circular_arc_2 &a2,
                OutputIterator res )
   {
-    typedef typename CK2_Intersection_traits<CK, typename CK::Circular_arc_2,
-                                                 typename CK::Circular_arc_2>::type result_type;
-
-    typedef std::vector<CGAL::Object> solutions_container;
     typedef typename CK::Circular_arc_2 Circular_arc_2;
+    typedef typename CK::Circle_2 Circle_2;
 
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
+    typedef std::vector<CGAL::Object> solutions_container;
     // same curve
     if(a1.number() == a2.number()) {
-      *res++ = result_type(a1);
+      *res++ = a1;
        return res;
     }
 
@@ -571,14 +569,14 @@ namespace CircularFunctors {
 
     if((a1s_a2s && a1t_a2t) || (a1s_a2t && a1t_a2s)){ // Case 1
       if( (a1.supporting_circle() == a2.supporting_circle()) && ((a1.on_upper_part() && a2.on_upper_part())|| (! a1.on_upper_part() && (! a2.on_upper_part())))){
-        *res++ = result_type(a1);
+        *res++ = a1;
       } else {
         if(compare_x<CK>(a1.source(), a1.target()) == SMALLER){
-          *res++ = result_type(std::make_pair(a1.source(),1u));
-          *res++ = result_type(std::make_pair(a1.target(),1u));
+          *res++ = std::make_pair(a1.source(),1u);
+          *res++ = std::make_pair(a1.target(),1u);
         } else {
-          *res++ = result_type(std::make_pair(a1.target(),1u));
-          *res++ = result_type(std::make_pair(a1.source(),1u));
+          *res++ = std::make_pair(a1.target(),1u);
+          *res++ = std::make_pair(a1.source(),1u);
         }
       }
       return res;
@@ -625,7 +623,7 @@ namespace CircularFunctors {
 
       if(return_q){
 
-        *res++ = result_type(std::make_pair(q,1u));
+        *res++ = std::make_pair(q,1u);
         return res;
       }
 
@@ -634,16 +632,14 @@ namespace CircularFunctors {
 
     const bool sqr1_eq_sqr2 = (a1.squared_radius() == a2.squared_radius());
     const bool c1_eq_c2 = (a1.center() == a2.center());
-    typedef typename CK2_Intersection_traits<CK, typename CK::Circular_arc_2,
-                                                 typename CK::Circular_arc_2>::type result_type;
 
     if(sqr1_eq_sqr2 && c1_eq_c2) {
       if(a1.is_full()) {
-        *res++ =CGAL::internal::ck2_intersection_return<result_type>(a2);
+        *res++ = a2;
         //return res;
       }
       else if(a2.is_full()) {
-        *res++ =CGAL::internal::ck2_intersection_return<result_type>(a1);
+        *res++ = a1;
         //return res;
       } else {
         bool t2_in_a1 = has_on<CK>(a1,a2.target(),true);
@@ -656,66 +652,66 @@ namespace CircularFunctors {
               CircularFunctors::compare_xy<CK>(a1.source(), a2.source());
             if(comp < 0) {
               if(a1.source() == a2.target()) {
-                *res++ =CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(a1.source(),1u));
+                *res++ = std::make_pair(a1.source(),1u);
               } else {
                 const Circular_arc_2 & arc =
                 Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-                *res++ =CGAL::internal::ck2_intersection_return<result_type>(arc);
+                *res++ = arc;
               }
               if(a2.source() == a1.target()) {
-                *res++ =CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(a2.source(),1u));
+                *res++ = std::make_pair(a2.source(),1u);
               } else {
                 const Circular_arc_2 & arc =
                 Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-                *res++ =CGAL::internal::ck2_intersection_return<result_type>(arc);
+                *res++ = arc;
               }
             } else if (comp > 0) {
               if(a2.source() == a1.target()) {
-                *res++ =CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(a2.source(),1u));
+                *res++ = std::make_pair(a2.source(),1u);
               } else {
                 const Circular_arc_2 & arc =
                 Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-                *res++ =CGAL::internal::ck2_intersection_return<result_type>(arc);
+                *res++ = arc;
               }
               if(a1.source() == a2.target()) {
-                *res++ =CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(a1.source(),1u));
+                *res++ = std::make_pair(a1.source(),1u);
               } else {
                 const Circular_arc_2 & arc =
                 Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-                *res++ =CGAL::internal::ck2_intersection_return<result_type>(arc);
+                *res++ = arc;
               }
             } else {
-              *res++ =CGAL::internal::ck2_intersection_return<result_type>(a1);
+              *res++ = a1;
             }
           } else {
-            *res++ =CGAL::internal::ck2_intersection_return<result_type>(a2);
+            *res++ = a2;
           //return res;
           }
         }
         else if(t2_in_a1) {
           if(a1.source() == a2.target())
-            *res++ =CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(a1.source(),1u));
+            *res++ = std::make_pair(a1.source(),1u);
           else {
             const Circular_arc_2 & arc =
               Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
-            *res++ =CGAL::internal::ck2_intersection_return<result_type>(arc);
+            *res++ = arc;
           } //return res;
         } else if(s2_in_a1) {
           if(a2.source() == a1.target()) {
-            *res++ =CGAL::internal::ck2_intersection_return<result_type>(std::make_pair(a2.source(),1u));
+            *res++ = std::make_pair(a2.source(),1u);
           } else {
             const Circular_arc_2 & arc =
               Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
-            *res++ =CGAL::internal::ck2_intersection_return<result_type>(arc);
+            *res++ = arc;
           } //return res;
         } else if(has_on<CK>(a2,a1.source(),true)) {
-          *res++ =CGAL::internal::ck2_intersection_return<result_type>(a1);
+          *res++ = a1;
         //return res;
         }
       //return res;
       }
     } else if(!c1_eq_c2) {
-      solutions_container solutions;
+      std::vector< std::variant<Circle_2, std::pair<typename CK::Circular_arc_point_2, unsigned>> > solutions;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       if(!Circular_arc_2::template
@@ -736,24 +732,23 @@ namespace CircularFunctors {
       if(solutions.size() == 0) return res;
       else {
         // The supporting circles are not the same and intersects
-        for (typename solutions_container::iterator it = solutions.begin();
-         it != solutions.end(); ++it) {
+        for (const auto& v : solutions) {
           const std::pair<typename CK::Circular_arc_point_2, unsigned>
-            *result = CGAL::object_cast
-              <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
+            *result = std::get_if
+              <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&v);
 
 #ifdef CGAL_CK_TEST_BBOX_BEFORE_HAS_ON
           Bbox_2 rb = result->first.bbox();
           if(do_overlap(a1.bbox(), rb) && do_overlap(a2.bbox(),rb)){
             if (has_on<CK>(a1,result->first,true) &&
                 has_on<CK>(a2,result->first,true)) {
-              *res++ =CGAL::internal::ck2_intersection_return<result_type>(*result);
+              *res++ = *result;
             }
           }
 #else
           if (has_on<CK>(a1,result->first,true) &&
               has_on<CK>(a2,result->first,true)) {
-            *res++ =CGAL::internal::ck2_intersection_return<result_type>(*result);
+            *res++ = *result;
           }
 #endif
         }
@@ -1069,7 +1064,7 @@ template < class CK, class OutputIterator >
       A.circle_number();
 #endif
 
-      *res++ = make_object(A);
+      *res++ = A;
       return res;
     }
 
@@ -1101,8 +1096,8 @@ template < class CK, class OutputIterator >
       ca2.set_circle_number(cn);
 #endif
 
-      *res++ = make_object(ca1);
-      *res++ = make_object(ca2);
+      *res++ = ca1;
+      *res++ = ca2;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
       intersecs1.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
@@ -1131,7 +1126,7 @@ template < class CK, class OutputIterator >
       unsigned int cn = ca1.circle_number();
 #endif
 
-      *res++ = make_object(ca1);
+      *res++ = ca1;
       if (cmp_end > 0) {
         // We must cut in 3 parts.
         const Circular_arc_2 &ca2 = Circular_arc_2(A.supporting_circle(),
@@ -1148,8 +1143,8 @@ template < class CK, class OutputIterator >
         ca3.set_circle_number(cn);
 #endif
 
-        *res++ = make_object(ca2);
-        *res++ = make_object(ca3);
+        *res++ = ca2;
+        *res++ = ca3;
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
         intersecs2.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
@@ -1171,7 +1166,7 @@ template < class CK, class OutputIterator >
         ca2.set_circle_number(cn);
 #endif
 
-        *res++ = make_object(ca2);
+        *res++ = ca2;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
@@ -1191,7 +1186,7 @@ template < class CK, class OutputIterator >
       unsigned int cn = ca1.circle_number();
 #endif
 
-      *res++ = make_object(ca1);
+      *res++ = ca1;
       if (cmp_end < 0) {
         const Circular_arc_2 &ca2 = Circular_arc_2(A.supporting_circle(),
                                                    x_extremal_point2,
@@ -1207,8 +1202,8 @@ template < class CK, class OutputIterator >
         ca3.set_circle_number(cn);
 #endif
 
-        *res++ = make_object(ca2);
-        *res++ = make_object(ca3);
+        *res++ = ca2;
+        *res++ = ca3;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
@@ -1232,7 +1227,7 @@ template < class CK, class OutputIterator >
         ca2.set_circle_number(cn);
 #endif
 
-        *res++ = make_object(ca2);
+        *res++ = ca2;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
@@ -1259,8 +1254,8 @@ template < class CK, class OutputIterator >
         ca2.set_circle_number(cn);
 #endif
 
-        *res++ = make_object(ca1);
-        *res++ = make_object(ca2);
+        *res++ = ca1;
+        *res++ = ca2;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point2,1u)));
@@ -1287,8 +1282,8 @@ template < class CK, class OutputIterator >
         ca2.set_circle_number(cn);
 #endif
 
-        *res++ = make_object(ca1);
-        *res++ = make_object(ca2);
+        *res++ = ca1;
+        *res++ = ca2;
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
         intersecs1.push_back(make_object(std::make_pair(x_extremal_point1,1u)));
@@ -1302,7 +1297,7 @@ template < class CK, class OutputIterator >
   }
 
 // This is the make_x_monotone function returning extra information:
-// The ouput iterator refers to pairs, the first part of which is an
+// The output iterator refers to pairs, the first part of which is an
 // object containing the x-monotone arc and the second part is a
 // boolean defining whether the arc is on the upper part of the
 // circle or not. This extra information returned by make_x_monotone
@@ -1317,7 +1312,7 @@ template < class CK, class OutputIterator >
                             OutputIterator res )
   {
     typedef typename CK::Circular_arc_2           Circular_arc_2;
-    typedef std::pair<CGAL::Object,bool >         S_pair;
+    typedef std::pair<Circular_arc_2,bool >         S_pair;
 
 
     int cmp_begin_y = CGAL::compare
@@ -1332,13 +1327,13 @@ template < class CK, class OutputIterator >
         ((((cmp_begin_y > 0) || (cmp_end_y > 0)) && (cmp_x > 0)) ||
          (((cmp_begin_y < 0) || (cmp_end_y < 0)) &&
          (cmp_x < 0)))) {
-      *res++ = S_pair(make_object(A),(cmp_begin_y>0 || cmp_end_y>0) );
+      *res++ = S_pair(A,(cmp_begin_y>0 || cmp_end_y>0) );
       return res;
     }
 
     // Half circles
     if (cmp_begin_y == 0 && cmp_end_y == 0 && cmp_x != 0) {
-      *res++ = std::make_pair(make_object(A), cmp_x>0 );
+      *res++ = std::make_pair(A, cmp_x>0 );
       return res;
     }
 
@@ -1347,67 +1342,67 @@ template < class CK, class OutputIterator >
     if (cmp_begin_y > 0) {
 
       *res++ = S_pair
-        (make_object(Circular_arc_2(A.supporting_circle(), A.source(),
-                                    CircularFunctors::x_extremal_point<CK>
-                                    (A.supporting_circle(),true))),
+        (Circular_arc_2(A.supporting_circle(), A.source(),
+                        CircularFunctors::x_extremal_point<CK>
+                        (A.supporting_circle(),true)),
          true);
 
       if (cmp_end_y > 0) {
         // We must cut in 3 parts.
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),true),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),false))),
+          (Circular_arc_2 (A.supporting_circle(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),true),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),false)),
            false);
 
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),false),
-                                       A.target())),
+          (Circular_arc_2 (A.supporting_circle(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),false),
+                           A.target()),
            true);
       } else {
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),true),
-                                       A.target())),
+          (Circular_arc_2 (A.supporting_circle(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),true),
+                           A.target()),
            false);
       }
     }
     else if (cmp_begin_y < 0) {
       // Very similar to the previous case.
       *res++ = std::make_pair
-        (make_object(Circular_arc_2 (A.supporting_circle(),
-                                     A.source(),
-                                     CircularFunctors::x_extremal_point<CK>
-                                     (A.supporting_circle(),false))),
+        (Circular_arc_2 (A.supporting_circle(),
+                         A.source(),
+                         CircularFunctors::x_extremal_point<CK>
+                         (A.supporting_circle(),false)),
          false);
 
       if (cmp_end_y < CGAL::EQUAL) {
         // We must cut in 3 parts.
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),false),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),true))) ,
+          (Circular_arc_2 (A.supporting_circle(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),false),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),true)) ,
            true );
 
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),true),
-                                       A.target())),
+          (Circular_arc_2 (A.supporting_circle(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),true),
+                           A.target()),
            false);
       } else {
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),false),
-                                       A.target())),
+          (Circular_arc_2 (A.supporting_circle(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),false),
+                           A.target()),
            true);
       }
     }
@@ -1415,34 +1410,34 @@ template < class CK, class OutputIterator >
       if ( compare(A.source().x(),A.supporting_circle().center().x())< 0) {
         CGAL_assertion(cmp_end_y >= 0);
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       A.source(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),false))),
+          (Circular_arc_2 (A.supporting_circle(),
+                           A.source(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),false)),
            false);
 
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),false),
-                                       A.target())),
+          (Circular_arc_2 (A.supporting_circle(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),false),
+                           A.target()),
            true);
       }
       else {
         CGAL_assertion( compare(A.source().x(),A.supporting_circle().center().x())< 0);
         CGAL_assertion(cmp_end_y != LARGER);
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       A.source(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),true))),
+          (Circular_arc_2 (A.supporting_circle(),
+                           A.source(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),true)),
            true);
 
         *res++ = std::make_pair
-          (make_object(Circular_arc_2 (A.supporting_circle(),
-                                       CircularFunctors::x_extremal_point<CK>
-                                       (A.supporting_circle(),true),
-                                       A.target())),
+          (Circular_arc_2 (A.supporting_circle(),
+                           CircularFunctors::x_extremal_point<CK>
+                           (A.supporting_circle(),true),
+                           A.target()),
            false);
       }
     }
@@ -1457,7 +1452,7 @@ template < class CK, class OutputIterator >
 // In the same as the advanced_make_x_monotone works, this make_xy_function
 // returns extra information, descriptive of the position of the returned
 // xy-monotone arcs on the circle: The output iterator refers to pairs, the
-// first part of which is the object containing tha arc and the second part
+// first part of which is the object containing the arc and the second part
 // is another pair containing 2 booleans which equavalently describe whether the
 // returned xy-monotone arc is on the upper part and the left side of the circle
 
@@ -1469,8 +1464,8 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 
   typedef typename CK::Circular_arc_2            Circular_arc_2;
   typedef std::pair<bool, bool>                  relat_pos;
-  typedef std::pair< CGAL::Object, bool>         Obj_descr_1;
-  typedef std::pair< CGAL::Object, relat_pos>    Obj_descr_2;
+  typedef std::pair< Circular_arc_2, bool>         Obj_descr_1;
+  typedef std::pair< Circular_arc_2, relat_pos>    Obj_descr_2;
   typedef std::vector<Obj_descr_1>               Obj_vector_1;
   typedef std::vector<Obj_descr_2>               Obj_vector_2;
 
@@ -1481,8 +1476,7 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
   advanced_make_x_monotone<CK>(a,std::back_inserter(vec));
 
   for(unsigned int i=0;i<vec.size();i++) {
-    const Circular_arc_2 *tmp_arc =
-      CGAL::object_cast<Circular_arc_2>(&vec.at(i).first);
+    const Circular_arc_2 *tmp_arc = (&vec.at(i).first);
 
     int cmp_begin_x = CGAL::compare
       (tmp_arc->source().x(), tmp_arc->supporting_circle().center().x());
@@ -1501,22 +1495,21 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 
       Obj_descr_1 tmp=vec.at(i);
       Obj_descr_2 tmp1,tmp2;
-      const Circular_arc_2 *tmp_arc =
-        CGAL::object_cast<Circular_arc_2>(&tmp.first);
+      const Circular_arc_2 *tmp_arc = &tmp.first;
 
-      tmp1.first = make_object
-        (Circular_arc_2(a.supporting_circle(),tmp_arc->source(),
+      tmp1.first =
+        Circular_arc_2(a.supporting_circle(),tmp_arc->source(),
                         CircularFunctors::y_extremal_point<CK>
-                        (a.supporting_circle(),!tmp.second)));
+                        (a.supporting_circle(),!tmp.second));
 
       tmp1.second.first=tmp.second;
       tmp1.second.second= (tmp.second)? false : true ;
 
-      tmp2.first = make_object
-        (Circular_arc_2(a.supporting_circle(),
+      tmp2.first =
+        Circular_arc_2(a.supporting_circle(),
                         CircularFunctors::y_extremal_point<CK>
                         (a.supporting_circle(),!tmp.second),
-                        tmp_arc->target()));
+                        tmp_arc->target());
 
       tmp2.second.first=tmp.second;
       tmp2.second.second= (tmp.second)? true  : false ;
@@ -1528,7 +1521,6 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
   }
 
   return res;
-
 }
 
   template <class CK>

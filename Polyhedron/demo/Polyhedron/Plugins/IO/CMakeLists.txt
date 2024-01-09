@@ -1,17 +1,17 @@
 include(polyhedron_demo_macros)
 
-find_package(LASLIB)
+find_package(LASLIB QUIET)
 set_package_properties(
   LASLIB PROPERTIES
-  DESCRIPTION "A library for some I/O."
-  PURPOSE "Requiered for reading or writing LAS files.")
+  DESCRIPTION "A library for LIDAR I/O."
+  PURPOSE "Required for reading or writing LAS files.")
 
 include(CGAL_LASLIB_support)
 
 polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin KEYWORDS Viewer)
 target_link_libraries(gocad_plugin PUBLIC scene_surface_mesh_item)
 
-qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
+qt6_wrap_ui( funcUI_FILES Function_dialog.ui )
 polyhedron_demo_plugin(io_implicit_function_plugin
   Implicit_function_io_plugin
   ${funcUI_FILES}
@@ -66,24 +66,15 @@ if(VTK_FOUND)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer Mesh_3)
       target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item scene_points_with_normal_item
                                        ${VTK_LIBRARIES})
-      target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK)
+      target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
     else()
-      message(
-        STATUS
-          "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled."
-      )
+      message(STATUS "NOTICE: the vtk IO plugin needs VTK libraries and will not be compiled.")
     endif()
   else()
-    message(
-      STATUS
-        "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled (incorrect version found)."
-    )
+    message(STATUS "NOTICE: the vtk IO plugin needs VTK 6.0 or greater and will not be compiled (incorrect version found).")
   endif()
 else()
-  message(
-    STATUS
-      "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled."
-  )
+  message(STATUS "NOTICE: the vtk IO plugin needs VTK 6.0 or greater and will not be compiled.")
 endif()
 polyhedron_demo_plugin(xyz_plugin XYZ_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
 target_link_libraries(xyz_plugin PUBLIC scene_points_with_normal_item)
@@ -92,10 +83,7 @@ list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_rvalue_references has_cxx_rvalues)
 list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_variadic_templates has_cxx_variadic)
 
 if(has_cxx_rvalues LESS 0 OR has_cxx_variadic LESS 0)
-  message(
-    STATUS
-      "NOTICE : LAS/PLY IO examples require a C++11 compiler and will not be compiled."
-  )
+  message(STATUS "NOTICE: LAS/PLY IO examples require a C++11 compiler and will not be compiled.")
 else()
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 
@@ -113,10 +101,7 @@ else()
         PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
     endif()
   else()
-    message(
-      STATUS
-        "NOTICE : the LAS IO plugin needs LAS libraries and will not be compiled."
-    )
+    message(STATUS "NOTICE: the LAS IO plugin needs LAS libraries and will not be compiled.")
   endif()
 endif()
 
@@ -138,8 +123,5 @@ if(3MF_LIBRARIES
   target_link_libraries(io_3mf_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
   target_compile_definitions(io_3mf_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
-  message(
-    STATUS
-      "NOTICE : The 3mf_io_plugin requires the lib3MF library in a version < 2.0, and will not be compiled."
-  )
+  message(STATUS "NOTICE: The 3mf_io_plugin requires the lib3MF library in a version < 2.0, and will not be compiled.")
 endif()

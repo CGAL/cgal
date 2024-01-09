@@ -4,6 +4,8 @@
 \example Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp
 \example Mesh_3/mesh_3D_image_with_features.cpp
 \example Mesh_3/mesh_3D_image_with_custom_initialization.cpp
+\example Mesh_3/mesh_3D_image_with_detection_of_features.cpp
+\example Mesh_3/mesh_3D_image_with_input_features.cpp
 \example Mesh_3/mesh_3D_weighted_image.cpp
 \example Mesh_3/random_labeled_image.h
 \example CGAL/Mesh_3/initialize_triangulation_from_gray_image.h
@@ -18,9 +20,13 @@
 \example Mesh_3/mesh_optimization_example.cpp
 \example Mesh_3/mesh_optimization_lloyd_example.cpp
 \example Mesh_3/mesh_polyhedral_domain.cpp
+\example Mesh_3/mesh_polyhedral_domain_sm.cpp
 \example Mesh_3/mesh_polyhedral_complex.cpp
+\example Mesh_3/mesh_polyhedral_complex_sm.cpp
 \example Mesh_3/remesh_polyhedral_surface.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_features.cpp
+\example Mesh_3/mesh_polyhedral_domain_with_features_sm.cpp
+\example Mesh_3/mesh_polyhedral_domain_with_features_sizing.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_lipschitz_sizing.cpp
 \example Mesh_3/mesh_two_implicit_spheres_with_balls.cpp

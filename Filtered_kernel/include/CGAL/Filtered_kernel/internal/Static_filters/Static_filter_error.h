@@ -129,7 +129,7 @@ private:
   //    variable.
   // _e is a bound on the absolute error (difference between _b and the
   //    _real_ value of the variable.
-  // _d is the degree of the variable, it allows some additionnal checks.
+  // _d is the degree of the variable, it allows some additional checks.
   double _b, _e;
   int _d;
 };

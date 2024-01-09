@@ -24,7 +24,7 @@
 #include <CGAL/Cartesian.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <utility>
 
@@ -371,9 +371,9 @@ class Compute_approximate_hyperbolic_diameter
     Hyperbolic_point_2 operator()(const Hyperbolic_segment_2& s1,
                                   const Hyperbolic_segment_2& s2)
     {
-      if(Circular_arc_2* c1 = boost::get<Circular_arc_2>(&s1))
+      if(Circular_arc_2* c1 = std::get_if<Circular_arc_2>(&s1))
       {
-        if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
+        if(Circular_arc_2* c2 = std::get_if<Circular_arc_2>(&s2))
         {
           std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(),
                                                                              c2->circle());
@@ -387,7 +387,7 @@ class Compute_approximate_hyperbolic_diameter
         }
         else
         {
-          Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
+          Euclidean_segment_2* ell2 = std::get_if<Euclidean_segment_2>(&s2);
           std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(c1->circle(),
                                                                              ell2->supporting_line());
           Hyperbolic_point_2 p1 = res.first;
@@ -401,8 +401,8 @@ class Compute_approximate_hyperbolic_diameter
       }
       else
       {
-        Euclidean_segment_2* ell1 = boost::get<Euclidean_segment_2>(&s1);
-        if(Circular_arc_2* c2 = boost::get<Circular_arc_2>(&s2))
+        Euclidean_segment_2* ell1 = std::get_if<Euclidean_segment_2>(&s1);
+        if(Circular_arc_2* c2 = std::get_if<Circular_arc_2>(&s2))
         {
           std::pair<Hyperbolic_point_2, Hyperbolic_point_2> res = operator()(ell1->supporting_line(),
                                                                              c2->circle());
@@ -416,7 +416,7 @@ class Compute_approximate_hyperbolic_diameter
         }
         else
         {
-          Euclidean_segment_2* ell2 = boost::get<Euclidean_segment_2>(&s2);
+          Euclidean_segment_2* ell2 = std::get_if<Euclidean_segment_2>(&s2);
           Hyperbolic_point_2 p1 = operator()(ell1->supporting_line(), ell2->supporting_line());
           CGAL_assertion(p1.x()*p1.x() + p1.y()*p1.y()) < FT(1);
           return p1;
@@ -465,9 +465,9 @@ class Compute_approximate_hyperbolic_diameter
       Euclidean_line_2* l;
       Circle_2* c;
 
-      if(Circle_2* c_pq = boost::get<Circle_2>(&bis_pq))
+      if(Circle_2* c_pq = std::get_if<Circle_2>(&bis_pq))
       {
-        if(Circle_2* c_qr = boost::get<Circle_2>(&bis_qr))
+        if(Circle_2* c_qr = std::get_if<Circle_2>(&bis_qr))
         {
           std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = _gt.construct_inexact_intersection_2_object()(*c_pq, *c_qr);
 
@@ -477,14 +477,14 @@ class Compute_approximate_hyperbolic_diameter
           return inters.second;
         }
         // here bis_qr is a line
-        l = boost::get<Euclidean_line_2>(&bis_qr);
+        l = std::get_if<Euclidean_line_2>(&bis_qr);
         c = c_pq;
       }
       else
       {
         // here bis_pq is a line
-        l = boost::get<Euclidean_line_2>(&bis_pq);
-        c = boost::get<Circle_2>(&bis_qr);
+        l = std::get_if<Euclidean_line_2>(&bis_pq);
+        c = std::get_if<Circle_2>(&bis_qr);
       }
 
       std::pair<Hyperbolic_point_2, Hyperbolic_point_2> inters = _gt.construct_inexact_intersection_2_object()(*c, *l);

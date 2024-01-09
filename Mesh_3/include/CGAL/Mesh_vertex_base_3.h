@@ -115,6 +115,7 @@ public:
   // Types
   typedef Index_                      Index;
   typedef typename GT::FT             FT;
+  typedef typename Vb::Point          Point;
 
   // Constructor
   Mesh_vertex_3()
@@ -309,7 +310,7 @@ of the concept `MeshDomain_3`.
 of the concept `RegularTriangulationVertexBase_3` and defaults to
 `Regular_triangulation_vertex_base_3<GT>`.
 
-\cgalModels `MeshVertexBase_3`
+\cgalModels{MeshVertexBase_3}
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 */
@@ -317,9 +318,14 @@ template<class GT,
          class MD,
          class Vb = Regular_triangulation_vertex_base_3<GT> >
 struct Mesh_vertex_base_3 {
+#ifdef DOXYGEN_RUNNING
+  using Triangulation_data_structure = unspecified_type;
+#else
   using Triangulation_data_structure = internal::Dummy_tds_3;
+#endif
   using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
   using Cell_handle = typename Triangulation_data_structure::Cell_handle;
+  using Point = typename Vb::Point;
 
   template < class TDS3 >
   struct Rebind_TDS {
@@ -335,7 +341,11 @@ template<class GT,
          class Index,
          class Vb = Regular_triangulation_vertex_base_3<GT> >
 struct Mesh_vertex_generator_3 {
+#ifdef DOXYGEN_RUNNING
+  using Triangulation_data_structure = unspecified_type;
+#else
   using Triangulation_data_structure = internal::Dummy_tds_3;
+#endif
   using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
   using Cell_handle = typename Triangulation_data_structure::Cell_handle;
 

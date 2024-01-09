@@ -36,8 +36,6 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/queuing_mutex.h>
 
-#include <boost/mpl/if.hpp>
-
 namespace CGAL {
 
 #define CGAL_GENERATE_MEMBER_DETECTOR(X)                                           \
@@ -754,7 +752,7 @@ void Concurrent_compact_container<T, Allocator>::merge(Self &d)
 #else // not  CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   m_capacity += d.m_capacity;
 #endif // not  CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
-  // It seems reasonnable to take the max of the block sizes.
+  // It seems reasonable to take the max of the block sizes.
   m_block_size = (std::max)(m_block_size, d.m_block_size);
   // Clear d.
   d.init();

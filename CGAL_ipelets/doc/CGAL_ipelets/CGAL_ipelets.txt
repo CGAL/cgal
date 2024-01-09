@@ -123,7 +123,7 @@ Draws an half-Yao-graph with the even of k cones.
 Draws an half-theta-graph with the odd of k cones.
 <li><b>Half-Yao-k-graph with odd cones:</b>
 Draws an half-Yao-graph with the odd of k cones.
-<li><b>k cones:</b> For earch selected point.
+<li><b>k cones:</b> For each selected point.
 Draws the k cones around the point.
 </ul>
 
@@ -247,6 +247,9 @@ The Minkowski sum of the polygons with the circle is computed and drawn.
 \subsection mst_ipelet Minimum Spanning Tree
 The input selection must be a set of points. The Euclidean minimum spanning
 tree of the points is computed and drawn.
+
+\subsection nng_ipelet Nearest-neighbor graph
+The input selection must be a set of points. The nearest-neighbor graph of the points is computed and drawn.
 
 \subsection multi_delaunay_ipelet k Order Delaunay
 The input selection must be a set of points.

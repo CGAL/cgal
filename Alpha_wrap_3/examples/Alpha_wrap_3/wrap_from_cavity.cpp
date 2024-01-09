@@ -1,3 +1,5 @@
+#include "output_helper.h"
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -8,7 +10,6 @@
 #include <iostream>
 #include <string>
 
-namespace AW3 = CGAL::Alpha_wraps_3;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -18,8 +19,6 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-
   // Read the input
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off");
   std::cout << "Reading " << filename << "..." << std::endl;
@@ -28,13 +27,13 @@ int main(int argc, char** argv)
   if(!PMP::IO::read_polygon_mesh(filename, input) ||
      is_empty(input) || !is_triangle_mesh(input))
   {
-    std::cerr << "Invalid input." << std::endl;
+    std::cerr << "Invalid input:" << filename << std::endl;
     return EXIT_FAILURE;
   }
 
   std::cout << "Input: " << num_vertices(input) << " vertices, " << num_faces(input) << " faces" << std::endl;
 
-  const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 30.;
+  const double relative_alpha = (argc > 2) ? std::stod(argv[2]) : 40.;
   const double relative_offset = (argc > 3) ? std::stod(argv[3]) : 600.;
 
   // Compute the alpha and offset values

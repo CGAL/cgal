@@ -5,9 +5,11 @@
 Models of this concept are passed to the polyline simplification algorithm to indicate
 when to stop the process.
 
-\cgalHasModel `CGAL::Polyline_simplification_2::Stop_below_count_ratio_threshold`
-\cgalHasModel `CGAL::Polyline_simplification_2::Stop_below_count_threshold`
-\cgalHasModel `CGAL::Polyline_simplification_2::Stop_above_cost_threshold`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polyline_simplification_2::Stop_below_count_ratio_threshold}
+\cgalHasModels{CGAL::Polyline_simplification_2::Stop_below_count_threshold}
+\cgalHasModels{CGAL::Polyline_simplification_2::Stop_above_cost_threshold}
+\cgalHasModelsEnd
 */
 
 class PolylineSimplificationStopPredicate

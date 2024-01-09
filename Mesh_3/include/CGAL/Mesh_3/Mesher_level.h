@@ -175,7 +175,7 @@ protected:
     return derived().debug_info_element_impl(e);
   }
 
-  /** \name Private member datas */
+  /** \name Private member data */
 
   Previous_level& previous_level; /**< The previous level of the refinement
                                     process. */

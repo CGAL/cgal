@@ -19,17 +19,13 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 # Include directory of demo includes
 include_directories(BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include)
 
-# Find CGAL and CGAL Qt5
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
+# Find CGAL and CGAL Qt6
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-# Find Qt5 itself
-set(QT_USE_QTXML TRUE)
-set(QT_USE_QTMAIN TRUE)
-set(QT_USE_QTSCRIPT TRUE)
-set(QT_USE_QTOPENGL TRUE)
-find_package(Qt5 QUIET COMPONENTS Script OpenGL ScriptTools)
+# Find Qt6 itself
+find_package(Qt6 QUIET COMPONENTS Core)
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND)
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   # put plugins (which are shared libraries) at the same location as
   # executable files
   set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
@@ -47,21 +43,18 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   polyhedron_demo_plugin(p_klein_function_plugin Klein_implicit_function
                          KEYWORDS Mesh_3)
 
-else(CGAL_Qt5_FOUND AND Qt5_FOUND)
+else(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(MESH_3_MISSING_DEPS "")
 
-  if(NOT CGAL_Qt5_FOUND)
-    set(MESH_3_MISSING_DEPS "the CGAL Qt5 library, ${MESH_3_MISSING_DEPS}")
+  if(NOT CGAL_Qt6_FOUND)
+    set(MESH_3_MISSING_DEPS "the CGAL Qt6 library, ${MESH_3_MISSING_DEPS}")
   endif()
 
-  if(NOT Qt5_FOUND)
-    set(MESH_3_MISSING_DEPS "Qt5, ${MESH_3_MISSING_DEPS}")
+  if(NOT Qt6_FOUND)
+    set(MESH_3_MISSING_DEPS "Qt6, ${MESH_3_MISSING_DEPS}")
   endif()
 
-  message(
-    STATUS
-      "NOTICE: This demo requires ${MESH_3_MISSING_DEPS}and will not be compiled."
-  )
+  message("NOTICE: This demo requires ${MESH_3_MISSING_DEPS} and will not be compiled.")
 
-endif(CGAL_Qt5_FOUND AND Qt5_FOUND)
+endif(CGAL_Qt6_FOUND AND Qt6_FOUND)

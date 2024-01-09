@@ -20,8 +20,6 @@
 
 #include <CGAL/license/Envelope_3.h>
 
-
-#include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Arr_segment_traits_2.h>
@@ -259,7 +257,7 @@ public:
     }
 
     /*!
-     * Check if the triangel is vertical.
+     * Check if the triangle is vertical.
      */
     bool is_vertical() const
     {
@@ -457,7 +455,7 @@ public:
       // the points should not be collinear
       CGAL_assertion(s1 != 0);
 
-      // should also take care for the original and trasformed direction of
+      // should also take care for the original and transformed direction of
       // the segment
       Sign s2 = CGAL_NTS sign(w3 - w1);
       Sign s = CGAL_NTS sign(int(s1 * s2));
@@ -546,9 +544,9 @@ public:
                        s2 != ON_ORIENTED_BOUNDARY &&
                        s3 != ON_ORIENTED_BOUNDARY);
 
-        *o++ = make_object(std::make_pair(A, s1));
-        *o++ = make_object(std::make_pair(B, s2));
-        *o++ = make_object(std::make_pair(C, s3));
+        *o++ = std::make_pair(A, s1);
+        *o++ = std::make_pair(B, s2);
+        *o++ = std::make_pair(C, s3);
       }
       else
       {
@@ -561,8 +559,8 @@ public:
                 b2 = parent->project(a2);
         CGAL_assertion(b1 != b2);
 
-        *o++ = make_object(std::make_pair(X_monotone_curve_2(b1, b2),
-                                          ON_ORIENTED_BOUNDARY));
+        *o++ = std::make_pair(X_monotone_curve_2(b1, b2),
+                              ON_ORIENTED_BOUNDARY);
       }
       return o;
     }
@@ -611,32 +609,30 @@ public:
         return o;
       }
 
-      Object inter_obj = parent->intersection(s1,s2);
-      if (inter_obj.is_empty())
+      std::optional<std::variant<Point_3, Segment_3>> inter_obj
+        = parent->intersection(s1,s2);
+      if (inter_obj == std::nullopt)
       {
         return o;
       }
 
-      Point_3 point;
-      Segment_3 curve;
-      if (k.assign_3_object()(point, inter_obj))
-        *o++ = make_object(parent->project(point));
+      if (const Point_3* point = std::get_if<Point_3>(&(*inter_obj)))
+        *o++ = parent->project(*point);
       else
       {
-        CGAL_assertion_code(bool b = )
-        k.assign_3_object()(curve, inter_obj);
-        CGAL_assertion(b);
+        const Segment_3* curve = std::get_if<Segment_3>(&(*inter_obj));
+        CGAL_assertion(curve != nullptr);
 
-        Segment_2  proj_seg = parent->project(curve);
+        Segment_2  proj_seg = parent->project(*curve);
         if (! k.is_degenerate_2_object() (proj_seg))
         {
           Intersection_curve inter_cv (proj_seg, 1);
-          *o++ = make_object(inter_cv);
+          *o++ = inter_cv;
         }
         else
         {
           const Point_2&  p = k.construct_point_on_2_object() (proj_seg, 0);
-          *o++ = make_object(p);
+          *o++ = p;
         }
       }
 
@@ -756,7 +752,7 @@ public:
     // upper envelope)
     // precondition: the surfaces are defined above cv (to the left of cv,
     //               if cv is directed from min point to max point)
-    //               the choise between surf1 and surf2 for the envelope is
+    //               the choice between surf1 and surf2 for the envelope is
     //               the same for every point in the infinitesimal region
     //               above cv
     //               the surfaces are EQUAL over the curve cv
@@ -1019,7 +1015,7 @@ public:
     return b;
   }
 
-  // check whethe two xy-monotone surfaces (3D-triangles or segments)
+  // check whether two xy-monotone surfaces (3D-triangles or segments)
   // intersect
   bool do_intersect(const Xy_monotone_surface_3& s1,
                     const Xy_monotone_surface_3& s2) const
@@ -1044,8 +1040,9 @@ public:
   // intersect two xy-monotone surfaces (3D-triangles or segments)
   // if the triangles overlap, the result is empty
   // the result can be a segment or a point
-  Object intersection(const Xy_monotone_surface_3& s1,
-                      const Xy_monotone_surface_3& s2) const
+  std::optional< std::variant<Point_3, Segment_3>>
+  intersection(const Xy_monotone_surface_3& s1,
+               const Xy_monotone_surface_3& s2) const
   {
     CGAL_precondition(s1.is_xy_monotone());
     CGAL_precondition(s2.is_xy_monotone());
@@ -1054,14 +1051,13 @@ public:
     // first, try to intersect the bounding boxes of the triangles,
     // efficiently return empty object when the triangles are faraway
     if (!CGAL::do_overlap(s1.bbox(), s2.bbox()))
-      return Object();
+      return std::nullopt;
 
     // if intersecting two segment - alculate the intersection
-    // as in the case of dimention 2
+    // as in the case of dimension 2
     if (s1.is_segment() && s2.is_segment())
     {
-      Object res = intersection_of_segments(s1, s2);
-      return res;
+      return intersection_of_segments(s1, s2);
     }
 
     // if both triangles lie on the same (non-vertical) plane, they overlap
@@ -1070,96 +1066,92 @@ public:
     Plane_3 p1 = s1.plane();
     Plane_3 p2 = s2.plane();
     if  (p1 == p2 || p1 == p2.opposite())
-        return Object();
+        return std::nullopt;
 
     // calculate intersection between a triangle and the other triangle's
     // supporting plane
     // if there is no intersection - then the triangles have no intersection
     // between them.
-    Object inter_obj = intersection(p1, s2);
+    auto inter_obj = intersection(p1, s2);
 
-    if (inter_obj.is_empty())
-      return Object();
+    if (inter_obj == std::nullopt)
+      return std::nullopt;
 
     // otherwise, if the intersection in a point, we should check if it lies
     // inside the first triangle
-    Assign_3 assign_obj = k.assign_3_object();
-    Point_3 inter_point;
-    if (assign_obj(inter_point, inter_obj))
+    if (const Point_3* inter_point = std::get_if<Point_3>(&(*inter_obj)))
     {
-      Object res = intersection_on_plane_3(p1, s1, inter_point);
-      return res;
+      std::optional<Point_3> res = intersection_on_plane_3(p1, s1, *inter_point);
+      if (res != std::nullopt)
+        return res.value();
     }
     else
     {
       // if the intersection is a segment, we check the intersection of the
       // other plane-triangle pair
-      Segment_3 inter_seg;
-      CGAL_assertion(assign_obj(inter_seg, inter_obj));
-      assign_obj(inter_seg, inter_obj);
+      const Segment_3* inter_seg = std::get_if<Segment_3>(&(*inter_obj));
+      CGAL_assertion(inter_seg != nullptr);
 
-      inter_obj = intersection(p2, s1);
+      auto inter_obj2 = intersection(p2, s1);
 
       // if there is no intersection - then the triangles have no intersection
       // between them.
-      if (inter_obj.is_empty())
-              return Object();
+      if (inter_obj2 == std::nullopt)
+        return std::nullopt;
 
-      if (assign_obj(inter_point, inter_obj))
+      if (const Point_3* inter_point = std::get_if<Point_3>(&(*inter_obj2)))
       {
-              // if the intersection is a point, which lies on the segment,
-              // than it is the result,
-              // otherwise, empty result
-               if (k.has_on_3_object()(inter_seg, inter_point))
-                 return make_object(inter_point);
-               else
-                 return Object();
+        // if the intersection is a point, which lies on the segment,
+        // than it is the result,
+        // otherwise, empty result
+         if (k.has_on_3_object()(*inter_seg, *inter_point))
+           return *inter_point;
+         else
+           return std::nullopt;
       }
       else
       {
-              // both plane-triangle intersections are segments, which are collinear,
-              // and lie on the line which is the intersection of the two supporting
-              // planes
-        Segment_3 inter_seg2;
-              CGAL_assertion(assign_obj(inter_seg2, inter_obj));
-              assign_obj(inter_seg2, inter_obj);
+        // both plane-triangle intersections are segments, which are collinear,
+        // and lie on the line which is the intersection of the two supporting
+        // planes
+        const Segment_3* inter_seg2 = std::get_if<Segment_3>(&(*inter_obj));
+        CGAL_assertion(inter_seg2 != nullptr);
 
-              Point_3 min1 = k.construct_min_vertex_3_object()(inter_seg),
-                      max1 = k.construct_max_vertex_3_object()(inter_seg);
-              Point_3 min2 = k.construct_min_vertex_3_object()(inter_seg2),
-                      max2 = k.construct_max_vertex_3_object()(inter_seg2);
+        Point_3 min1 = k.construct_min_vertex_3_object()(*inter_seg),
+                max1 = k.construct_max_vertex_3_object()(*inter_seg);
+        Point_3 min2 = k.construct_min_vertex_3_object()(*inter_seg2),
+                max2 = k.construct_max_vertex_3_object()(*inter_seg2);
 
-               CGAL_assertion((k.collinear_3_object()(min1, min2, max1) &&
+         CGAL_assertion((k.collinear_3_object()(min1, min2, max1) &&
                          k.collinear_3_object()(min1, max2, max1)));
 
-               // we need to find the overlapping part, if exists
-               Point_3 min, max;
-               if (k.less_xyz_3_object()(min1, min2))
-                 min = min2;
-               else
-                 min = min1;
-               if (k.less_xyz_3_object()(max1, max2))
-                 max = max1;
-               else
-                 max = max2;
+         // we need to find the overlapping part, if exists
+         Point_3 min, max;
+         if (k.less_xyz_3_object()(min1, min2))
+           min = min2;
+         else
+           min = min1;
+         if (k.less_xyz_3_object()(max1, max2))
+           max = max1;
+         else
+           max = max2;
 
-               Object res;
-               Comparison_result comp_res = k.compare_xyz_3_object()(min, max);
-               if (comp_res == EQUAL)
-                 res = make_object(min);
-               else if (comp_res == SMALLER)
-                 res = make_object(Segment_3(min, max));
-               // else - empty result
-
-               return res;
+         Comparison_result comp_res = k.compare_xyz_3_object()(min, max);
+         if (comp_res == EQUAL)
+           return min;
+         else if (comp_res == SMALLER)
+           return Segment_3(min, max);
+         // else - empty result
       }
     }
+    return std::nullopt;
   }
 
   // calculate intersection between triangle & point on the same plane plane
-  Object intersection_on_plane_3(const Plane_3& plane,
-                                 const Xy_monotone_surface_3& triangle,
-                                 const Point_3& point) const
+  std::optional<Point_3>
+  intersection_on_plane_3(const Plane_3& plane,
+                          const Xy_monotone_surface_3& triangle,
+                          const Point_3& point) const
   {
     Kernel k;
     CGAL_precondition( triangle.is_xy_monotone() );
@@ -1177,14 +1169,15 @@ public:
     else
       has_on = k.has_on_3_object()(static_cast<Triangle_3>(triangle), point);
     if (has_on)
-      return make_object(point);
+      return point;
     else
-      return Object();
+      return std::nullopt;
   }
 
   // calculate intersection between 2 segments on the same vertical plane plane
-  Object intersection_of_segments(const Xy_monotone_surface_3& s1,
-                                  const Xy_monotone_surface_3& s2) const
+  std::optional< std::variant<Point_3, Segment_3>>
+  intersection_of_segments(const Xy_monotone_surface_3& s1,
+                           const Xy_monotone_surface_3& s2) const
   {
     Kernel k;
     CGAL_precondition( s1.is_xy_monotone() && s1.is_segment());
@@ -1193,14 +1186,14 @@ public:
     // if the segments are not coplanar, they cannot intersect
     if (!k.coplanar_3_object()(s1.vertex(0), s1.vertex(1),
                                s2.vertex(0), s2.vertex(1)))
-      return Object();
+      return std::nullopt;
 
     const Plane_3& plane = s1.plane();
     if (s2.plane() != plane &&
         s2.plane() != plane.opposite())
       // todo: this case is not needed in the algorithm,
       // so we don't implement it
-      return Object();
+      return std::nullopt;
 
     CGAL_precondition( !k.is_degenerate_3_object()(plane) );
     CGAL_precondition( s2.plane() == plane ||
@@ -1212,30 +1205,24 @@ public:
             v2 = plane.to_2d(s1.vertex(1));
     Segment_2 seg1_t(v1, v2);
 
-          Point_2 u1 = plane.to_2d(s2.vertex(0)),
+    Point_2 u1 = plane.to_2d(s2.vertex(0)),
             u2 = plane.to_2d(s2.vertex(1));
-          Segment_2 seg2_t(u1, u2);
+    Segment_2 seg2_t(u1, u2);
 
-          Object inter_obj = k.intersect_2_object()(seg1_t, seg2_t);
-          Assign_2 assign_2 = k.assign_2_object();
-          if (inter_obj.is_empty())
-                  return inter_obj;
+    auto inter_obj = k.intersect_2_object()(seg1_t, seg2_t);
+    if (inter_obj == std::nullopt)
+        return std::nullopt;
 
-          Point_2 inter_point;
-    Segment_2 inter_segment;
-
-    if (assign_2(inter_point, inter_obj))
-            return make_object(plane.to_3d(inter_point));
+    if (const Point_2* inter_point = std::get_if<Point_2>(&(*inter_obj)))
+      return plane.to_3d(*inter_point);
     else
     {
-      CGAL_assertion_code(bool b = )
-      assign_2(inter_segment, inter_obj);
-      CGAL_assertion(b);
+      const Segment_2* inter_segment = std::get_if<Segment_2>(&(*inter_obj));
+      CGAL_assertion(inter_segment!=nullptr);
 
-      return make_object
-        (Segment_3
-         (plane.to_3d(k.construct_vertex_2_object()(inter_segment, 0)),
-          plane.to_3d(k.construct_vertex_2_object()(inter_segment, 1))));
+      return Segment_3
+         (plane.to_3d(k.construct_vertex_2_object()(*inter_segment, 0)),
+          plane.to_3d(k.construct_vertex_2_object()(*inter_segment, 1)));
     }
 
   }
@@ -1244,8 +1231,9 @@ public:
   // and a (non degenerate) plane in 3d
   // the result object can be empty, a point, a segment or the original
   // triangle
-  Object intersection(const Plane_3& pl,
-                                  const Xy_monotone_surface_3& tri) const
+  std::optional<std::variant<Point_3, Segment_3>>
+  intersection(const Plane_3& pl,
+               const Xy_monotone_surface_3& tri) const
   {
     Kernel k;
     CGAL_precondition( tri.is_xy_monotone() );
@@ -1278,24 +1266,23 @@ public:
         points_on_plane[n_points_on_plane++] = i;
     }
 
-    CGAL_assertion(n_points_on_plane +
-            n_points_on_positive + n_points_on_negative == 3);
+    CGAL_assertion(n_points_on_plane + n_points_on_positive + n_points_on_negative == 3);
 
     // if all vertices of tri lie on the same size (positive/negative) of pl,
     // there is no intersection
     if (n_points_on_positive == 3 || n_points_on_negative == 3)
-      return Object();
+      return std::nullopt;
 
     // if all vertices of tri lie on pl then we return tri
     if (n_points_on_plane == 3)
-       return make_object(tri);
+       return tri;
 
     // if 2 vertices lie on pl, then return the segment between them
     if (n_points_on_plane == 2)
     {
       int point_idx1 = points_on_plane[0], point_idx2 = points_on_plane[1];
-      return make_object (Segment_3(tri.vertex(point_idx1),
-                                    tri.vertex(point_idx2)));
+      return Segment_3(tri.vertex(point_idx1),
+                       tri.vertex(point_idx2));
     }
 
     // if only 1 lie on pl, should check the segment opposite to it on tri
@@ -1306,7 +1293,7 @@ public:
       // if the other 2 vertices are on the same side of pl,
       // then the answer is just this vertex
       if (n_points_on_negative == 2 || n_points_on_positive == 2)
-        return make_object(tri.vertex(point_on_plane_idx));
+        return tri.vertex(point_on_plane_idx);
 
       // now it is known that one vertex is on pl, and the segment of tri
       // opposite to it should intersect pl
@@ -1315,15 +1302,14 @@ public:
       Segment_3 tri_segment(tri.vertex(point_on_plane_idx+1),
                             tri.vertex(point_on_plane_idx+2));
 
-      Object inter_result = k.intersect_3_object()(pl, tri_segment);
-      Point_3 inter_point;
-      CGAL_assertion( k.assign_3_object()(inter_point, inter_result) );
-      k.assign_3_object()(inter_point, inter_result);
+      auto inter_result = k.intersect_3_object()(pl, tri_segment);
+      const Point_3* inter_point = std::get_if<Point_3>(&(*inter_result));
+      CGAL_assertion( inter_point != nullptr );
 
       // create the resulting segment
       // (between tri[point_on_plane_idx] and inter_point)
-      return make_object(Segment_3(tri.vertex(point_on_plane_idx),
-                                   inter_point));
+      return Segment_3(tri.vertex(point_on_plane_idx),
+                                   *inter_point);
 
     }
 
@@ -1341,16 +1327,14 @@ public:
       {
         Segment_3 seg(tri.vertex(points_on_positive[pos_it]),
                       tri.vertex(points_on_negative[neg_it]));
-        Object inter_result = k.intersect_3_object()(pl, seg);
-        Point_3 inter_point;
-        // the result of the intersection must be a point
-        CGAL_assertion( k.assign_3_object()(inter_point, inter_result) );
-        k.assign_3_object()(inter_point, inter_result);
-        inter_points[n_inter_points++] = inter_point;
+        auto inter_result = k.intersect_3_object()(pl, seg);
+        const Point_3* inter_point = std::get_if<Point_3>(&(*inter_result));
+        CGAL_assertion( inter_point != nullptr );
+        inter_points[n_inter_points++] = *inter_point;
       }
 
     CGAL_assertion( n_inter_points == 2 );
-    return make_object(Segment_3(inter_points[0], inter_points[1]));
+    return Segment_3(inter_points[0], inter_points[1]);
   }
 
   // compare the value of s1 in p1 to the value of s2 in p2
@@ -1394,13 +1378,12 @@ public:
       Line_3      vl = k.construct_line_3_object() (point, dir);
 
       const Plane_3& plane = s.plane();
-      Object    res = k.intersect_3_object()(plane, vl);
-      CGAL_assertion(!res.is_empty());
-      Point_3 ip;
-      CGAL_assertion(k.assign_3_object()(ip, res));
-      k.assign_3_object()(ip, res);
+      auto res = k.intersect_3_object()(plane, vl);
+      CGAL_assertion(res != std::nullopt);
+      const Point_3* ip = std::get_if<Point_3>(&(*res));
+      CGAL_assertion(ip != nullptr);
 
-      return ip;
+      return *ip;
     }
   }
 
@@ -1438,12 +1421,10 @@ public:
     Line_2 l(tvl_point1, tvl_point2);
 
     Segment_2 seg(t1, t2);
-    Object inter_obj = k.intersect_2_object()(seg, l);
-    Point_2 inter_point;
-    CGAL_assertion_code(bool is_inter_point =)
-    k.assign_2_object()(inter_point, inter_obj);
-    CGAL_assertion(is_inter_point);
-    return plane.to_3d(inter_point);
+    auto inter_obj = k.intersect_2_object()(seg, l);
+    const Point_2* inter_point = std::get_if<Point_2>(&(*inter_obj));
+    CGAL_assertion(inter_point != nullptr);
+    return plane.to_3d(*inter_point);
   }
 
   Point_2 construct_middle_point(const Point_2& p1, const Point_2& p2) const
@@ -1495,14 +1476,11 @@ public:
     typename Kernel::Line_2        vl = k.construct_line_2_object() (pt, dir);
 
     // Compute the intersetion between the vertical line and the given curve.
-    Object    res = k.intersect_2_object()(seg, vl);
-    Point_2   ip;
-    bool      ray_shoot_successful = k.assign_2_object()(ip, res);
+    auto res = k.intersect_2_object()(seg, vl);
+    const Point_2* ip = std::get_if<Point_2>(&(*res));
+    CGAL_assertion (ip != nullptr);
 
-    if (! ray_shoot_successful)
-      CGAL_assertion (ray_shoot_successful);
-
-    return (ip);
+    return *ip;
   }
 };
 

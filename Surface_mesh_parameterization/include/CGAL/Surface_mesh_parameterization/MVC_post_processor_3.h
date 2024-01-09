@@ -61,7 +61,7 @@ namespace Surface_mesh_parameterization {
 /// the convexification of the initial (2D) parameterization and the resolution
 /// of a linear system with coefficients based on Mean Value Coordinates.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
@@ -460,7 +460,7 @@ private:
     CGAL_precondition(!ct.is_infinite(fh));
     typedef typename CT::Vertex_handle                    Vertex_handle;
 
-    // Doing it explicitely rather than a loop for clarity
+    // Doing it explicitly rather than a loop for clarity
     Vertex_handle vh0 = fh->vertex(0);
     Vertex_handle vh1 = fh->vertex(1);
     Vertex_handle vh2 = fh->vertex(2);
@@ -598,7 +598,7 @@ private:
   {
     Error_code status = OK;
 
-    NT Du, Dv;
+    double Du, Dv;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv)) {
       status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;

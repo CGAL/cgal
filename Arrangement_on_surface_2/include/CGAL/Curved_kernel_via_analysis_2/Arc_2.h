@@ -23,7 +23,7 @@
 
 #include <iostream>
 #include <type_traits>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 
 #include <CGAL/Bbox_2.h>
@@ -155,13 +155,13 @@ public:
     mutable bool _m_left_to_right;
 
     //! stores the index of an interval this arc belongs to
-    mutable boost::optional<int> _m_interval_id;
+    mutable std::optional<int> _m_interval_id;
 
     //! stores boundary value in x-range of non-vertical interval
-    mutable boost::optional< Bound > _m_boundary_in_interval;
+    mutable std::optional< Bound > _m_boundary_in_interval;
 
     //! stores a bbox for an arc
-    mutable boost::optional< CGAL::Bbox_2 > _m_bbox;
+    mutable std::optional< CGAL::Bbox_2 > _m_bbox;
 
     //!@}
 };
@@ -1088,7 +1088,7 @@ public:
     }
 
     /*!\brief
-     * Compares the relative vertical aligment of this arc with a second
+     * Compares the relative vertical alignment of this arc with a second
      * immediately to the left of one of their intersection points.
      *
      * If one of the curves is vertical (emanating downward from p),
@@ -1116,7 +1116,7 @@ public:
     }
 
     /*!\brief
-     * Compares the relative vertical aligment of this arc with a second
+     * Compares the relative vertical alignment of this arc with a second
      * immediately to the right of one of their intersection points.
      *
      * If one of the curves is vertical (emanating downward from p),
@@ -1436,7 +1436,7 @@ public:
      * \pre p != q
      * \pre both points must be interior and must lie on \c cv
      */
-    // do we need this method separetely ??
+    // do we need this method separately ??
     Kernel_arc_2 trim(const Point_2& p, const Point_2& q) const {
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_ARC(Trim_2, trim_2)
@@ -1937,7 +1937,7 @@ protected:
      * \param cv2 the second arc
      * \param where the location in parameter space
      * \param x0 The x-coordinate
-     * \param perturb determines whether to pertub slightly to the left/right
+     * \param perturb determines whether to perturb slightly to the left/right
      * \return the relative vertical alignment
      *
      * \pre !is_on_bottom_top(where)
@@ -1964,7 +1964,7 @@ protected:
      * \param cv2 the second arc
      * \param where the location in parameter space
      * \param x0 The x-coordinate
-     * \param perturb determines whether to pertub slightly to the left/right
+     * \param perturb determines whether to perturb slightly to the left/right
      * \return the relative vertical alignment
      */
      CGAL::Comparison_result _compare_coprime(
@@ -2240,8 +2240,8 @@ protected:
         rep._m_is_vertical = this->ptr()->_m_is_vertical;
         rep._m_left_to_right = this->ptr()->_m_left_to_right;
 
-        rep._m_interval_id = boost::none;
-        rep._m_boundary_in_interval = boost::none;
+        rep._m_interval_id = std::nullopt;
+        rep._m_boundary_in_interval = std::nullopt;
 
         return std::make_pair(Kernel_arc_2(rep), cmp);
     }
@@ -2372,8 +2372,8 @@ protected:
             this->ptr()->_m_arcno_max = arcno();
 
         // invalidate curve-specific data
-        this->ptr()->_m_interval_id = boost::none;
-        this->ptr()->_m_boundary_in_interval = boost::none;
+        this->ptr()->_m_interval_id = std::nullopt;
+        this->ptr()->_m_boundary_in_interval = std::nullopt;
     }
     //!@}
 
@@ -2595,7 +2595,7 @@ protected:
     /*!\brief
      * computes intersection of two arcs meeting only at their curve ends.
      *
-     * Intersection points are returned in the output interator \c oi as object
+     * Intersection points are returned in the output iterator \c oi as object
      * of type std::pair<Point_2, int> (intersection + multiplicity)
      *
      * \param cv1 the first arc

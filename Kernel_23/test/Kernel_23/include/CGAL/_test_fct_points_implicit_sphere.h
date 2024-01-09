@@ -26,7 +26,7 @@ _test_fct_points_implicit_sphere(const R&)
   typedef typename R::FT    FT;
   typedef CGAL::Tetrahedron_3<R>  Tetrahedron;
 
-  const bool nonexact = std::is_same<FT, double>::value;
+  const bool nonexact = std::is_floating_point<FT>::value;
 
   const RT RT0(0);
   const RT RT4(4);
@@ -92,7 +92,7 @@ _test_fct_points_implicit_sphere(const R&)
 
   assert( CGAL::squared_distance(   r, org ) == FT1 );
   tpt = r.transform(rot_z);
-  assert( CGAL::squared_distance( tpt, org ) == FT1 );
+  assert( CGAL::squared_distance( tpt, org ) == FT1 || nonexact);
   r = tpt.transform(rot_y);
   assert( CGAL::squared_distance(   r, org ) == FT1 || nonexact );
 

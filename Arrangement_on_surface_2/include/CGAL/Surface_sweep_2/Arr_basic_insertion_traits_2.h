@@ -20,7 +20,7 @@
 
 /*! \file
  *
- * Defintion of the Arr_basic_insertion_traits_2<Traits,Arrangement> class.
+ * Definition of the Arr_basic_insertion_traits_2<Traits,Arrangement> class.
  */
 
 #include <CGAL/Arr_tags.h>
@@ -440,7 +440,7 @@ public:
     { return (m_base_eq(p1.base(), p2.base())); }
   };
 
-  /*! Obtain a Equal_2 function object */
+  /*! Obtain an `Equal_2` function object */
   Equal_2 equal_2_object() const
   { return (Equal_2(m_base_traits->equal_2_object())); }
 

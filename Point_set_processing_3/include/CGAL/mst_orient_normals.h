@@ -39,11 +39,7 @@
 
 #include <CGAL/property_map.h>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h> // work around a
-                                                      // bug in boost
-                                                      // 1.54
-
-
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
 
 #if defined(BOOST_MSVC)
@@ -156,7 +152,7 @@ public:
 /// Helper class: Propagate_normal_orientation
 ///
 /// This class is used internally by mst_orient_normals()
-/// to propage the normal orientation, starting from a source point
+/// to propagate the normal orientation, starting from a source point
 /// and following the adjacency relations of vertices in a Minimum Spanning Tree.
 /// It does not orient normals that are already oriented.
 /// It does not propagate the orientation if the angle between 2 normals > angle_max.
@@ -548,13 +544,10 @@ create_mst_graph(
    \ingroup PkgPointSetProcessing3Algorithms
    Orients the normals of the range of `points` using the propagation
    of a seed orientation through a minimum spanning tree of the Riemannian graph.
-   This method modifies the order of input points so as to pack all sucessfully oriented points first,
+   This method modifies the order of input points so as to pack all successfully oriented points first,
    and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
    For this reason it should not be called on sorted containers.
    It is based on \cgalCite{cgal:hddms-srup-92}.
-
-   \warning This function may fail when Boost version 1.54 is used,
-   because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
 
    \pre Normals must be unit vectors
    \pre `k >= 2`

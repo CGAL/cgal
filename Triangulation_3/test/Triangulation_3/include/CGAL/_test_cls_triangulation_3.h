@@ -10,20 +10,20 @@
 //
 // Author(s)     : Francois Rebufat
 
+#include "_test_cls_iterator.h"
+#include "_test_cls_circulator.h"
+#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
+#include <CGAL/Testsuite/use.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/use.h>
+
 #include <cassert>
 #include <iostream>
 #include <fstream>
 #include <list>
 #include <vector>
 #include <type_traits>
-
-#include "_test_cls_iterator.h"
-#include "_test_cls_circulator.h"
-
-#include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
-#include <CGAL/use.h>
-#include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 template <class Triangulation, class Container>
 bool check_all_are_finite(Triangulation* tr, const Container& cont)
@@ -119,6 +119,9 @@ _test_cls_triangulation_3(const Triangulation &)
   CGAL_USE_TYPE(difference_type);
   CGAL_USE_TYPE(Vertex_iterator);
   CGAL_USE_TYPE(Cell_iterator);
+
+  CGAL_USE_TYPE(typename Cls::Periodic_tag);
+  CGAL_USE_TYPE(typename Cls::Weighted_tag);
 
   // +++ We define now some points for building triangulations +++++//
 
@@ -584,7 +587,7 @@ _test_cls_triangulation_3(const Triangulation &)
 //   std::cout << " done" << std::endl;
 
 
-  // Test inserts function separatelly.
+  // Test inserts function separately.
 
   std::cout << "    Testing insertions   " << std::endl;
   Locate_type lt;
@@ -1028,23 +1031,31 @@ _test_cls_triangulation_3(const Triangulation &)
   Point p28(1,3,5);
   v0=T0_1.insert(p28);
 
-  std::cout << "    Testing Iterator   "<< std::endl;
+  std::cout << "    Testing Iterators and Ranges   "<< std::endl;
   _test_vertex_iterator(T0_1);
   _test_triangulation_iterator(T0_1);
+  _test_vertices_array(T0_1);
   _test_vertex_iterator(T0);
   _test_triangulation_iterator(T0);
+  _test_vertices_array(T0);
   _test_vertex_iterator(T2_0);
   _test_triangulation_iterator(T2_0);
+  _test_vertices_array(T2_0);
   _test_vertex_iterator(T1_0);
   _test_triangulation_iterator(T1_0);
+  _test_vertices_array(T1_0);
   _test_vertex_iterator(T3_1);
   _test_triangulation_iterator(T3_1);
+  _test_vertices_array(T3_1);
   _test_vertex_iterator(T3_0);
   _test_triangulation_iterator(T3_0);
+  _test_vertices_array(T3_0);
   _test_vertex_iterator(T3_2);
   _test_triangulation_iterator(T3_2);
+  _test_vertices_array(T3_2);
   _test_vertex_iterator(T3_3);
   _test_triangulation_iterator(T3_3);
+  _test_vertices_array(T3_3);
 
   std::cout << "    Testing Circulator  "<< std::endl;
   _test_circulator(T0);

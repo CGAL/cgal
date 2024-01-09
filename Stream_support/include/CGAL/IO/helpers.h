@@ -54,7 +54,10 @@ static inline std::string get_file_extension(const std::string fname)
     return std::string();
 
   std::string ext = fname.substr(dot+1, fname.length() - dot - 1);
-  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+  std::transform(ext.begin(), ext.end(), ext.begin(),
+                 [](char c) {
+                   return static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+                 });
 
   return ext;
 }
@@ -74,23 +77,23 @@ struct is_Point_set_3 : has_Point_set<T> { };
 // Point_set_3 and strings also functions as ranges, but we want to match polygon soups here
 template <typename T>
 struct is_Range
-  : public boost::mpl::and_<
-             boost::has_range_const_iterator<T>, // should be a range
-             boost::mpl::not_<is_Point_set_3<T> >, // but not a Point_set_3
-             boost::mpl::not_<boost::is_convertible<T, std::string> > > // or a std::string / char [x]
+  : public std::bool_constant<
+             boost::has_range_const_iterator<T>::value && // should be a range
+             !is_Point_set_3<T>::value && // but not a Point_set_3
+             !std::is_convertible_v<T, std::string> > // or a std::string / char [x]
 { };
 
 template <class T>
-CGAL_CPP17_INLINE constexpr bool is_Range_v = is_Range<T>::value;
+inline constexpr bool is_Range_v = is_Range<T>::value;
 
 // For polygon meshes
 template <typename T>
 struct is_Point_set_or_Range_or_Iterator
-  : public boost::mpl::or_<is_Point_set_3<T>, is_Range<T>, is_iterator<T> >
+  : public std::bool_constant<is_Point_set_3<T>::value || is_Range<T>::value || is_iterator<T>::value >
 { };
 
 template <class T>
-CGAL_CPP17_INLINE constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
+inline constexpr bool is_Point_set_or_Range_or_Iterator_v = is_Point_set_or_Range_or_Iterator<T>::value;
 
 } // end namespace internal
 } // end namespace IO

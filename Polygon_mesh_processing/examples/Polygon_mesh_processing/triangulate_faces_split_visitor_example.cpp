@@ -6,15 +6,14 @@
 
 #include <iostream>
 #include <fstream>
-#include <map>
 #include <string>
 #include <unordered_map>
 #include <utility>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3                    Point;
-typedef CGAL::Surface_mesh<Point>          Surface_mesh;
-typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
+typedef Kernel::Point_3                                     Point;
+typedef CGAL::Surface_mesh<Point>                           Mesh;
+typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
 
 class Insert_iterator
 {
@@ -41,7 +40,7 @@ public:
 };
 
 
-struct Visitor
+struct Visitor : public CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor<Mesh>
 {
    typedef std::unordered_map<face_descriptor,face_descriptor> Container;
 
@@ -78,7 +77,7 @@ int main(int argc, char* argv[])
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
   std::ifstream input(filename);
 
-  Surface_mesh mesh;
+  Mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
     std::cerr << "Not a valid off file." << std::endl;
@@ -87,7 +86,7 @@ int main(int argc, char* argv[])
 
   std::unordered_map<face_descriptor,face_descriptor> t2q;
 
-  Surface_mesh copy;
+  Mesh copy;
 
   CGAL::copy_face_graph(mesh, copy, CGAL::parameters::face_to_face_output_iterator(Insert_iterator(t2q)));
 

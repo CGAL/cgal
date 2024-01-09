@@ -50,13 +50,13 @@ public:
 
   const FT total_weight() const { return m_total_weight; }
 
-  template <typename SampleContainer>
-  void set_total_weight(const SampleContainer& samples)
+  template <typename Samples, typename SampleContainer>
+  void set_total_weight(const Samples& m_samples, const SampleContainer& samples)
   {
     m_total_weight = (FT)0;
     for (typename SampleContainer::const_iterator it = samples.begin();
          it != samples.end(); ++ it)
-      m_total_weight += (*it)->mass();
+      m_total_weight += m_samples[*it].mass();
   }
 
   FT finalize(const FT alpha = FT(0.5)) const

@@ -621,7 +621,7 @@ void Viewer::initialize_buffers()
         buffers[7].release();
         vao[7].release();
 
-        //Querry Point
+        //Query Point
         vao[8].bind();
         buffers[8].bind();
         buffers[8].allocate(pos_queryPoint->data(), pos_queryPoint->size()*sizeof(float));
@@ -863,7 +863,7 @@ void Viewer::initialize_buffers()
         }
         vao[16].release();
 
-        //Querry point Sphere
+        //Query point Sphere
         vao[17].bind();
         buffers[8].bind();
         centerLocation[0] = rendering_program_spheres.attributeLocation("center");
@@ -1307,7 +1307,7 @@ void Viewer::draw()
             // draw the rest to-be-inserted vertices
             rendering_program.bind();
             vao[24].bind();
-            color.setRgbF(0.7,0.7,0.7);
+            color.setRgbF(0.7f,0.7f,0.7f);
             rendering_program.setUniformValue(colorLocation[0],color);
             rendering_program.setUniformValue("point_size", 8.0f);
             glDrawArrays(GL_POINTS, 0, incremental_points->size()/3);
@@ -1510,7 +1510,7 @@ void Viewer::draw()
             // draw the rest to-be-inserted vertices
             rendering_program_spheres.bind();
             vao[25].bind();
-            color.setRgbF(0.7,0.7,0.7);
+            color.setRgbF(0.7f,0.7f,0.7f);
             rendering_program_spheres.setUniformValue(colorLocation[1],color);
             glDrawArraysInstanced(GL_TRIANGLES, 0, points_sphere->size()/3, incremental_points->size()/3);
             vao[25].release();
@@ -2381,7 +2381,7 @@ void Viewer::toggleIncremental(bool on) {
             }//end-if-pts
             // sorts points in a way that improves space locality
             CGAL::spatial_sort( m_incrementalPts.begin(), m_incrementalPts.end() );
-            // set the current to "hightlight the new point"
+            // set the current to "highlight the new point"
             m_curStep = INIT;
         }/* else resume play */
 
@@ -2472,7 +2472,7 @@ void Viewer::incremental_insert() {
         }//end-for
         // erase existing vertices
         initClean();
-        // set the current to "hightlight the new point"
+        // set the current to "highlight the new point"
         m_curStep = INIT;
     }
 

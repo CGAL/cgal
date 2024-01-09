@@ -317,10 +317,10 @@ public:
     IpeSegmentSubPath*
     create_polyline(const iterator first, const iterator last,bool setclose=false) const
     {
-      if (boost::next(first)!=last){
+      if (std::next(first)!=last){
         IpeSegmentSubPath* SSP_ipe = new IpeSegmentSubPath();
         IpeVector Prev_pt=IpeVector(CGAL::to_double(first->x()),CGAL::to_double(first->y())) ;
-        for (iterator it = boost::next(first);it!=last;++it){
+        for (iterator it = std::next(first);it!=last;++it){
           IpeVector Cur_pt=IpeVector(CGAL::to_double(it->x()),CGAL::to_double(it->y()));
           SSP_ipe -> AppendSegment(Prev_pt,Cur_pt);
           Prev_pt=Cur_pt;
@@ -403,9 +403,9 @@ public:
     {
       IpeSegmentSubPath* SSP_ipe = new IpeSegmentSubPath;
       IpeVector ipeS=IpeVector( CGAL::to_double(std::get<1>(arc).x()),
-                                CGAL::to_double(std::get<1>(arc).y()));//convert ot ipe format
+                                CGAL::to_double(std::get<1>(arc).y()));//convert to ipe format
       IpeVector ipeT=IpeVector( CGAL::to_double(std::get<2>(arc).x()),
-                                CGAL::to_double(std::get<2>(arc).y()));//convert ot ipe format
+                                CGAL::to_double(std::get<2>(arc).y()));//convert to ipe format
       SSP_ipe->AppendArc(IpeMatrix(sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),0,
                                    0,(std::get<3>(arc)==CGAL::COUNTERCLOCKWISE?1:-1)*
                                      sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),
@@ -636,12 +636,11 @@ public:
     template<class iterator>
     void
     draw_in_ipe(const iterator begin,const iterator end,const Iso_rectangle_2& bbox,bool make_grp=true,bool deselect_all=false,
-     std::enable_if_t<  boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Point_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Segment_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Circle_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
-                                         std::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
-                                      > > > >::value
+     std::enable_if_t<  std::is_same_v<typename std::iterator_traits<iterator>::value_type,Point_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Segment_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Circle_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Polygon_2>
                     >* = nullptr) const
     {
       for (iterator it=begin;it!=end;++it)
@@ -945,7 +944,7 @@ public:
               //retrieve circle arcs
               if(SSP_ipe -> Segment(j).Type()==IpePathSegment::EArc &&
                  is_only_rotated_or_scaled(object->AsPath()->Matrix()))
-              {//retreve circle arcs
+              {//retrieve circle arcs
                 if ( !CGAL::Is_in_tuple<Circular_arc_2,typename multi_output_iterator::Value_type_tuple>::value ){
                   to_deselect=true;
                   continue;

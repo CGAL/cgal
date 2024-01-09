@@ -8,7 +8,7 @@
  * this boundary side. A model of this concept can handle curves that reach the
  * left boundary side when it is closed.
 
- * \cgalRefines `ArrangementLeftSideTraits_2`
+ * \cgalRefines{ArrangementLeftSideTraits_2}
 
 \sa `ArrangementClosedRightTraits_2`,
     `ArrangementClosedBottomTraits_2`,

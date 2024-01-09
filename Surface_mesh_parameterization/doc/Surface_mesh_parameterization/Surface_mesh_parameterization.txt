@@ -441,7 +441,7 @@ Orbifold-Tutte Planar Embedding was introduced by Aigerman and Lipman \cgalCite{
 and is a generalization of Tutte’s embedding to other topologies, and in particular
 spheres, which we consider here. The orbifold-Tutte embedding bijectively maps
 the original surface, that is required to be a topological ball, to a canonical,
-topologically equivalent, two-dimensional flat surface called an Euclidean orbifold.
+topologically equivalent, two-dimensional flat surface called a Euclidean orbifold.
 There are 17 Euclidean orbifolds, of which only the 4 sphere orbifolds are currently implemented
 in CGAL.
 
@@ -547,6 +547,9 @@ and replaces a wrapper which had a more complicated API.
 Iterative authalic parameterization was added in CGAL 5.2 by Mael Rouxel-Labbé,
 based on a prototype developed by Hardik Jain.
 
+In CGAL 6.0 this package no longer uses the fork of OpenNL that was distributed with CGAL
+and hence was removed.
+
+
 */
 } /* namespace CGAL */
-

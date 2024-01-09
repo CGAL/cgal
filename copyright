@@ -9,18 +9,22 @@ R = RU Groningen
 
 
  AABB_tree                               I
+ Advancing_front_surface_reconstruction  I
  Algebraic_foundations                   ETIMU
  Algebraic_kernel_d                      IM
  Algebraic_kernel_for_circles            I
  Algebraic_kernel_for_spheres            I
  Alpha_shapes_2                          I
  Alpha_shapes_3                          I
+ Alpha_wrap_3                     I      Google LLC (USA).
  Apollonius_graph_2                      I
  Approximate_min_ellipsoid_d             E
  Arithmetic_kernel                       M
  Arrangement_on_surface_2                T
+ Barycentric_coordinates_2               IG; Università della Svizzera italiana (Switzerland)
  BGL                                     G
  Boolean_set_operations_2                T
+ Bounding_volumes                        E
  Box_intersection_d                      M
  CGAL_Core                               NYU; Chee Yap agreed to upgrade
  CGAL_ImageIO                            third party lib under LGPL
@@ -29,7 +33,9 @@ R = RU Groningen
  Circular_kernel_2                       I
  Circular_kernel_3                       I
  Circulator                              ETIMU
- Combinatorial_map                       Cnrs; Guillaume Damiand upgraded
+ Classification                          G
+ Combinatorial_map                       CNRS; Guillaume Damiand upgraded
+ Cone_spanners_2                         University of Western Sydney (Australia)
  Conic_2                                 ETIMU
  Convex_decomposition_3                  M
  Convex_hull_2                           M
@@ -41,24 +47,28 @@ R = RU Groningen
  Envelope_2                              T
  Envelope_3                              T
  Filtered_kernel                         I
+ Generalized_map                         CNRS
  Generator                               ETIMU
  Geomview                                ETIMU
  GraphicsView                            G
  HalfedgeDS                              ETIMU
  Hash_map                                M
+ Heat_method_3                           G; Carnegie Mellon University
  Homogeneous_kernel                      ETIMU
+ Hyperbolic_triangulation_2              I
+ Inscribed_areas                         ET
  Installation                            ETIMU
  Interpolation                           I
  Intersections_2                         ETIMU
  Intersections_3                         ETIMU
  Interval_skip_list                      G
  Interval_support                        M
- Inventor                                ETIMU
  Jet_fitting_3                           I
  Kernel_23                               ETIMU
  Kernel_d                                ETIMU
  LEDA                                    ETIMU
  Largest_empty_rect_2                    T
+ Linear_cell_complex                     CNRS
  MacOSX                                  F
  Maintenance                             ETIMUG
  Manual                                  ETIMU
@@ -66,6 +76,7 @@ R = RU Groningen
  Matrix_search                           E
  Mesh_2                                  I
  Mesh_3                                  I
+ Mesher_level                            I
  Min_annulus_d                           E
  Min_circle_2                            E
  Min_ellipse_2                           E
@@ -79,48 +90,80 @@ R = RU Groningen
  Nef_2                                   M
  Nef_3                                   M
  Nef_S2                                  M
+ NewKernel_d                             I
  Number_types                            ETIMU
- OpenNL                                  third party lib under LGPL 3
+ Optimal_bounding_box                    G
+ Optimal_transportation_reconstruction_2 I
  Optimisation_basic                      E
  Optimisation_doc                        E
+ Orthtree                                I
  Partition_2                             M
+ Periodic_2_triangulation_2              I
  Periodic_3_triangulation_3              I
+ Periodic_3_mesh_3                       I
+ Periodic_4_hyperbolic_triangulation_2   I
  Point_set_2                             Halle transfered copyright to Inria
+ Point_set_3                             G
  Point_set_processing_3                  I
  Poisson_surface_reconstruction_3        I
  Polygon                                 ETIMU
+ Polygonal_surface_reconstruction        Liangliang Nan
+ Polygon_mesh_processing                 G
  Polyhedron                              E
- Polyhedron_IO                           E
+ Polyline_simplification_2               G
  Polynomial                              M
  Polytope_distance_d                     E
  Principal_component_analysis            I
+ Principal_component_analysis_LGPL       I
  Profiling_tools                         ETIMU
+ Property_map                            I
  QP_solver                               E
- Qt_widget                               I
  Random_numbers                          ETIMU
  Ridges_3                                I
- Robustness                              M
+ Scale_space_reconstruction_3            I
  STL_Extension                           ETIMU
  Scripts                                 ETIMU
  SearchStructures                        E
  Segment_Delaunay_graph_2                I Menelaos removed Notre Dame U
+ Segment_Delaunay_graph_Linf_2           Università della Svizzera italiana
  Set_movable_separability_2              T
+ Shape_detection                         I
+ Shape_regularization                    GI
  Skin_surface_3                          R Gert Vegter agreed to upgrade
+ SMDS_3                                  I
  Snap_rounding_2                         T
+ Solver_interface                        I
  Spatial_searching                       U
  Spatial_sorting                         I
- Straight_skeleton_2                     Cacciola; Fernando agreed to upgrade to GPL
+ STL_Extension                           ETIMU
+ Straight_skeleton_2                     G
+ Straight_skeleton_extrusion_2           G
  Stream_lines_2                          I
  Stream_support                          ETIMU
  Subdivision_method_3                    G
- Surface_mesh_parameterization           I
- Surface_mesh_simplification             G
+ Surface_mesh                            G; Bielefeld University; RWTH Aachen
+ Surface_mesh_approximation              I
+ Surface_mesh_deformation                G
  Surface_mesher                          I
+ Surface_mesh_parameterization           I
+ Surface_mesh_segmentation               G
+ Surface_mesh_shortest_path              G
+ Surface_mesh_simplification             G
+ Surface_mesh_skeletonization            G
+ Surface_mesh_topology                   CNRS
+ Surface_sweep_2                         T
+ TDS_2                                   I
+ TDS_3                                   I
  Testsuite                               IG
+ Tetrahedral_remeshing                   G; Telecom Paris (France)
+ Triangulation                           I
  Triangulation_2                         I
  Triangulation_3                         I
+ Triangulation_on_sphere_2               I
  Union_find                              M
+ Visibility_2                            Braunschweig University (Germany).
  Voronoi_diagram_2                       F  I sent mail to Forth
+ Weights                                 G
  Width_3                                 E
  iostream                                ETIMU
  kdtree                                  T

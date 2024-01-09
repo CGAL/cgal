@@ -12,13 +12,12 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL QUIET COMPONENTS Qt5 OPTIONAL_COMPONENTS Core)
-find_package(Qt5 QUIET COMPONENTS Gui Widgets)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core Qt6)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
-  include(${CGAL_USE_FILE})
+if (CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_compile_definitions(QT_NO_KEYWORDS)
-  include_directories( BEFORE ./ )
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   # Arrangement package includes
   add_definitions(-DQT_NO_KEYWORDS)
@@ -50,7 +49,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   endif()
 
 
-  qt5_wrap_ui(arrangement_2_uis
+  qt6_wrap_ui(arrangement_2_uis
               ArrangementDemoWindow.ui
               NewTabDialog.ui
               OverlayDialog.ui
@@ -58,7 +57,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
               AlgebraicCurveInputDialog.ui
               RationalCurveInputDialog.ui)
 
-  qt5_wrap_cpp(CGAL_Qt5_MOC_FILES
+  qt6_wrap_cpp(CGAL_Qt6_MOC_FILES
                ArrangementDemoWindow.h
                ArrangementDemoTab.h
                GraphicsViewCurveInput.h
@@ -70,7 +69,7 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                ColorItemEditor.h
                PropertyValueDelegate.h)
 
-  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES Arrangement_on_surface_2.qrc)
+  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES Arrangement_on_surface_2.qrc)
 
   add_executable(arrangement_2
                  arrangement_2.cpp
@@ -107,13 +106,13 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
                  ArrangementIO.cpp
                  ${UTILS_COMPILE_FILES}
                  ${arrangement_2_uis}
-                 ${CGAL_Qt5_RESOURCE_FILES}
-                 ${CGAL_Qt5_MOC_FILES})
+                 ${CGAL_Qt6_RESOURCE_FILES}
+                 ${CGAL_Qt6_MOC_FILES})
 
-  target_link_libraries(arrangement_2 Qt5::Core Qt5::Gui Qt5::Widgets)
-  target_link_libraries(arrangement_2 CGAL::CGAL CGAL::CGAL_Qt5)
+  target_link_libraries(arrangement_2 PRIVATE Qt6::Widgets)
+  target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6)
   if(CGAL_Core_FOUND)
-    target_link_libraries(arrangement_2 CGAL::CGAL_Core)
+    target_link_libraries(arrangement_2 PRIVATE CGAL::CGAL_Core)
   endif()
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS arrangement_2)
@@ -124,15 +123,11 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 else()
   set(MISSING_DEPS "")
 
-  if(NOT CGAL_FOUND)
-    set(MISSING_DEPS "CGAL, ${MISSING_DEPS}")
+  if(NOT CGAL_Qt6_FOUND)
+    set(MISSING_DEPS "the CGAL Qt6 library, ${MISSING_DEPS}")
   endif()
-  if(NOT CGAL_Qt5_FOUND)
-    set(MISSING_DEPS "the CGAL Qt5 library, ${MISSING_DEPS}")
+  if(NOT Qt6_FOUND)
+    set(MISSING_DEPS "Qt6, ${MISSING_DEPS}")
   endif()
-  if(NOT Qt5_FOUND)
-    set(MISSING_DEPS "Qt5, ${MISSING_DEPS}")
-  endif()
-  message(STATUS
-          "NOTICE: This demo requires ${MISSING_DEPS} and will not be compiled.")
+  message("NOTICE: This demo requires ${MISSING_DEPS} and will not be compiled.")
 endif()

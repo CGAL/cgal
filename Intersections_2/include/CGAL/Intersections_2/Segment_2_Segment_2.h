@@ -435,6 +435,22 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
                                            : CGAL::make_array( _seg2->point(s2s2_id[c][2]), _seg2->point(s2s2_id[c][3]),
                                                                _seg1->point(s2s2_id[c][0]), _seg1->point(s2s2_id[c][1]) );
 
+    // special case for vertical and horizontal segments
+    if (std::is_floating_point<typename K::FT>::value &&
+        std::is_same<typename K::Kernel_tag, Cartesian_tag>::value)
+    {
+      if (pts[0].x()==pts[1].x() && pts[2].y()==pts[3].y())
+      {
+        _intersection_point = K().construct_point_2_object()(pts[0].x(), pts[2].y());
+        return _result;
+      }
+      if (pts[0].y()==pts[1].y() && pts[2].x()==pts[3].x())
+      {
+        _intersection_point = K().construct_point_2_object()(pts[2].x(), pts[0].y());
+        return _result;
+      }
+    }
+
     typename K::FT alpha =  s2s2_alpha(pts[0].x(), pts[0].y(), pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
 
     _intersection_point = K().construct_barycenter_2_object()(pts[0], alpha, pts[1]);

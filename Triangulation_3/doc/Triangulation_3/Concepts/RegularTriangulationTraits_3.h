@@ -13,9 +13,11 @@ Triangulation3secclassRegulartriangulation. To simplify notation, \f$
 p\f$ will often denote in the sequel either the point \f$ p\in\mathbb{R}^3\f$
 or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
 
-\cgalRefines `TriangulationTraits_3`
+\cgalRefines{TriangulationTraits_3}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Regular_triangulation_3`
 

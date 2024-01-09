@@ -22,9 +22,8 @@
  * Definition of the Arr_overlay_ss_visitor class-template.
  */
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
-#include <boost/variant/apply_visitor.hpp>
+#include <variant>
+#include <optional>
 
 #include <unordered_map>
 
@@ -289,50 +288,50 @@ protected:
   /*!
    * Update the boundary vertices map.
    * This function is used when the parameter space has an identified (or
-   * contructed) boundary side. We assume that if the parameter space has a
-   * contructed boundary side, it also must have an identified boundary side.
+   * constructed) boundary side. We assume that if the parameter space has a
+   * constructed boundary side, it also must have an identified boundary side.
    * \param event The event.
    * \param v The vertex.
    * \param tag The tag used for dispatching.
    */
   void _map_boundary_vertices(Event* event, Vertex_handle v,
-                              boost::mpl::bool_<true> /* tag */);
+                              std::bool_constant<true> /* tag */);
 
   /*!
    * Update the boundary vertices map.
    * This function is used when the parameter space does not have an identified
-   * boundary side, and thus, neither it has a contructed boundary side.
+   * boundary side, and thus, neither it has a constructed boundary side.
    * \param event The event.
    * \param v The vertex.
    * \param tag The tag used for dispatching.
    */
   void _map_boundary_vertices(Event* event, Vertex_handle v,
-                              boost::mpl::bool_<false> /* tag */);
+                              std::bool_constant<false> /* tag */);
 
   /*!
    * Update a newly created vertex using the overlay traits.
    * This function is used when the parameter space has an identified (or
-   * contructed) boundary side. We assume that if the parameter space has a
-   * contructed boundary side, it also must have an identified boundary side.
+   * constructed) boundary side. We assume that if the parameter space has a
+   * constructed boundary side, it also must have an identified boundary side.
    * \param event The event associated with the new vertex.
    * \param res_v The new vertex in the overlaid arrangement.
    * \param sc The subcurve incident to the event.
    * \param tag The tag used for dispatching.
    */
   void _create_vertex(Event* event, Vertex_handle res_v, Subcurve* sc,
-                      boost::mpl::bool_<true> /* tag */);
+                      std::bool_constant<true> /* tag */);
 
   /*!
    * Update a newly created vertex using the overlay traits.
    * This function is used when the parameter space does not have an identified
-   * boundary side, and thus, neither it has a contructed boundary side.
+   * boundary side, and thus, neither it has a constructed boundary side.
    * \param event The event associated with the new vertex.
    * \param res_v The new vertex in the overlaid arrangement.
    * \param sc The subcurve incident to the event.
    * \param tag The tag used for dispatching.
    */
   void _create_vertex(Event* event, Vertex_handle res_v, Subcurve* sc,
-                      boost::mpl::bool_<false> /* tag */);
+                      std::bool_constant<false> /* tag */);
 
   /*!
    * Update a newly created edge using the overlay traits.
@@ -344,7 +343,7 @@ protected:
   //@}
 
   /*! A visitor class to facilitate the call to create_vertex(). */
-  class Create_vertex_visitor : public boost::static_visitor<> {
+  class Create_vertex_visitor {
   private:
     Overlay_traits* m_overlay_traits;
     Vertex_handle m_vertex_handle;
@@ -524,11 +523,11 @@ void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::update_event(Event* e,
     CGAL_assertion(sc->color() == Gt2::RED);
 
     Halfedge_handle_red red_he = sc->red_halfedge_handle();
-    pt.set_red_cell(boost::make_optional(Cell_handle_red(red_he)));
+    pt.set_red_cell(std::make_optional(Cell_handle_red(red_he)));
   }
   else if (pt.is_blue_cell_empty()) {
     Halfedge_handle_blue blue_he = sc->blue_halfedge_handle();
-    pt.set_blue_cell(boost::make_optional(Cell_handle_blue(blue_he)));
+    pt.set_blue_cell(std::make_optional(Cell_handle_blue(blue_he)));
   }
 }
 
@@ -563,7 +562,7 @@ void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::after_sweep()
     const Cell_handle_blue& blue_handle = info.second;
     Vertex_handle v = (*it).first;
     Create_vertex_visitor visitor(m_overlay_traits, v);
-    boost::apply_visitor(visitor, red_handle, blue_handle);
+    std::visit(visitor, red_handle, blue_handle);
   }
 
   // When the sweep-line process is over, the remaining arrangement face
@@ -923,7 +922,7 @@ _map_halfedge_and_twin(Halfedge_handle he,
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
-_map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
+_map_boundary_vertices(Event* event, Vertex_handle v, std::bool_constant<true>)
 {
   // Update the red and blue object if the last event on sc is on the boundary.
   if ((event->parameter_space_in_x() != ARR_INTERIOR) ||
@@ -938,8 +937,8 @@ _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
     const Cell_handle_red* red_handle_p = pt.red_cell_handle();
     if (red_handle_p) info.first = *red_handle_p;
 
-    if (!boost::get<Face_handle_red>(&(info.first)) &&
-        !boost::get<Face_handle_blue>(&(info.second)))
+    if (!std::get_if<Face_handle_red>(&(info.first)) &&
+        !std::get_if<Face_handle_blue>(&(info.second)))
     {
       // If both, the red and blue, variants do not represent face handles,
       // they must represt either vertex or edge handles. In this case it is
@@ -949,7 +948,7 @@ _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
       const Cell_handle_blue& blue_handle = info.second;
       Vertex_handle v = (*it).first;
       Create_vertex_visitor visitor(m_overlay_traits, v);
-      boost::apply_visitor(visitor, red_handle, blue_handle);
+      std::visit(visitor, red_handle, blue_handle);
       m_vertices_map.erase(it);
     }
   }
@@ -961,7 +960,7 @@ _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _map_boundary_vertices(Event* /* event */, Vertex_handle /* v */,
-                       boost::mpl::bool_<false>)
+                       std::bool_constant<false>)
 {}
 
 /* Notify the overlay traits about a newly created vertex.
@@ -975,7 +974,7 @@ void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _create_vertex(Event* event,
                Vertex_handle new_v,
                Subcurve* sc,
-               boost::mpl::bool_<true>)
+               std::bool_constant<true>)
 {
   const Point_2& pt = event->point();
   const Cell_handle_red* red_handle = pt.red_cell_handle();
@@ -1012,7 +1011,7 @@ _create_vertex(Event* event,
     return;
   }
 
-  _create_vertex(event, new_v, sc, boost::mpl::bool_<false>());
+  _create_vertex(event, new_v, sc, std::bool_constant<false>());
 }
 
 /* Notify the overlay traits about a newly created vertex. */
@@ -1021,7 +1020,7 @@ void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _create_vertex(Event* event,
                Vertex_handle new_v,
                Subcurve* sc,
-               boost::mpl::bool_<false>)
+               std::bool_constant<false>)
 {
   const Point_2& pt = event->point();
   const Cell_handle_red* red_handle = pt.red_cell_handle();
@@ -1035,7 +1034,7 @@ _create_vertex(Event* event,
 
     CGAL_assertion(blue_handle != nullptr);
     const Vertex_handle_blue& blue_v =
-      boost::get<Vertex_handle_blue>(*blue_handle);
+      std::get<Vertex_handle_blue>(*blue_handle);
     m_overlay_traits->create_vertex(red_f, blue_v, new_v);
     return;
   }
@@ -1049,13 +1048,13 @@ _create_vertex(Event* event,
 
     CGAL_assertion(red_handle != nullptr);
     const Vertex_handle_red& red_v =
-      boost::get<Vertex_handle_red>(*red_handle);
+      std::get<Vertex_handle_red>(*red_handle);
     m_overlay_traits->create_vertex(red_v, blue_f, new_v);
     return;
   }
 
   Create_vertex_visitor visitor(m_overlay_traits, new_v);
-  boost::apply_visitor(visitor, *red_handle, *blue_handle);
+  std::visit(visitor, *red_handle, *blue_handle);
 }
 
 //-----------------------------------------------------------------------------

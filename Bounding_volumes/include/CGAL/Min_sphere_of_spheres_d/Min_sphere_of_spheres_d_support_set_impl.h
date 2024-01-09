@@ -144,7 +144,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       copy_n<D>(t.center_cartesian_begin(*b[0]),center);
 
       if (m > 1) {
-        // compute the coeffients beta[i] and the center:
+        // compute the coefficients beta[i] and the center:
         for(unsigned int i=1; i<m; ++i) {
           beta[i] = (static_cast<FT>(delta[i]+eps[i])+sol[m]*phi[i])/alpha[i];
           for (int j=0; j<D; ++j)

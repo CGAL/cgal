@@ -151,7 +151,7 @@ sub collect_results_of_platform($)
 # Create an anonymous hash that hashes packages to their result.
     my $platform_results = {};
     my $test_result="results_${platform}.txt";
-    my ($yeahs, $nays, $warnings,$third_party_warnings,$reqs) = (0,0,0,0,0);
+    my ($yeahs, $nays, $warnings,$third_party_warnings,$timeout,$reqs) = (0,0,0,0,0,0);
     my $resulttext;
     open(TESTRESULT, $test_result) or return $platform_results;
     while (<TESTRESULT>) {
@@ -169,7 +169,10 @@ sub collect_results_of_platform($)
 	    } elsif ($2 eq 'n' or $2 eq 'N') {
 		$resulttext = 'n';
 		++$nays;
-	    } elsif ($2 eq 'r') {
+	    } elsif ($2 eq 'o' or $2 eq 'O') {
+		$resulttext = 'o';
+		++$timeout;
+        } elsif ($2 eq 'r') {
 		$resulttext = 'r';
 		++$reqs;
 	    } else {
@@ -183,6 +186,7 @@ sub collect_results_of_platform($)
     $platform_results->{"n"} = $nays;
     $platform_results->{"w"} = $warnings;
     $platform_results->{"t"} = $third_party_warnings;
+    $platform_results->{"o"} = $timeout;
     $platform_results->{"r"} = $reqs;
     return $platform_results;
 }
@@ -260,6 +264,8 @@ EOF
 		print OUTPUT ' class="warning"';
 	    } elsif ($resulttext eq 't') {
 		print OUTPUT ' class="third_party_warning"';
+        } elsif ($resulttext eq 'o') {
+		print OUTPUT ' class="timeout"';
 	    } elsif ($resulttext eq 'n') {
 		print OUTPUT ' class="error"';
 	    } elsif ($resulttext eq 'r') {
@@ -461,13 +467,14 @@ sub print_platform_descriptions()
 <th class="ok">y</th>
 <th class="third_party_warning">t</th>
 <th class="warning">w</th>
+<th class="timeout">o</th>
 <th class="error">n</th>
 <th class="requirements">r</th>
 <th>CMake</th>
 <th>BOOST</th>
 <th>MPFR</th>
 <th>GMP</th>
-<th>QT5</th>
+<th>QT</th>
 <th>LEDA</th>
 <th>CXXFLAGS</th>
 <th>LDFLAGS</th>
@@ -500,6 +507,7 @@ EOF
 	    my $county = $testresults[$platform_num]->{"y"};
 	    my $countt = $testresults[$platform_num]->{"t"};
 	    my $countw = $testresults[$platform_num]->{"w"};
+	    my $counto = $testresults[$platform_num]->{"o"};
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
 
@@ -519,6 +527,7 @@ EOF
 	    print OUTPUT "<td>$county</td>\n";
 	    print OUTPUT "<td>$countt</td>\n";
 	    print OUTPUT "<td>$countw</td>\n";
+	    print OUTPUT "<td>$counto</td>\n";
  	    print OUTPUT "<td>$countn</td>\n";
  	    print OUTPUT "<td>$countr</td>\n";
 	    $index = 8;
@@ -535,6 +544,7 @@ EOF
             print OUTPUT ">$pf_short</a>";
 	    my $index = 12;
 	    while ($index) {
+        $index--;
 		print OUTPUT "<td>?</td>\n";
 	    }
 	}
@@ -608,10 +618,11 @@ sub print_little_header(){
 <body>
 <h1>Test Results of ${release_name}
 <a id="permalink" href="results-${release_version}.shtml">permalink</a>
-<a id="jump_to_results" href="#testresults">jump to results</a></h1>
+<a id="jump_to_results" href="#testresults">jump to results</a>
+<a id="compare" href="comparison/diff_testsuites.html?newTest=${release_name}">compare results...</a></h1>
 <!--#include virtual="versions.inc"-->
 <p>The results of the tests are presented in a table
-('y' = success, 'w' = warning, 't' = third party warning 'n' = failure, 'r' = a requirement is not found),
+('y' = success, 'w' = warning, 't' = third party warning, 'o' = timeout, 'n' = failure, 'r' = a requirement is not found),
 and the error + compiler output from each test can be retrieved by clicking
 on it.</p>
 <p><b>N.B. The detection of warnings is not exact.

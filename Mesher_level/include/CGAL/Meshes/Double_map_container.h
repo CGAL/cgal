@@ -33,7 +33,7 @@ namespace CGAL {
       typedef Elt Element;
 
     protected:
-      // --- protected datas ---
+      // --- protected data ---
       Double_map<Element, Quality> m;
 
     public:

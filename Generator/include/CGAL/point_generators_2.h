@@ -658,7 +658,7 @@ struct Address_of {
   }
 };
 
-}//namesapce internal
+}//namespace internal
 
 template <class Point_2,
           class Triangle_2=typename Kernel_traits<Point_2>::Kernel::Triangle_2,

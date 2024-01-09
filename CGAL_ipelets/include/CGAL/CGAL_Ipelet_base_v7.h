@@ -329,10 +329,10 @@ public:
     ipe::Curve*
     create_polyline(const iterator first, const iterator last,bool setclose=false) const
     {
-      if (boost::next(first)!=last){
+      if (std::next(first)!=last){
         ipe::Curve* SSP_ipe = new ipe::Curve();
         ipe::Vector Prev_pt=ipe::Vector(CGAL::to_double(first->x()),CGAL::to_double(first->y())) ;
-        for (iterator it = boost::next(first);it!=last;++it){
+        for (iterator it = std::next(first);it!=last;++it){
           ipe::Vector Cur_pt=ipe::Vector(CGAL::to_double(it->x()),CGAL::to_double(it->y()));
           SSP_ipe -> appendSegment(Prev_pt,Cur_pt);
           Prev_pt=Cur_pt;
@@ -414,9 +414,9 @@ public:
     {
       ipe::Curve* SSP_ipe = new ipe::Curve;
       ipe::Vector ipeS=ipe::Vector( CGAL::to_double(std::get<1>(arc).x()),
-                                CGAL::to_double(std::get<1>(arc).y()));//convert ot ipe format
+                                CGAL::to_double(std::get<1>(arc).y()));//convert to ipe format
       ipe::Vector ipeT=ipe::Vector( CGAL::to_double(std::get<2>(arc).x()),
-                                CGAL::to_double(std::get<2>(arc).y()));//convert ot ipe format
+                                CGAL::to_double(std::get<2>(arc).y()));//convert to ipe format
       SSP_ipe->appendArc(ipe::Matrix(sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),0,
                                    0,(std::get<3>(arc)==CGAL::COUNTERCLOCKWISE?1:-1)*
                                      sqrt(CGAL::to_double(std::get<0>(arc).squared_radius())),
@@ -645,12 +645,11 @@ public:
     template<class iterator>
     void
     draw_in_ipe(const iterator begin,const iterator end,const Iso_rectangle_2& bbox,bool make_grp=true,bool deselect_all=false,
-     std::enable_if_t<  boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Point_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Segment_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Circle_2> ,
-                        boost::mpl::or_< std::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
-                                         std::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
-                                                > > > >::value
+     std::enable_if_t<  std::is_same_v<typename std::iterator_traits<iterator>::value_type,Point_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Segment_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Circle_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ||
+                        std::is_same_v<typename std::iterator_traits<iterator>::value_type,Polygon_2>
                     >* = nullptr) const
     {
       for (iterator it=begin;it!=end;++it)
@@ -822,41 +821,34 @@ public:
       CGAL::Cartesian_converter<Kernel,SK> conv;
       Exact_circle_2 exact_circle=conv(approx_circle);
 
+      typedef std::pair<Circular_arc_point_2,unsigned> Cp2_mult;
       SK::Intersect_2 inter=SK().intersect_2_object();
-      std::vector< std::pair<Circular_arc_point_2,unsigned> > points;
+      std::vector< Cp2_mult > points;
       points.reserve(8);
 
-      std::vector<CGAL::Object> ints;
+      std::vector< Cp2_mult > ints;
       ints.reserve(2);
-      std::pair<Circular_arc_point_2,unsigned> tmp_pt;
 
       int indices[8]={-1,-1,-1,-1,-1,-1,-1,-1};
 
       for (unsigned i=0;i!=4;++i){
         ints.clear();
         SK::Segment_2 S(conv(bbox[i]),conv(bbox[(i+1)%4]));
-        inter(exact_circle,SK::Line_arc_2(S),std::back_inserter(ints));
+        inter(exact_circle,SK::Line_arc_2(S),dispatch_or_drop_output<Cp2_mult>(std::back_inserter(ints)));
         unsigned index=0;
-        bool ok=true;
         switch (ints.size()){
           case 1:
-            ok=CGAL::assign(tmp_pt,ints[0]);
-            CGAL_assertion(ok); CGAL_USE(ok);
-            points.push_back(tmp_pt);
+            points.push_back(ints[0]);
             index=points.size()-1;
             indices[i]=index;
             indices[(i+1)%4+4]=index;
             break;
           case 2:
             int right_ind=i<2?0:1;
-            ok=CGAL::assign(tmp_pt,ints[right_ind]);
-            CGAL_assertion(ok); CGAL_USE(ok);
-            points.push_back(tmp_pt);
+            points.push_back(ints[right_ind]);
             index=points.size()-1;
             indices[i]=index;
-            ok=CGAL::assign(tmp_pt,ints[(right_ind+1)%2]);
-            CGAL_assertion(ok); CGAL_USE(ok);
-            points.push_back(tmp_pt);
+            points.push_back(ints[(right_ind+1)%2]);
             index=points.size()-1;
             indices[(i+1)%4+4]=index;
             break;
@@ -951,7 +943,7 @@ public:
               //retrieve circle arcs
               if(SSP_ipe -> segment(j).type()==ipe::CurveSegment::EArc &&
                  is_only_rotated_or_scaled(object->asPath()->matrix()))
-              {//retreve circle arcs
+              {//retrieve circle arcs
                 if ( !CGAL::Is_in_tuple<Circular_arc_2,typename multi_output_iterator::Value_type_tuple>::value ){
                   to_deselect=true;
                   continue;

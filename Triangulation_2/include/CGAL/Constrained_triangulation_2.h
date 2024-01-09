@@ -34,9 +34,30 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+#  include <CGAL/IO/io.h>
+#  include <CGAL/Compact_container.h>
+#  include <iostream>
+namespace CGAL {
+
+struct With_point_tag {};
+
+template <class DSC, bool Const>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
+  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
+{
+  using Base = Output_rep<CGAL::internal::CC_iterator<DSC, Const>>;
+  using Base::Base;
+
+  std::ostream& operator()(std::ostream& out) const {
+    return Base::operator()(out) << "= " << this->it->point();
+  }
+};
+} // namespace CGAL
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
 namespace CGAL {
 
@@ -46,7 +67,7 @@ struct Exact_intersections_tag{}; // to be used with an exact number type
 struct Exact_predicates_tag{}; // to be used with filtered exact number
 
 // This was deprecated and replaced by ` No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`
-// due to an inconsistency between the code and the documenation.
+// due to an inconsistency between the code and the documentation.
 struct CGAL_DEPRECATED No_intersection_tag :
   public No_constraint_intersection_requiring_constructions_tag
 { };
@@ -74,9 +95,10 @@ namespace internal {
 
 template <typename K>
 struct Itag {
-  typedef typename boost::mpl::if_<typename Algebraic_structure_traits<typename K::FT>::Is_exact,
-                                   Exact_intersections_tag,
-                                   Exact_predicates_tag>::type type;
+  using Is_exact = typename Algebraic_structure_traits<typename K::FT>::Is_exact;
+  typedef std::conditional_t<Is_exact::value,
+                             Exact_intersections_tag,
+                             Exact_predicates_tag> type;
 };
 
 } // namespace internal
@@ -307,12 +329,12 @@ public:
 
 #if 1
   template <class Segment_2>
-  static const Point& get_source(const Segment_2& segment){
-    return segment.source();
+  static decltype(auto) get_source(const Segment_2& segment){
+    return segment[0];
   }
   template <class Segment_2>
-  static const Point& get_target(const Segment_2& segment){
-    return segment.target();
+  static decltype(auto) get_target(const Segment_2& segment){
+    return segment[1];
   }
 
   static const Point& get_source(const Constraint& cst){
@@ -330,8 +352,8 @@ public:
 template <class OutputIterator>
 void
 insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
-// forces the constrained [va,vb]
-// [va,vb] will eventually be split into several edges
+// forces the constrained [vaa,vbb]
+// [vaa,vbb] will potentially be split into several edges
 // if a vertex vc of t lies on segment ab
 // of if ab intersect some constrained edges
 {
@@ -428,12 +450,14 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     const Point& p0 = *first;
     Point p = p0;
     Vertex_handle v0 = insert(p0), v(v0), w(v0);
+    Face_handle hint = v0->face();
     ++first;
     for(; first!=last; ++first){
       const Point& q = *first;
       if(p != q){
-        w = insert(q);
+        w = insert(q,hint);
         insert_constraint(v,w);
+        hint = w->face();
         v = w;
         p = q;
       }
@@ -595,6 +619,13 @@ public:
       return are_there;
     }
 
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+  auto display_vertex(Vertex_handle v) const {
+    With_point_tag point_tag;
+    using CGAL::IO::oformat;
+    return IO::oformat(v, point_tag);
+  }
+#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
  template<class OutputItEdges>
  OutputItEdges  incident_constraints(Vertex_handle v,
@@ -608,7 +639,7 @@ public:
    return out;
  }
 
-  // the following fonctions are overloaded
+  // the following functions are overloaded
   // to take care of constraint marks
   template<class EdgeIt>
   Vertex_handle star_hole( const Point& p,
@@ -797,13 +828,16 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 // if a vertex vc of t lies on segment ab
 // or if ab intersect some constrained edges
 {
+  if(vaa == vbb){
+    return;
+  }
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint( #" << vaa->time_stamp() << "= " << vaa->point()
-            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << "CT_2::insert_constraint( " << display_vertex(vaa)
+            << " , " << display_vertex(vbb)
             << " )\n";
   internal::Indentation_level::Exit_guard exit_guard = CGAL::internal::cdt_2_indent_level.open_new_scope();
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
@@ -813,8 +847,8 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
     CGAL_precondition( vaa != vbb);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
     std::cerr << CGAL::internal::cdt_2_indent_level
-              << "CT_2::insert_constraint, stack pop=( #" << vaa->time_stamp() << "= " << vaa->point()
-              << " , #" << vbb->time_stamp() << "= " << vbb->point()
+              << "CT_2::insert_constraint, stack pop=( " << display_vertex(vaa)
+              << " , " << display_vertex(vbb)
               << " ) remaining stack size: "
               << stack.size() << '\n';
     CGAL_assertion(this->is_valid());
@@ -856,12 +890,12 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       if (vi != vaa && vi != vbb) {
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stack push [vaa, vi] ( #" << vaa->time_stamp() << "= " << vaa->point()
-            << " , #" << vi->time_stamp() << "= " << vi->point()
+            << "CT_2::insert_constraint stack push [vaa, vi] ( " << display_vertex(vaa)
+            << " , " << display_vertex(vi)
             << " )\n";
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stack push [vi, vbb] ( #" << vi->time_stamp() << "= " << vi->point()
-            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << "CT_2::insert_constraint stack push [vi, vbb] ( " << display_vertex(vi)
+            << " , " << display_vertex(vbb)
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
         stack.push(std::make_pair(vaa,vi));
@@ -870,8 +904,8 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       else{
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stack push [vaa, vbb]( #" << vaa->time_stamp() << "= " << vaa->point()
-            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << "CT_2::insert_constraint stack push [vaa, vbb]( " << display_vertex(vaa)
+            << " , " << display_vertex(vbb)
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
         stack.push(std::make_pair(vaa,vbb));
@@ -919,8 +953,8 @@ find_intersected_faces(Vertex_handle vaa,
   // is constrained
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::find_intersected_faces ( #" << vaa->time_stamp() << "= " << vaa->point()
-            << " , #" << vbb->time_stamp() << "= " << vbb->point()
+            << "CT_2::find_intersected_faces ( " << display_vertex(vaa)
+            << " , " << display_vertex(vbb)
             << " )\n"
             << CGAL::internal::cdt_2_indent_level
             << "> current constrained edges are:\n";
@@ -1218,7 +1252,7 @@ insert_intersection(Face_handle f, int i,
   }
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_intersection, `vi` is ( #" << vi->time_stamp() << "= " << vi->point()
+            << "CT_2::insert_intersection, `vi` is ( " << display_vertex(vi)
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   return vi;
@@ -1243,16 +1277,16 @@ intersect(Face_handle f, int i,
 
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::intersect segment ( #" << vaa->time_stamp() << "= " << vaa->point()
-            << " , #" << vbb->time_stamp() << "= " << vbb->point()
-            << " ) with edge ( #"<< vcc->time_stamp() << "= " << vcc->point()
-            << " , #" << vdd->time_stamp() << "= " << vdd->point()
+            << "CT_2::intersect segment ( " << display_vertex(vaa)
+            << " , " << display_vertex(vbb)
+            << " ) with edge ( " << display_vertex(vcc)
+            << " , " << display_vertex(vdd)
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Vertex_handle vi = insert_intersection(f, i, vaa, vbb, vcc, vdd, pa, pb, pc, pd, itag);
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::intersect, `vi` is ( #" << vi->time_stamp() << "= " << vi->point()
+            << "CT_2::intersect, `vi` is ( " << display_vertex(vi)
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
@@ -1857,16 +1891,16 @@ compute_intersection(const Gt& gt,
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   typedef typename Gt::Segment_2 Segment_2;
   if(result){
-    if (const Segment_2* s = boost::get<Segment_2>(&*result)){
+    if (const Segment_2* s = std::get_if<Segment_2>(&*result)){
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "compute_intersection: " << *s << '\n';
-    }else if(const Point_2* p = boost::get<Point_2 >(&*result))
+    }else if(const Point_2* p = std::get_if<Point_2 >(&*result))
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "compute_intersection: " << *p << '\n';
   }
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   if(result){
-    if(const Point_2* p = boost::get<Point_2 >(&*result)){
+    if(const Point_2* p = std::get_if<Point_2 >(&*result)){
       pi = *p;
       return true;
     }

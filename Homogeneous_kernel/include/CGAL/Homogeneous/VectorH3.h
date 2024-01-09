@@ -21,8 +21,6 @@
 #include <CGAL/array.h>
 #include <CGAL/Kernel_d/Cartesian_const_iterator_d.h>
 
-#include <boost/next_prior.hpp>
-
 namespace CGAL {
 
 template < class R_ >
@@ -69,9 +67,9 @@ public:
 
   template < typename Tx, typename Ty, typename Tz >
   VectorH3(const Tx & x, const Ty & y, const Tz & z,
-           std::enable_if_t< boost::mpl::and_< boost::mpl::and_< boost::is_convertible<Tx, RT>,
-                                                                          boost::is_convertible<Ty, RT> >,
-                                                        boost::is_convertible<Tz, RT> >::value >* = 0)
+           std::enable_if_t< std::is_convertible_v<Tx, RT> &&
+                             std::is_convertible_v<Ty, RT> &&
+                             std::is_convertible_v<Tz, RT>>* = 0)
     : base(CGAL::make_array<RT>(x, y, z, RT(1))) {}
 
   VectorH3(const FT& x, const FT& y, const FT& z)
@@ -117,12 +115,12 @@ public:
   Cartesian_const_iterator cartesian_begin() const
   {
     return make_cartesian_const_iterator_begin(get_pointee_or_identity(base).begin(),
-                                               boost::prior(get_pointee_or_identity(base).end()));
+                                               std::prev(get_pointee_or_identity(base).end()));
   }
 
   Cartesian_const_iterator cartesian_end() const
   {
-    return make_cartesian_const_iterator_end(boost::prior(get_pointee_or_identity(base).end()));
+    return make_cartesian_const_iterator_end(std::prev(get_pointee_or_identity(base).end()));
   }
 
   int   dimension() const { return 3; };

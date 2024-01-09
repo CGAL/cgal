@@ -28,7 +28,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 #include <CGAL/use.h>
@@ -137,7 +137,7 @@ typedef size_t Size_type;
 /*{\Mtypemember The size type.}*/
 typedef void*  GenPtr;
 #else
-typedef boost::any GenPtr;
+typedef std::any GenPtr;
 #endif
 
 
@@ -434,9 +434,10 @@ check_integrity_and_topological_planarity(bool faces) const
   /* check the source links of out edges and count isolated vertices */
   for (vit = vertices_begin() ; vit != vend; ++vit) {
     if ( is_isolated(vit) ) {
-      if ( faces )
-        CGAL_assertion_msg( vit->face() != Face_const_handle(),
-                            VI(vit).c_str());
+        if (faces) {
+            CGAL_assertion_msg(vit->face() != Face_const_handle(),
+                VI(vit).c_str());
+        }
       ++iso_vert_num;
     } else {
       CGAL_assertion_msg( vit->halfedge() != Halfedge_const_handle(),
@@ -481,6 +482,8 @@ check_integrity_and_topological_planarity(bool faces) const
     first=false;
   }
 
+  CGAL_assertion(iso_vert_num == iv_num);
+
   std::size_t v_num = number_of_vertices() - iso_vert_num;
   std::size_t e_num = number_of_edges();
   std::size_t c_num = number_of_connected_components() - iso_vert_num;
@@ -496,7 +499,7 @@ check_integrity_and_topological_planarity(bool faces) const
   /* this means all face cycles and all isolated vertices are
      indeed referenced from a face */
   /* every isolated vertex increases the component count
-       one face cycle per component is redundent except one
+       one face cycle per component is redundant except one
        finally check the Euler formula: */
   CGAL_assertion( v_num - e_num + f_num == 1 + c_num );
 }

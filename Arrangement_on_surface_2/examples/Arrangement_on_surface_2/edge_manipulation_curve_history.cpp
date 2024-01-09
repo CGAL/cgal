@@ -8,9 +8,9 @@
 #include "arr_circular.h"
 #include "arr_print.h"
 
-typedef CGAL::Arrangement_with_history_2<Traits>                Arr_with_hist;
-typedef Arr_with_hist::Curve_handle                             Curve_handle;
-typedef CGAL::Arr_walk_along_line_point_location<Arr_with_hist> Point_location;
+using Arr_with_hist = CGAL::Arrangement_with_history_2<Traits>;
+using Curve_handle = Arr_with_hist::Curve_handle;
+using Point_location = CGAL::Arr_walk_along_line_point_location<Arr_with_hist>;
 
 int main() {
   // Construct an arrangement containing nine circles: C[0] of radius 2 and
@@ -45,7 +45,7 @@ int main() {
   Point_location pl(arr);
   const Point q{_7_halves, 7};
   Point_location::result_type obj = pl.locate(q);
-  auto* e = boost::get<Arr_with_hist::Halfedge_const_handle>(&obj);
+  auto* e = std::get_if<Arr_with_hist::Halfedge_const_handle>(&obj);
 
   // Split the edge e to two edges e1 and e2;
   auto e1 = arr.split_edge(arr.non_const_handle(*e), q);

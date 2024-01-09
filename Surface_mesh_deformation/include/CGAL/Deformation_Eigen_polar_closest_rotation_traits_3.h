@@ -23,7 +23,7 @@ namespace CGAL {
   /// The internal computation relies on a hybrid system using the solvers `Eigen::SelfAdjointEigenSolver<>`
   /// and `Eigen::JacobiSVD<>` (polar decomposition).
   ///
-  /// \cgalModels `DeformationClosestRotationTraits_3`
+  /// \cgalModels{DeformationClosestRotationTraits_3}
   class Deformation_Eigen_polar_closest_rotation_traits_3 :
     public Deformation_Eigen_closest_rotation_traits_3{
   public:

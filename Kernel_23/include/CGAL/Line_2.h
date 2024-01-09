@@ -41,7 +41,7 @@ class Line_2 : public R_::Kernel_base::Line_2
   typedef typename R_::Kernel_base::Line_2   RLine_2;
 
   typedef Line_2                             Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Line_2>::value));
+  static_assert(std::is_same<Self, typename R_::Line_2>::value);
 
 public:
 
@@ -89,18 +89,17 @@ public:
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,v)) {}
 
 
-  // FIXME : Use Qrt<> here.
-  RT a() const
+  decltype(auto) a() const
   {
     return R().compute_a_2_object()(*this);
   }
 
-  RT b() const
+  decltype(auto) b() const
   {
     return R().compute_b_2_object()(*this);
   }
 
-  RT c() const
+  decltype(auto) c() const
   {
     return R().compute_c_2_object()(*this);
   }

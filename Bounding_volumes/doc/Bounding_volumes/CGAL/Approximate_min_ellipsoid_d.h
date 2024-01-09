@@ -8,7 +8,7 @@ An object of class `Approximate_min_ellipsoid_d` is an approximation to the
 ellipsoid of smallest volume enclosing a finite multiset of points
 in \f$ d\f$-dimensional Euclidean space \f$ \E^d\f$, \f$ d\ge 2\f$.
 
-An <I>ellipsoid</I> in \f$ \E^d\f$ is a Cartesian pointset of the form \f$ \{
+An <I>ellipsoid</I> in \f$ \E^d\f$ is a %Cartesian pointset of the form \f$ \{
 x\in\E^d \mid x^T E x + x^T e + \eta\leq 0 \}\f$, where \f$ E\f$ is some
 positive definite matrix from the set \f$ \mathbb{R}^{d\times d}\f$, \f$ e\f$ is some
 real \f$ d\f$-vector, and \f$ \eta\in\mathbb{R}\f$. A pointset \f$ P\subseteq \E^d\f$ is
@@ -94,7 +94,7 @@ is actually achieved; the performance of the algorithm in this respect
 highly depends on the input pointset. Values of at least \f$ 0.01\f$ for
 \f$ \epsilon\f$ are usually handled without problems.
 
-Internally, the algorithm represents the input points' Cartesian
+Internally, the algorithm represents the input points' %Cartesian
 coordinates as `double`'s. For this conversion to work, the input
 point coordinates must be convertible to `double`. Also, in order
 to compute the achieved epsilon \f$ \epsilon'\f$ mentioned above, the algorithm
@@ -119,7 +119,7 @@ We implement Khachyian's algorithm for rounding
 polytopes \cgalCite{cgal:k-rprnm-96}. Internally, we use
 `double`-arithmetic and (initially a single)
 Cholesky-decomposition. The algorithm's running time is
-\f$ {\cal O}(nd^2(\epsilon^{-1}+\ln d + \ln\ln(n)))\f$, where \f$ n=|P|\f$ and
+\cgalBigO{nd^2(\epsilon^{-1}+\ln d + \ln\ln(n))}, where \f$ n=|P|\f$ and
 \f$ 1+\epsilon\f$ is the desired approximation ratio.
 
 \cgalHeading{Example}
@@ -171,7 +171,7 @@ typedef unspecified_type Cartesian_const_iterator;
 /*!
 A model of STL concept
 `RandomAccessIterator` with value type `double` that is used
-to iterate over the Cartesian center coordinates of the computed
+to iterate over the %Cartesian center coordinates of the computed
 ellipsoid, see `center_cartesian_begin()`.
 */
 typedef unspecified_type Center_coordinate_iterator;
@@ -211,7 +211,7 @@ limited precision in the algorithm's underlying arithmetic, it
 can happen that the computed approximation ellipsoid has a
 worse approximation ratio (and \f$ \epsilon\f$ can thus be larger
 than `eps` in general). In any case, the number
-\f$ \epsilon\f$ (and with this, the achived approximation
+\f$ \epsilon\f$ (and with this, the achieved approximation
 \f$ 1+\epsilon\f$) can be queried by calling the routine
 `achieved_epsilon()` discussed below.
 
@@ -240,7 +240,7 @@ const Traits& traits = Traits() );
 /// exactly representable as `double` numbers.) In order to access the
 /// center and semiaxes of the computed approximation ellipsoid, the
 /// functions `center_cartesian_begin()`, `axes_lengths_begin()`, and
-/// `axis_direction_cartesian_begin()` can be used. In constrast to
+/// `axis_direction_cartesian_begin()` can be used. In contrast to
 /// the above access functions `achieved_epsilon()`,
 /// `defining_matrix()`, `defining_vector()`, and `defining_scalar()`,
 /// which return the described quantities exactly, the routines below
@@ -313,7 +313,7 @@ int dimension() const;
 
 /*!
 
-returns an iterator pointing to the first of the \f$ d\f$ Cartesian
+returns an iterator pointing to the first of the \f$ d\f$ %Cartesian
 coordinates of the computed ellipsoid's center.
 
 The returned point is a floating-point approximation to the

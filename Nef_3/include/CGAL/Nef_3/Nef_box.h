@@ -16,7 +16,11 @@
 
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
+#include <CGAL/Extended_cartesian.h>
+#include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
+#include <CGAL/Nef_3/SNC_intersection.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
 
 namespace CGAL {
 

@@ -9,8 +9,10 @@ The concept does not specify, whether the interval is open or
 closed. It is up to the implementer of a model for this concept
 to define that.
 
-\cgalHasModel `CGAL::Interval_skip_list_interval<Value>`
-\cgalHasModel `CGAL::Level_interval`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Interval_skip_list_interval<Value>}
+\cgalHasModels{CGAL::Level_interval}
+\cgalHasModelsEnd
 
 \sa `Interval_skip_list`
 
@@ -68,7 +70,7 @@ Equality test.
 bool operator==(const Interval& I) const;
 
 /*!
-Unequality test.
+Inequality test.
 */
 bool operator!=(const Interval& I) const;
 

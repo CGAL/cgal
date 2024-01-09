@@ -92,7 +92,7 @@ BiPoly<NT>::BiPoly(Polynomial<NT> p, bool flag){
 
   //BiPoly(deg, d[], C[]):
   //        Takes in a list of list of coefficients.
-  //        Each cofficient list represents a polynomial in X
+  //        Each coefficient list represents a polynomial in X
   //
   //  deg - ydeg of the bipoly
   //  d[] - array containing the degrees of each coefficient (i.e., X poly)
@@ -1101,7 +1101,7 @@ Curve<NT>::Curve(Polynomial<NT> p, bool flag)
 
   //Curve(deg, d[], C[]):
   //        Takes in a list of list of coefficients.
-  //        Each cofficient list represents a polynomial in X
+  //        Each coefficient list represents a polynomial in X
   //
   //  deg - ydeg of the bipoly
   //  d[] - array containing the degrees of each coefficient (i.e., X poly)

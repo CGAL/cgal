@@ -100,7 +100,7 @@ template <typename Iterator>
 void subdivide(Iterator start, Iterator end)
 /* subdivision is done in phases
    - first we partition all segments into the pieces in the
-     closed postive xy-halfspace and into the pieces in the
+     closed positive xy-halfspace and into the pieces in the
      negative xy-halfspace
    - we sweep both halfspheres separate. Note that the boundary
      carries the same topology

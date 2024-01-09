@@ -17,6 +17,7 @@
 #ifdef CGAL_USE_CIMG
 #define cimg_display 0 // To avoid X11 or Windows-GDI dependency
 #include <CImg.h>
+#include <QMessageBox>
 #endif
 #include <utility>      // std::pair
 #include <vector>
@@ -74,8 +75,8 @@ public:
   typedef R_s_2::Edge_vector Edge_vector;
 
   typedef R_s_2::Sample_ Sample_;
-  typedef R_s_2::Sample_vector Sample_vector;
-  typedef R_s_2::Sample_vector_const_iterator Sample_vector_const_iterator;
+  typedef std::vector<Sample_> Sample_vector;
+  typedef Sample_vector::const_iterator Sample_vector_const_iterator;
 
   typedef R_s_2::PSample PSample;
   typedef R_s_2::SQueue SQueue;
@@ -432,10 +433,10 @@ public:
 
     m_pwsrec->list_output(std::back_inserter(isolated_points), std::back_inserter(edges));
 
-    int vertex_count = 0;
+    CGAL_assertion_code(int vertex_count = 0);
     for (std::vector<Point>::iterator it = isolated_points.begin();
       it != isolated_points.end(); it++) {
-      vertex_count++;
+      CGAL_assertion_code(vertex_count++);
       std::cout << *it << std::endl;
     }
     CGAL_assertion(vertex_count == 18);
@@ -452,7 +453,7 @@ public:
     for (std::vector<Sample_>::iterator it = m_samples.begin();
       it != m_samples.end(); ++it) {
       Sample_& s = *it;
-      samples.push_back(&s);
+      samples.push_back(s);
     }
 
     if (filename.contains(".xy", Qt::CaseInsensitive)) {
@@ -469,8 +470,8 @@ public:
     std::ofstream ofs(qPrintable(filename));
     for (Sample_vector_const_iterator it = samples.begin();
       it != samples.end(); ++it) {
-      Sample_* sample = *it;
-      ofs << sample->point() << std::endl;
+      const Sample_& sample = *it;
+      ofs << sample.point() << std::endl;
     }
     ofs.close();
   }
@@ -505,12 +506,12 @@ public:
     Sample_vector_const_iterator it;
     for (it = vertices.begin(); it != vertices.end(); it++) {
       vertices_mass_list.push_back(
-        std::make_pair((*it)->point(), (*it)->mass()));
+        std::make_pair((*it).point(), (*it).mass()));
     }
     PointMassList samples_mass_list;
     for (it = samples.begin(); it != samples.end(); it++) {
       samples_mass_list.push_back(
-        std::make_pair((*it)->point(), (*it)->mass()));
+        std::make_pair((*it).point(), (*it).mass()));
     }
 
     Point_property_map point_pmap;
@@ -551,10 +552,10 @@ public:
     for (it = m_samples.begin(); it != m_samples.end(); ++it) {
       Sample_& s = *it;
 
-      samples.push_back(&s);
+      samples.push_back(s);
       FT rv = random.get_double(0.0, 1.0);
       if (rv <= percentage)
-        vertices.push_back(&s);
+        vertices.push_back(s);
     }
   }
 

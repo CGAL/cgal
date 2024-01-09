@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/version.h>
 
@@ -419,6 +420,32 @@ void Scene_polygon_soup_item::inside_out()
   invalidateOpenGLBuffers();
 }
 
+void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
+{
+  QApplication::setOverrideCursor(Qt::BusyCursor);
+  CGAL::Polygon_mesh_processing::repair_polygon_soup(
+        d->soup->points,
+        d->soup->polygons,
+        CGAL::parameters::erase_all_duplicates(erase_dup)
+                         .require_same_orientation(req_same_orientation));
+  QApplication::restoreOverrideCursor();
+  invalidateOpenGLBuffers();
+}
+
+bool Scene_polygon_soup_item::triangulate()
+{
+  QApplication::setOverrideCursor(Qt::BusyCursor);
+
+  bool success = true;
+
+  CGAL::Polygon_mesh_processing::triangulate_polygons(d->soup->points, d->soup->polygons);
+
+  QApplication::restoreOverrideCursor();
+  invalidateOpenGLBuffers();
+
+  return success;
+}
+
 bool
 Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
 {
@@ -761,7 +788,7 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
     d->soup->vcolors.reserve (vcolors.size());
     std::copy (vcolors.begin(), vcolors.end(), std::back_inserter (d->soup->vcolors));
 }
-// Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
+// Force the instantiation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<EPICK::Point_3, std::vector<int> >
 (const std::vector<EPICK::Point_3>& points, const std::vector<std::vector<int> >& polygons);
@@ -892,20 +919,6 @@ void Scene_polygon_soup_item::computeElements() const
 
   setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
-}
-
-void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
-{
-  QApplication::setOverrideCursor(Qt::BusyCursor);
-  CGAL::Polygon_mesh_processing::repair_polygon_soup(
-        d->soup->points,
-        d->soup->polygons,
-        CGAL::parameters::
-        erase_all_duplicates(erase_dup)
-        .require_same_orientation(req_same_orientation));
-  QApplication::restoreOverrideCursor();
-
- // CGAL::Three::Three::information(
 }
 
 CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const

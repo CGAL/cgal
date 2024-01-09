@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <boost/cstdint.hpp> // for uint32_t, etc.
+#include <cstdint> // for uint32_t, etc.
 
 #ifdef CGAL_USE_ZLIB
 #include <zlib.h>
@@ -191,7 +191,7 @@ typedef struct imformat {
   WRITE_IMAGE writeImage;
 
   /* the file extension of format (including a dot ".": if several
-     extensions may be used, they should be separed with a
+     extensions may be used, they should be separated with a
      comma ".inr,.inr.gz" */
   char fileExtension[IMAGE_FORMAT_NAME_LENGTH];
 
@@ -394,7 +394,7 @@ CGAL_IMAGEIO_EXPORT int _writeImage(_image *im, const char *name);
     File descriptor is let at the beginning of next slice and closed<br>
     when end of file is encountered.<br>
     If data buffer is nullptr, it is allocated for one slice only.<br>
-    This funtion is dedicated to read huge inrimages.
+    This function is dedicated to read huge inrimages.
     @param im image descriptor */
 CGAL_IMAGEIO_EXPORT void _getNextSlice(_image *im);
 
@@ -437,7 +437,7 @@ CGAL_IMAGEIO_EXPORT int _readNonInterlacedFileData(_image *im);
 
 
 /** given an initialized file descriptor and a file name, open file
-   from stdout (if name == nullptr), a gziped pipe (if file is gziped)
+   from stdout (if name == nullptr), a gzipped pipe (if file is gzipped)
    or a standard file otherwise.
    @param im initialized image descriptor
    @param name image file name */
@@ -562,38 +562,50 @@ struct Word_type_generator<WK_FLOAT, sign, 8>
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 1>
 {
-//   typedef boost::int8_t type;
+//   typedef std::int8_t type;
   typedef char type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 1>
 {
-  typedef boost::uint8_t type;
+  typedef std::uint8_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 2>
 {
-  typedef boost::int16_t type;
+  typedef std::int16_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 2>
 {
-  typedef boost::uint16_t type;
+  typedef std::uint16_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_SIGNED, 4>
 {
-  typedef boost::int32_t type;
+  typedef std::int32_t type;
 };
 
 template <>
 struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 4>
 {
-  typedef boost::uint32_t type;
+  typedef std::uint32_t type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_SIGNED, 8>
+{
+  typedef std::int64_t type;
+};
+
+template <>
+struct Word_type_generator<WK_FIXED, SGN_UNSIGNED, 8>
+{
+  typedef std::uint64_t type;
 };
 
 template <WORD_KIND wordKind, SIGN sign, std::size_t wdim>

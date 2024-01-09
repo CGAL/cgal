@@ -8,17 +8,33 @@ WARN_IF_UNDOCUMENTED       =  false
 
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h
 INPUT += ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/surface_Delaunay_remeshing.h \
-         ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Mesh_facet_topology.h
+         ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Mesh_facet_topology.h \
+         ${CGAL_Shape_detection_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/region_growing.h
 STRIP_FROM_PATH += ${CGAL_Mesh_3_INCLUDE_DIR}
+STRIP_FROM_PATH += ${CGAL_Shape_detection_INCLUDE_DIR}
 
 # macros to be used inside the code
 ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
 
 EXAMPLE_PATH += ${CGAL_Poisson_surface_reconstruction_3_EXAMPLE_DIR}
 
-EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/internal
 EXCLUDE_SYMBOLS += experimental
 
 HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/selfintersections.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/mesh_smoothing.png \
-                             ${CGAL_PACKAGE_DOC_DIR}/fig/shape_smoothing.png
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/shape_smoothing.png \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-dmax0.040000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-dmin0.040000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-gaussian0.040000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.020000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.020000-0.002000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.030000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.030000-0.002000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.040000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.040000-0.002000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.050000-0.000000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/bimba-mean0.050000-0.002000.jpg \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_cheese.png \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_colors.png \
+                             ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_rg_joint.png
+

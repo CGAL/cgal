@@ -33,23 +33,23 @@ Operations like `empty` take constant time. The operations
 `clear`, `complement`, `interior`, `closure`,
 `boundary`, `regularization`, input and output take linear
 time. All binary set operations and comparison operations take time
-\f$ O(n \log n)\f$ where \f$ n\f$ is the size of the output plus the size of the
+\cgalBigO{n \log n} where \f$ n\f$ is the size of the output plus the size of the
 input.
 
 The point location and ray shooting operations are implemented in two
 flavors. The `NAIVE` operations run in linear query time without
 any preprocessing, the `DEFAULT` operations (equals `LMWT`)
 run in sub-linear query time, but preprocessing is triggered with the
-first operation. Preprocessing takes time \f$ O(N^2)\f$, the sub-linear
+first operation. Preprocessing takes time \cgalBigO{N^2}, the sub-linear
 point location time is either logarithmic when LEDA's persistent
 dictionaries are present or if not then the point location time is
 worst-case linear, but experiments show often sublinear runtimes. Ray
 shooting equals point location plus a walk in the constrained
-triangulation overlayed on the plane map representation. The cost of
+triangulation overlaid on the plane map representation. The cost of
 the walk is proportional to the number of triangles passed in
 direction `d` until an obstacle is met. In a minimum weight
 triangulation of the obstacles (the plane map representing the
-polyhedron) the theory provides a \f$ O(\sqrt{n})\f$ bound for the number
+polyhedron) the theory provides a \cgalBigO{\sqrt{n}} bound for the number
 of steps. Our locally minimum weight triangulation approximates the
 minimum weight triangulation only heuristically (the calculation of
 the minimum weight triangulation is conjectured to be NP hard). Thus

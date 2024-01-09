@@ -19,7 +19,7 @@ declaration of the `Point` type.
 \tparam Data is an optional type of data to be stored in the vertex class. The
 class template `Triangulation_vertex` accepts that no second parameter be specified. In
 this case, `Data` defaults to `CGAL::No_vertex_data`.
-`CGAL::No_vertex_data` can be explicitely specified to allow to access the
+`CGAL::No_vertex_data` can be explicitly specified to allow to access the
 third parameter.
 
 \tparam TriangulationDSVertex_ must be a model of the concept `TriangulationDSVertex`. The
@@ -27,9 +27,9 @@ class template `Triangulation_vertex` accepts that no third parameter be specifi
 also accepts the tag `CGAL::Default` as third parameter. In both cases,
 `TriangulationDSVertex_` defaults to `CGAL::Triangulation_ds_vertex<>`.
 
-\cgalModels `TriangulationVertex` Additionally, the class
+\cgalModels{TriangulationVertex Additionally, the class
 `Triangulation_vertex` provides the following types, constructors
-and methods:
+and methods:}
 
 \sa `Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
 \sa `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`

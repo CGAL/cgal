@@ -3,9 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines Functor
+ * \cgalRefines{Functor}
  *
- * \cgalHasModel ArrangementConstructCurveTraits_2::Construct_curve_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementConstructCurveTraits_2::Construct_curve_2}
+ * \cgalHasModelsEnd
  */
 class ConstructCurve_2 {
 public:

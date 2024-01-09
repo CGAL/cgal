@@ -43,12 +43,10 @@
 #include <CGAL/Object.h>
 
 #include <boost/format.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/optional/optional_io.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/if.hpp>
 #include <CGAL/tuple.h>
-#include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
 #include <atomic>
 
@@ -244,10 +242,10 @@ class Refine_facets_3_base
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Triangulation_mesher_level_traits_3<Tr>::Zone Zone;
 
-  typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::Segment_3 Segment_3;
-  typedef typename Gt::Ray_3 Ray_3;
-  typedef typename Gt::Line_3 Line_3;
+  typedef typename Tr::Geom_traits GT;
+  typedef typename GT::Segment_3 Segment_3;
+  typedef typename GT::Ray_3 Ray_3;
+  typedef typename GT::Line_3 Line_3;
 
 public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
@@ -348,6 +346,7 @@ public:
   std::string debug_info_element_impl(const Facet &facet) const
   {
     std::stringstream sstr;
+    sstr.precision(17);
     sstr << "Facet { " << std::endl
     << "  " << *facet.first->vertex((facet.second+1)%4) << std::endl
     << "  " << *facet.first->vertex((facet.second+2)%4) << std::endl
@@ -397,7 +396,7 @@ protected:
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
 
-  typedef typename boost::optional<
+  typedef typename std::optional<
     std::tuple<Surface_patch_index, Index, Bare_point> >
                                                       Facet_properties;
 
@@ -477,7 +476,7 @@ protected:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet facet, const Quality& quality)
   {
-#if CGAL_MESH_3_VERY_VERBOSE
+#ifdef CGAL_MESH_3_VERY_VERBOSE
     std::stringstream s;
     s << "insert_bad_facet(" << debug_info_element_impl(facet) << ", ...) by thread "
       << std::this_thread::get_id() << '\n';
@@ -640,9 +639,9 @@ template<class Tr,
          template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2>
             class Base_ = Refine_facets_3_base,
 #ifdef CGAL_LINKED_WITH_TBB
-         class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
+         class Container_ = std::conditional_t // (parallel/sequential?)
          <
-          boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+          std::is_convertible_v<Concurrency_tag, Parallel_tag>,
           // Parallel
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
@@ -679,7 +678,7 @@ template<class Tr,
           Meshes::Double_map_container<typename Tr::Facet,
                                        typename Criteria::Facet_quality>
 # endif
-         >::type // boost::if (parallel/sequential)
+         > // std::conditional (parallel/sequential)
 
 #else // !CGAL_LINKED_WITH_TBB
 
@@ -892,8 +891,8 @@ private:
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
-  typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::Ray_3 Ray_3;
+  typedef typename Tr::Geom_traits GT;
+  typedef typename GT::Ray_3 Ray_3;
 
 private:
   // Disabled copy constructor
@@ -983,7 +982,7 @@ scan_triangulation_impl()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Ct, Parallel_tag>::value)
+  if (std::is_convertible<Ct, Parallel_tag>::value)
   {
 # if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
     std::cerr << "Scanning triangulation for bad facets (in parallel) - "
@@ -1051,7 +1050,8 @@ int
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 number_of_bad_elements_impl()
 {
-  typedef typename MD::Subdomain Subdomain;
+  typedef typename MD::Subdomain_index        Subdomain_index;
+  typedef std::optional<Subdomain_index>    Subdomain;
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
 
   int count = 0, count_num_bad_surface_facets = 0;
@@ -1147,9 +1147,9 @@ number_of_bad_elements_impl()
         const Subdomain mc_subdomain = this->r_oracle_.is_in_domain_object()(this->r_tr_.dual(mc));
 
         std::cerr << "*** Is in complex? c is marked in domain: " << this->r_c3t3_.is_in_complex(c)
-          << " / c is really in subdomain: " << c_subdomain
+          << " / c is really in subdomain: " << IO::oformat(c_subdomain)
           << " / mc is marked in domain: " << this->r_c3t3_.is_in_complex(mc)
-          << " / mc is really in subdomain: " << mc_subdomain
+          << " / mc is really in subdomain: " << IO::oformat(mc_subdomain)
           << std::endl;
 
 
@@ -1471,7 +1471,7 @@ before_insertion_impl(const Facet& facet,
     error_msg <<
       boost::format("Mesh_3 ERROR: "
                     "A facet is not in conflict with its refinement point!\n"
-                    "Debugging informations:\n"
+                    "Debugging information:\n"
                     "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
                     "  Dual: %3%\n"
                     "  Refinement point: %5%\n"
@@ -1624,15 +1624,15 @@ compute_facet_properties(const Facet& facet,
   CGAL_assertion( r_tr_.dimension() == 3 );
 
   // types
-  typedef boost::optional<typename MD::Surface_patch_index> Surface_patch;
+  typedef std::optional<typename MD::Surface_patch_index> Surface_patch;
   typedef typename MD::Intersection Intersection;
 
   // Functor
-  typename Gt::Is_degenerate_3 is_degenerate =
+  typename GT::Is_degenerate_3 is_degenerate =
       r_tr_.geom_traits().is_degenerate_3_object();
-  typename Gt::Compare_xyz_3 compare_xyz =
+  typename GT::Compare_xyz_3 compare_xyz =
       r_tr_.geom_traits().compare_xyz_3_object();
-  typename Gt::Construct_segment_3 construct_segment =
+  typename GT::Construct_segment_3 construct_segment =
       r_tr_.geom_traits().construct_segment_3_object();
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
   typename MD::Do_intersect_surface do_intersect_surface =
@@ -1732,6 +1732,9 @@ Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_facet_encroached(const Facet& facet,
                     const Weighted_point& point) const
 {
+  typedef typename MD::Subdomain_index        Subdomain_index;
+  typedef std::optional<Subdomain_index>    Subdomain;
+
   if ( r_tr_.is_infinite(facet) || ! this->is_facet_on_surface(facet) )
     return false;
 
@@ -1741,9 +1744,40 @@ is_facet_encroached(const Facet& facet,
   const Bare_point& center = get_facet_surface_center(facet);
   const Weighted_point& reference_point = r_tr_.point(cell, (facet_index+1)&3);
 
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+  std::cout << "---------------------------------------------------" << std::endl;
+  std::cout << "Facet " << r_tr_.point(cell, (facet_index+1)%4) << " "
+                        << r_tr_.point(cell, (facet_index+2)%4) << " "
+                        << r_tr_.point(cell, (facet_index+3)%4) << std::endl;
+  std::cout << "center: " << center << std::endl;
+  std::cout << "cell point: " << reference_point << std::endl;
+  std::cout << "refinement point: " << point << std::endl;
+  std::cout << "greater or equal? " << r_tr_.greater_or_equal_power_distance(center, reference_point, point) << std::endl;
+  std::cout << "greater or equal (other way)? " << r_tr_.greater_or_equal_power_distance(center, point, reference_point) << std::endl;
+  std::cout << "index of cell " << r_c3t3_.subdomain_index(cell) << std::endl;
+#endif
+
   // the facet is encroached if the new point is closer to the center than
   // any vertex of the facet
-  return r_tr_.greater_or_equal_power_distance(center, reference_point, point);
+  if(r_tr_.greater_or_equal_power_distance(center, reference_point, point))
+    return true;
+
+  // In an ideal (exact) world, when the predicate above returns true then the insertion
+  // of the refinement point will shorten the dual of the facet but that dual will
+  // still intersects the surface (domain), otherwise the power distance to the surface
+  // center would be shorter.
+  //
+  // In the real world, we can make an error both when we switch back to the inexact kernel
+  // and when we evaluate the domain (e.g. trigonometry-based implicit functions).
+  //
+  // An issue can then arise when we update the restricted Delaunay due to the insertion
+  // of another point, and we do not notice that a facet should in fact have been encroached
+  // by a previous insertion.
+  Bare_point cc;
+  r_tr_.dual_exact(facet, point, cc);
+
+  const Subdomain subdomain = r_oracle_.is_in_domain_object()(cc);
+  return (!subdomain || *subdomain != r_c3t3_.subdomain_index(cell));
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class Ct, class C_>
@@ -1752,13 +1786,13 @@ Refine_facets_3_base<Tr,Cr,MD,C3T3_,Ct,C_>::
 is_encroached_facet_refinable(Facet& facet) const
 {
   typedef typename Tr::Weighted_point Weighted_point;
-  typedef typename Gt::FT      FT;
+  typedef typename GT::FT      FT;
 
-  typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
+  typename GT::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
     r_tr_.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
-  typename Gt::Compute_weight_3 cw =
+  typename GT::Compute_weight_3 cw =
     r_tr_.geom_traits().compute_weight_3_object();
-  typename Gt::Compare_weighted_squared_radius_3 compare =
+  typename GT::Compare_weighted_squared_radius_3 compare =
     r_tr_.geom_traits().compare_weighted_squared_radius_3_object();
 
   const Cell_handle& c = facet.first;

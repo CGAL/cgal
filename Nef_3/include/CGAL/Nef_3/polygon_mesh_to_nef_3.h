@@ -19,10 +19,13 @@
 
 #include <CGAL/license/Nef_3.h>
 
-
+#include <CGAL/Circulator_project.h>
 #include <CGAL/normal_vector_newell_3.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
+#include <CGAL/Plane_3.h>
+#include <CGAL/Point_3.h>
+#include <CGAL/Vector_3.h>
 #include <CGAL/boost/graph/helpers.h>
 
 #undef CGAL_NEF_DEBUG

@@ -19,11 +19,11 @@
 
 /*! \file
  *
- * Defintion of the Arr_overlay_traits_2 class-template.
+ * Definition of the Arr_overlay_traits_2 class-template.
  */
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 
 #include <CGAL/Arr_tags.h>
 
@@ -105,21 +105,21 @@ public:
     RB_OVERLAP    // Red-blue overlap.
   };
 
-  typedef boost::variant<Halfedge_handle_red, Vertex_handle_red,
+  typedef std::variant<Halfedge_handle_red, Vertex_handle_red,
                          Face_handle_red>           Cell_handle_red;
-  typedef boost::optional<Cell_handle_red>          Optional_cell_red;
+  typedef std::optional<Cell_handle_red>          Optional_cell_red;
 
-  typedef boost::variant<Halfedge_handle_blue, Vertex_handle_blue,
+  typedef std::variant<Halfedge_handle_blue, Vertex_handle_blue,
                          Face_handle_blue>          Cell_handle_blue;
-  typedef boost::optional<Cell_handle_blue>         Optional_cell_blue;
+  typedef std::optional<Cell_handle_blue>         Optional_cell_blue;
 
   template <typename Handle_red>
   Optional_cell_red make_optional_cell_red(Handle_red handle_red)
-  { return boost::make_optional(Cell_handle_red(handle_red)); }
+  { return std::make_optional(Cell_handle_red(handle_red)); }
 
   template <typename Handle_blue>
   Optional_cell_red make_optional_cell_blue(Handle_blue handle_blue)
-  { return boost::make_optional(Cell_handle_blue(handle_blue)); }
+  { return std::make_optional(Cell_handle_blue(handle_blue)); }
 
 private:
   const Gt2* m_base_traits;        // The base traits object.
@@ -323,14 +323,14 @@ public:
     /*! Obtain the red vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_red* red_vertex_handle() const
     {
-      return m_red_cell ? boost::get<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
+      return m_red_cell ? std::get_if<Vertex_handle_red>(&(*m_red_cell)) : nullptr;
     }
 
     /*! Obtain the blue vertex handle or nullptr if it doesn't exist. */
     const Vertex_handle_blue* blue_vertex_handle() const
     {
       return
-        m_blue_cell ? boost::get<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
+        m_blue_cell ? std::get_if<Vertex_handle_blue>(&(*m_blue_cell)) : nullptr;
     }
   };
 
@@ -371,10 +371,10 @@ public:
                               OutputIterator oi)
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
       typedef std::pair<Base_point_2, Multiplicity>     Intersection_base_point;
-      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_base_point, Base_x_monotone_curve_2>
                                                         Intersection_base_result;
 
       // In case the curves originate from the same arrangement, they are
@@ -437,10 +437,10 @@ public:
         intersector(xcv2.base(), xcv1.base(), std::back_inserter(xections));
 
       // Convert objects that are associated with Base_x_monotone_curve_2 to
-      // the exteneded X_monotone_curve_2.
+      // the extended X_monotone_curve_2.
       for (const auto& xection : xections) {
         const Intersection_base_point* base_ipt =
-          boost::get<Intersection_base_point>(&xection);
+          std::get_if<Intersection_base_point>(&xection);
         if (base_ipt != nullptr) {
           // We have a red-blue intersection point, so we attach the
           // intersecting red and blue halfedges to it.
@@ -450,16 +450,16 @@ public:
           if (xcv1.color() == RED) {
             CGAL_assertion(xcv2.color() == BLUE);
             red_cell =
-              boost::make_optional(Cell_handle_red(xcv1.red_halfedge_handle()));
+              std::make_optional(Cell_handle_red(xcv1.red_halfedge_handle()));
             blue_cell =
-              boost::make_optional(Cell_handle_blue(xcv2.blue_halfedge_handle()));
+              std::make_optional(Cell_handle_blue(xcv2.blue_halfedge_handle()));
           }
           else {
             CGAL_assertion((xcv2.color() == RED) && (xcv1.color() == BLUE));
             red_cell =
-              boost::make_optional(Cell_handle_red(xcv2.red_halfedge_handle()));
+              std::make_optional(Cell_handle_red(xcv2.red_halfedge_handle()));
             blue_cell =
-              boost::make_optional(Cell_handle_blue(xcv1.blue_halfedge_handle()));
+              std::make_optional(Cell_handle_blue(xcv1.blue_halfedge_handle()));
           }
 
           // Create the extended point and add the multiplicity.
@@ -470,7 +470,7 @@ public:
         }
 
         const Base_x_monotone_curve_2* overlap_xcv =
-          boost::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(overlap_xcv != nullptr);
 
         // We have a red-blue overlap, so we mark the curve accordingly.
@@ -574,15 +574,15 @@ public:
         red_cell =
           (! xcv.red_halfedge_handle()->target()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.red_halfedge_handle()->target()->point())) ?
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->target())) :
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->target())) :
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
 
       if ((xcv.color() == BLUE) || (xcv.color() == RB_OVERLAP))
         blue_cell =
           (! xcv.blue_halfedge_handle()->target()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.blue_halfedge_handle()->target()->point())) ?
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->target())) :
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->target())) :
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
 
       return Point_2(base_p, red_cell, blue_cell);
     }
@@ -631,15 +631,15 @@ public:
         red_cell =
           (! xcv.red_halfedge_handle()->source()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.red_halfedge_handle()->source()->point())) ?
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->source())) :
-          boost::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()->source())) :
+          std::make_optional(Cell_handle_red(xcv.red_halfedge_handle()));
 
       if ((xcv.color() == BLUE) || (xcv.color() == RB_OVERLAP))
         blue_cell =
           (! xcv.blue_halfedge_handle()->source()->is_at_open_boundary() &&
            m_base_equal(base_p, xcv.blue_halfedge_handle()->source()->point())) ?
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->source())) :
-          boost::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()->source())) :
+          std::make_optional(Cell_handle_blue(xcv.blue_halfedge_handle()));
 
       return (Point_2(base_p, red_cell, blue_cell));
     }
@@ -705,7 +705,7 @@ public:
     { return m_base_equal(xcv1.base(), xcv2.base()); }
   };
 
-  /*! Obtain a Equal_2 functor object. */
+  /*! Obtain an `Equal_2` functor object. */
   Equal_2 equal_2_object() const
   { return Equal_2(m_base_traits->equal_2_object()); }
 
@@ -753,7 +753,7 @@ public:
   public:
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      // Check if there wither points represent red or blue vertices.
+      // Check if there whether points represent red or blue vertices.
       const Vertex_handle_red* vr1 = p1.red_vertex_handle();
       const Vertex_handle_red* vr2 = p2.red_vertex_handle();
       const Vertex_handle_blue* vb1 = p1.blue_vertex_handle();
@@ -983,7 +983,7 @@ public:
   Is_on_x_identification_2 is_on_x_identification_2_object() const
   { return Is_on_x_identification_2(m_base_traits); }
 
-  /*! A functor that compares the y-values of pointss on the
+  /*! A functor that compares the y-values of points on the
    * boundary of the parameter space.
    */
   class Compare_y_on_boundary_2 {
@@ -1115,7 +1115,7 @@ public:
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(m_base_traits); }
 
-  /*! A functor that compares the y-values of pointss on the
+  /*! A functor that compares the y-values of points on the
    * boundary of the parameter space.
    */
   class Compare_x_on_boundary_2 {

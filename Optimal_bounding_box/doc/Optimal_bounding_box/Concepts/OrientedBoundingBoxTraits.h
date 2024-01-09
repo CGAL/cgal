@@ -6,9 +6,11 @@ The concept `OrientedBoundingBoxTraits_3` describes the requirements of the trai
 used in the function `CGAL::oriented_bounding_box()`, and in particular the need for
 a 3x3 matrix type.
 
-\cgalRefines `Kernel`
+\cgalRefines{Kernel}
 
-\cgalHasModel `CGAL::Oriented_bounding_box_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Oriented_bounding_box_traits_3}
+\cgalHasModelsEnd
 
 */
 class OrientedBoundingBoxTraits_3

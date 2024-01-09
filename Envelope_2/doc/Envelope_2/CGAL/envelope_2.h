@@ -101,7 +101,7 @@ namespace CGAL {
 
 Computes the upper envelope of a set of \f$ x\f$-monotone curves in
 \f$ \mathbb{R}^2\f$, as given by the range `[begin, end)` with the help
-of the arrangement traits object `traits` responsbile for their creation.
+of the arrangement traits object `traits` responsible for their creation.
 Reusing the same traits object improves speed if the traits class caches data.
 The upper envelope is represented using the output maximization diagram `diag`.
 

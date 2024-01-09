@@ -53,7 +53,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     Traits t; // To allow the traits to not only vary at compile- but
               // also at runtime, we instantiate it here.
 
-  private: // for internal consisteny checks:
+  private: // for internal consistency checks:
     // The following variable is true if and only if the miniball
     // has been computed of all inserted balls, i.e. iff every checked-in
     // ball has been respected in the miniball computation.

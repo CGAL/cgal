@@ -73,7 +73,7 @@ public:
       return qobject_cast<Scene_polylines_item*>(scene->item(
                                                    scene->mainSelectionIndex()));
     bool all_polylines_selected = true;
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if (!qobject_cast<Scene_polylines_item*>(scene->item(index)))
       {
@@ -262,18 +262,18 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 void Polyhedron_demo_polylines_io_plugin::split()
 {
   Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
-  Scene_group_item* group = new Scene_group_item("Splitted Polylines");
+  Scene_group_item* group = new Scene_group_item("Split Polylines");
   scene->addItem(group);
   group->setColor(item->color());
   int i=0;
-  Q_FOREACH(Scene_polylines_item::Polyline polyline, item->polylines)
+  for(Scene_polylines_item::Polyline polyline: item->polylines)
   {
     Scene_polylines_item::Polylines_container container;
     container.push_back(polyline);
     Scene_polylines_item *new_polyline = new Scene_polylines_item();
     new_polyline->polylines = container;
     new_polyline->setColor(item->color());
-    new_polyline->setName(QString("Splitted %1 #%2").arg(item->name()).arg(i++));
+    new_polyline->setName(QString("Split %1 #%2").arg(item->name()).arg(i++));
     scene->addItem(new_polyline);
     scene->changeGroup(new_polyline, group);
   }
@@ -309,10 +309,10 @@ polylines_to_split(std::vector<std::vector<P> >& polylines,
       continue;
 
     typename Polyline::iterator pit = polyline.begin();
-    while (boost::next(pit) != polyline.end())
+    while (std::next(pit) != polyline.end())
     {
       vertex_descriptor v = g_manip.get_vertex(*pit, false);
-      vertex_descriptor w = g_manip.get_vertex(*boost::next(pit), false);
+      vertex_descriptor w = g_manip.get_vertex(*std::next(pit), false);
       g_manip.try_add_edge(v, w);
       ++pit;
     }
@@ -343,7 +343,7 @@ void Polyhedron_demo_polylines_io_plugin::simplify()
 {
   Scene_polylines_item* item = qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex()));
   bool ok;
-  double err = QInputDialog::getDouble(mw, "Squared Frechet Distance", "Enter the squared approximation error:", pow(0.01*item->diagonalBbox(),2),0,999,8,&ok);
+  double err = QInputDialog::getDouble(mw, "Squared Frechet Distance", "Enter the squared approximation error:", pow(0.01*item->bboxDiagonal(),2),0,999,8,&ok);
   if(!ok)
     return;
   for(Scene_polylines_item::Polylines_container::iterator
@@ -372,7 +372,7 @@ void Polyhedron_demo_polylines_io_plugin::join()
 
   Scene_polylines_item* new_polyline= new Scene_polylines_item();
   Scene_polylines_item::Polylines_container container;
-  Q_FOREACH(Scene_polylines_item* item, items)
+  for(Scene_polylines_item* item: items)
   {
     for(Scene_polylines_item::Polylines_container::iterator
         it = item->polylines.begin();

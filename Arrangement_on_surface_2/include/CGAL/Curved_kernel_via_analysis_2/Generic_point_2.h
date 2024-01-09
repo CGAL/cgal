@@ -67,12 +67,12 @@ public:
         _m_point(p) {
     }
 
-    mutable boost::optional<Arc_2> _m_arc; // supporting arc for points at inf
+    mutable std::optional<Arc_2> _m_arc; // supporting arc for points at inf
 
     // stores respective curve end if this is a point at infinity
     CGAL::Arr_curve_end _m_end;
 
-    mutable boost::optional<Point_2> _m_point; // stores a finite point
+    mutable std::optional<Point_2> _m_point; // stores a finite point
 
     // befriending the handle
     friend class Generic_point_2<Sweep_curves_adaptor_2, Self>;
@@ -128,7 +128,7 @@ public:
     }
 #endif
     /*!\brief
-     * constructs an arc from a given represenation
+     * constructs an arc from a given representation
      */
     Generic_point_2(Rep rep) :
         Base(rep) {

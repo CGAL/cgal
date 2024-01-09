@@ -86,10 +86,10 @@ private:
         CGAL::Polynomial_traits_d<Poly>::template Rebind<BFI,1>
     ::Other::Type BFI_polynomial;
 
-    mutable boost::optional
+    mutable std::optional
         < BFI_polynomial > f_bfi_;
 
-    mutable boost::optional<BFI> low_bfi_, f_low_bfi_,
+    mutable std::optional<BFI> low_bfi_, f_low_bfi_,
         high_bfi_, f_high_bfi_;
 
     mutable long N;
@@ -113,8 +113,8 @@ private:
         low_bfi_ = CGAL::convert_to_bfi(this->low());
 
         high_bfi_ = CGAL::convert_to_bfi(this->high());
-        f_low_bfi_ = f_bfi_.get().evaluate(low_bfi_.get());
-        f_high_bfi_ = f_bfi_.get().evaluate(high_bfi_.get());
+        f_low_bfi_ = f_bfi_.value().evaluate(low_bfi_.value());
+        f_high_bfi_ = f_bfi_.value().evaluate(high_bfi_.value());
 
     }
 
@@ -125,7 +125,7 @@ private:
         }
 
         m_bfi = CGAL::convert_to_bfi(m);
-        f_m_bfi = f_bfi_.get().evaluate(m_bfi);
+        f_m_bfi = f_bfi_.value().evaluate(m_bfi);
 
         if(CGAL::zero_in(f_m_bfi)) {
 
@@ -229,21 +229,21 @@ protected:
 
         bool poly_changed = (P!=this->polynomial());
         if(poly_changed) {
-            f_bfi_ = boost::none;
+            f_bfi_ = std::nullopt;
         }
         if(poly_changed || LOW != this->low()) {
-            f_low_bfi_ = low_bfi_ = boost::none;
+            f_low_bfi_ = low_bfi_ = std::nullopt;
         }
         if(poly_changed || HIGH != this->high()) {
-            f_high_bfi_ = high_bfi_ = boost::none;
+            f_high_bfi_ = high_bfi_ = std::nullopt;
         }
         Base::set_implicit_rep(P,LOW,HIGH,dummy_bool);
     }
 
     virtual void set_explicit_rep(const Field& m) const {
-        f_bfi_ = boost::none;
-        f_low_bfi_ = low_bfi_ = boost::none;
-        f_high_bfi_ = high_bfi_ = boost::none;
+        f_bfi_ = std::nullopt;
+        f_low_bfi_ = low_bfi_ = std::nullopt;
+        f_high_bfi_ = high_bfi_ = std::nullopt;
         Base::set_explicit_rep(m);
     }
 
@@ -256,13 +256,13 @@ public:
         if(this->is_rational()) return;
 
         if(old_low_!=this->low_) {
-            f_low_bfi_ = low_bfi_ = boost::none;
+            f_low_bfi_ = low_bfi_ = std::nullopt;
         }
         if(old_high_!=this->high_) {
-            f_high_bfi_ = high_bfi_ = boost::none;
+            f_high_bfi_ = high_bfi_ = std::nullopt;
         }
         if(old_pol != this->polynomial()) {
-            f_bfi_ = boost::none;
+            f_bfi_ = std::nullopt;
         }
     }
 
@@ -329,25 +329,25 @@ private:
             low_bfi_ = CGAL::convert_to_bfi(this->low());
         }
         if(! f_low_bfi_) {
-            f_low_bfi_ = f_bfi_.get().evaluate(low_bfi_.get());
+            f_low_bfi_ = f_bfi_.value().evaluate(low_bfi_.value());
         }
         if(! high_bfi_) {
             high_bfi_ = CGAL::convert_to_bfi(this->high());
         }
         if(! f_high_bfi_) {
-            f_high_bfi_ = f_bfi_.get().evaluate(high_bfi_.get());
+            f_high_bfi_ = f_bfi_.value().evaluate(high_bfi_.value());
         }
         Integer i;
         while(true) {
 
-            if(CGAL::zero_in(f_low_bfi_.get() - f_high_bfi_.get())) {
+            if(CGAL::zero_in(f_low_bfi_.value() - f_high_bfi_.value())) {
                 _set_prec(2*prec_);
                 continue;
             }
 
-            BFI denom = f_low_bfi_.get()-f_high_bfi_.get();
+            BFI denom = f_low_bfi_.value()-f_high_bfi_.value();
 
-            BFI z = f_low_bfi_.get() / denom;
+            BFI z = f_low_bfi_.value() / denom;
 
             std::pair<Integer, Integer> int_pair = _to_integer_interval(z,N);
             Integer i_low = int_pair.first;
@@ -458,7 +458,7 @@ protected:
             f_bfi_ = _convert_polynomial_to_bfi(this->polynomial());
         }
 
-        BFI eval = f_bfi_.get().evaluate(convert_to_bfi(m));
+        BFI eval = f_bfi_.value().evaluate(convert_to_bfi(m));
 
         CGAL::Sign s = CGAL::sign(CGAL::lower(eval));
 
@@ -490,11 +490,11 @@ public:
         Poly f_old = this->polynomial();
         Base::simplify();
         if(f_old != this->polynomial()) {
-            f_bfi_ = boost::none;
+            f_bfi_ = std::nullopt;
         }
     }
 };
-} // namepace internal
+} // namespace internal
 
 } //namespace CGAL
 

@@ -1,6 +1,7 @@
 #include <QtCore/qglobal.h>
 
 #include "Scene_surface_mesh_item.h"
+#include "Scene_polygon_soup_item.h"
 #include "Scene_points_with_normal_item.h"
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -19,6 +20,8 @@
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
+#include <CGAL/Polygon_mesh_processing/autorefinement.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include "ui_RemoveNeedlesDialog.h"
 #include "ui_SelfSnapDialog.h"
@@ -52,8 +55,9 @@ public:
     actionDuplicateNMVertices = new QAction(tr("Duplicate Non-Manifold Vertices"), mw);
     actionExtractNMVertices = new QAction(tr("Extract Non-Manifold Vertices"), mw);
     actionMergeDuplicatedVerticesOnBoundaryCycles = new QAction(tr("Merge Duplicated Vertices on Boundary Cycles"), mw);
-    actionAutorefine = new QAction(tr("Autorefine Mesh"), mw);
-    actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections"), mw);
+    actionAutorefine = new QAction(tr("Autorefine Mesh (Deprecated)"), mw);
+    actionNewAutorefine = new QAction(tr("Autorefine"), mw);
+    actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections (Deprecated)"), mw);
     actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"));
     actionSnapBorders = new QAction(tr("Snap Boundaries"));
 
@@ -65,6 +69,7 @@ public:
     actionExtractNMVertices->setObjectName("actionExtractNMVertices");
     actionMergeDuplicatedVerticesOnBoundaryCycles->setObjectName("actionMergeDuplicatedVerticesOnBoundaryCycles");
     actionAutorefine->setObjectName("actionAutorefine");
+    actionNewAutorefine->setObjectName("actionNewAutorefine");
     actionAutorefineAndRMSelfIntersections->setObjectName("actionAutorefineAndRMSelfIntersections");
     actionRemoveNeedlesAndCaps->setObjectName("actionRemoveNeedlesAndCaps");
     actionSnapBorders->setObjectName("actionSnapBorders");
@@ -77,6 +82,7 @@ public:
     actionExtractNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionMergeDuplicatedVerticesOnBoundaryCycles->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionNewAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionSnapBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
@@ -93,16 +99,29 @@ public:
                              << actionExtractNMVertices
                              << actionMergeDuplicatedVerticesOnBoundaryCycles
                              << actionAutorefine
+                             << actionNewAutorefine
                              << actionAutorefineAndRMSelfIntersections
                              << actionRemoveNeedlesAndCaps
                              << actionSnapBorders;
   }
 
-  bool applicable(QAction*) const
+  bool applicable(QAction* action) const
   {
-    int item_id = scene->mainSelectionIndex();
-    return qobject_cast<Scene_surface_mesh_item*>(scene->item(item_id));
+    if (action!=actionNewAutorefine)
+    {
+      int item_id = scene->mainSelectionIndex();
+      return qobject_cast<Scene_surface_mesh_item*>(scene->item(item_id));
+    }
+    for (Scene_interface::Item_id index : scene->selectionIndices())
+    {
+      if (qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
+        return true;
+      if (qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
+        return true;
+    }
+    return false;
   }
+
   template <typename Item>
   void on_actionRemoveIsolatedVertices_triggered(Scene_interface::Item_id index);
   template <typename Item>
@@ -120,6 +139,8 @@ public:
   template <typename Item>
   void on_actionAutorefine_triggered(Scene_interface::Item_id index);
   template <typename Item>
+  void on_actionNewAutorefine_triggered(const std::vector<Scene_interface::Item_id>& indices);
+  template <typename Item>
   void on_actionAutorefineAndRMSelfIntersections_triggered(Scene_interface::Item_id index);
 
 public Q_SLOTS:
@@ -131,6 +152,7 @@ public Q_SLOTS:
   void on_actionExtractNMVertices_triggered();
   void on_actionMergeDuplicatedVerticesOnBoundaryCycles_triggered();
   void on_actionAutorefine_triggered();
+  void on_actionNewAutorefine_triggered();
   void on_actionAutorefineAndRMSelfIntersections_triggered();
   void on_actionRemoveNeedlesAndCaps_triggered();
   void on_actionSnapBorders_triggered();
@@ -144,6 +166,7 @@ private:
   QAction* actionExtractNMVertices;
   QAction* actionMergeDuplicatedVerticesOnBoundaryCycles;
   QAction* actionAutorefine;
+  QAction* actionNewAutorefine;
   QAction* actionAutorefineAndRMSelfIntersections;
   QAction* actionRemoveNeedlesAndCaps;
   QAction* actionSnapBorders;
@@ -192,7 +215,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_tri
   QDialog dialog;
   Ui::NeedleDialog ui;
   ui.setupUi(&dialog);
-  ui.collapseBox->setValue(sm_item->diagonalBbox()*0.01);
+  ui.collapseBox->setValue(sm_item->bboxDiagonal()*0.01);
   if(dialog.exec() != QDialog::Accepted)
     return;
   CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces(*sm_item->face_graph(),
@@ -273,7 +296,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
   {
     std::vector<double> tolerances/* = 0.005, 0.0125, 0.025, 0.05, 0.07 */;
     bool ok;
-    Q_FOREACH(QString tol_text, ui.tolerances->text().split(","))
+    for(QString tol_text : ui.tolerances->text().split(","))
     {
       double d = tol_text.toDouble(&ok);
       if (ok)
@@ -418,6 +441,78 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   on_actionAutorefine_triggered<Scene_surface_mesh_item>(index);
+  QApplication::restoreOverrideCursor();
+}
+
+template <typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionNewAutorefine_triggered(const std::vector<Scene_interface::Item_id>& indices)
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  Polygon_soup::Points points;
+  Polygon_soup::Polygons polygons;
+
+  if (indices.size()==1)
+  {
+    if (Scene_surface_mesh_item* smi_ptr = qobject_cast<Scene_surface_mesh_item*>(scene->item(indices[0])))
+      PMP::polygon_mesh_to_polygon_soup(*smi_ptr->polyhedron(), points, polygons);
+    else if (Scene_polygon_soup_item* spi_ptr = qobject_cast<Scene_polygon_soup_item*>(scene->item(indices[0])))
+    {
+      points = spi_ptr->points();
+      polygons = spi_ptr->polygons();
+    }
+  }
+  else
+  {
+    for (Scene_interface::Item_id id : indices)
+    {
+      Polygon_soup::Points l_points;
+      Polygon_soup::Polygons l_polygons;
+
+      if (Scene_surface_mesh_item* smi_ptr = qobject_cast<Scene_surface_mesh_item*>(scene->item(id)))
+        PMP::polygon_mesh_to_polygon_soup(*smi_ptr->polyhedron(), l_points, l_polygons);
+      else if (Scene_polygon_soup_item* spi_ptr = qobject_cast<Scene_polygon_soup_item*>(scene->item(id)))
+      {
+        l_points = spi_ptr->points();
+        l_polygons = spi_ptr->polygons();
+      }
+      std::size_t offset=points.size();
+      points.insert(points.end(), l_points.begin(), l_points.end());
+      std::size_t psize=polygons.size();
+      polygons.insert(polygons.end(), l_polygons.begin(), l_polygons.end());
+      for (std::size_t i=psize; i<polygons.size(); ++i)
+        for(std::size_t& id : polygons[i])
+          id+=offset;
+    }
+  }
+
+  PMP::triangulate_polygons(points, polygons);
+  PMP::autorefine_triangle_soup(points, polygons,
+                                CGAL::parameters::concurrency_tag(CGAL::Parallel_if_available_tag()));
+
+  Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
+  new_item->load(points, polygons);
+  QString name = scene->item(indices[0])->name();
+  for (std::size_t k=1; k<indices.size(); ++k)
+    name += " + " + scene->item(indices[k])->name();
+  new_item->setName(name+" autorefined");
+
+  scene->addItem(new_item);
+  new_item->invalidateOpenGLBuffers();
+  Q_EMIT new_item->itemChanged();
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionNewAutorefine_triggered()
+{
+  std::vector<Scene_interface::Item_id> indices;
+  for (Scene_interface::Item_id index : scene->selectionIndices())
+  {
+    if (qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
+      indices.push_back(index);
+    else if (qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
+      indices.push_back(index);
+  }
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  on_actionNewAutorefine_triggered<Scene_surface_mesh_item>(indices);
   QApplication::restoreOverrideCursor();
 }
 

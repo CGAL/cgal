@@ -18,6 +18,7 @@
 #include <QStyleFactory>
 #include <QAction>
 #include <QMultipleInputDialog.h>
+#include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #ifdef CGAL_USE_WEBSOCKETS
 #include <QtWebSockets/QWebSocket>
@@ -67,7 +68,7 @@ public:
 
   // M e s s a g e s
   QString message;
-  bool _displayMessage;
+  bool _displayMessage = false;
   QTimer messageTimer;
   QOpenGLFunctions_4_3_Core* _recentFunctions;
   bool is_2d_selection_mode;
@@ -303,7 +304,7 @@ void Viewer::doBindings()
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
-  setShortcut(CGAL::qglviewer::EXIT_VIEWER, 0);
+  setShortcut(CGAL::qglviewer::EXIT_VIEWER, QKeyCombination{});
   setKeyDescription(Qt::Key_T,
                     tr("Turn the camera by 180 degrees"));
   setKeyDescription(Qt::Key_M,
@@ -623,7 +624,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
      event->modifiers().testFlag(Qt::ShiftModifier))
   {
     select(event->pos());
-    requestContextMenu(event->globalPos());
+    requestContextMenu(event->globalPosition().toPoint());
     event->accept();
   }
   else if(!event->modifiers()
@@ -994,7 +995,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_CUTPLANE_SPHERES:
     case PROGRAM_NO_SELECTION:
     case PROGRAM_HEAT_INTENSITY:
-      program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
+      program->setUniformValue("alpha", 1.0f); //overridden in item draw() if necessary
     default:
       break;
     }
@@ -1630,7 +1631,7 @@ void Viewer_impl::showDistance(QPoint pixel)
                                              QString(" distance: %1").arg(dist), true, font, Qt::red, true);
 
         distance_text.append(centerCoord);
-        Q_FOREACH(TextItem* ti, distance_text)
+        for(TextItem* ti : distance_text)
           textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
                   .arg(APoint.x/scaler.x()-viewer->offset().x)
@@ -1647,7 +1648,7 @@ void Viewer_impl::showDistance(QPoint pixel)
 void Viewer_impl::clearDistancedisplay()
 {
   distance_is_displayed = false;
-  Q_FOREACH(TextItem* ti, distance_text)
+  for(TextItem* ti : distance_text)
   {
     textRenderer->removeText(ti);
     delete ti;
@@ -1838,7 +1839,7 @@ void Viewer::setLighting()
   connect(dialog->position_lineEdit, &QLineEdit::editingFinished,
           [this, dialog]()
   {
-    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), CGAL_QT_SKIP_EMPTY_PARTS);
+    QStringList list = dialog->position_lineEdit->text().split(QRegularExpression(","), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;

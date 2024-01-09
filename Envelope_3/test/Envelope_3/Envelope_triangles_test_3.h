@@ -17,7 +17,6 @@
 #include <CGAL/Envelope_3/Envelope_overlay_2.h>
 
 #include <CGAL/Arr_walk_along_line_point_location.h>
-#include <CGAL/Object.h>
 #include <CGAL/enum.h>
 
 #include <iostream>
@@ -34,7 +33,7 @@
 // The algorithm projects the surfaces on the plane, and projects all the
 // intersections between surfaces, to get an arrangement that is a partition
 // of the real envelope.
-// Then it computes for each part in the arragement the surfaces on the
+// Then it computes for each part in the arrangement the surfaces on the
 // envelope over it by comparing them all.
 
 namespace CGAL {
@@ -130,48 +129,40 @@ public:
 #endif
 
       // collect the curve in this list, and use sweepline at the end
-      std::list<Object> boundary_list;
       typedef std::pair<X_monotone_curve_2, Oriented_side>     Boundary_xcurve;
+      std::list<std::variant<Boundary_xcurve, Point_2>> boundary_list;
       traits.construct_projected_boundary_2_object()
         (cur_surface, std::back_inserter(boundary_list));
-      std::list<Object>::const_iterator bit;
-      for (bit = boundary_list.begin(); bit != boundary_list.end(); ++bit) {
-        const Object& obj = *bit;
-        Boundary_xcurve boundary_cv;
-        assert(assign(boundary_cv, obj));
-        assign(boundary_cv, obj);
-        curves_col.push_back(boundary_cv.first);
+      for (auto bit = boundary_list.begin(); bit != boundary_list.end(); ++bit) {
+        const Boundary_xcurve* boundary_cv = std::get_if<Boundary_xcurve>(&(*bit));
+        assert(boundary_cv!=nullptr);
+        curves_col.push_back(boundary_cv->first);
       }
       // second, intersect it with all surfaces before it
-      Object cur_obj;
       for (unsigned int j = 0; j < i; ++j) {
         Xy_monotone_surface_3& prev_surface = surfaces[j];
 
-        std::vector<Object> inter_objs;
+        std::vector<std::variant<Intersection_curve,Point_2>> inter_objs;
         traits.construct_projected_intersections_2_object()
           (cur_surface, prev_surface, std::back_inserter(inter_objs));
 
         // we collect all intersections and use sweep to insert them
-        Point_2 point;
-        Intersection_curve curve;
         for(std::size_t k=0; k<inter_objs.size(); ++k)
         {
-          cur_obj = inter_objs[k];
-          assert(!cur_obj.is_empty());
-          if (CGAL::assign(point, cur_obj)) {
+          if (const Point_2* point = std::get_if<Point_2>(&inter_objs[k])) {
 #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
               std::cout << "intersection between surfaces is a point: "
                         << point << std::endl;
 #endif
             //insert_vertex(result, point, pl);
-            points_col.push_back(point);
+            points_col.push_back(*point);
           }
-          else if (CGAL::assign(curve, cur_obj)) {
+          else if (const Intersection_curve* curve = std::get_if<Intersection_curve>(&inter_objs[k])) {
 #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
               std::cout << "intersection between surfaces is a curve: "
                         << curve.first << std::endl;
 #endif
-            curves_col.push_back(curve.first);
+            curves_col.push_back(curve->first);
             //insert(result, curve.first, pl);
           }
           else
@@ -222,7 +213,7 @@ public:
     Halfedge_iterator hi = result.halfedges_begin();
     for (; hi != result.halfedges_end(); ++hi, ++hi) {
       Halfedge_handle hh = hi;
-      // first we find the surfaces that are defined over the egde
+      // first we find the surfaces that are defined over the edge
       std::list<Xy_monotone_surface_3> defined_surfaces;
       for(std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_surface_defined_over_edge(hh, surfaces[i]))
@@ -262,20 +253,17 @@ public:
     // foreach face in the test envelope, compute a point inside the face,
     // locate it in the other envelope and compare the surfaces over the 2 faces
     Md_point_location pl(env);
-    Object pl_obj;
-    Face_const_handle pl_fh;
-
     Face_iterator fi = test_env.faces_begin();
     bool eq, result = true;
     for (; fi != test_env.faces_end(); ++fi) {
       Face_handle fh = fi;
       if (!fh->is_unbounded()) {
         Point_2 inside_test = compute_point_inside_face(test_env, fh);
-        pl_obj = pl.locate(inside_test);
+        auto pl_obj = pl.locate(inside_test);
         // faces of env must contain the faces of test
-        bool located_in_face = assign(pl_fh, pl_obj);
-        assert(located_in_face);
-        eq = fh->is_equal_data(pl_fh->begin_data(), pl_fh->end_data());
+        const Face_const_handle* pl_fh = std::get_if<Face_const_handle>(&pl_obj);
+        assert(pl_fh!=nullptr);
+        eq = fh->is_equal_data((*pl_fh)->begin_data(), (*pl_fh)->end_data());
         assert(eq);
         result &= eq;
       }

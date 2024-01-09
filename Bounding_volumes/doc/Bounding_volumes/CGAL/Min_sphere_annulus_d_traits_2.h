@@ -10,7 +10,7 @@ optimisation algorithms using the two-dimensional \cgal kernel.
 \tparam K  must bea model for `Kernel`.
 \tparam ET NT are models for `RingNumberType`. Their default type is `K::RT`.
 
-\cgalModels `MinSphereAnnulusDTraits`
+\cgalModels{MinSphereAnnulusDTraits}
 
 \sa `CGAL::Min_sphere_d<Traits>`
 \sa `CGAL::Min_annulus_d<Traits>`

@@ -45,7 +45,7 @@ public:
 public Q_SLOTS:
   void on_actionDeformation_triggered();
   /////// Dock window signal handlers //////
-  // what they do is simply transmiting required 'action' to selected scene_edit_polyhedron_item object
+  // what they do is simply transmitting required 'action' to selected scene_edit_polyhedron_item object
   void on_AddCtrlVertPushButton_clicked();
   void on_PrevCtrlVertPushButton_clicked();
   void on_NextCtrlVertPushButton_clicked();
@@ -90,7 +90,7 @@ QList<QAction*> Polyhedron_demo_edit_polyhedron_plugin::actions() const {
   return QList<QAction*>() << actionDeformation;
 }
 bool Polyhedron_demo_edit_polyhedron_plugin::applicable(QAction*) const {
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id i, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id i : scene->selectionIndices())
   {
     if(qobject_cast<Scene_facegraph_item*>(scene->item(i)))
       return true;
@@ -116,7 +116,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   actionDeformation->setObjectName("actionDeformation");
   actionDeformation->setShortcutContext(Qt::ApplicationShortcut);
   autoConnectActions();
-  e_shortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), mw);
+  e_shortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_E), mw);
   connect(e_shortcut, &QShortcut::activated, this, &Polyhedron_demo_edit_polyhedron_plugin::dispatchAction);
   connect(e_shortcut, &QShortcut::activatedAmbiguously, this, &Polyhedron_demo_edit_polyhedron_plugin::dispatchAction);
 
@@ -309,7 +309,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_butto
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  boost::optional<std::size_t> minimum =
+  std::optional<std::size_t> minimum =
     edit_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
   if(minimum) {
     ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
@@ -321,7 +321,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  boost::optional<std::size_t> minimum = edit_item->get_minimum_isolated_component();
+  std::optional<std::size_t> minimum = edit_item->get_minimum_isolated_component();
   if(minimum) {
     ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
   }
@@ -385,7 +385,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
       else
         selection_item = nullptr;
     }
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id i , scene->selectionIndices())
+    for(CGAL::Three::Scene_interface::Item_id i  : scene->selectionIndices())
     {
       Scene_facegraph_item* poly_item = qobject_cast<Scene_facegraph_item*>(scene->item(i));
       if (poly_item &&
@@ -499,7 +499,7 @@ Scene_edit_polyhedron_item* edit_item = nullptr;
 bool need_sel(true), need_edit(true);
 
 // find selection_item and edit_item in selection
-  Q_FOREACH(Item_id id, scene->selectionIndices())
+ for(Item_id id : scene->selectionIndices())
   {
     if(need_sel)
     {
@@ -536,9 +536,9 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
 
   //converts the selection in selected points
   QVector<Scene_polyhedron_selection_item::fg_vertex_descriptor> sel_to_import;
-  Q_FOREACH(Scene_polyhedron_selection_item::fg_vertex_descriptor vh, selection_item->selected_vertices)
+  for(Scene_polyhedron_selection_item::fg_vertex_descriptor vh : selection_item->selected_vertices)
     sel_to_import.push_back(vh);
-  Q_FOREACH(Scene_polyhedron_selection_item::fg_edge_descriptor ed, selection_item->selected_edges)
+  for(Scene_polyhedron_selection_item::fg_edge_descriptor ed : selection_item->selected_edges)
   {
     Scene_polyhedron_selection_item::fg_vertex_descriptor vh = source(halfedge(ed, *selection_item->polyhedron()),*selection_item->polyhedron());
     if(!sel_to_import.contains(vh))
@@ -549,7 +549,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
       sel_to_import.push_back(vh);
   }
 
-  Q_FOREACH(Scene_polyhedron_selection_item::fg_face_descriptor fh, selection_item->selected_facets)
+  for(Scene_polyhedron_selection_item::fg_face_descriptor fh : selection_item->selected_facets)
   {
     CGAL::Halfedge_around_face_circulator<Scene_facegraph_item::Face_graph> hafc(halfedge(fh, *selection_item->polyhedron()), *selection_item->polyhedron());
     CGAL::Halfedge_around_face_circulator<Scene_facegraph_item::Face_graph> end = hafc;
@@ -561,7 +561,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
   }
 
   //makes the selected points ROI
-  Q_FOREACH(Scene_polyhedron_selection_item::fg_vertex_descriptor vh, sel_to_import)
+  for(Scene_polyhedron_selection_item::fg_vertex_descriptor vh : sel_to_import)
   {
     edit_item->insert_roi_vertex(vh);
   }
@@ -571,7 +571,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
     selection_item->set_highlighting(false);
   }
   selection_item->setVisible(false);
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     v->update();
 }
 

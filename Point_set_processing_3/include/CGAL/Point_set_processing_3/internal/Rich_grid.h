@@ -266,7 +266,7 @@ void Rich_grid<Kernel>::travel_itself(
       for(int x = 0; x < x_side; x++) {
         int origin = cell(x, y, z);
         self(get_start_iter(origin), get_end_iter(origin), radius);
-        // compute between other girds
+        // compute between other grids
         for(int d = 2; d < 28; d += 2) { // skipping self
           const int *cs = corner + 3*diagonals[d];
           const int *ce = corner + 3*diagonals[d+1];
@@ -284,7 +284,7 @@ void Rich_grid<Kernel>::travel_itself(
   }
 }
 
-/// define how to travel in other gird
+/// define how to travel in other grid
 template <typename Kernel>
 void Rich_grid<Kernel>::travel_others(
   Rich_grid &points,

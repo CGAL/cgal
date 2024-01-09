@@ -203,7 +203,7 @@ bool move_isolated_vertex(Face_handle f1, Face_handle f2, Vertex_handle v);
 /*! relocates all inner ccbs and isolated vertices to their proper position
  * immediately after a face has split due to the insertion of a new halfedge,
  * namely after `insert_at_vertices_ex()` was invoked and indicated that a new
- * face has been created. `he` is the halfegde returned by
+ * face has been created. `he` is the halfedge returned by
  * `insert_at_vertices_ex()`, such that `he->twin()->face` is the face that has
  * just been split and `he->face()` is the newly created face.
  */

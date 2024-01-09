@@ -29,7 +29,7 @@ auto make_not_null(T&& t) {
 }
 
 #include <boost/variant/variant.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include "Scene_polylines_item.h"
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -50,12 +50,13 @@ auto make_not_null(T&& t) {
 
 using namespace CGAL::Three;
 
-// Constants
-const QColor default_mesh_color(45,169,70);
-
 #include "Mesh_3_plugin_cgal_code.h" // declare functions `cgal_code_mesh_3`
 #include "split_polylines.h"
 #include <CGAL/Mesh_facet_topology.h>
+
+enum Protection { BORDERS = 1, FEATURES = 2 };
+using Protection_flags = QFlags<Protection>;
+Q_DECLARE_METATYPE(Protection_flags)
 
 class Mesh_3_plugin :
   public QObject,
@@ -70,6 +71,7 @@ class Mesh_3_plugin :
              READ get_sharp_edges_angle_bound
              WRITE set_sharp_edges_angle_bound)
   Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing)
+  Q_PROPERTY(double edges_min_sizing READ get_edges_min_sizing WRITE set_edges_min_sizing)
   Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing)
   Q_PROPERTY(double approx READ get_approx WRITE set_approx)
   Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing)
@@ -130,7 +132,7 @@ public:
   }
 
 public Q_SLOTS:
-  boost::optional<QString> get_items_or_return_error_string() const;
+  std::optional<QString> get_items_or_return_error_string() const;
   void set_defaults();
   void mesh_3_volume();
   void mesh_3_surface();
@@ -155,6 +157,7 @@ public Q_SLOTS:
     sharp_edges_angle_bound = v;
   }
   void set_edges_sizing(const double v) { edges_sizing = v; };
+  void set_edges_min_sizing(const double v) { edges_min_sizing = v; };
   void set_facets_sizing(const double v) { facets_sizing = v; };
   void set_approx(const double v) { approx = v; };
   void set_tets_sizing(const double v) { tets_sizing = v; };
@@ -167,6 +170,7 @@ public Q_SLOTS:
   double get_angle() { return angle; };
   double get_sharp_edges_angle_bound() { return sharp_edges_angle_bound; }
   double get_edges_sizing() { return edges_sizing; };
+  double get_edges_min_sizing() { return edges_min_sizing; };
   double get_facets_sizing() { return facets_sizing; };
   double get_approx() { return approx; };
   double get_tets_sizing() { return tets_sizing; };
@@ -202,8 +206,11 @@ private:
   double approx;
   int approx_decimals;
   double edges_sizing;
+  double edges_min_sizing;
   double facets_sizing;
+  double facets_min_sizing;
   double tets_sizing;
+  double tets_min_sizing;
   double tets_shape;
   bool manifold_criterion;
   CGAL::Mesh_facet_topology facet_topology;
@@ -231,7 +238,7 @@ private:
     IMAGE_MESH_ITEMS,
     IMPLICIT_MESH_ITEMS
   };
-  mutable boost::optional<boost::variant<Polyhedral_mesh_items,
+  mutable std::optional<std::variant<Polyhedral_mesh_items,
                                          Image_mesh_items,
                                          Implicit_mesh_items>>
       items;
@@ -277,12 +284,15 @@ void Mesh_3_plugin::mesh_3_volume()
   mesh_3(Mesh_type::VOLUME);
 }
 
-boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const {
-  using boost::get;
+std::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
+{
   items = {};
   features_protection_available = false;
   item = nullptr;
-  for (int ind : scene->selectionIndices()) {
+  Scene_polylines_item* polylines_item = nullptr;
+
+  for (int ind : scene->selectionIndices())
+  {
     try {
       if (auto sm_item =
               qobject_cast<Scene_surface_mesh_item*>(scene->item(ind))) {
@@ -313,22 +323,28 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
           return tr("An image items cannot be mixed with other items type");
       }
 #  endif
-      else if (auto polylines_item =
-                   qobject_cast<Scene_polylines_item*>(scene->item(ind))) {
-        if (!items) items = Polyhedral_mesh_items{};
-        auto poly_items_ptr = get<Polyhedral_mesh_items>(&*items);
+      else if ((polylines_item =
+                qobject_cast<Scene_polylines_item*>(scene->item(ind))))
+      {
+        if (!items)
+          continue;
+        auto poly_items_ptr = std::get_if<Polyhedral_mesh_items>(&items.value());
         if(poly_items_ptr) {
           if (poly_items_ptr->polylines_item) {
             return tr("Only one polyline item is accepted");
           } else {
             poly_items_ptr->polylines_item = polylines_item;
           }
-        } else {
-          auto image_items = get<Image_mesh_items>(*items);
-          if (image_items.polylines_item) {
-            return tr("Only one polyline item is accepted");
-          } else {
-            image_items.polylines_item = polylines_item;
+        }
+        else {
+          if(auto image_items_ptr = std::get_if<Image_mesh_items>(&items.value()))
+          {
+            if (image_items_ptr->polylines_item) {
+              return tr("Only one polyline item is accepted");
+            }
+            else {
+              image_items_ptr->polylines_item = polylines_item;
+            }
           }
         }
       }
@@ -341,10 +357,24 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
       }
     } catch (const boost::bad_get&) { return tr("Wrong selection of items"); }
   } // end for loop on selected items
+
+  //attach polylines_item to one or the other item
+  //if it could not be done in the for loop
+  //because of selection order
+  if (polylines_item != nullptr && items != std::nullopt)
+  {
+    auto poly_items_ptr = std::get_if<Polyhedral_mesh_items>(&items.value());
+    auto image_items_ptr = std::get_if<Image_mesh_items>(&items.value());
+    if(poly_items_ptr != nullptr)
+      poly_items_ptr->polylines_item = polylines_item;
+    else if(image_items_ptr != nullptr )
+      image_items_ptr->polylines_item = polylines_item;
+  }
+
   if (!items) { return tr("Selected objects can't be meshed"); }
   item = nullptr;
   features_protection_available = false;
-  if (auto poly_items = get<Polyhedral_mesh_items>(&*items)) {
+  if (auto poly_items = std::get_if<Polyhedral_mesh_items>(&items.value())) {
     auto& sm_items = poly_items->sm_items;
     if(sm_items.empty()) {
       return tr("ERROR: there must be at least one surface mesh item.");
@@ -365,12 +395,12 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
     features_protection_available = true;
   }
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-  else if (auto implicit_mesh_items = get<Implicit_mesh_items>(&*items)) {
+  else if (auto implicit_mesh_items = std::get_if<Implicit_mesh_items>(&items.value())) {
     item = implicit_mesh_items->function_item;
   }
 #  endif
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-  else if (auto image_mesh_items = get<Image_mesh_items>(&*items)) {
+  else if (auto image_mesh_items = std::get_if<Image_mesh_items>(&items.value())) {
     auto& image_item = image_mesh_items->image_item;
     item = image_item;
     features_protection_available = true;
@@ -379,7 +409,7 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
 
   if(item) {
     bbox = item->bbox();
-    if (auto poly_items = get<Polyhedral_mesh_items>(&*items)) {
+    if (auto poly_items = std::get_if<Polyhedral_mesh_items>(&items.value())) {
       for (auto it : poly_items->sm_items) {
         bbox = bbox + it->bbox();
       }
@@ -396,7 +426,10 @@ void Mesh_3_plugin::set_defaults() {
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   facets_sizing = get_approximate(diag * 0.05, 2, sizing_decimals);
   edges_sizing = facets_sizing;
+  edges_min_sizing = 0.1 * facets_sizing;
   tets_sizing = facets_sizing;
+  facets_min_sizing = 0.1 * facets_sizing;
+  tets_min_sizing = 0.1 * tets_sizing;
   angle = 25.;
   sharp_edges_angle_bound = 60.;
   approx = get_approximate(diag * 0.005, 2, approx_decimals);
@@ -411,26 +444,28 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     QMessageBox::warning(mw, tr("Mesh_3 plugin"), *error_string);
     return;
   }
-  using boost::get;
+
   const bool more_than_one_item =
-      get<Polyhedral_mesh_items>(&*items) &&
-      (get<Polyhedral_mesh_items>(&*items)->sm_items.size() > 1);
+      std::get_if<Polyhedral_mesh_items>(&items.value()) &&
+      (std::get_if<Polyhedral_mesh_items>(&items.value())->sm_items.size() > 1);
 
   Scene_image_item* image_item =
-      get<Image_mesh_items>(&*items)
-          ? get<Image_mesh_items>(&*items)->image_item.get()
+      std::get_if<Image_mesh_items>(&items.value())
+          ? std::get_if<Image_mesh_items>(&items.value())->image_item.get()
           : nullptr;
   Scene_surface_mesh_item* bounding_sm_item =
-      get<Polyhedral_mesh_items>(&*items)
-          ? get<Polyhedral_mesh_items>(&*items)->bounding_sm_item
+      std::get_if<Polyhedral_mesh_items>(&items.value())
+          ? std::get_if<Polyhedral_mesh_items>(&items.value())->bounding_sm_item
           : nullptr;
   Scene_polylines_item* polylines_item =
-      get<Polyhedral_mesh_items>(&*items)
-          ? get<Polyhedral_mesh_items>(&*items)->polylines_item
+      std::get_if<Polyhedral_mesh_items>(&items.value())
+          ? std::get_if<Polyhedral_mesh_items>(&items.value())->polylines_item
           : nullptr;
+  if (polylines_item == nullptr && std::get_if<Image_mesh_items>(&items.value()) != nullptr)
+    polylines_item = std::get_if<Image_mesh_items>(&items.value())->polylines_item;
   Scene_implicit_function_item* function_item =
-      get<Implicit_mesh_items>(&*items)
-          ? get<Implicit_mesh_items>(&*items)->function_item.get()
+      std::get_if<Implicit_mesh_items>(&items.value())
+          ? std::get_if<Implicit_mesh_items>(&items.value())->function_item.get()
           : nullptr;
   // -----------------------------------
   // Create Mesh dialog
@@ -465,6 +500,16 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.facetSizing,
           SLOT(setEnabled(bool)));
 
+  connect(ui.noFacetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.facetMinSizing,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.noFacetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.sizingMinLabel,
+          SLOT(setEnabled(bool)));
+
   connect(
       ui.noAngle, SIGNAL(toggled(bool)), ui.facetAngle, SLOT(setEnabled(bool)));
 
@@ -473,11 +518,22 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.tetSizing,
           SLOT(setEnabled(bool)));
 
+  connect(ui.noTetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.tetMinSizing,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.noTetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.tetMinSizingLabel,
+          SLOT(setEnabled(bool)));
+
   connect(ui.noTetShape,
           SIGNAL(toggled(bool)),
           ui.tetShape,
           SLOT(setEnabled(bool)));
 
+  //edge sizing
   connect(ui.protect,
           SIGNAL(toggled(bool)),
           ui.noEdgeSizing,
@@ -498,6 +554,28 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.edgeSizing,
           SLOT(setEnabled(bool)));
 
+  //edge min sizing
+  connect(ui.protect,
+          SIGNAL(toggled(bool)),
+          ui.noEdgeMinSizing,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.protect,
+          SIGNAL(toggled(bool)),
+          ui.noEdgeMinSizing,
+          SLOT(setChecked(bool)));
+
+  connect(ui.noEdgeMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.edgeMinSizingLabel,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.noEdgeMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.edgeMinSizing,
+          SLOT(setEnabled(bool)));
+
+  //sharp edges
   connect(ui.protect,
           SIGNAL(toggled(bool)),
           ui.sharpEdgesAngle,
@@ -530,15 +608,24 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.facetSizing->setRange(diag * 10e-6, // min
                            diag); // max
   ui.facetSizing->setValue(facets_sizing);
+  ui.facetMinSizing->setValue(facets_min_sizing);
+  ui.facetMinSizing->setEnabled(false);
+  ui.noFacetMinSizing->setChecked(false);
   ui.edgeSizing->setValue(edges_sizing);
+  ui.edgeMinSizing->setValue(edges_min_sizing);
 
   ui.tetSizing->setRange(diag * 10e-6, // min
                          diag);        // max
   ui.tetSizing->setValue(tets_sizing); // default value
+  ui.tetMinSizing->setValue(tets_min_sizing);
+  ui.tetMinSizing->setEnabled(false);
+  ui.noTetMinSizing->setChecked(false);
 
   ui.approx->setRange(diag * 10e-7, // min
                       diag);        // max
   ui.approx->setValue(approx);
+  ui.approx->setToolTip(tr("Approximation error: in [%1; %2]")
+                       .arg(diag * 10e-7).arg(diag));
 
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
@@ -550,13 +637,13 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.initializationGroup->setVisible(input_is_labeled_img);
   ui.grayImgGroup->setVisible(input_is_gray_img);
 
-  if (items->which() == POLYHEDRAL_MESH_ITEMS)
+  if (items->index() == POLYHEDRAL_MESH_ITEMS)
     ui.volumeGroup->setVisible(mesh_type == Mesh_type::VOLUME &&
                                nullptr != bounding_sm_item);
   else
     ui.volumeGroup->setVisible(mesh_type == Mesh_type::VOLUME);
   ui.sharpEdgesAngle->setValue(sharp_edges_angle_bound);
-  if (items->which() != POLYHEDRAL_MESH_ITEMS || polylines_item != nullptr) {
+  if (items->index() != POLYHEDRAL_MESH_ITEMS || polylines_item != nullptr) {
     ui.sharpEdgesAngleLabel->setVisible(false);
     ui.sharpEdgesAngle->setVisible(false);
 
@@ -568,21 +655,40 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
            " automatically"));
   }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
+  ui.noEdgeMinSizing->setChecked(false);
   ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
   ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
+  ui.edgeMinSizingLabel->setEnabled(ui.noEdgeMinSizing->isChecked());
+  ui.edgeMinSizing->setEnabled(ui.noEdgeMinSizing->isChecked());
 
+  using Item = std::pair<QString, Protection_flags>;
+  const Item sharp_and_boundary{"Sharp and Boundary edges", FEATURES};
+  const Item boundary_only{"Boundary edges only", BORDERS};
+  const Item sharp_edges{"Sharp edges", FEATURES};
+  const Item input_polylines{"Input polylines only", Protection_flags{}};
+  const Item on_cube{"Polylines on cube", BORDERS};
+  const Item triple_lines{"Triple+ lines", FEATURES};
   if (features_protection_available) {
-    if (items->which() == POLYHEDRAL_MESH_ITEMS) {
+    if (items->index() == POLYHEDRAL_MESH_ITEMS) {
+      auto v = [](Protection_flags f) { return QVariant::fromValue(f); };
       if (mesh_type == Mesh_type::SURFACE_ONLY) {
-        ui.protectEdges->addItem(QString("Sharp and Boundary edges"));
-        ui.protectEdges->addItem(QString("Boundary edges only"));
+        ui.protectEdges->addItem(sharp_and_boundary.first, v(sharp_and_boundary.second));
+        ui.protectEdges->addItem(boundary_only.first, v(boundary_only.second));
       } else
-        ui.protectEdges->addItem(QString("Sharp edges"));
-    } else if (items->which() == IMAGE_MESH_ITEMS) {
+        ui.protectEdges->addItem(sharp_edges.first, v(sharp_edges.second));
       if (polylines_item != nullptr)
-        ui.protectEdges->addItem(QString("Input polylines"));
+        ui.protectEdges->addItem(input_polylines.first, v(input_polylines.second));
+    } else if (items->index() == IMAGE_MESH_ITEMS) {
+      if (polylines_item != nullptr) {
+        ui.protectEdges->addItem(input_polylines.first, QVariant::fromValue(input_polylines.second));
+        ui.protectEdges->addItem(QString(on_cube.first).append(" and input polylines"),
+                                 QVariant::fromValue(on_cube.second));
+        ui.protectEdges->addItem(QString(triple_lines.first).append(" and input polylines"),
+                                 QVariant::fromValue(triple_lines.second));
+      }
       else {
-        ui.protectEdges->addItem(QString("Polylines on cube"));
+        ui.protectEdges->addItem(on_cube.first, QVariant::fromValue(on_cube.second));
+        ui.protectEdges->addItem(triple_lines.first, QVariant::fromValue(triple_lines.second));
       }
     }
   }
@@ -592,8 +698,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.weightsSigma, SLOT(setEnabled(bool)));
   connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
           ui.weightsSigma_label, SLOT(setEnabled(bool)));
-  ui.weightsSigma->setValue(1.);
   ui.labeledImgGroup->setVisible(input_is_labeled_img);
+  if(image_item != nullptr && input_is_labeled_img)
+    ui.weightsSigma->setValue(image_item->default_sigma_weights());
 
 #ifndef CGAL_USE_ITK
   if (input_is_labeled_img)
@@ -625,14 +732,20 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   std::cerr << "sharp_edges_angle_bound: " << sharp_edges_angle_bound << '\n';
   edges_sizing =
       !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
+  edges_min_sizing =
+      !ui.noEdgeMinSizing->isChecked() ? 0. : ui.edgeMinSizing->value();
   facets_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
+  facets_min_sizing = !ui.noFacetMinSizing->isChecked() ? 0 : ui.facetMinSizing->value();
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
   tets_shape = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   tets_sizing = !ui.noTetSizing->isChecked() ? 0 : ui.tetSizing->value();
-  protect_features =
-      ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 0);
-  protect_borders =
-      ui.protect->isChecked() && (ui.protectEdges->currentIndex() == 1);
+  tets_min_sizing = !ui.noTetMinSizing->isChecked() ? 0 : ui.tetMinSizing->value();
+
+  const auto pe_flags = ui.protectEdges->currentData().value<Protection_flags>();
+  protect_borders = ui.protect->isChecked() && pe_flags.testFlag(BORDERS);
+  protect_features = ui.protect->isChecked() && pe_flags.testFlag(FEATURES);
+  const bool protect_polylines = ui.protect->isChecked() && polylines_item != nullptr;
+
   const bool detect_connected_components = ui.detectComponents->isChecked();
   const int manifold = (ui.manifoldCheckBox->isChecked() ? 1 : 0) +
                        (ui.facetTopology->isChecked() ? 2 : 0);
@@ -647,7 +760,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                      : false;
 
   Meshing_thread* thread = nullptr;
-  switch (items->which()) {
+  switch (items->index()) {
   case POLYHEDRAL_MESH_ITEMS: {
     auto& poly_items = get<Polyhedral_mesh_items>(*items);
     auto& sm_items = poly_items.sm_items;
@@ -678,7 +791,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       sm_items.removeAll(make_not_null(bounding_sm_item));
     }
 
-    Scene_polylines_item::Polylines_container plc;
+    Scene_polylines_item::Polylines_container polylines_empty_container;
     SMesh* bounding_polyhedron = (bounding_sm_item == nullptr)
                                      ? nullptr
                                      : bounding_sm_item->polyhedron();
@@ -689,26 +802,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         return item->polyhedron();
       });
 
-    if(bounding_polyhedron != nullptr)
-    {
-      thread = cgal_code_mesh_3(
-        polyhedrons,
-        (polylines_item == nullptr) ? plc : polylines_item->polylines,
-        bounding_polyhedron,
-        item_name,
-        angle,
-        facets_sizing,
-        approx,
-        tets_sizing,
-        edges_sizing,
-        tets_shape,
-        protect_features,
-        protect_borders,
-        sharp_edges_angle_bound,
-        manifold,
-        mesh_type == Mesh_type::SURFACE_ONLY);
-    }
-    else if(!incident_sub.empty())
+    if(!incident_sub.empty())
     {
       thread = cgal_code_mesh_3(
         polyhedrons,
@@ -716,19 +810,44 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         item_name,
         angle,
         facets_sizing,
+        facets_min_sizing,
         approx,
         tets_sizing,
+        tets_min_sizing,
         edges_sizing,
+        edges_min_sizing,
         tets_shape,
         protect_features,
         protect_borders,
         sharp_edges_angle_bound,
         manifold,
         mesh_type == Mesh_type::SURFACE_ONLY);
-     }
+    }
+    else
+    {
+      thread = cgal_code_mesh_3(
+        polyhedrons,
+        protect_polylines ? polylines_item->polylines : polylines_empty_container,
+        bounding_polyhedron,
+        item_name,
+        angle,
+        facets_sizing,
+        facets_min_sizing,
+        approx,
+        tets_sizing,
+        tets_min_sizing,
+        edges_sizing,
+        edges_min_sizing,
+        tets_shape,
+        protect_features,
+        protect_borders,
+        sharp_edges_angle_bound,
+        manifold,
+        mesh_type == Mesh_type::SURFACE_ONLY);
+    }
     break;
   }//end case POLYHEDRAL_MESH_ITEMS
-  // Image
+  // Implicit functions
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   case IMPLICIT_MESH_ITEMS: {
     const Implicit_function_interface* pFunction = function_item->function();
@@ -740,18 +859,25 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     thread = cgal_code_mesh_3(pFunction,
                               angle,
                               facets_sizing,
+                              facets_min_sizing,
                               approx,
                               tets_sizing,
+                              tets_min_sizing,
                               edges_sizing,
+                              edges_min_sizing,
                               tets_shape,
                               manifold,
                               mesh_type == Mesh_type::SURFACE_ONLY);
     break;
-  }
+  }//end case IMPLICIT_MESH_ITEMS
 #  endif
+  // Images
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
   case IMAGE_MESH_ITEMS: {
     const Image* pImage = image_item->image();
+    auto& image_items = get<Image_mesh_items>(*items);
+    const auto img_polylines_item = image_items.polylines_item;
+
     if (nullptr == pImage) {
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
@@ -760,27 +886,30 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     if ( sigma_weights > 0
       && sigma_weights != image_item->sigma_weights())
     {
-      image_item->set_image_weights(
-        CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights),
-        sigma_weights);
+      CGAL::Image_3 weights = CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights);
+      image_item->set_image_weights(weights, sigma_weights);
     }
 #endif
-    const Image* pWeights = sigma_weights > 0
+    Image* pWeights = sigma_weights > 0
       ? image_item->image_weights()
       : nullptr;
 
-    Scene_polylines_item::Polylines_container plc;
+    Scene_polylines_item::Polylines_container polylines_empty_container;
 
     thread = cgal_code_mesh_3(
         pImage,
-        (polylines_item == nullptr) ? plc : polylines_item->polylines,
+        (img_polylines_item == nullptr) ? polylines_empty_container : img_polylines_item->polylines,
         angle,
         facets_sizing,
+        facets_min_sizing,
         approx,
         tets_sizing,
+        tets_min_sizing,
         edges_sizing,
+        edges_min_sizing,
         tets_shape,
         protect_features,
+        protect_borders,
         manifold,
         mesh_type == Mesh_type::SURFACE_ONLY,
         detect_connected_components,
@@ -876,7 +1005,7 @@ meshing_done(Meshing_thread* thread)
     .arg(source_item_name_)
     .arg(thread->time());
 
-  Q_FOREACH( QString param, thread->parameters_log() )
+  for( QString param : thread->parameters_log() )
   {
     str.append(QString("( %1 )<br>").arg(param));
   }
@@ -922,11 +1051,13 @@ treat_result(Scene_item& source_item,
                             float((bbox.ymin() + bbox.ymax())/2.f),
                             float((bbox.zmin() + bbox.zmax())/2.f));
 
-    result_item->setColor(default_mesh_color);
+    bool input_is_labeled_img = dynamic_cast<Scene_image_item*>(&source_item) != nullptr;
+    result_item->setUseSubdomainColors(input_is_labeled_img);
+    result_item->setColor(source_item.color());
     result_item->setRenderingMode(source_item.renderingMode());
     result_item->set_data_item(&source_item);
 
-    Q_FOREACH(int ind, scene->selectionIndices()) {
+    for(int ind : scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -940,7 +1071,7 @@ treat_result(Scene_item& source_item,
     Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
     CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
     new_item->setName(tr("%1 [Remeshed]").arg(source_item_name_));
-    Q_FOREACH(int ind, scene->selectionIndices()) {
+    for(int ind : scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();

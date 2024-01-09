@@ -46,7 +46,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   My_visitor(Stats* s) : stats(s) {}
 
   // Called during the collecting phase for each edge collected.
-  void OnCollected(const Profile&, const boost::optional<double>&)
+  void OnCollected(const Profile&, const std::optional<double>&)
   {
     ++(stats->collected);
     std::cerr << "\rEdges collected: " << stats->collected << std::endl;
@@ -55,7 +55,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   // Called during the processing phase for each edge selected.
   // If cost is absent the edge won't be collapsed.
   void OnSelected(const Profile&,
-                  boost::optional<double> cost,
+                  std::optional<double> cost,
                   std::size_t /* initial */,
                   std::size_t /* current */)
   {
@@ -67,7 +67,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   // Called during the processing phase for each edge being collapsed.
   // If placement is absent the edge is left uncollapsed.
   void OnCollapsing(const Profile&,
-                    boost::optional<Point> placement)
+                    std::optional<Point> placement)
   {
     if(!placement)
       ++(stats->placement_uncomputable);
@@ -148,7 +148,7 @@ int main(int argc, char** argv)
 
 
   std::cout << "\nEdges collected: "  << stats.collected
-            << "\nEdges proccessed: " << stats.processed
+            << "\nEdges processed: "  << stats.processed
             << "\nEdges collapsed: "  << stats.collapsed
             << std::endl
             << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable
