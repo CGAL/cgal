@@ -117,7 +117,7 @@ function(cgal_add_compilation_test exe_name)
     add_test(NAME "check build system"
       COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
     set_property(TEST "check build system"
-      APPEND PROPERTY LABELS "CGAL_build_system")
+      APPEND PROPERTY LABELS "CGAL_build_system" "Installation")
     set_property(TEST "check build system"
        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
   endif()
@@ -133,7 +133,7 @@ function(cgal_add_compilation_test exe_name)
       add_test(NAME "compilation of  CGAL_Qt6_moc_and_resources"
         COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "CGAL_Qt6_moc_and_resources" --config "$<CONFIG>")
       set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
-        APPEND PROPERTY LABELS "CGAL_build_system")
+        APPEND PROPERTY LABELS "CGAL_build_system" "Installation")
       set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
         PROPERTY FIXTURES_SETUP "CGAL_Qt6_moc_and_resources_Fixture")
       set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"

@@ -45,11 +45,11 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
                 COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "demo_framework" --config "$<CONFIG>")
 
               set_property(TEST "compilation of  demo_framework"
-                APPEND PROPERTY LABELS "CGAL_build_system")
+                APPEND PROPERTY LABELS "CGAL_build_system" "Installation" "${PROJECT_NAME}")
               set_property(TEST "compilation of  demo_framework"
                 APPEND PROPERTY FIXTURES_SETUP "demo_framework_SetupFixture")
               set_property(TEST "compilation of  demo_framework"
-                APPEND PROPERTY DEPENDS "compilation_of__CGAL_Qt6_moc_and_resources")
+                APPEND PROPERTY DEPENDS "check build system" "compilation of  CGAL_Qt6_moc_and_resources")
         endif()
       endif()
     else()
