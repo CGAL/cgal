@@ -165,11 +165,11 @@ public:
   }
 
   // gets the created triangle list
-  template<typename PointRange, typename TriangleRange>
-  void to_triangle_soup(PointRange& points, TriangleRange& triangles) const
+  template<typename PR, typename TR>
+  void to_triangle_soup(PR& points, TR& triangles) const
   {
     points.insert(points.begin(), m_points.begin(), m_points.end());
-    for (const std::array<Point_index, 3>& tri : m_triangles) {
+    for (const auto& tri : m_triangles) {
       triangles.push_back({ tri[0], tri[1], tri[2] });
     }
   }
@@ -195,7 +195,7 @@ private:
 
   bool find_point(const Edge_index& e, Point_index& i)
   {
-    Edge_point_map::const_accessor acc;
+    typename Edge_point_map::const_accessor acc;
     if (m_edges.find(acc, e))
     {
       i = acc->second;
@@ -206,10 +206,10 @@ private:
 
   Point_index add_point(const Point_3& p, const Edge_index& e)
   {
-    Edge_point_map::accessor acc;
+    typename Edge_point_map::accessor acc;
     if (!m_edges.insert(acc, e))
       return acc->second;
-    
+
     const Point_index i = m_point_counter++;
     acc->second = i;
     acc.release();
@@ -271,7 +271,7 @@ private:
     {
       if(flag & Cube_table::intersected_edges[i_case])
       {
-        
+
 
         // generate vertex here, do not care at this point if vertex already exists
         uint v0, v1;
@@ -1179,7 +1179,7 @@ private:
               pt_used = true;
               g_index = add_point_unchecked(point(px, py, pz));
             }
-            
+
             for(int t=0; t<cnt_sz; ++t)
             {
               add_triangle(vertices[get_c(i, t, c_)], vertices[get_c(i, (t + 1) % cnt_sz, c_)], g_index);

@@ -14,9 +14,9 @@ using Point_range = std::vector<Point>;
 using Triangle_range = std::vector<std::vector<std::size_t> >;
 
 // Sphere function = Euclidean distance function to the origin
-auto sphere_function = [&](const Point& p) -> FT
+auto sphere_function = [](const Point& p) -> FT
 {
-	return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
+  return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
 };
 
 int main(int, char**)
@@ -28,13 +28,13 @@ int main(int, char**)
 
   // create domain with sphere function
   auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>
-	  (bbox, vec_spacing, sphere_function);
+    (bbox, vec_spacing, sphere_function);
 
   // points and triangles for the output indexed mesh
   Point_range points;
   Triangle_range triangles;
 
-  // run marching cubes with given isovalue 
+  // run marching cubes with given isovalue
   std::cout << "marching cubes...";
   const FT isovalue = 0.8;
   CGAL::Timer timer;

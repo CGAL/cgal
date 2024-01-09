@@ -150,7 +150,7 @@ public:
       rhs += b_k;
     }
 
-    Eigen::JacobiSVD<Eigen_matrix_x::EigenType> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    Eigen::JacobiSVD<typename Eigen_matrix_x::EigenType> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
     // set threshold as in Peter Lindstrom's paper, "Out-of-Core Simplification of Large Polygonal Models"
     svd.setThreshold(1e-3);
