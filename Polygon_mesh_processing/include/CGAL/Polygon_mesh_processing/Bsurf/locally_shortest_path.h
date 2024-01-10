@@ -20,7 +20,7 @@
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 //TODO: split to avoid redundant linking
 #include <Eigen/Dense>
 #include <boost/graph/graph_traits.hpp>
