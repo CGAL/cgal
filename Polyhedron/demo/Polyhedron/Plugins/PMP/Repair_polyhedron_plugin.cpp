@@ -373,6 +373,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
+    if(! CGAL::is_triangle_mesh(*poly_item->polyhedron())) {
+      CGAL::Three::Three::error(QString("The mesh must have triangle faces"));
+      return;
+    }
+
     std::size_t nbv = faces(*poly_item->polyhedron()).size();
       CGAL::Polygon_mesh_processing::remove_degenerate_faces(
       *poly_item->polyhedron());
@@ -399,6 +404,11 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
+    if(! CGAL::is_triangle_mesh(*poly_item->polyhedron())) {
+      CGAL::Three::Three::error(QString("The mesh must have triangle faces"));
+      return;
+    }
+
     bool solved =
       CGAL::Polygon_mesh_processing::experimental::remove_self_intersections(
       *poly_item->polyhedron(), CGAL::parameters::preserve_genus(false));
@@ -424,6 +434,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered(Sce
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
+    CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
     try{
       CGAL::Polygon_mesh_processing::experimental::autorefine(*poly_item->polyhedron());
     }
@@ -523,6 +534,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
     qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
+    CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
     try{
       bool solved =
         CGAL::Polygon_mesh_processing::experimental::
