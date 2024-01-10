@@ -182,8 +182,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
   if (poly_item)
   {
     std::size_t nbv =
-      CGAL::Polygon_mesh_processing::remove_isolated_vertices(
-        *poly_item->polyhedron());
+      CGAL::Polygon_mesh_processing::remove_isolated_vertices(*poly_item->polyhedron());
     CGAL::Three::Three::information(tr(" %1 isolated vertices have been removed.")
       .arg(nbv));
     poly_item->setNbIsolatedvertices(0);
@@ -369,8 +368,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
 template <typename Item>
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_triggered(Scene_interface::Item_id index)
 {
-  Item* poly_item =
-    qobject_cast<Item*>(scene->item(index));
+  Item* poly_item = qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
     if(! CGAL::is_triangle_mesh(*poly_item->polyhedron())) {
@@ -379,8 +377,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
     }
 
     std::size_t nbv = faces(*poly_item->polyhedron()).size();
-      CGAL::Polygon_mesh_processing::remove_degenerate_faces(
-      *poly_item->polyhedron());
+      CGAL::Polygon_mesh_processing::remove_degenerate_faces(*poly_item->polyhedron());
     nbv -= faces(*poly_item->polyhedron()).size();
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
@@ -400,8 +397,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
 template <typename Item>
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_triggered(Scene_interface::Item_id index)
 {
-  Item* poly_item =
-    qobject_cast<Item*>(scene->item(index));
+  Item* poly_item = qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
     if(! CGAL::is_triangle_mesh(*poly_item->polyhedron())) {
@@ -430,8 +426,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
 template <typename Item>
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefine_triggered(Scene_interface::Item_id index)
 {
-  Item* poly_item =
-    qobject_cast<Item*>(scene->item(index));
+  Item* poly_item = qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
     CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
@@ -530,8 +525,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionNewAutorefine_triggered(
 template <typename Item>
 void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfIntersections_triggered(Scene_interface::Item_id index)
 {
-  Item* poly_item =
-    qobject_cast<Item*>(scene->item(index));
+  Item* poly_item = qobject_cast<Item*>(scene->item(index));
   if (poly_item)
   {
     CGAL::Polygon_mesh_processing::triangulate_faces(*poly_item->polyhedron());
