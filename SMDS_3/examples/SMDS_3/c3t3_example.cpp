@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   Triangulation tr;
 
   std::ifstream is(filename, std::ios_base::in);
-  if(!CGAL::IO::read_MEDIT(is, tr))
+  if(!CGAL::IO::read_MEDIT(is, tr, CGAL::parameters::verbose(true)))
   {
     std::cerr << "Failed to read" << std::endl;
     return EXIT_FAILURE;
