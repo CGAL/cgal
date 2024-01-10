@@ -21,6 +21,7 @@
 #include <CGAL/Orthtree/IO.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/NT_converter.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Property_container.h>
 #include <CGAL/property_map.h>
@@ -167,6 +168,7 @@ private: // data members :
   Node_property_container::Array <Maybe_node_index>& m_node_children;
 
   using Bbox_dimensions = std::array<CGAL::Exact_predicates_exact_constructions_kernel::FT, Dimension::value>;
+  CGAL::NT_converter<CGAL::Exact_predicates_exact_constructions_kernel::FT, typename Traits::Kernel::FT> conv;
   Bbox_dimensions m_bbox_min;
   std::vector<Bbox_dimensions> m_side_per_depth;      /* side length per node's depth */
 
@@ -473,7 +475,7 @@ public:
     using Cartesian_coordinate = std::array<FT, Dimension::value>;
     Cartesian_coordinate min_corner, max_corner;
     Bbox_dimensions size = m_side_per_depth[depth(n)];
-    CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, typename Traits::Kernel> conv;
+
     for (int i = 0; i < Dimension::value; i++) {
       min_corner[i] = conv(m_bbox_min[i] + int(global_coordinates(n)[i]) * size[i]);
       max_corner[i] = conv(m_bbox_min[i] + int(global_coordinates(n)[i] + 1) * size[i]);
@@ -971,7 +973,7 @@ public:
       bary[i] = FT(global_coordinates(n)[i]) * size[i] + size[i] / FT(2) + m_bbox_min[i];
 
     // Convert that location into a point
-    CGAL::Cartesian_converter<CGAL::Exact_predicates_exact_constructions_kernel, typename Traits::Kernel> conv;
+
     std::array<typename Traits::Kernel::FT, Dimension::value> tmp;
     for (std::size_t i = 0; i < Dimension::value; i++)
       tmp[i] = conv(bary[i]);

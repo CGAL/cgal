@@ -54,7 +54,7 @@ struct Orthtree_traits_base_for_dimension {
   auto construct_point_d_object() const {
     return [](auto... Args) -> Point_d {
       std::initializer_list<FT> args_list{Args...};
-      return Point_d{args_list.size(), args_list.begin(), args_list.end()};
+      return Point_d{static_cast<int>(args_list.size()), args_list.begin(), args_list.end()};
     };
   }
   /// @}

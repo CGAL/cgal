@@ -12,14 +12,15 @@ using Kernel = CGAL::Epick_d<Dimension>;
 using Point_d = Kernel::Point_d;
 using Point_vector = std::vector<Point_d>;
 using Traits = CGAL::Orthtree_traits_point<Kernel, Point_vector>;
-using Orthtree = CGAL::Orthtree<Traits>;
+using Traits2 = CGAL::Orthtree_traits_point<Kernel, Point_vector, CGAL::Identity_property_map<typename std::iterator_traits<typename Point_vector::iterator>::value_type>, CGAL::Dimension_tag<4>>;
+using Orthtree = CGAL::Orthtree<Traits2>;
 
 int main()
 {
   CGAL::Random r;
 
   Point_vector points_dd;
-  for (std::size_t i = 0; i < 5; ++ i)
+  for (std::size_t i = 0; i < 500; ++ i)
   {
     std::array<double, Dimension::value> init{};
     for (double& v : init)
