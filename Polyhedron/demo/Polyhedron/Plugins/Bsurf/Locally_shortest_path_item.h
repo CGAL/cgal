@@ -21,7 +21,8 @@ class LOCALLY_SHORTEST_PATH_ITEM_EXPORT Locally_shortest_path_item:
 
     Locally_shortest_path_item(const CGAL::Three::Scene_interface* scene_interface,
                                const Scene_surface_mesh_item* sm_item,
-                               Scene_polylines_item* polyline_item);
+                               Scene_polylines_item* polyline_item,
+                               std::size_t nb_pts);
     ~Locally_shortest_path_item();
     bool isFinite() const { return true; }
     bool isEmpty() const { return false; }

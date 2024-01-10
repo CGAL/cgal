@@ -96,6 +96,7 @@ struct Locally_shortest_path_item_priv{
   Locally_shortest_path_item_priv(const CGAL::Three::Scene_interface* scene_interface,
                                   const Scene_surface_mesh_item* sm_item,
                                   Scene_polylines_item* polyline_item,
+                                  std::size_t nb_pts,
                                   Locally_shortest_path_item* ebi)
   {
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
@@ -132,10 +133,23 @@ struct Locally_shortest_path_item_priv{
 
 
     // TODO: change the default
-    vertices.resize(2);
-    vertices[0].set( mesh.point(*mesh.vertices().begin()), 0 );
-    vertices[1].set( mesh.point(*std::next(mesh.vertices().begin())), 1 );
-    //~ vertices[2].set( mesh.point(*std::next(mesh.vertices().begin(),2)), 2 );
+    if (nb_pts==2)
+    {
+      //shortest_path
+      vertices.resize(2);
+      vertices[0].set( mesh.point(*mesh.vertices().begin()), 0 );
+      vertices[1].set( mesh.point(*std::next(mesh.vertices().begin())), 1 );
+    }
+    else if (nb_pts==4)
+    {
+      // bezier
+      vertices.resize(4);
+      vertices[0].set( mesh.point(*mesh.vertices().begin()), 0 );
+      vertices[1].set( mesh.point(*std::next(mesh.vertices().begin())), 1 );
+      vertices[2].set( mesh.point(*std::next(mesh.vertices().begin(),2)), 2 );
+      vertices[3].set( mesh.point(*std::next(mesh.vertices().begin(),3)), 3 );
+    }
+
 
     vertex_faces.resize(0);
     normal_faces.resize(0);
@@ -196,14 +210,15 @@ struct Locally_shortest_path_item_priv{
   int last_picked_id;
   int last_picked_type;
   QCursor rotate_cursor;
-
+  bool path_invalidated=true;
 };
 
 Locally_shortest_path_item::Locally_shortest_path_item(const CGAL::Three::Scene_interface* scene_interface,
                                                        const Scene_surface_mesh_item *sm_item,
-                                                       Scene_polylines_item* polyline_item)
+                                                       Scene_polylines_item* polyline_item,
+                                                       std::size_t nb_pts)
 {
-  d = new Locally_shortest_path_item_priv(scene_interface, sm_item, polyline_item, this);
+  d = new Locally_shortest_path_item_priv(scene_interface, sm_item, polyline_item, nb_pts, this);
 
   are_buffers_filled = false;
 
@@ -259,7 +274,7 @@ void Locally_shortest_path_item::drawSpheres(Viewer_interface *viewer, const QMa
     mv_mat.data()[i] = GLfloat(d_mat[i]);
   mv_mat = mv_mat*f_matrix;
   // TODO: must depend on the mesh (and zoom?)
-  double radius = 0.02 ;
+  double radius = 0.01 ;
 
   Tc* tc = getTriangleContainer(Priv::Spheres);
   tc->setFrameMatrix(f_matrix);
@@ -274,27 +289,59 @@ void Locally_shortest_path_item::drawSpheres(Viewer_interface *viewer, const QMa
 
 void Locally_shortest_path_item::drawPath() const
 {
+  if (!d->path_invalidated) return;
   namespace PMP = CGAL::Polygon_mesh_processing;
   typedef PMP::Edge_location<Mesh, double> Edge_location;
   typedef PMP::Face_location<Mesh, double> Face_location;
 
   const Mesh& mesh = *d->mesh_item->face_graph();
 
-  std::vector<Edge_location> edge_locations;
-  CGAL::Epick::Point_3 src_pt(d->vertices[0].x,d->vertices[0].y,d->vertices[0].z),
-                       tgt_pt(d->vertices[1].x,d->vertices[1].y,d->vertices[1].z);
+  if (d->vertices.size()==2)
+  {
+    std::vector<Edge_location> edge_locations;
+    CGAL::Epick::Point_3 src_pt(d->vertices[0].x,d->vertices[0].y,d->vertices[0].z),
+                         tgt_pt(d->vertices[1].x,d->vertices[1].y,d->vertices[1].z);
 
-//TODO store that in the vector vertices
-  Face_location src = PMP::locate_with_AABB_tree(src_pt, d->aabb_tree, mesh);
-  Face_location tgt = PMP::locate_with_AABB_tree(tgt_pt, d->aabb_tree, mesh);
+  //TODO store that in the vector vertices
+    Face_location src = PMP::locate_with_AABB_tree(src_pt, d->aabb_tree, mesh);
+    Face_location tgt = PMP::locate_with_AABB_tree(tgt_pt, d->aabb_tree, mesh);
 
-  PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
-  d->spath_item->polylines.back().clear();
-  d->spath_item->polylines.back().push_back(src_pt);
-  for (auto el : edge_locations)
-    d->spath_item->polylines.back().push_back(PMP::construct_point(el, mesh));
-  d->spath_item->polylines.back().push_back(tgt_pt);
-  d->spath_item->invalidateOpenGLBuffers();
+    PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
+    d->spath_item->polylines.back().clear();
+    d->spath_item->polylines.back().push_back(src_pt);
+    for (auto el : edge_locations)
+      d->spath_item->polylines.back().push_back(PMP::construct_point(el, mesh));
+    d->spath_item->polylines.back().push_back(tgt_pt);
+    d->spath_item->setRenderingMode(Wireframe);
+    d->spath_item->invalidateOpenGLBuffers();
+  }
+  else if (d->vertices.size()==4)
+  {
+    std::vector<Edge_location> edge_locations;
+    CGAL::Epick::Point_3 c1_pt(d->vertices[0].x,d->vertices[0].y,d->vertices[0].z),
+                         c2_pt(d->vertices[1].x,d->vertices[1].y,d->vertices[1].z),
+                         c3_pt(d->vertices[2].x,d->vertices[2].y,d->vertices[2].z),
+                         c4_pt(d->vertices[3].x,d->vertices[3].y,d->vertices[3].z);
+
+    //TODO store that in the vector vertices
+    Face_location c1 = PMP::locate_with_AABB_tree(c1_pt, d->aabb_tree, mesh);
+    Face_location c2 = PMP::locate_with_AABB_tree(c2_pt, d->aabb_tree, mesh);
+    Face_location c3 = PMP::locate_with_AABB_tree(c3_pt, d->aabb_tree, mesh);
+    Face_location c4 = PMP::locate_with_AABB_tree(c4_pt, d->aabb_tree, mesh);
+
+    PMP::Bezier_segment<Mesh, double> control_points=CGAL::make_array(c1, c2, c3, c4);
+
+    std::vector<Face_location> face_locations =
+      PMP::recursive_de_Casteljau(mesh, control_points, 8);
+
+    // TODO: we should connect points with geodesics and not segments
+    d->spath_item->polylines.back().clear();
+    for (auto fl : face_locations)
+      d->spath_item->polylines.back().push_back(PMP::construct_point(fl, mesh));
+    d->spath_item->setRenderingMode(Wireframe);
+    d->spath_item->invalidateOpenGLBuffers();
+  }
+  d->path_invalidated=false;
 }
 
 void Locally_shortest_path_item::draw(Viewer_interface *viewer) const
@@ -561,6 +608,8 @@ bool Locally_shortest_path_item::eventFilter(QObject *obj, QEvent *event)
         CGAL::qglviewer::Vec td(d->remodel_frame->position() - d->rf_last_pos);
         QVector3D dir(td.x, td.y, td.z);
         d->update_points(dir);
+        d->rf_last_pos=d->remodel_frame->position();
+        d->path_invalidated=true;
       }
       d->ready_to_hl= true;
       d->picked_pixel = e->pos();
@@ -617,7 +666,7 @@ void Locally_shortest_path_item_priv::draw_picking(Viewer_interface* viewer)
   mv_mat = mv_mat*f_matrix;
 
   // TODO: radius
-  double radius = 0.02 ;
+  double radius = 0.01 ;
   Tc* tc = item->getTriangleContainer(P_Spheres);
   tc->setFrameMatrix(f_matrix);
   tc->setClipping(false);
@@ -671,7 +720,6 @@ void Locally_shortest_path_item_priv::picking(int& type, int& id, Viewer_interfa
   if(!(buffer[0]==buffer[1] && buffer[1]==buffer[2]))
   {
     int r(std::ceil((buffer[0]-10)/20)), g(std::ceil((buffer[1]-10)/20)), b(std::ceil((buffer[2]-10)/20));
-//    std::cout << " r=" << r << " g=" << g << " b=" << b << "\n";
     id = (std::max)(r,g);
     id = (std::max)(id,b);
     if(buffer[0] > 0)
@@ -721,7 +769,7 @@ void Locally_shortest_path_item::drawHl(Viewer_interface* viewer)const
     tc->setColor(QColor(Qt::yellow));
 
     // TODO radius
-    double radius = 0.02 ;
+    double radius = 0.01 ;
     tc->setClipping(false);
     tc->getVao(viewer)->bind();
     tc->getVao(viewer)->program->setUniformValue("radius", (float)radius);
@@ -734,32 +782,13 @@ void Locally_shortest_path_item::invalidateOpenGLBuffers()
 {
   compute_bbox();
   setBuffersFilled(false);
-  //~ getTriangleContainer(Priv::Faces)->reset_vbos(ALL);
-  //~ getTriangleContainer(Priv::P_Faces)->reset_vbos(ALL);
   getTriangleContainer(Priv::Spheres)->reset_vbos(ALL);
   getTriangleContainer(Priv::P_Spheres)->reset_vbos(ALL);
-  //~ getEdgeContainer(Priv::Edges)->reset_vbos(ALL);
-  //~ getEdgeContainer(Priv::P_Edges)->reset_vbos(ALL);
 }
 
 void Locally_shortest_path_item::computeElements() const
 {
   d->computeElements();
-  //~ getEdgeContainer(Priv::Edges)->allocate(
-        //~ Ec::Vertices,
-        //~ d->vertex_edges.data(),
-        //~ static_cast<GLsizei>(d->vertex_edges.size()*sizeof(float)));
-  //~ Ec* ec = getEdgeContainer(Priv::P_Edges);
-  //~ ec->allocate(
-        //~ Ec::Vertices,
-        //~ d->vertex_edges.data(),
-        //~ static_cast<GLsizei>(d->vertex_edges.size()*sizeof(float)));
-
-  //~ ec->allocate(
-        //~ Ec::Colors,
-        //~ d->color_edges.data(),
-        //~ static_cast<GLsizei>(d->color_edges.size()*sizeof(float)));
-
 
   Tc* tc = getTriangleContainer(Priv::Spheres);
   tc->allocate(
@@ -791,54 +820,20 @@ void Locally_shortest_path_item::computeElements() const
         Tc::FColors,
         d->color_spheres.data(),
         static_cast<int>(d->color_spheres.size()*sizeof(float)));
-
-  //~ tc = getTriangleContainer(Priv::Faces);
-  //~ tc->allocate(
-        //~ Tc::Flat_vertices,
-        //~ d->vertex_faces.data(),
-        //~ static_cast<int>(d->vertex_faces.size()*sizeof(float)));
-
-  //~ tc->allocate(
-        //~ Tc::Flat_normals,
-        //~ d->normal_faces.data(),
-        //~ static_cast<int>(d->normal_faces.size()*sizeof(float)));
-  //~ tc = getTriangleContainer(Priv::P_Faces);
-  //~ tc->allocate(
-        //~ Tc::Flat_vertices,
-        //~ d->vertex_faces.data(),
-        //~ static_cast<int>(d->vertex_faces.size()*sizeof(float)));
-  //~ tc->allocate(
-        //~ Tc::FColors,
-        //~ d->color_faces.data(),
-        //~ static_cast<int>(d->color_faces.size()*sizeof(float)));
   setBuffersFilled(true);
 }
 
 void Locally_shortest_path_item::initializeBuffers(Viewer_interface *v) const
 {
-
-  //~ getTriangleContainer(Priv::Faces)->initializeBuffers(v);
-  //~ getTriangleContainer(Priv::P_Faces)->initializeBuffers(v);
-
   getTriangleContainer(Priv::Spheres)->initializeBuffers(v);
   getTriangleContainer(Priv::Spheres)->initializeBuffers(v);
   getTriangleContainer(Priv::P_Spheres)->initializeBuffers(v);
   getTriangleContainer(Priv::P_Spheres)->initializeBuffers(v);
-
-  //~ getEdgeContainer(Priv::Edges)->initializeBuffers(v);
-  //~ getEdgeContainer(Priv::P_Edges)->initializeBuffers(v);
-
-
-  //~ getTriangleContainer(Priv::Faces)->setFlatDataSize(d->vertex_faces.size());
-  //~ getTriangleContainer(Priv::P_Faces)->setFlatDataSize(d->vertex_faces.size());
 
   getTriangleContainer(Priv::Spheres)->setFlatDataSize(d->vertex_spheres.size());
   getTriangleContainer(Priv::Spheres)->setCenterSize(d->center_spheres.size());
   getTriangleContainer(Priv::P_Spheres)->setFlatDataSize(d->vertex_spheres.size());
   getTriangleContainer(Priv::P_Spheres)->setCenterSize(d->center_spheres.size());
-
-  //~ getEdgeContainer(Priv::Edges)->setFlatDataSize(d->vertex_edges.size());
-  //~ getEdgeContainer(Priv::P_Edges)->setFlatDataSize(d->vertex_edges.size());
 }
 
 void Locally_shortest_path_item::connectNewViewer(QObject *o)

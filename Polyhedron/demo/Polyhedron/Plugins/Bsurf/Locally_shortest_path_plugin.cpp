@@ -27,7 +27,7 @@ class Locally_shortest_path_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*);
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionTracePath;
+    return QList<QAction*>() << actionTracePath << actionTraceBezier;
   }
 
   bool applicable(QAction*) const {
@@ -41,6 +41,7 @@ public:
 public Q_SLOTS:
 
   void trace_path();
+  void trace_bezier();
   void enableAction();
   void connectNewViewer(QObject* o)
   {
@@ -57,6 +58,7 @@ private:
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
   QAction* actionTracePath;
+  QAction* actionTraceBezier;
 }; // end Locally_shortest_path_plugin
 
 void Locally_shortest_path_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*)
@@ -64,8 +66,11 @@ void Locally_shortest_path_plugin::init(QMainWindow* mainWindow, CGAL::Three::Sc
   scene = scene_interface;
   mw = mainWindow;
   actionTracePath = new QAction(tr("Create Locally Shortest Path"), mainWindow);
+  actionTraceBezier= new QAction(tr("Trace Bezier Curve"), mainWindow);
   connect(actionTracePath, SIGNAL(triggered()),
           this, SLOT(trace_path()));
+  connect(actionTraceBezier, SIGNAL(triggered()),
+          this, SLOT(trace_bezier()));
   connect(mw, SIGNAL(newViewerCreated(QObject*)),
           this, SLOT(connectNewViewer(QObject*)));
 }
@@ -89,22 +94,58 @@ void Locally_shortest_path_plugin::trace_path()
   scene->addItem(polyline_item);
   polyline_item->invalidateOpenGLBuffers();
 
-  Locally_shortest_path_item* item = new Locally_shortest_path_item(scene, sm_item, polyline_item);
+  Locally_shortest_path_item* item = new Locally_shortest_path_item(scene, sm_item, polyline_item,2);
   connect(item, SIGNAL(destroyed()),
           this, SLOT(enableAction()));
-  item->setName("Edit box");
+  item->setName("Source and Target Points");
   item->setRenderingMode(FlatPlusEdges);
   for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     viewer->installEventFilter(item);
 
   scene->addItem(item);
   actionTracePath->setEnabled(false);
+  actionTraceBezier->setEnabled(false);
+
+  QApplication::restoreOverrideCursor();
+}
+
+void Locally_shortest_path_plugin::trace_bezier()
+{
+  for(int i = 0, end = scene->numberOfEntries();
+      i < end; ++i)
+  {
+    if(qobject_cast<Locally_shortest_path_item*>(scene->item(i)))
+      return;
+  }
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
+
+  Scene_polylines_item* polyline_item = new Scene_polylines_item();
+
+  polyline_item->setName(tr("Locally Shortest Path"));
+  polyline_item->setColor(Qt::red);
+  scene->addItem(polyline_item);
+  polyline_item->invalidateOpenGLBuffers();
+
+  Locally_shortest_path_item* item = new Locally_shortest_path_item(scene, sm_item, polyline_item,4);
+  connect(item, SIGNAL(destroyed()),
+          this, SLOT(enableAction()));
+  item->setName("Control Points");
+  item->setRenderingMode(FlatPlusEdges);
+  for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
+    viewer->installEventFilter(item);
+
+  scene->addItem(item);
+  actionTracePath->setEnabled(false);
+  actionTraceBezier->setEnabled(false);
 
   QApplication::restoreOverrideCursor();
 }
 
 void Locally_shortest_path_plugin::enableAction() {
   actionTracePath->setEnabled(true);
+  actionTraceBezier->setEnabled(true);
 }
 
 #include "Locally_shortest_path_plugin.moc"
