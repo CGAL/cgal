@@ -61,7 +61,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     endif()
     # Link with CGAL
     target_link_libraries( ${plugin_name} PUBLIC CGAL::CGAL )
-    if(TARGET Polyhedron_3)
+    if(NOT CGAL_TEST_SUITE AND TARGET Polyhedron_3)
       add_dependencies( ${plugin_name} Polyhedron_3 )
     endif()
     if(NOT TARGET CGALlab_all_plugins)
