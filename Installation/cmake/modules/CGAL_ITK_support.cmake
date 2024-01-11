@@ -1,7 +1,9 @@
 if(ITK_FOUND AND NOT TARGET CGAL::ITK_support)
   add_library(CGAL::ITK_support INTERFACE IMPORTED)
-  set_target_properties(CGAL::ITK_support PROPERTIES
-    INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_ITK"
-    INTERFACE_INCLUDE_DIRECTORIES "${ITK_INCLUDE_DIRS}"
-    INTERFACE_LINK_LIBRARIES "${ITK_LIBRARIES}")
+  foreach(itk_target ITKCommon ITKSmoothing ITKImageIntensity)
+    if(TARGET ${itk_target})
+      target_link_libraries(CGAL::ITK_support INTERFACE ${itk_target})
+    endif()
+  endforeach()
+  target_compile_definitions(CGAL::ITK_support INTERFACE CGAL_USE_ITK)
 endif()

@@ -276,8 +276,8 @@ class GetInitializedIndexMap
 {
 public:
   // Check if there is an internal property map; if not, we must a dynamic property map
-  typedef typename boost::mpl::if_c<
-      CGAL::graph_has_property<Graph, Tag>::value, Tag, DynamicTag>::type    Final_tag;
+  typedef std::conditional_t<
+      CGAL::graph_has_property<Graph, Tag>::value, Tag, DynamicTag>    Final_tag;
 
   typedef typename internal_np::Lookup_named_param_def<
       PropertyTag,

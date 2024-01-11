@@ -14,13 +14,13 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main()
 {
-  Surface_mesh sm;
+  Mesh sm;
   CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/fandisk.off"), sm);
 
   //apply a perturbation to input vertices so that points are no longer coplanar
@@ -51,7 +51,7 @@ int main()
                                                      edge_is_constrained_map(CGAL::make_random_access_property_map(ecm)));
 
   // run the remeshing algorithm using filled properties
-  Surface_mesh out;
+  Mesh out;
   PMP::remesh_almost_planar_patches(sm,
                                     out,
                                     nb_regions, nb_corners,

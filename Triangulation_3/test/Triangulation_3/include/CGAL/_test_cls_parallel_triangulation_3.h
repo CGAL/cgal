@@ -16,7 +16,6 @@
 #include <iostream>
 #include <vector>
 
-#include <boost/mpl/if.hpp>
 
 template <typename Parallel_triangulation,
           typename WeightedTag = typename Parallel_triangulation::Weighted_tag>

@@ -46,14 +46,17 @@ option(
 
 message("== CMake setup (DONE) ==\n")
 
-# Enable testing with BUILD_TESTING
-option(BUILD_TESTING "Build the testing tree." OFF)
-if(BUILD_TESTING AND NOT POLICY CMP0064)
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
+option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
+if(CGAL_ENABLE_TESTING AND NOT POLICY CMP0064)
   message(
     FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
-The variable BUILD_TESTING must be set of OFF.")
+The variable CGAL_ENABLE_TESTING must be set of OFF.")
 endif()
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   enable_testing()
 endif()
 

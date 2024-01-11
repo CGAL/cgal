@@ -26,7 +26,9 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 // For interior_polyhedron_3
+#ifndef CGAL_CH3_DUAL_WITHOUT_QP_SOLVER
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_interior_point_3.h>
+#endif
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 #include <unordered_map>
@@ -227,7 +229,11 @@ namespace CGAL
     template <class PlaneIterator, class Polyhedron>
     void halfspace_intersection_3 (PlaneIterator begin, PlaneIterator end,
                                    Polyhedron &P,
-                                   std::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> origin = std::nullopt) {
+                                   std::optional<typename Kernel_traits<typename std::iterator_traits<PlaneIterator>::value_type>::Kernel::Point_3> origin
+#ifndef CGAL_CH3_DUAL_WITHOUT_QP_SOLVER
+                                   = std::nullopt
+#endif
+    ) {
         // Checks whether the intersection is a polyhedron
         CGAL_assertion_msg(Convex_hull_3::internal::is_intersection_dim_3(begin, end), "halfspace_intersection_3: intersection not a polyhedron");
 
@@ -238,8 +244,10 @@ namespace CGAL
 
         // if a point inside is not provided find one using linear programming
         if (!origin) {
+#ifndef CGAL_CH3_DUAL_WITHOUT_QP_SOLVER
           // find a point inside the intersection
           origin = halfspace_intersection_interior_point_3(begin, end);
+#endif
 
           CGAL_assertion_msg(origin!=std::nullopt, "halfspace_intersection_3: problem when determining a point inside the intersection");
           if (origin==std::nullopt)

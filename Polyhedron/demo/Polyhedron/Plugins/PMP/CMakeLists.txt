@@ -68,7 +68,7 @@ if(TARGET CGAL::Eigen3_support)
                            ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
     target_link_libraries(remesh_planar_patches_plugin PUBLIC scene_surface_mesh_item CGAL::Eigen3_support)
 
-    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+    if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
         "compilation of  extrude_plugin"
         "compilation of  fairing_plugin"
@@ -133,7 +133,11 @@ target_link_libraries(
 
 qt6_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui SelfSnapDialog.ui)
 polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
-target_link_libraries(repair_polyhedron_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item)
+target_link_libraries(repair_polyhedron_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item scene_polygon_soup_item)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(repair_polyhedron_plugin PUBLIC CGAL::TBB_support)
+endif()
+
 
 if(TARGET CGAL::Eigen3_support)
   qt6_wrap_ui(isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
@@ -178,7 +182,7 @@ target_link_libraries(
   engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item
                              scene_polylines_item)
 
-if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(
     "compilation of  join_and_split_plugin"
     "compilation of  selection_plugin"

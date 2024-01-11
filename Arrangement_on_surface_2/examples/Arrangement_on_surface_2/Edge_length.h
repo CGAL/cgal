@@ -4,15 +4,15 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/property_map.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef Kernel::FT                                        Number_type;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Number_type = Kernel::FT;
 
 template <typename Arrangement> struct Edge_length {
   // Boost property-type definitions.
-  typedef boost::readable_property_map_tag      category;
-  typedef Number_type                           value_type;
-  typedef value_type                            reference;
-  typedef typename Arrangement::Halfedge_handle key_type;
+  using category = boost::readable_property_map_tag;
+  using value_type = Number_type;
+  using reference = value_type;
+  using key_type = typename Arrangement::Halfedge_handle;
 
   value_type operator()(typename Arrangement::Halfedge_handle e) const {
     const auto diff_x = e->target()->point().x() - e->source()->point().x();

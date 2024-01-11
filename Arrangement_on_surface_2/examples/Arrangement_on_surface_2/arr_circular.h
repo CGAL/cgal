@@ -5,16 +5,16 @@
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
-typedef Kernel::FT                                         Number_type;
-typedef CGAL::Arr_circle_segment_traits_2<Kernel>          Traits;
-typedef Traits::CoordNT                                    CoordNT;
-typedef Traits::Point_2                                    Point;
-typedef Traits::Curve_2                                    Curve;
-typedef Traits::X_monotone_curve_2                         X_monotone_curve;
-typedef Traits::Rational_point_2                           Rational_point;
-typedef Traits::Rational_segment_2                         Segment;
-typedef Traits::Rational_circle_2                          Circle;
-typedef CGAL::Arrangement_2<Traits>                        Arrangement;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Number_type = Kernel::FT;
+using Traits = CGAL::Arr_circle_segment_traits_2<Kernel>;
+using CoordNT = Traits::CoordNT;
+using Point = Traits::Point_2;
+using Curve = Traits::Curve_2;
+using X_monotone_curve = Traits::X_monotone_curve_2;
+using Rational_point = Traits::Rational_point_2;
+using Segment = Traits::Rational_segment_2;
+using Circle = Traits::Rational_circle_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 
 #endif

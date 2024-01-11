@@ -15,7 +15,6 @@
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <boost/type_traits/is_function.hpp>
-#include <boost/mpl/if.hpp>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -47,9 +46,9 @@ public:
   }
 
 private:
-  typedef typename boost::mpl::if_<boost::is_function<Function_>,
-                                   Function_*,
-                                   Function_>::type Stored_function;
+  typedef std::conditional_t<std::is_function_v<Function_>,
+                             Function_*,
+                             Function_> Stored_function;
 
   /// Function to wrap
   Stored_function f_;

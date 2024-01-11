@@ -33,7 +33,10 @@ template <class R_> class Sphere_segment_rep
   typedef Sphere_segment_rep<R_> Rep;
   friend class Sphere_segment<R_>;
 public:
-Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
+
+Sphere_segment_rep() :
+  ps_(), pt_(), c_()
+{}
 
 Sphere_segment_rep(const Point& p1, const Point& p2,
                    bool shorter_arc=true) :

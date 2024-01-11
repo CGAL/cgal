@@ -10,6 +10,11 @@
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
+#ifndef CGAL_MIN_ELLIPSE_2_OPTIMISATION_ELLIPSE_2_IMPL_H
+#define CGAL_MIN_ELLIPSE_2_OPTIMISATION_ELLIPSE_2_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 namespace CGAL {
 
 // Class implementation (continued)
@@ -116,3 +121,5 @@ operator >> ( std::istream& is, CGAL::Optimisation_ellipse_2<K_>& e)
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif // CGAL_MIN_ELLIPSE_2_OPTIMISATION_ELLIPSE_2_IMPL_H

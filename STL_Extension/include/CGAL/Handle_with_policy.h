@@ -21,8 +21,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
-#include <boost/mpl/if.hpp>
-
 #include <cstddef>
 
 #ifdef CGAL_USE_LEDA
@@ -728,10 +726,10 @@ public:
     static Bind bind;
 
     // Define type that is used for function matching
-    typedef typename ::boost::mpl::if_c<
+    typedef std::conditional_t<
          is_class_hierarchy,
            ::CGAL::Tag_true,
-           ::CGAL::Tag_false >::type
+           ::CGAL::Tag_false >
          Class_hierarchy;
 
     //! the internal representation, i.e., \c T plus a reference count

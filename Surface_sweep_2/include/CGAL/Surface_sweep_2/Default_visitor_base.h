@@ -84,7 +84,7 @@ public:
   /*! Destructor */
   virtual ~Default_visitor_base() {}
 
-  /*! Attach the a sweep-line object. */
+  /*! Attach a sweep-line object. */
   void attach(Surface_sweep_2* sl) { m_surface_sweep = sl; }
 
   /*!

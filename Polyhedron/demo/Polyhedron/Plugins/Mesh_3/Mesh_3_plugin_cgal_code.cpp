@@ -134,6 +134,8 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   param.manifold = manifold;
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = polylines.empty() && protect_features;
+  param.image_3_ptr = nullptr;
+  param.weights_ptr = nullptr;
 
   typedef ::Mesh_function<Polyhedral_mesh_domain,
                           Mesh_fnt::Polyhedral_domain_tag> Mesh_function;
@@ -237,6 +239,8 @@ Meshing_thread* cgal_code_mesh_3(const QList<const SMesh*> pMeshes,
   param.manifold = manifold;
   param.protect_features = protect_features || protect_borders;
   param.use_sizing_field_with_aabb_tree = protect_features;
+  param.image_3_ptr = nullptr;
+  param.weights_ptr = nullptr;
 
   typedef ::Mesh_function<Polyhedral_complex_mesh_domain,
                           Mesh_fnt::Polyhedral_domain_tag> Mesh_function;
@@ -292,7 +296,8 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.manifold = manifold;
   param.detect_connected_components = false; // to avoid random values
                                              // in the debug displays
-
+  param.image_3_ptr = nullptr;
+  param.weights_ptr = nullptr;
 
   typedef ::Mesh_function<Function_mesh_domain,
                           Mesh_fnt::Implicit_domain_tag> Mesh_function;

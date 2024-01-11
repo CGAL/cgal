@@ -17,6 +17,11 @@
 * the free functions of this package.
 */
 
+#ifndef CGAL_POLYGON_MESH_PROCESSING_H
+#define CGAL_POLYGON_MESH_PROCESSING_H
+
+#include <CGAL/license/Polygon_mesh_processing/core.h>
+
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -49,3 +54,6 @@
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
+#include <CGAL/Polygon_mesh_processing/autorefinement.h>
+
+#endif //CGAL_POLYGON_MESH_PROCESSING_H

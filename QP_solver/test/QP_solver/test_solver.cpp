@@ -282,6 +282,7 @@ bool process(const std::string& filename,
 {
   using std::cout;
   using std::endl;
+  using CGAL::check_tag;
 
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;

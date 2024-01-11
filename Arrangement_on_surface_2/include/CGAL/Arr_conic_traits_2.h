@@ -141,15 +141,15 @@ public:
 
   /*! Obtain the rational kernel.
    */
-  Shared_rat_kernel rat_kernel() { return m_rat_kernel; }
+  Shared_rat_kernel rat_kernel() const { return m_rat_kernel; }
 
   /*! Obtain the algebraic kernel.
    */
-  Shared_alg_kernel alg_kernel() { return m_alg_kernel; }
+  Shared_alg_kernel alg_kernel() const { return m_alg_kernel; }
 
   /*! Obtain the nt traits.
    */
-  Shared_nt_traits nt_traits() { return m_nt_traits; }
+  Shared_nt_traits nt_traits() const { return m_nt_traits; }
 
   /*! Obtain the next conic index. */
   static size_t get_index() {
@@ -2258,7 +2258,7 @@ public:
      */
     Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
                        const Rational& u, const Rational& v, const Rational& w,
-                       const Orientation& orient,
+                       Orientation orient,
                        const Point_2& source, const Point_2& target) const {
       // Make sure that the source and the taget are not the same.
       const auto alg_kernel = m_traits.m_alg_kernel;
@@ -2280,7 +2280,7 @@ public:
      * \pre The three points must not be collinear.
      */
     Curve_2 operator()(const Rat_point_2& p1, const Rat_point_2& p2,
-                       const Rat_point_2& p3) {
+                       const Rat_point_2& p3) const {
       Curve_2 arc;
 
       // Set the source and target.
@@ -2363,7 +2363,7 @@ public:
      */
     Curve_2 operator()(const Rat_point_2& p1, const Rat_point_2& p2,
                        const Rat_point_2& p3, const Rat_point_2& p4,
-                       const Rat_point_2& p5) {
+                       const Rat_point_2& p5) const {
       Curve_2 arc;
 
       // Make sure that no three points are collinear.
@@ -2457,7 +2457,7 @@ public:
      */
     Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
                        const Rational& u, const Rational& v, const Rational& w,
-                       const Orientation& orient,
+                       Orientation orient,
                        const Point_2& app_source,
                        const Rational& r_1, const Rational& s_1,
                        const Rational& t_1, const Rational& u_1,
@@ -2724,9 +2724,8 @@ public:
      * \pre The source and the target must be on the conic boundary and must
      *      not be the same.
      */
-    Curve_2 operator()(const Rat_circle_2& circ, const Orientation& orient,
+    Curve_2 operator()(const Rat_circle_2& circ, Orientation orient,
                        const Point_2& source, const Point_2& target) const {
-
       // Make sure that the source and the taget are not the same.
       CGAL_precondition_code(auto cmp_xy =
                                m_traits.m_alg_kernel->compare_xy_2_object());

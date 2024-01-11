@@ -115,6 +115,7 @@ public:
   // Types
   typedef Index_                      Index;
   typedef typename GT::FT             FT;
+  typedef typename Vb::Point          Point;
 
   // Constructor
   Mesh_vertex_3()
@@ -324,6 +325,7 @@ struct Mesh_vertex_base_3 {
 #endif
   using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
   using Cell_handle = typename Triangulation_data_structure::Cell_handle;
+  using Point = typename Vb::Point;
 
   template < class TDS3 >
   struct Rebind_TDS {

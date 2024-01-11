@@ -1,7 +1,8 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - CGAL and the Boost Graph Library"
-INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO/polygon_mesh_io.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/iterator.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/helpers.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/generators.h \

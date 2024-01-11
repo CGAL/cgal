@@ -7,8 +7,8 @@
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_naive_point_location<Arrangement>             Naive_pl;
-typedef CGAL::Arr_point_location_result<Arrangement>::Type      Pl_result_type;
+using Naive_pl = CGAL::Arr_naive_point_location<Arrangement>;
+using Pl_result_type = CGAL::Arr_point_location_result<Arrangement>::Type;
 
 int main() {
   // Construct the arrangement of five intersecting segments.

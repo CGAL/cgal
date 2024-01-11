@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
 
 #ifndef CGAL_AUTO_LINK_QT_H
 #define CGAL_AUTO_LINK_QT_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/config.h>
 #include <QtCore/qglobal.h>

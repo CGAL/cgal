@@ -747,7 +747,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
  * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
- *  the value type of the point type associated to the mesh `tm`, i.e. the value type of the vertex
+ *  the value type of the point type associated to the mesh `tm`, i.e., the value type of the vertex
  *  point map property map, if provided, or the value type of the internal point property map otherwise
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -1570,7 +1570,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     candidate_triangles.pop();
 
     // Only process the triangle if it can contribute to the Hausdorff distance,
-    // i.e. if its upper bound is higher than the currently known best lower bound
+    // i.e., if its upper bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user-given error.
     const auto& triangle_bounds = triangle_and_bounds.bounds;

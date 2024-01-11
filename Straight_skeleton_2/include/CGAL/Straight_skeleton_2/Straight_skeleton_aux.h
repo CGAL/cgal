@@ -20,7 +20,6 @@
 #include <CGAL/Polygon_with_holes_2.h>
 
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <optional>
 
@@ -36,12 +35,10 @@ struct Has_inexact_constructions
 {
   typedef typename K::FT FT ;
 
-  typedef typename boost::mpl::if_< boost::mpl::or_< std::is_same<FT,double>
-                                                   , std::is_same<FT,Interval_nt_advanced>
-                                                   >
-                                  , Tag_true
-                                  , Tag_false
-                                  >::type type ;
+  typedef std::conditional_t< std::is_same_v<FT,double> || std::is_same_v<FT,Interval_nt_advanced>
+                              , Tag_true
+                              , Tag_false
+                              > type ;
 } ;
 
 template <class K>

@@ -9,13 +9,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s): Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_DRAW_ARRANGEMENT_2_H
 #define CGAL_DRAW_ARRANGEMENT_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <CGAL/config.h>
 

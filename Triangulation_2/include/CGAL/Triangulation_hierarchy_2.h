@@ -26,7 +26,6 @@
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>

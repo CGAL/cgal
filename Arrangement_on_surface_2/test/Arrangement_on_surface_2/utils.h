@@ -55,13 +55,13 @@ private:
   // This function is invoked for traits classes where at least one
   // boundary is not oblivious and all boundaries are not identified.
   bool operator()(const Point_2& p1, const Point_2& p2,
-                  boost::mpl::bool_<false>) const
+                  std::bool_constant<false>) const
   { return (m_traits.compare_xy_2_object()(p1, p2) == CGAL::SMALLER); }
 
   // This function should be invoked for traits classes where at least one
   // boundary is identified.
   bool operator()(const Point_2& p1, const Point_2& p2,
-                  boost::mpl::bool_<true>) const
+                  std::bool_constant<true>) const
   {
     // Compare in y boundaries:
     CGAL::Arr_parameter_space ps_y1 =

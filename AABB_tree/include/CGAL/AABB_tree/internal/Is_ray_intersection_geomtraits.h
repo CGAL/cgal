@@ -32,11 +32,11 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_cartesian_const_iterator_3,Cartesian_const
 
 template<typename GeomTraits>
 struct Is_ray_intersection_geomtraits
-: boost::mpl::and_< Has_ray_3<GeomTraits>,
-                    Has_construct_source_3<GeomTraits>,
-                    Has_vector_3<GeomTraits>,
-                    Has_construct_cartesian_const_iterator_3<GeomTraits>,
-                    Has_cartesian_const_iterator_3<GeomTraits> >::type
+: std::bool_constant< Has_ray_3<GeomTraits>::value &&
+                      Has_construct_source_3<GeomTraits>::value &&
+                      Has_vector_3<GeomTraits>::value &&
+                      Has_construct_cartesian_const_iterator_3<GeomTraits>::value &&
+                      Has_cartesian_const_iterator_3<GeomTraits>::value >
 {};
 
 

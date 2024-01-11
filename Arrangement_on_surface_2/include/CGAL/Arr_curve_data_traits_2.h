@@ -247,27 +247,32 @@ public:
   private:
     const Base_traits_2& m_base;
 
-    /*! Generate a helper class template to find out whether the base geometry
-     * traits has a nested type named Are_mergeable_2.
-     */
-    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_are_mergeable_2,
-                                      Are_mergeable_2, false)
+    template <typename T>
+    bool are_mergeable_data(const T& /* cv1 */, const T& /* cv2 */, long) const {
+      CGAL_error_msg("Equality operator is not supported.");
+      return false;
+    }
+
+    template <typename T>
+    auto are_mergeable_data(const T& cv1, const T& cv2, int) const ->
+      decltype(cv1.data() == cv2.data())
+    { return cv1.data() == cv2.data(); }
 
     /*! Implementation of the predicate in case the base geometry traits class
      * has a nested type named Are_mergeable_2.
      */
     template <typename GeomeTraits_2>
-    std::enable_if_t<has_are_mergeable_2<GeomeTraits_2>::value,bool>
-    are_mergeable(const X_monotone_curve_2& cv1,
-                  const X_monotone_curve_2& cv2) const
-    {
+    auto are_mergeable(const X_monotone_curve_2& cv1,
+                       const X_monotone_curve_2& cv2,
+                       const GeomeTraits_2& traits, int) const ->
+    decltype(traits.are_mergeable_2_object(), bool()) {
       // In case the two base curves are not mergeable, the extended curves
       // are not mergeable as well.
-      if (! (m_base.are_mergeable_2_object()(cv1, cv2))) return false;
+      if (! (traits.are_mergeable_2_object()(cv1, cv2))) return false;
 
       // In case the two base curves are mergeable, check that they have the
       // same data fields.
-      return (cv1.data() == cv2.data());
+      return are_mergeable_data(cv1, cv2, 0);
     }
 
     /*! Implementation of the predicate in case the base geometry traits class
@@ -275,10 +280,9 @@ public:
      * This function should never be called!
      */
     template <typename GeomeTraits_2>
-    std::enable_if_t<!has_are_mergeable_2<GeomeTraits_2>::value,bool>
-    are_mergeable(const X_monotone_curve_2& /* cv1 */,
-                  const X_monotone_curve_2& /* cv2 */) const
-    {
+    bool are_mergeable(const X_monotone_curve_2& /* cv1 */,
+                       const X_monotone_curve_2& /* cv2 */,
+                       const GeomeTraits_2& /* traits */, long) const {
       CGAL_error_msg("Are mergeable is not supported.");
       return false;
     }
@@ -294,7 +298,7 @@ public:
      */
     bool operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2) const
-    { return are_mergeable<Base_traits_2>(cv1, cv2); }
+    { return are_mergeable<Base_traits_2>(cv1, cv2, m_base, 0); }
   };
 
   /*! Obtain an Are_mergeable_2 functor object. */

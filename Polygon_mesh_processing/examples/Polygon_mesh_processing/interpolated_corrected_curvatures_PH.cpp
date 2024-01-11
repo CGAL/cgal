@@ -7,17 +7,17 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <iostream>
-#include <unordered_map>
+#include <string>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
-typedef CGAL::Polyhedron_3<Epic_kernel> Polyhedron;
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+typedef CGAL::Polyhedron_3<Epic_kernel>                     Mesh;
+typedef boost::graph_traits<Mesh>::vertex_descriptor        vertex_descriptor;
 
 int main(int argc, char* argv[])
 {
-  Polyhedron polyhedron;
+  Mesh polyhedron;
   const std::string filename = (argc > 1) ?
     argv[1] :
     CGAL::data_file_path("meshes/sphere.off");
@@ -29,11 +29,11 @@ int main(int argc, char* argv[])
   }
 
   // define property map to store curvature value and directions
-  boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<Epic_kernel::FT>>::type
+  boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Epic_kernel::FT>>::type
     mean_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron),
     Gaussian_curvature_map = get(CGAL::dynamic_vertex_property_t<Epic_kernel::FT>(), polyhedron);
 
-  boost::property_map<Polyhedron, CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>>::type
+  boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>>::type
     principal_curvatures_and_directions_map =
     get(CGAL::dynamic_vertex_property_t<PMP::Principal_curvatures_and_directions<Epic_kernel>>(), polyhedron);
 

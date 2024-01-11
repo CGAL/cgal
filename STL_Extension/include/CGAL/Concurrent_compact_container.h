@@ -36,8 +36,6 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/queuing_mutex.h>
 
-#include <boost/mpl/if.hpp>
-
 namespace CGAL {
 
 #define CGAL_GENERATE_MEMBER_DETECTOR(X)                                           \

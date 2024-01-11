@@ -861,14 +861,13 @@ namespace internal {
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
-    typedef typename boost::mpl::if_c< Const, const value_type*,
-                                       value_type*>::type pointer;
-    typedef typename boost::mpl::if_c< Const, const value_type&,
-                                       value_type&>::type reference;
+    typedef std::conditional_t< Const, const value_type*,
+                                       value_type*>   pointer;
+    typedef std::conditional_t< Const, const value_type&,
+                                       value_type&>  reference;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
-    typedef typename boost::mpl::if_c< Const, const DSC*, DSC*>::type
-    cc_pointer;
+    typedef std::conditional_t< Const, const DSC*, DSC*> cc_pointer;
 
     CC_iterator_with_index(): m_ptr_to_cc(nullptr),
       m_index(0)

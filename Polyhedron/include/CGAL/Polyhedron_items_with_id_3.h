@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
 #ifndef CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H
-#define CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H 1
+#define CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/HalfedgeDS_vertex_max_base_with_id.h>
 #include <CGAL/HalfedgeDS_halfedge_max_base_with_id.h>

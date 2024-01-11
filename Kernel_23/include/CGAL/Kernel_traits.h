@@ -19,7 +19,6 @@
 
 #include <CGAL/Kernel_traits_fwd.h>
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 

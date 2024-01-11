@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_PROPERTIES_POLYHEDRON_3_TIME_STAMP_H
 #define CGAL_PROPERTIES_POLYHEDRON_3_TIME_STAMP_H
+
+#include <CGAL/license/Polyhedron.h>
+
 
 #include <CGAL/Polyhedron_3.h>
 

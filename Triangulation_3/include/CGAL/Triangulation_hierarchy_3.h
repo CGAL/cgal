@@ -48,7 +48,6 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <array>
 #include <CGAL/array.h>
@@ -331,10 +330,8 @@ public:
   insert( boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           std::enable_if_t<
-            boost::mpl::and_<
-              std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<Vertex>::type >
-            >::value
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<Vertex>::type >
           >* =nullptr
   )
   {

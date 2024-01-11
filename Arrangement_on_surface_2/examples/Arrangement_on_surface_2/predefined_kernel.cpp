@@ -3,9 +3,9 @@
 // predefined kernel with exact constructions and exact predicates.
 
 #include <list>
+#include <chrono>
 
 #include <CGAL/basic.h>
-#include <CGAL/Timer.h>
 
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
@@ -28,18 +28,17 @@ int main (int argc, char* argv[]) {
 
   // Construct the arrangement by aggregately inserting all segments.
   Arrangement arr;
-  CGAL::Timer timer;
 
   std::cout << "Performing aggregated insertion of "
             << segments.size() << " segments.\n";
 
-  timer.start();
+  auto start = std::chrono::system_clock::now();
   insert(arr, segments.begin(), segments.end());
-  timer.stop();
+  std::chrono::duration<double> secs = std::chrono::system_clock::now() - start;
 
   print_arrangement_size(arr);
 
-  std::cout << "Construction took " << timer.time() << " seconds.\n";
+  std::cout << "Construction took " << secs.count() << " seconds.\n";
 
   return 0;
 }

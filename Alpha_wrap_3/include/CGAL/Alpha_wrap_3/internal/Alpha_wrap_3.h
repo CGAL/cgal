@@ -49,7 +49,9 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Default.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Modifiable_priority_queue.h>
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+ #include <CGAL/Modifiable_priority_queue.h>
+#endif
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
@@ -92,6 +94,10 @@ struct Wrapping_default_visitor
   template <typename AlphaWrapper>
   void on_flood_fill_begin(const AlphaWrapper&) { }
 
+  // Whether the flood filling process should continue
+  template <typename Wrapper>
+  constexpr bool go_further(const Wrapper&) { return true; }
+
   template <typename AlphaWrapper, typename Gate>
   void before_facet_treatment(const AlphaWrapper&, const Gate&) { }
 
@@ -110,7 +116,7 @@ struct Wrapping_default_visitor
 
 template <typename Oracle_,
           typename Triangulation_ = CGAL::Default>
-class Alpha_wrap_3
+class Alpha_wrapper_3
 {
   using Oracle = Oracle_;
 
@@ -120,22 +126,36 @@ class Alpha_wrap_3
 
   using Default_Vb = Alpha_wrap_triangulation_vertex_base_3<Default_Gt>;
   using Default_Cb = Alpha_wrap_triangulation_cell_base_3<Default_Gt>;
-  using Default_Cbt = Cell_base_with_timestamp<Default_Cb>; // determinism
+  using Default_Cbt = Cell_base_with_timestamp<Default_Cb>; // for determinism
   using Default_Tds = CGAL::Triangulation_data_structure_3<Default_Vb, Default_Cbt>;
   using Default_Triangulation = CGAL::Delaunay_triangulation_3<Default_Gt, Default_Tds, Fast_location>;
 
+public:
   using Triangulation = typename Default::Get<Triangulation_, Default_Triangulation>::type;
 
+  // Use the geom traits from the triangulation, and trust the (advanced) user that provided it
+  using Geom_traits = typename Triangulation::Geom_traits;
+
+private:
   using Cell_handle = typename Triangulation::Cell_handle;
   using Facet = typename Triangulation::Facet;
   using Vertex_handle = typename Triangulation::Vertex_handle;
   using Locate_type = typename Triangulation::Locate_type;
 
   using Gate = internal::Gate<Triangulation>;
-  using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Triangulation>, CGAL_BOOST_PAIRING_HEAP>;
 
-  // Use the geom traits from the triangulation, and trust the (advanced) user that provided it
-  using Geom_traits = typename Triangulation::Geom_traits;
+  // A sorted queue is a priority queue sorted by circumradius, and is experimentally significantly
+  // slower. However, intermediate results are usable: at each point of the algorithm, the wrap
+  // has a somewhat uniform mesh element size.
+  //
+  // An unsorted queue is a LIFO queue, and is experimentally much faster (~35%),
+  // but intermediate results are not useful: a LIFO carves deep before than wide,
+  // and can thus for example leave scaffolding faces till almost the end of the refinement.
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+  using Alpha_PQ = Modifiable_priority_queue<Gate, Less_gate, Gate_ID_PM<Triangulation>, CGAL_BOOST_PAIRING_HEAP>;
+#else
+  using Alpha_PQ = std::stack<Gate>;
+#endif
 
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
@@ -149,33 +169,48 @@ class Alpha_wrap_3
   using SC_Iso_cuboid_3 = SC::Iso_cuboid_3;
   using SC2GT = Cartesian_converter<SC, Geom_traits>;
 
+  using Seeds = std::vector<Point_3>;
 
 protected:
-  const Oracle m_oracle;
+  Oracle m_oracle;
   SC_Iso_cuboid_3 m_bbox;
 
-  FT m_alpha, m_sq_alpha;
-  FT m_offset, m_sq_offset;
+  FT m_alpha = FT(-1), m_sq_alpha = FT(-1);
+  FT m_offset = FT(-1), m_sq_offset = FT(-1);
+
+  Seeds m_seeds;
 
   Triangulation m_tr;
+
   Alpha_PQ m_queue;
 
 public:
-  // Main constructor
-  Alpha_wrap_3(const Oracle& oracle)
-    :
-      m_oracle(oracle),
-      m_tr(Geom_traits(oracle.geom_traits())),
-      // used to set up the initial MPQ, use some arbitrary not-too-small value
-      m_queue(4096)
+  Alpha_wrapper_3()
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      // '4096' is an arbitrary, not-too-small value for the largest ID in queue initialization
+    : m_queue(4096)
+#endif
   {
     // Due to the Steiner point computation being a dichotomy, the algorithm is inherently inexact
     // and passing exact kernels is explicitly disabled to ensure no misunderstanding.
     static_assert(std::is_floating_point<FT>::value);
   }
 
+  Alpha_wrapper_3(const Oracle& oracle)
+    :
+      m_oracle(oracle),
+      m_tr(Geom_traits(oracle.geom_traits()))
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      , m_queue(4096)
+#endif
+  {
+    static_assert(std::is_floating_point<FT>::value);
+  }
+
 public:
   const Geom_traits& geom_traits() const { return m_tr.geom_traits(); }
+  Oracle& oracle() { return m_oracle; }
+  const Oracle& oracle() const { return m_oracle; }
   Triangulation& triangulation() { return m_tr; }
   const Triangulation& triangulation() const { return m_tr; }
   const Alpha_PQ& queue() const { return m_queue; }
@@ -222,25 +257,52 @@ public:
     using parameters::get_parameter_reference;
     using parameters::choose_parameter;
 
+    //
     using OVPM = typename CGAL::GetVertexPointMap<OutputMesh, OutputNamedParameters>::type;
     OVPM ovpm = choose_parameter(get_parameter(out_np, internal_np::vertex_point),
                                  get_property_map(vertex_point, output_mesh));
 
-    typedef typename internal_np::Lookup_named_param_def <
-      internal_np::visitor_t,
-      InputNamedParameters,
-      Wrapping_default_visitor // default
-    >::reference                                                                 Visitor;
+    //
+    using Visitor = typename internal_np::Lookup_named_param_def<
+                      internal_np::visitor_t,
+                      InputNamedParameters,
+                      Wrapping_default_visitor // default
+                    >::reference;
 
     Wrapping_default_visitor default_visitor;
     Visitor visitor = choose_parameter(get_parameter_reference(in_np, internal_np::visitor), default_visitor);
 
-    std::vector<Point_3> no_seeds;
-    using Seeds = typename internal_np::Lookup_named_param_def<
-                    internal_np::seed_points_t, InputNamedParameters, std::vector<Point_3> >::reference;
-    Seeds seeds = choose_parameter(get_parameter_reference(in_np, internal_np::seed_points), no_seeds);
+    // Points used to create initial cavities
+    m_seeds = choose_parameter(get_parameter_reference(in_np, internal_np::seed_points), Seeds());
 
+    // Whether or not some cells should be reflagged as "inside" after the refinement+carving loop
+    // as ended, as to ensure that the result is not only combinatorially manifold, but also
+    // geometrically manifold.
+    //
+    // -- Warning --
+    // Manifoldness postprocessing will be performed even if the wrapping is interrupted (and
+    // this option is enabled).
     const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
+
+    // Whether to keep pockets of "outside" cells that are not connected to the exterior (or to the
+    // initial cavities, if used).
+    //
+    // -- Warning --
+    // Pockets of "outside" cells will be purged even if the wrapping is interrupted (and
+    // this option is enabled).
+    const bool keep_inner_ccs = choose_parameter(get_parameter(in_np, internal_np::keep_inner_connected_components), false);
+
+    // This parameter enables avoiding recomputing the triangulation from scratch when wrapping
+    // the same input for multiple values of alpha (and typically the same offset values).
+    //
+    // -- Warning --
+    // If this is enabled, the 3D triangulation will NOT be re-initialized at launch.
+    // This means that the triangulation is NOT cleared, even if:
+    // - you use an alpha value that is greater than what was used in a previous run; you will
+    //   obtain the same result as the last run.
+    // - you use a different offset value between runs, you might then get points that are not
+    //   on the offset surface corresponding to that corresponding to the latter offset value.
+    const bool refining = choose_parameter(get_parameter(in_np, internal_np::refine_triangulation), false);
 
 #ifdef CGAL_AW3_TIMER
     CGAL::Real_timer t;
@@ -249,76 +311,59 @@ public:
 
     visitor.on_alpha_wrapping_begin(*this);
 
-    if(!initialize(alpha, offset, seeds))
+    if(!initialize(alpha, offset, refining))
       return;
 
-#ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-    extract_surface(output_mesh, ovpm, true /*tolerate non manifoldness*/);
-    CGAL::IO::write_polygon_mesh("initial_cavities.off", output_mesh,
-                                 CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
+#ifdef CGAL_AW3_TIMER
+    t.stop();
+    std::cout << "Initialization took: " << t.time() << " s." << std::endl;
+    t.reset();
+    t.start();
+#endif
+
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    dump_triangulation_faces("starting_wrap.off", true /*only_boundary_faces*/);
 #endif
 
     alpha_flood_fill(visitor);
 
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    dump_triangulation_faces("flood_filled_wrap.off", true /*only_boundary_faces*/);
+#endif
+
 #ifdef CGAL_AW3_TIMER
     t.stop();
     std::cout << "Flood filling took: " << t.time() << " s." << std::endl;
+    t.reset();
+    t.start();
 #endif
 
     if(do_enforce_manifoldness)
     {
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
-      std::cout << "> Make manifold..." << std::endl;
-
-      extract_surface(output_mesh, ovpm, true /*tolerate non manifoldness*/);
-
-#ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-      dump_triangulation_faces("intermediate_dt3.off", false /*only_boundary_faces*/);
-      IO::write_polygon_mesh("intermediate.off", output_mesh,
-                             CGAL::parameters::vertex_point_map(ovpm).stream_precision(17));
-#endif
-
-      FT base_vol = 0;
-      if(is_closed(output_mesh)) // might not be due to manifoldness
-        base_vol = PMP::volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
-      else
-        std::cerr << "Warning: couldn't compute volume before manifoldness fixes (mesh is not closed)" << std::endl;
-#endif
-
-#ifdef CGAL_AW3_TIMER
-    t.reset();
-    t.start();
-#endif
-
       make_manifold();
+
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+      dump_triangulation_faces("manifold_wrap.off", true /*only_boundary_faces*/);
+#endif
 
 #ifdef CGAL_AW3_TIMER
       t.stop();
-      std::cout << "\nManifoldness post-processing took: " << t.time() << " s." << std::endl;
+      std::cout << "Manifoldness post-processing took: " << t.time() << " s." << std::endl;
+      t.reset();
+      t.start();
 #endif
+    }
 
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
-      if(!is_zero(base_vol))
-      {
-        extract_surface(output_mesh, ovpm, false /*do not tolerate non-manifoldness*/);
+    if(!keep_inner_ccs)
+    {
+      // We could purge *before* manifold enforcement, but making the mesh manifold is
+      // very cheap in most cases, so it is better to keep the code simpler.
+      purge_inner_connected_components();
 
-        const FT manifold_vol = PMP::volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
-        const FT ratio = manifold_vol / base_vol;
-
-        std::cout << "Volumes post-manifoldness fix:\n"
-                  << "before: " << base_vol << "\n"
-                  << "after:  " << manifold_vol << "\n"
-                  << "ratio:  " << ratio << std::endl;
-        if(ratio > 1.1) // more than 10% extra volume
-          std::cerr << "Warning: large increase of volume after manifoldness resolution" << std::endl;
-      }
+#ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+      dump_triangulation_faces("purged_wrap.off", true /*only_boundary_faces*/);
 #endif
-    } // do_enforce_manifoldness
-
-#ifdef CGAL_AW3_TIMER
-    t.reset();
-    t.start();
-#endif
+    }
 
     extract_surface(output_mesh, ovpm, !do_enforce_manifoldness);
 
@@ -331,9 +376,9 @@ public:
     std::cout << "Alpha wrap vertices:  " << vertices(output_mesh).size() << std::endl;
     std::cout << "Alpha wrap faces:     " << faces(output_mesh).size() << std::endl;
 
- #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
-    IO::write_polygon_mesh("final.off", output_mesh, CGAL::parameters::stream_precision(17));
-    dump_triangulation_faces("final_dt3.off", false /*only_boundary_faces*/);
+ #ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    IO::write_polygon_mesh("final_wrap.off", output_mesh, CGAL::parameters::stream_precision(17));
+    dump_triangulation_faces("final_tr.off", false /*only_boundary_faces*/);
  #endif
 #endif
 
@@ -383,6 +428,20 @@ public:
   }
 
 private:
+  // The distinction between inside boundary and outside boundary is the presence of cells
+  // being flagged for manifoldness: inside boundary considers those outside, and outside
+  // boundary considers them inside.
+  bool is_on_inside_boundary(Cell_handle ch, Cell_handle nh) const
+  {
+    return (ch->is_inside() != nh->is_inside()); // one is "inside", the other is not
+  }
+
+  bool is_on_outside_boundary(Cell_handle ch, Cell_handle nh) const
+  {
+    return (ch->is_outside() != nh->is_outside()); // one is "outside", the other is not
+  }
+
+private:
   // Adjust the bbox & insert its corners to construct the starting triangulation
   void insert_bbox_corners()
   {
@@ -409,20 +468,20 @@ private:
   // - Cells whose circumcenter is in the offset volume are inside: this is because
   // we need to have outside cell circumcenters outside of the volume to ensure
   // that the refinement point is separated from the existing point set.
-  bool cavity_cell_outside_tag(const Cell_handle ch)
+  Cell_label cavity_cell_label(const Cell_handle ch)
   {
     CGAL_precondition(!m_tr.is_infinite(ch));
 
     const Tetrahedron_with_outside_info<Geom_traits> tet(ch, geom_traits());
     if(m_oracle.do_intersect(tet))
-      return false;
+      return Cell_label::INSIDE;
 
     const Point_3& ch_cc = circumcenter(ch);
     typename Geom_traits::Construct_ball_3 ball = geom_traits().construct_ball_3_object();
     const Ball_3 ch_cc_offset_ball = ball(ch_cc, m_sq_offset);
     const bool is_cc_in_offset = m_oracle.do_intersect(ch_cc_offset_ball);
 
-    return !is_cc_in_offset;
+    return is_cc_in_offset ? Cell_label::INSIDE : Cell_label::OUTSIDE;
   }
 
   // Create a cavity using seeds rather than starting from the infinity.
@@ -461,15 +520,14 @@ private:
   //
   // Another way is to simply make faces incident to the seed always traversable, and then
   // we only have to ensure faces opposite of the seed are traversable (i.e., radius ~= 1.65 * alpha)
-  template <typename SeedRange>
-  bool initialize_with_cavities(const SeedRange& seeds)
+  bool initialize_with_cavities()
   {
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
     std::cout << "> Dig cavities" << std::endl;
-    std::cout << seeds.size() << " seed(s)" << std::endl;
+    std::cout << m_seeds.size() << " seed(s)" << std::endl;
 #endif
 
-    CGAL_precondition(!seeds.empty());
+    CGAL_precondition(!m_seeds.empty());
 
     // Get a double value approximating the scaling factors
 //    std::cout << sqrt(3) * sin(2pi / 5) << std::endl;
@@ -478,7 +536,7 @@ private:
     Iso_cuboid_3 bbox = SC2GT()(m_bbox);
 
     std::vector<Vertex_handle> seed_vs;
-    for(const Point_3& seed_p : seeds)
+    for(const Point_3& seed_p : m_seeds)
     {
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
       std::cout << "Initialize from seed " << seed_p << std::endl;
@@ -504,7 +562,7 @@ private:
         continue;
       }
 
-      // Mark the seeds and icosahedron vertices as "artificial vertices" such that the facets
+      // Mark the seeds and icosahedron vertices as "scaffolding" vertices such that the facets
       // incident to these vertices are always traversable regardless of their circumcenter.
       // This is done because otherwise some cavities can appear on the mesh: non-traversable facets
       // with two vertices on the offset, and the third being a deeper inside seed / ico_seed.
@@ -573,17 +631,19 @@ private:
       std::vector<Cell_handle> inc_cells;
       inc_cells.reserve(64);
       m_tr.incident_cells(seed_v, std::back_inserter(inc_cells));
+
       for(Cell_handle ch : inc_cells)
-        ch->is_outside() = cavity_cell_outside_tag(ch);
+        ch->set_label(cavity_cell_label(ch));
     }
 
-    // Might as well go through the full triangulation since only seeds should have been inserted
+    // Should be cheap enough to go through the full triangulation as only seeds have been inserted
     for(Cell_handle ch : m_tr.all_cell_handles())
     {
-      if(!ch->is_outside())
+      if(ch->is_inside())
         continue;
 
-      // When the algorithm starts from a manually dug hole, infinite cells are tagged "inside"
+      // When the algorithm starts from a manually dug hole, infinite cells are initialized
+      // as "inside" such that they do not appear on the boundary
       CGAL_assertion(!m_tr.is_infinite(ch));
 
       for(int i=0; i<4; ++i)
@@ -601,7 +661,7 @@ private:
     return true;
   }
 
-  // tag all infinite cells OUTSIDE and all finite cells INSIDE
+  // tag all infinite cells "outside" and all finite cells "inside"
   // init queue with all convex hull facets
   bool initialize_from_infinity()
   {
@@ -609,20 +669,52 @@ private:
     {
       if(m_tr.is_infinite(ch))
       {
-        ch->is_outside() = true;
+        ch->set_label(Cell_label::OUTSIDE);
         const int inf_index = ch->index(m_tr.infinite_vertex());
         push_facet(std::make_pair(ch, inf_index));
       }
       else
       {
-        ch->is_outside() = false;
+        ch->set_label(Cell_label::INSIDE);
       }
     }
 
     return true;
   }
 
-public:
+  void reset_manifold_labels()
+  {
+    // No erase counter increment, or it will mess up with a possibly non-empty queue.
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      if(ch->label() == Cell_label::MANIFOLD)
+        ch->set_label(Cell_label::OUTSIDE);
+  }
+
+  // This function is used in the case of resumption of a previous run: m_tr is not cleared,
+  // and we fill the queue with the new parameters.
+  bool initialize_from_existing_triangulation()
+  {
+#ifdef CGAL_AW3_DEBUG_INITIALIZATION
+    std::cout << "Restart from a DT of " << m_tr.number_of_cells() << " cells" << std::endl;
+#endif
+
+    for(Cell_handle ch : m_tr.all_cell_handles())
+    {
+      if(ch->is_inside())
+        continue;
+
+      for(int i=0; i<4; ++i)
+      {
+        if(ch->neighbor(i)->is_inside())
+          push_facet(std::make_pair(ch, i));
+
+      }
+    }
+
+    return true;
+  }
+
+private:
   // Manifoldness is tolerated while debugging and extracting at intermediate states
   // Not the preferred way because it uses 3*nv storage
   template <typename OutputMesh, typename OVPM>
@@ -662,7 +754,6 @@ public:
 
         if(cell->tds_data().processed())
           continue;
-
         cell->tds_data().mark_processed();
 
         for(int fid=0; fid<4; ++fid)
@@ -689,8 +780,6 @@ public:
         }
       }
 
-      PMP::duplicate_non_manifold_edges_in_polygon_soup(points, faces);
-
       CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(faces));
       PMP::polygon_soup_to_polygon_mesh(points, faces, output_mesh,
                                         CGAL::parameters::default_values(),
@@ -708,6 +797,8 @@ public:
     CGAL_postcondition(is_closed(output_mesh));
 
     PMP::orient_to_bound_a_volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
+
+    collect_garbage(output_mesh);
   }
 
   template <typename OutputMesh, typename OVPM>
@@ -717,7 +808,7 @@ public:
     namespace PMP = Polygon_mesh_processing;
 
 #ifdef CGAL_AW3_DEBUG
-    std::cout << "> Extract wrap... ()" << std::endl;
+    std::cout << "> Extract manifold wrap... ()" << std::endl;
 #endif
 
     CGAL_assertion_code(for(Vertex_handle v : m_tr.finite_vertex_handles()))
@@ -725,35 +816,30 @@ public:
 
     clear(output_mesh);
 
-    // boundary faces to polygon soup
     std::vector<Point_3> points;
     std::vector<std::array<std::size_t, 3> > faces;
 
     std::unordered_map<Vertex_handle, std::size_t> vertex_to_id;
-    std::size_t nv = 0;
 
-    for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit)
+    for(auto fit=m_tr.all_facets_begin(), fend=m_tr.all_facets_end(); fit!=fend; ++fit)
     {
       Facet f = *fit;
       if(!f.first->is_outside())
         f = m_tr.mirror_facet(f);
 
-      const Cell_handle c = f.first;
+      const Cell_handle ch = f.first;
       const int s = f.second;
-      const Cell_handle nh = c->neighbor(s);
-      if(c->is_outside() == nh->is_outside())
+      const Cell_handle nh = ch->neighbor(s);
+      if(!is_on_outside_boundary(ch, nh))
         continue;
 
       std::array<std::size_t, 3> ids;
       for(int pos=0; pos<3; ++pos)
       {
-        Vertex_handle vh = c->vertex(Triangulation::vertex_triple_index(s, pos));
-        auto insertion_res = vertex_to_id.emplace(vh, nv);
+        Vertex_handle vh = ch->vertex(Triangulation::vertex_triple_index(s, pos));
+        auto insertion_res = vertex_to_id.emplace(vh, vertex_to_id.size());
         if(insertion_res.second) // successful insertion, never-seen-before vertex
-        {
           points.push_back(m_tr.point(vh));
-          ++nv;
-        }
 
         ids[pos] = insertion_res.first->second;
       }
@@ -761,12 +847,22 @@ public:
       faces.emplace_back(std::array<std::size_t, 3>{ids[0], ids[1], ids[2]});
     }
 
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "\t" << points.size() << " points" << std::endl;
+    std::cout << "\t" << faces.size() << " faces" << std::endl;
+#endif
+
     if(faces.empty())
+    {
+#ifdef CGAL_AW3_DEBUG
+      std::cerr << "Warning: empty wrap?..." << std::endl;
+#endif
       return;
+    }
 
     if(!PMP::is_polygon_soup_a_polygon_mesh(faces))
     {
-      CGAL_warning_msg(false, "Could NOT extract mesh...");
+      CGAL_warning_msg(false, "Failed to extract a manifold boundary!");
       return;
     }
 
@@ -777,10 +873,12 @@ public:
     CGAL_postcondition(!is_empty(output_mesh));
     CGAL_postcondition(is_valid_polygon_mesh(output_mesh));
     CGAL_postcondition(is_closed(output_mesh));
+    CGAL_postcondition(PMP::does_bound_a_volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm)));
 
     PMP::orient_to_bound_a_volume(output_mesh, CGAL::parameters::vertex_point_map(ovpm));
   }
 
+public:
   template <typename OutputMesh, typename OVPM>
   void extract_surface(OutputMesh& output_mesh,
                        OVPM ovpm,
@@ -886,43 +984,76 @@ private:
   }
 
 private:
-  enum Facet_queue_status
+  // A permissive gate is a gate that we can traverse without checking its circumradius
+  enum class Facet_status
   {
     IRRELEVANT = 0,
-    ARTIFICIAL_FACET,
+    HAS_INFINITE_NEIGHBOR, // the cell incident to the mirrored facet is infinite (permissive)
+    SCAFFOLDING, // incident to a SEED or BBOX vertex (permissive)
     TRAVERSABLE
   };
 
+  inline const char* get_status_message(const Facet_status status)
+  {
+    constexpr std::size_t status_count = 4;
+
+    // Messages corresponding to Error_code list above. Must be kept in sync!
+    static const char* message[status_count] = {
+      "Irrelevant facet",
+      "Facet incident to infinite neighbor",
+      "Facet with a bbox/seed vertex",
+      "Traversable facet"
+    };
+
+    const std::size_t status_id = static_cast<std::size_t>(status);
+    if(status_id > status_count || status_id < 0)
+      return "Unknown status";
+    else
+      return message[status_id];
+  }
+
+public:
   // @speed some decent time may be spent constructing Facet (pairs) for no reason as it's always
   // just to grab the .first and .second as soon as it's constructed, and not due to API requirements
-  // e.g. from DT3
-  Facet_queue_status facet_status(const Facet& f) const
+  Facet_status facet_status(const Facet& f) const
   {
     CGAL_precondition(!m_tr.is_infinite(f));
 
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
     std::cout << "facet status: "
-              << f.first->vertex((f.second + 1)&3)->point() << " "
-              << f.first->vertex((f.second + 2)&3)->point() << " "
-              << f.first->vertex((f.second + 3)&3)->point() << std::endl;
+              << m_tr.point(f.first, Triangulation::vertex_triple_index(f.second, 0)) << " "
+              << m_tr.point(f.first, Triangulation::vertex_triple_index(f.second, 1)) << " "
+              << m_tr.point(f.first, Triangulation::vertex_triple_index(f.second, 2)) << std::endl;
 #endif
 
-    // skip if neighbor is OUTSIDE or infinite
+    // skip if neighbor is "outside" or infinite
     const Cell_handle ch = f.first;
     const int id = f.second;
+    CGAL_precondition(ch->label() == Cell_label::INSIDE || ch->label() == Cell_label::OUTSIDE);
+
+    if(!ch->is_outside()) // "inside" or "manifold"
+    {
+#ifdef CGAL_AW3_DEBUG_FACET_STATUS
+      std::cout << "Facet is inside" << std::endl;
+#endif
+      return Facet_status::IRRELEVANT;
+    }
+
     const Cell_handle nh = ch->neighbor(id);
+    CGAL_precondition(ch->label() == Cell_label::INSIDE || ch->label() == Cell_label::OUTSIDE);
+
     if(m_tr.is_infinite(nh))
-      return TRAVERSABLE;
+      return Facet_status::HAS_INFINITE_NEIGHBOR;
 
     if(nh->is_outside())
     {
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
       std::cout << "Neighbor already outside" << std::endl;
 #endif
-      return IRRELEVANT;
+      return Facet_status::IRRELEVANT;
     }
 
-    // push if facet is connected to artificial vertices
+    // push if facet is connected to scaffolding vertices
     for(int i=0; i<3; ++i)
     {
       const Vertex_handle vh = ch->vertex(Triangulation::vertex_triple_index(id, i));
@@ -930,9 +1061,9 @@ private:
          vh->type() == AW3i::Vertex_type:: SEED_VERTEX)
       {
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
-        std::cout << "artificial facet due to artificial vertex #" << i << std::endl;
+        std::cout << "Scaffolding facet due to vertex #" << i << std::endl;
 #endif
-        return ARTIFICIAL_FACET;
+        return Facet_status::SCAFFOLDING;
       }
     }
 
@@ -942,78 +1073,143 @@ private:
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
       std::cout << "traversable" << std::endl;
 #endif
-      return TRAVERSABLE;
+      return Facet_status::TRAVERSABLE;
     }
 
 #ifdef CGAL_AW3_DEBUG_FACET_STATUS
     std::cout << "not traversable" << std::endl;
 #endif
-    return IRRELEVANT;
+    return Facet_status::IRRELEVANT;
   }
 
+private:
   bool push_facet(const Facet& f)
   {
     CGAL_precondition(f.first->is_outside());
 
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     // skip if f is already in queue
     if(m_queue.contains_with_bounds_check(Gate(f)))
       return false;
+#endif
 
-    const Facet_queue_status s = facet_status(f);
-    if(s == IRRELEVANT)
+    // @todo could avoid useless facet_status() calls by doing it after the zombie check
+    // for the unsorted priority queue, but AFAIR, it doesn't save noticeable time (and that
+    // increases the queue size).
+    const Facet_status status = facet_status(f);
+    if(status == Facet_status::IRRELEVANT)
       return false;
 
-    const Cell_handle ch = f.first;
-    const int id = f.second;
-    const Point_3& p0 = m_tr.point(ch, (id+1)&3);
-    const Point_3& p1 = m_tr.point(ch, (id+2)&3);
-    const Point_3& p2 = m_tr.point(ch, (id+3)&3);
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+    const FT sqr = smallest_squared_radius_3(f, m_tr);
+    const bool is_permissive = (status == Facet_status::HAS_INFINITE_NEIGHBOR ||
+                                status == Facet_status::SCAFFOLDING);
+    m_queue.resize_and_push(Gate(f, sqr, is_permissive));
+#else
+    m_queue.push(Gate(f, m_tr));
+#endif
 
-    // @todo should prob be the real value we compare to alpha instead of squared_radius
-    const FT sqr = geom_traits().compute_squared_radius_3_object()(p0, p1, p2);
-    m_queue.resize_and_push(Gate(f, sqr, (s == ARTIFICIAL_FACET)));
+#ifdef CGAL_AW3_DEBUG_QUEUE
+    const Cell_handle ch = f.first;
+    const int s = f.second;
+    const Point_3& p0 = m_tr.point(ch, Triangulation::vertex_triple_index(s, 0));
+    const Point_3& p1 = m_tr.point(ch, Triangulation::vertex_triple_index(s, 1));
+    const Point_3& p2 = m_tr.point(ch, Triangulation::vertex_triple_index(s, 2));
+
+    static int gid = 0;
+    std::cout << "Queue insertion #" << gid++ << "\n"
+              << "  ch = " << &*ch << " (" << m_tr.is_infinite(ch) << ") " << "\n"
+              << "\t" << p0 << "\n\t" << p1 << "\n\t" << p2 << std::endl;
+    std::cout << "  Status: " << get_status_message(status) << std::endl;
+ #ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+    std::cout << "  SQR: " << sqr << std::endl;
+    std::cout << "  Permissiveness: " << is_permissive << std::endl;
+
+    CGAL_assertion(is_permissive || sqr >= m_sq_alpha);
+ #endif // CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+#endif // CGAL_AW3_DEBUG_QUEUE
 
     return true;
   }
 
 private:
-  template <typename SeedRange>
   bool initialize(const double alpha,
                   const double offset,
-                  const SeedRange& seeds)
+                  const bool refining)
   {
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Initialize..." << std::endl;
-    std::cout << "Alpha: " << alpha << std::endl;
-    std::cout << "Offset: " << offset << std::endl;
+#endif
+
+    const bool resuming = refining && (alpha == m_alpha) && (offset == m_offset);
+
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "\tAlpha: " << alpha << std::endl;
+    std::cout << "\tOffset: " << offset << std::endl;
+    std::cout << "\tRefining? " << refining << std::endl;
+    std::cout << "\tResuming? " << resuming << std::endl;
 #endif
 
     if(!is_positive(alpha) || !is_positive(offset))
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Error: invalid input parameters" << std::endl;
+      std::cerr << "Error: invalid input parameters: " << alpha << " and" << offset << std::endl;
 #endif
       return false;
     }
+
+    if(refining && alpha > m_alpha)
+      std::cerr << "Warning: refining with an alpha greater than the last iteration's!" << std::endl;
+    if(refining && offset != m_offset)
+      std::cerr << "Warning: refining with a different offset value!" << std::endl;
 
     m_alpha = FT(alpha);
     m_sq_alpha = square(m_alpha);
     m_offset = FT(offset);
     m_sq_offset = square(m_offset);
 
-    m_tr.clear();
+    // Resuming means that we do not need to re-initialize the queue: either we have finished
+    // and there is nothing to do, or the interruption was due to a user callback in the visitor,
+    // and we can resume with the current queue
+    if(resuming)
+    {
+#ifdef CGAL_AW3_DEBUG
+      std::cout << "Resuming with a queue of size: " << m_queue.size() << std::endl;
+#endif
+
+      reset_manifold_labels();
+      return true;
+    }
+
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
     m_queue.clear();
+#else
+    m_queue = { };
+#endif
 
-    insert_bbox_corners();
+    if(refining)
+    {
+      // If we are re-using the triangulation, change the label of the extra elements
+      // that we have added to ensure a manifold result back to external ("manifold" -> "outside")
+      reset_manifold_labels();
 
-    if(seeds.empty())
-      return initialize_from_infinity();
+      return initialize_from_existing_triangulation();
+    }
     else
-      return initialize_with_cavities(seeds);
+    {
+      m_tr.clear();
+
+      insert_bbox_corners();
+
+      if(m_seeds.empty())
+        return initialize_from_infinity();
+      else
+        return initialize_with_cavities();
+    }
   }
 
   template <typename Visitor>
-  void alpha_flood_fill(Visitor& visitor)
+  bool alpha_flood_fill(Visitor& visitor)
   {
 #ifdef CGAL_AW3_DEBUG
     std::cout << "> Flood fill..." << std::endl;
@@ -1024,32 +1220,46 @@ private:
     // Explore all finite cells that are reachable from one of the initial outside cells.
     while(!m_queue.empty())
     {
+      if(!visitor.go_further(*this))
+        return false;
+
 #ifdef CGAL_AW3_DEBUG_QUEUE_PP
       check_queue_sanity();
 #endif
 
       // const& to something that will be popped, but safe as `ch` && `id` are extracted before the pop
       const Gate& gate = m_queue.top();
+
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      if(gate.is_zombie())
+      {
+        m_queue.pop();
+        continue;
+      }
+#endif
+
       const Facet& f = gate.facet();
       CGAL_precondition(!m_tr.is_infinite(f));
 
       const Cell_handle ch = f.first;
-      const int id = f.second;
-      const Cell_handle neighbor = ch->neighbor(id);
+      const int s = f.second;
+      CGAL_precondition(ch->is_outside());
+
+      const Cell_handle nh = ch->neighbor(s);
+      CGAL_precondition(nh->label() == Cell_label::INSIDE || nh->label() == Cell_label::OUTSIDE);
 
 #ifdef CGAL_AW3_DEBUG_QUEUE
       static int fid = 0;
       std::cout << m_tr.number_of_vertices() << " DT vertices" << std::endl;
       std::cout << m_queue.size() << " facets in the queue" << std::endl;
       std::cout << "Face " << fid++ << "\n"
-                << "c = " << &*ch << " (" << m_tr.is_infinite(ch) << "), n = " << &*neighbor << " (" << m_tr.is_infinite(neighbor) << ")" << "\n"
-                << m_tr.point(ch, (id+1)&3) << "\n" << m_tr.point(ch, (id+2)&3) << "\n" << m_tr.point(ch, (id+3)&3) << std::endl;
-      std::cout << "Priority: " << gate.priority() << std::endl;
+                << "c = " << &*ch << " (" << m_tr.is_infinite(ch) << "), n = " << &*nh << " (" << m_tr.is_infinite(nh) << ")" << "\n"
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)) << "\n"
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)) << "\n"
+                << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
+      std::cout << "Priority: " << gate.priority() << " (sq alpha: " << m_sq_alpha << ")" << std::endl;
+      std::cout << "Permissiveness: " << gate.is_permissive_facet() << std::endl;
 #endif
-
-      visitor.before_facet_treatment(*this, gate);
-
-      m_queue.pop();
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
       static int i = 0;
@@ -1059,18 +1269,27 @@ private:
       std::string face_name = "results/steps/face_" + std::to_string(static_cast<int>(i++)) + ".xyz";
       std::ofstream face_out(face_name);
       face_out.precision(17);
-      face_out << "3\n" << m_tr.point(ch, (id+1)&3) << "\n" << m_tr.point(ch, (id+2)&3) << "\n" << m_tr.point(ch, (id+3)&3) << std::endl;
+      face_out << "3\n" << m_tr.point(ch, Triangulation::vertex_triple_index(s, 0)) << "\n"
+                        << m_tr.point(ch, Triangulation::vertex_triple_index(s, 1)) << "\n"
+                        << m_tr.point(ch, Triangulation::vertex_triple_index(s, 2)) << std::endl;
       face_out.close();
 #endif
 
-      if(m_tr.is_infinite(neighbor))
+      visitor.before_facet_treatment(*this, gate);
+
+      m_queue.pop();
+
+      if(m_tr.is_infinite(nh))
       {
-        neighbor->is_outside() = true;
+        nh->set_label(Cell_label::OUTSIDE);
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+        nh->increment_erase_counter();
+#endif
         continue;
       }
 
       Point_3 steiner_point;
-      if(compute_steiner_point(ch, neighbor, steiner_point))
+      if(compute_steiner_point(ch, nh, steiner_point))
       {
 //        std::cout << CGAL::abs(CGAL::approximate_sqrt(m_oracle.squared_distance(steiner_point)) - m_offset)
 //                  << " vs " << 1e-2 * m_offset << std::endl;
@@ -1079,7 +1298,7 @@ private:
         // locate cells that are going to be destroyed and remove their facet from the queue
         int li, lj = 0;
         Locate_type lt;
-        const Cell_handle conflict_cell = m_tr.locate(steiner_point, lt, li, lj, neighbor);
+        const Cell_handle conflict_cell = m_tr.locate(steiner_point, lt, li, lj, nh);
         CGAL_assertion(lt != Triangulation::VERTEX);
 
         // Using small vectors like in Triangulation_3 does not bring any runtime improvement
@@ -1092,6 +1311,7 @@ private:
                             std::back_inserter(boundary_facets),
                             std::back_inserter(conflict_zone));
 
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
         // Purge the queue of facets that will be deleted/modified by the Steiner point insertion,
         // and which might have been gates
         for(const Cell_handle& cch : conflict_zone)
@@ -1110,6 +1330,7 @@ private:
           if(m_queue.contains_with_bounds_check(Gate(mf)))
             m_queue.erase(Gate(mf));
         }
+#endif
 
         visitor.before_Steiner_point_insertion(*this, steiner_point);
 
@@ -1124,10 +1345,10 @@ private:
         std::vector<Cell_handle> new_cells;
         new_cells.reserve(32);
         m_tr.incident_cells(vh, std::back_inserter(new_cells));
-        for(const Cell_handle& ch : new_cells)
+        for(const Cell_handle& new_ch : new_cells)
         {
-          // std::cout << "new cell has time stamp " << ch->time_stamp() << std::endl;
-          ch->is_outside() = m_tr.is_infinite(ch);
+          // std::cout << "new cell has time stamp " << new_ch->time_stamp() << std::endl;
+          new_ch->set_label(m_tr.is_infinite(new_ch) ? Cell_label::OUTSIDE : Cell_label::INSIDE);
         }
 
         // Push all new boundary facets to the queue.
@@ -1135,34 +1356,37 @@ private:
         // because we need to handle internal facets, infinite facets, and also more subtle changes
         // such as a new cell being marked inside which now creates a boundary
         // with its incident "outside" flagged cell.
-        for(Cell_handle ch : new_cells)
+        for(Cell_handle new_ch : new_cells)
         {
           for(int i=0; i<4; ++i)
           {
-            if(m_tr.is_infinite(ch, i))
+            if(m_tr.is_infinite(new_ch, i))
               continue;
 
-            const Cell_handle nh = ch->neighbor(i);
-            if(nh->is_outside() == ch->is_outside()) // not on the boundary
+            const Cell_handle new_nh = new_ch->neighbor(i);
+            if(new_nh->label() == new_ch->label()) // not on a boundary
               continue;
 
-            const Facet boundary_f = std::make_pair(ch, i);
-            if(ch->is_outside())
+            const Facet boundary_f = std::make_pair(new_ch, i);
+            if(new_ch->is_outside())
               push_facet(boundary_f);
             else
               push_facet(m_tr.mirror_facet(boundary_f));
           }
         }
       }
-      else
+      else // no need for a Steiner point, carve through and continue
       {
-        // tag neighbor as OUTSIDE
-        neighbor->is_outside() = true;
+        nh->set_label(Cell_label::OUTSIDE);
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+        nh->increment_erase_counter();
+#endif
 
         // for each finite facet of neighbor, push it to the queue
-        for(int i=0; i<4; ++i)
+        const int mi = m_tr.mirror_index(ch, s);
+        for(int i=1; i<4; ++i)
         {
-          const Facet neighbor_f = std::make_pair(neighbor, i);
+          const Facet neighbor_f = std::make_pair(nh, (mi+i)&3);
           push_facet(neighbor_f);
         }
       }
@@ -1172,11 +1396,103 @@ private:
 
     // Check that no useful facet has been ignored
     CGAL_postcondition_code(for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit) {)
-    CGAL_postcondition_code(  if(fit->first->is_outside() == fit->first->neighbor(fit->second)->is_outside()) continue;)
+    CGAL_postcondition_code(  Cell_handle ch = fit->first; Cell_handle nh = fit->first->neighbor(fit->second); )
+    CGAL_postcondition_code(  if(ch->label() == nh->label()) continue;)
     CGAL_postcondition_code(  Facet f = *fit;)
-    CGAL_postcondition_code(  if(!fit->first->is_outside()) f = m_tr.mirror_facet(f);)
-    CGAL_postcondition(       facet_status(f) == IRRELEVANT);
+    CGAL_postcondition_code(  if(ch->is_inside()) f = m_tr.mirror_facet(f);)
+    CGAL_postcondition(       facet_status(f) == Facet_status::IRRELEVANT);
     CGAL_postcondition_code(})
+
+    return true;
+  }
+
+  // Any outside cell that isn't reachable from infinity is a cavity that can be discarded.
+  std::size_t purge_inner_connected_components()
+  {
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "> Purge inner islands..." << std::endl;
+
+    std::size_t pre_counter = 0;
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      if(ch->is_outside())
+        ++pre_counter;
+    std::cout << pre_counter << " / " << m_tr.all_cell_handles().size() << " (pre purge)" << std::endl;
+#endif
+
+    std::size_t label_change_counter = 0;
+
+    std::stack<Cell_handle> cells_to_visit;
+
+    if(!m_seeds.empty())
+    {
+      for(const Point_3& seed : m_seeds)
+      {
+        Locate_type lt;
+        int li, lj;
+        Cell_handle ch = m_tr.locate(seed, lt, li, lj);
+
+        if(!ch->is_outside())
+        {
+          std::cerr << "Warning: cell containing seed is not outside?!" << std::endl;
+          continue;
+        }
+
+        cells_to_visit.push(ch);
+      }
+    }
+    else // typical flooding from outside
+    {
+      cells_to_visit.push(m_tr.infinite_vertex()->cell());
+    }
+
+    while(!cells_to_visit.empty())
+    {
+      Cell_handle curr_c = cells_to_visit.top();
+      cells_to_visit.pop();
+
+      CGAL_assertion(curr_c->is_outside());
+
+      if(curr_c->tds_data().processed())
+        continue;
+      curr_c->tds_data().mark_processed();
+
+      for(int j=0; j<4; ++j)
+      {
+        Cell_handle neigh_c = curr_c->neighbor(j);
+        if(neigh_c->tds_data().processed() || !neigh_c->is_outside())
+          continue;
+
+        cells_to_visit.push(neigh_c);
+      }
+    }
+
+    for(Cell_handle ch : m_tr.all_cell_handles())
+    {
+      if(ch->tds_data().is_clear() && ch->is_outside())
+      {
+        ch->set_label(Cell_label::INSIDE);
+#ifndef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+        ch->increment_erase_counter();
+#endif
+        ++label_change_counter;
+      }
+    }
+
+    // reset the conflict flags
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      ch->tds_data().clear();
+
+#ifdef CGAL_AW3_DEBUG
+    std::size_t post_counter = 0;
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      if(ch->is_outside())
+        ++post_counter;
+    std::cout << post_counter << " / " << m_tr.all_cell_handles().size() << " (pre purge)" << std::endl;
+
+    std::cout << label_change_counter << " label changes" << std::endl;
+#endif
+
+    return label_change_counter;
   }
 
 private:
@@ -1190,7 +1506,7 @@ private:
     inc_cells.reserve(64);
     m_tr.incident_cells(v, std::back_inserter(inc_cells));
 
-    // Flood one inside and outside CC.
+    // Flood one inside and outside CC within the cell umbrella of the vertex.
     // Process both an inside and an outside CC to also detect edge pinching.
     // If there are still unprocessed afterwards, there is a non-manifoldness issue.
     //
@@ -1204,7 +1520,7 @@ private:
       if(ic->is_outside())
         outside_start = ic;
       else if(inside_start == Cell_handle())
-        inside_start = ic;
+        inside_start = ic; // can be "inside" or "manifold"
     }
 
     // fully inside / outside
@@ -1236,8 +1552,10 @@ private:
         CGAL_assertion(neigh_c->has_vertex(v));
 
         if(neigh_c->tds_data().processed() ||
-           neigh_c->is_outside() != curr_c->is_outside()) // do not cross the boundary
+           is_on_outside_boundary(neigh_c, curr_c)) // do not cross the boundary
+        {
           continue;
+        }
 
         cells_to_visit.push(neigh_c);
       }
@@ -1330,22 +1648,47 @@ public:
   // Not the best complexity, but it's very cheap compared to the rest of the algorithm.
   void make_manifold()
   {
-    namespace PMP = Polygon_mesh_processing;
+#ifdef CGAL_AW3_DEBUG
+    std::cout << "> Make manifold..." << std::endl;
 
-    // This seems more harmful than useful after the priority queue has been introduced since
-    // it adds a lot of flat cells into the triangulation, which then get added to the mesh
-    // during manifoldness fixing.
+    auto wrap_volume = [&]()
+    {
+      FT vol = 0;
+      for(Cell_handle ch : m_tr.finite_cell_handles())
+        if(!ch->is_outside())
+          vol += volume(m_tr.point(ch, 0), m_tr.point(ch, 1), m_tr.point(ch, 2), m_tr.point(ch, 3));
+
+      return vol;
+    };
+
+ #ifdef CGAL_AW3_DEBUG_DUMP_INTERMEDIATE_WRAPS
+    dump_triangulation_faces("carved_tr.off", true /*only_boundary_faces*/);
+ #endif
+
+    FT base_vol = wrap_volume();
+    if(!is_positive(base_vol))
+      std::cerr << "Warning: wrap with non-positive volume?" << std::endl;
+#endif
+
+    // This ends up more harmful than useful after the priority queue has been introduced since
+    // it usually results in a lot of flat cells into the triangulation, which then get added
+    // to the mesh during manifoldness fixing.
 //    remove_bbox_vertices();
 
     std::stack<Vertex_handle> non_manifold_vertices; // @todo sort somehow?
     for(Vertex_handle v : m_tr.finite_vertex_handles())
     {
       if(is_non_manifold(v))
+      {
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
+        std::cout << v->point() << " is non-manifold" << std::endl;
+#endif
         non_manifold_vertices.push(v);
+      }
     }
 
     // Some lambdas for the comparer
-    auto has_artificial_vertex = [](Cell_handle c) -> bool
+    auto has_scaffolding_vertex = [](Cell_handle c) -> bool
     {
       for(int i=0; i<4; ++i)
       {
@@ -1359,79 +1702,77 @@ public:
       return false;
     };
 
-    auto is_on_boundary = [](Cell_handle c, int i) -> bool
-    {
-      return (c->is_outside() != c->neighbor(i)->is_outside());
-    };
+    // This originally seemed like a good idea, but in the end it can have strong cascading issues,
+    // whereas some cells with much smaller volume could have solved the non-manifoldness.
+//    auto is_on_boundary = [](Cell_handle c, int i) -> bool
+//    {
+//      return is_on_outside_boundary(c, c->neighbor(i));
+//    };
+//
+//    auto count_boundary_facets = [&](Cell_handle c, Vertex_handle v) -> int
+//    {
+//      const int v_index_in_c = c->index(v);
+//      int boundary_facets = 0;
+//      for(int i=0; i<3; ++i) // also take into account the opposite facet?
+//      {
+//        if(i == v_index_in_c)
+//          continue;
+//
+//        boundary_facets += is_on_boundary(c, i);
+//      }
+//
+//      return boundary_facets;
+//    };
 
-    auto count_boundary_facets = [&](Cell_handle c, Vertex_handle v) -> int
-    {
-      const int v_index_in_c = c->index(v);
-      int boundary_facets = 0;
-      for(int i=0; i<3; ++i) // also take into account the opposite facet?
-      {
-        if(i == v_index_in_c)
-          continue;
-
-        boundary_facets += is_on_boundary(c, i);
-      }
-
-      return boundary_facets;
-    };
-
-    // longest edge works better
+    // Experimentally, longest edge works better
 //    auto sq_circumradius = [&](Cell_handle c) -> FT
 //    {
 //      const Point_3& cc = circumcenter(c);
 //      return geom_traits().compute_squared_distance_3_object()(m_tr.point(c, 0), cc);
 //    };
 
+    // The reasoning behind using longest edge rather than volume is that we want to avoid
+    // spikes (which would have a small volume), and can often happen since we do not spend
+    // any care on the quality of tetrahedra.
     auto sq_longest_edge = [&](Cell_handle c) -> FT
     {
       return (std::max)({ squared_distance(m_tr.point(c, 0), m_tr.point(c, 1)),
                           squared_distance(m_tr.point(c, 0), m_tr.point(c, 2)),
                           squared_distance(m_tr.point(c, 0), m_tr.point(c, 3)),
                           squared_distance(m_tr.point(c, 1), m_tr.point(c, 2)),
-                          squared_distance(m_tr.point(c, 3), m_tr.point(c, 3)),
+                          squared_distance(m_tr.point(c, 1), m_tr.point(c, 3)),
                           squared_distance(m_tr.point(c, 2), m_tr.point(c, 3)) });
     };
 
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
     std::cout << non_manifold_vertices.size() << " initial NMV" << std::endl;
 #endif
 
     while(!non_manifold_vertices.empty())
     {
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
+#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS_PP
       std::cout << non_manifold_vertices.size() << " NMV in queue" << std::endl;
 #endif
 
       Vertex_handle v = non_manifold_vertices.top();
       non_manifold_vertices.pop();
 
-#ifdef CGAL_AW3_DEBUG_MANIFOLDNESS
-      std::cout << "·";
-#endif
-
       if(!is_non_manifold(v))
         continue;
 
       // Prioritize:
       // - cells without bbox vertices
-      // - cells that already have a large number of boundary facets
       // - small cells when equal number of boundary facets
-      // @todo give topmost priority to cells with > 1 non-manifold vertex?
+      //
+      // Note that these are properties that do not depend on the cell labels, and so we only need
+      // to sort once. However, if a criterion such as the number of incident inside cells were added,
+      // we would need to sort after each modification of "inside"/"outside" labels.
       auto comparer = [&](Cell_handle l, Cell_handle r) -> bool
       {
-        if(has_artificial_vertex(l))
-          return false;
-        if(has_artificial_vertex(r))
-          return true;
+        CGAL_precondition(!m_tr.is_infinite(l) && !m_tr.is_infinite(r));
 
-        const int l_bf_count = count_boundary_facets(l, v);
-        const int r_bf_count = count_boundary_facets(r, v);
-        if(l_bf_count != r_bf_count)
-          return l_bf_count > r_bf_count;
+        if(has_scaffolding_vertex(l) != has_scaffolding_vertex(r))
+          return has_scaffolding_vertex(r);
 
         return sq_longest_edge(l) < sq_longest_edge(r);
       };
@@ -1440,22 +1781,22 @@ public:
       inc_cells.reserve(64);
       m_tr.finite_incident_cells(v, std::back_inserter(inc_cells));
 
-#define CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-#ifndef CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-      std::sort(inc_cells.begin(), inc_cells.end(), comparer); // sort once
-#endif
+      std::vector<Cell_handle> finite_outside_inc_cells;
+      finite_outside_inc_cells.reserve(64);
+      std::copy_if(inc_cells.begin(), inc_cells.end(), std::back_inserter(finite_outside_inc_cells),
+                   [&](Cell_handle c) -> bool { return !m_tr.is_infinite(c) && c->is_outside(); });
 
-      for(auto cit=inc_cells.begin(), cend=inc_cells.end(); cit!=cend; ++cit)
+      // 'std::stable_sort' to have determinism without having to write something like:
+      //     if(longest_edge(l) == longest_edge(r)) return ...
+      // in the comparer. It's almost always a small range, so the extra cost does not matter.
+      std::stable_sort(finite_outside_inc_cells.begin(), finite_outside_inc_cells.end(), comparer);
+
+      for(Cell_handle ic : finite_outside_inc_cells)
       {
-#ifdef CGAL_AW3_USE_BRUTE_FORCE_MUTABLE_PRIORITY_QUEUE
-        // sort at every iteration since the number of boundary facets evolves
-        std::sort(cit, cend, comparer);
-#endif
-        Cell_handle ic = *cit;
-        CGAL_assertion(!m_tr.is_infinite(ic));
+        CGAL_assertion(!m_tr.is_infinite(ic) && ic->is_outside());
 
         // This is where new material is added
-        ic->is_outside() = false;
+        ic->set_label(Cell_label::MANIFOLD);
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
         static int i = 0;
@@ -1470,6 +1811,8 @@ public:
 
       CGAL_assertion(!is_non_manifold(v));
 
+      // Check if the new material has not created a non-manifold configuration.
+      // @speed this could be done on only the vertices of cells whose labels have changed.
       std::vector<Vertex_handle> adj_vertices;
       adj_vertices.reserve(64);
       m_tr.finite_adjacent_vertices(v, std::back_inserter(adj_vertices));
@@ -1481,12 +1824,34 @@ public:
 
     CGAL_assertion_code(for(Vertex_handle v : m_tr.finite_vertex_handles()))
     CGAL_assertion(!is_non_manifold(v));
+
+#ifdef CGAL_AW3_DEBUG
+    std::size_t nm_cells_counter = 0;
+    for(Cell_handle ch : m_tr.all_cell_handles())
+      if(ch->label() == Cell_label::MANIFOLD)
+        ++nm_cells_counter;
+    std::cout << "Number of added cells: " << nm_cells_counter << std::endl;
+
+    if(!is_zero(base_vol))
+    {
+      const FT manifold_vol = wrap_volume();
+      const FT ratio = manifold_vol / base_vol;
+
+      std::cout << "Volumes post-manifoldness fix:\n"
+                << "before: " << base_vol << "\n"
+                << "after:  " << manifold_vol << "\n"
+                << "ratio:  " << ratio << std::endl;
+      if(ratio > 1.1) // more than 10% extra volume
+        std::cerr << "Warning: large increase of volume after manifoldness resolution" << std::endl;
+    }
+#endif
   }
 
 private:
   void check_queue_sanity()
   {
-    std::cout << "Check queue sanity..." << std::endl;
+    std::cout << "\t~~~ Check queue sanity ~~~" << std::endl;
+
     std::vector<Gate> queue_gates;
     Gate previous_top_gate = m_queue.top();
     while(!m_queue.empty())
@@ -1496,24 +1861,31 @@ private:
       const Facet& current_f = current_gate.facet();
       const Cell_handle ch = current_f.first;
       const int id = current_f.second;
-      const Point_3& p0 = m_tr.point(ch, (id+1)&3);
-      const Point_3& p1 = m_tr.point(ch, (id+2)&3);
-      const Point_3& p2 = m_tr.point(ch, (id+3)&3);
-      const FT sqr = geom_traits().compute_squared_radius_3_object()(p0, p1, p2);
+      const Point_3& p0 = m_tr.point(ch, Triangulation::vertex_triple_index(id, 0));
+      const Point_3& p1 = m_tr.point(ch, Triangulation::vertex_triple_index(id, 1));
+      const Point_3& p2 = m_tr.point(ch, Triangulation::vertex_triple_index(id, 2));
 
-      std::cout << "At Facet with VID " << get(Gate_ID_PM<Triangulation>(), current_gate)  << std::endl;
+      std::cout << "Facet with VID " << get(Gate_ID_PM<Triangulation>(), current_gate) << "\n";
+      std::cout << "\t" << p0 << "\n\t" << p1 << "\n\t" << p2 << "\n";
 
-      if(current_gate.priority() != sqr)
-        std::cerr << "Error: facet in queue has wrong priority" << std::endl;
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+      std::cout << "  Permissiveness: " << current_gate.is_permissive_facet() << "\n";
+      std::cout << "  SQR: " << geom_traits().compute_squared_radius_3_object()(p0, p1, p2) << "\n";
+      std::cout << "  Priority " << current_gate.priority() << std::endl;
 
       if(Less_gate()(current_gate, previous_top_gate))
         std::cerr << "Error: current gate has higher priority than the previous top" << std::endl;
 
       previous_top_gate = current_gate;
+#else
+      if(current_gate.is_zombie())
+        std::cout << "Gate is a zombie!" << std::endl;
+#endif
 
       m_queue.pop();
     }
-    std::cout << "End sanity check" << std::endl;
+
+    std::cout << "\t~~~ End queue sanity check ~~~" << std::endl;
 
     // Rebuild
     CGAL_assertion(m_queue.empty());
@@ -1536,17 +1908,17 @@ private:
 
     for(auto fit=m_tr.finite_facets_begin(), fend=m_tr.finite_facets_end(); fit!=fend; ++fit)
     {
-      Cell_handle c = fit->first;
+      Cell_handle ch = fit->first;
       int s = fit->second;
 
-      Cell_handle nc = c->neighbor(s);
-      if(only_boundary_faces && (c->is_outside() == nc->is_outside()))
+      Cell_handle nh = ch->neighbor(s);
+      if(only_boundary_faces && ch->label() == nh->label())
         continue;
 
       std::array<std::size_t, 3> ids;
       for(std::size_t pos=0; pos<3; ++pos)
       {
-        Vertex_handle v = c->vertex((s+pos+1)&3);
+        Vertex_handle v = ch->vertex((s+pos+1)&3);
         auto insertion_res = vertex_to_id.emplace(v, nv);
         if(insertion_res.second)
         {

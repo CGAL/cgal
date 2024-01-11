@@ -58,6 +58,7 @@ Vector_3(const Line_3<Kernel> &l);
 
 /*!
 introduces a null vector `v`.
+\cgalEpicExact
 */
 Vector_3(const Null_vector &NULL_VECTOR);
 
@@ -68,6 +69,7 @@ Vector_3(int x, int y, int z);
 
 /*!
 introduces a vector `v` initialized to `(x, y, z)`.
+\cgalEpicExact
 */
 Vector_3(double x, double y, double z);
 
@@ -78,6 +80,7 @@ Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const
 
 /*!
 introduces a vector `v` initialized to `(x, y, z)`.
+\cgalEpicExact
 */
 Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);
 
@@ -113,16 +116,19 @@ Kernel::RT hw() const;
 
 /*!
 returns the `x`-coordinate of `v`, that is `hx()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT x() const;
 
 /*!
 returns the `y`-coordinate of `v`, that is `hy()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT y() const;
 
 /*!
 returns the `z` coordinate of `v`, that is `hz()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT z() const;
 
@@ -143,12 +149,16 @@ Kernel::RT homogeneous(int i) const;
 /*!
 returns the i'th %Cartesian coordinate of `v`.
 \pre  `0 <= i <= 2`
+
+\cgalEpicExact
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
 \pre  `0 <= i <= 2`
+
+\cgalEpicExact
 */
 Kernel::FT operator[](int i) const;
 
@@ -176,6 +186,8 @@ Vector_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const;
 
 /*!
 returns the direction of `v`.
+
+\cgalEpicExact
 */
 Direction_3<Kernel> direction() const;
 
@@ -219,6 +231,7 @@ Vector_3<Kernel>& operator-=(const Vector_3<Kernel> &w);
 
 /*!
 Returns the opposite vector.
+\cgalEpicExact
 */
 Vector_3<Kernel> operator-() const;
 

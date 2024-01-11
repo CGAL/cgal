@@ -139,8 +139,8 @@ public:
   Protect_edges_sizing_field(C3T3& c3t3,
                              const MeshDomain& domain,
                              SizingFunction size=SizingFunction(),
-                             const FT minimal_size = FT(),
-                             std::size_t maximal_number_of_vertices = 0,
+                             const FT minimal_size = FT(-1),
+                             const std::size_t maximal_number_of_vertices = 0,
                              Mesh_error_code* error_code = 0
 #ifndef CGAL_NO_ATOMIC
                              , std::atomic<bool>* stop_ptr = 0
@@ -455,17 +455,29 @@ private:
     return s;
   }
 
+  bool use_minimal_size() const
+  {
+    return minimal_size_ != FT(-1);
+  }
+  Weight minimal_weight() const
+  {
+    if (use_minimal_size())
+      return minimal_weight_;
+    else
+      return Weight(0);
+  }
+
 private:
   C3T3& c3t3_;
   const MeshDomain& domain_;
   SizingFunction size_;
-  FT minimal_size_;
-  Weight minimal_weight_;
+  const FT minimal_size_;
+  const Weight minimal_weight_;
   std::set<Curve_index> treated_edges_;
   Vertex_set unchecked_vertices_;
   int refine_balls_iteration_nb;
   bool nonlinear_growth_of_balls;
-  std::size_t maximal_number_of_vertices_;
+  const std::size_t maximal_number_of_vertices_;
   Mesh_error_code* const error_code_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
@@ -478,7 +490,7 @@ template <typename C3T3, typename MD, typename Sf>
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
                            Sf size, const FT minimal_size,
-                           std::size_t maximal_number_of_vertices,
+                           const std::size_t maximal_number_of_vertices,
                            Mesh_error_code* error_code
 #ifndef CGAL_NO_ATOMIC
                            , std::atomic<bool>* stop_ptr
@@ -540,7 +552,7 @@ operator()(const bool refine)
     std::cerr << "refine_balls() done. Nb of points in triangulation: "
               << c3t3_.triangulation().number_of_vertices() << std::endl;
 #endif
-    CGAL_assertion(minimal_size_ > 0 || c3t3_.is_valid());
+    CGAL_assertion(use_minimal_size() || c3t3_.is_valid());
  }
 
   // debug_dump_c3t3("dump-mesh-after-protect_edges.binary.cgal", c3t3_);
@@ -760,10 +772,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     while ( ! is_special(nearest_vh) &&
             cwsr(c3t3_.triangulation().point(nearest_vh), - sq_d) == CGAL::SMALLER )
     {
-      CGAL_assertion( minimal_size_ > 0 || sq_d > 0 );
+      CGAL_assertion( use_minimal_size() || sq_d > 0);
 
       bool special_ball = false;
-      if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
+      if(use_minimal_size() && sq_d < minimal_weight_)
       {
         sq_d = minimal_weight_;
         w = minimal_weight_;
@@ -817,16 +829,16 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
 
         const FT sq_d = tr.min_squared_distance(p, cp(c3t3_.triangulation().point(v)));
 
-        if(minimal_weight_ != Weight() && sq_d < minimal_weight_) {
+        if(use_minimal_size() && sq_d < minimal_weight()) {
           insert_a_special_ball = true;
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
           nearest_point = c3t3_.triangulation().point(v);
 #endif
-          min_sq_d = minimal_weight_;
+          min_sq_d = minimal_weight();
           if(! is_special(v))
           {
             *out++ = v;
-            ch = change_ball_size(v, minimal_weight_, true)->cell(); // special ball
+            ch = change_ball_size(v, minimal_weight(), true)->cell(); // special ball
           }
         }
         else
@@ -876,10 +888,10 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
       if ( cwsr(it_wp, - sq_d) == CGAL::SMALLER )
       {
         bool special_ball = false;
-        if(minimal_weight_ != Weight() && sq_d < minimal_weight_)
+        if(use_minimal_size() && sq_d < minimal_weight())
         {
-          sq_d = minimal_weight_;
-          w = minimal_weight_;
+          sq_d = minimal_weight();
+          w = minimal_weight();
           special_ball = true;
           insert_a_special_ball = true;
         }
@@ -933,13 +945,13 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
     add_handle_to_unchecked = true;
   }
 
-  if( w < minimal_weight_) {
+  if( w < minimal_weight()) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
     std::cerr << "smart_insert_point: weight " << w
-              << " was smaller than minimal weight (" << minimal_weight_ << ")\n";
+              << " was smaller than minimal weight (" << minimal_weight() << ")\n";
 #endif
 
-    w = minimal_weight_;
+    w = minimal_weight();
     insert_a_special_ball = true;
   }
   Vertex_handle v = insert_point(p,w,dim,index, insert_a_special_ball);
@@ -1174,7 +1186,7 @@ insert_balls(const Vertex_handle& vp,
 
   const FT d_signF = static_cast<FT>(d_sign);
   int n = static_cast<int>(std::floor(FT(2)*(d-sq) / (sp+sq))+.5);
-  // if( minimal_weight_ != 0 && n == 0 ) return;
+  // if( minimal_weight() != 0 && n == 0 ) return;
 
   if(nonlinear_growth_of_balls && refine_balls_iteration_nb < 3)
   {
@@ -1183,7 +1195,7 @@ insert_balls(const Vertex_handle& vp,
     // balls at corner. When the curve segment is long enough, pick a point
     // at the middle and choose a new size.
     if(n >= internal::max_nb_vertices_to_reevaluate_size &&
-       d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight_)) {
+       d >= (internal::max_nb_vertices_to_reevaluate_size * minimal_weight())) {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       const Weighted_point& vq_wp = c3t3_.triangulation().point(vq);
       std::cerr << "Number of to-be-inserted balls is: "
@@ -1436,9 +1448,9 @@ refine_balls()
       const Vertex_handle v = it->first;
       const FT new_size = it->second;
       // Set size of the ball to new value
-      if(minimal_size_ != FT() && new_size < minimal_size_) {
+      if(use_minimal_size() && new_size < minimal_size_) {
         if(!is_special(v)) {
-          change_ball_size(v, minimal_weight_, true); // special ball
+          change_ball_size(v, minimal_weight(), true); // special ball
 
           // Loop will have to be run again
           restart = true;
@@ -1751,18 +1763,33 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   FT size_v1 = get_radius(v1);
   FT size_v2 = get_radius(v2);
 
-  CGAL_assertion(get_dimension(v1) != 1 ||
-                 curve_index == domain_.curve_index(v1->index()));
-  CGAL_assertion(get_dimension(v2) != 1 ||
-                 curve_index == domain_.curve_index(v2->index()));
+  bool v1_valid_curve_index = true;
+  bool v2_valid_curve_index = true;
+
+  if(use_minimal_size())
+  {
+    v1_valid_curve_index = (get_dimension(v1) != 1
+                         || curve_index == domain_.curve_index(v1->index()));
+    v2_valid_curve_index = (get_dimension(v2) != 1
+                         || curve_index == domain_.curve_index(v2->index()));
+  }
+  else
+  {
+    CGAL_assertion(get_dimension(v1) != 1 ||
+                   curve_index == domain_.curve_index(v1->index()));
+    CGAL_assertion(get_dimension(v2) != 1 ||
+                   curve_index == domain_.curve_index(v2->index()));
+  }
 
   const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
   const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
 
-  FT arc_length = domain_.curve_segment_length(cp(v1_wp),
+  FT arc_length = (v1_valid_curve_index && v2_valid_curve_index)
+                ? domain_.curve_segment_length(cp(v1_wp),
                                                cp(v2_wp),
                                                curve_index,
-                                               orientation);
+                                               orientation)
+                : compute_distance(v1, v2); //curve polyline may not be consistent
 
   // Sufficient condition so that the curve portion between v1 and v2 is
   // inside the union of the two balls.

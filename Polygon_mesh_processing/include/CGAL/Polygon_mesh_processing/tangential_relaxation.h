@@ -288,9 +288,9 @@ void tangential_relaxation(const VertexRange& vertices,
 
             const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
             const double face_weight = tri_area
-                                       / (1. / 3. * (sizing.at(v)
-                                                   + sizing.at(v1)
-                                                   + sizing.at(v2)));
+                                       / (1. / 3. * (sizing.at(v, tm)
+                                                   + sizing.at(v1, tm)
+                                                   + sizing.at(v2, tm)));
             weight += face_weight;
 
             const Point_3 centroid = gt_centroid(get(vpm, v), get(vpm, v1), get(vpm, v2));

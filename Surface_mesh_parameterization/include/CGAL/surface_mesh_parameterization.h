@@ -10,13 +10,17 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
+#ifndef CGAL_SURFACE_MESH_PARAMETERIZATION_H
+#define CGAL_SURFACE_MESH_PARAMETERIZATION_H
+
+#include <CGAL/license/Surface_mesh_parameterization.h>
+
 /**
 * \ingroup PkgSurfaceMeshParameterizationRef
 * \file CGAL/surface_mesh_parameterization.h
 * Convenience header file including the headers for all
 * the free functions of this package.
 */
-
 
 #include <CGAL/Surface_mesh_parameterization/ARAP_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Barycentric_mapping_parameterizer_3.h>
@@ -34,3 +38,5 @@
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Square_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
+
+#endif // CGAL_SURFACE_MESH_PARAMETERIZATION_H

@@ -12,12 +12,12 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point_3;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 int main()
 {
-  Surface_mesh sm;
+  Mesh sm;
   CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/cube_quad.off"), sm);
 
   // triangulate faces;
@@ -25,8 +25,8 @@ int main()
   std::cout << "Input mesh has " << faces(sm).size() << " faces" << std::endl;
   assert(faces(sm).size()==12);
 
-  Surface_mesh::Property_map<Surface_mesh::Edge_index, bool> ecm =
-    sm.add_property_map<Surface_mesh::Edge_index, bool>("ecm",false).first;
+  Mesh::Property_map<Mesh::Edge_index, bool> ecm =
+    sm.add_property_map<Mesh::Edge_index, bool>("ecm",false).first;
 
   // detect sharp edges of the cube
   PMP::detect_sharp_edges(sm, 60, ecm);
@@ -37,7 +37,7 @@ int main()
   assert(faces(sm).size()>100);
 
   // decimate the mesh
-  Surface_mesh out;
+  Mesh out;
   PMP::remesh_planar_patches(sm, out);
   CGAL::IO::write_polygon_mesh("cube_decimated.off", out, CGAL::parameters::stream_precision(17));
 

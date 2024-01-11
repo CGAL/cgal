@@ -9,9 +9,9 @@
 
 #include "arr_exact_construction_segments.h"
 
-typedef CGAL::Arr_tracing_traits_2<Traits>              Tracing_traits;
-typedef CGAL::Arr_counting_traits_2<Tracing_traits>     Geom_traits;
-typedef CGAL::Arrangement_2<Geom_traits>                My_arrangement;
+using Tracing_traits = CGAL::Arr_tracing_traits_2<Traits>;
+using Geom_traits = CGAL::Arr_counting_traits_2<Tracing_traits>;
+using My_arrangement = CGAL::Arrangement_2<Geom_traits>;
 
 int main() {
   const Segment s1(Point(0, 0), Point(2, 2));

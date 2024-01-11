@@ -19,7 +19,6 @@
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of functor
 #include <boost/operators.hpp>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/logical.hpp>
 
 #include <CGAL/Interval_nt.h>
@@ -383,9 +382,9 @@ public :
 
   // Also check that ET and AT are constructible from T?
   template<class T>
-  Lazy_exact_nt (T i, std::enable_if_t<boost::mpl::and_<
-      boost::mpl::or_<std::is_arithmetic<T>, std::is_enum<T> >,
-      boost::mpl::not_<std::is_same<T,ET> > >::value,void*> = 0)
+  Lazy_exact_nt (T i, std::enable_if_t<
+      (std::is_arithmetic_v<T> || std::is_enum_v<T>) &&
+      !std::is_same_v<T,ET>,void*> = 0)
     : Base(new Lazy_exact_Cst<ET,T>(i)) {}
 
   Lazy_exact_nt (const ET & e)
@@ -1179,12 +1178,11 @@ struct Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
         Are_implicit_interoperable;                                     \
     private:                                                            \
         static const  bool interoperable                                \
-        =std::is_same< Are_implicit_interoperable, Tag_false>::value; \
+        =std::is_same< Are_implicit_interoperable, Tag_false>::value;   \
     public:                                                             \
-        typedef typename boost::mpl::if_c <interoperable,Null_tag,NT>   \
-        ::type  Type;                                          \
-        typedef typename boost::mpl::if_c <interoperable, Null_functor, \
-    INTERN_CT::Cast_from_to<NTX,NT> >::type Cast;                       \
+        typedef std::conditional_t <interoperable,Null_tag,NT> Type;    \
+        typedef std::conditional_t <interoperable, Null_functor,        \
+    INTERN_CT::Cast_from_to<NTX,NT> > Cast;                             \
     };                                                                  \
                                                                         \
     template<class ET>                                                  \

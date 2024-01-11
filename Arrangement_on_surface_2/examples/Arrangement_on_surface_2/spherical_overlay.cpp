@@ -7,7 +7,7 @@
 
 #include "arr_geodesic_on_sphere.h"
 
-typedef CGAL::Arr_default_overlay_traits<Arrangement>         Overlay_traits;
+using Overlay_traits = CGAL::Arr_default_overlay_traits<Arrangement>;
 
 int main() {
   Geom_traits traits;

@@ -31,9 +31,13 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "mesh_and_remesh_polyhedral_domain_with_features.cpp" )
   target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen3_support)
 
+  create_single_source_cgal_program("mesh_and_remesh_c3t3.cpp")
+  target_link_libraries(mesh_and_remesh_c3t3 PUBLIC CGAL::Eigen3_support)
+
   if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     message(STATUS "Found TBB")
     target_link_libraries(mesh_and_remesh_polyhedral_domain_with_features PRIVATE CGAL::TBB_support)
+    target_link_libraries(mesh_and_remesh_c3t3 PRIVATE CGAL::TBB_support)
   endif()
 else()
   message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater), and will not be compiled.")

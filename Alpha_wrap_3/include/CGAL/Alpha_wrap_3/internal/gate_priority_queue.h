@@ -27,27 +27,29 @@ namespace CGAL {
 namespace Alpha_wraps_3 {
 namespace internal {
 
+#ifdef CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+
 // Represents an alpha-traversable facet in the mutable priority queue
-template <typename DT3>
+template <typename Tr>
 class Gate
 {
-  using Facet = typename DT3::Facet;
-  using FT = typename DT3::Geom_traits::FT;
+  using Facet = typename Tr::Facet;
+  using FT = typename Tr::Geom_traits::FT;
 
 private:
   Facet m_facet;
   FT m_priority; // circumsphere sq_radius
-  bool m_is_artificial_facet;
+  bool m_is_permissive_facet;
 
 public:
   // Constructors
   Gate(const Facet& facet,
        const FT& priority,
-       const bool is_artificial_facet)
+       const bool is_permissive_facet)
     :
       m_facet(facet),
       m_priority(priority),
-      m_is_artificial_facet(is_artificial_facet)
+      m_is_permissive_facet(is_permissive_facet)
   {
     CGAL_assertion(priority >= 0);
   }
@@ -60,34 +62,85 @@ public:
 public:
   const Facet& facet() const { return m_facet; }
   const FT& priority() const { return m_priority; }
-  bool is_artificial_facet() const { return m_is_artificial_facet; }
+  bool is_permissive_facet() const { return m_is_permissive_facet; }
 };
 
 struct Less_gate
 {
-  template <typename DT3>
-  bool operator()(const Gate<DT3>& a, const Gate<DT3>& b) const
+  template <typename Tr>
+  bool operator()(const Gate<Tr>& a, const Gate<Tr>& b) const
   {
-    // @fixme? make it a total order by comparing addresses if both gates are bbox facets
-    if(a.is_artificial_facet())
-      return true;
-    else if(b.is_artificial_facet())
-      return false;
+    // If one is permissive and the other is not, give priority to the permissive facet.
+    //
+    // The permissive facet are given highest priority because they need to be treated
+    // regardless of their circumradius. Treating them first allow the part that depends
+    // on alpha to be treated uniformly in a way: whatever the alpha, all permissive faces
+    // will first be treated.
+    if(a.is_permissive_facet() != b.is_permissive_facet())
+      return a.is_permissive_facet();
+
+    if(a.priority() == b.priority())
+    {
+      // arbitrary, the sole purpose is to make it a total order for determinism
+      if(a.facet().first->time_stamp() == b.facet().first->time_stamp())
+        return a.facet().second < b.facet().second;
+
+      return a.facet().first->time_stamp() < b.facet().first->time_stamp();
+    }
+
     return a.priority() > b.priority();
   }
 };
 
-template <typename DT3>
+#else // CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+
+// Represents an alpha-traversable facet in the mutable priority queue
+template <typename Tr>
+class Gate
+{
+  using Facet = typename Tr::Facet;
+  using FT = typename Tr::Geom_traits::FT;
+
+private:
+  Facet m_facet, m_mirror_facet;
+  const unsigned int m_erase_counter_mem;
+  const unsigned int m_mirror_erase_counter_mem;
+
+public:
+  // Constructors
+  Gate(const Facet& facet,
+       const Tr& tr)
+    :
+      m_facet(facet),
+      m_mirror_facet(tr.mirror_facet(facet)),
+      m_erase_counter_mem(m_facet.first->erase_counter()),
+      m_mirror_erase_counter_mem(m_mirror_facet.first->erase_counter())
+  {
+  }
+
+public:
+  const Facet& facet() const { return m_facet; }
+
+  bool is_zombie() const
+  {
+    return (m_facet.first->erase_counter() != m_erase_counter_mem) ||
+           (m_mirror_facet.first->erase_counter() != m_mirror_erase_counter_mem);
+  }
+};
+
+#endif // CGAL_AW3_USE_SORTED_PRIORITY_QUEUE
+
+template <typename Tr>
 struct Gate_ID_PM
 {
-  using key_type = Gate<DT3>;
+  using key_type = Gate<Tr>;
   using value_type = std::size_t;
   using reference = std::size_t;
   using category = boost::readable_property_map_tag;
 
   inline friend value_type get(Gate_ID_PM, const key_type& k)
   {
-    using Facet = typename DT3::Facet;
+    using Facet = typename Tr::Facet;
 
     const Facet& f = k.facet();
     return (4 * f.first->time_stamp() + f.second);

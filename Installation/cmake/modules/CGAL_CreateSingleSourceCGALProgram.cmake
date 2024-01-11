@@ -53,7 +53,7 @@ function(create_single_source_cgal_program firstfile )
 
     get_directory_property(folder_NO_TESTING CGAL_NO_TESTING)
 
-    if(folder_NO_TESTING OR NOT BUILD_TESTING)
+    if(folder_NO_TESTING OR NOT CGAL_ENABLE_TESTING)
       set(NO_TESTING TRUE)
     endif()
 

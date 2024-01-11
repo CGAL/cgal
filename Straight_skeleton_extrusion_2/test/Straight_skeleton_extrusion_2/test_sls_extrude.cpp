@@ -6,7 +6,7 @@
 #include <CGAL/extrude_skeleton.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 namespace PMP = ::CGAL::Polygon_mesh_processing;
 

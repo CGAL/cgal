@@ -190,13 +190,10 @@ private:
 
       for(boost::graph_traits<Face_graph>::face_descriptor f : faces(*poly)) {
         Vector nf = get(nf_pmap, f);
-        typedef FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> FT;
-
         //compute distance with other polyhedron
         //sample facet
         std::vector<Kernel::Point_3> sampled_points;
-        std::size_t nb_points =  (std::max)((int)std::ceil(nb_pts_per_face * PMP::face_area(f,*poly,CGAL::parameters::geom_traits(Kernel()))),
-                                            1);
+        std::size_t nb_points =  (std::max)((int)std::ceil(nb_pts_per_face * PMP::face_area(f,*poly,CGAL::parameters::geom_traits(Kernel()))), 1);
         Kernel::Point_3 &p = get(vpmap,target(halfedge(f,*poly),*poly));
         Kernel::Point_3 &q = get(vpmap,target(next(halfedge(f,*poly),*poly),*poly));
         Kernel::Point_3 &r = get(vpmap,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
@@ -207,36 +204,42 @@ private:
         sampled_points.push_back(r);
 
         //triangle facets with sample points for color display
-        FT triangulation(f,sampled_points,nf,poly);
+        auto func = [&](auto& ffit, auto&) {
+          if (ffit.info().is_external)
+            return;
 
-        if(triangulation.cdt->dimension() != 2 )
-        {
-          qDebug()<<"Error : cdt not right (dimension != 2). Facet not displayed";
-          continue;
-        }
-
-        //iterates on the internal faces to add the vertices to the positions
-        //and the normals to the appropriate vectors
-
-        for(FT::CDT::Finite_faces_iterator
-            ffit = triangulation.cdt->finite_faces_begin(),
-            end = triangulation.cdt->finite_faces_end();
-            ffit != end; ++ffit)
-        {
-          if(ffit->info().is_external)
-            continue;
-
-          for (int i = 0; i<3; ++i)
+          for (int i = 0; i < 3; ++i)
           {
-            total_points.push_back(ffit->vertex(i)->point());
-            m_vertices.push_back(ffit->vertex(i)->point().x());
-            m_vertices.push_back(ffit->vertex(i)->point().y());
-            m_vertices.push_back(ffit->vertex(i)->point().z());
+            total_points.push_back(ffit.vertex(i)->point());
+            m_vertices.push_back(ffit.vertex(i)->point().x());
+            m_vertices.push_back(ffit.vertex(i)->point().y());
+            m_vertices.push_back(ffit.vertex(i)->point().z());
 
             normals.push_back(nf.x());
             normals.push_back(nf.y());
             normals.push_back(nf.z());
           }
+          };
+
+        try {
+          FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor> triangulation(f, sampled_points, nf, poly);
+
+         if (triangulation.cdt->dimension() != 2)
+          {
+            qDebug() << "Error : cdt not right (dimension != 2). Facet not displayed";
+            continue;
+          }
+          triangulation.per_face(func);
+        }
+        catch (...) {
+         FacetTriangulator<Face_graph, Kernel, boost::graph_traits<Face_graph>::vertex_descriptor, CGAL::Exact_intersections_tag> triangulation(f, sampled_points, nf, poly);
+
+         if (triangulation.cdt->dimension() != 2)
+          {
+            qDebug() << "Error : cdt not right (dimension != 2). Facet not displayed";
+            continue;
+          }
+          triangulation.per_face(func);
         }
       }
       //compute the distances

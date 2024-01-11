@@ -28,6 +28,7 @@
 #include <iostream>
 #include <iterator>
 #include <functional>
+#include <memory>
 #include <vector>
 
 namespace CGAL {
@@ -40,7 +41,9 @@ struct SS_oracle_traits
 {
   using Geom_traits = Alpha_wrap_AABB_geom_traits<GT_>; // Wrap the kernel to add Ball_3 + custom Do_intersect_3
 
-  using Segments = std::vector<typename GT_::Segment_3>;
+  using Segment = typename GT_::Segment_3;
+  using Segments = std::vector<Segment>;
+  using Segments_ptr = std::shared_ptr<Segments>;
   using SR_iterator = typename Segments::const_iterator;
 
   using Primitive = AABB_primitive<SR_iterator,
@@ -68,27 +71,31 @@ public:
   using Geom_traits = typename SSOT::Geom_traits;
 
 private:
+  using Segment = typename SSOT::Segment;
   using Segments = typename SSOT::Segments;
+  using Segments_ptr = typename SSOT::Segments_ptr;
   using AABB_tree = typename SSOT::AABB_tree;
   using Oracle_base = AABB_tree_oracle<Geom_traits, AABB_tree, CGAL::Default, BaseOracle>;
 
 private:
-  Segments m_segments;
+  Segments_ptr m_segments_ptr;
 
 public:
   // Constructors
-  Segment_soup_oracle()
-    : Oracle_base(BaseOracle(), Base_GT())
-  { }
-
   Segment_soup_oracle(const BaseOracle& base_oracle,
                       const Base_GT& gt = Base_GT())
     : Oracle_base(base_oracle, gt)
-  { }
+  {
+    m_segments_ptr = std::make_shared<Segments>();
+  }
 
   Segment_soup_oracle(const Base_GT& gt,
                       const BaseOracle& base_oracle = BaseOracle())
-    : Oracle_base(base_oracle, gt)
+    : Segment_soup_oracle(base_oracle, gt)
+  { }
+
+  Segment_soup_oracle()
+    : Segment_soup_oracle(BaseOracle(), Base_GT())
   { }
 
 public:
@@ -100,20 +107,40 @@ public:
     if(segments.empty())
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Warning: Input is empty " << std::endl;
+      std::cout << "Warning: Input is empty (SS)" << std::endl;
 #endif
       return;
     }
 
-    const std::size_t old_size = m_segments.size();
-    m_segments.insert(std::cend(m_segments), std::cbegin(segments), std::cend(segments));
+    typename Geom_traits::Is_degenerate_3 is_degenerate = this->geom_traits().is_degenerate_3_object();
+
+    const std::size_t old_size = m_segments_ptr->size();
+
+    for(const Segment& s : segments)
+    {
+      if(is_degenerate(s))
+      {
+#ifdef CGAL_AW3_DEBUG
+        std::cerr << "Warning: ignoring degenerate segment " << s << std::endl;
+#endif
+        continue;
+      }
+
+      m_segments_ptr->push_back(s);
+    }
 
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Insert into AABB tree (segments)..." << std::endl;
 #endif
-    this->tree().insert(std::next(std::cbegin(m_segments), old_size), std::cend(m_segments));
+    this->tree().insert(std::next(std::cbegin(*m_segments_ptr), old_size), std::cend(*m_segments_ptr));
 
-    CGAL_postcondition(this->tree().size() == m_segments.size());
+    // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
+    // it will be done at the first treatment of a facet that needs a Steiner point.
+    // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
+    // to accelerate the tree.
+    this->tree().accelerate_distance_queries();
+
+    CGAL_postcondition(this->tree().size() == m_segments_ptr->size());
   }
 };
 

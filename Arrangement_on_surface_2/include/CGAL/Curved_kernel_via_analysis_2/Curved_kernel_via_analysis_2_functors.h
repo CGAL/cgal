@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -13,6 +13,9 @@
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h
  * \brief defines Curved_kernel_via_analysis_2 function objects + class

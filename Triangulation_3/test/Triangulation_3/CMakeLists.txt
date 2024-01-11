@@ -50,7 +50,7 @@ if(TARGET CGAL::TBB_support)
     target_link_libraries(${target} PUBLIC CGAL::TBB_support)
   endforeach()
 
-  if(BUILD_TESTING)
+  if(CGAL_ENABLE_TESTING)
     set_property(TEST
       "execution   of  test_delaunay_3"
       "execution   of  test_regular_3"
@@ -61,7 +61,7 @@ else()
   message(STATUS "NOTICE: The TBB library was not found. Some tests will not be available.")
 endif()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  test_delaunay_hierarchy_3"
     "execution   of  test_delaunay_hierarchy_3_old"

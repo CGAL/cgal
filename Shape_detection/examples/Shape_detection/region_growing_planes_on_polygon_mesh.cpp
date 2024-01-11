@@ -6,7 +6,7 @@
 #endif
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include "include/utils.h"
 
 // Typedefs.

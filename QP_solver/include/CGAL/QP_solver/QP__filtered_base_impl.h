@@ -13,6 +13,11 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
+#ifndef CGAL_QP_FILTERED_BASE_IMPL_H
+#define CGAL_QP_FILTERED_BASE_IMPL_H
+
+#include <CGAL/license/QP_solver.h>
+
 namespace CGAL {
 
 // =============================
@@ -370,3 +375,5 @@ transition( )
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif // CGAL_QP_FILTERED_BASE_IMPL_H

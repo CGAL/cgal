@@ -103,10 +103,10 @@ int main(int argc, char** argv)
   oracle.add_segment_soup(segments, CGAL::parameters::default_values());
   oracle.add_point_set(ps_points, CGAL::parameters::default_values());
 
-  CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
+  CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle> aw3(oracle);
 
-  Mesh output_mesh;
-  aw3(alpha, offset, output_mesh);
+  Mesh wrap;
+  aw3(alpha, offset, wrap);
 
   t.stop();
   std::cout << "Took " << t.time() << std::endl;
@@ -120,10 +120,11 @@ int main(int argc, char** argv)
   std::string ps_name = std::string(ps_filename);
   ps_name = ps_name.substr(ps_name.find_last_of("/") + 1, ps_name.length() - 1);
   ps_name = ps_name.substr(0, ps_name.find_last_of("."));
-  std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_" + std::to_string(static_cast<int>(relative_alpha))
-                            + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_"
+                                  + std::to_string(static_cast<int>(relative_alpha)) + "_"
+                                  + std::to_string(static_cast<int>(relative_offset)) + ".off";
   std::cout << "Writing to " << output_name << std::endl;
-  CGAL::IO::write_polygon_mesh(output_name, output_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

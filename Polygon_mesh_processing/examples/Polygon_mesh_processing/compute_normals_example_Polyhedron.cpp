@@ -16,9 +16,9 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Point_3                                            Point;
 typedef K::Vector_3                                           Vector;
 
-typedef CGAL::Polyhedron_3<K>                                 Polyhedron;
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
+typedef CGAL::Polyhedron_3<K>                                 Mesh;
+typedef boost::graph_traits<Mesh>::vertex_descriptor          vertex_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
-  Polyhedron mesh;
+  Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;

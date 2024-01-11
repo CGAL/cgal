@@ -997,6 +997,8 @@ add_featured_edges_to_graph(const Polyhedron_type& p,
         g_copy[pair.first].insert(get(fpm, face(he,p)));
       }
     }
+    else
+      std::cout << "self loop ignored at point " << get(vpm, source(e, graph)) << std::endl;
   }
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 2

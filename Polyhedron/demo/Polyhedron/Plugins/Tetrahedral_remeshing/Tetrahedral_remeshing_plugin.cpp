@@ -12,6 +12,7 @@
 #include "C3t3_type.h"
 
 #include <CGAL/tetrahedral_remeshing.h>
+#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <unordered_map>
 #include <memory>
@@ -80,6 +81,7 @@ public Q_SLOTS:
 
     Scene_c3t3_item* c3t3_item =
       qobject_cast<Scene_c3t3_item*>(scene->item(index));
+    const auto& c3t3 = c3t3_item->c3t3();
 
     if (c3t3_item)
     {
@@ -100,18 +102,37 @@ public Q_SLOTS:
       bool protect = ui.protect_checkbox->isChecked();
       bool smooth_edges = ui.smoothEdges_checkBox->isChecked();
 
+      // collect constraints
+      using Vertex_handle = Tr::Vertex_handle;
+      using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
+      using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>>;
+      using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
+
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       QElapsedTimer time;
       time.start();
 
+      Constraints_set constraints;
+      for (const auto e : c3t3_item->c3t3().triangulation().finite_edges())
+      {
+        if (c3t3_item->c3t3().is_in_complex(e)
+          || CGAL::Tetrahedral_remeshing::protecting_balls_intersect(e, c3t3))
+        {
+          Vertex_pair evv = CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e);
+          constraints.insert(evv);
+        }
+      }
+
       CGAL::tetrahedral_isotropic_remeshing(
-          c3t3_item->c3t3(),
-          target_length,
-          CGAL::parameters::remesh_boundaries(!protect)
-          .number_of_iterations(nb_iter)
-          .smooth_constrained_edges(smooth_edges));
+        c3t3_item->c3t3(),
+        target_length,
+        CGAL::parameters::remesh_boundaries(!protect)
+        .number_of_iterations(nb_iter)
+        .smooth_constrained_edges(smooth_edges)
+        .edge_is_constrained_map(Constraints_pmap(constraints))
+      );
 
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
 

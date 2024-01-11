@@ -39,6 +39,7 @@ typedef unspecified_type Cartesian_const_iterator;
 
 /*!
 introduces a point with %Cartesian coordinates\f$ (0,0,0)\f$.
+\cgalEpicExact
 */
 Point_3(const Origin &ORIGIN);
 
@@ -50,6 +51,7 @@ Point_3(int x, int y, int z);
 /*!
 introduces a point `p` initialized to `(x,y,z)`
 provided `RT` supports it.
+\cgalEpicExact
 */
 Point_3(double x, double y, double z);
 
@@ -61,6 +63,7 @@ Point_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const 
 
 /*!
 introduces a point `p` initialized to `(x,y,z)`.
+\cgalEpicExact
 */
 Point_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);
 
@@ -69,6 +72,8 @@ introduces a point from a weighted point.
 
 \warning The `explicit` keyword is used to avoid accidental implicit conversions
          between Point_3 and Weighted_point_3.
+
+\cgalEpicExact
 */
 explicit Point_3(const Kernel::Weighted_point_3 &wp);
 
@@ -130,16 +135,19 @@ Kernel::RT hw() const;
 
 /*!
 returns the %Cartesian \f$ x\f$ coordinate, that is `hx()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT x() const;
 
 /*!
 returns the %Cartesian \f$ y\f$ coordinate, that is `hy()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT y() const;
 
 /*!
 returns the %Cartesian \f$ z\f$ coordinate, that is `hz()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT z() const;
 
@@ -160,12 +168,16 @@ Kernel::RT homogeneous(int i) const;
 /*!
 returns the i'th %Cartesian coordinate of `p`.
 \pre `0 <= i <= 2`.
+
+\cgalEpicExact
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
 \pre `0 <= i <= 2`.
+
+\cgalEpicExact
 */
 Kernel::FT operator[](int i) const;
 
@@ -188,6 +200,7 @@ int dimension() const;
 
 /*!
 returns a bounding box containing `p`.
+\cgalEpicExact
 */
 Bbox_3 bbox() const;
 

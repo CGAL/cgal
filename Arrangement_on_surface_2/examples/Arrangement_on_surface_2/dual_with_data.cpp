@@ -10,9 +10,9 @@
 #include "arr_linear.h"
 #include "read_objects.h"
 
-typedef CGAL::Arr_curve_data_traits_2<Traits, size_t>   Data_traits;
-typedef Data_traits::X_monotone_curve_2                 Data_x_monotone_curve_2;
-typedef CGAL::Arrangement_2<Data_traits>                Data_arrangement;
+using Data_traits = CGAL::Arr_curve_data_traits_2<Traits, size_t>;
+using Data_x_monotone_curve_2 = Data_traits::X_monotone_curve_2;
+using Data_arrangement = CGAL::Arrangement_2<Data_traits>;
 
 int main(int argc, char* argv[]) {
   // Get the name of the input file from the command line, or use the default

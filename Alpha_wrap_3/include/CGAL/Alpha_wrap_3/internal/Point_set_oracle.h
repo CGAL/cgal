@@ -28,6 +28,7 @@
 #include <iostream>
 #include <iterator>
 #include <functional>
+#include <memory>
 #include <vector>
 
 namespace CGAL {
@@ -41,6 +42,7 @@ struct PS_oracle_traits
   using Geom_traits = Alpha_wrap_AABB_geom_traits<GT_>; // Wrap the kernel to add Ball_3 + custom Do_intersect_3
 
   using Points = std::vector<typename GT_::Point_3>;
+  using Points_ptr = std::shared_ptr<Points>;
   using PR_iterator = typename Points::const_iterator;
 
   using Primitive = AABB_primitive<PR_iterator,
@@ -69,26 +71,29 @@ public:
 
 private:
   using Points = typename PSOT::Points;
+  using Points_ptr = typename PSOT::Points_ptr;
   using AABB_tree = typename PSOT::AABB_tree;
   using Oracle_base = AABB_tree_oracle<Geom_traits, AABB_tree, CGAL::Default, BaseOracle>;
 
 private:
-  Points m_points;
+  Points_ptr m_points_ptr;
 
 public:
   // Constructors
-  Point_set_oracle()
-    : Oracle_base(BaseOracle(), Base_GT())
-  { }
-
   Point_set_oracle(const BaseOracle& base_oracle,
                    const Base_GT& gt = Base_GT())
     : Oracle_base(base_oracle, gt)
-  { }
+  {
+    m_points_ptr = std::make_shared<Points>();
+  }
 
   Point_set_oracle(const Base_GT& gt,
                    const BaseOracle& base_oracle = BaseOracle())
-    : Oracle_base(base_oracle, gt)
+    : Point_set_oracle(base_oracle, gt)
+  { }
+
+  Point_set_oracle()
+    : Point_set_oracle(BaseOracle(), Base_GT())
   { }
 
 public:
@@ -101,21 +106,27 @@ public:
     if(points.empty())
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cout << "Warning: Input is empty " << std::endl;
+      std::cout << "Warning: Input is empty (PS)" << std::endl;
 #endif
       return;
     }
 
-    const std::size_t old_size = m_points.size();
-    m_points.insert(std::cend(m_points), std::cbegin(points), std::cend(points));
+    const std::size_t old_size = m_points_ptr->size();
+    m_points_ptr->insert(std::cend(*m_points_ptr), std::cbegin(points), std::cend(points));
 
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Insert into AABB tree (points)..." << std::endl;
 #endif
 
-    this->tree().insert(std::next(std::cbegin(m_points), old_size), std::cend(m_points));
+    this->tree().insert(std::next(std::cbegin(*m_points_ptr), old_size), std::cend(*m_points_ptr));
 
-    CGAL_postcondition(this->tree().size() == m_points.size());
+    // Manually constructing it here purely for profiling reasons: if we keep the lazy approach,
+    // it will be done at the first treatment of a facet that needs a Steiner point.
+    // So if one wanted to bench the flood fill runtime, it would be skewed by the time it takes
+    // to accelerate the tree.
+    this->tree().accelerate_distance_queries();
+
+    CGAL_postcondition(this->tree().size() == m_points_ptr->size());
   }
 };
 

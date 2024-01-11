@@ -376,7 +376,8 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
     buffer.append(action);
 
   while(!buffer.isEmpty()){
-    for(QAction* action : buffer) {
+    QList<QAction*> buffer_copy=buffer; // make a copy as we modify buffer in the loop
+    for(QAction* action : buffer_copy) {
       if(QMenu* submenu = action->menu())
       {
         bool keep = true;

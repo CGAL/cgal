@@ -25,6 +25,8 @@
 #include <CGAL/Mesh_facet_topology.h>
 #include <CGAL/Mesh_3/Is_mesh_domain_field_3.h>
 
+#include <optional>
+
 namespace CGAL {
 
 /*!
@@ -131,9 +133,13 @@ public:
                         const DistanceField& distance_bound,
                         const Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE,
                         const FT& min_radius_bound = 0.)
+    : squared_min_radius_bound_(std::nullopt)
   {
     if (FT(0) != min_radius_bound)
+    {
       init_min_radius(min_radius_bound);
+      squared_min_radius_bound_ = CGAL::square(min_radius_bound);
+    }
 
     if ( FT(0) != angle_bound )
       init_aspect(angle_bound);
@@ -171,6 +177,13 @@ public:
 
   Mesh_facet_topology topology() const {
     return topology_;
+  }
+
+  std::optional<FT> squared_min_radius_bound() const {
+    if(squared_min_radius_bound_)
+      return *squared_min_radius_bound_;
+    else
+      return std::nullopt;
   }
 
 private:
@@ -242,6 +255,7 @@ private:
 private:
   Criteria criteria_;
   Mesh_facet_topology topology_;
+  std::optional<FT> squared_min_radius_bound_;
 };  // end class Mesh_facet_criteria_3
 
 }  // end namespace CGAL

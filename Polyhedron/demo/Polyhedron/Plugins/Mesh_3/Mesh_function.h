@@ -138,20 +138,40 @@ QStringList
 Mesh_parameters::
 log() const
 {
-  return QStringList()
-  << QString("edge max size: %1").arg(edge_sizing)
-  << QString("edge min size: %1").arg(edge_min_sizing)
-  << QString("facet min angle: %1").arg(facet_angle)
-  << QString("facet max size: %1").arg(facet_sizing)
-  << QString("facet min size: %1").arg(facet_min_sizing)
-  << QString("facet approx error: %1").arg(facet_approx)
-  << QString("tet shape (radius-edge): %1").arg(tet_shape)
-  << QString("tet max size: %1").arg(tet_sizing)
-  << QString("tet min size: %1").arg(tet_min_sizing)
-  << QString("detect connected components: %1")
-    .arg(detect_connected_components)
-  << QString("use weights: %1").arg(weights_ptr != nullptr)
-  << QString("protect features: %1").arg(protect_features);
+  QStringList res("Mesh criteria");
+
+  // doubles
+  if(edge_sizing > 0)
+    res << QString("edge max size: %1").arg(edge_sizing);
+  if(edge_min_sizing > 0)
+    res << QString("edge min size: %1").arg(edge_min_sizing);
+  if(facet_angle > 0)
+    res << QString("facet min angle: %1").arg(facet_angle);
+  if(facet_sizing > 0)
+    res << QString("facet max size: %1").arg(facet_sizing);
+  if(facet_min_sizing > 0)
+    res << QString("facet min size: %1").arg(facet_min_sizing);
+  if(facet_approx > 0)
+    res << QString("facet approx error: %1").arg(facet_approx);
+  if(tet_shape > 0)
+    res << QString("tet shape (radius-edge): %1").arg(tet_shape);
+  if(tet_sizing > 0)
+    res << QString("tet max size: %1").arg(tet_sizing);
+  if(tet_min_sizing > 0)
+    res << QString("tet min size: %1").arg(tet_min_sizing);
+
+  // booleans
+  res << QString("protect features: %1").arg(protect_features);
+  if(image_3_ptr != nullptr)
+  {
+    res << QString("detect connected components: %1")
+             .arg(detect_connected_components);
+    res << QString("use weights: %1").arg(weights_ptr != nullptr);
+  }
+  res << QString("use aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
+  res << QString("manifold: %1").arg(manifold);
+
+  return res;
 }
 
 

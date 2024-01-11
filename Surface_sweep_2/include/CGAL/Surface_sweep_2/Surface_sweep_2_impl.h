@@ -298,6 +298,14 @@ void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves()
 template <typename Vis>
 void Surface_sweep_2<Vis>::_handle_right_curves()
 {
+
+  for(Event_subcurve_iterator sc_it = this->m_currentEvent->right_curves_begin(),
+                              sc_it_end = this->m_currentEvent->right_curves_end();
+                              sc_it!=sc_it_end; ++sc_it)
+  {
+    (*sc_it)->reset_left_event();
+  }
+
   CGAL_SS_PRINT_START("handling right curves at (");
   CGAL_SS_DEBUG(this->PrintEvent(this->m_currentEvent));
   CGAL_SS_PRINT_TEXT(")");
@@ -565,10 +573,12 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
       Event* left_event = first_parent->left_event();
       Event* right_event = first_parent->right_event();
 
-      if (! second_parent->is_start_point(left_event))
-        left_event->add_curve_to_left(second_parent);
-      else
-        left_event->remove_curve_from_right(second_parent);
+      if (left_event != nullptr) {
+        if (! second_parent->is_start_point(left_event))
+          left_event->add_curve_to_left(second_parent);
+        else
+          left_event->remove_curve_from_right(second_parent);
+      }
 
       CGAL_SS_PRINT_CURVE(c1);
       CGAL_SS_PRINT_TEXT(" + ");
@@ -588,7 +598,8 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
 
       // add the overlapping curve kept of the right of the left end
       right_event->add_curve_to_left(first_parent);
-      _add_curve_to_right(left_event, first_parent);
+      if (left_event != nullptr)
+        _add_curve_to_right(left_event, first_parent);
 
       this->m_visitor->found_overlap(c1, c2, first_parent);
 

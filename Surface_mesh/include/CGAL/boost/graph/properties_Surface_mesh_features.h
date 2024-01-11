@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
 #define CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
+
+#include <CGAL/license/Surface_mesh.h>
+
 
 #ifndef DOXYGEN_RUNNING
 

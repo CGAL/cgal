@@ -51,7 +51,7 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$QT4,$QT5,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","-","-","no");
+    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","no");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -97,10 +97,13 @@ sub reformat_results($)
 	    $QT="$1";
 	}
 	if (/QT4_VERSION = '([^']+)'/) {
-	    $QT4="$1";
+	    $QT="$1";
 	}
 	if (/Qt5_VERSION = '([^']+)'/) {
-	    $QT5="$1";
+	    $QT="$1";
+	}
+	if (/Qt6_VERSION = '([^']+)'/) {
+	    $QT="$1";
 	}
 	if (/BOOST_VERSION = '([^']+)'/) {
 	    $BOOST="$1";
@@ -147,7 +150,7 @@ $CMAKE
 $BOOST
 $MPFR
 $GMP
-$QT5
+$QT
 $LEDA_VERSION
 $CXXFLAGS
 $LDFLAGS

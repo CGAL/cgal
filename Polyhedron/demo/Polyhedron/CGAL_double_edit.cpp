@@ -19,7 +19,6 @@ public:
   }
   QValidator::State validate ( QString & input, int & pos ) const
   {
-    fixup(input);
     return QDoubleValidator::validate(input, pos);
   }
 };
@@ -59,7 +58,7 @@ public:
 
   void DoubleEdit::setRange(double rmin, double rmax)
   {
-    this->validator->setRange(rmin, rmax, this->validator->decimals());
+    this->validator->setRange(rmin, rmax, -1);
   }
 
   double DoubleEdit::getValue()

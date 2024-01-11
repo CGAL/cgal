@@ -29,7 +29,6 @@
 #include <CGAL/Side_of_triangle_mesh.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <exception>
 #include <iterator>
@@ -1427,18 +1426,16 @@ bool do_intersect(const TriangleMesh& tm,
                   const Polyline& polyline,
                   const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , const std::enable_if_t<
-                    ! boost::mpl::or_<
-                      typename std::is_same<TriangleMesh, Polyline>::type, // Added to please MSVC 2015
-                      typename boost::mpl::not_<typename boost::has_range_iterator<Polyline>::type>::type, // not a range
-                      typename boost::has_range_iterator<
+                , const std::enable_if_t<!(
+                      std::is_same_v<TriangleMesh, Polyline> || // Added to please MSVC 2015
+                      !boost::has_range_iterator<Polyline>::value || // not a range
+                      boost::has_range_iterator<
                         typename boost::mpl::eval_if<
                           boost::has_range_iterator<Polyline>,
                           boost::range_value<Polyline>,
-                          std::false_type
-                        >::type
-                      >::type // not a range of a range
-                    >::value
+                          std::false_type>::type
+                        >::value
+                    )
                   >* = 0
 #endif
                  )

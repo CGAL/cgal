@@ -18,23 +18,22 @@ int main() {
 #include <CGAL/Arr_rational_function_traits_2.h>   // Traits
 #include <CGAL/Arrangement_2.h>                    // Arrangement
 
-typedef CORE::BigInt                               Integer;
-typedef CORE::BigRat                               Rational;
-typedef CGAL::Algebraic_kernel_d_1<Integer>           AK1;
-typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits_2;
+using Integer = CORE::BigInt;
+using Rational = CORE::BigRat;
+using AK1 = CGAL::Algebraic_kernel_d_1<Integer>;
+using Traits_2 = CGAL::Arr_rational_function_traits_2<AK1>;
 
-typedef std::vector<Rational>                      Rat_vec;
-typedef Traits_2::Algebraic_real_1                 Alg_real_1;
+using Rat_vec = std::vector<Rational>;
+using Alg_real_1 = Traits_2::Algebraic_real_1;
 
-typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
+using Arrangement_2 = CGAL::Arrangement_2<Traits_2>;
 
 int main () {
   CGAL::IO::set_pretty_mode(std::cout);             // for nice printouts.
 
   // Traits class object
   Traits_2 traits;
-  Traits_2::Construct_x_monotone_curve_2 construct_arc
-    = traits.construct_x_monotone_curve_2_object();
+  auto construct_arc = traits.construct_x_monotone_curve_2_object();
 
   // container storing all arcs
   std::vector<Traits_2::X_monotone_curve_2>  arcs;

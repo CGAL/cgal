@@ -10,6 +10,11 @@
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
+#ifndef CGAL_MIN_SPHERE_D_OPTIMISATION_CIRCLE_2_IMPL_H
+#define CGAL_MIN_SPHERE_D_OPTIMISATION_CIRCLE_2_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 // includes
 #  include <CGAL/assertions.h>
 
@@ -89,3 +94,5 @@ operator >> ( std::istream& is, CGAL::Optimisation_circle_2<K_>& c)
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_MIN_SPHERE_D_OPTIMISATION_CIRCLE_2_IMPL_H

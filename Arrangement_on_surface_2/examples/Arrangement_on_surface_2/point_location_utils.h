@@ -9,10 +9,10 @@ void print_point_location
 (const typename Arrangement_::Point_2& q,
  typename CGAL::Arr_point_location_result<Arrangement_>::Type obj)
 {
-  typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  using Arrangement_2 = Arrangement_;
+  using Vertex_const_handle = typename Arrangement_2::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arrangement_2::Halfedge_const_handle;
+  using Face_const_handle = typename Arrangement_2::Face_const_handle;
 
   const Vertex_const_handle* v;
   const Halfedge_const_handle* e;
@@ -39,8 +39,8 @@ void locate_point(const PointLocation& pl,
                   const typename PointLocation::Arrangement_2::Point_2& q)
 {
   // Perform the point-location query.
-  typedef PointLocation                                 Point_location;
-  typedef typename Point_location::Arrangement_2        Arrangement_2;
+  using Point_location = PointLocation;
+  using Arrangement_2 = typename Point_location::Arrangement_2;
   typename CGAL::Arr_point_location_result<Arrangement_2>::Type obj =
     pl.locate(q);
 
@@ -56,16 +56,16 @@ void shoot_vertical_ray(const VerticalRayShooting& vrs,
                         const typename
                         VerticalRayShooting::Arrangement_2::Point_2& q)
 {
-  typedef VerticalRayShooting                           Vertical_ray_shooting;
+  using Vertical_ray_shooting = VerticalRayShooting;
 
   // Perform the point-location query.
   typename Vertical_ray_shooting::result_type obj = vrs.ray_shoot_up(q);
 
   // Print the result.
-  typedef typename Vertical_ray_shooting::Arrangement_2 Arrangement_2;
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  using Arrangement_2 = typename Vertical_ray_shooting::Arrangement_2;
+  using Vertex_const_handle = typename Arrangement_2::Vertex_const_handle;
+  using Halfedge_const_handle = typename Arrangement_2::Halfedge_const_handle;
+  using Face_const_handle = typename Arrangement_2::Face_const_handle;
 
   const Vertex_const_handle* v;
   const Halfedge_const_handle* e;
@@ -94,10 +94,10 @@ void shoot_vertical_ray(const VerticalRayShooting& vrs,
 template <typename Arrangement_>
 void construct_segments_arr(Arrangement_& arr)
 {
-  typedef Arrangement_                                Arrangement_2;
-  typedef typename Arrangement_2::Point_2             Point_2;
-  typedef typename Arrangement_2::X_monotone_curve_2  Segment_2;
-  typedef typename Arrangement_2::Halfedge_handle     Halfedge_handle;
+  using Arrangement_2 = Arrangement_;
+  using Point_2 = typename Arrangement_2::Point_2;
+  using Segment_2 = typename Arrangement_2::X_monotone_curve_2;
+  using Halfedge_handle = typename Arrangement_2::Halfedge_handle;
 
   Point_2 p0(3,2), p1(0,3), p2(2,5), p3(4,5), p4(6,3), p5(3,0);
   Segment_2 s1(p1, p2), s2(p2, p3), s3(p3, p4), s4(p4, p5), s5(p5, p1);

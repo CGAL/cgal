@@ -978,11 +978,42 @@ namespace CommonKernelFunctors {
      const Vector_3 ad = vector(a,d);
 
      const Vector_3 abad = cross_product(ab,ad);
-     const double x = CGAL::to_double(scalar_product(cross_product(ab,ac), abad));
-     const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
-     const double y = l_ab * CGAL::to_double(scalar_product(ac,abad));
+     const Vector_3 abac = cross_product(ab,ac);
 
-     return FT(std::atan2(y, x) * 180 / CGAL_PI );
+     // The dihedral angle we are interested in is the angle around the oriented
+     // edge ab which is the same (in absolute value) as the angle between the
+     // vectors ab^ac and ab^ad (cross-products).
+     // (abac points inside the tetra abcd if its orientation is positive and outside otherwise)
+     //
+     // We consider the vector abad in the basis defined by the three vectors
+     //    (<ab>, <abac>, <ab^abac>)
+     // where <u> denote the normalized vector u/|u|.
+     //
+     // In this orthonormal basis, the vector adab has the coordinates
+     //    x = <ab>      * abad
+     //    y = <abac>    * abad
+     //    z = <ab^abac> * abad
+     // We have x == 0, because abad and ab are orthogonal, and thus abad is in
+     // the plane (yz) of the new basis.
+     //
+     // In that basis, the dihedral angle is the angle between the y axis and abad
+     // which is the arctan of y/z, or atan2(z, y).
+     //
+     // (Note that ab^abac is in the plane abc, pointing outside the tetra if
+     //  its orientation is positive and inside otherwise).
+     //
+     // For the normalization, abad appears in both scalar products
+     // in the quotient so we can ignore its norm. For the second
+     // terms of the scalar products, we are left with ab^abac and abac.
+     // Since ab and abac are orthogonal, the sinus of the angle between the
+     // two vectors is 1.
+     // So the norms are |ab|.|abac| vs |abac|, which is why we have a
+     // multiplication by |ab| in y below.
+     const double l_ab = CGAL::sqrt(CGAL::to_double(sq_distance(a,b)));
+     const double y = l_ab * CGAL::to_double(scalar_product(abac, abad));
+     const double z = CGAL::to_double(scalar_product(cross_product(ab,abac),abad));
+
+     return FT(std::atan2(z, y) * 180 / CGAL_PI );
    }
  };
 
@@ -2190,6 +2221,107 @@ namespace CommonKernelFunctors {
       const Point* e_pt = std::get_if<Point>(&(*res));
       CGAL_assertion(e_pt!=nullptr);
       return *e_pt;
+    }
+  };
+
+  template <typename K>
+  class Construct_planes_intersection_point_3
+  {
+    typedef typename K::Plane_3 Plane;
+    typedef typename K::Point_3 Point;
+    typename K::Construct_plane_3 construct_plane;
+  public:
+    typedef Point result_type;
+
+    Point
+    operator()(const Point& p1, const Point& q1, const Point& r1,
+               const Point& p2, const Point& q2, const Point& r2,
+               const Point& p3, const Point& q3, const Point& r3) const
+    {
+      Plane plane1 = construct_plane(p1, q1, r1);
+      Plane plane2 = construct_plane(p2, q2, r2);
+      Plane plane3 = construct_plane(p3, q3, r3);
+
+      const auto res = typename K::Intersect_3()(plane1, plane2, plane3);
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+
+    Point
+    operator()(const Plane& plane1, const Plane& plane2, const Plane& plane3) const
+    {
+      const auto res = typename K::Intersect_3()(plane1, plane2, plane3);
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+  };
+
+  template <typename K>
+  class Construct_coplanar_segments_intersection_point_3
+  {
+    typedef typename K::Segment_3 Segment;
+    typedef typename K::Point_3 Point;
+    typename K::Construct_segment_3 construct_segment;
+  public:
+    typedef Point result_type;
+
+    Point
+    operator()(const Point& p1, const Point& q1,
+               const Point& p2, const Point& q2) const
+    {
+      Segment s1 = construct_segment(p1, q1);
+      Segment s2 = construct_segment(p2, q2);
+
+      const auto res = typename K::Intersect_3()(s1, s2);
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+
+    Point
+    operator()(const Segment& s1, const Segment& s2) const
+    {
+      const auto res = typename K::Intersect_3()(s1, s2);
+      CGAL_assertion(res!=std::nullopt);
+      const Point* e_pt = std::get_if<Point>(&(*res));
+      CGAL_assertion(e_pt!=nullptr);
+      return *e_pt;
+    }
+  };
+
+  template <typename K>
+  class Compute_alpha_for_coplanar_triangle_intersection_3
+  {
+    typedef typename K::Point_3 Point_3;
+    typedef typename K::Vector_3 Vector_3;
+  public:
+    typedef typename K::FT  result_type;
+    result_type
+    operator()(const Point_3& p1, const Point_3& p2,       // segment 1
+               const Point_3& p3, const Point_3& p4) const // segment 2
+    {
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+      typename K::Construct_cross_product_vector_3 cross_product =
+        K().construct_cross_product_vector_3_object();
+
+      const Vector_3 v1 = vector(p1, p2);
+      const Vector_3 v2 = vector(p3, p4);
+
+      CGAL_assertion(K().coplanar_3_object()(p1,p2,p3,p4));
+
+      const Vector_3 v3 = vector(p1, p3);
+      const Vector_3 v3v2 = cross_product(v3,v2);
+      const Vector_3 v1v2 = cross_product(v1,v2);
+      const typename K::FT sl = K().compute_squared_length_3_object()(v1v2);
+      CGAL_assertion(!certainly(is_zero(sl)));
+
+      const typename K::FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
+      return t; // p1 + (p2-p1) * t
     }
   };
 

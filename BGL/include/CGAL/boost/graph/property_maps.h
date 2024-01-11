@@ -15,7 +15,6 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL{
 

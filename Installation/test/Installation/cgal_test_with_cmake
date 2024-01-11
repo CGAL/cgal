@@ -27,7 +27,7 @@ echo "Configuring... "
 mkdir build_dir
 cd build_dir
 if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} -DRUNNING_CGAL_AUTO_TEST=TRUE  \
-                                   -DCGAL_DIR="$CGAL_RELEASE_DIR" -DBUILD_TESTING=ON -DWITH_tests=ON \
+                                   -DCGAL_DIR="$CGAL_RELEASE_DIR" -DCGAL_ENABLE_TESTING=ON -DWITH_tests=ON \
                                    ..' ; then
 
   echo "   successful configuration" >> ../$ERRORFILE

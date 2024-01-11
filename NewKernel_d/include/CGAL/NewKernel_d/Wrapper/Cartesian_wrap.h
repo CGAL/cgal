@@ -83,8 +83,8 @@ template <class T> struct result_<T,false,true>{typedef transforming_iterator<Fo
 template<class> struct result;
 template<class T> struct result<Forward_rep(T)> : result_<T> {};
 
-template <class T> std::enable_if_t<!boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >::value,T> const& operator()(T const& t) const {return t;}
-template <class T> std::enable_if_t<!boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >::value,T>& operator()(T& t) const {return t;}
+template <class T> std::enable_if_t<!Is_wrapper<T>::value || Is_wrapper_iterator<T>::value,T> const& operator()(T const& t) const {return t;}
+template <class T> std::enable_if_t<!Is_wrapper<T>::value || Is_wrapper_iterator<T>::value,T>& operator()(T& t) const {return t;}
 
 template <class T> typename T::Rep const& operator()(T const& t, std::enable_if_t<Is_wrapper<T>::value >* = 0) const {return t.rep();}
 

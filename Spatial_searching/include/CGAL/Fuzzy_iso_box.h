@@ -22,8 +22,6 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Search_traits_adapter.h>
 
-#include <boost/mpl/if.hpp>
-
 #include <type_traits>
 
 

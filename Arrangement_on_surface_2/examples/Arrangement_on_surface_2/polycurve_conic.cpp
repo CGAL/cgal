@@ -21,10 +21,10 @@ int main() {
 #include "arr_conics.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_polycurve_traits_2<Traits>          Polycurve_conic_traits_2;
-typedef Polycurve_conic_traits_2::X_monotone_curve_2  X_monotone_polycurve;
-typedef Polycurve_conic_traits_2::Curve_2             Polycurve;
-typedef CGAL::Arrangement_2<Polycurve_conic_traits_2> Polycurve_conic_arrangment;
+using Polycurve_conic_traits_2 = CGAL::Arr_polycurve_traits_2<Traits>;
+using X_monotone_polycurve = Polycurve_conic_traits_2::X_monotone_curve_2;
+using Polycurve = Polycurve_conic_traits_2::Curve_2;
+using Polycurve_conic_arrangment = CGAL::Arrangement_2<Polycurve_conic_traits_2>;
 
 int main() {
   Traits sub_traits;

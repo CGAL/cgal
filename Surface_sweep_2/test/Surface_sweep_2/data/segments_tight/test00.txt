@@ -1,0 +1,27 @@
+# No. of input segments followed by segments
+2
+-1 1 1 -1
+1 1 -1 -1
+# No. of output segments followed by segments
+4
+0 0 -1 -1
+-1 1 0 0
+0 0 1 -1
+1 1 0 0
+# No. of output points followed by points
+5
+-1 -1
+-1 1
+0 0
+1 -1
+1 1
+# No. of intersection points followed by points
+1
+0 0
+# No of faces: 1
+# No. of output segments with overlaps followed by segments
+4
+0 0 -1 -1
+-1 1 0 0
+0 0 1 -1
+1 1 0 0

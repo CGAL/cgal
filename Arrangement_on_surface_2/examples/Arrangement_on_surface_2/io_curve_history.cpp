@@ -10,7 +10,7 @@
 #include "arr_exact_construction_segments.h"
 #include "arr_print.h"
 
-typedef CGAL::Arrangement_with_history_2<Traits>        Arr_with_hist;
+using Arr_with_hist = CGAL::Arrangement_with_history_2<Traits>;
 
 int main() {
   // Insert six additional segments aggregately:

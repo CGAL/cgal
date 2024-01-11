@@ -65,6 +65,7 @@ create_single_source_cgal_program("triangulate_hole_with_cdt_2_test.cpp")
 create_single_source_cgal_program("test_pmp_polyhedral_envelope.cpp")
 create_single_source_cgal_program("test_pmp_np_function.cpp")
 create_single_source_cgal_program("test_degenerate_pmp_clip_split_corefine.cpp")
+create_single_source_cgal_program("test_isolevel_refinement.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
@@ -105,6 +106,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(test_pmp_distance PUBLIC CGAL::TBB_support)
   target_link_libraries(orient_polygon_soup_test PUBLIC CGAL::TBB_support)
   target_link_libraries(self_intersection_surface_mesh_test PUBLIC CGAL::TBB_support)
+  target_link_libraries(test_autorefinement PUBLIC CGAL::TBB_support)
 else()
   message(STATUS "NOTICE: Intel TBB was not found. Tests will use sequential code.")
 endif()
@@ -129,7 +131,7 @@ else()
   message(STATUS "NOTICE: Tests are not using Ceres.")
 endif()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  triangulate_hole_Polyhedron_3_no_delaunay_test"
     "execution   of  triangulate_hole_Polyhedron_3_test"

@@ -2,13 +2,13 @@
 #define OVERLAY_COLOR_TRAITS_H
 
 template <typename Arrangement> struct Overlay_color_traits {
-  typedef unsigned int                                  Color;
-  typedef typename Arrangement::Vertex_const_handle     V_const_handle;
-  typedef typename Arrangement::Halfedge_const_handle   H_const_handle;
-  typedef typename Arrangement::Face_const_handle       F_const_handle;
-  typedef typename Arrangement::Vertex_handle           V_handle;
-  typedef typename Arrangement::Halfedge_handle         H_handle;
-  typedef typename Arrangement::Face_handle             F_handle;
+  using Color = unsigned int;
+  using V_const_handle = typename Arrangement::Vertex_const_handle;
+  using H_const_handle = typename Arrangement::Halfedge_const_handle;
+  using F_const_handle = typename Arrangement::Face_const_handle;
+  using V_handle = typename Arrangement::Vertex_handle;
+  using H_handle = typename Arrangement::Halfedge_handle;
+  using F_handle = typename Arrangement::Face_handle;
 
   // Compute the average of the red, green, and blue components separately.
   Color blend(Color color1, Color color2) const

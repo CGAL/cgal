@@ -30,6 +30,7 @@ public:
 introduces an iso-oriented cuboid `c` with diagonal
 opposite vertices `p` and `q`. Note that the object is
 brought in the canonical form.
+\cgalEpicExact
 */
 Iso_cuboid_3(const Point_3<Kernel> &p,
 const Point_3<Kernel> &q);
@@ -39,6 +40,8 @@ introduces an iso-oriented cuboid `c` with diagonal
 opposite vertices `p` and `q`. The `int` argument value
 is only used to distinguish the two overloaded functions.
 \pre `p.x()<=q.x()`, `p.y()<=q.y()` and `p.z()<=q.z()`.
+
+\cgalEpicExact
 */
 Iso_cuboid_3(const Point_3<Kernel> &p,
 const Point_3<Kernel> &q, int);
@@ -51,6 +54,7 @@ minimal \f$ y\f$ coordinate is the one of `bottom`, the
 maximal \f$ y\f$ coordinate is the one of `top`, the
 minimal \f$ z\f$ coordinate is the one of `far`, the
 maximal \f$ z\f$ coordinate is the one of `close`.
+\cgalEpicExact
 */
 Iso_cuboid_3(const Point_3<Kernel> &left,
 const Point_3<Kernel> &right,
@@ -74,6 +78,7 @@ const Kernel::RT& hw = RT(1));
 /*!
 If `Kernel::RT` is constructible from double,
 introduces an iso-oriented cuboid from `bbox`.
+\cgalEpicExact
 */
 Iso_cuboid_3(const Bbox_3& bbox);
 
@@ -96,6 +101,7 @@ bool operator!=(const Iso_cuboid_3<Kernel> &c2) const;
 /*!
 returns the i'th vertex modulo 8 of `c`.
 starting with the lower left vertex.
+\cgalEpicExact
 */
 Point_3<Kernel> vertex(int i) const;
 
@@ -103,52 +109,62 @@ Point_3<Kernel> vertex(int i) const;
 returns `vertex(i)`, as indicated in the figure below:
 \image html IsoCuboid.png
 \image latex IsoCuboid.png
+
+\cgalEpicExact
 */
 Point_3<Kernel> operator[](int i) const;
 
 /*!
 returns the smallest vertex of `c` (= `vertex(0)`).
+\cgalEpicExact
 */
 Point_3<Kernel> min() const;
 
 /*!
 returns the largest vertex of `c` (= `vertex(7)`).
+\cgalEpicExact
 */
 Point_3<Kernel> max() const;
 
 /*!
 returns smallest %Cartesian
 \f$ x\f$-coordinate in `c`.
+\cgalEpicExact
 */
 Kernel::FT xmin() const;
 
 /*!
 returns smallest %Cartesian
 \f$ y\f$-coordinate in `c`.
+\cgalEpicExact
 */
 Kernel::FT ymin() const;
 
 /*!
 returns smallest %Cartesian
 \f$ z\f$-coordinate in `c`.
+\cgalEpicExact
 */
 Kernel::FT zmin() const;
 
 /*!
 returns largest %Cartesian
 \f$ x\f$-coordinate in `c`.
+\cgalEpicExact
 */
 Kernel::FT xmax() const;
 
 /*!
 returns largest %Cartesian
 \f$ y\f$-coordinate in `c`.
+\cgalEpicExact
 */
 Kernel::FT ymax() const;
 
 /*!
 returns largest %Cartesian
 \f$ z\f$-coordinate in `c`.
+\cgalEpicExact
 */
 Kernel::FT zmax() const;
 
@@ -156,6 +172,8 @@ Kernel::FT zmax() const;
 returns `i`-th %Cartesian coordinate of
 the smallest vertex of `c`.
 \pre `0 <= i <= 2`.
+
+\cgalEpicExact
 */
 Kernel::FT min_coord(int i) const;
 
@@ -163,6 +181,8 @@ Kernel::FT min_coord(int i) const;
 returns `i`-th %Cartesian coordinate of
 the largest vertex of `c`.
 \pre `0 <= i <= 2`.
+
+\cgalEpicExact
 */
 Kernel::FT max_coord(int i) const;
 
@@ -212,6 +232,7 @@ Kernel::FT volume() const;
 
 /*!
 returns a bounding box containing `c`.
+\cgalEpicExact
 */
 Bbox_3 bbox() const;
 

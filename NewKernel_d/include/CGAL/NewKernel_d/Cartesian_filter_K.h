@@ -15,7 +15,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/NewKernel_d/KernelD_converter.h>
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
 
 namespace CGAL {
@@ -65,10 +64,10 @@ struct Cartesian_filter_K : public Base_
     EK_rt exact_kernel()const{return sek.kernel();}
 
     // MSVC is too dumb to perform the empty base optimization.
-    typedef boost::mpl::and_<
-      internal::Do_not_store_kernel<Kernel_base>,
-      internal::Do_not_store_kernel<AK>,
-      internal::Do_not_store_kernel<EK> > Do_not_store_kernel;
+    typedef std::bool_constant<
+      internal::Do_not_store_kernel<Kernel_base>::value &&
+      internal::Do_not_store_kernel<AK>::value &&
+      internal::Do_not_store_kernel<EK>::value > Do_not_store_kernel;
 
     //TODO: C2A/C2E could be able to convert *this into this->kernel() or this->kernel2().
     typedef KernelD_converter<Kernel_base,AK> C2A;

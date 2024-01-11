@@ -6,7 +6,7 @@
 #include <CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include <CGAL/mesh_segmentation.h>
 #include <CGAL/property_map.h>
 

@@ -75,8 +75,8 @@ namespace internal {
     Point_set_3_index operator++ (int) { Point_set_3_index tmp(*this); ++value; return tmp; }
     Point_set_3_index operator-- (int) { Point_set_3_index tmp(*this); --value; return tmp; }
 };
-/// \endcond
 } // namespace internal
+/// \endcond
 
 /*!
 

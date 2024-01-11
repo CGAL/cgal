@@ -26,6 +26,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
+#include <CGAL/Triangulation_structural_filtering_traits.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/bounding_box.h>
@@ -145,6 +146,12 @@ template <class BaseGt>
 struct Reconstruction_triangulation_default_geom_traits_3 : public BaseGt
 {
   typedef Point_with_normal_3<BaseGt> Point_3;
+};
+
+
+template < class BaseGt >
+struct Triangulation_structural_filtering_traits<Reconstruction_triangulation_default_geom_traits_3<BaseGt> > {
+  typedef typename Triangulation_structural_filtering_traits<BaseGt>::Use_structural_filtering_tag  Use_structural_filtering_tag;
 };
 
 

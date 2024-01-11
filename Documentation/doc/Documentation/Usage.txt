@@ -97,11 +97,6 @@ distribution of the <a href="https://cs.nyu.edu/exact/">Core library</a> version
 dealing with algebraic numbers. Note that \core is not part of \cgal and has its
 own license.
 
-The directory `include/CGAL/OpenNL` contains a distribution of the
-<a href="http://alice.loria.fr/index.php/software/4-library/23-opennl.html">Open Numerical Library</a>,
-which provides solvers for sparse linear systems, especially designed for the Computer Graphics community.
-\opennl is not part of \cgal and has its own license.
-
 The only documentation shipped within \cgal sources is the present manual.
 The \cgal manual can also be accessed online at
 <a href="https://doc.cgal.org/latest/Manual/index.html">`https://doc.cgal.org`</a>

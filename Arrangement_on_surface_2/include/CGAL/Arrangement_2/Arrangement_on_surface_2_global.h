@@ -23,8 +23,6 @@
 
 #include <list>
 #include <boost/type_traits.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits.hpp>
 #include <list>
 
 #include <CGAL/Arr_accessor.h>
@@ -66,7 +64,7 @@ namespace Ss2 = Surface_sweep_2;
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation, typename ZoneVisitor>
@@ -137,7 +135,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
@@ -271,7 +269,7 @@ insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Cgt2>, const Cgt2&, Cgt2>
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep:
@@ -326,7 +324,7 @@ void insert_empty(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>&
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Cgt2>, const Cgt2&, Cgt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Cgt2>, const Cgt2&, Cgt2>
     traits(*geom_traits);
 
   // Define a surface-sweep instance and perform the sweep.
@@ -379,7 +377,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Igt2>, const Igt2&, Igt2>
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -411,7 +409,7 @@ void insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
@@ -465,7 +463,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // error: no matching function for call to `do_intersect(Arrangement_2<>&,
 // const Arr_segment_2&, const Arr_walk_along_line_point_location<>&,
-// mpl_::bool_< true>)'
+// std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename InputIterator>
@@ -979,7 +977,7 @@ non_intersecting_insert_non_empty(Arrangement_on_surface_2<GeometryTraits_2,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typename boost::mpl::if_<std::is_same<Gt2, Igt2>, const Igt2&, Igt2>::type
+  std::conditional_t<std::is_same_v<Gt2, Igt2>, const Igt2&, Igt2>
     traits(*geom_traits);
 
   // Create a set of existing as well as new curves and points.
@@ -1526,7 +1524,7 @@ zone(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 // workaround since it didn't compile in FC3_g++-3.4.4 with the error of:
 //
 // error: no matching function for call to `do_intersect(Arrangement_on_surface_2<>&,
-// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>
@@ -1564,7 +1562,7 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 //
 // error: no matching function for call to
 // `do_intersect(Arrangement_on_surface_2<>&,
-// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, mpl_::bool_< true>)'
+// const Arr_segment_2&, const Arr_walk_along_line_point_location<>&, std::bool_constant< true>)'
 //
 template <typename GeometryTraits_2, typename TopologyTraits,
           typename PointLocation>

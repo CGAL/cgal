@@ -24,7 +24,6 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Random_access_output_iterator.h>
 #include <CGAL/algorithm.h>

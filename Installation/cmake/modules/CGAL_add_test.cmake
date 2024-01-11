@@ -3,9 +3,13 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
-option(BUILD_TESTING "Build the testing tree." OFF)
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
+option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   enable_testing()
 endif()
 

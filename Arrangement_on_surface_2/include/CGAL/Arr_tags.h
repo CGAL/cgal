@@ -21,7 +21,6 @@
 #include <CGAL/config.h>
 #include <boost/type_traits.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/not.hpp>
@@ -246,14 +245,14 @@ struct Arr_all_sides_not_finite_tag :
 struct Arr_not_all_sides_not_finite_tag :
   public virtual Arr_not_all_sides_oblivious_tag {};
 
-typedef boost::mpl::bool_<true>                                 Arr_true;
-typedef boost::mpl::bool_<false>                                Arr_false;
+typedef std::true_type                                          Arr_true;
+typedef std::false_type                                         Arr_false;
 
 template <typename ArrSideCategory>
 struct Arr_is_side_oblivious {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_oblivious_side_tag>        Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -261,7 +260,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_open {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_open_side_tag>             Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -269,15 +268,19 @@ template <typename ArrSideCategory>
 struct Arr_is_side_identified {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_identified_side_tag>       Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
+
+template <typename ArrSideCategory>
+inline constexpr bool Arr_is_side_identified_v =
+  Arr_is_side_identified<ArrSideCategory>::type::value;
 
 template <typename ArrSideCategory>
 struct Arr_is_side_contracted {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_contracted_side_tag>       Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -285,7 +288,7 @@ template <typename ArrSideCategory>
 struct Arr_is_side_closed {
   typedef ArrSideCategory                                       Side_cat;
   typedef std::is_same<Side_cat, Arr_closed_side_tag>           Is_same;
-  typedef boost::mpl::if_<Is_same, Arr_true, Arr_false>         result;
+  typedef std::bool_constant<Is_same::value>                    result;
   typedef typename result::type                                 type;
 };
 
@@ -307,10 +310,10 @@ struct Arr_all_sides_oblivious_category {
   /*! Boolean tag that is Arr_all_sides_oblivious_tag if all sides are
    * oblivious, otherwise Arr_not_all_sides_oblivious_tag
    */
-  typedef typename boost::mpl::if_<boost::mpl::and_<Lef_obl, Rig_obl,
-                                                    Bot_obl, Top_obl>,
-                                   Arr_all_sides_oblivious_tag,
-                                   Arr_not_all_sides_oblivious_tag>::type
+  typedef std::conditional_t<Lef_obl::value && Rig_obl::value &&
+                             Bot_obl::value && Top_obl::value,
+                             Arr_all_sides_oblivious_tag,
+                             Arr_not_all_sides_oblivious_tag>
     result;
 };
 
@@ -331,19 +334,19 @@ private:
   typedef typename Arr_is_side_open<Bot_side_cat>::result       Bot_ope;
   typedef typename Arr_is_side_open<Top_side_cat>::result       Top_ope;
 
-  typedef boost::mpl::not_<Lef_ope>                             Lef_not_ope;
-  typedef boost::mpl::not_<Rig_ope>                             Rig_not_ope;
-  typedef boost::mpl::not_<Bot_ope>                             Bot_not_ope;
-  typedef boost::mpl::not_<Top_ope>                             Top_not_ope;
+  static inline constexpr bool lef_not_ope = !Lef_ope::value;
+  static inline constexpr bool rig_not_ope = !Rig_ope::value;
+  static inline constexpr bool bot_not_ope = !Bot_ope::value;
+  static inline constexpr bool top_not_ope = !Top_ope::value;
 
 public:
   /*! Boolean tag that is Arr_all_sides_not_open_tag if all sides are not-open,
    * otherwise Arr_not_all_sides_not_open_tag
    */
-  typedef typename boost::mpl::if_<boost::mpl::and_<Lef_not_ope, Rig_not_ope,
-                                                    Bot_not_ope, Top_not_ope>,
-                                   Arr_all_sides_not_open_tag,
-                                   Arr_not_all_sides_not_open_tag>::type
+  typedef std::conditional_t<lef_not_ope && rig_not_ope &&
+                             bot_not_ope && top_not_ope,
+                             Arr_all_sides_not_open_tag,
+                             Arr_not_all_sides_not_open_tag>
     result;
 };
 
@@ -374,23 +377,23 @@ private:
   typedef typename Arr_is_side_open<Bot_side_cat>::result       Bot_ope;
   typedef typename Arr_is_side_open<Top_side_cat>::result       Top_ope;
 
-  typedef boost::mpl::or_<Lef_obl, Lef_ope>                     Lef_obl_or_ope;
-  typedef boost::mpl::or_<Rig_obl, Rig_ope>                     Rig_obl_or_ope;
-  typedef boost::mpl::or_<Bot_obl, Bot_ope>                     Bot_obl_or_ope;
-  typedef boost::mpl::or_<Top_obl, Top_ope>                     Top_obl_or_ope;
+  static inline constexpr bool lef_obl_or_ope = Lef_obl::value || Lef_ope::value;
+  static inline constexpr bool rig_obl_or_ope = Rig_obl::value || Rig_ope::value;
+  static inline constexpr bool bot_obl_or_ope = Bot_obl::value || Bot_ope::value;
+  static inline constexpr bool top_obl_or_ope = Top_obl::value || Top_ope::value;
 
-  typedef typename boost::mpl::if_<boost::mpl::and_<Lef_obl_or_ope,
-                                                    Rig_obl_or_ope,
-                                                    Bot_obl_or_ope,
-                                                    Top_obl_or_ope>,
-                                   Arr_all_sides_not_finite_tag,
-                                   Arr_not_all_sides_not_finite_tag>::type
+  typedef std::conditional_t<lef_obl_or_ope &&
+                             rig_obl_or_ope &&
+                             bot_obl_or_ope &&
+                             top_obl_or_ope,
+                             Arr_all_sides_not_finite_tag,
+                             Arr_not_all_sides_not_finite_tag>
     tmp;
 
 public:
-  typedef typename boost::mpl::if_<boost::mpl::and_<Lef_obl, Rig_obl,
-                                                    Bot_obl, Top_obl>,
-                                   Arr_all_sides_oblivious_tag, tmp>::type
+  typedef std::conditional_t<Lef_obl::value && Rig_obl::value &&
+                             Bot_obl::value && Top_obl::value,
+                             Arr_all_sides_oblivious_tag, tmp>
     result;
 };
 
@@ -404,32 +407,27 @@ struct Arr_sane_identified_tagging {
   typedef ArrBottomSideCategory                         Bot_side_cat;
   typedef ArrTopSideCategory                            Top_side_cat;
 
-  typedef typename Arr_is_side_identified<Lef_side_cat>::result Lef_ide;
-  typedef typename Arr_is_side_identified<Rig_side_cat>::result Rig_ide;
-  typedef typename Arr_is_side_identified<Bot_side_cat>::result Bot_ide;
-  typedef typename Arr_is_side_identified<Top_side_cat>::result Top_ide;
+  static inline constexpr bool lef_ide = Arr_is_side_identified_v<Lef_side_cat>;
+  static inline constexpr bool rig_ide = Arr_is_side_identified_v<Rig_side_cat>;
+  static inline constexpr bool bot_ide = Arr_is_side_identified_v<Bot_side_cat>;
+  static inline constexpr bool top_ide = Arr_is_side_identified_v<Top_side_cat>;
 
-  typedef boost::mpl::and_<Lef_ide, Rig_ide>            LR_ide;
-  typedef boost::mpl::and_<Bot_ide, Top_ide>            BT_ide;
+  static inline constexpr bool lr_ide = lef_ide && rig_ide;
+  static inline constexpr bool bt_ide = bot_ide && top_ide;
 
-  typedef boost::mpl::not_<Lef_ide>                     Lef_not_ide;
-  typedef boost::mpl::not_<Rig_ide>                     Rig_not_ide;
-  typedef boost::mpl::not_<Bot_ide>                     Bot_not_ide;
-  typedef boost::mpl::not_<Top_ide>                     Top_not_ide;
+  static inline constexpr bool lr_not_ide = !lef_ide && !rig_ide;
 
-  typedef boost::mpl::and_<Lef_not_ide, Rig_not_ide>    LR_not_ide;
+  static inline constexpr bool bt_not_ide = !bot_ide && !top_ide;
 
-  typedef boost::mpl::and_<Bot_not_ide, Top_not_ide>    BT_not_ide;
+  static inline constexpr bool lr_ok = lr_ide || lr_not_ide;
+  static inline constexpr bool bt_ok = bt_ide || bt_not_ide;
 
-  typedef boost::mpl::or_<LR_ide, LR_not_ide>           LR_ok;
-  typedef boost::mpl::or_<BT_ide, BT_not_ide>           BT_ok;
-
-  /*! Boolean tag that is bool_<true> if opposite sides are either
+  /*! Boolean tag that is bool_constant<true> if opposite sides are either
    * both identified or both not-identified,
-   * otherwise bool_<false>
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::and_<LR_ok, BT_ok>                result;
-  static constexpr bool value = result::value;
+  typedef std::bool_constant<lr_ok && bt_ok>              result;
+  static inline constexpr bool value = result::value;
 };
 
 /*! Checks whether one of two boundary sides are identified
@@ -448,10 +446,10 @@ struct Arr_has_identified_sides {
   typedef typename Arr_is_side_identified<Side_one_cat>::result Side_one_ide;
   typedef typename Arr_is_side_identified<Side_two_cat>::result Side_two_ide;
 
-  /*! Boolean tag that is bool_<true> if one side is identified,
-   * otherwise bool_<false>
+  /*! Boolean tag that is bool_constant<true> if one side is identified,
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::or_<Side_one_ide, Side_two_ide>   result;
+  typedef std::bool_constant<Side_one_ide::value || Side_two_ide::value> result;
 };
 
 /*! Checks whether one of two boundary sides are contracted
@@ -464,10 +462,11 @@ struct Arr_has_contracted_sides_two {
   typedef typename Arr_is_side_contracted<Side_one_cat>::result Side_one_con;
   typedef typename Arr_is_side_contracted<Side_two_cat>::result Side_two_con;
 
-  /*!\ Boolean tag that is bool_<true> if one side is identified,
-   * otherwise bool_<false>
+  /*!\ Boolean tag that is bool_constant<true> if one side is identified,
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::or_<Side_one_con, Side_two_con>           result;
+  typedef std::bool_constant<Side_one_con::value ||
+                             Side_two_con::value>               result;
 };
 
 /*! Checks whether one of two boundary sides are closed
@@ -480,10 +479,11 @@ struct Arr_has_closed_sides_two {
   typedef typename Arr_is_side_closed<Side_one_cat>::result     Side_one_clo;
   typedef typename Arr_is_side_closed<Side_two_cat>::result     Side_two_clo;
 
-  /*! Boolean tag that is bool_<true> if one side is identified,
-   * otherwise bool_<false>
+  /*! Boolean tag that is bool_constant<true> if one side is identified,
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::or_<Side_one_clo, Side_two_clo>           result;
+  typedef std::bool_constant<Side_one_clo::value ||
+                             Side_two_clo::value>               result;
 };
 
 /*! Checks whether one of two boundary sides are open
@@ -496,10 +496,11 @@ struct Arr_has_open_sides_two {
   typedef typename Arr_is_side_open<Side_one_cat>::result       Side_one_ope;
   typedef typename Arr_is_side_open<Side_two_cat>::result       Side_two_ope;
 
-  /*! Boolean tag that is bool_<true> if one side is identified,
-   * otherwise bool_<false>
+  /*! Boolean tag that is bool_constant<true> if one side is identified,
+   * otherwise bool_constant<false>
    */
-  typedef boost::mpl::or_<Side_one_ope, Side_two_ope>           result;
+  typedef std::bool_constant<Side_one_ope::value ||
+                             Side_two_ope::value>               result;
 };
 
 /*! Categorizes two boundary sides:
@@ -532,11 +533,11 @@ struct Arr_two_sides_category {
     Is_open;
 
 public:
-  typedef typename boost::mpl::if_<Is_identified, Arr_has_identified_side_tag,
-    typename boost::mpl::if_<Is_contracted, Arr_has_contracted_side_tag,
-      typename boost::mpl::if_<Is_closed, Arr_has_closed_side_tag,
-        typename boost::mpl::if_<Is_open, Arr_has_open_side_tag,
-          Arr_all_sides_oblivious_tag>::type>::type>::type>::type
+  typedef std::conditional_t<Is_identified::value, Arr_has_identified_side_tag,
+    std::conditional_t<Is_contracted::value, Arr_has_contracted_side_tag,
+      std::conditional_t<Is_closed::value, Arr_has_closed_side_tag,
+        std::conditional_t<Is_open::value, Arr_has_open_side_tag,
+          Arr_all_sides_oblivious_tag>>>>
     result;
 };
 

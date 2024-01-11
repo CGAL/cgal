@@ -1,5 +1,0 @@
-source /opt/intel/compilers_and_libraries_2017/linux/bin/compilervars.sh intel64
-CXX=icpc
-CC=icc
-CXXFLAGS="-w1 -DDONT_USE_BOOST_PROGRAM_OPTIONS"
-export CXX CC CXXFLAGS

@@ -1,11 +1,12 @@
 #define CGAL_AW3_TIMER
 #define CGAL_AW3_DEBUG
+#define CGAL_AW3_DEBUG_MANIFOLDNESS
 //#define CGAL_AW3_DEBUG_STEINER_COMPUTATION
 //#define CGAL_AW3_DEBUG_INITIALIZATION
 //#define CGAL_AW3_DEBUG_QUEUE
 
 #include <CGAL/alpha_wrap_3.h>
-#include "alpha_wrap_validation.h"
+#include <CGAL/Alpha_wrap_3/internal/validation.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

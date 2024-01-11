@@ -10,6 +10,10 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
+#ifndef CGAL_APPROXIMATE_MIN_ELLIPSOID_D_APPROXIMATE_MIN_ELLIPSOID_D_IMPL_H
+#define CGAL_APPROXIMATE_MIN_ELLIPSOID_D_APPROXIMATE_MIN_ELLIPSOID_D_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
 
 #include <CGAL/Default_diagonalize_traits.h>
 
@@ -272,3 +276,5 @@ namespace CGAL {
   }
 
 }
+
+#endif //CGAL_APPROXIMATE_MIN_ELLIPSOID_D_APPROXIMATE_MIN_ELLIPSOID_D_IMPL_H

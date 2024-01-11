@@ -37,9 +37,9 @@ struct Tester
   void test_iterator_on_pair() const
   {
     typedef std::vector<std::pair<Weighted_point, unsigned> >              Container;
-    typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     std::add_const_t<Container>,
-                                     Container>::type                      Cast_type;
+    typedef std::conditional_t<is_const,
+                               std::add_const_t<Container>,
+                               Container>                                  Cast_type;
 
     Container points;
     points.push_back(std::make_pair(Weighted_point(Bare_point(0.160385, 0.599679, 0.374932), -0.118572), 0));
@@ -90,9 +90,9 @@ struct Tester
   void test_zip_iterator() const
   {
     typedef std::vector<Weighted_point>                                   Container;
-    typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     std::add_const_t<Container>,
-                                     Container >::type                    Cast_type;
+    typedef std::conditional_t<is_const,
+                               std::add_const_t<Container>,
+                               Container >                                Cast_type;
 
     Container points;
     points.push_back(Weighted_point(Bare_point(0,0,0),1));
@@ -156,9 +156,9 @@ struct Tester
   void test_transform_iterator() const
   {
     typedef std::vector< Weighted_point >                                   Container;
-    typedef typename boost::mpl::if_<boost::mpl::bool_<is_const>,
-                                     std::add_const_t<Container>,
-                                     Container >::type                      Cast_type;
+    typedef std::conditional_t<is_const,
+                               std::add_const_t<Container>,
+                               Container >                                  Cast_type;
 
     Container points;
     points.push_back(Weighted_point(Bare_point(0,0,0),1));

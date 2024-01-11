@@ -26,8 +26,10 @@
 #include <vtkCommand.h>
 #include <vtkCell.h>
 #include <vtkXMLPolyDataReader.h>
+#include <vtkDataSetReader.h>
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
+#include <vtkUnstructuredGrid.h>
 #endif
 
 #if defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
@@ -114,14 +116,14 @@ bool read_VTP(const std::string& fname,
 }
 
 /*!
- * \ingroup PkgStreamSupportIoFuncsVTP
+ * \ingroup PkgStreamSupportIoFuncsVTK
  *
  * \brief reads the content of the input file into `points` and `polygons`, using the \ref IOStreamVTK.
  *
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
- *                    whose value type is the point type
+ *                    whose `value_type` is the point type
  * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
@@ -138,6 +140,62 @@ template <typename PointRange, typename PolygonRange>
 bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_VTP(fname, points, polygons, parameters::default_values());
+}
+
+
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
+bool read_VTK(const std::string& fname,
+              PointRange& points,
+              PolygonRange& polygons,
+              const NamedParameters& np)
+{
+  std::ifstream test(fname);
+  if(!test.good())
+  {
+    std::cerr<<"File doesn't exist."<<std::endl;
+    return false;
+  }
+
+  vtkSmartPointer<vtkPointSet> data;
+  vtkSmartPointer<internal::ErrorObserverVtk> obs =
+      vtkSmartPointer<internal::ErrorObserverVtk>::New();
+  vtkSmartPointer<vtkDataSetReader> reader =
+    CGAL::IO::internal::read_vtk_file<vtkDataSetReader>(fname,obs);
+  data = vtkPolyData::SafeDownCast(reader->GetOutput());
+  if (!data)
+    data = vtkUnstructuredGrid::SafeDownCast(reader->GetOutput());
+
+  if (obs->GetError())
+    return false;
+
+  return internal::vtkPointSet_to_polygon_soup(data, points, polygons, np);
+}
+
+/*!
+ * \ingroup PkgStreamSupportIoFuncsVTK
+ *
+ * \brief reads the content of the input file into `points` and `polygons`, using the legacy file format of the \ref IOStreamVTK.
+ *
+ * \attention The polygon soup is not cleared, and the data from the file are appended.
+ *
+ * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                    whose `value_type` is the point type
+ * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
+ *                      whose `value_type` is itself a model of the concept `SequenceContainer`
+ *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
+ *                      convertible to `std::size_t`
+ *
+ * \param fname the path to the input file
+ * \param points points of the soup of polygons
+ * \param polygons a range of polygons. Each element in it describes a polygon
+ *        using the indices of the points in `points`.
+ *
+ * \returns `true` if the reading was successful, `false` otherwise.
+ */
+template <typename PointRange, typename PolygonRange>
+bool read_VTK(const std::string& fname, PointRange& points, PolygonRange& polygons)
+{
+  return read_VTK(fname, points, polygons, parameters::default_values());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,11 +398,11 @@ void write_soup_polys_points(std::ostream& os,
 } // namespace internal
 
 /*!
- * \ingroup PkgStreamSupportIoFuncsVTP
+ * \ingroup PkgStreamSupportIoFuncsVTK
  *
  * \brief writes the content of `points` and `polygons` in `out`, using the \ref IOStreamVTK.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose `value_type` is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`
@@ -428,11 +486,11 @@ bool write_VTP(std::ostream& os,
 }
 
 /*!
- * \ingroup PkgStreamSupportIoFuncsVTP
+ * \ingroup PkgStreamSupportIoFuncsVTK
  *
  * \brief writes the content of `points` and `polygons` in a file named `fname`, using the \ref IOStreamVTK.
  *
- * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose `valuetype` is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
  *                      whose `value_type` is itself a model of the concept `SequenceContainer`
  *                      whose `value_type` is an unsigned integer type convertible to `std::size_t`

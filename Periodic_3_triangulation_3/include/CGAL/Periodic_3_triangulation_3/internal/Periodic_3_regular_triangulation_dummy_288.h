@@ -10,6 +10,8 @@
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
 #ifdef CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 
 std::vector<Weighted_point> dummy_points()

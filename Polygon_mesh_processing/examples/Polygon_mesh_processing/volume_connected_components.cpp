@@ -12,7 +12,7 @@
 #include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3>                   Surface_mesh;
+typedef CGAL::Surface_mesh<Kernel::Point_3>                   Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = CGAL::parameters;
@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
 
-  Surface_mesh mesh;
+  Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
@@ -29,8 +29,8 @@ int main(int argc, char** argv)
   }
 
   // property map to assign a volume id for each face
-  Surface_mesh::Property_map<Surface_mesh::Face_index, std::size_t> vol_id_map =
-    mesh.add_property_map<Surface_mesh::Face_index, std::size_t>().first;
+  Mesh::Property_map<Mesh::Face_index, std::size_t> vol_id_map =
+    mesh.add_property_map<Mesh::Face_index, std::size_t>().first;
 
   // fill the volume id map
   std::vector<PMP::Volume_error_code> err_codes;
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
   std::cout << "Found " << nb_vol << " volumes\n";
 
   // write each volume in an OFF file
-  typedef CGAL::Face_filtered_graph<Surface_mesh> Filtered_graph;
+  typedef CGAL::Face_filtered_graph<Mesh> Filtered_graph;
   Filtered_graph vol_mesh(mesh, 0, vol_id_map);
   for(std::size_t id = 0; id < nb_vol; ++id)
   {
@@ -49,11 +49,12 @@ int main(int argc, char** argv)
     if(id > 0)
       vol_mesh.set_selected_faces(id, vol_id_map);
 
-    Surface_mesh out;
+    Mesh out;
     CGAL::copy_face_graph(vol_mesh, out);
     std::ostringstream oss;
     oss << "vol_" << id <<".off";
     std::ofstream os(oss.str().data());
     os << out;
   }
+  return 0;
 }

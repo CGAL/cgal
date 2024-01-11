@@ -1,3 +1,5 @@
+#include "output_helper.h"
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -30,7 +32,7 @@ int main(int argc, char** argv)
   std::vector<std::array<std::size_t, 3> > faces;
   if(!CGAL::IO::read_polygon_soup(filename, points, faces) || faces.empty())
   {
-    std::cerr << "Invalid input." << std::endl;
+    std::cerr << "Invalid input:" << filename << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -63,12 +65,7 @@ int main(int argc, char** argv)
   std::cout << "Took " << t.time() << " s." << std::endl;
 
   // Save the result
-  std::string input_name = std::string(filename);
-  input_name = input_name.substr(input_name.find_last_of("/") + 1, input_name.length() - 1);
-  input_name = input_name.substr(0, input_name.find_last_of("."));
-  std::string output_name = input_name
-                            + "_" + std::to_string(static_cast<int>(relative_alpha))
-                            + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  const std::string output_name = generate_output_name(filename, relative_alpha, relative_offset);
   std::cout << "Writing to " << output_name << std::endl;
   CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 

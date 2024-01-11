@@ -25,6 +25,7 @@ public:
 
 /*!
 introduces a triangle `t` with vertices `p`, `q` and `r`.
+\cgalEpicExact
 */
 Triangle_2(const Point_2<Kernel> &p,
 const Point_2<Kernel> &q,
@@ -49,11 +50,13 @@ bool operator!=(const Triangle_2<Kernel> &t2) const;
 
 /*!
 returns the i'th vertex modulo 3 of `t`.
+\cgalEpicExact
 */
 Point_2<Kernel> vertex(int i) const;
 
 /*!
 returns `vertex(i)`.
+\cgalEpicExact
 */
 Point_2<Kernel> operator[](int i) const;
 
@@ -127,6 +130,7 @@ bool has_on_unbounded_side(const Point_2<Kernel> &p) const;
 returns a triangle where the boundary is oriented the other
 way round (this flips the positive and the negative side, but
 not the bounded and unbounded side).
+\cgalEpicExact
 */
 Triangle_2<Kernel> opposite();
 
@@ -137,6 +141,7 @@ Kernel::FT area() const;
 
 /*!
 returns a bounding box containing `t`.
+\cgalEpicExact
 */
 Bbox_2 bbox() const;
 

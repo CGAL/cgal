@@ -509,8 +509,8 @@ void test3(){
     ;
   CP_ cp_ Kinit(construct_point_d_object);
   CV_ cv_ Kinit(construct_vector_d_object);
-  typename boost::mpl::if_<std::is_same<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>,Construct_point3_helper<CP_>,CP_>::type cp(cp_);
-  typename boost::mpl::if_<std::is_same<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>,Construct_point3_helper<CV_>,CV_>::type cv(cv_);
+  std::conditional_t<std::is_same_v<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>,Construct_point3_helper<CP_>,CP_> cp(cp_);
+  std::conditional_t<std::is_same_v<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>,Construct_point3_helper<CV_>,CV_> cv(cv_);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
   CC cc Kinit(compute_coordinate_d_object);
   CL cl Kinit(compare_lexicographically_d_object);

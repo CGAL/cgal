@@ -282,26 +282,29 @@ Scene_polyhedron_selection_item_priv::triangulate_facet(fg_face_descriptor fit,c
   const CGAL::qglviewer::Vec off = Three::mainViewer()->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
 
-  typedef FacetTriangulator<Face_graph, EPICK, fg_vertex_descriptor> FT;
-  FT triangulation(fit,normal,poly, offset);
-    //iterates on the internal faces to add the vertices to the positions
-    //and the normals to the appropriate vectors
-    for(FT::CDT::Finite_faces_iterator
-        ffit = triangulation.cdt->finite_faces_begin(),
-        end = triangulation.cdt->finite_faces_end();
-        ffit != end; ++ffit)
-    {
-        if(ffit->info().is_external)
-            continue;
+  //iterates on the internal faces to add the vertices to the positions
+  //and the normals to the appropriate vectors
+  auto f = [&](auto& ffit, auto& /* v2v */) {
+    if (ffit.info().is_external)
+      return;
 
-        push_back_xyz(ffit->vertex(0)->point(), p_facets);
-        push_back_xyz(ffit->vertex(1)->point(), p_facets);
-        push_back_xyz(ffit->vertex(2)->point(), p_facets);
+    push_back_xyz(ffit.vertex(0)->point(), p_facets);
+    push_back_xyz(ffit.vertex(1)->point(), p_facets);
+    push_back_xyz(ffit.vertex(2)->point(), p_facets);
 
-        push_back_xyz(normal, p_normals);
-        push_back_xyz(normal, p_normals);
-        push_back_xyz(normal, p_normals);
-    }
+    push_back_xyz(normal, p_normals);
+    push_back_xyz(normal, p_normals);
+    push_back_xyz(normal, p_normals);
+    };
+
+  try {
+    FacetTriangulator<Face_graph, EPICK, fg_vertex_descriptor> triangulation(fit, normal, poly, offset);
+    triangulation.per_face(f);
+  }
+  catch (...) {
+    FacetTriangulator<Face_graph, EPICK, fg_vertex_descriptor, CGAL::Exact_intersections_tag> triangulation(fit, normal, poly, offset);
+    triangulation.per_face(f);
+  }
 }
 
 

@@ -48,7 +48,6 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
@@ -1224,10 +1223,8 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           std::enable_if_t<
-            boost::mpl::and_<
-              std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-              std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-            >::value
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
           >* =NULL)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<

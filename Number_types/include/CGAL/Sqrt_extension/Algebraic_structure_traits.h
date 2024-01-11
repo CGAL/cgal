@@ -204,10 +204,10 @@ public:
   typedef Sqrt_extension< COEFF_, ROOT_, ACDE_TAG,FP_TAG > Type;
 
     // Tag_true if COEFF and ROOT are exact
-    typedef typename ::boost::mpl::if_c<
-       bool( ::std::is_same<typename CGAL::Algebraic_structure_traits<ROOT_ >::Is_exact,::CGAL::Tag_true>::value )&&
-       bool( ::std::is_same<typename CGAL::Algebraic_structure_traits<COEFF_>::Is_exact,::CGAL::Tag_true>::value )
-           ,::CGAL::Tag_true,::CGAL::Tag_false>::type Is_exact;
+    typedef std::conditional_t<
+       std::is_same_v<typename CGAL::Algebraic_structure_traits<ROOT_ >::Is_exact,::CGAL::Tag_true> &&
+       std::is_same_v<typename CGAL::Algebraic_structure_traits<COEFF_>::Is_exact,::CGAL::Tag_true>
+           ,::CGAL::Tag_true,::CGAL::Tag_false> Is_exact;
 
     typedef typename Algebraic_structure_traits<COEFF_>::Is_numerical_sensitive
     Is_numerical_sensitive;

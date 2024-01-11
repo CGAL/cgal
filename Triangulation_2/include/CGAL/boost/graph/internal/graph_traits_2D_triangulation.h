@@ -4,11 +4,13 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé,
 //                 Andreas Fabri,
 //                 Fernando Cacciola
+
+#include <CGAL/license/Triangulation_2.h>
 
 #ifndef CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS
   #error CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS is not defined

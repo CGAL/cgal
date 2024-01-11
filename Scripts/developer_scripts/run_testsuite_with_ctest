@@ -312,16 +312,16 @@ run_test_on_platform()
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
   CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DWITH_tests=ON"
   if [ -n "${SCRIPTS_DIR}" ]; then
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
   else
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then

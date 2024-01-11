@@ -12,11 +12,11 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
 
-typedef CGAL::Polyhedron_3<Kernel>                            Polyhedron;
+typedef CGAL::Polyhedron_3<Kernel>                            Mesh;
 
-typedef Polyhedron::Vertex_handle                             Vertex_handle;
-typedef Polyhedron::Halfedge_handle                           Halfedge_handle;
-typedef Polyhedron::Facet_handle                              Facet_handle;
+typedef Mesh::Vertex_handle                                   Vertex_handle;
+typedef Mesh::Halfedge_handle                                 Halfedge_handle;
+typedef Mesh::Facet_handle                                    Facet_handle;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mech-holes-shark.off");
 
-  Polyhedron poly;
+  Mesh poly;
   if(!PMP::IO::read_polygon_mesh(filename, poly))
   {
     std::cerr << "Invalid input." << std::endl;
