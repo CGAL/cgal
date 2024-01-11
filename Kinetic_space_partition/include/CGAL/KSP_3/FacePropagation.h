@@ -80,7 +80,7 @@ public:
     m_data.reset_to_initialization();
 
     for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i)
-      m_data.k(i) = k;
+      m_data.k(i) = static_cast<int>(k);
 
     initialize_queue();
 
@@ -129,7 +129,7 @@ private:
 
       ++iteration;
 
-      apply(event, iteration);
+      apply(event);
     }
     return iteration;
   }
@@ -138,7 +138,7 @@ private:
   **        HANDLE EVENTS       **
   ********************************/
 
-  void apply(const Face_event& event, std::size_t iteration) {
+  void apply(const Face_event& event) {
     if (m_data.igraph().face(event.face).part_of_partition) {
       return;
     }

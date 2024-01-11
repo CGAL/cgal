@@ -86,7 +86,7 @@ public:
   { }
 
   Initializer(std::vector<std::vector<Point_3> >& input_polygons, std::vector<typename Intersection_kernel::Plane_3>& input_planes, Data_structure& data, const Parameters& parameters) :
-    m_input_polygons(input_polygons), m_data(data), m_parameters(parameters), m_input_planes(input_planes)
+    m_input_polygons(input_polygons), m_data(data), m_input_planes(input_planes), m_parameters(parameters)
   { }
 
   void initialize(const std::array<typename Intersection_kernel::Point_3, 8>& bbox, std::vector<std::size_t>& input_polygons) {
@@ -180,7 +180,7 @@ private:
           break;
         }
       }
-      CGAL_assertion(inext != -1);
+      CGAL_assertion(inext != static_cast<std::size_t>(-1));
 
       next = connected[inext].first;
       face.edges.push_back(next);
@@ -218,12 +218,12 @@ private:
 
   void get_prev_next(std::size_t sp_idx, IEdge edge, IEdge& prev, IEdge& next) {
     CGAL_assertion(edge != Intersection_graph::null_iedge());
-    CGAL_assertion(sp_idx != -1);
+    CGAL_assertion(sp_idx != static_cast<std::size_t>(-1));
 
     std::vector<std::pair<IEdge, Direction_2> > connected;
     m_data.get_and_sort_all_connected_iedges(sp_idx, m_data.target(edge), connected);
     //if (connected.size() <= 2) ivertex is on bbox edge
-    std::size_t inext = -1, iprev = -1;
+    std::size_t inext = static_cast<std::size_t>(-1), iprev = static_cast<std::size_t>(-1);
     for (std::size_t idx = 0; idx < connected.size(); idx++) {
       if (connected[idx].first == edge) {
         iprev = (idx - 1 + connected.size()) % connected.size();
@@ -232,8 +232,8 @@ private:
       }
     }
 
-    CGAL_assertion(inext != -1);
-    CGAL_assertion(iprev != -1);
+    CGAL_assertion(inext != static_cast<std::size_t>(-1));
+    CGAL_assertion(iprev != static_cast<std::size_t>(-1));
     prev = connected[iprev].first;
     next = connected[inext].first;
   }
@@ -399,7 +399,7 @@ private:
         typename Intersection_kernel::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
         typename Intersection_kernel::Line_2 exact_line(a, b);
         Line_2 l = to_inexact(exact_line);
-        Point_2 origin = l.point();
+
         typename Intersection_kernel::Vector_2 ldir = exact_line.to_vector();
         ldir = (typename Intersection_kernel::FT(1.0) / CGAL::approximate_sqrt(ldir * ldir)) * ldir;
         Vector_2 dir = to_inexact(ldir);
@@ -575,11 +575,10 @@ private:
         for (auto& f : sp.ifaces()) {
           Face_property& fp = m_data.igraph().face(f);
 
-          typename Intersection_kernel::Point_2& p = to_exact(sp.data().centroid);
+          typename Intersection_kernel::Point_2 p = to_exact(sp.data().centroid);
           bool outside = false;
 
           // poly, vertices and edges in IFace are oriented ccw
-          std::size_t idx = 0;
           for (std::size_t i = 0; i < fp.pts.size(); i++) {
             typename Intersection_kernel::Vector_2 ts = fp.pts[(i + fp.pts.size() - 1) % fp.pts.size()] - p;
             typename Intersection_kernel::Vector_2 tt = fp.pts[i] - p;
@@ -626,8 +625,6 @@ private:
 
   void add_polygons(const std::vector<std::vector<typename Intersection_kernel::Point_3> >& bbox_faces, std::vector<std::size_t>& input_polygons) {
     add_bbox_faces(bbox_faces);
-
-    From_exact from_exact;
 
     // Filter input polygons
     std::vector<bool> remove(input_polygons.size(), false);
@@ -745,7 +742,7 @@ private:
 
     // Create the merged polygon.
     std::vector<Point_2> merged;
-    create_merged_polygon(support_plane_idx, points, merged);
+    create_merged_polygon(points, merged);
 
     if (is_debug) {
       std::cout << "merged polygon: " << std::endl;
@@ -763,13 +760,12 @@ private:
     polygon_b = merged;
   }
 
-  void create_merged_polygon(const std::size_t support_plane_idx, const std::vector<Point_2>& points, std::vector<Point_2>& merged) const {
+  void create_merged_polygon(const std::vector<Point_2>& points, std::vector<Point_2>& merged) const {
     merged.clear();
 
     CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(merged));
 
     CGAL_assertion(merged.size() >= 3);
-    //CGAL_assertion(is_polygon_inside_bbox(support_plane_idx, merged));
   }
 
   void create_bbox_meshes() {

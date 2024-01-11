@@ -228,11 +228,11 @@ public:
 
   bool add_face(std::size_t sp_idx, const Edge_descriptor& edge, const Face_descriptor& idx) {
     auto pair = m_graph[edge].faces.insert(std::make_pair(sp_idx, std::pair<Face_descriptor, Face_descriptor>(-1, -1)));
-    if (pair.first->second.first == -1) {
+    if (pair.first->second.first == static_cast<std::size_t>(-1)) {
       pair.first->second.first = idx;
       return true;
     }
-    else if (pair.first->second.second == -1) {
+    else if (pair.first->second.second == static_cast<std::size_t>(-1)) {
       pair.first->second.second = idx;
       return true;
     }
