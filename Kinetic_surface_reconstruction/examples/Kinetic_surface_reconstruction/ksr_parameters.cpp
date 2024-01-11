@@ -135,7 +135,7 @@ int main(const int argc, const char** argv) {
   }
 
   if (parameters.min_region_size == 0)
-    parameters.min_region_size = point_set.size() * 0.01;
+    parameters.min_region_size = static_cast<std::atomic_size_t>(point_set.size() * 0.01);
 
   std::cout << std::endl;
   std::cout << "--- INPUT STATS: " << std::endl;

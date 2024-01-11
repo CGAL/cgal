@@ -673,7 +673,7 @@ private:
         write_face(m_lcc.dart_descriptor(*it), "face_wo_volume.ply");
       }
 
-      int first = m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id;
+      int first = static_cast<int>(m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id);
       auto& inf1 = m_lcc.template info<3>(m_lcc.dart_descriptor(*it++));
 
       auto inf2 = inf1;
@@ -682,7 +682,7 @@ private:
 
       int second;
       if (n.size() == 2 && it != n.end())
-        second = m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id;
+        second = static_cast<int>(m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id);
 
       if (n.size() == 2 && it != n.end())
         m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id + 6);
@@ -710,8 +710,8 @@ private:
 
     std::size_t max_inside = 0, max_outside = 0;
     for (std::size_t i = 0; i < m_volumes.size(); i++) {
-      max_inside = (std::max<double>)(m_cost_matrix[0][i + 6], max_inside);
-      max_outside = (std::max<double>)(m_cost_matrix[1][i + 6], max_outside);
+      max_inside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[0][i + 6]), max_inside);
+      max_outside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[1][i + 6]), max_outside);
     }
 
     // Dump volumes colored by votes
@@ -1123,7 +1123,7 @@ private:
 
       //write_face(cur_fdh, std::to_string(region) + "-inside-" + std::to_string(cur_fa) + ".ply");
 
-      region_index[cur_fa] = region;
+      region_index[cur_fa] = static_cast<int>(region);
 
       Dart_descriptor n = cur_fdh;
       std::vector<Point_3> f;
@@ -1311,16 +1311,16 @@ private:
 
     std::size_t num_vertices = 0;
 
-    for (std::size_t i = 0; i < polygons.size(); i++) {
+    for (int i = 0; i < polygons.size(); i++) {
       num_vertices += polygons[i].size();
-      for (std::size_t j = 0; j < polygons[i].size(); j++) {
-        vertices.push_back(cdt.insert(pl.to_2d(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[i][j])))));
+      for (int j = 0; j < polygons[i].size(); j++) {
+        vertices.push_back(cdt.insert(pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])))));
         auto it = va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1));
         CGAL_assertion(it.second);
 
         vertices.back()->info().i = i;
         vertices.back()->info().j = j;
-        vertices.back()->info().p = pl.to_2d(m_lcc.point(m_lcc.dart_of_attribute<0>(polygons[i][j])));
+        vertices.back()->info().p = pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])));
         vertices.back()->info().dh = polygons[i][j];
 
         if (j >= 1)
@@ -1417,8 +1417,6 @@ private:
     Face_attribute& fa = m_lcc.attribute<2>(dh);
     auto& finfo = m_lcc.info_of_attribute<2>(fa);
 
-    From_exact from_exact;
-
     typename LCC::Dart_descriptor dh2 = m_lcc.beta<2>(dh);
 
     std::size_t idx = 1;
@@ -1447,8 +1445,6 @@ private:
 
   void collect_border(typename LCC::Dart_descriptor dh, std::vector<bool>& processed, std::vector<std::vector<std::size_t> >& borders) {
     processed[dh] = true;
-
-    From_exact from_exact;
 
     if (!m_labels[m_lcc.info<3>(dh).volume_id + 6] == 1)
       std::cout << "collect_border called on dart of outside volume, dh " << dh << " volume_id " << m_lcc.info<3>(dh).volume_id << std::endl;
@@ -1519,7 +1515,6 @@ private:
     //borders contains Attribute<0> handles casted to std::size_t
     std::vector<bool> processed(m_lcc.number_of_darts(), false);
 
-    From_exact from_exact;
     borders_per_region.resize(region_index.size());
 
     for (std::size_t i = 0;i<region_index.size();i++) {
@@ -1876,7 +1871,7 @@ private:
     FT bbox_max[] = { -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)(), -(std::numeric_limits<FT>::max)() };
     for (const auto& p : m_points) {
       const auto& point = get(m_point_map, p);
-      for (std::size_t i = 0; i < 3; i++) {
+      for (int i = 0; i < 3; i++) {
         bbox_min[i] = (std::min)(point[i], bbox_min[i]);
         bbox_max[i] = (std::max)(point[i], bbox_max[i]);
       }
@@ -2083,7 +2078,7 @@ private:
     // 3 ymax
     // 4 xmin
     // 5 zmax
-    const std::size_t force = m_total_inliers * 3;
+    const double force = static_cast<double>(m_total_inliers * 3);
     // 0 - cost for labelled as outside
     cost_matrix[0][0] = 0;
     cost_matrix[0][1] = 0;
@@ -2099,7 +2094,7 @@ private:
     cost_matrix[1][4] = 0;
     cost_matrix[1][5] = 0;
 
-    if (m_ground_polygon_index != -1 && ground) {
+    if (m_ground_polygon_index != static_cast<std::size_t>(-1) && ground) {
       if (m_verbose)
         std::cout << "using estimated ground plane for reconstruction" << std::endl;
       cost_matrix[0][0] = force;

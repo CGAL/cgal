@@ -73,8 +73,8 @@ struct Orthtree_traits_polygons : public Orthtree_traits_3_base<GeomTraits>
 
     for (const std::pair<std::size_t, Node_data_element> &p : m_polygons) {
       const Node_data_element& poly = p.second;
-      for (std::size_t i = 0; i < poly.size(); i++)
-        for (std::size_t d = 0; d < Dimension::value; d++) {
+      for (int i = 0; i < poly.size(); i++)
+        for (int d = 0; d < Dimension::value; d++) {
           bbox_min[d] = (std::min)(bbox_min[d], poly[i][d]);
           bbox_max[d] = (std::max)(bbox_max[d], poly[i][d]);
         }
@@ -106,13 +106,13 @@ struct Orthtree_traits_polygons : public Orthtree_traits_3_base<GeomTraits>
       Node_data_element lower, upper;
       const Node_data_element& poly = p.second;
 
-      FT last = poly.back()[dimension];
+      FT last = poly.back()[static_cast<int>(dimension)];
       bool last_lower = (last <= mid);
       bool last_upper = (mid <= last);
       std::size_t last_index = poly.size() - 1;
 
       for (std::size_t i = 0; i < poly.size(); i++) {
-        FT d = poly[i][dimension];
+        FT d = poly[i][static_cast<int>(dimension)];
         bool clower = d <= mid;
         bool cupper = mid <= d;
 

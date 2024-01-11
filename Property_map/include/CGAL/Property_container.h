@@ -492,14 +492,14 @@ public:
       auto unused_end = unused_begin;
 
       // Determine if the group fits
-      if (std::distance(unused_begin, m_active_indices.end()) >= n)
+      if (std::distance(unused_begin, m_active_indices.end()) >= static_cast<int>(n))
         unused_end = std::find_if(
           unused_begin, (std::min)(unused_begin + n, m_active_indices.end()),
           [](bool used) { return used; }
       );
 
       // If the discovered range was large enough
-      if (std::distance(unused_begin, unused_end) >= n) {
+      if (std::distance(unused_begin, unused_end) >= static_cast<int>(n)) {
 
         // Mark the indices as used, and reset the properties of each of them
         // todo: it would be better to provide a function to set a range
