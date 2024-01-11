@@ -42,7 +42,7 @@ target_link_libraries(
   PUBLIC scene_surface_mesh_item scene_points_with_normal_item
          scene_polylines_item)
 
-     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+     if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
        set_tests_properties(
          "compilation of  create_obb_mesh_plugin"
          PROPERTIES RESOURCE_LOCK Selection_test_resources)

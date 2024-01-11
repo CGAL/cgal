@@ -37,7 +37,6 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>

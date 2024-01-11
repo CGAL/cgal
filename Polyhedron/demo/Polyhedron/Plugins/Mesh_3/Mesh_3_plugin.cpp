@@ -505,6 +505,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           ui.facetMinSizing,
           SLOT(setEnabled(bool)));
 
+  connect(ui.noFacetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.sizingMinLabel,
+          SLOT(setEnabled(bool)));
+
   connect(
       ui.noAngle, SIGNAL(toggled(bool)), ui.facetAngle, SLOT(setEnabled(bool)));
 
@@ -516,6 +521,11 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   connect(ui.noTetMinSizing,
           SIGNAL(toggled(bool)),
           ui.tetMinSizing,
+          SLOT(setEnabled(bool)));
+
+  connect(ui.noTetMinSizing,
+          SIGNAL(toggled(bool)),
+          ui.tetMinSizingLabel,
           SLOT(setEnabled(bool)));
 
   connect(ui.noTetShape,
@@ -599,6 +609,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                            diag); // max
   ui.facetSizing->setValue(facets_sizing);
   ui.facetMinSizing->setValue(facets_min_sizing);
+  ui.facetMinSizing->setEnabled(false);
+  ui.noFacetMinSizing->setChecked(false);
   ui.edgeSizing->setValue(edges_sizing);
   ui.edgeMinSizing->setValue(edges_min_sizing);
 
@@ -606,10 +618,14 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                          diag);        // max
   ui.tetSizing->setValue(tets_sizing); // default value
   ui.tetMinSizing->setValue(tets_min_sizing);
+  ui.tetMinSizing->setEnabled(false);
+  ui.noTetMinSizing->setChecked(false);
 
   ui.approx->setRange(diag * 10e-7, // min
                       diag);        // max
   ui.approx->setValue(approx);
+  ui.approx->setToolTip(tr("Approximation error: in [%1; %2]")
+                       .arg(diag * 10e-7).arg(diag));
 
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);

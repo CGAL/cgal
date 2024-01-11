@@ -31,6 +31,7 @@ public:
 introduces an iso-oriented rectangle `r` with diagonal
 opposite vertices `p` and `q`. Note that the object is
 brought in the canonical form.
+\cgalEpicExact
 */
 Iso_rectangle_2(const Point_2<Kernel> &p,
 const Point_2<Kernel> &q);
@@ -40,6 +41,8 @@ introduces an iso-oriented rectangle `r` with diagonal
 opposite vertices `p` and `q`. The `int` argument value
 is only used to distinguish the two overloaded functions.
 \pre `p.x()<=q.x()` and `p.y()<=q.y()`.
+
+\cgalEpicExact
 */
 Iso_rectangle_2(const Point_2<Kernel> &p,
 const Point_2<Kernel> &q,
@@ -51,6 +54,7 @@ minimal \f$ x\f$ coordinate is the one of `left`, the
 maximal \f$ x\f$ coordinate is the one of `right`, the
 minimal \f$ y\f$ coordinate is the one of `bottom`, the
 maximal \f$ y\f$ coordinate is the one of `top`.
+\cgalEpicExact
 */
 Iso_rectangle_2(const Point_2<Kernel> &left,
 const Point_2<Kernel> &right,
@@ -70,6 +74,7 @@ const Kernel::RT& hw = RT(1));
 /*!
 If `Kernel::RT` is constructible from double,
 introduces an iso-oriented rectangle from `bbox`.
+\cgalEpicExact
 */
 Iso_rectangle_2(const Bbox_2& bbox);
 
@@ -92,41 +97,49 @@ bool operator!=(const Iso_rectangle_2<Kernel> &r2) const;
 /*!
 returns the i'th vertex modulo 4 of `r` in counterclockwise order,
 starting with the lower left vertex.
+\cgalEpicExact
 */
 Point_2<Kernel> vertex(int i) const;
 
 /*!
 returns `vertex(i)`.
+\cgalEpicExact
 */
 Point_2<Kernel> operator[](int i) const;
 
 /*!
 returns the lower left vertex of `r` (= `vertex(0)`).
+\cgalEpicExact
 */
 Point_2<Kernel> min() const;
 
 /*!
 returns the upper right vertex of `r` (= `vertex(2)`).
+\cgalEpicExact
 */
 Point_2<Kernel> max() const;
 
 /*!
 returns the \f$ x\f$ coordinate of lower left vertex of `r`.
+\cgalEpicExact
 */
 Kernel::FT xmin() const;
 
 /*!
 returns the \f$ y\f$ coordinate of lower left vertex of `r`.
+\cgalEpicExact
 */
 Kernel::FT ymin() const;
 
 /*!
 returns the \f$ x\f$ coordinate of upper right vertex of `r`.
+\cgalEpicExact
 */
 Kernel::FT xmax() const;
 
 /*!
 returns the \f$ y\f$ coordinate of upper right vertex of `r`.
+\cgalEpicExact
 */
 Kernel::FT ymax() const;
 
@@ -134,6 +147,8 @@ Kernel::FT ymax() const;
 returns the `i`'th %Cartesian coordinate of the
 lower left vertex of `r`.
 \pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::FT min_coord(int i) const;
 
@@ -141,6 +156,8 @@ Kernel::FT min_coord(int i) const;
 returns the `i`'th %Cartesian coordinate of the
 upper right vertex of `r`.
 \pre `0 <= i <= 1`.
+
+\cgalEpicExact
 */
 Kernel::FT max_coord(int i) const;
 
@@ -190,6 +207,7 @@ Kernel::FT area() const;
 
 /*!
 returns a bounding box containing `r`.
+\cgalEpicExact
 */
 Bbox_2 bbox() const;
 

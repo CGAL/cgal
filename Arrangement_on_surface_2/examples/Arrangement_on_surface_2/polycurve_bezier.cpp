@@ -19,12 +19,12 @@ int main() {
 #include "arr_Bezier.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_polycurve_traits_2<Traits>            Polycurve_bezier_traits;
-typedef Polycurve_bezier_traits::Point_2                Point;
-typedef Polycurve_bezier_traits::X_monotone_curve_2     X_mono_polycurve;
-typedef CGAL::Arrangement_2<Polycurve_bezier_traits>    Arrangement_2;
+using Polycurve_bezier_traits = CGAL::Arr_polycurve_traits_2<Traits>;
+using Point = Polycurve_bezier_traits::Point_2;
+using X_mono_polycurve = Polycurve_bezier_traits::X_monotone_curve_2;
+using Arrangement_2 = CGAL::Arrangement_2<Polycurve_bezier_traits>;
 
-typedef std::variant<Point, Bezier_x_monotone_curve>  Make_x_monotone_result;
+using Make_x_monotone_result = std::variant<Point, Bezier_x_monotone_curve>;
 
 int main() {
   Polycurve_bezier_traits pc_traits;

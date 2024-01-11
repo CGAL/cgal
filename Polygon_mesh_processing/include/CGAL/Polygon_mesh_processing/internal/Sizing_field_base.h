@@ -60,13 +60,14 @@ public:
   typedef typename K::FT                                        FT;
 
 public:
-  virtual FT at(const vertex_descriptor v) const = 0;
+  virtual FT at(const vertex_descriptor v, const PolygonMesh&) const = 0;
   virtual std::optional<FT> is_too_long(const vertex_descriptor va,
-                                        const vertex_descriptor vb) const = 0;
+                                        const vertex_descriptor vb,
+                                        const PolygonMesh&) const = 0;
   virtual std::optional<FT> is_too_short(const halfedge_descriptor h,
                                          const PolygonMesh& pmesh) const = 0;
   virtual Point_3 split_placement(const halfedge_descriptor h, const PolygonMesh& pmesh) const = 0;
-  virtual void update(const vertex_descriptor v, const PolygonMesh& pmesh) = 0;
+  virtual void register_split_vertex(const vertex_descriptor v, const PolygonMesh& pmesh) = 0;
 
 };
 

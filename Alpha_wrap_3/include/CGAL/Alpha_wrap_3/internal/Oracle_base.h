@@ -321,7 +321,6 @@ public:
   typename AABB_tree::Bounding_box bbox() const
   {
     CGAL_precondition(!empty());
-
     return tree().bbox();
   }
 
