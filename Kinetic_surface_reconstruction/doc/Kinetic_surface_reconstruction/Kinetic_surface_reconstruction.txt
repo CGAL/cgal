@@ -85,18 +85,18 @@ Impact of parameters on the reconstruction of the rotated lans model.\n From lef
 \subsection ksrBasicExample Basic Example
 This minimal example shows the import of a simple synthetic point cloud and an reconstruction using mostly default parameters.
 
-\cgalExample{Kinetic_surface_reconstruction/basic.cpp}
+\cgalExample{Kinetic_surface_reconstruction/ksr_basic.cpp}
 
 \subsection ksrBuildingExample Building Example
 This example shows the import of an acquired point cloud of a building and a reconstruction using a common choice of parameters for building reconstruction. The input point cloud is reoriented to be axis-aligned and regularization is used to simplify the detected shapes before reconstruction.
 The actual reconstruction method is actually fast. To avoid running the full shape detection and kinetic partition just to try different values for beta, several reconstructions are performed and exported into ply format.
 
-\cgalExample{Kinetic_surface_reconstruction/building.cpp}
+\cgalExample{Kinetic_surface_reconstruction/ksr_building.cpp}
 
 \subsection ksrParametersExample Parameters Example
 This example provides a command line version of the kinetic surface reconstruction allowing to configure the input point cloud filename and most parameters.
 
-\cgalExample{Kinetic_surface_reconstruction/parameters.cpp}
+\cgalExample{Kinetic_surface_reconstruction/ksr_parameters.cpp}
 
 \section ksrPerformance Performance
 
