@@ -621,10 +621,10 @@ private:
     for (auto& d : face_range) {
       typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
 
-      Face_attribute fa = m_lcc.attribute<2>(dh);
+      Face_attribute fa = m_lcc.template attribute<2>(dh);
       if (fa == m_lcc.null_descriptor) {
-        dh = m_lcc.beta<3>(dh);
-        fa = m_lcc.attribute<2>(dh);
+        dh = m_lcc.template beta<3>(dh);
+        fa = m_lcc.template attribute<2>(dh);
       }
 
       if (fa == m_lcc.null_descriptor) {
@@ -633,7 +633,7 @@ private:
 
       m_faces_lcc.push_back(dh);
 
-      auto p = m_attrib2index_lcc.emplace(std::make_pair(m_lcc.attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
+      auto p = m_attrib2index_lcc.emplace(std::make_pair(m_lcc.template attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
       CGAL_assertion(p.second);
     }
 
@@ -653,11 +653,11 @@ private:
       assert(n.size() == 1 || n.size() == 2);
       auto it = n.begin();
 
-      auto& finf = m_lcc.info<2>(m_faces_lcc[i]);
+      auto& finf = m_lcc.template info<2>(m_faces_lcc[i]);
 
       bool skipped = false;
 
-      Volume_attribute va = m_lcc.attribute<3>(m_lcc.dart_descriptor(*it));
+      Volume_attribute va = m_lcc.template attribute<3>(m_lcc.dart_descriptor(*it));
       if (va == m_lcc.null_descriptor) {
         skipped = true;
         it++;
@@ -668,26 +668,26 @@ private:
         continue;
       }
 
-      va = m_lcc.attribute<3>(m_lcc.dart_descriptor(*it));
+      va = m_lcc.template attribute<3>(m_lcc.dart_descriptor(*it));
       if (va == m_lcc.null_descriptor) {
         write_face(m_lcc.dart_descriptor(*it), "face_wo_volume.ply");
       }
 
-      int first = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id;
-      auto& inf1 = m_lcc.info<3>(m_lcc.dart_descriptor(*it++));
+      int first = m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id;
+      auto& inf1 = m_lcc.template info<3>(m_lcc.dart_descriptor(*it++));
 
       auto inf2 = inf1;
       if (n.size() == 2 && it != n.end())
-        inf2 = m_lcc.info<3>(m_lcc.dart_descriptor(*it));
+        inf2 = m_lcc.template info<3>(m_lcc.dart_descriptor(*it));
 
       int second;
       if (n.size() == 2 && it != n.end())
-        second = m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id;
+        second = m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id;
 
       if (n.size() == 2 && it != n.end())
-        m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.info<3>(m_lcc.dart_descriptor(*it)).volume_id + 6);
+        m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id + 6);
       else
-        m_face_neighbors_lcc[i] = std::make_pair(first + 6, -m_lcc.info<2>(m_faces_lcc[i]).input_polygon_index - 1);
+        m_face_neighbors_lcc[i] = std::make_pair(first + 6, -m_lcc.template info<2>(m_faces_lcc[i]).input_polygon_index - 1);
 
       if (m_face_neighbors_lcc[i].first > m_face_neighbors_lcc[i].second)
         m_face_neighbors_lcc[i] = std::make_pair(m_face_neighbors_lcc[i].second, m_face_neighbors_lcc[i].first);
@@ -1092,7 +1092,7 @@ private:
     m_volume_below_ground.resize(num_volumes, false);
     From_exact from_exact;
 
-    if (m_ground_polygon_index != -1)
+    if (m_ground_polygon_index != static_cast<std::size_t>(-1))
       for (const auto &vd : m_lcc.template one_dart_per_cell<3>()) {
         const auto& info = m_lcc.info<3>(m_lcc.dart_descriptor(vd));
 
@@ -1528,9 +1528,9 @@ private:
 
       typename LCC::Dart_descriptor dh = m_faces_lcc[i];
 
-      Volume_attribute va = m_lcc.attribute<3>(dh);
-      Face_attribute &fa = m_lcc.attribute<2>(dh);
-      auto finfo = m_lcc.info_of_attribute<2>(fa);
+      Volume_attribute va = m_lcc.template attribute<3>(dh);
+      Face_attribute &fa = m_lcc.template attribute<2>(dh);
+      auto finfo = m_lcc.template info_of_attribute<2>(fa);
       const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
 
       // Belongs to reconstruction?
@@ -1544,7 +1544,7 @@ private:
       typename LCC::Dart_descriptor dh2 = dh;
 
       do {
-        if (va != m_lcc.attribute<3>(dh2)) {
+        if (va != m_lcc.template attribute<3>(dh2)) {
           std::cout << "volume attribute mismatch" << std::endl;
         }
 
@@ -1553,7 +1553,7 @@ private:
 
           collect_border(dh2, processed, borders);
         }
-        dh2 = m_lcc.beta<1>(dh2);
+        dh2 = m_lcc.template beta<1>(dh2);
       } while (dh2 != dh);
     }
   }
@@ -1567,8 +1567,8 @@ private:
     std::vector<Dart_descriptor> other_faces;
     for (auto& d : m_lcc.template one_dart_per_cell<2>()) {
       Dart_descriptor dh = m_lcc.dart_descriptor(d);
-      if (m_lcc.info<2>(dh).input_polygon_index >= 0)
-        poly2faces[m_lcc.info<2>(dh).input_polygon_index].push_back(dh);
+      if (m_lcc.template info<2>(dh).input_polygon_index >= 0)
+        poly2faces[m_lcc.template info<2>(dh).input_polygon_index].push_back(dh);
       else
         other_faces.push_back(dh); // Contains faces originating from the octree decomposition as well as bbox faces
     }
@@ -1590,13 +1590,13 @@ private:
 
       // Remap from mapping to m_face_inliers
       for (auto p : mapping) {
-        Face_attribute& f = m_lcc.attribute<2>(p.first);
+        Face_attribute& f = m_lcc.template attribute<2>(p.first);
         std::size_t id = m_attrib2index_lcc[f];
         assert(m_face_inliers[id].size() == 0);
 
-        m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]].resize(p.second.size());
+        m_face_inliers[m_attrib2index_lcc[m_lcc.template attribute<2>(p.first)]].resize(p.second.size());
         for (std::size_t k = 0; k < p.second.size(); k++)
-          m_face_inliers[m_attrib2index_lcc[m_lcc.attribute<2>(p.first)]][k] = m_regions[i].second[p.second[k]];
+          m_face_inliers[m_attrib2index_lcc[m_lcc.template attribute<2>(p.first)]][k] = m_regions[i].second[p.second[k]];
 
         m_total_inliers += p.second.size();
       }
@@ -1604,7 +1604,7 @@ private:
       Plane_3 pl = from_exact(m_kinetic_partition.input_planes()[i]);
 
       for (std::size_t j = 0; j < poly2faces[i].size(); j++) {
-        std::size_t idx = m_attrib2index_lcc[m_lcc.attribute<2>(poly2faces[i][j])];
+        std::size_t idx = m_attrib2index_lcc[m_lcc.template attribute<2>(poly2faces[i][j])];
         m_face_area_lcc[idx] = 0;
 
         //multiple regions per input polygon
