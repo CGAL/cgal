@@ -487,6 +487,9 @@ private:
       const Vertex_handle vh0 = e.first->vertex(e.second);
       const Vertex_handle vh1 = e.first->vertex(e.third);
 
+      CGAL_assertion(is_on_feature(vh0));
+      CGAL_assertion(is_on_feature(vh1));
+
       const std::size_t& i0 = vertex_id.at(vh0);
       const std::size_t& i1 = vertex_id.at(vh1);
 
@@ -495,13 +498,13 @@ private:
 
       const auto mass = mass_along_segment(e, tr);
 
-      if (!c3t3.is_in_complex(vh0) && is_on_feature(vh1) && free_vertex[i0])
+      if (free_vertex[i0])
       {
         smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(p0, p1);
         neighbors[i0]++;
         masses[i0] += mass;
       }
-      if (!c3t3.is_in_complex(vh1) && is_on_feature(vh0) && free_vertex[i1])
+      if (free_vertex[i1])
       {
         smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(p1, p0);
         neighbors[i1]++;
@@ -512,9 +515,7 @@ private:
     // iterate over map of <vertex, id>
     for (auto [v, vid] : vertex_id)
     {
-      if (!free_vertex[vid])
-        continue;
-      if(!is_on_feature(v))
+      if (!free_vertex[vid] || !is_on_feature(v))
         continue;
 
       const Point_3 current_pos = point(v->point());
