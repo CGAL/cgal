@@ -33,7 +33,7 @@ namespace Isosurfacing {
  * \tparam Domain must be a model of `IsosurfacingDomain_3`.
  * \tparam PointRange must be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose value type can be constructed from the point type of the domain.
- * \tparam PolygonRange must be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ * \tparam TriangleRange must be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                      whose value type is itself a model of the concepts `RandomAccessContainer`
  *                      and `BackInsertionSequence` whose value type is `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
