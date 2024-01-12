@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef ORTHTREE_EXAMPLES_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H
-#define ORTHTREE_EXAMPLES_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H
+#ifndef ORTHTREE_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H
+#define ORTHTREE_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -21,9 +21,6 @@
 #include <CGAL/Orthtree.h>
 
 namespace CGAL {
-
-template <typename K, typename DimensionTag>
-struct Orthtree_traits_base_for_dimension;
 
 template <typename K, typename DimensionTag>
 struct Orthtree_traits_base_for_dimension {
@@ -57,6 +54,12 @@ struct Orthtree_traits_base_for_dimension {
       return Point_d{static_cast<int>(args_list.size()), args_list.begin(), args_list.end()};
     };
   }
+
+  auto locate_halfspace_object() const {
+    return [](const FT& a, const FT& b) -> bool {
+      return a < b;
+      };
+  }
   /// @}
 };
 
@@ -72,7 +75,7 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
   using Sphere_d = typename K::Circle_2;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_2;
   /*!
-   * \brief Two directions along each axis in Cartesian space, relative to a node.
+   * \brief Two directions along each axis in %Cartesian space, relative to a node.
    *
    * Directions are mapped to numbers as 2-bit integers.
    *
@@ -81,15 +84,15 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
    *
    * The following diagram may be a useful reference:
    *
-   *            3 *
-   *              |
-   *              |                    y+
-   *              |                    *
-   *     0 *------+------* 1           |
-   *              |                    |
-   *              |                    +-----* x+
-   *              |
-   *              * 2
+   *
+   *                * 3
+   *               /
+   *              /                    y+
+   *    0 *------+------* 1           *
+   *            /                    /
+   *           /                    +-----* x+
+   *        2 *
+   *
    *
    * This lookup table may also be helpful:
    *
@@ -97,14 +100,14 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
    * | --------- | ------ | ------ | ----- |
    * | `-x`      |  00    | 0      | LEFT  |
    * | `+x`      |  01    | 1      | RIGHT |
-   * | `-y`      |  10    | 2      | DOWN  |
-   * | `+y`      |  11    | 3      | UP    |
+   * | `-y`      |  10    | 2      | FRONT |
+   * | `+y`      |  11    | 3      | BACK  |
    */
   enum Adjacency {
     LEFT,
     RIGHT,
-    DOWN,
-    UP
+    FRONT,
+    BACK
   };
   /// @}
 
@@ -114,6 +117,12 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
     return [](const FT& x, const FT& y) -> Point_d {
       return {x, y};
     };
+  }
+
+  auto locate_halfspace_object() const {
+    return [](const FT& a, const FT& b) -> bool {
+      return a < b;
+      };
   }
   /// @}
 };
@@ -130,7 +139,7 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
   using Sphere_d = typename K::Sphere_3;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_3;
   /*!
-   * \brief Two directions along each axis in Cartesian space, relative to a node.
+   * \brief Two directions along each axis in %Cartesian space, relative to a node.
    *
    * Directions are mapped to numbers as 3-bit integers,
    * though the numbers 6 and 7 are not used because there are only 6 different directions.
@@ -140,15 +149,15 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
    *
    * The following diagram may be a useful reference:
    *
-   *            3 *
-   *              |  * 5
-   *              | /                  y+
-   *              |/                   *  z+
+   *            5 *
+   *              |  * 3
+   *              | /                  z+
+   *              |/                   *  y+
    *     0 *------+------* 1           | *
    *             /|                    |/
    *            / |                    +-----* x+
-   *         4 *  |
-   *              * 2
+   *         2 *  |
+   *              * 4
    *
    * This lookup table may also be helpful:
    *
@@ -156,29 +165,29 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
    * | --------- | ------ | ------ | ----- |
    * | `-x`      | 000    | 0      | LEFT  |
    * | `+x`      | 001    | 1      | RIGHT |
-   * | `-y`      | 010    | 2      | DOWN  |
-   * | `+y`      | 011    | 3      | UP    |
-   * | `-z`      | 100    | 4      | BACK  |
-   * | `+z`      | 101    | 5      | FRONT |
+   * | `-y`      | 010    | 2      | FRONT |
+   * | `+y`      | 011    | 3      | BACK  |
+   * | `-z`      | 100    | 4      | DOWN  |
+   * | `+z`      | 101    | 5      | UP    |
    */
   enum Adjacency {
     LEFT,
     RIGHT,
-    DOWN,
-    UP,
+    FRONT,
     BACK,
-    FRONT
+    DOWN,
+    UP
   };
   /// \cond SKIP_IN_MANUAL
   enum Child {
-    LEFT_BOTTOM_BACK,
-    RIGHT_BOTTOM_BACK,
-    LEFT_TOP_BACK,
-    RIGHT_TOP_BACK,
     LEFT_BOTTOM_FRONT,
     RIGHT_BOTTOM_FRONT,
+    LEFT_BOTTOM_BACK,
+    RIGHT_BOTTOM_BACK,
     LEFT_TOP_FRONT,
-    RIGHT_TOP_FRONT
+    RIGHT_TOP_FRONT,
+    LEFT_TOP_BACK,
+    RIGHT_TOP_BACK
   };
   /// \endcond
   /// @}
@@ -190,10 +199,15 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
       return {x, y, z};
     };
   }
+
+  auto locate_halfspace_object() const {
+    return [](const FT& a, const FT& b) -> bool {
+      return a < b;
+      };
+  }
   /// @}
 };
 
-
 }
 
-#endif //ORTHTREE_EXAMPLES_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H
+#endif //ORTHTREE_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H

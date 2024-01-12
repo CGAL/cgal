@@ -23,21 +23,30 @@
 
 namespace CGAL {
 
-template <class PolygonMesh, class VPM>
-struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
-  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type,
-  Dimension_tag<3>
-  // todo: it should be possible to determine the ambient dimension automatically, but this isn't working
-//  Ambient_dimension<
-//    typename boost::property_traits<VPM>::value_type,
-//    typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type
-//  >
-> {
+/*!
+  \ingroup PkgOrthtreeTraits
 
-  Orthtree_traits_face_graph(const PolygonMesh& pm, VPM vpm)
+  The class `Orthtree_traits_face_graph` can be used as a template parameter of
+  the `Orthtree` class.
+
+  \tparam PolygonMesh a model of `FaceGraph`.
+  \tparam VertexPointMap a property map associating points to the vertices of `PolygonMesh`.
+
+  \cgalModels{OrthtreeTraits}
+  \sa `CGAL::Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag>`
+*/
+template <class PolygonMesh, class VertexPointMap>
+struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
+  typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type,
+  Dimension_tag<3> > {
+
+  Orthtree_traits_face_graph(const PolygonMesh& pm, VertexPointMap vpm)
     : m_pm(pm), m_vpm(vpm) {}
 
-  using Self = Orthtree_traits_face_graph<PolygonMesh, VPM>;
+  /// \name Types
+  /// @{
+
+  using Self = Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>;
   using Tree = Orthtree<Self>;
 
   using Point_d = typename Self::Point_d;
@@ -46,10 +55,11 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   using FT = typename Self::FT;
   using Cartesian_const_iterator_d = typename Self::Cartesian_const_iterator_d;
 
-  // SL: these could be considered as built-in data and if the typedefs are not present, the tree have none
   using Node_data = std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>;
 
   using Geom_traits = typename Kernel_traits<Point_d>::type;
+
+  /// @}
 
   auto construct_root_node_bbox_object() const {
     return [&]() -> Bbox_d {
@@ -82,21 +92,22 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   auto distribute_node_contents_object() {
     return [&](typename Tree::Node_index n, Tree& tree, const Point_d& center) -> void {
       Node_data& ndata = tree.data(n);
+      auto traits = tree.traits();
       for (int i = 0; i < 8; ++i) {
         typename Tree::Node_index child = tree.child(n, i);
         Node_data& child_data = tree.data(child);
         Bbox_d bbox = tree.bbox(child);
-        for (auto f: ndata) {
+        for (auto f : ndata) {
           typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
             h = halfedge(f, m_pm);
           typename Geom_traits::Triangle_3 t(get(m_vpm, source(h, m_pm)),
-                                             get(m_vpm, target(h, m_pm)),
-                                             get(m_vpm, target(next(h, m_pm), m_pm)));
+            get(m_vpm, target(h, m_pm)),
+            get(m_vpm, target(next(h, m_pm), m_pm)));
           if (do_intersect(t, bbox))
             child_data.push_back(f);
         }
       }
-    };
+      };
   }
 
   class Split_predicate_node_min_extent {
@@ -116,9 +127,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
       if (tree.data(ni).empty()) return false;
 
       Bbox_d bb = tree.bbox(ni);
-      // TODO: we should get better version to get guarantees
-      // TODO: as long as the bbox is cubic you can use depth and initial size to conclude.
-      // todo (jackson): bbox is _not_ guaranteed to be cubic now, this may break in some very niche cases
+
       for (int i = 0; i < 3; ++i)
         if ((bb.max()[i] - bb.min()[i]) < 2 * m_min_extent)
           return false;
@@ -127,7 +136,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   };
 
   const PolygonMesh& m_pm;
-  VPM m_vpm;
+  VertexPointMap m_vpm;
 };
 
 } // end of CGAL namespace

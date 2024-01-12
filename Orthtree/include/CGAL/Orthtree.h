@@ -50,13 +50,13 @@ namespace CGAL {
 /*!
   \ingroup PkgOrthtreeClasses
 
-  \brief A data structure using an axis-aligned hybercubic
+  \brief A data structure using an axis-aligned hyperrectangle
   decomposition of dD space for efficient access and
   computation.
 
-  \details It builds a hierarchy of nodes which subdivices the space.
-  Each node represents an axis-aligned hypercubic region of space.
-  The contents of nodes depend on the Traits class, non-leaf nodes also
+  \details It builds a hierarchy of nodes which subdivides the space.
+  Each node represents an axis-aligned hyperrectangle region of space.
+  The contents of nodes depend on the traits class, non-leaf nodes also
   contain \f$2^{dim}\f$ other nodes which further subdivide the
   region.
 
@@ -86,7 +86,6 @@ public:
   using Adjacency = typename Traits::Adjacency; ///< Adjacency type.
 
   using Node_data = typename Traits::Node_data;
-  // todo: Node_data_element will only exist for certain Traits types, so I don't know if it can be re-exported
 
   /// @}
 
@@ -94,7 +93,7 @@ public:
   /// @{
 
   /*!
-   * \brief Self typedef for convenience.
+   * \brief Self alias for convenience.
    */
   using Self = Orthtree<Traits>;
 
@@ -138,7 +137,7 @@ public:
   using Split_predicate = std::function<bool(Node_index, const Self&)>;
 
   /*!
-   * \brief A model of `ConstRange` whose value type is `Node_index`.
+   * \brief A model of `ConstRange` whose value type is `Node_index`. Its iterator type is `ForwardIterator`.
    */
 #ifdef DOXYGEN_RUNNING
   using Node_range = unspecified_type;
@@ -148,16 +147,7 @@ public:
 #endif
 
   /*!
-   * \brief A model of `ConstRange` whose value type is `Node_index`.
-   */
-#ifdef DOXYGEN_RUNNING
-  using Node_range = unspecified_type;
-  using Node_index_range = unspecified_type;
-#else
-  using Node_index_range = boost::iterator_range<Index_traversal_iterator<Self>>;
-#endif
-  /*!
-   * \brief A Model of `LvaluePropertyMap` with `Node_index` as key type and `T` as value type.
+   * \brief A model of `LvaluePropertyMap` with `Node_index` as key type and `T` as value type.
    */
 #ifdef DOXYGEN_RUNNING
   template <class T>
@@ -204,8 +194,8 @@ public:
     \brief creates an orthtree for a traits instance.
 
     The constructed orthtree has a root node with no children,
-    containing the contents determined by `construct_root_node_contents_object` from the Traits class.
-    That root node has a bounding box determined by `construct_root_node_bbox_object` from the Traits class,
+    containing the contents determined by `Construct_root_node_contents` from the traits class.
+    That root node has a bounding box determined by `Construct_root_node_bbox` from the traits class,
     which typically encloses its contents.
 
     This single-node orthtree is valid and compatible
@@ -419,9 +409,9 @@ public:
   /// @{
 
   /*!
-   * \brief provides direct read-only access to the tree Traits.
+   * \brief provides direct read-only access to the tree traits.
    *
-   * @return a const reference to the Traits instantiation.
+   * @return a const reference to the traits instantiation.
    */
   const Traits& traits() const { return m_traits; }
 
@@ -485,7 +475,6 @@ public:
 
     \note The object constructed is not the bounding box of the node's contents,
     but the bounding box of the node itself.
-    For a cubic orthtree, this will always be cubic.
 
     \param n node to generate a bounding box for
 
@@ -610,8 +599,8 @@ public:
       // Find the index of the correct sub-node
       Local_coordinates local_coords;
       std::size_t dimension = 0;
-      for (const auto& r: cartesian_range(center, point))
-        local_coords[dimension++] = (get < 0 > (r) < get < 1 > (r));
+      for (const auto& r: cartesian_range(point, center))
+        local_coords[dimension++] = m_traits.locate_halfspace_object()(get<0>(r), get<1>(r));
 
       // Find the correct sub-node of the current node
       node_for_point = child(node_for_point, local_coords.to_ulong());
@@ -627,7 +616,7 @@ public:
     \note this function requires the function
     `bool CGAL::do_intersect(QueryType, Traits::Bbox_d)` to be defined.
 
-    This function finds all the intersecting leaf nodes and writes their indices to the ouput iterator.
+    This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
 
     \tparam Query the primitive class (e.g. sphere, ray)
     \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
@@ -902,7 +891,7 @@ public:
   /*!
     \brief finds node reached when descending the tree to a depth `d` and always choosing child 0.
 
-    Similar to `deepest_first_child`, but does not go to a fixed depth.
+    Similar to `deepest_first_child()`, but does go to a fixed depth.
 
     \param n the index of the node to find the `d`th first child of.
     \param d the depth to descend to.
@@ -936,7 +925,7 @@ public:
     When a node is split it is no longer a leaf node.
     A number of `Degree::value` children are constructed automatically, and their values are set.
     Contents of this node are _not_ propagated automatically, this is responsibility of the
-    `distribute_node_contents_object` in the Traits class.
+    `distribute_node_contents_object` in the traits class.
 
     \param n index of the node to split
  */
@@ -1104,7 +1093,7 @@ public:
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
 
-    // Nodes only have up to 2*dim different adjacent nodes (since cubes have 6 sides)
+    // Nodes only have up to 2*dim different adjacent nodes (since boxes have 6 sides)
     CGAL_precondition(direction.to_ulong() < Dimension::value * 2);
 
     // The root node has no adjacent nodes!
@@ -1165,11 +1154,11 @@ private: // functions :
 
   bool do_intersect(Node_index n, const Sphere& sphere) const {
 
-    // Create a cubic bounding box from the node
-    Bbox node_cube = bbox(n);
+    // Create a bounding box from the node
+    Bbox node_box = bbox(n);
 
     // Check for intersection between the node and the sphere
-    return CGAL::do_intersect(node_cube, sphere);
+    return CGAL::do_intersect(node_box, sphere);
   }
 
   template <typename Query, typename Node_output_iterator>

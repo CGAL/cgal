@@ -36,13 +36,15 @@ void reassign_points(
     return;
   }
 
+  auto traits = tree.traits();
+
   // Split the point collection around the center point on this dimension
   auto split_point = std::partition(
     points.begin(), points.end(),
     [&](const auto& p) -> bool {
       // This should be done with cartesian iterator,
       // but it seems complicated to do efficiently
-      return (get(point_map, p)[int(dimension)] < center[int(dimension)]);
+      return traits.locate_halfspace_object()(get(point_map, p)[int(dimension)], center[int(dimension)]);
     }
   );
 
@@ -73,9 +75,8 @@ void reassign_points(
 
   \cgalModels{OrthtreeTraits}
   \sa `CGAL::Octree`
-  \sa `CGAL::Orthtree_traits_2`
-  \sa `CGAL::Orthtree_traits_3`
-  \sa `CGAL::Orthtree_traits_d`
+  \sa `CGAL::Quadtree`
+  \sa `CGAL::Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag>`
 */
 template <
   typename GeomTraits,

@@ -25,11 +25,8 @@ public:
   /*!
     A random access iterator type to enumerate the
     %Cartesian coordinates of a point.
-
-    todo: This isn't used, should it be?
   */
   using Cartesian_const_iterator_d = unspecified_type;
-
 
   /*!
    * \brief The data type contained by each node.
@@ -39,7 +36,7 @@ public:
   /*!
    * \brief Number-type which can take on values indicating adjacency directions.
    *
-   * Must be able to take on values ranging from 0 to the number of faces of the (hyper)cube type, equivalent to 2 * D.
+   * Must be able to take on values ranging from 0 to the number of faces of the (hyper)rectangle type, equivalent to 2 * D.
    */
   using Adjacency = unspecified_type; ///< Specify the adjacency directions
 
@@ -47,7 +44,7 @@ public:
    * \brief Functor with an operator to create the bounding box of the root node.
    *
    * The bounding box must enclose all elements contained by the tree.
-   * It may be tight-fitting. The orthtree constructor produces a bounding cube surrounding this region.
+   * It may be tight-fitting. The orthtree constructor produces a bounding box surrounding this region.
    * For traits which assign no data to each node, this can be defined to return a fixed region.
    */
   using Construct_root_node_bbox = unspecified_type;
@@ -65,6 +62,14 @@ public:
    *
    */
   using Construct_root_node_contents = unspecified_type;
+
+  /*!
+   * \brief Functor to locate in which halfspace a number of type `FT` is located with respect to another number of type `FT`.
+   *
+   * The functor is used by `Orthtree::locate()` to identify in which leaf node a point is located.
+   * Distribute_node_contents should use `Locate_halfspace` to guarantee consistency wich `Orthtree::locate()`.
+   */
+  using Locate_halfspace = unspecified_type;
 
   /*!
    * \brief Functor which distributes a node's contents to its children.
@@ -105,6 +110,11 @@ public:
    * Function used to construct an object of type `Distribute_node_contents`.
    */
   Distribute_node_contents distribute_node_contents_object() const;
+
+  /*!
+   * Function used to construct an object of type `Locate_halfspace`.
+   */
+  Locate_halfspace locate_halfspace_object() const;
 
   /*!
    * Function used to construct an object of type `Construct_point_d`.

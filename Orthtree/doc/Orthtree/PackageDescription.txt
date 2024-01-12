@@ -1,4 +1,5 @@
-/// \defgroup PkgOrthtreeRef Quadtree\, Octree and Orthtree Reference
+/// \defgroup PkgOrthtreeRef Quadtrees, Octrees and Orthtrees Reference
+Quadtree, Octree and Orthtree Reference
 
 /// \defgroup PkgOrthtreeClasses Classes
 /// \ingroup PkgOrthtreeRef
@@ -48,12 +49,12 @@
 \cgalCRPSection{Classes}
 - `CGAL::Quadtree<GeomTraits, PointRange, PointMap>`
 - `CGAL::Octree<GeomTraits, PointRange, PointMap>`
-- `CGAL::Orthtree<Traits, PointRange, PointMap>`
+- `CGAL::Orthtree<GeomTraits, PointRange, PointMap>`
 
 \cgalCRPSection{Traits}
-- `CGAL::Orthtree_traits_2<GeomTraits>`
-- `CGAL::Orthtree_traits_point_3<GeomTraits>`
-- `CGAL::Orthtree_traits_d<GeomTraits, Dimension>`
+- `CGAL::Orthtree_traits_point<GeomTraits>`
+- `CGAL::Orthtree_traits_base_for_dimension<GeomTraits>`
+- `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`
 
 \cgalCRPSection{Split Predicates}
 - `CGAL::Orthtrees::Maximum_number_of_inliers`
