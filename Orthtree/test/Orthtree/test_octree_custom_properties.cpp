@@ -25,6 +25,23 @@ int main(void) {
 
   Octree tree({points, points.point_map()});
 
+  // Testing built in node properties
+  typename Octree::Property_map<typename Octree::Node_data> data_prop = tree.get_node_property<typename Octree::Node_data>("contents");
+
+  auto prop2 = tree.get_or_add_node_property("test", int(0));
+  assert(prop2.second);
+
+  auto prop3 = tree.get_node_property_if_exists<int>("test");
+  assert(prop3.has_value());
+
+  auto prop4 = tree.get_node_property_if_exists<std::string>("test");
+  assert(!prop4.has_value());
+
+  auto prop5 = tree.get_or_add_node_property("test", int(0));
+  assert(!prop5.second);
+
+  auto prop6 = tree.add_node_property("test2", std::string());
+
   // Default value should be respected
   auto &node_int_property = tree.add_node_property<int>("int", 5);
   assert(node_int_property[tree.root()] == 5);

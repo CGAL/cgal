@@ -164,7 +164,7 @@ public:
   using Property_map = unspecified_type;
 #else
   template <class T>
-  using Property_map = Properties::Experimental::Property_container<Node_index>::Array<T>;
+  using Property_map = Properties::Experimental::Property_array_handle<Node_index, T>;
 #endif
 
   /// \cond SKIP_IN_MANUAL
@@ -176,15 +176,17 @@ private: // data members :
 
   using Cartesian_ranges = Orthtrees::internal::Cartesian_ranges<Traits>;
   using Node_property_container = Properties::Experimental::Property_container<Node_index>;
+  template <class T>
+  using Property_array = Node_property_container::Array<T>;
 
   Traits m_traits; /* the tree traits */
 
   Node_property_container m_node_properties;
-  Property_map<Node_data>& m_node_contents;
-  Property_map<std::uint8_t>& m_node_depths;
-  Property_map<Global_coordinates>& m_node_coordinates;
-  Property_map<Maybe_node_index>& m_node_parents;
-  Property_map<Maybe_node_index>& m_node_children;
+  Property_array<Node_data>& m_node_contents;
+  Property_array<std::uint8_t>& m_node_depths;
+  Property_array<Global_coordinates>& m_node_coordinates;
+  Property_array<Maybe_node_index>& m_node_parents;
+  Property_array<Maybe_node_index>& m_node_children;
 
   using Bbox_dimensions = std::array<CGAL::Exact_predicates_exact_constructions_kernel::FT, Dimension::value>;
   CGAL::NT_converter<CGAL::Exact_predicates_exact_constructions_kernel::FT, typename Traits::Kernel::FT> conv;
@@ -327,7 +329,7 @@ public:
   }
 
   /*!
-    \brief Convenience overload that refines an orthtree using a
+    \brief convenience overload that refines an orthtree using a
     maximum depth and maximum number of inliers in a node as split
     predicate.
 
@@ -417,7 +419,7 @@ public:
   /// @{
 
   /*!
-   * \brief Provides direct read-only access to the tree Traits.
+   * \brief provides direct read-only access to the tree Traits.
    *
    * @return a const reference to the Traits instantiation.
    */
@@ -464,7 +466,7 @@ public:
 
 
   /*!
-    \brief Convenience method for using a traversal without constructing it yourself
+    \brief convenience method for using a traversal without constructing it yourself
 
     \tparam Traversal model of `OrthtreeTraversal` that provides functions
     compatible with the type of the orthtree
@@ -509,7 +511,7 @@ public:
   /// @{
 
   /*!
-    \brief Gets a property for nodes, adding it if it doesn't already exist.
+    \brief gets a property for nodes, adding it if it doesn't already exist.
 
     \tparam T the type of the property to add
 
@@ -521,11 +523,12 @@ public:
   template <typename T>
   std::pair<Property_map<T>, bool>
   get_or_add_node_property(const std::string& name, const T default_value = T()) {
-    return m_node_properties.get_or_add_property(name, default_value);
+    auto p = m_node_properties.get_or_add_property(name, default_value);
+    return std::pair<Property_map<T>, bool>(Property_map<T>(p.first), p.second);
   }
 
   /*!
-    \brief Adds a property for nodes.
+    \brief adds a property for nodes.
 
     \tparam T the type of the property to add
 
@@ -540,7 +543,7 @@ public:
   }
 
   /*!
-    \brief Gets a property of the tree nodes.
+    \brief gets a property of the tree nodes.
 
     The property to be retrieved must exist in the tree.
 
@@ -556,7 +559,7 @@ public:
   }
 
   /*!
-    \brief Gets a property of the tree nodes if it exists.
+    \brief gets a property of the tree nodes if it exists.
 
     \tparam T the type of the property to retrieve
 
@@ -567,7 +570,11 @@ public:
   template <typename T>
   std::optional<Property_map<T>>
   get_node_property_if_exists(const std::string& name) {
-    return m_node_properties.get_property_if_exists<T>(name);
+    auto p = m_node_properties.get_property_if_exists<T>(name);
+    if (p)
+      return std::optional<Property_map<T> >(Property_map<T>(*p));
+    else
+      return std::nullopt;
   }
 
   /// @}
@@ -681,7 +688,7 @@ public:
   /// @{
 
   /*!
-    \brief Determines whether the node specified by index `n` is a leaf node.
+    \brief determines whether the node specified by index `n` is a leaf node.
 
     \param n index of the node to check.
 
@@ -692,7 +699,7 @@ public:
   }
 
   /*!
-    \brief Determines whether the node specified by index `n` is a root node.
+    \brief determines whether the node specified by index `n` is a root node.
 
     \param n index of the node to check.
 
@@ -703,7 +710,7 @@ public:
   }
 
   /*!
-    \brief Determines the depth of the node specified.
+    \brief determines the depth of the node specified.
 
     The root node has depth 0, its children have depth 1, and so on.
 
@@ -716,7 +723,7 @@ public:
   }
 
   /*!
-    \brief Retrieves a reference to the Node_data associated with the node specified by `n`.
+    \brief retrieves a reference to the Node_data associated with the node specified by `n`.
 
     \param n index of the node to retrieve the contents of.
 
@@ -738,7 +745,7 @@ public:
   }
 
   /*!
-    \brief Retrieves the global coordinates of the node.
+    \brief retrieves the global coordinates of the node.
 
     \param n index of the node to retrieve the coordinates of.
 
@@ -749,7 +756,7 @@ public:
   }
 
   /*!
-    \brief Retrieves the local coordinates of the node.
+    \brief retrieves the local coordinates of the node.
 
     \param n index of the node to retrieve the coordinates of.
 
@@ -792,7 +799,7 @@ public:
   }
 
   /*!
-    \brief Retrieves an arbitrary descendant of the node specified by `node`.
+    \brief retrieves an arbitrary descendant of the node specified by `node`.
 
     Convenience function to avoid the need to call `orthtree.child(orthtree.child(node, 0), 1)`.
 
@@ -811,7 +818,7 @@ public:
   }
 
   /*!
-    \brief Convenience function for retrieving arbitrary nodes.
+    \brief convenience function for retrieving arbitrary nodes.
 
     Equivalent to `tree.descendant(tree.root(), indices...)`.
 
@@ -825,7 +832,7 @@ public:
   }
 
   /*!
-    \brief Finds the next sibling in the parent of the node specified by the index `n`.
+    \brief finds the next sibling in the parent of the node specified by the index `n`.
 
     Traverses the tree in increasing order of local index (e.g. 000, 001, 010, etc.)
 
@@ -851,7 +858,7 @@ public:
   }
 
   /*!
-    \brief Finds the next sibling of the parent of the node specified by `n` if it exists.
+    \brief finds the next sibling of the parent of the node specified by `n` if it exists.
 
     \param n the index node to find the sibling up of.
 
@@ -875,7 +882,7 @@ public:
   }
 
   /*!
-    \brief Finds the leaf node reached when descending the tree and always choosing child 0.
+    \brief finds the leaf node reached when descending the tree and always choosing child 0.
 
     This is the starting point of a depth-first traversal.
 
@@ -893,7 +900,7 @@ public:
   }
 
   /*!
-    \brief Finds node reached when descending the tree to a depth `d` and always choosing child 0.
+    \brief finds node reached when descending the tree to a depth `d` and always choosing child 0.
 
     Similar to `deepest_first_child`, but does not go to a fixed depth.
 
@@ -973,7 +980,7 @@ public:
   }
 
   /*!
-   * \brief Finds the center point of a node.
+   * \brief finds the center point of a node.
    *
    * @param n index of the node to find the center point for
    *
@@ -999,7 +1006,7 @@ public:
   }
 
   /*!
-    \brief Determines whether a pair of subtrees have the same topology.
+    \brief determines whether a pair of subtrees have the same topology.
 
     \param lhsNode index of a node in lhsTree
     \param lhsTree an Orthtree
@@ -1030,7 +1037,7 @@ public:
   }
 
   /*!
-    \brief Helper function for calling `is_topology_equal` on the root nodes of two trees.
+    \brief helper function for calling `is_topology_equal` on the root nodes of two trees.
 
     \param lhs an Orthtree
     \param rhs another Orthtree
