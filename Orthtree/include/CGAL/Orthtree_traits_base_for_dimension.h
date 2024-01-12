@@ -22,6 +22,19 @@
 
 namespace CGAL {
 
+/*!
+  \ingroup PkgOrthtreeTraits
+
+  The class `Orthtree_traits_base_for_dimension` is a base class providing common choices for types and functors.
+  The base class is extended by `CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>` and by `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`.
+
+  \tparam K model of `Kernel`.
+  \tparam DimensionTag is a tag representing the dimension of the ambient Euclidean space. Must be `Dimension_tag<d>` where `d` is an integer.
+
+  \sa `CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>`
+  \sa `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`
+*/
+
 template <typename K, typename DimensionTag>
 struct Orthtree_traits_base_for_dimension {
   /// \name Types
@@ -38,11 +51,42 @@ struct Orthtree_traits_base_for_dimension {
 
     \note This type is used to identify adjacency directions with
     easily understandable keywords (left, right, up, etc.) and is thus
-    mainly useful for `Orthtree_traits_2` and `Orthtree_traits_3`. In
+    mainly useful for `Dimension_tag<2>` and `Dimension_tag<3>`. In
     higher dimensions, such keywords do not exist and this type is
     simply an integer. Conversions from this integer to bitsets still
     work but do not provide any easier API for adjacency selection.
-  */
+
+     Two directions along each axis in %Cartesian space, relative to a node.
+
+     Directions are mapped to numbers as 3-bit integers in the 3d case or as 2-bit integers in the 2d case.
+     In the 3d case the numbers 6 and 7 are not used because there are only 6 different directions.
+
+     The first two bits indicate the axis (00 = x, 01 = y, 10 = z),
+     the third bit indicates the direction along that axis (0 = -, 1 = +).
+
+     The following diagram showing the 3d case may be a useful reference:
+
+                5 *
+                  |  * 3
+                  | /                  z+
+                  |/                   *  y+
+         0 *------+------* 1           | *
+                 /|                    |/
+                / |                    +-----* x+
+             2 *  |
+                  * 4
+
+     This lookup table may also be helpful:
+
+     | Direction | bitset | number | Enum  |
+     | --------- | ------ | ------ | ----- |
+     | `-x`      | 000    | 0      | LEFT  |
+     | `+x`      | 001    | 1      | RIGHT |
+     | `-y`      | 010    | 2      | FRONT |
+     | `+y`      | 011    | 3      | BACK  |
+     | `-z`      | 100    | 4      | DOWN  |
+     | `+z`      | 101    | 5      | UP    |
+   */
   using Adjacency = int;
   /// @}
 
@@ -74,35 +118,7 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
   using Bbox_d = typename K::Iso_rectangle_2;
   using Sphere_d = typename K::Circle_2;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_2;
-  /*!
-   * \brief Two directions along each axis in %Cartesian space, relative to a node.
-   *
-   * Directions are mapped to numbers as 2-bit integers.
-   *
-   * The first bit indicates the axis (0 = x, 1 = y),
-   * the second bit indicates the direction along that axis (0 = -, 1 = +).
-   *
-   * The following diagram may be a useful reference:
-   *
-   *
-   *                * 3
-   *               /
-   *              /                    y+
-   *    0 *------+------* 1           *
-   *            /                    /
-   *           /                    +-----* x+
-   *        2 *
-   *
-   *
-   * This lookup table may also be helpful:
-   *
-   * | Direction | bitset | number | Enum  |
-   * | --------- | ------ | ------ | ----- |
-   * | `-x`      |  00    | 0      | LEFT  |
-   * | `+x`      |  01    | 1      | RIGHT |
-   * | `-y`      |  10    | 2      | FRONT |
-   * | `+y`      |  11    | 3      | BACK  |
-   */
+
   enum Adjacency {
     LEFT,
     RIGHT,
@@ -138,38 +154,7 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
   using Bbox_d = typename K::Iso_cuboid_3;
   using Sphere_d = typename K::Sphere_3;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_3;
-  /*!
-   * \brief Two directions along each axis in %Cartesian space, relative to a node.
-   *
-   * Directions are mapped to numbers as 3-bit integers,
-   * though the numbers 6 and 7 are not used because there are only 6 different directions.
-   *
-   * The first two bits indicate the axis (00 = x, 01 = y, 10 = z),
-   * the third bit indicates the direction along that axis (0 = -, 1 = +).
-   *
-   * The following diagram may be a useful reference:
-   *
-   *            5 *
-   *              |  * 3
-   *              | /                  z+
-   *              |/                   *  y+
-   *     0 *------+------* 1           | *
-   *             /|                    |/
-   *            / |                    +-----* x+
-   *         2 *  |
-   *              * 4
-   *
-   * This lookup table may also be helpful:
-   *
-   * | Direction | bitset | number | Enum  |
-   * | --------- | ------ | ------ | ----- |
-   * | `-x`      | 000    | 0      | LEFT  |
-   * | `+x`      | 001    | 1      | RIGHT |
-   * | `-y`      | 010    | 2      | FRONT |
-   * | `+y`      | 011    | 3      | BACK  |
-   * | `-z`      | 100    | 4      | DOWN  |
-   * | `+z`      | 101    | 5      | UP    |
-   */
+
   enum Adjacency {
     LEFT,
     RIGHT,

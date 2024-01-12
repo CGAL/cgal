@@ -26,7 +26,7 @@ namespace CGAL {
 
   These two types are exactly equivalent:
   - `Octree<GeomTraits, PointRange, PointMap>`
-  - `Orthtree<Orthtree_traits_3<GeomTraits>, PointRange, PointMap>`.
+  - `Orthtree<Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<3>>>`.
 
   \warning This is a not a real class but an alias, please refer to
   the documentation of `Orthtree`.

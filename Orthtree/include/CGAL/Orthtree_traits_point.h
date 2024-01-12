@@ -166,7 +166,6 @@ private:
 
   PointSet& m_point_set;
   PointMap m_point_map;
-
 };
 
 }

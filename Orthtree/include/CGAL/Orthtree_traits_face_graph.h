@@ -61,6 +61,9 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
 
   /// @}
 
+  /// \name Operations
+  /// @{
+
   auto construct_root_node_bbox_object() const {
     return [&]() -> Bbox_d {
 
@@ -134,6 +137,10 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
       return true;
     }
   };
+
+  /// @}
+
+private:
 
   const PolygonMesh& m_pm;
   VertexPointMap m_vpm;
