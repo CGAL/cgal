@@ -43,6 +43,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(marching_cubes_implicit_sphere PRIVATE CGAL::TBB_support)
   target_link_libraries(marching_cubes_Cartesian_grid_sphere PRIVATE CGAL::TBB_support)
   target_link_libraries(marching_cubes_signed_mesh_offset PRIVATE CGAL::TBB_support)
+  target_link_libraries(marching_cubes_multiple_mesh_offsets PRIVATE CGAL::TBB_support)
   target_link_libraries(marching_cubes_inrimage PRIVATE CGAL::TBB_support)
 
   if(TARGET CGAL::Eigen3_support)
