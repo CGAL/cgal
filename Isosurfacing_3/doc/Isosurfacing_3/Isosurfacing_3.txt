@@ -17,24 +17,24 @@ Isosurfacing with different isovalues for the tractor model (courtesy the GrabCA
 
 \section secmyintroduction Introduction
 
-Isosurfacing, also referred to as isosurface extraction, involves the generation of an approximate isosurface from a sampled 3D scalar field. The output isosurface may consist of a single or of multiple, disjoint connected components. Isosurfacing is commonly required for volume visualization or simulation of physical phenomena. 
+Isosurfacing, also referred to as isosurface extraction, involves the generation of an approximate isosurface from a sampled 3D scalar field. The output isosurface may consist of a single or of multiple, disjoint connected components. Isosurfacing is commonly required for volume visualization or simulation of physical phenomena.
 
 This package provides several isosurfacing algorithms that compute a surface mesh approximating an isosurface of a 3D scalar field defined over an input 3D domain.
-An isosurface is defined as the points of constant value of this scalar field, i.e. a level set.
+An isosurface is defined as the points of constant value of this scalar field, i.e., a level set.
 Such a constant value, referred to as isovalue, is user-defined. For well-behaved scalar fields
 (e.g., non-zero gradient), the above level set is a surface. Depending on the isosurfacing method and the input data structure, the output is either a triangle, a quadrangle or a polygon surface mesh represented as an indexed face set. Note that the output may be empty when the isosurface is absent from the sampled input scalar field.
 
 \section secmyalgorithms Algorithms
 
-The scientific literature abounds with algorithms for extracting isosurfaces, each coming with different properties for the output and requirements for the input. 
+The scientific literature abounds with algorithms for extracting isosurfaces, each coming with different properties for the output and requirements for the input.
 % add references to a recent survey or to a series of surveys
-This package offers Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
+This package offers Marching Cubes, topologically correct Marching Cubes and %Dual Contouring.
 
 \subsection subsecmc Marching Cubes (MC)
-MC runs over a 3D grid, i.e. a 3D domain partitioned into hexahedral cells, and processes all cells of the input 3D domain individually while sampling the input scalar field at the grid corners.
+MC runs over a 3D grid, i.e., a 3D domain partitioned into hexahedral cells, and processes all cells of the input 3D domain individually while sampling the input scalar field at the grid corners.
 Each cell corner is assigned a sign (+/-) to indicate whether its scalar field value is above or below the user-defined isovalue.
-MC creates a vertex for each grid edge with a sign change, i.e. where the edge intersects the isosurface.
-More specifically, the vertex position is computed via linear interpolation of the scalar field values evaluated at the cell corners forming the edge. Depending on the configuration of signs at the cell corners, the resulting vertices are connected to form triangles within the cell. The figure below illustrates the configurations in 2D. There is no less than 33 cases in 3D (not shown). 
+MC creates a vertex for each grid edge with a sign change, i.e., where the edge intersects the isosurface.
+More specifically, the vertex position is computed via linear interpolation of the scalar field values evaluated at the cell corners forming the edge. Depending on the configuration of signs at the cell corners, the resulting vertices are connected to form triangles within the cell. The figure below illustrates the configurations in 2D. There is no less than 33 cases in 3D (not shown).
 
 
 \cgalFigureAnchor{isosurfacing_mc_cases}
@@ -70,7 +70,7 @@ the MC algorithm often generates more triangles, and more skinny triangles with 
 [The statement is too strong - I would largely reformulate it as this depends too much on the parameters.
 I recommend to add instead a figure with different parameters and methods,
 depicting the mesh edges in black in addition to the shaded facets]
-MC does not preserve the sharp features present in the isovalue of the input scalar field 
+MC does not preserve the sharp features present in the isovalue of the input scalar field
 % PA: add a figure
 
 
@@ -97,7 +97,7 @@ Variants of DC differ in the way they compute vertex positions.
 The vertex positioning is thus configurable with an optional parameter passed to the DC algorithm.
 Some variants do not require the gradient and therefore run successfully even when the default null gradient is provided.
 
-Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh.
+%Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh.
 It generates fewer faces than Marching Cubes, in general.
 Its advantage over MC is its ability to recover sharp creases and corners.
 % PA: add a figure.
@@ -109,7 +109,7 @@ Its advantage over MC is its ability to recover sharp creases and corners.
 <img src="iwp_dc.png" style="max-width:40%;"/>
 </center>
 \cgalFigureCaptionBegin{isosurfacing_iwp_dc}
-Isosurface of the IWP scalar field generated by %Dual Contouring. 
+Isosurface of the IWP scalar field generated by %Dual Contouring.
 % PA: do not assume that the iwp scalar field is well known to the reader - explicit first what it means. in addition, the shape is too complex, adding confusion to the reader. try to pass only one message per figure and provide a caption to not let the reader guess. show mesh edges in black
 \cgalFigureCaptionEnd
 
@@ -149,7 +149,7 @@ The `isovalue` scalar parameter denotes the value used for sampling the input sc
 
 The output surface mesh is provided in the form of a indexed face set, which is stored into two containers of `points` and `polygons`.
 The vertex positions are stored as `Point_3` in `points`. Each face in `polygons` is a list of indices pointing into the `points` container.
-Depending on the algorithm, the indexed face set may store either a polygon soup (unorganized polygons with no relationship whatsoever, i.e. no connectivity between them) or a mesh with connectivity.
+Depending on the algorithm, the indexed face set may store either a polygon soup (unorganized polygons with no relationship whatsoever, i.e., no connectivity between them) or a mesh with connectivity.
 
 The isosurfacing algorithms can run either sequentially on one CPU core or in parallel on multicore architectures with shared memory.
 The template parameter `ConcurrencyTag` is used to specify how the algorithm is executed: either Sequential_tag or Parallel_tag.
@@ -188,7 +188,7 @@ Scalability of the Marching Cubes algorithm. We plot the algorithm efficiency (n
 
 \section secmyexamples Examples
 
-\subsection myExampleImplicit_domain Implicit sphere
+\subsection myExampleImplicit_domain Implicit Sphere
 
 The following example shows the usage of the Marching Cubes algorithm to extract an isosurface.
 The domain is an `Implicit_domain` that describes the unit sphere by the distance to its center (set to the origin) as an implicit field.
@@ -210,7 +210,7 @@ The following example shows how to load data from an `Image_3`.
 \subsection myExampleMeshOffset Offset Mesh
 
 The following example illustrates how to generates a mesh approximating a signed offset to an input closed surface mesh.
-The input mesh is stored into an `AABB_tree` data structure to provides fast distance queries. Via the `Side_of_triangle_mesh` functor, the sign of the distance field is made negative inside the mesh.
+The input mesh is stored into an `AABB_tree` data structure to provide fast distance queries. Via the `Side_of_triangle_mesh` functor, the sign of the distance field is made negative inside the mesh.
 
 \cgalExample{Isosurfacing_3/dual_contouring_mesh_offset.cpp}
 
