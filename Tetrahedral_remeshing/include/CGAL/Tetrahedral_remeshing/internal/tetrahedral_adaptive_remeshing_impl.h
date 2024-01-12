@@ -537,6 +537,8 @@ private:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
+      "0-edges_in_complex_after_init.polylines.txt");
 #endif
   }
 
