@@ -101,10 +101,9 @@ private:
 
 private:
 
-  Traversal_function m_next;
-
-  std::optional<std::size_t> m_index;
   const Tree* m_tree = nullptr;
+  std::optional<std::size_t> m_index;
+  Traversal_function m_next;
 
 };
 

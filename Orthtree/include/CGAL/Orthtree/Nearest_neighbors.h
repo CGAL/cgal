@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef ORTHTREE_EXAMPLES_NEAREST_NEIGHBORS_H
-#define ORTHTREE_EXAMPLES_NEAREST_NEIGHBORS_H
+#ifndef ORTHTREE_NEAREST_NEIGHBORS_H
+#define ORTHTREE_NEAREST_NEIGHBORS_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -116,6 +116,7 @@ void nearest_k_neighbors_recursive(const Tree& orthtree,
 namespace Orthtrees {
 
 /*!
+  \ingroup PkgOrthtreeNeighbors
   \brief finds the `k` points within a specific radius that are
   nearest to the center of `query_sphere`.
 
@@ -166,6 +167,7 @@ OutputIterator nearest_k_neighbors_in_radius(
 
 
 /*!
+  \ingroup PkgOrthtreeNeighbors
   \brief finds the `k` nearest neighbors of `query`.
 
   Nearest neighbors are outputted in order of increasing distance to
@@ -188,6 +190,7 @@ OutputIterator nearest_neighbors(const Tree& orthtree, const typename Tree::Poin
 }
 
 /*!
+  \ingroup PkgOrthtreeNeighbors
   \brief finds the points in `sphere`.
 
   Nearest neighbors are outputted in order of increasing distance to
@@ -209,4 +212,4 @@ OutputIterator nearest_neighbors(const Tree& orthtree, const typename Tree::Sphe
 }
 }
 
-#endif //ORTHTREE_EXAMPLES_NEAREST_NEIGHBORS_H
+#endif //ORTHTREE_NEAREST_NEIGHBORS_H

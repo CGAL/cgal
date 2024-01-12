@@ -15,6 +15,10 @@
 /// \defgroup PkgOrthtreeConcepts Concepts
 /// \ingroup PkgOrthtreeRef
 
+/// \defgroup PkgOrthtreeNeighbors Neighbor Search Functions
+/// \ingroup PkgOrthtreeRef
+
+
 /*!
 \addtogroup PkgOrthtreeRef
 
@@ -62,4 +66,6 @@
 - `CGAL::Orthtrees::Leaves_traversal`
 - `CGAL::Orthtrees::Level_traversal`
 
+\cgalCRPSection{Neighbor search}
+- \link PkgOrthtreeNeighbors `CGAL::Orthtrees::nearest_neighbors` \endlink
 */

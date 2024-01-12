@@ -63,22 +63,22 @@ namespace CGAL {
   \sa `CGAL::Quadtree`
   \sa `CGAL::Octree`
 
-  \tparam Traits_ must be a model of `OrthtreeTraits`
+  \tparam GeomTraits must be a model of `OrthtreeTraits`
  */
-template <typename Traits_>
+template <typename GeomTraits>
 class Orthtree {
 
 public:
 
   /// \name Template Types
   /// @{
-  using Traits = Traits_; ///< Geometry traits
+  using Traits = GeomTraits; ///< Geometry traits
   /// @}
 
   /// \name Traits Types
   /// @{
   using Dimension = typename Traits::Dimension; ///< Dimension of the tree
-  using Kernel = typename Traits::Kernel;
+  using Kernel = typename Traits::Kernel; ///< Kernel type.
   using FT = typename Traits::FT; ///< Number type.
   using Point = typename Traits::Point_d; ///< Point type.
   using Bbox = typename Traits::Bbox_d; ///< Bounding box type.
@@ -112,9 +112,6 @@ public:
    * \brief Optional index of a node in the tree.
    */
   using Maybe_node_index = std::optional<Node_index>;
-
-  // todo: maybe this could be private?
-  using Node_property_container = Properties::Experimental::Property_container<Node_index>;
 
   /*!
     \brief Set of bits representing this node's relationship to its parent.
@@ -150,22 +147,44 @@ public:
   using Node_index_range = boost::iterator_range<Index_traversal_iterator<Self>>;
 #endif
 
+  /*!
+   * \brief A model of `ConstRange` whose value type is `Node_index`.
+   */
+#ifdef DOXYGEN_RUNNING
+  using Node_range = unspecified_type;
+  using Node_index_range = unspecified_type;
+#else
+  using Node_index_range = boost::iterator_range<Index_traversal_iterator<Self>>;
+#endif
+  /*!
+   * \brief A Model of `LvaluePropertyMap` with `Node_index` as key type and `T` as value type.
+   */
+#ifdef DOXYGEN_RUNNING
+  template <class T>
+  using Property_map = unspecified_type;
+#else
+  template <class T>
+  using Property_map = Properties::Experimental::Property_container<Node_index>::Array<T>;
+#endif
+
   /// \cond SKIP_IN_MANUAL
-  using Cartesian_ranges = Orthtrees::internal::Cartesian_ranges<Traits>;
   /// \endcond
 
   /// @}
 
 private: // data members :
 
+  using Cartesian_ranges = Orthtrees::internal::Cartesian_ranges<Traits>;
+  using Node_property_container = Properties::Experimental::Property_container<Node_index>;
+
   Traits m_traits; /* the tree traits */
 
   Node_property_container m_node_properties;
-  Node_property_container::Array <Node_data>& m_node_contents;
-  Node_property_container::Array <std::uint8_t>& m_node_depths;
-  Node_property_container::Array <Global_coordinates>& m_node_coordinates;
-  Node_property_container::Array <Maybe_node_index>& m_node_parents;
-  Node_property_container::Array <Maybe_node_index>& m_node_children;
+  Property_map<Node_data>& m_node_contents;
+  Property_map<std::uint8_t>& m_node_depths;
+  Property_map<Global_coordinates>& m_node_coordinates;
+  Property_map<Maybe_node_index>& m_node_parents;
+  Property_map<Maybe_node_index>& m_node_children;
 
   using Bbox_dimensions = std::array<CGAL::Exact_predicates_exact_constructions_kernel::FT, Dimension::value>;
   CGAL::NT_converter<CGAL::Exact_predicates_exact_constructions_kernel::FT, typename Traits::Kernel::FT> conv;
@@ -435,7 +454,7 @@ public:
 
     Node_index first = traversal.first_index();
 
-    auto next = [=](const Self& tree, Node_index index) -> Maybe_node_index {
+    auto next = [=](const Self&, Node_index index) -> Maybe_node_index {
       return traversal.next_index(index);
     };
 
@@ -497,11 +516,10 @@ public:
     \param name the name of the new property
     \param default_value the default value assigned to nodes for this property
 
-    \return pair of a reference to the new node property array
-    and a boolean which is True if the property needed to be created
+    \return pair of the property map and a boolean which is True if the property needed to be created
    */
   template <typename T>
-  std::pair<std::reference_wrapper<Node_property_container::Array < T>>, bool>
+  std::pair<Property_map<T>, bool>
   get_or_add_node_property(const std::string& name, const T default_value = T()) {
     return m_node_properties.get_or_add_property(name, default_value);
   }
@@ -514,10 +532,10 @@ public:
     \param name the name of the new property
     \param default_value the default value assigned to nodes for this property
 
-    \return a reference to the new property array
+    \return the created property map
    */
   template <typename T>
-  Node_property_container::Array <T>& add_node_property(const std::string& name, const T default_value = T()) {
+  Property_map<T> add_node_property(const std::string& name, const T default_value = T()) {
     return m_node_properties.add_property(name, default_value);
   }
 
@@ -530,10 +548,10 @@ public:
 
     \param name the name of the property
 
-    \return a reference to the property array
+    \return the property map
    */
   template <typename T>
-  Node_property_container::Array <T>& get_node_property(const std::string& name) {
+  Property_map<T> get_node_property(const std::string& name) {
     return m_node_properties.get_property<T>(name);
   }
 
@@ -544,10 +562,10 @@ public:
 
     \param name the name of the property
 
-    \return an optional containing a reference to the property array if it exists
+    \return an optional containing the property map if it exists
    */
   template <typename T>
-  std::optional<std::reference_wrapper<Node_property_container::Array < T>>>
+  std::optional<Property_map<T>>
   get_node_property_if_exists(const std::string& name) {
     return m_node_properties.get_property_if_exists<T>(name);
   }
@@ -568,7 +586,7 @@ public:
 
     \return the index of the node which contains the point.
    */
-  const Node_index locate(const Point& point) const {
+  Node_index locate(const Point& point) const {
 
     // Make sure the point is enclosed by the orthtree
     CGAL_precondition (CGAL::do_intersect(point, bbox(root())));
