@@ -464,6 +464,7 @@ bool test ()
 int main()
 {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  CGAL::FPU_set_cw(CGAL_FE_TONEAREST);
   std::cout << "Stress-testing the class Interval_nt<> always rounding to nearest.\n";
   bool ok = test<CGAL::Interval_nt<> >();
   std::cout << "\nStress-testing the class Interval_nt_advanced always rounding to nearest.\n";
