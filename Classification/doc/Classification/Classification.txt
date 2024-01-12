@@ -525,6 +525,11 @@ The following example:
 
 \cgalExample{Classification/example_cluster_classification.cpp}
 
+\subsection Classification_example_multidimensional_feature Multi-dimensional Features
+
+The following example shows how to add multi-dimensional features from the [Point Cloud Library](https://pointclouds.org/).
+
+\cgalExample{Classification/example_pcl_feature.cpp}
 
 \section Classification_history History
 
