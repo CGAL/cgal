@@ -3,6 +3,9 @@
 #include <iostream>
 
 // That one should not be needed in the long term:
+#include <CGAL/double.h>
+#include <CGAL/float.h>
+#include <CGAL/int.h>
 #include <CGAL/Interval_nt.h>
 
 #ifdef CGAL_USE_LEDA
