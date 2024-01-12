@@ -137,10 +137,10 @@ public:
   using Split_predicate = std::function<bool(Node_index, const Self&)>;
 
   /*!
-   * \brief A model of `ConstRange` whose value type is `Node_index`. Its iterator type is `ForwardIterator`.
+   * \brief A model of `ConstRange` whose value type is `Node_index` and its iterator type is `ForwardIterator`.
    */
 #ifdef DOXYGEN_RUNNING
-  using Node_range = unspecified_type;
+
   using Node_index_range = unspecified_type;
 #else
   using Node_index_range = boost::iterator_range<Index_traversal_iterator<Self>>;
