@@ -536,6 +536,7 @@ private:
       std::size_t nb_projected = 0;
       Vector_3 sum_projections = CGAL::NULL_VECTOR;
 
+#ifndef CGAL_TET_REMESHING_EDGE_SMOOTHING_DISABLE_PROJECTION
       for (const Surface_patch_index& si : v_surface_indices)
       {
         const Point_3 projection = (nb_neighbors > 1)
@@ -551,6 +552,7 @@ private:
           ++nb_projected;
         }
       }
+#endif
 
       Point_3 new_pos = (nb_projected > 0)
                       ? smoothed_position + sum_projections / static_cast<FT>(nb_projected)
