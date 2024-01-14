@@ -199,7 +199,7 @@ public:
     which typically encloses its contents.
 
     This single-node orthtree is valid and compatible
-    with all Orthtree functionality, but any performance benefits are
+    with all orthtree functionality, but any performance benefits are
     unlikely to be realized until `refine()` is called.
 
     \param traits the traits object.
@@ -500,7 +500,7 @@ public:
   /// @{
 
   /*!
-    \brief gets a property for nodes, adding it if it doesn't already exist.
+    \brief gets a property for nodes, adding it if it does not already exist.
 
     \tparam T the type of the property to add
 
@@ -618,7 +618,7 @@ public:
 
     This function finds all the intersecting leaf nodes and writes their indices to the output iterator.
 
-    \tparam Query the primitive class (e.g. sphere, ray)
+    \tparam Query the primitive class (e.g., sphere, ray)
     \tparam OutputIterator a model of `OutputIterator` that accepts `Node_index` types
 
     \param query the intersecting primitive.
@@ -823,7 +823,7 @@ public:
   /*!
     \brief finds the next sibling in the parent of the node specified by the index `n`.
 
-    Traverses the tree in increasing order of local index (e.g. 000, 001, 010, etc.)
+    Traverses the tree in increasing order of local index (e.g., 000, 001, 010, etc.)
 
     \param n the index of the node to find the sibling of
 
@@ -1026,7 +1026,7 @@ public:
   }
 
   /*!
-    \brief helper function for calling `is_topology_equal` on the root nodes of two trees.
+    \brief helper function for calling `is_topology_equal()` on the root nodes of two trees.
 
     \param lhs an Orthtree
     \param rhs another Orthtree
@@ -1047,7 +1047,7 @@ public:
     - a node has at most `2 * Dimension::value` different adjacent nodes (in 3D: left, right, up, down, front, back)
     - adjacent nodes are not required to be leaf nodes
 
-    Here's a diagram demonstrating the concept for a Quadtree:
+    Here's a diagram demonstrating the concept for a quadtree:
 
     ```
     +---------------+---------------+
@@ -1083,7 +1083,7 @@ public:
     \param n index of the node to find a neighbor of
     \param direction which way to find the adjacent node relative to
     this one. Each successive bit selects the direction for the
-    corresponding dimension: for an Octree in 3D, 010 means: negative
+    corresponding dimension: for an octree in 3D, 010 means: negative
     direction in X, position direction in Y, negative direction in Z.
 
     \return the index of the adjacent node if it exists, nothing otherwise.
@@ -1105,7 +1105,7 @@ public:
     // The first two bits indicate the dimension/axis (x, y, z)
     uint8_t dimension = uint8_t((direction >> 1).to_ulong());
 
-    // Create an offset so that the bit-significance lines up with the dimension (e.g. 1, 2, 4 --> 001, 010, 100)
+    // Create an offset so that the bit-significance lines up with the dimension (e.g., 1, 2, 4 --> 001, 010, 100)
     int8_t offset = (uint8_t) 1 << dimension;
 
     // Finally, apply the sign to the offset

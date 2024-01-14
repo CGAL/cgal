@@ -26,13 +26,13 @@ namespace CGAL {
 
   These two types are exactly equivalent:
   - `Octree<GeomTraits, PointRange, PointMap>`
-  - `Orthtree<Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<3>>>`.
+  - `Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<3>>>`.
 
   \warning This is a not a real class but an alias, please refer to
   the documentation of `Orthtree`.
 
   \tparam GeomTraits must be a model of `Kernel`
-  \tparam PointRange_ must be a model of range whose value type is the key type of `PointMap`
+  \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
  */
 template <

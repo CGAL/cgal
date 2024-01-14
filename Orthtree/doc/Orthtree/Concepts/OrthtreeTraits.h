@@ -20,7 +20,7 @@ public:
   using Dimension = unspecified_type; ///< Dimension type (see `CGAL::Dimension_tag`).
   using FT = unspecified_type; ///< The number type of the %Cartesian coordinates of types `Point_d`
   using Point_d = unspecified_type; ///< Point type.
-  using Bbox_d = unspecified_type; ///< Bounding box type. Must be constructible from a pair of Point_d types.
+  using Bbox_d = unspecified_type; ///< Bounding box type. Must be constructible from a pair of `Point_d` types.
 
   /*!
     A random access iterator type to enumerate the
@@ -84,7 +84,7 @@ public:
   using Distribute_node_contents = unspecified_type;
 
   /*!
-   * \brief Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc. FT arguments.
+   * \brief Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc. `FT` arguments.
    *
    * For trees which use a different kernel for the Bbox type,
    * the return type of this functor must match the kernel used by the Bbox and not that of the contents.

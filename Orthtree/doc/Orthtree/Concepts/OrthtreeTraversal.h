@@ -23,7 +23,7 @@ public:
   using Node_index = unspecified_type; ///< Index type of the orthtree to be traversed
 
   /*!
-    \brief returns the first node to iterate to, given the root of the Orthtree.
+    \brief returns the first node to iterate to, given the root of the orthtree.
    */
   Node_index first_index() const;
 

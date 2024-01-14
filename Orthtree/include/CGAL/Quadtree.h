@@ -32,7 +32,7 @@ namespace CGAL {
   the documentation of `Orthtree`.
 
   \tparam GeomTraits must be a model of `Kernel`
-  \tparam PointRange_ must be a model of range whose value type is the key type of `PointMap`
+  \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_2`
 */
 template <typename GeomTraits, typename PointRange,
