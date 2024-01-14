@@ -5,7 +5,6 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Constrained_Delaunay_triangulation_3.h>
-#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
@@ -44,8 +43,8 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 #endif // use Epick
 
-using Vb = CGAL::Base_with_time_stamp<CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>>;
-using Cb = CGAL::Base_with_time_stamp<CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>>;
+using Vb = CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>;
+using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
 using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
 using Delaunay = CGAL::Delaunay_triangulation_3<K, Tds>;
 using CDT = CGAL::Constrained_Delaunay_triangulation_3<Delaunay>;

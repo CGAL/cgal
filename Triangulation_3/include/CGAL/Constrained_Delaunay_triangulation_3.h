@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -99,9 +100,9 @@ public:
 
 template <typename Gt, typename Cb = Triangulation_cell_base_3<Gt> >
 class Constrained_Delaunay_triangulation_cell_base_3
-  : public Cb
+  : public Base_with_time_stamp<Cb>
 {
-  using Base = Cb;
+  using Base = Base_with_time_stamp<Cb>;
   std::array<CDT_3_face_index, 4> face_id = { -1, -1, -1, -1 };
   std::array<void*, 4> facet_2d = {nullptr, nullptr, nullptr, nullptr};
 

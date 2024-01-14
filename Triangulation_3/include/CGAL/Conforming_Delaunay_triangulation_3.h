@@ -25,6 +25,7 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
+#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
 
@@ -41,7 +42,7 @@ namespace CGAL {
 enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
 
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
-struct Conforming_Delaunay_triangulation_vertex_base_3 : public Vb {
+struct Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb> {
   int nb_of_incident_constraints = 0;
   void* c_id = nullptr;
 private:
@@ -54,7 +55,8 @@ public:
     typedef Conforming_Delaunay_triangulation_vertex_base_3 <Gt, Vb3> Other;
   };
 
-  using Vb::Vb;
+  using Base = Base_with_time_stamp<Vb>;
+  using Base::Base;
 
   template<typename Triangulation>
   auto constraint_id(const Triangulation&) const {
