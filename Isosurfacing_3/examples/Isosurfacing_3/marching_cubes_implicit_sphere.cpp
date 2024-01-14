@@ -27,8 +27,7 @@ int main(int, char**)
   const Vector vec_spacing(spacing, spacing, spacing);
 
   // create domain with sphere function
-  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>
-    (bbox, vec_spacing, sphere_function);
+  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain(bbox, vec_spacing, sphere_function);
 
   // points and triangles for the output indexed mesh
   Point_range points;
@@ -43,7 +42,7 @@ int main(int, char**)
   timer.stop();
   std::cout << "done (" << timer.time() << "s, " << triangles.size() << " triangles)" << std::endl;
 
-  // save ouput indexed mesh to a file, in the OFF format
+  // save indexed face set to file, in the OFF format
   CGAL::IO::write_OFF("output.off", points, triangles);
 
   return EXIT_SUCCESS;

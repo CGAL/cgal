@@ -45,7 +45,7 @@ int main(int, char**)
   // execute marching cubes
   CGAL::Isosurfacing::marching_cubes(domain, 1120 /*isovalue*/, points, polygons);
 
-  // save output indexed mesh to a file, in the OFF format
+  // save indexed face set to file, in the OFF format
   CGAL::IO::write_OFF("result.off", points, polygons);
 
   return EXIT_SUCCESS;

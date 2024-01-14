@@ -57,7 +57,7 @@ int main(int, char**)
   // run dual contouring isosurfacing
   CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
 
-  // write output indexed surface mesh to file, in OFF format
+  // save indexed face set to file, in the OFF format
   CGAL::IO::write_OFF("output.off", points, polygons);
 
   return EXIT_SUCCESS;

@@ -69,8 +69,8 @@ int main(int, char**)
   };
 
   // create a domain with given bounding box and grid spacing
-  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>(bbox, grid_spacing,
-                                                                                  mesh_distance, mesh_normal);
+  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain(bbox, grid_spacing,
+                                                                          mesh_distance, mesh_normal);
   // containers for output indexed surface mesh
   Point_range points;
   Polygon_range polygons;
@@ -78,7 +78,7 @@ int main(int, char**)
   // run dual contouring
   CGAL::Isosurfacing::dual_contouring(domain, offset_value, points, polygons);
 
-  // save output indexed mesh to a file, in the OFF format
+  // save indexed face set to file, in the OFF format
   CGAL::IO::write_OFF("result.off", points, polygons);
 
   return EXIT_SUCCESS;

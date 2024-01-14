@@ -28,8 +28,7 @@ int main(int, char**)
   const Vector vec_spacing(spacing, spacing, spacing);
 
   // create domain with sphere function
-  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>
-    (bbox, vec_spacing, sphere_function);
+  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain(bbox, vec_spacing, sphere_function);
 
   // points and triangles for the output indexed mesh
   Point_range points;
