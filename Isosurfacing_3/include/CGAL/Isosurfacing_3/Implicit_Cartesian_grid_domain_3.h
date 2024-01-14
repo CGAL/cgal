@@ -91,7 +91,7 @@ template <typename GeomTraits,
           typename Gradient = Zero_gradient>
 Implicit_Cartesian_grid_domain_3<GeomTraits, ImplicitFunction, Gradient>
 create_implicit_Cartesian_grid_domain(const Bbox_3& bbox,
-                                      const typename GeomTraits::Vector_3& spacing,
+                                      const Vector_3<GeomTraits>& spacing,
                                       const ImplicitFunction& point_function,
                                       const Gradient& grad = Gradient(),
                                       const GeomTraits& gt = GeomTraits())
@@ -123,9 +123,6 @@ create_implicit_Cartesian_grid_domain(const Bbox_3& bbox,
 
   return Domain{ topo, geom, func, grad, gt };
 }
-
-// @todo add an undocumented convenience overload with Vector_3<GeomTraits> to match CGAL kernels
-// without having to provide the kernel in the call like f<kernel>(...)
 
 } // namespace Isosurfacing
 } // namespace CGAL
