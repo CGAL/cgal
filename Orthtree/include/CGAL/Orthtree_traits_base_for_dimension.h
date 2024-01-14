@@ -26,12 +26,12 @@ namespace CGAL {
   \ingroup PkgOrthtreeTraits
 
   The class `Orthtree_traits_base_for_dimension` is a base class providing common choices for types and functors.
-  The base class is extended by `CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>` and by `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`.
+  The base class is extended by `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>` and by `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`.
 
   \tparam K model of `Kernel`.
   \tparam DimensionTag is a tag representing the dimension of the ambient Euclidean space. Must be `Dimension_tag<d>` where `d` is an integer.
 
-  \sa `CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>`
+  \sa `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>`
   \sa `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`
 */
 

@@ -13,7 +13,7 @@
   \cgalRefines{OrthtreeTraits}
 
   \cgalHasModelsBegin
-  \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>}
+  \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>}
   \cgalHasModelsEnd
 */
 class CollectionPartitioningOrthtreeTraits {
@@ -39,7 +39,7 @@ public:
   /*!
    * \brief Functor with an operator to produce a geometric object from a `Node_data_element`.
    *
-   * The return type of the functor must be a valid argument to `CGAL::squared_distance`.
+   * The return type of the functor must be a valid argument to `CGAL::squared_distance()`.
    */
   using Get_geometric_object_for_element = unspecified_type;
 

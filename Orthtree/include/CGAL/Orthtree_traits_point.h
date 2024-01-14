@@ -66,7 +66,7 @@ void reassign_points(
   the `Orthtree` class.
 
   \tparam GeomTraits model of `Kernel`.
-  \tparam PointSet must be a model of range whose value type is the key type of `PointMap`
+  \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Traits::Point_d`
 
   \warning The input point set is not copied. It is used directly
@@ -80,10 +80,10 @@ void reassign_points(
 */
 template <
   typename GeomTraits,
-  typename PointSet,
-  typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointSet::iterator>::value_type>,
+  typename PointRange,
+  typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>,
   typename DimensionTag = Ambient_dimension<
-    typename std::iterator_traits<typename PointSet::iterator>::value_type,
+    typename std::iterator_traits<typename PointRange::iterator>::value_type,
     GeomTraits
   >
 >
@@ -93,18 +93,18 @@ public:
   /// \name Types
   /// @{
 
-  using Self = Orthtree_traits_point<GeomTraits, PointSet, PointMap, DimensionTag>;
+  using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>;
   using Tree = Orthtree<Self>;
 
-  using Node_data = boost::iterator_range<typename PointSet::iterator>;
-  using Node_data_element = typename std::iterator_traits<typename PointSet::iterator>::value_type;
+  using Node_data = boost::iterator_range<typename PointRange::iterator>;
+  using Node_data_element = typename std::iterator_traits<typename PointRange::iterator>::value_type;
 
   /// @}
 
   Orthtree_traits_point(
-    PointSet& point_set,
+    PointRange& points,
     PointMap point_map = PointMap()
-  ) : m_point_set(point_set), m_point_map(point_map) {}
+  ) : m_points(points), m_point_map(point_map) {}
 
   /// \name Operations
   /// @{
@@ -117,7 +117,7 @@ public:
 
       // init bbox with first values found
       {
-        const typename Self::Point_d& point = get(m_point_map, *(m_point_set.begin()));
+        const typename Self::Point_d& point = get(m_point_map, *(m_points.begin()));
         std::size_t i = 0;
         for (const typename Self::FT& x: cartesian_range(point)) {
           bbox_min[i] = x;
@@ -126,7 +126,7 @@ public:
         }
       }
       // Expand bbox to contain all points
-      for (const auto& p: m_point_set) {
+      for (const auto& p: m_points) {
         const typename Self::Point_d& point = get(m_point_map, p);
         std::size_t i = 0;
         for (const typename Self::FT& x: cartesian_range(point)) {
@@ -143,7 +143,7 @@ public:
 
   auto construct_root_node_contents_object() const {
     return [&]() -> typename Self::Node_data {
-      return {m_point_set.begin(), m_point_set.end()};
+      return {m_points.begin(), m_points.end()};
     };
   }
 
@@ -164,7 +164,7 @@ public:
 
 private:
 
-  PointSet& m_point_set;
+  PointRange& m_points;
   PointMap m_point_map;
 };
 
