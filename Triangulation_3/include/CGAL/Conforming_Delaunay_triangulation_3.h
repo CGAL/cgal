@@ -461,12 +461,10 @@ protected:
       std::cerr << "constraint " << (void*) c_id.vl_ptr() << " has "
                 << c_id.vl_ptr()->skip_size() << " vertices\n";
 #endif // CGAL_DEBUG_CDT_3
-      auto it = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+      const auto begin = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
       const auto end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
-      const auto c_va = *it;
-      while(std::next(it) != end)
-        ++it;
-      const auto c_vb = *it;
+      const auto c_va = *begin;
+      const auto c_vb = *std::prev(end);
     return std::make_pair(c_va, c_vb);
   }
 
