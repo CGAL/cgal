@@ -562,24 +562,47 @@ int go(Mesh mesh, CDT_options options) {
     }
 
     if(!options.dump_after_conforming_filename.empty()) {
-      for(auto e: edges(mesh)) {
-        auto he = halfedge(e, mesh);
-        auto vd1 = target(he, mesh);
-        auto vd2 = source(he, mesh);
-        if(!get(v_selected_map, vd1) || !get(v_selected_map, vd2)) continue;
-        auto p1 = get(pmap, vd1);
-        auto p2 = get(pmap, vd2);
-        auto n = cdt.number_of_vertices();
-        auto v1 = cdt.insert(p1);
-        auto v2 = cdt.insert(p2);
-        CGAL_assertion(n == cdt.number_of_vertices());
-        auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
-        if(!steiner_vertices) continue;
-        for(auto v: *steiner_vertices) {
-          he = CGAL::Euler::split_edge(he, mesh);
-          put(pmap, target(he, mesh), v->point());
-        }
+      using Vertex_index = Mesh::Vertex_index;
+      [[maybe_unused]] std::size_t time_stamp_counter = 0u;
+      for(auto v: cdt.finite_vertex_handles()) {
+        const auto time_stamp = v->time_stamp();
+        assert(++time_stamp_counter == time_stamp);
+        if(!v->is_Steiner_vertex_on_edge()) continue;
+        const auto [va, vb] = cdt.ancestors_of_Steiner_vertex_on_edge(v);
+        const auto index_va = Vertex_index{static_cast<unsigned>(va->time_stamp() - 1)};
+        const auto index_vb = Vertex_index{static_cast<unsigned>(vb->time_stamp() - 1)};
+        auto [it, end] = CGAL::halfedges_around_source(index_va, mesh);
+        // std::cerr << "  around mesh vertex " << index_va << ", search for vertex " << index_vb << '\n';
+        // for(auto it2 = it; it2 != end; ++it2) {
+        //   auto he = *it2;
+        //   auto vd = target(he, mesh);
+        //   std::cerr << "    " << vd << '\n';
+        // }
+        it = std::find_if(it, end, [&mesh, index_vb](auto he) { return target(he, mesh) == index_vb; });
+        CGAL_assertion(it != end);
+        auto he = CGAL::Euler::split_edge(*it, mesh);
+        auto mesh_v = target(he, mesh);
+        put(pmap, mesh_v, v->point());
+        assert(mesh_v == Vertex_index{static_cast<unsigned>(time_stamp - 1)});
       }
+      // for(auto e: edges(mesh)) {
+      //   auto he = halfedge(e, mesh);
+      //   auto vd1 = target(he, mesh);
+      //   auto vd2 = source(he, mesh);
+      //   if(!get(v_selected_map, vd1) || !get(v_selected_map, vd2)) continue;
+      //   auto p1 = get(pmap, vd1);
+      //   auto p2 = get(pmap, vd2);
+      //   auto n = cdt.number_of_vertices();
+      //   auto v1 = cdt.insert(p1);
+      //   auto v2 = cdt.insert(p2);
+      //   CGAL_assertion(n == cdt.number_of_vertices());
+      //   auto steiner_vertices = cdt.sequence_of_Steiner_vertices(v1, v2);
+      //   if(!steiner_vertices) continue;
+      //   for(auto v: *steiner_vertices) {
+      //     he = CGAL::Euler::split_edge(he, mesh);
+      //     put(pmap, target(he, mesh), v->point());
+      //   }
+      // }
       std::ofstream out_mesh(options.dump_after_conforming_filename);
       out_mesh.precision(17);
       out_mesh << mesh;

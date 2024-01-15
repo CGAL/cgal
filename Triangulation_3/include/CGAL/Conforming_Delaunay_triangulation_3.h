@@ -321,6 +321,38 @@ public:
                        });
   }
 
+  auto ancestors_of_Steiner_vertex_on_edge(Vertex_handle v) const {
+    std::pair<Vertex_handle, Vertex_handle> result;
+    CGAL_precondition(v->is_Steiner_vertex_on_edge());
+    CGAL_assertion(v->nb_of_incident_constraints == 1);
+    const auto v_time_stamp = v->time_stamp();
+    const auto constraint_id = v->constraint_id(*this);
+    const auto first = this->constraint_hierarchy.vertices_in_constraint_begin(constraint_id);
+    const auto end =   this->constraint_hierarchy.  vertices_in_constraint_end(constraint_id);
+    std::cerr << "ancestors_of_Steiner_vertex_on_edge " << display_vert(v) << '\n';
+    for(auto it = first; it != end; ++it) {
+      std::cerr << "  - " << display_vert(*it) << '\n';
+    }
+    CGAL_assertion(first != end);
+    const auto last = std::prev(this->constraint_hierarchy.vertices_in_constraint_end(constraint_id));
+    CGAL_assertion(first != last);
+    CGAL_assertion((*first)->time_stamp() < v_time_stamp);
+    CGAL_assertion((*last)->time_stamp() < v_time_stamp);
+    for(auto it = first; (*it) != v; ++it) {
+      if((*it)->time_stamp() < v_time_stamp) {
+        result.first = *it;
+      }
+      CGAL_assertion(it != last);
+    }
+    for(auto it = last; (*it) != v; --it) {
+      if((*it)->time_stamp() < v_time_stamp) {
+        result.second = *it;
+      }
+      CGAL_assertion(it != first);
+    }
+    return result;
+  }
+
   bool write_missing_segments_file(std::ostream &out) {
     bool any_missing_segment = false;
     std::for_each(
