@@ -28,9 +28,6 @@ namespace CGAL {
   - `Quadtree<GeomTraits, PointRange, PointMap>`
   - `Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<2>>>`.
 
-  \warning This is a not a real class but an alias, please refer to
-  the documentation of `Orthtree`.
-
   \tparam GeomTraits must be a model of `Kernel`
   \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_2`
@@ -38,11 +35,9 @@ namespace CGAL {
 template <typename GeomTraits, typename PointRange,
           typename PointMap = Identity_property_map
          <typename std::iterator_traits<typename PointRange::iterator>::value_type> >
-#ifdef DOXYGEN_RUNNING
-class Quadtree;
-#else
+
 using Quadtree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<2>>>;
-#endif
+
 
 } // namespace CGAL
 
