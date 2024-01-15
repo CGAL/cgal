@@ -1,19 +1,16 @@
 /// \defgroup PkgOrthtreeRef Quadtrees, Octrees and Orthtrees Reference
 Quadtree, Octree and Orthtree Reference
 
-/// \defgroup PkgOrthtreeClasses Classes
+/// \defgroup PkgOrthtreeConcepts Concepts
 /// \ingroup PkgOrthtreeRef
 
 /// \defgroup PkgOrthtreeTraits Traits
-/// \ingroup PkgOrthtreeClasses
+/// \ingroup PkgOrthtreeRef
 
 /// \defgroup PkgOrthtreeSplitPredicates Split Predicates
-/// \ingroup PkgOrthtreeClasses
+/// \ingroup PkgOrthtreeRef
 
 /// \defgroup PkgOrthtreeTraversal Traversal
-/// \ingroup PkgOrthtreeClasses
-
-/// \defgroup PkgOrthtreeConcepts Concepts
 /// \ingroup PkgOrthtreeRef
 
 /// \defgroup PkgOrthtreeNeighbors Neighbor Search Functions

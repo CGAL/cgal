@@ -25,7 +25,7 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgOrthtreeClasses
+ * \ingroup PkgOrthtreeTraversal
  *
  * \brief Wraps a traversal definition to produce an iterator which traverses the tree when incremented.
  *

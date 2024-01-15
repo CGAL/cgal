@@ -58,7 +58,7 @@ public:
    * It should take no arguments, and return an instance of `Node_data`.
    *
    * Typically, the `Node_data` of the root node contains all the elements in the tree.
-   * For a tree in which each node contains an `std::span` this function would return the span containing all items.
+   * For a tree in which each node contains an `std::span()` this function would return the span containing all items.
    *
    */
   using Construct_root_node_contents = unspecified_type;
@@ -67,7 +67,7 @@ public:
    * \brief Functor to locate in which halfspace a number of type `FT` is located with respect to another number of type `FT`.
    *
    * The functor is used by `Orthtree::locate()` to identify in which leaf node a point is located.
-   * Distribute_node_contents should use `Locate_halfspace` to guarantee consistency wich `Orthtree::locate()`.
+   * `Distribute_node_contents` mustt use `Locate_halfspace` to guarantee consistency wich `Orthtree::locate()`.
    */
   using Locate_halfspace = unspecified_type;
 
@@ -84,10 +84,10 @@ public:
   using Distribute_node_contents = unspecified_type;
 
   /*!
-   * \brief Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc. `FT` arguments.
+   * \brief Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc.\ `FT` arguments.
    *
-   * For trees which use a different kernel for the Bbox type,
-   * the return type of this functor must match the kernel used by the Bbox and not that of the contents.
+   * For trees which use a different kernel for the bounding box type,
+   * the return type of this functor must match the kernel used by the bounding box type and not that of the contents.
    */
   using Construct_point_d = unspecified_type;
 

@@ -48,7 +48,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgOrthtreeClasses
+  \ingroup PkgOrthtreeRef
 
   \brief A data structure using an axis-aligned hyperrectangle
   decomposition of dD space for efficient access and

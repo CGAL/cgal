@@ -20,7 +20,7 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgOrthtreeClasses
+  \ingroup PkgOrthtreeRef
 
   \brief Alias that specializes the `Orthtree` class to a 3D octree.
 

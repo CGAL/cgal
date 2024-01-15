@@ -3,11 +3,11 @@
   \ingroup PkgOrthtreeConcepts
   \cgalConcept
 
-  \brief a traversal provides the functions needed to traverse the
+  \brief A traversal provides the functions needed to traverse the
   nodes of an orthtree.
 
   A traversal is used to iterate on a tree with a user-selected order
-  (e.g. preorder, postorder).
+  (e.g., preorder, postorder).
 
   \cgalHasModelsBegin
   \cgalHasModels{CGAL::Orthtrees::Preorder_traversal}
