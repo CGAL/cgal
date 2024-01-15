@@ -67,17 +67,17 @@ public:
    * \brief Functor to locate in which halfspace a number of type `FT` is located with respect to another number of type `FT`.
    *
    * The functor is used by `Orthtree::locate()` to identify in which leaf node a point is located.
-   * `Distribute_node_contents` mustt use `Locate_halfspace` to guarantee consistency wich `Orthtree::locate()`.
+   * `Distribute_node_contents` must use `Locate_halfspace` to guarantee consistency wich `Orthtree::locate()`.
    */
   using Locate_halfspace = unspecified_type;
 
   /*!
    * \brief Functor which distributes a node's contents to its children.
    *
-   * The functor takes a node index, a tree reference, and a Point_d which is the center of the node.
-   * It can use tree.children(node_index) to access the children of the node, and tree.data(node_index)
+   * The functor takes a node index, a tree reference, and a `Point_d` which is the center of the node.
+   * It can use `tree.children(node_index)` to access the children of the node, and `tree.data(node_index)`
    * to access the contents of the node and each of its children.
-   * It should distribute the contents of the node to each of its children.
+   * It must distribute the contents of the node to each of its children.
    * For a tree in which each node contains a span, this may mean rearranging the contents of the original node
    * and producing spans containing a subset of its contents for each of its children.
    */
