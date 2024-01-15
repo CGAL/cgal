@@ -20,8 +20,6 @@
 #include <boost/operators.hpp>
 #include <boost/concept_check.hpp>
 
-#include <boost/mpl/if.hpp>
-
 namespace CGAL {
 
 // adapted from circulator.h, does not support
@@ -45,23 +43,20 @@ public:
 
   typedef typename I__traits::iterator_category iterator_category;
 
-  typedef typename
-  boost::mpl::if_c<  Prevent_deref
-                   , C
-                   , typename C::value_type
-                  >::type             value_type;
+  typedef std::conditional_t<  Prevent_deref
+                             , C
+                             , typename C::value_type>
+                                                         value_type;
 
   typedef typename C::difference_type difference_type;
-  typedef typename
-  boost::mpl::if_c<  Prevent_deref
-                   , C&
-                   , typename C::reference
-                  >::type             reference;
-  typedef typename
-  boost::mpl::if_c<  Prevent_deref
-                   , C*
-                   , typename C::reference
-                  >::type             pointer;
+  typedef std::conditional_t<  Prevent_deref
+                             , C&
+                             , typename C::reference
+                            >             reference;
+  typedef std::conditional_t<  Prevent_deref
+                             , C*
+                             , typename C::reference
+                            >             pointer;
 
   OM_iterator_from_circulator(){}
 

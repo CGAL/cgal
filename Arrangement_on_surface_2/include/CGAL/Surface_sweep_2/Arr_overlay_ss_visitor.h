@@ -295,7 +295,7 @@ protected:
    * \param tag The tag used for dispatching.
    */
   void _map_boundary_vertices(Event* event, Vertex_handle v,
-                              boost::mpl::bool_<true> /* tag */);
+                              std::bool_constant<true> /* tag */);
 
   /*!
    * Update the boundary vertices map.
@@ -306,7 +306,7 @@ protected:
    * \param tag The tag used for dispatching.
    */
   void _map_boundary_vertices(Event* event, Vertex_handle v,
-                              boost::mpl::bool_<false> /* tag */);
+                              std::bool_constant<false> /* tag */);
 
   /*!
    * Update a newly created vertex using the overlay traits.
@@ -319,7 +319,7 @@ protected:
    * \param tag The tag used for dispatching.
    */
   void _create_vertex(Event* event, Vertex_handle res_v, Subcurve* sc,
-                      boost::mpl::bool_<true> /* tag */);
+                      std::bool_constant<true> /* tag */);
 
   /*!
    * Update a newly created vertex using the overlay traits.
@@ -331,7 +331,7 @@ protected:
    * \param tag The tag used for dispatching.
    */
   void _create_vertex(Event* event, Vertex_handle res_v, Subcurve* sc,
-                      boost::mpl::bool_<false> /* tag */);
+                      std::bool_constant<false> /* tag */);
 
   /*!
    * Update a newly created edge using the overlay traits.
@@ -922,7 +922,7 @@ _map_halfedge_and_twin(Halfedge_handle he,
 //
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
-_map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
+_map_boundary_vertices(Event* event, Vertex_handle v, std::bool_constant<true>)
 {
   // Update the red and blue object if the last event on sc is on the boundary.
   if ((event->parameter_space_in_x() != ARR_INTERIOR) ||
@@ -960,7 +960,7 @@ _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
 template <typename OvlHlpr, typename OvlTr, typename Vis>
 void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _map_boundary_vertices(Event* /* event */, Vertex_handle /* v */,
-                       boost::mpl::bool_<false>)
+                       std::bool_constant<false>)
 {}
 
 /* Notify the overlay traits about a newly created vertex.
@@ -974,7 +974,7 @@ void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _create_vertex(Event* event,
                Vertex_handle new_v,
                Subcurve* sc,
-               boost::mpl::bool_<true>)
+               std::bool_constant<true>)
 {
   const Point_2& pt = event->point();
   const Cell_handle_red* red_handle = pt.red_cell_handle();
@@ -1011,7 +1011,7 @@ _create_vertex(Event* event,
     return;
   }
 
-  _create_vertex(event, new_v, sc, boost::mpl::bool_<false>());
+  _create_vertex(event, new_v, sc, std::bool_constant<false>());
 }
 
 /* Notify the overlay traits about a newly created vertex. */
@@ -1020,7 +1020,7 @@ void Arr_overlay_ss_visitor<OvlHlpr, OvlTr, Vis>::
 _create_vertex(Event* event,
                Vertex_handle new_v,
                Subcurve* sc,
-               boost::mpl::bool_<false>)
+               std::bool_constant<false>)
 {
   const Point_2& pt = event->point();
   const Cell_handle_red* red_handle = pt.red_cell_handle();

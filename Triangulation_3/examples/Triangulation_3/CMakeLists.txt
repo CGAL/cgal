@@ -42,7 +42,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(parallel_insertion_in_delaunay_3 PUBLIC CGAL::TBB_support)
   target_link_libraries(sequential_parallel PUBLIC CGAL::TBB_support)
 
-  if(BUILD_TESTING)
+  if(CGAL_ENABLE_TESTING)
     set_property(TEST
       "execution   of  parallel_insertion_and_removal_in_regular_3"
       "execution   of  parallel_insertion_in_delaunay_3"

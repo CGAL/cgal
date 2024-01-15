@@ -26,6 +26,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/collapse_short_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/flip_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/smooth_vertices.h>
+#include <CGAL/Tetrahedral_remeshing/internal/peel_slivers.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
@@ -289,67 +290,8 @@ public:
     std::cout.flush();
 #endif
 
-    std::size_t nb_slivers_peel = 0;
-    std::vector<std::pair<Cell_handle, std::array<bool, 4> > > peelable_cells;
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    double mindh = 180.;
-#endif
-    for (Cell_handle cit : tr().finite_cell_handles())
-    {
-      std::array<bool, 4> facets_on_surface;
-      if (m_c3t3.is_in_complex(cit))
-      {
-        const double dh = min_dihedral_angle(tr(), cit);
-        if(dh < sliver_angle && is_peelable(m_c3t3, cit, facets_on_surface))
-          peelable_cells.push_back(std::make_pair(cit, facets_on_surface));
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-        mindh = (std::min)(dh, mindh);
-#endif
-      }
-    }
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cout << "Min dihedral angle : " << mindh << std::endl;
-    std::cout << "Peelable cells : " << peelable_cells.size() << std::endl;
-#endif
-
-    for (auto c_i : peelable_cells)
-    {
-      Cell_handle c = c_i.first;
-      const std::array<bool, 4>& f_on_surface = c_i.second;
-
-      std::optional<Surface_patch_index> patch;
-      for (int i = 0; i < 4; ++i)
-      {
-        if (f_on_surface[i])
-        {
-          Surface_patch_index spi = m_c3t3.surface_patch_index(c, i);
-          if (patch != std::nullopt && patch != spi)
-          {
-            patch = std::nullopt;
-            break;
-          }
-          else
-          {
-            patch = spi;
-          }
-        }
-      }
-      if(patch == std::nullopt)
-        continue;
-
-      for (int i = 0; i < 4; ++i)
-      {
-        if(f_on_surface[i])
-          m_c3t3.remove_from_complex(c, i);
-        else
-          m_c3t3.add_to_complex(c, i, patch.value());
-      }
-
-      m_c3t3.remove_from_complex(c);
-      ++nb_slivers_peel;
-    }
+    const std::size_t nb_peeled
+      = CGAL::Tetrahedral_remeshing::peel_slivers(m_c3t3, sliver_angle, m_cell_selector);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -358,21 +300,8 @@ public:
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "99-postprocess");
 #endif
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    mindh = 180.;
-    for (Cell_handle cit : tr().finite_cell_handles())
-    {
-      if (m_c3t3.is_in_complex(cit))
-      {
-        const double dh = min_dihedral_angle(tr(), cit);
-        mindh = (std::min)(dh, mindh);
-      }
-    }
-    std::cout << "Peeling done (removed " << nb_slivers_peel << " slivers, "
-      << "min dihedral angle = " << mindh << ")." << std::endl;
 
-#endif
-    return nb_slivers_peel;
+    return nb_peeled;
   }
 
   void finalize()
@@ -469,17 +398,8 @@ private:
     const Curve_index default_curve_id = default_curve_index();
     for (const Edge& e : tr().finite_edges())
     {
-      if (m_c3t3.is_in_complex(e))
-      {
-        CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.second)) <= 1);
-        CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.third)) <= 1);
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        ++nbe;
-#endif
-        continue;
-      }
-
       if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e))
+          || m_c3t3.is_in_complex(e)
           || nb_incident_subdomains(e, m_c3t3) > 2
           || nb_incident_surface_patches(e, m_c3t3) > 1)
       {
@@ -537,6 +457,7 @@ private:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
       "0-edges_in_complex_after_init.polylines.txt");
 #endif

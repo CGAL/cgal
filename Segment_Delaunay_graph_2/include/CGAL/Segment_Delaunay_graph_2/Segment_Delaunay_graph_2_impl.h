@@ -10,6 +10,10 @@
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
+#ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_SDG_2_IMPL_H
+#define CGAL_SEGMENT_DELAUNAY_GRAPH_2_SDG_2_IMPL_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
 
 // class implementation continued
 //=================================
@@ -3325,3 +3329,5 @@ file_input(std::istream& is, bool read_handle_vector,
 } //namespace CGAL
 
 // EOF
+
+#endif // CGAL_SEGMENT_DELAUNAY_GRAPH_2_SDG_2_IMPL_H

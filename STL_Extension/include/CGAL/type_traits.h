@@ -21,10 +21,10 @@ namespace CGAL {
 
 template< class Base, class Derived >
 struct is_same_or_derived :
-  public ::boost::mpl::or_<
-    ::std::is_same< Base, Derived >,
-    ::boost::is_base_and_derived< Base, Derived >
-  >::type
+  public std::bool_constant<
+    ::std::is_same_v< Base, Derived > ||
+    ::boost::is_base_and_derived< Base, Derived >::value
+  >
 {};
 
 namespace cpp20 {

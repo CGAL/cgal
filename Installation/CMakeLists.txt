@@ -105,9 +105,12 @@ else(CGAL_BRANCH_BUILD)
       "${CGAL_SOURCE_DIR}"
       CACHE INTERNAL "Directory containing the GraphicsView package")
 
-  # Enable testing with BUILD_TESTING
-  option(BUILD_TESTING "Build the testing tree." OFF)
-  if(BUILD_TESTING)
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
+option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
+  if(CGAL_ENABLE_TESTING)
     enable_testing()
   endif()
 endif(CGAL_BRANCH_BUILD)
@@ -589,10 +592,9 @@ set(CGAL_INSTALL_LIB_DIR
 )
 
 if(CGAL_WIN32_CMAKE_ON_CYGWIN)
-  exec_program(
-    cygpath ARGS
-    -w "${CMAKE_INSTALL_PREFIX}"
-    OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
+  execute_process(COMMAND cygpath -w ${CMAKE_INSTALL_PREFIX}
+                  OUTPUT_STRIP_TRAILING_WHITESPACE
+                  OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
   file(TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX)
 endif()
 
@@ -1250,6 +1252,6 @@ if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'"
     )
   if(Qt6_FOUND)
-    message(STATUS "USING Qt6_VERSION = '${Qt6Core_VERSION_STRING}'")
+    message(STATUS "USING Qt6_VERSION = '${Qt6Core_VERSION}'")
   endif()#Qt6_FOUND
 endif()#RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE

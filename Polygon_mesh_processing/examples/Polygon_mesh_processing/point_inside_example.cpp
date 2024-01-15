@@ -12,14 +12,14 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef K::Point_3                                             Point;
-typedef CGAL::Polyhedron_3<K>                                  Polyhedron;
+typedef CGAL::Polyhedron_3<K>                                  Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-double max_coordinate(const Polyhedron& poly)
+double max_coordinate(const Mesh& poly)
 {
   double max_coord = -std::numeric_limits<double>::infinity();
-  for(Polyhedron::Vertex_handle v : vertices(poly))
+  for(Mesh::Vertex_handle v : vertices(poly))
   {
     Point p = v->point();
     max_coord = (std::max)(max_coord, CGAL::to_double(p.x()));
@@ -33,14 +33,14 @@ int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
-  Polyhedron poly;
+  Mesh poly;
   if(!PMP::IO::read_polygon_mesh(filename, poly) || CGAL::is_empty(poly) || !CGAL::is_triangle_mesh(poly))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
-  CGAL::Side_of_triangle_mesh<Polyhedron, K> inside(poly);
+  CGAL::Side_of_triangle_mesh<Mesh, K> inside(poly);
 
   double size = max_coordinate(poly);
 
