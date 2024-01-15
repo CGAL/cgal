@@ -96,7 +96,7 @@ int main(int, char**)
 
   CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
 
-  CGAL::IO::write_OFF("output.off", points, polygons);
+  CGAL::IO::write_OFF("dual_contouring_octree.off", points, polygons);
 
   return EXIT_SUCCESS;
 }

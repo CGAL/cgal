@@ -40,9 +40,9 @@ inline Kernel::FT distance_to_mesh(const Tree& tree,
   return sqrt((p - x).squared_length());
 }
 
-int main(int, char**)
+int main(int argc, char* argv[])
 {
-  const std::string input_name = CGAL::data_file_path("meshes/cross.off");
+  const std::string input_name = (argc > 1) ? argv[1] :CGAL::data_file_path("meshes/cross.off");
   const int n_voxels = 20;
   const FT offset_value = 0.2;
 
@@ -99,7 +99,7 @@ int main(int, char**)
   CGAL::Isosurfacing::marching_cubes(domain, offset_value, points, polygons);
 
   // save the output
-  CGAL::IO::write_polygon_soup("output.off", points, polygons);
+  CGAL::IO::write_polygon_soup("marching_cubes_signed_mesh_offset.off", points, polygons);
 
   return EXIT_SUCCESS;
 }

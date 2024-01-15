@@ -16,7 +16,7 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 
 int main(int, char**)
 {
-  // 3D bounding box [-1, 1]^3 and Cartesian grid 
+  // 3D bounding box [-1, 1]^3 and Cartesian grid
   const CGAL::Bbox_3 bbox{-1., -1., -1.,  1., 1., 1.};
   Grid grid { 50, 50, 50, bbox };
 
@@ -46,7 +46,7 @@ int main(int, char**)
   CGAL::Isosurfacing::marching_cubes(domain, 0.8, points, triangles);
 
   // save output indexed surface mesh to file, in the OFF format
-  CGAL::IO::write_OFF("output.off", points, triangles);
+  CGAL::IO::write_OFF("marching_cubes_Cartesian_grid_sphere.off", points, triangles);
 
   return EXIT_SUCCESS;
 }

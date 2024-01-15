@@ -30,9 +30,10 @@ using Tree = CGAL::AABB_tree<Traits>;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-int main(int, char**)
+int main(int argc, char* argv[])
 {
-  const std::string input_name = CGAL::data_file_path("meshes/cross.off");
+
+  const std::string input_name = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
   const Vector grid_spacing(0.1, 0.1, 0.1);
   const FT offset_value = 0.2;
 
@@ -79,7 +80,7 @@ int main(int, char**)
   CGAL::Isosurfacing::dual_contouring(domain, offset_value, points, polygons);
 
   // save output indexed mesh to a file, in the OFF format
-  CGAL::IO::write_OFF("result.off", points, polygons);
+  CGAL::IO::write_OFF("dual_contouring_mesh_offset.off", points, polygons);
 
   return EXIT_SUCCESS;
 }

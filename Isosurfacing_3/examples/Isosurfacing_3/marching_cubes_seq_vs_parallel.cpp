@@ -43,7 +43,7 @@ int main(int, char**)
   CGAL::Isosurfacing::marching_cubes<CGAL::Sequential_tag>(domain, isovalue, points, triangles);
   timer.stop();
   std::cout << "done (" << timer.time() << "s, " << triangles.size() << " triangles)" << std::endl;
-  CGAL::IO::write_OFF("output-seq.off", points, triangles);
+  CGAL::IO::write_OFF("output-sequential.off", points, triangles);
 
   // clear points and triangles
   points.clear();

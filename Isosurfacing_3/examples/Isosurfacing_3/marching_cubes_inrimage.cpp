@@ -15,9 +15,9 @@ using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-int main(int, char**)
+int main(int argc, char* argv[])
 {
-  const std::string fname = "../examples/Isosurfacing_3/FullHead.inr";//CGAL::data_file_path("images/skull_2.9.inr");
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/skull_2.9.inr");
 
   // load volumetric image from a file
   CGAL::Image_3 image;
@@ -46,7 +46,7 @@ int main(int, char**)
   CGAL::Isosurfacing::marching_cubes(domain, 1120 /*isovalue*/, points, polygons);
 
   // save output indexed mesh to a file, in the OFF format
-  CGAL::IO::write_OFF("result.off", points, polygons);
+  CGAL::IO::write_OFF("marching_cubes_inrimage.off", points, polygons);
 
   return EXIT_SUCCESS;
 }

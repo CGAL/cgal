@@ -53,7 +53,7 @@ int main(int, char**)
   CGAL::Isosurfacing::dual_contouring(domain, 0.0, points, polygons);
 
   // save output to the OFF format
-  CGAL::IO::write_OFF("output.off", points, polygons);
+  CGAL::IO::write_OFF("dual_contouring_implicit_iwp.off", points, polygons);
 
   return EXIT_SUCCESS;
 }

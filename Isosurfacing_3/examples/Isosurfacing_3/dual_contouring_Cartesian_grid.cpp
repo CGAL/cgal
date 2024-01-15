@@ -58,7 +58,7 @@ int main(int, char**)
   CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
 
   // write output indexed surface mesh to file, in OFF format
-  CGAL::IO::write_OFF("output.off", points, polygons);
+  CGAL::IO::write_OFF("dual_contouring_Cartesian_grid.off", points, polygons);
 
   return EXIT_SUCCESS;
 }

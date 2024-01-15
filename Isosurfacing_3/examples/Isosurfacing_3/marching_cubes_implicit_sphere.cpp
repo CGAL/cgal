@@ -44,7 +44,7 @@ int main(int, char**)
   std::cout << "done (" << timer.time() << "s, " << triangles.size() << " triangles)" << std::endl;
 
   // save ouput indexed mesh to a file, in the OFF format
-  CGAL::IO::write_OFF("output.off", points, triangles);
+  CGAL::IO::write_OFF("marching_cubes_implicit_sphere.off", points, triangles);
 
   return EXIT_SUCCESS;
 }
