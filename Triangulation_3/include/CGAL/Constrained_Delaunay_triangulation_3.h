@@ -177,17 +177,25 @@ public:
   }
 };
 
-struct With_point_and_info_tag {};
-
 template <class DSC, bool Const>
 struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_tag>
   : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
 {
+  int offset = 0;
   using Base = Output_rep<CGAL::internal::CC_iterator<DSC, Const>>;
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Compact_container = typename CC_iterator::CC;
+  using Time_stamper = typename Compact_container::Time_stamper;
+
   using Base::Base;
 
+  Output_rep(const CC_iterator& it, With_point_and_info_tag tag)
+    : Base(it), offset(tag.offset)
+  {
+  }
+
   std::ostream& operator()(std::ostream& out) const {
-    Base::operator()(out);
+    out << Time_stamper::display_id(this->it.operator->(), offset);
     if(this->it.operator->() != nullptr)
       return  out << (this->it->is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
                   << (this->it->is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
@@ -1249,8 +1257,8 @@ private:
                       }));
   }
 
-  static constexpr With_point_tag with_point{};
-  static constexpr With_point_and_info_tag with_point_and_info{};
+  using Conforming_Dt::with_point;
+  using Conforming_Dt::with_point_and_info;
 
   template <typename Fh_region>
   void restore_subface_region(CDT_3_face_index face_index, int region_count,

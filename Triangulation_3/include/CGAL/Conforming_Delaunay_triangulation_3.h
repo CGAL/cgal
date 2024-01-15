@@ -75,6 +75,7 @@ public:
   }
 };
 
+struct With_point_and_info_tag : public With_point_tag {};
 
 template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {
@@ -86,6 +87,9 @@ public:
   using Point = typename T_3::Point;
   using Line = typename T_3::Geom_traits::Line_3;
   using Locate_type = typename T_3::Locate_type;
+
+  inline static With_point_tag with_point{};
+  inline static With_point_and_info_tag with_point_and_info{};
 
 protected:
   struct Compare_vertex_handle {
@@ -107,7 +111,7 @@ protected:
   auto display_vert(Vertex_handle v) const{
     std::stringstream os;
     os.precision(17);
-    os << IO::oformat(v) << "=(" << this->tr.point(v) << ")";
+    os << IO::oformat(v, with_point);
     return os.str();
   };
   auto display_subcstr(Subconstraint subconstraint) const {

@@ -292,10 +292,11 @@ struct Output_rep<Triangulation_simplex_3<TriangulationDataStructure_3>, Tag >
   using Cell_handle = typename Simplex::Cell_handle;
 
   Simplex simplex;
+  Tag tag;
 
   std::ostream& operator()(std::ostream& os) const {
-    auto display_vert = [](auto v) {
-      return CGAL::IO::oformat(v, Tag{});
+    auto display_vert = [&](auto v) {
+      return CGAL::IO::oformat(v, tag);
     };
     switch(simplex.dimension()) {
       case 0: {

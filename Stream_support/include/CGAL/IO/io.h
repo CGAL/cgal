@@ -183,7 +183,7 @@ class Output_rep
 
 public:
   //! initialize with a const reference to \a t.
-  Output_rep( const T& tt) : t(tt) {}
+  Output_rep( const T& tt, F = {}) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
   std::ostream& operator()( std::ostream& os) const { return (os << t); }
 };
@@ -248,7 +248,7 @@ Convenience function to construct an output representation (`Output_rep`) for ty
 Generic IO for type `T` with formatting tag.
 */
 template <class T, class F>
-Output_rep<T,F> oformat( const T& t, F) { return Output_rep<T,F>(t); }
+Output_rep<T,F> oformat( const T& t, F format) { return Output_rep<T,F>(t, format); }
 
 } // namespace IO
 

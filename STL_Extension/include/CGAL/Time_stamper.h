@@ -67,12 +67,12 @@ struct Time_stamper
     return pt->time_stamp();
   }
 
-  static auto display_id(const T* pt)
+  static auto display_id(const T* pt, int offset = 0)
   {
     if(pt == nullptr)
       return std::string("nullptr");
     else
-      return std::string("#") + std::to_string(pt->time_stamp());
+      return std::string("#") + std::to_string(pt->time_stamp() + offset);
   }
 
   static std::size_t hash_value(const T* p) {
@@ -110,7 +110,7 @@ public:
     return 0;
   }
 
-  static auto display_id(const T* pt)
+  static auto display_id(const T* pt, int)
   {
     return static_cast<const void*>(pt);
   }
