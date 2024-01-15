@@ -43,7 +43,7 @@ int main(int, char**)
   const Vector vec_spacing(spacing, spacing, spacing);
 
   // create a domain with given bounding box and grid spacing
-  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain(bbox, vec_spacing, iwp_value, iwp_gradient);
+  auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>(bbox, vec_spacing, iwp_value, iwp_gradient);
 
   // prepare collections for the result
   Point_range points;
@@ -52,7 +52,7 @@ int main(int, char**)
   // run duak contouring with isovalue set to 0.0
   CGAL::Isosurfacing::dual_contouring(domain, 0.0, points, polygons);
 
-  // save indexed face set to file, in the OFF format
+  // save output to the OFF format
   CGAL::IO::write_OFF("output.off", points, polygons);
 
   return EXIT_SUCCESS;

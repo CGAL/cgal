@@ -94,7 +94,7 @@ int main(int argc, char **argv)
   auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
 
   // run Marching cubes with a range of offsets, 
-  // and save all outputs to files "output-index.off"
+  // and save all output meshes to files "output-index.off"
   int index = 0;
   for(FT offset = 0.0; offset < 0.3; offset += 0.01, index++)
   {
