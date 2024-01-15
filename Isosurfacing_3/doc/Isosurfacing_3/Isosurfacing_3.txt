@@ -75,7 +75,7 @@ MC does not preserve the sharp features present in the isovalue of the input sca
 
 
 \subsection subsectmc Topologically Correct Marching Cubes (TMC)
-This algorithm is an extension to MC and provides additional guarantees for the output \cgalCite{g-ctcmi-16}.
+This algorithm is an extension to MC and provides additional guarantees for the output \cgalCite{cgal:g-ctcmi-16}.
 It generates as output a mesh that is homeomorphic to the trilinear interpolant of the input scalar field inside each cube.
 This means that the output mesh can accurately represent small complex features.
 For example, a tunnel of the isosurface within a single cell is topologically resolved.
