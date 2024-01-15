@@ -12,8 +12,10 @@ at a 3D query point (not necessarily a vertex) in space.
 
 \cgalRefines `IsosurfacingDomain_3`
 
-\cgalHasModel `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
-\cgalHasModel `CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3}
+\cgalHasModels{CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3}
+\cgalHasModelsEnd
 */
 class IsosurfacingDomainWithGradient_3
 {

@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   // create a domain from the grid
   auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
 
-  // prepare collections for the output indexed mesh
+  // prepare collections for the output indexed soup
   Point_range points;
   Polygon_range polygons;
 

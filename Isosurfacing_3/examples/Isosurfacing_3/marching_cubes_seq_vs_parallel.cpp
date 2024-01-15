@@ -31,7 +31,7 @@ int main(int, char**)
   auto domain = CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<Kernel>
     (bbox, vec_spacing, sphere_function);
 
-  // points and triangles for the output indexed mesh
+  // points and triangles for the output indexed soup
   Point_range points;
   Triangle_range triangles;
 

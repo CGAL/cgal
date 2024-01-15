@@ -6,7 +6,9 @@
 The concept `IsosurfacingTraits_3` describes the set of requirements to be
 fulfilled by the traits class of a model of `IsosurfacingDomain_3`.
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the concept `Kernel`}
+\cgalHasModelsEnd
 */
 class IsosurfacingTraits_3
 {

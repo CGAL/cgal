@@ -59,7 +59,7 @@ using Explicit_Cartesian_grid_domain_3 =
  *
  * \brief Creates a domain that can be used as input for isosurfacing algorithms.
  *
- * \warning As the domain will keep a pointer to the `grid` object, users must ensure that
+ * \warning The domain keeps a pointer to the `grid` object, hence users must ensure that
  *          the lifetime of the `grid` object exceeds that of the object returned by this function.
  *
  * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
@@ -67,7 +67,7 @@ using Explicit_Cartesian_grid_domain_3 =
  *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
  * \param grid the %Cartesian grid containing input data
- * \param grad a function giving the value of the gradient of the implicit function at each discretization point
+ * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
  *
  * \return a new `CGAL::Explicit_Cartesian_grid_domain_3`
  */
@@ -76,14 +76,14 @@ template <typename GeomTraits,
           typename Gradient = Zero_gradient>
 Explicit_Cartesian_grid_domain_3<Grid, Gradient>
 create_explicit_Cartesian_grid_domain(const CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>& grid,
-                                      const Gradient& grad = Gradient())
+                                      const Gradient& gradient = Gradient())
 #else
 // Actual code enables passing more than just a Cartesian_grid_3
 template <typename Grid,
           typename Gradient = Zero_gradient>
 Explicit_Cartesian_grid_domain_3<Grid, Gradient>
 create_explicit_Cartesian_grid_domain(const Grid& grid,
-                                      const Gradient& grad = Gradient())
+                                      const Gradient& gradient = Gradient())
 #endif
 {
   using Domain = Explicit_Cartesian_grid_domain_3<Grid, Gradient>;
@@ -100,7 +100,7 @@ create_explicit_Cartesian_grid_domain(const Grid& grid,
   const Geometry geom { grid };
   const Function func { grid };
 
-  return Domain{ topo, geom, func, grad, grid.geom_traits() };
+  return Domain{ topo, geom, func, gradient, grid.geom_traits() };
 }
 
 } // namespace Isosurfacing

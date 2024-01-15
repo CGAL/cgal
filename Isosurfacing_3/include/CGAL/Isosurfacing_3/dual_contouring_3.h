@@ -89,7 +89,7 @@ void dual_contouring(const Domain& domain,
         vertex_ids.push_back(pos_func.map_voxel_to_point_id[v_id]);
     }
 
-    // ignore degenerated faces
+    // ignore degenerate faces
     if(vertex_ids.size() > 2)
       polygons.push_back(vertex_ids);
   }

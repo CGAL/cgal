@@ -71,15 +71,15 @@ using Implicit_Cartesian_grid_domain_3 =
  * less overall memory is required in comparison to an `Explicit_Cartesian_grid_domain_3`.
  *
  * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
- * \tparam ImplicitFunction the type of the implicit function. It must be a model of `CopyConstructible` and implement
- *                          `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
+ * \tparam ImplicitFunction the type of the implicit function. It must be a model of `CopyConstructible`
+ *                          and implement `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
  *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
  * \param bbox a bounding box that specifies the dimensions of the implicit function's domain
  * \param spacing the distance between discretization points
  * \param point_function the implicit function giving the value of the implicit function at each discretization point
- * \param grad a function giving the value of the gradient of the implicit function at each discretization point
+ * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
  * \param gt an instance of geometric traits
  *
  * \return a new object of type `CGAL::Implicit_Cartesian_grid_domain_3`
@@ -93,7 +93,7 @@ Implicit_Cartesian_grid_domain_3<GeomTraits, ImplicitFunction, Gradient>
 create_implicit_Cartesian_grid_domain(const Bbox_3& bbox,
                                       const typename GeomTraits::Vector_3& spacing,
                                       const ImplicitFunction& point_function,
-                                      const Gradient& grad = Gradient(),
+                                      const Gradient& gradient = Gradient(),
                                       const GeomTraits& gt = GeomTraits())
 {
   using Domain = Implicit_Cartesian_grid_domain_3<GeomTraits, ImplicitFunction, Gradient>;
@@ -121,7 +121,7 @@ create_implicit_Cartesian_grid_domain(const Bbox_3& bbox,
   const Geometry geom { offset, spacing };
   const Function func { geom, point_function };
 
-  return Domain{ topo, geom, func, grad, gt };
+  return Domain{ topo, geom, func, gradient, gt };
 }
 
 // @todo add an undocumented convenience overload with Vector_3<GeomTraits> to match CGAL kernels

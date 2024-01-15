@@ -76,7 +76,7 @@ int main(int, char**)
   Refine_one_eighth split_predicate(3, 5);
   octree_wrap.refine(split_predicate);
 
-  auto sphere_function = [&](const Point& p) -> FT
+  auto sphere_function = [](const Point& p) -> FT
   {
     return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
   };

@@ -39,19 +39,19 @@ public:
   typedef Geom_traits::Point_3 Point_3;
 
   /*!
-  A descriptor to uniquely identify a vertex.
+  A descriptor that uniquely identifies a vertex.
   Must be a model of the concepts `DefaultConstructible`, `CopyConstructible`, and `Assignable`.
   */
   typedef unspecified_type Vertex_descriptor;
 
   /*!
-  A descriptor to uniquely identify an edge.
+  A descriptor that uniquely identifies an edge.
   Must be a model of the concepts `DefaultConstructible`, `CopyConstructible`, and `Assignable`.
   */
   typedef unspecified_type Edge_descriptor;
 
   /*!
-  A descriptor to uniquely identify a cell.
+  A descriptor that uniquely identifies a cell.
   Must be a model of the concepts `DefaultConstructible`, `CopyConstructible`, and `Assignable`.
   */
   typedef unspecified_type Cell_descriptor;
@@ -88,42 +88,42 @@ public:
   /// @{
 
   /*!
-  gets the geometric traits
+  returns the geometric traits.
   */
   Geom_traits geom_traits();
 
   /*!
-  gets the 3D position of the vertex `v`
+  returns the 3D position of the vertex `v`.
   */
   Point_3 point(const Vertex_descriptor& v) const;
 
   /*!
-  gets the value of the implicit field at the vertex `v`
+  returns the value of the implicit field at the vertex `v`.
   */
   FT value(const Vertex_descriptor& v) const;
 
   /*!
-  gets the two vertices incident to the edge `e`
+  returns the two vertices incident to the edge `e`.
   */
   Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const;
 
   /*!
-  gets all cells incident to the edge `e`
+  returns all the cells incident to the edge `e`.
   */
   Cells_incident_to_edge incident_cells(const Edge_descriptor& e) const;
 
   /*!
-  gets all vertices of the cell `c`
+  returns all the vertices of the cell `c`.
   */
   Cell_vertices cell_vertices(const Cell_descriptor& c) const;
 
   /*!
-  gets all edges of the cell `c`
+  returns all the edges of the cell `c`.
   */
   Cell_edges cell_edges(const Cell_descriptor& c) const;
 
   /*!
-  iterates over all vertices and calls the functor `f` on each one
+  iterates over all vertices, and calls the functor `f` on each one.
 
   \tparam ConcurrencyTag decides if the vertices are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
@@ -135,7 +135,7 @@ public:
   void iterate_vertices(Functor& f) const;
 
   /*!
-  iterates over all edges and calls the functor `f` on each one
+  iterates over all edges, and calls the functor `f` on each one.
 
   \tparam ConcurrencyTag decides if the edges are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
@@ -147,7 +147,7 @@ public:
   void iterate_edges(Functor& f) const;
 
   /*!
-  iterates over all cells and calls the functor `f` on each one
+  iterates over all cells, and calls the functor `f` on each one.
 
   \tparam ConcurrencyTag decides if the cells are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.

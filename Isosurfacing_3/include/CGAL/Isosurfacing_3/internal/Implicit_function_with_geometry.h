@@ -20,7 +20,6 @@ namespace internal {
 
 // Wrapper for an implicit function that can only be evaluated at a position and not at a vertex.
 // Evaluates the geometry to get the vertex position and passes that to the function.
-// Works for all VertexDescriptor types.
 template <typename Geometry,
           typename PointFunction>
 class Implicit_function_with_geometry

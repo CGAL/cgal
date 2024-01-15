@@ -27,7 +27,7 @@ namespace Isosurfacing {
 /*
  * \ingroup IS_Domains_grp
  *
- * \cgalModels `IsosurfacingDomainWithGradient_3`
+ * \cgalModels{IsosurfacingDomainWithGradient_3}
  *
  * \brief A domain that represents an octree that discretizes an implicit function.
  *
@@ -83,7 +83,7 @@ template <typename Octree,
           typename Gradient = Zero_gradient>
 auto create_implicit_octree_domain(const Octree& octree,
                                    const ImplicitFunction& point_func,
-                                   const Gradient& grad = Gradient())
+                                   const Gradient& gradient = Gradient())
 {
 #endif
   using Domain = Implicit_octree_domain<Octree, ImplicitFunction, Gradient>;
@@ -97,7 +97,7 @@ auto create_implicit_octree_domain(const Octree& octree,
   const Function func { geom, point_func };
 
   // @fixme Octree_wrapper's geom_traits() isn't octree's geom_traits()...
-  return Domain{ topo, geom, func, grad, octree.geom_traits() };
+  return Domain{ topo, geom, func, gradient, octree.geom_traits() };
 }
 
 } // namespace Isosurfacing

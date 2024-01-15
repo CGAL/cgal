@@ -26,7 +26,7 @@ namespace Isosurfacing {
  *
  * \tparam P the point type
  *
- * \details This gradient function can be used for Marching Cubes that does not require a gradient.
+ * \details This gradient function can be useful when using Marching Cubes, which does not require the domain to have a gradient.
  */
 struct Zero_gradient
 {
