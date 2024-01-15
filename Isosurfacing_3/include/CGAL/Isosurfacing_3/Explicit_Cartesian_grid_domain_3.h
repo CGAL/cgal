@@ -26,7 +26,7 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Domains_grp
  *
- * \cgalModels `IsosurfacingDomainWithGradient_3`
+ * \cgalModels{IsosurfacingDomainWithGradient_3}
  *
  * \brief A domain that represents an explicitly stored %Cartesian grid.
  *

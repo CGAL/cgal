@@ -11,8 +11,10 @@ of an implicit field through a partition of the Euclidean space in cells.
 The isosurfacing algorithms traverse these cells and query the domain class
 at the vertices of each cell, using the functions `point()` and `value()`.
 
-\cgalHasModel `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
-\cgalHasModel `CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3}
+\cgalHasModels{CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3}
+\cgalHasModelsEnd
 */
 class IsosurfacingDomain_3
 {

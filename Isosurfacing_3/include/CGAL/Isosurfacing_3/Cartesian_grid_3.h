@@ -116,9 +116,7 @@ public:
   void from_image(const Image_3& image);
 
    /**
-  * \brief creates a `CGAL::Image_3` from the Cartesian grid.
-  *
-  * \param image the image providing the data
+  * \brief creates a `CGAL::Image_3` from the %Cartesian grid.
   */
   Image_3 to_image() const;
 
