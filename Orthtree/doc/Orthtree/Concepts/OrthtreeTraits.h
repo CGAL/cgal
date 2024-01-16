@@ -8,6 +8,7 @@
   \cgalHasModelsBegin
   \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>}
   \cgalHasModels{CGAL::Orthtree_traits_face_graph<PolygonMesh, VPM>}
+  \cgalHasModels{CGAL::Orthtree_traits_base_for_dimension< K, DimensionTag >}
   \cgalHasModelsEnd
 */
 class OrthtreeTraits
@@ -34,7 +35,7 @@ public:
   using Node_data = unspecified_type;
 
   /*!
-   * \brief Number-type which can take on values indicating adjacency directions.
+   * \brief Number type which can take on values indicating adjacency directions.
    *
    * Must be able to take on values ranging from 0 to the number of faces of the (hyper)rectangle type, equivalent to 2 * D.
    */
@@ -42,6 +43,9 @@ public:
 
   /*!
    * \brief Functor with an operator to create the bounding box of the root node.
+   *
+   * Provides the operator:
+   * `Bbox_d operator()()`
    *
    * The bounding box must enclose all elements contained by the tree.
    * It may be tight-fitting. The orthtree constructor produces a bounding box surrounding this region.
@@ -55,7 +59,10 @@ public:
    * Each node of a tree has an associated `Node_data` value.
    * For most nodes, this is set by `Distribute_node_contents`, but that is not possible for the root node.
    * Instead, this functor initializes the `Node_data` of the root node.
-   * It should take no arguments, and return an instance of `Node_data`.
+   * It takes no arguments, and return an instance of `Node_data`.
+   *
+   * Provides the operator:
+   * Node_data operator()()`
    *
    * Typically, the `Node_data` of the root node contains all the elements in the tree.
    * For a tree in which each node contains an `std::span()` this function would return the span containing all items.
@@ -75,6 +82,10 @@ public:
    * \brief Functor which distributes a node's contents to its children.
    *
    * The functor takes a node index, a tree reference, and a `Point_d` which is the center of the node.
+   *
+   * Provides the operator:
+   * void operator()(typename Tree::Node_index, Tree&, const Point_d&)`
+   *
    * It can use `tree.children(node_index)` to access the children of the node, and `tree.data(node_index)`
    * to access the contents of the node and each of its children.
    * It must distribute the contents of the node to each of its children.

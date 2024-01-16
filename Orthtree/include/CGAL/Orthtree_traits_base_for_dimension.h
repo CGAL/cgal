@@ -31,6 +31,8 @@ namespace CGAL {
   \tparam K model of `Kernel`.
   \tparam DimensionTag is a tag representing the dimension of the ambient Euclidean space. Must be `Dimension_tag<d>` where `d` is an integer.
 
+  \cgalModels{OrthtreeTraits}
+
   \sa `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>`
   \sa `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`
 */
