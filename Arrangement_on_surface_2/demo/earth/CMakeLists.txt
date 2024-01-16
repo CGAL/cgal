@@ -26,7 +26,7 @@ if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND)
   if (NOT Qt6_FOUND)
     set(MISSING_DEPS "the Qt6 library, ${MISSING_DEPS}")
   endif()
-  if (NOT CGAL_Boost_FOUND)
+  if (NOT Boost_FOUND)
     set(MISSING_DEPS "the Boost library, ${MISSING_DEPS}")
   endif()
 
