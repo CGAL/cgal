@@ -996,7 +996,7 @@ private:
         // triangulate and close inner hexagon
         // triangle must have the correct orientation
         // use asymptotic_decider() to see if positive vertices
-        // are separated, in thic case orientation must be changed
+        // are separated, in this case orientation must be changed
         const bool s_ = (asymptotic_decider(values[0], values[1], values[2], values[3]) <= i0);
         const bool of_ = (wi[1] < wi[0]) ? s_ : !s_;
 
