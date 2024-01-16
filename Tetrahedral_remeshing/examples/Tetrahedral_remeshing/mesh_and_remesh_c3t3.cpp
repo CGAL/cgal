@@ -68,8 +68,6 @@ int main(int argc, char* argv[])
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
-  CGAL::dump_c3t3(c3t3, "out");
-
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
 
