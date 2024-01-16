@@ -124,7 +124,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
 
   /// @}
 
-  /// Recommanded split predicate to pass to `Orthtree::refine()` function so
+  /// Recommended split predicate to pass to `Orthtree::refine()` function so
   /// that the octree is refined until a node is either empty or has an extend
   /// that would be smaller after split than the value provided to the constructor.
   class Split_predicate_node_min_extent {
