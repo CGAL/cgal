@@ -1,14 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
-
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
 #include <CGAL/Isosurfacing_3/dual_contouring_3.h>
 #include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
 #include <CGAL/Isosurfacing_3/Finite_difference_gradient_3.h>
 #include <CGAL/Isosurfacing_3/Implicit_Cartesian_grid_domain_3.h>
-#include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>
@@ -60,7 +57,7 @@ int main(int, char**)
     }
   }
 
-  const std::string fname = "../data/skull_2.9.inr";
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("images/skull_2.9.inr");
 
   // Load image
   // CGAL::Image_3 image;
