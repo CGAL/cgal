@@ -100,7 +100,7 @@ Some variants do not require the gradient and therefore run successfully even wh
 %Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh.
 It generates fewer faces than Marching Cubes, in general.
 Its advantage over MC is its ability to recover sharp creases and corners.
-#todo  PA: add a figure.
+@todo  PA: add a figure.
 
 
 
