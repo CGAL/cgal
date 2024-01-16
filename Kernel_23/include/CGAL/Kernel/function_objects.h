@@ -216,9 +216,13 @@ namespace CommonKernelFunctors {
       const Vector_3 bc2 = c2 - b2;
       const FT sc_prod_1 = ba1 * bc1;
       const FT sc_prod_2 = ba2 * bc2;
+      // Reminder: cos(angle) = scalar_product(ba, bc) / (length(ba)*length(bc))
+      // cosine is decreasing on 0, pi
+      // thus angle1 < angle2 is equivalent to cos(angle1) > cos(angle2)
       if(sc_prod_1 >= 0) {
         if(sc_prod_2 >= 0) {
-          // the two cosine are >= 0, cosine is decreasing on [0,1]
+          // the two cosine are >= 0, we can compare the squares
+          // (square(x) is increasing when x>=0
           return CGAL::compare(CGAL::square(sc_prod_2)*
                                ba1.squared_length()*bc1.squared_length(),
                                CGAL::square(sc_prod_1)*
@@ -228,7 +232,7 @@ namespace CommonKernelFunctors {
         }
       } else {
         if(sc_prod_2 < 0) {
-          // the two cosine are < 0, cosine is increasing on [-1,0]
+          // the two cosine are < 0, square(x) is decreasing when x<0
           return CGAL::compare(CGAL::square(sc_prod_1)*
                                ba2.squared_length()*bc2.squared_length(),
                                CGAL::square(sc_prod_2)*
