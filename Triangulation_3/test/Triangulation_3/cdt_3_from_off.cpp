@@ -95,6 +95,7 @@ Usage: cdt_3_from_off [options] input.off output.off
 
 int main(int argc, char* argv[])
 {
+  CDT::Conforming_Dt::with_offset.offset = -1;
   CDT::Conforming_Dt::with_point.offset = -1;
   CDT::Conforming_Dt::with_point_and_info.offset = -1;
   std::cerr.precision(17);

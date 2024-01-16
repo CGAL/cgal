@@ -88,6 +88,7 @@ public:
   using Line = typename T_3::Geom_traits::Line_3;
   using Locate_type = typename T_3::Locate_type;
 
+  inline static With_offset_tag with_offset{};
   inline static With_point_tag with_point{};
   inline static With_point_and_info_tag with_point_and_info{};
 
@@ -113,13 +114,15 @@ protected:
     os.precision(17);
     os << IO::oformat(v, with_point);
     return os.str();
-  };
+  }
+
   auto display_subcstr(Subconstraint subconstraint) const {
+    auto [va, vb] = subconstraint;
     std::stringstream os;
-    os << "[ " << display_vert(subconstraint.first)
-       << " - " << display_vert(subconstraint.second) << " ]";
+    os << "(" << IO::oformat(va, with_offset) << ", " << IO::oformat(vb, with_offset) << ")"
+       << ": [ " << display_vert(va) << " - " << display_vert(vb) << " ]";
     return os.str();
-  };
+  }
 
   class Insert_in_conflict_visitor
   {
