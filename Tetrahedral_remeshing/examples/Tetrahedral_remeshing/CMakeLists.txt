@@ -10,6 +10,7 @@ find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("tetrahedral_remeshing_example.cpp" )
 create_single_source_cgal_program("tetrahedral_remeshing_with_features.cpp")
+create_single_source_cgal_program("tetrahedral_remeshing_with_features_and_sizing.cpp")
 create_single_source_cgal_program("tetrahedral_remeshing_of_one_subdomain.cpp")
 create_single_source_cgal_program("tetrahedral_remeshing_from_mesh.cpp")
 
