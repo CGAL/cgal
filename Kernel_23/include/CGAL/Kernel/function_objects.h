@@ -232,7 +232,7 @@ namespace CommonKernelFunctors {
           return CGAL::compare(CGAL::square(sc_prod_1)*
                                ba2.squared_length()*bc2.squared_length(),
                                CGAL::square(sc_prod_2)*
-                               ba1.squared_length()*bc2.squared_length());
+                               ba1.squared_length()*bc1.squared_length());
         } else {
           return LARGER;
         }
