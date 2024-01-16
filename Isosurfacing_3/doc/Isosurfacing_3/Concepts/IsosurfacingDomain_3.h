@@ -153,7 +153,7 @@ public:
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
   \tparam Functor must implement `void operator()(const Cell_descriptor& cell)`.
 
-  \param f the functor called on every face
+  \param f the functor called on every cell
   */
   template <typename ConcurrencyTag, typename Functor>
   void iterate_cells(Functor& f) const;
