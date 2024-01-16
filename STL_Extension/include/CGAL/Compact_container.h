@@ -1166,12 +1166,15 @@ public:
   }
 };
 
-struct With_point_tag {
+struct With_offset_tag {
   int offset = 0;
 };
 
+struct With_point_tag : public With_offset_tag {
+};
+
 template <class DSC, bool Const>
-struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>
   : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
 {
   int offset = 0;
@@ -1182,11 +1185,30 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
   using Base = Output_rep<CC_iterator>;
   using Base::Base;
 
-  Output_rep(const CC_iterator it, With_point_tag tag = {})
+  Output_rep(const CC_iterator it, With_offset_tag tag = {})
     : Base(it), offset(tag.offset) {}
 
   std::ostream& operator()(std::ostream& out) const {
     out << Time_stamper::display_id(this->it.operator->(), offset);
+    return out;
+  }
+};
+
+template <class DSC, bool Const>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
+  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>
+{
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Base = Output_rep<CC_iterator, With_offset_tag>;
+  using Time_stamper = Base::Time_stamper;
+
+  using Base::Base;
+
+  Output_rep(const CC_iterator it, With_point_tag tag = {})
+    : Base(it, tag) {}
+
+  std::ostream& operator()(std::ostream& out) const {
+    this->Base::operator()(out);
     if(this->it.operator->() != nullptr) {
       if(Time_stamper::time_stamp(this->it.operator->()) == 0)
         return out << "= infinite_vertex()";
@@ -1213,7 +1235,6 @@ namespace std {
     }
   };
 #endif // CGAL_CFG_NO_STD_HASH
-
 
 } // namespace std
 
