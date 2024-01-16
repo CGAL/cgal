@@ -554,7 +554,10 @@ private:
       if (cid > max_index)
         max_index = cid;
     }
-    return max_index + 1;
+    if (max_index == (std::numeric_limits<Curve_index>::min)())
+      return 0;
+    else
+      return max_index + 1;
   }
 
   Curve_index default_curve_index() const
