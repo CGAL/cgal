@@ -533,30 +533,28 @@ private:
 
       const Point_3 smoothed_position = point(v->point()) + move;
 
-      std::size_t nb_projected = 0;
       Vector_3 sum_projections = CGAL::NULL_VECTOR;
+      Point_3 tmp_pos = current_pos;
 
 #ifndef CGAL_TET_REMESHING_EDGE_SMOOTHING_DISABLE_PROJECTION
       for (const Surface_patch_index& si : v_surface_indices)
       {
-        const Point_3 projection = (nb_neighbors > 1)
-          ? project_on_tangent_plane(smoothed_position, current_pos, vertices_normals.at(v).at(si))
-          : smoothed_position;
-
-        //Check if the mls surface exists to avoid degenerated cases
-        std::optional<Point_3> mls_projection = project(si, projection);
+        Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
+                                                             current_pos,
+                                                             vertices_normals.at(v).at(si));
+        std::optional<Point_3> mls_projection = project(si, normal_projection);
 
         if (mls_projection != std::nullopt)
         {
-          sum_projections = sum_projections + Vector_3(current_pos, *mls_projection);
-          ++nb_projected;
+          sum_projections += Vector_3(tmp_pos, *mls_projection);
+          tmp_pos = *mls_projection;
         }
+        else
+          std::cerr << "Warning: no projection found for vertex " << vid << std::endl;
       }
 #endif
 
-      Point_3 new_pos = (nb_projected > 0)
-                      ? smoothed_position + sum_projections / static_cast<FT>(nb_projected)
-                      : smoothed_position;
+      const Point_3 new_pos = current_pos + sum_projections;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       os_surf << "2 " << current_pos << " " << new_pos << std::endl;
