@@ -69,7 +69,7 @@ using Explicit_Cartesian_grid_domain_3 =
  * \param grid the %Cartesian grid containing input data
  * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
  *
- * \return a new `CGAL::Explicit_Cartesian_grid_domain_3`
+ * \return a new `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
  */
 #ifdef DOXYGEN_RUNNING // Allow more than Cartesian_grid_3
 template <typename GeomTraits,

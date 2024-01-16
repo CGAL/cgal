@@ -82,7 +82,7 @@ using Implicit_Cartesian_grid_domain_3 =
  * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
  * \param gt an instance of geometric traits
  *
- * \return a new object of type `CGAL::Implicit_Cartesian_grid_domain_3`
+ * \return a new object of type `CGAL::isosurfacing::Implicit_Cartesian_grid_domain_3`
  *
  * \pre `spacing != CGAL::NULL_VECTOR`
  */

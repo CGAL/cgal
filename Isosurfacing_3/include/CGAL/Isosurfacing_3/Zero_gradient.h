@@ -22,7 +22,7 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Domain_helpers_grp
  *
- * \brief Class template for a gradient that equates zero everywhere.
+ * \brief Class template for a gradient that equals zero everywhere.
  *
  * \tparam P the point type
  *

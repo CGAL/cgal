@@ -12,12 +12,12 @@ namespace CGAL {
 <img src="tractor_offset.gif" style="max-width:50%;"/>
 </center>
 \cgalFigureCaptionBegin{isosurfacing_tractor_offset}
-Isosurfacing with different isovalues for the tractor model (courtesy the GrabCAD library).
+%Isosurfacing with different isovalues for the tractor model (courtesy the GrabCAD library).
 \cgalFigureCaptionEnd
 
 \section secmyintroduction Introduction
 
-Isosurfacing, also referred to as isosurface extraction, involves the generation of an approximate isosurface from a sampled 3D scalar field. The output isosurface may consist of a single or of multiple, disjoint connected components. Isosurfacing is commonly required for volume visualization or simulation of physical phenomena.
+%Isosurfacing, also referred to as isosurface extraction, involves the generation of an approximate isosurface from a sampled 3D scalar field. The output isosurface may consist of a single or of multiple, disjoint connected components. %Isosurfacing is commonly required for volume visualization or simulation of physical phenomena.
 
 This package provides several isosurfacing algorithms that compute a surface mesh approximating an isosurface of a 3D scalar field defined over an input 3D domain.
 An isosurface is defined as the points of constant value of this scalar field, i.e., a level set.
@@ -27,7 +27,7 @@ Such a constant value, referred to as isovalue, is user-defined. For well-behave
 \section secmyalgorithms Algorithms
 
 The scientific literature abounds with algorithms for extracting isosurfaces, each coming with different properties for the output and requirements for the input.
-% add references to a recent survey or to a series of surveys
+@todo add references to a recent survey or to a series of surveys
 This package offers Marching Cubes, topologically correct Marching Cubes and %Dual Contouring.
 
 \subsection subsecmc Marching Cubes (MC)
@@ -48,7 +48,7 @@ Different configurations of Marching Cubes in 2D.
 
 The proposed implementation is generic in that it can process any grid-based data structure that consists of hexahedral cells.
 In case of a conforming grid, MC generates as output a surface triangle mesh that is 2-manifold in most scenarios.
-% PA: reformulate, as it is either strict or not - precise in which cases it is not, and say  whether you talk about just combinatorially 2-manifold, or truly 2-manifold with 3D embedding taken into account
+@todo PA: reformulate, as it is either strict or not - precise in which cases it is not, and say  whether you talk about just combinatorially 2-manifold, or truly 2-manifold with 3D embedding taken into account
 If the mesh is 2-manifold and the isosurface does not intersect the domain boundary, then the output mesh is watertight. Conversely, the output mesh has boundaries when the isosurface intersects the domain boundaries (see Figure below).
 
 \cgalFigureAnchor{isosurfacing_mc_open}
@@ -71,7 +71,7 @@ the MC algorithm often generates more triangles, and more skinny triangles with 
 I recommend to add instead a figure with different parameters and methods,
 depicting the mesh edges in black in addition to the shaded facets]
 MC does not preserve the sharp features present in the isovalue of the input scalar field
-% PA: add a figure
+@todo PA: add a figure
 
 
 \subsection subsectmc Topologically Correct Marching Cubes (TMC)
@@ -80,7 +80,7 @@ It generates as output a mesh that is homeomorphic to the trilinear interpolant 
 This means that the output mesh can accurately represent small complex features.
 For example, a tunnel of the isosurface within a single cell is topologically resolved.
 Furthermore, the mesh is guaranteed to be 2-manifold and watertight, as long as the isosurface does not intersect the domain boundaries.
-% PA: add a figure comparing without and with the option activated
+@todo PA: add a figure comparing without and with the option activated
 
 
 \subsection subsecdc Dual Contouring (DC)
@@ -90,8 +90,8 @@ As the original DC method requires the gradient of the scalar field, the domain 
 the concept `IsosurfacingDomainWithGradient_3` in order to provide a gradient field in addition to a scalar field.
 All default domain implementations provide a gradient field, but assume the gradient
 to be null everywhere when it is not provided as an additional parameter.
-Alternatively, some default gradient fields are provided such as `Finite_difference_gradient_3`
-and `Explicit_Cartesian_grid_gradient_3`.
+Alternatively, some default gradient fields are provided such as `Isosurfacing::Finite_difference_gradient_3`
+and `Isosurfacing::Explicit_Cartesian_grid_gradient_3`.
 
 Variants of DC differ in the way they compute vertex positions.
 The vertex positioning is thus configurable with an optional parameter passed to the DC algorithm.
@@ -100,7 +100,7 @@ Some variants do not require the gradient and therefore run successfully even wh
 %Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh.
 It generates fewer faces than Marching Cubes, in general.
 Its advantage over MC is its ability to recover sharp creases and corners.
-% PA: add a figure.
+#todo  PA: add a figure.
 
 
 
@@ -110,7 +110,7 @@ Its advantage over MC is its ability to recover sharp creases and corners.
 </center>
 \cgalFigureCaptionBegin{isosurfacing_iwp_dc}
 Isosurface of the IWP scalar field generated by %Dual Contouring.
-% PA: do not assume that the iwp scalar field is well known to the reader - explicit first what it means. in addition, the shape is too complex, adding confusion to the reader. try to pass only one message per figure and provide a caption to not let the reader guess. show mesh edges in black
+@todo PA: do not assume that the iwp scalar field is well known to the reader - explicit first what it means. in addition, the shape is too complex, adding confusion to the reader. try to pass only one message per figure and provide a caption to not let the reader guess. show mesh edges in black
 \cgalFigureCaptionEnd
 
 \subsection subseccomparison Comparisons
@@ -158,7 +158,7 @@ When the parallel version is not available due to unsuccessful link with the TBB
 
 \section secmydomains Domains
 A domain is an object that provides functions to access the input data, its geometry, topology, and optionally its gradient.
-% I fail to understand how you specify the topology - for me the domain is the support of the scalar field, whose sampling/interpolation will yield the output mesh topology - not more.
+@todo  I fail to understand how you specify the topology - for me the domain is the support of the scalar field, whose sampling/interpolation will yield the output mesh topology - not more.
 For common representations, we offer a set of predefined domain classes that wrap the input data and provide a generalized interface for the algorithm.
 Users can also define new domains by implementing the `IsosurfacingDomain_3` or `IsosurfacingDomainWithGradient_3` concepts.
 
@@ -191,13 +191,13 @@ Scalability of the Marching Cubes algorithm. We plot the algorithm efficiency (n
 \subsection myExampleImplicit_domain Implicit Sphere
 
 The following example shows the usage of the Marching Cubes algorithm to extract an isosurface.
-The domain is an `Implicit_domain` that describes the unit sphere by the distance to its center (set to the origin) as an implicit field.
+The domain is an implicit domain that describes the unit sphere by the distance to its center (set to the origin) as an implicit field.
 
 \cgalExample{Isosurfacing_3/marching_cubes_implicit_sphere.cpp}
 
 \subsection myExampleAll_cube Cartesian_grid_3 Cube Comparison
 
-The following example runs all provided algorithms to extract an isosurface. The input 3D domain is a `Cartesian_grid_domain` that describes a cube by storing the Manhattan distance to its origin in a `Cartesian_grid_3`.
+The following example runs all provided algorithms to extract an isosurface. The input 3D domain is a `Cartesian_grid_domain` that describes a cube by storing the Manhattan distance to its origin in an explicit %Cartesian grid domain.
 
 \cgalExample{Isosurfacing_3/all_Cartesian_cube.cpp}
 
