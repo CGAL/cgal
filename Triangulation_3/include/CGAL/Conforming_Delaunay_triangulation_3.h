@@ -464,6 +464,9 @@ protected:
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
 #if CGAL_CDT_3_DEBUG_CONFORMING
+      const auto [c_start, c_end] = constraint_extremities(constraint);
+      std::cerr << "(" << IO::oformat(va, with_offset) << ", " << IO::oformat(vb, with_offset) << ")";
+      std::cerr << ": [ " << display_vert(c_start) << " - " << display_vert(c_end) << " ] ";
       std::cerr << "  new vertex " << display_vert(v) << '\n';
 #endif // CGAL_CDT_3_DEBUG_CONFORMING
       return true;
@@ -631,10 +634,10 @@ protected:
                               });
 #if CGAL_DEBUG_CDT_3 & 0x10
     std::cerr << "  -> vector_of_encroaching_vertices (after filter):\n";
-    std::for_each(vector_of_encroaching_vertices.begin(), end,
-                  [this](Vertex_handle v){
-                    std::cerr << "    " << this->display_vert(v) << '\n';
-                  });
+    std::for_each(vector_of_encroaching_vertices.begin(), end, [&](Vertex_handle v) {
+      std::cerr << "    " << this->display_vert(v) << "  angle " << approximate_angle(pa, this->tr.point(v), pb)
+                << '\n';
+    });
 #endif // CGAL_DEBUG_CDT_3
     vector_of_encroaching_vertices.erase(end, vector_of_encroaching_vertices.end());
     return vector_of_encroaching_vertices;
