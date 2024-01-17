@@ -573,9 +573,6 @@ public:
           < position_of_meta_vertex_on_support_line(b, support_line_idx));
       });
 
-    std::size_t nb_segments_before = m_segments.size();
-    std::size_t nb_vertices_before = m_vertices.size();
-
     // Attach to existing endpoint
     std::size_t new_target_idx = m_vertices.size();
     m_vertices.push_back(Vertex(position_of_meta_vertex_on_support_line(meta_vertices_idx.front(),

@@ -78,7 +78,7 @@ public:
    * \param next
    */
   Index_traversal_iterator(const Tree& tree, Node_index first, const Traversal_function& next) :
-    m_tree(&tree), m_index(first), m_next(next) {}
+    m_next(next), m_index(first), m_tree(&tree) {}
 
   /// @}
 

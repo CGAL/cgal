@@ -199,7 +199,7 @@ void stress_test(
   std::size_t nb_regular_boxes,
   std::size_t nb_stars,
   std::size_t star_branches,
-  std::size_t k) {
+  unsigned int k) {
 
   cgal_rand = CGAL::Random(0);
 

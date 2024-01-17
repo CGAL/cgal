@@ -429,7 +429,7 @@ public:
 
     Node_index first = traversal.first_index();
 
-    auto next = [=](const Self& tree, Node_index index) -> Maybe_node_index {
+    auto next = [=](const Self&, Node_index index) -> Maybe_node_index {
       return traversal.next_index(index);
     };
 
@@ -529,7 +529,7 @@ public:
     \param point query point.
     \return the index of the node which contains the point.
    */
-  const Node_index locate(const Point& point) const {
+    Node_index locate(const Point& point) const {
 
     // Make sure the point is enclosed by the orthtree
     CGAL_precondition (CGAL::do_intersect(point, bbox(root())));

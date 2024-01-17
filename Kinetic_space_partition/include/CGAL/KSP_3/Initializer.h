@@ -86,7 +86,7 @@ public:
   { }
 
   Initializer(std::vector<std::vector<Point_3> >& input_polygons, std::vector<typename Intersection_kernel::Plane_3>& input_planes, Data_structure& data, const Parameters& parameters) :
-    m_input_polygons(input_polygons), m_data(data), m_input_planes(input_planes), m_parameters(parameters)
+    m_input_polygons(input_polygons), m_input_planes(input_planes), m_data(data), m_parameters(parameters)
   { }
 
   void initialize(const std::array<typename Intersection_kernel::Point_3, 8>& bbox, std::vector<std::size_t>& input_polygons) {
@@ -590,14 +590,14 @@ private:
             }
           }
           if (!outside) {
-            if (face == -1)
+            if (face == IFace(-1))
               face = f;
             else {
               std::cout << "Two faces found for " << sp_idx << " sp, f1 " << face << " f2 " << f << std::endl;
             }
           }
         }
-        if (face != -1) {
+        if (face != IFace(-1)) {
           if (!m_data.igraph().face(face).part_of_partition) {
             auto pface = m_data.add_iface_to_mesh(sp_idx, face);
             sp.data().initial_ifaces.push_back(face);
