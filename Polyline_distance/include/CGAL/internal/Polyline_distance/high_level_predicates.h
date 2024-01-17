@@ -16,7 +16,7 @@ bool dist_at_most(Point const& p, Point const& q, distance_t d)
 	return compare_squared_distance(p, q, d*d) != LARGER;
 }
 
-Interval intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end)
+Interval intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end, Interval* outer)
 {
 	using OutputType = std::pair<Circular_arc_point_2, unsigned>;
 
@@ -24,7 +24,7 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
 	auto line_arc_2 = LineArc(line_start, line_end);
 
 	std::vector<OutputType> intersections;
-	intersection(circle_2, line_arc_2, std::back_inserter(intersections));
+	intersection(circle_2, line_arc_2, std::back_inserter(intersections), outer);
 
 	std::vector<distance_t> ratios;
 	for (auto const& intersection: intersections) {

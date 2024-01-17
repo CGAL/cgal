@@ -225,8 +225,10 @@ template <>
 CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const& center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const
 {
     Interval outer_temp;
+	Interval* outer_pt = outer == nullptr ? nullptr : &outer_temp;
+
     Point point = curve1[center_id];
-    auto interval = HLPred::intersection_interval(point, distance, curve2[seg_start], curve2[seg_start + 1]);
+    auto interval = HLPred::intersection_interval(point, distance, curve2[seg_start], curve2[seg_start + 1], outer_pt);
 
     if (outer != nullptr) {
 		//TODO change intersection_interval so that the outer interval is

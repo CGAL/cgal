@@ -53,7 +53,7 @@ public:
 	* If x = 0 then x' = -eps, while if x > 0 then the distance at x' is more than the radius.
 	* If y = 1 then y' = 1+eps, while if y < 1 then the distance at y' is more than the radius.
     */
-	static void intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it);
+	static void intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it, Interval* outer);
 private:
 	IntersectionAlgorithm() {} // Make class static-only
 	static inline bool smallDistanceAt(distance_t interpolate, Point line_start, Point line_end, Point circle_center, distance_t radius_sqr);
@@ -72,14 +72,12 @@ inline distance_t IntersectionAlgorithm::distanceAt(distance_t interpolate, Poin
 }
 
 
-void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it)
+void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it, Interval* outer)
 {
 	Point const& circle_center = circle.center;
 	distance_t radius = circle.radius;
 	Point const& line_start = line_arc.start;
 	Point const& line_end = line_arc.end;
-	// This pointer is just here to avoid changing the code... it is of no use right now.
-	Interval* outer = nullptr;
 
     // The line can be represented as line_start + lambda * v
     const Point v = line_end - line_start;
@@ -245,9 +243,9 @@ void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc,
 	}
 }
 
-void intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it)
+void intersection(Circle const& circle, LineArc line_arc, IntersectionBackInserter it, Interval* outer)
 {
-	IntersectionAlgorithm::intersection(circle, line_arc, it);
+	IntersectionAlgorithm::intersection(circle, line_arc, it, outer);
 }
 
 } // end LLPred namespace
