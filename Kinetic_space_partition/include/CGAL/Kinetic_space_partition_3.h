@@ -1887,7 +1887,7 @@ private:
                                         -axis1.y(), axis1.x(), 0,
                                                  0,         0, 1.0);
 
-    CGAL::Aff_transformation_3<Kernel> T(CGAL::TRANSLATION, -Kernel::Vector_3((bbox[0].x() + bbox[2].x()) * 0.5, (bbox[0].y() + bbox[2].y()) * 0.5, (maxz + minz) * 0.5));
+    CGAL::Aff_transformation_3<Kernel> T(CGAL::TRANSLATION, - typename Kernel::Vector_3((bbox[0].x() + bbox[2].x()) * 0.5, (bbox[0].y() + bbox[2].y()) * 0.5, (maxz + minz) * 0.5));
 
     return R * T;
   }
