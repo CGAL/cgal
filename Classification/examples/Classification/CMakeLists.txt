@@ -41,6 +41,7 @@ create_single_source_cgal_program( "example_classification.cpp" )
 create_single_source_cgal_program( "example_ethz_random_forest.cpp" )
 create_single_source_cgal_program( "example_feature.cpp" )
 create_single_source_cgal_program( "example_advanced_features.cpp" )
+create_single_source_cgal_program( "example_generate_advanced_features.cpp" )
 create_single_source_cgal_program( "example_pcl_feature.cpp" )
 create_single_source_cgal_program( "example_generation_and_training.cpp" )
 create_single_source_cgal_program( "example_mesh_classification.cpp" )
@@ -64,6 +65,7 @@ foreach(target
     example_ethz_random_forest
     example_feature
     example_advanced_features
+    example_generate_advanced_features
     example_pcl_feature
     example_generation_and_training
     example_mesh_classification

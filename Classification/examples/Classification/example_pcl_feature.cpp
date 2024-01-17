@@ -173,7 +173,7 @@ int main (int argc, char** argv)
 
   Feature_set features;
   constexpr std::size_t dims = (std::size_t)pcl_SHOT::descriptorSize();
-  features.add_multidimensional_feature2<cgal_SHOT>(pts.number_of_points(), dims, shotFeatures);
+  features.add_multidimensional_feature2<cgal_SHOT>(dims, shotFeatures);
 
   //return EXIT_SUCCESS;
 

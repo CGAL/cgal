@@ -3,20 +3,6 @@
 // converts 64 to 32 bits integers
 #endif
 
-#define COMPUTE_COVERAGE false
-#define COMPUTE_SKELETON false
-#define COMPUTE_COMPACTNESS false
-#define COMPUTE_BETTI true
-#define COMPUTE_FRACTAL_DIMENSIONALITY false
-
-
-// Features
-#include <CGAL/Classification/Feature/Fractal_dimensionality.h>
-#include <CGAL/Classification/Feature/Coverage.h>
-#include <CGAL/Classification/Feature/Skeletonise.h>
-#include <CGAL/Classification/Feature/Compactness.h>
-#include <CGAL/Classification/Feature/Betti_numbers.h>
-
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -109,13 +95,11 @@ int main(int argc, char** argv)
 
     // construct the wrap
     Mesh wrap;
-    if (COMPUTE_BETTI || COMPUTE_COMPACTNESS || COMPUTE_COVERAGE || COMPUTE_SKELETON) {
-        CGAL::alpha_wrap_3(points, alpha, offset, wrap);
-        std::cout << "Result: " << num_vertices(wrap) << " vertices, " << num_faces(wrap) << " faces, " << std::endl;
+    CGAL::alpha_wrap_3(points, alpha, offset, wrap);
+    std::cout << "Result: " << num_vertices(wrap) << " vertices, " << num_faces(wrap) << " faces, " << std::endl;
 
-        CGAL::IO::write_polygon_mesh("wrap.ply", wrap, CGAL::parameters::stream_precision(17));
-        std::cout << "Wrap saved" << std::endl;
-    }
+    CGAL::IO::write_polygon_mesh("wrap.ply", wrap, CGAL::parameters::stream_precision(17));
+    std::cout << "Wrap saved" << std::endl;
     t.stop();
     std::cout << "Took " << t.time() << " s" << std::endl;
 
@@ -136,67 +120,7 @@ int main(int argc, char** argv)
         std::cout << ", " << generator.radius_neighbors(i);
     std::cout << std::endl;
 
-    if (COMPUTE_COVERAGE) {
-        std::cout << "Computing coverage feature..." << std::endl;
-        using MyCoverage = CGAL::Classification::Feature::Coverage<Kernel, Point_set, Pmap, Mesh, CGAL::Parallel_if_available_tag>;// <typename GeomTraits, typename PointRange, typename PointMap, typename Feature_generator, typename ConcurrencyTag>
-        t.reset(); t.start();
-        for (std::size_t i = 0; i < generator.number_of_scales(); ++i) {
-            std::cout << "  scale: " << i << std::endl;
-            features.add_with_scale_id<MyCoverage>(i, pts, pts.point_map(), wrap, generator.radius_neighbors(i));
-        }
-        t.stop();
-        std::cout << "done in " << t.time() << " second(s)" << std::endl;
-    }
-
-    // construct the wrap
-    if (COMPUTE_SKELETON) {
-        std::cout << "Computing skeletonize feature..." << std::endl;
-        t.reset(); t.start();
-        using MySkeleton = CGAL::Classification::Feature::Skeleton<Kernel, Point_set, Pmap, Mesh>;
-        features.add_multidimensional_feature2<MySkeleton>(2, pts, pts.point_map(), wrap);
-        std::cout << "done in " << t.time() << " second(s)" << std::endl;
-    }
-
-    if (COMPUTE_COMPACTNESS) {
-        std::cout << "Computing compactness feature..." << std::endl;
-        using MyCompactness = CGAL::Classification::Feature::Compactness<Kernel, Point_set, Point_set::Point_map, Mesh, CGAL::Parallel_if_available_tag>;
-        t.reset(); t.start();
-        auto bbox = CGAL::bounding_box(CGAL::make_transform_iterator_from_property_map(pts.begin(), pts.point_map()),
-            CGAL::make_transform_iterator_from_property_map(pts.end(), pts.point_map()));
-        using Planimetric_grid = Classification::Planimetric_grid<Kernel, Point_set, Pmap>;
-        for (std::size_t i = 0; i < generator.number_of_scales(); ++i) {
-            std::cout << "  scale: " << i << std::endl;
-            Planimetric_grid grid(pts, pts.point_map(), bbox, generator.grid_resolution(i));
-            features.add_with_scale_id<MyCompactness>(i, pts, pts.point_map(), grid, generator.radius_neighbors(i), wrap);
-        }
-        std::cout << "done in " << t.time() << " second(s)" << std::endl;
-    }
-
-    if (COMPUTE_BETTI) {
-        std::cout << "Computing betti feature..." << std::endl;
-        using MyBettiNumbers = CGAL::Classification::Feature::Betti_numbers<Kernel, Point_set, Point_set::Point_map, Mesh, CGAL::Parallel_if_available_tag>;
-        t.reset(); t.start();
-        auto bbox = CGAL::bounding_box(CGAL::make_transform_iterator_from_property_map(pts.begin(), pts.point_map()),
-            CGAL::make_transform_iterator_from_property_map(pts.end(), pts.point_map()));
-        using Planimetric_grid = Classification::Planimetric_grid<Kernel, Point_set, Pmap>;
-        for (std::size_t i = 0; i < generator.number_of_scales(); ++i) {
-            std::cout << "  scale: " << i << std::endl;
-            Planimetric_grid grid(pts, pts.point_map(), bbox, generator.grid_resolution(i));
-            features.add_multidimensional_feature_with_scale_id<MyBettiNumbers>(i, 3, pts, pts.point_map(), grid, generator.radius_neighbors(i), wrap);
-        }
-        std::cout << "done in " << t.time() << " second(s)" << std::endl;
-    }
-
-    if (COMPUTE_FRACTAL_DIMENSIONALITY) {
-        std::cout << "Computing fractal feature..." << std::endl;
-        using MyFractalDimensionality = CGAL::Classification::Feature::Fractal_dimensionality<Kernel, Point_set, Point_set::Point_map>;
-        t.reset(); t.start();
-        for (std::size_t i = 0; i < generator.number_of_scales(); ++i) {
-            features.add_with_scale_id<MyFractalDimensionality>(i, pts, pts.point_map(), generator.radius_neighbors(i));
-        }
-        std::cout << "done in " << t.time() << " second(s)" << std::endl;
-    }
-
+    generator.generate_novel_point_based_features(features, wrap);
 
     // Export features (adds features to output file)
     std::cout << "exporting features...";
