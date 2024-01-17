@@ -44,7 +44,7 @@ namespace CGAL
 template <class Traits>
 class FrechetKdTree
 {
-	using PT = PolylineTraits_2<Traits>;
+	using PT = Polyline_traits_2<Traits>;
 	using NT = typename PT::NT;
 	using Point = typename PT::Point;
 	using Polyline = typename PT::Polyline;

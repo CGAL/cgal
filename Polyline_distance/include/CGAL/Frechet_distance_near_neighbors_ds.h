@@ -34,6 +34,7 @@
 
 namespace CGAL{
 
+// TODO: hide away in Polyline_distance::internal (different naming but nvm)
 template <typename PointRange>
 using PointRangeKernel = typename CGAL::Kernel_traits<
                            typename std::iterator_traits<
@@ -43,7 +44,7 @@ template <class PointRange,
           class Traits = PointRangeKernel<PointRange>>
 class FrechetDistanceNearNeighborsDS
 {
-	using PT = PolylineTraits_2<Traits>;
+	using PT = Polyline_traits_2<Traits>;
 	using NT = typename PT::NT;
 	using Point = typename PT::Point;
 	using Polyline = typename PT::Polyline;

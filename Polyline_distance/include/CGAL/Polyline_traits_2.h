@@ -24,6 +24,11 @@
 #ifndef CGAL_POLYLINE_TRAITS_2_H
 #define CGAL_POLYLINE_TRAITS_2_H
 
+// TODO: add doxygen code
+
+/// \cgalModels{PolylineDistanceTraits}
+
+
 // TODO: is it too restrictive to use vectors by default?
 #include <vector>
 
@@ -32,7 +37,7 @@ namespace CGAL
 
 // TODO: This is just a starter to enable using the same types all over the package.
 template <class T>
-class PolylineTraits_2
+class Polyline_traits_2
 {
 public:
 	using BaseTraits = T;

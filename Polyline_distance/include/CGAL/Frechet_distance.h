@@ -32,6 +32,7 @@
 
 namespace CGAL {
 
+// TODO: hide away in Polyline_distance::internal (different naming but nvm)
 template <typename PointRange>
 using PointRangeKernel = typename CGAL::Kernel_traits<
                            typename std::iterator_traits<
@@ -39,13 +40,13 @@ using PointRangeKernel = typename CGAL::Kernel_traits<
 
 /**
  * \ingroup PkgPolylineDistanceFunctions
- * Decides if the Frechet distance between two polylines given as a range of points
- * is less than a given distance
+ * decides if the Frechet distance between two polylines given as a range of points
+ * is less than a given distance.
  * \param curve1 the first curve defined by the sequence of consecutive points along the polyline
  * \param curve2 the second curve defined by the sequence of consecutive points along the polyline
  * \param distance the decision distance
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
- * with Traits::Point_2 as value type.
+ * with `Traits::Point` as value type.
  */
 template <class PointRange,
           class Traits = PointRangeKernel<PointRange>>
@@ -63,11 +64,11 @@ continuous_Frechet_distance_less_than(const PointRange& curve1,
 
 /**
  * \ingroup PkgPolylineDistanceFunctions
- * Computes the Frechet distance between two polylines given as a range of points
+ * computes the Frechet distance between two polylines given as a range of points.
  * \param curve1 the first curve defined by the sequence of consecutive points along the polyline
  * \param curve2 the second curve defined by the sequence of consecutive points along the polyline
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
- * with Traits::Point_2 as value type.
+ * with `Traits::Point` as value type.
  */
 template <class PointRange,
           class Traits = PointRangeKernel<PointRange>>
