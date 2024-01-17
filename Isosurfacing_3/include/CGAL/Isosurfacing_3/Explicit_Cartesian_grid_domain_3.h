@@ -30,18 +30,19 @@ namespace Isosurfacing {
  *
  * \brief A domain that represents an explicitly stored %Cartesian grid.
  *
- * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
- * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
- *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
+ * \tparam Grid must be a `CGAL::Isosurfacing::Cartesian_grid_3` whose `GeomTraits` template parameter
+ *              is a model of `IsosurfacingTraits_3`.
+ * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible`
+ *                  and implement `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
  * \sa `CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain()`
  */
-#ifdef DOXYGEN_RUNNING // Allow more than a Cartesian_grid_3
-template <template <typename GeomTraits> class CGAL::Isosurfacing::Cartesian_grid_3,
+#ifdef DOXYGEN_RUNNING // Do not document Topology, Geometry, Function
+template <typename Grid,
           typename Gradient = Zero_gradient>
 using Explicit_Cartesian_grid_domain_3 = unspecified_type;
 #else
-template <typename Grid,
+template <typename Grid, // allow more than a Cartesian_grid_3
           typename Gradient = Zero_gradient,
           typename Topology = internal::Grid_topology_3,
           typename Geometry = internal::Explicit_Cartesian_grid_geometry_3<Grid>,
@@ -62,29 +63,21 @@ using Explicit_Cartesian_grid_domain_3 =
  * \warning The domain keeps a pointer to the `grid` object, hence users must ensure that
  *          the lifetime of the `grid` object exceeds that of the object returned by this function.
  *
- * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
- * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
- *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
+ * \tparam Grid must be a `CGAL::Isosurfacing::Cartesian_grid_3` whose `GeomTraits` template parameter
+ *              is a model of `IsosurfacingTraits_3`.
+ * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible`
+ *                  and implement `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
  * \param grid the %Cartesian grid containing input data
  * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
  *
- * \return a new `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
+ * \return a new instance of `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
  */
-#ifdef DOXYGEN_RUNNING // Allow more than Cartesian_grid_3
-template <typename GeomTraits,
-          typename Gradient = Zero_gradient>
-Explicit_Cartesian_grid_domain_3<Grid, Gradient>
-create_explicit_Cartesian_grid_domain(const CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>& grid,
-                                      const Gradient& gradient = Gradient())
-#else
-// Actual code enables passing more than just a Cartesian_grid_3
-template <typename Grid,
+template <typename Grid, // allow passing more than just a Cartesian_grid_3
           typename Gradient = Zero_gradient>
 Explicit_Cartesian_grid_domain_3<Grid, Gradient>
 create_explicit_Cartesian_grid_domain(const Grid& grid,
                                       const Gradient& gradient = Gradient())
-#endif
 {
   using Domain = Explicit_Cartesian_grid_domain_3<Grid, Gradient>;
 

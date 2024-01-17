@@ -70,21 +70,21 @@ public:
   }
 
   template <typename Functor>
-  void iterate_vertices(Functor& f, Sequential_tag) const
+  void for_each_vertex(Functor& f, Sequential_tag) const
   {
     for(const Vertex_descriptor& v : octree.leaf_vertices())
       f(v);
   }
 
   template <typename Functor>
-  void iterate_edges(Functor& f, Sequential_tag) const
+  void for_each_edge(Functor& f, Sequential_tag) const
   {
     for(const Edge_descriptor& e : octree.leaf_edges())
       f(e);
   }
 
   template <typename Functor>
-  void iterate_cells(Functor& f, Sequential_tag) const
+  void for_each_cell(Functor& f, Sequential_tag) const
   {
     for(const Cell_descriptor& v : octree.leaf_voxels())
       f(v);
@@ -92,7 +92,7 @@ public:
 
 #ifdef CGAL_LINKED_WITH_TBB
   template <typename Functor>
-  void iterate_vertices(Functor& f, Parallel_tag) const
+  void for_each_vertex(Functor& f, Parallel_tag) const
   {
     const auto& vertices = octree.leaf_vertices();
 
@@ -106,7 +106,7 @@ public:
   }
 
   template <typename Functor>
-  void iterate_edges(Functor& f, Parallel_tag) const
+  void for_each_edge(Functor& f, Parallel_tag) const
   {
     const auto& edges = octree.leaf_edges();
 
@@ -120,7 +120,7 @@ public:
   }
 
   template <typename Functor>
-  void iterate_cells(Functor& f, Parallel_tag) const
+  void for_each_cell(Functor& f, Parallel_tag) const
   {
     const auto& cells = octree.leaf_voxels();
 

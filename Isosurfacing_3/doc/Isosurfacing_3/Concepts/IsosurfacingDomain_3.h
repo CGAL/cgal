@@ -132,7 +132,7 @@ public:
   \param f the functor called on every vertex
   */
   template <typename ConcurrencyTag, typename Functor>
-  void iterate_vertices(Functor& f) const;
+  void for_each_vertex(Functor& f) const;
 
   /*!
   iterates over all edges, and calls the functor `f` on each one.
@@ -144,7 +144,7 @@ public:
   \param f the functor called on every edge
   */
   template <typename ConcurrencyTag, typename Functor>
-  void iterate_edges(Functor& f) const;
+  void for_each_edge(Functor& f) const;
 
   /*!
   iterates over all cells, and calls the functor `f` on each one.
@@ -156,7 +156,7 @@ public:
   \param f the functor called on every cell
   */
   template <typename ConcurrencyTag, typename Functor>
-  void iterate_cells(Functor& f) const;
+  void for_each_cell(Functor& f) const;
 
   /// @}
 };

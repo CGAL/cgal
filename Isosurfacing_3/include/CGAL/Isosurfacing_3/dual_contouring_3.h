@@ -66,11 +66,11 @@ void dual_contouring(const Domain& domain,
 {
   // create vertices in each relevant cell
   internal::Dual_contouring_vertex_positioning<Domain, Positioning> pos_func(domain, isovalue, positioning);
-  domain.template iterate_cells<ConcurrencyTag>(pos_func);
+  domain.template for_each_cell<ConcurrencyTag>(pos_func);
 
   // connect vertices around an edge to form a face
   internal::Dual_contouring_face_generation<Domain> face_generation(domain, isovalue);
-  domain.template iterate_edges<ConcurrencyTag>(face_generation);
+  domain.template for_each_edge<ConcurrencyTag>(face_generation);
 
   // copy vertices to point range
   CGAL::internal::resize(points, pos_func.points_counter);

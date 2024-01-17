@@ -26,20 +26,16 @@ namespace Isosurfacing {
  *
  * \details The gradient at a query point is calculated by trilinear interpolation.
  *
- * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
- */
-#ifdef DOXYGEN_RUNNING // Allow more than just Cartesian_grid_3
-template <template <typename GeomTraits> class Cartesian_grid_3>
+ * \warning This class keeps a pointer to the `grid` object, hence users must ensure that
+ *          the lifetime of the `grid` object exceeds that of this gradient object.
+ *
+ * \tparam Grid must be a `CGAL::Isosurfacing::Cartesian_grid_3` whose `GeomTraits` template parameter
+ *              is a model of `IsosurfacingTraits_3`.
+*/
+template <typename Grid> // allow more than just Cartesian_grid_3
 class Explicit_Cartesian_grid_gradient_3
-#else
-template <typename Grid>
-class Explicit_Cartesian_grid_gradient_3
-#endif
 {
 public:
-#ifdef DOXYGEN_RUNNING
-  using Grid = Cartesian_grid_3<GeomTraits>;
-#endif
   using Geom_traits = typename Grid::Geom_traits;
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;

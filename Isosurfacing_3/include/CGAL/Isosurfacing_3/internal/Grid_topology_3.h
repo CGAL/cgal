@@ -126,7 +126,7 @@ public:
 
   // iterates sequentially over all vertices v calling f(v) on every one
   template <typename Functor>
-  void iterate_vertices(Functor& f, Sequential_tag) const
+  void for_each_vertex(Functor& f, Sequential_tag) const
   {
     for(std::size_t i=0; i<size_i; ++i)
       for(std::size_t j=0; j<size_j; ++j)
@@ -136,7 +136,7 @@ public:
 
   // iterates sequentially over all edges e calling f(e) on every one
   template <typename Functor>
-  void iterate_edges(Functor& f, Sequential_tag) const
+  void for_each_edge(Functor& f, Sequential_tag) const
   {
     for(std::size_t i=0; i<size_i-1; ++i) {
       for(std::size_t j=0; j<size_j-1; ++j) {
@@ -153,7 +153,7 @@ public:
 
   // iterates sequentially over all cells c calling f(c) on every one
   template <typename Functor>
-  void iterate_cells(Functor& f, Sequential_tag) const
+  void for_each_cell(Functor& f, Sequential_tag) const
   {
     for(std::size_t i=0; i<size_i-1; ++i)
       for(std::size_t j=0; j<size_j-1; ++j)
@@ -164,7 +164,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
   // iterates in parallel over all vertices v calling f(v) on every one
   template <typename Functor>
-  void iterate_vertices(Functor& f, Parallel_tag) const
+  void for_each_vertex(Functor& f, Parallel_tag) const
   {
     const std::size_t sj = size_j;
     const std::size_t sk = size_k;
@@ -183,7 +183,7 @@ public:
 
   // iterates in parallel over all edges e calling f(e) on every one
   template <typename Functor>
-  void iterate_edges(Functor& f, Parallel_tag) const
+  void for_each_edge(Functor& f, Parallel_tag) const
   {
     const std::size_t sj = size_j;
     const std::size_t sk = size_k;
@@ -208,7 +208,7 @@ public:
 
   // iterates in parallel over all cells c calling f(c) on every one
   template <typename Functor>
-  void iterate_cells(Functor& f, Parallel_tag) const
+  void for_each_cell(Functor& f, Parallel_tag) const
   {
     const std::size_t sj = size_j;
     const std::size_t sk = size_k;

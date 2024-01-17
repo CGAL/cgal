@@ -68,7 +68,7 @@ using Implicit_octree_domain =
  *
  * \return a new `CGAL::Implicit_octree_domain`
  */
-#ifdef DOXYGEN_RUNNING // Allow more than the Octree_wrapper
+#ifdef DOXYGEN_RUNNING // allow more than the Octree_wrapper
 template <typename GeomTraits,
           typename ImplicitFunction,
           typename Gradient = Zero_gradient>

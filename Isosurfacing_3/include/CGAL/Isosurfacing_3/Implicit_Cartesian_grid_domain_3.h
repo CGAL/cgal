@@ -34,14 +34,14 @@ namespace Isosurfacing {
  * \brief A domain that represents a %Cartesian grid that discretizes an implicit function.
  *
  * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
- * \tparam ImplicitFunction the type of the implicit function. It must be a model of `CopyConstructible` and implement
- *                          `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
+ * \tparam ImplicitFunction the type of the implicit function. It must be a model of `CopyConstructible`
+ *                          and implement `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
  *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
  * \sa `CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain()`
  */
-#ifdef DOXYGEN_RUNNING // Otherwise it shows what is behind "using" in the doc...
+#ifdef DOXYGEN_RUNNING // Otherwise it would show what is behind "using" in the doc
 template <typename GeomTraits,
           typename ImplicitFunction,
           typename Gradient = Zero_gradient>
@@ -82,7 +82,7 @@ using Implicit_Cartesian_grid_domain_3 =
  * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
  * \param gt an instance of geometric traits
  *
- * \return a new object of type `CGAL::isosurfacing::Implicit_Cartesian_grid_domain_3`
+ * \return a new instance of `CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3`
  *
  * \pre `spacing != CGAL::NULL_VECTOR`
  */

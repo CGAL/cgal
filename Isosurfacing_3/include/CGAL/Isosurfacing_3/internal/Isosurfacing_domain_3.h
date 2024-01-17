@@ -106,7 +106,7 @@ public:
   }
 
   // gets a container with all cells incident to the edge `e`
- decltype(auto) /*Cells_incident_to_edge*/ incident_cells(const Edge_descriptor& e) const
+  decltype(auto) /*Cells_incident_to_edge*/ incident_cells(const Edge_descriptor& e) const
   {
     return m_topo.incident_cells(e);
   }
@@ -125,23 +125,23 @@ public:
 
   // iterates over all vertices `v`, calling `f(v)` on each of them
   template <typename ConcurrencyTag, typename Functor>
-  void iterate_vertices(Functor& f) const
+  void for_each_vertex(Functor& f) const
   {
-    m_topo.iterate_vertices(f, ConcurrencyTag{});
+    m_topo.for_each_vertex(f, ConcurrencyTag{});
   }
 
   // iterates over all edges `e`, calling `f(e)` on each of them
   template <typename ConcurrencyTag, typename Functor>
-  void iterate_edges(Functor& f) const
+  void for_each_edge(Functor& f) const
   {
-    m_topo.iterate_edges(f, ConcurrencyTag{});
+    m_topo.for_each_edge(f, ConcurrencyTag{});
   }
 
   // iterates over all cells `c`, calling `f(c)` on each of them
   template <typename ConcurrencyTag, typename Functor>
-  void iterate_cells(Functor& f) const
+  void for_each_cell(Functor& f) const
   {
-    m_topo.iterate_cells(f, ConcurrencyTag{});
+    m_topo.for_each_cell(f, ConcurrencyTag{});
   }
 };
 
