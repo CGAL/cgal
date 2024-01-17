@@ -18,9 +18,7 @@ struct Face { int a, b, c; };
 #ifndef CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
 #define CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS false
 #endif
-#if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#include <boost/timer/progress_display.hpp>
-#endif
+//#include <boost/timer/progress_display.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <thread>
@@ -60,19 +58,6 @@ namespace     Feature {
     is `GeomTraits::Point_3`.
 
   */
-    namespace AW3 = CGAL::Alpha_wraps_3;
-    typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_Alpha;
-    typedef Kernel_Alpha::Point_3 Point_Alpha;
-    using Point_container = std::vector<Point_Alpha>;
-    using Mesh = CGAL::Surface_mesh<Point_Alpha>;
-#ifndef CGAL_LINKED_WITH_EMBREE
-    //typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
-    //typedef CGAL::AABB_traits<Kernel_Alpha, Primitive> AABB_triangle_traits;
-    //typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
-    //typedef Kernel_Alpha::Ray_3 Ray;
-    //typedef std::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
-#endif
-
     template <typename GeomTraits, typename PointRange, typename PointMap, typename Feature_generator, typename ConcurrencyTag>
     void ComputeCoverage(const PointRange& input, Feature_set& features, Feature_generator& generator, const double alpha, const double offset) {
         /*!
@@ -84,6 +69,20 @@ namespace     Feature {
         \param alpha the wrap fidelity.
         \param offset the distance between the wrap and the point cloud.
         */
+
+        namespace AW3 = CGAL::Alpha_wraps_3;
+        typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_Alpha;
+        typedef Kernel_Alpha::Point_3 Point_Alpha;
+        using Point_container = std::vector<Point_Alpha>;
+        using Mesh = CGAL::Surface_mesh<Point_Alpha>;
+#ifndef CGAL_LINKED_WITH_EMBREE
+        //typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
+        //typedef CGAL::AABB_traits<Kernel_Alpha, Primitive> AABB_triangle_traits;
+        //typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
+        //typedef Kernel_Alpha::Ray_3 Ray;
+        //typedef std::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
+#endif
+
         Mesh wrap;
 
         #if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS

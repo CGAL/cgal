@@ -145,7 +145,7 @@ public:
 #endif
     {
       m_features.push_back (Feature_handle (std::make_unique<Feature>(std::forward<T>(t)...)));
-       m_features.back()->set_name (m_features.back()->name() + "_" + std::to_string(i));
+      m_features.back()->set_name (m_features.back()->name() + "_" + std::to_string(i));
     }
     return m_features.back();
   }
@@ -201,16 +201,17 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   template <typename Feature, typename ... T>
-  std::vector<Feature_handle> add_multidimensional_feature_with_scale_id (std::size_t i, std::size_t n_dims, T&& ... t)
+  std::vector<Feature_handle> add_multidimensional_feature_with_scale_id (std::size_t i, std::size_t n_points, std::size_t n_dims, T&& ... t)
   {
     if (m_features.capacity() < m_features.size() + n_dims)
     {
       m_features.reserve(m_features.size() + n_dims);
     }
+    Feature_handle multidim_handle(std::make_unique<Feature>(std::forward<T>(t)...));
     std::vector<Feature_handle> handles;
     handles.reserve(n_dims);
     for (std::size_t j = 0; j < n_dims; ++j) {
-      this->add_with_scale_id<Feature>(i, j, t...);
+      this->add<Internal::Feature_base_dim>(j, multidim_handle->name() + "_" + std::to_string(i) + "_", multidim_handle);
       handles.push_back(m_features.back());
     }
     return handles;
