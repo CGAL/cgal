@@ -160,7 +160,7 @@ void testFrechetDistanceNearNeighborsDS()
 		auto queries = readFrechetDistanceNearNeighborsDSQueries(query_directory + dataset + ".txt");
 
 		CGAL::FrechetDistanceNearNeighborsDS<Curve> ds;
-		ds.fill(curves);
+		ds.insert(curves);
 
 		for (auto const& query: queries) {
 			auto result = ds.get_close_curves(curves[query.id], query.distance);

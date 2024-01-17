@@ -67,7 +67,7 @@ private:
 // TODO: store preprocessed curves after CGALization
 template <class PointRange, class Traits>
 void
-FrechetDistanceNearNeighborsDS<PointRange,Traits>::fill(const Polylines& curves)
+FrechetDistanceNearNeighborsDS<PointRange,Traits>::insert(const Polylines& curves)
 {
 	this->curves = curves; // FIXME: copies all the curves...
 
