@@ -599,6 +599,11 @@ bool build_triangulation_from_file(std::istream& is,
   std::string line;
   while(std::getline(is, line) && line != "End")
   {
+    // remove trailing whitespace, in particular a possible '\r' from Windows
+    // end-of-line encoding
+    if(std::isspace(line.back())) {
+      line.pop_back();
+    }
     if (line.size() > 0 && line.at(0) == '#' &&
         line.find("CGAL::Mesh_complex_3_in_triangulation_3") != std::string::npos)
     {
