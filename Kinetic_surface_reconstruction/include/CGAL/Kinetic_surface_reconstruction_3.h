@@ -1570,7 +1570,6 @@ private:
 
     assert(m_kinetic_partition.input_planes().size() == m_regions.size());
 
-    std::size_t next = 0, step = 1;
     for (std::size_t i = 0; i < m_kinetic_partition.input_planes().size(); i++) {
 
       std::vector<std::pair<Dart_descriptor, std::vector<std::size_t> > > mapping;
