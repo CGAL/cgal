@@ -30,6 +30,8 @@
 \cgalClassifedRefPages
 
 \cgalCRPSection{Functions}
-- `CGAL::Polygon_repair::repair_odd_even()`
+- `CGAL::Polygon_repair::repair()`
 
+\cgalCRPSection{Simplification Rules}
+- `CGAL::Polygon_repair::Even_odd_rule`
 */
