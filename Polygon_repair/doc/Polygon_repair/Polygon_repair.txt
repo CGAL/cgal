@@ -17,7 +17,7 @@ or hole), and reconstructs the polygon(s) represented by the arrangement.
 The method returns valid output stored in a multipolygon with holes.
 
 Different arrangement and labelling heuristics are possible, but
-currently only the odd-even heuristic is implemented in the package.
+currently only the even-odd heuristic is implemented in the package.
 This heuristic results in areas that are alternately assigned as polygon
 interiors and exterior/holes each time that an input edge is passed.
 It does not distinguish between edges that are part of outer boundaries
@@ -104,14 +104,14 @@ or multipolygon is merely used as a container of input line segments. These line
 segments are added to the arrangement as edges. Internally, this is done using
 a constrained triangulation where they are added as constraints.
 
-With the odd-even heuristic, only the edges that are present an odd number of
+With the even-odd heuristic, only the edges that are present an odd number of
 times in the input will be edges in the final arrangement.
 When these edges are only partially overlapping, only the parts that overlap
 an odd number of times will be edges in the final arrangement.
 
 This procedure is done in two steps: 1. preprocessing to eliminate identical
 edges that are present an even number of times, and 2. adding edges incrementally
-while applying an odd-even counting mechanism, which erases existing (parts of)
+while applying an even-odd counting mechanism, which erases existing (parts of)
 edges when new overlapping ones are added.
 
 \subsection SubsectionPolygonRepair_Labeling Labeling
@@ -120,7 +120,7 @@ First, the polygon exterior is labeled. For this, all of the faces that can be
 accessed from the exterior without passing through an edge are labeled as exterior
 faces.
 
-Then, all other faces are labeled. For the odd-even heuristic, the label applied
+Then, all other faces are labeled. For the even-odd heuristic, the label applied
 alternates between polygon interior and hole every time that an edge is passed.
 
 \subsection SubsectionPolygonRepair_Reconstruction Reconstruction of the Multipolygon
@@ -150,7 +150,8 @@ with holes has zero holes and extract these if needed.
 \subsection SubsectionPolygonRepair_Repair Repairing a (Multi)polygon
 
 It is possible to repair a polygon, polygon with holes or multipolygon with holes
-using the odd-even rule by calling the `Polygon_repair::repair_odd_even()` function
+using the even-odd rule by calling the `Polygon_repair::repair()` function
+giving as second argument the `Polygon_repair::Even_odd_rule`
 as shown in the following example. This function returns a repaired multipolygon with holes.
 
 \cgalExample{Polygon_repair/repair_polygon_2.cpp}
@@ -177,7 +178,7 @@ The polygon repair method as originally developed is described by Ledoux et al.
 <a href="https://github.com/tudelft3d/prepair/">prepair</a> software.
 This package is a reimplementation of the method with a new approach to label
 and reconstruct the multipolygons. It also incorporates improvements later
-added to prepair, such as the application of the odd-even counting heuristic
+added to prepair, such as the application of the even-odd counting heuristic
 to edges, which enables correct counting even on partially overlapping edges.
 
 Ken Arroyo Ohori developed this package during the Google Summer of

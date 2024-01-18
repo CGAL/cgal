@@ -28,8 +28,8 @@ int main(int argc, char* argv[]) {
   Polygon_with_holes_2 p;
   CGAL::IO::read_polygon_WKT(iss, p);
   Polygon_repair pr;
-  pr.add_to_triangulation_odd_even(p);
-  pr.label_triangulation_odd_even();
+  pr.add_to_triangulation_even_odd(p);
+  pr.label_triangulation_even_odd();
   pr.reconstruct_multipolygon();
   Multipolygon_with_holes_2 rmp = pr.multipolygon();
   std::ostringstream oss;

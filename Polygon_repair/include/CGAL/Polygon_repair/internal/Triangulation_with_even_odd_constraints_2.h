@@ -9,8 +9,8 @@
 //
 // Author(s)     : Ken Arroyo Ohori
 
-#ifndef CGAL_TRIANGULATION_WITH_ODD_EVEN_CONSTRAINTS_2_H
-#define CGAL_TRIANGULATION_WITH_ODD_EVEN_CONSTRAINTS_2_H
+#ifndef CGAL_TRIANGULATION_WITH_EVEN_ODD_CONSTRAINTS_2_H
+#define CGAL_TRIANGULATION_WITH_EVEN_ODD_CONSTRAINTS_2_H
 
 #include <CGAL/license/Polygon_repair.h>
 #include <CGAL/iterator.h>
@@ -20,11 +20,8 @@ namespace Polygon_repair {
 namespace internal {
 
 template <class Triangulation_>
-class Triangulation_with_odd_even_constraints_2 : public Triangulation_ {
+class Triangulation_with_even_odd_constraints_2 : public Triangulation_ {
 public:
-  /// \name Definition
-
-  /// @{
   using Base_triangulation = Triangulation_;
   using Point = typename Triangulation_::Point;
   using Edge = typename Triangulation_::Edge;
@@ -33,13 +30,12 @@ public:
   using List_edges = typename Triangulation_::List_edges;
   using List_faces = typename Triangulation_::List_faces;
   using All_faces_iterator = typename Triangulation_::All_faces_iterator;
-  /// @}
 
   class Interior_tester {
-    const Triangulation_with_odd_even_constraints_2 *t;
+    const Triangulation_with_even_odd_constraints_2 *t;
   public:
     Interior_tester() {}
-    Interior_tester(const Triangulation_with_odd_even_constraints_2 *tr) : t(tr) {}
+    Interior_tester(const Triangulation_with_even_odd_constraints_2 *tr) : t(tr) {}
 
     bool operator()(const All_faces_iterator & fit) const {
       return fit->label() < 1;
@@ -66,7 +62,7 @@ public:
   }
 
   // Add constraint from va to vb using the odd-even rule
-  void odd_even_insert_constraint(Vertex_handle va, Vertex_handle vb) {
+  void even_odd_insert_constraint(Vertex_handle va, Vertex_handle vb) {
 
     // Degenerate edge
     if (va == vb) return;
@@ -80,7 +76,7 @@ public:
       if (Base_triangulation::is_constrained(Edge(incident_face, opposite_vertex))) {
         Base_triangulation::remove_constrained_edge(incident_face, opposite_vertex);
       } else Base_triangulation::mark_constraint(incident_face, opposite_vertex);
-      if (vc != vb) odd_even_insert_constraint(vc, vb); // process edges along [vc, vb]
+      if (vc != vb) even_odd_insert_constraint(vc, vb); // process edges along [vc, vb]
       return;
     }
 
@@ -90,24 +86,24 @@ public:
     Vertex_handle intersection;
     if (Base_triangulation::find_intersected_faces(va, vb, intersected_faces, conflict_boundary_ab, conflict_boundary_ba, intersection)) {
       if (intersection != va && intersection != vb) {
-        odd_even_insert_constraint(va, intersection);
-        odd_even_insert_constraint(intersection, vb);
-      } else odd_even_insert_constraint(va, vb);
+        even_odd_insert_constraint(va, intersection);
+        even_odd_insert_constraint(intersection, vb);
+      } else even_odd_insert_constraint(va, vb);
       return;
     }
 
     // Otherwise
     Base_triangulation::triangulate_hole(intersected_faces, conflict_boundary_ab, conflict_boundary_ba);
     if (intersection != vb) {
-      odd_even_insert_constraint(intersection, vb);
+      even_odd_insert_constraint(intersection, vb);
     }
   }
 
   // Add constraint from pa to pb using the odd-even rule
-  void odd_even_insert_constraint(Point pa, Point pb) {
+  void even_odd_insert_constraint(Point pa, Point pb) {
     Vertex_handle va = insert(pa);
     Vertex_handle vb = insert(pb, va->face()); // vb is likely close to va
-    odd_even_insert_constraint(va, vb);
+    even_odd_insert_constraint(va, vb);
   }
 
   // Starts at an arbitrary interior face
@@ -128,4 +124,4 @@ public:
 } // namespace Polygon_repair
 } // namespace CGAL
 
-#endif // CGAL_TRIANGULATION_WITH_ODD_EVEN_CONSTRAINTS_2_H
+#endif // CGAL_TRIANGULATION_WITH_EVEN_ODD_CONSTRAINTS_2_H

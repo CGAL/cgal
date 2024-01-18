@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
   Polygon_with_holes_2 pin;
   CGAL::IO::read_polygon_WKT(in, pin);
 
-  Multipolygon_with_holes_2 mp = CGAL::Polygon_repair::repair_odd_even(pin);
+  Multipolygon_with_holes_2 mp = CGAL::Polygon_repair::repair(pin, CGAL::Polygon_repair::Even_odd_rule());
   if (mp.number_of_polygons_with_holes() > 1) {
     CGAL::IO::write_multi_polygon_WKT(std::cout, mp);
   } else {

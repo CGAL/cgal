@@ -18,9 +18,10 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Polygon_repair/Even_odd_rule.h>
 
 #include <CGAL/Polygon_repair/internal/Triangulation_face_base_with_repair_info_2.h>
-#include <CGAL/Polygon_repair/internal/Triangulation_with_odd_even_constraints_2.h>
+#include <CGAL/Polygon_repair/internal/Triangulation_with_even_odd_constraints_2.h>
 
 namespace CGAL {
 
@@ -30,37 +31,55 @@ template <class Kernel, class Container>
 class Polygon_repair;
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a polygon without holes using the odd-even heuristic
+/// Repair a polygon without holes using
+template <class Kernel, class Container, class Rule>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& , Rule rule) {
+    CGAL_assertion(false); // rule not implemented
+    return Multipolygon_with_holes_2<Kernel, Container>();
+  }
+
 template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair_odd_even(const Polygon_2<Kernel, Container>& p) {
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p, Even_odd_rule) {
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
-  pr.add_to_triangulation_odd_even(p);
+  pr.add_to_triangulation_even_odd(p);
   if (pr.triangulation().number_of_faces() > 0) {
-    pr.label_triangulation_odd_even();
+    pr.label_triangulation_even_odd();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a polygon with holes using the odd-even heuristic
+/// Repair a polygon with holes
+template <class Kernel, class Container, class Rule>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Rule rule) {
+  CGAL_assertion(false); // rule not implemented
+  return Multipolygon_with_holes_2<Kernel, Container>();
+}
+
 template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair_odd_even(const Polygon_with_holes_2<Kernel, Container>& p) {
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Even_odd_rule) {
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
-  pr.add_to_triangulation_odd_even(p);
+  pr.add_to_triangulation_even_odd(p);
   if (pr.triangulation().number_of_faces() > 0) {
-    pr.label_triangulation_odd_even();
+    pr.label_triangulation_even_odd();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a multipolygon with holes using the odd-even heuristic
+/// Repair a multipolygon with holes
+template <class Kernel, class Container, class Rule>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& mp, Rule rule) {
+  CGAL_assertion(false); // rule not implemented
+  return Multipolygon_with_holes_2<Kernel, Container>();
+}
+
 template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair_odd_even(const Multipolygon_with_holes_2<Kernel, Container>& mp) {
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& mp, Even_odd_rule) {
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
-  pr.add_to_triangulation_odd_even(mp);
+  pr.add_to_triangulation_even_odd(mp);
   if (pr.triangulation().number_of_faces() > 0) {
-    pr.label_triangulation_odd_even();
+    pr.label_triangulation_even_odd();
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
@@ -281,7 +300,7 @@ public:
                                         CGAL::Exact_predicates_tag,
                                         CGAL::Exact_intersections_tag>::type;
   using Constrained_Delaunay_triangulation = CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag>;
-  using Triangulation = internal::Triangulation_with_odd_even_constraints_2<Constrained_Delaunay_triangulation>;
+  using Triangulation = internal::Triangulation_with_even_odd_constraints_2<Constrained_Delaunay_triangulation>;
   // TODO: Edge_map and Vertex_map use std::set and set::map with exact kernels since Point_2 can't be hashed otherwise
   using Edge_map = typename std::conditional<std::is_floating_point<typename Kernel::FT>::value,
                                              std::unordered_set<std::pair<typename Kernel::Point_2, typename Kernel::Point_2>,
@@ -333,7 +352,7 @@ public:
   /// @{
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation_odd_even(const Polygon_2<Kernel, Container>& polygon) {
+  void add_to_triangulation_even_odd(const Polygon_2<Kernel, Container>& polygon) {
 
     // Get unique edges
     for (auto const& edge: polygon.edges()) {
@@ -369,12 +388,12 @@ public:
 
     // Insert edges
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second);
+      t.even_odd_insert_constraint(edge.first, edge.second);
     }
   }
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation_odd_even(const Polygon_with_holes_2<Kernel, Container>& polygon) {
+  void add_to_triangulation_even_odd(const Polygon_with_holes_2<Kernel, Container>& polygon) {
 
     // Get unique edges
     for (auto const& edge: polygon.outer_boundary().edges()) {
@@ -419,12 +438,12 @@ public:
 
     // Insert edges
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second);
+      t.even_odd_insert_constraint(edge.first, edge.second);
     }
   }
 
   // Add edges of the polygon to the triangulation
-  void add_to_triangulation_odd_even(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon) {
+  void add_to_triangulation_even_odd(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon) {
 
     // Get unique edges
     for (auto const& polygon: multipolygon.polygons_with_holes()) {
@@ -471,7 +490,7 @@ public:
 
     // Insert edges
     for (auto const& edge: edges_to_insert) {
-      t.odd_even_insert_constraint(edge.first, edge.second);
+      t.even_odd_insert_constraint(edge.first, edge.second);
     }
   }
 
@@ -507,7 +526,7 @@ public:
   }
 
   // Label triangles in triangulation
-  void label_triangulation_odd_even() {
+  void label_triangulation_even_odd() {
 
     // Simplify collinear edges (gets rid of order dependency)
     for (auto vertex: t.all_vertex_handles()) {

@@ -20,8 +20,8 @@ int main(int argc, char* argv[]) {
   CGAL::IO::read_multi_polygon_WKT(ifs, mp);
 
   Polygon_repair pr;
-  pr.add_to_triangulation_odd_even(mp);
-  pr.label_triangulation_odd_even();
+  pr.add_to_triangulation_even_odd(mp);
+  pr.label_triangulation_even_odd();
 
   std::cout << "{" << std::endl;
   std::cout << "\t\"type\": \"FeatureCollection\"," << std::endl;

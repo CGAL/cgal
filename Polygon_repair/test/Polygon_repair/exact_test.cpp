@@ -28,17 +28,17 @@ int main(int argc, char* argv[]) {
   CGAL::draw(p);
   Polygon_repair pr;
   for (auto const edge: p.outer_boundary().edges()) {
-    pr.triangulation().odd_even_insert_constraint(edge.source(), edge.target());
+    pr.triangulation().even_odd_insert_constraint(edge.source(), edge.target());
   } int spikes = 20;
   for (auto const& hole: p.holes()) {
     for (auto const edge: hole.edges()) {
       if (spikes-- <= 0) break;
-      pr.triangulation().odd_even_insert_constraint(edge.source(), edge.target());
+      pr.triangulation().even_odd_insert_constraint(edge.source(), edge.target());
     }
   }
-  pr.label_triangulation_odd_even();
+  pr.label_triangulation_even_odd();
   pr.reconstruct_multipolygon();
-  rmp = CGAL::Polygon_repair::repair_odd_even(p);
+  rmp = CGAL::Polygon_repair::repair(p, CGAL::Polygon_repair::Even_odd_rule());
   std::ostringstream oss;
   CGAL::IO::write_multi_polygon_WKT(oss, rmp);
   std::string out = oss.str();

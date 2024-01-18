@@ -73,12 +73,12 @@ int main(int argc, char* argv[]) {
     for (auto const& edge: edges_to_insert) {
       Polygon_repair::Triangulation::Vertex_handle va = pr.triangulation().insert(edge.first, search_start);
       Polygon_repair::Triangulation::Vertex_handle vb = pr.triangulation().insert(edge.second, va->face()); // vb is likely close to va
-      pr.triangulation().odd_even_insert_constraint(va, vb);
+      pr.triangulation().even_odd_insert_constraint(va, vb);
       search_start = vb->face();
     }
 
     if (pr.triangulation().number_of_faces() > 0) {
-      pr.label_triangulation_odd_even();
+      pr.label_triangulation_even_odd();
       pr.reconstruct_multipolygon();
     } Multipolygon_with_holes_2 mp = pr.multipolygon();
 
