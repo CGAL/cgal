@@ -14,7 +14,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_AUTOREFINEMENT_H
 #define CGAL_POLYGON_MESH_PROCESSING_AUTOREFINEMENT_H
 
-#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
+#include <CGAL/license/Polygon_mesh_processing/autorefinement.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>

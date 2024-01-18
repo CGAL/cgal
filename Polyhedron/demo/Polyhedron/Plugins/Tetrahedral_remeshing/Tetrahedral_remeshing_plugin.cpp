@@ -12,9 +12,9 @@
 #include "C3t3_type.h"
 
 #include <CGAL/tetrahedral_remeshing.h>
+#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
-#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <unordered_map>
 #include <memory>
@@ -128,7 +128,6 @@ public Q_SLOTS:
         }
       }
 
-      CGAL::tetrahedral_isotropic_remeshing(
       using ASizing = CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<Tr>;
       using USizing = CGAL::Tetrahedral_remeshing::Uniform_sizing_field<Geom_traits>;
 

@@ -805,6 +805,9 @@ collapse(const typename C3t3::Cell_handle ch,
   }
   while (++circ != done);
 
+  if(c3t3.is_in_complex(ch->vertex(from), ch->vertex(to)))
+    c3t3.remove_from_complex(ch->vertex(from), ch->vertex(to));
+
   bool valid = true;
   std::vector<Cell_handle> cells_to_remove;
   std::unordered_set<Cell_handle> invalid_cells;

@@ -191,6 +191,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "1-c3t3_vertices_after_split");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
+      "1-edges_in_complex_after_split.polylines.txt");
     const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
     std::cout << "Min dihedral angle = " << mdh << std::endl;
 #endif
@@ -211,6 +213,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "2-c3t3_vertices_after_collapse");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
+      "2-edges_in_complex_after_collapse.polylines.txt");
     const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
     std::cout << "Min dihedral angle = " << mdh << std::endl;
 #endif
@@ -230,6 +234,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "3-c3t3_vertices_after_flip");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
+      "3-edges_in_complex_after_flip.polylines.txt");
     const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
     std::cout << "Min dihedral angle = " << mdh << std::endl;
 #endif
@@ -248,6 +254,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "4-c3t3_vertices_after_smooth");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
+      "4-edges_in_complex_after_smoothing.polylines.txt");
     const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
     std::cout << "Min dihedral angle = " << mdh << std::endl;
 #endif
@@ -460,6 +468,8 @@ private:
       m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
     CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3,
+      "0-edges_in_complex_after_init.polylines.txt");
 #endif
   }
 
@@ -554,7 +564,10 @@ private:
       if (cid > max_index)
         max_index = cid;
     }
-    return max_index + 1;
+    if (max_index == (std::numeric_limits<Curve_index>::min)())
+      return 0;
+    else
+      return max_index + 1;
   }
 
   Curve_index default_curve_index() const

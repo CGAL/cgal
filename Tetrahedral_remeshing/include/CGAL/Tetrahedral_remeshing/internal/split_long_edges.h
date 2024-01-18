@@ -42,6 +42,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   typedef typename C3t3::Triangulation       Tr;
   typedef typename C3t3::Subdomain_index     Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
+  typedef typename C3t3::Curve_index         Curve_index;
   typedef typename Tr::Geom_traits::Point_3 Point;
   typedef typename Tr::Facet                Facet;
   typedef typename Tr::Vertex_handle        Vertex_handle;
@@ -70,6 +71,11 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
       CGAL_assertion(false);//e should be in complex
   }
   CGAL_assertion(dimension > 0);
+
+  // remove complex edge before splitting
+  const Curve_index curve_index = (dimension == 1) ? c3t3.curve_index(e) : Curve_index();
+  if (dimension == 1)
+    c3t3.remove_from_complex(e);
 
   struct Cell_info {
     Subdomain_index subdomain_index_;
@@ -193,6 +199,13 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
 
     //the 4th facet (new_v, v_and_opp_patch.first, v1 or v2)
     // will have its patch tagged from the other side, if needed
+  }
+
+  // re-insert complex sub-edges
+  if (dimension == 1)
+  {
+    c3t3.add_to_complex(new_v, v1, curve_index);
+    c3t3.add_to_complex(new_v, v2, curve_index);
   }
 
   set_index(new_v, c3t3);

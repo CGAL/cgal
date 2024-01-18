@@ -39,13 +39,27 @@ using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
 using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>>;
 using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 
+struct Distance_from_corner_sizing_field
+{
+  typedef K::FT FT;
+  typedef K::Point_3 Point_3;
+
+  const Point_3 corner = Point_3{ -1., -1., -1 }; //lower corner of the cube
+
+  template<typename Index>
+  FT operator()(const Point_3& p, const int, const Index&) const
+  {
+    const FT d_to_origin = CGAL::approximate_sqrt(CGAL::squared_distance(p, corner));
+    return 0.02 + 0.1 * d_to_origin;
+  }
+};
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
   std::ifstream input(fname);
   Polyhedron polyhedron;
   input >> polyhedron;
@@ -61,12 +75,12 @@ int main(int argc, char* argv[])
   domain.detect_features();
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.025,
-    facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
-    cell_radius_edge_ratio = 3, cell_size = 0.05);
+  Mesh_criteria criteria(edge_size = 0.1,
+                         facet_size = 0.1,
+                         facet_distance = 0.005);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
@@ -81,12 +95,12 @@ int main(int argc, char* argv[])
   //It is possible to use :  CGAL::convert_to_triangulation_3(c3t3),
   //  Then the triangulation is copied and duplicated, and c3t3 remains as is.
 
-  const double target_edge_length = 0.1;//coarsen the mesh
-  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
+  CGAL::tetrahedral_isotropic_remeshing(tr,
+    Distance_from_corner_sizing_field(),
     CGAL::parameters::number_of_iterations(3)
-   .edge_is_constrained_map(constraints_pmap));
+    .edge_is_constrained_map(constraints_pmap));
 
-  std::ofstream out("out_remeshed.mesh");
+  std::ofstream out("out_remeshing.mesh");
   CGAL::IO::write_MEDIT(out, tr);
   out.close();
 

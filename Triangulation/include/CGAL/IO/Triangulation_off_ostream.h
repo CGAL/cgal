@@ -5,13 +5,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Clement Jamin
 
 
 #ifndef CGAL_TRIANGULATION_IO_H
 #define CGAL_TRIANGULATION_IO_H
+
+#include <CGAL/license/Triangulation.h>
+
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Triangulation.h>
