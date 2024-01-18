@@ -191,31 +191,22 @@ namespace Tetrahedral_remeshing
     add_edge(vpc[5], vpc[7], tr, constraints);
 
     assert(tr.is_valid(true));
-  }
 
-  template<typename Tr, typename Subdomain_index>
-  void set_subdomain_for_finite_cells(Tr& tr,
-                                      const Subdomain_index& subdomain)
-  {
-    for(auto c : tr.finite_cell_handles())
+    // set subdomain indices
+    for (auto c : tr.finite_cell_handles())
       c->set_subdomain_index(subdomain);
-  }
 
-  template<typename Tr, typename Surface_patch_index>
-  void set_surface_patch_for_convex_hull_facets(Tr& tr,
-    const Surface_patch_index& surface_patch)
-  {
+    // set surface patches
     for (auto f : tr.finite_facets())
     {
-      typename Tr::Facet mf = tr.mirror_facet(f);
-      const Surface_patch_index patch
-        = (tr.is_infinite(f.first) || tr.is_infinite(mf.first))
-          ? surface_patch
-          : 0;
+      const Point& p = f.first->vertex((f.second + 1) % 4)->point();
+      const Point& q = f.first->vertex((f.second + 2) % 4)->point();
+
 
       f.first->set_surface_patch_index(f.second, patch);
       mf.first->set_surface_patch_index(mf.second, patch);
     }
+
   }
 }
 }
