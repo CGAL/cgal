@@ -220,25 +220,27 @@ public:
   // copy constructor
   Orthtree(const Orthtree& other) :
     m_traits(other.m_traits),
-    m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
+
     m_node_properties(other.m_node_properties),
     m_node_contents(m_node_properties.get_property<Node_data>("contents")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
-    m_node_children(m_node_properties.get_property<Maybe_node_index>("children")) {}
+    m_node_children(m_node_properties.get_property<Maybe_node_index>("children")),
+    m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth)
+  {}
 
   // move constructor
   Orthtree(Orthtree&& other) :
     m_traits(other.m_traits),
-    m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth),
     m_node_properties(std::move(other.m_node_properties)),
     m_node_contents(m_node_properties.get_property<Node_data>("contents")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
-    m_node_children(m_node_properties.get_property<Maybe_node_index>("children")) {
-
+    m_node_children(m_node_properties.get_property<Maybe_node_index>("children")),
+    m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth)
+  {
     // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
     other.m_node_properties.emplace();
   }
@@ -1131,7 +1133,7 @@ public:
     // Iterate over all nodes
     for (auto n: orthtree.traverse(Orthtrees::Preorder_traversal<Self>(orthtree))) {
       // Show the depth
-      for (int i = 0; i < orthtree.depth(n); ++i)
+      for (std::size_t i = 0; i < orthtree.depth(n); ++i)
         os << ". ";
       // Print the node
       internal::print_orthtree_node(os, n, orthtree);
