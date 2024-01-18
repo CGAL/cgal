@@ -14,7 +14,7 @@ using Polygon_repair = CGAL::Polygon_repair::Polygon_repair<Kernel>;
 
 int main(int argc, char* argv[]) {
 
-  std::ifstream ifs("data/nesting-spike.wkt");
+  std::ifstream ifs("data/in/nesting-spike.wkt");
 
   Multipolygon_with_holes_2 mp;
   CGAL::IO::read_multi_polygon_WKT(ifs, mp);
