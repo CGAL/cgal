@@ -4,35 +4,51 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
+
+#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
+#include <CGAL/make_mesh_3.h>
+
 #include <CGAL/tetrahedral_remeshing.h>
 
-#include <CGAL/property_map.h>
+#include <CGAL/IO/File_medit.h>
 
-#include <unordered_set>
-#include <iostream>
-#include <utility>
-#include <cassert>
+// Domain
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
-#include "tetrahedral_remeshing_generate_input.h"
+#ifdef CGAL_CONCURRENT_MESH_3
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
 
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+// Triangulation for Meshing
+typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<
+  Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index> C3t3;
 
-using Remeshing_triangulation = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K>;
-using Point = Remeshing_triangulation::Point;
-using Vertex_handle = Remeshing_triangulation::Vertex_handle;
+// Criteria
+typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+
+// Triangulation for Remeshing
+typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
+  typename Tr::Triangulation_data_structure> Triangulation_3;
+using Vertex_handle = Triangulation_3::Vertex_handle;
 
 using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
 using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>>;
 using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 
-
 struct Distance_from_corner_sizing_field
 {
   typedef K::FT FT;
-  typedef Point Point_3;
+  typedef K::Point_3 Point_3;
 
-  const Point_3 corner = Point_3{-2., -2., -2}; //lower corner of the cube
+  const Point_3 corner = Point_3{ -1., -1., -1 }; //lower corner of the cube
 
   template<typename Index>
   FT operator()(const Point_3& p, const int, const Index&) const
@@ -42,33 +58,57 @@ struct Distance_from_corner_sizing_field
   }
 };
 
+// To avoid verbose function and named parameters call
+using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.02;
-  const int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
-  const int nbv = (argc > 3) ? atoi(argv[3]) : 50;
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube.off");
+  std::ifstream input(fname);
+  Polyhedron polyhedron;
+  input >> polyhedron;
+  if (input.fail() || !CGAL::is_triangle_mesh(polyhedron)) {
+    std::cerr << "Error: Input invalid " << fname << std::endl;
+    return EXIT_FAILURE;
+  }
 
-  Remeshing_triangulation t3;
+  // Create domain
+  Mesh_domain domain(polyhedron);
+
+  // Get sharp features
+  domain.detect_features();
+
+  // Mesh criteria
+  Mesh_criteria criteria(edge_size = 0.1,
+                         facet_size = 0.1,
+                         facet_distance = 0.005);
+
+  // Mesh generation
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+
+  CGAL::dump_c3t3(c3t3, "out_meshing");
 
   Constraints_set constraints;
-  CGAL::Tetrahedral_remeshing::generate_input_cube(nbv, t3, constraints);
-  set_subdomain_for_finite_cells(t3, 1);
-  set_surface_patch_for_convex_hull_facets(t3, 2);
+  Constraints_pmap constraints_pmap(constraints);
 
-  std::ofstream ofs("out0.mesh");
-  CGAL::IO::write_MEDIT(ofs, t3, CGAL::parameters::rebind_labels(true));
-  ofs.close();
+  Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
+    CGAL::parameters::edge_is_constrained_map(constraints_pmap));
 
-  CGAL::tetrahedral_isotropic_remeshing(t3,
-    0.1,//Distance_from_corner_sizing_field(),
-    CGAL::parameters::edge_is_constrained_map(Constraints_pmap(constraints))
-                     .number_of_iterations(nb_iter)
-                     .remesh_boundaries(true));
+  //note we use the move semantic, with std::move(c3t3),
+  //  to avoid a copy of the triangulation by the function
+  //  `CGAL::convert_to_triangulation_3()`
+  //  After the call to this function, c3t3 is an empty and valid C3t3.
+  //It is possible to use :  CGAL::convert_to_triangulation_3(c3t3),
+  //  Then the triangulation is copied and duplicated, and c3t3 remains as is.
 
-  std::ofstream ofs1("out1.mesh");
-  CGAL::IO::write_MEDIT(ofs1, t3);
-  ofs1.close();
+  CGAL::tetrahedral_isotropic_remeshing(tr,
+    Distance_from_corner_sizing_field(),
+    CGAL::parameters::number_of_iterations(3)
+    .edge_is_constrained_map(constraints_pmap));
+
+  std::ofstream out("out_remeshing.mesh");
+  CGAL::IO::write_MEDIT(out, tr);
+  out.close();
 
   return EXIT_SUCCESS;
 }
