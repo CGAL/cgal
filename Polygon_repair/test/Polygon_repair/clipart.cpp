@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
     if (file.path().filename().extension() != ".obj") continue;
     std::cout << "Reading " << file.path().filename() << "...";
-    if (std::filesystem::exists(folder_out + "/" + std::string(file.path().stem()) + ".svg")) {
+    if (std::filesystem::exists(folder_out + "/" + file.path().stem().string() + ".svg")) {
       std::cout << " skipped: already processed" << std::endl;
       continue;
     }
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
       double scale = desired_width/(bbox.xmax()-bbox.xmin());
 
 
-      std::ofstream ofs(folder_out + "/" + std::string(file.path().stem()) + ".svg");
+      std::ofstream ofs(folder_out + "/" + file.path().stem().string() + ".svg");
       ofs << "<svg viewBox=\"0 0 " << desired_width << " " << scale*(bbox.ymax()-bbox.ymin()) << "\" xmlns=\"http://www.w3.org/2000/svg\">" << std::endl;
 
       for (auto const& polygon: mp.polygons_with_holes()) {

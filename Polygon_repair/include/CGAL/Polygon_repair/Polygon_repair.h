@@ -212,14 +212,14 @@ template <class Kernel, class Container>
 bool is_valid(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon) {
 
   // Validate polygons
-  for (auto const& polygon: multipolygon.polygons()) {
+  for (auto const& polygon: multipolygon.polygons_with_holes()) {
     if (!is_valid(polygon)) return false;
   }
 
   typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation vt;
   typename CGAL::Polygon_repair::Polygon_repair<Kernel, Container>::Validation_triangulation::Locate_type lt;
   int li;
-  for (auto const& polygon: multipolygon.polygons()) {
+  for (auto const& polygon: multipolygon.polygons_with_holes()) {
 
 
     if (vt.number_of_faces() > 0) {
