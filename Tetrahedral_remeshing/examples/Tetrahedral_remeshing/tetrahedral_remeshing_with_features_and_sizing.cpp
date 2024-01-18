@@ -1,7 +1,3 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
-#define CGAL_DUMP_REMESHING_STEPS
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -85,8 +81,6 @@ int main(int argc, char* argv[])
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
-
-  CGAL::dump_c3t3(c3t3, "out_meshing");
 
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
