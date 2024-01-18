@@ -949,7 +949,7 @@ public:
                 }*/
 
         for (const Index& v : vtx_of_face) {
-          ib.add_vertex_to_facet(static_cast<std::size_t>(mapped_vertices[v]));
+          ib.add_vertex_to_facet(static_cast<typename LCC::size_type>(mapped_vertices[v]));
           //std::cout << " " << mapped_vertices[v];
           if (!used_vertices[mapped_vertices[v]]) {
             used_vertices[mapped_vertices[v]] = true;
