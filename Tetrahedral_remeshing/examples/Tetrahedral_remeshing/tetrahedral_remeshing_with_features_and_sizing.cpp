@@ -98,7 +98,8 @@ int main(int argc, char* argv[])
   CGAL::tetrahedral_isotropic_remeshing(tr,
     Distance_from_corner_sizing_field(),
     CGAL::parameters::number_of_iterations(3)
-    .edge_is_constrained_map(constraints_pmap));
+    .edge_is_constrained_map(constraints_pmap)
+    .smooth_constrained_edges(true));
 
   std::ofstream out("out_remeshing.mesh");
   CGAL::IO::write_MEDIT(out, tr);
