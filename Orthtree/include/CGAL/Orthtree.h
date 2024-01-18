@@ -862,17 +862,6 @@ public:
     m_traits.distribute_node_contents_object()(n, *this, center);
   }
 
-  /*!
-   * \brief eliminates this node's children, making it a leaf node.
-   *
-   * When a node is un-split, its children are automatically deleted.
-   * After un-splitting a node it will be considered a leaf node.
-   * Idempotent, un-splitting a leaf node has no effect.
-   */
-  void unsplit(Node_index n) {
-    // todo: the child nodes should be de-allocated!
-    // This may need to be done recursively
-  }
 
   /*!
    * \brief Finds the center point of the node specified by `n`.
