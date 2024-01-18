@@ -582,9 +582,8 @@ void generate_subtriangles(std::size_t ti,
 #define CGAL_AUTOREF_COUNTER_INSTRUCTION(X)
 #endif
 
-  #warning TODO
-
   std::vector<Exact_predicates_exact_constructions_kernel::Point_3>& points=triangle_data.points;
+  std::vector<int>& point_locations=triangle_data.point_locations;
   std::vector<std::pair<std::size_t, std::size_t>>& segments=triangle_data.segments;
   std::vector<std::size_t>& in_triangle_ids=triangle_data.segment_input_triangle_ids;
 
@@ -611,7 +610,10 @@ void generate_subtriangles(std::size_t ti,
     {
       auto insert_res = point_id_map.insert(std::make_pair(pt, points.size()));
       if (insert_res.second)
+      {
         points.push_back(pt);
+        point_locations.push_back(0);
+      }
       return insert_res.first->second;
     };
 
@@ -840,8 +842,57 @@ void generate_subtriangles(std::size_t ti,
   vhandles[2]->set_point(t[2]);
 
   // insert points and fill vhandles
-  std::vector<std::size_t> indices(triangle_data.points.size()-3);
-  std::iota(indices.begin(), indices.end(), 3);
+
+  //start by points on edges
+  std::array<std::vector<std::size_t>, 3> indices_on_edges;
+  std::vector<std::size_t> indices;
+  for (std::size_t i=3; i<points.size(); ++i)
+  {
+    if (point_locations[i]==0)
+      indices.push_back(i);
+    else
+    {
+      CGAL_assertion(point_locations[i]>0 && point_locations[i]<4);
+      indices_on_edges[point_locations[i]-1].push_back(i);
+    }
+  }
+
+  //sort points on edges and insert them
+  typename CDT::Vertex_handle vinf=cdt.infinite_vertex();
+  for (int i=0; i<3; ++i)
+  {
+    if (indices_on_edges[i].empty()) continue;
+    int src_id=i, tgt_id=(i+1)%3;
+    //look for a sort axis
+    int coord = 0;
+    if (points[src_id].x()==points[tgt_id].x())
+    {
+      coord=1;
+      if (points[src_id].y()==points[tgt_id].y())
+        coord=2;
+    }
+    if (points[src_id][coord]>points[tgt_id][coord])
+      std::swap(src_id, tgt_id);
+
+    std::sort(indices_on_edges[i].begin(), indices_on_edges[i].end(),
+              [&](std::size_t id1, std::size_t id2)
+              {
+                return points[id1][coord]<points[id2][coord];
+              });
+
+    std::size_t prev_id = src_id;
+    for(std::size_t id : indices_on_edges[i])
+    {
+      typename CDT::Face_handle fh;
+      CGAL_assertion_code(bool ok =)
+      cdt.is_face(vhandles[prev_id], vhandles[tgt_id],vinf, fh);
+      CGAL_assertion(ok);
+      vhandles[id]=cdt.insert_in_edge(points[id], fh, fh->index(vinf));
+      prev_id=id;
+    }
+  }
+
+  // then points in the interior
   typedef typename Pointer_property_map<typename EK::Point_3>::type Pmap;
   typedef Spatial_sort_traits_adapter_2<P_traits,Pmap> Search_traits;
   spatial_sort(indices.begin(), indices.end(),
@@ -1067,7 +1118,6 @@ void autorefine_triangle_soup(PointRange& soup_points,
       std::size_t nbi = inter_pts.size();
       switch(nbi)
       {
-        #warning TODO use inter pt info
         case 1:
           all_triangle_data[i1].add_point<1>(inter_pts[0]);
           all_triangle_data[i2].add_point<2>(inter_pts[0]);
