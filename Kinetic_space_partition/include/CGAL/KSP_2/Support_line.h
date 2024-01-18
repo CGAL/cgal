@@ -23,7 +23,7 @@ namespace KSP_2 {
 namespace internal {
 
 template <typename GeomTraits>
-class Support_line
+class Support_line_2
 {
 public:
   typedef GeomTraits Kernel;
@@ -45,9 +45,9 @@ private:
 
 public:
 
-  Support_line() { }
+  Support_line_2() { }
 
-  Support_line(const Segment_2& segment)
+  Support_line_2(const Segment_2& segment)
     : m_minimum((std::numeric_limits<FT>::max)())
     , m_maximum(-(std::numeric_limits<FT>::max)())
     , m_connected_components(1)
@@ -97,7 +97,7 @@ public:
 };
 
 template <typename Kernel>
-bool operator== (const Support_line<Kernel>& a, const Support_line<Kernel>& b)
+bool operator== (const Support_line_2<Kernel>& a, const Support_line_2<Kernel>& b)
 {
   const typename Kernel::Vector_2& va = a.vector();
   const typename Kernel::Vector_2& vb = b.vector();
@@ -112,8 +112,8 @@ bool operator== (const Support_line<Kernel>& a, const Support_line<Kernel>& b)
 #if 0
 template <>
 bool operator==<CGAL::Exact_predicates_exact_constructions_kernel>
-(const Support_line<CGAL::Exact_predicates_exact_constructions_kernel>& a,
-  const Support_line<CGAL::Exact_predicates_exact_constructions_kernel>& b)
+(const Support_line_2<CGAL::Exact_predicates_exact_constructions_kernel>& a,
+  const Support_line_2<CGAL::Exact_predicates_exact_constructions_kernel>& b)
 {
   return (a.line() == b.line());
 }

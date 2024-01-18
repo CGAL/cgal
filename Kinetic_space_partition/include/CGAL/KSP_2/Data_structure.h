@@ -38,7 +38,7 @@ public:
   typedef typename Kernel::Line_2 Line_2;
   typedef typename Kernel::Segment_2 Segment_2;
 
-  typedef Support_line<Kernel> Support_line;
+  typedef Support_line_2<Kernel> Support_line;
   typedef Segment Segment;
   typedef Vertex<FT> Vertex;
 
