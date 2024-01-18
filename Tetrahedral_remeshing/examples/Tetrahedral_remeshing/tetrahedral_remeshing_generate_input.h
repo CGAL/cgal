@@ -194,19 +194,18 @@ namespace Tetrahedral_remeshing
 
     // set subdomain indices
     for (auto c : tr.finite_cell_handles())
-      c->set_subdomain_index(subdomain);
+      c->set_subdomain_index(1);
 
     // set surface patches
     for (auto f : tr.finite_facets())
     {
-      const Point& p = f.first->vertex((f.second + 1) % 4)->point();
-      const Point& q = f.first->vertex((f.second + 2) % 4)->point();
-
-
-      f.first->set_surface_patch_index(f.second, patch);
-      mf.first->set_surface_patch_index(mf.second, patch);
+      auto& mf = tr.mirror_facet(f);
+      if(tr.is_infinite(f.first) || tr.is_infinite(mf.first))
+      {
+        f.first->set_surface_patch_index(f.second, 2);
+        mf.first->set_surface_patch_index(mf.second, 2);
+      }
     }
-
   }
 }
 }
