@@ -47,14 +47,14 @@ namespace CGAL
   \tparam GeomTraits
     must be a model of `KineticShapePartitionTraits_3`.
 
-  \tparam PointSet
+  \tparam PointRange
     must be a range of 3D points and corresponding 3D normal vectors whose iterator type is `RandomAccessIterator`.
 
   \tparam PointMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the `PointSet` and value type is `GeomTraits::Point_3`
+    a model of `ReadablePropertyMap` whose key type is the value type of the `PointRange` and value type is `GeomTraits::Point_3`
 
   \tparam NormalMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the `PointSet` and value type is `GeomTraits::Vector_3`
+    a model of `ReadablePropertyMap` whose key type is the value type of the `PointRange` and value type is `GeomTraits::Vector_3`
 
   \tparam IntersectionKernel
     must be a model of `Kernel` using exact computations. Defaults to `CGAL::Exact_predicates_exact_constructions_kernel`. Used for the internal kinetic shape partition.
@@ -76,10 +76,10 @@ public:
   using Normal_map = NormalMap;
 
   /*!
-  \brief Creates a Kinetic_shape_reconstruction_3 object.
+  \brief creates a `Kinetic_shape_reconstruction_3` object.
 
   \param points
-   an instance of `PointSet` with 3D points and corresponding 3D normal vectors.
+   an instance of `PointRange` with 3D points and corresponding 3D normal vectors.
 
   \param np
    a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -87,7 +87,7 @@ public:
   \cgalNamedParamsBegin
     \cgalParamNBegin{point_map}
       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Point_3`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
           \cgalParamDefault{`PointMap()`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
@@ -100,7 +100,7 @@ public:
   }
 
   /*!
-    \brief Detects shapes in the provided point cloud and regularizes them.
+    \brief detects shapes in the provided point cloud and regularizes them.
 
     \tparam NamedParameters
     a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -111,12 +111,12 @@ public:
   \cgalNamedParamsBegin
     \cgalParamNBegin{point_map}
       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Point_3`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
           \cgalParamDefault{`PointMap()`}
     \cgalParamNEnd
     \cgalParamNBegin{normal_map}
       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Vector_3`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
       \cgalParamDefault{`NormalMap()`}
    \cgalParamNBegin{k_neighbors}
      \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
@@ -200,31 +200,31 @@ public:
   }
 
   /*!
-  \brief Retrieves the support planes of the detected and regularized shapes.
+  \brief returns the support planes of the detected and regularized shapes.
 
   @return
   vector with a `Plane_3` for each detected planar shape.
 
-  \pre `shape detection performed`
+  \pre shape detection performed
   */
   const std::vector<Plane_3>& detected_planar_shapes() {
     return m_planes;
   }
 
   /*!
-  \brief Retrieves the indices of detected and regularized shapes.
+  \brief returns the indices of detected and regularized shapes.
 
   @return
   indices into `points` for each detected planar shape.
 
-  \pre `shape detection performed`
+  \pre shape detection performed
   */
   const std::vector<std::vector<std::size_t> >& detected_planar_shape_indices() {
     return m_planar_regions;
   }
 
   /*!
-    \brief Detects and regularizes shapes in the provided point cloud and creates the kinetic space partition.
+    \brief detects and regularizes shapes in the provided point cloud and creates the kinetic space partition.
 
     Combines calls of `detect_planar_shapes()`, `initialize_partition()` and `partition()`.
 
@@ -240,12 +240,12 @@ public:
   \cgalNamedParamsBegin
     \cgalParamNBegin{point_map}
       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Point_3`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
           \cgalParamDefault{`PointMap()`}
     \cgalParamNEnd
     \cgalParamNBegin{normal_map}
       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
-      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointSet` and whose value type is `GeomTraits::Vector_3`}
+      \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
       \cgalParamDefault{`NormalMap()`}
    \cgalParamNBegin{k_neighbors}
      \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
@@ -352,7 +352,7 @@ public:
   }
 
   /*!
-  \brief Propagates the kinetic polygons in the initialized partition.
+  \brief propagates the kinetic polygons in the initialized partition.
 
   \param k
   maximum number of allowed intersections for each input polygon before its expansion stops.
@@ -370,7 +370,7 @@ public:
   }
 
   /*!
-  \brief Access to the kinetic partition.
+  \brief gives access to the kinetic partition.
 
   @return
   created kinetic partition data structure
@@ -382,15 +382,15 @@ public:
   }
 
   /*!
-  \brief Uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+  \brief uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
   Estimates a horizontal ground plane within the detected shapes. Cells in the partition below the ground plane receive a weight to be labeled as inside.
   The z axis is considered as vertical upwards pointing.
 
   \tparam OutputPointIterator
-  an output iterator taking Point_3.
+  an output iterator taking `Point_3`.
 
   \tparam OutputPolygonIterator
-  an output iterator taking polygon indices std::vector<std::size_t>.
+  an output iterator taking polygon indices `std::vector<std::size_t>`.
 
   \param lambda
   trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
@@ -453,7 +453,7 @@ public:
   }
 
   /*!
-  \brief Uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
+  \brief uses min-cut to solve an inside/outside labeling of the volumes of the kinetic partition and provides the reconstructed surface as a list of indexed polygons.
   The `external_nodes` parameter allows to indicate the preferred labels for faces on the bounding box.
 
   \tparam OutputPointIterator
@@ -463,7 +463,7 @@ public:
   an output iterator taking polygon indices `std::vector<std::size_t>`.
 
   \param lambda
-  trades data faithfulness of the reconstruction for low complexity. Should be in the range [0, 1).
+  trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
 
   \param external_nodes
   adds label preference for the faces on the bounding box. Bounding box sides without preset label are chosen by the min-cut.
@@ -602,9 +602,9 @@ private:
 
 
   /*!
-  \brief Creates the visibility (data-) and regularity energy terms from the input point cloud and the kinetic partition.
+  \brief creates the visibility (data-) and regularity energy terms from the input point cloud and the kinetic partition.
 
-  \pre `successful initialization`
+  \pre successful initialization
   */
   void setup_energyterms() {
     if (m_lcc.template one_dart_per_cell<3>().size() == 0) {
@@ -763,7 +763,7 @@ private:
   }
 
   /*!
-  \brief Provides the data and regularity energy terms for reconstruction via min-cut.
+  \brief provides the data and regularity energy terms for reconstruction via min-cut.
 
   \param edges
   contains a vector of pairs of volume indices. Indicates which volumes should be connected in the min-cut formulation.
@@ -777,7 +777,7 @@ private:
   @return
   fails if the dimensions of parameters does not match the kinetic partition.
 
-  \pre `successful initialization`
+  \pre successful initialization
   */
   template<typename NamedParameters>
   bool setup_energyterms(
@@ -786,7 +786,7 @@ private:
     const std::vector< std::vector<double> >& cost_matrix);
 
   /*!
-  \brief Provides the reconstructed surface as a list of indexed triangles.
+  \brief provides the reconstructed surface as a list of indexed triangles.
 
   \param pit
   an output iterator taking Point_3.
@@ -794,7 +794,7 @@ private:
   \param triit
   an output iterator taking std::size_t.
 
-  \pre `successful reconstruction`
+  \pre successful reconstruction
   */
   template<class OutputPointIterator, class OutputTriangleIterator>
   void reconstructed_model_trilist(OutputPointIterator pit, OutputTriangleIterator triit) {
@@ -831,7 +831,7 @@ private:
   }
 
   /*!
-  \brief Provides the reconstructed surface as a list of indexed polygons.
+  \brief provides the reconstructed surface as a list of indexed polygons.
 
   \param pit
   an output iterator taking Point_3.
@@ -839,7 +839,7 @@ private:
   \param triit
   an output iterator taking std::vector<std::size_t>.
 
-  \pre `successful reconstruction`
+  \pre successful reconstruction
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstructed_model_polylist_lcc(OutputPointIterator pit, OutputPolygonIterator polyit, FT lambda) {
@@ -976,15 +976,15 @@ private:
   }
 
   /*!
-  \brief Provides the reconstructed surface as a list of indexed polygons.
+  \brief provides the reconstructed surface as a list of indexed polygons.
 
   \param pit
-  an output iterator taking Point_3.
+  an output iterator taking `Point_3`.
 
   \param triit
-  an output iterator taking std::vector<std::size_t>.
+  an output iterator taking `std::vector<std::size_t>`.
 
-  \pre `successful reconstruction`
+  \pre successful reconstruction
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstructed_model_polylist(OutputPointIterator pit, OutputPolygonIterator polyit) {
