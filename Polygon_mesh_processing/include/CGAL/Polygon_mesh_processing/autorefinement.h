@@ -485,9 +485,58 @@ bool collect_intersections(const std::array<typename K::Point_3, 3>& t1,
 //TODO: rename struct
 struct Triangle_data
 {
-  std::vector<Exact_predicates_exact_constructions_kernel::Point_3> points;
+  using Point_3 = Exact_predicates_exact_constructions_kernel::Point_3;
+  std::vector<Point_3> points;
+  std::vector<int> point_locations;
   std::vector<std::pair<std::size_t,std::size_t>> segments;
   std::vector<std::size_t> segment_input_triangle_ids;
+  template <int i>
+  std::size_t add_point(const std::tuple<Point_3,int, int>& tpl)
+  {
+    if (get<i>(tpl) < 0)
+      return -get<i>(tpl)-1;
+    points.push_back(get<0>(tpl));
+    point_locations.push_back(get<i>(tpl));
+    return points.size()-1;
+  }
+
+#ifndef NDEBUG
+  bool on_same_edge(std::size_t i, std::size_t j)
+#else
+  bool on_same_edge_debug(std::size_t i, std::size_t j)
+#endif
+  {
+    if (point_locations[i]==0 || point_locations[j]==0) return false;
+    if (point_locations[i]>0)
+    {
+      if (point_locations[j]>0)
+        return point_locations[i]==point_locations[j];
+      return -point_locations[j]==point_locations[i] || point_locations[i]%3+1==-point_locations[j];
+    }
+    if (point_locations[j]<0)
+      return true;
+    return -point_locations[i]==point_locations[j] || point_locations[j]%3+1==-point_locations[i];
+  }
+#ifdef NDEBUG
+  bool on_same_edge(std::size_t i, std::size_t j)
+  {
+    bool on = on_same_edge_debug(i,j);
+    if (!on) return false;
+    int eid = point_locations[i]>0 ? point_locations[i] : point_locations[j];
+    if (eid<0) return true;
+    if (!(collinear(points[eid-1], points[(eid)%3], points[i])))
+    {
+      std::cout << point_locations[i] << " " << point_locations[j] << " " << eid << "\n";
+    }
+    if (!(collinear(points[eid-1], points[(eid)%3], points[j])))
+    {
+      std::cout << point_locations[i] << " " << point_locations[j] << " " << eid << "\n";
+    }
+    CGAL_assertion(collinear(points[eid-1], points[(eid)%3], points[i]));
+    CGAL_assertion(collinear(points[eid-1], points[(eid)%3], points[j]));
+    return true;
+  }
+#endif
 };
 
 template <class EK,
@@ -982,6 +1031,10 @@ void autorefine_triangle_soup(PointRange& soup_points,
     all_triangle_data[tid].points[0]=triangles[tri_inter_ids[f]][0];
     all_triangle_data[tid].points[1]=triangles[tri_inter_ids[f]][1];
     all_triangle_data[tid].points[2]=triangles[tri_inter_ids[f]][2];
+    all_triangle_data[tid].point_locations.resize(3);
+    all_triangle_data[tid].point_locations[0]=-1;
+    all_triangle_data[tid].point_locations[1]=-2;
+    all_triangle_data[tid].point_locations[2]=-3;
   }
 
   CGAL_PMP_AUTOREFINE_VERBOSE("compute intersections");
@@ -1016,99 +1069,52 @@ void autorefine_triangle_soup(PointRange& soup_points,
       {
         #warning TODO use inter pt info
         case 1:
-          if (get<1>(inter_pts[0])>=0)
-          {
-            all_triangle_data[i1].points.push_back(get<0>(inter_pts[0]));
-            CGAL_assertion(get<0>(inter_pts[0])!=t1[0]);
-            CGAL_assertion(get<0>(inter_pts[0])!=t1[1]);
-            CGAL_assertion(get<0>(inter_pts[0])!=t1[2]);
-          }
-          if (get<2>(inter_pts[0])>=0)
-          {
-            all_triangle_data[i2].points.push_back(get<0>(inter_pts[0]));
-            CGAL_assertion(get<0>(inter_pts[0])!=t2[0]);
-            CGAL_assertion(get<0>(inter_pts[0])!=t2[1]);
-            CGAL_assertion(get<0>(inter_pts[0])!=t2[2]);
-          }
+          all_triangle_data[i1].add_point<1>(inter_pts[0]);
+          all_triangle_data[i2].add_point<2>(inter_pts[0]);
         break;
         case 2:
         {
-          std::size_t src_id=get<1>(inter_pts[0])<0?(-get<1>(inter_pts[0])-1):all_triangle_data[i1].points.size();
-          if (get<1>(inter_pts[0])>=0)
+          std::size_t src_id=all_triangle_data[i1].add_point<1>(inter_pts[0]),
+                      tgt_id=all_triangle_data[i1].add_point<1>(inter_pts[1]);
+          if (!all_triangle_data[i1].on_same_edge(src_id, tgt_id))
           {
-            all_triangle_data[i1].points.push_back(get<0>(inter_pts[0]));
-            CGAL_assertion(get<0>(inter_pts[0])!=t1[0]);
-            CGAL_assertion(get<0>(inter_pts[0])!=t1[1]);
-            CGAL_assertion(get<0>(inter_pts[0])!=t1[2]);
+            all_triangle_data[i1].segments.emplace_back(src_id, tgt_id);
+            all_triangle_data[i1].segment_input_triangle_ids.push_back(i2);
           }
-          std::size_t tgt_id=get<1>(inter_pts[1])<0?(-get<1>(inter_pts[1])-1):all_triangle_data[i1].points.size();
-          if (get<1>(inter_pts[1])>=0)
-          {
-            all_triangle_data[i1].points.push_back(get<0>(inter_pts[1]));
-            CGAL_assertion(get<0>(inter_pts[1])!=t1[0]);
-            CGAL_assertion(get<0>(inter_pts[1])!=t1[1]);
-            CGAL_assertion(get<0>(inter_pts[1])!=t1[2]);
-          }
-          all_triangle_data[i1].segments.emplace_back(src_id, tgt_id);
-          all_triangle_data[i1].segment_input_triangle_ids.push_back(i2);
           //
-          src_id=get<2>(inter_pts[0])<0?(-get<2>(inter_pts[0])-1):all_triangle_data[i2].points.size();
-          if (get<2>(inter_pts[0])>=0)
+          src_id=all_triangle_data[i2].add_point<2>(inter_pts[0]);
+          tgt_id=all_triangle_data[i2].add_point<2>(inter_pts[1]);
+          if (!all_triangle_data[i2].on_same_edge(src_id, tgt_id))
           {
-            all_triangle_data[i2].points.push_back(get<0>(inter_pts[0]));
-            CGAL_assertion(get<0>(inter_pts[0])!=t2[0]);
-            CGAL_assertion(get<0>(inter_pts[0])!=t2[1]);
-            CGAL_assertion(get<0>(inter_pts[0])!=t2[2]);
+            all_triangle_data[i2].segments.emplace_back(src_id, tgt_id);
+            all_triangle_data[i2].segment_input_triangle_ids.push_back(i1);
           }
-          tgt_id=get<2>(inter_pts[1])<0?(-get<2>(inter_pts[1])-1):all_triangle_data[i2].points.size();
-          if (get<2>(inter_pts[1])>=0)
-          {
-            all_triangle_data[i2].points.push_back(get<0>(inter_pts[1]));
-            CGAL_assertion(get<0>(inter_pts[1])!=t2[0]);
-            CGAL_assertion(get<0>(inter_pts[1])!=t2[1]);
-            CGAL_assertion(get<0>(inter_pts[1])!=t2[2]);
-          }
-          all_triangle_data[i2].segments.emplace_back(src_id, tgt_id);
-          all_triangle_data[i2].segment_input_triangle_ids.push_back(i1);
         }
         break;
         default:
         {
           std::vector<std::size_t> ipt_ids1(nbi+1), ipt_ids2(nbi+1);
-          all_triangle_data[i1].segment_input_triangle_ids.insert(
-            all_triangle_data[i1].segment_input_triangle_ids.end(), nbi, i2);
-          all_triangle_data[i2].segment_input_triangle_ids.insert(
-            all_triangle_data[i2].segment_input_triangle_ids.end(), nbi, i1);
 
           for (std::size_t i=0;i<nbi; ++i)
           {
-            std::size_t id1=get<1>(inter_pts[i])<0?(-get<1>(inter_pts[i])-1):all_triangle_data[i1].points.size();
-            std::size_t id2=get<2>(inter_pts[i])<0?(-get<2>(inter_pts[i])-1):all_triangle_data[i2].points.size();
-            if (get<1>(inter_pts[i])>=0)
-            {
-              all_triangle_data[i1].points.push_back(get<0>(inter_pts[i]));
-              CGAL_assertion(get<0>(inter_pts[i])!=t1[0]);
-              CGAL_assertion(get<0>(inter_pts[i])!=t1[1]);
-              CGAL_assertion(get<0>(inter_pts[i])!=t1[2]);
-            }
-
-            if (get<2>(inter_pts[i])>=0)
-            {
-              all_triangle_data[i2].points.push_back(get<0>(inter_pts[i]));
-              CGAL_assertion(get<0>(inter_pts[i])!=t2[0]);
-              CGAL_assertion(get<0>(inter_pts[i])!=t2[1]);
-              CGAL_assertion(get<0>(inter_pts[i])!=t2[2]);
-            }
-            ipt_ids1[i]=id1;
-            ipt_ids2[i]=id2;
+            ipt_ids1[i]=all_triangle_data[i1].add_point<1>(inter_pts[i]);
+            ipt_ids2[i]=all_triangle_data[i2].add_point<2>(inter_pts[i]);
           }
           ipt_ids1.back()=ipt_ids1.front();
           ipt_ids2.back()=ipt_ids2.front();
 
           for (std::size_t i=0;i<nbi; ++i)
           {
-            all_triangle_data[i1].segments.emplace_back(ipt_ids1[i], ipt_ids1[i+1]);
-            all_triangle_data[i2].segments.emplace_back(ipt_ids2[i], ipt_ids2[i+1]);
+            if (!all_triangle_data[i1].on_same_edge(ipt_ids1[i], ipt_ids1[i+1]))
+            {
+              all_triangle_data[i1].segments.emplace_back(ipt_ids1[i], ipt_ids1[i+1]);
+              all_triangle_data[i1].segment_input_triangle_ids.push_back(i2);
+            }
+            if (!all_triangle_data[i2].on_same_edge(ipt_ids2[i], ipt_ids2[i+1]))
+            {
+              all_triangle_data[i2].segments.emplace_back(ipt_ids2[i], ipt_ids2[i+1]);
+              all_triangle_data[i2].segment_input_triangle_ids.push_back(i1);
+            }
           }
         }
       }
@@ -1160,20 +1166,31 @@ void autorefine_triangle_soup(PointRange& soup_points,
         }
       }
 
-      //~ if (unique_ids.size()==indices.size())
-        //~ // TODO: do we want to keep points sorted? if yes always swap twice
-        //~ return; // no duplicates
+      CGAL_assertion(points.size() == all_triangle_data[ti].point_locations.size());
+      if (unique_ids.size()==indices.size())
+        // TODO: do we want to keep points sorted? if yes always swap the 3 containers
+        return; // no duplicates
 
       // now make points unique
       using EPoint_3 = EK::Point_3; // workaround for MSVC 2022 bug
       std::vector<EPoint_3> tmp;
+      std::vector<int> tmp_locations;
       tmp.reserve(unique_ids.size()+3);
+      tmp_locations.reserve(unique_ids.size()+3);
       tmp.push_back(points[0]);
       tmp.push_back(points[1]);
       tmp.push_back(points[2]);
+      tmp_locations.push_back(-1);
+      tmp_locations.push_back(-2);
+      tmp_locations.push_back(-3);
       for(std::size_t i : unique_ids)
+      {
         tmp.push_back(points[i]);
+        tmp_locations.push_back(all_triangle_data[ti].point_locations[i]);
+      }
       tmp.swap(points);
+      tmp_locations.swap(all_triangle_data[ti].point_locations);
+      CGAL_assertion(points.size() == all_triangle_data[ti].point_locations.size());
 
       // now make segments unique
       std::size_t nbs = segments.size();
@@ -1240,7 +1257,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
   auto refine_triangles = [&](std::size_t ti)
   {
-    if (all_triangle_data[ti].points.empty())
+    if (all_triangle_data[ti].points.size()==3)
       new_triangles.push_back({triangles[ti], ti});
     else
     {
