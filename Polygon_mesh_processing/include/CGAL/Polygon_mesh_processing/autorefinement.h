@@ -250,7 +250,6 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
 
 
 // imported from Intersections_3/include/CGAL/Intersections_3/internal/Triangle_3_Triangle_3_intersection.h
-#warning TODO fill the indices correctly
 template<class K>
 void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
                             const std::array<typename K::Point_3, 3>& t2,
@@ -260,18 +259,37 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
   const typename K::Point_3& p2 = t2[0], q2 = t2[1], r2 = t2[2];
 
   std::list<Intersections::internal::Point_on_triangle<K>> l_inter_pts;
-  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(-1,0));
-  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(-1,1));
-  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(-1,2));
+  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(0,-1));
+  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(0,-2));
+  l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(0,-3));
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  auto print_points = [&]()
+  {
+    std::cout << "  ipts size: " << l_inter_pts.size() << "\n";
+    for(auto p : l_inter_pts) {std::cout << "  (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "]) ";} std::cout <<"\n";
+  };
+#endif
 
   //intersect t2 with the three half planes which intersection defines t1
   K k;
-  Intersections::internal::intersection_coplanar_triangles_cutoff(p1,q1,r1,0,p2,q2,r2,k,l_inter_pts); //line p1q1
-  Intersections::internal::intersection_coplanar_triangles_cutoff(q1,r1,p1,1,p2,q2,r2,k,l_inter_pts); //line q1r1
-  Intersections::internal::intersection_coplanar_triangles_cutoff(r1,p1,q1,2,p2,q2,r2,k,l_inter_pts); //line r1p1
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  print_points();
+#endif
+  Intersections::internal::intersection_coplanar_triangles_cutoff(p1,q1,r1,1,p2,q2,r2,k,l_inter_pts); //line p1q1
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  print_points();
+#endif
+  Intersections::internal::intersection_coplanar_triangles_cutoff(q1,r1,p1,2,p2,q2,r2,k,l_inter_pts); //line q1r1
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  print_points();
+#endif
+  Intersections::internal::intersection_coplanar_triangles_cutoff(r1,p1,q1,3,p2,q2,r2,k,l_inter_pts); //line r1p1
+#ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
+  print_points();
+#endif
 
   for (const Intersections::internal::Point_on_triangle<K>& pot : l_inter_pts)
-    inter_pts.emplace_back(pot.point(p1,q1,r1,p2,q2,r2,k), 0, 0);
+    inter_pts.emplace_back(pot.point(p1,q1,r1,p2,q2,r2,k), pot.id1(), pot.id2());
 }
 
 // imported from Polygon_mesh_processing/internal/Corefinement/intersect_triangle_and_segment_3.h
@@ -891,8 +909,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
 
 
-  //~ constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
-  constexpr bool parallel_execution = false;
+  constexpr bool parallel_execution = std::is_same_v<Parallel_tag, Concurrency_tag>;
 
 #ifndef CGAL_LINKED_WITH_TBB
   static_assert (!parallel_execution,
@@ -994,43 +1011,63 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
     if (!inter_pts.empty())
     {
-      auto get_ipt_id1 = [](const std::tuple<EK::Point_3, int, int>& tpl)
-      {
-        if (get<1>(tpl)<0) return -get<1>(tpl)-1;
-      };
-      auto get_ipt_id2 = [](const std::tuple<EK::Point_3, int, int>& tpl)
-      {
-        if (get<2>(tpl)<0) return -get<2>(tpl)-1;
-      };
-
-
       std::size_t nbi = inter_pts.size();
       switch(nbi)
       {
         #warning TODO use inter pt info
         case 1:
           if (get<1>(inter_pts[0])>=0)
+          {
             all_triangle_data[i1].points.push_back(get<0>(inter_pts[0]));
+            CGAL_assertion(get<0>(inter_pts[0])!=t1[0]);
+            CGAL_assertion(get<0>(inter_pts[0])!=t1[1]);
+            CGAL_assertion(get<0>(inter_pts[0])!=t1[2]);
+          }
           if (get<2>(inter_pts[0])>=0)
+          {
             all_triangle_data[i2].points.push_back(get<0>(inter_pts[0]));
+            CGAL_assertion(get<0>(inter_pts[0])!=t2[0]);
+            CGAL_assertion(get<0>(inter_pts[0])!=t2[1]);
+            CGAL_assertion(get<0>(inter_pts[0])!=t2[2]);
+          }
         break;
         case 2:
         {
           std::size_t src_id=get<1>(inter_pts[0])<0?(-get<1>(inter_pts[0])-1):all_triangle_data[i1].points.size();
           if (get<1>(inter_pts[0])>=0)
+          {
             all_triangle_data[i1].points.push_back(get<0>(inter_pts[0]));
+            CGAL_assertion(get<0>(inter_pts[0])!=t1[0]);
+            CGAL_assertion(get<0>(inter_pts[0])!=t1[1]);
+            CGAL_assertion(get<0>(inter_pts[0])!=t1[2]);
+          }
           std::size_t tgt_id=get<1>(inter_pts[1])<0?(-get<1>(inter_pts[1])-1):all_triangle_data[i1].points.size();
           if (get<1>(inter_pts[1])>=0)
+          {
             all_triangle_data[i1].points.push_back(get<0>(inter_pts[1]));
+            CGAL_assertion(get<0>(inter_pts[1])!=t1[0]);
+            CGAL_assertion(get<0>(inter_pts[1])!=t1[1]);
+            CGAL_assertion(get<0>(inter_pts[1])!=t1[2]);
+          }
           all_triangle_data[i1].segments.emplace_back(src_id, tgt_id);
           all_triangle_data[i1].segment_input_triangle_ids.push_back(i2);
           //
           src_id=get<2>(inter_pts[0])<0?(-get<2>(inter_pts[0])-1):all_triangle_data[i2].points.size();
           if (get<2>(inter_pts[0])>=0)
+          {
             all_triangle_data[i2].points.push_back(get<0>(inter_pts[0]));
+            CGAL_assertion(get<0>(inter_pts[0])!=t2[0]);
+            CGAL_assertion(get<0>(inter_pts[0])!=t2[1]);
+            CGAL_assertion(get<0>(inter_pts[0])!=t2[2]);
+          }
           tgt_id=get<2>(inter_pts[1])<0?(-get<2>(inter_pts[1])-1):all_triangle_data[i2].points.size();
           if (get<2>(inter_pts[1])>=0)
+          {
             all_triangle_data[i2].points.push_back(get<0>(inter_pts[1]));
+            CGAL_assertion(get<0>(inter_pts[1])!=t2[0]);
+            CGAL_assertion(get<0>(inter_pts[1])!=t2[1]);
+            CGAL_assertion(get<0>(inter_pts[1])!=t2[2]);
+          }
           all_triangle_data[i2].segments.emplace_back(src_id, tgt_id);
           all_triangle_data[i2].segment_input_triangle_ids.push_back(i1);
         }
@@ -1047,8 +1084,21 @@ void autorefine_triangle_soup(PointRange& soup_points,
           {
             std::size_t id1=get<1>(inter_pts[i])<0?(-get<1>(inter_pts[i])-1):all_triangle_data[i1].points.size();
             std::size_t id2=get<2>(inter_pts[i])<0?(-get<2>(inter_pts[i])-1):all_triangle_data[i2].points.size();
-            if (get<1>(inter_pts[i])>=0) all_triangle_data[i1].points.push_back(get<0>(inter_pts[i]));
-            if (get<2>(inter_pts[i])>=0) all_triangle_data[i2].points.push_back(get<0>(inter_pts[i]));
+            if (get<1>(inter_pts[i])>=0)
+            {
+              all_triangle_data[i1].points.push_back(get<0>(inter_pts[i]));
+              CGAL_assertion(get<0>(inter_pts[i])!=t1[0]);
+              CGAL_assertion(get<0>(inter_pts[i])!=t1[1]);
+              CGAL_assertion(get<0>(inter_pts[i])!=t1[2]);
+            }
+
+            if (get<2>(inter_pts[i])>=0)
+            {
+              all_triangle_data[i2].points.push_back(get<0>(inter_pts[i]));
+              CGAL_assertion(get<0>(inter_pts[i])!=t2[0]);
+              CGAL_assertion(get<0>(inter_pts[i])!=t2[1]);
+              CGAL_assertion(get<0>(inter_pts[i])!=t2[2]);
+            }
             ipt_ids1[i]=id1;
             ipt_ids2[i]=id2;
           }
@@ -1147,6 +1197,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
       filtered_in_triangle_ids.swap(all_triangle_data[ti].segment_input_triangle_ids);
       filtered_segments.swap(segments);
 
+      CGAL_assertion(points.size()-3==std::set<EK::Point_3>(std::next(points.begin(),3), points.end()).size());
       CGAL_assertion(points.size()==std::set<EK::Point_3>(points.begin(), points.end()).size());
     }
   };
