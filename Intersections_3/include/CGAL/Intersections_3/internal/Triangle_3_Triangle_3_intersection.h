@@ -137,7 +137,7 @@ struct Point_on_triangle
     if (t1_t2_ids.first<0)
       return point_from_id(p1,q1,r1,t1_t2_ids.first);
 
-    return k.construct_barycenter_3_object()(point_from_id(p1,q1,r1,-(t1_t2_ids.first)%3), alpha,
+    return k.construct_barycenter_3_object()(point_from_id(p1,q1,r1,-(t1_t2_ids.first)%3-1), alpha,
                                              point_from_id(p1,q1,r1,-t1_t2_ids.first)) ;
   }
 };
@@ -164,7 +164,7 @@ intersection(const Point_on_triangle<Kernel>& p,
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   std::cout << "    calling intersection: ";
   std::cout << " (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "]) -";
-  std::cout << " (" << q.id1() << "," << q.id2() << ",[" << q.alpha << "]) || e" << edge_id_t1;
+  std::cout << " (" << q.id1() << "," << q.id2() << ",[" << q.alpha << "]) || e" << edge_id_t1 << "\n";
 #endif
   typename Kernel::Compute_alpha_for_coplanar_triangle_intersection_3 compute_alpha
     = k.compute_alpha_for_coplanar_triangle_intersection_3_object();
@@ -333,25 +333,22 @@ intersection_coplanar_triangles(const typename K::Triangle_3& t1,
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
   auto print_points = [&]()
   {
+    std::cout << "  ipts size: " << inter_pts.size() << "\n";
     for(auto p : inter_pts) {std::cout << "  (" << p.id1() << "," << p.id2() << ",[" << p.alpha << "]) ";} std::cout <<"\n";
   };
-  std::cout << "  ipts size: " << inter_pts.size() << "\n";
   print_points();
 #endif
   //intersect t2 with the three half planes which intersection defines t1
   intersection_coplanar_triangles_cutoff(p1,q1,r1,1,p2,q2,r2,k,inter_pts); //line pq
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
-  std::cout << "  ipts size: " << inter_pts.size() << "\n";
   print_points();
 #endif
   intersection_coplanar_triangles_cutoff(q1,r1,p1,2,p2,q2,r2,k,inter_pts); //line qr
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
-  std::cout << "  ipts size: " << inter_pts.size() << "\n";
   print_points();
 #endif
   intersection_coplanar_triangles_cutoff(r1,p1,q1,3,p2,q2,r2,k,inter_pts); //line rp
 #ifdef CGAL_DEBUG_COPLANAR_T3_T3_INTERSECTION
-  std::cout << "  ipts size: " << inter_pts.size() << "\n";
   print_points();
 #endif
 
