@@ -406,10 +406,8 @@ private:
     {
       const Surface_patch_index& surface_index = c3t3.surface_patch_index(fit);
 
-      for (int i = 0; i < 3; i++)
+      for (const Vertex_handle vi : c3t3.triangulation().vertices(fit))
       {
-        const Vertex_handle vi = fit.first->vertex(indices(fit.second, i));
-
         std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[vi];
         if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index) == v_surface_indices.end())
           v_surface_indices.push_back(surface_index);
@@ -500,13 +498,13 @@ private:
 
       if (free_vertex[i0])
       {
-        smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(p0, p1);
+        smoothed_positions[i0] += mass * Vector_3(p0, p1);
         neighbors[i0]++;
         masses[i0] += mass;
       }
       if (free_vertex[i1])
       {
-        smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(p1, p0);
+        smoothed_positions[i1] += mass * Vector_3(p1, p0);
         neighbors[i1]++;
         masses[i1] += mass;
       }
@@ -527,11 +525,11 @@ private:
         continue;
 
       CGAL_assertion(masses[vid] > 0);
-      const Vector_3 move = (nb_neighbors > 1)
-                          ? smoothed_positions[vid] / masses[vid]//nb_neighbors)
+      const Vector_3 move = (nb_neighbors > 0)
+                          ? smoothed_positions[vid] / masses[vid]
                           : CGAL::NULL_VECTOR;
 
-      const Point_3 smoothed_position = point(v->point()) + move;
+      const Point_3 smoothed_position = current_pos + move;
 
       Vector_3 sum_projections = CGAL::NULL_VECTOR;
       Point_3 tmp_pos = current_pos;
@@ -542,15 +540,9 @@ private:
         Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
                                                              current_pos,
                                                              vertices_normals.at(v).at(si));
-        std::optional<Point_3> mls_projection = project(si, normal_projection);
 
-        if (mls_projection != std::nullopt)
-        {
-          sum_projections += Vector_3(tmp_pos, *mls_projection);
-          tmp_pos = *mls_projection;
-        }
-        else
-          std::cerr << "Warning: no projection found for vertex " << vid << std::endl;
+        sum_projections += Vector_3(tmp_pos, normal_projection);
+        tmp_pos = normal_projection;
       }
 #endif
 
