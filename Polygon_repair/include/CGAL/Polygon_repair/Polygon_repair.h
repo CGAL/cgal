@@ -27,8 +27,10 @@ namespace CGAL {
 
 namespace Polygon_repair {
 
+#ifndef DOXYGEN_RUNNING
 template <class Kernel, class Container>
 class Polygon_repair;
+#endif
 
 /// \ingroup PkgPolygonRepairFunctions
 /// Repair a polygon without holes using
@@ -288,6 +290,8 @@ bool is_valid(const Multipolygon_with_holes_2<Kernel, Container>& multipolygon) 
 
   return true;
 }
+
+#ifndef DOXYGEN_RUNNING
 
 template <class Kernel, class Container = std::vector<typename Kernel::Point_2>>
 class Polygon_repair {
@@ -693,6 +697,8 @@ protected:
   int number_of_polygons, number_of_holes;
   typename Triangulation::Face_handle search_start;
 };
+
+#endif // DOXYGEN_RUNNING
 
 } // namespace Polygon_repair
 } // namespace CGAL
