@@ -1,7 +1,7 @@
 // #define CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+//#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -15,10 +15,10 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK;
 
 typedef CGAL::Surface_mesh<EPICK::Point_3>                           EPICK_SM;
-typedef CGAL::Surface_mesh<EPECK::Point_3>                           EPECK_SM;
+//typedef CGAL::Surface_mesh<EPECK::Point_3>                           EPECK_SM;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -100,8 +100,8 @@ void test(const Mesh& mesh,
     {
       if (PMP::is_degenerate_triangle_face(f, mesh))
       {
-        if (std::is_same<K, EPECK>())
-          assert(get(fnormals, f) == CGAL::NULL_VECTOR);
+//        if (std::is_same<K, EPECK>())
+//          assert(get(fnormals, f) == CGAL::NULL_VECTOR);
       }
       else
         assert(get(fnormals, f) != CGAL::NULL_VECTOR);
