@@ -601,7 +601,7 @@ bool build_triangulation_from_file(std::istream& is,
   {
     // remove trailing whitespace, in particular a possible '\r' from Windows
     // end-of-line encoding
-    if(std::isspace(line.back())) {
+    if(!line.empty() && std::isspace(line.back())) {
       line.pop_back();
     }
     if (line.size() > 0 && line.at(0) == '#' &&
