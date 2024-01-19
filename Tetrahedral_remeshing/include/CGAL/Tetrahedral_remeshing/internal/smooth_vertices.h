@@ -41,6 +41,7 @@ class Tetrahedral_remeshing_smoother
 {
   typedef typename C3t3::Triangulation       Tr;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
+  typedef typename Tr::Cell_handle           Cell_handle;
   typedef typename Tr::Vertex_handle         Vertex_handle;
   typedef typename Tr::Edge                  Edge;
   typedef typename Tr::Facet                 Facet;
@@ -54,18 +55,31 @@ private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
   std::vector<FMLS> subdomain_FMLS;
   std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
-  bool m_smooth_constrained_edges;
+  const bool m_protect_boundaries;
+  const bool m_smooth_constrained_edges;
+
   const SizingFunction& m_sizing;
 
+  // the 2 following variables become useful and valid
+  // just before flip/smooth steps, when no vertices get inserted
+  // nor removed anymore
+  std::unordered_map<Vertex_handle, std::size_t> m_vertex_id;
+  std::vector<bool> m_free_vertices{};
+  bool m_flip_smooth_steps;
+
 public:
-  Tetrahedral_remeshing_smoother(const SizingFunction& sizing)
+  Tetrahedral_remeshing_smoother(const SizingFunction& sizing,
+                                 const bool protect_boundaries,
+                                 const bool smooth_constrained_edges)
     : m_sizing(sizing)
+    , m_protect_boundaries(protect_boundaries)
+    , m_smooth_constrained_edges(smooth_constrained_edges)
+    , m_flip_smooth_steps(false)
   {}
 
   template<typename CellSelector>
   void init(const C3t3& c3t3,
-            const CellSelector& cell_selector,
-            const bool smooth_constrained_edges)
+            const CellSelector& cell_selector)
   {
     //collect a map of vertices surface indices
     std::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
@@ -82,11 +96,97 @@ public:
                       vertices_normals,
                       vertices_surface_indices,
                       c3t3);
+  }
 
-    m_smooth_constrained_edges = smooth_constrained_edges;
+
+  template<typename CellSelector>
+  void start_flip_smooth_steps(const C3t3& c3t3,
+                               const CellSelector& cell_selector)
+  {
+    CGAL_assertion(!m_flip_smooth_steps);
+    m_vertex_id = vertex_id_map(c3t3.triangulation());
+    m_free_vertices = free_vertices(c3t3.triangulation(), cell_selector);
+
+    // once this variable is set to true,
+    // m_vertex_id becomes constant and
+    // m_free_vertices can refer to it safely
+    m_flip_smooth_steps = true;
   }
 
 private:
+
+  const auto& vertex_id_map(const Tr& tr)
+  {
+    if (!m_flip_smooth_steps)
+      compute_vertex_id_map(tr);
+    return m_vertex_id;
+  }
+
+  template<typename CellSelector>
+  std::vector<bool>& free_vertices(const Tr& tr,
+                                   const CellSelector& cell_selector)
+  {
+    if (!m_flip_smooth_steps)
+      compute_free_vertices(tr, cell_selector);
+    return m_free_vertices;
+  }
+
+  // this function can be used iff m_vertex_id
+  // has already been initialized
+  template<typename CellSelector>
+  void compute_free_vertices(const Tr& tr,
+                             const CellSelector& cell_selector)
+  {
+    m_free_vertices.resize(tr.number_of_vertices(), false);
+
+    for (const Cell_handle c : tr.finite_cell_handles())
+    {
+      if (!get(cell_selector, c))
+        continue;
+
+      for (auto vi : tr.vertices(c))
+      {
+        const std::size_t idi = m_vertex_id.at(vi);
+        const int dim = vi->in_dimension();
+
+        switch (dim)
+        {
+        case 3:
+          m_free_vertices[idi] = true;
+          break;
+        case 2:
+          m_free_vertices[idi] = !m_protect_boundaries;
+          break;
+        case 1:
+          m_free_vertices[idi] = !m_protect_boundaries && m_smooth_constrained_edges;
+          break;
+        case 0:
+          m_free_vertices[idi] = false;
+          break;
+        default:
+          CGAL_unreachable();
+        }
+      }
+    }
+  }
+
+  template<typename IncCellsVector, typename CellSelector>
+  void collect_incident_cells(const Tr& tr,
+                              const CellSelector& cell_selector,
+                              IncCellsVector& inc_cells)
+  {
+    for (const Cell_handle c : tr.finite_cell_handles())
+    {
+//      if(!get(cell_selector, c))
+//        continue;
+
+      for (auto vi : tr.vertices(c))
+      {
+        const std::size_t idi = m_vertex_id.at(vi);
+        inc_cells[idi].push_back(c);
+      }
+    }
+  }
 
   Point_3 project_on_tangent_plane(const Point_3& gi,
                                     const Point_3& pi,
@@ -415,16 +515,16 @@ private:
     }
   }
 
-  auto vertex_id_map(const Tr& tr)
+  void compute_vertex_id_map(const Tr& tr)
   {
     using Vertex_handle = typename Tr::Vertex_handle;
-    std::unordered_map<Vertex_handle, std::size_t> vertex_id;
+
+    m_vertex_id.clear();
     std::size_t id = 0;
     for (const Vertex_handle v : tr.finite_vertex_handles())
     {
-      vertex_id[v] = id++;
+      m_vertex_id[v] = id++;
     }
-    return vertex_id;
   }
 
   typename C3t3::Index max_dimension_index(const std::array<Vertex_handle, 2> vs) const
@@ -783,48 +883,18 @@ public:
     compute_vertices_normals(c3t3, vertices_normals, cell_selector);
 
     //collect ids
-    const std::unordered_map<Vertex_handle, std::size_t>
+    const std::unordered_map<Vertex_handle, std::size_t>&
       vertex_id = vertex_id_map(tr);
 
-    //smooth()
-    const std::size_t nbv = tr.number_of_vertices();
-    std::vector<bool> free_vertex(nbv, false);//are vertices free to move? indices are in `vertex_id`
+    //are vertices free to move? indices are in `vertex_id`
+    const std::vector<bool>&
+      free_vertex = free_vertices(tr, cell_selector);
 
     //collect incident cells
     using Incident_cells_vector = boost::container::small_vector<Cell_handle, 40>;
+    const std::size_t nbv = tr.number_of_vertices();
     std::vector<Incident_cells_vector> inc_cells(nbv, Incident_cells_vector());
-
-    for (const Cell_handle c : tr.finite_cell_handles())
-    {
-      const bool cell_is_selected = get(cell_selector, c);
-
-      for (int i = 0; i < 4; ++i)
-      {
-        const std::size_t idi = vertex_id.at(c->vertex(i));
-        inc_cells[idi].push_back(c);
-        if (!cell_is_selected)
-          continue;
-
-        const int dim = c3t3.in_dimension(c->vertex(i));
-        switch (dim)
-        {
-        case 3:
-          free_vertex[idi] = true;
-          break;
-        case 2:
-          free_vertex[idi] = !protect_boundaries;
-          break;
-        case 1:
-          free_vertex[idi] = !protect_boundaries && m_smooth_constrained_edges;
-          break;
-        case 0:
-          free_vertex[idi] = false;
-          break;
-        default:
-          CGAL_unreachable();
-        }
-      }
-    }
+    collect_incident_cells(tr, cell_selector, inc_cells);
 
     if (!protect_boundaries && m_smooth_constrained_edges)
     {

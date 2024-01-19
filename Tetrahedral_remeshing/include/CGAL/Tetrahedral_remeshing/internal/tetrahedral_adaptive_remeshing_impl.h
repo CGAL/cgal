@@ -126,14 +126,14 @@ public:
     , m_protect_boundaries(protect_boundaries)
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
-    , m_vertex_smoother(sizing)
+    , m_vertex_smoother(sizing, protect_boundaries, smooth_constrained_edges)
     , m_c3t3_pbackup(NULL)
     , m_tr_pbackup(&tr)
   {
     m_c3t3.triangulation().swap(tr);
 
     init_c3t3(ecmap, fcmap);
-    m_vertex_smoother.init(m_c3t3, m_cell_selector, smooth_constrained_edges);
+    m_vertex_smoother.init(m_c3t3, m_cell_selector);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -156,14 +156,14 @@ public:
     , m_protect_boundaries(protect_boundaries)
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
-    , m_vertex_smoother(sizing)
+    , m_vertex_smoother(sizing, protect_boundaries, smooth_constrained_edges)
     , m_c3t3_pbackup(&c3t3)
     , m_tr_pbackup(NULL)
   {
     m_c3t3.swap(c3t3);
 
     init_c3t3(ecmap, fcmap);
-    m_vertex_smoother.init(m_c3t3, m_cell_selector, smooth_constrained_edges);
+    m_vertex_smoother.init(m_c3t3, m_cell_selector);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -622,6 +622,7 @@ public:
 #endif
     }
 
+    m_vertex_smoother.start_flip_smooth_steps(m_c3t3, m_cell_selector);
     while (it_nb < max_it + nb_extra_iterations)
     {
       ++it_nb;
