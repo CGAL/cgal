@@ -28,15 +28,15 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
 
 	std::vector<distance_t> ratios;
 	for (auto const& intersection: intersections) {
-		assert(line_start.x != line_end.x || line_start.y != line_end.y);
+		assert(line_start.x() != line_end.x() || line_start.y() != line_end.y());
 
 		distance_t ratio;
 		// TODO: replace by projection onto coordinate axis
-		if (line_start.x != line_end.x) {
-			ratio = (intersection.first.x - line_start.x)/(line_end.x - line_start.x);
+		if (line_start.x() != line_end.x()) {
+			ratio = (intersection.first.x() - line_start.x())/(line_end.x() - line_start.x());
 		}
 		else {
-			ratio = (intersection.first.y - line_start.y)/(line_end.y - line_start.y);
+			ratio = (intersection.first.y() - line_start.y())/(line_end.y() - line_start.y());
 		}
 		ratio = std::max(0., std::min(1., ratio));
 		ratios.push_back(ratio);

@@ -4,6 +4,8 @@
 #include "geometry_basics.h"
 #include "id.h"
 
+#include "low_level_predicates.h"
+
 // TODO: should probably make this a more general type in CGAL
 // Represents a trajectory. Additionally to the points given in the input file,
 // we also store the length of any prefix of the trajectory.
@@ -25,7 +27,9 @@ public:
 	Point interpolate_at(CPoint const& pt) const  {
 		assert(pt.getFraction() >= 0. && pt.getFraction() <= 1.);
 		assert((pt.getPoint() < points.size()-1 || (pt.getPoint() == points.size()-1 && pt.getFraction() == 0.)));
-		return pt.getFraction() == 0. ? points[pt.getPoint()] : points[pt.getPoint()]*(1.-pt.getFraction()) + points[pt.getPoint()+1]*pt.getFraction();
+		// TODO: fix here
+		OldPoint old_p = pt.getFraction() == 0. ? toOldPoint(points[pt.getPoint()]) : toOldPoint(points[pt.getPoint()])*(1.-pt.getFraction()) + toOldPoint(points[pt.getPoint()+1])*pt.getFraction();
+		return Point(old_p.x(), old_p.y());
 	}
 	Point interpolate_at(PointID const& pt) const  { return points[pt]; }
     distance_t curve_length(PointID i, PointID j) const
@@ -65,35 +69,35 @@ Curve::Curve(const Points& points)
 	if (points.empty()) { return; }
 
 	auto const& front = points.front();
-	extreme_points = { front.x, front.y, front.x, front.y };
+	extreme_points = { front.x(), front.y(), front.x(), front.y() };
 	prefix_length[0] = 0;
 
 	for (PointID i = 1; i < points.size(); ++i)
 	{
-		auto segment_distance = points[i - 1].dist(points[i]);
+		auto segment_distance = distance(points[i - 1], points[i]);
 		prefix_length[i] = prefix_length[i - 1] + segment_distance;
 
-		extreme_points.min_x = std::min(extreme_points.min_x, points[i].x);
-		extreme_points.min_y = std::min(extreme_points.min_y, points[i].y);
-		extreme_points.max_x = std::max(extreme_points.max_x, points[i].x);
-		extreme_points.max_y = std::max(extreme_points.max_y, points[i].y);
+		extreme_points.min_x = std::min(extreme_points.min_x, points[i].x());
+		extreme_points.min_y = std::min(extreme_points.min_y, points[i].y());
+		extreme_points.max_x = std::max(extreme_points.max_x, points[i].x());
+		extreme_points.max_y = std::max(extreme_points.max_y, points[i].y());
 	}
 }
 
 void Curve::push_back(Point const& point)
 {
 	if (prefix_length.size()) {
-		auto segment_distance = points.back().dist(point);
+		auto segment_distance = distance(points.back(), point);
 		prefix_length.push_back(prefix_length.back() + segment_distance);
 	}
 	else {
 		prefix_length.push_back(0);
 	}
 
-	extreme_points.min_x = std::min(extreme_points.min_x, point.x);
-	extreme_points.min_y = std::min(extreme_points.min_y, point.y);
-	extreme_points.max_x = std::max(extreme_points.max_x, point.x);
-	extreme_points.max_y = std::max(extreme_points.max_y, point.y);
+	extreme_points.min_x = std::min(extreme_points.min_x, point.x());
+	extreme_points.min_y = std::min(extreme_points.min_y, point.y());
+	extreme_points.max_x = std::max(extreme_points.max_x, point.x());
+	extreme_points.max_y = std::max(extreme_points.max_y, point.y());
 
 	points.push_back(point);
 }
@@ -113,7 +117,7 @@ distance_t Curve::getUpperBoundDistance(Curve const& other) const
 	Point max_point = { std::max(extreme1.max_x, extreme2.max_x),
 		std::max(extreme1.max_y, extreme2.max_y) };
 
-	return min_point.dist(max_point);
+	return distance(min_point, max_point);
 }
 
 std::ostream& operator<<(std::ostream& out, const Curve& curve)

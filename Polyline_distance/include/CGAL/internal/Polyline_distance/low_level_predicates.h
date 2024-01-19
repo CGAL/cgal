@@ -3,7 +3,18 @@
 #include "geometry_basics.h"
 #include "predicate_types.h"
 
+#include <CGAL/number_utils.h>
 #include <iterator>
+
+distance_t squared_distance(Point const& p, Point const& q)
+{
+	return toOldPoint(p).dist_sqr(toOldPoint(q));
+}
+
+distance_t distance(Point const& p, Point const& q)
+{
+	return CGAL::sqrt(squared_distance(p, q));
+}
 
 namespace LLPred
 {
@@ -11,11 +22,6 @@ namespace LLPred
 //
 // compare_squared_distance
 //
-
-distance_t squared_distance(Point const& p, Point const& q)
-{
-	return p.dist_sqr(q);
-}
 
 enum Comparison_result {
 	LESS,
@@ -64,11 +70,11 @@ private:
 };
 
 inline bool IntersectionAlgorithm::smallDistanceAt(distance_t interpolate, Point line_start, Point line_end, Point circle_center, distance_t radius_sqr) {
-	return circle_center.dist_sqr(line_start * (1. - interpolate) + line_end * interpolate) <= radius_sqr;
+	return toOldPoint(circle_center).dist_sqr(toOldPoint(line_start) * (1. - interpolate) + toOldPoint(line_end) * interpolate) <= radius_sqr;
 }
 
 inline distance_t IntersectionAlgorithm::distanceAt(distance_t interpolate, Point line_start, Point line_end, Point circle_center) {
-	return circle_center.dist_sqr(line_start * (1. - interpolate) + line_end * interpolate);
+	return toOldPoint(circle_center).dist_sqr(toOldPoint(line_start) * (1. - interpolate) + toOldPoint(line_end) * interpolate);
 }
 
 
@@ -80,26 +86,26 @@ void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc,
 	Point const& line_end = line_arc.end;
 
     // The line can be represented as line_start + lambda * v
-    const Point v = line_end - line_start;
+    const OldPoint v = toOldPoint(line_end) - toOldPoint(line_start);
 	const distance_t rad_sqr = radius * radius;
 	
     // Find points p = line_start + lambda * v with
     //     dist(p, circle_center) = radius
-    // <=> sqrt(p.x^2 + p.y^2) = radius
-    // <=> p.x^2 + p.y^2 = radius^2
-    // <=> (line_start.x + lambda * v.x)^2 + (line_start.y + lambda * v.y)^2 = radius^2
-    // <=> (line_start.x^2 + 2 * line_start.x * lambda * v.x + lambda^2 * v.x^2) + (line_start.y^2 + 2 * line_start.y * lambda * v.y + lambda^2 * v.y^2) = radius^2
-    // <=> lambda^2 * (v.x^2 + v.y^2) + lambda * (2 * line_start.x * v.x + 2 * line_start.y * v.y) + line_start.x^2 + line_start.y^2) - radius^2 = 0
-    // let a := v.x^2 + v.y^2, 
-	// let b := line_start.x * v.x + line_start.y * v.y, 
-	// let c := line_start.x^2 + line_start.y^2 - radius^2
+    // <=> sqrt(p.x()^2 + p.y()^2) = radius
+    // <=> p.x()^2 + p.y()^2 = radius^2
+    // <=> (line_start.x() + lambda * v.x())^2 + (line_start.y() + lambda * v.y())^2 = radius^2
+    // <=> (line_start.x()^2 + 2 * line_start.x() * lambda * v.x() + lambda^2 * v.x()^2) + (line_start.y()^2 + 2 * line_start.y() * lambda * v.y() + lambda^2 * v.y()^2) = radius^2
+    // <=> lambda^2 * (v.x()^2 + v.y()^2) + lambda * (2 * line_start.x() * v.x() + 2 * line_start.y() * v.y()) + line_start.x()^2 + line_start.y()^2) - radius^2 = 0
+    // let a := v.x()^2 + v.y()^2, 
+	// let b := line_start.x() * v.x() + line_start.y() * v.y(), 
+	// let c := line_start.x()^2 + line_start.y()^2 - radius^2
     // <=> lambda^2 * a + lambda * 2 b + c = 0
     // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
     // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
 	
-    const distance_t a = pow2(v.x) + pow2(v.y);
-    const distance_t b = (line_start.x - circle_center.x) * v.x + (line_start.y - circle_center.y) * v.y;
-    const distance_t c = pow2(line_start.x - circle_center.x) + pow2(line_start.y - circle_center.y) - pow2(radius);
+    const distance_t a = pow2(v.x()) + pow2(v.y());
+    const distance_t b = (line_start.x() - circle_center.x()) * v.x() + (line_start.y() - circle_center.y()) * v.y();
+    const distance_t c = pow2(line_start.x() - circle_center.x()) + pow2(line_start.y() - circle_center.y()) - pow2(radius);
 
 	distance_t mid = - b / a;
     distance_t discriminant = pow2(mid) - c / a;
@@ -235,11 +241,14 @@ void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc,
 	//assert(end + eps > 1. || !smallDistanceAt(end + eps, line_start, line_end, circle_center, rad_sqr));
 	
 	if (begin == end) {
-		it = std::make_pair(line_start + (line_end - line_start)*begin, 2);
+		OldPoint old_p = toOldPoint(line_start) + (toOldPoint(line_end) - toOldPoint(line_start))*begin;
+		it = std::make_pair(Point(old_p.x(), old_p.y()), 2);
 	}
 	else {
-		it = std::make_pair(line_start + (line_end - line_start)*begin, 1);
-		it = std::make_pair(line_start + (line_end - line_start)*end, 1);
+		OldPoint old_p1 = toOldPoint(line_start) + (toOldPoint(line_end) - toOldPoint(line_start))*begin;
+		it = std::make_pair(Point(old_p1.x(), old_p1.y()), 1);
+		OldPoint old_p2 = toOldPoint(line_start) + (toOldPoint(line_end) - toOldPoint(line_start))*end;
+		it = std::make_pair(Point(old_p2.x(), old_p2.y()), 1);
 	}
 }
 
