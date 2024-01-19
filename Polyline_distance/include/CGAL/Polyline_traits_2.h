@@ -36,13 +36,18 @@ namespace CGAL
 {
 
 // TODO: This is just a starter to enable using the same types all over the package.
-template <class T>
+template <class T, class CNT>
 class Polyline_traits_2
 {
 public:
 	using BaseTraits = T;
-	using NT = typename BaseTraits::FT;
+	// TODO: remove FT?
+	using FT = typename BaseTraits::FT;
 	using Point = typename BaseTraits::Point_2;
+	using Compare_squared_distance = typename BaseTraits::Compare_squared_distance_2;
+	using Construct_midpoint = typename BaseTraits::Construct_midpoint_2;
+	using Construction_number_type = CNT;
+	// TODO: remove?
 	using Polyline = std::vector<Point>;
 	using Polylines = std::vector<Polyline>;
 	using PolylineID = std::size_t;

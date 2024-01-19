@@ -4,6 +4,9 @@
 #include "curve.h"
 #include "certificate.h"
 
+// TODO: use Cartesian_converter if we have one-sided approximate decisions somewhere that
+// cannot be done with some exact kernel.
+
 class Filter
 {
 private:
@@ -49,7 +52,7 @@ bool Filter::isPointTooFarFromCurve(Point fixed, const Curve& curve, distance_t 
 		auto maxdist = std::max(curve.curve_length(pt, mid), curve.curve_length(mid, pt + stepsize));
 		auto comp_dist = distance + maxdist;
 
-		if (mid_dist_sqr > std::pow(comp_dist, 2)) {
+		if (mid_dist_sqr > std::pow(comp_dist, 2)) { // TODO: replace by CGAL::square()
 			pt += stepsize;
 			stepsize *= 2;
 		}

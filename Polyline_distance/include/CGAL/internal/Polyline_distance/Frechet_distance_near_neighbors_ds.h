@@ -44,8 +44,8 @@ namespace CGAL
 template <class Traits>
 class FrechetKdTree
 {
-	using PT = Polyline_traits_2<Traits>;
-	using NT = typename PT::NT;
+	using PT = Polyline_traits_2<Traits, double>;
+	using FT = typename PT::FT;
 	using Point = typename PT::Point;
 	using Polyline = typename PT::Polyline;
 	using Polylines = typename PT::Polylines;
@@ -66,7 +66,7 @@ public:
 
 	void insert(Polylines const& curves); // TODO: also add other methods of inserting points
 	void build();
-	PolylineIDs search(Polyline const& curve, NT distance);
+	PolylineIDs search(Polyline const& curve, FT distance);
 
 private:
 	Kd_tree<Tree_traits> kd_tree;
@@ -77,7 +77,7 @@ private:
 		using D = FrechetKdTree::D;
 		using Point_d = FrechetKdTree::Point_d;
 		using Point_and_id = FrechetKdTree::Point_and_id;
-		using FT = NT;
+		using FT = FT;
 
 		// const Polyline& curve;
 		const Point_d p;
@@ -154,9 +154,9 @@ FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve)
 	CGAL_precondition(!curve.empty());
 
 	// TODO: remove this when curves are preprocessed first
-	NT x_min, y_min, x_max, y_max;
-	x_min = y_min = std::numeric_limits<NT>::max();
-	x_max = y_max = std::numeric_limits<NT>::min();
+	FT x_min, y_min, x_max, y_max;
+	x_min = y_min = std::numeric_limits<FT>::max();
+	x_max = y_max = std::numeric_limits<FT>::min();
 	for (auto const& point: curve) {
 		x_min = std::min(x_min, point.x());
 		y_min = std::min(y_min, point.y());
@@ -164,7 +164,7 @@ FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve)
 		y_max = std::max(y_max, point.y());
 	}
 
-	std::array<NT, D::value> values = {
+	std::array<FT, D::value> values = {
 		curve.front().x(),
 		curve.front().y(),
 		curve.back().x(),
@@ -196,7 +196,7 @@ FrechetKdTree<Traits>::build()
 
 template <class Traits>
 auto
-FrechetKdTree<Traits>::search(Polyline const& curve, NT distance)
+FrechetKdTree<Traits>::search(Polyline const& curve, FT distance)
 -> PolylineIDs
 {
 	// TODO: This is the best way I found to not copy the 8-dimensional point,

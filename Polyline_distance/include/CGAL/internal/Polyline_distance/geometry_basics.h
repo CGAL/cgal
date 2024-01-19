@@ -16,7 +16,7 @@ namespace unit_tests { void testGeometricBasics(); }
 // distance_t
 //
 
-// TODO: replace by NT of traits
+// TODO: replace by FT of traits
 using distance_t = double;
 
 //
@@ -35,8 +35,8 @@ struct Point {
 	Point& operator+=(const Point& point);
 	Point operator+(const Point& point) const;
 	Point operator*(const distance_t mult) const;
-	Point& operator/=(distance_t distance);
-	Point operator/(distance_t distance);
+	// Point& operator/=(distance_t distance);
+	// Point operator/(distance_t distance);
 
 	bool operator==(Point const& other) const;
 	bool operator!=(Point const& other) const;
@@ -372,17 +372,17 @@ Point Point::operator*(const distance_t mult) const
     return res;
 }
 
-Point& Point::operator/=(distance_t distance)
-{
-    x /= distance;
-    y /= distance;
-    return *this;
-}
-
-Point Point::operator/(distance_t distance)
-{
-    return Point(x/distance, y/distance);
-}
+// Point& Point::operator/=(distance_t distance)
+// {
+//     x /= distance;
+//     y /= distance;
+//     return *this;
+// }
+// 
+// Point Point::operator/(distance_t distance)
+// {
+//     return Point(x/distance, y/distance);
+// }
 
 bool Point::operator==(Point const& other) const
 {

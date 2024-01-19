@@ -24,6 +24,7 @@
 #ifndef CGAL_FRECHET_DISTANCE_H
 #define CGAL_FRECHET_DISTANCE_H
 
+#include <CGAL/Polyline_traits_2.h>
 #include <CGAL/internal/Polyline_distance/Frechet_distance.h>
 
 #include <CGAL/basic.h>
@@ -31,12 +32,6 @@
 #include <iterator>
 
 namespace CGAL {
-
-// TODO: hide away in Polyline_distance::internal (different naming but nvm)
-template <typename PointRange>
-using PointRangeKernel = typename CGAL::Kernel_traits<
-                           typename std::iterator_traits<
-                             typename PointRange::iterator>::value_type>::Kernel;
 
 /**
  * \ingroup PkgPolylineDistanceFunctions
@@ -49,7 +44,7 @@ using PointRangeKernel = typename CGAL::Kernel_traits<
  * with `Traits::Point` as value type.
  */
 template <class PointRange,
-          class Traits = PointRangeKernel<PointRange>>
+          class Traits>
 bool
 continuous_Frechet_distance_less_than(const PointRange& curve1,
                                       const PointRange& curve2,
@@ -71,7 +66,7 @@ continuous_Frechet_distance_less_than(const PointRange& curve1,
  * with `Traits::Point` as value type.
  */
 template <class PointRange,
-          class Traits = PointRangeKernel<PointRange>>
+          class Traits>
 typename Traits::FT
 continuous_Frechet_distance(const PointRange& curve1,
                             const PointRange& curve2,

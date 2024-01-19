@@ -17,6 +17,7 @@ namespace {
 //
 
 using Kernel = CGAL::Cartesian<double>;
+using Traits = CGAL::Polyline_traits_2<Kernel, double>;
 // using NT = Kernel::FT;
 using Point = Kernel::Point_2;
 using Curve = std::vector<Point>;
@@ -143,7 +144,7 @@ void testFrechetDistance()
 		auto queries = readFrechetDistanceQueries(query_directory + dataset + ".txt");
 
 		for (auto const& query: queries) {
-			auto decision = continuous_Frechet_distance_less_than(curves[query.id1], curves[query.id2], query.distance);
+			auto decision = CGAL::continuous_Frechet_distance_less_than<Curve,Traits>(curves[query.id1], curves[query.id2], query.distance);
 			assert(decision == query.decision);
 		}
 	}
