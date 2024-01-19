@@ -468,10 +468,10 @@ bool collect_intersections(const std::array<typename K::Point_3, 3>& t1,
     }
   }
 
-  #warning TODO get rid of sort and unique calls
+//  #warning TODO get rid of sort and unique calls
   // because we don't handle intersection type and can have edge-edge edge-vertex duplicates
-  std::sort(inter_pts.begin(), inter_pts.end(), [](auto p, auto q){return get<0>(p)<get<0>(q);});
-  auto last = std::unique(inter_pts.begin(), inter_pts.end(), [](auto p, auto q){return get<0>(p)==get<0>(q);});
+  std::sort(inter_pts.begin(), inter_pts.end(), [](auto p, auto q){return std::get<0>(p)<std::get<0>(q);});
+  auto last = std::unique(inter_pts.begin(), inter_pts.end(), [](auto p, auto q){return std::get<0>(p)==std::get<0>(q);});
   inter_pts.erase(last, inter_pts.end());
 
 #ifdef CGAL_AUTOREF_DEBUG_DEPTH
@@ -493,10 +493,10 @@ struct Triangle_data
   template <int i>
   std::size_t add_point(const std::tuple<Point_3,int, int>& tpl)
   {
-    if (get<i>(tpl) < 0)
-      return -get<i>(tpl)-1;
-    points.push_back(get<0>(tpl));
-    point_locations.push_back(get<i>(tpl));
+    if (std::get<i>(tpl) < 0)
+      return -std::get<i>(tpl)-1;
+    points.push_back(std::get<0>(tpl));
+    point_locations.push_back(std::get<i>(tpl));
     return points.size()-1;
   }
 
