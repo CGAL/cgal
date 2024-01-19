@@ -27,33 +27,6 @@ using distance_t = double;
 using Kernel = CGAL::Cartesian<double>;
 using Point = Kernel::Point_2;
 
-// struct Point {
-//     Point() = default;
-//     Point(distance_t X, distance_t Y) : X(X), Y(Y) {}
-// 
-//     distance_t x() const { return X; };
-//     distance_t y() const { return Y; };
-// 
-//     Point& operator-=(const Point& point);
-//     Point operator-(const Point& point) const;
-//     Point& operator+=(const Point& point);
-//     Point operator+(const Point& point) const;
-// 
-//     bool operator==(Point const& other) const;
-//     bool operator!=(Point const& other) const;
-// 
-//     // TODO: replace by squared_distance(p,q)
-//     // distance_t dist_sqr(const Point& point) const;
-//     // TODO: replace by some dist function that I can then replace
-//     distance_t dist(const Point& point) const;
-// 
-// private:
-//     distance_t X;
-//     distance_t Y;
-// };
-
-
-
 struct OldPoint {
 	OldPoint() = default;
 	OldPoint(distance_t X, distance_t Y) : X(X), Y(Y) {}
@@ -371,74 +344,6 @@ template<typename T>
 T pow2(T d) { return std::pow(d, 2); }
 
 } // end anonymous namespace
-
-//
-// Point
-//
-
-// Point& Point::operator-=(const Point& point)
-// {
-//     X -= point.x();
-//     Y -= point.y();
-//     return *this;
-// }
-// 
-// Point Point::operator-(const Point& point) const
-// {
-//     auto result = *this;
-//     result -= point; 
-// 
-//     return result;
-// }
-// 
-// Point& Point::operator+=(const Point& point)
-// {
-//     X += point.x();
-//     Y += point.y();
-//     return *this;
-// }
-// 
-// Point Point::operator+(const Point& point) const
-// {
-//     auto result = *this;
-//     result += point; 
-// 
-//     return result;
-// }
-
-// Point& Point::operator/=(distance_t distance)
-// {
-//     x /= distance;
-//     y /= distance;
-//     return *this;
-// }
-// 
-// Point Point::operator/(distance_t distance)
-// {
-//     return Point(x/distance, y/distance);
-// }
-
-// bool Point::operator==(Point const& other) const
-// {
-//     return X == other.x() && Y == other.y();
-// }
-// 
-// bool Point::operator!=(Point const& other) const
-// {
-//     return !(*this == other);
-// }
-
-// TODO: should be replaced everywhere by low_level_predicate
-// distance_t Point::dist_sqr(const Point& point) const
-// {
-//     return pow2(X - point.x()) + pow2(Y - point.y());
-// }
-
-// TODO: should be replaced everywhere by low_level_predicate
-// distance_t Point::dist(const Point& point) const
-// {
-//     return std::sqrt(pow2(X - point.x()) + pow2(Y - point.y()));
-// }
 
 std::ostream& operator<<(std::ostream& out, const Point& p)
 {
