@@ -843,13 +843,22 @@ void generate_subtriangles(std::size_t ti,
 
   // insert points and fill vhandles
 
+#if 0
+  std::vector<std::size_t> indices(triangle_data.points.size()-3);
+  std::iota(indices.begin(), indices.end(), 3);
+#else
   //start by points on edges
   std::array<std::vector<std::size_t>, 3> indices_on_edges;
   std::vector<std::size_t> indices;
   for (std::size_t i=3; i<points.size(); ++i)
   {
     if (point_locations[i]==0)
+    {
+      CGAL_assertion(!collinear(points[0], points[1], points[i]));
+      CGAL_assertion(!collinear(points[1], points[2], points[i]));
+      CGAL_assertion(!collinear(points[2], points[0], points[i]));
       indices.push_back(i);
+    }
     else
     {
       CGAL_assertion(point_locations[i]>0 && point_locations[i]<4);
@@ -862,7 +871,7 @@ void generate_subtriangles(std::size_t ti,
   for (int i=0; i<3; ++i)
   {
     if (indices_on_edges[i].empty()) continue;
-    int src_id=i, tgt_id=(i+1)%3;
+    std::size_t src_id=i, tgt_id=(i+1)%3;
     //look for a sort axis
     int coord = 0;
     if (points[src_id].x()==points[tgt_id].x())
@@ -879,19 +888,32 @@ void generate_subtriangles(std::size_t ti,
               {
                 return points[id1][coord]<points[id2][coord];
               });
+    if (segments.empty()) // we might have intersection points duplicated
+    {
+      auto it=
+        std::unique(indices_on_edges[i].begin(), indices_on_edges[i].end(),
+                    [&](std::size_t id1, std::size_t id2)
+                    {
+                      return points[id1][coord]==points[id2][coord];
+                    });
+      indices_on_edges[i].erase(it, indices_on_edges[i].end());
+    }
 
     std::size_t prev_id = src_id;
     for(std::size_t id : indices_on_edges[i])
     {
+      CGAL_assertion(collinear(points[src_id], points[tgt_id], points[id]));
       typename CDT::Face_handle fh;
       CGAL_assertion_code(bool ok =)
       cdt.is_face(vhandles[prev_id], vhandles[tgt_id],vinf, fh);
       CGAL_assertion(ok);
       vhandles[id]=cdt.insert_in_edge(points[id], fh, fh->index(vinf));
+      cdt.restore_Delaunay(vhandles[id]); // TODO maybe not each time but one global?
+      CGAL_assertion(cdt.is_valid());
       prev_id=id;
     }
   }
-
+#endif
   // then points in the interior
   typedef typename Pointer_property_map<typename EK::Point_3>::type Pmap;
   typedef Spatial_sort_traits_adapter_2<P_traits,Pmap> Search_traits;
