@@ -1,5 +1,5 @@
 # This module install a hook (with `variable_watch()`) on CMAKE_CURRENT_LIST_DIR
-# 
+#
 # That uses the non-documented fact that CMAKE_CURRENT_LIST_DIR is cleared
 # by CMake at the end of the configuration process. So, if the value of
 # that variable gets empty, that means that CMake has reached the end of
@@ -110,7 +110,7 @@ function(CGAL_hook_fix_ctest_depending_on_Qt6)
       continue()
     endif()
     get_property(_target_links TARGET ${_target} PROPERTY LINK_LIBRARIES)
-    if("CGAL_Qt6" IN_LIST _target_links OR "CGAL::CGAL_Qt6" IN_LIST _target_links)
+    if("CGAL_Qt6" IN_LIST _target_links OR "CGAL::CGAL_Qt6" IN_LIST _target_links OR "CGAL::CGAL_Basic_viewer" IN_LIST _target_links)
       set_property(TEST "compilation of  ${_target}" APPEND PROPERTY FIXTURES_REQUIRED CGAL_Qt6_moc_and_resources_Fixture)
     endif()
     endforeach()
