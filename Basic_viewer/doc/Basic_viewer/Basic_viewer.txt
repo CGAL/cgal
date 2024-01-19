@@ -8,48 +8,95 @@ namespace CGAL {
 \author Guillaume Damiand, Mostafa Ashraf
 \cgalAutoToc
 
-\section Basic_viewerDoc
+\section Basic_Viewer
 
-\subsection Basic_viewerDoc_1 Direct Draw
+\subsection Introduction
 
-draw(XXX)
+The Basic_viewer class appears to serve as a foundation for a 3D graphics viewer in the context of the CGAL (Computational Geometry Algorithms Library) and Qt (a C++ GUI toolkit). The goal of Basic_viewer is to provide a flexible and interactive environment for visualizing geometric data and interacting with 3D scenes. The Functionality of the Basic_viewer is to renders various geometric elements such as(points, segments, rays, lines, faces, edges, etc.) and supports user interaction through keyboard inputs.
 
-\subsection Basic_viewerDoc_2 Customize the drawing
+The goal of Basic_viewer is allowing to view all CGAL data structures, such as (Arrangement_on_surface_2, Boolean_set_operations_2, Linear_cell_complex, Nef_3, Periodic_2_triangulation_2, Point_set_3, Polygon, Polyhedron, Straight_skeleton_2, Surface_mesh, Triangulation_2, Triangulation_3, Voronoi_diagram_2, and more).
 
-Graphics_scene_options
+\subsubsection Some key goals and features of Basic_viewer include:
 
-\subsection Basic_viewerDoc_3 Graphic Scene
+<OL>
+<LI> Versatile Rendering:
 
-\subsection Basic_viewerDoc_4 Basic viewer Qt
+The viewer supports the rendering of various geometric elements, such as points, edges, faces, rays, and lines.
+Different rendering modes, including mono and colored representations, are available for these elements.
 
-\subsection Basic_viewerDoc_5 Application and basic viewer
+<LI> Camera Control:
 
+The viewer allows users to switch between 2D and 3D viewing modes, adjusting the camera accordingly.
+Camera settings, such as orthographic or perspective projection, can be configured based on the dimensionality of the scene.
 
-\section Basic_viewerExamples Examples
+<LI> User Interaction:
 
-\subsection Basic_viewerExamples_simple_draw Basic draw
+Users can interact with the viewer through keyboard inputs, enabling them to control rendering options, toggle the display of elements, and adjust visual parameters.
+Key presses are mapped to specific actions, such as toggling the clipping plane, changing rendering modes, adjusting the size of elements, and modifying ambient light color.
+
+<LI> Clipping Plane:
+
+The viewer includes support for a clipping plane, allowing users to selectively render parts of the scene.
+The clipping plane can be toggled on and off, and its rendering style can be modified (solid, wireframe, etc.).
+
+<LI> Shader Support:
+
+Shaders are compiled to enhance the rendering capabilities of the viewer, potentially providing advanced shading and visual effects.
+
+<LI> Flexibility and Configurability:
+
+The viewer is designed to be flexible, allowing users to configure various rendering parameters and interact with the scene based on their needs.
+The code includes functions for setting up the initial state of the viewer, initializing OpenGL settings, and handling key events.
+
+</OL>
+
+Based on class QApplication_and_basic_viewer you can develop your own demo.
+
+\subsection Basic_viewerUsage 
+
+\subsubsection Basic_viewerDoc_1 Direct Draw
+
+draw(XXX) [WIP]
+
+\subsubsection Basic_viewerDoc_2 Customize the drawing
+
+[WIP]
+
+\subsection Basic_viewerExamples Examples that use Basic_viewer
+
+\subsubsection Basic_viewerExamples_simple_draw Basic draw
 
 \cgalExample{Surface_mesh/draw_surface_mesh.cpp}
 
 
-\subsection Basic_viewerExamples_custom_color Change Face Colors
+\subsubsection Basic_viewerExamples_custom_color Change Face Colors
 
 \cgalExample{Basic_viewer/draw_surface_mesh_height.cpp}
 
 
-\subsection Basic_viewerExamples_two_ds Draw two different CGAL data-structures in a same viewer
+\subsubsection Basic_viewerExamples_two_ds Draw two different CGAL data-structures in a same viewer
 
 \cgalExample{Basic_viewer/draw_mesh_and_points.cpp}
 
 
-\subsection Basic_viewerExamples_interact Interaction with the viewer
+\subsubsection Basic_viewerExamples_interact Interaction with the viewer
 
 \cgalExample{Basic_viewer/draw_surface_mesh_small_faces.cpp}
 
 
-\subsection Basic_viewerExamples_several_window Draw several basic viewers
+\subsubsection Basic_viewerExamples_several_window Draw several basic viewers
 
 \cgalExample{Basic_viewer/draw_several_windows.cpp}
+
+
+\section  Graphic_Scene
+
+Graphics_scene_options
+[WIP]
+
+\section secsoftwaredesign Software Design
+
+class diagram [WIP] 
 
 
 */
