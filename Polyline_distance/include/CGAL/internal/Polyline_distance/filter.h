@@ -45,12 +45,12 @@ public:
 bool Filter::isPointTooFarFromCurve(Point fixed, const Curve& curve, distance_t distance)
 {
 	auto dist_sqr = distance * distance;
-	if (squared_distance(fixed,curve.front()) <= dist_sqr || squared_distance(fixed,curve.back()) <= dist_sqr) { return false; }
+	if (CGAL::squared_distance(fixed,curve.front()) <= dist_sqr || CGAL::squared_distance(fixed,curve.back()) <= dist_sqr) { return false; }
 	std::size_t stepsize = 1;
 	for (PointID pt = 0; pt < curve.size()-1; ) {
 		stepsize = std::min<std::size_t>(stepsize, curve.size() - 1 - pt);
 		auto mid = pt + (stepsize+1)/2; 
-		auto mid_dist_sqr = squared_distance(fixed,curve[mid]);
+		auto mid_dist_sqr = CGAL::squared_distance(fixed,curve[mid]);
 		auto maxdist = std::max(curve.curve_length(pt, mid), curve.curve_length(mid, pt + stepsize));
 		auto comp_dist = distance + maxdist;
 
@@ -71,7 +71,7 @@ bool Filter::isFree(Point const& fixed, Curve const& var_curve, PointID start, P
 {
 	auto mid = (start + end + 1) / 2;
 	auto max = std::max(var_curve.curve_length(start+1, mid), var_curve.curve_length(mid, end));
-	auto mid_dist_sqr = squared_distance(fixed,var_curve[mid]);
+	auto mid_dist_sqr = CGAL::squared_distance(fixed,var_curve[mid]);
 
 	auto comp_dist = distance - max;
 	if (comp_dist > 0 && mid_dist_sqr <= std::pow(comp_dist, 2)) {
@@ -88,7 +88,7 @@ bool Filter::isFree(Curve const& curve1, PointID start1, PointID end1, Curve con
 	auto mid2 = (start2 + end2 + 1) / 2;
 	auto max1 = std::max(curve1.curve_length(start1 + 1, mid1), curve1.curve_length(mid1, end1));
 	auto max2 = std::max(curve2.curve_length(start2 + 1, mid2), curve2.curve_length(mid2, end2));
-	auto mid_dist_sqr = squared_distance(curve1[mid1],curve2[mid2]);
+	auto mid_dist_sqr = CGAL::squared_distance(curve1[mid1],curve2[mid2]);
 
 	auto comp_dist = distance - max1 - max2;
 	return comp_dist >= 0 && mid_dist_sqr <= std::pow(comp_dist, 2);
@@ -120,13 +120,13 @@ bool Filter::bichromaticFarthestDistance()
 	distance_t distance_sqr = distance*distance;
 	distance_t d;
 ;
-	d = squared_distance(Point{extreme1.min_x, extreme1.min_y},Point{extreme2.max_x, extreme2.max_y});
+	d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.min_y},Point{extreme2.max_x, extreme2.max_y});
 	if (d > distance_sqr) { return false; }
-	d = squared_distance(Point{extreme1.min_x, extreme1.max_y},Point{extreme2.max_x, extreme2.min_y});
+	d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.max_y},Point{extreme2.max_x, extreme2.min_y});
 	if (d > distance_sqr) { return false; }
-	d = squared_distance(Point{extreme1.max_x, extreme1.min_y},Point{extreme2.min_x, extreme2.max_y});
+	d = CGAL::squared_distance(Point{extreme1.max_x, extreme1.min_y},Point{extreme2.min_x, extreme2.max_y});
 	if (d > distance_sqr) { return false; }
-	d = squared_distance(Point{extreme1.max_x, extreme1.max_y},Point{extreme2.min_x, extreme2.min_y});
+	d = CGAL::squared_distance(Point{extreme1.max_x, extreme1.max_y},Point{extreme2.min_x, extreme2.min_y});
 	if (d > distance_sqr) { return false; }
 
 	cert.setAnswer(true);
@@ -146,12 +146,12 @@ bool Filter::greedy()
 	auto& curve1 = *curve1_pt;
 	auto& curve2 = *curve2_pt;
 	auto distance_sqr = distance*distance;
-	auto d_sqr = squared_distance(curve1.back(),curve2.back());
+	auto d_sqr = CGAL::squared_distance(curve1.back(),curve2.back());
 	PointID pos1 = 0;
 	PointID pos2 = 0;
 
 	while (pos1 + pos2 < curve1.size() + curve2.size() - 2) {
-		d_sqr = std::max(d_sqr, squared_distance(curve1[pos1],curve2[pos2]));
+		d_sqr = std::max(d_sqr, CGAL::squared_distance(curve1[pos1],curve2[pos2]));
 
 		if (d_sqr > distance_sqr) { return false; }
 
@@ -162,9 +162,9 @@ bool Filter::greedy()
 			++pos1;
 		}
 		else {
-			distance_t dist1 = squared_distance(curve1[pos1 + 1],curve2[pos2]);
-			distance_t dist2 = squared_distance(curve1[pos1],curve2[pos2 + 1]);
-			distance_t dist12 = squared_distance(curve1[pos1 + 1],curve2[pos2 + 1]);
+			distance_t dist1 = CGAL::squared_distance(curve1[pos1 + 1],curve2[pos2]);
+			distance_t dist2 = CGAL::squared_distance(curve1[pos1],curve2[pos2 + 1]);
+			distance_t dist12 = CGAL::squared_distance(curve1[pos1 + 1],curve2[pos2 + 1]);
 
 			if (dist1 < dist2 && dist1 < dist12) {
 				++pos1;
@@ -192,7 +192,7 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
 	pos2 = 0;
 	cert.addPoint({ CPoint(pos1, 0.), CPoint(pos2, 0.) });
 	
-	if (squared_distance(curve1[0],curve2[0]) > distance_sqr || squared_distance(curve1.back(),curve2.back()) > distance_sqr) { return false; }
+	if (CGAL::squared_distance(curve1[0],curve2[0]) > distance_sqr || CGAL::squared_distance(curve1.back(),curve2.back()) > distance_sqr) { return false; }
 	
 	std::size_t step = std::max(curve1.size(), curve2.size());
 	while (pos1 + pos2 < curve1.size() + curve2.size() - 2) {
@@ -231,9 +231,9 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
 		}
 		// if we cannot reduce the step size
 		else if (step == 1) {
-			auto dist1 = squared_distance(curve1[pos1 + 1],curve2[pos2]);
-			auto dist2 = squared_distance(curve1[pos1],curve2[pos2 + 1]);
-			auto dist12 = squared_distance(curve1[pos1 + 1],curve2[pos2 + 1]);
+			auto dist1 = CGAL::squared_distance(curve1[pos1 + 1],curve2[pos2]);
+			auto dist2 = CGAL::squared_distance(curve1[pos1],curve2[pos2 + 1]);
+			auto dist12 = CGAL::squared_distance(curve1[pos1 + 1],curve2[pos2 + 1]);
 
 			if (dist1 <= distance_sqr && dist1 < dist2 && dist1 < dist12) { ++pos1; }
 		       	else if (dist2 <= distance_sqr && dist2 < dist12) { ++pos2; }
@@ -251,8 +251,8 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
 			bool step2_possible = isFree(curve1[pos1], curve2, pos2, new_pos2, distance);
 
 			if (step1_possible && step2_possible) {
-				auto dist_after_step1 = squared_distance(curve1[new_pos1],curve2[pos2]);
-				auto dist_after_step2 = squared_distance(curve1[pos1],curve2[new_pos2]);
+				auto dist_after_step1 = CGAL::squared_distance(curve1[new_pos1],curve2[pos2]);
+				auto dist_after_step2 = CGAL::squared_distance(curve1[pos1],curve2[new_pos2]);
 				if (dist_after_step1 <= dist_after_step2) {
 					pos1 = new_pos1;
 				}
@@ -301,7 +301,7 @@ bool Filter::adaptiveSimultaneousGreedy()
 	PointID pos2 = 0;
 	cert.addPoint( {CPoint(pos1, 0.), CPoint(pos2, 0.)} );
 	
-	if (squared_distance(curve1[0],curve2[0]) > distance_sqr || squared_distance(curve1.back(),curve2.back()) > distance_sqr) { return false; }
+	if (CGAL::squared_distance(curve1[0],curve2[0]) > distance_sqr || CGAL::squared_distance(curve1.back(),curve2.back()) > distance_sqr) { return false; }
 	
 	std::size_t step = std::max(curve1.size(), curve2.size());
 	while (pos1 + pos2 < curve1.size() + curve2.size() - 2) {
@@ -339,9 +339,9 @@ bool Filter::adaptiveSimultaneousGreedy()
 		}
 		// if we cannot reduce the step size
 		else if (step == 1) {
-			auto dist1 = squared_distance(curve1[pos1 + 1],curve2[pos2]);
-			auto dist2 = squared_distance(curve1[pos1],curve2[pos2 + 1]);
-			auto dist12 = squared_distance(curve1[pos1 + 1],curve2[pos2 + 1]);
+			auto dist1 = CGAL::squared_distance(curve1[pos1 + 1],curve2[pos2]);
+			auto dist2 = CGAL::squared_distance(curve1[pos1],curve2[pos2 + 1]);
+			auto dist12 = CGAL::squared_distance(curve1[pos1 + 1],curve2[pos2 + 1]);
 
 			if (dist1 <= distance_sqr && dist1 < dist2 && dist1 < dist12) { ++pos1; }
 			else if (dist2 <= distance_sqr && dist2 < dist12) { ++pos2; }
@@ -389,7 +389,7 @@ bool Filter::negative(PointID position1, PointID position2)
 	auto& curve2 = *curve2_pt;
 
 	distance_t distance_sqr = distance * distance;
-	if (squared_distance(curve1[0],curve2[0]) > distance_sqr || squared_distance(curve1.back(),curve2.back()) > distance_sqr) { return true; }
+	if (CGAL::squared_distance(curve1[0],curve2[0]) > distance_sqr || CGAL::squared_distance(curve1.back(),curve2.back()) > distance_sqr) { return true; }
 	
 	size_t pos1 = position1;
 	size_t pos2 = position2;

@@ -301,7 +301,7 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, const 
 		auto mid = (min + max)/2;
 		auto maxdist = std::max(curve.curve_length(min, mid), curve.curve_length(mid, max));
 		auto fixed_point = fixed_curve.interpolate_at(fixed);
-		auto mid_dist_sqr = squared_distance(fixed_point,curve[mid]);
+		auto mid_dist_sqr = CGAL::squared_distance(fixed_point,curve[mid]);
 
 		//heuristic tests avoiding sqrts
 		auto comp_dist1 = distance - maxdist;
@@ -344,7 +344,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 	// if start > min, then the free interval must be empty
 
 	auto fixed_point = fixed_curve.interpolate_at(fixed);
-	bool current_free = squared_distance(fixed_point,curve[start]) <= dist_sqr;
+	bool current_free = CGAL::squared_distance(fixed_point,curve[start]) <= dist_sqr;
 	// Work directly on the simple_interval of the boundary
 	//CPoint first_free = current_free ? CPoint{min,0.} : CPoint{max+1,0.};
 	assert((not current_free) or start==min);
@@ -355,7 +355,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 	//TODO do we need to make sure that last_empty etc. is used only if we want to certify or does the compiler optimization take care of it?
 	CPoint last_empty = current_free ? CPoint{min, 0.} : CPoint{max+1,0.};
 
-	assert(first_free > max || squared_distance(fixed_point,curve.interpolate_at(first_free)) <= dist_sqr);
+	assert(first_free > max || CGAL::squared_distance(fixed_point,curve.interpolate_at(first_free)) <= dist_sqr);
 	
 	std::size_t stepsize = static_cast<std::size_t>(max - start)/2;
 	if (stepsize < 1 or qsimple.hasPartialInformation()) {
@@ -367,7 +367,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 		stepsize = std::min<std::size_t>(stepsize, max - cur);
 		auto mid = cur + (stepsize+1)/2; 
 		auto maxdist = std::max(curve.curve_length(cur, mid), curve.curve_length(mid, cur + stepsize));
-		auto mid_dist_sqr = squared_distance(fixed_point,curve[mid]);
+		auto mid_dist_sqr = CGAL::squared_distance(fixed_point,curve[mid]);
 
 		auto comp_dist1 = distance - maxdist;
 		if (current_free && comp_dist1 > 0 && mid_dist_sqr <= std::pow(comp_dist1, 2)) {
@@ -904,7 +904,7 @@ CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i, Curve
 		auto first_part = curve2.curve_length(cur+1, mid);
 		auto second_part = curve2.curve_length(mid, cur + stepsize);
 		auto maxdist = std::max(first_part, second_part);
-		auto mid_dist_sqr = squared_distance(point,curve2[mid]);
+		auto mid_dist_sqr = CGAL::squared_distance(point,curve2[mid]);
 
 		auto comp_dist1 = distance - maxdist;
 		if (comp_dist1 > 0 && mid_dist_sqr <= std::pow(comp_dist1, 2)) {
@@ -952,8 +952,8 @@ bool FrechetLight::lessThan(distance_t distance, Curve const& curve1, Curve cons
 
 	// curves empty or start or end are already far
 	if (curve1.empty() || curve2.empty()) { return false; }
-	if (squared_distance(curve1.front(),curve2.front()) > dist_sqr) { return false; }
-	if (squared_distance(curve1.back(),curve2.back()) > dist_sqr) { return false; }
+	if (CGAL::squared_distance(curve1.front(),curve2.front()) > dist_sqr) { return false; }
+	if (CGAL::squared_distance(curve1.back(),curve2.back()) > dist_sqr) { return false; }
 
 	// cases where at least one curve has length 1
 	if (curve1.size() == 1 && curve2.size() == 1) { return true; }
@@ -984,8 +984,8 @@ bool FrechetLight::lessThanWithFilters(distance_t distance, Curve const& curve1,
 	assert(curve1.size());
 	assert(curve2.size());
 
-	if (squared_distance(curve1[0],curve2[0]) > dist_sqr ||
-		squared_distance(curve1.back(),curve2.back()) > dist_sqr) {
+	if (CGAL::squared_distance(curve1[0],curve2[0]) > dist_sqr ||
+		CGAL::squared_distance(curve1.back(),curve2.back()) > dist_sqr) {
 		return false;
 	}
 	if (curve1.size() == 1 && curve2.size() == 1) {
@@ -1157,13 +1157,13 @@ Certificate& FrechetLight::computeCertificate() {
 
 	//TODO test handling of special cases!
 	//special cases:
-	if (squared_distance(curve1.front(),curve2.front()) > dist_sqr) { 
+	if (CGAL::squared_distance(curve1.front(),curve2.front()) > dist_sqr) { 
 		cert.setAnswer(false);
 		cert.addPoint({ CPoint(0, 0.), CPoint(0, 0.) });
 		cert.validate();
 		return cert;
        	}
-	if (squared_distance(curve1.back(),curve2.back()) > dist_sqr) { 
+	if (CGAL::squared_distance(curve1.back(),curve2.back()) > dist_sqr) { 
 		cert.setAnswer(false);
 		cert.addPoint({ CPoint(curve1.size()-1, 0.), CPoint(curve2.size()-1, 0.) });
 		cert.validate();

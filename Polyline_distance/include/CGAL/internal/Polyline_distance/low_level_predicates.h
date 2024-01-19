@@ -6,14 +6,9 @@
 #include <CGAL/number_utils.h>
 #include <iterator>
 
-distance_t squared_distance(Point const& p, Point const& q)
-{
-	return toOldPoint(p).dist_sqr(toOldPoint(q));
-}
-
 distance_t distance(Point const& p, Point const& q)
 {
-	return CGAL::sqrt(squared_distance(p, q));
+	return CGAL::sqrt(CGAL::squared_distance(p, q));
 }
 
 namespace LLPred
@@ -31,7 +26,7 @@ enum Comparison_result {
 
 Comparison_result compare_squared_distance(Point const& p, Point const& q, distance_t d2)
 {
-	auto const pq_dist_sqr = squared_distance(p, q);
+	auto const pq_dist_sqr = CGAL::squared_distance(p, q);
 
 	if (pq_dist_sqr < d2) { return LESS; }
 	if (pq_dist_sqr == d2) { return EQUAL; }
