@@ -7152,9 +7152,6 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\image html IsoCuboid.png
-\image latex IsoCuboid.png
-
 \cgalRefines{AdaptableBinaryFunction}
 
 \sa `CGAL::Iso_cuboid_3<Kernel>`
@@ -7183,6 +7180,8 @@ public:
     `c`, as indicated in the figure below. The parameter `i` is
     taken modulo 8.
 
+    \image html IsoCuboid.png
+    \image latex IsoCuboid.png
   */
   Kernel::Point_3 operator()(const
                              Kernel::Iso_cuboid_3 &c, int i);
