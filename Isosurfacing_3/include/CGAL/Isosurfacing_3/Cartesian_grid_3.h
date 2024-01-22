@@ -102,23 +102,36 @@ public:
    */
   Cartesian_grid_3(const Image_3& image)
   {
-    from_image(image);
-  }
+    // compute bounding box
+    const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();
+    const FT max_y = image.ty() + (image.ydim() - 1) * image.vy();
+    const FT max_z = image.tz() + (image.zdim() - 1) * image.vz();
+    m_bbox = Bbox_3{image.tx(), image.ty(), image.tz(), max_x, max_y, max_z};
 
-  /**
-  * \brief creates a Cartesian_grid_3 object from a `CGAL::Image_3`.
-  *
-  * The dimensions and bounding box are read from the image. The values stored
-  * in the image must be of type `Geom_traits::FT` or implicitly convertible to it.
-  *
-  * \param image the image providing the data
-  */
-  void from_image(const Image_3& image);
+    // get spacing
+    m_spacing = make_array(image.vx(), image.vy(), image.vz());
+
+    // get sizes
+    m_sizes[0] = image.xdim();
+    m_sizes[1] = image.ydim();
+    m_sizes[2] = image.zdim();
+
+    // pre-allocate
+    const std::size_t nv = m_sizes[0] * m_sizes[1] * m_sizes[2];
+    m_values.resize(nv);
+    m_gradients.resize(nv);
+
+    // copy values
+    for(std::size_t x=0; x<m_sizes[0]; ++x)
+      for(std::size_t y=0; y<m_sizes[1]; ++y)
+        for(std::size_t z=0; z<m_sizes[2]; ++z)
+          value(x, y, z) = image.value(x, y, z);
+  }
 
    /**
   * \brief creates a `CGAL::Image_3` from the %Cartesian grid.
   */
-  Image_3 to_image() const;
+  explicit operator Image_3() const;
 
 public:
   /**
@@ -281,40 +294,8 @@ private:
 };
 
 template <typename GeomTraits>
-void
 Cartesian_grid_3<GeomTraits>::
-from_image(const Image_3& image)
-{
-  // compute bounding box
-  const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();
-  const FT max_y = image.ty() + (image.ydim() - 1) * image.vy();
-  const FT max_z = image.tz() + (image.zdim() - 1) * image.vz();
-  m_bbox = Bbox_3{image.tx(), image.ty(), image.tz(), max_x, max_y, max_z};
-
-  // get spacing
-  m_spacing = make_array(image.vx(), image.vy(), image.vz());
-
-  // get sizes
-  m_sizes[0] = image.xdim();
-  m_sizes[1] = image.ydim();
-  m_sizes[2] = image.zdim();
-
-  // pre-allocate
-  const std::size_t nv = m_sizes[0] * m_sizes[1] * m_sizes[2];
-  m_values.resize(nv);
-  m_gradients.resize(nv);
-
-  // copy values
-  for(std::size_t x=0; x<m_sizes[0]; ++x)
-    for(std::size_t y=0; y<m_sizes[1]; ++y)
-      for(std::size_t z=0; z<m_sizes[2]; ++z)
-        value(x, y, z) = image.value(x, y, z);
-}
-
-template <typename GeomTraits>
-Image_3
-Cartesian_grid_3<GeomTraits>::
-to_image() const
+operator Image_3() const
 {
   // select number type
   WORD_KIND wordkind;
