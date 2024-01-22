@@ -3,7 +3,6 @@
 // #define CGAL_DEBUG_CDT_3 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Random.h>
 #include <CGAL/Constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Surface_mesh.h>
 
@@ -11,6 +10,9 @@
 
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Polygon_mesh_processing/region_growing.h>
+
+#include <boost/graph/graph_traits.hpp>
 
 #include <vector>
 #include <cassert>
@@ -291,9 +293,25 @@ auto segment_soup_to_polylines(Range_of_segments&& segment_soup) {
 int go(Mesh mesh, CDT_options options) {
   CDT cdt;
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
+
+  const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
+  double d_x = bbox.xmax() - bbox.xmin();
+  double d_y = bbox.ymax() - bbox.ymin();
+  double d_z = bbox.zmax() - bbox.zmin();
+
+  const double bbox_max_width = (std::max)(d_x, (std::max)(d_y, d_z));
+
+  double epsilon = options.vertex_vertex_epsilon;
+
+  if(!options.quiet) {
+    std::cout << "Bbox width                   : " << bbox_max_width << '\n'
+              << "Epsilon                      : " << epsilon << '\n'
+              << "Epsilon * Bbox width         : " << epsilon * bbox_max_width << "\n\n";
+  }
+
   auto pmap = get(CGAL::vertex_point, mesh);
 
-  auto [patch_id_map, ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -1);
+  auto [patch_id_map, ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -2);
   assert(ok); CGAL_USE(ok);
   auto [v_selected_map, ok2] = mesh.add_property_map<vertex_descriptor, bool>("v:selected", false);
   assert(ok2); CGAL_USE(ok2);
@@ -301,55 +319,41 @@ int go(Mesh mesh, CDT_options options) {
   std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
   if(options.merge_facets) {
     auto start_time = std::chrono::high_resolution_clock::now();
-    for(auto f: faces(mesh))
-    {
-      if(get(patch_id_map, f) >= 0) continue;
-      patch_edges.emplace_back();
-      auto& edges = patch_edges.back();
-      std::stack<face_descriptor> f_stack;
-      f_stack.push(f);
-      while(!f_stack.empty()) {
-        auto f = f_stack.top();
-        f_stack.pop();
-        if(get(patch_id_map, f) >= 0) continue;
-        put(patch_id_map, f, nb_patches);
+
+    namespace np = CGAL::parameters;
+    nb_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
+        mesh, patch_id_map, np::maximum_distance(epsilon * bbox_max_width).maximum_angle(1));
+    for(auto f: faces(mesh)) {
+      if(get(patch_id_map, f) < 0) {
+        std::cerr << "warning: face " << f << " has no patch id! Reassign it to " << nb_patches << '\n';
         for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
-          auto opp = opposite(h, mesh);
-          if(is_border_edge(opp, mesh)) {
-            auto va = source(h, mesh);
-            auto vb = target(h, mesh);
-            edges.emplace_back(va, vb);
-            put(v_selected_map, va, true);
-            put(v_selected_map, vb, true);
-            continue;
-          }
-          auto n = face(opp, mesh);
-          auto a = get(pmap, source(h, mesh));
-          auto b = get(pmap, target(h, mesh));
-          auto c = get(pmap, target(next(h, mesh), mesh));
-          auto d = get(pmap, target(next(opp, mesh), mesh));
-          if(CGAL::orientation(a, b, c, d) != CGAL::COPLANAR) {
-            auto va = source(h, mesh);
-            auto vb = target(h, mesh);
-            edges.emplace_back(va, vb);
-            put(v_selected_map, va, true);
-            put(v_selected_map, vb, true);
-            continue;
-          }
-          if(get(patch_id_map, n) >= 0) continue;
-          f_stack.push(n);
+          std::cerr << "  " << target(h, mesh) << ", point " << mesh.point(target(h, mesh)) << '\n';
         }
+        put(patch_id_map, f, nb_patches++);
       }
-      ++nb_patches;
+    }
+    if (!options.quiet) {
+      std::cout << "[timings] detected " << nb_patches << " patches in " << std::chrono::duration_cast<std::chrono::milliseconds>(
+          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    }
+    patch_edges.resize(nb_patches);
+    for(auto h: halfedges(mesh))
+    {
+      if(is_border(h, mesh)) continue;
+      auto f = face(h, mesh);
+      auto patch_id = get(patch_id_map, f);
+      auto opp = opposite(h, mesh);
+      if(is_border(opp, mesh) || patch_id != get(patch_id_map, face(opp, mesh))) {
+        auto va = source(h, mesh);
+        auto vb = target(h, mesh);
+        patch_edges[patch_id].emplace_back(va, vb);
+        put(v_selected_map, va, true);
+        put(v_selected_map, vb, true);
+      }
     }
     if(!options.dump_patches_after_merge_filename.empty()) {
       std::ofstream out(options.dump_patches_after_merge_filename);
       CGAL::IO::write_PLY(out, mesh);
-    }
-    if(!options.quiet) {
-      std::cout << "[timings] merged facets in " << std::chrono::duration_cast<std::chrono::milliseconds>(
-          std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
-      std::cout << "Number of facets after --merge_facets: " << mesh.number_of_faces() << "\n\n";
     }
   }
   if(!options.dump_patches_borders_prefix.empty()) {
@@ -418,13 +422,6 @@ int go(Mesh mesh, CDT_options options) {
         std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
     std::cout << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
   }
-  const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
-  double d_x = bbox.xmax() - bbox.xmin();
-  double d_y = bbox.ymax() - bbox.ymin();
-  double d_z = bbox.zmax() - bbox.zmin();
-
-  const double bbox_max_width = (std::max)(d_x, (std::max)(d_y, d_z));
-
   if(cdt.dimension() < 3) {
     if(!options.quiet) {
       std::cout << "current is 2D... inserting the 8 vertices of an extended bounding box\n";
@@ -443,7 +440,6 @@ int go(Mesh mesh, CDT_options options) {
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
   }
   {
-    double epsilon = options.vertex_vertex_epsilon;
     auto [min_sq_distance, min_edge] = std::ranges::min(
         cdt.finite_edges() | std::views::transform([&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); }));
     auto min_distance = CGAL::approximate_sqrt(min_sq_distance);
@@ -451,10 +447,7 @@ int go(Mesh mesh, CDT_options options) {
     if(!options.quiet) {
       std::cout << "Min distance between vertices: " << min_distance << '\n'
                 << "  between vertices:          : " << CGAL::IO::oformat(vertices_of_min_edge[0], CGAL::With_point_tag{})
-                << "    " << CGAL::IO::oformat(vertices_of_min_edge[1], CGAL::With_point_tag{}) << '\n'
-                << "Bbox width                   : " << bbox_max_width << '\n'
-                << "Epsilon                      : " << epsilon << '\n'
-                << "Epsilon * Bbox width         : " << epsilon * bbox_max_width << "\n\n";
+                << "    " << CGAL::IO::oformat(vertices_of_min_edge[1], CGAL::With_point_tag{}) << "\n\n";
     }
     if(min_distance < epsilon * bbox_max_width) {
       std::cerr << "ERROR: min distance between vertices is too small\n";

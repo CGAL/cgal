@@ -4,6 +4,8 @@ project(Triangulation_3_Tests)
 find_package(CGAL REQUIRED)
 
 find_package(TBB QUIET)
+find_package(Eigen3 QUIET)
+include(CGAL_Eigen3_support)
 include(CGAL_TBB_support)
 
 include_directories(BEFORE "include")
@@ -45,10 +47,12 @@ create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_EDG_fi
 create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_OFF_file.cpp" CXX_FEATURES cxx_std_20)
 create_single_source_cgal_program( "cdt_3_from_off.cpp" CXX_FEATURES cxx_std_20)
 create_single_source_cgal_program( "cdt_3_from_off_with_Epeck.cpp" CXX_FEATURES cxx_std_20)
+target_link_libraries(cdt_3_from_off PUBLIC CGAL::Eigen3_support)
+target_link_libraries(cdt_3_from_off_with_Epeck PUBLIC CGAL::Eigen3_support)
 add_executable(cdt_3_from_off_CGAL_DEBUG_CDT_3 cdt_3_from_off)
 target_compile_definitions(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE CGAL_DEBUG_CDT_3=255)
 target_compile_features(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE cxx_std_20)
-target_link_libraries(cdt_3_from_off_CGAL_DEBUG_CDT_3 PUBLIC CGAL::CGAL CGAL::Data)
+target_link_libraries(cdt_3_from_off_CGAL_DEBUG_CDT_3 PUBLIC CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
 cgal_add_test(cdt_3_from_off_CGAL_DEBUG_CDT_3)
 
 add_executable(test_CDT_3_insert_constrained_edge_from_EDG_file cdt_test_insert_constrained_edge_from_EDG_file.cpp)
