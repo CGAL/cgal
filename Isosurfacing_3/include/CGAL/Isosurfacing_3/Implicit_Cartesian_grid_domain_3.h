@@ -29,7 +29,7 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Domains_grp
  *
- * \cgalModels{IsosurfacingDomainWithGradient_3}
+ * \cgalModels{IsosurfacingDomain_3,IsosurfacingDomainWithGradient_3}
  *
  * \brief A domain that represents a %Cartesian grid that discretizes an implicit function.
  *

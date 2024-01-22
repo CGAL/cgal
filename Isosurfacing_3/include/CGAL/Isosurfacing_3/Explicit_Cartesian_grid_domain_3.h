@@ -26,14 +26,17 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Domains_grp
  *
- * \cgalModels{IsosurfacingDomainWithGradient_3}
+ * \cgalModels{IsosurfacingDomain_3,IsosurfacingDomainWithGradient_3}
  *
  * \brief A domain that represents an explicitly stored %Cartesian grid.
+ *
+ * \warning The domain keeps a pointer to the `grid` object, hence users must ensure that
+ *          the lifetime of the `grid` object exceeds that of the object returned by this function.
  *
  * \tparam Grid must be a `CGAL::Isosurfacing::Cartesian_grid_3` whose `GeomTraits` template parameter
  *              is a model of `IsosurfacingTraits_3`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible`
- *                  and implement `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
+ *                  and implement `%Grid::GeomTraits::Vector_3 operator()(const %Grid::GeomTraits::Point_3& point) const`.
  *
  * \sa `CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain()`
  */
@@ -84,7 +87,7 @@ public:
  * \tparam Grid must be a `CGAL::Isosurfacing::Cartesian_grid_3` whose `GeomTraits` template parameter
  *              is a model of `IsosurfacingTraits_3`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible`
- *                  and implement `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
+ *                  and implement `%Grid::Geom_traits::Vector_3 operator()(const GeomTraits::Point_3& point) const
  *
  * \param grid the %Cartesian grid containing input data
  * \param gradient a function giving the value of the gradient of the implicit function at each discretization point

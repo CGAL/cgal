@@ -23,7 +23,7 @@ using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-int main(int, char**)
+int main(int argc, char** argv)
 {
   const Vector spacing(0.002, 0.002, 0.02);
   const CGAL::Bbox_3 bbox = {-1, -1, -1, 1, 1, 1};

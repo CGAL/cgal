@@ -145,43 +145,28 @@ public:
   /**
    * \return the number of grid vertices in the `x` direction
    */
-  std::size_t xdim() const
-  {
-    return m_sizes[0];
-  }
+  std::size_t xdim() const { return m_sizes[0]; }
 
   /**
    * \return the number of grid vertices in the `y` direction
    */
-  std::size_t ydim() const
-  {
-    return m_sizes[1];
-  }
+  std::size_t ydim() const { return m_sizes[1]; }
 
   /**
    * \return the number of grid vertices in the `z` direction
    */
-  std::size_t zdim() const
-  {
-    return m_sizes[2];
-  }
+  std::size_t zdim() const { return m_sizes[2]; }
 
   /**
    * \return the bounding box of the %Cartesian grid.
    */
-  const Bbox_3& bbox() const
-  {
-    return m_bbox;
-  }
+  const Bbox_3& bbox() const { return m_bbox; }
 
   /**
    * \return the spacing of the %Cartesian grid, that is a vector whose coordinates are
    *         the grid steps in the `x`, `y`, and `z` directions, respectively
    */
-  const std::array<FT, 3>& spacing() const
-  {
-    return m_spacing;
-  }
+  const std::array<FT, 3>& spacing() const { return m_spacing; }
 
   /**
    * \brief gets the geometric position of the grid vertex described by a set of indices.

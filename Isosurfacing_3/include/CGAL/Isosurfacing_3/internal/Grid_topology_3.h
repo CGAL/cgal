@@ -16,6 +16,8 @@
 
 #include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/tables.h>
+
+#include <CGAL/assertions.h>
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -60,7 +62,9 @@ public:
     : size_i{size_i},
       size_j{size_j},
       size_k{size_k}
-  { }
+  {
+    CGAL_precondition(size_i > 0 && size_j > 0 && size_k > 0);
+  }
 
   // gets a container with the two vertices incident to edge e
   Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const
