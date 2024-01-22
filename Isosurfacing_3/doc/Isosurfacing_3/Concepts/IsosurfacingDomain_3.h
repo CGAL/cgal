@@ -64,19 +64,19 @@ public:
 
   /*!
   A container for the cells incident to an edge.
-  Must be a model of the concept `Range` whose value type is `Cell_descriptor`.
+  Must be a model of the concept `ForwardRange` whose value type is `Cell_descriptor`.
   */
   typedef unspecified_type Cells_incident_to_edge;
 
   /*!
   A container for the vertices of a cell.
-  Must be a model of the concept `Range` whose value type is `Vertex_descriptor`.
+  Must be a model of the concept `ForwardRange` whose value type is `Vertex_descriptor`.
   */
   typedef unspecified_type Cell_vertices;
 
   /*!
   A container for the edges of a cell.
-  Must be a model of the concept `Range` whose value type is `Edge_descriptor`.
+  Must be a model of the concept `ForwardRange` whose value type is `Edge_descriptor`.
   */
   typedef unspecified_type Cell_edges;
 
