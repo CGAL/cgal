@@ -41,10 +41,10 @@ The provided algorithms include Marching Cubes, topologically correct Marching C
 - `IsosurfacingDomainWithGradient_3`
 
 \cgalCRPSection{Isosurfacing Domains}
-- `CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain()`
-- `CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain()`
 - `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
 - `CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3`
+- `CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain()`
+- `CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain()`
 - `CGAL::Isosurfacing::Cartesian_grid_3`
 - `CGAL::Isosurfacing::Zero_gradient`
 - `CGAL::Isosurfacing::Finite_difference_gradient_3`

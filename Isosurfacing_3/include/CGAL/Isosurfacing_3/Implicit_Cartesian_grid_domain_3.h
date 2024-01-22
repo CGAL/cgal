@@ -41,25 +41,61 @@ namespace Isosurfacing {
  *
  * \sa `CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain()`
  */
-#ifdef DOXYGEN_RUNNING // Otherwise it would show what is behind "using" in the doc
 template <typename GeomTraits,
           typename ImplicitFunction,
-          typename Gradient = Zero_gradient>
-using Implicit_Cartesian_grid_domain_3 = unspecified_type;
-#else
-template <typename GeomTraits,
-          typename ImplicitFunction,
-          typename Gradient = Zero_gradient,
-          typename Topology = internal::Grid_topology_3,
-          typename Geometry = internal::Implicit_Cartesian_grid_geometry_3<GeomTraits>,
-          typename Function = internal::Implicit_function_with_geometry<Geometry, ImplicitFunction> >
-using Implicit_Cartesian_grid_domain_3 =
-  internal::Isosurfacing_domain_3<GeomTraits,
-                                  Topology,
-                                  Geometry,
-                                  Function,
-                                  Gradient>;
+          typename Gradient = Zero_gradient
+#ifndef DOXYGEN_RUNNING // Do not document Topology, Geometry, Function
+          , typename Topology = internal::Grid_topology_3
+          , typename Geometry = internal::Implicit_Cartesian_grid_geometry_3<GeomTraits>
+          , typename Function = internal::Implicit_function_with_geometry<Geometry, ImplicitFunction>
 #endif
+          >
+class Implicit_Cartesian_grid_domain_3
+#ifndef DOXYGEN_RUNNING
+  : public internal::Isosurfacing_domain_3<GeomTraits, Topology, Geometry, Function, Gradient>
+#endif
+{
+private:
+  using Base = internal::Isosurfacing_domain_3<GeomTraits, Topology, Geometry, Function, Gradient>;
+
+public:
+  /**
+   * \brief creates a domain from an implicit function.
+   *
+   * \details The implicit function is evaluated at the vertices of the virtual grid
+   * defined by the bounding box and the spacing value. By not storing any function values explicitely,
+   * less overall memory is required in comparison to an `Explicit_Cartesian_grid_domain_3`.
+   *
+   * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
+   * \tparam ImplicitFunction the type of the implicit function. It must be a model of `CopyConstructible`
+   *                          and implement `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
+   * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
+   *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
+   *
+   * \param bbox a bounding box that specifies the dimensions of the implicit function's domain
+   * \param spacing the distance between discretization points
+   * \param point_function the implicit function giving the value of the implicit function at each discretization point
+   * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
+   * \param gt an instance of geometric traits
+   *
+   * \pre `spacing != CGAL::NULL_VECTOR`
+   */
+  Implicit_Cartesian_grid_domain_3(const CGAL::Bbox_3& bbox,
+                                   const typename GeomTraits::Vector_3& spacing,
+                                   const ImplicitFunction& point_function,
+                                   const Gradient& gradient = Gradient(),
+                                   const GeomTraits& gt = GeomTraits())
+    : Base(Topology { std::ceil(bbox.x_span() / gt.compute_x_3_object()(spacing)) + 1,
+                      std::ceil(bbox.y_span() / gt.compute_y_3_object()(spacing)) + 1,
+                      std::ceil(bbox.z_span() / gt.compute_z_3_object()(spacing)) + 1 },
+           Geometry { typename GeomTraits::Vector_3 { bbox.xmin(), bbox.ymin(), bbox.zmin() }, spacing },
+           Function { Geometry { typename GeomTraits::Vector_3{bbox.xmin(), bbox.ymin(), bbox.zmin()}, spacing },
+                      point_function },
+           gradient,
+           gt)
+  {
+  }
+};
 
 /**
  * \ingroup IS_Domains_grp
@@ -90,38 +126,13 @@ template <typename GeomTraits,
           typename ImplicitFunction,
           typename Gradient = Zero_gradient>
 Implicit_Cartesian_grid_domain_3<GeomTraits, ImplicitFunction, Gradient>
-create_implicit_Cartesian_grid_domain(const Bbox_3& bbox,
+create_implicit_Cartesian_grid_domain(const CGAL::Bbox_3& bbox,
                                       const typename GeomTraits::Vector_3& spacing,
                                       const ImplicitFunction& point_function,
                                       const Gradient& gradient = Gradient(),
                                       const GeomTraits& gt = GeomTraits())
 {
-  using Domain = Implicit_Cartesian_grid_domain_3<GeomTraits, ImplicitFunction, Gradient>;
-
-  using Topology = typename Domain::Topology;
-  using Geometry = typename Domain::Geometry;
-  using Function = typename Domain::Function;
-
-  typename GeomTraits::Compute_x_3 x_coord = gt.compute_x_3_object();
-  typename GeomTraits::Compute_y_3 y_coord = gt.compute_y_3_object();
-  typename GeomTraits::Compute_z_3 z_coord = gt.compute_z_3_object();
-
-  // calculate grid dimensions
-  const std::size_t size_i = std::ceil(bbox.x_span() / x_coord(spacing)) + 1;
-  const std::size_t size_j = std::ceil(bbox.y_span() / y_coord(spacing)) + 1;
-  const std::size_t size_k = std::ceil(bbox.z_span() / z_coord(spacing)) + 1;
-
-  CGAL_precondition(size_i > 0 && size_j > 0 && size_k > 0);
-
-  // @fixme recompute the spacing?
-
-  const typename GeomTraits::Vector_3 offset{bbox.xmin(), bbox.ymin(), bbox.zmin()};
-
-  const Topology topo { size_i, size_j, size_k };
-  const Geometry geom { offset, spacing };
-  const Function func { geom, point_function };
-
-  return Domain{ topo, geom, func, gradient, gt };
+  return { bbox, spacing, point_function, gradient, gt };
 }
 
 // @todo add an undocumented convenience overload with Vector_3<GeomTraits> to match CGAL kernels

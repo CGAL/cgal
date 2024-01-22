@@ -37,28 +37,46 @@ namespace Isosurfacing {
  *
  * \sa `CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain()`
  */
-#ifdef DOXYGEN_RUNNING // Do not document Topology, Geometry, Function
-template <typename Grid,
-          typename Gradient = Zero_gradient>
-using Explicit_Cartesian_grid_domain_3 = unspecified_type;
-#else
-template <typename Grid, // allow more than a Cartesian_grid_3
-          typename Gradient = Zero_gradient,
-          typename Topology = internal::Grid_topology_3,
-          typename Geometry = internal::Explicit_Cartesian_grid_geometry_3<Grid>,
-          typename Function = internal::Explicit_Cartesian_grid_function<Grid> >
-using Explicit_Cartesian_grid_domain_3 =
-  internal::Isosurfacing_domain_3<typename Grid::Geom_traits,
-                                  Topology,
-                                  Geometry,
-                                  Function,
-                                  Gradient>;
+template <typename Grid, // to allow more than a Cartesian_grid_3
+          typename Gradient = Zero_gradient
+#ifndef DOXYGEN_RUNNING // Do not document Topology, Geometry, Function
+          , typename Topology = internal::Grid_topology_3
+          , typename Geometry = internal::Explicit_Cartesian_grid_geometry_3<Grid>
+          , typename Function = internal::Explicit_Cartesian_grid_function<Grid>
 #endif
+          >
+class Explicit_Cartesian_grid_domain_3
+#ifndef DOXYGEN_RUNNING
+  : public internal::Isosurfacing_domain_3<typename Grid::Geom_traits,
+                                           Topology, Geometry, Function, Gradient>
+#endif
+{
+private:
+  using Base = internal::Isosurfacing_domain_3<typename Grid::Geom_traits,
+                                               Topology, Geometry, Function, Gradient>;
+
+public:
+  /**
+   * \brief creates a domain that can be used as input for isosurfacing algorithms.
+   *
+   * \param grid the %Cartesian grid containing input data
+   * \param gradient a function giving the value of the gradient at each discretization point
+   */
+  Explicit_Cartesian_grid_domain_3(const Grid& grid,
+                                   const Gradient& gradient = Gradient())
+    : Base(Topology { grid.xdim(), grid.ydim(), grid.zdim() },
+           Geometry { grid },
+           Function { grid },
+           gradient,
+           grid.geom_traits())
+  {
+  }
+};
 
 /**
  * \ingroup IS_Domains_grp
  *
- * \brief Creates a domain that can be used as input for isosurfacing algorithms.
+ * \brief creates a domain that can be used as input for isosurfacing algorithms.
  *
  * \warning The domain keeps a pointer to the `grid` object, hence users must ensure that
  *          the lifetime of the `grid` object exceeds that of the object returned by this function.
@@ -70,8 +88,6 @@ using Explicit_Cartesian_grid_domain_3 =
  *
  * \param grid the %Cartesian grid containing input data
  * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
- *
- * \return a new instance of `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
  */
 template <typename Grid, // allow passing more than just a Cartesian_grid_3
           typename Gradient = Zero_gradient>
@@ -79,21 +95,7 @@ Explicit_Cartesian_grid_domain_3<Grid, Gradient>
 create_explicit_Cartesian_grid_domain(const Grid& grid,
                                       const Gradient& gradient = Gradient())
 {
-  using Domain = Explicit_Cartesian_grid_domain_3<Grid, Gradient>;
-
-  using Topology = typename Domain::Topology;
-  using Geometry = typename Domain::Geometry;
-  using Function = typename Domain::Function;
-
-  const std::size_t size_i = grid.xdim();
-  const std::size_t size_j = grid.ydim();
-  const std::size_t size_k = grid.zdim();
-
-  const Topology topo { size_i, size_j, size_k };
-  const Geometry geom { grid };
-  const Function func { grid };
-
-  return Domain{ topo, geom, func, gradient, grid.geom_traits() };
+  return { grid, gradient };
 }
 
 } // namespace Isosurfacing
