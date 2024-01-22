@@ -1203,7 +1203,7 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
 {
   using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
   using Base = Output_rep<CC_iterator, With_offset_tag>;
-  using Time_stamper = Base::Time_stamper;
+  using Time_stamper = typename Base::Time_stamper;
 
   using Base::Base;
 
