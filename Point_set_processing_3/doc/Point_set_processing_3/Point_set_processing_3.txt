@@ -926,6 +926,18 @@ The following example reads a point set from a file, estimates the
 points that are on sharp edges:
 \cgalExample{Point_set_processing_3/edges_example.cpp}
 
+\section Point_set_processing_3LFSEstimation Local Feature Size Estimation
+
+The function `estimate_local_feature_size()` can estimate the local feature size for each point by giving a raw point set.
+
+The function will estimate the curvature and shape diameter. Then, the local feature size will be the minimum of the curvature radius and half of the shape diameter.
+
+\subsection Point_set_processing_3Example_LFS Example
+
+The following example reads a point set from a file, estimates the
+local feature size for each point:
+\cgalExample{Point_set_processing_3/lfs_example.cpp}
+
 
 \section Point_set_processing_3Structuring Structuring
 
