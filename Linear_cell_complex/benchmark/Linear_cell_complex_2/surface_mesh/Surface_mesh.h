@@ -1031,14 +1031,14 @@ public: //---------------------------------------------- low-level connectivity
     }
 
 
-    /// returns the \c i'th halfedge of edge \c e. \c i has to be 0 or 1.
+    /// returns the \c i-th halfedge of edge \c e. \c i has to be 0 or 1.
     Halfedge halfedge(Edge e, unsigned int i) const
     {
         assert(i<=1);
         return Halfedge((e.idx() << 1) + i);
     }
 
-    /// returns the \c i'th vertex of edge \c e. \c i has to be 0 or 1.
+    /// returns the \c i-th vertex of edge \c e. \c i has to be 0 or 1.
     Vertex vertex(Edge e, unsigned int i) const
     {
         assert(i<=1);

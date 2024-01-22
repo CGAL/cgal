@@ -94,20 +94,20 @@ public:
   //! @returns the item's bounding box.
   Scene_item::Bbox bbox()const override;
   //!
-  //! \brief getTriangleContainer returns the `id`th `Triangle_container`.
+  //! \brief getTriangleContainer returns the `id`-th `Triangle_container`.
   //!
   CGAL::Three::Triangle_container* getTriangleContainer(std::size_t id) const;
   //!
-  //! \brief getEdgeContainer returns the `id`th `Edge_container`.
+  //! \brief getEdgeContainer returns the `id`-th `Edge_container`.
   //!
   CGAL::Three::Edge_container* getEdgeContainer(std::size_t id) const;
   //!
-  //! \brief getPointContainer returns the `id`th `Point_container`.
+  //! \brief getPointContainer returns the `id`-th `Point_container`.
   //!
   CGAL::Three::Point_container* getPointContainer(std::size_t id) const;
 
   //!
-  //! \brief setTriangleContainer sets the `id`th `Triangle_container` to `tc`.
+  //! \brief setTriangleContainer sets the `id`-th `Triangle_container` to `tc`.
   //!
   //! If `id` is bigger than the current size of the container vector, this vector is
   //! resized accordingly. This means that for optimisation reasons, containers should be created
@@ -117,7 +117,7 @@ public:
                             Triangle_container* tc);
 
   //!
-  //! \brief setEdgeContainer sets the `id`th `Edge_container` to `tc`.
+  //! \brief setEdgeContainer sets the `id`-th `Edge_container` to `tc`.
   //!
   //! If `id` is bigger than the current size of the container vector, this vector is
   //! resized accordingly. This means that for optimisation reasons, containers should be created
@@ -127,7 +127,7 @@ public:
                         Edge_container* tc);
 
   //!
-  //! \brief setPointContainer sets the `id`th `Point_container` to `tc`.
+  //! \brief setPointContainer sets the `id`-th `Point_container` to `tc`.
   //!
   //! If `id` is bigger than the current size of the container vector, this vector is
   //! resized accordingly. This means that for optimisation reasons, containers should be created

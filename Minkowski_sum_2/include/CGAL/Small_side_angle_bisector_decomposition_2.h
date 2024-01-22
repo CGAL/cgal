@@ -443,7 +443,7 @@ private:
       vec[k].is_reflex = (f_orientation(*prev, *curr, *next) == RIGHT_TURN);
 
       // Set the number of reflex vertices from the beginning of the vector
-      // until the k'th (including itself).
+      // until the k-th (including itself).
       if (vec[k].is_reflex) ++reflex_count;
 
       vec[k].reflex_count = reflex_count;

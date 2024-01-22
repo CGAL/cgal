@@ -3983,7 +3983,7 @@ public:
 
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `p`.
+    returns an iterator on the zeroth %Cartesian coordinate of `p`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2
                                                 &p);
@@ -3995,7 +3995,7 @@ public:
                                                 &p, int);
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `v`.
+    returns an iterator on the zeroth %Cartesian coordinate of `v`.
   */
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2
                                                 &v);
@@ -4028,7 +4028,7 @@ public:
   /// @{
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `p`.
+    returns an iterator on the zeroth %Cartesian coordinate of `p`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Point_3
                                                 &p);
@@ -4040,7 +4040,7 @@ public:
                                                 &p, int);
 
   /*!
-    returns an iterator on the 0'th %Cartesian coordinate of `v`.
+    returns an iterator on the zeroth %Cartesian coordinate of `v`.
   */
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Vector_3
                                                 &v);
@@ -7130,7 +7130,7 @@ public:
                              &s, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `r` in counterclockwise order, starting with the lower left
     vertex. The parameter `i` is taken modulo 4.
   */
@@ -7138,7 +7138,7 @@ public:
                              Kernel::Iso_rectangle_2 &r, int i);
 
   /*!
-    returns the i'th vertex of `t`. The parameter
+    returns the i-th vertex of `t`. The parameter
     `i` is taken modulo 3.
   */
   Kernel::Point_2 operator()(const Kernel::Triangle_2
@@ -7179,7 +7179,7 @@ public:
                              &s, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `c`, as indicated in the figure below. The parameter `i` is
     taken modulo 8.
 
@@ -7188,14 +7188,14 @@ public:
                              Kernel::Iso_cuboid_3 &c, int i);
 
   /*!
-    returns the i'th vertex of `t`. The parameter
+    returns the i-th vertex of `t`. The parameter
     `i` is taken modulo 3.
   */
   Kernel::Point_3 operator()(const Kernel::Triangle_3
                              &t, int i);
 
   /*!
-    returns the i'th vertex of
+    returns the i-th vertex of
     `t`. The parameter `i` is taken modulo 4.
   */
   Kernel::Point_3 operator()(const
