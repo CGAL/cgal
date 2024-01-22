@@ -106,7 +106,8 @@ private:
 
   @param mesh the polygon mesh whose faces are used for region growing
   @param region_map a property map storing the region index of each face. Values start at `0` up to the value returned minus `1`.
-         `std::size_t(-1)` is put for faces with no region assigned (can only happen if `minimum_region_size > 1`).
+         `std::size_t(-1)` is put for faces with no region assigned (it can happen if `minimum_region_size > 1` or for a non-triangular
+          face having a fitting plane not satisfying the maximum distance criterium).
   @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   @return the number of regions detected
