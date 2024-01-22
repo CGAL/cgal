@@ -28,16 +28,16 @@ class Octree_geometry
 
 public:
   Octree_geometry(const Octree& octree)
-    : octree(octree)
+    : m_octree(octree)
   { }
 
   decltype(auto) /*Point_3*/ operator()(const Vertex_descriptor& v) const
   {
-    return octree.point(v);
+    return m_octree.point(v);
   }
 
 private:
-  const Octree& octree;
+  const Octree& m_octree;
 };
 
 } // namespace internal

@@ -46,47 +46,47 @@ public:
 
 public:
   Octree_topology(const Octree& octree)
-    : octree(octree)
+    : m_octree(octree)
   { }
 
   Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const
   {
-    return octree.edge_vertices(e);
+    return m_octree.edge_vertices(e);
   }
 
   Cells_incident_to_edge incident_cells(const Edge_descriptor& e) const
   {
-    return octree.edge_voxels(e);
+    return m_octree.edge_voxels(e);
   }
 
   Cell_vertices cell_vertices(const Cell_descriptor& c) const
   {
-    return octree.voxel_vertices(c);
+    return m_octree.voxel_vertices(c);
   }
 
   Cell_edges cell_edges(const Cell_descriptor& c) const
   {
-    return octree.voxel_edges(c);
+    return m_octree.voxel_edges(c);
   }
 
   template <typename Functor>
   void for_each_vertex(Functor& f, Sequential_tag) const
   {
-    for(const Vertex_descriptor& v : octree.leaf_vertices())
+    for(const Vertex_descriptor& v : m_octree.leaf_vertices())
       f(v);
   }
 
   template <typename Functor>
   void for_each_edge(Functor& f, Sequential_tag) const
   {
-    for(const Edge_descriptor& e : octree.leaf_edges())
+    for(const Edge_descriptor& e : m_octree.leaf_edges())
       f(e);
   }
 
   template <typename Functor>
   void for_each_cell(Functor& f, Sequential_tag) const
   {
-    for(const Cell_descriptor& v : octree.leaf_voxels())
+    for(const Cell_descriptor& v : m_octree.leaf_voxels())
       f(v);
   }
 
@@ -94,7 +94,7 @@ public:
   template <typename Functor>
   void for_each_vertex(Functor& f, Parallel_tag) const
   {
-    const auto& vertices = octree.leaf_vertices();
+    const auto& vertices = m_octree.leaf_vertices();
 
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
     {
@@ -108,7 +108,7 @@ public:
   template <typename Functor>
   void for_each_edge(Functor& f, Parallel_tag) const
   {
-    const auto& edges = octree.leaf_edges();
+    const auto& edges = m_octree.leaf_edges();
 
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
     {
@@ -122,7 +122,7 @@ public:
   template <typename Functor>
   void for_each_cell(Functor& f, Parallel_tag) const
   {
-    const auto& cells = octree.leaf_voxels();
+    const auto& cells = m_octree.leaf_voxels();
 
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
     {
@@ -135,7 +135,7 @@ public:
 #endif // CGAL_LINKED_WITH_TBB
 
 private:
-  const Octree& octree;
+  const Octree& m_octree;
 };
 
 } // namespace internal

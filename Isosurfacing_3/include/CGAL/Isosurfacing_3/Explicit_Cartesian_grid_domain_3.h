@@ -31,7 +31,7 @@ namespace Isosurfacing {
  * \brief A domain that represents an explicitly stored %Cartesian grid.
  *
  * \warning The domain keeps a pointer to the `grid` object, hence users must ensure that
- *          the lifetime of the `grid` object exceeds that of the object returned by this function.
+ *          the lifetime of the `grid` object exceeds that of this object.
  *
  * \tparam Grid must be a `CGAL::Isosurfacing::Cartesian_grid_3` whose `GeomTraits` template parameter
  *              is a model of `IsosurfacingTraits_3`.
@@ -87,7 +87,7 @@ public:
  * \tparam Grid must be a `CGAL::Isosurfacing::Cartesian_grid_3` whose `GeomTraits` template parameter
  *              is a model of `IsosurfacingTraits_3`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible`
- *                  and implement `%Grid::Geom_traits::Vector_3 operator()(const GeomTraits::Point_3& point) const
+ *                  and implement `%Grid::Geom_traits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
  * \param grid the %Cartesian grid containing input data
  * \param gradient a function giving the value of the gradient of the implicit function at each discretization point

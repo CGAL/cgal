@@ -31,7 +31,10 @@ namespace Isosurfacing {
  *
  * \brief A domain that represents an octree that discretizes an implicit function.
  *
- * \tparam Octree must be a model of `...`.
+ * \warning The domain keeps a pointer to the `octree` object, hence users must ensure that
+ *          the lifetime of the `octree` object exceeds that of this object.
+ *
+ * \tparam Octree must be a `CGAL::Octree<GeomTraits>`.
  * \tparam ImplicitFunction the type of the implicit function. It must be a model of CopyConstructible implement
  *                          `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
@@ -39,28 +42,48 @@ namespace Isosurfacing {
  */
 template <typename Octree,
           typename ImplicitFunction,
-          typename Gradient = Zero_gradient,
-          typename Topology = internal::Octree_topology<Octree>,
-          typename Geometry = internal::Octree_geometry<Octree> >
-using Implicit_octree_domain =
-  internal::Isosurfacing_domain_3<typename Octree::Geom_traits,
-                                  Topology,
-                                  Geometry,
-                                  internal::Implicit_function_with_geometry<Geometry, ImplicitFunction>,
-                                  Gradient>;
+          typename Gradient = Zero_gradient
+#ifndef DOXYGEN_RUNNING // Do not document Topology, Geometry, Function
+          , typename Topology = internal::Octree_topology<Octree>
+          , typename Geometry = internal::Octree_geometry<Octree>
+          , typename Function = internal::Implicit_function_with_geometry<Geometry, ImplicitFunction>
+#endif
+          >
+class Implicit_octree_domain
+#ifndef DOXYGEN_RUNNING
+  : public internal::Isosurfacing_domain_3<typename Octree::Geom_traits,
+                                           Topology, Geometry, Function, Gradient>
+#endif
+{
+  using Base = internal::Isosurfacing_domain_3<typename Octree::Geom_traits,
+                                               Topology, Geometry, Function, Gradient>;
+
+public:
+  Implicit_octree_domain(const Octree& octree,
+                         const ImplicitFunction& point_function,
+                         const Gradient& gradient = Gradient())
+    : Base(Topology { octree },
+           Geometry { octree },
+           Function { Geometry { octree }, point_function },
+           gradient,
+           octree.geom_traits())
+  {
+  }
+};
 
 /*
  * \ingroup IS_Domains_grp
  *
  * \brief creates a domain from an octree that can be used as input for isosurfacing algorithms.
  *
- * \details The implicit function will be evaluated on the octree vertices.
+ * \warning The domain keeps a pointer to the `octree` object, hence users must ensure that
+ *          the lifetime of the `octree` object exceeds that of the object returned by this function.
  *
- * \tparam GeomTraits must be a model of `Kernel`.
- * \tparam ImplicitFunction the type of the implicit function. It must be a model of `CopyConstructible` and implement
- *                          `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
+ * \tparam Octree must be a `CGAL::Octree<GeomTraits>`.
+ * \tparam ImplicitFunction the type of the implicit function. It must be a model of `CopyConstructible`
+ *                          and implement `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
- *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
+ *                  `Octree::GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
  * \param octree an octree
  * \param point_function the function with a point as argument
@@ -68,36 +91,15 @@ using Implicit_octree_domain =
  *
  * \return a new `CGAL::Implicit_octree_domain`
  */
-#ifdef DOXYGEN_RUNNING // allow more than the Octree_wrapper
-template <typename GeomTraits,
-          typename ImplicitFunction,
-          typename Gradient = Zero_gradient>
-auto create_implicit_octree_domain(const internal::Octree_wrapper<Octree<GeomTraits> >& octree,
-                                   const ImplicitFunction& point_func,
-                                   const Gradient& grad = Gradient())
-{
-  using Octree = internal::Octree_wrapper<Octree<GeomTraits> >;
-#else
 template <typename Octree,
           typename ImplicitFunction,
           typename Gradient = Zero_gradient>
-auto create_implicit_octree_domain(const Octree& octree,
-                                   const ImplicitFunction& point_func,
-                                   const Gradient& gradient = Gradient())
+Implicit_octree_domain<Octree, ImplicitFunction, Gradient>
+create_implicit_octree_domain(const Octree& octree,
+                              const ImplicitFunction& point_function,
+                              const Gradient& gradient = Gradient())
 {
-#endif
-  using Domain = Implicit_octree_domain<Octree, ImplicitFunction, Gradient>;
-
-  using Topology = typename Domain::Topology;
-  using Geometry = typename Domain::Geometry;
-  using Function = typename Domain::Function;
-
-  const Topology topo { octree };
-  const Geometry geom { octree };
-  const Function func { geom, point_func };
-
-  // @fixme Octree_wrapper's geom_traits() isn't octree's geom_traits()...
-  return Domain{ topo, geom, func, gradient, octree.geom_traits() };
+  return { octree, point_function, gradient };
 }
 
 } // namespace Isosurfacing
