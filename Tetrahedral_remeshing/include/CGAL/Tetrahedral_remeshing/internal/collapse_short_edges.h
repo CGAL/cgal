@@ -216,6 +216,7 @@ public:
       } while (++circ != done);
 
 #ifdef PROTECT_ANGLES_FROM_COLLAPSE
+      const Dihedral_angle_cosine acceptable_max_cos(0.995); // 0.995 cos <=> 5.7 degrees
       Dihedral_angle_cosine curr_max_cos
         = max_cos_dihedral_angle(triangulation, cells_to_remove[0]);
       for (std::size_t i = 1; i < cells_to_remove.size(); ++i)
@@ -280,7 +281,11 @@ public:
         if (!triangulation.tds().is_valid(cit, true))
           return C_PROBLEM;
 #ifdef PROTECT_ANGLES_FROM_COLLAPSE
-        if (curr_max_cos < max_cos_dihedral_angle(triangulation, cit))
+
+        auto max_cos_after_collapse = max_cos_dihedral_angle(triangulation, cit);
+
+        if ( curr_max_cos < max_cos_after_collapse // angles decreased
+          && acceptable_max_cos < max_cos_after_collapse) // && angles go below acceptable bound
           return ANGLE_PROBLEM;
 #endif
       }
