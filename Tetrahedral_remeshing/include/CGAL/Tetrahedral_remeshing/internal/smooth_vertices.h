@@ -36,7 +36,7 @@ namespace Tetrahedral_remeshing
 {
 namespace internal
 {
-template<typename C3t3, typename SizingFunction>
+template<typename C3t3, typename SizingFunction, typename CellSelector>
 class Tetrahedral_remeshing_smoother
 {
   typedef typename C3t3::Triangulation       Tr;
@@ -59,6 +59,7 @@ private:
   const bool m_smooth_constrained_edges;
 
   const SizingFunction& m_sizing;
+  const CellSelector& m_cell_selector;
 
   // the 2 following variables become useful and valid
   // just before flip/smooth steps, when no vertices get inserted
@@ -69,9 +70,11 @@ private:
 
 public:
   Tetrahedral_remeshing_smoother(const SizingFunction& sizing,
+                                 const CellSelector& cell_selector,
                                  const bool protect_boundaries,
                                  const bool smooth_constrained_edges)
     : m_sizing(sizing)
+    , m_cell_selector(cell_selector)
     , m_protect_boundaries(protect_boundaries)
     , m_smooth_constrained_edges(smooth_constrained_edges)
     , m_flip_smooth_steps(false)
@@ -114,6 +117,11 @@ public:
   }
 
 private:
+
+  const bool is_selected(const Cell_handle c) const
+  {
+    return get(m_cell_selector, c);
+  }
 
   const auto& vertex_id_map(const Tr& tr)
   {
@@ -177,9 +185,6 @@ private:
   {
     for (const Cell_handle c : tr.finite_cell_handles())
     {
-//      if(!get(cell_selector, c))
-//        continue;
-
       for (auto vi : tr.vertices(c))
       {
         const std::size_t idi = m_vertex_id.at(vi);
@@ -447,11 +452,28 @@ private:
     return Point_3(result[0], result[1], result[2]);
   }
 
+  Dihedral_angle_cosine max_cosine(const Tr& tr,
+    const boost::container::small_vector<Cell_handle, 40>& cells)
+  {
+    Dihedral_angle_cosine max_cos_dh = cosine_of_90_degrees();// = 0.
+    for (Cell_handle c : cells)
+    {
+      if(!is_selected(c))
+        continue;
+      Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr, c, false);
+      if (max_cos_dh < cos_dh)
+        max_cos_dh = cos_dh;
+    }
+    return max_cos_dh;
+  }
+
+  // in flip-smooth steps, this function also checks that it improves
+  // dihedral angles
   template<typename CellRange, typename Tr>
   bool check_inversion_and_move(const typename Tr::Vertex_handle v,
                                 const typename Tr::Geom_traits::Point_3& final_pos,
                                 const CellRange& inc_cells,
-                                const Tr& /* tr */,
+                                const Tr& tr,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
                                 FT& total_move)
 #else
@@ -462,14 +484,23 @@ private:
     const typename Tr::Geom_traits::Point_3 pv = point(backup);
 
     bool valid_orientation = false;
+    bool angles_improved = true;
     double frac = 1.0;
     typename Tr::Geom_traits::Vector_3 move(pv, final_pos);
 
+    const Dihedral_angle_cosine curr_max_cos = m_flip_smooth_steps
+      ? max_cosine(tr, inc_cells)
+      : Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);//Dummy unused value
+
+    bool valid_try = true;
     do
     {
       v->set_point(typename Tr::Point(pv + frac * move));
 
-      bool valid_try = true;
+      valid_try = true;
+      valid_orientation = true;
+      angles_improved = true;
+
       for (const typename Tr::Cell_handle& ci : inc_cells)
       {
         if (CGAL::POSITIVE != CGAL::orientation(point(ci->vertex(0)->point()),
@@ -479,14 +510,33 @@ private:
         {
           frac = 0.9 * frac;
           valid_try = false;
+          valid_orientation = false;
           break;
         }
+        else if (m_flip_smooth_steps) //check that dihedral angles get improved
+        {
+          if(is_selected(ci))
+          {
+            Dihedral_angle_cosine max_cos_ci = max_cos_dihedral_angle(tr, ci, false);
+            if (curr_max_cos < max_cos_ci)
+            {
+              // keep move only if new cosine is smaller than previous one
+              // i.e. if angle is larger
+              frac = 0.9 * frac;
+              valid_try = false;
+              angles_improved = false;
+              break;
+            }
+          }
+        }
       }
-      valid_orientation = valid_try;
     }
-    while(!valid_orientation && frac > 0.1);
+    while(!valid_try && frac > 0.1);
 
-    if (!valid_orientation) //move failed
+    // if move failed, cancel move
+    bool valid_move =  valid_orientation && angles_improved;
+
+    if(!valid_move)
       v->set_point(backup);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -494,7 +544,7 @@ private:
       total_move += CGAL::approximate_sqrt(CGAL::squared_distance(pv, point(v->point())));
 #endif
 
-    return valid_orientation;
+    return valid_move;
   }
 
   void collect_vertices_surface_indices(
