@@ -331,9 +331,9 @@ operator Image_3() const
     sign = SGN_UNSIGNED;
 
   // get spacing
-  const double vx = m_spacing[0];
-  const double vy = m_spacing[1];
-  const double vz = m_spacing[2];
+  const double vx = CGAL::to_double(m_spacing[0]);
+  const double vy = CGAL::to_double(m_spacing[1]);
+  const double vz = CGAL::to_double(m_spacing[2]);
 
   // create image
   _image* im = _createImage(xdim(), ydim(), zdim(),
@@ -348,12 +348,13 @@ operator Image_3() const
     throw std::bad_alloc();  // @todo idk?
 
   // set min coordinates
-  im->tx = m_bbox.xmin();
-  im->ty = m_bbox.ymin();
-  im->tz = m_bbox.zmin();
+  const Point_3& min_p = vertex(m_bbox, 0);
+  im->tx = float(CGAL::to_double(x_coord(min_p)));
+  im->ty = float(CGAL::to_double(y_coord(min_p)));
+  im->tz = float(CGAL::to_double(z_coord(min_p)));
 
   // copy data
-  FT* data = static_cast<FT*>(im->data);
+  FT* data = static_cast<FT*>(im->data); // @fixme what compatibility with non trivial FTs?
   for(std::size_t x=0; x<xdim(); ++x) {
     for(std::size_t y=0; y<ydim(); ++y) {
       for(std::size_t z=0; z<zdim(); ++z)

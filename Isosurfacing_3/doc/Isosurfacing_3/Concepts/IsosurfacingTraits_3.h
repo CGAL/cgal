@@ -18,19 +18,19 @@ public:
 
   /*!
   The scalar type.
-  Must be a model of `FieldNumberType`
+  Must be a model of `FieldNumberType`.
   */
   typedef unspecified_type FT;
 
   /*!
   The 3D point type.
-  Must be a model of `DefaultConstructible` and `CopyConstructible`
+  Must be a model of `Kernel::Point_3`.
   */
   typedef unspecified_type Point_3;
 
   /*!
   The 3D vector type.
-  Must be a model of `DefaultConstructible` and `CopyConstructible`
+  Must be a model of `Kernel::Vector_3`.
   */
   typedef unspecified_type Vector_3;
 

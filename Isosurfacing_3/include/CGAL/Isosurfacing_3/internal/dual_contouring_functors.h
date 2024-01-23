@@ -94,8 +94,8 @@ public:
       const Vertex_descriptor& v0 = edge_vertices[0];
       const Vertex_descriptor& v1 = edge_vertices[1];
 
-      const FT& val0 = domain.value(v0);
-      const FT& val1 = domain.value(v1);
+      const FT val0 = domain.value(v0);
+      const FT val1 = domain.value(v1);
 
       const Point_3& p0 = domain.point(v0);
       const Point_3& p1 = domain.point(v1);
@@ -363,7 +363,7 @@ public:
   void operator()(const Cell_descriptor& v)
   {
     // compute dc-vertices
-    Point_3 p; // fixme: initialize?
+    Point_3 p; // @fixme initialize?
     if(positioning.position(domain, isovalue, v, p))
     {
       std::lock_guard<std::mutex> lock(mutex);
@@ -377,7 +377,7 @@ public:
   const FT isovalue;
   const Positioning& positioning;
 
-  std::map<Cell_descriptor, std::size_t> map_voxel_to_point_id;
+  std::map<Cell_descriptor, std::size_t> map_voxel_to_point_id; // @todo unordered?
   std::map<Cell_descriptor, Point_3> map_voxel_to_point;
   std::size_t points_counter;
 

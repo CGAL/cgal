@@ -49,8 +49,8 @@ int main(int, char**)
   Point_range points;
   Polygon_range polygons;
 
-  // run duak contouring with isovalue set to 0.0
-  CGAL::Isosurfacing::dual_contouring(domain, 0.0, points, polygons);
+  // run dual contouring with isovalue set to 0
+  CGAL::Isosurfacing::dual_contouring(domain, 0., points, polygons);
 
   // save output to the OFF format
   CGAL::IO::write_OFF("dual_contouring_implicit_iwp.off", points, polygons);
