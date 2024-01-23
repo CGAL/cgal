@@ -215,21 +215,20 @@ public:
   bool position(const Domain& domain,
                 const typename Domain::Geom_traits::FT isovalue,
                 const typename Domain::Cell_descriptor& vh,
-                typename Domain::Geom_traits::Point_3& point) const
+                typename Domain::Geom_traits::Point_3& p) const
   {
     using FT = typename Domain::Geom_traits::FT;
     using Point_3 = typename Domain::Geom_traits::Vector_3;
 
     using Vertex_descriptor = typename Domain::Vertex_descriptor;
 
+    auto x_coord = domain.geom_traits().compute_x_3_object();
+    auto y_coord = domain.geom_traits().compute_y_3_object();
+    auto z_coord = domain.geom_traits().compute_z_3_object();
+    auto point = domain.geom_traits().construct_point_3_object();
+
     typename Domain::Cell_vertices vertices = domain.cell_vertices(vh);
-
-    std::vector<Point_3> pos(vertices.size());
-    std::transform(vertices.begin(), vertices.end(), pos.begin(),
-                   [&](const Vertex_descriptor& v) { return domain.point(v); });
-
-    // set point to cell center
-    point = CGAL::centroid(pos.begin(), pos.end(), CGAL::Dimension_tag<0>());
+    const std::size_t cn = vertices.size();
 
     bool all_smaller = true;
     bool all_greater = true;
@@ -242,6 +241,18 @@ public:
 
     if(all_smaller || all_greater)
       return false;
+
+    FT x(0), y(0), z(0);
+    for(const auto& v : vertices)
+    {
+      const Point_3 cp = domain.point(v);
+      x += x_coord(cp);
+      y += y_coord(cp);
+      z += z_coord(cp);
+    }
+
+    // set point to cell center
+    p = point(x / cn, y / cn, z / cn);
 
     return true;
   }
@@ -269,7 +280,7 @@ public:
   bool position(const Domain& domain,
                 const typename Domain::Geom_traits::FT isovalue,
                 const typename Domain::Cell_descriptor& cell,
-                typename Domain::Geom_traits::Point_3& point) const
+                typename Domain::Geom_traits::Point_3& p) const
   {
     using FT = typename Domain::Geom_traits::FT;
     using Point_3 = typename Domain::Geom_traits::Point_3;
@@ -278,7 +289,10 @@ public:
     using Vertex_descriptor = typename Domain::Vertex_descriptor;
     using Edge_descriptor = typename Domain::Edge_descriptor;
 
-    typename Domain::Cell_vertices vertices = domain.cell_vertices(cell);
+    auto x_coord = domain.geom_traits().compute_x_3_object();
+    auto y_coord = domain.geom_traits().compute_y_3_object();
+    auto z_coord = domain.geom_traits().compute_z_3_object();
+    auto point = domain.geom_traits().construct_point_3_object();
 
     // compute edge intersections
     std::vector<Point_3> edge_intersections;
@@ -299,16 +313,26 @@ public:
       {
         // current edge is intersected by the isosurface
         const FT u = (val0 - isovalue) / (val0 - val1);
-        const Point_3 p_lerp = CGAL::ORIGIN + ((FT(1) - u) * (p0 - CGAL::ORIGIN) + u * (p1 - CGAL::ORIGIN));
+        const Point_3 p_lerp = point((FT(1) - u) * x_coord(p0) + u * x_coord(p1),
+                                     (FT(1) - u) * y_coord(p0) + u * y_coord(p1),
+                                     (FT(1) - u) * z_coord(p0) + u * z_coord(p1));
         edge_intersections.push_back(p_lerp);
       }
     }
 
-    if(edge_intersections.empty())
+    const std::size_t en = edge_intersections.size();
+    if(en == 0)
       return false;
 
-    point = CGAL::centroid(edge_intersections.begin(), edge_intersections.end(),
-                            CGAL::Dimension_tag<0>());  // set point to center of edge intersections
+    FT x(0), y(0), z(0);
+    for(const Point_3& p : edge_intersections)
+    {
+      x += x_coord(p);
+      y += y_coord(p);
+      z += z_coord(p);
+    }
+
+    p = point(x / en, y / en, z / en);
 
     return true;
   }
