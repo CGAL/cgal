@@ -173,6 +173,12 @@ struct Dihedral_angle_cosine
     , m_sq_den(sq_den)
   {}
 
+  Dihedral_angle_cosine(const double val)
+    : m_sgn(CGAL::sign(val))
+    , m_sq_num(CGAL::square(val))
+    , m_sq_den(1.)
+  {}
+
   bool is_one() const
   {
     return m_sgn == CGAL::POSITIVE && m_sq_num == m_sq_den;
@@ -203,6 +209,11 @@ struct Dihedral_angle_cosine
       CGAL_assertion(m_sgn == CGAL::NEGATIVE);
       return -1. * CGAL::approximate_sqrt(m_sq_num / m_sq_den);
     };
+  }
+
+  double angle_value() const
+  {
+    return std::acos(this->value()) * 180. / CGAL_PI;
   }
 
   friend bool operator<(const Dihedral_angle_cosine& l,
@@ -244,6 +255,11 @@ struct Dihedral_angle_cosine
          &&  l.m_sq_num * r.m_sq_den == r.m_sq_num * l.m_sq_den;
   }
 };
+
+Dihedral_angle_cosine cosine_of_90_degrees()
+{
+  return Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);
+}
 
 template<typename Gt>
 Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
