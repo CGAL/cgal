@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
   for (std::size_t i = 0; i < grid.xdim(); i++)
     for (std::size_t j = 0; j < grid.ydim(); j++)
       for (std::size_t k = 0; k < grid.zdim(); k++)
-        grid.value(i, j, k) = 2 * 1120 - grid.value(i, j, k);
+        grid.value(i, j, k) = -grid.value(i, j, k);
 
   // create a domain from the grid
   auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   Polygon_range polygons;
 
   // execute marching cubes
-  CGAL::Isosurfacing::marching_cubes(domain, 1120 /*isovalue*/, points, polygons);
+  CGAL::Isosurfacing::marching_cubes(domain, -2.9 /*isovalue*/, points, polygons);
 
   // save output indexed mesh to a file, in the OFF format
   CGAL::IO::write_OFF("marching_cubes_inrimage.off", points, polygons);
