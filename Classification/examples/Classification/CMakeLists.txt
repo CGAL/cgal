@@ -42,7 +42,7 @@ create_single_source_cgal_program( "example_ethz_random_forest.cpp" )
 create_single_source_cgal_program( "example_feature.cpp" )
 create_single_source_cgal_program( "example_advanced_features.cpp" )
 create_single_source_cgal_program( "example_generate_advanced_features.cpp" )
-create_single_source_cgal_program( "example_pcl_feature.cpp" )
+create_single_source_cgal_program( "example_multi_dim_feature.cpp" )
 create_single_source_cgal_program( "example_generation_and_training.cpp" )
 create_single_source_cgal_program( "example_mesh_classification.cpp" )
 create_single_source_cgal_program( "example_cluster_classification.cpp" )
@@ -66,7 +66,7 @@ foreach(target
     example_feature
     example_advanced_features
     example_generate_advanced_features
-    example_pcl_feature
+    example_multi_dim_feature
     example_generation_and_training
     example_mesh_classification
     example_cluster_classification
@@ -113,7 +113,7 @@ if(PCL_FOUND)
     include_directories(${PCL_INCLUDE_DIRS})
     add_definitions(${PCL_DEFINITIONS})
     link_directories(${PCL_LIBRARY_DIRS})
-    target_link_libraries(example_pcl_feature PUBLIC ${PCL_LIBRARIES})
+    target_link_libraries(example_multi_dim_feature PUBLIC ${PCL_LIBRARIES})
 else()
   message("NOTICE: PCL was not found. The PCL feature descriptor example won't be available.")
 endif()

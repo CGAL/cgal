@@ -170,24 +170,7 @@ public:
     \return a list of handles to each dimension of the newly added feature.
   */
   template <typename Feature, typename ... T>
-  std::vector<Feature_handle> add_multidimensional_feature (std::size_t n, T&& ... t)
-  {
-    std::vector<Feature_handle> handles;
-    handles.reserve(n);
-    for (std::size_t i = 0; i < n; ++i) {
-      this->add<Feature>(i, t...);
-      handles.push_back(m_features.back());
-    }
-    return handles;
-  }
-
-  /*!
-  \brief a second implementation that implements a different API. To use this
-  function the user must define a `Feature_base_multidim` rather than
-  `Feature_base`.
-  */
-  template <typename Feature, typename ... T>
-  std::vector<Feature_handle> add_multidimensional_feature2(std::size_t n_points, std::size_t n_dims, T&& ... t)
+  std::vector<Feature_handle> add_multidimensional_feature(std::size_t n_dims, T&& ... t)
   {
     Feature_handle multidim_handle(std::make_unique<Feature>(std::forward<T>(t)...));
     std::vector<Feature_handle> handles;
@@ -201,7 +184,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   template <typename Feature, typename ... T>
-  std::vector<Feature_handle> add_multidimensional_feature_with_scale_id (std::size_t i, std::size_t n_points, std::size_t n_dims, T&& ... t)
+  std::vector<Feature_handle> add_multidimensional_feature_with_scale_id (std::size_t i, std::size_t n_dims, T&& ... t)
   {
     if (m_features.capacity() < m_features.size() + n_dims)
     {

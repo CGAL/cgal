@@ -45,11 +45,10 @@ int main(int argc, char** argv)
     if (argc == 1) {
         std::cout << "Usage: " << argv[0] << " filename scale alpha offset" << std::endl;
     }
-    std::string filename = (argc > 1) ? argv[1] : "C:/Users/rdyke/Documents/Datasets/ROAD-AI/Chambon/Chambon_Scan_Riegl_20210712.ply";
+    std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/b9.ply");
     filename = "C:/Users/rdyke/Documents/Datasets/ROAD-AI/Chambon/Chambon_Scan_Riegl_20210712_small.ply";
-    //filename = "C:/Users/rdyke/Documents/Research/ROAD-AI/Betti\ number/wrap_intersect_smaller_2_comp.ply";
-    //filename = "C:/Users/rdyke/Documents/Datasets/ROAD-AI/Talus_CereMap3D/Run1-Falaise-Sud-training_data.ply";
-    filename = CGAL::data_file_path("meshes/b9.ply");
+    //filename = "C:/Users/rdyke/Documents/MATLAB/Fractal dim data generator/line.ply";
+    //filename = "C:/Users/rdyke/Documents/MATLAB/Fractal dim data generator/plane.ply";
 
     std::ifstream in(filename.c_str(), std::ios::binary);
     Point_set pts;
@@ -132,12 +131,7 @@ int main(int argc, char** argv)
     }
     std::cout << "done" << std::endl;
 
-    //CGAL::IO::write_PLY("computed_features.ply", pts, CGAL::parameters::use_binary_mode(true));
-#ifdef CGAL_LINKED_WITH_EMBREE
-    CGAL::IO::write_PLY("computed_features_EMBREE.ply", pts, CGAL::parameters::use_binary_mode(false));
-#else
-    CGAL::IO::write_PLY("computed_features_AABB.ply", pts, CGAL::parameters::use_binary_mode(false));
-#endif
+    CGAL::IO::write_PLY("computed_features.ply", pts, CGAL::parameters::use_binary_mode(true));
     std::cout << "Completed successfully" << std::endl;
     return EXIT_SUCCESS;
 }

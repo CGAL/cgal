@@ -9,7 +9,6 @@
 #define COMPUTE_BETTI true
 #define COMPUTE_FRACTAL_DIMENSIONALITY false
 
-
 // Features
 #include <CGAL/Classification/Feature/Fractal_dimensionality.h>
 #include <CGAL/Classification/Feature/Coverage.h>
@@ -44,7 +43,6 @@ typedef Classification::Point_set_feature_generator<Kernel, Point_set, Pmap>    
 using Neighborhood = Classification::Point_set_neighborhood<Kernel, Point_set, Pmap>;
 using Neighbor_query = typename Neighborhood::Sphere_neighbor_query;
 
-
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/alpha_wrap_3.h>
 namespace AW3 = CGAL::Alpha_wraps_3;
@@ -52,7 +50,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_Alpha;
 typedef Kernel_Alpha::Point_3 Point_Alpha;
 using Point_container = std::vector<Point_Alpha>;
 using Mesh = CGAL::Surface_mesh<Point_Alpha>;
-
 
 int main(int argc, char** argv)
 {
@@ -84,7 +81,7 @@ int main(int argc, char** argv)
     const float radius_size = (argc > 2) ? atof(argv[2]) : 0.5f; //0.1; specify radius of neighborhoods (default: 10cm)
     const float voxel_size = radius_size / 3.f; // re-scale for CGAL's feature generator
 
-    // wrap surface
+    // Wrap point cloud
     // Compute the alpha and offset values
     const double relative_alpha = (argc > 3) ? std::stod(argv[3]) : 0.1f;
     const double relative_offset = (argc > 4) ? std::stod(argv[4]) : 2.f;
@@ -125,7 +122,6 @@ int main(int argc, char** argv)
     Feature_set features;
     std::cerr << "Initialising feature generator...";
 
-    //const float radius_size = (argc > 2) ? atof(argv[2]) : 0.1f; // specify radius of neighborhoods (default: 10cm)
     t.reset(); t.start();
     Feature_generator generator(pts, pts.point_map(), 5, voxel_size);  // using 5 scales
     t.stop();
@@ -153,7 +149,7 @@ int main(int argc, char** argv)
         std::cout << "Computing skeletonize feature..." << std::endl;
         t.reset(); t.start();
         using MySkeleton = CGAL::Classification::Feature::Skeleton<Kernel, Point_set, Pmap, Mesh>;
-        features.add_multidimensional_feature2<MySkeleton>(2, pts, pts.point_map(), wrap);
+        features.add_multidimensional_feature<MySkeleton>(2, pts, pts.point_map(), wrap);
         std::cout << "done in " << t.time() << " second(s)" << std::endl;
     }
 

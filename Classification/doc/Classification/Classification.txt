@@ -60,6 +60,10 @@ This feature can then be instantiated from the feature set the same way as the o
 
 \snippet Classification/example_feature.cpp Addition
 
+If a feature comprises of a higher dimensional descriptor the user-defined feature must inherit from [Feature_base_multi_dim](@ref CGAL::Classification::Feature_base_multi_dim) and provide a method [value()](@ref CGAL::Classification::Feature_base_multi_dim::value). Similarly, the multi-dimensional feature is instantiated from the feature set as so:
+
+\snippet Classification/example_multi_dim_feature.cpp Addition
+
 \section Classification_structures_specialized Specialized Data Structures
 
 %Classification is based on the computation of local features. These features can take advantage of shared data structures that are precomputed and stored separately. Both these features and the underlying data structures depend on the type of data that needs to be classified. \cgal provides data structures to classify point sets, surface meshes and clusters.
@@ -529,7 +533,7 @@ The following example:
 
 The following example shows how to add multi-dimensional features from the [Point Cloud Library](https://pointclouds.org/).
 
-\cgalExample{Classification/example_pcl_feature.cpp}
+\cgalExample{Classification/example_multi_dim_feature.cpp}
 
 \section Classification_history History
 
