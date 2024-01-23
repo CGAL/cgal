@@ -158,7 +158,8 @@ public:
 
       const FT d_k = n_k.transpose() * p_k;
 
-      Eigen_matrix_3 A_k = n_k * n_k.transpose();
+      // have to cast to cast to the underlying type because the type of 'n_k * n_k.transpose()' is Eigen::Product< ... > etc., so the double conversion is not implicit
+      Eigen_matrix_3 A_k = typename Eigen_matrix_3::EigenType(n_k * n_k.transpose());
       Eigen_vector_3 b_k;
       b_k = d_k * n_k;
       A += A_k;
