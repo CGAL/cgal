@@ -71,8 +71,9 @@ std::size_t peel_slivers(C3T3& c3t3,
       if (f_on_surface[i])
       {
         Surface_patch_index spi = c3t3.surface_patch_index(c, i);
-        if (patch != boost::none && patch != spi)
+        if (patch != boost::none && patch.get() != spi)
         {
+          //there are 2 different patches
           patch = boost::none;
           break;
         }
