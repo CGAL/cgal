@@ -3,12 +3,15 @@
 #include "defs.h"
 #include "id.h"
 
+#include <CGAL/number_utils.h>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <limits>
 #include <vector>
 #include <sstream>
+
+#include <CGAL/CORE_Expr.h>
 
 namespace unit_tests { void testGeometricBasics(); }
 
@@ -133,14 +136,14 @@ BFDirection toBFDirection(Direction direction);
 // TODO: does CGAL have any replacement for this or do we want our custom type here?
 struct Interval
 {
-	distance_t begin;
-	distance_t end;
+	CORE::Expr begin;
+	CORE::Expr end;
 
 	Interval()
 		: begin(1.),
 		  end(0.) {}
 
-	Interval(distance_t begin, distance_t end)
+	Interval(CORE::Expr begin, CORE::Expr end)
 		: begin(begin),
 		  end(end) {}
 
@@ -170,7 +173,7 @@ std::ostream& operator<<(std::ostream& out, const Interval& interval);
 class CPoint {
 private:
 	PointID point;
-	distance_t fraction;
+	CORE::Expr fraction;
 
 	void normalize() {
 		assert(fraction >= 0. && fraction <= 1.);
@@ -180,7 +183,7 @@ private:
 		}
 	}
 public:
-	CPoint(PointID point, distance_t fraction)
+	CPoint(PointID point, CORE::Expr fraction)
 		: point(point), fraction(fraction)
 	{
 			normalize();
@@ -188,10 +191,14 @@ public:
 	CPoint() : point(std::numeric_limits<PointID::IDType>::max()), fraction(0.) {}
 	
 	PointID getPoint() const { return point; } 
-	distance_t getFraction() const { return fraction; } 
-	distance_t convert() const { return (distance_t) point + fraction; }
+	CORE::Expr getFraction() const { return fraction; } 
+	double getFractionLB() const {
+		// returns a lower bound to the fraction
+		return std::get<0>(CGAL::to_interval(fraction));
+	}
+	CORE::Expr convert() const { return (CORE::Expr) point + fraction; }
 	void setPoint(PointID point) { this->point = point; }
-	void setFraction(distance_t frac) { fraction = frac; normalize(); }
+	void setFraction(CORE::Expr frac) { fraction = frac; normalize(); }
 		
 	bool operator<(CPoint const& other) const {
 		return point < other.point || (point == other.point && fraction < other.fraction);
@@ -299,7 +306,7 @@ struct CInterval
 	CInterval(CPoint const& begin, CPoint const& end)
                 : begin(begin), end(end) {}
 
-	CInterval(PointID point1, distance_t fraction1, PointID point2, distance_t fraction2)
+	CInterval(PointID point1, CORE::Expr fraction1, PointID point2, CORE::Expr fraction2)
 		: begin(point1, fraction1), end(point2, fraction2) {}
 
 	CInterval(PointID begin, PointID end)

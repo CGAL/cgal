@@ -109,7 +109,7 @@ private:
 	CInterval const empty;
 	CInterval const* firstinterval1;
 	CInterval const* firstinterval2;
-	distance_t min1_frac, min2_frac;
+	CORE::Expr min1_frac, min2_frac;
 	QSimpleInterval qsimple1, qsimple2;
 	CInterval out1, out2;
 	// TODO: can those be made members of out1, out2?
@@ -233,7 +233,7 @@ CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const&
     if (outer != nullptr) {
 		//TODO change intersection_interval so that the outer interval is
 		// 0,1 instead of -eps, 1+eps ?
-		*outer = CInterval{seg_start, std::max(outer_temp.begin,0.), seg_start, std::min(outer_temp.end,1.)};
+		*outer = CInterval{seg_start, CGAL::max(outer_temp.begin, CORE::Expr(0.)), seg_start, CGAL::min(outer_temp.end, CORE::Expr(1.))};
     }
     return CInterval{seg_start, interval.begin, seg_start, interval.end};
 }
@@ -416,8 +416,8 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 		CInterval temp_interval = FrechetLight::getInterval<IndexType>(fixed_curve, fixed, curve, cur, &temp_outer);
 		Interval interval = Interval(temp_interval.begin.getPoint() == cur ? temp_interval.begin.getFraction() : 1., temp_interval.end.getPoint() == cur ? temp_interval.end.getFraction() : 1.); 
 		Interval outer = Interval(temp_outer.begin.getPoint() == cur ? temp_outer.begin.getFraction() : 1., temp_outer.end.getPoint() == cur ? temp_outer.end.getFraction() : 1.);
-		outer.begin = std::max(outer.begin, 0.);
-		outer.end = std::min(outer.end, 1.);
+		outer.begin = CGAL::max(outer.begin, CORE::Expr(0.));
+		outer.end = CGAL::min(outer.end, CORE::Expr(1.));
 		if (interval.is_empty()) {
 			++cur;
 			stepsize *= 2;
@@ -613,7 +613,7 @@ inline void FrechetLight::handleCellCase(BoxData& data)
 			visAddFreeNonReachable(
 				output1.begin, std::min(output1.end, firstinterval1->begin), {box.max2,0.}, 1);
 			output1.begin.setFraction(
-				std::max(output1.begin.getFraction(), firstinterval1->begin.getFraction()));
+				CGAL::max(output1.begin.getFraction(), firstinterval1->begin.getFraction()));
 			certSetValues(output1, *firstinterval1, box.max2, 1);
 		}
 		else {
@@ -630,7 +630,7 @@ inline void FrechetLight::handleCellCase(BoxData& data)
 			visAddFreeNonReachable(
 				output2.begin, std::min(output2.end, firstinterval2->begin), {box.max1,0.}, 0);
 			output2.begin.setFraction(
-				std::max(output2.begin.getFraction(), firstinterval2->begin.getFraction()));
+				CGAL::max(output2.begin.getFraction(), firstinterval2->begin.getFraction()));
 			certSetValues(output2, *firstinterval2, box.max1, 0);
 		}
 		else {

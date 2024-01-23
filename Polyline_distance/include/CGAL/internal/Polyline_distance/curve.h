@@ -27,8 +27,8 @@ public:
 	Point interpolate_at(CPoint const& pt) const  {
 		assert(pt.getFraction() >= 0. && pt.getFraction() <= 1.);
 		assert((pt.getPoint() < points.size()-1 || (pt.getPoint() == points.size()-1 && pt.getFraction() == 0.)));
-		// TODO: fix here
-		OldPoint old_p = pt.getFraction() == 0. ? toOldPoint(points[pt.getPoint()]) : toOldPoint(points[pt.getPoint()])*(1.-pt.getFraction()) + toOldPoint(points[pt.getPoint()+1])*pt.getFraction();
+		// TODO: this interpolates at a point slightly below pt; check whether this is really fine in all contexts
+		OldPoint old_p = pt.getFraction() == 0. ? toOldPoint(points[pt.getPoint()]) : toOldPoint(points[pt.getPoint()])*(1.-pt.getFractionLB()) + toOldPoint(points[pt.getPoint()+1])*pt.getFractionLB();
 		return Point(old_p.x(), old_p.y());
 	}
 	Point interpolate_at(PointID const& pt) const  { return points[pt]; }
