@@ -35,6 +35,12 @@ public:
   typedef unspecified_type Vector_3;
 
   /*!
+  The 3D cuboid type.
+  Must be a model of `Kernel::IsoCuboid_3`
+  */
+  typedef unspecified_type IsoCuboid_3;
+
+  /*!
   A construction object that must provide the function operators:
 
   `FT operator()(Point_3 p)`
@@ -91,6 +97,26 @@ public:
   */
   typedef unspecified_type Construct_vector_3;
 
+  /*!
+  A construction object that must provide the function operator:
+
+  `IsoCuboid_3 operator()(Point_3 p, Point_3 q)`
+
+  which constructs an iso-oriented cuboid with diagonal opposite vertices `p` and `q`
+  such that `p` is the lexicographically smallest point in the cuboid.
+  */
+  typedef unspecified_type Construct_iso_cuboid_3;
+
+  /*!
+  A construction object that must provide the function operator:
+
+  `Point_3 operator()(IsoCuboid_3 c, int i)`
+
+  which returns the i-th vertex of an iso-cuboid `c`. See `Kernel::ConstructVertex_3`
+  for the order of vertices.
+  */
+  typedef unspecified_type Construct_vertex_3;
+
   /// @}
 
   /// \name Operations
@@ -121,6 +147,16 @@ public:
 
   */
   Construct_vector_3 construct_vector_3_object();
+
+  /*!
+
+  */
+  Construct_iso_cuboid_3 construct_iso_cuboid_3_object();
+
+  /*!
+
+  */
+  Construct_vertex_3 construct_vertex_3_object();
 
   /// @}
 

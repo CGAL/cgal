@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Bbox_3.h>
 #include <CGAL/centroid.h>
 #include <CGAL/Origin.h>
 
@@ -41,9 +40,9 @@ namespace Positioning {
  * \brief computes the vertex position for a point in Dual Contouring
  *        using Quadric Error Metrics and the SVD pseudo inverse.
  *
- * \tparam use_bbox clamp vertex position to the bounding box of the cell
+ * \tparam constrain_to_cell clamp vertex position to the bounding box of the cell
  */
-template <bool use_bbox = false>
+template <bool constrain_to_cell = false>
 class QEM_SVD
 {
 public:
@@ -77,21 +76,13 @@ public:
 
     using Vertex_descriptor = typename Domain::Vertex_descriptor;
 
-    typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
-    typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
-    typename Geom_traits::Compute_z_3 z_coord = domain.geom_traits().compute_z_3_object();
-    typename Geom_traits::Construct_point_3 point = domain.geom_traits().construct_point_3_object();
+    auto x_coord = domain.geom_traits().compute_x_3_object();
+    auto y_coord = domain.geom_traits().compute_y_3_object();
+    auto z_coord = domain.geom_traits().compute_z_3_object();
+    auto point = domain.geom_traits().construct_point_3_object();
 
     typename Domain::Cell_vertices vertices = domain.cell_vertices(cell);
-
-    // @todo could call centroid directly with a transform iterator
-    std::vector<Point_3> pos(vertices.size());
-    std::transform(vertices.begin(), vertices.end(), pos.begin(),
-                   [&](const Vertex_descriptor& v) { return domain.point(v); });
-
-    // set point to cell center
-    // @fixme this call messes up the concepts...
-    p = CGAL::centroid(pos.begin(), pos.end(), CGAL::Dimension_tag<0>());
+    const std::size_t cn = vertices.size();
 
     // compute edge intersections
     std::vector<Point_3> edge_intersections;
@@ -123,6 +114,30 @@ public:
 
     if(edge_intersections.empty())
       return false;
+
+    FT x_min, y_min, z_min, x_max, y_max, z_max;
+    FT x(0), y(0), z(0);
+
+    for(const auto& v : vertices)
+    {
+      const Point_3 cp = domain.point(v);
+      x += x_coord(cp);
+      y += y_coord(cp);
+      z += z_coord(cp);
+
+      if constexpr(constrain_to_cell)
+      {
+        x_min = (std::min<FT>)(x_min, x_coord(cp));
+        y_min = (std::min<FT>)(y_min, y_coord(cp));
+        z_min = (std::min<FT>)(z_min, z_coord(cp));
+
+        x_max = (std::max<FT>)(x_max, x_coord(cp));
+        y_max = (std::max<FT>)(y_max, y_coord(cp));
+        z_max = (std::max<FT>)(z_max, z_coord(cp));
+      }
+    }
+
+    p = point(x / cn, y / cn, z / cn);
 
     // SVD QEM
     Eigen_matrix_3 A;
@@ -162,18 +177,16 @@ public:
     // Lindstrom formula for QEM new position for singular matrices
     Eigen_vector_x v_svd;
     v_svd = x_hat + svd.solve(rhs - A * x_hat);
-    p = point(v_svd[0], v_svd[1], v_svd[2]);
 
     // bounding box
-    if(use_bbox)
+    if constexpr(constrain_to_cell)
     {
-      CGAL::Bbox_3 bbox = pos[0].bbox() + pos[7].bbox();  // @todo remove[0],[7]
-
-      const FT x = (std::min<FT>)((std::max<FT>)(x_coord(p), bbox.xmin()), bbox.xmax());
-      const FT y = (std::min<FT>)((std::max<FT>)(y_coord(p), bbox.ymin()), bbox.ymax());
-      const FT z = (std::min<FT>)((std::max<FT>)(z_coord(p), bbox.zmin()), bbox.zmax());
-      p = point(x, y, z);
+      v_svd[0] = std::clamp<FT>(v_svd[0], x_min, x_max);
+      v_svd[1] = std::clamp<FT>(v_svd[1], y_min, y_max);
+      v_svd[2] = std::clamp<FT>(v_svd[2], z_min, z_max);
     }
+
+    p = point(v_svd[0], v_svd[1], v_svd[2]);
 
     return true;
   }

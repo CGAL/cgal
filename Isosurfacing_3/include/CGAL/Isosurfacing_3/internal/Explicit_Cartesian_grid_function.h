@@ -32,17 +32,17 @@ public:
 
 public:
   Explicit_Cartesian_grid_function(const Grid& grid)
-    : grid{grid}
+    : m_grid{grid}
   { }
 
   // gets the value at vertex `v`
   FT operator()(const Vertex_descriptor& v) const
   {
-    return grid.value(v[0], v[1], v[2]);
+    return m_grid.value(v[0], v[1], v[2]);
   }
 
 private:
-  const Grid& grid;
+  const Grid& m_grid;
 };
 
 } // namespace internal

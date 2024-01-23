@@ -74,6 +74,8 @@ private:
   FT offset_y_;
   FT offset_z_;
 
+  // @todo should be iso_cuboid_3 if we mirrored the other domains, but we'll see
+  // once CGAL::Octree has been updated and this wrapper isn't required anymore.
   CGAL::Bbox_3 bbox_;
 
   std::size_t dim_ = 1;

@@ -42,9 +42,10 @@ public:
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
+  using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
 
 private:
-  Bbox_3 m_bbox;
+  Iso_cuboid_3 m_bbox;
   std::array<FT,3> m_spacing;
   std::array<std::size_t, 3> m_sizes;
 
@@ -62,7 +63,7 @@ public:
    * \param xdim the number of grid vertices in the `x` direction
    * \param ydim the number of grid vertices in the `y` direction
    * \param zdim the number of grid vertices in the `z` direction
-   * \param bbox the bounding box
+   * \param bbox the bounding box of the grid
    * \param gt the geometric traits
    *
    * \pre `xdim`, `ydim`, and `zdim` are (strictly) positive.
@@ -70,7 +71,7 @@ public:
   Cartesian_grid_3(const std::size_t xdim,
                    const std::size_t ydim,
                    const std::size_t zdim,
-                   const Bbox_3& bbox,
+                   const Iso_cuboid_3& bbox,
                    const Geom_traits& gt = Geom_traits())
     : m_sizes{xdim, ydim, zdim},
       m_bbox{bbox},
@@ -80,17 +81,36 @@ public:
     CGAL_precondition(ydim > 0);
     CGAL_precondition(zdim > 0);
 
+    auto x_coord = m_gt.compute_x_3_object();
+    auto y_coord = m_gt.compute_y_3_object();
+    auto z_coord = m_gt.compute_z_3_object();
+    auto vertex = m_gt.construct_vertex_3_object();
+
     // pre-allocate memory
     const std::size_t nv = xdim * ydim * zdim;
     m_values.resize(nv);
     m_gradients.resize(nv);
 
     // calculate grid spacing
-    const FT d_x = FT{bbox.x_span()} / (xdim - 1);
-    const FT d_y = FT{bbox.y_span()} / (ydim - 1);
-    const FT d_z = FT{bbox.z_span()} / (zdim - 1);
+    const Point_3& min_p = vertex(bbox, 0);
+    const Point_3& max_p = vertex(bbox, 7);
+    const FT x_span = x_coord(max_p) - x_coord(min_p);
+    const FT y_span = y_coord(max_p) - y_coord(min_p);
+    const FT z_span = z_coord(max_p) - z_coord(min_p);
+
+    const FT d_x = x_span / (xdim - 1);
+    const FT d_y = y_span / (ydim - 1);
+    const FT d_z = z_span / (zdim - 1);
     m_spacing = make_array(d_x, d_y, d_z);
   }
+
+  Cartesian_grid_3(const std::size_t xdim,
+                   const std::size_t ydim,
+                   const std::size_t zdim,
+                   const Point_3& p, const Point_3& q,
+                   const Geom_traits& gt = Geom_traits())
+    : Cartesian_grid_3(xdim, ydim, zdim, Iso_cuboid_3(p, q), gt)
+  { }
 
   /**
    * \brief creates a grid from a `CGAL::Image_3`.
@@ -102,11 +122,15 @@ public:
    */
   Cartesian_grid_3(const Image_3& image)
   {
+    auto point = m_gt.construct_point_3_object();
+    auto iso_cuboid = m_gt.construct_iso_cuboid_3_object();
+
     // compute bounding box
     const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();
     const FT max_y = image.ty() + (image.ydim() - 1) * image.vy();
     const FT max_z = image.tz() + (image.zdim() - 1) * image.vz();
-    m_bbox = Bbox_3{image.tx(), image.ty(), image.tz(), max_x, max_y, max_z};
+    m_bbox = iso_cuboid(point(image.tx(), image.ty(), image.tz()),
+                        point(max_x, max_y, max_z));
 
     // get spacing
     m_spacing = make_array(image.vx(), image.vy(), image.vz());
@@ -160,7 +184,7 @@ public:
   /**
    * \return the bounding box of the %Cartesian grid.
    */
-  const Bbox_3& bbox() const { return m_bbox; }
+  const Iso_cuboid_3& bbox() const { return m_bbox; }
 
   /**
    * \return the spacing of the %Cartesian grid, that is a vector whose coordinates are
@@ -185,11 +209,16 @@ public:
                 const std::size_t j,
                 const std::size_t k) const
   {
-    typename Geom_traits::Construct_point_3 cp = m_gt.construct_point_3_object();
+    auto x_coord = m_gt.compute_x_3_object();
+    auto y_coord = m_gt.compute_y_3_object();
+    auto z_coord = m_gt.compute_z_3_object();
+    auto point = m_gt.construct_point_3_object();
+    auto vertex = m_gt.construct_vertex_3_object();
 
-    return cp(m_bbox.xmin() + i * m_spacing[0],
-              m_bbox.ymin() + j * m_spacing[1],
-              m_bbox.zmin() + k * m_spacing[2]);
+    const Point_3& min_p = vertex(m_bbox, 0);
+    return point(x_coord(min_p) + i * m_spacing[0],
+                 y_coord(min_p) + j * m_spacing[1],
+                 z_coord(min_p) + k * m_spacing[2]);
   }
 
   /**
@@ -282,6 +311,11 @@ template <typename GeomTraits>
 Cartesian_grid_3<GeomTraits>::
 operator Image_3() const
 {
+  auto x_coord = m_gt.compute_x_3_object();
+  auto y_coord = m_gt.compute_y_3_object();
+  auto z_coord = m_gt.compute_z_3_object();
+  auto vertex = m_gt.construct_vertex_3_object();
+
   // select number type
   WORD_KIND wordkind;
   if(std::is_floating_point<FT>::value) // @fixme seems meaningless given that vx vy vz are doubles

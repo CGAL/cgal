@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Bbox_3.h>
+#include <array>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -40,6 +40,7 @@ public:
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
+  using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
 
 private:
   const Grid& m_grid;
@@ -65,29 +66,30 @@ public:
     typename Geom_traits::Compute_y_3 y_coord = m_grid.geom_traits().compute_y_3_object();
     typename Geom_traits::Compute_z_3 z_coord = m_grid.geom_traits().compute_z_3_object();
     typename Geom_traits::Construct_vector_3 vector = m_grid.geom_traits().construct_vector_3_object();
+    typename Geom_traits::Construct_vertex_3 vertex = m_grid.geom_traits().construct_vertex_3_object();
 
     // trilinear interpolation of stored gradients
-    const Bbox_3& bbox = m_grid.bbox();
+    const Iso_cuboid_3& bbox = m_grid.bbox();
     const std::array<FT, 3>& spacing = m_grid.spacing();
 
     // calculate min index including border case
-    std::size_t min_i = (x_coord(p) - bbox.xmin()) / spacing[0];
-    std::size_t min_j = (y_coord(p) - bbox.ymin()) / spacing[1];
-    std::size_t min_k = (z_coord(p) - bbox.zmin()) / spacing[2];
+    const Point_3& min_p = vertex(bbox, 0);
+    std::size_t i = (x_coord(p) - x_coord(min_p)) / spacing[0];
+    std::size_t j = (y_coord(p) - y_coord(min_p)) / spacing[1];
+    std::size_t k = (z_coord(p) - z_coord(min_p)) / spacing[2];
 
-    if(min_i == m_grid.xdim() - 1)
-      --min_i;
-
-    if(min_j == m_grid.ydim() - 1)
-      --min_j;
-
-    if(min_k == m_grid.zdim() - 1)
-      --min_k;
+    // @todo check this
+    if(i == m_grid.xdim() - 1)
+      --i;
+    if(j == m_grid.ydim() - 1)
+      --j;
+    if(k == m_grid.zdim() - 1)
+      --k;
 
     // calculate coordinates of min index
-    const FT min_x = min_i * spacing[0] + bbox.xmin();
-    const FT min_y = min_j * spacing[1] + bbox.ymin();
-    const FT min_z = min_k * spacing[2] + bbox.zmin();
+    const FT min_x = i * spacing[0] + x_coord(min_p);
+    const FT min_y = j * spacing[1] + y_coord(min_p);
+    const FT min_z = k * spacing[2] + z_coord(min_p);
 
     // interpolation factors between 0 and 1
     const FT f_i = (x_coord(p) - min_x) / spacing[0];
@@ -95,14 +97,14 @@ public:
     const FT f_k = (z_coord(p) - min_z) / spacing[2];
 
     // read the gradient at all 8 corner points
-    const Vector_3& g000 = m_grid.gradient(min_i + 0, min_j + 0, min_k + 0);
-    const Vector_3& g001 = m_grid.gradient(min_i + 0, min_j + 0, min_k + 1);
-    const Vector_3& g010 = m_grid.gradient(min_i + 0, min_j + 1, min_k + 0);
-    const Vector_3& g011 = m_grid.gradient(min_i + 0, min_j + 1, min_k + 1);
-    const Vector_3& g100 = m_grid.gradient(min_i + 1, min_j + 0, min_k + 0);
-    const Vector_3& g101 = m_grid.gradient(min_i + 1, min_j + 0, min_k + 1);
-    const Vector_3& g110 = m_grid.gradient(min_i + 1, min_j + 1, min_k + 0);
-    const Vector_3& g111 = m_grid.gradient(min_i + 1, min_j + 1, min_k + 1);
+    const Vector_3& g000 = m_grid.gradient(i + 0, j + 0, k + 0);
+    const Vector_3& g001 = m_grid.gradient(i + 0, j + 0, k + 1);
+    const Vector_3& g010 = m_grid.gradient(i + 0, j + 1, k + 0);
+    const Vector_3& g011 = m_grid.gradient(i + 0, j + 1, k + 1);
+    const Vector_3& g100 = m_grid.gradient(i + 1, j + 0, k + 0);
+    const Vector_3& g101 = m_grid.gradient(i + 1, j + 0, k + 1);
+    const Vector_3& g110 = m_grid.gradient(i + 1, j + 1, k + 0);
+    const Vector_3& g111 = m_grid.gradient(i + 1, j + 1, k + 1);
 
     // interpolate along all axes by weighting the corner points
     const FT lambda000 = (FT(1) - f_i) * (FT(1) - f_j) * (FT(1) - f_k);

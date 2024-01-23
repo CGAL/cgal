@@ -20,8 +20,7 @@
 #include <CGAL/Isosurfacing_3/internal/Implicit_function_with_geometry.h>
 #include <CGAL/Isosurfacing_3/Zero_gradient.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/Bbox_3.h>
+#include <cmath>
 
 namespace CGAL {
 namespace Isosurfacing {
@@ -58,6 +57,40 @@ class Implicit_Cartesian_grid_domain_3
 private:
   using Base = internal::Isosurfacing_domain_3<GeomTraits, Topology, Geometry, Function, Gradient>;
 
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+
+  Base construct_domain(const typename GeomTraits::Iso_cuboid_3& bbox,
+                        const typename GeomTraits::Vector_3& spacing,
+                        const ImplicitFunction& point_function,
+                        const Gradient& gradient,
+                        const GeomTraits& gt)
+  {
+    auto x_coord = gt.compute_x_3_object();
+    auto y_coord = gt.compute_y_3_object();
+    auto z_coord = gt.compute_z_3_object();
+    auto vertex = gt.construct_vertex_3_object();
+    auto vector = gt.construct_vector_3_object();
+
+    const Point_3& min_p = vertex(bbox, 0);
+    const Point_3& max_p = vertex(bbox, 7);
+    const FT x_span = x_coord(max_p) - x_coord(min_p);
+    const FT y_span = y_coord(max_p) - y_coord(min_p);
+    const FT z_span = z_coord(max_p) - z_coord(min_p);
+
+    Topology topo { std::ceil(x_span / x_coord(spacing)) + 1,
+                    std::ceil(y_span / y_coord(spacing)) + 1,
+                    std::ceil(z_span / z_coord(spacing)) + 1 };
+
+    const Vector_3 offset = vector(x_coord(min_p), y_coord(min_p), z_coord(min_p));
+    Geometry geom { offset, spacing };
+
+    Function func { geom, point_function };
+
+    return { topo, geom, func, gradient, gt };
+  }
+
 public:
   /**
    * \brief creates a domain from an implicit function.
@@ -72,7 +105,7 @@ public:
    * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
    *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
    *
-   * \param bbox a bounding box that specifies the dimensions of the implicit function's domain
+   * \param bbox an axis-aligned box that specifies the dimensions of the implicit function's domain
    * \param spacing the distance between discretization points
    * \param point_function the implicit function giving the value of the implicit function at each discretization point
    * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
@@ -80,19 +113,12 @@ public:
    *
    * \pre `spacing != CGAL::NULL_VECTOR`
    */
-  Implicit_Cartesian_grid_domain_3(const CGAL::Bbox_3& bbox,
+  Implicit_Cartesian_grid_domain_3(const typename GeomTraits::Iso_cuboid_3& bbox,
                                    const typename GeomTraits::Vector_3& spacing,
                                    const ImplicitFunction& point_function,
                                    const Gradient& gradient = Gradient(),
                                    const GeomTraits& gt = GeomTraits())
-    : Base(Topology { std::ceil(bbox.x_span() / gt.compute_x_3_object()(spacing)) + 1,
-                      std::ceil(bbox.y_span() / gt.compute_y_3_object()(spacing)) + 1,
-                      std::ceil(bbox.z_span() / gt.compute_z_3_object()(spacing)) + 1 },
-           Geometry { typename GeomTraits::Vector_3 { bbox.xmin(), bbox.ymin(), bbox.zmin() }, spacing },
-           Function { Geometry { typename GeomTraits::Vector_3{bbox.xmin(), bbox.ymin(), bbox.zmin()}, spacing },
-                      point_function },
-           gradient,
-           gt)
+    : Base(construct_domain(bbox, spacing, point_function, gradient, gt))
   {
   }
 };
@@ -112,7 +138,7 @@ public:
  * \tparam Gradient the type of the gradient functor. It must be a model of `CopyConstructible` and implement
  *                  `GeomTraits::Vector_3 operator()(const GeomTraits::Point_3& point) const`.
  *
- * \param bbox a bounding box that specifies the dimensions of the implicit function's domain
+ * \param bbox an axis-aligned box that specifies the dimensions of the implicit function's domain
  * \param spacing the distance between discretization points
  * \param point_function the implicit function giving the value of the implicit function at each discretization point
  * \param gradient a function giving the value of the gradient of the implicit function at each discretization point
@@ -126,7 +152,7 @@ template <typename GeomTraits,
           typename ImplicitFunction,
           typename Gradient = Zero_gradient>
 Implicit_Cartesian_grid_domain_3<GeomTraits, ImplicitFunction, Gradient>
-create_implicit_Cartesian_grid_domain(const CGAL::Bbox_3& bbox,
+create_implicit_Cartesian_grid_domain(const typename GeomTraits::Iso_cuboid_3& bbox,
                                       const typename GeomTraits::Vector_3& spacing,
                                       const ImplicitFunction& point_function,
                                       const Gradient& gradient = Gradient(),
