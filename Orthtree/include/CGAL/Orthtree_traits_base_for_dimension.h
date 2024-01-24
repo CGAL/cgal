@@ -160,6 +160,7 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
   using Sphere_d = typename K::Sphere_3;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_3;
 
+#if 0
   enum Adjacency {
     LEFT,
     RIGHT,
@@ -179,6 +180,29 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
     LEFT_TOP_BACK,
     RIGHT_TOP_BACK
   };
+
+#else
+
+  enum Adjacency {
+    LEFT,
+    RIGHT,
+    DOWN,
+    UP,
+    BACK,
+    FRONT
+  };
+  /// \cond SKIP_IN_MANUAL
+  enum Child {
+    LEFT_BOTTOM_BACK,
+    RIGHT_BOTTOM_BACK,
+    LEFT_TOP_BACK,
+    RIGHT_TOP_BACK,
+    LEFT_BOTTOM_FRONT,
+    RIGHT_BOTTOM_FRONT,
+    LEFT_TOP_FRONT,
+    RIGHT_TOP_FRONT
+  };
+#endif
   /// \endcond
   /// @}
 
