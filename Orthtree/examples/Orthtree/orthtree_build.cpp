@@ -31,7 +31,6 @@ int main()
   Orthtree orthtree(points_dd);
   orthtree.refine(10, 5);
 
-  std::cout << orthtree.bbox(orthtree.root()).min()[0] << std::endl;
   std::cout << orthtree << std::endl;
 
   return EXIT_SUCCESS;
