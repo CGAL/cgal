@@ -43,7 +43,7 @@ int main(void) {
   auto prop6 = tree.add_node_property("test2", std::string());
 
   // Default value should be respected
-  auto &node_int_property = tree.add_node_property<int>("int", 5);
+  auto node_int_property = tree.add_node_property<int>("int", 5);
   assert(node_int_property[tree.root()] == 5);
 
   // Changes to individual nodes should be respected
