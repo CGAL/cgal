@@ -151,7 +151,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
       Bbox_d bb = tree.bbox(ni);
 
       for (int i = 0; i < 3; ++i)
-        if ((bb.max()[i] - bb.min()[i]) < 2 * m_min_extent)
+        if (((bb.max)()[i] - (bb.min)()[i]) < 2 * m_min_extent)
           return false;
       return true;
     }
