@@ -1,5 +1,6 @@
 
 #include <CGAL/Property_container.h>
+#include <CGAL/use.h>
 
 using namespace CGAL::Properties::Experimental;
 
@@ -31,6 +32,7 @@ void test_property_creation() {
   auto [bools, bools_created] = properties.get_or_add_property("bools", false);
   static_assert(std::is_same_v<decltype(bools), std::reference_wrapper<Property_array<std::size_t, bool>>>);
   Property_array<std::size_t, bool>& b = bools.get();
+  CGAL_USE(b);
 }
 
 void test_element_access() {
@@ -110,7 +112,7 @@ void test_emplace_group() {
   Property_container properties;
 
   auto& a = properties.add_property("a", 5);
-
+  CGAL_USE(a);
   // Insert a group of 100 elements
   properties.emplace_group(100);
   assert(properties.size() == 100);
