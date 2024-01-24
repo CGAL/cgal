@@ -106,7 +106,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   }
 
   auto distribute_node_contents_object() {
-    return [&](Node_index n, Tree& tree, const Point_d& center) -> void {
+    return [&](Node_index n, Tree& tree, const Point_d& /* center */) -> void {
       Node_data& ndata = tree.data(n);
       auto traits = tree.traits();
       for (int i = 0; i < 8; ++i) {
