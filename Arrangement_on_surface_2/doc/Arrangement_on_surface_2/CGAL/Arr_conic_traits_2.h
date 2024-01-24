@@ -58,7 +58,7 @@ namespace CGAL {
  * <I>integer</I> coefficient of degree \f$d\f$ such that \f$p(\alpha) = 0\f$).
  * We therefore require separate representations of the curve
  * coefficients and the point coordinates. The `NtTraits` should be substituted
- * with a class that defines nested `Integer`, `Rational`, and `Algebraic` number
+ * by a class that defines nested `Integer`, `Rational`, and `Algebraic` number
  * types and supports various operations on them, yielding certified computation
  * results (for example, it can convert rational numbers to algebraic numbers
  * and can compute roots of polynomials with integer coefficients).  The other

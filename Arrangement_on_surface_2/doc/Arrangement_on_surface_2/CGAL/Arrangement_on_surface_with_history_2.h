@@ -25,14 +25,14 @@ namespace CGAL {
  * The `Arrangement_on_surface_with_history_2` template has two parameters:
  *
  * <UL>
- * <LI>The `GeometryTraits` template-parameter should be substituted with a
+ * <LI>The `GeometryTraits` template-parameter should be substituted by a
  * model of the `ArrangementTraits_2` concept. The traits class defines the
  * `Curve_2` type, which represents an input curve.  It also defines the types
  * of \f$ x\f$-monotone curves and two-dimensional points, namely
  * `ArrangementTraits_2::X_monotone_curve_2` and
  * `ArrangementTraits_2::Point_2`, respectively, and supports basic
  * geometric predicates on them.
- * <LI>The `TopologyTraits` template-parameter should be substituted with a
+ * <LI>The `TopologyTraits` template-parameter should be substituted by a
  * class that is a model of the `ArrangementTopologyTraits` concept.
  * </UL>
  *
