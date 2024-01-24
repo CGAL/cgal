@@ -1356,7 +1356,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
     //Create planes
     image_item = new Scene_image_item(image,0, true);
-    image_item->setName(fileinfo.baseName());
+    image_item->setName(fileinfo.completeBaseName());
     msgBox.setText("Planes created : 0/3");
     msgBox.setStandardButtons(QMessageBox::NoButton);
     msgBox.show();
@@ -1367,7 +1367,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
     image_item = new Scene_image_item(image,voxel_scale, false);
   }
-  image_item->setName(fileinfo.baseName());
+  image_item->setName(fileinfo.completeBaseName());
 
   if(add_to_scene)
     CGAL::Three::Three::scene()->addItem(image_item);
@@ -1456,7 +1456,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
       {
         // Create planes
         image_item = new Scene_image_item(image,125, true);
-        image_item->setName(fileinfo.baseName());
+        image_item->setName(fileinfo.completeBaseName());
         msgBox.setText("Planes created : 0/3");
         msgBox.setStandardButtons(QMessageBox::NoButton);
         msgBox.show();
@@ -1470,7 +1470,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
         int voxel_scale = ui.precisionList->currentIndex() + 1;
 
         image_item = new Scene_image_item(image,voxel_scale, false);
-        image_item->setName(fileinfo.baseName());
+        image_item->setName(fileinfo.completeBaseName());
         scene->addItem(image_item);
       }
     }

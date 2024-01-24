@@ -1,14 +1,9 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/test_macros.h>
+#include <CGAL/Exact_integer.h>
 
-#ifdef CGAL_USE_LEDA
-#include <CGAL/leda_integer.h>
-typedef leda_integer NT;
-#else
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz NT;
-#endif
+typedef CGAL::Exact_integer NT;
 
 typedef CGAL::Homogeneous<NT> Kernel;
 typedef CGAL::Nef_polyhedron_S2<Kernel> Nef_polyhedron;

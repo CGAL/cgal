@@ -109,8 +109,11 @@ public:
   typedef typename Topology_traits::Dcel            Dcel;
   typedef typename Dcel::Size                       Size;
 
+  using Observer = Aos_observer<Self>;
+  using Base_aos = Self;
+
 protected:
-  friend class Arr_observer<Self>;
+  friend class Aos_observer<Self>;
   friend class Arr_accessor<Self>;
 
   // Internal DCEL types:
@@ -892,7 +895,6 @@ protected:
   typedef CGAL_ALLOCATOR(Point_2)                 Points_alloc;
   typedef CGAL_ALLOCATOR(X_monotone_curve_2)      Curves_alloc;
 
-  typedef Arr_observer<Self>                      Observer;
   typedef std::list<Observer*>                    Observers_container;
   typedef typename Observers_container::iterator  Observers_iterator;
 

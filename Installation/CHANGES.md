@@ -23,6 +23,8 @@ Release date: October 2023
     `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
     has been removed.
 
+- Eliminated the error-prone c-type casting that was used to define observers. In general, backward compatibility was maintained; however, the former class template `Arr_observer` was replaced by an alias template. (The former class Arr_observer was renamed to Aos_observer).
+
 #### Envelopes of Surfaces in 3D
 - **Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
 

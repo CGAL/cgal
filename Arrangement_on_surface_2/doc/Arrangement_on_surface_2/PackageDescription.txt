@@ -199,7 +199,8 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arrangement_2<Traits,Dcel>`
 - `CGAL::Arrangement_with_history_2<Traits,Dcel>`
 - `CGAL::Arr_accessor<Arrangement>`
-- `CGAL::Arr_observer<Arrangement>`
+- `CGAL::Aos_observer<ArrangementOnSurface_2>`
+- `CGAL::Arr_observer<Arrangement_2>`
 - `CGAL::Arrangement_2::Vertex`
 - `CGAL::Arrangement_2::Halfedge`
 - `CGAL::Arrangement_2::Face`
