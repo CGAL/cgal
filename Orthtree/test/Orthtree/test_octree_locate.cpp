@@ -49,7 +49,6 @@ void test_8_points() {
   // Create the octree
   Octree octree({points, points.point_map()});
   octree.refine(10, 1);
-
   // Existing points should end up in the same place
   assert(octree.node(0) == octree.locate({-1, -1, -1}));
   assert(octree.node(1) == octree.locate({1, -1, -1}));

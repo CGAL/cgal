@@ -597,8 +597,9 @@ public:
       // Find the index of the correct sub-node
       Local_coordinates local_coords;
       std::size_t dimension = 0;
-      for (const auto& r: cartesian_range(point, center))
-        local_coords[dimension++] = m_traits.locate_halfspace_object()(get<0>(r), get<1>(r));
+      for (const auto& r: cartesian_range(point, center)){
+        local_coords[dimension++] = m_traits.locate_halfspace_object()(get<0>(r), get<1>(r))?0:1;
+      }
 
       // Find the correct sub-node of the current node
       node_for_point = child(node_for_point, local_coords.to_ulong());
