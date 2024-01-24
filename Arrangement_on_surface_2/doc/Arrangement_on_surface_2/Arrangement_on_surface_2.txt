@@ -5703,20 +5703,25 @@ objects, so that when one object changes state, all its dependents are
 notified and updated automatically. The observed object does not know
 anything about the observers. It merely "publishes" information about
 changes when they occur. In our case observers can be attached to an
-arrangement object. An attached observer receives notifications about
-the changes this arrangement undergoes.
+arrangement object.
 
-An observer object, the type of which is an instance of the
-`Arr_observer<Arrangement>` class template, stores a pointer to an
-arrangement object. When the `Arr_observer<Arrangement>` class
-template is instantiated, the `Arrangement` parameter must be
-substituted with the type of the arrangement object. The observer
-receives notifications <em>just before</em> a structural change occurs
-in the arrangement and <em>immediately after</em> such a change takes
-place. `Arr_observer` serves as a base class for other
-observer classes and defines a set of virtual notification
-functions, with default empty implementations. The set of functions
-can be divided into three categories, as follows:
+An observer object that observes changes in an arrangement object
+stores a pointer to the attached arrangement object. It receives
+notifications about the changes this arrangement undergoes. The
+observer receives notifications <em>just before</em> a structural
+change occurs in the arrangement and <em>immediately after</em> such a
+change takes place.  An observer object that observes changes in an
+arrangement object of type `Arrangement` must be of a type derived
+from `Arrangement::Observer`, which is an alias to
+`Aos_observer<Arrangement_on_surface_2>`, where
+`Arrangement_on_surface_2` is the type of the arrangement object or
+its base type. An instance of `Aos_observer<>` serves as a base type
+for other observer classes and defines a set of virtual notification
+functions, with default empty implementations.  You can also use the
+template alias `Arr_observer<Arrangement_2>`, where `Arrangement_2` is
+the type of the arrangement object in case it is derived from an
+instance of the template `Arrangement_on_surface_2`.  The set of
+functions can be divided into three categories, as follows:
 
 <OL>
 
@@ -5782,10 +5787,10 @@ the call to `after_global_change()`.
 </OL>
 
 See the Reference Manual for a detailed specification of the
-`Arr_observer` class template and the prototypes of all notification
+`Aos_observer` class template and the prototypes of all notification
 functions.
 
-Each arrangement object stores a list of pointers to `Arr_observer`
+Each arrangement object stores a list of pointers to `Aos_observer`
 objects. This list may be empty, in which case the arrangement does
 not have to notify any external class on the structural changes it
 undergoes. If, however, there are observers associated with the
@@ -5799,7 +5804,7 @@ invoked for each observer.
 <!--  This allows for the nesting of \Index{observer} objects. -->
 
 Concrete arrangement-observer classes should inherit from
-`Arr_observer`. When an observer is constructed, it is attached to a
+`Aos_observer`. When an observer is constructed, it is attached to a
 valid arrangement supplied to the observed constructor, or
 alternatively the observer can be attached to the arrangement at a
 later time.  When this happens, the observer object inserts itself
@@ -5809,8 +5814,8 @@ thereafter. Subsequently, the observer object unregisters itself by
 removing itself from this list just before it is destroyed. Most
 concrete observer-classes do not need to use the full set of
 notifications. Thus, the bodies of all notification methods defined in
-the base class `Arr_observer` are empty. A concrete observer that
-inherits from `Arr_observer` needs to override only the relevant
+the base class `Aos_observer` are empty. A concrete observer that
+inherits from `Aos_observer` needs to override only the relevant
 notification methods. The remaining methods are invoked when
 corresponding changes occur, but they do nothing.
 
