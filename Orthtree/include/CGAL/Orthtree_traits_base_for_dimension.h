@@ -41,6 +41,7 @@ template <typename K, typename DimensionTag>
 struct Orthtree_traits_base_for_dimension {
   /// \name Types
   /// @{
+  using Node_index = std::size_t;
   using Kernel = K;
   using Dimension = DimensionTag;
   using FT = typename K::FT;
@@ -113,6 +114,7 @@ template <typename K>
 struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
   /// \name Types
   /// @{
+  using Node_index = std::size_t;
   using Kernel = K;
   using Dimension = Dimension_tag<2>;
   using FT = typename K::FT;
@@ -149,6 +151,7 @@ template <typename K>
 struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
   /// \name Types
   /// @{
+  using Node_index = std::size_t;
   using Kernel = K;
   using Dimension = Dimension_tag<3>;
   using FT = typename K::FT;
