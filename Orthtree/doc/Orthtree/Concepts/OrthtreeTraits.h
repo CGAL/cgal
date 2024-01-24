@@ -17,7 +17,7 @@ public:
 
   /// \name Types
   /// @{
-
+  using Node_index = unspecified_type; ///< An integer type for nodes
   using Dimension = unspecified_type; ///< Dimension type (see `CGAL::Dimension_tag`).
   using FT = unspecified_type; ///< The number type of the %Cartesian coordinates of types `Point_d`
   using Point_d = unspecified_type; ///< Point type.
@@ -62,7 +62,7 @@ public:
    * It takes no arguments, and return an instance of `Node_data`.
    *
    * Provides the operator:
-   * Node_data operator()()`
+   * `Node_data operator()()`
    *
    * Typically, the `Node_data` of the root node contains all the elements in the tree.
    * For a tree in which each node contains an `std::span()` this function would return the span containing all items.
@@ -84,7 +84,7 @@ public:
    * The functor takes a node index, a tree reference, and a `Point_d` which is the center of the node.
    *
    * Provides the operator:
-   * void operator()(typename Tree::Node_index, Tree&, const Point_d&)`
+   * `void operator()(typename Tree::Node_index, Tree&, const Point_d&)`
    *
    * It can use `tree.children(node_index)` to access the children of the node, and `tree.data(node_index)`
    * to access the contents of the node and each of its children.
