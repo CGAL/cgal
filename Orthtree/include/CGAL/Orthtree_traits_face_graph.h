@@ -51,6 +51,10 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   /// \name Types
   /// @{
 
+  using Base = Orthtree_traits_base_for_dimension<
+  typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type,
+    Dimension_tag<3> >;
+  using Node_index = typename Base::Node_index;
   using Self = Orthtree_traits_face_graph<TriangleMesh, VertexPointMap>;
   using Tree = Orthtree<Self>;
 
@@ -66,7 +70,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
 
   using Construct_root_node_bbox = std::function<Bbox_d()>;
   using Construct_root_node_contents = std::function<Node_data()>;
-  using Distribute_node_contents = std::function<void(typename Tree::Node_index, Tree&, const Point_d&)>;
+  using Distribute_node_contents = std::function<void(Node_index, Tree&, const Point_d&)>;
 
   /// @}
 
@@ -102,11 +106,11 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   }
 
   auto distribute_node_contents_object() {
-    return [&](typename Tree::Node_index n, Tree& tree, const Point_d& center) -> void {
+    return [&](Node_index n, Tree& tree, const Point_d& center) -> void {
       Node_data& ndata = tree.data(n);
       auto traits = tree.traits();
       for (int i = 0; i < 8; ++i) {
-        typename Tree::Node_index child = tree.child(n, i);
+        Node_index child = tree.child(n, i);
         Node_data& child_data = tree.data(child);
         Bbox_d bbox = tree.bbox(child);
         for (auto f : ndata) {
@@ -140,8 +144,8 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
     /*!
       \brief returns `true` if `ni` should be split, `false` otherwise.
      */
-    template <typename Node_index, typename Tree>
-    bool operator()(Node_index ni, const Tree& tree) const {
+    template <typename NodeIndex, typename Tree>
+    bool operator()(NodeIndex ni, const Tree& tree) const {
       if (tree.data(ni).empty()) return false;
 
       Bbox_d bb = tree.bbox(ni);

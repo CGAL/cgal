@@ -93,12 +93,13 @@ public:
   /// \name Types
   /// @{
 
+  using Base = Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag>;
   using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>;
   using Tree = Orthtree<Self>;
 
   using Node_data = boost::iterator_range<typename PointRange::iterator>;
   using Node_data_element = typename std::iterator_traits<typename PointRange::iterator>::value_type;
-
+  using Node_index = typename Base::Node_index;
   /// @}
 
   Orthtree_traits_point(
@@ -148,7 +149,7 @@ public:
   }
 
   auto distribute_node_contents_object() const {
-    return [&](typename Tree::Node_index n, Tree& tree, const typename Self::Point_d& center) {
+    return [&](Node_index n, Tree& tree, const typename Self::Point_d& center) {
       CGAL_precondition(!tree.is_leaf(n));
       reassign_points(tree, m_point_map, n, center, tree.data(n));
     };
