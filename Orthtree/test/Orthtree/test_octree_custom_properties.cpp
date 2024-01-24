@@ -41,7 +41,7 @@ int main(void) {
   assert(!prop5.second);
 
   auto prop6 = tree.add_node_property("test2", std::string());
-
+  assert(prop6.second);
   // Default value should be respected
   auto node_int_property = tree.add_node_property<int>("int", 5);
   assert(node_int_property[tree.root()] == 5);
