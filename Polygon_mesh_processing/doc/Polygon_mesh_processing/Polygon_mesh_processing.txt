@@ -973,6 +973,11 @@ quad meshes, and meshes with n-gon faces (for n-gons, the centroid must be insid
 The algorithms used prove to work well in general. Also, on meshes with noise on vertex positions,
 they give accurate results, under the condition that the correct vertex normals are provided.
 
+It is worth noting that the Principal Curvatures and Directions can also be estimated using the
+\ref PkgJetFitting3 package, which estimates the local differential quantities of a surface at a point
+using a local polynomial fitting (fitting a d-jet). Unlike the Interpolated Corrected Curvatures,
+the Jet Fitting method discards topological information and thus can be used on point clouds as well.
+
 \subsection ICCBackground Brief Background
 
 Surface curvatures are quantities that describe the local geometry of a surface. They are important in many
@@ -987,7 +992,7 @@ introduce a new way to compute curvatures on polygonal meshes. The main idea in 
 based on decoupling the normal information from the position information, which is useful for dealing with
 digital surfaces, or meshes with noise on vertex positions. \cgalCite{cgal:lrtc-iccmps-20} introduces some
 extensions to this framework, as it uses linear interpolation on the corrected normal vector field
-to derive new closed form equations for the corrected curvature measures. These <b>interpolated</b>
+to derive new closed-form equations for the corrected curvature measures. These <b>interpolated</b>
 curvature measures are the first step for computing the curvatures. For a triangle \f$ \tau_{ijk} \f$,
 with vertices \a i, \a j, \a k:
 
@@ -1011,8 +1016,13 @@ solver.
 
 The interpolated curvature measures are then computed for each vertex \f$ v \f$ as the sum of
 the curvature measures of the faces in a ball around \f$ v \f$ weighted by the inclusion ratio of the
-triangle in the ball. If the ball radius is not specified, the sum is instead computed over the incident faces
-of \f$ v \f$.
+triangle in the ball. This ball radius is an optional (named) parameter of the function. There are 3
+cases for the ball radius passed value:
+- A positive value is passed: it is naturally used as the radius of the ball.
+- 0 is passed, a small epsilon (`average_edge_length * 1e-6`) is used
+(to account for the convergence of curvatures at infinitely small balls).
+- It is not specified (or negative), the sum is instead computed over the incident faces
+of the vertex \f$ v \f$.
 
 To get the final curvature value for a vertex \f$ v \f$, the respective interpolated curvature measure
 is divided by the interpolated area measure.
@@ -1030,7 +1040,7 @@ These computations are performed using (on all vertices of the mesh) `CGAL::Poly
 where function named parameters are used to select the curvatures (and possibly directions) to be computed. An overload function with the same name
 but taking a given vertex is also available in case the computation should be done only for that vertex.
 
-\subsection ICCResults Results & Performance
+\subsection ICCResults Results
 
 First, \cgalFigureRef{icc_measures} illustrates various curvature measures on a triangular mesh.
 
@@ -1072,6 +1082,121 @@ Mean curvature, Gaussian curvature, minimal principal curvature direction and ma
 </center>
 \cgalFigureCaptionBegin{icc_various_ball_radii}
 When changing the integration ball radius, we obtain a scale space of curvature measure that can be used to tackle possible noise in the input as illustrated in the second row (mean curvature only with fixed colormap ranges and ball radii in {0.02,0.03,0.04,0.05}).
+\cgalFigureCaptionEnd
+
+
+\subsection ICCPerformance Performance
+
+The implemented algorithms exhibit a linear complexity in the number of faces of the mesh. It is worth noting that
+we pre-computed the vertex normals and passed them as a named parameter to the function to better estimate the
+performance of the curvature computation. For the data reported in the following table, we used a machine with an
+Intel Core i7-8750H CPU @ 2.20GHz, 16GB of RAM, on Windows 11, 64 bits and compiled with Visual Studio 2019.
+
+\cgalFigureAnchor{icc_performance_table}
+<center>
+<table>
+  <tr>
+    <th>Ball <br>Radius</th>
+    <th>Computation</th>
+    <th>Spot<br>(<span>6k </span>faces)</th>
+    <th>Bunny<br>(<span>144K </span>faces)</th>
+    <th>Stanford Dragon<br>(<span>871K </span>faces)</th>
+    <th>Old Age or Winter<br>(<span>6M </span>faces)</th>
+  </tr>
+  <tr>
+    <td rowspan="4">vertex<br>1-ring faces <br>(default)</td>
+    <td>Mean Curvature</td>
+    <td>  &lt; 0.001 s</td>
+    <td>0.019 s</td>
+    <td>0.11 s</td>
+    <td>2.68 s</td>
+  </tr>
+  <tr>
+    <td>Gaussian Curvature</td>
+    <td> &lt; 0.001 s</td>
+    <td>0.017 s</td>
+    <td>0.10 s</td>
+    <td>2.77 s</td>
+  </tr>
+  <tr>
+    <td>Principal Curvatures &amp; Directions</td>
+    <td>0.002 s</td>
+    <td>0.044 s</td>
+    <td>0.25 s</td>
+    <td>3.98 s</td>
+  </tr>
+  <tr>
+    <td>All (optimized for shared computations)</td>
+    <td>0.003 s</td>
+    <td>0.049 s</td>
+    <td>0.28 s</td>
+    <td>4.52 s</td>
+  </tr>
+  <tr>
+    <td rowspan="4">r = 0.1<br>* avg_edge_length</td>
+    <td>Mean Curvature</td>
+    <td>0.017 s</td>
+    <td>0.401 s</td>
+    <td>2.66 s</td>
+    <td>22.29 s</td>
+  </tr>
+  <tr>
+    <td>Gaussian Curvature</td>
+    <td>0.018 s</td>
+    <td>0.406 s</td>
+    <td>2.63 s</td>
+    <td>21.61 s</td>
+  </tr>
+  <tr>
+    <td>Principal Curvatures &amp; Directions</td>
+    <td>0.019 s</td>
+    <td>0.430 s</td>
+    <td>2.85 s</td>
+    <td>23.55 s</td>
+  </tr>
+  <tr>
+    <td>All (optimized for shared computations)</td>
+    <td>0.017 s</td>
+    <td>0.428 s</td>
+    <td>2.89 s</td>
+    <td>24.16 s</td>
+  </tr>
+  <tr>
+    <td rowspan="4">r = 0.5<br>* avg_edge_length</td>
+    <td>Mean Curvature</td>
+    <td>0.024 s</td>
+    <td>0.388 s</td>
+    <td>3.18 s</td>
+    <td>22.79 s</td>
+  </tr>
+  <tr>
+    <td>Gaussian Curvature</td>
+    <td>0.024 s</td>
+    <td>0.392 s</td>
+    <td>3.21 s</td>
+    <td>23.58 s</td>
+  </tr>
+  <tr>
+    <td>Principal Curvatures &amp; Directions</td>
+    <td>0.027 s</td>
+    <td>0.428 s</td>
+    <td>3.41 s</td>
+    <td>24.44 s</td>
+  </tr>
+  <tr>
+    <td>All (optimized for shared computations)</td>
+    <td>0.025 s</td>
+    <td>0.417 s</td>
+    <td>3.44 s</td>
+    <td>23.93 s</td>
+  </tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{icc_performance_table}
+Performance of the curvature computation on various meshes (in seconds). The first 4 rows show the performance of the default value for the ball radius,
+which is using the 1-ring of neighboring faces around each vertex, instead of actually approximating the inclusion ratio of the faces in a ball of certain radius.
+The other rows show a ball radius of 0.1 (and 0.5) scaled by the average edge length of the mesh. It is clear that using the 1-ring of faces
+is much faster, but it might not be as effective when used on a noisy input mesh.
 \cgalFigureCaptionEnd
 
 
@@ -1309,7 +1434,7 @@ available on 7th of October 2020.  It only uses the high level algorithm of chec
 is covered by a set of prisms, where each prism is an offset for an input triangle.
 That is, the implementation in \cgal does not use indirect predicates.
 
-The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under
+The interpolated corrected curvatures were implemented during GSoC 2022. This was implemented by Hossam Saeed and under the
 supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. The implementation is based on \cgalCite{cgal:lrtc-iccmps-20}.
 <a href="https://dgtal-team.github.io/doc-nightly/moduleCurvatureMeasures.html">DGtal's implementation</a> was also
 used as a reference during the project.
