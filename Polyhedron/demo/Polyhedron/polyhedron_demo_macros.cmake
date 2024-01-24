@@ -19,7 +19,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
       set(moc_file_name "")
     else()
       set(moc_file_name ${plugin_implementation_base_name}.moc )
-      qt5_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${moc_file_name}" )
+      qt6_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${moc_file_name}" TARGET ${plugin_name})
       add_file_dependencies( ${moc_file_name} "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
     endif()
 
@@ -35,7 +35,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     if(TARGET demo_framework)
       target_link_libraries( ${plugin_name} PUBLIC demo_framework)
       add_dependencies(${plugin_name} demo_framework)
-      if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+      if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
         if(NOT TARGET "compilation_of__demo_framework")
               # This custom target is useless. It is used only as a flag to
               # detect that the test has already been created.
@@ -45,11 +45,11 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
                 COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "demo_framework" --config "$<CONFIG>")
 
               set_property(TEST "compilation of  demo_framework"
-                APPEND PROPERTY LABELS "CGAL_build_system")
+                APPEND PROPERTY LABELS "CGAL_build_system" "Installation" "${PROJECT_NAME}")
               set_property(TEST "compilation of  demo_framework"
                 APPEND PROPERTY FIXTURES_SETUP "demo_framework_SetupFixture")
               set_property(TEST "compilation of  demo_framework"
-                APPEND PROPERTY DEPENDS "compilation_of__CGAL_Qt5_moc_and_resources")
+                APPEND PROPERTY DEPENDS "check build system" "compilation of  CGAL_Qt6_moc_and_resources")
         endif()
       endif()
     else()
@@ -60,10 +60,14 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
       set_property(TEST "compilation of  ${plugin_name}" APPEND PROPERTY FIXTURES_REQUIRED demo_framework_SetupFixture)
     endif()
     # Link with CGAL
-    target_link_libraries( ${plugin_name} PUBLIC ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-    if(TARGET Polyhedron_3)
+    target_link_libraries( ${plugin_name} PUBLIC CGAL::CGAL )
+    if(NOT CGAL_TEST_SUITE AND TARGET Polyhedron_3)
       add_dependencies( ${plugin_name} Polyhedron_3 )
     endif()
+    if(NOT TARGET CGALlab_all_plugins)
+      add_custom_target(CGALlab_all_plugins)
+    endif()
+    add_dependencies(CGALlab_all_plugins ${plugin_name})
     #metadata management
     #create "${plugin_implementation_base_name}.json" in BINARY_DIR
     STRING(TOLOWER "${plugin_implementation_base_name}.json" base_name)

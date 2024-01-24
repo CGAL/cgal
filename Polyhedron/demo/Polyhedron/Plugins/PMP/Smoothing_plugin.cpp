@@ -107,6 +107,10 @@ public:
     ui_widget.projection_checkBox->setChecked(true);
 
     ui_widget.area_smoothing_checkBox->setChecked(false);
+#ifndef CGAL_PMP_USE_CERES_SOLVER
+    ui_widget.area_smoothing_checkBox->setDisabled(true);
+#endif
+    ui_widget.flip_checkBox->setChecked(true);
     ui_widget.flip_checkBox->setDisabled(true);
   }
 

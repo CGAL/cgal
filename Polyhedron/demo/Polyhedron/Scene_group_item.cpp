@@ -91,7 +91,7 @@ void Scene_group_item::update_group_number(Scene_item * new_item, int n)
             qobject_cast<Scene_group_item*>(new_item);
     if(group)
     {
-      Q_FOREACH(Scene_interface::Item_id id, group->getChildren()){
+      for(Scene_interface::Item_id id : group->getChildren()){
 
         update_group_number(getChild(id),n+1);
       }

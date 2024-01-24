@@ -71,7 +71,7 @@ public:
               this, SLOT(on_actionFitLine_triggered()));
       _actions << actionFitPlane
                << actionFitLine;
-      Q_FOREACH(QAction* action, _actions)
+      for(QAction* action : _actions)
         action->setProperty("subMenuName", "Principal Component Analysis");
 
 

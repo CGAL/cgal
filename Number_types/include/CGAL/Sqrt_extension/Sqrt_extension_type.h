@@ -178,10 +178,10 @@ public:
      */
   template <class NTX>
   explicit Sqrt_extension(const NTX& a, const NTX& b, const NTX& c, const bool is_smaller,
-    std::enable_if_t< boost::mpl::and_<
-      std::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
-      std::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
-    >::value >* = 0  )
+    std::enable_if_t<
+      std::is_same_v< typename Fraction_traits<NT>::Numerator_type,NTX > &&
+      std::is_same_v< typename Fraction_traits<ROOT>::Numerator_type,NTX >
+    >* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
     typename Fraction_traits<ROOT>::Compose compose_root;

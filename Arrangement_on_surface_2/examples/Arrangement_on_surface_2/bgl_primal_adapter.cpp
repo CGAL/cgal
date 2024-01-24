@@ -5,7 +5,7 @@
 
 #include <CGAL/config.h>
 
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 
 #include <CGAL/graph_traits_Arrangement_2.h>

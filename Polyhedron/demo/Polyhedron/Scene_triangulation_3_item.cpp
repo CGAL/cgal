@@ -79,13 +79,13 @@ public :
     setTriangleContainer(0, new Tc(Vi::PROGRAM_C3T3, false));
     setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   }
-  bool isFinite() const Q_DECL_OVERRIDE{ return false; }
+  bool isFinite() const override{ return false; }
   ~Scene_intersection_item()
   {
     if(alphaSlider)
          delete alphaSlider;
   }
-  void compute_bbox() const Q_DECL_OVERRIDE{}
+  void compute_bbox() const override{}
 
   void gl_initialization(Vi* viewer)
   {
@@ -109,16 +109,16 @@ public :
     barycenters = p_bary;
     subdomain_ids = p_subdomain_ids;
   }
-  void setColor(QColor c) Q_DECL_OVERRIDE
+  void setColor(QColor c) override
   {
     qobject_cast<Scene_triangulation_3_item*>(this->parent())->setColor(c);
     Scene_item::setColor(c);
   }
   // Indicates if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
+  bool supportsRenderingMode(RenderingMode m) const override{
     return (m != Gouraud && m != PointsPlusNormals && m != Points && m != ShadedPoints);
   }
-  void computeElements() const Q_DECL_OVERRIDE
+  void computeElements() const override
   {
     getTriangleContainer(0)->reset_vbos(ALL);
     getEdgeContainer(0)->reset_vbos(ALL);
@@ -137,7 +137,7 @@ public :
                             static_cast<int>(edges->size()*sizeof(float)));
     setBuffersFilled(true);
   }
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const override
   {
     //vao containing the data for the facets
     {
@@ -152,7 +152,7 @@ public :
   }
 
   //Displays the item
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
+  void draw(CGAL::Three::Viewer_interface* viewer) const override
   {
     if(is_fast)
       return;
@@ -174,7 +174,7 @@ public :
     getTriangleContainer(0)->setAlpha(alpha());
     getTriangleContainer(0)->draw(viewer, false);
   }
-  void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const override
   {
     if(is_fast)
       return;
@@ -251,9 +251,9 @@ public :
     }
   }
 
-  Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
-  QString toolTip() const Q_DECL_OVERRIDE{return QString();}
-  QMenu* contextMenu() Q_DECL_OVERRIDE
+  Scene_item* clone() const override{return 0;}
+  QString toolTip() const override{return QString();}
+  QMenu* contextMenu() override
   {
     QMenu* menu = Scene_item::contextMenu();
 
@@ -279,12 +279,12 @@ public :
     }
     return menu;
   }
-  float alpha() const Q_DECL_OVERRIDE
+  float alpha() const override
   {
     return m_alpha ;
   }
 
-  void setAlpha(int a) Q_DECL_OVERRIDE
+  void setAlpha(int a) override
   {
     m_alpha = a / 255.0f;
     redraw();
@@ -370,6 +370,7 @@ struct Scene_triangulation_3_item_priv {
     is_aabb_tree_built = false;
     alphaSlider = NULL;
     is_filterable = true;
+    visible_bitset.fill(0xFFFFFFFF);
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -527,7 +528,8 @@ struct Scene_triangulation_3_item_priv {
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
   boost::dynamic_bitset<> visible_subdomain;
-  std::bitset<24> bs[4] = {16777215, 16777215, 16777215, 16777215};
+  bool use_subdomain_colors = false;
+  std::array<std::bitset<32>, Scene_triangulation_3_item::number_of_bitset> visible_bitset;
   bool show_tetrahedra;
   bool cut_plane_enabled;
   bool is_aabb_tree_built;
@@ -720,7 +722,7 @@ Scene_triangulation_3_item::triangulation_changed()
   }
   const int max_subdomain_index = max;
   d->visible_subdomain.resize(max_subdomain_index+1, true);
-  d->is_filterable &=( d->subdomain_ids.size() < 96);
+  d->is_filterable &=( d->subdomain_indices_.size() < 32*number_of_bitset-1);
   for (Tr::Finite_facets_iterator fit = triangulation().finite_facets_begin(),
        end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
@@ -943,8 +945,19 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
 {
   typedef Indices::size_type size_type;
 
+  const size_type nb_patch_indices = surface_patch_indices_.size();
+  double i = -1;
+  double patch_hsv_value = use_subdomain_colors ? fmod(c.valueF() + .5, 1.) : c.valueF();
+  for (Indices::iterator it = surface_patch_indices_.begin(),
+       end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
+  {
+    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
+    if (hue > 1) { hue -= 1.; }
+    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
+  }
+
   const size_type nb_domains = subdomain_indices_.size();
-  double i = 0;
+  i = -1;
   for (Indices::iterator it = subdomain_indices_.begin(),
          end = subdomain_indices_.end(); it != end; ++it, i += 1.)
   {
@@ -952,21 +965,14 @@ Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
     if (hue > 1) { hue -= 1.; }
     colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
   }
-  const size_type nb_patch_indices = surface_patch_indices_.size();
-  i = 0;
-  double patch_hsv_value = fmod(c.valueF() + .5, 1.);
-  for (Indices::iterator it = surface_patch_indices_.begin(),
-         end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
-  {
-    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
-    if (hue > 1) { hue -= 1.; }
-    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
-  }
 
-  for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
-       end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
+  if (use_subdomain_colors)
   {
-    colors[it->first] = colors_subdomains[it->second];
+    for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
+         end = visible_surface_patch_to_subdomain.end(); it != end; ++it)
+    {
+      colors[it->first] = colors_subdomains[it->second];
+    }
   }
 }
 
@@ -1053,8 +1059,11 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     program->bind();
     if(d->is_filterable)
     {
-      QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
-      program->setUniformValue("is_visible_bitset", visible_bitset);
+      std::array<GLuint, number_of_bitset> visible_bitset_ulong;
+      std::transform(d->visible_bitset.cbegin(), d->visible_bitset.cend(), visible_bitset_ulong.begin(),
+                     [](const std::bitset<32>& bitset) { return bitset.to_ulong(); }
+                     );
+      program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong.data(), number_of_bitset);
     }
     program->setUniformValue("is_filterable", d->is_filterable);
     program->release();
@@ -1140,8 +1149,11 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
         program->bind();
         if(d->is_filterable)
         {
-          QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
-          program->setUniformValue("is_visible_bitset", visible_bitset);
+          std::array<GLuint, number_of_bitset> visible_bitset_ulong;
+          std::transform(d->visible_bitset.cbegin(), d->visible_bitset.cend(), visible_bitset_ulong.begin(),
+                         [](const std::bitset<32>& bitset) { return bitset.to_ulong(); }
+                         );
+          program->setUniformValueArray("is_visible_bitset", visible_bitset_ulong.data(), number_of_bitset);
         }
         program->setUniformValue("is_filterable", d->is_filterable);
         program->release();
@@ -1611,6 +1623,12 @@ Scene_triangulation_3_item::setColor(QColor c)
   }
 }
 
+void
+Scene_triangulation_3_item::setUseSubdomainColors(bool b)
+{
+  d->use_subdomain_colors = b;
+}
+
 void Scene_triangulation_3_item::show_grid(bool b)
 {
   d->is_grid_shown = b;
@@ -1950,7 +1968,7 @@ void Scene_triangulation_3_item::invalidateOpenGLBuffers()
   getEdgeContainer(T3_edges)->reset_vbos(ALL);
   getEdgeContainer(Grid_edges)->reset_vbos(ALL);
 
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(viewer == NULL)
@@ -2148,6 +2166,12 @@ QColor Scene_triangulation_3_item::getSubdomainIndexColor(int i) const
   return d->colors_subdomains[i];
 }
 
+void Scene_triangulation_3_item::resetVisibleSubdomain()
+{
+  d->visible_subdomain.set();
+  d->visible_bitset.fill(0xFFFFFFFF);
+}
+
 void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
 {
   d->visible_subdomain[id] = !d->visible_subdomain[id];
@@ -2155,7 +2179,12 @@ void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
   int i = compact_id/32;
   int j = compact_id%32;
 
-  d->bs[i][j] = d->visible_subdomain[id];
+  d->visible_bitset[i][j] = d->visible_subdomain[id];
+}
+
+bool Scene_triangulation_3_item::isVisibleSubdomain(int id) const
+{
+  return d->visible_subdomain[id];
 }
 
 void Scene_triangulation_3_item::computeIntersection()
@@ -2174,4 +2203,3 @@ void Scene_triangulation_3_item::set_cut_edge(bool b)
 }
 
 #include "Scene_triangulation_3_item.moc"
-

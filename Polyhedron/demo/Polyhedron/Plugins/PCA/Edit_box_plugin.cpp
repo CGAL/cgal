@@ -98,7 +98,7 @@ void Edit_box_plugin::bbox()
           this, SLOT(enableAction()));
   item->setName("Edit box");
   item->setRenderingMode(FlatPlusEdges);
-  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     viewer->installEventFilter(item);
 
   scene->addItem(item);

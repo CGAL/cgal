@@ -54,7 +54,6 @@
 #include <CGAL/point_generators_3.h>
 #endif
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/utility/result_of.hpp>
@@ -613,10 +612,9 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
          std::enable_if_t<
-           boost::mpl::and_<
-           typename std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
-           typename std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-         >::value >* =nullptr)
+           std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point > &&
+           std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+         >* =nullptr)
   {
     return insert_with_info<
              boost::tuple<Weighted_point,
@@ -2066,7 +2064,7 @@ Regular_triangulation_3<Gt,Tds,Lds>::
 side_of_power_sphere(Cell_handle c, const Weighted_point& p, bool perturb) const
 {
   CGAL_precondition(dimension() == 3);
-  int i3;
+  int i3=3;
   if(! c->has_vertex(infinite_vertex(), i3))
   {
     return Bounded_side(side_of_oriented_power_sphere(c->vertex(0)->point(),
@@ -2175,7 +2173,7 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
                      bool perturb) const
 {
   CGAL_precondition(dimension() >= 2);
-  int i3 = 5;
+  int i3 = 3;
   if(dimension() == 2)
   {
     CGAL_precondition(i == 3);

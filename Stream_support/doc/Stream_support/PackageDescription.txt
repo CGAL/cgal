@@ -20,7 +20,7 @@
 /// I/O Functions for the \ref IOStreamOFF
 /// \ingroup IOstreamFunctions
 
-/// \defgroup PkgStreamSupportIoFuncsVTP VTP I/O Functions
+/// \defgroup PkgStreamSupportIoFuncsVTK VTK I/O Functions
 /// I/O Functions for the \ref IOStreamVTK
 /// \ingroup IOstreamFunctions
 
@@ -96,9 +96,8 @@ the printing mode.
 - \link PkgStreamSupportIoFuncsOBJ I/O for OBJ files \endlink
 - \link PkgStreamSupportIoFuncsOFF I/O for OFF files \endlink
 - \link PkgStreamSupportIoFuncsGOCAD I/O for GOCAD files \endlink
-- \link PkgStreamSupportIoFuncsVTP I/O for VTP files \endlink
+- \link PkgStreamSupportIoFuncsVTK I/O for VTK files \endlink
 - \link PkgStreamSupportIoFuncs3MF I/O for 3MF files \endlink
 - \link PkgStreamSupportIoFuncsWKT I/O for WKT files \endlink
 
 */
-

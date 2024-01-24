@@ -222,52 +222,52 @@ _test_cls_constrained_triangulation(const Triang &)
   /******** I/O *******/
   std::cout << "output to a file" << std::endl;
 
-  std::ofstream of0_1("T01.triangulation", std::ios::out);
+  std::ofstream of0_1("T01ct.triangulation", std::ios::out);
   CGAL::IO::set_ascii_mode(of0_1);
    of0_1 << T0_1; of0_1.close();
 
-  std::ofstream of0_2("T02.triangulation");
+  std::ofstream of0_2("T02ct.triangulation");
   CGAL::IO::set_ascii_mode(of0_2);
   of0_2 << T0_2; of0_2.close();
 
-  std::ofstream of1_1("T11.triangulation");
+  std::ofstream of1_1("T11ct.triangulation");
   CGAL::IO::set_ascii_mode(of1_1);
   of1_1 << T1_1; of1_1.close();
 
-  std::ofstream of1_2("T12.triangulation");
+  std::ofstream of1_2("T12ct.triangulation");
   CGAL::IO::set_ascii_mode(of1_2);
    of1_2 << T1_2; of1_2.close();
 
-  std::ofstream of2_1("T21.triangulation");
+  std::ofstream of2_1("T21ct.triangulation");
   CGAL::IO::set_ascii_mode(of2_1);
   of2_1 << T2_1; of2_1.close();
 
-  std::ofstream of2_2("T22.triangulation");
+  std::ofstream of2_2("T22ct.triangulation");
   CGAL::IO::set_ascii_mode(of2_2);
   of2_2 << T2_2; of2_2.close();
 
   std::cout << "input from a file" << std::endl;
-  std::ifstream if0_1("T01.triangulation"); CGAL::IO::set_ascii_mode(if0_1);
+  std::ifstream if0_1("T01ct.triangulation"); CGAL::IO::set_ascii_mode(if0_1);
   Triang T0_1_copy;   if0_1 >> T0_1_copy;
 
-  std::ifstream if0_2("T02.triangulation"); CGAL::IO::set_ascii_mode(if0_2);
+  std::ifstream if0_2("T02ct.triangulation"); CGAL::IO::set_ascii_mode(if0_2);
   Triang T0_2_copy;  if0_2 >> T0_2_copy;
 
-  std::ifstream if1_1("T11.triangulation"); CGAL::IO::set_ascii_mode(if1_1);
+  std::ifstream if1_1("T11ct.triangulation"); CGAL::IO::set_ascii_mode(if1_1);
   Triang T1_1_copy; if1_1 >> T1_1_copy;
 
-  std::ifstream if1_2("T12.triangulation"); CGAL::IO::set_ascii_mode(if1_2);
+  std::ifstream if1_2("T12ct.triangulation"); CGAL::IO::set_ascii_mode(if1_2);
    Triang T1_2_copy; if1_2 >> T1_2_copy;
 
-  std::ifstream if2_1("T21.triangulation"); CGAL::IO::set_ascii_mode(if2_1);
+  std::ifstream if2_1("T21ct.triangulation"); CGAL::IO::set_ascii_mode(if2_1);
   Triang T2_1_copy; if2_1 >> T2_1_copy;
 
-  std::ifstream if2_2("T22.triangulation"); CGAL::IO::set_ascii_mode(if2_2);
+  std::ifstream if2_2("T22ct.triangulation"); CGAL::IO::set_ascii_mode(if2_2);
   Triang T2_2_copy; if2_2 >> T2_2_copy;
 
   // test copy of constrained Triangulation
    Triang T2_4(T2_2);
-  std::ofstream of2_2_bis("T22.triangulation");
+  std::ofstream of2_2_bis("T22ct.triangulation");
   CGAL::IO::set_ascii_mode(of2_2_bis);
   of2_2_bis << T2_4; of2_2_bis.close();
   All_faces_iterator fit2 = T2_2.all_faces_begin();

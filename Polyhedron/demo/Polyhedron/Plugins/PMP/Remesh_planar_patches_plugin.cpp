@@ -88,7 +88,7 @@ public:
     if (scene->selectionIndices().size() == 1)
       return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
 
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if (qobject_cast<Scene_surface_mesh_item*>(scene->item(index)))
         return true;

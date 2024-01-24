@@ -20,7 +20,6 @@
 #include <CGAL/enum.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Arr_observer.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -96,7 +95,7 @@ protected:
   typedef typename Minimization_diagram_2::Dcel::Dcel_data_iterator
                                                         Envelope_data_iterator;
 
-  typedef Arr_observer<Minimization_diagram_2>          Md_observer;
+  typedef typename Minimization_diagram_2::Observer     Md_observer;
   typedef Arr_accessor<Minimization_diagram_2>          Md_accessor;
 
   typedef typename Topology_traits::Default_point_location_strategy
@@ -1979,14 +1978,13 @@ protected:
   // so we can later identify all the faces that form the original given face
   // it also should remember the edges of the face, that are also projected
   // intersections
-  class Copied_face_observer : public Md_observer
-
-  {
+  class Copied_face_observer : public Md_observer {
   public:
-    typedef typename Minimization_diagram_2::Face_handle     Face_handle;
-    typedef typename Minimization_diagram_2::Halfedge_handle Halfedge_handle;
-    typedef typename Minimization_diagram_2::X_monotone_curve_2
-      X_monotone_curve_2;
+    using Base_aos = typename Minimization_diagram_2::Base_aos;
+
+    using Face_handle = typename Base_aos::Face_handle;
+    using Halfedge_handle = typename Base_aos::Halfedge_handle;
+    using X_monotone_curve_2 = typename Base_aos::X_monotone_curve_2;
 
     Copied_face_observer(Halfedges_map& map_h) : map_halfedges(map_h) {}
 
@@ -1998,8 +1996,7 @@ protected:
                                   Faces_hash& parts,
                                   Vertices_hash& boundaryv,
                                   Vertices_hash& specialv,
-                                  Vertices_to_edges_map& v_to_h)
-    {
+                                  Vertices_to_edges_map& v_to_h) {
       boundary_halfedges = &boundary;
       special_edges = &specialh;
       new_edges = &newh;
@@ -2010,20 +2007,16 @@ protected:
     }
 
     virtual void after_split_face(Face_handle org_f,
-                                  Face_handle new_f, bool)
-    {
+                                  Face_handle new_f, bool) override {
       // keep track of the face parts
       if (face_parts->is_defined(org_f))
         (*face_parts)[new_f] = face_parts->default_value();
     }
 
     virtual void after_split_edge(Halfedge_handle org_he,
-                                  Halfedge_handle new_he)
-    {
+                                  Halfedge_handle new_he) override {
       // take care of special edges that were split
-      if (special_edges->is_defined(org_he))
-
-      {
+      if (special_edges->is_defined(org_he)) {
         // if original edge was in the set, then now both split parts should
         // be in the set
         (*special_edges)[new_he] = special_edges->default_value();
@@ -2031,15 +2024,13 @@ protected:
       }
 
       // take care of new edges that were split
-      if (new_edges->is_defined(org_he))
-      {
+      if (new_edges->is_defined(org_he)) {
         (*new_edges)[new_he] = (*new_edges)[org_he];
         (*new_edges)[new_he->twin()] = (*new_edges)[org_he];
       }
 
       // take care for boundary edges
-      if (boundary_halfedges->is_defined(org_he))
-      {
+      if (boundary_halfedges->is_defined(org_he)) {
         (*boundary_halfedges)[new_he] = boundary_halfedges->default_value();
         (*boundary_halfedges)[new_he->twin()] =
           boundary_halfedges->default_value();
@@ -2066,8 +2057,7 @@ protected:
         Halfedge_handle correct_side_he;
         if (face_parts->is_defined(org_he->face()))
           correct_side_he = org_he;
-        else
-        {
+        else {
           CGAL_assertion(face_parts->is_defined(new_he->twin()->face()));
           // new_he->twin() is directed as org_he, so on the boundary pointing
           // inside the face, and has the new vertex as target
@@ -2080,7 +2070,8 @@ protected:
         //BZBZ
         /* CGAL_assertion(vertices_to_halfedges->is_defined(correct_side_he->source()) &&
            vertices_to_halfedges->is_defined(correct_side_he->next()->target()));*/
-        (*vertices_to_halfedges)[correct_side_he->next()->target()] = correct_side_he->next();
+        (*vertices_to_halfedges)[correct_side_he->next()->target()] =
+          correct_side_he->next();
 
         if (correct_side_he == org_he &&
             face_parts->is_defined(org_he->twin()->face()))
@@ -2100,46 +2091,42 @@ protected:
     Halfedges_map& map_halfedges;
   };
 
-
   // this observer is used in the process of resolving a face
   // it listens to what happens in the copied arrangement, and copies back
   // the actions to result arrangements very efficiently
-  class Copy_observer : public Md_observer
-  {
+  class Copy_observer : public Md_observer {
   public:
-    typedef typename Minimization_diagram_2::Face_handle       Face_handle;
-    typedef typename Minimization_diagram_2::Halfedge_handle   Halfedge_handle;
-    typedef typename Minimization_diagram_2::Vertex_handle     Vertex_handle;
-    typedef typename Minimization_diagram_2::Point_2           Point_2;
-    typedef typename Minimization_diagram_2::X_monotone_curve_2
-      X_monotone_curve_2;
-    typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
-     Ccb_halfedge_circulator;
+    using Base_aos = typename Minimization_diagram_2::Base_aos;
 
-    typedef typename Traits::Left_side_category             Left_side_category;
-    typedef typename Traits::Right_side_category            Right_side_category;
-    typedef typename Traits::Top_side_category              Top_side_category;
-    typedef typename Traits::Bottom_side_category           Bottom_side_category;
+    using Face_handle = typename Base_aos::Face_handle;
+    using Halfedge_handle = typename Base_aos::Halfedge_handle;
+    using Vertex_handle = typename Base_aos::Vertex_handle;
+    using Point_2 = typename Base_aos::Point_2;
+    using X_monotone_curve_2 = typename Base_aos::X_monotone_curve_2;
+    using Ccb_halfedge_circulator = typename Base_aos::Ccb_halfedge_circulator;
+
+    using Left_side_category = typename Traits::Left_side_category;
+    using Right_side_category = typename Traits::Right_side_category;
+    using Top_side_category = typename Traits::Top_side_category;
+    using Bottom_side_category = typename Traits::Bottom_side_category;
 
     Copy_observer(Minimization_diagram_2& small_,
                   Minimization_diagram_2& big,
                   Halfedges_map& map_h,
-                  Vertices_map&  map_v,
-                  Faces_map&     map_f)
-      : small_arr(small_), big_arr(big),
-        big_arr_accessor(big_arr),
-        map_halfedges(map_h),
-        map_vertices(map_v),
-        map_faces(map_f)
+                  Vertices_map& map_v,
+                  Faces_map& map_f) :
+      small_arr(small_), big_arr(big),
+      big_arr_accessor(big_arr),
+      map_halfedges(map_h),
+      map_vertices(map_v),
+      map_faces(map_f)
     {}
 
     virtual ~Copy_observer() {}
 
-    virtual void before_create_vertex (const Point_2& /* p */)
-    {}
+    virtual void before_create_vertex (const Point_2& /* p */) override {}
 
-    virtual void after_create_vertex (Vertex_handle v)
-    {
+    virtual void after_create_vertex (Vertex_handle v) override {
       // should create a new vertex with v->point() inside
       Vertex_handle new_v = big_arr_accessor.create_vertex(v->point());
 
@@ -2150,11 +2137,11 @@ protected:
       new_vertices.push_back(v);
     }
 
-    void before_create_boundary_vertex (const X_monotone_curve_2& cv,
-                                        Arr_curve_end ind,
-                                        Arr_parameter_space in_ps_x,
-                                        Arr_parameter_space in_ps_y)
-    {
+    virtual void before_create_boundary_vertex(const X_monotone_curve_2& cv,
+                                               Arr_curve_end ind,
+                                               Arr_parameter_space in_ps_x,
+                                               Arr_parameter_space in_ps_y)
+    override {
       boundary_vertex_cv = cv;
       boundary_vertex_ind = ind;
       ps_x = in_ps_x;
@@ -2164,8 +2151,7 @@ protected:
     bool is_bounded_impl(Arr_open_side_tag) { return false; }
     bool is_bounded_impl(Arr_boundary_side_tag) { return true; }
 
-    bool is_bounded()
-    {
+    bool is_bounded() {
       // This is the case of create boundary vertex.
       CGAL_assertion((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
 
@@ -2185,8 +2171,7 @@ protected:
       return true;
     }
 
-    void after_create_boundary_vertex(Vertex_handle v)
-    {
+    virtual void after_create_boundary_vertex(Vertex_handle v) override {
       CGAL_assertion(big_arr.is_valid());
       Vertex_handle new_v =
         big_arr_accessor.create_boundary_vertex(boundary_vertex_cv,
@@ -2200,16 +2185,15 @@ protected:
       map_vertices[v] = new_v;
     }
 
-    void before_split_fictitious_edge(Halfedge_handle e,
-                                      Vertex_handle v)
-    {
+    virtual void
+    before_split_fictitious_edge(Halfedge_handle e, Vertex_handle v) override {
       split_fict_v = v;
       split_fict_e = e;
     }
 
-    void after_split_fictitious_edge(Halfedge_handle e1,
-                                     Halfedge_handle e2)
-    {
+    virtual void
+    after_split_fictitious_edge(Halfedge_handle e1, Halfedge_handle e2)
+      override {
       // find the corresponding split vertex in big_arr
       CGAL_assertion(map_vertices.is_defined(split_fict_v));
       Vertex_handle big_v = map_vertices[split_fict_v];
@@ -2236,8 +2220,7 @@ protected:
 
     virtual void before_create_edge(const X_monotone_curve_2& /* c */,
                                     Vertex_handle v1,
-                                    Vertex_handle v2)
-    {
+                                    Vertex_handle v2) override {
       // save state for after_create_edge event
       create_edge_v1 = v1;
       create_edge_v2 = v2;
@@ -2245,9 +2228,7 @@ protected:
       is_in_relocate = false;
     }
 
-    virtual void after_create_edge(Halfedge_handle e)
-
-    {
+    virtual void after_create_edge(Halfedge_handle e) override {
       // a new edge e was created in small_arr, we should create a corresponding
       // edge in big_arr
       CGAL_assertion(map_vertices.is_defined(create_edge_v1));
@@ -2261,18 +2242,14 @@ protected:
       // if we have 2 new vertices, they must be new.
       // if we have only one, we should check which is new
       bool v1_is_new = false, v2_is_new = false;
-      if (new_vertices.size() == 1)
-      {
-        if (new_vertices.back() == create_edge_v1)
-          v1_is_new = true;
-        else
-        {
+      if (new_vertices.size() == 1) {
+        if (new_vertices.back() == create_edge_v1) v1_is_new = true;
+        else {
           CGAL_assertion(new_vertices.back() == create_edge_v2);
           v2_is_new = true;
         }
       }
-      if (new_vertices.size() == 2)
-      {
+      if (new_vertices.size() == 2) {
         v1_is_new = true;
         v2_is_new = true;
       }
@@ -2286,15 +2263,13 @@ protected:
 
       // if an endpoint is not new, but is isolated, we should remove it from
       // its face's isolated vertices list, and treat it as new
-      if (!v1_is_new && big_v1->is_isolated())
-      {
+      if (!v1_is_new && big_v1->is_isolated()) {
         //Face_handle f = big_v1->face(); //big_arr.incident_face(big_v1);
         //big_arr_accessor.find_and_erase_isolated_vertex(f, big_v1);
         big_arr_accessor.remove_isolated_vertex_ex(big_v1);
         v1_is_new = true;
       }
-      if (!v2_is_new && big_v2->is_isolated())
-      {
+      if (! v2_is_new && big_v2->is_isolated()) {
         //Face_handle f = big_v2->face(); //big_arr.incident_face(big_v2);
         //big_arr_accessor.find_and_erase_isolated_vertex(f, big_v2);
         big_arr_accessor.remove_isolated_vertex_ex(big_v2);
@@ -2302,8 +2277,7 @@ protected:
       }
 
       // now use the approppriate method to insert the new edge
-      if (v1_is_new && v2_is_new)
-      {
+      if (v1_is_new && v2_is_new) {
         // if both vertices are new - use the O(1) operation
         // _insert_in_face_interior (in the face mapped to by he->face())
         CGAL_assertion(map_faces.is_defined(he->face()));
@@ -2320,8 +2294,7 @@ protected:
         map_halfedges[he] = new_he;
         map_halfedges[he->twin()] = new_he->twin();
       }
-      else if (!v1_is_new && !v2_is_new)
-      {
+      else if (! v1_is_new && !v2_is_new) {
         // if both vertices are old - use _insert_at_vertices
         // this is a linear action by the size of the faces involved
         // we can get relevant prev halfedges from he
@@ -2361,8 +2334,7 @@ protected:
 
         // if a new face was created update its mapping too
         // the new face is the incident face of he
-        if (new_face)
-        {
+        if (new_face) {
           map_faces[he->face()] = new_he->face();
           // save state for move_hole/move_isolated_vertex events
           is_in_relocate = true;
@@ -2373,16 +2345,14 @@ protected:
         CGAL_assertion(map_faces.is_defined(he->face()) &&
                        map_faces[he->face()] == new_he->face());
       }
-      else
-      {
+      else {
         // only one vertex is new - use the O(1) operation _insert_from_vertex
         // we can get the relevant prev halfedge from e
         Halfedge_handle prev = he->prev();
         CGAL_assertion(map_halfedges.is_defined(prev));
         Halfedge_handle big_prev = map_halfedges[prev];
         Halfedge_handle new_he;
-        if (!v1_is_new)
-        {
+        if (!v1_is_new) {
           new_he = big_arr_accessor.insert_from_vertex_ex(big_prev,
                                                           he->curve(), (HE_COMP_RES(he) == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                                                           big_v2);
@@ -2392,8 +2362,7 @@ protected:
           map_halfedges[he] = new_he;
           map_halfedges[he->twin()] = new_he->twin();
         }
-        else
-        {
+        else {
           new_he =
             big_arr_accessor.insert_from_vertex_ex(big_prev,
                                                    he->curve(), (HE_COMP_RES(he->twin()) == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
@@ -2411,14 +2380,13 @@ protected:
                                    Vertex_handle v,
                                    const X_monotone_curve_2& /* c1 */,
                                    const X_monotone_curve_2& /* c2 */)
-    {
+      override {
       // save state info for using _split_edge in after event
       split_v = v;
       split_e = e;
     }
-    virtual void after_split_edge (Halfedge_handle e1,
-                                   Halfedge_handle e2)
-    {
+    virtual void after_split_edge(Halfedge_handle e1,
+                                  Halfedge_handle e2) override {
       // find the corresponding split vertex in big_arr
       CGAL_assertion(map_vertices.is_defined(split_v));
       Vertex_handle big_v = map_vertices[split_v];
@@ -2449,11 +2417,10 @@ protected:
     }
 
     virtual void before_add_isolated_vertex(Face_handle f,
-                                            Vertex_handle /* v */)
-    {
-      saved_face = f;
-    }
-    virtual void after_add_isolated_vertex(Vertex_handle v)
+                                            Vertex_handle /* v */) override
+    { saved_face = f; }
+
+    virtual void after_add_isolated_vertex(Vertex_handle v) override
     {
       // make sure it is the only new vertex right now
       CGAL_assertion(new_vertices.size() == 1 &&
@@ -2476,15 +2443,14 @@ protected:
 
     virtual void before_move_inner_ccb(Face_handle from_f,
                                        Face_handle to_f,
-                                       Ccb_halfedge_circulator )
-    {
+                                       Ccb_halfedge_circulator) override {
       // should be used after insert_at_vertices which creates a new face
       CGAL_assertion(is_in_relocate);
       move_from = from_f;
       move_to = to_f;
     }
-    virtual void after_move_inner_ccb(Ccb_halfedge_circulator h)
-    {
+
+    virtual void after_move_inner_ccb(Ccb_halfedge_circulator h) override {
       CGAL_assertion(map_faces.is_defined(move_from));
       CGAL_assertion(map_faces.is_defined(move_to));
       CGAL_assertion(map_halfedges.is_defined(h));
@@ -2501,16 +2467,14 @@ protected:
 
     virtual void before_move_isolated_vertex(Face_handle from_f,
                                              Face_handle to_f,
-                                             Vertex_handle )
-    {
+                                             Vertex_handle) override {
       // should be used after insert_at_vertices which creates a new face
 
       CGAL_assertion(is_in_relocate);
       move_from = from_f;
       move_to = to_f;
     }
-    virtual void after_move_isolated_vertex(Vertex_handle v)
-    {
+    virtual void after_move_isolated_vertex(Vertex_handle v) override {
       CGAL_assertion(map_faces.is_defined(move_from));
       CGAL_assertion(map_faces.is_defined(move_to));
       CGAL_assertion(map_vertices.is_defined(v));
@@ -2525,12 +2489,12 @@ protected:
   protected:
     Minimization_diagram_2& small_arr;
     Minimization_diagram_2& big_arr;
-    Md_accessor             big_arr_accessor;
+    Md_accessor big_arr_accessor;
 
     // mappings between small_arr features to big_arr features
     Halfedges_map& map_halfedges;
-    Vertices_map&  map_vertices;
-    Faces_map&     map_faces;
+    Vertices_map& map_vertices;
+    Faces_map& map_faces;
     std::deque<Vertex_handle> new_vertices;
 
     // state for actions
@@ -2538,25 +2502,23 @@ protected:
     Vertex_handle create_edge_v2;
     Vertex_handle split_v, split_fict_v;
     Halfedge_handle split_e, split_fict_e;
-    Face_handle   saved_face;
-    Face_handle   move_from;
-    Face_handle   move_to;
+    Face_handle saved_face;
+    Face_handle move_from;
+    Face_handle move_to;
 
     // for the create_vertex call-back
-    X_monotone_curve_2  boundary_vertex_cv;
-    Arr_curve_end           boundary_vertex_ind;
+    X_monotone_curve_2 boundary_vertex_cv;
+    Arr_curve_end boundary_vertex_ind;
     Arr_parameter_space ps_x;
     Arr_parameter_space ps_y;
     bool is_in_relocate;
-
   };
 
   // A zone visitor for the Minimization Diagram which only inserts
   // parts of the curve which are inside a given face
   // it also remembers those parts which overlap the boundary of the original
   // face
-  class Copied_face_zone_visitor
-  {
+  class Copied_face_zone_visitor {
   public:
     typedef typename Minimization_diagram_2::Vertex_handle     Vertex_handle;
     typedef typename Minimization_diagram_2::Halfedge_handle   Halfedge_handle;
@@ -2640,7 +2602,7 @@ protected:
     // the zone visitor functions
 
     /*! Initialize the visitor with an arrangement object. */
-    void init (Minimization_diagram_2* arr)
+    void init(Minimization_diagram_2* arr)
     {
       CGAL_assertion(&copied_arr == arr);
       insert_visitor.init(arr);
@@ -2822,8 +2784,7 @@ protected:
             result_new_he->twin()->set_has_equal_aux_data_in_target_and_face(1, flag);
           }
         }
-        else
-        {
+        else {
           result_new_he->twin()->set_is_equal_aux_data_in_target(0, true);
           result_new_he->twin()->set_is_equal_aux_data_in_target(1, true);
           result_new_he->twin()->set_has_equal_aux_data_in_target(0, true);
@@ -2834,8 +2795,7 @@ protected:
 
         return base_result;
       }
-      else
-      {
+      else {
         // we don't insert the subcurve, but it might touch a vertex of the
         // face's boundary - we need to check it and identify special vertices
         if (left_v != Vertex_handle(nullptr) &&
@@ -2853,8 +2813,7 @@ protected:
       }
     }
 
-    /*!
-     * Handle the a subcurve that overlaps a given edge.
+    /*! Handle the a subcurve that overlaps a given edge.
      * \param cv The overlapping subcurve.
      * \param he The overlapped halfedge (directed from left to right).
      * \param left_v The vertex that corresponds to the left endpoint of cv
@@ -2907,7 +2866,6 @@ protected:
     }
 
     /*!
-
      * Handle point that lies inside a given face.
      * \param p The point.
      * \param face The face inside which the point lies.
@@ -3135,18 +3093,18 @@ protected:
     Vertices_list& result_special_vertices;
 
     // helper collections (for copied_arr features)
-    Halfedges_hash        copied_arr_boundary_halfedges;
-    Vertices_hash         copied_arr_orig_vertices;
-    Vertices_hash         copied_arr_new_boundary_vertices;
+    Halfedges_hash copied_arr_boundary_halfedges;
+    Vertices_hash copied_arr_orig_vertices;
+    Vertices_hash copied_arr_new_boundary_vertices;
     Vertices_to_edges_map copied_vertices_to_halfedges;
 
-    Halfedges_hash        copied_arr_special_edges;
+    Halfedges_hash copied_arr_special_edges;
     Halfedges_hash_w_type copied_arr_new_edges;
-    Faces_hash            copied_face_parts;
-    Vertices_hash         copied_arr_special_vertices;
+    Faces_hash copied_face_parts;
+    Vertices_hash copied_arr_special_vertices;
 
     // this observer will take care of the result arrangegment
-    Copy_observer        md_copy_observer;
+    Copy_observer md_copy_observer;
 
     // this observer will keep all our information in the helper collections
     // during the insert process
@@ -3161,26 +3119,23 @@ protected:
   };
 
   // this minimization diagram observer updates data in new faces created
-  class New_faces_observer : public Md_observer
-  {
+  class New_faces_observer : public Md_observer {
   public:
-    typedef typename Minimization_diagram_2::Face_handle Face_handle;
+    using Base_aos = typename Minimization_diagram_2::Base_aos;
+    using Face_handle = typename Base_aos::Face_handle;
 
-    New_faces_observer(Minimization_diagram_2& arr) : Md_observer(arr) {}
+    New_faces_observer(Base_aos& arr) : Md_observer(arr) {}
 
     virtual ~New_faces_observer() {}
 
-    virtual void after_split_face(Face_handle org_f,
-                                  Face_handle new_f,
-                                  bool)
-    {
+    virtual void after_split_face(Face_handle org_f, Face_handle new_f, bool)
+      override {
       // update the new face's aux_data from original face
       if (org_f->get_aux_is_set(0))
         new_f->set_aux_source(0, org_f->get_aux_source(0));
       if (org_f->get_aux_is_set(1))
         new_f->set_aux_source(1, org_f->get_aux_source(1));
     }
-
   };
 
   //! The geometry traits object.

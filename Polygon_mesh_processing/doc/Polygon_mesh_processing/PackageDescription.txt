@@ -16,6 +16,10 @@
 /// Functions to triangulate faces, and to refine and fair regions of a polygon mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
 
+/// \defgroup PMP_corrected_curvatures_grp Corrected Curvature Computation
+/// Functions to compute the corrected curvatures of a polygon mesh.
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /// \defgroup PMP_normal_grp Normal Computation
 /// Functions to compute unit normals for individual/all vertices or faces.
 /// \ingroup PkgPolygonMeshProcessingRef
@@ -75,7 +79,7 @@
 \cgalPkgPicture{hole_filling_ico.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, and Ilker %O. Yaz}
+\cgalPkgAuthors{David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz}
 \cgalPkgDesc{This package provides a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms such as
 Boolean operations, remeshing, repairing, collision and intersection detection, and more.}
@@ -109,10 +113,10 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
 - `CGAL::Polygon_mesh_processing::clip()`
 - `CGAL::Polygon_mesh_processing::split()`
+- `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()`
+- `CGAL::Polygon_mesh_processing::autorefine()`
 
 \cgalCRPSection{Meshing Functions}
-- \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
-- \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
 - `CGAL::Polygon_mesh_processing::remesh_planar_patches()`
 - `CGAL::Polygon_mesh_processing::remesh_almost_planar_patches()`
 - `CGAL::Polygon_mesh_processing::refine()`
@@ -129,6 +133,10 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::tangential_relaxation()`
 - `CGAL::Polygon_mesh_processing::smooth_shape()`
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
+
+\cgalCRPSection{Sizing Fields}
+- `CGAL::Polygon_mesh_processing::Uniform_sizing_field`
+- `CGAL::Polygon_mesh_processing::Adaptive_sizing_field`
 
 \cgalCRPSection{Orientation Functions}
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
@@ -208,6 +216,10 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - \link PMP_locate_grp Nearest Face Location Queries \endlink
 - \link PMP_locate_grp Random Location Generation \endlink
 
+\cgalCRPSection{Corrected Curvatures}
+- `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()`
+- `CGAL::Polygon_mesh_processing::Principal_curvatures_and_directions`
+
 \cgalCRPSection{Normal Computation Functions}
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
 - `CGAL::Polygon_mesh_processing::compute_face_normals()`
@@ -258,6 +270,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::triangle()`
 - `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`
 - `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
+- `CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel()`
 
 \cgalCRPSection{I/O Functions}
 - \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink
