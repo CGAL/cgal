@@ -218,12 +218,8 @@ public:
 #ifdef PROTECT_ANGLES_FROM_COLLAPSE
       const Dihedral_angle_cosine acceptable_max_cos(0.995); // 0.995 cos <=> 5.7 degrees
       Dihedral_angle_cosine curr_max_cos
-        = max_cos_dihedral_angle(triangulation, cells_to_remove[0]);
-      for (std::size_t i = 1; i < cells_to_remove.size(); ++i)
-      {
-        curr_max_cos = (std::max)(curr_max_cos,
-          max_cos_dihedral_angle(triangulation, cells_to_remove[i]));
-      }
+        = (std::max)(max_cos_dihedral_angle_in_range(triangulation, cells_to_remove, false),
+                     max_cos_dihedral_angle_in_range(triangulation, cells_to_update, false));
 #endif
 
       vh0->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
@@ -280,15 +276,17 @@ public:
           return ORIENTATION_PROBLEM;
         if (!triangulation.tds().is_valid(cit, true))
           return C_PROBLEM;
-#ifdef PROTECT_ANGLES_FROM_COLLAPSE
-
-        auto max_cos_after_collapse = max_cos_dihedral_angle(triangulation, cit);
-
-        if ( curr_max_cos < max_cos_after_collapse // angles decreased
-          && acceptable_max_cos < max_cos_after_collapse) // && angles go below acceptable bound
-          return ANGLE_PROBLEM;
-#endif
       }
+
+#ifdef PROTECT_ANGLES_FROM_COLLAPSE
+      for (Cell_handle cit : triangulation.finite_cell_handles())
+      {
+        auto max_cos_after_collapse = max_cos_dihedral_angle(triangulation, cit, false);
+        if (      curr_max_cos < max_cos_after_collapse  // angles decreased
+         && acceptable_max_cos < max_cos_after_collapse) // && angles go below acceptable bound
+          return ANGLE_PROBLEM;
+      }
+#endif
 
       for (Vertex_handle vit : triangulation.finite_vertex_handles())
       {

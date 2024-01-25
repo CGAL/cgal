@@ -379,6 +379,21 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
   return cos_dh;
 }
 
+template<typename Tr, typename CellRange>
+Dihedral_angle_cosine max_cos_dihedral_angle_in_range(const Tr& tr,
+                                             const CellRange& cells,
+                                             const bool use_cache = true)
+{
+  Dihedral_angle_cosine max_cos_dh = cosine_of_90_degrees();
+  for (const auto c : cells)
+  {
+    const Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr, c, use_cache);
+    if (max_cos_dh < cos_dh)
+      max_cos_dh = cos_dh;
+  }
+  return max_cos_dh;
+}
+
 template<typename C3t3>
 bool is_peelable(const C3t3& c3t3,
                  const typename C3t3::Cell_handle ch,
