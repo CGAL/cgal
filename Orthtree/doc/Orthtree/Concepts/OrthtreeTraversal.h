@@ -3,11 +3,7 @@
   \ingroup PkgOrthtreeConcepts
   \cgalConcept
 
-  \brief A traversal provides the functions needed to traverse the
-  nodes of an orthtree.
-
-  A traversal is used to iterate on a tree with a user-selected order
-  (e.g., preorder, postorder).
+  \brief Requirements for defining a traversal strategie of an orthtree.
 
   \cgalHasModelsBegin
   \cgalHasModels{CGAL::Orthtrees::Preorder_traversal}
@@ -23,7 +19,7 @@ public:
   using Node_index = unspecified_type; ///< Index type of the orthtree to be traversed
 
   /*!
-    \brief returns the first node to iterate to, given the root of the orthtree.
+    \brief returns the first node of the traversal.
    */
   Node_index first_index() const;
 

@@ -18,6 +18,9 @@
 
 namespace CGAL {
 
+template <typename GeomTraits>
+class Orthtree;
+
 namespace Orthtrees {
 
 /*!
@@ -39,10 +42,10 @@ public:
           m_bucket_size(bucket_size) {}
 
   /*!
-    \brief returns `true` if `i` should be split, `false` otherwise.
+    \brief returns `true` if the node with index `i` should be split, `false` otherwise.
    */
-  template<typename Node_index, typename Tree>
-  bool operator()(Node_index i, const Tree &tree) const {
+  template<typename GeomTraits>
+  bool operator()(typename Orthtree<GeomTraits>::Node_index i, const Orthtree<GeomTraits> &tree) const {
     return (tree.data(i).size() > m_bucket_size);
   }
 
@@ -66,10 +69,10 @@ public:
   Maximum_depth(std::size_t max_depth) : m_max_depth(max_depth) {}
 
   /*!
-    \brief returns `true` if `i` should be split, `false` otherwise.
+    \brief returns `true` if the node with index `i` should be split, `false` otherwise.
    */
-  template<typename Node_index, typename Tree>
-  bool operator()(Node_index i, const Tree &tree) const {
+  template<typename GeomTraits>
+  bool operator()(typename Orthtree<GeomTraits>::Node_index i, const Orthtree<GeomTraits> &tree) const {
     return (tree.depth(i) < m_max_depth);
   }
 
@@ -102,10 +105,10 @@ public:
           m_max_depth(max_depth), m_bucket_size(bucket_size) {}
 
   /*!
-    \brief returns `true` if `i` should be split, `false` otherwise.
+    \brief returns `true` if the node with index `i` should be split, `false` otherwise.
    */
-  template<typename Node_index, typename Tree>
-  bool operator()(Node_index i, const Tree &tree) const {
+  template<typename GeomTraits>
+  bool operator()(typename Orthtree<GeomTraits>::Node_index i, const Orthtree<GeomTraits> &tree) const {
     std::size_t num_points = tree.data(i).size();
     std::size_t depth = tree.depth(i);
     return (num_points > m_bucket_size && depth < m_max_depth);

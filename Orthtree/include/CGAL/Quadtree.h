@@ -22,11 +22,7 @@ namespace CGAL {
 /*!
   \ingroup PkgOrthtreeRef
 
-  \brief Alias that specializes the `Orthtree` class to a 2D quadtree.
-
-  These two types are exactly equivalent:
-  - `Quadtree<GeomTraits, PointRange, PointMap>`
-  - `Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<2>>>`.
+  \brief Alias that specializes the `Orthtree` class to a 2D quadtree storing 2D points.
 
   \tparam GeomTraits must be a model of `Kernel`
   \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`

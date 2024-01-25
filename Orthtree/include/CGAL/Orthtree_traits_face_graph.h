@@ -35,10 +35,7 @@ to which the minimal extend of a node should be provided.
 \tparam TriangleMesh a model of `FaceListGraph` with all faces being triangles
 \tparam VertexPointMap a property map associating points to the vertices of `TriangleMesh`
 
-\todo check how to adapt to non regular splits (cubes vs rectangular cuboid)
-
 \cgalModels{OrthtreeTraits}
-\sa `CGAL::Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag>`
 */
 template <class TriangleMesh, class VertexPointMap>
 struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
@@ -129,15 +126,21 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
 
   /// Recommended split predicate to pass to `Orthtree::refine()` function so
   /// that the octree is refined until a node is either empty or has an extent
-  /// that would be smaller after split than the value provided to the constructor.
+  /// that would be smaller after split than the corresponding value provided to the constructor.
   class Split_predicate_node_min_extent {
 
-    FT m_min_extent;
+    std::array<FT, 3> m_min_extent;
 
   public:
 
-    /// constructor with `me` being the minimal value a node extent could be.
-    Split_predicate_node_min_extent(FT me)
+    /// constructor with `me` being the minimal value a node extent could be
+    /// (same value for all dimension).
+    Split_predicate_node_min_extent(const FT& me)
+      : m_min_extent({me, me, me}) {}
+
+    /// constructor with `me` being the minimal value a node extent could be
+    /// (one value per dimension).
+    Split_predicate_node_min_extent(const std::array<FT, 3>& me)
       : m_min_extent(me) {}
 
     /*!
@@ -150,7 +153,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
       Bbox_d bb = tree.bbox(ni);
 
       for (int i = 0; i < 3; ++i)
-        if (((bb.max)()[i] - (bb.min)()[i]) < 2 * m_min_extent)
+        if (((bb.max)()[i] - (bb.min)()[i]) < 2 * m_min_extent[i])
           return false;
       return true;
     }

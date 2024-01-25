@@ -28,10 +28,8 @@ namespace CGAL {
   The class `Orthtree_traits_base_for_dimension` is a base class providing common choices for types and functors.
   The base class is extended by `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>` and by `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`.
 
-  \tparam K model of `Kernel`.
-  \tparam DimensionTag is a tag representing the dimension of the ambient Euclidean space. Must be `Dimension_tag<d>` where `d` is an integer.
-
-  \cgalModels{OrthtreeTraits}
+  \tparam K a model of `Kernel`.
+  \tparam DimensionTag a tag representing the dimension of the ambient Euclidean space. Must be `Dimension_tag<d>` where `d` is an integer.
 
   \sa `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>`
   \sa `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`
@@ -50,25 +48,25 @@ struct Orthtree_traits_base_for_dimension {
   using Sphere_d = typename K::Sphere_d;
   using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_d;
   /*!
-    Adjacency type.
-
-    \note This type is used to identify adjacency directions with
-    easily understandable keywords (left, right, up, etc.) and is thus
-    mainly useful for `Dimension_tag<2>` and `Dimension_tag<3>`. In
-    higher dimensions, such keywords do not exist and this type is
-    simply an integer. Conversions from this integer to bitsets still
-    work but do not provide any easier API for adjacency selection.
-
-     Two directions along each axis in %Cartesian space, relative to a node.
-
-     Directions are mapped to numbers as 3-bit integers in the 3d case or as 2-bit integers in the 2d case.
-     In the 3d case the numbers 6 and 7 are not used because there are only 6 different directions.
-
-     The first two bits indicate the axis (00 = x, 01 = y, 10 = z),
-     the third bit indicates the direction along that axis (0 = -, 1 = +).
-
-     The following diagram showing the 3d case may be a useful reference:
-
+   * Adjacency type.
+   *
+   * \note This type is used to identify adjacency directions with
+   * easily understandable keywords (left, right, up, down, ...) and is thus
+   * mainly useful for `Dimension_tag<2>` and `Dimension_tag<3>`. In
+   * higher dimensions, such keywords do not exist and this type is
+   * simply an integer. Conversions from this integer to bitsets still
+   * work but do not provide any user-friendly API for adjacency selection.
+   *
+   * Two directions along each axis in %Cartesian space, relative to a node.
+   *
+   * Directions are mapped to numbers as 3-bit integers in the 3d case or as 2-bit integers in the 2d case.
+   * In the 3d case the numbers 6 and 7 are not used because there are only 6 different directions.
+   *
+   * The first two bits indicate the axis (00 = x, 01 = y, 10 = z),
+   * the third bit indicates the direction along that axis (0 = -, 1 = +).
+   *
+   * The following diagram and table showing the 3d case may be a useful reference (2d case is identical with one dimension less):
+   *
    *            3 *
    *              |  * 4
    *              | /                  y+
@@ -94,8 +92,6 @@ struct Orthtree_traits_base_for_dimension {
   using Adjacency = int;
   /// @}
 
-  /// \name Operations
-  /// @{
   auto construct_point_d_object() const {
     return [](auto... Args) -> Point_d {
       std::initializer_list<FT> args_list{Args...};
@@ -108,13 +104,10 @@ struct Orthtree_traits_base_for_dimension {
       return a < b;
       };
   }
-  /// @}
 };
 
 template <typename K>
 struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
-  /// \name Types
-  /// @{
   using Node_index = std::size_t;
   using Kernel = K;
   using Dimension = Dimension_tag<2>;
@@ -130,10 +123,7 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
     DOWN,
     UP
   };
-  /// @}
 
-  /// \name Operations
-  /// @{
   auto construct_point_d_object() const {
     return [](const FT& x, const FT& y) -> Point_d {
       return {x, y};
@@ -145,13 +135,10 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
       return a < b;
       };
   }
-  /// @}
 };
 
 template <typename K>
 struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
-  /// \name Types
-  /// @{
   using Node_index = std::size_t;
   using Kernel = K;
   using Dimension = Dimension_tag<3>;
@@ -169,7 +156,7 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
     BACK,
     FRONT
   };
-  /// \cond SKIP_IN_MANUAL
+
   enum Child {
     LEFT_BOTTOM_BACK,
     RIGHT_BOTTOM_BACK,
@@ -180,11 +167,7 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
     LEFT_TOP_FRONT,
     RIGHT_TOP_FRONT
   };
-  /// \endcond
-  /// @}
 
-  /// \name Operations
-  /// @{
   auto construct_point_d_object() const {
     return [](const FT& x, const FT& y, const FT& z) -> Point_d {
       return {x, y, z};
@@ -196,7 +179,6 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
       return a < b;
       };
   }
-  /// @}
 };
 
 }

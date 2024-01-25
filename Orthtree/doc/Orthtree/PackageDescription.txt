@@ -42,6 +42,7 @@ Quadtree, Octree and Orthtree Reference
 \cgalCRPSection{Concepts}
 - `OrthtreeTraits`
 - `OrthtreeTraversal`
+- `CollectionPartitioningOrthtreeTraits`
 
 \cgalCRPSection{Classes}
 - `CGAL::Quadtree<GeomTraits, PointRange, PointMap>`

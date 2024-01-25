@@ -62,16 +62,16 @@ void reassign_points(
 /*!
   \ingroup PkgOrthtreeTraits
 
-  The class `Orthtree_traits_point` can be used as a template parameter of
-  the `Orthtree` class.
+  Traits class for defining an orthtree of points using the class `CGAL::Orthtree`.
 
   \tparam GeomTraits model of `Kernel`.
-  \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`
-  \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Traits::Point_d`
+  \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap` and whose iterator type is model of `RandomAccessIterator`
+  \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is a point type from `GeomTraits` matching the current dimension
+  \tparam DimensionTag a tag representing the dimension of the ambient Euclidean space. Must be `Dimension_tag<d>` where `d` is an integer.
 
   \warning The input point set is not copied. It is used directly
   and is rearranged by the `Orthtree`. Altering the point range
-  after creating the orthtree might leave it in an invalid state.
+  after creating the orthtree will leave it in an invalid state.
 
   \cgalModels{OrthtreeTraits}
   \sa `CGAL::Octree`
@@ -89,26 +89,23 @@ template <
 >
 struct Orthtree_traits_point : public Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag> {
 public:
-
   /// \name Types
   /// @{
+  using Node_data = boost::iterator_range<typename PointRange::iterator>;
+  /// @}
 
   using Base = Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag>;
   using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>;
   using Tree = Orthtree<Self>;
 
-  using Node_data = boost::iterator_range<typename PointRange::iterator>;
   using Node_data_element = typename std::iterator_traits<typename PointRange::iterator>::value_type;
   using Node_index = typename Base::Node_index;
-  /// @}
+
 
   Orthtree_traits_point(
     PointRange& points,
     PointMap point_map = PointMap()
   ) : m_points(points), m_point_map(point_map) {}
-
-  /// \name Operations
-  /// @{
 
   auto construct_root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d {
@@ -160,8 +157,6 @@ public:
       return get(m_point_map, index);
     };
   }
-
-  /// @}
 
 private:
 

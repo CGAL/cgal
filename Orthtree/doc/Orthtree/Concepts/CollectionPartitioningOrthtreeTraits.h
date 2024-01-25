@@ -2,9 +2,8 @@
   \ingroup PkgOrthtreeConcepts
   \cgalConcept
 
-  In addition to the requirements described in the OrthtreeTraits concept,
-  the concept `CollectionPartitioningOrthtreeTraits` defines the requirements for the
-  traits class of a `CGAL::Orthtree` which supports nearest-neighbor searching.
+  Refinement of the OrthtreeTraits concept, adding requirements for the
+  traits class of a `CGAL::Orthtree` in order to supports nearest-neighbor searching.
 
   Nearest neighbor searches expect a tree with nodes which contain list types.
   The leaf nodes of the tree represent an exclusive partition of the elements contained in the tree.
@@ -49,7 +48,7 @@ public:
   /// @{
 
   /*!
-   * Function used to construct an object of type `Get_geometric_object_for_element`.
+   * constructs an object of type `Get_geometric_object_for_element`.
    */
   Get_geometric_object_for_element get_geometric_object_for_element_object() const;
 

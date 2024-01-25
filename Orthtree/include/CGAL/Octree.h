@@ -22,15 +22,11 @@ namespace CGAL {
 /*!
   \ingroup PkgOrthtreeRef
 
-  \brief Alias that specializes the `Orthtree` class to a 3D octree.
+  \brief Alias that specializes the `Orthtree` class to a 3D octree storing 3D points.
 
-  These two types are exactly equivalent:
-  - `Octree<GeomTraits, PointRange, PointMap>`
-  - `Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<3>>>`.
-
-  \tparam GeomTraits must be a model of `Kernel`
-  \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`
-  \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
+  \tparam GeomTraits a model of `Kernel`
+  \tparam PointRange a model of `Range` whose value type is the key type of `PointMap`
+  \tparam PointMap a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
  */
 template <
   typename GeomTraits,

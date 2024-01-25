@@ -117,18 +117,15 @@ namespace Orthtrees {
 
 /*!
   \ingroup PkgOrthtreeNeighbors
-  \brief finds the `k` points within a specific radius that are
-  nearest to the center of the sphere `query`.
+  \brief finds at most `k` points within a specific radius that are
+  nearest to the center of the sphere `query`: if `query` does not contain
+  at least `k` points, only contained points will be returned.
 
-  This function guarantees that there are no closer points than the ones returned,
-  but it does not guarantee that it will return at least `k` points.
-  For a query where the search radius encloses `k` or fewer points, all enclosed points will be returned.
-  If the search radius is too small, no points may be returned.
   This function is useful when the user already knows how sparse the points are,
   or if they do not care about points that are too far away.
   Setting a small radius may have performance benefits.
 
-  \tparam Tree must be an orthtree with traits which are a model of CollectionPartitioningOrthtreeTraits
+  \tparam Tree must be `Orthtree<GT>` with `GT` being a model of `CollectionPartitioningOrthtreeTraits`
   \tparam OutputIterator must be a model of `OutputIterator` that accepts points
 
   \param orthtree the tree to search within
@@ -173,13 +170,13 @@ OutputIterator nearest_k_neighbors_in_radius(
   Nearest neighbors are outputted in order of increasing distance to
   `query`.
 
-  \tparam Tree must be an orthtree with traits which are a model of `CollectionPartitioningOrthtreeTraits`
+  \tparam Tree must be `Orthtree<GT>` with `GT` being a model of `CollectionPartitioningOrthtreeTraits`
   \tparam OutputIterator a model of `OutputIterator` that accepts `Point_d` objects.
 
   \param orthtree the tree to search within
-  \param query query point.
-  \param k number of neighbors.
-  \param output output iterator.
+  \param query query point
+  \param k number of neighbors to find
+  \param output output iterator
  */
 template <typename Tree, typename OutputIterator>
 OutputIterator nearest_neighbors(const Tree& orthtree, const typename Tree::Point& query,
@@ -193,15 +190,15 @@ OutputIterator nearest_neighbors(const Tree& orthtree, const typename Tree::Poin
   \ingroup PkgOrthtreeNeighbors
   \brief finds the points in the sphere `query`.
 
-  Nearest neighbors are outputted in order of increasing distance to
+  Points are outputted in order of increasing distance to
   the center of the sphere.
 
-  \tparam Tree must be an orthtree with traits which are a model of `CollectionPartitioningOrthtreeTraits`
+  \tparam Tree must be `Orthtree<GT>` with `GT` being a model of `CollectionPartitioningOrthtreeTraits`
   \tparam OutputIterator a model of `OutputIterator` that accepts `Point_d` objects.
 
   \param orthtree the tree to search within
-  \param query query sphere.
-  \param output output iterator.
+  \param query query sphere
+  \param output output iterator
  */
 template <typename Tree, typename OutputIterator>
 OutputIterator nearest_neighbors(const Tree& orthtree, const typename Tree::Sphere& query, OutputIterator output) {
