@@ -233,7 +233,8 @@ int main(int argc, char* argv[])
     try {
       go(mesh, options);
     } catch(CGAL::Failure_exception& e) {
-      if(e.expression().find(options.failure_assertion_expression) != std::string::npos)
+      std::cerr << "CAUGHT EXCEPTION: " << e.what() << '\n';
+      if(std::string(e.what()).find(options.failure_assertion_expression) != std::string::npos)
       {
         std::cerr << "BAD MESH! " << mesh.number_of_faces() << " faces\n";
         std::ofstream bad("bad_mesh.off");
