@@ -2119,7 +2119,7 @@ void flip_edges(C3T3& c3t3,
   //}
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << "\nFlip edges... done ("
+  std::cout << "Flip edges... done ("
     << nb_flips_on_surface << "/"
     << nb_flips_in_volume << " surface/volume flips done)." << std::endl;
 #endif
