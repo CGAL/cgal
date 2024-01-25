@@ -107,8 +107,8 @@ public:
                                const CellSelector& cell_selector)
   {
     CGAL_assertion(!m_flip_smooth_steps);
-    m_vertex_id = vertex_id_map(c3t3.triangulation());
-    m_free_vertices = free_vertices(c3t3.triangulation(), cell_selector);
+    reset_vertex_id_map(c3t3.triangulation());
+    reset_free_vertices(c3t3.triangulation(), cell_selector);
 
     // once this variable is set to true,
     // m_vertex_id becomes constant and
@@ -123,28 +123,51 @@ private:
     return get(m_cell_selector, c);
   }
 
-  const auto& vertex_id_map(const Tr& tr)
+  const std::unordered_map<Vertex_handle, std::size_t>&
+  vertex_id_map(const Tr& tr)
   {
     if (!m_flip_smooth_steps)
-      compute_vertex_id_map(tr);
+      reset_vertex_id_map(tr);
+
+    // when flip-smooth steps start,
+    // m_vertex_id is initialized
+    // then, it does not need to be recomputed
+    // because no vertices are inserted nor removed anymore
     return m_vertex_id;
   }
 
   template<typename CellSelector>
-  std::vector<bool>& free_vertices(const Tr& tr,
-                                   const CellSelector& cell_selector)
+  const std::vector<bool>&
+  free_vertices(const Tr& tr, const CellSelector& cell_selector)
   {
     if (!m_flip_smooth_steps)
-      compute_free_vertices(tr, cell_selector);
+      reset_free_vertices(tr, cell_selector);
+
+    // when flip-smooth steps start,
+    // m_free_vertices is initialized
+    // then, it does not need to be recomputed
+    // because no vertices are inserted nor removed anymore
     return m_free_vertices;
+  }
+
+  std::size_t vertex_id(const Vertex_handle v) const
+  {
+    CGAL_assertion(m_vertex_id.find(v) != m_vertex_id.end());
+    return m_vertex_id.at(v);
+  }
+
+  bool is_free(const Vertex_handle v) const
+  {
+    return m_free_vertices[vertex_id(v)];
   }
 
   // this function can be used iff m_vertex_id
   // has already been initialized
   template<typename CellSelector>
-  void compute_free_vertices(const Tr& tr,
+  void reset_free_vertices(const Tr& tr,
                              const CellSelector& cell_selector)
   {
+    m_free_vertices.clear();
     m_free_vertices.resize(tr.number_of_vertices(), false);
 
     for (const Cell_handle c : tr.finite_cell_handles())
@@ -154,7 +177,7 @@ private:
 
       for (auto vi : tr.vertices(c))
       {
-        const std::size_t idi = m_vertex_id.at(vi);
+        const std::size_t idi = vertex_id(vi);
         const int dim = vi->in_dimension();
 
         switch (dim)
@@ -187,7 +210,7 @@ private:
     {
       for (auto vi : tr.vertices(c))
       {
-        const std::size_t idi = m_vertex_id.at(vi);
+        const std::size_t idi = vertex_id(vi);
         inc_cells[idi].push_back(c);
       }
     }
@@ -565,10 +588,8 @@ private:
     }
   }
 
-  void compute_vertex_id_map(const Tr& tr)
+  void reset_vertex_id_map(const Tr& tr)
   {
-    using Vertex_handle = typename Tr::Vertex_handle;
-
     m_vertex_id.clear();
     std::size_t id = 0;
     for (const Vertex_handle v : tr.finite_vertex_handles())
@@ -943,7 +964,7 @@ public:
     //collect incident cells
     using Incident_cells_vector = boost::container::small_vector<Cell_handle, 40>;
     const std::size_t nbv = tr.number_of_vertices();
-    std::vector<Incident_cells_vector> inc_cells(nbv, Incident_cells_vector());
+    std::vector<Incident_cells_vector> inc_cells(nbv, Incident_cells_vector{});
     collect_incident_cells(tr, cell_selector, inc_cells);
 
     if (!protect_boundaries && m_smooth_constrained_edges)
