@@ -80,9 +80,7 @@ public:
     , m_flip_smooth_steps(false)
   {}
 
-  template<typename CellSelector>
-  void init(const C3t3& c3t3,
-            const CellSelector& cell_selector)
+  void init(const C3t3& c3t3)
   {
     //collect a map of vertices surface indices
     std::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
@@ -91,7 +89,7 @@ public:
     //collect a map of normals at surface vertices
     std::unordered_map<Vertex_handle,
           std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>> vertices_normals;
-    compute_vertices_normals(c3t3, vertices_normals, cell_selector);
+    compute_vertices_normals(c3t3, vertices_normals);
 
     // Build MLS Surfaces
     createMLSSurfaces(subdomain_FMLS,
@@ -102,13 +100,11 @@ public:
   }
 
 
-  template<typename CellSelector>
-  void start_flip_smooth_steps(const C3t3& c3t3,
-                               const CellSelector& cell_selector)
+  void start_flip_smooth_steps(const C3t3& c3t3)
   {
     CGAL_assertion(!m_flip_smooth_steps);
     reset_vertex_id_map(c3t3.triangulation());
-    reset_free_vertices(c3t3.triangulation(), cell_selector);
+    reset_free_vertices(c3t3.triangulation());
 
     // once this variable is set to true,
     // m_vertex_id becomes constant and
@@ -140,9 +136,7 @@ private:
 
   // this function can be used iff m_vertex_id
   // has already been initialized
-  template<typename CellSelector>
-  void reset_free_vertices(const Tr& tr,
-                           const CellSelector& cell_selector)
+  void reset_free_vertices(const Tr& tr)
   {
     // when flip-smooth steps start,
     // m_free_vertices should already be initialized
@@ -159,7 +153,7 @@ private:
 
     for (const Cell_handle c : tr.finite_cell_handles())
     {
-      if (!get(cell_selector, c))
+      if (!is_selected(c))
         continue;
 
       for (auto vi : tr.vertices(c))
@@ -211,14 +205,12 @@ private:
     return gi + (normal * diff) * normal;
   }
 
-  template<typename CellSelector>
   std::optional<Facet>
   find_adjacent_facet_on_surface(const Facet& f,
                                  const Edge& edge,
-                                 const C3t3& c3t3,
-                                 const CellSelector& cell_selector)
+                                 const C3t3& c3t3)
   {
-    CGAL_assertion(is_boundary(c3t3, f, cell_selector));
+    CGAL_assertion(is_boundary(c3t3, f, m_cell_selector));
 
     typedef typename Tr::Facet_circulator Facet_circulator;
 
@@ -236,7 +228,7 @@ private:
       const Facet fi = *fcirc;
       if (f != fi
           && mf != fi
-          && is_boundary(c3t3, fi, cell_selector)
+          && is_boundary(c3t3, fi, m_cell_selector)
           && patch == c3t3.surface_patch_index(fi))
       {
         return canonical_facet(fi); //"canonical" is important
@@ -277,10 +269,9 @@ private:
     return str;
   }
 
-  template<typename VertexNormalsMap, typename CellSelector>
+  template<typename VertexNormalsMap>
   void compute_vertices_normals(const C3t3& c3t3,
-                                VertexNormalsMap& normals_map,
-                                const CellSelector& cell_selector)
+                                VertexNormalsMap& normals_map)
   {
     typename Tr::Geom_traits gt = c3t3.triangulation().geom_traits();
     typename Tr::Geom_traits::Construct_opposite_vector_3
@@ -292,7 +283,7 @@ private:
     std::unordered_map<Facet, Vector_3, boost::hash<Facet>> fnormals;
     for (const Facet& f : tr.finite_facets())
     {
-      if (is_boundary(c3t3, f, cell_selector))
+      if (is_boundary(c3t3, f, m_cell_selector))
       {
         const Facet cf = canonical_facet(f);
         fnormals[cf] = CGAL::NULL_VECTOR;
@@ -306,7 +297,7 @@ private:
 
       const Facet& f = fn.first;
       const Facet& mf = tr.mirror_facet(f);
-      CGAL_assertion(is_boundary(c3t3, f, cell_selector));
+      CGAL_assertion(is_boundary(c3t3, f, m_cell_selector));
 
       Vector_3 start_ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
       if (c3t3.triangulation().is_infinite(mf.first)
@@ -333,7 +324,7 @@ private:
         {
           Edge edge(ch, ei[0], ei[1]);
           if (std::optional<Facet> neighbor
-              = find_adjacent_facet_on_surface(f, edge, c3t3, cell_selector))
+              = find_adjacent_facet_on_surface(f, edge, c3t3))
           {
             const Facet neigh = *neighbor; //already a canonical_facet
             if (fnormals[neigh] == CGAL::NULL_VECTOR) //check it's not already computed
@@ -723,12 +714,11 @@ private:
 
 
 template<typename SurfaceIndices,
-         typename IncidentCells, typename NormalsMap, typename CellSelector>
+         typename IncidentCells, typename NormalsMap>
 std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
                                         const SurfaceIndices& vertices_surface_indices,
                                         const IncidentCells& inc_cells,
                                         const NormalsMap& vertices_normals,
-                                        const CellSelector& cell_selector,
                                         FT& total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                                       , std::ofstream& os_surf
@@ -746,7 +736,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
   for (const Edge& e : tr.finite_edges())
   {
-    if (!c3t3.is_in_complex(e) && is_boundary(c3t3, e, cell_selector))
+    if (!c3t3.is_in_complex(e) && is_boundary(c3t3, e, m_cell_selector))
     {
       const Vertex_handle vh0 = e.first->vertex(e.second);
       const Vertex_handle vh1 = e.first->vertex(e.third);
@@ -825,10 +815,9 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   return nb_done_2d;
 }
 
-template<typename IncidentCells, typename CellSelector>
+template<typename IncidentCells>
 std::size_t smooth_internal_vertices(C3t3& c3t3,
                                      const IncidentCells& inc_cells,
-                                     const CellSelector& cell_selector,
                                      FT& total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                                    , std::ofstream& os_vol
@@ -845,7 +834,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 
   for (const Edge& e : tr.finite_edges())
   {
-    if (is_outside(e, c3t3, cell_selector))
+    if (is_outside(e, c3t3, m_cell_selector))
       continue;
     else
     {
@@ -901,10 +890,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 }
 
 public:
-  template<typename CellSelector>
-  void smooth_vertices(C3t3& c3t3,
-                       const bool protect_boundaries,
-                       const CellSelector& cell_selector)
+  void smooth_vertices(C3t3& c3t3)
   {
     typedef typename C3t3::Cell_handle            Cell_handle;
 
@@ -928,20 +914,20 @@ public:
 
     //collect a map of vertices surface indices
     std::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
-    if(!protect_boundaries)
+    if(!m_protect_boundaries)
       collect_vertices_surface_indices(c3t3, vertices_surface_indices);
 
     //collect a map of normals at surface vertices
     std::unordered_map<Vertex_handle,
           std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>> vertices_normals;
-    if(!protect_boundaries)
-      compute_vertices_normals(c3t3, vertices_normals, cell_selector);
+    if(!m_protect_boundaries)
+      compute_vertices_normals(c3t3, vertices_normals);
 
     //collect ids
     reset_vertex_id_map(tr);
 
     //are vertices free to move? indices are in `vertex_id`
-    reset_free_vertices(tr, cell_selector);
+    reset_free_vertices(tr);
 
     //collect incident cells
     using Incident_cells_vector = boost::container::small_vector<Cell_handle, 40>;
@@ -949,7 +935,7 @@ public:
     std::vector<Incident_cells_vector> inc_cells(nbv, Incident_cells_vector{});
     collect_incident_cells(tr, inc_cells);
 
-    if (!protect_boundaries && m_smooth_constrained_edges)
+    if (!m_protect_boundaries && m_smooth_constrained_edges)
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       nb_done_1d =
@@ -963,14 +949,14 @@ public:
     }
 
     /////////////// EDGES ON SURFACE, BUT NOT IN COMPLEX //////////////////
-    if (!protect_boundaries)
+    if (!m_protect_boundaries)
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       nb_done_2d =
 #endif
        smooth_vertices_on_surfaces(c3t3,
                                   vertices_surface_indices, inc_cells, vertices_normals,
-                                  cell_selector, total_move
+                                  total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                                 , os_surf, os_surf0
 #endif
@@ -984,7 +970,7 @@ public:
     nb_done_3d =
 #endif
     smooth_internal_vertices(c3t3, inc_cells,
-                             cell_selector, total_move
+                             total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                            , os_vol
 #endif

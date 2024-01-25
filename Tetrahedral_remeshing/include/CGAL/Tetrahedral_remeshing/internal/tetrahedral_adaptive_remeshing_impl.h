@@ -133,7 +133,7 @@ public:
     m_c3t3.triangulation().swap(tr);
 
     init_c3t3(ecmap, fcmap);
-    m_vertex_smoother.init(m_c3t3, m_cell_selector);
+    m_vertex_smoother.init(m_c3t3);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -163,7 +163,7 @@ public:
     m_c3t3.swap(c3t3);
 
     init_c3t3(ecmap, fcmap);
-    m_vertex_smoother.init(m_c3t3, m_cell_selector);
+    m_vertex_smoother.init(m_c3t3);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
@@ -246,7 +246,7 @@ public:
 
   void smooth()
   {
-    m_vertex_smoother.smooth_vertices(m_c3t3, m_protect_boundaries, m_cell_selector);
+    m_vertex_smoother.smooth_vertices(m_c3t3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -622,7 +622,7 @@ public:
 #endif
     }
 
-    m_vertex_smoother.start_flip_smooth_steps(m_c3t3, m_cell_selector);
+    m_vertex_smoother.start_flip_smooth_steps(m_c3t3);
     while (it_nb < max_it + nb_extra_iterations)
     {
       ++it_nb;
