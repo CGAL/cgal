@@ -8,8 +8,8 @@
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;
-using Vector = typename Kernel::Vector_3;
 using Point = typename Kernel::Point_3;
+using Vector = typename Kernel::Vector_3;
 
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;

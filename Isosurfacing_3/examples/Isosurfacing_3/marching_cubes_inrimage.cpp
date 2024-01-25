@@ -30,10 +30,10 @@ int main(int argc, char* argv[])
   // convert image to a Cartesian grid
   Grid grid{image};
 
-  for (std::size_t i = 0; i < grid.xdim(); i++)
-    for (std::size_t j = 0; j < grid.ydim(); j++)
-      for (std::size_t k = 0; k < grid.zdim(); k++)
-        grid.value(i, j, k) = -grid.value(i, j, k);
+  for (std::size_t i=0; i<grid.xdim(); ++i)
+    for (std::size_t j=0; j<grid.ydim(); ++j)
+      for (std::size_t k=0; k<grid.zdim(); ++k)
+        grid.value(i, j, k) = - grid.value(i, j, k);
 
   // create a domain from the grid
   auto domain = CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid);

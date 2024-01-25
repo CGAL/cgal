@@ -36,24 +36,25 @@ int main(int argc, char* argv[])
   const std::string input_name = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
   const Vector grid_spacing(0.1, 0.1, 0.1);
   const FT offset_value = 0.2;
+  CGAL_assertion(offset_value > 0);
 
-  Mesh mesh_input;
-  if(!CGAL::IO::read_OFF(input_name, mesh_input))
+  Mesh input_mesh;
+  if(!CGAL::IO::read_OFF(input_name, input_mesh))
   {
     std::cerr << "Could not read input mesh" << std::endl;
     return EXIT_FAILURE;
   }
 
   // compute bounding box
-  CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(mesh_input);
+  CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox(input_mesh);
   Vector aabb_increase_vec = Vector(offset_value + 0.01, offset_value + 0.01, offset_value + 0.01);
   bbox += (Point(bbox.xmax(), bbox.ymax(), bbox.zmax()) + aabb_increase_vec).bbox();
   bbox += (Point(bbox.xmin(), bbox.ymin(), bbox.zmin()) - aabb_increase_vec).bbox();
 
   // construct AABB tree
-  Tree tree(mesh_input.faces_begin(), mesh_input.faces_end(), mesh_input);
+  Tree tree(input_mesh.faces_begin(), input_mesh.faces_end(), input_mesh);
 
-  CGAL::Side_of_triangle_mesh<Mesh, CGAL::GetGeomTraits<Mesh>::type> sotm(mesh_input);
+  CGAL::Side_of_triangle_mesh<Mesh, CGAL::GetGeomTraits<Mesh>::type> sotm(input_mesh);
 
   // functors for addressing distance and normal queries
   auto mesh_distance = [&tree](const Point& p)
@@ -65,7 +66,7 @@ int main(int argc, char* argv[])
   auto mesh_normal = [&tree](const Point& p)
   {
     const Point x = tree.closest_point(p);
-    const Vector n = p - x; // @todo address case where norm = zero
+    const Vector n = p - x;
     return n / sqrt(n.squared_length()); // normalize output vector
   };
 

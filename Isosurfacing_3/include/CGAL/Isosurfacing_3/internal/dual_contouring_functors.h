@@ -158,7 +158,9 @@ public:
 
       const FT d_k = n_k.transpose() * p_k;
 
-      // have to cast to cast to the underlying type because the type of 'n_k * n_k.transpose()' is Eigen::Product< ... > etc., so the double conversion is not implicit
+      // have to cast to cast to the underlying Eigen type because the type
+      // of 'n_k * n_k.transpose()' is Eigen::Product< ... > etc.,
+      // so the double conversion is not implicit
       Eigen_matrix_3 A_k = typename Eigen_matrix_3::EigenType(n_k * n_k.transpose());
       Eigen_vector_3 b_k;
       b_k = d_k * n_k;
@@ -303,16 +305,16 @@ public:
       const Vertex_descriptor& v0 = edge_vertices[0];
       const Vertex_descriptor& v1 = edge_vertices[1];
 
-      const FT val0 = domain.value(v0);
-      const FT val1 = domain.value(v1);
+      const FT val_0 = domain.value(v0);
+      const FT val_1 = domain.value(v1);
 
       const Point_3& p0 = domain.point(v0);
       const Point_3& p1 = domain.point(v1);
 
-      if((val0 <= isovalue) != (val1 <= isovalue))
+      if((val_0 <= isovalue) != (val_1 <= isovalue))
       {
         // current edge is intersected by the isosurface
-        const FT u = (val0 - isovalue) / (val0 - val1);
+        const FT u = (val_0 - isovalue) / (val_0 - val_1);
         const Point_3 p_lerp = point((FT(1) - u) * x_coord(p0) + u * x_coord(p1),
                                      (FT(1) - u) * y_coord(p0) + u * y_coord(p1),
                                      (FT(1) - u) * z_coord(p0) + u * z_coord(p1));
@@ -404,17 +406,17 @@ public:
   {
     // save all faces
     const auto& vertices = domain.incident_vertices(e);
-    const FT s0 = domain.value(vertices[0]);
-    const FT s1 = domain.value(vertices[1]);
+    const FT val_0 = domain.value(vertices[0]);
+    const FT val_1 = domain.value(vertices[1]);
 
-    if(s0 <= isovalue && s1 > isovalue)
+    if(val_0 <= isovalue && val_1 > isovalue)
     {
       const auto& voxels = domain.incident_cells(e);
 
       std::lock_guard<std::mutex> lock(mutex);
       faces[e].insert(faces[e].begin(), voxels.begin(), voxels.end());
     }
-    else if(s1 <= isovalue && s0 > isovalue)
+    else if(val_1 <= isovalue && val_0 > isovalue)
     {
       const auto& voxels = domain.incident_cells(e);
 
