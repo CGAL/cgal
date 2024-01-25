@@ -198,7 +198,8 @@ private:
       for (auto vi : tr.vertices(c))
       {
         const std::size_t idi = vertex_id(vi);
-        inc_cells[idi].push_back(c);
+        if(is_free(idi))
+          inc_cells[idi].push_back(c);
       }
     }
   }
