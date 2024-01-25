@@ -782,9 +782,10 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
     const std::size_t nb_neighbors = neighbors[vid];
     const Point_3 current_pos = point(v->point());
+    const Surface_patch_index si = vertices_surface_indices.at(v)[0];
 
-    const Surface_patch_index si = surface_patch_index(v, c3t3);
     CGAL_assertion(si != Surface_patch_index());
+    CGAL_assertion(si == surface_patch_index(v, c3t3));
 
     if (nb_neighbors > 1)
     {
@@ -927,13 +928,14 @@ public:
 
     //collect a map of vertices surface indices
     std::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
-    if(m_smooth_constrained_edges)
+    if(!protect_boundaries)
       collect_vertices_surface_indices(c3t3, vertices_surface_indices);
 
     //collect a map of normals at surface vertices
     std::unordered_map<Vertex_handle,
           std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>> vertices_normals;
-    compute_vertices_normals(c3t3, vertices_normals, cell_selector);
+    if(!protect_boundaries)
+      compute_vertices_normals(c3t3, vertices_normals, cell_selector);
 
     //collect ids
     reset_vertex_id_map(tr);
