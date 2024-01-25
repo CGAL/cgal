@@ -123,34 +123,7 @@ private:
     return get(m_cell_selector, c);
   }
 
-  const std::unordered_map<Vertex_handle, std::size_t>&
-  vertex_id_map(const Tr& tr)
-  {
-    if (!m_flip_smooth_steps)
-      reset_vertex_id_map(tr);
-
-    // when flip-smooth steps start,
-    // m_vertex_id is initialized
-    // then, it does not need to be recomputed
-    // because no vertices are inserted nor removed anymore
-    return m_vertex_id;
-  }
-
-  template<typename CellSelector>
-  const std::vector<bool>&
-  free_vertices(const Tr& tr, const CellSelector& cell_selector)
-  {
-    if (!m_flip_smooth_steps)
-      reset_free_vertices(tr, cell_selector);
-
-    // when flip-smooth steps start,
-    // m_free_vertices is initialized
-    // then, it does not need to be recomputed
-    // because no vertices are inserted nor removed anymore
-    return m_free_vertices;
-  }
-
-  std::size_t vertex_id(const Vertex_handle v) const
+   std::size_t vertex_id(const Vertex_handle v) const
   {
     CGAL_assertion(m_vertex_id.find(v) != m_vertex_id.end());
     return m_vertex_id.at(v);
@@ -160,13 +133,27 @@ private:
   {
     return m_free_vertices[vertex_id(v)];
   }
+  bool is_free(const std::size_t & vid) const
+  {
+    return m_free_vertices[vid];
+  }
 
   // this function can be used iff m_vertex_id
   // has already been initialized
   template<typename CellSelector>
   void reset_free_vertices(const Tr& tr,
-                             const CellSelector& cell_selector)
+                           const CellSelector& cell_selector)
   {
+    // when flip-smooth steps start,
+    // m_free_vertices should already be initialized
+    // ny the last smoothing step.
+    // Then, it does not need to be recomputed
+    // because no vertices are inserted nor removed anymore
+    if (m_flip_smooth_steps)
+    {
+      CGAL_assertion(m_free_vertices.size() == tr.number_of_vertices());
+      return;
+    }
     m_free_vertices.clear();
     m_free_vertices.resize(tr.number_of_vertices(), false);
 
@@ -590,6 +577,13 @@ private:
 
   void reset_vertex_id_map(const Tr& tr)
   {
+    // when flip-smooth steps start,
+    // m_vertex_id should already be initialized,
+    // done by the last smoothing step.
+    // Then, it does not need to be recomputed
+    // because no vertices are inserted nor removed anymore
+    if(m_flip_smooth_steps)
+      return;
     m_vertex_id.clear();
     std::size_t id = 0;
     for (const Vertex_handle v : tr.finite_vertex_handles())
@@ -627,12 +621,9 @@ private:
     return density;// mass;
   }
 
-  template<typename VertexIdMap,
-           typename VertexBoolMap, typename SurfaceIndices,
+  template<typename SurfaceIndices,
            typename IncidentCells, typename NormalsMap>
   std::size_t smooth_edges_in_complex(C3t3& c3t3,
-                                      const VertexIdMap& vertex_id,
-                                      const VertexBoolMap& free_vertex,
                                       const SurfaceIndices& vertices_surface_indices,
                                       const IncidentCells& inc_cells,
                                       const NormalsMap& vertices_normals,
@@ -659,21 +650,21 @@ private:
       CGAL_assertion(is_on_feature(vh0));
       CGAL_assertion(is_on_feature(vh1));
 
-      const std::size_t& i0 = vertex_id.at(vh0);
-      const std::size_t& i1 = vertex_id.at(vh1);
+      const std::size_t& i0 = vertex_id(vh0);
+      const std::size_t& i1 = vertex_id(vh1);
 
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
       const auto mass = mass_along_segment(e, tr);
 
-      if (free_vertex[i0])
+      if (is_free(i0))
       {
         smoothed_positions[i0] += mass * Vector_3(p0, p1);
         neighbors[i0]++;
         masses[i0] += mass;
       }
-      if (free_vertex[i1])
+      if (is_free(i1))
       {
         smoothed_positions[i1] += mass * Vector_3(p1, p0);
         neighbors[i1]++;
@@ -682,9 +673,9 @@ private:
     }
 
     // iterate over map of <vertex, id>
-    for (auto [v, vid] : vertex_id)
+    for (auto [v, vid] : m_vertex_id)
     {
-      if (!free_vertex[vid] || !is_on_feature(v))
+      if (!is_free(vid) || !is_on_feature(v))
         continue;
 
       const Point_3 current_pos = point(v->point());
@@ -731,12 +722,9 @@ private:
   }
 
 
-template<typename VertexIdMap,
-         typename VertexBoolMap, typename SurfaceIndices,
+template<typename SurfaceIndices,
          typename IncidentCells, typename NormalsMap, typename CellSelector>
 std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
-                                        const VertexIdMap& vertex_id,
-                                        const VertexBoolMap& free_vertex,
                                         const SurfaceIndices& vertices_surface_indices,
                                         const IncidentCells& inc_cells,
                                         const NormalsMap& vertices_normals,
@@ -766,18 +754,18 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
-      const std::size_t& i0 = vertex_id.at(vh0);
-      const std::size_t& i1 = vertex_id.at(vh1);
+      const std::size_t& i0 = vertex_id(vh0);
+      const std::size_t& i1 = vertex_id(vh1);
 
       const auto mass = mass_along_segment(e, tr);
 
-      if (!is_on_feature(vh0) && free_vertex[i0])
+      if (!is_on_feature(vh0) && is_free(i0))
       {
         smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(p0, p1);
         neighbors[i0]++;
         masses[i0] += mass;
       }
-      if (!is_on_feature(vh1) && free_vertex[i1])
+      if (!is_on_feature(vh1) && is_free(i1))
       {
         smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(p1, p0);
         neighbors[i1]++;
@@ -787,9 +775,9 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   }
 
   // iterate over map of <vertex, id>
-  for (auto [v, vid] : vertex_id)
+  for (auto [v, vid] : m_vertex_id)
   {
-    if (!free_vertex[vid] || v->in_dimension() != 2)
+    if (!is_free(vid) || v->in_dimension() != 2)
       continue;
 
     const std::size_t nb_neighbors = neighbors[vid];
@@ -836,12 +824,9 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   return nb_done_2d;
 }
 
-template<typename VertexIdMap,
-         typename VertexBoolMap, typename SurfaceIndices,
+template<typename SurfaceIndices,
          typename IncidentCells, typename NormalsMap, typename CellSelector>
 std::size_t smooth_internal_vertices(C3t3& c3t3,
-                                     const VertexIdMap& vertex_id,
-                                     const VertexBoolMap& free_vertex,
                                      const SurfaceIndices& vertices_surface_indices,
                                      const IncidentCells& inc_cells,
                                      const NormalsMap& vertices_normals,
@@ -869,21 +854,21 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
       const Vertex_handle vh0 = e.first->vertex(e.second);
       const Vertex_handle vh1 = e.first->vertex(e.third);
 
-      const std::size_t& i0 = vertex_id.at(vh0);
-      const std::size_t& i1 = vertex_id.at(vh1);
+      const std::size_t& i0 = vertex_id(vh0);
+      const std::size_t& i1 = vertex_id(vh1);
 
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
       const auto mass = mass_along_segment(e, tr);
 
-      if (c3t3.in_dimension(vh0) == 3 && free_vertex[i0])
+      if (c3t3.in_dimension(vh0) == 3 && is_free(i0))
       {
         smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(p0, p1);
         neighbors[i0]++;
         masses[i0] += mass;
       }
-      if (c3t3.in_dimension(vh1) == 3 && free_vertex[i1])
+      if (c3t3.in_dimension(vh1) == 3 && is_free(i1))
       {
         smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(p1, p0);
         neighbors[i1]++;
@@ -893,9 +878,9 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
   }
 
   // iterate over map of <vertex, id>
-  for (auto [v, vid] : vertex_id)
+  for (auto [v, vid] : m_vertex_id)
   {
-    if (!free_vertex[vid])
+    if (!is_free(vid))
       continue;
 
     if (c3t3.in_dimension(v) == 3 && neighbors[vid] > 1)
@@ -954,12 +939,10 @@ public:
     compute_vertices_normals(c3t3, vertices_normals, cell_selector);
 
     //collect ids
-    const std::unordered_map<Vertex_handle, std::size_t>&
-      vertex_id = vertex_id_map(tr);
+    reset_vertex_id_map(tr);
 
     //are vertices free to move? indices are in `vertex_id`
-    const std::vector<bool>&
-      free_vertex = free_vertices(tr, cell_selector);
+    reset_free_vertices(tr, cell_selector);
 
     //collect incident cells
     using Incident_cells_vector = boost::container::small_vector<Cell_handle, 40>;
@@ -972,7 +955,7 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       nb_done_1d =
 #endif
-      smooth_edges_in_complex(c3t3, vertex_id, free_vertex,
+      smooth_edges_in_complex(c3t3,
                               vertices_surface_indices, inc_cells, vertices_normals, total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                               , os_surf
@@ -986,7 +969,7 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       nb_done_2d =
 #endif
-       smooth_vertices_on_surfaces(c3t3, vertex_id, free_vertex,
+       smooth_vertices_on_surfaces(c3t3,
                                   vertices_surface_indices, inc_cells, vertices_normals,
                                   cell_selector, total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -1001,7 +984,7 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     nb_done_3d =
 #endif
-    smooth_internal_vertices(c3t3, vertex_id, free_vertex,
+    smooth_internal_vertices(c3t3,
                              vertices_surface_indices, inc_cells, vertices_normals,
                              cell_selector, total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
