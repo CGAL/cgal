@@ -157,9 +157,6 @@ public:
   using Property_map = Properties::Experimental::Property_array_handle<Node_index, T>;
 #endif
 
-  /// \cond SKIP_IN_MANUAL
-  /// \endcond
-
   /// @}
 
 private: // data members :
@@ -264,9 +261,6 @@ public:
   Orthtree& operator=(const Orthtree& other) = delete;
 
   Orthtree& operator=(Orthtree&& other) = delete;
-
-  // move constructor
-  /// \endcond
 
   /// \name Tree Building
   /// @{
