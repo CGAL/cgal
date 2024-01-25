@@ -140,7 +140,6 @@ public:
    * \brief A model of `ConstRange` whose value type is `Node_index` and its iterator type is `ForwardIterator`.
    */
 #ifdef DOXYGEN_RUNNING
-
   using Node_index_range = unspecified_type;
 #else
   using Node_index_range = boost::iterator_range<Index_traversal_iterator<Self>>;
@@ -268,9 +267,7 @@ public:
   /*!
     \brief recursively subdivides the orthtree until it meets the given criteria.
 
-    The split predicate is an `std::function` that takes a `Node_index` and an Orthtree reference, and
-    returns a Boolean value (where `true` implies that the corresponding node needs to
-    be split, `false` that the node should be a leaf).
+    The split predicate should return `true` if the node should be split and  false` otherwise.
 
     This function may be called several times with different
     predicates: in that case, nodes already split are left unaltered,
@@ -426,10 +423,9 @@ public:
     This method allows iteration over the nodes of the tree with a
     user-selected order (preorder, postorder, leaves-only, etc.).
 
-    \tparam Traversal model of `OrthtreeTraversal` that provides functions
-    compatible with the type of the orthtree
+    \tparam Traversal a model of `OrthtreeTraversal`
 
-    \param traversal the instance of `Traversal` used
+    \param traversal class defining the traversal strategy
 
     \return a forward input iterator over the node indices of the tree
    */
@@ -450,8 +446,7 @@ public:
   /*!
     \brief convenience method for using a traversal without constructing it yourself
 
-    \tparam Traversal model of `OrthtreeTraversal` that provides functions
-    compatible with the type of the orthtree
+    \tparam Traversal a model of `OrthtreeTraversal`
 
     \param args Arguments to to pass to the traversal's constructor, excluding the first (always an orthtree reference)
 
@@ -500,7 +495,7 @@ public:
     \param name the name of the new property
     \param default_value the default value assigned to nodes for this property
 
-    \return pair of the property map and a boolean which is True if the property needed to be created
+    \return pair of the property map and a boolean which is `true` if the property needed to be created
    */
   template <typename T>
   std::pair<Property_map<T>, bool>
@@ -637,7 +632,7 @@ public:
 
     \param rhs the other orthtree
 
-    \return boolean, True if the trees have the same topology
+    \return `true` if the trees have the same topology, and `false` otherwise
    */
   bool operator==(const Self& rhs) const {
 
@@ -658,7 +653,7 @@ public:
 
     \param rhs the other orthtree
 
-    \return boolean, False if the trees have the same topology
+    \return `false` if the trees have the same topology, and `true` otherwise
    */
   bool operator!=(const Self& rhs) const {
     return !operator==(rhs);
@@ -674,7 +669,7 @@ public:
 
     \param n index of the node to check.
 
-    \return true of the node is a leaf, false otherwise.
+    \return `true` of the node is a leaf, `false` otherwise.
    */
   bool is_leaf(Node_index n) const {
     return !m_node_children[n].has_value();
@@ -685,7 +680,7 @@ public:
 
     \param n index of the node to check.
 
-    \return True of the node is a root, False otherwise.
+    \return `true` if the node is a root, `false` otherwise.
    */
   bool is_root(Node_index n) const {
     return n == 0;
@@ -962,7 +957,7 @@ public:
   }
 
   /*!
-   * \brief finds the center point of a node.
+   * \brief returns the center point of a node.
    *
    * @param n index of the node to find the center point for
    *
@@ -1024,7 +1019,7 @@ public:
     \param lhs an Orthtree
     \param rhs another Orthtree
 
-    \return True if lhsTree and rhsTree have the same topology
+    \return `true` if `lhs` and `rhs` have the same topology, and `false` otherwise
    */
   static bool is_topology_equal(const Self& lhs, const Self& rhs) {
     return is_topology_equal(lhs.root(), lhs, rhs.root(), rhs);
