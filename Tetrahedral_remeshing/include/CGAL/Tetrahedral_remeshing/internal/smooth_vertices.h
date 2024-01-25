@@ -188,9 +188,8 @@ private:
     }
   }
 
-  template<typename IncCellsVector, typename CellSelector>
+  template<typename IncCellsVector>
   void collect_incident_cells(const Tr& tr,
-                              const CellSelector& cell_selector,
                               IncCellsVector& inc_cells)
   {
     for (const Cell_handle c : tr.finite_cell_handles())
@@ -825,12 +824,9 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   return nb_done_2d;
 }
 
-template<typename SurfaceIndices,
-         typename IncidentCells, typename NormalsMap, typename CellSelector>
+template<typename IncidentCells, typename CellSelector>
 std::size_t smooth_internal_vertices(C3t3& c3t3,
-                                     const SurfaceIndices& vertices_surface_indices,
                                      const IncidentCells& inc_cells,
-                                     const NormalsMap& vertices_normals,
                                      const CellSelector& cell_selector,
                                      FT& total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -949,7 +945,7 @@ public:
     using Incident_cells_vector = boost::container::small_vector<Cell_handle, 40>;
     const std::size_t nbv = tr.number_of_vertices();
     std::vector<Incident_cells_vector> inc_cells(nbv, Incident_cells_vector{});
-    collect_incident_cells(tr, cell_selector, inc_cells);
+    collect_incident_cells(tr, inc_cells);
 
     if (!protect_boundaries && m_smooth_constrained_edges)
     {
@@ -985,8 +981,7 @@ public:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     nb_done_3d =
 #endif
-    smooth_internal_vertices(c3t3,
-                             vertices_surface_indices, inc_cells, vertices_normals,
+    smooth_internal_vertices(c3t3, inc_cells,
                              cell_selector, total_move
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
                            , os_vol
