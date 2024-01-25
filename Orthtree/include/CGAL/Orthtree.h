@@ -1086,7 +1086,7 @@ public:
 
     \return the index of the adjacent node if it exists, nothing otherwise.
   */
-  Maybe_node_index adjacent_node(Node_index n, Local_coordinates direction) const {
+  Maybe_node_index adjacent_node(Node_index n, const Local_coordinates& direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
