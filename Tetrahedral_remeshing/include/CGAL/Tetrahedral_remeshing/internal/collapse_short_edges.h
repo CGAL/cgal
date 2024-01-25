@@ -215,12 +215,11 @@ public:
 
       } while (++circ != done);
 
-#ifdef PROTECT_ANGLES_FROM_COLLAPSE
-      const Dihedral_angle_cosine acceptable_max_cos(0.995); // 0.995 cos <=> 5.7 degrees
+      // compute and keep worst angle
       Dihedral_angle_cosine curr_max_cos
         = (std::max)(max_cos_dihedral_angle_in_range(triangulation, cells_to_remove, false),
                      max_cos_dihedral_angle_in_range(triangulation, cells_to_update, false));
-#endif
+
 
       vh0->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
       vh1->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
@@ -270,6 +269,7 @@ public:
         triangulation.tds().delete_cell(ch);
       }
 
+      // check validity of cells
       for (Cell_handle cit : triangulation.finite_cell_handles())
       {
         if (!is_well_oriented(triangulation, cit))
@@ -278,7 +278,7 @@ public:
           return C_PROBLEM;
       }
 
-#ifdef PROTECT_ANGLES_FROM_COLLAPSE
+      // check angles
       for (Cell_handle cit : triangulation.finite_cell_handles())
       {
         auto max_cos_after_collapse = max_cos_dihedral_angle(triangulation, cit, false);
@@ -286,8 +286,8 @@ public:
          && acceptable_max_cos < max_cos_after_collapse) // && angles go below acceptable bound
           return ANGLE_PROBLEM;
       }
-#endif
 
+      // check validity of vertices
       for (Vertex_handle vit : triangulation.finite_vertex_handles())
       {
         if (!triangulation.tds().is_valid(vit, true))
@@ -320,6 +320,8 @@ protected:
   Edge edge;
 
   bool not_an_edge;
+
+  const Dihedral_angle_cosine acceptable_max_cos{0.995}; // 0.995 cos <=> 5.7 degrees
 };
 
 
