@@ -62,6 +62,7 @@ struct CDT_options
 {
   bool quiet = false;
   bool merge_facets = false;
+  bool merge_facets_old_method = false;
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
   double segment_vertex_epsilon = 1e-8;
@@ -83,13 +84,13 @@ Usage: cdt_3_from_off [options] input.off output.off
   output.off: output mesh
 
   --merge-facets: merge facets into patches (unset by default)
-  --ratio: ratio of faces to remove (default: 0)
-  --failure-expression: expression to detect bad mesh (to use with --ratio)
-  --dump-patches-after-merge: dump patches after merging facets
-  --dump-patches-borders-prefix: dump patches borders
-  --dump-after-conforming: dump mesh after conforming
-  --vertex-vertex-epsilon: epsilon for vertex-vertex min distance (default: 1e-6)
-  --segment-vertex-epsilon: epsilon for segment-vertex min distance (default: 0)
+  --ratio <double>: ratio of faces to remove (default: 0)
+  --failure-expression <expression>: expression to detect bad mesh (to use with --ratio)
+  --dump-patches-after-merge <filename.ply>: dump patches after merging facets in PLY
+  --dump-patches-borders-prefix <filenames_prefix>: dump patches borders
+  --dump-after-conforming <filename.off>: dump mesh after conforming in OFF
+  --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
+  --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
   --quiet: do not print anything
   --help: print this help
 )";
@@ -110,6 +111,9 @@ int main(int argc, char* argv[])
     std::string arg = argv[i];
     if(arg == "--merge-facets") {
       options.merge_facets = true;
+    } else if(arg == "--merge-facets-old") {
+      options.merge_facets = true;
+      options.merge_facets_old_method = true;
     } else if(arg == "--failure-expression") {
       assert(i + 1 < argc);
       options.failure_assertion_expression = argv[++i];
@@ -320,9 +324,41 @@ int go(Mesh mesh, CDT_options options) {
   if(options.merge_facets) {
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    namespace np = CGAL::parameters;
-    nb_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
-        mesh, patch_id_map, np::maximum_distance(epsilon * bbox_max_width).maximum_angle(1));
+    if(options.merge_facets_old_method) {
+      for(auto f: faces(mesh))
+      {
+        if(get(patch_id_map, f) >= 0) continue;
+        std::stack<face_descriptor> f_stack;
+        f_stack.push(f);
+        while(!f_stack.empty()) {
+          auto f = f_stack.top();
+          f_stack.pop();
+          if(get(patch_id_map, f) >= 0) continue;
+          put(patch_id_map, f, nb_patches);
+          for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
+            auto opp = opposite(h, mesh);
+            if(is_border_edge(opp, mesh)) {
+              continue;
+            }
+            auto n = face(opp, mesh);
+            auto a = get(pmap, source(h, mesh));
+            auto b = get(pmap, target(h, mesh));
+            auto c = get(pmap, target(next(h, mesh), mesh));
+            auto d = get(pmap, target(next(opp, mesh), mesh));
+            if(CGAL::orientation(a, b, c, d) != CGAL::COPLANAR) {
+              continue;
+            }
+            if(get(patch_id_map, n) >= 0) continue;
+            f_stack.push(n);
+          }
+        }
+        ++nb_patches;
+      }
+    } else {
+      namespace np = CGAL::parameters;
+      nb_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
+          mesh, patch_id_map, np::maximum_distance(epsilon * bbox_max_width).maximum_angle(1));
+    }
     for(auto f: faces(mesh)) {
       if(get(patch_id_map, f) < 0) {
         std::cerr << "warning: face " << f << " has no patch id! Reassign it to " << nb_patches << '\n';
