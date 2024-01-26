@@ -20,7 +20,6 @@
 #include <CGAL/Orthtree/Traversal_iterator.h>
 #include <CGAL/Orthtree/IO.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Property_container.h>
@@ -174,10 +173,9 @@ private: // data members :
   Property_array<Maybe_node_index>& m_node_parents;
   Property_array<Maybe_node_index>& m_node_children;
 
-  using Bbox_dimensions = std::array<CGAL::Exact_predicates_exact_constructions_kernel::FT, Dimension::value>;
-  CGAL::NT_converter<CGAL::Exact_predicates_exact_constructions_kernel::FT, typename Traits::Kernel::FT> conv;
-  Bbox_dimensions m_bbox_min;
-  std::vector<Bbox_dimensions> m_side_per_depth;      /* side length per node's depth */
+  using Bbox_dimensions = std::array<FT, Dimension::value>;
+  Bbox m_bbox;
+  std::vector<Bbox_dimensions> m_side_per_depth;      /* precomputed (potentially approximated) side length per node's depth */
 
   Cartesian_ranges cartesian_range; /* a helper to easily iterate over coordinates of points */
 
@@ -211,16 +209,15 @@ public:
     m_node_properties.emplace();
 
     // init bbox with first values found
-    auto bbox = m_traits.construct_root_node_bbox_object()();
+    m_bbox = m_traits.construct_root_node_bbox_object()();
 
     // Determine dimensions of the root bbox
 
     Bbox_dimensions size;
-    for (int i = 0; i < Dimension::value; ++i) {
-      m_bbox_min[i] = (bbox.min)()[i];
-      size[i] = CGAL::Exact_predicates_exact_constructions_kernel::FT((bbox.max)()[i]) - m_bbox_min[i];
+    for (int i = 0; i < Dimension::value; ++i)
+    {
+      size[i] = (m_bbox.max)()[i] - (m_bbox.min)()[i];
     }
-
     // save orthtree attributes
     m_side_per_depth.push_back(size);
     data(root()) = m_traits.construct_root_node_contents_object()();
@@ -237,7 +234,7 @@ public:
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
     m_node_children(m_node_properties.get_property<Maybe_node_index>("children")),
-    m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth) {}
+    m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth) {}
 
   // move constructor
   Orthtree(Orthtree&& other) :
@@ -248,7 +245,7 @@ public:
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
     m_node_children(m_node_properties.get_property<Maybe_node_index>("children")),
-    m_bbox_min(other.m_bbox_min), m_side_per_depth(other.m_side_per_depth)
+    m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth)
   {
     // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
     other.m_node_properties.emplace();
@@ -468,14 +465,16 @@ public:
     \return the bounding box of the node n
    */
   Bbox bbox(Node_index n) const {
-
     using Cartesian_coordinate = std::array<FT, Dimension::value>;
     Cartesian_coordinate min_corner, max_corner;
-    Bbox_dimensions size = m_side_per_depth[depth(n)];
-
+    std::size_t node_depth = depth(n);
+    Bbox_dimensions size = m_side_per_depth[node_depth];
+    const std::size_t last_coord = std::pow(2,node_depth)-1;
     for (int i = 0; i < Dimension::value; i++) {
-      min_corner[i] = approx(m_bbox_min[i] + int(global_coordinates(n)[i]) * size[i]).inf();
-      max_corner[i] = approx(m_bbox_min[i] + int(global_coordinates(n)[i] + 1) * size[i]).sup();
+      min_corner[i] = (m_bbox.min)()[i] + int(global_coordinates(n)[i]) * size[i];
+      max_corner[i] = std::size_t(global_coordinates(n)[i]) == last_coord
+                    ? (m_bbox.max)()[i]
+                    : (m_bbox.min)()[i] + int(global_coordinates(n)[i] + 1) * size[i];
     }
 
     return {std::apply(m_traits.construct_point_d_object(), min_corner),
@@ -637,7 +636,7 @@ public:
   bool operator==(const Self& rhs) const {
 
     // Identical trees should have the same bounding box
-    if (rhs.m_bbox_min != m_bbox_min || rhs.m_side_per_depth[0] != m_side_per_depth[0])
+    if (rhs.m_bbox != m_bbox || rhs.m_side_per_depth[0] != m_side_per_depth[0])
       return false;
 
     // Identical trees should have the same depth
@@ -945,7 +944,7 @@ public:
       Bbox_dimensions size = m_side_per_depth.back();
       Bbox_dimensions child_size;
       for (int i = 0; i < Dimension::value; ++i)
-        child_size[i] = size[i] * 0.5;
+        child_size[i] = size[i] / FT(2);
       m_side_per_depth.push_back(child_size);
     }
 
@@ -969,17 +968,12 @@ public:
     Bbox_dimensions size = m_side_per_depth[depth(n)];
 
     // Determine the location this node should be split
-    Bbox_dimensions bary;
-
+    std::array<FT, Dimension::value> bary;
     for (std::size_t i = 0; i < Dimension::value; i++)
-      bary[i] = FT(global_coordinates(n)[i]) * size[i] + size[i] / FT(2) + m_bbox_min[i];
+      // use the same expression as for the bbox computation
+      bary[i] = (m_bbox.min)()[i] + int(2 * global_coordinates(n)[i]+1) * ( size[i] / FT(2) );
 
-    // Convert that location into a point
-
-    std::array<typename Traits::Kernel::FT, Dimension::value> tmp;
-    for (std::size_t i = 0; i < Dimension::value; i++)
-      tmp[i] = conv(bary[i]);
-    return std::apply(m_traits.construct_point_d_object(), tmp);
+    return std::apply(m_traits.construct_point_d_object(), bary);
   }
 
   /*!
