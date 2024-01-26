@@ -1485,10 +1485,10 @@ private:
                   register_internal_constrained_facet);
 
     std::for_each(fh_region.begin(), fh_region.end(), [&](auto fh) {
-      auto is_fh_facet_of = [this, fh](const auto& tr) -> std::optional<Facet> {
-        const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
-        const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
-        const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
+      const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
+      const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
+      const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
+      auto is_fh_facet_of = [&](const auto& tr) -> std::optional<Facet> {
         return this->vertex_triple_is_facet_of_other_triangulation(*this, v0, v1, v2, tr);
       };
 
@@ -1496,11 +1496,20 @@ private:
       const bool fail_lower = !is_fh_facet_of(lower_cavity_triangulation);
       const bool test = !fail_upper && !fail_lower;
       if(fail_upper || fail_lower) {
+        auto display_face = [&]() {
+          std::stringstream s;
+          s.precision(std::cerr.precision());
+          s << "(" << IO::oformat(v0, this->with_offset) << ", " << IO::oformat(v1, this->with_offset)
+            << ", " << IO::oformat(v2, this->with_offset) << ") = ( "
+            << tr.point(v0) << "  " << tr.point(v1) << "  " << tr.point(v2)
+            << " )";
+          return s.str();
+        };
         if(fail_upper) {
-          std::cerr << "NOTE: Face is not a facet of the upper cavity\n";
+          std::cerr << "NOTE: Face " << display_face() << " is not a facet of the upper cavity\n";
         }
         if(fail_lower) {
-          std::cerr << "NOTE: Face is not a facet of the lower cavity\n";
+          std::cerr << "NOTE: Face " << display_face() << " is not a facet of the lower cavity\n";
         }
         // debug_region_size_4();
         // dump_region(face_index, region_count, cdt_2);
