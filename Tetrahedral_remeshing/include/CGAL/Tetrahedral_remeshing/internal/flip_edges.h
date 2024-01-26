@@ -726,7 +726,6 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   //TODO!!!! Check that the created edges do not exist!!!
 
   boost::container::small_vector<Facet, 2> facets_in_complex;
-  typename C3t3::Surface_patch_index patch;
 
   Facet_circulator facet_circulator = tr.incident_facets(edge);
   Facet_circulator done_facet_circulator = facet_circulator;
@@ -735,7 +734,6 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   {
     if (c3t3.is_in_complex(*facet_circulator))
     {
-      patch = c3t3.surface_patch_index(*facet_circulator);
       facets_in_complex.push_back(*facet_circulator);
     }
 
@@ -1178,7 +1176,6 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename Tr::Cell_handle   Cell_handle;
-  typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Edge          Edge;
 
   Tr& tr = c3t3.triangulation();
@@ -1229,7 +1226,6 @@ void collectBoundaryEdgesAndComputeVerticesValences(
   boost::unordered_map<typename C3T3::Vertex_handle, std::unordered_set<typename C3T3::Subdomain_index> >&
       vertices_subdomain_indices)
 {
-  typedef typename C3T3::Subdomain_index     Subdomain_index;
   typedef typename C3T3::Surface_patch_index Surface_patch_index;
   typedef typename C3T3::Vertex_handle       Vertex_handle;
   typedef typename C3T3::Edge                Edge;
@@ -1302,19 +1298,17 @@ void collectBoundaryEdgesAndComputeVerticesValences(
   }
 }
 
-template<typename C3T3, typename IncCellsVector, typename CellSelector, typename Visitor>
+template<typename C3T3, typename IncCellsVector, typename Visitor>
 Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
     C3T3& c3t3,
     typename C3T3::Vertex_handle v0i,//v0 of new edge that will replace edge
     typename C3T3::Vertex_handle v1i,//v1 of new edge that will replace edge
     const IncCellsVector& cells_around_edge,
-    Flip_Criterion flip_criterion,
-    CellSelector& cell_selector,
-    Visitor& visitor)
+    Flip_Criterion /*flip_criterion*/,
+    Visitor& /*visitor*/)
 {
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef typename C3T3::Cell_handle   Cell_handle;
-  typedef typename C3T3::Triangulation::Geom_traits::Point_3 Point_3;
 
   typename C3T3::Triangulation& tr = c3t3.triangulation();
 
@@ -1365,14 +1359,13 @@ Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
 //v0i and v1i are the vertices opposite to `edge`
 //on facets of the surface
 template<typename C3T3, typename IncCellsVectorMap,
-         typename CellSelector, typename Visitor>
+         typename Visitor>
 Sliver_removal_result flip_on_surface(C3T3& c3t3,
     typename C3T3::Edge& edge,
     typename C3T3::Vertex_handle v0i,//v0 of new edge that will replace edge
     typename C3T3::Vertex_handle v1i,//v1 of new edge that will replace edge
     IncCellsVectorMap& inc_cells,
     Flip_Criterion flip_criterion,
-    CellSelector& cell_selector,
     Visitor& visitor)
 {
   typedef typename C3T3::Triangulation Tr;
@@ -1407,7 +1400,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 #else
         return flip_n_to_m_on_surface(edge, c3t3, v0i, v1i,
                                       cells_around_edge, flip_criterion,
-                                      cell_selector, visitor);
+                                      visitor);
 #endif
 //////    }
     }
@@ -1460,12 +1453,12 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //  std::vector<std::pair<Point_3, Point_3> > current_edges;
 //  current_edges.push_back(std::make_pair(vh1->point(), vh3->point()));
 
-  if (vh0 == v0i && vh2 == v1i || vh2 == v0i && vh0 == v1i)
+  if ((vh0 == v0i && vh2 == v1i) || (vh2 == v0i && vh0 == v1i))
   {
     planar_flip = true;
 //    current_edges.push_back(std::make_pair(vh0->point(), vh2->point()));
   }
-  else if (vh4 == v0i && vh5 == v1i || vh5 == v0i && vh4 == v1i)
+  else if ((vh4 == v0i && vh5 == v1i) || (vh5 == v0i && vh4 == v1i))
     planar_flip = false;
   else
     return NOT_FLIPPABLE;
@@ -1500,8 +1493,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //  std::cout << "vh0 "<< vh0->info() <<", " << vh1->info() << ", " << vh2->info() << ", " << vh3->info()<<", " << vh4->info() << ", " << vh5 ->info() << std::endl;
 //  */
 
-  typedef std::pair<Vertex_handle, Vertex_handle> Edge_uv;
-  typedef typename C3T3::Edge  Edge;
   typedef typename C3T3::Facet Facet;
   typedef typename C3T3::Surface_patch_index Surface_patch_index;
 
@@ -1853,7 +1844,6 @@ std::size_t flipBoundaryEdges(
   typedef typename C3T3::Facet         Facet;
   typedef typename C3T3::Edge          Edge;
   typedef typename C3T3::Surface_patch_index Surface_patch_index;
-  typedef typename C3T3::Subdomain_index Subdomain_index;
   typedef typename C3T3::Triangulation Tr;
   typedef std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
@@ -1937,8 +1927,8 @@ std::size_t flipBoundaryEdges(
           vh3 = v3;
       }
 
-      int li, lj, lk;
-      Cell_handle c;
+      CGAL_assertion_code((int li, lj, lk));
+      CGAL_assertion_code(Cell_handle c);
       CGAL_assertion(tr.is_facet(vh0, vh1, vh2, c, li, lj, lk));
       CGAL_assertion(c3t3.is_in_complex(c, (6 - li - lj - lk)));
 
@@ -1986,7 +1976,6 @@ std::size_t flipBoundaryEdges(
           Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
                                                      inc_cells,
                                                      flip_criterion,
-                                                     cell_selector,
                                                      visitor);
           if (db == VALID_FLIP)
           {
