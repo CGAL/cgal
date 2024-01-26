@@ -489,10 +489,9 @@ private:
                         // in this case, we want to be able to set it
     case 1 : return new_dim == 0; //features can be modified to corners
     case 0 : return false;// corners remain corners
-    default:
-      return true;
+    default: break;
     }
-    CGAL_unreachable();
+    CGAL_assertion(false);
     return true;
   }
 

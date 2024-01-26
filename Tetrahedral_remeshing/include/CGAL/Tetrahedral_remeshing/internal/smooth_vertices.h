@@ -55,18 +55,18 @@ private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
   std::vector<FMLS> subdomain_FMLS;
   std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
-  const bool m_protect_boundaries;
-  const bool m_smooth_constrained_edges;
 
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
+  const bool m_protect_boundaries;
+  const bool m_smooth_constrained_edges;
 
   // the 2 following variables become useful and valid
   // just before flip/smooth steps, when no vertices get inserted
   // nor removed anymore
   std::unordered_map<Vertex_handle, std::size_t> m_vertex_id;
   std::vector<bool> m_free_vertices{};
-  bool m_flip_smooth_steps;
+  bool m_flip_smooth_steps{false};
 
 public:
   Tetrahedral_remeshing_smoother(const SizingFunction& sizing,
@@ -77,7 +77,6 @@ public:
     , m_cell_selector(cell_selector)
     , m_protect_boundaries(protect_boundaries)
     , m_smooth_constrained_edges(smooth_constrained_edges)
-    , m_flip_smooth_steps(false)
   {}
 
   void init(const C3t3& c3t3)
@@ -114,7 +113,7 @@ public:
 
 private:
 
-  const bool is_selected(const Cell_handle c) const
+  bool is_selected(const Cell_handle c) const
   {
     return get(m_cell_selector, c);
   }
@@ -599,7 +598,7 @@ private:
 
     const std::array<Vertex_handle, 2> vs = tr.vertices(e);
 
-    const FT len = CGAL::approximate_sqrt(squared_edge_length(e, tr));
+    //const FT len = CGAL::approximate_sqrt(squared_edge_length(e, tr));
 
     const int dim = (std::max)(vs[0]->in_dimension(), vs[1]->in_dimension());
     const typename C3t3::Index index = max_dimension_index(vs);
@@ -671,7 +670,6 @@ private:
 
       const Point_3 current_pos = point(v->point());
       const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(v);
-      const std::size_t count = v_surface_indices.size();
 
       const std::size_t nb_neighbors = neighbors[vid];
       if(nb_neighbors == 0)
