@@ -1372,7 +1372,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
   typedef typename Tr::Cell_handle     Cell_handle;
   typedef typename Tr::Vertex_handle   Vertex_handle;
   typedef typename Tr::Cell_circulator Cell_circulator;
-  typedef typename Tr::Point           Point_3;
 
   Tr& tr = c3t3.triangulation();
   Cell_circulator circ = tr.incident_cells(edge);
@@ -1927,7 +1926,9 @@ std::size_t flipBoundaryEdges(
           vh3 = v3;
       }
 
-      CGAL_assertion_code((int li, lj, lk));
+      CGAL_assertion_code(int li);
+      CGAL_assertion_code(int lj);
+      CGAL_assertion_code(int lk);
       CGAL_assertion_code(Cell_handle c);
       CGAL_assertion(tr.is_facet(vh0, vh1, vh2, c, li, lj, lk));
       CGAL_assertion(c3t3.is_in_complex(c, (6 - li - lj - lk)));
@@ -1966,9 +1967,10 @@ std::size_t flipBoundaryEdges(
                        + (v3 - m3)*(v3 - m3);
         if (initial_cost > final_cost)
         {
-          int nbf = std::distance(c3t3.facets_in_complex_begin(),
-                                  c3t3.facets_in_complex_end());
-          CGAL_assertion_code(int nbe =
+          CGAL_assertion_code(std::size_t nbf =
+            std::distance(c3t3.facets_in_complex_begin(),
+                          c3t3.facets_in_complex_end()));
+          CGAL_assertion_code(std::size_t nbe =
             std::distance(c3t3.edges_in_complex_begin(),
                           c3t3.edges_in_complex_end()));
 
@@ -1991,11 +1993,11 @@ std::size_t flipBoundaryEdges(
             CGAL_assertion(b);
             c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
 
-//            std::cout << " done" << std::endl;
-            int nbf_post = std::distance(c3t3.facets_in_complex_begin(),
-                                         c3t3.facets_in_complex_end());
+            CGAL_assertion_code(std::size_t nbf_post =
+              std::distance(c3t3.facets_in_complex_begin(),
+                            c3t3.facets_in_complex_end()));
             CGAL_assertion(nbf == nbf_post);
-            CGAL_assertion_code(int nbe_post =
+            CGAL_assertion_code(std::size_t nbe_post =
               std::distance(c3t3.edges_in_complex_begin(),
                             c3t3.edges_in_complex_end()));
             CGAL_assertion(nbe == nbe_post);
