@@ -36,6 +36,7 @@
 #include <boost/container/small_vector.hpp> /// @TODO Requires Boost 1.66
 
 #include <fstream>
+#include <bitset>
 
 namespace CGAL {
 
@@ -287,6 +288,14 @@ public:
     segment_vertex_epsilon = epsilon;
   }
 
+  bool debug_Steiner_points() const {
+    return debug_flags[static_cast<int>(Debug_flags::Steiner_points)];
+  }
+
+  void debug_Steiner_points(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::Steiner_points), b);
+  }
+
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
                        int li, int lj)
   {
@@ -463,12 +472,12 @@ protected:
       const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
-#if CGAL_CDT_3_DEBUG_CONFORMING
-      const auto [c_start, c_end] = constraint_extremities(constraint);
-      std::cerr << "(" << IO::oformat(va, with_offset) << ", " << IO::oformat(vb, with_offset) << ")";
-      std::cerr << ": [ " << display_vert(c_start) << " - " << display_vert(c_end) << " ] ";
-      std::cerr << "  new vertex " << display_vert(v) << '\n';
-#endif // CGAL_CDT_3_DEBUG_CONFORMING
+      if(debug_Steiner_points()) {
+        const auto [c_start, c_end] = constraint_extremities(constraint);
+        std::cerr << "(" << IO::oformat(va, with_offset) << ", " << IO::oformat(vb, with_offset) << ")";
+        std::cerr << ": [ " << display_vert(c_start) << " - " << display_vert(c_end) << " ] ";
+        std::cerr << "  new vertex " << display_vert(v) << '\n';
+      }
       return true;
     }
 
@@ -795,6 +804,9 @@ protected:
 
   std::stack<std::pair<Subconstraint, Constraint_id> >
     subconstraints_to_conform;
+
+  enum class Debug_flags { Steiner_points = 0, conforming = 1 };
+  std::bitset<2> debug_flags{};
 };
 
 } // end CGAL

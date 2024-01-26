@@ -60,6 +60,7 @@ using face_descriptor   = boost::graph_traits<Mesh>::face_descriptor;
 
 struct CDT_options
 {
+  int verbose = 0;
   bool quiet = false;
   bool merge_facets = false;
   bool merge_facets_old_method = false;
@@ -83,6 +84,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   input.off: input mesh
   output.off: output mesh
 
+  -V/--verbose: verbose (can be used several times)
   --merge-facets: merge facets into patches (unset by default)
   --ratio <double>: ratio of faces to remove (default: 0)
   --failure-expression <expression>: expression to detect bad mesh (to use with --ratio)
@@ -137,6 +139,8 @@ int main(int argc, char* argv[])
       options.segment_vertex_epsilon = std::stod(argv[++i]);
     } else if(arg == "--quiet") {
       options.quiet = true;
+    } else if(arg == "-V") {
+      ++options.verbose;
     } else if(arg == "--help") {
       help(std::cout);
       return 0;
@@ -297,6 +301,9 @@ auto segment_soup_to_polylines(Range_of_segments&& segment_soup) {
 
 int go(Mesh mesh, CDT_options options) {
   CDT cdt;
+  if(options.verbose > 0) {
+    cdt.debug_Steiner_points(true);
+  }
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
 
   const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);

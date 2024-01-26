@@ -1914,10 +1914,12 @@ private:
     if(encroached_edge_opt) {
       return encroached_edge_opt;
     }
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-    std::cerr << std::format("Inserting Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
-                             IO::oformat(cdt_2.triangle(fh_2d)));
-#endif // CGAL_DEBUG_CDT_3
+#if __has_include(<format>)
+    if(this->debug_Steiner_points()) {
+      std::cerr << std::format("Inserting Steiner (centroid) point {} in non-coplanar face {}.\n",
+                               IO::oformat(steiner_pt), IO::oformat(cdt_2.triangle(fh_2d)));
+    }
+#endif
 
     Locate_type lt;
     int li, lj;
@@ -1984,6 +1986,11 @@ private:
     const auto v = this->insert_in_cdt_3(steiner_pt, lt, ch, li, lj, insert_in_conflict_visitor);// TODO: use "insert in hole"
     // this->study_bug = false;
     // assert(is_valid(true));
+#if __has_include(<format>)
+    if(this->debug_Steiner_points()) {
+      std::cerr << "  -> " << IO::oformat(v) << '\n';
+    }
+#endif
     v->set_vertex_type(CDT_3_vertex_type::STEINER_IN_FACE);
     [[maybe_unused]] typename CDT_2::Locate_type lt_2;
     int i;
@@ -2004,11 +2011,13 @@ private:
     const auto a = this->point(va_3d);
     const auto b = this->point(vb_3d);
     const auto mid = CGAL::midpoint(a, b);
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
-    std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
-                             IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
-                             IO::oformat(vb_3d, with_point_and_info));
-#endif // CGAL_DEBUG_CDT_3 & 64
+#if __has_include(<format>)
+    if(this->debug_Steiner_points()) {
+      std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
+                              IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
+                              IO::oformat(vb_3d, with_point_and_info));
+    }
+#endif
     auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
     if(std::next(contexts.begin()) != contexts.end()) {
@@ -2035,7 +2044,14 @@ private:
     int mid_li, min_lj;
     Cell_handle mid_c = tr.locate(mid, mid_lt, mid_li, min_lj, va_3d->cell());
     CGAL_assertion(mid_lt != Locate_type::VERTEX);
-    this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d}, constraint_id, insert_in_conflict_visitor);
+    [[maybe_unused]] auto v =
+      this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d},
+                                                  constraint_id, insert_in_conflict_visitor);
+#if __has_include(<format>)
+    if(this->debug_Steiner_points()) {
+      std::cerr << "  -> " << IO::oformat(v) << '\n';
+    }
+#endif
     // this->study_bug = false;
     // assert(is_valid(true));
   }
