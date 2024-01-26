@@ -132,7 +132,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
           if((inf > 1) || (sup < 1)){
             return false;
           }
-          if((inf == 1) && (sup == 1)){
+          if(inf == sup){
             return true;
           }
           return x.cmp(Type::getOne()) == 0;
