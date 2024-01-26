@@ -43,7 +43,10 @@ public:
 
   virtual void copy(const Property_array_base<Index>& other) = 0;
 
+  // desactived as MSVC 2017 as an issue with that but it is not currently used.
+#if 0
   virtual void move(Property_array_base<Index>&& other) = 0;
+#endif
 
   virtual void append(const Property_array_base<Index>& other) = 0;
 
@@ -106,11 +109,14 @@ public:
     CGAL_precondition(m_active_indices.size() == m_data.size());
   }
 
+// desactived as MSVC 2017 as an issue with that but it is not currently used.
+#if 0
   virtual void move(Property_array_base<Index>&& other_base) override {
     auto&& other = static_cast<Property_array<Index, T>&&>(other_base);
     m_data = std::move(other.m_data);
     CGAL_precondition(m_active_indices.size() == m_data.size());
   }
+#endif
 
   virtual void append(const Property_array_base<Index>& other_base) override {
     auto& other = dynamic_cast<const Property_array<Index, T>&>(other_base);
