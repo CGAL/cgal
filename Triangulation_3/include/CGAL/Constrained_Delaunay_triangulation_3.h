@@ -1113,7 +1113,7 @@ private:
                           int region_count,
                           const CDT_2& cdt_2,
                           const Fh_region& fh_region,
-                          const Vertices_container& polygon_vertices,
+                          const Vertices_container& polygon_border_vertices,
                           Edge first_intersecting_edge)
   {
     // outputs
@@ -1126,7 +1126,7 @@ private:
       std::vector<Facet> facets_of_upper_cavity;
       std::vector<Facet> facets_of_lower_cavity;
     } outputs{
-        {}, {}, {polygon_vertices.begin(), polygon_vertices.end()}, {polygon_vertices.begin(), polygon_vertices.end()},
+        {}, {}, {polygon_border_vertices.begin(), polygon_border_vertices.end()}, {polygon_border_vertices.begin(), polygon_border_vertices.end()},
         {}, {}};
 
     auto& [intersecting_edges, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
@@ -1162,8 +1162,8 @@ private:
                                 IO::oformat(v_above, with_point),
                                 IO::oformat(v_below, with_point));
 #endif // CGAL_CDT_3_DEBUG_REGION
-      CGAL_assertion(0 == polygon_vertices.count(v_above));
-      CGAL_assertion(0 == polygon_vertices.count(v_below));
+      CGAL_assertion(0 == polygon_border_vertices.count(v_above));
+      CGAL_assertion(0 == polygon_border_vertices.count(v_below));
       if(new_vertex(v_above)) {
         vertices_of_upper_cavity.push_back(v_above);
       }
@@ -1184,7 +1184,7 @@ private:
         const auto index_v_below = cell->index(v_below);
         const auto index_vc = 6 - index_v_above - index_v_below - facet_index;
         const auto vc = cell->vertex(index_vc);
-        if(polygon_vertices.count(vc) > 0) continue; // intersecting edges cannot touch the border
+        if(polygon_border_vertices.count(vc) > 0) continue; // intersecting edges cannot touch the border
 
         auto test_edge = [&](Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1, int expected) {
           auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
@@ -1267,7 +1267,7 @@ private:
     const auto& cdt_2 = non_const_cdt_2;
     const auto& fh_region = non_const_fh_region;
     const auto border_edges = brute_force_border_3_of_region(face_index, region_count, cdt_2, fh_region);
-    const auto polygon_vertices = std::invoke([&]() {
+    const auto polygon_border_vertices = std::invoke([&]() {
       std::set<Vertex_handle> vertices;
       for(const auto& [c, i, j]: border_edges) {
         vertices.insert(c->vertex(i));
@@ -1276,23 +1276,23 @@ private:
       return vertices;
     });
 #if CGAL_CDT_3_DEBUG_REGION
-    std::cerr << "polygon_vertices.size() = " << polygon_vertices.size() << "\n";
-    for(auto v : polygon_vertices) {
+    std::cerr << "polygon_border_vertices.size() = " << polygon_border_vertices.size() << "\n";
+    for(auto v : polygon_border_vertices) {
       std::cerr << std::format("  {}\n", IO::oformat(v, with_point));
     }
 #endif // CGAL_CDT_3_DEBUG_REGION
-    for(auto v: polygon_vertices) {
+    for(auto v: polygon_border_vertices) {
       v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
       CGAL_assertion(v->is_Steiner_vertex_in_face() || v->nb_of_incident_constraints < 0);
     }
     const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, border_edges);
-    for(auto v: polygon_vertices) {
+    for(auto v: polygon_border_vertices) {
       v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
       CGAL_assertion(v->is_Steiner_vertex_in_face() || v->nb_of_incident_constraints > 0);
     }
 
     [[maybe_unused]] auto try_flip_region_size_4 = [&] {
-      if(polygon_vertices.size() == 4) {
+      if(polygon_border_vertices.size() == 4) {
         std::set<Vertex_handle> vertices;
         std::set<Vertex_handle> diagonal;
         for(auto fh : fh_region) {
@@ -1304,7 +1304,7 @@ private:
           }
         }
         std::set<Vertex_handle> other_diagonal;
-        std::set_difference(polygon_vertices.begin(), polygon_vertices.end(),
+        std::set_difference(polygon_border_vertices.begin(), polygon_border_vertices.end(),
                             diagonal.begin(), diagonal.end(),
                             std::inserter(other_diagonal, other_diagonal.begin()));
         CGAL_assertion(diagonal.size() == 2);
@@ -1350,27 +1350,27 @@ private:
             IO::oformat(*std::next(other_diagonal.begin()), with_point),
             tr.tds().is_edge(*other_diagonal.begin(), *std::next(other_diagonal.begin())) ? "IS" : "is NOT");
         if(cdt_2.geom_traits().side_of_oriented_circle_2_object()(
-               (*polygon_vertices.begin())->point(), (*std::next(polygon_vertices.begin()))->point(),
-               (*std::next(polygon_vertices.begin(), 2))->point(),
-               (*std::next(polygon_vertices.begin(), 3))->point()) == CGAL::ZERO)
+               (*polygon_border_vertices.begin())->point(), (*std::next(polygon_border_vertices.begin()))->point(),
+               (*std::next(polygon_border_vertices.begin(), 2))->point(),
+               (*std::next(polygon_border_vertices.begin(), 3))->point()) == CGAL::ZERO)
         {
           std::cerr << std::format(
               "NOTE: In polygon #{}, region {}, the 4 vertices are co-circular in the 2D triangulation\n",
               face_index, region_count);
         }
         if(CGAL::coplanar(
-               (*polygon_vertices.begin())->point(),
-               (*std::next(polygon_vertices.begin()))->point(),
-               (*std::next(polygon_vertices.begin(), 2))->point(),
-               (*std::next(polygon_vertices.begin(), 3))->point()))
+               (*polygon_border_vertices.begin())->point(),
+               (*std::next(polygon_border_vertices.begin()))->point(),
+               (*std::next(polygon_border_vertices.begin(), 2))->point(),
+               (*std::next(polygon_border_vertices.begin(), 3))->point()))
         {
           std::cerr << std::format("NOTE: In polygon #{}, region {}, the 4 vertices are coplanar\n",
                                    face_index, region_count);
           if(CGAL::coplanar_side_of_bounded_circle(
-               (*polygon_vertices.begin())->point(),
-               (*std::next(polygon_vertices.begin()))->point(),
-               (*std::next(polygon_vertices.begin(), 2))->point(),
-               (*std::next(polygon_vertices.begin(), 3))->point()) == CGAL::ON_BOUNDARY)
+               (*polygon_border_vertices.begin())->point(),
+               (*std::next(polygon_border_vertices.begin()))->point(),
+               (*std::next(polygon_border_vertices.begin(), 2))->point(),
+               (*std::next(polygon_border_vertices.begin(), 3))->point()) == CGAL::ON_BOUNDARY)
           {
             std::cerr << std::format(
                 "NOTE: In polygon #{}, region {}, the 4 vertices are co-circular in the 3D triangulation\n",
@@ -1387,7 +1387,7 @@ private:
       }
       // {
       //   Constrained_Delaunay_triangulation_3 new_tr;
-      //   for(const auto v : polygon_vertices) {
+      //   for(const auto v : polygon_border_vertices) {
       //     new_tr.insert(v->point());
       //   }
       //   std::cerr << "new_tr.dimension() = " << new_tr.dimension() << '\n';
@@ -1417,11 +1417,11 @@ private:
     const auto first_intersecting_edge = *found_edge_opt;
     const auto [intersecting_edges, original_intersecting_cells, original_vertices_of_upper_cavity,
                  original_vertices_of_lower_cavity, original_facets_of_upper_cavity, original_facets_of_lower_cavity] =
-        construct_cavities(face_index, region_count, cdt_2, fh_region, polygon_vertices, first_intersecting_edge);
+        construct_cavities(face_index, region_count, cdt_2, fh_region, polygon_border_vertices, first_intersecting_edge);
 
     const std::set<Point_3> polygon_points = std::invoke([&](){
       std::set<Point_3> polygon_points;
-      for(auto vh : polygon_vertices) {
+      for(auto vh : polygon_border_vertices) {
         polygon_points.insert(this->point(vh));
       }
       return polygon_points;
