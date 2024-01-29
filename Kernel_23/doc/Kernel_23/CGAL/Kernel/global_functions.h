@@ -2688,11 +2688,13 @@ const CGAL::Point_3<Kernel>& r);
 
 // The same reason as do_intersect.
 
-/// \defgroup squared_distance_grp CGAL::squared_distance()
+/// \defgroup squared_length_grp CGAL::squared_distance()
 /// \ingroup kernel_global_function
 
 /// \defgroup squared_radius_grp CGAL::squared_length()
 /// \ingroup kernel_global_function
+
+/// @{
 
 /*!
 compute the squared length of vector `v`.
