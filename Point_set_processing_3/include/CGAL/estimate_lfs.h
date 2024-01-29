@@ -93,7 +93,7 @@ template <typename NeighborQuery>
 typename NeighborQuery::FT
 av_sqrt_sum_sq_distance_to_knn(const typename NeighborQuery::Point_3& query, ///< point
                                  const NeighborQuery& neighbor_query,
-                                 const int knn) 
+                                 const int knn)
 {
   // basic geometric types
   typedef typename NeighborQuery::Kernel Kernel;
@@ -121,7 +121,7 @@ av_sqrt_sum_sq_distance_to_knn(const typename NeighborQuery::Point_3& query, ///
 template <typename NeighborQuery, typename PointRange, typename PointMap>
 typename NeighborQuery::FT
 classical_point_dist_func_epsilon_band(const PointRange &points,
-                                      const NeighborQuery& neighbor_query, 
+                                      const NeighborQuery& neighbor_query,
                                       const PointMap point_map,
                                       const int band_knn=12)
 {
@@ -183,7 +183,7 @@ Point local2world(const Point &local, const Point &o,
 
 
 template <typename Geom_traits>
-void random_dual_cone_search_segs(const typename Geom_traits::Point_3 &p, 
+void random_dual_cone_search_segs(const typename Geom_traits::Point_3 &p,
                     const typename Geom_traits::Vector_3 &n,
                       const typename Geom_traits::Sphere_3 &bsphere,
                       std::vector<typename Geom_traits::Segment_3> &segs,
@@ -251,7 +251,7 @@ void random_dual_cone_search_segs(const typename Geom_traits::Point_3 &p,
 }
 
 template <typename NeighborQuery>
-bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segment_3 &e, 
+bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segment_3 &e,
                                       const typename NeighborQuery::Kernel::Point_2 &s, 
                                       const typename NeighborQuery::Kernel::Point_2 &t,
                                       const NeighborQuery& neighbor_query,
@@ -349,7 +349,7 @@ bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segm
 }
 
 template<class NeighborQuery>
-bool recursive_dichotomic_search(const typename NeighborQuery::Kernel::Segment_3 &e, 
+bool recursive_dichotomic_search(const typename NeighborQuery::Kernel::Segment_3 &e,
                                 const typename NeighborQuery::Kernel::Point_2 &s, 
                                 const typename NeighborQuery::Kernel::Point_2 &t,
                                 const NeighborQuery &neighbor_query,
@@ -363,14 +363,10 @@ bool recursive_dichotomic_search(const typename NeighborQuery::Kernel::Segment_3
   typedef typename Kernel::Point_3  Point;
 
   CGAL_precondition(intersections.empty());
-  bool flag = recursive_dichotomic_search_base(e, s, t, neighbor_query, epsilon_band, 
+  bool flag = recursive_dichotomic_search_base(e, s, t, neighbor_query, epsilon_band,
                     intersections, lipschitz, eps);
 
-  if (flag == false) // should not false
-  {
-    ;
-  }
-  else if (intersections.size() % 2 != 0) 
+  if (intersections.size() % 2 != 0)
   {
     const bool s_sign = (s.y() > epsilon_band);
     const bool t_sign = (t.y() > epsilon_band);
@@ -378,6 +374,7 @@ bool recursive_dichotomic_search(const typename NeighborQuery::Kernel::Segment_3
     if ((!s_sign) && t_sign)
     {
       std::vector<Point> intersections_;
+      intersections_.reserve(intersections.size());
       intersections_.push_back(e.source());
       for (std::size_t i = 1; i < intersections.size(); i = i + 2)
       {
@@ -386,12 +383,13 @@ bool recursive_dichotomic_search(const typename NeighborQuery::Kernel::Segment_3
         const Point p = p1 + (p0 - p1) / 2;
         intersections_.push_back(p);
       }
-      intersections = intersections_;
+      std::swap(intersections, intersections_);
     }
 
     if ((!t_sign) && s_sign)
     {
       std::vector<Point> intersections_;
+      intersections_.reserve(intersections.size());
       for (std::size_t i = 0; i < intersections.size() - 1; i = i + 2)
       {
         const Point p0 = intersections[i];
@@ -400,10 +398,10 @@ bool recursive_dichotomic_search(const typename NeighborQuery::Kernel::Segment_3
         intersections_.push_back(p);
       }
       intersections_.push_back(e.target());
-      intersections = intersections_;
+      std::swap(intersections, intersections_);
     }
 
-    if (s_sign && t_sign) 
+    if (s_sign && t_sign)
     {
       flag = false;
     }  
@@ -527,7 +525,7 @@ min_curvature_radius(Monge_form &monge_form)
 
 template <typename NeighborQuery>
 typename NeighborQuery::FT
-estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< point 
+estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< point
                     typename NeighborQuery::Kernel::Vector_3& normal,
                     const NeighborQuery& neighbor_query, ///< KD-tree
                     const typename NeighborQuery::Kernel::Sphere_3& bsphere, ///< bounding sphere
