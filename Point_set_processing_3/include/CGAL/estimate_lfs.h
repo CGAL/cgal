@@ -642,10 +642,6 @@ estimate_local_feature_size(PointRange& points,
   // estimate an epsilon band for the classical distance function
   FT epsilon_band = CGAL::internal::classical_point_dist_func_epsilon_band(points, neighbor_query, point_map);
 
-  // point_lfses.resize(nb_points);
-  // point_curv_radii.resize(nb_points);
-  // point_half_shape_diameters.resize(nb_points);
-  // point_monge_forms.resize(nb_points);
   std::vector<FT> lfses(nb_points);
   std::map<Point, std::size_t> index_map;
   for (std::size_t i = 0; i < nb_points; i++) index_map[get(point_map, points[i])] = i;
