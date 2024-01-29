@@ -49,7 +49,8 @@ foreach(
   edge_aware_upsample_point_set_example
   structuring_example
   read_ply_points_with_colors_example
-  write_ply_points_example)
+  write_ply_points_example
+  lfs_example)
   create_single_source_cgal_program("${target}.cpp")
   target_link_libraries(${target} PRIVATE ${CGAL_libs})
 endforeach()
