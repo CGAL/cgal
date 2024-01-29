@@ -38,8 +38,8 @@ void lower_envelope_3(InputIterator begin, InputIterator end,
   using Tt = TopolTraits;
 
   using Edos_2 = Envelope_diagram_on_surface_2<Gt, Tt>;
-  using Ed = typename Edos_2::Arrangement;
-  using Envelope_algorithm = Envelope_divide_and_conquer_3<Gt, Ed>;
+  using Aos = typename Edos_2::Base_aos;
+  using Envelope_algorithm = Envelope_divide_and_conquer_3<Gt, Aos>;
   Envelope_algorithm env_alg(min_diagram.geometry_traits(), ENVELOPE_LOWER);
   env_alg.construct_lu_envelope(begin, end, min_diagram);
 }
@@ -58,8 +58,8 @@ void upper_envelope_3(InputIterator begin, InputIterator end,
   using Tt = TopolTraits;
 
   using Edos = Envelope_diagram_on_surface_2<Gt, Tt>;
-  using Ed = typename Edos::Arrangement;
-  using Envelope_algorithm = Envelope_divide_and_conquer_3<Gt, Ed>;
+  using Aos = typename Edos::Base_aos;
+  using Envelope_algorithm = Envelope_divide_and_conquer_3<Gt, Aos>;
   Envelope_algorithm env_alg(max_diagram.geometry_traits(), ENVELOPE_UPPER);
   env_alg.construct_lu_envelope (begin, end, max_diagram);
 }
@@ -79,8 +79,8 @@ void lower_envelope_xy_monotone_3(InputIterator begin, InputIterator end,
   using Tt = TopolTraits;
 
   using Edos = Envelope_diagram_on_surface_2<Gt, Tt>;
-  using Ed = typename Edos::Arrangement;
-  using Envelope_algorithm = Envelope_divide_and_conquer_3<Gt, Ed>;
+  using Aos = typename Edos::Base_aos;
+  using Envelope_algorithm = Envelope_divide_and_conquer_3<Gt, Aos>;
   Envelope_algorithm env_alg(min_diagram.geometry_traits(), ENVELOPE_LOWER);
   env_alg.construct_envelope_xy_monotone (begin, end, min_diagram);
 }
@@ -100,8 +100,8 @@ void upper_envelope_xy_monotone_3(InputIterator begin, InputIterator end,
   using Tt = TopolTraits;
 
   using Edos = Envelope_diagram_on_surface_2<Gt, Tt>;
-  using Ed = typename Edos::Arrangement;
-  using Envelope_algorithm = Envelope_divide_and_conquer_3<Gt, Ed>;
+  using Aos = typename Edos::Base_aos;
+  using Envelope_algorithm = Envelope_divide_and_conquer_3<Gt, Aos>;
   Envelope_algorithm env_alg(max_diagram.geometry_traits(), ENVELOPE_UPPER);
   env_alg.construct_envelope_xy_monotone (begin, end, max_diagram);
 }
