@@ -267,7 +267,7 @@ bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segm
   typedef typename Kernel::Point_2  Point_2;
   typedef typename Kernel::Vector_3  Vector;
 
-  CGAL_precondition(t.x() + eps >= s.x() - eps);
+  assert(t.x() + eps >= s.x() - eps);
   CGAL_precondition(lipschitz >= 0.0);
 
   Point ps = e.source();
@@ -287,14 +287,14 @@ bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segm
   FT lip_lbx = (s.x() + t.x()) * 0.5 - (t.y() - s.y()) * 0.5 / lipschitz;
   FT lip_lby = s.y() - lipschitz * (lip_lbx - s.x());
 
-  CGAL_precondition(lip_lbx + eps >= s.x() - eps);
-  CGAL_precondition(lip_lbx - eps <= t.x() + eps);
+  assert(lip_lbx + eps >= s.x() - eps);
+  assert(lip_lbx - eps <= t.x() + eps);
 
   FT lip_ubx = ((t.y() - s.y()) / lipschitz + t.x() + s.x()) * 0.5;
   FT lip_uby = s.y() + lipschitz * (lip_ubx - s.x());
 
-  CGAL_precondition(lip_ubx + eps >= s.x() - eps);
-  CGAL_precondition(lip_ubx - eps <= t.x() + eps);
+  assert(lip_ubx + eps >= s.x() - eps);
+  assert(lip_ubx - eps <= t.x() + eps);
 
   // stop
   if (lip_lby >= epsilon_band || lip_uby <= epsilon_band)
@@ -311,14 +311,14 @@ bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segm
   const Point pms = ps + ms_x / len * v;
   FT ms_y = classical_point_dist_func(pms, neighbor_query);
   const Point_2 ms(ms_x, ms_y);
-  CGAL_precondition(ms_x + eps >= s.x() - eps);
+  assert(ms_x + eps >= s.x() - eps);
 
   FT mt_x = t.x() + (epsilon_band - t.y()) / t_slope;
   const Point pmt = ps + mt_x / len * v;
   FT mt_y = classical_point_dist_func(pmt, neighbor_query);
   const Point_2 mt(mt_x, mt_y);
-  CGAL_precondition(mt_x - eps <= t.x() + eps);
-  CGAL_precondition(mt_x + eps >= ms_x - eps);
+  assert(mt_x - eps <= t.x() + eps);
+  assert(mt_x + eps >= ms_x - eps);
 
   const FT mm_x = (ms_x + mt_x) / 2;
   const Point pmm = ps + mm_x / len * v;
@@ -450,7 +450,7 @@ estimate_shape_diameter(const typename NeighborQuery::Point_3& query, ///< point
   
   std::vector<Point> points;
   neighbor_query.get_points (query, reject_knn, FT(0), std::back_inserter(points));
-  FT project_raidus = reject_knn == 0 ? 0.0 : std::sqrt(CGAL::squared_distance(query, points[reject_knn-1]));
+  FT project_radius = reject_knn == 0 ? 0.0 : std::sqrt(CGAL::squared_distance(query, points[reject_knn-1]));
 
   // dual cone search segments
   FT half_apex_angle = apex_angle / 2.0;
@@ -484,7 +484,7 @@ estimate_shape_diameter(const typename NeighborQuery::Point_3& query, ///< point
       }
       std::sort(dsqs.begin(), dsqs.end(), std::less<FT>());
       // dist should be larger than epsilon_band
-      auto it = upper_bound(dsqs.begin(), dsqs.end(), project_raidus*project_raidus);
+      auto it = upper_bound(dsqs.begin(), dsqs.end(), project_radius*project_radius);
 
       if (it != dsqs.end())
       {
@@ -520,7 +520,7 @@ min_curvature_radius(Monge_form &monge_form)
 
   FT r1 = 1.0 / std::abs(max_principal_curvature);
   FT r2 = 1.0 / std::abs(min_principal_curvature);
-  FT r = std::min(r1, r2);
+  FT r = (std::min)(r1, r2);
 
   return r;
 }
@@ -570,7 +570,7 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
     FT shape_diameter = estimate_shape_diameter(query, normal, neighbor_query, bsphere, epsilon_band, apex_angle, N_rays);
     FT half_shape_diameter = 0.5 * shape_diameter;
 
-    FT lfs = std::min(abs_curvature_r, half_shape_diameter);
+    FT lfs = (std::min)(abs_curvature_r, half_shape_diameter);
 
     return lfs;
 }
