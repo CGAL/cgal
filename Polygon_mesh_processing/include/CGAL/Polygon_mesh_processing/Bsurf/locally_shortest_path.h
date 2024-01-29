@@ -1398,7 +1398,165 @@ struct Locally_shortest_path_imp
   // }
 #endif
 
-};
+  static
+  void
+  strip_initial_path(const TriangleMesh& tmesh,
+                     Face_location<TriangleMesh, FT>& src,
+                     Face_location<TriangleMesh, FT>& tgt,
+                     std::vector<halfedge_descriptor>& initial_path)
+  {
+    CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
+    CGAL_assertion(face(initial_path.back(), tmesh)==tgt.first);
+
+    // retrieve the vertex id of a face location describing a vertex
+    auto is_vertex = [](const Face_location<TriangleMesh, FT>& fl)
+    {
+      if (fl.second[0]==0 && fl.second[1]==0)
+        return 2;
+      if (fl.second[1]==0 && fl.second[2]==0)
+        return 0;
+      if (fl.second[0]==0 && fl.second[2]==0)
+        return 1;
+      return -1;
+    };
+
+    // retrieve the source vertex id of a face location describing a point on a halfedge
+    auto is_edge = [](const Face_location<TriangleMesh, FT>& fl)
+    {
+      if (fl.second[0]==0 && fl.second[1]!=0 && fl.second[2]!=0)
+        return 1;
+      if (fl.second[1]==0 && fl.second[2]!=0 && fl.second[0]!=0)
+        return 2;
+      if (fl.second[2]==0 && fl.second[0]!=0 && fl.second[1]!=0)
+        return 0;
+      return -1;
+    };
+
+    // strip initial_path from extra halfedges after src and also update src
+    int vi = is_vertex(src);
+    if (vi!=-1)
+    {
+      halfedge_descriptor hsrc=prev(halfedge(src.first, tmesh), tmesh);
+      for (int i=0; i<vi; ++i)
+        hsrc=next(hsrc, tmesh);
+      vertex_descriptor vsrc = target(hsrc, tmesh);
+      int last_hi=0;
+      for (halfedge_descriptor hip : initial_path)
+      {
+        if (source(hip, tmesh)!=vsrc && target(hip, tmesh)!=vsrc)
+          break;
+        ++last_hi;
+      }
+      initial_path.erase(initial_path.begin(), std::next(initial_path.begin(),last_hi));
+      if (initial_path.empty()) return;
+
+      if (last_hi!=0)
+      {
+        hsrc=halfedge(face(opposite(initial_path[0], tmesh), tmesh), tmesh);
+        int vid=0;
+        while (source(hsrc, tmesh)!=vsrc)
+        {
+          hsrc=next(hsrc, tmesh);
+          ++vid;
+          CGAL_assertion(vid!=3);
+        }
+        std::array<FT, 3> fl_src = {FT(0),FT(0),FT(0)};
+        fl_src[vid]=FT(1);
+        src=std::make_pair(face(hsrc, tmesh), fl_src);
+      }
+    }
+    else
+    {
+      int ei = is_edge(src);
+      if (ei!=-1)
+      {
+        halfedge_descriptor hsrc=prev(halfedge(src.first, tmesh), tmesh);
+        for (int i=0; i<vi; ++i)
+          hsrc=next(hsrc, tmesh);
+        if (opposite(initial_path[0], tmesh)==hsrc)
+        {
+          initial_path.erase(initial_path.begin(), std::next(initial_path.begin()));
+          if (initial_path.empty()) return;
+
+          halfedge_descriptor new_hsrc=halfedge(face(opposite(initial_path[0], tmesh), tmesh), tmesh);
+          int hid=0;
+          while (opposite(new_hsrc, tmesh)!=hsrc)
+          {
+            new_hsrc=next(new_hsrc, tmesh);
+            ++hid;
+            CGAL_assertion(hid!=3);
+          }
+          std::array<FT, 3> fl_src = {FT(0),FT(0),FT(0)};
+          fl_src[hid]=src.second[(ei+1)%3];
+          fl_src[(hid+1)%3]=src.second[ei];
+          src=std::make_pair(face(new_hsrc, tmesh), fl_src);
+        }
+      }
+    }
+
+    // strip initial_path from extra halfedges before src and also update tgt
+    vi = is_vertex(tgt);
+    if (vi!=-1)
+    {
+      halfedge_descriptor htgt=prev(halfedge(tgt.first, tmesh), tmesh);
+      for (int i=0; i<vi; ++i)
+        htgt=next(htgt, tmesh);
+      vertex_descriptor vtgt = target(htgt, tmesh);
+      std::size_t first_hi=initial_path.size();
+      for (auto rit=initial_path.rbegin(); rit!=initial_path.rend(); ++rit)
+      {
+        if (source(*rit, tmesh)!=vtgt && target(*rit, tmesh)!=vtgt)
+          break;
+        --first_hi;
+      }
+      initial_path.erase(std::next(initial_path.begin(), first_hi), initial_path.end());
+      if (initial_path.empty()) return;
+
+      if (first_hi!=initial_path.size())
+      {
+        halfedge_descriptor new_htgt=halfedge(face(initial_path.back(), tmesh), tmesh);
+        int vid=0;
+        while (source(new_htgt, tmesh)!=vtgt)
+        {
+          new_htgt=next(new_htgt, tmesh);
+          ++vid;
+          CGAL_assertion(vid!=3);
+        }
+        std::array<FT, 3> fl_tgt = {FT(0),FT(0),FT(0)};
+        fl_tgt[vid]=FT(1);
+        src=std::make_pair(face(new_htgt, tmesh), fl_tgt);
+      }
+    }
+    else
+    {
+      int ei = is_edge(tgt);
+      if (ei!=-1)
+      {
+        halfedge_descriptor htgt=prev(halfedge(tgt.first, tmesh), tmesh);
+        for (int i=0; i<vi; ++i)
+          htgt=next(htgt, tmesh);
+        if (htgt==initial_path.back())
+        {
+          initial_path.pop_back();
+          if (initial_path.empty()) return;
+
+          halfedge_descriptor new_htgt=halfedge(face(initial_path.back(), tmesh), tmesh);
+          int hid=0;
+          while (opposite(new_htgt, tmesh)!=htgt)
+          {
+            new_htgt=next(new_htgt, tmesh);
+            ++hid;
+            CGAL_assertion(hid!=3);
+          }
+          std::array<FT, 3> fl_tgt = {FT(0),FT(0),FT(0)};
+          fl_tgt[hid]=tgt.second[(ei+1)%3];
+          fl_tgt[(hid+1)%3]=tgt.second[ei];
+          tgt=std::make_pair(face(new_htgt, tmesh), fl_tgt);
+        }
+      }
+    }
+  }
+}; // end of Locally_shortest_path_imp
 
 template <class K, class TriangleMesh, class VertexPointMap>
 struct Bezier_tracing_impl
@@ -1582,7 +1740,6 @@ struct Bezier_tracing_impl
 
     return {{polygon[0], Q0, R0, S}, {S, R1, Q2, polygon[3]}};
   }
-
 };
 
 
@@ -2227,8 +2384,6 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
 
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
       halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor
-      vertex_descriptor;
 
   //TODO replace with named parameter
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
@@ -2342,153 +2497,10 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
   CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
   CGAL_assertion(face(initial_path.back(), tmesh)==tgt.first);
 
-  // retrieve the vertex id of a face location describing a vertex
-  auto is_vertex = [](const Face_location<TriangleMesh, FT>& fl)
-  {
-    if (fl.second[0]==0 && fl.second[1]==0)
-      return 2;
-    if (fl.second[1]==0 && fl.second[2]==0)
-      return 0;
-    if (fl.second[0]==0 && fl.second[2]==0)
-      return 1;
-    return -1;
-  };
-
-  // retrieve the source vertex id of a face location describing a point on a halfedge
-  auto is_edge = [](const Face_location<TriangleMesh, FT>& fl)
-  {
-    if (fl.second[0]==0 && fl.second[1]!=0 && fl.second[2]!=0)
-      return 1;
-    if (fl.second[1]==0 && fl.second[2]!=0 && fl.second[0]!=0)
-      return 2;
-    if (fl.second[2]==0 && fl.second[0]!=0 && fl.second[1]!=0)
-      return 0;
-    return -1;
-  };
-
-  // strip initial_path from extra halfedges after src and also update src
-  int vi = is_vertex(src);
-  if (vi!=-1)
-  {
-    halfedge_descriptor hsrc=prev(halfedge(src.first, tmesh), tmesh);
-    for (int i=0; i<vi; ++i)
-      hsrc=next(hsrc, tmesh);
-    vertex_descriptor vsrc = target(hsrc, tmesh);
-    int last_hi=0;
-    for (halfedge_descriptor hip : initial_path)
-    {
-      if (source(hip, tmesh)!=vsrc && target(hip, tmesh)!=vsrc)
-        break;
-      ++last_hi;
-    }
-    initial_path.erase(initial_path.begin(), std::next(initial_path.begin(),last_hi));
-    if (initial_path.empty()) return;
-
-    if (last_hi!=0)
-    {
-      hsrc=halfedge(face(opposite(initial_path[0], tmesh), tmesh), tmesh);
-      int vid=0;
-      while (source(hsrc, tmesh)!=vsrc)
-      {
-        hsrc=next(hsrc, tmesh);
-        ++vid;
-        CGAL_assertion(vid!=3);
-      }
-      std::array<FT, 3> fl_src = {FT(0),FT(0),FT(0)};
-      fl_src[vid]=FT(1);
-      src=std::make_pair(face(hsrc, tmesh), fl_src);
-    }
-  }
-  else
-  {
-    int ei = is_edge(src);
-    if (ei!=-1)
-    {
-      halfedge_descriptor hsrc=prev(halfedge(src.first, tmesh), tmesh);
-      for (int i=0; i<vi; ++i)
-        hsrc=next(hsrc, tmesh);
-      if (opposite(initial_path[0], tmesh)==hsrc)
-      {
-        initial_path.erase(initial_path.begin(), std::next(initial_path.begin()));
-        if (initial_path.empty()) return;
-
-        halfedge_descriptor new_hsrc=halfedge(face(opposite(initial_path[0], tmesh), tmesh), tmesh);
-        int hid=0;
-        while (opposite(new_hsrc, tmesh)!=hsrc)
-        {
-          new_hsrc=next(new_hsrc, tmesh);
-          ++hid;
-          CGAL_assertion(hid!=3);
-        }
-        std::array<FT, 3> fl_src = {FT(0),FT(0),FT(0)};
-        fl_src[hid]=src.second[(ei+1)%3];
-        fl_src[(hid+1)%3]=src.second[ei];
-        src=std::make_pair(face(new_hsrc, tmesh), fl_src);
-      }
-    }
-  }
-
-  // strip initial_path from extra halfedges before src and also update tgt
-  vi = is_vertex(tgt);
-  if (vi!=-1)
-  {
-    halfedge_descriptor htgt=prev(halfedge(tgt.first, tmesh), tmesh);
-    for (int i=0; i<vi; ++i)
-      htgt=next(htgt, tmesh);
-    vertex_descriptor vtgt = target(htgt, tmesh);
-    std::size_t first_hi=initial_path.size();
-    for (auto rit=initial_path.rbegin(); rit!=initial_path.rend(); ++rit)
-    {
-      if (source(*rit, tmesh)!=vtgt && target(*rit, tmesh)!=vtgt)
-        break;
-      --first_hi;
-    }
-    initial_path.erase(std::next(initial_path.begin(), first_hi), initial_path.end());
-    if (initial_path.empty()) return;
-
-    if (first_hi!=initial_path.size())
-    {
-      halfedge_descriptor new_htgt=halfedge(face(initial_path.back(), tmesh), tmesh);
-      int vid=0;
-      while (source(new_htgt, tmesh)!=vtgt)
-      {
-        new_htgt=next(new_htgt, tmesh);
-        ++vid;
-        CGAL_assertion(vid!=3);
-      }
-      std::array<FT, 3> fl_tgt = {FT(0),FT(0),FT(0)};
-      fl_tgt[vid]=FT(1);
-      src=std::make_pair(face(new_htgt, tmesh), fl_tgt);
-    }
-  }
-  else
-  {
-    int ei = is_edge(tgt);
-    if (ei!=-1)
-    {
-      halfedge_descriptor htgt=prev(halfedge(tgt.first, tmesh), tmesh);
-      for (int i=0; i<vi; ++i)
-        htgt=next(htgt, tmesh);
-      if (htgt==initial_path.back())
-      {
-        initial_path.pop_back();
-        if (initial_path.empty()) return;
-
-        halfedge_descriptor new_htgt=halfedge(face(initial_path.back(), tmesh), tmesh);
-        int hid=0;
-        while (opposite(new_htgt, tmesh)!=htgt)
-        {
-          new_htgt=next(new_htgt, tmesh);
-          ++hid;
-          CGAL_assertion(hid!=3);
-        }
-        std::array<FT, 3> fl_tgt = {FT(0),FT(0),FT(0)};
-        fl_tgt[hid]=tgt.second[(ei+1)%3];
-        fl_tgt[(hid+1)%3]=tgt.second[ei];
-        tgt=std::make_pair(face(new_htgt, tmesh), fl_tgt);
-      }
-    }
-  }
+  // remove extra halfedges from inital_path and update src/tgt to get a minimal sequence
+  // in case src and/or tgt are on a vertex or an edge
+  Impl::strip_initial_path(tmesh, src, tgt, initial_path);
+  if (initial_path.empty()) return;
 
   CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
   CGAL_assertion(face(initial_path.back(), tmesh)==tgt.first);
