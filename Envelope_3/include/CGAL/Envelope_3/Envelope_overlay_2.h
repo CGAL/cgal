@@ -8,8 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
-//                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
+// Author(s) : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
+//             Baruch Zukerman        <baruchzu@post.tau.ac.il>
+//             Efi Fogel              <efif@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_OVERLAY_2_H
 #define CGAL_ENVELOPE_OVERLAY_2_H
@@ -17,40 +18,38 @@
 #include <CGAL/license/Envelope_3.h>
 
 
+#include <iostream>
+
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Envelope_3/Envelope_overlay_functor.h>
 
-#include <iostream>
-
 namespace CGAL {
 
-template <class MinimizationDiagram_2,
-          class OverlayFunctor = Envelope_overlay_functor<MinimizationDiagram_2> >
-class Envelope_overlay_2
-{
+template <typename MinimizationDiagram_2,
+          typename OverlayFunctor =
+            Envelope_overlay_functor<MinimizationDiagram_2>>
+class Envelope_overlay_2 {
 public:
-  typedef MinimizationDiagram_2                                  Minimization_diagram_2;
+  using Minimization_diagram_2 = MinimizationDiagram_2;
 
-  typedef typename Minimization_diagram_2::Face_handle           Face_handle;
-  typedef typename Minimization_diagram_2::Face_iterator         Face_iterator;
+  using Face_handle = typename Minimization_diagram_2::Face_handle;
+  using Face_iterator = typename Minimization_diagram_2::Face_iterator;
 
-  typedef typename Minimization_diagram_2::Vertex_handle         Vertex_handle;
-  typedef typename Minimization_diagram_2::Vertex_iterator       Vertex_iterator;
+  using Vertex_handle = typename Minimization_diagram_2::Vertex_handle;
+  using Vertex_iterator = typename Minimization_diagram_2::Vertex_iterator;
 
-  typedef typename Minimization_diagram_2::Halfedge_handle       Halfedge_handle;
-  typedef typename Minimization_diagram_2::Halfedge_iterator     Halfedge_iterator;
+  using Halfedge_handle = typename Minimization_diagram_2::Halfedge_handle;
+  using Halfedge_iterator = typename Minimization_diagram_2::Halfedge_iterator;
 
-  typedef OverlayFunctor                                         Overlay_functor;
+  using Overlay_functor = OverlayFunctor;
+
 protected:
-  typedef typename Minimization_diagram_2::Geometry_traits_2     Traits;
-  typedef typename Traits::Xy_monotone_surface_3                 Xy_monotone_surface_3;
+  using Traits = typename Minimization_diagram_2::Geometry_traits_2;
+  using Xy_monotone_surface_3 = typename Traits::Xy_monotone_surface_3;
 
 public:
-
-  void operator()(Minimization_diagram_2& md1,
-                  Minimization_diagram_2& md2,
-                  Minimization_diagram_2& result)
-  {
+  void operator()(Minimization_diagram_2& md1, Minimization_diagram_2& md2,
+                  Minimization_diagram_2& result) {
     CGAL_assertion(md1.is_valid());
     CGAL_assertion(md2.is_valid());
 
@@ -60,9 +59,7 @@ public:
     CGAL_assertion_code(post_test_assertions(result));
   }
 
-
 public:
-
   /*
   void print_face(Face_handle fh)
   {
@@ -72,7 +69,7 @@ public:
     {
       std::cout << " #data= " << fh->number_of_data_objects();
       if (fh->number_of_data_objects() > 0)
-        std::cout << " data= " << fh->get_data();
+        std::cout << " data= " << fh->get_env_data();
     }
 
     if (fh->get_aux_is_set(0))
@@ -114,7 +111,7 @@ public:
       {
         std::cout << " #data= " << vh->number_of_data_objects();
         if (vh->number_of_data_objects() > 0)
-          std::cout << " data= " << vh->get_data();
+          std::cout << " data= " << vh->get_env_data();
       }
 
       if (vh->get_aux_is_set(0))
@@ -146,7 +143,7 @@ public:
       {
         std::cout << " #data= " << hh->number_of_data_objects();
         if (hh->number_of_data_objects() > 0)
-          std::cout << " data= " << hh->get_data();
+          std::cout << " data= " << hh->get_env_data();
       }
 
 
@@ -169,75 +166,68 @@ public:
   }
   */
 
-  void post_test_assertions(Minimization_diagram_2& md)
-  {
+  void post_test_assertions(Minimization_diagram_2& md) {
     // check that all data is filled in result
-    Face_iterator fi = md.faces_begin();
-    for(; fi != md.faces_end(); ++fi)
-    {
+    for (auto fi = md.faces_begin(); fi != md.faces_end(); ++fi) {
       Face_handle fh = fi;
-      CGAL_assertion_msg(fh->get_aux_is_set(0), "data from md1 on face is not set");
-      CGAL_assertion_msg(fh->get_aux_is_set(1), "data from md2 on face is not set");
+      CGAL_assertion_msg(fh->get_aux_is_set(0),
+                         "data from md1 on face is not set");
+      CGAL_assertion_msg(fh->get_aux_is_set(1),
+                         "data from md2 on face is not set");
     }
 
-    Halfedge_iterator hi = md.halfedges_begin();
-    for(; hi != md.halfedges_end(); ++hi)
-    {
+    for (auto hi = md.halfedges_begin(); hi != md.halfedges_end(); ++hi) {
       Halfedge_handle hh = hi;
-      CGAL_assertion_msg(hh->get_aux_is_set(0), "data from md1 on halfedge is not set");
-      CGAL_assertion_msg(hh->get_aux_is_set(1), "data from md2 on halfedge is not set");
+      CGAL_assertion_msg(hh->get_aux_is_set(0),
+                         "data from md1 on halfedge is not set");
+      CGAL_assertion_msg(hh->get_aux_is_set(1),
+                         "data from md2 on halfedge is not set");
     }
 
-    Vertex_iterator vi = md.vertices_begin();
-    for(; vi != md.vertices_end(); ++vi)
-    {
+    for (auto vi = md.vertices_begin(); vi != md.vertices_end(); ++vi) {
       Vertex_handle vh = vi;
-      CGAL_assertion_msg(vh->get_aux_is_set(0), "data from md1 on vertex is not set");
-      CGAL_assertion_msg(vh->get_aux_is_set(1), "data from md2 on vertex is not set");
+      CGAL_assertion_msg(vh->get_aux_is_set(0),
+                         "data from md1 on vertex is not set");
+      CGAL_assertion_msg(vh->get_aux_is_set(1),
+                         "data from md2 on vertex is not set");
     }
   }
+
 protected:
   // helper methods
-  template <class FeatureHandle>
-  Xy_monotone_surface_3 get_aux_data(FeatureHandle fh, unsigned int id)
-  {
+  template <typename FeatureHandle>
+  Xy_monotone_surface_3 get_aux_data(FeatureHandle fh, unsigned int id) {
     const Object& o = fh->get_aux_source(id);
     Xy_monotone_surface_3 data;
 
     Halfedge_handle h;
     Vertex_handle v;
-          Face_handle f;
-          if (assign(v, o))
-            data = v->get_data();
-          else if (assign(h, o))
-            data = h->get_data();
-          else
-          {
-            CGAL_assertion(assign(f, o));
+    Face_handle f;
+    if (assign(v, o)) data = v->get_env_data();
+    else if (assign(h, o)) data = h->get_env_data();
+    else {
+      CGAL_assertion(assign(f, o));
       assign(f, o);
-            data = f->get_data();
-          }
+      data = f->get_env_data();
+    }
     return data;
   }
-  template <class FeatureHandle>
-  int get_number_of_aux_data_objects(FeatureHandle fh, unsigned int id)
-  {
+
+  template <typename FeatureHandle>
+  int get_number_of_aux_data_objects(FeatureHandle fh, unsigned int id) {
           const Object& o = fh->get_aux_source(id);
     int data;
 
     Halfedge_handle h;
     Vertex_handle v;
-          Face_handle f;
-          if (assign(v, o))
-            data = v->number_of_data_objects();
-          else if (assign(h, o))
-            data = h->number_of_data_objects();
-          else
-          {
-            CGAL_assertion(assign(f, o));
+    Face_handle f;
+    if (assign(v, o)) data = v->number_of_data_objects();
+    else if (assign(h, o)) data = h->number_of_data_objects();
+    else {
+      CGAL_assertion(assign(f, o));
       assign(f, o);
-            data = f->number_of_data_objects();
-          }
+      data = f->number_of_data_objects();
+    }
     return data;
   }
 
