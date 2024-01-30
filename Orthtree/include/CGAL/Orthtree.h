@@ -452,6 +452,7 @@ public:
   FT
   compute_cartesian_coordinate(std::uint32_t gc, std::size_t depth, int ci) const
   {
+    CGAL_assertion(depth <= m_side_per_depth.size());
     // an odd coordinate will be first compute at the current depth,
     // while an even coordinate has already been computed at a previous depth.
     // So while the coordinate is even, we decrease the depth to end up of the first
@@ -460,7 +461,13 @@ public:
     // due to rounding errors.
     if (gc == (1u << depth)) return (m_bbox.max)()[ci]; // gc == 2^node_depth
     if (gc == 0) return (m_bbox.min)()[ci];
-    if (gc % 2 !=0) return (m_bbox.min)()[ci] + int(gc) * m_side_per_depth[depth][ci];
+    if (gc % 2 !=0)
+    {
+      FT size = depth < m_side_per_depth.size()
+              ? m_side_per_depth[depth][ci]
+              : m_side_per_depth[depth-1][ci]/FT(2);
+      return (m_bbox.min)()[ci] + int(gc) * size;
+    }
     std::size_t nd = depth;
     do{
       --nd;
