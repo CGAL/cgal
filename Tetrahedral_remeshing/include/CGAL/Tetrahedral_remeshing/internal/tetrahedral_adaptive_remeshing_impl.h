@@ -32,6 +32,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
 #include <optional>
+#include <boost/container/small_vector.hpp>
 
 namespace CGAL
 {
@@ -436,8 +437,12 @@ private:
     Corner_index corner_id = 0;
     for (Vertex_handle vit : tr().finite_vertex_handles())
     {
-      if ( vit->in_dimension() == 0
-           || nb_incident_complex_edges(vit, m_c3t3) > 2)
+      boost::container::small_vector<Edge, 3> incident_edges;
+      incident_complex_edges(vit, m_c3t3, std::back_inserter(incident_edges));
+      if ( incident_edges.size() == 1 //tip or endpoint
+        || incident_edges.size() > 2  //corner
+        || (incident_edges.size() == 2
+            && edges_form_a_sharp_angle(incident_edges, 60, m_c3t3)))
       {
         if (!m_c3t3.is_in_complex(vit))
           m_c3t3.add_to_complex(vit, ++corner_id);

@@ -394,6 +394,62 @@ Dihedral_angle_cosine max_cos_dihedral_angle_in_range(const Tr& tr,
   return max_cos_dh;
 }
 
+// incident_edges must share a vertex
+template<typename EdgesVector, typename C3t3>
+bool edges_form_a_sharp_angle(const EdgesVector& incident_edges,
+                              const double angle_bound,
+                              const C3t3& c3t3)
+{
+  CGAL_assertion(incident_edges.size() == 2);
+
+  typedef typename EdgesVector::value_type Edge;
+  typedef typename C3t3::Vertex_handle Vertex_handle;
+
+  const std::array<Vertex_handle, 2> ev0
+    = c3t3.triangulation().vertices(incident_edges[0]);
+  const std::array<Vertex_handle, 2> ev1
+    = c3t3.triangulation().vertices(incident_edges[1]);
+
+  Vertex_handle shared_vertex, v1, v2;
+  if (ev0[0] == ev1[0])
+  {
+    shared_vertex = ev0[0];
+    v1 = ev0[1];
+    v2 = ev1[1];
+  }
+  else if(ev0[0] == ev1[1])
+  {
+    shared_vertex = ev0[0];
+    v1 = ev0[1];
+    v2 = ev1[0];
+  }
+  else if(ev0[1] == ev1[0])
+  {
+    shared_vertex = ev0[1];
+    v1 = ev0[0];
+    v2 = ev1[1];
+  }
+  else if(ev0[1] == ev1[1])
+  {
+    shared_vertex = ev0[1];
+    v1 = ev0[0];
+    v2 = ev1[0];
+  }
+  else
+  {
+    CGAL_assertion(false);
+    return false;
+  }
+  CGAL_assertion(shared_vertex != v1);
+  CGAL_assertion(shared_vertex != v2);
+  CGAL_assertion(v1 != v2);
+
+  const double angle = CGAL::approximate_angle(point(v1->point()),
+                                               point(shared_vertex->point()),
+                                               point(v2->point()));
+  return angle < angle_bound;
+}
+
 template<typename C3t3>
 bool is_peelable(const C3t3& c3t3,
                  const typename C3t3::Cell_handle ch,
@@ -832,6 +888,23 @@ std::size_t nb_incident_surface_patches(const typename C3t3::Edge& e,
   incident_surface_patches(e, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
+}
+
+template<typename OutputIterator, typename C3t3>
+OutputIterator incident_complex_edges(const typename C3t3::Vertex_handle v,
+                                      const C3t3& c3t3,
+                                      OutputIterator oit)
+{
+  typedef typename C3t3::Edge Edge;
+  std::unordered_set<Edge> edges;
+  c3t3.triangulation().finite_incident_edges(v, std::inserter(edges, edges.begin()));
+
+  for (const Edge& e : edges)
+  {
+    if (c3t3.is_in_complex(e))
+      *oit++ = e;
+  }
+  return oit;
 }
 
 template<typename C3t3>
