@@ -304,6 +304,9 @@ int go(Mesh mesh, CDT_options options) {
   if(options.verbose > 0) {
     cdt.debug_Steiner_points(true);
   }
+  if(options.verbose > 1) {
+    cdt.debug_missing_region(true);
+  }
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
 
   const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);

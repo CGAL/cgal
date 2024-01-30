@@ -319,6 +319,14 @@ public:
     debug_flags.set(static_cast<int>(Debug_flags::Steiner_points), b);
   }
 
+  bool debug_missing_region() const {
+    return debug_flags[static_cast<int>(Debug_flags::missing_region)];
+  }
+
+  void debug_missing_region(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::missing_region), b);
+  }
+
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
                        int li, int lj)
   {
@@ -827,8 +835,8 @@ protected:
   std::stack<std::pair<Subconstraint, Constraint_id> >
     subconstraints_to_conform;
 
-  enum class Debug_flags { Steiner_points = 0, conforming = 1 };
-  std::bitset<2> debug_flags{};
+  enum class Debug_flags { Steiner_points = 0, conforming = 1, missing_region };
+  std::bitset<3> debug_flags{};
 };
 
 } // end CGAL

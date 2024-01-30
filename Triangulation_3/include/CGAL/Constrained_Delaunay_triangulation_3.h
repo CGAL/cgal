@@ -1477,7 +1477,8 @@ private:
     std::for_each(interior_constrained_faces_lower.begin(), interior_constrained_faces_lower.end(),
                   register_internal_constrained_facet);
 
-    std::for_each(fh_region.begin(), fh_region.end(), [&](auto fh) {
+    // the following transform_reduce is like `std::any_of` but without the fast-exit
+    if(std::transform_reduce(fh_region.begin(), fh_region.end(), false, std::logical_or<bool>{}, [&](auto fh) {
       const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
       const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
       const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
@@ -1487,8 +1488,8 @@ private:
 
       const bool fail_upper = !is_fh_facet_of(upper_cavity_triangulation);
       const bool fail_lower = !is_fh_facet_of(lower_cavity_triangulation);
-      const bool test = !fail_upper && !fail_lower;
       if(fail_upper || fail_lower) {
+        fh->info().is_in_region = 1;
         auto display_face = [&]() {
           std::stringstream s;
           s.precision(std::cerr.precision());
@@ -1504,38 +1505,43 @@ private:
         if(fail_lower) {
           std::cerr << "NOTE: Face " << display_face() << " is not a facet of the lower cavity\n";
         }
+        return true;
+      }
+      return false;
+    })) {
+      if(this->debug_missing_region()) {
         // debug_region_size_4();
-        // dump_region(face_index, region_count, cdt_2);
+        dump_region(face_index, region_count, cdt_2);
+        std::for_each(fh_region.begin(), fh_region.end(), [](auto fh) { fh->info().is_in_region = 3; });
         // dump_3d_triangulation(face_index, region_count, "lower", lower_cavity_triangulation);
         // dump_3d_triangulation(face_index, region_count, "upper", upper_cavity_triangulation);
-        // auto dump_facets_of_cavity_border = [&](CDT_3_face_index face_index, int region_count, std::string type,
-        //                                         const auto& cavity_triangulation) {
-        //   std::ofstream out(std::string("dump_plane_facets_of_region_") + std::to_string(face_index) + "_" +
-        //                     std::to_string(region_count) + "_" + type + ".off");
-        //   std::ofstream other_out(std::string("dump_non_plane_facets_of_region_") + std::to_string(face_index) + "_" +
-        //                     std::to_string(region_count) + "_" + type + ".off");
-        //   out.precision(17);
-        //   other_out.precision(17);
+        auto dump_facets_of_cavity_border = [&](CDT_3_face_index face_index, int region_count, std::string type,
+                                                const auto& cavity_triangulation) {
+          std::ofstream out(std::string("dump_plane_facets_of_region_") + std::to_string(face_index) + "_" +
+                            std::to_string(region_count) + "_" + type + ".off");
+          std::ofstream other_out(std::string("dump_non_plane_facets_of_region_") + std::to_string(face_index) + "_" +
+                            std::to_string(region_count) + "_" + type + ".off");
+          out.precision(17);
+          other_out.precision(17);
 
-        //   std::vector<Facet> border_faces;
-        //   std::vector<Facet> non_border_faces;
-        //   visit_convex_hull_of_triangulation(cavity_triangulation,
-        //       [&](Facet f) {
-        //         if(is_facet_of_polygon(cavity_triangulation, f))
-        //           border_faces.push_back(f);
-        //         else
-        //           non_border_faces.push_back(f);
-        //       });
-        //   CGAL_warning(!border_faces.empty());
-        //   write_facets(out, cavity_triangulation, border_faces);
-        //   write_facets(other_out, cavity_triangulation, non_border_faces);
-        // };
-        // dump_facets_of_cavity_border(face_index, region_count, "lower", lower_cavity_triangulation);
-        // dump_facets_of_cavity_border(face_index, region_count, "upper", upper_cavity_triangulation);
-        throw Next_region{"missing facet in polygon", fh_region[0]};
+          std::vector<Facet> border_faces;
+          std::vector<Facet> non_border_faces;
+          visit_convex_hull_of_triangulation(cavity_triangulation,
+              [&](Facet f) {
+                if(is_facet_of_polygon(cavity_triangulation, f))
+                  border_faces.push_back(f);
+                else
+                  non_border_faces.push_back(f);
+              });
+          CGAL_warning(!border_faces.empty());
+          write_facets(out, cavity_triangulation, border_faces);
+          write_facets(other_out, cavity_triangulation, non_border_faces);
+        };
+        dump_facets_of_cavity_border(face_index, region_count, "lower", lower_cavity_triangulation);
+        dump_facets_of_cavity_border(face_index, region_count, "upper", upper_cavity_triangulation);
       }
-      return test;
-    });
+      throw Next_region{"missing facet in polygon", fh_region[0]};
+    }
 
 #if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# glu the upper triangulation of the cavity\n";
@@ -2266,7 +2272,10 @@ public:
     out.precision(17);
     auto color_fn = [](CDT_2_face_handle fh_2d) -> CGAL::IO::Color {
       if(fh_2d->info().is_outside_the_face) return CGAL::IO::gray();
-      if(fh_2d->info().is_in_region) return CGAL::IO::red();
+      if(fh_2d->info().is_in_region) {
+        if(fh_2d->info().is_in_region == 1) return CGAL::IO::violet();
+        else return CGAL::IO::red();
+      }
       return CGAL::IO::green();
     };
     auto color_pmap = boost::make_function_property_map<CDT_2_face_handle>(color_fn);
