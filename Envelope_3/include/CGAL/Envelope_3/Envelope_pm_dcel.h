@@ -39,19 +39,19 @@ protected:
   Data_container m_env_data;
 
   /*! Indicates that the data (surfaces) have been set already */
-  bool m_is_set;
+  bool m_is_env_set;
 
   // the decision that was made
   Dac_decision m_decision;
 public:
   /*! Constructor */
-  Dcel_info() : m_is_set(false), m_decision(DAC_DECISION_NOT_SET) {}
+  Dcel_info() : m_is_env_set(false), m_decision(DAC_DECISION_NOT_SET) {}
 
   /*! \brief returns true iff data has been set already */
-  bool env_is_set() const { return m_is_set; }
+  bool is_env_set() const { return m_is_env_set; }
 
   /*! \brief resets the flag  */
-  void set_is_set(bool flag) { m_is_set = flag; }
+  void set_is_env_set(bool flag) { m_is_env_set = flag; }
 
   bool is_decision_set() { return (m_decision != DAC_DECISION_NOT_SET); }
 
@@ -85,7 +85,7 @@ public:
   /*! Check whether the data is set to be empty
    */
   bool has_no_env_data() const
-  { return (m_is_set && (env_data_size() == 0)); }
+  { return (m_is_env_set && (env_data_size() == 0)); }
 
   /*! Obtain the first data object associated with the cell.
    * \pre m_env_data.size() is not 0.
@@ -129,7 +129,7 @@ public:
    */
   void set_no_env_data() {
     clear_env_data();
-    m_is_set = true;
+    m_is_env_set = true;
   }
 
    /*! Add a data object to the face.
@@ -137,7 +137,7 @@ public:
    */
   void add_env_data(const Data& data) {
     m_env_data.push_back(data);
-    m_is_set = true;
+    m_is_env_set = true;
   }
 
   /*! Add a range of data objects to the face.
@@ -147,14 +147,14 @@ public:
   template <typename InputIterator>
   void add_env_data(InputIterator begin, InputIterator end) {
     for (auto it = begin; it != end; ++it) m_env_data.push_back(*it);
-    m_is_set = true;
+    m_is_env_set = true;
   }
 
   /*! Clear the data objects.
    */
   void clear_env_data() {
     m_env_data.clear();
-    m_is_set = false;
+    m_is_env_set = false;
   }
 
   /*! Check whether the set of data objects in the input range is equal to our
@@ -162,7 +162,7 @@ public:
    */
   template <typename InputIterator>
   bool is_equal_env_data(InputIterator begin, InputIterator end) const {
-    if (! env_is_set()) return false;
+    if (! is_env_set()) return false;
 
     // insert the input data objects into a set
     std::set<Data> input_data(begin, end);
@@ -173,7 +173,7 @@ public:
 
   template <typename InputIterator>
   bool has_equal_env_data(InputIterator begin, InputIterator end) const {
-    if (! env_is_set()) return false;
+    if (! is_env_set()) return false;
 
     // insert the input data objects into a set
     std::set<Data> input_data(begin, end);

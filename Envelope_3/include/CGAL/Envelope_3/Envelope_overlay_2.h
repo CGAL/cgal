@@ -63,7 +63,7 @@ public:
   /* void print_face(Face_handle fh) {
    *   std::cout << (fh->is_unbounded() ? "unbounded" : "bounded");
    *
-   *   if (fh->env_is_set()) {
+   *   if (fh->is_env_set()) {
    *     std::cout << " #data= " << fh->env_data_size();
    *     if (fh->env_data_size() > 0)
    *       std::cout << " data= " << fh->env_data_front();
@@ -98,7 +98,7 @@ public:
    *     Vertex_handle vh = vit;
    *     std::cout << vh->point();
    *
-   *      if (vh->env_is_set()) {
+   *      if (vh->is_env_set()) {
    *       std::cout << " #data= " << vh->env_data_size();
    *       if (vh->env_data_size() > 0)
    *         std::cout << " data= " << vh->env_data_front();
@@ -125,7 +125,7 @@ public:
    *     Halfedge_handle hh = hit;
    *     std::cout << hh->curve();
    *
-   *     if (hh->env_is_set()) {
+   *     if (hh->is_env_set()) {
    *       std::cout << " #data= " << hh->env_data_size();
    *       if (hh->env_data_size() > 0)
    *         std::cout << " data= " << hh->env_data_front();

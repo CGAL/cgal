@@ -1341,7 +1341,7 @@ protected:
     for (auto vi = result.vertices_begin(); vi != result.vertices_end(); ++vi) {
       Vertex_handle vh = vi;
 
-      all_ok &= (vh->env_is_set());
+      all_ok &= (vh->is_env_set());
       CGAL_assertion_msg(all_ok, "data not set over vertex");
       all_ok &= (!vh->has_no_env_data());
 
@@ -1354,7 +1354,7 @@ protected:
     {
       Halfedge_handle hh = hi;
 
-      all_ok &= (hh->env_is_set());
+      all_ok &= (hh->is_env_set());
       if (!all_ok) std::cerr << "edge: " << hh->curve() << std::endl;
       CGAL_assertion_msg(all_ok, "data not set over edge");
       all_ok &= (!hh->has_no_env_data());
@@ -1367,7 +1367,7 @@ protected:
 
     for (auto fi = result.faces_begin(); fi != result.faces_end(); ++fi) {
       Face_handle fh = fi;
-      all_ok &= (fh->env_is_set());
+      all_ok &= (fh->is_env_set());
       CGAL_assertion_msg(all_ok, "data not set over face");
     }
     return all_ok;
