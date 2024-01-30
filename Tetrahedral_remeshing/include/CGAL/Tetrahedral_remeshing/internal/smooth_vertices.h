@@ -582,16 +582,6 @@ private:
     }
   }
 
-  typename C3t3::Index max_dimension_index(const std::array<Vertex_handle, 2> vs) const
-  {
-    const int dim0 = vs[0]->in_dimension();
-    const int dim1 = vs[1]->in_dimension();
-
-    if(dim0 > dim1)       return vs[0]->index();
-    else if(dim1 > dim0)  return vs[1]->index();
-    else                  return vs[0]->index(); //arbitrary choice, any of the two should be fine
-  }
-
   FT mass_along_segment(const Edge& e, const Tr& tr) const
   {
     typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
