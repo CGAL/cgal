@@ -448,6 +448,28 @@ public:
     return traverse(Traversal{*this, std::forward<Args>(args)...});
   }
 
+  // TODO shall we document it?
+  FT
+  compute_cartesian_coordinate(std::uint32_t gc, std::size_t depth, int ci) const
+  {
+    // an odd coordinate will be first compute at the current depth,
+    // while an even coordinate has already been computed at a previous depth.
+    // So while the coordinate is even, we decrease the depth to end up of the first
+    // non-even coordinate to compute it (with particular case for bbox limits).
+    // Note that is depth becomes too large, we might end up with incorrect coordinates
+    // due to rounding errors.
+    if (gc == (1u << depth)) return (m_bbox.max)()[ci]; // gc == 2^node_depth
+    if (gc == 0) return (m_bbox.min)()[ci];
+    if (gc % 2 !=0) return (m_bbox.min)()[ci] + int(gc) * m_side_per_depth[depth][ci];
+    std::size_t nd = depth;
+    do{
+      --nd;
+      gc = gc >> 1;
+    }
+    while((gc&1)==0); // while even, shift
+    return (m_bbox.min)()[ci] + int(gc) * m_side_per_depth[nd][ci];
+  }
+
   /*!
     \brief constructs the bounding box of a node.
 
@@ -463,45 +485,11 @@ public:
     Cartesian_coordinate min_corner, max_corner;
     std::size_t node_depth = depth(n);
 
-#if 1
-    // naive implementation for now
-    Bbox_dimensions size = m_side_per_depth[node_depth];
-
-    auto get_coord = [&](int gc, int node_depth, int i)
-    {
-      // an odd coordinate will be first compute at the current depth,
-      // while an even coordinate has already been computed at a previous depth.
-      // So while the coordinate is even, we decrease the depth to end up of the first
-      // non-even coordinate to compute it (with particular case for bbox limits).
-      // Note that is depth becomes too large, we might end up with incorrect coordinates
-      // due to rounding errors.
-      if (gc == (1 << node_depth)) return (m_bbox.max)()[i]; // gc == 2^node_depth
-      if (gc == 0) return (m_bbox.min)()[i];
-      if (gc % 2 !=0) return (m_bbox.min)()[i] + gc * size[i];
-      int nd = node_depth;
-      do{
-        --nd;
-        gc = gc >> 1;
-      }
-      while((gc&1)==0); // while even, shift
-      return (m_bbox.min)()[i] + gc * m_side_per_depth[nd][i];
-    };
-
     for (int i = 0; i < Dimension::value; i++)
     {
-      min_corner[i]=get_coord(global_coordinates(n)[i], node_depth, i);
-      max_corner[i]=get_coord(global_coordinates(n)[i]+1, node_depth, i);
+      min_corner[i]=compute_cartesian_coordinate(global_coordinates(n)[i], node_depth, i);
+      max_corner[i]=compute_cartesian_coordinate(global_coordinates(n)[i]+1, node_depth, i);
     }
-#else
-    Bbox_dimensions size = m_side_per_depth[node_depth];
-    const std::size_t last_coord = std::pow(2,node_depth)-1;
-    for (int i = 0; i < dimension; i++) {
-      min_corner[i] = (m_bbox.min)()[i] + int(global_coordinates(n)[i]) * size[i];
-      max_corner[i] = std::size_t(global_coordinates(n)[i]) == last_coord
-                    ? (m_bbox.max)()[i]
-                    : (m_bbox.min)()[i] + int(global_coordinates(n)[i] + 1) * size[i];
-    }
-#endif
     return {std::apply(m_traits.construct_point_d_object(), min_corner),
             std::apply(m_traits.construct_point_d_object(), max_corner)};
   }
@@ -988,15 +976,11 @@ public:
    * @return the center point of node n
    */
   Point barycenter(Node_index n) const {
-
-    // Determine the side length of this node
-    Bbox_dimensions size = m_side_per_depth[depth(n)];
-
-    // Determine the location this node should be split
-    std::array<FT, dimension> bary;
-    for (std::size_t i = 0; i < dimension; i++)
-      // use the same expression as for the bbox computation
-      bary[i] = (m_bbox.min)()[i] + int(2 * global_coordinates(n)[i]+1) * ( size[i] / FT(2) );
+    std::size_t node_depth = depth(n);
+    // the barycenter is computed as the lower corner of the lexicographically top child node
+    std::array<FT, Dimension::value> bary;
+    for (std::size_t i = 0; i < Dimension::value; i++)
+      bary[i] = compute_cartesian_coordinate(2 * global_coordinates(n)[i]+1, node_depth+1, i);
 
     return std::apply(m_traits.construct_point_d_object(), bary);
   }
