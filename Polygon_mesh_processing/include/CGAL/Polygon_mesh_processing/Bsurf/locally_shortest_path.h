@@ -2602,11 +2602,24 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
 
   // remove extra halfedges from inital_path and update src/tgt to get a minimal sequence
   // in case src and/or tgt are on a vertex or an edge
+#ifdef CGAL_DEBUG_BSURF
+  std::size_t initial_path_size_before = initial_path.size();
+#endif
   Impl::strip_initial_path(tmesh, src, tgt, initial_path);
   if (initial_path.empty()) return;
 
   CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
   CGAL_assertion(face(initial_path.back(), tmesh)==tgt.first);
+#ifdef CGAL_DEBUG_BSURF
+  if (initial_path_size_before != initial_path.size())
+  {
+    std::cout << "initial_path cured: " << initial_path_size_before << " ---> " << initial_path.size() << "\n";
+    for (halfedge_descriptor h : initial_path)
+    {
+      std::cout << "  - " << edge(h,tmesh) << "\n";
+    }
+  }
+#endif
 
 // TODO : if (edge(vsrc, vtgt, mesh) || tgt && src on the same edge ) return;
 
