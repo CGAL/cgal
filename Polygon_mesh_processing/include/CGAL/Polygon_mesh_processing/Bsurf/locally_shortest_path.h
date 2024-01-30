@@ -111,7 +111,7 @@ struct Locally_shortest_path_imp
                  const TriangleMesh& mesh)
   {
     static int i = -1;
-    std::cout << "dump current path in path_"+std::to_string(i)+".polylines.txt\n";
+    std::cout << "dump current path in path_"+std::to_string(i+1)+".polylines.txt\n";
     std::ofstream out("path_"+std::to_string(++i)+".polylines.txt");
     out << path.size()+2 << " " << construct_point(src, mesh);
     for(std::size_t i=0; i<path.size(); ++i)
@@ -345,7 +345,7 @@ struct Locally_shortest_path_imp
               const VertexPointMap &vpm, const TriangleMesh &mesh)
   {
     std::size_t s=initial_path.size();
-    std::vector<std::array<Vector_2, 2>> result(s+1);
+    std::vector<std::array<Vector_2, 2>> result(s+1); // Vector_2 should be Point_2 as they are funnel endpoints in 2D (after flattening)
     result[0]=init_source_triangle(initial_path[0], vpm, mesh, src);
 #ifdef CGAL_DEBUG_BSURF
     std::cout << "unfolding faces\n";
@@ -433,7 +433,7 @@ struct Locally_shortest_path_imp
     std::vector<funnel_point> points = std::vector<funnel_point>{{apex_index, apex}};
     points.reserve(portals.size());
     // @Speed: is this slower than an inlined function?
-    auto area = [](const Vector_2 a, const Vector_2 b, const Vector_2 c) {
+    auto area = [](const Vector_2 a, const Vector_2 b, const Vector_2 c) { // TODO replace with orientation predicate
       return determinant(b - a, c - a);
     };
 
@@ -549,8 +549,8 @@ struct Locally_shortest_path_imp
   void straighten_path(std::vector< std::array<Vector_2, 2>>& portals,
                        std::vector<FT>& lerps,
                        std::vector<halfedge_descriptor>& path,
-                       const Face_location<TriangleMesh, FT>& src,
-                       const Face_location<TriangleMesh, FT>& tgt,
+                       Face_location<TriangleMesh, FT>& src,
+                       Face_location<TriangleMesh, FT>& tgt,
                        const VertexPointMap &vpm, const TriangleMesh &mesh, std::size_t index)
   {
 #ifdef CGAL_DEBUG_BSURF
@@ -560,7 +560,7 @@ struct Locally_shortest_path_imp
     vertex_descriptor vertex=boost::graph_traits<TriangleMesh>::null_vertex();
 
     // TODO: use a while loop breaking when no apex vertices not already visited are available
-    for (std::size_t i = 0; i < portals.size() * 2 && index != std::size_t(-1); i++)
+    for (std::size_t i = 0; i < portals.size() * 2 && index != std::size_t(-1); ++i)
     {
 #ifdef CGAL_DEBUG_BSURF
       std::cout << "Improving path " << path.size() << " hedges\n";
@@ -604,6 +604,22 @@ struct Locally_shortest_path_imp
 
       std::size_t curr_index = index+1;
       std::vector<halfedge_descriptor> new_hedges;
+
+      // indicate if a point location is on an edge (interior or endpoints)
+      auto is_on_hedge = [&mesh](const Face_location<TriangleMesh,FT>& loc, halfedge_descriptor h_loop)
+      {
+        int k=0;
+        halfedge_descriptor hloc=prev(halfedge(loc.first, mesh), mesh);
+        while(hloc!=h_loop)
+        {
+          hloc=next(hloc,mesh);
+          ++k;
+          if (k==3) return -1;
+        }
+        return loc.second[(k+1)%3]==0 ? k : -1;
+      };
+
+
       if (is_target)
       {
         face_descriptor target_face;
@@ -622,12 +638,56 @@ struct Locally_shortest_path_imp
           target_face = face(opposite(path[curr_index], mesh), mesh);
 
         halfedge_descriptor h_loop=opposite(prev(opposite(h_curr, mesh), mesh), mesh);
+
+        // don't pick first h_loop if src is visible on the other side of it
+        const int ksrc=is_on_hedge(src, opposite(h_loop, mesh));
+        if (ksrc!=-1)
+        {
+          src.first=face(h_loop,mesh);
+          int new_k=0;
+          halfedge_descriptor hsrc=prev(halfedge(src.first, mesh), mesh);
+          while(hsrc!=h_loop)
+          {
+            hsrc=next(hsrc,mesh);
+            ++new_k;
+          }
+          std::array<FT,3> new_second = CGAL::make_array(FT(0.),FT(0.),FT(0.));
+          new_second[new_k]=src.second[(ksrc+2)%3];
+          new_second[(new_k+2)%3]=src.second[ksrc];
+          src.second=new_second;
+          h_loop=opposite(prev(h_loop,mesh), mesh);
+        }
+
         do {
           new_hedges.push_back(h_loop);
           h_loop=opposite(prev(h_loop,mesh), mesh);
         }
         while(target_face!=face(h_loop, mesh));
-        new_hedges.push_back(h_loop);
+
+        // don't pick last h_loop is tgt is visible on the other side of it
+        const int ktgt = is_on_hedge(tgt,h_loop);
+        if (ktgt!=-1)
+        {
+          halfedge_descriptor oh_loop=opposite(h_loop,mesh);
+          tgt.first=face(oh_loop,mesh);
+          int new_k=0;
+          halfedge_descriptor htgt=prev(halfedge(tgt.first, mesh), mesh);
+          while(htgt!=oh_loop)
+          {
+            htgt=next(htgt,mesh);
+            ++new_k;
+          }
+          std::array<FT,3> new_second = CGAL::make_array(FT(0.),FT(0.),FT(0.));
+          new_second[new_k]=tgt.second[(ktgt+2)%3];
+          new_second[(new_k+2)%3]=tgt.second[ktgt];
+          tgt.second=new_second;
+        }
+        else
+          new_hedges.push_back(h_loop);
+
+
+
+
       }
       else
       {
@@ -647,12 +707,52 @@ struct Locally_shortest_path_imp
           target_face=face(opposite(path[curr_index], mesh), mesh);
 
         halfedge_descriptor h_loop=opposite(next(opposite(h_curr, mesh), mesh), mesh); // skip the face before h_curr (as we won't remove it from path)
+
+        // don't pick first h_loop if src is visible on the other side of it
+        const int ksrc=is_on_hedge(src, opposite(h_loop, mesh));
+        if (ksrc!=-1)
+        {
+          src.first=face(h_loop,mesh);
+          int new_k=0;
+          halfedge_descriptor hsrc=prev(halfedge(src.first, mesh), mesh);
+          while(hsrc!=h_loop)
+          {
+            hsrc=next(hsrc,mesh);
+            ++new_k;
+          }
+          std::array<FT,3> new_second = CGAL::make_array(FT(0.),FT(0.),FT(0.));
+          new_second[new_k]=src.second[(ksrc+2)%3];
+          new_second[(new_k+2)%3]=src.second[ksrc];
+          src.second=new_second;
+          h_loop=opposite(next(h_loop,mesh), mesh);
+        }
+
         do {
           new_hedges.push_back(h_loop);
           h_loop=opposite(next(h_loop,mesh), mesh);
         }
         while(target_face!=face(h_loop, mesh));
-        new_hedges.push_back(h_loop);
+
+        // don't pick last h_loop is tgt is visible on the other side of it
+        const int ktgt = is_on_hedge(tgt,h_loop);
+        if (ktgt!=-1)
+        {
+          halfedge_descriptor oh_loop=opposite(h_loop,mesh);
+          tgt.first=face(oh_loop,mesh);
+          int new_k=0;
+          halfedge_descriptor htgt=prev(halfedge(tgt.first, mesh), mesh);
+          while(htgt!=oh_loop)
+          {
+            htgt=next(htgt,mesh);
+            ++new_k;
+          }
+          std::array<FT,3> new_second = CGAL::make_array(FT(0.),FT(0.),FT(0.));
+          new_second[new_k]=tgt.second[(ktgt+2)%3];
+          new_second[(new_k+2)%3]=tgt.second[ktgt];
+          tgt.second=new_second;
+        }
+        else
+          new_hedges.push_back(h_loop);
       }
 
       // replace the halfedges incident to the apex vertex with the opposite part of the ring
@@ -663,6 +763,8 @@ struct Locally_shortest_path_imp
 
       portals=unfold_strip(path,src,tgt,vpm,mesh);
       lerps=funnel(portals,index);
+      CGAL_assertion(lerps.size()==path.size());
+
 #ifdef CGAL_DEBUG_BSURF
       dump_path(path, lerps, src, tgt, mesh);
 #endif
@@ -1424,11 +1526,11 @@ struct Locally_shortest_path_imp
     auto is_edge = [](const Face_location<TriangleMesh, FT>& fl)
     {
       if (fl.second[0]==0 && fl.second[1]!=0 && fl.second[2]!=0)
-        return 1;
-      if (fl.second[1]==0 && fl.second[2]!=0 && fl.second[0]!=0)
         return 2;
-      if (fl.second[2]==0 && fl.second[0]!=0 && fl.second[1]!=0)
+      if (fl.second[1]==0 && fl.second[2]!=0 && fl.second[0]!=0)
         return 0;
+      if (fl.second[2]==0 && fl.second[0]!=0 && fl.second[1]!=0)
+        return 1;
       return -1;
     };
 
@@ -1471,7 +1573,7 @@ struct Locally_shortest_path_imp
       if (ei!=-1)
       {
         halfedge_descriptor hsrc=prev(halfedge(src.first, tmesh), tmesh);
-        for (int i=0; i<vi; ++i)
+        for (int i=0; i<ei; ++i)
           hsrc=next(hsrc, tmesh);
         if (opposite(initial_path[0], tmesh)==hsrc)
         {
@@ -1494,7 +1596,7 @@ struct Locally_shortest_path_imp
       }
     }
 
-    // strip initial_path from extra halfedges before src and also update tgt
+    // strip initial_path from extra halfedges before tgt and also update tgt
     vi = is_vertex(tgt);
     if (vi!=-1)
     {
@@ -1509,10 +1611,11 @@ struct Locally_shortest_path_imp
           break;
         --first_hi;
       }
+      bool update_tgt = (first_hi!=initial_path.size());
       initial_path.erase(std::next(initial_path.begin(), first_hi), initial_path.end());
       if (initial_path.empty()) return;
 
-      if (first_hi!=initial_path.size())
+      if (update_tgt)
       {
         halfedge_descriptor new_htgt=halfedge(face(initial_path.back(), tmesh), tmesh);
         int vid=0;
@@ -1524,7 +1627,7 @@ struct Locally_shortest_path_imp
         }
         std::array<FT, 3> fl_tgt = {FT(0),FT(0),FT(0)};
         fl_tgt[vid]=FT(1);
-        src=std::make_pair(face(new_htgt, tmesh), fl_tgt);
+        tgt=std::make_pair(face(new_htgt, tmesh), fl_tgt);
       }
     }
     else
@@ -1533,7 +1636,7 @@ struct Locally_shortest_path_imp
       if (ei!=-1)
       {
         halfedge_descriptor htgt=prev(halfedge(tgt.first, tmesh), tmesh);
-        for (int i=0; i<vi; ++i)
+        for (int i=0; i<ei; ++i)
           htgt=next(htgt, tmesh);
         if (htgt==initial_path.back())
         {
@@ -2505,9 +2608,13 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
   CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
   CGAL_assertion(face(initial_path.back(), tmesh)==tgt.first);
 
+// TODO : if (edge(vsrc, vtgt, mesh) || tgt && src on the same edge ) return;
+
+  // here portals contains 2D coordinates of endpoints of edges in initial_path
   std::vector< std::array<typename K::Vector_2, 2>> portals=Impl::unfold_strip(initial_path,src,tgt,vpm,tmesh);
   std::size_t max_index=0;
 
+  // lerps are barycentric coordinates of the shortest path restricted to the unfolded strip
   std::vector<FT> lerps=Impl::funnel(portals,max_index);
   // TODO: if you comment this if you don't want to shorten the path (option?).
   //       but this part is really fast so maybe does not make sense.
