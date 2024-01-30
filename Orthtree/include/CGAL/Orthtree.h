@@ -264,14 +264,14 @@ public:
   /*!
     \brief recursively subdivides the orthtree until it meets the given criteria.
 
-    The split predicate should return `true` if the node should be split and  false` otherwise.
+    The split predicate should return `true` if a leaf node should be split and false` otherwise.
 
     This function may be called several times with different
     predicates: in that case, nodes already split are left unaltered,
     while nodes that were not split and for which `split_predicate`
     returns `true` are split.
 
-    \param split_predicate determines whether or not a node needs to be subdivided.
+    \param split_predicate determines whether or not a leaf node needs to be subdivided.
    */
   void refine(const Split_predicate& split_predicate) {
 
@@ -402,10 +402,10 @@ public:
   const Traits& traits() const { return m_traits; }
 
   /*!
-    \brief provides read-only access to the root node, and by
+    \brief provides access to the root node, and by
     extension the rest of the tree.
 
-    \return a const reference to the root node of the tree.
+    \return Node_index of the root node.
    */
   Node_index root() const { return 0; }
 

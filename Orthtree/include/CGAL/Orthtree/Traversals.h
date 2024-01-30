@@ -105,7 +105,7 @@ public:
 
   \tparam Tree an instance of `Orthtree`
 
-  All non-leave nodes are ignored.
+  All non-leaf nodes are ignored.
 
   \cgalModels{OrthtreeTraversal}
  */
