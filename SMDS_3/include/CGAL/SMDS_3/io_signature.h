@@ -350,6 +350,18 @@ Get_io_signature<Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt
 };
 #endif
 
+#ifdef CGAL_BASE_WITH_TIME_STAMP_H
+template <class Base>
+struct
+Get_io_signature<Base_with_time_stamp<Base> >
+{
+  std::string operator()() {
+    return Get_io_signature<Base>()();
+  }
+};
+#endif
+
+
 } // end namespace CGAL
 
 
