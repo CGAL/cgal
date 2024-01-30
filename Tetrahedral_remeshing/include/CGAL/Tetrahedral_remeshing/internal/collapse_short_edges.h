@@ -1156,7 +1156,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
         return Vertex_handle();
       }
     }
-    else //note : priority is given to 
+    else
     {
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
       if (in_cx)
