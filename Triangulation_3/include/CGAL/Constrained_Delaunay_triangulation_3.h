@@ -1103,14 +1103,9 @@ private:
     Next_region(const std::string& what, CDT_2_face_handle fh) : std::logic_error(what), fh_2d(fh) {}
   };
 
-  static constexpr auto vertex_pair(Edge e) {
-    const auto [c, i, j] = e;
-    return std::pair<Vertex_handle, Vertex_handle>{c->vertex(i), c->vertex(j)};
-  }
-
   template <typename Fh_region, typename Vertices_container>
   auto construct_cavities(CDT_3_face_index face_index,
-                          int region_count,
+                          int region_index,
                           const CDT_2& cdt_2,
                           const Fh_region& fh_region,
                           const Vertices_container& polygon_border_vertices,
@@ -1151,11 +1146,11 @@ private:
     };
 
     intersecting_edges.push_back(first_intersecting_edge);
-    const auto [v0, v1] = vertex_pair(first_intersecting_edge);
+    const auto [v0, v1] = tr.vertices(first_intersecting_edge);
     (void)new_edge(v0, v1, true);
     for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
       const auto intersecting_edge = intersecting_edges[i];
-      const auto [v_above, v_below] = vertex_pair(intersecting_edge);
+      const auto [v_above, v_below] = tr.vertices(intersecting_edge);
 #if CGAL_CDT_3_DEBUG_REGION
       std::cerr << std::format("restore_subface_region face index: {}, region #{}, Edge #{:6}: ({} , {})\n",
                                 face_index, region_count, i,
@@ -1193,7 +1188,7 @@ private:
           if(v0v1_intersects_region != 0) {
             if(v0v1_intersects_region != expected) {
               throw PLC_error{"PLC error: v0v1_intersects_region != expected" ,
-                    __FILE__, __LINE__, face_index, region_count};
+                    __FILE__, __LINE__, face_index, region_index};
             }
             // report the edge with first vertex above the region
             if(v0v1_intersects_region < 0) {
@@ -1213,19 +1208,19 @@ private:
            !test_edge(v_below, index_v_below, vc, index_vc, -1))
         {
           dump_triangulation();
-          dump_region(face_index, region_count, cdt_2);
+          dump_region(face_index, region_index, cdt_2);
           {
             std::ofstream out(std::string("dump_two_edges_") + std::to_string(face_index) + ".polylines.txt");
             write_segment(out, Edge{cell, index_v_above, index_vc});
             write_segment(out, Edge{cell, index_v_below, index_vc});
           }
           throw PLC_error{"PLC error: !test_edge(v_above..) && !test_edge(v_below..)" ,
-                __FILE__, __LINE__, face_index, region_count};
+                __FILE__, __LINE__, face_index, region_index};
         }
       } while(++facet_circ != facet_circ_end);
     }
     for(auto intersecting_edge: intersecting_edges) {
-      const auto [v_above, v_below] = vertex_pair(intersecting_edge);
+      const auto [v_above, v_below] = tr.vertices(intersecting_edge);
 
       auto cell_circ = this->incident_cells(intersecting_edge), end = cell_circ;
       CGAL_assume(cell_circ != nullptr);
