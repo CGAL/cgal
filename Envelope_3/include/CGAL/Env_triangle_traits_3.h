@@ -34,8 +34,9 @@ namespace CGAL {
 template <typename Kernel_> class Env_triangle_3;
 
 // this traits class supports both triagles and segments in 3d
-template <typename Kernel_>
-class Env_triangle_traits_3 : public Arr_segment_traits_2<Kernel_> {
+template <typename Kernel_,
+          typename ArrSegmentTraits = Arr_segment_traits_2<Kernel_>>
+class Env_triangle_traits_3 : public ArrSegmentTraits {
 public:
   using Traits_2 = Arr_segment_traits_2<Kernel_>;
   using Point_2 = typename Traits_2::Point_2;

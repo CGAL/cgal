@@ -28,8 +28,9 @@
 
 namespace CGAL {
 
-template <typename Kernel_>
-class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_> {
+template <typename Kernel_,
+          typename ArrLinearTraits = Arr_linear_traits_2<Kernel_>>
+class Env_plane_traits_3 : public ArrLinearTraits {
 public:
   using Kernel = Kernel_;
   using FT = typename Kernel::FT;
