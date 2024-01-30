@@ -2482,11 +2482,69 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
                            const TriangleMesh &tmesh,
                            EdgeLocationRange &edge_locations)
 {
+  typedef boost::graph_traits<TriangleMesh> BGT;
+  typedef typename BGT::halfedge_descriptor halfedge_descriptor;
+  typedef typename BGT::vertex_descriptor vertex_descriptor;
+  typedef typename BGT::face_descriptor face_descriptor;
+
+  // start by checking if it is not a trivial path
   if (src.first == tgt.first) return;
 
+  auto variant_src = get_descriptor_from_location(src,tmesh);
+  auto variant_tgt = get_descriptor_from_location(tgt,tmesh);
 
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
-      halfedge_descriptor;
+  std::vector<face_descriptor> src_visible_face;
+  if (const face_descriptor* f_ptr = std::get_if<face_descriptor>(&variant_src))
+  {
+    src_visible_face.push_back(*f_ptr);
+  }
+  else
+  {
+    if (const halfedge_descriptor* h_ptr = std::get_if<halfedge_descriptor>(&variant_src))
+    {
+      if (!is_border(*h_ptr, tmesh))
+        src_visible_face.push_back(face(*h_ptr, tmesh));
+      if (!is_border(opposite(*h_ptr, tmesh), tmesh))
+        src_visible_face.push_back(face(opposite(*h_ptr, tmesh), tmesh));
+    }
+    else
+    {
+      vertex_descriptor v = std::get<vertex_descriptor>(variant_src);
+      for(halfedge_descriptor h : halfedges_around_target(v, tmesh))
+      {
+        if (!is_border(h, tmesh)) src_visible_face.push_back(face(h, tmesh));
+      }
+    }
+  }
+  std::sort(src_visible_face.begin(), src_visible_face.end());
+  if (const face_descriptor* f_ptr = std::get_if<face_descriptor>(&variant_tgt))
+  {
+    if (std::find(src_visible_face.begin(), src_visible_face.end(), *f_ptr)!=src_visible_face.end())
+      return;
+  }
+  else
+  {
+    auto is_visible = [&src_visible_face, &tmesh](halfedge_descriptor h)
+    {
+      return !is_border(h, tmesh) &&
+              std::find(src_visible_face.begin(),
+                        src_visible_face.end(), face(h, tmesh))!=src_visible_face.end();
+    };
+    if (const halfedge_descriptor* h_ptr = std::get_if<halfedge_descriptor>(&variant_tgt))
+    {
+      if (is_visible(*h_ptr) || is_visible(opposite(*h_ptr, tmesh))) return;
+    }
+    else
+    {
+      vertex_descriptor v = std::get<vertex_descriptor>(variant_tgt);
+      for(halfedge_descriptor h : halfedges_around_target(v, tmesh))
+      {
+        if (is_visible(h)) return;
+      }
+    }
+  }
+
+
 
   //TODO replace with named parameter
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
@@ -2495,13 +2553,12 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
   VPM vpm = get(CGAL::vertex_point, tmesh);
 
 
+
+// TODO : if (edge(vsrc, vtgt, mesh) || tgt && src on the same edge ) return;
+
+
 //TODO: handle cases of src and tgt not in the same connected component (assert?)
 #ifdef CGAL_BSURF_USE_DIJKSTRA_SP
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor
-      face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
-      edge_descriptor;
-
   typename boost::property_map<
       TriangleMesh, CGAL::dynamic_face_property_t<face_descriptor>>::const_type
       predecessor_map =
@@ -2620,8 +2677,6 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
     }
   }
 #endif
-
-// TODO : if (edge(vsrc, vtgt, mesh) || tgt && src on the same edge ) return;
 
   // here portals contains 2D coordinates of endpoints of edges in initial_path
   std::vector< std::array<typename K::Vector_2, 2>> portals=Impl::unfold_strip(initial_path,src,tgt,vpm,tmesh);
