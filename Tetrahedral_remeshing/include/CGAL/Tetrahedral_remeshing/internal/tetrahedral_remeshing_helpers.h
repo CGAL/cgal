@@ -82,7 +82,6 @@ inline int indices(const int& i, const int& j)
 }
 
 // returns angle in degrees
-// returns angle in degrees
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,
                                const Point& q,
@@ -1209,6 +1208,13 @@ bool topology_test(const typename C3t3::Edge& edge,
   } while (++fcirc != fdone);
 
   return true;
+}
+
+template<typename Sizing, typename Vertex_handle>
+auto sizing_at_vertex(const Vertex_handle v,
+                      const Sizing& sizing)
+{
+  return sizing(point(v->point()), v->in_dimension(), v->index());
 }
 
 template<typename Tr>
