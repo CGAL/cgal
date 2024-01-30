@@ -42,11 +42,20 @@ namespace CGAL {
 
 enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
 
+using CDT_3_face_index = int; // must be signed
+
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
 class Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb> {
-  int nb_of_incident_constraints = 0;
-  void* c_id = nullptr;
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
+  union U {
+    struct On_edge {
+      int nb_of_incident_constraints = 0;
+      void* c_id = nullptr;
+    } on_edge;
+    struct On_face{
+      CDT_3_face_index face_index = 0;
+    } on_face;
+  } u;
 public:
   // To get correct vertex type in TDS
   template < class TDS3 >
@@ -58,36 +67,51 @@ public:
   using Base = Base_with_time_stamp<Vb>;
   using Base::Base;
 
+  Conforming_Delaunay_triangulation_vertex_base_3()
+    : Base{}
+    , u{typename U::On_edge()}
+  {}
+
   void set_on_constraint(auto constraint_id) {
-    ++nb_of_incident_constraints;
-    c_id = constraint_id.vl_ptr();
+    ++u.on_edge.nb_of_incident_constraints;
+    u.on_edge.c_id = constraint_id.vl_ptr();
   }
 
   int number_of_incident_constraints() const {
-    CGAL_assertion(nb_of_incident_constraints >= 0);
-    return nb_of_incident_constraints;
+    CGAL_assertion(u.on_edge.nb_of_incident_constraints >= 0);
+    return u.on_edge.nb_of_incident_constraints;
   }
 
   void mark_vertex() {
-    CGAL_assertion(nb_of_incident_constraints > 0);
-    nb_of_incident_constraints = -nb_of_incident_constraints;
+    CGAL_assertion(u.on_edge.nb_of_incident_constraints > 0);
+    u.on_edge.nb_of_incident_constraints = -u.on_edge.nb_of_incident_constraints;
   }
 
   void unmark_vertex() {
-    CGAL_assertion(nb_of_incident_constraints < 0);
-    nb_of_incident_constraints = -nb_of_incident_constraints;
+    CGAL_assertion(u.on_edge.nb_of_incident_constraints < 0);
+    u.on_edge.nb_of_incident_constraints = -u.on_edge.nb_of_incident_constraints;
   }
 
   bool is_marked() const {
-    CGAL_assertion(nb_of_incident_constraints != 0);
-    return nb_of_incident_constraints < 0;
+    CGAL_assertion(u.on_edge.nb_of_incident_constraints != 0);
+    return u.on_edge.nb_of_incident_constraints < 0;
   }
 
   template<typename Triangulation>
   auto constraint_id(const Triangulation&) const {
     using C_id = typename Triangulation::Constraint_id;
     using Vertex_list_ptr = decltype(std::declval<C_id>().vl_ptr());
-    return C_id(static_cast<Vertex_list_ptr>(c_id));
+    return C_id(static_cast<Vertex_list_ptr>(u.on_edge.c_id));
+  }
+
+  void set_Steiner_vertex_on_face(CDT_3_face_index face_index) {
+    m_vertex_type = CDT_3_vertex_type::STEINER_IN_FACE;
+    u.on_face = typename U::On_face{face_index};
+  }
+
+  CDT_3_face_index face_index() const {
+    CGAL_assertion(m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE);
+    return u.on_face.face_index;
   }
 
   CDT_3_vertex_type vertex_type() const { return m_vertex_type; }
