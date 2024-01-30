@@ -1215,10 +1215,26 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
   return count;
 }
 
+template<typename C3t3>
+void collect_subdomains_on_boundary(const C3t3& c3t3,
+  boost::unordered_map<typename C3t3::Vertex_handle,
+    std::unordered_set<typename C3t3::Subdomain_index> >& vertices_subdomain_indices)
+{
+  for (auto c : c3t3.triangulation().all_cell_handles())
+  {
+    for (auto v : c3t3.triangulation().vertices(c))
+    {
+      const int dim = v->in_dimension();
+      if(dim >= 0 && dim < 3)
+        vertices_subdomain_indices[v].insert(c->subdomain_index());
+    }
+  }
+}
+
 template<typename C3T3, typename CellSelector>
 void collectBoundaryEdgesAndComputeVerticesValences(
   const C3T3& c3t3,
-  CellSelector cell_selector,
+  const CellSelector& cell_selector,
   std::vector<typename C3T3::Edge>& boundary_edges,
   boost::unordered_map<typename C3T3::Vertex_handle,
                        boost::unordered_map<typename C3T3::Surface_patch_index, unsigned int> >&
@@ -1247,17 +1263,13 @@ void collectBoundaryEdgesAndComputeVerticesValences(
                                                  "boundary_edges.polylines.txt");
 #endif
 
+  // collect incident subdomain indices at vertices
+  collect_subdomains_on_boundary(c3t3, vertices_subdomain_indices);
+
   for (const Edge& e : boundary_edges)
   {
     const Vertex_handle v0 = e.first->vertex(e.second);
     const Vertex_handle v1 = e.first->vertex(e.third);
-
-    if (vertices_subdomain_indices.find(v0) == vertices_subdomain_indices.end())
-      incident_subdomains(v0, c3t3,
-        std::inserter(vertices_subdomain_indices[v0], vertices_subdomain_indices[v0].end()));
-    if (vertices_subdomain_indices.find(v1) == vertices_subdomain_indices.end())
-      incident_subdomains(v1, c3t3,
-        std::inserter(vertices_subdomain_indices[v1], vertices_subdomain_indices[v1].end()));
 
     //In case of feature edge
     if (vertices_subdomain_indices[v0].size() > 2
@@ -1275,7 +1287,8 @@ void collectBoundaryEdgesAndComputeVerticesValences(
         }
       } while (++facet_circulator != done);
     }
-    else if (vertices_subdomain_indices[v0].size() == 2)
+    else if (vertices_subdomain_indices[v0].size() == 2
+          || vertices_subdomain_indices[v1].size() == 2)
     {
       Facet_circulator facet_circulator = tr.incident_facets(e);
       Facet_circulator done(facet_circulator);
@@ -2110,7 +2123,7 @@ void flip_edges(C3T3& c3t3,
   //}
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << "Flip edges... done ("
+  std::cout << "\rFlip edges... done ("
     << nb_flips_on_surface << "/"
     << nb_flips_in_volume << " surface/volume flips done)." << std::endl;
 #endif
