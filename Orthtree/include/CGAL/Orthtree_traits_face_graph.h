@@ -74,7 +74,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   auto construct_root_node_bbox_object() const {
     return [&]() -> Bbox_d {
 
-      std::array<FT, dimension> min = {0.0, 0}, max = {0.0, 0};
+      std::array<FT, Base::dimension> min = {0.0, 0}, max = {0.0, 0};
       if (faces(m_pm).begin() != faces(m_pm).end()) {
         const Point_d& p = get(m_vpm, *vertices(m_pm).begin());
         min = {p.x(), p.y(), p.z()};
