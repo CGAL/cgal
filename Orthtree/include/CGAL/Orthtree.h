@@ -462,6 +462,37 @@ public:
     using Cartesian_coordinate = std::array<FT, dimension>;
     Cartesian_coordinate min_corner, max_corner;
     std::size_t node_depth = depth(n);
+
+#if 1
+    // naive implementation for now
+    Bbox_dimensions size = m_side_per_depth[node_depth];
+
+    auto get_coord = [&](int gc, int node_depth, int i)
+    {
+      // an odd coordinate will be first compute at the current depth,
+      // while an even coordinate has already been computed at a previous depth.
+      // So while the coordinate is even, we decrease the depth to end up of the first
+      // non-even coordinate to compute it (with particular case for bbox limits).
+      // Note that is depth becomes too large, we might end up with incorrect coordinates
+      // due to rounding errors.
+      if (gc == (1 << node_depth)) return (m_bbox.max)()[i]; // gc == 2^node_depth
+      if (gc == 0) return (m_bbox.min)()[i];
+      if (gc % 2 !=0) return (m_bbox.min)()[i] + gc * size[i];
+      int nd = node_depth;
+      do{
+        --nd;
+        gc = gc >> 1;
+      }
+      while((gc&1)==0); // while even, shift
+      return (m_bbox.min)()[i] + gc * m_side_per_depth[nd][i];
+    };
+
+    for (int i = 0; i < Dimension::value; i++)
+    {
+      min_corner[i]=get_coord(global_coordinates(n)[i], node_depth, i);
+      max_corner[i]=get_coord(global_coordinates(n)[i]+1, node_depth, i);
+    }
+#else
     Bbox_dimensions size = m_side_per_depth[node_depth];
     const std::size_t last_coord = std::pow(2,node_depth)-1;
     for (int i = 0; i < dimension; i++) {
@@ -470,7 +501,7 @@ public:
                     ? (m_bbox.max)()[i]
                     : (m_bbox.min)()[i] + int(global_coordinates(n)[i] + 1) * size[i];
     }
-
+#endif
     return {std::apply(m_traits.construct_point_d_object(), min_corner),
             std::apply(m_traits.construct_point_d_object(), max_corner)};
   }
