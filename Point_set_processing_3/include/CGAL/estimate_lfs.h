@@ -44,7 +44,7 @@ namespace internal {
 
 template <typename Geom_traits, typename PointRange, typename PointMap>
 typename Geom_traits::Sphere_3
-calculate_loose_bsphere(const PointRange& points, const PointMap point_map, 
+calculate_loose_bsphere(const PointRange& points, const PointMap point_map,
   const typename Geom_traits::FT loose_ratio=0.1)
 {
   typedef typename Geom_traits::FT  FT;
@@ -58,7 +58,7 @@ calculate_loose_bsphere(const PointRange& points, const PointMap point_map,
                   CGAL::make_transform_iterator_from_property_map
                                        (points.end(), point_map));
 
-  FT max_distance = std::numeric_limits<double>::min();
+  FT max_distance = (std::numeric_limits<double>::min)();
   for (const auto& pt : points)
   {
     const Point& point = get(point_map, pt);
@@ -74,7 +74,7 @@ calculate_loose_bsphere(const PointRange& points, const PointMap point_map,
 template <typename NeighborQuery>
 typename NeighborQuery::FT
 classical_point_dist_func(const typename NeighborQuery::Point_3& query, ///< point
-                          const NeighborQuery& neighbor_query) 
+                          const NeighborQuery& neighbor_query)
 {
   // basic geometric types
   typedef typename NeighborQuery::Kernel Kernel;
@@ -143,7 +143,7 @@ classical_point_dist_func_epsilon_band(const PointRange &points,
     FT l = av_sqrt_sum_sq_distance_to_knn(query, neighbor_query, band_knn);
 
     if (l == FT(0)) continue;
-            
+
     if (l < l_min)
     {
       l_min = l;
@@ -207,7 +207,7 @@ void random_dual_cone_search_segs(const typename Geom_traits::Point_3 &p,
   // normal should be normalized
   FT eps = 1e-5;
   assert(std::abs(n.squared_length() - 1.0) <= eps);
-  const Vector w_basis = n; 
+  const Vector w_basis = n;
 
   Vector v_vec(0.0, 0.0, 0.0);
   if (std::abs(n.x()) >= std::abs(n.y()))
@@ -252,12 +252,12 @@ void random_dual_cone_search_segs(const typename Geom_traits::Point_3 &p,
 
 template <typename NeighborQuery>
 bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segment_3 &e,
-                                      const typename NeighborQuery::Kernel::Point_2 &s, 
+                                      const typename NeighborQuery::Kernel::Point_2 &s,
                                       const typename NeighborQuery::Kernel::Point_2 &t,
                                       const NeighborQuery& neighbor_query,
-                                      const typename NeighborQuery::FT epsilon_band, 
+                                      const typename NeighborQuery::FT epsilon_band,
                                       std::vector<typename NeighborQuery::Kernel::Point_3>& intersections,
-                                      typename NeighborQuery::FT lipschitz, 
+                                      typename NeighborQuery::FT lipschitz,
                                       typename NeighborQuery::FT eps)
 {
   // basic geometric types
@@ -279,7 +279,7 @@ bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segm
   FT abs_dy = std::abs(t.y() - s.y());
   FT abs_dx = std::abs(t.x() - s.x());
   // it is better to abs_dy / abs_dx, when abs_dx is small
-  if (abs_dy / abs_dx > lipschitz + eps) 
+  if (abs_dy / abs_dx > lipschitz + eps)
   {
     return false;
   }
@@ -336,13 +336,13 @@ bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segm
     {
       intersections.push_back(pmm);
     }
-        
+
       return true;
   }
 
-  bool fl = recursive_dichotomic_search_base(e, ms, mm, neighbor_query, epsilon_band, 
+  bool fl = recursive_dichotomic_search_base(e, ms, mm, neighbor_query, epsilon_band,
             intersections, lipschitz, eps);
-  bool fr = recursive_dichotomic_search_base(e, mm, mt, neighbor_query, epsilon_band, 
+  bool fr = recursive_dichotomic_search_base(e, mm, mt, neighbor_query, epsilon_band,
             intersections, lipschitz, eps);
 
   return (fl && fr);
@@ -350,12 +350,12 @@ bool recursive_dichotomic_search_base(const typename NeighborQuery::Kernel::Segm
 
 template<class NeighborQuery>
 bool recursive_dichotomic_search(const typename NeighborQuery::Kernel::Segment_3 &e,
-                                const typename NeighborQuery::Kernel::Point_2 &s, 
+                                const typename NeighborQuery::Kernel::Point_2 &s,
                                 const typename NeighborQuery::Kernel::Point_2 &t,
                                 const NeighborQuery &neighbor_query,
-                                const typename NeighborQuery::FT epsilon_band, 
+                                const typename NeighborQuery::FT epsilon_band,
                                 std::vector<typename NeighborQuery::Kernel::Point_3>& intersections,
-                                typename NeighborQuery::FT lipschitz, 
+                                typename NeighborQuery::FT lipschitz,
                                 typename NeighborQuery::FT eps=1e-5)
 {
   // basic geometric types
@@ -404,13 +404,13 @@ bool recursive_dichotomic_search(const typename NeighborQuery::Kernel::Segment_3
     if (s_sign && t_sign)
     {
       flag = false;
-    }  
+    }
 
     // should not happen
-    if ((!s_sign) && (!t_sign)) 
+    if ((!s_sign) && (!t_sign))
     {
       flag = false;
-    }  
+    }
   }
   else
   {
@@ -435,7 +435,7 @@ estimate_shape_diameter(const typename NeighborQuery::Point_3& query, ///< point
            const NeighborQuery& neighbor_query, ///< KD-tree
            const typename NeighborQuery::Kernel::Sphere_3& bsphere,
            const typename NeighborQuery::FT epsilon_band,
-           const typename NeighborQuery::FT apex_angle, 
+           const typename NeighborQuery::FT apex_angle,
            std::size_t N_rays,
            unsigned int reject_knn=6)
 {
@@ -445,7 +445,7 @@ estimate_shape_diameter(const typename NeighborQuery::Point_3& query, ///< point
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Point_2  Point_2;
   typedef typename Kernel::Segment_3  Segment;
-  
+
   std::vector<Point> points;
   neighbor_query.get_points (query, reject_knn, FT(0), std::back_inserter(points));
   FT project_radius = reject_knn == 0 ? 0.0 : std::sqrt(CGAL::squared_distance(query, points[reject_knn-1]));
@@ -453,7 +453,7 @@ estimate_shape_diameter(const typename NeighborQuery::Point_3& query, ///< point
   // dual cone search segments
   FT half_apex_angle = apex_angle / 2.0;
   std::vector<Segment> segs;
-  random_dual_cone_search_segs<Kernel>(query, normal, bsphere, segs, 
+  random_dual_cone_search_segs<Kernel>(query, normal, bsphere, segs,
             half_apex_angle, N_rays);
 
   std::vector<FT> antipodal_point_dsqs;
@@ -493,7 +493,7 @@ estimate_shape_diameter(const typename NeighborQuery::Point_3& query, ///< point
   }
 
   FT dsq_upper_bound = 4.0 * bsphere.squared_radius();
-  
+
   if(antipodal_point_dsqs.empty())
         antipodal_point_dsqs.push_back(dsq_upper_bound);
 
@@ -512,7 +512,7 @@ min_curvature_radius(Monge_form &monge_form)
 {
   // basic geometric types
   typedef typename Monge_form::FT FT;
-    
+
   FT max_principal_curvature = monge_form.principal_curvatures(0);
   FT min_principal_curvature = monge_form.principal_curvatures(1);
 
@@ -545,7 +545,7 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
     typedef typename Kernel::FT FT;
 
     // types for jet fitting
-    typedef Monge_via_jet_fitting< Kernel> Monge_jet_fitting;
+    typedef Monge_via_jet_fitting< Kernel > Monge_jet_fitting;
     typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
     std::vector<Point> points;
@@ -619,7 +619,8 @@ estimate_local_feature_size(PointRange& points,
   CGAL_precondition(points.begin() != points.end());
 
   // precondition: at least 2 nearest neighbors
-  CGAL_precondition(k >= 2);
+  // @todo fix this k as it does not exist
+  // CGAL_precondition(k >= 2);
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
@@ -631,7 +632,7 @@ estimate_local_feature_size(PointRange& points,
   // Input points types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
-    
+
 
   std::size_t nb_points = points.size();
 
@@ -659,9 +660,9 @@ estimate_local_feature_size(PointRange& points,
 
     bool need_jet_normal = false;
 
-    if (normal * normal == 0.0) 
+    if (normal * normal == 0.0)
       need_jet_normal = true;
-   
+
     FT lfs = CGAL::internal::estimate_local_feature_size
           (point, normal, neighbor_query, bsphere,
             jet_k, neighbor_radius, degree_fitting, degree_monge,
@@ -669,14 +670,14 @@ estimate_local_feature_size(PointRange& points,
              );
     lfses[index_map[point]] = lfs;
 
-    if (need_jet_normal) 
+    if (need_jet_normal)
       put(normal_map, vt, normal);
-    
+
      ++ callback_wrapper.advancement();
 
      return true;
    });
-   
+
    return lfses;
 }
 
