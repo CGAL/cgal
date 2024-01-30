@@ -336,7 +336,7 @@ void split_long_edges(C3T3& c3t3,
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-      std::cout << "\rSplit (" << high << ")... ("
+      std::cout << "\rSplit... ("
                 << long_edges.left.size() << " long edges, "
                 << "length  = " << std::sqrt(sqlen) << ", "
                 << nb_splits << " splits)";
