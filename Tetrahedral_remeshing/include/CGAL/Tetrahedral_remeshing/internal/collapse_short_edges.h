@@ -1134,7 +1134,6 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
 
   if (!is_valid_collapse(edge, collapse_type, new_pos, c3t3))
   {
-#ifdef TET_REMESHING_COLLAPSE_FALLBACK_EXPERIMENTS
     if (collapse_type == TO_MIDPOINT)
     {
       // with TO_MIDPOINT, we are authorized to test TO_V0 and TO_V1
@@ -1157,8 +1156,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
         return Vertex_handle();
       }
     }
-    else
-#endif //TET_REMESHING_COLLAPSE_FALLBACK_EXPERIMENTS
+    else //note : priority is given to 
     {
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
       if (in_cx)
