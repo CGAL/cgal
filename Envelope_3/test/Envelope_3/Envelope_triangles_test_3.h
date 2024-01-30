@@ -176,9 +176,8 @@ public:
       Vertex_handle vh = vi;
       // first we find the surfaces that are defined over the vertex
       std::list<Xy_monotone_surface_3> defined_surfaces;
-      typename Traits::Is_defined_over is_defined_over =
-        traits.is_defined_over_object();
-      for(std::size_t i=0; i<number_of_surfaces; ++i)
+      auto is_defined_over = traits.is_defined_over_object();
+      for (std::size_t i=0; i<number_of_surfaces; ++i)
         if (is_defined_over(vh->point(), surfaces[i]))
           defined_surfaces.push_back(surfaces[i]);
 
@@ -229,7 +228,7 @@ public:
     // foreach face in the test envelope, compute a point inside the face,
     // locate it in the other envelope and compare the surfaces over the 2 faces
     Md2_point_location pl(env);
-    bool eq, result = true;
+    bool result = true;
     for (auto fi = test_env.faces_begin(); fi != test_env.faces_end(); ++fi) {
       Face_handle fh = fi;
       if (! fh->is_unbounded()) {
@@ -237,8 +236,9 @@ public:
         auto pl_obj = pl.locate(inside_test);
         // faces of env must contain the faces of test
         const Face_const_handle* pl_fh = std::get_if<Face_const_handle>(&pl_obj);
-        assert(pl_fh!=nullptr);
-        eq = fh->is_equal_data((*pl_fh)->begin_data(), (*pl_fh)->end_data());
+        assert(pl_fh != nullptr);
+        auto eq = fh->is_equal_env_data((*pl_fh)->begin_env_data(),
+                                        (*pl_fh)->end_env_data());
         assert(eq);
         result &= eq;
       }
@@ -265,16 +265,16 @@ protected:
   template <typename SurfaceIterator>
   void set_minimum_over_vertex(Vertex_handle v, SurfaceIterator begin,
                                SurfaceIterator end) {
-    if (begin == end) v->set_no_data();
+    if (begin == end) v->set_no_env_data();
     else {
       auto si = begin;
       // we set the first surface as the minimum, and then compare all the others
       v->set_env_data(*si);
       ++si;
       for (; si != end; ++si) {
-        Comparison_result cr =
-          traits.compare_z_at_xy_3_object()(v->point(), v->get_env_data(), *si);
-        if (cr == EQUAL) v->add_data(*si);
+        auto cr = traits.compare_z_at_xy_3_object()(v->point(),
+                                                    v->env_data_front(), *si);
+        if (cr == EQUAL) v->add_env_data(*si);
         // this erases all surfaces from vertex's list
         else if (cr == LARGER) v->set_env_data(*si);
         // else - new surface has no affect on the envelope
@@ -287,7 +287,7 @@ protected:
   template <typename SurfaceIterator>
   void set_minimum_over_edge(const Halfedge_handle& h, SurfaceIterator begin,
                              SurfaceIterator end) {
-    if (begin == end) h->set_no_data();
+    if (begin == end) h->set_no_env_data();
     else {
       if (h != current_edge) compute_point_in_current_edge(h);
 
@@ -296,16 +296,15 @@ protected:
       h->set_env_data(*si);
       ++si;
       for (; si != end; ++si) {
-        Comparison_result cr =
-          traits.compare_z_at_xy_3_object()(current_point_inside_edge,
-                                            h->get_env_data(), *si);
-        if (cr == EQUAL) h->add_data(*si);
+        auto cr = traits.compare_z_at_xy_3_object()(current_point_inside_edge,
+                                                    h->env_data_front(), *si);
+        if (cr == EQUAL) h->add_env_data(*si);
         // this erases all surfaces from halfedge's list
         else if (cr == LARGER) h->set_env_data(*si);
         // else - new surface has no affect on the envelope
       }
       // set twin's data
-      h->twin()->set_env_data(h->begin_data(), h->end_data());
+      h->twin()->set_env_data(h->begin_env_data(), h->end_env_data());
     }
   }
   // fill the face with the surface on the envelope
@@ -317,7 +316,7 @@ protected:
     if (face->is_unbounded() || begin == end) {
       // a special case - no surface over the unbounded face, and when there
       // are no surfaces at all
-      face->set_no_data();
+      face->set_no_env_data();
     }
     else {
       auto si = begin;
@@ -326,9 +325,8 @@ protected:
       face->set_env_data(*si);
       ++si;
       for (; si != end; ++si) {
-        Comparison_result cr =
-          compare_surfaces_over_face(face, face->get_env_data(), *si);
-        if (cr == EQUAL) face->add_data(*si);
+        auto cr = compare_surfaces_over_face(face, face->env_data_front(), *si);
+        if (cr == EQUAL) face->add_env_data(*si);
         // this erases all surfaces from face's list
         else if (cr == LARGER) face->set_env_data(*si);
         // else - new surface has no affect on the envelope
@@ -392,10 +390,9 @@ protected:
                   << cur_res << std::endl;
 #endif
 
-      if (cur_res != EQUAL)
-        found_not_equal = true;
-      hec++;
-    } while(hec != hec_begin && !found_not_equal);
+      if (cur_res != EQUAL) found_not_equal = true;
+      ++hec;
+    } while ((hec != hec_begin) && ! found_not_equal);
     //  std::cout << "for comparison on vertices, result = " << cur_res
     //            << std::endl;
 
@@ -482,11 +479,11 @@ protected:
         #endif
 
         result &= tmp_result;
-        hec++;
-      } while(hec != hec_begin && result);
+        ++hec;
+      } while ((hec != hec_begin) && result);
     }
 
-    if (result == false) return result;
+    if (! result) return result;
 
     // check vertices on holes boundary
     Hole_iterator hi;
@@ -502,9 +499,9 @@ protected:
         #endif
 
         result &= tmp_result;
-        hec++;
-      } while(hec != hec_begin && result);
-      if (result == false) return result;
+        ++hec;
+      } while ((hec != hec_begin) && result);
+      if (! result) return result;
     }
 
     return result;
@@ -540,8 +537,8 @@ protected:
         found = true;
         continue;
       }
-      hec++;
-    } while (hec != hec_begin && !found);
+      ++hec;
+    } while ((hec != hec_begin) && !found);
     assert(found);
 
     Halfedge_handle found_hh = hec;

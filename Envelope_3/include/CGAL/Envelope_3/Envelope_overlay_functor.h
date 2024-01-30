@@ -92,10 +92,10 @@ public:
     //res_v->set_is_intersection(false);
 
     if (v1->is_isolated() && v2->is_isolated()) {
-      res_v->set_is_equal_aux_data_in_face(0, v1->get_is_equal_data_in_face());
-      res_v->set_is_equal_aux_data_in_face(1, v2->get_is_equal_data_in_face());
-      res_v->set_has_equal_aux_data_in_face(0, v1->get_has_equal_data_in_face());
-      res_v->set_has_equal_aux_data_in_face(1, v2->get_has_equal_data_in_face());
+      res_v->set_is_equal_aux_data_in_face(0, v1->is_equal_env_data_in_face());
+      res_v->set_is_equal_aux_data_in_face(1, v2->is_equal_env_data_in_face());
+      res_v->set_has_equal_aux_data_in_face(0, v1->has_equal_env_data_in_face());
+      res_v->set_has_equal_aux_data_in_face(1, v2->has_equal_env_data_in_face());
     }
   }
 
@@ -125,9 +125,9 @@ public:
       // the res_v is also isolated, and we should update the is_equal/has_equal
       // data in face information
       res_v->set_is_equal_aux_data_in_face(0, true);
-      res_v->set_is_equal_aux_data_in_face(1, v2->get_is_equal_data_in_face());
-      res_v->set_has_equal_aux_data_in_face(0, !f1->has_no_data());
-      res_v->set_has_equal_aux_data_in_face(1, v2->get_has_equal_data_in_face());
+      res_v->set_is_equal_aux_data_in_face(1, v2->is_equal_env_data_in_face());
+      res_v->set_has_equal_aux_data_in_face(0, ! f1->has_no_env_data());
+      res_v->set_has_equal_aux_data_in_face(1, v2->has_equal_env_data_in_face());
     }
   }
 
@@ -140,10 +140,10 @@ public:
     if (v1->is_isolated()) {
       // the res_v is also isolated, and we should update the is_equal/has_equal
       // data in face information
-      res_v->set_is_equal_aux_data_in_face(0, v1->get_is_equal_data_in_face());
+      res_v->set_is_equal_aux_data_in_face(0, v1->is_equal_env_data_in_face());
       res_v->set_is_equal_aux_data_in_face(1, true);
-      res_v->set_has_equal_aux_data_in_face(0, v1->get_has_equal_data_in_face());
-      res_v->set_has_equal_aux_data_in_face(1, !f2->has_no_data());
+      res_v->set_has_equal_aux_data_in_face(0, v1->has_equal_env_data_in_face());
+      res_v->set_has_equal_aux_data_in_face(1, ! f2->has_no_env_data());
     }
   }
 
@@ -157,19 +157,19 @@ public:
     res_h->twin()->set_aux_source(1, m_2.non_const_handle(h2->twin()));
 
     // update is_equal/has_equal data in face
-    res_h->set_is_equal_aux_data_in_face(0, h1->get_is_equal_data_in_face());
-    res_h->set_is_equal_aux_data_in_face(1, h2->get_is_equal_data_in_face());
-    res_h->set_has_equal_aux_data_in_face(0, h1->get_has_equal_data_in_face());
-    res_h->set_has_equal_aux_data_in_face(1, h2->get_has_equal_data_in_face());
+    res_h->set_is_equal_aux_data_in_face(0, h1->is_equal_env_data_in_face());
+    res_h->set_is_equal_aux_data_in_face(1, h2->is_equal_env_data_in_face());
+    res_h->set_has_equal_aux_data_in_face(0, h1->has_equal_env_data_in_face());
+    res_h->set_has_equal_aux_data_in_face(1, h2->has_equal_env_data_in_face());
 
     res_h->twin()->set_is_equal_aux_data_in_face(0, h1->twin()->
-                                                 get_is_equal_data_in_face());
+                                                 is_equal_env_data_in_face());
     res_h->twin()->set_is_equal_aux_data_in_face(1, h2->twin()->
-                                                 get_is_equal_data_in_face());
+                                                 is_equal_env_data_in_face());
     res_h->twin()->set_has_equal_aux_data_in_face(0, h1->twin()->
-                                                  get_has_equal_data_in_face());
+                                                  has_equal_env_data_in_face());
     res_h->twin()->set_has_equal_aux_data_in_face(1, h2->twin()->
-                                                  get_has_equal_data_in_face());
+                                                  has_equal_env_data_in_face());
 
     // update is_equal/has_equal data in target
     update_halfedge_flags_on_edge(res_h, m_1.non_const_handle(h1), 0);
@@ -197,17 +197,17 @@ public:
     res_h->twin()->set_aux_source(1, m_2.non_const_handle(f2));
 
     // update is_equal/has_equal data in face
-    res_h->set_is_equal_aux_data_in_face(0, h1->get_is_equal_data_in_face());
+    res_h->set_is_equal_aux_data_in_face(0, h1->is_equal_env_data_in_face());
     res_h->set_is_equal_aux_data_in_face(1, true);
-    res_h->set_has_equal_aux_data_in_face(0, h1->get_has_equal_data_in_face());
-    res_h->set_has_equal_aux_data_in_face(1, !f2->has_no_data());
+    res_h->set_has_equal_aux_data_in_face(0, h1->has_equal_env_data_in_face());
+    res_h->set_has_equal_aux_data_in_face(1, ! f2->has_no_env_data());
 
     res_h->twin()->set_is_equal_aux_data_in_face(0, h1->twin()->
-                                                 get_is_equal_data_in_face());
+                                                 is_equal_env_data_in_face());
     res_h->twin()->set_is_equal_aux_data_in_face(1, true);
     res_h->twin()->set_has_equal_aux_data_in_face(0, h1->twin()->
-                                                  get_has_equal_data_in_face());
-    res_h->twin()->set_has_equal_aux_data_in_face(1, !f2->has_no_data());
+                                                  has_equal_env_data_in_face());
+    res_h->twin()->set_has_equal_aux_data_in_face(1, ! f2->has_no_env_data());
 
     // update is_equal/has_equal data in target for the first source map
     update_halfedge_flags_on_edge(res_h, m_1.non_const_handle(h1), 0);
@@ -234,14 +234,16 @@ public:
 
     // update halfedge-face flags of the new halfedge
     res_h->set_is_equal_aux_data_in_face(0, true);
-    res_h->set_is_equal_aux_data_in_face(1, h2->get_is_equal_data_in_face());
-    res_h->set_has_equal_aux_data_in_face(0, !f1->has_no_data());
-    res_h->set_has_equal_aux_data_in_face(1, h2->get_has_equal_data_in_face());
+    res_h->set_is_equal_aux_data_in_face(1, h2->is_equal_env_data_in_face());
+    res_h->set_has_equal_aux_data_in_face(0, ! f1->has_no_env_data());
+    res_h->set_has_equal_aux_data_in_face(1, h2->has_equal_env_data_in_face());
 
     res_h->twin()->set_is_equal_aux_data_in_face(0, true);
-    res_h->twin()->set_is_equal_aux_data_in_face(1, h2->twin()->get_is_equal_data_in_face());
-    res_h->twin()->set_has_equal_aux_data_in_face(0, !f1->has_no_data());
-    res_h->twin()->set_has_equal_aux_data_in_face(1, h2->twin()->get_has_equal_data_in_face());
+    res_h->twin()->set_is_equal_aux_data_in_face
+      (1, h2->twin()->is_equal_env_data_in_face());
+    res_h->twin()->set_has_equal_aux_data_in_face(0, ! f1->has_no_env_data());
+    res_h->twin()->set_has_equal_aux_data_in_face
+      (1, h2->twin()->has_equal_env_data_in_face());
 
     // update is_equal/has_equal data in target for the second source map
     update_halfedge_flags_on_edge(res_h, m_2.non_const_handle(h2), 1);
@@ -261,8 +263,9 @@ protected:
   template <typename Halfedge_handle_t>
   void copy_halfedge_target_info(Halfedge_handle_t from,
                                  Res_halfedge_handle to, unsigned int id) {
-    to->set_is_equal_aux_data_in_target(id, from->get_is_equal_data_in_target());
-    to->set_has_equal_aux_data_in_target(id, from->get_has_equal_data_in_target());
+    to->set_is_equal_aux_data_in_target(id, from->is_equal_env_data_in_target());
+    to->set_has_equal_aux_data_in_target
+      (id, from->has_equal_env_data_in_target());
   }
   void set_halfedge_target_info(Res_halfedge_handle to, unsigned int id,
                                 bool info) {
@@ -274,16 +277,17 @@ protected:
   void copy_halfedge_target_info_from_halfedge_face_info(Halfedge_handle_t from,
                                                          Res_halfedge_handle to,
                                                          unsigned int id) {
-    to->set_is_equal_aux_data_in_target(id, from->get_is_equal_data_in_face());
-    to->set_has_equal_aux_data_in_target(id, from->get_has_equal_data_in_face());
-    to->set_has_equal_aux_data_in_target_and_face(id, from->get_has_equal_data_in_face());
+    to->set_is_equal_aux_data_in_target(id, from->is_equal_env_data_in_face());
+    to->set_has_equal_aux_data_in_target(id, from->has_equal_env_data_in_face());
+    to->set_has_equal_aux_data_in_target_and_face
+      (id, from->has_equal_env_data_in_face());
   }
   template <typename Vertex_handle_t>
   void copy_halfedge_target_info_from_vertex_face_info(Vertex_handle_t from,
                                                        Res_halfedge_handle to,
                                                        unsigned int id) {
-    to->set_is_equal_aux_data_in_target(id, from->get_is_equal_data_in_face());
-    to->set_has_equal_aux_data_in_target(id, from->get_has_equal_data_in_face());
+    to->set_is_equal_aux_data_in_target(id, from->is_equal_env_data_in_face());
+    to->set_has_equal_aux_data_in_target(id, from->has_equal_env_data_in_face());
   }
 
   // find a halfedge that v is its target and f is its face
@@ -309,8 +313,7 @@ protected:
         traversed_vertices[Vertex_face_pair(v, hh->face())] = hh;
         // check for reult
         if (hh->face() == f) result = hh;
-        ++vc;
-      } while (vc != vc_begin);
+      } while (++vc != vc_begin);
     }
     else {
       // take it from the map
@@ -329,21 +332,21 @@ protected:
     if(new_h->target()->is_at_open_boundary()) return;
     Vertex_handle vh;
     Halfedge_handle hh;
-    const Object& trg_src = new_h->target()->get_aux_source(id);
+    const Object& trg_src = new_h->target()->aux_source(id);
     if (assign(vh, trg_src)) {
-          // vh is the target of on_edge, and we can copy the halfedge-target information
-      // from on_edge
+      // vh is the target of on_edge, and we can copy the halfedge-target
+      // information from on_edge
       copy_halfedge_target_info(on_edge, new_h, id);
             new_h->set_has_equal_aux_data_in_target_and_face
-              (id, on_edge->get_has_equal_data_in_target_and_face());
+              (id, on_edge->has_equal_env_data_in_target_and_face());
     }
     else if (assign(hh, trg_src)) {
       // hh is the "HEMSHECH" of on_edge, so we need to set halfedge_target
       // information to true
       set_halfedge_target_info(new_h, id, true);
-            // and target-face information using the original halfedge-face information
+      // and target-face information using the original halfedge-face information
       new_h->set_has_equal_aux_data_in_target_and_face
-        (id, on_edge->get_has_equal_data_in_face());
+        (id, on_edge->has_equal_env_data_in_face());
     }
     else
       // this cannot happen, since we need to touch an edge
@@ -361,34 +364,38 @@ protected:
     Halfedge_handle hh;
     Face_handle fh;
     // update target
-    const Object& trg_src = new_h->target()->get_aux_source(id);
+    const Object& trg_src = new_h->target()->aux_source(id);
     if (assign(vh, trg_src)) {
       if (vh->is_isolated()) {
         copy_halfedge_target_info_from_vertex_face_info(vh, new_h, id);
         // the target-face information is taken from vertex-face information too
         new_h->set_has_equal_aux_data_in_target_and_face
-                                     (id, vh->get_has_equal_data_in_face());
+                                     (id, vh->has_equal_env_data_in_face());
       }
       else {
+
         // we have a vertex vh on the boundary of the face in_face
         // todo: get rid of this calculations: (using unknown value for
         // has_equal flag)
-        /*CGAL_assertion_code(
-          bool calc_is_equal = vh->is_equal_data(in_face->begin_data(), in_face->end_data());
-        )*/
-        //bool calc_has_equal = vh->has_equal_data(in_face->begin_data(), in_face->end_data());
+        // CGAL_assertion_code(
+        //  bool calc_is_equal = vh->is_equal_env_data(in_face->begin_env_data(),
+        //                                         in_face->end_env_data());
+        // )
+        //
+        // bool calc_has_equal = vh->has_equal_env_data(in_face->begin_env_data(),
+        //                                          in_face->end_env_data());
 
         // find the halfedge with target vh on the boundary of in_face
         Halfedge_handle h_of_vh_and_in_face =
           find_halfedge_by_vertex_and_face(vh, in_face);
         // is_equal relationship is easy:
-        bool is_equal = h_of_vh_and_in_face->get_is_equal_data_in_face() &&
-                        h_of_vh_and_in_face->get_is_equal_data_in_target();
+        bool is_equal = h_of_vh_and_in_face->is_equal_env_data_in_face() &&
+                        h_of_vh_and_in_face->is_equal_env_data_in_target();
         //CGAL_assertion(is_equal == calc_is_equal);
 
         // has_equal relationship is problematic in one case:
         bool has_equal =
-          h_of_vh_and_in_face->get_has_equal_data_in_target_and_face();
+          h_of_vh_and_in_face->has_equal_env_data_in_target_and_face();
 
         /*CGAL_assertion(has_equal == calc_has_equal);
         if(has_equal != calc_has_equal)
@@ -419,8 +426,8 @@ protected:
       // the face data
       CGAL_assertion(fh == in_face);
       new_h->set_is_equal_aux_data_in_target(id, true);
-      new_h->set_has_equal_aux_data_in_target(id, !fh->has_no_data());
-      new_h->set_has_equal_aux_data_in_target_and_face(id, !fh->has_no_data());
+      new_h->set_has_equal_aux_data_in_target(id, ! fh->has_no_env_data());
+      new_h->set_has_equal_aux_data_in_target_and_face(id, ! fh->has_no_env_data());
     }
   }
 

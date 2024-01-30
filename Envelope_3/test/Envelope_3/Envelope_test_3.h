@@ -124,34 +124,37 @@ public:
         Xy_monotone_surface_3& prev_surface = surfaces[j];
 
         std::vector<std::variant<Intersection_curve,Point_2>> inter_objs;
-        traits.construct_projected_intersections_2_object()(cur_surface, prev_surface, std::back_inserter(inter_objs));
+        traits.construct_projected_intersections_2_object()
+          (cur_surface, prev_surface, std::back_inserter(inter_objs));
 
         // we collect all intersections and use sweep to insert them
         for (std::size_t k = 0; k < inter_objs.size(); ++k) {
           if (const Point_2* point = std::get_if<Point_2>(&inter_objs[k])) {
-            #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
-              std::cout << "intersection between surfaces is a point: "
-                        << point << std::endl;
-            #endif
+#ifdef CGAL_DEBUG_ENVELOPE_TEST_3
+            std::cout << "intersection between surfaces is a point: "
+                      << point << std::endl;
+#endif
             //insert_vertex(result, point, pl);
             points_col.push_back(*point);
           }
           else if (const auto* curve =
                    std::get_if<Intersection_curve>(&inter_objs[k])) {
             curves_col.push_back(curve->first);
-            /*#ifdef CGAL_DEBUG_ENVELOPE_TEST_3
-              std::cout << "intersection between surfaces is a curve: " << curve.first << std::endl;
-            #endif
-            std::list<Object> objs;
-            traits.make_x_monotone_2_object()(curve.first, std::back_inserter(objs));
-            std::list<Object>::iterator itr;
-            for(itr = objs.begin(); itr != objs.end(); ++itr)
-            {
-              X_monotone_curve_2 curr_cv;
-              assert(assign(curr_cv, *itr));
-              assign(curr_cv, *itr);
-              curves_col.push_back(curr_cv);
-            }*/
+            /* #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
+             * std::cout << "intersection between surfaces is a curve: "
+             *           << curve.first << std::endl;
+             * #endif
+             * std::list<Object> objs;
+             * traits.make_x_monotone_2_object()(curve.first,
+             *                                   std::back_inserter(objs));
+             * std::list<Object>::iterator itr;
+             * for(itr = objs.begin(); itr != objs.end(); ++itr) {
+             *   X_monotone_curve_2 curr_cv;
+             *   assert(assign(curr_cv, *itr));
+             *   assign(curr_cv, *itr);
+             *   curves_col.push_back(curr_cv);
+             * }
+             */
             //insert(result, curve.first, pl);
           }
           else assert_msg(false, "wrong intersection type");
@@ -167,7 +170,8 @@ public:
 
     m_result = &result;
 
-    // now, foreach vertex, edge and face, we should determine which surfaces are minimal over it.
+    // now, foreach vertex, edge and face, we should determine which surfaces
+    // are minimal over it.
 
     // update vertices' data
     for (auto vi = result.vertices_begin(); vi != result.vertices_end(); ++vi) {
@@ -242,16 +246,16 @@ protected:
   template <typename SurfaceIterator>
   void set_minimum_over_vertex(const Vertex_handle& v,
                                SurfaceIterator begin, SurfaceIterator end) {
-    if (begin == end) v->set_no_data();
+    if (begin == end) v->set_no_env_data();
     else {
       auto si = begin;
       // we set the first surface as the minimum, and then compare all the others
       v->set_env_data(*si);
       ++si;
       for (; si != end; ++si) {
-        Comparison_result cr =
-          traits.compare_z_at_xy_3_object()(v->point(), v->get_env_data(), *si);
-        if (cr == EQUAL) v->add_data(*si);
+        auto cr = traits.compare_z_at_xy_3_object()(v->point(),
+                                                    v->env_data_front(), *si);
+        if (cr == EQUAL) v->add_env_data(*si);
         // this erases all surfaces from vertex's list
         else if (cr == LARGER) v->set_env_data(*si);
         // else - new surface has no affect on the envelope
@@ -264,7 +268,7 @@ protected:
   template <typename SurfaceIterator>
   void set_minimum_over_edge(const Halfedge_handle& h, SurfaceIterator begin,
                              SurfaceIterator end) {
-    if (begin == end) h->set_no_data();
+    if (begin == end) h->set_no_env_data();
     else {
       if (h != current_edge) compute_point_in_current_edge(h);
 
@@ -273,16 +277,15 @@ protected:
       h->set_env_data(*si);
       ++si;
       for (; si != end; ++si) {
-        Comparison_result cr =
-          traits.compare_z_at_xy_3_object()(current_point_inside_edge,
-                                            h->get_env_data(), *si);
-        if (cr == EQUAL) h->add_data(*si);
+        auto cr = traits.compare_z_at_xy_3_object()(current_point_inside_edge,
+                                                    h->env_data_front(), *si);
+        if (cr == EQUAL) h->add_env_data(*si);
         // this erases all surfaces from halfedge's list
         else if (cr == LARGER) h->set_env_data(*si);
         // else - new surface has no affect on the envelope
       }
       // set twin's data
-      h->twin()->set_env_data(h->begin_data(), h->end_data());
+      h->twin()->set_env_data(h->begin_env_data(), h->end_env_data());
     }
   }
 
@@ -295,7 +298,7 @@ protected:
     if (face->is_unbounded() || begin == end) {
       // a special case - no surface over the unbounded face, and when there
       // are no surfaces at all
-      face->set_no_data();
+      face->set_no_env_data();
     }
     else {
       auto si = begin;
@@ -303,9 +306,8 @@ protected:
       face->set_env_data(*si);
       ++si;
       for (; si != end; ++si) {
-        Comparison_result cr =
-          compare_surfaces_over_face(face, face->get_env_data(), *si);
-        if (cr == EQUAL) face->add_data(*si);
+        auto cr = compare_surfaces_over_face(face, face->env_data_front(), *si);
+        if (cr == EQUAL) face->add_env_data(*si);
         // this erases all surfaces from face's list
         else if (cr == LARGER) face->set_env_data(*si);
         // else - new surface has no affect on the envelope
@@ -329,7 +331,8 @@ protected:
     cur_res = traits.compare_z_at_xy_3_object()(current_point,surf1,surf2);
 
     #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
-      std::cout << "for comparison inside face, current result = " << cur_res << std::endl;
+    std::cout << "for comparison inside face, current result = " << cur_res
+              << std::endl;
     #endif
 
     return cur_res;
@@ -366,7 +369,7 @@ protected:
     assert(! face->is_unbounded());
 
     #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
-      std::cout << "in compute point inside face" << std::endl;
+    std::cout << "in compute point inside face" << std::endl;
     #endif
 
     // 1. find an edge on the outer ccb of the face that is not vertical
@@ -374,12 +377,12 @@ protected:
     Ccb_halfedge_circulator hec_begin = hec;
     bool found = false;
     do {
-      if (!traits.is_vertical_2_object()(hec->curve())) {
+      if (! traits.is_vertical_2_object()(hec->curve())) {
         found = true;
         continue;
       }
-      hec++;
-    } while(hec != hec_begin && !found);
+      ++hec;
+    } while ((hec != hec_begin) && ! found);
     assert(found);
 
     Halfedge_handle found_hh = hec;
@@ -388,10 +391,10 @@ protected:
     //    (we use the middle of the curve)
     Point_2 shoot_source = traits.construct_middle_point(found_hh->curve());
 
-    // 3. ray shoot up or down, into the face
-    //    and find the intersection point of the ray. the segment between
-    //    the point from which we shoot, and the intersection point lies
-    //    inside the face. we take its middle point as a point inside the face
+    // 3. ray shoot up or down, into the face and find the intersection point
+    //    of the ray. the segment between the point from which we shoot,
+    //    and the intersection point lies inside the face.
+    //    we take its middle point as a point inside the face
     bool shoot_up = true;
 // TODO_NEW_DESIGN - check this
 //    if (traits.compare_x(found_hh->source()->point(), found_hh->target()->point()) == LARGER)
@@ -418,19 +421,18 @@ protected:
 
     Point_2 res_point = traits.construct_middle_point(shoot_source, shoot_target);
 
-    #ifdef CGAL_DEBUG_ENVELOPE_TEST_3
-      std::cout << "finished computing point in face" << std::endl;
+#ifdef CGAL_DEBUG_ENVELOPE_TEST_3
+    std::cout << "finished computing point in face" << std::endl;
 
-      // just for checking, locate res_point in env to find face
-      Object test_pl_obj = pl.locate(res_point);
-      Face_const_handle test_fh;
-      assert(assign(test_fh, test_pl_obj));
-      assert(test_fh == face);
-    #endif
+    // just for checking, locate res_point in env to find face
+    Object test_pl_obj = pl.locate(res_point);
+    Face_const_handle test_fh;
+    assert(assign(test_fh, test_pl_obj));
+    assert(test_fh == face);
+#endif
 
     return res_point;
   }
-
 
   // compute a point inside the face saved in current_face
   // and put the result into current_point

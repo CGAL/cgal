@@ -60,135 +60,117 @@ public:
   }
 
 public:
-  /*
-  void print_face(Face_handle fh)
-  {
-    std::cout << (fh->is_unbounded() ? "unbounded" : "bounded");
-
-    if (fh->get_is_set())
-    {
-      std::cout << " #data= " << fh->number_of_data_objects();
-      if (fh->number_of_data_objects() > 0)
-        std::cout << " data= " << fh->get_env_data();
-    }
-
-    if (fh->get_aux_is_set(0))
-    {
-      std::cout << " #data1= " << get_number_of_aux_data_objects(fh, 0);
-      if (get_number_of_aux_data_objects(fh, 0)>0)
-        std::cout << " data#1= " << get_aux_data(fh, 0);
-    }
-    if (fh->get_aux_is_set(1))
-    {
-      std::cout << " #data2= " << get_number_of_aux_data_objects(fh, 1);
-      if (get_number_of_aux_data_objects(fh, 1)>0)
-        std::cout << " data#2= " << get_aux_data(fh, 1);
-    }
-    std::cout << std::endl;
-  }
-
-  // print the aux data in the faces of md
-  void print_faces(Minimization_diagram_2& md)
-  {
-    Face_iterator fit = md.faces_begin();
-    for(; fit != md.faces_end(); ++fit)
-    {
-      Face_handle fh = fit;
-      print_face(fh);
-    }
-    std::cout << std::endl;
-  }
-
-  void print_vertices(Minimization_diagram_2& md)
-  {
-    Vertex_iterator vit = md.vertices_begin();
-    for(; vit != md.vertices_end(); ++vit)
-    {
-      Vertex_handle vh = vit;
-      std::cout << vh->point();
-
-      if (vh->get_is_set())
-      {
-        std::cout << " #data= " << vh->number_of_data_objects();
-        if (vh->number_of_data_objects() > 0)
-          std::cout << " data= " << vh->get_env_data();
-      }
-
-      if (vh->get_aux_is_set(0))
-      {
-        std::cout << " #data1= " << get_number_of_aux_data_objects(vh, 0);
-        if (get_number_of_aux_data_objects(vh, 0)>0)
-          std::cout << " data#1= " << get_aux_data(vh, 0);
-      }
-      if (vh->get_aux_is_set(1))
-      {
-        std::cout << " #data2= " << get_number_of_aux_data_objects(vh, 1);
-        if (get_number_of_aux_data_objects(vh, 1)>0)
-          std::cout << " data#2= " << get_aux_data(vh, 1);
-      }
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;
-  }
-
-  void print_edges(Minimization_diagram_2& md)
-  {
-    Halfedge_iterator hit = md.halfedges_begin();
-    for(; hit != md.halfedges_end(); ++hit, ++hit)
-    {
-      Halfedge_handle hh = hit;
-      std::cout << hh->curve();
-
-      if (hh->get_is_set())
-      {
-        std::cout << " #data= " << hh->number_of_data_objects();
-        if (hh->number_of_data_objects() > 0)
-          std::cout << " data= " << hh->get_env_data();
-      }
-
-
-      if (hh->get_aux_is_set(0))
-      {
-        std::cout << " #data1= " << get_number_of_aux_data_objects(hh, 0);
-        if (get_number_of_aux_data_objects(hh, 0)>0)
-          std::cout << " data#1= " << get_aux_data(hh, 0);
-      }
-      if (hh->get_aux_is_set(1))
-      {
-        std::cout << " #data2= " << get_number_of_aux_data_objects(hh, 1);
-
-        if (get_number_of_aux_data_objects(hh, 1)>0)
-          std::cout << " data#2= " << get_aux_data(hh, 1);
-      }
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;
-  }
-  */
+  /* void print_face(Face_handle fh) {
+   *   std::cout << (fh->is_unbounded() ? "unbounded" : "bounded");
+   *
+   *   if (fh->env_is_set()) {
+   *     std::cout << " #data= " << fh->env_data_size();
+   *     if (fh->env_data_size() > 0)
+   *       std::cout << " data= " << fh->env_data_front();
+   *   }
+   *
+   *   if (fh->aux_is_set(0)) {
+   *     std::cout << " #data1= " << number_of_aux_data_objects(fh, 0);
+   *     if (number_of_aux_data_objects(fh, 0)>0)
+   *       std::cout << " data#1= " << aux_data(fh, 0);
+   *   }
+   *   if (fh->aux_is_set(1)) {
+   *     std::cout << " #data2= " << number_of_aux_data_objects(fh, 1);
+   *     if (number_of_aux_data_objects(fh, 1)>0)
+   *       std::cout << " data#2= " << aux_data(fh, 1);
+   *   }
+   *   std::cout << std::endl;
+   * }
+   *
+   * // print the aux data in the faces of md
+   * void print_faces(Minimization_diagram_2& md) {
+   *   Face_iterator fit = md.faces_begin();
+   *   for(; fit != md.faces_end(); ++fit) {
+   *     Face_handle fh = fit;
+   *     print_face(fh);
+   *   }
+   *   std::cout << std::endl;
+   * }
+   *
+   * void print_vertices(Minimization_diagram_2& md) {
+   *   Vertex_iterator vit = md.vertices_begin();
+   *   for(; vit != md.vertices_end(); ++vit) {
+   *     Vertex_handle vh = vit;
+   *     std::cout << vh->point();
+   *
+   *      if (vh->env_is_set()) {
+   *       std::cout << " #data= " << vh->env_data_size();
+   *       if (vh->env_data_size() > 0)
+   *         std::cout << " data= " << vh->env_data_front();
+   *     }
+   *
+   *     if (vh->aux_is_set(0)) {
+   *       std::cout << " #data1= " << number_of_aux_data_objects(vh, 0);
+   *       if (number_of_aux_data_objects(vh, 0)>0)
+   *         std::cout << " data#1= " << aux_data(vh, 0);
+   *     }
+   *     if (vh->aux_is_set(1)) {
+   *       std::cout << " #data2= " << number_of_aux_data_objects(vh, 1);
+   *       if (number_of_aux_data_objects(vh, 1)>0)
+   *         std::cout << " data#2= " << aux_data(vh, 1);
+   *     }
+   *     std::cout << std::endl;
+   *   }
+   *   std::cout << std::endl;
+   * }
+   *
+   * void print_edges(Minimization_diagram_2& md) {
+   *   Halfedge_iterator hit = md.halfedges_begin();
+   *   for(; hit != md.halfedges_end(); ++hit, ++hit) {
+   *     Halfedge_handle hh = hit;
+   *     std::cout << hh->curve();
+   *
+   *     if (hh->env_is_set()) {
+   *       std::cout << " #data= " << hh->env_data_size();
+   *       if (hh->env_data_size() > 0)
+   *         std::cout << " data= " << hh->env_data_front();
+   *     }
+   *
+   *     if (hh->aux_is_set(0)) {
+   *       std::cout << " #data1= " << number_of_aux_data_objects(hh, 0);
+   *       if (number_of_aux_data_objects(hh, 0)>0)
+   *         std::cout << " data#1= " << aux_data(hh, 0);
+   *     }
+   *     if (hh->aux_is_set(1)) {
+   *       std::cout << " #data2= " << number_of_aux_data_objects(hh, 1);
+   *
+   *       if (number_of_aux_data_objects(hh, 1)>0)
+   *         std::cout << " data#2= " << aux_data(hh, 1);
+   *     }
+   *     std::cout << std::endl;
+   *   }
+   *   std::cout << std::endl;
+   * }
+   */
 
   void post_test_assertions(Minimization_diagram_2& md) {
     // check that all data is filled in result
     for (auto fi = md.faces_begin(); fi != md.faces_end(); ++fi) {
       Face_handle fh = fi;
-      CGAL_assertion_msg(fh->get_aux_is_set(0),
+      CGAL_assertion_msg(fh->aux_is_set(0),
                          "data from md1 on face is not set");
-      CGAL_assertion_msg(fh->get_aux_is_set(1),
+      CGAL_assertion_msg(fh->aux_is_set(1),
                          "data from md2 on face is not set");
     }
 
     for (auto hi = md.halfedges_begin(); hi != md.halfedges_end(); ++hi) {
       Halfedge_handle hh = hi;
-      CGAL_assertion_msg(hh->get_aux_is_set(0),
+      CGAL_assertion_msg(hh->aux_is_set(0),
                          "data from md1 on halfedge is not set");
-      CGAL_assertion_msg(hh->get_aux_is_set(1),
+      CGAL_assertion_msg(hh->aux_is_set(1),
                          "data from md2 on halfedge is not set");
     }
 
     for (auto vi = md.vertices_begin(); vi != md.vertices_end(); ++vi) {
       Vertex_handle vh = vi;
-      CGAL_assertion_msg(vh->get_aux_is_set(0),
+      CGAL_assertion_msg(vh->aux_is_set(0),
                          "data from md1 on vertex is not set");
-      CGAL_assertion_msg(vh->get_aux_is_set(1),
+      CGAL_assertion_msg(vh->aux_is_set(1),
                          "data from md2 on vertex is not set");
     }
   }
@@ -196,37 +178,37 @@ public:
 protected:
   // helper methods
   template <typename FeatureHandle>
-  Xy_monotone_surface_3 get_aux_data(FeatureHandle fh, unsigned int id) {
-    const Object& o = fh->get_aux_source(id);
+  Xy_monotone_surface_3 aux_data(FeatureHandle fh, unsigned int id) {
+    const Object& o = fh->aux_source(id);
     Xy_monotone_surface_3 data;
 
     Halfedge_handle h;
     Vertex_handle v;
     Face_handle f;
-    if (assign(v, o)) data = v->get_env_data();
-    else if (assign(h, o)) data = h->get_env_data();
+    if (assign(v, o)) data = v->env_data_front();
+    else if (assign(h, o)) data = h->env_data_front();
     else {
       CGAL_assertion(assign(f, o));
       assign(f, o);
-      data = f->get_env_data();
+      data = f->env_data_front();
     }
     return data;
   }
 
   template <typename FeatureHandle>
-  int get_number_of_aux_data_objects(FeatureHandle fh, unsigned int id) {
-          const Object& o = fh->get_aux_source(id);
+  int number_of_aux_data_objects(FeatureHandle fh, unsigned int id) {
+    const Object& o = fh->aux_source(id);
     int data;
 
     Halfedge_handle h;
     Vertex_handle v;
     Face_handle f;
-    if (assign(v, o)) data = v->number_of_data_objects();
-    else if (assign(h, o)) data = h->number_of_data_objects();
+    if (assign(v, o)) data = v->env_data_size();
+    else if (assign(h, o)) data = h->env_data_size();
     else {
       CGAL_assertion(assign(f, o));
       assign(f, o);
-      data = f->number_of_data_objects();
+      data = f->env_data_size();
     }
     return data;
   }

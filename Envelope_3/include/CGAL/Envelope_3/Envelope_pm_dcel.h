@@ -36,7 +36,7 @@ public:
 
 protected:
   /*! data container */
-  Data_container m_data;
+  Data_container m_env_data;
 
   /*! Indicates that the data (surfaces) have been set already */
   bool m_is_set;
@@ -48,14 +48,14 @@ public:
   Dcel_info() : m_is_set(false), m_decision(DAC_DECISION_NOT_SET) {}
 
   /*! \brief returns true iff data has been set already */
-  bool get_is_set() const { return m_is_set; }
+  bool env_is_set() const { return m_is_set; }
 
   /*! \brief resets the flag  */
   void set_is_set(bool flag) { m_is_set = flag; }
 
   bool is_decision_set() { return (m_decision != DAC_DECISION_NOT_SET); }
 
-  Dac_decision get_decision() const { return m_decision; }
+  Dac_decision decision() const { return m_decision; }
 
   void set_decision(Comparison_result comp)
   { m_decision = enum_cast<Dac_decision>(comp); }
@@ -63,55 +63,56 @@ public:
   void set_decision(Dac_decision dec) { m_decision = dec; }
 
   /*! User-friendly interface: */
-  size_t number_of_surfaces() const { return m_data.size(); }
+  size_t number_of_surfaces() const { return m_env_data.size(); }
 
-  Data_const_iterator surfaces_begin() const { return m_data.begin(); }
+  Data_const_iterator surfaces_begin() const { return m_env_data.begin(); }
 
-  Data_const_iterator surfaces_end() const { return m_data.end(); }
+  Data_const_iterator surfaces_end() const { return m_env_data.end(); }
 
    /*! Obtain the first Xy-monotone surface associated with the face.
     * \pre number_of_surfaces() is not 0.
     */
   const Data& surface() const {
-    CGAL_precondition(m_data.size() > 0);
-    return m_data.front();
+    CGAL_precondition(m_env_data.size() > 0);
+    return m_env_data.front();
   }
 
-  /*! Obtain the number of data objects associated with the face.
+  /*! Obtain the number of data objects associated with the cell.
    */
-  int number_of_data_objects() const { return static_cast<int>(m_data.size()); }
+  int env_data_size() const
+  { return static_cast<int>(m_env_data.size()); }
 
   /*! Check whether the data is set to be empty
    */
-  bool has_no_data() const
-  { return (m_is_set && (number_of_data_objects() == 0)); }
+  bool has_no_env_data() const
+  { return (m_is_set && (env_data_size() == 0)); }
 
-  /*! Obtain the first data object associated with the face.
-   * \pre number_of_data_objects() is not 0.
+  /*! Obtain the first data object associated with the cell.
+   * \pre m_env_data.size() is not 0.
    */
-  const Data& get_env_data() const {
-    CGAL_precondition(m_data.size() > 0);
-    return m_data.front();
+  const Data& env_data_front() const {
+    CGAL_precondition(m_env_data.size() > 0);
+    return m_env_data.front();
   }
 
   /*! Obtain the data iterators (const version).
    */
-  Data_const_iterator begin_data() const { return m_data.begin(); }
+  Data_const_iterator begin_env_data() const { return m_env_data.begin(); }
 
-  Data_const_iterator end_data() const { return m_data.end(); }
+  Data_const_iterator end_env_data() const { return m_env_data.end(); }
 
   /*! Obtain the data iterators (non-const version).
    */
-  Data_iterator begin_data() { return m_data.begin(); }
+  Data_iterator begin_env_data() { return m_env_data.begin(); }
 
-  Data_iterator end_data() { return m_data.end(); }
+  Data_iterator end_env_data() { return m_env_data.end(); }
 
   /*! Set a data object to the face.
    * \param data The data object to set.
    */
   void set_env_data(const Data& data) {
-    clear_data();
-    add_data(data);
+    clear_env_data();
+    add_env_data(data);
   }
 
   /*! Set a range of data objects to the face.
@@ -120,22 +121,22 @@ public:
    */
   template <typename InputIterator>
   void set_env_data(InputIterator begin, InputIterator end) {
-    clear_data();
-    add_data(begin, end);
+    clear_env_data();
+    add_env_data(begin, end);
   }
 
   /*! set the data to be empty.
    */
-  void set_no_data() {
-    clear_data();
+  void set_no_env_data() {
+    clear_env_data();
     m_is_set = true;
   }
 
    /*! Add a data object to the face.
    * \param data The additional data object.
    */
-  void add_data(const Data& data) {
-    m_data.push_back(data);
+  void add_env_data(const Data& data) {
+    m_env_data.push_back(data);
     m_is_set = true;
   }
 
@@ -144,15 +145,15 @@ public:
    * \param end A past-the-end iterator for the data range.
    */
   template <typename InputIterator>
-  void add_data(InputIterator begin, InputIterator end) {
-    for (auto it = begin; it != end; it++) m_data.push_back(*it);
+  void add_env_data(InputIterator begin, InputIterator end) {
+    for (auto it = begin; it != end; ++it) m_env_data.push_back(*it);
     m_is_set = true;
   }
 
   /*! Clear the data objects.
    */
-  void clear_data() {
-    m_data.clear();
+  void clear_env_data() {
+    m_env_data.clear();
     m_is_set = false;
   }
 
@@ -160,23 +161,23 @@ public:
    * set of data objects
    */
   template <typename InputIterator>
-  bool is_equal_data(InputIterator begin, InputIterator end) const {
-    if (! get_is_set()) return false;
+  bool is_equal_env_data(InputIterator begin, InputIterator end) const {
+    if (! env_is_set()) return false;
 
     // insert the input data objects into a set
     std::set<Data> input_data(begin, end);
-    std::set<Data> my_data(begin_data(), end_data());
+    std::set<Data> my_data(begin_env_data(), end_env_data());
     if (input_data.size() != my_data.size()) return false;
     return (my_data == input_data);
   }
 
   template <typename InputIterator>
-  bool has_equal_data(InputIterator begin, InputIterator end) const {
-    if (! get_is_set()) return false;
+  bool has_equal_env_data(InputIterator begin, InputIterator end) const {
+    if (! env_is_set()) return false;
 
     // insert the input data objects into a set
     std::set<Data> input_data(begin, end);
-    std::set<Data> my_data(begin_data(), end_data());
+    std::set<Data> my_data(begin_env_data(), end_env_data());
     std::list<Data> intersection;
     std::set_intersection(my_data.begin(), my_data.end(),
                           input_data.begin(), input_data.end(),
@@ -185,7 +186,6 @@ public:
   }
 
 protected:
-
   /*! Place holder for the source of the overlay data */
   Object m_aux_source[2];
 
@@ -202,14 +202,14 @@ public:
     m_aux_source[id] = o;
   }
 
-  const Object& get_aux_source(unsigned int id) {
+  const Object& aux_source(unsigned int id) {
     CGAL_precondition(id < 2);
     CGAL_precondition (!m_aux_source[id].is_empty());
     return m_aux_source[id];
   }
 
   /*! \brief returns true iff the point has been set already */
-  bool get_aux_is_set(unsigned int id) const {
+  bool aux_is_set(unsigned int id) const {
     CGAL_precondition(id < 2);
     return (! m_aux_source[id].is_empty());
   }
@@ -251,35 +251,25 @@ public:
   /*! Constructor */
   Envelope_pm_vertex() : Dcel_info<Vertex_data>(), flags(0) {}
 
-  /*void set_is_fake(bool b)
-  {
-    set_bit(IS_FAKE, b);
-  }
-  bool get_is_fake() const
-  {
-    return get_bit(IS_FAKE);
-  }*/
+  /* void set_is_fake(bool b) { set_bit(IS_FAKE, b); }
+   * bool is_fake() const { return get_bit(IS_FAKE); }
+   */
 
- /* void set_is_intersection(bool b)
-  {
-    set_bit(IS_INTERSECTION, b);
-  }*/
-  /*bool get_is_intersection() const
-  {
-    return get_bit(IS_FAKE);
-  }*/
+  /* void set_is_intersection(bool b) { set_bit(IS_INTERSECTION, b); }
+   * bool is_intersection() const { return get_bit(IS_FAKE); }
+   */
 
-  void set_is_equal_data_in_face(bool b) { set_bit(IS_EQUAL, b); }
-  bool get_is_equal_data_in_face() const { return get_bit(IS_EQUAL); }
+  void set_is_equal_env_data_in_face(bool b) { set_bit(IS_EQUAL, b); }
+  bool is_equal_env_data_in_face() const { return get_bit(IS_EQUAL); }
 
-  void set_has_equal_data_in_face(bool b) { set_bit(HAS_EQUAL, b); }
-  bool get_has_equal_data_in_face() const { return get_bit(HAS_EQUAL); }
+  void set_has_equal_env_data_in_face(bool b) { set_bit(HAS_EQUAL, b); }
+  bool has_equal_env_data_in_face() const { return get_bit(HAS_EQUAL); }
 
   void set_is_equal_aux_data_in_face(unsigned int id, bool b) {
     CGAL_assertion(id < 2);
     set_bit(IS_EQUAL_AUX+id, b);
   }
-  bool get_is_equal_aux_data_in_face(unsigned int id) const {
+  bool is_equal_aux_data_in_face(unsigned int id) const {
     CGAL_assertion(id < 2);
     return get_bit(IS_EQUAL_AUX+id);
   }
@@ -288,7 +278,7 @@ public:
     CGAL_assertion(id < 2);
     set_bit(HAS_EQUAL_AUX+id, b);
   }
-  bool get_has_equal_aux_data_in_face(unsigned int id) const {
+  bool has_equal_aux_data_in_face(unsigned int id) const {
     CGAL_assertion(id < 2);
     return get_bit(HAS_EQUAL_AUX+id);
   }
@@ -359,26 +349,21 @@ public:
 
   Envelope_pm_halfedge() : Dcel_info<Halfedge_data>(), flags(0) {}
 
- /* void set_is_fake(bool b)
-  {
-    set_bit(IS_FAKE, b);
-  }
-  bool get_is_fake() const
-  {
-    return get_bit(IS_FAKE);
-  }*/
+ /* void set_is_fake(bool b) { set_bit(IS_FAKE, b); }
+  * bool is_fake() const { return get_bit(IS_FAKE); }
+  */
 
-  void set_is_equal_data_in_face(bool b) { set_bit(IS_EQUAL_FACE, b); }
-  bool get_is_equal_data_in_face() const { return get_bit(IS_EQUAL_FACE); }
+  void set_is_equal_env_data_in_face(bool b) { set_bit(IS_EQUAL_FACE, b); }
+  bool is_equal_env_data_in_face() const { return get_bit(IS_EQUAL_FACE); }
 
-  void set_has_equal_data_in_face(bool b) { set_bit(HAS_EQUAL_FACE, b); }
-  bool get_has_equal_data_in_face() const { return get_bit(HAS_EQUAL_FACE); }
+  void set_has_equal_env_data_in_face(bool b) { set_bit(HAS_EQUAL_FACE, b); }
+  bool has_equal_env_data_in_face() const { return get_bit(HAS_EQUAL_FACE); }
 
   void set_is_equal_aux_data_in_face(unsigned int id, bool b) {
     CGAL_assertion(id < 2);
     set_bit(IS_EQUAL_AUX_FACE+id, b);
   }
-  bool get_is_equal_aux_data_in_face(unsigned int id) const {
+  bool is_equal_aux_data_in_face(unsigned int id) const {
     CGAL_assertion(id < 2);
     return get_bit(IS_EQUAL_AUX_FACE+id);
   }
@@ -387,22 +372,22 @@ public:
     CGAL_assertion(id < 2);
     set_bit(HAS_EQUAL_AUX_FACE+id, b);
   }
-  bool get_has_equal_aux_data_in_face(unsigned int id) const {
+  bool has_equal_aux_data_in_face(unsigned int id) const {
     CGAL_assertion(id < 2);
     return get_bit(HAS_EQUAL_AUX_FACE+id);
   }
 
-  void set_is_equal_data_in_target(bool b) { set_bit(IS_EQUAL_TARGET, b); }
-  bool get_is_equal_data_in_target() const { return get_bit(IS_EQUAL_TARGET); }
+  void set_is_equal_env_data_in_target(bool b) { set_bit(IS_EQUAL_TARGET, b); }
+  bool is_equal_env_data_in_target() const { return get_bit(IS_EQUAL_TARGET); }
 
-  void set_has_equal_data_in_target(bool b) { set_bit(HAS_EQUAL_TARGET, b); }
-  bool get_has_equal_data_in_target() const { return get_bit(HAS_EQUAL_TARGET); }
+  void set_has_equal_env_data_in_target(bool b) { set_bit(HAS_EQUAL_TARGET, b); }
+  bool has_equal_env_data_in_target() const { return get_bit(HAS_EQUAL_TARGET); }
 
   void set_is_equal_aux_data_in_target(unsigned int id, bool b) {
     CGAL_assertion(id < 2);
     set_bit(IS_EQUAL_AUX_TARGET+id, b);
   }
-  bool get_is_equal_aux_data_in_target(unsigned int id) const {
+  bool is_equal_aux_data_in_target(unsigned int id) const {
     CGAL_assertion(id < 2);
     return get_bit(IS_EQUAL_AUX_TARGET+id);
   }
@@ -411,21 +396,21 @@ public:
     CGAL_assertion(id < 2);
     set_bit(HAS_EQUAL_AUX_TARGET+id, b);
   }
-  bool get_has_equal_aux_data_in_target(unsigned int id) const {
+  bool has_equal_aux_data_in_target(unsigned int id) const {
     CGAL_assertion(id < 2);
     return get_bit(HAS_EQUAL_AUX_TARGET+id);
   }
   // access to flags that contain relation between target and face
-  void set_has_equal_data_in_target_and_face(bool b)
+  void set_has_equal_env_data_in_target_and_face(bool b)
   { set_bit(HAS_EQUAL_F_T, b); }
-  bool get_has_equal_data_in_target_and_face() const
+  bool has_equal_env_data_in_target_and_face() const
   { return get_bit(HAS_EQUAL_F_T); }
 
   void set_has_equal_aux_data_in_target_and_face(unsigned int id, bool b) {
     CGAL_assertion(id < 2);
     set_bit(HAS_EQUAL_AUX_F_T+id, b);
   }
-  bool get_has_equal_aux_data_in_target_and_face(unsigned int id) const {
+  bool has_equal_aux_data_in_target_and_face(unsigned int id) const {
     CGAL_assertion(id < 2);
     return get_bit(HAS_EQUAL_AUX_F_T+id);
   }

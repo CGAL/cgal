@@ -56,7 +56,7 @@ public:
   void create_face (Face_handle1 f1, Face_handle2 f2, Res_face_handle res_f) {
     res_f->set_aux_source(0, f1);
     res_f->set_aux_source(1, f2);
-    assert_msg(f1->is_equal_data(f2->begin_data(), f2->end_data()),
+    assert_msg(f1->is_equal_env_data(f2->begin_env_data(), f2->end_env_data()),
                "data different over face");
   }
 
@@ -64,7 +64,7 @@ public:
                      Res_vertex_handle res_v) {
     res_v->set_aux_source(0, h1);
     res_v->set_aux_source(1, h2);
-    assert_msg(h1->is_equal_data(h2->begin_data(), h2->end_data()),
+    assert_msg(h1->is_equal_env_data(h2->begin_env_data(), h2->end_env_data()),
                "data different over vertex");
   }
 
@@ -72,40 +72,40 @@ public:
                      Res_vertex_handle res_v) {
     res_v->set_aux_source(0, v1);
     res_v->set_aux_source(1, v2);
-    assert_msg(v1->is_equal_data(v2->begin_data(), v2->end_data()),
-                       "data different over vertex");
+    assert_msg(v1->is_equal_env_data(v2->begin_env_data(), v2->end_env_data()),
+               "data different over vertex");
   }
 
   void create_vertex(Vertex_handle1 v1, Halfedge_handle2 h2,
                      Res_vertex_handle res_v) {
     res_v->set_aux_source(0, v1);
     res_v->set_aux_source(1, h2);
-    assert_msg(v1->is_equal_data(h2->begin_data(), h2->end_data()),
-                       "data different over vertex");
+    assert_msg(v1->is_equal_env_data(h2->begin_env_data(), h2->end_env_data()),
+               "data different over vertex");
   }
 
   void create_vertex(Halfedge_handle1 h1, Vertex_handle2 v2,
                      Res_vertex_handle res_v) {
     res_v->set_aux_source(0, h1);
     res_v->set_aux_source(1, v2);
-    assert_msg(h1->is_equal_data(v2->begin_data(), v2->end_data()),
-                       "data different over vertex");
+    assert_msg(h1->is_equal_env_data(v2->begin_env_data(), v2->end_env_data()),
+               "data different over vertex");
   }
 
   void create_vertex(Face_handle1 f1, Vertex_handle2 v2,
                      Res_vertex_handle res_v) {
     res_v->set_aux_source(0, f1);
     res_v->set_aux_source(1, v2);
-    assert_msg(f1->is_equal_data(v2->begin_data(), v2->end_data()),
-                       "data different over vertex");
+    assert_msg(f1->is_equal_env_data(v2->begin_env_data(), v2->end_env_data()),
+               "data different over vertex");
   }
 
   void create_vertex(Vertex_handle1 v1, Face_handle2 f2,
                      Res_vertex_handle res_v) {
     res_v->set_aux_source(0, v1);
     res_v->set_aux_source(1, f2);
-    assert_msg(v1->is_equal_data(f2->begin_data(), f2->end_data()),
-                       "data different over vertex");
+    assert_msg(v1->is_equal_env_data(f2->begin_env_data(), f2->end_env_data()),
+               "data different over vertex");
   }
 
   void create_edge(Halfedge_handle1 h1, Halfedge_handle2 h2,
@@ -116,8 +116,8 @@ public:
     res_h->twin()->set_aux_source(0, h1->twin());
     res_h->twin()->set_aux_source(1, h2->twin());
 
-    assert_msg(h1->is_equal_data(h2->begin_data(), h2->end_data()),
-                       "data different over edge");
+    assert_msg(h1->is_equal_env_data(h2->begin_env_data(), h2->end_env_data()),
+               "data different over edge");
   }
 
   void create_edge(Halfedge_handle1 h1, Face_handle2 f2,
@@ -128,8 +128,8 @@ public:
     res_h->twin()->set_aux_source(0, h1->twin());
     res_h->twin()->set_aux_source(1, f2);
 
-    assert_msg(h1->is_equal_data(f2->begin_data(), f2->end_data()),
-                       "data different over edge");
+    assert_msg(h1->is_equal_env_data(f2->begin_env_data(), f2->end_env_data()),
+               "data different over edge");
   }
 
   void create_edge(Face_handle1 f1, Halfedge_handle2 h2,
@@ -139,11 +139,9 @@ public:
 
     res_h->twin()->set_aux_source(0, f1);
     res_h->twin()->set_aux_source(1, h2->twin());
-    assert_msg(f1->is_equal_data(h2->begin_data(), h2->end_data()),
-                       "data different over edge");
-
+    assert_msg(f1->is_equal_env_data(h2->begin_env_data(), h2->end_env_data()),
+               "data different over edge");
   }
-
 };
 
 } //namespace CGAL
