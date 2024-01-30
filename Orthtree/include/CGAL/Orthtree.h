@@ -106,11 +106,6 @@ public:
   using Node_index = std::size_t;
 
   /*!
-   * \brief Optional index of a node in the tree.
-   */
-  using Maybe_node_index = std::optional<Node_index>;
-
-  /*!
     \brief Set of bits representing this node's relationship to its parent.
 
     Equivalent to an array of Booleans, where index[0] is whether `x`
@@ -169,8 +164,8 @@ private: // data members :
   Property_array<Node_data>& m_node_contents;
   Property_array<std::uint8_t>& m_node_depths;
   Property_array<Global_coordinates>& m_node_coordinates;
-  Property_array<Maybe_node_index>& m_node_parents;
-  Property_array<Maybe_node_index>& m_node_children;
+  Property_array<std::optional<Node_index>>& m_node_parents;
+  Property_array<std::optional<Node_index>>& m_node_children;
 
   using Bbox_dimensions = std::array<FT, dimension>;
   Bbox m_bbox;
@@ -202,8 +197,8 @@ public:
     m_node_contents(m_node_properties.add_property<Node_data>("contents")),
     m_node_depths(m_node_properties.add_property<std::uint8_t>("depths", 0)),
     m_node_coordinates(m_node_properties.add_property<Global_coordinates>("coordinates")),
-    m_node_parents(m_node_properties.add_property<Maybe_node_index>("parents")),
-    m_node_children(m_node_properties.add_property<Maybe_node_index>("children")) {
+    m_node_parents(m_node_properties.add_property<std::optional<Node_index>>("parents")),
+    m_node_children(m_node_properties.add_property<std::optional<Node_index>>("children")) {
 
     m_node_properties.emplace();
 
@@ -231,8 +226,8 @@ public:
     m_node_contents(m_node_properties.get_property<Node_data>("contents")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
-    m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
-    m_node_children(m_node_properties.get_property<Maybe_node_index>("children")),
+    m_node_parents(m_node_properties.get_property<std::optional<Node_index>>("parents")),
+    m_node_children(m_node_properties.get_property<std::optional<Node_index>>("children")),
     m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth) {}
 
   // move constructor
@@ -242,8 +237,8 @@ public:
     m_node_contents(m_node_properties.get_property<Node_data>("contents")),
     m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
-    m_node_parents(m_node_properties.get_property<Maybe_node_index>("parents")),
-    m_node_children(m_node_properties.get_property<Maybe_node_index>("children")),
+    m_node_parents(m_node_properties.get_property<std::optional<Node_index>>("parents")),
+    m_node_children(m_node_properties.get_property<std::optional<Node_index>>("children")),
     m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth)
   {
     // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
@@ -430,7 +425,7 @@ public:
 
     Node_index first = traversal.first_index();
 
-    auto next = [=](const Self&, Node_index index) -> Maybe_node_index {
+    auto next = [=](const Self&, Node_index index) -> std::optional<Node_index> {
       return traversal.next_index(index);
     };
 
@@ -816,7 +811,7 @@ public:
     \return the index of the next sibling of n
     if n is not the last node in its parent, otherwise nothing.
    */
-  const Maybe_node_index next_sibling(Node_index n) const {
+  const std::optional<Node_index> next_sibling(Node_index n) const {
 
     // Root node has no siblings
     if (is_root(n)) return {};
@@ -840,17 +835,17 @@ public:
     \return The index of the next sibling of the parent of n
     if n is not the root and its parent has a sibling, otherwise nothing.
    */
-  const Maybe_node_index next_sibling_up(Node_index n) const {
+  const std::optional<Node_index> next_sibling_up(Node_index n) const {
 
     // the root node has no next sibling up
     if (n == 0) return {};
 
-    auto up = Maybe_node_index{parent(n)};
+    auto up = std::optional<Node_index>{parent(n)};
     while (up) {
 
       if (next_sibling(*up)) return {next_sibling(*up)};
 
-      up = is_root(*up) ? Maybe_node_index{} : Maybe_node_index{parent(*up)};
+      up = is_root(*up) ? std::optional<Node_index>{} : std::optional<Node_index>{parent(*up)};
     }
 
     return {};
@@ -884,7 +879,7 @@ public:
 
     \return the index of the `d`th first child, nothing if the tree is not deep enough.
    */
-  Maybe_node_index first_child_at_depth(Node_index n, std::size_t d) const {
+  std::optional<Node_index> first_child_at_depth(Node_index n, std::size_t d) const {
 
     std::queue<Node_index> todo;
     todo.push(n);
@@ -1069,7 +1064,7 @@ public:
 
     \return the index of the adjacent node if it exists, nothing otherwise.
   */
-  Maybe_node_index adjacent_node(Node_index n, const Local_coordinates& direction) const {
+  std::optional<Node_index> adjacent_node(Node_index n, const Local_coordinates& direction) const {
 
     // Direction:   LEFT  RIGHT  DOWN    UP  BACK FRONT
     // direction:    000    001   010   011   100   101
@@ -1118,7 +1113,7 @@ public:
     \param n index of the node to find a neighbor of
     \param adjacency which way to find the adjacent node relative to this one
    */
-  Maybe_node_index adjacent_node(Node_index n, Adjacency adjacency) const {
+  std::optional<Node_index> adjacent_node(Node_index n, Adjacency adjacency) const {
     return adjacent_node(n, std::bitset<dimension>(static_cast<int>(adjacency)));
   }
 
