@@ -105,8 +105,8 @@ int main()
 
     for (auto v : cdt.finite_vertex_handles()) {
       std::cout << "Point ( " << v->point() << " )\n";
-      std::cout << "  on " << v->nb_of_incident_constraints
-                << " constraint(s): " << v->c_id << "\n";
+      std::cout << "  on " << v->number_of_incident_constraints()
+                << " constraint(s)\n";
     }
     std::cerr << "test2: " << filename << "  "
               << (cdt.is_conforming() ? "OK" : "ERROR: NOT CONFORMING")

@@ -1028,8 +1028,8 @@ private:
   {
     const auto vc = cell->vertex(index_vd);
     const auto vd = cell->vertex(index_vc);
-    if(vc->nb_of_incident_constraints < 0) return 0; // vertex marked of the border
-    if(vd->nb_of_incident_constraints < 0) return 0; // vertex marked of the border
+    if(vc->is_Steiner_vertex_on_edge() && vc->is_marked()) return 0; // vertex marked of the border
+    if(vd->is_Steiner_vertex_on_edge() && vd->is_marked()) return 0; // vertex marked of the border
     const auto pc = this->point(vc);
     const auto pd = this->point(vd);
     const typename Geom_traits::Segment_3 seg{pc, pd};
@@ -1282,13 +1282,11 @@ private:
     }
 #endif // CGAL_CDT_3_DEBUG_REGION
     for(auto v: polygon_border_vertices) {
-      v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
-      CGAL_assertion(v->is_Steiner_vertex_in_face() || v->nb_of_incident_constraints < 0);
+      v->mark_vertex();
     }
     const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, border_edges);
     for(auto v: polygon_border_vertices) {
-      v->nb_of_incident_constraints = -v->nb_of_incident_constraints;
-      CGAL_assertion(v->is_Steiner_vertex_in_face() || v->nb_of_incident_constraints > 0);
+      v->unmark_vertex();
     }
 
     [[maybe_unused]] auto try_flip_region_size_4 = [&] {

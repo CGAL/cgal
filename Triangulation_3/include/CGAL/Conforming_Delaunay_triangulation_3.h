@@ -43,10 +43,9 @@ namespace CGAL {
 enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
 
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
-struct Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb> {
+class Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb> {
   int nb_of_incident_constraints = 0;
   void* c_id = nullptr;
-private:
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
 public:
   // To get correct vertex type in TDS
@@ -58,6 +57,31 @@ public:
 
   using Base = Base_with_time_stamp<Vb>;
   using Base::Base;
+
+  void set_on_constraint(auto constraint_id) {
+    ++nb_of_incident_constraints;
+    c_id = constraint_id.vl_ptr();
+  }
+
+  int number_of_incident_constraints() const {
+    CGAL_assertion(nb_of_incident_constraints >= 0);
+    return nb_of_incident_constraints;
+  }
+
+  void mark_vertex() {
+    CGAL_assertion(nb_of_incident_constraints > 0);
+    nb_of_incident_constraints = -nb_of_incident_constraints;
+  }
+
+  void unmark_vertex() {
+    CGAL_assertion(nb_of_incident_constraints < 0);
+    nb_of_incident_constraints = -nb_of_incident_constraints;
+  }
+
+  bool is_marked() const {
+    CGAL_assertion(nb_of_incident_constraints != 0);
+    return nb_of_incident_constraints < 0;
+  }
 
   template<typename Triangulation>
   auto constraint_id(const Triangulation&) const {
@@ -209,8 +233,7 @@ protected:
                       // std::cerr << "- " << oformat(simplex, With_point_tag{}) << '\n';
                       if(simplex.dimension() == 0) {
                         const auto v = static_cast<Vertex_handle>(simplex);
-                        v->c_id = c_id.vl_ptr();
-                        ++v->nb_of_incident_constraints;
+                        v->set_on_constraint(c_id);
                         if(prev != Vertex_handle{}) {
                           if(v != vb) {
                             v->set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
@@ -340,7 +363,7 @@ public:
   auto ancestors_of_Steiner_vertex_on_edge(Vertex_handle v) const {
     std::pair<Vertex_handle, Vertex_handle> result;
     CGAL_precondition(v->is_Steiner_vertex_on_edge());
-    CGAL_assertion(v->nb_of_incident_constraints == 1);
+    CGAL_assertion(v->number_of_incident_constraints() == 1);
     const auto v_time_stamp = v->time_stamp();
     const auto constraint_id = v->constraint_id(*this);
     const auto first = this->constraint_hierarchy.vertices_in_constraint_begin(constraint_id);
@@ -449,8 +472,7 @@ protected:
     const Vertex_handle v = visitor.insert_in_triangulation(steiner_pt, lt, c, li, lj);
     v->set_vertex_type(CDT_3_vertex_type::STEINER_ON_EDGE);
     if(lt != T_3::VERTEX) {
-      v->nb_of_incident_constraints = 1;
-      v->c_id = constraint.vl_ptr();
+      v->set_on_constraint(constraint);
     }
     constraint_hierarchy.add_Steiner(va, vb, v);
     visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v);
@@ -485,7 +507,7 @@ protected:
   }
 
   Constraint_id constraint_from_extremities(Vertex_handle va, Vertex_handle vb) const {
-    if (va->nb_of_incident_constraints == 0 || vb->nb_of_incident_constraints == 0)
+    if (va->number_of_incident_constraints() == 0 || vb->number_of_incident_constraints() == 0)
     {
       return {};
     }
@@ -528,12 +550,12 @@ protected:
         return true;
       return false;
     }; // end lambda constraint_id_goes_to_vb
-    if (va->nb_of_incident_constraints == 1)
+    if (va->number_of_incident_constraints() == 1)
     {
       const Constraint_id c_id = va->constraint_id(*this);
       CGAL_assertion(c_id != Constraint_id{});
       if(constraint_id_goes_to_vb(c_id)) return c_id;
-    } else if (expensive == true && va->nb_of_incident_constraints > 1) {
+    } else if (expensive == true && va->number_of_incident_constraints() > 1) {
       boost::container::small_vector<Vertex_handle, 64> adj_vertices;
       this->finite_adjacent_vertices(va, std::back_inserter(adj_vertices));
       for(auto other_v: adj_vertices) {
@@ -718,7 +740,7 @@ protected:
     const auto vector_ab = vector_functor(pa, pb);
 
     if(reference_vertex->is_Steiner_vertex_on_edge()) {
-      CGAL_assertion(reference_vertex->nb_of_incident_constraints == 1);
+      CGAL_assertion(reference_vertex->number_of_incident_constraints() == 1);
       const auto ref_constraint_id = reference_vertex->constraint_id(*this);
       const auto [ref_va, ref_vb] = constraint_extremities(ref_constraint_id);
 #if CGAL_CDT_3_DEBUG_CONFORMING
