@@ -498,6 +498,8 @@ class Envelope_pm_dcel :
                              Envelope_pm_face<FaceBase, DcelData>> {
 public:
   using Dcel_data = DcelData;
+  using Vertex_base = VertexBase;
+  using Halfedge_base = HalfedgeBase;
   using Face_base = FaceBase;
 
   using Face_data = Dcel_data;
@@ -520,8 +522,17 @@ public:
   /*! \struct
    * An auxiliary structure for rebinding the DCEL with a new traits class.
    */
-  template<typename T>
-  struct rebind { typedef Envelope_pm_dcel<T, Face_data> other; };
+  template <typename T>
+  struct rebind {
+    using Pnt = typename T::Point_2;
+    using Xcv = typename T::X_monotone_curve_2;
+    using Rebind_v = typename Vertex_base::template rebind<Pnt>;
+    using V_other = typename Rebind_v::other;
+    using Rebind_h = typename Halfedge_base::template rebind<Xcv>;
+    using H_other = typename Rebind_h::other;
+
+    typedef Envelope_pm_dcel<T, Dcel_data, V_other, H_other, Face_base> other;
+  };
 
   /*! Constructor */
   Envelope_pm_dcel() {}
