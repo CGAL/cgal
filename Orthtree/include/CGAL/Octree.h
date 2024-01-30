@@ -33,7 +33,7 @@ template <
   typename PointRange,
   typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>
 >
-using Octree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<3>>>;
+using Octree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, 3>>;
 
 } // namespace CGAL
 

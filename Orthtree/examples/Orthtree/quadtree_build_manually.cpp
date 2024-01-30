@@ -13,10 +13,10 @@ namespace CGAL {
 struct empty_type {
 };
 
-template <typename K, typename DimensionTag>
-struct Orthtree_traits_empty : public Orthtree_traits_base_for_dimension<K, DimensionTag> {
+template <typename K, int dimension>
+struct Orthtree_traits_empty : public Orthtree_traits_base_for_dimension<K, dimension> {
 
-  using Self = Orthtree_traits_empty<K, DimensionTag>;
+  using Self = Orthtree_traits_empty<K, dimension>;
   using Tree = Orthtree<Self>;
 
   using Node_data = std::array<empty_type, 0>;
@@ -40,7 +40,7 @@ private:
 };
 }
 
-using EmptyQuadtree = CGAL::Orthtree<CGAL::Orthtree_traits_empty<Kernel, CGAL::Dimension_tag<2>>>;
+using EmptyQuadtree = CGAL::Orthtree<CGAL::Orthtree_traits_empty<Kernel, 2 >>;
 
 int main() {
 

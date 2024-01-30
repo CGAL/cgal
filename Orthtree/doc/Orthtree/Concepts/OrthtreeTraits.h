@@ -6,9 +6,9 @@
   template parameter of the `CGAL::Orthtree` class.
 
   \cgalHasModelsBegin
-  \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>}
+  \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension >}
   \cgalHasModels{CGAL::Orthtree_traits_face_graph<PolygonMesh, VPM>}
-  \cgalHasModels{CGAL::Orthtree_traits_base_for_dimension< K, DimensionTag >}
+  \cgalHasModels{CGAL::Orthtree_traits_base_for_dimension< K, dimension >}
   \cgalHasModelsEnd
 */
 class OrthtreeTraits
@@ -18,7 +18,7 @@ public:
   /// \name Types
   /// @{
   using Node_index = unspecified_type; ///< An integer type for nodes
-  using Dimension = unspecified_type; ///< Dimension type (see `CGAL::Dimension_tag`).
+  constexpr int dimension; ///< Dimension.
   using FT = unspecified_type; ///< The number type of the %Cartesian coordinates of types `Point_d`
   using Point_d = unspecified_type; ///< Point type.
   using Bbox_d = unspecified_type; ///< Bounding box type. Must be constructible from a pair of `Point_d` types.

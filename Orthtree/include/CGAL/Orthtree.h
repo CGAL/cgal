@@ -26,7 +26,6 @@
 #include <CGAL/property_map.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/Dimension.h>
 #include <CGAL/span.h>
 
 #include <boost/function.hpp>
@@ -76,7 +75,7 @@ public:
 
   /// \name Traits Types
   /// @{
-  using Dimension = typename Traits::Dimension; ///< Dimension of the tree
+  static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
   using Kernel = typename Traits::Kernel; ///< Kernel type.
   using FT = typename Traits::FT; ///< Number type.
   using Point = typename Traits::Point_d; ///< Point type.
@@ -99,7 +98,7 @@ public:
   /*!
    * \brief Degree of the tree (number of children of non-leaf nodes).
    */
-  using Degree = Dimension_tag<(2 << (Dimension::value - 1))>;
+  static constexpr int degree = (2 << (dimension - 1));
 
   /*!
    * \brief Index of a given node in the tree; the root always has index 0.
@@ -119,7 +118,7 @@ public:
     `z` is greater, and so on for higher dimensions if needed.
     Used to represent a node's relationship to the center of its parent.
    */
-  using Local_coordinates = std::bitset<Dimension::value>;
+  using Local_coordinates = std::bitset<dimension>;
 
   /*!
     \brief Coordinates representing this node's relationship
@@ -128,7 +127,7 @@ public:
     Each value `(x, y, z, ...)` of global coordinates is calculated by doubling
     the parent's global coordinates and adding the local coordinates.
    */
-  using Global_coordinates = std::array<std::uint32_t, Dimension::value>;
+  using Global_coordinates = std::array<std::uint32_t, dimension>;
 
   /*!
    * \brief A predicate that determines whether a node must be split when refining a tree.
@@ -173,7 +172,7 @@ private: // data members :
   Property_array<Maybe_node_index>& m_node_parents;
   Property_array<Maybe_node_index>& m_node_children;
 
-  using Bbox_dimensions = std::array<FT, Dimension::value>;
+  using Bbox_dimensions = std::array<FT, dimension>;
   Bbox m_bbox;
   std::vector<Bbox_dimensions> m_side_per_depth;      /* precomputed (potentially approximated) side length per node's depth */
 
@@ -214,7 +213,7 @@ public:
     // Determine dimensions of the root bbox
 
     Bbox_dimensions size;
-    for (int i = 0; i < Dimension::value; ++i)
+    for (int i = 0; i < dimension; ++i)
     {
       size[i] = (m_bbox.max)()[i] - (m_bbox.min)()[i];
     }
@@ -298,7 +297,7 @@ public:
       if (!is_leaf(current)) {
 
         // Process each of its children
-        for (int i = 0; i < Degree::value; ++i)
+        for (int i = 0; i < degree; ++i)
           todo.push(child(current, i));
       }
     }
@@ -381,7 +380,7 @@ public:
           split(*neighbor);
 
           // Add newly created children to the queue
-          for (int i = 0; i < Degree::value; ++i) {
+          for (int i = 0; i < degree; ++i) {
             leaf_nodes.push(child(*neighbor, i));
           }
         }
@@ -465,12 +464,12 @@ public:
     \return the bounding box of the node n
    */
   Bbox bbox(Node_index n) const {
-    using Cartesian_coordinate = std::array<FT, Dimension::value>;
+    using Cartesian_coordinate = std::array<FT, dimension>;
     Cartesian_coordinate min_corner, max_corner;
     std::size_t node_depth = depth(n);
     Bbox_dimensions size = m_side_per_depth[node_depth];
     const std::size_t last_coord = std::pow(2,node_depth)-1;
-    for (int i = 0; i < Dimension::value; i++) {
+    for (int i = 0; i < dimension; i++) {
       min_corner[i] = (m_bbox.min)()[i] + int(global_coordinates(n)[i]) * size[i];
       max_corner[i] = std::size_t(global_coordinates(n)[i]) == last_coord
                     ? (m_bbox.max)()[i]
@@ -585,9 +584,9 @@ public:
 
       // Find the index of the correct sub-node
       Local_coordinates local_coords;
-      std::size_t dimension = 0;
+      std::size_t dim = 0;
       for (const auto& r: cartesian_range(center, point))
-        local_coords[dimension++] = m_traits.locate_halfspace_object()(get<0>(r), get<1>(r));
+        local_coords[dim++] = m_traits.locate_halfspace_object()(get<0>(r), get<1>(r));
 
       // Find the correct sub-node of the current node
       node_for_point = child(node_for_point, local_coords.to_ulong());
@@ -740,7 +739,7 @@ public:
    */
   Local_coordinates local_coordinates(Node_index n) const {
     Local_coordinates result;
-    for (std::size_t i = 0; i < Dimension::value; ++i)
+    for (std::size_t i = 0; i < dimension; ++i)
       result[i] = global_coordinates(n)[i] & 1;
     return result;
   }
@@ -826,7 +825,7 @@ public:
     std::size_t local_coords = local_coordinates(n).to_ulong();
 
     // The last child has no more siblings
-    if (int(local_coords) == Degree::value - 1)
+    if (int(local_coords) == degree - 1)
       return {};
 
     // The next sibling is the child of the parent with the following local coordinates
@@ -898,7 +897,7 @@ public:
         return node;
 
       if (!is_leaf(node))
-        for (int i = 0; i < Degree::value; ++i)
+        for (int i = 0; i < degree; ++i)
           todo.push(child(node, i));
     }
 
@@ -910,7 +909,7 @@ public:
 
     Only leaf nodes should be split.
     When a node is split it is no longer a leaf node.
-    A number of `Degree::value` children are constructed automatically, and their values are set.
+    The full set of `degree` children are constructed automatically, and their values are set.
     Contents of this node are _not_ propagated automatically, this is responsibility of the
     `distribute_node_contents_object` in the traits class.
 
@@ -923,8 +922,8 @@ public:
 
     // Split the node to create children
     using Local_coordinates = Local_coordinates;
-    m_node_children[n] = m_node_properties.emplace_group(Degree::value);
-    for (std::size_t i = 0; i < Degree::value; i++) {
+    m_node_children[n] = m_node_properties.emplace_group(degree);
+    for (std::size_t i = 0; i < degree; i++) {
 
       Node_index c = *m_node_children[n] + i;
 
@@ -932,7 +931,7 @@ public:
       CGAL_assertion(n != *m_node_children[n] + i);
 
       Local_coordinates local_coordinates{i};
-      for (int i = 0; i < Dimension::value; i++)
+      for (int i = 0; i < dimension; i++)
         m_node_coordinates[c][i] = (2 * m_node_coordinates[n][i]) + local_coordinates[i];
       m_node_depths[c] = m_node_depths[n] + 1;
       m_node_parents[c] = n;
@@ -943,7 +942,7 @@ public:
       // Update the side length map with the dimensions of the children
       Bbox_dimensions size = m_side_per_depth.back();
       Bbox_dimensions child_size;
-      for (int i = 0; i < Dimension::value; ++i)
+      for (int i = 0; i < dimension; ++i)
         child_size[i] = size[i] / FT(2);
       m_side_per_depth.push_back(child_size);
     }
@@ -968,8 +967,8 @@ public:
     Bbox_dimensions size = m_side_per_depth[depth(n)];
 
     // Determine the location this node should be split
-    std::array<FT, Dimension::value> bary;
-    for (std::size_t i = 0; i < Dimension::value; i++)
+    std::array<FT, dimension> bary;
+    for (std::size_t i = 0; i < dimension; i++)
       // use the same expression as for the bbox computation
       bary[i] = (m_bbox.min)()[i] + int(2 * global_coordinates(n)[i]+1) * ( size[i] / FT(2) );
 
@@ -996,7 +995,7 @@ public:
     if (!lhsTree.is_leaf(lhsNode)) {
 
       // Check all the children
-      for (int i = 0; i < Degree::value; ++i) {
+      for (int i = 0; i < degree; ++i) {
         // If any child cell is different, they're not the same
         if (!is_topology_equal(lhsTree.child(lhsNode, i), lhsTree,
                                rhsTree.child(rhsNode, i), rhsTree))
@@ -1022,11 +1021,11 @@ public:
   /*!
     \brief finds the directly adjacent node in a specific direction
 
-    \pre `direction.to_ulong < 2 * Dimension::value`
+    \pre `direction.to_ulong < 2 * dimension`
 
     Adjacent nodes are found according to several properties:
     - adjacent nodes may be larger than the seek node, but never smaller
-    - a node has at most `2 * Dimension::value` different adjacent nodes (in 3D: left, right, up, down, front, back)
+    - a node has at most `2 * dimension` different adjacent nodes (in 3D: left, right, up, down, front, back)
     - adjacent nodes are not required to be leaf nodes
 
     Here's a diagram demonstrating the concept for a quadtree:
@@ -1076,7 +1075,7 @@ public:
     // direction:    000    001   010   011   100   101
 
     // Nodes only have up to 2*dim different adjacent nodes (since boxes have 6 sides)
-    CGAL_precondition(direction.to_ulong() < Dimension::value * 2);
+    CGAL_precondition(direction.to_ulong() < dimension * 2);
 
     // The root node has no adjacent nodes!
     if (is_root(n)) return {};
@@ -1085,16 +1084,16 @@ public:
     bool sign = direction[0];
 
     // The first two bits indicate the dimension/axis (x, y, z)
-    uint8_t dimension = uint8_t((direction >> 1).to_ulong());
+    uint8_t dim = uint8_t((direction >> 1).to_ulong());
 
     // Create an offset so that the bit-significance lines up with the dimension (e.g., 1, 2, 4 --> 001, 010, 100)
-    int8_t offset = (uint8_t) 1 << dimension;
+    int8_t offset = (uint8_t) 1 << dim;
 
     // Finally, apply the sign to the offset
     offset = (sign ? offset : -offset);
 
     // Check if this child has the opposite sign along the direction's axis
-    if (local_coordinates(n)[dimension] != sign) {
+    if (local_coordinates(n)[dim] != sign) {
       // This means the adjacent node is a direct sibling, the offset can be applied easily!
       return {child(parent(n), local_coordinates(n).to_ulong() + offset)};
     }
@@ -1120,7 +1119,7 @@ public:
     \param adjacency which way to find the adjacent node relative to this one
    */
   Maybe_node_index adjacent_node(Node_index n, Adjacency adjacency) const {
-    return adjacent_node(n, std::bitset<Dimension::value>(static_cast<int>(adjacency)));
+    return adjacent_node(n, std::bitset<dimension>(static_cast<int>(adjacency)));
   }
 
   /// @}
@@ -1157,7 +1156,7 @@ private: // functions :
       }
 
       // Otherwise, each of the children need to be checked
-      for (int i = 0; i < Degree::value; ++i) {
+      for (int i = 0; i < degree; ++i) {
         intersected_nodes_recursive(query, child(node, i), output);
       }
     }

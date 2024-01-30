@@ -39,8 +39,7 @@ to which the minimal extend of a node should be provided.
 */
 template <class TriangleMesh, class VertexPointMap>
 struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
-  typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type,
-  Dimension_tag<3> > {
+  typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type, 3 > {
 
   Orthtree_traits_face_graph(const TriangleMesh& pm, VertexPointMap vpm)
     : m_pm(pm), m_vpm(vpm) {}
@@ -49,14 +48,12 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   /// @{
 
   using Base = Orthtree_traits_base_for_dimension<
-  typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type,
-    Dimension_tag<3> >;
+  typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type, 3 >;
   using Node_index = typename Base::Node_index;
   using Self = Orthtree_traits_face_graph<TriangleMesh, VertexPointMap>;
   using Tree = Orthtree<Self>;
 
   using Point_d = typename Self::Point_d;
-  using Dimension = typename Self::Dimension;
   using Bbox_d = typename Self::Bbox_d;
   using FT = typename Self::FT;
   using Cartesian_const_iterator_d = typename Self::Cartesian_const_iterator_d;
@@ -77,7 +74,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   auto construct_root_node_bbox_object() const {
     return [&]() -> Bbox_d {
 
-      std::array<FT, Dimension::value> min = {0.0, 0}, max = {0.0, 0};
+      std::array<FT, dimension> min = {0.0, 0}, max = {0.0, 0};
       if (faces(m_pm).begin() != faces(m_pm).end()) {
         const Point_d& p = get(m_vpm, *vertices(m_pm).begin());
         min = {p.x(), p.y(), p.z()};

@@ -80,10 +80,10 @@ void nearest_k_neighbors_recursive(const Tree& orthtree,
 
     // Create a list to map children to their distances
     std::vector<Node_index_with_distance> children_with_distances;
-    children_with_distances.reserve(Tree::Degree::value);
+    children_with_distances.reserve(Tree::degree);
 
     // Fill the list with child nodes
-    for (int i = 0; i < Tree::Degree::value; ++i) {
+    for (int i = 0; i < Tree::degree; ++i) {
       auto child_node = orthtree.child(node, i);
 
       // Add a child to the list, with its distance

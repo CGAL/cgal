@@ -32,7 +32,7 @@ template <typename GeomTraits, typename PointRange,
           typename PointMap = Identity_property_map
          <typename std::iterator_traits<typename PointRange::iterator>::value_type> >
 
-using Quadtree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<2>>>;
+using Quadtree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, 2>>;
 
 
 } // namespace CGAL

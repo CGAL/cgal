@@ -27,11 +27,11 @@ template <typename Tree, typename PointMap>
 void reassign_points(
   Tree& tree, PointMap& point_map,
   typename Tree::Node_index n, const typename Tree::Point& center, typename Tree::Node_data points,
-  std::bitset<Tree::Dimension::value> coord = {}, std::size_t dimension = 0
+  std::bitset<Tree::dimension> coord = {}, std::size_t dimension = 0
 ) {
 
   // Root case: reached the last dimension
-  if (dimension == Tree::Dimension::value) {
+  if (dimension == Tree::dimension) {
     tree.data(tree.child(n, coord.to_ulong())) = points;
     return;
   }
@@ -49,12 +49,12 @@ void reassign_points(
   );
 
   // Further subdivide the first side of the split
-  std::bitset<Tree::Dimension::value> coord_left = coord;
+  std::bitset<Tree::dimension> coord_left = coord;
   coord_left[dimension] = false;
   reassign_points(tree, point_map, n, center, {points.begin(), split_point}, coord_left, dimension + 1);
 
   // Further subdivide the second side of the split
-  std::bitset<Tree::Dimension::value> coord_right = coord;
+  std::bitset<Tree::dimension> coord_right = coord;
   coord_right[dimension] = true;
   reassign_points(tree, point_map, n, center, {split_point, points.end()}, coord_right, dimension + 1);
 }
@@ -67,7 +67,7 @@ void reassign_points(
   \tparam GeomTraits model of `Kernel`.
   \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap` and whose iterator type is model of `RandomAccessIterator`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is a point type from `GeomTraits` matching the current dimension
-  \tparam DimensionTag a tag representing the dimension of the ambient Euclidean space. Must be `Dimension_tag<d>` where `d` is an integer.
+  \tparam dimension the dimension of the ambient Euclidean space.
 
   \warning The input point set is not copied. It is used directly
   and is rearranged by the `Orthtree`. Altering the point range
@@ -82,20 +82,20 @@ template <
   typename GeomTraits,
   typename PointRange,
   typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>,
-  typename DimensionTag = Ambient_dimension<
+  int dimension = Ambient_dimension<
     typename std::iterator_traits<typename PointRange::iterator>::value_type,
     GeomTraits
-  >
+  >::value
 >
-struct Orthtree_traits_point : public Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag> {
+struct Orthtree_traits_point : public Orthtree_traits_base_for_dimension<GeomTraits, dimension> {
 public:
   /// \name Types
   /// @{
   using Node_data = boost::iterator_range<typename PointRange::iterator>;
   /// @}
 
-  using Base = Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag>;
-  using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>;
+  using Base = Orthtree_traits_base_for_dimension<GeomTraits, dimension>;
+  using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>;
   using Tree = Orthtree<Self>;
 
   using Node_data_element = typename std::iterator_traits<typename PointRange::iterator>::value_type;
@@ -110,7 +110,7 @@ public:
   auto construct_root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d {
 
-      std::array<typename Self::FT, Self::Dimension::value> bbox_min, bbox_max;
+      std::array<typename Self::FT, Self::dimension> bbox_min, bbox_max;
       Orthtrees::internal::Cartesian_ranges<Self> cartesian_range;
 
       // init bbox with first values found

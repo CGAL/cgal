@@ -14,7 +14,6 @@
 
 #include <CGAL/license/Orthtree.h>
 
-#include <CGAL/Dimension.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
@@ -26,22 +25,22 @@ namespace CGAL {
   \ingroup PkgOrthtreeTraits
 
   The class `Orthtree_traits_base_for_dimension` is a base class providing common choices for types and functors.
-  The base class is extended by `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>` and by `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`.
+  The base class is extended by `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>` and by `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`.
 
   \tparam K a model of `Kernel`.
-  \tparam DimensionTag a tag representing the dimension of the ambient Euclidean space. Must be `Dimension_tag<d>` where `d` is an integer.
+  \tparam dim dimension of the ambient Euclidean space.
 
-  \sa `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>`
+  \sa `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dim>`
   \sa `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`
 */
 
-template <typename K, typename DimensionTag>
+template <typename K, int dim>
 struct Orthtree_traits_base_for_dimension {
   /// \name Types
   /// @{
   using Node_index = std::size_t;
   using Kernel = K;
-  using Dimension = DimensionTag;
+  static constexpr int dimension = dim;
   using FT = typename K::FT;
   using Point_d = typename K::Point_d;
   using Bbox_d = typename K::Iso_box_d;
@@ -52,7 +51,7 @@ struct Orthtree_traits_base_for_dimension {
    *
    * \note This type is used to identify adjacency directions with
    * easily understandable keywords (left, right, up, down, ...) and is thus
-   * mainly useful for `Dimension_tag<2>` and `Dimension_tag<3>`. In
+   * mainly useful in 2d and 3d. In
    * higher dimensions, such keywords do not exist and this type is
    * simply an integer. Conversions from this integer to bitsets still
    * work but do not provide any user-friendly API for adjacency selection.
@@ -107,10 +106,10 @@ struct Orthtree_traits_base_for_dimension {
 };
 
 template <typename K>
-struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
+struct Orthtree_traits_base_for_dimension<K, 2> {
   using Node_index = std::size_t;
   using Kernel = K;
-  using Dimension = Dimension_tag<2>;
+  static constexpr int dimension = 2;
   using FT = typename K::FT;
   using Point_d = typename K::Point_2;
   using Bbox_d = typename K::Iso_rectangle_2;
@@ -138,10 +137,10 @@ struct Orthtree_traits_base_for_dimension<K, Dimension_tag<2>> {
 };
 
 template <typename K>
-struct Orthtree_traits_base_for_dimension<K, Dimension_tag<3>> {
+struct Orthtree_traits_base_for_dimension<K, 3> {
   using Node_index = std::size_t;
   using Kernel = K;
-  using Dimension = Dimension_tag<3>;
+  static constexpr int dimension = 3;
   using FT = typename K::FT;
   using Point_d = typename K::Point_3;
   using Bbox_d = typename K::Iso_cuboid_3;
