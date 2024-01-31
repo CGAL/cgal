@@ -1580,7 +1580,7 @@ struct Locally_shortest_path_imp
           initial_path.erase(initial_path.begin(), std::next(initial_path.begin()));
           if (initial_path.empty()) return;
 
-          halfedge_descriptor new_hsrc=halfedge(face(opposite(initial_path[0], tmesh), tmesh), tmesh);
+          halfedge_descriptor new_hsrc=prev(halfedge(face(opposite(initial_path[0], tmesh), tmesh), tmesh), tmesh);
           int hid=0;
           while (opposite(new_hsrc, tmesh)!=hsrc)
           {
@@ -1589,8 +1589,8 @@ struct Locally_shortest_path_imp
             CGAL_assertion(hid!=3);
           }
           std::array<FT, 3> fl_src = {FT(0),FT(0),FT(0)};
-          fl_src[hid]=src.second[(ei+1)%3];
-          fl_src[(hid+1)%3]=src.second[ei];
+          fl_src[hid]=src.second[(ei+2)%3];
+          fl_src[(hid+2)%3]=src.second[ei];
           src=std::make_pair(face(new_hsrc, tmesh), fl_src);
         }
       }
@@ -1643,7 +1643,7 @@ struct Locally_shortest_path_imp
           initial_path.pop_back();
           if (initial_path.empty()) return;
 
-          halfedge_descriptor new_htgt=halfedge(face(initial_path.back(), tmesh), tmesh);
+          halfedge_descriptor new_htgt=prev(halfedge(face(initial_path.back(), tmesh), tmesh), tmesh);
           int hid=0;
           while (opposite(new_htgt, tmesh)!=htgt)
           {
@@ -1652,8 +1652,8 @@ struct Locally_shortest_path_imp
             CGAL_assertion(hid!=3);
           }
           std::array<FT, 3> fl_tgt = {FT(0),FT(0),FT(0)};
-          fl_tgt[hid]=tgt.second[(ei+1)%3];
-          fl_tgt[(hid+1)%3]=tgt.second[ei];
+          fl_tgt[hid]=tgt.second[(ei+2)%3];
+          fl_tgt[(hid+2)%3]=tgt.second[ei];
           tgt=std::make_pair(face(new_htgt, tmesh), fl_tgt);
         }
       }
@@ -2675,6 +2675,7 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
     {
       std::cout << "  - " << edge(h,tmesh) << "\n";
     }
+    std::cout <<  "  Updated src/tgt " << construct_point(src, tmesh) << " | " << construct_point(tgt, tmesh) << "\n";
   }
 #endif
 
