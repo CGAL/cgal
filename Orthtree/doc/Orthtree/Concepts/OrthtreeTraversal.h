@@ -3,7 +3,7 @@
   \ingroup PkgOrthtreeConcepts
   \cgalConcept
 
-  \brief Requirements for defining a traversal strategie of an orthtree.
+  \brief Requirements for defining a traversal strategy of an orthtree.
 
   \cgalHasModelsBegin
   \cgalHasModels{CGAL::Orthtrees::Preorder_traversal}
