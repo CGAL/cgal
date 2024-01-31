@@ -587,14 +587,16 @@ struct Locally_shortest_path_imp
 #ifdef CGAL_DEBUG_BSURF
       std::cout << "  Current strip with Apex: " << get(vpm, new_vertex) <<  "\n";
       std::cout << "  is_target? " << is_target << "\n";
+      std::cout << "  -- path --\n";
       for (auto h : path)
       {
         std::cout << "  4 " << get(vpm, source(h, mesh))
                   << "  " << get(vpm, target(h, mesh))
                   << "  " << get(vpm, target(next(h, mesh), mesh))
                   << "  " << get(vpm, source(h, mesh)) << std::endl;
-
+        std::cout << edge(h, mesh) << std::endl;
       }
+      std::cout << "  ----------\n";
 #endif
 
       // if I hit the source vertex v of h_curr, then h_next has v as source, thus we turn ccw around v in path
@@ -666,11 +668,11 @@ struct Locally_shortest_path_imp
           h_loop=opposite(prev(h_loop,mesh), mesh);
         }
 
-        do {
+        while(target_face!=face(h_loop, mesh))
+        {
           new_hedges.push_back(h_loop);
           h_loop=opposite(prev(h_loop,mesh), mesh);
         }
-        while(target_face!=face(h_loop, mesh));
 
         // don't pick last h_loop is tgt is visible on the other side of it
         const int ktgt = is_on_hedge(tgt,h_loop);
@@ -737,11 +739,12 @@ struct Locally_shortest_path_imp
           h_loop=opposite(next(h_loop,mesh), mesh);
         }
 
-        do {
+        while(target_face!=face(h_loop, mesh))
+        {
           new_hedges.push_back(h_loop);
           h_loop=opposite(next(h_loop,mesh), mesh);
         }
-        while(target_face!=face(h_loop, mesh));
+
 
         // don't pick last h_loop is tgt is visible on the other side of it
         const int ktgt = is_on_hedge(tgt,h_loop);
@@ -770,6 +773,19 @@ struct Locally_shortest_path_imp
       new_path.insert(new_path.end(), new_hedges.begin(), new_hedges.end());
       new_path.insert(new_path.end(), path.begin()+curr_index, path.end());
       path.swap(new_path);
+
+#ifdef CGAL_DEBUG_BSURF
+      std::cout << "  -- new path --\n";
+      for (auto h : path)
+      {
+        std::cout << "  4 " << get(vpm, source(h, mesh))
+                  << "  " << get(vpm, target(h, mesh))
+                  << "  " << get(vpm, target(next(h, mesh), mesh))
+                  << "  " << get(vpm, source(h, mesh)) << std::endl;
+        std::cout << edge(h, mesh) << std::endl;
+      }
+      std::cout << "  ----------\n";
+#endif
 
       portals=unfold_strip(path,src,tgt,vpm,mesh);
       lerps=funnel(portals,index);
