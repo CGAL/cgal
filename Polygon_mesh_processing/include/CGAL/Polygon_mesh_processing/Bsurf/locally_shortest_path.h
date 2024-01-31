@@ -557,7 +557,8 @@ struct Locally_shortest_path_imp
     dump_path(path, lerps, src, tgt, mesh);
 #endif
 
-    vertex_descriptor vertex=boost::graph_traits<TriangleMesh>::null_vertex();
+    typedef boost::graph_traits<TriangleMesh> BGT;
+    vertex_descriptor vertex=BGT::null_vertex();
 
     // TODO: use a while loop breaking when no apex vertices not already visited are available
     for (std::size_t i = 0; i < portals.size() * 2 && index != std::size_t(-1); ++i)
@@ -568,9 +569,11 @@ struct Locally_shortest_path_imp
       std::cout << "tgt = " << construct_point(tgt, mesh) << "\n";
 #endif
 
-      vertex_descriptor new_vertex=boost::graph_traits<TriangleMesh>::null_vertex();
+      vertex_descriptor new_vertex=BGT::null_vertex();
       halfedge_descriptor h_curr       = path[index];
-      halfedge_descriptor h_next       = path[index + 1];
+      halfedge_descriptor h_next       = path.size()>index+1
+                                       ? path[index + 1]
+                                       : BGT::null_halfedge(); // only for debug
       bool is_target = false;
       if (lerps[index] == 0) {
         new_vertex = target(h_curr,mesh);
@@ -583,6 +586,7 @@ struct Locally_shortest_path_imp
 
 #ifdef CGAL_DEBUG_BSURF
       std::cout << "  Current strip with Apex: " << get(vpm, new_vertex) <<  "\n";
+      std::cout << "  is_target? " << is_target << "\n";
       for (auto h : path)
       {
         std::cout << "  4 " << get(vpm, source(h, mesh))
@@ -596,11 +600,8 @@ struct Locally_shortest_path_imp
       // if I hit the source vertex v of h_curr, then h_next has v as source, thus we turn ccw around v in path
       // Similarly, if I hit the target vertex v of h_curr, then  h_next has v as target, thus we turn cw around v in path
 
-      if ( !(!is_target || opposite(next(h_curr, mesh), mesh)==h_next) )
-        std::cout <<  edge(h_curr, mesh) << " |  " << edge(opposite(next(h_curr, mesh), mesh), mesh) << " vs " << edge(h_next, mesh) << "\n";
-
-      CGAL_assertion(!is_target || opposite(next(h_curr, mesh), mesh)==h_next);
-      CGAL_assertion(is_target || opposite(prev(h_curr, mesh), mesh)==h_next);
+      CGAL_assertion(BGT::null_halfedge()==h_next || !is_target || opposite(next(h_curr, mesh), mesh)==h_next);
+      CGAL_assertion(BGT::null_halfedge()==h_next || is_target || opposite(prev(h_curr, mesh), mesh)==h_next);
 
       std::size_t curr_index = index+1;
       std::vector<halfedge_descriptor> new_hedges;
@@ -624,18 +625,25 @@ struct Locally_shortest_path_imp
       {
         face_descriptor target_face;
 
-        while (target(path[curr_index], mesh) == new_vertex)
+        if (curr_index == path.size())
         {
-          if(curr_index==path.size()-1)
-          {
-            target_face=tgt.first;
-            curr_index=path.size();
-            break;
-          }
-          ++curr_index;
+          target_face=tgt.first;
         }
-        if (curr_index != path.size())
-          target_face = face(opposite(path[curr_index], mesh), mesh);
+        else
+        {
+          while (target(path[curr_index], mesh) == new_vertex)
+          {
+            if(curr_index==path.size()-1)
+            {
+              target_face=tgt.first;
+              curr_index=path.size();
+              break;
+            }
+            ++curr_index;
+          }
+          if (curr_index != path.size())
+            target_face = face(opposite(path[curr_index], mesh), mesh);
+        }
 
         halfedge_descriptor h_loop=opposite(prev(opposite(h_curr, mesh), mesh), mesh);
 
@@ -684,28 +692,30 @@ struct Locally_shortest_path_imp
         }
         else
           new_hedges.push_back(h_loop);
-
-
-
-
       }
       else
       {
         face_descriptor target_face;
 
-        while (source(path[curr_index], mesh) == new_vertex)
+        if (curr_index == path.size())
         {
-          if(curr_index==path.size()-1)
-          {
-            target_face=tgt.first;
-            curr_index=path.size();
-            break;
-          }
-          ++curr_index;
+          target_face=tgt.first;
         }
-        if (curr_index != path.size())
-          target_face=face(opposite(path[curr_index], mesh), mesh);
-
+        else
+        {
+          while (source(path[curr_index], mesh) == new_vertex)
+          {
+            if(curr_index==path.size()-1)
+            {
+              target_face=tgt.first;
+              curr_index=path.size();
+              break;
+            }
+            ++curr_index;
+          }
+          if (curr_index != path.size())
+            target_face=face(opposite(path[curr_index], mesh), mesh);
+        }
         halfedge_descriptor h_loop=opposite(next(opposite(h_curr, mesh), mesh), mesh); // skip the face before h_curr (as we won't remove it from path)
 
         // don't pick first h_loop if src is visible on the other side of it
@@ -2675,6 +2685,8 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
     {
       std::cout << "  - " << edge(h,tmesh) << "\n";
     }
+    std::cout << "  src=" << src.first << " ("<< src.second[0] << "," << src.second[1] << "," << src.second[2] << ")\n";
+    std::cout << "  tgt=" << tgt.first << " ("<< tgt.second[0] << "," << tgt.second[1] << "," << tgt.second[2] << ")\n";
     std::cout <<  "  Updated src/tgt " << construct_point(src, tmesh) << " | " << construct_point(tgt, tmesh) << "\n";
   }
 #endif
