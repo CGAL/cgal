@@ -20,7 +20,9 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   if ( WIN32 )
     find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
     if(CMAKE_UNAME)
-      exec_program(uname ARGS -s OUTPUT_VARIABLE CMAKE_SYSTEM_NAME2)
+      execute_process(COMMAND uname -s
+                      OUTPUT_STRIP_TRAILING_WHITESPACE
+                      OUTPUT_VARIABLE CMAKE_SYSTEM_NAME2)
       if ( CMAKE_SYSTEM_NAME2 MATCHES "CYGWIN" )
         message( STATUS "This is the Windows CMake running within the cygwin platform." )
         set( CGAL_WIN32_CMAKE_ON_CYGWIN TRUE CACHE INTERNAL "This is the cygwin platform." )

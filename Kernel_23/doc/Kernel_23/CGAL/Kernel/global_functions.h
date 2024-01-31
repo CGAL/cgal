@@ -2691,6 +2691,42 @@ const CGAL::Point_3<Kernel>& r);
 /// \defgroup squared_distance_grp CGAL::squared_distance()
 /// \ingroup kernel_global_function
 
+/// \defgroup squared_length_grp CGAL::squared_length()
+/// \ingroup kernel_global_function
+
+/// @{
+
+/*!
+compute the squared length of vector `v`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Vector_2<Kernel>& v);
+
+/*!
+compute the squared length of segment `s`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Segment_2<Kernel>& s);
+
+/*!
+compute the squared length of vector `v`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Vector_3<Kernel>& v);
+
+/*!
+compute the squared length of segment `s`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Segment_3<Kernel>& s);
+
+/// @}
+
+
 /// \defgroup squared_radius_grp CGAL::squared_radius()
 /// \ingroup kernel_global_function
 /// \sa `Circle_2<Kernel>_grp`

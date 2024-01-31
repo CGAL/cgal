@@ -40,7 +40,7 @@
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Arr_default_dcel.h>
-#include <CGAL/Arr_observer.h>
+#include <CGAL/Aos_observer.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/function_objects.h>
@@ -109,8 +109,11 @@ public:
   typedef typename Topology_traits::Dcel            Dcel;
   typedef typename Dcel::Size                       Size;
 
+  using Observer = Aos_observer<Self>;
+  using Base_aos = Self;
+
 protected:
-  friend class Arr_observer<Self>;
+  friend class Aos_observer<Self>;
   friend class Arr_accessor<Self>;
 
   // Internal DCEL types:
@@ -892,7 +895,6 @@ protected:
   typedef CGAL_ALLOCATOR(Point_2)                 Points_alloc;
   typedef CGAL_ALLOCATOR(X_monotone_curve_2)      Curves_alloc;
 
-  typedef Arr_observer<Self>                      Observer;
   typedef std::list<Observer*>                    Observers_container;
   typedef typename Observers_container::iterator  Observers_iterator;
 

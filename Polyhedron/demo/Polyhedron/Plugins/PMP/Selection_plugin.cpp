@@ -111,7 +111,7 @@ public:
         ok = false;
         return QList<Scene_item*>();
       }
-      item->setName(fileinfo.baseName());
+      item->setName(fileinfo.completeBaseName());
       ok = true;
       if(add_to_scene)
         CGAL::Three::Three::scene()->addItem(item);
