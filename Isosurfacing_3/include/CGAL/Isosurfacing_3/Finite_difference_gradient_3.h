@@ -91,7 +91,9 @@ public:
     const FT gy = (m_func(p2) - m_func(p3)) * m_den;
     const FT gz = (m_func(p4) - m_func(p5)) * m_den;
 
-    return vector(gx, gy, gz);
+    const FT n = CGAL::approximate_sqrt(CGAL::square(gx) + CGAL::square(gy) + CGAL::square(gz));
+
+    return vector(gx / n, gy / n, gz / n);
   }
 };
 
