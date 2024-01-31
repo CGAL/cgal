@@ -1,10 +1,11 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/generators.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
 #include <iostream>

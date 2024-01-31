@@ -1,8 +1,8 @@
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/refine_mesh_at_isolevel.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <fstream>
 #include <iostream>
