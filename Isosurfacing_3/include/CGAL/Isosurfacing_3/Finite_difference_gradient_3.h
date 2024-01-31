@@ -26,11 +26,8 @@ namespace Isosurfacing {
  *          that are a given distance `delta` away from the queried point along the %Cartesian axes.
  *
  * \tparam GeomTraits must be a model of `Kernel`.
- * \tparam PointFunction the type of the implicit function. It must be a model of `CopyConstructible` and implement
- *                       `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
  */
-template <typename GeomTraits,
-          typename PointFunction>
+template <typename GeomTraits>
 class Finite_difference_gradient_3
 {
 public:
@@ -39,11 +36,9 @@ public:
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
 
-  using Point_function = PointFunction;
-
 private:
-  const Point_function m_func;
-  const FT m_delta, m_den;
+  const std::function<FT(const Point_3&)> m_function;
+  const FT m_delta, m_half_step_inv;
 
   const GeomTraits m_gt;
 
@@ -51,16 +46,20 @@ public:
   /**
    * \brief creates a new instance of this gradient.
    *
+   * \tparam ValueFunction the type of the implicit function. It must be a model of `CopyConstructible`
+   *                       and implement `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
+   *
    * \param func the implicit function giving the value of the implicit function at each discretization point
    * \param delta the distance for calculating the finite differences
    * \param gt the geometric traits class
    */
-  Finite_difference_gradient_3(const Point_function& func,
+  template <typename ValueFunction>
+  Finite_difference_gradient_3(const ValueFunction& function,
                                const FT delta = 0.001,
                                const Geom_traits& gt = Geom_traits())
-    : m_func{func},
+    : m_function{function},
       m_delta{delta},
-      m_den{FT{1} / (FT{2} * m_delta)},
+      m_half_step_inv{FT{1} / (FT{2} * m_delta)},
       m_gt{gt}
   { }
 
@@ -80,6 +79,7 @@ public:
     // compute the gradient by sampling the function with finite differences
     // at six points with distance delta around the query point
     const FT x = x_coord(p), y = y_coord(p), z = z_coord(p);
+
     const Point_3 p0 = point(x + m_delta, y, z);
     const Point_3 p1 = point(x - m_delta, y, z);
     const Point_3 p2 = point(x, y + m_delta, z);
@@ -87,9 +87,9 @@ public:
     const Point_3 p4 = point(x, y, z + m_delta);
     const Point_3 p5 = point(x, y, z - m_delta);
 
-    const FT gx = (m_func(p0) - m_func(p1)) * m_den;
-    const FT gy = (m_func(p2) - m_func(p3)) * m_den;
-    const FT gz = (m_func(p4) - m_func(p5)) * m_den;
+    const FT gx = (m_function(p0) - m_function(p1)) * m_half_step_inv;
+    const FT gy = (m_function(p2) - m_function(p3)) * m_half_step_inv;
+    const FT gz = (m_function(p4) - m_function(p5)) * m_half_step_inv;
 
     const FT n = CGAL::approximate_sqrt(CGAL::square(gx) + CGAL::square(gy) + CGAL::square(gz));
 
