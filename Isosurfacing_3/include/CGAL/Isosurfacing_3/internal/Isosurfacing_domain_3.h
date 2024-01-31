@@ -124,21 +124,21 @@ public:
   }
 
   // iterates over all vertices `v`, calling `f(v)` on each of them
-  template <typename ConcurrencyTag, typename Functor>
+  template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_vertex(Functor& f) const
   {
     m_topo.for_each_vertex(f, ConcurrencyTag{});
   }
 
   // iterates over all edges `e`, calling `f(e)` on each of them
-  template <typename ConcurrencyTag, typename Functor>
+  template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_edge(Functor& f) const
   {
     m_topo.for_each_edge(f, ConcurrencyTag{});
   }
 
   // iterates over all cells `c`, calling `f(c)` on each of them
-  template <typename ConcurrencyTag, typename Functor>
+  template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_cell(Functor& f) const
   {
     m_topo.for_each_cell(f, ConcurrencyTag{});
