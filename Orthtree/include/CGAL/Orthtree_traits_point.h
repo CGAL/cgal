@@ -42,9 +42,7 @@ void reassign_points(
   auto split_point = std::partition(
     points.begin(), points.end(),
     [&](const auto& p) -> bool {
-      // This should be done with cartesian iterator,
-      // but it seems complicated to do efficiently
-      return traits.locate_halfspace_object()(get(point_map, p)[int(dimension)], center[int(dimension)]);
+      return (get(point_map, p)[int(dimension)] < center[int(dimension)]);
     }
   );
 
