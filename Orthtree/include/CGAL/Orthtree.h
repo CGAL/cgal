@@ -986,7 +986,7 @@ public:
     std::size_t node_depth = depth(n);
     // the barycenter is computed as the lower corner of the lexicographically top child node
     std::array<FT, dimension> bary;
-    for (std::size_t i = 0; i < dimension; i++)
+    for (int i = 0; i < dimension; i++)
       bary[i] = compute_cartesian_coordinate(2 * global_coordinates(n)[i]+1, node_depth+1, i);
 
     return std::apply(m_traits.construct_point_d_object(), bary);
