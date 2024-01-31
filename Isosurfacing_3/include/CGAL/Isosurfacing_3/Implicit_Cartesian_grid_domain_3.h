@@ -79,16 +79,18 @@ private:
     const FT y_span = y_coord(max_p) - y_coord(min_p);
     const FT z_span = z_coord(max_p) - z_coord(min_p);
 
-    Topology topo { std::ceil(x_span / x_coord(spacing)) + 1,
-                    std::ceil(y_span / y_coord(spacing)) + 1,
-                    std::ceil(z_span / z_coord(spacing)) + 1 };
+    const std::size_t x_dim = std::ceil(x_span / x_coord(spacing)) + 1;
+    const std::size_t y_dim = std::ceil(y_span / y_coord(spacing)) + 1;
+    const std::size_t z_dim = std::ceil(z_span / z_coord(spacing)) + 1;
+
+    Topology topology { x_dim, y_dim, z_dim };
 
     const Vector_3 offset = vector(x_coord(min_p), y_coord(min_p), z_coord(min_p));
-    Geometry geom { offset, spacing };
+    Geometry geometry { offset, spacing };
 
-    Function func { geom, point_function };
+    Function func { geometry, point_function };
 
-    return { topo, geom, func, gradient, gt };
+    return { topology, geometry, func, gradient, gt };
   }
 
 public:
