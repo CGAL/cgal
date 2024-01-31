@@ -62,7 +62,7 @@ struct CDT_options
 {
   int verbose = 0;
   bool quiet = false;
-  bool merge_facets = false;
+  bool merge_facets = true;
   bool merge_facets_old_method = false;
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
@@ -85,7 +85,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   output.off: output mesh
 
   -V/--verbose: verbose (can be used several times)
-  --merge-facets: merge facets into patches (unset by default)
+  --merge-facets/--no-merge-facets: merge facets into patches (set by default)
   --ratio <double>: ratio of faces to remove (default: 0)
   --failure-expression <expression>: expression to detect bad mesh (to use with --ratio)
   --dump-patches-after-merge <filename.ply>: dump patches after merging facets in PLY
@@ -113,6 +113,8 @@ int main(int argc, char* argv[])
     std::string arg = argv[i];
     if(arg == "--merge-facets") {
       options.merge_facets = true;
+    } else if(arg == "--no-merge-facets") {
+      options.merge_facets = false;
     } else if(arg == "--merge-facets-old") {
       options.merge_facets = true;
       options.merge_facets_old_method = true;

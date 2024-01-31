@@ -80,6 +80,7 @@ function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
   endif()
   add_test(NAME "execution   of  cdt_3_from_off ${data_name}"
       COMMAND cdt_3_from_off
+      --no-merge-facets
       ${data_dir}/${data_filename}
       ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}.off)
   if(MY_ONLY_MERGE_FACETS)
