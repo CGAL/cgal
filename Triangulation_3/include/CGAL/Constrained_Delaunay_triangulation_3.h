@@ -1151,8 +1151,8 @@ private:
       const auto intersecting_edge = intersecting_edges[i];
       const auto [v_above, v_below] = tr.vertices(intersecting_edge);
 #if CGAL_CDT_3_DEBUG_REGION
-      std::cerr << std::format("restore_subface_region face index: {}, region #{}, Edge #{:6}: ({} , {})\n",
-                                face_index, region_count, i,
+      std::cerr << std::format("restore_subface_region face index: {}, region #{}, Edge #{}: ({} , {})\n",
+                                face_index, region_index, i,
                                 IO::oformat(v_above, with_point),
                                 IO::oformat(v_below, with_point));
 #endif // CGAL_CDT_3_DEBUG_REGION
@@ -2094,8 +2094,8 @@ private:
 #if CGAL_DEBUG_CDT_3 & 128 && __has_include(<format>)
       std::cerr << std::format("Edge is 3D: {:6}  ({} , {})\n",
                                 is_3d,
-                                IO::oformat(this->point(va_3d)),
-                                IO::oformat(this->point(vb_3d)));
+                                IO::oformat(va_3d, with_point_and_info),
+                                IO::oformat(vb_3d, with_point_and_info));
 #endif // CGAL_DEBUG_CDT_3
       CGAL_assertion(is_3d || !cdt_2.is_constrained(edge));
       fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;

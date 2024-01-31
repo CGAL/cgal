@@ -385,8 +385,8 @@ public:
 #if CGAL_DEBUG_CDT_3 & 128 && __has_include(<format>)
                          std::cerr << std::format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
                                                   is_edge,
-                                                  CGAL::IO::oformat(this->point(va)),
-                                                  CGAL::IO::oformat(this->point(vb)));
+                                                  CGAL::IO::oformat(va, with_point_and_info),
+                                                  CGAL::IO::oformat(vb, with_point_and_info));
 #endif // CGAL_DEBUG_CDT_3
                          return is_edge;
                        });
