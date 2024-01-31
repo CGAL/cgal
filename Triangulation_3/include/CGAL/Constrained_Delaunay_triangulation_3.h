@@ -984,7 +984,7 @@ private:
   }
 
   auto brute_force_border_3_of_region([[maybe_unused]] CDT_3_face_index face_index,
-                                      [[maybe_unused]] int region_count,
+                                      [[maybe_unused]] int region_index,
                                       [[maybe_unused]] const CDT_2& cdt_2,
                                       const std::vector<CDT_2_face_handle>& fh_region)
   {
@@ -1257,12 +1257,12 @@ private:
   using Conforming_Dt::with_point_and_info;
 
   template <typename Fh_region>
-  void restore_subface_region(CDT_3_face_index face_index, int region_count,
+  void restore_subface_region(CDT_3_face_index face_index, int region_index,
                               CDT_2& non_const_cdt_2, Fh_region& non_const_fh_region)
   {
     const auto& cdt_2 = non_const_cdt_2;
     const auto& fh_region = non_const_fh_region;
-    const auto border_edges = brute_force_border_3_of_region(face_index, region_count, cdt_2, fh_region);
+    const auto border_edges = brute_force_border_3_of_region(face_index, region_index, cdt_2, fh_region);
     const auto region_vertices = std::invoke([&]() {
       std::set<Vertex_handle> vertices;
       for(const auto fh_2d: fh_region) {
@@ -1319,25 +1319,37 @@ private:
         const auto v1 = fh_region[0]->vertex(cdt_2.ccw(diagonal_index))->info().vertex_handle_3d;
         const auto v2 = fh_region[0]->vertex(cdt_2.cw(diagonal_index))->info().vertex_handle_3d;
         const auto v3 = fh_region[1]->vertex(fh_region[1]->index(fh_region[0]))->info().vertex_handle_3d;
-        if(tr.is_facet(v0, v1, v3) && tr.is_facet(v0, v3, v2)) {
-          std::cerr << "NOTE: the other diagonal is in the 3D triangulation: flip the edge\n";
-          non_const_cdt_2.flip(non_const_fh_region[0], diagonal_index);
-          for(auto fh : fh_region) {
-            for(int i = 0; i < 3; ++i) {
-              const auto mirror_edge = cdt_2.mirror_edge({fh, i});
-              fh->set_constraint(i, mirror_edge.first->is_constrained(mirror_edge.second));
+        if(tr.is_facet(v0, v1, v3) && tr.is_facet(v0, v3, v2))
+        {
+          if(cdt_2.orientation(v0->point(), v1->point(), v3->point()) == CGAL::POSITIVE &&
+             cdt_2.orientation(v0->point(), v3->point(), v2->point()) == CGAL::POSITIVE)
+          {
+            std::cerr << "NOTE: the other diagonal is in the 3D triangulation: flip the edge\n";
+            non_const_cdt_2.flip(non_const_fh_region[0], diagonal_index);
+            for(auto fh : fh_region) {
+              for(int i = 0; i < 3; ++i) {
+                const auto mirror_edge = cdt_2.mirror_edge({fh, i});
+                fh->set_constraint(i, mirror_edge.first->is_constrained(mirror_edge.second));
+              }
+              int i, j, k;
+              Cell_handle c;
+              [[maybe_unused]] bool fh_is_3d_facet = tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
+                                                                fh->vertex(1)->info().vertex_handle_3d,
+                                                                fh->vertex(2)->info().vertex_handle_3d,
+                                                                c, i, j, k);
+              CGAL_assertion(fh_is_3d_facet);
+              set_facet_constrained({c, 6-i-j-k}, face_index, fh);
+              fh->info().missing_subface = false;
             }
-            int i, j, k;
-            Cell_handle c;
-            [[maybe_unused]] bool fh_is_3d_facet = tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
-                                                               fh->vertex(1)->info().vertex_handle_3d,
-                                                               fh->vertex(2)->info().vertex_handle_3d,
-                                                               c, i, j, k);
-            CGAL_assertion(fh_is_3d_facet);
-            set_facet_constrained({c, 6-i-j-k}, face_index, fh);
-            fh->info().missing_subface = false;
+            return true;
+          } else {
+            std::cerr << "NOTE: the other diagonal is in the 3D triangulation BUT the edge is not flippable!\n";
+            std::cerr << "  The region " << region_index << " of face #F" << face_index << " has four points:\n";
+            std::cerr << "    v0: " << v0->point() << '\n';
+            std::cerr << "    v1: " << v1->point() << '\n';
+            std::cerr << "    v2: " << v2->point() << '\n';
+            std::cerr << "    v3: " << v3->point() << '\n';
           }
-          return true;
         }
 
 #if __has_include(<format>) && \
@@ -1359,7 +1371,7 @@ private:
         {
           std::cerr << std::format(
               "NOTE: In polygon #{}, region {}, the 4 vertices are co-circular in the 2D triangulation\n",
-              face_index, region_count);
+              face_index, region_index);
         }
         if(CGAL::coplanar(
                (*region_border_vertices.begin())->point(),
@@ -1368,7 +1380,7 @@ private:
                (*std::next(region_border_vertices.begin(), 3))->point()))
         {
           std::cerr << std::format("NOTE: In polygon #{}, region {}, the 4 vertices are coplanar\n",
-                                   face_index, region_count);
+                                   face_index, region_index);
           if(CGAL::coplanar_side_of_bounded_circle(
                (*region_border_vertices.begin())->point(),
                (*std::next(region_border_vertices.begin()))->point(),
@@ -1377,7 +1389,7 @@ private:
           {
             std::cerr << std::format(
                 "NOTE: In polygon #{}, region {}, the 4 vertices are co-circular in the 3D triangulation\n",
-                face_index, region_count);
+                face_index, region_index);
           }
         }
 #endif // __has_include(<format>) && (__cpp_lib_format >= 201907L || __cplusplus >= 202000L || _MSVC_LANG >= 202000L)
@@ -1407,11 +1419,11 @@ private:
       // }
       // {
       //   dump_edge_link(std::string("dump_around_edge_") + std::to_string(face_index) + "_" +
-      //                  std::to_string(region_count) + ".polylines.txt", border_edges[0]);
+      //                  std::to_string(region_index) + ".polylines.txt", border_edges[0]);
       //   std::ofstream dump(std::string("dump_no_segment_found_") + std::to_string(face_index) + "_" +
-      //                      std::to_string(region_count) + ".binary.cgal");
+      //                      std::to_string(region_index) + ".binary.cgal");
       //   CGAL::IO::save_binary_file(dump, *this);
-      //   dump_region(face_index, region_count, cdt_2);
+        dump_region(face_index, region_index, cdt_2);
       // }
       throw Next_region{"No segment found", fh_region[0]};
     }
@@ -1420,7 +1432,7 @@ private:
     const auto first_intersecting_edge = *found_edge_opt;
     const auto [intersecting_edges, original_intersecting_cells, original_vertices_of_upper_cavity,
                 original_vertices_of_lower_cavity, original_facets_of_upper_cavity, original_facets_of_lower_cavity] =
-        construct_cavities(face_index, region_count, cdt_2, fh_region, region_border_vertices, region_vertices,
+        construct_cavities(face_index, region_index, cdt_2, fh_region, region_border_vertices, region_vertices,
                            first_intersecting_edge);
 
     const std::set<Point_3> polygon_points = std::invoke([&](){
@@ -1454,17 +1466,17 @@ private:
                              original_facets_of_lower_cavity.size());
     if(original_intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
       std::cerr << "!! Interesting case !!\n";
-      // dump_region(face_index, region_count, cdt_2);
+      // dump_region(face_index, region_index, cdt_2);
       // {
       //   std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + "_" +
-      //                     std::to_string(region_count) + ".polylines.txt");
+      //                     std::to_string(region_index) + ".polylines.txt");
       //   out.precision(17);
       //   for(auto edge: intersecting_edges) {
       //     write_segment(out, edge);
       //   }
       // }
-      // dump_facets_of_cavity(face_index, region_count, "lower", original_facets_of_lower_cavity);
-      // dump_facets_of_cavity(face_index, region_count, "upper", original_facets_of_upper_cavity);
+      // dump_facets_of_cavity(face_index, region_index, "lower", original_facets_of_lower_cavity);
+      // dump_facets_of_cavity(face_index, region_index, "upper", original_facets_of_upper_cavity);
     }
 #endif // CGAL_DEBUG_CDT_3
     auto register_internal_constrained_facet = [this](Facet f) { this->register_facet_to_be_constrained(f); };
@@ -1522,16 +1534,16 @@ private:
     })) {
       if(this->debug_missing_region()) {
         // debug_region_size_4();
-        dump_region(face_index, region_count, cdt_2);
+        dump_region(face_index, region_index, cdt_2);
         std::for_each(fh_region.begin(), fh_region.end(), [](auto fh) { fh->info().is_in_region = 3; });
-        // dump_3d_triangulation(face_index, region_count, "lower", lower_cavity_triangulation);
-        // dump_3d_triangulation(face_index, region_count, "upper", upper_cavity_triangulation);
-        auto dump_facets_of_cavity_border = [&](CDT_3_face_index face_index, int region_count, std::string type,
+        // dump_3d_triangulation(face_index, region_index, "lower", lower_cavity_triangulation);
+        // dump_3d_triangulation(face_index, region_index, "upper", upper_cavity_triangulation);
+        auto dump_facets_of_cavity_border = [&](CDT_3_face_index face_index, int region_index, std::string type,
                                                 const auto& cavity_triangulation) {
           std::ofstream out(std::string("dump_plane_facets_of_region_") + std::to_string(face_index) + "_" +
-                            std::to_string(region_count) + "_" + type + ".off");
+                            std::to_string(region_index) + "_" + type + ".off");
           std::ofstream other_out(std::string("dump_non_plane_facets_of_region_") + std::to_string(face_index) + "_" +
-                            std::to_string(region_count) + "_" + type + ".off");
+                            std::to_string(region_index) + "_" + type + ".off");
           out.precision(17);
           other_out.precision(17);
 
@@ -1548,8 +1560,8 @@ private:
           write_facets(out, cavity_triangulation, border_faces);
           write_facets(other_out, cavity_triangulation, non_border_faces);
         };
-        dump_facets_of_cavity_border(face_index, region_count, "lower", lower_cavity_triangulation);
-        dump_facets_of_cavity_border(face_index, region_count, "upper", upper_cavity_triangulation);
+        dump_facets_of_cavity_border(face_index, region_index, "lower", lower_cavity_triangulation);
+        dump_facets_of_cavity_border(face_index, region_index, "upper", upper_cavity_triangulation);
       }
       throw Next_region{"missing facet in polygon", fh_region[0]};
     }
@@ -2103,7 +2115,7 @@ private:
       reverse_edge.first->info().is_edge_also_in_3d_triangulation[unsigned(reverse_edge.second)] = is_3d;
     }
     std::set<CDT_2_face_handle> processed_faces;
-    int region_count = 0;
+    int region_index = 0;
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
       if(false == fh->info().missing_subface) {
@@ -2125,10 +2137,10 @@ private:
       auto fh_region = region(cdt_2, fh);
       processed_faces.insert(fh_region.begin(), fh_region.end());
       try {
-        restore_subface_region(face_index, region_count++, non_const_cdt_2, fh_region);
+        restore_subface_region(face_index, region_index++, non_const_cdt_2, fh_region);
       }
       catch(Next_region& e) {
-        std::cerr << "NOTE: " << e.what() << " in sub-region " << (region_count - 1)
+        std::cerr << "NOTE: " << e.what() << " in sub-region " << (region_index - 1)
                   << " of face #F" << face_index << '\n';
 #if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
         std::cerr << "  constrained edges are:\n";
@@ -2310,12 +2322,12 @@ public:
   }
 
   void dump_3d_triangulation(CDT_3_face_index face_index,
-                             int region_count,
+                             int region_index,
                              std::string type,
                              const Constrained_Delaunay_triangulation_3& tr)
   {
     std::ofstream dump(std::string("dump_") + type + "_cavity_" + std::to_string(face_index) + "_" +
-                       std::to_string(region_count) + ".off");
+                       std::to_string(region_index) + ".off");
     dump.precision(17);
     write_3d_triangulation_to_OFF(dump, tr);
   }
@@ -2325,15 +2337,15 @@ public:
     CGAL::IO::save_binary_file(dump, *this);
   }
 
-  void dump_region(CDT_3_face_index face_index, int region_count, const CDT_2& cdt_2) {
+  void dump_region(CDT_3_face_index face_index, int region_index, const CDT_2& cdt_2) {
     std::ofstream dump_region(std::string("dump_region_") + std::to_string(face_index) + "_" +
-                              std::to_string(region_count) + ".off");
+                              std::to_string(region_index) + ".off");
     write_region_to_OFF(dump_region, cdt_2);
   }
 
-  void dump_region(CDT_3_face_index face_index, int region_count) {
+  void dump_region(CDT_3_face_index face_index, int region_index) {
     const auto& cdt_2 = face_cdt_2[face_index];
-    dump_region(face_index, region_count, cdt_2);
+    dump_region(face_index, region_index, cdt_2);
   }
 
   void write_triangle(std::ostream &out,
@@ -2404,11 +2416,11 @@ public:
   }
 
   template <typename Facets_range>
-  void dump_facets_of_cavity(CDT_3_face_index face_index, int region_count, std::string type,
+  void dump_facets_of_cavity(CDT_3_face_index face_index, int region_index, std::string type,
                              const Facets_range& facets_range)
   {
     std::ofstream out(std::string("dump_facets_of_region_") + std::to_string(face_index) + "_" +
-                      std::to_string(region_count) + "_" + type + ".off");
+                      std::to_string(region_index) + "_" + type + ".off");
     out.precision(17);
     write_facets(out, *this, facets_range);
   }
