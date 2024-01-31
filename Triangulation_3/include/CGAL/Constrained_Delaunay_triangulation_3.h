@@ -1026,8 +1026,8 @@ private:
   {
     const auto vc = cell->vertex(index_vd);
     const auto vd = cell->vertex(index_vc);
-    if(vc->is_Steiner_vertex_on_edge() && vc->is_marked()) return 0; // vertex marked of the border
-    if(vd->is_Steiner_vertex_on_edge() && vd->is_marked()) return 0; // vertex marked of the border
+    if(!vd->is_Steiner_vertex_in_face() && vd->is_marked()) return 0; // vertex marked of the border
+    if(!vc->is_Steiner_vertex_in_face() && vc->is_marked()) return 0; // vertex marked of the border
     const auto pc = this->point(vc);
     const auto pd = this->point(vd);
     const typename Geom_traits::Segment_3 seg{pc, pd};
