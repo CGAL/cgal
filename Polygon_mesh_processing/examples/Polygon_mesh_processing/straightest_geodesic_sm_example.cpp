@@ -33,8 +33,8 @@ int main(int argc, char** argv)
   std::size_t nb_faces = faces(mesh).size();
 
   // take two random faces and pick the centroid
-  //CGAL::Random rnd = CGAL::get_default_random();
-   CGAL::Random rnd(1706709591);
+  CGAL::Random rnd = CGAL::get_default_random();
+  //CGAL::Random rnd(1706709591);
 
   std::cout << "seed " << rnd.get_seed() << std::endl;
   Mesh::Face_index f = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));
