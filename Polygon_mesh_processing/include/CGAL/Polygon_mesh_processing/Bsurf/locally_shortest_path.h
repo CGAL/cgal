@@ -32,15 +32,24 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+template <class FT>
+struct Dual_geodesic_solver;
+#endif
+
 template <class FT, class TriangleMesh, class EdgeLocationRange>
 void locally_shortest_path(Face_location<TriangleMesh, FT> src,
                            Face_location<TriangleMesh, FT> tgt,
                            const TriangleMesh &tmesh,
-                           EdgeLocationRange &edge_locations);
+                           EdgeLocationRange &edge_locations
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+                           , const Dual_geodesic_solver<FT>& solver = Dual_geodesic_solver<FT>()
+#endif
+);
+
 
 template <class TriangleMesh, class FT>
 using Bezier_segment = std::array<Face_location<TriangleMesh, FT>, 4>;
-
 
 template <typename FT, typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
@@ -586,9 +595,11 @@ struct Locally_shortest_path_imp
 
       vertex_descriptor new_vertex=BGT::null_vertex();
       halfedge_descriptor h_curr       = path[index];
+      CGAL_assertion_code(
       halfedge_descriptor h_next       = path.size()>index+1
                                        ? path[index + 1]
-                                       : BGT::null_halfedge(); // only for debug
+                                       : BGT::null_halfedge();
+      )
       bool is_target = false;
       if (lerps[index] == 0) {
         new_vertex = target(h_curr,mesh);
@@ -1925,10 +1936,14 @@ struct Bezier_tracing_impl
   Face_location<TriangleMesh, FT>
   geodesic_lerp(const TriangleMesh &mesh,
                 const Face_location<TriangleMesh, FT>& src,
-                const Face_location<TriangleMesh, FT>& tgt,const FT& t)
+                const Face_location<TriangleMesh, FT>& tgt,const FT& t
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+               , const Dual_geodesic_solver<FT>& solver
+#endif
+  )
   {
     std::vector<Edge_location<TriangleMesh, FT>> edge_locations;
-    locally_shortest_path<FT>(src,tgt,mesh, edge_locations);
+    locally_shortest_path<FT>(src,tgt,mesh, edge_locations, solver);
     std::vector<FT> parameters=path_parameters(edge_locations,mesh,src,tgt);
     Face_location<TriangleMesh, FT> point =
       eval_point_on_geodesic(edge_locations,mesh,src,tgt,parameters,t);
@@ -1940,15 +1955,27 @@ struct Bezier_tracing_impl
   std::pair<Bezier_segment<TriangleMesh, FT>,Bezier_segment<TriangleMesh,FT>>
   subdivide_bezier_polygon(const TriangleMesh& mesh,
                            const Bezier_segment<TriangleMesh,FT>& polygon,
-                           const FT& t)
+                           const FT& t
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+                           , const Dual_geodesic_solver<FT>& solver
+#endif
+  )
   {
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+     Face_location<TriangleMesh, FT> Q0 = geodesic_lerp(mesh, polygon[0], polygon[1], t, solver);
+     Face_location<TriangleMesh, FT> Q1 = geodesic_lerp(mesh, polygon[1], polygon[2], t, solver);
+     Face_location<TriangleMesh, FT> Q2 = geodesic_lerp(mesh, polygon[2], polygon[3], t, solver);
+     Face_location<TriangleMesh, FT> R0 = geodesic_lerp(mesh, Q0, Q1, t, solver);
+     Face_location<TriangleMesh, FT> R1 = geodesic_lerp(mesh, Q1, Q2, t, solver);
+     Face_location<TriangleMesh, FT> S  = geodesic_lerp(mesh, R0, R1, t, solver);
+#else
      Face_location<TriangleMesh, FT> Q0 = geodesic_lerp(mesh, polygon[0], polygon[1], t);
      Face_location<TriangleMesh, FT> Q1 = geodesic_lerp(mesh, polygon[1], polygon[2], t);
      Face_location<TriangleMesh, FT> Q2 = geodesic_lerp(mesh, polygon[2], polygon[3], t);
      Face_location<TriangleMesh, FT> R0 = geodesic_lerp(mesh, Q0, Q1, t);
      Face_location<TriangleMesh, FT> R1 = geodesic_lerp(mesh, Q1, Q2, t);
      Face_location<TriangleMesh, FT> S  = geodesic_lerp(mesh, R0, R1, t);
-
+#endif
     return {{polygon[0], Q0, R0, S}, {S, R1, Q2, polygon[3]}};
   }
 };
@@ -1976,13 +2003,6 @@ struct Geodesic_circle_impl
       double len=DBL_MAX;
     };
     std::vector<std::vector<graph_edge>> graph;
-  };
-  struct dual_geodesic_solver {
-    struct edge {
-      int node = -1;
-      double len = DBL_MAX;
-    };
-    std::vector<std::array<edge, 3>> graph = {};
   };
 
   static
@@ -2106,7 +2126,7 @@ struct Geodesic_circle_impl
   //   }
   // }
   static
-  dual_geodesic_solver
+  Dual_geodesic_solver<FT>
   make_dual_geodesic_solver(const VertexPointMap &vpm,
                             const FaceIndexMap& tidmap,
                             const TriangleMesh &mesh)
@@ -2123,7 +2143,7 @@ struct Geodesic_circle_impl
       return sqrt((c1 - c0).squared_length());
     };
 
-    dual_geodesic_solver solver;
+    Dual_geodesic_solver<FT> solver;
     solver.graph.resize(faces(mesh).size());
     for (auto f : faces(mesh)) {
       halfedge_descriptor h=halfedge(f,mesh);
@@ -2234,10 +2254,10 @@ struct Geodesic_circle_impl
     }
   }
 
-  template <typename Update, typename Stop, typename Exit>
+  template <typename Update, typename Stop, typename Exit, typename FT>
   static
   void visit_dual_geodesic_graph(std::vector<double> &field,
-                                const dual_geodesic_solver &solver,
+                                const Dual_geodesic_solver<FT> &solver,
                                 const std::vector<int> &sources,
                                 Update &&update,
                                 Stop &&stop,
@@ -2495,9 +2515,10 @@ struct Geodesic_circle_impl
     return solve_with_targets(solver, source_nodes, target_nodes);
   }
 
+  template <class FT>
   static
   std::vector<halfedge_descriptor>
-  strip_on_dual_graph(const dual_geodesic_solver &solver,
+  strip_on_dual_graph(const Dual_geodesic_solver<FT> &solver,
                       const TriangleMesh &mesh,
                       const int src,
                       const int tgt)
@@ -2583,12 +2604,42 @@ struct Geodesic_circle_impl
 
 
 } // namespace internal
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+template <class FT>
+struct Dual_geodesic_solver
+{
+  struct Edge {
+    int node = -1;
+    FT len = DBL_MAX;
+  };
+  std::vector<std::array<Edge, 3>> graph = {};
+};
+
+template <class FT, class TriangleMesh>
+void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleMesh& tmesh)
+{
+  //TODO replace with named parameter
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type FIM;
+  typedef typename GetInitializedVertexIndexMap<TriangleMesh, parameters::Default_named_parameters>::const_type VIM;
+  const FIM fim = get_initialized_face_index_map(tmesh, parameters::default_values());
+
+  using Impl2 = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
+  solver=Impl2::make_dual_geodesic_solver(vpm, fim, tmesh);
+}
+#endif
 
 template <class FT, class TriangleMesh, class EdgeLocationRange>
 void locally_shortest_path(Face_location<TriangleMesh, FT> src,
                            Face_location<TriangleMesh, FT> tgt,
                            const TriangleMesh &tmesh,
-                           EdgeLocationRange &edge_locations)
+                           EdgeLocationRange &edge_locations
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+                           , const Dual_geodesic_solver<FT>& solver
+#endif
+)
 {
   typedef boost::graph_traits<TriangleMesh> BGT;
   typedef typename BGT::halfedge_descriptor halfedge_descriptor;
@@ -2758,11 +2809,11 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
 
   using Impl2 = typename internal::Geodesic_circle_impl<K, TriangleMesh, VPM, VIM, FIM>;
 
-  typename Impl2::dual_geodesic_solver solver = Impl2::make_dual_geodesic_solver(vpm, fim, tmesh);
-  std::vector<halfedge_descriptor> initial_path =
-    Impl2::strip_on_dual_graph(solver, tmesh, get(fim, src.first), get(fim,tgt.first));
+  std::vector<halfedge_descriptor> initial_path
+    = (solver.graph.empty())
+    ? Impl2::strip_on_dual_graph(Impl2::make_dual_geodesic_solver(vpm, fim, tmesh), tmesh, get(fim, src.first), get(fim,tgt.first))
+    : Impl2::strip_on_dual_graph(solver, tmesh, get(fim, src.first), get(fim,tgt.first));
 #endif
-
 
   CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
   CGAL_assertion(face(initial_path.back(), tmesh)==tgt.first);
@@ -2813,13 +2864,25 @@ template <class TriangleMesh, class FT>
 std::vector<Face_location<TriangleMesh, FT>>
 recursive_de_Casteljau(const TriangleMesh& mesh,
                        const Bezier_segment<TriangleMesh, FT>& control_points,
-                       const int num_subdiv)
+                       const int num_subdiv
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+                       , const Dual_geodesic_solver<FT>& solver = Dual_geodesic_solver<FT>()
+#endif
+                       )
 {
   //TODO replace with named parameter
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
   using Impl = internal::Bezier_tracing_impl<K, TriangleMesh, VPM>;
 
+  // init solver if empty
+  const Dual_geodesic_solver<FT>* solver_ptr=&solver;
+  Dual_geodesic_solver<FT> local_solver;
+  if (solver.graph.empty())
+  {
+    solver_ptr = &local_solver;
+    init_geodesic_dual_solver(local_solver, mesh);
+  }
 
   std::vector<Bezier_segment<TriangleMesh, FT>> segments(1,control_points);
   std::vector<Bezier_segment<TriangleMesh, FT>> result;
@@ -2829,7 +2892,7 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
     result.reserve(segments.size() * 2);
     for (std::size_t i = 0; i < segments.size(); ++i)
     {
-      auto [split0, split1] = Impl::subdivide_bezier_polygon(mesh, segments[i], 0.5);
+      auto [split0, split1] = Impl::subdivide_bezier_polygon(mesh, segments[i], 0.5, *solver_ptr);
       result.push_back(split0);
       result.push_back(split1);
     }

@@ -159,6 +159,10 @@ struct Locally_shortest_path_item_priv{
     last_picked_type = -1;
     QPixmap pix(":/cgal/cursors/resources/rotate_around_cursor.png");
     rotate_cursor = QCursor(pix);
+
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+    CGAL::Polygon_mesh_processing::init_geodesic_dual_solver(geodesic_solver, mesh);
+#endif
   }
 
   ~Locally_shortest_path_item_priv(){
@@ -211,6 +215,9 @@ struct Locally_shortest_path_item_priv{
   int last_picked_type;
   QCursor rotate_cursor;
   bool path_invalidated=true;
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+  CGAL::Polygon_mesh_processing::Dual_geodesic_solver<double> geodesic_solver;
+#endif
 };
 
 Locally_shortest_path_item::Locally_shortest_path_item(const CGAL::Three::Scene_interface* scene_interface,
@@ -306,7 +313,7 @@ void Locally_shortest_path_item::drawPath() const
     Face_location src = PMP::locate_with_AABB_tree(src_pt, d->aabb_tree, mesh);
     Face_location tgt = PMP::locate_with_AABB_tree(tgt_pt, d->aabb_tree, mesh);
 
-    PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
+    PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations, d->geodesic_solver);
     d->spath_item->polylines.back().clear();
     d->spath_item->polylines.back().push_back(src_pt);
     for (auto el : edge_locations)
@@ -332,7 +339,7 @@ void Locally_shortest_path_item::drawPath() const
     PMP::Bezier_segment<Mesh, double> control_points=CGAL::make_array(c1, c2, c3, c4);
 
     std::vector<Face_location> face_locations =
-      PMP::recursive_de_Casteljau(mesh, control_points, 8);
+      PMP::recursive_de_Casteljau(mesh, control_points, 8, d->geodesic_solver);
 
     // TODO: we should connect points with geodesics and not segments
     d->spath_item->polylines.back().clear();
