@@ -1844,7 +1844,7 @@ template<typename C3T3, typename SurfaceIndexMapMap,
          typename CellSelector, typename Visitor>
 std::size_t flipBoundaryEdges(
   C3T3& c3t3,
-  std::vector<typename C3T3::Edge>& boundary_edges,
+  const std::vector<typename C3T3::Edge>& boundary_edges,
   SurfaceIndexMapMap& boundary_vertices_valences,
   IncidentCellsVectorMap& inc_cells,
   const Flip_Criterion& flip_criterion,
@@ -1867,20 +1867,12 @@ std::size_t flipBoundaryEdges(
 
   for (const Edge& e : boundary_edges)
   {
-    if (c3t3.is_in_complex(e))
-      continue;
-    else
+    if (!c3t3.is_in_complex(e))
       candidate_edges_for_flip.push_back(make_vertex_pair(e));
   }
 
-//  double min_angle = min_dihedral_angle(c3t3);
-//  std::cout << "Min dihedral angle before surface flips = " << min_angle << std::endl;
-
-  for (const std::pair<Vertex_handle, Vertex_handle>& vp : candidate_edges_for_flip)
+  for (const auto [vh0, vh1] : candidate_edges_for_flip)
   {
-    const Vertex_handle vh0 = vp.first;
-    const Vertex_handle vh1 = vp.second;
-
     boost::container::small_vector<Cell_handle, 64>& inc_vh0 = inc_cells[vh0];
     if (inc_vh0.empty())
       tr.incident_cells(vh0, std::back_inserter(inc_vh0));
@@ -1918,8 +1910,7 @@ std::size_t flipBoundaryEdges(
 
     if (!on_boundary)
       continue;
-    else
-      CGAL_assertion(boundary_facets.size() == 2);
+    CGAL_assertion(boundary_facets.size() == 2);
 
     const Surface_patch_index surfi = c3t3.surface_patch_index(boundary_facets[0]);
 
@@ -1945,16 +1936,13 @@ std::size_t flipBoundaryEdges(
       CGAL_assertion_code(Cell_handle c);
       CGAL_assertion(tr.is_facet(vh0, vh1, vh2, c, li, lj, lk));
       CGAL_assertion(c3t3.is_in_complex(c, (6 - li - lj - lk)));
-
       CGAL_assertion(tr.is_facet(vh0, vh1, vh3, c, li, lj, lk));
       CGAL_assertion(c3t3.is_in_complex(c, (6 - li - lj - lk)));
 
       Cell_handle t_ch;
       int t_i0, t_i1;
-      if (!tr.is_edge(vh2, vh3, t_ch, t_i0, t_i1))
+      if (!tr.is_edge(vh2, vh3, t_ch, t_i0, t_i1)) // most-likely to happen early exit
       {
-//        nb_surface_flip_candidates++;
-
         int v0 = boundary_vertices_valences.at(vh0)[surfi];
         int v1 = boundary_vertices_valences.at(vh1)[surfi];
         int v2 = boundary_vertices_valences.at(vh2)[surfi];
@@ -2015,7 +2003,6 @@ std::size_t flipBoundaryEdges(
                             c3t3.edges_in_complex_end()));
             CGAL_assertion(nbe == nbe_post);
 
-//            nb_surface_flip_done++;
             nb++;
 
             boundary_vertices_valences[vh0][surfi]--;
@@ -2023,13 +2010,8 @@ std::size_t flipBoundaryEdges(
             boundary_vertices_valences[vh2][surfi]++;
             boundary_vertices_valences[vh3][surfi]++;
           }
-          else if (db == INVALID_CELL || db == INVALID_VERTEX || db == INVALID_ORIENTATION)
-          {
-//            std::cout << "Cell problem" << std::endl;
+          else
             continue;
-          }
-//          else
-//            std::cout << "Boundary flip failed" << std::endl;
         }
       }
     }
