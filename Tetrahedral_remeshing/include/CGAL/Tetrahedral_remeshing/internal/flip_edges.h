@@ -1859,7 +1859,7 @@ std::size_t flipBoundaryEdges(
   typedef typename C3T3::Triangulation Tr;
   typedef std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
-  std::size_t nb = 0;
+  std::size_t nb_success = 0;
 
   Tr& tr = c3t3.triangulation();
 
@@ -1912,113 +1912,110 @@ std::size_t flipBoundaryEdges(
       continue;
     CGAL_assertion(boundary_facets.size() == 2);
 
-    const Surface_patch_index surfi = c3t3.surface_patch_index(boundary_facets[0]);
+    const Facet& f0 = boundary_facets[0];
+    const Facet& f1 = boundary_facets[1];
 
+    Vertex_handle vh2;
+    Vertex_handle vh3;
+    for (int i = 0; i < 3; i++)
     {
-      const Facet& f0 = boundary_facets[0];
-      const Facet& f1 = boundary_facets[1];
+      Vertex_handle v2 = f0.first->vertex(indices(f0.second, i));
+      Vertex_handle v3 = f1.first->vertex(indices(f1.second, i));
+      if (v2 != vh0 && v2 != vh1)
+        vh2 = v2;
+      if (v3 != vh0 && v3 != vh1)
+        vh3 = v3;
+    }
 
-      Vertex_handle vh2;
-      Vertex_handle vh3;
-      for (int i = 0; i < 3; i++)
-      {
-        Vertex_handle v2 = f0.first->vertex(indices(f0.second, i));
-        Vertex_handle v3 = f1.first->vertex(indices(f1.second, i));
-        if (v2 != vh0 && v2 != vh1)
-          vh2 = v2;
-        if (v3 != vh0 && v3 != vh1)
-          vh3 = v3;
-      }
+    CGAL_assertion_code(int li);
+    CGAL_assertion_code(int lj);
+    CGAL_assertion_code(int lk);
+    CGAL_assertion_code(Cell_handle cc);
+    CGAL_assertion(tr.is_facet(vh0, vh1, vh2, cc, li, lj, lk));
+    CGAL_assertion(c3t3.is_in_complex(cc, (6 - li - lj - lk)));
+    CGAL_assertion(tr.is_facet(vh0, vh1, vh3, cc, li, lj, lk));
+    CGAL_assertion(c3t3.is_in_complex(cc, (6 - li - lj - lk)));
 
-      CGAL_assertion_code(int li);
-      CGAL_assertion_code(int lj);
-      CGAL_assertion_code(int lk);
-      CGAL_assertion_code(Cell_handle c);
-      CGAL_assertion(tr.is_facet(vh0, vh1, vh2, c, li, lj, lk));
-      CGAL_assertion(c3t3.is_in_complex(c, (6 - li - lj - lk)));
-      CGAL_assertion(tr.is_facet(vh0, vh1, vh3, c, li, lj, lk));
-      CGAL_assertion(c3t3.is_in_complex(c, (6 - li - lj - lk)));
+    Cell_handle t_ch;
+    int t_i0, t_i1;
+    if (!tr.is_edge(vh2, vh3, t_ch, t_i0, t_i1)) // most-likely to happen early exit
+    {
+      const Surface_patch_index surfi = c3t3.surface_patch_index(boundary_facets[0]);
 
-      Cell_handle t_ch;
-      int t_i0, t_i1;
-      if (!tr.is_edge(vh2, vh3, t_ch, t_i0, t_i1)) // most-likely to happen early exit
-      {
-        int v0 = boundary_vertices_valences.at(vh0)[surfi];
-        int v1 = boundary_vertices_valences.at(vh1)[surfi];
-        int v2 = boundary_vertices_valences.at(vh2)[surfi];
-        int v3 = boundary_vertices_valences.at(vh3)[surfi];
-        int m0 = (boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
-        int m1 = (boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
-        int m2 = (boundary_vertices_valences.at(vh2).size() > 1 ? 4 : 6);
-        int m3 = (boundary_vertices_valences.at(vh3).size() > 1 ? 4 : 6);
+      int v0 = boundary_vertices_valences.at(vh0)[surfi];
+      int v1 = boundary_vertices_valences.at(vh1)[surfi];
+      int v2 = boundary_vertices_valences.at(vh2)[surfi];
+      int v3 = boundary_vertices_valences.at(vh3)[surfi];
+      int m0 = (boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
+      int m1 = (boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
+      int m2 = (boundary_vertices_valences.at(vh2).size() > 1 ? 4 : 6);
+      int m3 = (boundary_vertices_valences.at(vh3).size() > 1 ? 4 : 6);
 
-        int initial_cost = (v0 - m0)*(v0 - m0)
-                         + (v1 - m1)*(v1 - m1)
-                         + (v2 - m2)*(v2 - m2)
-                         + (v3 - m3)*(v3 - m3);
-
-        v0--;
-        v1--;
-        v2++;
-        v3++;
-
-        int final_cost = (v0 - m0)*(v0 - m0)
+      int initial_cost = (v0 - m0)*(v0 - m0)
                        + (v1 - m1)*(v1 - m1)
                        + (v2 - m2)*(v2 - m2)
                        + (v3 - m3)*(v3 - m3);
-        if (initial_cost > final_cost)
+      v0--;
+      v1--;
+      v2++;
+      v3++;
+
+      int final_cost = (v0 - m0)*(v0 - m0)
+                     + (v1 - m1)*(v1 - m1)
+                     + (v2 - m2)*(v2 - m2)
+                     + (v3 - m3)*(v3 - m3);
+      if (initial_cost > final_cost)
+      {
+        CGAL_assertion_code(std::size_t nbf =
+          std::distance(c3t3.facets_in_complex_begin(),
+                        c3t3.facets_in_complex_end()));
+        CGAL_assertion_code(std::size_t nbe =
+          std::distance(c3t3.edges_in_complex_begin(),
+                        c3t3.edges_in_complex_end()));
+
+        Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
+                                                   inc_cells,
+                                                   flip_criterion,
+                                                   visitor);
+        if (db == VALID_FLIP)
         {
-          CGAL_assertion_code(std::size_t nbf =
+          CGAL_assertion(tr.tds().is_edge(vh2, vh3));
+          Cell_handle c;
+          int li, lj, lk;
+          CGAL_assertion_code(bool b =)
+          tr.tds().is_facet(vh2, vh3, vh0, c, li, lj, lk);
+          CGAL_assertion(b);
+          c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
+
+          CGAL_assertion_code(b = )
+          tr.tds().is_facet(vh2, vh3, vh1, c, li, lj, lk);
+          CGAL_assertion(b);
+          c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
+
+          CGAL_assertion_code(std::size_t nbf_post =
             std::distance(c3t3.facets_in_complex_begin(),
                           c3t3.facets_in_complex_end()));
-          CGAL_assertion_code(std::size_t nbe =
+          CGAL_assertion(nbf == nbf_post);
+          CGAL_assertion_code(std::size_t nbe_post =
             std::distance(c3t3.edges_in_complex_begin(),
                           c3t3.edges_in_complex_end()));
+          CGAL_assertion(nbe == nbe_post);
 
-          Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
-                                                     inc_cells,
-                                                     flip_criterion,
-                                                     visitor);
-          if (db == VALID_FLIP)
-          {
-            CGAL_assertion(tr.tds().is_edge(vh2, vh3));
-            Cell_handle c;
-            int li, lj, lk;
-            CGAL_assertion_code(bool b =)
-            tr.tds().is_facet(vh2, vh3, vh0, c, li, lj, lk);
-            CGAL_assertion(b);
-            c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
+          boundary_vertices_valences[vh0][surfi]--;
+          boundary_vertices_valences[vh1][surfi]--;
+          boundary_vertices_valences[vh2][surfi]++;
+          boundary_vertices_valences[vh3][surfi]++;
 
-            CGAL_assertion_code(b = )
-            tr.tds().is_facet(vh2, vh3, vh1, c, li, lj, lk);
-            CGAL_assertion(b);
-            c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
-
-            CGAL_assertion_code(std::size_t nbf_post =
-              std::distance(c3t3.facets_in_complex_begin(),
-                            c3t3.facets_in_complex_end()));
-            CGAL_assertion(nbf == nbf_post);
-            CGAL_assertion_code(std::size_t nbe_post =
-              std::distance(c3t3.edges_in_complex_begin(),
-                            c3t3.edges_in_complex_end()));
-            CGAL_assertion(nbe == nbe_post);
-
-            nb++;
-
-            boundary_vertices_valences[vh0][surfi]--;
-            boundary_vertices_valences[vh1][surfi]--;
-            boundary_vertices_valences[vh2][surfi]++;
-            boundary_vertices_valences[vh3][surfi]++;
-          }
-          else
-            continue;
+          nb_success++;
         }
+        else
+          continue;
       }
     }
   }
   CGAL_assertion(tr.tds().is_valid());
 
-  return nb;
+  return nb_success;
 }
 
 template<typename C3T3, typename CellSelector, typename Visitor>
