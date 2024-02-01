@@ -19,7 +19,11 @@
 
 #include <CGAL/Polygon_mesh_processing/Bsurf/locally_shortest_path.h>
 
+#include <sstream>
+
 using namespace CGAL::Three;
+namespace PMP = CGAL::Polygon_mesh_processing;
+
 typedef Viewer_interface Vi;
 typedef Triangle_container Tc;
 typedef Edge_container Ec;
@@ -139,6 +143,7 @@ struct Locally_shortest_path_item_priv{
       vertices.resize(2);
       vertices[0].set( mesh.point(*mesh.vertices().begin()), 0 );
       vertices[1].set( mesh.point(*std::next(mesh.vertices().begin())), 1 );
+      locations.resize(2);
     }
     else if (nb_pts==4)
     {
@@ -148,6 +153,7 @@ struct Locally_shortest_path_item_priv{
       vertices[1].set( mesh.point(*std::next(mesh.vertices().begin())), 1 );
       vertices[2].set( mesh.point(*std::next(mesh.vertices().begin(),2)), 2 );
       vertices[3].set( mesh.point(*std::next(mesh.vertices().begin(),3)), 3 );
+      locations.resize(4);
     }
 
 
@@ -192,6 +198,7 @@ struct Locally_shortest_path_item_priv{
   CGAL::qglviewer::Vec relative_center_;
 
   mutable std::vector<Locally_shortest_path_item::vertex> vertices;
+  mutable std::vector<PMP::Face_location<Mesh, double>> locations;
   std::vector<Locally_shortest_path_item::vertex*> selected_vertices;
 
   void reset_selection();
@@ -216,7 +223,7 @@ struct Locally_shortest_path_item_priv{
   QCursor rotate_cursor;
   bool path_invalidated=true;
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-  CGAL::Polygon_mesh_processing::Dual_geodesic_solver<double> geodesic_solver;
+  PMP::Dual_geodesic_solver<double> geodesic_solver;
 #endif
 };
 
@@ -254,9 +261,16 @@ Locally_shortest_path_item::Locally_shortest_path_item(const CGAL::Three::Scene_
   }
   contextMenu();
 }
-QString Locally_shortest_path_item::toolTip() const {
-
-  return QString();
+QString Locally_shortest_path_item::toolTip() const
+{
+  std::stringstream ss;
+  ss << "Face locations:<br>";
+  ss << std::setprecision(17);
+  for (auto fl : d->locations)
+  {
+    ss << "   - " << fl.first << "  (" << fl.second[0] << "," << fl.second[1] << "," << fl.second[2] << ")<br>";
+  }
+  return QString::fromStdString(ss.str());
 }
 
 
@@ -297,7 +311,6 @@ void Locally_shortest_path_item::drawSpheres(Viewer_interface *viewer, const QMa
 void Locally_shortest_path_item::drawPath() const
 {
   if (!d->path_invalidated) return;
-  namespace PMP = CGAL::Polygon_mesh_processing;
   typedef PMP::Edge_location<Mesh, double> Edge_location;
   typedef PMP::Face_location<Mesh, double> Face_location;
 
@@ -310,10 +323,10 @@ void Locally_shortest_path_item::drawPath() const
                          tgt_pt(d->vertices[1].x,d->vertices[1].y,d->vertices[1].z);
 
   //TODO store that in the vector vertices
-    Face_location src = PMP::locate_with_AABB_tree(src_pt, d->aabb_tree, mesh);
-    Face_location tgt = PMP::locate_with_AABB_tree(tgt_pt, d->aabb_tree, mesh);
+    d->locations[0] = PMP::locate_with_AABB_tree(src_pt, d->aabb_tree, mesh);
+    d->locations[1] = PMP::locate_with_AABB_tree(tgt_pt, d->aabb_tree, mesh);
 
-    PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations, d->geodesic_solver);
+    PMP::locally_shortest_path<double>(d->locations[0], d->locations[1], mesh, edge_locations, d->geodesic_solver);
     d->spath_item->polylines.back().clear();
     d->spath_item->polylines.back().push_back(src_pt);
     for (auto el : edge_locations)
@@ -331,12 +344,15 @@ void Locally_shortest_path_item::drawPath() const
                          c4_pt(d->vertices[3].x,d->vertices[3].y,d->vertices[3].z);
 
     //TODO store that in the vector vertices
-    Face_location c1 = PMP::locate_with_AABB_tree(c1_pt, d->aabb_tree, mesh);
-    Face_location c2 = PMP::locate_with_AABB_tree(c2_pt, d->aabb_tree, mesh);
-    Face_location c3 = PMP::locate_with_AABB_tree(c3_pt, d->aabb_tree, mesh);
-    Face_location c4 = PMP::locate_with_AABB_tree(c4_pt, d->aabb_tree, mesh);
+    d->locations[0] = PMP::locate_with_AABB_tree(c1_pt, d->aabb_tree, mesh);
+    d->locations[1] = PMP::locate_with_AABB_tree(c2_pt, d->aabb_tree, mesh);
+    d->locations[2] = PMP::locate_with_AABB_tree(c3_pt, d->aabb_tree, mesh);
+    d->locations[3] = PMP::locate_with_AABB_tree(c4_pt, d->aabb_tree, mesh);
 
-    PMP::Bezier_segment<Mesh, double> control_points=CGAL::make_array(c1, c2, c3, c4);
+    PMP::Bezier_segment<Mesh, double> control_points=CGAL::make_array(d->locations[0],
+                                                                      d->locations[1],
+                                                                      d->locations[2],
+                                                                      d->locations[3]);
 
     std::vector<Face_location> face_locations =
       PMP::recursive_de_Casteljau(mesh, control_points, 8, d->geodesic_solver);

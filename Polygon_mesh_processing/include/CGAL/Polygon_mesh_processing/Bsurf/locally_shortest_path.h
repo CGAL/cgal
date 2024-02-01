@@ -2968,8 +2968,6 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
   size_t n=directions.size();
   std::vector<typename K::Point_3> result;
   std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
-  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   for(std::size_t i=0;i<n;++i)
     vertices[i]= straightest_geodesic<K>(center,directions[i],lengths[i],tmesh).back();
 
