@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Orthtree.h>
 
-#include <CGAL/Orthtree_traits_base_for_dimension.h>
+#include <CGAL/Orthtree_traits_base.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Dimension.h>
@@ -38,7 +38,7 @@ to which the minimal extend of a node should be provided.
 \cgalModels{OrthtreeTraits}
 */
 template <class TriangleMesh, class VertexPointMap>
-struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
+struct Orthtree_traits_face_graph : public Orthtree_traits_base<
   typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type, 3 > {
 
   Orthtree_traits_face_graph(const TriangleMesh& pm, VertexPointMap vpm)
@@ -47,7 +47,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base_for_dimension<
   /// \name Types
   /// @{
 
-  using Base = Orthtree_traits_base_for_dimension<
+  using Base = Orthtree_traits_base<
   typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type, 3 >;
   using Node_index = typename Base::Node_index;
   using Self = Orthtree_traits_face_graph<TriangleMesh, VertexPointMap>;

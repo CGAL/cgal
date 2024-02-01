@@ -4,7 +4,7 @@
 #include <CGAL/Dimension.h>
 
 #include <CGAL/Orthtree.h>
-#include <CGAL/Orthtree_traits_base_for_dimension.h>
+#include <CGAL/Orthtree_traits_base.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 
@@ -14,7 +14,7 @@ struct empty_type {
 };
 
 template <typename K, int dimension>
-struct Orthtree_traits_empty : public Orthtree_traits_base_for_dimension<K, dimension> {
+struct Orthtree_traits_empty : public Orthtree_traits_base<K, dimension> {
 
   using Self = Orthtree_traits_empty<K, dimension>;
   using Tree = Orthtree<Self>;

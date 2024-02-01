@@ -8,7 +8,7 @@
   \cgalHasModelsBegin
   \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension >}
   \cgalHasModels{CGAL::Orthtree_traits_face_graph<PolygonMesh, VPM>}
-  \cgalHasModels{CGAL::Orthtree_traits_base_for_dimension< K, dimension >}
+  \cgalHasModels{CGAL::Orthtree_traits_base< K, dimension >}
   \cgalHasModelsEnd
 */
 class OrthtreeTraits

@@ -9,8 +9,8 @@
 //
 // Author(s)     : Jackson Campolattaro
 
-#ifndef ORTHTREE_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H
-#define ORTHTREE_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H
+#ifndef ORTHTREE_ORTHTREE_TRAITS_BASE_H
+#define ORTHTREE_ORTHTREE_TRAITS_BASE_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -24,7 +24,7 @@ namespace CGAL {
 /*!
   \ingroup PkgOrthtreeTraits
 
-  The class `Orthtree_traits_base_for_dimension` is a base class providing common choices for types and functors.
+  The class `Orthtree_traits_base` is a base class providing common choices for types and functors.
   The base class is extended by `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>` and by `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`.
 
   \tparam K a model of `Kernel`.
@@ -35,7 +35,7 @@ namespace CGAL {
 */
 
 template <typename K, int dim>
-struct Orthtree_traits_base_for_dimension {
+struct Orthtree_traits_base {
   /// \name Types
   /// @{
   using Node_index = std::size_t;
@@ -97,16 +97,10 @@ struct Orthtree_traits_base_for_dimension {
       return Point_d{static_cast<int>(args_list.size()), args_list.begin(), args_list.end()};
     };
   }
-
-  auto locate_halfspace_object() const {
-    return [](const FT& a, const FT& b) -> bool {
-      return a < b;
-      };
-  }
 };
 
 template <typename K>
-struct Orthtree_traits_base_for_dimension<K, 2> {
+struct Orthtree_traits_base<K, 2> {
   using Node_index = std::size_t;
   using Kernel = K;
   static constexpr int dimension = 2;
@@ -128,16 +122,10 @@ struct Orthtree_traits_base_for_dimension<K, 2> {
       return {x, y};
     };
   }
-
-  auto locate_halfspace_object() const {
-    return [](const FT& a, const FT& b) -> bool {
-      return a < b;
-      };
-  }
 };
 
 template <typename K>
-struct Orthtree_traits_base_for_dimension<K, 3> {
+struct Orthtree_traits_base<K, 3> {
   using Node_index = std::size_t;
   using Kernel = K;
   static constexpr int dimension = 3;
@@ -172,14 +160,8 @@ struct Orthtree_traits_base_for_dimension<K, 3> {
       return {x, y, z};
     };
   }
-
-  auto locate_halfspace_object() const {
-    return [](const FT& a, const FT& b) -> bool {
-      return a < b;
-      };
-  }
 };
 
 }
 
-#endif //ORTHTREE_ORTHTREE_TRAITS_BASE_FOR_DIMENSION_H
+#endif //ORTHTREE_ORTHTREE_TRAITS_BASE_H

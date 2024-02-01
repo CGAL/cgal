@@ -19,7 +19,7 @@
 #include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
 
-#include <CGAL/Orthtree_traits_base_for_dimension.h>
+#include <CGAL/Orthtree_traits_base.h>
 
 namespace CGAL {
 
@@ -74,7 +74,7 @@ void reassign_points(
   \cgalModels{OrthtreeTraits}
   \sa `CGAL::Octree`
   \sa `CGAL::Quadtree`
-  \sa `CGAL::Orthtree_traits_base_for_dimension<GeomTraits, DimensionTag>`
+  \sa `CGAL::Orthtree_traits_base<GeomTraits, DimensionTag>`
 */
 template <
   typename GeomTraits,
@@ -85,14 +85,14 @@ template <
     GeomTraits
   >::value
 >
-struct Orthtree_traits_point : public Orthtree_traits_base_for_dimension<GeomTraits, dimension> {
+struct Orthtree_traits_point : public Orthtree_traits_base<GeomTraits, dimension> {
 public:
   /// \name Types
   /// @{
   using Node_data = boost::iterator_range<typename PointRange::iterator>;
   /// @}
 
-  using Base = Orthtree_traits_base_for_dimension<GeomTraits, dimension>;
+  using Base = Orthtree_traits_base<GeomTraits, dimension>;
   using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>;
   using Tree = Orthtree<Self>;
 
