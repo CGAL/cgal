@@ -80,6 +80,23 @@ inline int indices(const int& i, const int& j)
 }
 
 template<typename Tr>
+typename Tr::Vertex_handle
+third_vertex(const typename Tr::Facet& f,
+             const typename Tr::Vertex_handle v0,
+             const typename Tr::Vertex_handle v1,
+             const Tr& tr)
+{
+  for(auto v : tr.vertices(f))
+    if(v != v0 && v != v1)
+      return v;
+
+  CGAL_assertion(false);
+  return
+    typename Tr::Vertex_handle();
+}
+
+// returns angle in degrees
+template<typename Tr>
 std::array<typename Tr::Vertex_handle, 2>
 vertices(const typename Tr::Edge& e , const Tr&)
 {
