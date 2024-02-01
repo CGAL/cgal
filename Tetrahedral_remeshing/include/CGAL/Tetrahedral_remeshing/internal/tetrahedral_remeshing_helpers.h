@@ -923,6 +923,23 @@ std::size_t nb_incident_complex_edges(const typename C3t3::Vertex_handle v,
   return count;
 }
 
+template<typename C3t3>
+std::size_t nb_incident_complex_facets(const typename C3t3::Edge& e,
+                                       const C3t3& c3t3)
+{
+  typedef typename C3t3::Triangulation::Facet_circulator Facet_circulator;
+  Facet_circulator circ = c3t3.triangulation().incident_facets(e);
+  Facet_circulator end = circ;
+  std::size_t count = 0;
+  do
+  {
+    const typename C3t3::Facet& f = *circ;
+    if (c3t3.is_in_complex(f))
+      ++count;
+  }
+  while (++circ != end);
+  return count;
+}
 
 template<typename C3t3>
 bool is_feature(const typename C3t3::Vertex_handle v,
