@@ -983,8 +983,8 @@ struct Locally_shortest_path_imp
   static
   Vector_2 compute_new_dir(const halfedge_descriptor h_ref,
                                                 const halfedge_descriptor h_edge,
-                                                const array<FT,3>& prev_coords,
-                                                const array<FT,3>& curr_coords,
+                                                const std::array<FT,3>& prev_coords,
+                                                const std::array<FT,3>& curr_coords,
                                                 const VertexPointMap& vpm,
                                                 const TriangleMesh& mesh)
   {
@@ -2878,6 +2878,7 @@ void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& 
   }
 }
 
+
 template <class K, class TriangleMesh>
 std::vector<Face_location<TriangleMesh, typename K::FT>>
 straightest_geodesic(const Face_location<TriangleMesh, typename K::FT> &src,
@@ -2894,6 +2895,37 @@ straightest_geodesic(const Face_location<TriangleMesh, typename K::FT> &src,
   return Impl::straightest_geodesic(src, tmesh, vpm, dir, len);
 }
 
+template <class K, class TriangleMesh>
+std::vector<typename K::Point_3>
+trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
+                     const std::vector<typename K::Vector_2>& directions,
+                     const std::vector<typename K::FT>& lengths,
+                     const TriangleMesh &tmesh)
+{
+  size_t n=directions.size();
+  std::vector<typename K::Point_3> result;
+  std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
+  for(std::size_t i=0;i<n;++i)
+    vertices[i]= straightest_geodesic<K>(center,directions[i],lengths[i],tmesh).back();
+
+  std::vector<Edge_location<TriangleMesh,typename K::FT>> edge_locations;
+
+  for(std::size_t i=0;i<n;++i)
+  {
+    edge_locations.clear();
+    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations);
+    result.push_back(construct_point(vertices[i],tmesh));
+    for(auto& el : edge_locations)
+    {
+      result.push_back(construct_point(el, tmesh));
+    }
+  }
+
+  return result;
+
+}
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
