@@ -10,9 +10,9 @@ namespace CGAL {
 \section Section_Orthtree_Introduction Introduction
 
 Quadtrees are tree data structures in which each node encloses a
-square section of space, and each internal node has exactly 4
+rectangular section of space, and each internal node has exactly 4
 children. Octrees are a similar data structure in 3D in which each
-node encloses a cubic section of space, and each internal node has
+node encloses a cuboid section of space, and each internal node has
 exactly 8 children.
 
 We call the generalization of such data structure "orthtrees", as

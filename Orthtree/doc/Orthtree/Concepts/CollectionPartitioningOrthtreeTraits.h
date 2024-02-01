@@ -5,7 +5,7 @@
   Refinement of the OrthtreeTraits concept, adding requirements for the
   traits class of a `CGAL::Orthtree` in order to supports nearest-neighbor searching.
 
-  Nearest neighbor searches expect a tree with nodes which contain list types.
+  Nearest neighbor searches expect a tree where `Node_data` is a model of `ForwardRange`.
   The leaf nodes of the tree represent an exclusive partition of the elements contained in the tree.
   This means that no element should be contained by more than one node.
 

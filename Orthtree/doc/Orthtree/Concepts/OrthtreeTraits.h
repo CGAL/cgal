@@ -85,7 +85,7 @@ public:
   using Distribute_node_contents = unspecified_type;
 
   /*!
-   * \brief Functor with an operator to construct a `Point_d` from an appropriate number of x, y, z etc.\ `FT` arguments.
+   * \brief Functor with an operator to construct a `Point_d` from an initializer list.
    *
    * For trees which use a different kernel for the bounding box type,
    * the return type of this functor must match the kernel used by the bounding box type and not that of the contents.
