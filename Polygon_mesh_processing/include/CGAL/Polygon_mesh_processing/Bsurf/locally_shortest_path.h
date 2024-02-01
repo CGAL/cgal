@@ -2983,6 +2983,7 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
       result.push_back(construct_point(el, tmesh));
     }
   }
+  result.push_back(construct_point(vertices[0],tmesh));
 
   return result;
 

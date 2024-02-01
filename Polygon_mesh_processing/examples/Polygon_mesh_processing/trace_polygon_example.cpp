@@ -31,36 +31,39 @@ int main(int argc, char** argv)
   }
 
   std::size_t nb_faces = faces(mesh).size();
-  int n_sides=4;
-  double len=0.05;
+  int n_sides=6;
+  std::vector<double> lenghts = { 0.3, 0.2, 0.1, 0.05 };
+
   // take two random faces and pick the centroid
   CGAL::Random rnd = CGAL::get_default_random();
    //CGAL::Random rnd(1706709591);
-
+  // 1706798575  <------- crash
+  // 1706799948  <------- crash
 
   std::cout << "seed " << rnd.get_seed() << std::endl;
   Mesh::Face_index f = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));
 
   Face_location center(f, CGAL::make_array(0.3,0.3,0.4));
   std::vector<K::Vector_2> directions(n_sides);
-  std::vector<K::FT> lens(n_sides,len);
   double step=2*CGAL_PI/n_sides;
   for(int i=0;i<n_sides;++i)
   {
-    directions[i]=K::Vector_2(len*std::cos(i*step),len*std::sin(i*step));
+    directions[i]=K::Vector_2(std::cos(i*step), std::sin(i*step));
   }
   K::Point_3 center_pt = PMP::construct_point(center, mesh);
   std::cout << "center = " << center_pt << "\n";
 
-  std::vector<K::Point_3> polygon = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh);
-
-
-  std::ofstream out("geodesic_polygon.txt");
-  out << polygon.size() << " ";
-
-  for (auto p : polygon)
-    out << " " << p;
-  out << "\n";
+  std::ofstream out("geodesic_polygon.polylines.txt");
+  out << std::setprecision(17);
+  for (double len : lenghts)
+  {
+    std::vector<K::FT> lens(n_sides,len);
+    std::vector<K::Point_3> polygon = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh);
+    out << polygon.size();
+    for (auto p : polygon)
+      out << " " << p;
+    out << "\n";
+  }
 
   return 0;
 }
