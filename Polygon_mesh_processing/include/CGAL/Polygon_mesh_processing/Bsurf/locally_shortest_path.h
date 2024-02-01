@@ -35,11 +35,6 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
                            EdgeLocationRange &edge_locations);
 
 template <class TriangleMesh, class FT>
-using Edge_location =
-    std::pair<typename boost::graph_traits<TriangleMesh>::edge_descriptor,
-              std::array<FT, 2>>;
-
-template <class TriangleMesh, class FT>
 using Bezier_segment = std::array<Face_location<TriangleMesh, FT>, 4>;
 
 
@@ -2584,7 +2579,9 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
 
 
 //TODO: handle cases of src and tgt not in the same connected component (assert?)
+
 #ifdef CGAL_BSURF_USE_DIJKSTRA_SP
+  typedef typename BGT::edge_descriptor edge_descriptor;
   typename boost::property_map<
       TriangleMesh, CGAL::dynamic_face_property_t<face_descriptor>>::const_type
       predecessor_map =
