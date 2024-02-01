@@ -412,7 +412,8 @@ private:
       if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair(e))
           || m_c3t3.is_in_complex(e)
           || nb_incident_subdomains(e, m_c3t3) > 2
-          || nb_incident_surface_patches(e, m_c3t3) > 1)
+          || nb_incident_surface_patches(e, m_c3t3) > 1
+          || nb_incident_complex_facets(e, m_c3t3) > 2)//non-manifold edges
       {
         const bool in_complex = m_c3t3.is_in_complex(e);
         typename C3t3::Curve_index curve_id = in_complex
