@@ -1943,15 +1943,6 @@ std::size_t flipBoundaryEdges(
       int t_i0, t_i1;
       if (!tr.is_edge(vh2, vh3, t_ch, t_i0, t_i1)) // most-likely to happen early exit
       {
-        int v0 = boundary_vertices_valences[vh0][surfi];
-        int v1 = boundary_vertices_valences[vh1][surfi];
-        int v2 = boundary_vertices_valences[vh2][surfi];
-        int v3 = boundary_vertices_valences[vh3][surfi];
-        int m0 = (boundary_vertices_valences[vh0].size() > 1 ? 4 : 6);
-        int m1 = (boundary_vertices_valences[vh1].size() > 1 ? 4 : 6);
-        int m2 = (boundary_vertices_valences[vh2].size() > 1 ? 4 : 6);
-        int m3 = (boundary_vertices_valences[vh3].size() > 1 ? 4 : 6);
-
         int initial_cost = (v0 - m0)*(v0 - m0)
                          + (v1 - m1)*(v1 - m1)
                          + (v2 - m2)*(v2 - m2)
