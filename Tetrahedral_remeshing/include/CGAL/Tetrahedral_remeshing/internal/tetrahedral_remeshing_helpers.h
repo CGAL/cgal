@@ -81,6 +81,22 @@ inline int indices(const int& i, const int& j)
   return 0;
 }
 
+template<typename Tr>
+typename Tr::Vertex_handle
+third_vertex(const typename Tr::Facet& f,
+             const typename Tr::Vertex_handle v0,
+             const typename Tr::Vertex_handle v1,
+             const Tr& tr)
+{
+  for(auto v : tr.vertices(f))
+    if(v != v0 && v != v1)
+      return v;
+
+  CGAL_assertion(false);
+  return
+    typename Tr::Vertex_handle();
+}
+
 // returns angle in degrees
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,

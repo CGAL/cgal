@@ -1915,17 +1915,9 @@ std::size_t flipBoundaryEdges(
     const Facet& f0 = boundary_facets[0];
     const Facet& f1 = boundary_facets[1];
 
-    Vertex_handle vh2;
-    Vertex_handle vh3;
-    for (int i = 0; i < 3; i++)
-    {
-      Vertex_handle v2 = f0.first->vertex(indices(f0.second, i));
-      Vertex_handle v3 = f1.first->vertex(indices(f1.second, i));
-      if (v2 != vh0 && v2 != vh1)
-        vh2 = v2;
-      if (v3 != vh0 && v3 != vh1)
-        vh3 = v3;
-    }
+    // find 3rd and 4th vertices to flip on surface
+    const Vertex_handle vh2 = third_vertex(f0, vh0, vh1, tr);
+    const Vertex_handle vh3 = third_vertex(f1, vh0, vh1, tr);
 
     CGAL_assertion_code(int li);
     CGAL_assertion_code(int lj);
@@ -1936,9 +1928,7 @@ std::size_t flipBoundaryEdges(
     CGAL_assertion(tr.is_facet(vh0, vh1, vh3, cc, li, lj, lk));
     CGAL_assertion(c3t3.is_in_complex(cc, (6 - li - lj - lk)));
 
-    Cell_handle t_ch;
-    int t_i0, t_i1;
-    if (!tr.is_edge(vh2, vh3, t_ch, t_i0, t_i1)) // most-likely to happen early exit
+    if (!tr.tds().is_edge(vh2, vh3)) // most-likely to happen early exit
     {
       const Surface_patch_index surfi = c3t3.surface_patch_index(boundary_facets[0]);
 
