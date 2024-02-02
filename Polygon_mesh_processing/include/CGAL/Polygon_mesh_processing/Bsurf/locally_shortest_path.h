@@ -12,7 +12,6 @@
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_BSURF_LOCALLY_SHORTEST_PATH_H
 #define CGAL_POLYGON_MESH_PROCESSING_BSURF_LOCALLY_SHORTEST_PATH_H
-
 // #include <CGAL/license/Polygon_mesh_processing/bsurf.h>
 
 #include <CGAL/Named_function_parameters.h>
@@ -164,6 +163,8 @@ struct Locally_shortest_path_imp
                                get(vpm, triangle_vertices[2]));
     auto ry = squared_distance(get(vpm, triangle_vertices[1]),
                                get(vpm, triangle_vertices[2]));
+
+
     tr2d[2] = intersect_circles(tr2d[0], rx, tr2d[1], ry);
 
     return tr2d;
@@ -1108,6 +1109,11 @@ struct Locally_shortest_path_imp
       //TODO: replace intersection with CGAL code
       if (t0 > 0 && t1 >= -1e-4 && t1 <= 1 + 1e-4)
       {
+          int h=((i+1)%3 + offset)%3;
+          Vector_2 intersection_point=(1-t1)*tri[h]+t1*tri[(h+1)%3];
+          #ifdef CGAL_DEBUG_BSURF
+          std::cout<<"intersection point "<<intersection_point<<std::endl;
+          #endif
           return {((i+1)%3 + offset)%3, std::clamp(t1, 0., 1.)}; //return the offset w.r.t h_ref
       }
     }
@@ -1124,14 +1130,16 @@ struct Locally_shortest_path_imp
     halfedge_descriptor h_start=h_ref;
     halfedge_descriptor h_next = next(h_start,mesh);
 
-    FT theta=angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
+    FT theta=approximate_angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
                    get(vpm,target(h_next,mesh))-get(vpm,target(h_start,mesh)));
+
     h_start=opposite(h_next,mesh);
     h_next=next(h_start,mesh);
     while(h_start!=h_ref)
     {
-      theta+=angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
+      theta+=approximate_angle(get(vpm,source(h_start,mesh))-get(vpm,target(h_start,mesh)),
                    get(vpm,target(h_next,mesh))-get(vpm,target(h_start,mesh)));
+
       h_start=opposite(h_next,mesh);
       h_next=next(h_start,mesh);
     }
@@ -1147,41 +1155,84 @@ struct Locally_shortest_path_imp
                              const face_descriptor& tid,
                              const FT& init_angle)
   {
+     auto get_vid_offset=[&mesh](const halfedge_descriptor& h_ref,const vertex_descriptor& vid)
+    {
+      if(source(h_ref,mesh)==vid)
+        return 0;
+
+      if(target(h_ref,mesh)==vid)
+        return 1;
+
+      if(target(next(h_ref,mesh),mesh)==vid)
+        return 2;
+
+      std::cerr<<"Error! Halfedges are in different faces"<<std::endl;
+
+      CGAL_assertion(false);
+
+      return -1;
+    };
     //TODO use interval for robustness + snap if ambiguous
     FT total_angle=get_total_angle(vid,mesh,vpm);
-    FT theta = 0.5 * total_angle;
+    FT theta = 0.5 * total_angle; //in degrees
     halfedge_descriptor h=halfedge(tid,mesh);
 
     while(target(h,mesh)!=vid)
       h=next(h,mesh);
+
 
     Point_3 vert = get(vpm,vid);
     Point_3 vert_adj=get(vpm,source(h,mesh));
     FT acc = init_angle;
 
     FT prev_angle = acc;
-
+    #ifdef CGAL_DEBUG_BSURF
+     std::cout<<"initial h"<< edge(h,mesh)<<std::endl;
+    std::cout<<"acc "<< acc<<std::endl;
+    std::cout<<"theta "<< theta<<std::endl;
+    #endif
     while (acc < theta) {
       h=prev(opposite(h,mesh),mesh);
       prev_angle = acc;
       Point_3 next_vert_adj=get(vpm,source(h,mesh));
-      acc += angle(vert_adj - vert,next_vert_adj - vert);
+      acc += approximate_angle(vert_adj - vert,next_vert_adj - vert);
+      std::cout<<" curr acc" <<acc<<std::endl;
       vert_adj=next_vert_adj;
     }
+
     auto offset = theta - prev_angle;
+    //moving to radiants
+    offset*=CGAL_PI/180.;
     Point_3 prev_vert_adj=get(vpm,target(next(h,mesh),mesh));
 
     FT l = sqrt(squared_distance(prev_vert_adj,vert));
-    FT phi = angle(vert - prev_vert_adj, vert_adj - prev_vert_adj);
+    FT phi = approximate_angle(vert - prev_vert_adj, vert_adj - prev_vert_adj);
+    phi*=CGAL_PI/180.;
     FT x = l * std::sin(offset) / std::sin(M_PI - phi - offset);
     FT alpha = x / sqrt(squared_distance(vert_adj, prev_vert_adj));
     halfedge_descriptor prev_h=prev(h,mesh);
-    std::array<Vector_2,3> flat_tid = init_flat_triangle(prev_h,vpm,mesh);
 
-    Vector_2 q = (1 - alpha) * flat_tid[0] + alpha * flat_tid[1];
+    std::array<Vector_2,3> flat_tid = init_flat_triangle(halfedge(face(h,mesh),mesh),vpm,mesh);
+    int kv=get_vid_offset(halfedge(face(h,mesh),mesh),vid);
 
-    Vector_2 new_dir = q - flat_tid[2];
+Vector_2 flat_p=flat_tid[kv];
+    Vector_2 q = (1 - alpha) * flat_tid[(kv+1)%3] + alpha * flat_tid[(kv+2)%3];
 
+    Vector_2 new_dir = q - flat_tid[kv];
+     #ifdef CGAL_DEBUG_BSURF
+    std::cout<<"final h"<< edge(h,mesh)<<std::endl;
+    std::cout<<" prev_vert_adj"<< prev_vert_adj<<std::endl;
+    std::cout<<" vert_adj"<< vert_adj<<std::endl;
+    std::cout<< "------ outgoing tid"<<std::endl;
+    std::cout << "  " << flat_tid[0] << " " << flat_tid[1] << " " << flat_tid[2] << "\n";
+
+    std::cout<< "------ flat_p"<<std::endl;
+    std::cout << "  " << flat_p<< "\n";
+     std::cout<< "------ outgoing dir"<<std::endl;
+     std::cout << "  " << new_dir[0]+flat_p[0] << " " << new_dir[1]+flat_p[1] << "\n";
+     std::cout<<"outgoing face "<<face(prev_h,mesh)<<std::endl;
+     std::cout<< "h_curr "<< edge(h,mesh)<<std::endl;
+     #endif
     return {new_dir,face(prev_h,mesh), h};
   }
 
@@ -1206,9 +1257,13 @@ struct Locally_shortest_path_imp
 
 #ifdef CGAL_DEBUG_BSURF
     auto fn = compute_face_normal(p.first, mesh);
+    double theta= std::acos(dir.y()/sqrt(dir*dir));
+    if(dir.x()<0)
+      theta*=-1;
     auto dir3 = rotate_vector(mesh.point(target(halfedge(p.first, mesh), mesh)) -
                               mesh.point(source(halfedge(p.first, mesh), mesh)),
-                              fn, CGAL_PI/4.);
+                              fn, theta);
+
     std::cout << "direction " << construct_point(p, mesh) << " " << construct_point(p, mesh)+dir3 << "\n";
 #endif
 
@@ -1312,7 +1367,6 @@ struct Locally_shortest_path_imp
       int curr_offset=get_halfedge_offset(h_ref,h_curr);
 
       auto [k, t1] = segment_in_tri(flat_p, curr_flat_tid, curr_dir,curr_offset);
-
       CGAL_assertion(k!=-1);
       std::array<FT,3> new_bary=make_array(0.,0.,0.);
       Face_location<TriangleMesh, FT> point_on_edge;
@@ -1327,8 +1381,12 @@ struct Locally_shortest_path_imp
 #endif
       if (is_vert)
       {
-        vertex_descriptor vid = target(get_halfedge(kv, h_ref), mesh);
-
+        vertex_descriptor vid = target(get_halfedge(kv, prev(h_ref,mesh)), mesh);
+        #ifdef CGAL_DEBUG_BSURF
+        std::cout<< "hit vertex "<< vid <<std::endl;
+        std::cout<< "href "<< edge(h_ref,mesh) <<std::endl;
+        std::cout<< "kv "<< kv <<std::endl;
+        #endif
         accumulated +=
             sqrt(squared_distance(construct_point(curr_p,mesh), get(vpm,vid)));
 
@@ -1338,16 +1396,23 @@ struct Locally_shortest_path_imp
 
         //TODO add a 2D version of approximate_angle in CGAL
         // FT init_angle = approximate_angle(curr_flat_tid[(kv+2)%3]-curr_flat_tid[kv], curr_dir);
-        auto tmp =curr_flat_tid[(kv+2)%3]-curr_flat_tid[kv];
+        auto tmp =curr_flat_tid[kv]-curr_flat_tid[(kv+2)%3];
         FT init_angle = approximate_angle(Vector_3(tmp.x(), tmp.y(), 0), Vector_3(curr_dir.x(), curr_dir.y(), 0));
-
+        init_angle*=CGAL_PI/180.;
         std::tie(curr_dir, curr_tid, h_curr) =
             polthier_condition_at_vert(mesh,vpm,vid,curr_tid, init_angle);
 
+
         h_ref=halfedge(curr_tid,mesh);
+        kv=get_vid_offset(h_ref,vid);
+        CGAL_assertion(kv!=-1);
+        std::array<FT,3> tmp_bary=make_array(0.,0.,0.);
+        tmp_bary[kv]=1;
+
         curr_flat_tid=init_flat_triangle(h_ref,vpm,mesh);
         prev_p = curr_p;
-        curr_p=point_on_edge;
+
+        curr_p=Face_location<TriangleMesh,FT>(curr_tid,tmp_bary);
         int k=get_vid_offset(h_ref,target(h_curr,mesh));
         flat_p=curr_flat_tid[k];
       }
@@ -1364,6 +1429,7 @@ struct Locally_shortest_path_imp
         accumulated += sqrt(squared_distance(construct_point(curr_p,mesh), construct_point(prev_p,mesh)));
         curr_tid = adj;
         h_ref=halfedge(curr_tid,mesh);
+        //TODO curr_dir should be normalized everytime
         curr_dir = compute_new_dir(h_ref,h_curr,prev_p.second,curr_p.second,vpm,mesh);
         curr_flat_tid=init_flat_triangle(h_ref,vpm,mesh);
         flat_p= curr_p.second[0]*curr_flat_tid[0]+curr_p.second[1]*curr_flat_tid[1]+curr_p.second[2]*curr_flat_tid[2];
@@ -1386,10 +1452,22 @@ struct Locally_shortest_path_imp
     }
 
     double excess = accumulated - len;
+
+
     Point_3 prev_pos = construct_point(*std::next(result.rbegin()),mesh);
     Point_3 last_pos = construct_point(result.back(),mesh);
     double alpha = excess / sqrt((last_pos - prev_pos).squared_length());
-    Point_3 pos = barycenter(prev_pos, alpha, last_pos, 1 - alpha);
+    Point_3 pos = barycenter(prev_pos, 1-alpha, last_pos, alpha);
+    #ifdef CGAL_DEBUG_BSURF
+    std::cout<<"excess "<< excess<<std::endl;
+    std::cout<< "prev_pos " << prev_pos<<std::endl;
+    std::cout<< "last_pos " << last_pos<<std::endl;
+
+    std::cout<< "curr_tri "<< prev_p.first<<std::endl;
+     std::cout<< "pos " << pos<<std::endl;
+
+     std::cout<<"len of pos"<<sqrt(squared_distance(pos,prev_pos))<<std::endl;
+     #endif
 
     auto [inside, bary] =
         point_in_triangle(vpm,mesh,prev_p.first,pos);
@@ -2866,6 +2944,127 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
   size_t n=directions.size();
   std::vector<typename K::Point_3> result;
   std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
+  for(std::size_t i=0;i<n;++i)
+    {
+      vertices[i]= straightest_geodesic<K>(center,directions[i],lengths[i],tmesh).back();
+      std::cout<< i <<" -th vertex is "<< construct_point(vertices[i],tmesh)<<"  ";
+    }
+
+
+
+
+  std::vector<Edge_location<TriangleMesh,typename K::FT>> edge_locations;
+
+  for(std::size_t i=0;i<n;++i)
+  {
+    edge_locations.clear();
+    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations);
+    result.push_back(construct_point(vertices[i],tmesh));
+    for(auto& el : edge_locations)
+    {
+      result.push_back(construct_point(el, tmesh));
+    }
+  }
+
+  return result;
+
+
+}
+template <class K, class TriangleMesh>
+typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
+                          const Face_location<TriangleMesh, typename K::FT>& src,
+                          const Face_location<TriangleMesh, typename K::FT>& tgt,
+                          const TriangleMesh &tmesh)
+ {
+   if(path.size()==0)
+   return sqrt(squared_distance(construct_point(src,tmesh),construct_point(tgt,tmesh)));
+
+   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+   VPM vpm = get(CGAL::vertex_point, tmesh);
+
+   typename K::FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
+   typename K::FT dist=[&](const Edge_location<TriangleMesh,typename K::FT>& p0,const Edge_location<TriangleMesh,typename K::FT>& p1)
+   {
+      return sqrt(squared_distance(construct_point(p0,tmesh),construct_point(p1,tmesh)));
+   };
+
+   len=std::accumulate(path.begin(),path.end(),dist);
+
+   len+=sqrt(squared_distance(construct_point(path.back(),tmesh),construct_point(tgt,tmesh)));
+
+   return len;
+}
+// template <class K, class TriangleMesh>
+// std::vector<typename K::Vector_2>
+// tangent_path_direction(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
+//                        const Face_location<TriangleMesh, typename K::FT>& src,
+//                        const Face_location<TriangleMesh, typename K::FT>& tgt,
+//                        const TriangleMesh &tmesh,const bool initial=true)
+// {
+//   auto find = [](const std::array<typename K::FT,3> &vec, int x) {
+//     for (int i = 0; i < vec.size(); i++)
+//       if (vec[i] == x)
+//         return i;
+//     return -1;
+//   };
+//  typename K::Vector_2 direction;
+//   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+//   VPM vpm = get(CGAL::vertex_point, tmesh);
+
+
+//  if(initial)
+//  {
+
+//     halfedge_descriptor h_ref=halfedge(src.first,mesh);
+//     std::array<Vector_2, 3> flat_tid=init_flat_triangle(h_ref,vpm,tmesh);
+//     if(path.size()==0)
+//     {
+//       assert(src.first==tgt.first);//TODO:src and tgt may have different faces because we do not update them when cleaning the strip
+//       typename K::Vector_2 flat_src=src.second[0]*flat_tid[0]+src.second[1]*flat_tid[1]+src.second[2]*flat_tid[2];
+//       typename K::Vector_2 flat_tgt=tgt.second[0]*flat_tid[0]+tgt.second[1]*flat_tid[1]+tgt.second[2]*flat_tid[2];
+//       direction=normalize(flat_tgt-flat_src);
+//     }else{
+//     halfedge_descriptor h_edge=halfedge(path[0].first,tmesh);
+//     int k=0;
+
+//     if(h_edge==prev(h_ref,mesh))
+//       k=2;
+//     else if(h_edge==next(h_ref,mesh))
+//       k=1;
+//     else
+//       assert(h_edge==h_ref);
+//     }
+
+
+
+
+
+
+
+
+
+
+//  }
+
+
+
+
+
+
+// }
+
+template <class K, class TriangleMesh>
+std::vector<typename K::Point_3>
+trace_agap_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
+                     const std::vector<typename K::Vector_2>& directions,
+                     const std::vector<typename K::FT>& lengths,
+                     const TriangleMesh &tmesh)
+{
+  size_t n=directions.size();
+  std::vector<typename K::Point_3> result;
+  std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   for(std::size_t i=0;i<n;++i)
     vertices[i]= straightest_geodesic<K>(center,directions[i],lengths[i],tmesh).back();
 
