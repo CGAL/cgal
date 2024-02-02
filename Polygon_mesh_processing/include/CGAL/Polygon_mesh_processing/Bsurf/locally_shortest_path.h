@@ -2927,6 +2927,32 @@ straightest_geodesic(const Face_location<TriangleMesh, typename K::FT> &src,
   return Impl::straightest_geodesic(src, tmesh, vpm, dir, len);
 }
 
+// we don't expect the last point to be duplicated here
+template <class K>
+std::vector<std::pair<typename K::FT, typename K::FT>>
+convert_polygon_to_polar_coordinates(const std::vector <typename K::Point_2>& polygon,
+                                     std::optional<typename K::Point_2> center = std::nullopt)
+{
+  std::vector<std::pair<typename K::FT, typename K::FT>> result;
+  // compute naively the center
+  if (center==std::nullopt)
+  {
+    Bbox_2 bb = bbox_2(polygon.begin(), polygon.end());
+    center = typename K::Point_2((bb.xmax()+bb.xmin())/2., (bb.ymax()+bb.ymin())/2);
+  }
+
+  for (const typename K::Point_2& pt : polygon)
+  {
+    typename K::FT d = approximate_sqrt(squared_distance(*center, pt));
+    typename K::FT polar = std::atan2((pt.y()-center->y())/* /d */, (pt.x()-center->x())/* /d */);
+    result.emplace_back(d, polar);
+    // std::cout << center->x()+d*std::cos(polar) << " " << center->x()+d*std::sin(polar) << " 0\n";
+  }
+
+  return result;
+}
+
+
 template <class K, class TriangleMesh>
 std::vector<typename K::Point_3>
 trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
@@ -2938,9 +2964,13 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
   size_t n=directions.size();
   std::vector<typename K::Point_3> result;
   std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
+  std::cout << "trace_geodesic_polygon\n";
   for(std::size_t i=0;i<n;++i)
+  {
     vertices[i]= straightest_geodesic<K>(center,directions[i],lengths[i],tmesh).back();
-
+    std::cout << construct_point(vertices[i], tmesh) << "\n";
+  }
+    exit(1);
   std::vector<Edge_location<TriangleMesh,typename K::FT>> edge_locations;
 
   const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
@@ -2963,9 +2993,8 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
   }
 
   return result;
-
-
 }
+
 template <class K, class TriangleMesh>
 typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
                           const Face_location<TriangleMesh, typename K::FT>& src,
@@ -2990,6 +3019,7 @@ typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename
 
    return len;
 }
+
 // template <class K, class TriangleMesh>
 // std::vector<typename K::Vector_2>
 // tangent_path_direction(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
