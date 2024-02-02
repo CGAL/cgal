@@ -83,6 +83,7 @@ public:
   using Sphere = typename Traits::Sphere_d; ///< Sphere type.
   using Adjacency = typename Traits::Adjacency; ///< Adjacency type.
 
+  using Node_index = typename Traits::Node_index; ///< Index of a given node in the tree; the root always has index 0.
   using Node_data = typename Traits::Node_data;
 
   /// @}
@@ -99,11 +100,6 @@ public:
    * \brief Degree of the tree (number of children of non-leaf nodes).
    */
   static constexpr int degree = (2 << (dimension - 1));
-
-  /*!
-   * \brief Index of a given node in the tree; the root always has index 0.
-   */
-  using Node_index = std::size_t;
 
   /*!
     \brief Set of bits representing this node's relationship to its parent.
@@ -155,8 +151,9 @@ private: // data members :
 
   using Cartesian_ranges = Orthtrees::internal::Cartesian_ranges<Traits>;
   using Node_property_container = Properties::Experimental::Property_container<Node_index>;
-  template <class T>
-  using Property_array = Node_property_container::Array<T>;
+
+  template <typename T>
+  using Property_array = typename Properties::Experimental::Property_container<Node_index>::template Array<T>;
 
   Traits m_traits; /* the tree traits */
 
@@ -194,11 +191,11 @@ public:
   */
   explicit Orthtree(Traits traits) :
     m_traits(traits),
-    m_node_contents(m_node_properties.add_property<Node_data>("contents")),
-    m_node_depths(m_node_properties.add_property<std::uint8_t>("depths", 0)),
-    m_node_coordinates(m_node_properties.add_property<Global_coordinates>("coordinates")),
-    m_node_parents(m_node_properties.add_property<std::optional<Node_index>>("parents")),
-    m_node_children(m_node_properties.add_property<std::optional<Node_index>>("children")) {
+    m_node_contents(m_node_properties.template add_property<Node_data>("contents")),
+    m_node_depths(m_node_properties.template add_property<std::uint8_t>("depths", 0)),
+    m_node_coordinates(m_node_properties.template add_property<Global_coordinates>("coordinates")),
+    m_node_parents(m_node_properties.template add_property<std::optional<Node_index>>("parents")),
+    m_node_children(m_node_properties.template add_property<std::optional<Node_index>>("children")) {
 
     m_node_properties.emplace();
 

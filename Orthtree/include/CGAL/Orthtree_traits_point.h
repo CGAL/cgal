@@ -96,9 +96,8 @@ public:
   using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>;
   using Tree = Orthtree<Self>;
 
-  using Node_data_element = typename std::iterator_traits<typename PointRange::iterator>::value_type;
   using Node_index = typename Base::Node_index;
-
+  using Node_data_element = typename std::iterator_traits<typename PointRange::iterator>::value_type;
 
   Orthtree_traits_point(
     PointRange& points,

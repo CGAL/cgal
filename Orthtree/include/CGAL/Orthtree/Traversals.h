@@ -42,7 +42,7 @@ private:
 
 public:
 
-  using Node_index = typename Orthtree<GeomTraits>::Node_index;
+  using Node_index = typename GeomTraits::Node_index;
 
   Preorder_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
@@ -86,7 +86,7 @@ private:
 
 public:
 
-  using Node_index = typename Orthtree<GeomTraits>::Node_index;
+  using Node_index = typename GeomTraits::Node_index;
 
   Postorder_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
@@ -117,7 +117,7 @@ private:
 
 public:
 
-  using Node_index = typename Orthtree<GeomTraits>::Node_index;
+  using Node_index = typename GeomTraits::Node_index;
 
   Leaves_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
@@ -158,7 +158,7 @@ private:
 
 public:
 
-  using Node_index = typename Orthtree<GeomTraits>::Node_index;
+  using Node_index = typename GeomTraits::Node_index;
 
   /*!
     constructs a `depth`-level traversal.

@@ -49,7 +49,6 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base<
 
   using Base = Orthtree_traits_base<
   typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::type, 3 >;
-  using Node_index = typename Base::Node_index;
   using Self = Orthtree_traits_face_graph<TriangleMesh, VertexPointMap>;
   using Tree = Orthtree<Self>;
 
@@ -58,6 +57,7 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base<
   using FT = typename Self::FT;
   using Cartesian_const_iterator_d = typename Self::Cartesian_const_iterator_d;
 
+  using Node_index = typename Base::Node_index;
   using Node_data = std::vector<typename boost::graph_traits<TriangleMesh>::face_descriptor>;
 
   using Geom_traits = typename Kernel_traits<Point_d>::type;
