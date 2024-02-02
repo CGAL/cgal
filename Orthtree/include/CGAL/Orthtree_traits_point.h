@@ -149,10 +149,10 @@ public:
     };
   }
 
-  auto get_geometric_object_for_element_object() const {
-    return [&](const Node_data_element& index) -> typename Self::Point_d {
-      return get(m_point_map, index);
-    };
+  auto get_squared_distance_of_element_object() const {
+    return [&](const Node_data_element& index, const Point_d& point) -> typename FT {
+      return CGAL::squared_distance(get(m_point_map, index), point);
+      };
   }
 
 private:

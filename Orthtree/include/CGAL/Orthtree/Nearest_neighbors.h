@@ -38,7 +38,7 @@ void nearest_k_neighbors_recursive(const Tree& orthtree,
 
       // Pair that point with its distance from the search point
       Result current_point_with_distance =
-        {p, squared_distance(orthtree.traits().get_geometric_object_for_element_object()(p), search_bounds.center())};
+        {p, orthtree.traits().get_squared_distance_of_element_object()(p, search_bounds.center())};
 
       // Check if the new point is within the bounds
       if (current_point_with_distance.distance < search_bounds.squared_radius()) {

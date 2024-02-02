@@ -36,11 +36,12 @@ public:
   using Node_data_element = unspecified_type;
 
   /*!
-   * \brief Functor with an operator to produce a geometric object from a `Node_data_element`.
+   * \brief Functor with an operator calculate the squared distance of `Node_data_element` from a point.
    *
-   * The return type of the functor must be a valid argument to `CGAL::squared_distance()`.
+   * Provides the operator:
+   * `FT operator()(const Node_data_element&, const Point_d&)`
    */
-  using Get_geometric_object_for_element = unspecified_type;
+  using Squared_distance_of_element = unspecified_type;
 
   /// @}
 
@@ -48,9 +49,9 @@ public:
   /// @{
 
   /*!
-   * constructs an object of type `Get_geometric_object_for_element`.
+   * constructs an object of type `Squared_distance_of_element`.
    */
-  Get_geometric_object_for_element get_geometric_object_for_element_object() const;
+  Squared_distance_of_element get_squared_distance_of_element_object() const;
 
   /// @}
 };
