@@ -220,22 +220,22 @@ public:
   Orthtree(const Orthtree& other) :
     m_traits(other.m_traits),
     m_node_properties(other.m_node_properties),
-    m_node_contents(m_node_properties.get_property<Node_data>("contents")),
-    m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
-    m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
-    m_node_parents(m_node_properties.get_property<std::optional<Node_index>>("parents")),
-    m_node_children(m_node_properties.get_property<std::optional<Node_index>>("children")),
+    m_node_contents(m_node_properties.template get_property<Node_data>("contents")),
+    m_node_depths(m_node_properties.template get_property<std::uint8_t>("depths")),
+    m_node_coordinates(m_node_properties.template get_property<Global_coordinates>("coordinates")),
+    m_node_parents(m_node_properties.template get_property<std::optional<Node_index>>("parents")),
+    m_node_children(m_node_properties.template get_property<std::optional<Node_index>>("children")),
     m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth) {}
 
   // move constructor
   Orthtree(Orthtree&& other) :
     m_traits(other.m_traits),
     m_node_properties(std::move(other.m_node_properties)),
-    m_node_contents(m_node_properties.get_property<Node_data>("contents")),
-    m_node_depths(m_node_properties.get_property<std::uint8_t>("depths")),
-    m_node_coordinates(m_node_properties.get_property<Global_coordinates>("coordinates")),
-    m_node_parents(m_node_properties.get_property<std::optional<Node_index>>("parents")),
-    m_node_children(m_node_properties.get_property<std::optional<Node_index>>("children")),
+    m_node_contents(m_node_properties.template get_property<Node_data>("contents")),
+    m_node_depths(m_node_properties.template get_property<std::uint8_t>("depths")),
+    m_node_coordinates(m_node_properties.template get_property<Global_coordinates>("coordinates")),
+    m_node_parents(m_node_properties.template get_property<std::optional<Node_index>>("parents")),
+    m_node_children(m_node_properties.template get_property<std::optional<Node_index>>("children")),
     m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth)
   {
     // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
@@ -482,7 +482,7 @@ public:
   template <typename T>
   std::pair<Property_map<T>, bool>
   get_or_add_node_property(const std::string& name, const T default_value = T()) {
-    auto p = m_node_properties.get_or_add_property(name, default_value);
+    auto p = m_node_properties.template get_or_add_property(name, default_value);
     return std::pair<Property_map<T>, bool>(Property_map<T>(p.first), p.second);
   }
 
@@ -498,7 +498,7 @@ public:
    */
   template <typename T>
   Property_map<T> add_node_property(const std::string& name, const T default_value = T()) {
-    return m_node_properties.add_property(name, default_value);
+    return m_node_properties.template add_property(name, default_value);
   }
 
   /*!
@@ -514,7 +514,7 @@ public:
    */
   template <typename T>
   Property_map<T> get_node_property(const std::string& name) {
-    return m_node_properties.get_property<T>(name);
+    return m_node_properties.template get_property<T>(name);
   }
 
   /*!
@@ -529,7 +529,7 @@ public:
   template <typename T>
   std::optional<Property_map<T>>
   get_node_property_if_exists(const std::string& name) {
-    auto p = m_node_properties.get_property_if_exists<T>(name);
+    auto p = m_node_properties.template get_property_if_exists<T>(name);
     if (p)
       return std::optional<Property_map<T> >(Property_map<T>(*p));
     else

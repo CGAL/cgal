@@ -38,13 +38,13 @@ template <typename GeomTraits>
 struct Preorder_traversal {
 private:
 
-  const Orthtree<GeomTraits>& m_orthtree;
+  const CGAL::Orthtree<GeomTraits>& m_orthtree;
 
 public:
 
   using Node_index = typename GeomTraits::Node_index;
 
-  Preorder_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
+  Preorder_traversal(const CGAL::Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
   Node_index first_index() const {
     return m_orthtree.root();
@@ -82,13 +82,13 @@ template <typename GeomTraits>
 struct Postorder_traversal {
 private:
 
-  const Orthtree<GeomTraits>& m_orthtree;
+  const CGAL::Orthtree<GeomTraits>& m_orthtree;
 
 public:
 
   using Node_index = typename GeomTraits::Node_index;
 
-  Postorder_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
+  Postorder_traversal(const CGAL::Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
   Node_index first_index() const {
     return m_orthtree.deepest_first_child(m_orthtree.root());
@@ -113,13 +113,13 @@ template <typename GeomTraits>
 struct Leaves_traversal {
 private:
 
-  const Orthtree<GeomTraits>& m_orthtree;
+  const CGAL::Orthtree<GeomTraits>& m_orthtree;
 
 public:
 
   using Node_index = typename GeomTraits::Node_index;
 
-  Leaves_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
+  Leaves_traversal(const CGAL::Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
   Node_index first_index() const {
     return m_orthtree.deepest_first_child(m_orthtree.root());
@@ -153,7 +153,7 @@ template <typename GeomTraits>
 struct Level_traversal {
 private:
 
-  const Orthtree<GeomTraits>& m_orthtree;
+  const CGAL::Orthtree<GeomTraits>& m_orthtree;
   const std::size_t m_depth;
 
 public:
@@ -163,7 +163,7 @@ public:
   /*!
     constructs a `depth`-level traversal.
   */
-  Level_traversal(const Orthtree<GeomTraits>& orthtree, std::size_t depth) : m_orthtree(orthtree), m_depth(depth) {}
+  Level_traversal(const CGAL::Orthtree<GeomTraits>& orthtree, std::size_t depth) : m_orthtree(orthtree), m_depth(depth) {}
 
   Node_index first_index() const {
     // assumes the tree has at least one child at m_depth
