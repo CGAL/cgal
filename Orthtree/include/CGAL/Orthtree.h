@@ -330,7 +330,7 @@ public:
 
     // Collect all the leaf nodes
     std::queue<Node_index> leaf_nodes;
-    for (Node_index leaf: traverse(Orthtrees::Leaves_traversal<Traits>(*this))) {
+    for (Node_index leaf: traverse(Orthtrees::Leaves_traversal<Self>(*this))) {
       leaf_nodes.push(leaf);
     }
 
@@ -391,7 +391,8 @@ public:
   const Traits& traits() const { return m_traits; }
 
   /*!
-    \brief provides access to the root node, and by extension the rest of the tree.
+    \brief provides access to the root node, and by
+    extension the rest of the tree.
    */
   Node_index root() const { return 0; }
 
@@ -438,6 +439,35 @@ public:
   template <typename Traversal, typename ...Args>
   Node_index_range traverse(Args&& ...args) const {
     return traverse(Traversal{*this, std::forward<Args>(args)...});
+  }
+
+  // TODO shall we document it?
+  FT
+  compute_cartesian_coordinate(std::uint32_t gc, std::size_t depth, int ci) const
+  {
+    CGAL_assertion(depth <= m_side_per_depth.size());
+    // an odd coordinate will be first compute at the current depth,
+    // while an even coordinate has already been computed at a previous depth.
+    // So while the coordinate is even, we decrease the depth to end up of the first
+    // non-even coordinate to compute it (with particular case for bbox limits).
+    // Note that is depth becomes too large, we might end up with incorrect coordinates
+    // due to rounding errors.
+    if (gc == (1u << depth)) return (m_bbox.max)()[ci]; // gc == 2^node_depth
+    if (gc == 0) return (m_bbox.min)()[ci];
+    if (gc % 2 !=0)
+    {
+      FT size = depth < m_side_per_depth.size()
+              ? m_side_per_depth[depth][ci]
+              : m_side_per_depth[depth-1][ci]/FT(2);
+      return (m_bbox.min)()[ci] + int(gc) * size;
+    }
+    std::size_t nd = depth;
+    do{
+      --nd;
+      gc = gc >> 1;
+    }
+    while((gc&1)==0); // while even, shift
+    return (m_bbox.min)()[ci] + int(gc) * m_side_per_depth[nd][ci];
   }
 
   /*!
@@ -1083,33 +1113,6 @@ public:
 
 private: // functions :
 
-  FT compute_cartesian_coordinate(std::uint32_t gc, std::size_t depth, int ci) const
-  {
-    CGAL_assertion(depth <= m_side_per_depth.size());
-    // an odd coordinate will be first compute at the current depth,
-    // while an even coordinate has already been computed at a previous depth.
-    // So while the coordinate is even, we decrease the depth to end up of the first
-    // non-even coordinate to compute it (with particular case for bbox limits).
-    // Note that is depth becomes too large, we might end up with incorrect coordinates
-    // due to rounding errors.
-    if (gc == (1u << depth)) return (m_bbox.max)()[ci]; // gc == 2^node_depth
-    if (gc == 0) return (m_bbox.min)()[ci];
-    if (gc % 2 != 0)
-    {
-      FT size = depth < m_side_per_depth.size()
-        ? m_side_per_depth[depth][ci]
-        : m_side_per_depth[depth - 1][ci] / FT(2);
-      return (m_bbox.min)()[ci] + int(gc) * size;
-    }
-    std::size_t nd = depth;
-    do {
-      --nd;
-      gc = gc >> 1;
-    } while ((gc & 1) == 0); // while even, shift
-    return (m_bbox.min)()[ci] + int(gc) * m_side_per_depth[nd][ci];
-  }
-
-
   Node_index recursive_descendant(Node_index node, std::size_t i) { return child(node, i); }
 
   template <typename... Indices>
@@ -1208,7 +1211,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Self& orthtree) {
     // Iterate over all nodes
-    for (auto n: orthtree.traverse(Orthtrees::Preorder_traversal<Traits>(orthtree))) {
+    for (auto n: orthtree.traverse(Orthtrees::Preorder_traversal<Self>(orthtree))) {
       // Show the depth
       for (std::size_t i = 0; i < orthtree.depth(n); ++i)
         os << ". ";

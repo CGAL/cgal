@@ -15,7 +15,7 @@ using Octree = CGAL::Orthtree<OTraits>;
 void dump_as_polylines(const Octree& ot)
 {
     std::ofstream out("octree.polylines.txt");
-    for (Octree::Node_index node : ot.traverse(CGAL::Orthtrees::Leaves_traversal<OTraits>(ot)))
+    for (Octree::Node_index node : ot.traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(ot)))
     {
       if (!ot.is_leaf(node))
         continue;
