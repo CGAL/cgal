@@ -31,7 +31,7 @@ namespace Orthtrees {
   split if it contains more than a certain number of items.
 
   \warning This split predicate is only appropriate for trees with traits classes where
-  `Node_data` is a model of `RandomAccessRange`.
+  `Node_data` is a model of `Range`. `RandomAccessRange` is suggested for performance.
  */
 class Maximum_number_of_inliers {
 
@@ -96,7 +96,7 @@ public:
   than `bucket_size`, it is not split.
 
   \warning This split predicate is only appropriate for trees with traits classes where
-  `Node_data` is a model of `RandomAccessRange`.
+  `Node_data` is a model of `Range`. `RandomAccessRange` is suggested for performance.
  */
 class Maximum_depth_and_maximum_number_of_inliers {
 

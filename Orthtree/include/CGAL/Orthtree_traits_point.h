@@ -150,7 +150,7 @@ public:
   }
 
   auto get_squared_distance_of_element_object() const {
-    return [&](const Node_data_element& index, const typename Self::Point_d& point) -> typename FT {
+    return [&](const Node_data_element& index, const typename Self::Point_d& point) -> typename Self::FT {
       return CGAL::squared_distance(get(m_point_map, index), point);
       };
   }
