@@ -512,7 +512,7 @@ public:
   template <typename T>
   std::pair<Property_map<T>, bool>
   get_or_add_node_property(const std::string& name, const T default_value = T()) {
-    auto p = m_node_properties.template get_or_add_property(name, default_value);
+    auto p = m_node_properties.get_or_add_property(name, default_value);
     return std::pair<Property_map<T>, bool>(Property_map<T>(p.first), p.second);
   }
 
@@ -528,7 +528,7 @@ public:
    */
   template <typename T>
   Property_map<T> add_node_property(const std::string& name, const T default_value = T()) {
-    return m_node_properties.template add_property(name, default_value);
+    return m_node_properties.add_property(name, default_value);
   }
 
   /*!

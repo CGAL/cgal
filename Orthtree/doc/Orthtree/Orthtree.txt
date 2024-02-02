@@ -121,7 +121,7 @@ set as the orthtree's map type, so a map does not need to be provided.
 \section Section_Orthtree_Properties Properties
 The Orthtree uses a mechanism to attach properties to nodes at run-time which follows \ref sectionSurfaceMesh_properties "Surface mesh properties". Each property is identified by a string and its key type and stored in a consecutive block of memory. Contrary to surface mesh the removal of properties is not supported.
 
-Several properties are provided by default and used to maintain the data structure. The property \c "contents" keeps the data for each node. "parents" and "children" maintain the relation between nodes. "coordinates" and "depth" contain absolute positions of nodes.
+Several properties are provided by default and used to maintain the data structure. The property \c "contents" keeps the data for each node. \c "parents" and \c "children" maintain the relation between nodes. \c "coordinates" and \c "depth" contain absolute positions of nodes.
 
 \section Section_Orthtree_Traversal Traversal
 
