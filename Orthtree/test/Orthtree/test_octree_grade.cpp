@@ -15,7 +15,7 @@ using Point = Kernel::Point_3;
 using FT = Kernel::FT;
 using Point_set = CGAL::Point_set_3<Point>;
 using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
-using Leaves_traversal = CGAL::Orthtrees::Leaves_traversal<Octree>;
+using Leaves_traversal = CGAL::Orthtrees::Leaves_traversal<typename Octree::Traits>;
 
 std::size_t count_jumps(Octree& octree) {
 

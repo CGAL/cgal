@@ -12,8 +12,8 @@ using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_3;
 using Point_set = CGAL::Point_set_3<Point>;
 using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
-using Preorder_traversal = CGAL::Orthtrees::Preorder_traversal<Octree>;
-using Level_traversal = CGAL::Orthtrees::Level_traversal<Octree>;
+using Preorder_traversal = CGAL::Orthtrees::Preorder_traversal<typename Octree::Traits>;
+using Level_traversal = CGAL::Orthtrees::Level_traversal<typename Octree::Traits>;
 
 bool test_preorder_1_node() {
 
