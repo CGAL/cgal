@@ -24,7 +24,6 @@ struct Face { int a, b, c; };
 #include <thread>
 #endif
 
-
 //#undef CGAL_LINKED_WITH_EMBREE
 #ifdef CGAL_LINKED_WITH_EMBREE
 #include <embree3/rtcore.h>
@@ -115,7 +114,7 @@ namespace     Feature {
         }
     }
 
-    template <typename GeomTraits, typename PointRange, typename PointMap, typename Mesh, typename ConcurrencyTag>
+    template <typename GeomTraits, typename PointRange, typename PointMap, typename Mesh, typename ConcurrencyTag = CGAL::Parallel_if_available_tag>
     class Coverage : public CGAL::Classification::Feature_base
     {
         using MeshKernel = typename Mesh::Point::R::Kernel;
@@ -213,13 +212,9 @@ namespace     Feature {
 
 #if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
             std::cerr << "Shooting rays (Embree)..." << std::endl;
-#ifdef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
-            boost::timer::progress_display progress(input.number_of_points());
-#else
             CGAL::Real_timer t;
             t.reset();
             t.start();
-#endif
 #endif
             coverage.reserve(input.number_of_points());
             CGAL::for_each<ConcurrencyTag>
@@ -261,20 +256,12 @@ namespace     Feature {
 
                         coverage[s] = n_occluded / float(N_rays);
 
-#if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#ifdef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
-                        ++progress;
-#endif
-#endif
-
                         delete[] rays;
                         return true;
                     });
 #if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#ifndef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
             t.stop();
             std::cout << "Took " << t.time() << " s." << std::endl;
-#endif
 #endif
 
         }

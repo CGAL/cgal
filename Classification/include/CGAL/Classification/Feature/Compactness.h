@@ -12,8 +12,8 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Real_timer.h>
-#ifndef CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#define CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS false
+#ifndef CGAL_COMPACTNESS_FEATURE_DISPLAY_PROGRESS
+#define CGAL_COMPACTNESS_FEATURE_DISPLAY_PROGRESS false
 #endif
 // Sphere generation
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
@@ -30,7 +30,7 @@ namespace   Classification {
 namespace     Feature {
 
 // User-defined feature
-template <typename GeomTraits, typename PointRange, typename PointMap, typename Mesh, typename ConcurrencyTag>
+template <typename GeomTraits, typename PointRange, typename PointMap, typename Mesh, typename ConcurrencyTag = CGAL::Parallel_if_available_tag>
 class Compactness : public CGAL::Classification::Feature_base
 {
     using MeshKernel = typename Mesh::Point::R::Kernel;
@@ -68,7 +68,7 @@ public:
     Compactness(const PointRange& input, PointMap point_map, const Grid& grid, float feature_scale, const Mesh& wrap) : input(input), point_map(point_map), grid(grid)
     {
         this->set_name("Compactness");
-        feature_scale *= 2.0f;
+        feature_scale /= 2.0f;
 
         dtm = Image_float(grid.width(), grid.height());
 
@@ -101,15 +101,11 @@ public:
         CGAL::Cartesian_converter<GeomTraits, GT> to_tr;
 
         std::size_t n_cells = grid.height() * grid.width();
-#if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
+#if CGAL_COMPACTNESS_FEATURE_DISPLAY_PROGRESS
         std::cout << "No. of cells: " << grid.height() * grid.width() << " occupied cells: " << occupied_cells << std::endl;
-#ifdef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
-        boost::timer::progress_display progress(n_cells);
-#else
         CGAL::Real_timer t;
         t.reset();
         t.start();
-#endif
 #endif
         CGAL::for_each<ConcurrencyTag>
             (CGAL::make_counting_range<std::size_t>(0, n_cells),
@@ -118,6 +114,7 @@ public:
                     std::size_t i = s % grid.width();
                     std::size_t j = s / grid.width();
                     if (grid.has_points(i, j)) {
+                        /*
                         // calculate centroid of points in grid cell
                         float cx = 0, cy = 0, cz = 0;
                         PointRange::Vector_3 c;
@@ -134,6 +131,17 @@ public:
                         PointRange::Point_3 centroid(cx / k, cy / k, cz / k);
                         //PointRange::Point_3 centroid(c.x() / k, c.y() / k, c.z() / k);
                         //Vector_3 centroid = to_tr(c / k);
+                        */
+                        // calculate highest of points in grid cell
+                        PointRange::Point_3& highest = get(point_map, *(input.begin() + (*grid.indices_begin(i, j))));;
+                        for (typename Grid::iterator it = grid.indices_begin(i, j), end = grid.indices_end(i, j); it != end; ++it) {
+                            PointRange::Point_3& p = get(point_map, *(input.begin() + (*it)));
+                            if (highest.z() < p.z()) {
+                                highest = p;
+                            }
+                        }
+                        PointRange::Point_3 centroid(highest);
+
 
                         Mesh smi = sm; // copy sphere mesh
 
@@ -155,7 +163,7 @@ public:
 
                         // Compute volume and surface area
                         double vol = 0;
-                        double surface = 0;
+                        double area = 0;
                         for (Mesh::Face_range::iterator it = intersected_mesh.faces_begin(); it != intersected_mesh.faces_end(); ++it) {
                             halfedge_descriptor hd = intersected_mesh.halfedge(*it);
 
@@ -166,43 +174,23 @@ public:
                                 hd = intersected_mesh.next(hd);
                             } while (hd != intersected_mesh.halfedge(*it));
 
-                            // Determinant
-                            double v321 = P.at(2).x() * P.at(1).y() * P.at(0).z();
-                            double v231 = P.at(1).x() * P.at(2).y() * P.at(0).z();
-                            double v312 = P.at(2).x() * P.at(0).y() * P.at(1).z();
-                            double v132 = P.at(0).x() * P.at(2).y() * P.at(1).z();
-                            double v213 = P.at(1).x() * P.at(0).y() * P.at(2).z();
-                            double v123 = P.at(0).x() * P.at(1).y() * P.at(2).z();
-
-                            double det = -v321 + v231 + v312 - v132 - v213 + v123;
-                            vol += det;
-
-                            double area = 0.5f * CGAL::sqrt(std::pow((P.at(1).y() - P.at(0).y()) * (P.at(2).z() - P.at(0).z()) - (P.at(1).z() - P.at(0).z()) * (P.at(2).y() - P.at(0).y()), 2) +
-                                                            std::pow((P.at(1).z() - P.at(0).z()) * (P.at(2).x() - P.at(0).x()) - (P.at(1).x() - P.at(0).x()) * (P.at(2).z() - P.at(0).z()), 2) +
-                                                            std::pow((P.at(1).x() - P.at(0).x()) * (P.at(2).y() - P.at(0).y()) - (P.at(1).y() - P.at(0).y()) * (P.at(2).x() - P.at(0).x()), 2));
-
-                            surface += std::abs(area);
+                            vol += CGAL::determinant(P.at(0).x(), P.at(0).y(), P.at(0).z(), P.at(1).x(), P.at(1).y(), P.at(1).z(), P.at(2).x(), P.at(2).y(), P.at(2).z());
+                            area += CGAL::sqrt(CGAL::squared_area(P.at(0), P.at(1), P.at(2)));
                         }
                         vol /= 6.0f;
+                        area /= 2.0f;
 
-                        double compactness = (3.f * vol) / (feature_scale * surface);
-                        if (surface == 0.f) compactness = 0.f;
+                        double compactness = (3.f * vol) / (feature_scale * area);
+                        if (area == 0.f) compactness = 0.f;
 
                         dtm(i, j) = compactness;
                     }
-#if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#ifdef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
-                    ++progress;
-#endif
-#endif
                     return true;
                 });
 
-#if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#ifndef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
+#if CGAL_COMPACTNESS_FEATURE_DISPLAY_PROGRESS
                 t.stop();
                 std::cout << "Took " << t.time() << " s." << std::endl;
-#endif
 #endif
 
         if (grid.width() * grid.height() > input.size()) {

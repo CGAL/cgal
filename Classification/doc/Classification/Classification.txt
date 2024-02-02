@@ -95,6 +95,13 @@ The following code snippet shows how to instantiate such data structures from an
 - [Vertical_range](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest and lowest points;
 - [Verticality](@ref CGAL::Classification::Feature::Verticality) compares the local normal vector to the vertical vector.
 
+Optionally, some advanced features can be computed.
+- [Betti_numbers](@ref CGAL::Classification::Feature::Betti_numbers) given a reconstruction of the surface, this computes Betti numbers of the local surface.
+- [Compactness](@ref CGAL::Classification::Feature::Compactness) given a reconstruction of the surface, computes how similar to a sphere a local region appears.
+- [Coverage](@ref CGAL::Classification::Feature::Coverage) given a reconstruction of the surface, this estimates the number of perspectives a point can be viewed from without being obstructed by the surface.
+- [Fractal_dimensionality](@ref CGAL::Classification::Feature::Fractal_dimensionality) computes dimensionality of point in a local region.
+- [Skeletonise](@ref CGAL::Classification::Feature::Skeletonise) given a reconstruction of the surface, computes branching and cycle quantities with respect to the medial axis of the surface.
+
 These features are designed for point sets but can easily be used with surface meshes as well (see \ref Classification_meshes). For more details about how these different features can help to identify one label or the other, please refer to their associated reference manual pages.
 
 In addition, if the input data set has additional properties, these can also be used as features. For example, \cgal provides the following features:

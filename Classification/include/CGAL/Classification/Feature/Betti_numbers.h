@@ -12,8 +12,8 @@
 //#include <CGAL/Point_set_3.h>
 //#include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Real_timer.h>
-#ifndef CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#define CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS false
+#ifndef CGAL_BETTI_NUMBERS_FEATURE_DISPLAY_PROGRESS
+#define CGAL_BETTI_NUMBERS_FEATURE_DISPLAY_PROGRESS false
 #endif
 // Sphere generation
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
@@ -30,7 +30,7 @@ namespace   Classification {
 namespace     Feature {
 
 // User-defined feature
-template <typename GeomTraits, typename PointRange, typename PointMap, typename Mesh, typename ConcurrencyTag>
+template <typename GeomTraits, typename PointRange, typename PointMap, typename Mesh, typename ConcurrencyTag = CGAL::Parallel_if_available_tag>
 class Betti_numbers : public CGAL::Classification::Feature_base_multi_dim
 {
     using MeshKernel = typename Mesh::Point::R::Kernel;
@@ -59,22 +59,23 @@ class Betti_numbers : public CGAL::Classification::Feature_base_multi_dim
 
     const PointRange& input;
     PointMap point_map;
-    const Grid& grid;
+    const Grid& m_grid;
 
     Image_float dtm_0, dtm_1, dtm_2;
     std::vector<int> b0, b1, b2;
 
 
 public:
-    Betti_numbers(const PointRange& input, PointMap point_map, const Grid& grid, float feature_scale, const Mesh& wrap) : input(input), point_map(point_map), grid(grid)
+
+    Betti_numbers(const PointRange& input, PointMap point_map, const Grid& grid, float feature_scale, const Mesh& wrap) : input(input), point_map(point_map), m_grid(grid)
     {
         this->set_name("Betti_numbers");
-        feature_scale *= 2.0f;
+        feature_scale /= 2.0f;
 
-        dtm_0 = Image_float(grid.width(), grid.height());
-        dtm_1 = Image_float(grid.width(), grid.height());
-        dtm_2 = Image_float(grid.width(), grid.height());
-
+        dtm_0 = Image_float(m_grid.width(), m_grid.height());
+        dtm_1 = Image_float(m_grid.width(), m_grid.height());
+        dtm_2 = Image_float(m_grid.width(), m_grid.height());
+        
         // Create Sphere
         Tr tr;           // 3D-Delaunay triangulation
         C2t3 c2t3(tr);   // 2D-complex in 3D-Delaunay triangulation
@@ -92,41 +93,41 @@ public:
 
         Mesh sm;
         CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, sm);
+        std::cout << "sm #vertices = " << sm.number_of_vertices() << ", #faces = " << sm.number_of_faces() << std::endl;
+        CGAL::IO::write_polygon_mesh("sm.ply", sm, CGAL::parameters::stream_precision(17));
 
         int occupied_cells = 0;
-        for (int j = 0; j < grid.height(); ++j)
-            for (std::size_t i = 0; i < grid.width(); ++i) {
-                if (grid.has_points(i, j)) {
+        for (int j = 0; j < m_grid.height(); ++j)
+            for (std::size_t i = 0; i < m_grid.width(); ++i) {
+                if (m_grid.has_points(i, j)) {
                     occupied_cells++;
                 }
             }
 
         CGAL::Cartesian_converter<GeomTraits, GT> to_tr;
 
-        std::size_t n_cells = grid.height() * grid.width();
-#if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-        std::cout << "No. of cells: " << grid.height() * grid.width() << " occupied cells: " << occupied_cells << std::endl;
-#ifdef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
-        boost::timer::progress_display progress(n_cells);
-#else
+        std::size_t n_cells = m_grid.height() * m_grid.width();
+#if CGAL_BETTI_NUMBERS_FEATURE_DISPLAY_PROGRESS
+        std::cout << "No. of cells: " << m_grid.height() * m_grid.width() << " occupied cells: " << occupied_cells << std::endl;
+
         CGAL::Real_timer t;
         t.reset();
         t.start();
-#endif
 #endif
         CGAL::for_each<ConcurrencyTag>
             (CGAL::make_counting_range<std::size_t>(0, n_cells),
                 [&](const std::size_t& s) -> bool
                 {
-                    std::size_t i = s % grid.width();
-                    std::size_t j = s / grid.width();
-                    if (grid.has_points(i, j)) {
+                    std::size_t i = s % m_grid.width();
+                    std::size_t j = s / m_grid.width();
+                    if (m_grid.has_points(i, j)) {
+                        /*
                         // calculate centroid of points in grid cell
                         float cx = 0, cy = 0, cz = 0;
                         PointRange::Vector_3 c;
                         int k = 0;
-                        typename Grid::iterator end = grid.indices_end(i, j);
-                        for (typename Grid::iterator it = grid.indices_begin(i, j); it != end; ++it) {
+                        typename Grid::iterator end = m_grid.indices_end(i, j);
+                        for (typename Grid::iterator it = m_grid.indices_begin(i, j); it != end; ++it) {
                             PointRange::Point_3& p = get(point_map, *(input.begin() + (*it)));
                             cx += p.x();
                             cy += p.y();
@@ -137,9 +138,26 @@ public:
                         PointRange::Point_3 centroid(cx / k, cy / k, cz / k);
                         //PointRange::Point_3 centroid(c.x() / k, c.y() / k, c.z() / k);
                         //Vector_3 centroid = to_tr(c / k);
+                        */
+                        // calculate highest of points in grid cell
+                        PointRange::Point_3& highest = get(point_map, *(input.begin() + (*m_grid.indices_begin(i, j))));;
+                        for (typename Grid::iterator it = m_grid.indices_begin(i, j), end = m_grid.indices_end(i, j); it != end; ++it) {
+                            PointRange::Point_3& p = get(point_map, *(input.begin() + (*it)));
+                            /*
+                            if (cz < p.z()) {
+                                cx = p.x();
+                                cy = p.y();
+                                cz = p.z();
+                            }*/
+                            if (highest.z() < p.z()) {
+                                highest = p;
+                            }
+                        }
+                        //PointRange::Point_3 centroid(cx, cy, cz);
+                        PointRange::Point_3 centroid(highest);
 
-                        Mesh smi = sm; // copy sphere mesh
-
+                        Mesh smi(sm); // copy sphere mesh
+                        
                         // Translate and scale sphere mesh
                         for (Mesh::Vertex_index& p : smi.vertices()) {
                             Point_3& a = smi.point(p);
@@ -169,28 +187,21 @@ public:
                         dtm_1(i, j) = (float)b_1;
                         dtm_2(i, j) = (float)b_2;
                     }
-#if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#ifdef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
-                    ++progress;
-#endif
-#endif
                     return true;
                 });
 
-#if CGAL_COVERAGE_FEATURE_DISPLAY_PROGRESS
-#ifndef BOOST_TIMER_PROGRESS_DISPLAY_HPP_INCLUDED
+#if CGAL_BETTI_NUMBERS_FEATURE_DISPLAY_PROGRESS
                 t.stop();
                 std::cout << "Took " << t.time() << " s." << std::endl;
 #endif
-#endif
 
-        if (grid.width() * grid.height() > input.size()) {
+        if (m_grid.width() * m_grid.height() > input.size()) {
             b0.resize(input.size(), 0.f);
             b1.resize(input.size(), 0.f);
             b2.resize(input.size(), 0.f);
             for (std::size_t i = 0; i < input.size(); ++i) {
-                std::size_t I = grid.x(i);
-                std::size_t J = grid.y(i);
+                std::size_t I = m_grid.x(i);
+                std::size_t J = m_grid.y(i);
                 b0[i] = (int) dtm_0(I, J);
                 b1[i] = (int) dtm_1(I, J);
                 b2[i] = (int) dtm_2(I, J);
@@ -201,8 +212,9 @@ public:
     float value(std::size_t pt_index, std::size_t dim_index)
     {
         if (b0.empty() && b1.empty() && b2.empty()) {
-            std::size_t I = grid.x(pt_index);
-            std::size_t J = grid.y(pt_index);
+            std::size_t I = m_grid.x(pt_index);
+            std::size_t J = m_grid.y(pt_index);
+            
             if (dim_index == 0)
                 return dtm_0(I, J);
             else if (dim_index == 1)
