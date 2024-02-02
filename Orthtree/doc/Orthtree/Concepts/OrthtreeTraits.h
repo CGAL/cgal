@@ -71,7 +71,7 @@ public:
   using Construct_root_node_contents = unspecified_type;
 
   /*!
-   * \brief Functor which distributes a node's contents to its children.
+   * \brief functor which fills the contents of the nodes children.
    *
    * Provides the operator:
    * `void operator()(typename Tree::Node_index, Tree&, const Point_d&)`
@@ -81,6 +81,7 @@ public:
    * It must distribute the contents of the node to each of its children.
    * For a tree in which each node contains a span, this may mean rearranging the contents of the original node
    * and producing spans containing a subset of its contents for each of its children.
+   * For compatibility with locate, the center of the node is considered to be part of the upper half.
    */
   using Distribute_node_contents = unspecified_type;
 

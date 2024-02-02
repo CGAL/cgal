@@ -544,9 +544,10 @@ public:
   /*!
     \brief finds the leaf node which contains a particular point in space.
 
-    Traverses the orthtree and finds the deepest cell that has a
+    Traverses the orthtree and finds the leaf cell that has a
     domain enclosing the point passed. The point passed must be within
-    the region enclosed by the orthtree (bbox of the root node).
+    the region enclosed by the orthtree (bbox of the root node). The point is contained in the
+    lower cell of each direction if its coordinate is lower than the center.
 
     \param point query point.
 
