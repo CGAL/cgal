@@ -651,10 +651,6 @@ public:
 
   /*!
     \brief determines whether the node specified by index `n` is a leaf node.
-
-    \param n index of the node to check.
-
-    \return `true` of the node is a leaf, `false` otherwise.
    */
   bool is_leaf(Node_index n) const {
     return !m_node_children[n].has_value();
@@ -662,10 +658,6 @@ public:
 
   /*!
     \brief determines whether the node specified by index `n` is a root node.
-
-    \param n index of the node to check.
-
-    \return `true` if the node is a root, `false` otherwise.
    */
   bool is_root(Node_index n) const {
     return n == 0;
@@ -686,21 +678,13 @@ public:
 
   /*!
     \brief retrieves a reference to the Node_data associated with the node specified by `n`.
-
-    \param n index of the node to retrieve the contents of.
-
-    \return a reference to the data associated with the node.
    */
   Node_data& data(Node_index n) {
     return m_node_contents[n];
   }
 
   /*!
-    \brief const version of `data()`
-
-    \param n index of the node to retrieve the contents of.
-
-    \return a const reference to the data associated with the node.
+    \brief retrieves a const reference to the Node_data associated with the node specified by `n`.
    */
   const Node_data& data(Node_index n) const {
     return m_node_contents[n];
@@ -708,10 +692,6 @@ public:
 
   /*!
     \brief retrieves the global coordinates of the node.
-
-    \param n index of the node to retrieve the coordinates of.
-
-    \return the global coordinates of the node within the tree
    */
   Global_coordinates global_coordinates(Node_index n) const {
     return m_node_coordinates[n];
@@ -719,10 +699,6 @@ public:
 
   /*!
     \brief retrieves the local coordinates of the node.
-
-    \param n index of the node to retrieve the coordinates of.
-
-    \return the local coordinates of the node within the tree
    */
   Local_coordinates local_coordinates(Node_index n) const {
     Local_coordinates result;
