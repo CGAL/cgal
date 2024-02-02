@@ -1169,11 +1169,9 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos, sizing, cell_selector/*, adaptive = false*/)
     && collapse_preserves_surface_star(edge, c3t3, new_pos, cell_selector))
   {
-    CGAL_assertion_code(typename Tr::Cell_handle dc);
-    CGAL_assertion_code(int di);
-    CGAL_assertion_code(int dj);
-    CGAL_assertion(c3t3.triangulation().is_edge(edge.first->vertex(edge.second),
-                                                edge.first->vertex(edge.third), dc, di, dj));
+    CGAL_assertion(c3t3.triangulation().tds().is_edge(
+                       edge.first->vertex(edge.second),
+                       edge.first->vertex(edge.third)));
 
     Vertex_handle v0_init = edge.first->vertex(edge.second);
     Vertex_handle v1_init = edge.first->vertex(edge.third);

@@ -424,9 +424,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
                                           indices(facet_circulator->second, j));
             if (curr != vh0  && curr != vh1)
             {
-              Cell_handle ch;
-              int i0, i1;
-              if (tr.is_edge(curr, vh, ch, i0, i1))
+              if (tr.tds().is_edge(curr, vh))
                 is_edge = true;
             }
           }
@@ -1864,7 +1862,6 @@ std::size_t flipBoundaryEdges(
   Tr& tr = c3t3.triangulation();
 
   std::vector<Edge_vv> candidate_edges_for_flip;
-
   for (const Edge& e : boundary_edges)
   {
     if (!c3t3.is_in_complex(e))
@@ -1919,14 +1916,7 @@ std::size_t flipBoundaryEdges(
     const Vertex_handle vh2 = third_vertex(f0, vh0, vh1, tr);
     const Vertex_handle vh3 = third_vertex(f1, vh0, vh1, tr);
 
-    CGAL_assertion_code(int li);
-    CGAL_assertion_code(int lj);
-    CGAL_assertion_code(int lk);
-    CGAL_assertion_code(Cell_handle cc);
-    CGAL_assertion(tr.is_facet(vh0, vh1, vh2, cc, li, lj, lk));
-    CGAL_assertion(c3t3.is_in_complex(cc, (6 - li - lj - lk)));
-    CGAL_assertion(tr.is_facet(vh0, vh1, vh3, cc, li, lj, lk));
-    CGAL_assertion(c3t3.is_in_complex(cc, (6 - li - lj - lk)));
+    CGAL_assertion_code(debug::check_facets(vh0, vh1, vh2, vh3, c3t3));
 
     if (!tr.tds().is_edge(vh2, vh3)) // most-likely to happen early exit
     {

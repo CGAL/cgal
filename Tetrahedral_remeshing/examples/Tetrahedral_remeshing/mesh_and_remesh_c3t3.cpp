@@ -12,27 +12,27 @@
 #include <CGAL/IO/File_medit.h>
 
 // Domain
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Polyhedron = CGAL::Mesh_polyhedron_3<K>::type;
+using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<K>;
 
 #ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
+using Concurrency_tag = CGAL::Parallel_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+using Concurrency_tag = CGAL::Sequential_tag;
 #endif
 
 // Triangulation for Meshing
-typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index> C3t3;
+using Tr = CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type;
+using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<
+  Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index>;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
 // Triangulation for Remeshing
-typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
-  typename Tr::Triangulation_data_structure> Triangulation_3;
+using Triangulation_3 = CGAL::Triangulation_3<Tr::Geom_traits,
+                             Tr::Triangulation_data_structure>;
 using Vertex_handle = Triangulation_3::Vertex_handle;
 
 using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
+  // Property map of constraints
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
 
