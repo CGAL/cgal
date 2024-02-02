@@ -311,7 +311,7 @@ public:
     than `bucket_size`, it is not split.
 
     \warning This convenience method is only appropriate for trees with traits classes where
-    `Node_data` is a list-like type with a `size()` method.
+    `Node_data` is a model of `RandomAccessRange`.
 
     \param max_depth deepest a tree is allowed to be (nodes at this depth will not be split).
     \param bucket_size maximum number of items a node is allowed to contain.
