@@ -97,16 +97,6 @@ third_vertex(const typename Tr::Facet& f,
     typename Tr::Vertex_handle();
 }
 
-{
-  for(auto v : tr.vertices(f))
-    if(v != v0 && v != v1)
-      return v;
-
-  CGAL_assertion(false);
-  return
-    typename Tr::Vertex_handle();
-}
-
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,
                                const Point& q,
