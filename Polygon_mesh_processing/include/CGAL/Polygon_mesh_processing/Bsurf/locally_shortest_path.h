@@ -595,11 +595,7 @@ struct Locally_shortest_path_imp
 
       vertex_descriptor new_vertex=BGT::null_vertex();
       halfedge_descriptor h_curr       = path[index];
-      CGAL_assertion_code(
-      halfedge_descriptor h_next       = path.size()>index+1
-                                       ? path[index + 1]
-                                       : BGT::null_halfedge();
-      )
+
       bool is_target = false;
       if (lerps[index] == 0) {
         new_vertex = target(h_curr,mesh);
@@ -627,27 +623,8 @@ struct Locally_shortest_path_imp
 
       // if I hit the source vertex v of h_curr, then h_next has v as source, thus we turn ccw around v in path
       // Similarly, if I hit the target vertex v of h_curr, then  h_next has v as target, thus we turn cw around v in path
-
-      CGAL_assertion(BGT::null_halfedge()==h_next || !is_target || opposite(next(h_curr, mesh), mesh)==h_next);
-      CGAL_assertion(BGT::null_halfedge()==h_next || is_target || opposite(prev(h_curr, mesh), mesh)==h_next);
-
       std::size_t curr_index = index+1;
       std::vector<halfedge_descriptor> new_hedges;
-
-      // indicate if a point location is on an edge (interior or endpoints)
-      auto is_on_hedge = [&mesh](const Face_location<TriangleMesh,FT>& loc, halfedge_descriptor h_loop)
-      {
-        int k=0;
-        halfedge_descriptor hloc=prev(halfedge(loc.first, mesh), mesh);
-        while(hloc!=h_loop)
-        {
-          hloc=next(hloc,mesh);
-          ++k;
-          if (k==3) return -1;
-        }
-        return loc.second[(k+1)%3]==0 ? k : -1;
-      };
-
 
       if (is_target)
       {
@@ -675,51 +652,12 @@ struct Locally_shortest_path_imp
 
         halfedge_descriptor h_loop=opposite(prev(opposite(h_curr, mesh), mesh), mesh);
 
-        // don't pick first h_loop if src is visible on the other side of it
-        const int ksrc=is_on_hedge(src, opposite(h_loop, mesh));
-        if (ksrc!=-1)
-        {
-          src.first=face(h_loop,mesh);
-          int new_k=0;
-          halfedge_descriptor hsrc=prev(halfedge(src.first, mesh), mesh);
-          while(hsrc!=h_loop)
-          {
-            hsrc=next(hsrc,mesh);
-            ++new_k;
-          }
-          std::array<FT,3> new_second = CGAL::make_array(FT(0.),FT(0.),FT(0.));
-          new_second[new_k]=src.second[(ksrc+2)%3];
-          new_second[(new_k+2)%3]=src.second[ksrc];
-          src.second=new_second;
-          h_loop=opposite(prev(h_loop,mesh), mesh);
-        }
-
         while(target_face!=face(h_loop, mesh))
         {
           new_hedges.push_back(h_loop);
           h_loop=opposite(prev(h_loop,mesh), mesh);
         }
-
-        // don't pick last h_loop is tgt is visible on the other side of it
-        const int ktgt = is_on_hedge(tgt,h_loop);
-        if (ktgt!=-1)
-        {
-          halfedge_descriptor oh_loop=opposite(h_loop,mesh);
-          tgt.first=face(oh_loop,mesh);
-          int new_k=0;
-          halfedge_descriptor htgt=prev(halfedge(tgt.first, mesh), mesh);
-          while(htgt!=oh_loop)
-          {
-            htgt=next(htgt,mesh);
-            ++new_k;
-          }
-          std::array<FT,3> new_second = CGAL::make_array(FT(0.),FT(0.),FT(0.));
-          new_second[new_k]=tgt.second[(ktgt+2)%3];
-          new_second[(new_k+2)%3]=tgt.second[ktgt];
-          tgt.second=new_second;
-        }
-        else
-          new_hedges.push_back(h_loop);
+        new_hedges.push_back(h_loop);
       }
       else
       {
@@ -746,52 +684,12 @@ struct Locally_shortest_path_imp
         }
         halfedge_descriptor h_loop=opposite(next(opposite(h_curr, mesh), mesh), mesh); // skip the face before h_curr (as we won't remove it from path)
 
-        // don't pick first h_loop if src is visible on the other side of it
-        const int ksrc=is_on_hedge(src, opposite(h_loop, mesh));
-        if (ksrc!=-1)
-        {
-          src.first=face(h_loop,mesh);
-          int new_k=0;
-          halfedge_descriptor hsrc=prev(halfedge(src.first, mesh), mesh);
-          while(hsrc!=h_loop)
-          {
-            hsrc=next(hsrc,mesh);
-            ++new_k;
-          }
-          std::array<FT,3> new_second = CGAL::make_array(FT(0.),FT(0.),FT(0.));
-          new_second[new_k]=src.second[(ksrc+2)%3];
-          new_second[(new_k+2)%3]=src.second[ksrc];
-          src.second=new_second;
-          h_loop=opposite(next(h_loop,mesh), mesh);
-        }
-
         while(target_face!=face(h_loop, mesh))
         {
           new_hedges.push_back(h_loop);
           h_loop=opposite(next(h_loop,mesh), mesh);
         }
-
-
-        // don't pick last h_loop is tgt is visible on the other side of it
-        const int ktgt = is_on_hedge(tgt,h_loop);
-        if (ktgt!=-1)
-        {
-          halfedge_descriptor oh_loop=opposite(h_loop,mesh);
-          tgt.first=face(oh_loop,mesh);
-          int new_k=0;
-          halfedge_descriptor htgt=prev(halfedge(tgt.first, mesh), mesh);
-          while(htgt!=oh_loop)
-          {
-            htgt=next(htgt,mesh);
-            ++new_k;
-          }
-          std::array<FT,3> new_second = CGAL::make_array(FT(0.),FT(0.),FT(0.));
-          new_second[new_k]=tgt.second[(ktgt+2)%3];
-          new_second[(new_k+2)%3]=tgt.second[ktgt];
-          tgt.second=new_second;
-        }
-        else
-          new_hedges.push_back(h_loop);
+        new_hedges.push_back(h_loop);
       }
 
       // replace the halfedges incident to the apex vertex with the opposite part of the ring
@@ -799,6 +697,8 @@ struct Locally_shortest_path_imp
       new_path.insert(new_path.end(), new_hedges.begin(), new_hedges.end());
       new_path.insert(new_path.end(), path.begin()+curr_index, path.end());
       path.swap(new_path);
+
+      strip_path(mesh, src, tgt, path);
 
 #ifdef CGAL_DEBUG_BSURF
       std::cout << "  -- new path --\n";
@@ -808,6 +708,7 @@ struct Locally_shortest_path_imp
                   << "  " << get(vpm, target(h, mesh))
                   << "  " << get(vpm, target(next(h, mesh), mesh))
                   << "  " << get(vpm, source(h, mesh)) << std::endl;
+        std::cout << face(h, mesh) << std::endl;
         std::cout << edge(h, mesh) << std::endl;
       }
       std::cout << "  ----------\n";
@@ -1621,14 +1522,11 @@ struct Locally_shortest_path_imp
 
   static
   void
-  strip_initial_path(const TriangleMesh& tmesh,
-                     Face_location<TriangleMesh, FT>& src,
-                     Face_location<TriangleMesh, FT>& tgt,
-                     std::vector<halfedge_descriptor>& initial_path)
+  strip_path(const TriangleMesh& tmesh,
+             Face_location<TriangleMesh, FT>& src,
+             Face_location<TriangleMesh, FT>& tgt,
+             std::vector<halfedge_descriptor>& initial_path)
   {
-    CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
-    CGAL_assertion(face(initial_path.back(), tmesh)==tgt.first);
-
     // retrieve the vertex id of a face location describing a vertex
     auto is_vertex = [](const Face_location<TriangleMesh, FT>& fl)
     {
@@ -2823,7 +2721,7 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
 #ifdef CGAL_DEBUG_BSURF
   std::size_t initial_path_size_before = initial_path.size();
 #endif
-  Impl::strip_initial_path(tmesh, src, tgt, initial_path);
+  Impl::strip_path(tmesh, src, tgt, initial_path);
   if (initial_path.empty()) return;
 
   CGAL_assertion(face(opposite(initial_path.front(), tmesh), tmesh)==src.first);
