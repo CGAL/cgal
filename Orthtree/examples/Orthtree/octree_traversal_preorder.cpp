@@ -12,7 +12,7 @@ using Point = Kernel::Point_3;
 using Point_set = CGAL::Point_set_3<Point>;
 using Point_map = Point_set::Point_map;
 using Octree = CGAL::Octree<Kernel, Point_set, Point_map>;
-using Preorder_traversal = CGAL::Orthtrees::Preorder_traversal<Octree>;
+using Preorder_traversal = CGAL::Orthtrees::Preorder_traversal<typename Octree::Traits>;
 
 int main(int argc, char **argv) {
 

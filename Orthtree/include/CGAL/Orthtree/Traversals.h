@@ -28,23 +28,23 @@ namespace Orthtrees {
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a preorder traversal.
 
-  \tparam Tree an instance of `Orthtree`
+  \tparam GeomTraits must be a model of `OrthtreeTraits`
 
   A preorder traversal starts from the root towards the leaves.
 
   \cgalModels{OrthtreeTraversal}
  */
-template <typename Tree>
+template <typename GeomTraits>
 struct Preorder_traversal {
 private:
 
-  const Tree& m_orthtree;
+  const Orthtree<GeomTraits>& m_orthtree;
 
 public:
 
-  using Node_index = typename Tree::Node_index;
+  using Node_index = typename Orthtree<GeomTraits>::Node_index;
 
-  Preorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
+  Preorder_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
   Node_index first_index() const {
     return m_orthtree.root();
@@ -72,23 +72,23 @@ public:
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a postorder traversal.
 
-  \tparam Tree an instance of `Orthtree`
+  \tparam GeomTraits must be a model of `OrthtreeTraits`
 
   A postorder traversal starts from the leaves towards the root.
 
   \cgalModels{OrthtreeTraversal}
  */
-template <typename Tree>
+template <typename GeomTraits>
 struct Postorder_traversal {
 private:
 
-  const Tree& m_orthtree;
+  const Orthtree<GeomTraits>& m_orthtree;
 
 public:
 
-  using Node_index = typename Tree::Node_index;
+  using Node_index = typename Orthtree<GeomTraits>::Node_index;
 
-  Postorder_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
+  Postorder_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
   Node_index first_index() const {
     return m_orthtree.deepest_first_child(m_orthtree.root());
@@ -103,23 +103,23 @@ public:
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a traversal on leaves only.
 
-  \tparam Tree an instance of `Orthtree`
+  \tparam GeomTraits must be a model of `OrthtreeTraits`
 
   All non-leaf nodes are ignored.
 
   \cgalModels{OrthtreeTraversal}
  */
-template <typename Tree>
+template <typename GeomTraits>
 struct Leaves_traversal {
 private:
 
-  const Tree& m_orthtree;
+  const Orthtree<GeomTraits>& m_orthtree;
 
 public:
 
-  using Node_index = typename Tree::Node_index;
+  using Node_index = typename Orthtree<GeomTraits>::Node_index;
 
-  Leaves_traversal(const Tree& orthtree) : m_orthtree(orthtree) {}
+  Leaves_traversal(const Orthtree<GeomTraits>& orthtree) : m_orthtree(orthtree) {}
 
   Node_index first_index() const {
     return m_orthtree.deepest_first_child(m_orthtree.root());
@@ -141,7 +141,7 @@ public:
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a traversal of a specific depth level.
 
-  \tparam Tree an instance of `Orthtree`
+  \tparam GeomTraits must be a model of `OrthtreeTraits`
 
   All tree nodes at another depth are ignored. If the selected depth is
   All tree nodes at another depth are ignored. If the selected depth is
@@ -149,21 +149,21 @@ public:
 
   \cgalModels{OrthtreeTraversal}
  */
-template <typename Tree>
+template <typename GeomTraits>
 struct Level_traversal {
 private:
 
-  const Tree& m_orthtree;
+  const Orthtree<GeomTraits>& m_orthtree;
   const std::size_t m_depth;
 
 public:
 
-  using Node_index = typename Tree::Node_index;
+  using Node_index = typename Orthtree<GeomTraits>::Node_index;
 
   /*!
     constructs a `depth`-level traversal.
   */
-  Level_traversal(const Tree& orthtree, std::size_t depth) : m_orthtree(orthtree), m_depth(depth) {}
+  Level_traversal(const Orthtree<GeomTraits>& orthtree, std::size_t depth) : m_orthtree(orthtree), m_depth(depth) {}
 
   Node_index first_index() const {
     // assumes the tree has at least one child at m_depth
