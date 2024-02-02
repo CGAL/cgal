@@ -2932,7 +2932,8 @@ std::vector<typename K::Point_3>
 trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
                      const std::vector<typename K::Vector_2>& directions,
                      const std::vector<typename K::FT>& lengths,
-                     const TriangleMesh &tmesh)
+                     const TriangleMesh &tmesh,
+                     const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
   size_t n=directions.size();
   std::vector<typename K::Point_3> result;
@@ -2942,10 +2943,18 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
 
   std::vector<Edge_location<TriangleMesh,typename K::FT>> edge_locations;
 
+  const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
+  Dual_geodesic_solver<typename K::FT> local_solver;
+  if (solver.graph.empty())
+  {
+    solver_ptr = &local_solver;
+    init_geodesic_dual_solver(local_solver, tmesh);
+  }
+
   for(std::size_t i=0;i<n;++i)
   {
     edge_locations.clear();
-    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations);
+    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations, *solver_ptr);
     result.push_back(construct_point(vertices[i],tmesh));
     for(auto& el : edge_locations)
     {
@@ -3045,7 +3054,8 @@ std::vector<typename K::Point_3>
 trace_agap_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
                      const std::vector<typename K::Vector_2>& directions,
                      const std::vector<typename K::FT>& lengths,
-                     const TriangleMesh &tmesh)
+                     const TriangleMesh &tmesh,
+                     const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
   size_t n=directions.size();
   std::vector<typename K::Point_3> result;
@@ -3055,10 +3065,18 @@ trace_agap_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
 
   std::vector<Edge_location<TriangleMesh,typename K::FT>> edge_locations;
 
+  const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
+  Dual_geodesic_solver<typename K::FT> local_solver;
+  if (solver.graph.empty())
+  {
+    solver_ptr = &local_solver;
+    init_geodesic_dual_solver(local_solver, tmesh);
+  }
+
   for(std::size_t i=0;i<n;++i)
   {
     edge_locations.clear();
-    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations);
+    locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations, *solver_ptr);
     result.push_back(construct_point(vertices[i],tmesh));
     for(auto& el : edge_locations)
     {
