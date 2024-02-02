@@ -51,7 +51,7 @@ Quadtree, Octree and Orthtree Reference
 
 \cgalCRPSection{Traits}
 - `CGAL::Orthtree_traits_point<GeomTraits>`
-- `CGAL::Orthtree_traits_base_for_dimension<GeomTraits>`
+- `CGAL::Orthtree_traits_base<GeomTraits>`
 - `CGAL::Orthtree_traits_face_graph<TriangleMesh, VertexPointMap>`
 
 \cgalCRPSection{Split Predicates}
