@@ -26,9 +26,8 @@ with custom contents and split predicates, and iterated on with
 various traversal methods. Orthants can be orthotopes and not only hypercubes.
 
 \cgalFigureBegin{Orthtree_fig, orthtree.png}
-Building an %orthtree in 3D (%octree) from a point cloud.
+Building an %orthtree in 3D (%octree) from a point cloud (top) and a mesh (bottom).
 \cgalFigureEnd
-
 
 \section Section_Orthtree_Building Building
 
@@ -118,6 +117,11 @@ The vector is used as the point set, and an `Identity_property_map` is automatic
 set as the orthtree's map type, so a map does not need to be provided.
 
 \cgalExample{Orthtree/orthtree_build.cpp}
+
+\section Section_Orthtree_Properties Properties
+The Orthtree uses a mechanism to attach properties to nodes at run-time which follows \ref sectionSurfaceMesh_properties "Surface mesh properties". Each property is identified by a string and its key type and stored in a consecutive block of memory. Contrary to surface mesh the removal of properties is not supported.
+
+Several properties are provided by default and used to maintain the data structure. The property \c "contents" keeps the data for each node. "parents" and "children" maintain the relation between nodes. "coordinates" and "depth" contain absolute positions of nodes.
 
 \section Section_Orthtree_Traversal Traversal
 

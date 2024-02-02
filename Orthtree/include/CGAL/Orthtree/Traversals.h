@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Orthtree.h>
 
+#include <CGAL/Orthtree.h>
 #include <iostream>
 #include <boost/range/iterator_range.hpp>
 #include <CGAL/Orthtree/Traversal_iterator.h>
