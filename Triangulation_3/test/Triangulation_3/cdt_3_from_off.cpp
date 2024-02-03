@@ -64,6 +64,8 @@ struct CDT_options
   bool quiet = false;
   bool merge_facets = true;
   bool merge_facets_old_method = false;
+  bool debug_missing_regions = false;
+  int debug_regions = false;
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
   double segment_vertex_epsilon = 1e-8;
@@ -141,6 +143,10 @@ int main(int argc, char* argv[])
       options.segment_vertex_epsilon = std::stod(argv[++i]);
     } else if(arg == "--quiet") {
       options.quiet = true;
+    } else if(arg == "--debug-missing-regions") {
+      options.debug_missing_regions = true;
+    } else if(arg == "--debug-regions") {
+      options.debug_regions = true;
     } else if(arg == "-V") {
       ++options.verbose;
     } else if(arg == "--help") {
@@ -306,8 +312,11 @@ int go(Mesh mesh, CDT_options options) {
   if(options.verbose > 0) {
     cdt.debug_Steiner_points(true);
   }
-  if(options.verbose > 1) {
+  if(options.verbose > 1 || options.debug_missing_regions) {
     cdt.debug_missing_region(true);
+  }
+  if(options.debug_regions) {
+    cdt.debug_regions(true);
   }
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
 

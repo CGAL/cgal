@@ -1004,10 +1004,10 @@ private:
         border_edges.emplace_back(c, i, j);
       }
     }
-#if CGAL_CDT_3_DEBUG_REGIONS
-    std::cerr << "region size is: " << fh_region.size() << "\n";
-    std::cerr << "region border size is: " << border_edges.size() << "\n";
-#endif // CGAL_CDT_3_DEBUG_REGIONS
+    if(this->debug_regions()) {
+      std::cerr << "region size is: " << fh_region.size() << "\n";
+      std::cerr << "region border size is: " << border_edges.size() << "\n";
+    }
     return border_edges;
   }
 
@@ -1150,12 +1150,14 @@ private:
     for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
       const auto intersecting_edge = intersecting_edges[i];
       const auto [v_above, v_below] = tr.vertices(intersecting_edge);
-#if CGAL_CDT_3_DEBUG_REGION
-      std::cerr << std::format("restore_subface_region face index: {}, region #{}, Edge #{}: ({} , {})\n",
-                                face_index, region_index, i,
-                                IO::oformat(v_above, with_point),
-                                IO::oformat(v_below, with_point));
-#endif // CGAL_CDT_3_DEBUG_REGION
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+      if(this->debug_regions()) {
+        std::cerr << std::format("restore_subface_region face index: {}, region #{}, intersecting edge #{}: ({}   {})\n",
+                                  face_index, region_index, i,
+                                  IO::oformat(v_above, with_point_and_info),
+                                  IO::oformat(v_below, with_point_and_info));
+      }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       CGAL_assertion(0 == region_border_vertices.count(v_above));
       CGAL_assertion(0 == region_border_vertices.count(v_below));
       if(new_vertex(v_above)) {
@@ -1181,8 +1183,23 @@ private:
         if(region_border_vertices.count(vc) > 0) continue; // intersecting edges cannot touch the border
 
         auto test_edge = [&](Vertex_handle v0, int index_v0, Vertex_handle v1, int index_v1, int expected) {
+          auto value_returned = [this](bool b) {
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+            if(this->debug_regions()) {
+              std::cerr << std::format("   return {}\n", b);
+            }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+            return b;
+          };
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+          if(this->debug_regions()) {
+            std::cerr << std::format("  test_edge {}   {})  ",
+                                      IO::oformat(v0, with_point_and_info),
+                                      IO::oformat(v1, with_point_and_info));
+          }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
           auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
-          if(!not_visited) return cached_value_it->second;
+          if(!not_visited) return value_returned(cached_value_it->second);
           int v0v1_intersects_region = ((v0->is_Steiner_vertex_in_face() && v0->face_index() == face_index) ||
                                         (v1->is_Steiner_vertex_in_face() && v1->face_index() == face_index))
                                            ? expected
@@ -1198,10 +1215,10 @@ private:
             }
             intersecting_edges.emplace_back(cell, index_v0, index_v1);
             cached_value_it->second = true;
-            return true;
+            return value_returned(true);
           } else {
             cached_value_it->second = false;
-            return false;
+            return value_returned(false);
           }
         };
 
@@ -1280,12 +1297,14 @@ private:
       }
       return vertices;
     });
-#if CGAL_CDT_3_DEBUG_REGION
-    std::cerr << "region_border_vertices.size() = " << region_border_vertices.size() << "\n";
-    for(auto v : region_border_vertices) {
-      std::cerr << std::format("  {}\n", IO::oformat(v, with_point));
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+    if(this->debug_regions()) {
+      std::cerr << "region_border_vertices.size() = " << region_border_vertices.size() << "\n";
+      for(auto v : region_border_vertices) {
+        std::cerr << std::format("  {}\n", IO::oformat(v, with_point));
+      }
     }
-#endif // CGAL_CDT_3_DEBUG_REGION
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     for(auto v: region_border_vertices) {
       v->mark_vertex();
     }
