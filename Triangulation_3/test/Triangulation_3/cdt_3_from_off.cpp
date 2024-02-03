@@ -64,6 +64,7 @@ struct CDT_options
   bool quiet = false;
   bool merge_facets = true;
   bool merge_facets_old_method = false;
+  bool repair_mesh = true;
   bool debug_missing_regions = false;
   int debug_regions = false;
   double ratio = 0.;
@@ -117,6 +118,8 @@ int main(int argc, char* argv[])
       options.merge_facets = true;
     } else if(arg == "--no-merge-facets") {
       options.merge_facets = false;
+    } else if(arg == "--no-repair") {
+      options.repair_mesh = false;
     } else if(arg == "--merge-facets-old") {
       options.merge_facets = true;
       options.merge_facets_old_method = true;
@@ -180,9 +183,10 @@ int main(int argc, char* argv[])
   auto start_time = std::chrono::high_resolution_clock::now();
 
   Mesh mesh;
-  const bool ok = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(options.input_filename, mesh);
-  if (!ok)
-  {
+  const bool ok = options.repair_mesh
+                      ? CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(options.input_filename, mesh)
+                      : CGAL::IO::read_polygon_mesh(options.input_filename, mesh);
+  if(!ok) {
     std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
