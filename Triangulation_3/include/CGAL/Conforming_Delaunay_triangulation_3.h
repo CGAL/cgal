@@ -47,6 +47,7 @@ using CDT_3_face_index = int; // must be signed
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
 class Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb> {
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
+  unsigned int mark = 0;
   union U {
     struct On_edge {
       int nb_of_incident_constraints = 0;
@@ -83,22 +84,20 @@ public:
   }
 
   void mark_vertex() {
-    CGAL_assertion(u.on_edge.nb_of_incident_constraints > 0);
-    u.on_edge.nb_of_incident_constraints = -u.on_edge.nb_of_incident_constraints;
+    mark = 1;
   }
 
   void unmark_vertex() {
-    CGAL_assertion(u.on_edge.nb_of_incident_constraints < 0);
-    u.on_edge.nb_of_incident_constraints = -u.on_edge.nb_of_incident_constraints;
+    mark = 0;
   }
 
   bool is_marked() const {
-    CGAL_assertion(u.on_edge.nb_of_incident_constraints != 0);
-    return u.on_edge.nb_of_incident_constraints < 0;
+    return mark == 1;
   }
 
   template<typename Triangulation>
   auto constraint_id(const Triangulation&) const {
+    CGAL_assertion(m_vertex_type != CDT_3_vertex_type::STEINER_IN_FACE);
     using C_id = typename Triangulation::Constraint_id;
     using Vertex_list_ptr = decltype(std::declval<C_id>().vl_ptr());
     return C_id(static_cast<Vertex_list_ptr>(u.on_edge.c_id));
