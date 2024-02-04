@@ -52,15 +52,31 @@ The code includes functions for setting up the initial state of the viewer, init
 
 Based on class QApplication_and_basic_viewer you can develop your own demo.
 
-\subsection Basic_viewerUsage 
+\subsection Basic_viewerUsage Basic Viewer Class Draw virtual function
 
-\subsubsection Basic_viewerDoc_1 Direct Draw
+The draw function is a virtual function in the Basic_viewer class responsible for rendering 3D elements such as points, segments, triangles, rays, lines, and faces. It utilizes OpenGL for rendering and incorporates several customization options for drawing styles and colors. Below is an overview of key functionalities:
 
-draw(XXX) [WIP]
+<OL>
+<LI> Initialization: The function starts by enabling depth testing and initializing matrices for the clipping plane.
 
-\subsubsection Basic_viewerDoc_2 Customize the drawing
+<LI> Vertex Rendering: Renders vertices (points) based on specified rendering modes and colors. Supports both mono and colored points.
 
-[WIP]
+<LI> Edge Rendering: Renders edges (segments) with specified rendering modes and colors. Supports both mono and colored edges.
+
+<LI> Ray Rendering: Renders rays with specified rendering modes and colors. Supports both mono and colored rays.
+
+<LI> Line Rendering: Renders lines with specified rendering modes and colors. Supports both mono and colored lines.
+
+<LI> Face Rendering: Renders faces (triangles) with specified rendering modes and colors. Supports both mono and colored faces. Implements transparency for specific rendering modes.
+
+<LI> Clipping Plane Rendering: Renders the clipping plane when applicable.
+
+<LI> Text Rendering: Renders text on the screen at specified positions.
+
+<LI> Coordinate System Transformation: Applies transformations to bring drawings into the frame coordinate system. This includes multiplying matrices and scaling down drawings.
+
+<LI> Additional Rendering Considerations: Handles Z-fighting by offsetting polygons and includes adjustments for two-dimensional rendering.
+</OL>
 
 \subsection Basic_viewerExamples Examples that use Basic_viewer
 
@@ -68,37 +84,90 @@ draw(XXX) [WIP]
 
 \cgalExample{Surface_mesh/draw_surface_mesh.cpp}
 
-
 \subsubsection Basic_viewerExamples_custom_color Change Face Colors
 
 \cgalExample{Basic_viewer/draw_surface_mesh_height.cpp}
-
 
 \subsubsection Basic_viewerExamples_two_ds Draw two different CGAL data-structures in a same viewer
 
 \cgalExample{Basic_viewer/draw_mesh_and_points.cpp}
 
-
 \subsubsection Basic_viewerExamples_interact Interaction with the viewer
 
 \cgalExample{Basic_viewer/draw_surface_mesh_small_faces.cpp}
-
 
 \subsubsection Basic_viewerExamples_several_window Draw several basic viewers
 
 \cgalExample{Basic_viewer/draw_several_windows.cpp}
 
-
 \section  Graphic_Scene
-
-Graphics_scene_options
 [WIP]
+
+\subsection GraphicSceneContinue Graphics_scene_options
+The Graphics_scene_options class is responsible for providing a set of options and customization parameters for rendering geometric structures in a graphics scene. Its main purpose is to allow users to control the visual appearance of various elements such as vertices, edges, faces, and volumes in a graphical representation of a combinatorial data structure (DS). The classes are template classes, allowing them to work with different combinatorial data structures (DS) in 2D and 3D.
+\subsubsection GraphicSceneOptionsCont Here are some key responsibilities of the Graphics_scene_options class:
+<OL>
+<LI> Drawing Control: It determines whether to draw vertices, edges, faces, and volumes in the graphics scene through the use of drawing functors (draw_vertex, draw_edge, draw_face, draw_volume).
+<LI> Coloring Control: It allows users to customize the coloring of vertices, edges, faces, and volumes. Users can specify whether coloring is enabled (colored_vertex, colored_edge, colored_face, colored_volume) and, if so, provide functions (vertex_color, edge_color, face_color, volume_color) to determine the color for each element.
+<LI> Wireframe Control: For faces and volumes, it provides options to draw a wireframe representation (face_wireframe, volume_wireframe), allowing users to choose whether to display a wireframe overlay.
+<LI> Visibility Control: Users can enable or disable the visibility of vertices, edges, faces, and volumes independently using functions like disable_vertices, enable_vertices, are_vertices_enabled, and similar functions for other components.
+<LI> Template Flexibility: The class is templated to support different types of combinatorial data structures (DS) in 2D and 3D. This template flexibility allows users to use the class with various geometric structures.
+<LI> Default Settings: It provides reasonable default settings for the various options, ensuring that users can get started with a sensible configuration without needing to customize every parameter.
+</OL>
 
 \section secsoftwaredesign Software Design
 
 class diagram [WIP] 
 
+\section DrawFunction Global Draw Function
+
+The draw function is a template function that facilitates drawing an almost mentioned data structures such as (Arrangement_on_surface_2, Boolean_set_operations_2, Linear_cell_complex, Nef_3, Periodic_2_triangulation_2, Point_set_3, Polygon, Polyhedron, Straight_skeleton_2, Surface_mesh, Triangulation_2, Triangulation_3, Voronoi_diagram_2, and more) in a graphics scene. It has two specialization, one for using graphics scene options and another without graphics scene options.
+
+The draw function can be used in default way or in custom way with a graphics scene options
+
+```
+// Specialization of draw function for a LCC, with a drawing graphics scene options.
+template<unsigned int d_, unsigned int ambient_dim, class Traits_,
+         class Items_, class Alloc_,
+         template <unsigned int, class, class, class, class> class Map,
+         class Refs, class Storage_,
+         class GSOptions>
+void draw(const CGAL_LCC_TYPE& alcc, const GSOptions& gso,
+          const char *title="LCC Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(alcc, buffer, gso);
+  draw_graphics_scene(buffer, title);
+}
+
+// Specialization of draw function for a LCC, without a graphics scene options.
+template<unsigned int d_, unsigned int ambient_dim, class Traits_,
+         class Items_, class Alloc_,
+         template <unsigned int, class, class, class, class> class Map,
+         class Refs, class Storage_>
+void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(alcc, buffer);
+  draw_graphics_scene(buffer, title);
+}
+
+```
+As shown above in code snippt the add_to_graphics_scene function fill LCC in the given graphic buffer with or without options, and then we pass graphic buffer to draw_graphics_scene function which is designed to display or render the contents of a Graphics_scene object.
+
+\cgalFigureBegin{linear_cell_complex_for_combinatorial_map,lcc_cmap_with_faces.png}
+example of drawing LCC for CMap with faces
+\cgalFigureEnd
+
+\cgalFigureBegin{linear_cell_complex_for_combinatorial_map,lcc_cmap_without_edges.png}
+example of drawing LCC for CMap without edges
+\cgalFigureEnd
+
+\cgalFigureBegin{linear_cell_complex_for_combinatorial_map,lcc_cmap_without_faces.png}
+example of drawing LCC for CMap without faces
+\cgalFigureEnd
 
 */
 
 } /* namespace CGAL */
+
