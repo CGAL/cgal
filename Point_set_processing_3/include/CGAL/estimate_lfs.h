@@ -587,10 +587,10 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
    its iterator is the key type of the named parameter `point_map`.
 
    \param points input point range
-   \param LfsMap the map to store the LFS value
    \param jet_k number of neighbors for jet-fitting
    \param N_rays number of rays for dual cone search
    \param apex_angle angle for dual cone search
+   \param LfsMap the map to store the LFS value
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
@@ -618,10 +618,10 @@ template <typename ConcurrencyTag,
           typename NamedParameters = parameters::Default_named_parameters>
 void
 estimate_local_feature_size(PointRange& points,
-                            LfsMap lfs_map,
                             const unsigned int jet_k,
                             const std::size_t N_rays,
                             const typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT apex_angle,
+                            LfsMap lfs_map,
                             const NamedParameters& np = parameters::default_values())
 {
   std::cerr << "estimate lfs" << std::endl;

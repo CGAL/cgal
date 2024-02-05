@@ -40,10 +40,10 @@ int main(void)
   
   auto lfs_map = CGAL::Nth_of_tuple_property_map<2, Point_with_normal_and_lfs>();
   CGAL::estimate_local_feature_size<Concurrency_tag>(points,
-                                                    lfs_map,
                                                      jet_k,
                                                      N_rays,
                                                      apex_angle,
+                                                     lfs_map,
                                                      CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>())
                                                                       .normal_map(CGAL::Nth_of_tuple_property_map<1, Point_with_normal_and_lfs>()));
 
