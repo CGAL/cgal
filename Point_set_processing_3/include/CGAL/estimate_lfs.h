@@ -582,7 +582,7 @@ template <typename ConcurrencyTag,
           typename NamedParameters = parameters::Default_named_parameters>
 void
 estimate_local_feature_size(PointRange& points,
-                            LfsMap lfs_map,
+                            LfsMap& lfs_map,
                             const unsigned int jet_k,
                             const std::size_t N_rays,
                             const typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT apex_angle,
@@ -670,6 +670,7 @@ estimate_local_feature_size(PointRange& points,
 
     if (need_jet_normal)
       put(normal_map, vt, normal);
+      ;
 
     ++ callback_wrapper.advancement();
 
