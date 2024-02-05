@@ -507,48 +507,17 @@ public:
     \param name the name of the new property
     \param default_value the default value assigned to nodes for this property
 
-    \return pair of the property map and a boolean which is `true` if the property needed to be created
+    \return pair of the property map and a Boolean which is `true` if the property needed to be created
    */
   template <typename T>
   std::pair<Property_map<T>, bool>
-  get_or_add_node_property(const std::string& name, const T default_value = T()) {
+  add_node_property(const std::string& name, const T default_value = T()) {
     auto p = m_node_properties.get_or_add_property(name, default_value);
     return std::pair<Property_map<T>, bool>(Property_map<T>(p.first), p.second);
   }
 
   /*!
-    \brief adds a property for nodes.
-
-    \tparam T the type of the property to add
-
-    \param name the name of the new property
-    \param default_value the default value assigned to nodes for this property
-
-    \return the created property map
-   */
-  template <typename T>
-  Property_map<T> add_node_property(const std::string& name, const T default_value = T()) {
-    return m_node_properties.add_property(name, default_value);
-  }
-
-  /*!
-    \brief gets a property of the tree nodes.
-
-    The property to be retrieved must exist in the tree.
-
-    \tparam T the type of the property to retrieve
-
-    \param name the name of the property
-
-    \return the property map
-   */
-  template <typename T>
-  Property_map<T> get_node_property(const std::string& name) {
-    return m_node_properties.template get_property<T>(name);
-  }
-
-  /*!
-    \brief gets a property of the tree nodes if it exists.
+    \brief gets a property of the nodes if it exists.
 
     \tparam T the type of the property to retrieve
 
@@ -558,12 +527,33 @@ public:
    */
   template <typename T>
   std::optional<Property_map<T>>
-  get_node_property_if_exists(const std::string& name) {
+  node_property(const std::string& name) {
     auto p = m_node_properties.template get_property_if_exists<T>(name);
     if (p)
       return std::optional<Property_map<T> >(Property_map<T>(*p));
     else
       return std::nullopt;
+  }
+
+  /*!
+    \brief returns a vector of all property names.
+   */
+  std::vector<std::string> properties() const {
+    return m_node_properties.properties();
+  }
+
+  /*!
+    \brief removes the node property from the tree.
+
+    \tparam T the type of the property to remove
+
+    \param property the property to be removed from the tree.
+
+    \return true if property was a valid property of the tree.
+   */
+  template <typename T>
+  bool remove_node_property(Property_map<T> property) {
+    return m_node_properties.remove_property(property.array());
   }
 
   /// @}

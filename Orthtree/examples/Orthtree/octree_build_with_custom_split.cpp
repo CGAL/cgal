@@ -15,7 +15,7 @@ using Point_map = Point_set::Point_map;
 using Octree = CGAL::Octree<Kernel, Point_set, Point_map>;
 
 // Split Predicate
-// The predicate is a functor which returns a boolean value, whether a node needs to be split or not
+// The predicate is a functor which returns a Boolean value, whether a node needs to be split or not
 struct Split_by_ratio {
 
   std::size_t ratio;

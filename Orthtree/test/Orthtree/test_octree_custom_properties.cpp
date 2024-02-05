@@ -26,26 +26,32 @@ int main(void) {
   Octree tree({points, points.point_map()});
 
   // Testing built in node properties
-  typename Octree::Property_map<typename Octree::Node_data> data_prop = tree.get_node_property<typename Octree::Node_data>("contents");
+  typename Octree::Property_map<typename Octree::Node_data> data_prop = *tree.node_property<typename Octree::Node_data>("contents");
   CGAL_USE(data_prop);
 
-  auto prop2 = tree.get_or_add_node_property("test", int(0));
+  // list of properties
+  std::size_t num = tree.properties().size();
+  assert(num == 5);
+  auto prop2 = tree.add_node_property("test", int(0));
   assert(prop2.second);
+  assert(tree.properties().size() == 6);
 
-  auto prop3 = tree.get_node_property_if_exists<int>("test");
-  assert(prop3.has_value());
-
-  auto prop4 = tree.get_node_property_if_exists<std::string>("test");
-  assert(!prop4.has_value());
-
-  auto prop5 = tree.get_or_add_node_property("test", int(0));
+  auto prop5 = tree.add_node_property("test", int(0));
   assert(!prop5.second);
 
-  auto prop6 = tree.add_node_property("test2", std::string());
-  CGAL_USE(prop6);
+  auto prop3 = tree.node_property<int>("test");
+  assert(prop3.has_value());
+
+  auto prop4 = tree.node_property<std::string>("test");
+  assert(!prop4.has_value());
+
+  // removal of properties
+  num = tree.properties().size();
+  tree.remove_node_property(*prop3);
+  assert(tree.properties().size() == (num - 1));
 
   // Default value should be respected
-  auto node_int_property = tree.add_node_property<int>("int", 5);
+  auto node_int_property = tree.add_node_property<int>("int", 5).first;
   assert(node_int_property[tree.root()] == 5);
 
   // Changes to individual nodes should be respected
