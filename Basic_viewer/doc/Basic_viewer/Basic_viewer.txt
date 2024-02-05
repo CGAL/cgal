@@ -196,7 +196,11 @@ The Graphics_scene_options class is responsible for providing a set of options a
 
 \section SoftwareDesignClassDiagam Software Design
 
-class diagram [WIP] 
+The diagram in \cgalFigureRef{fig_basic_viewer_diagramme_class} shows the different classes of the package.
+
+\cgalFigureBegin{fig_basic_viewer_diagramme_class,basic_viewer_diagramme_class.svg}
+UML diagram of the main classes of the package.
+\cgalFigureEnd
 
 \section DrawFunction Global Draw Function
 
