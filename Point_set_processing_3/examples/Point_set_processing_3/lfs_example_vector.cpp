@@ -23,7 +23,7 @@ int main(void)
 {
 
   // read xyz
-  const std::string filename = "./frog.xyz";
+  const std::string filename = "/home/daozi/CGAL/LFS-example/frog.xyz";
 
   std::vector<Point_with_normal_and_lfs> points;
   if(!CGAL::IO::read_points(filename,
@@ -37,12 +37,13 @@ int main(void)
   unsigned int jet_k = 24;
   std::size_t N_rays = 60;
   FT apex_angle = 30;
-
+  
+  auto lfs_map = CGAL::Nth_of_tuple_property_map<2, Point_with_normal_and_lfs>();
   CGAL::estimate_local_feature_size<Concurrency_tag>(points,
+                                                    lfs_map,
                                                      jet_k,
                                                      N_rays,
                                                      apex_angle,
-                                                     CGAL::Nth_of_tuple_property_map<2,Point_with_normal_and_lfs>(),
                                                      CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>())
                                                                       .normal_map(CGAL::Nth_of_tuple_property_map<1, Point_with_normal_and_lfs>()));
 
