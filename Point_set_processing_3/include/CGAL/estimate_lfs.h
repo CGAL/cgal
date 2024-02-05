@@ -576,6 +576,42 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
 } /* namespace internal */
 /// \endcond
 
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+
+   Estimates the local feature size (LFS) for the input 3D point cloud. The function only works for 3D point cloud.
+   If the input 3D point cloud has no normals, the function will also estimate the normals using jet-fitting.
+
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range
+   \param LfsMap the map to store the LFS value
+   \param jet_k number of neighbors for jet-fitting
+   \param N_rays number of rays for dual cone search
+   \param apex_angle angle for dual cone search
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \note This function accepts both 2D and 3D points.
+
+   \return The estimated lfs will be stored in the LfsMap.
+*/
 template <typename ConcurrencyTag,
           typename PointRange,
           typename LfsMap,
