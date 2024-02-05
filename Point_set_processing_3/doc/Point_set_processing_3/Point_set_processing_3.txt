@@ -928,7 +928,7 @@ points that are on sharp edges:
 
 \section Point_set_processing_3LFSEstimation Local Feature Size Estimation
 
-The function `estimate_local_feature_size()` can estimate the local feature size for each point by giving a raw point set.
+The function `estimate_local_feature_size()` can estimate the local feature size for each point by giving a raw point set. If the point has no normals, the function can also estimate normals using jet-fitting.
 
 The function will estimate the curvature and shape diameter. Then, the local feature size will be the minimum of the curvature radius and half of the shape diameter.
 
@@ -936,7 +936,7 @@ The function will estimate the curvature and shape diameter. Then, the local fea
 
 The following example reads a point set from a file, estimates the
 local feature size for each point:
-\cgalExample{Point_set_processing_3/lfs_example.cpp}
+\cgalExample{Point_set_processing_3/lfs_example_tuple.cpp}
 
 
 \section Point_set_processing_3Structuring Structuring
