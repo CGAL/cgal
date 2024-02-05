@@ -578,13 +578,15 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
 
 template <typename ConcurrencyTag,
           typename PointRange,
+          typename LfsMap,
           typename NamedParameters = parameters::Default_named_parameters>
-std::vector<typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::FT>
+void
 estimate_local_feature_size(PointRange& points,
-    unsigned int jet_k,
-    std::size_t N_rays,
-    typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT apex_angle,
-    const NamedParameters& np = parameters::default_values())
+                            const unsigned int jet_k,
+                            const std::size_t N_rays,
+                            const typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT apex_angle,
+                            LfsMap lfs_map,
+                            const NamedParameters& np = parameters::default_values())
 {
   std::cerr << "estimate lfs" << std::endl;
 
@@ -641,10 +643,6 @@ estimate_local_feature_size(PointRange& points,
   // estimate an epsilon band for the classical distance function
   FT epsilon_band = CGAL::internal::classical_point_dist_func_epsilon_band(points, neighbor_query, point_map);
 
-  std::vector<FT> lfses(nb_points);
-  std::map<Point, std::size_t> index_map;
-  for (std::size_t i = 0; i < nb_points; i++) index_map[get(point_map, points[i])] = i;
-
   Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
   callback_wrapper (callback, nb_points);
 
@@ -666,19 +664,16 @@ estimate_local_feature_size(PointRange& points,
     FT lfs = CGAL::internal::estimate_local_feature_size
           (point, normal, neighbor_query, bsphere,
             jet_k, neighbor_radius, degree_fitting, degree_monge,
-            epsilon_band, apex_angle, N_rays
-             );
-    lfses[index_map[point]] = lfs;
+            epsilon_band, apex_angle, N_rays);
+    put(lfs_map, vt, lfs);
 
     if (need_jet_normal)
       put(normal_map, vt, normal);
 
-     ++ callback_wrapper.advancement();
+    ++ callback_wrapper.advancement();
 
      return true;
    });
-
-   return lfses;
 }
 
 } //namespace CGAL
