@@ -21,8 +21,6 @@ typedef CGAL::Point_set_processing_3::internal::Neighbor_query<Kernel, Point_set
 
 // Concurrency
 typedef CGAL::Parallel_if_available_tag Concurrency_tag;
-//typedef CGAL::Parallel_tag Concurrency_tag;
-typedef CGAL::Sequential_tag Concurrency_tag;
 
 int main(void)
 {
@@ -36,15 +34,14 @@ int main(void)
   boost::tie (lfs_map, boost::tuples::ignore) = point_set.add_property_map<FT> ("LFS", 0.);
 
   if (!CGAL::IO::read_points(filename, point_set.index_back_inserter(),
-                            CGAL::parameters::point_map(point_set.point_map())
-                                                .normal_map(point_set.normal_map()))
+                            CGAL::parameters::point_map(point_set.point_push_map())
+                                                .normal_map(point_set.normal_push_map()))
     )
   {
     std::cerr << "Error: cannot read file " << filename<< std::endl;
     return EXIT_FAILURE;
   }
-  
-  
+    
   unsigned int jet_k = 24;
   std::size_t N_rays = 60;
   FT apex_angle = 30;

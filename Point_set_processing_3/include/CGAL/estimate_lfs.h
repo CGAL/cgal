@@ -694,8 +694,15 @@ estimate_local_feature_size(PointRange& points,
 
     bool need_jet_normal = false;
 
-    if (normal * normal == 0.0)
+    FT squared_length = std::sqrt(normal.squared_length());
+    if (squared_length == 0.0)
+    {
       need_jet_normal = true;
+    }
+    else  if (squared_length != 1.0) // normalize to unit vector
+    {
+      normal = normal / std::sqrt(squared_length);
+    }
 
     FT lfs = CGAL::internal::estimate_local_feature_size
           (point, normal, neighbor_query, bsphere,
@@ -706,7 +713,6 @@ estimate_local_feature_size(PointRange& points,
 
     if (need_jet_normal)
       put(normal_map, vt, normal);
-      ;
 
     ++ callback_wrapper.advancement();
 
