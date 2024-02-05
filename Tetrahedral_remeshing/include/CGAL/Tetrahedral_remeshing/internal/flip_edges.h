@@ -1396,7 +1396,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 
   if (cells_around_edge.size() != 4)
   {
-//    nb_surface_nm_configs++;
     if (cells_around_edge.size() > 4){
 //////      if (flip_criterion == VALENCE_BASED){
 //////        return find_best_n_m_flip(edge, vh0_index, vh1_index);
@@ -1418,7 +1417,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       return NOT_FLIPPABLE;
   }
 
-//  nb_surface_44_configs++;
 #ifdef CGAL_FLIP_ON_SURFACE_DISABLE_44_FLIP
   return NOT_FLIPPABLE;
 #endif
@@ -1439,75 +1437,41 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 
   Vertex_handle vh0, vh1, vh2, vh3, vh4, vh5;
 
-  int ivh4 = ch0->index(ch1);
-  vh4 = ch0->vertex(ivh4);
+  int ivh4_in_ch0 = ch0->index(ch1);
+  vh4 = ch0->vertex(ivh4_in_ch0);
 
-  int ivh2 = ch0->index(ch3);
-  vh2 = ch0->vertex(ivh2);
+  int ivh2_in_ch0 = ch0->index(ch3);
+  vh2 = ch0->vertex(ivh2_in_ch0);
 
   vh5 = ch1->vertex(ch1->index(ch0));
   vh0 = ch2->vertex(ch2->index(ch1));
 
   for (int j = 0; j < 3; j++){
-    if (indices(ivh4, j) == ivh2){
+    if (indices(ivh4_in_ch0, j) == ivh2_in_ch0){
       int j1 = (j + 1) % 3;
       int j2 = (j + 2) % 3;
-      vh1 = ch0->vertex(indices(ivh4, j1));
-      vh3 = ch0->vertex(indices(ivh4, j2));
+      vh1 = ch0->vertex(indices(ivh4_in_ch0, j1));
+      vh3 = ch0->vertex(indices(ivh4_in_ch0, j2));
       break;
     }
   }
 
   bool planar_flip;
-
-//  std::vector<std::pair<Point_3, Point_3> > current_edges;
-//  current_edges.push_back(std::make_pair(vh1->point(), vh3->point()));
-
   if ((vh0 == v0i && vh2 == v1i) || (vh2 == v0i && vh0 == v1i))
-  {
     planar_flip = true;
-//    current_edges.push_back(std::make_pair(vh0->point(), vh2->point()));
-  }
   else if ((vh4 == v0i && vh5 == v1i) || (vh5 == v0i && vh4 == v1i))
     planar_flip = false;
   else
     return NOT_FLIPPABLE;
-
-  //  /*
-//  post_sliver_Removal_cells.clear();
-//  post_sliver_Removal_cells.push_back( ch0 );
-//  post_sliver_Removal_cells.push_back( ch1 );
-//  post_sliver_Removal_cells.push_back( ch2 );
-//  post_sliver_Removal_cells.push_back( ch3 );
-//
-//  post_sliver_Removal_vertices.clear();
-//  post_sliver_Removal_vertices.push_back( vh0 );
-//  post_sliver_Removal_vertices.push_back( vh1 );
-//  post_sliver_Removal_vertices.push_back( vh2 );
-//  post_sliver_Removal_vertices.push_back( vh3 );
-//  post_sliver_Removal_vertices.push_back( vh4 );
-//  post_sliver_Removal_vertices.push_back( vh5 );
-//
-//  pre_sliver_Removal_cells.clear();
-//  pre_sliver_Removal_cells.push_back(K::Tetrahedron_3 ( ch0->vertex(0)->point(), ch0->vertex(1)->point(), ch0->vertex(2)->point(), ch0->vertex(3)->point()  ));
-//  pre_sliver_Removal_cells.push_back(K::Tetrahedron_3 ( ch1->vertex(0)->point(), ch1->vertex(1)->point(), ch1->vertex(2)->point(), ch1->vertex(3)->point()  ));
-//  pre_sliver_Removal_cells.push_back(K::Tetrahedron_3 ( ch2->vertex(0)->point(), ch2->vertex(1)->point(), ch2->vertex(2)->point(), ch2->vertex(3)->point()  ));
-//  pre_sliver_Removal_cells.push_back(K::Tetrahedron_3 ( ch3->vertex(0)->point(), ch3->vertex(1)->point(), ch3->vertex(2)->point(), ch3->vertex(3)->point()  ));
-//
-//  if( ! c3t3_with_info.triangulation().is_valid( ch0 ) ||
-//  ! c3t3_with_info.triangulation().is_valid( ch1 ) || ! c3t3_with_info.triangulation().is_valid( ch2 ) || !c3t3_with_info.triangulation().is_valid( ch3 ) ){
-//  std::cout << "Initial cell PB!!" << std::endl;
-//  return CELL_PBS;
-//  }
-//
-//  std::cout << "vh0 "<< vh0->info() <<", " << vh1->info() << ", " << vh2->info() << ", " << vh3->info()<<", " << vh4->info() << ", " << vh5 ->info() << std::endl;
-//  */
 
   typedef typename C3T3::Facet Facet;
   typedef typename C3T3::Surface_patch_index Surface_patch_index;
 
   if (planar_flip)
   {
+#ifdef CGAL_FLIP_ON_SURFACE_DISABLE_PLANAR_44_FLIP
+    return NOT_FLIPPABLE;
+#endif
     Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh4));
     CGAL_assertion(patch != Surface_patch_index());
     CGAL_assertion(c3t3.is_in_complex(ch0, ch0->index(vh4)));
@@ -1516,9 +1480,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     c3t3.remove_from_complex(ch3, ch3->index(vh4));
 
     boost::unordered_map<Facet, Surface_patch_index> opposite_facet_in_complex;
-    for (int i = 0; i < 4; ++i)
+    for (Cell_handle chi : cells_around_edge)
     {
-      Cell_handle chi = cells_around_edge[i];
       Facet f1(chi, chi->index(vh1));
       Facet f2(chi, chi->index(vh3));
 
@@ -1542,11 +1505,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     Cell_handle n_ch2_vh1 = ch2->neighbor(ch2->index(vh1));
     Cell_handle n_ch1_vh3 = ch1->neighbor(ch1->index(vh3));
 
-//    pre_sliver_Removal_cells.push_back(K::Tetrahedron_3(n_ch3_vh1->vertex(0)->point(), n_ch3_vh1->vertex(1)->point(), n_ch3_vh1->vertex(2)->point(), n_ch3_vh1->vertex(3)->point()));
-//    pre_sliver_Removal_cells.push_back(K::Tetrahedron_3(n_ch0_vh3->vertex(0)->point(), n_ch0_vh3->vertex(1)->point(), n_ch0_vh3->vertex(2)->point(), n_ch0_vh3->vertex(3)->point()));
-//    pre_sliver_Removal_cells.push_back(K::Tetrahedron_3(n_ch2_vh1->vertex(0)->point(), n_ch2_vh1->vertex(1)->point(), n_ch2_vh1->vertex(2)->point(), n_ch2_vh1->vertex(3)->point()));
-//    pre_sliver_Removal_cells.push_back(K::Tetrahedron_3(n_ch1_vh3->vertex(0)->point(), n_ch1_vh3->vertex(1)->point(), n_ch1_vh3->vertex(2)->point(), n_ch1_vh3->vertex(3)->point()));
-
     ch3->set_vertex(ch3->index(vh3), vh2);
     ch0->set_vertex(ch0->index(vh1), vh0);
     ch2->set_vertex(ch2->index(vh3), vh2);
@@ -1564,7 +1522,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       || curr_max_cosdh < max_cos_dihedral_angle(tr, ch3, false))
       db = NO_BEST_CONFIGURATION;
 
-    if(db == NOT_FLIPPABLE || db == NO_BEST_CONFIGURATION)
+    if(db != VALID_FLIP)
     {
       ch3->set_vertex(ch3->index(vh2), vh3);
       ch0->set_vertex(ch0->index(vh0), vh1);
@@ -1574,9 +1532,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       c3t3.add_to_complex(ch0, ch0->index(vh4), patch);
       c3t3.add_to_complex(ch3, ch3->index(vh4), patch);
 
-      for (int i = 0; i < 4; ++i)
+      for (Cell_handle chi : cells_around_edge)
       {
-        Cell_handle chi = cells_around_edge[i];
         Facet f1(chi, chi->index(vh1));
         Facet f2(chi, chi->index(vh3));
 
@@ -1610,18 +1567,17 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     ch1->set_neighbor(ch1->index(vh2), n_ch2_vh1);
     n_ch2_vh1->set_neighbor(n_ch2_vh1->index(ch2), ch1);
 
-    for (std::size_t i = 0; i < cells_around_edge.size(); i++)
+    for (Cell_handle ci : cells_around_edge)
     {
       for (int j = 0; j < 4; j++)
-        cells_around_edge[i]->vertex(j)->set_cell(cells_around_edge[i]);
+        ci->vertex(j)->set_cell(ci);
     }
 
     c3t3.add_to_complex(ch0, ch0->index(vh4), patch);
     c3t3.add_to_complex(ch3, ch3->index(vh4), patch);
 
-    for (int i = 0; i < 4; ++i)
+    for (Cell_handle chi : cells_around_edge)
     {
-      Cell_handle chi = cells_around_edge[i];
       Facet f1(chi, chi->index(vh0));
       Facet f2(chi, chi->index(vh2));
 
@@ -1634,46 +1590,16 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
         c3t3.add_to_complex(f2, it->second);
     }
 
-//    /*
-//    std::cout << "Ch0 "<< ch0->info()<< std::endl;
-//    if(! c3t3_with_info.triangulation().is_valid(ch0, true) )
-//    db = CELL_PBS;
-//    std::cout << "Ch1 "<< ch1->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(ch1, true))
-//    db = CELL_PBS;
-//    std::cout << "Ch2 "<< ch2->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(ch2, true))
-//    db = CELL_PBS;
-//    std::cout << "Ch3 "<< ch3->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(ch3, true))
-//    db = CELL_PBS;
-//    std::cout << "n_ch3_vh1 "<< n_ch3_vh1->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(n_ch3_vh1, true))
-//    db = CELL_PBS;
-//    std::cout << "n_ch0_vh3 "<< n_ch0_vh3->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(n_ch0_vh3, true))
-//    db = CELL_PBS;
-//    std::cout << "n_ch2_vh1 "<< n_ch2_vh1->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(n_ch2_vh1, true))
-//    db = CELL_PBS;
-//    std::cout << "n_ch1_vh3 "<< n_ch1_vh3->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(n_ch1_vh3, true))
-//    db = CELL_PBS;
-//
-//    */
-//
-//    if (db == VALID_FLIP) nb_surface_44_flips_done++;
-
-      if (db == VALID_FLIP)
-      {
-        for(Cell_handle c : cells_around_edge)
-          c->reset_cache_validity();
-      }
+    for(Cell_handle c : cells_around_edge)
+      c->reset_cache_validity();
 
     return db;
   }
   else //Non planar flip
   {
+#ifdef CGAL_FLIP_ON_SURFACE_DISABLE_NON_PLANAR_44_FLIP
+    return NOT_FLIPPABLE;
+#endif
     typename C3T3::Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh2));
     CGAL_assertion(patch != typename C3T3::Surface_patch_index());
 
@@ -1683,9 +1609,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     c3t3.remove_from_complex(ch1, ch1->index(vh2));
 
     boost::unordered_map<Facet, Surface_patch_index> opposite_facet_in_complex;
-    for (int i = 0; i < 4; ++i)
+    for (Cell_handle chi : cells_around_edge)
     {
-      Cell_handle chi = cells_around_edge[i];
       Facet f1(chi, chi->index(vh1));
       Facet f2(chi, chi->index(vh3));
 
@@ -1731,9 +1656,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       c3t3.add_to_complex(ch0, ch0->index(vh2), patch);
       c3t3.add_to_complex(ch1, ch1->index(vh2), patch);
 
-      for (int i = 0; i < 4; ++i)
+      for (Cell_handle chi : cells_around_edge)
       {
-        Cell_handle chi = cells_around_edge[i];
         Facet f1(chi, chi->index(vh1));
         Facet f2(chi, chi->index(vh3));
 
@@ -1796,42 +1720,10 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
         c3t3.add_to_complex(f2, it->second);
     }
 
-    db = VALID_FLIP;
-//    nb_surface_44_flips_done++;
+    for (Cell_handle c : cells_around_edge)
+      c->reset_cache_validity();
 
-//    /*
-//    std::cout << "Ch0 "<< ch0->info()<< std::endl;
-//    if(! c3t3_with_info.triangulation().is_valid(ch0, true) )
-//    db = CELL_PBS;
-//    std::cout << "Ch1 "<< ch1->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(ch1, true))
-//    db = CELL_PBS;
-//    std::cout << "Ch2 "<< ch2->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(ch2, true))
-//    db = CELL_PBS;
-//    std::cout << "Ch3 "<< ch3->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(ch3, true))
-//    db = CELL_PBS;
-//    std::cout << "n_ch3_vh3 "<< n_ch3_vh3->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(n_ch3_vh3, true))
-//    db = CELL_PBS;
-//    std::cout << "n_ch2_vh1 "<< n_ch2_vh1->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(n_ch2_vh1, true))
-//    db = CELL_PBS;
-//    std::cout << "n_ch0_vh3 "<< n_ch0_vh3->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(n_ch0_vh3, true))
-//    db = CELL_PBS;
-//    std::cout << "n_ch1_vh1 "<< n_ch1_vh1->info()<< std::endl;
-//    if(!c3t3_with_info.triangulation().is_valid(n_ch1_vh1, true))
-//    db = CELL_PBS;
-//    */
-
-    if (db == VALID_FLIP)
-    {
-      for (Cell_handle c : cells_around_edge)
-        c->reset_cache_validity();
-    }
-    return db;
+    return VALID_FLIP;
   }
 
   return NOT_FLIPPABLE;
@@ -2078,8 +1970,6 @@ void flip_edges(C3T3& c3t3,
                         MIN_ANGLE_BASED,
                         cell_selector, visitor);
   }
-
-  //}
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   std::cout << "\rFlip edges... done ("
