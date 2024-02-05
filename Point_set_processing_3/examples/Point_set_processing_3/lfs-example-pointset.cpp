@@ -49,7 +49,7 @@ int main(void)
   std::size_t N_rays = 60;
   FT apex_angle = 30;
   CGAL::estimate_local_feature_size<Concurrency_tag>(point_set, jet_k, N_rays, apex_angle, lfs_map,
-    CGAL::parameters::point_map(point_set.point_push_map())
+    CGAL::parameters::point_map(point_set.point_map())
                                                 .normal_map(point_set.normal_push_map()));
   // print
   for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
