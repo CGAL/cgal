@@ -84,7 +84,7 @@ int main(int argc, char** argv)
   // convert polygons to polar coordinates
   typename K::Point_2 center_2((bb2.xmax()+bb2.xmin())/2., (bb2.ymax()+bb2.ymin())/2.);
   double diag = std::sqrt( CGAL::square(bb2.xmin()-bb2.xmax()) + CGAL::square(bb2.xmin()-bb2.xmax()) );
-  const double expected_diag = 0.05; // user parameter for scaling
+  const double expected_diag = 0.45; // user parameter for scaling
   const double scaling = expected_diag/diag;
 
   std::ofstream out("geodesic_polygon.polylines.txt");
@@ -107,10 +107,8 @@ int main(int argc, char** argv)
 
     for (const std::pair<double, double>& coord : polar_coords)
     {
-      std::cout << scaling <<  " * " << coord.first << " = " << scaling * coord.first << "\n";
       lens.push_back(scaling * coord.first);
       directions.emplace_back(std::cos(coord.second), std::sin(coord.second));
-      std::cout << std::cos(coord.second) << " " << std::sin(coord.second) << "\n";
     }
 
     // last point is duplicated

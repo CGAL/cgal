@@ -32,13 +32,11 @@ int main(int argc, char** argv)
 
   std::size_t nb_faces = faces(mesh).size();
   int n_sides=6;
-  std::vector<double> lenghts = { 0.3, 0.2, 0.1, 0.05 };
+  std::vector<double> lenghts = { 0.03, 0.02, 0.01, 0.005 };
 
   // take two random faces and pick the centroid
   CGAL::Random rnd = CGAL::get_default_random();
-   //CGAL::Random rnd(1706709591);
-  // 1706798575  <------- crash
-  // 1706799948  <------- crash
+  //CGAL::Random rnd(1707129825);
 
   std::cout << "seed " << rnd.get_seed() << std::endl;
   Mesh::Face_index f = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));
