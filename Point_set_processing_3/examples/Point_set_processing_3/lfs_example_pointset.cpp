@@ -27,7 +27,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 int main(void)
 {
   // read xyz
-  const std::string filename = = CGAL::data_file_path("points_3/kitten.xyz");
+  const std::string filename = CGAL::data_file_path("points_3/kitten.xyz");
 
   Point_set point_set;
   point_set.add_normal_map();
@@ -36,8 +36,8 @@ int main(void)
   boost::tie (lfs_map, boost::tuples::ignore) = point_set.add_property_map<FT> ("LFS", 0.);
 
   if (!CGAL::IO::read_points(filename, point_set.index_back_inserter(),
-                            CGAL::parameters::point_map(point_set.point_push_map())
-                                                .normal_map(point_set.normal_push_map()))
+                            CGAL::parameters::point_map(point_set.point_map())
+                                                .normal_map(point_set.normal_map()))
     )
   {
     std::cerr << "Error: cannot read file " << filename<< std::endl;
