@@ -1451,7 +1451,7 @@ struct Locally_shortest_path_imp
     Point_3 prev_pos = construct_point(*std::next(result.rbegin()),mesh);
     Point_3 last_pos = construct_point(result.back(),mesh);
     double alpha = excess / sqrt((last_pos - prev_pos).squared_length());
-    Point_3 pos = barycenter(prev_pos, 1-alpha, last_pos, alpha);
+    Point_3 pos = barycenter(prev_pos, alpha, last_pos, 1-alpha);
 #ifdef CGAL_DEBUG_BSURF
     std::cout << "excess " << excess << std::endl;
     std::cout << "prev_pos " << prev_pos << std::endl;
@@ -2964,13 +2964,16 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
   size_t n=directions.size();
   std::vector<typename K::Point_3> result;
   std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
+#ifdef CGAL_DEBUG_BSURF
   std::cout << "trace_geodesic_polygon\n";
+#endif
   for(std::size_t i=0;i<n;++i)
   {
     vertices[i]= straightest_geodesic<K>(center,directions[i],lengths[i],tmesh).back();
+#ifdef CGAL_DEBUG_BSURF
     std::cout << construct_point(vertices[i], tmesh) << "\n";
+#endif
   }
-    exit(1);
   std::vector<Edge_location<TriangleMesh,typename K::FT>> edge_locations;
 
   const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
@@ -2991,6 +2994,7 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
       result.push_back(construct_point(el, tmesh));
     }
   }
+  result.push_back(construct_point(vertices[0],tmesh));
 
   return result;
 }
