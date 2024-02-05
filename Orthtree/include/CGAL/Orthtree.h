@@ -512,7 +512,7 @@ public:
    */
   template <typename T>
   std::pair<Property_map<T>, bool>
-  add_node_property(const std::string& name, const T default_value = T()) {
+  add_property(const std::string& name, const T default_value = T()) {
     auto p = m_node_properties.get_or_add_property(name, default_value);
     return std::pair<Property_map<T>, bool>(Property_map<T>(p.first), p.second);
   }
@@ -528,7 +528,7 @@ public:
    */
   template <typename T>
   Pair_optional_adaptor<Property_map<T>>
-  node_property(const std::string& name) {
+  property(const std::string& name) {
     auto p = m_node_properties.template get_property_if_exists<T>(name);
     if (p)
       return std::optional<Property_map<T> >(Property_map<T>(*p));
@@ -553,7 +553,7 @@ public:
     \return true if property was a valid property of the tree.
    */
   template <typename T>
-  bool remove_node_property(Property_map<T> property) {
+  bool remove_property(Property_map<T> property) {
     return m_node_properties.remove_property(property.array());
   }
 
