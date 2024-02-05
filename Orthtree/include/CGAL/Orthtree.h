@@ -27,6 +27,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/span.h>
+#include <CGAL/Pair_optional_adaptor.h>
 
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -526,7 +527,7 @@ public:
     \return an optional containing the property map if it exists
    */
   template <typename T>
-  std::optional<Property_map<T>>
+  Pair_optional_adaptor<Property_map<T>>
   node_property(const std::string& name) {
     auto p = m_node_properties.template get_property_if_exists<T>(name);
     if (p)

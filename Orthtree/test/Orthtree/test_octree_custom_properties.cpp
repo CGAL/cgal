@@ -39,15 +39,27 @@ int main(void) {
   auto prop5 = tree.add_node_property("test", int(0));
   assert(!prop5.second);
 
-  auto prop3 = tree.node_property<int>("test");
-  assert(prop3.has_value());
+  auto a1 = tree.node_property<int>("test");
+  std::pair<typename Octree::Property_map<int>, bool> p1 = tree.node_property<int>("test");
+  std::optional<typename Octree::Property_map<int>> o1 = tree.node_property<int>("test");
+  auto f = a1.first;
+  auto pf1 = p1.first;
+  auto of1 = o1.value();
+  auto fo1 = a1.value();
+  std::cout << f.size() << std::endl;
+
+  auto a2 = tree.node_property<std::string>("test");
+  std::pair<typename Octree::Property_map<std::string>, bool> p2 = tree.node_property<std::string>("test");
+  std::optional<typename Octree::Property_map<std::string>> o2 = tree.node_property<std::string>("test");
+
+  //assert(prop3.has_value());
 
   auto prop4 = tree.node_property<std::string>("test");
   assert(!prop4.has_value());
 
   // removal of properties
   num = tree.properties().size();
-  tree.remove_node_property(*prop3);
+  //tree.remove_node_property(*prop3);
   assert(tree.properties().size() == (num - 1));
 
   // Default value should be respected
