@@ -194,7 +194,7 @@ The Graphics_scene_options class is responsible for providing a set of options a
 
 </OL>
 
-\section secsoftwaredesign Software Design
+\section SoftwareDesignClassDiagam Software Design
 
 class diagram [WIP] 
 
@@ -234,15 +234,15 @@ void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
 ```
 As shown above in code snippt the add_to_graphics_scene function fill LCC in the given graphic buffer with or without options, and then we pass graphic buffer to draw_graphics_scene function which is designed to display or render the contents of a Graphics_scene object.
 
-\cgalFigureBegin{linear_cell_complex_for_combinatorial_map,lcc_cmap_with_faces.png}
+\cgalFigureBegin{linear_cell_complex_for_combinatorial_map_ex1,lcc_cmap_with_faces.png}
 example of drawing LCC for CMap with faces
 \cgalFigureEnd
 
-\cgalFigureBegin{linear_cell_complex_for_combinatorial_map,lcc_cmap_without_edges.png}
+\cgalFigureBegin{linear_cell_complex_for_combinatorial_map_ex2,lcc_cmap_without_edges.png}
 example of drawing LCC for CMap without edges
 \cgalFigureEnd
 
-\cgalFigureBegin{linear_cell_complex_for_combinatorial_map,lcc_cmap_without_faces.png}
+\cgalFigureBegin{linear_cell_complex_for_combinatorial_map_ex3,lcc_cmap_without_faces.png}
 example of drawing LCC for CMap without faces
 \cgalFigureEnd
 
