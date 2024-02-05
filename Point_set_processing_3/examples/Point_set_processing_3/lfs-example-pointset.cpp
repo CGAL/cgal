@@ -26,10 +26,8 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 
 int main(void)
 {
-
   // read xyz
-  const std::string filename = "/home/daozi/CGAL/LFS-example/frog.xyz";
-  // const std::string filename = "/home/daozi/CGAL/LFS-example/frog-pca-normal.pwn";
+  const std::string filename = = CGAL::data_file_path("points_3/kitten.xyz");
 
   Point_set point_set;
   point_set.add_normal_map();

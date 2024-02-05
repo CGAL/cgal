@@ -23,7 +23,7 @@ int main(void)
 {
 
   // read xyz
-  const std::string filename = "/home/daozi/CGAL/LFS-example/frog.xyz";
+  const std::string filename = CGAL::data_file_path("points_3/kitten.xyz");
 
   std::vector<Point_with_normal_and_lfs> points;
   if(!CGAL::IO::read_points(filename,
