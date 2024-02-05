@@ -608,7 +608,7 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \note This function accepts both 2D and 3D points.
+   \note This function only accepts 3D points.
 
    \return The estimated lfs will be stored in the LfsMap.
 */
