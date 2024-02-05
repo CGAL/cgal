@@ -101,18 +101,97 @@ The draw function is a virtual function in the Basic_viewer class responsible fo
 \cgalExample{Basic_viewer/draw_several_windows.cpp}
 
 \section  Graphic_Scene
-[WIP]
+
+The Graphics_scene class appears to be a container class responsible for managing CGAL data structures and handling buffers for various geometric elements, such as points, segments, rays, lines, and faces by fill data in given graphic buffer.
+
+\subsection GraphicSceneClass key components and functionality of this class:
+<OL>
+
+<LI> Buffer Management:
+
+<OL>
+<LI> The class manages buffers for different geometric elements, including mono and colored versions of points, segments, rays, lines, and faces.
+<LI> Buffers are stored in the arrays array, which holds vectors of BufferType (defaulted to float), and each buffer is initialized in the constructor.
+</OL>
+
+<LI> Bounding Box:
+<OL>
+<LI> The class maintains a bounding box (m_bounding_box) that encompasses all the geometric elements in the scene.
+<LI> The bounding box can be initiated and updated based on the elements added to the scene.
+</OL>
+
+<LI> Adding Geometric Elements:
+<OL>
+<LI> The class provides template member functions (add_point, add_segment, add_ray, etc.) for adding various geometric elements to the corresponding buffers.
+<LI> It supports both mono and colored versions of these elements, allowing for the addition of color information.
+</OL>
+
+<LI> Face Handling:
+<OL>
+<LI> The class supports the creation of faces by providing methods such as face_begin, add_point_in_face, and face_end.
+<LI> Faces can be either mono or colored, and they are constructed by adding points to the corresponding face buffers.
+</OL>
+
+<LI> Normal Handling:
+<OL>
+<LI> Normals for faces are handled separately for smooth and flat shading, and they are part of the normal buffers.
+</OL>
+
+<LI> Text Handling:
+<OL>
+<LI> The class maintains a vector of text elements (m_texts), where each text element is associated with a 3D point in the scene.
+<LI> Text elements can be added using the add_text member function.
+</OL>
+
+<LI> Utility Functions:
+<OL>
+<LI> The class provides utility functions such as checking if a face has started (a_face_started), clearing all buffers (clear), and determining if the scene is empty.
+</OL>
+
+<LI> Coordinate System Information:
+<OL>
+<LI> The class contains functions to check if the data structure lies on a particular plane (XY, XZ, or YZ), providing information about the coordinate system.
+</OL>
+
+<LI> Local Coordinate Transformations:
+<OL>
+<LI> There are template functions (get_local_point and get_local_vector) for transforming CGAL points and vectors into a local coordinate system (Local_kernel).
+</OL>
+
+<LI> Size and Dimensionality:
+<OL>
+<LI> Functions like get_size_of_index and number_of_elements provide information about the size and dimensionality of buffers.
+</OL>
+
+<LI> Miscellaneous:
+<OL>
+<LI> The class allows for reversing all normals in the scene using the reverse_all_normals function.
+<LI> The empty function checks whether the scene is empty.
+<LI> Functions like has_zero_x, has_zero_y, and has_zero_z check if any element in the scene has a zero value in a specific coordinate.
+</OL>
+
+</OL>
+
+This class provides a comprehensive interface for managing and manipulating geometric data in a 3D scene, facilitating the rendering and interaction of complex scenes in a graphics application.
+
 
 \subsection GraphicSceneContinue Graphics_scene_options
 The Graphics_scene_options class is responsible for providing a set of options and customization parameters for rendering geometric structures in a graphics scene. Its main purpose is to allow users to control the visual appearance of various elements such as vertices, edges, faces, and volumes in a graphical representation of a combinatorial data structure (DS). The classes are template classes, allowing them to work with different combinatorial data structures (DS) in 2D and 3D.
 \subsubsection GraphicSceneOptionsCont Here are some key responsibilities of the Graphics_scene_options class:
 <OL>
+
 <LI> Drawing Control: It determines whether to draw vertices, edges, faces, and volumes in the graphics scene through the use of drawing functors (draw_vertex, draw_edge, draw_face, draw_volume).
+
 <LI> Coloring Control: It allows users to customize the coloring of vertices, edges, faces, and volumes. Users can specify whether coloring is enabled (colored_vertex, colored_edge, colored_face, colored_volume) and, if so, provide functions (vertex_color, edge_color, face_color, volume_color) to determine the color for each element.
+
 <LI> Wireframe Control: For faces and volumes, it provides options to draw a wireframe representation (face_wireframe, volume_wireframe), allowing users to choose whether to display a wireframe overlay.
+
 <LI> Visibility Control: Users can enable or disable the visibility of vertices, edges, faces, and volumes independently using functions like disable_vertices, enable_vertices, are_vertices_enabled, and similar functions for other components.
+
 <LI> Template Flexibility: The class is templated to support different types of combinatorial data structures (DS) in 2D and 3D. This template flexibility allows users to use the class with various geometric structures.
+
 <LI> Default Settings: It provides reasonable default settings for the various options, ensuring that users can get started with a sensible configuration without needing to customize every parameter.
+
 </OL>
 
 \section secsoftwaredesign Software Design
