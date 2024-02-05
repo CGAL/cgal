@@ -38,7 +38,6 @@ using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
 using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>>;
 using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 
-
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
@@ -51,7 +50,6 @@ int main(int argc, char* argv[])
   Polyhedron polyhedron;
 
   std::string filename(fname);
-  //  if (filename.substr(filename.find_last_of(".")).compare(".off") == 0)
   input >> polyhedron;
   if (input.fail()) {
     std::cerr << "Error: Cannot read file " << fname << std::endl;
