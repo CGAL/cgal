@@ -108,7 +108,7 @@ public:
   Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const;
 
   /*!
-  returns all the cells incident to the edge `e`.
+  returns all the cells incident to the edge `e`, in a geometrically ordered manner around the edge.
   */
   Cells_incident_to_edge incident_cells(const Edge_descriptor& e) const;
 
