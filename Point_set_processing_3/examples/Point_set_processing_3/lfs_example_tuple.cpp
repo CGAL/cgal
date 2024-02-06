@@ -3,7 +3,7 @@
 #include <CGAL/IO/read_points.h>
 
 #include <vector>
-#include <utility> // defines std::pair
+#include <utility>
 #include <tuple>
 
 // types
@@ -12,7 +12,6 @@ typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
-// Point with normal vector stored in a std::pair.
 typedef std::tuple<Point, Vector, FT> Point_with_normal_and_lfs;
 
 // Concurrency
