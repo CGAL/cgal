@@ -195,6 +195,7 @@ public:
    */
   const std::array<FT, 3>& spacing() const { return m_spacing; }
 
+public:
   /**
    * \brief gets the geometric position of the grid vertex described by a set of indices.
    *
@@ -262,6 +263,7 @@ public:
     return m_values[linear_index(i, j, k)];
   }
 
+public:
   /**
    * \brief gets the gradient stored at the grid vertex described by a set of indices.
    *

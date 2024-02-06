@@ -105,7 +105,7 @@ private:
 
   Edge_point_map m_edges;
 
-  tbb::concurrent_vector<std::array<Point_index, 3>> m_triangles;
+  tbb::concurrent_vector<std::array<Point_index, 3> > m_triangles;
 
 public:
   TMC_functor(const Domain& domain,
@@ -271,8 +271,6 @@ private:
     {
       if(flag & Cube_table::intersected_edges[i_case])
       {
-
-
         // generate vertex here, do not care at this point if vertex already exists
         uint v0, v1;
         get_edge_vertex(eg, v0, v1, l_edges_);

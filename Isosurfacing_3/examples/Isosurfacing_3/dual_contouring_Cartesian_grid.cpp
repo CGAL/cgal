@@ -38,7 +38,7 @@ int main(int, char**)
         grid.value(x, y, z) = distance;
 
         if(distance != 0)
-            grid.gradient(x, y, z) = direction / distance;
+          grid.gradient(x, y, z) = direction / distance;
         else
           grid.gradient(x, y, z) = CGAL::NULL_VECTOR;
       }

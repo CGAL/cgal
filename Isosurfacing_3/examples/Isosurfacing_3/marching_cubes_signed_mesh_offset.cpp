@@ -36,8 +36,8 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 inline Kernel::FT distance_to_mesh(const Tree& tree,
                                    const Point& p)
 {
-  const Point x = tree.closest_point(p);
-  return sqrt((p - x).squared_length());
+  const Point cp = tree.closest_point(p);
+  return sqrt((p - cp).squared_length());
 }
 
 int main(int argc, char* argv[])
@@ -68,22 +68,22 @@ int main(int argc, char* argv[])
   // create grid
   Grid grid { n_voxels, n_voxels, n_voxels, aabb_grid };
 
-  for(std::size_t z=0; z<grid.zdim(); ++z) {
-    for(std::size_t y=0; y<grid.ydim(); ++y) {
-      for(std::size_t x=0; x<grid.xdim(); ++x)
+  for(std::size_t k=0; k<grid.zdim(); ++k) {
+    for(std::size_t j=0; j<grid.ydim(); ++j) {
+      for(std::size_t i=0; i<grid.xdim(); ++i)
       {
-        const FT pos_x = x * grid.spacing()[0] + grid.bbox().xmin();
-        const FT pos_y = y * grid.spacing()[1] + grid.bbox().ymin();
-        const FT pos_z = z * grid.spacing()[2] + grid.bbox().zmin();
+        const FT pos_x = i * grid.spacing()[0] + grid.bbox().xmin();
+        const FT pos_y = j * grid.spacing()[1] + grid.bbox().ymin();
+        const FT pos_z = k * grid.spacing()[2] + grid.bbox().zmin();
         const Point p(pos_x, pos_y, pos_z);
 
         // compute unsigned distance to input mesh
-        grid.value(x, y, z) = distance_to_mesh(tree, p);
+        grid.value(i, j, k) = distance_to_mesh(tree, p);
 
         // sign distance so that it is negative inside the mesh
         const bool is_inside = (sotm(p) == CGAL::ON_BOUNDED_SIDE);
         if(is_inside)
-          grid.value(x, y, z) *= -1.0;
+          grid.value(i, j, k) *= -1.0;
       }
     }
   }

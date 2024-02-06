@@ -98,22 +98,22 @@ int main(int argc, char *argv[])
   int index = 0;
   for(FT offset = 0.0; offset < 0.3; offset += 0.01, index++)
   {
-          // containers for the triangle soup output
-          Point_range points;
-          Polygon_range triangles;
+    // containers for the triangle soup output
+    Point_range points;
+    Polygon_range triangles;
 
-          // execute marching cubes with an isovalue equating offset
-      std::cout << "Marching cubes with offset " << offset << "...";
-      CGAL::Isosurfacing::marching_cubes(domain, offset, points, triangles);
-      std::cout << "done" << std::endl;
+    // execute marching cubes with an isovalue equating offset
+    std::cout << "Marching cubes with offset " << offset << "...";
+    CGAL::Isosurfacing::marching_cubes(domain, offset, points, triangles);
+    std::cout << "done" << std::endl;
 
-          // save the output
-      std::string filename("output-");
-      filename.append(std::to_string(index));
-      filename.append(std::string(".off"));
-      std::cout << "Save to file " << filename << "...";
-          CGAL::IO::write_polygon_soup(filename, points, triangles);
-      std::cout << "done" << std::endl;
+      // save the output
+    std::string filename("output-");
+    filename.append(std::to_string(index));
+    filename.append(std::string(".off"));
+    std::cout << "Saving to file " << filename << "...";
+    CGAL::IO::write_polygon_soup(filename, points, triangles);
+    std::cout << "done" << std::endl;
   }
 
   return EXIT_SUCCESS;

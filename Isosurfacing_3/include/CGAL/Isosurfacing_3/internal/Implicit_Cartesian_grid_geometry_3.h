@@ -21,7 +21,7 @@ namespace Isosurfacing {
 namespace internal {
 
 // Describes the geometry of a regular Cartesian grid.
-// Positions are not stored but calculated from an offset and grid spacing.
+// Positions are not stored but calculated on-the-fly from an offset and grid spacing.
 template <class GeomTraits>
 class Implicit_Cartesian_grid_geometry_3
 {
@@ -46,7 +46,7 @@ public:
       m_gt{gt}
   { }
 
-  // Get the position of vertex v
+  // gets the position of vertex v
   Point_3 operator()(const Vertex_descriptor& v) const
   {
     typename Geom_traits::Compute_x_3 x_coord = m_gt.compute_x_3_object();

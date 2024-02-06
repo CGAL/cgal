@@ -1,7 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
 #include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
 #include <CGAL/Isosurfacing_3/marching_cubes_3.h>
+
 #include <CGAL/boost/graph/IO/OFF.h>
 
 #include <vector>

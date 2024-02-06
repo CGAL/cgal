@@ -30,16 +30,16 @@ int main(int, char**)
   Grid grid { 7, 7, 7, bbox };
 
   // calculate the value at all grid points
-  for(std::size_t x = 0; x < grid.xdim(); ++x) {
-    for(std::size_t y = 0; y < grid.ydim(); ++y) {
-      for(std::size_t z = 0; z < grid.zdim(); ++z)
+  for(std::size_t i=0; i<grid.xdim(); ++i) {
+    for(std::size_t j=0; j<grid.ydim(); ++j) {
+      for(std::size_t k=0; k<grid.zdim(); ++k)
       {
-        const FT pos_x = x * grid.spacing()[0] + bbox.xmin();
-        const FT pos_y = y * grid.spacing()[1] + bbox.ymin();
-        const FT pos_z = z * grid.spacing()[2] + bbox.zmin();
+        const FT pos_x = i * grid.spacing()[0] + bbox.xmin();
+        const FT pos_y = j * grid.spacing()[1] + bbox.ymin();
+        const FT pos_z = k * grid.spacing()[2] + bbox.zmin();
 
         // L_inf distance to the origin
-        grid.value(x, y, z) = (std::max)({std::abs(pos_x), std::abs(pos_y), std::abs(pos_z)});
+        grid.value(i, j, k) = (std::max)({std::abs(pos_x), std::abs(pos_y), std::abs(pos_z)});
       }
     }
   }

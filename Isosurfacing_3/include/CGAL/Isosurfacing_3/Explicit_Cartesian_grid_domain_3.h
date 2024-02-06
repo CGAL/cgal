@@ -14,10 +14,10 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Isosurfacing_3/internal/Isosurfacing_domain_3.h>
 #include <CGAL/Isosurfacing_3/internal/Explicit_Cartesian_grid_function.h>
 #include <CGAL/Isosurfacing_3/internal/Explicit_Cartesian_grid_geometry_3.h>
 #include <CGAL/Isosurfacing_3/internal/Grid_topology_3.h>
+#include <CGAL/Isosurfacing_3/internal/Isosurfacing_domain_3.h>
 #include <CGAL/Isosurfacing_3/Zero_gradient.h>
 
 namespace CGAL {
