@@ -579,8 +579,8 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
 /**
    \ingroup PkgPointSetProcessing3Algorithms
 
-   Estimates the local feature size (LFS) for the input 3D point cloud. The function only works for 3D point cloud.
-   If the input 3D point cloud has no normals, the function will also estimate the normals using jet-fitting.
+   estimates the local feature size (LFS) for the input 3D point cloud. The function only works for 3D point cloud.
+   If the input 3D point cloud has no normals, the function will also estimate the normals using jet fitting.
 
 
    \tparam PointRange is a model of `Range`. The value type of
@@ -604,13 +604,13 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
      \cgalParamNBegin{geom_traits}
        \cgalParamDescription{an instance of a geometric traits class}
        \cgalParamType{a model of `Kernel`}
-       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+       \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \note This function only accepts 3D points.
 
-   \return The estimated lfs will be stored in the LfsMap.
+   \return The estimated local feature size is stored in `lfs_map`.
 */
 template <typename ConcurrencyTag,
           typename PointRange,
