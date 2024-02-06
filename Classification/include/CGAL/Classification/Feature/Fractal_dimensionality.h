@@ -6,15 +6,12 @@
 #include <iostream>
 #include <math.h>
 
-#include <tbb/mutex.h>
-
 #ifndef FRACTAL_DIMENSION_DATA_STRUCTURE_MODE
-#define FRACTAL_DIMENSION_DATA_STRUCTURE_MODE 2 // 0 = dense, 1 = sparse, 2 = kdtree (N.B. the kdtree mode only supports basic box counting - d0)
+#define FRACTAL_DIMENSION_DATA_STRUCTURE_MODE 1 // 0 = dense, 1 = Image_int
 #endif
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
-#include <boost/multi_array.hpp>
 
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Splitters.h>
@@ -26,84 +23,10 @@
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Matrix2d;
 typedef Eigen::Matrix<double, 1, Eigen::Dynamic> VectorXd;
 typedef Eigen::Matrix<int, 1, Eigen::Dynamic> VectorXi;
-typedef boost::multi_array<int, 3> Matrix3i;
-typedef Matrix3i::array_view<3>::type Matrix3iV;
-typedef Matrix3i::index_range range;
-
-#if FRACTAL_DIMENSION_DATA_STRUCTURE_MODE == 1
-#include <Eigen/Sparse>
-template <typename T>
-class SparseMatrix3 {
-public:
-    SparseMatrix3(size_t x_size, size_t y_size, size_t z_size, size_t n_reserve = 0)
-        : x_size_(x_size), y_size_(y_size), z_size_(z_size), yz_size_(y_size * z_size) {
-        matrix_.resize(x_size_, yz_size_);
-        if (n_reserve > 0) {
-            matrix_.reserve(n_reserve);
-        }
-        matrix_.setZero();
-    }
-
-    T& operator()(size_t i, size_t j, size_t k) {
-        size_t flattened_index = flattenIndices(i, j, k);
-        return matrix_.coeffRef(i, flattened_index);
-    }
-
-    const T& operator()(size_t i, size_t j, size_t k) const {
-        size_t flattened_index = flattenIndices(i, j, k);
-        return matrix_.coeff(i, flattened_index);
-    }
-
-    inline const T& get(size_t i, size_t j, size_t k) const {
-        size_t flattened_index = flattenIndices(i, j, k);
-        return matrix_.coeff(i, flattened_index);
-    }
-
-    void makeCompressed() {
-        matrix_.makeCompressed();
-    }
-
-    const Eigen::SparseMatrix<T>& getMatrix() const {
-        return matrix_;
-    }
-
-    template<typename InputIterators>
-    void setFromTriplets(const InputIterators& begin, const InputIterators& end) {
-        matrix_.setFromTriplets(begin, end);
-    }
-
-private:
-    inline size_t flattenIndices(size_t i, size_t j, size_t k) const {
-        return j + y_size_ * k;
-    }
-
-    size_t x_size_;
-    size_t y_size_;
-    size_t z_size_;
-    size_t yz_size_;
-    Eigen::SparseMatrix<T> matrix_;
-};
-typedef SparseMatrix3<int> SparseMatrix3i;
-#endif
 
 namespace CGAL {
 namespace   Classification {
 namespace     Feature {
-
-// given f() takes extra arguments
-template<class T, class F, class... Args>
-typename std::enable_if<(T::dimensionality == 1), void>::type IterateArrayView(T& array, F f, Args& ...args) {
-    for (auto& element : array) {
-        f(element, args...);
-    }
-}
-
-template<class T, class F, class... Args>
-typename std::enable_if<(T::dimensionality > 1), void>::type IterateArrayView(T& array, F f, Args& ...args) {
-    for (auto element : array) {
-        IterateArrayView<decltype(element), F, Args...>(element, f, args...);
-    }
-}
 
 // User-defined feature
 template <typename GeomTraits, typename PointRange, typename PointMap, typename ConcurrencyTag = CGAL::Parallel_if_available_tag>
@@ -119,7 +42,7 @@ public:
     Fractal_dimensionality(const PointRange& input, PointMap point_map, float feature_scale, float r1 = -1, float r2 = -1, std::size_t n = 30) : input(input), point_map(point_map)
     {
         std::cout << "Fractal_dimensionality(feature_scale = " << feature_scale << ")" << std::endl;
-        Eigen::initParallel();
+        //Eigen::initParallel();
         assert((r1 >= 0) && (r2 > r1));
 
         this->set_name("Fractal_dimensionality");
@@ -131,6 +54,8 @@ public:
         typedef CGAL::Sliding_midpoint<SearchTraits_3> Splitter;
         typedef CGAL::Kd_tree<SearchTraits_3, Splitter, CGAL::Tag_true> Tree;
         typedef CGAL::Fuzzy_iso_box<SearchTraits_3> Iso_box;
+
+        using Image_int = CGAL::Classification::Image<int>;
         
         //feature_scale *= 0.5;
         double l = feature_scale; // the length of neighborhoods (default: 6)
@@ -194,57 +119,23 @@ public:
             CGAL::Timer t;
             t.reset(); t.start();
 
-#if FRACTAL_DIMENSION_DATA_STRUCTURE_MODE == 1
-            SparseMatrix3i my_voxel_sparse(gb_xsize, gb_ysize, gb_zsize, input.size());
-            typedef Eigen::Triplet<int> T;
-            std::vector<T> tripletList;
-            tripletList.reserve(input.size());
-
+            Image_int my_voxel(gb_xsize, gb_ysize, gb_zsize);
             for (auto pt = point_map.begin(); pt != point_map.end(); pt++) {
                 size_t my_xid = min((size_t)((pt->x() - gb_xmin) / cell_size), gb_xsize - 1);
                 size_t my_yid = min((size_t)((pt->y() - gb_ymin) / cell_size), gb_ysize - 1);
                 size_t my_zid = min((size_t)((pt->z() - gb_zmin) / cell_size), gb_zsize - 1);
-                //my_voxel[my_xid][my_yid][my_zid] += 1;
-                tripletList.push_back(T(my_xid, my_yid+gb_ysize*my_zid, 1)); //my_voxel_sparse(my_xid, my_yid, my_zid) += 1;
+                my_voxel(my_xid,my_yid,my_zid) += 1;
             }
-            my_voxel_sparse.setFromTriplets(tripletList.begin(), tripletList.end());
-            t.stop();
-            std::cout << "Sparse matrix constructed (" << t.time() << "s)" << std::endl;
-#elif FRACTAL_DIMENSION_DATA_STRUCTURE_MODE == 2
-            //std::cout << "Not matrix constructed" << std::endl;
-#else
-            Matrix3i my_voxel = Matrix3i(boost::extents[gb_xsize][gb_ysize][gb_zsize]);
-            std::fill_n(my_voxel.data(), my_voxel.num_elements(), 0);
-            for (auto pt = point_map.begin(); pt != point_map.end(); pt++) {
-                size_t my_xid = min((size_t)((pt->x() - gb_xmin) / cell_size), gb_xsize - 1);
-                size_t my_yid = min((size_t)((pt->y() - gb_ymin) / cell_size), gb_ysize - 1);
-                size_t my_zid = min((size_t)((pt->z() - gb_zmin) / cell_size), gb_zsize - 1);
-                my_voxel[my_xid][my_yid][my_zid] += 1;
-            }
-            t.stop();
-            std::cout << "Dense matrix constructed (" << t.time() << "s)" << std::endl;
-#endif
-            Matrix3i my_voxel = Matrix3i(boost::extents[gb_xsize][gb_ysize][gb_zsize]);
-            std::fill_n(my_voxel.data(), my_voxel.num_elements(), 0);
-            for (auto pt = point_map.begin(); pt != point_map.end(); pt++) {
-                size_t my_xid = min((size_t)((pt->x() - gb_xmin) / cell_size), gb_xsize - 1);
-                size_t my_yid = min((size_t)((pt->y() - gb_ymin) / cell_size), gb_ysize - 1);
-                size_t my_zid = min((size_t)((pt->z() - gb_zmin) / cell_size), gb_zsize - 1);
-                my_voxel[my_xid][my_yid][my_zid] += 1;
-            }
-            t.stop();
-            std::cout << "Dense matrix constructed (" << t.time() << "s)" << std::endl;
+            std::cout << "Matrix constructed (" << t.time() << "s)" << std::endl;
             
             Matrix2d limits(1, 6);
             limits.row(0) << gb_xsize - 1, gb_ysize - 1, gb_zsize - 1, gb_xsize - 1, gb_ysize - 1, gb_zsize - 1;
             t.reset(); t.start();
-            tbb::mutex mutex;
             CGAL::for_each<ConcurrencyTag>
                 (CGAL::make_counting_range<std::size_t>(0, input.size()),
                     [&](const std::size_t& global_index) -> bool {
                         //std::cout << "(start) global_index = " << global_index << "/" << input.size() << ", it = " << it << "/" << n << std::endl;
                         const auto& pt = input.point(global_index);
-                        //const Eigen::SparseMatrix<int>& my_voxel_sparse_local = my_voxel_sparse.getMatrix();
 
                         // Calculate range
                         VectorXd ranges_d(6);
@@ -255,81 +146,18 @@ public:
                         // Calculate Fractal Dimension within view from voxel matrix
                         double total_pts = 0.f;
                         double d0 = 0.f, d1 = 0.f, d2 = 0.f;
-#if FRACTAL_DIMENSION_DATA_STRUCTURE_MODE == 2
-                        std::vector<Point> nbs;
-                        
-                        Point pt_left(bboxes(global_index + 1, 0), bboxes(global_index + 1, 1), bboxes(global_index + 1, 2));
-                        Point pt_right(bboxes(global_index + 1, 3), bboxes(global_index + 1, 4), bboxes(global_index + 1, 5));
-                        //Point pt_left((bboxes(global_index + 1, 0) - gb_xmin) / cell_size + gb_xmin, (bboxes(global_index + 1, 1) - gb_ymin) / cell_size + gb_ymin, (bboxes(global_index + 1, 2) - gb_zmin) / cell_size + gb_zmin);
-                        //Point pt_right((bboxes(global_index + 1, 3) - gb_xmax) / cell_size + gb_xmax, (bboxes(global_index + 1, 4) - gb_ymax) / cell_size + gb_ymax, (bboxes(global_index + 1, 5) - gb_zmax) / cell_size + gb_zmax);
-                        //Point pt_left(pt.x() - cell_size / 2, pt.y() - cell_size / 2, pt.z() - cell_size / 2);
-                        //Point pt_right(pt.x() + cell_size / 2, pt.y() + cell_size / 2, pt.z() + cell_size / 2);
-                        //Point pt_left(pt.x() - cell_size, pt.y() - cell_size, pt.z() - cell_size);
-                        //Point pt_right(pt.x() + cell_size, pt.y() + cell_size, pt.z() + cell_size);
-                        Iso_box box(pt_left, pt_right);
-                        m_tree.search(std::back_inserter(nbs), box);
 
-                        total_pts = nbs.size();
-                        //std::map<std::tuple<size_t, size_t, size_t>, int> box_counts; // for d0, you could technically use an std::set
-                        std::set<std::tuple<size_t, size_t, size_t>> box_counts;
-                        for (auto& pt : nbs) {
-                            size_t my_xid = min((size_t)((pt.x() - gb_xmin) / cell_size), gb_xsize - 1);
-                            size_t my_yid = min((size_t)((pt.y() - gb_ymin) / cell_size), gb_ysize - 1);
-                            size_t my_zid = min((size_t)((pt.z() - gb_zmin) / cell_size), gb_zsize - 1);
-                            box_counts.insert(std::make_tuple(my_xid, my_yid, my_zid));
-                        }
-                        nbs.clear();
-
-                        Matrix3iV my_view = my_voxel[boost::indices[range(ranges_i[0], ranges_i[3] + 1)][range(ranges_i[1], ranges_i[4] + 1)][range(ranges_i[2], ranges_i[5] + 1)]];
-                        IterateArrayView(my_view, [](int& elem, double& d0, double& d1, double& d2, double& total_pts) {
-                            if (elem > 0)
-                                d0 += 1;
-                            }, d0, d1, d2, total_pts);
-
-                        if (global_index == 0) {
-                            mutex.lock();
-                            std::cout << "total_pts = " << total_pts << ", cell_size = " << cell_size << ", box_counts.size() = " << box_counts.size() << ", d0 = " << d0 << std::endl;
-                            size_t my_xid_min = min((size_t)((pt_left.x() - gb_xmin) / cell_size), gb_xsize - 1);
-                            size_t my_yid_min = min((size_t)((pt_left.y() - gb_ymin) / cell_size), gb_ysize - 1);
-                            size_t my_zid_min = min((size_t)((pt_left.z() - gb_zmin) / cell_size), gb_zsize - 1);
-                            size_t my_xid_max = min((size_t)((pt_right.x() - gb_xmin) / cell_size), gb_xsize - 1);
-                            size_t my_yid_max = min((size_t)((pt_right.y() - gb_ymin) / cell_size), gb_ysize - 1);
-                            size_t my_zid_max = min((size_t)((pt_right.z() - gb_zmin) / cell_size), gb_zsize - 1);
-                            std::cout << "global bounding box:" << std::endl;
-                            std::cout << "\tmin: " << pt_left << std::endl;
-                            std::cout << "\tmax: " << pt_right << std::endl;
-                            std::cout << "global bounding box indices:" << std::endl;
-                            std::cout << "\tmin: [" << my_xid_min << "," << my_yid_min << "," << my_zid_min << "]" << std::endl;
-                            std::cout << "\tmax: [" << my_xid_max << "," << my_yid_max << "," << my_zid_max << "]" << std::endl;
-                            mutex.unlock();
-                        }
-                        d0 = box_counts.size();
-                        d1 = log(d0);
-                        d2 = d0;
-
-#else
                         for (size_t i = ranges_i[0]; i <= ranges_i[3]; ++i)
                             for (size_t j = ranges_i[1]; j <= ranges_i[4]; ++j)
                                 for (size_t k = ranges_i[2]; k <= ranges_i[5]; ++k) {
-#if FRACTAL_DIMENSION_DATA_STRUCTURE_MODE == 1
-                                    const int& elem = my_voxel_sparse.get(i, j, k);
-#else
-                                    const int& elem = my_voxel[i][j][k];
-#endif
+                                    const int& elem = my_voxel(i, j, k);
                                     total_pts += elem;
                                 }
 
                         for (size_t i = ranges_i[0]; i <= ranges_i[3]; ++i) {
                             for (size_t j = ranges_i[1]; j <= ranges_i[4]; ++j) {
                                 for (size_t k = ranges_i[2]; k <= ranges_i[5]; ++k) {
-                                    //mutex.lock();
-                                    //const int& elem = my_voxel_sparse(i, j, k);
-                                    //mutex.unlock();
-#if FRACTAL_DIMENSION_DATA_STRUCTURE_MODE == 1
-                                    const int& elem = my_voxel_sparse.get(i, j, k);
-#else
-                                    const int& elem = my_voxel[i][j][k];
-#endif
+                                    const int& elem = my_voxel(i, j, k);
                                     if (elem > 0) {
                                         d0 += 1;
                                         d1 += elem / total_pts * log(elem / total_pts);
@@ -338,38 +166,11 @@ public:
                                 }
                             }
                         }
-#endif
 
-                        /*
-                        // Create view from voxel matrix
-                        Matrix3iV my_view = my_voxel[boost::indices[range(ranges_i[0], ranges_i[3] + 1)][range(ranges_i[1], ranges_i[4] + 1)][range(ranges_i[2], ranges_i[5] + 1)]];
-                        double total_pts = 0.0;
-                        IterateArrayView(my_view, [](int& elem, double& total_pts) {total_pts += elem; }, total_pts);
-
-                        // Calculate Fractal Dimension
-                        double d0 = 0., d1 = 0., d2 = 0.;
-                        IterateArrayView(my_view, [](int& elem, double& d0, double& d1, double& d2, double& total_pts) {
-                            if (elem > 0) {
-                                d0 += 1;
-                                d1 += elem / total_pts * log(elem / total_pts);
-                                d2 += pow(elem / total_pts, 2);
-                            }
-                            }, d0, d1, d2, total_pts);
-                        */
                         d0 = log(d0);
                         d2 = log(d2);
 
-                        //std::cout << "(end) global_index = " << global_index << "/" << input.size() << ", it = " << it << "/" << n << std::endl;
-                        //mutex.lock();
-                        //std::cout << "global_index = " << global_index << "/" << input.size() << ", it = " << it << "/" << n << std::endl;
-                        //mutex.unlock();
                         results[global_index].row(it) << cell_size, d0, d1, d2;
-                        //global_index += 1;
-                        if (global_index == 0) {
-                            mutex.lock();
-                            std::cout << "\tresults[global_index].row(it) = " << results[global_index].row(it) << std::endl;
-                            mutex.unlock();
-                        }
                         return true;
                     //}
                     });
@@ -393,8 +194,8 @@ public:
                     // Perform line fitting
                     Matrix2d A(n, 2);
                     for (int j = 0; j < n; ++j) {
-                        A.row(j) << log(results[i](j, 0)), -results[i](j, 1); // d0
-                        //A.row(j) << log(results[i](j, 0)), results[i](j, 2); // d1
+                        //A.row(j) << log(results[i](j, 0)), -results[i](j, 1); // d0
+                        A.row(j) << log(results[i](j, 0)), results[i](j, 2); // d1
                         //A.row(j) << log(results[i](j, 0)), results[i](j, 3); // d2
                     }
                     A.col(0).array() -= A.col(0).mean();
