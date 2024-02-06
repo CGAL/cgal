@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/estimate_lfs.h>
+#include <CGAL/estimate_local_feature_size.h>
 #include <CGAL/IO/read_points.h>
 
 #include <vector>
