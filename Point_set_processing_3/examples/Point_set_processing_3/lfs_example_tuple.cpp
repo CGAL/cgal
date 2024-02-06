@@ -15,8 +15,7 @@ typedef Kernel::Vector_3 Vector;
 typedef std::tuple<Point, Vector, FT> Point_with_normal_and_lfs;
 
 // Concurrency
-//typedef CGAL::Parallel_if_available_tag Concurrency_tag;
-typedef CGAL::Sequential_tag Concurrency_tag;
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(void)
 {
