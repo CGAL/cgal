@@ -30,7 +30,6 @@ int main(void)
   const std::string filename = CGAL::data_file_path("points_3/kitten.xyz");
 
   Point_set point_set;
-  point_set.add_normal_map();
 
   FT_map lfs_map;
   boost::tie (lfs_map, boost::tuples::ignore) = point_set.add_property_map<FT> ("LFS", 0.);
