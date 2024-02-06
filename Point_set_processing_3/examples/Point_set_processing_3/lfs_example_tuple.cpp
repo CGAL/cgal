@@ -36,7 +36,6 @@ int main(void)
   unsigned int jet_k = 24;
   std::size_t N_rays = 60;
   FT apex_angle = 30;
-  
   auto lfs_map = CGAL::Nth_of_tuple_property_map<2, Point_with_normal_and_lfs>();
   CGAL::estimate_local_feature_size<Concurrency_tag>(points,
                                                      jet_k,
