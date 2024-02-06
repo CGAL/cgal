@@ -7,14 +7,15 @@
 
 /*!
 \addtogroup PkgPolygonRepairRef
-\todo check generated documentation
 
 \cgalPkgDescriptionBegin{2D Polygon Repair,PkgPolygonRepair}
 \cgalPkgPicture{Polygon_repair-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Ken Arroyo Ohori}
-\cgalPkgDesc{The package provides algorithms to repair 2D (multi)polygons. }
+\cgalPkgDesc{This package provides algorithms to repair 2D polygons, polygons with holes,
+and multipolygons with holes, by selecting faces of the arrangement of the input based on a selection rule.
+Currently, only the even-odd rule is provided. }
 \cgalPkgManuals{Chapter_2D_Polygon_repair,PkgPolygonRepairRef}
 \cgalPkgSummaryEnd
 
