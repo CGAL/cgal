@@ -2,8 +2,10 @@
 #include <CGAL/estimate_lfs.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Point_set_3/IO.h>
+
 #include <vector>
-#include <utility> // defines std::pair
+
 
 
 // types
@@ -33,15 +35,13 @@ int main(void)
   FT_map lfs_map;
   boost::tie (lfs_map, boost::tuples::ignore) = point_set.add_property_map<FT> ("LFS", 0.);
 
-  if (!CGAL::IO::read_points(filename, point_set.index_back_inserter(),
-                            CGAL::parameters::point_map(point_set.point_push_map())
-                                                .normal_map(point_set.normal_push_map()))
-    )
+  if (!CGAL::IO::read_point_set(filename, point_set))
   {
     std::cerr << "Error: cannot read file " << filename<< std::endl;
     return EXIT_FAILURE;
   }
-    
+
+
   unsigned int jet_k = 24;
   std::size_t N_rays = 60;
   FT apex_angle = 30;
@@ -51,13 +51,11 @@ int main(void)
   // print
   for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
    {
-      Point p = point_set.point(*it);
-      Vector n = point_set.normal(*it);
+      // Point p = point_set.point(*it);
+      // Vector n = point_set.normal(*it);
       FT lfs = lfs_map[*it];
-      std::cerr << "point:" << p << " normal:" << n << " lfs:" << lfs << std::endl;
+      std::cerr << lfs << std::endl;
    }
-
-  std::cerr << "this is a test!" << std::endl;
 
   return EXIT_SUCCESS;
 }

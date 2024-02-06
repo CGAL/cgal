@@ -699,7 +699,7 @@ estimate_local_feature_size(PointRange& points,
     {
       need_jet_normal = true;
     }
-    else  if (squared_length != 1.0) // normalize to unit vector
+    else  if (std::abs(squared_length - 1.0) > 1e-5) // normalize to unit vector
     {
       normal = normal / std::sqrt(squared_length);
     }
