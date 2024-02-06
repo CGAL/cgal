@@ -39,6 +39,14 @@ int main(void) {
   auto prop5 = tree.add_property("test", int(0));
   assert(!prop5.second);
 
+  auto a3 = tree.add_property("test1", int(0));
+  std::pair<typename Octree::Property_map<int>, bool> p3 = tree.add_property("test2", int(0));
+  std::optional<typename Octree::Property_map<int>> o3 = tree.add_property("test3", int(0));
+
+  auto a4 = tree.add_property("test", int(0));
+  std::pair<typename Octree::Property_map<int>, bool> p4 = tree.add_property("test", int(0));
+  std::optional<typename Octree::Property_map<int>> o4 = tree.add_property("test", int(0));
+
   auto a1 = tree.property<int>("test");
   std::pair<typename Octree::Property_map<int>, bool> p1 = tree.property<int>("test");
   std::optional<typename Octree::Property_map<int>> o1 = tree.property<int>("test");
