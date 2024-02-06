@@ -28,15 +28,11 @@ int main(void)
   std::vector<Point_with_normal_and_lfs> points;
   if(!CGAL::IO::read_points(filename,
                             std::back_inserter(points),
-                            CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>())))
+                            CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>())
+                            .normal_map(CGAL::Nth_of_tuple_property_map<1, Point_with_normal_and_lfs>())))
   {
     std::cerr << "Error: cannot read file " << filename<< std::endl;
     return EXIT_FAILURE;
-  }
-
-  for (const auto& pts : points)
-  {
-    std::cerr << std::get<0>(pts) << ", " << std::get<1>(pts) << ", " << std::get<2>(pts) << std::endl;
   }
 
   unsigned int jet_k = 24;
@@ -52,8 +48,8 @@ int main(void)
                                                      CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>())
                                                                       .normal_map(CGAL::Nth_of_tuple_property_map<1, Point_with_normal_and_lfs>()));
 
-  for (const auto &p : points){
-    std::cerr << std::get<2>(p) << "\n";
+  for (const auto &pts : points){
+    std::cerr << std::get<2>(pts) << std::endl;
   }
 
   return EXIT_SUCCESS;
