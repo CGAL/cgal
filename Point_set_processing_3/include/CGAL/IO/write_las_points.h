@@ -304,7 +304,7 @@ bool write_LAS(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Saves the range of `points` (positions only), using the \ref IOStreamLAS.
+   writes the range of `points` (positions only), using the \ref IOStreamLAS.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.

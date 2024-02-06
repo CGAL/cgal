@@ -245,9 +245,11 @@ bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_NP_CLA
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
+/// \endcond
+
 } // namespace IO
 
-/// \endcond
+
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 

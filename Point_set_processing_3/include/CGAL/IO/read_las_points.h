@@ -123,7 +123,7 @@ typedef Base<unsigned short, Id::I> I;
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Generates a %LAS property handler to read 3D points. Points are
+   generates a %LAS property handler to read 3D points. Points are
    constructed from the input the using 3 %LAS properties
    `LAS_property::X`, `LAS_property::Y` and `LAS_property::Z`.
 
