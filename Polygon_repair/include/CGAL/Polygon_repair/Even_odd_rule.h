@@ -21,6 +21,7 @@ namespace Polygon_repair {
   /*!
   \addtogroup PkgPolygonRepairRef
 
+  Tag class to select the even odd rule when calling `CGAL::Polygon_repair::repair()`.
   */
   struct Even_odd_rule {};
 

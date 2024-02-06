@@ -17,11 +17,12 @@ or hole), and reconstructs the polygon(s) represented by the arrangement.
 The method returns valid output stored in a multipolygon with holes.
 
 Different arrangement and labelling heuristics are possible, but
-currently only the even-odd heuristic is implemented in the package.
-This heuristic results in areas that are alternately assigned as polygon
+currently only the <em>even-odd</em> rule is implemented in this package.
+This rule results in areas that are alternately assigned as polygon
 interiors and exterior/holes each time that an input edge is passed.
 It does not distinguish between edges that are part of outer boundaries
-from those of inner boundaries.
+from those of inner boundaries.  In a next version we will add the
+<em>winding number</em> rule.
 
 \section SectionPolygonRepair_Definitions Definitions
 
@@ -104,7 +105,7 @@ or multipolygon is merely used as a container of input line segments. These line
 segments are added to the arrangement as edges. Internally, this is done using
 a constrained triangulation where they are added as constraints.
 
-With the even-odd heuristic, only the edges that are present an odd number of
+With the even-odd rule, only the edges that are present an odd number of
 times in the input will be edges in the final arrangement.
 When these edges are only partially overlapping, only the parts that overlap
 an odd number of times will be edges in the final arrangement.
@@ -120,7 +121,7 @@ First, the polygon exterior is labeled. For this, all of the faces that can be
 accessed from the exterior without passing through an edge are labeled as exterior
 faces.
 
-Then, all other faces are labeled. For the even-odd heuristic, the label applied
+Then, all other faces are labeled. For the even-odd rule, the label applied
 alternates between polygon interior and hole every time that an edge is passed.
 
 \subsection SubsectionPolygonRepair_Reconstruction Reconstruction of the Multipolygon
@@ -175,14 +176,14 @@ since all of these intersections need to be calculated in the overlay.
 
 The polygon repair method as originally developed is described by Ledoux et al.
 \cgalCite{ledoux2014triangulation} and implemented in the
-<a href="https://github.com/tudelft3d/prepair/">prepair</a> software.
+<a href="https://github.com/tudelft3d/prepair/"><em>prepair</em></a> software.
 This package is a reimplementation of the method with a new approach to label
 and reconstruct the multipolygons. It also incorporates improvements later
-added to prepair, such as the application of the even-odd counting heuristic
+added to <em>prepair</em>, such as the application of the even-odd counting heuristics
 to edges, which enables correct counting even on partially overlapping edges.
 
 Ken Arroyo Ohori developed this package during the Google Summer of
-Code 2023 under the mentorship of Sébastien Loriot and Andreas Fabri.
+Code 2023 mentored by Sébastien Loriot and Andreas Fabri.
 
 */
 } /* namespace CGAL */

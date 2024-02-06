@@ -33,7 +33,10 @@ class Polygon_repair;
 #endif
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a polygon without holes using
+/// repairs a polygon without holes using the given rule
+/// \tparam Kernel parameter of the input and output polygons
+/// \tparam Container parameter of the input and output polygons
+///  \tparam Rule must be `Even_odd_rule`
 template <class Kernel, class Container, class Rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& , Rule rule) {
     CGAL_assertion(false); // rule not implemented
@@ -51,7 +54,10 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Cont
 }
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a polygon with holes
+/// repairs a polygon with holes using the given rule
+/// \tparam Kernel parameter of the input and output polygons
+/// \tparam Container parameter of the input and output polygons
+///  \tparam Rule must be `Even_odd_rule`
 template <class Kernel, class Container, class Rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Rule rule) {
   CGAL_assertion(false); // rule not implemented
@@ -69,7 +75,10 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
 }
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Repair a multipolygon with holes
+/// repairs a multipolygon with holes using the given rule
+/// \tparam Kernel parameter of the input and output polygons
+/// \tparam Container parameter of the input and output polygons
+///  \tparam Rule must be `Even_odd_rule`
 template <class Kernel, class Container, class Rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& mp, Rule rule) {
   CGAL_assertion(false); // rule not implemented
