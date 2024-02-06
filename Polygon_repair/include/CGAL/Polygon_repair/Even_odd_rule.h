@@ -18,7 +18,7 @@ namespace CGAL {
 
 namespace Polygon_repair {
 
-\addtogroup PkgPolygonRepairRef
+/// \addtogroup PkgPolygonRepairRef
 /// @{
 
 /*!
