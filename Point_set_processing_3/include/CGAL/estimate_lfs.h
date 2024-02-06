@@ -587,7 +587,7 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
    its iterator is the key type of the named parameter `point_map`.
 
    \param points input point range
-   \param jet_k number of neighbors for jet-fitting
+   \param jet_k number of neighbors for jet fitting
    \param N_rays number of rays for dual cone search
    \param apex_angle angle for dual cone search
    \param LfsMap the map to store the LFS value
