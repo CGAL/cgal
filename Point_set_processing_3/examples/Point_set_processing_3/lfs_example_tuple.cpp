@@ -19,7 +19,6 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(void)
 {
-
   // read xyz
   const std::string filename = CGAL::data_file_path("points_3/kitten.xyz");
 
