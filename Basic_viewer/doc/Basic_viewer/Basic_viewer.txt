@@ -203,9 +203,6 @@ This class provides a comprehensive interface for managing and manipulating geom
 
 \cgalExample{Basic_viewer/draw_surface_mesh_small_faces.cpp}
 
-\subsubsection Basic_viewerExamples_several_window Draw several basic viewers
-
-
 */
 
 } /* namespace CGAL */
