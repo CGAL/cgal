@@ -1185,7 +1185,7 @@ struct Locally_shortest_path_imp
 
     FT prev_angle = acc;
 #ifdef CGAL_DEBUG_BSURF
-    std::cout<<"initial h"<< edge(h,mesh)<<std::endl;
+    std::cout<<"initial h "<< edge(h,mesh)<<std::endl;
     std::cout<<"acc "<< acc<<std::endl;
     std::cout<<"theta "<< theta<<std::endl;
 #endif
@@ -1216,9 +1216,9 @@ struct Locally_shortest_path_imp
     Vector_2 new_dir = q - flat_tid[kv];
 #ifdef CGAL_DEBUG_BSURF
     Vector_2 flat_p=flat_tid[kv];
-    std::cout<<"final h"<< edge(h,mesh)<<std::endl;
-    std::cout<<" prev_vert_adj"<< prev_vert_adj<<std::endl;
-    std::cout<<" vert_adj"<< vert_adj<<std::endl;
+    std::cout<<"final h "<< edge(h,mesh)<<std::endl;
+    std::cout<<" prev_vert_adj "<< prev_vert_adj<<std::endl;
+    std::cout<<" vert_adj "<< vert_adj<<std::endl;
     std::cout<< "------ outgoing tid"<<std::endl;
     std::cout << "  " << flat_tid[0] << " " << flat_tid[1] << " " << flat_tid[2] << "\n";
 
@@ -1395,7 +1395,6 @@ struct Locally_shortest_path_imp
         // FT init_angle = approximate_angle(curr_flat_tid[(kv+2)%3]-curr_flat_tid[kv], curr_dir);
         auto tmp =curr_flat_tid[kv]-curr_flat_tid[(kv+2)%3];
         FT init_angle = approximate_angle(Vector_3(tmp.x(), tmp.y(), 0), Vector_3(curr_dir.x(), curr_dir.y(), 0));
-        init_angle*=CGAL_PI/180.;
         std::tie(curr_dir, curr_tid, h_curr) =
             polthier_condition_at_vert(mesh,vpm,vid,curr_tid, init_angle);
 
@@ -2910,7 +2909,7 @@ void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& 
   }
 }
 
-
+// TODO: center is put is output, shall we keep it like that?
 template <class K, class TriangleMesh>
 std::vector<Face_location<TriangleMesh, typename K::FT>>
 straightest_geodesic(const Face_location<TriangleMesh, typename K::FT> &src,
