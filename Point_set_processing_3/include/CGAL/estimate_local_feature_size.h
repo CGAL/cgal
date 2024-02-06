@@ -608,8 +608,6 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
-   \note This function only accepts 3D points.
-
    \return The estimated local feature size is stored in `lfs_map`.
 */
 template <typename ConcurrencyTag,
