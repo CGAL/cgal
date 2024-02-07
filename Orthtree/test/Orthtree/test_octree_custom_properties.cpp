@@ -1,12 +1,12 @@
 #define CGAL_TRACE_STREAM std::cerr
 
 #include <iostream>
+#include <cassert>
 #include <CGAL/Octree.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
-#include <cassert>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Simple_cartesian.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_3;
@@ -30,65 +30,42 @@ int main(void) {
   CGAL_USE(data_prop);
 
   // list of properties
-  std::size_t num = tree.properties().size();
-  assert(num == 5);
+  assert(tree.properties().size() == 5);
+  auto prop1 = tree.add_property("test", int(5));
+  assert(prop1.second);
+  // One property added
+  assert(tree.properties().size() == 6);
+  // Default value should be respected
+  assert(prop1.first[tree.root()] == 5);
+  // Changes to individual nodes should be respected
+  prop1.first[tree.root()] = 0;
+  assert(prop1.first[tree.root()] == 0);
+
   auto prop2 = tree.add_property("test", int(0));
-  assert(prop2.second);
+  assert(!prop2.second);
   assert(tree.properties().size() == 6);
 
-  auto prop5 = tree.add_property("test", int(0));
-  assert(!prop5.second);
+  auto prop3 = tree.add_property("test2", std::string());
+  assert(prop3.second);
+  assert(tree.properties().size() == 7);
 
-  auto a3 = tree.add_property("test1", int(0));
-  std::pair<typename Octree::Property_map<int>, bool> p3 = tree.add_property("test2", int(0));
-  std::optional<typename Octree::Property_map<int>> o3 = tree.add_property("test3", int(0));
+  auto prop4 = tree.property<int>("test");
+  assert(prop4.has_value());
 
-  auto a4 = tree.add_property("test", int(0));
-  std::pair<typename Octree::Property_map<int>, bool> p4 = tree.add_property("test", int(0));
-  std::optional<typename Octree::Property_map<int>> o4 = tree.add_property("test", int(0));
-
-  auto a1 = tree.property<int>("test");
-  std::pair<typename Octree::Property_map<int>, bool> p1 = tree.property<int>("test");
-  std::optional<typename Octree::Property_map<int>> o1 = tree.property<int>("test");
-  auto f = a1.first;
-  auto pf1 = p1.first;
-  auto of1 = o1.value();
-  auto fo1 = a1.value();
-  std::cout << f.size() << std::endl;
-
-  auto a2 = tree.property<std::string>("test");
-  std::pair<typename Octree::Property_map<std::string>, bool> p2 = tree.property<std::string>("test");
-  std::optional<typename Octree::Property_map<std::string>> o2 = tree.property<std::string>("test");
-
-  //assert(prop3.has_value());
-
-  auto prop4 = tree.property<std::string>("test");
-  assert(!prop4.has_value());
-
-  // removal of properties
-  num = tree.properties().size();
-  //tree.remove_node_property(*prop3);
-  assert(tree.properties().size() == (num - 1));
-
-  // Default value should be respected
-  auto node_int_property = tree.add_property<int>("int", 5).first;
-  assert(node_int_property[tree.root()] == 5);
-
-  // Changes to individual nodes should be respected
-  node_int_property[tree.root()] = 0;
-  assert(node_int_property[tree.root()] == 0);
+  auto prop5 = tree.property<std::string>("test");
+  assert(!prop5.has_value());
 
   // Expanding the tree; new nodes should be assigned the default value
   tree.refine(10, 1);
   for (auto n : tree.traverse<CGAL::Orthtrees::Preorder_traversal<Octree>>()) {
     // Everything but the root will have the default value
-    if (!tree.is_root(n)) assert(node_int_property[n] == 5);
+    if (!tree.is_root(n)) assert(prop1.first[n] == 5);
   }
   // The root should have preserved its custom value
-  assert(node_int_property[tree.root()] == 0);
+  assert(prop1.first[tree.root()] == 0);
 
-
-
+  tree.remove_property(prop1.first);
+  assert(tree.properties().size() == 6);
 
   return EXIT_SUCCESS;
 }

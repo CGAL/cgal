@@ -3,8 +3,8 @@
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
 
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Simple_cartesian.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_3;

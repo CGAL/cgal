@@ -511,8 +511,7 @@ public:
     \return pair of the property map and a Boolean which is `true` if the property needed to be created
    */
   template <typename T>
-  Pair_optional_adaptor<Property_map<T>>
-  add_property(const std::string& name, const T default_value = T()) {
+  std::pair<Property_map<T>, bool> add_property(const std::string& name, const T default_value = T()) {
     auto p = m_node_properties.get_or_add_property(name, default_value);
     return std::pair<Property_map<T>, bool>(Property_map<T>(p.first), p.second);
   }
@@ -527,8 +526,7 @@ public:
     \return an optional containing the property map if it exists
    */
   template <typename T>
-  Pair_optional_adaptor<Property_map<T>>
-  property(const std::string& name) {
+  std::optional<Property_map<T>> property(const std::string& name) {
     auto p = m_node_properties.template get_property_if_exists<T>(name);
     if (p)
       return std::optional<Property_map<T> >(Property_map<T>(*p));
