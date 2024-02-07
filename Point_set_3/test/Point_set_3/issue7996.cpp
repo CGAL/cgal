@@ -42,13 +42,13 @@ int main()
 
   {
     std::ofstream out("binary.ply", std::ios::binary);
-    CGAL::set_binary_mode(out);
+    CGAL::IO::set_binary_mode(out);
     out << ps;
     out.close();
 
     Point_set ps2;
     std::ifstream in("binary.ply", std::ios::binary);
-    CGAL::set_binary_mode(in);
+    CGAL::IO::set_binary_mode(in);
     in >> ps2;
 
     std::cout << ps2 << std::endl;
