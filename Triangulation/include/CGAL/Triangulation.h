@@ -843,7 +843,6 @@ Triangulation<TT, TDS>
             return insert_in_face(p, f);
             break;
         case ON_VERTEX:
-            s->vertex(f.index(0))->set_point(p);
             return s->vertex(f.index(0));
             break;
     }
