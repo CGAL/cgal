@@ -394,14 +394,7 @@ bool read_xyz_points(std::istream& is, ///< input stream.
 
 /// \endcond
 
-/**
-   \ingroup PkgPointSetProcessing3IODeprecated
 
-   \deprecated This function is deprecated since \cgal 5.3,
-               \link PkgPointSetProcessing3IOXyz `CGAL::IO::read_XYZ()` \endlink should be used instead.
-
-   \returns `true` if reading was successful, `false` otherwise.
-*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
