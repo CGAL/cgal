@@ -119,5 +119,21 @@ int main(int argc, char** argv)
     out << std::endl;
   }
 
+  // second method
+  out.close();
+  out.open("geodesic_polygons.polylines.txt");
+  out << std::setprecision(17);
+
+  std::vector<std::vector<K::Point_3>> polygons_3
+    = PMP::trace_geodesic_polygons<K>(center, polygons, scaling, mesh, solver);
+
+  for (const auto& polygon : polygons_3)
+  {
+    out << polygon.size();
+    for (auto p : polygon)
+      out << " " << p;
+    out << std::endl;
+  }
+
   return 0;
 }

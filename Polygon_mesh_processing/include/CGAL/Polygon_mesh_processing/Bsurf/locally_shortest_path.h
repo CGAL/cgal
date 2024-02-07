@@ -2951,14 +2951,15 @@ convert_polygon_to_polar_coordinates(const std::vector <typename K::Point_2>& po
   return result;
 }
 
-
+//TODO: do we want to handle polylines?
+// href of center.first is the y axis in 2D
 template <class K, class TriangleMesh>
 std::vector<typename K::Point_3>
 trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
-                     const std::vector<typename K::Vector_2>& directions,
-                     const std::vector<typename K::FT>& lengths,
-                     const TriangleMesh &tmesh,
-                     const Dual_geodesic_solver<typename K::FT>& solver = {})
+                       const std::vector<typename K::Vector_2>& directions,
+                       const std::vector<typename K::FT>& lengths,
+                       const TriangleMesh &tmesh,
+                       const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
   size_t n=directions.size();
   std::vector<typename K::Point_3> result;
@@ -2997,6 +2998,64 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
 
   return result;
 }
+
+//TODO add groups of polygons for better rendering
+template <class K, class TriangleMesh>
+std::vector<std::vector<typename K::Point_3>>
+trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &center,
+                        const std::vector<std::vector<typename K::Point_2>>& polygons,
+                        const typename K::FT scaling,
+                        const TriangleMesh &tmesh,
+                        const Dual_geodesic_solver<typename K::FT>& solver = {})
+{
+  std::vector<Bbox_2> polygon_bboxes;
+  polygon_bboxes.reserve(polygons.size());
+  Bbox_2 gbox;
+  for (const std::vector<typename K::Point_2>& polygon : polygons)
+  {
+    polygon_bboxes.push_back( bbox_2(polygon.begin(), polygon.end()) );
+    gbox+=polygon_bboxes.back();
+  }
+
+  const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
+  Dual_geodesic_solver<typename K::FT> local_solver;
+  if (solver.graph.empty())
+  {
+    solver_ptr = &local_solver;
+    init_geodesic_dual_solver(local_solver, tmesh);
+  }
+
+  std::vector<std::vector<typename K::Point_3>> result(polygons.size());
+
+  for(std::size_t i=0;i<polygons.size();++i)
+  {
+    typename K::Vector_2 dir( (-gbox.xmin()-gbox.xmax()+polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
+                              (-gbox.ymin()-gbox.ymax()+polygon_bboxes[i].ymin()+polygon_bboxes[i].ymax())/2. );
+    Face_location<TriangleMesh, typename K::FT> polygon_center=
+      straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()),tmesh).back();
+
+
+    std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
+      convert_polygon_to_polar_coordinates<K>(polygons[i],
+                                              typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
+                                                                  (polygon_bboxes[i].ymin()+polygon_bboxes[i].ymax())/2.));
+
+    std::vector<typename K::Vector_2> directions;
+    std::vector<typename K::FT> lens;
+    lens.reserve(polar_coords.size());
+    directions.reserve(polar_coords.size());
+
+    for (const std::pair<double, double>& coord : polar_coords)
+    {
+      lens.push_back(scaling * coord.first);
+      directions.emplace_back(std::cos(coord.second), std::sin(coord.second));
+    }
+    result[i] = trace_geodesic_polygon<K>(polygon_center, directions, lens, tmesh, *solver_ptr);
+  }
+
+  return result;
+}
+
 
 template <class K, class TriangleMesh>
 typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
