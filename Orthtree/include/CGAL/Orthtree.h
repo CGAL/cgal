@@ -27,7 +27,6 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/span.h>
-#include <CGAL/Pair_optional_adaptor.h>
 
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
