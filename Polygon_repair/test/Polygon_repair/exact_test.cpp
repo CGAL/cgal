@@ -1,3 +1,5 @@
+#define CGAL_NO_CDT_2_WARNING
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
