@@ -1,11 +1,11 @@
+#include <CGAL/Polygon_repair/Polygon_repair.h>
+#include <CGAL/IO/WKT.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_repair/Polygon_repair.h>
-#include <CGAL/IO/WKT.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_2 = Kernel::Point_2;
