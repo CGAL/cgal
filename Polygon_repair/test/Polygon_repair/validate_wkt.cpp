@@ -18,7 +18,7 @@ using Polygon_repair = CGAL::Polygon_repair::Polygon_repair<Kernel>;
 int main(int argc, char* argv[]) {
 
 //  std::string folder = "/Users/ken/Downloads/big polygons/";
-  std::string folder = "/Users/ken/Versioned/cgal-public-dev/Polygon_repair/test/Polygon_repair/data/in";
+  std::string folder = "data/in";
 
   for (const auto& file: std::filesystem::directory_iterator(folder)) {
     if (file.path().filename().extension() != ".wkt") continue;
