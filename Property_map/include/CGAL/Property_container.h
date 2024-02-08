@@ -414,10 +414,10 @@ public:
   void remove_all_properties_except(const std::vector<std::string>& preserved_names) {
     // todo: if this is used often, it should take a parameter pack instead of a vector
     // A fold expression could then be used in place of std::find for better performance
-    for (auto it = m_property_arrays.begin(); it != m_property_arrays.end();) {
+    for (auto it = m_properties.begin(); it != m_properties.end();) {
       auto const& [name, array] = *it;
       if (std::find(preserved_names.begin(), preserved_names.end(), name) == preserved_names.end())
-        it = m_property_arrays.erase(it);
+        it = m_properties.erase(it);
       else
         it++;
     }
