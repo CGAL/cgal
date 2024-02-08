@@ -109,7 +109,7 @@ public:
     CGAL_precondition(m_active_indices.size() == m_data.size());
   }
 
-// desactived as MSVC 2017 as an issue with that but it is not currently used.
+// deactived as MSVC 2017 as an issue with that but it is not currently used.
 #if 0
   virtual void move(Property_array_base<Index>&& other_base) override {
     auto&& other = static_cast<Property_array<Index, T>&&>(other_base);
@@ -246,7 +246,7 @@ public:
 template <typename Index = std::size_t>
 class Property_container {
 
-  std::map<std::string, std::shared_ptr<Property_array_base<Index>>> m_property_arrays{};
+  std::multimap<std::string, std::shared_ptr<Property_array_base<Index>>> m_properties;
   std::vector<bool> m_active_indices{};
 
 public:
@@ -258,9 +258,10 @@ public:
 
   Property_container(const Property_container<Index>& other) {
     m_active_indices = other.m_active_indices;
-    for (auto [name, array]: other.m_property_arrays) {
+
+    for (auto [name, array] : other.m_properties) {
       // todo: this could probably be made faster using emplace_hint
-      m_property_arrays.emplace(
+      m_properties.emplace(
         name,
         array->clone(m_active_indices)
       );
@@ -269,49 +270,45 @@ public:
 
   Property_container(Property_container<Index>&& other) { *this = std::move(other); }
 
-  // todo: maybe this could be implemented in terms of the move assignment operator?
+  // This is not exactly an assignment as existing unique properties are kept.
   Property_container<Index>& operator=(const Property_container<Index>& other) {
     m_active_indices = other.m_active_indices;
-    for (auto [name, other_array]: other.m_property_arrays) {
 
-      // If this container has a property by the same name
-      auto it = m_property_arrays.find(name);
-      if (it != m_property_arrays.end()) {
-        auto [_, this_array] = *it;
-
-        // No naming collisions with different types allowed
-        CGAL_precondition(typeid(*this_array) == typeid(*other_array));
-
-        // Copy the data from the other array
-        this_array->copy(*other_array);
-
-      } else {
-        // Adds the new property
-        m_property_arrays.emplace(name, other_array->clone(m_active_indices));
+    for (auto [name, array] : other.m_properties) {
+      // search if property already exists
+      auto range = m_properties.equal_range(name);
+      auto it = range.first;
+      for (; it != range.second; it++) {
+        if (typeid(*array) == typeid((*it->second)))
+          break;
       }
+
+      if (it != range.second)
+        it->second->copy(*array);
+      else
+        m_properties.emplace(name, array->clone(m_active_indices));
     }
+
     return *this;
   }
-
+  
+  // This is not exactly an assignment as existing unique properties are kept.
   Property_container<Index>& operator=(Property_container<Index>&& other) {
     m_active_indices = std::move(other.m_active_indices);
-    for (auto [name, other_array]: other.m_property_arrays) {
 
-      // If this container has a property by the same name
-      auto it = m_property_arrays.find(name);
-      if (it != m_property_arrays.end()) {
-        auto [_, this_array] = *it;
-
-        // No naming collisions with different types allowed
-        CGAL_precondition(typeid(*this_array) == typeid(*other_array));
-
-        // Copy the data from the other array
-        this_array->copy(std::move(*other_array));
-
-      } else {
-        // Adds the new property
-        m_property_arrays.emplace(name, other_array->clone(m_active_indices));
+    for (auto [name, array] : other.m_properties) {
+      // search if property already exists
+      auto range = m_properties.equal_range(name);
+      auto it = range.first;
+      for (; it != range.second; it++) {
+        if (typeid(*array) == typeid((*it->second)))
+          break;
       }
+
+      if (it != range.second)
+        it->second->copy(std::move(*array));
+      else
+        m_properties.emplace(name, array->clone(m_active_indices));
     }
 
     // The moved-from property map should retain all of its properties, but contain 0 elements
@@ -322,16 +319,22 @@ public:
   template <typename T>
   std::pair<std::reference_wrapper<Property_array<Index, T>>, bool>
   get_or_add_property(const std::string& name, const T default_value = T()) {
-    auto [it, created] = m_property_arrays.emplace(
+    auto range = m_properties.equal_range(name);
+    for (auto it = range.first; it != range.second; it++) {
+      Property_array<Index, T>* typed_array_ptr = dynamic_cast<Property_array<Index, T>*>(it->second.get());
+      if (typed_array_ptr != nullptr)
+        return { {*typed_array_ptr}, false };
+    }
+
+    auto it = m_properties.emplace(
       name,
       std::make_shared<Property_array<Index, T>>(
         m_active_indices,
         default_value
       )
     );
-    auto [key, array] = *it;
-    auto& typed_array = dynamic_cast<Property_array<Index, T>&>(*array);
-    return {{typed_array}, created};
+
+    return {{*dynamic_cast<Property_array<Index, T>*>(it->second.get())}, true};
   }
 
   template <typename T>
@@ -342,65 +345,66 @@ public:
     return array.get();
   }
 
+/*
   // todo: misleading name, maybe it could be add_same_properties?
   void copy_properties(const Property_container<Index>& other) {
-    for (auto [name, other_array]: other.m_property_arrays) {
+    for (auto [name, other_array]: other.m_properties) {
       // If this container doesn't have any property by this name, add it (with the same type as in other)
       if (!property_exists(name))
         m_property_arrays.emplace(name, other_array->empty_clone(m_active_indices));
     }
-  }
+  }*/
 
   template <typename T>
   const Property_array<Index, T>& get_property(const std::string& name) const {
-    CGAL_precondition(m_property_arrays.count(name) != 0);
-    return dynamic_cast<const Property_array<Index, T>&>(*m_property_arrays.at(name));
+    return *(get_property_if_exists<T>(name));
   }
 
   template <typename T>
   Property_array<Index, T>& get_property(const std::string& name) {
-    CGAL_precondition(m_property_arrays.count(name) != 0);
-    return dynamic_cast<Property_array<Index, T>&>(*m_property_arrays.at(name));
+    return *(get_property_if_exists<T>(name));
   }
 
   template <typename T>
-  std::optional<std::reference_wrapper<Property_array<Index, T>>> get_property_if_exists(const std::string& name) {
-    auto it = m_property_arrays.find(name);
-    if (it == m_property_arrays.end()) return {};
-    auto [_, array] = *it;
-    if (typeid(*array) != typeid(Property_array<Index, T>)) return {};
-    return dynamic_cast<Property_array<Index, T>&>(*m_property_arrays.at(name));
+  std::optional<std::reference_wrapper<Property_array<Index, T>>> get_property_if_exists(const std::string& name) const {
+    auto range = m_properties.equal_range(name);
+    for (auto it = range.first; it != range.second; it++) {
+      Property_array<Index, T>* typed_array_ptr = dynamic_cast<Property_array<Index, T>*>(it->second.get());
+      if (typed_array_ptr != nullptr)
+        return *typed_array_ptr;
+    }
+
+    return {};
   }
 
   template <typename T>
   bool property_exists(const std::string& name) const {
-    auto it = m_property_arrays.find(name);
-    if (it == m_property_arrays.end()) return false;
-    auto [_, array] = *it;
-    if (typeid(*array) != typeid(Property_array<Index, T>)) return false;
-    return true;
-  }
+    auto range = m_properties.equal_range(name);
 
-  // todo: maybe the non-type-strict version is useful?
-  bool property_exists(const std::string& name) const {
-    auto it = m_property_arrays.find(name);
-    return (it != m_property_arrays.end());
+    for (auto it = range.first; it != range.second; it++) {
+      Property_array<Index, T>* typed_array_ptr = dynamic_cast<Property_array<Index, T>*>(it->second.get());
+      if (typed_array_ptr != nullptr)
+        return true;
+    }
+
+    return false;
   }
 
   /*!
-   * Removes a property array from the container
+   * Removes all properties with the name from the container.
    *
    * @param name
-   * @return True if a container with this name existed, false otherwise
+   * @return number of removed properties.
    */
-  bool remove_property(const std::string& name) { return m_property_arrays.erase(name) == 1; }
+  std::size_t remove_properties(const std::string& name) { return m_properties.erase(name); }
 
   template <typename T>
   bool remove_property(const Property_array<Index, T>& arrayToRemove) {
-    for (auto it = m_property_arrays.begin(); it != m_property_arrays.end(); ++it) {
+    const Property_array_base<Index>* ref = dynamic_cast<const Property_array_base<Index>*>(&arrayToRemove);
+    for (auto it = m_properties.begin(); it != m_properties.end(); it++) {
       auto const& [name, array] = *it;
-      if (array.get() == dynamic_cast<const Property_array_base<Index>*>(&arrayToRemove)) {
-        m_property_arrays.erase(it);
+      if (array.get() == ref) {
+        m_properties.erase(it);
         return true;
       }
     }
@@ -421,25 +425,26 @@ public:
 
   std::vector<std::string> properties() const {
     std::vector<std::string> property_names{};
-    for (auto const& [name, _]: m_property_arrays)
+    for (auto const& [name, _]: m_properties)
       property_names.emplace_back(name);
     return property_names;
   }
 
-  std::size_t num_properties() const { return m_property_arrays.size(); }
+  std::size_t num_properties() const { return m_properties.size(); }
 
+/* Deactivated as there may be several Property_maps with different types but the same name.
   const std::type_info& property_type(const std::string& name) const {
     if (auto it = m_property_arrays.find(name); it != m_property_arrays.end())
       return it->second->type();
     else
       return typeid(void);
-  }
+  }*/
 
 public:
 
   void reserve(std::size_t n) {
     m_active_indices.resize(n);
-    for (auto [name, array]: m_property_arrays)
+    for (auto [name, array]: m_properties)
       array->reserve(n);
   }
 
@@ -528,18 +533,18 @@ public:
   }
 
   void swap(Index a, Index b) {
-    for (auto [name, array]: m_property_arrays)
+    for (auto [name, array]: m_properties)
       array->swap(a, b);
   }
 
   void reset(Index i) {
-    for (auto [name, array]: m_property_arrays)
+    for (auto [name, array]: m_properties)
       array->reset(i);
   }
 
   void erase(Index i) {
     m_active_indices[i] = false;
-    for (auto [name, array]: m_property_arrays)
+    for (auto [name, array]: m_properties)
       array->reset(i);
   }
 
@@ -571,7 +576,7 @@ public:
   }
 
   void shrink_to_fit() {
-    for (auto [name, array]: m_property_arrays)
+    for (auto [name, array]: m_properties)
       array->shrink_to_fit();
   }
 
@@ -589,15 +594,23 @@ public:
   void append(const Property_container<Index>& other) {
 
     m_active_indices.insert(m_active_indices.end(), other.m_active_indices.begin(), other.m_active_indices.end());
-    for (auto [name, array]: m_property_arrays) {
-      auto it = other.m_property_arrays.find(name);
-      if (it != other.m_property_arrays.end())
-        array->append(*it->second);
+    for (auto [name, array]: m_properties) {
+
+      auto range = other.m_properties.equal_range(name);
+      auto it = range.first;
+      for (; it != range.second; it++) {
+        if (typeid(array.get()) == typeid((it->second.get())))
+          break;
+      }
+
+      if (it != range.second)
+        array->append(*it->second.get());
       else
         array->reserve(m_active_indices.size());
     }
   }
 
+/*
   // todo: maybe should be renamed to transfer_from, but I'd rather remove this functionality entirely
   void transfer(const Property_container<Index>& other, Index other_index, Index this_index) {
     CGAL_precondition(other.m_property_arrays.size() == m_property_arrays.size());
@@ -605,7 +618,7 @@ public:
       auto other_array = other.m_property_arrays.at(name);
       array->transfer_from(*other_array, other_index, this_index);
     }
-  }
+  }*/
 
   // todo: maybe a compress() method?
 };

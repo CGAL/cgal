@@ -191,11 +191,11 @@ public:
   */
   explicit Orthtree(Traits traits) :
     m_traits(traits),
-    m_node_contents(m_node_properties.template add_property<Node_data>("contents")),
-    m_node_depths(m_node_properties.template add_property<std::uint8_t>("depths", 0)),
-    m_node_coordinates(m_node_properties.template add_property<Global_coordinates>("coordinates")),
-    m_node_parents(m_node_properties.template add_property<std::optional<Node_index>>("parents")),
-    m_node_children(m_node_properties.template add_property<std::optional<Node_index>>("children")) {
+    m_node_contents(m_node_properties.template get_or_add_property<Node_data>("contents").first),
+    m_node_depths(m_node_properties.template get_or_add_property<std::uint8_t>("depths", 0).first),
+    m_node_coordinates(m_node_properties.template get_or_add_property<Global_coordinates>("coordinates").first),
+    m_node_parents(m_node_properties.template get_or_add_property<std::optional<Node_index>>("parents").first),
+    m_node_children(m_node_properties.template get_or_add_property<std::optional<Node_index>>("children").first) {
 
     m_node_properties.emplace();
 

@@ -36,8 +36,6 @@ void reassign_points(
     return;
   }
 
-  auto traits = tree.traits();
-
   // Split the point collection around the center point on this dimension
   auto split_point = std::partition(
     points.begin(), points.end(),
