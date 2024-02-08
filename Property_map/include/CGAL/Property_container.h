@@ -291,7 +291,7 @@ public:
 
     return *this;
   }
-  
+
   // This is not exactly an assignment as existing unique properties are kept.
   Property_container<Index>& operator=(Property_container<Index>&& other) {
     m_active_indices = std::move(other.m_active_indices);
