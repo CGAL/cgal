@@ -42,12 +42,19 @@ namespace CGAL {
 
 enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
 
+enum class CDT_3_vertex_marker {
+  CLEAR = 0,
+  REGION_BORDER,
+  REGION_INSIDE,
+  nb_of_markers
+};
+
 using CDT_3_face_index = int; // must be signed
 
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
 class Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb> {
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
-  unsigned int mark = 0;
+  std::bitset<static_cast<int>(CDT_3_vertex_marker::nb_of_markers)> mark;
   union U {
     struct On_edge {
       int nb_of_incident_constraints = 0;
@@ -83,16 +90,20 @@ public:
     return u.on_edge.nb_of_incident_constraints;
   }
 
-  void mark_vertex() {
-    mark = 1;
+  void set_mark(CDT_3_vertex_marker marker) {
+    mark.set(static_cast<unsigned int>(marker));
   }
 
-  void unmark_vertex() {
-    mark = 0;
+  void clear_marks() {
+    mark.reset();
   }
 
-  bool is_marked() const {
-    return mark == 1;
+  void clear_mark(CDT_3_vertex_marker marker) {
+    mark.reset(static_cast<unsigned int>(marker));
+  }
+
+  bool is_marked(CDT_3_vertex_marker marker) const {
+    return mark.test(static_cast<unsigned int>(marker));
   }
 
   template<typename Triangulation>

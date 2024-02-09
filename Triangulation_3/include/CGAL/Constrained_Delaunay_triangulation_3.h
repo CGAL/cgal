@@ -218,6 +218,8 @@ public:
   using Locate_type = typename T_3::Locate_type;
   using Geom_traits = typename T_3::Geom_traits;
 
+  using Vertex_marker = CDT_3_vertex_marker;
+
   using Face_index = CDT_3_face_index;
 
   static std::string io_signature() {
@@ -1026,8 +1028,8 @@ private:
   {
     const auto vc = cell->vertex(index_vd);
     const auto vd = cell->vertex(index_vc);
-    if(!vd->is_Steiner_vertex_in_face() && vd->is_marked()) return 0; // vertex marked of the border
-    if(!vc->is_Steiner_vertex_in_face() && vc->is_marked()) return 0; // vertex marked of the border
+    if(vc->is_marked(Vertex_marker::REGION_BORDER)) return 0; // vertex marked of the border
+    if(vd->is_marked(Vertex_marker::REGION_BORDER)) return 0; // vertex marked of the border
     const auto pc = this->point(vc);
     const auto pd = this->point(vd);
     const typename Geom_traits::Segment_3 seg{pc, pd};
@@ -1200,10 +1202,10 @@ private:
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
           auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
           if(!not_visited) return value_returned(cached_value_it->second);
-          int v0v1_intersects_region = ((v0->is_Steiner_vertex_in_face() && v0->face_index() == face_index) ||
-                                        (v1->is_Steiner_vertex_in_face() && v1->face_index() == face_index))
-                                           ? expected
-                                           : does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
+          int v0v1_intersects_region =
+              (v0->is_marked(Vertex_marker::REGION_INSIDE) || v1->is_marked(Vertex_marker::REGION_INSIDE))
+                  ? expected
+                  : does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
           if(v0v1_intersects_region != 0) {
             if(v0v1_intersects_region != expected) {
               throw PLC_error{"PLC error: v0v1_intersects_region != expected" ,
@@ -1306,11 +1308,11 @@ private:
     }
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     for(auto v: region_border_vertices) {
-      v->mark_vertex();
+      v->set_mark(Vertex_marker::REGION_BORDER);
     }
     const auto found_edge_opt = search_first_intersection(face_index, cdt_2, fh_region, border_edges);
     for(auto v: region_border_vertices) {
-      v->unmark_vertex();
+      v->clear_mark(Vertex_marker::REGION_BORDER);
     }
 
     [[maybe_unused]] auto try_flip_region_size_4 = [&] {
@@ -1447,6 +1449,25 @@ private:
       throw Next_region{"No segment found", fh_region[0]};
     }
     CGAL_assertion(found_edge_opt != std::nullopt);
+
+    for(auto v : region_border_vertices) {
+      v->set_mark(Vertex_marker::REGION_BORDER);
+    }
+    for(auto v : region_vertices) {
+      if(v->is_marked(Vertex_marker::REGION_BORDER))
+        continue;
+      v->set_mark(Vertex_marker::REGION_INSIDE);
+    }
+    struct Region_vertices_marker_scope_guard
+    {
+      std::function<void()> unmark;
+      ~Region_vertices_marker_scope_guard() { unmark(); }
+    } guard{[&] {
+      for(auto v : region_vertices) {
+        v->clear_mark(Vertex_marker::REGION_BORDER);
+        v->clear_mark(Vertex_marker::REGION_INSIDE);
+      }
+    }};
 
     const auto first_intersecting_edge = *found_edge_opt;
     const auto [intersecting_edges, original_intersecting_cells, original_vertices_of_upper_cavity,
