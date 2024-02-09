@@ -882,7 +882,7 @@ struct Locally_shortest_path_imp
 
   }
   static
-  Eigen::Matrix3d tranformation_matrix(const Vector_2 &x1, const Vector_2 &y1,
+  Eigen::Matrix3d transformation_matrix(const Vector_2 &x1, const Vector_2 &y1,
                                        const Vector_2 &O1)
   {
     Eigen::Matrix3d T = Eigen::Matrix3d::Zero();
@@ -894,13 +894,12 @@ struct Locally_shortest_path_imp
   //h_ref is the reference halfedge of the face we are in, h_edge is the halfedge along which we want to unfold
   static
   Vector_2 compute_new_dir(const halfedge_descriptor h_ref,
-                                                const halfedge_descriptor h_edge,
-                                                const std::array<FT,3>& prev_coords,
-                                                const std::array<FT,3>& curr_coords,
-                                                const VertexPointMap& vpm,
-                                                const TriangleMesh& mesh)
+                           const halfedge_descriptor h_edge,
+                           const std::array<FT,3>& prev_coords,
+                           const std::array<FT,3>& curr_coords,
+                           const VertexPointMap& vpm,
+                           const TriangleMesh& mesh)
   {
-
     int k=0;
 
     if(h_edge==prev(h_ref,mesh))
@@ -936,6 +935,35 @@ struct Locally_shortest_path_imp
 
     return curr_flat_p-prev_flat_p;
 
+  }
+
+  //h_edge is the halfedge along which we want to unfold
+  // TODO: use interval to control the error?
+  static
+  Vector_2 parallel_transport_f2f(const halfedge_descriptor h_edge, // face(opposite(h_edge)) = previous face face(h_edge)==current_face
+                                  const Vector_2& prev_dir,
+                                  const VertexPointMap& vpm,
+                                  const TriangleMesh& mesh)
+  {
+    halfedge_descriptor h_ref = halfedge(face(h_edge,mesh), mesh);
+    int k=0;
+
+    if(h_edge==prev(h_ref,mesh))
+      k=2;
+    else if(h_edge==next(h_ref,mesh))
+      k=1;
+    else
+      assert(h_edge==h_ref);
+
+    std::array<Vector_2,3> flat_curr = init_flat_triangle(h_ref,vpm,mesh);
+    std::array<Vector_2,3> flat_prev = unfold_face(h_edge,vpm,mesh,flat_curr,k);
+
+    Vector_2 prev_origin = flat_prev[0];
+    Vector_2 prev_y = flat_prev[1]-flat_prev[0];
+    Vector_2 prev_x = Vector_2(prev_y.y(), - prev_y.x());
+
+    Eigen::Matrix3d T= transformation_matrix(prev_x, prev_y, prev_origin);
+    return switch_reference_frame_vector(T, prev_dir);
   }
 
   static Vector_2 switch_reference_frame_vector(const Eigen::Matrix3d &T, const Vector_2 &p) {
@@ -3008,6 +3036,12 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
                         const TriangleMesh &tmesh,
                         const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
+
+
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
   std::vector<Bbox_2> polygon_bboxes;
   polygon_bboxes.reserve(polygons.size());
   Bbox_2 gbox;
@@ -3026,19 +3060,34 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
   }
 
   std::vector<std::vector<typename K::Point_3>> result(polygons.size());
+  typename K::Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
 
   for(std::size_t i=0;i<polygons.size();++i)
   {
     typename K::Vector_2 dir( (-gbox.xmin()-gbox.xmax()+polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
                               (-gbox.ymin()-gbox.ymax()+polygon_bboxes[i].ymin()+polygon_bboxes[i].ymax())/2. );
-    Face_location<TriangleMesh, typename K::FT> polygon_center=
-      straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()),tmesh).back();
+    std::vector< Face_location<TriangleMesh, typename K::FT> > spath =
+      straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()),tmesh);
+    Face_location<TriangleMesh, typename K::FT> polygon_center = spath.back();
 
+    std::vector<Edge_location<TriangleMesh, typename K::FT>> shortest_path;
+      locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, *solver_ptr);
+
+    // update direction
+    typename K::Vector_2 v = initial_dir;
+    for(std::size_t i=0;i<shortest_path.size();++i)
+    {
+      halfedge_descriptor h_curr = halfedge(shortest_path[i].first, tmesh);
+      v = Impl::parallel_transport_f2f(h_curr, v, vpm, tmesh);
+    }
 
     std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
       convert_polygon_to_polar_coordinates<K>(polygons[i],
                                               typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
                                                                   (polygon_bboxes[i].ymin()+polygon_bboxes[i].ymax())/2.));
+
+
+    double theta = atan2(v.y(),v.x());
 
     std::vector<typename K::Vector_2> directions;
     std::vector<typename K::FT> lens;
@@ -3048,7 +3097,7 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
     for (const std::pair<double, double>& coord : polar_coords)
     {
       lens.push_back(scaling * coord.first);
-      directions.emplace_back(std::cos(coord.second), std::sin(coord.second));
+      directions.emplace_back(std::cos(coord.second+theta), std::sin(coord.second+theta));
     }
     result[i] = trace_geodesic_polygon<K>(polygon_center, directions, lens, tmesh, *solver_ptr);
   }
