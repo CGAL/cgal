@@ -135,5 +135,21 @@ int main(int argc, char** argv)
     out << std::endl;
   }
 
+  // third method
+  out.close();
+  out.open("geodesic_label.polylines.txt");
+  out << std::setprecision(17);
+
+  polygons_3.clear();
+  polygons_3 = PMP::trace_geodesic_label<K>(center, polygons, scaling, mesh, solver);
+
+  for (const auto& polygon : polygons_3)
+  {
+    out << polygon.size();
+    for (auto p : polygon)
+      out << " " << p;
+    out << std::endl;
+  }
+
   return 0;
 }
