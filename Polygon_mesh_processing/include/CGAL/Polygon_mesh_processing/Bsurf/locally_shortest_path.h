@@ -3118,8 +3118,9 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
   using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   VPM vpm = get(CGAL::vertex_point, tmesh);
   using Point_2 = typename K::Point_2;
+  using Vector_2 = typename K::Vector_2;
 
-  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+
   std::vector<Bbox_2> polygon_bboxes;
   polygon_bboxes.reserve(polygons.size());
   Bbox_2 gbox;
@@ -3138,7 +3139,7 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
   }
 
   std::vector<std::vector<typename K::Point_3>> result(polygons.size());
-  typename K::Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
+  Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
 
   // 1D partition of the letters
   Point_2 c2( (gbox.xmin()+gbox.xmax())/2.,
@@ -3160,9 +3161,8 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
     Face_location<TriangleMesh, typename K::FT> polygon_center;
     double xc = (polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.;
 
-
-    auto get_polygon_center = [&tmesh](const std::vector<Face_location<TriangleMesh, typename K::FT>>& path,
-                                      double targetd)
+    auto get_polygon_center = [&tmesh, &vpm](const std::vector<Face_location<TriangleMesh, typename K::FT>>& path,
+                                             double targetd)
     {
       // use left
       double acc=0.;
@@ -3174,7 +3174,22 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
         acc+=len;
         if (acc == targetd)
         {
-          return path[k+1];
+          double theta=0;
+          if (k!=0)
+          {
+            Face_location<TriangleMesh, typename K::FT> loc_k=path[k], loc_k1=path[k+1];
+            CGAL_assertion_code(bool OK=)
+            locate_in_common_face(loc_k, loc_k1, tmesh);
+            CGAL_assertion(OK);
+            std::array<Vector_2,3> flat_triangle =
+              Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
+            Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
+            Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+
+            Vector_2 dir2 = tgt-src;
+            theta = atan2(dir2.y(), dir2.x());
+          }
+          return std::make_pair(path[k+1], theta);
         }
 
         if (acc > targetd)
@@ -3193,41 +3208,54 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
           for(int ii=0; ii<3;++ii)
             polygon_center.second[ii] = loc_k.second[ii]*alpha+loc_k1.second[ii]*(1.-alpha);
 
-          return polygon_center;
+          std::array<Vector_2,3> flat_triangle =
+            Impl::init_flat_triangle(halfedge(polygon_center.first,tmesh),vpm,tmesh);
+          Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
+          Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+
+          Vector_2 dir2 = tgt-src;
+          double theta = atan2(dir2.y(), dir2.x());
+
+          return std::make_pair(polygon_center, theta);
         }
 
         if (++k==path.size()-1)
         {
-          return path.back();
+          Face_location<TriangleMesh, typename K::FT> loc_k=path[k-1], loc_k1=path[k];
+          CGAL_assertion_code(bool OK=)
+          locate_in_common_face(loc_k, loc_k1, tmesh);
+          CGAL_assertion(OK);
+          std::array<Vector_2,3> flat_triangle =
+            Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
+          Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
+          Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+
+          Vector_2 dir2 = tgt-src;
+          double theta = atan2(dir2.y(), dir2.x());
+
+          return std::make_pair(path.back(), theta);
         }
       }
     };
-
+    double theta;
     if (xc<c2.x())
-      polygon_center=get_polygon_center(left_path, scaling * (c2.x()-xc));
+    {
+      std::tie(polygon_center, theta)=get_polygon_center(left_path, scaling * (c2.x()-xc));
+      theta=CGAL_PI+theta;
+    }
     else
-      polygon_center=get_polygon_center(right_path, scaling * (xc-c2.x()));
+      std::tie(polygon_center, theta)=get_polygon_center(right_path, scaling * (xc-c2.x()));
 
     std::vector<Edge_location<TriangleMesh, typename K::FT>> shortest_path;
       locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, *solver_ptr);
 
-    // update direction
-    typename K::Vector_2 v = initial_dir;
-    for(std::size_t i=0;i<shortest_path.size();++i)
-    {
-      halfedge_descriptor h_curr = halfedge(shortest_path[i].first, tmesh);
-      v = Impl::parallel_transport_f2f(h_curr, v, vpm, tmesh);
-    }
 
     std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
       convert_polygon_to_polar_coordinates<K>(polygons[i],
                                               typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
                                                                   (gbox.ymin()+gbox.ymax())/2.));
 
-
-    double theta = atan2(v.y(),v.x());
-
-    std::vector<typename K::Vector_2> directions;
+    std::vector<Vector_2> directions;
     std::vector<typename K::FT> lens;
     lens.reserve(polar_coords.size());
     directions.reserve(polar_coords.size());
