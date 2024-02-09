@@ -90,8 +90,11 @@ struct Pixel_2_
 
     Integer sub_x, sub_y; // subpixel coordinates relative to pixel's boundary
                           // (always 0 for pixels)
+    Pixel_2_() = default;
 
-    Pixel_2_& operator =(const Pixel_2_& pix) = default;
+    Pixel_2_(const Pixel_2_&) = default;
+
+    Pixel_2_& operator =(const Pixel_2_&) = default;
 
     bool operator ==(const Pixel_2_& pix) const {
         return (
