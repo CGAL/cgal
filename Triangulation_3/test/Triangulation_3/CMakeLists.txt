@@ -144,7 +144,7 @@ CGAL_add_cdt3_from_local_off_test(243014-min2)
 include(./Thingi10k-CDT.cmake)
 
 add_test(NAME "execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3 3torus" COMMAND cdt_3_from_off_CGAL_DEBUG_CDT_3 ${CGAL_DATA_DIR}/meshes/3torus.off)
-cgal_setup_test_properties("execution   of  cdt_3_from_off 3torus" cdt_3_from_off)
+cgal_setup_test_properties("execution   of  cdt_3_from_off_CGAL_DEBUG_CDT_3" cdt_3_from_off_CGAL_DEBUG_CDT_3)
 
 get_directory_property(all_tests TESTS)
 foreach(test ${all_tests})
