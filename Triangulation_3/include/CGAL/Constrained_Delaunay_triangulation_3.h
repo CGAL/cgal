@@ -96,6 +96,13 @@ public:
   }
 };
 
+enum class CDT_3_cell_marker {
+  CLEAR = 0,
+  IN_REGION = 1,
+  ON_REGION_BOUNDARY = 2,
+  nb_of_markers
+};
+
 template <typename Gt, typename Cb = Triangulation_cell_base_3<Gt> >
 class Constrained_Delaunay_triangulation_cell_base_3
   : public Base_with_time_stamp<Cb>
@@ -103,6 +110,7 @@ class Constrained_Delaunay_triangulation_cell_base_3
   using Base = Base_with_time_stamp<Cb>;
   std::array<CDT_3_face_index, 4> face_id = { -1, -1, -1, -1 };
   std::array<void*, 4> facet_2d = {nullptr, nullptr, nullptr, nullptr};
+  std::bitset<static_cast<unsigned>(CDT_3_cell_marker::nb_of_markers)> markers;
 
 public:
   // To get correct cell type in TDS
@@ -114,6 +122,11 @@ public:
 
   // Constructor
   using Base::Base;
+
+  bool is_marked(CDT_3_cell_marker m) const { return markers.test(static_cast<unsigned>(m)); }
+  void set_mark(CDT_3_cell_marker m) { markers.set(static_cast<unsigned>(m)); }
+  void clear_mark(CDT_3_cell_marker m) { markers.reset(static_cast<unsigned>(m)); }
+  void clear_marks() { markers.reset(); }
 
   bool is_facet_constrained(int i) const { return face_id[unsigned(i)] >= 0; }
 
