@@ -3105,30 +3105,168 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
   return result;
 }
 
+//TODO add groups of polygons for better rendering
+template <class K, class TriangleMesh>
+std::vector<std::vector<typename K::Point_3>>
+trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
+                     const std::vector<std::vector<typename K::Point_2>>& polygons,
+                     const typename K::FT scaling,
+                     const TriangleMesh &tmesh,
+                     const Dual_geodesic_solver<typename K::FT>& solver = {})
+{
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
+  using Point_2 = typename K::Point_2;
+
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+  std::vector<Bbox_2> polygon_bboxes;
+  polygon_bboxes.reserve(polygons.size());
+  Bbox_2 gbox;
+  for (const std::vector<typename K::Point_2>& polygon : polygons)
+  {
+    polygon_bboxes.push_back( bbox_2(polygon.begin(), polygon.end()) );
+    gbox+=polygon_bboxes.back();
+  }
+
+  const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
+  Dual_geodesic_solver<typename K::FT> local_solver;
+  if (solver.graph.empty())
+  {
+    solver_ptr = &local_solver;
+    init_geodesic_dual_solver(local_solver, tmesh);
+  }
+
+  std::vector<std::vector<typename K::Point_3>> result(polygons.size());
+  typename K::Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
+
+  // 1D partition of the letters
+  Point_2 c2( (gbox.xmin()+gbox.xmax())/2.,
+              (gbox.ymin()+gbox.ymax())/2. );
+  Point_2 left_most(gbox.xmin(), c2.y());
+  Point_2 right_most(gbox.xmax(), c2.y());
+  double len = (gbox.xmax()-gbox.xmin())/2.;
+
+  std::vector< Face_location<TriangleMesh, typename K::FT> > left_path =
+    straightest_geodesic<K>(center, left_most-c2, scaling * len, tmesh);
+  std::vector< Face_location<TriangleMesh, typename K::FT> > right_path =
+    straightest_geodesic<K>(center, right_most-c2, scaling * len, tmesh);
+
+  CGAL_assertion(left_path.size() >=2);
+  CGAL_assertion(right_path.size() >=2);
+
+  for(std::size_t i=0;i<polygons.size();++i)
+  {
+    Face_location<TriangleMesh, typename K::FT> polygon_center;
+    double xc = (polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.;
+
+
+    auto get_polygon_center = [&tmesh](const std::vector<Face_location<TriangleMesh, typename K::FT>>& path,
+                                      double targetd)
+    {
+      // use left
+      double acc=0.;
+      std::size_t k=0;
+      while(true)
+      {
+        double len = std::sqrt(squared_distance(construct_point(path[k], tmesh),
+                                                construct_point(path[k+1], tmesh)));
+        acc+=len;
+        if (acc == targetd)
+        {
+          return path[k+1];
+        }
+
+        if (acc > targetd)
+        {
+          double excess = acc-targetd;
+
+          Face_location<TriangleMesh, typename K::FT> loc_k=path[k], loc_k1=path[k+1];
+          CGAL_assertion_code(bool OK=)
+          locate_in_common_face(loc_k, loc_k1, tmesh);
+          CGAL_assertion(OK);
+
+          Face_location<TriangleMesh, typename K::FT> polygon_center;
+          polygon_center.first=loc_k.first;
+          double alpha = excess/len;
+
+          for(int ii=0; ii<3;++ii)
+            polygon_center.second[ii] = loc_k.second[ii]*alpha+loc_k1.second[ii]*(1.-alpha);
+
+          return polygon_center;
+        }
+
+        if (++k==path.size()-1)
+        {
+          return path.back();
+        }
+      }
+    };
+
+    if (xc<c2.x())
+      polygon_center=get_polygon_center(left_path, scaling * (c2.x()-xc));
+    else
+      polygon_center=get_polygon_center(right_path, scaling * (xc-c2.x()));
+
+    std::vector<Edge_location<TriangleMesh, typename K::FT>> shortest_path;
+      locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, *solver_ptr);
+
+    // update direction
+    typename K::Vector_2 v = initial_dir;
+    for(std::size_t i=0;i<shortest_path.size();++i)
+    {
+      halfedge_descriptor h_curr = halfedge(shortest_path[i].first, tmesh);
+      v = Impl::parallel_transport_f2f(h_curr, v, vpm, tmesh);
+    }
+
+    std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
+      convert_polygon_to_polar_coordinates<K>(polygons[i],
+                                              typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
+                                                                  (gbox.ymin()+gbox.ymax())/2.));
+
+
+    double theta = atan2(v.y(),v.x());
+
+    std::vector<typename K::Vector_2> directions;
+    std::vector<typename K::FT> lens;
+    lens.reserve(polar_coords.size());
+    directions.reserve(polar_coords.size());
+
+    for (const std::pair<double, double>& coord : polar_coords)
+    {
+      lens.push_back(scaling * coord.first);
+      directions.emplace_back(std::cos(coord.second+theta), std::sin(coord.second+theta));
+    }
+    result[i] = trace_geodesic_polygon<K>(polygon_center, directions, lens, tmesh, *solver_ptr);
+  }
+
+  return result;
+}
+
 
 template <class K, class TriangleMesh>
 typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
                           const Face_location<TriangleMesh, typename K::FT>& src,
                           const Face_location<TriangleMesh, typename K::FT>& tgt,
                           const TriangleMesh &tmesh)
- {
-   if(path.size()==0)
-   return sqrt(squared_distance(construct_point(src,tmesh),construct_point(tgt,tmesh)));
+{
+  if(path.size()==0)
+  return sqrt(squared_distance(construct_point(src,tmesh),construct_point(tgt,tmesh)));
 
-   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-   VPM vpm = get(CGAL::vertex_point, tmesh);
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
 
-   typename K::FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
-   typename K::FT dist=[&](const Edge_location<TriangleMesh,typename K::FT>& p0,const Edge_location<TriangleMesh,typename K::FT>& p1)
-   {
-      return sqrt(squared_distance(construct_point(p0,tmesh),construct_point(p1,tmesh)));
-   };
+  typename K::FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
+  typename K::FT dist=[&](const Edge_location<TriangleMesh,typename K::FT>& p0,const Edge_location<TriangleMesh,typename K::FT>& p1)
+  {
+    return sqrt(squared_distance(construct_point(p0,tmesh),construct_point(p1,tmesh)));
+  };
 
-   len=std::accumulate(path.begin(),path.end(),dist);
+  len=std::accumulate(path.begin(),path.end(),dist);
 
-   len+=sqrt(squared_distance(construct_point(path.back(),tmesh),construct_point(tgt,tmesh)));
+  len+=sqrt(squared_distance(construct_point(path.back(),tmesh),construct_point(tgt,tmesh)));
 
-   return len;
+  return len;
 }
 
 // template <class K, class TriangleMesh>
