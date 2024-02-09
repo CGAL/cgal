@@ -2079,7 +2079,7 @@ private:
       std::cerr << "  -> " << IO::oformat(v) << '\n';
     }
 #endif
-    v->set_Steiner_vertex_on_face(face_index);
+    v->set_Steiner_vertex_in_face(face_index);
     [[maybe_unused]] typename CDT_2::Locate_type lt_2;
     int i;
     auto fh = cdt_2.locate(steiner_pt, lt_2, i, fh_2d);

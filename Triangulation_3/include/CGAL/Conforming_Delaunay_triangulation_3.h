@@ -114,7 +114,7 @@ public:
     return C_id(static_cast<Vertex_list_ptr>(u.on_edge.c_id));
   }
 
-  void set_Steiner_vertex_on_face(CDT_3_face_index face_index) {
+  void set_Steiner_vertex_in_face(CDT_3_face_index face_index) {
     m_vertex_type = CDT_3_vertex_type::STEINER_IN_FACE;
     u.on_face = typename U::On_face{face_index};
   }
