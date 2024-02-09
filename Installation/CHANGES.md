@@ -76,6 +76,12 @@ Release date: October 2023
 -   Added three functions `vertices()` to the class `Triangulation_3`.
     Each of them returns an array containing the vertices of the given triangulation simplex.
 
+### [dD Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulations)
+-   **Breaking change**: Inserting multiple unweighted points in the same
+    position now keeps the first one, instead of switching to the latest. This
+    only affects custom point types where not all points in the same position
+    are equivalent.
+
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
