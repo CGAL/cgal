@@ -46,6 +46,7 @@ enum class CDT_3_vertex_marker {
   CLEAR = 0,
   REGION_BORDER,
   REGION_INSIDE,
+  CAVITY,
   nb_of_markers
 };
 
@@ -104,6 +105,10 @@ public:
 
   bool is_marked(CDT_3_vertex_marker marker) const {
     return mark.test(static_cast<unsigned int>(marker));
+  }
+
+  bool is_marked() const {
+    return mark.any();
   }
 
   template<typename Triangulation>
