@@ -17,9 +17,9 @@
 
 #include <CGAL/Bbox_3.h>
 
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Named_function_parameters.h>
@@ -261,9 +261,28 @@ namespace CGAL {
     }
 
     /*!
-    * adds a triangulated bounding box to a polygon mesh
-    * @todo add extended bbox factor
-    * @todo add triangulate or not as NP
+    * adds an axis-aligned bounding box to a polygon mesh.
+    * @tparam PolygonMesh a model of `MutableFaceGraph`
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+    * @param pmesh a polygon mesh
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    * \cgalNamedParamsBegin
+    *   \cgalParamNBegin{bbox_scaling}
+    *     \cgalParamDescription{a double used to scale the bounding box.
+    *       The default value is 1 and the bounding box is the smallest possible
+    *       axis-aligned bounding box.}
+    *     \cgalParamDefault{1.}
+    *   \cgalParamNEnd
+    *   \cgalParamNBegin{triangulate_bbox}
+    *     \cgalParamDescription{a boolean used to specify if the bounding box should be triangulated or not.}
+    *     \cgalParamDefault{true}
+    *   \cgalParamNEnd
+    *   \cgalParamNBegin{geom_traits}
+    *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`,
+    *       the function `Construct_bbox_3 construct_bbox_3_object()`,
+    *       the types `Point_3`, `Vector_3` and `Iso_cuboid_3`.}
+    *   \cgalParamNEnd
+    * \cgalNamedParamsEnd
     */
     template<typename PolygonMesh,
              typename NamedParameters = parameters::Default_named_parameters>
@@ -273,66 +292,32 @@ namespace CGAL {
       using parameters::choose_parameter;
       using parameters::get_parameter;
 
-      typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+      using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
       GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-      typedef typename GT::Point_3 Point_3;
+      using Point_3 = typename GT::Point_3;
+      using Iso_cuboid_3 = typename GT::Iso_cuboid_3;
+      using Vector_3 = typename GT::Vector_3;
 
-      const double factor = 1.1; //todo : add as NP
-      CGAL::Bbox_3 bb = bbox(pmesh);
-      if (factor != 1.0)
-      {
-        const double dx = bb.xmax() - bb.xmin();
-        const double dy = bb.ymax() - bb.ymin();
-        const double dz = bb.zmax() - bb.zmin();
-        const Point_3 center( bb.xmin() + 0.5 * dx,
-                              bb.ymin() + 0.5 * dy,
-                              bb.zmin() + 0.5 * dz );
-        bb = Bbox_3( center.x() - factor * 0.5 * dx,
-                     center.y() - factor * 0.5 * dy,
-                     center.z() - factor * 0.5 * dz,
-                     center.x() + factor * 0.5 * dx,
-                     center.y() + factor * 0.5 * dy,
-                     center.z() + factor * 0.5 * dz );
-      }
+      double factor = choose_parameter(get_parameter(np, internal_np::bbox_scaling), 1.);
+      bool triangulate = choose_parameter(get_parameter(np, internal_np::triangulate_bbox), true);
 
-      const bool triangulate = true; //todo : add as NP
+      Iso_cuboid_3 bb(CGAL::Polygon_mesh_processing::bbox(pmesh));
+      Point_3 bb_center(0.5 * (bb.xmax() + bb.xmin()),
+                        0.5 * (bb.ymax() + bb.ymin()),
+                        0.5 * (bb.zmax() + bb.zmin()));
+      Iso_cuboid_3 bbext(
+        (bb.min)() + 0.5 * factor * Vector_3(bb_center, (bb.min)()),
+        (bb.max)() + 0.5 * factor * Vector_3(bb_center, (bb.max)()));
 
-      const typename GT::Iso_cuboid_3 bbox(bb);
-      std::vector<Point_3> bb_points;
-      for (int i = 0; i < 8; ++i)
-        bb_points.push_back(bbox[i]);
+      PolygonMesh bbox_mesh;
+      CGAL::make_hexahedron(bbext[0], bbext[1], bbext[2], bbext[3],
+                            bbext[4], bbext[5], bbext[6], bbext[7],
+                            bbox_mesh);
 
-      std::vector<std::vector<std::size_t>> faces;
-      if (!triangulate)
-      {
-        faces.push_back({0, 1, 2, 3});//bottom
-        faces.push_back({4, 5, 6, 7});//top
-        faces.push_back({0, 1, 6, 5});//front
-        faces.push_back({2, 3, 4, 7});//back
-        faces.push_back({1, 2, 7, 6});//right
-        faces.push_back({0, 3, 4, 5});//left
-      }
-      else
-      {
-        faces.push_back({0, 1, 2});//bottom
-        faces.push_back({0, 2, 3});
-        faces.push_back({4, 5, 6});//top
-        faces.push_back({4, 6, 7});
-        faces.push_back({0, 1, 5});//front
-        faces.push_back({1, 5, 6});
-        faces.push_back({2, 3, 4});//back
-        faces.push_back({2, 4, 7});
-        faces.push_back({1, 2, 6});//right
-        faces.push_back({2, 6, 7});
-        faces.push_back({0, 3, 4});//left
-        faces.push_back({0, 4, 5});
-      }
+      if(triangulate)
+        CGAL::Polygon_mesh_processing::triangulate_faces(bbox_mesh);
 
-      PolygonMesh bbox_pmesh;
-      orient_polygon_soup(bb_points, faces);
-      polygon_soup_to_polygon_mesh(bb_points, faces, bbox_pmesh);
-
-      CGAL::copy_face_graph(bbox_pmesh, pmesh,
+      CGAL::copy_face_graph(bbox_mesh, pmesh,
                             parameters::default_values(),
                             np);
     }
