@@ -395,7 +395,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAddBbox_triggered(Scene_
     const double scaling = ui.bbox_scaling->value();
     CGAL::Polygon_mesh_processing::add_bbox(*poly_item->face_graph(),
       CGAL::parameters::bbox_scaling(scaling).
-                        triangulate_bbox(ui.triangulate_bbox->isChecked()));
+      do_not_triangulate_faces(!ui.triangulate_bbox->isChecked()));
 
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();

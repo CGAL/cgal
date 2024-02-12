@@ -278,9 +278,11 @@ namespace CGAL {
     *       axis-aligned bounding box.}
     *     \cgalParamDefault{1.}
     *   \cgalParamNEnd
-    *   \cgalParamNBegin{triangulate_bbox}
-    *     \cgalParamDescription{a boolean used to specify if the bounding box should be triangulated or not.}
-    *     \cgalParamDefault{true}
+    *   \cgalParamNBegin{do_not_triangulate_faces}
+    *     \cgalParamDescription{a boolean used to specify if the bounding box faces
+    *       should be triangulated or not.
+    *       The default value is `false`, and faces are triangulated.}
+    *     \cgalParamDefault{false}
     *   \cgalParamNEnd
     *   \cgalParamNBegin{geom_traits}
     *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`,
@@ -306,7 +308,8 @@ namespace CGAL {
       using Vector_3 = typename GT::Vector_3;
 
       double factor = choose_parameter(get_parameter(np, internal_np::bbox_scaling), 1.);
-      bool triangulate = choose_parameter(get_parameter(np, internal_np::triangulate_bbox), true);
+      bool dont_triangulate = choose_parameter(
+        get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
       Iso_cuboid_3 bb(CGAL::Polygon_mesh_processing::bbox(pmesh));
       Point_3 bb_center(0.5 * (bb.xmax() + bb.xmin()),
@@ -321,7 +324,7 @@ namespace CGAL {
                             bbext[4], bbext[5], bbext[6], bbext[7],
                             bbox_mesh);
 
-      if(triangulate)
+      if(!dont_triangulate)
         CGAL::Polygon_mesh_processing::triangulate_faces(bbox_mesh);
 
       CGAL::copy_face_graph(bbox_mesh, pmesh,
