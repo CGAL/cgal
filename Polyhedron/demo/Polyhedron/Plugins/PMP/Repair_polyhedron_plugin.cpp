@@ -25,6 +25,7 @@
 
 #include "ui_RemoveNeedlesDialog.h"
 #include "ui_SelfSnapDialog.h"
+#include "ui_AddBboxDialog.h"
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -60,6 +61,7 @@ public:
     actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections (Deprecated)"), mw);
     actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"));
     actionSnapBorders = new QAction(tr("Snap Boundaries"));
+    actionAddBbox = new QAction(tr("Add Bounding Box"));
 
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
@@ -73,6 +75,7 @@ public:
     actionAutorefineAndRMSelfIntersections->setObjectName("actionAutorefineAndRMSelfIntersections");
     actionRemoveNeedlesAndCaps->setObjectName("actionRemoveNeedlesAndCaps");
     actionSnapBorders->setObjectName("actionSnapBorders");
+    actionAddBbox->setObjectName("actionAddBbox");
 
     actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
@@ -85,6 +88,7 @@ public:
     actionNewAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionSnapBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionAddBbox->setProperty("subMenuName", "Polygon Mesh Processing");
 
     autoConnectActions();
   }
@@ -102,7 +106,8 @@ public:
                              << actionNewAutorefine
                              << actionAutorefineAndRMSelfIntersections
                              << actionRemoveNeedlesAndCaps
-                             << actionSnapBorders;
+                             << actionSnapBorders
+                             << actionAddBbox;
   }
 
   bool applicable(QAction* action) const
@@ -126,6 +131,8 @@ public:
   void on_actionRemoveIsolatedVertices_triggered(Scene_interface::Item_id index);
   template <typename Item>
   void on_actionRemoveDegenerateFaces_triggered(Scene_interface::Item_id index);
+  template <typename Item>
+  void on_actionAddBbox_triggered(Scene_interface::Item_id index);
   template <typename Item>
   void on_actionRemoveSelfIntersections_triggered(Scene_interface::Item_id index);
   template <typename Item>
@@ -156,6 +163,7 @@ public Q_SLOTS:
   void on_actionAutorefineAndRMSelfIntersections_triggered();
   void on_actionRemoveNeedlesAndCaps_triggered();
   void on_actionSnapBorders_triggered();
+  void on_actionAddBbox_triggered();
 
 private:
   QAction* actionRemoveIsolatedVertices;
@@ -170,6 +178,7 @@ private:
   QAction* actionAutorefineAndRMSelfIntersections;
   QAction* actionRemoveNeedlesAndCaps;
   QAction* actionSnapBorders;
+  QAction* actionAddBbox;
 
   Messages_interface* messages;
 }; // end Polyhedron_demo_repair_polyhedron_plugin
@@ -364,6 +373,41 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
 
   sm_item->invalidateOpenGLBuffers();
   sm_item->itemChanged();
+}
+
+template<typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionAddBbox_triggered(Scene_interface::Item_id index)
+{
+  Item* poly_item =
+    qobject_cast<Item*>(scene->item(index));
+  if (poly_item)
+  {
+    QDialog dialog;
+    Ui::AddBboxDialog ui;
+    ui.setupUi(&dialog);
+    ui.triangulate_bbox->setChecked(true);
+    ui.bbox_scaling->setValue(1.0);
+
+    if(dialog.exec() != QDialog::Accepted)
+      return;
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    const double scaling = ui.bbox_scaling->value();
+    CGAL::Polygon_mesh_processing::add_bbox(*poly_item->face_graph(),
+      CGAL::parameters::bbox_scaling(scaling).
+                        triangulate_bbox(ui.triangulate_bbox->isChecked()));
+
+    poly_item->invalidateOpenGLBuffers();
+    Q_EMIT poly_item->itemChanged();
+    QApplication::restoreOverrideCursor();
+    CGAL::Three::Three::information(tr("Bbox has been added (%1 @%)").arg(scaling));
+  }
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionAddBbox_triggered()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  on_actionAddBbox_triggered<Scene_surface_mesh_item>(index);
 }
 
 template <typename Item>
