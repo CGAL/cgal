@@ -261,11 +261,16 @@ namespace CGAL {
     }
 
     /*!
+    * \ingroup PkgPolygonMeshProcessingRef
+    *
     * adds an axis-aligned bounding box to a polygon mesh.
+    *
     * @tparam PolygonMesh a model of `MutableFaceGraph`
     * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+    *
     * @param pmesh a polygon mesh
     * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    *
     * \cgalNamedParamsBegin
     *   \cgalParamNBegin{bbox_scaling}
     *     \cgalParamDescription{a double used to scale the bounding box.
@@ -283,6 +288,8 @@ namespace CGAL {
     *       the types `Point_3`, `Vector_3` and `Iso_cuboid_3`.}
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
+    *
+    * @see `bbox()`
     */
     template<typename PolygonMesh,
              typename NamedParameters = parameters::Default_named_parameters>
