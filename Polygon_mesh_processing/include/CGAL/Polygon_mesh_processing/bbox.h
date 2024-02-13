@@ -277,6 +277,7 @@ namespace CGAL {
     *       The default value is 1 and the bounding box is the smallest possible
     *       axis-aligned bounding box.}
     *     \cgalParamDefault{1.}
+    *     \cgalParamPrecondition{`bbox_scaling > 0`}
     *   \cgalParamNEnd
     *   \cgalParamNBegin{do_not_triangulate_faces}
     *     \cgalParamDescription{a boolean used to specify if the bounding box faces
@@ -321,11 +322,14 @@ namespace CGAL {
       using Vector_3 = typename GT::Vector_3;
 
       const double factor = choose_parameter(get_parameter(np, internal_np::bbox_scaling), 1.);
+      CGAL_precondition(factor > 0);
       const bool dont_triangulate = choose_parameter(
         get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-      const Iso_cuboid_3 bb(CGAL::Polygon_mesh_processing::bbox(pmesh));
-      const Point_3 bb_center = CGAL::midpoint((bb.min)(), (bb.max)());
+      const Iso_cuboid_3 bb(CGAL::Polygon_mesh_processing::bbox(pmesh, np));
+
+      auto midpoint = gt.construct_midpoint_3_object();
+      const Point_3 bb_center = midpoint((bb.min)(), (bb.max)());
       const Iso_cuboid_3 bbext = (factor == 1.)
         ? bb
         : Iso_cuboid_3(bb_center + factor * Vector_3(bb_center, (bb.min)()),
