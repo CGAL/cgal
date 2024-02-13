@@ -307,17 +307,16 @@ namespace CGAL {
       using Iso_cuboid_3 = typename GT::Iso_cuboid_3;
       using Vector_3 = typename GT::Vector_3;
 
-      double factor = choose_parameter(get_parameter(np, internal_np::bbox_scaling), 1.);
-      bool dont_triangulate = choose_parameter(
+      const double factor = choose_parameter(get_parameter(np, internal_np::bbox_scaling), 1.);
+      const bool dont_triangulate = choose_parameter(
         get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-      Iso_cuboid_3 bb(CGAL::Polygon_mesh_processing::bbox(pmesh));
-      Point_3 bb_center(0.5 * (bb.xmax() + bb.xmin()),
-                        0.5 * (bb.ymax() + bb.ymin()),
-                        0.5 * (bb.zmax() + bb.zmin()));
-      Iso_cuboid_3 bbext(
-        (bb.min)() + 0.5 * factor * Vector_3(bb_center, (bb.min)()),
-        (bb.max)() + 0.5 * factor * Vector_3(bb_center, (bb.max)()));
+      const Iso_cuboid_3 bb(CGAL::Polygon_mesh_processing::bbox(pmesh));
+      const Point_3 bb_center = CGAL::midpoint((bb.min)(), (bb.max()));
+      const Iso_cuboid_3 bbext = (factor == 1.)
+        ? bb
+        : Iso_cuboid_3(bb_center + factor * Vector_3(bb_center, (bb.min)()),
+                       bb_center + factor * Vector_3(bb_center, (bb.max)()));
 
       PolygonMesh bbox_mesh;
       CGAL::make_hexahedron(bbext[0], bbext[1], bbext[2], bbext[3],
