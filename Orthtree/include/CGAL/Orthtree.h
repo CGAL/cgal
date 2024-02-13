@@ -263,7 +263,7 @@ public:
     m_side_per_depth.push_back(size);
 
     if constexpr (has_data)
-      m_traits.construct_root_node_contents_object()();
+      data(root()) = m_traits.construct_root_node_contents_object()();
   }
 
   /// @}
