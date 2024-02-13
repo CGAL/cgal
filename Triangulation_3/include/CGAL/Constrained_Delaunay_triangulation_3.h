@@ -1181,7 +1181,8 @@ private:
         const auto index_vd = this->next_around_edge(index_vb, index_va);
 
         //write_segment(dump_edges_around, cell_circ->vertex(index_vc), cell_circ->vertex(index_vd));
-
+        if(cell_circ->vertex(index_vc)->is_marked(Vertex_marker::REGION_BORDER)) continue;
+        if(cell_circ->vertex(index_vd)->is_marked(Vertex_marker::REGION_BORDER)) continue;
         int cd_intersects_region = does_edge_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region);
         if(cd_intersects_region == 1) {
           return { Edge{cell_circ, index_vc, index_vd} };
