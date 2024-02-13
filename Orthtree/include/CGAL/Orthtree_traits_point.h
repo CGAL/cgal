@@ -72,7 +72,7 @@ void reassign_points(
   \cgalModels{OrthtreeTraits}
   \sa `CGAL::Octree`
   \sa `CGAL::Quadtree`
-  \sa `CGAL::Orthtree_traits_base<GeomTraits, DimensionTag>`
+  \sa `CGAL::Orthtree_traits_base<GeomTraits, dimension>`
 */
 template <
   typename GeomTraits,

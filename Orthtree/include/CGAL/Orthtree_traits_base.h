@@ -27,25 +27,25 @@ namespace CGAL {
   The class `Orthtree_traits_base` is a base class providing common choices for types and functors.
   The base class is extended by `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>` and by `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`.
 
-  \tparam K a model of `Kernel`.
+  \tparam GeomTraits a model of `Kernel`.
   \tparam dim dimension of the ambient Euclidean space.
 
   \sa `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dim>`
   \sa `CGAL::Orthtree_traits_face_graph<PolygonMesh, VertexPointMap>`
 */
 
-template <typename K, int dim>
+template <typename GeomTraits, int dim>
 struct Orthtree_traits_base {
   /// \name Types
   /// @{
   using Node_index = std::size_t;
-  using Kernel = K;
+  using Kernel = GeomTraits;
   static constexpr int dimension = dim;
-  using FT = typename K::FT;
-  using Point_d = typename K::Point_d;
-  using Bbox_d = typename K::Iso_box_d;
-  using Sphere_d = typename K::Sphere_d;
-  using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_d;
+  using FT = typename GeomTraits::FT;
+  using Point_d = typename GeomTraits::Point_d;
+  using Bbox_d = typename GeomTraits::Iso_box_d;
+  using Sphere_d = typename GeomTraits::Sphere_d;
+  using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_d;
   /*!
    * Adjacency type.
    *
@@ -99,16 +99,16 @@ struct Orthtree_traits_base {
   }
 };
 
-template <typename K>
-struct Orthtree_traits_base<K, 2> {
+template <typename GeomTraits>
+struct Orthtree_traits_base<GeomTraits, 2> {
   using Node_index = std::size_t;
-  using Kernel = K;
+  using Kernel = GeomTraits;
   static constexpr int dimension = 2;
-  using FT = typename K::FT;
-  using Point_d = typename K::Point_2;
-  using Bbox_d = typename K::Iso_rectangle_2;
-  using Sphere_d = typename K::Circle_2;
-  using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_2;
+  using FT = typename GeomTraits::FT;
+  using Point_d = typename GeomTraits::Point_2;
+  using Bbox_d = typename GeomTraits::Iso_rectangle_2;
+  using Sphere_d = typename GeomTraits::Circle_2;
+  using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_2;
 
   enum Adjacency {
     LEFT,
@@ -124,16 +124,16 @@ struct Orthtree_traits_base<K, 2> {
   }
 };
 
-template <typename K>
-struct Orthtree_traits_base<K, 3> {
+template <typename GeomTraits>
+struct Orthtree_traits_base<GeomTraits, 3> {
   using Node_index = std::size_t;
-  using Kernel = K;
+  using Kernel = GeomTraits;
   static constexpr int dimension = 3;
-  using FT = typename K::FT;
-  using Point_d = typename K::Point_3;
-  using Bbox_d = typename K::Iso_cuboid_3;
-  using Sphere_d = typename K::Sphere_3;
-  using Cartesian_const_iterator_d = typename K::Cartesian_const_iterator_3;
+  using FT = typename GeomTraits::FT;
+  using Point_d = typename GeomTraits::Point_3;
+  using Bbox_d = typename GeomTraits::Iso_cuboid_3;
+  using Sphere_d = typename GeomTraits::Sphere_3;
+  using Cartesian_const_iterator_d = typename GeomTraits::Cartesian_const_iterator_3;
 
   enum Adjacency {
     LEFT,
