@@ -382,6 +382,14 @@ public:
     debug_flags.set(static_cast<int>(Debug_flags::copy_triangulation_into_hole), b);
   }
 
+  bool use_older_cavity_algorithm() const {
+    return debug_flags[static_cast<int>(Debug_flags::use_older_cavity_algorithm)];
+  }
+
+  void use_older_cavity_algorithm(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::use_older_cavity_algorithm), b);
+  }
+
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
                        int li, int lj)
   {
@@ -896,6 +904,7 @@ protected:
     missing_region,
     regions,
     copy_triangulation_into_hole,
+    use_older_cavity_algorithm,
     nb_of_flags
   };
   std::bitset<static_cast<int>(Debug_flags::nb_of_flags)> debug_flags{};

@@ -1238,6 +1238,7 @@ private:
       };
     };
 
+    auto new_vertex = make__new_element_functor(visited_vertices);
     auto new_cell = make__new_element_functor(visited_cells);
     auto new_edge = [&](Vertex_handle v0, Vertex_handle v1, bool does_intersect) {
       return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_intersect);
@@ -1436,17 +1437,18 @@ private:
         }
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
         auto [cached_value_it, not_visited] = new_edge(v0, v1, false);
-        if(!not_visited)
-          return value_returned(cached_value_it->second);
+        if(!not_visited) return value_returned(cached_value_it->second);
         int v0v1_intersects_region =
             (v0->is_marked(Vertex_marker::REGION_INSIDE) || v1->is_marked(Vertex_marker::REGION_INSIDE))
                 ? expected
                 : does_edge_intersect_region(cell, index_v0, index_v1, cdt_2, fh_region);
         if(v0v1_intersects_region != 0) {
-          // if(v0v1_intersects_region != expected) {
-          //   throw PLC_error{"PLC error: v0v1_intersects_region != expected" ,
-          //         __FILE__, __LINE__, face_index, region_index};
-          // }
+          if(this->use_older_cavity_algorithm()) {
+            if(v0v1_intersects_region != expected) {
+              throw PLC_error{"PLC error: v0v1_intersects_region != expected" ,
+                    __FILE__, __LINE__, face_index, region_index};
+            }
+          }
           // report the edge with first vertex above the region
           if(v0v1_intersects_region < 0) {
             std::swap(index_v0, index_v1);
@@ -1460,6 +1462,16 @@ private:
         }
       };
 
+      if(this->use_older_cavity_algorithm()) {
+        CGAL_assertion(0 == region_border_vertices.count(v_above));
+        CGAL_assertion(0 == region_border_vertices.count(v_below));
+        if(new_vertex(v_above)) {
+          vertices_of_upper_cavity.push_back(v_above);
+        }
+        if(new_vertex(v_below)) {
+          vertices_of_lower_cavity.push_back(v_below);
+        }
+      }
       auto facet_circ = this->incident_facets(intersecting_edge);
       const auto facet_circ_end = facet_circ;
       do { // loop facets around [v_above, v_below]
@@ -1477,7 +1489,8 @@ private:
         if(region_border_vertices.count(vc) > 0) continue; // intersecting edges cannot touch the border
 
         if(!test_edge(cell, v_above, index_v_above, vc, index_vc, 1) &&
-           !test_edge(cell, v_below, index_v_below, vc, index_vc, -1) && false)
+           !test_edge(cell, v_below, index_v_below, vc, index_vc, -1) &&
+           !this->use_older_cavity_algorithm())
         {
           dump_triangulation();
           dump_region(face_index, region_index, cdt_2);
@@ -1491,7 +1504,7 @@ private:
                 __FILE__, __LINE__, face_index, region_index};
         }
       } while(++facet_circ != facet_circ_end);
-      if(i + 1 == intersecting_edges.size()) {
+      if(!this->use_older_cavity_algorithm() && i + 1 == intersecting_edges.size()) {
         for(auto ch: intersecting_cells) {
           std::cerr << "tetrahedron #" << ch->time_stamp() << " intersects the region\n";
           for(int i = 0; i < 4; ++i) {
@@ -1528,86 +1541,141 @@ private:
             }
           }
         }
+      } // last intersecting edge, and new algorithm
+    } // end loop on intersecting_edges
+    if(this->use_older_cavity_algorithm()) {
+      for(auto intersecting_edge: intersecting_edges) {
+        const auto [v_above, v_below] = tr.vertices(intersecting_edge);
+
+        auto cell_circ = this->incident_cells(intersecting_edge), end = cell_circ;
+        CGAL_assume(cell_circ != nullptr);
+        do {
+          const Cell_handle cell = cell_circ;
+          const auto index_v_above = cell->index(v_above);
+          const auto index_v_below = cell->index(v_below);
+          const auto cell_above = cell->neighbor(index_v_below);
+          const auto cell_below = cell->neighbor(index_v_above);
+          if(0 == intersecting_cells.count(cell_above)) {
+            facets_of_upper_cavity.emplace_back(cell_above, cell_above->index(cell));
+          }
+          if(0 == intersecting_cells.count(cell_below)) {
+            facets_of_lower_cavity.emplace_back(cell_below, cell_below->index(cell));
+          }
+        } while(++cell_circ != end);
       }
-    }
+    } // older algorithm
+
     std::set<Facet> facets_of_border;
-    for(auto c: intersecting_cells) {
-      for(int i = 0; i < 4; ++i) {
-        auto n = c->neighbor(i);
-        if(intersecting_cells.count(n) == 0) {
-          facets_of_border.emplace(c, i);
-        }
-      }
-    }
     Union_find<Vertex_handle> vertices_of_border_union_find;
-    Unique_hash_map<Vertex_handle, typename Union_find<Vertex_handle>::handle> vertices_of_border_handles;
-    for(auto facet: facets_of_border) {
-      for(auto v : tr.vertices(facet)) {
-        if(!v->is_marked()) {
-          v->set_mark(Vertex_marker::CAVITY);
-          vertices_of_border_handles[v] = vertices_of_border_union_find.make_set(v);
+    if(!this->use_older_cavity_algorithm()) {
+      for(auto c: intersecting_cells) {
+        for(int i = 0; i < 4; ++i) {
+          auto n = c->neighbor(i);
+          if(intersecting_cells.count(n) == 0) {
+            facets_of_border.emplace(n, n->index(c));
+          }
         }
       }
-    }
-    for(auto facet: facets_of_border) {
-      auto vertices = tr.vertices(facet);
-      for(int i = 0; i < 3; ++i) {
-        auto v1 = vertices[i];
-        auto v2 = vertices[(i + 1) % 3];
-        if(v1->is_marked(Vertex_marker::CAVITY) && v2->is_marked(Vertex_marker::CAVITY)) {
-          vertices_of_border_union_find.unify_sets(vertices_of_border_handles[v1],
-                                                   vertices_of_border_handles[v2]);
+      Unique_hash_map<Vertex_handle, typename Union_find<Vertex_handle>::handle> vertices_of_border_handles;
+      for(auto facet: facets_of_border) {
+        for(auto v : tr.vertices(facet)) {
+          if(!v->is_marked()) {
+            v->set_mark(Vertex_marker::CAVITY);
+            vertices_of_border_handles[v] = vertices_of_border_union_find.make_set(v);
+          }
         }
       }
+      for(auto facet: facets_of_border) {
+        auto vertices = tr.vertices(facet);
+        for(int i = 0; i < 3; ++i) {
+          auto v1 = vertices[i];
+          auto v2 = vertices[(i + 1) % 3];
+          if(v1->is_marked(Vertex_marker::CAVITY) && v2->is_marked(Vertex_marker::CAVITY)) {
+            vertices_of_border_union_find.unify_sets(vertices_of_border_handles[v1],
+                                                    vertices_of_border_handles[v2]);
+          }
+        }
+      }
+      CGAL_assertion(vertices_of_border_union_find.number_of_sets() <= 2);
+      auto it = vertices_of_border_union_find.begin();
+      const auto vertex_above_handle = it;
+      do {
+        ++it;
+      } while(it != vertices_of_border_union_find.end() &&
+              vertices_of_border_union_find.same_set(vertex_above_handle, it));
+      const auto vertex_below_handle = it;
+      CGAL_assertion((it == vertices_of_border_union_find.end()) ==
+                    (vertices_of_border_union_find.number_of_sets() == 1));
+      for(auto handle = vertices_of_border_union_find.begin(), end = vertices_of_border_union_find.end();
+          handle != end; ++handle)
+      {
+        auto v = *handle;
+        v->clear_mark(Vertex_marker::CAVITY);
+        if(vertices_of_border_union_find.same_set(handle, vertex_above_handle)) {
+          vertices_of_upper_cavity.push_back(v);
+          v->set_mark(Vertex_marker::CAVITY_ABOVE);
+        } else if(vertices_of_border_union_find.same_set(handle, vertex_below_handle)) {
+          vertices_of_lower_cavity.push_back(v);
+          v->set_mark(Vertex_marker::CAVITY_BELOW);
+        } else {
+          CGAL_error();
+        }
+      }
+    } // new algorithm
+    if(this->debug_regions()) {
+      std::stringstream ss_filename;
+      ss_filename << "dump_facets_of_cavity_region_" << face_index << "_" << region_index << "_border.off";
+      std::ofstream out(ss_filename.str());
+      out.precision(17);
+      write_facets(out, tr, facets_of_border);
     }
 
-    std::ofstream out("dump_facets_of_border.off");
-    out.precision(17);
-    write_facets(out, tr, facets_of_border);
-
-    CGAL_assertion(vertices_of_border_union_find.number_of_sets() <= 2);
-    auto it = vertices_of_border_union_find.begin();
-    const auto vertex_above_handle = it;
-    do {
-      ++it;
-    } while(it != vertices_of_border_union_find.end() &&
-            vertices_of_border_union_find.same_set(vertex_above_handle, it));
-    const auto vertex_below_handle = it;
-    CGAL_assertion((it == vertices_of_border_union_find.end()) ==
-                   (vertices_of_border_union_find.number_of_sets() == 1));
-    for(auto handle = vertices_of_border_union_find.begin(), end = vertices_of_border_union_find.end();
-        handle != end; ++handle)
-    {
-      auto v = *handle;
-      v->clear_mark(Vertex_marker::CAVITY);
-      if(vertices_of_border_union_find.same_set(handle, vertex_above_handle)) {
-        vertices_of_upper_cavity.push_back(v);
-        v->set_mark(Vertex_marker::CAVITY_ABOVE);
-      } else if(vertices_of_border_union_find.same_set(handle, vertex_below_handle)) {
-        vertices_of_lower_cavity.push_back(v);
-        v->set_mark(Vertex_marker::CAVITY_BELOW);
-      } else {
-        CGAL_error();
+    if(this->debug_regions()) {
+      for(auto edge : intersecting_edges) {
+        auto [v1, v2] = tr.vertices(edge);
+        std::cerr << std::format("  edge: {}   {}\n", IO::oformat(v1, with_point_and_info),
+                                IO::oformat(v2, with_point_and_info));
       }
     }
-    for(auto facet: facets_of_border) {
-      for(auto v: tr.vertices(facet)) {
-        if(v->is_marked(Vertex_marker::CAVITY_ABOVE)) {
-          facets_of_upper_cavity.push_back(facet);
-          break;
+    if(!this->use_older_cavity_algorithm()) {
+      for(auto facet: facets_of_border) {
+        if(this->debug_regions()) {
+          std::cerr << "  facet:  ";
+          for(auto v: tr.vertices(facet)) {
+            std::cerr << IO::oformat(v, with_point_and_info) << "  ";
+          }
+          std::cerr << "\n";
         }
-        if(v->is_marked(Vertex_marker::CAVITY_BELOW)) {
-          facets_of_lower_cavity.push_back(facet);
-          break;
+        for(auto v: tr.vertices(facet)) {
+          if(v->is_marked(Vertex_marker::CAVITY_ABOVE)) {
+            facets_of_upper_cavity.push_back(facet);
+            break;
+          }
+          if(v->is_marked(Vertex_marker::CAVITY_BELOW)) {
+            facets_of_lower_cavity.push_back(facet);
+            break;
+          }
         }
       }
+      for(auto v: vertices_of_border_union_find)
+      {
+        v->clear_mark(Vertex_marker::CAVITY_ABOVE);
+        v->clear_mark(Vertex_marker::CAVITY_BELOW);
+      }
     }
-    for(auto v: vertices_of_border_union_find)
-    {
-      v->clear_mark(Vertex_marker::CAVITY_ABOVE);
-      v->clear_mark(Vertex_marker::CAVITY_BELOW);
+    if(this->debug_regions()) {
+      std::stringstream ss_filename;
+      ss_filename << "dump_facets_of_upper_cavity_region_" << face_index << "_" << region_index << "_border.off";
+      std::ofstream out(ss_filename.str());
+      out.precision(17);
+      write_facets(out, tr, facets_of_upper_cavity);
+      out.close();
+      ss_filename.str("");
+      ss_filename << "dump_facets_of_lower_cavity_region_" << face_index << "_" << region_index << "_border.off";
+      out.open(ss_filename.str());
+      write_facets(out, tr, facets_of_lower_cavity);
+      out.close();
     }
-
 
     return outputs;
   }
@@ -1835,8 +1903,10 @@ private:
     });
 
     auto is_facet_of_polygon = [&](const auto& tr, Facet f) {
-      for(const auto vh: tr.vertices(f)) {
-        if(!vh->is_marked()) {
+      const auto [c, facet_index] = f;
+      for(int i = 0; i < 3; ++i) {
+        const auto vh = c->vertex(T_3::vertex_triple_index(facet_index, i));
+        if(0 == polygon_points.count(tr.point(vh))) {
           return false;
         }
       }

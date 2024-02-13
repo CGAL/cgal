@@ -68,6 +68,7 @@ struct CDT_options
   bool debug_missing_regions = false;
   bool debug_regions = false;
   bool debug_copy_triangulation_into_hole = false;
+  bool use_new_cavity_algorithm = false;
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
   double segment_vertex_epsilon = 1e-8;
@@ -119,6 +120,10 @@ int main(int argc, char* argv[])
       options.merge_facets = true;
     } else if(arg == "--no-merge-facets") {
       options.merge_facets = false;
+    } else if(arg == "--use-new-cavity-algorithm") {
+      options.use_new_cavity_algorithm = true;
+    } else if(arg == "--use-old-cavity-algorithm") {
+      options.use_new_cavity_algorithm = false;
     } else if(arg == "--no-repair") {
       options.repair_mesh = false;
     } else if(arg == "--merge-facets-old") {
@@ -316,18 +321,11 @@ auto segment_soup_to_polylines(Range_of_segments&& segment_soup) {
 
 int go(Mesh mesh, CDT_options options) {
   CDT cdt;
-  if(options.verbose > 0) {
-    cdt.debug_Steiner_points(true);
-  }
-  if(options.verbose > 1 || options.debug_missing_regions) {
-    cdt.debug_missing_region(true);
-  }
-  if(options.debug_regions) {
-    cdt.debug_regions(true);
-  }
-  if(options.debug_copy_triangulation_into_hole) {
-    cdt.debug_copy_triangulation_into_hole(true);
-  }
+  cdt.debug_Steiner_points(options.verbose > 0);
+  cdt.debug_missing_region(options.verbose > 1 || options.debug_missing_regions);
+  cdt.debug_regions(options.debug_regions);
+  cdt.debug_copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
+  cdt.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
 
   const auto bbox = CGAL::Polygon_mesh_processing::bbox(mesh);
