@@ -748,7 +748,7 @@ public:
     \brief retrieves a reference to the `Node_data` associated with the node specified by `n` if
     `GeomTraits` is a model of `OrthtreeTraitswithData`, and `nullptr` otherwise.
    */
-  auto data(Node_index n){
+  std::conditional_t<has_data,Node_data&,void*>& data(Node_index n){
     return m_node_contents[n];
   }
 
@@ -756,7 +756,7 @@ public:
     \brief retrieves a const reference to the `Node_data` associated with the node specified by `n` if
     `GeomTraits` is a model of `OrthtreeTraitswithData`, and `nullptr` otherwise.
    */
-  auto data(Node_index n) const{
+  std::conditional_t<has_data,const Node_data&,void*> data(Node_index n) const{
     return m_node_contents[n];
   }
 
