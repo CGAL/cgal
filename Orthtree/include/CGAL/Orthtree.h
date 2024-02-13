@@ -42,8 +42,15 @@
 #include <queue>
 #include <vector>
 #include <math.h>
+#include <utility>
+
+#include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
+
+namespace internal {
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Node_data)
+}
 
 /*!
   \ingroup PkgOrthtreeRef
@@ -65,13 +72,26 @@ namespace CGAL {
  */
 template <typename GeomTraits>
 class Orthtree {
+private:
+  template<class A, class T>
+  struct Node_data_selector {};
+
+  template<class A>
+  struct Node_data_selector<A, boost::mpl::bool_<true>> {
+    using type = typename A::Node_data;
+  };
+
+  template<class A>
+  struct Node_data_selector<A, boost::mpl::bool_<false>> {
+    using type = void;
+  };
 
 public:
-
   /// \name Template Types
   /// @{
   using Traits = GeomTraits; ///< Geometry traits
   /// @}
+  using Has_data = boost::mpl::bool_<internal::has_Node_data<GeomTraits>::value>;
 
   /// \name Traits Types
   /// @{
@@ -84,7 +104,7 @@ public:
   using Adjacency = typename Traits::Adjacency; ///< Adjacency type.
 
   using Node_index = typename Traits::Node_index; ///< Index of a given node in the tree; the root always has index 0.
-  using Node_data = typename Traits::Node_data;
+  using Node_data = typename Node_data_selector<Traits, Has_data>::type;
 
   /// @}
 
@@ -153,22 +173,34 @@ private: // data members :
   using Node_property_container = Properties::Experimental::Property_container<Node_index>;
 
   template <typename T>
-  using Property_array = typename Properties::Experimental::Property_container<Node_index>::template Array<T>;
+  using Property_array = typename Properties::Experimental::Property_array_handle<Node_index, T>;
 
   Traits m_traits; /* the tree traits */
 
   Node_property_container m_node_properties;
-  Property_array<Node_data>& m_node_contents;
-  Property_array<std::uint8_t>& m_node_depths;
-  Property_array<Global_coordinates>& m_node_coordinates;
-  Property_array<std::optional<Node_index>>& m_node_parents;
-  Property_array<std::optional<Node_index>>& m_node_children;
+  Property_array<Node_data> m_node_contents;
+  Property_array<std::uint8_t> m_node_depths;
+  Property_array<Global_coordinates> m_node_coordinates;
+  Property_array<std::optional<Node_index>> m_node_parents;
+  Property_array<std::optional<Node_index>> m_node_children;
 
   using Bbox_dimensions = std::array<FT, dimension>;
   Bbox m_bbox;
   std::vector<Bbox_dimensions> m_side_per_depth;      /* precomputed (potentially approximated) side length per node's depth */
 
   Cartesian_ranges cartesian_range; /* a helper to easily iterate over coordinates of points */
+
+  template<class T>
+  void init_data();
+
+  template<>
+  void init_data<boost::mpl::bool_<true>>() {
+    data(root()) = m_traits.construct_root_node_contents_object()();
+  }
+
+  template<>
+  void init_data<boost::mpl::bool_<false>>() {
+  }
 
 public:
 
@@ -211,7 +243,8 @@ public:
     }
     // save orthtree attributes
     m_side_per_depth.push_back(size);
-    data(root()) = m_traits.construct_root_node_contents_object()();
+
+    init_data<Has_data>();
   }
 
   /// @}
@@ -695,14 +728,16 @@ public:
   /*!
     \brief retrieves a reference to the Node_data associated with the node specified by `n`.
    */
-  Node_data& data(Node_index n) {
+  template<typename Dummy = Node_data>
+  auto data(Node_index n) -> std::enable_if_t<internal::has_Node_data<GeomTraits>::value, Dummy&>{
     return m_node_contents[n];
   }
 
   /*!
     \brief retrieves a const reference to the Node_data associated with the node specified by `n`.
    */
-  const Node_data& data(Node_index n) const {
+  template<typename Dummy = Node_data>
+  auto data(Node_index n) const -> std::enable_if_t<internal::has_Node_data<GeomTraits>::value, const Dummy&> {
     return m_node_contents[n];
   }
 
@@ -930,7 +965,7 @@ public:
     Point center = barycenter(n);
 
     // Add the node's contents to its children
-    m_traits.distribute_node_contents_object()(n, *this, center);
+    distribute_node_contents<Has_data>(n, center);
   }
 
   /*!
@@ -1137,6 +1172,17 @@ private: // functions :
     }
     return output;
   }
+
+  template<class T>
+  void distribute_node_contents(Node_index n, const Point& center);
+
+  template<>
+  void distribute_node_contents<boost::mpl::bool_<true>>(Node_index n, const Point& center) {
+    m_traits.distribute_node_contents_object()(n, *this, center);
+  }
+
+  template<>
+  void distribute_node_contents<boost::mpl::bool_<false>>(Node_index n, const Point& center) {}
 
 public:
 

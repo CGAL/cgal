@@ -191,6 +191,43 @@ public:
 
 };
 
+template <typename Index>
+class Property_array<Index, void> : public Property_array_base<Index> {
+public:
+  Property_array() {}
+
+  virtual std::shared_ptr<Property_array_base<Index>> empty_clone(const std::vector<bool>& active_indices) {
+    return std::make_shared<Property_array<Index, void>>();
+  }
+
+  virtual std::shared_ptr<Property_array_base<Index>> clone(const std::vector<bool>& active_indices) {
+    return std::make_shared<Property_array<Index, void>>();
+  }
+
+  virtual void copy(const Property_array_base<Index>& other) {}
+
+  // desactived as MSVC 2017 as an issue with that but it is not currently used.
+#if 0
+  virtual void move(Property_array_base<Index>&& other) = 0;
+#endif
+
+  virtual void append(const Property_array_base<Index>& other) {}
+
+  virtual void reserve(std::size_t n) {}
+
+  virtual void shrink_to_fit() {}
+
+  virtual void swap(Index a, Index b) {}
+
+  virtual void reset(Index i) {}
+
+  virtual const std::type_info& type() const {
+    return typeid(void);
+  }
+
+  virtual void transfer_from(const Property_array_base<Index>& other_base, Index other_index, Index this_index) {}
+};
+
 // todo: property maps/array handles should go in their own file
 
 // todo: add const/read-only handle
@@ -241,6 +278,56 @@ public:
 
   inline friend void put(Property_array_handle<Index, T> p, const Index& i, const T& v) { p[i] = v; }
 
+};
+
+// void specialization
+template <typename Index>
+class Property_array_handle<Index, void> {
+
+  std::reference_wrapper<Property_array<Index, void>> m_array;
+  std::vector<int> m_dummy;
+
+public:
+
+  // Necessary for use as a boost::property_type
+  using key_type = Index;
+  using value_type = void;
+  using reference = void;
+  using const_reference = void;
+  using category = boost::lvalue_property_map_tag;
+
+  using iterator = typename std::vector<int>::iterator;
+  using const_iterator = typename std::vector<int>::const_iterator;
+
+  Property_array_handle(Property_array<Index, void>& array) : m_array(array) {}
+
+  [[nodiscard]] std::size_t size() const { return 0; }
+
+  [[nodiscard]] std::size_t capacity() const { return 0; }
+
+  Property_array<Index, void>& array() const { return m_array.get(); }
+
+  // todo: This might not be needed, if the other operator[] is made const
+  const_reference operator[](Index i) const { }
+
+  reference operator[](Index i) { }
+
+  // todo: maybe these can be const, in an lvalue property map?
+  iterator begin() { return m_dummy.begin(); }
+
+  iterator end() { return m_dummy.end(); }
+
+  const_iterator begin() const { return m_dummy.begin(); }
+
+  const_iterator end() const { return m_dummy.end(); }
+
+  bool operator==(const Property_array_handle<Index, void>& other) const { return true; }
+
+  bool operator!=(const Property_array_handle<Index, void>& other) const { return false; }
+
+  inline friend reference get(Property_array_handle<Index, void> p, const Index& i) {}
+
+  //inline friend void put(Property_array_handle<Index, void> p, const Index& i, const T& v) {}
 };
 
 template <typename Index = std::size_t>
@@ -318,7 +405,46 @@ public:
 
   template <typename T>
   std::pair<std::reference_wrapper<Property_array<Index, T>>, bool>
-  get_or_add_property(const std::string& name, const T default_value = T()) {
+    get_or_add_property(const std::string& name) {
+    auto range = m_properties.equal_range(name);
+    for (auto it = range.first; it != range.second; it++) {
+      Property_array<Index, T>* typed_array_ptr = dynamic_cast<Property_array<Index, T>*>(it->second.get());
+      if (typed_array_ptr != nullptr)
+        return { {*typed_array_ptr}, false };
+    }
+
+    auto it = m_properties.emplace(
+      name,
+      std::make_shared<Property_array<Index, T>>(
+        m_active_indices,
+        T()
+      )
+    );
+
+    return { {*dynamic_cast<Property_array<Index, T>*>(it->second.get())}, true };
+  }
+
+  template<>
+  std::pair<std::reference_wrapper<Property_array<Index, void>>, bool>
+    get_or_add_property(const std::string& name) {
+    auto range = m_properties.equal_range(name);
+    for (auto it = range.first; it != range.second; it++) {
+      Property_array<Index, void>* typed_array_ptr = dynamic_cast<Property_array<Index, void>*>(it->second.get());
+      if (typed_array_ptr != nullptr)
+        return { {*typed_array_ptr}, false };
+    }
+
+    auto it = m_properties.emplace(
+      name,
+      std::make_shared<Property_array<Index, void>>()
+    );
+
+    return { {*dynamic_cast<Property_array<Index, void>*>(it->second.get())}, true };
+  }
+
+  template <typename T>
+  std::pair<std::reference_wrapper<Property_array<Index, T>>, bool>
+    get_or_add_property(const std::string& name, const T default_value) {
     auto range = m_properties.equal_range(name);
     for (auto it = range.first; it != range.second; it++) {
       Property_array<Index, T>* typed_array_ptr = dynamic_cast<Property_array<Index, T>*>(it->second.get());
@@ -334,7 +460,7 @@ public:
       )
     );
 
-    return {{*dynamic_cast<Property_array<Index, T>*>(it->second.get())}, true};
+    return { {*dynamic_cast<Property_array<Index, T>*>(it->second.get())}, true };
   }
 
   template <typename T>
