@@ -367,7 +367,7 @@ const CGAL::Line_2<Kernel> &l2);
 /*!
 constructs the bisector plane of the two points `p` and `q`.
 The bisector is oriented in such a way that `p` lies on its
-positive side. \pre `p != q'.
+positive side. \pre `p != q`.
 */
 template <typename Kernel>
 CGAL::Plane_3<Kernel> bisector(const CGAL::Point_3<Kernel> &p,
