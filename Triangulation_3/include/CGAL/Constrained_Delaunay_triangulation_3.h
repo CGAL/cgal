@@ -1834,45 +1834,47 @@ private:
       return true;
     };
 
-#if CGAL_DEBUG_CDT_3 & 64
-    std::cerr << std::format("Cavity has {} cells and {} edges, "
-                             "{} vertices in upper cavity and {} in lower, "
-                             "{} facets in upper cavity and {} in lower\n",
-                             original_intersecting_cells.size(),
-                             intersecting_edges.size(),
-                             original_vertices_of_upper_cavity.size(),
-                             original_vertices_of_lower_cavity.size(),
-                             original_facets_of_upper_cavity.size(),
-                             original_facets_of_lower_cavity.size());
-    if(original_intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
-      std::cerr << "!! Interesting case !!\n";
-      // dump_region(face_index, region_index, cdt_2);
-      // {
-      //   std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + "_" +
-      //                     std::to_string(region_index) + ".polylines.txt");
-      //   out.precision(17);
-      //   for(auto edge: intersecting_edges) {
-      //     write_segment(out, edge);
-      //   }
-      // }
-      // dump_facets_of_cavity(face_index, region_index, "lower", original_facets_of_lower_cavity);
-      // dump_facets_of_cavity(face_index, region_index, "upper", original_facets_of_upper_cavity);
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+    if(this->debug_regions()) {
+      std::cerr << std::format("Cavity has {} cells and {} edges, "
+                              "{} vertices in upper cavity and {} in lower, "
+                              "{} facets in upper cavity and {} in lower\n",
+                              original_intersecting_cells.size(),
+                              intersecting_edges.size(),
+                              original_vertices_of_upper_cavity.size(),
+                              original_vertices_of_lower_cavity.size(),
+                              original_facets_of_upper_cavity.size(),
+                              original_facets_of_lower_cavity.size());
+      if(original_intersecting_cells.size() > 3 || intersecting_edges.size() > 1) {
+        std::cerr << "!! Interesting case !!\n";
+        // dump_region(face_index, region_index, cdt_2);
+        // {
+        //   std::ofstream out(std::string("dump_intersecting_edges_") + std::to_string(face_index) + "_" +
+        //                     std::to_string(region_index) + ".polylines.txt");
+        //   out.precision(17);
+        //   for(auto edge: intersecting_edges) {
+        //     write_segment(out, edge);
+        //   }
+        // }
+        // dump_facets_of_cavity(face_index, region_index, "lower", original_facets_of_lower_cavity);
+        // dump_facets_of_cavity(face_index, region_index, "upper", original_facets_of_upper_cavity);
+      }
     }
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     auto register_internal_constrained_facet = [this](Facet f) { this->register_facet_to_be_constrained(f); };
 
-#if CGAL_DEBUG_CDT_3 & 128
-    std::cerr << "# upper cavity\n";
-#endif // CGAL_DEBUG_CDT_3
+    if(this->debug_copy_triangulation_into_hole()) {
+      std::cerr << "# upper cavity\n";
+    }
     [[maybe_unused]] const auto [upper_cavity_triangulation, vertices_of_upper_cavity,
                                  map_upper_cavity_vertices_to_ambient_vertices, facets_of_upper_cavity,
                                  interior_constrained_faces_upper, cells_of_upper_cavity] =
         triangulate_cavity(original_intersecting_cells, original_facets_of_upper_cavity, original_vertices_of_upper_cavity);
     std::for_each(interior_constrained_faces_upper.begin(), interior_constrained_faces_upper.end(),
                   register_internal_constrained_facet);
-#if CGAL_DEBUG_CDT_3 & 128
-    std::cerr << "# lower cavity\n";
-#endif // CGAL_DEBUG_CDT_3
+    if(this->debug_copy_triangulation_into_hole()) {
+      std::cerr << "# lower cavity\n";
+    }
     [[maybe_unused]] const auto [lower_cavity_triangulation, vertices_of_lower_cavity,
                                  map_lower_cavity_vertices_to_ambient_vertices, facets_of_lower_cavity,
                                  interior_constrained_faces_lower, cells_of_lower_cavity] =
@@ -1963,18 +1965,24 @@ private:
 #endif // CGAL_DEBUG_CDT_3
 
     typename T_3::Vertex_triple_Facet_map outer_map;
-    auto add_to_outer_map = [&outer_map](typename T_3::Vertex_triple vt, Facet f,
-                                         [[maybe_unused]] std::string_view extra = {}) {
+    auto add_to_outer_map = [this, &outer_map](typename T_3::Vertex_triple vt, Facet f,
+                                               [[maybe_unused]] std::string_view extra = {}) {
       outer_map[vt] = f;
-#if CGAL_DEBUG_CDT_3 & 128
-      CGAL_assertion(vt[0] != vt[1]);
-      CGAL_assertion(vt[0] != vt[2]);
-      CGAL_assertion(vt[1] != vt[2]);
-      std::cerr << std::format("outer map: Adding {}triple ({:.6}, {:.6}, {:.6})\n", extra,
-                               IO::oformat(vt[0], with_point),
-                               IO::oformat(vt[1], with_point),
-                               IO::oformat(vt[2], with_point));
-#endif // CGAL_DEBUG_CDT_3
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+      if(this->debug_copy_triangulation_into_hole()) {
+        CGAL_assertion(vt[0] != vt[1]);
+        CGAL_assertion(vt[0] != vt[2]);
+        CGAL_assertion(vt[1] != vt[2]);
+        std::cerr << std::format("outer map: Adding {}triple ({:.6}, {:.6}, {:.6})\n", extra,
+                                IO::oformat(vt[0], with_point),
+                                IO::oformat(vt[1], with_point),
+                                IO::oformat(vt[2], with_point));
+        std::ofstream out("dump_upper_outer_map.off");
+        out.precision(17);
+        write_facets(out, *this, std::ranges::views::values(outer_map));
+        out.close();
+      }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     };
     auto fill_outer_map_of_cavity = [&](const auto&, const auto& facets) {
       for(auto f : facets) {
@@ -2027,6 +2035,17 @@ private:
       const auto upper_inner_map = tr.create_triangulation_inner_map(
           upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, false);
 
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+      if(this->debug_copy_triangulation_into_hole()) {
+        std::cerr << "upper_inner_map:\n";
+        for(auto [vt, _] : upper_inner_map) {
+          std::cerr << std::format("  {:.6}, {:.6}, {:.6})\n",
+                                  IO::oformat(vt[0], with_point),
+                                  IO::oformat(vt[1], with_point),
+                                  IO::oformat(vt[2], with_point));
+        }
+      }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       this->copy_triangulation_into_hole(map_upper_cavity_vertices_to_ambient_vertices,
                                          std::move(outer_map),
                                          upper_inner_map,
@@ -2052,19 +2071,21 @@ private:
     {
       const auto lower_inner_map = tr.create_triangulation_inner_map(
           lower_cavity_triangulation, map_lower_cavity_vertices_to_ambient_vertices, false);
-#if CGAL_DEBUG_CDT_3 & 128
-      std::cerr << "outer_map:\n";
-      for(auto [vt, _] : outer_map) {
-        std::cerr << std::format("  {:.6}, {:.6}, {:.6})\n",
-                                 IO::oformat(vt[0], with_point),
-                                 IO::oformat(vt[1], with_point),
-                                 IO::oformat(vt[2], with_point));
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+      if(this->debug_copy_triangulation_into_hole()) {
+        std::cerr << "outer_map:\n";
+        for(auto [vt, _] : outer_map) {
+          std::cerr << std::format("  {:.6}, {:.6}, {:.6})\n",
+                                  IO::oformat(vt[0], with_point),
+                                  IO::oformat(vt[1], with_point),
+                                  IO::oformat(vt[2], with_point));
+        }
+        std::ofstream out("dump_lower_outer_map.off");
+        out.precision(17);
+        write_facets(out, *this, std::ranges::views::values(outer_map));
+        out.close();
       }
-      std::ofstream out("dump_lower_outer_map.off");
-      out.precision(17);
-      write_facets(out, *this, std::ranges::views::values(outer_map));
-      out.close();
-#endif // CGAL_DEBUG_CDT_3
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       this->copy_triangulation_into_hole(map_lower_cavity_vertices_to_ambient_vertices, std::move(outer_map), lower_inner_map,
                                          Emptyset_iterator{});
     }
@@ -2221,12 +2242,14 @@ private:
           tr.is_infinite(v) ? cavity_triangulation.infinite_vertex() : cavity_triangulation.insert(this->point(v));
       map_ambient_vertices_to_cavity_vertices[v] = cavity_v;
       map_cavity_vertices_to_ambient_vertices[cavity_v] = v;
-#if CGAL_DEBUG_CDT_3 & 128
-      std::cerr << std::format("inserted {}cavity vertex {:.6} -> {:.6}\n",
-                               extra,
-                               IO::oformat(cavity_v, with_point),
-                               IO::oformat(v, with_point));
-#endif
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+      if(this->debug_regions()) {
+        std::cerr << std::format("inserted {}cavity vertex {:.6} -> {:.6}\n",
+                                extra,
+                                IO::oformat(cavity_v, with_point_and_info),
+                                IO::oformat(v, with_point_and_info));
+      }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       return cavity_v;
     };
 
@@ -2483,12 +2506,14 @@ private:
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
       const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
       const bool is_3d = this->tds().is_edge(va_3d, vb_3d);
-#if CGAL_DEBUG_CDT_3 & 128 && __has_include(<format>)
-      std::cerr << std::format("Edge is 3D: {:6}  ({} , {})\n",
-                                is_3d,
-                                IO::oformat(va_3d, with_point_and_info),
-                                IO::oformat(vb_3d, with_point_and_info));
-#endif // CGAL_DEBUG_CDT_3
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+      if(this->debug_copy_triangulation_into_hole()) {
+        std::cerr << std::format("Edge is 3D: {:6}  ({} , {})\n",
+                                  is_3d,
+                                  IO::oformat(va_3d, with_point_and_info),
+                                  IO::oformat(vb_3d, with_point_and_info));
+      }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       CGAL_assertion(is_3d || !cdt_2.is_constrained(edge));
       fh->info().is_edge_also_in_3d_triangulation[unsigned(i)] = is_3d;
       const auto reverse_edge = cdt_2.mirror_edge(edge);

@@ -66,7 +66,8 @@ struct CDT_options
   bool merge_facets_old_method = false;
   bool repair_mesh = true;
   bool debug_missing_regions = false;
-  int debug_regions = false;
+  bool debug_regions = false;
+  bool debug_copy_triangulation_into_hole = false;
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
   double segment_vertex_epsilon = 1e-8;
@@ -150,6 +151,8 @@ int main(int argc, char* argv[])
       options.debug_missing_regions = true;
     } else if(arg == "--debug-regions") {
       options.debug_regions = true;
+    } else if(arg == "--debug_copy_triangulation_into_hole") {
+      options.debug_copy_triangulation_into_hole = true;
     } else if(arg == "-V") {
       ++options.verbose;
     } else if(arg == "--help") {
@@ -321,6 +324,9 @@ int go(Mesh mesh, CDT_options options) {
   }
   if(options.debug_regions) {
     cdt.debug_regions(true);
+  }
+  if(options.debug_copy_triangulation_into_hole) {
+    cdt.debug_copy_triangulation_into_hole(true);
   }
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
 

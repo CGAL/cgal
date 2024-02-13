@@ -372,6 +372,14 @@ public:
     debug_flags.set(static_cast<int>(Debug_flags::regions), b);
   }
 
+  bool debug_copy_triangulation_into_hole() const {
+    return debug_flags[static_cast<int>(Debug_flags::copy_triangulation_into_hole)];
+  }
+
+  void debug_copy_triangulation_into_hole(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::copy_triangulation_into_hole), b);
+  }
+
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
                        int li, int lj)
   {
@@ -885,6 +893,7 @@ protected:
     conforming,
     missing_region,
     regions,
+    copy_triangulation_into_hole,
     nb_of_flags
   };
   std::bitset<static_cast<int>(Debug_flags::nb_of_flags)> debug_flags{};
