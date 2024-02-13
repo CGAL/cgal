@@ -72,26 +72,26 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(Node_data)
  */
 template <typename GeomTraits>
 class Orthtree {
-private:
-  template<class A, class T>
+  template<class A, bool b>
   struct Node_data_selector {};
 
   template<class A>
-  struct Node_data_selector<A, boost::mpl::bool_<true>> {
+  struct Node_data_selector<A, true> {
     using type = typename A::Node_data;
   };
 
   template<class A>
-  struct Node_data_selector<A, boost::mpl::bool_<false>> {
+  struct Node_data_selector<A, false> {
     using type = void;
   };
+
+  static inline constexpr bool has_data = internal::has_Node_data<GeomTraits>::value;
 
 public:
   /// \name Template Types
   /// @{
   using Traits = GeomTraits; ///< Geometry traits
   /// @}
-  using Has_data = boost::mpl::bool_<internal::has_Node_data<GeomTraits>::value>;
 
   /// \name Traits Types
   /// @{
@@ -104,7 +104,7 @@ public:
   using Adjacency = typename Traits::Adjacency; ///< Adjacency type.
 
   using Node_index = typename Traits::Node_index; ///< Index of a given node in the tree; the root always has index 0.
-  using Node_data = typename Node_data_selector<Traits, Has_data>::type;
+  using Node_data = typename Node_data_selector<Traits, has_data>::type;
 
   /// @}
 
@@ -178,7 +178,7 @@ private: // data members :
   Traits m_traits; /* the tree traits */
 
   Node_property_container m_node_properties;
-  Property_array<Node_data> m_node_contents;
+  std::conditional_t<has_data,Property_array<Node_data>, void*> m_node_contents;
   Property_array<std::uint8_t> m_node_depths;
   Property_array<Global_coordinates> m_node_coordinates;
   Property_array<std::optional<Node_index>> m_node_parents;
@@ -190,17 +190,13 @@ private: // data members :
 
   Cartesian_ranges cartesian_range; /* a helper to easily iterate over coordinates of points */
 
-  template<class T>
-  void init_data();
-
-  template<>
-  void init_data<boost::mpl::bool_<true>>() {
-    data(root()) = m_traits.construct_root_node_contents_object()();
+  template<typename Dummy = Property_array<Node_data>>
+  auto init_node_contents(std::true_type) -> std::enable_if_t<has_data, Dummy>
+  {
+    return Property_array<Node_data>(m_node_properties.template get_or_add_property<Node_data>("contents").first);
   }
 
-  template<>
-  void init_data<boost::mpl::bool_<false>>() {
-  }
+  void* init_node_contents(std::false_type) { return nullptr; }
 
 public:
 
@@ -223,7 +219,7 @@ public:
   */
   explicit Orthtree(Traits traits) :
     m_traits(traits),
-    m_node_contents(m_node_properties.template get_or_add_property<Node_data>("contents").first),
+    m_node_contents(init_node_contents(std::bool_constant<has_data>())),
     m_node_depths(m_node_properties.template get_or_add_property<std::uint8_t>("depths", 0).first),
     m_node_coordinates(m_node_properties.template get_or_add_property<Global_coordinates>("coordinates").first),
     m_node_parents(m_node_properties.template get_or_add_property<std::optional<Node_index>>("parents").first),
@@ -244,7 +240,8 @@ public:
     // save orthtree attributes
     m_side_per_depth.push_back(size);
 
-    init_data<Has_data>();
+    if constexpr (has_data)
+      m_traits.construct_root_node_contents_object()();
   }
 
   /// @}
@@ -253,7 +250,7 @@ public:
   Orthtree(const Orthtree& other) :
     m_traits(other.m_traits),
     m_node_properties(other.m_node_properties),
-    m_node_contents(m_node_properties.template get_property<Node_data>("contents")),
+    m_node_contents(init_node_contents(std::bool_constant<has_data>())),
     m_node_depths(m_node_properties.template get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.template get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.template get_property<std::optional<Node_index>>("parents")),
@@ -264,7 +261,7 @@ public:
   Orthtree(Orthtree&& other) :
     m_traits(other.m_traits),
     m_node_properties(std::move(other.m_node_properties)),
-    m_node_contents(m_node_properties.template get_property<Node_data>("contents")),
+    m_node_contents(init_node_contents(std::bool_constant<has_data>())),
     m_node_depths(m_node_properties.template get_property<std::uint8_t>("depths")),
     m_node_coordinates(m_node_properties.template get_property<Global_coordinates>("coordinates")),
     m_node_parents(m_node_properties.template get_property<std::optional<Node_index>>("parents")),
@@ -729,7 +726,7 @@ public:
     \brief retrieves a reference to the Node_data associated with the node specified by `n`.
    */
   template<typename Dummy = Node_data>
-  auto data(Node_index n) -> std::enable_if_t<internal::has_Node_data<GeomTraits>::value, Dummy&>{
+  auto data(Node_index n) -> std::enable_if_t<has_data, Dummy&>{
     return m_node_contents[n];
   }
 
@@ -737,7 +734,7 @@ public:
     \brief retrieves a const reference to the Node_data associated with the node specified by `n`.
    */
   template<typename Dummy = Node_data>
-  auto data(Node_index n) const -> std::enable_if_t<internal::has_Node_data<GeomTraits>::value, const Dummy&> {
+  auto data(Node_index n) const -> std::enable_if_t<has_data, const Dummy&> {
     return m_node_contents[n];
   }
 
@@ -965,7 +962,8 @@ public:
     Point center = barycenter(n);
 
     // Add the node's contents to its children
-    distribute_node_contents<Has_data>(n, center);
+    if constexpr (has_data)
+      m_traits.distribute_node_contents_object()(n, *this, center);
   }
 
   /*!
@@ -1172,17 +1170,6 @@ private: // functions :
     }
     return output;
   }
-
-  template<class T>
-  void distribute_node_contents(Node_index n, const Point& center);
-
-  template<>
-  void distribute_node_contents<boost::mpl::bool_<true>>(Node_index n, const Point& center) {
-    m_traits.distribute_node_contents_object()(n, *this, center);
-  }
-
-  template<>
-  void distribute_node_contents<boost::mpl::bool_<false>>(Node_index n, const Point& center) {}
 
 public:
 

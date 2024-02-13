@@ -48,17 +48,18 @@ int test(Tree &tree)
   return EXIT_SUCCESS;
 }
 
-void main() {
-    std::size_t nb_pts = 100;
-    Point_set points;
-    CGAL::Random_points_in_cube_3<Point> generator;
-    points.reserve(nb_pts);
-    for (std::size_t i = 0; i < nb_pts; ++i)
-      points.insert(*(generator++));
+int main()
+{
+  std::size_t nb_pts = 100;
+  Point_set points;
+  CGAL::Random_points_in_cube_3<Point> generator;
+  points.reserve(nb_pts);
+  for (std::size_t i = 0; i < nb_pts; ++i)
+    points.insert(*(generator++));
 
-    Octree base({ points, points.point_map() });
-    test(base);
+  Octree base({ points, points.point_map() });
+  test(base);
 
-    Octree_without_data base2({});
-    test(base2);
+  Octree_without_data base2({});
+  test(base2);
 }
