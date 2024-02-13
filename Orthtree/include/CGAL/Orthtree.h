@@ -60,7 +60,7 @@ struct Node_data_wrapper<GT, true>
 {
   using Node_index = typename GT::Node_index;
   using Node_data = typename GT::Node_data;
-  Properties::Experimental::Property_array_handle<Node_index, Node_data> m_node_contents;
+  typename CGAL::Properties::Experimental::Property_container<Node_index>::template Array<Node_data>& m_node_contents;
 
   template <class Property_container>
   Node_data_wrapper(Property_container& node_properties)
@@ -203,16 +203,16 @@ private: // data members :
   using Node_property_container = Properties::Experimental::Property_container<Node_index>;
 
   template <typename T>
-  using Property_array = typename Properties::Experimental::Property_array_handle<Node_index, T>;
+  using Property_array = typename Properties::Experimental::Property_container<Node_index>::template Array<T>;
 
   Traits m_traits; /* the tree traits */
 
   Node_property_container m_node_properties;
   Orthtree_impl::Node_data_wrapper<Traits, has_data> m_node_contents;
-  Property_array<std::uint8_t> m_node_depths;
-  Property_array<Global_coordinates> m_node_coordinates;
-  Property_array<std::optional<Node_index>> m_node_parents;
-  Property_array<std::optional<Node_index>> m_node_children;
+  Property_array<std::uint8_t>& m_node_depths;
+  Property_array<Global_coordinates>& m_node_coordinates;
+  Property_array<std::optional<Node_index>>& m_node_parents;
+  Property_array<std::optional<Node_index>>& m_node_children;
 
   using Bbox_dimensions = std::array<FT, dimension>;
   Bbox m_bbox;
