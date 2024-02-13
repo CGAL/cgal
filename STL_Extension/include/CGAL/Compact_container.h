@@ -1173,6 +1173,8 @@ struct With_offset_tag {
 struct With_point_tag : public With_offset_tag {
 };
 
+struct With_point_and_info_tag : public With_point_tag {};
+
 template <class DSC, bool Const>
 struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>
   : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
