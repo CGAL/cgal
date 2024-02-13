@@ -284,10 +284,23 @@ namespace CGAL {
     *       The default value is `false`, and faces are triangulated.}
     *     \cgalParamDefault{false}
     *   \cgalParamNEnd
+    *   \cgalParamNBegin{vertex_point_map}
+    *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+    *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+    *                    as key type and `%Point_3` as value type}
+    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+    *                     must be available in `PolygonMesh`.}
+    *   \cgalParamNEnd
     *   \cgalParamNBegin{geom_traits}
-    *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`,
-    *       the function `Construct_bbox_3 construct_bbox_3_object()`,
-    *       the types `Point_3`, `Vector_3` and `Iso_cuboid_3`.}
+    *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`
+    *                           and the function `Construct_bbox_3 construct_bbox_3_object()`.
+    *                           `Construct_bbox_3` must provide `Bbox_3 operator()(Point_3)`
+    *                           where `%Point_3` is the value type of the vertex point map.
+    *                           It must also provide the functor `Construct_midpoint_3` and,
+    *                           the function `Construct_midpoint_3 construct_midpoint_3_object()`.
+    *                           `Construct_midpoint_3` must provide `Point_3 operator()(Point_3, Point_3)`.
+    *                           The types `Vector_3` and `Iso_cuboid_3` must also be provided.}
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
@@ -312,7 +325,7 @@ namespace CGAL {
         get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
       const Iso_cuboid_3 bb(CGAL::Polygon_mesh_processing::bbox(pmesh));
-      const Point_3 bb_center = CGAL::midpoint((bb.min)(), (bb.max()));
+      const Point_3 bb_center = CGAL::midpoint((bb.min)(), (bb.max)());
       const Iso_cuboid_3 bbext = (factor == 1.)
         ? bb
         : Iso_cuboid_3(bb_center + factor * Vector_3(bb_center, (bb.min)()),
