@@ -281,10 +281,17 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
 
   std::ostream& operator()(std::ostream& out) const {
     out << Time_stamper::display_id(this->it.operator->(), offset);
-    if(this->it.operator->() != nullptr)
-      return  out << (this->it->is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
-                  << (this->it->is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
-                  << "= " << this->it->point();
+    if(this->it.operator->() != nullptr) {
+      out << (this->it->is_Steiner_vertex_on_edge() ? "(Steiner)" : "")
+          << (this->it->is_Steiner_vertex_in_face() ? "(Steiner in face)" : "")
+          << "= " << this->it->point();
+      if(this->it->is_marked(CDT_3_vertex_marker::REGION_BORDER)) out << " (region border)";
+      if(this->it->is_marked(CDT_3_vertex_marker::REGION_INSIDE)) out << " (inside region)";
+      if(this->it->is_marked(CDT_3_vertex_marker::CAVITY)) out << " (cavity vertex)";
+      if(this->it->is_marked(CDT_3_vertex_marker::CAVITY_ABOVE)) out << " (vertex above)";
+      if(this->it->is_marked(CDT_3_vertex_marker::CAVITY_BELOW)) out << " (vertex below)";
+      return out;
+    }
     else
       return out;
   }
@@ -1575,28 +1582,32 @@ private:
       v->clear_mark(Vertex_marker::CAVITY);
       if(vertices_of_border_union_find.same_set(handle, vertex_above_handle)) {
         vertices_of_upper_cavity.push_back(v);
+        v->set_mark(Vertex_marker::CAVITY_ABOVE);
       } else if(vertices_of_border_union_find.same_set(handle, vertex_below_handle)) {
         vertices_of_lower_cavity.push_back(v);
+        v->set_mark(Vertex_marker::CAVITY_BELOW);
       } else {
         CGAL_error();
       }
     }
     for(auto facet: facets_of_border) {
       for(auto v: tr.vertices(facet)) {
-        if(v->is_marked()) {
-          continue;
-        }
-        auto handle = vertices_of_border_handles[v];
-        if(vertices_of_border_union_find.same_set(handle, vertex_above_handle)) {
+        if(v->is_marked(Vertex_marker::CAVITY_ABOVE)) {
           facets_of_upper_cavity.push_back(facet);
-        } else if(vertices_of_border_union_find.same_set(handle, vertex_below_handle)) {
-          facets_of_lower_cavity.push_back(facet);
-        } else {
-          CGAL_error();
+          break;
         }
-        break;
+        if(v->is_marked(Vertex_marker::CAVITY_BELOW)) {
+          facets_of_lower_cavity.push_back(facet);
+          break;
+        }
       }
     }
+    for(auto v: vertices_of_border_union_find)
+    {
+      v->clear_mark(Vertex_marker::CAVITY_ABOVE);
+      v->clear_mark(Vertex_marker::CAVITY_BELOW);
+    }
+
 
     return outputs;
   }
@@ -1824,10 +1835,8 @@ private:
     });
 
     auto is_facet_of_polygon = [&](const auto& tr, Facet f) {
-      const auto [c, facet_index] = f;
-      for(int i = 0; i < 3; ++i) {
-        const auto vh = c->vertex(T_3::vertex_triple_index(facet_index, i));
-        if(0 == polygon_points.count(tr.point(vh))) {
+      for(const auto vh: tr.vertices(f)) {
+        if(!vh->is_marked()) {
           return false;
         }
       }

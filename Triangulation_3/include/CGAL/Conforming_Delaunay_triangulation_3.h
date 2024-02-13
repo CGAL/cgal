@@ -47,6 +47,8 @@ enum class CDT_3_vertex_marker {
   REGION_BORDER,
   REGION_INSIDE,
   CAVITY,
+  CAVITY_ABOVE,
+  CAVITY_BELOW,
   nb_of_markers
 };
 
