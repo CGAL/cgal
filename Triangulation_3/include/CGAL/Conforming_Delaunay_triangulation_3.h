@@ -139,8 +139,6 @@ public:
   }
 };
 
-struct With_point_and_info_tag : public With_point_tag {};
-
 template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {
 public:
