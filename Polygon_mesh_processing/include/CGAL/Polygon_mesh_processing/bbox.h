@@ -19,7 +19,7 @@
 
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Named_function_parameters.h>
@@ -325,8 +325,15 @@ namespace CGAL {
                             bbox_mesh);
 
       if(!dont_triangulate)
-        CGAL::Polygon_mesh_processing::triangulate_faces(bbox_mesh);
-
+      {
+        for (auto h : halfedges(bbox_mesh))
+        {
+          if (is_quad(h, bbox_mesh))
+            CGAL::Euler::split_face(h, next(next(h, bbox_mesh), bbox_mesh), bbox_mesh);
+          else
+            CGAL_assertion(is_triangle(h, bbox_mesh));
+        }
+      }
       CGAL::copy_face_graph(bbox_mesh, pmesh,
                             parameters::default_values(),
                             np);
