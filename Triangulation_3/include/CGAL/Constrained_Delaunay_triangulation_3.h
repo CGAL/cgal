@@ -1090,8 +1090,8 @@ private:
       for(int index = 0; index < 3; ++index) {
         if(fh_region_set.count(fh->neighbor(index)) > 0) continue;
         // otherwise we have a border edge: fh->neighbor(i) is not in the region
-        const auto va = fh->vertex(CDT_2::cw(index))->info().vertex_handle_3d;
-        const auto vb = fh->vertex(CDT_2::ccw(index))->info().vertex_handle_3d;
+        const auto va = fh->vertex(CDT_2::ccw(index))->info().vertex_handle_3d;
+        const auto vb = fh->vertex(CDT_2:: cw(index))->info().vertex_handle_3d;
         Cell_handle c;
         int i, j;
         CGAL_assume_code(bool b =)
@@ -1153,16 +1153,23 @@ private:
     return 0;
   }
 
+  struct Search_first_intersection_result_type {
+    Edge intersecting_edge;
+    Edge border_edge;
+  };
+
   // Given a region and a border edge of it, returns an edge in the link of the
   // border edge that intersects the region.
   // The returned edge has its first vertex above the region.
   template <typename Fh_region, typename Edges_container>
-  std::optional<Edge> search_first_intersection(CDT_3_face_index /*face_index*/,
-                                                const CDT_2& cdt_2,
-                                                const Fh_region& fh_region,
-                                                const Edges_container& border_edges)
+  std::optional<Search_first_intersection_result_type>
+  search_first_intersection(CDT_3_face_index /*face_index*/,
+                            const CDT_2& cdt_2,
+                            const Fh_region& fh_region,
+                            const Edges_container& border_edges)
   {
-    for(const auto [c, i, j]: border_edges) {
+    for(const auto border_edge: border_edges) {
+      const auto [c, i, j] = border_edge;
       const Vertex_handle va_3d = c->vertex(i);
       const Vertex_handle vb_3d = c->vertex(j);
 
@@ -1185,10 +1192,10 @@ private:
         if(cell_circ->vertex(index_vd)->is_marked(Vertex_marker::REGION_BORDER)) continue;
         int cd_intersects_region = does_edge_intersect_region(cell_circ, index_vc, index_vd, cdt_2, fh_region);
         if(cd_intersects_region == 1) {
-          return { Edge{cell_circ, index_vc, index_vd} };
+          return Search_first_intersection_result_type{ Edge{cell_circ, index_vc, index_vd}, border_edge };
         }
         if(cd_intersects_region == -1) {
-          return { Edge{cell_circ, index_vd, index_vc} };
+          return Search_first_intersection_result_type{ Edge{cell_circ, index_vd, index_vc}, border_edge };
         }
       } while(++cell_circ != end);
     }
@@ -1209,7 +1216,8 @@ private:
                           const Fh_region& fh_region,
                           const Vertices_container& region_border_vertices,
                           const Vertices_container& region_vertices,
-                          Edge first_intersecting_edge)
+                          Edge first_intersecting_edge,
+                          Edge border_edge)
   {
     // outputs
     struct Outputs
@@ -1593,20 +1601,37 @@ private:
           auto v2 = vertices[(i + 1) % 3];
           if(v1->is_marked(Vertex_marker::CAVITY) && v2->is_marked(Vertex_marker::CAVITY)) {
             vertices_of_border_union_find.unify_sets(vertices_of_border_handles[v1],
-                                                    vertices_of_border_handles[v2]);
+                                                     vertices_of_border_handles[v2]);
           }
         }
       }
-      CGAL_assertion(vertices_of_border_union_find.number_of_sets() <= 2);
-      auto it = vertices_of_border_union_find.begin();
-      const auto vertex_above_handle = it;
+      CGAL_assertion(vertices_of_border_union_find.number_of_sets() == 2);
+      const auto [border_edge_va, border_edge_vb] = tr.vertices(border_edge);
+      auto circ = tr.incident_cells(border_edge);
+      CGAL_assertion(circ != nullptr);
+      const auto end = circ;
+      Vertex_handle vertex_above{};
       do {
+        const auto index_va = circ->index(border_edge_va);
+        const auto index_vb = circ->index(border_edge_vb);
+        const auto face_index = tr.next_around_edge(index_va, index_vb);
+        if(facets_of_border.count(Facet{circ, face_index}) > 0) {
+          const auto other_vertex_index = 6 - index_va - index_vb - face_index;
+          vertex_above = circ->vertex(other_vertex_index);
+          break;
+        }
+      } while(++circ != end);
+      CGAL_assume(vertex_above != Vertex_handle{});
+
+      const auto vertex_above_handle = vertices_of_border_handles[vertex_above];
+      auto it = vertices_of_border_union_find.begin();
+      while(it != vertices_of_border_union_find.end() &&
+            vertices_of_border_union_find.same_set(it, vertex_above_handle))
+      {
         ++it;
-      } while(it != vertices_of_border_union_find.end() &&
-              vertices_of_border_union_find.same_set(vertex_above_handle, it));
+      }
+      CGAL_assertion(it != vertices_of_border_union_find.end());
       const auto vertex_below_handle = it;
-      CGAL_assertion((it == vertices_of_border_union_find.end()) ==
-                    (vertices_of_border_union_find.number_of_sets() == 1));
       for(auto handle = vertices_of_border_union_find.begin(), end = vertices_of_border_union_find.end();
           handle != end; ++handle)
       {
@@ -1642,9 +1667,12 @@ private:
       for(auto facet: facets_of_border) {
         if(this->debug_regions()) {
           std::cerr << "  facet:  ";
-          for(auto v: tr.vertices(facet)) {
+          const auto facet_vertices = tr.vertices(facet);
+          for(auto v: facet_vertices) {
             std::cerr << IO::oformat(v, with_point_and_info) << "  ";
           }
+          CGAL_assertion(!std::all_of(facet_vertices.begin(), facet_vertices.end(),
+                                      [](auto v) { return v->is_marked(Vertex_marker::REGION_BORDER); }));
           std::cerr << "\n";
         }
         for(auto v: tr.vertices(facet)) {
@@ -1889,11 +1917,11 @@ private:
       }
     }};
 
-    const auto first_intersecting_edge = *found_edge_opt;
+    const auto [first_intersecting_edge, border_edge] = *found_edge_opt;
     const auto [intersecting_edges, original_intersecting_cells, original_vertices_of_upper_cavity,
                 original_vertices_of_lower_cavity, original_facets_of_upper_cavity, original_facets_of_lower_cavity] =
         construct_cavities(face_index, region_index, cdt_2, fh_region, region_border_vertices, region_vertices,
-                           first_intersecting_edge);
+                           first_intersecting_edge, border_edge);
 
     const std::set<Point_3> polygon_points = std::invoke([&](){
       std::set<Point_3> polygon_points;

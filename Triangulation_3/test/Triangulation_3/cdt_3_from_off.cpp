@@ -68,7 +68,7 @@ struct CDT_options
   bool debug_missing_regions = false;
   bool debug_regions = false;
   bool debug_copy_triangulation_into_hole = false;
-  bool use_new_cavity_algorithm = false;
+  bool use_new_cavity_algorithm = true;
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
   double segment_vertex_epsilon = 1e-8;
