@@ -69,7 +69,7 @@ void reassign_points(
   and is rearranged by the `Orthtree`. Altering the point range
   after creating the orthtree will leave it in an invalid state.
 
-  \cgalModels{OrthtreeTraits}
+  \cgalModels{CollectionPartitioningOrthtreeTraits}
   \sa `CGAL::Octree`
   \sa `CGAL::Quadtree`
   \sa `CGAL::Orthtree_traits_base<GeomTraits, dimension>`

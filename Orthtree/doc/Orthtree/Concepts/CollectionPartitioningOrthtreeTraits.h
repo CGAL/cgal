@@ -2,14 +2,14 @@
   \ingroup PkgOrthtreeConcepts
   \cgalConcept
 
-  Refinement of the OrthtreeTraits concept, adding requirements for the
+  Refinement of the OrthtreeTraitsWithData concept, adding requirements for the
   traits class of a `CGAL::Orthtree` in order to supports nearest-neighbor searching.
 
   Nearest neighbor searches expect a tree where `Node_data` is a model of `ForwardRange`.
   The leaf nodes of the tree represent an exclusive partition of the elements contained in the tree.
   This means that no element should be contained by more than one node.
 
-  \cgalRefines{OrthtreeTraits}
+  \cgalRefines{OrthtreeTraitsWithData}
 
   \cgalHasModelsBegin
   \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, DimensionTag>}

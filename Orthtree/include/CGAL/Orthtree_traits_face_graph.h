@@ -35,7 +35,7 @@ to which the minimal extend of a node should be provided.
 \tparam TriangleMesh a model of `FaceListGraph` with all faces being triangles
 \tparam VertexPointMap a property map associating points to the vertices of `TriangleMesh`
 
-\cgalModels{OrthtreeTraits}
+\cgalModels{OrthtreeTraitsWithData}
 */
 template <class TriangleMesh, class VertexPointMap>
 struct Orthtree_traits_face_graph : public Orthtree_traits_base<

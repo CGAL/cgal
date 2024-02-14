@@ -40,8 +40,8 @@ Quadtree, Octree and Orthtree Reference
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-- `OrthtreeTraitsWithoutData`
 - `OrthtreeTraits`
+- `OrthtreeTraitsWithData`
 - `OrthtreeTraversal`
 - `CollectionPartitioningOrthtreeTraits`
 

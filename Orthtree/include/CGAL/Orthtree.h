@@ -26,7 +26,6 @@
 #include <CGAL/property_map.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/span.h>
 
 #include <boost/function.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -176,7 +175,7 @@ public:
   using Split_predicate = std::function<bool(Node_index, const Self&)>;
 
   /*!
-   * \brief A model of `ConstRange` whose value type is `Node_index` and its iterator type is `ForwardIterator`.
+   * \brief A model of `ForwardRange` whose value type is `Node_index`.
    */
 #ifdef DOXYGEN_RUNNING
   using Node_index_range = unspecified_type;
@@ -463,7 +462,7 @@ public:
 
     \param traversal class defining the traversal strategy
 
-    \return a forward input iterator over the node indices of the tree
+    \return a `ForwardRange` over the node indices of the tree
    */
   template <typename Traversal>
   Node_index_range traverse(Traversal traversal) const {
@@ -486,7 +485,7 @@ public:
 
     \param args Arguments to to pass to the traversal's constructor, excluding the first (always an orthtree reference)
 
-    \return a forward input iterator over the node indices of the tree
+    \return a `ForwardRange` over the node indices of the tree
    */
   template <typename Traversal, typename ...Args>
   Node_index_range traverse(Args&& ...args) const {
