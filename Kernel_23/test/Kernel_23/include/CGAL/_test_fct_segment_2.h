@@ -111,6 +111,9 @@ _test_fct_segment_2(const R& )
  assert( CGAL::compare_slope(l6, l9) == CGAL::LARGER );
  assert( CGAL::compare_slope(l9, l7) == CGAL::SMALLER );
 
+ std::cout <<'.';
+ assert( CGAL::squared_distance(l9.source(), l9.target()) == CGAL::squared_length(l9) );
+
  std::cout << "done" << std::endl;
  return true;
 }
