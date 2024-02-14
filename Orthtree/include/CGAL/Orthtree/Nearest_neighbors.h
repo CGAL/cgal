@@ -32,26 +32,26 @@ void nearest_k_neighbors_recursive(const Tree& orthtree,
 
     // Base case: the node has no children
 
-    // Loop through each of the points contained by the node
+    // Loop through each of the elements contained by the node
     // Note: there might be none, and that should be fine!
-    for (auto& p: orthtree.data(node)) {
+    for (auto& e: orthtree.data(node)) {
 
-      // Pair that point with its distance from the search point
-      Result current_point_with_distance =
-        {p, orthtree.traits().get_squared_distance_of_element_object()(p, search_bounds.center())};
+      // Pair that element with its distance from the search point
+      Result current_element_with_distance =
+        {e, orthtree.traits().get_squared_distance_of_element_object()(e, search_bounds.center())};
 
-      // Check if the new point is within the bounds
-      if (current_point_with_distance.distance < search_bounds.squared_radius()) {
+      // Check if the new element is within the bounds
+      if (current_element_with_distance.distance < search_bounds.squared_radius()) {
 
         // Check if the results list is full
         if (results.size() == results.capacity()) {
 
-          // Delete a point if we need to make room
+          // Delete a element if we need to make room
           results.pop_back();
         }
 
-        // Add the new point
-        results.push_back(current_point_with_distance);
+        // Add the new element
+        results.push_back(current_element_with_distance);
 
         // Sort the list
         std::sort(results.begin(), results.end(), [=](auto& left, auto& right) {
@@ -117,21 +117,21 @@ namespace Orthtrees {
 
 /*!
   \ingroup PkgOrthtreeNeighbors
-  \brief finds at most `k` points within a specific radius that are
+  \brief finds at most `k` elements within a specific radius that are
   nearest to the center of the sphere `query`: if `query` does not contain
-  at least `k` points, only contained points will be returned.
+  at least `k` elements, only contained points will be returned.
 
-  This function is useful when the user already knows how sparse the points are,
-  or if they do not care about points that are too far away.
+  This function is useful when the user already knows how sparse the elements are,
+  or if they do not care about elements that are too far away.
   Setting a small radius may have performance benefits.
 
   \tparam Tree must be `Orthtree<GT>` with `GT` being a model of `CollectionPartitioningOrthtreeTraits`
-  \tparam OutputIterator must be a model of `OutputIterator` that accepts points
+  \tparam OutputIterator must be a model of `OutputIterator` that accepts `GT::Node_data_element`
 
   \param orthtree the tree to search within
   \param query the region to search within
-  \param k the number of points to find
-  \param output the output iterator to add the found points to (in order of increasing distance)
+  \param k the number of elements to find
+  \param output the output iterator to add the found elements to (in order of increasing distance)
  */
 template <typename Tree, typename OutputIterator>
 OutputIterator nearest_k_neighbors_in_radius(
@@ -143,21 +143,21 @@ OutputIterator nearest_k_neighbors_in_radius(
 
   // todo: this type is over-constrained, this must be made more generic
   struct Node_element_with_distance {
-    typename Tree::Traits::Node_data_element point;
+    typename Tree::Traits::Node_data_element element;
     typename Tree::FT distance;
   };
 
-  // Create an empty list of points
-  std::vector<Node_element_with_distance> points_list;
+  // Create an empty list of elements
+  std::vector<Node_element_with_distance> element_list;
   if (k != (std::numeric_limits<std::size_t>::max)())
-    points_list.reserve(k);
+    element_list.reserve(k);
 
-  // Invoking the recursive function adds those points to the vector (passed by reference)
-  CGAL::internal::nearest_k_neighbors_recursive(orthtree, query, orthtree.root(), points_list);
+  // Invoking the recursive function adds those elements to the vector (passed by reference)
+  CGAL::internal::nearest_k_neighbors_recursive(orthtree, query, orthtree.root(), element_list);
 
   // Add all the points found to the output
-  for (auto& item: points_list)
-    *output++ = item.point;
+  for (auto& item: element_list)
+    *output++ = item.element;
 
   return output;
 }
@@ -171,7 +171,7 @@ OutputIterator nearest_k_neighbors_in_radius(
   `query`.
 
   \tparam Tree must be `Orthtree<GT>` with `GT` being a model of `CollectionPartitioningOrthtreeTraits`
-  \tparam OutputIterator a model of `OutputIterator` that accepts `Point_d` objects.
+  \tparam OutputIterator a model of `OutputIterator` that accepts `GT::Node_data_element` objects.
 
   \param orthtree the tree to search within
   \param query query point
@@ -188,13 +188,13 @@ OutputIterator nearest_neighbors(const Tree& orthtree, const typename Tree::Poin
 
 /*!
   \ingroup PkgOrthtreeNeighbors
-  \brief finds the points in the sphere `query`.
+  \brief finds the elements in the sphere `query`.
 
-  Points are outputted in order of increasing distance to
+  Elements are outputted in order of increasing distance to
   the center of the sphere.
 
   \tparam Tree must be `Orthtree<GT>` with `GT` being a model of `CollectionPartitioningOrthtreeTraits`
-  \tparam OutputIterator a model of `OutputIterator` that accepts `Point_d` objects.
+  \tparam OutputIterator a model of `OutputIterator` that accepts `GT::Node_data_element` objects.
 
   \param orthtree the tree to search within
   \param query query sphere
