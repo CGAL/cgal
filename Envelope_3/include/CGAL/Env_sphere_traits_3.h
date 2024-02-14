@@ -976,7 +976,7 @@ public:
     const Rational& t = cv.t();
     const Rational& u = cv.u();
     const Rational& v = cv.v();
-    const Rational& w = cv.w();
+    // const Rational& w = cv.w();      // unused
     Algebraic m = -1 * (2*r*x0 + t*y0 + u);
     Algebraic n = 2*s*y0 + t*x0 + v;
     // line coefficients: A3, B3, C3

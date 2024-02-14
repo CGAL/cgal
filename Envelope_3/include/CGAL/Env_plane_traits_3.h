@@ -239,7 +239,7 @@ public:
       const Line_2& line = cv.supp_line();
       const FT& a3 = line.a();
       const FT& b3 = line.b();
-      const FT& c3 = line.c();
+      // const FT& c3 = line.c();       // unused
 
       // if the line was parallel to the y-axis (i.e x = const),
       // then it was enough to compare dz/dx of both planes
