@@ -1087,9 +1087,6 @@ insert_balls(const Vertex_handle& vp,
              const CGAL::Orientation orientation,
              ErasedVeOutIt out)
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   // Get size of p & q
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
@@ -2106,15 +2103,9 @@ is_sizing_field_correct(const Vertex_handle& v1,
                         const Curve_index& curve_index,
                         const CGAL::Orientation orientation) const
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   FT s1 = get_radius(v1);
   FT s2 = get_radius(v2);
   FT s3 = get_radius(v3);
-  const Weighted_point& wp1 = c3t3_.triangulation().point(v1);
-  const Weighted_point& wp2 = c3t3_.triangulation().point(v2);
-  const Weighted_point& wp3 = c3t3_.triangulation().point(v3);
 
   FT D = curve_segment_length(v1, v3, curve_index, orientation);
   FT d = curve_segment_length(v1, v2, curve_index, orientation);
