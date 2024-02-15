@@ -1605,7 +1605,7 @@ private:
           }
         }
       }
-      CGAL_assertion(vertices_of_border_union_find.number_of_sets() == 2);
+      CGAL_assertion(vertices_of_border_union_find.number_of_sets() <= 2);
       const auto [border_edge_va, border_edge_vb] = tr.vertices(border_edge);
       auto circ = tr.incident_cells(border_edge);
       CGAL_assertion(circ != nullptr);
@@ -1630,7 +1630,8 @@ private:
       {
         ++it;
       }
-      CGAL_assertion(it != vertices_of_border_union_find.end());
+      CGAL_assertion((it == vertices_of_border_union_find.end()) ==
+                     (vertices_of_border_union_find.number_of_sets() == 1));
       const auto vertex_below_handle = it;
       for(auto handle = vertices_of_border_union_find.begin(), end = vertices_of_border_union_find.end();
           handle != end; ++handle)
@@ -1671,8 +1672,9 @@ private:
           for(auto v: facet_vertices) {
             std::cerr << IO::oformat(v, with_point_and_info) << "  ";
           }
-          CGAL_assertion(!std::all_of(facet_vertices.begin(), facet_vertices.end(),
-                                      [](auto v) { return v->is_marked(Vertex_marker::REGION_BORDER); }));
+          // This assertion is wrong, because there might be only one half-cavity and not a full cavity.
+          // CGAL_assertion(!std::all_of(facet_vertices.begin(), facet_vertices.end(),
+          //                             [](auto v) { return v->is_marked(Vertex_marker::REGION_BORDER); }));
           std::cerr << "\n";
         }
         for(auto v: tr.vertices(facet)) {
