@@ -238,7 +238,10 @@ CGAL_add_named_parameter(with_dihedral_angle_t, with_dihedral_angle, with_dihedr
 CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, optimize_anchor_location)
 CGAL_add_named_parameter(optimize_boundary_anchor_location_t, optimize_boundary_anchor_location, optimize_boundary_anchor_location)
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
+
+// List of named parameters used in Isosurfacing_3
 CGAL_add_named_parameter(use_topologically_correct_marching_cubes_t, use_topologically_correct_marching_cubes, use_topologically_correct_marching_cubes)
+CGAL_add_named_parameter(constrain_to_cell_t, constrain_to_cell, constrain_to_cell)
 
 // tetrahedral remeshing parameters
 CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
