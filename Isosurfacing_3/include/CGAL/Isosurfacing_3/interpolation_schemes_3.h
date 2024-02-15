@@ -140,9 +140,9 @@ public:
 
     // calculate min index including border case
     const Point_3& min_p = vertex(bbox, 0);
-    std::size_t i = (x_coord(p) - x_coord(min_p)) / spacing[0];
-    std::size_t j = (y_coord(p) - y_coord(min_p)) / spacing[1];
-    std::size_t k = (z_coord(p) - z_coord(min_p)) / spacing[2];
+    std::size_t i = static_cast<std::size_t>((x_coord(p) - x_coord(min_p)) / spacing[0]);
+    std::size_t j = static_cast<std::size_t>((y_coord(p) - y_coord(min_p)) / spacing[1]);
+    std::size_t k = static_cast<std::size_t>((z_coord(p) - z_coord(min_p)) / spacing[2]);
 
     if(i == g.xdim() - 1)
       --i;

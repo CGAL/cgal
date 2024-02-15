@@ -183,9 +183,9 @@ public:
     const FT y_span = y_coord(max_p) - y_coord(min_p);
     const FT z_span = z_coord(max_p) - z_coord(min_p);
 
-    m_sizes[0] = std::ceil(x_span / spacing[0]) + 1;
-    m_sizes[1] = std::ceil(y_span / spacing[1]) + 1;
-    m_sizes[2] = std::ceil(z_span / spacing[2]) + 1;
+    m_sizes[0] = static_cast<std::size_t>(std::ceil(x_span / spacing[0])) + 1;
+    m_sizes[1] = static_cast<std::size_t>(std::ceil(y_span / spacing[1])) + 1;
+    m_sizes[2] = static_cast<std::size_t>(std::ceil(z_span / spacing[2])) + 1;
   }
 
   /**
