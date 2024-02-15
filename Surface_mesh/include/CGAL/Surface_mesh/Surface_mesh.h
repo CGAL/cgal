@@ -32,6 +32,7 @@
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Pair_optional_adaptor.h>
 
 #include <boost/cstdint.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -2078,7 +2079,7 @@ private: //--------------------------------------------------- property handling
     /// In case it does not exist the Boolean is `false` and the behavior of
     /// the property map is undefined.
     template <class I, class T>
-    std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
+    Pair_optional_adaptor<Property_map<I, T>> property_map(const std::string& name) const
     {
       return Property_selector<I>(const_cast<Surface_mesh*>(this))().template get<T>(name);
     }

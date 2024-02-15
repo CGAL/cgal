@@ -25,6 +25,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/demangle.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Pair_optional_adaptor.h>
 
 #include <algorithm>
 #include <iterator>
@@ -784,9 +785,8 @@ public:
   template <typename T>
   bool has_property_map (const std::string& name) const
   {
-    std::pair<Property_map<T>, bool>
-      pm = m_base.template get<T> (name);
-    return pm.second;
+    auto o = m_base.template get<T>(name);
+    return o.has_value();
   }
 
   /*!
@@ -824,13 +824,10 @@ public:
     to `false` (if the property was not found).
   */
   template <class T>
-  std::pair<Property_map<T>,bool>
+  Pair_optional_adaptor<Property_map<T>>
   property_map (const std::string& name) const
   {
-    Property_map<T> pm;
-    bool okay = false;
-    std::tie (pm, okay) = m_base.template get<T>(name);
-    return std::make_pair (pm, okay);
+    return Pair_optional_adaptor<Property_map<T>>(m_base.template get<T>(name));
   }
 
   /*!
