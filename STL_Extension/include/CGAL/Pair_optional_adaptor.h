@@ -28,6 +28,7 @@ public:
 
   Pair_optional_adaptor(std::pair<T, bool>& p) : std::optional<T>(p.second ? p.first : std::optional<T>()), first(t_storage.t), second(p.second), t_storage(p.first) {}
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   CGAL_DEPRECATED_MSG("you are using the deprecated API, please update your code")
   operator std::pair<T, bool>() {
     return std::pair<T, bool>(first, second);
@@ -72,6 +73,7 @@ public:
     operator std::tuple<std::_Ignore const&, std::_Ignore const&>() {
     return std::tuple<std::_Ignore const&, std::_Ignore const&>(std::ignore, std::ignore);
   }
+#endif
 
   T &first;
   bool second;
