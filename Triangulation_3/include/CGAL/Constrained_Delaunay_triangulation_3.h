@@ -1289,9 +1289,8 @@ private:
         if(!intersects) {
           std::cerr << "ERROR: tetrahedron #" << ch->time_stamp() << " has no edge intersecting the region\n";
         }
-        std::stringstream ss_filename;
-        ss_filename << "dump_intersecting_tetrahedron_" << ch->time_stamp() << ".off";
-        std::ofstream dump_tetrahedron(ss_filename.str());
+        std::ofstream dump_tetrahedron(
+            std::format("dump_intersecting_{}_{}_tetrahedron_{}.off", face_index, region_index, ch->time_stamp()));
         dump_tetrahedron.precision(17);
         Mesh mesh;
         CGAL::make_tetrahedron(tr.point(ch->vertex(0)), tr.point(ch->vertex(1)), tr.point(ch->vertex(2)),
@@ -1331,7 +1330,8 @@ private:
           }
         }
       }
-      std::ofstream tets_intersect_region_out("dump_tets_intersect_region.ply");
+      std::ofstream tets_intersect_region_out(
+          std::format("dump_tets_intersect_region_{}_{}.ply", face_index, region_index));
       tets_intersect_region_out.precision(17);
       CGAL::IO::write_PLY(tets_intersect_region_out, tets_intersect_region_mesh);
       tets_intersect_region_out.close();
@@ -1353,6 +1353,7 @@ private:
         dump_region(face_index, region_index, cdt_2);
       }
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       if(this->debug_regions()) {
         const auto p_above = this->point(v_above);
@@ -1506,7 +1507,9 @@ private:
       } while(++facet_circ != facet_circ_end);
       if(!this->use_older_cavity_algorithm() && i + 1 == intersecting_edges.size()) {
         for(auto ch: intersecting_cells) {
-          std::cerr << "tetrahedron #" << ch->time_stamp() << " intersects the region\n";
+          if(this->debug_regions()) {
+            std::cerr << "tetrahedron #" << ch->time_stamp() << " intersects the region\n";
+          }
           for(int i = 0; i < 4; ++i) {
             for(int j = i + 1; j < 4; ++j) {
               test_edge(ch, ch->vertex(i), i, ch->vertex(j), j, 1);
@@ -1529,8 +1532,10 @@ private:
                  }))
               {
                 intersecting_cells.insert(n_ch);
-                std::cerr << "tetrahedron #" << n_ch->time_stamp() << " intersects the region\n";
-              } else {
+                if(this->debug_regions()) {
+                  std::cerr << "tetrahedron #" << n_ch->time_stamp() << " intersects the region\n";
+                }
+              } else if(this->debug_regions()) {
                 std::cerr << "NO, tetrahedron #" << n_ch->time_stamp() << " does not intersect the region\n";
               }
               for(int i = 0; i < 4; ++i) {
@@ -2049,21 +2054,20 @@ private:
       throw Next_region{"missing facet in polygon", fh_region[0]};
     }
 
-#if CGAL_DEBUG_CDT_3 & 64
-    std::cerr << "# glu the upper triangulation of the cavity\n";
-
-    if(cells_of_lower_cavity.size() > original_intersecting_cells.size() ||
-       cells_of_upper_cavity.size() > original_intersecting_cells.size())
-    {
-      std::cerr << std::format("!! Cavity has grown and has now "
-                               "{} vertices in upper cavity and {} in lower, "
-                               "{} facets in upper cavity and {} in lower\n",
-                               vertices_of_upper_cavity.size(),
-                               vertices_of_lower_cavity.size(),
-                               facets_of_upper_cavity.size(),
-                               facets_of_lower_cavity.size());
+    if(this->debug_copy_triangulation_into_hole()) {
+      std::cerr << "# glu the upper triangulation of the cavity\n";
+      if(cells_of_lower_cavity.size() > original_intersecting_cells.size() ||
+        cells_of_upper_cavity.size() > original_intersecting_cells.size())
+      {
+        std::cerr << std::format("!! Cavity has grown and has now "
+                                "{} vertices in upper cavity and {} in lower, "
+                                "{} facets in upper cavity and {} in lower\n",
+                                vertices_of_upper_cavity.size(),
+                                vertices_of_lower_cavity.size(),
+                                facets_of_upper_cavity.size(),
+                                facets_of_lower_cavity.size());
+      }
     }
-#endif // CGAL_DEBUG_CDT_3
 
     typename T_3::Vertex_triple_Facet_map outer_map;
     auto add_to_outer_map = [this, &outer_map](typename T_3::Vertex_triple vt, Facet f,
@@ -2099,6 +2103,7 @@ private:
                                              bool is_upper_cavity) { // @TODO: comment this piece of code
                                              // @TODO: this should not be a lambda
       std::vector<std::pair<Cell_handle, CDT_2_face_handle>> pseudo_cells;
+      std::vector<Facet> facets_of_polygon;
       for(auto f : tr.finite_facets()) {
         if(!is_facet_of_polygon(tr, f))
           continue;
@@ -2106,7 +2111,7 @@ private:
         if(!is_facet)
           continue; // we might be in a sliver in the plane of the polygon
         const auto [fh_2d, reverse_orientation] = *is_facet;
-
+        if(this->debug_regions()) facets_of_polygon.push_back(f);
         const auto vt_aux = this->make_vertex_triple(f);
         typename T_3::Vertex_triple vt{map_cavity_vertices_to_ambient_vertices[vt_aux[0]],
                                        map_cavity_vertices_to_ambient_vertices[vt_aux[1]],
@@ -2120,6 +2125,12 @@ private:
         new_cell->set_vertices(vt[0], vt[1], vt[2], this->infinite_vertex());
         CGAL_assertion(static_cast<bool>(facet_is_facet_of_cdt_2(*this, {new_cell, 3}, cdt_2)));
         add_to_outer_map(vt, {new_cell, 3}, "extra ");
+      }
+      if(this->debug_regions()) {
+        std::ofstream out(std::format("dump_{}_pseudo_cells_region_{}_{}.off", is_upper_cavity ? "upper" : "lower",
+                                      face_index, region_index));
+        out.precision(17);
+        write_facets(out, tr, facets_of_polygon);
       }
       return pseudo_cells;
     };
