@@ -141,7 +141,6 @@ public:
 #endif
   {
     CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
-    CGAL_assertion(CGAL::is_closed(tmesh));
     box = Polygon_mesh_processing::bbox(tmesh, parameters::vertex_point_map(vpmap));
   }
 
@@ -233,6 +232,8 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
+    CGAL_assertion(CGAL::is_closed(*tm_ptr));
+
     if(point.x() < box.xmin()
        || point.x() > box.xmax()
        || point.y() < box.ymin()
@@ -276,6 +277,8 @@ public:
   template <class K2>
   Bounded_side operator()(const typename K2::Point_3& point, const K2& k2) const
   {
+    CGAL_assertion(CGAL::is_closed(*tm_ptr));
+
     if(point.x() < box.xmin()
        || point.x() > box.xmax()
        || point.y() < box.ymin()
