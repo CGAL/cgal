@@ -12,6 +12,8 @@
 #ifndef CGAL_ISOSURFACING_3_INTERNAL_IMPLICIT_SHAPES_HELPER_H
 #define CGAL_ISOSURFACING_3_INTERNAL_IMPLICIT_SHAPES_HELPER_H
 
+#include <CGAL/license/Isosurfacing_3.h>
+
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
