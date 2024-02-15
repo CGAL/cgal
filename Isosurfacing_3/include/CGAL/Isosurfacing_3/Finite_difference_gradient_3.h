@@ -1,4 +1,4 @@
-// Copyright (c) 2022-2023 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2022-2024 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,24 +8,29 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Julian Stahl
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_ISOSURFACING_3_FINITE_DIFFERENCE_GRADIENT_3_H
 #define CGAL_ISOSURFACING_3_FINITE_DIFFERENCE_GRADIENT_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <functional>
+
 namespace CGAL {
 namespace Isosurfacing {
 
 /**
- * \ingroup IS_Domain_helpers_grp
+ * \ingroup IS_Fields_grp
+ *
+ * \cgalModels{GradientField_3}
  *
  * \brief Class template for a gradient that is calculated using finite differences.
  *
- * \details This gradient function evaluates an implicit value function at six points
- *          that are a given distance `delta` away from the queried point along the %Cartesian axes.
+ * \details This gradient function evaluates a value function at six points that are
+ *          a given distance `delta` away from the queried point along the %Cartesian axes.
  *
- * \tparam GeomTraits must be a model of `Kernel`.
+ * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
  */
 template <typename GeomTraits>
 class Finite_difference_gradient_3
@@ -44,12 +49,11 @@ private:
 
 public:
   /**
-   * \brief creates a new instance of this gradient.
+   * \brief creates a new instance of this gradient class.
    *
-   * \tparam ValueFunction the type of the implicit function. It must be a model of `CopyConstructible`
-   *                       and implement `GeomTraits::FT operator()(const GeomTraits::Point_3& point) const`.
+   * \tparam ValueFunction must be a model of `ValueFunction_3`.
    *
-   * \param func the implicit function giving the value of the implicit function at each discretization point
+   * \param function the function giving the scalar value at each point
    * \param delta the distance for calculating the finite differences
    * \param gt the geometric traits class
    */
@@ -64,7 +68,7 @@ public:
   { }
 
   /**
-   * \brief evaluates the gradient at a point in space.
+   * \brief evaluates the gradient at a point in 3D space.
    *
    * \param p the position at which the gradient is computed
    */

@@ -46,7 +46,6 @@
 namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
-
 namespace Cube_table {
 /*
  * Naming convention from "A parallel dual marching cubes approach
@@ -681,7 +680,6 @@ constexpr int t_ambig[256] =
 };
 
 } // namespace Cube_table
-
 } // namespace internal
 } // namespace Isosurfacing
 } // namespace CGAL

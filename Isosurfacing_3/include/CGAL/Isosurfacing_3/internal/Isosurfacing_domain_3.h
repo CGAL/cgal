@@ -1,4 +1,4 @@
-// Copyright (c) 2022-2023 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2022-2024 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,140 +8,153 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Julian Stahl
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_ISOSURFACING_3_INTERNAL_ISOSURFACING_DOMAIN_3_H
 #define CGAL_ISOSURFACING_3_INTERNAL_ISOSURFACING_DOMAIN_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/Isosurfacing_3/internal/Cell_type.h>
+#include <CGAL/Isosurfacing_3/internal/partition_traits.h>
+#include <CGAL/Isosurfacing_3/edge_intersection_oracles_3.h>
+
+#include <CGAL/tags.h>
 
 namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-// A wrapper class to puzzle a domain together from different combinations of topology,
-// geometry, function, and gradient.
-template <typename GeomTraits,
-          typename Topology_,
-          typename Geometry_,
-          typename Function_,
-          typename Gradient_>
+// This class is pretty much just the concatenation of the following classes:
+// - Partition: Space partitioning data structure, e.g. Cartesian grid, octree, ...
+// - Values: values over the 3D space
+// - Gradients: gradients over the 3D space
+// - Oracle: edge-isosurface intersection computation
+template <typename Partition,
+          typename ValueField,
+          typename GradientField,
+          typename IntersectionOracle = CGAL::Isosurfacing::Dichotomy_edge_intersection>
 class Isosurfacing_domain_3
 {
 public:
-  using Geom_traits = GeomTraits;
+  using Edge_intersection_oracle = IntersectionOracle;
 
+  using Geom_traits = typename Partition::Geom_traits;
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
 
-  using Topology = Topology_;
-  using Vertex_descriptor = typename Topology_::Vertex_descriptor;
-  using Edge_descriptor = typename Topology_::Edge_descriptor;
-  using Cell_descriptor = typename Topology_::Cell_descriptor;
+  using PT = CGAL::Isosurfacing::partition_traits<Partition>;
 
-  using Vertices_incident_to_edge = typename Topology_::Vertices_incident_to_edge;
-  using Cells_incident_to_edge = typename Topology_::Cells_incident_to_edge;
-  using Cell_vertices = typename Topology_::Cell_vertices;
-  using Cell_edges = typename Topology_::Cell_edges;
+  using Vertex_descriptor = typename PT::Vertex_descriptor;
+  using Edge_descriptor = typename PT::Edge_descriptor;
+  using Cell_descriptor = typename PT::Cell_descriptor;
 
-  using Geometry = Geometry_;
-  using Function = Function_;
-  using Gradient = Gradient_;
+  using Vertices_incident_to_edge = typename PT::Vertices_incident_to_edge;
+  using Cells_incident_to_edge = typename PT::Cells_incident_to_edge;
+  using Cell_vertices = typename PT::Cell_vertices;
+  using Cell_edges = typename PT::Cell_edges;
 
-  static constexpr Cell_type CELL_TYPE = Topology_::CELL_TYPE;
-  static constexpr std::size_t VERTICES_PER_CELL = Topology_::VERTICES_PER_CELL;
-  static constexpr std::size_t EDGES_PER_CELL = Topology_::EDGES_PER_CELL;
+  static constexpr Cell_type CELL_TYPE = PT::CELL_TYPE;
+  static constexpr std::size_t VERTICES_PER_CELL = PT::VERTICES_PER_CELL;
+  static constexpr std::size_t EDGES_PER_CELL = PT::EDGES_PER_CELL;
 
 private:
-  const Topology m_topo;
-  const Geometry m_geom;
-  const Function m_func;
-  const Gradient m_grad;
-  const Geom_traits m_gt;
+  const Partition& m_partition;
+  const ValueField& m_values;
+  const GradientField& m_gradients;
+  const IntersectionOracle m_intersection_oracle;
 
 public:
-  // creates a base domain from topology, geometry, implicit function, gradient, and geometric traits
-  Isosurfacing_domain_3(const Topology& topo,
-                        const Geometry& geom,
-                        const Function& func,
-                        const Gradient& grad,
-                        const Geom_traits& gt)
-    : m_topo{topo},
-      m_geom{geom},
-      m_func{func},
-      m_grad{grad},
-      m_gt(gt)
+  Isosurfacing_domain_3(const Partition& partition,
+                        const ValueField& values,
+                        const GradientField& gradients,
+                        const IntersectionOracle& intersection_oracle = IntersectionOracle())
+    : m_partition{partition},
+      m_values{values},
+      m_gradients{gradients},
+      m_intersection_oracle{intersection_oracle}
   { }
 
   const Geom_traits& geom_traits() const
   {
-    return m_gt;
+    return m_partition.geom_traits();
+  }
+
+  const Edge_intersection_oracle& intersection_oracle() const
+  {
+    return m_intersection_oracle;
   }
 
 public:
+  // The following functions are dispatching to the partition_traits' static functions.
+
   // gets the position of vertex `v`
   decltype(auto) /*Point_3*/ point(const Vertex_descriptor& v) const
   {
-    return m_geom.operator()(v);
-  }
-
-  // gets the value of the function at vertex `v`
-  decltype(auto) /*FT*/ value(const Vertex_descriptor& v) const
-  {
-    return m_func.operator()(v);
-  }
-
-  // gets the gradient at vertex `v`
-  decltype(auto) /*Vector_3*/ gradient(const Point_3& p) const
-  {
-    return m_grad.operator()(p);
+    return PT::point(v, m_partition);
   }
 
   // gets a container with the two vertices incident to the edge `e`
   decltype(auto) /*Vertices_incident_to_edge*/ incident_vertices(const Edge_descriptor& e) const
   {
-    return m_topo.incident_vertices(e);
+    return PT::incident_vertices(e, m_partition);
   }
 
   // gets a container with all cells incident to the edge `e`
   decltype(auto) /*Cells_incident_to_edge*/ incident_cells(const Edge_descriptor& e) const
   {
-    return m_topo.incident_cells(e);
+    return PT::incident_cells(e, m_partition);
   }
 
   // gets a container with all vertices of the cell `c`
   decltype(auto) /*Cell_vertices*/ cell_vertices(const Cell_descriptor& c) const
   {
-    return m_topo.cell_vertices(c);
+    return PT::cell_vertices(c, m_partition);
   }
 
   // gets a container with all edges of the cell `c`
   decltype(auto) /*Cell_edges*/ cell_edges(const Cell_descriptor& c) const
   {
-    return m_topo.cell_edges(c);
+    return PT::cell_edges(c, m_partition);
   }
 
   // iterates over all vertices `v`, calling `f(v)` on each of them
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_vertex(Functor& f) const
   {
-    m_topo.for_each_vertex(f, ConcurrencyTag{});
+    PT::for_each_vertex(f, m_partition, ConcurrencyTag{});
   }
 
   // iterates over all edges `e`, calling `f(e)` on each of them
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_edge(Functor& f) const
   {
-    m_topo.for_each_edge(f, ConcurrencyTag{});
+    PT::for_each_edge(f, m_partition, ConcurrencyTag{});
   }
 
   // iterates over all cells `c`, calling `f(c)` on each of them
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_cell(Functor& f) const
   {
-    m_topo.for_each_cell(f, ConcurrencyTag{});
+    PT::for_each_cell(f, m_partition, ConcurrencyTag{});
+  }
+
+  // gets the value of the function at vertex `v`
+  decltype(auto) /*FT*/ value(const Vertex_descriptor& v) const
+  {
+    return m_values(v);
+  }
+
+  // gets the value of the function at point `p`
+  decltype(auto) /*FT*/ value(const Point_3& p) const
+  {
+    return m_values(p);
+  }
+
+  // gets the gradient at point `p`
+  decltype(auto) /*Vector_3*/ gradient(const Point_3& p) const
+  {
+    return m_gradients(p);
   }
 };
 

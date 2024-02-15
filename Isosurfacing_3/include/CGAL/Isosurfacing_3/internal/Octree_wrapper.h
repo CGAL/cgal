@@ -1,4 +1,4 @@
-// Copyright (c) 2022-2023 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2022-2024 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,6 +15,7 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <CGAL/Isosurfacing_3/internal/Octree_topology.h>
 #include <CGAL/Isosurfacing_3/internal/tables.h>
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
@@ -30,6 +31,7 @@ namespace internal {
 
 template <typename GeomTraits>
 class Octree_wrapper
+  : public Octree_topology<CGAL::Octree<GeomTraits, std::vector<typename GeomTraits::Point_3> > >
 {
   /*
     * Naming convention from "A parallel dual marching cubes approach to quad

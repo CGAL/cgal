@@ -46,8 +46,10 @@
 #include <CGAL/Isosurfacing_3/internal/marching_cubes_functors.h>
 #include <CGAL/Isosurfacing_3/internal/tables.h>
 
-#include <tbb/concurrent_vector.h>
-#include <tbb/concurrent_hash_map.h>
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/concurrent_vector.h>
+# include <tbb/concurrent_hash_map.h>
+#endif
 
 #include <array>
 #include <cmath>
@@ -94,24 +96,32 @@ private:
     }
   };
 
-  using Edge_point_map = tbb::concurrent_hash_map<Edge_index, Point_index, Hash_compare>;
-
 private:
   const Domain& m_domain;
   FT m_isovalue;
 
   std::atomic<Point_index> m_point_counter;
+
+#ifdef CGAL_LINKED_WITH_TBB
   tbb::concurrent_vector<Point_3> m_points;
-
-  Edge_point_map m_edges;
-
   tbb::concurrent_vector<std::array<Point_index, 3> > m_triangles;
+
+  using Edge_point_map = tbb::concurrent_hash_map<Edge_index, Point_index, Hash_compare>;
+  Edge_point_map m_edges;
+#else
+  std::vector<Point_3> m_points;
+  std::vector<std::array<Point_index, 3> > m_triangles;
+
+  // std::unordered_map<Edge_index, Point_index, Hash_compare> m_edges; // @tmp hash map
+  std::map<Edge_index, Point_index> m_edges; // @tmp hash map
+#endif
 
 public:
   TMC_functor(const Domain& domain,
               const FT isovalue)
     : m_domain(domain),
-      m_isovalue(isovalue)
+      m_isovalue(isovalue),
+      m_point_counter(0)
   { }
 
   void operator()(const Cell_descriptor& cell)
@@ -124,7 +134,7 @@ public:
     const int tcm = Cube_table::t_ambig[i_case];
     if(tcm == 105)
     {
-      if (p_slice(cell, m_isovalue, values, corners, i_case))
+      if(p_slice(cell, m_isovalue, values, corners, i_case))
         return;
       else
         std::cerr << "WARNING: the result might not be topologically correct" << std::endl;
@@ -132,12 +142,10 @@ public:
 
     constexpr int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
     if(i_case == 0 || i_case == all_bits_set)
-    {
       return;
-    }
 
     std::array<Point_3, 12> vertices;
-    mc_construct_vertices(cell, i_case, corners, values, m_isovalue, m_domain, vertices);
+    MC_construct_vertices(cell, i_case, corners, values, m_isovalue, m_domain, vertices);
 
     // @todo improve triangle generation
 
@@ -195,28 +203,47 @@ private:
 
   bool find_point(const Edge_index& e, Point_index& i)
   {
+#ifdef CGAL_LINKED_WITH_TBB
     typename Edge_point_map::const_accessor acc;
     if (m_edges.find(acc, e))
     {
       i = acc->second;
       return true;
     }
+#else
+    auto it = m_edges.find(e);
+    if (it != m_edges.end())
+    {
+      i = it->second;
+      return true;
+    }
+#endif
     return false;
   }
 
   Point_index add_point(const Point_3& p, const Edge_index& e)
   {
+    const Point_index i = m_point_counter++;
+    std::cout << "i =" << i << std::endl;
+
+#ifdef CGAL_LINKED_WITH_TBB
     typename Edge_point_map::accessor acc;
     if (!m_edges.insert(acc, e))
       return acc->second;
 
-    const Point_index i = m_point_counter++;
     acc->second = i;
     acc.release();
 
     m_points.grow_to_at_least(i + 1);
-    m_points[i] = p;
+#else
+    auto res = m_edges.insert({e, i});
+    if (!res.second)
+      return res.first->second;
 
+    m_points.resize(i + 1);
+#endif
+
+    m_points[i] = p;
     return i;
   }
 
@@ -224,7 +251,11 @@ private:
   {
     const Point_index i = m_point_counter++;
 
+#ifdef CGAL_LINKED_WITH_TBB
     m_points.grow_to_at_least(i + 1);
+#else
+    m_points.resize(i + 1);
+#endif
     m_points[i] = p;
 
     return i;
@@ -248,8 +279,6 @@ private:
     typename Geom_traits::Compute_z_3 z_coord = m_domain.geom_traits().compute_z_3_object();
     typename Geom_traits::Construct_point_3 point = m_domain.geom_traits().construct_point_3_object();
 
-    using uint = unsigned int;
-
     // code edge end vertices for each of the 12 edges
     const unsigned char l_edges_[12] = {16, 49, 50, 32, 84, 117, 118, 100, 64, 81, 115, 98};
     auto get_edge_vertex = [](const int e, unsigned int& v0, unsigned int& v1, const unsigned char l_edges_[12])
@@ -272,7 +301,7 @@ private:
       if(flag & Cube_table::intersected_edges[i_case])
       {
         // generate vertex here, do not care at this point if vertex already exists
-        uint v0, v1;
+        unsigned int v0, v1;
         get_edge_vertex(eg, v0, v1, l_edges_);
 
         FT l = (i0 - values[v0]) / (values[v1] - values[v0]);
@@ -358,15 +387,15 @@ private:
     for(int f=0; f<6; ++f)
     {
       // classify face
-      unsigned int f_case{0};
-      uint v0 = get_face_v(f, 0);
-      uint v1 = get_face_v(f, 1);
-      uint v2 = get_face_v(f, 2);
-      uint v3 = get_face_v(f, 3);
-      uint e0 = get_face_e(f, 0);
-      uint e1 = get_face_e(f, 1);
-      uint e2 = get_face_e(f, 2);
-      uint e3 = get_face_e(f, 3);
+      unsigned int f_case = 0;
+      unsigned int v0 = get_face_v(f, 0);
+      unsigned int v1 = get_face_v(f, 1);
+      unsigned int v2 = get_face_v(f, 2);
+      unsigned int v3 = get_face_v(f, 3);
+      unsigned int e0 = get_face_e(f, 0);
+      unsigned int e1 = get_face_e(f, 1);
+      unsigned int e2 = get_face_e(f, 2);
+      unsigned int e3 = get_face_e(f, 3);
       FT f0 = values[v0];
       FT f1 = values[v1];
       FT f2 = values[v2];
@@ -584,9 +613,9 @@ private:
     // set corresponging edge
     auto set_c = [](const int cnt, const int pos, const int val, unsigned long long& c_)
     {
-      const uint mask[4] = {0x0, 0xF, 0xFF, 0xFFF};
-      const uint c_sz = c_ & mask[cnt];
-      const uint e = 16 + 4 * ((c_sz & 0xF) + ((c_sz & 0xF0) >> 4) + ((c_sz & 0xF00) >> 8) + pos);
+      const unsigned int mask[4] = {0x0, 0xF, 0xFF, 0xFFF};
+      const unsigned int c_sz = c_ & mask[cnt];
+      const unsigned int e = 16 + 4 * ((c_sz & 0xF) + ((c_sz & 0xF0) >> 4) + ((c_sz & 0xF00) >> 8) + pos);
       c_ &= ~(((unsigned long long)0xF) << e);
       c_ |= (((unsigned long long)val) << e);
     };
@@ -594,22 +623,22 @@ private:
     // read edge from contour
     auto get_c = [](const int cnt, const int pos, unsigned long long c_) -> int
     {
-      const uint mask[4] = {0x0, 0xF, 0xFF, 0xFFF};
-      const uint c_sz = (uint)(c_ & mask[cnt]);
-      const uint e = 16 + 4 * ((c_sz & 0xF) + ((c_sz & 0xF0) >> 4) + ((c_sz & 0xF00) >> 8) + pos);
+      const unsigned int mask[4] = {0x0, 0xF, 0xFF, 0xFFF};
+      const unsigned int c_sz = (unsigned int)(c_ & mask[cnt]);
+      const unsigned int e = 16 + 4 * ((c_sz & 0xF) + ((c_sz & 0xF0) >> 4) + ((c_sz & 0xF00) >> 8) + pos);
       return int((c_ >> e) & 0xF);
     };
 
     // connect oriented contours
-    uint cnt_{0};
-    for(uint e=0; e<12; ++e)
+    unsigned int cnt_ = 0;
+    for(unsigned int e=0; e<12; ++e)
     {
       if(is_segm_set(e, segm_))
       {
-        uint eTo = get_segm(e, 0, segm_);
-        uint eIn = get_segm(e, 1, segm_);
-        uint eStart = e;
-        uint pos = 0;
+        unsigned int eTo = get_segm(e, 0, segm_);
+        unsigned int eIn = get_segm(e, 1, segm_);
+        unsigned int eStart = e;
+        unsigned int pos = 0;
         set_c(cnt_, pos, eStart, c_);
 
         while(eTo != eStart)
@@ -637,7 +666,7 @@ private:
     FT ui[2]{};
     FT vi[2]{};
     FT wi[2]{};
-    unsigned char q_sol{0};
+    unsigned char q_sol = 0;
     const FT a = (values[0] - values[1]) * (-values[6] + values[7] + values[4] - values[5]) -
                  (values[4] - values[5]) * (-values[2] + values[3] + values[0] - values[1]);
     const FT b = (i0 - values[0]) * (-values[6] + values[7] + values[4] - values[5]) +
@@ -747,16 +776,16 @@ private:
     auto numberOfSetBits = [](const unsigned char n)
     {
       // C or C++: use uint32_t
-      uint b = uint{n};
+      unsigned int b = (unsigned int)(n);
       b = b - ((b >> 1) & 0x55555555);
       b = (b & 0x33333333) + ((b >> 2) & 0x33333333);
       return (((b + (b >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
     };
 
     // compute the number of solutions to the quadratic equation for a given face
-    auto nrQSolFace = [](const uint f, const unsigned char n)
+    auto nrQSolFace = [](const unsigned int f, const unsigned char n)
     {
-      uint nr{0};
+      unsigned int nr = 0;
       switch (f)
       {
         case 0:
@@ -837,9 +866,9 @@ private:
           {
             FT umin(2);
             FT umax(-2);
-            const uint e0 = get_c(t, 0, c_);
-            const uint e1 = get_c(t, 1, c_);
-            const uint e2 = get_c(t, 2, c_);
+            const unsigned int e0 = get_c(t, 0, c_);
+            const unsigned int e1 = get_c(t, 1, c_);
+            const unsigned int e2 = get_c(t, 2, c_);
             const FT u_e0 = e_vert(e0, 0);
             const FT u_e1 = e_vert(e1, 0);
             const FT u_e2 = e_vert(e2, 0);
@@ -894,9 +923,9 @@ private:
           const int cnt_sz = int(get_cnt_size(i, c_));
           for(int r=0; r<cnt_sz; ++r)
           {
-            uint index = -1;
+            unsigned int index = -1;
             FT dist = std::numeric_limits<FT>::max();
-            uint ci = get_c(i, r, c_);
+            unsigned int ci = get_c(i, r, c_);
             const FT u_edge = e_vert(ci, 0);
             const FT v_edge = e_vert(ci, 1);
             const FT w_edge = e_vert(ci, 2);
@@ -934,10 +963,11 @@ private:
 
           for(int r=0; r<cnt_sz; ++r)
           {
-            const uint tid1 = get_c(i, r, c_);
-            const uint tid2 = get_c(i, ((r + 1) % cnt_sz), c_);
-            const uint cid1 = tcon_[tid1];
-            const uint cid2 = tcon_[tid2];
+            const unsigned int tid1 = get_c(i, r, c_);
+            const unsigned int tid2 = get_c(i, ((r + 1) % cnt_sz), c_);
+            const unsigned int cid1 = tcon_[tid1];
+            const unsigned int cid2 = tcon_[tid2];
+
             // compute index distance
             const int dst = distanceRingIntsModulo(cid1, cid2);
             switch(dst)

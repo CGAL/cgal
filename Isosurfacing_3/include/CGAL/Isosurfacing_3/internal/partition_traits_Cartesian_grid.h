@@ -1,4 +1,4 @@
-// Copyright (c) 2022-2023 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2022-2024 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,16 +8,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Julian Stahl
+//                 Mael Rouxel-Labbé
 
-#ifndef CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_3_H
-#define CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_3_H
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_PARTITION_TRAITS_CARTESIAN_GRID_3_H
+#define CGAL_ISOSURFACING_3_INTERNAL_PARTITION_TRAITS_CARTESIAN_GRID_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
 #include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/tables.h>
 
-#include <CGAL/assertions.h>
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -29,13 +30,18 @@
 
 namespace CGAL {
 namespace Isosurfacing {
-namespace internal {
 
-// The topology of a Cartesian grid.
-// All elements are created with the help of the cube tables.
-class Grid_topology_3
+template <typename GeomTraits, typename MemoryPolicy>
+class Cartesian_grid_3;
+
+template <typename Partition>
+struct partition_traits;
+
+template <typename GeomTraits, typename MemoryPolicy>
+struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
 {
-public:
+  using Self = Cartesian_grid_3<GeomTraits, MemoryPolicy>;
+
   // identifies a vertex by its (i, j, k) indices
   using Vertex_descriptor = std::array<std::size_t, 3>;
 
@@ -54,20 +60,15 @@ public:
   using Cell_vertices = std::array<Vertex_descriptor, VERTICES_PER_CELL>;
   using Cell_edges = std::array<Edge_descriptor, EDGES_PER_CELL>;
 
-public:
-  // creates the topology of a grid with size_i, size_j, and size_k vertices in the respective dimensions.
-  Grid_topology_3(const std::size_t size_i,
-                  const std::size_t size_j,
-                  const std::size_t size_k)
-    : size_i{size_i},
-      size_j{size_j},
-      size_k{size_k}
+  static decltype(auto) /*Point_3*/ point(const Vertex_descriptor& v,
+                                          const Self& g)
   {
-    CGAL_precondition(size_i > 0 && size_j > 0 && size_k > 0);
+    return g.point(v[0], v[1], v[2]);
   }
 
   // gets a container with the two vertices incident to edge e
-  Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e) const
+  static Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e,
+                                                     const Self&)
   {
     Vertices_incident_to_edge ev;
     ev[0] = { e[0], e[1], e[2] };  // start vertex
@@ -77,7 +78,8 @@ public:
   }
 
   // gets a container with all cells incident to edge e
-  Cells_incident_to_edge incident_cells(const Edge_descriptor& e) const
+  static Cells_incident_to_edge incident_cells(const Edge_descriptor& e,
+                                               const Self&)
   {
     // lookup the neighbor cells relative to the edge
     const int local = internal::Cube_table::edge_store_index[e[3]];
@@ -96,7 +98,8 @@ public:
   }
 
   // gets a container with all vertices of cell c
-  Cell_vertices cell_vertices(const Cell_descriptor& c) const
+  static Cell_vertices cell_vertices(const Cell_descriptor& c,
+                                     const Self&)
   {
     Cell_vertices cv;
     for(std::size_t i=0; i<cv.size(); ++i) {
@@ -111,7 +114,8 @@ public:
   }
 
   // gets a container with all edges of cell c
-  Cell_edges cell_edges(const Cell_descriptor& c) const
+  static Cell_edges cell_edges(const Cell_descriptor& c,
+                               const Self&)
   {
     Cell_edges ce;
     for(std::size_t i=0; i<ce.size(); ++i) {
@@ -128,23 +132,28 @@ public:
     return ce;
   }
 
+
   // iterates sequentially over all vertices v calling f(v) on every one
   template <typename Functor>
-  void for_each_vertex(Functor& f, Sequential_tag) const
+  static void for_each_vertex(Functor& f,
+                              const Self& g,
+                              const CGAL::Sequential_tag)
   {
-    for(std::size_t i=0; i<size_i; ++i)
-      for(std::size_t j=0; j<size_j; ++j)
-        for(std::size_t k=0; k<size_k; ++k)
+    for(std::size_t i=0; i<g.xdim(); ++i)
+      for(std::size_t j=0; j<g.ydim(); ++j)
+        for(std::size_t k=0; k<g.zdim(); ++k)
           f({i, j, k});
   }
 
   // iterates sequentially over all edges e calling f(e) on every one
   template <typename Functor>
-  void for_each_edge(Functor& f, Sequential_tag) const
+  static void for_each_edge(Functor& f,
+                            const Self& g,
+                            const CGAL::Sequential_tag)
   {
-    for(std::size_t i=0; i<size_i-1; ++i) {
-      for(std::size_t j=0; j<size_j-1; ++j) {
-        for(std::size_t k=0; k<size_k-1; ++k)
+    for(std::size_t i=0; i<g.xdim()-1; ++i) {
+      for(std::size_t j=0; j<g.ydim()-1; ++j) {
+        for(std::size_t k=0; k<g.zdim()-1; ++k)
         {
           // all three edges starting at vertex (i, j, k)
           f({i, j, k, 0});
@@ -157,47 +166,53 @@ public:
 
   // iterates sequentially over all cells c calling f(c) on every one
   template <typename Functor>
-  void for_each_cell(Functor& f, Sequential_tag) const
+  static void for_each_cell(Functor& f,
+                            const Self& g,
+                            const CGAL::Sequential_tag)
   {
-    for(std::size_t i=0; i<size_i-1; ++i)
-      for(std::size_t j=0; j<size_j-1; ++j)
-        for(std::size_t k=0; k<size_k-1; ++k)
+    for(std::size_t i=0; i<g.xdim()-1; ++i)
+      for(std::size_t j=0; j<g.ydim()-1; ++j)
+        for(std::size_t k=0; k<g.zdim()-1; ++k)
           f({i, j, k});
   }
 
-#ifdef CGAL_LINKED_WITH_TBB
+  #ifdef CGAL_LINKED_WITH_TBB
   // iterates in parallel over all vertices v calling f(v) on every one
   template <typename Functor>
-  void for_each_vertex(Functor& f, Parallel_tag) const
+  static void for_each_vertex(Functor& f,
+                              const Self& g,
+                              const CGAL::Parallel_tag)
   {
-    const std::size_t sj = size_j;
-    const std::size_t sk = size_k;
+    const std::size_t sj = g.ydim();
+    const std::size_t sk = g.zdim();
 
     // for now only parallelize outer loop
     auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r)
     {
-      for(std::size_t i = r.begin(); i != r.end(); ++i)
+      for(std::size_t i=r.begin(); i!=r.end(); ++i)
         for(std::size_t j=0; j<sj; ++j)
           for(std::size_t k=0; k<sk; ++k)
             f({i, j, k});
     };
 
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i), iterator);
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, g.xdim()), iterator);
   }
 
   // iterates in parallel over all edges e calling f(e) on every one
   template <typename Functor>
-  void for_each_edge(Functor& f, Parallel_tag) const
+  static void for_each_edge(Functor& f,
+                            const Self& g,
+                            const CGAL::Parallel_tag)
   {
-    const std::size_t sj = size_j;
-    const std::size_t sk = size_k;
+    const std::size_t sj = g.ydim();
+    const std::size_t sk = g.zdim();
 
     // for now only parallelize outer loop
     auto iterator = [&f, sj, sk](const tbb::blocked_range<std::size_t>& r)
     {
-      for(std::size_t i = r.begin(); i != r.end(); ++i) {
-        for(std::size_t j=0; j<sj - 1; ++j) {
-          for(std::size_t k=0; k<sk - 1; ++k)
+      for(std::size_t i=r.begin(); i != r.end(); ++i) {
+        for(std::size_t j=0; j<sj-1; ++j) {
+          for(std::size_t k=0; k<sk-1; ++k)
           {
             f({i, j, k, 0});
             f({i, j, k, 1});
@@ -207,18 +222,21 @@ public:
       }
     };
 
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, size_i - 1), iterator);
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, g.xdim() - 1), iterator);
   }
 
   // iterates in parallel over all cells c calling f(c) on every one
   template <typename Functor>
-  void for_each_cell(Functor& f, Parallel_tag) const
+  static void for_each_cell(Functor& f,
+                            const Self& g,
+                            const CGAL::Parallel_tag)
   {
-    const std::size_t sj = size_j;
-    const std::size_t sk = size_k;
+    const std::size_t sj = g.ydim();
+    const std::size_t sk = g.zdim();
 
     // for now only parallelize outer loop
-    auto iterator = [&f, sj, sk](const tbb::blocked_range3d<std::size_t>& r) {
+    auto iterator = [&f, sj, sk](const tbb::blocked_range3d<std::size_t>& r)
+    {
       const std::size_t i_begin = r.pages().begin();
       const std::size_t i_end = r.pages().end();
       const std::size_t j_begin = r.rows().begin();
@@ -232,19 +250,13 @@ public:
             f({i, j, k});
     };
 
-    tbb::blocked_range3d<std::size_t> range(0, size_i - 1, 0, size_j - 1, 0, size_k - 1);
+    tbb::blocked_range3d<std::size_t> range(0, g.xdim() - 1, 0, g.ydim() - 1, 0, g.zdim() - 1);
     tbb::parallel_for(range, iterator);
   }
-#endif // CGAL_LINKED_WITH_TBB
-
-private:
-  std::size_t size_i;
-  std::size_t size_j;
-  std::size_t size_k;
+  #endif // CGAL_LINKED_WITH_TBB
 };
 
-} // namespace internal
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_ISOSURFACING_3_INTERNAL_GRID_TOPOLOGY_3_H
+#endif // CGAL_ISOSURFACING_3_INTERNAL_PARTITION_TRAITS_CARTESIAN_GRID_3_H

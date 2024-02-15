@@ -76,7 +76,12 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
   typename GeomTraits::Compute_z_3 z_coord = gt.compute_z_3_object();
   typename GeomTraits::Construct_point_3 point = gt.construct_point_3_object();
 
-  FT mu = FT(0.0);
+  FT mu = FT(0);
+
+  // @todo, technically we should be using the edge intersection oracle here, but there is a nuance
+  // between MC and DC on the handling of edges that have val0 = val1 = isovalue: in MC we assume
+  // the isosurface is in the middle, in DC we assume the isosurface is not intersecting the edge.
+  // In the oracle, we follow DC right now. Could put a Boolean parameter, but it's ugly.
 
   // don't divide by 0
   if(abs(d1 - d0) < 0.000001) // @fixme hardcoded bound
@@ -87,9 +92,9 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
   CGAL_assertion(mu >= FT(0.0) || mu <= FT(1.0));
 
   // linear interpolation
-  return point(x_coord(p1) * mu + x_coord(p0) * (FT(1.0) - mu),
-               y_coord(p1) * mu + y_coord(p0) * (FT(1.0) - mu),
-               z_coord(p1) * mu + z_coord(p0) * (FT(1.0) - mu));
+  return point(x_coord(p1) * mu + x_coord(p0) * (FT(1) - mu),
+               y_coord(p1) * mu + y_coord(p0) * (FT(1) - mu),
+               z_coord(p1) * mu + z_coord(p0) * (FT(1) - mu));
 }
 
 // retrieves the corner vertices and their values of a cell and return the lookup index
@@ -128,7 +133,7 @@ template <typename Corners,
           typename Values,
           typename Domain,
           typename Vertices>
-void mc_construct_vertices(const typename Domain::Cell_descriptor cell,
+void MC_construct_vertices(const typename Domain::Cell_descriptor cell,
                            const std::size_t i_case,
                            const Corners& corners,
                            const Values& values,
@@ -145,9 +150,9 @@ void mc_construct_vertices(const typename Domain::Cell_descriptor cell,
   std::size_t flag = 1;
   std::size_t e_id = 0;
 
-  for(const Edge_descriptor& edge : cell_edges)
+  for(const Edge_descriptor& e : cell_edges)
   {
-    (void)edge; // @todo
+    CGAL_USE(e);
 
     if(flag & Cube_table::intersected_edges[i_case])
     {
@@ -187,11 +192,11 @@ void mc_construct_triangles(const int i_case,
     const int eg2 = Cube_table::triangle_cases[t_index + 2];
 
     // insert new triangle in list
-    #ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
       auto& tris = triangles.local();
-    #else
+#else
       auto& tris = triangles;
-    #endif
+#endif
     tris.push_back({vertices[eg0], vertices[eg1], vertices[eg2]});
   }
 }
@@ -203,12 +208,12 @@ void triangles_to_polygon_soup(const TriangleRange& triangles,
                                PointRange& points,
                                PolygonRange& polygons)
 {
-  #ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     for(const auto& triangle_list : triangles)
     {
-  #else
+#else
       const auto& triangle_list = triangles;
-  #endif
+#endif
 
       for(const auto& triangle : triangle_list)
       {
@@ -222,9 +227,9 @@ void triangles_to_polygon_soup(const TriangleRange& triangles,
         polygons.push_back({id + 2, id + 1, id + 0});
       }
 
-  #ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     }
-  #endif
+#endif
 }
 
 // Marching Cubes implemented as a functor that runs on every cell of the grid
@@ -270,7 +275,6 @@ public:
   // computes one cell
   void operator()(const Cell_descriptor& cell)
   {
-    // @todo: maybe better checks if the domain can be processed?
     CGAL_precondition(m_domain.cell_vertices(cell).size() == 8);
     CGAL_precondition(m_domain.cell_edges(cell).size() == 12);
 
@@ -284,7 +288,7 @@ public:
       return;
 
     std::array<Point_3, 12> vertices;
-    mc_construct_vertices(cell, i_case, corners, values, m_isovalue, m_domain, vertices);
+    MC_construct_vertices(cell, i_case, corners, values, m_isovalue, m_domain, vertices);
 
     mc_construct_triangles(i_case, vertices, m_triangles);
   }

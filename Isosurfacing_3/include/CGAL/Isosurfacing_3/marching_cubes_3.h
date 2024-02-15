@@ -1,4 +1,4 @@
-// Copyright (c) 2022-2023 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2022-2024 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,6 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Julian Stahl
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_ISOSURFACING_3_MARCHING_CUBES_3_H
 #define CGAL_ISOSURFACING_3_MARCHING_CUBES_3_H
@@ -38,20 +39,21 @@ namespace Isosurfacing {
  *                      and `BackInsertionSequence` whose value type is `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param domain the domain providing input data and its topology
- * \param isovalue value of the isosurface
- * \param points points of the triangles in the created indexed face set
+ * \param domain the domain providing the spacial partition and the data
+ * \param isovalue the value defining the isosurface
+ * \param points the points of the triangles in the created indexed face set
  * \param triangles each element in the vector describes a triangle using the indices of the points in `points`
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_topologically_correct_marching_cubes}
- *     \cgalParamDescription{whether the topologically correct variant of Marching Cubes should be used}
+ *     \cgalParamDescription{whether the topologically correct variant of Marching Cubes \cgalCite{cgal:g-ctcmi-16} should be used.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
  */
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename Domain,
@@ -67,13 +69,10 @@ void marching_cubes(const Domain& domain,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  // @todo test 'false'
   const bool use_tmc = choose_parameter(get_parameter(np, internal_np::use_topologically_correct_marching_cubes), true);
 
   if(use_tmc)
   {
-    // run topologically correct marching cubes
-    // and directly write the result to points and triangles
     internal::TMC_functor<Domain, PointRange, TriangleRange> functor(domain, isovalue);
     domain.template for_each_cell<ConcurrencyTag>(functor);
     functor.to_triangle_soup(points, triangles);
