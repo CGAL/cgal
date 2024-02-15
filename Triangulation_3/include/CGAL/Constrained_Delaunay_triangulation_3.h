@@ -1384,15 +1384,6 @@ private:
           auto tetrahedron =
               typename Geom_traits::Tetrahedron_3{tr.point(cell.vertex(0)), tr.point(cell.vertex(1)),
                                                   tr.point(cell.vertex(2)), tr.point(cell.vertex(3))};
-          std::stringstream ss_filename;
-          ss_filename << "dump_tetrahedron_" << cell.time_stamp() << "_around_edge.off";
-          std::ofstream dump_tetrahedron(ss_filename.str());
-          dump_tetrahedron.precision(17);
-          Mesh mesh;
-          CGAL::make_tetrahedron(tr.point(cell.vertex(0)), tr.point(cell.vertex(1)),
-                                tr.point(cell.vertex(2)), tr.point(cell.vertex(3)), mesh);
-          dump_tetrahedron << mesh;
-          dump_tetrahedron.close();
           for(auto fh: fh_region) {
             auto v0 = fh->vertex(0)->info().vertex_handle_3d;
             auto v1 = fh->vertex(1)->info().vertex_handle_3d;
