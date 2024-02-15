@@ -15,7 +15,7 @@
 #include <CGAL/license/Isosurfacing_3.h>
 
 #include <CGAL/number_utils.h>
-#include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 namespace Isosurfacing {
