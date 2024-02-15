@@ -1,10 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Isosurfacing_3/dual_contouring_3.h>
-#include <CGAL/Isosurfacing_3/Implicit_octree_domain.h>
+#include <CGAL/Isosurfacing_3/Value_function_3.h>
+#include <CGAL/Isosurfacing_3/Gradient_function_3.h>
 #include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
 
-#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 #include <cmath>
 #include <iostream>
@@ -19,6 +20,9 @@ using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
 using Octree_wrapper = CGAL::Isosurfacing::internal::Octree_wrapper<Kernel>;
+using Values = CGAL::Isosurfacing::Value_function_3<Octree_wrapper>;
+using Gradients = CGAL::Isosurfacing::Gradient_function_3<Octree_wrapper>;
+using Domain = CGAL::Isosurfacing::Isosurfacing_domain_3<Octree_wrapper, Data>;
 
 struct Refine_one_eighth
 {
@@ -26,6 +30,14 @@ struct Refine_one_eighth
   std::size_t max_depth_;
 
   std::size_t octree_dim_;
+
+  Refine_one_eighth(std::size_t min_depth,
+                    std::size_t max_depth)
+    : min_depth_(min_depth),
+      max_depth_(max_depth)
+  {
+    octree_dim_ = std::size_t(1) << max_depth_;
+  }
 
   Octree_wrapper::Uniform_coords uniform_coordinates(const Octree_wrapper::Octree::Node& node) const
   {
@@ -35,14 +47,6 @@ struct Refine_one_eighth
       coords[i] *= uint32_t(depth_factor);
 
     return coords;
-  }
-
-  Refine_one_eighth(std::size_t min_depth,
-                    std::size_t max_depth)
-    : min_depth_(min_depth),
-      max_depth_(max_depth)
-  {
-    octree_dim_ = std::size_t(1) << max_depth_;
   }
 
   bool operator()(const Octree_wrapper::Octree::Node& n) const
@@ -87,16 +91,15 @@ int main(int, char**)
     return g / std::sqrt(g.squared_length());
   };
 
-  auto domain = CGAL::Isosurfacing::create_implicit_octree_domain(octree_wrap,
-                                                                  sphere_function,
-                                                                  sphere_gradient);
+  Data data(sphere_function, sphere_gradient);
+  Domain domain(octree_wrap, data);
 
   Point_range points;
   Polygon_range polygons;
 
   CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
 
-  CGAL::IO::write_OFF("dual_contouring_octree.off", points, polygons);
+  CGAL::IO::write_polygon_soup("dual_contouring_octree.off", points, polygons);
 
   return EXIT_SUCCESS;
 }
