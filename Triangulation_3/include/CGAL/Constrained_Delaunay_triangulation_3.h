@@ -1499,7 +1499,7 @@ private:
 
         if(!test_edge(cell, v_above, index_v_above, vc, index_vc, 1) &&
            !test_edge(cell, v_below, index_v_below, vc, index_vc, -1) &&
-           !this->use_older_cavity_algorithm())
+           this->use_older_cavity_algorithm())
         {
           dump_triangulation();
           dump_region(face_index, region_index, cdt_2);
