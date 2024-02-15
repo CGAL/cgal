@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <CGAL/enum.h>
+
 #include <array>
 #include <vector>
 

@@ -15,6 +15,8 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 namespace Isosurfacing {
 

@@ -15,6 +15,8 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <CGAL/number_utils.h>
+
 #include <functional>
 
 namespace CGAL {
