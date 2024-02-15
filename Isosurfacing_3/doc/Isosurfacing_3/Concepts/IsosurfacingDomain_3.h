@@ -6,15 +6,17 @@
 \brief The concept `IsosurfacingDomain_3` describes the set of requirements to be
 fulfilled by any class used as input data for isosurfacing algorithms.
 
-A model of the concept `IsosurfacingDomain_3` provides a discrete representation
-of an implicit field through a partition of the Euclidean space in cells.
+A model of the concept `IsosurfacingDomain_3` provides a partition of the Euclidean space in cells,
+and a scalar field defined over the whole partition.
 The isosurfacing algorithms traverse these cells and query the domain class
 at the vertices of each cell, using the functions `point()` and `value()`.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3}
-\cgalHasModels{CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3}
+\cgalHasModels{CGAL::Isosurfacing::Marching_cubes_domain_3}
+\cgalHasModels{CGAL::Isosurfacing::Dual_contouring_domain_3}
 \cgalHasModelsEnd
+
+\sa `IsosurfacingDomainWithGradient_3`
 */
 class IsosurfacingDomain_3
 {
@@ -98,7 +100,12 @@ public:
   Point_3 point(const Vertex_descriptor& v) const;
 
   /*!
-  returns the value of the implicit field at the vertex `v`.
+  returns the value of the values field at the vertex `p`.
+  */
+  FT value(const Point_3& v) const;
+
+  /*!
+  returns the value of the values field at the vertex `v`.
   */
   FT value(const Vertex_descriptor& v) const;
 

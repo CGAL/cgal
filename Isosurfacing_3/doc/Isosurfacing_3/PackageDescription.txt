@@ -2,6 +2,18 @@
 /// \defgroup PkgIsosurfacing3Concepts Concepts
 /// \ingroup PkgIsosurfacing3Ref
 
+/// \defgroup IS_Partitions_grp Space Partitioning Data Structures
+/// \ingroup PkgIsosurfacing3Ref
+
+/// \defgroup IS_Partitions_helpers_grp Space Partitioning Data Structures Helpers
+/// \ingroup IS_Partitions_grp
+
+/// \defgroup IS_Fields_helpers_grp Value and Gradient Fields Helpers
+/// \ingroup PkgIsosurfacing3Ref
+
+/// \defgroup IS_Fields_grp Value and Gradient Fields
+/// \ingroup PkgIsosurfacing3Ref
+
 /// \defgroup IS_Domains_grp Isosurfacing Domains
 /// \ingroup PkgIsosurfacing3Ref
 
@@ -11,13 +23,18 @@
 /// \defgroup IS_Methods_grp Isosurfacing Methods
 /// \ingroup PkgIsosurfacing3Ref
 
+/// \defgroup IS_IO_functions_grp I/O Functions
+/// \ingroup PkgIsosurfacing3Ref
+
 /*!
 \addtogroup PkgIsosurfacing3Ref
 \cgalPkgDescriptionBegin{3D Isosurfacing,PkgIsosurfacing3}
 \cgalPkgPicture{isosurfacing3_ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Julian Stahl, Daniel Zint and Pierre Alliez}
-\cgalPkgDesc{This package implements several isosurfacing algorithms (Marching Cubes and its topologically correct variant, and Dual Contouring) to generate a surface mesh from a 3D scalar field. The possible format for the input scalar field is flexible and includes explicit as well as implicit representations. }
+\cgalPkgDesc{This package implements several isosurfacing algorithms (Marching Cubes,
+its topologically correct variant, and Dual Contouring) that enable generating meshes
+from value and gradient fields.}
 \cgalPkgManuals{Chapter_Isosurfacing3,PkgIsosurfacing3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -28,31 +45,51 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-This package provides algorithms to extract isosurfaces from different inputs: Marching Cubes, topologically correct Marching Cubes, and Dual Contouring.
-The input is represented as a 3D scalar field defined as an implicit function, a Cartesian grid or an octree.
-The output is a surface mesh represented as an indexed face set (container of point coordinates and indexed faces).
-The provided algorithms include Marching Cubes, topologically correct Marching Cubes and Dual Contouring.
+This package provides algorithms to extract isosurfaces: Marching Cubes, topologically correct Marching Cubes,
+and Dual Contouring.
+The input is represented as a space partitioning data structure (Cartesian grid, octree, ...)
+coupled with a 3D scalar field.
+The output is a polygon soup (i.e., a container of point coordinates and indexed faces).
 
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
 - `IsosurfacingTraits_3`
+- `Partition_3`
+- `ValueField_3`
+- `GradientField_3`
+- `InterpolationScheme_3`
+- `EdgeIntersectionOracle_3`
 - `IsosurfacingDomain_3`
 - `IsosurfacingDomainWithGradient_3`
 
-\cgalCRPSection{Isosurfacing Domains}
-- `CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3`
-- `CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3`
-- `CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain()`
-- `CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain()`
+\cgalCRPSection{Space Partitioning Data Structures}
 - `CGAL::Isosurfacing::Cartesian_grid_3`
-- `CGAL::Isosurfacing::Zero_gradient`
+
+\cgalCRPSection{Value and Gradient Fields}
+- `CGAL::Isosurfacing::Value_function_3`
+- `CGAL::Isosurfacing::Gradient_function_3`
 - `CGAL::Isosurfacing::Finite_difference_gradient_3`
-- `CGAL::Isosurfacing::Explicit_Cartesian_grid_gradient_3`
+- `CGAL::Isosurfacing::Interpolated_discrete_values_3`
+- `CGAL::Isosurfacing::Interpolated_discrete_gradients_3`
+- `CGAL::Isosurfacing::Trilinear_interpolation`
+
+\cgalCRPSection{Isosurfacing Domains Helpers}
+- `CGAL::Isosurfacing::Dichotomy_edge_intersection`
+- `CGAL::Isosurfacing::Linear_interpolation_edge_intersection`
+
+\cgalCRPSection{Isosurfacing Domains}
+- `CGAL::Isosurfacing::Marching_cubes_domain_3`
+- `CGAL::Isosurfacing::Dual_contouring_domain_3`
+- `CGAL::Isosurfacing::create_marching_cubes_domain_3()`
+- `CGAL::Isosurfacing::create_dual_contouring_domain_3()`
 
 \cgalCRPSection{Isosurfacing Methods}
 
 - `CGAL::Isosurfacing::marching_cubes()`
 - `CGAL::Isosurfacing::dual_contouring()`
 
+\cgalCRPSection{I/O}
+- `CGAL::Isosurfacing::IO::read_Image_3()`
+- `CGAL::Isosurfacing::IO::write_Image_3()`
 */

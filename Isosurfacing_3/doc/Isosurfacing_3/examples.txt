@@ -1,9 +1,9 @@
 /*!
-\example Isosurfacing_3/marching_cubes_implicit_sphere.cpp
-\example Isosurfacing_3/marching_cubes_Cartesian_grid_sphere.cpp
-\example Isosurfacing_3/marching_cubes_inrimage.cpp
-\example Isosurfacing_3/marching_cubes_signed_mesh_offset.cpp
-\example Isosurfacing_3/dual_contouring_Cartesian_grid.cpp
-\example Isosurfacing_3/dual_contouring_mesh_offset.cpp
-\example Isosurfacing_3/all_Cartesian_cube.cpp
+\example Isosurfacing_3/contouring_discrete_data.cpp
+\example Isosurfacing_3/contouring_image.cpp
+\example Isosurfacing_3/contouring_implicit_data.cpp
+\example Isosurfacing_3/contouring_mesh_offset.cpp
+\example Isosurfacing_3/contouring_octree.cpp
+\example Isosurfacing_3/dual_contouring.cpp
+\example Isosurfacing_3/marching_cubes.cpp
 */
