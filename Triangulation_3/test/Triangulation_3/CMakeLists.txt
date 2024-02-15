@@ -143,6 +143,7 @@ CGAL_add_cdt3_from_local_off_test(thingi-1036467-selection3)
 CGAL_add_cdt3_from_local_off_test(243014-min2)
 CGAL_add_cdt3_from_local_off_test(243014-min3)
 CGAL_add_cdt3_from_local_off_test(1435440-min1)
+CGAL_add_cdt3_from_local_off_test(1435440-min2)
 
 include(./Thingi10k-CDT.cmake)
 
