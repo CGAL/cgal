@@ -382,6 +382,14 @@ public:
     debug_flags.set(static_cast<int>(Debug_flags::copy_triangulation_into_hole), b);
   }
 
+  bool debug_validity() const {
+    return debug_flags[static_cast<int>(Debug_flags::validity)];
+  }
+
+  void debug_validity(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::validity), b);
+  }
+
   bool use_older_cavity_algorithm() const {
     return debug_flags[static_cast<int>(Debug_flags::use_older_cavity_algorithm)];
   }
@@ -904,6 +912,7 @@ protected:
     missing_region,
     regions,
     copy_triangulation_into_hole,
+    validity,
     use_older_cavity_algorithm,
     nb_of_flags
   };

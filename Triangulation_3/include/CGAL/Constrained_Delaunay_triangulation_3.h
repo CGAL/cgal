@@ -646,6 +646,7 @@ public:
     for(auto c: cells_of_cavity) {
       this->tds().delete_cell(c);
     }
+    CGAL_assume(!this->debug_validity() || this->is_valid(true));
 
     return p_vh;
   }
@@ -2225,7 +2226,7 @@ private:
       set_facet_constrained(f, face_index, f2d);
       f2d->info().missing_subface = false;
     }
-    //CGAL_assertion(this->T_3::Tr_Base::is_valid(true));
+    CGAL_assume(!this->debug_validity() || this->is_valid(true));
   };
 
   struct Oriented_face_of_cdt_2 {

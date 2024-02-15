@@ -69,6 +69,7 @@ struct CDT_options
   bool debug_regions = false;
   bool debug_copy_triangulation_into_hole = false;
   bool use_new_cavity_algorithm = true;
+  bool debug_validity = false;
   double ratio = 0.;
   double vertex_vertex_epsilon = 1e-6;
   double segment_vertex_epsilon = 1e-8;
@@ -158,6 +159,8 @@ int main(int argc, char* argv[])
       options.debug_regions = true;
     } else if(arg == "--debug_copy_triangulation_into_hole") {
       options.debug_copy_triangulation_into_hole = true;
+    } else if(arg == "--debug-validity") {
+      options.debug_validity = true;
     } else if(arg == "-V") {
       ++options.verbose;
     } else if(arg == "--help") {
@@ -324,6 +327,7 @@ int go(Mesh mesh, CDT_options options) {
   cdt.debug_Steiner_points(options.verbose > 0);
   cdt.debug_missing_region(options.verbose > 1 || options.debug_missing_regions);
   cdt.debug_regions(options.debug_regions);
+  cdt.debug_validity(options.debug_validity);
   cdt.debug_copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
   cdt.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);
