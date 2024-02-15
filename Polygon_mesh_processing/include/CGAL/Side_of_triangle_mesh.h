@@ -181,9 +181,9 @@ public:
   }
 
   /**
-  * Constructor moving an instance of Side_of_triangle_mesh to a new memory
+  * Constructor moving an instance of `Side_of_triangle_mesh` to a new memory
   * location with minimal memory copy.
-  * @param other The instance to be moved
+  * @param other the instance to be moved
   */
   Side_of_triangle_mesh(Side_of_triangle_mesh&& other)
   {
@@ -201,10 +201,10 @@ public:
 
 public:
   /**
-  * Assign operator moving an instance of Side_of_triangle_mesh to this
+  * Assign operator moving an instance of `Side_of_triangle_mesh` to this
   * location with minimal memory copy.
-  * @param other The instance to be moved
-  * @return A reference to this
+  * @param other the instance to be moved
+  * @return a reference to `this`
   */
   Side_of_triangle_mesh& operator=(Side_of_triangle_mesh&& other)
   {
