@@ -394,10 +394,7 @@ public:
     typename Get_pmap_type<T>::type
     get_or_add(const std::string& name, const T t=T())
     {
-      typename Ref_class::template Get_property_map<Key, T>::type p;
-      bool b;
-      boost::tie(p,b)= get<T>(name);
-      std::optional<Get_pmap_type<T>::type> out = get<T>(name);
+      std::optional<typename Get_pmap_type<T>::type> out = get<T>(name);
       if (out.has_value())
         return *out;
       else
