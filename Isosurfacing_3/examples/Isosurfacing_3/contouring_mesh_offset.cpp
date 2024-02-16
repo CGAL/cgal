@@ -126,14 +126,14 @@ int main(int argc, char** argv)
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross.off");
   const FT offset_value = (argc > 2) ? std::stod(argv[2]) : 0.2;
 
-  if(offset_value <= 0)
+  if(offset_value < 0)
   {
     std::cerr << "Offset value must be positive" << std::endl;
     return EXIT_FAILURE;
   }
 
   Mesh mesh;
-  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh) || is_empty(mesh))
   {
     std::cerr << "Could not read input mesh" << std::endl;
     return EXIT_FAILURE;
