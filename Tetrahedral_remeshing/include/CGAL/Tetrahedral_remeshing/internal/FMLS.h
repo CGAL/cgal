@@ -498,6 +498,9 @@ private:
     inline std::size_t getCellIndicesSize(std::size_t i,
                                            std::size_t j,
                                            std::size_t k) const {
+      CGAL_assertion_code(auto gle = getLUTElement(i, j, k));
+      CGAL_assertion(gle >= 0);
+      CGAL_assertion(gle < indices.size());
       return indices[getLUTElement(i, j, k)];
     }
     inline std::size_t getIndicesElement(std::size_t i,
