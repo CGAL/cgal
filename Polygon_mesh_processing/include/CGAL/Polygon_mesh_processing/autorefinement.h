@@ -486,7 +486,6 @@ bool collect_intersections(const std::array<typename K::Point_3, 3>& t1,
   return false;
 }
 
-//TODO: rename struct
 struct Triangle_data
 {
   using Point_3 = Exact_predicates_exact_constructions_kernel::Point_3;
@@ -950,7 +949,6 @@ void generate_subtriangles(std::size_t ti,
 
   for (const std::pair<std::size_t, std::size_t>& ids : triangle_data.segments)
   {
-    //TODO remove me
     CGAL_assertion(ids.first < vhandles.size());
     CGAL_assertion(ids.second < vhandles.size());
     CGAL_assertion( vhandles[ids.first]!= typename CDT::Vertex_handle() );
