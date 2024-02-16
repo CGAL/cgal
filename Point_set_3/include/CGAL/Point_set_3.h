@@ -813,15 +813,14 @@ public:
   }
 
   /*!
-    \brief returns the property `name` of type `T`.
+    \brief returns a std::optional of the property `name` of type `T`.
 
     \tparam T type of the property.
 
     \param name Name of the property.
 
-    \return Returns a pair containing: the specified property map and a
-    Boolean set to `true` or an empty property map and a Boolean set
-    to `false` (if the property was not found).
+    \return Returns a std::optional containing the specified property map
+    if it has been found.
   */
   template <class T>
   Pair_optional_adaptor<Property_map<T>>

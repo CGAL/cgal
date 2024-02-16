@@ -2074,10 +2074,8 @@ private: //--------------------------------------------------- property handling
       return Property_selector<I>(this)().template add<T>(name, t);
     }
 
-    /// returns a property map named `name` with key type `I` and value type `T`,
-    /// and a Boolean that is `true` if the property exists.
-    /// In case it does not exist the Boolean is `false` and the behavior of
-    /// the property map is undefined.
+    /// returns a std::optional of the property map named `name` with key type `I` and value type `T` if
+    /// it has been found.
     template <class I, class T>
     Pair_optional_adaptor<Property_map<I, T>> property_map(const std::string& name) const
     {
