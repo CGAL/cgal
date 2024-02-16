@@ -82,10 +82,14 @@ void run_marching_cubes(const Grid& grid,
   Point_range points;
   Polygon_range triangles;
 
+  // run marching cubes
+  std::cout << "Running Marching Cubes with isovalue = " << offset_value << std::endl;
+  CGAL::Isosurfacing::marching_cubes(domain, offset_value, points, triangles,
+                                     CGAL::parameters::do_not_triangulate_faces(true));
+
   std::cout << "Output #vertices (MC): " << points.size() << std::endl;
   std::cout << "Output #triangles (MC): " << triangles.size() << std::endl;
   CGAL::IO::write_polygon_soup("marching_cubes_offsets.off", points, triangles);
-
 }
 
 void run_dual_contouring(const Grid& grid,
@@ -102,7 +106,6 @@ void run_dual_contouring(const Grid& grid,
 
   Values values { mesh_distance, grid };
   Gradients gradients { values };
-
   Domain domain { grid, values, gradients };
 
   // output containers
