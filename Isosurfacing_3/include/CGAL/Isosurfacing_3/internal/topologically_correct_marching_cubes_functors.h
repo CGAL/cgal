@@ -136,8 +136,10 @@ public:
     {
       if(p_slice(cell, m_isovalue, values, corners, i_case))
         return;
+#ifdef CGAL_ISOSURFACING_3_MC_FUNCTORS_DEBUG
       else
         std::cerr << "WARNING: the result might not be topologically correct" << std::endl;
+#endif
     }
 
     constexpr int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
