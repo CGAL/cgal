@@ -711,13 +711,13 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   {
     new_index = c3t3.index(v0);
     new_dim = c3t3.in_dimension(v0);
-    sizing_at_new_pos = sizing_at_vertex(v0, sizing, c3t3);
+    sizing_at_new_pos = sizing_at_vertex(v0, sizing, c3t3, cell_selector);
   }
   else if (collapse_type == TO_V1)
   {
     new_index = c3t3.index(v1);
     new_dim = c3t3.in_dimension(v1);
-    sizing_at_new_pos = sizing_at_vertex(v1, sizing, c3t3);
+    sizing_at_new_pos = sizing_at_vertex(v1, sizing, c3t3, cell_selector);
   }
   else if (collapse_type == TO_MIDPOINT)
   {
@@ -750,7 +750,7 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
     else
       sqlen = edges_sqlength_after_collapse[vh];
 
-    const FT sizing_at_vh = sizing_at_vertex(vh, sizing, c3t3);
+    const FT sizing_at_vh = sizing_at_vertex(vh, sizing, c3t3, cell_selector);
     const FT sqhigh
         = CGAL::square(FT(4) / FT(3)) * (std::max)(CGAL::square(sizing_at_vh),
                                                    CGAL::square(sizing_at_new_pos));

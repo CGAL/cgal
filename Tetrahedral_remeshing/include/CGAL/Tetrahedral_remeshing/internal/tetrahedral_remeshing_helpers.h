@@ -1253,29 +1253,36 @@ auto size_at_centroid(const typename C3t3::Cell_handle c,
   return sizing(cc, 3, c->subdomain_index());
 }
 
-//todo : use cell_selector
-template<typename CellRange, typename Sizing, typename C3t3>
-auto max_size_at_centroids(const CellRange& cells,
-                           const Sizing& sizing,
-                           const C3t3& c3t3)
+template<typename CellRange, typename Sizing, typename C3t3, typename Cell_selector>
+auto average_size_at_centroids(const CellRange& cells,
+                               const Sizing& sizing,
+                               const C3t3& c3t3,
+                               const Cell_selector& cell_selector)
 {
   using FT = typename C3t3::Triangulation::Geom_traits::FT;
 
-  FT max_size = 0;
+  FT size = 0;
+  unsigned int count = 0;
   for (const auto& c : cells)
   {
-    if(c3t3.is_in_complex(c)) //todo : use cell_selector
+    if(get(cell_selector, c))
     {
-      max_size = (std::max)(max_size, size_at_centroid(c, sizing, c3t3));
+      size += size_at_centroid(c, sizing, c3t3);
+      ++count;
     }
   }
-  return max_size;
+  CGAL_assertion(count > 0);
+  return size / static_cast<FT>(count);
 }
 
-template<typename Vertex_handle, typename Sizing, typename C3t3>
+template<typename Vertex_handle,
+         typename Sizing,
+         typename C3t3,
+         typename Cell_selector>
 auto sizing_at_vertex(const Vertex_handle v,
                       const Sizing& sizing,
-                      const C3t3& c3t3)
+                      const C3t3& c3t3,
+                      const Cell_selector& cell_selector)
 {
   auto size = sizing(point(v->point()), v->in_dimension(), v->index());
 
@@ -1283,7 +1290,7 @@ auto sizing_at_vertex(const Vertex_handle v,
   {
     std::vector<typename C3t3::Cell_handle> cells;
     c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
-    return max_size_at_centroids(cells, sizing, c3t3);
+    return average_size_at_centroids(cells, sizing, c3t3, cell_selector);
   }
 
   return size;
@@ -1313,22 +1320,9 @@ auto sizing_at_midpoint(const typename C3t3::Edge& e,
     const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), v->index());
 
     if (size_at_u == 0. || size_at_v == 0.)
-    {
-      FT max_size_at_uv = 0.;
-      auto circ = c3t3.triangulation().incident_cells(e);
-      auto done = circ;
-      do
-      {
-        if (get(cell_selector, circ))
-        {
-          const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
-          max_size_at_uv = (std::max)(max_size_at_uv, size_at_cc);
-        }
-      } while (++circ != done);
-
-      CGAL_assertion(max_size_at_uv > 0.);
-      return max_size_at_uv;
-    }
+      return average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+    else
+      return 0.5 * (size_at_u + size_at_v);
   }
 
   return size;
@@ -1346,29 +1340,6 @@ auto average_sizing_in_incident_cells(const typename C3t3::Edge& e,
   typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
   typename Tr::Cell_circulator done = circ;
 
-#ifdef COLLAPSE_USE_MAX_SIZE_AT_UV
-  FT size_at_uv = 0.;
-  do
-  {
-    if (get(cell_selector, circ))
-    {
-      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
-      size_at_uv = (std::max)(size_at_uv, size_at_cc);
-    }
-  } while (++circ != done);
-
-#elif defined(COLLAPSE_USE_MIN_SIZE_AT_UV)
-  FT size_at_uv = (std::numeric_limits<FT>::max)();
-  do
-  {
-    if (get(cell_selector, circ))
-    {
-      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
-      size_at_uv = (std::min)(size_at_uv, size_at_cc);
-    }
-  } while (++circ != done);
-
-#else //default : average
   FT size_at_uv = 0.;
   unsigned int count = 0;
   do
@@ -1382,7 +1353,6 @@ auto average_sizing_in_incident_cells(const typename C3t3::Edge& e,
   } while (++circ != done);
 
   size_at_uv = size_at_uv / static_cast<FT>(count);
-#endif
 
   CGAL_assertion(size_at_uv > 0);
   return size_at_uv;
