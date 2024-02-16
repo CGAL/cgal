@@ -55,7 +55,7 @@
 #endif
 #endif
 
-#ifdef USE_FIXED_PROJECTION_TRAITS
+#ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
 #include <CGAL/Kernel_23/internal/Projection_traits_3.h>
 #endif
 
@@ -544,7 +544,7 @@ struct Triangle_data
 };
 
 template <class EK,
-#ifdef USE_FIXED_PROJECTION_TRAITS
+#ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
           int dim,
 #endif
           class PointVector>
@@ -820,7 +820,7 @@ void generate_subtriangles(std::size_t ti,
 
 // init CDT + insert points and constraints
   CGAL_AUTOREF_COUNTER_INSTRUCTION(counter.timer3.start();)
-#ifdef USE_FIXED_PROJECTION_TRAITS
+#ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
   typedef ::CGAL::internal::Projection_traits_3<EK, dim> P_traits;
 #else
   typedef CGAL::Projection_traits_3<EK> P_traits;
@@ -835,7 +835,7 @@ void generate_subtriangles(std::size_t ti,
   const std::array<typename EK::Point_3,3>& t = triangles[ti];
   std::vector<typename CDT::Vertex_handle> vhandles(triangle_data.points.size());
 
-#ifdef USE_FIXED_PROJECTION_TRAITS
+#ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
   P_traits cdt_traits;
   bool orientation_flipped = false;
   CDT cdt(cdt_traits);
@@ -1354,7 +1354,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
       new_triangles.push_back({triangles[ti], ti});
     else
     {
-#ifdef USE_FIXED_PROJECTION_TRAITS
+#ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
       const std::array<typename EK::Point_3, 3>& t = triangles[ti];
       typename EK::Vector_3 orth = CGAL::normal(t[0], t[1], t[2]); // TODO::avoid construction?
       int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
