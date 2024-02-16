@@ -73,14 +73,15 @@ public:
    * \param k the index in the `z` direction
    *
    * \return a reference to the stored value
-   *
-   * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
   FT& operator()(const std::size_t i,
                  const std::size_t j,
                  const std::size_t k)
   {
-    return m_values[m_grid.linear_index(i, j, k)];
+    const std::size_t id = m_grid.linear_index(i, j, k);
+    if(id >= m_values.size())
+      m_values.resize(id + 1);
+    return m_values[id];
   }
 
   /**
