@@ -76,6 +76,9 @@ Release date: October 2023
 -   Added three functions `vertices()` to the class `Triangulation_3`.
     Each of them returns an array containing the vertices of the given triangulation simplex.
 
+### [dD Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulations)
+-   **Breaking change**: `CGAL::TDS_full_cell_mirror_storage_policy` is now unsupported in dimension larger than 127.
+
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
 
