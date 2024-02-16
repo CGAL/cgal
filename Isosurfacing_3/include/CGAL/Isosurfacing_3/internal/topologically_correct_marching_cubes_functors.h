@@ -224,7 +224,6 @@ private:
   Point_index add_point(const Point_3& p, const Edge_index& e)
   {
     const Point_index i = m_point_counter++;
-    std::cout << "i =" << i << std::endl;
 
 #ifdef CGAL_LINKED_WITH_TBB
     typename Edge_point_map::accessor acc;

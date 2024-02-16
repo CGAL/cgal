@@ -146,7 +146,7 @@ public:
     std::size_t j = static_cast<std::size_t>((y_coord(p) - y_coord(min_p)) / spacing[1]);
     std::size_t k = static_cast<std::size_t>((z_coord(p) - z_coord(min_p)) / spacing[2]);
 
-    if(i == g.xdim() - 1)
+    if(i == g.xdim() - 1) // dim is the point number
       --i;
     if(j == g.ydim() - 1)
       --j;

@@ -89,7 +89,39 @@ private:
 
   Geom_traits m_gt;
 
+private:
+  void compute_spacing()
+  {
+    auto x_coord = m_gt.compute_x_3_object();
+    auto y_coord = m_gt.compute_y_3_object();
+    auto z_coord = m_gt.compute_z_3_object();
+    auto vertex = m_gt.construct_vertex_3_object();
+
+    // calculate grid spacing
+    const Point_3& min_p = vertex(m_bbox, 0);
+    const Point_3& max_p = vertex(m_bbox, 7);
+    const FT x_span = x_coord(max_p) - x_coord(min_p);
+    const FT y_span = y_coord(max_p) - y_coord(min_p);
+    const FT z_span = z_coord(max_p) - z_coord(min_p);
+
+    const FT d_x = x_span / (m_sizes[0] - 1);
+    const FT d_y = y_span / (m_sizes[1] - 1);
+    const FT d_z = z_span / (m_sizes[2] - 1);
+
+    m_spacing = make_array(d_x, d_y, d_z);
+  }
+
 public:
+  /*!
+   * \brief Default constructor
+   */
+  Cartesian_grid_3()
+    : m_bbox{Point_3{0, 0, 0}, Point_3{0, 0, 0}},
+      m_sizes{2, 2, 2},
+      m_spacing{0, 0, 0},
+      m_gt{Geom_traits()}
+  { }
+
   /**
    * \brief creates a %Cartesian grid with `xdim * ydim * zdim` grid vertices.
    *
@@ -112,22 +144,7 @@ public:
       m_sizes{xdim, ydim, zdim},
       m_gt{gt}
   {
-    auto x_coord = m_gt.compute_x_3_object();
-    auto y_coord = m_gt.compute_y_3_object();
-    auto z_coord = m_gt.compute_z_3_object();
-    auto vertex = m_gt.construct_vertex_3_object();
-
-    // calculate grid spacing
-    const Point_3& min_p = vertex(bbox, 0);
-    const Point_3& max_p = vertex(bbox, 7);
-    const FT x_span = x_coord(max_p) - x_coord(min_p);
-    const FT y_span = y_coord(max_p) - y_coord(min_p);
-    const FT z_span = z_coord(max_p) - z_coord(min_p);
-
-    const FT d_x = x_span / (xdim - 1);
-    const FT d_y = y_span / (ydim - 1);
-    const FT d_z = z_span / (zdim - 1);
-    m_spacing = make_array(d_x, d_y, d_z);
+    compute_spacing();
   }
 
   /**
@@ -222,6 +239,15 @@ public:
   const Iso_cuboid_3& bbox() const { return m_bbox; }
 
   /**
+   * sets the bounding box of the %Cartesian grid and recomputes the spacing.
+   */
+  void set_bbox(const Iso_cuboid_3& bbox)
+  {
+    m_bbox = bbox;
+    compute_spacing();
+  }
+
+  /**
    * \return the spacing of the %Cartesian grid, that is a vector whose coordinates are
    *         the grid steps in the `x`, `y`, and `z` directions, respectively
    */
@@ -242,6 +268,16 @@ public:
    */
   std::size_t zdim() const { return m_sizes[2]; }
 
+  /**
+   * sets the number of grid vertices in the `x`, `y`, and `z` directions, respectively,
+   * and recomputes the spacing.
+   */
+  void set_sizes(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim)
+  {
+    m_sizes = {xdim, ydim, zdim};
+    compute_spacing();
+  }
+
 public:
   /**
    * \brief gets the canonical index of a grid cell given its indices.
@@ -251,8 +287,6 @@ public:
                            const std::size_t k) const
   {
     CGAL_precondition(i < m_sizes[0] && j < m_sizes[1] && k < m_sizes[2]);
-
-    // convert (i, j, k) into a linear index, e.g. to access the scalar values / gradient vectors
     return (k * m_sizes[1] + j) * m_sizes[0] + i;
   }
 

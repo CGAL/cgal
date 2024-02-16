@@ -99,6 +99,7 @@ public:
                 const std::size_t j,
                 const std::size_t k) const
   {
+    CGAL_precondition(i < m_grid.xdim() && j < m_grid.ydim() && k < m_grid.zdim());
     return m_values[m_grid.linear_index(i, j, k)];
   }
 

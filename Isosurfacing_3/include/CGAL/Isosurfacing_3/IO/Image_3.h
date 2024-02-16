@@ -32,58 +32,48 @@ namespace IO {
  * The dimensions and bounding box are read from the image. The values stored
  * in the image must be of type `Geom_traits::FT` or implicitly convertible to it.
  *
- * \tparam K must be a model of `IsosurfacingTraits_3`
+ * \tparam Grid must be `CGAL::Cartesian_grid_3<GeomTraits>` whose `GeomTraits` is a model of `IsosurfacingTraits_3`
+ * \tparam Values must be `CGAL::Interpolated_discrete_values_3<Grid>`
  *
  * \param image the image providing the data
- * \param k the traits
+ * \param grid the grid
+ * \tparam values the values
  */
-template <typename K>
-std::pair<Cartesian_grid_3<K>,
-          Interpolated_discrete_values_3<Cartesian_grid_3<K> > >
-read_Image_3(const CGAL::Image_3& image,
-             const K& k = K())
+template <typename Grid, typename Values>
+bool read_Image_3(const CGAL::Image_3& image,
+                  Grid& grid,
+                  Values& values)
 {
-  using Grid = Cartesian_grid_3<K>;
-  using Values = Interpolated_discrete_values_3<Grid>;
+  using Geom_traits = typename Grid::Geom_traits;
+  using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
+  using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
 
-  using FT = typename K::FT;
-  using Point_3 = typename K::Point_3;
-  using Iso_cuboid_3 = typename K::Iso_cuboid_3;
-
-  auto point = k.construct_point_3_object();
-  auto iso_cuboid = k.construct_iso_cuboid_3_object();
-
-  Iso_cuboid_3 bbox;
+  auto point = grid.geom_traits().construct_point_3_object();
+  auto iso_cuboid = grid.geom_traits().construct_iso_cuboid_3_object();
 
   // compute bounding box
   const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();
   const FT max_y = image.ty() + (image.ydim() - 1) * image.vy();
   const FT max_z = image.tz() + (image.zdim() - 1) * image.vz();
-  bbox = iso_cuboid(point(image.tx(), image.ty(), image.tz()),
-                    point(max_x, max_y, max_z));
+  Iso_cuboid_3 bbox = iso_cuboid(point(image.tx(), image.ty(), image.tz()),
+                                 point(max_x, max_y, max_z));
 
   // get spacing
   // std::array<FT, 3> spacing = make_array(image.vx(), image.vy(), image.vz());
 
   // get sizes
-  std::array<std::size_t, 3> sizes;
-  sizes[0] = image.xdim();
-  sizes[1] = image.ydim();
-  sizes[2] = image.zdim();
-
-  Grid grid { bbox, sizes[0], sizes[1], sizes[2], k };
-
-  Values values { grid };
+  grid.set_bbox(bbox);
+  grid.set_sizes(image.xdim(), image.ydim(), image.zdim());
 
   // copy values
-  for(std::size_t x=0; x<sizes[0]; ++x)
-    for(std::size_t y=0; y<sizes[1]; ++y)
-      for(std::size_t z=0; z<sizes[2]; ++z)
+  for(std::size_t x=0; x<image.xdim(); ++x)
+    for(std::size_t y=0; y<image.ydim(); ++y)
+      for(std::size_t z=0; z<image.zdim(); ++z)
         values(x, y, z) = image.value(x, y, z);
 
-  return { grid, values };
+  return true;
 }
-
 
 /**
  * \ingroup IS_IO_functions_grp
