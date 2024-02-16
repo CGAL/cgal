@@ -255,12 +255,12 @@ do_coplanar_segments_intersect(std::size_t pi, std::size_t qi,
 
 // imported from Intersections_3/include/CGAL/Intersections_3/internal/Triangle_3_Triangle_3_intersection.h
 template<class K>
-void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
-                            const std::array<typename K::Point_3, 3>& t2,
+void coplanar_intersections(const std::vector<typename K::Point_3>& t1,
+                            const std::vector<typename K::Point_3>& t2,
                             std::vector<std::tuple<typename K::Point_3, int, int>>& inter_pts)
 {
-  const typename K::Point_3& p1 = t1[0], q1 = t1[1], r1 = t1[2];
-  const typename K::Point_3& p2 = t2[0], q2 = t2[1], r2 = t2[2];
+  const typename K::Point_3& p1 = t1[0], & q1 = t1[1], & r1 = t1[2];
+  const typename K::Point_3& p2 = t2[0], & q2 = t2[1], & r2 = t2[2];
 
   std::list<Intersections::internal::Point_on_triangle<K>> l_inter_pts;
   l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(0,-1));
@@ -416,8 +416,8 @@ test_edge(const typename K::Point_3& p, const typename K::Point_3& q,
 }
 
 template <class K>
-bool collect_intersections(const std::array<typename K::Point_3, 3>& t1,
-                           const std::array<typename K::Point_3, 3>& t2,
+bool collect_intersections(const std::vector<typename K::Point_3>& t1,
+                           const std::vector<typename K::Point_3>& t2,
                            std::vector<std::tuple<typename K::Point_3, int, int>>& inter_pts)
 {
   // test edges of t1 vs t2
@@ -548,10 +548,9 @@ template <class EK,
 #endif
           class PointVector>
 void generate_subtriangles(std::size_t ti,
-                           Triangle_data& triangle_data,
+                           std::vector<Triangle_data>& all_triangle_data,
                            const std::set<std::pair<std::size_t, std::size_t> >& intersecting_triangles,
                            const std::set<std::pair<std::size_t, std::size_t> >& coplanar_triangles,
-                           const std::vector<std::array<typename EK::Point_3,3>>& triangles,
                            PointVector& new_triangles
                            )
 {
@@ -588,6 +587,7 @@ void generate_subtriangles(std::size_t ti,
 #define CGAL_AUTOREF_COUNTER_INSTRUCTION(X)
 #endif
 
+  Triangle_data& triangle_data=all_triangle_data[ti];
   std::vector<Exact_predicates_exact_constructions_kernel::Point_3>& points=triangle_data.points;
   std::vector<int>& point_locations=triangle_data.point_locations;
   std::vector<std::pair<std::size_t, std::size_t>>& segments=triangle_data.segments;
@@ -680,9 +680,9 @@ void generate_subtriangles(std::size_t ti,
               {
                 CGAL_AUTOREF_COUNTER_INSTRUCTION(counter.timer6.start();)
                 typename EK::Point_3 pt = typename EK::Construct_planes_intersection_point_3()(
-                  triangles[in_triangle_ids[i]][0], triangles[in_triangle_ids[i]][1],triangles[in_triangle_ids[i]][2],
-                  triangles[in_triangle_ids[j]][0], triangles[in_triangle_ids[j]][1],triangles[in_triangle_ids[j]][2],
-                  triangles[ti][0], triangles[ti][1],triangles[ti][2]);
+                  all_triangle_data[in_triangle_ids[i]].points[0], all_triangle_data[in_triangle_ids[i]].points[1],all_triangle_data[in_triangle_ids[i]].points[2],
+                  all_triangle_data[in_triangle_ids[j]].points[0], all_triangle_data[in_triangle_ids[j]].points[1],all_triangle_data[in_triangle_ids[j]].points[2],
+                  points[0], points[1],points[2]);
                 CGAL_AUTOREF_COUNTER_INSTRUCTION(counter.timer6.stop();)
 
                 CGAL_AUTOREF_COUNTER_INSTRUCTION(++counter.c1;)
@@ -831,7 +831,6 @@ void generate_subtriangles(std::size_t ti,
   //typedef CGAL::Constrained_triangulation_plus_2<CDT_2> CDT;
   typedef CDT_2 CDT;
 
-  const std::array<typename EK::Point_3,3>& t = triangles[ti];
   std::vector<typename CDT::Vertex_handle> vhandles(triangle_data.points.size());
 
 #ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
@@ -839,12 +838,12 @@ void generate_subtriangles(std::size_t ti,
   bool orientation_flipped = false;
   CDT cdt(cdt_traits);
   // TODO: still need to figure out why I can't make the orientation_flipped correctly
-  vhandles[0]=cdt.insert(t[0]);
-  vhandles[1]=cdt.insert(t[1]);
-  vhandles[2]=cdt.insert(t[2]);
+  vhandles[0]=cdt.insert(points[0]);
+  vhandles[1]=cdt.insert(points[1]);
+  vhandles[2]=cdt.insert(points[2]);
 #else
   // positive triangle normal
-  typename EK::Vector_3 n = normal(t[0], t[1], t[2]);
+  typename EK::Vector_3 n = normal(points[0], points[1], points[2]);
   typename EK::Point_3 o(CGAL::ORIGIN);
 
   bool orientation_flipped = false;
@@ -856,18 +855,14 @@ void generate_subtriangles(std::size_t ti,
   P_traits cdt_traits(n);
 
   CDT cdt(cdt_traits);
-  vhandles[0]=cdt.insert_outside_affine_hull(t[0]);
-  vhandles[1]=cdt.insert_outside_affine_hull(t[1]);
+  vhandles[0]=cdt.insert_outside_affine_hull(points[0]);
+  vhandles[1]=cdt.insert_outside_affine_hull(points[1]);
   vhandles[2] = cdt.tds().insert_dim_up(cdt.infinite_vertex(), orientation_flipped);
-  vhandles[2]->set_point(t[2]);
+  vhandles[2]->set_point(points[2]);
 #endif
 
   // insert points and fill vhandles
-#if 0
-  std::vector<std::size_t> indices(triangle_data.points.size()-3);
-  std::iota(indices.begin(), indices.end(), 3);
-#else
-  //start by points on edges
+  // start by points on edges
   std::array<std::vector<std::size_t>, 3> indices_on_edges;
   std::vector<std::size_t> indices;
   for (std::size_t i=3; i<points.size(); ++i)
@@ -933,7 +928,7 @@ void generate_subtriangles(std::size_t ti,
       prev_id=id;
     }
   }
-#endif
+
   // then points in the interior
   typedef typename Pointer_property_map<typename EK::Point_3>::type Pmap;
   typedef Spatial_sort_traits_adapter_2<P_traits,Pmap> Search_traits;
@@ -1107,22 +1102,17 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
   // init the vector of triangles used for the autorefinement of triangles
   typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
-  std::vector< std::array<EK::Point_3, 3> > triangles(tiid+1); // TODO get rid of triangles and use all_triangle_data
   // vector of data for refining triangles
-  std::vector<autorefine_impl::Triangle_data> all_triangle_data(triangles.size());
+  std::vector<autorefine_impl::Triangle_data> all_triangle_data(tiid+1);
   Cartesian_converter<GT, EK> to_exact;
 
   for(Input_TID f : intersected_faces)
   {
     std::size_t tid=tri_inter_ids[f];
-    triangles[tid]= CGAL::make_array(
-      to_exact( get(pm, soup_points[soup_triangles[f][0]]) ),
-      to_exact( get(pm, soup_points[soup_triangles[f][1]]) ),
-      to_exact( get(pm, soup_points[soup_triangles[f][2]]) ) );
     all_triangle_data[tid].points.resize(3);
-    all_triangle_data[tid].points[0]=triangles[tri_inter_ids[f]][0];
-    all_triangle_data[tid].points[1]=triangles[tri_inter_ids[f]][1];
-    all_triangle_data[tid].points[2]=triangles[tri_inter_ids[f]][2];
+    all_triangle_data[tid].points[0]=to_exact( get(pm, soup_points[soup_triangles[f][0]]) );
+    all_triangle_data[tid].points[1]=to_exact( get(pm, soup_points[soup_triangles[f][1]]) );
+    all_triangle_data[tid].points[2]=to_exact( get(pm, soup_points[soup_triangles[f][2]]) );
     all_triangle_data[tid].point_locations.resize(3);
     all_triangle_data[tid].point_locations[0]=-1;
     all_triangle_data[tid].point_locations[1]=-2;
@@ -1144,8 +1134,8 @@ void autorefine_triangle_soup(PointRange& soup_points,
 
     if (i1==-1 || i2==-1) continue; //skip degenerate faces
 
-    const std::array<EK::Point_3, 3>& t1 = triangles[i1];
-    const std::array<EK::Point_3, 3>& t2 = triangles[i2];
+    const std::vector<EK::Point_3>& t1 = all_triangle_data[i1].points;
+    const std::vector<EK::Point_3>& t2 = all_triangle_data[i2].points;
 
     std::vector<std::tuple<EK::Point_3, int, int>> inter_pts;
     bool triangles_are_coplanar = autorefine_impl::collect_intersections<EK>(t1, t2, inter_pts);
@@ -1313,7 +1303,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
 #ifdef CGAL_LINKED_WITH_TBB
   if (parallel_execution)
   {
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, all_triangle_data.size()),
                       [&](const tbb::blocked_range<size_t>& r) {
                         for (size_t ti = r.begin(); ti != r.end(); ++ti)
                           deduplicate_inserted_segments(ti);
@@ -1322,7 +1312,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   }
   else
 #endif
-  for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
+  for (std::size_t ti = 0; ti < all_triangle_data.size(); ++ti) {
     deduplicate_inserted_segments(ti);
   }
 
@@ -1343,32 +1333,34 @@ void autorefine_triangle_soup(PointRange& soup_points,
 #endif
 
 #ifdef CGAL_AUTOREF_USE_PROGRESS_DISPLAY
-  boost::timer::progress_display pd(triangles.size());
+  boost::timer::progress_display pd(all_triangle_data.size());
 #endif
 
   auto refine_triangles = [&](std::size_t ti)
   {
     if (all_triangle_data[ti].points.size()==3)
-      new_triangles.push_back({triangles[ti], ti});
+      new_triangles.push_back({CGAL::make_array(all_triangle_data[ti].points[0],
+                                                all_triangle_data[ti].points[1],
+                                                all_triangle_data[ti].points[2]),
+                               ti});
     else
     {
 #ifdef CGAL_AUTOREF_USE_FIXED_PROJECTION_TRAITS
-      const std::array<typename EK::Point_3, 3>& t = triangles[ti];
-      typename EK::Vector_3 orth = CGAL::normal(t[0], t[1], t[2]); // TODO::avoid construction?
+      typename EK::Vector_3 orth = CGAL::normal(all_triangle_data[ti].points[0], all_triangle_data[ti].points[1], all_triangle_data[ti].points[2]); // TODO::avoid construction?
       int c = CGAL::abs(orth[0]) > CGAL::abs(orth[1]) ? 0 : 1;
       c = CGAL::abs(orth[2]) > CGAL::abs(orth[c]) ? 2 : c;
 
       if (c == 0) {
-        autorefine_impl::generate_subtriangles<EK, 0>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, 0>(ti, all_triangle_data, intersecting_triangles, coplanar_triangles, new_triangles);
       }
       else if (c == 1) {
-        autorefine_impl::generate_subtriangles<EK, 1>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, 1>(ti, all_triangle_data, intersecting_triangles, coplanar_triangles, new_triangles);
       }
       else if (c == 2) {
-        autorefine_impl::generate_subtriangles<EK, 2>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+        autorefine_impl::generate_subtriangles<EK, 2>(ti, all_triangle_data, intersecting_triangles, coplanar_triangles, new_triangles);
       }
 #else
-      autorefine_impl::generate_subtriangles<EK>(ti, all_triangle_data[ti], intersecting_triangles, coplanar_triangles, triangles, new_triangles);
+      autorefine_impl::generate_subtriangles<EK>(ti, all_triangle_data, intersecting_triangles, coplanar_triangles, new_triangles);
 #endif
     }
 
@@ -1383,7 +1375,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
 #ifdef CGAL_LINKED_WITH_TBB
   if (parallel_execution)
   {
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, triangles.size()),
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, all_triangle_data.size()),
                       [&](const tbb::blocked_range<size_t>& r) {
                         for (size_t ti = r.begin(); ti != r.end(); ++ti)
                           refine_triangles(ti);
@@ -1392,7 +1384,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   }
   else
 #endif
-  for (std::size_t ti = 0; ti < triangles.size(); ++ti) {
+  for (std::size_t ti = 0; ti < all_triangle_data.size(); ++ti) {
     refine_triangles(ti);
   }
 
@@ -1449,7 +1441,7 @@ void autorefine_triangle_soup(PointRange& soup_points,
   }
 
   // raw copy of input triangles with no intersection
-  std::vector<std::size_t> tri_inter_ids_inverse(triangles.size());
+  std::vector<std::size_t> tri_inter_ids_inverse(all_triangle_data.size());
   for (Input_TID f=0; f<soup_triangles.size(); ++f)
   {
     if (is_degen[f]) continue; //skip degenerate faces
