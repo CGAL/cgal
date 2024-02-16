@@ -78,6 +78,10 @@ Release date: October 2023
 
 ### [dD Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulations)
 -   **Breaking change**: `CGAL::TDS_full_cell_mirror_storage_policy` is now unsupported in dimension larger than 127.
+-   **Breaking change**: Inserting multiple unweighted points in the same
+    position now keeps the first one, instead of switching to the latest. This
+    only affects custom point types where not all points in the same position
+    are equivalent.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
