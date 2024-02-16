@@ -14,6 +14,9 @@ include(CGAL_TBB_support)
 
 create_single_source_cgal_program("marching_cubes.cpp")
 
+# undocumented
+create_single_source_cgal_program("marching_cubes_strategies.cpp")
+
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("dual_contouring.cpp")
   create_single_source_cgal_program("contouring_discrete_data.cpp")
@@ -53,4 +56,5 @@ endif()
 
 if(TARGET CGAL::TBB_support)
   target_link_libraries(marching_cubes PRIVATE CGAL::TBB_support)
+  target_link_libraries(marching_cubes_strategies PRIVATE CGAL::TBB_support)
 endif()
