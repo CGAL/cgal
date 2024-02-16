@@ -30,7 +30,7 @@ namespace Isosurfacing {
  *
  * \cgalModels{ValueField_3}
  *
- * \brief Class template for a field of values that are calculated using discrete values and trilinear interpolation.
+ * \brief Class template for a field of values that are calculated using discrete values and interpolation.
  *
  * \tparam Grid must be `CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>`, with `GeomTraits` a model of `IsosurfacingTraits_3`
  * \tparam InterpolationScheme must be a model of `InterpolationScheme_3`

@@ -100,9 +100,9 @@ public:
   Point_3 point(const Vertex_descriptor& v) const;
 
   /*!
-  returns the value of the values field at the vertex `p`.
+  returns the value of the values field at the point `p`.
   */
-  FT value(const Point_3& v) const;
+  FT value(const Point_3& p) const;
 
   /*!
   returns the value of the values field at the vertex `v`.

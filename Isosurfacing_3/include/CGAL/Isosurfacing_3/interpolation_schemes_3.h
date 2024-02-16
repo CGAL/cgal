@@ -28,7 +28,7 @@ namespace Isosurfacing {
  * \cgalModels{InterpolationScheme_3}
  *
  * The class `Trilinear_interpolation` is the standard interpolation scheme to extrapolate
- * data defined only at vertices of a Cartesian grid.
+ * data defined only at vertices of a %Cartesian grid.
  *
  * \tparam Grid must be `CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>`, with `GeomTraits`
  *              a model of `IsosurfacingTraits_3`
