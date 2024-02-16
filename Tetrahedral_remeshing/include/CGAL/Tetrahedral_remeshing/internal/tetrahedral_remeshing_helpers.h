@@ -1334,6 +1334,59 @@ auto sizing_at_midpoint(const typename C3t3::Edge& e,
   return size;
 }
 
+template<typename Sizing, typename C3t3, typename Cell_selector>
+auto average_sizing_in_incident_cells(const typename C3t3::Edge& e,
+                                      const Sizing& sizing,
+                                      const C3t3& c3t3,
+                                      const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+
+  typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typename Tr::Cell_circulator done = circ;
+
+#ifdef COLLAPSE_USE_MAX_SIZE_AT_UV
+  FT size_at_uv = 0.;
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv = (std::max)(size_at_uv, size_at_cc);
+    }
+  } while (++circ != done);
+
+#elif defined(COLLAPSE_USE_MIN_SIZE_AT_UV)
+  FT size_at_uv = (std::numeric_limits<FT>::max)();
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv = (std::min)(size_at_uv, size_at_cc);
+    }
+  } while (++circ != done);
+
+#else //default : average
+  FT size_at_uv = 0.;
+  unsigned int count = 0;
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv += size_at_cc;
+      ++count;
+    }
+  } while (++circ != done);
+
+  size_at_uv = size_at_uv / static_cast<FT>(count);
+#endif
+
+  CGAL_assertion(size_at_uv > 0);
+  return size_at_uv;
+}
 
 template<typename Tr>
 typename Tr::Geom_traits::FT
@@ -1366,20 +1419,9 @@ squared_upper_size_bound(const typename C3t3::Edge& e,
   // we take the maximum size of the incident cells
   if (boundary_edge && (size_at_u == 0 || size_at_v == 0))
   {
-    FT max_size_at_uv = 0.;
-    typename Tr::Cell_circulator circ = tr.incident_cells(e);
-    typename Tr::Cell_circulator done = circ;
-    do
-    {
-      if(get(cell_selector, circ))
-      {
-        const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
-        max_size_at_uv = (std::max)(max_size_at_uv, size_at_cc);
-      }
-    } while (++circ != done);
-
-    CGAL_assertion(max_size_at_uv > 0);
-    return CGAL::square(FT(4) / FT(3) * max_size_at_uv);
+    FT size_at_uv = average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+    CGAL_assertion(size_at_uv > 0);
+    return CGAL::square(FT(4) / FT(3) * size_at_uv);
   }
 
   const FT sq_max_u = CGAL::square(FT(4) / FT(3) * size_at_u);
@@ -1417,7 +1459,6 @@ squared_lower_size_bound(const typename C3t3::Edge& e,
   using Tr = typename C3t3::Triangulation;
   using FT = typename Tr::Geom_traits::FT;
   using Vertex_handle = typename Tr::Vertex_handle;
-  const Tr& tr = c3t3.triangulation();
 
   const Vertex_handle u = e.first->vertex(e.second);
   const Vertex_handle v = e.first->vertex(e.third);
@@ -1429,23 +1470,9 @@ squared_lower_size_bound(const typename C3t3::Edge& e,
   // we take the minimum size of the incident cells
   if ( (size_at_u == 0 || size_at_v == 0) && is_boundary(c3t3, e, cell_selector))
   {
-    FT min_size_at_uv = (std::numeric_limits<FT>::max)();
-    typename Tr::Cell_circulator circ = tr.incident_cells(e);
-    typename Tr::Cell_circulator done = circ;
-    do
-    {
-      if(get(cell_selector, circ))
-      {
-        const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
-        min_size_at_uv = (std::min)(min_size_at_uv, size_at_cc);
-      }
-    } while (++circ != done);
-
-    CGAL_assertion(min_size_at_uv > 0);
-//    std::cout << "min(su,sv) = "
-//      << std::min(sizing(P(u->point()), 3, 1), sizing(P(v->point()), 3, 1))
-//      << "\tmin_size_at_uv = " << min_size_at_uv << std::endl;
-    return CGAL::square(FT(4) / FT(5) * min_size_at_uv);
+    FT size_at_uv = average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+    CGAL_assertion(size_at_uv > 0);
+    return CGAL::square(FT(4) / FT(5) * size_at_uv);
   }
 
   const FT sq_min_u = CGAL::square(FT(4) / FT(5) * size_at_u);
