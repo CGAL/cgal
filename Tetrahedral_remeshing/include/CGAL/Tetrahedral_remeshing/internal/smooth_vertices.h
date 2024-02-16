@@ -582,18 +582,58 @@ private:
     }
   }
 
-  FT mass_along_segment(const Edge& e, const Tr& tr) const
+  FT sizing_at_midpoint(const Edge& e,
+                        const int dim,
+                        const typename C3t3::Index& index,
+                        const C3t3& c3t3) const
   {
-    typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+    typename Gt::Construct_point_3
+      cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+    const Point_3 p = CGAL::midpoint(point(e.first->vertex(e.second)->point()),
+                                     point(e.first->vertex(e.third)->point()));
+    const auto size = m_sizing(p, dim, index);
 
-    const std::array<Vertex_handle, 2> vs = tr.vertices(e);
+    if(dim < 3 && size == 0)
+    {
+      const Vertex_handle u = e.first->vertex(e.second);
+      const Vertex_handle v = e.first->vertex(e.third);
+
+      const FT size_at_u = m_sizing(cp(u->point()), u->in_dimension(), u->index());
+      const FT size_at_v = m_sizing(cp(v->point()), v->in_dimension(), v->index());
+
+      if(size_at_u == 0. || size_at_v == 0.)
+      {
+        FT max_size_at_uv = 0.;
+        typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+        typename Tr::Cell_circulator done = circ;
+        do
+        {
+          if (get(m_cell_selector, circ))
+          {
+            const FT size_at_cc = size_at_centroid(circ, m_sizing, c3t3);
+            max_size_at_uv = (std::max)(max_size_at_uv, size_at_cc);
+          }
+        } while (++circ != done);
+
+        CGAL_assertion(max_size_at_uv > 0.);
+        return max_size_at_uv;
+      }
+    }
+
+    return size;
+  }
+
+  FT mass_along_segment(const Edge& e, const C3t3& c3t3) const
+  {
+    const std::array<Vertex_handle, 2>
+      vs = c3t3.triangulation().vertices(e);
 
     //const FT len = CGAL::approximate_sqrt(squared_edge_length(e, tr));
 
     const int dim = (std::max)(vs[0]->in_dimension(), vs[1]->in_dimension());
     const typename C3t3::Index index = max_dimension_index(vs);
 
-    const FT s = m_sizing(CGAL::midpoint(cp(vs[0]->point()), cp(vs[1]->point())), dim, index);
+    const FT s = sizing_at_midpoint(e, dim, index, c3t3);
     const FT density = 1. / (s * s * s); //density = 1 / size^(dimension + 2)
                                          //edge dimension is 1, so density = 1 / size^3
     //const FT mass = len * density;
@@ -636,7 +676,7 @@ private:
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
-      const auto mass = mass_along_segment(e, tr);
+      const auto mass = mass_along_segment(e, c3t3);
 
       if (is_free(i0))
       {
@@ -735,7 +775,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
 
-      const auto mass = mass_along_segment(e, tr);
+      const auto mass = mass_along_segment(e, c3t3);
 
       if (!is_on_feature(vh0) && is_free(i0))
       {
@@ -835,7 +875,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
-      const auto mass = mass_along_segment(e, tr);
+      const auto mass = mass_along_segment(e, c3t3);
 
       if (c3t3.in_dimension(vh0) == 3 && is_free(i0))
       {

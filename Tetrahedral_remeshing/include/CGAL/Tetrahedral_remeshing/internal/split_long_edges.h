@@ -213,21 +213,31 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   return new_v;
 }
 
+/**
+* returns [can_be_split, is_on_boundary]
+*/
 template<typename C3T3, typename CellSelector>
-bool can_be_split(const typename C3T3::Edge& e,
+auto can_be_split(const typename C3T3::Edge& e,
                   const C3T3& c3t3,
                   const bool protect_boundaries,
-                  CellSelector cell_selector)
+                  const CellSelector& cell_selector)
 {
+  struct Splittable
+  {
+    bool can_be_split;
+    bool on_boundary;
+  };
+
   if (is_outside(e, c3t3, cell_selector))
-    return false;
+    return Splittable{false, false};
+
+  const bool boundary = c3t3.is_in_complex(e)
+                     || is_boundary(c3t3, e, cell_selector);
 
   if (protect_boundaries)
   {
-    if (c3t3.is_in_complex(e))
-      return false;
-    else if (is_boundary(c3t3, e, cell_selector))
-      return false;
+    if (boundary)
+      return Splittable{false, boundary};
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     if (!is_internal(e, c3t3, cell_selector))
@@ -240,11 +250,11 @@ bool can_be_split(const typename C3T3::Edge& e,
 #endif
 
     CGAL_assertion(is_internal(e, c3t3, cell_selector));
-    return true;
+    return Splittable{true, boundary};
   }
   else
   {
-    return is_selected(e, c3t3, cell_selector);
+    return Splittable{is_selected(e, c3t3, cell_selector), boundary};
   }
 }
 
@@ -283,10 +293,11 @@ void split_long_edges(C3T3& c3t3,
   Boost_bimap long_edges;
   for (Edge e : tr.finite_edges())
   {
-    if (!can_be_split(e, c3t3, protect_boundaries, cell_selector))
+    auto [splittable, boundary] = can_be_split(e, c3t3, protect_boundaries, cell_selector);
+    if (!splittable)
       continue;
 
-    const std::optional<FT> sqlen = is_too_long(e, sizing, tr);
+    const std::optional<FT> sqlen = is_too_long(e, boundary, sizing, c3t3, cell_selector);
     if(sqlen != std::nullopt)
       long_edges.insert(long_edge(make_vertex_pair(e), sqlen.value()));
   }
@@ -315,7 +326,8 @@ void split_long_edges(C3T3& c3t3,
       Edge edge(cell, i1, i2);
 
       //check that splittability has not changed
-      if (!can_be_split(edge, c3t3, protect_boundaries, cell_selector))
+      auto [splittable, _] = can_be_split(edge, c3t3, protect_boundaries, cell_selector);
+      if (!splittable)
         continue;
 
       visitor.before_split(tr, edge);

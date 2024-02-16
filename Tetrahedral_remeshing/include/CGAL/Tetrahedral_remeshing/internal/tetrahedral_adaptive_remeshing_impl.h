@@ -270,15 +270,13 @@ public:
     for (const Edge& e : tr().finite_edges())
     {
       // skip protected edges
-      if (m_protect_boundaries)
-      {
-        if(  m_c3t3.is_in_complex(e)
-             || is_boundary(m_c3t3, e, m_cell_selector))
-          continue;
-      }
+      const bool boundary =
+        m_c3t3.is_in_complex(e) || is_boundary(m_c3t3, e, m_cell_selector);
+      if (m_protect_boundaries && boundary)
+        continue;
 
-      if(  is_too_long(e, m_sizing, tr())
-        || is_too_short(e, m_sizing, tr()))
+      if(  is_too_long(e, boundary, m_sizing, m_c3t3, m_cell_selector)
+        || is_too_short(e, m_sizing, m_c3t3, m_cell_selector))
         return false;
     }
 

@@ -39,8 +39,8 @@ namespace params = CGAL::parameters;
 // Sizing field
 struct Spherical_sizing_field
 {
-  typedef ::FT FT;
-  typedef Point Point_3;
+  typedef K::FT FT;
+  typedef K::Point_3 Point_3;
   typedef Mesh_domain::Index Index;
 
   FT operator()(const Point_3& p, const int, const Index&) const

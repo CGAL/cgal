@@ -1,3 +1,7 @@
+#define CGAL_DUMP_REMESHING_STEPS
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -47,10 +51,12 @@ struct Distance_from_corner_sizing_field
   const Point_3 corner = Point_3{ -1., -1., -1 }; //lower corner of the cube
 
   template<typename Index>
-  FT operator()(const Point_3& p, const int, const Index&) const
+  FT operator()(const Point_3& p, const int dim, const Index&) const
   {
+    if (dim < 3)
+      return 0.;
     const FT d_to_origin = CGAL::approximate_sqrt(CGAL::squared_distance(p, corner));
-    return 0.02 + 0.1 * d_to_origin;
+    return 0.02 + 0.2 * d_to_origin;
   }
 };
 

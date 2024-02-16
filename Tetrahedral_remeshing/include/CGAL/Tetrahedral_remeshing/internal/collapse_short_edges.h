@@ -711,20 +711,20 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   {
     new_index = c3t3.index(v0);
     new_dim = c3t3.in_dimension(v0);
-    sizing_at_new_pos = sizing_at_vertex(v0, sizing);
+    sizing_at_new_pos = sizing_at_vertex(v0, sizing, c3t3);
   }
   else if (collapse_type == TO_V1)
   {
     new_index = c3t3.index(v1);
     new_dim = c3t3.in_dimension(v1);
-    sizing_at_new_pos = sizing_at_vertex(v1, sizing);
+    sizing_at_new_pos = sizing_at_vertex(v1, sizing, c3t3);
   }
   else if (collapse_type == TO_MIDPOINT)
   {
     const std::array<Vertex_handle, 2> vs = {{ v0, v1 }};
     new_index = max_dimension_index(vs);
     new_dim = (std::max)(v0->in_dimension(), v1->in_dimension());
-    sizing_at_new_pos = sizing(point(new_pos), new_dim, new_index);
+    sizing_at_new_pos = sizing_at_point(new_pos, new_dim, new_index, sizing, c3t3);
   }
   else
     CGAL_assertion(false);
@@ -750,7 +750,7 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
     else
       sqlen = edges_sqlength_after_collapse[vh];
 
-    const FT sizing_at_vh = sizing_at_vertex(vh, sizing);
+    const FT sizing_at_vh = sizing_at_vertex(vh, sizing, c3t3);
     const FT sqhigh
         = CGAL::square(FT(4) / FT(3)) * (std::max)(CGAL::square(sizing_at_vh),
                                                    CGAL::square(sizing_at_new_pos));
@@ -1273,7 +1273,7 @@ void collapse_short_edges(C3T3& c3t3,
     if (!can_be_collapsed(e, c3t3, protect_boundaries, cell_selector))
       continue;
 
-    const auto sqlen = is_too_short(e, sizing, tr);
+    const auto sqlen = is_too_short(e, sizing, c3t3, cell_selector);
     if(sqlen != std::nullopt)
       short_edges.insert(short_edge(make_vertex_pair(e), sqlen.value()));
   }
@@ -1307,7 +1307,7 @@ void collapse_short_edges(C3T3& c3t3,
     if ( tr.tds().is_vertex(e.first)
          && tr.tds().is_vertex(e.second)
          && tr.tds().is_edge(e.first, e.second, cell, i1, i2)
-         && is_too_short(Edge(cell, i1, i2), sizing, tr))
+         && is_too_short(Edge(cell, i1, i2), sizing, c3t3, cell_selector))
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       const typename T3::Point p1 = e.first->point();
@@ -1337,7 +1337,7 @@ void collapse_short_edges(C3T3& c3t3,
           if (!can_be_collapsed(eshort, c3t3, protect_boundaries, cell_selector))
             continue;
 
-          const auto sqlen = is_too_short(eshort, sizing, tr);
+          const auto sqlen = is_too_short(eshort, sizing, c3t3, cell_selector);
           if (sqlen != std::nullopt)
             short_edges.insert(short_edge(make_vertex_pair(eshort), sqlen.value()));
         }
