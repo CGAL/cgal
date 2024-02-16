@@ -15,6 +15,7 @@
 
 #include <CGAL/license/Isosurfacing_3.h>
 
+#include <CGAL/Isosurfacing_3/internal/Cell_type.h>
 #include <CGAL/Isosurfacing_3/internal/partition_traits.h>
 #include <CGAL/Isosurfacing_3/edge_intersection_oracles_3.h>
 
