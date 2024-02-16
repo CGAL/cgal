@@ -582,46 +582,6 @@ private:
     }
   }
 
-  FT sizing_at_midpoint(const Edge& e,
-                        const int dim,
-                        const typename C3t3::Index& index,
-                        const C3t3& c3t3) const
-  {
-    typename Gt::Construct_point_3
-      cp = c3t3.triangulation().geom_traits().construct_point_3_object();
-    const Point_3 p = CGAL::midpoint(point(e.first->vertex(e.second)->point()),
-                                     point(e.first->vertex(e.third)->point()));
-    const auto size = m_sizing(p, dim, index);
-
-    if(dim < 3 && size == 0)
-    {
-      const Vertex_handle u = e.first->vertex(e.second);
-      const Vertex_handle v = e.first->vertex(e.third);
-
-      const FT size_at_u = m_sizing(cp(u->point()), u->in_dimension(), u->index());
-      const FT size_at_v = m_sizing(cp(v->point()), v->in_dimension(), v->index());
-
-      if(size_at_u == 0. || size_at_v == 0.)
-      {
-        FT max_size_at_uv = 0.;
-        typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
-        typename Tr::Cell_circulator done = circ;
-        do
-        {
-          if (get(m_cell_selector, circ))
-          {
-            const FT size_at_cc = size_at_centroid(circ, m_sizing, c3t3);
-            max_size_at_uv = (std::max)(max_size_at_uv, size_at_cc);
-          }
-        } while (++circ != done);
-
-        CGAL_assertion(max_size_at_uv > 0.);
-        return max_size_at_uv;
-      }
-    }
-
-    return size;
-  }
 
   FT mass_along_segment(const Edge& e, const C3t3& c3t3) const
   {
@@ -633,7 +593,7 @@ private:
     const int dim = (std::max)(vs[0]->in_dimension(), vs[1]->in_dimension());
     const typename C3t3::Index index = max_dimension_index(vs);
 
-    const FT s = sizing_at_midpoint(e, dim, index, c3t3);
+    const FT s = sizing_at_midpoint(e, dim, index, m_sizing, c3t3, m_cell_selector);
     const FT density = 1. / (s * s * s); //density = 1 / size^(dimension + 2)
                                          //edge dimension is 1, so density = 1 / size^3
     //const FT mass = len * density;

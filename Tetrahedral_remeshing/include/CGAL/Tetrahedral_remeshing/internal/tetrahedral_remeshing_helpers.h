@@ -1289,46 +1289,45 @@ auto sizing_at_vertex(const Vertex_handle v,
   return size;
 }
 
-template<typename Sizing, typename C3t3>
-auto sizing_at_point(const typename C3t3::Triangulation::Point& p,
-                     const int dim,
-                     const typename C3t3::Index& index,
-                     const Sizing& sizing,
-                     const C3t3& c3t3)
+template<typename Sizing, typename C3t3, typename Cell_selector>
+auto sizing_at_midpoint(const typename C3t3::Edge& e,
+                        const int dim,
+                        const typename C3t3::Index& index,
+                        const Sizing& sizing,
+                        const C3t3& c3t3,
+                        const Cell_selector& cell_selector)
 {
-  using Tr = typename C3t3::Triangulation;
-  using Cell_handle = typename Tr::Cell_handle;
+  using FT = typename C3t3::Triangulation::Geom_traits::FT;
 
-  auto size = sizing(point(p), dim, index);
+  auto cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+  const Point_3 m = CGAL::midpoint(cp(e.first->vertex(e.second)->point()),
+                                   cp(e.first->vertex(e.third)->point()));
+  const FT size = sizing(m, dim, index);
 
-  if(dim < 3 && size == 0)
+  if (dim < 3 && size == 0)
   {
-    typename Tr::Locate_type lt;
-    int li, lj;
-    Cell_handle c = c3t3.triangulation().locate(p, lt, li, lj);
+    const auto u = e.first->vertex(e.second);
+    const auto v = e.first->vertex(e.third);
 
-    switch(lt)
+    const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), u->index());
+    const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), v->index());
+
+    if (size_at_u == 0. || size_at_v == 0.)
     {
-    case Tr::VERTEX:
-      return sizing_at_vertex(c->vertex(li), sizing, c3t3);
-    case Tr::EDGE:
-    {
-      std::vector<Cell_handle> cells;
-      auto circ = c3t3.triangulation().incident_cells(c, li, lj);
-      auto end = circ;
+      FT max_size_at_uv = 0.;
+      auto circ = c3t3.triangulation().incident_cells(e);
+      auto done = circ;
       do
       {
-        cells.push_back(circ);
-      } while (++circ != end);
-      return max_size_at_centroids(cells, sizing, c3t3);
-    }
-    case Tr::FACET:
-    {
-      std::vector<Cell_handle> cells = {c, c->neighbor(li)};
-      return max_size_at_centroids(cells, sizing, c3t3);
-    }
-    case Tr::CELL:
-      return size_at_centroid(c, sizing, c3t3);
+        if (get(cell_selector, circ))
+        {
+          const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+          max_size_at_uv = (std::max)(max_size_at_uv, size_at_cc);
+        }
+      } while (++circ != done);
+
+      CGAL_assertion(max_size_at_uv > 0.);
+      return max_size_at_uv;
     }
   }
 
