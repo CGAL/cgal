@@ -81,14 +81,14 @@ public:
       --k;
 
     // calculate coordinates of min index
-    const FT min_x = i * spacing[0] + x_coord(min_p);
-    const FT min_y = j * spacing[1] + y_coord(min_p);
-    const FT min_z = k * spacing[2] + z_coord(min_p);
+    const FT min_x = x_coord(min_p) + i * spacing[0];
+    const FT min_y = y_coord(min_p) + j * spacing[1];
+    const FT min_z = z_coord(min_p) + k * spacing[2];
 
     // interpolation factors between 0 and 1
-    const FT f_i = (x_coord(p) - min_x) / spacing[0];
-    const FT f_j = (y_coord(p) - min_y) / spacing[1];
-    const FT f_k = (z_coord(p) - min_z) / spacing[2];
+    const FT f_i = std::clamp<FT>((x_coord(p) - min_x) / spacing[0], 0, 1);
+    const FT f_j = std::clamp<FT>((y_coord(p) - min_y) / spacing[1], 0, 1);
+    const FT f_k = std::clamp<FT>((z_coord(p) - min_z) / spacing[2], 0, 1);
 
     // read the value at all 8 corner points
     const FT g000 = values[g.linear_index(i + 0, j + 0, k + 0)];
@@ -159,9 +159,9 @@ public:
     const FT min_z = k * spacing[2] + z_coord(min_p);
 
     // interpolation factors between 0 and 1
-    const FT f_i = (x_coord(p) - min_x) / spacing[0];
-    const FT f_j = (y_coord(p) - min_y) / spacing[1];
-    const FT f_k = (z_coord(p) - min_z) / spacing[2];
+    const FT f_i = std::clamp<FT>((x_coord(p) - min_x) / spacing[0], 0, 1);
+    const FT f_j = std::clamp<FT>((y_coord(p) - min_y) / spacing[1], 0, 1);
+    const FT f_k = std::clamp<FT>((z_coord(p) - min_z) / spacing[2], 0, 1);
 
     // read the value at all 8 corner points
     const Vector_3& g000 = gradients[g.linear_index(i + 0, j + 0, k + 0)];
