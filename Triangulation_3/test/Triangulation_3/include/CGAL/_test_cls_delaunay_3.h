@@ -28,7 +28,7 @@
 
 #include <cassert>
 #include <iostream>
-#include <fstream>
+#include <sstream>
 #include <list>
 #include <vector>
 #include <type_traits>
@@ -293,12 +293,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT1("Test1_dtriangulation_IO_3",std::ios::out);
-        oFileT1 << T0 << std::endl;
-      }
-      std::ifstream iFileT1("Test1_dtriangulation_IO_3",std::ios::in);
-      iFileT1 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == -1);
       assert(Tfromfile.number_of_vertices() == 0);
@@ -314,12 +311,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT2("Test2_dtriangulation_IO_3",std::ios::out);
-        oFileT2 << T0 << std::endl;
-      }
-      std::ifstream iFileT2("Test2_dtriangulation_IO_3",std::ios::in);
-      iFileT2 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 0);
       assert(Tfromfile.number_of_vertices() == 1);
@@ -336,12 +330,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT3("Test3_dtriangulation_IO_3",std::ios::out);
-        oFileT3 << T0 << std::endl;
-      }
-      std::ifstream iFileT3("Test3_dtriangulation_IO_3",std::ios::in);
-      iFileT3 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 1);
       assert(Tfromfile.number_of_vertices() == 2);
@@ -358,12 +349,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT4("Test4_dtriangulation_IO_3",std::ios::out);
-        oFileT4 << T0;
-      }
-      std::ifstream iFileT4("Test4_dtriangulation_IO_3",std::ios::in);
-      iFileT4 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 2);
       assert(Tfromfile.number_of_vertices() == 3);
@@ -380,12 +368,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT5("Test5_dtriangulation_IO_3",std::ios::out);
-        oFileT5 << T0;
-      }
-      std::ifstream iFileT5("Test5_dtriangulation_IO_3",std::ios::in);
-      iFileT5 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 4);
@@ -463,12 +448,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT6("Test6_dtriangulation_IO_3",std::ios::out);
-        oFileT6 << T1_2;
-      }
-      std::ifstream iFileT6("Test6_dtriangulation_IO_3",std::ios::in);
-      iFileT6 >> Tfromfile;
+      std::stringstream ss;
+      ss << T1_2;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 1);
       assert(Tfromfile.number_of_vertices() == n);
@@ -510,12 +492,10 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT7("Test7_dtriangulation_IO_3",std::ios::out);
-        oFileT7 << T2_0;
-      }
-      std::ifstream iFileT7("Test7_dtriangulation_IO_3",std::ios::in);
-      iFileT7 >> Tfromfile;
+
+      std::stringstream ss;
+      ss << T2_0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 2);
       assert(Tfromfile.number_of_vertices() == 8);
@@ -586,12 +566,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT8("Test8_dtriangulation_IO_3",std::ios::out);
-        oFileT8 << T3_1;
-      }
-      std::ifstream iFileT8("Test8_dtriangulation_IO_3",std::ios::in);
-      iFileT8 >> Tfromfile;
+      std::stringstream ss;
+      ss << T3_1;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 22);
@@ -677,12 +654,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT8("Test13_dtriangulation_IO_3",std::ios::out);
-        oFileT8 << T3_13;
-      }
-      std::ifstream iFileT8("Test13_dtriangulation_IO_3",std::ios::in);
-      iFileT8 >> Tfromfile;
+      std::stringstream ss;
+      ss << T3_13;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 22);
