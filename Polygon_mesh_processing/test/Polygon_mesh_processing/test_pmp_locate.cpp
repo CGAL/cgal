@@ -785,7 +785,7 @@ void test_2D_surface_mesh(const std::string fname, CGAL::Random& rnd)
   if(!input || !(input >> tm))
   {
     std::cerr << "Error: cannot read file.";
-    return;
+    exit(1);
   }
 
   test_locate<K>(tm, rnd);
@@ -805,7 +805,7 @@ void test_surface_mesh_3D(const std::string fname, CGAL::Random& rnd)
   if(!input || !(input >> tm))
   {
     std::cerr << "Error: cannot read file.";
-    return;
+    exit(1);
   }
 
   typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::const_type  VertexPointMap;
@@ -831,7 +831,7 @@ void test_surface_mesh_projection(const std::string fname, CGAL::Random& rnd)
   if(!input || !(input >> tm))
   {
     std::cerr << "Error: cannot read file.";
-    return;
+    exit(1);
   }
 
   const auto& proj_vpm = tm.template add_property_map<typename Mesh::Vertex_index,
@@ -859,7 +859,7 @@ void test_polyhedron(const std::string fname, CGAL::Random& rnd)
   if(!input || !(input >> poly))
   {
     std::cerr << "Error: cannot read file.";
-    return;
+    exit(1);
   }
 
   test_locate<K>(poly, rnd);
@@ -870,7 +870,7 @@ void test(CGAL::Random& rnd)
 {
   test_2D_triangulation<K>("data/stair.xy", rnd);
 //  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd); // temporarily disabled, until Surface_mesh's IO is "fixed"
-  test_surface_mesh_3D<K>("meshes/mech-holes-shark.off", rnd);
+  test_surface_mesh_3D<K>(CGAL::data_file_path("meshes/mech-holes-shark.off"), rnd);
   test_surface_mesh_projection<K>("data/unit-grid.off", rnd);
   test_polyhedron<K>("data-coref/elephant_split_2.off", rnd);
 }
