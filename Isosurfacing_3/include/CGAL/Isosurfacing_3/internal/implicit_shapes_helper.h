@@ -9,13 +9,14 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
+//  This file is only used by the testsuite and examples
+
 #ifndef CGAL_ISOSURFACING_3_INTERNAL_IMPLICIT_SHAPES_HELPER_H
 #define CGAL_ISOSURFACING_3_INTERNAL_IMPLICIT_SHAPES_HELPER_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
-#include <CGAL/number_utils.h>
-#include <CGAL/squared_distance_3.h>
+#include <CGAL/Simple_cartesian.h>  // quiet the CI in case this file gets compiled alone
 
 namespace CGAL {
 namespace Isosurfacing {
