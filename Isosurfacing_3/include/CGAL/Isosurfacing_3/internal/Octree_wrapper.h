@@ -515,7 +515,7 @@ public:
     return node_points(node);
   }
 
-  // gets the values at the incident two vertices.
+  // returns the values at the incident two vertices.
   // Vertices are sorted in ascending order.
   std::array<FT, 2> edge_values(const Edge_handle& e_id) const
   {
@@ -569,7 +569,7 @@ public:
     return { v0, v1 };
   }
 
-  /// gets the 4 voxels incident to an edge. If an edge has only three incident
+  /// returns the 4 voxels incident to an edge. If an edge has only three incident
   /// voxels, one will appear twice. The voxels are given with the uniform
   /// lexicographical index.
   std::array<std::size_t, 4> edge_voxels(const Edge_handle& e_id) const

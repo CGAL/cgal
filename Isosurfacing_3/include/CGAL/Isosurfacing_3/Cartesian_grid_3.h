@@ -226,7 +226,7 @@ public:
 
 public:
   /**
-   * \return the geometric traits class
+   * returns the geometric traits class
    */
   const Geom_traits& geom_traits() const
   {
@@ -234,7 +234,7 @@ public:
   }
 
   /**
-   * \return the bounding box of the %Cartesian grid
+   * returns the bounding box of the %Cartesian grid
    */
   const Iso_cuboid_3& bbox() const { return m_bbox; }
 
@@ -248,23 +248,23 @@ public:
   }
 
   /**
-   * \return the spacing of the %Cartesian grid, that is a vector whose coordinates are
-   *         the grid steps in the `x`, `y`, and `z` directions, respectively
+   * returns the spacing of the %Cartesian grid, that is a vector whose coordinates are
+   * the grid steps in the `x`, `y`, and `z` directions, respectively
    */
   const std::array<FT, 3>& spacing() const { return m_spacing; }
 
   /**
-   * \return the number of grid vertices in the `x` direction
+   * returns the number of grid vertices in the `x` direction
    */
   std::size_t xdim() const { return m_sizes[0]; }
 
   /**
-   * \return the number of grid vertices in the `y` direction
+   * returns the number of grid vertices in the `y` direction
    */
   std::size_t ydim() const { return m_sizes[1]; }
 
   /**
-   * \return the number of grid vertices in the `z` direction
+   * returns the number of grid vertices in the `z` direction
    */
   std::size_t zdim() const { return m_sizes[2]; }
 
@@ -280,7 +280,7 @@ public:
 
 public:
   /**
-   * \brief gets the canonical index of a grid cell given its indices.
+   * \brief returns the canonical index of a grid cell given its indices.
   */
   std::size_t linear_index(const std::size_t i,
                            const std::size_t j,
@@ -292,11 +292,9 @@ public:
 
 public:
   /**
-   * \brief gets the index of the grid cell that contains a given point.
+   * \brief returns the index of the grid cell that contains a given point.
    *
    * \param p the point to be located
-   *
-   * \return the index of the grid cell that contains `p`
    *
    * \pre `p` is inside the bounding box of the grid.
    */

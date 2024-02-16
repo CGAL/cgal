@@ -66,7 +66,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
     return g.point(v[0], v[1], v[2]);
   }
 
-  // gets a container with the two vertices incident to edge e
+  // returns a container with the two vertices incident to edge e
   static Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e,
                                                      const Self&)
   {
@@ -77,7 +77,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
     return ev;
   }
 
-  // gets a container with all cells incident to edge e
+  // returns a container with all cells incident to edge e
   static Cells_incident_to_edge incident_cells(const Edge_descriptor& e,
                                                const Self&)
   {
@@ -97,7 +97,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
     return cite;
   }
 
-  // gets a container with all vertices of cell c
+  // returns a container with all vertices of cell c
   static Cell_vertices cell_vertices(const Cell_descriptor& c,
                                      const Self&)
   {
@@ -113,7 +113,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
     return cv;
   }
 
-  // gets a container with all edges of cell c
+  // returns a container with all edges of cell c
   static Cell_edges cell_edges(const Cell_descriptor& c,
                                const Self&)
   {

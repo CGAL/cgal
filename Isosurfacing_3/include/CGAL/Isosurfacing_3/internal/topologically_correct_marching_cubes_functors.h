@@ -174,7 +174,7 @@ public:
     }
   }
 
-  // gets the created triangle list
+  // returns the created triangle list
   template<typename PR, typename TR>
   void to_triangle_soup(PR& points, TR& triangles) const
   {

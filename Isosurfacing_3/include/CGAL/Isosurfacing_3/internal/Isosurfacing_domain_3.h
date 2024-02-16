@@ -88,31 +88,31 @@ public:
 public:
   // The following functions are dispatching to the partition_traits' static functions.
 
-  // gets the position of vertex `v`
+  // returns the position of vertex `v`
   decltype(auto) /*Point_3*/ point(const Vertex_descriptor& v) const
   {
     return PT::point(v, m_partition);
   }
 
-  // gets a container with the two vertices incident to the edge `e`
+  // returns a container with the two vertices incident to the edge `e`
   decltype(auto) /*Vertices_incident_to_edge*/ incident_vertices(const Edge_descriptor& e) const
   {
     return PT::incident_vertices(e, m_partition);
   }
 
-  // gets a container with all cells incident to the edge `e`
+  // returns a container with all cells incident to the edge `e`
   decltype(auto) /*Cells_incident_to_edge*/ incident_cells(const Edge_descriptor& e) const
   {
     return PT::incident_cells(e, m_partition);
   }
 
-  // gets a container with all vertices of the cell `c`
+  // returns a container with all vertices of the cell `c`
   decltype(auto) /*Cell_vertices*/ cell_vertices(const Cell_descriptor& c) const
   {
     return PT::cell_vertices(c, m_partition);
   }
 
-  // gets a container with all edges of the cell `c`
+  // returns a container with all edges of the cell `c`
   decltype(auto) /*Cell_edges*/ cell_edges(const Cell_descriptor& c) const
   {
     return PT::cell_edges(c, m_partition);
@@ -139,19 +139,19 @@ public:
     PT::for_each_cell(f, m_partition, ConcurrencyTag{});
   }
 
-  // gets the value of the function at vertex `v`
+  // returns the value of the function at vertex `v`
   decltype(auto) /*FT*/ value(const Vertex_descriptor& v) const
   {
     return m_values(v);
   }
 
-  // gets the value of the function at point `p`
+  // returns the value of the function at point `p`
   decltype(auto) /*FT*/ value(const Point_3& p) const
   {
     return m_values(p);
   }
 
-  // gets the gradient at point `p`
+  // returns the gradient at point `p`
   decltype(auto) /*Vector_3*/ gradient(const Point_3& p) const
   {
     return m_gradients(p);

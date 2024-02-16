@@ -50,8 +50,6 @@ public:
    * \param p the point at which to interpolate the values
    * \param g the grid
    * \param values the continuous field of scalar values, defined over the bounding box of `g`
-   *
-   * \return the interpolated value at point `p`
    */
   FT interpolate_values(const Point_3& p,
                         const Grid& g,
@@ -123,8 +121,6 @@ public:
    * \param p the point at which to interpolate the gradients
    * \param g the grid
    * \param gradients the continuous field of vector values, defined over the bounding box of `g`
-   *
-   * \return the interpolated value at point `p`
    */
   Vector_3 interpolate_gradients(const Point_3& p,
                                  const Grid& g,

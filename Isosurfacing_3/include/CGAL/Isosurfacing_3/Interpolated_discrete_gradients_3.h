@@ -74,15 +74,13 @@ public:
 
 public:
   /**
-   * \brief gets the gradient stored at the grid vertex described by a set of indices.
+   * \brief returns the gradient stored at the grid vertex described by a set of indices.
    *
    * \note This function can be used to set the gradient at a grid vertex.
    *
    * \param i the index in the `x` direction
    * \param j the index in the `y` direction
    * \param k the index in the `z` direction
-   *
-   * \return a reference to the stored gradient
    *
    * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
@@ -94,7 +92,7 @@ public:
   }
 
   /**
-   * \brief gets the gradient stored at the grid vertex described by a set of indices.
+   * \brief returns the gradient stored at the grid vertex described by a set of indices.
    *
    * \param i the index in the `x` direction
    * \param j the index in the `y` direction

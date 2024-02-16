@@ -64,15 +64,13 @@ public:
 
 public:
   /**
-   * \brief gets the scalar value stored at the grid vertex described by a set of indices.
+   * \brief returns the scalar value stored at the grid vertex described by a set of indices.
    *
    * \note This function can be used to set the value at a grid vertex.
    *
    * \param i the index in the `x` direction
    * \param j the index in the `y` direction
    * \param k the index in the `z` direction
-   *
-   * \return a reference to the stored value
    */
   FT& operator()(const std::size_t i,
                  const std::size_t j,
@@ -85,13 +83,11 @@ public:
   }
 
   /**
-   * \brief gets the scalar value stored at the grid vertex described by a set of indices.
+   * \brief returns the scalar value stored at the grid vertex described by a set of indices.
    *
    * \param i the index in the `x` direction
    * \param j the index in the `y` direction
    * \param k the index in the `z` direction
-   *
-   * \return the stored value
    *
    * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */

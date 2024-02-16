@@ -265,7 +265,7 @@ public:
       m_isovalue(isovalue)
   { }
 
-  // gets the created triangle list
+  // returns the created triangle list
   Triangles& triangles()
   {
     return m_triangles;
