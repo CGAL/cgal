@@ -9,6 +9,7 @@
 //
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARRANGEMENT_WITH_HISTORY_2_H
 #define CGAL_ARRANGEMENT_WITH_HISTORY_2_H
@@ -23,6 +24,7 @@
 
 #include <CGAL/Arrangement_on_surface_with_history_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
+#include <CGAL/Arr_default_dcel.h>
 
 namespace CGAL {
 
