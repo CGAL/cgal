@@ -2,7 +2,7 @@
   \ingroup PkgOrthtreeConcepts
   \cgalConcept
 
-  Refinement of the OrthtreeTraitsWithData concept, adding requirements for the
+  Refinement of the `OrthtreeTraitsWithData` concept, adding requirements for the
   traits class of a `CGAL::Orthtree` in order to supports nearest-neighbor searching.
 
   Nearest neighbor searches expect a tree where `Node_data` is a model of `ForwardRange`.
@@ -36,7 +36,7 @@ public:
   using Node_data_element = unspecified_type;
 
   /*!
-   * \brief Functor with an operator calculate the squared distance of `Node_data_element` from a point.
+   * \brief Functor with an operator that calculates the squared distance of a `Node_data_element` from a point.
    *
    * Provides the operator:
    * `FT operator()(const Node_data_element&, const Point_d&)`

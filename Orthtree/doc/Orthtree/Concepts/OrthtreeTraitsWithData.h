@@ -25,11 +25,10 @@ public:
   using Node_data = unspecified_type;
 
   /*!
-   * \brief Functor which initializes the contained elements for the root node.
+   * \brief Functor which initializes elements contained by the root node.
    *
    * Each node of a tree has an associated `Node_data` value.
-   * For most nodes, this is set by `Distribute_node_contents`, but that is not possible for the root node.
-   * Instead, this functor initializes the `Node_data` of the root node.
+   * This functor initializes the `Node_data` of the root node.
    * It takes no arguments, and returns an instance of `Node_data`.
    *
    * Provides the operator:

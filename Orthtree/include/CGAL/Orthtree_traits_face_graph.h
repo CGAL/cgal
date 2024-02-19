@@ -26,7 +26,7 @@ namespace CGAL {
 /*!
 \ingroup PkgOrthtreeTraits
 
-Traits class for the `Orthtree` class to be used to contruct a 3D octree around
+Traits class for the `Orthtree` class to be used to construct a 3D octree around
 a triangulated surface mesh. Each node of the octree will store all the faces of the
 mesh intersected by its bounding box. The subdivision of the octree is controlled
 by the nested class `Orthtree_traits_face_graph::Split_predicate_node_min_extent`
@@ -93,13 +93,13 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base<
     };
   }
 
-  auto construct_root_node_contents_object() {
+  auto construct_root_node_contents_object() const {
     return [&]() -> Node_data {
       return {faces(m_pm).begin(), faces(m_pm).end()};
     };
   }
 
-  auto distribute_node_contents_object() {
+  auto distribute_node_contents_object() const {
     return [&](Node_index n, Tree& tree, const Point_d& /* center */) -> void {
       Node_data& ndata = tree.data(n);
       for (int i = 0; i < 8; ++i) {

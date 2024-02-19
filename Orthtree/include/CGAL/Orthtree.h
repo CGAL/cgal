@@ -110,12 +110,10 @@ struct Node_data_wrapper<GT, false>
   \sa `CGAL::Quadtree`
   \sa `CGAL::Octree`
 
-  \tparam GeomTraits must be a model of `OrthtreeTraits`
+  \tparam GeomTraits must be a model of `OrthtreeTraits` or `OrthtreeTraitswithData`.
  */
 template <typename GeomTraits>
 class Orthtree {
-  static inline constexpr bool has_data = Orthtree_impl::has_Node_data<GeomTraits>::value;
-
 public:
   /// \name Template Types
   /// @{
@@ -124,6 +122,11 @@ public:
 
   /// \name Traits Types
   /// @{
+#ifndef DOXYGEN_RUNNING
+  static inline constexpr bool has_data = Orthtree_impl::has_Node_data<GeomTraits>::value;
+#else
+  static inline constexpr bool has_data = bool_value; ///< `true` if `GeomTraits` is a model of `OrthtreeTraitswithData` and `false` otherwise.
+#endif
   static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
   using Kernel = typename Traits::Kernel; ///< Kernel type.
   using FT = typename Traits::FT; ///< Number type.
@@ -133,7 +136,11 @@ public:
   using Adjacency = typename Traits::Adjacency; ///< Adjacency type.
 
   using Node_index = typename Traits::Node_index; ///< Index of a given node in the tree; the root always has index 0.
+#ifndef DOXYGEN_RUNNING
   using Node_data = typename Orthtree_impl::Node_data_wrapper<Traits, has_data>::Node_data;
+#else
+  using Node_data = std::conditional_t<has_data,typename GeomTraits::Node_data,void*>;
+#endif
 
   /// @}
 

@@ -1,4 +1,3 @@
-
 /*!
   \ingroup PkgOrthtreeConcepts
   \cgalConcept
@@ -24,7 +23,7 @@ public:
   Node_index first_index() const;
 
   /*!
-    \brief returns the next node to iterate to, given the previous node.
+    \brief returns the next node to be traversed given the previous node `n`.
    */
   Node_index next(Node_index n) const;
 };
