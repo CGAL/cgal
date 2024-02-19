@@ -487,6 +487,7 @@ void tetrahedral_isotropic_remeshing(
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
                        Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
+  typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename internal_np::Lookup_named_param_def <
               internal_np::vertex_is_constrained_t,
               NamedParameters,
