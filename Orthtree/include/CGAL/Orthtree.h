@@ -724,7 +724,7 @@ public:
   }
 
   /*!
-    \brief determines whether the node specified by index `n` is a root node.
+    \brief determines whether the node specified by index `n` is the root node.
    */
   bool is_root(Node_index n) const {
     return n == 0;

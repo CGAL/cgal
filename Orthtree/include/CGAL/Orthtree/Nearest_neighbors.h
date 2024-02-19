@@ -119,7 +119,7 @@ namespace Orthtrees {
   \ingroup PkgOrthtreeNeighbors
   \brief finds at most `k` elements within a specific radius that are
   nearest to the center of the sphere `query`: if `query` does not contain
-  at least `k` elements, only contained points will be returned.
+  at least `k` elements, only contained elements will be returned.
 
   This function is useful when the user already knows how sparse the elements are,
   or if they do not care about elements that are too far away.

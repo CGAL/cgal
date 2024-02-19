@@ -42,7 +42,7 @@ public:
   using Construct_root_node_contents = unspecified_type;
 
   /*!
-   * \brief functor which fills the contents of the nodes children.
+   * \brief Functor which fills the contents of the nodes children.
    *
    * Provides the operator:
    * `void operator()(typename Tree::Node_index, Tree&, const Point_d&)`
