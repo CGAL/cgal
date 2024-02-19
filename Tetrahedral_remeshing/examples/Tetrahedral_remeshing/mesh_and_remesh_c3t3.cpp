@@ -84,7 +84,8 @@ int main(int argc, char* argv[])
 
   const double target_edge_length = 0.1;//coarsen the mesh
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
-    CGAL::parameters::number_of_iterations(3)
+    CGAL::parameters::number_of_iterations(5)
+   .smooth_constrained_edges(true)
    .edge_is_constrained_map(constraints_pmap));
 
   std::ofstream out("out_remeshed.mesh");
