@@ -12,7 +12,7 @@ namespace CGAL {
 Quadtrees are tree data structures in which each node encloses a
 rectangular section of space, and each internal node has exactly 4
 children. Octrees are a similar data structure in 3D in which each
-node encloses a cuboid section of space, and each internal node has
+node encloses a rectangular cuboid section of space, and each internal node has
 exactly 8 children.
 
 We call the generalization of such data structure "orthtrees", as
@@ -72,11 +72,11 @@ Nodes are split if their depth is less than 10, and they contain more than 5 inl
 \subsection Section_Orthtree_Point_Vector Building an Octree
 
 `Orthtree_traits_point<>` can also be templated with a 3d dimension tag and thus
-behave as an %octree. For convenience, the alias `CGAL::Octree` is provided.
+behaves as an %octree. For convenience, the alias `CGAL::Octree` is provided.
 
 The following example shows how to create an %octree from a vector of `Point_3` objects.
 As with the %quadtree example, we use the default split predicate.
-In this case the max depth is 10, and the bucket size is 1.
+In this case the maximum depth is 10, and the bucket size is 1.
 
 
 \cgalExample{Orthtree/octree_build_from_point_vector.cpp}
@@ -91,8 +91,8 @@ An %octree is constructed from the point set and its corresponding map,
 and then written to the standard output.
 
 The split predicate is manually constructed and passed to the refine method.
-In this case, we use a maximum number of inliers with no corresponding max depth,
-this means that nodes will continue to be split until none contain more than 10 points.
+In this case, we use a maximum number of inliers with no corresponding maximum depth.
+This means that nodes will continue to be split until none contain more than 10 points.
 
 \cgalExample{Orthtree/octree_build_from_point_set.cpp}
 
@@ -288,10 +288,10 @@ Simon Giraudot, supervisor of the GSoC internship, completed and
 finalized the package for integration in CGAL 5.3. Pierre Alliez
 provided kind help and advice all the way through.
 Starting with CGAL 6.0 an API improvement of the Orthtree package was released.
-Most notably, the orthtree does not need to store anything. Data to be stored
+Most notably, the orthtree nodes do not need to store anything. Data to be stored
 by the node are managed through a mechanism of dynamic properties.
 This improvement was done by Jackson Campolattaro thanks to a funding provided by
-INRIA, together with help from GeometryFactory.
+INRIA, together with GeometryFactory.
 
 */
 
