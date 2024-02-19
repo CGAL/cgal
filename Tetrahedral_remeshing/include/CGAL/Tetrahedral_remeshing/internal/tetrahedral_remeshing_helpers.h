@@ -1275,6 +1275,21 @@ auto average_size_at_centroids(const CellRange& cells,
   return size / static_cast<FT>(count);
 }
 
+template<typename CellRange, typename Sizing, typename C3t3, typename Cell_selector>
+auto max_size_at_centroids(const CellRange& cells,
+                           const Sizing& sizing,
+                           const C3t3& c3t3,
+                           const Cell_selector& cell_selector)
+{
+  typename C3t3::Triangulation::Geom_traits::FT size = 0.;
+  for (const auto& c : cells)
+  {
+    if (get(cell_selector, c))
+      size = (std::max)(size, size_at_centroid(c, sizing, c3t3));
+  }
+  return size;
+}
+
 template<typename Vertex_handle,
          typename Sizing,
          typename C3t3,
@@ -1290,7 +1305,11 @@ auto sizing_at_vertex(const Vertex_handle v,
   {
     std::vector<typename C3t3::Cell_handle> cells;
     c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
+#ifdef CGAL_AVERAGE_SIZING_AFTER_COLLAPSE
     return average_size_at_centroids(cells, sizing, c3t3, cell_selector);
+#else
+    return max_size_at_centroids(cells, sizing, c3t3, cell_selector);
+#endif
   }
 
   return size;
@@ -1329,6 +1348,32 @@ auto sizing_at_midpoint(const typename C3t3::Edge& e,
 }
 
 template<typename Sizing, typename C3t3, typename Cell_selector>
+auto max_sizing_in_incident_cells(const typename C3t3::Edge& e,
+                                  const Sizing& sizing,
+                                  const C3t3& c3t3,
+                                  const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+
+  typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typename Tr::Cell_circulator done = circ;
+
+  FT size_at_uv = 0.;
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv = (std::max)(size_at_uv, size_at_cc);
+    }
+  } while (++circ != done);
+
+  CGAL_assertion(size_at_uv > 0);
+  return size_at_uv;
+}
+
+template<typename Sizing, typename C3t3, typename Cell_selector>
 auto average_sizing_in_incident_cells(const typename C3t3::Edge& e,
                                       const Sizing& sizing,
                                       const C3t3& c3t3,
@@ -1357,6 +1402,33 @@ auto average_sizing_in_incident_cells(const typename C3t3::Edge& e,
   CGAL_assertion(size_at_uv > 0);
   return size_at_uv;
 }
+
+template<typename Sizing, typename C3t3, typename Cell_selector>
+auto min_sizing_in_incident_cells(const typename C3t3::Edge& e,
+                                  const Sizing& sizing,
+                                  const C3t3& c3t3,
+                                  const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+
+  typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typename Tr::Cell_circulator done = circ;
+
+  FT size_at_uv = (std::numeric_limits<FT>::max)();
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv = (std::min)(size_at_cc, size_at_uv);
+    }
+  } while (++circ != done);
+
+  CGAL_assertion(size_at_uv > 0);
+  return size_at_uv;
+}
+
 
 template<typename Tr>
 typename Tr::Geom_traits::FT
@@ -1389,7 +1461,11 @@ squared_upper_size_bound(const typename C3t3::Edge& e,
   // we take the maximum size of the incident cells
   if (boundary_edge && (size_at_u == 0 || size_at_v == 0))
   {
+#ifdef CGAL_MAX_SIZING_IN_IS_TOO_LONG
+    FT size_at_uv = max_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+#else
     FT size_at_uv = average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+#endif
     CGAL_assertion(size_at_uv > 0);
     return CGAL::square(FT(4) / FT(3) * size_at_uv);
   }
@@ -1440,7 +1516,11 @@ squared_lower_size_bound(const typename C3t3::Edge& e,
   // we take the minimum size of the incident cells
   if ( (size_at_u == 0 || size_at_v == 0) && is_boundary(c3t3, e, cell_selector))
   {
+#ifdef CGAL_MIN_SIZING_IN_IS_TOO_SHORT
+    FT size_at_uv = min_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+#else
     FT size_at_uv = average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+#endif
     CGAL_assertion(size_at_uv > 0);
     return CGAL::square(FT(4) / FT(5) * size_at_uv);
   }

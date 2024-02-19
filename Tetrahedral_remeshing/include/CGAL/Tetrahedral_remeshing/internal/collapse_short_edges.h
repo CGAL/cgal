@@ -724,7 +724,13 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
     const std::array<Vertex_handle, 2> vs = {{ v0, v1 }};
     new_index = max_dimension_index(vs);
     new_dim = (std::max)(v0->in_dimension(), v1->in_dimension());
+#ifdef CGAL_AVERAGE_SIZING_AFTER_COLLAPSE
     sizing_at_new_pos = sizing_at_midpoint(edge, new_dim, new_index, sizing, c3t3, cell_selector);
+#else
+    sizing_at_new_pos = sizing(point(new_pos), new_dim, new_index);
+    if(new_dim < 3 && sizing_at_new_pos == FT(0))
+      sizing_at_new_pos = max_sizing_in_incident_cells(edge, sizing, c3t3, cell_selector);
+#endif
   }
   else
     CGAL_assertion(false);

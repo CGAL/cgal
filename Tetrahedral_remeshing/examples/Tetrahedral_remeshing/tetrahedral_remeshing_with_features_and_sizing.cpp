@@ -2,6 +2,12 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 
+// experiments on sizing
+//#define CGAL_AVERAGE_SIZING_AFTER_COLLAPSE
+#define CGAL_MAX_SIZING_IN_IS_TOO_LONG
+#define CGAL_MIN_SIZING_IN_IS_TOO_SHORT
+
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
