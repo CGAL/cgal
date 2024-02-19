@@ -23,6 +23,7 @@
 #include <string>
 #include <typeinfo>
 #include <vector>
+#include <optional>
 
 namespace CGAL {
 
