@@ -2955,9 +2955,10 @@ straightest_geodesic(const Face_location<TriangleMesh, typename K::FT> &src,
 }
 
 // we don't expect the last point to be duplicated here
-template <class K>
+// TODO: rename the function, it's not a polygon necessarily
+template <class K, class PointRange_2>
 std::vector<std::pair<typename K::FT, typename K::FT>>
-convert_polygon_to_polar_coordinates(const std::vector <typename K::Point_2>& polygon,
+convert_polygon_to_polar_coordinates(const PointRange_2& polygon,
                                      std::optional<typename K::Point_2> center = std::nullopt)
 {
   std::vector<std::pair<typename K::FT, typename K::FT>> result;
@@ -3266,6 +3267,71 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
       directions.emplace_back(std::cos(coord.second+theta), std::sin(coord.second+theta));
     }
     result[i] = trace_geodesic_polygon<K>(polygon_center, directions, lens, tmesh, *solver_ptr);
+  }
+
+  return result;
+}
+
+
+template <class K, class TriangleMesh>
+std::vector< std::vector<typename K::Point_3> >
+trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
+                    const std::vector<std::array<typename K::Vector_2, 4>>& directions,
+                    const std::vector<std::array<typename K::FT, 4>>& lengths,
+                    const int num_subdiv,
+                    const TriangleMesh &tmesh
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+                    , const Dual_geodesic_solver<typename K::FT>& solver = {}
+#endif
+)
+{
+  using FT = typename K::FT;
+
+  std::size_t n=directions.size();
+  std::vector< std::vector<typename K::Point_3> > result(n);
+  std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
+
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+  const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
+  Dual_geodesic_solver<typename K::FT> local_solver;
+  if (solver.graph.empty())
+  {
+    solver_ptr = &local_solver;
+    init_geodesic_dual_solver(local_solver, tmesh);
+  }
+#endif
+
+#ifdef CGAL_DEBUG_BSURF
+  std::ofstream debug_cp("/tmp/control_points.xyz");
+  std::ofstream debug_ep("/tmp/end_points.xyz");
+  debug_cp << std::setprecision(17);
+  debug_ep << std::setprecision(17);
+#endif
+  for (std::size_t i=0; i<n; ++i)
+  {
+    Bezier_segment<TriangleMesh, FT> control_loc;
+    for (int k=0;k<4; ++k)
+    {
+      control_loc[k] = straightest_geodesic<K>(center,directions[i][k],lengths[i][k],tmesh).back();
+    }
+
+    #ifdef CGAL_DEBUG_BSURF
+      debug_ep << construct_point(control_loc[0], tmesh) << "\n";
+      debug_ep << construct_point(control_loc[3], tmesh) << "\n";
+      debug_cp << construct_point(control_loc[1], tmesh) << "\n";
+      debug_cp << construct_point(control_loc[2], tmesh) << "\n";
+    #endif
+
+    std::vector<Face_location<TriangleMesh, FT>> bezier =
+      recursive_de_Casteljau(tmesh, control_loc, num_subdiv
+#ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+                            , *solver_ptr
+#endif
+                            );
+
+    result[i].reserve(bezier.size());
+    for(const Face_location<TriangleMesh, FT>& loc : bezier)
+      result[i].push_back(construct_point(loc,tmesh));
   }
 
   return result;
