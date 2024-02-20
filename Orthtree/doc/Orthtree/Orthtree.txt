@@ -58,7 +58,7 @@ the existing ones do not match users' needs.
 \subsection Section_Orthtree_Quadtree Building a Quadtree
 
 The `Orthtree` class may be templated with `Orthtree_traits_point<>`
-with a 2d dimension tag and thus behave as a %quadtree.
+while specifying a 2d ambient space and thus behave as a %quadtree.
 For convenience, the alias `CGAL::Quadtree` is provided.
 
 The following example shows the construction of %quadtree from a vector of `Point_2` objects.
@@ -71,8 +71,8 @@ Nodes are split if their depth is less than 10, and they contain more than 5 inl
 
 \subsection Section_Orthtree_Point_Vector Building an Octree
 
-`Orthtree_traits_point<>` can also be templated with a 3d dimension tag and thus
-behaves as an %octree. For convenience, the alias `CGAL::Octree` is provided.
+`Orthtree_traits_point<>` can also be templated with dimension 3 and thus
+behave as an %octree. For convenience, the alias `CGAL::Octree` is provided.
 
 The following example shows how to create an %octree from a vector of `Point_3` objects.
 As with the %quadtree example, we use the default split predicate.
@@ -119,15 +119,9 @@ set as the orthtree's map type, so a map does not need to be provided.
 \cgalExample{Orthtree/orthtree_build.cpp}
 
 \section Section_Orthtree_Properties Properties
-The Orthtree uses a mechanism to attach properties to nodes at run-time which follows \ref sectionSurfaceMesh_properties "Surface mesh properties". Each property is identified by a string and its key type and stored in a consecutive block of memory. Contrary to surface mesh the removal of properties is not supported.
-
-Several properties are provided by default and used to maintain the data structure. The property \c "contents" keeps the data for each node. \c "parents" and \c "children" maintain the relation between nodes. \c "coordinates" and \c "depth" contain absolute positions of nodes.
+The Orthtree uses a mechanism to attach properties to nodes at run-time which follows \ref sectionSurfaceMesh_properties "Surface mesh properties". Each property is identified by a string and its value type and stored in a consecutive block of memory.
 
 \section Section_Orthtree_Traversal Traversal
-
-\note For simplicity, the rest of the user manual will only use
-octrees, but all the presented features also apply to quadtrees and
-higher dimension orthtrees.
 
 %Traversal is the act of navigating among the nodes of the tree.
 The `Orthtree` class provides a
@@ -164,8 +158,8 @@ It is often useful to be able to iterate over the nodes of the tree in a particu
 For example, the stream operator `<<` uses a traversal to print out each node.
 A few traversals are provided, among them [Preorder_traversal](@ref CGAL::Orthtrees::Preorder_traversal)
 and [Postorder_traversal](@ref CGAL::Orthtrees::Postorder_traversal).
-To traverse a tree in preorder is to visit each parent immediately followed by its children,
-whereas in postorder, traversal the children are visited first.
+Traversing a tree in preorder means to visit each parent immediately followed by its children,
+whereas in postorder traversal the children are visited first.
 
 The following example illustrates how to use the provided traversals.
 
@@ -181,7 +175,7 @@ Users can define their own traversal methods by creating models of the `Orthtree
 The custom traversal must provide a method which returns the starting point of the traversal (`first_index()`)
 and another method which returns the next node in the sequence (`next_index()`).
 `next_index()` returns an empty optional when the end of the traversal is reached.
-The following example shows how to define a custom traversal that only traverses the first branch of the octree:
+The following example shows how to define a custom traversal that only traverses the first branch an octree:
 
 \cgalExample{Orthtree/octree_traversal_custom.cpp}
 
@@ -202,12 +196,11 @@ Once an orthtree is built, its structure can be used to accelerate different tas
 
 \subsection Section_Orthtree_Nearest_Neighbor Finding the Nearest Neighbor of a Point
 
-The naive way of finding the nearest neighbor of a point requires finding the distance to every other point.
+The naive way of finding the nearest neighbor of a point requires finding the distance to all elements.
 An orthtree can be used to perform the same task in significantly less time.
-For large numbers of points, this can be a large enough difference to outweigh the time spent building the tree.
+For large numbers of elements, this can be a large enough difference to outweigh the time spent building the tree.
 
-Note that a kd-tree is expected to outperform the orthtree for this task,
-it should be preferred unless features specific to the orthtree are needed.
+Note that a kd-tree is expected to outperform the orthtree for this task on points, it should be preferred unless features specific to the orthtree are needed.
 
 The following example illustrates how to use an octree to accelerate the search for points close to a location.
 

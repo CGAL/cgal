@@ -46,9 +46,11 @@ public:
    * Provides the operator:
    * `void operator()(typename Tree::Node_index, Tree&, const Point_d&)`
    *
-   * It can use `tree.children(node_index)` to access the children of the node, and `tree.data(node_index)`
-   * to access its children and the contents of the node.
-   * It must distribute the contents of the node to each of its children.
+   * The functor is called during refinement of the `Orthtree` on a node after it has been split. The purpose of the functor is to
+   * distribute the `Node_data`, accessible via `tree.data()`, to the data of the nodes children, accessible via `tree.children()`.
+   * The first parameter is the `Node_index` of the node. The second parameter provides the instance of the `Orthtree`
+   * and the last parameter is the barycenter of the node which delimits the internal boundaries of the children.
+   *
    * For a tree in which each node contains a span, this may mean rearranging the contents of the original node
    * and producing spans containing a subset of its contents for each of its children.
    * For compatibility with locate, the center of the node is considered to be part of the upper half.
