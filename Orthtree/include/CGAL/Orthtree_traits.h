@@ -9,8 +9,8 @@
 //
 // Author(s)     : Sven Oesau
 
-#ifndef ORTHTREE_TESTS_ORTHTREE_TRAITS_WITHOUT_DATA_H
-#define ORTHTREE_TESTS_ORTHTREE_TRAITS_WITHOUT_DATA_H
+#ifndef ORTHTREE_TESTS_ORTHTREE_TRAITS_H
+#define ORTHTREE_TESTS_ORTHTREE_TRAITS_H
 
 #include <CGAL/license/Orthtree.h>
 
@@ -37,15 +37,15 @@ namespace CGAL {
   \sa `CGAL::Orthtree_traits_base<GeomTraits, DimensionTag>`
 */
 template <typename GeomTraits, int dimension>
-struct Orthtree_traits_without_data: public Orthtree_traits_base<GeomTraits, dimension> {
+struct Orthtree_traits : public Orthtree_traits_base<GeomTraits, dimension> {
 public:
   using Base = Orthtree_traits_base<GeomTraits, dimension>;
-  using Self = Orthtree_traits_without_data<GeomTraits, dimension>;
+  using Self = Orthtree_traits<GeomTraits, dimension>;
   using Tree = Orthtree<Self>;
 
   using Node_index = typename Base::Node_index;
 
-  Orthtree_traits_without_data() {}
+  Orthtree_traits() {}
 
   auto construct_root_node_bbox_object() const {
     return [&]() -> typename Self::Bbox_d {
@@ -58,4 +58,4 @@ public:
 }
 
 
-#endif //ORTHTREE_TESTS_ORTHTREE_TRAITS_WITHOUT_DATA_H
+#endif //ORTHTREE_TESTS_ORTHTREE_TRAITS_H
