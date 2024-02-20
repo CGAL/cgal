@@ -70,7 +70,7 @@ struct CDT_options
   bool debug_copy_triangulation_into_hole = false;
   bool use_new_cavity_algorithm = true;
   bool debug_validity = false;
-  double ratio = 0.;
+  double ratio = 0.1;
   double vertex_vertex_epsilon = 1e-6;
   double segment_vertex_epsilon = 1e-8;
   std::string failure_assertion_expression{};
@@ -90,15 +90,23 @@ Usage: cdt_3_from_off [options] input.off output.off
   input.off: input mesh
   output.off: output mesh
 
-  -V/--verbose: verbose (can be used several times)
   --merge-facets/--no-merge-facets: merge facets into patches (set by default)
-  --ratio <double>: ratio of faces to remove (default: 0)
-  --failure-expression <expression>: expression to detect bad mesh (to use with --ratio)
+  --use-new-cavity-algorithm/--use-old-cavity-algorithm: use new or old cavity algorithm (default: new)
+  --failure-expression <expression>: expression to detect bad meshratio)
+  --ratio <double>: ratio of faces to remove (default: 0.1), if --failure-expression is used
+  --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
+  --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
+
   --dump-patches-after-merge <filename.ply>: dump patches after merging facets in PLY
   --dump-patches-borders-prefix <filenames_prefix>: dump patches borders
   --dump-after-conforming <filename.off>: dump mesh after conforming in OFF
-  --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
-  --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
+
+  -V/--verbose: verbose (can be used several times)
+  --debug-missing-regions: debug missing regions
+  --debug-regions: debug regions
+  --debug_copy_triangulation_into_hole: debug copy_triangulation_into_hole
+  --debug-validity: add is_valid checks after modifications to the TDS
+
   --quiet: do not print anything
   --help: print this help
 )";
@@ -209,7 +217,7 @@ int main(int argc, char* argv[])
     std::cout << "Number of faces: " << mesh.number_of_faces() << "\n\n";
   }
 
-  if(options.ratio == 0.) {
+  if(options.failure_assertion_expression.empty()) {
     auto exit_code = go(std::move(mesh), std::move(options));
     if(!options.quiet) {
       std::cout << "[timings] total time: " << std::chrono::duration_cast<std::chrono::milliseconds>(
