@@ -27,13 +27,15 @@ namespace CGAL {
   \tparam GeomTraits a model of `Kernel`
   \tparam PointRange a model of `Range` whose value type is the key type of `PointMap`
   \tparam PointMap a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
+  \tparam cubic boolean to enforce a cubic octree
  */
 template <
   typename GeomTraits,
   typename PointRange,
-  typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>
+  typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>,
+  bool cubic = false
 >
-using Octree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, 3>>;
+using Octree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, cubic, 3>>;
 
 } // namespace CGAL
 

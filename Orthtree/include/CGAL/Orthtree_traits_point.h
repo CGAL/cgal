@@ -78,6 +78,7 @@ template <
   typename GeomTraits,
   typename PointRange,
   typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>,
+  bool cubic = false,
   int dimension = Ambient_dimension<
     typename std::iterator_traits<typename PointRange::iterator>::value_type,
     GeomTraits
@@ -91,7 +92,7 @@ public:
   /// @}
 
   using Base = Orthtree_traits_base<GeomTraits, dimension>;
-  using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>;
+  using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, cubic, dimension>;
   using Tree = Orthtree<Self>;
 
   using Node_index = typename Base::Node_index;
@@ -126,6 +127,21 @@ public:
           bbox_min[i] = (std::min)(x, bbox_min[i]);
           bbox_max[i] = (std::max)(x, bbox_max[i]);
           ++i;
+        }
+      }
+
+      if constexpr (cubic) {
+        std::array<typename Self::FT, Self::dimension> center;
+        FT max_side = 0;
+        for (int i = 0; i < Self::dimension; i++) {
+          FT side = bbox_max[i] - bbox_min[i];
+          max_side = (std::max<FT>)(max_side, side);
+          center[i] = (bbox_min[i] + bbox_max[i]) * 0.5f;
+        }
+        max_side *= 0.5f;
+        for (int i = 0; i < Self::dimension; i++) {
+          bbox_min[i] = center[i] - max_side;
+          bbox_max[i] = center[i] + max_side;
         }
       }
 
