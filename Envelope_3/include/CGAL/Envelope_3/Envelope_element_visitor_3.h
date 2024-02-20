@@ -482,7 +482,7 @@ public:
         // find the intersection points and overlapping segments with the
         // original curve and insert them to the list of split points
         // intersect the x-monotone curve with the edge's curve
-        typedef std::pair<Point_2, unsigned int> Intersect_point_2;
+        typedef std::pair<Point_2, std::size_t> Intersect_point_2;
         std::list<std::variant<X_monotone_curve_2, Intersect_point_2>>
           intersections_list;
 
