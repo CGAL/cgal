@@ -132,10 +132,10 @@ public:
 
       if constexpr (cubic) {
         std::array<typename Self::FT, Self::dimension> center;
-        FT max_side = 0;
+        typename Self::FT max_side = 0;
         for (int i = 0; i < Self::dimension; i++) {
-          FT side = bbox_max[i] - bbox_min[i];
-          max_side = (std::max<FT>)(max_side, side);
+          typename Self::FT side = bbox_max[i] - bbox_min[i];
+          max_side = (std::max<typename Self::FT>)(max_side, side);
           center[i] = (bbox_min[i] + bbox_max[i]) * 0.5f;
         }
         max_side *= 0.5f;
