@@ -18,7 +18,7 @@ namespace CGAL {
 
 template <typename Base>
 class Base_with_time_stamp : public Base {
-  std::size_t time_stamp_ = -1;
+  std::size_t time_stamp_ = 0;
 public:
   using Base::Base;
 
