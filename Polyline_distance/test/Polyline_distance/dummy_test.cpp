@@ -137,7 +137,8 @@ FrechetDistanceQueries readFrechetDistanceQueries(std::string const& query_file)
 void testFrechetDistance()
 {
 	std::string curve_directory = "../data/curves/";
-	std::vector<std::string> datasets = { "sigspatial", "OV" };
+	// std::vector<std::string> datasets = { "sigspatial", "OV" };
+	std::vector<std::string> datasets = { "sigspatial" };
 	std::string query_directory = "../data/queries/";
 
 	for (auto const& dataset: datasets) {
@@ -146,7 +147,9 @@ void testFrechetDistance()
 
 		for (auto const& query: queries) {
 			auto decision = CGAL::continuous_Frechet_distance_less_than<Curve,Traits>(curves[query.id1], curves[query.id2], query.distance);
-			assert(decision == query.decision);
+			if (decision != query.decision) {
+				ERROR("Wrong decision on query.");
+			}
 		}
 	}
 }

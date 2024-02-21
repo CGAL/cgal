@@ -3,6 +3,9 @@
 #include "low_level_predicates.h"
 #include "predicate_types.h"
 
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
+#include <CGAL/number_utils.h>
 #include <iterator>
 
 namespace HLPred
@@ -16,7 +19,7 @@ bool dist_at_most(Point const& p, Point const& q, distance_t d)
 	return compare_squared_distance(p, q, d*d) != LARGER;
 }
 
-Interval intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end, Interval* outer)
+Interval intersection_interval2(const Point& circle_center, distance_t radius, Point line_start, Point line_end, Interval* outer)
 {
 	using OutputType = std::pair<Circular_arc_point_2, unsigned>;
 
@@ -60,6 +63,59 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
 	case 2:
 		return Interval(std::min(ratios[0], ratios[1]), std::max(ratios[0], ratios[1]));
 	}
+}
+
+// TODO: something is wrong here
+Interval intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end, Interval* outer)
+{
+	//////////////////////////
+	// Just keeping the call to intersection to leave the assignment to "outer" as before
+	// TODO: remove when removing all the "outer" stuff
+	{
+		// auto I = intersection_interval2(circle_center, radius, line_start, line_end, outer);
+		// std::cout << "old: " << CGAL::to_double(I.begin) << " " << CGAL::to_double(I.end) << std::endl;
+	}
+	//////////////////////////
+
+    // let a := v.x()^2 + v.y()^2, 
+	// let b := line_start.x() * v.x() + line_start.y() * v.y(), 
+	// let c := line_start.x()^2 + line_start.y()^2 - radius^2
+    // <=> lambda^2 * a + lambda * 2 b + c = 0
+    // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
+    // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
+
+	// TODO: use actual dimension here instead of 2!
+	Rational a,b,c = 0;
+	for (auto i = 0; i < 2; ++i) {
+		Rational diff = line_end[i] - line_start[i];
+		a += CGAL::square(diff);
+		b += (line_start[i]-circle_center[i])*diff;
+		c += CGAL::square(line_start[i]-circle_center[i]);
+	}
+	c -= CGAL::square(Rational(radius));
+
+	Interval I;
+	if (CGAL::square(b/a) - c/a >= 0.) {
+		// std::cout << CGAL::to_double(a) << " " << CGAL::to_double(b) << " " << CGAL::to_double(c) << std::endl;
+		// std::cout << CGAL::to_double(CGAL::square(b/a) - c/a) << std::endl;
+
+		// auto start = CGAL::max(RealType(0.), RealType(-b/a - CGAL::sqrt(CGAL::square(b/a) - c/a)));
+		// auto end = CGAL::min(RealType(1.), RealType(-b/a + CGAL::sqrt(CGAL::square(b/a) - c/a)));
+		auto start = CGAL::max(RealType(0.), RealType(-b/a, -1, CGAL::square(b/a) - c/a));
+		auto end = CGAL::min(RealType(1.), RealType(-b/a, 1, CGAL::square(b/a) - c/a));
+
+		if (start <= RealType(1.) && end >= RealType(0.)) {
+			I = Interval(start, end);
+		}
+	}
+	else {
+		// std::cout << "empty" << std::endl;
+	}
+
+	// std::cout << "new: " << CGAL::to_double(I.begin) << " " << CGAL::to_double(I.end) << std::endl << std::endl;
+	if (outer != nullptr) { *outer = I; }
+
+	return I;
 }
 
 } // end HLPred namespace

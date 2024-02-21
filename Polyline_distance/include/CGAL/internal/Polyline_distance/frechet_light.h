@@ -109,7 +109,7 @@ private:
 	CInterval const empty;
 	CInterval const* firstinterval1;
 	CInterval const* firstinterval2;
-	CORE::Expr min1_frac, min2_frac;
+	RealType min1_frac, min2_frac;
 	QSimpleInterval qsimple1, qsimple2;
 	CInterval out1, out2;
 	// TODO: can those be made members of out1, out2?
@@ -150,7 +150,7 @@ void FrechetLight::certSetValues(
 	CInterval& interval, CInterval const& parent, PointID point_id, CurveID curve_id)
 {
 	interval.reach_parent = &parent;
-	interval.fixed = CPoint(point_id, 0.);
+	interval.fixed = CPoint(point_id, 0);
 	interval.fixed_curve = curve_id;
 }
 
@@ -233,7 +233,7 @@ CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const&
     if (outer != nullptr) {
 		//TODO change intersection_interval so that the outer interval is
 		// 0,1 instead of -eps, 1+eps ?
-		*outer = CInterval{seg_start, CGAL::max(outer_temp.begin, CORE::Expr(0.)), seg_start, CGAL::min(outer_temp.end, CORE::Expr(1.))};
+		*outer = CInterval{seg_start, CGAL::max(outer_temp.begin, RealType(0)), seg_start, CGAL::min(outer_temp.end, RealType(1.))};
     }
     return CInterval{seg_start, interval.begin, seg_start, interval.end};
 }
@@ -280,7 +280,7 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, const 
 	assert( (qsimple.getFreeInterval().is_empty() and qsimple.getOuterInterval().is_empty()) or (!qsimple.getFreeInterval().is_empty() and !qsimple.getOuterInterval().is_empty()));
 	if (qsimple.is_valid() or (qsimple.hasPartialInformation() and qsimple.getLastValidPoint() >= max)) {
 		qsimple.validate();
-		qsimple.clamp(CPoint{min,0.},CPoint{max,0.});
+		qsimple.clamp(CPoint{min,0},CPoint{max,0});
 		return false; //parent information already valid
 	} 
 
@@ -289,7 +289,7 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, const 
 	       if (qsimple.getLastValidPoint() < min) {
 		       qsimple = QSimpleInterval(); //we know nothing about this part
 	       } else  {
-		       qsimple.clamp(CPoint{min,0.}, CPoint{max,0.}); 
+		       qsimple.clamp(CPoint{min,0}, CPoint{max,0}); 
 		       if (!qsimple.getFreeInterval().is_empty()) {
 			       return false; //even restricted to current interval, parent information still gives invalidity 
 		       }
@@ -346,14 +346,14 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 	auto fixed_point = fixed_curve.interpolate_at(fixed);
 	bool current_free = CGAL::squared_distance(fixed_point,curve[start]) <= dist_sqr;
 	// Work directly on the simple_interval of the boundary
-	//CPoint first_free = current_free ? CPoint{min,0.} : CPoint{max+1,0.};
+	//CPoint first_free = current_free ? CPoint{min,0} : CPoint{max+1,0};
 	assert((not current_free) or start==min);
-	CPoint first_free = current_free ? CPoint{min,0.} : CPoint{max+1, 0.}; //qsimple.free.begin;
+	CPoint first_free = current_free ? CPoint{min,0} : CPoint{max+1, 0}; //qsimple.free.begin;
 
 	//CERT: outerinterval -- note that it is safe to set last_empty=min even if min is free,
 	//since we never add an empty interval of a single point
 	//TODO do we need to make sure that last_empty etc. is used only if we want to certify or does the compiler optimization take care of it?
-	CPoint last_empty = current_free ? CPoint{min, 0.} : CPoint{max+1,0.};
+	CPoint last_empty = current_free ? CPoint{min, 0} : CPoint{max+1,0};
 
 	assert(first_free > max || CGAL::squared_distance(fixed_point,curve.interpolate_at(first_free)) <= dist_sqr);
 	
@@ -416,8 +416,8 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 		CInterval temp_interval = FrechetLight::getInterval<IndexType>(fixed_curve, fixed, curve, cur, &temp_outer);
 		Interval interval = Interval(temp_interval.begin.getPoint() == cur ? temp_interval.begin.getFraction() : 1., temp_interval.end.getPoint() == cur ? temp_interval.end.getFraction() : 1.); 
 		Interval outer = Interval(temp_outer.begin.getPoint() == cur ? temp_outer.begin.getFraction() : 1., temp_outer.end.getPoint() == cur ? temp_outer.end.getFraction() : 1.);
-		outer.begin = CGAL::max(outer.begin, CORE::Expr(0.));
-		outer.end = CGAL::min(outer.end, CORE::Expr(1.));
+		outer.begin = CGAL::max(outer.begin, RealType(0));
+		outer.end = CGAL::min(outer.end, RealType(1.));
 		if (interval.is_empty()) {
 			++cur;
 			stepsize *= 2;
@@ -463,8 +463,8 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 	// If it is still invalid but we didn't return yet, then the free interval ends at max
 	// Note: if no free points were found, first_free defaults to an invalid value (>> max), making the interval empty   
 	if (! qsimple.is_valid()) {
-		qsimple.setFreeInterval(first_free, CPoint{max,0.});
-		qsimple.setOuterInterval(last_empty, CPoint{max,0.});
+		qsimple.setFreeInterval(first_free, CPoint{max,0});
+		qsimple.setOuterInterval(last_empty, CPoint{max,0});
 		qsimple.validate();
 	}
 	
@@ -472,7 +472,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 }
 
 CIntervals::iterator getIntervalContainingNumber(const CIntervals::iterator& begin, const CIntervals::iterator& end, CPoint const& x) {
-	auto it = std::upper_bound(begin, end, CInterval{x, CPoint{std::numeric_limits<PointID::IDType>::max(),0.}});
+	auto it = std::upper_bound(begin, end, CInterval{x, CPoint{std::numeric_limits<PointID::IDType>::max(),0}});
 	if (it != begin) {
 		--it;
 		if (it->begin <= x && it->end >= x) {
@@ -483,7 +483,7 @@ CIntervals::iterator getIntervalContainingNumber(const CIntervals::iterator& beg
 }
 
 CIntervals::iterator getIntervalContainingNumber(const CIntervals::iterator& begin, const CIntervals::iterator& end, PointID x) {
-	auto it = std::upper_bound(begin, end, CInterval{x, 0., std::numeric_limits<PointID::IDType>::max(), 0.});
+	auto it = std::upper_bound(begin, end, CInterval{x, 0, std::numeric_limits<PointID::IDType>::max(), 0});
 	if (it != begin) {
 		--it;
 		if (it->begin <= x && it->end >= x) {
@@ -509,7 +509,7 @@ void FrechetLight::getReachableIntervals(BoxData& data)
 
 	if (emptyInputsRule(data)) { return; }
 
-	min1_frac = 0., min2_frac = 0.;
+	min1_frac = 0, min2_frac = 0;
 	boxShrinkingRule(data);
 
 	if (box.isCell()) {
@@ -542,10 +542,10 @@ inline bool FrechetLight::emptyInputsRule(BoxData& data)
 	if (pruning_level > 0 || (box.min1 == box.max1 - 1 && box.min2 == box.max2 - 1)) {
 		if (firstinterval2->is_empty() && firstinterval1->is_empty()) {
 			if (data.outputs.id2.valid()) {
-				visAddUnknown(CPoint(box.min2,0.), CPoint(box.max2,0.), CPoint(box.max1,0.), 0);
+				visAddUnknown(CPoint(box.min2,0), CPoint(box.max2,0), CPoint(box.max1,0), 0);
 			}
 			if (data.outputs.id1.valid()) {
-				visAddUnknown(CPoint(box.min1,0.), CPoint(box.max1,0.), CPoint(box.max2,0.), 1);
+				visAddUnknown(CPoint(box.min1,0), CPoint(box.max1,0), CPoint(box.max2,0), 1);
 			}
 			return true;
 		}
@@ -572,9 +572,9 @@ inline void FrechetLight::boxShrinkingRule(BoxData& data)
 			}
 
 			if (box.min1 != old_min1) {
-				visAddUnknown(CPoint(box.min2,0.), CPoint(box.max2,0.), CPoint(box.min1,0.), 0);
+				visAddUnknown(CPoint(box.min2,0), CPoint(box.max2,0), CPoint(box.min1,0), 0);
 				if (data.outputs.id1.valid()) {
-					visAddUnknown(CPoint(old_min1,0.), CPoint(box.min1,0.), CPoint(box.max2,0.), 1);
+					visAddUnknown(CPoint(old_min1,0), CPoint(box.min1,0), CPoint(box.max2,0), 1);
 				}
 			}
 		}
@@ -590,9 +590,9 @@ inline void FrechetLight::boxShrinkingRule(BoxData& data)
 			}
 
 			if (box.min2 != old_min2) {
-				visAddUnknown(CPoint(box.min1,0.), CPoint(box.max1,0.), CPoint(box.min2,0.), 1);
+				visAddUnknown(CPoint(box.min1,0), CPoint(box.max1,0), CPoint(box.min2,0), 1);
 				if (data.outputs.id2.valid()) {
-					visAddUnknown(CPoint(old_min2,0.), CPoint(box.min2,0.), CPoint(box.max1,0.), 0);
+					visAddUnknown(CPoint(old_min2,0), CPoint(box.min2,0), CPoint(box.max1,0), 0);
 				}
 			}
 		}
@@ -611,7 +611,7 @@ inline void FrechetLight::handleCellCase(BoxData& data)
 		CInterval output1 = getInterval(curve2, box.max2, curve1, box.min1, &outer1);
 		if (firstinterval2->is_empty()) {
 			visAddFreeNonReachable(
-				output1.begin, std::min(output1.end, firstinterval1->begin), {box.max2,0.}, 1);
+				output1.begin, std::min(output1.end, firstinterval1->begin), {box.max2,0}, 1);
 			output1.begin.setFraction(
 				CGAL::max(output1.begin.getFraction(), firstinterval1->begin.getFraction()));
 			certSetValues(output1, *firstinterval1, box.max2, 1);
@@ -628,7 +628,7 @@ inline void FrechetLight::handleCellCase(BoxData& data)
 		CInterval output2 = getInterval(curve1, box.max1, curve2, box.min2, &outer2);
 		if (firstinterval1->is_empty()) {
 			visAddFreeNonReachable(
-				output2.begin, std::min(output2.end, firstinterval2->begin), {box.max1,0.}, 0);
+				output2.begin, std::min(output2.end, firstinterval2->begin), {box.max1,0}, 0);
 			output2.begin.setFraction(
 				CGAL::max(output2.begin.getFraction(), firstinterval2->begin.getFraction()));
 			certSetValues(output2, *firstinterval2, box.max1, 0);
@@ -725,7 +725,7 @@ inline void FrechetLight::calculateQSimple1(BoxData& data)
 						out1.begin = x;
 						out1_valid = true;
 						certSetValues(out1, parent, box.max2, 1);
-						visAddConnection({box.min2,0.}, {box.max2,0.}, x, 0);
+						visAddConnection({box.min2,0}, {box.max2,0}, x, 0);
 					}
 				}
 			}
@@ -735,7 +735,7 @@ inline void FrechetLight::calculateQSimple1(BoxData& data)
 		merge(reachable_intervals_vec[data.outputs.id1], out1);
 		visAddReachable(out1);
 		if (!out1.is_empty()) {
-			visAddFreeNonReachable(qsimple1.getFreeInterval().begin, out1.begin, {box.max2,0.}, 1);
+			visAddFreeNonReachable(qsimple1.getFreeInterval().begin, out1.begin, {box.max2,0}, 1);
 		}
 		data.outputs.id1.invalidate();
 	}
@@ -790,7 +790,7 @@ inline void FrechetLight::calculateQSimple2(BoxData& data)
 						out2.begin = x;
 						out2_valid = true;
 						certSetValues(out2, parent, box.max1,0);
-						visAddConnection({box.min1,0.}, {box.max1,0.}, x, 1);
+						visAddConnection({box.min1,0}, {box.max1,0}, x, 1);
 					}
 				}
 			}
@@ -800,7 +800,7 @@ inline void FrechetLight::calculateQSimple2(BoxData& data)
 		merge(reachable_intervals_vec[data.outputs.id2], out2);
 		visAddReachable(out2);
 		if (!out2.is_empty()) {
-			visAddFreeNonReachable(qsimple2.getFreeInterval().begin, out2.begin, {box.max1,0.}, 0);
+			visAddFreeNonReachable(qsimple2.getFreeInterval().begin, out2.begin, {box.max1,0}, 0);
 		}
 		data.outputs.id2.invalidate();
 	}
@@ -816,11 +816,11 @@ inline bool FrechetLight::boundaryPruningRule(BoxData& data)
 	// special cases for boxes which are at the boundary of the freespace diagram
 	if (pruning_level > 5 && enable_boundary_rule) {
 		if (box.max1 == curve1.size()-1 && out1_valid) {
-			visAddUnknown({box.min2,0.}, {box.max2,0.}, {box.max1,0.}, 0);
+			visAddUnknown({box.min2,0}, {box.max2,0}, {box.max1,0}, 0);
 			return true;
 		}
 		if (box.max2 == curve2.size()-1 && out2_valid) {
-			visAddUnknown({box.min1,0.}, {box.max1,0.}, {box.max2,0.}, 1);
+			visAddUnknown({box.min1,0}, {box.max1,0}, {box.max2,0}, 1);
 			return true;
 		}
 	}
@@ -839,7 +839,7 @@ inline void FrechetLight::splitAndRecurse(BoxData& data)
 		PointID split_position = (box.max2 + box.min2) / 2;
 		assert(split_position > box.min2 && split_position < box.max2);
 
-		auto bound = CInterval{split_position, 0., std::numeric_limits<PointID::IDType>::max(),0.};
+		auto bound = CInterval{split_position, 0, std::numeric_limits<PointID::IDType>::max(),0};
 		auto it = std::upper_bound(data.inputs.begin2, data.inputs.end2, bound);
 
 		BoxData data_bottom{
@@ -867,7 +867,7 @@ inline void FrechetLight::splitAndRecurse(BoxData& data)
 		PointID split_position = (box.max1 + box.min1) / 2;
 		assert(split_position > box.min1 && split_position < box.max1);
 
-		auto bound = CInterval{split_position, 0., std::numeric_limits<PointID::IDType>::max(), 0.};
+		auto bound = CInterval{split_position, 0, std::numeric_limits<PointID::IDType>::max(), 0};
 		auto it = std::upper_bound(data.inputs.begin1, data.inputs.end1, bound);
 
 		BoxData data_left{
@@ -921,7 +921,7 @@ CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i, Curve
 			return getInterval(curve1, i, curve2, cur).end;
 		}
 	}
-	return CPoint{max, 0.};
+	return CPoint{max, 0};
 }
 
 void FrechetLight::buildFreespaceDiagram(distance_t distance, Curve const& curve1, Curve const& curve2)
@@ -1034,7 +1034,7 @@ inline void FrechetLight::visAddCell(Box const& box)
 
 inline bool FrechetLight::isClose(Curve const& curve1, PointID i, Curve const& curve2) const
 {
-	return getLastReachablePoint(curve1, i, curve2) == CPoint{PointID(curve2.size()-1), 0.};
+	return getLastReachablePoint(curve1, i, curve2) == CPoint{PointID(curve2.size()-1), 0};
 }
 
 inline bool FrechetLight::isTopRightReachable(Outputs const& outputs) const
@@ -1058,8 +1058,8 @@ inline void FrechetLight::initCertificate(Inputs const& initial_inputs)
 	certSetValues(*initial_inputs.begin1, origin, 0, 1);
 	certSetValues(*initial_inputs.begin2, origin, 0, 0);
 
-	visAddUnknown(initial_inputs.begin1->end, CPoint(curve1.size()-1,0.), {0,0.}, 1);
-	visAddUnknown(initial_inputs.begin2->end, CPoint(curve2.size()-1,0.), {0,0.}, 0);
+	visAddUnknown(initial_inputs.begin1->end, CPoint(curve1.size()-1,0), {0,0}, 1);
+	visAddUnknown(initial_inputs.begin2->end, CPoint(curve2.size()-1,0), {0,0}, 0);
 	visAddReachable(*initial_inputs.begin1);
 	visAddReachable(*initial_inputs.begin2);
 }
@@ -1084,7 +1084,7 @@ inline auto FrechetLight::computeInitialInputs() -> Inputs
 	auto const& curve1 = *curve_pair[0];
 	auto const& curve2 = *curve_pair[1];
 
-	auto const first = CPoint(0,0.);
+	auto const first = CPoint(0,0);
 
 	auto last1 = getLastReachablePoint(curve2, 0, curve1);
 	reachable_intervals_vec.emplace_back();
@@ -1105,7 +1105,7 @@ distance_t FrechetLight::calcDistance(Curve const& curve1, Curve const& curve2)
 {
 	static constexpr distance_t epsilon = 1e-10;
 
-	distance_t min = 0.;
+	distance_t min = 0;
 	distance_t max = curve1.getUpperBoundDistance(curve2);
 
 	while (max - min >= epsilon) {
@@ -1159,13 +1159,13 @@ Certificate& FrechetLight::computeCertificate() {
 	//special cases:
 	if (CGAL::squared_distance(curve1.front(),curve2.front()) > dist_sqr) { 
 		cert.setAnswer(false);
-		cert.addPoint({ CPoint(0, 0.), CPoint(0, 0.) });
+		cert.addPoint({ CPoint(0, 0), CPoint(0, 0) });
 		cert.validate();
 		return cert;
        	}
 	if (CGAL::squared_distance(curve1.back(),curve2.back()) > dist_sqr) { 
 		cert.setAnswer(false);
-		cert.addPoint({ CPoint(curve1.size()-1, 0.), CPoint(curve2.size()-1, 0.) });
+		cert.addPoint({ CPoint(curve1.size()-1, 0), CPoint(curve2.size()-1, 0) });
 		cert.validate();
 		return cert;
 	}
@@ -1173,44 +1173,44 @@ Certificate& FrechetLight::computeCertificate() {
 	// cases where at least one curve has length 1
 	if (curve1.size() == 1 && curve2.size() == 1) { 
 		cert.setAnswer(true);
-		cert.addPoint({ CPoint(0, 0.), CPoint(0, 0.) });
+		cert.addPoint({ CPoint(0, 0), CPoint(0, 0) });
 		cert.validate();
 		return cert;
 	}
 	if (curve1.size() == 1) { 
 		auto last = getLastReachablePoint(curve1, 0, curve2);
-		if (last == CPoint(curve2.size()-1, 0.)) {
+		if (last == CPoint(curve2.size()-1, 0)) {
 			cert.setAnswer(true);
-			cert.addPoint({ CPoint(0, 0.), CPoint(0, 0.) });
-			cert.addPoint({ CPoint(0, 0.), CPoint(curve2.size()-1, 0.) });
+			cert.addPoint({ CPoint(0, 0), CPoint(0, 0) });
+			cert.addPoint({ CPoint(0, 0), CPoint(curve2.size()-1, 0) });
 			cert.validate();
 			return cert;
 		} else {
 		 	CInterval outer;
 			(void) getInterval(curve1, (PointID) 0, curve2, last.getPoint(), &outer);
-			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0.) ? outer.begin : outer.end;
-			assert(safe_empty > CPoint(last.getPoint(), 0.) or safe_empty < CPoint(last.getPoint()+1, 0.));
+			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0) ? outer.begin : outer.end;
+			assert(safe_empty > CPoint(last.getPoint(), 0) or safe_empty < CPoint(last.getPoint()+1, 0));
 			cert.setAnswer(false);
-			cert.addPoint({ CPoint(0, 0.), safe_empty});
+			cert.addPoint({ CPoint(0, 0), safe_empty});
 			cert.validate();
 			return cert;
 		}
 	}
 	if (curve2.size() == 1) { 
 		auto last = getLastReachablePoint(curve2, 0, curve1);
-		if (last == CPoint(curve1.size()-1, 0.)) {
+		if (last == CPoint(curve1.size()-1, 0)) {
 			cert.setAnswer(true);
-			cert.addPoint({ CPoint(0, 0.), CPoint(0, 0.) });
-			cert.addPoint({ CPoint(curve1.size()-1, 0.), CPoint(0, 0.) });
+			cert.addPoint({ CPoint(0, 0), CPoint(0, 0) });
+			cert.addPoint({ CPoint(curve1.size()-1, 0), CPoint(0, 0) });
 			cert.validate();
 			return cert;
 		} else {
 		 	CInterval outer;
 			(void) getInterval(curve2, (PointID) 0, curve1, last.getPoint(), &outer);
-			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0.) ? outer.begin : outer.end;
-			assert(safe_empty > CPoint(last.getPoint(), 0.) or safe_empty < CPoint(last.getPoint()+1, 0.));
+			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0) ? outer.begin : outer.end;
+			assert(safe_empty > CPoint(last.getPoint(), 0) or safe_empty < CPoint(last.getPoint()+1, 0));
 			cert.setAnswer(false);
-			cert.addPoint({ safe_empty, CPoint(0, 0.)});
+			cert.addPoint({ safe_empty, CPoint(0, 0)});
 			cert.validate();
 			return cert;
 		}
@@ -1238,11 +1238,11 @@ Certificate& FrechetLight::computeCertificate() {
 	
 	if (answer) {
 		CPositions rev_traversal;
-		CPosition cur_pos = { CPoint(curve1.size()-1, 0.), CPoint(curve2.size()-1, 0.) };
+		CPosition cur_pos = { CPoint(curve1.size()-1, 0), CPoint(curve2.size()-1, 0) };
 		rev_traversal.push_back(cur_pos);
 		CInterval const* interval = last_interval;
 		while (cur_pos[0] > 0 or cur_pos[1] > 0) {
-			CPosition  next_pos = {CPoint(0, 0.), CPoint(0, 0.)};
+			CPosition  next_pos = {CPoint(0, 0), CPoint(0, 0)};
 
 			next_pos[interval->fixed_curve] = interval->fixed;
 			next_pos[1-interval->fixed_curve] = interval->end > cur_pos[1-interval->fixed_curve] ? cur_pos[1-interval->fixed_curve] : interval->end;

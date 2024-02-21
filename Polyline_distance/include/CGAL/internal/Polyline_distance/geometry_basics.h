@@ -11,7 +11,18 @@
 #include <vector>
 #include <sstream>
 
-#include <CGAL/CORE_Expr.h>
+// #include <CGAL/CORE_Expr.h>
+// using Rational = CORE::Expr;
+// using RealType = CORE::Expr;
+
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Sqrt_extension.h>
+using Rational = CGAL::Exact_rational;
+using RealType = CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_true>;
+
+// #include <CGAL/MP_Float.h>
+// using RealType = CGAL::MP_Float;
+// using RealType = double;
 
 namespace unit_tests { void testGeometricBasics(); }
 
@@ -26,8 +37,8 @@ using distance_t = double;
 // Point
 //
 
-#include <CGAL/Cartesian.h>
-using Kernel = CGAL::Cartesian<double>;
+#include <CGAL/Simple_cartesian.h>
+using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_2;
 
 struct OldPoint {
@@ -136,14 +147,14 @@ BFDirection toBFDirection(Direction direction);
 // TODO: does CGAL have any replacement for this or do we want our custom type here?
 struct Interval
 {
-	CORE::Expr begin;
-	CORE::Expr end;
+	RealType begin;
+	RealType end;
 
 	Interval()
 		: begin(1.),
 		  end(0.) {}
 
-	Interval(CORE::Expr begin, CORE::Expr end)
+	Interval(RealType begin, RealType end)
 		: begin(begin),
 		  end(end) {}
 
@@ -173,7 +184,7 @@ std::ostream& operator<<(std::ostream& out, const Interval& interval);
 class CPoint {
 private:
 	PointID point;
-	CORE::Expr fraction;
+	RealType fraction;
 
 	void normalize() {
 		assert(fraction >= 0. && fraction <= 1.);
@@ -183,7 +194,7 @@ private:
 		}
 	}
 public:
-	CPoint(PointID point, CORE::Expr fraction)
+	CPoint(PointID point, RealType const& fraction)
 		: point(point), fraction(fraction)
 	{
 			normalize();
@@ -191,14 +202,14 @@ public:
 	CPoint() : point(std::numeric_limits<PointID::IDType>::max()), fraction(0.) {}
 	
 	PointID getPoint() const { return point; } 
-	CORE::Expr getFraction() const { return fraction; } 
+	RealType const& getFraction() const { return fraction; } 
 	double getFractionLB() const {
 		// returns a lower bound to the fraction
 		return std::get<0>(CGAL::to_interval(fraction));
 	}
-	CORE::Expr convert() const { return (CORE::Expr) point + fraction; }
+	RealType convert() const { return (RealType) (double) point + fraction; }
 	void setPoint(PointID point) { this->point = point; }
-	void setFraction(CORE::Expr frac) { fraction = frac; normalize(); }
+	void setFraction(RealType const& frac) { fraction = frac; normalize(); }
 		
 	bool operator<(CPoint const& other) const {
 		return point < other.point || (point == other.point && fraction < other.fraction);
@@ -294,7 +305,7 @@ struct CInterval
 		}
 	}
 
-	CInterval(CPoint begin, CPoint end, CPoint fixed, CurveID fixed_curve)
+	CInterval(CPoint const& begin, CPoint const& end, CPoint const& fixed, CurveID fixed_curve)
 		: begin(begin), end(end), fixed(fixed), fixed_curve(fixed_curve) {}
 
 	CInterval()
@@ -306,7 +317,7 @@ struct CInterval
 	CInterval(CPoint const& begin, CPoint const& end)
                 : begin(begin), end(end) {}
 
-	CInterval(PointID point1, CORE::Expr fraction1, PointID point2, CORE::Expr fraction2)
+	CInterval(PointID point1, RealType fraction1, PointID point2, RealType const& fraction2)
 		: begin(point1, fraction1), end(point2, fraction2) {}
 
 	CInterval(PointID begin, PointID end)
@@ -319,8 +330,8 @@ struct CInterval
 
 	bool is_empty() const { return end < begin; }
 	void make_empty() {
-		begin = {std::numeric_limits<PointID::IDType>::max(), 0.};
-		end = {std::numeric_limits<PointID::IDType>::lowest(), 0.};
+		begin = {std::numeric_limits<PointID::IDType>::max(), 0};
+		end = {std::numeric_limits<PointID::IDType>::lowest(), 0};
 	}
 	void clamp(CPoint const& min, CPoint const& max) {
 		begin = std::max(min, begin);

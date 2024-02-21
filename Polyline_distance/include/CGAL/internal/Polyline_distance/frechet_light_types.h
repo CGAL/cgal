@@ -80,7 +80,7 @@ struct QSimpleInterval
 		//valid = true;
 	}
 	void setFreeInterval(PointID begin, PointID end) {
-		free = {begin, 0., end, 0.};
+		free = {begin, 0, end, 0};
 		//valid = true;
 	}
 	void invalidateFreeInterval() {
