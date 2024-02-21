@@ -35,7 +35,7 @@ public:
   /*!
    * \brief An element of the `Node_data` list-like type.
    *
-   * Must be constructible from the value type of a `Node_data` iterator.
+   * Must be constructible from the value type of a `Node_data::iterator`.
    * Typically the same as that type, but can also be an `std::reference_wrapper<>` if the type is not copyable.
    */
   using Node_data_element = unspecified_type;

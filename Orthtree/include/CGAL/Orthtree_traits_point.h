@@ -78,7 +78,7 @@ template <
   typename GeomTraits,
   typename PointRange,
   typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>,
-  bool cubic = false,
+  bool hypercubic_nodes = false,
   int dimension = Ambient_dimension<
     typename std::iterator_traits<typename PointRange::iterator>::value_type,
     GeomTraits
@@ -92,7 +92,7 @@ public:
   /// @}
 
   using Base = Orthtree_traits_base<GeomTraits, dimension>;
-  using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, cubic, dimension>;
+  using Self = Orthtree_traits_point<GeomTraits, PointRange, PointMap, hypercubic_nodes, dimension>;
   using Tree = Orthtree<Self>;
 
   using Node_index = typename Base::Node_index;
@@ -130,7 +130,7 @@ public:
         }
       }
 
-      if constexpr (cubic) {
+      if constexpr (hypercubic_nodes) {
         std::array<typename Self::FT, Self::dimension> center;
         typename Self::FT max_side = 0;
         for (int i = 0; i < Self::dimension; i++) {
