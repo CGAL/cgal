@@ -20,7 +20,7 @@ public:
   /// \name Types
   /// @{
   /*!
-   * \brief The data type contained by each node.
+   * \brief The data type contained by each node. Must be default constructible, copy constructible and copy assignable.
    */
   using Node_data = unspecified_type;
 

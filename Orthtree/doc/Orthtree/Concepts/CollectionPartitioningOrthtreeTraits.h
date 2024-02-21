@@ -28,7 +28,7 @@ public:
   using Sphere_d = unspecified_type;
 
   /*!
-   * \brief The data type contained by each node; must be a model of `ForwardRange`.
+   * \brief The data type contained by each node; must be a model of `ForwardRange` in addition to default constructible, copy constructible and copy assignable.
    */
   using Node_data = unspecified_type;
 
