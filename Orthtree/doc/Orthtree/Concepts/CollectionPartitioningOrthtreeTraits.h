@@ -23,7 +23,7 @@ public:
   /// @{
 
   /*!
-   * Sphere type used for the shrinking-sphere approach for neighbor queries
+   * Sphere Type used for the shrinking-sphere approach for neighbor queries; needs to be copy assignable.
    */
   using Sphere_d = unspecified_type;
 
@@ -48,10 +48,49 @@ public:
    */
   using Squared_distance_of_element = unspecified_type;
 
+  /*!
+   * \brief Functor with an operator that constructs a `Sphere_d` from a provided center and squared radius.
+   *
+   * Provides the operator:
+   * `Sphere_d operator()(const Point_d&, const FT&)`
+  */
+  using Construct_sphere_3 = unspecified_type;
+
+  /*!
+   * \brief Functor with an operator that provides the center of a `Sphere_d`.
+   *
+   * Provides the operator:
+   * `Point_d operator()(const Sphere_d&)`
+  */
+  using Construct_center_3 = unspecified_type;
+
+  /*!
+   * \brief Functor with an operator that provides the squared radius of a `Sphere_d`.
+   *
+   * Provides the operator:
+   * `FT operator()(const Sphere_d&)`
+  */
+  using Compute_squared_radius_3 = unspecified_type;
+
   /// @}
 
   /// \name Operations
   /// @{
+
+  /*!
+   * constructs an object of type `ConstructSphere_3`.
+   */
+  Construct_sphere_3 get_construct_sphere_3_object() const;
+
+  /*!
+   * constructs an object of type `ConstructCenter_3`.
+   */
+  Construct_center_3 get_construct_center_3_object() const;
+
+  /*!
+   * constructs an object of type `ComputeSquaredRadius_3`.
+   */
+  Compute_squared_radius_3 get_compute_squared_radius_3_object() const;
 
   /*!
    * constructs an object of type `Squared_distance_of_element`.
