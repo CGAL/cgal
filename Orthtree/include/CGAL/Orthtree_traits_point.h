@@ -163,25 +163,25 @@ public:
     };
   }
 
-  auto get_construct_sphere_3_object() const {
+  auto construct_sphere_3_object() const {
     return [](const typename Self::Point_d& center, const typename Self::FT& squared_radius) -> typename Self::Sphere_d {
       return typename Self::Sphere_d(center, squared_radius);
       };
   }
 
-  auto get_construct_center_3_object() const {
+  auto construct_center_3_object() const {
     return [](const typename Self::Sphere_d& sphere) -> typename Self::Point_d {
       return sphere.center();
       };
   }
 
-  auto get_compute_squared_radius_3_object() const {
+  auto compute_squared_radius_3_object() const {
     return [](const typename Self::Sphere_d& sphere) -> typename Self::FT {
       return sphere.squared_radius();
       };
   }
 
-  auto get_squared_distance_of_element_object() const {
+  auto squared_distance_of_element_object() const {
     return [&](const Node_data_element& index, const typename Self::Point_d& point) -> typename Self::FT {
       return CGAL::squared_distance(get(m_point_map, index), point);
       };

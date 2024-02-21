@@ -38,10 +38,10 @@ void nearest_k_neighbors_recursive(const Tree& orthtree,
 
       // Pair that element with its distance from the search point
       Result current_element_with_distance =
-        {e, orthtree.traits().get_squared_distance_of_element_object()(e, orthtree.traits().get_construct_center_3_object()(search_bounds))};
+        {e, orthtree.traits().squared_distance_of_element_object()(e, orthtree.traits().construct_center_3_object()(search_bounds))};
 
       // Check if the new element is within the bounds
-      if (current_element_with_distance.distance < orthtree.traits().get_compute_squared_radius_3_object()(search_bounds)) {
+      if (current_element_with_distance.distance < orthtree.traits().compute_squared_radius_3_object()(search_bounds)) {
 
         // Check if the results list is full
         if (results.size() == results.capacity()) {
@@ -62,7 +62,7 @@ void nearest_k_neighbors_recursive(const Tree& orthtree,
         if (results.size() == results.capacity()) {
 
           // Set the search radius
-          search_bounds = orthtree.traits().get_construct_sphere_3_object()(orthtree.traits().get_construct_center_3_object()(search_bounds), results.back().distance + epsilon);
+          search_bounds = orthtree.traits().construct_sphere_3_object()(orthtree.traits().construct_center_3_object()(search_bounds), results.back().distance + epsilon);
         }
       }
     }
@@ -89,7 +89,7 @@ void nearest_k_neighbors_recursive(const Tree& orthtree,
       // Add a child to the list, with its distance
       children_with_distances.emplace_back(
         child_node,
-        CGAL::squared_distance(orthtree.traits().get_construct_center_3_object()(search_bounds), orthtree.barycenter(child_node))
+        CGAL::squared_distance(orthtree.traits().construct_center_3_object()(search_bounds), orthtree.barycenter(child_node))
       );
     }
 
@@ -182,7 +182,7 @@ template <typename Tree, typename OutputIterator>
 OutputIterator nearest_neighbors(const Tree& orthtree, const typename Tree::Point& query,
                                  std::size_t k,
                                  OutputIterator output) {
-  typename Tree::Sphere query_sphere = orthtree.traits().get_construct_sphere_3_object()(query, (std::numeric_limits<typename Tree::FT>::max)());
+  typename Tree::Sphere query_sphere = orthtree.traits().construct_sphere_3_object()(query, (std::numeric_limits<typename Tree::FT>::max)());
   return nearest_k_neighbors_in_radius(orthtree, query_sphere, k, output);
 }
 

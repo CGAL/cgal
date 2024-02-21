@@ -80,22 +80,22 @@ public:
   /*!
    * constructs an object of type `ConstructSphere_3`.
    */
-  Construct_sphere_3 get_construct_sphere_3_object() const;
+  Construct_sphere_3 construct_sphere_3_object() const;
 
   /*!
    * constructs an object of type `ConstructCenter_3`.
    */
-  Construct_center_3 get_construct_center_3_object() const;
+  Construct_center_3 construct_center_3_object() const;
 
   /*!
    * constructs an object of type `ComputeSquaredRadius_3`.
    */
-  Compute_squared_radius_3 get_compute_squared_radius_3_object() const;
+  Compute_squared_radius_3 compute_squared_radius_3_object() const;
 
   /*!
    * constructs an object of type `Squared_distance_of_element`.
    */
-  Squared_distance_of_element get_squared_distance_of_element_object() const;
+  Squared_distance_of_element squared_distance_of_element_object() const;
 
   /// @}
 };
