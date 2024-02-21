@@ -136,9 +136,9 @@ FrechetDistanceQueries readFrechetDistanceQueries(std::string const& query_file)
 
 void testFrechetDistance()
 {
-	std::string curve_directory = "data/curves/";
+	std::string curve_directory = "../data/curves/";
 	std::vector<std::string> datasets = { "sigspatial", "OV" };
-	std::string query_directory = "data/queries/";
+	std::string query_directory = "../data/queries/";
 
 	for (auto const& dataset: datasets) {
 		auto curves = readCurves(curve_directory + dataset + "/");
