@@ -385,10 +385,17 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    std::size_t ts;
+    if constexpr (Time_stamper::has_timestamp) {
+      ts = ret->time_stamp();
+    }
     new (ret) value_type(args...);
+    if constexpr (Time_stamper::has_timestamp) {
+      ret->set_time_stamp(ts);
+    }
+    Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    Time_stamper::set_time_stamp(ret, time_stamp);
     return iterator(ret, 0);
   }
 
@@ -427,7 +434,14 @@ public:
 
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+    std::size_t ts;
+    if constexpr (Time_stamper::has_timestamp) {
+      ts = x->time_stamp();
+    }
     std::allocator_traits<allocator_type>::destroy(alloc, &*x);
+    if constexpr (Time_stamper::has_timestamp) {
+      x->set_time_stamp(ts);
+    }
 
     put_on_free_list(&*x);
     --size_;
@@ -641,6 +655,9 @@ private:
   // Get the type of the pointee.
   static Type type(const_pointer ptr)
   {
+    if constexpr (Time_stamper::has_timestamp) {
+      return (Type)(ptr->time_stamp() >> Time_stamper::time_stamp_shift);
+    }
     char * p = (char *) Traits::pointer(*ptr);
     return (Type) (reinterpret_cast<std::ptrdiff_t>(p) -
                    reinterpret_cast<std::ptrdiff_t>(clean_pointer(p)));
@@ -649,6 +666,10 @@ private:
   // Sets the pointer part and the type of the pointee.
   static void set_type(pointer ptr, void * p, Type t)
   {
+    if constexpr (Time_stamper::has_timestamp) {
+      const auto ts = ptr->time_stamp() & ~(Time_stamper::time_stamp_mask);
+      ptr->set_time_stamp(ts | (static_cast<std::size_t>(t) << Time_stamper::time_stamp_shift));
+    }
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 4);
