@@ -1944,7 +1944,8 @@ private:
     struct Region_vertices_marker_scope_guard
     {
       std::function<void()> unmark;
-      ~Region_vertices_marker_scope_guard() { unmark(); }
+      void clear() { if(unmark) unmark(); unmark = nullptr; }
+      ~Region_vertices_marker_scope_guard() { clear(); }
     } guard{[&] {
       for(auto v : region_vertices) {
         v->clear_mark(Vertex_marker::REGION_BORDER);
@@ -2195,6 +2196,9 @@ private:
         }
       }
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+      if(this->debug_copy_triangulation_into_hole()) {
+        std::cerr << "# glu the lower triangulation of the cavity\n";
+      }
       this->copy_triangulation_into_hole(map_upper_cavity_vertices_to_ambient_vertices,
                                          std::move(outer_map),
                                          upper_inner_map,
