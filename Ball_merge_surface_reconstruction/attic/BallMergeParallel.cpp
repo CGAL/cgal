@@ -46,7 +46,7 @@ int _function(Delaunay::Cell_handle fh1, Delaunay::Cell_handle fh2){ //Function 
         return 1;
     return 0;
 }
-void Group(Delaunay::Cell_handle fh){ //Function to recursively group all the cells that is mergable from the cell fh with user specified parameter
+void Group(Delaunay &T, Delaunay::Cell_handle fh){ //Function to recursively group all the cells that is mergable from the cell fh with user specified parameter
     std::queue<Delaunay::Cell_handle> q; //A queue to do the grouping
     q.push(fh); //The cell itself is mergable
     while (!q.empty()){ //A traversal
@@ -55,7 +55,7 @@ void Group(Delaunay::Cell_handle fh){ //Function to recursively group all the ce
         fh->info() = group; //A label
         gcount++;
         for (int i = 0; i < 4; i++) //For each neighbors
-            if (fh->neighbor(i)->info() == 0 && _function(fh, fh->neighbor(i)) == 1){//If it is unlabeled and can be merged - using the function that computes IR
+            if ((!T.is_infinite(fh->neighbor(i)))&&(fh->neighbor(i)->info() == 0 && _function(fh, fh->neighbor(i)) == 1)){//If it is unlabeled and can be merged - using the function that computes IR
                 fh->neighbor(i)->info() = group;//If mergable, then change the label
                 q.push(fh->neighbor(i));//Push it into the traversal list
             }
@@ -119,12 +119,12 @@ int main(int argc, char **argv){
         }
     }
 #ifdef CGAL_LINKED_WITH_TBB //Parallel Delaunay computation
-    Bbox_3 bbox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
-    Delaunay::Lock_data_structure locking_ds(bbox, 50);
+   Bbox_3 bbox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
+   Delaunay::Lock_data_structure locking_ds(bbox, 50);
     Delaunay T(points.begin(), points.end(), &locking_ds);
-#else
+ #else
     Delaunay T(points.begin(), points.end());//General Delaunay computation
-#endif
+ #endif
     Delaunay::Finite_cells_iterator vit;
     for (vit = T.finite_cells_begin(); vit != T.finite_cells_end(); vit++)//Initialize the labels of all tetrahedrons
         vit->info() = 0;
@@ -132,7 +132,7 @@ int main(int argc, char **argv){
         for (vit = T.finite_cells_begin(); vit != T.finite_cells_end(); vit++){//For each cell
             if (vit->info() == 0){//If the cell label is not altered
                 vit->info() = group;//Assign a label
-                Group(vit);//Group all the mergable cells
+                Group(T,vit);//Group all the mergable cells
                 if (maxg < gcount){//Remember the largest group - based on the number of tetrahedrons in the group
                     max1 = maxg;
                     secondgroup = maingroup;//To remember the second largest group
@@ -158,7 +158,7 @@ int main(int argc, char **argv){
         meshVertexPositions[vIndex][2] = point.z();
     }
     std::string st = argv[1];
-    st = st + std::to_string(par) + "out.ply";
+    st = st + std::to_string(par) + "out"+std::to_string(tlen)+".ply";
     char outname[100];
     strcpy(outname, st.c_str());
     bbdiaglen = distance(Point(minx, miny, minz), Point(maxx, maxy, maxz));
@@ -174,7 +174,7 @@ int main(int argc, char **argv){
             }
             else if (vit->neighbor(i)->info() != 9999)//If local
                 if (bblen(vit->vertex((i + 1) % 4)->point(), vit->vertex((i + 2) % 4)->point(), vit->vertex((i + 3) % 4)->point()))//If the triangle crosses our bbdiagonal based criteria
-                    if (!_function(vit, vit->neighbor(i)) == 1){//If the cells cannot be merged, then wirte the triangle between these two cells to the PLY file
+                    if (!_function(vit, vit->neighbor(i)) == 1||T.is_infinite(vit->neighbor(i))){//If the cells cannot be merged, then wirte the triangle between these two cells to the PLY file
                         vit->info() = 9999;
                         std::vector<int> indices(3);
                         for (int j = 0; j < 3; j++)

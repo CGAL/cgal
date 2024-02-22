@@ -57,7 +57,7 @@ int main(int argc, char **argv)
   bmsr.result(meshVertexPositions, meshFaceIndices);
 
   std::string st = argv[1];
-  st = st + std::to_string(par) + "out.ply";
+  st = st + std::to_string(par) + "out"+std::to_string(tlen)+".ply";
 
   happly::PLYData plyOut;
   plyOut.addVertexPositions(meshVertexPositions);

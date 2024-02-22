@@ -65,7 +65,7 @@ private:
   }
 
   //Function to recursively group all the cells that are mergeable from the cell fh with user specified parameter
-  void regroup(Cell_handle fh)
+  void regroup(const Delaunay& dt3, Cell_handle fh)
   {
     std::queue<Cell_handle> q; //A queue to do the grouping
     q.push(fh); //The cell itself is mergeable
@@ -75,8 +75,7 @@ private:
       fh->info() = group; //A label
       ++gcount;
       for (int i = 0; i < 4; ++i){ //For each neighbor
-        if (fh->neighbor(i)->info() == 0 && _function(fh, fh->neighbor(i)) == 1){//If it is unlabeled and can be merged - using the function that computes IR
-          fh->neighbor(i)->info() = group;//If mergeable, then change the label
+        if ((!dt3.is_infinite(fh->neighbor(i)))&&(fh->neighbor(i)->info() == 0 && _function(fh, fh->neighbor(i)) == 1)){//If it is unlabeled and can be merged - using the function that computes IR          fh->neighbor(i)->info() = group;//If mergeable, then change the label
           q.push(fh->neighbor(i));//Push it into the traversal list
         }
       }
@@ -120,7 +119,7 @@ public:
       for (vit = dt3.finite_cells_begin(); vit != dt3.finite_cells_end(); ++vit){//For each cell
         if (vit->info() == 0){//If the cell label is not altered
           vit->info() = group;//Assign a label
-          regroup(vit);//Group all the mergeable cells
+          regroup(dt3, vit);//Group all the mergeable cells
           if (maxg < gcount){
             //Remember the largest group - based on the number of tetrahedra in the group
             max1 = maxg;
@@ -168,7 +167,7 @@ public:
           //If local  AF: replace 9999.  -1, numeric_limits, number_of_vertices ??
           if (bblen(vit->vertex((i + 1) % 4)->point(), vit->vertex((i + 2) % 4)->point(), vit->vertex((i + 3) % 4)->point()))
             //If the triangle crosses our bbdiagonal based criteria
-            if (!_function(vit, vit->neighbor(i)) == 1){
+            if (!_function(vit, vit->neighbor(i)) == 1||dt3.is_infinite(vit->neighbor(i))){
               //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
               vit->info() = 9999;
               std::vector<int> indices(3);
