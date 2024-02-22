@@ -35,7 +35,7 @@ class Ball_merge_surface_reconstruction {
   typedef CGAL::Delaunay_triangulation_3<Traits, Tds> Delaunay;
   typedef typename Delaunay::Point Point;
   typedef typename Delaunay::Cell_handle Cell_handle;
-
+  static constexpr int NOT_VISITED=-1;
   int group = 1, gcount = 0, maxg = 0, maingroup, max1 = 0;
   double par, bbdiaglen;
   Bbox_3 bbox;
@@ -53,7 +53,7 @@ private:
   //Function that computes the Intersection Ratio (IR) given two cell handles
   // AF This could become a filtered predicate if robustness might be an issue
   // AF Find a better name and an enum for the return type
-  int _function(Cell_handle fh1, Cell_handle fh2) const
+  bool _function(Cell_handle fh1, Cell_handle fh2) const
   {
     Point p1 = dt3.dual(fh1); //p1 is the circumcenter of the first cell
     Point p2 = dt3.dual(fh2); //p2 is the circumcenter of the second cell
@@ -61,8 +61,8 @@ private:
     double a = distance(fh1->vertex(0)->point(), p1);//circumradius of circumsphere of the first cell
     double b = distance(fh2->vertex(0)->point(), p2);//circumradius of circumsphere of the second cell
     if ((a + b - d) > a * par || (a + b - d) > b * par)//Check whether the IR is less than a user given parameter
-      return 1;
-    return 0;
+      return true;
+    return false;
   }
 
   //Function to recursively group all the cells that are mergeable from the cell fh with user specified parameter
@@ -107,7 +107,7 @@ public:
     bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
 
     if constexpr (std::is_same_v<ConcurrencyTag, Parallel_tag>) {
-      typename Delaunay::Lock_data_structure locking_ds(bbox, 50); // AF: why 50
+      typename Delaunay::Lock_data_structure locking_ds(bbox, 50);
       dt3.insert(points.begin(), points.end(), &locking_ds);
     } else {
       dt3.insert(points.begin(), points.end());//Sequential Delaunay computation
@@ -164,15 +164,13 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
           meshFaceIndices.push_back(indices);
         }
       }
-      else if (vit->neighbor(i)->info() != 9999)
+      else if (vit->neighbor(i)->info() != NOT_VISITED)
       {
-      //  if(!dt3.is_infinite(vit->neighbor(i)))
-        //If local  AF: replace 9999.  -1, numeric_limits, number_of_vertices ??
         if (bblen(vit->vertex((i + 1) % 4)->point(), vit->vertex((i + 2) % 4)->point(), vit->vertex((i + 3) % 4)->point())){
           //If the triangle crosses our bbdiagonal based criteria
           if (dt3.is_infinite(vit->neighbor(i))||!_function(vit, vit->neighbor(i)) == 1){
             //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
-            vit->info() = 9999;
+            vit->info() = NOT_VISITED;
             std::vector<int> indices(3);
             for (int j = 0; j < 3; ++j){
               indices[j] = vit->vertex((i + 1 + j) % 4)->info();
