@@ -280,6 +280,10 @@ void tetrahedral_isotropic_remeshing(
 
   // perform remeshing
   std::size_t nb_extra_iterations = 3;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_NO_EXTRA_ITERATIONS
+  nb_extra_iterations = 0;
+#endif
+
   remesher.remesh(max_it, nb_extra_iterations);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -363,7 +367,7 @@ convert_to_triangulation_3(
     for (auto e : c3t3.edges_in_complex())
     {
       const Edge_vv evv
-        = CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e);//ordered pair
+        = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);//ordered pair
       put(ecmap, evv, true);
     }
   }
@@ -501,6 +505,10 @@ void tetrahedral_isotropic_remeshing(
 
   // perform remeshing
   std::size_t nb_extra_iterations = 3;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_NO_EXTRA_ITERATIONS
+  nb_extra_iterations = 0;
+#endif
+
   remesher.remesh(max_it, nb_extra_iterations);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
