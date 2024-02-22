@@ -123,22 +123,6 @@ template <> class Algebraic_structure_traits< CORE::Expr >
         }
     };
 
-    class Is_one
-      : public CGAL::cpp98::unary_function< Type, bool > {
-      public:
-        bool operator()( const Type& x ) const {
-          double inf, sup;
-          x.doubleInterval(inf,sup);
-          if((inf > 1) || (sup < 1)){
-            return false;
-          }
-          if(inf == sup){
-            return true;
-          }
-          return x.cmp(Type::getOne()) == 0;
-        }
-    };
-
 };
 
 template <> class Real_embeddable_traits< CORE::Expr >
