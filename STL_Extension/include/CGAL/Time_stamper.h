@@ -29,27 +29,18 @@ template <typename T>
 struct Time_stamper
 {
   static constexpr bool has_timestamp = true;
-  static constexpr int time_stamp_shift = sizeof(std::size_t) * CHAR_BIT - 2;
-  static constexpr std::size_t time_stamp_mask = std::size_t(0b11) << time_stamp_shift;
-  static constexpr std::size_t time_stamp_is_free_mask = std::size_t(0b001) << (time_stamp_shift - 1);
 
   static void initialize_time_stamp(T* pt) {
     pt->set_time_stamp(std::size_t(-1));
   }
 
-  static bool is_free(const T* pt)
-  {
-    return ( pt->time_stamp() & time_stamp_is_free_mask )!= 0;
-  }
-
   template <typename time_stamp_t>
   static void set_time_stamp(T* pt, time_stamp_t& time_stamp_) {
-    if(is_free(pt)) {
+    if(pt->time_stamp() == std::size_t(-1)) {
       const std::size_t new_ts = time_stamp_++;
       pt->set_time_stamp(new_ts);
     }
     else {
-      pt->set_time_stamp(pt->time_stamp() & ~time_stamp_mask);
       // else: the time stamp is re-used
 
       // Enforces that the time stamp is greater than the current value.
