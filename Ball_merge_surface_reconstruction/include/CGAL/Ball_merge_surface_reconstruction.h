@@ -106,13 +106,13 @@ public:
     bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
 
     if constexpr (std::is_same_v<ConcurrencyTag, Parallel_tag>) {
-      Delaunay::Lock_data_structure locking_ds(bbox, 50); // AF: why 50
+      typename Delaunay::Lock_data_structure locking_ds(bbox, 50); // AF: why 50
       dt3.insert(points.begin(), points.end(), &locking_ds);
     } else {
       dt3.insert(points.begin(), points.end());//Sequential Delaunay computation
     }
 
-    Delaunay::Finite_cells_iterator vit;
+    typename Delaunay::Finite_cells_iterator vit;
     for (vit = dt3.finite_cells_begin(); vit != dt3.finite_cells_end(); ++vit){//Initialize the labels of all tetrahedra
       vit->info() = 0;
     }
@@ -144,7 +144,7 @@ public:
   void result(std::vector<std::array<double, 3>>& meshVertexPositions,
               std::vector<std::vector<int>>& meshFaceIndices) const
   {
-    for (Delaunay::Finite_vertices_iterator vIter = dt3.finite_vertices_begin(); vIter != dt3.finite_vertices_end(); ++vIter){
+    for (typename Delaunay::Finite_vertices_iterator vIter = dt3.finite_vertices_begin(); vIter != dt3.finite_vertices_end(); ++vIter){
       const Point& point = vIter->point();
       int vIndex = vIter->info();
       meshVertexPositions[vIndex][0] = point.x();
