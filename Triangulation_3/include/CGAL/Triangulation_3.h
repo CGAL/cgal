@@ -5097,7 +5097,7 @@ Triangulation_3<Gt,Tds,Lds>::
 copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
                              Vertex_triple_Facet_map&& outer_map,
                              const Vertex_triple_Facet_map& inner_map,
-                             OutputItCells fit)
+                             OutputItCells cit)
 {
   while(! outer_map.empty())
   {
@@ -5125,7 +5125,6 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
 
     // Create a new cell and glue it to the outer surface
     Cell_handle new_ch = tds().create_cell();
-    *fit++ = new_ch;
     new_ch->set_vertices(vmap[i_ch->vertex(0)], vmap[i_ch->vertex(1)],
                          vmap[i_ch->vertex(2)], vmap[i_ch->vertex(3)]);
 
@@ -5134,6 +5133,8 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
 
     for(int j=0; j<4; j++)
      new_ch->vertex(j)->set_cell(new_ch);
+
+    *cit++ = new_ch;
 
     // For the other faces check, if they can also be glued
     for(unsigned int index = 0; index < 4; index++)
@@ -5164,7 +5165,7 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
       }
     }
   }
-  return fit;
+  return cit;
 }
 
 
