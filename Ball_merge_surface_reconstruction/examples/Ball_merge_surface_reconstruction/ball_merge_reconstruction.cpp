@@ -1,12 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Ball_merge_surface_reconstruction.h>
+#include <CGAL/IO/polygon_soup_io.h>
 
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <string>
-
-#include "happly.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
@@ -51,20 +50,15 @@ int main(int argc, char **argv)
 
   // AF: In case of duplicated points the colors of vertices will be wrong
 
-  std::vector<std::array<double, 3>> meshVertexPositions(points.size());//Preparing the tetrahedra for creating the PLY file & PLY file writing starts
+  std::vector<Point> meshVertexPositions(points.size());//Preparing the tetrahedra for creating the PLY file & PLY file writing starts
   std::vector<std::vector<int>> meshFaceIndices;
 
   bmsr.result(meshVertexPositions, meshFaceIndices);
 
-  std::string st = argv[1];
-  st = st + std::to_string(par) + "out"+std::to_string(tlen)+".ply";
+  std::string st = std::to_string(par) + "out"+std::to_string(tlen)+".ply";
 
-  happly::PLYData plyOut;
-  plyOut.addVertexPositions(meshVertexPositions);
-  if (meshVertexColors.size() > 0)
-    plyOut.addVertexColors(meshVertexColors);
-  plyOut.addFaceIndices(meshFaceIndices);
-  plyOut.write(st.c_str(), happly::DataFormat::Binary);
+  CGAL::IO::write_polygon_soup(st, meshVertexPositions, meshFaceIndices);
+std::cout << "#faces " << meshFaceIndices.size() << "\n";
   meshFaceIndices.clear();
 
   if (option == 1){//Sometimes, in the gloabl case, the largest group would be a mould created by the convex hull, just to avoid it, we will write the second largest group as well
@@ -78,12 +72,7 @@ int main(int argc, char **argv)
             indices[j] = vit->vertex((i + 1 + j) % 4)->info();
           meshFaceIndices.push_back(indices);
         }
-    happly::PLYData plyOut2;
-    plyOut2.addVertexPositions(meshVertexPositions);
-    if (meshVertexColors.size() > 0)
-      plyOut2.addVertexColors(meshVertexColors);
-    plyOut2.addFaceIndices(meshFaceIndices);
-    plyOut2.write(st.c_str(), happly::DataFormat::Binary);
+      CGAL::IO::write_polygon_soup(st, meshVertexPositions, meshFaceIndices);
   }
 
   return 0;

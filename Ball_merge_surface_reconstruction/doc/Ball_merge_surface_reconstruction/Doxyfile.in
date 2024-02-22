@@ -1,4 +1,2 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Ball Merge Surface Reconstruction"
-INPUT        = ${CMAKE_SOURCE_DIR}/Ball_merge_reconstruction/doc/Ball_merge_reconstruction/ \
-               ${CMAKE_SOURCE_DIR}/Ball_merge_reconstruction/include

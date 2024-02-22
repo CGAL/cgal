@@ -76,6 +76,7 @@ private:
       ++gcount;
       for (int i = 0; i < 4; ++i){ //For each neighbor
         if ((!dt3.is_infinite(fh->neighbor(i)))&&(fh->neighbor(i)->info() == 0 && _function(fh, fh->neighbor(i)) == 1)){//If it is unlabeled and can be merged - using the function that computes IR          fh->neighbor(i)->info() = group;//If mergeable, then change the label
+          fh->neighbor(i)->info() = group;//If mergeable, then change the label
           q.push(fh->neighbor(i));//Push it into the traversal list
         }
       }
@@ -140,15 +141,12 @@ public:
   }
 
 
-  void result(std::vector<std::array<double, 3>>& meshVertexPositions,
+  void result(std::vector<Point>& meshVertexPositions,
               std::vector<std::vector<int>>& meshFaceIndices) const
   {
-    for (typename Delaunay::Finite_vertices_iterator vIter = dt3.finite_vertices_begin(); vIter != dt3.finite_vertices_end(); ++vIter){
-      const Point& point = vIter->point();
-      int vIndex = vIter->info();
-      meshVertexPositions[vIndex][0] = point.x();
-      meshVertexPositions[vIndex][1] = point.y();
-      meshVertexPositions[vIndex][2] = point.z();
+    for (typename Delaunay::Finite_vertices_iterator vIter = dt3.finite_vertices_begin(); vIter != dt3.finite_vertices_end(); ++vIter)
+    {
+      meshVertexPositions[vIter->info()] = vIter->point();
     }
     for (auto vit = dt3.finite_cells_begin(); vit != dt3.finite_cells_end(); ++vit){
       for (int i = 0; i < 4; ++i){
@@ -163,7 +161,8 @@ public:
             meshFaceIndices.push_back(indices);
           }
         }
-        else if (vit->neighbor(i)->info() != 9999){
+        else if (vit->neighbor(i)->info() != 9999)
+        {
           //If local  AF: replace 9999.  -1, numeric_limits, number_of_vertices ??
           if (bblen(vit->vertex((i + 1) % 4)->point(), vit->vertex((i + 2) % 4)->point(), vit->vertex((i + 3) % 4)->point()))
             //If the triangle crosses our bbdiagonal based criteria
