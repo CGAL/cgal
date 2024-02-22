@@ -339,23 +339,16 @@ private:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::ofstream osf("dump_facet_normals.polylines.txt");
 #endif
-    for (const auto& fn : fnormals)
+    for (const auto& [f, n] : fnormals)
     {
-      const Facet& f = fn.first;
-      const Vector_3& n = fn.second;
-
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      typename Tr::Geom_traits::Point_3 fc
-        = CGAL::centroid(point(f.first->vertex(indices(f.second, 0))->point()),
-                         point(f.first->vertex(indices(f.second, 1))->point()),
-                         point(f.first->vertex(indices(f.second, 2))->point()));
+      typename Tr::Geom_traits::Point_3 fc = CGAL::centroid(tr.triangle(f));
       osf << "2 " << fc << " " << (fc + n) << std::endl;
 #endif
       const Surface_patch_index& surf_i = c3t3.surface_patch_index(f);
 
-      for (int i = 0; i < 3; ++i)
+      for (const Vertex_handle vi : tr.vertices(f))
       {
-        const Vertex_handle vi = f.first->vertex(indices(f.second, i));
         typename VertexNormalsMap::iterator patch_vector_it = normals_map.find(vi);
 
         if (patch_vector_it == normals_map.end()
@@ -392,7 +385,7 @@ private:
         os << "2 " << p << " " << (p + n) << std::endl;
 #endif
 
-        CGAL::Tetrahedral_remeshing::normalize(n, c3t3.triangulation().geom_traits());
+        CGAL::Tetrahedral_remeshing::normalize(n, gt);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         const Surface_patch_index si = it->first;
