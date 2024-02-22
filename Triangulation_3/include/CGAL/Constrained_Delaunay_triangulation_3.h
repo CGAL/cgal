@@ -173,6 +173,7 @@ public:
 enum class CDT_3_cell_marker {
   CLEAR = 0,
   IN_REGION = 1,
+  VISITED = 1,
   ON_REGION_BOUNDARY = 2,
   nb_of_markers
 };
@@ -197,6 +198,7 @@ public:
   // Constructor
   using Base::Base;
 
+  bool is_marked() const { return markers.any(); }
   bool is_marked(CDT_3_cell_marker m) const { return markers.test(static_cast<unsigned>(m)); }
   void set_mark(CDT_3_cell_marker m) { markers.set(static_cast<unsigned>(m)); }
   void clear_mark(CDT_3_cell_marker m) { markers.reset(static_cast<unsigned>(m)); }
@@ -313,6 +315,7 @@ public:
   using Geom_traits = typename T_3::Geom_traits;
 
   using Vertex_marker = CDT_3_vertex_marker;
+  using Cell_marker = CDT_3_cell_marker;
 
   using Face_index = CDT_3_face_index;
 
@@ -1645,6 +1648,38 @@ private:
           CGAL_error();
         }
       }
+      while(std::any_of(intersecting_cells.begin(), intersecting_cells.end(), [&](Cell_handle c) {
+           const auto vs = tr.vertices(c);
+           return std::any_of(vs.begin(), vs.end(), [&](auto v) {
+            if(!v->is_marked()) {
+              std::cerr << "INFO: Vertex " << IO::oformat(v, with_point_and_info) << " is not marked\n";
+              return true;
+            }
+            return false;
+          });
+         }))
+      {
+        std::for_each(intersecting_cells.begin(), intersecting_cells.end(), [&](Cell_handle c) {
+          for(int i = 0; i < 4; ++i) {
+            for(int j = i + 1; j < 4; ++j) {
+              auto v1 = c->vertex(i);
+              auto v2 = c->vertex(j);
+              if(v1->is_marked() != v2->is_marked()) {
+                if(v2->is_marked()) {
+                  std::swap(v1, v2);
+                } // here v1 is marked and v2 is not
+                if(v1->is_marked(Vertex_marker::CAVITY_ABOVE)) {
+                  vertices_of_upper_cavity.push_back(v2);
+                  v2->set_mark(Vertex_marker::CAVITY_ABOVE);
+                } else if(v1->is_marked(Vertex_marker::CAVITY_BELOW)) {
+                  vertices_of_lower_cavity.push_back(v2);
+                  v2->set_mark(Vertex_marker::CAVITY_BELOW);
+                }
+              }
+            }
+          }
+        });
+      }
     } // new algorithm
     if(this->debug_regions()) {
       std::stringstream ss_filename;
@@ -1685,9 +1720,10 @@ private:
           }
         }
       }
-      for(auto v: vertices_of_border_union_find)
-      {
+      for(auto v: vertices_of_upper_cavity) {
         v->clear_mark(Vertex_marker::CAVITY_ABOVE);
+      }
+      for(auto v: vertices_of_lower_cavity) {
         v->clear_mark(Vertex_marker::CAVITY_BELOW);
       }
     }
