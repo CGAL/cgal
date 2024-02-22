@@ -5,7 +5,7 @@
 #include <CGAL/IO/Color.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
 #include <fstream>
 #include <iostream>
 #include <queue>

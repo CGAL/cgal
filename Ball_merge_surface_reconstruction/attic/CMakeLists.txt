@@ -1,15 +1,13 @@
-project(Group)
-cmake_minimum_required (VERSION 2.6)
-find_package(CGAL QUIET COMPONENTS Core )
-find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIR})
-find_package(GLUT REQUIRED)
-include_directories(${GLUT_INCLUDE_DIR})
-include( ${CGAL_USE_FILE} )
-include_directories(${CGAL_INCLUDE_DIR})
-add_executable(Group BallMergeParallel.cpp)
-target_link_libraries(Group ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})                        
-target_link_libraries(Group ${GLUT_LIBRARY} ${OPENGL_LIBRARY} pthread tbb tbbmalloc)  
-SET(CMAKE_BUILD_TYPE "Release")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCGAL_LINKED_WITH_TBB")
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
+
+cmake_minimum_required(VERSION 3.1...3.23)
+project( attic )
+
+find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
+
+include_directories (BEFORE "../include")
+
+create_single_source_cgal_program( "AutomaticBallMerge.cpp" )
+create_single_source_cgal_program( "BallMergeParallel.cpp" )
 
