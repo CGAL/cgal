@@ -153,6 +153,25 @@ void set_vertex(std::vector<Point>& meshVertexPositions)
   }
 }
 
+// void flood_from_infinity(std::vector<bool> &outside, int group) const
+// {
+//   std::vector<Cell_handle> queue;
+//     queue.push_back(dt3.infinite_cell());
+//     while(!queue.empty())
+//     {
+//       Cell_handle cell = queue.back();
+//       queue.pop_back();
+//       if (outside[cell->info()]) continue;
+//       outside[cell->info()]=true;
+//       for(int i=0;i<4;++i)
+//       {
+//         if(cell_groups[cell->neighbor(i)->info()] == group) continue;
+//         if (!outside[cell->neighbor(i)->info()])
+//           queue.push_back(cell->neighbor(i));
+//       }
+//     }
+// }
+
 void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) const
 {
   std::vector<bool> visited(dt3.number_of_cells(),false);
@@ -166,6 +185,8 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
           for (int j = 0; j < 3; ++j){
             indices[j] = cell->vertex((i + 1 + j) % 4)->info();
           }
+          if (i%2==1)
+              std::swap(indices[0], indices[1]);
           meshFaceIndices.push_back(indices);
         }
       }
@@ -188,16 +209,22 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
   }
 }
 
-void set_triangle_indices_hull2(std::vector<std::vector<int>>& meshFaceIndices) const
-{
-   for (Cell_handle cell : dt3.finite_cell_handles())
-    for (int i = 0; i < 4; i++)
-      if (cell_groups[cell->info()] == secondgroup && (cell_groups[cell->neighbor(i)->info()] != secondgroup || dt3.is_infinite(cell->neighbor(i)))){//Write the triangles between cells if they have have different labels and one of them is labeled as the same as the second largest group
-        std::vector<int> indices(3);
-        for (int j = 0; j < 3; j++)
-          indices[j] = cell->vertex((i + 1 + j) % 4)->info();
-        meshFaceIndices.push_back(indices);
-      }
+  void set_triangle_indices_hull2(std::vector<std::vector<int>>& meshFaceIndices) const
+  {
+  for (Cell_handle cell : dt3.finite_cell_handles())
+    {
+      for (int i = 0; i < 4; ++i)
+        if (cell_groups[cell->info()] == secondgroup && (dt3.is_infinite(cell->neighbor(i)) || cell_groups[cell->neighbor(i)->info()] != secondgroup))
+        {
+          //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the second largest group
+          std::vector<int> indices(3);
+          for (int j = 0; j < 3; j++)
+            indices[j] = cell->vertex((i + 1 + j) % 4)->info();
+          if (i%2==1)
+            std::swap(indices[0], indices[1]);
+          meshFaceIndices.push_back(indices);
+        }
+    }
   }
 };
 
