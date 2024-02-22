@@ -45,6 +45,7 @@ int main(int argc, char **argv)
   }
 
   CGAL::Ball_merge_surface_reconstruction<K, CGAL::Parallel_tag> bmsr;
+  bmsr.option=option;
 
   bmsr(points, par, tlen);
 

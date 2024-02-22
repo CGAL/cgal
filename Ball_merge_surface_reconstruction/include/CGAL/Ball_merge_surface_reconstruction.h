@@ -36,12 +36,13 @@ class Ball_merge_surface_reconstruction {
   typedef typename Delaunay::Point Point;
   typedef typename Delaunay::Cell_handle Cell_handle;
 
-  int group = 1, gcount = 0, option, maxg = 0, maingroup, max1 = 0;
+  int group = 1, gcount = 0, maxg = 0, maingroup, max1 = 0;
   double par, bbdiaglen, tlen;
   Bbox_3 bbox;
 
 public:
   int secondgroup;
+  int option = 0;
   Delaunay dt3;
 
 private:
