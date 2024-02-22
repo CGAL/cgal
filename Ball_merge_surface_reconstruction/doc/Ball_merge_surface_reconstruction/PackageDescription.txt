@@ -2,9 +2,6 @@
 /// \defgroup PkgBallMergeConcepts Concepts
 /// \ingroup PkgBallMergeRef
 
-/// \defgroup PkgBallMergeAlgorithmClasses Algorithm Classes
-/// \ingroup PkgBallMergeRef
-
 /// \defgroup PkgBallMergeTraitsClasses Traits Classes
 /// \ingroup PkgBallMergeRef
 
@@ -31,6 +28,7 @@
 
 \cgalCRPSection{Concepts}
 
-\cgalCRPSection{Classes}
-- `CGAL::Ball_merge_surface_reconstruction<Traits,ConcurrencyTag>`
+\cgalCRPSection{Functions}
+- `CGAL::ball_merge_surface_reconstruction_local()`
+- `CGAL::ball_merge_surface_reconstruction_global()`
 */

@@ -27,6 +27,8 @@
 
 namespace CGAL {
 
+namespace internal{
+
 template <typename Traits, typename ConcurrencyTag>
 class Ball_merge_surface_reconstruction {
 
@@ -50,7 +52,7 @@ public:
 private:
 
   double distance(const Point& p1, const Point& p2) const
-  { return sqrt(squared_distance(p1,p2)); }
+  { return std::sqrt(typename Traits::Compute_squared_distance_3()(p1,p2)); }
 
   //Function that computes the Intersection Ratio (IR) given two cell handles
   // AF This could become a filtered predicate if robustness might be an issue
@@ -224,13 +226,15 @@ void set_triangle_indices_hull1(std::vector<std::array<int,3>>& meshFaceIndices)
   }
 };
 
+}
+
 /// \ingroup PkgBallMergeRef
 template <class Concurrency_tag, class Traits>
 void ball_merge_surface_reconstruction_local(const std::vector<CGAL::Point_3<Traits>>& points,
                                              std::vector<std::array<int, 3> >& out_triangles,
                                              double parameter, double tlen=200.)
 {
-  CGAL::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
+  CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
   bmsr.option=0;
   bmsr(points, parameter, tlen);
   bmsr.set_triangle_indices_hull1(out_triangles);
@@ -243,7 +247,7 @@ void ball_merge_surface_reconstruction_global(const std::vector<CGAL::Point_3<Tr
                                               std::vector<std::array<int, 3> >& out_triangles2,
                                               double parameter)
 {
-  CGAL::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
+  CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
   bmsr.option=1;
   bmsr(points, parameter, 0);
   bmsr.set_triangle_indices_hull1(out_triangles1);
