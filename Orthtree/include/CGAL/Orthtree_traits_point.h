@@ -130,7 +130,11 @@ public:
         }
       }
 
+#if !defined(_MSC_VER) || _MSC_VER > 1920
       if constexpr (hypercubic_nodes) {
+#else
+      if (hypercubic_nodes) {
+#endif
         std::array<typename Self::FT, Self::dimension> center;
         typename Self::FT max_side = 0;
         for (int i = 0; i < Self::dimension; i++) {
