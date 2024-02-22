@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_dD_Polyline_distance
 
 \cgalAutoToc
-\author Marvin Künnemann and André Nusser
+\author André Nusser, Marvin Künnemann, and Karl Bringmann
 
 This chapter describes the ...
 

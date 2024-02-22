@@ -13,7 +13,7 @@
 \cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Marvin Künnemann and André Nusser}
+\cgalPkgAuthors{André Nusser, Marvin Künnemann, and Karl Bringmann}
 \cgalPkgDesc{The package provides ... }
 \cgalPkgManuals{Chapter_dD_Polyline_distance,PkgPolylineDistanceRef}
 \cgalPkgSummaryEnd

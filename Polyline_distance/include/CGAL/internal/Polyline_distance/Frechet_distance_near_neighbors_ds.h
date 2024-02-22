@@ -18,6 +18,7 @@
 //
 // Author(s)     : André Nusser <anusser@mpi-inf.mpg.de>
 //                 Marvin Künnemann <marvin@mpi-inf.mpg.de>
+//                 Karl Bringmann <kbringma@mpi-inf.mpg.de>
 //
 // =============================================================================
 
