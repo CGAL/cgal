@@ -168,7 +168,7 @@ public:
 //     }
 // }
 
-void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) const
+void set_triangle_indices_hull1(std::vector<std::array<int,3>>& meshFaceIndices) const
 {
   std::vector<bool> visited(dt3.number_of_cells(),false);
   for (Cell_handle cell : dt3.finite_cell_handles()){
@@ -177,7 +177,7 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
         //If global, write the cell details of the largest group to the PLY file
         if (cell_groups[cell->info()] == maingroup && (cell_groups[cell->neighbor(i)->info()] != maingroup || dt3.is_infinite(cell->neighbor(i)))){
           //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the largest group
-          std::vector<int> indices(3);
+          std::array<int, 3> indices;
           for (int j = 0; j < 3; ++j){
             indices[j] = cell->vertex((i + 1 + j) % 4)->info();
           }
@@ -193,7 +193,7 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
           if (dt3.is_infinite(cell->neighbor(i))||!_function(cell, cell->neighbor(i)) == 1){
             //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
             visited[cell->info()]=true;
-            std::vector<int> indices(3);
+            std::array<int,3> indices;
             for (int j = 0; j < 3; ++j){
               indices[j] = cell->vertex((i + 1 + j) % 4)->info();
             }
@@ -205,7 +205,7 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
   }
 }
 
-  void set_triangle_indices_hull2(std::vector<std::vector<int>>& meshFaceIndices) const
+  void set_triangle_indices_hull2(std::vector<std::array<int,3>>& meshFaceIndices) const
   {
   for (Cell_handle cell : dt3.finite_cell_handles())
     {
@@ -213,7 +213,7 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
         if (cell_groups[cell->info()] == secondgroup && (dt3.is_infinite(cell->neighbor(i)) || cell_groups[cell->neighbor(i)->info()] != secondgroup))
         {
           //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the second largest group
-          std::vector<int> indices(3);
+          std::array<int,3> indices;
           for (int j = 0; j < 3; j++)
             indices[j] = cell->vertex((i + 1 + j) % 4)->info();
           if (i%2==1)
@@ -223,6 +223,32 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
     }
   }
 };
+
+/// \ingroup PkgBallMergeRef
+template <class Concurrency_tag, class Traits>
+void ball_merge_surface_reconstruction_local(const std::vector<CGAL::Point_3<Traits>>& points,
+                                             std::vector<std::array<int, 3> >& out_triangles,
+                                             double parameter, double tlen=200.)
+{
+  CGAL::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
+  bmsr.option=0;
+  bmsr(points, parameter, tlen);
+  bmsr.set_triangle_indices_hull1(out_triangles);
+}
+
+/// \ingroup PkgBallMergeRef
+template <class Concurrency_tag, class Traits>
+void ball_merge_surface_reconstruction_global(const std::vector<CGAL::Point_3<Traits>>& points,
+                                              std::vector<std::array<int, 3> >& out_triangles1,
+                                              std::vector<std::array<int, 3> >& out_triangles2,
+                                              double parameter)
+{
+  CGAL::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
+  bmsr.option=1;
+  bmsr(points, parameter, 0);
+  bmsr.set_triangle_indices_hull1(out_triangles1);
+  bmsr.set_triangle_indices_hull2(out_triangles2);
+}
 
 
 } // namespace CGAL
