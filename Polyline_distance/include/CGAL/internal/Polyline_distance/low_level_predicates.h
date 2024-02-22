@@ -160,11 +160,11 @@ void IntersectionAlgorithm::intersection(Circle const& circle, LineArc line_arc,
 		return; // no intersection;
     }
 	
-	if (mid <= 0. and !smallDistAtZero) {
+	if (mid <= 0. && !smallDistAtZero) {
 		if (outer != nullptr) { *outer = Interval(); }
 		return;
 	}
-	if (mid >= 1. and !smallDistAtOne) {
+	if (mid >= 1. && !smallDistAtOne) {
 		if (outer != nullptr) { *outer = Interval(); }
 		return;
 	}

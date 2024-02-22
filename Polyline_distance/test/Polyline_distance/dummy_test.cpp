@@ -25,7 +25,7 @@
 #include <CGAL/Frechet_distance.h>
 // #include <CGAL/Frechet_distance_near_neighbors_ds.h>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <algorithm>
 #include <cassert>
@@ -41,11 +41,11 @@ namespace {
 // helpers
 //
 
-using Kernel = CGAL::Cartesian<double>;
+using Kernel = CGAL::Simple_cartesian<double>;
 using Traits = CGAL::Polyline_traits_2<Kernel, double>;
 // using NT = Kernel::FT;
 using Point = Kernel::Point_2;
-using Curve = std::vector<Point>;
+//using Curve = std::vector<Point>;
 using Curves = std::vector<Curve>;
 
 struct FrechetDistanceQuery {
@@ -74,7 +74,7 @@ void readCurve(std::ifstream& curve_file, Curve& curve)
 	while (ss >> p) {
 		ss.ignore(ignore_count, '\n');
 
-		if (!curve.empty() && p == curve.back()) {
+		if ( ( !curve.empty()) && (p == curve.back())) {
 			continue;
 		}
 		curve.push_back(p);

@@ -267,6 +267,7 @@ template <>
 CInterval FrechetLight::getInterval<CPoint>(Curve const& curve1, CPoint const& center_id, Curve const& curve2, PointID seg_start) const
 {
   assert(false); //we should never get here
+  return CInterval();
 }
 
 //TODO get rid of this!
@@ -274,6 +275,7 @@ template <>
 CInterval FrechetLight::getInterval<CPoint>(Curve const& curve1, CPoint const& center_id, Curve const& curve2, PointID seg_start, CInterval* outer) const
 {
   assert(false); //we should never get here
+  return CInterval();
 }
 
 
@@ -301,8 +303,8 @@ inline QSimpleInterval FrechetLight::getTestFullQSimpleInterval(CPoint const& fi
 template <class MODE, class IndexType>
 inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, const IndexType& fixed, const Curve& fixed_curve, PointID min, PointID max, const Curve& curve) const
 {
-	assert( (qsimple.getFreeInterval().is_empty() and qsimple.getOuterInterval().is_empty()) or (!qsimple.getFreeInterval().is_empty() and !qsimple.getOuterInterval().is_empty()));
-	if (qsimple.is_valid() or (qsimple.hasPartialInformation() and qsimple.getLastValidPoint() >= max)) {
+	assert( (qsimple.getFreeInterval().is_empty() && qsimple.getOuterInterval().is_empty()) || (!qsimple.getFreeInterval().is_empty() && !qsimple.getOuterInterval().is_empty()));
+	if (qsimple.is_valid() || (qsimple.hasPartialInformation() && qsimple.getLastValidPoint() >= max)) {
 		qsimple.validate();
 		qsimple.clamp(CPoint{min,0},CPoint{max,0});
 		return false; //parent information already valid
@@ -347,7 +349,7 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, const 
 
 	continueQSimpleSearch<MODE, IndexType>(qsimple, fixed, fixed_curve, min, max, curve);
 
-	assert( (qsimple.getFreeInterval().is_empty() and qsimple.getOuterInterval().is_empty()) or (!qsimple.getFreeInterval().is_empty() and !qsimple.getOuterInterval().is_empty()));
+	assert( (qsimple.getFreeInterval().is_empty() && qsimple.getOuterInterval().is_empty()) || (!qsimple.getFreeInterval().is_empty() && !qsimple.getOuterInterval().is_empty()));
 	return true;
 }
 
@@ -355,7 +357,7 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple, const 
 template <class MODE, class IndexType>
 inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const IndexType& fixed, const Curve& fixed_curve, PointID min, PointID max, const Curve& curve) const
 {
-	assert(!qsimple.hasPartialInformation() or (qsimple.getLastValidPoint() >= min and qsimple.getLastValidPoint() <= max));
+	assert(!qsimple.hasPartialInformation() || (qsimple.getLastValidPoint() >= min && qsimple.getLastValidPoint() <= max));
 
 	PointID start;
 	if (qsimple.hasPartialInformation()) {
@@ -371,7 +373,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 	bool current_free = CGAL::squared_distance(fixed_point,curve[start]) <= dist_sqr;
 	// Work directly on the simple_interval of the boundary
 	//CPoint first_free = current_free ? CPoint{min,0} : CPoint{max+1,0};
-	assert((not current_free) or start==min);
+	assert((! current_free) || start==min);
 	CPoint first_free = current_free ? CPoint{min,0} : CPoint{max+1, 0}; //qsimple.free.begin;
 
 	//CERT: outerinterval -- note that it is safe to set last_empty=min even if min is free,
@@ -382,7 +384,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
 	assert(first_free > max || CGAL::squared_distance(fixed_point,curve.interpolate_at(first_free)) <= dist_sqr);
 	
 	std::size_t stepsize = static_cast<std::size_t>(max - start)/2;
-	if (stepsize < 1 or qsimple.hasPartialInformation()) {
+	if (stepsize < 1 || qsimple.hasPartialInformation()) {
 		stepsize = 1;
 	}
 	for (PointID cur = start; cur < max; ) {
@@ -1163,11 +1165,11 @@ void FrechetLight::clear()
 
 bool FrechetLight::isOnLowerRight(const CPosition& pt) const
 {
-	return pt[0] == curve_pair[0]->size()-1 or pt[1] == 0;
+	return pt[0] == curve_pair[0]->size()-1 || pt[1] == 0;
 }
 bool FrechetLight::isOnUpperLeft(const CPosition& pt) const
 {
-	return pt[0] == 0 or pt[1] == curve_pair[1]->size()-1;
+	return pt[0] == 0 || pt[1] == curve_pair[1]->size()-1;
 }
 
 Certificate& FrechetLight::computeCertificate() {
@@ -1213,7 +1215,7 @@ Certificate& FrechetLight::computeCertificate() {
 		 	CInterval outer;
 			(void) getInterval(curve1, (PointID) 0, curve2, last.getPoint(), &outer);
 			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0) ? outer.begin : outer.end;
-			assert(safe_empty > CPoint(last.getPoint(), 0) or safe_empty < CPoint(last.getPoint()+1, 0));
+			assert(safe_empty > CPoint(last.getPoint(), 0) || safe_empty < CPoint(last.getPoint()+1, 0));
 			cert.setAnswer(false);
 			cert.addPoint({ CPoint(0, 0), safe_empty});
 			cert.validate();
@@ -1232,7 +1234,7 @@ Certificate& FrechetLight::computeCertificate() {
 		 	CInterval outer;
 			(void) getInterval(curve2, (PointID) 0, curve1, last.getPoint(), &outer);
 			CPoint safe_empty = outer.begin > CPoint(last.getPoint(), 0) ? outer.begin : outer.end;
-			assert(safe_empty > CPoint(last.getPoint(), 0) or safe_empty < CPoint(last.getPoint()+1, 0));
+			assert(safe_empty > CPoint(last.getPoint(), 0) || safe_empty < CPoint(last.getPoint()+1, 0));
 			cert.setAnswer(false);
 			cert.addPoint({ safe_empty, CPoint(0, 0)});
 			cert.validate();
@@ -1265,13 +1267,13 @@ Certificate& FrechetLight::computeCertificate() {
 		CPosition cur_pos = { CPoint(curve1.size()-1, 0), CPoint(curve2.size()-1, 0) };
 		rev_traversal.push_back(cur_pos);
 		CInterval const* interval = last_interval;
-		while (cur_pos[0] > 0 or cur_pos[1] > 0) {
+		while (cur_pos[0] > 0 || cur_pos[1] > 0) {
 			CPosition  next_pos = {CPoint(0, 0), CPoint(0, 0)};
 
 			next_pos[interval->fixed_curve] = interval->fixed;
 			next_pos[1-interval->fixed_curve] = interval->end > cur_pos[1-interval->fixed_curve] ? cur_pos[1-interval->fixed_curve] : interval->end;
-			assert(next_pos[0] <= cur_pos[0] and next_pos[1] <= cur_pos[1]);
-			if (next_pos[0] != cur_pos[0] or next_pos[1] != cur_pos[1]) {
+			assert(next_pos[0] <= cur_pos[0] && next_pos[1] <= cur_pos[1]);
+			if (next_pos[0] != cur_pos[0] || next_pos[1] != cur_pos[1]) {
 				rev_traversal.push_back(next_pos);
 			}
 
@@ -1280,7 +1282,7 @@ Certificate& FrechetLight::computeCertificate() {
 				rev_traversal.push_back(next_pos);
 			}
 
-			assert(next_pos[0] <= cur_pos[0] and next_pos[1] <= cur_pos[1]);
+			assert(next_pos[0] <= cur_pos[0] && next_pos[1] <= cur_pos[1]);
 			cur_pos = next_pos;
 			interval = interval->reach_parent;
 		}

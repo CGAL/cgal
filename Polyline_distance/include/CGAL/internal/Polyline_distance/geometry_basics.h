@@ -251,7 +251,7 @@ public:
 		return point == other.point && fraction == other.fraction;
 	}
 	bool operator!=(CPoint const& other) const {
-		return point != other.point or fraction != other.fraction;
+		return point != other.point || fraction != other.fraction;
 	}
 	bool operator<(PointID other) const {
 		return point < other;
