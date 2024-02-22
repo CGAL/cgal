@@ -3573,6 +3573,12 @@ is_valid(bool verbose, int level ) const
       size_type cell_count;
       if ( ! count_cells(cell_count,verbose,level) )
         return false;
+      if( number_of_cells() != cell_count ) {
+        if (verbose)
+          std::cerr << "wrong number of cells" << std::endl;
+        CGAL_assertion(false);
+        return false;
+      }
       size_type edge_count;
       if ( ! count_edges(edge_count,verbose,level) )
           return false;
