@@ -30,7 +30,7 @@ template <typename Traits, typename ConcurrencyTag>
 class Ball_merge_surface_reconstruction {
 
   typedef CGAL::Triangulation_vertex_base_with_info_3<int, Traits> Vb;
-  typedef CGAL::Triangulation_cell_base_with_info_3<int, Traits, CGAL::Delaunay_triangulation_cell_base_3<Traits>> Cb;
+  typedef CGAL::Triangulation_cell_base_with_info_3<unsigned int, Traits, CGAL::Delaunay_triangulation_cell_base_3<Traits>> Cb;
   typedef CGAL::Triangulation_data_structure_3<Vb, Cb, ConcurrencyTag> Tds;
   typedef CGAL::Delaunay_triangulation_3<Traits, Tds> Delaunay;
   typedef typename Delaunay::Point Point;
@@ -39,6 +39,7 @@ class Ball_merge_surface_reconstruction {
   int group = 1, gcount = 0, maxg = 0, maingroup, max1 = 0;
   double par, bbdiaglen;
   Bbox_3 bbox;
+  std::vector<int> cell_groups;
 
 public:
   int secondgroup;
@@ -73,11 +74,11 @@ private:
     while (!q.empty()){ //A traversal
       fh = q.front();
       q.pop();
-      fh->info() = group; //A label
+      cell_groups[fh->info()] = group; //A label
       ++gcount;
       for (int i = 0; i < 4; ++i){ //For each neighbor
-        if ((!dt3.is_infinite(fh->neighbor(i)))&&(fh->neighbor(i)->info() == 0 && _function(fh, fh->neighbor(i)) == 1)){//If it is unlabeled and can be merged - using the function that computes IR          fh->neighbor(i)->info() = group;//If mergeable, then change the label
-          fh->neighbor(i)->info() = group;//If mergeable, then change the label
+        if ((!dt3.is_infinite(fh->neighbor(i)))&&(cell_groups[fh->neighbor(i)->info()] == 0 && _function(fh, fh->neighbor(i)) == 1)){//If it is unlabeled and can be merged - using the function that computes IR          fh->neighbor(i)->info() = group;//If mergeable, then change the label
+          cell_groups[fh->neighbor(i)->info()] = group;//If mergeable, then change the label
           q.push(fh->neighbor(i));//Push it into the traversal list
         }
       }
@@ -112,16 +113,19 @@ public:
     } else {
       dt3.insert(points.begin(), points.end());//Sequential Delaunay computation
     }
-
-    typename Delaunay::Finite_cells_iterator vit;
-    for (vit = dt3.finite_cells_begin(); vit != dt3.finite_cells_end(); ++vit){//Initialize the labels of all tetrahedra
-      vit->info() = 0;
+    unsigned int cell_id=0;
+    for (Cell_handle ch : dt3.all_cell_handles())
+    {
+      ch->info()=cell_id++;
     }
+
+    cell_groups.assign(dt3.number_of_cells(), 0);
     if (option == 1){//If the user opted for global algorithm
-      for (vit = dt3.finite_cells_begin(); vit != dt3.finite_cells_end(); ++vit){//For each cell
-        if (vit->info() == 0){//If the cell label is not altered
-          vit->info() = group;//Assign a label
-          regroup(dt3, vit);//Group all the mergeable cells
+      for (Cell_handle cell : dt3.finite_cell_handles())
+      {
+        if (cell_groups[cell->info()] == 0){//If the cell label is not altered
+          cell_groups[cell->info()] = group;//Assign a label
+          regroup(dt3, cell);//Group all the mergeable cells
           if (maxg < gcount){
             //Remember the largest group - based on the number of tetrahedra in the group
             max1 = maxg;
@@ -151,29 +155,30 @@ void set_vertex(std::vector<Point>& meshVertexPositions)
 
 void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) const
 {
-  for (auto vit = dt3.finite_cells_begin(); vit != dt3.finite_cells_end(); ++vit){
+  std::vector<bool> visited(dt3.number_of_cells(),false);
+  for (Cell_handle cell : dt3.finite_cell_handles()){
     for (int i = 0; i < 4; ++i){
       if (option == 1){
         //If global, write the cell details of the largest group to the PLY file
-        if (vit->info() == maingroup && (vit->neighbor(i)->info() != maingroup || dt3.is_infinite(vit->neighbor(i)))){
+        if (cell_groups[cell->info()] == maingroup && (cell_groups[cell->neighbor(i)->info()] != maingroup || dt3.is_infinite(cell->neighbor(i)))){
           //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the largest group
           std::vector<int> indices(3);
           for (int j = 0; j < 3; ++j){
-            indices[j] = vit->vertex((i + 1 + j) % 4)->info();
+            indices[j] = cell->vertex((i + 1 + j) % 4)->info();
           }
           meshFaceIndices.push_back(indices);
         }
       }
-      else if (vit->neighbor(i)->info() != NOT_VISITED)
+      else if (!visited[cell->neighbor(i)->info()])
       {
-        if (bblen(vit->vertex((i + 1) % 4)->point(), vit->vertex((i + 2) % 4)->point(), vit->vertex((i + 3) % 4)->point())){
+        if (bblen(cell->vertex((i + 1) % 4)->point(), cell->vertex((i + 2) % 4)->point(), cell->vertex((i + 3) % 4)->point())){
           //If the triangle crosses our bbdiagonal based criteria
-          if (dt3.is_infinite(vit->neighbor(i))||!_function(vit, vit->neighbor(i)) == 1){
+          if (dt3.is_infinite(cell->neighbor(i))||!_function(cell, cell->neighbor(i)) == 1){
             //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
-            vit->info() = NOT_VISITED;
+            visited[cell->info()]=true;
             std::vector<int> indices(3);
             for (int j = 0; j < 3; ++j){
-              indices[j] = vit->vertex((i + 1 + j) % 4)->info();
+              indices[j] = cell->vertex((i + 1 + j) % 4)->info();
             }
             meshFaceIndices.push_back(indices);
           }
@@ -184,13 +189,13 @@ void set_triangle_indices_hull1(std::vector<std::vector<int>>& meshFaceIndices) 
 }
 
 void set_triangle_indices_hull2(std::vector<std::vector<int>>& meshFaceIndices) const
-  {
-        for (auto vit = dt3.finite_cells_begin(); vit != dt3.finite_cells_end(); vit++)
+{
+   for (Cell_handle cell : dt3.finite_cell_handles())
     for (int i = 0; i < 4; i++)
-      if (vit->info() == secondgroup && (vit->neighbor(i)->info() != secondgroup || dt3.is_infinite(vit->neighbor(i)))){//Write the triangles between cells if they have have different labels and one of them is labeled as the same as the second largest group
+      if (cell_groups[cell->info()] == secondgroup && (cell_groups[cell->neighbor(i)->info()] != secondgroup || dt3.is_infinite(cell->neighbor(i)))){//Write the triangles between cells if they have have different labels and one of them is labeled as the same as the second largest group
         std::vector<int> indices(3);
         for (int j = 0; j < 3; j++)
-          indices[j] = vit->vertex((i + 1 + j) % 4)->info();
+          indices[j] = cell->vertex((i + 1 + j) % 4)->info();
         meshFaceIndices.push_back(indices);
       }
   }
