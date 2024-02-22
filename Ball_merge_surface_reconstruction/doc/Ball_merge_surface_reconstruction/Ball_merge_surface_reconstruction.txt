@@ -19,9 +19,9 @@ Section on definitions here ...
 
 The following example shows ...
 
-\cgalExample{ }
+\cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction.cpp}
 
-\cgalFigureBegin{figBMSR,benchBMSR.png}
+\cgalFigureBegin{fig_ref_id, pkgBMR-small.png}
 Left: ...
 \cgalFigureEnd
 
