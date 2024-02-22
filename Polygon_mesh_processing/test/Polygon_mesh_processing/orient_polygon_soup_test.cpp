@@ -1,17 +1,19 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/IO/polygon_mesh_io.h>
-#include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
+
+#include <CGAL/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_soup_io.h>
+
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#include <CGAL/Cartesian_converter.h>
 
 #include <algorithm>
 #include <cstdlib>
