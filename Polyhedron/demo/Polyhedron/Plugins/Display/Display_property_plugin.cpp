@@ -90,6 +90,7 @@ private:
   double bI = 0.;
 
   double expand_radius = 0.;
+  double expand_radius_updated = false;
   double maxEdgeLength = -1.;
 
   Color_ramp color_ramp;
@@ -912,6 +913,8 @@ private Q_SLOTS:
 
     expand_radius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
     dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius: %1").arg(expand_radius));
+    CGAL_assertion(expand_radius >= 0);
+    expand_radius_updated = true;
   }
 
 private:
@@ -933,7 +936,7 @@ private:
     bool non_init;
     SMesh::Property_map<vertex_descriptor, double> mu_i_map;
     std::tie(mu_i_map, non_init) = smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
-    if(non_init)
+    if(non_init || expand_radius_updated)
     {
       if(vnm_exists)
       {
@@ -967,6 +970,8 @@ private:
                                                                   .ball_radius(expand_radius));
         }
       }
+
+      expand_radius_updated = false;
     }
 
     displaySMProperty<vertex_descriptor>(tied_string, smesh);

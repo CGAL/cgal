@@ -19,6 +19,11 @@
 #include <CGAL/Gmpz.h>
 #endif
 
+
+#include <CGAL/float.h>
+#include <CGAL/double.h>
+#include <CGAL/int.h>
+
 #if 0
 #ifdef CGAL_USE_CLN
 #include <CGAL/CLN/cl_integer.h>

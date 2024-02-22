@@ -69,10 +69,10 @@ class Arrangement_2 { ... };
 
 An instance of this template represents an arrangement embedded in the
 plane. When the template is instantiated, the `GeometryTraits`
-parameter must be substituted with a type that defines a set of
+parameter must be substituted by a type that defines a set of
 geometric-object types, such as point and curve, and a set of
 operations on objects of these types (see Section \ref
-aos_sec-geom_traits); the `Dcel` parameter must be substituted with a
+aos_sec-geom_traits); the `Dcel` parameter must be substituted by a
 type that represents a doubly-connected edge list (\dcel) data
 structure. It defines types of topological objects, such as vertices,
 edges, and faces, and the operations required to maintain the
@@ -91,7 +91,7 @@ An instance of this template represents a two-dimensional arrangement
 embedded in a surface in three dimensional space. When the template is
 instantiated, the `GeometryTraits` parameter must be substituted as
 described above; the `TopologyTraits` parameter must be substituted
-with a type that deals with the topology of the surface (see Section
+by a type that deals with the topology of the surface (see Section
 \ref aos_sec-topol_traits). In particular, it maintains a
 representation of the arrangement graph embedded in the surface using
 a doubly-connected edge list (\dcel) data-structure suitable for
@@ -390,7 +390,7 @@ the `Arrangement_2` class template; their description follows.
 
 <UL>
 
-<LI>The `Traits` template-parameter should be instantiated with a
+<LI>The `Traits` template-parameter should be substituted by a
   model of the `ArrangementBasicTraits_2` concept and optionally
   additional geometry traits concepts. A model of the
   `ArrangementBasicTraits_2` concept defines the types of
@@ -415,14 +415,15 @@ the `Arrangement_2` class template; their description follows.
   rational functions. We exemplify the usage of these traits classes
   in Section \ref aos_sec-geom_traits.
 
-<LI>The `Dcel` template-parameter should be instantiated with a class
+<LI>The `Dcel` template-parameter should be substituted by a class
   that models the `ArrangementDcel` concept, which is used to represent
   the topological layout of the arrangement. This parameter is
-  substituted with `Arr_default_dcel<Traits>` by default, and
+  substituted by `Arr_default_dcel<Traits>` by default, and
   we use this default value in this and in the following three
-  sections. However, in many applications it is necessary to
-  extend the \dcel features. This is done by substituting the
-  `Dcel` parameter with a different type; see Section \ref arr_ssecex_dcel
+  sections. However, in many applications it is necessary to extend the
+  \dcel features. This is done by substituting the `Dcel` parameter with
+  a different type (typically, a different instance of the
+  `Arr_dcel<>` class template); see Section \ref arr_ssecex_dcel
   for further explanations and examples.
 </UL>
 
@@ -1001,7 +1002,7 @@ segments common to all examples that do not construct new geometric
 objects. They are kept in the header file
 `arr_inexact_construction_segments.h`.  In these examples the `Traits`
 parameter of the `Arrangement_2<Traits, Dcel>` class template is
-substituted with an instance of the
+substituted by an instance of the
 `Arr_non_caching_segment_traits_2<Kernel>` class template. The
 `Arr_non_caching_segment_traits_2` class template is instantiated with
 the predefined kernel that evaluates predicates in an exact manner,
@@ -1438,7 +1439,7 @@ vary according to the user choice.} for answering queries:
 
   The landmark strategy requires that the type of the attached
   arrangement be an instance of the `Arrangement_2<Traits,Dcel>` class
-  template, where the `Traits` parameter is substituted with a
+  template, where the `Traits` parameter is substituted by a
   geometry-traits class that models the `ArrangementLandmarkTraits_2`
   concept, which refines the basic `ArrangementBasicTraits_2` concept;
   see Section \ref aos_sssec-tr_landmarks_concept for details. Most
@@ -1742,7 +1743,7 @@ query results, and insert \f$c\f$ at its proper
 location.\cgalFootnote{The \cgalFootnoteCode{CGAL::insert_non_intersecting_curve<>()}
 function template, as all other functions reviewed in this section, is
 parameterized by an arrangement type and a point-location type (The
-latter must be substituted with a model of the
+latter must be substituted by a model of the
 `ArrangementPointLocation_2` concept).} The insertion operation thus
 hardly requires any geometric operations on top of the ones needed to
 answer the point-location queries. Moreover, it is sufficient that the
@@ -1846,7 +1847,7 @@ condition. Consider the call \link CGAL::insert<>() `insert(arr, c,
 pl)`\endlink, where \f$c\f$ is not necessarily \f$x\f$-monotone. In
 this case the type of `arr` must be an instance of the
 `Arrangement_2<Traits, Dcel>` class template, where the `Traits`
-template parameter is substituted with a traits class that models the
+template parameter is substituted by a traits class that models the
 concept `ArrangementTraits_2`, which refines the
 `ArrangementXMonotoneTraits_2` concept. It has to define an additional
 \link ArrangementTraits_2::Curve_2 `Curve_2`\endlink type, which may
@@ -2267,7 +2268,7 @@ accepts the name of an input file that contains the plain-text
 description of the geometric objects and an output iterator for
 storing the newly constructed objects.  When the function is
 instantiated, the first template parameter, namely `Type`, must be
-substituted with the type of objects to read. It is assumed that an
+substituted by the type of objects to read. It is assumed that an
 extractor operator (`>>`) that extracts objects of the given type from
 the input stream is available. The listing of the function template,
 which is defined in the file `read_objects.h`, is omitted here
@@ -2704,7 +2705,7 @@ All the free functions that operate on arrangements of bounded curves
 of unbounded curves. For example, consider a container of linear
 curves that has to be inserted into an arrangement object, the type of
 which is an instance of the `Arrangement_2<Traits,Dcel>` class
-template, where the `Traits` parameter is substituted with the traits
+template, where the `Traits` parameter is substituted by the traits
 class that handles linear curves; see Section \ref
 arr_sssectr_linear. You can do it incrementally; namely, insert the
 curves one by one as follows:
@@ -3485,7 +3486,7 @@ point-location strategy.
 The type of an arrangement associated with the landmark point-location
 strategy (see Section \ref arr_ssecpl) must be an instance of the
 `Arrangement_on_surface_2<GeomTraits, TopolTraits>` class template,
-where the `GeomTraits` parameter is substituted with a model of the
+where the `GeomTraits` parameter is substituted by a model of the
 concept `ArrangementLandmarkTraits_2`. (Naturally, it can also model
 either the `ArrangementXMonotoneTraits_2` concept or the
 `ArrangementTraits_2` concept.) The `ArrangementLandmarkTraits_2`
@@ -4541,7 +4542,7 @@ PkgBooleanSetOperations2Ref. Note that it is not a model of the
 computations with square root numbers, which makes it attractive for
 arrangements induced by line segments, circular arcs, and whole
 circles.  When the traits class-template is instantiated, the `Kernel`
-template parameter must be substituted with a geometric kernel that
+template parameter must be substituted by a geometric kernel that
 models the `Kernel` concept. Always plug in a kernel that uses a
 rational number type, such as
 `Exact_predicates_exact_constructions_kernel`. Observe that the nested
@@ -4722,20 +4723,20 @@ follows:
 
 <UL>
 
-<LI>The `RatKernel` template parameter must be substituted with a
+<LI>The `RatKernel` template parameter must be substituted by a
 geometric kernel whose field type is an exact rational type. It is
 used to define basic geometric entities (e.g., a line segment or a
 circle) with rational coefficients. Typically we use one of the
 standard \cgal kernels, instantiated with the number type
 `NtTraits::Rational` (see below).
 
-<LI>The `AlgKernel` template parameter must be substituted with a
+<LI>The `AlgKernel` template parameter must be substituted by a
 geometric kernel whose field type is an exact algebraic type. It is
 used to define points with algebraic coordinates. Typically, we use
 one of the standard \cgal kernels, instantiated with the number type
 `NtTraits::Algebraic` (see below).
 
-<LI>The `NtTraits` template parameter must be substituted with a type
+<LI>The `NtTraits` template parameter must be substituted by a type
 that encapsulates all the numeric operations needed for performing
 geometric computation carried out by the geometric traits class.  It
 defines the `Integer`, `Rational`, and `Algebraic` number-types, and
@@ -4916,7 +4917,7 @@ provided by the traits in form of functors.
 
 When the `Arr_rational_function_traits_2<AlgebraicKernel_d_1>` class
 template is instantiated, the template parameter must be substituted
-with a model of the `AlgebraicKernel_d_1` concept. Models of this
+by a model of the `AlgebraicKernel_d_1` concept. Models of this
 concept, such as the `Algebraic_kernel_d_1<Coefficient>` class
 template provided by the package \ref PkgAlgebraicFoundations are
 meant to support algebraic functionalities on univariate polynomials
@@ -5176,11 +5177,11 @@ polynomial.  Currently supported integral number types are `Gmpz`,
 statements included in the header file `integer_type.h`, the listings
 of which are omitted here. This header file is used by the two example
 programs listed in this section. The template parameter `Coefficient`
-can be substituted in addition with an instance of the
+can be substituted in addition by an instance of the
 `Sqrt_extension<A,B>` class template, where the template parameters
-`NT` and `Root` are substituted in turn with one of the integral
+`NT` and `Root` are substituted in turn by one of the integral
 number types above. Finally, the template parameter `Coefficient` can
-be substituted also with a rational number type, where the type of the
+be substituted also by a rational number type, where the type of the
 numerator and denominator is one of the types above.
 
 The type \link Arr_algebraic_segment_traits_2::Curve_2
@@ -5487,7 +5488,7 @@ decorator used to attach a data field to curves and to
 \f$x\f$-monotone curves. It is a class template named
 `Arr_curve_data_traits_2<BaseTraits, XMonotoneCurveData, Merge,
 CurveData, Convert>` parameterized by a base-traits class, which must
-be substituted with one of the geometric traits models described in
+be substituted by one of the geometric traits models described in
 the previous subsections or with a user-defined traits model, when the
 decorator is instantiated. The curve-data decorator derives from the
 base-traits class, and in particular inherits its \link
@@ -5703,20 +5704,25 @@ objects, so that when one object changes state, all its dependents are
 notified and updated automatically. The observed object does not know
 anything about the observers. It merely "publishes" information about
 changes when they occur. In our case observers can be attached to an
-arrangement object. An attached observer receives notifications about
-the changes this arrangement undergoes.
+arrangement object.
 
-An observer object, the type of which is an instance of the
-`Arr_observer<Arrangement>` class template, stores a pointer to an
-arrangement object. When the `Arr_observer<Arrangement>` class
-template is instantiated, the `Arrangement` parameter must be
-substituted with the type of the arrangement object. The observer
-receives notifications <em>just before</em> a structural change occurs
-in the arrangement and <em>immediately after</em> such a change takes
-place. `Arr_observer` serves as a base class for other
-observer classes and defines a set of virtual notification
-functions, with default empty implementations. The set of functions
-can be divided into three categories, as follows:
+An observer object that observes changes in an arrangement object
+stores a pointer to the attached arrangement object. It receives
+notifications about the changes this arrangement undergoes. The
+observer receives notifications <em>just before</em> a structural
+change occurs in the arrangement and <em>immediately after</em> such a
+change takes place.  An observer object that observes changes in an
+arrangement object of type `Arrangement` must be of a type derived
+from `Arrangement::Observer`, which is an alias to
+`Aos_observer<Arrangement_on_surface_2>`, where
+`Arrangement_on_surface_2` is the type of the arrangement object or
+its base type. An instance of `Aos_observer<>` serves as a base type
+for other observer classes and defines a set of virtual notification
+functions, with default empty implementations.  You can also use the
+template alias `Arr_observer<Arrangement_2>`, where `Arrangement_2` is
+the type of the arrangement object in case it is derived from an
+instance of the template `Arrangement_on_surface_2`.  The set of
+functions can be divided into three categories, as follows:
 
 <OL>
 
@@ -5782,10 +5788,10 @@ the call to `after_global_change()`.
 </OL>
 
 See the Reference Manual for a detailed specification of the
-`Arr_observer` class template and the prototypes of all notification
+`Aos_observer` class template and the prototypes of all notification
 functions.
 
-Each arrangement object stores a list of pointers to `Arr_observer`
+Each arrangement object stores a list of pointers to `Aos_observer`
 objects. This list may be empty, in which case the arrangement does
 not have to notify any external class on the structural changes it
 undergoes. If, however, there are observers associated with the
@@ -5799,7 +5805,7 @@ invoked for each observer.
 <!--  This allows for the nesting of \Index{observer} objects. -->
 
 Concrete arrangement-observer classes should inherit from
-`Arr_observer`. When an observer is constructed, it is attached to a
+`Aos_observer`. When an observer is constructed, it is attached to a
 valid arrangement supplied to the observed constructor, or
 alternatively the observer can be attached to the arrangement at a
 later time.  When this happens, the observer object inserts itself
@@ -5809,8 +5815,8 @@ thereafter. Subsequently, the observer object unregisters itself by
 removing itself from this list just before it is destroyed. Most
 concrete observer-classes do not need to use the full set of
 notifications. Thus, the bodies of all notification methods defined in
-the base class `Arr_observer` are empty. A concrete observer that
-inherits from `Arr_observer` needs to override only the relevant
+the base class `Aos_observer` are empty. A concrete observer that
+inherits from `Aos_observer` needs to override only the relevant
 notification methods. The remaining methods are invoked when
 corresponding changes occur, but they do nothing.
 
@@ -5877,12 +5883,12 @@ applications.
 
 All examples presented so far use the default \dcel; namely, they
 employ the `Arr_default_dcel<Traits>` instance. This is done
-implicitly, as an instance of this class template serves as the
-default parameter for the `Arrangement_2` class template; see Section
-\ref aos_ssec-basic-arr_class. The default \dcel class associates
-points with vertices and \f$x\f$-monotone curves with halfedges, but
-nothing more.  In this section we show how to use alternative
-\dcel types to extend the desired \dcel records.
+implicitly, as this instance of the `Arr_default_dcel` class template
+serves as the default parameter for the `Arrangement_2` class
+template; see Section \ref aos_ssec-basic-arr_class. The default \dcel
+class associates points with vertices and \f$x\f$-monotone curves with
+halfedges, but nothing more.  In this section we show how to use
+alternative \dcel types to extend the desired \dcel records.
 
 <!-- ------------------------------------------------------------------------- -->
 \subsubsection arr_sssecex_dcel_face Extending the DCEL Faces
@@ -6102,7 +6108,7 @@ ovl_traits)`\endlink constructs the arrangement `arr_o`, which is the
 overlay of two input arrangement `arr_r` and `arr_b`. All three
 arrangements must use the same geometric primitives. In other words,
 their types are instances of the `Arrangement_2<Traits,Dcel>` class
-template, where the `Traits` parameter is substituted with three
+template, where the `Traits` parameter is substituted by three
 geometry-traits classes, respectively. The geometry-traits classes of
 the input arrangements must be convertible to the geometry-traits
 class of the resulting arrangement.\cgalFootnote{It is sufficient that
@@ -6111,17 +6117,17 @@ of arrangements derive from a common ancestor that models the
 geometry-traits concept.} Typically, all three arrangements use the
 same geometry-traits class.
 
-The `overlay()` function template is suitable for
-arrangements that do not store any additional data with their
-\dcel records; namely, arrangements defined using an instance of
-the default \dcel class-template `Arr_default_dcel`. Typically,
-the overlay arrangement in this case does not store extra data with
-its \dcel records as well (or if it does, the additional
-data-fields cannot be computed by the overlay operation). The overlay
-arrangement is equivalent to the arrangement induced by all curves of
-`arr_r` and `arr_b`. Indeed, it is possible to obtain the same result
-using the standard insertion-operations instead, but, as mentioned
-above, this is less efficient.
+The `overlay()` function template is suitable for arrangements that do
+not store any additional data with their \dcel records; namely,
+arrangements defined using the default \dcel, which is the instance
+`Arr_default_dcel<Traits>`. Typically, the overlay arrangement in this
+case does not store extra data with its \dcel records as well. (If it
+does, the additional data-fields cannot be computed by the overlay
+operation in this case.) The overlay arrangement is equivalent to the
+arrangement induced by all curves of `arr_r` and `arr_b`. Indeed, it
+is possible to obtain the same result using the standard
+insertion-operations instead, but, as mentioned above, this is less
+efficient.
 
 <!-- ------------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_figex_overlay,overlay.png}
@@ -6163,7 +6169,7 @@ arrangement that results from overlaying two face-extended
 arrangements typically also stores additional data-fields with its
 faces. The types of such arrangements, for example, could be instances
 of the `Arrangement_2<Traits,Dcel>` class template, where the `Dcel`
-parameters are substituted with instances of the
+parameters are substituted by instances of the
 `Arr_face_extended_dcel` class template (see Section \ref
 arr_sssecex_dcel_face). The data field that is attached to an overlay
 face can be computed from the data fields of the two faces (in `arr_r`
@@ -6173,7 +6179,7 @@ data fields with all their \dcel records typically also stores
 additional data-fields with all its \dcel records. The types of
 such arrangements, for example, could be instances of the
 `Arrangement_2<Traits,Dcel>` class template, where the `Dcel`
-parameters are substituted with instances of the `Arr_extended_dcel`
+parameters are substituted by instances of the `Arr_extended_dcel`
 class template (see Section \ref arr_sssecex_dcel_all). The data field
 attached to an overlay feature can be computed from the data fields of
 the two features (in `arr_r` and `arr_b`) that induce the overlay
@@ -6188,7 +6194,7 @@ of the overlay traits can be an instance of the class template
 `Arr_face_overlay_traits<ArrangementR,ArrangementB,ArrangementO,OverlayFaceData>`,
 which models the concept `OverlayTraits`. An object of this type
 operates on face-extended arrangements. When instantiated, the
-`OverlayFaceData` parameter must be substituted with a functor that is
+`OverlayFaceData` parameter must be substituted by a functor that is
 capable of combining two face-data fields of types
 `ArrangementR::Dcel::Face_data` and `ArrangementB::Dcel::Face_data`
 and computing the output `ArrangementO::Dcel::Face_data` object. The
@@ -6203,7 +6209,7 @@ flag. A polygon is represented as a <em>marked</em> arrangement face
 (whose flag is set). The example uses an instance of the
 `Arr_face_overlay_traits<ArrR,ArrB,ArrO,OverlayFaceData>` class
 template as the face-overlay traits class where the `OverlayFaceData`
-template parameter is substituted with a functor that simply performs
+template parameter is substituted by a functor that simply performs
 a logical <em>and</em> operation on Boolean flags. As a result, a face
 in the overlay arrangement is marked only when it corresponds to an
 overlapping region of two marked faces in the input
@@ -6401,12 +6407,12 @@ between these curves and the arrangement edges they induce. Similarly,
 the `Arrangement_with_history_2<GeometryTraits,Dcel>` class-template
 extends the `Arrangement_2<GeometryTraits,Dcel>` class template. The
 `GeometryTraits` template parameter, of either class templates, must
-be substituted with a model of the `ArrangementTraits_2` concept; see
+be substituted by a model of the `ArrangementTraits_2` concept; see
 Section \ref aos_ssec-insert_gen. It should define the \link
 ArrangementTraits_2::Curve_2 `Curve_2`\endlink type and support its
 subdivision into \link ArrangementBasicTraits_2::X_monotone_curve_2
 `X_monotone_curve_2`\endlink objects, among the others.  The `Dcel`
-parameter must be substituted with a model of the `ArrangementDcel`
+parameter must be substituted by a model of the `ArrangementDcel`
 concept. You can use either the default \dcel class or an extended
 \dcel class (see Section \ref arr_ssecex_dcel) based on your needs. An
 arrangement that support the cross-mapping mentioned above is referred
@@ -6483,7 +6489,7 @@ iterators is \link Arrangement_with_history_2::Curve_2
 Overlaying two arrangement-with-history objects is possible only if
 their types are instances of the
 `Arrangement_with_history_2<Traits,Dcel>` class template, where the
-respective `Traits` parameters are substituted with two traits classes
+respective `Traits` parameters are substituted by two traits classes
 that are convertible to one another. In this case, the resulting
 arrangement stores a consolidated container of input curves, and
 automatically preserves the cross-mapping between the arrangement
@@ -6663,15 +6669,15 @@ a file.
 \subsection arr_ssecarr_io_aux_data Arrangements with Auxiliary Data
 <!-- ------------------------------------------------------------------------- -->
 
-\cgalAdvancedBegin
-The inserter and extractor both ignore any auxiliary data stored with
-the arrangement features. Thus, they are ideal for arrangements
-instantiated using the `Arr_default_dcel` class.
-However, as explained in Section \ref arr_ssecex_dcel, one can easily
-extend the arrangement faces by using the `Arr_face_extended_dcel`
-template, or extend all \dcel records by using the `Arr_extended_dcel`
-template. In such cases, it might be crucial that the auxiliary data fields
-are written to the file and read from there.
+\cgalAdvancedBegin The inserter and extractor both ignore any
+auxiliary data stored with the arrangement features. Thus, they are
+ideal for arrangements instantiated using the default \dcel, which is
+the instance `Arr_default_dcel<Traits>`.  However, as explained in
+Section \ref arr_ssecex_dcel, one can easily extend the arrangement
+faces by using the `Arr_face_extended_dcel` template, extend all \dcel
+records by using the `Arr_extended_dcel` template, or use the
+`Arr_dcel` template. In such cases, it might be crucial that the
+auxiliary data fields are written to the file and read from there.
 
 The arrangement package includes the free functions
 `write(arr, os, formatter)`, which writes the arrangement `arr`
@@ -6968,7 +6974,7 @@ algorithm on a dual arrangement. It uses the functor template
 information stored inside the faces. The functor implements a property
 map that utilizes the `data()` and `set_data()` member functions of the
 extended face to update or obtain the property. When the property map
-is instantiated, the `Type` parameter must be substituted with the
+is instantiated, the `Type` parameter must be substituted by the
 same type that is used to extend the arrangement face; see Section
 \ref arr_sssecex_dcel_face. The functor template is defined in the
 header file `Extended_face_property_map.h` listed below.

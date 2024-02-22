@@ -16,14 +16,14 @@ namespace CGAL {
 
  * The `Arrangement_on_surface_2` template has two parameters:
  * <UL>
- * <LI>The `GeometryTraits` template-parameter should be instantiated with
+ * <LI>The `GeometryTraits` template-parameter should be substituted by
  * a model of a geometry traits. The minimal requirements are defined by the
  * `ArrangementBasicTraits_2` concept. A model of this concept defines
  * the types of \f$ x\f$-monotone curves and two-dimensional points, namely
  * `ArrangementBasicTraits_2::X_monotone_curve_2` and
  * `ArrangementBasicTraits_2::Point_2`, respectively, and supports basic
  * geometric predicates on them.
- * <LI>The `TopologyTraits` template-parameter should be instantiated with a
+ * <LI>The `TopologyTraits` template-parameter should be substituted by a
  * class that is a model of the `ArrangementTopologyTraits` concept.
  * </UL>
  *

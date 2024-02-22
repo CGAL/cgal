@@ -378,7 +378,6 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
 {
   typedef typename C3t3::Triangulation  Tr;
   typedef typename C3t3::Vertex_handle  Vertex_handle;
-  typedef typename C3t3::Cell_handle    Cell_handle;
   typedef typename C3t3::Facet          Facet;
   typedef typename Tr::Facet_circulator Facet_circulator;
   typedef typename Tr::Cell_circulator  Cell_circulator;
@@ -1760,7 +1759,7 @@ std::size_t flipBoundaryEdges(
       candidate_edges_for_flip.push_back(make_vertex_pair(e));
   }
 
-  for (const auto [vh0, vh1] : candidate_edges_for_flip)
+  for (const auto& [vh0, vh1] : candidate_edges_for_flip)
   {
     boost::container::small_vector<Cell_handle, 64>& inc_vh0 = inc_cells[vh0];
     if (inc_vh0.empty())
