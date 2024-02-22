@@ -21,6 +21,7 @@
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
+#include <boost/iterator/zip_iterator.hpp>
 
 #include <queue>
 
@@ -95,23 +96,26 @@ private:
 
 public:
 
-  void operator()(const std::vector<std::pair<Point, unsigned>>& points, double par_, double tlen_)
+  void operator()(const std::vector<Point>& points, double par_, double tlen_)
   {
     dt3.clear();
     par = par_;
     tlen = tlen_;
-
-    for (const auto& p : points) {
-      bbox += p.first.bbox();
-    }
-
+    bbox = bbox_3(points.begin(), points.end());
+ 
     bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
+
+    std::vector<int> vids(points.size());
+    std::iota(vids.begin(), vids.end(), 0);
 
     if constexpr (std::is_same_v<ConcurrencyTag, Parallel_tag>) {
       typename Delaunay::Lock_data_structure locking_ds(bbox, 50);
-      dt3.insert(points.begin(), points.end(), &locking_ds);
+      dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
+                 boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())),
+                 &locking_ds);
     } else {
-      dt3.insert(points.begin(), points.end());//Sequential Delaunay computation
+      dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
+                 boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())));//Sequential Delaunay computation
     }
     unsigned int cell_id=0;
     for (Cell_handle ch : dt3.all_cell_handles())
@@ -144,14 +148,6 @@ public:
     }
 
   }
-
-void set_vertex(std::vector<Point>& meshVertexPositions) 
-{
-  for (typename Delaunay::Finite_vertices_iterator vIter = dt3.finite_vertices_begin(); vIter != dt3.finite_vertices_end(); ++vIter)
-  {
-    meshVertexPositions[vIter->info()] = vIter->point();
-  }
-}
 
 // void flood_from_infinity(std::vector<bool> &outside, int group) const
 // {

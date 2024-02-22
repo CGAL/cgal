@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Ball_merge_surface_reconstruction.h>
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/IO/read_points.h>
 
 #include <fstream>
 #include <sstream>
@@ -26,23 +27,8 @@ int main(int argc, char **argv)
   else
     tlen = 200.0;//If not provided, default 200 will be taken
 
-  int vIndex = 0;
-  std::vector<std::pair<Point, unsigned>> points;
-
-  while (!inStream.eof()){//Read the data from the input file - coordinates, texture information (if available)
-    std::string line;
-    std::getline(inStream, line);
-    std::istringstream str(line);
-    if (str >> p){
-      int r, g, b;
-      if (str >> r){
-        str >> g;
-        str >> b;
-        meshVertexColors.push_back({(unsigned char)r, (unsigned char)g, (unsigned char)b});
-      }
-      points.push_back(std::make_pair(Point(p.x(), p.y(), p.z()), vIndex++));
-    }
-  }
+  std::vector<Point> points;
+  CGAL::IO::read_points(argv[1], std::back_inserter(points));
 
   CGAL::Ball_merge_surface_reconstruction<K, CGAL::Parallel_tag> bmsr;
   bmsr.option=option;
@@ -50,19 +36,17 @@ int main(int argc, char **argv)
 
   // AF: In case of duplicated points the colors of vertices will be wrong
 
-  std::vector<Point> meshVertexPositions(points.size());//Preparing the tetrahedra for creating the PLY file & PLY file writing starts
   std::vector<std::vector<int>> meshFaceIndices;
-  bmsr.set_vertex(meshVertexPositions);
   bmsr.set_triangle_indices_hull1(meshFaceIndices);
   std::string st = "BMOut1.ply";
 
-  CGAL::IO::write_polygon_soup(st, meshVertexPositions, meshFaceIndices);
+  CGAL::IO::write_polygon_soup(st, points, meshFaceIndices);
   meshFaceIndices.clear();
 
   if (option == 1){//Sometimes, in the gloabl case, the largest group would be a mould created by the convex hull, just to avoid it, we will write the second largest group as well
     bmsr.set_triangle_indices_hull2(meshFaceIndices);
     st="BMOut2.ply";
-    CGAL::IO::write_polygon_soup(st, meshVertexPositions, meshFaceIndices);
+    CGAL::IO::write_polygon_soup(st, points, meshFaceIndices);
   }
 
   return 0;
