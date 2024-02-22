@@ -1,10 +1,11 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <cassert>
 #include <fstream>

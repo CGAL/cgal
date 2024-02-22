@@ -104,8 +104,8 @@ jobs:
               echo "DoxygenError=No package affected." >> $GITHUB_OUTPUT
               exit 1
             fi
-            cd build_doc && make -j2 doc
-            make -j2 doc_with_postprocessing 2>tmp.log
+            cd build_doc && make -j$(nproc) doc
+            make -j$(nproc) doc_with_postprocessing 2>tmp.log
             if [ -s tmp.log ]; then
               content=`cat ./tmp.log`
               delimiter="$(openssl rand -hex 8)"

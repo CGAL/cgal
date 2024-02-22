@@ -1,17 +1,20 @@
+#define CGAL_NO_CDT_2_WARNING
+
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <set>
 #include <vector>
 #include <fstream>
 #include <cassert>
 #include <string>
 
-#define CGAL_NO_CDT_2_WARNING
-
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 template<
 class PolygonMesh,

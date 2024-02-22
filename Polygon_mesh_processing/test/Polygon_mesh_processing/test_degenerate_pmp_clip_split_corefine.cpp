@@ -1,8 +1,7 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 // #define CGAL_DEBUG_PMP_CLIP
 
 // TODO: test coref

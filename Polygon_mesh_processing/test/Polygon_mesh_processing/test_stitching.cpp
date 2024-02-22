@@ -1,15 +1,17 @@
 // #define CGAL_PMP_STITCHING_DEBUG_PP
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Dynamic_property_map.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <algorithm>
 #include <deque>

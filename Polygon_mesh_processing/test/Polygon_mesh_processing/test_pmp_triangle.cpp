@@ -1,7 +1,9 @@
 #include <CGAL/Polygon_mesh_processing/triangle.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/generators.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point_3;

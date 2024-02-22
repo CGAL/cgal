@@ -26,7 +26,6 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
-#include <CGAL/Arr_observer.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/Arrangement_2/Arr_with_history_accessor.h>
 
@@ -75,10 +74,7 @@ public:
   typedef typename Geometry_traits_2::Curve_2             Curve_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
-  typedef Arr_observer<Self>                              Observer;
-
 protected:
-  friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
   friend class Arr_with_history_accessor<Self>;
 
@@ -170,104 +166,75 @@ protected:
   // Forward declaration:
   class Curve_halfedges_observer;
 
+public:
   /*! \class
    * Extension of a curve with the set of edges that it induces.
    * Each edge is represented by one of the halfedges.
    */
   class Curve_halfedges : public Curve_2,
-                          public In_place_list_base<Curve_halfedges>
-  {
+                          public In_place_list_base<Curve_halfedges> {
+    using Gt = Geometry_traits_2;
+    using Btt = Base_topology_traits;
+    using Aos_wh = Arrangement_on_surface_with_history_2<Gt, Btt>;
+
     friend class Curve_halfedges_observer;
-    friend class Arrangement_on_surface_with_history_2<Geometry_traits_2,
-                                                       Base_topology_traits>;
-    friend class Arr_with_history_accessor<
-      Arrangement_on_surface_with_history_2<Geometry_traits_2,
-                                            Base_topology_traits> >;
+    friend class Arrangement_on_surface_with_history_2<Gt, Btt>;
+    friend class Arr_with_history_accessor<Aos_wh>;
 
   private:
-    typedef std::set<Halfedge_handle, Less_halfedge_handle>  Halfedges_set;
+    using Halfedges_set = std::set<Halfedge_handle, Less_halfedge_handle>;
 
     // Data members:
     Halfedges_set m_halfedges;
 
   public:
     /*! Default constructor. */
-    Curve_halfedges ()
-    {}
+    Curve_halfedges() {}
 
     /*! Constructor from a given curve. */
-    Curve_halfedges (const Curve_2& curve) :
-      Curve_2(curve)
-    {}
+    Curve_halfedges(const Curve_2& curve) : Curve_2(curve) {}
 
-    typedef typename Halfedges_set::iterator             iterator;
-    typedef typename Halfedges_set::const_iterator       const_iterator;
+    using iterator = typename Halfedges_set::iterator;
+    using const_iterator = typename Halfedges_set::const_iterator;
 
   private:
-
     /*! Get the number of edges induced by the curve. */
-    Size _size () const
-    {
-      return (m_halfedges.size());
-    }
+    Size size() const { return m_halfedges.size(); }
 
     /*! Get an iterator for the first edge in the set (const version). */
-    const_iterator _begin () const
-    {
-      return m_halfedges.begin();
-    }
+    const_iterator begin() const { return m_halfedges.begin(); }
 
     /*! Get an iterator for the first edge in the set (non-const version). */
-    iterator _begin ()
-    {
-      return m_halfedges.begin();
-    }
+    iterator begin() { return m_halfedges.begin(); }
 
     /*! Get a past-the-end iterator for the set edges (const version). */
-    const_iterator _end () const
-    {
-      return m_halfedges.end();
-    }
+    const_iterator end() const { return m_halfedges.end(); }
 
     /*! Get a past-the-end iterator for the set edges (non-const version). */
-    iterator _end ()
-    {
-      return m_halfedges.end();
-    }
+    iterator end() { return m_halfedges.end(); }
 
     /*! Insert an edge to the set. */
-    iterator _insert (Halfedge_handle he)
-    {
+    iterator _insert(Halfedge_handle he) {
       std::pair<iterator, bool> res = m_halfedges.insert(he);
       CGAL_assertion(res.second);
-      return (res.first);
+      return res.first;
     }
 
     /*! Erase an edge, given by its position, from the set. */
-    void _erase(iterator pos)
-    {
-      m_halfedges.erase(pos);
-      return;
-    }
+    void erase(iterator pos) { m_halfedges.erase(pos); }
 
     /*! Erase an edge from the set. */
-    void _erase (Halfedge_handle he)
-    {
+    void _erase(Halfedge_handle he) {
       size_t res = m_halfedges.erase(he);
-      if (res == 0)
-        res = m_halfedges.erase(he->twin());
+      if (res == 0) res = m_halfedges.erase(he->twin());
       CGAL_assertion(res != 0);
-      return;
     }
 
     /*! Cleat the edges set. */
-    void _clear ()
-    {
-      m_halfedges.clear();
-      return;
-    }
+    void clear() { m_halfedges.clear(); }
   };
 
+protected:
   typedef CGAL_ALLOCATOR(Curve_halfedges)               Curves_alloc;
   typedef In_place_list<Curve_halfedges, false>         Curve_halfedges_list;
 
@@ -276,111 +243,87 @@ protected:
    * involving edges and updates the list of halfedges associated with the
    * input curves accordingly.
    */
-  class Curve_halfedges_observer : public Arr_observer<Base_arr_2> {
+  class Curve_halfedges_observer : public Base_arr_2::Observer {
   public:
+    using Base_aos = typename Base_arr_2::Base_aos;
 
-    typedef typename Base_arr_2::Halfedge_handle     Halfedge_handle;
-    typedef typename Base_arr_2::Vertex_handle       Vertex_handle;
-    typedef typename Base_arr_2::X_monotone_curve_2  X_monotone_curve_2;
+    using Vertex_handle = typename Base_aos::Vertex_handle;
+    using Halfedge_handle = typename Base_aos::Halfedge_handle;
+    using X_monotone_curve_2 = typename Base_aos::X_monotone_curve_2;
 
-    /*!
-     * Notification after the creation of a new edge.
+    /*! Notification after the creation of a new edge.
      * \param e A handle to one of the twin halfedges that were created.
      */
-    virtual void after_create_edge (Halfedge_handle e)
-    {
-      _register_edge(e);
-    }
+    virtual void after_create_edge(Halfedge_handle e) override
+    { _register_edge(e); }
 
     /*!
      * Notification before the modification of an existing edge.
      * \param e A handle to one of the twin halfedges to be updated.
      * \param c The x-monotone curve to be associated with the edge.
      */
-    virtual void before_modify_edge (Halfedge_handle e,
-                                     const X_monotone_curve_2& /* c */)
-    {
-      _unregister_edge(e);
-    }
+    virtual void before_modify_edge(Halfedge_handle e,
+                                    const X_monotone_curve_2& /* c */) override
+    { _unregister_edge(e); }
 
-    /*!
-     * Notification after an edge was modified.
+    /*! Notification after an edge was modified.
      * \param e A handle to one of the twin halfedges that were updated.
      */
-    virtual void after_modify_edge (Halfedge_handle e)
-    {
-      _register_edge(e);
-    }
+    virtual void after_modify_edge(Halfedge_handle e) override
+    { _register_edge(e); }
 
-    /*!
-     * Notification before the splitting of an edge into two.
+    /*! Notification before the splitting of an edge into two.
      * \param e A handle to one of the existing halfedges.
      * \param c1 The x-monotone curve to be associated with the first edge.
      * \param c2 The x-monotone curve to be associated with the second edge.
      */
-    virtual void before_split_edge (Halfedge_handle e,
-                                    Vertex_handle /* v */,
-                                    const X_monotone_curve_2& /* c1 */,
-                                    const X_monotone_curve_2& /* c2 */)
-    {
-      _unregister_edge(e);
-    }
+    virtual void before_split_edge(Halfedge_handle e,
+                                   Vertex_handle /* v */,
+                                   const X_monotone_curve_2& /* c1 */,
+                                   const X_monotone_curve_2& /* c2 */) override
+    { _unregister_edge(e); }
 
-    /*!
-     * Notification after an edge was split.
+    /*! Notification after an edge was split.
      * \param e1 A handle to one of the twin halfedges forming the first edge.
      * \param e2 A handle to one of the twin halfedges forming the second edge.
      */
-    virtual void after_split_edge (Halfedge_handle e1, Halfedge_handle e2)
-    {
+    virtual void after_split_edge(Halfedge_handle e1, Halfedge_handle e2)
+      override {
       _register_edge(e1);
       _register_edge(e2);
     }
 
-    /*!
-     * Notification before the merging of two edges.
+    /*! Notification before the merging of two edges.
      * \param e1 A handle to one of the halfedges forming the first edge.
      * \param e2 A handle to one of the halfedges forming the second edge.
      * \param c The x-monotone curve to be associated with the merged edge.
      */
-    virtual void before_merge_edge (Halfedge_handle e1, Halfedge_handle e2,
-                                    const X_monotone_curve_2& /* c */)
-    {
+    virtual void before_merge_edge(Halfedge_handle e1, Halfedge_handle e2,
+                                   const X_monotone_curve_2& /* c */) override {
       _unregister_edge(e1);
       _unregister_edge(e2);
     }
 
-    /*!
-     * Notification after an edge was merged.
+    /*! Notification after an edge was merged.
      * \param e A handle to one of the twin halfedges forming the merged edge.
      */
-    virtual void after_merge_edge (Halfedge_handle e)
-    {
-      _register_edge(e);
-    }
+    virtual void after_merge_edge(Halfedge_handle e) override
+    { _register_edge(e); }
 
-    /*!
-     * Notification before the removal of an edge.
+    /*! Notification before the removal of an edge.
      * \param e A handle to one of the twin halfedges to be deleted.
      */
-    virtual void before_remove_edge (Halfedge_handle e)
-    {
-      _unregister_edge(e);
-    }
+    virtual void before_remove_edge(Halfedge_handle e) override
+    { _unregister_edge(e); }
 
   private:
 
-    /*!
-     * Register the given halfedge in the set(s) associated with its curve.
+    /*! Register the given halfedge in the set(s) associated with its curve.
      */
-    void _register_edge (Halfedge_handle e)
-    {
-      Curve_halfedges  *curve_halfedges;
-      Data_iterator     di;
-
-      for (di = e->curve().data().begin(); di != e->curve().data().end(); ++di)
-      {
-        curve_halfedges = static_cast<Curve_halfedges*>(*di);
+    void _register_edge(Halfedge_handle e) {
+      for (auto di = e->curve().data().begin(); di != e->curve().data().end();
+           ++di) {
+        Curve_halfedges*  curve_halfedges = static_cast<Curve_halfedges*>(*di);
         curve_halfedges->_insert(e);
       }
     }
@@ -388,14 +331,10 @@ protected:
     /*!
      * Unregister the given halfedge from the set(s) associated with its curve.
      */
-    void _unregister_edge (Halfedge_handle e)
-    {
-      Curve_halfedges  *curve_halfedges;
-      Data_iterator     di;
-
-      for (di = e->curve().data().begin(); di != e->curve().data().end(); ++di)
-      {
-        curve_halfedges = static_cast<Curve_halfedges*>(*di);
+    void _unregister_edge(Halfedge_handle e) {
+      for (auto di = e->curve().data().begin(); di != e->curve().data().end();
+           ++di) {
+        Curve_halfedges* curve_halfedges = static_cast<Curve_halfedges*>(*di);
         curve_halfedges->_erase(e);
       }
     }
@@ -537,16 +476,13 @@ public:
 
   /// \name Traversal of the edges induced by a curve.
   //@{
-  Size number_of_induced_edges (Curve_const_handle c) const
-  {
-    return (c->_size());
-  }
+  Size number_of_induced_edges (Curve_const_handle c) const { return c->size(); }
 
   Induced_edge_iterator
-  induced_edges_begin (Curve_const_handle c) const { return (c->_begin()); }
+  induced_edges_begin (Curve_const_handle c) const { return (c->begin()); }
 
   Induced_edge_iterator
-  induced_edges_end (Curve_const_handle c) const { return (c->_end()); }
+  induced_edges_end (Curve_const_handle c) const { return (c->end()); }
   //@}
 
   /// \name Manipulating edges.
@@ -582,24 +518,6 @@ public:
   //@}
 
 protected:
-
-  /// \name Managing and notifying the arrangement observers.
-  //@{
-
-  /*!
-   * Register a new observer (so it starts receiving notifications).
-   * \param p_obs A pointer to the observer object.
-   */
-  void _register_observer (Observer *p_obs);
-
-  /*!
-   * Unregister an observer (so it stops receiving notifications).
-   * \param p_obs A pointer to the observer object.
-   * \return Whether the observer was successfully unregistered.
-   */
-  bool _unregister_observer (Observer *p_obs);
-  //@}
-
   /// \name Curve insertion and deletion.
   //@{
 
@@ -696,12 +614,12 @@ protected:
   Size _remove_curve (Curve_handle ch)
   {
     // Go over all edges the given curve induces.
-    Curve_halfedges                           *p_cv = &(*ch);
-    typename Curve_halfedges::const_iterator   it = ch->_begin();
-    Halfedge_handle                            he;
-    Size                                       n_removed = 0;
+    Curve_halfedges* p_cv = &(*ch);
+    Halfedge_handle he;
+    Size n_removed = 0;
 
-    while (it != ch->_end()) {
+    typename Curve_halfedges::const_iterator it = ch->begin();
+    while (it != ch->end()) {
       // Check how many curves have originated the current edge.
       // Note we increment the iterator now, as the edge may be removed.
       he = *it;

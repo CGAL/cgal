@@ -14,8 +14,8 @@
 
 #include <CGAL/license/Triangulation.h>
 
-
 #include <CGAL/TDS_full_cell_default_storage_policy.h>
+#include <cstdint>
 
 namespace CGAL {
 
@@ -30,7 +30,7 @@ struct   TFC_data< Vertex_handle, Full_cell_handle, Maximal_dimension, TDS_full_
     typedef TFC_data< Vertex_handle, Full_cell_handle, Maximal_dimension, TDS_full_cell_default_storage_policy > Base;
     typedef typename Base::Vertex_handle_array          Vertex_handle_array;
     typedef typename Base::Full_cell_handle_array         Full_cell_handle_array;
-    typedef typename internal::S_or_D_array< int, typename Base::Dimen_plus >   Int_array;
+    typedef typename internal::S_or_D_array< std::int_least8_t, typename Base::Dimen_plus >   Int_array;
 
 private:
     Int_array            mirror_vertices_;
@@ -42,7 +42,7 @@ public:
 
     void set_mirror_index(const int i, const int index)
     {
-        mirror_vertices_[i] = index;
+        mirror_vertices_[i] = static_cast<std::int_least8_t>(index);
     }
     int mirror_index(const int i) const
     {

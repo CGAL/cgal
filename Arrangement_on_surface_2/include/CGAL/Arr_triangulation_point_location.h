@@ -21,7 +21,6 @@
  * Definition of the Arr_triangulation_point_location<Arrangement> template.
  */
 
-#include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location_result.h>
 
@@ -39,73 +38,70 @@ namespace CGAL {
  * triangulation algorithm.
  */
 template <typename Arrangement_>
-class Arr_triangulation_point_location : public Arr_observer<Arrangement_>
-{
+class Arr_triangulation_point_location : public Arrangement_::Observer {
 public:
-  typedef Arrangement_                                  Arrangement_2;
+  using Arrangement_2 = Arrangement_;
+  using Base_aos = typename Arrangement_2::Base_aos;
 
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Geometry_traits_2::Kernel            Kernel;
+  using Geometry_traits_2 = typename Base_aos::Geometry_traits_2;
+  using Kernel = typename Geometry_traits_2::Kernel;
 
-  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Vertex_handle                Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle        Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle                Face_handle;
+  using Vertex_const_handle = typename Base_aos::Vertex_const_handle;
+  using Halfedge_const_handle = typename Base_aos::Halfedge_const_handle;
+  using Face_const_handle = typename Base_aos::Face_const_handle;
+  using Vertex_handle = typename Base_aos::Vertex_handle;
+  using Halfedge_handle = typename Base_aos::Halfedge_handle;
+  using Face_handle = typename Base_aos::Face_handle;
 
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Face_const_iterator   Face_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_iterator
-    Halfedge_const_iterator;
-  typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
-    Halfedge_around_vertex_const_circulator;
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-    Ccb_halfedge_const_circulator;
-  typedef typename Arrangement_2::Ccb_halfedge_circulator
-    Ccb_halfedge_circulator;
-  typedef typename Arrangement_2::Isolated_vertex_const_iterator
-    Isolated_vertex_const_iterator;
+  using Vertex_const_iterator = typename Base_aos::Vertex_const_iterator;
+  using Edge_const_iterator = typename Base_aos::Edge_const_iterator;
+  using Face_const_iterator = typename Base_aos::Face_const_iterator;
+  using Halfedge_const_iterator = typename Base_aos::Halfedge_const_iterator;
+  using Halfedge_around_vertex_const_circulator =
+    typename Base_aos::Halfedge_around_vertex_const_circulator;
+  using Ccb_halfedge_const_circulator =
+    typename Base_aos::Ccb_halfedge_const_circulator;
+  using Ccb_halfedge_circulator = typename Base_aos::Ccb_halfedge_circulator;
+  using Isolated_vertex_const_iterator =
+    typename Base_aos::Isolated_vertex_const_iterator;
 
-  typedef typename Geometry_traits_2::Point_2            Point_2;
-  typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
+  using Point_2 = typename Geometry_traits_2::Point_2;
+  using X_monotone_curve_2 = typename Geometry_traits_2::X_monotone_curve_2;
 
-  typedef std::list<Halfedge_const_handle>               Edge_list;
-  typedef typename Edge_list::iterator                   Std_edge_iterator;
+  using Edge_list = std::list<Halfedge_const_handle>;
+  using Std_edge_iterator = typename Edge_list::iterator;
 
   //----------------------------------------------------------
   // Triangulation Types
   //----------------------------------------------------------
-  typedef Triangulation_vertex_base_with_info_2<Vertex_const_handle, Kernel>
-    Vbb;
-  typedef Triangulation_hierarchy_vertex_base_2<Vbb>                  Vb;
+  using Vbb = Triangulation_vertex_base_with_info_2<Vertex_const_handle, Kernel>;
+  using Vb = Triangulation_hierarchy_vertex_base_2<Vbb>;
   //typedef Triangulation_face_base_with_info_2<CGAL::IO::Color,Kernel>    Fbt;
-  typedef Constrained_triangulation_face_base_2<Kernel>               Fb;
-  typedef Triangulation_data_structure_2<Vb,Fb>                       TDS;
-  typedef Exact_predicates_tag                                        Itag;
+  using Fb = Constrained_triangulation_face_base_2<Kernel>;
+  using TDS = Triangulation_data_structure_2<Vb,Fb>;
+  using Itag = Exact_predicates_tag;
   //typedef Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>    CDT;
-  typedef Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>     CDT_t;
-  typedef Triangulation_hierarchy_2<CDT_t>                            CDTH;
-  typedef Constrained_triangulation_plus_2<CDTH>                      CDT;
+  using CDT_t = Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>;
+  using CDTH = Triangulation_hierarchy_2<CDT_t>;
+  using CDT = Constrained_triangulation_plus_2<CDTH>;
 
-  typedef typename CDT::Point                    CDT_Point;
-  typedef typename CDT::Edge                     CDT_Edge;
-  typedef typename CDT::Face_handle              CDT_Face_handle;
-  typedef typename CDT::Vertex_handle            CDT_Vertex_handle;
-  typedef typename CDT::Finite_faces_iterator    CDT_Finite_faces_iterator;
-  typedef typename CDT::Finite_vertices_iterator CDT_Finite_vertices_iterator;
-  typedef typename CDT::Finite_edges_iterator    CDT_Finite_edges_iterator;
-  typedef typename CDT::Locate_type              CDT_Locate_type;
+  using CDT_Point = typename CDT::Point;
+  using CDT_Edge = typename CDT::Edge;
+  using CDT_Face_handle = typename CDT::Face_handle;
+  using CDT_Vertex_handle = typename CDT::Vertex_handle;
+  using CDT_Finite_faces_iterator = typename CDT::Finite_faces_iterator;
+  using CDT_Finite_vertices_iterator = typename CDT::Finite_vertices_iterator;
+  using CDT_Finite_edges_iterator = typename CDT::Finite_edges_iterator;
+  using CDT_Locate_type = typename CDT::Locate_type;
 
-  typedef Arr_point_location_result<Arrangement_2>       Result;
-  typedef typename Result::Type                          Result_type;
+  using Result = Arr_point_location_result<Base_aos>;
+  using Result_type = typename Result::Type;
 
   // Support cpp11::result_of
-  typedef Result_type                                    result_type;
+  using result_type = Result_type;
 
 protected:
-  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
+  using Traits_adaptor_2 = Arr_traits_basic_adaptor_2<Geometry_traits_2>;
 
   // Data members:
   const Traits_adaptor_2* m_traits;     // Its associated traits object.
@@ -128,8 +124,8 @@ public:
   /*! Constructor from an arrangement.
    * \param arr (in) The arrangement.
    */
-  Arr_triangulation_point_location(const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2>(const_cast<Arrangement_2&>(arr)),
+  Arr_triangulation_point_location(const Base_aos& arr) :
+    Base_aos::Observer(const_cast<Base_aos&>(arr)),
     m_traits(static_cast<const Traits_adaptor_2*>(arr.geometry_traits())),
     m_ignore_notifications(false),
     m_ignore_remove_edge(false)
@@ -149,12 +145,12 @@ public:
   /*! Attach an arrangement.
    * \param arr (in) The arrangement.
    */
-  virtual void before_attach(const Arrangement_2& arr)
+  virtual void before_attach(const Base_aos& arr) override
   { m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits()); }
 
-  virtual void after_attach() { build_triangulation(); }
+  virtual void after_attach() override { build_triangulation(); }
 
-  virtual void before_detach() { clear_triangulation(); }
+  virtual void before_detach() override { clear_triangulation(); }
 
   /// \name Overloaded observer functions on global changes.
   //@{
@@ -162,32 +158,28 @@ public:
   /*! Notification after the arrangement has been assigned with another
    * arrangement.
    */
-  virtual void after_assign()
-  {
+  virtual void after_assign() override {
     clear_triangulation();
     build_triangulation();
   }
 
   /*! Notification after the arrangement is cleared.
    */
-  virtual void after_clear()
-  {
+  virtual void after_clear() override {
     clear_triangulation();
     build_triangulation();
   }
 
   /*! Notification before a global operation modifies the arrangement.
    */
-  virtual void before_global_change()
-  {
+  virtual void before_global_change() override {
     clear_triangulation();
     m_ignore_notifications = true;
   }
 
   /*! Notification after a global operation is completed.
    */
-  virtual void after_global_change()
-  {
+  virtual void after_global_change() override {
     build_triangulation();
     m_ignore_notifications = false;
   }
@@ -199,14 +191,13 @@ public:
   /*! Notification before the removal of an edge.
    * \param e (in) A handle to one of the twin halfedges to be removed.
    */
-  virtual void before_remove_edge(Halfedge_handle /* e */)
+  virtual void before_remove_edge(Halfedge_handle /* e */) override
   { m_ignore_remove_edge = true; }
 
   /*! Notification after the creation of a new vertex.
    * \param v (in) A handle to the created vertex.
    */
-  virtual void after_create_vertex(Vertex_handle /* v */)
-  {
+  virtual void after_create_vertex(Vertex_handle /* v */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -216,8 +207,7 @@ public:
   /*! Notification after the creation of a new edge.
    * \param e (in) A handle to one of the twin halfedges that were created.
    */
-  virtual void after_create_edge(Halfedge_handle /* e */)
-  {
+  virtual void after_create_edge(Halfedge_handle /* e */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -229,8 +219,7 @@ public:
    * \param e2 (in) A handle to one of the twin halfedges forming the second edge.
    */
   virtual void after_split_edge(Halfedge_handle /* e1 */,
-                                Halfedge_handle /* e2 */)
-  {
+                                Halfedge_handle /* e2 */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -244,8 +233,7 @@ public:
    */
   virtual void after_split_face(Face_handle /* f */,
                                 Face_handle /* new_f */,
-                                bool /* is_hole */)
-  {
+                                bool /* is_hole */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -255,8 +243,7 @@ public:
   /*! Notification after an outer CCB was created inside a face.
    * \param h (in) A circulator representing the boundary of the new outer CCB.
    */
-  virtual void after_add_outer_ccb(Ccb_halfedge_circulator /* h */)
-  {
+  virtual void after_add_outer_ccb(Ccb_halfedge_circulator /* h */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -266,8 +253,7 @@ public:
   /*! Notification after an edge was merged.
    * \param e (in) A handle to one of the twin halfedges forming the merged edge.
    */
-  virtual void after_merge_edge(Halfedge_handle /* e */)
-  {
+  virtual void after_merge_edge(Halfedge_handle /* e */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -277,8 +263,7 @@ public:
   /*! Notification after a face was merged.
    * \param f (in) A handle to the merged face.
    */
-  virtual void after_merge_face(Face_handle /* f */)
-  {
+  virtual void after_merge_face(Face_handle /* f */) override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_triangulation();
       build_triangulation();
@@ -288,8 +273,7 @@ public:
   /*! Notification after an outer CCB  is moved from one face to another.
    * \param h (in) A circulator representing the boundary of the component.
    */
-  virtual void after_move_outer_ccb(Ccb_halfedge_circulator /* h */)
-  {
+  virtual void after_move_outer_ccb(Ccb_halfedge_circulator /* h */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -299,8 +283,7 @@ public:
   /*! Notificaion before the removal of a vertex.
    * \param v (in) A handle to the vertex to be deleted.
    */
-  virtual void after_remove_vertex()
-  {
+  virtual void after_remove_vertex() override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_triangulation();
       build_triangulation();
@@ -310,8 +293,7 @@ public:
   /*! Notification before the removal of an edge.
    * \param e (in) A handle to one of the twin halfedges to be deleted.
    */
-  virtual void after_remove_edge()
-  {
+  virtual void after_remove_edge() override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -322,8 +304,7 @@ public:
   /*! Notification before the removal of an outer CCB.
    * \param f (in) The face that used to own the outer CCB.
    */
-  virtual void after_remove_outer_ccb(Face_handle /* f */)
-  {
+  virtual void after_remove_outer_ccb(Face_handle /* f */) override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_triangulation();
       build_triangulation();
@@ -333,8 +314,7 @@ public:
   /*! Notification after an inner CCB was created inside a face.
    * \param h (in) A circulator representing the boundary of the new inner CCB.
    */
-  virtual void after_add_inner_ccb(Ccb_halfedge_circulator /* h */)
-  {
+  virtual void after_add_inner_ccb(Ccb_halfedge_circulator /* h */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -344,8 +324,7 @@ public:
   /*! Notification after an inner CCB is moved from one face to another.
    * \param h (in) A circulator representing the boundary of the component.
    */
-  virtual void after_move_inner_ccb(Ccb_halfedge_circulator /* h */)
-  {
+  virtual void after_move_inner_ccb(Ccb_halfedge_circulator /* h */) override {
     if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
@@ -355,8 +334,7 @@ public:
   /*! Notificaion after the removal of an inner CCB.
    * \param f (in) The face that used to contain the inner CCB.
    */
-  virtual void after_remove_inner_ccb(Face_handle /* f */)
-  {
+  virtual void after_remove_inner_ccb(Face_handle /* f */) override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_triangulation();
       build_triangulation();

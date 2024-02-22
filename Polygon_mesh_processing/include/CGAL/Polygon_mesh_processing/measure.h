@@ -217,6 +217,25 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
   return squared_edge_length(halfedge(e, pmesh), pmesh, np);
 }
 
+template<typename PolygonMesh,
+         typename NamedParameters = parameters::Default_named_parameters>
+typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
+average_edge_length(const PolygonMesh& pmesh,
+                    const NamedParameters& np = parameters::default_values())
+{
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
+
+  const std::size_t n = edges(pmesh).size();
+  CGAL_assertion(n > 0);
+
+  typename GT::FT avg_edge_length = 0;
+  for (auto e : edges(pmesh))
+    avg_edge_length += edge_length(e, pmesh, np);
+
+  avg_edge_length /= static_cast<typename GT::FT>(n);
+  return avg_edge_length;
+}
+
 /**
   * \ingroup PMP_measure_grp
   *

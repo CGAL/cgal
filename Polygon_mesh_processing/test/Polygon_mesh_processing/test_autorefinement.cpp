@@ -1,5 +1,3 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
@@ -7,6 +5,9 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <CGAL/IO/polygon_soup_io.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
 #include <sstream>

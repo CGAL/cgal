@@ -273,29 +273,6 @@ bool Arrangement_on_surface_with_history_2<GeomTr,TopTr>::are_mergeable
                                                         e2->curve()));
 }
 
-//-----------------------------------------------------------------------------
-// Register a new observer (so it starts receiving notifications).
-//
-template<class GeomTr, class TopTr>
-void Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
-_register_observer(Arr_observer<Self> *p_obs)
-{
-  Base_arr_2::_register_observer
-    (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs));
-  return;
-}
-
-//-----------------------------------------------------------------------------
-// Unregister an observer (so it stops receiving notifications).
-//
-template<class GeomTr, class TopTr>
-bool Arrangement_on_surface_with_history_2<GeomTr,TopTr>::
-_unregister_observer(Arr_observer<Self> *p_obs)
-{
-  return (Base_arr_2::_unregister_observer
-          (reinterpret_cast<Arr_observer<Base_arr_2>*>(p_obs)));
-}
-
 } //namespace CGAL
 
 #endif

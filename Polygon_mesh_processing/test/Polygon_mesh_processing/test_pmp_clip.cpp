@@ -1,10 +1,11 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
-#include <CGAL/boost/graph/Face_filtered_graph.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <boost/property_map/property_map.hpp>
 
 #include <iostream>
@@ -879,5 +880,3 @@ int main()
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
 }
-
-

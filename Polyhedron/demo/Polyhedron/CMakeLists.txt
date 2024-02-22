@@ -196,7 +196,19 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     message(STATUS "Qt6WebSockets was found. Using WebSockets is therefore possible.")
   endif()
 
-  #compilation_of__demo_framework is defined in polyhedron_demo_macros.cmake
+  # This custom target is useless. It is used only as a flag to
+  # detect that the test has already been created.
+  add_custom_target("compilation_of__demo_framework")
+  cgal_add_compilation_test(demo_framework)
+  if(TEST "compilation of  demo_framework")
+    set_property(TEST "compilation of  demo_framework"
+      APPEND PROPERTY LABELS "CGAL_build_system" "Installation" "${PROJECT_NAME}")
+    set_property(TEST "compilation of  demo_framework"
+      APPEND PROPERTY FIXTURES_SETUP "demo_framework_SetupFixture")
+    set_property(TEST "compilation of  demo_framework"
+      APPEND PROPERTY DEPENDS "check build system" "compilation of  CGAL_Qt6_moc_and_resources")
+  endif()
+
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
   # CMake). That is to deal with the visibility of symbols of
@@ -219,13 +231,16 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
                                   ${Show_point_dialogUI_FILES})
   target_link_libraries(point_dialog PUBLIC Qt6::OpenGLWidgets Qt6::Gui
                                             Qt6::Widgets)
+  cgal_add_compilation_test(point_dialog)
 
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(
       ${item_name} PUBLIC demo_framework CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::Gui
                           Qt6::Widgets)
+    cgal_add_compilation_test(${item_name})
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${item_name})
+    CGAL_install_hooks()
   endmacro(add_item)
 
   add_item(scene_triangulation_3_item Scene_triangulation_3_item.cpp)
@@ -360,9 +375,11 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     target_compile_definitions(demo_framework PRIVATE -DCGAL_USE_WEBSOCKETS)
     target_link_libraries(polyhedron_demo PRIVATE Qt6::WebSockets)
   endif()
+  cgal_add_compilation_test(polyhedron_demo)
   add_executable(Polyhedron_3 Polyhedron_3.cpp)
   target_link_libraries(Polyhedron_3 PRIVATE polyhedron_demo)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polyhedron_3)
+  cgal_add_compilation_test(Polyhedron_3)
 
   target_link_libraries(Polyhedron_3 PRIVATE demo_framework)
 

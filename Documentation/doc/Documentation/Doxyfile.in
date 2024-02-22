@@ -34,4 +34,4 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
-ALIASES                 += "cgalReleaseNumber =${CGAL_DOC_VERSION}"
+ALIASES                 += "cgalReleaseNumber=${CGAL_DOC_VERSION}"

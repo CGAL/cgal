@@ -367,25 +367,6 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::read_PLY()` \endlink  should be used instead.
-
-  \brief reads a point set with properties from an input stream in \ascii or binary PLY format.
-
-  - the operator reads the vertex `point` property;
-  - if three PLY properties `nx`, `ny` and `nz` with type `float`
-     or `double` are found, the normal map is added;
-  - if any other PLY property is found, a "[name]" property map is
-    added, where `[name]` is the name of the PLY property.
-
-  The `comments` parameter can be omitted. If provided, it will be
-  used to store the potential comments found in the PLY
-  header. Each line starting by "comment " in the header is
-  appended to the `comments` string (without the "comment " word).
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
@@ -744,12 +725,6 @@ bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::write_PLY()` \endlink  should be used instead.
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_ply_point_set(std::ostream& os,
                                          const CGAL::Point_set_3<Point, Vector>& point_set,

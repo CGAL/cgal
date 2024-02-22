@@ -9,13 +9,13 @@ namespace CGAL {
  *
  * The `Arr_spherical_topology_traits_2` template has two parameters:
  * <UL>
- * <LI>The `GeometryTraits_2` template-parameter should be instantiated with
+ * <LI>The `GeometryTraits_2` template-parameter should be substituted by
  * a model of the `ArrangementBasicTraits_2` concept. The traits
  * class defines the types of \f$x\f$-monotone curves and two-dimensional
  * points, namely `ArrangementBasicTraits_2::X_monotone_curve_2` and
  * `ArrangementBasicTraits_2::Point_2`,
  *   respectively, and supports basic geometric predicates on them.
- * <LI>The `Dcel` template-parameter should be instantiated with
+ * <LI>The `Dcel` template-parameter should be substituted by
  * a class that is a model of the `ArrangementDcel` concept. The
  * value of this parameter is by default
  * `Arr_default_dcel<Traits>`.

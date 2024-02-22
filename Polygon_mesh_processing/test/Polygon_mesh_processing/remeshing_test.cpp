@@ -7,17 +7,18 @@
 //#define CGAL_PMP_REMESHING_VERY_VERBOSE
 //#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Timer.h>
+
 #include <fstream>
 #include <vector>
 #include <cstdlib>

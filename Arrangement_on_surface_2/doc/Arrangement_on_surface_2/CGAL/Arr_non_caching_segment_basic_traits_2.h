@@ -16,7 +16,7 @@ that are not provided by the kernel. The kernel is parameterized with a
 number type, which should support the arithmetic operations \f$ +\f$, \f$ -\f$ and
 \f$ \times\f$ in an exact manner in order to avoid robustness problems.
 Using `Cartesian<MP_Float>` or `Cartesian<Gmpz>` are possible
-instantiations for the kernel. Using other (inexact) number types
+substitutions for the kernel. Using other (inexact) number types
 (for example, instantiating the template with
 `Simple_cartesian<double>`) is also possible, at the user's own
 risk.

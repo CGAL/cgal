@@ -201,7 +201,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
   }
   Scene_polylines_item* item = new Scene_polylines_item;
   item->polylines = polylines;
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   item->setColor(Qt::black);
   item->setProperty("polylines metadata", polylines_metadata);
   std::cerr << "Number of polylines in item: " << item->polylines.size() << std::endl;

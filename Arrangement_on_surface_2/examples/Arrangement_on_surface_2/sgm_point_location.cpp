@@ -55,22 +55,6 @@ int main() {
   // Landmarks_pl landmarks_pl(gm);
   Walk_pl walk_pl(gm);
   // Trap_pl trap_pl(gm);
-  /* Need to add the code below to both Arr_spherical_gaussian_map_3 and
-   * Arr_polyhedral_sgm, and then work on the trap point location code...
-
-private:
-  friend class Arr_observer<Self>;
-  friend class Arr_accessor<Self>;
-
-protected:
-  typedef Arr_observer<Self>                      Observer;
-
-  void _register_observer(Observer *p_obs)
-  { Base::_register_observer((typename Base::Observer*)p_obs); }
-
-  bool _unregister_observer(Observer *p_obs)
-  { return (Base::_unregister_observer ((typename Base::Observer*)p_obs)); }
-  */
 
   Gm_traits traits;
   Gm_initializer gm_initializer(gm);

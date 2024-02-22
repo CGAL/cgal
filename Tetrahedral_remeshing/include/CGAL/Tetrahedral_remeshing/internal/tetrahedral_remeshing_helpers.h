@@ -416,7 +416,6 @@ bool edges_form_a_sharp_angle(const EdgesVector& incident_edges,
 {
   CGAL_assertion(incident_edges.size() == 2);
 
-  typedef typename EdgesVector::value_type Edge;
   typedef typename C3t3::Vertex_handle Vertex_handle;
 
   const std::array<Vertex_handle, 2> ev0

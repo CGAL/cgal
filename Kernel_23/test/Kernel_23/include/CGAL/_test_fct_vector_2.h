@@ -87,6 +87,7 @@ _test_fct_vector_2(const R& )
  assert( CGAL::scalar_product(v1, v2) == FT(30) );
  assert( v1 * v0 == FT(0) );
  assert( v1.squared_length() == FT(40) );
+ assert( v1.squared_length() == CGAL::squared_length(v1) );
  assert( CGAL::Vector_2<R>( n1, n2) == v1 * RT(2));
  assert( CGAL::Vector_2<R>( n5, n6) == v2 * RT(3));
  assert( CGAL::Vector_2<R>( n1, n2) == RT(2) * v1);

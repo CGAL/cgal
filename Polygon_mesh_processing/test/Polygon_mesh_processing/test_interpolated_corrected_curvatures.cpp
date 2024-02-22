@@ -1,10 +1,11 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 #include <CGAL/Polygon_mesh_processing/random_perturbation.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/property_map.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <boost/graph/graph_traits.hpp>
 

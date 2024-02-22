@@ -29,7 +29,7 @@ public:
   {
       scene = scene_interface;
       this->mw = mw;
-      actionInsideOut = new QAction(tr("Inside Out"), mw);
+      actionInsideOut = new QAction(tr("Reverse Orientation (\"Inside Out\")"), mw);
 
       actionInsideOut->setProperty("subMenuName", "Polygon Mesh Processing");
       connect(actionInsideOut, SIGNAL(triggered()), this, SLOT(on_actionInsideOut_triggered()));

@@ -1,4 +1,4 @@
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <CGAL/Surface_mesh.h>
 
@@ -8,7 +8,7 @@
 #include <CGAL/Linear_cell_complex_for_bgl_combinatorial_map_helper.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
-#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <fstream>
 #include <vector>

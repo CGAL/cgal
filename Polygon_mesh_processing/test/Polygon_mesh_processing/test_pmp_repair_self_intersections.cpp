@@ -3,11 +3,11 @@
 #define CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
 #define CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>

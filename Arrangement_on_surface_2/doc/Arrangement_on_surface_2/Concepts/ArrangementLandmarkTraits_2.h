@@ -7,7 +7,7 @@
  * associated with the landmark point-location strategy (see
  * `CGAL::Arr_landmarks_point_location`) must be an instance of the
  * `CGAL::Arrangement_2<Traits,Dcel>` class template, where the Traits parameter
- * is substituted with a model of this concept.
+ * is substituted by a model of this concept.
  *
  * \cgalRefines{ArrangementApproximateTraits_2,ArrangementConstructXMonotoneCurveTraits_2}
  *
