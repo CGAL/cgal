@@ -37,19 +37,22 @@ class Cartesian_grid_3;
 template <typename Partition>
 struct partition_traits;
 
+struct CG_Edge_descriptor : public std::array<std::size_t, 4> { };
+struct CG_Cell_descriptor : public std::array<std::size_t, 3> { };
+
 template <typename GeomTraits, typename MemoryPolicy>
 struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
 {
-  using Self = Cartesian_grid_3<GeomTraits, MemoryPolicy>;
+  using Grid = Cartesian_grid_3<GeomTraits, MemoryPolicy>;
 
   // identifies a vertex by its (i, j, k) indices
   using Vertex_descriptor = std::array<std::size_t, 3>;
 
   // identifies an edge by its starting vertex (i, j, k) and the direction x -> 0, y -> 1, z -> 2
-  using Edge_descriptor = std::array<std::size_t, 4>;
+  using Edge_descriptor = CG_Edge_descriptor;
 
   // identifies a cell by its corner vertex with the smallest (i, j, k) index
-  using Cell_descriptor = std::array<std::size_t, 3>;
+  using Cell_descriptor = CG_Cell_descriptor;
 
   static constexpr Cell_type CELL_TYPE = CUBICAL_CELL;
   static constexpr std::size_t VERTICES_PER_CELL = 8;
@@ -258,5 +261,36 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
 
 } // namespace Isosurfacing
 } // namespace CGAL
+
+namespace std {
+
+template <>
+struct hash<CGAL::Isosurfacing::CG_Edge_descriptor>
+{
+  std::size_t operator()(const CGAL::Isosurfacing::CG_Edge_descriptor& e) const
+  {
+    std::size_t seed = 0;
+    boost::hash_combine(seed, e[0]);
+    boost::hash_combine(seed, e[1]);
+    boost::hash_combine(seed, e[2]);
+    boost::hash_combine(seed, e[3]);
+    return seed;
+  }
+};
+
+template <>
+struct hash<CGAL::Isosurfacing::CG_Cell_descriptor>
+{
+  std::size_t operator()(const CGAL::Isosurfacing::CG_Cell_descriptor& e) const
+  {
+    std::size_t seed = 0;
+    boost::hash_combine(seed, e[0]);
+    boost::hash_combine(seed, e[1]);
+    boost::hash_combine(seed, e[2]);
+    return seed;
+  }
+};
+
+} // namespace std
 
 #endif // CGAL_ISOSURFACING_3_INTERNAL_PARTITION_TRAITS_CARTESIAN_GRID_3_H

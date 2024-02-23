@@ -315,8 +315,8 @@ public:
     const bool do_not_triangulate_faces =
       choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-    using Edge_to_point_ID_map = std::map<Edge_descriptor, std::size_t>;
-    using Cell_to_point_ID_map = std::map<Cell_descriptor, std::size_t>;
+    using Edge_to_point_ID_map = std::unordered_map<Edge_descriptor, std::size_t>;
+    using Cell_to_point_ID_map = std::unordered_map<Cell_descriptor, std::size_t>;
 
     Edge_to_point_ID_map edge_to_point_id;
     Cell_to_point_ID_map cell_to_point_id;
@@ -446,8 +446,8 @@ public:
     bool do_not_triangulate_faces =
       choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-    using Edge_to_point_ID_map = std::map<Edge_descriptor, std::size_t>;
-    using Cell_to_point_ID_map = std::map<Cell_descriptor, std::size_t>;
+    using Edge_to_point_ID_map = std::unordered_map<Edge_descriptor, std::size_t>;
+    using Cell_to_point_ID_map = std::unordered_map<Cell_descriptor, std::size_t>;
 
     Edge_to_point_ID_map edge_to_point_id;
     Cell_to_point_ID_map cell_to_point_id;
@@ -560,8 +560,8 @@ public:
     bool do_not_triangulate_faces =
       choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-    using Edge_to_point_ID_map = std::map<Edge_descriptor, std::size_t>;
-    using Cell_to_point_ID_map = std::map<Cell_descriptor, std::size_t>;
+    using Edge_to_point_ID_map = std::unordered_map<Edge_descriptor, std::size_t>;
+    using Cell_to_point_ID_map = std::unordered_map<Cell_descriptor, std::size_t>;
 
     Edge_to_point_ID_map edge_to_point_id;
     Cell_to_point_ID_map cell_to_point_id;
