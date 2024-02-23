@@ -686,9 +686,9 @@ int go(Mesh mesh, CDT_options options) {
     if(!options.quiet) {
       std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
     }
-    assert(cdt.Delaunay::is_valid(true));
-    assert(cdt.is_valid(true));
-    assert(cdt.is_conforming());
+    CGAL_assertion(cdt.Delaunay::is_valid(true));
+    CGAL_assertion(cdt.is_valid(true));
+    CGAL_assertion(cdt.is_conforming());
     if(exit_code == EXIT_SUCCESS) {
       try {
         start_time = std::chrono::high_resolution_clock::now();
@@ -707,8 +707,8 @@ int go(Mesh mesh, CDT_options options) {
     CDT_3_throw_exception_again;
   }
   finally();
-  assert(cdt.is_conforming());
-  assert(cdt.is_valid(true));
+  CGAL_assertion(cdt.is_conforming());
+  CGAL_assertion(cdt.is_valid(true));
 
 
   return exit_code;
