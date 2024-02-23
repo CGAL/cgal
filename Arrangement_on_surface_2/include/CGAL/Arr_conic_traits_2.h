@@ -3316,9 +3316,9 @@ public:
     //                sqrt((r - s)^2 + t^2)
     //
     const int or_fact = (cv.orientation() == CLOCKWISE) ? -1 : 1;
-    const Algebraic r = m_nt_traits->convert(or_fact * cv.r());
-    const Algebraic s = m_nt_traits->convert(or_fact * cv.s());
-    const Algebraic t = m_nt_traits->convert(or_fact * cv.t());
+    const Algebraic r = m_nt_traits->convert(Integer(or_fact * cv.r()));
+    const Algebraic s = m_nt_traits->convert(Integer(or_fact * cv.s()));
+    const Algebraic t = m_nt_traits->convert(Integer(or_fact * cv.t()));
     const Algebraic cos_2phi = (r - s) / m_nt_traits->sqrt((r-s)*(r-s) + t*t);
     const Algebraic zero = 0;
     const Algebraic one = 1;
@@ -3363,8 +3363,8 @@ public:
     //        4*r*s - t^2                4*r*s - t^2
     //
     // The denominator (4*r*s - t^2) must be negative for hyperbolas.
-    const Algebraic u = m_nt_traits->convert(or_fact * cv.u());
-    const Algebraic v = m_nt_traits->convert(or_fact * cv.v());
+    const Algebraic u = m_nt_traits->convert(Integer(or_fact * cv.u()));
+    const Algebraic v = m_nt_traits->convert(Integer(or_fact * cv.v()));
     const Algebraic det = 4*r*s - t*t;
     Algebraic x0, y0;
 
@@ -3803,9 +3803,9 @@ public:
     auto u = cv.u();
     auto v = cv.v();
     auto w = cv.w();
-    Algebraic* xs_end = m_nt_traits->solve_quadratic_equation(t*t - four*r*s,
-                                                              two*t*v - four*s*u,
-                                                              v*v - four*s*w,
+    Algebraic* xs_end = m_nt_traits->solve_quadratic_equation(Integer(t*t - four*r*s),
+                                                              Integer(two*t*v - four*s*u),
+                                                              Integer(v*v - four*s*w),
                                                               xs);
     auto n_xs = static_cast<int>(xs_end - xs);
 
@@ -3816,14 +3816,14 @@ public:
 
     if (CGAL::sign(cv.t()) == ZERO) {
       // The two vertical tangency points have the same y coordinate:
-      ys[0] = m_nt_traits->convert(-v) / m_nt_traits->convert(two*s);
+      ys[0] = m_nt_traits->convert(Integer(- v)) / m_nt_traits->convert(Integer(two * s));
       n_ys = 1;
     }
     else {
-      ys_end = m_nt_traits->solve_quadratic_equation(four*r*s*s - s*t*t,
-                                                     four*r*s*v - two*s*t*u,
-                                                     r*v*v - t*u*v +
-                                                     t*t*w,
+      ys_end = m_nt_traits->solve_quadratic_equation(Integer(four*r*s*s - s*t*t),
+                                                     Integer(four*r*s*v - two*s*t*u),
+                                                     Integer(r*v*v - t*u*v) +
+                                                     Integer(t*t*w),
                                                      ys);
       n_ys = static_cast<int>(ys_end - ys);
     }
@@ -3837,7 +3837,7 @@ public:
       }
       else {
         for (int j = 0; j < n_ys; ++j) {
-          if (CGAL::compare(m_nt_traits->convert(two*s) * ys[j],
+          if (CGAL::compare(m_nt_traits->convert(Integer(two*s)) * ys[j],
                             -(m_nt_traits->convert(t) * xs[i] +
                               m_nt_traits->convert(v))) == EQUAL)
           {

@@ -128,11 +128,6 @@ struct Exact_NT_backend<LEDA_BACKEND>
 #endif
 
 template <>
-struct Exact_ring_selector<double>
-#ifdef CGAL_HAS_MPZF
-{ typedef cpp_float Type; };
-#elif defined(CGAL_HAS_THREADS) || !defined(CGAL_USE_GMP)
-{ typedef MP_Float Type; };
 struct Exact_NT_backend<MP_FLOAT_BACKEND>
   : public MP_Float_arithmetic_kernel
 {
