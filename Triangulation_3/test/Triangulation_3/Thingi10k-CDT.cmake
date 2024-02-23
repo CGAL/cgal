@@ -69,6 +69,44 @@ set(thingi10k_FAILED_WITH_MERGE_FACETS
     97503.stl
 )
 
+set(thingi10k_FAILED_WITH_MERGE_FACETS_CTest_20240222_2201
+40119.stl
+40985.stl
+41360.stl
+44903.stl
+47732.stl
+55262.stl
+55278.stl
+57812.stl
+58439.stl
+67817.stl
+77342.stl
+80084.stl
+90224.stl
+92118.stl
+97503.stl
+112926.stl
+135777.stl
+162336.stl
+186544.stl
+186559.stl
+225958.stl
+285604.stl
+285605.stl
+288353.stl
+288354.stl
+288355.stl
+375273.stl
+442387.stl
+464846.stl
+904476.stl
+904480.stl
+1053875.stl
+1452672.stl
+1505023.stl
+1514904.stl
+)
+
 function(CGAL_add_cdt3_test_from_Thingi10k data_name data_filename)
   set(options "ONLY_MERGE_FACETS")
   set(oneValueArgs TIMEOUT)
@@ -85,7 +123,7 @@ function(CGAL_add_cdt3_test_from_Thingi10k data_name data_filename)
     set(MY_ONLY_MERGE_FACETS ONLY_MERGE_FACETS)
   endif()
   CGAL_add_cdt3_from_off_test_aux(${data_name} ${THINGI10K_DATA_DIR} DATA_FILENAME ${data_filename}
-     LABELS Thingi10K ${MY_LABELS}
+     LABELS ${MY_LABELS}
      ${MY_TIMEOUT_KEYWORD} ${MY_TIMEOUT}
      ${MY_ONLY_MERGE_FACETS}
      )
@@ -98,12 +136,14 @@ foreach(thingi_file_name ${thingi10k_max_10k_solid})
 
     unset(MY_ONLY_MERGE_FACETS)
   endif()
+  set(LABELS Thingi10K Thingi10K_max_10k_solid)
   if(thingi_file_name IN_LIST thingi10k_FAILED_WITH_MERGE_FACETS)
-    set(MY_EXTRA_LABEL "Thingi10K_FAIL")
-  else()
-    unset(MY_EXTRA_LABEL)
+    list(APPEND LABELS "Thingi10K_FAIL")
+  endif()
+  if(thingi_file_name IN_LIST thingi10k_FAILED_WITH_MERGE_FACETS_CTest_20240222_2201)
+    list(APPEND LABELS "CTest_20240222_2201_failed_merge_facets")
   endif()
   get_filename_component(thingi_ID "${thingi_file_name}" NAME_WE)
   CGAL_add_cdt3_test_from_Thingi10k(Thingi10K_${thingi_ID} ${thingi_file_name}
-      TIMEOUT 600 LABELS Thingi10K_max_10k_solid ${MY_EXTRA_LABEL} ${MY_ONLY_MERGE_FACETS})
+      TIMEOUT 600 LABELS ${LABELS} ${MY_ONLY_MERGE_FACETS})
 endforeach()

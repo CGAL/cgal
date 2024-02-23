@@ -97,7 +97,7 @@ function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
     set_property(TEST
       "execution   of  cdt_3_from_off ${data_name}"
       "execution   of  cdt_3_from_off --merge-facets ${data_name}"
-      APPEND PROPERTY LABELS "${MY_LABELS}")
+      APPEND PROPERTY LABELS ${MY_LABELS})
   endif()
   if(MY_TIMEOUT)
     set_tests_properties(
