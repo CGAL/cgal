@@ -11,8 +11,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
-#include <vector>
 #include <array>
+#include <vector>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;

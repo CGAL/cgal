@@ -61,14 +61,14 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   using Cell_edges = std::array<Edge_descriptor, EDGES_PER_CELL>;
 
   static decltype(auto) /*Point_3*/ point(const Vertex_descriptor& v,
-                                          const Self& g)
+                                          const Grid& g)
   {
     return g.point(v[0], v[1], v[2]);
   }
 
   // returns a container with the two vertices incident to edge e
   static Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e,
-                                                     const Self&)
+                                                     const Grid&)
   {
     Vertices_incident_to_edge ev;
     ev[0] = { e[0], e[1], e[2] };  // start vertex
@@ -79,7 +79,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
 
   // returns a container with all cells incident to edge e
   static Cells_incident_to_edge incident_cells(const Edge_descriptor& e,
-                                               const Self&)
+                                               const Grid&)
   {
     // lookup the neighbor cells relative to the edge
     const int local = internal::Cube_table::edge_store_index[e[3]];
@@ -99,7 +99,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
 
   // returns a container with all vertices of cell c
   static Cell_vertices cell_vertices(const Cell_descriptor& c,
-                                     const Self&)
+                                     const Grid&)
   {
     Cell_vertices cv;
     for(std::size_t i=0; i<cv.size(); ++i) {
@@ -115,7 +115,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
 
   // returns a container with all edges of cell c
   static Cell_edges cell_edges(const Cell_descriptor& c,
-                               const Self&)
+                               const Grid&)
   {
     Cell_edges ce;
     for(std::size_t i=0; i<ce.size(); ++i) {
@@ -136,7 +136,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   // iterates sequentially over all vertices v calling f(v) on every one
   template <typename Functor>
   static void for_each_vertex(Functor& f,
-                              const Self& g,
+                              const Grid& g,
                               const CGAL::Sequential_tag)
   {
     for(std::size_t i=0; i<g.xdim(); ++i)
@@ -148,7 +148,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   // iterates sequentially over all edges e calling f(e) on every one
   template <typename Functor>
   static void for_each_edge(Functor& f,
-                            const Self& g,
+                            const Grid& g,
                             const CGAL::Sequential_tag)
   {
     for(std::size_t i=0; i<g.xdim()-1; ++i) {
@@ -167,7 +167,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   // iterates sequentially over all cells c calling f(c) on every one
   template <typename Functor>
   static void for_each_cell(Functor& f,
-                            const Self& g,
+                            const Grid& g,
                             const CGAL::Sequential_tag)
   {
     for(std::size_t i=0; i<g.xdim()-1; ++i)
@@ -180,7 +180,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   // iterates in parallel over all vertices v calling f(v) on every one
   template <typename Functor>
   static void for_each_vertex(Functor& f,
-                              const Self& g,
+                              const Grid& g,
                               const CGAL::Parallel_tag)
   {
     const std::size_t sj = g.ydim();
@@ -201,7 +201,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   // iterates in parallel over all edges e calling f(e) on every one
   template <typename Functor>
   static void for_each_edge(Functor& f,
-                            const Self& g,
+                            const Grid& g,
                             const CGAL::Parallel_tag)
   {
     const std::size_t sj = g.ydim();
@@ -228,7 +228,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   // iterates in parallel over all cells c calling f(c) on every one
   template <typename Functor>
   static void for_each_cell(Functor& f,
-                            const Self& g,
+                            const Grid& g,
                             const CGAL::Parallel_tag)
   {
     const std::size_t sj = g.ydim();

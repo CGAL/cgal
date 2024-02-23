@@ -376,7 +376,6 @@ public:
 
       out_edge_intersections << "2 " << x_coord(p) << " " << y_coord(p) << " " << z_coord(p) << " " << x_coord(p) + x_coord(g) << " " << y_coord(p) + y_coord(g) << " " << z_coord(p) + z_coord(g) << std::endl;
     }
-
 #endif
 
     if(!do_not_triangulate_faces)
