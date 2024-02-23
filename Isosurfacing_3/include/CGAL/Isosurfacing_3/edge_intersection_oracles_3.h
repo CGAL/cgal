@@ -67,9 +67,6 @@ struct Dichotomy_edge_intersection
     using FT = typename Domain::Geom_traits::FT;
     using Point_3 = typename Domain::Geom_traits::Point_3;
 
-    using Vertex_descriptor = typename Domain::Vertex_descriptor;
-    using Edge_descriptor = typename Domain::Edge_descriptor;
-
     auto x_coord = domain.geom_traits().compute_x_3_object();
     auto y_coord = domain.geom_traits().compute_y_3_object();
     auto z_coord = domain.geom_traits().compute_z_3_object();
@@ -159,10 +156,6 @@ struct Linear_interpolation_edge_intersection
                   typename Domain::Geom_traits::Point_3& p) const
   {
     using FT = typename Domain::Geom_traits::FT;
-    using Point_3 = typename Domain::Geom_traits::Point_3;
-
-    using Vertex_descriptor = typename Domain::Vertex_descriptor;
-    using Edge_descriptor = typename Domain::Edge_descriptor;
 
     auto x_coord = domain.geom_traits().compute_x_3_object();
     auto y_coord = domain.geom_traits().compute_y_3_object();

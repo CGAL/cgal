@@ -192,7 +192,6 @@ public:
     auto y_coord = gt.compute_y_3_object();
     auto z_coord = gt.compute_z_3_object();
     auto vertex = gt.construct_vertex_3_object();
-    auto vector = gt.construct_vector_3_object();
 
     const Point_3& min_p = vertex(bbox, 0);
     const Point_3& max_p = vertex(bbox, 7);
