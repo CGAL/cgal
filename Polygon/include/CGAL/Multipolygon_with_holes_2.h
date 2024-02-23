@@ -117,8 +117,8 @@ std::ostream& operator<<(std::ostream& os,
 
   switch(IO::get_mode(os)) {
     case IO::ASCII :
-      os << mp.number_of_polygons() << ' ';
-      for (i = mp.polygon_with_holes_begin(); i != mp.polygon_with_holes_end(); ++i) {
+      os << mp.number_of_polygons_with_holes() << ' ';
+      for (i = mp.polygons_with_holes_begin(); i != mp.polygons_with_holes_end(); ++i) {
         os << *i << ' ';
       }
       return os;
