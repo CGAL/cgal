@@ -72,17 +72,17 @@ struct Dichotomy_edge_intersection
     auto z_coord = domain.geom_traits().compute_z_3_object();
     auto point = domain.geom_traits().construct_point_3_object();
 
-    if((val_0 <= isovalue) == (val_1 <= isovalue))
+    const bool sl = (val_0 <= isovalue);
+    const bool sr = (val_1 <= isovalue);
+
+    if(sl == sr)
       return false;
 
     Point_3 pl = p_0;
     Point_3 pr = p_1;
-    FT val_l = val_0;
-    FT val_r = val_1;
 
-    // @todo max iter choice
     unsigned int dichotomy_iterations = 10, iter = 0;
-
+    const FT eps = (std::max)(FT(1e-7), std::abs(isovalue) * FT(1e-7));
     do
     {
       p = point((x_coord(pl) + x_coord(pr)) / FT(2),
@@ -90,22 +90,17 @@ struct Dichotomy_edge_intersection
                 (z_coord(pl) + z_coord(pr)) / FT(2));
 
       const FT val_p = domain.value(p);
+      const bool sp = (val_p <= isovalue);
 
-      if((val_l <= isovalue) != (val_p <= isovalue))
-      {
-        pr = p;
-        val_r = val_p;
-      }
-      else
-      {
+      if(sl == sp)
         pl = p;
-        val_l = val_p;
-      }
-
-      // @todo something like 1e-10 * isovalue?
-      // see also https://stats.stackexchange.com/questions/86708/how-to-calculate-relative-error-when-the-true-value-is-zero
-      if(is_zero(val_l - val_r))
+      else if(sp == sr)
+        pr = p;
+      else
         break;
+
+      if(std::abs(val_p - isovalue) < eps)
+        return true;
     }
     while(++iter < dichotomy_iterations);
 
