@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
   mp.add_polygon_with_holes(p1);
   mp.add_polygon_with_holes(p2);
 
-  for (auto const& p: mp.polygons()) {
+  for (auto const& p: mp.polygons_with_holes()) {
     std::cout << p << std::endl;
   }
 
