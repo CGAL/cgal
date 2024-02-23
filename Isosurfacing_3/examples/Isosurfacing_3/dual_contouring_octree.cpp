@@ -1,11 +1,15 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Isosurfacing_3/dual_contouring_3.h>
-#include <CGAL/Isosurfacing_3/Value_function_3.h>
-#include <CGAL/Isosurfacing_3/Gradient_function_3.h>
+// undocumented
 #include <CGAL/Isosurfacing_3/internal/Octree_wrapper.h>
 
+#include <CGAL/Isosurfacing_3/dual_contouring_3.h>
+#include <CGAL/Isosurfacing_3/Dual_contouring_domain_3.h>
+#include <CGAL/Isosurfacing_3/Value_function_3.h>
+#include <CGAL/Isosurfacing_3/Gradient_function_3.h>
+
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/Real_timer.h>
 
 #include <cmath>
 #include <iostream>
@@ -22,8 +26,9 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 using Octree_wrapper = CGAL::Isosurfacing::internal::Octree_wrapper<Kernel>;
 using Values = CGAL::Isosurfacing::Value_function_3<Octree_wrapper>;
 using Gradients = CGAL::Isosurfacing::Gradient_function_3<Octree_wrapper>;
-using Domain = CGAL::Isosurfacing::Isosurfacing_domain_3<Octree_wrapper, Data>;
+using Domain = CGAL::Isosurfacing::Dual_contouring_domain_3<Octree_wrapper, Values, Gradients>;
 
+// Refine one of the octant
 struct Refine_one_eighth
 {
   std::size_t min_depth_;
@@ -72,34 +77,57 @@ struct Refine_one_eighth
   }
 };
 
-int main(int, char**)
+auto sphere_function = [](const Point& p) -> FT
 {
+  return std::sqrt(p.x()*p.x() + p.y()*p.y() + p.z()*p.z());
+};
+
+auto sphere_gradient = [](const Point& p) -> Vector
+{
+  const Vector g = p - CGAL::ORIGIN;
+  return g / std::sqrt(g.squared_length());
+};
+
+int main(int argc, char** argv)
+{
+  const FT isovalue = (argc > 1) ? std::stod(argv[1]) : 0.8;
+
   const CGAL::Bbox_3 bbox{-1., -1., -1.,  1., 1., 1.};
   Octree_wrapper octree_wrap { bbox };
 
   Refine_one_eighth split_predicate(3, 5);
   octree_wrap.refine(split_predicate);
 
-  auto sphere_function = [](const Point& p) -> FT
-  {
-    return std::sqrt(p.x() * p.x() + p.y() * p.y() + p.z() * p.z());
-  };
+  std::ofstream oo("octree.polylines.txt");
+  oo.precision(17);
+  octree_wrap.octree().dump_to_polylines(oo);
 
-  auto sphere_gradient = [&](const Point& p) -> Vector
-  {
-    const Vector g = p - CGAL::ORIGIN;
-    return g / std::sqrt(g.squared_length());
-  };
+  std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
 
-  Data data(sphere_function, sphere_gradient);
-  Domain domain(octree_wrap, data);
+  CGAL::Real_timer timer;
+  timer.start();
 
+  // fill up values and gradients
+  Values values { sphere_function, octree_wrap };
+  Gradients gradients { sphere_gradient, octree_wrap };
+  Domain domain { octree_wrap, values, gradients };
+
+  // output containers
   Point_range points;
-  Polygon_range polygons;
+  Polygon_range triangles;
 
-  CGAL::Isosurfacing::dual_contouring(domain, 0.8, points, polygons);
+  // run Dual Contouring
+  CGAL::Isosurfacing::dual_contouring<CGAL::Sequential_tag>(domain, isovalue, points, triangles,
+                                                            CGAL::parameters::do_not_triangulate_faces(true));
 
-  CGAL::IO::write_polygon_soup("dual_contouring_octree.off", points, polygons);
+  timer.stop();
+
+  std::cout << "Output #vertices (DC): " << points.size() << std::endl;
+  std::cout << "Output #triangles (DC): " << triangles.size() << std::endl;
+  std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
+  CGAL::IO::write_polygon_soup("dual_contouring_octree.off", points, triangles);
+
+  std::cout << "Done" << std::endl;
 
   return EXIT_SUCCESS;
 }
