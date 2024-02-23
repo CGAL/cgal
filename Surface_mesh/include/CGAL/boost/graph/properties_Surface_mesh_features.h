@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
 #define CGAL_PROPERTIES_SURFACE_MESH_FEATURES_H
+
+#include <CGAL/license/Surface_mesh.h>
+
 
 #ifndef DOXYGEN_RUNNING
 
@@ -79,7 +82,7 @@ namespace CGAL {
 
 template <typename P, typename I>
 typename boost::lazy_disable_if<
-   boost::is_const<P>,
+   std::is_const<P>,
    Get_pmap_of_surface_mesh<P, CGAL::face_patch_id_t<I> >
  >::type
 inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
@@ -91,7 +94,7 @@ inline get(CGAL::face_patch_id_t<I>, Surface_mesh<P> & smesh)
 
 template <typename P, typename I>
 typename boost::lazy_disable_if<
-   boost::is_const<P>,
+   std::is_const<P>,
    Get_pmap_of_surface_mesh<P, CGAL::face_patch_id_t<I> >
  >::type
 inline get(CGAL::face_patch_id_t<I>, const Surface_mesh<P> & smesh)
@@ -103,7 +106,7 @@ inline get(CGAL::face_patch_id_t<I>, const Surface_mesh<P> & smesh)
 
 #define CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(Tag) \
   typename boost::lazy_disable_if<                      \
-     boost::is_const<P>,                                \
+     std::is_const<P>,                                \
      Get_pmap_of_surface_mesh<P, Tag >                  \
    >::type
 
@@ -153,7 +156,7 @@ inline get(CGAL::vertex_feature_degree_t, const Surface_mesh<P> & smesh)
 
 template <typename P, typename I>
 typename boost::lazy_disable_if<
-   boost::is_const<P>,
+   std::is_const<P>,
    Get_pmap_of_surface_mesh<P, CGAL::vertex_incident_patches_t<I> >
  >::type
   inline get(CGAL::vertex_incident_patches_t<I>, Surface_mesh<P> & smesh)
@@ -164,7 +167,7 @@ typename boost::lazy_disable_if<
 
 template <typename P, typename I>
 typename boost::lazy_disable_if<
-   boost::is_const<P>,
+   std::is_const<P>,
    Get_pmap_of_surface_mesh<P, CGAL::vertex_incident_patches_t<I> >
  >::type
   inline get(CGAL::vertex_incident_patches_t<I>, const Surface_mesh<P> & smesh)

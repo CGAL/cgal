@@ -7,7 +7,9 @@ The class `HalfedgeDS_list` is a model for the `HalfedgeDS` concept.
 `HalfedgeDS_list` is a list-based representation with bidirectional
 iterators that supports removal.
 
-\cgalModels `HalfedgeDS<Traits,Items,Alloc>`
+\cgalModelsBareBegin
+\cgalModelsBare{`HalfedgeDS<Traits,Items,Alloc>`}
+\cgalModelsBareEnd
 
 \sa `CGAL::HalfedgeDS_default`
 \sa `CGAL::HalfedgeDS_vector`
@@ -20,7 +22,7 @@ iterators that supports removal.
 \cgalHeading{Implementation}
 
 `HalfedgeDS_list` uses internally the `CGAL::In_place_list` container class.
-The copy constructor and the assignment operator need \f$ O(n)\f$ time with
+The copy constructor and the assignment operator need \cgalBigO{n} time with
 \f$ n\f$ the total number of vertices, halfedges, and faces.
 
 `CGAL_ALLOCATOR(int)` is used as default argument for the

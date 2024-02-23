@@ -3,14 +3,16 @@
 \ingroup PkgTetrahedralRemeshingConcepts
 \cgalConcept
 
-\cgalRefines TriangulationTraits_3
+\cgalRefines{TriangulationTraits_3}
 
 The concept `RemeshingTriangulationTraits_3` is the first template parameter
 of the class `Remeshing_triangulation_3`. It defines the geometric objects
 (points, segments, triangles, and tetrahedra) forming the triangulation together with a few
 geometric predicates and constructions on these objects.
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_3`
 */

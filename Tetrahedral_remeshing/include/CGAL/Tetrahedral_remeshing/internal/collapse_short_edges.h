@@ -18,7 +18,6 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/array.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/functional/hash.hpp>
 
@@ -45,6 +44,7 @@ enum Edge_type     { FEATURE, BOUNDARY, INSIDE, MIXTE,
 enum Collapse_type { TO_MIDPOINT, TO_V0, TO_V1, IMPOSSIBLE };
 enum Result_type   { VALID,
                      V_PROBLEM, C_PROBLEM, E_PROBLEM,
+                     ANGLE_PROBLEM,
                      TOPOLOGICAL_PROBLEM, ORIENTATION_PROBLEM, SHARED_NEIGHBOR_PROBLEM };
 
 template<typename C3t3>
@@ -215,6 +215,15 @@ public:
 
       } while (++circ != done);
 
+#ifdef PROTECT_ANGLES_FROM_COLLAPSE
+      Dihedral_angle_cosine curr_max_cos
+        = max_cos_dihedral_angle(triangulation, cells_to_remove[0]);
+      for (std::size_t i = 1; i < cells_to_remove.size(); ++i)
+      {
+        curr_max_cos = (std::max)(curr_max_cos,
+          max_cos_dihedral_angle(triangulation, cells_to_remove[i]));
+      }
+#endif
 
       vh0->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
       vh1->set_point(Point_3(v0_new_pos.x(), v0_new_pos.y(), v0_new_pos.z()));
@@ -270,6 +279,10 @@ public:
           return ORIENTATION_PROBLEM;
         if (!triangulation.tds().is_valid(cit, true))
           return C_PROBLEM;
+#ifdef PROTECT_ANGLES_FROM_COLLAPSE
+        if (curr_max_cos < max_cos_dihedral_angle(triangulation, cit))
+          return ANGLE_PROBLEM;
+#endif
       }
 
       for (Vertex_handle vit : triangulation.finite_vertex_handles())
@@ -453,7 +466,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
       if (!ch->has_vertex(v1))
       {
         //check orientation
-        boost::array<Point, 4> pts = { ch->vertex(0)->point(),
+        std::array<Point, 4> pts = { ch->vertex(0)->point(),
                                        ch->vertex(1)->point(),
                                        ch->vertex(2)->point(),
                                        ch->vertex(3)->point()};
@@ -486,7 +499,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
       if (!ch->has_vertex(v0))
       {
         //check orientation
-        boost::array<Point, 4> pts = { ch->vertex(0)->point(),
+        std::array<Point, 4> pts = { ch->vertex(0)->point(),
                                        ch->vertex(1)->point(),
                                        ch->vertex(2)->point(),
                                        ch->vertex(3)->point() };
@@ -791,6 +804,9 @@ collapse(const typename C3t3::Cell_handle ch,
     inc_cells.push_back(circ);
   }
   while (++circ != done);
+
+  if(c3t3.is_in_complex(ch->vertex(from), ch->vertex(to)))
+    c3t3.remove_from_complex(ch->vertex(from), ch->vertex(to));
 
   bool valid = true;
   std::vector<Cell_handle> cells_to_remove;
@@ -1110,11 +1126,9 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   if (are_edge_lengths_valid(edge, c3t3, new_pos, sqhigh, cell_selector/*, adaptive = false*/)
     && collapse_preserves_surface_star(edge, c3t3, new_pos, cell_selector))
   {
-    CGAL_assertion_code(typename Tr::Cell_handle dc);
-    CGAL_assertion_code(int di);
-    CGAL_assertion_code(int dj);
-    CGAL_assertion(c3t3.triangulation().is_edge(edge.first->vertex(edge.second),
-                                                edge.first->vertex(edge.third), dc, di, dj));
+    CGAL_assertion(c3t3.triangulation().tds().is_edge(
+                       edge.first->vertex(edge.second),
+                       edge.first->vertex(edge.third)));
 
     Vertex_handle v0_init = edge.first->vertex(edge.second);
     Vertex_handle v1_init = edge.first->vertex(edge.third);
@@ -1224,7 +1238,7 @@ void collapse_short_edges(C3T3& c3t3,
 
     FT sqlen = sql(tr.segment(e));
     if (sqlen < sq_low)
-      short_edges.insert(short_edge(make_vertex_pair<T3>(e), sqlen));
+      short_edges.insert(short_edge(make_vertex_pair(e), sqlen));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -1286,7 +1300,7 @@ void collapse_short_edges(C3T3& c3t3,
 
           const FT sqlen = sql(tr.segment(eshort));
           if (sqlen < sq_low)
-            short_edges.insert(short_edge(make_vertex_pair<T3>(eshort), sqlen));
+            short_edges.insert(short_edge(make_vertex_pair(eshort), sqlen));
         }
 
         //debug::dump_c3t3(c3t3, "dump_after_collapse");

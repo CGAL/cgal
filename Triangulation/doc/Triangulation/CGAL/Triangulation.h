@@ -556,8 +556,7 @@ Inserts point `p` into the triangulation and returns a handle to the
 `Vertex` at that position. The action taken depends on the value of
 `loc_type`:
 
-<DL> <DT><B>`ON_VERTEX`</B><DD> The point of the
-p`Vertex` described by `f` is set to `p`.
+<DL> <DT><B>`ON_VERTEX`</B><DD> The triangulation remains unchanged.
 <DT><B>`IN_FACE`</B><DD> The point `p` is inserted in the `Face f`.
 <DT><B>`IN_FACET`</B><DD> The point `p` is inserted in the `Facet ft`.
 <DT><B>Anything else</B><DD> The point `p` is inserted in the triangulation according to the value

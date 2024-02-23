@@ -23,7 +23,6 @@
 #include <CGAL/Object.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/utility/result_of.hpp>
 
@@ -395,7 +394,7 @@ public:
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
           std::enable_if_t<
-              boost::is_convertible<
+              std::is_convertible<
                   typename std::iterator_traits<InputIterator>::value_type,
                   Weighted_point
               >::value
@@ -516,7 +515,7 @@ public:
   insert(InputIterator first,
           InputIterator last,
           std::enable_if_t<
-              boost::is_convertible<
+              std::is_convertible<
                 typename std::iterator_traits<InputIterator>::value_type,
                 std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
               >::value
@@ -529,10 +528,8 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
           std::enable_if_t<
-            boost::mpl::and_<
-              typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
-              typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-            >::value
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point > &&
+              std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
           >* =nullptr
 )
   {return insert_with_info< boost::tuple<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}

@@ -48,7 +48,7 @@ namespace Point_set {
   \tparam PointMap
   a model of `ReadablePropertyMap` whose key type is `Item_` and value type is `GeomTraits::Point_2` or `GeomTraits::Point_3`
 
-  \cgalModels `NeighborQuery`
+  \cgalModels{NeighborQuery}
 */
 template<
 typename GeomTraits,

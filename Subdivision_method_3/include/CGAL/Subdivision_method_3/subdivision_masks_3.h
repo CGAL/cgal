@@ -88,7 +88,7 @@ public:
 
 public:
   Linear_mask_3(Mesh* pmesh)
-    : Base(pmesh, get(vertex_point, pmesh))
+    : Base(pmesh, get(vertex_point, *pmesh))
   { }
 
   Linear_mask_3(Mesh* pmesh, VertexPointMap vpmap)
@@ -118,7 +118,7 @@ public:
   }
 
   void border_node(halfedge_descriptor edge, Point& ept, Point& /*vpt*/){
-    edge_node(edge, ept);
+   edge_node(edge, ept);
   }
 };
 
@@ -142,7 +142,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \image html CCBorderMask.svg
 
 
-\cgalModels `PQQMask_3`
+\cgalModels{PQQMask_3}
 
 \sa `CGAL::Subdivision_method_3`
 */
@@ -266,7 +266,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \image html LoopBorderMask.png
 \image latex LoopBorderMask.png
 
-\cgalModels `PTQMask_3`
+\cgalModels{PTQMask_3}
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -429,7 +429,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \image html DSCornerMask.png
 \image latex DSCornerMask.png
 
-\cgalModels `DQQMask_3`
+\cgalModels{DQQMask_3}
 
 \sa `CGAL::Subdivision_method_3`
 
@@ -523,7 +523,7 @@ such as `Polyhedron_3` and `Surface_mesh`.
 \tparam PolygonMesh must be a model of the concept `MutableFaceGraph`. Additionally all faces must be triangles.
 \tparam VertexPointMap must be a model of `WritablePropertyMap` with value type `Point_3`
 
-\cgalModels `Sqrt3Mask_3`
+\cgalModels{Sqrt3Mask_3}
 
 \sa `CGAL::Subdivision_method_3`
 

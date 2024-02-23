@@ -14,5 +14,6 @@
 
 #include <CGAL/boost_mp_type.h>
 #include <CGAL/BOOST_MP_arithmetic_kernel.h>
+#include <CGAL/cpp_float.h>
 
 #endif // CGAL_BOOST_MP_H

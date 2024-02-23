@@ -20,6 +20,10 @@
   #define CGAL_MESH_3_VERBOSE
 #endif
 
+#ifdef CGAL_MESH_3_CONFIG_H
+  #error "The header '<CGAL/Periodic_3_mesh_3/config.h>' must be included before '<CGAL/Mesh_3/config.h>'"
+#endif
+
 #include <CGAL/Mesh_3/config.h>
 
 // Whether to remove dummy points or not during the protection of sharp features

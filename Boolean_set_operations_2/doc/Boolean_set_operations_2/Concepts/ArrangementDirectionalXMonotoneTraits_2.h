@@ -14,15 +14,17 @@ If the traits class is also a model of
 also required to have a direction, namely one of these two endpoint serves
 as its <I>source</I> and the other as its <I>target</I>.
 
-\cgalRefines `ArrangementXMonotoneTraits_2`
+\cgalRefines{ArrangementXMonotoneTraits_2}
 
-\cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Arr_circle_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
-\cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits>`
-\cgalHasModel `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
-\cgalHasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Arr_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Arr_non_caching_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Arr_circle_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
+\cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgKernel,NtTraits>}
+\cgalHasModels{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}
+\cgalHasModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
+\cgalHasModelsEnd
 
 \sa `ArrangementXMonotoneTraits_2`
 

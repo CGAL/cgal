@@ -16,16 +16,12 @@
 
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_convertible.hpp>
-
-
-
 
 namespace CGAL {
 namespace internal {
-template <class Cat1, class Cat2, bool=boost::is_convertible<Cat1,Cat2>::value>
+template <class Cat1, class Cat2, bool=std::is_convertible<Cat1,Cat2>::value>
 struct Min_category {
-        CGAL_static_assertion((boost::is_convertible<Cat2,Cat1>::value));
+        static_assert(std::is_convertible<Cat2,Cat1>::value);
         typedef Cat1 type;
 };
 
@@ -47,7 +43,7 @@ class transforming_pair_iterator_helper
                 decltype(std::declval<F>()(std::declval<typename std::iterator_traits<It1>::reference>(),std::declval<typename std::iterator_traits<It2>::reference>()))
                         >::type reference;
 
-        typedef typename Default::Get<Val,typename boost::remove_cv<typename boost::remove_reference<reference>::type>::type>::type value_type;
+        typedef typename Default::Get<Val,std::remove_cv_t<std::remove_reference_t<reference>>>::type value_type;
 
         public:
         typedef boost::iterator_facade<
@@ -97,9 +93,9 @@ private internal::Functor_as_base<F>
         template<class F2,class J1,class J2,class R2,class V2>
         transforming_pair_iterator(
                 transforming_pair_iterator<F2,J1,J2,R2,V2> const&i,
-                std::enable_if_t<boost::is_convertible<J1, It1>::value>* = 0,
-                std::enable_if_t<boost::is_convertible<J2, It2>::value>* = 0,
-                std::enable_if_t<boost::is_convertible<F2, F>::value>* = 0)
+                std::enable_if_t<std::is_convertible<J1, It1>::value>* = 0,
+                std::enable_if_t<std::is_convertible<J2, It2>::value>* = 0,
+                std::enable_if_t<std::is_convertible<F2, F>::value>* = 0)
                 : Functor_base(i.functor()),iter1(i.iter1),iter2(i.iter2) {}
 
 };

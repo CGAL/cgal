@@ -7,9 +7,11 @@ concept `AABBGeomTraits`. In addition to the types required by
 `AABBGeomTraits` it also requires types and functors necessary to
 define the Intersection_distance functor.
 
-\cgalRefines `AABBGeomTraits`
+\cgalRefines{AABBGeomTraits}
 
-\cgalHasModel All models of the concept `Kernel`
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the concept `Kernel`}
+\cgalHasModelsEnd
 
 \sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`

@@ -21,11 +21,12 @@ halfedge data structure they must be derived from a base class `Base`
 where the modifying member functions are still public. (The protection
 could be bypassed by an user, but not by accident.)
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{CopyConstructible,DefaultConstructible}
 
-\cgalHasModel `CGAL::HalfedgeDS_vertex_base<Refs>`
-\cgalHasModel `CGAL::HalfedgeDS_vertex_min_base<Refs>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::HalfedgeDS_vertex_base<Refs>}
+\cgalHasModels{CGAL::HalfedgeDS_vertex_min_base<Refs>}
+\cgalHasModelsEnd
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`
 \sa `HalfedgeDSItems`

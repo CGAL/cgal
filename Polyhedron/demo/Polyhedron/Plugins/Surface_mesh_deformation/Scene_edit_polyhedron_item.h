@@ -26,9 +26,9 @@
 #include <CGAL/Surface_mesh_deformation.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <QGLBuffer>
-#include <QGLShader>
-#include <QGLShaderProgram>
+#include <QOpenGLBuffer>
+#include <QOpenGLShader>
+#include <QOpenGLShaderProgram>
 
 
 typedef boost::graph_traits<SMesh>::vertex_descriptor sm_vertex_descriptor;
@@ -379,7 +379,7 @@ public:
     }
   };
 
-  boost::optional<std::size_t> get_minimum_isolated_component();
+  std::optional<std::size_t> get_minimum_isolated_component();
   template<typename Mesh>
   struct Select_roi_output{
     typedef typename CGAL::Surface_mesh_deformation<Mesh, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
@@ -393,7 +393,7 @@ public:
     M_Deform_mesh* dm;
   };
 
-  boost::optional<std::size_t> select_isolated_components(std::size_t threshold) ;
+  std::optional<std::size_t> select_isolated_components(std::size_t threshold) ;
 
 protected:
   // Deformation related functions //

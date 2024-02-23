@@ -48,7 +48,7 @@ namespace Point_set {
     \tparam NormalMap
     a model of `ReadablePropertyMap` whose key type is `Item` and value type is `Kernel::Vector_3`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,
@@ -128,7 +128,7 @@ namespace Point_set {
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
         \cgalParamNEnd
-        \cgalParamNBegin{cosine_of_maxium_angle}
+        \cgalParamNBegin{cosine_of_maximum_angle}
           \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
           this parameter can be used instead of the `maximum_angle`}
           \cgalParamType{`GeomTraits::FT`}
@@ -167,7 +167,7 @@ namespace Point_set {
 
       \pre `maximum_distance >= 0`
       \pre `maximum_angle >= 0 && maximum_angle <= 90`
-      \pre `cosine_of_maxium_angle >= 0 && cosine_of_maxium_angle <= 1`
+      \pre `cosine_of_maximum_angle >= 0 && cosine_of_maximum_angle <= 1`
       \pre `minimum_region_size > 0`
       \pre `minimum_radius >= 0`
       \pre `maximum_radius >= minimum_radius`
@@ -197,7 +197,7 @@ namespace Point_set {
       const FT default_cos_value = static_cast<FT>(std::cos(CGAL::to_double(
         (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
       const FT cos_value = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::cosine_of_maxium_angle), default_cos_value);
+        parameters::get_parameter(np, internal_np::cosine_of_maximum_angle), default_cos_value);
       CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
       m_cos_value_threshold = cos_value;
 
@@ -252,13 +252,10 @@ namespace Point_set {
       \param region
       inlier items of the region
 
-      The first parameter is not used in this implementation.
-
       \return Boolean `true` or `false`
 
     */
     bool is_part_of_region(
-      const Item,
       const Item query,
       const Region& region) const {
 

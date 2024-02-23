@@ -1,5 +1,4 @@
-
-// Copyright (c) 2023 GeometryFactory (France).
+// Copyright (c) 2023 GeometryFactory (France), INRIA Saclay - Ile de France (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -8,13 +7,14 @@
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)        :  Andreas Fabri
+// Author(s)        :  Andreas Fabri, Marc Glisse
 
 #ifndef CGAL_CPP_FLOAT_H
 #define CGAL_CPP_FLOAT_H
 
+//#define CGAL_DEBUG_CPPF
 
-#include <CGAL/boost_mp_type.h>
+#include <CGAL/boost_mp.h>
 #include <CGAL/assertions.h>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <iostream>
@@ -40,12 +40,12 @@ namespace internal {
 #if defined(_MSC_VER)
     unsigned long ret;
     _BitScanReverse64(&ret, x);
-    return (int)ret; // AF:  was 63 - (int)ret;  The others have to be changed too
+    return (int)ret;
 #elif defined(__xlC__)
     // Macro supposedly not defined on z/OS.
-    return __cntlz8 (x);
+    return 63 - __cntlz8 (x);
 #else
-    return __builtin_clzll (x);
+    return 63 - __builtin_clzll (x);
 #endif
   }
 
@@ -59,8 +59,12 @@ namespace internal {
   }
 #endif
 
+// It would have made sense to make this
+// boost::multiprecision::number<some_new_backend>, but we keep that
+// for later when we contribute to boost::mp
+
 class cpp_float {
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
   boost::multiprecision::cpp_rational rat;
 #endif
 
@@ -71,7 +75,7 @@ class cpp_float {
 public:
   cpp_float()
     :
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat(),
 #endif
     man(), exp()
@@ -79,7 +83,7 @@ public:
 
   cpp_float(short i)
     :
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat(i),
 #endif
     man(i),exp(0)
@@ -87,7 +91,7 @@ public:
 
   cpp_float(int i)
     :
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat(i),
 #endif
     man(i),exp(0)
@@ -95,12 +99,12 @@ public:
 
   cpp_float(long i)
     :
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat(i),
 #endif
     man(i),exp(0)
   {}
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
   cpp_float(const Mantissa& man,  int exp, const boost::multiprecision::cpp_rational& rat)
     : rat(rat), man(man),exp(exp)
   {}
@@ -108,22 +112,27 @@ public:
 
   cpp_float(const Mantissa& man, int exp)
       : man(man), exp(exp)
-  {}
+  {
+    CGAL_HISTOGRAM_PROFILER("size (man/exp)", static_cast<int>(man.backend().size()));
+  }
 
-
+#ifndef CGAL_DEBUG_CPPF
   template <typename Expression>
   cpp_float(const Expression& man, int exp)
-      : man(man), exp(exp)
-  {}
+    :man(man), exp(exp)
+  {
+    CGAL_HISTOGRAM_PROFILER("size (expression/exp)", static_cast<int>(this->man.backend().size()));
+  }
+#endif
 
 #endif
   cpp_float(double d)
 
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
    : rat(d)
 #endif
   {
-    //std::cout << "\ndouble = " << d << std::endl;
+    // std::cout << "\ndouble = " << d << std::endl;
     using boost::uint64_t;
     union {
 #ifdef CGAL_LITTLE_ENDIAN
@@ -164,22 +173,45 @@ public:
     // std::cout << "nbits = " << nbits << std::endl;
 
     exp = idexp - nbits;
+    man = m;
     if(u.s.sig){
-      m = -m;
+      man.backend().negate();
     }
+#ifdef CGAL_DEBUG_CPPF
+    assert(rat.sign() == man.sign());
+#endif
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
-    man = m;
+
+    CGAL_HISTOGRAM_PROFILER("size when constructed from double", static_cast<int>(man.backend().size()));
   }
+
 
   friend std::ostream& operator<<(std::ostream& os, const cpp_float& m)
   {
-    return os << m.man << " * 2 ^ " << m.exp << " ( " << m.to_double() << ") ";
+    return os << m.to_double();
+#if 0 // dehug output
+    return os << m.man << " * 2 ^ " << m.exp << " ( " << m.to_double() << ") "
+#ifdef CGAL_DEBUG_CPPF
+              << "  " << m.rat
+#endif
+      ;
+#endif
   }
+
+
+  friend std::istream& operator>>(std::istream& is, cpp_float& m)
+  {
+    double d;
+    is >> d;
+    m = cpp_float(d);
+    return is;
+  }
+
 
   friend cpp_float operator-(cpp_float const&x)
   {
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     return cpp_float(-x.man,x.exp, -x.rat);
 #else
     return cpp_float(-x.man,x.exp);
@@ -188,7 +220,7 @@ public:
 
   cpp_float& operator*=(const cpp_float& other)
   {
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat *= other.rat;
 #endif
     man *= other.man;
@@ -196,35 +228,52 @@ public:
     return *this;
   }
 
-
   friend
   cpp_float operator*(const cpp_float& a, const cpp_float&b){
-    return cpp_float(a.man*b.man, a.exp+b.exp);
+#ifdef CGAL_DEBUG_CPPF
+    return cpp_float(a.man*b.man, a.exp+b.exp, a.rat * b.rat);
+#else
+      return cpp_float(a.man*b.man, a.exp+b.exp);
+#endif
   }
 
-
+  // Marc Glisse commented on github:
+  // We can sometimes end up with a mantissa that has quite a few zeros at the end,
+  // but the cases where the mantissa is too long by more than 1 limb should be negligible,
+  // and normalizing so the mantissa is always odd would have a cost.
   cpp_float operator+=(const cpp_float& other)
   {
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat += other.rat;
 #endif
     int shift = exp - other.exp;
     if(shift > 0){
-      man <<= shift;
-      man += other.man;
+      man = (man << shift) + other.man;
       exp = other.exp;
     }else if(shift < 0){
-      man += (other.man << -shift);
+      man = man + (other.man << -shift);
     }else{
       man += other.man;
     }
     return *this;
   }
 
-
+#ifdef CGAL_DEBUG_CPPF
   friend
   cpp_float operator+(const cpp_float& a, const cpp_float&b){
     int shift = a.exp - b.exp;
+    if(shift > 0){
+      return cpp_float((a.man << shift) + b.man, b.exp, a.rat+b.rat);
+    }else if(shift < 0){
+      return cpp_float(a.man + (b.man << -shift), a.exp, a.rat+b.rat);
+    }
+    return cpp_float(a.man + b.man, a.exp, a.rat+b.rat);
+  }
+#else
+  friend
+  cpp_float operator+(const cpp_float& a, const cpp_float&b){
+    int shift = a.exp - b.exp;
+    CGAL_HISTOGRAM_PROFILER("shift+", CGAL::abs(shift));
     if(shift > 0){
       return cpp_float((a.man << shift) + b.man, b.exp);
     }else if(shift < 0){
@@ -232,13 +281,12 @@ public:
     }
     return cpp_float(a.man + b.man, a.exp);
   }
-
-
+#endif
 
   cpp_float operator-=(const cpp_float& other)
   {
 
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     rat -= other.rat;
 #endif
     int shift = exp - other.exp;
@@ -254,10 +302,24 @@ public:
     return *this;
   }
 
+  #ifdef CGAL_DEBUG_CPPF
   friend
   cpp_float operator-(const cpp_float& a, const cpp_float&b){
 
     int shift = a.exp - b.exp;
+    if(shift > 0){
+      return cpp_float((a.man << shift) - b.man, b.exp, a.rat-b.rat);
+    }else if(shift < 0){
+      return cpp_float(a.man - (b.man << -shift), a.exp, a.rat-b.rat);
+    }
+    return cpp_float(a.man - b.man, a.exp, a.rat-b.rat);
+  }
+#else
+  friend
+  cpp_float operator-(const cpp_float& a, const cpp_float&b){
+
+    int shift = a.exp - b.exp;
+    CGAL_HISTOGRAM_PROFILER("shift-", CGAL::abs(shift));
     if(shift > 0){
       return cpp_float((a.man << shift) - b.man, b.exp);
     }else if(shift < 0){
@@ -265,25 +327,35 @@ public:
     }
     return cpp_float(a.man - b.man, a.exp);
   }
+#endif
 
-  bool positive() const
+  bool is_positive() const
   {
-    return is_positive(man);
+    return CGAL::is_positive(man);
   }
 
+  bool is_negative() const
+  {
+    return CGAL::is_negative(man);
+  }
 
+  // Would it make sense to compare the sign of the exponent?
+  // to distinguish the interval between ]-1,1[  from the rest.
   friend bool operator<(const cpp_float& a, const cpp_float& b)
   {
-#ifdef CGAL_CPPF
+    if(((! a.is_positive()) && b.is_positive())
+       || (a.is_negative() && b.is_zero()))return true;
+    if(((! b.is_positive()) && a.is_positive())
+       || (b.is_negative() && a.is_zero()))return false;
+
+#ifdef CGAL_DEBUG_CPPF
     bool qres = a.rat < b.rat;
 #endif
-    cpp_float d(b);
-    d -= a;
-
-#ifdef CGAL_CPPF
-    assert(qres == ( (!d.is_zero()) && d.positive()));
+    cpp_float d = b-a;
+#ifdef CGAL_DEBUG_CPPF
+    assert(qres == d.is_positive());
 #endif
-    return ( (!d.is_zero()) && d.positive());
+    return d.is_positive();
   }
 
   friend bool operator>(cpp_float const&a, cpp_float const&b){
@@ -299,26 +371,25 @@ public:
 
   friend bool operator==(cpp_float const&a, cpp_float const&b){
 
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     bool qres = a.rat == b.rat;
 #endif
    int shift = a.exp - b.exp;
+   CGAL_HISTOGRAM_PROFILER("shift==", CGAL::abs(shift));
     if(shift > 0){
-      Mantissa ac(a.man);
-      ac <<= shift;
-#ifdef CGAL_CPPF
+      Mantissa ac = a.man << shift;
+#ifdef CGAL_DEBUG_CPPF
       assert( qres == (ac == b.man));
 #endif
       return ac == b.man;
     }else if(shift < 0){
-      Mantissa  bc(b.man);
-      bc <<= -shift;
-#ifdef CGAL_CPPF
+      Mantissa  bc = b.man << -shift;
+#ifdef CGAL_DEBUG_CPPF
       assert(qres == (a.man == bc));
 #endif
       return a.man == bc;
     }
-#ifdef CGAL_CPPF
+#ifdef CGAL_DEBUG_CPPF
     assert(qres == (a.man == b.man));
 #endif
     return a.man==b.man;
@@ -347,27 +418,38 @@ public:
     }
     Mantissa pow(1);
     pow <<= -exp;
-    boost::multiprecision::cpp_rational rat(man, pow);
-    return CGAL::to_double(rat);
+    boost::multiprecision::cpp_rational r(man, pow);
+    return CGAL::to_double(r);
   }
 
   std::pair<double,double> to_interval() const
   {
-    assert(false);
-    double zero(0);
-    return std::make_pair(zero,zero);
+      if(exp == 0){
+      return CGAL::to_interval(man);
+    }
+    if(exp > 0){
+      Mantissa as = man << exp;
+      return CGAL::to_interval(as);
+    }
+    Mantissa pow(1);
+    pow <<= -exp;
+    boost::multiprecision::cpp_rational r(man, pow);
+    return CGAL::to_interval(r);
   }
 
 
   bool is_zero () const {
-    return man==0 && exp == 0;
+    return CGAL::is_zero(man);
   }
 
 
   bool is_one () const {
-    assert(false);
-    return true;
-    //  return exp==0 && size==1 && data()[0]==1;
+    if(! is_positive()) return false;
+
+    int msb = static_cast<int>(boost::multiprecision::msb(man));
+    if (msb != -exp) return false;
+    int lsb = static_cast<int>(boost::multiprecision::lsb(man));
+    return (msb == lsb);
   }
 
 
@@ -376,6 +458,10 @@ public:
     return CGAL::sign(man);
   }
 
+  std::size_t size() const
+  {
+    return man.backend().size();
+  }
 };
 
 
@@ -394,16 +480,15 @@ public:
       struct Is_one
         : public CGAL::cpp98::unary_function< Type, bool > {
           bool operator()( const Type& x ) const {
-            assert(false);
-            return false; // x.is_one();
+            return x.is_one();
           }
         };
 
       struct Gcd
         : public CGAL::cpp98::binary_function< Type, Type, Type > {
           Type operator()(
-              const Type& x,
-              const Type& y ) const {
+              const Type& /* x */,
+              const Type& /* y */ ) const {
             assert(false);
             return Type(); // cpp_float_gcd(x, y);
           }
@@ -419,8 +504,8 @@ public:
       struct Integral_division
         : public CGAL::cpp98::binary_function< Type, Type, Type > {
           Type operator()(
-              const Type& x,
-              const Type& y ) const {
+              const Type& /* x */,
+              const Type& /* y */ ) const {
             assert(false);
             return Type(); // x / y;
           }
@@ -428,7 +513,7 @@ public:
 
       struct Sqrt
         : public CGAL::cpp98::unary_function< Type, Type > {
-          Type operator()( const Type& x) const {
+          Type operator()( const Type& /* x */) const {
             assert(false);
             return Type(); // cpp_float_sqrt(x);
           }
@@ -436,12 +521,12 @@ public:
 
       struct Is_square
         : public CGAL::cpp98::binary_function< Type, Type&, bool > {
-          bool operator()( const Type& x, Type& y ) const {
+          bool operator()( const Type& /* x */, Type& /* y */ ) const {
             // TODO: avoid doing 2 calls.
             assert(false);
             return true;
           }
-          bool operator()( const Type& x) const {
+          bool operator()( const Type& /* x */) const {
             assert(false);
             return true;
           }

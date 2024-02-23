@@ -111,7 +111,7 @@ void init_c3t3_with_features(C3T3& c3t3,
     protect_edges(c3t3,
                   domain,
                   Sizing_field(criteria.edge_criteria_object()),
-                  typename Edge_criteria::FT(),
+                  criteria.edge_criteria_object().min_length_bound(),
                   maximal_number_of_vertices,
                   pointer_to_error_code
 #ifndef CGAL_NO_ATOMIC
@@ -231,6 +231,13 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
 
         if (c3t3.number_of_facets() == 0) {
           need_more_init = true;
+        }
+        else
+        {
+          helper.update_restricted_cells();
+          if(c3t3.number_of_cells() == 0) {
+            need_more_init = true;
+          }
         }
       }
       if(need_more_init) {

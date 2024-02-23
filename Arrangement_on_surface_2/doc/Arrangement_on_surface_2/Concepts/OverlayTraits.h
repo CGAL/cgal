@@ -11,8 +11,10 @@ Models for the concept are used by the global `overlay()` function to
 maintain the auxiliary data stored with the \dcel records of the resulting
 overlaid arrangement, based on the contents of the input records.
 
-\cgalHasModel `CGAL::Arr_default_overlay_traits<Arrangement>`
-\cgalHasModel `CGAL::Arr_face_overlay_traits<Arr1,Arr2,ResArr,OvlFaceData>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Arr_default_overlay_traits<Arrangement>}
+\cgalHasModels{CGAL::Arr_face_overlay_traits<Arr1,Arr2,ResArr,OvlFaceData>}
+\cgalHasModelsEnd
 
 \sa `overlay`
 

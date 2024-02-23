@@ -23,7 +23,6 @@
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Time_stamper.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -43,17 +42,17 @@ namespace Mesh_3 {
 template<typename Tr>
 class Triangulation_helpers
 {
-  typedef typename Tr::Geom_traits              Gt;
+  typedef typename Tr::Geom_traits              GT;
 
-  typedef typename Gt::FT                       FT;
-  typedef typename Gt::Vector_3                 Vector_3;
+  typedef typename GT::FT                       FT;
+  typedef typename GT::Vector_3                 Vector_3;
 
   // If `Tr` is not a triangulation that has defined Bare_point,
   // use Point_3 as defined in the traits class.
   typedef typename boost::mpl::eval_if_c<
     CGAL::internal::Has_nested_type_Bare_point<Tr>::value,
     typename CGAL::internal::Bare_point_type<Tr>,
-    boost::mpl::identity<typename Gt::Point_3>
+    boost::mpl::identity<typename GT::Point_3>
   >::type                                       Bare_point;
 
   // 'Point' is either a bare point or a weighted point, depending on the triangulation.
@@ -190,7 +189,7 @@ no_topological_change(Tr& tr,
   if(std::is_same<typename Tr::Periodic_tag, Tag_true>::value)
     return false;
 
-  typename Gt::Construct_opposite_vector_3 cov =
+  typename GT::Construct_opposite_vector_3 cov =
       tr.geom_traits().construct_opposite_vector_3_object();
 
   bool np = true;
@@ -382,7 +381,7 @@ inside_protecting_balls(const Tr& tr,
                         const Vertex_handle v,
                         const Bare_point& p) const
 {
-  typename Gt::Compare_weighted_squared_radius_3 cwsr =
+  typename GT::Compare_weighted_squared_radius_3 cwsr =
     tr.geom_traits().compare_weighted_squared_radius_3_object();
 
   Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
@@ -414,10 +413,10 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   typedef std::vector<Vertex_handle>              Vertex_container;
 
   // There is no need to use tr.min_squared_distance() here because we are computing
-  // distances between 'v' and a neighbor within their common cell, which means
+  // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
-  typename Gt::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
+  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   Vertex_container treated_vertices;
   FT min_sq_dist = std::numeric_limits<FT>::infinity();
@@ -475,10 +474,10 @@ get_sq_distance_to_closest_vertex(const Tr& tr,
   typedef typename Vertex_container::iterator                VC_it;
 
   // There is no need to use tr.min_squared_distance() here because we are computing
-  // distances between 'v' and a neighbor within their common cell, which means
+  // distances between 'v' and a neighboring vertex within a common cell, which means
   // that even if we are using a periodic triangulation, the distance is correctly computed.
-  typename Gt::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typename GT::Compute_squared_distance_3 csqd = tr.geom_traits().compute_squared_distance_3_object();
+  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   Vertex_container treated_vertices;
   FT min_sq_dist = std::numeric_limits<FT>::infinity();
@@ -524,9 +523,9 @@ Triangulation_helpers<Tr>::
 well_oriented(const Tr& tr,
               const Cell_vector& cells_tos) const
 {
-  typedef typename Tr::Geom_traits Gt;
-  typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typedef typename Tr::Geom_traits GT;
+  typename GT::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
+  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
@@ -570,9 +569,9 @@ well_oriented(const Tr& tr,
               const Cell_vector& cells_tos,
               const Point_getter& pg) const
 {
-  typedef typename Tr::Geom_traits Gt;
-  typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
-  typename Gt::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
+  typedef typename Tr::Geom_traits GT;
+  typename GT::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
+  typename GT::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
 
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)

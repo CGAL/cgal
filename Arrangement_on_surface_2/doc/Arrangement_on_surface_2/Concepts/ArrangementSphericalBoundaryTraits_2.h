@@ -8,13 +8,12 @@
  * space, the sphere is the mapping of which, is identified on the left and
  * right sides and contracted at the top and bottom sides.
  *
- * \cgalRefines `ArrangementBasicTraits_2`
- * \cgalRefines `ArrangementIdentifiedVerticalTraits_2`
- * \cgalRefines `ArrangementContractedBottomTraits_2`
- * \cgalRefines `ArrangementContractedTopTraits_2`
- * \cgalRefines
+ * \cgalRefines{ArrangementBasicTraits_2,ArrangementIdentifiedVerticalTraits_2,
+ *   ArrangementContractedBottomTraits_2,ArrangementContractedTopTraits_2}
  *
- * \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>`
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>}
+ * \cgalHasModelsEnd
  *
  * \sa `ArrangementOpenBoundaryTraits_2`
  * \sa `ArrangementBasicTraits_2`

@@ -27,7 +27,7 @@ The library <I>CGAL_ImageIO</I> and therefore `Gray_level_image_3` support
 several types of 3D images: INRIMAGE (extension .inr[.gz]), GIS (extension
 .dim, of .ima[.gz]), and ANALYZE (extension .hdr, or .img[.gz]).
 
-\cgalModels `ImplicitFunction`
+\cgalModels{ImplicitFunction}
 
 \sa `ImplicitFunction`
 \sa `Implicit_surface_3<Traits, Function>`

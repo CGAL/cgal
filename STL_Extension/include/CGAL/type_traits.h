@@ -21,12 +21,24 @@ namespace CGAL {
 
 template< class Base, class Derived >
 struct is_same_or_derived :
-  public ::boost::mpl::or_<
-    ::std::is_same< Base, Derived >,
-    ::boost::is_base_and_derived< Base, Derived >
-  >::type
+  public std::bool_constant<
+    ::std::is_same_v< Base, Derived > ||
+    ::boost::is_base_and_derived< Base, Derived >::value
+  >
 {};
 
-}
+namespace cpp20 {
+
+  template< class T >
+  struct remove_cvref {
+      typedef std::remove_cv_t<std::remove_reference_t<T>> type;
+  };
+
+  template< class T >
+  using remove_cvref_t = typename remove_cvref<T>::type;
+
+} // end namespace cpp20
+
+} // end namespace CGAL
 
 #endif // CGAL_TYPE_TRAITS_H

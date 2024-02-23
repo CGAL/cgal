@@ -11,13 +11,13 @@ bool lAppToLog = false ;
 void Straight_skeleton_external_trace ( std::string m )
 {
   std::ofstream out("sls_log.txt", ( lAppToLog ? std::ios::app | std::ios::ate : std::ios::trunc | std::ios::ate ) );
-  out << std::setprecision(19) << m << std::endl << std::flush ;
+  out << std::setprecision(17) << m << std::endl << std::flush ;
   lAppToLog = true ;
 }
 void Straight_skeleton_traits_external_trace ( std::string m )
 {
   std::ofstream out("sls_log.txt", ( lAppToLog ? std::ios::app | std::ios::ate : std::ios::trunc | std::ios::ate ) ) ;
-  out << std::setprecision(19) << m << std::endl << std::flush ;
+  out << std::setprecision(17) << m << std::endl << std::flush ;
   lAppToLog = true ;
 }
 
@@ -83,7 +83,7 @@ void test(const PointRange& points,
                   K());
   assert(ss_ptr);
 
-  std::vector<boost::shared_ptr<Polygon_2> > offset_polygons_ptrs =
+  std::vector<std::shared_ptr<Polygon_2> > offset_polygons_ptrs =
     CGAL::create_offset_polygons_2<Polygon_2>(FT(offset), CGAL::CGAL_SS_i::dereference(ss_ptr), K());
 
   std::cout << offset_polygons_ptrs.size() << " polygon(s)" << std::endl;

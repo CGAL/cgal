@@ -12,7 +12,8 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+// Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
+//            Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
 #define CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
@@ -33,7 +34,7 @@ namespace CGAL {
  *
  * \tparam Polygon_ must have input and output operators.
  *
- * \cgalModels `GeneralPolygonWithHoles_2`
+ * \cgalModels{GeneralPolygonWithHoles_2}
  */
 template <typename Polygon_>
 class General_polygon_with_holes_2 {
@@ -106,6 +107,10 @@ public:
   void add_hole(Polygon_2&& pgn_hole) { m_holes.emplace_back(std::move(pgn_hole)); }
 
   void erase_hole(Hole_iterator hit) { m_holes.erase(hit); }
+
+  void clear_outer_boundary() { m_pgn.clear(); }
+
+  void clear_holes() { m_holes.clear(); }
 
   bool has_holes() const { return (!m_holes.empty()); }
 

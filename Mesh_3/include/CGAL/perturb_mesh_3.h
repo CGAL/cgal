@@ -50,7 +50,7 @@ namespace CGAL {
  * \tparam MD a model of the concept `MeshDomain_3`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- *  @param c3t3 the initial mesh and is modified by the algorithm to represent the final optimized mesh
+ *  @param c3t3 the initial mesh, modified by the algorithm to represent the final optimized mesh
  *  @param domain the domain used to create the `c3t3` parameter
  *  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
@@ -60,18 +60,18 @@ namespace CGAL {
  *                           is stopped. This time is measured using the `Real_timer` class. The default value is
  *                           0 and means that there is no time limit.}
  *     \cgalParamType{`double`}
- *     \cgalParamPrecondition{`0 <= sliver_bound <= 180`}
+ *     \cgalParamPrecondition{`time_limit >= 0`}
  *   \cgalParamDefault{0}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{sliver_bound}
  *     \cgalParamDescription{is designed to give, in degrees, a targeted lower bound on dihedral angles of mesh cells.
- *                          The exudation process considers in turn all the mesh cells that have a smallest dihedral
- *                          angle less than sliver_bound and tries to make them disappear by weighting their vertices.
- *                          The optimization process stops when every cell in the mesh achieves this quality. The
- *                          default value is 0 and means that there is no targeted bound: the exuder then runs as long
- *                          as it can improve the smallest dihedral angles of the set of cells incident to some vertices.}
+ *                          The function `perturb_mesh_3()` runs as long as steps are successful and step number
+ *                          `sliver_bound` (after which the worst tetrahedron in the mesh has a smallest angle larger
+ *                           than `sliver_bound` degrees) has not been reached.
+ *                          The default value is 0 and means that there is no targeted bound:
+ *                          the perturber then runs as long as steps are successful.}
  *     \cgalParamType{`double`}
- *     \cgalParamPrecondition{`time_limit >= 0`}
+ *     \cgalParamPrecondition{`0 <= sliver_bound <= 180`}
  *     \cgalParamDefault{0}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd

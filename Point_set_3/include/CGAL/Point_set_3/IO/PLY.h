@@ -118,40 +118,40 @@ public:
         continue;
       }
 
-      if(dynamic_cast<PLY_read_typed_number<boost::int8_t>*>(property))
+      if(dynamic_cast<PLY_read_typed_number<std::int8_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::int8_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::int8_t>(m_point_set,
                                                                    name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::uint8_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::uint8_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::uint8_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::uint8_t>(m_point_set,
                                                                     name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::int16_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::int16_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::int16_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::int16_t>(m_point_set,
                                                                     name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::uint16_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::uint16_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::uint16_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::uint16_t>(m_point_set,
                                                                      name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::int32_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::int32_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::int32_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::int32_t>(m_point_set,
                                                                     name));
       }
-      else if(dynamic_cast<PLY_read_typed_number<boost::uint32_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<std::uint32_t>*>(property))
       {
         m_properties.push_back
-            (new PLY_property_to_point_set_property<boost::uint32_t>(m_point_set,
+            (new PLY_property_to_point_set_property<std::uint32_t>(m_point_set,
                                                                      name));
       }
       else if(dynamic_cast<PLY_read_typed_number<float>*>(property))
@@ -367,25 +367,6 @@ bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::read_PLY()` \endlink  should be used instead.
-
-  \brief reads a point set with properties from an input stream in \ascii or binary PLY format.
-
-  - the operator reads the vertex `point` property;
-  - if three PLY properties `nx`, `ny` and `nz` with type `float`
-     or `double` are found, the normal map is added;
-  - if any other PLY property is found, a "[name]" property map is
-    added, where `[name]` is the name of the PLY property.
-
-  The `comments` parameter can be omitted. If provided, it will be
-  used to store the potential comments found in the PLY
-  header. Each line starting by "comment " in the header is
-  appended to the `comments` string (without the "comment " word).
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
@@ -456,14 +437,14 @@ bool write_PLY(std::ostream& os,
   typedef typename Point_set::Index Index;
   typedef typename Point_set::Point_map Point_map;
   typedef typename Point_set::Vector_map Vector_map;
-  typedef typename Point_set::template Property_map<boost::int8_t> Int8_map;
-  typedef typename Point_set::template Property_map<boost::uint8_t> Uint8_map;
-  typedef typename Point_set::template Property_map<boost::int16_t> Int16_map;
-  typedef typename Point_set::template Property_map<boost::uint16_t> Uint16_map;
-  typedef typename Point_set::template Property_map<boost::int32_t> Int32_map;
-  typedef typename Point_set::template Property_map<boost::uint32_t> Uint32_map;
-  typedef typename Point_set::template Property_map<boost::int64_t> Int64_map;
-  typedef typename Point_set::template Property_map<boost::uint64_t> Uint64_map;
+  typedef typename Point_set::template Property_map<std::int8_t> Int8_map;
+  typedef typename Point_set::template Property_map<std::uint8_t> Uint8_map;
+  typedef typename Point_set::template Property_map<std::int16_t> Int16_map;
+  typedef typename Point_set::template Property_map<std::uint16_t> Uint16_map;
+  typedef typename Point_set::template Property_map<std::int32_t> Int32_map;
+  typedef typename Point_set::template Property_map<std::uint32_t> Uint32_map;
+  typedef typename Point_set::template Property_map<std::int64_t> Int64_map;
+  typedef typename Point_set::template Property_map<std::uint64_t> Uint64_map;
   typedef typename Point_set::template Property_map<float> Float_map;
   typedef typename Point_set::template Property_map<double> Double_map;
 
@@ -541,27 +522,27 @@ bool write_PLY(std::ostream& os,
     bool okay = false;
     {
       Int8_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int8_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::int8_t>(prop[i]);
       if(okay)
       {
         os << "property char " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Int8_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int8_map>(pmap));
         continue;
       }
     }
     {
       Uint8_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint8_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::uint8_t>(prop[i]);
       if(okay)
       {
         os << "property uchar " << prop[i] << std::endl;
-        printers.push_back(new internal::Char_property_printer<Index,Uint8_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint8_map>(pmap));
         continue;
       }
     }
     {
       Int16_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int16_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::int16_t>(prop[i]);
       if(okay)
       {
         os << "property short " << prop[i] << std::endl;
@@ -571,7 +552,7 @@ bool write_PLY(std::ostream& os,
     }
     {
       Uint16_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint16_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::uint16_t>(prop[i]);
       if(okay)
       {
         os << "property ushort " << prop[i] << std::endl;
@@ -581,7 +562,7 @@ bool write_PLY(std::ostream& os,
     }
     {
       Int32_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int32_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::int32_t>(prop[i]);
       if(okay)
       {
         os << "property int " << prop[i] << std::endl;
@@ -591,7 +572,7 @@ bool write_PLY(std::ostream& os,
     }
     {
       Uint32_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint32_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::uint32_t>(prop[i]);
       if(okay)
       {
         os << "property uint " << prop[i] << std::endl;
@@ -601,21 +582,21 @@ bool write_PLY(std::ostream& os,
     }
     {
       Int64_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::int64_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::int64_t>(prop[i]);
       if(okay)
       {
         os << "property int " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,std::int32_t>(pmap));
         continue;
       }
     }
     {
       Uint64_map pmap;
-      boost::tie(pmap, okay) = point_set.template property_map<boost::uint64_t>(prop[i]);
+      boost::tie(pmap, okay) = point_set.template property_map<std::uint64_t>(prop[i]);
       if(okay)
       {
         os << "property uint " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,std::uint32_t>(pmap));
         continue;
       }
     }
@@ -744,12 +725,6 @@ bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::write_PLY()` \endlink  should be used instead.
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_ply_point_set(std::ostream& os,
                                          const CGAL::Point_set_3<Point, Vector>& point_set,

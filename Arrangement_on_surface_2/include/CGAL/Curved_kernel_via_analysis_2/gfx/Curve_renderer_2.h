@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -18,6 +18,9 @@
 
 #ifndef CGAL_CKVA_CURVE_RENDERER_2_H
 #define CGAL_CKVA_CURVE_RENDERER_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #ifndef CGAL_AK_ENABLE_DEPRECATED_INTERFACE
 #define CGAL_AK_ENABLE_DEPRECATED_INTERFACE 1
@@ -423,8 +426,8 @@ template < class Coord_2, template < class, class > class Container,
         class Allocator >
 void draw(const Arc_2& arc,
           Container< std::vector< Coord_2 >, Allocator >& points,
-          boost::optional< Coord_2 > *end_pt1 = nullptr,
-          boost::optional< Coord_2 > *end_pt2 = nullptr) {
+          std::optional< Coord_2 > *end_pt1 = nullptr,
+          std::optional< Coord_2 > *end_pt2 = nullptr) {
 
 #ifdef CGAL_CKVA_CR_TIMING
     refine_timer.start();

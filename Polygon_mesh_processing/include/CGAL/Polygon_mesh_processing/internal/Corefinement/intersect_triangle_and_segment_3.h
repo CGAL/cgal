@@ -98,7 +98,7 @@ intersection_type(
   typedef typename boost::property_traits<VertexPointMap1>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel Kernel;
 
-  CGAL_static_assertion((std::is_same<Point_3, typename boost::property_traits<VertexPointMap2>::value_type>::value));
+  static_assert(std::is_same<Point_3, typename boost::property_traits<VertexPointMap2>::value_type>::value);
 
   halfedge_descriptor h_2=halfedge(f_2,tm2);
 

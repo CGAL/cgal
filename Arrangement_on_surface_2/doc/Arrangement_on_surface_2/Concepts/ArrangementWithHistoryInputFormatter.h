@@ -7,9 +7,11 @@ A model for the `ArrangementWithHistoryInputFormatter` concept supports a set of
 reading an arrangement-with-history instance from an input stream using a
 specific format.
 
-\cgalRefines `ArrangementInputFormatter`
+\cgalRefines{ArrangementInputFormatter}
 
-\cgalHasModel `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Arr_with_history_text_formatter<ArrFormatter>}
+\cgalHasModelsEnd
 
 */
 

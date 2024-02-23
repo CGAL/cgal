@@ -42,6 +42,11 @@ Converts a point.
 QPointF operator()(K::Point_2);
 
 /*!
+Converts a circular arc point.
+*/
+QPointF operator()(K::Circular_arc_point_2);
+
+/*!
 Converts a segment.
 */
 QLineF operator()(K::Segment_2);
@@ -94,7 +99,7 @@ K::Iso_rectangle_2 operator()(QRectF);
 /*!
 Converts a polygon to a list of points.
 */
-std::list<K::Point_2> operator()(QPolygonF);
+void operator()(std::list<K::Point_2>&, QPolygonF);
 
 /// @}
 

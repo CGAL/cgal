@@ -72,7 +72,7 @@ for(i=1;i<6;i++){
   typedef CircularKernel::Line_arc_2                                      Line_arc_2;
   typedef CGAL::Variant_traits<CircularKernel,Line_arc_2,Circular_arc_2>  CircularK_Variant_Traits;
 
-  typedef boost::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
+  typedef std::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
   typedef std::vector<CircularKVarArc>                        CircularKVarArcContainer;
 
   bench.kernel("CK VarTraits");
@@ -93,7 +93,7 @@ for(i=1;i<6;i++){
 
   typedef BBCircularKernel::Circular_arc_2                                        Circular_arc_6;
   typedef BBCircularKernel::Line_arc_2                                            Line_arc_6;
-  typedef boost::variant<Circular_arc_6,Line_arc_6 >                  BBCircVarArc;
+  typedef std::variant<Circular_arc_6,Line_arc_6 >                  BBCircVarArc;
   typedef std::vector<BBCircVarArc>                                   BBCircVarContainer;
   typedef CGAL::Variant_traits<BBCircularKernel,Line_arc_6,Circular_arc_6>  BBCircVariantTraits;
 

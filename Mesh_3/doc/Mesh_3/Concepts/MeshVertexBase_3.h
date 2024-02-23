@@ -20,11 +20,11 @@ and two `Vertex_handle` called 'intrusive'.
 The parallel algorithms require an erase counter in
 each cell (see below).
 
-\cgalRefines `SimplicialMeshVertexBase_3`
-\cgalRefines `RegularTriangulationVertexBase_3`
-\cgalRefines `SurfaceMeshVertexBase_3`
+\cgalRefines{SimplicialMeshVertexBase_3,RegularTriangulationVertexBase_3,SurfaceMeshVertexBase_3}
 
-\cgalHasModel `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Mesh_vertex_base_3<GT,MD,Vb>}
+\cgalHasModelsEnd
 
 \sa `CGAL::make_mesh_3()`
 \sa `CGAL::refine_mesh_3()`

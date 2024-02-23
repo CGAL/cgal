@@ -34,7 +34,7 @@ class Point_3 : public R_::Kernel_base::Point_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Point_3                            Self;
-  CGAL_static_assertion((std::is_same<Self, typename R_::Point_3>::value));
+  static_assert(std::is_same<Self, typename R_::Point_3>::value);
 
 public:
 

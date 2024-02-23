@@ -31,7 +31,7 @@ _test_fct_weighted_point_3(const R& )
   std::cout << "Testing functions Weighted_point_3" ;
 
   typedef typename  R::RT    RT;
-  const bool nonexact = std::is_same<RT, double>::value;
+  const bool nonexact = std::is_floating_point<RT>::value;
 
   CGAL::Point_3<R> p1(RT(18), RT(15), RT(-21), RT(3) ); //  6,  5, -7
   CGAL::Point_3<R> p2(RT(18), RT(15), RT( 12), RT(3) ); //  6,  5,  4

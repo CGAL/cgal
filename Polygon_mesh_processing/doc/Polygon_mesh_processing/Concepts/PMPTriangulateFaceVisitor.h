@@ -5,8 +5,10 @@
 /// used in \link PMP_meshing_grp triangulation-related functions \endlink to track
 /// the creation of new faces.
 ///
-/// \cgalRefines `CopyConstructible`
-/// \cgalHasModel `CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor`.
+/// \cgalRefines{CopyConstructible}
+/// \cgalHasModelsBegin
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Triangulate_faces::Default_visitor}
+/// \cgalHasModelsEnd
 
 
 class PMPTriangulateFaceVisitor {

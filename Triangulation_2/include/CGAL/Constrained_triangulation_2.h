@@ -34,7 +34,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
@@ -96,9 +95,10 @@ namespace internal {
 
 template <typename K>
 struct Itag {
-  typedef typename boost::mpl::if_<typename Algebraic_structure_traits<typename K::FT>::Is_exact,
-                                   Exact_intersections_tag,
-                                   Exact_predicates_tag>::type type;
+  using Is_exact = typename Algebraic_structure_traits<typename K::FT>::Is_exact;
+  typedef std::conditional_t<Is_exact::value,
+                             Exact_intersections_tag,
+                             Exact_predicates_tag> type;
 };
 
 } // namespace internal
@@ -330,11 +330,11 @@ public:
 #if 1
   template <class Segment_2>
   static decltype(auto) get_source(const Segment_2& segment){
-    return segment.source();
+    return segment[0];
   }
   template <class Segment_2>
   static decltype(auto) get_target(const Segment_2& segment){
-    return segment.target();
+    return segment[1];
   }
 
   static const Point& get_source(const Constraint& cst){
@@ -352,8 +352,8 @@ public:
 template <class OutputIterator>
 void
 insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
-// forces the constrained [va,vb]
-// [va,vb] will eventually be split into several edges
+// forces the constrained [vaa,vbb]
+// [vaa,vbb] will potentially be split into several edges
 // if a vertex vc of t lies on segment ab
 // of if ab intersect some constrained edges
 {
@@ -623,7 +623,7 @@ public:
   auto display_vertex(Vertex_handle v) const {
     With_point_tag point_tag;
     using CGAL::IO::oformat;
-    return oformat(v, point_tag);
+    return IO::oformat(v, point_tag);
   }
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
 
@@ -828,6 +828,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
 // if a vertex vc of t lies on segment ab
 // or if ab intersect some constrained edges
 {
+  if(vaa == vbb){
+    return;
+  }
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));
 
@@ -1888,16 +1891,16 @@ compute_intersection(const Gt& gt,
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   typedef typename Gt::Segment_2 Segment_2;
   if(result){
-    if (const Segment_2* s = boost::get<Segment_2>(&*result)){
+    if (const Segment_2* s = std::get_if<Segment_2>(&*result)){
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "compute_intersection: " << *s << '\n';
-    }else if(const Point_2* p = boost::get<Point_2 >(&*result))
+    }else if(const Point_2* p = std::get_if<Point_2 >(&*result))
       std::cerr << CGAL::internal::cdt_2_indent_level
                 << "compute_intersection: " << *p << '\n';
   }
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   if(result){
-    if(const Point_2* p = boost::get<Point_2 >(&*result)){
+    if(const Point_2* p = std::get_if<Point_2 >(&*result)){
       pi = *p;
       return true;
     }

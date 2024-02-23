@@ -35,7 +35,7 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
   // Default parameter values.
   const FT          distance_threshold = FT(1);
   const FT          angle_threshold    = FT(45);
-  const std::size_t min_region_size    = 5;
+  const std::size_t min_region_size    = 1;
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("meshes/building.off"));
@@ -68,13 +68,19 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
 
   std::vector<typename Region_growing::Primitive_and_region> regions;
   region_growing.detect(std::back_inserter(regions));
-  assert(regions.size() == 416);
+  assert(regions.size() == 1077);
   for (const auto& region : regions)
     assert(region_type.is_valid_region(region.second));
 
+  auto map = region_growing.region_map();
+  for (auto fit : face_range) {
+    std::size_t id = get(region_growing.region_map(), fit);
+    assert(id != std::size_t(-1));
+  }
+
   std::vector<typename Region_growing::Item> unassigned_faces;
   region_growing.unassigned_items(face_range, std::back_inserter(unassigned_faces));
-  assert(unassigned_faces.size() == 1006);
+  assert(unassigned_faces.size() == 0);
   return true;
 }
 

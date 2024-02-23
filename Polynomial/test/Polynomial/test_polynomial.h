@@ -34,7 +34,7 @@ inline
 void convert_to(const NT& x, RT& r){
     typedef CGAL::Coercion_traits<NT,RT> CT;
     typedef typename CT::Coercion_type RET;
-    CGAL_static_assertion((::std::is_same<RET,RT>::value));
+    static_assert(::std::is_same<RET,RT>::value);
     r = typename CT::Cast()(x);
 }
 } //namespace CGAL
@@ -886,7 +886,7 @@ void test_scalar_factor_traits(){
         typedef CGAL::Scalar_factor_traits<Polynomial> SFT;
         typedef typename AT::Integer Scalar;
         typedef typename SFT::Scalar Scalar_;
-        CGAL_static_assertion((::std::is_same<Scalar_, Scalar>::value));
+        static_assert(::std::is_same<Scalar_, Scalar>::value);
 
         typename SFT::Scalar_factor sfac;
 
@@ -912,7 +912,7 @@ void test_scalar_factor_traits(){
         typedef CGAL::Scalar_factor_traits<Poly_2_ext_1> SFT;
         typedef typename AT::Integer Scalar;
         typedef typename SFT::Scalar Scalar_;
-        CGAL_static_assertion((::std::is_same<Scalar_, Scalar>::value));
+        static_assert(::std::is_same<Scalar_, Scalar>::value);
 
         typename SFT::Scalar_factor sfac;
 

@@ -146,6 +146,12 @@ namespace CGAL {
       { return cit; }
       bool is_used(size_type i) const
       { return mmap.mdarts.is_used(i); }
+      bool owns(size_type i) const
+      { return mmap.mdarts.owns(i); }
+      size_type capacity() const
+      { return mmap.mdarts.capacity(); }
+      size_type upper_bound() const
+      { return mmap.mdarts.upper_bound(); }
     private:
       Self & mmap;
     };
@@ -264,7 +270,7 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_descriptor<i>::type attribute(Dart_descriptor ADart)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (mdarts[ADart].mattribute_descriptors);
@@ -273,7 +279,7 @@ namespace CGAL {
     typename Attribute_const_descriptor<i>::type
     attribute(Dart_const_descriptor ADart) const
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "attribute<i> called but i-attributes are disabled.");
       return std::get<Helper::template Dimension_index<i>::value>
         (mdarts[ADart].mattribute_descriptors);
@@ -284,8 +290,15 @@ namespace CGAL {
     typename Attribute_descriptor<i>::type copy_attribute
     (typename Attribute_const_descriptor<i>::type ah)
     {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+      static_assert(Helper::template Dimension_index<i>::value>=0,
                      "copy_attribute<i> called but i-attributes are disabled.");
+      // We need to do a reserve before the emplace in order to avoid a bug of
+      // invalid reference when the container is reallocated.
+      std::get<Helper::template Dimension_index<i>::value>
+          (mattribute_containers).reserve
+          (std::get<Helper::template Dimension_index<i>::value>
+           (mattribute_containers).size()+1);
+
       typename Attribute_descriptor<i>::type res=
         std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).emplace(get_attribute<i>(ah));
@@ -435,7 +448,7 @@ namespace CGAL {
         (mattribute_containers).upper_bound();
     }
 
-    protected:
+  protected:
     // Set the handle on the i th attribute
     template<unsigned int i>
     void basic_set_dart_attribute(Dart_descriptor dh,

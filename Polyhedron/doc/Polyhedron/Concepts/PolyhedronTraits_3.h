@@ -8,12 +8,13 @@ geometric traits concept is used in the polyhedral surface data
 structure `CGAL::Polyhedron_3<Traits>`. Any \cgal kernel is a model of this concept
 and can be used directly as template argument.
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable}
 
-\cgalHasModel `CGAL::Polyhedron_traits_3<Kernel>`
-\cgalHasModel `CGAL::Polyhedron_traits_with_normals_3<Kernel>`
-\cgalHasModel All models of the `Kernel` concept, e.g., `CGAL::Simple_cartesian<FieldNumberType>`
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the `Kernel` concept, e.g. `CGAL::Simple_cartesian<FieldNumberType>`}
+\cgalHasModels{CGAL::Polyhedron_traits_3<Kernel>}
+\cgalHasModels{CGAL::Polyhedron_traits_with_normals_3<Kernel>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Polyhedron_3<Traits>`
 

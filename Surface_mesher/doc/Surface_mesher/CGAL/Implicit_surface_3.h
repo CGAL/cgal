@@ -27,7 +27,7 @@ mesh traits
 The number type `Function::FT` has to match
 the type `Traits::FT`.
 
-\cgalModels `Surface_3`
+\cgalModels{Surface_3}
 
 \sa `make_surface_mesh`
 \sa `Surface_mesh_traits_generator_3<Surface>`

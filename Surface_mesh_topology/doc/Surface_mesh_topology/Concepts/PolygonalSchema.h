@@ -7,10 +7,12 @@
   PolygonalSchema::Dart_info should be a class having a public data member std::string m_label.
   PolygonalSchema::dimension should be equal to 2.
 
-  \cgalRefines GenericMap
+  \cgalRefines{GenericMap}
 
-  \cgalHasModel \link CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map `CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<Items,Alloc>`\endlink
-  \cgalHasModel \link CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map `CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map<Items,Alloc>`\endlink
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map `CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<Items,Alloc>`\endlink}
+  \cgalHasModelsBare{\link CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map `CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map<Items,Alloc>`\endlink}
+  \cgalHasModelsEnd
   */
 
 class PolygonalSchema

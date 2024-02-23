@@ -14,9 +14,7 @@
 /// \ingroup PkgTriangulation2Ref
 
 /*!
-  \code
-   #include <CGAL/draw_triangulation_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_triangulation_2.h}
 */
 /// \defgroup PkgDrawTriangulation2 Draw a Triangulation 2
 /// \ingroup PkgTriangulation2Ref
@@ -102,6 +100,10 @@ are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 - `CGAL::Triangulation_hierarchy_vertex_base_2<Vb>`
 
 - `CGAL::Triangulation_cw_ccw_2`
+
+\cgalCRPSection{Functions}
+
+- `CGAL::mark_domain_in_triangulation()`
 
 \cgalCRPSection{Enum}
 - \link CGAL::Triangulation_2::Locate_type `CGAL::Triangulation_2<Traits,Tds>::Locate_type` \endlink

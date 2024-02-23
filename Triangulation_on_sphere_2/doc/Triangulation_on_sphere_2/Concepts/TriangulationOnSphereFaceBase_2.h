@@ -2,7 +2,7 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-\cgalRefines `TriangulationDSFaceBase_2`
+\cgalRefines{TriangulationDSFaceBase_2}
 
 The concept `TriangulationOnSphereFaceBase_2` describes the requirements for a face class
 of a triangulation data structure that is itself plugged into a triangulation on the sphere.
@@ -19,7 +19,9 @@ then the triangulation is not an orientable triangulated surface without boundar
 In this case, fictitious faces are added to the triangulation, called <i>ghost faces</i>,
 such that the triangulation is a topological sphere.
 
-\cgalHasModel `CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationOnSphereVertexBase_2`

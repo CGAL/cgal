@@ -6,9 +6,7 @@
 Concept to represent a system of polynomials on `FieldNumberType`
 capable of storing equations of circles.
 
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
 \sa `AlgebraicKernelForSpheres`
 
