@@ -84,7 +84,7 @@ int main(int argc, char** argv)
     std::cout << "Output #vertices: " << points.size() << std::endl;
     std::cout << "Output #triangles: " << triangles.size() << std::endl;
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
-    CGAL::IO::write_polygon_soup("marching_cubes.off", points, triangles);
+    CGAL::IO::write_polygon_soup("marching_cubes_TMC.off", points, triangles);
   }
 
   std::cout << "Done" << std::endl;

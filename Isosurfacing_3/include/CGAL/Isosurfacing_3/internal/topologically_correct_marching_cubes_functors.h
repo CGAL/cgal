@@ -128,7 +128,7 @@ public:
   {
     std::array<FT, 8> values;
     std::array<Point_3, 8> corners;
-    const int i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
+    const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
 
     // this is the only difference to mc
     const int tcm = Cube_table::t_ambig[i_case];
@@ -142,8 +142,9 @@ public:
 #endif
     }
 
-    constexpr int all_bits_set = (1 << (8 + 1)) - 1;  // last 8 bits are 1
-    if(i_case == 0 || i_case == all_bits_set)
+    constexpr std::size_t ones = (1 << 8) - 1;
+    if((i_case & ones) == ones || // all bits set
+       (i_case & ones) == 0) // no bits set
       return;
 
     std::array<Point_3, 12> vertices;

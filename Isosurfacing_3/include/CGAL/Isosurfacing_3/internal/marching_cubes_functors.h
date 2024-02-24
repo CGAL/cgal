@@ -278,13 +278,18 @@ public:
     CGAL_precondition(m_domain.cell_vertices(cell).size() == 8);
     CGAL_precondition(m_domain.cell_edges(cell).size() == 12);
 
-    std::array<FT, 8> values;
-    std::array<Point_3, 8> corners;
-    const int i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
+    // @todo for SDFs, we could query at the center of the voxel an early exit
+
+    constexpr std::size_t vpc = Domain::VERTICES_PER_CELL;
+
+    std::array<FT, vpc> values;
+    std::array<Point_3, vpc> corners;
+    const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
 
     // skip empty cells
-    const int all_bits_set = (1 << (8 + 1)) - 1; // last 8 bits are 1
-    if(i_case == 0 || i_case == all_bits_set)
+    constexpr std::size_t ones = (1 << vpc) - 1;
+    if((i_case & ones) == ones || // all bits set
+       (i_case & ones) == 0) // no bits set
       return;
 
     std::array<Point_3, 12> vertices;
