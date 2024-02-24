@@ -66,7 +66,7 @@ def execute(n, threads, times=1):
             m = re.search(r'Operational intensity.*\s+(\d+(\.\d+)?) \|\s*$', line)
             if m is not None:
                 measurements["intensity"] += float(m.group(1))
-        
+
     for item in measurements.items():
         measurements[item[0]] = item[1] / times
 

@@ -4,41 +4,52 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_gradient_3.h>
 #include <CGAL/Isosurfacing_3/dual_contouring_3.h>
-#include <CGAL/Isosurfacing_3/Explicit_Cartesian_grid_domain_3.h>
-#include <CGAL/Isosurfacing_3/Implicit_Cartesian_grid_domain_3.h>
 #include <CGAL/Isosurfacing_3/marching_cubes_3.h>
+#include <CGAL/Isosurfacing_3/internal/Isosurfacing_domain_3.h>
+#include <CGAL/Isosurfacing_3/Value_function_3.h>
+#include <CGAL/Isosurfacing_3/Gradient_function_3.h>
+#include <CGAL/Isosurfacing_3/Interpolated_discrete_gradients_3.h>
+#include <CGAL/Isosurfacing_3/Interpolated_discrete_values_3.h>
+#include <CGAL/Isosurfacing_3/Finite_difference_gradient_3.h>
 
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/Image_3.h>
+#include <CGAL/Isosurfacing_3/IO/Image_3.h>
+#include <CGAL/Real_timer.h>
 
 #include <cmath>
 #include <iostream>
 #include <limits>
 
 #include "CLI11.hpp"
-#include "Timer.h"
 
 #ifndef M_PI
-#define M_PI 3.141592653589793238462643383279502884L
+# define M_PI 3.141592653589793238462643383279502884L
 #endif
 
 template <class GeomTraits>
-struct SphereValue
+struct Sphere_value
 {
-  typename GeomTraits::FT operator()(const typename GeomTraits::Point_3& point) const
+  using FT = typename GeomTraits::FT;
+  using Point = typename GeomTraits::Point_3;
+
+  FT operator()(const Point& point) const
   {
     return CGAL::approximate_sqrt((point - CGAL::ORIGIN).squared_length());
   }
 };
 
 template <class GeomTraits>
-struct SphereGradient
+struct Sphere_gradient
 {
-  typename GeomTraits::Vector_3 operator()(const typename GeomTraits::Point_3& point) const
+  using FT = typename GeomTraits::FT;
+  using Point = typename GeomTraits::Point_3;
+  using Vector = typename GeomTraits::Vector_3;
+
+  Vector operator()(const Point& point) const
   {
-    const typename GeomTraits::Vector_3 g = point - CGAL::ORIGIN;
+    Vector g = point - CGAL::ORIGIN;
     return g / CGAL::approximate_sqrt(g.squared_length());
   }
 };
@@ -46,29 +57,31 @@ struct SphereGradient
 template <class GeomTraits>
 struct Implicit_sphere
 {
-  using Domain = CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3<GeomTraits,
-                                                                    SphereValue<GeomTraits>,
-                                                                    SphereGradient<GeomTraits> >;
+  using FT = typename GeomTraits::FT;
   using Vector = typename GeomTraits::Vector_3;
 
+  using Grid = CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>;
+  using Values = CGAL::Isosurfacing::Value_function_3<Grid>;
+  using Gradients = CGAL::Isosurfacing::Gradient_function_3<Grid>;
+  using Domain = CGAL::Isosurfacing::internal::Isosurfacing_domain_3<Grid, Values, Gradients>;
+
   Implicit_sphere(const std::size_t N)
-    : res(2.0 / N, 2.0 / N, 2.0 / N)
+    : res(2. / N, 2. / N, 2. / N)
   { }
 
   Domain domain() const
   {
-    return CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<GeomTraits>({-1, -1, -1, 1, 1, 1},
-                                                                                 res, val, grad);
+    return { { CGAL::Bbox_3 {-1, -1, -1, 1, 1, 1}, res },
+             { Sphere_value<GeomTraits>{} },
+             { Sphere_gradient<GeomTraits>{} } };
   }
 
-  typename GeomTraits::FT iso() const
+  FT iso() const
   {
     return 0.8;
   }
 
 private:
-  SphereValue<GeomTraits> val;
-  SphereGradient<GeomTraits> grad;
   Vector res;
 };
 
@@ -76,17 +89,18 @@ template <class GeomTraits>
 struct IWPValue
 {
   using FT = typename GeomTraits::FT;
+  using Point = typename GeomTraits::Point_3;
 
-  FT operator()(const typename GeomTraits::Point_3& point) const
+  FT operator()(const Point& point) const
   {
     const FT alpha = 5.01;
-    // const float alpha = 1.01;
+    // const FT alpha = 1.01;
 
     const FT x = alpha * (point.x() + 1) * M_PI;
     const FT y = alpha * (point.y() + 1) * M_PI;
     const FT z = alpha * (point.z() + 1) * M_PI;
 
-    return cos(x) * cos(y) + cos(y) * cos(z) + cos(z) * cos(x) - cos(x) * cos(y) * cos(z);  // isovalue = 0
+    return cos(x)*cos(y) + cos(y)*cos(z) + cos(z)*cos(x) - cos(x)*cos(y)*cos(z); // isovalue = 0
   }
 };
 
@@ -94,12 +108,13 @@ template <class GeomTraits>
 struct IWPGradient
 {
   using FT = typename GeomTraits::FT;
+  using Point = typename GeomTraits::Point_3;
   using Vector = typename GeomTraits::Vector_3;
 
-  Vector operator()(const typename GeomTraits::Point_3& point) const
+  Vector operator()(const Point& point) const
   {
     const FT alpha = 5.01;
-    // const float alpha = 1.01;
+    // const FT alpha = 1.01;
 
     const FT x = alpha * (point.x() + 1) * M_PI;
     const FT y = alpha * (point.y() + 1) * M_PI;
@@ -116,29 +131,29 @@ struct IWPGradient
 template <class GeomTraits>
 struct Implicit_iwp
 {
-  using Domain = CGAL::Isosurfacing::Implicit_Cartesian_grid_domain_3<GeomTraits,
-                                                                    IWPValue<GeomTraits>,
-                                                                    IWPGradient<GeomTraits> >;
+  using FT = typename GeomTraits::FT;
   using Vector = typename GeomTraits::Vector_3;
 
+  using Grid = CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>;
+  using Values = CGAL::Isosurfacing::Value_function_3<Grid>;
+  using Gradients = CGAL::Isosurfacing::Gradient_function_3<Grid>;
+  using Domain = CGAL::Isosurfacing::internal::Isosurfacing_domain_3<Grid, Values, Gradients>;
+
   Implicit_iwp(const std::size_t N)
-    : res(2.0 / N, 2.0 / N, 2.0 / N)
+    : res(2. / N, 2. / N, 2. / N)
   { }
 
   Domain domain() const
   {
-    return CGAL::Isosurfacing::create_implicit_Cartesian_grid_domain<GeomTraits>({-1, -1, -1, 1, 1, 1},
-                                                                                 res, val, grad);
+    return { { {-1, -1, -1, 1, 1, 1}, res } , { IWPValue<GeomTraits>{} }, { IWPGradient<GeomTraits>{} } };
   }
 
-  typename GeomTraits::FT iso() const
+  FT iso() const
   {
-    return 0.0;
+    return 0.;
   }
 
 private:
-  IWPValue<GeomTraits> val;
-  IWPGradient<GeomTraits> grad;
   Vector res;
 };
 
@@ -146,8 +161,9 @@ template <class GeomTraits>
 struct Grid_sphere
 {
   using Grid = CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>;
-  using Gradient = CGAL::Isosurfacing::Explicit_Cartesian_grid_gradient_3<Grid>;
-  using Domain = CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3<Grid, Gradient>;
+  using Values = CGAL::Isosurfacing::Interpolated_discrete_values_3<Grid>;
+  using Gradients = CGAL::Isosurfacing::Interpolated_discrete_gradients_3<Grid>;
+  using Domain = CGAL::Isosurfacing::internal::Isosurfacing_domain_3<Grid, Values, Gradients>;
 
   using FT = typename GeomTraits::FT;
   using Point = typename GeomTraits::Point_3;
@@ -155,11 +171,15 @@ struct Grid_sphere
   Grid_sphere(const std::size_t N)
   {
     const CGAL::Bbox_3 bbox{-1., -1., -1., 1., 1., 1.};
-    grid = Grid{N, N, N, bbox};
+    grid = Grid { bbox, N, N, N };
+
+    values = { grid };
+    gradients = { grid };
 
     const FT resolution = 2.0 / N;
-    SphereValue<GeomTraits> val;
-    SphereGradient<GeomTraits> grad;
+
+    Sphere_value<GeomTraits> sphere_val;
+    Sphere_gradient<GeomTraits> sphere_grad;
 
     for(std::size_t x = 0; x < grid.xdim(); x++)
     {
@@ -171,8 +191,8 @@ struct Grid_sphere
         {
           const FT zp = z * resolution - 1.0;
 
-          grid.value(x, y, z) = val(Point(xp, yp, zp));
-          grid.gradient(x, y, z) = grad(Point(xp, yp, zp));
+          values(x, y, z) = sphere_val(Point(xp, yp, zp));
+          gradients(x, y, z) = sphere_grad(Point(xp, yp, zp));
         }
       }
     }
@@ -180,7 +200,7 @@ struct Grid_sphere
 
   Domain domain() const
   {
-    return CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid, Gradient(grid));
+    return { grid, values, gradients };
   }
 
   typename GeomTraits::FT iso() const
@@ -190,14 +210,17 @@ struct Grid_sphere
 
 private:
   Grid grid;
+  Values values;
+  Gradients gradients;
 };
 
 template <class GeomTraits>
 struct Skull_image
 {
   using Grid = CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>;
-  using Gradient = CGAL::Isosurfacing::Explicit_Cartesian_grid_gradient_3<Grid>;
-  using Domain = CGAL::Isosurfacing::Explicit_Cartesian_grid_domain_3<Grid, Gradient>;
+  using Values = CGAL::Isosurfacing::Interpolated_discrete_values_3<Grid>;
+  using Gradients = CGAL::Isosurfacing::Finite_difference_gradient_3<GeomTraits>;
+  using Domain = CGAL::Isosurfacing::internal::Isosurfacing_domain_3<Grid, Values, Gradients>;
 
   Skull_image(const std::size_t N)
   {
@@ -206,12 +229,17 @@ struct Skull_image
     if(!image.read(fname))
       std::cerr << "Error: Cannot read file " << fname << std::endl;
 
-    grid = Grid{image};
+    Grid grid;
+    Values values { grid };
+    if(!CGAL::Isosurfacing::IO::read_Image_3(image, grid, values))
+      std::cerr << "Error: Cannot convert image to Cartesian grid" << std::endl;
+
+    gradients = { values };
   }
 
   Domain domain() const
   {
-    return CGAL::Isosurfacing::create_explicit_Cartesian_grid_domain(grid, Gradient(grid));
+    return { grid, values, gradients };
   }
 
   typename GeomTraits::FT iso() const
@@ -221,16 +249,21 @@ struct Skull_image
 
 private:
   Grid grid;
+  Values values;
+  Gradients gradients;
 };
 
 int main(int argc, char* argv[])
 {
-  CLI::App app{"Isosurfacing benchmarks"};
-
   std::size_t N = 100;
-  app.add_option("-N", N, "Grid size");
 
-  CLI11_PARSE(app, argc, argv);
+  const int argc_check = argc - 1;
+
+  for(int i=1; i<argc; ++i)
+  {
+    if(!strcmp("-N", argv[i]) && i < argc_check)
+      N = std::stoi(argv[++i]);
+  }
 
 #if defined KERNEL_SIMPLE_CARTESIAN_DOUBLE
   std::cout << "KERNEL_SIMPLE_CARTESIAN_DOUBLE" << std::endl;
@@ -268,13 +301,14 @@ int main(int argc, char* argv[])
   auto scenario = Skull_image<Kernel>(N);
 #else
   std::cout << "no scenario selected!" << std::endl;
-  auto scenario = Implicit_sphere<Kernel>();
+  auto scenario = Implicit_sphere<Kernel>(N);
 #endif
 
   Point_range points;
   Polygon_range polygons;
 
-  ScopeTimer timer;
+  CGAL::Real_timer timer;
+  timer.start();
 
 #if defined TAG_PARALLEL
   std::cout << "TAG_PARALLEL" << std::endl;
@@ -298,13 +332,12 @@ int main(int argc, char* argv[])
   CGAL::Isosurfacing::marching_cubes<Tag>(scenario.domain(), scenario.iso(), points, polygons);
 #endif
 
-  const int64_t ms = timer.stop();
+  timer.stop();
 
-  if (points.size() > std::numeric_limits<std::size_t>::max() - 2) {
-      std::cout << "This should never print and only prevents optimizations" << std::endl;
-  }
+  if(points.size() > std::numeric_limits<std::size_t>::max() - 2)
+    std::cout << "This should never print and only prevents optimizations" << std::endl;
 
-  std::cout << "internal timer: " << ms << std::endl;
+  std::cout << "internal timer: " << timer.time() << std::endl;
   std::cout << "internal polygons: " << polygons.size() << std::endl;
   std::cout << "internal points: " << points.size() << std::endl;
 }
