@@ -285,9 +285,10 @@ template <typename ConcurrencyTag,
           typename Domain>
 class Dual_contourer<ConcurrencyTag, Domain, DC_Strategy::QEM>
 {
-  using FT = typename Domain::Geom_traits::FT;
-  using Point_3 = typename Domain::Geom_traits::Point_3;
-  using Vector_3 = typename Domain::Geom_traits::Vector_3;
+  using Geom_traits = typename Domain::Geom_traits;
+  using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
+  using Vector_3 = typename Geom_traits::Vector_3;
 
   using Vertex_descriptor = typename Domain::Vertex_descriptor;
   using Edge_descriptor = typename Domain::Edge_descriptor;
@@ -298,7 +299,7 @@ class Dual_contourer<ConcurrencyTag, Domain, DC_Strategy::QEM>
 public:
   template<typename PointRange, typename PolygonRange, typename NamedParameters>
   void operator()(const Domain& domain,
-                  const typename Domain::Geom_traits::FT isovalue,
+                  const FT isovalue,
                   PointRange& points,
                   PolygonRange& polygons,
                   const NamedParameters& np = parameters::default_values())
@@ -351,9 +352,9 @@ public:
     domain.template for_each_edge<ConcurrencyTag>(edge_positioner);
 
 #ifdef CGAL_ISOSURFACING_3_DC_FUNCTORS_DEBUG
-    auto x_coord = domain.geom_traits().compute_x_3_object();
-    auto y_coord = domain.geom_traits().compute_y_3_object();
-    auto z_coord = domain.geom_traits().compute_z_3_object();
+    typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
+    typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
+    typename Geom_traits::Compute_z_3 z_coord = domain.geom_traits().compute_z_3_object();
 
     std::ofstream out_active_edges("active_edges.polylines");
     for(const auto& ei : edge_to_point_id)
@@ -417,7 +418,6 @@ template <typename ConcurrencyTag,
 class Dual_contourer<ConcurrencyTag, Domain, DC_Strategy::Centroid_of_edge_intersections>
 {
   using Geom_traits = typename Domain::Geom_traits;
-
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
@@ -532,9 +532,10 @@ template <typename ConcurrencyTag,
           typename Domain>
 class Dual_contourer<ConcurrencyTag, Domain, DC_Strategy::Cell_center>
 {
-  using FT = typename Domain::Geom_traits::FT;
-  using Point_3 = typename Domain::Geom_traits::Point_3;
-  using Vector_3 = typename Domain::Geom_traits::Vector_3;
+  using Geom_traits = typename Domain::Geom_traits;
+  using FT = typename Geom_traits::FT;
+  using Point_3 = typename Geom_traits::Point_3;
+  using Vector_3 = typename Geom_traits::Vector_3;
 
   using Vertex_descriptor = typename Domain::Vertex_descriptor;
   using Edge_descriptor = typename Domain::Edge_descriptor;
@@ -545,7 +546,7 @@ class Dual_contourer<ConcurrencyTag, Domain, DC_Strategy::Cell_center>
 public:
   template<typename PointRange, typename PolygonRange, typename NamedParameters>
   void operator()(const Domain& domain,
-                  const typename Domain::Geom_traits::FT isovalue,
+                  const FT isovalue,
                   PointRange& points,
                   PolygonRange& polygons,
                   const NamedParameters& np = parameters::default_values())
@@ -571,15 +572,10 @@ public:
     // ---------------------------------------------------------------------------------------------
     auto edge_positioner = [&](const Edge_descriptor& e)
     {
-      using FT = typename Domain::Geom_traits::FT;
-      using Point_3 = typename Domain::Geom_traits::Point_3;
-
-      using Vertex_descriptor = typename Domain::Vertex_descriptor;
-
-      auto x_coord = domain.geom_traits().compute_x_3_object();
-      auto y_coord = domain.geom_traits().compute_y_3_object();
-      auto z_coord = domain.geom_traits().compute_z_3_object();
-      auto point = domain.geom_traits().construct_point_3_object();
+      typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
+      typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
+      typename Geom_traits::Compute_z_3 z_coord = domain.geom_traits().compute_z_3_object();
+      typename Geom_traits::Construct_point_3 point = domain.geom_traits().construct_point_3_object();
 
       const auto& evs = domain.incident_vertices(e);
       const Vertex_descriptor& v0 = evs[0];
@@ -606,10 +602,10 @@ public:
     // ---------------------------------------------------------------------------------------------
     auto cell_positioner = [&](const Cell_descriptor& c)
     {
-      auto x_coord = domain.geom_traits().compute_x_3_object();
-      auto y_coord = domain.geom_traits().compute_y_3_object();
-      auto z_coord = domain.geom_traits().compute_z_3_object();
-      auto point = domain.geom_traits().construct_point_3_object();
+      typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
+      typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
+      typename Geom_traits::Compute_z_3 z_coord = domain.geom_traits().compute_z_3_object();
+      typename Geom_traits::Construct_point_3 point = domain.geom_traits().construct_point_3_object();
 
       typename Domain::Cell_vertices vertices = domain.cell_vertices(c);
       const std::size_t cn = vertices.size();

@@ -49,8 +49,8 @@ bool read_Image_3(const CGAL::Image_3& image,
   using Point_3 = typename Geom_traits::Point_3;
   using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
 
-  auto point = grid.geom_traits().construct_point_3_object();
-  auto iso_cuboid = grid.geom_traits().construct_iso_cuboid_3_object();
+  typename Geom_traits::Construct_point_3 point = grid.geom_traits().construct_point_3_object();
+  typename Geom_traits::Construct_iso_cuboid_3 iso_cuboid = grid.geom_traits().construct_iso_cuboid_3_object();
 
   // compute span
   const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();

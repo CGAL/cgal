@@ -91,11 +91,11 @@ private:
 private:
   void compute_spacing()
   {
-    auto x_coord = m_gt.compute_x_3_object();
-    auto y_coord = m_gt.compute_y_3_object();
-    auto z_coord = m_gt.compute_z_3_object();
-    auto vector = m_gt.construct_vector_3_object();
-    auto vertex = m_gt.construct_vertex_3_object();
+    typename Geom_traits::Compute_x_3 x_coord = m_gt.compute_x_3_object();
+    typename Geom_traits::Compute_y_3 y_coord = m_gt.compute_y_3_object();
+    typename Geom_traits::Compute_z_3 z_coord = m_gt.compute_z_3_object();
+    typename Geom_traits::Construct_vector_3 vector = m_gt.construct_vector_3_object();
+    typename Geom_traits::Construct_vertex_3 vertex = m_gt.construct_vertex_3_object();
 
     // calculate grid spacing
     const Point_3& min_p = vertex(m_span, 0);
@@ -181,10 +181,10 @@ public:
       m_spacing{spacing},
       m_gt{gt}
   {
-    auto x_coord = gt.compute_x_3_object();
-    auto y_coord = gt.compute_y_3_object();
-    auto z_coord = gt.compute_z_3_object();
-    auto vertex = gt.construct_vertex_3_object();
+    typename Geom_traits::Compute_x_3 x_coord = gt.compute_x_3_object();
+    typename Geom_traits::Compute_y_3 y_coord = gt.compute_y_3_object();
+    typename Geom_traits::Compute_z_3 z_coord = gt.compute_z_3_object();
+    typename Geom_traits::Construct_vertex_3 vertex = gt.construct_vertex_3_object();
 
     const Point_3& min_p = vertex(span, 0);
     const Point_3& max_p = vertex(span, 7);
@@ -292,15 +292,15 @@ public:
    */
   std::array<std::size_t, 3> index(const Point_3& p) const
   {
-    auto x_coord = m_gt.compute_x_3_object();
-    auto y_coord = m_gt.compute_y_3_object();
-    auto z_coord = m_gt.compute_z_3_object();
-    auto vertex = m_gt.construct_vertex_3_object();
+    typename Geom_traits::Compute_x_3 x_coord = m_gt.compute_x_3_object();
+    typename Geom_traits::Compute_y_3 y_coord = m_gt.compute_y_3_object();
+    typename Geom_traits::Compute_z_3 z_coord = m_gt.compute_z_3_object();
+    typename Geom_traits::Construct_vertex_3 vertex = m_gt.construct_vertex_3_object();
 
     const Point_3& min_p = vertex(m_span, 0);
-    std::size_t i = (x_coord(p) - x_coord(min_p)) / m_spacing[0];
-    std::size_t j = (y_coord(p) - y_coord(min_p)) / m_spacing[1];
-    std::size_t k = (z_coord(p) - z_coord(min_p)) / m_spacing[2];
+    std::size_t i = (x_coord(p) - x_coord(min_p)) / x_coord(m_spacing);
+    std::size_t j = (y_coord(p) - y_coord(min_p)) / y_coord(m_spacing);
+    std::size_t k = (z_coord(p) - z_coord(min_p)) / z_coord(m_spacing);
 
     if(i == xdim() - 1)
       --i;

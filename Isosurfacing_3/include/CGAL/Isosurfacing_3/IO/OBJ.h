@@ -38,10 +38,10 @@ bool write_OBJ(std::ostream& out,
 {
   using Point_3 = typename GeomTraits::Point_3;
 
-  auto x_coord = grid.geom_traits().compute_x_3_object();
-  auto y_coord = grid.geom_traits().compute_y_3_object();
-  auto z_coord = grid.geom_traits().compute_z_3_object();
-  auto vertex = grid.geom_traits().construct_vertex_3_object();
+  typename GeomTraits::Compute_x_3 x_coord = grid.geom_traits().compute_x_3_object();
+  typename GeomTraits::Compute_y_3 y_coord = grid.geom_traits().compute_y_3_object();
+  typename GeomTraits::Compute_z_3 z_coord = grid.geom_traits().compute_z_3_object();
+  typename GeomTraits::Construct_vertex_3 vertex = grid.geom_traits().construct_vertex_3_object();
 
   set_ascii_mode(out); // obj is ASCII only
 

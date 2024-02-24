@@ -64,13 +64,14 @@ struct Dichotomy_edge_intersection
                   const typename Domain::Geom_traits::FT isovalue,
                   typename Domain::Geom_traits::Point_3& p) const
   {
-    using FT = typename Domain::Geom_traits::FT;
-    using Point_3 = typename Domain::Geom_traits::Point_3;
+    using Geom_traits = typename Domain::Geom_traits;
+    using FT = typename Geom_traits::FT;
+    using Point_3 = typename Geom_traits::Point_3;
 
-    auto x_coord = domain.geom_traits().compute_x_3_object();
-    auto y_coord = domain.geom_traits().compute_y_3_object();
-    auto z_coord = domain.geom_traits().compute_z_3_object();
-    auto point = domain.geom_traits().construct_point_3_object();
+    typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
+    typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
+    typename Geom_traits::Compute_z_3 z_coord = domain.geom_traits().compute_z_3_object();
+    typename Geom_traits::Construct_point_3 point = domain.geom_traits().construct_point_3_object();
 
     const bool sl = (val_0 <= isovalue);
     const bool sr = (val_1 <= isovalue);
@@ -150,12 +151,13 @@ struct Linear_interpolation_edge_intersection
                   const typename Domain::Geom_traits::FT isovalue,
                   typename Domain::Geom_traits::Point_3& p) const
   {
-    using FT = typename Domain::Geom_traits::FT;
+    using Geom_traits = typename Domain::Geom_traits;
+    using FT = typename Geom_traits::FT;
 
-    auto x_coord = domain.geom_traits().compute_x_3_object();
-    auto y_coord = domain.geom_traits().compute_y_3_object();
-    auto z_coord = domain.geom_traits().compute_z_3_object();
-    auto point = domain.geom_traits().construct_point_3_object();
+    typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
+    typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
+    typename Geom_traits::Compute_z_3 z_coord = domain.geom_traits().compute_z_3_object();
+    typename Geom_traits::Construct_point_3 point = domain.geom_traits().construct_point_3_object();
 
     if((val_0 <= isovalue) == (val_1 <= isovalue))
       return false;
