@@ -272,7 +272,7 @@ public:
 
 public:
   /**
-   * \brief returns the canonical index of a grid cell given its indices.
+   * \brief returns the index of a grid cell given its indices.
   */
   std::size_t linear_index(const std::size_t i,
                            const std::size_t j,
