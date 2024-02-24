@@ -19,7 +19,6 @@
 #include <CGAL/Isosurfacing_3/IO/OBJ.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
 
@@ -83,7 +82,7 @@ public:
   using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
 
 private:
-  Iso_cuboid_3 m_bbox;
+  Iso_cuboid_3 m_span;
   std::array<std::size_t, 3> m_sizes;
   Vector_3 m_spacing;
 
@@ -99,8 +98,8 @@ private:
     auto vertex = m_gt.construct_vertex_3_object();
 
     // calculate grid spacing
-    const Point_3& min_p = vertex(m_bbox, 0);
-    const Point_3& max_p = vertex(m_bbox, 7);
+    const Point_3& min_p = vertex(m_span, 0);
+    const Point_3& max_p = vertex(m_span, 7);
     const FT x_span = x_coord(max_p) - x_coord(min_p);
     const FT y_span = y_coord(max_p) - y_coord(min_p);
     const FT z_span = z_coord(max_p) - z_coord(min_p);
@@ -117,7 +116,7 @@ public:
    * \brief Default constructor
    */
   Cartesian_grid_3()
-    : m_bbox{Point_3{0, 0, 0}, Point_3{0, 0, 0}},
+    : m_span{Point_3{0, 0, 0}, Point_3{0, 0, 0}},
       m_sizes{2, 2, 2},
       m_spacing{0, 0, 0},
       m_gt{Geom_traits()}
@@ -126,18 +125,18 @@ public:
   /**
    * \brief creates a %Cartesian grid with `xdim * ydim * zdim` grid vertices.
    *
-   * The grid covers the space described by a bounding box.
+   * The grid covers the space described by an iso-cuboid.
    *
-   * \param bbox the bounding box of the grid
+   * \param span the geometric span of the grid
    * \param dimensions the number of grid vertices in the `x`, `y`, and `z` directions
    * \param gt the geometric traits
    *
    * \pre all dimensions are (strictly) positive.
    */
-  Cartesian_grid_3(const Iso_cuboid_3& bbox,
+  Cartesian_grid_3(const Iso_cuboid_3& span,
                    const std::array<std::size_t, 3>& dimensions,
                    const Geom_traits& gt = Geom_traits())
-    : m_bbox{bbox},
+    : m_span{span},
       m_sizes{dimensions},
       m_gt{gt}
   {
@@ -147,10 +146,11 @@ public:
   /**
    * \brief creates a %Cartesian grid with `xdim * ydim * zdim` grid vertices.
    *
-   * The grid covers the space described by a bounding box, itself described through two diagonal corners.
+   * The grid covers the space described by an iso-cuboid,
+   * itself described through two diagonal corners.
    *
-   * \param p the lowest corner of the bounding box of the grid
-   * \param q the upper corner of the bounding box of the grid
+   * \param p the lexicographically smallest corner of the iso-cuboid
+   * \param q the lexicographically largest corner of the iso-cuboid
    * \param dimensions the number of grid vertices in the `x`, `y`, and `z` directions
    * \param gt the geometric traits
    *
@@ -166,18 +166,18 @@ public:
   /**
    * \brief creates a %Cartesian grid using a prescribed grid step.
    *
-   * The grid covers the space described by a bounding box.
+   * The grid covers the space described by an iso-cuboid.
    *
-   * \param bbox the bounding box of the grid
-   * \param spacing the dimension of the paving cell, in the `x`, `y`, and `z` directions, respectively.
+   * \param span the geometric span of the grid
+   * \param spacing the dimension of the paving cell, in the `x`, `y`, and `z` directions
    * \param gt the geometric traits
    *
-   * \pre the diagonal of `bbox` has length a multiple of `spacing`
+   * \pre the diagonal of `span` has length a multiple of `spacing`
    */
-  Cartesian_grid_3(const Iso_cuboid_3& bbox,
+  Cartesian_grid_3(const Iso_cuboid_3& span,
                    const Vector_3& spacing,
                    const Geom_traits& gt = Geom_traits())
-    : m_bbox{bbox},
+    : m_span{span},
       m_spacing{spacing},
       m_gt{gt}
   {
@@ -186,8 +186,8 @@ public:
     auto z_coord = gt.compute_z_3_object();
     auto vertex = gt.construct_vertex_3_object();
 
-    const Point_3& min_p = vertex(bbox, 0);
-    const Point_3& max_p = vertex(bbox, 7);
+    const Point_3& min_p = vertex(span, 0);
+    const Point_3& max_p = vertex(span, 7);
     const FT x_span = x_coord(max_p) - x_coord(min_p);
     const FT y_span = y_coord(max_p) - y_coord(min_p);
     const FT z_span = z_coord(max_p) - z_coord(min_p);
@@ -200,15 +200,15 @@ public:
   /**
    * \brief creates a %Cartesian grid using a prescribed grid step.
    *
-   * The grid covers the space described by a bounding box, itself described through two diagonal corners.
+   * The grid covers the space described by an iso-cuboid, itself described through two diagonal corners.
    *
-   * \param p the lowest corner of the bounding box of the grid
-   * \param q the upper corner of the bounding box of the grid
+   * \param p the lexicographically smallest corner of the iso-cuboid
+   * \param q the lexicographically largest corner of the iso-cuboid
    * \param spacing the dimension of the paving cell, in the `x`, `y`, and `z` directions, respectively.
    * \param gt the geometric traits
    *
    * \pre `p` is lexicographically (strictly) smaller than `q`
-   * \pre the diagonal of the bounding box has length a multiple of `spacing`
+   * \pre the diagonal of the iso-cuboid has length a multiple of `spacing`
    */
   Cartesian_grid_3(const Point_3& p, const Point_3& q,
                    const Vector_3& spacing,
@@ -226,16 +226,16 @@ public:
   }
 
   /**
-   * returns the bounding box of the %Cartesian grid
+   * returns an iso-cuboid representing the geometric span of the %Cartesian grid
    */
-  const Iso_cuboid_3& bbox() const { return m_bbox; }
+  const Iso_cuboid_3& span() const { return m_span; }
 
   /**
-   * sets the bounding box of the %Cartesian grid and recomputes the spacing.
+   * sets the geometric span of the %Cartesian grid and recomputes the spacing.
    */
-  void set_bbox(const Iso_cuboid_3& bbox)
+  void set_span(const Iso_cuboid_3& span)
   {
-    m_bbox = bbox;
+    m_span = span;
     compute_spacing();
   }
 
@@ -288,7 +288,7 @@ public:
    *
    * \param p the point to be located
    *
-   * \pre `p` is inside the bounding box of the grid.
+   * \pre `p` is inside the grid.
    */
   std::array<std::size_t, 3> index(const Point_3& p) const
   {
@@ -297,7 +297,7 @@ public:
     auto z_coord = m_gt.compute_z_3_object();
     auto vertex = m_gt.construct_vertex_3_object();
 
-    const Point_3& min_p = vertex(m_bbox, 0);
+    const Point_3& min_p = vertex(m_span, 0);
     std::size_t i = (x_coord(p) - x_coord(min_p)) / m_spacing[0];
     std::size_t j = (y_coord(p) - y_coord(min_p)) / m_spacing[1];
     std::size_t k = (z_coord(p) - z_coord(min_p)) / m_spacing[2];
@@ -318,7 +318,7 @@ public:
    * \brief returns the geometric position of the grid vertex described by a set of indices.
    *
    * Depending on the value of the template parameter `cache_points`, positions might not be stored
-   * but calculated using the lowest corner of the bounding box and grid spacing.
+   * but calculated on-the-fly.
    *
    * \param i the index in the `x` direction
    * \param j the index in the `y` direction
@@ -336,7 +336,7 @@ public:
     typename Geom_traits::Construct_point_3 point = m_gt.construct_point_3_object();
     typename Geom_traits::Construct_vertex_3 vertex = m_gt.construct_vertex_3_object();
 
-    const Point_3& min_p = vertex(m_bbox, 0);
+    const Point_3& min_p = vertex(m_span, 0);
     return point(x_coord(min_p) + i * m_spacing[0],
                  y_coord(min_p) + j * m_spacing[1],
                  z_coord(min_p) + k * m_spacing[2]);

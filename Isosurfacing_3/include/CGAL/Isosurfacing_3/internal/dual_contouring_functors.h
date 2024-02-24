@@ -102,7 +102,7 @@ bool cell_position_QEM(const typename Domain::Cell_descriptor& c,
 #endif
 
   FT x_min, y_min, z_min, x_max, y_max, z_max;
-  x_min = y_min = z_min = std::numeric_limits<FT>::max(); // @todo domain.bbox()
+  x_min = y_min = z_min = std::numeric_limits<FT>::max(); // @todo domain.span()
   x_max = y_max = z_max = std::numeric_limits<FT>::lowest();
   FT x(0), y(0), z(0);
 

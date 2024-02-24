@@ -6,8 +6,8 @@
 The concept `ValueField_3` describes the set of requirements to be fulfilled
 by the value field template parameter of the domain classes `CGAL::Isosurfacing::Marching_cubes_domain_3` and `CGAL::Isosurfacing::Dual_contouring_domain_3`.
 
-Value fields must be continuous and defined over the bounding box of whatever
-space partitioning data structure (also known as "partition") is being used.
+Value fields must be continuous and defined over the geometric span of the
+space partitioning data structure (also known as "partition") being used.
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Isosurfacing::Value_function_3}

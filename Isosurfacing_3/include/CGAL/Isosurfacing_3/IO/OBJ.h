@@ -55,7 +55,7 @@ bool write_OBJ(std::ostream& out,
     for(std::size_t y=0; y<grid.ydim(); ++y) {
       for(std::size_t z=0; z<grid.zdim(); ++z)
       {
-        const Point_3& p = vertex(grid.bbox(), 0);
+        const Point_3& p = vertex(grid.span(), 0);
         const double x_coord_d = CGAL::to_double(x_coord(p) + x * grid.spacing()[0]);
         const double y_coord_d = CGAL::to_double(y_coord(p) + y * grid.spacing()[1]);
         const double z_coord_d = CGAL::to_double(z_coord(p) + z * grid.spacing()[2]);

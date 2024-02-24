@@ -161,7 +161,7 @@ int main(int argc, char** argv)
   bbox = CGAL::Bbox_3{ -5, -5, -5, 15, 15, 15 };
   Grid grid { bbox, CGAL::make_array<std::size_t>(nv, nv, nv) };
 
-  std::cout << "Bbox: " << grid.bbox() << std::endl;
+  std::cout << "Span: " << grid.span() << std::endl;
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;
   std::cout << "Cell #: " << grid.xdim() << ", " << grid.ydim() << ", " << grid.zdim() << std::endl;
 

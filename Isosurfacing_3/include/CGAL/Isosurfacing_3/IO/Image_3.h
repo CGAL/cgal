@@ -29,7 +29,7 @@ namespace IO {
  *
  * \brief creates a grid from a `CGAL::Image_3`.
  *
- * The dimensions and bounding box are read from the image. The values stored
+ * The dimensions and geometric span are read from the image. The values stored
  * in the image must be of type `Geom_traits::FT` or implicitly convertible to it.
  *
  * \tparam Grid must be `CGAL::Cartesian_grid_3<GeomTraits>` whose `GeomTraits` is a model of `IsosurfacingTraits_3`
@@ -52,18 +52,18 @@ bool read_Image_3(const CGAL::Image_3& image,
   auto point = grid.geom_traits().construct_point_3_object();
   auto iso_cuboid = grid.geom_traits().construct_iso_cuboid_3_object();
 
-  // compute bounding box
+  // compute span
   const FT max_x = image.tx() + (image.xdim() - 1) * image.vx();
   const FT max_y = image.ty() + (image.ydim() - 1) * image.vy();
   const FT max_z = image.tz() + (image.zdim() - 1) * image.vz();
-  Iso_cuboid_3 bbox = iso_cuboid(point(image.tx(), image.ty(), image.tz()),
+  Iso_cuboid_3 span = iso_cuboid(point(image.tx(), image.ty(), image.tz()),
                                  point(max_x, max_y, max_z));
 
   // get spacing
   // std::array<FT, 3> spacing = make_array(image.vx(), image.vy(), image.vz());
 
   // get sizes
-  grid.set_bbox(bbox);
+  grid.set_span(span);
   grid.set_sizes(image.xdim(), image.ydim(), image.zdim());
 
   // copy values
@@ -133,7 +133,7 @@ CGAL::Image_3 write_Image_3(const Grid& grid,
     throw std::bad_alloc();  // @todo idk?
 
   // set min coordinates
-  const Point_3& min_p = vertex(grid.bbox(), 0);
+  const Point_3& min_p = vertex(grid.span(), 0);
   im->tx = float(CGAL::to_double(x_coord(min_p)));
   im->ty = float(CGAL::to_double(y_coord(min_p)));
   im->tz = float(CGAL::to_double(z_coord(min_p)));

@@ -6,8 +6,8 @@
 The concept `GradientField_3` describes the set of requirements to be fulfilled
 by the gradient field template parameter of the domain class `CGAL::Isosurfacing::Dual_contouring_domain_3`.
 
-Gradient fields must be continuous and defined over the bounding box of whatever
-space partitioning data structure (also known as "partition") is being used.
+Gradient fields must be continuous and defined over the geometric span of the
+space partitioning data structure (also known as "partition") being used.
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Isosurfacing::Gradient_function_3}

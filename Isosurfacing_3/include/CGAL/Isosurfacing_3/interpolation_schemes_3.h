@@ -49,7 +49,7 @@ public:
    *
    * \param p the point at which to interpolate the values
    * \param g the grid
-   * \param values the continuous field of scalar values, defined over the bounding box of `g`
+   * \param values the continuous field of scalar values, defined over the geometric span of `g`
    */
   FT interpolate_values(const Point_3& p,
                         const Grid& g,
@@ -61,11 +61,11 @@ public:
     typename Geom_traits::Construct_vertex_3 vertex = g.geom_traits().construct_vertex_3_object();
 
     // trilinear interpolation of stored values
-    const Iso_cuboid_3& bbox = g.bbox();
+    const Iso_cuboid_3& span = g.span();
     const Vector_3& spacing = g.spacing();
 
     // calculate min index including border case
-    const Point_3& min_p = vertex(bbox, 0);
+    const Point_3& min_p = vertex(span, 0);
     std::size_t i = (x_coord(p) - x_coord(min_p)) / x_coord(spacing);
     std::size_t j = (y_coord(p) - y_coord(min_p)) / y_coord(spacing);
     std::size_t k = (z_coord(p) - z_coord(min_p)) / z_coord(spacing);
@@ -119,7 +119,7 @@ public:
    *
    * \param p the point at which to interpolate the gradients
    * \param g the grid
-   * \param gradients the continuous field of vector values, defined over the bounding box of `g`
+   * \param gradients the continuous field of vector values, defined over the geometric span of `g`
    */
   Vector_3 interpolate_gradients(const Point_3& p,
                                  const Grid& g,
@@ -132,11 +132,11 @@ public:
     typename Geom_traits::Construct_vertex_3 vertex = g.geom_traits().construct_vertex_3_object();
 
     // trilinear interpolation of stored gradients
-    const Iso_cuboid_3& bbox = g.bbox();
+    const Iso_cuboid_3& span = g.span();
     const Vector_3& spacing = g.spacing();
 
     // calculate min index including border case
-    const Point_3& min_p = vertex(bbox, 0);
+    const Point_3& min_p = vertex(span, 0);
     std::size_t i = static_cast<std::size_t>((x_coord(p) - x_coord(min_p)) / x_coord(spacing));
     std::size_t j = static_cast<std::size_t>((y_coord(p) - y_coord(min_p)) / y_coord(spacing));
     std::size_t k = static_cast<std::size_t>((z_coord(p) - z_coord(min_p)) / z_coord(spacing));

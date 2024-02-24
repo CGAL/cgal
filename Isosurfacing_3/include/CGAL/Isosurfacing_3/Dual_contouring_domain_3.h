@@ -58,8 +58,8 @@ public:
    * \brief constructs a domain that can be used with the %Dual Contouring algorithm.
    *
    * \param partition the space partitioning data structure
-   * \param values a continuous field of scalar values, defined over the bounding box of `partition`
-   * \param gradients a continuous field of normalized vectors, defined over the bounding box of `partition`
+   * \param values a continuous field of scalar values, defined over the geometric span of `partition`
+   * \param gradients a continuous field of normalized vectors, defined over the geometric span of `partition`
    * \param intersection_oracle the oracle for edge-isosurface intersection computation
    *
    * \warning the domain class keeps a reference to the `partition`, `values` and `gradients` objects.
@@ -84,8 +84,8 @@ public:
  * \tparam EdgeIntersectionOracle must be a model of `EdgeIntersectionOracle_3`
  *
  * \param partition the space partitioning data structure
- * \param values a continuous field of scalar values, defined over the bounding box of `partition`
- * \param gradients a continuous field of normalized vectors, defined over the bounding box of `partition`
+ * \param values a continuous field of scalar values, defined over the geometric span of `partition`
+ * \param gradients a continuous field of normalized vectors, defined over the geometric span of `partition`
  * \param intersection_oracle the oracle for edge-isosurface intersection computation
  *
  * \warning the domain class keeps a reference to the `partition`, `values` and `gradients` objects.
