@@ -22,8 +22,6 @@
 #include <iostream>
 #include <limits>
 
-#include "CLI11.hpp"
-
 #ifndef M_PI
 # define M_PI 3.141592653589793238462643383279502884L
 #endif
@@ -66,14 +64,15 @@ struct Implicit_sphere
   using Domain = CGAL::Isosurfacing::internal::Isosurfacing_domain_3<Grid, Values, Gradients>;
 
   Implicit_sphere(const std::size_t N)
-    : res(2. / N, 2. / N, 2. / N)
+    : res(2. / N, 2. / N, 2. / N),
+      grid { CGAL::Bbox_3 {-1, -1, -1, 1, 1, 1}, CGAL::make_array<std::size_t>(N, N, N) },
+      values { Sphere_value<GeomTraits>{}, grid },
+      gradients { Sphere_gradient<GeomTraits>{}, grid }
   { }
 
   Domain domain() const
   {
-    return { { CGAL::Bbox_3 {-1, -1, -1, 1, 1, 1}, res },
-             { Sphere_value<GeomTraits>{} },
-             { Sphere_gradient<GeomTraits>{} } };
+    return { grid, values, gradients };
   }
 
   FT iso() const
@@ -83,6 +82,9 @@ struct Implicit_sphere
 
 private:
   Vector res;
+  Grid grid;
+  Values values;
+  Gradients gradients;
 };
 
 template <class GeomTraits>
