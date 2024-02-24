@@ -156,8 +156,10 @@ int main(int argc, char** argv)
   bbox += (Point(bbox.xmax(), bbox.ymax(), bbox.zmax()) + aabb_increase_vec).bbox();
   bbox += (Point(bbox.xmin(), bbox.ymin(), bbox.zmin()) - aabb_increase_vec).bbox();
 
-  const int n_voxels = 250;
-  Grid grid { bbox, n_voxels, n_voxels, n_voxels };
+  const int nv = 15;
+
+  bbox = CGAL::Bbox_3{ -5, -5, -5, 15, 15, 15 };
+  Grid grid { bbox, CGAL::make_array<std::size_t>(nv, nv, nv) };
 
   std::cout << "Bbox: " << grid.bbox() << std::endl;
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;

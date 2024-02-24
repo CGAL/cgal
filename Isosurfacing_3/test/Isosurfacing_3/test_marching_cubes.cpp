@@ -60,7 +60,7 @@ void test_grid_sphere(const std::size_t n)
 
   Sphere_function sphere_function;
 
-  Grid grid{n, n, n, bbox};
+  Grid grid { bbox, CGAL::make_array<std::size_t>(n, n, n) };
 
   for(std::size_t x=0; x<grid.xdim(); ++x) {
     for(std::size_t y=0; y<grid.ydim(); ++y) {

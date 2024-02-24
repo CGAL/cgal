@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 
   // create bounding box and grid
   const CGAL::Bbox_3 bbox = {-2., -2., -2., 2., 2., 2.};
-  Grid grid { bbox, 150, 150, 150 };
+  Grid grid { bbox, CGAL::make_array<std::size_t>(150, 150, 150) };
 
   std::cout << "Bbox: " << grid.bbox() << std::endl;
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;

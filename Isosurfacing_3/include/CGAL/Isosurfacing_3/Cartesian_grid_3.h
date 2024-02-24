@@ -85,7 +85,7 @@ public:
 private:
   Iso_cuboid_3 m_bbox;
   std::array<std::size_t, 3> m_sizes;
-  std::array<FT, 3> m_spacing;
+  Vector_3 m_spacing;
 
   Geom_traits m_gt;
 
@@ -95,6 +95,7 @@ private:
     auto x_coord = m_gt.compute_x_3_object();
     auto y_coord = m_gt.compute_y_3_object();
     auto z_coord = m_gt.compute_z_3_object();
+    auto vector = m_gt.construct_vector_3_object();
     auto vertex = m_gt.construct_vertex_3_object();
 
     // calculate grid spacing
@@ -108,7 +109,7 @@ private:
     const FT d_y = y_span / (m_sizes[1] - 1);
     const FT d_z = z_span / (m_sizes[2] - 1);
 
-    m_spacing = make_array(d_x, d_y, d_z);
+    m_spacing = vector(d_x, d_y, d_z);
   }
 
 public:
@@ -128,20 +129,16 @@ public:
    * The grid covers the space described by a bounding box.
    *
    * \param bbox the bounding box of the grid
-   * \param xdim the number of grid vertices in the `x` direction
-   * \param ydim the number of grid vertices in the `y` direction
-   * \param zdim the number of grid vertices in the `z` direction
+   * \param dimensions the number of grid vertices in the `x`, `y`, and `z` directions
    * \param gt the geometric traits
    *
-   * \pre `xdim`, `ydim`, and `zdim` are (strictly) positive.
+   * \pre all dimensions are (strictly) positive.
    */
   Cartesian_grid_3(const Iso_cuboid_3& bbox,
-                   const std::size_t xdim,
-                   const std::size_t ydim,
-                   const std::size_t zdim,
+                   const std::array<std::size_t, 3>& dimensions,
                    const Geom_traits& gt = Geom_traits())
     : m_bbox{bbox},
-      m_sizes{xdim, ydim, zdim},
+      m_sizes{dimensions},
       m_gt{gt}
   {
     compute_spacing();
@@ -154,20 +151,16 @@ public:
    *
    * \param p the lowest corner of the bounding box of the grid
    * \param q the upper corner of the bounding box of the grid
-   * \param xdim the number of grid vertices in the `x` direction
-   * \param ydim the number of grid vertices in the `y` direction
-   * \param zdim the number of grid vertices in the `z` direction
+   * \param dimensions the number of grid vertices in the `x`, `y`, and `z` directions
    * \param gt the geometric traits
    *
    * \pre `p` is lexicographically (strictly) smaller than `q`
-   * \pre `xdim`, `ydim`, and `zdim` are (strictly) positive.
+   * \pre all dimensions are (strictly) positive.
    */
   Cartesian_grid_3(const Point_3& p, const Point_3& q,
-                   const std::size_t xdim,
-                   const std::size_t ydim,
-                   const std::size_t zdim,
+                   const std::array<std::size_t, 3>& dimensions,
                    const Geom_traits& gt = Geom_traits())
-    : Cartesian_grid_3{Iso_cuboid_3{p, q}, xdim, ydim, zdim, gt}
+    : Cartesian_grid_3{Iso_cuboid_3{p, q}, dimensions, gt}
   { }
 
   /**
@@ -182,7 +175,7 @@ public:
    * \pre the diagonal of `bbox` has length a multiple of `spacing`
    */
   Cartesian_grid_3(const Iso_cuboid_3& bbox,
-                   const std::array<FT, 3>& spacing,
+                   const Vector_3& spacing,
                    const Geom_traits& gt = Geom_traits())
     : m_bbox{bbox},
       m_spacing{spacing},
@@ -218,7 +211,7 @@ public:
    * \pre the diagonal of the bounding box has length a multiple of `spacing`
    */
   Cartesian_grid_3(const Point_3& p, const Point_3& q,
-                   const std::array<FT, 3>& spacing,
+                   const Vector_3& spacing,
                    const Geom_traits& gt = Geom_traits())
     : Cartesian_grid_3{Iso_cuboid_3{p, q}, spacing, gt}
   { }
@@ -250,7 +243,7 @@ public:
    * returns the spacing of the %Cartesian grid, that is a vector whose coordinates are
    * the grid steps in the `x`, `y`, and `z` directions, respectively
    */
-  const std::array<FT, 3>& spacing() const { return m_spacing; }
+  const Vector_3& spacing() const { return m_spacing; }
 
   /**
    * returns the number of grid vertices in the `x` direction
@@ -273,7 +266,7 @@ public:
    */
   void set_sizes(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim)
   {
-    m_sizes = {xdim, ydim, zdim};
+    m_sizes = { xdim, ydim, zdim };
     compute_spacing();
   }
 
@@ -309,7 +302,6 @@ public:
     std::size_t j = (y_coord(p) - y_coord(min_p)) / m_spacing[1];
     std::size_t k = (z_coord(p) - z_coord(min_p)) / m_spacing[2];
 
-    // @todo check this
     if(i == xdim() - 1)
       --i;
     if(j == ydim() - 1)

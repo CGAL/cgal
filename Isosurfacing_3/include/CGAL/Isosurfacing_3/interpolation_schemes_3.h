@@ -62,15 +62,14 @@ public:
 
     // trilinear interpolation of stored values
     const Iso_cuboid_3& bbox = g.bbox();
-    const std::array<FT, 3>& spacing = g.spacing();
+    const Vector_3& spacing = g.spacing();
 
     // calculate min index including border case
     const Point_3& min_p = vertex(bbox, 0);
-    std::size_t i = (x_coord(p) - x_coord(min_p)) / spacing[0];
-    std::size_t j = (y_coord(p) - y_coord(min_p)) / spacing[1];
-    std::size_t k = (z_coord(p) - z_coord(min_p)) / spacing[2];
+    std::size_t i = (x_coord(p) - x_coord(min_p)) / x_coord(spacing);
+    std::size_t j = (y_coord(p) - y_coord(min_p)) / y_coord(spacing);
+    std::size_t k = (z_coord(p) - z_coord(min_p)) / z_coord(spacing);
 
-    // @todo check this
     if(i == g.xdim() - 1)
       --i;
     if(j == g.ydim() - 1)
@@ -134,13 +133,13 @@ public:
 
     // trilinear interpolation of stored gradients
     const Iso_cuboid_3& bbox = g.bbox();
-    const std::array<FT, 3>& spacing = g.spacing();
+    const Vector_3& spacing = g.spacing();
 
     // calculate min index including border case
     const Point_3& min_p = vertex(bbox, 0);
-    std::size_t i = static_cast<std::size_t>((x_coord(p) - x_coord(min_p)) / spacing[0]);
-    std::size_t j = static_cast<std::size_t>((y_coord(p) - y_coord(min_p)) / spacing[1]);
-    std::size_t k = static_cast<std::size_t>((z_coord(p) - z_coord(min_p)) / spacing[2]);
+    std::size_t i = static_cast<std::size_t>((x_coord(p) - x_coord(min_p)) / x_coord(spacing));
+    std::size_t j = static_cast<std::size_t>((y_coord(p) - y_coord(min_p)) / y_coord(spacing));
+    std::size_t k = static_cast<std::size_t>((z_coord(p) - z_coord(min_p)) / z_coord(spacing));
 
     if(i == g.xdim() - 1) // dim is the point number
       --i;

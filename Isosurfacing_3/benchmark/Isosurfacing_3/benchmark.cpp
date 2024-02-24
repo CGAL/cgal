@@ -171,7 +171,7 @@ struct Grid_sphere
   Grid_sphere(const std::size_t N)
   {
     const CGAL::Bbox_3 bbox{-1., -1., -1., 1., 1., 1.};
-    grid = Grid { bbox, N, N, N };
+    grid = Grid { bbox, CGAL::make_array<std::size_t>(N, N, N) };
 
     values = { grid };
     gradients = { grid };
