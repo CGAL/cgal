@@ -142,12 +142,15 @@ struct Implicit_iwp
   using Domain = CGAL::Isosurfacing::internal::Isosurfacing_domain_3<Grid, Values, Gradients>;
 
   Implicit_iwp(const std::size_t N)
-    : res(2. / N, 2. / N, 2. / N)
+    : res(2. / N, 2. / N, 2. / N),
+      grid { CGAL::Bbox_3{-1, -1, -1, 1, 1, 1}, CGAL::make_array<std::size_t>(N, N, N) },
+      values { IWPValue<GeomTraits>{}, grid },
+      gradients { IWPGradient<GeomTraits>{}, grid }
   { }
 
   Domain domain() const
   {
-    return { { {-1, -1, -1, 1, 1, 1}, res } , { IWPValue<GeomTraits>{} }, { IWPGradient<GeomTraits>{} } };
+    return { grid, values, gradients };
   }
 
   FT iso() const
@@ -157,6 +160,9 @@ struct Implicit_iwp
 
 private:
   Vector res;
+  Grid grid;
+  Values values;
+  Gradients gradients;
 };
 
 template <class GeomTraits>
@@ -171,17 +177,14 @@ struct Grid_sphere
   using Point = typename GeomTraits::Point_3;
 
   Grid_sphere(const std::size_t N)
+    : grid { CGAL::Bbox_3{-1., -1., -1., 1., 1., 1.},
+             CGAL::make_array<std::size_t>(N, N, N) },
+      values { grid },
+      gradients { grid }
   {
-    const CGAL::Bbox_3 bbox{-1., -1., -1., 1., 1., 1.};
-    grid = Grid { bbox, CGAL::make_array<std::size_t>(N, N, N) };
-
-    values = { grid };
-    gradients = { grid };
-
+    const Sphere_value<GeomTraits> sphere_val;
+    const Sphere_gradient<GeomTraits> sphere_grad;
     const FT resolution = 2.0 / N;
-
-    Sphere_value<GeomTraits> sphere_val;
-    Sphere_gradient<GeomTraits> sphere_grad;
 
     for(std::size_t x = 0; x < grid.xdim(); x++)
     {
@@ -225,6 +228,8 @@ struct Skull_image
   using Domain = CGAL::Isosurfacing::internal::Isosurfacing_domain_3<Grid, Values, Gradients>;
 
   Skull_image(const std::size_t N)
+    : grid { },
+      values { grid }
   {
     const std::string fname = CGAL::data_file_path("images/skull_2.9.inr");
     CGAL::Image_3 image;
@@ -235,12 +240,11 @@ struct Skull_image
     Values values { grid };
     if(!CGAL::Isosurfacing::IO::read_Image_3(image, grid, values))
       std::cerr << "Error: Cannot convert image to Cartesian grid" << std::endl;
-
-    gradients = { values };
   }
 
   Domain domain() const
   {
+    Gradients gradients { values };
     return { grid, values, gradients };
   }
 
@@ -252,7 +256,6 @@ struct Skull_image
 private:
   Grid grid;
   Values values;
-  Gradients gradients;
 };
 
 int main(int argc, char* argv[])
@@ -325,7 +328,7 @@ int main(int argc, char* argv[])
 
 #if defined ALGO_MARCHING_CUBES
   std::cout << "ALGO_MARCHING_CUBES" << std::endl;
-  CGAL::Isosurfacing::marching_cubes<Tag>(scenario.domain(), scenario.iso(), points, polygons, false);
+  CGAL::Isosurfacing::marching_cubes<Tag>(scenario.domain(), scenario.iso(), points, polygons);
 #elif defined ALGO_DUAL_CONTOURING
   std::cout << "ALGO_DUAL_CONTOURING" << std::endl;
   CGAL::Isosurfacing::dual_contouring<Tag>(scenario.domain(), scenario.iso(), points, polygons);

@@ -47,7 +47,7 @@ private:
   const std::function<FT(const Point_3&)> m_function;
   const FT m_delta, m_half_step_inv;
 
-  const GeomTraits m_gt;
+  GeomTraits m_gt;
 
 public:
   /**
