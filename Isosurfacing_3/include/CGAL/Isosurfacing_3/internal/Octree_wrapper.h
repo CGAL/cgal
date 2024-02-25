@@ -464,7 +464,7 @@ public:
     const auto& depth = node.depth();
 
     std::array<Edge_handle, internal::Cube_table::N_EDGES> edges;
-    for(int e_id=0; e_id<edges.size(); ++e_id)
+    for(std::size_t e_id=0; e_id<edges.size(); ++e_id)
     {
       const std::size_t e_gl = e_glIndex(e_id, coords_global[0], coords_global[1], coords_global[2], depth);
       edges[e_id] = {e_gl, depth};

@@ -298,9 +298,9 @@ public:
     typename Geom_traits::Construct_vertex_3 vertex = m_gt.construct_vertex_3_object();
 
     const Point_3& min_p = vertex(m_span, 0);
-    std::size_t i = (x_coord(p) - x_coord(min_p)) / x_coord(m_spacing);
-    std::size_t j = (y_coord(p) - y_coord(min_p)) / y_coord(m_spacing);
-    std::size_t k = (z_coord(p) - z_coord(min_p)) / z_coord(m_spacing);
+    std::size_t i = std::size_t((x_coord(p) - x_coord(min_p)) / x_coord(m_spacing));
+    std::size_t j = std::size_t((y_coord(p) - y_coord(min_p)) / y_coord(m_spacing));
+    std::size_t k = std::size_t((z_coord(p) - z_coord(min_p)) / z_coord(m_spacing));
 
     if(i == xdim() - 1)
       --i;

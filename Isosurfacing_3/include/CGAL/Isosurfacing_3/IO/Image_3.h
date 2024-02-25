@@ -46,7 +46,6 @@ bool read_Image_3(const CGAL::Image_3& image,
 {
   using Geom_traits = typename Grid::Geom_traits;
   using FT = typename Geom_traits::FT;
-  using Point_3 = typename Geom_traits::Point_3;
   using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
 
   typename Geom_traits::Construct_point_3 point = grid.geom_traits().construct_point_3_object();
