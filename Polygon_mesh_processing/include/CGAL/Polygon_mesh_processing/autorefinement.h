@@ -259,8 +259,8 @@ void coplanar_intersections(const std::array<typename K::Point_3, 3>& t1,
                             const std::array<typename K::Point_3, 3>& t2,
                             std::vector<std::tuple<typename K::Point_3, int, int>>& inter_pts)
 {
-  const typename K::Point_3& p1 = t1[0], q1 = t1[1], r1 = t1[2];
-  const typename K::Point_3& p2 = t2[0], q2 = t2[1], r2 = t2[2];
+  const typename K::Point_3& p1 = t1[0], &q1 = t1[1], &r1 = t1[2];
+  const typename K::Point_3& p2 = t2[0], &q2 = t2[1], &r2 = t2[2];
 
   std::list<Intersections::internal::Point_on_triangle<K>> l_inter_pts;
   l_inter_pts.push_back(Intersections::internal::Point_on_triangle<K>(0,-1));
