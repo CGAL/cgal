@@ -39,6 +39,8 @@ namespace IO {
  * \param grid the grid
  * \tparam values the values
  */
+// We need to have the API pass us an existing grid / values pair because the values
+// usually keep a reference to the grid.
 template <typename Grid, typename Values>
 bool read_Image_3(const CGAL::Image_3& image,
                   Grid& grid,
@@ -61,9 +63,7 @@ bool read_Image_3(const CGAL::Image_3& image,
   // get spacing
   // std::array<FT, 3> spacing = make_array(image.vx(), image.vy(), image.vz());
 
-  // get sizes
-  grid.set_span(span);
-  grid.set_sizes(image.xdim(), image.ydim(), image.zdim());
+  grid = Grid { span, CGAL::make_array<std::size_t>(image.xdim(), image.ydim(), image.zdim()) };
 
   // copy values
   for(std::size_t x=0; x<image.xdim(); ++x)

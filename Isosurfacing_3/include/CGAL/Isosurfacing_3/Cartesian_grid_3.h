@@ -52,6 +52,78 @@ using Cache_positions = Grid_vertex_memory_policy<Tag_true>;
  */
 using Do_not_cache_positions = Grid_vertex_memory_policy<Tag_false>;
 
+namespace internal {
+
+template <typename GeomTraits,
+          typename MemoryPolicy = Do_not_cache_positions>
+struct Cartesian_grid_position
+{
+  using Point_3 = typename GeomTraits::Point_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
+
+  Cartesian_grid_position() { } // just for compilation
+
+  Cartesian_grid_position(const Iso_cuboid_3& /*span*/,
+                          const std::array<std::size_t, 3>& /*dims*/,
+                          const Vector_3& /*spacing*/)
+  { }
+
+  template <typename Grid>
+  Point_3 operator()(const std::size_t i,
+                     const std::size_t j,
+                     const std::size_t k,
+                     const Grid& g) const
+  {
+    typename GeomTraits::Compute_x_3 x_coord = g.geom_traits().compute_x_3_object();
+    typename GeomTraits::Compute_y_3 y_coord = g.geom_traits().compute_y_3_object();
+    typename GeomTraits::Compute_z_3 z_coord = g.geom_traits().compute_z_3_object();
+    typename GeomTraits::Construct_point_3 point = g.geom_traits().construct_point_3_object();
+    typename GeomTraits::Construct_vertex_3 vertex = g.geom_traits().construct_vertex_3_object();
+
+    const Point_3& min_p = vertex(g.span(), 0);
+    return point(x_coord(min_p) + i * g.spacing()[0],
+                 y_coord(min_p) + j * g.spacing()[1],
+                 z_coord(min_p) + k * g.spacing()[2]);
+  }
+};
+
+template <typename GeomTraits>
+struct Cartesian_grid_position<GeomTraits, Cache_positions>
+{
+  using Point_3 = typename GeomTraits::Point_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
+
+  std::vector<Point_3> m_points;
+
+  Cartesian_grid_position() { } // just for compilation
+
+  Cartesian_grid_position(const Iso_cuboid_3& span,
+                          const std::array<std::size_t, 3>& dims,
+                          const Vector_3& spacing)
+  {
+    m_points.reserve(dims[0] * dims[1] * dims[2]);
+    for(std::size_t k=0; k<dims[2]; ++k)
+      for(std::size_t j=0; j<dims[1]; ++j)
+        for(std::size_t i=0; i<dims[0]; ++i)
+          m_points.emplace_back(span.min() + Vector_3(i * spacing[0], j * spacing[1], k * spacing[2]));
+  }
+
+  template <typename Grid>
+  const Point_3& operator()(const std::size_t i,
+                            const std::size_t j,
+                            const std::size_t k,
+                            const Grid& g) const
+  {
+    const std::size_t linear_index = g.linear_index(i, j, k);
+    CGAL_precondition(linear_index < m_points.size());
+    return m_points[linear_index];
+  }
+};
+
+} // namespace internal
+
 /**
  * \ingroup IS_Partitions_grp
  *
@@ -71,7 +143,7 @@ using Do_not_cache_positions = Grid_vertex_memory_policy<Tag_false>;
  * \sa `CGAL::Isosurfacing::Dual_contouring_domain_3()`
  */
 template <typename GeomTraits,
-          typename MemoryPolicy = Do_not_cache_positions> // @todo actually implement it
+          typename MemoryPolicy = Do_not_cache_positions>
 class Cartesian_grid_3
 {
 public:
@@ -81,15 +153,18 @@ public:
   using Vector_3 = typename Geom_traits::Vector_3;
   using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
 
+  using Positioner = internal::Cartesian_grid_position<GeomTraits, MemoryPolicy>;
+
 private:
   Iso_cuboid_3 m_span;
-  std::array<std::size_t, 3> m_sizes;
+  std::array<std::size_t, 3> m_dims;
   Vector_3 m_spacing;
 
+  Positioner m_positioner;
   Geom_traits m_gt;
 
 private:
-  void compute_spacing()
+  void initialize_spacing()
   {
     typename Geom_traits::Compute_x_3 x_coord = m_gt.compute_x_3_object();
     typename Geom_traits::Compute_y_3 y_coord = m_gt.compute_y_3_object();
@@ -104,11 +179,33 @@ private:
     const FT y_span = y_coord(max_p) - y_coord(min_p);
     const FT z_span = z_coord(max_p) - z_coord(min_p);
 
-    const FT d_x = x_span / (m_sizes[0] - 1);
-    const FT d_y = y_span / (m_sizes[1] - 1);
-    const FT d_z = z_span / (m_sizes[2] - 1);
+    const FT d_x = x_span / (m_dims[0] - 1);
+    const FT d_y = y_span / (m_dims[1] - 1);
+    const FT d_z = z_span / (m_dims[2] - 1);
 
     m_spacing = vector(d_x, d_y, d_z);
+
+    m_positioner = Positioner { m_span, m_dims, m_spacing };
+  }
+
+  void initialize_dimensions()
+  {
+    typename Geom_traits::Compute_x_3 x_coord = m_gt.compute_x_3_object();
+    typename Geom_traits::Compute_y_3 y_coord = m_gt.compute_y_3_object();
+    typename Geom_traits::Compute_z_3 z_coord = m_gt.compute_z_3_object();
+    typename Geom_traits::Construct_vertex_3 vertex = m_gt.construct_vertex_3_object();
+
+    const Point_3& min_p = vertex(m_span, 0);
+    const Point_3& max_p = vertex(m_span, 7);
+    const FT x_span = x_coord(max_p) - x_coord(min_p);
+    const FT y_span = y_coord(max_p) - y_coord(min_p);
+    const FT z_span = z_coord(max_p) - z_coord(min_p);
+
+    m_dims[0] = static_cast<std::size_t>(std::ceil(x_span / m_spacing[0])) + 1;
+    m_dims[1] = static_cast<std::size_t>(std::ceil(y_span / m_spacing[1])) + 1;
+    m_dims[2] = static_cast<std::size_t>(std::ceil(z_span / m_spacing[2])) + 1;
+
+    m_positioner = Positioner { m_span, m_dims, m_spacing };
   }
 
 public:
@@ -117,7 +214,7 @@ public:
    */
   Cartesian_grid_3()
     : m_span{Point_3{0, 0, 0}, Point_3{0, 0, 0}},
-      m_sizes{2, 2, 2},
+      m_dims{2, 2, 2},
       m_spacing{0, 0, 0},
       m_gt{Geom_traits()}
   { }
@@ -137,10 +234,10 @@ public:
                    const std::array<std::size_t, 3>& dimensions,
                    const Geom_traits& gt = Geom_traits())
     : m_span{span},
-      m_sizes{dimensions},
+      m_dims{dimensions},
       m_gt{gt}
   {
-    compute_spacing();
+    initialize_spacing();
   }
 
   /**
@@ -181,20 +278,7 @@ public:
       m_spacing{spacing},
       m_gt{gt}
   {
-    typename Geom_traits::Compute_x_3 x_coord = gt.compute_x_3_object();
-    typename Geom_traits::Compute_y_3 y_coord = gt.compute_y_3_object();
-    typename Geom_traits::Compute_z_3 z_coord = gt.compute_z_3_object();
-    typename Geom_traits::Construct_vertex_3 vertex = gt.construct_vertex_3_object();
-
-    const Point_3& min_p = vertex(span, 0);
-    const Point_3& max_p = vertex(span, 7);
-    const FT x_span = x_coord(max_p) - x_coord(min_p);
-    const FT y_span = y_coord(max_p) - y_coord(min_p);
-    const FT z_span = z_coord(max_p) - z_coord(min_p);
-
-    m_sizes[0] = static_cast<std::size_t>(std::ceil(x_span / spacing[0])) + 1;
-    m_sizes[1] = static_cast<std::size_t>(std::ceil(y_span / spacing[1])) + 1;
-    m_sizes[2] = static_cast<std::size_t>(std::ceil(z_span / spacing[2])) + 1;
+    initialize_dimensions();
   }
 
   /**
@@ -231,44 +315,25 @@ public:
   const Iso_cuboid_3& span() const { return m_span; }
 
   /**
-   * sets the geometric span of the %Cartesian grid and recomputes the spacing.
+   * returns the number of grid vertices in the `x` direction
    */
-  void set_span(const Iso_cuboid_3& span)
-  {
-    m_span = span;
-    compute_spacing();
-  }
+  std::size_t xdim() const { return m_dims[0]; }
+
+  /**
+   * returns the number of grid vertices in the `y` direction
+   */
+  std::size_t ydim() const { return m_dims[1]; }
+
+  /**
+   * returns the number of grid vertices in the `z` direction
+   */
+  std::size_t zdim() const { return m_dims[2]; }
 
   /**
    * returns the spacing of the %Cartesian grid, that is a vector whose coordinates are
    * the grid steps in the `x`, `y`, and `z` directions, respectively
    */
   const Vector_3& spacing() const { return m_spacing; }
-
-  /**
-   * returns the number of grid vertices in the `x` direction
-   */
-  std::size_t xdim() const { return m_sizes[0]; }
-
-  /**
-   * returns the number of grid vertices in the `y` direction
-   */
-  std::size_t ydim() const { return m_sizes[1]; }
-
-  /**
-   * returns the number of grid vertices in the `z` direction
-   */
-  std::size_t zdim() const { return m_sizes[2]; }
-
-  /**
-   * sets the number of grid vertices in the `x`, `y`, and `z` directions, respectively,
-   * and recomputes the spacing.
-   */
-  void set_sizes(const std::size_t xdim, const std::size_t ydim, const std::size_t zdim)
-  {
-    m_sizes = { xdim, ydim, zdim };
-    compute_spacing();
-  }
 
 public:
   /**
@@ -278,8 +343,8 @@ public:
                            const std::size_t j,
                            const std::size_t k) const
   {
-    CGAL_precondition(i < m_sizes[0] && j < m_sizes[1] && k < m_sizes[2]);
-    return (k * m_sizes[1] + j) * m_sizes[0] + i;
+    CGAL_precondition(i < m_dims[0] && j < m_dims[1] && k < m_dims[2]);
+    return (k * m_dims[1] + j) * m_dims[0] + i;
   }
 
 public:
@@ -326,20 +391,11 @@ public:
    *
    * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
-  Point_3 point(const std::size_t i,
-                const std::size_t j,
-                const std::size_t k) const
+  decltype(auto) /*Point_3*/ point(const std::size_t i,
+                                   const std::size_t j,
+                                   const std::size_t k) const
   {
-    typename Geom_traits::Compute_x_3 x_coord = m_gt.compute_x_3_object();
-    typename Geom_traits::Compute_y_3 y_coord = m_gt.compute_y_3_object();
-    typename Geom_traits::Compute_z_3 z_coord = m_gt.compute_z_3_object();
-    typename Geom_traits::Construct_point_3 point = m_gt.construct_point_3_object();
-    typename Geom_traits::Construct_vertex_3 vertex = m_gt.construct_vertex_3_object();
-
-    const Point_3& min_p = vertex(m_span, 0);
-    return point(x_coord(min_p) + i * m_spacing[0],
-                 y_coord(min_p) + j * m_spacing[1],
-                 z_coord(min_p) + k * m_spacing[2]);
+    return m_positioner(i, j, k, *this);
   }
 };
 
