@@ -123,8 +123,7 @@ int main(int argc, char** argv)
     Polygon_range triangles;
 
     std::cout << "--- Marching Cubes (Sequential)" << std::endl;
-    IS::marching_cubes<CGAL::Sequential_tag>(
-      domain, isovalue, points, triangles, CGAL::parameters::do_not_triangulate_faces(!triangulate_faces));
+    IS::marching_cubes<CGAL::Sequential_tag>(domain, isovalue, points, triangles);
 
     timer.stop();
 
@@ -146,8 +145,7 @@ int main(int argc, char** argv)
     Polygon_range triangles;
 
     std::cout << "--- Marching Cubes (Parallel)" << std::endl;
-    IS::marching_cubes<CGAL::Parallel_if_available_tag>(
-      domain, isovalue, points, triangles, CGAL::parameters::do_not_triangulate_faces(!triangulate_faces));
+    IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles);
 
     timer.stop();
 
