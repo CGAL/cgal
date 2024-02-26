@@ -95,6 +95,24 @@ public:
     return PT::point(v, m_partition);
   }
 
+  // returns the value of the function at vertex `v`
+  decltype(auto) /*FT*/ value(const Vertex_descriptor& v) const
+  {
+    return m_values(v);
+  }
+
+  // returns the value of the function at point `p`
+  decltype(auto) /*FT*/ value(const Point_3& p) const
+  {
+    return m_values(p);
+  }
+
+  // returns the gradient at point `p`
+  decltype(auto) /*Vector_3*/ gradient(const Point_3& p) const
+  {
+    return m_gradients(p);
+  }
+
   // returns a container with the two vertices incident to the edge `e`
   decltype(auto) /*Vertices_incident_to_edge*/ incident_vertices(const Edge_descriptor& e) const
   {
@@ -140,22 +158,13 @@ public:
     PT::for_each_cell(f, m_partition, ConcurrencyTag{});
   }
 
-  // returns the value of the function at vertex `v`
-  decltype(auto) /*FT*/ value(const Vertex_descriptor& v) const
+  // finds the intersection of the isosurface with the edge `e` (if any)
+  bool construct_intersection(const Point_3& p_0, const Point_3& p_1,
+                              const FT val_0, const FT val_1,
+                              const FT isovalue,
+                              Point_3& p) const
   {
-    return m_values(v);
-  }
-
-  // returns the value of the function at point `p`
-  decltype(auto) /*FT*/ value(const Point_3& p) const
-  {
-    return m_values(p);
-  }
-
-  // returns the gradient at point `p`
-  decltype(auto) /*Vector_3*/ gradient(const Point_3& p) const
-  {
-    return m_gradients(p);
+    return m_intersection_oracle(p_0, p_1, val_0, val_1, *this, isovalue, p);
   }
 };
 

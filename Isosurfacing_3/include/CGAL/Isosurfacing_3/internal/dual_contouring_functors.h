@@ -338,7 +338,7 @@ public:
       const FT val1 = domain.value(v1);
 
       Point_3 p;
-      bool res = domain.intersection_oracle()(p0, p1, val0, val1, domain, isovalue, p);
+      bool res = domain.construct_intersection(p0, p1, val0, val1, isovalue, p);
       if(!res)
         return;
 
@@ -466,7 +466,7 @@ public:
       const FT val1 = domain.value(v1);
 
       Point_3 p;
-      bool res = domain.intersection_oracle()(p0, p1, val0, val1, domain, isovalue, p);
+      bool res = domain.construct_intersection(p0, p1, val0, val1, isovalue, p);
       if(!res)
         return;
 
