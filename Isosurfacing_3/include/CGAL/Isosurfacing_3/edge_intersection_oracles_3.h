@@ -40,6 +40,9 @@ namespace Isosurfacing {
  */
 struct Dichotomy_edge_intersection
 {
+  unsigned int m_max_iterations = 10;
+  double m_relative_eps = 1e-7;
+
   /*!
    * \brief computes the intersection point between an edge and the isosurface.
    *
@@ -82,8 +85,8 @@ struct Dichotomy_edge_intersection
     Point_3 pl = p_0;
     Point_3 pr = p_1;
 
-    unsigned int dichotomy_iterations = 10, iter = 0;
-    const FT eps = (std::max)(FT(1e-7), std::abs(isovalue) * FT(1e-7));
+    unsigned int dichotomy_iterations = m_max_iterations, iter = 0;
+    const FT eps = (std::max)(FT(m_relative_eps), std::abs(isovalue) * FT(m_relative_eps));
     do
     {
       p = point((x_coord(pl) + x_coord(pr)) / FT(2),
