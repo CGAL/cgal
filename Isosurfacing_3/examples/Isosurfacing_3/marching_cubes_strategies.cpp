@@ -42,8 +42,6 @@ int main(int argc, char** argv)
 
   Values values { sphere_value_fn, grid };
   Domain domain { grid, values };
-  // the domain could also be created with:
-  // auto domain = CGAL::Isosurfacing::create_marching_cubes_domain_3(grid, values);
 
   // MC base version
   {

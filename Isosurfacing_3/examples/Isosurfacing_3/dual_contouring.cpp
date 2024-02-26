@@ -50,9 +50,9 @@ int main(int argc, char** argv)
   Values values { sphere_value_fn, grid };
   Gradients gradients { sphere_gradient_fn, grid };
 
-  Domain domain { grid, values, gradients };
-  // the domain could also be created with:
-  // auto domain = CGAL::Isosurfacing::create_dual_contouring_domain_3(grid, values, gradients);
+  // Below is equivalent to:
+  //   Domain domain { grid, values, gradients };
+  Domain domain = CGAL::Isosurfacing::create_dual_contouring_domain_3(grid, values, gradients);
 
   Point_range points;
   Polygon_range triangles;
