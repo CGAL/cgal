@@ -668,8 +668,9 @@ public:
     Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
 
     Orthtrees::nearest_k_neighbors_in_radius(*this, query_sphere, k, boost::make_function_output_iterator
-    ([&](const Traits::Node_data_element index)
-      {*output++ = get(m_traits.m_point_map, index); }));
+      ([&](const typename Traits::Node_data_element index) {
+          *output++ = get(m_traits.m_point_map, index);
+        }));
 
     return output;
   }
@@ -681,8 +682,9 @@ public:
 
     Orthtrees::nearest_k_neighbors_in_radius(*this, query_sphere,
       (std::numeric_limits<std::size_t>::max)(), boost::make_function_output_iterator
-      ([&](const Traits::Node_data_element index)
-        {*output++ = get(m_traits.m_point_map, index); }));
+      ([&](const typename Traits::Node_data_element index) {
+        *output++ = get(m_traits.m_point_map, index);
+        }));
 
     return output;
   }
