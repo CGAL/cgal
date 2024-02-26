@@ -165,5 +165,22 @@ public:
   template <typename ConcurrencyTag, typename Functor>
   void for_each_cell(Functor& f) const;
 
+  /*!
+  Constructs the intersection - if it exists - between an edge and an isosurface.
+
+  \param p_0 the geometric position of the first vertex of the edge
+  \param p_1 the geometric position of the second vertex of the edge
+  \param val_0 the value at the first vertex of the edge
+  \param val_1 the value at the second vertex of the edge
+  \param isovalue the isovalue defining the isosurfacing with which we seek an intersection
+  \param p the intersection point, if it exists
+
+  \returns `true` if the intersection point exists, `false` otherwise
+  */
+  bool construct_intersection(const Point_3& p_0, const Point_3& p_1,
+                            const FT val_0, const FT val_1,
+                            const FT isovalue,
+                            Point_3& p) const;
+
   /// @}
 };
