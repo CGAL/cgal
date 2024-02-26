@@ -191,8 +191,6 @@ public:
       };
   }
 
-private:
-
   PointRange& m_points;
   PointMap m_point_map;
 };

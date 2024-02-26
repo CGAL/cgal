@@ -50,6 +50,7 @@ namespace CGAL {
 namespace Orthtree_impl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Node_data)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Squared_distance_of_element)
 
 template <class GT, bool has_data>
 struct Node_data_wrapper;
@@ -124,8 +125,10 @@ public:
   /// @{
 #ifndef DOXYGEN_RUNNING
   static inline constexpr bool has_data = Orthtree_impl::has_Node_data<GeomTraits>::value;
+  static inline constexpr bool supports_neighbor_search = true;// Orthtree_impl::has_Squared_distance_of_element<GeomTraits>::value;
 #else
   static inline constexpr bool has_data = bool_value; ///< `true` if `GeomTraits` is a model of `OrthtreeTraitswithData` and `false` otherwise.
+  static inline constexpr bool supports_neighbor_search = bool_value; ///< `true` if `GeomTraits` is a model of `CollectionPartitioningOrthtreeTraits` and `false` otherwise.
 #endif
   static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
   using Kernel = typename Traits::Kernel; ///< Kernel type.
@@ -655,6 +658,33 @@ public:
 
     // Return the result
     return node_for_point;
+  }
+
+  template<typename OutputIterator>
+  CGAL_DEPRECATED_MSG("you are using the deprecated API, please update your code")
+  auto nearest_neighbors(const Point& query,
+    std::size_t k,
+    OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+    Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
+
+    Orthtrees::nearest_k_neighbors_in_radius(*this, query_sphere, k, boost::make_function_output_iterator
+    ([&](const Traits::Node_data_element index)
+      {*output++ = get(m_traits.m_point_map, index); }));
+
+    return output;
+  }
+
+  template<typename OutputIterator>
+  CGAL_DEPRECATED_MSG("you are using the deprecated API, please update your code")
+  auto nearest_neighbors(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+    Sphere query_sphere = query;
+
+    Orthtrees::nearest_k_neighbors_in_radius(*this, query_sphere,
+      (std::numeric_limits<std::size_t>::max)(), boost::make_function_output_iterator
+      ([&](const Traits::Node_data_element index)
+        {*output++ = get(m_traits.m_point_map, index); }));
+
+    return output;
   }
 
   /*!
