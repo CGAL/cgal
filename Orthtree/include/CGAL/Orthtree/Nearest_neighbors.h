@@ -13,6 +13,10 @@
 #define ORTHTREE_NEAREST_NEIGHBORS_H
 
 #include <CGAL/license/Orthtree.h>
+#include <CGAL/intersections.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/squared_distance_3.h>
+#include <boost/function_output_iterator.hpp>
 
 namespace CGAL {
 
