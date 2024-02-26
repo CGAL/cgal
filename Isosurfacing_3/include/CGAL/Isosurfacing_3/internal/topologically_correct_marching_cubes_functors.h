@@ -78,6 +78,7 @@ private:
   using Point_index = std::size_t;
   using Edge_index = std::array<std::size_t, 4>;
 
+#ifdef CGAL_LINKED_WITH_TBB
   struct Hash_compare
   {
     static size_t hash(const Edge_index& key)
@@ -95,25 +96,40 @@ private:
       return key1[0] == key2[0] && key1[1] == key2[1] && key1[2] == key2[2] && key1[3] == key2[3];
     }
   };
+#else
+  struct Hash
+  {
+    std::size_t operator()(const Edge_index& key) const
+    {
+      std::size_t res = 17;
+      res = res * 31 + std::hash<std::size_t>()(key[0]);
+      res = res * 31 + std::hash<std::size_t>()(key[1]);
+      res = res * 31 + std::hash<std::size_t>()(key[2]);
+      res = res * 31 + std::hash<std::size_t>()(key[3]);
+      return res;
+    }
+  };
+#endif
 
 private:
   const Domain& m_domain;
   FT m_isovalue;
 
+#ifdef CGAL_LINKED_WITH_TBB
   std::atomic<Point_index> m_point_counter;
 
-#ifdef CGAL_LINKED_WITH_TBB
   tbb::concurrent_vector<Point_3> m_points;
   tbb::concurrent_vector<std::array<Point_index, 3> > m_triangles;
 
   using Edge_point_map = tbb::concurrent_hash_map<Edge_index, Point_index, Hash_compare>;
   Edge_point_map m_edges;
 #else
+  Point_index m_point_counter;
+
   std::vector<Point_3> m_points;
   std::vector<std::array<Point_index, 3> > m_triangles;
 
-  // std::unordered_map<Edge_index, Point_index, Hash_compare> m_edges; // @tmp hash map
-  std::map<Edge_index, Point_index> m_edges; // @tmp hash map
+  std::unordered_map<Edge_index, Point_index, Hash> m_edges;
 #endif
 
 public:
