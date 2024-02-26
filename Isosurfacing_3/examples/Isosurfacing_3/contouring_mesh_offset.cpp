@@ -158,7 +158,6 @@ int main(int argc, char** argv)
 
   const int nv = 15;
 
-  bbox = CGAL::Bbox_3{ -5, -5, -5, 15, 15, 15 };
   Grid grid { bbox, CGAL::make_array<std::size_t>(nv, nv, nv) };
 
   std::cout << "Span: " << grid.span() << std::endl;
