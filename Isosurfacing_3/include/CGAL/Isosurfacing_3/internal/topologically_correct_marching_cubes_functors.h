@@ -242,26 +242,29 @@ private:
 
   Point_index add_point(const Point_3& p, const Edge_index& e)
   {
-    const Point_index i = m_point_counter++;
 
 #ifdef CGAL_LINKED_WITH_TBB
     typename Edge_point_map::accessor acc;
     if (!m_edges.insert(acc, e))
       return acc->second;
 
+    const Point_index i = m_point_counter++;
     acc->second = i;
     acc.release();
 
     m_points.grow_to_at_least(i + 1);
 #else
+    const Point_index i = m_point_counter;
     auto res = m_edges.insert({e, i});
     if (!res.second)
       return res.first->second;
 
+    ++m_point_counter;
     m_points.resize(i + 1);
 #endif
 
     m_points[i] = p;
+
     return i;
   }
 
