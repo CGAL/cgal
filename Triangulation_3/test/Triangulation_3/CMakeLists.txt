@@ -147,6 +147,8 @@ CGAL_add_cdt3_from_local_off_test(1435440-min2)
 CGAL_add_cdt3_from_local_off_test(106884-min1)
 CGAL_add_cdt3_from_local_off_test(113344-min3)
 CGAL_add_cdt3_from_local_off_test(40985-min3)
+CGAL_add_cdt3_from_local_off_test(1514904-min8)
+CGAL_add_cdt3_from_local_off_test(error_mesh-p_not_equal_0-min2)
 
 include(./Thingi10k-CDT.cmake)
 
