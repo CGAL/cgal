@@ -110,7 +110,7 @@ public:
     std::vector<int> vids(points.size());
     std::iota(vids.begin(), vids.end(), 0);
 
-    if constexpr (std::is_same_v<ConcurrencyTag, Parallel_tag>) {
+    if constexpr (std::is_same<ConcurrencyTag, Parallel_tag>::value) {
       typename Delaunay::Lock_data_structure locking_ds(bbox, 50);
       dt3.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), vids.begin())),
                  boost::make_zip_iterator(boost::make_tuple(points.end(), vids.end())),
