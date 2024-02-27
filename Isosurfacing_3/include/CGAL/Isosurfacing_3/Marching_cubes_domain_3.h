@@ -42,7 +42,7 @@ namespace Isosurfacing {
  */
 template <typename Partition,
           typename ValueField,
-          typename EdgeIntersectionOracle = CGAL::Isosurfacing::Dichotomy_edge_intersection>
+          typename EdgeIntersectionOracle = CGAL::Isosurfacing::Linear_interpolation_edge_intersection>
 class Marching_cubes_domain_3
 #ifndef DOXYGEN_RUNNING
   : public internal::Isosurfacing_domain_3<Partition, ValueField, EdgeIntersectionOracle>
@@ -87,7 +87,7 @@ public:
  */
 template <typename Partition,
           typename ValueField,
-          typename EdgeIntersectionOracle = Dichotomy_edge_intersection>
+          typename EdgeIntersectionOracle = Linear_interpolation_edge_intersection>
 Marching_cubes_domain_3<Partition, ValueField, EdgeIntersectionOracle>
 create_marching_cubes_domain_3(const Partition& partition,
                                const ValueField& values,
