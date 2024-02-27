@@ -68,7 +68,7 @@ public:
     : base(Rep{x, y, z}) {}
 
   VectorC3(FT_ &&x, FT_ &&y, FT_ &&z)
-    : base(Rep{std::forward<FT_>(x), std::forward<FT_>(y), std::forward<FT_>(z)}) {}
+    : base(Rep{x, y, z}) {}
 
   VectorC3(const FT_ &x, const FT_ &y, const FT_ &z, const FT_ &w)
     : base( w != FT_(1) ? CGAL::make_array<FT_>(x/w, y/w, z/w)
