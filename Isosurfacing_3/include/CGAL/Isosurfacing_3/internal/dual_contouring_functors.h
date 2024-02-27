@@ -18,6 +18,7 @@
 
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
+#include <CGAL/Container_helper.h>
 #include <CGAL/Origin.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
@@ -246,7 +247,9 @@ void generate_face(const typename Domain::Edge_descriptor& e,
   if(do_not_triangulate_faces)
   {
     std::lock_guard<std::mutex> lock(mutex);
-    polygons.push_back(vertex_ids);
+    polygons.emplace_back();
+    CGAL::internal::resize(polygons.back(), vertex_ids.size());
+    std::copy(vertex_ids.begin(), vertex_ids.end(), std::begin(polygons.back()));
   }
   else
   {
