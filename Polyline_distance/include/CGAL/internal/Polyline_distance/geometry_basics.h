@@ -42,7 +42,11 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Sqrt_extension.h>
 using Rational = CGAL::Exact_rational;
-// using RealType = CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_true>;
+
+#define USE_LAMBDA
+#ifndef USE_LAMBDA
+using RealType = CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_true>;
+#endif
 
 // #include <CGAL/MP_Float.h>
 // using RealType = CGAL::MP_Float;
@@ -90,7 +94,7 @@ struct Lambda
     {}
 
     Lambda(const Exact& exact)
-        : approx(CGAL::to_interval(exact)), exact(exact), is_zero(false), is_one(false), is_exact(true)
+      : approx(CGAL::to_interval(exact)), exact(exact), is_zero(CGAL::is_zero(exact)), is_one(CGAL::is_one(exact)), is_exact(true)
     {}
 
     bool update_exact() const
@@ -98,6 +102,7 @@ struct Lambda
         if (is_exact) {
             return true;
         }
+        
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
             Rational diff = Rational(line_end[i]) - Rational(line_start[i]);
@@ -180,8 +185,9 @@ struct Lambda
     }
 };
 
+#ifdef USE_LAMBDA
 using RealType = Lambda;
-
+#endif
 
 bool
 approximate_reals(const Point& circle_center, distance_t radius, const Point& line_start, const Point& line_end, std::pair<Lambda,Lambda>& I)
@@ -198,18 +204,15 @@ approximate_reals(const Point& circle_center, distance_t radius, const Point& li
 
   Approx id = CGAL::square(ib / ia) - ic / ia;
   if (id >= 0.) {
-    Approx ie = (-ib / ia) - id;
-    if (ie >= 0 ) {
-      Approx sqrtie = sqrt(ie);
-      Approx istart = -ib / ia - sqrtie;
-      Approx iend   = -ib / ia + sqrtie;
-      if (is_negative(istart)) istart = Approx(0);
-      if (iend > Approx(1)) iend = Approx(1);
-      if (istart <= Approx(1) && iend >= Approx(0)) {
-        I = std::make_pair((istart == Approx(0))? Lambda(0) : Lambda(istart, circle_center, radius, line_start, line_end, true),
-                           (iend   == Approx(1))? Lambda(1) :  Lambda(iend, circle_center, radius, line_start, line_end, false));
-        return true;
-      }
+    Approx sqrtid = sqrt(id);
+    Approx istart = -ib / ia - sqrtid;
+    Approx iend   = -ib / ia + sqrtid;
+    if (is_negative(istart)) istart = Approx(0);
+    if (iend > Approx(1)) iend = Approx(1);
+    if (istart <= Approx(1) && iend >= Approx(0)) {
+      I = std::make_pair((istart == Approx(0))? Lambda(0) : Lambda(istart, circle_center, radius, line_start, line_end, true),
+                         (iend   == Approx(1))? Lambda(1) :  Lambda(iend, circle_center, radius, line_start, line_end, false));
+      return true;
     }
   }
   return false;
@@ -231,18 +234,14 @@ exact_reals(const Point& circle_center, distance_t radius, const Point& line_sta
 
   Rational d = CGAL::square(b / a) - c / a;
   if (d >= 0.) {
-    Rational e = (-b / a) - d;
-    if (e >= 0 ) {
-
-      Exact start( -b / a, -1, e);
-      Exact end(-b / a, 1, e);
-      if (is_negative(start)) start = Exact(0);
-      if (end > Exact(1)) end = Exact(1);
-      if (start <= Exact(1) && end >= Exact(0)) {
-        I = std::make_pair((start == Exact(0))? Lambda(0) : Lambda(start),
-                           (end == Exact(1)? Lambda(1) : Lambda(end)));
-        return true;
-      }
+    Exact start( -b / a, -1, d);
+    Exact end(-b / a, 1, d);
+    if (is_negative(start)) start = Exact(0);
+    if (end > Exact(1)) end = Exact(1);
+    if (start <= Exact(1) && end >= Exact(0)) {
+      I = std::make_pair((start == Exact(0))? Lambda(0) : Lambda(start),
+                         (end == Exact(1)? Lambda(1) : Lambda(end)));
+      return true;
     }
   }
   return false;
@@ -424,7 +423,11 @@ public:
         RealType const& getFraction() const { return fraction; }
         double getFractionLB() const {
                 // returns a lower bound to the fraction
+#ifdef USE_LAMBDA
                 return CGAL::to_interval(fraction).inf();
+#else
+            return CGAL::to_interval(fraction).first;
+#endif
         }
         // AF needed??   RealType convert() const { return (RealType) (double) point + fraction; }
         void setPoint(PointID point) { this->point = point; }

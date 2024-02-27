@@ -108,33 +108,34 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
     // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
     // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
         Interval I;
-#if 1
+#ifdef USE_LAMBDA
         try {
           std::pair<RealType,RealType> II;
           if(approximate_reals(circle_center, radius, line_start, line_end, II)){
             I = Interval(II.first, II.second);
           }else{
-            std::cout << "empty" << std::endl;
+            // std::cout << "empty" << std::endl;
           }
 
         } catch(const CGAL::Uncertain_conversion_exception& e){
           std::cout << "problem with interval arithmetic" << std::endl;
+
           std::pair<RealType,RealType> II;
           if(exact_reals(circle_center, radius, line_start, line_end, II)){
             I = Interval(II.first, II.second);
           }else{
-            std::cout << "empty" << std::endl;
+            // std::cout << "empty" << std::endl;
           }
-        }
+          }
 
 #else
         // TODO: use actual dimension here instead of 2!
-        Rational a,b,c = 0;
+        Rational a = 0, b = 0, c = 0;
         for (auto i = 0; i < 2; ++i) {
-                Rational diff = line_end[i] - line_start[i];
+          Rational diff = Rational(line_end[i]) - Rational(line_start[i]);
                 a += CGAL::square(diff);
-                b += (line_start[i]-circle_center[i])*diff;
-                c += CGAL::square(line_start[i]-circle_center[i]);
+                b += (Rational(line_start[i])-Rational(circle_center[i]))*diff;
+                c += CGAL::square(Rational(line_start[i])-Rational(circle_center[i]));
         }
         c -= CGAL::square(Rational(radius));
 
@@ -149,11 +150,12 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
                 auto end = CGAL::min(RealType(1.), RealType(-b/a, 1, CGAL::square(b/a) - c/a));
 
                 if (start <= RealType(1.) && end >= RealType(0.)) {
+                  assert(empty == false);
                         I = Interval(start, end);
                 }
         }
         else {
-                // std::cout << "empty" << std::endl;
+          //std::cout << "empty" << std::endl;
         }
 #endif
         // std::cout << "new: " << CGAL::to_double(I.begin) << " " << CGAL::to_double(I.end) << std::endl << std::endl;
