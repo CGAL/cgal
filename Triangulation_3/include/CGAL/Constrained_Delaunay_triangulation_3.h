@@ -2764,13 +2764,29 @@ public:
           {
             if(!it->is_facet_constrained(i) && this->side_of_sphere(it, n->vertex(n_index)->point()) == ON_BOUNDED_SIDE) {
               if(verbose) {
+                const auto v = tr.vertices(it);
                 std::cerr << "non-empty sphere at non-constrained facet (" << IO::oformat(Cell_handle(it))
                           << ", " << i << ") the cell is:\n  "
-                          << IO::oformat(it->vertex(0), with_point) << "\n  "
-                          << IO::oformat(it->vertex(1), with_point) << "\n  "
-                          << IO::oformat(it->vertex(2), with_point) << "\n  "
-                          << IO::oformat(it->vertex(3), with_point) << "\ncontains:\n  "
+                          << IO::oformat(v[0], with_point) << "\n  "
+                          << IO::oformat(v[1], with_point) << "\n  "
+                          << IO::oformat(v[2], with_point) << "\n  "
+                          << IO::oformat(v[3], with_point) << "\ncontains:\n  "
                           << IO::oformat(n->vertex(n_index), with_point_and_info) << '\n';
+                using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+                const auto to_exact = CGAL::Cartesian_converter<Geom_traits, EK>();
+                const auto from_exact = CGAL::Cartesian_converter<EK, Geom_traits>();
+
+                const auto exact_circ = CGAL::circumcenter(to_exact(tr.point(v[0])),
+                                                           to_exact(tr.point(v[1])),
+                                                           to_exact(tr.point(v[2])),
+                                                           to_exact(tr.point(v[3])));
+                const auto exact_sq_circumradius = CGAL::squared_distance(to_exact(tr.point(v[0])), exact_circ);
+                const auto exact_sq_distance =
+                    CGAL::squared_distance(exact_circ, to_exact(tr.point(n->vertex(n_index))));
+                std::cerr << "exact squared circumradius: " << exact_sq_circumradius << '\n';
+                std::cerr << "exact squared distance:     " << exact_sq_distance << '\n';
+                std::cerr << "ratio (non-squared):        "
+                          << CGAL::sqrt(CGAL::to_double(from_exact(exact_sq_distance / exact_sq_circumradius))) << '\n';
               }
               result = false;
             }
