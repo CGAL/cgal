@@ -146,7 +146,7 @@ public:
     std::array<Point_3, 8> corners;
     const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
 
-    // this is the only difference to mc
+    // this is the only difference to the default Marching Cubes
     const int tcm = Cube_table::t_ambig[i_case];
     if(tcm == 105)
     {
@@ -169,9 +169,10 @@ public:
     // @todo improve triangle generation
 
     // construct triangles
-    for(int t=0; t<16; t += 3)
+    for(int t=0; t<16; t+=3)
     {
       const int t_index = i_case * 16 + t;
+
       // if(e_tris_list[t_index] == 0x7f)
       if(Cube_table::triangle_cases[t_index] == -1)
         break;
@@ -180,7 +181,6 @@ public:
       const int eg0 = Cube_table::triangle_cases[t_index + 0];
       const int eg1 = Cube_table::triangle_cases[t_index + 1];
       const int eg2 = Cube_table::triangle_cases[t_index + 2];
-
 
       // insert new triangle into list
       const Point_index p0 = add_point(vertices[eg0], compute_edge_index(cell, eg0));
@@ -325,6 +325,7 @@ private:
         unsigned int v0, v1;
         get_edge_vertex(eg, v0, v1, l_edges_);
 
+        // @todo use the domain's interpolation scheme?
         FT l = (i0 - values[v0]) / (values[v1] - values[v0]);
         ecoord[eg] = l;
 

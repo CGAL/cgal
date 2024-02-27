@@ -130,7 +130,7 @@ bool cell_position_QEM(const typename Domain::Cell_descriptor& c,
     z += z_coord(ep);
   }
 
-  Point_3 com = point(x / en, y / en, z / en);
+  Point_3 com = point(x / FT(en), y / FT(en), z / FT(en));
 
 #ifdef CGAL_ISOSURFACING_3_DC_FUNCTORS_DEBUG
   std::cout << "cell: " << x_min << " " << y_min << " " << z_min << " " << x_max << " " << y_max << " " << z_max << std::endl;
@@ -168,7 +168,8 @@ bool cell_position_QEM(const typename Domain::Cell_descriptor& c,
 
   Eigen::JacobiSVD<typename Eigen_matrix_x::EigenType> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-  // set threshold as in Peter Lindstrom's paper, "Out-of-Core Simplification of Large Polygonal Models"
+  // Ju's paper, "Dual Contouring of Hermite Data": 1e-1
+  // Lindstrom's paper, "Out-of-Core Simplification of Large Polygonal Models": 1e-3
   svd.setThreshold(1e-3);
 
   Eigen_vector_3 x_hat;
@@ -512,7 +513,7 @@ public:
         z += z_coord(p);
       }
 
-      const Point_3 p = point(x / en, y / en, z / en);
+      const Point_3 p = point(x / FT(en), y / FT(en), z / FT(en));
 
       std::lock_guard<std::mutex> lock(m_mutex);
       cell_to_point_id[c] = points.size();

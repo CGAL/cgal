@@ -35,7 +35,6 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(contouring_image PRIVATE CGAL::Eigen3_support)
   target_link_libraries(contouring_implicit_data PRIVATE CGAL::Eigen3_support)
   target_link_libraries(contouring_mesh_offset PRIVATE CGAL::Eigen3_support)
-
   target_link_libraries(dual_contouring_strategies PRIVATE CGAL::Eigen3_support)
   target_link_libraries(dual_contouring_intersection_oracles PRIVATE CGAL::Eigen3_support)
 
@@ -46,7 +45,6 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(contouring_image PRIVATE CGAL::TBB_support)
     target_link_libraries(contouring_implicit_data PRIVATE CGAL::TBB_support)
     target_link_libraries(contouring_mesh_offset PRIVATE CGAL::TBB_support)
-
     target_link_libraries(dual_contouring_strategies PRIVATE CGAL::TBB_support)
     target_link_libraries(dual_contouring_intersection_oracles PRIVATE CGAL::TBB_support)
   endif()

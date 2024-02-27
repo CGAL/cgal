@@ -133,7 +133,7 @@ template <typename Corners,
           typename Values,
           typename Domain,
           typename Vertices>
-void MC_construct_vertices(const typename Domain::Cell_descriptor cell,
+void MC_construct_vertices(const typename Domain::Cell_descriptor& cell,
                            const std::size_t i_case,
                            const Corners& corners,
                            const Values& values,
@@ -173,12 +173,12 @@ void MC_construct_vertices(const typename Domain::Cell_descriptor cell,
 // connects the vertices of one cell to form triangles
 template <typename Vertices,
           typename TriangleList>
-void mc_construct_triangles(const int i_case,
+void MC_construct_triangles(const int i_case,
                             const Vertices& vertices,
                             TriangleList& triangles)
 {
   // construct triangles
-  for(int t = 0; t < 16; t += 3)
+  for(int t=0; t<16; t+=3)
   {
     const int t_index = i_case * 16 + t;
 
@@ -193,10 +193,11 @@ void mc_construct_triangles(const int i_case,
 
     // insert new triangle in list
 #ifdef CGAL_LINKED_WITH_TBB
-      auto& tris = triangles.local();
+    auto& tris = triangles.local();
 #else
-      auto& tris = triangles;
+    auto& tris = triangles;
 #endif
+
     tris.push_back({vertices[eg0], vertices[eg1], vertices[eg2]});
   }
 }
@@ -295,7 +296,7 @@ public:
     std::array<Point_3, 12> vertices;
     MC_construct_vertices(cell, i_case, corners, values, m_isovalue, m_domain, vertices);
 
-    mc_construct_triangles(i_case, vertices, m_triangles);
+    MC_construct_triangles(i_case, vertices, m_triangles);
   }
 };
 

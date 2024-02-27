@@ -7,7 +7,6 @@
 #include <CGAL/Isosurfacing_3/Marching_cubes_domain_3.h>
 #include <CGAL/Isosurfacing_3/Value_function_3.h>
 #include <CGAL/Isosurfacing_3/Finite_difference_gradient_3.h>
-#include <CGAL/Isosurfacing_3/internal/implicit_shapes_helper.h>
 
 #include <CGAL/Real_timer.h>
 
