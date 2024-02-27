@@ -79,13 +79,6 @@ public:
     : Rep(typename R::Construct_point_3()(Return_base_tag(), x, y, z))
   {}
 
-  template < typename T1, typename T2, typename T3 >
-  Point_3(T1&& x, T2&& y, T3&& z)
-    : Rep(typename R::Construct_point_3()(Return_base_tag(), std::forward<T1>(x),
-                                                             std::forward<T2>(y),
-                                                             std::forward<T3>(z)))
-  {}
-
   Point_3(const RT& hx, const RT& hy, const RT& hz, const RT& hw)
     : Rep(typename R::Construct_point_3()(Return_base_tag(), hx, hy, hz, hw))
   {}
@@ -290,7 +283,7 @@ extract(std::istream& is, Point_3<R>& p, const Cartesian_tag&)
         break;
     }
     if (is)
-      p = Point_3<R>(std::move(x), std::move(y), std::move(z));
+      p = Point_3<R>(x, y, z);
     return is;
 }
 

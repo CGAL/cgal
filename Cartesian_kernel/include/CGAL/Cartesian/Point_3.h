@@ -45,11 +45,6 @@ public:
   PointC3(const FT &x, const FT &y, const FT &z)
     : base(x, y, z) {}
 
-  PointC3(FT &&x, FT &&y, FT &&z)
-    : base(std::forward<FT>(x), std::forward<FT>(y), std::forward<FT>(z))
-  {}
-
-
   PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
     : base(x, y, z, w) {}
 
