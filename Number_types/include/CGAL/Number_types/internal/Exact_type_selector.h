@@ -23,8 +23,8 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 
-#include <CGAL/boost_mp.h>
-#  include <CGAL/cpp_float.h>
+#include <CGAL/cpp_float.h>
+
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
