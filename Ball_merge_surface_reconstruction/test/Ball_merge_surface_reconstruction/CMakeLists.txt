@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1...3.23)
-project(Ball_merge_Tests)
+project(Ball_merge_surface_reconstruction_Tests)
 
 find_package(CGAL REQUIRED)
 

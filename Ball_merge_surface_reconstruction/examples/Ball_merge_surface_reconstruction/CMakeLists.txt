@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.1...3.23)
-project(Ball_merge_reconstruction_Examples)
+project(Ball_merge_surface_reconstruction_Examples)
 
 find_package(CGAL REQUIRED)
 
