@@ -26,6 +26,7 @@
 // #include <CGAL/Frechet_distance_near_neighbors_ds.h>
 
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Timer.h> 
 
 #include <algorithm>
 #include <cassert>
@@ -164,19 +165,22 @@ void testFrechetDistance()
 	// std::vector<std::string> datasets = { "sigspatial", "OV" };
 	std::vector<std::string> datasets = { "sigspatial" };
 	std::string query_directory = "../data/queries/";
-
+	CGAL::Timer timer;
 	for (auto const& dataset: datasets) {
 		auto curves = readCurves(curve_directory + dataset + "/");
 		auto queries = readFrechetDistanceQueries(query_directory + dataset + ".txt");
 
 		for (auto const& query: queries) {
+			timer.start();
 			auto decision = CGAL::continuous_Frechet_distance_less_than<Curve,Traits>(curves[query.id1], curves[query.id2], query.distance);
+			timer.stop();
 			if (decision != query.decision) {
 				assert(false);
 				ERROR("Wrong decision on query.");
 			}
 		}
 	}
+	std::cout << timer.time() << "sec." << std::endl;
 }
 
 // void testFrechetDistanceNearNeighborsDS()

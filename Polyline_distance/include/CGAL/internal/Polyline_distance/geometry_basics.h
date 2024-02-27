@@ -102,7 +102,7 @@ struct Lambda
         if (is_exact) {
             return true;
         }
-        
+
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
             Rational diff = Rational(line_end[i]) - Rational(line_start[i]);
@@ -184,6 +184,20 @@ struct Lambda
         return exact < other.exact;
     }
 };
+
+namespace CGAL {
+  bool is_one(const Lambda& lambda)
+  {
+    if(lambda.is_one) return true;
+    if(lambda.is_zero) return false;
+    Uncertain<bool> ub = is_one(lambda.approx);
+    if(is_certain(ub)){
+      return make_certain(ub);
+    }
+    lambda.update_exact();
+    return is_one(lambda.exact);
+  }
+}
 
 #ifdef USE_LAMBDA
 using RealType = Lambda;
@@ -406,7 +420,7 @@ private:
 
         void normalize() {
                 assert(fraction >= 0. && fraction <= 1.);
-                if (fraction == 1.) {
+                if (CGAL::is_one(fraction)) {
                         fraction = 0.;
                         ++point;
                 }
