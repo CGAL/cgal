@@ -172,6 +172,7 @@ void testFrechetDistance()
 		for (auto const& query: queries) {
 			auto decision = CGAL::continuous_Frechet_distance_less_than<Curve,Traits>(curves[query.id1], curves[query.id2], query.distance);
 			if (decision != query.decision) {
+				assert(false);
 				ERROR("Wrong decision on query.");
 			}
 		}
