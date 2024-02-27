@@ -168,9 +168,8 @@ bool cell_position_QEM(const typename Domain::Cell_descriptor& c,
 
   Eigen::JacobiSVD<typename Eigen_matrix_x::EigenType> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-  // Lindstrom's paper, "Out-of-Core Simplification of Large Polygonal Models": 1e-3
-  // Ju's paper, "Dual Contouring of Hermite Data": 1e-1
-  svd.setThreshold(1e-1);
+  // set threshold as in Peter Lindstrom's paper, "Out-of-Core Simplification of Large Polygonal Models"
+  svd.setThreshold(1e-3);
 
   Eigen_vector_3 x_hat;
   x_hat << x_coord(com), y_coord(com), z_coord(com);
