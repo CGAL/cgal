@@ -37,7 +37,7 @@ namespace IO {
  *
  * \param image the image providing the data
  * \param grid the grid
- * \tparam values the values
+ * \param values the values
  */
 // We need to have the API pass us an existing grid / values pair because the values
 // usually keep a reference to the grid.
