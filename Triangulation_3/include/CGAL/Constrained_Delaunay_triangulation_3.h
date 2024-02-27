@@ -1213,7 +1213,7 @@ private:
     Next_region(const std::string& what, CDT_2_face_handle fh) : std::logic_error(what), fh_2d(fh) {}
   };
 
-  template <typename Fh_region, typename Vertices_container>
+  template <typename Fh_region, typename Vertices_container, typename Edges_container>
   auto construct_cavities(CDT_3_face_index face_index,
                           int region_index,
                           const CDT_2& cdt_2,
@@ -1221,7 +1221,7 @@ private:
                           const Vertices_container& region_border_vertices,
                           const Vertices_container& region_vertices,
                           Edge first_intersecting_edge,
-                          Edge border_edge)
+                          Edges_container border_edges)
   {
     // outputs
     struct Outputs
@@ -1437,7 +1437,7 @@ private:
         };
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
         if(this->debug_regions()) {
-          std::cerr << std::format("  test_edge {}   {})  ", IO::oformat(v0, with_point_and_info),
+          std::cerr << std::format("  test_edge {}   {}  ", IO::oformat(v0, with_point_and_info),
                                    IO::oformat(v1, with_point_and_info));
         }
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
@@ -1605,22 +1605,35 @@ private:
           }
         }
       }
+      if(vertices_of_border_union_find.number_of_sets() > 2) {
+        std::cerr << "vertices_of_border_union_find.number_of_sets() " << vertices_of_border_union_find.number_of_sets() << "\n";
+      }
       CGAL_assertion(vertices_of_border_union_find.number_of_sets() <= 2);
-      const auto [border_edge_va, border_edge_vb] = tr.vertices(border_edge);
-      auto circ = tr.incident_cells(border_edge);
-      CGAL_assertion(circ != nullptr);
-      const auto end = circ;
       Vertex_handle vertex_above{};
-      do {
-        const auto index_va = circ->index(border_edge_va);
-        const auto index_vb = circ->index(border_edge_vb);
-        const auto face_index = tr.next_around_edge(index_va, index_vb);
-        if(facets_of_border.count(Facet{circ, face_index}) > 0) {
-          const auto other_vertex_index = 6 - index_va - index_vb - face_index;
-          vertex_above = circ->vertex(other_vertex_index);
-          break;
-        }
-      } while(++circ != end);
+      Edges_container all_border_edges{border_edges.begin(), border_edges.end()};
+      std::for_each(border_edges.begin(), border_edges.end(), [&](auto edge) {
+        all_border_edges.emplace_back(edge.first, edge.third, edge.second);
+      });
+      for(const auto& border_edge: all_border_edges) {
+        const auto [border_edge_va, border_edge_vb] = tr.vertices(border_edge);
+        auto circ = tr.incident_cells(border_edge);
+        CGAL_assertion(circ != nullptr);
+        const auto end = circ;
+        do {
+          const auto index_va = circ->index(border_edge_va);
+          const auto index_vb = circ->index(border_edge_vb);
+          const auto face_index = tr.next_around_edge(index_va, index_vb);
+          if(facets_of_border.count(Facet{circ, face_index}) > 0) {
+            const auto other_vertex_index = 6 - index_va - index_vb - face_index;
+            const auto other_vertex = circ->vertex(other_vertex_index);
+            if(other_vertex->is_marked(Vertex_marker::CAVITY)) {
+              vertex_above = circ->vertex(other_vertex_index);
+              break;
+            }
+          }
+        } while(++circ != end);
+        if(vertex_above != Vertex_handle{}) break;
+      }
       CGAL_assume(vertex_above != Vertex_handle{});
 
       const auto vertex_above_handle = vertices_of_border_handles[vertex_above];
@@ -1953,11 +1966,11 @@ private:
       }
     }};
 
-    const auto [first_intersecting_edge, border_edge] = *found_edge_opt;
+    const auto [first_intersecting_edge, _] = *found_edge_opt;
     const auto [intersecting_edges, original_intersecting_cells, original_vertices_of_upper_cavity,
                 original_vertices_of_lower_cavity, original_facets_of_upper_cavity, original_facets_of_lower_cavity] =
         construct_cavities(face_index, region_index, cdt_2, fh_region, region_border_vertices, region_vertices,
-                           first_intersecting_edge, border_edge);
+                           first_intersecting_edge, border_edges);
 
     const std::set<Point_3> polygon_points = std::invoke([&](){
       std::set<Point_3> polygon_points;
