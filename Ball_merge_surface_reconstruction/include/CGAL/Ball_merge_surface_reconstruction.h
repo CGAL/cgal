@@ -1,21 +1,53 @@
-// Copyright (c) 2023 GeometryFactory (France).
+// Copyright (c) 2023 GeometryFactory (France) and Telecom Paris (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: ( GPL-3.0-or-later OR LicenseRef-Commercial ) AND MIT
 //
 //
-// Author(s)     :  NN
+// Author(s)     :  Amal Dev Parakkat, Andreas Fabri, Sébastien Loriot
+//
+// This file incorporates work covered by the following copyright and permission notice:
+//
+//     MIT License
+//
+//     Copyright (c) 2023 Parakkat, Amal Dev and Ohrhallinger, Stefan and Eisemann, Elmar and Memari, Pooran
+//
+//     Permission is hereby granted, free of charge, to any person obtaining a copy
+//     of this software and associated documentation files (the "Software"), to deal
+//     in the Software without restriction, including without limitation the rights
+//     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//     copies of the Software, and to permit persons to whom the Software is
+//     furnished to do so, subject to the following conditions:
+//
+//     The above copyright notice and this permission notice shall be included in all
+//     copies or substantial portions of the Software.
+//
+//     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//     SOFTWARE.
+//
+//
+// @inproceedings{parakkat2024ballmerge,
+//   title={BallMerge: High-quality Fast Surface Reconstruction via Voronoi Balls},
+//   author={Parakkat, Amal Dev and Ohrhallinger, Stefan and Eisemann, Elmar and Memari, Pooran},
+//   booktitle={Computer Graphics Forum},
+//   year={2024}
+// }
+//
+
 
 #ifndef CGAL_BALL_MERGE_SURFACE_RECONSTRUCTION_H
 #define CGAL_BALL_MERGE_SURFACE_RECONSTRUCTION_H
 
-// #include <memory>
-
-// #include <CGAL/license/Ball_merge_surface_reconstruction.h>
+#include <CGAL/license/Ball_merge_surface_reconstruction.h>
 
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
@@ -104,7 +136,7 @@ public:
     par = par_;
     tlen = tlen_;
     bbox = bbox_3(points.begin(), points.end());
- 
+
     bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
 
     std::vector<int> vids(points.size());
