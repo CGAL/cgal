@@ -213,7 +213,7 @@ Results are put in a vector, and then printed.
 
 Not all octrees are compatible with nearest neighbor functionality,
 as the idea of a nearest neighbor may not make sense for some tree contents.
-For the nearest neighbor functions to work, the traits class must implement the
+For the nearest neighbor methods to work, the traits class must implement the
 `CollectionPartitioningOrthtreeTraits` concept.
 
 \subsection Section_Orthtree_Grade Grading

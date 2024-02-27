@@ -15,7 +15,6 @@
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Orthtree/Cartesian_ranges.h>
-#include <CGAL/Orthtree/Nearest_neighbors.h>
 #include <CGAL/Orthtree/Split_predicates.h>
 #include <CGAL/Orthtree/Traversals.h>
 #include <CGAL/Orthtree/Traversal_iterator.h>
@@ -661,31 +660,89 @@ public:
     return node_for_point;
   }
 
+  /*!
+  \brief finds the `k` nearest neighbors of the point `query`.
+
+  Nearest neighbors are outputted in order of increasing distance to `query`.
+
+  \tparam OutputIterator a model of `OutputIterator` that accepts `GeomTraits::Node_data_element` objects.
+
+  \param query query point
+  \param k number of neighbors to find
+  \param output output iterator
+
+  \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
+ */
   template<typename OutputIterator>
-  CGAL_DEPRECATED_MSG("you are using the deprecated API, please update your code")
   auto nearest_neighbors(const Point& query,
     std::size_t k,
     OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
     Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
 
-    Orthtrees::nearest_k_neighbors_in_radius(*this, query_sphere, k, boost::make_function_output_iterator
-      ([&](const typename Traits::Node_data_element index) {
-          *output++ = get(m_traits.m_point_map, index);
-        }));
-
-    return output;
+    return nearest_k_neighbors_in_radius(query_sphere, k, output);
   }
 
+  /*!
+  \brief finds the elements in the sphere `query`.
+
+  Elements are outputted in order of increasing distance to
+  the center of the sphere.
+
+  \tparam OutputIterator a model of `OutputIterator` that accepts `GeomTraits::Node_data_element` objects.
+
+  \param query query sphere
+  \param output output iterator
+
+  \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
+ */
   template<typename OutputIterator>
-  CGAL_DEPRECATED_MSG("you are using the deprecated API, please update your code")
   auto nearest_neighbors(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
     Sphere query_sphere = query;
 
-    Orthtrees::nearest_k_neighbors_in_radius(*this, query_sphere,
-      (std::numeric_limits<std::size_t>::max)(), boost::make_function_output_iterator
-      ([&](const typename Traits::Node_data_element index) {
-        *output++ = get(m_traits.m_point_map, index);
-        }));
+    return nearest_k_neighbors_in_radius(query_sphere, (std::numeric_limits<std::size_t>::max)(), output);
+  }
+
+  /*!
+  \brief finds at most `k` elements within a specific radius that are
+  nearest to the center of the sphere `query`: if `query` does not contain
+  at least `k` elements, only contained elements will be returned.
+
+  This function is useful when the user already knows how sparse the elements are,
+  or if they do not care about elements that are too far away.
+  Setting a small radius may have performance benefits.
+
+  \tparam OutputIterator must be a model of `OutputIterator` that accepts `GeomTraits::Node_data_element`
+
+  \param query the region to search within
+  \param k the number of elements to find
+  \param output the output iterator to add the found elements to (in order of increasing distance)
+
+  \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
+ */
+  template <typename OutputIterator>
+  auto nearest_k_neighbors_in_radius(
+    Sphere& query,
+    std::size_t k,
+    OutputIterator output
+  ) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+
+    // todo: this type is over-constrained, this must be made more generic
+    struct Node_element_with_distance {
+      typename Traits::Node_data_element element;
+      FT distance;
+    };
+
+    // Create an empty list of elements
+    std::vector<Node_element_with_distance> element_list;
+    if (k != (std::numeric_limits<std::size_t>::max)())
+      element_list.reserve(k);
+
+    // Invoking the recursive function adds those elements to the vector (passed by reference)
+    nearest_k_neighbors_recursive(query, root(), element_list);
+
+    // Add all the points found to the output
+    for (auto& item : element_list)
+      *output++ = item.element;
 
     return output;
   }
@@ -1230,6 +1287,104 @@ private: // functions :
       }
     }
     return output;
+  }
+
+  template <typename Result>
+  auto nearest_k_neighbors_recursive(
+    Sphere& search_bounds,
+    Node_index node,
+    std::vector<Result>& results,
+    FT epsilon = 0) const -> std::enable_if_t<supports_neighbor_search> {
+
+    // Check whether the node has children
+    if (is_leaf(node)) {
+
+      // Base case: the node has no children
+
+      // Loop through each of the elements contained by the node
+      // Note: there might be none, and that should be fine!
+      for (auto& e : data(node)) {
+
+        // Pair that element with its distance from the search point
+        Result current_element_with_distance =
+        { e, m_traits.squared_distance_of_element_object()(e, m_traits.construct_center_d_object()(search_bounds)) };
+
+        // Check if the new element is within the bounds
+        if (current_element_with_distance.distance < m_traits.compute_squared_radius_d_object()(search_bounds)) {
+
+          // Check if the results list is full
+          if (results.size() == results.capacity()) {
+
+            // Delete a element if we need to make room
+            results.pop_back();
+          }
+
+          // Add the new element
+          results.push_back(current_element_with_distance);
+
+          // Sort the list
+          std::sort(results.begin(), results.end(), [=](auto& left, auto& right) {
+            return left.distance < right.distance;
+            });
+
+          // Check if the results list is full
+          if (results.size() == results.capacity()) {
+
+            // Set the search radius
+            search_bounds = m_traits.construct_sphere_d_object()(m_traits.construct_center_d_object()(search_bounds), results.back().distance + epsilon);
+          }
+        }
+      }
+    }
+    else {
+
+      struct Node_index_with_distance {
+        Node_index index;
+        FT distance;
+
+        Node_index_with_distance(const Node_index& index, FT distance) :
+          index(index), distance(distance) {}
+      };
+
+      // Recursive case: the node has children
+
+      // Create a list to map children to their distances
+      std::vector<Node_index_with_distance> children_with_distances;
+      children_with_distances.reserve(Self::degree);
+
+      // Fill the list with child nodes
+      for (int i = 0; i < Self::degree; ++i) {
+        auto child_node = child(node, i);
+
+        FT squared_distance = 0;
+        for (const auto& r : cartesian_range(m_traits.construct_center_d_object()(search_bounds), barycenter(child_node))) {
+          FT d = (get<0>(r) - get<1>(r));
+          squared_distance += d * d;
+        }
+
+        // Add a child to the list, with its distance
+        children_with_distances.emplace_back(
+          child_node,
+          squared_distance
+        );
+      }
+
+      // Sort the children by their distance from the search point
+      std::sort(children_with_distances.begin(), children_with_distances.end(), [=](auto& left, auto& right) {
+        return left.distance < right.distance;
+        });
+
+      // Loop over the children
+      for (auto child_with_distance : children_with_distances) {
+
+        // Check whether the bounding box of the child intersects with the search bounds
+        if (CGAL::do_intersect(bbox(child_with_distance.index), search_bounds)) {
+
+          // Recursively invoke this function
+          nearest_k_neighbors_recursive(search_bounds, child_with_distance.index, results);
+        }
+      }
+    }
   }
 
 public:

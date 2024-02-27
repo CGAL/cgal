@@ -67,6 +67,4 @@ Quadtree, Octree and Orthtree Reference
 - `CGAL::Orthtrees::Leaves_traversal`
 - `CGAL::Orthtrees::Level_traversal`
 
-\cgalCRPSection{Neighbor search}
-- \link PkgOrthtreeNeighbors `CGAL::Orthtrees::nearest_neighbors` \endlink
 */
