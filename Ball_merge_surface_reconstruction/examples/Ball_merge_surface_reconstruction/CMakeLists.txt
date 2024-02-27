@@ -6,13 +6,16 @@ project(Ball_merge_surface_reconstruction_Examples)
 
 find_package(CGAL REQUIRED)
 
-include_directories( ../../include)
+create_single_source_cgal_program("ball_merge_reconstruction.cpp")
+create_single_source_cgal_program("ball_merge_reconstruction_global.cpp")
+create_single_source_cgal_program("ball_merge_reconstruction_local.cpp")
 
-# create a target per cppfile
-file(
-  GLOB cppfiles
-  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-foreach(cppfile ${cppfiles})
-  create_single_source_cgal_program("${cppfile}")
-endforeach()
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+if(TARGET CGAL::TBB_support)
+target_link_libraries(ball_merge_reconstruction PUBLIC CGAL::TBB_support)
+target_link_libraries(ball_merge_reconstruction_global PUBLIC CGAL::TBB_support)
+target_link_libraries(ball_merge_reconstruction_local PUBLIC CGAL::TBB_support)
+else()
+  message(STATUS "NOTICE: Intel TBB was not found. Parallel code will not be used.")
+endif()

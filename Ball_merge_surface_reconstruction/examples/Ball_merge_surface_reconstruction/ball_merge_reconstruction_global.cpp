@@ -10,7 +10,7 @@ typedef K::Point_3 Point;
 
 int main(int argc, char **argv)
 {
-  std::string inFilename=CGAL::data_file_path("points_3/kitten.xyz"); //Test input file
+  const std::string inFilename=argc>1?argv[1]:CGAL::data_file_path("points_3/kitten.xyz"); //Test input file
   std::vector<Point> points;
   CGAL::IO::read_points(inFilename, std::back_inserter(points)); //Reading the input points
 

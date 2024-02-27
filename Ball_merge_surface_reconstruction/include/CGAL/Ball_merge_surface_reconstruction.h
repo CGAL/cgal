@@ -224,7 +224,7 @@ void set_triangle_indices_hull1(std::vector<std::array<int,3>>& meshFaceIndices)
       {
         if (bblen(cell->vertex((i + 1) % 4)->point(), cell->vertex((i + 2) % 4)->point(), cell->vertex((i + 3) % 4)->point())){
           //If the triangle crosses our bbdiagonal based criteria
-          if (dt3.is_infinite(cell->neighbor(i))||!_function(cell, cell->neighbor(i)) == 1){
+          if (dt3.is_infinite(cell->neighbor(i)) || !_function(cell, cell->neighbor(i))){
             //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
             visited[cell->info()]=true;
             std::array<int,3> indices;
