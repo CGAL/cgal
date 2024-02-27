@@ -78,7 +78,7 @@ class Ball_merge_surface_reconstruction {
 
 public:
   int secondgroup;
-  int option = 0,tlen=0;
+  int option = 0,eta=0;
   Delaunay dt3;
 
 private:
@@ -123,18 +123,18 @@ private:
   //Function to check whether a triangle made by three points has an edge greater than bbdiag/(user defined paramter - 200 by default) - used for filtering long triangles in local ballmerge
   int bblen(const Point& a, const Point& b, const Point& c) const
   {
-    if (distance(a, b) * tlen > bbdiaglen || distance(c, b) * tlen > bbdiaglen || distance(a, c) * tlen > bbdiaglen)
+    if (distance(a, b) * eta > bbdiaglen || distance(c, b) * eta > bbdiaglen || distance(a, c) * eta > bbdiaglen)
       return 0;
     return 1;
   }
 
 public:
 
-  void operator()(const std::vector<Point>& points, double par_, double tlen_)
+  void operator()(const std::vector<Point>& points, double par_, double eta_)
   {
     dt3.clear();
     par = par_;
-    tlen = tlen_;
+    eta = eta_;
     bbox = bbox_3(points.begin(), points.end());
 
     bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
@@ -261,19 +261,47 @@ void set_triangle_indices_hull1(std::vector<std::array<int,3>>& meshFaceIndices)
 }
 
 /// \ingroup PkgBallMergeRef
+
+/// Creates a triangle soup approximating the surface.
+/// After creation, resulting triangular faces will be stored in "out_triangles", allowing us to use it independently for further processing.
+
+/// Parameters
+
+/// points is the input points (without additional information like normal or texture)
+/// out_triangles is the output parameter storing triangles approximating the surface
+/// parameter is the value of \f$ \delta \f$
+/// eta is the optional parameter \f$ \eta \f$
+
+/// Examples:
+/// Ball_merge_surface_reconstruction/ball_merge_reconstruction_local.cpp
+
 template <class Concurrency_tag, class Point_3>
 void ball_merge_surface_reconstruction_local(const std::vector<Point_3>& points,
                                              std::vector<std::array<int, 3> >& out_triangles,
-                                             double parameter, double tlen=200.)
+                                             double parameter, double eta=200.)
 {
   using Traits = typename Kernel_traits<Point_3>::type;
   CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
   bmsr.option=0;
-  bmsr(points, parameter, tlen);
+  bmsr(points, parameter, eta);
   bmsr.set_triangle_indices_hull1(out_triangles);
 }
 
 /// \ingroup PkgBallMergeRef
+
+/// Creates a watertight mesh approximating the surface.
+/// After creation, resulting meshes will be stored in "out_triangles1" and "out_triangles2", allowing us to use it independently for further processing.
+
+/// Parameters
+
+/// points is the input points (without additional information like normal or texture)
+/// out_triangles1 is the output parameter storing the first resulting mesh
+/// out_triangles2 is the output parameter storing the second resulting mesh
+/// parameter is the value of \f$ \delta \f$
+
+/// Examples:
+/// Ball_merge_surface_reconstruction/ball_merge_reconstruction_global.cpp
+
 template <class Concurrency_tag, class Point_3>
 void ball_merge_surface_reconstruction_global(const std::vector<Point_3>& points,
                                               std::vector<std::array<int, 3> >& out_triangles1,
