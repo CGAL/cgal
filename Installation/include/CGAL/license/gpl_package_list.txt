@@ -5,6 +5,7 @@ Alpha_shapes_3 3D Alpha Shapes
 Alpha_wrap_3 3D Alpha Wrapping
 Apollonius_graph_2 2D Apollonius Graphs (Delaunay Graphs of Disks)
 Arrangement_on_surface_2 2D Arrangements
+Ball_merge_surface_reconstruction Ball Merge Surface Reconstruction
 Barycentric_coordinates_2 2D Generalized Barycentric Coordinates
 Boolean_set_operations_2 2D Regularized Boolean Set-Operations
 Bounding_volumes Bounding Volumes
