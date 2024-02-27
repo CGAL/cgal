@@ -167,19 +167,19 @@ public:
     };
   }
 
-  auto construct_sphere_3_object() const {
+  auto construct_sphere_d_object() const {
     return [](const typename Self::Point_d& center, const typename Self::FT& squared_radius) -> typename Self::Sphere_d {
       return typename Self::Sphere_d(center, squared_radius);
       };
   }
 
-  auto construct_center_3_object() const {
+  auto construct_center_d_object() const {
     return [](const typename Self::Sphere_d& sphere) -> typename Self::Point_d {
       return sphere.center();
       };
   }
 
-  auto compute_squared_radius_3_object() const {
+  auto compute_squared_radius_d_object() const {
     return [](const typename Self::Sphere_d& sphere) -> typename Self::FT {
       return sphere.squared_radius();
       };

@@ -54,7 +54,7 @@ public:
    * Provides the operator:
    * `Sphere_d operator()(const Point_d&, const FT&)`
   */
-  using Construct_sphere_3 = unspecified_type;
+  using Construct_sphere_d = unspecified_type;
 
   /*!
    * \brief Functor with an operator that provides the center of a `Sphere_d`.
@@ -62,7 +62,7 @@ public:
    * Provides the operator:
    * `Point_d operator()(const Sphere_d&)`
   */
-  using Construct_center_3 = unspecified_type;
+  using Construct_center_d = unspecified_type;
 
   /*!
    * \brief Functor with an operator that provides the squared radius of a `Sphere_d`.
@@ -70,7 +70,7 @@ public:
    * Provides the operator:
    * `FT operator()(const Sphere_d&)`
   */
-  using Compute_squared_radius_3 = unspecified_type;
+  using Compute_squared_radius_d = unspecified_type;
 
   /// @}
 
@@ -78,19 +78,19 @@ public:
   /// @{
 
   /*!
-   * constructs an object of type `ConstructSphere_3`.
+   * constructs an object of type `ConstructSphere_d`.
    */
-  Construct_sphere_3 construct_sphere_3_object() const;
+  Construct_sphere_d construct_sphere_d_object() const;
 
   /*!
-   * constructs an object of type `ConstructCenter_3`.
+   * constructs an object of type `ConstructCenter_d`.
    */
-  Construct_center_3 construct_center_3_object() const;
+  Construct_center_d construct_center_d_object() const;
 
   /*!
-   * constructs an object of type `ComputeSquaredRadius_3`.
+   * constructs an object of type `ComputeSquaredRadius_d`.
    */
-  Compute_squared_radius_3 compute_squared_radius_3_object() const;
+  Compute_squared_radius_d compute_squared_radius_d_object() const;
 
   /*!
    * constructs an object of type `Squared_distance_of_element`.
