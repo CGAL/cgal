@@ -14,9 +14,8 @@
 
 #include <CGAL/license/Orthtree.h>
 #include <CGAL/intersections.h>
-#include <CGAL/squared_distance_2.h>
-#include <CGAL/squared_distance_3.h>
-#include <boost/function_output_iterator.hpp>
+#include <CGAL/Orthtree/Cartesian_ranges.h>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -88,10 +87,18 @@ void nearest_k_neighbors_recursive(const Tree& orthtree,
     for (int i = 0; i < Tree::degree; ++i) {
       auto child_node = orthtree.child(node, i);
 
+      Orthtrees::internal::Cartesian_ranges<typename Tree::Traits> cartesian_range;
+
+      typename Tree::FT squared_distance = 0;
+      for (const auto& r : cartesian_range(orthtree.traits().construct_center_3_object()(search_bounds), orthtree.barycenter(child_node))) {
+        typename Tree::FT d = (get<0>(r) - get<1>(r));
+        squared_distance += d * d;
+      }
+
       // Add a child to the list, with its distance
       children_with_distances.emplace_back(
         child_node,
-        CGAL::squared_distance(orthtree.traits().construct_center_3_object()(search_bounds), orthtree.barycenter(child_node))
+        squared_distance
       );
     }
 
