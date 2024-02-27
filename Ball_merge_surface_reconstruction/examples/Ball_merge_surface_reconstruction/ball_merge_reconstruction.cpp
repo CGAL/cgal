@@ -1,7 +1,7 @@
- #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
- #include <CGAL/Ball_merge_surface_reconstruction.h>
- #include <CGAL/IO/polygon_soup_io.h>
- #include <CGAL/IO/read_points.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Ball_merge_surface_reconstruction.h>
+#include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/IO/read_points.h>
 
 #include <string>
 
