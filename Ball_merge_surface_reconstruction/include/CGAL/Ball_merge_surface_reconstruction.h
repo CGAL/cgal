@@ -261,11 +261,12 @@ void set_triangle_indices_hull1(std::vector<std::array<int,3>>& meshFaceIndices)
 }
 
 /// \ingroup PkgBallMergeRef
-template <class Concurrency_tag, class Traits>
-void ball_merge_surface_reconstruction_local(const std::vector<CGAL::Point_3<Traits>>& points,
+template <class Concurrency_tag, class Point_3>
+void ball_merge_surface_reconstruction_local(const std::vector<Point_3>& points,
                                              std::vector<std::array<int, 3> >& out_triangles,
                                              double parameter, double tlen=200.)
 {
+  using Traits = typename Kernel_traits<Point_3>::type;
   CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
   bmsr.option=0;
   bmsr(points, parameter, tlen);
@@ -273,12 +274,13 @@ void ball_merge_surface_reconstruction_local(const std::vector<CGAL::Point_3<Tra
 }
 
 /// \ingroup PkgBallMergeRef
-template <class Concurrency_tag, class Traits>
-void ball_merge_surface_reconstruction_global(const std::vector<CGAL::Point_3<Traits>>& points,
+template <class Concurrency_tag, class Point_3>
+void ball_merge_surface_reconstruction_global(const std::vector<Point_3>& points,
                                               std::vector<std::array<int, 3> >& out_triangles1,
                                               std::vector<std::array<int, 3> >& out_triangles2,
                                               double parameter)
 {
+  using Traits = typename Kernel_traits<Point_3>::type;
   CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
   bmsr.option=1;
   bmsr(points, parameter, 0);
