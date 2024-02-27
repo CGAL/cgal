@@ -114,11 +114,8 @@ struct Lambda
 
         Rational d = CGAL::square(b / a) - c / a;
         if (d >= 0.) {
-            Rational e = (-b / a) - d;
-            if (e >= 0) {
-
                 if (is_start) {
-                    Exact start(-b / a, -1, e);
+                    Exact start(-b / a, -1, d);
                     if (is_negative(start)) start = Exact(0);
                     if (start <= Exact(1)) {
                         exact = start;
@@ -128,7 +125,7 @@ struct Lambda
                     }
                 }
                 else {
-                    Exact end(-b / a, 1, e);
+                    Exact end(-b / a, 1, d);
                     if (end > Exact(1)) end = Exact(1);
                     if (end >= Exact(0)) {
                         exact = end;
@@ -137,7 +134,6 @@ struct Lambda
                         return true;
                     }
                 }
-            }
         }
         return false;
     }
