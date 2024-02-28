@@ -10,8 +10,9 @@
 #include <CGAL/Isosurfacing_3/internal/implicit_shapes_helper.h>
 
 #include <CGAL/Real_timer.h>
-
 #include <CGAL/IO/polygon_soup_io.h>
+
+#include <tbb/task_arena.h>
 
 #include <vector>
 
@@ -41,12 +42,15 @@ auto implicit_function = [](const Point& q) -> FT
 
 int main(int argc, char** argv)
 {
+  int num_threads = tbb::this_task_arena::max_concurrency();
+  std::cout << "Number of TBB threads: " << num_threads << std::endl;
+
   const FT isovalue = (argc > 1) ? std::stod(argv[1]) : 0.;
   std::cout << "Isovalue: " << isovalue << std::endl;
 
   // create bounding box and grid
   const CGAL::Bbox_3 bbox = {-2., -2., -2., 2., 2., 2.};
-  Grid grid { bbox, CGAL::make_array<std::size_t>(150, 150, 150) };
+  Grid grid { bbox, CGAL::make_array<std::size_t>(500, 500, 500) };
 
   std::cout << "Span: " << grid.span() << std::endl;
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;
@@ -70,7 +74,7 @@ int main(int argc, char** argv)
     Polygon_range triangles;
 
     std::cout << "--- Dual Contouring (Parallel)" << std::endl;
-    IS::dual_contouring<CGAL::Parallel_if_available_tag>(
+    IS::dual_contouring<CGAL::Parallel_tag>(
       domain, isovalue, points, triangles, CGAL::parameters::do_not_triangulate_faces(!triangulate_faces));
 
     timer.stop();
@@ -104,7 +108,7 @@ int main(int argc, char** argv)
     CGAL::IO::write_polygon_soup("dual_contouring_implicit_sequential.off", points, triangles);
   }
 
-  // MC Sequential
+  // TMC parallel
   {
     using Domain = CGAL::Isosurfacing::Marching_cubes_domain_3<Grid, Values>;
     Domain domain { grid, values };
@@ -115,7 +119,29 @@ int main(int argc, char** argv)
     Point_range points;
     Polygon_range triangles;
 
-    std::cout << "--- Marching Cubes (Sequential)" << std::endl;
+    std::cout << "--- TC Marching Cubes (Parallel)" << std::endl;
+    IS::marching_cubes<CGAL::Parallel_tag>(domain, isovalue, points, triangles);
+
+    timer.stop();
+
+    std::cout << "Output #vertices: " << points.size() << std::endl;
+    std::cout << "Output #triangles: " << triangles.size() << std::endl;
+    std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
+    CGAL::IO::write_polygon_soup("marching_cubes_implicit_parallel.off", points, triangles);
+  }
+
+  // TMC Sequential
+  {
+    using Domain = CGAL::Isosurfacing::Marching_cubes_domain_3<Grid, Values>;
+    Domain domain { grid, values };
+
+    CGAL::Real_timer timer;
+    timer.start();
+
+    Point_range points;
+    Polygon_range triangles;
+
+    std::cout << "--- TC Marching Cubes (Sequential)" << std::endl;
     IS::marching_cubes<CGAL::Sequential_tag>(domain, isovalue, points, triangles);
 
     timer.stop();
@@ -138,7 +164,8 @@ int main(int argc, char** argv)
     Polygon_range triangles;
 
     std::cout << "--- Marching Cubes (Parallel)" << std::endl;
-    IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles);
+    IS::marching_cubes<CGAL::Parallel_tag>(domain, isovalue, points, triangles,
+                                           CGAL::parameters::use_topologically_correct_marching_cubes(false));
 
     timer.stop();
 
@@ -146,6 +173,29 @@ int main(int argc, char** argv)
     std::cout << "Output #triangles: " << triangles.size() << std::endl;
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
     CGAL::IO::write_polygon_soup("marching_cubes_implicit_parallel.off", points, triangles);
+  }
+
+  // MC Sequential
+  {
+    using Domain = CGAL::Isosurfacing::Marching_cubes_domain_3<Grid, Values>;
+    Domain domain { grid, values };
+
+    CGAL::Real_timer timer;
+    timer.start();
+
+    Point_range points;
+    Polygon_range triangles;
+
+    std::cout << "--- Marching Cubes (Sequential)" << std::endl;
+    IS::marching_cubes<CGAL::Sequential_tag>(domain, isovalue, points, triangles,
+                                             CGAL::parameters::use_topologically_correct_marching_cubes(false));
+
+    timer.stop();
+
+    std::cout << "Output #vertices: " << points.size() << std::endl;
+    std::cout << "Output #triangles: " << triangles.size() << std::endl;
+    std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
+    CGAL::IO::write_polygon_soup("marching_cubes_implicit_sequential.off", points, triangles);
   }
 
   std::cout << "Done" << std::endl;
