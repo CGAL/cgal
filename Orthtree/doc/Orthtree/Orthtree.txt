@@ -25,9 +25,21 @@ aliases for `Quadtree` and `Octree`. These trees can be constructed
 with custom contents and split predicates, and iterated on with
 various traversal methods. Orthants can be orthotopes and not only hypercubes.
 
-\cgalFigureBegin{Orthtree_fig, orthtree.png}
-Building an %orthtree in 3D (%octree) from a point cloud (top) and a mesh (bottom).
-\cgalFigureEnd
+\cgalFigureAnchor{Orthtree_fig  }
+<center>
+<table border=0>
+<tr>
+  <td><img border="0" src="orthtree.png"></td>
+</tr>
+<tr>
+  <td><img border="0" src="orthtree_mesh.png"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{Orthtree_fig}
+Top: an %orthtree in 3D (%octree) from a point cloud (top);
+Bottom: an %orthtree in 3D (%octree) from the triangle faces of a mesh.
+\cgalFigureCaptionEnd
 
 \section Section_Orthtree_Building Building
 
