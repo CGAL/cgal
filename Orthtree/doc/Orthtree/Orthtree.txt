@@ -272,6 +272,64 @@ purposes.
 
 For nontrivial point counts, the naive approach's calculation time dwarfs that of either the %orthtree or kd-tree.
 
+\section Section_Orthtree_Migration Migration from CGAL 5.6
+
+The orthtree traits changed to allow for custom data stored per node in the orthtree. To migrate existing code from CGAL 5.6 Orthtree_traits_point can be used for a point-based orthtrees. The aliases `CGAL::Quadtree` and `CGAL::Octree` have been extended by a boolean template parameter to allow for non-cubic cells, which is the default. The data is passed via the traits class and no longer directly into the orthtree.
+
+CGAL 5.6 code to declare and define an Octree with cubic cells:
+\code{.cpp}
+typedef CGAL::Point_set_3<Kernel::Point_3> Point_set;
+typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
+...
+Octree octree(points, points.point_map());
+\endcode
+
+CGAL 6.0 code with identical behavior:
+\code{.cpp}
+typedef CGAL::Point_set_3<Kernel::Point_3> Point_set;
+typedef CGAL::Octree<Kernel, Point_set, Point_map, false> Octree;
+...
+Octree octree({points, points.point_map()});
+\endcode
+
+The node class does not exist anymore and has been replaced by the lightweight type Node_index. All information formerly contained in the node class is now accessible via the Orthtree interface and stored using the new property maps.
+
+CGAL 5.6 exemplary node access:
+\code{.cpp}
+Orthtree::Node root = orthtree.root();
+Orthtree::Node child = root[0];
+bool is_leaf = child.is_leaf();
+
+for (Orthtree::Node::const_iterator it = child.begin(); it != child.end(); it++)
+  ...
+\endcode
+
+CGAL 6.0 exemplary node access:
+\code{.cpp}
+Orthtree::Node_index root = orthtree.root();
+Orthtree::Node_index child = orthtree.child(root, 0);
+bool is_leaf = orthtree.is_leaf(child);
+
+for (const Orthtree::Traits::Node_data_element &idx : orthtree.data(child))
+  ... // may require the use of a point map to retrieve the point from idx
+\endcode
+
+The nearest neighbor search behaves as before, however, the output iterator will be required to store `CollectionPartitioningOrthtreeTraits::Node_data_element`. This may be the actual point or, e.g., in case a `Point_set_3` is used, an index which requires the use of a point map to retrieve the point.
+
+The provided traversals, i.e., CGAL::Orthtrees::Leaves_traversal, CGAL::Orthtrees::Preorder_traversal, CGAL::Orthtrees::Postorder_traversal, require the orthtree as template parameter now.
+
+CGAL 5.6 traversal use:
+\code{.cpp}
+for (Orthtree::Node node : orthtree.traverse<CGAL::Orthtrees::Leaves_traversal>())
+  ...
+\endcode
+
+CGAL 6.0 traversal use:
+\code{.cpp}
+for (Orthtree::Node_index node : orthtree.traverse<CGAL::Orthtrees::Leaves_traversal<Orthtree>>())
+  ...
+\endcode
+
 \section Section_Orthtree_History History
 
 A prototype code was implemented by Pierre Alliez and improved by Tong
