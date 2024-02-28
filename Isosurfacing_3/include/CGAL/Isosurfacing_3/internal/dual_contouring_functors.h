@@ -180,9 +180,9 @@ bool cell_position_QEM(const typename Domain::Cell_descriptor& c,
   v_svd = x_hat + svd.solve(rhs - A * x_hat);
 
 
-  // bounding box
   if(constrain_to_cell)
   {
+    // @todo clamping back doesn't necessarily yield the optimal position within the cell
     v_svd[0] = std::clamp<FT>(v_svd[0], x_min, x_max);
     v_svd[1] = std::clamp<FT>(v_svd[1], y_min, y_max);
     v_svd[2] = std::clamp<FT>(v_svd[2], z_min, z_max);
