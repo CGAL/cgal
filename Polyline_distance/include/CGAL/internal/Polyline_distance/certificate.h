@@ -24,8 +24,12 @@
 
 #pragma once
 
-#include "curve.h"
-#include "geometry_basics.h"
+#include <CGAL/internal/Polyline_distance/curve.h>
+#include <CGAL/internal/Polyline_distance/geometry_basics.h>
+
+namespace CGAL {
+namespace internal {
+namespace Polyline_distance {
 
 class Certificate
 {
@@ -83,3 +87,7 @@ private:
     bool nonEmpty(CurveID fixed_curve, const CPoint& fixed_point,
                   const CPoint& start_pt, const CPoint& end_point) const;
 };
+
+} // namespace Polyline_distance
+} // namespace internal
+} // namespace CGAL

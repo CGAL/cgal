@@ -49,11 +49,11 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
                                            const PointRange& curve2,
                                            const typename Traits::FT distance)
 {
-    auto icurve1 = toCurve(curve1);
-    auto icurve2 = toCurve(curve2);
-    auto idistance = toDistance(distance);
+    auto icurve1 = internal::Polyline_distance::toCurve(curve1);
+    auto icurve2 = internal::Polyline_distance::toCurve(curve2);
+    auto idistance = internal::Polyline_distance::toDistance(distance);
 
-    return lessThan(icurve1, icurve2, idistance);
+    return internal::Polyline_distance::lessThan(icurve1, icurve2, idistance);
 }
 
 /**
@@ -69,10 +69,10 @@ typename Traits::FT continuous_Frechet_distance(const PointRange& curve1,
                                                 const PointRange& curve2,
                                                 const double precision)
 {
-    auto icurve1 = toCurve(curve1);
-    auto icurve2 = toCurve(curve2);
+    auto icurve1 = internal::Polyline_distance::toCurve(curve1);
+    auto icurve2 = internal::Polyline_distance::toCurve(curve2);
 
-    return calcDistance(icurve1, icurve2);
+    return internal::Polyline_distance::calcDistance(icurve1, icurve2);
 }
 
 }  // end of namespace CGAL

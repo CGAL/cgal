@@ -33,8 +33,10 @@
 #include <sstream>
 #include <vector>
 
-#include "defs.h"
-#include "id.h"
+#include <CGAL/Simple_cartesian.h>
+
+#include <CGAL/internal/Polyline_distance/defs.h>
+#include <CGAL/internal/Polyline_distance/id.h>
 
 // #include <CGAL/CORE_Expr.h>
 // using Rational = CORE::Expr;
@@ -42,6 +44,12 @@
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Sqrt_extension.h>
+
+namespace CGAL {
+namespace internal {
+namespace Polyline_distance {
+
+
 using Rational = CGAL::Exact_rational;
 
 #define USE_LAMBDA
@@ -70,7 +78,7 @@ using distance_t = double;
 // Point
 //
 
-#include <CGAL/Simple_cartesian.h>
+
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_2;
 
@@ -200,9 +208,12 @@ struct Lambda {
     }
 };
 
-namespace CGAL
-{
-bool is_one(const Lambda& lambda)
+} // namespace Polyline_distance
+} // namespace internal
+
+
+inline
+bool is_one(const internal::Polyline_distance::Lambda& lambda)
 {
     if (lambda.is_one) return true;
     if (lambda.is_zero) return false;
@@ -213,12 +224,35 @@ bool is_one(const Lambda& lambda)
     lambda.update_exact();
     return is_one(*lambda.exact);
 }
-}  // namespace CGAL
+
+inline
+bool is_zero(const internal::Polyline_distance::Lambda& lambda)
+{
+    if (lambda.is_zero) return true;
+    if (lambda.is_one) return false;
+    Uncertain<bool> ub = is_zero(lambda.approx);
+    if (is_certain(ub)) {
+        return make_certain(ub);
+    }
+    lambda.update_exact();
+    return is_zero(*lambda.exact);
+}
+
+inline CGAL::Interval_nt<> to_interval(const internal::Polyline_distance::Lambda& lambda)
+{
+  return lambda.approx;
+}
+
+
+namespace internal {
+namespace Polyline_distance {
+
 
 #ifdef USE_LAMBDA
 using RealType = Lambda;
 #endif
 
+inline
 bool approximate_reals(const Point& circle_center, distance_t radius,
                        const Point& line_start, const Point& line_end,
                        std::pair<Lambda, Lambda>& I)
@@ -254,6 +288,7 @@ bool approximate_reals(const Point& circle_center, distance_t radius,
     return false;
 }
 
+inline
 bool exact_reals(const Point& circle_center, distance_t radius,
                  const Point& line_start, const Point& line_end,
                  std::pair<Lambda, Lambda>& I)
@@ -286,12 +321,10 @@ bool exact_reals(const Point& circle_center, distance_t radius,
     return false;
 }
 
-namespace CGAL
-{
 
-CGAL::Interval_nt<> to_interval(const Lambda& lambda) { return lambda.approx; }
 
-}  // namespace CGAL
+
+
 
 struct OldPoint {
     OldPoint() = default;
@@ -389,7 +422,7 @@ struct Interval {
 
     Interval() : begin(1.), end(0.) {}
 
-    Interval(RealType begin, RealType end) : begin(begin), end(end) {}
+    Interval(RealType const& begin, RealType const& end) : begin(begin), end(end) {}
     /*
     bool operator<(Interval const& other) const {
             std::cout << "coucou" << std::endl;
@@ -508,7 +541,7 @@ public:
     bool operator!=(size_t other) const { return !(point == other); }
     CPoint ceil() const
     {
-        return fraction > 0 ? CPoint(point + 1, 0.) : CPoint(point, 0.);
+      return (! CGAL::is_zero(fraction)) ? CPoint(point + 1, 0.) : CPoint(point, 0.);
     }
     CPoint floor() const { return CPoint(point, 0.); }
     std::string to_string() const
@@ -628,17 +661,7 @@ struct Ellipse {
     bool is_valid() { return width >= 0 && height >= 0; }
 };
 
-// TODO: many things here can be deleted after replacements above
-namespace
-{
 
-template <typename T>
-T pow2(T d)
-{
-    return CGAL::square(d);
-}
-
-}  // end anonymous namespace
 
 std::ostream& operator<<(std::ostream& out, const Point& p)
 {
@@ -723,7 +746,7 @@ bool OldPoint::operator!=(OldPoint const& other) const
 // TODO: should be replaced everywhere by low_level_predicate
 distance_t OldPoint::dist_sqr(const OldPoint& point) const
 {
-    return pow2(X - point.x()) + pow2(Y - point.y());
+  return CGAL::square(X - point.x()) + CGAL::square(Y - point.y());
 }
 
 // TODO: should be replaced everywhere by low_level_predicate
@@ -758,3 +781,7 @@ std::ostream& operator<<(std::ostream& out, const CInterval& interval)
 
     return out;
 }
+
+} // namespace Polyline_distance
+} // namespace internal
+} // namespace CGAL

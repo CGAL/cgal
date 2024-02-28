@@ -24,9 +24,13 @@
 
 #pragma once
 
-#include "defs.h"
-#include "geometry_basics.h"
-#include "id.h"
+#include <CGAL/internal/Polyline_distance/defs.h>
+#include <CGAL/internal/Polyline_distance/geometry_basics.h>
+#include <CGAL/internal/Polyline_distance/id.h>
+
+namespace CGAL {
+namespace internal {
+namespace Polyline_distance {
 
 // TODO: Clean up Curve
 
@@ -46,6 +50,11 @@ class Curve
 public:
     Curve() = default;
     Curve(const Points& points);
+
+  void reserve(std::size_t n)
+  {
+    points.reserve(n);
+  }
 
     std::size_t size() const { return points.size(); }
     bool empty() const { return points.empty(); }
@@ -175,3 +184,7 @@ std::ostream& operator<<(std::ostream& out, const Curve& curve)
 
     return out;
 }
+
+} // namespace Polyline_distance
+} // namespace internal
+} // namespace CGAL

@@ -25,18 +25,20 @@
 #ifndef CGAL_INTERNAL_POLYLINE_DISTANCE_FRECHET_DISTANCE_H
 #define CGAL_INTERNAL_POLYLINE_DISTANCE_FRECHET_DISTANCE_H
 
-#include "curve.h"
-#include "frechet_light.h"
-#include "geometry_basics.h"
+#include <CGAL/internal/Polyline_distance/curve.h>
+#include <CGAL/internal/Polyline_distance/frechet_light.h>
+#include <CGAL/internal/Polyline_distance/geometry_basics.h>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace internal {
+namespace Polyline_distance {
 
 template <class PointRange>
 Curve toCurve(const PointRange& point_range)
 {
     Curve curve;
 
+    curve.reserve(point_range.size());
     for (auto const& point : point_range) {
         auto ipoint = Point(point.x(), point.y());
         curve.push_back(ipoint);
@@ -63,6 +65,8 @@ distance_t calcDistance(Curve const& curve1, Curve const& curve2)
     return frechet.calcDistance(curve1, curve2);
 }
 
+} // namespace Polyline_distance
+} // namespace internal
 }  // end of namespace CGAL
 
 #endif  // CGAL_INTERNAL_POLYLINE_DISTANCE_FRECHET_DISTANCE_H

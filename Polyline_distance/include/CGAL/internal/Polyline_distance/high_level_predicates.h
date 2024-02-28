@@ -30,11 +30,15 @@
 
 #include <iterator>
 
+namespace CGAL {
+namespace internal {
+namespace Polyline_distance {
 namespace HLPred
 {
 
-Interval intersection_interval(const Point& circle_center, distance_t radius,
-                               Point line_start, Point line_end)
+inline
+Interval intersection_interval(Point const & circle_center, distance_t radius,
+                               Point const& line_start, Point const& line_end)
 {
     // let a := v.x()^2 + v.y()^2,
     // let b := line_start.x() * v.x() + line_start.y() * v.y(),
@@ -65,3 +69,7 @@ Interval intersection_interval(const Point& circle_center, distance_t radius,
 }
 
 }  // namespace HLPred
+
+} // namespace Polyline_distance
+} // namespace internal
+} // namespace CGAL

@@ -63,7 +63,7 @@ public:
 
 private:
     Polylines curves;
-    FrechetKdTree<Traits> kd_tree;
+    internal::Polyline_distance::FrechetKdTree<Traits> kd_tree;
 };
 
 // TODO: store preprocessed curves after CGALization
@@ -84,7 +84,7 @@ auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
     auto result = kd_tree.search(curve, distance);
 
     auto predicate = [&](PolylineID id) {
-        return !continuous_Frechet_distance_less_than<PointRange, Traits>(
+        return ! continuous_Frechet_distance_less_than<PointRange, Traits>(
             curve, curves[id], distance);
     };
     auto new_end = std::remove_if(result.begin(), result.end(), predicate);

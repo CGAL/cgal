@@ -26,9 +26,13 @@
 
 #include <vector>
 
-#include "curve.h"
-#include "geometry_basics.h"
-#include "id.h"
+#include <CGAL/internal/Polyline_distance/curve.h>
+#include <CGAL/internal/Polyline_distance/geometry_basics.h>
+#include <CGAL/internal/Polyline_distance/id.h>
+
+namespace CGAL {
+namespace internal {
+namespace Polyline_distance {
 
 //
 // Box
@@ -163,3 +167,7 @@ struct BoxData {
     Outputs outputs;
     QSimpleOutputs qsimple_outputs;
 };
+
+} // namespace Polyline_distance
+} // namespace internal
+} // namespace CGAL

@@ -24,9 +24,13 @@
 
 #pragma once
 
-#include "certificate.h"
-#include "curve.h"
-#include "geometry_basics.h"
+#include <CGAL/internal/Polyline_distance/certificate.h>
+#include <CGAL/internal/Polyline_distance/curve.h>
+#include <CGAL/internal/Polyline_distance/geometry_basics.h>
+
+namespace CGAL {
+namespace internal {
+namespace Polyline_distance {
 
 // TODO: we can use Cartesian_converter here when we have one-sided approximate
 // decisions
@@ -56,7 +60,7 @@ public:
     bool adaptiveSimultaneousGreedy();
     bool negative(PointID pos1, PointID pos2);
 
-    static bool isPointTooFarFromCurve(Point fixed, const Curve& curve,
+    static bool isPointTooFarFromCurve(Point const& fixed, const Curve& curve,
                                        distance_t distance);
     static bool isFree(Point const& fixed, Curve const& var_curve,
                        PointID start, PointID end, distance_t distance);
@@ -67,7 +71,7 @@ public:
     static void decrease(size_t& step);
 };
 
-bool Filter::isPointTooFarFromCurve(Point fixed, const Curve& curve,
+bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve,
                                     distance_t distance)
 {
     auto dist_sqr = distance * distance;
@@ -484,3 +488,7 @@ bool Filter::negative(PointID position1, PointID position2)
 
     return false;
 }
+
+} // namespace Polyline_distance
+} // namespace internal
+} // namespace CGAL
