@@ -76,7 +76,7 @@ struct Lambda
 
 
     mutable Approx approx;
-    mutable Exact exact;
+  mutable std::optional<Exact> exact;
     Point circle_center;
     Point line_start, line_end;
     distance_t radius;
@@ -118,8 +118,8 @@ struct Lambda
                     Exact start(-b / a, -1, d);
                     if (is_negative(start)) start = Exact(0);
                     if (start <= Exact(1)) {
-                        exact = start;
-                        approx = CGAL::to_interval(exact);
+                      exact = std::make_optional(start);
+                        approx = CGAL::to_interval(*exact);
                         is_exact = true;
                         return true;
                     }
@@ -128,8 +128,8 @@ struct Lambda
                     Exact end(-b / a, 1, d);
                     if (end > Exact(1)) end = Exact(1);
                     if (end >= Exact(0)) {
-                        exact = end;
-                        approx = CGAL::to_interval(exact);
+                      exact = std::make_optional(end);
+                        approx = CGAL::to_interval(*exact);
                         is_exact = true;
                         return true;
                     }
@@ -191,7 +191,7 @@ namespace CGAL {
       return make_certain(ub);
     }
     lambda.update_exact();
-    return is_one(lambda.exact);
+    return is_one(*lambda.exact);
   }
 }
 
