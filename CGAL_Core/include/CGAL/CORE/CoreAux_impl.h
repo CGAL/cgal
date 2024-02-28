@@ -31,7 +31,6 @@
 
 #include <CGAL/use.h>
 #include <CGAL/CORE/CoreAux.h>
-#include <CGAL/gmp.h>
 
 namespace CORE {
 

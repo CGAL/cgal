@@ -85,6 +85,7 @@ struct Needs_parens_as_product<typename boost::multiprecision::cpp_rational>{
 
 };
 
+#ifdef CGAL_USE_GMP
 template<>
 struct Needs_parens_as_product<typename boost::multiprecision::mpz_int>{
   bool operator()(const typename boost::multiprecision::mpz_int& x){
@@ -100,8 +101,8 @@ struct Needs_parens_as_product<typename boost::multiprecision::mpq_rational>{
     else
       return needs_parens_as_product(numerator(x)) ;
   }
-
 };
+#endif
 
 
 

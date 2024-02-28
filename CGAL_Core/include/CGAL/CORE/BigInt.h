@@ -25,7 +25,6 @@
 #define _CORE_BIGINT_H_
 
 #include <CGAL/boost_mp_type.h>
-#include <CGAL/CORE/Gmp.h>
 #include <CGAL/CORE/RefCount.h>
 #include <CGAL/CORE/MemoryPool.h>
 #include <string>
