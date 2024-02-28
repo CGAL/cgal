@@ -678,6 +678,7 @@ public:
     std::size_t k,
     OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
     Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
+    CGAL_precondition(k > 0);
 
     return nearest_k_neighbors_in_radius(query_sphere, k, output);
   }
@@ -697,9 +698,7 @@ public:
  */
   template<typename OutputIterator>
   auto nearest_neighbors(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
-    Sphere query_sphere = query;
-
-    return nearest_k_neighbors_in_radius(query_sphere, (std::numeric_limits<std::size_t>::max)(), output);
+    return nearest_k_neighbors_in_radius(query, (std::numeric_limits<std::size_t>::max)(), output);
   }
 
   /*!
@@ -721,10 +720,12 @@ public:
  */
   template <typename OutputIterator>
   auto nearest_k_neighbors_in_radius(
-    Sphere& query,
+    const Sphere& query,
     std::size_t k,
     OutputIterator output
   ) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+    CGAL_precondition(k > 0);
+    Sphere query_sphere = query;
 
     // todo: this type is over-constrained, this must be made more generic
     struct Node_element_with_distance {
@@ -738,7 +739,7 @@ public:
       element_list.reserve(k);
 
     // Invoking the recursive function adds those elements to the vector (passed by reference)
-    nearest_k_neighbors_recursive(query, root(), element_list);
+    nearest_k_neighbors_recursive(query_sphere, root(), element_list, k);
 
     // Add all the points found to the output
     for (auto& item : element_list)
@@ -1294,6 +1295,7 @@ private: // functions :
     Sphere& search_bounds,
     Node_index node,
     std::vector<Result>& results,
+    std::size_t k,
     FT epsilon = 0) const -> std::enable_if_t<supports_neighbor_search> {
 
     // Check whether the node has children
@@ -1313,8 +1315,7 @@ private: // functions :
         if (current_element_with_distance.distance < m_traits.compute_squared_radius_d_object()(search_bounds)) {
 
           // Check if the results list is full
-          if (results.size() == results.capacity()) {
-
+          if (results.size() == k) {
             // Delete a element if we need to make room
             results.pop_back();
           }
@@ -1328,7 +1329,7 @@ private: // functions :
             });
 
           // Check if the results list is full
-          if (results.size() == results.capacity()) {
+          if (results.size() == k) {
 
             // Set the search radius
             search_bounds = m_traits.construct_sphere_d_object()(m_traits.construct_center_d_object()(search_bounds), results.back().distance + epsilon);
@@ -1381,7 +1382,7 @@ private: // functions :
         if (CGAL::do_intersect(bbox(child_with_distance.index), search_bounds)) {
 
           // Recursively invoke this function
-          nearest_k_neighbors_recursive(search_bounds, child_with_distance.index, results);
+          nearest_k_neighbors_recursive(search_bounds, child_with_distance.index, results, k);
         }
       }
     }

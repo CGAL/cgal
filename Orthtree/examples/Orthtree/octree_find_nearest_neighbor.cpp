@@ -44,7 +44,6 @@ int main(int argc, char** argv) {
     {-0.46026,  -0.25353,  0.32051},
     {-0.460261, -0.253533, 0.320513}
   };
-  typename Octree::Sphere s(Point(0, -0.1, 0), 5.0);
 
   for (const Point& p : points_to_find)
     octree.nearest_neighbors
@@ -56,31 +55,25 @@ int main(int argc, char** argv) {
             ") is (" << points.point(nearest) << ")" << std::endl;
         }));
 
+  typename Octree::Sphere s(points_to_find[0], 0.0375);
+  std::cout << std::endl << "Closest points within the sphere around " << s.center() << " with squared radius of " << s.squared_radius() << ":" << std::endl;
+  octree.nearest_neighbors
+  (s,
+    boost::make_function_output_iterator
+    ([&](const Point_set::Index& nearest)
+      {
+        std::cout << points.point(nearest) << "    dist: " << (Point(0, 0, 0) - points.point(nearest)).squared_length() << std::endl;
+      }));
 
-  std::cout << std::endl << "Closest points within sphere" << std::endl;
-/*
-  for (const Point& p : points_to_find)
-    octree.nearest_neighbors
-    (s,
-      boost::make_function_output_iterator
-      ([&](const Point_set::Index& nearest)
-        {
-          std::cout << points.point(nearest) << std::endl;
-        }));*/
-
-  std::cout << std::endl << "Closest points within sphere" << std::endl;
-  for (const Point& p : points_to_find) {
-    std::cout << "The up to three closest points to (" << p <<
-      ") within a squared radius of " << s.squared_radius() << " are:" << std::endl;
-    octree.nearest_k_neighbors_in_radius
-    (s, 3,
-      boost::make_function_output_iterator
-      ([&](const Point_set::Index& nearest)
-        {
-          std::cout << "(" << points.point(nearest) << ")" << std::endl;
-        }));
-    std::cout << std::endl;
-  }
+  std::size_t k = 3;
+  std::cout << std::endl << "The up to " << k << " closest points to(" << s.center() << ") within a squared radius of " << s.squared_radius() << " are:" << std::endl;
+  octree.nearest_k_neighbors_in_radius
+  (s, k,
+    boost::make_function_output_iterator
+    ([&](const Point_set::Index& nearest)
+      {
+        std::cout << "(" << points.point(nearest) << "    dist: " << (Point(0, 0, 0) - points.point(nearest)).squared_length() << std::endl;
+      }));
 
   return EXIT_SUCCESS;
 }
