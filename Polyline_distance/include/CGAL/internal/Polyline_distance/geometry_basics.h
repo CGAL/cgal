@@ -45,7 +45,7 @@ using Rational = CGAL::Exact_rational;
 
 #define USE_LAMBDA
 #ifndef USE_LAMBDA
-using RealType = CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_true>;
+using RealType = CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_false>;
 #endif
 
 // #include <CGAL/MP_Float.h>
@@ -72,7 +72,7 @@ using Point = Kernel::Point_2;
 struct Lambda
 {
     typedef CGAL::Interval_nt<> Approx;
-    typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_true> Exact;
+    typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_false> Exact;
 
 
     mutable Approx approx;
@@ -231,7 +231,7 @@ approximate_reals(const Point& circle_center, distance_t radius, const Point& li
 bool
 exact_reals(const Point& circle_center, distance_t radius, const Point& line_start, const Point& line_end, std::pair<Lambda,Lambda>& I)
 {
-  typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_true> Exact;
+  typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_false> Exact;
 
   Rational a(0), b(0), c(0);
   for (auto i = 0; i < 2; ++i) {
