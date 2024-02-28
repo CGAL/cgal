@@ -3904,10 +3904,11 @@ public:
     auto u = cv.u();
     auto v = cv.v();
     auto w = cv.w();
-    Algebraic* ys_end = m_nt_traits->solve_quadratic_equation(t*t - four*r*s,
-                                                              two*t*u - four*r*v,
-                                                              u*u - four*r*w,
-                                                              ys);
+    Algebraic* ys_end = m_nt_traits->template
+      solve_quadratic_equation<Integer>(t*t - four*r*s,
+                                        two*t*u - four*r*v,
+                                        u*u - four*r*w,
+                                        ys);
     auto n = static_cast<int>(ys_end - ys);
 
     // Compute the x coordinates and construct the horizontal tangency points.
@@ -3915,7 +3916,7 @@ public:
       // Having computed y, x is the single solution to the quadratic equation
       // above, and since its discriminant is 0, x is simply given by:
       Algebraic x = -(m_nt_traits->convert(t)*ys[i] + m_nt_traits->convert(u)) /
-        m_nt_traits->convert(two*r);
+        m_nt_traits->convert(Integer(two*r));
       ps[i] = Point_2(x, ys[i]);
     }
 

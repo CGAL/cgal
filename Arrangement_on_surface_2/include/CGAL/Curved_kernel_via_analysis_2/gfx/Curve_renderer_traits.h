@@ -336,7 +336,7 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, CORE::BigRat > :
 
 //! Specialization for \c CORE::BigFloat
 template <>
-struct Curve_renderer_traits<CORE::BigFloat, class CORE::BigRat>
+struct Curve_renderer_traits<CORE::BigFloat, CORE::BigRat>
          : public Curve_renderer_traits_base<CORE::BigFloat, CORE::BigInt,
                 CORE::BigRat> {
 
