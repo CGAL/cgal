@@ -591,7 +591,7 @@ namespace
 {
 
 template<typename T>
-T pow2(T d) { return std::pow(d, 2); }
+T pow2(T d) { return CGAL::square(d); }
 
 } // end anonymous namespace
 
