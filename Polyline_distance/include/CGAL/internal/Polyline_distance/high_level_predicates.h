@@ -90,7 +90,7 @@ Interval intersection_interval2(const Point& circle_center, distance_t radius, P
 }
 
 // TODO: something is wrong here
-Interval intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end, Interval* outer)
+Interval intersection_interval(const Point& circle_center, distance_t radius, Point line_start, Point line_end)
 {
         //////////////////////////
         // Just keeping the call to intersection to leave the assignment to "outer" as before
@@ -159,7 +159,6 @@ Interval intersection_interval(const Point& circle_center, distance_t radius, Po
         }
 #endif
         // std::cout << "new: " << CGAL::to_double(I.begin) << " " << CGAL::to_double(I.end) << std::endl << std::endl;
-        if (outer != nullptr) { *outer = I; }
 
         return I;
 }

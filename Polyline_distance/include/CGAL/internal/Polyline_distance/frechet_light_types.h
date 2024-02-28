@@ -112,19 +112,8 @@ struct QSimpleInterval
 		free.end = CPoint{};
 	}
 
-	void setOuterInterval(CPoint const& outerbegin, CPoint const& outerend) {
-		outer.begin = outerbegin;
-		outer.end = outerend;
-	}
-	void setOuterInterval(PointID begin, PointID end) {
-		setOuterInterval(CPoint(begin, 0.), CPoint(end, 0.));
-	}
-
 	CInterval const& getFreeInterval() {
 		return free;
-	}
-	CInterval const& getOuterInterval() {
-		return outer;
 	}
 
 	void setLastValidPoint(PointID const& point) {
@@ -142,7 +131,6 @@ struct QSimpleInterval
 	void invalidate() { valid = false; }
 	void clamp(CPoint const& min, CPoint const& max) {
 		free.clamp(min, max);
-		outer.clamp(min,max);
 	} 
 
 	bool is_empty() const { return free.is_empty(); }
@@ -153,8 +141,6 @@ private:
 	bool valid;
 	CInterval free;
 	PointID last_valid_point;
-
-	CInterval outer;
 };
 
 using QSimpleIntervals = std::vector<QSimpleInterval>;
