@@ -21,6 +21,8 @@
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
 
+#include <boost/functional/hash.hpp>
+
 #include <array>
 #include <map>
 #include <tuple>

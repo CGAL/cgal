@@ -26,6 +26,8 @@
 #include <tbb/blocked_range3d.h>
 #endif // CGAL_LINKED_WITH_TBB
 
+#include <boost/functional/hash.hpp>
+
 #include <array>
 
 namespace CGAL {
