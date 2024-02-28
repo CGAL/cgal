@@ -29,32 +29,33 @@
 
 /// \cgalModels{PolylineDistanceTraits}
 
-
 // TODO: is it too restrictive to use vectors by default?
 #include <vector>
 
 namespace CGAL
 {
 
-// TODO: This is just a starter to enable using the same types all over the package.
+// TODO: This is just a starter to enable using the same types all over the
+// package.
 template <class T, class CNT>
 class Polyline_traits_2
 {
 public:
-	using BaseTraits = T;
-	// TODO: remove FT?
-	using FT = typename BaseTraits::FT;
-	using Point = typename BaseTraits::Point_2;
-	using Compare_squared_distance = typename BaseTraits::Compare_squared_distance_2;
-	using Construct_midpoint = typename BaseTraits::Construct_midpoint_2;
-	using Construction_number_type = CNT;
-	// TODO: remove?
-	using Polyline = std::vector<Point>;
-	using Polylines = std::vector<Polyline>;
-	using PolylineID = std::size_t;
-	using PolylineIDs = std::vector<PolylineID>;
+    using BaseTraits = T;
+    // TODO: remove FT?
+    using FT = typename BaseTraits::FT;
+    using Point = typename BaseTraits::Point_2;
+    using Compare_squared_distance =
+        typename BaseTraits::Compare_squared_distance_2;
+    using Construct_midpoint = typename BaseTraits::Construct_midpoint_2;
+    using Construction_number_type = CNT;
+    // TODO: remove?
+    using Polyline = std::vector<Point>;
+    using Polylines = std::vector<Polyline>;
+    using PolylineID = std::size_t;
+    using PolylineIDs = std::vector<PolylineID>;
 };
 
-} // end of namespace CGAL
+}  // end of namespace CGAL
 
-#endif // CGAL_POLYLINE_TRAITS_2_H
+#endif  // CGAL_POLYLINE_TRAITS_2_H

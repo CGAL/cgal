@@ -29,40 +29,40 @@
 #include "frechet_light.h"
 #include "geometry_basics.h"
 
-namespace CGAL{
+namespace CGAL
+{
 
 template <class PointRange>
 Curve toCurve(const PointRange& point_range)
 {
-	Curve curve;
+    Curve curve;
 
-	for (auto const& point: point_range) {
-		auto ipoint = Point(point.x(), point.y());
-		curve.push_back(ipoint);
-	}
+    for (auto const& point : point_range) {
+        auto ipoint = Point(point.x(), point.y());
+        curve.push_back(ipoint);
+    }
 
-	return curve;
+    return curve;
 }
 
 template <class NT>
 distance_t toDistance(NT distance)
 {
-	return distance;
+    return distance;
 }
 
 bool lessThan(Curve const& curve1, Curve const& curve2, distance_t distance)
 {
-	FrechetLight frechet;
-	return frechet.lessThanWithFilters(distance, curve1, curve2);
+    FrechetLight frechet;
+    return frechet.lessThanWithFilters(distance, curve1, curve2);
 }
-
 
 distance_t calcDistance(Curve const& curve1, Curve const& curve2)
 {
-	FrechetLight frechet;
-	return frechet.calcDistance(curve1, curve2);
+    FrechetLight frechet;
+    return frechet.calcDistance(curve1, curve2);
 }
 
-} // end of namespace CGAL
+}  // end of namespace CGAL
 
-#endif // CGAL_INTERNAL_POLYLINE_DISTANCE_FRECHET_DISTANCE_H
+#endif  // CGAL_INTERNAL_POLYLINE_DISTANCE_FRECHET_DISTANCE_H

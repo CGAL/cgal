@@ -25,74 +25,74 @@
 #ifndef CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 #define CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Polyline_traits_2.h>
 #include <CGAL/Frechet_distance.h>
+#include <CGAL/Polyline_traits_2.h>
+#include <CGAL/basic.h>
 #include <CGAL/internal/Polyline_distance/Frechet_distance_near_neighbors_ds.h>
 
 #include <iterator>
 #include <vector>
 
-namespace CGAL{
+namespace CGAL
+{
 
 // TODO: hide away in Polyline_distance::internal (different naming but nvm)
 template <typename PointRange>
 using PointRangeKernel = typename CGAL::Kernel_traits<
-	typename std::iterator_traits<
-	typename PointRange::iterator>::value_type>::Kernel; // TODO: replace by CORE type for initial testing
+    typename std::iterator_traits<typename PointRange::iterator>::value_type>::
+    Kernel;  // TODO: replace by CORE type for initial testing
 
-template <class PointRange,
-          class Traits = PointRangeKernel<PointRange>>
+template <class PointRange, class Traits = PointRangeKernel<PointRange>>
 class FrechetDistanceNearNeighborsDS
 {
-	using PT = Polyline_traits_2<Traits, double>;
-	using FT = typename PT::FT;
-	using Point = typename PT::Point;
-	using Polyline = typename PT::Polyline;
-	using Polylines = typename PT::Polylines;
-	using PolylineID = typename PT::PolylineID;
-	using PolylineIDs = typename PT::PolylineIDs;
+    using PT = Polyline_traits_2<Traits, double>;
+    using FT = typename PT::FT;
+    using Point = typename PT::Point;
+    using Polyline = typename PT::Polyline;
+    using Polylines = typename PT::Polylines;
+    using PolylineID = typename PT::PolylineID;
+    using PolylineIDs = typename PT::PolylineIDs;
 
 public:
-	FrechetDistanceNearNeighborsDS() = default;
+    FrechetDistanceNearNeighborsDS() = default;
 
-	void insert(const Polyline& curve);
-	void insert(const Polylines& curve);
+    void insert(const Polyline& curve);
+    void insert(const Polylines& curve);
 
-	PolylineIDs get_close_curves(const Polyline& curve, FT distance);
+    PolylineIDs get_close_curves(const Polyline& curve, FT distance);
 
 private:
-	Polylines curves;
-	FrechetKdTree<Traits> kd_tree;
+    Polylines curves;
+    FrechetKdTree<Traits> kd_tree;
 };
 
 // TODO: store preprocessed curves after CGALization
 template <class PointRange, class Traits>
-void
-FrechetDistanceNearNeighborsDS<PointRange,Traits>::insert(const Polylines& curves)
+void FrechetDistanceNearNeighborsDS<PointRange, Traits>::insert(
+    const Polylines& curves)
 {
-	this->curves = curves; // FIXME: copies all the curves...
+    this->curves = curves;  // FIXME: copies all the curves...
 
-	kd_tree.insert(curves);
-	kd_tree.build();
+    kd_tree.insert(curves);
+    kd_tree.build();
 }
 
 template <class PointRange, class Traits>
-auto
-FrechetDistanceNearNeighborsDS<PointRange,Traits>::get_close_curves(const Polyline& curve, FT distance)
--> PolylineIDs
+auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
+    const Polyline& curve, FT distance) -> PolylineIDs
 {
-	auto result = kd_tree.search(curve, distance);
+    auto result = kd_tree.search(curve, distance);
 
-	auto predicate = [&](PolylineID id) {
-		return !continuous_Frechet_distance_less_than<PointRange, Traits>(curve, curves[id], distance);
-	};
-	auto new_end = std::remove_if(result.begin(), result.end(), predicate);
-	result.erase(new_end, result.end());
+    auto predicate = [&](PolylineID id) {
+        return !continuous_Frechet_distance_less_than<PointRange, Traits>(
+            curve, curves[id], distance);
+    };
+    auto new_end = std::remove_if(result.begin(), result.end(), predicate);
+    result.erase(new_end, result.end());
 
-	return result;
+    return result;
 }
 
-} // end of namespace CGAL
+}  // end of namespace CGAL
 
-#endif // CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
+#endif  // CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
