@@ -513,32 +513,6 @@ inline long minStar(long m, long n) {
 }
 /// \name Functions for Compatibility with BigInt (needed by Poly, Curves)
 //@{
-/// isDivisible(a,b) = "is a divisible by b"
-/**         Assuming that a and  b are in coanonized forms.
-        Defined to be true if mantissa(b) | mantissa(a) &&
-        exp(b) = min*(exp(b), exp(a)).
- *      This concepts assume a and b are exact BigFloats.
- */
-inline bool isDivisible(const BigFloat& a, const BigFloat& b) {
-  // assert: a and b are exact BigFloats.
-  if (sign(a.m()) == 0) return true;
-  if (sign(b.m()) == 0) return false;
-  unsigned long bin_a = getBinExpo(a.m());
-  unsigned long bin_b = getBinExpo(b.m());
-
-  BigInt m_a = a.m() >> bin_a;
-  BigInt m_b = b.m() >> bin_b;
-  long e_a = bin_a + BigFloatRep::bits(a.exp());
-  long e_b = bin_b + BigFloatRep::bits(b.exp());
-  long dx = minStar(e_a, e_b);
-
-  return isDivisible(m_a, m_b) && (dx == e_b);
-}
-
-inline bool isDivisible(double x, double y) {
-  //Are these exact?
-  return isDivisible(BigFloat(x), BigFloat(y));
-}
 
 /// div_exact(x,y) returns the BigFloat quotient of x divided by y
 /**        This is defined only if isDivisible(x,y).
@@ -551,7 +525,6 @@ inline bool isDivisible(double x, double y) {
 // normalizing it then we get zero.
 inline BigFloat div_exact(const BigFloat& x, const BigFloat& y) {
   BigInt z;
-  CGAL_assertion (isDivisible(x,y));
   unsigned long bin_x = getBinExpo(x.m());
   unsigned long bin_y = getBinExpo(y.m());
 

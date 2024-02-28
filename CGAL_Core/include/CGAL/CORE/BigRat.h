@@ -67,20 +67,6 @@ namespace CORE {
   return BigRat(n,d);
   }
 
-  // Chee: 8/8/2004: need isDivisible to compile Polynomial<BigRat>
-  // A trivial implementation is to return true always. But this
-  // caused tPolyRat to fail.
-  // So we follow the definition of
-  // Expr::isDivisible(e1, e2) which checks if e1/e2 is an integer.
-  inline bool isInteger(const BigRat& x) {
-    return denominator(x) == 1; // AF: does that need canonicalize?
-  }
-  inline bool isDivisible(const BigRat& x, const BigRat& y) {
-    BigRat r;
-    r = x/y;
-    return isInteger(r);
-  }
-
   /// BigIntValue
 inline BigInt BigIntValue(const BigRat& br)
 {
