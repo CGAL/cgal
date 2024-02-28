@@ -26,7 +26,6 @@
 
 #include "defs.h"
 #include "filter.h"
-#include "frechet_abstract.h"
 #include "frechet_light_types.h"
 #include "geometry_basics.h"
 #include "id.h"
@@ -40,13 +39,11 @@
 #include <array>
 #include <vector>
 
-class FrechetLight final : public FrechetAbstract
+class FrechetLight
 {
         using CurvePair = std::array<Curve const*, 2>;
 
 public:
-        static constexpr distance_t eps = 1e-10;
-
         FrechetLight() = default;
         void buildFreespaceDiagram(distance_t distance, Curve const& curve1, Curve const& curve2);
         bool lessThan(distance_t distance, Curve const& curve1, Curve const& curve2);
@@ -59,7 +56,7 @@ public:
         const Certificate& getCertificate() const { return cert; }
 
         void setPruningLevel(int pruning_level);
-        void setRules(std::array<bool,5> const& enable) override;
+        void setRules(std::array<bool,5> const& enable);
 
         std::size_t getNumberOfBoxes() const;
 
@@ -232,8 +229,6 @@ void FrechetLight::visAddFreeNonReachable(CPoint begin, CPoint end, CPoint fixed
         assert(free_non_reachable.back().end <= curve_pair[1-free_non_reachable.back().fixed_curve]->size() - 1);
 #endif
 }
-template <> CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const& center_id, Curve const& curve2, PointID seg_start) const;
-template <> CInterval FrechetLight::getInterval<CPoint>(Curve const& curve1, CPoint const& center_id, Curve const& curve2, PointID seg_start) const;
 
 template <>
 CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const& center_id, Curve const& curve2, PointID seg_start) const
@@ -242,15 +237,6 @@ CInterval FrechetLight::getInterval<PointID>(Curve const& curve1, PointID const&
     auto interval = HLPred::intersection_interval(point, distance, curve2[seg_start], curve2[seg_start + 1]);
     return CInterval{seg_start, interval.begin, seg_start, interval.end};
 }
-
-//TODO get rid of this!
-template <>
-CInterval FrechetLight::getInterval<CPoint>(Curve const& curve1, CPoint const& center_id, Curve const& curve2, PointID seg_start) const
-{
-  assert(false); //we should never get here
-  return CInterval();
-}
-
 
 inline void FrechetLight::merge(CIntervals& intervals, CInterval const& new_interval) const
 {
@@ -344,11 +330,6 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple, const 
         //CPoint first_free = current_free ? CPoint{min,0} : CPoint{max+1,0};
         assert((! current_free) || start==min);
         CPoint first_free = current_free ? CPoint{min,0} : CPoint{max+1, 0}; //qsimple.free.begin;
-
-        //CERT: outerinterval -- note that it is safe to set last_empty=min even if min is free,
-        //since we never add an empty interval of a single point
-        //TODO do we need to make sure that last_empty etc. is used only if we want to certify or does the compiler optimization take care of it?
-        CPoint last_empty = current_free ? CPoint{min, 0} : CPoint{max+1,0};
 
         assert(first_free > max || CGAL::squared_distance(fixed_point,curve.interpolate_at(first_free)) <= dist_sqr);
 
@@ -593,7 +574,6 @@ inline void FrechetLight::handleCellCase(BoxData& data)
         auto const& box = data.box;
 
         if (data.outputs.id1.valid()) {
-                //TODO set &outer1 to nullptr if we don't certify? Probably not really costly...
                 CInterval output1 = getInterval(curve2, box.max2, curve1, box.min1);
                 if (firstinterval2->is_empty()) {
                         visAddFreeNonReachable(

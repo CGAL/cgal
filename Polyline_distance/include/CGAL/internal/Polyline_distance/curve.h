@@ -28,9 +28,16 @@
 #include "geometry_basics.h"
 #include "id.h"
 
-#include "low_level_predicates.h"
+// TODO: Clean up Curve
 
-// TODO: should probably make this a more general type in CGAL
+// TODO: Make sure that values in Curve are computed in a way that is suitable for exact decisions
+
+// TODO: This can lead to faulty decisions in the filters! Fix!
+distance_t distance(Point const& p, Point const& q)
+{
+	return CGAL::sqrt(CGAL::squared_distance(p, q));
+}
+
 // Represents a trajectory. Additionally to the points given in the input file,
 // we also store the length of any prefix of the trajectory.
 class Curve
