@@ -97,7 +97,8 @@ typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Poi
                z_coord(p1) * mu + z_coord(p0) * (FT(1) - mu));
 }
 
-// retrieves the corner vertices and their values of a cell and return the lookup index
+// retrieves the values of a cell and return the lookup index
+// if the cell is completely above or below the isovalue, corner points are not computed
 template <typename Domain,
           typename Corners,
           typename Values>
@@ -109,21 +110,26 @@ std::size_t get_cell_corners(const Domain& domain,
 {
   using Vertex_descriptor = typename Domain::Vertex_descriptor;
 
+  const auto& vertices = domain.cell_vertices(cell);
+
   // collect function values and build index
   std::size_t v_id = 0;
   std::bitset<Domain::VERTICES_PER_CELL> index = 0;
-  for(const Vertex_descriptor& v : domain.cell_vertices(cell))
+  for(const Vertex_descriptor& v : vertices)
   {
-    // collect scalar values and computex index
-    corners[v_id] = domain.point(v);
     values[v_id] = domain.value(v);
-
     if(values[v_id] >= isovalue)
       index.set(v_id);
 
-    // next cell vertex
     ++v_id;
   }
+
+  if(index.all() || index.none()) // nothing's happening in this cell
+    return static_cast<std::size_t>(index.to_ullong());
+
+  v_id = 0;
+  for(const Vertex_descriptor& v : vertices)
+    corners[v_id++] = domain.point(v);
 
   return static_cast<std::size_t>(index.to_ullong());
 }
@@ -290,7 +296,7 @@ public:
     std::array<Point_3, vpc> corners;
     const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
 
-    // skip empty cells
+    // skip empty / full cells
     constexpr std::size_t ones = (1 << vpc) - 1;
     if((i_case & ones) == ones || // all bits set
        (i_case & ones) == 0) // no bits set

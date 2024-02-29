@@ -146,22 +146,23 @@ public:
     std::array<Point_3, 8> corners;
     const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
 
+    // skip empty / full cells
+    constexpr std::size_t ones = (1 << 8) - 1;
+    if((i_case & ones) == ones || // all bits set
+       (i_case & ones) == 0) // no bits set
+      return;
+
     // this is the only difference to the default Marching Cubes
     const int tcm = Cube_table::t_ambig[i_case];
     if(tcm == 105)
     {
-      if(p_slice(cell, m_isovalue, values, corners, i_case))
+      if(p_slice(cell, m_isovalue, corners, values, i_case))
         return;
 #ifdef CGAL_ISOSURFACING_3_MC_FUNCTORS_DEBUG
       else
         std::cerr << "WARNING: the result might not be topologically correct" << std::endl;
 #endif
     }
-
-    constexpr std::size_t ones = (1 << 8) - 1;
-    if((i_case & ones) == ones || // all bits set
-       (i_case & ones) == 0) // no bits set
-      return;
 
     std::array<Point_3, 12> vertices;
     MC_construct_vertices(cell, i_case, corners, values, m_isovalue, m_domain, vertices);
@@ -294,8 +295,8 @@ private:
 
   bool p_slice(const Cell_descriptor& cell,
                const FT i0,
-               const std::array<FT, 8>& values,
                const std::array<Point_3, 8>& corners,
+               const std::array<FT, 8>& values,
                const int i_case)
   {
     typename Geom_traits::Compute_x_3 x_coord = m_domain.geom_traits().compute_x_3_object();
