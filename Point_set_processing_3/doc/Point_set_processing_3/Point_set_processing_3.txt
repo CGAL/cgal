@@ -928,11 +928,15 @@ points that are on sharp edges:
 
 \section Point_set_processing_3LFSEstimation Local Feature Size Estimation
 
-Function `estimate_local_feature_size()` can estimate the local feature size for each point by giving a raw point set. If the points have no normals, the function also estimates normals using jet fitting. The function works by calculating the curvature and shape diameter. Then, the local feature size will be the minimum of the curvature radius and half of the shape diameter.
+Function `estimate_local_feature_size()` can estimate the local feature size for each point
+by giving a raw point set. If the points have no normals, the function also estimates normals using jet fitting.
+The function works by calculating the curvature and shape diameter.
+Then, the local feature size will be the minimum of the curvature radius and half of the shape diameter.
 
 Function `median_filter_smoothing_lfs()` performs the median filter to smooth the estimated local feature size.
 
-Function `lipschitz_continuity_smoothing_lfs()` smooth the local feature size based on the property of 1-Lipschitz continuity of the local feature size function.
+Function `lipschitz_continuity_smoothing_lfs()` smooth the local feature size
+based on the property of 1-Lipschitz continuity of the local feature size function.
 
 Function `laplacian_smoothing_lfs()` performs the laplacian smoothing to smooth the estimated local feature size.
 
