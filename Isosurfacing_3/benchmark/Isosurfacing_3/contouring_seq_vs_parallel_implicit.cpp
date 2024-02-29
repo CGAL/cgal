@@ -131,7 +131,7 @@ int main(int argc, char** argv)
     std::cout << "Output #vertices: " << points.size() << std::endl;
     std::cout << "Output #triangles: " << triangles.size() << std::endl;
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
-    CGAL::IO::write_polygon_soup("marching_cubes_implicit_parallel.off", points, triangles);
+    CGAL::IO::write_polygon_soup("toco_marching_cubes_implicit_parallel.off", points, triangles);
   }
 
   // TMC Sequential
@@ -153,7 +153,7 @@ int main(int argc, char** argv)
     std::cout << "Output #vertices: " << points.size() << std::endl;
     std::cout << "Output #triangles: " << triangles.size() << std::endl;
     std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
-    CGAL::IO::write_polygon_soup("marching_cubes_implicit_sequential.off", points, triangles);
+    CGAL::IO::write_polygon_soup("toco_marching_cubes_implicit_sequential.off", points, triangles);
   }
 
   // MC parallel
