@@ -67,7 +67,8 @@ void run_dual_contouring(const Grid& grid,
   std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
 
   // fill up values and gradients
-  Gradients gradients { values };
+  const FT step = CGAL::approximate_sqrt(grid.spacing().squared_length()) * 0.01; // finite difference step
+  Gradients gradients { values, step };
   Domain domain { grid, values, gradients };
 
   Point_range points;

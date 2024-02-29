@@ -18,7 +18,6 @@
 #include <CGAL/Isosurfacing_3/internal/partition_traits.h>
 
 #include <CGAL/Isosurfacing_3/interpolation_schemes_3.h>
-#include <CGAL/Isosurfacing_3/Finite_difference_gradient_3.h>
 
 #include <vector>
 

@@ -222,6 +222,7 @@ private:
 template <class GeomTraits>
 struct Skull_image
 {
+  using FT = typename GeomTraits::FT;
   using Grid = CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>;
   using Values = CGAL::Isosurfacing::Interpolated_discrete_values_3<Grid>;
   using Gradients = CGAL::Isosurfacing::Finite_difference_gradient_3<GeomTraits>;
@@ -244,7 +245,8 @@ struct Skull_image
 
   Domain domain() const
   {
-    Gradients gradients { values };
+    const FT step = CGAL::approximate_sqrt(grid.spacing().squared_length()) * 0.01;
+    Gradients gradients { values, step };
     return { grid, values, gradients };
   }
 

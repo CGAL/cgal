@@ -9,8 +9,10 @@
 #include <CGAL/Isosurfacing_3/Finite_difference_gradient_3.h>
 #include <CGAL/Isosurfacing_3/internal/implicit_shapes_helper.h>
 
+#include <CGAL/Bbox_3.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/number_utils.h>
 
 #include <tbb/task_arena.h>
 
@@ -58,7 +60,9 @@ int main(int argc, char** argv)
 
   // fill up values and gradients
   Values values { implicit_function, grid };
-  Gradients gradients { values };
+
+  const FT step = CGAL::approximate_sqrt(grid.spacing().squared_length()) * 0.01;
+  Gradients gradients { values, step };
 
   const bool triangulate_faces = false;
 

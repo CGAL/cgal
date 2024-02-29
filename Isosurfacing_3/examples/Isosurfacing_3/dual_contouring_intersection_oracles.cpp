@@ -53,9 +53,11 @@ int main(int argc, char** argv)
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;
   std::cout << "Cell #: " << grid.xdim() << ", " << grid.ydim() << ", " << grid.zdim() << std::endl;
 
+  const FT step = CGAL::approximate_sqrt(grid.spacing().squared_length()) * 0.01;
+
   // fill up values and gradients
   Values values { implicit_function, grid };
-  Gradients gradients { values };
+  Gradients gradients { values, step };
 
   const bool triangulate_faces = false;
 

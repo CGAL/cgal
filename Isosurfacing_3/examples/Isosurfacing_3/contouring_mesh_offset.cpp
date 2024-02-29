@@ -103,8 +103,10 @@ void run_dual_contouring(const Grid& grid,
   // fill up values and gradients
   auto mesh_distance = [&offset_oracle](const Point& p) { return offset_oracle.distance(p); };
 
+  const FT step = CGAL::approximate_sqrt(grid.spacing().squared_length()) * 0.01;
+
   Values values { mesh_distance, grid };
-  Gradients gradients { values };
+  Gradients gradients { values, step };
   Domain domain { grid, values, gradients };
 
   // output containers

@@ -56,12 +56,12 @@ public:
    * \tparam ValueFunction must be a model of `ValueFunction_3`.
    *
    * \param function the function giving the scalar value at each point
-   * \param delta the distance for calculating the finite differences
+   * \param delta the distance between samples for calculating the finite differences
    * \param gt the geometric traits class
    */
   template <typename ValueFunction>
   Finite_difference_gradient_3(const ValueFunction& function,
-                               const FT delta = 0.001,
+                               const FT delta,
                                const Geom_traits& gt = Geom_traits())
     : m_function{function},
       m_delta{delta},
