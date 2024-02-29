@@ -628,8 +628,8 @@ construct_knn_graph(PointRange& points,
     if (callback_wrapper.interrupted())
       return false;
 
-    const Point& point = get(point_map, get<0>(t));
-    neighbor_query.get_iterators(point, knn, FT(0), std::back_inserter(get<1>(t)));
+    const Point& point = get(point_map, boost::get<0>(t));
+    neighbor_query.get_iterators(point, knn, FT(0), std::back_inserter(boost::get<1>(t)));
 
     ++ callback_wrapper.advancement();
     return true;
@@ -843,9 +843,9 @@ median_filter_smoothing_lfs(PointRange& points,
   {
     for(auto it = begin; it != end; it++)
     {
-      value_type& vt = get<0>(*it);
+      value_type& vt = boost::get<0>(*it);
       FT lfs = get(lfs_map, vt);
-      const std::vector<iterator>& iterators = get<1>(*it);
+      const std::vector<iterator>& iterators = boost::get<1>(*it);
 
       std::vector<FT> knn_lfs_vals;
       for (const auto& iterator : iterators) knn_lfs_vals.push_back(get(lfs_map, *iterator));
@@ -1050,9 +1050,9 @@ laplacian_smoothing_lfs(PointRange& points,
   {
     for(auto it = begin; it != end; it++)
     {
-      value_type& vt = get<0>(*it);
+      value_type& vt = boost::get<0>(*it);
       FT lfs = get(lfs_map, vt);
-      const std::vector<iterator>& iterators = get<1>(*it);
+      const std::vector<iterator>& iterators = boost::get<1>(*it);
 
       FT avg_lfs = 0.0;
       for (const auto& iterator : iterators) avg_lfs += get(lfs_map, *iterator);

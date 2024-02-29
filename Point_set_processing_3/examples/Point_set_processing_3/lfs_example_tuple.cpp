@@ -60,8 +60,13 @@ int main(void)
     laplacian_smoothing_k, laplacian_smoothing_T, laplacian_smoothing_lambda, lfs_map,
     CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>()));
 
-  for (const auto &pts : points){
-    std::cout << std::get<2>(pts) << std::endl;
+  // print
+  for (const auto &pts : points)
+  {
+    // Point p = std::get<0>(pts);
+    // Vector n = std::get<1>(pts);
+    FT lfs = std::get<2>(pts);
+    std::cout << lfs << std::endl;
   }
 
   return EXIT_SUCCESS;

@@ -4,8 +4,6 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
-#include <vector>
-
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -16,8 +14,6 @@ typedef CGAL::Point_set_3<Point, Vector> Point_set;
 typedef Point_set::Property_map<Point> Point_map;
 typedef Point_set::Property_map<FT> FT_map;
 
-// types for K nearest neighbors search structure
-typedef CGAL::Point_set_processing_3::internal::Neighbor_query<Kernel, Point_set&, Point_map> Neighbor_query;
 
 // Concurrency
 typedef CGAL::Parallel_if_available_tag Concurrency_tag;
