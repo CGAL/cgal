@@ -22,7 +22,11 @@ int main(int argc, char** argv)
 
   std::vector<Point> input_points;
   std::vector<boost::container::small_vector<std::size_t, 3>> input_triangles;
-  CGAL::IO::read_polygon_soup(filename, input_points, input_triangles);
+  if (!CGAL::IO::read_polygon_soup(filename, input_points, input_triangles))
+  {
+    std::cerr << "Cannot read " << filename << "\n";
+    return 1;
+  }
   PMP::repair_polygon_soup(input_points, input_triangles);
   PMP::triangulate_polygons(input_points, input_triangles);
 
