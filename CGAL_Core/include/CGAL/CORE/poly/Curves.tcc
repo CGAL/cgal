@@ -1336,7 +1336,7 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
     if (!xCurr.isExact()){
       std::ostringstream oss;
       oss << "xCurr has error! xCurr=" << xCurr;
-      CGAL_warning_msg(false, oss.str());
+      CGAL_CORE_warning_msg(false, oss.str());
     }
    }//main while loop
 

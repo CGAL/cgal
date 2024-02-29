@@ -673,7 +673,7 @@ Polynomial<NT> Polynomial<NT>::pseudoRemainder (
   int bTrueDegree = tmpB.degree;
   C = NT(1);  // Initialized to C=1.
   if (bTrueDegree == -1)  {
-    CGAL_warning_msg(false, "ERROR in Polynomial<NT>::pseudoRemainder :\n    -- divide by zero polynomial");
+    CGAL_CORE_warning_msg(false, "ERROR in Polynomial<NT>::pseudoRemainder :\n    -- divide by zero polynomial");
     return Polynomial(0);  // Unit Polynomial (arbitrary!)
   }
   if (bTrueDegree > degree) {

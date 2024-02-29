@@ -1024,7 +1024,7 @@ void MultRep::computeApproxValue(const extLong& relPrec,
   {
     std::ostringstream oss;
     oss << "CORE WARNING: a huge lMSB in AddSubRep " <<  lMSB();
-    CGAL_warning_msg(false, oss.str().c_str());
+    CGAL_CORE_warning_msg(false, oss.str().c_str());
   }
 
   extLong r   = relPrec + EXTLONG_FOUR;
@@ -1046,7 +1046,7 @@ void DivRep::computeApproxValue(const extLong& relPrec,
   {
     std::ostringstream oss;
     oss << "CORE WARNING: a huge lMSB in AddSubRep " << lMSB();
-    CGAL_warning_msg(false, oss.str().c_str());
+    CGAL_CORE_warning_msg(false, oss.str().c_str());
   }
 
   extLong rr  = relPrec + EXTLONG_SEVEN;                // These rules come from
@@ -1079,7 +1079,7 @@ void Expr::debug(int mode, int level, int depthLimit) const {
   else if (mode == Expr::TREE_MODE)
     rep->debugTree(level, 0, depthLimit);
   else
-    CGAL_warning_msg(false, "unknown debugging mode");
+    CGAL_CORE_warning_msg(false, "unknown debugging mode");
   std::cout << "---- End Expr debug(): " << std::endl;
 }
 

@@ -819,7 +819,7 @@ BigFloatRep::toDecimal(unsigned int width, bool Scientific) const {
   if (err > 0 && err >= abs(m)) {
     // if err is larger than mantissa, sign and significant values
     // can not be determined.
-    CGAL_warning_msg(true, "BigFloat error: Error is too big!");
+    CGAL_CORE_warning_msg(true, "BigFloat error: Error is too big!");
     decOut.rep = "0.0e0";          // error is too big
     decOut.isScientific = false;
     decOut.noSignificant = 0;

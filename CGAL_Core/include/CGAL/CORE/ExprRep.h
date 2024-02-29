@@ -1088,7 +1088,7 @@ void AddSubRep<Operator>::computeExactFlags() {
           uMSB() = newValue.uMSB();   // chen: to get tighers value.
           sign() = newValue.sign();
         } else if (lowBound.isInfty()) {//check if rootbound is too big
-          CGAL_warning_msg(false, "AddSubRep:root bound has exceeded the maximum size but we still cannot decide zero.");
+          CGAL_CORE_warning_msg(false, "AddSubRep:root bound has exceeded the maximum size but we still cannot decide zero.");
         } else {               // Op(first, second) == 0
           lMSB() = CORE_negInfty;
           sign() = 0;
@@ -1181,7 +1181,7 @@ void AddSubRep<Operator>::computeExactFlags() {
           //8/9/01, Chee: implement escape precision here:
           if (i> get_static_EscapePrec()) {
             get_static_EscapePrecFlag() = -i.asLong();//negative means EscapePrec is used
-            CGAL_warning_msg(false, "Escape precision triggered");
+            CGAL_CORE_warning_msg(false, "Escape precision triggered");
             if (get_static_EscapePrecWarning())
               std::cout<< "Escape Precision triggered at "
                       << get_static_EscapePrec() << " bits" << std::endl;
@@ -1229,7 +1229,7 @@ void AddSubRep<Operator>::computeApproxValue(const extLong& relPrec,
   {
     std::ostringstream oss;
     oss << "CORE WARNING: a huge lMSB in AddSubRep: " << lMSB();
-    CGAL_warning_msg(false, oss.str().c_str());
+    CGAL_CORE_warning_msg(false, oss.str().c_str());
   }
 
   extLong rf = first->uMSB()-lMSB()+relPrec+EXTLONG_FOUR;  // 2 better

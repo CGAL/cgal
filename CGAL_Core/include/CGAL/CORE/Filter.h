@@ -137,7 +137,7 @@ public:
   }
   /// division
   filteredFp operator/ (const filteredFp& x) const {
-    CGAL_warning_msg(x.fpVal != 0.0, "possible zero divisor!");
+    CGAL_CORE_warning_msg(x.fpVal != 0.0, "possible zero divisor!");
 
     double xxx = core_abs(x.fpVal) / x.maxAbs - (x.ind+1)*CORE_EPS + DBL_MIN;
     if (xxx > 0) {
@@ -150,7 +150,7 @@ public:
   /// square root
   filteredFp sqrt () const {
 
-    CGAL_warning_msg( !(fpVal < 0.0), "possible negative sqrt!");
+    CGAL_CORE_warning_msg( !(fpVal < 0.0), "possible negative sqrt!");
     if (fpVal > 0.0) {
       double val = std::sqrt(fpVal);
       return filteredFp(val,  ( maxAbs / fpVal ) * val, 1 + ind);

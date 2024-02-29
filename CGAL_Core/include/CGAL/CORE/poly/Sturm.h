@@ -607,7 +607,7 @@ public:
       if (ff == 0) {
         NEWTON_DIV_BY_ZERO = true;
         del = 0;
-        CGAL_warning_msg(false, "Zero divisor in Newton Iteration");
+        CGAL_CORE_warning_msg(false, "Zero divisor in Newton Iteration");
         return 0;
       }
 
