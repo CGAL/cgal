@@ -23,7 +23,7 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Domain_helpers_grp
  *
- * \cgalModels{EdgeIntersectionOracle_3}
+ * \cgalModels{IsosurfacingEdgeIntersectionOracle_3}
  *
  * \brief The class `Dichotomy_edge_intersection` uses a dichotomy to find the intersection point
  * between an edge and the isosurface.
@@ -116,7 +116,7 @@ struct Dichotomy_edge_intersection
 /**
  * \ingroup IS_Domain_helpers_grp
  *
- * \cgalModels{EdgeIntersectionOracle_3}
+ * \cgalModels{IsosurfacingEdgeIntersectionOracle_3}
  *
  * \brief The class `Linear_interpolation_edge_intersection` uses linear interpolation
  * to find the intersection point between an edge and the isosurface.
@@ -178,7 +178,7 @@ struct Linear_interpolation_edge_intersection
 /*
  * \ingroup IS_Domain_helpers_grp
  *
- * \cgalModels{EdgeIntersectionOracle_3}
+ * \cgalModels{IsosurfacingEdgeIntersectionOracle_3}
  *
  * \brief The class `Ray_marching_edge_intersection` uses ray marching to find the intersection point
  * between an edge and the isosurface.

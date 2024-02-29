@@ -3,7 +3,7 @@
 
 \cgalConcept
 
-The concept `ValueField_3` describes the set of requirements to be fulfilled
+The concept `IsosurfacingValueField_3` describes the set of requirements to be fulfilled
 by the value field template parameter of the domain classes `CGAL::Isosurfacing::Marching_cubes_domain_3` and `CGAL::Isosurfacing::Dual_contouring_domain_3`.
 
 Value fields must be continuous and defined over the geometric span of the
@@ -15,9 +15,9 @@ space partitioning data structure (also known as "partition") being used.
 \cgalHasModelsEnd
 
 \sa `IsosurfacingTraits_3`
-\sa `GradientField_3`
+\sa `IsosurfacingGradientField_3`
 */
-class ValueField_3
+class IsosurfacingValueField_3
 {
 public:
   /*!
@@ -31,7 +31,7 @@ public:
   typedef unspecified_type Point_3;
 
   /*!
-  * A descriptor that uniquely identifies a vertex (see `Partition_3`).
+  * A descriptor that uniquely identifies a vertex (see `IsosurfacingPartition_3`).
   */
   typedef unspecified_type Vertex_descriptor;
 

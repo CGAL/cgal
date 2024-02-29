@@ -4,19 +4,17 @@ namespace Isosurfacing {
 /*!
  * \ingroup PkgIsosurfacing3Concepts
  *
- * \cgalConcept
+ * \relates IsosurfacingPartition_3
  *
- * \relates Partition_3
- *
- * The class `partition_traits` is the API compatibility layer between a model of `Partition_3`
+ * The class `partition_traits` is the API compatibility layer between a model of `IsosurfacingPartition_3`
  * and the isosurfacing domain classes `CGAL::Isosurfacing::Marching_cubes_domain_3` and
  * `CGAL::Isosurfacing::Dual_contouring_domain_3`.
  *
- * For each model of `Partition_3`, a partial specialization of `partition_traits` must be provided,
+ * For each model of `IsosurfacingPartition_3`, a partial specialization of `partition_traits` must be provided,
  * providing the types and functions listed below. Such a partial specialization is provided
  * for `CGAL::Isosurfacing::Cartesian_grid_3`.
  */
-template <typename Partition_3>
+template <typename IsosurfacingPartition_3>
 class partition_traits
 {
 public:
@@ -62,27 +60,27 @@ public:
   /*!
    * \returns the 3D position of the vertex `v`.
    */
-  static Point_3 point(const Vertex_descriptor& v, const Partition_3& partition);
+  static Point_3 point(const Vertex_descriptor& v, const IsosurfacingPartition_3& partition);
 
   /*!
    * \returns the two vertices incident to the edge `e`.
    */
-  static Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e, const Partition_3& partition);
+  static Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e, const IsosurfacingPartition_3& partition);
 
   /*!
    * \returns all the cells incident to the edge `e`, in a geometrically ordered manner around the edge.
    */
-  static Cells_incident_to_edge incident_cells(const Edge_descriptor& e, const Partition_3& partition);
+  static Cells_incident_to_edge incident_cells(const Edge_descriptor& e, const IsosurfacingPartition_3& partition);
 
   /*!
    * \returns all the vertices of the cell `c`.
    */
-  static Cell_vertices cell_vertices(const Cell_descriptor& c, const Partition_3& partition);
+  static Cell_vertices cell_vertices(const Cell_descriptor& c, const IsosurfacingPartition_3& partition);
 
   /*!
    * \returns all the edges of the cell `c`.
    */
-  static Cell_edges cell_edges(const Cell_descriptor& c, const Partition_3& partition);
+  static Cell_edges cell_edges(const Cell_descriptor& c, const IsosurfacingPartition_3& partition);
 
   /*!
    * iterates over all vertices, and calls the functor `f` on each one.
@@ -95,7 +93,7 @@ public:
    * \param partition the partition whose vertices are being iterated
   */
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_vertex(Functor& f, const Partition_3& partition);
+  static void for_each_vertex(Functor& f, const IsosurfacingPartition_3& partition);
 
   /*!
    * iterates over all edges, and calls the functor `f` on each one.
@@ -108,7 +106,7 @@ public:
    * \param partition the partition whose edges are being iterated
    */
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_edge(Functor& f, const Partition_3& partition);
+  static void for_each_edge(Functor& f, const IsosurfacingPartition_3& partition);
 
   /*!
    * iterates over all cells, and calls the functor `f` on each one.
@@ -121,7 +119,7 @@ public:
    * \param partition the partition whose cells are being iterated
    */
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_cell(Functor& f, const Partition_3& partition);
+  static void for_each_cell(Functor& f, const IsosurfacingPartition_3& partition);
 };
 
 } // namespace Isosurfacing

@@ -25,7 +25,7 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Fields_grp
  *
- * \cgalModels{GradientField_3}
+ * \cgalModels{IsosurfacingGradientField_3}
  *
  * \brief Class template for a gradient that is calculated using finite differences.
  *

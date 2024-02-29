@@ -3,7 +3,7 @@
 
 \cgalConcept
 
-The concept `EdgeIntersectionOracle_3` describes the requirements for the edge-isosurface
+The concept `IsosurfacingEdgeIntersectionOracle_3` describes the requirements for the edge-isosurface
 intersection oracle template parameter of the domain classes
 `CGAL::Isosurfacing::Marching_cubes_domain_3` and
 `CGAL::Isosurfacing::Dual_contouring_domain_3`.
@@ -13,7 +13,7 @@ intersection oracle template parameter of the domain classes
 \cgalHasModels{CGAL::Isosurfacing::Linear_interpolation_edge_intersection}
 \cgalHasModelsEnd
 */
-class EdgeIntersectionOracle_3
+class IsosurfacingEdgeIntersectionOracle_3
 {
 public:
   /*!

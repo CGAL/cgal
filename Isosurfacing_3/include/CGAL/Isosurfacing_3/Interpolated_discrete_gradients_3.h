@@ -28,12 +28,12 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Domain_helpers_grp
  *
- * \cgalModels{ValueField_3}
+ * \cgalModels{IsosurfacingValueField_3}
  *
  * \brief Class template for a gradient that is calculated using discrete values and trilinear interpolation.
  *
  * \tparam Grid must be `CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>`, with `GeomTraits` a model of `IsosurfacingTraits_3`
- * \tparam InterpolationScheme must be a model of `InterpolationScheme_3`
+ * \tparam InterpolationScheme must be a model of `IsosurfacingInterpolationScheme_3`
  */
 template <typename Grid,
           typename InterpolationScheme = Trilinear_interpolation<Grid> >
@@ -64,7 +64,7 @@ public:
   }
 
   // computes and stores gradients at the vertices of the grid
-  // \tparam must be ValueField a model of `ValueField_3`
+  // \tparam must be ValueField a model of `IsosurfacingValueField_3`
   // \param values a field of values whose gradient are being computed
   template <typename ValueField>
   void compute_discrete_gradients(const ValueField& values)

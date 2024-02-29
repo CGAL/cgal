@@ -25,12 +25,12 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Domain_helpers_grp
  *
- * \cgalModels{ValueField_3}
+ * \cgalModels{IsosurfacingValueField_3}
  *
  * \brief The class `Value_function_3` represents a field of scalars computed
  * using a user-provided unary function.
  *
- * \tparam Partition must be a model of `Partition_3`
+ * \tparam Partition must be a model of `IsosurfacingPartition_3`
  *
  * \sa `CGAL::Isosurfacing::Marching_cubes_domain_3`
  * \sa `CGAL::Isosurfacing::Dual_contouring_domain_3`

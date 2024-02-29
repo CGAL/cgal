@@ -127,7 +127,7 @@ struct Cartesian_grid_position<GeomTraits, Cache_positions>
 /**
  * \ingroup IS_Partitions_grp
  *
- * \cgalModels{Partition_3}
+ * \cgalModels{IsosurfacingPartition_3}
  *
  * \brief The class `Cartesian_grid_3` represents a 3D %Cartesian grid, that is the partition of
  * an iso-cuboid into identical iso-cuboidal cells.

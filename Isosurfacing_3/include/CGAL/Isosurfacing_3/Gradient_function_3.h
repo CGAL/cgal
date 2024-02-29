@@ -25,12 +25,12 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Fields_grp
  *
- * \cgalModels{GradientField_3}
+ * \cgalModels{IsosurfacingGradientField_3}
  *
  * \brief The class `Gradient_function_3` represents a field of vectors computed
  * using a user-provided unary function.
  *
- * \tparam Partition must be a model of `Partition_3`
+ * \tparam Partition must be a model of `IsosurfacingPartition_3`
  *
  * \sa `CGAL::Isosurfacing::Dual_contouring_domain_3`
  */

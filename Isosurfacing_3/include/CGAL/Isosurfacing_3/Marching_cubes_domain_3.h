@@ -33,9 +33,9 @@ namespace Isosurfacing {
  * the values that define the isosurface. The optional template parameter
  * `EdgeIntersectionOracle` gives control over the method used to computate edge-isosurface intersection points.
  *
- * \tparam Partition must be a model of `Partition_3`
- * \tparam ValueField must be a model of `ValueField_3`
- * \tparam EdgeIntersectionOracle must be a model of `EdgeIntersectionOracle_3`
+ * \tparam Partition must be a model of `IsosurfacingPartition_3`
+ * \tparam ValueField must be a model of `IsosurfacingValueField_3`
+ * \tparam EdgeIntersectionOracle must be a model of `IsosurfacingEdgeIntersectionOracle_3`
  *
  * \sa `CGAL::Isosurfacing::marching_cubes_3()`
  * \sa `CGAL::Isosurfacing::Dual_contouring_domain_3`
@@ -74,9 +74,9 @@ public:
  *
  * \brief creates a new instance of a domain that can be used with the Marching Cubes algorithm.
  *
- * \tparam Partition must be a model of `Partition_3`
- * \tparam ValueField must be a model of `ValueField_3`
- * \tparam EdgeIntersectionOracle must be a model of `EdgeIntersectionOracle_3`
+ * \tparam Partition must be a model of `IsosurfacingPartition_3`
+ * \tparam ValueField must be a model of `IsosurfacingValueField_3`
+ * \tparam EdgeIntersectionOracle must be a model of `IsosurfacingEdgeIntersectionOracle_3`
  *
  * \param partition the space partitioning data structure
  * \param values a continuous field of scalar values, defined over the geometric span of `partition`

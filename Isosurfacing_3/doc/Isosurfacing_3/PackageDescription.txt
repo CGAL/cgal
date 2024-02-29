@@ -55,11 +55,11 @@ The output is a polygon soup (i.e., a container of point coordinates and indexed
 
 \cgalCRPSection{Concepts}
 - `IsosurfacingTraits_3`
-- `Partition_3`
-- `ValueField_3`
-- `GradientField_3`
-- `InterpolationScheme_3`
-- `EdgeIntersectionOracle_3`
+- `IsosurfacingPartition_3`
+- `IsosurfacingValueField_3`
+- `IsosurfacingGradientField_3`
+- `IsosurfacingInterpolationScheme_3`
+- `IsosurfacingEdgeIntersectionOracle_3`
 - `IsosurfacingDomain_3`
 - `IsosurfacingDomainWithGradient_3`
 

@@ -3,7 +3,7 @@
 
 \cgalConcept
 
-The concept `Partition_3` describes the set of requirements to be fulfilled
+The concept `IsosurfacingPartition_3` describes the set of requirements to be fulfilled
 by the partition template parameter of the domain classes `CGAL::Isosurfacing::Marching_cubes_domain_3`
 and `CGAL::Isosurfacing::Dual_contouring_domain_3`.
 
@@ -17,7 +17,7 @@ This is similar to graph traits in \ref PkgBGL.
 \cgalHasModels{`CGAL::Isosurfacing::Cartesian_grid_3`}
 \cgalHasModelsEnd
 */
-class Partition_3
+class IsosurfacingPartition_3
 {
 public:
   /*!

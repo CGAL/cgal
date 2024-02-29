@@ -3,7 +3,7 @@
 
 \cgalConcept
 
-The concept `GradientField_3` describes the set of requirements to be fulfilled
+The concept `IsosurfacingGradientField_3` describes the set of requirements to be fulfilled
 by the gradient field template parameter of the domain class `CGAL::Isosurfacing::Dual_contouring_domain_3`.
 
 Gradient fields must be continuous and defined over the geometric span of the
@@ -16,9 +16,9 @@ space partitioning data structure (also known as "partition") being used.
 \cgalHasModelsEnd
 
 \sa `IsosurfacingTraits_3`
-\sa `ValueField_3`
+\sa `IsosurfacingValueField_3`
 */
-class GradientField_3
+class IsosurfacingGradientField_3
 {
 public:
   /*!

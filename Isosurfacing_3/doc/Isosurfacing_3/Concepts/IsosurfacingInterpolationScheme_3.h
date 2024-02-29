@@ -5,14 +5,14 @@
 
 \cgalRefines{DefaultConstructible, CopyConstructible, Assignable}
 
-The concept `InterpolationScheme_3` describes the set of requirements to be fulfilled
+The concept `IsosurfacingInterpolationScheme_3` describes the set of requirements to be fulfilled
 by the interpolation scheme template parameter of the domain classes `CGAL::Isosurfacing::Interpolated_discrete_values_3` and `CGAL::Isosurfacing::Interpolated_discrete_gradients_3`.
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Isosurfacing::Trilinear_interpolation}
 \cgalHasModelsEnd
 */
-class InterpolationScheme_3
+class IsosurfacingInterpolationScheme_3
 {
 public:
   /*!
