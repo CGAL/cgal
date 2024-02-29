@@ -54,7 +54,7 @@ void run_marching_cubes(const Grid& grid,
   std::cout << "Output #triangles: " << triangles.size() << std::endl;
 
   // save output indexed mesh to a file, in the OFF format
-  CGAL::IO::write_polygon_soup("marching_cubes_image.off", points, triangles);
+  CGAL::IO::write_polygon_soup("marching_cubes_inrimage.off", points, triangles);
 }
 
 void run_dual_contouring(const Grid& grid,
@@ -79,7 +79,7 @@ void run_dual_contouring(const Grid& grid,
 
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;
-  CGAL::IO::write_polygon_soup("dual_contouring_image.off", points, triangles);
+  CGAL::IO::write_polygon_soup("dual_contouring_inrimage.off", points, triangles);
 }
 
 int main(int argc, char* argv[])
