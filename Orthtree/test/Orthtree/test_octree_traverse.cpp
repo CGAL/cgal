@@ -22,7 +22,7 @@ bool test_preorder_1_node() {
   points.insert({-1, -1, -1});
 
   // Create the octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Create the range
@@ -43,7 +43,7 @@ bool test_preorder_9_nodes() {
   points.insert({1, -1, -1});
 
   // Create the octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Create the range
@@ -68,7 +68,7 @@ bool test_level_9_nodes() {
   points.insert({1, -1, -1});
 
   // Create the octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Create the range
@@ -94,7 +94,7 @@ bool test_preorder_25_nodes() {
   points.insert({1, 1, 4});
 
   // Create the octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
   std::cout << octree << std::endl;
 

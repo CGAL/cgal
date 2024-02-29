@@ -301,7 +301,7 @@ Octree octree(points, points.point_map());
 typedef CGAL::Point_set_3<Kernel::Point_3> Point_set;
 typedef CGAL::Octree<Kernel, Point_set, Point_map, false> Octree;
 ...
-Octree octree({points, points.point_map()});
+Octree octree(points, points.point_map());
 \endcode
 
 The node class does not exist anymore and has been replaced by the lightweight type `Node_index`. All information formerly contained in the node class is now accessible via the `Orthtree` interface.

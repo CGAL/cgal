@@ -60,7 +60,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  Octree tree({mesh, mesh.points()});
+  Octree tree(mesh, mesh.points());
   OTraits::Split_predicate_node_min_extent sp(0.01);
   tree.refine(sp);
 

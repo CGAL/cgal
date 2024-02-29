@@ -57,7 +57,7 @@ int main()
   for (std::size_t i = 0; i < nb_pts; ++i)
     points.insert(*(generator++));
 
-  Octree base({ points, points.point_map() });
+  Octree base(points, points.point_map());
   test(base);
 
   Octree_without_data base2({});

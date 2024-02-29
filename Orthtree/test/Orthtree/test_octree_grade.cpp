@@ -48,7 +48,7 @@ void test(std::size_t dataset_size) {
     points.insert(*(generator++));
 
   // Build an octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
 
   // Refine the octree
   octree.refine();

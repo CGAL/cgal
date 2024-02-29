@@ -18,7 +18,7 @@ void test()
   for (std::size_t i = 0; i < 100; ++i)
     points.insert(*(generator++));
 
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine();
   octree.grade();
 }

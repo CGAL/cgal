@@ -23,7 +23,7 @@ int main(void) {
   for (std::size_t i = 0; i < nb_pts; ++i)
     points.insert(*(generator++));
 
-  Octree tree({points, points.point_map()});
+  Octree tree(points, points.point_map());
 
   // Testing built in node properties
   typename Octree::Property_map<typename Octree::Node_data> data_prop = *tree.property<typename Octree::Node_data>("contents");

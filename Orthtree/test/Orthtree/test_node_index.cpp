@@ -33,7 +33,7 @@ int main(void) {
   points.insert({-1, -1, -1.8});
   points.insert({-1, -1, -1.9});
 
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   std::cout << "root: " << octree.local_coordinates(octree.root()) << std::endl;

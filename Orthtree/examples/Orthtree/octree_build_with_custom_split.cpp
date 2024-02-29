@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   std::cout << "loaded " << points.number_of_points() << " points" << std::endl;
 
   // Create an octree from the points
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
 
   // Build the octree using our custom split predicate
   octree.refine(Split_by_ratio(2));

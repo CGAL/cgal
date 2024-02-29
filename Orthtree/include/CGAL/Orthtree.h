@@ -235,7 +235,7 @@ public:
   /// @{
 
   /*!
-    \brief creates an orthtree for a traits instance.
+    \brief constructs an orthtree for a traits instance.
 
     The constructed orthtree has a root node with no children,
     containing the contents determined by `Construct_root_node_contents` from the traits class.
@@ -275,10 +275,18 @@ public:
       data(root()) = m_traits.construct_root_node_contents_object()();
   }
 
+  /*!
+    constructs an orthtree from a set of arguments provided to the traits constructor
+   */
+  template <class Arg1, class Arg2, class ... Args>
+  explicit Orthtree(Arg1&& arg1, Arg2&& arg2, Args&& ... args)
+    : Orthtree(Traits(std::forward<Arg1>(arg1), std::forward<Arg2>(arg2), std::forward<Args>(args)...))
+  {}
+
   /// @}
 
   // copy constructor
-  Orthtree(const Orthtree& other) :
+  explicit Orthtree(const Orthtree& other) :
     m_traits(other.m_traits),
     m_node_properties(other.m_node_properties),
     m_node_contents(m_node_properties),
@@ -289,7 +297,7 @@ public:
     m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth) {}
 
   // move constructor
-  Orthtree(Orthtree&& other) :
+  explicit Orthtree(Orthtree&& other) :
     m_traits(other.m_traits),
     m_node_properties(std::move(other.m_node_properties)),
     m_node_contents(m_node_properties),
