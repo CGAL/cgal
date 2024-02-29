@@ -52,14 +52,13 @@ int main(void)
     CGAL::parameters::point_map(point_set.point_map()));
 
   unsigned int lipschitz_continuity_smoothing_k = 11;
-  FT lipschitz_continuity_lipschitz = 1.0; // 1-lipschitz_continuity for LFS function
-  CGAL::lipschitz_continuity_smoothing_lfs<Concurrency_tag>(point_set, lfs_map, lipschitz_continuity_smoothing_k, lipschitz_continuity_lipschitz,
+  FT lipschitz = 1.0;
+  CGAL::lipschitz_continuity_smoothing_lfs<Concurrency_tag>(point_set, lipschitz_continuity_smoothing_k, lipschitz, lfs_map,
     CGAL::parameters::point_map(point_set.point_map()));
 
   unsigned int laplacian_smoothing_k = 11, laplacian_smoothing_T = 5;
   FT laplacian_smoothing_lambda = 1.0;
-  CGAL::laplacian_smoothing_lfs<Concurrency_tag>(point_set, lfs_map,
-    laplacian_smoothing_k, laplacian_smoothing_T, laplacian_smoothing_lambda,
+  CGAL::laplacian_smoothing_lfs<Concurrency_tag>(point_set, laplacian_smoothing_k, laplacian_smoothing_T, laplacian_smoothing_lambda, lfs_map,
     CGAL::parameters::point_map(point_set.point_map()));
 
   // print

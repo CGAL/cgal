@@ -50,14 +50,14 @@ int main(void)
     CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>()));
 
   unsigned int lipschitz_continuity_smoothing_k = 11;
-  FT lipschitz_continuity_lipschitz = 1.0; // 1 lipschitz_continuity for LFS function
-  CGAL::lipschitz_continuity_smoothing_lfs<Concurrency_tag>(points, lfs_map, lipschitz_continuity_smoothing_k, lipschitz_continuity_lipschitz,
+  FT lipschitz = 1.0; // 1 lipschitz_continuity for LFS function
+  CGAL::lipschitz_continuity_smoothing_lfs<Concurrency_tag>(points, lipschitz_continuity_smoothing_k, lipschitz, lfs_map,
     CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>()));
 
   unsigned int laplacian_smoothing_k = 11, laplacian_smoothing_T = 5;
   FT laplacian_smoothing_lambda = 1.0;
-  CGAL::laplacian_smoothing_lfs<Concurrency_tag>(points, lfs_map,
-    laplacian_smoothing_k, laplacian_smoothing_T, laplacian_smoothing_lambda,
+  CGAL::laplacian_smoothing_lfs<Concurrency_tag>(points,
+    laplacian_smoothing_k, laplacian_smoothing_T, laplacian_smoothing_lambda, lfs_map,
     CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, Point_with_normal_and_lfs>()));
 
   for (const auto &pts : points){

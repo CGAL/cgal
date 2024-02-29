@@ -642,7 +642,7 @@ construct_knn_graph(PointRange& points,
 /**
    \ingroup PkgPointSetProcessing3Algorithms
 
-   estimates the local feature size (LFS) for the input 3D point cloud. The function only works for 3D point cloud.
+   Estimate the local feature size (LFS) for the input 3D point cloud. The function only works for 3D point cloud.
    If the input 3D point cloud has no normals, the function will also estimate the normals using jet fitting.
 
 
@@ -777,6 +777,38 @@ estimate_local_feature_size(PointRange& points,
    });
 }
 
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+
+   Smooth the local feature size using median filter.
+
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range
+   \param knn number of neighbors for median filter
+   \param T number of iterations
+   \param LfsMap the map for the LFS value
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \return The function will smooth the local feature size values directly in `lfs_map`.
+*/
 template <typename ConcurrencyTag,
           typename PointRange,
           typename LfsMap,
@@ -825,15 +857,46 @@ median_filter_smoothing_lfs(PointRange& points,
   }
 }
 
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+
+   Smooth the local feature size based on the lipschitz continuity.
+
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range
+   \param knn number of neighbors for the smoothing based on the lipschitz continuity, suggested set it to be 1.0
+   \param LfsMap the map for the LFS value
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \return The function will smooth the local feature size values directly in `lfs_map`.
+*/
 template <typename ConcurrencyTag,
           typename PointRange,
           typename LfsMap,
           typename NamedParameters = parameters::Default_named_parameters>
 void
 lipschitz_continuity_smoothing_lfs(PointRange& points,
-                        LfsMap lfs_map,
                         const unsigned int knn,
-                        const typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT lipschitz=1.0,
+                        const typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT lipschitz,
+                        LfsMap lfs_map,
                         const NamedParameters& np = parameters::default_values())
 {
   // basic geometric types
@@ -918,16 +981,49 @@ lipschitz_continuity_smoothing_lfs(PointRange& points,
   }
 }
 
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+
+   Smooth the local feature size using median filter.
+
+
+   \tparam PointRange is a model of `Range`. The value type of
+   its iterator is the key type of the named parameter `point_map`.
+
+   \param points input point range
+   \param knn number of neighbors for laplacian smoothing
+   \param T number of iterations
+   \param lambda lambda value for laplacian smoothing
+   \param LfsMap the map for the LFS value
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
+
+   \return The function will smooth the local feature size values directly in `lfs_map`.
+*/
 template <typename ConcurrencyTag,
           typename PointRange,
           typename LfsMap,
           typename NamedParameters = parameters::Default_named_parameters>
 void
 laplacian_smoothing_lfs(PointRange& points,
-                        LfsMap lfs_map,
                         const unsigned int knn,
                         const unsigned int T,
                         const typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT lambda,
+                        LfsMap lfs_map,
                         const NamedParameters& np = parameters::default_values())
 {
   // basic geometric types
