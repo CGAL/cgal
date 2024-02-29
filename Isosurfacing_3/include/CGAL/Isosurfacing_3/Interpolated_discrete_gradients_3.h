@@ -43,7 +43,7 @@ class Interpolated_discrete_gradients_3
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
 
-  using Vertex_descriptor = typename partition_traits<Grid>::Vertex_descriptor;
+  using vertex_descriptor = typename partition_traits<Grid>::vertex_descriptor;
 
 private:
   const Grid& m_grid;

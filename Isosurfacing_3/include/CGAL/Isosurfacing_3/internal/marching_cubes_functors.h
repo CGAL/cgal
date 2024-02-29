@@ -103,19 +103,19 @@ template <typename Domain,
           typename Corners,
           typename Values>
 std::size_t get_cell_corners(const Domain& domain,
-                             const typename Domain::Cell_descriptor& cell,
+                             const typename Domain::cell_descriptor& cell,
                              const typename Domain::Geom_traits::FT isovalue,
                              Corners& corners,
                              Values& values)
 {
-  using Vertex_descriptor = typename Domain::Vertex_descriptor;
+  using vertex_descriptor = typename Domain::vertex_descriptor;
 
   const auto& vertices = domain.cell_vertices(cell);
 
   // collect function values and build index
   std::size_t v_id = 0;
   std::bitset<Domain::VERTICES_PER_CELL> index = 0;
-  for(const Vertex_descriptor& v : vertices)
+  for(const vertex_descriptor& v : vertices)
   {
     values[v_id] = domain.value(v);
     if(values[v_id] >= isovalue)
@@ -128,7 +128,7 @@ std::size_t get_cell_corners(const Domain& domain,
     return static_cast<std::size_t>(index.to_ullong());
 
   v_id = 0;
-  for(const Vertex_descriptor& v : vertices)
+  for(const vertex_descriptor& v : vertices)
     corners[v_id++] = domain.point(v);
 
   return static_cast<std::size_t>(index.to_ullong());
@@ -139,7 +139,7 @@ template <typename Corners,
           typename Values,
           typename Domain,
           typename Vertices>
-void MC_construct_vertices(const typename Domain::Cell_descriptor& cell,
+void MC_construct_vertices(const typename Domain::cell_descriptor& cell,
                            const std::size_t i_case,
                            const Corners& corners,
                            const Values& values,
@@ -148,7 +148,7 @@ void MC_construct_vertices(const typename Domain::Cell_descriptor& cell,
                            Vertices& vertices)
 {
   using Cell_edges = typename Domain::Cell_edges;
-  using Edge_descriptor = typename Domain::Edge_descriptor;
+  using edge_descriptor = typename Domain::edge_descriptor;
 
   const Cell_edges& cell_edges = domain.cell_edges(cell);
 
@@ -156,7 +156,7 @@ void MC_construct_vertices(const typename Domain::Cell_descriptor& cell,
   std::size_t flag = 1;
   std::size_t e_id = 0;
 
-  for(const Edge_descriptor& e : cell_edges)
+  for(const edge_descriptor& e : cell_edges)
   {
     CGAL_USE(e);
 
@@ -253,7 +253,7 @@ public:
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
 
-  using Cell_descriptor = typename Domain::Cell_descriptor;
+  using cell_descriptor = typename Domain::cell_descriptor;
 
 #ifdef CGAL_LINKED_WITH_TBB
   using Triangles = tbb::enumerable_thread_specific<std::vector<std::array<Point_3, 3>>>;
@@ -283,7 +283,7 @@ public:
 
 public:
   // computes one cell
-  void operator()(const Cell_descriptor& cell)
+  void operator()(const cell_descriptor& cell)
   {
     CGAL_precondition(m_domain.cell_vertices(cell).size() == 8);
     CGAL_precondition(m_domain.cell_edges(cell).size() == 12);

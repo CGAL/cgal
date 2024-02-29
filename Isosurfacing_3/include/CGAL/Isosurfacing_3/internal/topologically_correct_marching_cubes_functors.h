@@ -72,8 +72,8 @@ private:
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
 
-  using Edge_descriptor = typename Domain::Edge_descriptor;
-  using Cell_descriptor = typename Domain::Cell_descriptor;
+  using edge_descriptor = typename Domain::edge_descriptor;
+  using cell_descriptor = typename Domain::cell_descriptor;
 
   using Point_index = std::size_t;
   using Edge_index = std::array<std::size_t, 4>;
@@ -140,7 +140,7 @@ public:
       m_point_counter(0)
   { }
 
-  void operator()(const Cell_descriptor& cell)
+  void operator()(const cell_descriptor& cell)
   {
     std::array<FT, 8> values;
     std::array<Point_3, 8> corners;
@@ -206,7 +206,7 @@ public:
   }
 
 private:
-  Edge_index compute_edge_index(const Cell_descriptor& cell, int edge)
+  Edge_index compute_edge_index(const cell_descriptor& cell, int edge)
   {
     // edge is in 0 - 11
 
@@ -293,7 +293,7 @@ private:
     m_triangles.push_back({p0, p1, p2});
   }
 
-  bool p_slice(const Cell_descriptor& cell,
+  bool p_slice(const cell_descriptor& cell,
                const FT i0,
                const std::array<Point_3, 8>& corners,
                const std::array<FT, 8>& values,

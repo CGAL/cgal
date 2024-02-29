@@ -33,7 +33,7 @@ public:
   /*!
   * A descriptor that uniquely identifies a vertex (see `IsosurfacingPartition_3`).
   */
-  typedef unspecified_type Vertex_descriptor;
+  typedef unspecified_type vertex_descriptor;
 
   /*!
   returns the value of the value field at the point `p`.
@@ -43,5 +43,5 @@ public:
   /*!
   returns the value of the value field at the vertex `v`.
   */
-  FT operator()(const Vertex_descriptor& v);
+  FT operator()(const vertex_descriptor& v);
 };

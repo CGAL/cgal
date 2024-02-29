@@ -48,7 +48,7 @@ template <typename Domain,
           typename EdgeToPointIDMap,
           typename PointRange,
           typename GradientRange>
-bool cell_position_QEM(const typename Domain::Cell_descriptor& c,
+bool cell_position_QEM(const typename Domain::cell_descriptor& c,
                        const Domain& domain,
                        const bool constrain_to_cell,
                        const EdgeToPointIDMap& edge_to_point_id,
@@ -203,7 +203,7 @@ template <typename Domain,
           typename EdgeToPointIDMap,
           typename CellToPointIDMap,
           typename PolygonRange>
-void generate_face(const typename Domain::Edge_descriptor& e,
+void generate_face(const typename Domain::edge_descriptor& e,
                    const Domain& domain,
                    const typename Domain::Geom_traits::FT isovalue,
                    const bool do_not_triangulate_faces,
@@ -214,7 +214,7 @@ void generate_face(const typename Domain::Edge_descriptor& e,
 {
   using FT = typename Domain::Geom_traits::FT;
 
-  using Cell_descriptor = typename Domain::Cell_descriptor;
+  using cell_descriptor = typename Domain::cell_descriptor;
 
   const auto& vertices = domain.incident_vertices(e);
 
@@ -227,7 +227,7 @@ void generate_face(const typename Domain::Edge_descriptor& e,
   std::vector<std::size_t> vertex_ids;
 
   const auto& icells = domain.incident_cells(e);
-  for(const Cell_descriptor& c : icells)
+  for(const cell_descriptor& c : icells)
   {
     auto it = cell_to_point_id.find(c);
     if(it == cell_to_point_id.end())
@@ -293,9 +293,9 @@ class Dual_contourer<ConcurrencyTag, Domain, DC_Strategy::QEM>
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
 
-  using Vertex_descriptor = typename Domain::Vertex_descriptor;
-  using Edge_descriptor = typename Domain::Edge_descriptor;
-  using Cell_descriptor = typename Domain::Cell_descriptor;
+  using vertex_descriptor = typename Domain::vertex_descriptor;
+  using edge_descriptor = typename Domain::edge_descriptor;
+  using cell_descriptor = typename Domain::cell_descriptor;
 
   std::mutex m_mutex;
 
@@ -319,8 +319,8 @@ public:
     const bool do_not_triangulate_faces =
       choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-    using Edge_to_point_ID_map = std::unordered_map<Edge_descriptor, std::size_t>;
-    using Cell_to_point_ID_map = std::unordered_map<Cell_descriptor, std::size_t>;
+    using Edge_to_point_ID_map = std::unordered_map<edge_descriptor, std::size_t>;
+    using Cell_to_point_ID_map = std::unordered_map<cell_descriptor, std::size_t>;
 
     Edge_to_point_ID_map edge_to_point_id;
     Cell_to_point_ID_map cell_to_point_id;
@@ -330,11 +330,11 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // construct the intersection of the surface at active edges
-    auto edge_positioner = [&](const Edge_descriptor& e)
+    auto edge_positioner = [&](const edge_descriptor& e)
     {
       const auto& evs = domain.incident_vertices(e);
-      const Vertex_descriptor& v0 = evs[0];
-      const Vertex_descriptor& v1 = evs[1];
+      const vertex_descriptor& v0 = evs[0];
+      const vertex_descriptor& v1 = evs[1];
       const Point_3& p0 = domain.point(v0);
       const Point_3& p1 = domain.point(v1);
       const FT val0 = domain.value(v0);
@@ -362,10 +362,10 @@ public:
     std::ofstream out_active_edges("active_edges.polylines");
     for(const auto& ei : edge_to_point_id)
     {
-      const Edge_descriptor& e = ei.first;
+      const edge_descriptor& e = ei.first;
       const auto& evs = domain.incident_vertices(e);
-      const Vertex_descriptor& v0 = evs[0];
-      const Vertex_descriptor& v1 = evs[1];
+      const vertex_descriptor& v0 = evs[0];
+      const vertex_descriptor& v1 = evs[1];
       const Point_3& p0 = domain.point(v0);
       const Point_3& p1 = domain.point(v1);
 
@@ -387,7 +387,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // create a vertex for each cell that has at least one active edge
-    auto cell_positioner = [&](const Cell_descriptor& c)
+    auto cell_positioner = [&](const cell_descriptor& c)
     {
       Point_3 p;
       if(cell_position_QEM(c, domain, constrain_to_cell, edge_to_point_id,
@@ -402,7 +402,7 @@ public:
 
     // ---------------------------------------------------------------------------------------------
     // connect vertices around edges to form faces
-    auto face_generator = [&](const Edge_descriptor& e)
+    auto face_generator = [&](const edge_descriptor& e)
     {
       generate_face(e, domain, isovalue, do_not_triangulate_faces,
                     edge_to_point_id, cell_to_point_id, m_mutex, polygons);
@@ -425,9 +425,9 @@ class Dual_contourer<ConcurrencyTag, Domain, DC_Strategy::Centroid_of_edge_inter
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
 
-  using Vertex_descriptor = typename Domain::Vertex_descriptor;
-  using Edge_descriptor = typename Domain::Edge_descriptor;
-  using Cell_descriptor = typename Domain::Cell_descriptor;
+  using vertex_descriptor = typename Domain::vertex_descriptor;
+  using edge_descriptor = typename Domain::edge_descriptor;
+  using cell_descriptor = typename Domain::cell_descriptor;
 
   std::mutex m_mutex;
 
@@ -449,8 +449,8 @@ public:
     bool do_not_triangulate_faces =
       choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-    using Edge_to_point_ID_map = std::unordered_map<Edge_descriptor, std::size_t>;
-    using Cell_to_point_ID_map = std::unordered_map<Cell_descriptor, std::size_t>;
+    using Edge_to_point_ID_map = std::unordered_map<edge_descriptor, std::size_t>;
+    using Cell_to_point_ID_map = std::unordered_map<cell_descriptor, std::size_t>;
 
     Edge_to_point_ID_map edge_to_point_id;
     Cell_to_point_ID_map cell_to_point_id;
@@ -458,11 +458,11 @@ public:
     std::vector<Point_3> edge_points;
 
     // ---------------------------------------------------------------------------------------------
-    auto edge_positioner = [&](const Edge_descriptor& e)
+    auto edge_positioner = [&](const edge_descriptor& e)
     {
       const auto& evs = domain.incident_vertices(e);
-      const Vertex_descriptor& v0 = evs[0];
-      const Vertex_descriptor& v1 = evs[1];
+      const vertex_descriptor& v0 = evs[0];
+      const vertex_descriptor& v1 = evs[1];
       const Point_3& p0 = domain.point(v0);
       const Point_3& p1 = domain.point(v1);
       const FT val0 = domain.value(v0);
@@ -483,7 +483,7 @@ public:
       points.insert(points.end(), edge_points.begin(), edge_points.end());
 
     // ---------------------------------------------------------------------------------------------
-    auto cell_positioner = [&](const Cell_descriptor& c)
+    auto cell_positioner = [&](const cell_descriptor& c)
     {
       typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
       typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
@@ -492,7 +492,7 @@ public:
 
       // compute edge intersections
       std::vector<Point_3> edge_intersections;
-      for(const Edge_descriptor& e : domain.cell_edges(c))
+      for(const edge_descriptor& e : domain.cell_edges(c))
       {
         const auto it = edge_to_point_id.find(e);
         if(it == edge_to_point_id.end())
@@ -522,7 +522,7 @@ public:
     domain.template for_each_cell<ConcurrencyTag>(cell_positioner);
 
     // ---------------------------------------------------------------------------------------------
-    auto face_generator = [&](const Edge_descriptor& e)
+    auto face_generator = [&](const edge_descriptor& e)
     {
       generate_face(e, domain, isovalue, do_not_triangulate_faces,
                     edge_to_point_id, cell_to_point_id, m_mutex, polygons);
@@ -540,9 +540,9 @@ class Dual_contourer<ConcurrencyTag, Domain, DC_Strategy::Cell_center>
   using Point_3 = typename Geom_traits::Point_3;
   using Vector_3 = typename Geom_traits::Vector_3;
 
-  using Vertex_descriptor = typename Domain::Vertex_descriptor;
-  using Edge_descriptor = typename Domain::Edge_descriptor;
-  using Cell_descriptor = typename Domain::Cell_descriptor;
+  using vertex_descriptor = typename Domain::vertex_descriptor;
+  using edge_descriptor = typename Domain::edge_descriptor;
+  using cell_descriptor = typename Domain::cell_descriptor;
 
   std::mutex m_mutex;
 
@@ -564,8 +564,8 @@ public:
     bool do_not_triangulate_faces =
       choose_parameter(get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-    using Edge_to_point_ID_map = std::unordered_map<Edge_descriptor, std::size_t>;
-    using Cell_to_point_ID_map = std::unordered_map<Cell_descriptor, std::size_t>;
+    using Edge_to_point_ID_map = std::unordered_map<edge_descriptor, std::size_t>;
+    using Cell_to_point_ID_map = std::unordered_map<cell_descriptor, std::size_t>;
 
     Edge_to_point_ID_map edge_to_point_id;
     Cell_to_point_ID_map cell_to_point_id;
@@ -573,7 +573,7 @@ public:
     std::vector<Point_3> edge_points;
 
     // ---------------------------------------------------------------------------------------------
-    auto edge_positioner = [&](const Edge_descriptor& e)
+    auto edge_positioner = [&](const edge_descriptor& e)
     {
       typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
       typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
@@ -581,8 +581,8 @@ public:
       typename Geom_traits::Construct_point_3 point = domain.geom_traits().construct_point_3_object();
 
       const auto& evs = domain.incident_vertices(e);
-      const Vertex_descriptor& v0 = evs[0];
-      const Vertex_descriptor& v1 = evs[1];
+      const vertex_descriptor& v0 = evs[0];
+      const vertex_descriptor& v1 = evs[1];
 
       const FT val_0 = domain.value(v0);
       const FT val_1 = domain.value(v1);
@@ -603,7 +603,7 @@ public:
       points.insert(points.end(), edge_points.begin(), edge_points.end());
 
     // ---------------------------------------------------------------------------------------------
-    auto cell_positioner = [&](const Cell_descriptor& c)
+    auto cell_positioner = [&](const cell_descriptor& c)
     {
       typename Geom_traits::Compute_x_3 x_coord = domain.geom_traits().compute_x_3_object();
       typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
@@ -644,7 +644,7 @@ public:
     domain.template for_each_cell<ConcurrencyTag>(cell_positioner);
 
     // ---------------------------------------------------------------------------------------------
-    auto face_generator = [&](const Edge_descriptor& e)
+    auto face_generator = [&](const edge_descriptor& e)
     {
       generate_face(e, domain, isovalue, do_not_triangulate_faces,
                     edge_to_point_id, cell_to_point_id, m_mutex, polygons);

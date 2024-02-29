@@ -46,9 +46,9 @@ public:
 
   using PT = CGAL::Isosurfacing::partition_traits<Partition>;
 
-  using Vertex_descriptor = typename PT::Vertex_descriptor;
-  using Edge_descriptor = typename PT::Edge_descriptor;
-  using Cell_descriptor = typename PT::Cell_descriptor;
+  using vertex_descriptor = typename PT::vertex_descriptor;
+  using edge_descriptor = typename PT::edge_descriptor;
+  using cell_descriptor = typename PT::cell_descriptor;
 
   using Vertices_incident_to_edge = typename PT::Vertices_incident_to_edge;
   using Cells_incident_to_edge = typename PT::Cells_incident_to_edge;
@@ -90,13 +90,13 @@ public:
   // The following functions are dispatching to the partition_traits' static functions.
 
   // returns the position of vertex `v`
-  decltype(auto) /*Point_3*/ point(const Vertex_descriptor& v) const
+  decltype(auto) /*Point_3*/ point(const vertex_descriptor& v) const
   {
     return PT::point(v, m_partition);
   }
 
   // returns the value of the function at vertex `v`
-  decltype(auto) /*FT*/ value(const Vertex_descriptor& v) const
+  decltype(auto) /*FT*/ value(const vertex_descriptor& v) const
   {
     return m_values(v);
   }
@@ -114,25 +114,25 @@ public:
   }
 
   // returns a container with the two vertices incident to the edge `e`
-  decltype(auto) /*Vertices_incident_to_edge*/ incident_vertices(const Edge_descriptor& e) const
+  decltype(auto) /*Vertices_incident_to_edge*/ incident_vertices(const edge_descriptor& e) const
   {
     return PT::incident_vertices(e, m_partition);
   }
 
   // returns a container with all cells incident to the edge `e`
-  decltype(auto) /*Cells_incident_to_edge*/ incident_cells(const Edge_descriptor& e) const
+  decltype(auto) /*Cells_incident_to_edge*/ incident_cells(const edge_descriptor& e) const
   {
     return PT::incident_cells(e, m_partition);
   }
 
   // returns a container with all vertices of the cell `c`
-  decltype(auto) /*Cell_vertices*/ cell_vertices(const Cell_descriptor& c) const
+  decltype(auto) /*Cell_vertices*/ cell_vertices(const cell_descriptor& c) const
   {
     return PT::cell_vertices(c, m_partition);
   }
 
   // returns a container with all edges of the cell `c`
-  decltype(auto) /*Cell_edges*/ cell_edges(const Cell_descriptor& c) const
+  decltype(auto) /*Cell_edges*/ cell_edges(const cell_descriptor& c) const
   {
     return PT::cell_edges(c, m_partition);
   }

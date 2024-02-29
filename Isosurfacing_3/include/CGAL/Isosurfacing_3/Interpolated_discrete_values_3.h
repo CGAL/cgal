@@ -43,7 +43,7 @@ class Interpolated_discrete_values_3
   using FT = typename Geom_traits::FT;
   using Point_3 = typename Geom_traits::Point_3;
 
-  using Vertex_descriptor = typename partition_traits<Grid>::Vertex_descriptor;
+  using vertex_descriptor = typename partition_traits<Grid>::vertex_descriptor;
 
 private:
   const Grid& m_grid;
@@ -102,7 +102,7 @@ public:
   /*!
    * returns the value at vertex `v`.
    */
-  FT operator()(const Vertex_descriptor& v) const
+  FT operator()(const vertex_descriptor& v) const
   {
     return this->operator()(v[0], v[1], v[2]);
   }

@@ -73,9 +73,9 @@ struct MC_Domain
   typedef Traits<K> Geom_traits;
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point_3;
-  typedef std::size_t Vertex_descriptor;
-  typedef std::size_t Edge_descriptor;
-  typedef std::size_t Cell_descriptor;
+  typedef std::size_t vertex_descriptor;
+  typedef std::size_t edge_descriptor;
+  typedef std::size_t cell_descriptor;
   typedef std::vector<std::size_t> Vertices_incident_to_edge;
   typedef std::vector<std::size_t> Cells_incident_to_edge;
   typedef std::vector<std::size_t> Cell_vertices;
@@ -83,15 +83,15 @@ struct MC_Domain
 
   Geom_traits geom_traits() const { return Geom_traits(); }
 
-  Point_3 point(const Vertex_descriptor& /*v*/) const { return CGAL::ORIGIN; }
+  Point_3 point(const vertex_descriptor& /*v*/) const { return CGAL::ORIGIN; }
 
   FT value(const Point_3& /*p*/) const { return 0; }
-  FT value(const Vertex_descriptor& /*v*/) const { return 0; }
+  FT value(const vertex_descriptor& /*v*/) const { return 0; }
 
-  Vertices_incident_to_edge incident_vertices(const Edge_descriptor& /*e*/) const { return {}; }
-  Cells_incident_to_edge incident_cells(const Edge_descriptor& /*e*/) const { return {}; }
-  Cell_vertices cell_vertices(const Cell_descriptor& /*c*/) const { return {}; }
-  Cell_edges cell_edges(const Cell_descriptor& /*c*/) const { return {}; }
+  Vertices_incident_to_edge incident_vertices(const edge_descriptor& /*e*/) const { return {}; }
+  Cells_incident_to_edge incident_cells(const edge_descriptor& /*e*/) const { return {}; }
+  Cell_vertices cell_vertices(const cell_descriptor& /*c*/) const { return {}; }
+  Cell_edges cell_edges(const cell_descriptor& /*c*/) const { return {}; }
 
   template <typename ConcurrencyTag, typename Functor>
   void for_each_vertex(Functor& /*f*/) const { }

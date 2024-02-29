@@ -188,7 +188,7 @@ struct Linear_interpolation_edge_intersection
 struct Ray_marching_edge_intersection
 {
   template <typename Domain>
-  bool operator()(const typename Domain::Edge_descriptor& e,
+  bool operator()(const typename Domain::edge_descriptor& e,
                   const Domain& domain,
                   const typename Domain::Geom_traits::FT isovalue,
                   typename Domain::Geom_traits::Point_3& p) const

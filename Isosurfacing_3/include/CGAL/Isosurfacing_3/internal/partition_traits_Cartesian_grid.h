@@ -48,31 +48,31 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   using Grid = Cartesian_grid_3<GeomTraits, MemoryPolicy>;
 
   // identifies a vertex by its (i, j, k) indices
-  using Vertex_descriptor = std::array<std::size_t, 3>;
+  using vertex_descriptor = std::array<std::size_t, 3>;
 
   // identifies an edge by its starting vertex (i, j, k) and the direction x -> 0, y -> 1, z -> 2
-  using Edge_descriptor = CG_Edge_descriptor;
+  using edge_descriptor = CG_Edge_descriptor;
 
   // identifies a cell by its corner vertex with the smallest (i, j, k) index
-  using Cell_descriptor = CG_Cell_descriptor;
+  using cell_descriptor = CG_Cell_descriptor;
 
   static constexpr Cell_type CELL_TYPE = CUBICAL_CELL;
   static constexpr std::size_t VERTICES_PER_CELL = 8;
   static constexpr std::size_t EDGES_PER_CELL = 12;
 
-  using Vertices_incident_to_edge = std::array<Vertex_descriptor, 2>;
-  using Cells_incident_to_edge = std::array<Cell_descriptor, 4>;
-  using Cell_vertices = std::array<Vertex_descriptor, VERTICES_PER_CELL>;
-  using Cell_edges = std::array<Edge_descriptor, EDGES_PER_CELL>;
+  using Vertices_incident_to_edge = std::array<vertex_descriptor, 2>;
+  using Cells_incident_to_edge = std::array<cell_descriptor, 4>;
+  using Cell_vertices = std::array<vertex_descriptor, VERTICES_PER_CELL>;
+  using Cell_edges = std::array<edge_descriptor, EDGES_PER_CELL>;
 
-  static decltype(auto) /*Point_3*/ point(const Vertex_descriptor& v,
+  static decltype(auto) /*Point_3*/ point(const vertex_descriptor& v,
                                           const Grid& g)
   {
     return g.point(v[0], v[1], v[2]);
   }
 
   // returns a container with the two vertices incident to edge e
-  static Vertices_incident_to_edge incident_vertices(const Edge_descriptor& e,
+  static Vertices_incident_to_edge incident_vertices(const edge_descriptor& e,
                                                      const Grid&)
   {
     Vertices_incident_to_edge ev;
@@ -83,7 +83,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   }
 
   // returns a container with all cells incident to edge e
-  static Cells_incident_to_edge incident_cells(const Edge_descriptor& e,
+  static Cells_incident_to_edge incident_cells(const edge_descriptor& e,
                                                const Grid&)
   {
     // lookup the neighbor cells relative to the edge
@@ -103,7 +103,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   }
 
   // returns a container with all vertices of cell c
-  static Cell_vertices cell_vertices(const Cell_descriptor& c,
+  static Cell_vertices cell_vertices(const cell_descriptor& c,
                                      const Grid&)
   {
     Cell_vertices cv;
@@ -119,7 +119,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   }
 
   // returns a container with all edges of cell c
-  static Cell_edges cell_edges(const Cell_descriptor& c,
+  static Cell_edges cell_edges(const cell_descriptor& c,
                                const Grid&)
   {
     Cell_edges ce;

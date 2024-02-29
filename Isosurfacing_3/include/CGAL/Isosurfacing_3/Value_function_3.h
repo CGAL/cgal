@@ -44,7 +44,7 @@ public:
   using Point_3 = typename Geom_traits::Point_3;
 
   using PT = partition_traits<Partition>;
-  using Vertex_descriptor = typename PT::Vertex_descriptor;
+  using vertex_descriptor = typename PT::vertex_descriptor;
 
 private:
   std::function<FT(const Point_3&)> m_fn;
@@ -79,7 +79,7 @@ public:
   /**
    * \brief evaluates the function at the vertex `v`
    */
-  FT operator()(const Vertex_descriptor& v) const
+  FT operator()(const vertex_descriptor& v) const
   {
     return this->operator()(PT::point(v, m_partition));
   }
