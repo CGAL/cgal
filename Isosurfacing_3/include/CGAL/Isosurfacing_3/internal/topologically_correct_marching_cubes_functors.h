@@ -198,6 +198,9 @@ public:
     points.insert(points.begin(), m_points.begin(), m_points.end());
     for (const auto& tri : m_triangles) {
       triangles.push_back({ tri[0], tri[1], tri[2] });
+
+      // just a safeguard against arrays of the wrong size
+      CGAL_assertion(triangles.back().size() == 3);
     }
   }
 

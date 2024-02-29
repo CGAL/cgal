@@ -226,6 +226,9 @@ void triangles_to_polygon_soup(const TriangleRange& triangles,
 
         // simply use increasing indices
         polygons.push_back({id + 2, id + 1, id + 0});
+
+        // just a safeguard against arrays of the wrong size
+        CGAL_assertion(polygons.back().size() == 3);
       }
 
 #ifdef CGAL_LINKED_WITH_TBB
