@@ -6,8 +6,6 @@
 
 #include <vector>
 
-
-
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -47,14 +45,31 @@ int main(void)
   CGAL::estimate_local_feature_size<Concurrency_tag>(point_set, jet_k, N_rays, apex_angle, lfs_map,
     CGAL::parameters::point_map(point_set.point_map())
                                                 .normal_map(point_set.normal_map()));
+
+  // optionally, smooth the raw LFS values for other purposes
+  unsigned int median_filter_k = 11, median_filter_T = 5;
+  CGAL::median_filter_smoothing_lfs<Concurrency_tag>(point_set, median_filter_k, median_filter_T, lfs_map,
+    CGAL::parameters::point_map(point_set.point_map()));
+
+  unsigned int lipschitz_continuity_smoothing_k = 11;
+  FT lipschitz_continuity_lipschitz = 1.0; // 1-lipschitz_continuity for LFS function
+  CGAL::lipschitz_continuity_smoothing_lfs<Concurrency_tag>(point_set, lfs_map, lipschitz_continuity_smoothing_k, lipschitz_continuity_lipschitz,
+    CGAL::parameters::point_map(point_set.point_map()));
+
+  unsigned int laplacian_smoothing_k = 11, laplacian_smoothing_T = 5;
+  FT laplacian_smoothing_lambda = 1.0;
+  CGAL::laplacian_smoothing_lfs<Concurrency_tag>(point_set, lfs_map,
+    laplacian_smoothing_k, laplacian_smoothing_T, laplacian_smoothing_lambda,
+    CGAL::parameters::point_map(point_set.point_map()));
+
   // print
   for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
-   {
-      // Point p = point_set.point(*it);
-      // Vector n = point_set.normal(*it);
-      FT lfs = lfs_map[*it];
-      std::cerr << lfs << std::endl;
-   }
+  {
+    // Point p = point_set.point(*it);
+    // Vector n = point_set.normal(*it);
+    FT lfs = lfs_map[*it];
+    std::cout << lfs << std::endl;
+  }
 
   return EXIT_SUCCESS;
 }

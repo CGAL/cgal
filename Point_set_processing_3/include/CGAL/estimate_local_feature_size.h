@@ -23,6 +23,7 @@
 #include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
 #include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Index_property_map.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Memory_sizer.h>
 #include <functional>
@@ -30,9 +31,13 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/zip_iterator.hpp>
 
 #include <vector>
 #include <map>
+#include <unordered_map>
+#include <queue>
+#include <mutex>
 
 namespace CGAL {
 
@@ -134,8 +139,6 @@ classical_point_dist_func_epsilon_band(const PointRange &points,
   CGAL_precondition(band_knn > 0);
 
   FT l_min = std::numeric_limits<FT>::infinity();
-  // for (typename PointRange::const_iterator pwn_it = pwns.begin();
-  //            pwn_it != pwns.end(); pwn_it++)
   for (const auto& pt : points)
   {
     const Point &query = get(point_map, pt);
@@ -573,6 +576,66 @@ estimate_local_feature_size(const typename NeighborQuery::Point_3& query, ///< p
     return lfs;
 }
 
+template <typename ConcurrencyTag,
+          typename PointRange,
+          typename NamedParameters = parameters::Default_named_parameters>
+void
+construct_knn_graph(PointRange& points,
+                    const int knn,
+                    std::vector<std::vector<typename PointRange::iterator>>& knn_graph,
+                    const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  // basic geometric types
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3 Point;
+
+  // types for K nearest neighbors search structure
+  typedef typename PointRange::iterator iterator;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
+  // Property map typename PointRange::iterator -> index
+  typedef Index_property_map<iterator> IndexMap;
+
+  PointMap point_map = NP_helper::get_point_map(points, np);
+
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
+                                                               std::function<bool(double)>());
+
+  CGAL_precondition(points.begin() != points.end());
+
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
+  CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+  CGAL_TRACE_STREAM << "  Creates KD-tree\n";
+
+  Neighbor_query neighbor_query(points, point_map);
+
+  std::size_t nb_points = points.size();
+  knn_graph.clear();
+  knn_graph.resize(nb_points);
+
+  Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
+  callback_wrapper (callback, nb_points);
+  typedef boost::zip_iterator<boost::tuple<iterator, typename std::vector<std::vector<iterator>>::iterator> > Zip_iterator;
+  CGAL::for_each<ConcurrencyTag>
+  (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), knn_graph.begin())),
+                        boost::make_zip_iterator (boost::make_tuple (points.end(), knn_graph.end()))),
+   [&](const typename Zip_iterator::reference& t)
+   {
+    if (callback_wrapper.interrupted())
+      return false;
+
+    const Point& point = get(point_map, get<0>(t));
+    neighbor_query.get_iterators(point, knn, FT(0), std::back_inserter(get<1>(t)));
+
+    ++ callback_wrapper.advancement();
+    return true;
+   });
+}
+
 } /* namespace internal */
 /// \endcond
 
@@ -622,8 +685,6 @@ estimate_local_feature_size(PointRange& points,
                             LfsMap lfs_map,
                             const NamedParameters& np = parameters::default_values())
 {
-  std::cerr << "estimate lfs" << std::endl;
-
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -664,11 +725,9 @@ estimate_local_feature_size(PointRange& points,
 
   Neighbor_query neighbor_query(points, point_map);
 
-
   // Input points types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
-
 
   std::size_t nb_points = points.size();
 
@@ -716,6 +775,199 @@ estimate_local_feature_size(PointRange& points,
 
      return true;
    });
+}
+
+template <typename ConcurrencyTag,
+          typename PointRange,
+          typename LfsMap,
+          typename NamedParameters = parameters::Default_named_parameters>
+void
+median_filter_smoothing_lfs(PointRange& points,
+                        const unsigned int knn,
+                        const unsigned int T,
+                        LfsMap lfs_map,
+                        const NamedParameters& np = parameters::default_values())
+{
+  // basic geometric types
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Geom_traits Kernel;
+  typedef typename Kernel::FT FT;
+  typedef typename PointRange::iterator iterator;
+  typedef typename iterator::value_type value_type;
+
+  CGAL_precondition(points.begin() != points.end());
+
+  std::vector<std::vector<iterator>> knn_graph;
+  CGAL::internal::construct_knn_graph<ConcurrencyTag>(points, knn, knn_graph, np);
+
+  std::size_t nb_points = points.size();
+
+  assert(nb_points == knn_graph.size());
+
+  auto begin = boost::make_zip_iterator (boost::make_tuple (points.begin(), knn_graph.begin()));
+  auto end = boost::make_zip_iterator (boost::make_tuple (points.end(), knn_graph.end()));
+
+  for (int t = 0; t < T; t++)
+  {
+    for(auto it = begin; it != end; it++)
+    {
+      value_type& vt = get<0>(*it);
+      FT lfs = get(lfs_map, vt);
+      const std::vector<iterator>& iterators = get<1>(*it);
+
+      std::vector<FT> knn_lfs_vals;
+      for (const auto& iterator : iterators) knn_lfs_vals.push_back(get(lfs_map, *iterator));
+      const auto median = knn_lfs_vals.begin() + knn_lfs_vals.size() / 2;
+      std::nth_element(knn_lfs_vals.begin(), median, knn_lfs_vals.end());
+
+      put(lfs_map, vt, *median);
+    }
+  }
+}
+
+template <typename ConcurrencyTag,
+          typename PointRange,
+          typename LfsMap,
+          typename NamedParameters = parameters::Default_named_parameters>
+void
+lipschitz_continuity_smoothing_lfs(PointRange& points,
+                        LfsMap lfs_map,
+                        const unsigned int knn,
+                        const typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT lipschitz=1.0,
+                        const NamedParameters& np = parameters::default_values())
+{
+  // basic geometric types
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
+  typedef typename Kernel::FT FT;
+  typedef typename PointRange::iterator iterator;
+  typedef typename iterator::value_type value_type;
+
+  CGAL_precondition(points.begin() != points.end());
+
+  std::vector<std::vector<iterator>> knn_graph;
+  CGAL::internal::construct_knn_graph<ConcurrencyTag>(points, knn, knn_graph, np);
+
+  std::size_t nb_points = points.size();
+
+  assert(nb_points == knn_graph.size());
+
+  PointMap point_map = NP_helper::get_point_map(points, np);
+
+  // Property map typename PointRange::iterator -> index
+  typedef Index_property_map<iterator> IndexMap;
+  IndexMap index_map(points.begin(), points.end());
+
+  // starting from the minimum of the func_vals
+  auto min_iterator = std::min_element(points.begin(), points.end(),
+        [&](const value_type& vt1, const value_type& vt2) {
+            return get(lfs_map, vt1) < get(lfs_map, vt2);
+        }
+  );
+  std::size_t min_lfs_index = std::distance(std::begin(points), min_iterator);
+
+  std::unordered_map<std::size_t, int> visited_map;
+  visited_map[min_lfs_index] = 1;
+
+  std::function<bool(std::size_t, std::size_t)> cmp =
+        [&](std::size_t ind1, std::size_t ind2)
+    { return get(lfs_map, *(points.begin() + ind1)) > get(lfs_map, *(points.begin() + ind2)); };
+  std::priority_queue<std::size_t, std::vector<std::size_t>, decltype(cmp)> min_top_queue(cmp);
+
+  for (iterator it = points.begin(); it != points.end(); it++) min_top_queue.push(get(index_map, it));
+
+  while (!min_top_queue.empty())
+  {
+    std::size_t cur = min_top_queue.top();
+    min_top_queue.pop();
+
+    // check if the current node satisfying lipschitz continuity
+    const std::vector<iterator>& iterators = *(knn_graph.begin() + cur);
+    auto iterator_cur = points.begin() + cur;
+    FT cur_lfs = get(lfs_map, *iterator_cur);
+    for (const auto& iterator : iterators)
+    {
+      std::size_t nei = get(index_map, iterator);
+      auto iterator_nei = points.begin() + nei;
+
+      if (nei == cur) continue;
+
+      if (visited_map.find(nei) != visited_map.end())
+          continue;
+      else
+          visited_map[nei] = 1;
+
+      FT dist = CGAL::squared_distance(get(point_map, *iterator_cur), get(point_map, *iterator_nei));
+      dist = std::sqrt(dist);
+
+      FT nei_lfs = get(lfs_map, *iterator_nei);
+
+      if (nei_lfs > cur_lfs)
+      {
+        if (std::abs(nei_lfs - cur_lfs) > lipschitz * dist)
+          nei_lfs = cur_lfs + dist;
+          put(lfs_map, *iterator_nei, nei_lfs);
+      }
+      else
+      {
+        min_top_queue.push(cur);
+        break;
+      }
+    }
+  }
+}
+
+template <typename ConcurrencyTag,
+          typename PointRange,
+          typename LfsMap,
+          typename NamedParameters = parameters::Default_named_parameters>
+void
+laplacian_smoothing_lfs(PointRange& points,
+                        LfsMap lfs_map,
+                        const unsigned int knn,
+                        const unsigned int T,
+                        const typename Point_set_processing_3_np_helper<PointRange, NamedParameters>::Geom_traits::FT lambda,
+                        const NamedParameters& np = parameters::default_values())
+{
+  // basic geometric types
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Geom_traits Kernel;
+  typedef typename Kernel::FT FT;
+  typedef typename PointRange::iterator iterator;
+  typedef typename iterator::value_type value_type;
+
+  CGAL_precondition(points.begin() != points.end());
+
+  std::vector<std::vector<iterator>> knn_graph;
+  CGAL::internal::construct_knn_graph<ConcurrencyTag>(points, knn, knn_graph, np);
+
+  std::size_t nb_points = points.size();
+
+  assert(nb_points == knn_graph.size());
+
+  auto begin = boost::make_zip_iterator (boost::make_tuple (points.begin(), knn_graph.begin()));
+  auto end = boost::make_zip_iterator (boost::make_tuple (points.end(), knn_graph.end()));
+
+  LfsMap smoothed_lfs_map = lfs_map;
+  for (int t = 0; t < T; t++)
+  {
+    for(auto it = begin; it != end; it++)
+    {
+      value_type& vt = get<0>(*it);
+      FT lfs = get(lfs_map, vt);
+      const std::vector<iterator>& iterators = get<1>(*it);
+
+      FT avg_lfs = 0.0;
+      for (const auto& iterator : iterators) avg_lfs += get(lfs_map, *iterator);
+      avg_lfs /= iterators.size();
+
+      FT smoothed_lfs = lfs + lambda * (avg_lfs - lfs);
+      put(smoothed_lfs_map, vt, smoothed_lfs);
+    }
+  }
+
+  std::swap(lfs_map, smoothed_lfs_map);
 }
 
 } //namespace CGAL
