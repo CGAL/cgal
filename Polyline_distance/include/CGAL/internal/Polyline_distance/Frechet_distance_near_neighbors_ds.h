@@ -169,13 +169,13 @@ auto FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve) -> Point_d
 
     // TODO: remove this when curves are preprocessed first
     FT x_min, y_min, x_max, y_max;
-    x_min = y_min = std::numeric_limits<FT>::max();
-    x_max = y_max = std::numeric_limits<FT>::min();
+    x_min = y_min = (std::numeric_limits<FT>::max)();
+    x_max = y_max = (std::numeric_limits<FT>::min)();
     for (auto const& point : curve) {
-        x_min = std::min(x_min, point.x());
-        y_min = std::min(y_min, point.y());
-        x_max = std::max(x_max, point.x());
-        y_max = std::max(y_max, point.y());
+      x_min = (std::min)(x_min, point.x());
+      y_min = (std::min)(y_min, point.y());
+      x_max = (std::max)(x_max, point.x());
+      y_max = (std::max)(y_max, point.y());
     }
 
     std::array<FT, D::value> values = {curve.front().x(),

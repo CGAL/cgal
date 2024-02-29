@@ -336,8 +336,8 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple,
                                              // heuristics
         // heuristic check:
         auto mid = (min + max) / 2;
-        auto maxdist = std::max(curve.curve_length(min, mid),
-                                curve.curve_length(mid, max));
+        auto maxdist = (std::max)(curve.curve_length(min, mid),
+                                  curve.curve_length(mid, max));
         auto fixed_point = fixed_curve.interpolate_at(fixed);
         auto mid_dist_sqr = CGAL::squared_distance(fixed_point, curve[mid]);
 
@@ -407,8 +407,8 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
 
         stepsize = std::min<std::size_t>(stepsize, max - cur);
         auto mid = cur + (stepsize + 1) / 2;
-        auto maxdist = std::max(curve.curve_length(cur, mid),
-                                curve.curve_length(mid, cur + stepsize));
+        auto maxdist = (std::max)(curve.curve_length(cur, mid),
+                                  curve.curve_length(mid, cur + stepsize));
         auto mid_dist_sqr = CGAL::squared_distance(fixed_point, curve[mid]);
 
         auto comp_dist1 = distance - maxdist;
@@ -521,7 +521,7 @@ CIntervals::iterator getIntervalContainingNumber(
 {
     auto it = std::upper_bound(
         begin, end,
-        CInterval{x, CPoint{std::numeric_limits<PointID::IDType>::max(), 0}});
+        CInterval{x, CPoint{(std::numeric_limits<PointID::IDType>::max)(), 0}});
     if (it != begin) {
         --it;
         if (it->begin <= x && it->end >= x) {
@@ -537,7 +537,7 @@ CIntervals::iterator getIntervalContainingNumber(
 {
     auto it = std::upper_bound(
         begin, end,
-        CInterval{x, 0, std::numeric_limits<PointID::IDType>::max(), 0});
+        CInterval{x, 0, (std::numeric_limits<PointID::IDType>::max)(), 0});
     if (it != begin) {
         --it;
         if (it->begin <= x && it->end >= x) {
@@ -676,11 +676,11 @@ inline void FrechetLight::handleCellCase(BoxData& data)
         CInterval output1 = getInterval(curve2, box.max2, curve1, box.min1);
         if (firstinterval2->is_empty()) {
             visAddFreeNonReachable(output1.begin,
-                                   std::min(output1.end, firstinterval1->begin),
+                                   (std::min)(output1.end, firstinterval1->begin),
                                    {box.max2, 0}, 1);
             output1.begin.setFraction(
-                CGAL::max(output1.begin.getFraction(),
-                          firstinterval1->begin.getFraction()));
+                                      (CGAL::max)(output1.begin.getFraction(),
+                                                  firstinterval1->begin.getFraction()));
             certSetValues(output1, *firstinterval1, box.max2, 1);
         } else {
             certSetValues(output1, *firstinterval2, box.max2, 1);
@@ -693,11 +693,11 @@ inline void FrechetLight::handleCellCase(BoxData& data)
         CInterval output2 = getInterval(curve1, box.max1, curve2, box.min2);
         if (firstinterval1->is_empty()) {
             visAddFreeNonReachable(output2.begin,
-                                   std::min(output2.end, firstinterval2->begin),
+                                   (std::min)(output2.end, firstinterval2->begin),
                                    {box.max1, 0}, 0);
             output2.begin.setFraction(
-                CGAL::max(output2.begin.getFraction(),
-                          firstinterval2->begin.getFraction()));
+                                      (CGAL::max)(output2.begin.getFraction(),
+                                                  firstinterval2->begin.getFraction()));
             certSetValues(output2, *firstinterval2, box.max1, 0);
         } else {
             certSetValues(output2, *firstinterval1, box.max1, 0);
@@ -925,7 +925,7 @@ inline void FrechetLight::splitAndRecurse(BoxData& data)
         assert(split_position > box.min2 && split_position < box.max2);
 
         auto bound = CInterval{split_position, 0,
-                               std::numeric_limits<PointID::IDType>::max(), 0};
+          (std::numeric_limits<PointID::IDType>::max)(), 0};
         auto it = std::upper_bound(data.inputs.begin2, data.inputs.end2, bound);
 
         BoxData data_bottom{
@@ -954,7 +954,7 @@ inline void FrechetLight::splitAndRecurse(BoxData& data)
         assert(split_position > box.min1 && split_position < box.max1);
 
         auto bound = CInterval{split_position, 0,
-                               std::numeric_limits<PointID::IDType>::max(), 0};
+                               (std::numeric_limits<PointID::IDType>::max)(), 0};
         auto it = std::upper_bound(data.inputs.begin1, data.inputs.end1, bound);
 
         BoxData data_left{
@@ -992,7 +992,7 @@ CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i,
         auto mid = cur + (stepsize + 1) / 2;
         auto first_part = curve2.curve_length(cur + 1, mid);
         auto second_part = curve2.curve_length(mid, cur + stepsize);
-        auto maxdist = std::max(first_part, second_part);
+        auto maxdist = (std::max)(first_part, second_part);
         auto mid_dist_sqr = CGAL::squared_distance(point, curve2[mid]);
 
         auto comp_dist1 = distance - maxdist;

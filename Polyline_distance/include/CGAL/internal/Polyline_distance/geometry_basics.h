@@ -38,10 +38,6 @@
 #include <CGAL/internal/Polyline_distance/defs.h>
 #include <CGAL/internal/Polyline_distance/id.h>
 
-// #include <CGAL/CORE_Expr.h>
-// using Rational = CORE::Expr;
-// using RealType = CORE::Expr;
-
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Sqrt_extension.h>
 
@@ -52,15 +48,6 @@ namespace Polyline_distance {
 
 using Rational = CGAL::Exact_rational;
 
-#define USE_LAMBDA
-#ifndef USE_LAMBDA
-using RealType =
-    CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_false>;
-#endif
-
-// #include <CGAL/MP_Float.h>
-// using RealType = CGAL::MP_Float;
-// using RealType = double;
 
 namespace unit_tests
 {
@@ -248,9 +235,7 @@ namespace internal {
 namespace Polyline_distance {
 
 
-#ifdef USE_LAMBDA
 using RealType = Lambda;
-#endif
 
 inline
 bool approximate_reals(const Point& circle_center, distance_t radius,
@@ -472,7 +457,7 @@ public:
     {
         normalize();
     }
-    CPoint() : point(std::numeric_limits<PointID::IDType>::max()), fraction(0.)
+  CPoint() : point((std::numeric_limits<PointID::IDType>::max)()), fraction(0.)
     {
     }
 
@@ -481,14 +466,9 @@ public:
     double getFractionLB() const
     {
         // returns a lower bound to the fraction
-#ifdef USE_LAMBDA
         return CGAL::to_interval(fraction).inf();
-#else
-        return CGAL::to_interval(fraction).first;
-#endif
     }
-    // AF needed??   RealType convert() const { return (RealType) (double) point
-    // + fraction; }
+
     void setPoint(PointID point) { this->point = point; }
     void setFraction(RealType const& frac)
     {
@@ -575,7 +555,7 @@ struct CInterval {
     CPoint end;
 
     const CInterval* reach_parent = nullptr;
-    CPoint fixed = CPoint(std::numeric_limits<PointID::IDType>::max(), 0.);
+  CPoint fixed = CPoint((std::numeric_limits<PointID::IDType>::max)(), 0.);
     CurveID fixed_curve = -1;
 
     CPosition getLowerRightPos() const
@@ -606,7 +586,7 @@ struct CInterval {
     }
 
     CInterval()
-        : begin(std::numeric_limits<PointID::IDType>::max(), 0.),
+      : begin((std::numeric_limits<PointID::IDType>::max)(), 0.),
           end(std::numeric_limits<PointID::IDType>::lowest(), 0.)
     {
     }
@@ -633,13 +613,13 @@ struct CInterval {
     bool is_empty() const { return end < begin; }
     void make_empty()
     {
-        begin = {std::numeric_limits<PointID::IDType>::max(), 0};
+      begin = {(std::numeric_limits<PointID::IDType>::max)(), 0};
         end = {std::numeric_limits<PointID::IDType>::lowest(), 0};
     }
     void clamp(CPoint const& min, CPoint const& max)
     {
-        begin = std::max(min, begin);
-        end = std::min(max, end);
+      begin = (std::max)(min, begin);
+      end = (std::min)(max, end);
     }
 };
 

@@ -97,8 +97,6 @@ public:
     Points::const_iterator begin() const { return points.cbegin(); }
     Points::const_iterator end() const { return points.cend(); }
 
-    std::string filename;
-
     struct ExtremePoints {
         distance_t min_x, min_y, max_x, max_y;
     };
@@ -108,10 +106,10 @@ public:
 private:
     Points points;
     std::vector<distance_t> prefix_length;
-    ExtremePoints extreme_points = {std::numeric_limits<distance_t>::max(),
-                                    std::numeric_limits<distance_t>::max(),
-                                    std::numeric_limits<distance_t>::lowest(),
-                                    std::numeric_limits<distance_t>::lowest()};
+  ExtremePoints extreme_points = {(std::numeric_limits<distance_t>::max)(),
+                                  (std::numeric_limits<distance_t>::max)(),
+                                  std::numeric_limits<distance_t>::lowest(),
+                                  std::numeric_limits<distance_t>::lowest()};
 };
 using Curves = std::vector<Curve>;
 
@@ -132,10 +130,10 @@ Curve::Curve(const Points& points)
         auto segment_distance = distance(points[i - 1], points[i]);
         prefix_length[i] = prefix_length[i - 1] + segment_distance;
 
-        extreme_points.min_x = std::min(extreme_points.min_x, points[i].x());
-        extreme_points.min_y = std::min(extreme_points.min_y, points[i].y());
-        extreme_points.max_x = std::max(extreme_points.max_x, points[i].x());
-        extreme_points.max_y = std::max(extreme_points.max_y, points[i].y());
+        extreme_points.min_x = (std::min)(extreme_points.min_x, points[i].x());
+        extreme_points.min_y = (std::min)(extreme_points.min_y, points[i].y());
+        extreme_points.max_x = (std::max)(extreme_points.max_x, points[i].x());
+        extreme_points.max_y = (std::max)(extreme_points.max_y, points[i].y());
     }
 }
 
@@ -148,10 +146,10 @@ void Curve::push_back(Point const& point)
         prefix_length.push_back(0);
     }
 
-    extreme_points.min_x = std::min(extreme_points.min_x, point.x());
-    extreme_points.min_y = std::min(extreme_points.min_y, point.y());
-    extreme_points.max_x = std::max(extreme_points.max_x, point.x());
-    extreme_points.max_y = std::max(extreme_points.max_y, point.y());
+    extreme_points.min_x = (std::min)(extreme_points.min_x, point.x());
+    extreme_points.min_y = (std::min)(extreme_points.min_y, point.y());
+    extreme_points.max_x = (std::max)(extreme_points.max_x, point.x());
+    extreme_points.max_y = (std::max)(extreme_points.max_y, point.y());
 
     points.push_back(point);
 }
@@ -166,10 +164,10 @@ distance_t Curve::getUpperBoundDistance(Curve const& other) const
     auto const& extreme1 = this->getExtremePoints();
     auto const& extreme2 = other.getExtremePoints();
 
-    Point min_point{std::min(extreme1.min_x, extreme2.min_x),
-                    std::min(extreme1.min_y, extreme2.min_y)};
-    Point max_point = {std::max(extreme1.max_x, extreme2.max_x),
-                       std::max(extreme1.max_y, extreme2.max_y)};
+    Point min_point{(std::min)(extreme1.min_x, extreme2.min_x),
+                    (std::min)(extreme1.min_y, extreme2.min_y)};
+    Point max_point = {(std::max)(extreme1.max_x, extreme2.max_x),
+                       (std::max)(extreme1.max_y, extreme2.max_y)};
 
     return distance(min_point, max_point);
 }
