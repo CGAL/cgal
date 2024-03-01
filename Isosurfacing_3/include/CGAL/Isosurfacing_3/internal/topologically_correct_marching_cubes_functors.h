@@ -314,7 +314,7 @@ private:
 
     // A hexahedron has twelve edges, save the intersection of the isosurface with the edge
     // save global edge and global vertex index of isosurface
-    std::vector<Point_index> vertices(12);
+    std::array<Point_index, 12> vertices;
 
     // save local coordinate along the edge of intersection point
     std::vector<FT> ecoord(12, FT(0));
