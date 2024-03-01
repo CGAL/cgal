@@ -53,7 +53,7 @@ Sphere::Sphere(int num_slices, int num_stacks, float r) {
 
   // strided vertex-data
   std::vector<QVector3D> vertex_data;
-  for (int i = 0; i < vertices.size(); ++i) {
+  for (std::size_t i = 0; i < vertices.size(); ++i) {
     vertex_data.push_back(vertices[i]);
     vertex_data.push_back(normals[i]);
   }

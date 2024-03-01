@@ -25,9 +25,9 @@ public:
 protected:
   void set_mouse_button_pressed_flag(QMouseEvent* e, bool flag);
 
-  virtual void mouse_press_event(QMouseEvent* e) {}
-  virtual void mouse_move_event(QMouseEvent* e) {}
-  virtual void mouse_release_event(QMouseEvent* e) {}
+  virtual void mouse_press_event(QMouseEvent* /* e */) {}
+  virtual void mouse_move_event(QMouseEvent* /* e */) {}
+  virtual void mouse_release_event(QMouseEvent* /* e */) {}
   virtual void resize(int w, int h) {}
 
   bool m_left_mouse_button_down = false;

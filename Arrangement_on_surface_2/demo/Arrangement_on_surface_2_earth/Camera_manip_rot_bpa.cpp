@@ -15,13 +15,13 @@ Camera_manip_rot_bpa::Camera_manip_rot_bpa(Camera& camera) :
 {}
 
 //! \brief
-void Camera_manip_rot_bpa::mouse_press_event(QMouseEvent* e) {
+void Camera_manip_rot_bpa::mouse_press_event(QMouseEvent* /* e */) {
   // for the backprojected diff-vector method:
   if (m_left_mouse_button_down) m_camera.save_config();
 }
 
 //! \brief
-void Camera_manip_rot_bpa::mouse_move_event(QMouseEvent* e) {
+void Camera_manip_rot_bpa::mouse_move_event(QMouseEvent* /* e */) {
   const float rotation_scale_factor = 0.1f;
 
   // ROTATION AROUND AN AXIS ORTHOGONAL TO THE BACKPROJECTED DIF-VECTOR
@@ -52,7 +52,7 @@ void Camera_manip_rot_bpa::mouse_move_event(QMouseEvent* e) {
 }
 
 //! \brief
-void Camera_manip_rot_bpa::mouse_release_event(QMouseEvent* e) {}
+void Camera_manip_rot_bpa::mouse_release_event(QMouseEvent* /* e */) {}
 
 //! \brief
 void Camera_manip_rot_bpa::resize(int w, int h) {

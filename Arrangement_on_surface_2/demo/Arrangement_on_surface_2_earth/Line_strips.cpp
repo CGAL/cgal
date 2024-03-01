@@ -102,7 +102,7 @@ void Line_strips::draw(int line_strip_index) {
 //! \brief
 void Line_strips::draw() {
   glBindVertexArray(m_vao);
-  for (int i = 1; i < m_offsets.size(); i++) {
+  for (std::size_t i = 1; i < m_offsets.size(); i++) {
     const auto first = m_offsets[i - 1];
     const auto count = m_offsets[i] - first;
     glDrawArrays(GL_LINE_STRIP, first, count);

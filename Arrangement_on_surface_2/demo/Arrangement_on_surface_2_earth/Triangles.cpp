@@ -23,11 +23,11 @@ Triangles::Triangles(std::vector<QVector3D>& vertices) {
     normals.push_back(n);
   }
 
-  int num_triangles = vertices.size() / 3;
+  // std::size_t num_triangles = vertices.size() / 3;
 
   // strided vertex-data
   std::vector<QVector3D> vertex_data;
-  for (int i = 0; i < vertices.size(); ++i) {
+  for (std::size_t i = 0; i < vertices.size(); ++i) {
     vertex_data.push_back(vertices[i]);
     vertex_data.push_back(normals[i]);
   }

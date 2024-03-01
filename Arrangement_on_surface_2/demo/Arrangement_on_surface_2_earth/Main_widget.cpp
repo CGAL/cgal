@@ -95,7 +95,7 @@ void Main_widget::mouseReleaseEvent(QMouseEvent* e) {
 void Main_widget::timerEvent(QTimerEvent*) { update(); }
 
 //! \brief
-void Main_widget::keyPressEvent(QKeyEvent* event) {}
+void Main_widget::keyPressEvent(QKeyEvent* /* event */) {}
 
 //! \brief
 void Main_widget::initializeGL() {

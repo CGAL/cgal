@@ -90,17 +90,18 @@ namespace {
   //          CGAL::Arrangement_on_surface_2<Geom_traits, Countries_topol_traits>;
 
   using Dir3 = Kernel::Direction_3;
-  std::ostream& operator << (std::ostream& os, const Dir3& d) {
-    os << d.dx() << ", " << d.dy() << ", " << d.dz();
-    return os;
-  }
+
+  // std::ostream& operator << (std::ostream& os, const Dir3& d) {
+  //   os << d.dx() << ", " << d.dy() << ", " << d.dz();
+  //   return os;
+  // }
 
   using Approximate_point_2 = Geom_traits::Approximate_point_2;
 
-  std::ostream& operator << (std::ostream& os, const Approximate_point_2& d) {
-    os << d.dx() << ", " << d.dy() << ", " << d.dz();
-    return os;
-  }
+  // std::ostream& operator << (std::ostream& os, const Approximate_point_2& d) {
+  //   os << d.dx() << ", " << d.dy() << ", " << d.dz();
+  //   return os;
+  // }
 
   using Approximate_number_type = Geom_traits::Approximate_number_type;
   using Approximate_kernel = Geom_traits::Approximate_kernel;
@@ -108,12 +109,11 @@ namespace {
   using Approximate_Direction_3 = Approximate_kernel::Direction_3;
   using Direction_3 = Kernel::Direction_3;
 
-
-  std::ostream& operator << (std::ostream& os, const Approximate_Vector_3& v) {
-    os << v.x() << ", " << v.y() << ", " << v.z();
-    //os << v.hx() << ", " << v.hy() << ", " << v.hz() << ", " << v.hw();
-    return os;
-  }
+  // std::ostream& operator << (std::ostream& os, const Approximate_Vector_3& v) {
+  //   os << v.x() << ", " << v.y() << ", " << v.z();
+  //   //os << v.hx() << ", " << v.hy() << ", " << v.hz() << ", " << v.hw();
+  //   return os;
+  // }
 
   //---------------------------------------------------------------------------
   // below are the helper functions used to construct the arcs from KML data
@@ -122,7 +122,7 @@ namespace {
 
   // get curves for the given kml placemark
   // NOTE: this is defined here to keep the definitions local to this cpp file
-  Curves  get_arcs(const Kml::Placemark& placemark) {
+  Curves get_arcs(const Kml::Placemark& placemark) {
     //Geom_traits traits;
     auto ctr_p = s_traits.construct_point_2_object();
     auto ctr_cv = s_traits.construct_curve_2_object();
@@ -147,8 +147,8 @@ namespace {
         }
 
         // add geodesic arcs for the current LinearRing
-        int num_points = sphere_points.size();
-        for (int i = 0; i < num_points - 1; i++) {
+        std::size_t num_points = sphere_points.size();
+        for (std::size_t i = 0; i < num_points - 1; ++i) {
           const auto p1 = sphere_points[i];
           const auto p2 = sphere_points[i + 1];
           xcvs.push_back(ctr_cv(ctr_p(p1.x(), p1.y(), p1.z()),
@@ -162,14 +162,13 @@ namespace {
 
 
   // this one is used by the Aos::check and Aos::ext_check functions
-  int num_counted_nodes = 0;
-  int num_counted_arcs = 0;
-  int num_counted_polygons = 0;
+  std::size_t num_counted_nodes = 0;
+  std::size_t num_counted_arcs = 0;
+  std::size_t num_counted_polygons = 0;
   std::map<Ext_aos::Vertex_handle, Kml::Node>  vertex_node_map;
 
   template<typename Arr_type>
-  Curves  get_arcs(const Kml::Placemarks& placemarks, Arr_type& arr)
-  {
+  Curves  get_arcs(const Kml::Placemarks& placemarks, Arr_type& arr) {
     //Geom_traits traits;
     auto ctr_p = s_traits.construct_point_2_object();
     auto ctr_cv = s_traits.construct_curve_2_object();
@@ -206,9 +205,8 @@ namespace {
           }
 
           // add curves
-          int num_points = sphere_points.size();
-          for (int i = 0; i < num_points - 1; i++)
-          {
+          std::size_t num_points = sphere_points.size();
+          for (std::size_t i = 0; i < num_points - 1; ++i) {
             num_counted_arcs++;
             const auto p1 = sphere_points[i];
             const auto p2 = sphere_points[i + 1];
@@ -226,13 +224,12 @@ namespace {
   Aos::Approx_arc get_approx_curve(Curve xcv, double error) {
     //Geom_traits traits;
     auto approx = s_traits.approximate_2_object();
-    std::vector<QVector3D>  approx_curve;
+    std::vector<QVector3D> approx_curve;
     {
       std::vector<Approximate_point_2> v;
-      auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
+      approx(xcv, error, std::back_insert_iterator(v));
 
-      for (const auto& p : v)
-      {
+      for (const auto& p : v) {
         const QVector3D arc_point(p.dx(), p.dy(), p.dz());
         approx_curve.push_back(arc_point);
       }
@@ -251,7 +248,6 @@ namespace {
   }
 }
 
-
 Aos::Approx_arc Aos::get_approx_identification_curve(double error) {
   //Geom_traits traits;
   auto ctr_p = s_traits.construct_point_2_object();
@@ -264,7 +260,7 @@ Aos::Approx_arc Aos::get_approx_identification_curve(double error) {
   Approx_arc approx_arc;
   {
     std::vector<Approximate_point_2> v;
-    auto oi2 = approx(xcv, error, std::back_insert_iterator(v));
+    approx(xcv, error, std::back_insert_iterator(v));
     for (const auto& p : v) {
       const QVector3D arc_point(p.dx(), p.dy(), p.dz());
       approx_arc.push_back(arc_point);
@@ -348,20 +344,20 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks) {
   for (auto& xcv : xcvs) CGAL::insert(arr, xcv);
 
   // extract all vertices that are ADDED when inserting the arcs!
-  int num_created_vertices = 0;
+  std::size_t num_created_vertices = 0;
   std::vector<QVector3D> created_vertices;
   auto approx = s_traits.approximate_2_object();
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-    auto& d = vit->data();
+    // auto& d = vit->data();
     if (vit->data().v == false) {
       std::cout << "-------------------------------------\n";
       std::cout << vit->point() << std::endl;
 
-      if (2 == vit->degree());//continue;
+      if (2 == vit->degree()) {}	//continue;
 
       if (1 == vit->degree()) {
         auto p = vit->point();
-        auto p2 = p.location();
+        // auto p2 = p.location();
         std::cout << "   deg-1 vertex = " << p << std::endl;
         std::cout << "   deg-1 vertex: " << std::boolalpha
                   << vit->incident_halfedges()->target()->data().v << std::endl;
@@ -379,8 +375,7 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks) {
       created_vertices.push_back(new_vertex);
 
       // find the arcs that are adjacent to the vertex of degree 4
-      if (4 == vit->degree())
-      {
+      if (4 == vit->degree()) {
         std::cout << "**************************\n DEGREE 4 VERTEX: \n";
         const auto first = vit->incident_halfedges();
         auto curr = first;
@@ -431,8 +426,8 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks) {
   auto ctr_p = s_traits.construct_point_2_object();
   auto ctr_cv = s_traits.construct_curve_2_object();
 
-  int num_counted_arcs = 0;
-  int num_counted_polygons = 0;
+  std::size_t num_counted_arcs = 0;
+  std::size_t num_counted_polygons = 0;
   //
   std::vector<Point> points;
   std::vector<Ext_aos::Vertex_handle> vertices;
@@ -457,8 +452,8 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks) {
 
       // TO DO : ADD the outer boundaries!
       auto& ids = polygon.outer_boundary.ids;
-      int num_nodes = ids.size();
-      for (int i = 0; i < num_nodes - 1; ++i) {
+      std::size_t num_nodes = ids.size();
+      for (std::size_t i = 0; i < num_nodes - 1; ++i) {
         num_counted_arcs++;
         const auto nid1 = ids[i];
         const auto nid2 = ids[i + 1];
@@ -474,20 +469,20 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks) {
     arr.number_of_vertices() << std::endl;
 
   // extract all vertices that are ADDED when inserting the arcs!
-  int num_created_vertices = 0;
+  std::size_t num_created_vertices = 0;
   std::vector<QVector3D> created_vertices;
   auto approx = s_traits.approximate_2_object();
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-    auto& d = vit->data();
+    // auto& d = vit->data();
     if (vit->data().v == false) {
       std::cout << "-------------------------------------\n";
       std::cout << vit->point() << std::endl;
 
-      if (2 == vit->degree());//continue;
+      if (2 == vit->degree()) {}	//continue;
 
       if (1 == vit->degree()) {
         auto p = vit->point();
-        auto p2 = p.location();
+        // auto p2 = p.location();
         std::cout << "deg-1 vertex = " << p << std::endl;
         std::cout << "deg-1 vertex: " << std::boolalpha
                   << vit->incident_halfedges()->target()->data().v << std::endl;
@@ -538,7 +533,6 @@ auto Aos::find_new_faces(Kml::Placemarks& placemarks) -> Approx_arcs {
   auto ctr_p = s_traits.construct_point_2_object();
   auto ctr_cv = s_traits.construct_curve_2_object();
 
-  using Face_handle = Ext_aos::Face_handle;
   auto fh = arr.faces_begin();
   fh->data().v = true;
   std::cout << "num faces = " << arr.number_of_faces() << std::endl;
@@ -573,7 +567,7 @@ auto Aos::find_new_faces(Kml::Placemarks& placemarks) -> Approx_arcs {
       //for (auto* lring : linear_rings)
       auto* lring = &polygon.outer_boundary;
       {
-        int num_faces_before = arr.number_of_faces();
+        std::size_t num_faces_before = arr.number_of_faces();
         std::set<int> polygon_node_ids;
 
         // convert the nodes to points on unit-sphere
@@ -581,7 +575,7 @@ auto Aos::find_new_faces(Kml::Placemarks& placemarks) -> Approx_arcs {
         //for (const auto& node : lring->nodes)
         //std::cout << "   NUM POLYGON-NODES SIZE = "
         //          << lring->ids.size() << std::endl;
-        for (int i = 0; i < lring->ids.size(); ++i) {
+        for (std::size_t i = 0; i < lring->ids.size(); ++i) {
           num_counted_nodes++;
           const auto id = lring->ids[i];
           const auto& node = lring->nodes[i];
@@ -610,9 +604,8 @@ auto Aos::find_new_faces(Kml::Placemarks& placemarks) -> Approx_arcs {
         all_polygon_node_ids.insert(std::move(polygon_node_ids));
 
         // add curves
-        int num_points = sphere_points.size();
-        for (int i = 0; i < num_points - 1; i++)
-        {
+        auto num_points = sphere_points.size();
+        for (std::size_t i = 0; i < num_points - 1; ++i) {
           num_counted_arcs++;
           const auto p1 = sphere_points[i];
           const auto p2 = sphere_points[i + 1];
@@ -622,16 +615,16 @@ auto Aos::find_new_faces(Kml::Placemarks& placemarks) -> Approx_arcs {
           CGAL::insert(arr, xcv);
         }
 
-        int num_faces_after = arr.number_of_faces();
-        int num_new_faces = num_faces_after - num_faces_before;
+        // auto num_faces_after = arr.number_of_faces();
+        // auto num_new_faces = num_faces_after - num_faces_before;
       }
     }
   }
 
 
   // mark all faces as TRUE (= as existing faces)
-  int num_found = 0;
-  int num_not_found = 0;
+  std::size_t num_found = 0;
+  std::size_t num_not_found = 0;
   std::vector<Curve>  new_face_arcs;
   for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh) {
     // skip the spherical face
@@ -684,19 +677,16 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
   auto ctr_p = s_traits.construct_point_2_object();
   auto ctr_cv = s_traits.construct_curve_2_object();
 
-  using Face_handle = Ext_aos::Face_handle;
   auto fh = arr.faces_begin();
   fh->data().v = true;
   std::cout << "num faces = " << arr.number_of_faces() << std::endl;
 
   auto nodes = Kml::generate_ids(placemarks);
 
-
   //-------------------------------------------------------------------------
   // define a set of vertex-handles: use this to check if the face is
   // obtained from the polygon definition, or if it is an additional face
   using Vertex_handle = Ext_aos::Vertex_handle;
-  using Halfedge_handle = Ext_aos::Halfedge_handle;
   using Face_handle = Ext_aos::Face_handle;
   std::map<Vertex_handle, int> vertex_id_map;
   std::map<std::set<int>, std::string> all_polygon_node_ids_map;
@@ -725,16 +715,16 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
       //for (auto* lring : linear_rings)
       auto* lring = &polygon.outer_boundary;
       {
-        int num_faces_before = arr.number_of_faces();
+        auto num_faces_before = arr.number_of_faces();
         std::set<int> polygon_node_ids;
 
         // convert the nodes to points on unit-sphere
-        std::vector<Approximate_Vector_3>  sphere_points;
+        std::vector<Approximate_Vector_3> sphere_points;
         //for (const auto& node : lring->nodes)
         //std::cout << "   NUM POLYGON-NODES SIZE = " << lring->ids.size()
         //          << std::endl;
-        for (int i = 0; i < lring->ids.size(); ++i) {
-          num_counted_nodes++;
+        for (std::size_t i = 0; i < lring->ids.size(); ++i) {
+          ++num_counted_nodes;
           const auto id = lring->ids[i];
           const auto& node = lring->nodes[i];
           const auto p = node.get_coords_3d();
@@ -763,8 +753,8 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
           std::move(polygon_node_ids), pm.name));
 
         // add curves
-        int num_points = sphere_points.size();
-        for (int i = 0; i < num_points - 1; ++i) {
+        std::size_t num_points = sphere_points.size();
+        for (std::size_t i = 0; i < num_points - 1; ++i) {
           num_counted_arcs++;
           const auto p1 = sphere_points[i];
           const auto p2 = sphere_points[i + 1];
@@ -774,8 +764,8 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
           CGAL::insert(arr, xcv);
         }
 
-        int num_faces_after = arr.number_of_faces();
-        int num_new_faces = num_faces_after - num_faces_before;
+        // std::size_t num_faces_after = arr.number_of_faces();
+        // auto num_new_faces = num_faces_after - num_faces_before;
       }
     }
   }
@@ -827,7 +817,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
     // add the vertex if not found in the map
     auto it = vertex_pos_map.find(vh);
     if (it == vertex_pos_map.end()) {
-      int new_vh_pos = vertex_pos_map.size();
+      std::size_t new_vh_pos = vertex_pos_map.size();
       vertex_pos_map[vh] = new_vh_pos;
 
       // write the vertex-data to JSON object
@@ -853,13 +843,13 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
   auto& js_curves = js["curves"] = json::array();
   using Ext_curve = Ext_aos::X_monotone_curve_2;
   std::map<Ext_curve*, int>  curve_pos_map;
-  int num_edges = 0;
+  std::size_t num_edges = 0;
   for (auto eh = arr.edges_begin(); eh != arr.edges_end(); ++eh) {
-    num_edges++;
+    ++num_edges;
     auto& xcv = eh->curve();
     auto it = curve_pos_map.find(&xcv);
     if (it == curve_pos_map.end()) {
-      int new_xcv_pos = curve_pos_map.size();
+      std::size_t new_xcv_pos = curve_pos_map.size();
       curve_pos_map[&xcv] = new_xcv_pos;
 
       json je;
@@ -968,7 +958,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
     num_edges++;
 
     // add the halfedge indices to the map
-    int new_halfedge_index = halfedge_pos_map.size();
+    std::size_t new_halfedge_index = halfedge_pos_map.size();
     auto& twin = *edge.twin();
     halfedge_pos_map[&edge] = new_halfedge_index;
     halfedge_pos_map[&twin] = new_halfedge_index + 1;
@@ -983,8 +973,8 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
   // CONDITION DATA: Caspian Sea needs to be defined
   //num_half_edges = 0;
   num_edges = 0;
-  int num_found = 0;
-  int num_not_found = 0;
+  std::size_t num_found = 0;
+  std::size_t num_not_found = 0;
   std::map<Face_handle, std::string>  face_name_map;
   for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh) {
     // skip the spherical face
@@ -992,22 +982,21 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
     if (fh->number_of_outer_ccbs() == 0) continue;
 
     // construct the set of all node-ids for the current face
-    std::set<int>  face_node_ids_set;
-    std::vector<int>  face_node_ids;
+    std::set<int> face_node_ids_set;
+    std::vector<int> face_node_ids;
     auto first = fh->outer_ccb();
     auto curr = first;
     do {
       //num_half_edges++;
       auto vh = curr->source();
       // skip if the vertex is due to intersection with the identification curve
-      if ((vh->data().v == false) && (vh->degree() == 2))
-        continue;
+      if ((vh->data().v == false) && (vh->degree() == 2)) continue;
 
       auto id = vertex_id_map[vh];
       face_node_ids_set.insert(id);
 
       //face_arcs.push_back(ctr_cv(curr->source()->point(), curr->target()->point()));
-      auto& xcv = curr->curve();
+      // auto& xcv = curr->curve();
     } while (++curr != first);
     //std::cout << "counted vertices = " << num_vertices << std::endl;
     //std::cout << "vertices in the set = " << polygon_node_ids.size() << std::endl;
@@ -1058,7 +1047,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
     return js_edges;
   };
 
-  int total_num_half_edges = 0;
+  std::size_t total_num_half_edges = 0;
   for (auto fh = arr.faces_begin(); fh != arr.faces_end(); ++fh) {
     //// skip the spherical face
     //if (fh->number_of_outer_ccbs() == 0)
@@ -1245,7 +1234,7 @@ namespace {
     using Point = typename Arrangement::Point_2;
     using X_monotone_curve = typename Arrangement::X_monotone_curve_2;
     using FT = typename Kernel::FT;
-    using Exact_type = typename FT::Exact_type;
+    // using Exact_type = typename FT::Exact_type;
 
     std::vector<Point> points;
     points.reserve(num_points);
@@ -1319,7 +1308,7 @@ namespace {
       std::size_t source_id = js_edge["source"];
       std::size_t target_id = js_edge["target"];
       std::size_t curve_id = js_edge["curve"];
-      int direction = js_edge["direction"];
+      auto direction = js_edge["direction"];
       DVertex* src_v = vertices[source_id];
       DVertex* trg_v = vertices[target_id];
       const auto& curve = xcurves[curve_id];
@@ -1335,9 +1324,6 @@ namespace {
 
     // Faces
     using DFace = typename Arr_accessor::Dcel_face;
-    using DOuter_ccb = typename Arr_accessor::Dcel_outer_ccb;
-    using DInner_ccb = typename Arr_accessor::Dcel_inner_ccb;
-    using DIso_vert = typename Arr_accessor::Dcel_isolated_vertex;
     const bool is_unbounded(false);
     const bool is_valid(true);
     for (const auto& js_face : js_faces) {
@@ -1778,15 +1764,14 @@ Aos::Country_color_map  Aos::get_color_mapping(Arr_handle arrh) {
 
     // find the first color index not used
     bool found = false;
-    for (int i = 0; i < 5; ++i) {
+    for (std::size_t i = 0; i < 5; ++i) {
       if (! color_used[i]) {
         found = true;
         result[country_name] = i;
       }
     }
     // assertion check!!!
-    if(! found)
-      std::cout << "*** ASSERTION ERROR: NO INDEX FOUND!!!\n";
+    if(! found) std::cout << "*** ASSERTION ERROR: NO INDEX FOUND!!!\n";
   }
 
   return result;
@@ -1846,9 +1831,7 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point) {
       country_name = (*v)->incident_halfedges()->face()->data();
     }
   }
-  else {
-    CGAL_error_msg("Invalid object.");
-  }
+  else CGAL_error_msg("Invalid object.");
 
   return country_name;
 }

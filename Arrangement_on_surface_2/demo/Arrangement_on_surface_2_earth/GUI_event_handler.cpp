@@ -20,6 +20,8 @@ GUI_event_handler::set_mouse_button_pressed_flag(QMouseEvent* e, bool flag) {
    case Qt::MiddleButton:
     m_middle_mouse_button_down = flag;
     break;
+
+   default: break;
   }
 }
 

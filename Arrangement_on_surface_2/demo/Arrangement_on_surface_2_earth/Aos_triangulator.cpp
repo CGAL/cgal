@@ -42,16 +42,16 @@ namespace {
   static Geom_traits s_traits;
 
   using Dir3 = Kernel::Direction_3;
-  std::ostream& operator << (std::ostream& os, const Dir3& d) {
-    os << d.dx() << ", " << d.dy() << ", " << d.dz();
-    return os;
-  }
+  // std::ostream& operator << (std::ostream& os, const Dir3& d) {
+  //   os << d.dx() << ", " << d.dy() << ", " << d.dz();
+  //   return os;
+  // }
 
-  using Approximate_point_2 = Geom_traits::Approximate_point_2;
-  std::ostream& operator << (std::ostream& os, const Approximate_point_2& d) {
-    os << d.dx() << ", " << d.dy() << ", " << d.dz();
-    return os;
-  }
+  // using Approximate_point_2 = Geom_traits::Approximate_point_2;
+  // std::ostream& operator << (std::ostream& os, const Approximate_point_2& d) {
+  //   os << d.dx() << ", " << d.dy() << ", " << d.dz();
+  //   return os;
+  // }
 
   using Approximate_number_type = Geom_traits::Approximate_number_type;
   using Approximate_kernel = Geom_traits::Approximate_kernel;
@@ -64,20 +64,18 @@ namespace {
 std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh) {
   using K     = CGAL::Exact_predicates_inexact_constructions_kernel;
   //using K     = CGAL::Projection_traits_3<K_epic>;
-  using Vb    = CGAL::Triangulation_vertex_base_2<K>;
-  using Fb    = CGAL::Constrained_triangulation_face_base_2<K>;
-  using TDS   = CGAL::Triangulation_data_structure_2<Vb, Fb>;
-  using Itag  = CGAL::Exact_predicates_tag;
-  using CDT   = CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>;
+  using Vb = CGAL::Triangulation_vertex_base_2<K>;
+  using Fb = CGAL::Constrained_triangulation_face_base_2<K>;
+  using TDS = CGAL::Triangulation_data_structure_2<Vb, Fb>;
+  using Itag = CGAL::Exact_predicates_tag;
+  using CDT = CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>;
   using Face_handle = CDT::Face_handle;
-  using Point       = CDT::Point;
-  using Polygon_2   = CGAL::Polygon_2<K>;
+  using Polygon_2 = CGAL::Polygon_2<K>;
 
   auto& arr = *reinterpret_cast<Arrangement*>(arrh.get());
 
   //Geom_traits traits;
   auto approx = s_traits.approximate_2_object();
-
 
   std::vector<std::vector<QVector3D>> all_faces;
   // loop on all faces of the arrangement

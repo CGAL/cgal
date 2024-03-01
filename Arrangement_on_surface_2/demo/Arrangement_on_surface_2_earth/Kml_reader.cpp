@@ -241,7 +241,7 @@ Kml::Nodes Kml::generate_ids(Placemarks& placemarks) {
         }
 
         assert(lring->nodes.size() == lring->ids.size());
-        for (int i = 0; i < lring->nodes.size(); ++i)
+        for (std::size_t i = 0; i < lring->nodes.size(); ++i)
           assert(lring->nodes[i] == nodes[lring->ids[i]]);
       }
     }
@@ -270,7 +270,7 @@ Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps) {
         for (const auto& node : lring->nodes) {
           // check if there is a node sufficiently close to the current one
           int node_index = -1;
-          for (int i = 0; i < nodes.size(); ++i) {
+          for (std::size_t i = 0; i < nodes.size(); ++i) {
             const auto dist = node.distance_to(nodes[i]);
             if (dist < eps) {
               node_index = i;
