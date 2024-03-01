@@ -19,7 +19,7 @@ int main()
   CGAL::Random r;
 
   Point_vector points_dd;
-  for (std::size_t i = 0; i < 500; ++ i)
+  for (std::size_t i = 0; i < 20; ++ i)
   {
     std::array<double, dimension> init{};
     for (double& v : init)
