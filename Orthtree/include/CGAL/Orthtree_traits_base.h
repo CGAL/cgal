@@ -51,7 +51,7 @@ struct Orthtree_traits_base {
    *
    * \note This type is used to identify adjacency directions with
    * easily understandable keywords (left, right, up, down, ...) and is thus
-   * mainly useful in 2d and 3d. In
+   * mainly useful in 2D and 3D. In
    * higher dimensions, such keywords do not exist and this type is
    * simply an integer. Conversions from this integer to bitsets still
    * work but do not provide any user-friendly API for adjacency selection.
