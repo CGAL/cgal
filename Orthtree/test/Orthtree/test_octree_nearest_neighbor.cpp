@@ -71,7 +71,7 @@ void naive_vs_octree(std::size_t dataset_size) {
   auto octree_start_time = high_resolution_clock::now();
   {
     std::vector<Point_set::Index> k_neighbors;
-    octree.nearest_neighbors(random_point, 1, std::back_inserter(k_neighbors));
+    octree.nearest_k_neighbors(random_point, 1, std::back_inserter(k_neighbors));
     octree_nearest = get(points.point_map(), *k_neighbors.begin());
   }
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
@@ -121,7 +121,7 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
   Octree octree(points, points.point_map());
   octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
-  octree.nearest_neighbors(random_point, K, std::back_inserter(octree_nearest_neighbors));
+  octree.nearest_k_neighbors(random_point, K, std::back_inserter(octree_nearest_neighbors));
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
 
   std::cout << "Octree --> "

@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   };
 
   for (const Point& p : points_to_find)
-    octree.nearest_neighbors
+    octree.nearest_k_neighbors
     (p, 1, // k=1 to find the single closest point
       boost::make_function_output_iterator
       ([&](const Point_set::Index& nearest)
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
 
   typename Octree::Sphere s(points_to_find[0], 0.0375);
   std::cout << std::endl << "Closest points within the sphere around " << s.center() << " with squared radius of " << s.squared_radius() << ":" << std::endl;
-  octree.nearest_neighbors
+  octree.neighbors_in_radius
   (s,
     boost::make_function_output_iterator
     ([&](const Point_set::Index& nearest)
