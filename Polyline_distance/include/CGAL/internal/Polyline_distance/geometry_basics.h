@@ -123,7 +123,7 @@ struct Lambda {
 
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
-          Rational start_end_diff = Rational(line_end[i]) - Rational(line_start[i]);
+            Rational start_end_diff = Rational(line_end[i]) - Rational(line_start[i]);
             a += CGAL::square(start_end_diff);
             Rational start_center_diff = Rational(line_start[i]) - Rational(circle_center[i]);
             b -= start_center_diff * start_end_diff;
@@ -133,7 +133,7 @@ struct Lambda {
 
         Rational minus_b_div_a = b / a;
         Rational d = CGAL::square(minus_b_div_a) - c / a;
-        if (d >= 0.) {
+        if (! is_negative(d)) {
             if (is_start) {
                 Exact start(minus_b_div_a, -1, d);
                 if (is_negative(start)) start = Exact(0);
@@ -256,7 +256,7 @@ bool approximate_reals(const Point& circle_center, distance_t radius,
 
     Approx iminus_b_div_a = ib / ia;
     Approx id = CGAL::square(iminus_b_div_a) - ic / ia;
-    if (id >= 0.) {
+    if (! is_negative(id)) {
         Approx sqrtid = sqrt(id);
         Approx istart = iminus_b_div_a - sqrtid;
         Approx iend = iminus_b_div_a + sqrtid;
@@ -297,7 +297,7 @@ bool exact_reals(const Point& circle_center, distance_t radius,
 
     Rational minus_b_div_a = b / a;
     Rational d = CGAL::square(minus_b_div_a) - c / a;
-    if (d >= 0.) {
+    if (! is_negative(d)) {
         Exact start(minus_b_div_a, -1, d);
         Exact end(minus_b_div_a, 1, d);
         if (is_negative(start)) start = Exact(0);
