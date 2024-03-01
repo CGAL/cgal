@@ -27,7 +27,7 @@ namespace CGAL {
   \tparam GeomTraits must be a model of `Kernel`
   \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_2`
-  \tparam square_nodes boolean to enforce square nodes
+  \tparam square_nodes Boolean to enforce square nodes
 */
 template <typename GeomTraits, typename PointRange,
           typename PointMap = Identity_property_map
