@@ -324,7 +324,7 @@ public:
   /*!
     \brief recursively subdivides the orthtree until it meets the given criteria.
 
-    The split predicate should return `true` if a leaf node should be split and false` otherwise.
+    The split predicate should return `true` if a leaf node should be split and `false` otherwise.
 
     This function may be called several times with different
     predicates: in that case, nodes already split are left unaltered,
