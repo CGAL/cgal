@@ -42,7 +42,5 @@ int main(void) {
   std::cout << "fifth child of first child: "
             << octree.local_coordinates(octree.child(octree.child(octree.root(), 0), 4)) << std::endl;
 
-  // TODO
-
   return 0;
 }

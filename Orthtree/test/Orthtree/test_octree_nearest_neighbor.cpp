@@ -1,9 +1,6 @@
 
 #define CGAL_TRACE_STREAM std::cerr
 
-#include <iostream>
-#include <chrono>
-#include <cassert>
 #include <CGAL/Octree.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/point_generators_3.h>
@@ -12,6 +9,9 @@
 #include <CGAL/Search_traits_3.h>
 
 #include <CGAL/Simple_cartesian.h>
+#include <iostream>
+#include <chrono>
+#include <cassert>
 
 using namespace std::chrono;
 

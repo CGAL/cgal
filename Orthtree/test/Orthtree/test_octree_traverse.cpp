@@ -1,11 +1,11 @@
 #define CGAL_TRACE_STREAM std::cerr
 
-#include <cassert>
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
 #include <CGAL/Point_set_3.h>
 
 #include <CGAL/Simple_cartesian.h>
+#include <cassert>
 
 
 using Kernel = CGAL::Simple_cartesian<double>;

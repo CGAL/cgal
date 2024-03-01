@@ -1,10 +1,8 @@
-
-#include <iostream>
-#include <cassert>
 #include <CGAL/Octree.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Simple_cartesian.h>
-
+#include <iostream>
+#include <cassert>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_3;
