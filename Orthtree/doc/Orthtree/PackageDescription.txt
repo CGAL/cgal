@@ -55,9 +55,9 @@ Quadtree, Octree and Orthtree Reference
 - `CGAL::Orthtree_traits_face_graph<TriangleMesh, VertexPointMap>`
 
 \cgalCRPSection{Split Predicates}
-- `CGAL::Orthtrees::Maximum_number_of_inliers`
+- `CGAL::Orthtrees::Maximum_contained_elements`
 - `CGAL::Orthtrees::Maximum_depth`
-- `CGAL::Orthtrees::Maximum_depth_and_maximum_number_of_inliers`
+- `CGAL::Orthtrees::Maximum_depth_and_maximum_contained_elements`
 
 \cgalCRPSection{%Traversal}
 - `CGAL::Orthtrees::Preorder_traversal`

@@ -366,17 +366,17 @@ public:
 
   /*!
     \brief convenience overload that refines an orthtree using a
-    maximum depth and maximum number of inliers in a node as split
+    maximum depth and maximum number of contained elements in a node as split
     predicate.
 
     This is equivalent to calling
-    `refine(Orthtrees::Maximum_depth_and_maximum_number_of_inliers(max_depth,
+    `refine(Orthtrees::Maximum_depth_and_maximum_contained_elements(max_depth,
     bucket_size))`.
 
     The refinement is stopped as soon as one of the conditions is
-    violated: if a node has more inliers than `bucket_size` but is
+    violated: if a node contains more elements than `bucket_size` but is
     already at `max_depth`, it is not split. Similarly, a node that is
-    at a depth smaller than `max_depth` but already has fewer inliers
+    at a depth smaller than `max_depth` but already contains fewer elements
     than `bucket_size`, it is not split.
 
     \warning This convenience method is only appropriate for trees with traits classes where
@@ -386,7 +386,7 @@ public:
     \param bucket_size maximum number of items a node is allowed to contain.
    */
   void refine(size_t max_depth = 10, size_t bucket_size = 20) {
-    refine(Orthtrees::Maximum_depth_and_maximum_number_of_inliers(max_depth, bucket_size));
+    refine(Orthtrees::Maximum_depth_and_maximum_contained_elements(max_depth, bucket_size));
   }
 
   /*!

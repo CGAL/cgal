@@ -57,7 +57,7 @@ split, `false` otherwise: this enables users to choose on what
 criterion should the orthtree be refined. Predefined predicates are
 provided for the point-set orthtree,
 including [Maximum_depth](@ref CGAL::Orthtrees::Maximum_depth)
-and [Maximum_number_of_inliers](@ref CGAL::Orthtrees::Maximum_number_of_inliers).
+and [Maximum_contained_elements](@ref CGAL::Orthtrees::Maximum_contained_elements).
 
 The simplest way to create a point-set orthtree is from a vector of points.
 The constructor generally expects a separate point range and map,
@@ -75,8 +75,8 @@ For convenience, the alias `CGAL::Quadtree` is provided.
 
 The following example shows the construction of %quadtree from a vector of `Point_2` objects.
 `quadtree.refine(10, 5)` uses the default split predicate, which
-enforces a max-depth and a maximum number of inliers per node ("bucket size").
-Nodes are split if their depth is less than 10, and they contain more than 5 inliers.
+enforces a max-depth and a maximum of elements contained per node ("bucket size").
+Nodes are split if their depth is less than 10, and they contain more than 5 points.
 
 
 \cgalExample{Orthtree/quadtree_build_from_point_vector.cpp}
@@ -103,7 +103,7 @@ An %octree is constructed from the point set and its corresponding map,
 and then written to the standard output.
 
 The split predicate is manually constructed and passed to the refine method.
-In this case, we use a maximum number of inliers with no corresponding maximum depth.
+In this case, we use a maximum number of contained elements with no corresponding maximum depth.
 This means that nodes will continue to be split until none contain more than 10 points.
 
 \cgalExample{Orthtree/octree_build_from_point_set.cpp}
