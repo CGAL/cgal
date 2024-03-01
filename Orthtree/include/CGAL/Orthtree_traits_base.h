@@ -64,7 +64,7 @@ struct Orthtree_traits_base {
    * The first two bits indicate the axis (00 = x, 01 = y, 10 = z),
    * the third bit indicates the direction along that axis (0 = -, 1 = +).
    *
-   * The following diagram and table showing the 3d case may be a useful reference (2d case is identical with one dimension less):
+   * The following diagram and table showing the 3D case may be a useful reference (2D case is identical with one dimension less):
    *
    *            3 *
    *              |  * 4
