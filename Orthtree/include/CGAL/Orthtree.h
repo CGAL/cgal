@@ -952,7 +952,7 @@ public:
     \param n the index of the node to find the sibling of
 
     \return the index of the next sibling of n
-    if n is not the last node in its parent, otherwise nothing.
+    if n is not the last node in its parent, otherwise `std::nullopt`.
    */
   const std::optional<Node_index> next_sibling(Node_index n) const {
 
