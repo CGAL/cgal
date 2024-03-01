@@ -75,7 +75,7 @@ private:
     // (interpolate between discrete points) if NO certificate: certificate
     // should be as described in certificate-outline.pdf
 
-    CPositions traversal;
+    std::vector<CPosition>  traversal;
     std::array<const Curve*, 2> curve_pair;
     distance_t dist, dist_sqr;
 

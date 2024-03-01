@@ -344,13 +344,8 @@ OldPoint toOldPoint(Point const& p) { return OldPoint(p.x(), p.y()); }
 using Points = std::vector<Point>;
 using PointID = ID<Point>;
 
-// TODO: already defined for CGAL types?
-std::ostream& operator<<(std::ostream& out, const Point& p);
 
-struct PointRange {
-    PointID begin;
-    PointID end;
-};
+
 
 struct ContinuousPoint {
     PointID point;
@@ -368,10 +363,7 @@ struct ContinuousPoint {
     void invalidate() { point.invalidate(); }
 };
 
-struct FSCoordinate {
-    PointID x;
-    PointID y;
-};
+
 
 // Orientation and Direction etc.
 
@@ -405,36 +397,37 @@ struct Interval {
     RealType begin;
     RealType end;
 
-    Interval() : begin(1.), end(0.) {}
+  Interval()
+    : begin(1.), end(0.)
+  {}
 
-    Interval(RealType const& begin, RealType const& end) : begin(begin), end(end) {}
-    /*
-    bool operator<(Interval const& other) const {
-            std::cout << "coucou" << std::endl;
-            return begin < other.begin || (begin == other.begin && end <
-    other.end);
-    }
-    */
-    bool is_empty() const { return begin > end; }
-    bool intersects(Interval const& other) const
-    {
-        if (is_empty() || other.is_empty()) {
-            return false;
-        }
+  Interval(RealType const& begin, RealType const& end)
+    : begin(begin), end(end)
+  {}
 
-        return (other.begin >= begin && other.begin <= end) ||
-               (other.end >= begin && other.end <= end) ||
-               (other.begin <= begin && other.end >= end);
+  bool is_empty() const
+  {
+    return begin > end;
+  }
+
+  bool intersects(Interval const& other) const
+  {
+    if (is_empty() || other.is_empty()) {
+      return false;
     }
+
+    return (other.begin >= begin && other.begin <= end) ||
+      (other.end >= begin && other.end <= end) ||
+      (other.begin <= begin && other.end >= end);
+  }
 };
-using Intervals = std::vector<Interval>;
+
 
 std::ostream& operator<<(std::ostream& out, const Interval& interval);
 
 // Data Types for FrechetLight:
 
-// NOTES: CPoint will be integral part + rational [0,1] number given as
-// sqrt_extension
+// CPoint is integral part + rational [0,1] number given as sqrt_extension
 
 class CPoint
 {
@@ -457,12 +450,15 @@ public:
     {
         normalize();
     }
+
   CPoint() : point((std::numeric_limits<PointID::IDType>::max)()), fraction(0.)
     {
     }
 
     PointID getPoint() const { return point; }
+
     RealType const& getFraction() const { return fraction; }
+
     double getFractionLB() const
     {
         // returns a lower bound to the fraction
@@ -470,6 +466,7 @@ public:
     }
 
     void setPoint(PointID point) { this->point = point; }
+
     void setFraction(RealType const& frac)
     {
         fraction = frac;
@@ -481,49 +478,63 @@ public:
         return point < other.point ||
                (point == other.point && fraction < other.fraction);
     }
+
     bool operator<=(CPoint const& other) const
     {
         return point < other.point ||
                (point == other.point && fraction <= other.fraction);
     }
+
     bool operator>(CPoint const& other) const
     {
         return point > other.point ||
                (point == other.point && fraction > other.fraction);
     }
+
     bool operator>=(CPoint const& other) const
     {
         return point > other.point ||
                (point == other.point && fraction >= other.fraction);
     }
+
     bool operator==(CPoint const& other) const
     {
         return point == other.point && fraction == other.fraction;
     }
+
     bool operator!=(CPoint const& other) const
     {
         return point != other.point || fraction != other.fraction;
     }
+
     bool operator<(PointID other) const { return point < other; }
+
     bool operator>(PointID other) const
     {
         return point > other || (point == other && fraction > 0.);
     }
+
     bool operator<=(PointID other) const
     {
         return point < other || (point == other && fraction == 0.);
     }
+
     bool operator>=(PointID other) const { return point >= other; }
+
     bool operator==(PointID other) const
     {
         return point == other && fraction == 0.;
     }
+
     bool operator!=(size_t other) const { return !(point == other); }
+
     CPoint ceil() const
     {
       return (! CGAL::is_zero(fraction)) ? CPoint(point + 1, 0.) : CPoint(point, 0.);
     }
+
     CPoint floor() const { return CPoint(point, 0.); }
+
     std::string to_string() const
     {
         // return std::to_string( (double) point + fraction);
@@ -540,7 +551,7 @@ struct CInterval;
 using CIntervals = std::vector<CInterval>;
 using CIntervalsID = ID<CIntervals>;
 using CIntervalID = std::size_t;
-using CIntervalIDs = std::vector<CIntervalID>;
+
 
 using CPoints = std::vector<CPoint>;
 
