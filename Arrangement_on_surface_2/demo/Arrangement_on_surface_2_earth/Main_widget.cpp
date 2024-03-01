@@ -61,7 +61,7 @@ void Main_widget::hightlight_country(const std::string& country_name) {
     color /= m_dimming_factor;
     color.setW(1);
     curr_country->set_color(color);
-    qDebug() << "SELECTED COUNTRY: " << country_name;
+    qDebug() << "SELECTED COUNTRY: " << country_name.c_str();
   }
 
   prev_picked_country = country_name;
