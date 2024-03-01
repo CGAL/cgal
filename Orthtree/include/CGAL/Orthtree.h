@@ -705,7 +705,7 @@ public:
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
   template<typename OutputIterator>
-  auto nearest_neighbors(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+  auto neighbors_in_radius(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
     return nearest_k_neighbors_in_radius(query, (std::numeric_limits<std::size_t>::max)(), output);
   }
 
