@@ -126,12 +126,12 @@ struct Lambda {
           Rational start_end_diff = Rational(line_end[i]) - Rational(line_start[i]);
             a += CGAL::square(start_end_diff);
             Rational start_center_diff = Rational(line_start[i]) - Rational(circle_center[i]);
-            b += start_center_diff * start_end_diff;
+            b -= start_center_diff * start_end_diff;
             c += CGAL::square(start_center_diff);
         }
         c -= CGAL::square(Rational(radius));
 
-        Rational minus_b_div_a = - b / a;
+        Rational minus_b_div_a = b / a;
         Rational d = CGAL::square(minus_b_div_a) - c / a;
         if (d >= 0.) {
             if (is_start) {
@@ -249,12 +249,12 @@ bool approximate_reals(const Point& circle_center, distance_t radius,
         Approx istart_end_diff = Approx(line_end[i]) - Approx(line_start[i]);
         ia += CGAL::square(istart_end_diff);
         Approx istart_center_diff = Approx(line_start[i]) - Approx(circle_center[i]);
-        ib += istart_center_diff * istart_end_diff;
+        ib -= istart_center_diff * istart_end_diff;
         ic += CGAL::square(istart_center_diff);
     }
     ic -= CGAL::square(Approx(radius));
 
-    Approx iminus_b_div_a = - ib / ia;
+    Approx iminus_b_div_a = ib / ia;
     Approx id = CGAL::square(iminus_b_div_a) - ic / ia;
     if (id >= 0.) {
         Approx sqrtid = sqrt(id);
@@ -290,12 +290,12 @@ bool exact_reals(const Point& circle_center, distance_t radius,
         Rational start_end_diff = Rational(line_end[i]) - Rational(line_start[i]);
         a += CGAL::square(start_end_diff);
         Rational start_center_diff = Rational(line_start[i]) - Rational(circle_center[i]);
-        b += start_center_diff * start_end_diff;
+        b -= start_center_diff * start_end_diff;
         c += CGAL::square(start_center_diff);
     }
     c -= CGAL::square(Rational(radius));
 
-    Rational minus_b_div_a = - b / a;
+    Rational minus_b_div_a = b / a;
     Rational d = CGAL::square(minus_b_div_a) - c / a;
     if (d >= 0.) {
         Exact start(minus_b_div_a, -1, d);
