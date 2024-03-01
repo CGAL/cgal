@@ -58,7 +58,7 @@ struct Orthtree_traits_base {
    *
    * Two directions along each axis in %Cartesian space, relative to a node.
    *
-   * Directions are mapped to numbers as 3-bit integers in the 3d case or as 2-bit integers in the 2d case.
+   * Directions are mapped to numbers as 3-bit integers in the 3D case or as 2-bit integers in the 2D case.
    * In the 3d case the numbers 6 and 7 are not used because there are only 6 different directions.
    *
    * The first two bits indicate the axis (00 = x, 01 = y, 10 = z),
