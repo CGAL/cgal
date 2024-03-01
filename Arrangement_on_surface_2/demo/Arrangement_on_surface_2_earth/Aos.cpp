@@ -567,7 +567,7 @@ auto Aos::find_new_faces(Kml::Placemarks& placemarks) -> Approx_arcs {
       //for (auto* lring : linear_rings)
       auto* lring = &polygon.outer_boundary;
       {
-        std::size_t num_faces_before = arr.number_of_faces();
+        // std::size_t num_faces_before = arr.number_of_faces();
         std::set<int> polygon_node_ids;
 
         // convert the nodes to points on unit-sphere
@@ -715,7 +715,7 @@ void Aos::save_arr(Kml::Placemarks& placemarks, const std::string& file_name) {
       //for (auto* lring : linear_rings)
       auto* lring = &polygon.outer_boundary;
       {
-        auto num_faces_before = arr.number_of_faces();
+        // auto num_faces_before = arr.number_of_faces();
         std::set<int> polygon_node_ids;
 
         // convert the nodes to points on unit-sphere

@@ -183,7 +183,7 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
   using Itag = CGAL::Exact_predicates_tag;
   using CDT = CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag>;
   using Face_handle = CDT::Face_handle;
-  using Point = CDT::Point;
+  // using Point = CDT::Point;
   using Polygon_2 = CGAL::Polygon_2<K>;
 
   auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
