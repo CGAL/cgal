@@ -28,7 +28,7 @@ protected:
   virtual void mouse_press_event(QMouseEvent* /* e */) {}
   virtual void mouse_move_event(QMouseEvent* /* e */) {}
   virtual void mouse_release_event(QMouseEvent* /* e */) {}
-  virtual void resize(int w, int h) {}
+  virtual void resize(int /* w */, int /* h */) {}
 
   bool m_left_mouse_button_down = false;
   bool m_middle_mouse_button_down = false;
