@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     return(-1);
   }
   const char* file_name = (argc > 1) ? argv[1] :
-    "../../../Data/data/arrangements_3/sphere/ne_110m_admin_0_countries.json";
+    "data/geometry_on_sphere/ne_110m_admin_0_countries.json";
   fi::path file_path(file_name);
   if (! fi::exists(file_path)) {
     std::cerr << "Error: failed to find file " << file_name << "\n";
