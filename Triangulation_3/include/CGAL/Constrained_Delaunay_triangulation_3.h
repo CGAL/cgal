@@ -1238,6 +1238,7 @@ private:
 
     auto& [intersecting_edges, intersecting_cells, vertices_of_upper_cavity, vertices_of_lower_cavity,
            facets_of_upper_cavity, facets_of_lower_cavity] = outputs;
+    std::set<std::pair<Vertex_handle, Vertex_handle>> non_intersecting_edges_set;
 
     // marker for already visited elements
     std::set<Vertex_handle> visited_vertices;
@@ -1462,6 +1463,7 @@ private:
           cached_value_it->second = true;
           return value_returned(true);
         } else {
+          non_intersecting_edges_set.insert(make_sorted_pair(v0, v1));
           cached_value_it->second = false;
           return value_returned(false);
         }
@@ -1575,7 +1577,7 @@ private:
     } // older algorithm
 
     std::set<Facet> facets_of_border;
-    Union_find<Vertex_handle> vertices_of_border_union_find;
+    Union_find<Vertex_handle> vertices_of_cavity_union_find;
     if(!this->use_older_cavity_algorithm()) {
       for(auto c: intersecting_cells) {
         for(int i = 0; i < 4; ++i) {
@@ -1585,12 +1587,12 @@ private:
           }
         }
       }
-      Unique_hash_map<Vertex_handle, typename Union_find<Vertex_handle>::handle> vertices_of_border_handles;
-      for(auto facet: facets_of_border) {
-        for(auto v : tr.vertices(facet)) {
+      Unique_hash_map<Vertex_handle, typename Union_find<Vertex_handle>::handle> vertices_of_cavity_handles;
+      for(auto c: intersecting_cells) {
+        for(auto v : tr.vertices(c)) {
           if(!v->is_marked()) {
             v->set_mark(Vertex_marker::CAVITY);
-            vertices_of_border_handles[v] = vertices_of_border_union_find.make_set(v);
+            vertices_of_cavity_handles[v] = vertices_of_cavity_union_find.make_set(v);
           }
         }
       }
@@ -1600,15 +1602,30 @@ private:
           auto v1 = vertices[i];
           auto v2 = vertices[(i + 1) % 3];
           if(v1->is_marked(Vertex_marker::CAVITY) && v2->is_marked(Vertex_marker::CAVITY)) {
-            vertices_of_border_union_find.unify_sets(vertices_of_border_handles[v1],
-                                                     vertices_of_border_handles[v2]);
+            vertices_of_cavity_union_find.unify_sets(vertices_of_cavity_handles[v1],
+                                                     vertices_of_cavity_handles[v2]);
           }
         }
       }
-      if(vertices_of_border_union_find.number_of_sets() > 2) {
-        std::cerr << "vertices_of_border_union_find.number_of_sets() " << vertices_of_border_union_find.number_of_sets() << "\n";
+      if(vertices_of_cavity_union_find.number_of_sets() > 2) {
+        for(auto c : intersecting_cells) {
+
+          for(int i = 0; i < 4; ++i) {
+            for(int j = i + 1; j < 4; ++j) {
+              const auto v1 = c->vertex(i);
+              const auto v2 = c->vertex(j);
+              if(v1->is_marked(Vertex_marker::CAVITY) && v2->is_marked(Vertex_marker::CAVITY) &&
+                 non_intersecting_edges_set.count(make_sorted_pair(v1, v2)) > 0)
+              {
+                vertices_of_cavity_union_find.unify_sets(vertices_of_cavity_handles[v1],
+                                                         vertices_of_cavity_handles[v2]);
+              }
+            }
+          }
+          if(vertices_of_cavity_union_find.number_of_sets() <= 2)
+            break;
+        }
       }
-      CGAL_assertion(vertices_of_border_union_find.number_of_sets() <= 2);
       Vertex_handle vertex_above{};
       Edges_container all_border_edges{border_edges.begin(), border_edges.end()};
       std::for_each(border_edges.begin(), border_edges.end(), [&](auto edge) {
@@ -1636,25 +1653,25 @@ private:
       }
       CGAL_assume(vertex_above != Vertex_handle{});
 
-      const auto vertex_above_handle = vertices_of_border_handles[vertex_above];
-      auto it = vertices_of_border_union_find.begin();
-      while(it != vertices_of_border_union_find.end() &&
-            vertices_of_border_union_find.same_set(it, vertex_above_handle))
+      const auto vertex_above_handle = vertices_of_cavity_handles[vertex_above];
+      auto it = vertices_of_cavity_union_find.begin();
+      while(it != vertices_of_cavity_union_find.end() &&
+            vertices_of_cavity_union_find.same_set(it, vertex_above_handle))
       {
         ++it;
       }
-      CGAL_assertion((it == vertices_of_border_union_find.end()) ==
-                     (vertices_of_border_union_find.number_of_sets() == 1));
+      CGAL_assertion((it == vertices_of_cavity_union_find.end()) ==
+                     (vertices_of_cavity_union_find.number_of_sets() == 1));
       const auto vertex_below_handle = it;
-      for(auto handle = vertices_of_border_union_find.begin(), end = vertices_of_border_union_find.end();
+      for(auto handle = vertices_of_cavity_union_find.begin(), end = vertices_of_cavity_union_find.end();
           handle != end; ++handle)
       {
         auto v = *handle;
         v->clear_mark(Vertex_marker::CAVITY);
-        if(vertices_of_border_union_find.same_set(handle, vertex_above_handle)) {
+        if(vertices_of_cavity_union_find.same_set(handle, vertex_above_handle)) {
           vertices_of_upper_cavity.push_back(v);
           v->set_mark(Vertex_marker::CAVITY_ABOVE);
-        } else if(vertices_of_border_union_find.same_set(handle, vertex_below_handle)) {
+        } else if(vertices_of_cavity_union_find.same_set(handle, vertex_below_handle)) {
           vertices_of_lower_cavity.push_back(v);
           v->set_mark(Vertex_marker::CAVITY_BELOW);
         } else {
@@ -1775,6 +1792,9 @@ private:
   void restore_subface_region(CDT_3_face_index face_index, int region_index,
                               CDT_2& non_const_cdt_2, Fh_region& non_const_fh_region)
   {
+    if(this->debug_regions()) {
+      std::cerr << "restore_subface_region face index: " << face_index << ", region #" << region_index << "\n";
+    }
     const auto& cdt_2 = non_const_cdt_2;
     const auto& fh_region = non_const_fh_region;
     const auto border_edges = brute_force_border_3_of_region(face_index, region_index, cdt_2, fh_region);
@@ -2663,9 +2683,11 @@ private:
   bool restore_face(CDT_3_face_index face_index) {
     CDT_2& non_const_cdt_2 = face_cdt_2[face_index];
     const CDT_2& cdt_2 = non_const_cdt_2;
-#if CGAL_DEBUG_CDT_3 && __has_include(<format>)
-    std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
-#endif // CGAL_DEBUG_CDT_3
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+    if(this->debug_copy_triangulation_into_hole()) {
+      std::cerr << std::format("restore_face({}): CDT_2 has {} vertices\n", face_index, cdt_2.number_of_vertices());
+    }
+#endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     for(const auto& edge : cdt_2.finite_edges()) {
       const auto fh = edge.first;
       const auto i = edge.second;
@@ -2686,7 +2708,7 @@ private:
       reverse_edge.first->info().is_edge_also_in_3d_triangulation[unsigned(reverse_edge.second)] = is_3d;
     }
     std::set<CDT_2_face_handle> processed_faces;
-    int region_index = 0;
+    auto& region_index = faces_region_numbers[face_index];
     for(const CDT_2_face_handle fh : cdt_2.finite_face_handles()) {
       if(fh->info().is_outside_the_face) continue;
       if(false == fh->info().missing_subface) {
@@ -2849,6 +2871,7 @@ public:
   void restore_constrained_Delaunay()
   {
     is_Delaunay = false;
+    faces_region_numbers.resize(face_constraint_misses_subfaces.size());
     for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
       CDT_2& cdt_2 = face_cdt_2[i];
       fill_cdt_2(cdt_2, i);
@@ -3068,6 +3091,7 @@ protected:
   std::vector<std::vector<std::vector<Face_edge>>> face_borders;
   std::multimap<Constraint_id, CDT_3_face_index> constraint_to_faces;
   boost::dynamic_bitset<> face_constraint_misses_subfaces;
+  std::vector<std::size_t> faces_region_numbers;
 };
 
 } // end CGAL
