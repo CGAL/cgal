@@ -13,8 +13,6 @@ Quadtree, Octree and Orthtree Reference
 /// \defgroup PkgOrthtreeTraversal Traversal
 /// \ingroup PkgOrthtreeRef
 
-/// \defgroup PkgOrthtreeNeighbors Neighbor Search Functions
-/// \ingroup PkgOrthtreeRef
 
 
 /*!
