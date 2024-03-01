@@ -27,7 +27,7 @@ namespace CGAL {
   \tparam GeomTraits a model of `Kernel`
   \tparam PointRange a model of `Range` whose value type is the key type of `PointMap`
   \tparam PointMap a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
-  \tparam cubic_nodes boolean to enforce cubic nodes
+  \tparam cubic_nodes Boolean to enforce cubic nodes
  */
 template <
   typename GeomTraits,
