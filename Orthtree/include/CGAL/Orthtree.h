@@ -1366,7 +1366,9 @@ private: // functions :
         auto child_node = child(node, i);
 
         FT squared_distance = 0;
-        for (const auto& r : cartesian_range(m_traits.construct_center_d_object()(search_bounds), barycenter(child_node))) {
+        Point c = m_traits.construct_center_d_object()(search_bounds);
+        Point b = barycenter(child_node);
+        for (const auto r : cartesian_range(c, b)) {
           FT d = (get<0>(r) - get<1>(r));
           squared_distance += d * d;
         }
