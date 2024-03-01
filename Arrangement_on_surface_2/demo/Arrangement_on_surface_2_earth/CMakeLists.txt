@@ -1,7 +1,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.1...3.23)
-project(earth LANGUAGES CXX)
+project(Arrangement_on_surface_2_earth_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
