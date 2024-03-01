@@ -22,7 +22,7 @@ public:
   constexpr int dimension; ///< Dimension.
   using FT = unspecified_type; ///< The number type of the %Cartesian coordinates of types `Point_d`
   using Point_d = unspecified_type; ///< Point type.
-  using Bbox_d = unspecified_type; ///< Bounding box type. Must be constructible from a pair of `Point_d` types.
+  using Bbox_d = unspecified_type; ///< Bounding box type. Must be constructible from a pair of `Point_d` objects.
 
   /*!
     A random access iterator type to enumerate the
