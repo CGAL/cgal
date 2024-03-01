@@ -127,7 +127,7 @@ public:
   static inline constexpr bool has_data = Orthtree_impl::has_Node_data<GeomTraits>::value;
   static inline constexpr bool supports_neighbor_search = true;// Orthtree_impl::has_Squared_distance_of_element<GeomTraits>::value;
 #else
-  static inline constexpr bool has_data = bool_value; ///< `true` if `GeomTraits` is a model of `OrthtreeTraitswithData` and `false` otherwise.
+  static inline constexpr bool has_data = bool_value; ///< `true` if `GeomTraits` is a model of `OrthtreeTraitsWithData` and `false` otherwise.
   static inline constexpr bool supports_neighbor_search = bool_value; ///< `true` if `GeomTraits` is a model of `CollectionPartitioningOrthtreeTraits` and `false` otherwise.
 #endif
   static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
