@@ -935,7 +935,7 @@ public:
 
     Equivalent to `tree.descendant(tree.root(), indices...)`.
 
-    \param indices the integer indices specifying the descent to perform, starting from root
+    \param indices the integer indices specifying the descent to perform, starting from the root
 
     \return the index of the specified node
    */
