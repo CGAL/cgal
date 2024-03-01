@@ -30,7 +30,7 @@ Traits class for the `Orthtree` class to be used to construct a 3D octree around
 a triangulated surface mesh. Each node of the octree will store all the faces of the
 mesh intersected by its bounding box. The subdivision of the octree is controlled
 by the nested class `Orthtree_traits_face_graph::Split_predicate_node_min_extent`
-to which the minimal extend of a node should be provided.
+to which the minimal extent of a node should be provided.
 
 \tparam TriangleMesh a model of `FaceListGraph` with all faces being triangles
 \tparam VertexPointMap a property map associating points to the vertices of `TriangleMesh`
