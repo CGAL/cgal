@@ -111,7 +111,7 @@ struct Node_data_wrapper<GT, false>
   \sa `CGAL::Quadtree`
   \sa `CGAL::Octree`
 
-  \tparam GeomTraits must be a model of `OrthtreeTraits` or `OrthtreeTraitswithData`.
+  \tparam GeomTraits must be a model of `OrthtreeTraits` or `OrthtreeTraitsWithData`.
  */
 template <typename GeomTraits>
 class Orthtree {
