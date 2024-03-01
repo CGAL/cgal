@@ -123,18 +123,19 @@ struct Lambda {
 
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
-            Rational diff = Rational(line_end[i]) - Rational(line_start[i]);
-            a += CGAL::square(diff);
-            b += (Rational(line_start[i]) - Rational(circle_center[i])) * diff;
-            c += CGAL::square(Rational(line_start[i]) -
-                              Rational(circle_center[i]));
+          Rational start_end_diff = Rational(line_end[i]) - Rational(line_start[i]);
+            a += CGAL::square(start_end_diff);
+            Rational start_center_diff = Rational(line_start[i]) - Rational(circle_center[i]);
+            b += start_center_diff * start_end_diff;
+            c += CGAL::square(start_center_diff);
         }
         c -= CGAL::square(Rational(radius));
 
-        Rational d = CGAL::square(b / a) - c / a;
+        Rational minus_b_div_a = - b / a;
+        Rational d = CGAL::square(minus_b_div_a) - c / a;
         if (d >= 0.) {
             if (is_start) {
-                Exact start(-b / a, -1, d);
+                Exact start(minus_b_div_a, -1, d);
                 if (is_negative(start)) start = Exact(0);
                 if (start <= Exact(1)) {
                     exact = std::make_optional(start);
@@ -143,7 +144,7 @@ struct Lambda {
                     return true;
                 }
             } else {
-                Exact end(-b / a, 1, d);
+                Exact end(minus_b_div_a, 1, d);
                 if (end > Exact(1)) end = Exact(1);
                 if (end >= Exact(0)) {
                     exact = std::make_optional(end);
@@ -245,18 +246,20 @@ bool approximate_reals(const Point& circle_center, distance_t radius,
     typedef CGAL::Interval_nt<> Approx;
     Approx ia(0), ib(0), ic(0);
     for (auto i = 0; i < 2; ++i) {
-        Approx idiff = Approx(line_end[i]) - Approx(line_start[i]);
-        ia += CGAL::square(idiff);
-        ib += (Approx(line_start[i]) - Approx(circle_center[i])) * idiff;
-        ic += CGAL::square(Approx(line_start[i]) - Approx(circle_center[i]));
+        Approx istart_end_diff = Approx(line_end[i]) - Approx(line_start[i]);
+        ia += CGAL::square(istart_end_diff);
+        Approx istart_center_diff = Approx(line_start[i]) - Approx(circle_center[i]);
+        ib += istart_center_diff * istart_end_diff;
+        ic += CGAL::square(istart_center_diff);
     }
     ic -= CGAL::square(Approx(radius));
 
-    Approx id = CGAL::square(ib / ia) - ic / ia;
+    Approx iminus_b_div_a = - ib / ia;
+    Approx id = CGAL::square(iminus_b_div_a) - ic / ia;
     if (id >= 0.) {
         Approx sqrtid = sqrt(id);
-        Approx istart = -ib / ia - sqrtid;
-        Approx iend = -ib / ia + sqrtid;
+        Approx istart = iminus_b_div_a - sqrtid;
+        Approx iend = iminus_b_div_a + sqrtid;
         if (is_negative(istart)) istart = Approx(0);
         if (iend > Approx(1)) iend = Approx(1);
         if (istart <= Approx(1) && iend >= Approx(0)) {
@@ -284,17 +287,19 @@ bool exact_reals(const Point& circle_center, distance_t radius,
 
     Rational a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {
-        Rational diff = Rational(line_end[i]) - Rational(line_start[i]);
-        a += CGAL::square(diff);
-        b += (Rational(line_start[i]) - Rational(circle_center[i])) * diff;
-        c += CGAL::square(Rational(line_start[i]) - Rational(circle_center[i]));
+        Rational start_end_diff = Rational(line_end[i]) - Rational(line_start[i]);
+        a += CGAL::square(start_end_diff);
+        Rational start_center_diff = Rational(line_start[i]) - Rational(circle_center[i]);
+        b += start_center_diff * start_end_diff;
+        c += CGAL::square(start_center_diff);
     }
     c -= CGAL::square(Rational(radius));
 
-    Rational d = CGAL::square(b / a) - c / a;
+    Rational minus_b_div_a = - b / a;
+    Rational d = CGAL::square(minus_b_div_a) - c / a;
     if (d >= 0.) {
-        Exact start(-b / a, -1, d);
-        Exact end(-b / a, 1, d);
+        Exact start(minus_b_div_a, -1, d);
+        Exact end(minus_b_div_a, 1, d);
         if (is_negative(start)) start = Exact(0);
         if (end > Exact(1)) end = Exact(1);
         if (start <= Exact(1) && end >= Exact(0)) {

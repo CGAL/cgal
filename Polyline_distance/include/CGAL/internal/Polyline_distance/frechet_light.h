@@ -1356,7 +1356,7 @@ Certificate& FrechetLight::computeCertificate()
     cert.setAnswer(answer);
 
     if (answer) {
-        CPositions rev_traversal;
+        std::vector<CPosition> rev_traversal;
         CPosition cur_pos = {CPoint(curve1.size() - 1, 0),
                              CPoint(curve2.size() - 1, 0)};
         rev_traversal.push_back(cur_pos);
