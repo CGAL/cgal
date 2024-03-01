@@ -457,7 +457,7 @@ public:
         int envelope_coef = 1;
         if (! m_traits.m_is_lower) envelope_coef = -1;
 
-        Sign sign_c_diff = CGAL_NTS sign(c_diff);
+        Rational sign_c_diff = Rational(sign(c_diff));
         Rational la = envelope_coef*2*a_diff*sign_c_diff;
         Rational lb = envelope_coef*2*b_diff*sign_c_diff;
         Rational lc = envelope_coef*sign_c_diff*(2*c_diff*z_plane - m);
