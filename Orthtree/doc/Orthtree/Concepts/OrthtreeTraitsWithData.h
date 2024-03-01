@@ -44,7 +44,7 @@ public:
    * \brief Functor which fills the contents of the nodes children.
    *
    * Provides the operator:
-   * `void operator()(typename Tree::Node_index, Tree&, const Point_d&)`
+   * `void operator()(Node_index, Orthtree<Traits>&, const Point_d&)`
    *
    * The functor is called during refinement of the `Orthtree` on a node after it has been split. The purpose of the functor is to
    * distribute the `Node_data`, accessible via `tree.data()`, to the data of the nodes children, accessible via `tree.children()`.
