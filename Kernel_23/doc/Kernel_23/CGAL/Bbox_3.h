@@ -115,6 +115,12 @@ Bbox_3& operator+=(const Bbox_3 &c);
 dilates the bounding box by a specified number of ULP.
 */
 void dilate(int dist);
+
+/*!
+scales the bounding box by a factor, while keeping its center fixed.
+*/
+void scale(double factor);
+
 /// @}
 
 }; /* end Bbox_3 */
