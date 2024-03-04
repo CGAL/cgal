@@ -73,7 +73,7 @@ template <class Kernel, class Container, class Rule = Even_odd_rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Rule rule = Rule())
 {
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
-  pr.add_to_triangulation_even_odd(mp);
+  pr.add_to_triangulation_even_odd(p);
   if (pr.triangulation().number_of_faces() > 0) {
     pr.label_triangulation_even_odd();
     pr.reconstruct_multipolygon();
