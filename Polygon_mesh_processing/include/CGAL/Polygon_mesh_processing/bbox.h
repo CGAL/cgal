@@ -335,12 +335,13 @@ namespace CGAL {
 
       if(!dont_triangulate)
       {
-        for (auto h : halfedges(bbox_mesh))
+        std::size_t k=0;
+        std::array<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, 8> hfaces;
+        for (auto f : faces(bbox_mesh))
+          hfaces[k++]=halfedge(f, bbox_mesh);
+        for (auto h : hfaces)
         {
-          if (is_quad(h, bbox_mesh))
-            CGAL::Euler::split_face(h, next(next(h, bbox_mesh), bbox_mesh), bbox_mesh);
-          else
-            CGAL_assertion(is_triangle(h, bbox_mesh));
+          CGAL::Euler::split_face(h, next(next(h, bbox_mesh), bbox_mesh), bbox_mesh);
         }
       }
       CGAL::copy_face_graph(bbox_mesh, pmesh,
