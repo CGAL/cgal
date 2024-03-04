@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `AABBGeomTraits_3` defines the requirements for the first template parameter of the class
-`CGAL::AABB_traits<AABBGeomTraits_3, AABBPrimitive>`. It provides predicates and constructors to detect
+`CGAL::AABB_traits_3<AABBGeomTraits_3, AABBPrimitive>`. It provides predicates and constructors to detect
 and compute intersections between query objects and the primitives stored in the AABB tree.
 In addition, it contains predicates and constructors to compute distances between a point query
 and the primitives stored in the AABB tree.
@@ -200,4 +200,3 @@ Equal_3 equal_3_object();
 /// @}
 
 }; /* end AABBGeomTraits_3 */
-
