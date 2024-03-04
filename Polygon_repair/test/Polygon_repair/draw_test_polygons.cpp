@@ -4,7 +4,7 @@
 #include <filesystem>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_repair/Polygon_repair.h>
+#include <CGAL/Polygon_repair/repair.h>
 #include <CGAL/draw_polygon_2.h>
 #include <CGAL/draw_polygon_with_holes_2.h>
 #include <CGAL/draw_multipolygon_with_holes_2.h>

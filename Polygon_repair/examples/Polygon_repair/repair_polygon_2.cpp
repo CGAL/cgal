@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_repair/Polygon_repair.h>
+#include <CGAL/Polygon_repair/repair.h>
 #include <CGAL/IO/WKT.h>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
