@@ -32,37 +32,35 @@ public:
 
   /*!
     A functor object to construct the source point of a ray. Provides the operator:
-    `Point operator()(const Ray&);`
+    `Point_3 operator()(const Ray_3&);`
    */
-  typedef unspecified_type Construct_source;
+  typedef unspecified_type Construct_source_3;
 
   /*!
    */
-  Construct_source construct_source_object();
+  Construct_source_3 construct_source_3_object();
 
   /*!
-    @todo update me
     A model of `CartesianConstIterator3`.
    */
-  typedef unspecified_type Cartesian_const_iterator;
+  typedef unspecified_type Cartesian_const_iterator_3;
 
   /*!
-    @todo update me
     A model of `ConstructCartesianConstIterator3`.
    */
-  typedef unspecified_type  Construct_cartesian_const_iterator;
+  typedef unspecified_type  Construct_cartesian_const_iterator_3;
 
   /*!
    */
-  Construct_source construct_cartesian_const_iterator_object();
+  Construct_source_3 construct_cartesian_const_iterator_3_object();
 
   /*!
     A functor object to construct a vector giving the direction of a ray. Provides the operator:
-    `Vector operator()(const Ray&);`
+    `Vector_3 operator()(const Ray_3&);`
    */
-  typedef unspecified_type Construct_vector;
+  typedef unspecified_type Construct_vector_3;
 
   /*!
    */
-  Construct_source construct_vector_object();
+  Construct_source_3 construct_vector_3_object();
 };
