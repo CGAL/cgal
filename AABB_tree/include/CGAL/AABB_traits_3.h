@@ -72,7 +72,7 @@ struct AABB_traits_intersection_base<GeomTraits,true>{
   typedef typename GeomTraits::Ray_3 Ray_3;
   typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Point_3 Point;
-  typedef typename GeomTraits::Point_3 Ray;
+  typedef typename GeomTraits::Ray_3 Ray;
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::FT    FT;
   typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
