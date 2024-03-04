@@ -25,7 +25,7 @@ namespace CGAL
 template <class Traits>
 struct AABB_search_tree
 {
-  
+
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
   typedef First_of_pair_property_map<Point_and_primitive_id> Pmap;
   typedef Search_traits_adapter<Point_and_primitive_id, Pmap, Traits> TreeTraits;
@@ -65,4 +65,3 @@ public:
 }
 
 #endif // CGAL_AABB_SEARCH_TREE_H
-
