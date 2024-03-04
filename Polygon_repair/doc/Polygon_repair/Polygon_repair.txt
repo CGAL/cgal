@@ -152,7 +152,6 @@ with holes has zero holes and extract these if needed.
 
 It is possible to repair a polygon, polygon with holes or multipolygon with holes
 using the even-odd rule by calling the `Polygon_repair::repair()` function
-giving as second argument the `Polygon_repair::Even_odd_rule`
 as shown in the following example. This function returns a repaired multipolygon with holes.
 
 \cgalExample{Polygon_repair/repair_polygon_2.cpp}

@@ -37,14 +37,9 @@ class Polygon_repair;
 /// \tparam Kernel parameter of the input and output polygons
 /// \tparam Container parameter of the input and output polygons
 ///  \tparam Rule must be `Even_odd_rule`
-template <class Kernel, class Container, class Rule>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p , Rule rule) {
-    CGAL_assertion(false); // rule not implemented
-    return Multipolygon_with_holes_2<Kernel, Container>();
-  }
-
-template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p, Even_odd_rule) {
+template <class Kernel, class Container, class Rule = Even_odd_rule>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p , Rule rule = Rule())
+{
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_even_odd(p);
   if (pr.triangulation().number_of_faces() > 0) {
@@ -58,14 +53,9 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Cont
 /// \tparam Kernel parameter of the input and output polygons
 /// \tparam Container parameter of the input and output polygons
 ///  \tparam Rule must be `Even_odd_rule`
-template <class Kernel, class Container, class Rule>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Rule rule) {
-  CGAL_assertion(false); // rule not implemented
-  return Multipolygon_with_holes_2<Kernel, Container>();
-}
-
-template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Even_odd_rule) {
+template <class Kernel, class Container, class Rule = Even_odd_rule>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Rule rule = Rule())
+{
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_even_odd(p);
   if (pr.triangulation().number_of_faces() > 0) {
@@ -79,14 +69,9 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
 /// \tparam Kernel parameter of the input and output polygons
 /// \tparam Container parameter of the input and output polygons
 ///  \tparam Rule must be `Even_odd_rule`
-template <class Kernel, class Container, class Rule>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Rule rule) {
-  CGAL_assertion(false); // rule not implemented
-  return Multipolygon_with_holes_2<Kernel, Container>();
-}
-
-template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& mp, Even_odd_rule) {
+template <class Kernel, class Container, class Rule = Even_odd_rule>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Rule rule = Rule())
+{
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_even_odd(mp);
   if (pr.triangulation().number_of_faces() > 0) {
