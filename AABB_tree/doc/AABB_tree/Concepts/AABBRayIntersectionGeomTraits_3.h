@@ -2,7 +2,7 @@
 \ingroup PkgAABBTreeConcepts
 \cgalConcept
 
-The concept `AABBRayIntersectionGeomTraits` is a refinement of the
+The concept `AABBRayIntersectionGeomTraits_3` is a refinement of the
 concept `AABBGeomTraits`. In addition to the types required by
 `AABBGeomTraits` it also requires types and functors necessary to
 define the Intersection_distance functor.
@@ -18,7 +18,7 @@ define the Intersection_distance functor.
 \sa `AABBPrimitive`
 
 */
-class AABBRayIntersectionGeomTraits {
+class AABBRayIntersectionGeomTraits_3 {
 public:
   /*!
     Type of a ray.
