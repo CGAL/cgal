@@ -973,6 +973,7 @@ private:
           CDT_2_face_handle fh;
           bool outside;
         };
+        const auto d = cdt_2.dimension();
         std::stack<Face_handle_and_outside> stack;
         stack.push({cdt_2.infinite_face(), true});
         while(!stack.empty()) {
@@ -980,7 +981,7 @@ private:
           stack.pop();
           if(fh->info().is_outside_the_face == -1) {
             fh->info().is_outside_the_face = outside;
-            for(int i = 0; i < 3; ++i) {
+            for(int i = 0; i <= d; ++i) {
               const auto neighbor = fh->neighbor(i);
               const auto new_outside = fh->is_constrained(i) ? !outside : outside;
               if(neighbor->info().is_outside_the_face == -1) {
