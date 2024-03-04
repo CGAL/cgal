@@ -596,24 +596,22 @@ bool build_triangulation_from_file(std::istream& is,
 
   bool is_CGAL_mesh = false;
 
-  while(is >> word && word != "End")
+  std::string line;
+  while(std::getline(is, line) && line != "End")
   {
-    if (word.at(0) == '#')
+    // remove trailing whitespace, in particular a possible '\r' from Windows
+    // end-of-line encoding
+    if(!line.empty() && std::isspace(line.back())) {
+      line.pop_back();
+    }
+    if (line.size() > 0 && line.at(0) == '#' &&
+        line.find("CGAL::Mesh_complex_3_in_triangulation_3") != std::string::npos)
     {
-      is >> word;
-      if (word == "End")
-      {
-        break;
-      }
-      else if (word == "CGAL::Mesh_complex_3_in_triangulation_3")
-      {
-        is_CGAL_mesh = true; // with CGAL meshes, domain 0 should be kept
-        continue;
-      }
-      //else skip other comments
+      is_CGAL_mesh = true; // with CGAL meshes, domain 0 should be kept
+      continue;
     }
 
-    if(word == "Vertices")
+    if(line == "Vertices")
     {
       is >> nv;
       for(int i=0; i<nv; ++i)
@@ -629,8 +627,10 @@ bool build_triangulation_from_file(std::istream& is,
       }
     }
 
-    if(word == "Triangles")
+    if(line == "Triangles")
     {
+      bool has_negative_surface_patch_ids = false;
+      typename Tr::Cell::Surface_patch_index max_surface_patch_id = 0;
       is >> nf;
       for(int i=0; i<nf; ++i)
       {
@@ -642,7 +642,8 @@ bool build_triangulation_from_file(std::istream& is,
             std::cerr << "Issue while reading triangles" << std::endl;
           return false;
         }
-
+        has_negative_surface_patch_ids |= (surface_patch_id < 0);
+        max_surface_patch_id = (std::max)(max_surface_patch_id, surface_patch_id);
         Facet facet;
         facet[0] = n[0] - 1;
         facet[1] = n[1] - 1;
@@ -668,9 +669,18 @@ bool build_triangulation_from_file(std::istream& is,
 
         border_facets.emplace(facet, surface_patch_id);
       }
+      if(has_negative_surface_patch_ids)
+      {
+        if(verbose)
+          std::cerr << "Warning: negative surface patch ids" << std::endl;
+        for(auto& facet_and_patch_id  : border_facets) {
+          if(facet_and_patch_id.second < 0)
+            facet_and_patch_id.second = max_surface_patch_id - facet_and_patch_id.second;
+        }
+      }
     }
 
-    if(word == "Tetrahedra")
+    if(line == "Tetrahedra")
     {
       is >> ntet;
       for(int i=0; i<ntet; ++i)

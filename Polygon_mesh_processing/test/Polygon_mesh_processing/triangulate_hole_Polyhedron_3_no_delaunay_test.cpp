@@ -1,22 +1,21 @@
 //#define POLY
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/do_not_use_DT3.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+
 #ifdef POLY
 #include <CGAL/Polyhedron_3.h>
 #else
 #include <CGAL/Surface_mesh.h>
 #endif
+
 #include <CGAL/boost/graph/helpers.h>
-
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-
-#include <CGAL/assertions.h>
-
 #include <CGAL/boost/graph/Euler_operations.h>
 
 #include <CGAL/Weights/uniform_weights.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <cassert>
 #include <vector>

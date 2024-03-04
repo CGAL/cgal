@@ -4,7 +4,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -19,8 +19,11 @@
 #include <iterator>
 #include <utility>
 
-#ifndef CGAL_GRAPH_TRAITS_2D_TDS_HELPERS
-#define CGAL_GRAPH_TRAITS_2D_TDS_HELPERS
+#ifndef CGAL_GRAPH_TRAITS_2D_TDS_HELPERS_H
+#define CGAL_GRAPH_TRAITS_2D_TDS_HELPERS_H
+
+#include <CGAL/license/TDS_2.h>
+
 
 namespace CGAL {
 namespace internal {
@@ -319,4 +322,4 @@ struct hash<CGAL::internal::TDS2_halfedge_descriptor<TDS> >
 
 } // namespace std
 
-#endif // CGAL_GRAPH_TRAITS_2D_TDS_HELPERS
+#endif // CGAL_GRAPH_TRAITS_2D_TDS_HELPERS_H

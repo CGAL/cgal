@@ -16,6 +16,10 @@ Release date: October 2023
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
 - **Breaking change**: The file CMake file `UseCGAL.cmake` has been removed from CGAL. Usages of the CMake variables `${CGAL_USE_FILE}` and `${CGAL_LIBRARIES}` must be replaced by a link to the imported target `CGAL::CGAL`, for example: `target_link_library(the_target PRIVATE CGAL::CGAL)`.
 
+### [Polygon Repair](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonRepair) (new package)
+
+-   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
+    using the odd-even heuristic.
 
 #### 2D Arrangements
 
@@ -23,13 +27,15 @@ Release date: October 2023
     `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
     has been removed.
 
+- Eliminated the error-prone c-type casting that was used to define observers. In general, backward compatibility was maintained; however, the former class template `Arr_observer` was replaced by an alias template. (The former class Arr_observer was renamed to Aos_observer).
+
+- Introduced `Arr_dcel`, which essentially replaces the former `Arr_default_dcel`. Backward compatibility was maintained by the introduction of the alias template `Arr_default_dcel`. `Arr_dcel`, as opposed to the former `Arr_default_dcel` is templated (in addition to the geometry traits) by Vertex, Halfedge, and Face template parameters, and they have default type values. All this enables the layered extension of DCEL records.
+
 #### Envelopes of Surfaces in 3D
 - **Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
 
-### [Polygon Repair](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonRepair) (new package)
-
--   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
-    using the odd-even heuristic.
+- Passed the base class of `Env_plane_traits_3` as a template parameter with a default value (being the 2D arrangement linear traits). Similarly, passed the base class of `Env_triangle_traits_3` as a template parameter with a default value (being the 2D arrangement segment traits).
+>>>>>>> cgal/master
 
 ### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps) and [Generalized Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgGeneralizedMaps)
 
@@ -78,6 +84,13 @@ Release date: October 2023
 ### [3D Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulation3)
 -   Added three functions `vertices()` to the class `Triangulation_3`.
     Each of them returns an array containing the vertices of the given triangulation simplex.
+
+### [dD Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulations)
+-   **Breaking change**: `CGAL::TDS_full_cell_mirror_storage_policy` is now unsupported in dimension larger than 127.
+-   **Breaking change**: Inserting multiple unweighted points in the same
+    position now keeps the first one, instead of switching to the latest. This
+    only affects custom point types where not all points in the same position
+    are equivalent.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------

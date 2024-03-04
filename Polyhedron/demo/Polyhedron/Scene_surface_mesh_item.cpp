@@ -984,62 +984,66 @@ Scene_surface_mesh_item_priv::triangulate_facet(face_descriptor fd,
     return;
   }
 
-  typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
   const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
-  FT triangulation(fd,normal,smesh_, offset);
+
   //iterates on the internal faces
-  for(FT::CDT::Finite_faces_iterator
-      ffit = triangulation.cdt->finite_faces_begin(),
-      end = triangulation.cdt->finite_faces_end();
-      ffit != end; ++ffit)
-  {
-    if(ffit->info().is_external)
-      continue;
+  auto f = [&](auto& ffit, auto& v2v) {
+    if (ffit.info().is_external)
+      return;
     //add the vertices to the positions
     //adds the vertices, normals and colors to the appropriate vectors
-    if(!index)
+    if (!index)
     {
       CGAL::IO::Color* color;
-      if(has_fpatch_id)
+      if (has_fpatch_id)
       {
-        QColor c= item->color_vector()[fpatch_id_map[fd] - min_patch_id];
-        color = new CGAL::IO::Color(c.red(),c.green(),c.blue());
+        QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id];
+        color = new CGAL::IO::Color(c.red(), c.green(), c.blue());
       }
-      else if(has_fcolors)
+      else if (has_fcolors)
         color = &(*fcolors)[fd];
       else
         color = nullptr;
 
-      addFlatData(ffit->vertex(0)->point()-offset,
-                  (*fnormals)[fd],
-                  color,
-                  name);
-      addFlatData(ffit->vertex(1)->point()-offset,
-                  (*fnormals)[fd],
-                  color,
-                  name);
+      addFlatData(ffit.vertex(0)->point() - offset,
+        (*fnormals)[fd],
+        color,
+        name);
+      addFlatData(ffit.vertex(1)->point() - offset,
+        (*fnormals)[fd],
+        color,
+        name);
 
-      addFlatData(ffit->vertex(2)->point()-offset,
-                  (*fnormals)[fd],
-                  color,
-                  name);
-      if(has_fpatch_id)
+      addFlatData(ffit.vertex(2)->point() - offset,
+        (*fnormals)[fd],
+        color,
+        name);
+      if (has_fpatch_id)
         delete color;
     }
     //adds the indices to the appropriate vector
     else
     {
-      if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
+      if (name.testFlag(Scene_item_rendering_helper::GEOMETRY))
       {
-        idx_data_.push_back((*im)[triangulation.v2v[ffit->vertex(0)]]);
-        idx_data_.push_back((*im)[triangulation.v2v[ffit->vertex(1)]]);
-        idx_data_.push_back((*im)[triangulation.v2v[ffit->vertex(2)]]);
+        idx_data_.push_back((*im)[v2v[ffit.vertex(0)]]);
+        idx_data_.push_back((*im)[v2v[ffit.vertex(1)]]);
+        idx_data_.push_back((*im)[v2v[ffit.vertex(2)]]);
       }
     }
+  };
 
+  try {
+    FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> triangulation(fd, normal, smesh_, offset);
+    triangulation.per_face(f);
+  }
+  catch (...) {
+    FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor, CGAL::Exact_intersections_tag> triangulation(fd, normal, smesh_, offset);
+    triangulation.per_face(f);
   }
 }
+
 void delete_aabb_tree(Scene_surface_mesh_item* item)
 {
     QVariant aabb_tree_property = item->property(aabb_property_name);
@@ -1356,7 +1360,6 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
 QList<EPICK::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(face_descriptor fit,
                                                 EPICK::Vector_3 normal)
 {
-  typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
   //The output list
   QList<EPICK::Triangle_3> res;
   //check if normal contains NaN values
@@ -1365,23 +1368,27 @@ QList<EPICK::Triangle_3> Scene_surface_mesh_item_priv::triangulate_primitive(fac
     qDebug()<<"Warning in triangulation of the selection item: normal contains NaN values and is not valid.";
     return QList<EPICK::Triangle_3>();
   }
-  FT triangulation(fit,normal,smesh_);
+
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
-  for( FT::CDT::Finite_faces_iterator
-      ffit = triangulation.cdt->finite_faces_begin(),
-      end = triangulation.cdt->finite_faces_end();
-      ffit != end; ++ffit)
-  {
-    if(ffit->info().is_external)
-      continue;
+  auto f = [&](auto &ffit, auto&) {
+    if (ffit.info().is_external)
+      return;
 
+    res << EPICK::Triangle_3(ffit.vertex(0)->point(),
+      ffit.vertex(1)->point(),
+      ffit.vertex(2)->point());
+    };
 
-    res << EPICK::Triangle_3(ffit->vertex(0)->point(),
-                              ffit->vertex(1)->point(),
-                              ffit->vertex(2)->point());
-
+  try {
+    FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> triangulation(fit, normal, smesh_);
+    triangulation.per_face(f);
   }
+  catch (...) {
+    FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor, CGAL::Exact_intersections_tag> triangulation(fit, normal, smesh_);
+    triangulation.per_face(f);
+  }
+
   return res;
 }
 
@@ -2619,21 +2626,24 @@ void Scene_surface_mesh_item::fill_flat_vertex_map()
           return;
         }
 
-        typedef FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> FT;
         const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
         EPICK::Vector_3 offset(off.x,off.y,off.z);
-        FT triangulation(fd,normal,face_graph(), offset);
-        //iterates on the internal faces
-        for(FT::CDT::Finite_faces_iterator
-            ffit = triangulation.cdt->finite_faces_begin(),
-            end = triangulation.cdt->finite_faces_end();
-            ffit != end; ++ffit)
-        {
-          if(ffit->info().is_external)
-            continue;
-          d->flat_vertices_map[triangulation.v2v[ffit->vertex(0)]].push_back(counter++);
-          d->flat_vertices_map[triangulation.v2v[ffit->vertex(1)]].push_back(counter++);
-          d->flat_vertices_map[triangulation.v2v[ffit->vertex(2)]].push_back(counter++);
+
+        auto f = [&](auto ffit, auto &v2v) {
+          if (ffit.info().is_external)
+            return;
+          d->flat_vertices_map[v2v[ffit.vertex(0)]].push_back(counter++);
+          d->flat_vertices_map[v2v[ffit.vertex(1)]].push_back(counter++);
+          d->flat_vertices_map[v2v[ffit.vertex(2)]].push_back(counter++);
+          };
+
+        try {
+          FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor> triangulation(fd, normal, face_graph(), offset);
+          triangulation.per_face(f);
+        }
+        catch (...) {
+          FacetTriangulator<SMesh, EPICK, boost::graph_traits<SMesh>::vertex_descriptor, CGAL::Exact_intersections_tag> triangulation(fd, normal, face_graph(), offset);
+          triangulation.per_face(f);
         }
       }
     }
