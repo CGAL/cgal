@@ -246,8 +246,8 @@ public:
   typedef typename GeomTraits::Compute_squared_distance_3 Squared_distance;
   Squared_distance squared_distance_object() const { return GeomTraits().compute_squared_distance_3_object(); }
 
-  typedef typename GeomTraits::Equal_3 Equal_3;
-  Equal_3 equal_3_object() const { return GeomTraits().equal_3_object(); }
+  typedef typename GeomTraits::Equal_3 Equal;
+  Equal equal_object() const { return GeomTraits().equal_3_object(); }
 
   /**
    * @internal

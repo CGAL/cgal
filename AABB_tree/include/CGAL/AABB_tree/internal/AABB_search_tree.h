@@ -25,9 +25,7 @@ namespace CGAL
 template <class Traits>
 struct AABB_search_tree
 {
-  typedef typename Traits::FT FT;
-  typedef typename Traits::Point_3 Point;
-  typedef typename Traits::Primitive Primitive;
+  
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
   typedef First_of_pair_property_map<Point_and_primitive_id> Pmap;
   typedef Search_traits_adapter<Point_and_primitive_id, Pmap, Traits> TreeTraits;
@@ -56,6 +54,7 @@ public:
     m_tree.build();
   }
 
+  template <typename Point>
   Point_and_primitive_id closest_point(const Point& query) const
   {
     Neighbor_search search(m_tree, query, 1);
