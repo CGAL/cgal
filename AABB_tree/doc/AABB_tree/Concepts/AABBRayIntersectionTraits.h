@@ -19,9 +19,9 @@ class AABBRayIntersectionTraits {
 public:
 
   /*!
-    Type of a 3D ray.
+    Type of a ray.
   */
-  typedef unspecified_type Ray_3;
+  typedef unspecified_type Ray;
 
 
   /*!
@@ -34,9 +34,9 @@ public:
     respectively.
 
     Provides the operators:
-    `std::optional<FT> operator()(const Ray_3& r, const Bounding_box& bbox)`.
-    `std::optional<std::pair<FT, Intersection_and_primitive_id<Ray_3>::%Type > >
-     operator()(const Ray_3& r, const Primitive& primitive)`.
+    `std::optional<FT> operator()(const Ray& r, const Bounding_box& bbox)`.
+    `std::optional<std::pair<FT, Intersection_and_primitive_id<Ray>::%Type > >
+     operator()(const Ray& r, const Primitive& primitive)`.
 
     A common algorithm to compute the intersection between a bounding box and a ray is <A
     HREF="https://education.siggraph.org/static/HyperGraph/raytrace/rtinter3.htm">the

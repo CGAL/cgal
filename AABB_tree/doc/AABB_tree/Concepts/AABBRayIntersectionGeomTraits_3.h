@@ -21,14 +21,14 @@ define the Intersection_distance functor.
 class AABBRayIntersectionGeomTraits_3 {
 public:
   /*!
-    Type of a ray.
+    Type of a 3D ray.
   */
-  typedef unspecified_type Ray;
+  typedef unspecified_type Ray_3;
 
   /*!
-    Type of a vector.
+    Type of a 3D vector.
   */
-  typedef unspecified_type Vector;
+  typedef unspecified_type Vector_3;
 
   /*!
     A functor object to construct the source point of a ray. Provides the operator:
