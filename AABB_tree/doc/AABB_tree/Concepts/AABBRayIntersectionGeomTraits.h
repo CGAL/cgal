@@ -21,46 +21,48 @@ define the Intersection_distance functor.
 class AABBRayIntersectionGeomTraits {
 public:
   /*!
-    Type of a 3D ray.
+    Type of a ray.
   */
-  typedef unspecified_type Ray_3;
+  typedef unspecified_type Ray;
 
   /*!
-    Type of a 3D vector.
+    Type of a vector.
   */
-  typedef unspecified_type Vector_3;
+  typedef unspecified_type Vector;
 
   /*!
     A functor object to construct the source point of a ray. Provides the operator:
-    `Point_3 operator()(const Ray_3&);`
+    `Point operator()(const Ray&);`
    */
-  typedef unspecified_type Construct_source_3;
+  typedef unspecified_type Construct_source;
 
   /*!
    */
-  Construct_source_3 construct_source_3_object();
+  Construct_source construct_source_object();
 
   /*!
+    @todo update me
     A model of `CartesianConstIterator3`.
    */
-  typedef unspecified_type Cartesian_const_iterator_3;
+  typedef unspecified_type Cartesian_const_iterator;
 
   /*!
+    @todo update me
     A model of `ConstructCartesianConstIterator3`.
    */
-  typedef unspecified_type  Construct_cartesian_const_iterator_3;
+  typedef unspecified_type  Construct_cartesian_const_iterator;
 
   /*!
    */
-  Construct_source_3 construct_cartesian_const_iterator_3_object();
+  Construct_source construct_cartesian_const_iterator_object();
 
   /*!
     A functor object to construct a vector giving the direction of a ray. Provides the operator:
-    `Vector_3 operator()(const Ray_3&);`
+    `Vector operator()(const Ray&);`
    */
-  typedef unspecified_type Construct_vector_3;
+  typedef unspecified_type Construct_vector;
 
   /*!
    */
-  Construct_source_3 construct_vector_3_object();
+  Construct_source construct_vector_object();
 };

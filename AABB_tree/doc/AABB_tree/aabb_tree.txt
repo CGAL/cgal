@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_3D_Fast_Intersection_and_Distance_Computation
+\anchor Chapter_Fast_Intersection_and_Distance_Computation
 \cgalAutoToc
 
 \authors Pierre Alliez, Stephane Tayeb, and Camille Wormser

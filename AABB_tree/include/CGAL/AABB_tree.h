@@ -76,7 +76,7 @@ namespace CGAL {
 
 
     /// Type of 3D point.
-    typedef typename AABBTraits::Point_3 Point;
+    typedef typename AABBTraits::Point Point;
 
     /// Type of input primitive.
     typedef typename AABBTraits::Primitive Primitive;
@@ -300,7 +300,7 @@ public:
 
     /// returns the intersection and  primitive id closest to the source point of the ray
     /// query.
-    /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    /// \tparam Ray must be the same as `AABBTraits::Ray` and
     /// `do_intersect` predicates and intersections for it must be
     /// defined.
     /// \tparam Skip a functor with an operator
@@ -331,7 +331,7 @@ public:
 
     /// returns the primitive id closest to the source point of the ray
     /// query.
-    /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    /// \tparam Ray must be the same as `AABBTraits::Ray` and
     /// `do_intersect` predicates and intersections for it must be
     /// defined.
     /// \tparam Skip a functor with an operator
