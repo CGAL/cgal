@@ -25,7 +25,7 @@
 #include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
-
+#include <CGAL/Search_traits_3.h>
 
 #include <optional>
 
@@ -176,7 +176,8 @@ template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default
 class AABB_traits_3
 #ifndef DOXYGEN_RUNNING
 : public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
-  public internal::AABB_tree::AABB_traits_intersection_base<GeomTraits>
+  public internal::AABB_tree::AABB_traits_intersection_base<GeomTraits>,
+  public Search_traits_3<GeomTraits>
 #endif
 {
   typedef typename CGAL::Object Object;

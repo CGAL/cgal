@@ -16,7 +16,6 @@
 #include <CGAL/license/AABB_tree.h>
 
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/property_map.h>
 
@@ -31,8 +30,7 @@ struct AABB_search_tree
   typedef typename Traits::Primitive Primitive;
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
   typedef First_of_pair_property_map<Point_and_primitive_id> Pmap;
-  typedef Search_traits_3<Traits> Search_traits;
-  typedef Search_traits_adapter<Point_and_primitive_id, Pmap, Search_traits> TreeTraits;
+  typedef Search_traits_adapter<Point_and_primitive_id, Pmap, Traits> TreeTraits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
 private:
