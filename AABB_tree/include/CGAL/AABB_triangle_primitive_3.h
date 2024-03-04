@@ -12,8 +12,8 @@
 //
 
 
-#ifndef CGAL_AABB_TRIANGLE_PRIMITIVE_H_
-#define CGAL_AABB_TRIANGLE_PRIMITIVE_H_
+#ifndef CGAL_AABB_TRIANGLE_PRIMITIVE_3_H_
+#define CGAL_AABB_TRIANGLE_PRIMITIVE_3_H_
 
 #include <CGAL/license/AABB_tree.h>
 
@@ -75,7 +75,7 @@ namespace internal {
 template < class GeomTraits,
            class Iterator,
            class CacheDatum=Tag_false>
-class AABB_triangle_primitive
+class AABB_triangle_primitive_3
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<  Iterator,
                             Input_iterator_property_map<Iterator>,
@@ -91,12 +91,12 @@ class AABB_triangle_primitive
                           CacheDatum > Base;
 public:
   ///constructor from an iterator
-  AABB_triangle_primitive(Iterator it) : Base(it){}
+  AABB_triangle_primitive_3(Iterator it) : Base(it){}
 };
 
 }  // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_AABB_TRIANGLE_PRIMITIVE_H_
+#endif // CGAL_AABB_TRIANGLE_PRIMITIVE_3_H_
 
