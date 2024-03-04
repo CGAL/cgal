@@ -331,18 +331,13 @@ namespace CGAL {
 
       using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
       GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
-      using Point_3 = typename GT::Point_3;
       using Iso_cuboid_3 = typename GT::Iso_cuboid_3;
-      using Vector_3 = typename GT::Vector_3;
 
       const bool dont_triangulate = choose_parameter(
         get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-      const Iso_cuboid_3 bbext(CGAL::Polygon_mesh_processing::bbox(pmesh, np));
-
       PolygonMesh bbox_mesh;
-      CGAL::make_hexahedron(bbext[0], bbext[1], bbext[2], bbext[3],
-                            bbext[4], bbext[5], bbext[6], bbext[7],
+      CGAL::make_hexahedron(Iso_cuboid_3(bbox(pmesh, np)),
                             bbox_mesh);
 
       if(!dont_triangulate)

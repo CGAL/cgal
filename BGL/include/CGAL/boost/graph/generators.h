@@ -350,6 +350,22 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 
 /**
  * \ingroup PkgBGLHelperFct
+ * \tparam IsoCuboid model of `IsoCuboid_3`
+ * \brief creates an isolated hexahedron
+ * equivalent to `c`, and adds it to the graph `g`.
+ * \returns the halfedge that has the target vertex associated with `c.min()`,
+ * in the bottom face of the cuboid.
+ **/
+template<typename Graph, typename IsoCuboid>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_hexahedron(const IsoCuboid& c, Graph& g)
+{
+  return CGAL::make_hexahedron(c[0], c[1], c[2], c[3],
+                               c[4], c[5], c[6], c[7], g);
+}
+
+/**
+ * \ingroup PkgBGLHelperFct
  * \brief creates an isolated tetrahedron
  * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \image html tetrahedron.png
