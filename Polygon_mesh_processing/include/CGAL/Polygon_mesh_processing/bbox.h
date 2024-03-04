@@ -58,6 +58,14 @@ namespace CGAL {
     *                           `Construct_bbox_3` must provide the functor `Bbox_3 operator()(Point_3)`
     *                           where `%Point_3` is the value type of the vertex point map.}
     *   \cgalParamNEnd
+    *
+    *   \cgalParamNBegin{bbox_scaling}
+    *     \cgalParamDescription{a double used to scale the bounding box.
+    *       The default value is 1 and the bounding box is the smallest possible
+    *       axis-aligned bounding box.}
+    *     \cgalParamDefault{1.}
+    *     \cgalParamPrecondition{`bbox_scaling > 0`}
+    *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
     * @see `vertex_bbox()`
@@ -79,6 +87,9 @@ namespace CGAL {
       GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
+      const double factor = choose_parameter(get_parameter(np, internal_np::bbox_scaling), 1.);
+      CGAL_precondition(factor > 0);
+
       typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
       CGAL::Bbox_3 bb;
@@ -86,6 +97,9 @@ namespace CGAL {
       {
         bb += get_bbox( get(vpm, v) );
       }
+      if (factor != 1.)
+        bb.scale(factor);
+
       return bb;
     }
 
@@ -321,19 +335,10 @@ namespace CGAL {
       using Iso_cuboid_3 = typename GT::Iso_cuboid_3;
       using Vector_3 = typename GT::Vector_3;
 
-      const double factor = choose_parameter(get_parameter(np, internal_np::bbox_scaling), 1.);
-      CGAL_precondition(factor > 0);
       const bool dont_triangulate = choose_parameter(
         get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
-      const Iso_cuboid_3 bb(CGAL::Polygon_mesh_processing::bbox(pmesh, np));
-
-      auto midpoint = gt.construct_midpoint_3_object();
-      const Point_3 bb_center = midpoint((bb.min)(), (bb.max)());
-      const Iso_cuboid_3 bbext = (factor == 1.)
-        ? bb
-        : Iso_cuboid_3(bb_center + factor * Vector_3(bb_center, (bb.min)()),
-                       bb_center + factor * Vector_3(bb_center, (bb.max)()));
+      const Iso_cuboid_3 bbext(CGAL::Polygon_mesh_processing::bbox(pmesh, np));
 
       PolygonMesh bbox_mesh;
       CGAL::make_hexahedron(bbext[0], bbext[1], bbext[2], bbext[3],
