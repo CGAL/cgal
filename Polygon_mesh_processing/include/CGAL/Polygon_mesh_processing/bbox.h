@@ -308,14 +308,7 @@ namespace CGAL {
     *                     must be available in `PolygonMesh`.}
     *   \cgalParamNEnd
     *   \cgalParamNBegin{geom_traits}
-    *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`
-    *                           and the function `Construct_bbox_3 construct_bbox_3_object()`.
-    *                           `Construct_bbox_3` must provide `Bbox_3 operator()(Point_3)`
-    *                           where `%Point_3` is the value type of the vertex point map.
-    *                           It must also provide the functor `Construct_midpoint_3` and,
-    *                           the function `Construct_midpoint_3 construct_midpoint_3_object()`.
-    *                           `Construct_midpoint_3` must provide `Point_3 operator()(Point_3, Point_3)`.
-    *                           The types `Vector_3` and `Iso_cuboid_3` must also be provided.}
+    *     \cgalParamDescription{an instance of a geometric traits class model of `Kernel`.}
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
