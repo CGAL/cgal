@@ -312,18 +312,30 @@ Orthtree::Node root = orthtree.root();
 Orthtree::Node child = root[0];
 bool is_leaf = child.is_leaf();
 
-for (Orthtree::Node::const_iterator it = child.begin(); it != child.end(); it++)
+for (Orthtree::Node::const_iterator it = child.begin(); it != child.end(); it++) {
+  const Orthtree::Point &p = *it;
   ...
+}
 \endcode
 
 \cgal 6.0 node access is now:
 \code{.cpp}
+using Point = Kernel::Point_3;
+using Point_set = CGAL::Point_set_3<Point>;
+Point_set points;
+...
 Orthtree::Node_index root = orthtree.root();
 Orthtree::Node_index child = orthtree.child(root, 0);
 bool is_leaf = orthtree.is_leaf(child);
 
-for (const Orthtree::Traits::Node_data_element &idx : orthtree.data(child))
-  ... // may require the use of a point map to retrieve the point from idx
+for (Octree::Traits::Node_data_element& e : octree.data(child)) {
+  // Using a pointmap is necessary when using a Point_set_3.
+  Point& p = points.point(e);
+  
+  // If the orthtree is used with a std::vector<Point>, Node_data_element is identical to Point.
+  // Point& p = e;
+  ...
+}
 \endcode
 
 The nearest neighbor search behaves as before, however, the output iterator will be required to store `CollectionPartitioningOrthtreeTraits::Node_data_element`. This may be the actual point or, e.g., in case a `Point_set_3` is used, an index which requires the use of a point map to retrieve the point.
