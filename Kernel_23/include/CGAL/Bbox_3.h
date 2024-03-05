@@ -76,8 +76,8 @@ public:
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
 
-  void dilate(int dist);
-  void scale(double factor);
+  inline void dilate(int dist);
+  inline void scale(double factor);
 };
 
 inline
@@ -213,12 +213,15 @@ Bbox_3::scale(double factor)
   std::array<double, 3> center = { (xmin() + xmax()) * 0.5,
                                    (ymin() + ymax()) * 0.5,
                                    (zmin() + zmax()) * 0.5 };
-  rep[0] = center[0] + factor * (xmin() - center[0]);
-  rep[1] = center[1] + factor * (ymin() - center[1]);
-  rep[2] = center[2] + factor * (zmin() - center[2]);
-  rep[3] = center[0] + factor * (xmax() - center[0]);
-  rep[4] = center[1] + factor * (ymax() - center[1]);
-  rep[5] = center[2] + factor * (zmax() - center[2]);
+  std::array<double, 3> half_width = { (xmax() - xmin()) * 0.5,
+                                       (ymax() - ymin()) * 0.5,
+                                       (zmax() - zmin()) * 0.5 };
+  rep[0] = center[0] - factor * half_width[0];
+  rep[1] = center[1] - factor * half_width[1];
+  rep[2] = center[2] - factor * half_width[2];
+  rep[3] = center[0] + factor * half_width[0];
+  rep[4] = center[1] + factor * half_width[1];
+  rep[5] = center[2] + factor * half_width[2];
 }
 
 inline

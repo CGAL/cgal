@@ -102,6 +102,11 @@ dilates the bounding box by a specified number of ULP.
 */
 void dilate(int dist);
 
+/*!
+scales the bounding box by `factor`, while keeping its center fixed.
+*/
+void scale(double factor);
+
 /// @}
 
 }; /* end Bbox_2 */
