@@ -48,6 +48,12 @@ split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
 
 } // namespace Euler
 
+template <typename SourceMesh, typename TargetMesh,
+          typename NamedParameters1, typename NamedParameters2>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
+                     const NamedParameters1& np1,
+                     const NamedParameters2& np2);
+
 namespace internal {
 
 template <class FaceGraph>
