@@ -17,7 +17,7 @@
 
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/tuple.h>
 
@@ -76,7 +76,7 @@ template<class TriangleMesh,
   class Traits,
   class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
-                       AABB_traits<Traits,
+                       AABB_traits_3<Traits,
                          AABB_halfedge_graph_segment_primitive<TriangleMesh,
                                                                 std::conditional_t<
                                                                   std::is_same_v<

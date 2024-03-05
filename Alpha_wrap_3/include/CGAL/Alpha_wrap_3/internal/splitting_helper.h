@@ -18,7 +18,7 @@
 
 #include <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
@@ -192,7 +192,7 @@ struct AABB_tree_splitter_traits
                                          CGAL::Tag_true /*external pmaps*/,
                                          CGAL::Tag_false /*no caching*/>;
 
-  using AABB_traits = CGAL::AABB_traits<GT, Primitive, BPM>;
+  using AABB_traits = CGAL::AABB_traits_3<GT, Primitive, BPM>;
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 };
 

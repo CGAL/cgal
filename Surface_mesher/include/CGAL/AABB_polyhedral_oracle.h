@@ -22,7 +22,7 @@
 
 #include <CGAL/point_generators_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <memory>
@@ -46,7 +46,7 @@ namespace CGAL {
 
     // AABB tree
     typedef AABB_face_graph_triangle_primitive<Polyhedron> AABB_primitive;
-    typedef class AABB_traits<Kernel,AABB_primitive> AABB_traits;
+    typedef class AABB_traits_3<Kernel,AABB_primitive> AABB_traits;
     typedef AABB_tree<AABB_traits> Tree;
     typedef typename AABB_traits::Bounding_box Bounding_box;
 

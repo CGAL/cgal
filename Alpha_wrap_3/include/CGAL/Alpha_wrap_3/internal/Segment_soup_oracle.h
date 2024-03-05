@@ -17,9 +17,9 @@
 #include <CGAL/Alpha_wrap_3/internal/Alpha_wrap_AABB_geom_traits.h>
 #include <CGAL/Alpha_wrap_3/internal/Oracle_base.h>
 
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_segment_primitive.h>
+#include <CGAL/AABB_segment_primitive_3.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
@@ -52,7 +52,7 @@ struct SS_oracle_traits
                                    CGAL::Tag_false, // not external
                                    CGAL::Tag_false>; // no caching
 
-  using AABB_traits = CGAL::AABB_traits<Geom_traits, Primitive>;
+  using AABB_traits = CGAL::AABB_traits_3<Geom_traits, Primitive>;
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 };
 

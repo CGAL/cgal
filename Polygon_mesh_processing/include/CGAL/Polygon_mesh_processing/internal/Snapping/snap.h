@@ -31,7 +31,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -875,7 +875,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
   typedef typename boost::property_traits<VPMT>::value_type                       Point;
 
   typedef CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh, VPMT>         Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive>                                        AABB_Traits;
+  typedef CGAL::AABB_traits_3<GT, Primitive>                                      AABB_Traits;
   typedef CGAL::AABB_tree<AABB_Traits>                                            AABB_tree;
 
   typedef std::pair<halfedge_descriptor, Point>                                   Vertex_with_new_position;

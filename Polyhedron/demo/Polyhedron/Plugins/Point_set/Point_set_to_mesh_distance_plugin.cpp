@@ -15,8 +15,8 @@
 
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Kernel_traits.h>
 #ifdef CGAL_LINKED_WITH_TBB
@@ -72,8 +72,8 @@ double compute_distances(const Mesh& m,
                          const Point_set & point_set,
                          std::vector<double>& out)
 {
-  typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+  typedef CGAL::AABB_face_graph_triangle_primitive_3<Mesh> Primitive;
+  typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
   typedef CGAL::AABB_tree< Traits > Tree;
 
   Tree tree( faces(m).first, faces(m).second, m);

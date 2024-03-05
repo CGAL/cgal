@@ -67,7 +67,7 @@ namespace internal {
  *
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
- * \sa `AABB_triangle_primitive<Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive_3<Iterator,CacheDatum>`
  * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
  * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
  */
@@ -98,4 +98,3 @@ public:
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_SEGMENT_PRIMITIVE_3_H_
-

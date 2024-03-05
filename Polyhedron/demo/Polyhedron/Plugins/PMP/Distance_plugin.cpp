@@ -130,7 +130,7 @@ private:
                            std::vector<double>& out)const
   {
     typedef CGAL::AABB_face_graph_triangle_primitive<Face_graph> Primitive;
-    typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree< Traits > Tree;
 
     Tree tree( faces(m).first, faces(m).second, m);

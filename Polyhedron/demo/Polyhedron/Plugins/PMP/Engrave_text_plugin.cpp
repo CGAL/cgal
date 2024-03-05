@@ -20,7 +20,7 @@
 #include <CGAL/Surface_mesh_shortest_path.h>
 #include <CGAL/double.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
@@ -307,7 +307,7 @@ private:
   typedef CGAL::Surface_mesh_shortest_path<SP_traits> Surface_mesh_shortest_path;
   typedef Surface_mesh_shortest_path::Face_location Face_location;
   typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
-  typedef CGAL::AABB_traits<EPICK, Primitive> Tree_traits;
+  typedef CGAL::AABB_traits_3<EPICK, Primitive> Tree_traits;
   typedef CGAL::AABB_tree<Tree_traits> Tree;
   typedef EPICK::Point_3 Point_3;
   Messages_interface* messages;
