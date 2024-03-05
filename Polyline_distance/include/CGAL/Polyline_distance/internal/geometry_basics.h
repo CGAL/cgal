@@ -30,8 +30,8 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <sstream>
 #include <vector>
+#include <optional>
 
 #include <CGAL/Simple_cartesian.h>
 
@@ -40,6 +40,7 @@
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Sqrt_extension.h>
+#include <CGAL/Interval_nt.h>
 
 namespace CGAL {
 namespace Polyline_distance {
@@ -69,6 +70,10 @@ using distance_t = double;
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_2;
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctionsxx
+ * A class representing a value in the interval `[0,1]`.
+*/
 struct Lambda {
     typedef CGAL::Interval_nt<> Approx;
     typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true,
@@ -172,13 +177,20 @@ struct Lambda {
         return (other < *this) || (*this == other);
     }
 
-    bool operator>(const Lambda& other) const { return (other < *this); }
+    bool operator>(const Lambda& other) const
+    {
+      return (other < *this);
+    }
 
     bool operator==(const Lambda& other) const
     {
         return (!(*this < other)) && (!(other < *this));
     }
-    bool operator!=(const Lambda& other) const { return !(*this == other); }
+
+    bool operator!=(const Lambda& other) const
+    {
+      return !(*this == other);
+    }
 
     bool operator<(const Lambda& other) const
     {

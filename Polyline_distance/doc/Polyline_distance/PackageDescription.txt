@@ -19,7 +19,7 @@
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.2}
+\cgalPkgSince{6.1}
 \cgalPkgDependsOn{\ref PkgSpatialSearchingD}
 \cgalPkgBib{cgal:kn-pd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
@@ -36,8 +36,5 @@ This chapter presents ....
 
 \cgalCRPSection{Functions}
 - `CGAL::Frechet_distance()`
-
-*/
-
 
 */

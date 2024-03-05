@@ -28,6 +28,10 @@
 #include <functional>
 #include <limits>
 
+
+namespace CGAL {
+namespace Polyline_distance {
+namespace internal {
 // Typesafe ID class such that there are compiler errors if different IDs are
 // mixed. The template parameter T is just there to assure this behavior.
 // Additionally, we have a member function which can check for validity.
@@ -63,14 +67,18 @@ private:
     IDType id;
 };
 
+} // namespace internal
+} // namespace Polyline_distance
+} // namespace CGAL
+
 // define custom hash function to be able to use IDs with maps/sets
 namespace std
 {
 
 template <typename T>
-struct hash<ID<T>> {
-    using IDType = typename ID<T>::IDType;
-    std::size_t operator()(ID<T> const& id) const noexcept
+struct hash<CGAL::Polyline_distance::internal::ID<T>> {
+    using IDType = typename CGAL::Polyline_distance::internal::ID<T>::IDType;
+    std::size_t operator()(CGAL::Polyline_distance::internal::ID<T> const& id) const noexcept
     {
         return std::hash<IDType>()(id);
     }
