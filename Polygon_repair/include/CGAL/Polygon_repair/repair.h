@@ -649,7 +649,7 @@ public:
 
     // Create polygons with holes and put in multipolygon
     std::set<Polygon_with_holes_2<Kernel, Container>, Polygon_with_holes_less> ordered_polygons;
-    for (int i = 0; i < polygons.size(); ++i) {
+    for (std::size_t i = 0; i < polygons.size(); ++i) {
       ordered_polygons.insert(Polygon_with_holes_2<Kernel, Container>(polygons[i], holes[i].begin(), holes[i].end()));
     }
     for (auto const& polygon: ordered_polygons) {
