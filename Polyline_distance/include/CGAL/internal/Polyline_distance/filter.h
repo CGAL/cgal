@@ -60,6 +60,8 @@ public:
     bool adaptiveSimultaneousGreedy();
     bool negative(PointID pos1, PointID pos2);
 
+private:
+    // AF: why are they static?  That also explains why we have to pass distance
     static bool isPointTooFarFromCurve(Point const& fixed, const Curve& curve,
                                        distance_t distance);
     static bool isFree(Point const& fixed, Curve const& var_curve,
