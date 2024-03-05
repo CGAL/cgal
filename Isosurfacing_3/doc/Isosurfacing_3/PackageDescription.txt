@@ -31,7 +31,7 @@
 \cgalPkgDescriptionBegin{3D Isosurfacing,PkgIsosurfacing3}
 \cgalPkgPicture{isosurfacing3_ico.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Julian Stahl, Daniel Zint and Pierre Alliez}
+\cgalPkgAuthor{Mael Rouxel-Labbé, Julian Stahl, Daniel Zint, and Pierre Alliez}
 \cgalPkgDesc{This package implements several isosurfacing algorithms (Marching Cubes,
 its topologically correct variant, and Dual Contouring) that enable generating meshes
 from value and gradient fields.}
@@ -47,8 +47,7 @@ from value and gradient fields.}
 
 This package provides algorithms to extract isosurfaces: Marching Cubes, topologically correct Marching Cubes,
 and Dual Contouring.
-The input is represented as a space partitioning data structure (Cartesian grid, octree, ...)
-coupled with a 3D scalar field.
+The input is represented as a space partitioning data structure coupled with a 3D scalar field.
 The output is a polygon soup (i.e., a container of point coordinates and indexed faces).
 
 \cgalClassifedRefPages
