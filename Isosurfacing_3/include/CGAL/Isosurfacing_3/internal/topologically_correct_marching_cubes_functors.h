@@ -950,7 +950,7 @@ private:
           for(int r=0; r<cnt_sz; ++r)
           {
             unsigned int index = -1;
-            FT dist = std::numeric_limits<FT>::max();
+            FT dist = (std::numeric_limits<FT>::max)();
             unsigned int ci = get_c(i, r, c_);
             const FT u_edge = e_vert(ci, 0);
             const FT v_edge = e_vert(ci, 1);
