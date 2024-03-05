@@ -90,61 +90,14 @@ void run_dual_contouring(const Grid& grid,
   CGAL::IO::write_polygon_soup("dual_contouring_vtk_image.off", points, triangles);
 }
 
-int main(int argc, char* argv[])
+template <typename VtkReader>
+void run(const char* filename,
+         const FT isovalue)
 {
-  if(argc == 1)
-  {
-    std::cerr << "Usage: " << argv[0] << " <vtk image> <isovalue = 0>" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  const std::string filename = argv[1];
-  const FT isovalue = (argc > 2) ? std::stod(argv[2]) : 0;
-
-  CGAL::Image_3 image;
-
-  std::string ext = CGAL::IO::internal::get_file_extension(filename);
-  if(ext == "mhd" || ext == "mha")
-  {
-    // load volumetric image from a file
-    vtkNew<vtkMetaImageReader> reader;
-    reader->SetFileName(argv[1]);
-    reader->Update();
-    image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
-  }
-  else if(ext == "vti")
-  {
-    vtkNew<vtkXMLImageDataReader> reader;
-    reader->SetFileName(argv[1]);
-    reader->Update();
-    image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
-  }
-  else if(ext == "tif")
-  {
-    vtkNew<vtkTIFFReader> reader;
-    reader->SetFileName(argv[1]);
-    reader->Update();
-    image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
-  }
-  else if(ext == "nrrd")
-  {
-    vtkNew<vtkNrrdReader> reader;
-    reader->SetFileName(argv[1]);
-    reader->Update();
-    image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
-  }
-  else if(ext == "mnc")
-  {
-    vtkNew<vtkMINCImageReader> reader;
-    reader->SetFileName(argv[1]);
-    reader->Update();
-    image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
-  }
-  else
-  {
-    std::cerr << "Error: Unsupported file format" << std::endl;
-    return EXIT_FAILURE;
-  }
+  vtkNew<VtkReader> reader;
+  reader->SetFileName(filename);
+  reader->Update();
+  CGAL::Image_3 image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
 
   // convert image to a Cartesian grid
   Grid grid;
@@ -152,7 +105,7 @@ int main(int argc, char* argv[])
   if(!IS::IO::read_Image_3(image, grid, values))
   {
     std::cerr << "Error: Cannot convert image to Cartesian grid" << std::endl;
-    return EXIT_FAILURE;
+    return;
   }
 
   std::cout << "Span: " << grid.span() << std::endl;
@@ -162,6 +115,35 @@ int main(int argc, char* argv[])
   run_marching_cubes(grid, isovalue, values);
 
   run_dual_contouring(grid, isovalue, values);
+}
+
+int main(int argc, char* argv[])
+{
+  if(argc == 1)
+  {
+    std::cerr << "Usage: " << argv[0] << " <vtk image> <isovalue = 0>" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  const char* filename = argv[1];
+  const FT isovalue = (argc > 2) ? std::stod(argv[2]) : 0;
+
+  const std::string ext = CGAL::IO::internal::get_file_extension(filename);
+  if(ext == "mhd" || ext == "mha")
+    run<vtkMetaImageReader>(filename, isovalue);
+  else if(ext == "vti")
+    run<vtkXMLImageDataReader>(filename, isovalue);
+  else if(ext == "tif")
+    run<vtkTIFFReader>(filename, isovalue);
+  else if(ext == "nrrd")
+    run<vtkNrrdReader>(filename, isovalue);
+  else if(ext == "mnc")
+    run<vtkMINCImageReader>(filename, isovalue);
+  else
+  {
+    std::cerr << "Error: Unsupported file format" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   return EXIT_SUCCESS;
 }
