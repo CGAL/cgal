@@ -9,6 +9,7 @@
 #include <CGAL/Isosurfacing_3/Marching_cubes_domain_3.h>
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
 #include <array>
@@ -19,7 +20,8 @@ using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
 using Vector = typename Kernel::Vector_3;
 
-using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel>;
+// using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel, CGAL::Isosurfacing::Do_not_cache_positions>;
+using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel, CGAL::Isosurfacing::Cache_positions>;
 using Values = CGAL::Isosurfacing::Value_function_3<Grid>;
 using Gradients = CGAL::Isosurfacing::Gradient_function_3<Grid>;
 
@@ -56,6 +58,9 @@ void run_marching_cubes(const Grid& grid,
   std::cout << "\n ---- " << std::endl;
   std::cout << "Running Marching Cubes with isovalue = " << isovalue << std::endl;
 
+  CGAL::Real_timer timer;
+  timer.start();
+
   // fill up values
   Values values { iwp_value, grid };
   Domain domain { grid, values };
@@ -67,8 +72,11 @@ void run_marching_cubes(const Grid& grid,
   // run Marching Cubes
   CGAL::Isosurfacing::marching_cubes(domain, isovalue, points, triangles);
 
+  timer.stop();
+
   std::cout << "Output #vertices (MC): " << points.size() << std::endl;
   std::cout << "Output #triangles (MC): " << triangles.size() << std::endl;
+  std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
   CGAL::IO::write_polygon_soup("marching_cubes_implicit.off", points, triangles);
 }
 
@@ -80,6 +88,9 @@ void run_dual_contouring(const Grid& grid,
   std::cout << "\n ---- " << std::endl;
   std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
 
+  CGAL::Real_timer timer;
+  timer.start();
+
   // fill up values and gradients
   Values values { iwp_value, grid };
   Gradients gradients { iwp_gradient, grid };
@@ -90,10 +101,14 @@ void run_dual_contouring(const Grid& grid,
   Polygon_range triangles;
 
   // run Dual Contouring
-  CGAL::Isosurfacing::dual_contouring(domain, isovalue, points, triangles);
+  CGAL::Isosurfacing::dual_contouring<CGAL::Sequential_tag>(domain, isovalue, points, triangles,
+                                                            CGAL::parameters::do_not_triangulate_faces(true));
+
+  timer.stop();
 
   std::cout << "Output #vertices (DC): " << points.size() << std::endl;
   std::cout << "Output #triangles (DC): " << triangles.size() << std::endl;
+  std::cout << "Elapsed time: " << timer.time() << " seconds" << std::endl;
   CGAL::IO::write_polygon_soup("dual_contouring_implicit.off", points, triangles);
 }
 
@@ -102,9 +117,9 @@ int main(int argc, char** argv)
   const FT isovalue = (argc > 1) ? std::stod(argv[1]) : 0.;
 
   const CGAL::Bbox_3 bbox{-1, -1, -1,  1, 1, 1};
-  const FT step = 0.0078125; // 0.02
-  const std::array<FT, 3> spacing { step, step, step };
-  const Grid grid { bbox, spacing };
+  const FT step = 0.02;
+  const Vector spacing { step, step, step };
+  Grid grid { bbox, spacing };
 
   std::cout << "Span: " << grid.span() << std::endl;
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;
