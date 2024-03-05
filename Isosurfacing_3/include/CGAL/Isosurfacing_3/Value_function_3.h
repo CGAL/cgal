@@ -1,4 +1,4 @@
-// Copyright (c) 2022-2024 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2022-2024 INRIA Sophia-Antipolis (France), GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
