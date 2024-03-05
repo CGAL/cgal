@@ -118,6 +118,7 @@ void dilate(int dist);
 
 /*!
 scales the bounding box by `factor`, while keeping its center fixed.
+\pre `factor > 0`
 */
 void scale(double factor);
 
