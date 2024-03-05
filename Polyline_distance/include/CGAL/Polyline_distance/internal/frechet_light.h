@@ -24,14 +24,14 @@
 
 #pragma once
 
-#include <CGAL/internal/Polyline_distance/certificate.h>
-#include <CGAL/internal/Polyline_distance/curve.h>
-#include <CGAL/internal/Polyline_distance/defs.h>
-#include <CGAL/internal/Polyline_distance/filter.h>
-#include <CGAL/internal/Polyline_distance/frechet_light_types.h>
-#include <CGAL/internal/Polyline_distance/geometry_basics.h>
-#include <CGAL/internal/Polyline_distance/id.h>
-#include <CGAL/internal/Polyline_distance/high_level_predicates.h>
+#include <CGAL/Polyline_distance/internal/certificate.h>
+#include <CGAL/Polyline_distance/internal/curve.h>
+#include <CGAL/Polyline_distance/internal/defs.h>
+#include <CGAL/Polyline_distance/internal/filter.h>
+#include <CGAL/Polyline_distance/internal/frechet_light_types.h>
+#include <CGAL/Polyline_distance/internal/geometry_basics.h>
+#include <CGAL/Polyline_distance/internal/id.h>
+#include <CGAL/Polyline_distance/internal/high_level_predicates.h>
 
 
 #include <algorithm>
@@ -39,8 +39,8 @@
 #include <vector>
 
 namespace CGAL {
-namespace internal {
 namespace Polyline_distance {
+namespace internal {
 
 class FrechetLight
 {
@@ -1417,6 +1417,6 @@ void FrechetLight::setRules(std::array<bool, 5> const& enable)
 
 std::size_t FrechetLight::getNumberOfBoxes() const { return num_boxes; }
 
-} // namespace Polyline_distance
 } // namespace internal
+} // namespace Polyline_distance
 } // namespace CGAL

@@ -35,15 +35,15 @@
 
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/internal/Polyline_distance/defs.h>
-#include <CGAL/internal/Polyline_distance/id.h>
+#include <CGAL/Polyline_distance/internal/defs.h>
+#include <CGAL/Polyline_distance/internal/id.h>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Sqrt_extension.h>
 
 namespace CGAL {
-namespace internal {
 namespace Polyline_distance {
+namespace internal {
 
 
 using Rational = CGAL::Exact_rational;
@@ -201,7 +201,7 @@ struct Lambda {
 
 
 inline
-bool is_one(const internal::Polyline_distance::Lambda& lambda)
+bool is_one(const Polyline_distance::internal::Lambda& lambda)
 {
     if (lambda.is_one) return true;
     if (lambda.is_zero) return false;
@@ -214,7 +214,7 @@ bool is_one(const internal::Polyline_distance::Lambda& lambda)
 }
 
 inline
-bool is_zero(const internal::Polyline_distance::Lambda& lambda)
+bool is_zero(const Polyline_distance::internal::Lambda& lambda)
 {
     if (lambda.is_zero) return true;
     if (lambda.is_one) return false;
@@ -226,14 +226,15 @@ bool is_zero(const internal::Polyline_distance::Lambda& lambda)
     return is_zero(*lambda.exact);
 }
 
-inline CGAL::Interval_nt<> to_interval(const internal::Polyline_distance::Lambda& lambda)
+inline CGAL::Interval_nt<> to_interval(const Polyline_distance::internal::Lambda& lambda)
 {
   return lambda.approx;
 }
 
 
+namespace Polyline_distance
+{
 namespace internal {
-namespace Polyline_distance {
 
 
 using RealType = Lambda;
@@ -778,6 +779,6 @@ std::ostream& operator<<(std::ostream& out, const CInterval& interval)
     return out;
 }
 
-} // namespace Polyline_distance
 } // namespace internal
+} // namespace Polyline_distance
 } // namespace CGAL

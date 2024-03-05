@@ -28,7 +28,7 @@
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Polyline_traits_2.h>
 #include <CGAL/basic.h>
-#include <CGAL/internal/Polyline_distance/Frechet_distance_near_neighbors_ds.h>
+#include <CGAL/Polyline_distance/internal/Frechet_distance_near_neighbors_ds.h>
 
 #include <iterator>
 #include <vector>
@@ -63,7 +63,7 @@ public:
 
 private:
     Polylines curves;
-    internal::Polyline_distance::FrechetKdTree<Traits> kd_tree;
+    Polyline_distance::internal::FrechetKdTree<Traits> kd_tree;
 };
 
 // TODO: store preprocessed curves after CGALization

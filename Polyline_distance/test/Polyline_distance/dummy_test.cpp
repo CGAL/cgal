@@ -150,7 +150,7 @@ readFrechetDistanceNearNeighborsDSQueries(std::string const& query_file)
 		std::stringstream ss(line);
 		ss >> query.id >> query.distance;
 
-		CGAL::internal::Polyline_distance::CurveID result_id;
+		CGAL::Polyline_distance::internal::CurveID result_id;
 		while (ss >> result_id) {
 			query.expected_result.push_back(result_id);
 		}

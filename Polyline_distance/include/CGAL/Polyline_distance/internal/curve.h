@@ -24,13 +24,13 @@
 
 #pragma once
 
-#include <CGAL/internal/Polyline_distance/defs.h>
-#include <CGAL/internal/Polyline_distance/geometry_basics.h>
-#include <CGAL/internal/Polyline_distance/id.h>
+#include <CGAL/Polyline_distance/internal/defs.h>
+#include <CGAL/Polyline_distance/internal/geometry_basics.h>
+#include <CGAL/Polyline_distance/internal/id.h>
 
 namespace CGAL {
-namespace internal {
 namespace Polyline_distance {
+namespace internal {
 
 // TODO: Clean up Curve
 
@@ -183,6 +183,6 @@ std::ostream& operator<<(std::ostream& out, const Curve& curve)
     return out;
 }
 
-} // namespace Polyline_distance
 } // namespace internal
+} // namespace Polyline_distance
 } // namespace CGAL

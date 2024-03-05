@@ -27,7 +27,7 @@
 
 #include <CGAL/Polyline_traits_2.h>
 #include <CGAL/basic.h>
-#include <CGAL/internal/Polyline_distance/Frechet_distance.h>
+#include <CGAL/Polyline_distance/internal/Frechet_distance.h>
 
 #include <iterator>
 
@@ -49,11 +49,11 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
                                            const PointRange& curve2,
                                            const typename Traits::FT distance)
 {
-    auto icurve1 = internal::Polyline_distance::toCurve(curve1);
-    auto icurve2 = internal::Polyline_distance::toCurve(curve2);
-    auto idistance = internal::Polyline_distance::toDistance(distance);
+    auto icurve1 = Polyline_distance::internal::toCurve(curve1);
+    auto icurve2 = Polyline_distance::internal::toCurve(curve2);
+    auto idistance = Polyline_distance::internal::toDistance(distance);
 
-    return internal::Polyline_distance::lessThan(icurve1, icurve2, idistance);
+    return Polyline_distance::internal::lessThan(icurve1, icurve2, idistance);
 }
 
 /**
@@ -69,10 +69,10 @@ typename Traits::FT continuous_Frechet_distance(const PointRange& curve1,
                                                 const PointRange& curve2,
                                                 const double precision)
 {
-    auto icurve1 = internal::Polyline_distance::toCurve(curve1);
-    auto icurve2 = internal::Polyline_distance::toCurve(curve2);
+    auto icurve1 = Polyline_distance::internal::toCurve(curve1);
+    auto icurve2 = Polyline_distance::internal::toCurve(curve2);
 
-    return internal::Polyline_distance::calcDistance(icurve1, icurve2);
+    return Polyline_distance::internal::calcDistance(icurve1, icurve2);
 }
 
 }  // end of namespace CGAL

@@ -31,8 +31,8 @@
 #include <iterator>
 
 namespace CGAL {
-namespace internal {
 namespace Polyline_distance {
+namespace internal {
 namespace HLPred
 {
 
@@ -70,6 +70,6 @@ Interval intersection_interval(Point const & circle_center, distance_t radius,
 
 }  // namespace HLPred
 
-} // namespace Polyline_distance
 } // namespace internal
+} // namespace Polyline_distance
 } // namespace CGAL
