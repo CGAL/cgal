@@ -2939,9 +2939,9 @@ public:
       }
 
       // compute the number of divisions given the requested error
-      const Approximate_number_type  R = 1.0; // radius is always 1
-      Approximate_number_type dtheta = 2.0 * std::acos(1 - error / R);
-      int num_segs = std::ceil(theta / dtheta);
+      const Approximate_number_type radius = 1.0; // radius is always 1
+      Approximate_number_type dtheta = 2.0 * std::acos(1 - error / radius);
+      auto num_segs = std::ceil(theta / dtheta);
       dtheta = theta / num_segs;
 
       // generate the points approximating the curve
