@@ -87,8 +87,8 @@ public:
         return prefix_length[j] - prefix_length[i];
     }
 
-    Point front() const { return points.front(); }
-    Point back() const { return points.back(); }
+    Point const& front() const { return points.front(); }
+    Point const& back() const { return points.back(); }
 
     void push_back(Point const& point);
 
