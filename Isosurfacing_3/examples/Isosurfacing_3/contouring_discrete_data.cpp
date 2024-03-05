@@ -54,7 +54,7 @@ void run_marching_cubes(const Grid& grid,
   Polygon_range triangles;
 
   // run marching cubes isosurfacing
-  IS::marching_cubes(domain, isovalue, points, triangles);
+  IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles);
 
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;
@@ -95,7 +95,7 @@ void run_dual_contouring(const Grid& grid,
   Polygon_range triangles;
 
   // run dual contouring isosurfacing
-  IS::dual_contouring(domain, isovalue, points, triangles);
+  IS::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles);
 
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;

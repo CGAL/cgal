@@ -65,9 +65,9 @@ int main(int argc, char** argv)
 
   // run dual contouring isosurfacing
   std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
-  CGAL::Isosurfacing::dual_contouring(domain, isovalue, points, triangles,
-                                      CGAL::parameters::do_not_triangulate_faces(true)
-                                                       .constrain_to_cell(false));
+  CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                                       CGAL::parameters::do_not_triangulate_faces(true)
+                                                                                        .constrain_to_cell(false));
 
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;

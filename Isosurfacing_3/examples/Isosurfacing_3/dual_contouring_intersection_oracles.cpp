@@ -73,8 +73,8 @@ int main(int argc, char** argv)
     Polygon_range triangles;
 
     std::cout << "--- Dual Contouring (Dichotomy)" << std::endl;
-    IS::dual_contouring(domain, isovalue, points, triangles,
-                        CGAL::parameters::do_not_triangulate_faces(!triangulate_faces));
+    IS::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                         CGAL::parameters::do_not_triangulate_faces(!triangulate_faces));
 
     timer.stop();
 
@@ -96,8 +96,8 @@ int main(int argc, char** argv)
     Polygon_range triangles;
 
     std::cout << "--- Dual Contouring (Linear Interpolation)" << std::endl;
-    IS::dual_contouring(domain, isovalue, points, triangles,
-                        CGAL::parameters::do_not_triangulate_faces(!triangulate_faces));
+    IS::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                         CGAL::parameters::do_not_triangulate_faces(!triangulate_faces));
 
     timer.stop();
 

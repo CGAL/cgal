@@ -53,8 +53,8 @@ int main(int argc, char** argv)
 
     // run marching cubes isosurfacing
     std::cout << "Running Marching Cubes with isovalue = " << isovalue << std::endl;
-    CGAL::Isosurfacing::marching_cubes(domain, isovalue, points, triangles,
-                                      CGAL::parameters::use_topologically_correct_marching_cubes(false));
+    CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                                        CGAL::parameters::use_topologically_correct_marching_cubes(false));
 
     timer.stop();
 
@@ -74,8 +74,8 @@ int main(int argc, char** argv)
 
     // run marching cubes isosurfacing
     std::cout << "Running Marching Cubes (TMC) with isovalue = " << isovalue << std::endl;
-    CGAL::Isosurfacing::marching_cubes(domain, isovalue, points, triangles,
-                                      CGAL::parameters::use_topologically_correct_marching_cubes(true));
+    CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                                        CGAL::parameters::use_topologically_correct_marching_cubes(true));
 
     timer.stop();
 

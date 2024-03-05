@@ -70,7 +70,7 @@ void run_marching_cubes(const Grid& grid,
   Polygon_range triangles;
 
   // run Marching Cubes
-  CGAL::Isosurfacing::marching_cubes(domain, isovalue, points, triangles);
+  CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles);
 
   timer.stop();
 
@@ -101,8 +101,8 @@ void run_dual_contouring(const Grid& grid,
   Polygon_range triangles;
 
   // run Dual Contouring
-  CGAL::Isosurfacing::dual_contouring<CGAL::Sequential_tag>(domain, isovalue, points, triangles,
-                                                            CGAL::parameters::do_not_triangulate_faces(true));
+  CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                                       CGAL::parameters::do_not_triangulate_faces(true));
 
   timer.stop();
 

@@ -50,8 +50,8 @@ int main(int argc, char** argv)
 
   // run marching cubes isosurfacing
   std::cout << "Running Marching Cubes with isovalue = " << isovalue << std::endl;
-  CGAL::Isosurfacing::marching_cubes(domain, isovalue, points, triangles,
-                                     CGAL::parameters::use_topologically_correct_marching_cubes(true));
+  CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                                      CGAL::parameters::use_topologically_correct_marching_cubes(true));
 
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;

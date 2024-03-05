@@ -84,7 +84,7 @@ void run_marching_cubes(const Grid& grid,
 
   // run marching cubes
   std::cout << "Running Marching Cubes with isovalue = " << offset_value << std::endl;
-  CGAL::Isosurfacing::marching_cubes(domain, offset_value, points, triangles);
+  CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(domain, offset_value, points, triangles);
 
   std::cout << "Output #vertices (MC): " << points.size() << std::endl;
   std::cout << "Output #triangles (MC): " << triangles.size() << std::endl;
@@ -115,8 +115,9 @@ void run_dual_contouring(const Grid& grid,
 
   // run dual contouring
   std::cout << "Running Dual Contouring with isovalue = " << offset_value << std::endl;
-  CGAL::Isosurfacing::dual_contouring(domain, offset_value, points, triangles,
-                                      CGAL::parameters::do_not_triangulate_faces(true));
+  CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_if_available_tag>(
+                        domain, offset_value, points, triangles,
+                        CGAL::parameters::do_not_triangulate_faces(true));
 
   std::cout << "Output #vertices (DC): " << points.size() << std::endl;
   std::cout << "Output #triangles (DC): " << triangles.size() << std::endl;

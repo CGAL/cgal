@@ -69,7 +69,7 @@ int main(int argc, char** argv)
     Polygon_range triangles;
 
     std::cout << "--- Dual Contouring (QEM - unconstrained)" << std::endl;
-    IS::internal::Dual_contourer<CGAL::Sequential_tag, Domain,
+    IS::internal::Dual_contourer<CGAL::Parallel_if_available_tag, Domain,
                                  IS::internal::DC_Strategy::QEM> contourer;
     contourer(domain, isovalue, points, triangles,
               CGAL::parameters::do_not_triangulate_faces(!triangulate_faces));
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
     Polygon_range triangles;
 
     std::cout << "--- Dual Contouring (QEM - constrained)" << std::endl;
-    IS::internal::Dual_contourer<CGAL::Sequential_tag, Domain,
+    IS::internal::Dual_contourer<CGAL::Parallel_if_available_tag, Domain,
                                  IS::internal::DC_Strategy::QEM> contourer;
     contourer(domain, isovalue, points, triangles,
               CGAL::parameters::do_not_triangulate_faces(!triangulate_faces)
