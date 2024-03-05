@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Mael Rouxel-Labbé, Julian Stahl, Daniel Zint, and Pierre Alliez
 
-\cgalFigureAnchor{Fig_IsosurfacingTeaser}
+\cgalFigureAnchor{IsosurfacingTeaser}
 <center>
 <img src="isosurfacing_teaser.png" style="max-width:50%;"/>
 </center>
