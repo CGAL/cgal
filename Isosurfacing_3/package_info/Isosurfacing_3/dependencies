@@ -1,5 +1,8 @@
 Algebraic_foundations
+BGL
 CGAL_ImageIO
+Cartesian_kernel
+Circulator
 Distance_2
 Distance_3
 Installation
@@ -11,8 +14,8 @@ Kernel_23
 Modular_arithmetic
 Number_types
 Orthtree
-Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
 STL_Extension
+Solver_interface
 Stream_support
