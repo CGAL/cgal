@@ -126,3 +126,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders
 #   BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
 #   LIBRARY DESTINATION "${INSTALL_EXAMPLEDIR}"
 # )
+
+add_to_cached_list(CGAL_EXECUTABLE_TARGETS earth)
+include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+cgal_add_compilation_test(earth)
