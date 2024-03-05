@@ -688,7 +688,7 @@ public:
     Sphere query_sphere(query, (std::numeric_limits<FT>::max)());
     CGAL_precondition(k > 0);
 
-    return nearest_k_neighbors_in_radius(query_sphere, k, output);
+    return nearest_k_neighbors_within_radius(query_sphere, k, output);
   }
 
   /*!
@@ -705,8 +705,8 @@ public:
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
   template<typename OutputIterator>
-  auto neighbors_in_radius(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
-    return nearest_k_neighbors_in_radius(query, (std::numeric_limits<std::size_t>::max)(), output);
+  auto neighbors_within_radius(const Sphere& query, OutputIterator output) const -> std::enable_if_t<supports_neighbor_search, OutputIterator> {
+    return nearest_k_neighbors_within_radius(query, (std::numeric_limits<std::size_t>::max)(), output);
   }
 
   /*!
@@ -727,7 +727,7 @@ public:
   \warning Nearest neighbor searches requires `GeomTraits` to be a model of `CollectionPartitioningOrthtreeTraits`.
  */
   template <typename OutputIterator>
-  auto nearest_k_neighbors_in_radius(
+  auto nearest_k_neighbors_within_radius(
     const Sphere& query,
     std::size_t k,
     OutputIterator output
