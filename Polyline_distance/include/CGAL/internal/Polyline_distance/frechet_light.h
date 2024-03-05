@@ -107,7 +107,12 @@ private:
     // TODO re-inline these functions!
     template <class IndexType>
     CInterval getInterval(Curve const& curve1, IndexType const& center_id,
-                          Curve const& curve2, PointID seg_start) const;
+                          Curve const& curve2, PointID seg_start) const
+  {
+    assert(false);
+    return CInterval();
+  }
+
     void merge(CIntervals& v, CInterval const& i) const;
 
     Outputs createFinalOutputs();
@@ -274,7 +279,7 @@ CInterval FrechetLight::getInterval<PointID>(Curve const& curve1,
                                              Curve const& curve2,
                                              PointID seg_start) const
 {
-    Point point = curve1[center_id];
+    Point const& point = curve1[center_id];
     auto interval = HLPred::intersection_interval(
         point, distance, curve2[seg_start], curve2[seg_start + 1]);
     return CInterval{seg_start, interval.begin, seg_start, interval.end};
