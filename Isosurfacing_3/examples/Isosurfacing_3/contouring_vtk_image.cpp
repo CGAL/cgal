@@ -18,6 +18,8 @@
 #include <vtkMetaImageReader.h>
 #include <vtkXMLImageDataReader.h>
 #include <vtkTIFFReader.h>
+#include <vtkNrrdReader.h>
+#include <vtkMINCImageReader.h>
 
 #include <iostream>
 #include <vector>
@@ -120,6 +122,20 @@ int main(int argc, char* argv[])
   else if(ext == "tif")
   {
     vtkNew<vtkTIFFReader> reader;
+    reader->SetFileName(argv[1]);
+    reader->Update();
+    image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
+  }
+  else if(ext == "nrrd")
+  {
+    vtkNew<vtkNrrdReader> reader;
+    reader->SetFileName(argv[1]);
+    reader->Update();
+    image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
+  }
+  else if(ext == "mnc")
+  {
+    vtkNew<vtkMINCImageReader> reader;
     reader->SetFileName(argv[1]);
     reader->Update();
     image = CGAL::IO::read_vtk_image_data(reader->GetOutput());
