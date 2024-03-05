@@ -331,7 +331,7 @@ bool is_leaf = orthtree.is_leaf(child);
 for (Octree::Traits::Node_data_element& e : octree.data(child)) {
   // Using a pointmap is necessary when using a Point_set_3.
   Point& p = points.point(e);
-  
+
   // If the orthtree is used with a std::vector<Point>, Node_data_element is identical to Point.
   // Point& p = e;
   ...
