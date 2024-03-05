@@ -23,32 +23,38 @@ using Domain = CGAL::Isosurfacing::Dual_contouring_domain_3<Grid, Values, Gradie
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
+// https://www-sop.inria.fr/galaad/surface/
+auto devil_value = [](const Point& point)
+{
+  const FT x = point.x(), y = point.y(), z = point.z();
+  return x*x*x*x + 2*x*x*z*z - 0.36*x*x - y*y*y*y + 0.25*y*y + z*z*z*z;
+};
+
+auto devil_gradient = [](const Point& point)
+{
+  const FT x = point.x(), y = point.y(), z = point.z();
+
+  const FT gx = 4*x*x*x + 4*x*z*z - 0.72*x;
+  const FT gy = -4*y*y*y + 0.5*y;
+  const FT gz = 4*x*x*z + 4*z*z*z;
+  Vector g(gx, gy, gz);
+  return g / std::sqrt(gx*gx + gy*gy + gz*gz);
+};
+
 int main(int argc, char** argv)
 {
-  const FT isovalue = (argc > 1) ? std::stod(argv[1]) : 0.8;
+  const FT isovalue = (argc > 1) ? std::stod(argv[1]) : 0.;
 
   // create bounding box and grid
-  const CGAL::Bbox_3 bbox { -1., -1., -1., 1., 1., 1. };
-  Grid grid { bbox, CGAL::make_array<std::size_t>(30, 30, 30) };
+  const CGAL::Bbox_3 bbox { -1, -1, -1, 1, 1, 1 };
+  Grid grid { bbox, CGAL::make_array<std::size_t>(50, 50, 50) };
 
   std::cout << "Span: " << grid.span() << std::endl;
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;
   std::cout << "Cell #: " << grid.xdim() << ", " << grid.ydim() << ", " << grid.zdim() << std::endl;
 
-  // fill up values and gradients
-  auto sphere_value_fn = [](const Point& p) -> FT
-  {
-    return sqrt(p.x()*p.x() + p.y()*p.y() + p.z()*p.z());
-  };
-
-  auto sphere_gradient_fn = [](const Point& p) -> Vector
-  {
-    const FT d = sqrt(p.x()*p.x() + p.y()*p.y() + p.z()*p.z());
-    return Vector(CGAL::ORIGIN, p) / d;
-  };
-
-  Values values { sphere_value_fn, grid };
-  Gradients gradients { sphere_gradient_fn, grid };
+  Values values { devil_value, grid };
+  Gradients gradients { devil_gradient, grid };
 
   // Below is equivalent to:
   //   Domain domain { grid, values, gradients };
@@ -61,7 +67,7 @@ int main(int argc, char** argv)
   std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
   CGAL::Isosurfacing::dual_contouring(domain, isovalue, points, triangles,
                                       CGAL::parameters::do_not_triangulate_faces(true)
-                                                       .constrain_to_cell(true));
+                                                       .constrain_to_cell(false));
 
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;
