@@ -20,7 +20,7 @@
 
 template <class R>
 bool
-_test_fct_constructions_2(const R&)
+_test_fct_constructions_2(const R& r)
 {
   typedef typename R::RT              RT;
   typedef CGAL::Point_2<R>            Point;
@@ -88,6 +88,15 @@ _test_fct_constructions_2(const R&)
   assert( CGAL::weighted_circumcenter( wpsw, wpse, wpnw ) == p);
 
   assert( CGAL::weighted_circumcenter( wpnw_b, wpse_b, wpsw_b ) == psw);
+
+  Point a(0.0, 1.0);
+  Point b(3.0, 4.0);
+  Segment seg(a, b);
+
+  assert(r.construct_projected_point_2_object()(seg, Point(0, 0)) == a);
+  assert(r.construct_projected_point_2_object()(seg, Point(5.0, 0)) == Point(2.0, 3.0));
+  assert(r.construct_projected_point_2_object()(seg, Point(5.0, 4.0)) == b);
+  assert(r.construct_projected_point_2_object()(seg, Point(2.0, 4.0)) == Point(2.5, 3.5));
 
   return true;
 }
