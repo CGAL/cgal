@@ -159,11 +159,6 @@ int main(int argc, char* argv[])
   std::cout << "Cell dimensions: " << grid.spacing()[0] << " " << grid.spacing()[1] << " " << grid.spacing()[2] << std::endl;
   std::cout << "Cell #: " << grid.xdim() << ", " << grid.ydim() << ", " << grid.zdim() << std::endl;
 
-  for (std::size_t i=0; i<grid.xdim(); ++i)
-    for (std::size_t j=0; j<grid.ydim(); ++j)
-      for (std::size_t k=0; k<grid.zdim(); ++k)
-        values(i, j, k) = - values(i, j, k); // inside out
-
   run_marching_cubes(grid, isovalue, values);
 
   run_dual_contouring(grid, isovalue, values);
