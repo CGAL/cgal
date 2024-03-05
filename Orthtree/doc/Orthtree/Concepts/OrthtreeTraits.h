@@ -6,7 +6,6 @@
   template parameter of the `CGAL::Orthtree` class.
 
   \cgalHasModelsBegin
-  \cgalHasModels{CGAL::Orthtree_traits_with_data<GeomTraits, dimension>}
   \cgalHasModels{CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>}
   \cgalHasModels{CGAL::Orthtree_traits_face_graph<PolygonMesh, VPM>}
   \cgalHasModels{CGAL::Orthtree_traits_base<K, dimension>}
