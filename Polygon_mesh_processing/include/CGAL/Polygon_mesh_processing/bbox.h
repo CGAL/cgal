@@ -19,7 +19,6 @@
 
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/boost/graph/Euler_operations.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Named_function_parameters.h>
@@ -296,8 +295,8 @@ namespace CGAL {
     *   \cgalParamNBegin{do_not_triangulate_faces}
     *     \cgalParamDescription{a boolean used to specify if the bounding box faces
     *       should be triangulated or not.
-    *       The default value is `false`, and faces are triangulated.}
-    *     \cgalParamDefault{false}
+    *       The default value is `true`, and faces are not triangulated.}
+    *     \cgalParamDefault{true}
     *   \cgalParamNEnd
     *   \cgalParamNBegin{vertex_point_map}
     *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
@@ -323,27 +322,12 @@ namespace CGAL {
       using parameters::get_parameter;
 
       using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
-      GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
       using Iso_cuboid_3 = typename GT::Iso_cuboid_3;
-
-      const bool dont_triangulate = choose_parameter(
-        get_parameter(np, internal_np::do_not_triangulate_faces), false);
 
       PolygonMesh bbox_mesh;
       CGAL::make_hexahedron(Iso_cuboid_3(bbox(pmesh, np)),
-                            bbox_mesh);
-
-      if(!dont_triangulate)
-      {
-        std::size_t k=0;
-        std::array<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor, 8> hfaces;
-        for (auto f : faces(bbox_mesh))
-          hfaces[k++]=halfedge(f, bbox_mesh);
-        for (auto h : hfaces)
-        {
-          CGAL::Euler::split_face(h, next(next(h, bbox_mesh), bbox_mesh), bbox_mesh);
-        }
-      }
+                            bbox_mesh,
+                            np);
       CGAL::copy_face_graph(bbox_mesh, pmesh,
                             parameters::default_values(),
                             np);

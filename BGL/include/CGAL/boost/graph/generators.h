@@ -19,14 +19,19 @@
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+
 #include <array>
 #include <iterator>
 #include <vector>
+#include <unordered_map>
 
 namespace CGAL {
 namespace Euler {
 
-// Some forward declaration to break the helpers.h > generators.h > Euler_operations.h cycle
+// Some forward declarations to break the helpers.h > generators.h > Euler_operations.h cycle
 template< typename Graph>
 void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
                Graph& g);
@@ -34,6 +39,12 @@ void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 template<typename Graph , typename VertexRange >
 typename boost::graph_traits<Graph>::face_descriptor add_face(const VertexRange& vr,
                                                               Graph& g);
+
+template<typename Graph>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
+           typename boost::graph_traits<Graph>::halfedge_descriptor h2,
+           Graph& g);
 
 } // namespace Euler
 
@@ -350,18 +361,66 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 
 /**
  * \ingroup PkgBGLHelperFct
- * \tparam IsoCuboid model of `IsoCuboid_3`
  * \brief creates an isolated hexahedron
  * equivalent to `c`, and adds it to the graph `g`.
  * \returns the halfedge that has the target vertex associated with `c.min()`,
+ * aligned with axis,
  * in the bottom face of the cuboid.
+ *
+ * \tparam IsoCuboid a model of `IsoCuboid_3`
+ * \tparam Graph a model of `MutableFaceGraph`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param c the `IsoCuboid_3` to be used to create the hexahedron
+ * \param g the graph in which the hexahedron will be created
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
+ *           among the ones listed below
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{do_not_triangulate_faces}
+ *     \cgalParamDescription{a boolean used to specify if the bounding box faces
+ *       should be triangulated or not.
+ *       The default value is `true`, and faces are not triangulated.}
+ *     \cgalParamDefault{true}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  **/
-template<typename Graph, typename IsoCuboid>
+template<typename IsoCuboid,
+         typename Graph,
+         typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<Graph>::halfedge_descriptor
-make_hexahedron(const IsoCuboid& c, Graph& g)
+make_hexahedron(const IsoCuboid& c,
+                Graph& g,
+                const NamedParameters& np = parameters::default_values())
 {
-  return CGAL::make_hexahedron(c[0], c[1], c[2], c[3],
-                               c[4], c[5], c[6], c[7], g);
+  using halfedge_descriptor = typename boost::graph_traits<Graph>::halfedge_descriptor;
+
+  const bool dont_triangulate = parameters::choose_parameter(
+    parameters::get_parameter(np, internal_np::do_not_triangulate_faces), true);
+
+  if(dont_triangulate)
+    return CGAL::make_hexahedron(c[0], c[1], c[2], c[3],
+                                 c[4], c[5], c[6], c[7], g);
+
+  Graph hexahedron;
+  halfedge_descriptor res = CGAL::make_hexahedron(c[0], c[1], c[2], c[3],
+                                                  c[4], c[5], c[6], c[7],
+                                                  hexahedron);
+  std::size_t k = 0;
+  std::array<halfedge_descriptor, 6> hfaces;
+  for (auto f : faces(hexahedron))
+    hfaces[k++] = halfedge(f, hexahedron);
+  for (halfedge_descriptor h : hfaces)
+  {
+    halfedge_descriptor h2 = next(next(h, hexahedron), hexahedron);
+    CGAL::Euler::split_face(h, h2, hexahedron);
+  }
+
+  std::unordered_map<halfedge_descriptor, halfedge_descriptor> h2h;
+  CGAL::copy_face_graph(hexahedron, g,
+    parameters::halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end())),
+    np);
+
+  return h2h.at(res);
 }
 
 /**
