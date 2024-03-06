@@ -24,7 +24,6 @@
 
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Frechet_distance_near_neighbors_ds.h>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 
@@ -42,7 +41,7 @@ namespace
 //
 // helpers
 //
-using distance_t = double; 
+using distance_t = double;
 using Kernel = CGAL::Simple_cartesian<double>;
 using Traits = CGAL::Polyline_traits_2<Kernel, double>;
 // using NT = Kernel::FT;
@@ -58,12 +57,12 @@ struct FrechetDistanceQuery {
 using FrechetDistanceQueries = std::vector<FrechetDistanceQuery>;
 
 struct FrechetDistanceNearNeighborsDSQuery {
-	std::size_t id;
-	distance_t distance;
-	std::vector<std::size_t> expected_result; // TODO: should be curve ids
+    std::size_t id;
+    distance_t distance;
+    std::vector<std::size_t> expected_result;  // TODO: should be curve ids
 };
 using FrechetDistanceNearNeighborsDSQueries =
-std::vector<FrechetDistanceNearNeighborsDSQuery>;
+    std::vector<FrechetDistanceNearNeighborsDSQuery>;
 
 void readCurve(std::ifstream& curve_file, TestCurve& curve)
 {
@@ -134,31 +133,30 @@ FrechetDistanceQueries readFrechetDistanceQueries(std::string const& query_file)
     return queries;
 }
 
-FrechetDistanceNearNeighborsDSQueries
-readFrechetDistanceNearNeighborsDSQueries(std::string const& query_file)
+FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQueries(
+    std::string const& query_file)
 {
-	FrechetDistanceNearNeighborsDSQueries queries;
+    FrechetDistanceNearNeighborsDSQueries queries;
 
-	std::ifstream file(query_file);
-	assert(file);
+    std::ifstream file(query_file);
+    assert(file);
 
-	std::string line;
-	while (std::getline(file, line)) {
-		queries.emplace_back();
-		auto& query = queries.back();
+    std::string line;
+    while (std::getline(file, line)) {
+        queries.emplace_back();
+        auto& query = queries.back();
 
-		std::stringstream ss(line);
-		ss >> query.id >> query.distance;
+        std::stringstream ss(line);
+        ss >> query.id >> query.distance;
 
-		CGAL::Polyline_distance::internal::CurveID result_id;
-		while (ss >> result_id) {
-			query.expected_result.push_back(result_id);
-		}
-		std::sort(query.expected_result.begin(),
-		query.expected_result.end());
-	}
+        CGAL::Polyline_distance::internal::CurveID result_id;
+        while (ss >> result_id) {
+            query.expected_result.push_back(result_id);
+        }
+        std::sort(query.expected_result.begin(), query.expected_result.end());
+    }
 
-	return queries;
+    return queries;
 }
 
 //
@@ -169,7 +167,7 @@ void testFrechetDistance()
 {
     std::string curve_directory = "../data/curves/";
     // std::vector<std::string> datasets = {"sigspatial", "OV"};
-	std::vector<std::string> datasets = { "sigspatial" };
+    std::vector<std::string> datasets = {"sigspatial"};
     std::string query_directory = "../data/queries/";
     CGAL::Timer timer;
     for (auto const& dataset : datasets) {
@@ -194,29 +192,30 @@ void testFrechetDistance()
 
 void testFrechetDistanceNearNeighborsDS()
 {
-	std::string curve_directory = "../data/curves/";
-	std::vector<std::string> datasets = { "sigspatial" };
-	std::string query_directory = "../data/ds_queries/";
+    std::string curve_directory = "../data/curves/";
+    std::vector<std::string> datasets = {"sigspatial"};
+    std::string query_directory = "../data/ds_queries/";
 
-	for (auto const& dataset: datasets) {
-		auto curves = readCurves(curve_directory + dataset + "/");
-		auto queries =
-		readFrechetDistanceNearNeighborsDSQueries(query_directory + dataset +
-		".txt");
+    for (auto const& dataset : datasets) {
+        auto curves = readCurves(curve_directory + dataset + "/");
+        auto queries = readFrechetDistanceNearNeighborsDSQueries(
+            query_directory + dataset + ".txt");
 
-		CGAL::FrechetDistanceNearNeighborsDS<TestCurve> ds;
-		ds.insert(curves);
+        CGAL::FrechetDistanceNearNeighborsDS<TestCurve> ds;
+        ds.insert(curves);
 
-		for (auto const& query: queries) {
-			auto result = ds.get_close_curves(curves[query.id],
-			query.distance); std::sort(result.begin(), result.end());
+        for (auto const& query : queries) {
+            auto result = ds.get_close_curves(curves[query.id], query.distance);
+            std::sort(result.begin(), result.end());
 
-			if (!std::equal(result.begin(), result.end(), query.expected_result.begin(), query.expected_result.end())) {
-				assert(false);
+            if (!std::equal(result.begin(), result.end(),
+                            query.expected_result.begin(),
+                            query.expected_result.end())) {
+                assert(false);
                 ERROR("Wrong result on query.");
-			}
-		}
-	}
+            }
+        }
+    }
 }
 
 }  // end anonymous namespace
@@ -224,9 +223,9 @@ void testFrechetDistanceNearNeighborsDS()
 int main()
 {
     // TODO: add actualy query data for DS
-	std::cout << "testFrechetDistanceNearNeighborsDS start" << std::endl;
-	testFrechetDistanceNearNeighborsDS();
-	std::cout << "testFrechetDistanceNearNeighborsDS done" << std::endl;
+    std::cout << "testFrechetDistanceNearNeighborsDS start" << std::endl;
+    testFrechetDistanceNearNeighborsDS();
+    std::cout << "testFrechetDistanceNearNeighborsDS done" << std::endl;
     std::cout << "testFrechetDistance start" << std::endl;
     testFrechetDistance();
     std::cout << "testFrechetDistance done" << std::endl;

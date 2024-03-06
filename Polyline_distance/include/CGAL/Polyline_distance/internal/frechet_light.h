@@ -348,6 +348,8 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple,
         auto mid = (min + max) / 2;
         auto maxdist = (std::max)(curve.curve_length(min, mid),
                                   curve.curve_length(mid, max));
+        // TODO: return upper bound on error of fixed_point displacement to then
+        // overestimate the mid_dist_sqr distance.
         auto fixed_point = fixed_curve.interpolate_at(fixed);
         auto mid_dist_sqr = CGAL::squared_distance(fixed_point, curve[mid]);
 
