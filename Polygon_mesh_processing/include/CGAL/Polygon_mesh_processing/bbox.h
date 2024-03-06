@@ -293,7 +293,7 @@ namespace CGAL {
     *     \cgalParamPrecondition{`bbox_scaling > 0`}
     *   \cgalParamNEnd
     *   \cgalParamNBegin{do_not_triangulate_faces}
-    *     \cgalParamDescription{a boolean used to specify if the bounding box faces
+    *     \cgalParamDescription{a Boolean used to specify whether the bounding box's faces
     *       should be triangulated or not.
     *       The default value is `true`, and faces are not triangulated.}
     *     \cgalParamDefault{true}

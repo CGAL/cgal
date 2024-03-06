@@ -353,13 +353,13 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
  * \tparam Graph a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param c the `IsoCuboid_3` to be used to create the hexahedron
- * \param g the graph in which the hexahedron will be created
+ * \param c the iso-cuboid describing the geometry of the hexahedron
+ * \param g the graph to which the hexahedron will be appended
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
  *           among the ones listed below
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{do_not_triangulate_faces}
- *     \cgalParamDescription{a boolean used to specify if the bounding box faces
+ *     \cgalParamDescription{a Boolean used to specify whether the hexadron's faces
  *       should be triangulated or not.
  *       The default value is `true`, and faces are not triangulated.}
  *     \cgalParamDefault{true}
