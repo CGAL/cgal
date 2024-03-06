@@ -3294,37 +3294,11 @@ namespace CartesianKernelFunctors {
 
     Point_2
     operator()( const Segment_2& s, const Point_2& p ) const
-    {
-      const Point_2& a = s.source();
-      const Point_2& b = s.target();
-      typename K::FT dx = b.x() - a.x();
-      typename K::FT dy = b.y() - a.y();
-
-      // Degenerate segment
-      if (dx == 0 && dy == 0)
-        return a;
-
-      typename K::FT px = p.x() - a.x();
-      typename K::FT py = p.y() - a.y();
-
-      typename K::FT proj = (dx * px + dy * py) / (dx * dx + dy * dy);
-
-      if (proj <= 0.0)
-        return a;
-
-      if (proj >= 1.0)
-        return b;
-
-      typename K::Construct_point_2 construct_point_2;
-      return construct_point_2(a.x() + proj * dx, a.y() + proj * dy);
-    }
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(s, p, K()); }
 
     Point_2
     operator()( const Triangle_2& t, const Point_2& p ) const
-    {
-      assert(false);
-      return p;
-    }
+    { return CommonKernelFunctors::Construct_projected_point_2<K>()(t, p, K()); }
   };
 
 

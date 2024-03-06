@@ -93,10 +93,25 @@ _test_fct_constructions_2(const R& r)
   Point b(3.0, 4.0);
   Segment seg(a, b);
 
-  assert(r.construct_projected_point_2_object()(seg, Point(0, 0)) == a);
-  assert(r.construct_projected_point_2_object()(seg, Point(5.0, 0)) == Point(2.0, 3.0));
-  assert(r.construct_projected_point_2_object()(seg, Point(5.0, 4.0)) == b);
-  assert(r.construct_projected_point_2_object()(seg, Point(2.0, 4.0)) == Point(2.5, 3.5));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(seg, Point(0, 0)), a));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(seg, Point(5.0, 0)), Point(2.0, 3.0)));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(seg, Point(5.0, 4.0)), b));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(seg, Point(2.0, 4.0)), Point(2.5, 3.5)));
+
+  Point c(2.0, 5.0);
+  Triangle tri(a, b, c);
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(0, 0)), a));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(0, 10.0)), c));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(3.5, 3.5)), b));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(2.0, 1.0)), Point(1.0, 2.0)));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(2.0, 4.0)), Point(2.0, 4.0)));
+
+  Triangle dtri(a, b, a);
+
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(dtri, Point(0, 0)), a));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(dtri, Point(5.0, 0)), Point(2.0, 3.0)));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(dtri, Point(5.0, 4.0)), b));
+  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(dtri, Point(2.0, 4.0)), Point(2.5, 3.5)));
 
   return true;
 }
