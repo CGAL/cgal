@@ -38,8 +38,9 @@ class Polygon_repair;
 /// \tparam Container parameter of the input and output polygons
 ///  \tparam Rule must be `Even_odd_rule`
 template <class Kernel, class Container, class Rule = Even_odd_rule>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p , Rule rule = Rule())
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p , Rule = Rule())
 {
+  static_assert(std::is_same_v<Rule,Even_odd_rule>);
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_even_odd(p);
   if (pr.triangulation().number_of_faces() > 0) {
@@ -54,8 +55,9 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Cont
 /// \tparam Container parameter of the input and output polygons
 ///  \tparam Rule must be `Even_odd_rule`
 template <class Kernel, class Container, class Rule = Even_odd_rule>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Rule rule = Rule())
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Rule = Rule())
 {
+  static_assert(std::is_same_v<Rule,Even_odd_rule>);
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_even_odd(p);
   if (pr.triangulation().number_of_faces() > 0) {
@@ -70,8 +72,9 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
 /// \tparam Container parameter of the input and output polygons
 ///  \tparam Rule must be `Even_odd_rule`
 template <class Kernel, class Container, class Rule = Even_odd_rule>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Rule rule = Rule())
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Rule = Rule())
 {
+  static_assert(std::is_same_v<Rule,Even_odd_rule>);
   CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
   pr.add_to_triangulation_even_odd(p);
   if (pr.triangulation().number_of_faces() > 0) {

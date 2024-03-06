@@ -11,7 +11,7 @@ using Polygon_2 = CGAL::Polygon_2<Kernel>;
 using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel>;
 using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 
-int main(int argc, char* argv[]) {
+int main() {
   std::ifstream in("data/bridge-edge.wkt");
   Polygon_with_holes_2 pin;
   CGAL::IO::read_polygon_WKT(in, pin);
