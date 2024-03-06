@@ -29,30 +29,6 @@
 #include <unordered_map>
 
 namespace CGAL {
-namespace Euler {
-
-// Some forward declarations to break the helpers.h > generators.h > Euler_operations.h cycle
-template< typename Graph>
-void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
-               Graph& g);
-
-template<typename Graph , typename VertexRange >
-typename boost::graph_traits<Graph>::face_descriptor add_face(const VertexRange& vr,
-                                                              Graph& g);
-
-template<typename Graph>
-typename boost::graph_traits<Graph>::halfedge_descriptor
-split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
-           typename boost::graph_traits<Graph>::halfedge_descriptor h2,
-           Graph& g);
-
-} // namespace Euler
-
-template <typename SourceMesh, typename TargetMesh,
-          typename NamedParameters1, typename NamedParameters2>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     const NamedParameters1& np1,
-                     const NamedParameters2& np2);
 
 namespace internal {
 

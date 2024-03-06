@@ -3,6 +3,8 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 
+#include <CGAL/boost/graph/generators.h>
+
 #include <QAction>
 #include <QMainWindow>
 #include <QMessageBox>
