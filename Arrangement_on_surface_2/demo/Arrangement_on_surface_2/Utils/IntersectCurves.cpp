@@ -11,7 +11,7 @@
 
 #include "IntersectCurves.h"
 #include "ArrangementTypes.h"
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 
 template <typename Traits_>

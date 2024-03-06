@@ -96,7 +96,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
     }
     if(fileinfo.suffix().toLower() == "cgal")
     {
-        item->setName(fileinfo.baseName());
+        item->setName(fileinfo.completeBaseName());
 
         if(item->load_binary(in)) {
           if(add_to_scene){
@@ -134,7 +134,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       in.open(fileinfo.filePath().toUtf8(), std::ios_base::in);//not binary
       CGAL_assertion(!(!in));
 
-      item->setName(fileinfo.baseName());
+      item->setName(fileinfo.completeBaseName());
       item->set_valid(false);
 
       if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
@@ -165,7 +165,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
         CGAL_assertion(!(!in));
       }
 
-      item->setName(fileinfo.baseName());
+      item->setName(fileinfo.completeBaseName());
 
       if (CGAL::IO::read_AVIZO_TETRA(in, item->c3t3().triangulation()))
       {

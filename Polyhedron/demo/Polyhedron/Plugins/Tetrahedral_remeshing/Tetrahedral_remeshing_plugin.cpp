@@ -3,6 +3,7 @@
 //#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 //#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
 //#define CGAL_TETRAHEDRAL_REMESHING_PROFILE
+//#define CGAL_FLIP_ON_SURFACE_DISABLE_44_FLIP
 
 #include <QtCore/qglobal.h>
 
@@ -120,7 +121,7 @@ public Q_SLOTS:
         if (c3t3_item->c3t3().is_in_complex(e)
           || CGAL::Tetrahedral_remeshing::protecting_balls_intersect(e, c3t3))
         {
-          Vertex_pair evv = CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e);
+          Vertex_pair evv = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);
           constraints.insert(evv);
         }
       }

@@ -1,6 +1,4 @@
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
 #include <cassert>
 #include <vector>
@@ -10,7 +8,9 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel  Epec;
