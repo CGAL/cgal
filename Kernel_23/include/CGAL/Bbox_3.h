@@ -210,12 +210,12 @@ Bbox_3::scale(double factor)
   if (factor == 1.)
     return;
 
-  std::array<double, 3> center = { (xmin() + xmax()) * 0.5,
-                                   (ymin() + ymax()) * 0.5,
-                                   (zmin() + zmax()) * 0.5 };
   std::array<double, 3> half_width = { (xmax() - xmin()) * 0.5,
                                        (ymax() - ymin()) * 0.5,
                                        (zmax() - zmin()) * 0.5 };
+  std::array<double, 3> center = { xmin() + half_width[0],
+                                   ymin() + half_width[1],
+                                   zmin() + half_width[2] };
   rep[0] = center[0] - factor * half_width[0];
   rep[1] = center[1] - factor * half_width[1];
   rep[2] = center[2] - factor * half_width[2];
