@@ -248,20 +248,9 @@ protected:
                                              Visitor&) {
     if(va != vb) {
       if(segment_vertex_epsilon != 0.) {
-        if(!max_bbox_edge_length) {
-          update_max_bbox_edge_length();
-        }
         auto [min_dist, min_vertex] = min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
-        if(min_dist < segment_vertex_epsilon * *max_bbox_edge_length) {
-          std::stringstream ss;
-          ss.precision(std::cerr.precision());
-          ss << "A constrained segment is too close to a vertex.\n";
-          ss << "  -> vertex " << display_vert(min_vertex) << '\n';
-          ss << "  -> constrained segment " << display_vert(va) << "  -  " << display_vert(vb) << '\n';
-          ss << "  -> distance = " << min_dist << '\n';
-          ss << "  -> max_bbox_edge_length = " << *max_bbox_edge_length << '\n';
-          throw std::runtime_error(ss.str());
-        }
+        check_segment_vertex_distance_or_throw(va, vb, min_vertex, CGAL::to_double(min_dist),
+                                               Check_distance::NON_SQUARED_DISTANCE);
       }
       const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
       pair_of_vertices_to_cid.emplace(make_sorted_pair(va, vb), c_id);
@@ -439,6 +428,32 @@ public:
                        });
   }
 
+  enum class Check_distance { SQUARED_DISTANCE, NON_SQUARED_DISTANCE };
+
+  void check_segment_vertex_distance_or_throw(Vertex_handle va,
+                                              Vertex_handle vb,
+                                              Vertex_handle min_vertex,
+                                              double min_dist,
+                                              Check_distance option)
+  {
+    if(!max_bbox_edge_length) {
+      update_max_bbox_edge_length();
+    }
+    if((option == Check_distance::NON_SQUARED_DISTANCE && min_dist < segment_vertex_epsilon * *max_bbox_edge_length) ||
+       (option == Check_distance::SQUARED_DISTANCE &&
+        min_dist < CGAL::square(segment_vertex_epsilon * *max_bbox_edge_length)))
+    {
+      std::stringstream ss;
+      ss.precision(std::cerr.precision());
+      ss << "A constrained segment is too close to a vertex.\n";
+      ss << "  -> vertex " << display_vert(min_vertex) << '\n';
+      ss << "  -> constrained segment " << display_vert(va) << "  -  " << display_vert(vb) << '\n';
+      ss << "  -> distance = " << min_dist << '\n';
+      ss << "  -> max_bbox_edge_length = " << *max_bbox_edge_length << '\n';
+      throw std::runtime_error(ss.str());
+    }
+  }
+
   auto ancestors_of_Steiner_vertex_on_edge(Vertex_handle v) const {
     std::pair<Vertex_handle, Vertex_handle> result;
     CGAL_precondition(v->is_Steiner_vertex_on_edge());
@@ -467,6 +482,21 @@ public:
         result.second = *it;
       }
       CGAL_assertion(it != first);
+    }
+    return result;
+  }
+
+  auto min_distance_and_vertex_between_constraint_and_encroaching_vertex(Vertex_handle va, Vertex_handle vb) const {
+    struct Result {
+      typename T_3::Geom_traits::FT min_dist = std::numeric_limits<double>::max();
+      Vertex_handle v = {};
+    } result;
+    const auto vector_of_encroaching_vertices = encroaching_vertices(va, vb);
+    for(auto v: vector_of_encroaching_vertices) {
+      const auto dist = CGAL::approximate_sqrt(squared_distance(tr.point(v), Line{tr.point(va), tr.point(vb)}));
+      if(dist < result.min_dist) {
+        result = Result{dist, v};
+      }
     }
     return result;
   }
@@ -753,21 +783,6 @@ protected:
     return vector_of_encroaching_vertices;
   }
 
-  auto min_distance_and_vertex_between_constraint_and_encroaching_vertex(Vertex_handle va, Vertex_handle vb) const {
-    struct Result {
-      typename T_3::Geom_traits::FT min_dist = std::numeric_limits<double>::max();
-      Vertex_handle v = {};
-    } result;
-    const auto vector_of_encroaching_vertices = encroaching_vertices(va, vb);
-    for(auto v: vector_of_encroaching_vertices) {
-      const auto dist = CGAL::approximate_sqrt(squared_distance(tr.point(v), Line{tr.point(va), tr.point(vb)}));
-      if(dist < result.min_dist) {
-        result = Result{dist, v};
-      }
-    }
-    return result;
-  }
-
   Construct_Steiner_point_return_type
   construct_Steiner_point(Constraint_id constraint_id, Subconstraint subconstraint)
   {
@@ -867,16 +882,8 @@ protected:
           update_max_bbox_edge_length();
         }
         auto sq_dist = squared_distance(reference_point, Line{orig_pa, orig_pb});
-        if(sq_dist < CGAL::square(segment_vertex_epsilon * *max_bbox_edge_length)) {
-          std::stringstream ss;
-          ss.precision(std::cerr.precision());
-          ss << "A constrained segment is too close to a vertex.\n";
-          ss << "  -> vertex " << display_vert(reference_vertex) << '\n';
-          ss << "  -> constrained segment " << display_vert(orig_va) << "  -  " << display_vert(orig_vb) << '\n';
-          ss << "  -> distance = " << CGAL::approximate_sqrt(sq_dist) << '\n';
-          ss << "  -> max_bbox_edge_length = " << *max_bbox_edge_length << '\n';
-          throw std::runtime_error(ss.str());
-        }
+        check_segment_vertex_distance_or_throw(orig_va, orig_vb, reference_vertex, CGAL::to_double(sq_dist),
+                                               Check_distance::SQUARED_DISTANCE);
       }
     }
     // compute the projection of the reference point

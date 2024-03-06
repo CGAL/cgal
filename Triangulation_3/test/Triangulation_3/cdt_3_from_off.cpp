@@ -71,8 +71,8 @@ struct CDT_options
   bool use_new_cavity_algorithm = true;
   bool debug_validity = false;
   double ratio = 0.1;
-  double vertex_vertex_epsilon = 1e-6;
-  double segment_vertex_epsilon = 1e-8;
+  double vertex_vertex_epsilon = 1e-14;
+  double segment_vertex_epsilon = 1e-14;
   std::string failure_assertion_expression{};
   std::string input_filename = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename{"dump.off"};
@@ -357,10 +357,10 @@ int go(Mesh mesh, CDT_options options) {
 
   auto pmap = get(CGAL::vertex_point, mesh);
 
-  auto [patch_id_map, ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -2);
-  assert(ok); CGAL_USE(ok);
-  auto [v_selected_map, ok2] = mesh.add_property_map<vertex_descriptor, bool>("v:selected", false);
-  assert(ok2); CGAL_USE(ok2);
+  auto [patch_id_map, patch_id_map_ok] = mesh.add_property_map<face_descriptor, int>("f:patch_id", -2);
+  assert(patch_id_map_ok); CGAL_USE(patch_id_map_ok);
+  auto [v_selected_map, v_selected_map_ok] = mesh.add_property_map<vertex_descriptor, bool>("v:selected", false);
+  assert(v_selected_map_ok); CGAL_USE(v_selected_map_ok);
   int nb_patches = 0;
   std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
   if(options.merge_facets) {
@@ -490,10 +490,14 @@ int go(Mesh mesh, CDT_options options) {
     }
   };
 
+  auto [tr_vertex_pmap, tr_vertex_pmap_ok] = mesh.add_property_map<vertex_descriptor, CDT::Vertex_handle>("tr_vertex");
+  assert(tr_vertex_pmap_ok); CGAL_USE(tr_vertex_pmap_ok);
+
   auto start_time = std::chrono::high_resolution_clock::now();
   for(auto v: vertices(mesh)) {
     if(options.merge_facets && false == get(v_selected_map, v)) continue;
-    cdt.insert(get(pmap, v));
+    auto vh = cdt.insert(get(pmap, v));
+    put(tr_vertex_pmap, v, vh);
   }
   if(!options.quiet) {
     std::cout << "[timings] inserted vertices in " << std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -517,6 +521,7 @@ int go(Mesh mesh, CDT_options options) {
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
   }
+  start_time = std::chrono::high_resolution_clock::now();
   {
     auto [min_sq_distance, min_edge] = std::ranges::min(
         cdt.finite_edges() | std::views::transform([&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); }));
@@ -532,6 +537,57 @@ int go(Mesh mesh, CDT_options options) {
       exit_code = EXIT_FAILURE;
       return exit_code;
     }
+  }
+  {
+    double min_distance = std::numeric_limits<double>::max();
+    CDT::Vertex_handle min_va, min_vb, min_vertex;
+    if(options.merge_facets) {
+      for(int i = 0; i < nb_patches; ++i) {
+        const auto& edges = patch_edges[i];
+        for(auto [vda, vdb]: edges) {
+          auto va = get(tr_vertex_pmap, vda);
+          auto vb = get(tr_vertex_pmap, vdb);
+          auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
+          if(min_dist < min_distance) {
+            min_distance = CGAL::to_double(min_dist);
+            min_va = va;
+            min_vb = vb;
+            min_vertex = min_v;
+          }
+        }
+      }
+    } else {
+      for(auto face_descriptor : faces(mesh)) {
+        auto he = halfedge(face_descriptor, mesh);
+        const auto end = he;
+        do {
+          auto va = get(tr_vertex_pmap, source(he, mesh));
+          auto vb = get(tr_vertex_pmap, target(he, mesh));
+          auto [min_dist, min_v] = cdt.min_distance_and_vertex_between_constraint_and_encroaching_vertex(va, vb);
+          if(min_dist < min_distance) {
+            min_distance = CGAL::to_double(min_dist);
+            min_va = va;
+            min_vb = vb;
+            min_vertex = min_v;
+          }
+          he = next(he, mesh);
+        } while((he = next(he, mesh)) != end);
+      }
+    }
+    if(!options.quiet) {
+      std::cout << "Min distance between constraint segment and vertex: " << min_distance << '\n'
+                << "  between segment                                 : "
+                << CGAL::IO::oformat(min_va, CDT::Conforming_Dt::with_point) << "    "
+                << CGAL::IO::oformat(min_vb, CDT::Conforming_Dt::with_point) << '\n'
+                << "  and vertex:                                     : "
+                << CGAL::IO::oformat(min_vertex, CDT::Conforming_Dt::with_point) << "\n\n";
+    }
+    cdt.check_segment_vertex_distance_or_throw(min_va, min_vb, min_vertex, min_distance,
+                                               CDT::Check_distance::NON_SQUARED_DISTANCE);
+  }
+  if(!options.quiet) {
+    std::cout << "[timings] compute distances on " << std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
   }
   int poly_id = 0;
   CDT_3_try {
