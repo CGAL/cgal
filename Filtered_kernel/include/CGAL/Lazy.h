@@ -108,6 +108,10 @@ template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_e
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> exact (T d){return d;}
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, int> depth(T){return -1;}
 
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, Quotient<T>> approx(Quotient<T> d){return d;}
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, Quotient<T>> exact (Quotient<T> d){return d;}
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, int> depth(Quotient<T>){return -1;}
+
 // For tag classes: Return_base_tag, Homogeneous_tag, Null_vector, Origin
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> exact(T){return {};}
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> approx(T){return {};}
