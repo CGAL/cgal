@@ -95,8 +95,7 @@ namespace CGAL {
       {
         bb += get_bbox( get(vpm, v) );
       }
-      if (factor != 1.)
-        bb.scale(factor);
+      bb.scale(factor);
 
       return bb;
     }
