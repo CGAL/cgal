@@ -38,6 +38,12 @@ Release date: October 2023
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
+- **Breaking change**:
+  - Node splitting behavior and per-node data are now customizable via the Traits class.
+  - Nodes are now stored as a property map, with properties of each node accessed by index.
+  - Nearest neighbors functions only work for Orthtrees which provide the necessary functionality.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonMeshProcessing)
 
 -   Added the function `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` which can be used to compute
