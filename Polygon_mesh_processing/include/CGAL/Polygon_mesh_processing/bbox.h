@@ -18,7 +18,6 @@
 #include <CGAL/Bbox_3.h>
 
 #include <CGAL/boost/graph/generators.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Named_function_parameters.h>
@@ -322,15 +321,15 @@ namespace CGAL {
       using parameters::get_parameter;
 
       using GT = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
-      using Iso_cuboid_3 = typename GT::Iso_cuboid_3;
+      using P = typename GT::Point_3;
+      GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+      typename GT::Construct_iso_cuboid_3
+        iso_cuboid = gt.construct_iso_cuboid_3_object();
 
-      PolygonMesh bbox_mesh;
-      CGAL::make_hexahedron(Iso_cuboid_3(bbox(pmesh, np)),
-                            bbox_mesh,
-                            np);
-      CGAL::copy_face_graph(bbox_mesh, pmesh,
-                            parameters::default_values(),
-                            np);
+      const CGAL::Bbox_3 bb = bbox(pmesh, np);
+      CGAL::make_hexahedron(iso_cuboid(P(bb.xmin(), bb.ymin(), bb.zmin()),
+                                       P(bb.xmax(), bb.ymax(), bb.zmax())),
+                            pmesh, np);
     }
   }
 }
