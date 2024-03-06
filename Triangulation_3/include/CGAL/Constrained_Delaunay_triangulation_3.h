@@ -1786,6 +1786,7 @@ private:
                       }));
   }
 
+  using Conforming_Dt::with_offset;
   using Conforming_Dt::with_point;
   using Conforming_Dt::with_point_and_info;
 
@@ -2613,7 +2614,7 @@ private:
     // assert(is_valid(true));
 #if __has_include(<format>)
     if(this->debug_Steiner_points()) {
-      std::cerr << "  -> " << IO::oformat(v) << '\n';
+      std::cerr << "  -> " << IO::oformat(v, with_offset) << '\n';
     }
 #endif
     v->set_Steiner_vertex_in_face(face_index);
@@ -2674,7 +2675,7 @@ private:
                                                   constraint_id, insert_in_conflict_visitor);
 #if __has_include(<format>)
     if(this->debug_Steiner_points()) {
-      std::cerr << "  -> " << IO::oformat(v) << '\n';
+      std::cerr << "  -> " << IO::oformat(v, with_offset) << '\n';
     }
 #endif
     // this->study_bug = false;

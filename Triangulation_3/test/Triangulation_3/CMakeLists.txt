@@ -89,7 +89,7 @@ function(CGAL_add_cdt3_from_off_test_aux data_name data_dir)
   cgal_setup_test_properties("execution   of  cdt_3_from_off ${data_name}" cdt_3_from_off)
   add_test(NAME "execution   of  cdt_3_from_off --merge-facets ${data_name}"
       COMMAND cdt_3_from_off
-       --merge-facets
+       --merge-facets --segment-vertex-epsilon 0 --vertex-vertex-epsilon 0
       ${data_dir}/${data_filename}
       ${CMAKE_CURRENT_BINARY_DIR}/dump_output_${data_name}--merge-facets.off)
   cgal_setup_test_properties("execution   of  cdt_3_from_off --merge-facets ${data_name}" cdt_3_from_off)
