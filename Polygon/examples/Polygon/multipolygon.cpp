@@ -7,7 +7,7 @@ using Polygon_2 = CGAL::Polygon_2<Kernel>;
 using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel>;
 using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 
-int main(int argc, char* argv[]) {
+int main() {
 
   Point_2 p1_outer[] = {Point_2(0,0), Point_2(1,0), Point_2(1,1), Point_2(0,1)};
   Point_2 p1_inner[] = {Point_2(0.2,0.2), Point_2(0.8,0.2), Point_2(0.8,0.8), Point_2(0.2,0.8)};
