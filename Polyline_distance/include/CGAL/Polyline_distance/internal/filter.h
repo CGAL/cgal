@@ -65,20 +65,16 @@ public:
     bool negative(PointID pos1, PointID pos2);
 
 private:
-    // AF: why are they static?  That also explains why we have to pass distance
-    static bool isPointTooFarFromCurve(Point const& fixed, const Curve& curve,
-                                       distance_t distance);
-    static bool isFree(Point const& fixed, Curve const& var_curve,
-                       PointID start, PointID end, distance_t distance);
-    static bool isFree(Curve const& curve1, PointID start1, PointID end1,
-                       Curve const& curve2, PointID start2, PointID end2,
-                       distance_t distance);
-    static void increase(size_t& step);
-    static void decrease(size_t& step);
+    bool isPointTooFarFromCurve(Point const& fixed, const Curve& curve);
+    bool isFree(Point const& fixed, Curve const& var_curve,
+                       PointID start, PointID end);
+    bool isFree(Curve const& curve1, PointID start1, PointID end1,
+                       Curve const& curve2, PointID start2, PointID end2);
+    void increase(size_t& step);
+    void decrease(size_t& step);
 };
 
-bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve,
-                                    distance_t distance)
+bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
 {
     auto dist_sqr = distance * distance;
     if (CGAL::squared_distance(fixed, curve.front()) <= dist_sqr ||
@@ -107,7 +103,7 @@ bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve,
 }
 
 bool Filter::isFree(Point const& fixed, Curve const& var_curve, PointID start,
-                    PointID end, distance_t distance)
+                    PointID end)
 {
     auto mid = (start + end + 1) / 2;
     auto max = (std::max)(var_curve.curve_length(start + 1, mid),
@@ -123,8 +119,7 @@ bool Filter::isFree(Point const& fixed, Curve const& var_curve, PointID start,
 }
 
 bool Filter::isFree(Curve const& curve1, PointID start1, PointID end1,
-                    Curve const& curve2, PointID start2, PointID end2,
-                    distance_t distance)
+                    Curve const& curve2, PointID start2, PointID end2)
 {
     auto mid1 = (start1 + end1 + 1) / 2;
     auto mid2 = (start2 + end2 + 1) / 2;
@@ -259,7 +254,7 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
         if (curve1.size() - 1 == pos1) {
             auto new_pos2 =
                 std::min<PointID::IDType>(pos2 + step, curve2.size() - 1);
-            if (isFree(curve1[pos1], curve2, pos2, new_pos2, distance)) {
+            if (isFree(curve1[pos1], curve2, pos2, new_pos2)) {
                 pos2 = new_pos2;
                 cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
                 // step *= 2;
@@ -274,7 +269,7 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
         else if (curve2.size() - 1 == pos2) {
             auto new_pos1 =
                 std::min<PointID::IDType>(pos1 + step, curve1.size() - 1);
-            if (isFree(curve2[pos2], curve1, pos1, new_pos1, distance)) {
+            if (isFree(curve2[pos2], curve1, pos1, new_pos1)) {
                 pos1 = new_pos1;
                 cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
                 // step *= 2;
@@ -312,9 +307,9 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
             auto new_pos2 =
                 std::min<PointID::IDType>(pos2 + step, curve2.size() - 1);
             bool step1_possible =
-                isFree(curve2[pos2], curve1, pos1, new_pos1, distance);
+                isFree(curve2[pos2], curve1, pos1, new_pos1);
             bool step2_possible =
-                isFree(curve1[pos1], curve2, pos2, new_pos2, distance);
+                isFree(curve1[pos1], curve2, pos2, new_pos2);
 
             if (step1_possible && step2_possible) {
                 auto dist_after_step1 =
@@ -373,7 +368,7 @@ bool Filter::adaptiveSimultaneousGreedy()
         if (curve1.size() - 1 == pos1) {
             auto new_pos2 =
               (std::min<PointID::IDType>)(pos2 + step, curve2.size() - 1);
-            if (isFree(curve1[pos1], curve2, pos2, new_pos2, distance)) {
+            if (isFree(curve1[pos1], curve2, pos2, new_pos2)) {
                 pos2 = new_pos2;
                 cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
                 // step *= 2;
@@ -388,7 +383,7 @@ bool Filter::adaptiveSimultaneousGreedy()
         else if (curve2.size() - 1 == pos2) {
             auto new_pos1 =
                 (std::min<PointID::IDType>)(pos1 + step, curve1.size() - 1);
-            if (isFree(curve2[pos2], curve1, pos1, new_pos1, distance)) {
+            if (isFree(curve2[pos2], curve1, pos1, new_pos1)) {
                 pos1 = new_pos1;
                 cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
                 // step *= 2;
@@ -429,8 +424,7 @@ bool Filter::adaptiveSimultaneousGreedy()
             }
             PointID new_pos2 =
                 std::min<PointID::IDType>(pos2 + step2, curve2.size() - 1);
-            if (isFree(curve1, pos1, new_pos1, curve2, pos2, new_pos2,
-                       distance)) {
+            if (isFree(curve1, pos1, new_pos1, curve2, pos2, new_pos2)) {
                 if (pos1 != new_pos1 && pos2 != new_pos2) {
                     cert.addPoint({CPoint(pos1 + 1, 0.), CPoint(pos2 + 1, 0.)});
                 }
@@ -471,7 +465,7 @@ bool Filter::negative(PointID position1, PointID position2)
     size_t pos2 = position2;
     for (size_t step = 1; pos1 + step <= curve1.size(); increase(step)) {
         size_t cur_pos1 = pos1 + step - 1;
-        if (isPointTooFarFromCurve(curve1[cur_pos1], curve2, distance)) {
+        if (isPointTooFarFromCurve(curve1[cur_pos1], curve2)) {
             cert.setAnswer(false);
             cert.addPoint({CPoint(cur_pos1, 0.), CPoint(0, 0.)});
             cert.addPoint(
@@ -482,7 +476,7 @@ bool Filter::negative(PointID position1, PointID position2)
     }
     for (size_t step = 1; pos2 + step <= curve2.size(); increase(step)) {
         size_t cur_pos2 = pos2 + step - 1;
-        if (isPointTooFarFromCurve(curve2[cur_pos2], curve1, distance)) {
+        if (isPointTooFarFromCurve(curve2[cur_pos2], curve1)) {
             cert.setAnswer(false);
             cert.addPoint(
                 {CPoint(curve1.size() - 1, 0.), CPoint(cur_pos2, 0.)});
