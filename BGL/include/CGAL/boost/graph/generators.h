@@ -26,7 +26,6 @@
 #include <array>
 #include <iterator>
 #include <vector>
-#include <unordered_map>
 
 namespace CGAL {
 
@@ -285,12 +284,30 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
  * with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`.
  * \image html hexahedron.png
  * \image latex hexahedron.png
- * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
+ * \returns the halfedge that has the target vertex associated with `p0`,
+ * in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`
+ * (or `p0`, `p2` and `p3` when `do_not_triangulate` is set to `false`).
+ *
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
+ *           among the ones listed below
+ *   \cgalNamedParamsBegin
+ *     \cgalParamNBegin{do_not_triangulate_faces}
+ *       \cgalParamDescription{a Boolean used to specify whether the hexadron's faces
+ *         should be triangulated or not.
+ *         The default value is `true`, and faces are not triangulated.}
+ *       \cgalParamDefault{true}
+ *     \cgalParamNEnd
+ *   \cgalNamedParamsEnd
  **/
-template<typename Graph, typename P>
+template<typename P,
+         typename Graph,
+         typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
-                const P& p4, const P& p5, const P& p6, const P& p7, Graph& g)
+                const P& p4, const P& p5, const P& p6, const P& p7,
+                Graph& g,
+                const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<Graph>              Traits;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
@@ -298,6 +315,9 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 
   typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
   Point_property_map ppmap = get(CGAL::vertex_point, g);
+
+  const bool triangulate = !parameters::choose_parameter(
+    parameters::get_parameter(np, internal_np::do_not_triangulate_faces), true);
 
   vertex_descriptor v0, v1, v2, v3, v4, v5, v6, v7;
   v0 = add_vertex(g);
@@ -319,6 +339,14 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 
   halfedge_descriptor ht = internal::make_quad(v4, v5, v6, v7, g);
   halfedge_descriptor hb = prev(internal::make_quad(v0, v3, v2, v1, g), g);
+
+  std::array<halfedge_descriptor, 6> he_faces;
+  if(triangulate)
+  {
+    he_faces[0] = hb;
+    he_faces[1] = ht;
+  }
+
   for(int i=0; i <4; ++i)
   {
     halfedge_descriptor h = halfedge(add_edge(g), g);
@@ -335,7 +363,18 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
   for(int i=0; i <4; ++i)
   {
     Euler::fill_hole(opposite(hb, g), g);
+    if(triangulate)
+      he_faces[i+2] = opposite(hb, g);
     hb = next(hb, g);
+  }
+
+  if(triangulate)
+  {
+    for (halfedge_descriptor hi : he_faces)
+    {
+      halfedge_descriptor nnhi = next(next(hi, g), g);
+      Euler::split_face(hi, nnhi, g);
+    }
   }
 
   return next(next(hb, g), g);
@@ -346,7 +385,7 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
  * \brief creates an isolated hexahedron
  * equivalent to `c`, and adds it to the graph `g`.
  * \returns the halfedge that has the target vertex associated with `c.min()`,
- * aligned with axis,
+ * aligned with x-axis,
  * in the bottom face of the cuboid.
  *
  * \tparam IsoCuboid a model of `IsoCuboid_3`
@@ -364,6 +403,9 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
  *       The default value is `true`, and faces are not triangulated.}
  *     \cgalParamDefault{true}
  *   \cgalParamNEnd
+ *  \cgalParamNBegin{geom_traits}
+ *    \cgalParamDescription{an instance of a geometric traits class model of `Kernel`.}
+ *  \cgalParamNEnd
  * \cgalNamedParamsEnd
  **/
 template<typename IsoCuboid,
@@ -374,35 +416,15 @@ make_hexahedron(const IsoCuboid& c,
                 Graph& g,
                 const NamedParameters& np = parameters::default_values())
 {
-  using halfedge_descriptor = typename boost::graph_traits<Graph>::halfedge_descriptor;
+  using GT = typename GetGeomTraits<Graph, NamedParameters>::type;
+  GT gt = parameters::choose_parameter<GT>(
+            parameters::get_parameter(np, internal_np::geom_traits));
+  typename GT::Construct_vertex_3 v = gt.construct_vertex_3_object();
 
-  const bool dont_triangulate = parameters::choose_parameter(
-    parameters::get_parameter(np, internal_np::do_not_triangulate_faces), true);
-
-  if(dont_triangulate)
-    return CGAL::make_hexahedron(c[0], c[1], c[2], c[3],
-                                 c[4], c[5], c[6], c[7], g);
-
-  Graph hexahedron;
-  halfedge_descriptor res = CGAL::make_hexahedron(c[0], c[1], c[2], c[3],
-                                                  c[4], c[5], c[6], c[7],
-                                                  hexahedron);
-  std::size_t k = 0;
-  std::array<halfedge_descriptor, 6> hfaces;
-  for (auto f : faces(hexahedron))
-    hfaces[k++] = halfedge(f, hexahedron);
-  for (halfedge_descriptor h : hfaces)
-  {
-    halfedge_descriptor h2 = next(next(h, hexahedron), hexahedron);
-    CGAL::Euler::split_face(h, h2, hexahedron);
-  }
-
-  std::unordered_map<halfedge_descriptor, halfedge_descriptor> h2h;
-  CGAL::copy_face_graph(hexahedron, g,
-    parameters::halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end())),
-    np);
-
-  return h2h.at(res);
+  return CGAL::make_hexahedron(v(c, 0), v(c, 1), v(c, 2), v(c, 3),
+                               v(c, 4), v(c, 5), v(c, 6), v(c, 7),
+                               g,
+                               np);
 }
 
 /**
