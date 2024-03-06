@@ -283,9 +283,7 @@ public:
     : Orthtree(Traits(std::forward<Arg1>(arg1), std::forward<Arg2>(arg2), std::forward<Args>(args)...))
   {}
 
-  /// @}
-
-  // copy constructor
+  /// copy constructor
   explicit Orthtree(const Orthtree& other) :
     m_traits(other.m_traits),
     m_node_properties(other.m_node_properties),
@@ -296,7 +294,7 @@ public:
     m_node_children(m_node_properties.template get_property<std::optional<Node_index>>("children")),
     m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth) {}
 
-  // move constructor
+  /// move constructor
   explicit Orthtree(Orthtree&& other) :
     m_traits(other.m_traits),
     m_node_properties(std::move(other.m_node_properties)),
@@ -307,9 +305,11 @@ public:
     m_node_children(m_node_properties.template get_property<std::optional<Node_index>>("children")),
     m_bbox(other.m_bbox), m_side_per_depth(other.m_side_per_depth)
   {
-    // todo: makes sure moved-from is still valid. Maybe this shouldn't be necessary.
     other.m_node_properties.emplace();
   }
+
+  /// @}
+
 
   // Non-necessary but just to be clear on the rule of 5:
 
