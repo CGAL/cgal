@@ -42,6 +42,11 @@ namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
+
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 class FrechetLight
 {
     using CurvePair = std::array<Curve const*, 2>;

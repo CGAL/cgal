@@ -35,6 +35,10 @@ namespace internal {
 // TODO: we can use Cartesian_converter here when we have one-sided approximate
 // decisions
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 class Filter
 {
 private:

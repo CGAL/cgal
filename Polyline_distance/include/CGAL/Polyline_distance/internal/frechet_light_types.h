@@ -38,6 +38,10 @@ namespace internal {
 // Box
 //
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct Box {
     PointID min1;
     PointID max1;
@@ -57,6 +61,10 @@ using Boxes = std::vector<Box>;
 // Inputs
 //
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct Inputs {
     CIntervals::iterator begin1;
     CIntervals::iterator end1;
@@ -90,6 +98,10 @@ struct Inputs {
 // Outputs
 //
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct Outputs {
     CIntervalsID id1;
     CIntervalsID id2;
@@ -99,6 +111,10 @@ struct Outputs {
 // QSimpleInterval
 //
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct QSimpleInterval {
     QSimpleInterval() : valid(false) {}
     QSimpleInterval(CPoint const& begin, CPoint const& end)
@@ -152,6 +168,10 @@ using QSimpleID = ID<QSimpleInterval>;
 // QSimpleOutputs
 //
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct QSimpleOutputs {
     QSimpleID id1;
     QSimpleID id2;
@@ -161,6 +181,10 @@ struct QSimpleOutputs {
 // BoxData
 //
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct BoxData {
     Box box;
     Inputs inputs;

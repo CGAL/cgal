@@ -71,8 +71,8 @@ using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_2;
 
 /*!
- * \ingroup PkgPolylineDistanceFunctionsxx
- * A class representing a value in the interval `[0,1]`.
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a value in the interval `[0,1]`....
 */
 struct Lambda {
     typedef CGAL::Interval_nt<> Approx;
@@ -329,6 +329,10 @@ bool exact_reals(const Point& circle_center, distance_t radius,
 
 
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct OldPoint {
     OldPoint() = default;
     OldPoint(distance_t X, distance_t Y) : X(X), Y(Y) {}
@@ -411,6 +415,10 @@ BFDirection toBFDirection(Direction direction);
 
 // TODO: does CGAL have any replacement for this or do we want our custom type
 // here?
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct Interval {
     RealType begin;
     RealType end;
@@ -443,10 +451,12 @@ struct Interval {
 
 std::ostream& operator<<(std::ostream& out, const Interval& interval);
 
-// Data Types for FrechetLight:
-
-// CPoint is integral part + rational [0,1] number given as sqrt_extension
-
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * Data Types for FrechetLight:
+ *
+ * CPoint is integral part + rational [0,1] number given as sqrt_extension
+ */
 class CPoint
 {
 private:
@@ -579,6 +589,10 @@ using CPositions = std::vector<CPosition>;
 using CurveID = std::size_t;
 using CurveIDs = std::vector<CurveID>;
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a
+*/
 struct CInterval {
     CPoint begin;
     CPoint end;

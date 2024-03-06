@@ -43,8 +43,12 @@ distance_t distance(Point const& p, Point const& q)
     return CGAL::sqrt(CGAL::squared_distance(p, q));
 }
 
-// Represents a trajectory. Additionally to the points given in the input file,
-// we also store the length of any prefix of the trajectory.
+
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * A class representing a trajectory. Additionally to the points given in the input file,
+ * we also store the length of any prefix of the trajectory.
+ */
 class Curve
 {
 public:

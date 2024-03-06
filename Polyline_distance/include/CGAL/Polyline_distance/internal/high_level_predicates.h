@@ -36,6 +36,10 @@ namespace internal {
 namespace HLPred
 {
 
+/*!
+ * \ingroup PkgPolylineDistanceFunctions
+ * computes
+*/
 inline
 Interval intersection_interval(Point const & circle_center, distance_t radius,
                                Point const& line_start, Point const& line_end)
