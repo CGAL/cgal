@@ -399,7 +399,7 @@ int go(Mesh mesh, CDT_options options) {
     } else {
       namespace np = CGAL::parameters;
       nb_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
-          mesh, patch_id_map, np::maximum_distance(epsilon * bbox_max_width).maximum_angle(1));
+          mesh, patch_id_map, np::maximum_distance(1e-8 * bbox_max_width).maximum_angle(1));
     }
     for(auto f: faces(mesh)) {
       if(get(patch_id_map, f) < 0) {
