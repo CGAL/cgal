@@ -450,6 +450,8 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
         auto const& end_point = curve[mid];
         auto end_dist_sqr = mid_dist_sqr;
         // if last and next point are both free:
+        // TODO: if this is done with an uncertain decision, then we still have
+        // to catch this case (i.e., segment free) with the interval below.
         if (current_free && (end_dist_sqr <= dist_sqr)) {
             ++cur;
             stepsize *= 2;
@@ -475,6 +477,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
                                      temp_interval.end.getPoint() == cur
                                          ? temp_interval.end.getFraction()
                                          : 1.);
+
         if (interval.is_empty()) {
             ++cur;
             stepsize *= 2;
