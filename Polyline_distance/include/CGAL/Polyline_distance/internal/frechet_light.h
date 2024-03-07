@@ -53,11 +53,11 @@ class FrechetLight
 
 public:
     FrechetLight() = default;
-    void buildFreespaceDiagram(distance_t distance, Curve const& curve1,
+    void buildFreespaceDiagram(distance_t const& distance, Curve const& curve1,
                                Curve const& curve2);
-    bool lessThan(distance_t distance, Curve const& curve1,
+    bool lessThan(distance_t const& distance, Curve const& curve1,
                   Curve const& curve2);
-    bool lessThanWithFilters(distance_t distance, Curve const& curve1,
+    bool lessThanWithFilters(distance_t const& distance, Curve const& curve1,
                              Curve const& curve2);
     double calcDistance(Curve const& curve1, Curve const& curve2);
     void clear();
@@ -1028,7 +1028,7 @@ CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i,
     return CPoint{max, 0};
 }
 
-void FrechetLight::buildFreespaceDiagram(distance_t distance,
+void FrechetLight::buildFreespaceDiagram(distance_t const& distance,
                                          Curve const& curve1,
                                          Curve const& curve2)
 {
@@ -1049,7 +1049,7 @@ void FrechetLight::buildFreespaceDiagram(distance_t distance,
     computeOutputs(initial_box, initial_inputs, final_outputs);
 }
 
-bool FrechetLight::lessThan(distance_t distance, Curve const& curve1,
+bool FrechetLight::lessThan(distance_t const& distance, Curve const& curve1,
                             Curve const& curve2)
 {
     this->curve_pair[0] = &curve1;
@@ -1093,7 +1093,7 @@ bool FrechetLight::lessThan(distance_t distance, Curve const& curve1,
     return isTopRightReachable(final_outputs);
 }
 
-bool FrechetLight::lessThanWithFilters(distance_t distance, Curve const& curve1,
+bool FrechetLight::lessThanWithFilters(distance_t const& distance, Curve const& curve1,
                                        Curve const& curve2)
 {
     this->curve_pair[0] = &curve1;
