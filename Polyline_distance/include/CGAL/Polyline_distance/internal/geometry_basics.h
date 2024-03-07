@@ -333,44 +333,6 @@ bool exact_reals(const Point& circle_center, distance_t radius,
 
 
 
-#if 0
-
-/*!
- * \ingroup PkgPolylineDistanceFunctions
- * A class representing a
-*/
-struct OldPoint {
-    OldPoint() = default;
-    OldPoint(distance_t X, distance_t Y) : X(X), Y(Y) {}
-
-    distance_t x() const { return X; };
-    distance_t y() const { return Y; };
-
-    OldPoint& operator-=(const OldPoint& point);
-    OldPoint operator-(const OldPoint& point) const;
-    OldPoint& operator+=(const OldPoint& point);
-    OldPoint operator+(const OldPoint& point) const;
-    // TODO: replace by "to_vector, scale, and back"
-    OldPoint operator*(const distance_t mult) const;
-    // OldPoint& operator/=(distance_t distance);
-    // OldPoint operator/(distance_t distance);
-
-    bool operator==(OldPoint const& other) const;
-    bool operator!=(OldPoint const& other) const;
-
-    // TODO: replace by functions
-    distance_t dist_sqr(const OldPoint& point) const;
-    distance_t dist(const OldPoint& point) const;
-
-private:
-    distance_t X;
-    distance_t Y;
-};
-
-OldPoint toOldPoint(Point const& p) { return OldPoint(p.x(), p.y()); }
-
-#endif
-
 using Points = std::vector<Point>;
 using PointID = ID<Point>;
 
@@ -707,92 +669,6 @@ std::ostream& operator<<(std::ostream& out, const CPoint& p)
     return out;
 }
 
-#if 0
-//
-// Old Point
-// TODO: delete at some point
-//
-
-OldPoint& OldPoint::operator-=(const OldPoint& point)
-{
-    X -= point.x();
-    Y -= point.y();
-    return *this;
-}
-
-OldPoint OldPoint::operator-(const OldPoint& point) const
-{
-    auto result = *this;
-    result -= point;
-
-    return result;
-}
-
-OldPoint& OldPoint::operator+=(const OldPoint& point)
-{
-    X += point.x();
-    Y += point.y();
-    return *this;
-}
-
-OldPoint OldPoint::operator+(const OldPoint& point) const
-{
-    auto result = *this;
-    result += point;
-
-    return result;
-}
-
-OldPoint OldPoint::operator*(const distance_t mult) const
-{
-    OldPoint res;
-    res.X = mult * this->x();
-    res.Y = mult * this->y();
-    return res;
-}
-
-// OldPoint& OldPoint::operator/=(distance_t distance)
-// {
-//     x /= distance;
-//     y /= distance;
-//     return *this;
-// }
-//
-// OldPoint OldPoint::operator/(distance_t distance)
-// {
-//     return OldPoint(x/distance, y/distance);
-// }
-
-bool OldPoint::operator==(OldPoint const& other) const
-{
-    return X == other.x() && Y == other.y();
-}
-
-bool OldPoint::operator!=(OldPoint const& other) const
-{
-    return !(*this == other);
-}
-
-// TODO: should be replaced everywhere by low_level_predicate
-distance_t OldPoint::dist_sqr(const OldPoint& point) const
-{
-  return CGAL::square(X - point.x()) + CGAL::square(Y - point.y());
-}
-
-// TODO: should be replaced everywhere by low_level_predicate
-distance_t OldPoint::dist(const OldPoint& point) const
-{
-    return std::sqrt(dist_sqr(point));
-}
-
-std::ostream& operator<<(std::ostream& out, const OldPoint& p)
-{
-    out << std::setprecision(15) << "(" << p.x() << ", " << p.y() << ")";
-
-    return out;
-}
-
-#endif
 
 //
 // Interval
