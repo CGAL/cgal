@@ -45,15 +45,14 @@ private:
     Certificate cert;
     const Curve *curve1_pt, *curve2_pt;
     distance_t distance;
+    distance_t distance_sqr;
 
 public:
-    Filter(const Curve& curve1, const Curve& curve2, distance_t distance)
+    Filter(const Curve& curve1, const Curve& curve2, distance_t const& distance)
+      : curve1_pt(&curve1), curve2_pt(&curve2), distance(distance), distance_sqr(square(distance))
     {
-        this->curve1_pt = &curve1;
-        this->curve2_pt = &curve2;
-        this->distance = distance;
-        cert.setCurves(&curve1, &curve2);
-        cert.setDistance(distance);
+      cert.setCurves(&curve1, &curve2);
+      cert.setDistance(distance);
     }
 
     Certificate const& getCertificate() { return cert; };
@@ -76,9 +75,8 @@ private:
 
 bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
 {
-    auto dist_sqr = distance * distance;
-    if (certainly(CGAL::squared_distance(fixed, curve.front()) <= dist_sqr) || // Uncertain
-        certainly(CGAL::squared_distance(fixed, curve.back()) <= dist_sqr)) {
+    if (certainly(CGAL::squared_distance(fixed, curve.front()) <= distance_sqr) || // Uncertain
+        certainly(CGAL::squared_distance(fixed, curve.back()) <= distance_sqr)) {
         return false;
     }
     std::size_t stepsize = 1;
@@ -150,7 +148,6 @@ bool Filter::bichromaticFarthestDistance()
     auto const& extreme1 = curve1.getExtremePoints();
     auto const& extreme2 = curve2.getExtremePoints();
 
-    distance_t distance_sqr = distance * distance;
     distance_t d;
 
     d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.min_y},
@@ -191,7 +188,6 @@ bool Filter::greedy()
     cert.reset();
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
-    auto distance_sqr = distance * distance;
     auto d_sqr = CGAL::squared_distance(curve1.back(), curve2.back());
     PointID pos1 = 0;
     PointID pos2 = 0;
@@ -235,7 +231,6 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
     cert.reset();
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
-    auto const distance_sqr = distance * distance;
     // PointID pos1 = 0;
     // PointID pos2 = 0;
     pos1 = 0;
@@ -352,7 +347,6 @@ bool Filter::adaptiveSimultaneousGreedy()
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
 
-    auto distance_sqr = distance * distance;
     PointID pos1 = 0;
     PointID pos2 = 0;
     cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
@@ -455,7 +449,6 @@ bool Filter::negative(PointID position1, PointID position2)
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
 
-    distance_t distance_sqr = distance * distance;
     if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain
         certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return true;
