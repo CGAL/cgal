@@ -75,6 +75,7 @@ public:
         assert(
             (pt.getPoint() < points.size() - 1 ||
              (pt.getPoint() == points.size() - 1 && pt.getFraction() == 0.)));
+        /*
         // TODO: this interpolates at a point slightly below pt; check whether
         // this is really fine in all contexts
         OldPoint old_p = pt.getFraction() == 0.
@@ -84,7 +85,16 @@ public:
                                    toOldPoint(points[pt.getPoint() + 1]) *
                                        pt.getFractionLB();
         return Point(old_p.x(), old_p.y());
+        */
+        if(pt.getFraction() == 0){
+          return points[pt.getPoint()];
+        }
+        auto fraction = to_interval(pt.getFraction());
+        return points[pt.getPoint()] +
+               (fraction * (points[pt.getPoint() + 1] - points[pt.getPoint()]));
+          
     }
+
     Point interpolate_at(PointID const& pt) const { return points[pt]; }
     distance_t curve_length(PointID i, PointID j) const
     {

@@ -346,7 +346,7 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple,
                                              // heuristics
         // heuristic check:
         auto mid = (min + max) / 2;
-        auto maxdist = (std::max)(curve.curve_length(min, mid),
+        auto maxdist = (CGAL::max)(curve.curve_length(min, mid),
                                   curve.curve_length(mid, max));
         // TODO: return upper bound on error of fixed_point displacement to then
         // overestimate the mid_dist_sqr distance.
@@ -419,7 +419,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
 
         stepsize = std::min<std::size_t>(stepsize, max - cur);
         auto mid = cur + (stepsize + 1) / 2;
-        auto maxdist = (std::max)(curve.curve_length(cur, mid),
+        auto maxdist = (CGAL::max)(curve.curve_length(cur, mid),
                                   curve.curve_length(mid, cur + stepsize));
         auto mid_dist_sqr = CGAL::squared_distance(fixed_point, curve[mid]);
 
@@ -1004,7 +1004,7 @@ CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i,
         auto mid = cur + (stepsize + 1) / 2;
         auto first_part = curve2.curve_length(cur + 1, mid);
         auto second_part = curve2.curve_length(mid, cur + stepsize);
-        auto maxdist = (std::max)(first_part, second_part);
+        auto maxdist = (CGAL::max)(first_part, second_part);
         auto mid_dist_sqr = CGAL::squared_distance(point, curve2[mid]);
 
         auto comp_dist1 = distance - maxdist;
@@ -1227,7 +1227,7 @@ inline auto FrechetLight::computeInitialInputs() -> Inputs
 
 distance_t FrechetLight::calcDistance(Curve const& curve1, Curve const& curve2)
 {
-    static constexpr distance_t epsilon = 1e-10;
+  static /* AF: constexpr (in case of double) */  distance_t epsilon = 1e-10;
 
     distance_t min = 0;
     distance_t max = curve1.getUpperBoundDistance(curve2);

@@ -86,7 +86,7 @@ bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
         stepsize = std::min<std::size_t>(stepsize, curve.size() - 1 - pt);
         auto mid = pt + (stepsize + 1) / 2;
         auto mid_dist_sqr = CGAL::squared_distance(fixed, curve[mid]);
-        auto maxdist = (std::max)(curve.curve_length(pt, mid),
+        auto maxdist = (CGAL::max)(curve.curve_length(pt, mid),
                                   curve.curve_length(mid, pt + stepsize));
         auto comp_dist = distance + maxdist;
 
@@ -106,7 +106,7 @@ bool Filter::isFree(Point const& fixed, Curve const& var_curve, PointID start,
                     PointID end)
 {
     auto mid = (start + end + 1) / 2;
-    auto max = (std::max)(var_curve.curve_length(start + 1, mid),
+    auto max = (CGAL::max)(var_curve.curve_length(start + 1, mid),
                           var_curve.curve_length(mid, end));
     auto mid_dist_sqr = CGAL::squared_distance(fixed, var_curve[mid]);
 
@@ -123,9 +123,9 @@ bool Filter::isFree(Curve const& curve1, PointID start1, PointID end1,
 {
     auto mid1 = (start1 + end1 + 1) / 2;
     auto mid2 = (start2 + end2 + 1) / 2;
-    auto max1 = (std::max)(curve1.curve_length(start1 + 1, mid1),
+    auto max1 = (CGAL::max)(curve1.curve_length(start1 + 1, mid1),
                            curve1.curve_length(mid1, end1));
-    auto max2 = (std::max)(curve2.curve_length(start2 + 1, mid2),
+    auto max2 = (CGAL::max)(curve2.curve_length(start2 + 1, mid2),
                            curve2.curve_length(mid2, end2));
     auto mid_dist_sqr = CGAL::squared_distance(curve1[mid1], curve2[mid2]);
 
@@ -198,7 +198,7 @@ bool Filter::greedy()
 
     while (pos1 + pos2 < curve1.size() + curve2.size() - 2) {
         d_sqr =
-          (std::max)(d_sqr, CGAL::squared_distance(curve1[pos1], curve2[pos2]));
+          (CGAL::max)(d_sqr, CGAL::squared_distance(curve1[pos1], curve2[pos2]));
 
         if (d_sqr > distance_sqr) {
             return false;

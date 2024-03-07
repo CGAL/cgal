@@ -49,6 +49,7 @@ namespace internal {
 
 using Rational = CGAL::Exact_rational;
 
+using IntervalNT = CGAL::Interval_nt<>;
 
 namespace unit_tests
 {
@@ -60,14 +61,14 @@ void testGeometricBasics();
 //
 
 // TODO: replace by FT of traits
-using distance_t = double;
+using distance_t = IntervalNT;
 
 //
 // Point
 //
 
 
-using Kernel = CGAL::Simple_cartesian<double>;
+using Kernel = CGAL::Simple_cartesian<IntervalNT>;
 using Point = Kernel::Point_2;
 
 /*!
@@ -128,13 +129,13 @@ struct Lambda {
 
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
-            Rational start_end_diff = Rational(line_end[i]) - Rational(line_start[i]);
+            Rational start_end_diff = Rational(to_double(line_end[i])) - Rational(to_double(line_start[i]));
             a += CGAL::square(start_end_diff);
-            Rational start_center_diff = Rational(line_start[i]) - Rational(circle_center[i]);
+            Rational start_center_diff = Rational(to_double(line_start[i])) - Rational(to_double(circle_center[i]));
             b -= start_center_diff * start_end_diff;
             c += CGAL::square(start_center_diff);
         }
-        c -= CGAL::square(Rational(radius));
+        c -= CGAL::square(Rational(to_double(radius))); // AF this is not exact if radius.inf() != radius.sup()
 
         Rational minus_b_div_a = b / a;
         Rational d = CGAL::square(minus_b_div_a) - c / a;
@@ -300,13 +301,13 @@ bool exact_reals(const Point& circle_center, distance_t radius,
 
     Rational a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {
-        Rational start_end_diff = Rational(line_end[i]) - Rational(line_start[i]);
+        Rational start_end_diff = Rational(to_double(line_end[i])) - Rational(to_double(line_start[i]));
         a += CGAL::square(start_end_diff);
-        Rational start_center_diff = Rational(line_start[i]) - Rational(circle_center[i]);
+        Rational start_center_diff = Rational(to_double(line_start[i])) - Rational(to_double(circle_center[i]));
         b -= start_center_diff * start_end_diff;
         c += CGAL::square(start_center_diff);
     }
-    c -= CGAL::square(Rational(radius));
+    c -= CGAL::square(Rational(to_double(radius)));// AF this is not exact if radius.inf() != radius.sup()
 
     Rational minus_b_div_a = b / a;
     Rational d = CGAL::square(minus_b_div_a) - c / a;
@@ -327,7 +328,7 @@ bool exact_reals(const Point& circle_center, distance_t radius,
 
 
 
-
+#if 0
 
 /*!
  * \ingroup PkgPolylineDistanceFunctions
@@ -363,10 +364,10 @@ private:
 
 OldPoint toOldPoint(Point const& p) { return OldPoint(p.x(), p.y()); }
 
+#endif
+
 using Points = std::vector<Point>;
 using PointID = ID<Point>;
-
-
 
 
 struct ContinuousPoint {
@@ -701,6 +702,7 @@ std::ostream& operator<<(std::ostream& out, const CPoint& p)
     return out;
 }
 
+#if 0
 //
 // Old Point
 // TODO: delete at some point
@@ -784,6 +786,8 @@ std::ostream& operator<<(std::ostream& out, const OldPoint& p)
 
     return out;
 }
+
+#endif 
 
 //
 // Interval
