@@ -44,12 +44,6 @@ inline
 Interval intersection_interval(Point const & circle_center, distance_t radius,
                                Point const& line_start, Point const& line_end)
 {
-    // let a := v.x()^2 + v.y()^2,
-    // let b := line_start.x() * v.x() + line_start.y() * v.y(),
-    // let c := line_start.x()^2 + line_start.y()^2 - radius^2
-    // <=> lambda^2 * a + lambda * 2 b + c = 0
-    // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
-    // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
     Interval I;
 
     try {

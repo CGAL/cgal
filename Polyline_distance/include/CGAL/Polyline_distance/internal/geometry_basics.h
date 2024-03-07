@@ -258,33 +258,41 @@ bool approximate_reals(const Point& circle_center, distance_t radius,
                        const Point& line_start, const Point& line_end,
                        std::pair<Lambda, Lambda>& I)
 {
-    typedef CGAL::Interval_nt<> Approx;
-    Approx ia(0), ib(0), ic(0);
-    for (auto i = 0; i < 2; ++i) {
-        Approx istart_end_diff = line_end[i] - line_start[i];
-        ia += CGAL::square(istart_end_diff);
-        Approx istart_center_diff = line_start[i] - circle_center[i];
-        ib -= istart_center_diff * istart_end_diff;
-        ic += CGAL::square(istart_center_diff);
-    }
-    ic -= CGAL::square(radius);
 
-    Approx iminus_b_div_a = ib / ia;
-    Approx id = CGAL::square(iminus_b_div_a) - ic / ia;
-    if (! is_negative(id)) {
-        Approx sqrtid = sqrt(id);
-        Approx istart = iminus_b_div_a - sqrtid;
-        Approx iend = iminus_b_div_a + sqrtid;
-        if (is_negative(istart)) istart = Approx(0);
-        if (iend > Approx(1)) iend = Approx(1);
-        if (istart <= Approx(1) && iend >= Approx(0)) {
+    // let a := v.x()^2 + v.y()^2,
+    // let b := line_start.x() * v.x() + line_start.y() * v.y(),
+    // let c := line_start.x()^2 + line_start.y()^2 - radius^2
+    // <=> lambda^2 * a + lambda * 2 b + c = 0
+    // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
+    // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
+
+    typedef CGAL::Interval_nt<> Approx;
+    Approx a(0), b(0), c(0);
+    for (auto i = 0; i < 2; ++i) {
+        Approx start_end_diff = line_end[i] - line_start[i];
+        a += CGAL::square(start_end_diff);
+        Approx start_center_diff = line_start[i] - circle_center[i];
+        b -= start_center_diff * start_end_diff;
+        c += CGAL::square(start_center_diff);
+    }
+    c -= CGAL::square(radius);
+
+    Approx minus_b_div_a = b / a;
+    Approx d = CGAL::square(minus_b_div_a) - c / a;
+    if (! is_negative(d)) {
+        Approx sqrtd = sqrt(d);
+        Approx start = minus_b_div_a - sqrtd;
+        Approx end = minus_b_div_a + sqrtd;
+        if (is_negative(start)) start = Approx(0);
+        if (end > Approx(1)) end = Approx(1);
+        if (start <= Approx(1) && end >= Approx(0)) {
             I = std::make_pair(
-                (istart == Approx(0)) ? Lambda(0)
-                                      : Lambda(istart, circle_center, radius,
-                                               line_start, line_end, true),
-                (iend == Approx(1)) ? Lambda(1)
-                                    : Lambda(iend, circle_center, radius,
-                                             line_start, line_end, false));
+                (start == Approx(0)) ? Lambda(0)
+                                     : Lambda(start, circle_center, radius,
+                                              line_start, line_end, true),
+                (end == Approx(1)) ? Lambda(1)
+                                   : Lambda(end, circle_center, radius,
+                                            line_start, line_end, false));
             return true;
         }
     }
