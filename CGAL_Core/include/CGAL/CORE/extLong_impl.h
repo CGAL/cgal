@@ -180,9 +180,7 @@ extLong extLong::operator- () const {
 //    you cannot interpret the returned value!
 CGAL_INLINE_FUNCTION
 int extLong::sign() const {
-  if (flag == 2){
-    CGAL_CORE_warning_msg(false, "NaN Sign can not be determined!");
-  }
+  CGAL_CORE_warning_msg(flag != 2, "NaN Sign can not be determined!");
   return ((val == 0) ? 0 : ((val > 0) ? 1 : -1));
 }
 
