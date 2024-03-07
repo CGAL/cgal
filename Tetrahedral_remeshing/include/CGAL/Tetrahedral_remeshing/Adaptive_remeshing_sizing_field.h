@@ -25,8 +25,8 @@
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/iterator/zip_iterator.hpp>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_triangle_primitive.h>
 
 #include <vector>
 #include <array>
@@ -39,6 +39,8 @@ namespace Tetrahedral_remeshing
 /**
  * @class Adaptive_remeshing_sizing_field
  * @tparam Tr a triangulation
+ *
+ * @todo add template parameter to take an input aabb_tree
  */
 template <typename Tr>
 class Adaptive_remeshing_sizing_field
@@ -53,14 +55,40 @@ class Adaptive_remeshing_sizing_field
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
 
+  struct Point_with_info
+  {
+    Bare_point p;
+    FT size;
+    int dimension;
+  };
+
 private:
-  using Point_and_size = boost::tuple<Bare_point, FT>;
-  using Traits = CGAL::Search_traits_adapter<Point_and_size,
-    CGAL::Nth_of_tuple_property_map<0, Point_and_size>,
-    CGAL::Search_traits_3<GT> >;
-  using K_neighbor_search = CGAL::Orthogonal_k_neighbor_search<Traits>;
-  using Distance = typename K_neighbor_search::Distance;
-  using Tree = typename K_neighbor_search::Tree;
+  struct Point_property_map
+  {
+    using Self = Point_property_map;
+    using value_type = Bare_point;
+    using reference = value_type; //TODO : why can't that be value_type& ?
+    using key_type = Point_with_info;
+    using category = boost::readable_property_map_tag;
+
+    const value_type operator[](const key_type& pwi) const { return pwi.p; }
+    friend const value_type get(const Self&, const key_type& pwi) { return pwi.p; }
+  };
+
+private:
+  using Kd_traits = CGAL::Search_traits_adapter<Point_with_info,
+                                                Point_property_map,
+                                                CGAL::Search_traits_3<GT> >;
+  using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<Kd_traits>;
+  using Kd_tree = typename Neighbor_search::Tree;
+  using Distance = typename Neighbor_search::Distance;
+  using Splitter = typename Neighbor_search::Splitter;
+
+  using Triangle_vec = std::vector<typename Tr::Triangle>;
+  using Triangle_iter = typename Triangle_vec::iterator;
+  using Triangle_primitive = CGAL::AABB_triangle_primitive<GT, Triangle_iter>;
+  using AABB_triangle_traits = CGAL::AABB_traits<GT, Triangle_primitive>;
+  using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
 
 public:
   /**
@@ -68,53 +96,99 @@ public:
   */
   Adaptive_remeshing_sizing_field(const Tr& tr)
     : m_gt(tr.geom_traits())
+    , m_kd_tree(points_with_info(tr), Splitter(), Kd_traits(Point_property_map()))
   {
-    build_kd_tree(tr);
+    m_kd_tree.build();
+    build_aabb_trees(tr);
   }
 
+private:
+  std::vector<Point_with_info> points_with_info(const Tr& tr) const
+  {
+    auto cp = tr.geom_traits().construct_point_3_object();
+    std::vector<Point_with_info> points;
+    for (const Vertex_handle v : tr.finite_vertex_handles())
+    {
+      points.push_back(Point_with_info{ cp(tr.point(v)),
+                                        average_circumradius_around(v, tr),
+                                        v->in_dimension() });
+    }
+    return points;
+  }
+
+public:
   /**
   * Returns size at point `p`
   */
   template <typename Index>
-  FT operator()(const Bare_point& p, const int& /* dim */, const Index& /* i */) const
+  FT operator()(const Bare_point& p, const int& dim, const Index& i) const
   {
-    // Find nearest vertex
-    K_neighbor_search search(m_kd_tree, p, 1/*nb nearest neighbors*/);
-    const auto & [pi, size] = search.begin()->first;
-    return size;
+    // Find nearest vertex and local size before remeshing
+    Point_property_map pp_map;
+    Distance dist(pp_map);
+    Neighbor_search search(m_kd_tree,
+                           p, //query point
+                           1, //nb nearest neighbors
+                           0, //epsilon
+                           true, //search nearest
+                           dist);
+    const auto [pi, size, dimension] = search.begin()->first;
 
-//    std::array<Point_and_size, 4> vertices;
-//    int vi = 0;
-//    for (typename K_neighbor_search::iterator it = search.begin();
-//         it != search.end();
-//         ++it, ++vi)
-//    {
-//      const auto& [pi, size] = it->first;
-//      if (pi == p)
-//        return size;
-//      vertices[vi] = {pi, size};
-//    }
-//    return interpolate_on_four_vertices(p, vertices);
+    if (dim < 3)
+      return size;
+
+    // measure distance to input surfaces
+    Bare_point closest_point = p;
+    FT shortest_distance = (std::numeric_limits<FT>::max)();
+    Surface_patch_index closest_patch{};
+    for(std::size_t i = 0; i < m_aabb_trees.size(); ++i)
+    {
+      const Bare_point closest = m_aabb_trees[i].closest_point(p);
+      const FT sq_dist = m_gt.compute_squared_distance_3_object()(p, closest);
+      if(sq_dist < shortest_distance)
+      {
+        shortest_distance = sq_dist;
+        closest_point = closest;
+        closest_patch = m_i2p[i];
+      }
+    }
+    shortest_distance = CGAL::approximate_sqrt(shortest_distance);
+    FT div_max_distance = 1. / 10.;
+      //?? (10 as a magic number for distance_field.getMaxDist();)
+
+    return size - size / (shortest_distance * div_max_distance);
   }
 
 private:
   /**
   * Fills sizing field, using size associated to points in `tr_`
   */
-  void build_kd_tree(const Tr& tr);
+  auto build_kd_tree(const Tr& tr);
+
+  /**
+  * Fills aabb trees, using triangles in `tr_`, for projection to input surfaces
+  */
+  void build_aabb_trees(const Tr& tr);
 
   /**
    * Returns size at point `p`, by interpolation into tetrahedron.
    */
   FT interpolate_on_four_vertices(
     const Bare_point& p,
-    const std::array<Point_and_size, 4>& vertices) const;
+    const std::array<Point_with_info, 4>& vertices) const;
 
   FT sq_circumradius_length(const Cell_handle cell, const Vertex_handle v, const Tr& tr) const;
   FT average_circumradius_around(const Vertex_handle v, const Tr& tr) const;
 
 private:
-  Tree m_kd_tree;
+  Kd_tree m_kd_tree;
+
+  using Surface_patch_index = typename Tr::Cell::Surface_patch_index;
+  std::map<Surface_patch_index, std::size_t> m_p2i;
+  std::vector<Surface_patch_index> m_i2p;
+  std::vector<Triangle_vec> m_triangles;
+  std::vector<AABB_triangle_tree> m_aabb_trees;
+
   const GT& m_gt;
 };
 
@@ -122,23 +196,36 @@ private:
 template <typename Tr>
 void
 Adaptive_remeshing_sizing_field<Tr>::
-build_kd_tree(const Tr& tr)
+build_aabb_trees(const Tr& tr)
 {
-  auto cp = m_gt.construct_point_3_object();
-
-  std::vector<Bare_point> points;
-  std::vector<FT>         sizes;
-
-  // Fill Kd tree with local size
-  for (const Vertex_handle v : tr.finite_vertex_handles())
+  // collect patch indices, and triangles for each patch
+  for (const auto& f : tr.finite_facets())
   {
-    const Tr_point& position = tr.point(v);
-    points.push_back(cp(position));
-    sizes.push_back(average_circumradius_around(v, tr));
+    if (!f.first->is_facet_on_surface(f.second))
+      continue;
+
+    const Surface_patch_index patch = f.first->surface_patch_index(f.second);
+    if (m_p2i.find(patch) == m_p2i.end())
+    {
+      m_p2i.insert({patch, m_aabb_trees.size()});
+      m_i2p.push_back(patch);
+
+      m_triangles.emplace_back();
+      m_triangles.back().push_back(tr.triangle(f));
+    }
+    else
+      m_triangles[m_p2i[patch]].push_back(tr.triangle(f));
   }
 
-  m_kd_tree.insert(boost::make_zip_iterator(boost::make_tuple(points.begin(), sizes.begin())),
-                   boost::make_zip_iterator(boost::make_tuple(points.end(), sizes.end())));
+  CGAL_assertion(m_triangles.size() == m_i2p.size());
+  CGAL_assertion(m_triangles.size() == m_p2i.size());
+
+  for (std::size_t i = 0; i < m_triangles.size(); ++i)
+  {
+    m_aabb_trees.push_back(AABB_triangle_tree(m_triangles[i].begin(), m_triangles[i].end()));
+    m_aabb_trees.back().build();
+    m_aabb_trees.back().accelerate_distance_queries();
+  }
 }
 
 template <typename Tr>
@@ -146,7 +233,7 @@ typename Adaptive_remeshing_sizing_field<Tr>::FT
 Adaptive_remeshing_sizing_field<Tr>::
 interpolate_on_four_vertices(
   const Bare_point& p,
-  const std::array<Point_and_size, 4>& vertices) const
+  const std::array<Point_with_info, 4>& vertices) const
 {
   // Interpolate value using values at vertices
   const FT& va = boost::get<1>(vertices[0]);
