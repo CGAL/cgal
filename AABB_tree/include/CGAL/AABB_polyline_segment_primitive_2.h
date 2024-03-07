@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sebastien Loriot
+// Author(s)     : Sven Oesau
 //
 
 
@@ -17,7 +17,6 @@
 
 #include <CGAL/license/AABB_tree.h>
 
-#include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_primitive.h>
 #include <iterator>
@@ -105,6 +104,5 @@ public:
 
 }  // end namespace CGAL
 
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_POLYLINE_SEGMENT_PRIMITIVE_2_H_
