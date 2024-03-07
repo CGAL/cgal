@@ -89,29 +89,29 @@ _test_fct_constructions_2(const R& r)
 
   assert( CGAL::weighted_circumcenter( wpnw_b, wpse_b, wpsw_b ) == psw);
 
-  Point a(0.0, 1.0);
-  Point b(3.0, 4.0);
+  Point a(0, 1);
+  Point b(3, 4);
   Segment seg(a, b);
 
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(seg, Point(0, 0)), a));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(seg, Point(5.0, 0)), Point(2.0, 3.0)));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(seg, Point(5.0, 4.0)), b));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(seg, Point(2.0, 4.0)), Point(2.5, 3.5)));
+  assert(r.construct_projected_point_2_object()(seg, Point(0, 0)) == a);
+  assert(r.construct_projected_point_2_object()(seg, Point(5, 0)) == Point(2, 3));
+  assert(r.construct_projected_point_2_object()(seg, Point(5, 4)) == b);
+  assert(r.construct_projected_point_2_object()(seg, Point(2, 4)) == Point(5, 7, 2));
 
   Point c(2.0, 5.0);
   Triangle tri(a, b, c);
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(0, 0)), a));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(0, 10.0)), c));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(3.5, 3.5)), b));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(2.0, 1.0)), Point(1.0, 2.0)));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(tri, Point(2.0, 4.0)), Point(2.0, 4.0)));
+  assert(r.construct_projected_point_2_object()(tri, Point(0, 0)) == a);
+  assert(r.construct_projected_point_2_object()(tri, Point(0, 10)) == c);
+  assert(r.construct_projected_point_2_object()(tri, Point(7, 7, 2)) == b);
+  assert(r.construct_projected_point_2_object()(tri, Point(2, 1)) == Point(1, 2));
+  assert(r.construct_projected_point_2_object()(tri, Point(2, 4)) == Point(2, 4));
 
   Triangle dtri(a, b, a);
 
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(dtri, Point(0, 0)), a));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(dtri, Point(5.0, 0)), Point(2.0, 3.0)));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(dtri, Point(5.0, 4.0)), b));
-  assert(CGAL::equal_xy(r.construct_projected_point_2_object()(dtri, Point(2.0, 4.0)), Point(2.5, 3.5)));
+  assert(r.construct_projected_point_2_object()(dtri, Point(0, 0)) == a);
+  assert(r.construct_projected_point_2_object()(dtri, Point(5, 0)) == Point(2, 3));
+  assert(r.construct_projected_point_2_object()(dtri, Point(5, 4)) == b);
+  assert(r.construct_projected_point_2_object()(dtri, Point(2, 4)) == Point(5, 7, 2));
 
   return true;
 }
