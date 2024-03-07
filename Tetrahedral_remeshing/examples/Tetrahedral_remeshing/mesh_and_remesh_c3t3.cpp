@@ -39,6 +39,8 @@ using Vertex_pair = std::pair<Vertex_handle, Vertex_handle>;
 using Constraints_set = std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>>;
 using Constraints_pmap = CGAL::Boolean_property_map<Constraints_set>;
 
+using Corners_set = std::unordered_set<Vertex_handle, boost::hash<Vertex_handle>>;
+using Corners_pmap = CGAL::Boolean_property_map<Corners_set>;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
@@ -72,8 +74,12 @@ int main(int argc, char* argv[])
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
 
+  Corners_set corners;
+  Corners_pmap corners_pmap(corners);
+
   Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
-    CGAL::parameters::edge_is_constrained_map(constraints_pmap));
+    CGAL::parameters::edge_is_constrained_map(constraints_pmap).
+                      vertex_is_constrained_map(corners_pmap));
 
   //note we use the move semantic, with std::move(c3t3),
   //  to avoid a copy of the triangulation by the function

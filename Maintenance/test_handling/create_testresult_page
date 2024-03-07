@@ -635,7 +635,7 @@ The doxygen documentation testpage</a>
 (and the <a href="${doxygen_manual_test_url}">overview page</a>)</li>
 <li><a href="https://cgal.geometryfactory.com/~cgaltest/testsuite_comparison/diff_testsuites.html">
 Diff of testsuites results</a></li>
-<li><a href="$testresult_dir/summary-$release_version.html">
+<li><a href="summary-$release_version.html">
 Summary Page</a></li>
 </ol>
 EOF
