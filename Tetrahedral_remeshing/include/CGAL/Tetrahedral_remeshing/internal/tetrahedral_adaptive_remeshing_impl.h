@@ -677,6 +677,13 @@ struct Adaptive_remesher_type_generator
   >::type;
 
   using Vertex_handle = typename Tr::Vertex_handle;
+  using Default_VCMap = Constant_property_map<Vertex_handle, bool>;
+  using VCMap = typename internal_np::Lookup_named_param_def<
+    internal_np::vertex_is_constrained_t,
+    NamedParameters,
+    Default_VCMap//default
+  >::type;
+
   using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
   using Default_ECMap = Constant_property_map<Edge_vv, bool>;
   using ECMap = typename internal_np::Lookup_named_param_def<
@@ -701,7 +708,7 @@ struct Adaptive_remesher_type_generator
   >::type;
 
   using type = Adaptive_remesher<
-    Tr, SizingFunction, ECMap, FCMap, SelectionFunctor, Visitor>;
+    Tr, SizingFunction, VCMap, ECMap, FCMap, SelectionFunctor, Visitor>;
 };
 
 }//end namespace internal
