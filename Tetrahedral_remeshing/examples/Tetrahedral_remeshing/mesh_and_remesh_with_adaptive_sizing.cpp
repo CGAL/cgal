@@ -1,3 +1,5 @@
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
@@ -66,6 +68,10 @@ int main(int argc, char* argv[])
 
   std::cout << "\rMeshing done." << std::endl;
 
+  std::ofstream out_mesh("out_meshing.mesh");
+  CGAL::IO::write_MEDIT(out_mesh, c3t3.triangulation());
+  out_mesh.close();
+
   T3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3));
   //note we use the move semantic, with std::move(c3t3),
   //  to avoid a copy of the triangulation by the function
@@ -85,6 +91,10 @@ int main(int argc, char* argv[])
     CGAL::parameters::number_of_iterations(5));
 
   std::cout << "\rRemeshing done." << std::endl;
+
+  std::ofstream out("out_remeshing.mesh");
+  CGAL::IO::write_MEDIT(out, tr);
+  out.close();
 
   return EXIT_SUCCESS;
 }
