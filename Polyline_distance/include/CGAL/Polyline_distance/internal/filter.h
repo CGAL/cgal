@@ -200,7 +200,7 @@ bool Filter::greedy()
         d_sqr =
           (CGAL::max)(d_sqr, CGAL::squared_distance(curve1[pos1], curve2[pos2]));
 
-        if (d_sqr > distance_sqr) { // Uncertain
+        if (certainly(d_sqr > distance_sqr)) { // Uncertain
             return false;
         }
 
@@ -242,8 +242,8 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
     pos2 = 0;
     cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
 
-    if (CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr ||  // Uncertain
-        CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr) {
+    if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) ||  // Uncertain
+        certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return false;
     }
 
@@ -357,8 +357,8 @@ bool Filter::adaptiveSimultaneousGreedy()
     PointID pos2 = 0;
     cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
 
-    if (CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr || // Uncertain
-        CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr) {
+    if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain
+        certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return false;
     }
 
@@ -456,8 +456,8 @@ bool Filter::negative(PointID position1, PointID position2)
     auto& curve2 = *curve2_pt;
 
     distance_t distance_sqr = distance * distance;
-    if (CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr || // Uncertain
-        CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr) {
+    if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain
+        certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return true;
     }
 
