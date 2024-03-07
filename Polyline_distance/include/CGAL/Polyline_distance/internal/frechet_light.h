@@ -452,7 +452,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
         // if last and next point are both free:
         // TODO: if this is done with an uncertain decision, then we still have
         // to catch this case (i.e., segment free) with the interval below.
-        if (current_free && (end_dist_sqr <= dist_sqr)) { // Uncertain
+        if (current_free && certainly(end_dist_sqr <= dist_sqr)) {  // Uncertain
             ++cur;
             stepsize *= 2;
 

@@ -77,8 +77,8 @@ private:
 bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
 {
     auto dist_sqr = distance * distance;
-    if (CGAL::squared_distance(fixed, curve.front()) <= dist_sqr || // Uncertain
-        CGAL::squared_distance(fixed, curve.back()) <= dist_sqr) {
+    if (certainly(CGAL::squared_distance(fixed, curve.front()) <= dist_sqr) || // Uncertain
+        certainly(CGAL::squared_distance(fixed, curve.back()) <= dist_sqr)) {
         return false;
     }
     std::size_t stepsize = 1;
@@ -152,25 +152,25 @@ bool Filter::bichromaticFarthestDistance()
 
     distance_t distance_sqr = distance * distance;
     distance_t d;
-    ;
+
     d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.min_y},
                                Point{extreme2.max_x, extreme2.max_y});
-    if (d > distance_sqr) { // Uncertain
+    if (certainly(d > distance_sqr)) { // Uncertain
         return false;
     }
     d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.max_y},
                                Point{extreme2.max_x, extreme2.min_y});
-    if (d > distance_sqr) {
+    if (certainly(d > distance_sqr)) {
         return false;
     }
     d = CGAL::squared_distance(Point{extreme1.max_x, extreme1.min_y},
                                Point{extreme2.min_x, extreme2.max_y});
-    if (d > distance_sqr) {
+    if (certainly(d > distance_sqr)) {
         return false;
     }
     d = CGAL::squared_distance(Point{extreme1.max_x, extreme1.max_y},
                                Point{extreme2.min_x, extreme2.min_y});
-    if (d > distance_sqr) {
+    if (certainly(d > distance_sqr)) {
         return false;
     }
 
