@@ -72,7 +72,7 @@ typename Traits::FT continuous_Frechet_distance(const PointRange& curve1,
     auto icurve1 = Polyline_distance::internal::toCurve(curve1);
     auto icurve2 = Polyline_distance::internal::toCurve(curve2);
 
-    return Polyline_distance::internal::calcDistance(icurve1, icurve2);
+    return to_double(Polyline_distance::internal::calcDistance(icurve1, icurve2));
 }
 
 }  // end of namespace CGAL

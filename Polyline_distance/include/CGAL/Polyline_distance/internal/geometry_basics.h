@@ -60,13 +60,11 @@ void testGeometricBasics();
 // distance_t
 //
 
-// TODO: replace by FT of traits
 using distance_t = IntervalNT;
 
 //
 // Point
 //
-
 
 using Kernel = CGAL::Simple_cartesian<IntervalNT>;
 using Point = Kernel::Point_2;
@@ -129,13 +127,16 @@ struct Lambda {
 
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
-            Rational start_end_diff = Rational(to_double(line_end[i])) - Rational(to_double(line_start[i]));
+            assert(line_start[i].is_point());
+            assert(line_end[i].is_point());
+            assert(circle_center[i].is_point());
+            Rational start_end_diff = Rational(line_end[i].inf()) - Rational(line_start[i].inf());
             a += CGAL::square(start_end_diff);
-            Rational start_center_diff = Rational(to_double(line_start[i])) - Rational(to_double(circle_center[i]));
+            Rational start_center_diff = Rational(line_start[i].inf()) - Rational(circle_center[i].inf());
             b -= start_center_diff * start_end_diff;
             c += CGAL::square(start_center_diff);
         }
-        c -= CGAL::square(Rational(to_double(radius))); // AF this is not exact if radius.inf() != radius.sup()
+        c -= CGAL::square(Rational(to_double(radius)));
 
         Rational minus_b_div_a = b / a;
         Rational d = CGAL::square(minus_b_div_a) - c / a;
@@ -260,13 +261,13 @@ bool approximate_reals(const Point& circle_center, distance_t radius,
     typedef CGAL::Interval_nt<> Approx;
     Approx ia(0), ib(0), ic(0);
     for (auto i = 0; i < 2; ++i) {
-        Approx istart_end_diff = Approx(line_end[i]) - Approx(line_start[i]);
+        Approx istart_end_diff = line_end[i] - line_start[i];
         ia += CGAL::square(istart_end_diff);
-        Approx istart_center_diff = Approx(line_start[i]) - Approx(circle_center[i]);
+        Approx istart_center_diff = line_start[i] - circle_center[i];
         ib -= istart_center_diff * istart_end_diff;
         ic += CGAL::square(istart_center_diff);
     }
-    ic -= CGAL::square(Approx(radius));
+    ic -= CGAL::square(radius);
 
     Approx iminus_b_div_a = ib / ia;
     Approx id = CGAL::square(iminus_b_div_a) - ic / ia;
@@ -301,13 +302,17 @@ bool exact_reals(const Point& circle_center, distance_t radius,
 
     Rational a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {
-        Rational start_end_diff = Rational(to_double(line_end[i])) - Rational(to_double(line_start[i]));
+        assert(line_start[i].is_point());
+        assert(line_end[i].is_point());
+        assert(circle_center[i].is_point());
+        Rational start_end_diff = Rational(line_end[i].inf()) - Rational(line_start[i].inf());
         a += CGAL::square(start_end_diff);
-        Rational start_center_diff = Rational(to_double(line_start[i])) - Rational(to_double(circle_center[i]));
+        Rational start_center_diff = Rational(line_start[i].inf()) - Rational(circle_center[i].inf());
         b -= start_center_diff * start_end_diff;
         c += CGAL::square(start_center_diff);
     }
-    c -= CGAL::square(Rational(to_double(radius)));// AF this is not exact if radius.inf() != radius.sup()
+    assert(radius.is_point());
+    c -= CGAL::square(Rational(radius.inf()));
 
     Rational minus_b_div_a = b / a;
     Rational d = CGAL::square(minus_b_div_a) - c / a;
@@ -787,7 +792,7 @@ std::ostream& operator<<(std::ostream& out, const OldPoint& p)
     return out;
 }
 
-#endif 
+#endif
 
 //
 // Interval

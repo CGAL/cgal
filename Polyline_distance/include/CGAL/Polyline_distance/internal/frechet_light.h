@@ -59,7 +59,7 @@ public:
                   Curve const& curve2);
     bool lessThanWithFilters(distance_t distance, Curve const& curve1,
                              Curve const& curve2);
-    distance_t calcDistance(Curve const& curve1, Curve const& curve2);
+    double calcDistance(Curve const& curve1, Curve const& curve2);
     void clear();
 
     CurvePair getCurvePair() const;
@@ -1228,16 +1228,16 @@ inline auto FrechetLight::computeInitialInputs() -> Inputs
     return inputs;
 }
 
-distance_t FrechetLight::calcDistance(Curve const& curve1, Curve const& curve2)
+double FrechetLight::calcDistance(Curve const& curve1, Curve const& curve2)
 {
-  static /* AF: constexpr (in case of double) */  distance_t epsilon = 1e-10;
+  static double epsilon = 1e-10;
 
-    distance_t min = 0;
-    distance_t max = curve1.getUpperBoundDistance(curve2);
+    double min = 0;
+    double max = curve1.getUpperBoundDistance(curve2).sup();
 
     while (max - min >= epsilon) {
         auto split = (max + min) / 2.;
-        if (lessThan(split, curve1, curve2)) {
+        if (lessThan(distance_t(split), curve1, curve2)) {
             max = split;
         } else {
             min = split;

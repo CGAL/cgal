@@ -120,10 +120,8 @@ public:
 private:
     Points points;
     std::vector<distance_t> prefix_length;
-  ExtremePoints extreme_points = {(std::numeric_limits<distance_t>::max)(),
-                                  (std::numeric_limits<distance_t>::max)(),
-                                  std::numeric_limits<distance_t>::lowest(),
-                                  std::numeric_limits<distance_t>::lowest()};
+    ExtremePoints extreme_points;
+                                  
 };
 using Curves = std::vector<Curve>;
 
@@ -159,17 +157,20 @@ void Curve::push_back(Point const& point)
     } else {
         prefix_length.push_back(0);
     }
-
-    extreme_points.min_x = (std::min)(extreme_points.min_x, point.x());
-    extreme_points.min_y = (std::min)(extreme_points.min_y, point.y());
-    extreme_points.max_x = (std::max)(extreme_points.max_x, point.x());
-    extreme_points.max_y = (std::max)(extreme_points.max_y, point.y());
-
+    if (points.empty()) {
+        extreme_points = {point.x(), point.y(), point.x(), point.y()};
+    } else {
+        extreme_points.min_x = (std::min)(extreme_points.min_x, point.x());
+        extreme_points.min_y = (std::min)(extreme_points.min_y, point.y());
+        extreme_points.max_x = (std::max)(extreme_points.max_x, point.x());
+        extreme_points.max_y = (std::max)(extreme_points.max_y, point.y());
+    }
     points.push_back(point);
 }
 
 auto Curve::getExtremePoints() const -> ExtremePoints const&
 {
+    assert(!points.empty());
     return extreme_points;
 }
 
@@ -177,7 +178,6 @@ distance_t Curve::getUpperBoundDistance(Curve const& other) const
 {
     auto const& extreme1 = this->getExtremePoints();
     auto const& extreme2 = other.getExtremePoints();
-
     Point min_point{(std::min)(extreme1.min_x, extreme2.min_x),
                     (std::min)(extreme1.min_y, extreme2.min_y)};
     Point max_point = {(std::max)(extreme1.max_x, extreme2.max_x),

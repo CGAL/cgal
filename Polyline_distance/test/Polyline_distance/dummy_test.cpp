@@ -177,6 +177,11 @@ void testFrechetDistance()
             readFrechetDistanceQueries(query_directory + dataset + ".txt");
 
         for (auto const& query : queries) {
+                        std::cout
+                            << CGAL::continuous_Frechet_distance<TestCurve,
+                                                                 TestTraits>(
+                                   curves[query.id1], curves[query.id2], 0.001)
+                            << std::endl;
             timer.start();
             auto decision =
                 CGAL::continuous_Frechet_distance_less_than<TestCurve, TestTraits>(
