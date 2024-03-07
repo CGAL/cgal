@@ -2,11 +2,13 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.1...3.23)
-project(Hyperbolic_surfaces_Tests)
+project(Hyperbolic_surface_triangulation_2_Tests)
 
 find_package(CGAL REQUIRED)
 
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
+
+include_directories(../../include/)
 
 # create a target per cppfile
 file(
@@ -14,5 +16,5 @@ file(
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 foreach(cppfile ${cppfiles})
-  create_single_source_cgal_program("${cppfile}")
+  create_single_source_cgal_program("${cppfile}" ../../include/)
 endforeach()
