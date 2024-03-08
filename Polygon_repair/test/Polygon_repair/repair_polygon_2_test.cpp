@@ -59,8 +59,8 @@ int main(int argc, char* argv[]) {
     } else {
       std::cout << "fail" << std::endl;
       std::cout << "\tin:  " << in << std::endl;
-      std::cout << "\tout: " << out;
-      std::cout << "\tref: " << ref;
+      std::cout << "\tout: " << out << std::flush;
+      std::cout << "\tref: " << ref << std::flush;
     } CGAL_assertion(ref == out);
 
     // Test orientations
