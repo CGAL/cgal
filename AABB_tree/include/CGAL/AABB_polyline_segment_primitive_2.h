@@ -39,12 +39,11 @@ namespace internal {
     inline friend reference // Cannot return reference as the Segment does not exist, only the points exist.
     get(Self s, key_type it)
     {
-      typename Iterator::value_type& p = *it;
-      it++;
-      if (it == s.end)
-        return typename GeomTraits::Construct_segment_2()(p, *s.begin);
+      Iterator it2 = std::next(it);
+      if (it2 == s.end)
+        return typename GeomTraits::Construct_segment_2()(*it, *s.begin);
       else
-        return typename GeomTraits::Construct_segment_2()( p, *it );
+        return typename GeomTraits::Construct_segment_2()(*it, *it2 );
     }
 
     Iterator begin, end;
@@ -54,16 +53,18 @@ namespace internal {
 
 /*!
  * \ingroup PkgAABBTreeRef
- * Primitive type that uses as identifier an iterator with a 3D segment as `value_type`.
+ * Primitive type that uses as identifier an iterator with a 2D point as `value_type`.
  * The iterator from which the primitive is built should not be invalided
- * while the AABB tree holding the primitive is in use.
+ * while the AABB tree holding the primitive is in use. The `Segment_2` is constructed on the fly using the `Point_2`
+ * the identifier is pointing to as source and the next `Point_2` as target.
  *
  * \cgalModels{AABBPrimitive}
  *
  * \tparam GeomTraits is a traits class providing the nested type `Point_2` and `Segment_2`.
- *         It also provides the functor `Construct_source_2` that has an operator taking a `Segment_2`
- *         and returning its source as a type convertible to `Point_2`.
- * \tparam Iterator is a model of `ForwardIterator` with its value type convertible to `GeomTraits::Segment_2`
+ *         It also provides the functor `Construct_segment_2` that has an operator taking two `Point_2`
+ *         and returning a `Segment_2`.
+ * \tparam Iterator is a model of `ForwardIterator` with its value type convertible to `GeomTraits::Point_2`
+ * \tparam PointRange is a model of `ForwardRange` with its value type convertible to `GeomTraits::Point_2`
  * \tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
  *           the datum is stored in the primitive, while in the latter it is
  *           constructed on the fly to reduce the memory footprint.
@@ -71,13 +72,14 @@ namespace internal {
  *
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
+ * \sa `AABB_segment_primitive_2<Iterator,CacheDatum>`
  * \sa `AABB_triangle_primitive_3<Iterator,CacheDatum>`
  * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
  * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
  */
-template < class PointRange,
-           class GeomTraits,
+template < class GeomTraits,
            class Iterator,
+           class PointRange,
            class CacheDatum=Tag_false>
 class AABB_polyline_segment_primitive_2
 #ifndef DOXYGEN_RUNNING

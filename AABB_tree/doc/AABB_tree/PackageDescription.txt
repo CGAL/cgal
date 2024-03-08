@@ -40,6 +40,7 @@
 \cgalCRPSection{Primitives}
 - `CGAL::AABB_triangle_primitive_2<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_segment_primitive_2<GeomTraits, Iterator, CacheDatum>`
+- `CGAL::AABB_polyline_segment_primitive_2<GeomTraits, Iterator, PointRange, CacheDatum>`
 - `CGAL::AABB_triangle_primitive_3<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_segment_primitive_3<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,ExternalPropertyMaps,CacheDatum>`
