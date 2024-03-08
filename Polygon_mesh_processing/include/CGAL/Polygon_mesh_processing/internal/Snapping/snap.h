@@ -373,7 +373,7 @@ public:
       return;
 
     const typename Primitive::Datum& s = primitive.datum(m_traits.shared_data());
-    if(m_traits.equal_3_object()(s[0], query) || m_traits.equal_3_object()(s[1], query))
+    if(m_traits.equal_object()(s[0], query) || m_traits.equal_object()(s[1], query))
     {
       // If we are NOT using the same mesh and the query is (geometrically) equal to one extremity
       // of the target edge, we don't want to move the source point away from the target point

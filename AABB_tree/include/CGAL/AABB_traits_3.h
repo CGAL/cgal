@@ -215,6 +215,8 @@ public:
   /// Point query type.
   typedef typename GeomTraits::Point_3 Point_3;
 
+  typedef Point_3 Point; // AF: because the AABB_tree dimension agnostic
+
   /// additional types for the search tree, required by the RangeSearchTraits concept
   /// \bug This is not documented for now in the AABBTraits concept.
   typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
