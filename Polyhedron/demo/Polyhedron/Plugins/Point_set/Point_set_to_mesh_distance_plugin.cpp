@@ -72,7 +72,7 @@ double compute_distances(const Mesh& m,
                          const Point_set & point_set,
                          std::vector<double>& out)
 {
-  typedef CGAL::AABB_face_graph_triangle_primitive_3<Mesh> Primitive;
+  typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
   typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
   typedef CGAL::AABB_tree< Traits > Tree;
 
