@@ -447,12 +447,16 @@ int go(Mesh mesh, CDT_options options) {
     }
   }
   if(!options.dump_patches_borders_prefix.empty()) {
+    std::set<std::pair<vertex_descriptor, vertex_descriptor>> all_edges;
     for(int i = 0; i < nb_patches; ++i) {
       std::stringstream ss;
       ss << options.dump_patches_borders_prefix << i << ".polylines.txt";
       std::ofstream out(ss.str());
       out.precision(17);
       const auto& edges = patch_edges[i];
+      for(auto [va, vb]: edges) {
+        all_edges.insert(CGAL::make_sorted_pair(va, vb));
+      }
       std::cerr << "Patch p#" << i << " has " << edges.size() << " edges\n";
       const auto polylines = segment_soup_to_polylines(edges);
       for(const auto& polyline: polylines) {
@@ -468,6 +472,18 @@ int go(Mesh mesh, CDT_options options) {
         std::cerr << "    - " << polyline.size() << " vertices\n";
         assert(polyline.front() == polyline.back());
       }
+    }
+    std::stringstream ss;
+    ss << options.dump_patches_borders_prefix << "all_edges.polylines.txt";
+    std::ofstream out(ss.str());
+    out.precision(17);
+    const auto polylines = segment_soup_to_polylines(all_edges);
+    for(const auto& polyline: polylines) {
+      out << polyline.size() << "    ";
+      for(auto v: polyline) {
+        out << get(pmap, v) << "  ";
+      }
+      out << '\n';
     }
   }
 
