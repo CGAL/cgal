@@ -73,6 +73,8 @@ struct CDT_options
   double ratio = 0.1;
   double vertex_vertex_epsilon = 1e-14;
   double segment_vertex_epsilon = 1e-14;
+  double coplanar_polygon_max_angle = 1;
+  double coplanar_polygon_max_distance = 1e-6;
   std::string failure_assertion_expression{};
   std::string input_filename = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename{"dump.off"};
@@ -96,6 +98,8 @@ Usage: cdt_3_from_off [options] input.off output.off
   --ratio <double>: ratio of faces to remove (default: 0.1), if --failure-expression is used
   --vertex-vertex-epsilon <double>: epsilon for vertex-vertex min distance (default: 1e-6)
   --segment-vertex-epsilon <double>: epsilon for segment-vertex min distance (default: 0)
+  --coplanar-polygon-max-angle <double>: max angle for coplanar polygons (default: 1)
+  --coplanar-polygon-max-distance <double>: max distance for coplanar polygons (default: 1e-6)
 
   --dump-patches-after-merge <filename.ply>: dump patches after merging facets in PLY
   --dump-patches-borders-prefix <filenames_prefix>: dump patches borders
@@ -159,6 +163,12 @@ int main(int argc, char* argv[])
     } else if(arg == "--segment-vertex-epsilon") {
       assert(i + 1 < argc);
       options.segment_vertex_epsilon = std::stod(argv[++i]);
+    } else if(arg == "--coplanar-polygon-max-angle") {
+      assert(i + 1 < argc);
+      options.coplanar_polygon_max_angle = std::stod(argv[++i]);
+    } else if(arg == "--coplanar-polygon-max-distance") {
+      assert(i + 1 < argc);
+      options.coplanar_polygon_max_distance = std::stod(argv[++i]);
     } else if(arg == "--quiet") {
       options.quiet = true;
     } else if(arg == "--debug-missing-regions") {
@@ -399,7 +409,9 @@ int go(Mesh mesh, CDT_options options) {
     } else {
       namespace np = CGAL::parameters;
       nb_patches = CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces(
-          mesh, patch_id_map, np::maximum_distance(1e-8 * bbox_max_width).maximum_angle(1));
+          mesh, patch_id_map,
+          np::maximum_distance(options.coplanar_polygon_max_distance * bbox_max_width)
+             .maximum_angle(options.coplanar_polygon_max_angle));
     }
     for(auto f: faces(mesh)) {
       if(get(patch_id_map, f) < 0) {
