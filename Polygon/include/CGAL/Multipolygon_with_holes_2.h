@@ -92,6 +92,45 @@ protected:
   Polygon_with_holes_container m_polygons;
 };
 
+
+template <class Kernel_, class Container_>
+bool operator==(const Multipolygon_with_holes_2<Kernel_, Container_>& p1,
+                const Multipolygon_with_holes_2<Kernel_, Container_>& p2)
+{
+  typedef typename
+    Multipolygon_with_holes_2<Kernel_, Container_>::Polygon_with_holes_const_iterator HCI;
+  typedef CGAL::Polygon_with_holes_2<Kernel_, Container_> Polygon_2;
+  if(&p1 == &p2)
+    return (true);
+
+  if(p1.number_of_polygons_with_holes() != p2.number_of_polygons_with_holes())
+    return (false);
+
+  std::list<Polygon_2> tmp_list(p2.polygons_with_holes_begin(), p2.polygons_with_holes_end());
+
+  HCI i = p1.polygons_with_holes_begin();
+  for(; i!= p1.polygons_with_holes_end(); ++i)
+  {
+    typename std::list<Polygon_2>::iterator j =
+      (std::find(tmp_list.begin(), tmp_list.end(), *i));
+
+    if(j == tmp_list.end())
+      return (false);
+
+    tmp_list.erase(j);
+  }
+
+
+  CGAL_assertion(tmp_list.empty());
+  return (true);
+}
+
+template <class Kernel_, class Container_>
+inline bool operator!=(const Multipolygon_with_holes_2<Kernel_, Container_>& p1,
+                       const Multipolygon_with_holes_2<Kernel_, Container_>& p2)
+{
+  return (!(p1==p2));
+}
 /*!
 inserts a multipolygon with holes to the output stream `os`.
 
