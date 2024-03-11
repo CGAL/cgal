@@ -1,0 +1,2133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="1052.3622"
+   version="1.1"
+   width="744.09448"
+   id="svg2"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="StraightSkeleton2D_DataStructure.svg">
+  <metadata
+     id="metadata326">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs324">
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3771"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3433"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3435"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3437"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3439"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3441"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3443"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3445"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3447"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3449"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3451"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3453"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3455"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="DotM"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3827"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3459"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3461"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3463"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3465"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3467"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3469"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3471"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3473"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3475"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3477"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3479"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3481"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3483"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3485"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3487"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3489"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3491"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3493"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-0"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3771-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3037"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3039"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3041"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3043"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3045"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3047"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3049"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3051"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3053"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3055"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3057"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3059"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="DotM-3"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3827-6"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3063"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3065"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3067"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3069"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3071"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3073"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3075"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3077"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3079"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3081"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3083"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3085"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3087"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3089"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="DotM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3091"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3093"
+         d="m -2.5,-1 c 0,2.76 -2.24,5 -5,5 -2.76,0 -5,-2.24 -5,-5 0,-2.76 2.24,-5 5,-5 2.76,0 5,2.24 5,5 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none;marker-end:none"
+         transform="matrix(0.4,0,0,0.4,2.96,0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3095"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3097"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       style="overflow:visible;"
+       id="Arrow2Lend"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow2Lend">
+      <path
+         transform="scale(1.1) rotate(180) translate(1,0)"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         style="font-size:12.0;fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
+         id="path3783" />
+    </marker>
+    <marker
+       style="overflow:visible;"
+       id="Arrow1Mend-4"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Mend">
+      <path
+         transform="scale(0.4) rotate(180) translate(10,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path3771-7" />
+    </marker>
+    <marker
+       style="overflow:visible;"
+       id="Arrow1Lend"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path3765" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="DotL"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="DotL">
+      <path
+         transform="scale(0.8) translate(7.4, 1)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;marker-end:none"
+         d="M -2.5,-1.0 C -2.5,1.7600000 -4.7400000,4.0 -7.5,4.0 C -10.260000,4.0 -12.5,1.7600000 -12.5,-1.0 C -12.5,-3.7600000 -10.260000,-6.0 -7.5,-6.0 C -4.7400000,-6.0 -2.5,-3.7600000 -2.5,-1.0 z "
+         id="path3824" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="DotM-1"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="DotM">
+      <path
+         transform="scale(0.4) translate(7.4, 1)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;marker-end:none"
+         d="M -2.5,-1.0 C -2.5,1.7600000 -4.7400000,4.0 -7.5,4.0 C -10.260000,4.0 -12.5,1.7600000 -12.5,-1.0 C -12.5,-3.7600000 -10.260000,-6.0 -7.5,-6.0 C -4.7400000,-6.0 -2.5,-3.7600000 -2.5,-1.0 z "
+         id="path3827-9" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1600"
+     inkscape:window-height="853"
+     id="namedview322"
+     showgrid="false"
+     inkscape:zoom="1.050338"
+     inkscape:cx="386"
+     inkscape:cy="703.907"
+     inkscape:window-x="-2"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <text
+     xml:space="preserve"
+     style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+     x="59.980694"
+     y="69.82132"
+     id="text3640"
+     sodipodi:linespacing="125%"><tspan
+       sodipodi:role="line"
+       id="tspan3642"
+       x="59.980694"
+       y="69.82132">Straight Skeleton 2D - Data Structure</tspan></text>
+  <g
+     id="layer1"
+     inkscape:label="Ebene 1"
+     transform="translate(77.252463,23.969958)">
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path4949"
+       d="m 130,232.36218 270,0"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#DotM);marker-end:url(#Arrow1Mend)" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path5137"
+       d="m 400,232.36218 10,-90"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#DotM);marker-end:url(#Arrow1Mend)" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path5325"
+       d="m 410,142.36218 -220,-40"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#DotM);marker-end:url(#Arrow1Mend)" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path5513"
+       d="m 190,102.36218 -90,70"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#DotM);marker-end:url(#Arrow1Mend)" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path5701"
+       d="m 100,172.36218 30,60"
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#DotM);marker-end:url(#Arrow1Mend)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5889"
+       d="m 130,232.36218 20,-50"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5893"
+       d="m 400,232.36218 -50,-50"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5895"
+       d="m 410,142.36218 -60,40"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path5897"
+       d="m 350,182.36218 -140,-20"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path6829"
+       d="m 100,172.36218 50,10"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path7017"
+       d="m 150,182.36218 60,-20"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path7577"
+       d="m 190,102.36218 20,60"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text11705"
+       y="262.36218"
+       x="260"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         y="262.36218"
+         x="260"
+         id="tspan11707"
+         sodipodi:role="line">Arc</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text11709"
+       y="102.36218"
+       x="320"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         y="102.36218"
+         x="320"
+         id="tspan11711"
+         sodipodi:role="line">Edge</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text11713"
+       y="262.36218"
+       x="320"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         y="262.36218"
+         x="320"
+         id="tspan11715"
+         sodipodi:role="line">Node</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text11717"
+       y="87.362183"
+       x="140"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         y="87.362183"
+         x="140"
+         id="tspan11719"
+         sodipodi:role="line">Vertex</tspan></text>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path11723"
+       d="m 300,122.36218 30,-20"
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path11725"
+       d="M 190,102.36218 160,87.362183"
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path11727"
+       d="m 340,252.36218 c 10,-70 10,-70 10,-70"
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path11731"
+       d="m 280,172.36218 -10,80"
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3017"
+       y="252.81931"
+       x="196.04176"
+       style="font-size:18px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       xml:space="preserve"><tspan
+         y="252.81931"
+         x="196.04176"
+         id="tspan3019"
+         sodipodi:role="line" /></text>
+  </g>
+  <g
+     id="g4195"
+     transform="matrix(0.78654169,0,0,0.78654169,58.377437,310.69371)">
+    <polygon
+       id="polygon3761"
+       points="740,14 740,37 789,37 789,181 14,181 14,14 14,14 "
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3763"
+       y="14"
+       x="14"
+       width="726"
+       height="23"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3765"
+       y="27"
+       x="19"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">kernel</text>
+    <rect
+       id="rect3767"
+       y="37"
+       x="14"
+       width="775"
+       height="144"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect3769"
+       y="62"
+       x="110"
+       width="104"
+       height="85"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3771"
+       y="62"
+       x="110"
+       width="104"
+       height="85"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3773"
+       y="75"
+       x="139"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">Point2</text>
+    <rect
+       id="rect3775"
+       y="85"
+       x="110"
+       width="104"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3777"
+       y="99"
+       x="114"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">x : Double</text>
+    <text
+       id="text3779"
+       y="115"
+       x="114"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">y : Double</text>
+    <rect
+       id="rect3781"
+       y="125"
+       x="110"
+       width="104"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect3783"
+       y="62"
+       x="542"
+       width="104"
+       height="85"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3785"
+       y="62"
+       x="542"
+       width="104"
+       height="85"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3787"
+       y="75"
+       x="558"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">Segment2</text>
+    <rect
+       id="rect3789"
+       y="85"
+       x="542"
+       width="104"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3791"
+       y="99"
+       x="546"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">p : Point2</text>
+    <text
+       id="text3793"
+       y="115"
+       x="546"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">q : Point2</text>
+    <rect
+       id="rect3795"
+       y="125"
+       x="542"
+       width="104"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3797"
+       points="542,110 213,110"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3799"
+       y2="110"
+       y1="103"
+       x2="213"
+       x1="225"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3801"
+       y2="110"
+       y1="117"
+       x2="213"
+       x1="225"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polygon
+       id="polygon3803"
+       points="740,206 740,229 789,229 789,893 14,893 14,206 14,206 "
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3805"
+       y="206"
+       x="14"
+       width="726"
+       height="23"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3807"
+       y="219"
+       x="19"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">data2d</text>
+    <rect
+       id="rect3809"
+       y="229"
+       x="14"
+       width="775"
+       height="664"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect3811"
+       y="278"
+       x="150"
+       width="128"
+       height="136"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3813"
+       y="278"
+       x="150"
+       width="128"
+       height="136"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3815"
+       y="291"
+       x="191"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">Vertex</text>
+    <rect
+       id="rect3817"
+       y="301"
+       x="150"
+       width="128"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3819"
+       y="315"
+       x="154"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">point : Point2</text>
+    <text
+       id="text3821"
+       y="331"
+       x="154"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">edge_in : Edge</text>
+    <text
+       id="text3823"
+       y="347"
+       x="154"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">edge_out : Edge</text>
+    <text
+       id="text3825"
+       y="363"
+       x="154"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">polygon : Polygon</text>
+    <text
+       id="text3827"
+       y="379"
+       x="154"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">data : VertexData</text>
+    <rect
+       id="rect3829"
+       y="389"
+       x="150"
+       width="128"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3831"
+       y="403"
+       x="154"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">isReflex() : Boolean</text>
+    <rect
+       id="rect3833"
+       y="278"
+       x="470"
+       width="141"
+       height="120"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3835"
+       y="278"
+       x="470"
+       width="141"
+       height="120"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3837"
+       y="291"
+       x="523"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">Edge</text>
+    <rect
+       id="rect3839"
+       y="301"
+       x="470"
+       width="141"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3841"
+       y="315"
+       x="474"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">vertex_src : Vertex</text>
+    <text
+       id="text3843"
+       y="331"
+       x="474"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">vertex_dst : Vertex</text>
+    <text
+       id="text3845"
+       y="347"
+       x="474"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">polygon : Polygon</text>
+    <text
+       id="text3847"
+       y="363"
+       x="474"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">data : EdgeData</text>
+    <rect
+       id="rect3849"
+       y="373"
+       x="470"
+       width="141"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3851"
+       y="387"
+       x="474"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">segment() : Segment</text>
+    <rect
+       id="rect3853"
+       y="254"
+       x="318"
+       width="104"
+       height="101"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3855"
+       y="254"
+       x="318"
+       width="104"
+       height="101"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3857"
+       y="267"
+       x="341"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">Polygon</text>
+    <rect
+       id="rect3859"
+       y="277"
+       x="318"
+       width="104"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3861"
+       y="291"
+       x="322"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">vertices : List</text>
+    <text
+       id="text3863"
+       y="307"
+       x="322"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">edges : List</text>
+    <text
+       id="text3865"
+       y="323"
+       x="322"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">mutex : Mutex</text>
+    <rect
+       id="rect3867"
+       y="333"
+       x="318"
+       width="104"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3869"
+       points="190,278 190,146"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3871"
+       y2="146"
+       y1="158"
+       x2="190"
+       x1="197"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3873"
+       y2="146"
+       y1="158"
+       x2="190"
+       x1="183"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3875"
+       points="277,326 318,326"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3877"
+       y2="326"
+       y1="333"
+       x2="318"
+       x1="306"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3879"
+       y2="326"
+       y1="319"
+       x2="318"
+       x1="306"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3881"
+       points="318,310 277,310"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3883"
+       y2="310"
+       y1="303"
+       x2="277"
+       x1="289"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3885"
+       y2="310"
+       y1="317"
+       x2="277"
+       x1="289"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3887"
+       points="421,310 470,310"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3889"
+       y2="310"
+       y1="317"
+       x2="470"
+       x1="458"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3891"
+       y2="310"
+       y1="303"
+       x2="470"
+       x1="458"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3893"
+       points="470,326 421,326"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3895"
+       y2="326"
+       y1="319"
+       x2="421"
+       x1="433"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3897"
+       y2="326"
+       y1="333"
+       x2="421"
+       x1="433"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3899"
+       y2="273"
+       y1="278"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3901"
+       y2="263"
+       y1="268"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3903"
+       y2="253"
+       y1="258"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3905"
+       y2="243"
+       y1="248"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3907"
+       y2="233"
+       y1="238"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3909"
+       y2="223"
+       y1="228"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3911"
+       y2="213"
+       y1="218"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3913"
+       y2="203"
+       y1="208"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3915"
+       y2="193"
+       y1="198"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3917"
+       y2="183"
+       y1="188"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3919"
+       y2="173"
+       y1="178"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3921"
+       y2="163"
+       y1="168"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3923"
+       y2="153"
+       y1="158"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3925"
+       y2="146"
+       y1="148"
+       x2="558"
+       x1="558"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3927"
+       y2="146"
+       y1="158"
+       x2="558"
+       x1="565"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3929"
+       y2="146"
+       y1="158"
+       x2="558"
+       x1="551"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3931"
+       points="277,374 470,374"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3933"
+       y2="374"
+       y1="381"
+       x2="470"
+       x1="458"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3935"
+       y2="374"
+       y1="367"
+       x2="470"
+       x1="458"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3937"
+       points="470,390 277,390"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3939"
+       y2="390"
+       y1="383"
+       x2="277"
+       x1="289"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3941"
+       y2="390"
+       y1="397"
+       x2="277"
+       x1="289"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect3943"
+       y="486"
+       x="110"
+       width="199"
+       height="117"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3945"
+       y="486"
+       x="110"
+       width="199"
+       height="117"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3947"
+       y="499"
+       x="191"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">Node</text>
+    <rect
+       id="rect3949"
+       y="509"
+       x="110"
+       width="199"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3951"
+       y="523"
+       x="114"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">point : Point2</text>
+    <text
+       id="text3953"
+       y="539"
+       x="114"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">height : Double</text>
+    <text
+       id="text3955"
+       y="555"
+       x="114"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">straightskel : StraightSkeleton</text>
+    <text
+       id="text3957"
+       y="571"
+       x="114"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">arcs : List</text>
+    <rect
+       id="rect3959"
+       y="581"
+       x="110"
+       width="199"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline3961"
+       points="134,486 134,146"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3963"
+       y2="146"
+       y1="158"
+       x2="134"
+       x1="141"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line3965"
+       y2="146"
+       y1="158"
+       x2="134"
+       x1="127"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect3967"
+       y="454"
+       x="518"
+       width="200"
+       height="152"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3969"
+       y="454"
+       x="518"
+       width="200"
+       height="152"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3971"
+       y="467"
+       x="607"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">Arc</text>
+    <rect
+       id="rect3973"
+       y="477"
+       x="518"
+       width="200"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3975"
+       y="491"
+       x="522"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">node_src : Node</text>
+    <text
+       id="text3977"
+       y="507"
+       x="522"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">node_dst : Node</text>
+    <text
+       id="text3979"
+       y="523"
+       x="522"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">edge_left : Edge</text>
+    <text
+       id="text3981"
+       y="539"
+       x="522"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">edge_right : Edge</text>
+    <text
+       id="text3983"
+       y="555"
+       x="522"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">straightskel : StraightSkeleton</text>
+    <rect
+       id="rect3985"
+       y="565"
+       x="518"
+       width="200"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3987"
+       y="579"
+       x="522"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">segment() : Segment</text>
+    <text
+       id="text3989"
+       y="595"
+       x="522"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">direction() : Vector2</text>
+    <rect
+       id="rect3991"
+       y="422"
+       x="350"
+       width="131"
+       height="133"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect3993"
+       y="422"
+       x="350"
+       width="131"
+       height="133"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3995"
+       y="435"
+       x="355"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">StraightSkeleton</text>
+    <rect
+       id="rect3997"
+       y="445"
+       x="350"
+       width="131"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text3999"
+       y="459"
+       x="354"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">polygon : Polygon</text>
+    <text
+       id="text4001"
+       y="475"
+       x="354"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">nodes : List</text>
+    <text
+       id="text4003"
+       y="491"
+       x="354"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">arcs : List</text>
+    <text
+       id="text4005"
+       y="507"
+       x="354"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">events : List</text>
+    <text
+       id="text4007"
+       y="523"
+       x="354"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">mutex : Mutex</text>
+    <rect
+       id="rect4009"
+       y="533"
+       x="350"
+       width="131"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4011"
+       points="374,422 374,354"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4013"
+       y2="354"
+       y1="366"
+       x2="374"
+       x1="381"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4015"
+       y2="354"
+       y1="366"
+       x2="374"
+       x1="367"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4017"
+       points="550,454 550,397"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4019"
+       y2="397"
+       y1="409"
+       x2="550"
+       x1="557"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4021"
+       y2="397"
+       y1="409"
+       x2="550"
+       x1="543"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4023"
+       points="350,518 308,518"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4025"
+       y2="518"
+       y1="511"
+       x2="308"
+       x1="320"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4027"
+       y2="518"
+       y1="525"
+       x2="308"
+       x1="320"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4029"
+       points="308,534 350,534"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4031"
+       y2="534"
+       y1="541"
+       x2="350"
+       x1="338"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4033"
+       y2="534"
+       y1="527"
+       x2="350"
+       x1="338"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4035"
+       points="480,518 518,518"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4037"
+       y2="518"
+       y1="525"
+       x2="518"
+       x1="506"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4039"
+       y2="518"
+       y1="511"
+       x2="518"
+       x1="506"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4041"
+       points="518,534 480,534"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4043"
+       y2="534"
+       y1="527"
+       x2="480"
+       x1="492"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4045"
+       y2="534"
+       y1="541"
+       x2="480"
+       x1="492"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4047"
+       y2="449"
+       y1="454"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4049"
+       y2="439"
+       y1="444"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4051"
+       y2="429"
+       y1="434"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4053"
+       y2="419"
+       y1="424"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4055"
+       y2="409"
+       y1="414"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4057"
+       y2="399"
+       y1="404"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4059"
+       y2="389"
+       y1="394"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4061"
+       y2="379"
+       y1="384"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4063"
+       y2="369"
+       y1="374"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4065"
+       y2="359"
+       y1="364"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4067"
+       y2="349"
+       y1="354"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4069"
+       y2="339"
+       y1="344"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4071"
+       y2="329"
+       y1="334"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4073"
+       y2="319"
+       y1="324"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4075"
+       y2="309"
+       y1="314"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4077"
+       y2="299"
+       y1="304"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4079"
+       y2="289"
+       y1="294"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4081"
+       y2="279"
+       y1="284"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4083"
+       y2="269"
+       y1="274"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4085"
+       y2="259"
+       y1="264"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4087"
+       y2="249"
+       y1="254"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4089"
+       y2="239"
+       y1="244"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4091"
+       y2="229"
+       y1="234"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4093"
+       y2="219"
+       y1="224"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4095"
+       y2="209"
+       y1="214"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4097"
+       y2="199"
+       y1="204"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4099"
+       y2="189"
+       y1="194"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4101"
+       y2="179"
+       y1="184"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4103"
+       y2="169"
+       y1="174"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4105"
+       y2="159"
+       y1="164"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4107"
+       y2="149"
+       y1="154"
+       x2="630"
+       x1="630"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4109"
+       y2="146"
+       y1="158"
+       x2="630"
+       x1="637"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4111"
+       y2="146"
+       y1="158"
+       x2="630"
+       x1="623"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4113"
+       points="518,582 308,582"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4115"
+       y2="582"
+       y1="575"
+       x2="308"
+       x1="320"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4117"
+       y2="582"
+       y1="589"
+       x2="308"
+       x1="320"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4119"
+       points="308,595 518,595"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4121"
+       y2="595"
+       y1="602"
+       x2="518"
+       x1="506"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4123"
+       y2="595"
+       y1="588"
+       x2="518"
+       x1="506"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect4125"
+       y="638"
+       x="318"
+       width="199"
+       height="88"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect4127"
+       y="638"
+       x="318"
+       width="199"
+       height="88"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text4129"
+       y="651"
+       x="368"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">AbstractEvent</text>
+    <rect
+       id="rect4131"
+       y="661"
+       x="318"
+       width="199"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <text
+       id="text4133"
+       y="675"
+       x="322"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">node : Node</text>
+    <text
+       id="text4135"
+       y="691"
+       x="322"
+       font-size="12"
+       style="font-size:12px;font-family:Dialog">straightskel : StraightSkeleton</text>
+    <rect
+       id="rect4137"
+       y="702"
+       x="318"
+       width="199"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4139"
+       points="430,638 430,554"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4141"
+       y2="554"
+       y1="566"
+       x2="430"
+       x1="437"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4143"
+       y2="554"
+       y1="566"
+       x2="430"
+       x1="423"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect4145"
+       y="766"
+       x="318"
+       width="84"
+       height="66"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect4147"
+       y="766"
+       x="318"
+       width="84"
+       height="66"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text4149"
+       y="779"
+       x="323"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">EdgeEvent</text>
+    <rect
+       id="rect4151"
+       y="789"
+       x="318"
+       width="84"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect4153"
+       y="810"
+       x="318"
+       width="84"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect4155"
+       y="766"
+       x="438"
+       width="81"
+       height="66"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <rect
+       id="rect4157"
+       y="766"
+       x="438"
+       width="81"
+       height="66"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <text
+       id="text4159"
+       y="779"
+       x="443"
+       font-weight="bold"
+       font-size="12"
+       style="font-size:12px;font-weight:bold;font-family:Dialog">SplitEvent</text>
+    <rect
+       id="rect4161"
+       y="789"
+       x="438"
+       width="81"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <rect
+       id="rect4163"
+       y="810"
+       x="438"
+       width="81"
+       height="1"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4165"
+       points="366,766 366,725"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <polygon
+       id="polygon4167"
+       points="359,737 366,725 373,737 "
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <polygon
+       id="polygon4169"
+       points="359,737 366,725 373,737 "
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4171"
+       points="478,766 478,725"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <polygon
+       id="polygon4173"
+       points="471,737 478,725 485,737 "
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1" />
+    <polygon
+       id="polygon4175"
+       points="471,737 478,725 485,737 "
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4177"
+       points="414,554 414,638"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4179"
+       y2="638"
+       y1="626"
+       x2="414"
+       x1="407"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4181"
+       y2="638"
+       y1="626"
+       x2="414"
+       x1="421"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <polyline
+       id="polyline4183"
+       points="318,654 278,654 278,602"
+       style="fill:none;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4185"
+       y2="602"
+       y1="614"
+       x2="278"
+       x1="285"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+    <line
+       id="line4187"
+       y2="602"
+       y1="614"
+       x2="278"
+       x1="271"
+       style="fill:#000000;stroke:#000000;stroke-width:1" />
+  </g>
+</svg>

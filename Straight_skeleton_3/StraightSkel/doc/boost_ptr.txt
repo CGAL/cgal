@@ -1,0 +1,5 @@
+http://www.boost.org/doc/libs/release/libs/smart_ptr/smart_ptr.htm
+http://www.boost.org/doc/libs/release/libs/smart_ptr/sp_techniques.html#in_constructor
+http://www.boost.org/doc/libs/release/libs/smart_ptr/shared_ptr.htm#BestPractices
+http://stackoverflow.com/questions/327573/c-passing-references-to-boostshared-ptr
+http://www.codeproject.com/KB/stl/boostsmartptr.aspx#Cyclic%20References

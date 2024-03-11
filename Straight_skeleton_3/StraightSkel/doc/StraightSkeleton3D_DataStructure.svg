@@ -1,0 +1,1661 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg3721"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="StraightSkeleton3D_DataStructure.svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     inkscape:document-units="mm"
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.62"
+     inkscape:cx="350"
+     inkscape:cy="518.75213"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="853"
+     inkscape:window-x="-2"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Serif;-inkscape-font-specification:Serif"
+       x="67.241386"
+       y="62.450954"
+       id="text4210"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4212"
+         x="67.241386"
+         y="62.450954">Straight Skeleton 3D - Data Structure</tspan></text>
+    <polygon
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1"
+       points="592,14 592,37 641,37 641,221 18,221 18,14 18,14 "
+       id="polygon3947" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="22.131424"
+       width="552.32336"
+       x="72.370995"
+       y="75.378319"
+       id="rect3949" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="77.182175"
+       y="87.887383"
+       id="text3951">kernel</text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="177.05139"
+       width="599.47296"
+       x="72.370995"
+       y="97.509743"
+       id="rect3953" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="97.185822"
+       width="100.07253"
+       x="103.16248"
+       y="121.56564"
+       id="rect3955" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="97.185822"
+       width="100.07253"
+       x="103.16248"
+       y="121.56564"
+       id="rect3957" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="131.06732"
+       y="134.07469"
+       id="text3959">Point3</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="100.07253"
+       x="103.16248"
+       y="143.69705"
+       id="rect3961" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="107.01141"
+       y="157.16837"
+       id="text3963">x : Double</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="107.01141"
+       y="172.56413"
+       id="text3965">y : Double</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="107.01141"
+       y="187.9599"
+       id="text3967">z : Double</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="100.07253"
+       x="103.16248"
+       y="197.58226"
+       id="rect3969" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="81.790047"
+       width="100.07253"
+       x="526.5462"
+       y="121.56564"
+       id="rect3971" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="81.790047"
+       width="100.07253"
+       x="526.5462"
+       y="121.56564"
+       id="rect3973" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="541.94202"
+       y="134.07469"
+       id="text3975">Segment3</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="100.07253"
+       x="526.5462"
+       y="143.69705"
+       id="rect3977" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="530.3952"
+       y="157.16837"
+       id="text3979">p : Point3</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="530.3952"
+       y="172.56413"
+       id="text3981">q : Point3</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="100.07253"
+       x="526.5462"
+       y="182.18649"
+       id="rect3983" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="64.469803"
+       width="63.507565"
+       x="395.68219"
+       y="183.14873"
+       id="rect3985" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="64.469803"
+       width="63.507565"
+       x="395.68219"
+       y="183.14873"
+       id="rect3987" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="404.34232"
+       y="195.65779"
+       id="text3989">Plane3</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="63.507565"
+       x="395.68219"
+       y="205.28015"
+       id="rect3991" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="63.507565"
+       x="395.68219"
+       y="225.48711"
+       id="rect3993" />
+    <polygon
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:1"
+       points="592,254 592,277 641,277 641,997 18,997 18,254 18,254 "
+       id="polygon3995" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="22.131424"
+       width="552.32336"
+       x="72.370995"
+       y="306.31491"
+       id="rect3997" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="77.182175"
+       y="318.82397"
+       id="text3999">data3d</text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="692.80981"
+       width="599.47296"
+       x="72.370995"
+       y="328.44632"
+       id="rect4001" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="115.4683"
+       width="153.95773"
+       x="241.72446"
+       y="352.50223"
+       id="rect4003" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="115.4683"
+       width="153.95773"
+       x="241.72446"
+       y="352.50223"
+       id="rect4005" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="279.25165"
+       y="365.01129"
+       id="text4007">Polyhedron</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="153.95773"
+       x="241.72446"
+       y="374.63364"
+       id="rect4009" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="245.57339"
+       y="388.10495"
+       id="text4011">vertices : List</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="245.57339"
+       y="403.50073"
+       id="text4013">edges : List</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="245.57339"
+       y="418.89648"
+       id="text4015">facets : List</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="245.57339"
+       y="434.29227"
+       id="text4017">mutex : Mutex</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="153.95773"
+       x="241.72446"
+       y="443.91461"
+       id="rect4019" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="245.57339"
+       y="457.38593"
+       id="text4021">isConsistent() : Boolean</text>
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="130.86407"
+       width="153.95773"
+       x="311.00543"
+       y="514.15784"
+       id="rect4023" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="130.86407"
+       width="153.95773"
+       x="311.00543"
+       y="514.15784"
+       id="rect4025" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="368.73959"
+       y="526.66693"
+       id="text4027">Facet</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="153.95773"
+       x="311.00543"
+       y="536.28925"
+       id="rect4029" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="314.85437"
+       y="549.76056"
+       id="text4031">vertices : List</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="314.85437"
+       y="565.15637"
+       id="text4033">edges : List</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="314.85437"
+       y="580.55212"
+       id="text4035">triangles : List</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="314.85437"
+       y="595.94788"
+       id="text4037">polyhedron : Polyhedron</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="314.85437"
+       y="611.34369"
+       id="text4039">data : FacetData</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="153.95773"
+       x="311.00543"
+       y="620.966"
+       id="rect4041" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="314.85437"
+       y="634.43732"
+       id="text4043">plane() : Plane3</text>
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="130.86407"
+       width="153.95773"
+       x="103.16248"
+       y="568.04303"
+       id="rect4045" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="130.86407"
+       width="153.95773"
+       x="103.16248"
+       y="568.04303"
+       id="rect4047" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="158.00993"
+       y="580.55212"
+       id="text4049">Vertex</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="153.95773"
+       x="103.16248"
+       y="590.1745"
+       id="rect4051" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="107.01141"
+       y="603.64575"
+       id="text4053">point : Point3</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="107.01141"
+       y="619.04156"
+       id="text4055">edges : List</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="107.01141"
+       y="634.43732"
+       id="text4057">facets : List</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="107.01141"
+       y="649.83307"
+       id="text4059">polyhedron : Polyhedron</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="107.01141"
+       y="665.22888"
+       id="text4061">data : VertexData</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="153.95773"
+       x="103.16248"
+       y="675.81348"
+       id="rect4063" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="146.25984"
+       width="153.95773"
+       x="503.45261"
+       y="568.04303"
+       id="rect4065" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="146.25984"
+       width="153.95773"
+       x="503.45261"
+       y="568.04303"
+       id="rect4067" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="563.11121"
+       y="580.55212"
+       id="text4069">Edge</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="153.95773"
+       x="503.45261"
+       y="590.1745"
+       id="rect4071" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="507.30154"
+       y="603.64575"
+       id="text4073">vertex_src : Vertex</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="507.30154"
+       y="619.04156"
+       id="text4075">vertex_dst : Vertex</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="507.30154"
+       y="634.43732"
+       id="text4077">facet_l : Facet</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="507.30154"
+       y="649.83307"
+       id="text4079">facet_r : Facet</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="507.30154"
+       y="665.22888"
+       id="text4081">polyhedron : Polyhedron</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="507.30154"
+       y="680.62463"
+       id="text4083">data : EdgeData</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="153.95773"
+       x="503.45261"
+       y="690.24701"
+       id="rect4085" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="507.30154"
+       y="703.71832"
+       id="text4087">segment() : Segment3</text>
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="81.790047"
+       width="130.86407"
+       x="311.00543"
+       y="722.00079"
+       id="rect4089" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="81.790047"
+       width="130.86407"
+       x="311.00543"
+       y="722.00079"
+       id="rect4091" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="348.53262"
+       y="734.50983"
+       id="text4093">Triangle</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="130.86407"
+       x="311.00543"
+       y="744.1322"
+       id="rect4095" />
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="314.85437"
+       y="757.60352"
+       id="text4097">vertices [3] : Vertex</text>
+    <text
+       style="font-size:11.54683018px;font-family:Dialog"
+       font-size="12"
+       x="314.85437"
+       y="772.99927"
+       id="text4099">facet : Facet</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="130.86407"
+       x="311.00543"
+       y="782.62164"
+       id="rect4101" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="64.469803"
+       width="138.56197"
+       x="210.93291"
+       y="837.46912"
+       id="rect4103" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="64.469803"
+       width="138.56197"
+       x="210.93291"
+       y="837.46912"
+       id="rect4105" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="221.5175"
+       y="849.97815"
+       id="text4107">StraightSkeleton</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="138.56197"
+       x="210.93291"
+       y="859.60052"
+       id="rect4109" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="138.56197"
+       x="210.93291"
+       y="879.8075"
+       id="rect4111" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="64.469803"
+       width="63.507565"
+       x="164.74557"
+       y="937.54163"
+       id="rect4113" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="64.469803"
+       width="63.507565"
+       x="164.74557"
+       y="937.54163"
+       id="rect4115" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="178.21689"
+       y="950.05066"
+       id="text4117">Node</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="63.507565"
+       x="164.74557"
+       y="959.67303"
+       id="rect4119" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="63.507565"
+       x="164.74557"
+       y="979.88"
+       id="rect4121" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="64.469803"
+       width="63.507565"
+       x="318.70331"
+       y="937.54163"
+       id="rect4123" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="64.469803"
+       width="63.507565"
+       x="318.70331"
+       y="937.54163"
+       id="rect4125" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="330.25015"
+       y="950.05066"
+       id="text4127">Sheet</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="63.507565"
+       x="318.70331"
+       y="959.67303"
+       id="rect4129" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="63.507565"
+       x="318.70331"
+       y="979.88"
+       id="rect4131" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="64.469803"
+       width="63.507565"
+       x="241.72446"
+       y="937.54163"
+       id="rect4133" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="64.469803"
+       width="63.507565"
+       x="241.72446"
+       y="937.54163"
+       id="rect4135" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="262.89365"
+       y="950.05066"
+       id="text4137">Arc</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="63.507565"
+       x="241.72446"
+       y="959.67303"
+       id="rect4139" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="63.507565"
+       x="241.72446"
+       y="979.88"
+       id="rect4141" />
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.96223587"
+       height="64.469803"
+       width="107.77042"
+       x="395.68219"
+       y="837.46912"
+       id="rect4143" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.96223587"
+       height="64.469803"
+       width="107.77042"
+       x="395.68219"
+       y="837.46912"
+       id="rect4145" />
+    <text
+       style="font-size:11.54683018px;font-weight:bold;font-family:Dialog"
+       font-size="12"
+       font-weight="bold"
+       x="401.4556"
+       y="849.97815"
+       id="text4147">AbstractEvent</text>
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="107.77042"
+       x="395.68219"
+       y="859.60052"
+       id="rect4149" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       height="0.96223587"
+       width="107.77042"
+       x="395.68219"
+       y="879.8075"
+       id="rect4151" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="170,872 170,910"
+       id="polyline4153" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="211.89514"
+       x2="218.63078"
+       y1="925.99481"
+       y2="937.54163"
+       id="line4155" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="225.36644"
+       x2="218.63078"
+       y1="925.99481"
+       y2="937.54163"
+       id="line4157" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="299,872 299,910"
+       id="polyline4159" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="336.02356"
+       x2="342.75922"
+       y1="925.99481"
+       y2="937.54163"
+       id="line4161" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="349.49487"
+       x2="342.75922"
+       y1="925.99481"
+       y2="937.54163"
+       id="line4163" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="226,872 226,910"
+       id="polyline4165" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="265.78033"
+       x2="272.51599"
+       y1="925.99481"
+       y2="937.54163"
+       id="line4167" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="279.25165"
+       x2="272.51599"
+       y1="925.99481"
+       y2="937.54163"
+       id="line4169" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="305,838 354,838"
+       id="polyline4171" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="384.13535"
+       x2="395.68219"
+       y1="874.99628"
+       y2="868.26062"
+       id="line4173" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="384.13535"
+       x2="395.68219"
+       y1="861.52496"
+       y2="868.26062"
+       id="line4175" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="490,102 153,102"
+       id="polyline4177" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="213.81961"
+       x2="202.27278"
+       y1="153.31941"
+       y2="160.05507"
+       id="line4179" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="213.81961"
+       x2="202.27278"
+       y1="166.79071"
+       y2="160.05507"
+       id="line4181" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="106,526 106,162"
+       id="polyline4183" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="163.78334"
+       x2="157.0477"
+       y1="229.33604"
+       y2="217.78922"
+       id="line4185" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="150.31204"
+       x2="157.0477"
+       y1="229.33604"
+       y2="217.78922"
+       id="line4187" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="162,526 162,382 194,382"
+       id="polyline4189" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="230.17763"
+       x2="241.72446"
+       y1="436.21674"
+       y2="429.48108"
+       id="line4191" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="230.17763"
+       x2="241.72446"
+       y1="422.74542"
+       y2="429.48108"
+       id="line4193" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="194,366 146,366 146,526"
+       id="polyline4195" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="188.80148"
+       x2="195.53712"
+       y1="556.49622"
+       y2="568.04303"
+       id="line4197" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="202.27278"
+       x2="195.53712"
+       y1="556.49622"
+       y2="568.04303"
+       id="line4199" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="353,366 514,366 514,526"
+       id="polyline4201" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="542.90424"
+       x2="549.63989"
+       y1="556.49622"
+       y2="568.04303"
+       id="line4203" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="556.37555"
+       x2="549.63989"
+       y1="556.49622"
+       y2="568.04303"
+       id="line4205" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="498,526 498,382 353,382"
+       id="polyline4207" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="406.26678"
+       x2="394.71994"
+       y1="422.74542"
+       y2="429.48108"
+       id="line4209" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="406.26678"
+       x2="394.71994"
+       y1="436.21674"
+       y2="429.48108"
+       id="line4211" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="306,421 306,470"
+       id="polyline4213" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="342.75922"
+       x2="349.49487"
+       y1="502.61102"
+       y2="514.15784"
+       id="line4215" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="356.23053"
+       x2="349.49487"
+       y1="502.61102"
+       y2="514.15784"
+       id="line4217" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="322,470 322,421"
+       id="polyline4219" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="371.62628"
+       x2="364.89062"
+       y1="478.55511"
+       y2="467.0083"
+       id="line4221" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="358.155"
+       x2="364.89062"
+       y1="478.55511"
+       y2="467.0083"
+       id="line4223" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="322,605 322,686"
+       id="polyline4225" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="358.155"
+       x2="364.89062"
+       y1="710.45398"
+       y2="722.00079"
+       id="line4227" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="371.62628"
+       x2="364.89062"
+       y1="710.45398"
+       y2="722.00079"
+       id="line4229" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="338,686 338,605"
+       id="polyline4231" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="387.02206"
+       x2="380.28641"
+       y1="655.60651"
+       y2="644.05969"
+       id="line4233" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="373.55075"
+       x2="380.28641"
+       y1="655.60651"
+       y2="644.05969"
+       id="line4235" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="266,542 209,542"
+       id="polyline4237" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="267.7048"
+       x2="256.15799"
+       y1="576.70319"
+       y2="583.43884"
+       id="line4239" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="267.7048"
+       x2="256.15799"
+       y1="590.1745"
+       y2="583.43884"
+       id="line4241" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="425,542 466,542"
+       id="polyline4243" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="491.90576"
+       x2="503.45261"
+       y1="590.1745"
+       y2="583.43884"
+       id="line4245" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="491.90576"
+       x2="503.45261"
+       y1="576.70319"
+       y2="583.43884"
+       id="line4247" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="466,558 425,558"
+       id="polyline4249" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="475.54776"
+       x2="464.00095"
+       y1="592.09894"
+       y2="598.83459"
+       id="line4251" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="475.54776"
+       x2="464.00095"
+       y1="605.57025"
+       y2="598.83459"
+       id="line4253" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="209,558 266,558"
+       id="polyline4255" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="299.45859"
+       x2="311.00543"
+       y1="605.57025"
+       y2="598.83459"
+       id="line4257" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="299.45859"
+       x2="311.00543"
+       y1="592.09894"
+       y2="598.83459"
+       id="line4259" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="466,630 209,630"
+       id="polyline4261" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="267.7048"
+       x2="256.15799"
+       y1="661.37994"
+       y2="668.1156"
+       id="line4263" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="267.7048"
+       x2="256.15799"
+       y1="674.85126"
+       y2="668.1156"
+       id="line4265" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="209,646 466,646"
+       id="polyline4267" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="491.90576"
+       x2="503.45261"
+       y1="690.24701"
+       y2="683.51135"
+       id="line4269" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="491.90576"
+       x2="503.45261"
+       y1="676.7757"
+       y2="683.51135"
+       id="line4271" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="266,734 130,734 130,661"
+       id="polyline4273" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="186.87701"
+       x2="180.14136"
+       y1="709.4917"
+       y2="697.94489"
+       id="line4275" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="173.4057"
+       x2="180.14136"
+       y1="709.4917"
+       y2="697.94489"
+       id="line4277" />
+    <polyline
+       transform="matrix(0.96223585,0,0,0.96223585,55.050681,61.907005)"
+       style="fill:none;stroke:#000000;stroke-width:1"
+       points="234,806 234,421"
+       id="polyline4279" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="286.94952"
+       x2="280.2139"
+       y1="478.55511"
+       y2="467.0083"
+       id="line4281" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="273.47824"
+       x2="280.2139"
+       y1="478.55511"
+       y2="467.0083"
+       id="line4283" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="568.04303"
+       y2="563.23187"
+       id="line4285" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="558.42072"
+       y2="553.6095"
+       id="line4287" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="548.79834"
+       y2="543.98718"
+       id="line4289" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="539.17596"
+       y2="534.36481"
+       id="line4291" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="529.55359"
+       y2="524.74243"
+       id="line4293" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="519.93127"
+       y2="515.12006"
+       id="line4295" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="510.3089"
+       y2="505.49771"
+       id="line4297" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="500.68655"
+       y2="495.87537"
+       id="line4299" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="491.06418"
+       y2="486.25299"
+       id="line4301" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="481.44183"
+       y2="476.63065"
+       id="line4303" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="471.81946"
+       y2="467.0083"
+       id="line4305" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="462.19711"
+       y2="457.38593"
+       id="line4307" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="452.57474"
+       y2="447.76358"
+       id="line4309" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="442.95239"
+       y2="438.1412"
+       id="line4311" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="433.33002"
+       y2="428.51886"
+       id="line4313" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="423.70767"
+       y2="418.89648"
+       id="line4315" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="414.08533"
+       y2="409.27414"
+       id="line4317" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="404.46295"
+       y2="399.65176"
+       id="line4319" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="394.84061"
+       y2="390.02942"
+       id="line4321" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="385.21823"
+       y2="380.40707"
+       id="line4323" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="375.59589"
+       y2="370.7847"
+       id="line4325" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="365.97351"
+       y2="361.16235"
+       id="line4327" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="356.35117"
+       y2="351.53998"
+       id="line4329" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="346.72879"
+       y2="341.91763"
+       id="line4331" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="337.10645"
+       y2="332.29526"
+       id="line4333" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="327.4841"
+       y2="322.67291"
+       id="line4335" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="317.86172"
+       y2="313.05054"
+       id="line4337" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="308.23938"
+       y2="303.42819"
+       id="line4339" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="298.617"
+       y2="293.80585"
+       id="line4341" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="288.99466"
+       y2="284.18347"
+       id="line4343" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="279.37228"
+       y2="274.56113"
+       id="line4345" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="269.74994"
+       y2="264.93875"
+       id="line4347" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="260.12759"
+       y2="255.31642"
+       id="line4349" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="250.50523"
+       y2="245.69406"
+       id="line4351" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="240.88287"
+       y2="236.0717"
+       id="line4353" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="231.26051"
+       y2="226.44934"
+       id="line4355" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="221.63815"
+       y2="216.82698"
+       id="line4357" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="572.73358"
+       x2="572.73358"
+       y1="212.01581"
+       y2="207.20462"
+       id="line4359" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="579.46918"
+       x2="572.73358"
+       y1="213.94028"
+       y2="202.39345"
+       id="line4361" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="565.99792"
+       x2="572.73358"
+       y1="213.94028"
+       y2="202.39345"
+       id="line4363" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="514.15784"
+       y2="509.34665"
+       id="line4365" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="504.53549"
+       y2="499.7243"
+       id="line4367" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="494.91312"
+       y2="490.10196"
+       id="line4369" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="485.29077"
+       y2="480.47958"
+       id="line4371" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="475.6684"
+       y2="470.85724"
+       id="line4373" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="466.04605"
+       y2="461.23486"
+       id="line4375" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="456.42371"
+       y2="451.61252"
+       id="line4377" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="446.80133"
+       y2="441.99014"
+       id="line4379" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="437.17899"
+       y2="432.3678"
+       id="line4381" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="427.55661"
+       y2="422.74542"
+       id="line4383" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="417.93427"
+       y2="413.12308"
+       id="line4385" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="408.31189"
+       y2="403.50073"
+       id="line4387" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="398.68954"
+       y2="393.87836"
+       id="line4389" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="389.06717"
+       y2="384.25601"
+       id="line4391" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="379.44482"
+       y2="374.63364"
+       id="line4393" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="369.82248"
+       y2="365.01129"
+       id="line4395" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="360.2001"
+       y2="355.38892"
+       id="line4397" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="350.57776"
+       y2="345.76657"
+       id="line4399" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="340.95538"
+       y2="336.14423"
+       id="line4401" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="331.33304"
+       y2="326.52185"
+       id="line4403" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="321.71066"
+       y2="316.89951"
+       id="line4405" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="312.08832"
+       y2="307.27713"
+       id="line4407" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="302.46594"
+       y2="297.65479"
+       id="line4409" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="292.8436"
+       y2="288.03241"
+       id="line4411" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="283.22125"
+       y2="278.41006"
+       id="line4413" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="273.59888"
+       y2="268.78769"
+       id="line4415" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="263.97653"
+       y2="259.16534"
+       id="line4417" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="426.47372"
+       x2="426.47372"
+       y1="254.35417"
+       y2="249.543"
+       id="line4419" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="433.20938"
+       x2="426.47372"
+       y1="258.20309"
+       y2="246.6563"
+       id="line4421" />
+    <line
+       style="fill:#000000;stroke:#000000;stroke-width:0.96223587"
+       x1="419.73807"
+       x2="426.47372"
+       y1="258.20309"
+       y2="246.6563"
+       id="line4423" />
+  </g>
+</svg>
