@@ -55,7 +55,7 @@ void Camera::rotate_from_init_config(float theta, float phi) {
   r1.rotate(theta, ey);
 
   // rx = rotated x axis
-  auto rx = r1.map(QVector3D(1,0,0));
+  auto rx = r1.map(QVector3D(1, 0, 0));
   QMatrix4x4 r2;
   r2.rotate(phi, rx);
 
