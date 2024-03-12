@@ -15,7 +15,7 @@ using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel>;
 using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 using Polygon_repair = CGAL::Polygon_repair::Polygon_repair<Kernel>;
 
-int main(]) {
+int main() {
 
   for (const auto& file: std::filesystem::directory_iterator("data/in")) {
     if (file.path().filename().extension() != ".wkt") continue;
@@ -67,7 +67,7 @@ int main(]) {
 
     // Test orientations
     for (auto const& polygon: rmp.polygons_with_holes()) {
-      assertpolygon.outer_boundary().orientation() == CGAL::COUNTERCLOCKWISE);
+      assert(polygon.outer_boundary().orientation() == CGAL::COUNTERCLOCKWISE);
       for (auto const &hole: polygon.holes()) {
         assert(hole.orientation() == CGAL::CLOCKWISE);
       }
