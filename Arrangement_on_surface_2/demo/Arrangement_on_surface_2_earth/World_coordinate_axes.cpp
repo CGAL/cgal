@@ -18,16 +18,16 @@ World_coord_axes::World_coord_axes(float length) {
   initializeOpenGLFunctions();
 
   const auto a = length;
-  const float c = 0.0;
+  const float c = 0.0f;
   std::vector<QVector3D> vertex_data {
-    QVector3D(0,0,0), QVector3D(1,0,0),
-    QVector3D(a,0,0), QVector3D(1,0,0),
+    QVector3D(0, 0, 0), QVector3D(1, 0, 0),
+    QVector3D(a, 0, 0), QVector3D(1, 0, 0),
 
-    QVector3D(0,0,0), QVector3D(0,1,0),
-    QVector3D(0,a,0), QVector3D(0,1,0),
+    QVector3D(0, 0, 0), QVector3D(0, 1, 0),
+    QVector3D(0, a, 0), QVector3D(0, 1, 0),
 
-    QVector3D(0,0,0), QVector3D(c,c,1),
-    QVector3D(0,0,a), QVector3D(c,c,1)
+    QVector3D(0, 0, 0), QVector3D(c, c, 1),
+    QVector3D(0, 0, a), QVector3D(c, c, 1)
   };
 
   // DEFINE OPENGL BUFFERS
@@ -64,7 +64,7 @@ World_coord_axes::World_coord_axes(float length) {
 //! \brief
 void World_coord_axes::draw() {
   glBindVertexArray(m_vao);
-  const int count = 2 * 3; // = 2 * number of lines
+  const GLsizei count = 2 * 3; // = 2 * number of lines
   glDrawArrays(GL_LINES, 0, count);
   glBindVertexArray(0);
 }
