@@ -15,7 +15,7 @@
 
 class Sphere : protected OpenGLFunctionsBase {
 public:
-  Sphere(int num_slices, int num_stacks, float r);
+  Sphere(std::size_t num_slices, std::size_t num_stacks, float r);
 
   void set_color(float r, float g, float b, float a);
   const QVector4D& get_color() { return m_color; }

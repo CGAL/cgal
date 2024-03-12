@@ -357,7 +357,7 @@ void Main_widget::paintGL() {
     sp.use();
     sp.set_uniform("u_mvp", mvp);
 
-    const QVector4D arc_color(0, 0.5, 1, 1);
+    // const QVector4D arc_color(0, 0.5, 1, 1);
     glLineWidth(5);
     sp.set_uniform("u_plane", plane);
 

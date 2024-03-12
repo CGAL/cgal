@@ -15,10 +15,10 @@
 #include "Sphere.h"
 
 //! \brief
-Sphere::Sphere(int num_slices, int num_stacks, float r) {
+Sphere::Sphere(std::size_t num_slices, std::size_t num_stacks, float r) {
   initializeOpenGLFunctions();
 
-  num_stacks = std::max<int>(2, num_stacks);
+  num_stacks = std::max<std::size_t>(2, num_stacks);
   std::vector<QVector3D> vertices, normals;
 
   // NORTH POLE
@@ -28,15 +28,15 @@ Sphere::Sphere(int num_slices, int num_stacks, float r) {
   // SOUTH POLE
   vertices.push_back(QVector3D(0, 0, -r));
   normals.push_back(QVector3D(0, 0, -1));
-  int starting_index_of_middle_vertices = vertices.size();
+  auto starting_index_of_middle_vertices = vertices.size();
 
-  for (int j = 1; j < num_stacks; ++j) {
+  for (std::size_t j = 1; j < num_stacks; ++j) {
     // Calculate the latitude (vertical angle) for the current stack
     float lat = M_PI * j / num_stacks;
     float rxy = r * std::sin(lat);
     float z = r * std::cos(lat);
 
-    for (int i = 0; i < num_slices; ++i) {
+    for (std::size_t i = 0; i < num_slices; ++i) {
       // Calculate the longitude (horizontal angle) for the current slice
       float lon = 2 * M_PI * i / num_slices;
 
@@ -58,14 +58,13 @@ Sphere::Sphere(int num_slices, int num_stacks, float r) {
     vertex_data.push_back(normals[i]);
   }
 
-
   // add the indices for all triangles
   std::vector<GLuint> indices;
 
   // NORTH CAP
-  const int north_vertex_index = 0;
-  const int north_cap_vertex_index_start = starting_index_of_middle_vertices;
-  for (int i = 0; i < num_slices; i++) {
+  const std::size_t north_vertex_index = 0;
+  const auto north_cap_vertex_index_start = starting_index_of_middle_vertices;
+  for (std::size_t i = 0; i < num_slices; i++) {
     indices.push_back(north_vertex_index);
     indices.push_back(north_cap_vertex_index_start + i);
     indices.push_back(north_cap_vertex_index_start + (i + 1) % num_slices);
@@ -82,10 +81,10 @@ Sphere::Sphere(int num_slices, int num_stacks, float r) {
   //                                                the last stack (# numStacks)
 
   // SOUTH CAP
-  const int south_vertex_index = 1;
-  const int south_cap_index_start = starting_index_of_middle_vertices +
+  const std::size_t south_vertex_index = 1;
+  const std::size_t south_cap_index_start = starting_index_of_middle_vertices +
     (num_stacks - 2) * num_slices;
-  for (int i = 0; i < num_slices; ++i) {
+  for (std::size_t i = 0; i < num_slices; ++i) {
     const auto vi0 = south_vertex_index;
     const auto vi1 = south_cap_index_start + i;
     const auto vi2 = south_cap_index_start + (i + 1) % num_slices;
@@ -95,20 +94,20 @@ Sphere::Sphere(int num_slices, int num_stacks, float r) {
   }
 
   // MIDDLE TRIANGLES
-  for (int k = 0; k < num_stacks - 2; ++k) {
-    const int stack_start_index = starting_index_of_middle_vertices +
-      k * num_slices;
-    const int next_stack_start_index = stack_start_index + num_slices;
-    for (int i = 0; i < num_slices; ++i) {
+  for (std::size_t k = 0; k < num_stacks - 2; ++k) {
+    const std::size_t stack_start_index =
+      starting_index_of_middle_vertices + k * num_slices;
+    const std::size_t next_stack_start_index = stack_start_index + num_slices;
+    for (std::size_t i = 0; i < num_slices; ++i) {
       // check why the following code snippet does not work (winding order?)
-      //int vi0 = stackStartIndex + i;
-      //int vi1 = nextStackStartIndex + i;
-      //int vi2 = nextStackStartIndex + (i + 1) % numSlices;
-      //int vi3 = stackStartIndex + (i + 1) % numSlices;
-      int vi0 = stack_start_index + i;
-      int vi1 = stack_start_index + (i + 1) % num_slices;
-      int vi2 = next_stack_start_index + i;
-      int vi3 = next_stack_start_index + (i + 1) % num_slices;
+      //std::size_t vi0 = stackStartIndex + i;
+      //std::size_t vi1 = nextStackStartIndex + i;
+      //std::size_t vi2 = nextStackStartIndex + (i + 1) % numSlices;
+      //std::size_t vi3 = stackStartIndex + (i + 1) % numSlices;
+      std::size_t vi0 = stack_start_index + i;
+      std::size_t vi1 = stack_start_index + (i + 1) % num_slices;
+      std::size_t vi2 = next_stack_start_index + i;
+      std::size_t vi3 = next_stack_start_index + (i + 1) % num_slices;
 
       indices.push_back(vi0);
       indices.push_back(vi2);

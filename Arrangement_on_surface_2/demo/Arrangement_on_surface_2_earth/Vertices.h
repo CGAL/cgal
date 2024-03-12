@@ -24,7 +24,7 @@ public:
 private:
   GLuint m_vao;
   GLuint m_vbo;
-  GLuint m_num_indices;
+  GLsizei m_num_indices;
   std::vector<GLuint> m_offsets;
 };
 

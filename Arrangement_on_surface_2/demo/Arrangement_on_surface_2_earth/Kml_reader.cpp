@@ -7,15 +7,16 @@
 //
 // Author(s): Engin Deniz Diktas <denizdiktas@gmail.com>
 
-#include "Kml_reader.h"
-
 #include <algorithm>
 #include <iostream>
 #include <unordered_map>
+#include <limits>
 
 #include <qdebug.h>
 #include <qfile.h>
 #include <qxmlstream.h>
+
+#include "Kml_reader.h"
 
 //! \brief
 double Kml::Node::distance_to(const Node& r) const {
@@ -53,8 +54,8 @@ std::ostream& operator << (std::ostream& os, const Kml::Node& n) {
 }
 
 //! \brief
-int Kml::get_number_of_polygons(Placemarks& placemarks) {
-  int total_number_of_polygons = 0;
+std::size_t Kml::get_number_of_polygons(Placemarks& placemarks) {
+  std::size_t total_number_of_polygons = 0;
   for (auto& placemark : placemarks)
     total_number_of_polygons += placemark.polygons.size();
   return total_number_of_polygons;
@@ -149,11 +150,11 @@ Kml::Placemarks  Kml::read(const std::string& file_name) {
 //! \brief
 Kml::Nodes Kml::get_duplicates(const Placemarks& placemarks) {
   // collect all nodes into a single vector
-  int polygon_count = 0;
+  std::size_t polygon_count = 0;
   std::vector<Kml::Node> nodes;
   for (const auto& pm : placemarks) {
     for (const auto& polygon : pm.polygons) {
-      polygon_count++;
+      ++polygon_count;
 
       Kml::LinearRings linear_rings;
       linear_rings.push_back(polygon.outer_boundary);
@@ -167,30 +168,29 @@ Kml::Nodes Kml::get_duplicates(const Placemarks& placemarks) {
   }
   qDebug() << "polygon count = " << polygon_count;
 
-  int count = nodes.size();
-  std::vector<int> num_duplicates(count, 0);
+  auto count = nodes.size();
+  std::vector<std::size_t> num_duplicates(count, 0);
   qDebug() << "node count (with duplicates) = " << count;
-  int dup_count = 0;
+  std::size_t dup_count = 0;
 
   // this keeps track of how many nodes there are with certain dup-count
-  std::unordered_map<int, int> dup_count_map;
+  std::unordered_map<std::size_t, std::size_t> dup_count_map;
 
   Nodes duplicate_nodes;
-  for (int i = 0; i < count; ++i) {
+  for (std::size_t i = 0; i < count; ++i) {
     // if the current node has been detected as duplicate skip it
-    if (num_duplicates[i] > 0)
-      continue;
+    if (num_duplicates[i] > 0) continue;
 
     const auto& curr_node = nodes[i];
-    std::vector<int> curr_dup; // current set of duplicates
-    for (int j = i + 1; j < count; ++j) {
+    std::vector<std::size_t> curr_dup; // current set of duplicates
+    for (std::size_t j = i + 1; j < count; ++j) {
       if (curr_node == nodes[j]) curr_dup.push_back(j);
     }
 
     // if duplicates found
     if (!curr_dup.empty()) {
-      dup_count++;
-      int num_dup = curr_dup.size() + 1; // +1 for the i'th node
+      ++dup_count;
+      std::size_t num_dup = curr_dup.size() + 1; // +1 for the i'th node
       num_duplicates[i] = num_dup;
       for (const auto di : curr_dup) num_duplicates[di] = num_dup;
 
@@ -211,7 +211,7 @@ Kml::Nodes Kml::get_duplicates(const Placemarks& placemarks) {
 //! \brief
 Kml::Nodes Kml::generate_ids(Placemarks& placemarks) {
   // collect all nodes into a single vector
-  int polygon_count = 0;
+  std::size_t polygon_count = 0;
   std::vector<Node> nodes;
   for (auto& pm : placemarks) {
     for (auto& polygon : pm.polygons) {
@@ -229,12 +229,12 @@ Kml::Nodes Kml::generate_ids(Placemarks& placemarks) {
           if (nodes.end() == it) {
             // insert new node
             nodes.push_back(node);
-            const int node_id = nodes.size() - 1;
+            const std::size_t node_id = nodes.size() - 1;
             lring->ids.push_back(node_id);
           }
           else {
             // get the existing node
-            const int node_id = std::distance(nodes.begin(), it);
+            const std::size_t node_id = std::distance(nodes.begin(), it);
             lring->ids.push_back(node_id);
             assert(nodes[node_id] == node);
           }
@@ -253,11 +253,11 @@ Kml::Nodes Kml::generate_ids(Placemarks& placemarks) {
 //! \breif
 Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps) {
   // collect all nodes into a single vector
-  int polygon_count = 0;
+  // std::size_t polygon_count = 0;
   std::vector<Node> nodes;
   for (auto& pm : placemarks) {
     for (auto& polygon : pm.polygons) {
-      polygon_count++;
+      // ++polygon_count;
 
       std::vector<LinearRing*> linear_rings;
       linear_rings.push_back(&polygon.outer_boundary);
@@ -269,7 +269,7 @@ Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps) {
 
         for (const auto& node : lring->nodes) {
           // check if there is a node sufficiently close to the current one
-          int node_index = -1;
+          auto node_index = std::numeric_limits<std::size_t>::max();
           for (std::size_t i = 0; i < nodes.size(); ++i) {
             const auto dist = node.distance_to(nodes[i]);
             if (dist < eps) {
@@ -278,20 +278,20 @@ Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps) {
             }
           }
 
-          if (node_index < 0) {
+          if (node_index == std::numeric_limits<std::size_t>::max()) {
             // insert new node
             nodes.push_back(node);
-            const int node_id = nodes.size() - 1;
+            const auto node_id = nodes.size() - 1;
             lring->ids.push_back(node_id);
           }
           else {
             // get the existing node
-            const int node_id = node_index;
+            const auto node_id = node_index;
             lring->ids.push_back(node_id);
           }
 
           auto it = std::unique(lring->ids.begin(), lring->ids.end());
-          std::vector<int> new_ids(lring->ids.begin(), it);
+          std::vector<std::size_t> new_ids(lring->ids.begin(), it);
           if (new_ids.size() < lring->ids.size())
             std::cout << "** REDUCED!\n";
           lring->ids = std::move(new_ids);
@@ -302,10 +302,11 @@ Kml::Nodes Kml::generate_ids_approx(Placemarks& placemarks, const double eps) {
 
   // find the pair of closest nodes
   double min_dist = std::numeric_limits<double>::max();
-  int ni1, ni2;
-  int num_nodes = nodes.size();
-  for (int i = 0; i < num_nodes - 1; ++i) {
-    for (int j = i + 1; j < num_nodes; ++j) {
+  std::size_t ni1 = 0;
+  std::size_t ni2 = 0;
+  std::size_t num_nodes = nodes.size();
+  for (std::size_t i = 0; i < num_nodes - 1; ++i) {
+    for (std::size_t j = i + 1; j < num_nodes; ++j) {
       const auto dist = nodes[i].distance_to(nodes[j]);
       if (min_dist > dist) {
         min_dist = dist;
@@ -363,8 +364,8 @@ Kml::Nodes Kml::Placemark::get_all_nodes() const {
 }
 
 //! \brief
-int Kml::Placemark::get_all_nodes_count() const {
-  int num_nodes = 0;
+std::size_t Kml::Placemark::get_all_nodes_count() const {
+  std::size_t num_nodes = 0;
   for (const auto& polygon : polygons) {
     auto polygon_nodes = polygon.get_all_nodes();
     num_nodes += polygon_nodes.size();
@@ -375,8 +376,8 @@ int Kml::Placemark::get_all_nodes_count() const {
 //! \brief
 Kml::Arcs Kml::LinearRing::get_arcs() const {
   Arcs arcs;
-  const int num_nodes = nodes.size();
-  for (int i = 0; i < num_nodes - 1; ++i) {
+  const auto num_nodes = nodes.size();
+  for (std::size_t i = 0; i < num_nodes - 1; ++i) {
     const auto from = nodes[i];
     const auto to = nodes[i + 1];
     arcs.push_back(Arc{ from, to });

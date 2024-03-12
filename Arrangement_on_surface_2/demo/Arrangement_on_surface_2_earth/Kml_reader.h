@@ -51,7 +51,7 @@ public:
 
   struct LinearRing {
     std::vector<Node> nodes;
-    std::vector<int>  ids;
+    std::vector<std::size_t>  ids;
 
     Arcs get_arcs() const;
     void get_arcs(Arcs& arcs) const;
@@ -75,14 +75,14 @@ public:
 
     // collects all nodes from all polygons
     Nodes get_all_nodes() const;
-    int get_all_nodes_count() const;
+    std::size_t get_all_nodes_count() const;
 
     Arcs get_all_arcs() const;
   };
 
   using Placemarks = std::vector<Placemark>;
 
-  static int get_number_of_polygons(Placemarks& placemarks);
+  static std::size_t get_number_of_polygons(Placemarks& placemarks);
 
   static Placemarks read(const std::string& file_name);
 

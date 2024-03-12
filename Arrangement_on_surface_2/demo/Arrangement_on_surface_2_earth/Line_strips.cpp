@@ -87,7 +87,8 @@ Line_strips::Line_strips(std::vector<std::vector<QVector3D>>& arcs) {
 }
 
 //! \brief
-int Line_strips::get_num_line_strips() const { return m_offsets.size() - 1; }
+std::size_t Line_strips::get_num_line_strips() const
+{ return m_offsets.size() - 1; }
 
 //! \brief
 void Line_strips::draw(int line_strip_index) {

@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     using Direction_3 = Kernel::Direction_3;
     auto delta = 2.0 * CGAL_PI / num_meridians;
     FT z(0);
-    for (auto i = 0; i < num_meridians; ++i) {
+    for (std::size_t i = 0; i < num_meridians; ++i) {
       auto alpha = delta * i;
       FT x(std::sin(alpha));
       FT y(std::cos(alpha));
