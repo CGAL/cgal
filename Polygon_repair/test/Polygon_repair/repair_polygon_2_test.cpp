@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+#include <cassert>
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_2 = Kernel::Point_2;
@@ -14,7 +15,7 @@ using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel>;
 using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 using Polygon_repair = CGAL::Polygon_repair::Polygon_repair<Kernel>;
 
-int main(int argc, char* argv[]) {
+int main(]) {
 
   for (const auto& file: std::filesystem::directory_iterator("data/in")) {
     if (file.path().filename().extension() != ".wkt") continue;
@@ -61,13 +62,14 @@ int main(int argc, char* argv[]) {
       std::cout << "\tin:  " << in << std::endl;
       std::cout << "\tout: " << out << std::flush;
       std::cout << "\tref: " << ref << std::flush;
-    } CGAL_assertion(ref == out);
+    }
+    assert(ref == out);
 
     // Test orientations
     for (auto const& polygon: rmp.polygons_with_holes()) {
-      CGAL_assertion(polygon.outer_boundary().orientation() == CGAL::COUNTERCLOCKWISE);
+      assertpolygon.outer_boundary().orientation() == CGAL::COUNTERCLOCKWISE);
       for (auto const &hole: polygon.holes()) {
-        CGAL_assertion(hole.orientation() == CGAL::CLOCKWISE);
+        assert(hole.orientation() == CGAL::CLOCKWISE);
       }
     }
   }

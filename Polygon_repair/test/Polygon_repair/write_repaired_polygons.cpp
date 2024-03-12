@@ -14,7 +14,7 @@ using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel>;
 using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 using Polygon_repair = CGAL::Polygon_repair::Polygon_repair<Kernel>;
 
-int main(int argc, char* argv[]) {
+int main() {
 
   // std::ifstream ifs("/Users/ken/Downloads/180927.wkt");
   // std::ofstream ofs("/Users/ken/Downloads/1.geojson");
