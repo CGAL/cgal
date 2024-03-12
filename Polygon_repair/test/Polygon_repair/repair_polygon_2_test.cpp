@@ -27,7 +27,7 @@ int main() {
 
     // Load test file and repair to create output
     std::istringstream iss(in);
-    Multipolygon_with_holes_2 rmp;
+    Multipolygon_with_holes_2 rmp, refmp;
     if (in.find("POLYGON") == 0) {
       Polygon_with_holes_2 p;
       if (in != "POLYGON()") { // maybe should be checked in WKT reader
@@ -37,9 +37,11 @@ int main() {
       Multipolygon_with_holes_2 mp;
       CGAL::IO::read_multi_polygon_WKT(iss, mp);
       rmp = CGAL::Polygon_repair::repair(mp, CGAL::Polygon_repair::Even_odd_rule());
-    } std::ostringstream oss;
+    } std::stringstream oss;
     CGAL::IO::write_multi_polygon_WKT(oss, rmp);
     std::string out = oss.str();
+    rmp.clear();
+    CGAL::IO::read_multi_polygon_WKT(oss, rmp);
 
     // Read reference file
     std::string ref_path = "data/ref/";
@@ -53,9 +55,11 @@ int main() {
     } std::string ref;
     std::getline(ref_ifs, ref);
     ref += "\n";
+    std::stringstream refss(ref);
+    CGAL::IO::read_multi_polygon_WKT(refss, refmp);
 
     // Compare output with reference file
-    if (ref == out) {
+    if (rmp == refmp) {
       std::cout << "ok" << std::endl;
     } else {
       std::cout << "fail" << std::endl;
@@ -63,7 +67,7 @@ int main() {
       std::cout << "\tout: " << out << std::flush;
       std::cout << "\tref: " << ref << std::flush;
     }
-    assert(ref == out);
+    assert(rmp == refmp);
 
     // Test orientations
     for (auto const& polygon: rmp.polygons_with_holes()) {
