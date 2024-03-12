@@ -182,11 +182,11 @@ void Main_widget::init_camera() {
 //! \brief
 void Main_widget::init_geometry() {
   // SPHERE
-  int num_slices, num_stacks;
-  num_slices = num_stacks = 64;
-  float r = 1;
+  std::size_t num_slices = 64;
+  std::size_t num_stacks = 64;
+  float r = 1.0f;
   m_gr_sphere = std::make_unique<Sphere>(num_slices, num_stacks, r);
-  const float c = 0.8;
+  const float c = 0.8f;
   m_gr_sphere->set_color(c, c, c, 1);
 
   // IDENTIFICATION CURVE
