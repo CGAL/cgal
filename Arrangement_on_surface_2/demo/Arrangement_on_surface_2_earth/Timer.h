@@ -20,13 +20,13 @@ public:
 
   void reset() { m_Start = std::chrono::high_resolution_clock::now(); }
 
-  float elapsed() {
+  double elapsed() {
     return std::chrono::duration_cast<std::chrono::nanoseconds>(
-      std::chrono::high_resolution_clock::now() - m_Start).count()
-      * 0.001f * 0.001f * 0.001f;
+      std::chrono::high_resolution_clock::now() - m_Start).count() *
+      0.001 * 0.001 * 0.001;
   }
 
-  float elapsed_millis() { return elapsed() * 1000.0f; }
+  double elapsed_millis() { return elapsed() * 1000.0f; }
 
 private:
   std::chrono::time_point<std::chrono::high_resolution_clock> m_Start;
@@ -34,16 +34,16 @@ private:
 
 class ScopedTimer {
 public:
-  ScopedTimer(const std::string& name) : m_Name(name) {}
+  ScopedTimer(const std::string& name) : m_name(name) {}
 
   ~ScopedTimer() {
-    float time = m_Timer.elapsed_millis();
-    std::cout << "[TIMER] " << m_Name << " - " << time << "ms\n";
+    double time = m_timer.elapsed_millis();
+    std::cout << "[TIMER] " << m_name << " - " << time << "ms\n";
   }
 
 private:
-  std::string m_Name;
-  Timer m_Timer;
+  std::string m_name;
+  Timer m_timer;
 };
 
 

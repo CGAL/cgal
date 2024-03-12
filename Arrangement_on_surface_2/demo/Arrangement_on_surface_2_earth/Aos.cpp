@@ -1836,7 +1836,7 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point) {
 }
 
 Aos::Approx_arcs
-Aos::get_approx_arcs_from_faces_edges(Arr_handle arrh, float error) {
+Aos::get_approx_arcs_from_faces_edges(Arr_handle arrh, double error) {
   auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
   auto ctr_cv = s_traits.construct_curve_2_object();
   Curves xcvs;
