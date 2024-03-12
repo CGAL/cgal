@@ -353,7 +353,7 @@ std::vector<QVector3D> Aos::ext_check(const Kml::Placemarks& placemarks) {
       std::cout << "-------------------------------------\n";
       std::cout << vit->point() << std::endl;
 
-      if (2 == vit->degree()) {}	//continue;
+      if (2 == vit->degree()) {} //continue;
 
       if (1 == vit->degree()) {
         auto p = vit->point();
@@ -478,7 +478,7 @@ std::vector<QVector3D>  Aos::ext_check_id_based(Kml::Placemarks& placemarks) {
       std::cout << "-------------------------------------\n";
       std::cout << vit->point() << std::endl;
 
-      if (2 == vit->degree()) {}	//continue;
+      if (2 == vit->degree()) {} //continue;
 
       if (1 == vit->degree()) {
         auto p = vit->point();
@@ -1357,11 +1357,11 @@ namespace {
           for (++hit; hit != js_halfedges.end(); ++hit) {
             std::size_t curr_idx = *hit;
             auto curr_he = halfedges[curr_idx];
-            prev_he->set_next(curr_he);		// connect
-            curr_he->set_outer_ccb(new_occb);	// set the CCB
+            prev_he->set_next(curr_he); // connect
+            curr_he->set_outer_ccb(new_occb);// set the CCB
             prev_he = curr_he;
           }
-          prev_he->set_next(first_he);		// close the loop
+          prev_he->set_next(first_he);// close the loop
           new_f->add_outer_ccb(new_occb, first_he);
         }
       }
@@ -1392,11 +1392,11 @@ namespace {
           for (++hit; hit != js_halfedges.end(); ++hit) {
             std::size_t curr_idx = *hit;
             auto curr_he = halfedges[curr_idx];
-            prev_he->set_next(curr_he);		// connect
-            curr_he->set_inner_ccb(new_iccb);	// set the CCB
+            prev_he->set_next(curr_he);// connect
+            curr_he->set_inner_ccb(new_iccb);// set the CCB
             prev_he = curr_he;
           }
-          prev_he->set_next(first_he);		// close the loop
+          prev_he->set_next(first_he);// close the loop
           new_f->add_inner_ccb(new_iccb, first_he);
         }
       }
