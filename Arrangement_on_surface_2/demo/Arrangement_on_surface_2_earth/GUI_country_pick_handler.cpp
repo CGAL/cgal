@@ -22,8 +22,8 @@ void GUI_country_pick_handler::mouse_press_event(QMouseEvent* e) {
   // handle country selection
   if (e->button() == Qt::RightButton) {
     auto p = e->pos();
-    QVector3D  sp0(p.x(), m_vp_height - p.y(), 0);
-    QVector3D  sp1(p.x(), m_vp_height - p.y(), 1);
+    QVector3D sp0(p.x(), m_vp_height - p.y(), 0);
+    QVector3D sp1(p.x(), m_vp_height - p.y(), 1);
 
     auto proj = m_camera.get_projection_matrix();
     auto view = m_camera.get_view_matrix();
