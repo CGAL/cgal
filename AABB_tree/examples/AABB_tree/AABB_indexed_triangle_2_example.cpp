@@ -1,7 +1,8 @@
 // Author(s) : Camille Wormser, Pierre Alliez
 
 #include <iostream>
-#include <list>
+#include <vector>
+#include <array>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
@@ -9,8 +10,6 @@
 #include <CGAL/AABB_indexed_triangle_primitive_2.h>
 
 typedef CGAL::Simple_cartesian<double> K;
-
-typedef K::FT FT;
 typedef K::Point_2 Point;
 
 typedef std::vector<std::array<uint8_t, 3> >::iterator IndexIterator;

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <list>
+#include <vector>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
@@ -10,8 +10,6 @@
 
 
 typedef CGAL::Simple_cartesian<double> K;
-
-typedef K::FT FT;
 typedef K::Segment_2 Segment;
 typedef K::Point_2 Point;
 
@@ -77,7 +75,6 @@ int main()
   // id_poly.second is of type Iterator_poly and points to the first point of the segment in the polygon point range.
 
   Point_and_primitive_id_pr id_pr = tree_pr.closest_point_and_primitive(point_query);
-  // id_pr.second is of type Iterator_poly and points to the first point of the segment in the point range.
-
+  // id_pr.second is of type std::vector<Point>::iterator and points to the first point of the segment in the point range.
   return EXIT_SUCCESS;
 }
