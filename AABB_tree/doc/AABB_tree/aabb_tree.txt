@@ -169,7 +169,7 @@ list as `id`. We compute the number of intersections with plane
 and triangles queries, and the closest point from a point query.
 \cgalExample{AABB_tree/AABB_segment_3_example.cpp}
 
-\subsectiom aabb_tree_examples_8 Tree of Polyline and Polygon Segments for Intersection and Distance Queries
+\subsection aabb_tree_examples_8 Tree of Polyline and Polygon Segments for Intersection and Distance Queries
 
 The following example uses segments given by a polyline and a polygon. The difference is that the polygon is closed. The `id` in this case is the iterator pointing to a `Point_2` in the polyline or the polygon. The datum, a `Segment_2`, is created on the fly from the points using the `id` as the source and the following `Point_2` as the target. We count the intersections with a `Segment_2` and the closest point and id from a point query.
 \cgalExample{AABB_tree/AABB_polyline_segment_2_example.cpp}
