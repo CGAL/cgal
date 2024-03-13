@@ -355,13 +355,6 @@ bool read_multi_polygon_WKT(std::istream& in,
 }
 
 
-template<typename Kernel, typename Container>
-std::ostream& write_multi_polygon_WKT(std::ostream& out,
-                                      Multipolygon_with_holes_2<Kernel,Container>& mp)
-{
-  return write_multi_polygon_WKT(out, mp.polygons_with_holes());
-}
-
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
 //! \brief writes `point` into a WKT stream.
@@ -463,6 +456,13 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
   CGAL::internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
+}
+
+template<typename Kernel, typename Container>
+std::ostream& write_multi_polygon_WKT(std::ostream& out,
+                                      Multipolygon_with_holes_2<Kernel,Container>& mp)
+{
+  return write_multi_polygon_WKT(out, mp.polygons_with_holes());
 }
 
 //! \ingroup PkgStreamSupportIoFuncsWKT
