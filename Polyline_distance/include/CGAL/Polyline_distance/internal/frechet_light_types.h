@@ -23,7 +23,7 @@
 // =============================================================================
 
 #pragma once
-
+#include <CGAL/license/Polyline_distance.h>
 #include <vector>
 
 #include <CGAL/Polyline_distance/internal/curve.h>

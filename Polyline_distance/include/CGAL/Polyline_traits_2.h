@@ -25,6 +25,8 @@
 #ifndef CGAL_POLYLINE_TRAITS_2_H
 #define CGAL_POLYLINE_TRAITS_2_H
 
+#include <CGAL/license/Polyline_distance.h>
+
 // TODO: add doxygen code
 
 /// \cgalModels{PolylineDistanceTraits}

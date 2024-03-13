@@ -24,7 +24,7 @@
 
 #ifndef CGAL_INTERNAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 #define CGAL_INTERNAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
-
+#include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Kd_tree.h>

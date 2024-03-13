@@ -25,6 +25,7 @@
 #ifndef CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 #define CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 
+#include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Polyline_traits_2.h>
 #include <CGAL/basic.h>

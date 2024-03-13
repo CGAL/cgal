@@ -23,7 +23,7 @@
 // =============================================================================
 
 #pragma once
-
+#include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Polyline_distance/internal/defs.h>
 #include <CGAL/Polyline_distance/internal/geometry_basics.h>
 #include <CGAL/Polyline_distance/internal/id.h>
@@ -92,7 +92,7 @@ public:
         auto fraction = to_interval(pt.getFraction());
         return points[pt.getPoint()] +
                (fraction * (points[pt.getPoint() + 1] - points[pt.getPoint()]));
-          
+
     }
 
     Point interpolate_at(PointID const& pt) const { return points[pt]; }
@@ -121,7 +121,7 @@ private:
     Points points;
     std::vector<distance_t> prefix_length;
     ExtremePoints extreme_points;
-                                  
+
 };
 using Curves = std::vector<Curve>;
 

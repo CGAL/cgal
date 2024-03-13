@@ -24,7 +24,7 @@
 
 #ifndef CGAL_INTERNAL_POLYLINE_DISTANCE_FRECHET_DISTANCE_H
 #define CGAL_INTERNAL_POLYLINE_DISTANCE_FRECHET_DISTANCE_H
-
+#include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Polyline_distance/internal/curve.h>
 #include <CGAL/Polyline_distance/internal/frechet_light.h>
 #include <CGAL/Polyline_distance/internal/geometry_basics.h>

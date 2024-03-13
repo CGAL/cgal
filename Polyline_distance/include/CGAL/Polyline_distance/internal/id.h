@@ -23,7 +23,7 @@
 // =============================================================================
 
 #pragma once
-
+#include <CGAL/license/Polyline_distance.h>
 #include <cstdint>
 #include <functional>
 #include <limits>

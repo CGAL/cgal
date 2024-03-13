@@ -23,7 +23,7 @@
 // =============================================================================
 
 #pragma once
-
+#include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
 #include <CGAL/number_utils.h>
