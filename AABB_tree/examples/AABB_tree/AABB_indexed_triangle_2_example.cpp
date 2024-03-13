@@ -1,5 +1,3 @@
-// Author(s) : Camille Wormser, Pierre Alliez
-
 #include <iostream>
 #include <vector>
 #include <array>
