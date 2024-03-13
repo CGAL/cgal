@@ -14,6 +14,11 @@
 
 #include <CGAL/license/Polygon_repair.h>
 
+#include <list>
+#include <vector>
+#include <set>
+#include <unordered_set>
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
