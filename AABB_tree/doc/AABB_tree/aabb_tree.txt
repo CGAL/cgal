@@ -12,7 +12,7 @@ namespace CGAL {
 
 The AABB tree component offers a static data structure and algorithms
 to perform efficient intersection and distance queries against sets of
-finite 3D geometric objects. The set of geometric objects stored in
+finite 2D or 3D geometric objects. The set of geometric objects stored in
 the data structure can be queried for intersection detection,
 intersection computation and distance. The intersection queries can be
 of any type, provided that the corresponding intersection predicates
