@@ -76,15 +76,14 @@ struct Orthtree_traits_face_graph : public Orthtree_traits_base<
 
       std::array<FT, Base::dimension> min = {0.0, 0}, max = {0.0, 0};
       if (faces(m_pm).begin() != faces(m_pm).end()) {
-        const Point_d& p = get(m_vpm, *vertices(m_pm).begin());
-        min = {p.x(), p.y(), p.z()};
-        max = min;
+        bool first = true;
         for (auto v: vertices(m_pm)) {
           const Point_d& p_v = get(m_vpm, v);
           for (int i = 0; i < 3; ++i) {
-            if (p_v[i] < min[i]) min[i] = p_v[i];
-            if (p_v[i] > max[i]) max[i] = p_v[i];
+            if (first || p_v[i] < min[i]) min[i] = p_v[i];
+            if (first || p_v[i] > max[i]) max[i] = p_v[i];
           }
+          first=false;
         }
       }
 
