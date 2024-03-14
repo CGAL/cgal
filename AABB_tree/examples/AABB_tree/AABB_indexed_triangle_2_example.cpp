@@ -47,6 +47,10 @@ int main()
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
   id = tree.closest_point_and_primitive(Point(1.5, 0.6));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
+  id = tree.closest_point_and_primitive(Point(1.0, 0.0));
+  std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
+  id = tree.closest_point_and_primitive(Point(3.0, 0.5));
+  std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
 
   return EXIT_SUCCESS;
 }
