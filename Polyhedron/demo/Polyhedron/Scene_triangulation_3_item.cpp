@@ -2198,7 +2198,7 @@ void Scene_triangulation_3_item::computeIntersection()
 void Scene_triangulation_3_item::set_cut_edge(bool b)
 {
   d->cut_edges = b;
-  d->intersection->setCutEdges(b);
+  if(d->intersection) d->intersection->setCutEdges(b);
   Q_EMIT redraw();
 }
 
