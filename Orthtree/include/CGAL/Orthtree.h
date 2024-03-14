@@ -278,9 +278,9 @@ public:
   /*!
     constructs an orthtree from a set of arguments provided to the traits constructor
    */
-  template <class Arg1, class Arg2, class ... Args>
-  explicit Orthtree(Arg1&& arg1, Arg2&& arg2, Args&& ... args)
-    : Orthtree(Traits(std::forward<Arg1>(arg1), std::forward<Arg2>(arg2), std::forward<Args>(args)...))
+  template <class ... Args, class = std::enable_if_t<sizeof...(Args)>= 2>>
+  explicit Orthtree(Args&& ... args)
+    : Orthtree(Traits(std::forward<Args>(args)...))
   {}
 
   /// copy constructor
