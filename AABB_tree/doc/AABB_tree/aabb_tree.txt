@@ -431,7 +431,7 @@ initial ball radius to a small value still guaranteed to intersect the
 input primitives. This is achieved by constructing an internal secondary data
 structure which provides a good hint to the algorithm at the beginning
 of the traversal (done by default).
-Calling `do_not_accelerate_distance_queries()` will disable
+Calling `AABB_tree::do_not_accelerate_distance_queries()` will disable
 the construction and the usage of this internal secondary data structure.
 
 \section aabb_tree_history Design and Implementation History
