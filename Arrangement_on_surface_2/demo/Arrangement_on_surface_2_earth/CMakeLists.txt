@@ -12,7 +12,7 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(Qt6 COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
+find_package(Qt6 QUIET COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
 find_package(CGAL COMPONENTS Qt6)
 
 if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND)
