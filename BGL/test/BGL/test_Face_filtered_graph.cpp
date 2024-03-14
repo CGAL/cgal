@@ -2,6 +2,7 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/use.h>
 #include "test_Prefix.h"
 
