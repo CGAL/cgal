@@ -86,7 +86,7 @@ file(GLOB source_files Common_defs.h earth.cpp Timer.h
   Verification.h Verification.cpp)
 source_group("Source Files" FILES ${source_files})
 
-qt_standard_project_setup()
+set(CMAKE_AUTOMOC ON)
 
 qt_add_executable(earth
   ${source_files_aos}
