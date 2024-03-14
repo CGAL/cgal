@@ -170,6 +170,7 @@ public:
                         const GeomTraits& gt = GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
+  , tm_ptr(nullptr)
   , own_tree(false)
 #ifdef CGAL_HAS_THREADS
   , atomic_tree_ptr(&tree)
@@ -232,7 +233,7 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
-    CGAL_assertion(CGAL::is_closed(*tm_ptr));
+    CGAL_assertion(tm_ptr == nullptr || CGAL::is_closed(*tm_ptr));
 
     if(point.x() < box.xmin()
        || point.x() > box.xmax()
@@ -277,7 +278,7 @@ public:
   template <class K2>
   Bounded_side operator()(const typename K2::Point_3& point, const K2& k2) const
   {
-    CGAL_assertion(CGAL::is_closed(*tm_ptr));
+    CGAL_assertion(tm_ptr == nullptr || CGAL::is_closed(*tm_ptr));
 
     if(point.x() < box.xmin()
        || point.x() > box.xmax()
