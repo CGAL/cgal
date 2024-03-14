@@ -55,12 +55,12 @@ inline int set_str(BigInt& a, const char* s) {
 
   /// longValue
 inline long longValue(const BigInt& a) {
-  return a.convert_to<long>();;
+  return a.convert_to<long>();
 }
 
   /// doubleValue
 inline double doubleValue(const BigInt& a) {
-  return a.convert_to<double>();;
+  return a.convert_to<double>();
 }
 
   /// isEven
