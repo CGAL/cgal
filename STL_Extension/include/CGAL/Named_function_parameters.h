@@ -557,16 +557,6 @@ namespace authorized_parameters_impl
 template <class ... Tag>
 struct Tag_wrapper{};
 
-template <class TagAllowed, class ... TagsAllowed, class Tag>
-constexpr
-bool is_tag_present(Tag_wrapper<TagAllowed, TagsAllowed...>, Tag)
-{
-  if (std::is_same_v<TagAllowed, Tag>)
-    return true;
-  else
-    return is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
-}
-
 template <class Tag>
 constexpr
 bool is_tag_present(Tag_wrapper<Tag>, Tag)
@@ -579,6 +569,16 @@ constexpr
 bool is_tag_present(Tag_wrapper<TagAllowed>, Tag)
 {
   return false;
+}
+
+template <class TagAllowed, class ... TagsAllowed, class Tag, class = typename std::enable_if<sizeof...(TagsAllowed) >= 1>::type>
+constexpr
+bool is_tag_present(Tag_wrapper<TagAllowed, TagsAllowed...>, Tag)
+{
+  if (std::is_same_v<TagAllowed, Tag>)
+    return true;
+  else
+    return is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
 }
 
 template <class ... TagsAllowed, class T, class Tag>
