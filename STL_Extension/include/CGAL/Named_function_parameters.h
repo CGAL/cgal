@@ -571,7 +571,7 @@ bool is_tag_present(Tag_wrapper<TagAllowed>, Tag)
   return false;
 }
 
-template <class TagAllowed, class ... TagsAllowed, class Tag, class = typename std::enable_if<sizeof...(TagsAllowed) >= 1>::type>
+template <class TagAllowed, class ... TagsAllowed, class Tag, class = std::enable_if_t<sizeof...(TagsAllowed) >= 1>>
 constexpr
 bool is_tag_present(Tag_wrapper<TagAllowed, TagsAllowed...>, Tag)
 {
