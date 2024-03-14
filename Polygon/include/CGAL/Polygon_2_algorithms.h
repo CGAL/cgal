@@ -24,8 +24,8 @@
 #include <CGAL/config.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Lazy.h>
 #include <CGAL/Polygon_2/polygon_assertions.h>
+#include <CGAL/utils_classes.h>
 
 ///
 namespace CGAL {
@@ -143,6 +143,7 @@ area_2( ForwardIterator first, ForwardIterator last,
         const PolygonTraits& traits)
 {
   typedef typename PolygonTraits::FT FT;
+  internal::Evaluate<FT> evaluate;
    result = FT(0);
    // check if the polygon is empty
    if (first == last) return;
@@ -154,7 +155,7 @@ area_2( ForwardIterator first, ForwardIterator last,
    ForwardIterator third = second;
    while (++third != last) {
         result = result + compute_area_2(*first, *second, *third);
-        exact(result);
+        evaluate(result);
         second = third;
    }
 }
@@ -181,6 +182,7 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
                 const PolygonTraits& traits)
 {
    typedef typename PolygonTraits::FT FT;
+   internal::Evaluate<FT> evaluate;
    FT result = FT(0);
    // check if the polygon is empty
    if (first == last) return result;
@@ -192,7 +194,7 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
    ForwardIterator third = second;
    while (++third != last) {
         result = result + compute_area_2(*first, *second, *third);
-        exact(result);
+        evaluate(result);
         second = third;
    }
    return result;

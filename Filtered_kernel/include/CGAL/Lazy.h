@@ -117,6 +117,17 @@ template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> exact(T){re
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> approx(T){return {};}
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, int> depth(T){return -1;}
 
+namespace internal{
+template <typename AT, typename ET, typename E2A>
+struct Evaluate<Lazy<AT,ET,E2A>>
+{
+  void operator()(const Lazy<AT,ET,E2A>& l)
+  {
+    exact(l);
+  }
+};
+} // internal namespace
+
 // For an iterator, exact/approx applies to the objects it points to
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
 auto exact(T const& t) {return make_transforming_iterator(t,[](auto const&u)->decltype(auto){return CGAL::exact(u);});}

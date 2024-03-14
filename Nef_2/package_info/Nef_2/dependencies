@@ -5,7 +5,6 @@ Cartesian_kernel
 Circulator
 Distance_2
 Distance_3
-Filtered_kernel
 HalfedgeDS
 Hash_map
 Homogeneous_kernel
