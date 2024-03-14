@@ -62,7 +62,7 @@ create_single_source_cgal_program("utilities.cpp")
 create_single_source_cgal_program("Exact_rational.cpp")
 create_single_source_cgal_program("Mpzf_new.cpp")
 
-if( CGAL_CORE_FOUND )
+if( CGAL_Core_FOUND )
   create_single_source_cgal_program( "CORE_Expr_ticket_4296.cpp" )
   create_single_source_cgal_program("CORE_BigFloat.cpp")
   create_single_source_cgal_program("CORE_BigInt.cpp")
@@ -72,7 +72,7 @@ if( CGAL_CORE_FOUND )
   if( MPFI_FOUND )
     include( ${MPFI_USE_FILE} )
   endif() #MPFI_FOUND
-endif() #CGAL_CORE_FOUND
+endif() #CGAL_Core_FOUND
 
 if(NOT CGAL_DISABLE_GMP)
   create_single_source_cgal_program( "Gmpfi.cpp" )
