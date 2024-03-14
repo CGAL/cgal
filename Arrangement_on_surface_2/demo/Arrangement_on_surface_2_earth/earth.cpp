@@ -7,17 +7,14 @@
 //
 // Author(s): Engin Deniz Diktas <denizdiktas@gmail.com>
 
-#include <boost/filesystem.hpp>
-
 #include <QApplication>
 #include <QLabel>
 #include <QSurfaceFormat>
+#include <fstream>
 
 #ifndef QT_NO_OPENGL
 #include "Main_widget.h"
 #endif
-
-namespace fi = boost::filesystem;
 
 int main(int argc, char* argv[]) {
   QApplication app(argc, argv);
@@ -28,8 +25,8 @@ int main(int argc, char* argv[]) {
   }
   const char* file_name = (argc > 1) ? argv[1] :
     "data/geometry_on_sphere/ne_110m_admin_0_countries.json";
-  fi::path file_path(file_name);
-  if (! fi::exists(file_path)) {
+
+  if (!std::ifstream(file_name).good()) {
     std::cerr << "Error: failed to find file " << file_name << "\n";
     return -1;
   }
