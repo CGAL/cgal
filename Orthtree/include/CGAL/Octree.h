@@ -15,7 +15,7 @@
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Orthtree.h>
-#include <CGAL/Orthtree_traits_3.h>
+#include <CGAL/Orthtree_traits_point.h>
 
 namespace CGAL {
 
@@ -35,13 +35,15 @@ namespace CGAL {
   \tparam PointRange_ must be a model of range whose value type is the key type of `PointMap`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
  */
-template <typename GeomTraits, typename PointRange,
-          typename PointMap = Identity_property_map
-         <typename std::iterator_traits<typename PointRange::iterator>::value_type> >
+template <
+  typename GeomTraits,
+  typename PointRange,
+  typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>
+>
 #ifdef DOXYGEN_RUNNING
-class Octree;
+  class Octree;
 #else
-using Octree = Orthtree<Orthtree_traits_3<GeomTraits>, PointRange, PointMap>;
+using Octree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<3>>>;
 #endif
 
 } // namespace CGAL

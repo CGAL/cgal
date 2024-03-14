@@ -8,12 +8,11 @@
 
 #include <cassert>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::FT FT;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
-Octree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using FT = Kernel::FT;
+using Point_set = CGAL::Point_set_3<Point>;
+using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
 
 void test_1_point() {
 
@@ -22,7 +21,7 @@ void test_1_point() {
   points.insert({-1, -1, -1});
 
   // Create the octree
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
   octree.refine(10, 1);
 
   // Because there's only the root node, any point should be placed in it
@@ -48,28 +47,28 @@ void test_8_points() {
   points.insert({1, 1, 1});
 
   // Create the octree
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
   octree.refine(10, 1);
 
   // Existing points should end up in the same place
-  assert(octree.root()[0] == octree.locate({-1, -1, -1}));
-  assert(octree.root()[1] == octree.locate({1, -1, -1}));
-  assert(octree.root()[2] == octree.locate({-1, 1, -1}));
-  assert(octree.root()[3] == octree.locate({1, 1, -1}));
-  assert(octree.root()[4] == octree.locate({-1, -1, 1}));
-  assert(octree.root()[5] == octree.locate({1, -1, 1}));
-  assert(octree.root()[6] == octree.locate({-1, 1, 1}));
-  assert(octree.root()[7] == octree.locate({1, 1, 1}));
+  assert(octree.node(0) == octree.locate({-1, -1, -1}));
+  assert(octree.node(1) == octree.locate({1, -1, -1}));
+  assert(octree.node(2) == octree.locate({-1, 1, -1}));
+  assert(octree.node(3) == octree.locate({1, 1, -1}));
+  assert(octree.node(4) == octree.locate({-1, -1, 1}));
+  assert(octree.node(5) == octree.locate({1, -1, 1}));
+  assert(octree.node(6) == octree.locate({-1, 1, 1}));
+  assert(octree.node(7) == octree.locate({1, 1, 1}));
 
   // Points adjacent to the existing points should also end up in the same place
-  assert(octree.root()[0] == octree.locate({-1.1, -1.1, -1.1}));
-  assert(octree.root()[1] == octree.locate({1.1, -1.1, -1.1}));
-  assert(octree.root()[2] == octree.locate({-1.1, 1.1, -1.1}));
-  assert(octree.root()[3] == octree.locate({1.1, 1.1, -1.1}));
-  assert(octree.root()[4] == octree.locate({-1.1, -1.1, 1.1}));
-  assert(octree.root()[5] == octree.locate({1.1, -1.1, 1.1}));
-  assert(octree.root()[6] == octree.locate({-1.1, 1.1, 1.1}));
-  assert(octree.root()[7] == octree.locate({1.1, 1.1, 1.1}));
+  assert(octree.node(0) == octree.locate({-0.99, -0.99, -0.99}));
+  assert(octree.node(1) == octree.locate({0.99, -0.99, -0.99}));
+  assert(octree.node(2) == octree.locate({-0.99, 0.99, -0.99}));
+  assert(octree.node(3) == octree.locate({0.99, 0.99, -0.99}));
+  assert(octree.node(4) == octree.locate({-0.99, -0.99, 0.99}));
+  assert(octree.node(5) == octree.locate({0.99, -0.99, 0.99}));
+  assert(octree.node(6) == octree.locate({-0.99, 0.99, 0.99}));
+  assert(octree.node(7) == octree.locate({0.99, 0.99, 0.99}));
 
 }
 
@@ -89,28 +88,28 @@ void test_10_points() {
   points.insert({-1, -0.75, 1});
 
   // Create the octree
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
   octree.refine(10, 1);
 
   // Existing points should end up in the same place
-  assert(octree.root()[0] == octree.locate({-1, -1, -1}));
-  assert(octree.root()[1] == octree.locate({1, -1, -1}));
-  assert(octree.root()[2] == octree.locate({-1, 1, -1}));
-  assert(octree.root()[3][3][3] == octree.locate({1, 1, -1}));
-  assert(octree.root()[4][4][4] == octree.locate({-1, -1, 1}));
-  assert(octree.root()[5] == octree.locate({1, -1, 1}));
-  assert(octree.root()[6] == octree.locate({-1, 1, 1}));
-  assert(octree.root()[7] == octree.locate({1, 1, 1}));
+  assert(octree.node(0) == octree.locate({-1, -1, -1}));
+  assert(octree.node(1) == octree.locate({1, -1, -1}));
+  assert(octree.node(2) == octree.locate({-1, 1, -1}));
+  assert(octree.node(3, 3, 3, 3, 3) == octree.locate({1, 1, -1}));
+  assert(octree.node(4, 4, 4) == octree.locate({-1, -1, 1}));
+  assert(octree.node(5) == octree.locate({1, -1, 1}));
+  assert(octree.node(6) == octree.locate({-1, 1, 1}));
+  assert(octree.node(7) == octree.locate({1, 1, 1}));
 
   // Points adjacent to the existing points might end up in different places
-  assert(octree.root()[0] == octree.locate({-1.1, -1.1, -1.1}));
-  assert(octree.root()[1] == octree.locate({1.1, -1.1, -1.1}));
-  assert(octree.root()[2] == octree.locate({-1.1, 1.1, -1.1}));
-  assert(octree.root()[3][3][3] == octree.locate({1.1, 1.1, -1.1}));
-  assert(octree.root()[4][4][4] == octree.locate({-1.1, -1.1, 1.1}));
-  assert(octree.root()[5] == octree.locate({1.1, -1.1, 1.1}));
-  assert(octree.root()[6] == octree.locate({-1.1, 1.1, 1.1}));
-  assert(octree.root()[7] == octree.locate({1.1, 1.1, 1.1}));
+  assert(octree.node(0) == octree.locate({-0.99, -0.99, -0.99}));
+  assert(octree.node(1) == octree.locate({0.99, -0.99, -0.99}));
+  assert(octree.node(2) == octree.locate({-0.99, 0.99, -0.99}));
+  assert(octree.node(3, 3, 3, 3, 3) == octree.locate({0.99, 0.99, -0.99}));
+  assert(octree.node(4, 4, 4) == octree.locate({-0.99, -0.99, 0.99}));
+  assert(octree.node(5) == octree.locate({0.99, -0.99, 0.99}));
+  assert(octree.node(6) == octree.locate({-0.99, 0.99, 0.99}));
+  assert(octree.node(7) == octree.locate({0.99, 0.99, 0.99}));
 
 }
 

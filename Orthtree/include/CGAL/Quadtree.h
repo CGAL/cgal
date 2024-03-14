@@ -15,7 +15,7 @@
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Orthtree.h>
-#include <CGAL/Orthtree_traits_2.h>
+#include <CGAL/Orthtree_traits_point.h>
 
 namespace CGAL {
 
@@ -41,7 +41,7 @@ template <typename GeomTraits, typename PointRange,
 #ifdef DOXYGEN_RUNNING
 class Quadtree;
 #else
-using Quadtree = Orthtree<Orthtree_traits_2<GeomTraits>, PointRange, PointMap>;
+using Quadtree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<2>>>;
 #endif
 
 } // namespace CGAL

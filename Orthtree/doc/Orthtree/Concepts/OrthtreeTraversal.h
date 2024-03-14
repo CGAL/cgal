@@ -20,15 +20,15 @@ class OrthtreeTraversal {
 
 public:
 
-  using Node = unspecified_type; ///< A specialization of [CGAL::Orthtree<Traits,PointRange,PointMap>::Node](@ref CGAL::Orthtree::Node)
+  using Node_index = unspecified_type; ///< Index type of the orthtree to be traversed
 
   /*!
     \brief returns the first node to iterate to, given the root of the Orthtree.
    */
-  Node first (Node root) const;
+  Node_index first_index() const;
 
   /*!
     \brief returns the next node to iterate to, given the previous node.
    */
-  Node next(Node n) const;
+  Node_index next(Node_index n) const;
 };

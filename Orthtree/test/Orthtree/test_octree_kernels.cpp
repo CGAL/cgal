@@ -8,9 +8,9 @@
 template <typename Kernel>
 void test()
 {
-  typedef typename Kernel::Point_3 Point;
-  typedef CGAL::Point_set_3<Point> Point_set;
-  typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
+  using Point = typename Kernel::Point_3;
+  using Point_set = CGAL::Point_set_3<Point>;
+  using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
 
   Point_set points;
   CGAL::Random_points_in_cube_3<Point> generator;
@@ -18,7 +18,7 @@ void test()
   for (std::size_t i = 0; i < 100; ++i)
     points.insert(*(generator++));
 
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
   octree.refine();
   octree.grade();
 }

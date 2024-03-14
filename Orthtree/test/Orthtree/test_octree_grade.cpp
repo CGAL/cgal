@@ -10,27 +10,27 @@
 #include <cassert>
 #include <CGAL/point_generators_3.h>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::FT FT;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
-typedef CGAL::Orthtrees::Leaves_traversal Leaves_traversal;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using FT = Kernel::FT;
+using Point_set = CGAL::Point_set_3<Point>;
+using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
+using Leaves_traversal = CGAL::Orthtrees::Leaves_traversal<Octree>;
 
-std::size_t count_jumps(Octree &octree) {
+std::size_t count_jumps(Octree& octree) {
 
   std::size_t jumps = 0;
 
-  for (auto &node : octree.traverse(Leaves_traversal())) {
+  for (auto node: octree.traverse<Leaves_traversal>()) {
 
     for (int direction = 0; direction < 6; ++direction) {
 
-      auto adjacent_node = node.adjacent_node(direction);
+      auto adjacent_node = octree.adjacent_node(node, direction);
 
-      if (adjacent_node.is_null())
+      if (!adjacent_node)
         continue;
 
-      if ((node.depth() - adjacent_node.depth()) > 1)
+      if ((octree.depth(node) - octree.depth(*adjacent_node)) > 1)
         jumps++;
     }
   }
@@ -48,7 +48,7 @@ void test(std::size_t dataset_size) {
     points.insert(*(generator++));
 
   // Build an octree
-  Octree octree(points, points.point_map());
+  Octree octree({points, points.point_map()});
 
   // Refine the octree
   octree.refine();

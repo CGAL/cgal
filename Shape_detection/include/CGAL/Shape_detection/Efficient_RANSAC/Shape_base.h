@@ -374,7 +374,7 @@ namespace CGAL {
      */
     typename boost::property_traits< typename Traits::Point_map >::reference
     point(std::size_t i) const {
-      return get(this->m_point_pmap, *(this->m_first + i));
+      return get(this->m_point_pmap.value(), *(this->m_first + i));
     }
 
     /*!
@@ -382,7 +382,7 @@ namespace CGAL {
      */
     typename boost::property_traits< typename Traits::Normal_map >::reference
     normal(std::size_t i) const {
-      return get(this->m_normal_pmap, *(this->m_first + i));
+      return get(this->m_normal_pmap.value(), *(this->m_first + i));
     }
 
     /*!
@@ -694,8 +694,8 @@ namespace CGAL {
     Input_iterator m_first;
 
     Traits m_traits;
-    Point_map m_point_pmap;
-    Normal_map m_normal_pmap;
+    std::optional<Point_map> m_point_pmap;
+    std::optional<Normal_map> m_normal_pmap;
     /// \endcond
   };
 }
