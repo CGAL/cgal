@@ -52,5 +52,4 @@ function(CGAL_setup_CGAL_Core_dependencies target)
   use_CGAL_GMP_support(CGAL_Core INTERFACE)
   target_compile_definitions(${target} INTERFACE CGAL_USE_CORE=1)
   target_link_libraries( CGAL_Core INTERFACE CGAL::CGAL )
-
 endfunction()

@@ -30,7 +30,7 @@
 #include <string>
 
 
-#if !(defined(CGAL_CORE_USE_BOOST_BACKEND) && BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP))
+#if !(defined(CGAL_CORE_USE_BOOST_BACKEND) && BOOST_VERSION > 107900 && defined(CGAL_USE_BOOST_MP)) && !defined(CGAL_DISABLE_GMP)
 #define CGAL_CORE_USE_GMP_BACKEND 1
 #endif
 
