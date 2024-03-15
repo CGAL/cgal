@@ -922,7 +922,7 @@ BigInt Polynomial<NT>::CauchyBound() const {
     /* compute B^{deg} */
     if (rhs <= lhs) {
       B <<= 1;
-      rhs *= (BigInt(1)<<deg);
+      rhs *= BigFloat(BigInt(BigInt(1)<<deg));
     } else
       break;
   }
@@ -959,7 +959,7 @@ BigInt Polynomial<NT>::UpperBound() const {
     /* compute B^{deg} */
     if (rhs <= (std::max)(lhsPos,lhsNeg)) {
       B <<= 1;
-      rhs *= (BigInt(1)<<deg);
+      rhs *= BigFloat(BigInt(BigInt(1)<<deg));
     } else
       break;
   }

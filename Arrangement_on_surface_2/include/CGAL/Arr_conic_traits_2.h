@@ -3822,9 +3822,9 @@ public:
     else {
       ys_end = m_nt_traits->solve_quadratic_equation(Integer(four*r*s*s - s*t*t),
                                                      Integer(four*r*s*v - two*s*t*u),
-                                                     Integer(r*v*v - t*u*v) +
-                                                     Integer(t*t*w),
+                                                     Integer((r*v*v - t*u*v) + (t*t*w)),
                                                      ys);
+
       n_ys = static_cast<int>(ys_end - ys);
     }
 
