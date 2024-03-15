@@ -28,7 +28,7 @@ namespace internal {
     //classical typedefs
     typedef Iterator key_type;
     typedef typename GeomTraits::Triangle_2 value_type;
-    typedef typename GeomTraits::Triangle_2& reference;
+    typedef typename GeomTraits::Triangle_2 reference;
 
     typedef boost::readable_property_map_tag category;
     typedef Triangle_2_from_index_range_iterator_property_map<GeomTraits, Iterator, PointIterator> Self;
@@ -37,7 +37,7 @@ namespace internal {
     Triangle_2_from_index_range_iterator_property_map(PointIterator b) : begin(b) {}
 
     inline friend value_type
-      get(Self s, key_type it)
+    get(Self s, key_type it)
     {
       return typename GeomTraits::Construct_triangle_2()(s.begin[(*it)[0]], s.begin[(*it)[1]], s.begin[(*it)[2]]);
     }
@@ -113,7 +113,7 @@ class AABB_indexed_triangle_primitive_2
                           CacheDatum > Base;
 public:
   ///constructor from an iterator
-  AABB_indexed_triangle_primitive_2(IndexIterator it, PointRange &range) : Base(it) {}
+  AABB_indexed_triangle_primitive_2(IndexIterator it, PointRange&) : Base(it) {}
 
   /// \internal
   static typename Base::Shared_data construct_shared_data(PointRange &range) {
