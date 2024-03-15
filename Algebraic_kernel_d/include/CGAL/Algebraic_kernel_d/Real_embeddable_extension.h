@@ -337,7 +337,7 @@ public:
       // (already commented out in EXACUS)...
       //   NiX_precond(!(NiX::in_zero(x) && NiX::singleton(x)));
       x = CGAL::abs(x);
-      return CORE::ceilLg(x.m()+x.err())+x.exp()*CORE::CHUNK_BIT;
+      return CORE::ceilLg(CORE::BigInt(x.m()+x.err()))+x.exp()*CORE::CHUNK_BIT;
     }
   };
 
