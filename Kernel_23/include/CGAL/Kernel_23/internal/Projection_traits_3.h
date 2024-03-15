@@ -266,7 +266,7 @@ public:
     {
         Point_2 p2 =  typename R::Construct_projected_point_2()(Triangle_2(project(t.vertex(0)), project(t.vertex(1)), project(t.vertex(2))),
                                                          project(p));
-        return Point_3(p.x(), p.y(), 0);
+        return Point_3(p2.x(), p2.y(), 0);
     }
 
     template <typename T>
