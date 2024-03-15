@@ -19,7 +19,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
 
 find_package( Boost 1.66 REQUIRED )
 
-if(Boost_FOUND AND Boost_VERSION VERSION_LESS 1.70)
+if(Boost_FOUND AND Boost_VERSION VERSION_LESS 1.72)
   if(DEFINED Boost_DIR AND NOT Boost_DIR)
     # Unset that cache variable that is set in the cache by FindBoost
     # (while it was searching for boost-cmake).
