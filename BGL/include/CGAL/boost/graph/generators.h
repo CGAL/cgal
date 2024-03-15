@@ -118,7 +118,7 @@ random_face_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
 } // namespace internal
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates an isolated triangle
  * with its vertices initialized to `p0`, `p1` and `p2`, and adds it to the graph `g`.
@@ -248,7 +248,7 @@ struct Default_grid_maker
 } // namespace internal
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates an isolated quad with
  * its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
@@ -279,7 +279,7 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  * \brief creates an isolated hexahedron
  * with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`.
  * \image html hexahedron.png
@@ -381,7 +381,7 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  * \brief creates an isolated hexahedron
  * equivalent to `c`, and adds it to the graph `g`.
  * \returns the halfedge that has the target vertex associated with `c.min()`,
@@ -428,7 +428,7 @@ make_hexahedron(const IsoCuboid& c,
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  * \brief creates an isolated tetrahedron
  * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \image html tetrahedron.png
@@ -526,7 +526,7 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates a triangulated regular prism, outward oriented,
  * having `nb_vertices` vertices in each of its bases and adds it to the graph `g`.
@@ -626,7 +626,7 @@ make_regular_prism(typename boost::graph_traits<Graph>::vertices_size_type nb_ve
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  * \brief creates a pyramid, outward oriented, having `nb_vertices` vertices in its base and adds it to the graph `g`.
  *
  * If `center` is `(0, 0, 0)`, then the first point of the base is `(radius, 0, 0)`
@@ -714,7 +714,7 @@ make_pyramid(typename boost::graph_traits<Graph>::vertices_size_type nb_vertices
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates an icosahedron, outward oriented, centered in `center` and adds it to the graph `g`.
  *
@@ -809,7 +809,7 @@ make_icosahedron(Graph& g,
 }
 
 /*!
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates a row major ordered grid with `i` cells along the width and `j` cells
  * along the height and adds it to the graph `g`.
