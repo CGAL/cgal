@@ -327,7 +327,7 @@ public:
     long operator()( CORE::BigFloat x ) const {
       CGAL_precondition(!CGAL::zero_in(x));
       x = CGAL::abs(x);
-      return CORE::floorLg(x.m()-x.err())+x.exp()*CORE::CHUNK_BIT;
+      return CORE::floorLg(CORE::BigInt(x.m()-x.err()))+x.exp()*CORE::CHUNK_BIT;
     }
   };
 
