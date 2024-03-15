@@ -250,7 +250,7 @@ class Construct_projected_point_3
 {
 public:
     typedef typename R::Point_3    Point_3;
-    typedef typename R::Point_2    Point_2; 
+    typedef typename R::Point_2    Point_2;
     typedef typename R::Triangle_3 Triangle_3;
     typedef typename R::Triangle_2 Triangle_2;
     typedef typename R::FT         RT;
@@ -545,7 +545,7 @@ public:
     bool operator()(const Sphere_3& s, const Bbox_2& bb)
     {
         Circle_2 circ(project(s.center()), s.squared_radius());
-        
+
         return R::Do_intersect_2()(circ,bb);
     }
 };
