@@ -326,7 +326,7 @@ public:
           NT w = Width()(x);
           w /= ::CORE::BigFloat(x.m()-x.err(),0,x.exp());
           w = w.abs();
-          return -(CORE::ceilLg(w.m()+w.err())+w.exp()*CORE::CHUNK_BIT);
+          return -(CORE::ceilLg(CORE::BigInt(w.m()+w.err()))+w.exp()*CORE::CHUNK_BIT);
         }
     };
 
