@@ -192,6 +192,11 @@ public:
   /// Point query type.
   typedef typename GeomTraits::Point_2 Point_2;
 
+  /// <summary>
+  /// point type
+  /// </summary>
+  typedef Point_2 Point;
+
   /// additional types for the search tree, required by the RangeSearchTraits concept
   /// \bug This is not documented for now in the AABBTraits concept.
   typedef typename GeomTraits::Iso_rectangle_2 Iso_rectangle_2;
@@ -446,7 +451,7 @@ private:
 
   Bounding_box compute_bbox(const Primitive& pr, const Default&)const
   {
-    return internal::Primitive_helper<AT>::get_datum(pr,*this).bbox();
+    return GeomTraits().construct_bbox_2_object()(internal::Primitive_helper<AT>::get_datum(pr, *this));
   }
 
   /// Comparison functions

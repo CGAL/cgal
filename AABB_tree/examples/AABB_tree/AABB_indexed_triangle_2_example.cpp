@@ -6,8 +6,10 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_2.h>
 #include <CGAL/AABB_indexed_triangle_primitive_2.h>
+#include <CGAL/Projection_traits_xy_3.h>
 
-typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Simple_cartesian<double> SC;
+typedef CGAL::Projection_traits_xy_3<SC> K;
 typedef K::Point_2 Point;
 
 typedef std::vector<std::array<uint8_t, 3> >::iterator IndexIterator;
@@ -19,12 +21,12 @@ typedef Tree::Point_and_primitive_id Point_and_primitive_id;
 
 int main()
 {
-  Point a(0.0, 0.0);
-  Point b(0.0, 1.0);
-  Point c(1.0, 0.0);
-  Point d(1.0, 1.0);
-  Point e(2.0, 0.0);
-  Point f(2.0, 1.0);
+  Point a(0.0, 0.0, 0.0);
+  Point b(0.0, 1.0, 0.0);
+  Point c(1.0, 0.0, 0.0);
+  Point d(1.0, 1.0, 0.0);
+  Point e(2.0, 0.0, 0.0);
+  Point f(2.0, 1.0, 0.0);
 
   std::vector<Point> points = { a, b, c, d, e, f };
 
@@ -39,17 +41,17 @@ int main()
 
   // point sampling
   Point_and_primitive_id id;
-  id = tree.closest_point_and_primitive(Point(0.5, 0.4));
+  id = tree.closest_point_and_primitive(Point(0.5, 0.4, 0.0));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(0.5, 0.6));
+  id = tree.closest_point_and_primitive(Point(0.5, 0.6, 0.0));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(1.5, 0.5));
+  id = tree.closest_point_and_primitive(Point(1.5, 0.5, 0.0));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(1.5, 0.6));
+  id = tree.closest_point_and_primitive(Point(1.5, 0.6, 0.0));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(1.0, 0.0));
+  id = tree.closest_point_and_primitive(Point(1.0, 0.0, 0.0));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(3.0, 0.5));
+  id = tree.closest_point_and_primitive(Point(3.0, 0.5, 0.0));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
 
   return EXIT_SUCCESS;
