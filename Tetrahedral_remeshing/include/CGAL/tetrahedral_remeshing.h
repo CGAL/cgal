@@ -20,6 +20,8 @@
 
 #include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/Complex_cells_selector.h>
+
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
@@ -219,11 +221,11 @@ void tetrahedral_isotropic_remeshing(
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::cell_selector_t,
     NamedParameters,
-    Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
+    Tetrahedral_remeshing::Complex_cells_selector<Tr>//default
   > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+                       Tetrahedral_remeshing::Complex_cells_selector<Tr>());
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
   typedef typename internal_np::Lookup_named_param_def <
@@ -442,11 +444,11 @@ void tetrahedral_isotropic_remeshing(
   typedef typename internal_np::Lookup_named_param_def <
               internal_np::cell_selector_t,
               NamedParameters,
-              Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
+              Tetrahedral_remeshing::Complex_cells_selector<Tr>//default
               > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+                       Tetrahedral_remeshing::Complex_cells_selector<Tr>());
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
   typedef typename internal_np::Lookup_named_param_def <
