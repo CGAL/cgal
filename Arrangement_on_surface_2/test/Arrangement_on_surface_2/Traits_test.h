@@ -1126,7 +1126,7 @@ merge_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true) {
 template <typename GeomTraits>
 template <typename GT>
 bool Traits_test<GeomTraits>::
-approximate_wrapper_impl2(std::istringstream& is, long) { return false; }
+approximate_wrapper_impl2(std::istringstream&, long) { return false; }
 
 //! Specialized instance
 template <typename GeomTraits>
@@ -1164,7 +1164,7 @@ approximate_wrapper_impl2(std::istringstream& is, int) {
 template <typename GeomTraits>
 template <typename GT>
 bool Traits_test<GeomTraits>::
-approximate_wrapper_impl1(std::istringstream& is, long) { return false; }
+approximate_wrapper_impl1(std::istringstream&, long) { return false; }
 
 //! Specialized instance
 template <typename GeomTraits>
