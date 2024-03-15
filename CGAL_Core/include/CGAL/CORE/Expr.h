@@ -91,6 +91,9 @@ public:
   Expr(const BigInt& I) : RCExpr(new ConstRealRep(Real(I))) {}
   /// constructor for <tt>BigRat</tt>
   Expr(const BigRat& R) : RCExpr(new ConstRealRep(Real(R))) {}
+  /// constructor for <tt>BigRat expression</tt>
+  template <class BigRatExpr, class = std::enable_if_t< boost::multiprecision::is_number_expression<BigRatExpr>::value> >
+  explicit Expr(const BigRatExpr& R) : RCExpr(new ConstRealRep(Real(BigRat(R)))) {}
 
   /// constructor for <tt>BigFloat</tt>
   Expr(const BigFloat& F) : RCExpr(new ConstRealRep(Real(F))) {}
