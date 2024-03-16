@@ -73,56 +73,59 @@ class Vertex_base {
   SFace_iterator     sfaces_begin_, sfaces_last_;
   SHalfloop_iterator shalfloop_;
   GenPtr             info_;
+  mutable bool       visited_;
 
  public:
 
-  Vertex_base() : point_at_center_(), mark_(), sncp_(),
-    svertices_begin_(), svertices_last_(),
-    shalfedges_begin_(), shalfedges_last_(),
-    sfaces_begin_(), sfaces_last_(), shalfloop_(),
-    info_()
-    // , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*) this))
-      {}
+      Vertex_base() : point_at_center_(), mark_(), sncp_(),
+        svertices_begin_(), svertices_last_(),
+        shalfedges_begin_(), shalfedges_last_(),
+        sfaces_begin_(), sfaces_last_(), shalfloop_(),
+        info_(), visited_(false)
+        // , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*) this))
+          {}
 
-    Vertex_base(const Point_3& p, Mark m) :
-      point_at_center_(p), mark_(m), sncp_(),
-      svertices_begin_(), svertices_last_(),
-      shalfedges_begin_(), shalfedges_last_(),
-      sfaces_begin_(), sfaces_last_(), shalfloop_(),
-      info_()
-      //    , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*) this))
+      Vertex_base(const Point_3& p, Mark m) :
+        point_at_center_(p), mark_(m), sncp_(),
+        svertices_begin_(), svertices_last_(),
+        shalfedges_begin_(), shalfedges_last_(),
+        sfaces_begin_(), sfaces_last_(), shalfloop_(),
+        info_(), visited_(false)
+        //    , sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*) this))
         {}
 
-      Vertex_base(const Vertex_base<Refs>& v)
+      Vertex_base(const Vertex_base<Refs>& v) :
       //      : sm_(Vertex_handle((SNC_in_place_list_vertex<Vertex_base>*)this))
-        {
-          point_at_center_ = v.point_at_center_;
-          mark_ = v.mark_;
-          sncp_ = v.sncp_;
-          svertices_begin_ = v.svertices_begin_;
-          svertices_last_ = v.svertices_last_;
-          shalfedges_begin_ = v.shalfedges_begin_;
-          shalfedges_last_ = v.shalfedges_last_;
-          sfaces_begin_ = v.sfaces_begin_;
-          sfaces_last_ = v.sfaces_last_;
-          shalfloop_ = v.shalfloop_;
-          info_ = 0;
-        }
+
+        point_at_center_(v.point_at_center_),
+        mark_(v.mark_),
+        sncp_(v.sncp_),
+        svertices_begin_(v.svertices_begin_),
+        svertices_last_(v.svertices_last_),
+        shalfedges_begin_(v.shalfedges_begin_),
+        shalfedges_last_(v.shalfedges_last_),
+        sfaces_begin_(v.sfaces_begin_),
+        sfaces_last_(v.sfaces_last_),
+        shalfloop_(v.shalfloop_),
+        info_(0),
+        visited_(false) {}
 
       Vertex_base<Refs>& operator=(const Vertex_base<Refs>& v)
-        { if (this == &v) return *this;
-          point_at_center_ = v.point_at_center_;
-          mark_ = v.mark_;
-          sncp_ = v.sncp_;
-          svertices_begin_ = v.svertices_begin_;
-          svertices_last_ = v.svertices_last_;
-          shalfedges_begin_ = v.shalfedges_begin_;
-          shalfedges_last_ = v.shalfedges_last_;
-          sfaces_begin_ = v.sfaces_begin_;
-          sfaces_last_ = v.sfaces_last_;
-          shalfloop_ = v.shalfloop_;
-          return *this;
-        }
+      { if (this == &v) return *this;
+        point_at_center_ = v.point_at_center_;
+        mark_ = v.mark_;
+        sncp_ = v.sncp_;
+        svertices_begin_ = v.svertices_begin_;
+        svertices_last_ = v.svertices_last_;
+        shalfedges_begin_ = v.shalfedges_begin_;
+        shalfedges_last_ = v.shalfedges_last_;
+        sfaces_begin_ = v.sfaces_begin_;
+        sfaces_last_ = v.sfaces_last_;
+        shalfloop_ = v.shalfloop_;
+        info_ = 0;
+        visited_ = false;
+        return *this;
+      }
 
       Refs* sncp() const { return sncp_; }
       Refs*& sncp() { return sncp_; }
@@ -295,6 +298,8 @@ class Vertex_base {
       const Mark& mark() const { return mark_;}
       GenPtr& info() { return info_; }
       const GenPtr& info() const { return info_; }
+
+      bool& visited() const { return visited_; }
 
       ~Vertex_base() {
         CGAL_NEF_TRACEN("  destroying Vertex item "<<&*this);
