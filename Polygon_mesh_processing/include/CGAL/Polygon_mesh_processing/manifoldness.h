@@ -27,6 +27,7 @@
 
 #include <iterator>
 #include <map>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -286,23 +287,26 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
 
 /// \ingroup PMP_combinatorial_repair_grp
 ///
-/// \brief collects the non-manifold vertices (if any) present in the mesh.
+/// \brief collects the combinatorial non-manifold vertices (if any) present in the mesh.
 ///
 /// A non-manifold vertex `v` is returned via one incident halfedge `h` such that `target(h, pm) = v`
-/// for all the umbrellas that `v` appears in (an <i>umbrella</i> being the set of faces incident
+/// for each umbrella that `v` appears in (an <i>umbrella</i> being the set of faces incident
 /// to all the halfedges reachable by walking around `v` using `hnext = prev(opposite(h, pm), pm)`,
 /// starting from `h`).
+///
+/// In this function, a vertex is non-manifold if it appears in at least two umbrellas.
 ///
 /// @tparam PolygonMesh a model of `HalfedgeListGraph`
 /// @tparam OutputIterator a model of `OutputIterator` holding objects of type
 ///                         `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
 ///
-/// @param pm a triangle mesh
-/// @param out the output iterator that collects halfedges incident to `v`
+/// @param pm a polygon mesh
+/// @param out the output iterator that collects halfedges incident to non-manifold vertices
 ///
 /// \return the output iterator
 ///
 /// \sa `is_non_manifold_vertex()`
+/// \sa `geometrically_non_manifold_vertices()`
 /// \sa `duplicate_non_manifold_vertices()`
 template <typename PolygonMesh, typename OutputIterator>
 OutputIterator non_manifold_vertices(const PolygonMesh& pm,
@@ -317,25 +321,21 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                  vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                halfedge_descriptor;
 
-  typedef CGAL::dynamic_vertex_property_t<bool>                                         Vertex_bool_tag;
-  typedef typename boost::property_map<PolygonMesh, Vertex_bool_tag>::const_type        Known_manifold_vertex_map;
   typedef CGAL::dynamic_vertex_property_t<halfedge_descriptor>                          Vertex_halfedge_tag;
   typedef typename boost::property_map<PolygonMesh, Vertex_halfedge_tag>::const_type    Visited_vertex_map;
   typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
   typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
 
-  Known_manifold_vertex_map known_nm_vertices = get(Vertex_bool_tag(), pm);
+  std::set<vertex_descriptor> known_nm_vertices;
   Visited_vertex_map visited_vertices = get(Vertex_halfedge_tag(), pm);
   Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
 
   halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
 
-  // Dynamic pmaps do not have default initialization values (yet)
+  // Dynamic pmaps do not have default initialization values (yet).
   for(vertex_descriptor v : vertices(pm))
-  {
-    put(known_nm_vertices, v, false);
     put(visited_vertices, v, null_h);
-  }
+
   for(halfedge_descriptor h : halfedges(pm))
     put(visited_halfedges, h, false);
 
@@ -347,27 +347,27 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
     if(!get(visited_halfedges, h))
     {
       put(visited_halfedges, h, true);
-      bool is_non_manifold = false;
 
-      vertex_descriptor v = target(h, pm);
+      bool is_non_manifold = false;
+      const vertex_descriptor v = target(h, pm);
 
       if(get(visited_vertices, v) != null_h) // already seen this vertex, but not from this star
       {
         is_non_manifold = true;
 
-        // if this is the second time we visit that vertex and the first star was manifold, we have
-        // never reported the first star, but we must now
-        if(!get(known_nm_vertices, v))
+        // If this is the second time we visit that vertex and the first star was manifold, we have
+        // never reported the first star, but must do so now.
+        if(known_nm_vertices.count(v) == 0)
           *out++ = get(visited_vertices, v); // that's a halfedge of the first star we've seen 'v' in
       }
       else
       {
-        // first time we meet this vertex, just mark it so, and keep the halfedge we found the vertex with in memory
+        // First time we meet this vertex, only remember the halfedge we found the vertex with.
         put(visited_vertices, v, h);
       }
 
       // While walking the star of this halfedge, if we meet a border halfedge more than once,
-      // it means the mesh is pinched and we are also in the case of a non-manifold situation
+      // it means the mesh is pinched and we are also in the case of a non-manifold situation.
       halfedge_descriptor ih = h, done = ih;
       int border_counter = 0;
       do
@@ -386,8 +386,241 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
       if(is_non_manifold)
       {
         *out++ = h;
-        put(known_nm_vertices, v, true);
+        known_nm_vertices.insert(v);
       }
+    }
+  }
+
+  return out;
+}
+
+// Pretty much the same as 'PMP::non_manifold_vertices()', but considers the geometry
+// instead of the combinatorics ({combinatorial non-manifold vertices} being a subset of
+// {geometrical non-manifold vertices})
+/// \ingroup PMP_repairing_grp
+///
+/// \brief collects the non-manifold vertices (if any) present in the mesh.
+///
+/// A non-manifold vertex `v` is returned via one incident halfedge `h` such that `target(h, pm) = v`
+/// for each umbrella that `v` appears in (an <i>umbrella</i> being the set of faces incident
+/// to all the halfedges reachable by walking around `v` using `hnext = prev(opposite(h, pm), pm)`,
+/// starting from `h`).
+///
+/// In this function, a vertex is non-manifold if it shares its position with another, non-adjacent vertex.
+///
+/// @tparam PolygonMesh a model of `HalfedgeListGraph`
+/// @tparam OutputIterator a model of `OutputIterator` holding objects of type
+///                         `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+///
+/// @param pmesh a polygon mesh
+/// @param out the output iterator that collects halfedges incident to non-manifold vertices
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `PolygonMesh`.}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested functor `Equal_3` to check
+///                    whether two points are identical and a function `Equal_3 equal_3_object()`.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
+/// \cgalNamedParamsEnd
+///
+/// \return the output iterator
+///
+/// \sa `non_manifold_vertices()`
+/// \sa `is_non_manifold_vertex()`
+/// \sa `duplicate_non_manifold_vertices()`
+template <typename PolygonMesh, typename OutputIterator,
+          typename NamedParameters = parameters::Default_named_parameters>
+OutputIterator geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
+                                                   OutputIterator out,
+                                                   const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                   vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                 halfedge_descriptor;
+
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type                     Geom_traits;
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type           VertexPointMap;
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                        get_const_property_map(vertex_point, pmesh));
+
+  const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
+  typedef typename boost::property_traits<VertexPointMap>::reference                    Point_ref;
+  typedef typename boost::property_traits<VertexPointMap>::value_type                   Point;
+
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
+
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pmesh);
+
+  std::hash<Point> hasher;
+  auto equalizer = [&gt](const Point& l, const Point& r) -> bool { return gt.equal_3_object()(l, r); };
+  std::unordered_map<Point, halfedge_descriptor,
+                     decltype(hasher), decltype(equalizer)> visited_points(num_vertices(pmesh), hasher, equalizer);
+  std::set<Point> known_nm_points; // not made unordered because it should usually be small
+
+  for(halfedge_descriptor h : halfedges(pmesh))
+  {
+    // If 'h' is not visited yet, we walk around the target of 'h' and mark these
+    // halfedges as visited. Thus, if we are here and the target is already marked as visited,
+    // it means that the vertex is non manifold.
+    if(get(visited_halfedges, h))
+      continue;
+
+    put(visited_halfedges, h, true);
+
+    bool is_non_manifold = false;
+    const vertex_descriptor v = target(h, pmesh);
+    const Point_ref p = get(vpm, v);
+
+    const auto visited_itb = visited_points.emplace(p, h);
+    if(!visited_itb.second) // unsuccessful insertion: already seen this point, but not from this star
+    {
+      is_non_manifold = true;
+
+      // If this is the second time we visit that vertex and the first star was manifold, we have
+      // not yet marked the vertex as non-manifold from the first star, but must do so now.
+      if(known_nm_points.count(p) == 0)
+        *out++ = visited_itb.first->second;
+    }
+
+    // While walking the star of this halfedge, if we meet a border halfedge more than once,
+    // it means the mesh is pinched and we are also in the case of a non-manifold situation
+    halfedge_descriptor ih = h, done = ih;
+    int border_counter = 0;
+    do
+    {
+      put(visited_halfedges, ih, true);
+      if(is_border(ih, pmesh))
+        ++border_counter;
+
+      ih = prev(opposite(ih, pmesh), pmesh);
+    }
+    while(ih != done);
+
+    if(border_counter > 1)
+      is_non_manifold = true;
+
+    if(is_non_manifold)
+    {
+      *out++ = h;
+      known_nm_points.insert(p);
+
+      if(verbose)
+        std::cout << "Non-manifold star centered at " << p << std::endl;
+    }
+  }
+
+  return out;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// \ingroup PMP_repairing_grp
+///
+/// collects the non-manifold edges (if any) present in the mesh.
+///
+/// An edge is considered non-manifold if there exists another edge sharing the same geometry.
+/// Note that this means that two different edges with partial overlaps are thus not considered
+/// as non-manifold.
+///
+/// @tparam PolygonMesh a model of `HalfedgeListGraph`
+/// @tparam OutputIterator a model of `OutputIterator` holding objects of type
+///                         `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+///
+/// @param pmesh a polygon mesh
+/// @param out the output iterator that collects non-manifold edges
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `PolygonMesh`.}
+///   \cgalParamNEnd
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested functor `Equal_3` to check
+///                    whether two points are identical and a function `Equal_3 equal_3_object()`.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
+/// \cgalNamedParamsEnd
+///
+/// \sa `non_manifold_vertices()`
+/// \sa `geometrically_non_manifold_vertices()`
+///
+/// \return the output iterator.
+template <typename PolygonMesh, typename OutputIterator,
+          typename NamedParameters = parameters::Default_named_parameters>
+OutputIterator geometrically_non_manifold_edges(const PolygonMesh& pmesh,
+                                                OutputIterator out,
+                                                const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor                     edge_descriptor;
+
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type                     Geom_traits;
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type           VertexPointMap;
+  typedef typename boost::property_traits<VertexPointMap>::value_type                    Point_3;
+
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                        get_const_property_map(vertex_point, pmesh));
+
+  auto edge_point_hasher = [vpm, &pmesh](const edge_descriptor e) -> std::size_t
+  {
+    std::size_t result = CGAL::hash_value(get(vpm, source(e, pmesh)));
+    result ^= CGAL::hash_value(get(vpm, target(e, pmesh))); // xor to have commutativity
+    return result;
+  };
+
+  auto equalizer = [&pmesh, &gt, vpm](const edge_descriptor l, const edge_descriptor r) -> bool
+  {
+    return ((gt.equal_3_object()(get(vpm, source(l, pmesh)), get(vpm, source(r, pmesh))) &&
+             gt.equal_3_object()(get(vpm, target(l, pmesh)), get(vpm, target(r, pmesh)))) ||
+            (gt.equal_3_object()(get(vpm, source(l, pmesh)), get(vpm, target(r, pmesh))) &&
+             gt.equal_3_object()(get(vpm, target(l, pmesh)), get(vpm, source(r, pmesh)))));
+  };
+  std::unordered_map<edge_descriptor, bool,
+                     decltype(edge_point_hasher),
+                     decltype(equalizer)> unique_edges(num_edges(pmesh), edge_point_hasher, equalizer);
+
+  for(const edge_descriptor e : edges(pmesh))
+  {
+    auto r = unique_edges.emplace(e, false);
+    if(!r.second)
+    {
+      if(!r.first->second) // first report of this edge being non-manifold
+      {
+        *out++ = r.first->first;
+        r.first->second = true; // don't report it again
+      }
+
+      *out++ = e;
     }
   }
 

@@ -146,7 +146,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::volume_connected_components()`
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
 - `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
-- `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup()`
 - `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
@@ -194,6 +193,9 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
 - `CGAL::Polygon_mesh_processing::non_manifold_vertices()`
 - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
+- `CGAL::Polygon_mesh_processing::geometrically_non_manifold_vertices()`
+- `CGAL::Polygon_mesh_processing::geometrically_non_manifold_edges()`
+- `CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
 

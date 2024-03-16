@@ -20,7 +20,7 @@ typedef CGAL::Polyhedron_3<K>                                     Polyhedron;
 typedef std::vector<std::vector<std::size_t> >                    Vertices_to_merge_container;
 
 template <typename PolygonMesh>
-void read_mesh(const std::string fname,
+void read_mesh(const std::string& fname,
                PolygonMesh& mesh)
 {
   std::ifstream input(fname);
@@ -79,7 +79,7 @@ void merge_vertices(const Vertices_to_merge_container& all_vertices_to_merge,
       merge_vertices(vd_to_merge_onto, vds[vertices_to_merge[j]], mesh);
 
     std::pair<typename std::map<vertex_descriptor, std::size_t>::iterator, bool > is_insert_successful =
-      merged_onto.insert(std::make_pair(vd_to_merge_onto, vertices_to_merge.size() - 1));
+      merged_onto.emplace(vd_to_merge_onto, vertices_to_merge.size() - 1);
     if(!is_insert_successful.second)
       is_insert_successful.first->second += vertices_to_merge.size() - 1;
 
@@ -92,17 +92,23 @@ std::size_t test_nm_vertices_duplication(const Vertices_to_merge_container& all_
                                          std::map<typename boost::graph_traits<PolygonMesh>::vertex_descriptor, std::size_t>& merged_onto,
                                          std::vector<std::vector<
                                            typename boost::graph_traits<PolygonMesh>::vertex_descriptor> >& duplicated_vertices,
-                                         PolygonMesh& mesh)
+                                         PolygonMesh& mesh,
+                                         const std::size_t expected_nm_vertices_nb= -1)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
 
   merge_vertices(all_merges, merged_onto, mesh);
 
+  std::vector<halfedge_descriptor> non_manifold_cones;
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(mesh, std::back_inserter(non_manifold_cones));
+  if(expected_nm_vertices_nb != std::size_t(-1))
+    assert(non_manifold_cones.size() == expected_nm_vertices_nb);
+
   std::size_t new_vertices_nb =
     CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh,
       CGAL::parameters::output_iterator(std::back_inserter(duplicated_vertices)));
 
-  std::vector<halfedge_descriptor> non_manifold_cones;
+  non_manifold_cones.clear();
   CGAL::Polygon_mesh_processing::non_manifold_vertices(mesh, std::back_inserter(non_manifold_cones));
   assert(non_manifold_cones.empty());
 
@@ -115,22 +121,24 @@ template <typename PolygonMesh>
 std::size_t test_nm_vertices_duplication(const Vertices_to_merge_container& all_merges,
                                          std::vector<std::vector<
                                            typename boost::graph_traits<PolygonMesh>::vertex_descriptor> >& duplicated_vertices,
-                                         PolygonMesh& mesh)
+                                         PolygonMesh& mesh,
+                                         const std::size_t expected_nm_vertices_nb = -1)
 {
   std::map<typename boost::graph_traits<PolygonMesh>::vertex_descriptor, std::size_t> useless_map;
 
-  return test_nm_vertices_duplication(all_merges, useless_map, duplicated_vertices, mesh);
+  return test_nm_vertices_duplication(all_merges, useless_map, duplicated_vertices, mesh, expected_nm_vertices_nb);
 }
 
 template <typename PolygonMesh>
 std::size_t test_nm_vertices_duplication(std::vector<std::vector<
                                            typename boost::graph_traits<PolygonMesh>::vertex_descriptor> >& duplicated_vertices,
-                                         PolygonMesh& mesh)
+                                         PolygonMesh& mesh,
+                                         const std::size_t expected_nm_vertices_nb = -1)
 {
   Vertices_to_merge_container all_merges;
   std::map<typename boost::graph_traits<PolygonMesh>::vertex_descriptor, std::size_t> useless_map;
 
-  return test_nm_vertices_duplication(all_merges, useless_map, duplicated_vertices, mesh);
+  return test_nm_vertices_duplication(all_merges, useless_map, duplicated_vertices, mesh, expected_nm_vertices_nb);
 }
 
 template <typename PolygonMesh>
@@ -146,12 +154,17 @@ void test_unpinched_mesh(const Vertices_to_merge_container& all_merges,
     assert(!CGAL::Polygon_mesh_processing::is_non_manifold_vertex(vd, mesh));
   }
 
+  std::size_t expected_nm_vertices_nb = 0;
+  for(auto m : all_merges)
+     expected_nm_vertices_nb += m.size();
+
   std::vector<std::vector<vertex_descriptor> > duplicated_vertices;
   std::map<vertex_descriptor, std::size_t> number_of_vertices_merged_onto;
   std::size_t nb = test_nm_vertices_duplication(all_merges,
                                                 number_of_vertices_merged_onto,
                                                 duplicated_vertices,
-                                                mesh);
+                                                mesh,
+                                                expected_nm_vertices_nb);
 
   const std::size_t final_vertices_size = vertices(mesh).size();
   std::cout << "    ini: " << ini_vertices_size << " final: " << final_vertices_size << std::endl;
@@ -191,10 +204,16 @@ void test_blobby()
 template <typename PolygonMesh>
 void test_nm_cubes()
 {
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor        edge_descriptor;
+
   std::cout << "  test: data_repair/nm_closed_cubes.off" << std::endl;
 
   PolygonMesh mesh;
   read_mesh("data_repair/nm_closed_cubes.off", mesh);
+
+  std::vector<edge_descriptor> nm_edges;
+  CGAL::Polygon_mesh_processing::geometrically_non_manifold_edges(mesh, std::back_inserter(nm_edges));
+  assert(nm_edges.size() == 2);
 
   // non-manifold vertices
   Vertices_to_merge_container all_merges;
@@ -210,10 +229,11 @@ void test_nm_cubes()
 }
 
 template <typename PolygonMesh>
-void test_pinched_triangles(const std::string filename,
+void test_pinched_triangles(const std::string& filename,
                             const std::size_t expected_nb)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
 
   std::cout << "  test: " << filename << " expected: " << expected_nb << std::endl;
 
@@ -230,6 +250,10 @@ void test_pinched_triangles(const std::string filename,
     }
   }
 
+  std::vector<halfedge_descriptor> non_manifold_cones;
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(mesh, std::back_inserter(non_manifold_cones));
+  assert(non_manifold_cones.size() == 1);
+
   std::vector<std::vector<vertex_descriptor> > duplicated_vertices;
   std::size_t new_vertices_nb =
     CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices(mesh,
@@ -244,11 +268,20 @@ template <typename PolygonMesh>
 void test_many_umbrellas()
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
 
   std::cout << "  test: data_repair/many_umbrellas.off" << std::endl;
 
   PolygonMesh mesh;
   read_mesh("data_repair/many_umbrellas.off", mesh);
+
+  std::vector<halfedge_descriptor> non_manifold_cones;
+  CGAL::Polygon_mesh_processing::non_manifold_vertices(mesh, std::back_inserter(non_manifold_cones));
+  assert(non_manifold_cones.size() == 2);
+
+  non_manifold_cones.clear();
+  CGAL::Polygon_mesh_processing::geometrically_non_manifold_vertices(mesh, std::back_inserter(non_manifold_cones));
+  assert(non_manifold_cones.size() == 5);
 
   // non-manifold vertices
   Vertices_to_merge_container all_merges;
