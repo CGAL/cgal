@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
+#if defined(CGAL_LINKED_WITH_LIB3MF) || defined(DOXYGEN_RUNNING)
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_DEPRECATED
@@ -153,6 +153,6 @@ CGAL_DEPRECATED int read_3mf(const std::string& filename, std::vector<CGAL::Surf
 
 } // namespace CGAL
 
-#endif // defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
+#endif // defined(CGAL_LINKED_WITH_LIB3MF) || defined(DOXYGEN_RUNNING)
 
 #endif // CGAL_SURFACE_MESH_IO_3MF_H

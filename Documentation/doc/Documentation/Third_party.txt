@@ -321,4 +321,8 @@ In order to use \osqp in \cgal programs, the executables should be linked with t
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
 
+\subsection thirdpartylib3mf lib3mf
+
+Reading/writing of meshes using the 3mf format is offered in CGAL using <a href="https://github.com/3MFConsortium/lib3mf">lib3mf</a> version 2+.
+
 */

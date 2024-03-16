@@ -412,4 +412,15 @@ The file `CGAL/compiler_config.h` is included from
 `<CGAL/config.h>`.
 which is included by all \cgal header files.
 
+\subsection installation_lib3mf lib3mf library
+
+If lib3mf is not automatically found, the following variables must be set:
+
+| Variable             | Description                                         | Type        |
+| :-                   | :-                                                  | :-          |
+| `LIB3MF_INCLUDE_DIR` | Directory containing the file `lib3mf_implicit.hpp` | CMake       |
+| `LIB3MF_LIBRARIES`   | Full pathname of the compiled lib3mf library        | CMake       |
+| `LIB3MF_INC_DIR`     | Directory containing the file `lib3mf_implicit.hpp` | Environment |
+| `LIB3MF_LIB_DIR`     | Full pathname of the compiled lib3mf library        | Environment |
+
 */

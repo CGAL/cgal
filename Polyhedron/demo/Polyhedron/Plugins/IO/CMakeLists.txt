@@ -105,23 +105,13 @@ else()
   endif()
 endif()
 
-find_path(
-  3MF_INCLUDE_DIR
-  NAMES Model/COM/NMR_DLLInterfaces.h
-  PATH_SUFFIXES lib3mf
-  DOC "Path to lib3MF headers")
-find_library(
-  3MF_LIBRARIES
-  NAMES 3MF
-  DOC "Path to the lib3MF library")
+find_package(lib3mf)
+include(CGAL_lib3mf_support)
 
-if(3MF_LIBRARIES
-   AND 3MF_INCLUDE_DIR
-   AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NMR_DLLInterfaces.h")
-  include_directories(${3MF_INCLUDE_DIR})
+
+if(TARGET CGAL::lib3mf_support)
   polyhedron_demo_plugin(io_3mf_plugin 3mf_io_plugin KEYWORDS Viewer PMP)
-  target_link_libraries(io_3mf_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
-  target_compile_definitions(io_3mf_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
+  target_link_libraries(io_3mf_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item CGAL::lib3mf_support)
 else()
   message(STATUS "NOTICE: The 3mf_io_plugin requires the lib3MF library in a version < 2.0, and will not be compiled.")
 endif()

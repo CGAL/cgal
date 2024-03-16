@@ -24,7 +24,7 @@
 #include <vector>
 #include <type_traits>
 
-#if defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
+#if defined(CGAL_LINKED_WITH_LIB3MF) || defined(DOXYGEN_RUNNING)
 
 namespace CGAL {
 
@@ -118,6 +118,6 @@ bool write_3MF(const std::string& filename,
 
 } } // namespace CGAL::IO
 
-#endif // defined(CGAL_LINKED_WITH_3MF) || defined(DOXYGEN_RUNNING)
+#endif // defined(CGAL_LINKED_WITH_LIB3MF) || defined(DOXYGEN_RUNNING)
 
 #endif // CGAL_BGL_IO_3MF_H

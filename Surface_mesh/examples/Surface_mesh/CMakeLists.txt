@@ -12,7 +12,13 @@ project(Surface_mesh_Examples)
 #CGAL_Qt6 is needed for the drawing.
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-create_single_source_cgal_program("sm_points.cpp")
+find_package(lib3mf)
+include(CGAL_lib3mf_support)
+if(NOT TARGET CGAL::lib3mf_support)
+  message("NOTICE: sm_3MF.cpp requires lib3mf v2+ and will not be compiled.")
+  return()
+endif()
+
 create_single_source_cgal_program("sm_derivation.cpp")
 create_single_source_cgal_program("sm_join.cpp")
 create_single_source_cgal_program("sm_aabbtree.cpp")
@@ -25,6 +31,11 @@ create_single_source_cgal_program("sm_memory.cpp")
 create_single_source_cgal_program("sm_properties.cpp")
 create_single_source_cgal_program("sm_draw_small_faces.cpp")
 create_single_source_cgal_program("check_orientation.cpp")
+
+if(TARGET CGAL::lib3mf_support)
+  create_single_source_cgal_program("sm_3MF.cpp")
+  target_link_libraries( sm_3MF PUBLIC CGAL::lib3mf_support)
+endif()
 
 #create the executable of the application
 create_single_source_cgal_program("draw_surface_mesh.cpp")

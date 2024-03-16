@@ -17,7 +17,9 @@
 #include <fstream>
 #include <unordered_map>
 
-using namespace NMR;
+#include "lib3mf_implicit.hpp"
+
+using namespace Lib3MF;
 
 class Io_3mf_plugin:
     public QObject,
@@ -80,6 +82,7 @@ class Io_3mf_plugin:
     int nb_meshes =
         CGAL::IO::read_3MF(fileinfo.filePath().toUtf8().toStdString(),
                            all_points, all_polygons, all_colors, names);
+
     if(nb_meshes <0 )
     {
       ok = false;
@@ -173,14 +176,10 @@ class Io_3mf_plugin:
       to_return.push_back(item);
     }
 
-    HRESULT hResult;
-    NMR::PLib3MFModel * pModel;
-    hResult = NMR::lib3mf_createmodel(&pModel);
-    NMR::PLib3MFModelMeshObject* pMeshObject;
-    if (hResult != LIB3MF_OK) {
-      std::cerr << "could not create model: " << std::hex << hResult << std::endl;
-      return false;
-    }
+    PWrapper wrapper = CWrapper::loadLibrary();
+    PModel pModel = wrapper->CreateModel();
+    PMeshObject pMeshObject  = pModel->AddMeshObject();
+
     for(Scene_surface_mesh_item* sm_item : sm_items)
     {
       SMesh &mesh = *sm_item->polyhedron();
@@ -228,7 +227,7 @@ class Io_3mf_plugin:
           int pid = get(fpid, fd);
           QColor q_color = sm_item->color_vector()[pid];
           colors.push_back(CGAL::IO::Color(q_color.red(), q_color.green(),
-                                       q_color.blue(), q_color.alpha()));
+                                           q_color.blue(), q_color.alpha()));
         }
       }
       //else fill it with item->color()
@@ -241,15 +240,15 @@ class Io_3mf_plugin:
       }
 
       CGAL::IO::write_mesh_to_model(points, triangles, colors,
-                                sm_item->name().toStdString(), &pMeshObject, pModel);
+                                    sm_item->name().toStdString(), pMeshObject, pModel, wrapper);
     }
     for(Scene_points_with_normal_item* pts_item : pts_items)
     {
       QColor qc = pts_item->color();
       CGAL::IO::Color color(qc.red(), qc.green(), qc.blue());
       CGAL::IO::write_point_cloud_to_model(pts_item->point_set()->points(), color,
-                                       pts_item->name().toStdString(),
-                                       &pMeshObject, pModel);
+                                           pts_item->name().toStdString(),
+                                           pMeshObject, pModel, wrapper);
     }
     for(Scene_polylines_item* pol_item : pol_items)
     {
@@ -259,8 +258,8 @@ class Io_3mf_plugin:
         QColor qc = pol_item->color();
         CGAL::IO::Color color(qc.red(), qc.green(), qc.blue());
         CGAL::IO::write_polyline_to_model(*pol_it,color,
-                                      pol_item->name().toStdString(),
-                                      &pMeshObject, pModel);
+                                          pol_item->name().toStdString(),
+                                          pMeshObject, pModel, wrapper);
       }
     }
     CGAL::IO::export_model_to_file(fi.filePath().toUtf8().toStdString(), pModel);
@@ -269,4 +268,3 @@ class Io_3mf_plugin:
   }
 };
 #include "3mf_io_plugin.moc"
-

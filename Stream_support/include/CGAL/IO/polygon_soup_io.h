@@ -183,7 +183,7 @@ bool write_polygon_soup(const std::string& fname,
   else if(ext == "vtp")
     return write_VTP(fname, points, polygons, np);
 #endif
-#ifdef CGAL_LINKED_WITH_3MF
+#ifdef CGAL_LINKED_WITH_LIB3MF
   else if(ext == "3mf")
     return write_3MF(fname, points, polygons);
 #endif
