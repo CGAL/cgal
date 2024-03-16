@@ -79,7 +79,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef Infimaximal_box<typename Is_extended_kernel<Standard_kernel>::value_type, Standard_kernel> No_box;
 
   typedef Self                                              Vertex_base;
-  typedef SNC_in_place_list_sm<Vertex_base>                 Vertex;
+  typedef SNC_in_place_list<Vertex_base>                    Vertex;
   typedef CGAL::In_place_list<Vertex,false>                 Vertex_list;
   typedef CGAL_ALLOCATOR(Vertex)                            Vertex_alloc;
   typedef typename Vertex_list::iterator                    Vertex_handle;
@@ -88,7 +88,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename Vertex_list::const_iterator              Vertex_const_iterator;
 
   typedef typename Items::template SVertex<SNC_structure>   SVertex_base;
-  typedef SNC_in_place_list_svertex<SVertex_base>           SVertex;
+  typedef SNC_in_place_list<SVertex_base>                   SVertex;
   typedef CGAL::In_place_list<SVertex,false>                SVertex_list;
   typedef CGAL_ALLOCATOR(SVertex)                           SVertex_alloc;
   typedef typename SVertex_list::iterator                   SVertex_handle;
@@ -97,7 +97,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename SVertex_list::const_iterator             SVertex_const_iterator;
 
   typedef typename Items::template SHalfedge<SNC_structure> SHalfedge_base;
-  typedef SNC_in_place_list_shalfedge<SHalfedge_base>       SHalfedge;
+  typedef SNC_in_place_list<SHalfedge_base>                 SHalfedge;
   typedef CGAL::In_place_list<SHalfedge,false>              SHalfedge_list;
   typedef CGAL_ALLOCATOR(SHalfedge)                         SHalfedge_alloc;
   typedef typename SHalfedge_list::iterator                 SHalfedge_handle;
@@ -106,7 +106,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename SHalfedge_list::const_iterator           SHalfedge_const_iterator;
 
   typedef typename Items::template SHalfloop<SNC_structure> SHalfloop_base;
-  typedef SNC_in_place_list_shalfloop<SHalfloop_base>       SHalfloop;
+  typedef SNC_in_place_list<SHalfloop_base>                 SHalfloop;
   typedef CGAL::In_place_list<SHalfloop,false>              SHalfloop_list;
   typedef CGAL_ALLOCATOR(SHalfloop)                         SHalfloop_alloc;
   typedef typename SHalfloop_list::iterator                 SHalfloop_handle;
@@ -115,7 +115,7 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
   typedef typename SHalfloop_list::const_iterator           SHalfloop_const_iterator;
 
   typedef typename Items::template SFace<SNC_structure>     SFace_base;
-  typedef SNC_in_place_list_sface<SFace_base>               SFace;
+  typedef SNC_in_place_list<SFace_base>                     SFace;
   typedef CGAL::In_place_list<SFace,false>                  SFace_list;
   typedef CGAL_ALLOCATOR(SFace)                             SFace_alloc;
   typedef typename SFace_list::iterator                     SFace_handle;
@@ -313,68 +313,36 @@ class SNC_sphere_map : public Items_::template Vertex<SNC_structure<Kernel_, Ite
 
   SVertex_handle new_svertex(const Sphere_point& p,
                            Mark m = Mark()) {
-    SVertex_iterator sv;
+    SVertex_iterator sv = this->sncp()->new_halfedge_only();
     if (this->svertices_begin() == this->sncp()->svertices_end()) {
-      sv = this->sncp()->new_halfedge_only();
       init_range(sv);
-    }
-    else {
-      SVertex_iterator svn = this->svertices_end();
-      sv =  this->sncp()->new_halfedge_only(svn);
+    } else {
       this->svertices_last() = sv;
     }
     sv->point() = p;
     sv->mark() = m;
-    sv->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
+    sv->center_vertex() = Vertex_handle((SNC_in_place_list<Self>*) this);
     CGAL_NEF_TRACEN("new_svertex "<<&*sv);
     return sv;
   }
-  /*
+
   SFace_handle new_sface() {
-    SFace_iterator sf =  this->sncp()->new_sface_only();
-    if ( this->sfaces_begin() == this->sncp()->sfaces_end()) init_range(sf);
-    else this->sfaces_last() = sf;
-    sf->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
-    return sf;
-  }
-  */
-  SFace_handle new_sface() {
-    SFace_iterator sf;
+    SFace_iterator sf = this->sncp()->new_sface_only();
     if ( this->sfaces_begin() == this->sncp()->sfaces_end()) {
-      sf =  this->sncp()->new_sface_only();
       init_range(sf);
     } else {
-      SFace_iterator sfn = this->sfaces_end();
-      sf =  this->sncp()->new_sface_only(sfn);
       this->sfaces_last() = sf;
     }
-    sf->center_vertex() = Vertex_handle((SNC_in_place_list_sm<Self>*) this);
+    sf->center_vertex() = Vertex_handle((SNC_in_place_list<Self>*) this);
     return sf;
   }
 
-  /*
   SHalfedge_handle new_shalfedge_pair() {
     SHalfedge_iterator se = this->sncp()->new_shalfedge_only();
-    SHalfedge_iterator set = this->sncp()->new_shalfedge_only();
-    if(this->shalfedges_begin() == this->sncp()->shalfedges_end())
-      init_range(se);
-    this->shalfedges_last() = set;
-    make_twins(se,set);
-    return se;
-  }
-  */
-
-  SHalfedge_handle new_shalfedge_pair() {
-    SHalfedge_iterator se, set;
     if(this->shalfedges_begin() == this->sncp()->shalfedges_end()) {
-      se = this->sncp()->new_shalfedge_only();
-      set = this->sncp()->new_shalfedge_only();
       init_range(se);
-    } else {
-      SHalfedge_iterator sen = this->shalfedges_end();
-      se = this->sncp()->new_shalfedge_only(sen);
-      set = this->sncp()->new_shalfedge_only(sen);
     }
+    SHalfedge_iterator set = this->sncp()->new_shalfedge_only();
     this->shalfedges_last() = set;
     make_twins(se,set);
     return se;

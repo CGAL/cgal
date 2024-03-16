@@ -130,7 +130,7 @@ public:
 
  public:
   typedef Sphere_map                                        Vertex_base;
-  typedef SNC_in_place_list_sm<Vertex_base>                 Vertex;
+  typedef SNC_in_place_list<Vertex_base>                    Vertex;
   typedef CGAL::In_place_list<Vertex,false>                 Vertex_list;
   typedef CGAL_ALLOCATOR(Vertex)                            Vertex_alloc;
   typedef typename Vertex_list::iterator                    Vertex_handle;
@@ -139,7 +139,7 @@ public:
   typedef typename Vertex_list::const_iterator              Vertex_const_iterator;
 
   typedef typename Items::template Halffacet<SNC_structure> Halffacet_base;
-  typedef SNC_in_place_list_halffacet<Halffacet_base>       Halffacet;
+  typedef SNC_in_place_list<Halffacet_base>                 Halffacet;
   typedef CGAL::In_place_list<Halffacet,false>              Halffacet_list;
   typedef CGAL_ALLOCATOR(Halffacet)                         Halffacet_alloc;
   typedef typename Halffacet_list::iterator                 Halffacet_handle;
@@ -148,7 +148,7 @@ public:
   typedef typename Halffacet_list::const_iterator           Halffacet_const_iterator;
 
   typedef typename Items::template Volume<SNC_structure>    Volume_base;
-  typedef SNC_in_place_list_volume<Volume_base>             Volume;
+  typedef SNC_in_place_list<Volume_base>                    Volume;
   typedef CGAL::In_place_list<Volume,false>                 Volume_list;
   typedef CGAL_ALLOCATOR(Volume)                            Volume_alloc;
   typedef typename Volume_list::iterator                    Volume_handle;
@@ -157,7 +157,7 @@ public:
   typedef typename Volume_list::const_iterator              Volume_const_iterator;
 
   typedef typename Items::template SVertex<SNC_structure>   SVertex_base;
-  typedef SNC_in_place_list_svertex<SVertex_base>           SVertex;
+  typedef SNC_in_place_list<SVertex_base>                   SVertex;
   typedef CGAL::In_place_list<SVertex,false>                SVertex_list;
   typedef CGAL_ALLOCATOR(SVertex)                           SVertex_alloc;
   typedef typename SVertex_list::iterator                   SVertex_handle;
@@ -166,7 +166,7 @@ public:
   typedef typename SVertex_list::const_iterator             SVertex_const_iterator;
 
   typedef typename Items::template SVertex<SNC_structure>   Halfedge_base;
-  typedef SNC_in_place_list_svertex<SVertex_base>           Halfedge;
+  typedef SNC_in_place_list<SVertex_base>                   Halfedge;
   typedef CGAL::In_place_list<SVertex,false>                Halfedge_list;
   typedef CGAL_ALLOCATOR(SVertex)                           Halfedge_alloc;
   typedef typename SVertex_list::iterator                   Halfedge_handle;
@@ -175,7 +175,7 @@ public:
   typedef typename SVertex_list::const_iterator             Halfedge_const_iterator;
 
   typedef typename Items::template SHalfedge<SNC_structure> SHalfedge_base;
-  typedef SNC_in_place_list_shalfedge<SHalfedge_base>       SHalfedge;
+  typedef SNC_in_place_list<SHalfedge_base>                 SHalfedge;
   typedef CGAL::In_place_list<SHalfedge,false>              SHalfedge_list;
   typedef CGAL_ALLOCATOR(SHalfedge)                         SHalfedge_alloc;
   typedef typename SHalfedge_list::iterator                 SHalfedge_handle;
@@ -184,7 +184,7 @@ public:
   typedef typename SHalfedge_list::const_iterator           SHalfedge_const_iterator;
 
   typedef typename Items::template SHalfloop<SNC_structure> SHalfloop_base;
-  typedef SNC_in_place_list_shalfloop<SHalfloop_base>       SHalfloop;
+  typedef SNC_in_place_list<SHalfloop_base>                 SHalfloop;
   typedef CGAL::In_place_list<SHalfloop,false>              SHalfloop_list;
   typedef CGAL_ALLOCATOR(SHalfloop)                         SHalfloop_alloc;
   typedef typename SHalfloop_list::iterator                 SHalfloop_handle;
@@ -193,7 +193,7 @@ public:
   typedef typename SHalfloop_list::const_iterator           SHalfloop_const_iterator;
 
   typedef typename Items::template SFace<SNC_structure>     SFace_base;
-  typedef SNC_in_place_list_sface<SFace_base>               SFace;
+  typedef SNC_in_place_list<SFace_base>                     SFace;
   typedef CGAL::In_place_list<SFace,false>                  SFace_list;
   typedef CGAL_ALLOCATOR(SFace)                             SFace_alloc;
   typedef typename SFace_list::iterator                     SFace_handle;
@@ -737,172 +737,100 @@ public:
   }
 
   Vertex_alloc vertex_allocator;
-  Vertex* get_vertex_node( const Vertex& ) {
-    Vertex* p = vertex_allocator.allocate(1);
-    std::allocator_traits<Vertex_alloc>::construct(vertex_allocator, p);
-    return p;
-  }
-  void put_vertex_node( Vertex* p) {
-    std::allocator_traits<Vertex_alloc>::destroy(vertex_allocator,p);
-    vertex_allocator.deallocate( p, 1);
-  }
-
   Halfedge_alloc halfedge_allocator;
-  Halfedge* get_halfedge_node( const Halfedge&) {
-    Halfedge* p = halfedge_allocator.allocate(1);
-    std::allocator_traits<Halfedge_alloc>::construct(halfedge_allocator, p);
-    return p;
-  }
-  void put_halfedge_node( Halfedge* p) {
-    std::allocator_traits<Halfedge_alloc>::destroy(halfedge_allocator,p);
-    halfedge_allocator.deallocate( p, 1);
-  }
-
   Halffacet_alloc halffacet_allocator;
-  Halffacet* get_halffacet_node( const Halffacet& ) {
-    Halffacet* p = halffacet_allocator.allocate(1);
-    std::allocator_traits<Halffacet_alloc>::construct(halffacet_allocator, p);
-    return p;
-  }
-  void put_halffacet_node( Halffacet* p) {
-    std::allocator_traits<Halffacet_alloc>::destroy(halffacet_allocator,p);
-    halffacet_allocator.deallocate( p, 1);
-  }
-
   Volume_alloc volume_allocator;
-  Volume* get_volume_node( const Volume& ) {
-    Volume* p = volume_allocator.allocate(1);
-    std::allocator_traits<Volume_alloc>::construct(volume_allocator, p);
-    return p;
-  }
-  void put_volume_node( Volume* p) {
-    std::allocator_traits<Volume_alloc>::destroy(volume_allocator,p);
-    volume_allocator.deallocate( p, 1);
-  }
-
   SHalfedge_alloc shalfedge_allocator;
-  SHalfedge* get_shalfedge_node( const SHalfedge& ) {
-    SHalfedge* p = shalfedge_allocator.allocate(1);
-    std::allocator_traits<SHalfedge_alloc>::construct(shalfedge_allocator, p);
-    return p;
-  }
-  void put_shalfedge_node( SHalfedge* p) {
-    std::allocator_traits<SHalfedge_alloc>::destroy(shalfedge_allocator,p);
-    shalfedge_allocator.deallocate( p, 1);
-  }
-
   SHalfloop_alloc shalfloop_allocator;
-  SHalfloop* get_shalfloop_node( const SHalfloop& ) {
-    SHalfloop* p = shalfloop_allocator.allocate(1);
-    std::allocator_traits<SHalfloop_alloc>::construct(shalfloop_allocator, p);
-    return p;
-  }
-  void put_shalfloop_node( SHalfloop* p) {
-    std::allocator_traits<SHalfloop_alloc>::destroy(shalfloop_allocator,p);
-    shalfloop_allocator.deallocate( p, 1);
-  }
-
   SFace_alloc sface_allocator;
-  SFace* get_sface_node( const SFace& ) {
-    SFace* p = sface_allocator.allocate(1);
-    std::allocator_traits<SFace_alloc>::construct(sface_allocator, p);
+
+  template <typename Node_alloc, typename Node = typename std::allocator_traits<Node_alloc>::value_type>
+  Node* get_node(Node_alloc& allocator) {
+    Node* p = allocator.allocate(1);
+    std::allocator_traits<Node_alloc>::construct(allocator, p);
     return p;
   }
-  void put_sface_node( SFace* p) {
-    std::allocator_traits<SFace_alloc>::destroy(sface_allocator,p);
-    sface_allocator.deallocate( p, 1);
-  }
 
+  template <typename Node_alloc, typename Node>
+  void put_node(Node_alloc& allocator, Node* p) {
+    std::allocator_traits<Node_alloc>::destroy(allocator,p);
+    allocator.deallocate( p, 1);
+  }
 
   Vertex_handle new_vertex_only() {
-    vertices_.push_back(* get_vertex_node(Vertex()));
+    vertices_.push_back(* get_node(vertex_allocator));
     CGAL_NEF_TRACEN("  new vertex only "<<&*(--vertices_end()));
     return --vertices_end();
   }
-  Halfedge_handle new_halfedge_only(Halfedge_handle e)  {
-    Halfedge_handle ne = halfedges_.insert(e, * get_halfedge_node(Halfedge()));
-    CGAL_NEF_TRACEN("  after "<<&*e<<" new halfedge only "<<&*ne);
-    return ne;
-  }
   Halfedge_handle new_halfedge_only()  {
     CGAL_NEF_TRACEN("  new halfedge only "<<&*(--halfedges_end()));
-    halfedges_.push_back( * get_halfedge_node(Halfedge()));
+    halfedges_.push_back( * get_node(halfedge_allocator));
     return --halfedges_end();
   }
   Halffacet_handle new_halffacet_only()  {
-    halffacets_.push_back( * get_halffacet_node(Halffacet()));
+    halffacets_.push_back( * get_node(halffacet_allocator));
     CGAL_NEF_TRACEN("  new halffacet only "<<&*(--halffacets_end()));
     return --halffacets_end();
   }
   Volume_handle new_volume_only()  {
-    volumes_.push_back( * get_volume_node(Volume()));
+    volumes_.push_back( * get_node(volume_allocator));
     CGAL_NEF_TRACEN("  new volume only "<<&*(--volumes_end()));
     return --volumes_end();
   }
   SHalfedge_handle new_shalfedge_only()  {
-    shalfedges_.push_back( * get_shalfedge_node(SHalfedge()));
+    shalfedges_.push_back( * get_node(shalfedge_allocator));
     CGAL_NEF_TRACEN("  new shalfedge only "<<&*(--shalfedges_end()));
     return --shalfedges_end();
   }
-  SHalfedge_handle new_shalfedge_only(SHalfedge_handle se) {
-    SHalfedge_handle nse = shalfedges_.insert(se, * get_shalfedge_node(SHalfedge()));
-    CGAL_NEF_TRACEN("  after " << &*se << " new shalfedge only " << &*nse);
-    return nse;
-  }
   SHalfloop_handle new_shalfloop_only()  {
-    shalfloops_.push_back( * get_shalfloop_node(SHalfloop()));
+    shalfloops_.push_back( * get_node(shalfloop_allocator));
     CGAL_NEF_TRACEN("  new shalfloop only "<<&*(--shalfloops_end()));
     return --shalfloops_end();
   }
   SFace_handle new_sface_only() {
-    sfaces_.push_back( * get_sface_node(SFace()));
+    sfaces_.push_back( * get_node(sface_allocator));
     CGAL_NEF_TRACEN("  new sface only "<<&*(--sfaces_end()));
     return --sfaces_end();
-  }
-  SFace_handle new_sface_only(SFace_handle sf) {
-    SFace_handle nsf = sfaces_.insert(sf, * get_sface_node(SFace()));
-    CGAL_NEF_TRACEN("  after " << &*sf << " new sface only " << &*nsf);
-    return nsf;
   }
 
   void delete_vertex_only(Vertex_handle h) {
     CGAL_NEF_TRACEN("~ deleting vertex only "<<&*h<<" from "<<&*this);
     vertices_.erase(h);
-    put_vertex_node(&*h);
+    put_node(vertex_allocator,&*h);
   }
   void delete_halfedge_only(Halfedge_handle h) {
     CGAL_NEF_TRACEN("~ deleting halfedge only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
     halfedges_.erase(h);
-    put_halfedge_node(&*h);
+    put_node(halfedge_allocator,&*h);
   }
   void delete_halffacet_only(Halffacet_handle h) {
     CGAL_NEF_TRACEN("~ deleting halffacet only "<<&*h<<" from "<<&*this);
     halffacets_.erase(h);
-    put_halffacet_node(&*h);
+    put_node(halffacet_allocator,&*h);
   }
   void delete_volume_only(Volume_handle h) {
     CGAL_NEF_TRACEN("~ deleting volume only "<<&*h<<" from "<<&*this);
     volumes_.erase(h);
-    put_volume_node(&*h);
+    put_node(volume_allocator,&*h);
   }
   void delete_shalfedge_only(SHalfedge_handle h)  {
     CGAL_NEF_TRACEN("~ deleting shalfedge only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
     shalfedges_.erase(h);
-    put_shalfedge_node(&*h);
+    put_node(shalfedge_allocator,&*h);
   }
   void delete_shalfloop_only(SHalfloop_handle h)  {
     CGAL_NEF_TRACEN("~ deleting shalfloop only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
     shalfloops_.erase(h);
-    put_shalfloop_node(&*h);
+    put_node(shalfloop_allocator,&*h);
   }
   void delete_sface_only(SFace_handle h)  {
     CGAL_NEF_TRACEN("~ deleting sface only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_boundary_object(h));
     sfaces_.erase(h);
-    put_sface_node(&*h);
+    put_node(sface_allocator,&*h);
   }
     //SL: in the following function, I guess the sizeof(void*) is related to the void* info that was
     //used together with geninfo to store an arbitrary type. I replaced that with any and did not changed that
