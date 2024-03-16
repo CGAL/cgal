@@ -351,18 +351,110 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
   typedef Cartesian_converter<Nef_Kernel, Output_kernel> Converter;
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();
-  if ( Nef_polyhedron::Infi_box::extended_kernel() ) ++vol_it; // skip Infi_box
+
+  if (Nef_polyhedron::Infi_box::extended_kernel()) {
+      ++vol_it; // skip Infi_box
+  }
+
   CGAL_assertion ( vol_it != vol_end );
-  ++vol_it; // skip unbounded volume
 
   Converter to_output;
+  bool handling_unbounded_volume = true;
+
+  auto shell_is_closed = [](typename Nef_polyhedron::Shell_entry_const_iterator sfh)
+  {
+    typename Nef_polyhedron::SFace_const_handle sf = sfh;
+
+    typename Nef_polyhedron::SFace_cycle_const_iterator fc;
+    for(fc = sf->sface_cycles_begin(); fc != sf->sface_cycles_end(); ++fc)
+    {
+      if (fc.is_shalfedge() ) {
+        typename Nef_polyhedron::SHalfedge_const_handle e(fc);
+        typename Nef_polyhedron::SHalfedge_around_sface_const_circulator ec(e),ee(e);
+        CGAL_For_all(ec,ee)
+        {
+          typename Nef_polyhedron::SVertex_const_handle vv = ec->twin()->source();
+          //~ if ( !SD.is_isolated(vv) && !Done[vv] ) {
+            //~ V.visit(vv); // report edge
+            //~ Done[vv] = Done[vv->twin()] = true;
+          //~ }
+          typename Nef_polyhedron::Halffacet_const_handle f = ec->twin()->facet();
+          return f->incident_volume()!=f->twin()->incident_volume();
+          //~ if ( Done[f] ) continue;
+          //~ Halffacet_handle tf = f->twin();
+          //~ }
+          //~ FacetCandidates.push_back(f); Done[f] = true;
+        }
+      }
+
+#if 0
+      else if (fc.is_svertex() ) {
+        SVertex_handle v(fc);
+        if ( Done[v] ) continue;
+        V.visit(v); // report edge
+        V.visit(v->twin());
+        Done[v] = Done[v->twin()] = true;
+        CGAL_assertion(SD.is_isolated(v));
+        SFaceCandidates.push_back(v->twin()->incident_sface());
+        Done[v->twin()->incident_sface()]=true;
+        // note that v is isolated, thus twin(v) is isolated too
+        //          SM_const_decorator SD;
+        //          SFace_const_handle fo;
+        //          fo = v->twin()->incident_sface();
+        /*
+        if(SD.is_isolated(v))
+          fo = v->source()->sfaces_begin();
+        else
+          fo = v->twin()->incident_sface();
+        */
+      } else if (fc.is_shalfloop() ) {
+        SHalfloop_handle l(fc);
+        V.visit(l);
+        Halffacet_handle f = l->twin()->facet();
+        if ( Done[f] ) continue;
+        FacetCandidates.push_back(f);  Done[f] = true;
+      } else CGAL_error_msg("Damn wrong handle.");
+#endif
+    }
+
+    return false;
+
+    //~ typename Nef_polyhedron::SHalfedge_const_handle e(sf);
+    //~ typename Nef_polyhedron::SHalffacet_const_handle f = e->facet();
+  //~ e->facet()
+  //~ SHalfedge_around_sface_circulator ec(e),ee(e);
+  //~ CGAL_For_all(ec,ee) {
+          //~ SVertex_handle vv = ec->twin()->source();
+          //~ if ( !SD.is_isolated(vv) && !Done[vv] ) {
+            //~ V.visit(vv); // report edge
+            //~ Done[vv] = Done[vv->twin()] = true;
+          //~ }
+          //~ Halffacet_handle f = ec->twin()->facet();
+          //~ if ( Done[f] ) continue;
+
+  //~ if (CGAL::assign(f,*sfh))
+  //~ {
+    //~ std::cout << "COUCOU\n";
+      //~ return f->incident_volume()!=f->twin()->incident_volume();
+    //~ }
+    //~ else
+      //~ return false;
+  };
+
   for (;vol_it!=vol_end;++vol_it)
-    nef_to_pm::collect_polygon_mesh_info(points,
-                                         polygons,
-                                         nef,
-                                         vol_it->shells_begin(),
-                                         to_output,
-                                         triangulate_all_faces);
+  {
+    for(auto sit = vol_it->shells_begin(); sit != vol_it->shells_end(); ++sit)
+    {
+      if ( (handling_unbounded_volume || sit!=vol_it->shells_begin()) && shell_is_closed(sit)) continue;
+      nef_to_pm::collect_polygon_mesh_info(points,
+                                           polygons,
+                                           nef,
+                                           sit,
+                                           to_output,
+                                           triangulate_all_faces);
+    }
+    handling_unbounded_volume = false;
+  }
 }
 
 template <class Nef_polyhedron, class Polygon_mesh>
