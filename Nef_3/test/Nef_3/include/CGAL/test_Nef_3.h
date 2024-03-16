@@ -149,6 +149,7 @@ private:
     std::string fullname = std::string(datadir) + std::string(name);
     std::ofstream out("data/temp.nef3");
     out << N;
+    out.close();
     bool b = are_files_equal("data/temp.nef3",fullname.c_str());
     return b;
   }
