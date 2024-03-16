@@ -983,7 +983,7 @@ private:
     pointer operator->() const { return *(this->base()); }
     reference operator*() const { return **(this->base()); }
 
-    operator Vertex_handle() { return Vertex_handle(*(this->base())); }
+    operator Vertex_handle() const { return Vertex_handle(*(this->base())); }
   };
 
 public:
@@ -1051,10 +1051,10 @@ public:
     operator Cell_handle() const { return Cell_handle(this->base()); }
   }; // end class Cells_in_complex_iterator
 
-  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator> > Vertices_in_complex;
-  typedef Iterator_range<Edges_in_complex_iterator>                    Edges_in_complex;
-  typedef Iterator_range<Facets_in_complex_iterator>                   Facets_in_complex;
-  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator> >    Cells_in_complex;
+  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator, Vertex_handle> > Vertices_in_complex;
+  typedef Iterator_range<Edges_in_complex_iterator>                                   Edges_in_complex;
+  typedef Iterator_range<Facets_in_complex_iterator>                                  Facets_in_complex;
+  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator, Cell_handle> >      Cells_in_complex;
 
 #endif
 
@@ -1162,8 +1162,7 @@ public:
   */
   Vertices_in_complex vertices_in_complex() const
   {
-    return make_prevent_deref_range(vertices_in_complex_begin(),
-                                    vertices_in_complex_end());
+      return { vertices_in_complex_begin(), vertices_in_complex_end() };
   }
   /*!
     returns a range of iterators over the edges of the 1D complex,
@@ -1193,8 +1192,7 @@ public:
   */
   Cells_in_complex cells_in_complex() const
   {
-    return make_prevent_deref_range(cells_in_complex_begin(),
-                                    cells_in_complex_end());
+    return { cells_in_complex_begin(), cells_in_complex_end() };
   }
 ///  @}
 
