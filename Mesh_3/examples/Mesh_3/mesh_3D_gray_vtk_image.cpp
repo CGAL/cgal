@@ -32,14 +32,14 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-class Less {
+class More {
   double iso;
 public:
-  Less(double iso): iso(iso) {}
+  More(double iso): iso(iso) {}
 
   template <typename T>
   int operator()(T v) const {
-    return int(v < iso);
+    return int(v > iso);
   }
 };
 
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 
   Mesh_domain domain = Mesh_domain::create_gray_image_mesh_domain
     (image,
-     image_values_to_subdomain_indices = Less(iso),
+     image_values_to_subdomain_indices = More(iso),
      value_outside = 0);
   /// [Domain creation]
 
