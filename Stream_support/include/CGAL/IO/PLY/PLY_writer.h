@@ -12,6 +12,7 @@
 #define CGAL_IO_PLY_PLY_WRITER_H
 
 #include <CGAL/IO/io.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 namespace IO {
@@ -252,6 +253,29 @@ public:
     stream << get(m_pmap, index);
   }
 };
+
+template <typename Index, typename PropertyMap>
+class Double_coordinate_printer
+    : public Abstract_property_printer<Index>
+{
+    PropertyMap m_pmap;
+public:
+    Double_coordinate_printer(const PropertyMap& pmap) : m_pmap(pmap) { }
+
+    virtual void print(std::ostream& stream, const Index& index)
+    {
+      if (get_mode(stream) == CGAL::IO::ASCII) {
+        stream << to_double(get(m_pmap, index).x()) << " "
+               << to_double(get(m_pmap, index).y()) << " "
+               << to_double(get(m_pmap, index).z());
+      }else{
+        write(stream, to_double(get(m_pmap, index).x()));
+        write(stream, to_double(get(m_pmap, index).y()));
+        write(stream, to_double(get(m_pmap, index).z()));
+      }
+    }
+};
+
 
 template <typename Index,
           typename PropertyMap,

@@ -89,7 +89,7 @@ enum Mode {ASCII = 0, PRETTY, BINARY};
 \brief Inserts object `c` in the stream `os`. Returns `os`.
 \cgal defines output operators for classes that are derived
 from the class `ostream`. This allows to write to ostreams
-as `cout` or `cerr`, as well as to `std::ostringstream`
+as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
 and `std::ofstream`.
 The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 
@@ -150,7 +150,7 @@ typedef IO_rep_is_not_specialized_aux<void> IO_rep_is_not_specialized;
 
 The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator.
 
-If you dont specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behaviour for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behaviour*.
+If you dont specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behavior for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behavior*.
 
 Specializations of `Output_rep` should provide the following features:
 
@@ -190,8 +190,8 @@ public:
   \relates Output_rep
   \brief stream output of the \c Output_rep calls its \c operator().
 
-  \cgal defines output operators for classes that are derived from the class `ostream`.
-  This enables to write to ostreams as `cout` or `cerr`, as well as to `std::ostringstream`
+  \cgal defines output operators for classes that are derived from the class `std::ostream`.
+  This enables to write to output streams as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
   and `std::ofstream`.
   The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 */
@@ -390,7 +390,7 @@ public:
     \brief stream input to the \c Input_rep calls its \c operator().
 
 \brief \cgal defines input operators for classes that are derived
-from the class `istream`. This allows to read from istreams
+from the class `std::istream`. This allows to read from input streams
 as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 */
