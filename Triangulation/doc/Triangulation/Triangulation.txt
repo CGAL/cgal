@@ -126,7 +126,7 @@ The set of faces of a triangulation data structure with
 current dimension \f$ d \f$ forms a triangulation of the
 topological sphere \f$ \mathbb{S}^d\f$.
 
-Two full cells \f$ \sigma\f$ and \f$ \sigma'\f$ sharing a facet are called
+Two full cells \f$ \sigma\f$ and \f$ \sigma`\f$ sharing a facet are called
 <I>neighbors</I>. A full cell has always exactly \f$ d+1\f$ neighbors.
 
 Possible values of \f$d\f$ (the <I>current dimension</I> of the triangulation) include
@@ -299,8 +299,8 @@ Each infinite \f$ i\f$-simplex is
 incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the
 convex hull boundary.
 
-See Chapters \ref Chapter_2D_Triangulations "2D Triangulations" or
-\ref Chapter_3D_Triangulations "3D Triangulations" for more details
+See Chapters \ref Chapter_2D_Triangulations ``2D Triangulations`` or
+\ref Chapter_3D_Triangulations ``3D Triangulations`` for more details
 about infinite vertices and cells.
 
 Methods are provided for the insertion of points in the triangulation, the
@@ -405,7 +405,7 @@ of an infinite full cell is the empty half-space bounded by the affine hull
 of the finite facet of this cell. The set of full cells that are in
 conflict with `p` form the <I>conflict zone</I>. The full cells
 in the conflict zone are removed, leaving a hole that contains `p`. That
-hole is ``star shaped'' around `p` and thus is re-triangulated using
+hole is ``star shaped`` around `p` and thus is re-triangulated using
 `p` as a center vertex.
 
 Delaunay triangulations support insertion of points, removal of vertices,
@@ -509,7 +509,7 @@ This simple example shows how to create a regular triangulation.
 When inserting a batch of points into a Delaunay triangulation,
 the current implementation starts by spatially sorting the points.
 Then, for each point to insert, it locates it by walking in the triangulation,
-using the previously inserted vertex as a "hint". Finally, the point is
+using the previously inserted vertex as a ``hint``. Finally, the point is
 inserted.
 In the worst case scenario, without spatial sort, the expected complexity is
 \cgalBigO{(n^{\lceil\frac{d}{2}\rceil+1}}$.
