@@ -10,7 +10,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
-#include <CGAL/IO/write_MEDIT.h>
+#include <CGAL/IO/File_medit.h>
 
 // Domain
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
