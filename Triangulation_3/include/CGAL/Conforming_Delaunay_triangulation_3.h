@@ -161,7 +161,7 @@ protected:
     const T_3* tr;
     Compare_vertex_handle(const T_3* tr) : tr(tr) {}
     bool operator()(const Vertex_handle va, const Vertex_handle vb) const {
-      return tr->compare_xyz(tr->point(va), tr->point(vb)) == SMALLER;
+      return va < vb;
     }
   };
 

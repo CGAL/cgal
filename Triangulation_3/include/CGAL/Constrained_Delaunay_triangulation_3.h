@@ -1530,12 +1530,18 @@ private:
               auto tetrahedron =
                   typename Geom_traits::Tetrahedron_3{tr.point(n_ch->vertex(0)), tr.point(n_ch->vertex(1)),
                                                       tr.point(n_ch->vertex(2)), tr.point(n_ch->vertex(3))};
+              auto tet_bbox = tetrahedron.bbox();
               if(std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
                    const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
                    const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
                    const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
                    const auto triangle = typename Geom_traits::Triangle_3{tr.point(v0), tr.point(v1), tr.point(v2)};
-                   return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr.geom_traits());
+                   const auto tri_bbox = triangle.bbox();
+                   if(CGAL::do_overlap(tet_bbox, tri_bbox)) {
+                     return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr.geom_traits());
+                   } else {
+                     return false;
+                   }
                  }))
               {
                 intersecting_cells.insert(n_ch);
