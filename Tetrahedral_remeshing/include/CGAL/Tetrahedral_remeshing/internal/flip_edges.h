@@ -1268,9 +1268,11 @@ void collectBoundaryEdgesAndComputeVerticesValences(
     const Vertex_handle v0 = e.first->vertex(e.second);
     const Vertex_handle v1 = e.first->vertex(e.third);
 
+    const std::size_t n0 = vertices_subdomain_indices[v0].size();
+    const std::size_t n1 = vertices_subdomain_indices[v1].size();
+
     //In case of feature edge
-    if (vertices_subdomain_indices[v0].size() > 2
-      && vertices_subdomain_indices[v1].size() > 2)
+    if (n0 > 2 && n1 > 2)
     {
       Facet_circulator facet_circulator = tr.incident_facets(e);
       Facet_circulator done(facet_circulator);
@@ -1284,8 +1286,8 @@ void collectBoundaryEdgesAndComputeVerticesValences(
         }
       } while (++facet_circulator != done);
     }
-    else if (vertices_subdomain_indices[v0].size() == 2
-          || vertices_subdomain_indices[v1].size() == 2)
+    //Normal surface edge, or non-manifold edge on dangling facet
+    else
     {
       Facet_circulator facet_circulator = tr.incident_facets(e);
       Facet_circulator done(facet_circulator);
@@ -1796,7 +1798,7 @@ std::size_t flipBoundaryEdges(
 //      std::cerr << "boundary = " << b << std::endl;
 //    }
 
-    if (!on_boundary)
+    if (!on_boundary || boundary_facets.size() != 2)
       continue;
     CGAL_assertion(boundary_facets.size() == 2);
 
@@ -1817,6 +1819,10 @@ std::size_t flipBoundaryEdges(
       int v1 = boundary_vertices_valences.at(vh1)[surfi];
       int v2 = boundary_vertices_valences.at(vh2)[surfi];
       int v3 = boundary_vertices_valences.at(vh3)[surfi];
+
+      if(v0 < 2 || v1 < 2 || v2 < 2 || v3 < 2)
+        continue;
+
       int m0 = (boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
       int m1 = (boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
       int m2 = (boundary_vertices_valences.at(vh2).size() > 1 ? 4 : 6);
