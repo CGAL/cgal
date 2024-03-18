@@ -33,6 +33,15 @@
 # define CDT_3_throw_exception_again throw
 #endif
 
+#if CGAL_USE_ITT
+#  include <ittnotify.h>
+#  define CGAL_CDT_3_TASK_BEGIN(task_handle) std::cerr << "START " << #task_handle << '\n'; __itt_task_begin(cdt_3_domain, __itt_null, __itt_null, task_handle);
+#  define CGAL_CDT_3_TASK_END(task_handle) std::cerr << "-STOP " << #task_handle << '\n';__itt_task_end(cdt_3_domain);
+#else
+#  define CGAL_CDT_3_TASK_BEGIN(task_handle)
+#  define CGAL_CDT_3_TASK_END(task_handle)
+#endif // CGAL_USE_ITT
+
 #if CGAL_CDT_3_USE_EPECK
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -115,6 +124,18 @@ Usage: cdt_3_from_off [options] input.off output.off
   --help: print this help
 )";
 }
+
+#if CGAL_USE_ITT
+  auto cdt_3_domain = __itt_domain_create("org.cgal.CDT_3");
+  auto read_input_task_handle = __itt_string_handle_create("CDT_3: read input file");
+  auto merge_facets_task_handle = __itt_string_handle_create("CDT_3: merge facets");
+  auto insert_vertices_task_handle = __itt_string_handle_create("CDT_3: insert vertices");
+  auto compute_distances_task_handle = __itt_string_handle_create("CDT_3: compute distances");
+  auto conforming_task_handle = __itt_string_handle_create("CDT_3: conforming");
+  auto cdt_task_handle = __itt_string_handle_create("CDT_3: cdt");
+  auto output_task_handle = __itt_string_handle_create("CDT_3: outputs");
+  auto validation_task_handle = __itt_string_handle_create("CDT_3: validation");
+#endif // CGAL_USE_ITT
 
 int main(int argc, char* argv[])
 {
@@ -208,7 +229,7 @@ int main(int argc, char* argv[])
       }
     }
   }
-
+  CGAL_CDT_3_TASK_BEGIN(read_input_task_handle);
   auto start_time = std::chrono::high_resolution_clock::now();
 
   Mesh mesh;
@@ -226,6 +247,7 @@ int main(int argc, char* argv[])
     std::cout << "Number of edges: " << mesh.number_of_edges() << '\n';
     std::cout << "Number of faces: " << mesh.number_of_faces() << "\n\n";
   }
+  CGAL_CDT_3_TASK_END(read_input_task_handle);
 
   if(options.failure_assertion_expression.empty()) {
     auto exit_code = go(std::move(mesh), std::move(options));
@@ -374,6 +396,7 @@ int go(Mesh mesh, CDT_options options) {
   int nb_patches = 0;
   std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
   if(options.merge_facets) {
+    CGAL_CDT_3_TASK_BEGIN(merge_facets_task_handle);
     auto start_time = std::chrono::high_resolution_clock::now();
 
     if(options.merge_facets_old_method) {
@@ -441,12 +464,16 @@ int go(Mesh mesh, CDT_options options) {
         put(v_selected_map, vb, true);
       }
     }
+    CGAL_CDT_3_TASK_END(merge_facets_task_handle);
     if(!options.dump_patches_after_merge_filename.empty()) {
+      CGAL_CDT_3_TASK_BEGIN(output_task_handle);
       std::ofstream out(options.dump_patches_after_merge_filename);
       CGAL::IO::write_PLY(out, mesh);
+      CGAL_CDT_3_TASK_END(output_task_handle);
     }
   }
   if(!options.dump_patches_borders_prefix.empty()) {
+    CGAL_CDT_3_TASK_BEGIN(output_task_handle);
     std::set<std::pair<vertex_descriptor, vertex_descriptor>> all_edges;
     for(int i = 0; i < nb_patches; ++i) {
       std::stringstream ss;
@@ -485,11 +512,13 @@ int go(Mesh mesh, CDT_options options) {
       }
       out << '\n';
     }
+    CGAL_CDT_3_TASK_END(output_task_handle);
   }
 
   int exit_code = EXIT_SUCCESS;
 
   auto finally = [&cdt, &options]() {
+    CGAL_CDT_3_TASK_BEGIN(output_task_handle);
     {
       std::ofstream dump("dump.binary.cgal");
       CGAL::IO::save_binary_file(dump, cdt);
@@ -501,26 +530,13 @@ int go(Mesh mesh, CDT_options options) {
           return cdt.is_constrained(f);
       }));
     }
-    {
-      std::ofstream missing_faces("dump_missing_faces.polylines.txt");
-      missing_faces.precision(17);
-      cdt.recheck_constrained_Delaunay();
-      if(cdt.write_missing_subfaces_file(missing_faces)) {
-        std::cerr << "ERROR: Missing subfaces!\n";
-      }
-    }
-    {
-      std::ofstream missing_edges("dump_missing_segments.polylines.txt");
-      missing_edges.precision(17);
-      if(cdt.write_missing_segments_file(missing_edges)) {
-        std::cerr << "ERROR: Missing segments!\n";
-      }
-    }
+    CGAL_CDT_3_TASK_END(output_task_handle);
   };
 
   auto [tr_vertex_pmap, tr_vertex_pmap_ok] = mesh.add_property_map<vertex_descriptor, CDT::Vertex_handle>("tr_vertex");
   assert(tr_vertex_pmap_ok); CGAL_USE(tr_vertex_pmap_ok);
 
+  CGAL_CDT_3_TASK_BEGIN(insert_vertices_task_handle);
   auto start_time = std::chrono::high_resolution_clock::now();
   for(auto v: vertices(mesh)) {
     if(options.merge_facets && false == get(v_selected_map, v)) continue;
@@ -549,7 +565,10 @@ int go(Mesh mesh, CDT_options options) {
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymin() - d_y, bbox.zmax() + d_z));
     cdt.insert(Point(bbox.xmax() + d_x, bbox.ymax() + d_y, bbox.zmax() + d_z));
   }
+  CGAL_CDT_3_TASK_END(insert_vertices_task_handle);
+
   start_time = std::chrono::high_resolution_clock::now();
+  CGAL_CDT_3_TASK_BEGIN(compute_distances_task_handle);
   {
     auto [min_sq_distance, min_edge] = std::ranges::min(
         cdt.finite_edges() | std::views::transform([&](auto edge) { return std::make_pair(cdt.segment(edge).squared_length(), edge); }));
@@ -613,11 +632,14 @@ int go(Mesh mesh, CDT_options options) {
     cdt.check_segment_vertex_distance_or_throw(min_va, min_vb, min_vertex, min_distance,
                                                CDT::Check_distance::NON_SQUARED_DISTANCE);
   }
+  CGAL_CDT_3_TASK_END(compute_distances_task_handle);
+
   if(!options.quiet) {
     std::cout << "[timings] compute distances on " << std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
   }
   int poly_id = 0;
+  CGAL_CDT_3_TASK_BEGIN(conforming_task_handle);
   CDT_3_try {
     start_time = std::chrono::high_resolution_clock::now();
     if(options.merge_facets) {
@@ -670,33 +692,6 @@ int go(Mesh mesh, CDT_options options) {
   #if CGAL_DEBUG_CDT_3
         std::cerr << "NEW POLYGON #" << poly_id << '\n';
   #endif // CGAL_DEBUG_CDT_3
-        const auto coplanar = polygon.size() < 3 ||
-            std::all_of(polygon.begin(), polygon.end(),
-                        [p1 = polygon[0], p2 = polygon[1], p3 = polygon[2]](auto p) {
-                          const auto coplanar =
-                              CGAL::orientation(p1, p2, p3, p) == CGAL::COPLANAR;
-                          if(!coplanar) {
-                            std::cerr << "Non coplanar points: " << p1 << ", " << p2
-                                      << ", " << p3 << ", " << p << '\n'
-                                      << "  volume: " << volume(p1, p2, p3, p) << '\n';
-
-                          }
-                          return coplanar;
-                        });
-        if(!coplanar) {
-          std::ofstream out(std::string("dump_noncoplanar_polygon_") + std::to_string(poly_id) + ".off");
-          out.precision(17);
-          out << "OFF\n" << polygon.size() << " 1 0\n";
-          for(auto p : polygon) {
-            out << p << '\n';
-          }
-          out << polygon.size() << ' ';
-          for(std::size_t i = 0u, end = polygon.size(); i < end; ++i) {
-            out << ' ' << i;
-          }
-          out << '\n';
-          std::cerr << "Polygon is not coplanar\n";
-        }
         try {
           [[maybe_unused]] auto id = cdt.insert_constrained_polygon(polygon, false);
           assert(id == poly_id);
@@ -718,12 +713,14 @@ int go(Mesh mesh, CDT_options options) {
       std::cout << "[timings] restored Delaunay (conforming of facets borders) in " << std::chrono::duration_cast<std::chrono::milliseconds>(
           std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
     }
+    CGAL_CDT_3_TASK_END(conforming_task_handle);
 
     if(!options.dump_after_conforming_filename.empty()) {
+      CGAL_CDT_3_TASK_BEGIN(output_task_handle);
       using Vertex_index = Mesh::Vertex_index;
       [[maybe_unused]] std::size_t time_stamp_counter = 0u;
       for(auto v: cdt.finite_vertex_handles()) {
-        const auto time_stamp = v->time_stamp();
+        [[maybe_unused]] const auto time_stamp = v->time_stamp();
         assert(++time_stamp_counter == time_stamp);
         if(!v->is_Steiner_vertex_on_edge()) continue;
         const auto [va, vb] = cdt.ancestors_of_Steiner_vertex_on_edge(v);
@@ -765,16 +762,20 @@ int go(Mesh mesh, CDT_options options) {
       out_mesh.precision(17);
       out_mesh << mesh;
       out_mesh.close();
+      CGAL_CDT_3_TASK_END(output_task_handle);
     }
 
     if(!options.quiet) {
       std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
     }
+    CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
     CGAL_assertion(cdt.Delaunay::is_valid(true));
     CGAL_assertion(cdt.is_valid(true));
     CGAL_assertion(cdt.is_conforming());
+    CGAL_CDT_3_TASK_END(validation_task_handle);
     if(exit_code == EXIT_SUCCESS) {
       try {
+        CGAL_CDT_3_TASK_BEGIN(cdt_task_handle);
         start_time = std::chrono::high_resolution_clock::now();
         cdt.restore_constrained_Delaunay();
         if(!options.quiet) {
@@ -782,6 +783,7 @@ int go(Mesh mesh, CDT_options options) {
               std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
           std::cout << "Number of vertices after CDT: " << cdt.number_of_vertices() << "\n\n";
         }
+        CGAL_CDT_3_TASK_END(cdt_task_handle);
       } catch(int error) {
         exit_code = error;
       }
@@ -791,9 +793,11 @@ int go(Mesh mesh, CDT_options options) {
     CDT_3_throw_exception_again;
   }
   finally();
+
+  CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
   CGAL_assertion(cdt.is_conforming());
   CGAL_assertion(cdt.is_valid(true));
-
+  CGAL_CDT_3_TASK_END(validation_task_handle);
 
   return exit_code;
 }

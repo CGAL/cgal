@@ -193,3 +193,11 @@ if(BUILD_TESTING)
     "execution   of  test_delaunay_3"
     PROPERTIES RESOURCE_LOCK Triangulation_3_Tests_IO)
 endif()
+
+find_package(ITT QUIET)
+if(TARGET ITT::ITT)
+  target_link_libraries(cdt_3_from_off PRIVATE ITT::ITT)
+  target_link_libraries(cdt_3_from_off_with_Epeck PRIVATE ITT::ITT)
+  target_compile_definitions(cdt_3_from_off PRIVATE CGAL_USE_ITT)
+  target_compile_definitions(cdt_3_from_off_with_Epeck PRIVATE CGAL_USE_ITT)
+endif()
