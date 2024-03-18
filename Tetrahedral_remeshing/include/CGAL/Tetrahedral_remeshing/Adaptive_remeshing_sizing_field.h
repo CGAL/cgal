@@ -28,6 +28,8 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_triangle_primitive.h>
 
+#include <CGAL/Tetrahedral_remeshing/internal/Medial_axis_kd_tree.h>
+
 #include <vector>
 #include <array>
 
@@ -84,6 +86,8 @@ private:
   using Distance = typename Neighbor_search::Distance;
   using Splitter = typename Neighbor_search::Splitter;
 
+  using Medial_axis_kd_tree = internal::Medial_axis_kd_tree<Tr>;
+
   using Triangle_vec = std::vector<typename Tr::Triangle>;
   using Triangle_iter = typename Triangle_vec::iterator;
   using Triangle_primitive = CGAL::AABB_triangle_primitive<GT, Triangle_iter>;
@@ -97,6 +101,8 @@ public:
   Adaptive_remeshing_sizing_field(const Tr& tr)
     : m_gt(tr.geom_traits())
     , m_kd_tree(points_with_info(tr), Splitter(), Kd_traits(Point_property_map()))
+    , m_k_lipschitz(0.5)
+    , m_medial_axis_kd_tree(tr)
   {
     m_kd_tree.build();
     build_aabb_trees(tr);
@@ -123,6 +129,9 @@ public:
   template <typename Index>
   FT operator()(const Bare_point& p, const int& dim, const Index& i) const
   {
+//    if(dim < 3)
+//      return FT(0);//automatically adapt to 3D sizing around the point
+
     // Find nearest vertex and local size before remeshing
     Point_property_map pp_map;
     Distance dist(pp_map);
@@ -133,9 +142,6 @@ public:
                            true, //search nearest
                            dist);
     const auto [pi, size, dimension] = search.begin()->first;
-
-    if (dim < 3)
-      return size;
 
     // measure distance to input surfaces
     Bare_point closest_point = p;
@@ -153,10 +159,16 @@ public:
       }
     }
     shortest_distance = CGAL::approximate_sqrt(shortest_distance);
-    FT div_max_distance = 1. / 10.;
-      //?? (10 as a magic number for distance_field.getMaxDist();)
 
-    return size - size / (shortest_distance * div_max_distance);
+    FT lfs = m_medial_axis_kd_tree.distance_to_medial_axis(p);// closest_point);
+    FT res = m_k_lipschitz * shortest_distance + lfs;
+
+//    std::cout << "res = " << res
+//      << "\tshortest_distance = " << shortest_distance
+//      << "\tlfs = " << lfs << std::endl;
+
+    const FT min_size = 0.5;
+    return (std::max)(res, min_size);
   }
 
 private:
@@ -190,6 +202,9 @@ private:
   std::vector<AABB_triangle_tree> m_aabb_trees;
 
   const GT& m_gt;
+  const FT m_k_lipschitz;
+
+  Medial_axis_kd_tree m_medial_axis_kd_tree;
 };
 
 
