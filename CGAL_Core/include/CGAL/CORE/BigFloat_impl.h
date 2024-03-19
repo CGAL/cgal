@@ -214,7 +214,7 @@ CGAL_INLINE_FUNCTION
 void BigFloatRep::approx(const BigFloatRep& B,
               const extLong& r, const extLong& a) {
   if (B.err) {
-    if (1 + clLg(B.err) <= bitLength(B.m))
+    if (static_cast<unsigned>(1 + clLg(B.err)) <= bitLength(B.m))
       truncM(B, r + 1, a);
     else //  1 + clLg(B.err) > lg(B.m)
       truncM(B, CORE_posInfty, a);

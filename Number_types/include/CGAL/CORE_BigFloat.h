@@ -178,7 +178,7 @@ public:
 
             // shift such that err.m()+err.err() fits into long
             int digits_long = std::numeric_limits<long>::digits;
-            if(::CORE::bitLength(err.m()+err.err()) >= digits_long){
+            if(::CORE::bitLength(err.m()+err.err()) >= static_cast<unsigned>(digits_long)){
                 long shift = ::CORE::bitLength(err.m()) - digits_long + 1 ;
                 //std::cout << "shift " << shift<< std::endl;
                 CORE::BigInt bi = (err.m() + err.err());
