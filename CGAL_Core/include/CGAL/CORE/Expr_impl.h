@@ -1079,7 +1079,9 @@ void Expr::debug(int mode, int level, int depthLimit) const {
   else if (mode == Expr::TREE_MODE)
     rep->debugTree(level, 0, depthLimit);
   else
+  {
     CGAL_CORE_warning_msg(false, "unknown debugging mode");
+  }
   std::cout << "---- End Expr debug(): " << std::endl;
 }
 

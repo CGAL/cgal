@@ -87,7 +87,7 @@ inline bool isDivisible(long x, long y) {
 
 }
   /// get exponent of power 2
-inline unsigned long getBinExpo(const BigInt& z) {
+inline auto getBinExpo(const BigInt& z) {
     if (z.is_zero()) {
         return (std::numeric_limits<unsigned long>::max)();
     }
@@ -95,7 +95,7 @@ inline unsigned long getBinExpo(const BigInt& z) {
 }
 
   // bit length
-inline int bitLength(const BigInt& a) {
+inline auto bitLength(const BigInt& a) {
     if (a.is_zero()) {
         return 0;
     }
