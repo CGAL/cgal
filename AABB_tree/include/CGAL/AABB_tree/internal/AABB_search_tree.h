@@ -27,6 +27,8 @@ struct AABB_search_tree
 {
 
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
+  typedef typename Point_and_primitive_id::first_type Point;
+  typedef typename Point_and_primitive_id::second_type Id;
   typedef First_of_pair_property_map<Point_and_primitive_id> Pmap;
   typedef Search_traits_adapter<Point_and_primitive_id, Pmap, Traits> TreeTraits;
   typedef typename CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
@@ -39,16 +41,21 @@ private:
     return p;
   }
 
+  Point_and_primitive_id get_p_and_p(const Point& p)
+  {
+    return Point_and_primitive_id(p, Id());
+  }
+
 public:
   template <class ConstPointIterator>
   AABB_search_tree(ConstPointIterator begin, ConstPointIterator beyond)
       : m_tree{}
   {
     std::vector<Point_and_primitive_id> points;
-    while(begin != beyond) {
-            Point_and_primitive_id pp = get_p_and_p(*begin);
-            points.emplace_back(pp);
-            ++begin;
+    while (begin != beyond) {
+      Point_and_primitive_id pp = get_p_and_p(*begin);
+      points.emplace_back(pp);
+      ++begin;
     }
     m_tree.insert(points.begin(), points.end());
     m_tree.build();
