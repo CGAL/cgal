@@ -98,7 +98,7 @@ namespace internal {
 template < class GeomTraits,
            class IndexIterator,
            class PointRange,
-           class PointMap=Identity_property_map<PointRange::value_type>,
+           class PointMap=Identity_property_map<typename PointRange::value_type>,
            class CacheDatum=Tag_false>
 class AABB_indexed_triangle_primitive_2
 #ifndef DOXYGEN_RUNNING

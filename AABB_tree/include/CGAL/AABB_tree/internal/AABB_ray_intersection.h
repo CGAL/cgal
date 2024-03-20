@@ -53,7 +53,7 @@ struct Intersection_traits_wrapper<GT, 3> {
 template<typename AABBTree, typename SkipFunctor>
 class AABB_ray_intersection {
   typedef typename AABBTree::AABB_traits AABB_traits;
-  static const int dimension = typename AABB_traits::Point::Ambient_dimension::value;
+  static const int dimension = AABB_traits::Point::Ambient_dimension::value;
   typedef typename internal::Intersection_traits_wrapper<AABB_traits, dimension>::Ray Ray;
   typedef typename internal::Intersection_traits_wrapper<AABB_traits, dimension>::Vector Vector;
 
