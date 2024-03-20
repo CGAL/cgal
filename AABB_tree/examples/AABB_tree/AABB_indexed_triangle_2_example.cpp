@@ -17,7 +17,7 @@ struct Projection_xy_point_map {
 
   typedef typename GeomTraits::Point_3 key_type;
   typedef typename GeomTraits::Point_2 value_type;
-  typedef const value_type& reference;
+  typedef value_type reference;
 
   typedef boost::readable_property_map_tag category;
   typedef Projection_xy_point_map<GeomTraits> Self;
