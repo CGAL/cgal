@@ -87,15 +87,15 @@ inline bool isDivisible(long x, long y) {
 
 }
   /// get exponent of power 2
-inline unsigned getBinExpo(const BigInt& z) {
+inline std::size_t getBinExpo(const BigInt& z) {
     if (z.is_zero()) {
-        return (std::numeric_limits<unsigned>::max)();
+        return (std::numeric_limits<std::size_t>::max)();
     }
     return lsb(abs(z));
 }
 
   // bit length
-inline unsigned bitLength(const BigInt& a){
+inline std::size_t bitLength(const BigInt& a){
     if (a.is_zero()) {
         return 0;
     }
