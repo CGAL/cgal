@@ -630,7 +630,7 @@ typename Hyperbolic_surface_triangulation_2<GeometricTraits_2>::_Dart_handle Hyp
 
 template<class GeometricTraits_2>
 void Hyperbolic_surface_triangulation_2<GeometricTraits_2>::copy_from(const Combinatorial_map_with_cross_ratios& cmap){
-  _combinatorial_map.copy(cmap);
+  _combinatorial_map.copy_from_const(cmap);
   _has_anchor = false;
 }
 
