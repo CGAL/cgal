@@ -11,6 +11,8 @@
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
 typedef K::Point_2 Point;
+typedef K::Vector_2 Vector;
+typedef K::Ray_2 Ray;
 
 template <class GeomTraits>
 struct Projection_xy_point_map {
@@ -30,48 +32,13 @@ struct Projection_xy_point_map {
   }
 };
 
-template <class GeomTraits>
-struct Projection_xz_point_map {
-
-  typedef typename GeomTraits::Point_3 key_type;
-  typedef typename GeomTraits::Point_2 value_type;
-  typedef const value_type& reference;
-
-  typedef boost::readable_property_map_tag category;
-  typedef Projection_xz_point_map<GeomTraits> Self;
-
-  Projection_xz_point_map() {}
-
-  inline friend value_type get(Self s, key_type p)
-  {
-    return value_type(p.x(), p.z());
-  }
-};
-
-template <class GeomTraits>
-struct Projection_yz_point_map {
-
-  typedef typename GeomTraits::Point_3 key_type;
-  typedef typename GeomTraits::Point_2 value_type;
-  typedef const value_type& reference;
-
-  typedef boost::readable_property_map_tag category;
-  typedef Projection_yz_point_map<GeomTraits> Self;
-
-  Projection_yz_point_map() {}
-
-  inline friend value_type get(Self s, key_type p)
-  {
-    return value_type(p.y(), p.z());
-  }
-};
-
 typedef std::vector<std::array<uint8_t, 3> >::iterator IndexIterator;
 typedef std::vector<Point_3> PointRange;
-typedef CGAL::AABB_indexed_triangle_primitive_2<K, IndexIterator, PointRange, Projection_yz_point_map<K>> Primitive;
+typedef CGAL::AABB_indexed_triangle_primitive_2<K, IndexIterator, PointRange, Projection_xy_point_map<K>> Primitive;
 typedef CGAL::AABB_traits_2<K, Primitive> AABB_triangle_traits;
 typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
+typedef std::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
 
 
 int main()
@@ -108,6 +75,17 @@ int main()
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
   id = tree.closest_point_and_primitive(Point(3.0, 0.5));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
+
+  Ray ray(Point(5.5, 0.5), Point(1.5, 0.5));
+  Ray_intersection intersection = tree.first_intersection(ray);
+
+  if (!intersection) {
+    std::cout << "Ray does not intersect with triangles although it should!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  else {
+    std::cout << std::distance(triangles.begin(), intersection->second) << ". triangle" << std::endl;
+  }
 
   return EXIT_SUCCESS;
 }

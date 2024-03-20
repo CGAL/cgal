@@ -38,7 +38,7 @@ namespace internal{  namespace AABB_tree {
 
 // AABB_traits_intersection_base brings in the Intersection_distance predicate,
 // if GeomTraits is a model RayIntersectionGeomTraits.
-template <typename GeomTraits, bool ray_intersection_geom_traits=Is_ray_intersection_geomtraits<GeomTraits>::value>
+template <typename GeomTraits, bool ray_intersection_geom_traits=Is_ray_intersection_geomtraits_2<GeomTraits>::value>
 struct AABB_traits_intersection_base_2;
 
 template <typename GeomTraits>
@@ -77,7 +77,7 @@ struct AABB_traits_intersection_base_2<GeomTraits,true>{
       Cartesian_const_iterator_2 source_iter = construct_cartesian_const_iterator_2(source);
       Cartesian_const_iterator_2 direction_iter = construct_cartesian_const_iterator_2(direction);
 
-      for(int i = 0; i < 3; ++i, ++source_iter, ++direction_iter) {
+      for(int i = 0; i < 2; ++i, ++source_iter, ++direction_iter) {
         if(*direction_iter == 0) {
           if((*source_iter < (bbox.min)(i)) || (*source_iter > (bbox.max)(i))) {
             return std::nullopt;
