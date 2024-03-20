@@ -23,7 +23,7 @@
 namespace CGAL {
 
 namespace internal {
-  template <class GeomTraits, class Iterator, class PointIterator>
+  template <class GeomTraits, class Iterator, class PointIterator, class PointMap>
   struct Triangle_2_from_index_range_iterator_property_map {
     //classical typedefs
     typedef Iterator key_type;
@@ -31,40 +31,42 @@ namespace internal {
     typedef typename GeomTraits::Triangle_2 reference;
 
     typedef boost::readable_property_map_tag category;
-    typedef Triangle_2_from_index_range_iterator_property_map<GeomTraits, Iterator, PointIterator> Self;
+    typedef Triangle_2_from_index_range_iterator_property_map<GeomTraits, Iterator, PointIterator, PointMap> Self;
 
     Triangle_2_from_index_range_iterator_property_map() {}
-    Triangle_2_from_index_range_iterator_property_map(PointIterator b) : begin(b) {}
+    Triangle_2_from_index_range_iterator_property_map(PointIterator b, PointMap& pmap) : begin(b), pmap(pmap) {}
 
     inline friend value_type
     get(Self s, key_type it)
     {
-      return typename GeomTraits::Construct_triangle_2()(s.begin[(*it)[0]], s.begin[(*it)[1]], s.begin[(*it)[2]]);
+      return typename GeomTraits::Construct_triangle_2()(get(s.pmap, s.begin[(*it)[0]]), get(s.pmap, s.begin[(*it)[1]]), get(s.pmap, s.begin[(*it)[2]]));
     }
 
     PointIterator begin;
+    PointMap pmap;
   };
 
-  template <class GeomTraits, class Iterator, class PointIterator>
+  template <class GeomTraits, class Iterator, class PointIterator, class PointMap>
   struct Point_from_indexed_triangle_2_iterator_property_map {
     //classical typedefs
     typedef Iterator key_type;
-    typedef typename PointIterator::value_type value_type;
-    typedef const value_type& reference;
+    typedef typename PointMap::value_type value_type;
+    typedef const value_type reference;
 
     typedef boost::readable_property_map_tag category;
-    typedef Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, Iterator, PointIterator> Self;
+    typedef Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, Iterator, PointIterator, PointMap> Self;
 
     Point_from_indexed_triangle_2_iterator_property_map() {}
-    Point_from_indexed_triangle_2_iterator_property_map(PointIterator b) : begin(b) {}
+    Point_from_indexed_triangle_2_iterator_property_map(PointIterator b, PointMap &pmap) : begin(b), pmap(pmap) {}
 
     inline friend reference
     get(Self s, key_type it)
     {
-      return s.begin[((*it)[0])];
+      return get(s.pmap, s.begin[((*it)[0])]);
     }
 
     PointIterator begin;
+    PointMap pmap;
   };
 }//namespace internal
 
@@ -96,19 +98,20 @@ namespace internal {
 template < class GeomTraits,
            class IndexIterator,
            class PointRange,
+           class PointMap=Identity_property_map<PointRange::value_type>,
            class CacheDatum=Tag_false>
 class AABB_indexed_triangle_primitive_2
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<  IndexIterator,
-                            internal::Triangle_2_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator>,
-                            internal::Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator>,
+                            internal::Triangle_2_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>,
+                            internal::Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>,
                             Tag_true,
                             CacheDatum >
 #endif
 {
   typedef AABB_primitive< IndexIterator,
-                          internal::Triangle_2_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator>,
-                          internal::Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator>,
+                          internal::Triangle_2_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>,
+                          internal::Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>,
                           Tag_true,
                           CacheDatum > Base;
 public:
@@ -116,10 +119,10 @@ public:
   AABB_indexed_triangle_primitive_2(IndexIterator it, PointRange&) : Base(it) {}
 
   /// \internal
-  static typename Base::Shared_data construct_shared_data(PointRange &range) {
+  static typename Base::Shared_data construct_shared_data(PointRange &range, PointMap &pmap = PointMap()) {
     return std::make_pair(
-      internal::Triangle_2_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator>(range.begin()),
-      internal::Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator>(range.begin()));
+      internal::Triangle_2_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>(range.begin(), pmap),
+      internal::Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>(range.begin(), pmap));
   }
 };
 
