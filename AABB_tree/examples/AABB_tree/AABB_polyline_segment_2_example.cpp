@@ -27,6 +27,26 @@ typedef CGAL::AABB_traits_2<K, Primitive_poly> Traits_poly;
 typedef CGAL::AABB_tree<Traits_poly> Tree_poly;
 typedef Tree_poly::Point_and_primitive_id Point_and_primitive_id_poly;
 
+template<class AABBTree, class PPId>
+void test(AABBTree& tree) {
+  tree.build();
+
+  tree.accelerate_distance_queries();
+
+  // counts #intersections with a segment query
+  Segment segment_query(Point(1.0, 0.0), Point(0.0, 7.0));
+
+  std::cout << tree.number_of_intersected_primitives(segment_query)
+    << " intersections(s) with segment" << std::endl;
+
+  // computes the closest point from a point query
+  Point point_query(1.5, 3.0);
+  Point closest = tree.closest_point(point_query);
+  std::cerr << "closest point is: " << closest << std::endl;
+
+  PPId id = tree.closest_point_and_primitive(point_query);
+}
+
 
 int main()
 {
@@ -40,41 +60,11 @@ int main()
 
   Polygon poly(polyline.begin(), polyline.end());
 
-  // constructs the AABB tree and the internal search tree for
-  // efficient distance computations.
+  test<Tree_poly, Point_and_primitive_id_poly>(Tree_poly(poly.begin(), poly.end(), poly));
 
   // For a point range, the second iterator must be of the second-last point in the range.
   // If it points to the end of the range, to polyline is considered to be closed.
-  Tree_pr tree_pr(polyline.begin(), std::prev(polyline.end()), polyline);
-  Tree_poly tree_poly(poly.begin(), poly.end(), poly);
+  test<Tree_pr, Point_and_primitive_id_pr>(Tree_pr(polyline.begin(), std::prev(polyline.end()), polyline));
 
-  tree_pr.build();
-  tree_poly.build();
-
-  tree_pr.accelerate_distance_queries();
-  tree_poly.accelerate_distance_queries();
-
-  // counts #intersections with a segment query
-  Segment segment_query(Point(1.0, 0.0), Point(0.0, 7.0));
-
-  std::cout << tree_pr.number_of_intersected_primitives(segment_query)
-    << " intersections(s) with segment" << std::endl;
-
-  std::cout << tree_poly.number_of_intersected_primitives(segment_query)
-    << " intersections(s) with segment" << std::endl;
-
-  // computes the closest point from a point query
-  Point point_query(1.5, 3.0);
-  Point closest = tree_pr.closest_point(point_query);
-  std::cerr << "closest point is: " << closest << std::endl;
-
-  closest = tree_poly.closest_point(point_query);
-  std::cerr << "closest point is: " << closest << std::endl;
-
-  Point_and_primitive_id_poly id_poly = tree_poly.closest_point_and_primitive(point_query);
-  // id_poly.second is of type Iterator_poly and points to the first point of the segment in the polygon point range.
-
-  Point_and_primitive_id_pr id_pr = tree_pr.closest_point_and_primitive(point_query);
-  // id_pr.second is of type std::vector<Point>::iterator and points to the first point of the segment in the point range.
   return EXIT_SUCCESS;
 }
