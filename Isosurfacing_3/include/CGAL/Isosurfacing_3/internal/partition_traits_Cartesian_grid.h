@@ -161,9 +161,9 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
         for(std::size_t k=0; k<g.zdim()-1; ++k)
         {
           // all three edges starting at vertex (i, j, k)
-          f({i, j, k, 0});
-          f({i, j, k, 1});
-          f({i, j, k, 2});
+          f({{i, j, k, 0}});
+          f({{i, j, k, 1}});
+          f({{i, j, k, 2}});
         }
       }
     }
@@ -178,7 +178,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
     for(std::size_t i=0; i<g.xdim()-1; ++i)
       for(std::size_t j=0; j<g.ydim()-1; ++j)
         for(std::size_t k=0; k<g.zdim()-1; ++k)
-          f({i, j, k});
+          f({{i, j, k}});
   }
 
   #ifdef CGAL_LINKED_WITH_TBB
@@ -236,11 +236,8 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
                             const Grid& g,
                             const CGAL::Parallel_tag)
   {
-    const std::size_t sj = g.ydim();
-    const std::size_t sk = g.zdim();
-
     // for now only parallelize outer loop
-    auto iterator = [&f, sj, sk](const tbb::blocked_range3d<std::size_t>& r)
+    auto iterator = [&f](const tbb::blocked_range3d<std::size_t>& r)
     {
       const std::size_t i_begin = r.pages().begin();
       const std::size_t i_end = r.pages().end();

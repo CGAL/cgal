@@ -88,7 +88,7 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   // If there is more than a scalar per point, vtk_image->data is not immediately
   // interpretable in Image_3->data
   CGAL_assertion(owning == Image_3::OWN_THE_DATA || cn == 1);
-  CGAL_assertion(vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() == image->xdim*image->ydim*image->zdim);
+  CGAL_assertion(vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() == static_cast<vtkIdType>(image->xdim*image->ydim*image->zdim));
 
   if(owning == Image_3::OWN_THE_DATA) {
     std::size_t dims_n = image->xdim*image->ydim*image->zdim;
