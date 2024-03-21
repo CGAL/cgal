@@ -87,32 +87,13 @@ struct Projector<R,2>
   static const int y_index=1;
 };
 
-template <class R, int dim>
-class Construct_cartesian_const_iterator_projected_3 {
-public:
-    typedef typename R::Point_3     Point_3;
-    typedef typename R::Cartesian_const_iterator_3 Cartesian_const_iterator;
-    Cartesian_const_iterator operator()(const Point_3& p) const
-    {
-        return typename R::Construct_cartesian_const_iterator_3()(p);
-    }
-    Cartesian_const_iterator operator()(const Point_3& p, int) const
-    {
-        Cartesian_const_iterator it = typename R::Construct_cartesian_const_iterator_3()(p,0);
-        --it;
-        return it;
-    }
-};
-
 template <class R,int dim>
 class Construct_bbox_projected_2 {
 public:
   typedef typename R::Point_3     Point;
-  typedef typename R::Triangle_3  Triangle_3;
   typedef Bbox_2 result_type;
 
   Bbox_2 operator()(const Point& p) const { typename R::Construct_bbox_3 bb;  return Projector<R, dim>::bbox(bb(p)); }
-  Bbox_2 operator()(const Triangle_3& t) const { typename R::Construct_bbox_3 bb;  return Projector<R, dim>::bbox(bb(t)); }
 };
 
 template <class R,int dim>
@@ -219,108 +200,6 @@ public:
                                   const Point &r) const
     {
       return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
-    }
-};
-
-template <class R, int dim>
-class Construct_center_3
-{
-public:
-    typedef typename R::Sphere_3  Sphere_3;
-    typedef typename R::Point_3   Point_3;
-    typedef typename R::Point_2   Point_2;
-    typedef typename R::FT        RT;
-    typename R::FT x(const Point_3& p) const { return Projector<R, dim>::x(p); }
-    typename R::FT y(const Point_3& p) const { return Projector<R, dim>::y(p); }
-
-    Point_2 project(const Point_3& p) const
-    {
-        return Point_2(x(p), y(p));
-    }
-
-    Point_2 operator()(const Sphere_3& s) const
-    {
-        Point_3 p = typename R::Construct_center_3()(s);
-        return project(p);
-    }
-};
-
-template <class R, int dim>
-class Construct_projected_point_3
-{
-public:
-    typedef typename R::Point_3    Point_3;
-    typedef typename R::Point_2    Point_2;
-    typedef typename R::Triangle_3 Triangle_3;
-    typedef typename R::Triangle_2 Triangle_2;
-    typedef typename R::FT         RT;
-    typename R::FT x(const Point_3& p) const { return Projector<R, dim>::x(p); }
-    typename R::FT y(const Point_3& p) const { return Projector<R, dim>::y(p); }
-
-    Point_2 project(const Point_3& p) const
-    {
-        return Point_2(x(p), y(p));
-    }
-
-    Point_3 operator()(const Triangle_3& t, const Point_3& p) const
-    {
-        Point_2 p2 =  typename R::Construct_projected_point_2()(Triangle_2(project(t.vertex(0)), project(t.vertex(1)), project(t.vertex(2))),
-                                                         project(p));
-        return Point_3(p2.x(), p2.y(), 0);
-    }
-
-    template <typename T>
-    Point_3 operator()(const T& t, const Point_3& p) const
-    {   std::cout << "todo:  implement Projection_traits_3::Construct_projected_point_3 for " << typeid(t).name() << " and Point_3" << std::endl;
-        return Point_3();
-    }
-
-};
-
-
-template <class R, int dim>
-class Construct_min_vertex_3
-{
-public:
-    typedef typename R::Iso_cuboid_3 Iso_cuboid_3;
-    typedef typename R::Point_3   Point_3;
-    typedef typename R::Point_2   Point_2;
-    typedef typename R::FT        RT;
-    typename R::FT x(const Point_3& p) const { return Projector<R, dim>::x(p); }
-    typename R::FT y(const Point_3& p) const { return Projector<R, dim>::y(p); }
-
-    Point_2 project(const Point_3& p) const
-    {
-        return Point_2(x(p), y(p));
-    }
-
-    Point_2 operator()(const Iso_cuboid_3& ic) const
-    {
-        Point_3 p = typename R::Construct_min_vertex_3()(ic);
-        return project(p);
-    }
-};
-
-template <class R, int dim>
-class Construct_max_vertex_3
-{
-public:
-    typedef typename R::Iso_cuboid_3 Iso_cuboid_3;
-    typedef typename R::Point_3   Point_3;
-    typedef typename R::Point_2   Point_2;
-    typedef typename R::FT        RT;
-    typename R::FT x(const Point_3& p) const { return Projector<R, dim>::x(p); }
-    typename R::FT y(const Point_3& p) const { return Projector<R, dim>::y(p); }
-
-    Point_2 project(const Point_3& p) const
-    {
-        return Point_2(x(p), y(p));
-    }
-
-    Point_2 operator()(const Iso_cuboid_3& ic) const
-    {
-        Point_3 p = typename R::Construct_max_vertex_3()(ic);
-        return project(p);
     }
 };
 
@@ -521,35 +400,6 @@ public:
     return CGAL::determinant(v2, w2);
   }
 };
-
-
-template <class R, int dim>
-class Do_intersect_projected_3
-{
-public:
-    typedef typename R::Point_3   Point_3;
-    typedef typename R::Sphere_3 Sphere_3;
-    typedef typename R::Point_2   Point_2;
-    typedef typename R::Vector_2  Vector_2;
-    typedef typename R::Circle_2  Circle_2;
-    typedef typename R::FT        FT;
-
-    typename R::FT x(const Point_3& p) const { return Projector<R, dim>::x(p); }
-    typename R::FT y(const Point_3& p) const { return Projector<R, dim>::y(p); }
-
-    Point_2 project(const Point_3& p) const
-    {
-        return Point_2(x(p), y(p));
-    }
-
-    bool operator()(const Sphere_3& s, const Bbox_2& bb)
-    {
-        Circle_2 circ(project(s.center()), s.squared_radius());
-
-        return R::Do_intersect_2()(circ,bb);
-    }
-};
-
 
 template <class R,int dim>
 class  Intersect_projected_3
@@ -1077,9 +927,6 @@ public:
   typedef typename Rp::Triangle_3                             Triangle_2;
   typedef typename Rp::Line_3                                 Line_2;
   typedef typename Rp::Ray_3                                  Ray_2;
-  typedef typename Rp::Iso_cuboid_3                           Iso_rectangle_2;
-  typedef typename Rp::Sphere_3                               Circle_2;
-  typedef typename Rp::Cartesian_const_iterator_3             Cartesian_const_iterator_2;
 
   typedef typename Projector<R,dim>::Less_x_2                 Less_x_2;
   typedef typename Projector<R,dim>::Less_y_2                 Less_y_2;
@@ -1096,7 +943,6 @@ public:
   typedef Collinear_are_ordered_along_line_projected_3<Rp,dim> Collinear_are_ordered_along_line_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
-  typedef Do_intersect_projected_3<Rp, dim>                   Do_intersect_2;
   typedef Compute_squared_radius_projected<Rp,dim>            Compute_squared_radius_2;
   typedef Compute_scalar_product_projected_3<Rp,dim>          Compute_scalar_product_2;
   typedef Compute_squared_length_projected_3<Rp,dim>          Compute_squared_length_2;
@@ -1113,14 +959,6 @@ public:
 
   typedef Construct_centroid_projected_3<Rp,dim>              Construct_centroid_2;
   typedef Compute_determinant_projected_3<Rp,dim>             Compute_determinant_2;
-  typedef Construct_min_vertex_3<Rp, dim>                     Construct_min_vertex_2;
-  typedef Construct_max_vertex_3<Rp, dim>                     Construct_max_vertex_2;
-  typedef Construct_center_3<Rp, dim>                         Construct_center_2;
-  typedef Construct_projected_point_3<Rp, dim>                Construct_projected_point_2;
-
-  typedef typename Rp::Construct_iso_cuboid_3                 Construct_iso_rectangle_2;
-  typedef typename Rp::Construct_sphere_3                     Construct_circle_2;
-  typedef Construct_cartesian_const_iterator_projected_3<Rp,dim>   Construct_cartesian_const_iterator_2;
 
   typedef typename Rp::Construct_point_3                      Construct_point_2;
   typedef typename Rp::Construct_weighted_point_3             Construct_weighted_point_2;
@@ -1297,16 +1135,6 @@ public:
   {
     return Intersect_2();
   }
-
-  Do_intersect_2
-      do_intersect_2_object() const
-  { return Do_intersect_2();}
-
-  Construct_projected_point_2 construct_projected_point_2_object() const
-  { return Construct_projected_point_2();}
-
-  Construct_circle_2 construct_circle_2_object() const
-  { return Construct_circle_2();}
 
   Construct_point_2 construct_point_2_object() const
   { return Construct_point_2();}
