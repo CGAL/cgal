@@ -81,8 +81,8 @@ public:
   /// constructor for \c unsigned long
   extLong(unsigned long);
   /// constructor for \c std::size_t
-  template<typename = std::enable_if_t<!std::is_same_v<unsigned long, std::size_t>>>
-  extLong(std::size_t s);
+  template<typename T, typename = std::enable_if_t<std::is_same_v<T,std::size_t> && !std::is_same_v<unsigned long, std::size_t>>>
+  extLong(T s);
   //@}
 
   /// \name Arithmetic and assignment operators
@@ -194,8 +194,8 @@ inline extLong::extLong(unsigned long u) {
   }
 }
 
-template <typename>
-inline extLong::extLong(std::size_t u) {
+template <typename T, typename>
+inline extLong::extLong(T u) {
   if (u >= (std::numeric_limits<std::size_t>::max)()) {
     val  = EXTLONG_MAX;
     flag = 1;
