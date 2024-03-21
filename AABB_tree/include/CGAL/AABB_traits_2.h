@@ -47,10 +47,11 @@ struct AABB_traits_intersection_base_2<GeomTraits,false>{};
 template <typename GeomTraits>
 struct AABB_traits_intersection_base_2<GeomTraits,true>{
   typedef typename GeomTraits::Ray_2 Ray_2;
+  typedef typename GeomTraits::Ray_2 Ray;
   typedef typename GeomTraits::Point_2 Point_2;
   typedef typename GeomTraits::Point_2 Point;
-  typedef typename GeomTraits::Ray_2 Ray;
   typedef typename GeomTraits::Vector_2 Vector_2;
+  typedef typename GeomTraits::Vector_2 Vector;
   typedef typename GeomTraits::FT    FT;
   typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator_2;
   typedef typename GeomTraits::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator_2;

@@ -33,29 +33,12 @@
 
 namespace CGAL {
 
-namespace internal {
-template<class GT, int>
-struct Intersection_traits_wrapper {};
-
-template<class GT>
-struct Intersection_traits_wrapper<GT, 2> {
-  typedef typename GT::Ray_2 Ray;
-  typedef typename GT::Vector_2 Vector;
-};
-
-template<class GT>
-struct Intersection_traits_wrapper<GT, 3> {
-  typedef typename GT::Ray_3 Ray;
-  typedef typename GT::Vector_3 Vector;
-};
-}
-
 template<typename AABBTree, typename SkipFunctor>
 class AABB_ray_intersection {
   typedef typename AABBTree::AABB_traits AABB_traits;
   static const int dimension = AABB_traits::Point::Ambient_dimension::value;
-  typedef typename internal::Intersection_traits_wrapper<AABB_traits, dimension>::Ray Ray;
-  typedef typename internal::Intersection_traits_wrapper<AABB_traits, dimension>::Vector Vector;
+  typedef typename AABB_traits::Ray Ray;
+  typedef typename AABB_traits::Vector Vector;
 
   typedef typename AABBTree::template Intersection_and_primitive_id<Ray>::Type Ray_intersection_and_primitive_id;
   typedef typename Ray_intersection_and_primitive_id::first_type Ray_intersection;
