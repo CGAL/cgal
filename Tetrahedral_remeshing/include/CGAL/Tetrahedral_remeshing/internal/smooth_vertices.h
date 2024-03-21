@@ -20,6 +20,9 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/FMLS.h>
 
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_triangle_primitive.h>
 
 #include <optional>
 #include <boost/container/small_vector.hpp>
@@ -51,10 +54,19 @@ class Tetrahedral_remeshing_smoother
   typedef typename Gt::Point_3               Point_3;
   typedef typename Gt::FT                    FT;
 
+  using Triangle_vec = std::vector<typename Tr::Triangle>;
+  using Triangle_iter = typename Triangle_vec::iterator;
+  using Triangle_primitive = CGAL::AABB_triangle_primitive<Gt, Triangle_iter>;
+  using AABB_triangle_traits = CGAL::AABB_traits<Gt, Triangle_primitive>;
+  using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
+
 private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
   std::vector<FMLS> subdomain_FMLS;
   std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
+
+  Triangle_vec m_aabb_triangles;
+  AABB_triangle_tree m_aabb_tree;
 
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
@@ -96,8 +108,10 @@ public:
                       vertices_normals,
                       vertices_surface_indices,
                       c3t3);
-  }
 
+    // Build AABB tree
+    build_aabb_tree(c3t3);
+  }
 
   void start_flip_smooth_steps(const C3t3& c3t3)
   {
@@ -179,6 +193,17 @@ private:
         }
       }
     }
+  }
+
+  void build_aabb_tree(const C3t3& c3t3)
+  {
+    for (const Facet& f : c3t3.facets_in_complex())
+    {
+      const Triangle_3 t = c3t3.triangulation().triangle(f);
+      m_aabb_triangles.push_back(t);
+    }
+    m_aabb_tree.rebuild(m_aabb_triangles.begin(), m_aabb_triangles.end());
+    m_aabb_tree.accelerate_distance_queries();
   }
 
   template<typename IncCellsVector>
@@ -745,6 +770,9 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
     }
   }
 
+  std::ofstream os_smooth("dump_smoothed_positions_surf.polylines.txt");
+
+
   // iterate over map of <vertex, id>
   for (auto [v, vid] : m_vertex_id)
   {
@@ -762,6 +790,42 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
     {
       const Vector_3 move = smoothed_positions[vid] / masses[vid];
       const Point_3 smoothed_position = point(v->point()) + move;
+      os_smooth << "2 " << point(v->point()) << " " << smoothed_position << std::endl;
+
+#ifdef CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
+      Point_3 new_pos;
+      if (m_aabb_tree.squared_distance(smoothed_position) < 1e-6)
+      {
+        new_pos = smoothed_position;
+      }
+      else
+      {
+        const auto n = vertices_normals.at(v).at(si);
+        const auto ray = tr.geom_traits().construct_ray_3_object()(current_pos, n);
+
+        auto proj = m_aabb_tree.first_intersection(ray);
+        if(proj == std::nullopt)
+          proj = m_aabb_tree.first_intersection(
+            tr.geom_traits().construct_opposite_ray_3_object()(ray));
+
+        CGAL_assertion(proj != std::nullopt);
+        if(proj != std::nullopt)
+        {
+          const auto intersection = proj.value().first;
+          if (const Point_3* p = std::get_if<Point_3>(&intersection))
+            new_pos = *p;
+          else
+          {
+            using Segment = typename Tr::Geom_traits::Segment_3;
+            const Segment* s = std::get_if<Segment>(&intersection);
+            new_pos = CGAL::midpoint(s->source(), s->target());
+            std::cerr << "Warning: AABB tree projection on segment" << std::endl;
+          }
+        }
+        else
+          new_pos = smoothed_position;
+      }
+#else
       Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
                                                            current_pos,
                                                            vertices_normals.at(v).at(si));
@@ -770,6 +834,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const Point_3 new_pos = (mls_projection != std::nullopt)
                             ? *mls_projection
                             : smoothed_position;
+#endif
 
       if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
         nb_done_2d++;
@@ -793,6 +858,8 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       }
     }
   }
+  os_smooth.close();
+
   return nb_done_2d;
 }
 
