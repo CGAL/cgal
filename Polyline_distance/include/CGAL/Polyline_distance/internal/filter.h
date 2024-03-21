@@ -75,8 +75,8 @@ private:
 
 bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
 {
-    if (certainly(CGAL::squared_distance(fixed, curve.front()) <= distance_sqr) || // Uncertain
-        certainly(CGAL::squared_distance(fixed, curve.back()) <= distance_sqr)) {
+    if (possibly(CGAL::squared_distance(fixed, curve.front()) <= distance_sqr) || // Uncertain (A)
+        possibly(CGAL::squared_distance(fixed, curve.back()) <= distance_sqr)) {
         return false;
     }
     std::size_t stepsize = 1;
@@ -88,7 +88,7 @@ bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
                                   curve.curve_length(mid, pt + stepsize));
         auto comp_dist = distance + maxdist;
 
-        if (mid_dist_sqr > CGAL::square(comp_dist)) { // Uncertain
+        if (certainly(mid_dist_sqr > CGAL::square(comp_dist))) { // Uncertain (A)
             pt += stepsize;
             stepsize *= 2;
         } else if (stepsize > 1) {
@@ -109,7 +109,7 @@ bool Filter::isFree(Point const& fixed, Curve const& var_curve, PointID start,
     auto mid_dist_sqr = CGAL::squared_distance(fixed, var_curve[mid]);
 
     auto comp_dist = distance - max;
-    if (comp_dist > 0 && mid_dist_sqr <= CGAL::square(comp_dist)) { // Uncertain
+    if (certainly(comp_dist > 0) && certainly(mid_dist_sqr <= CGAL::square(comp_dist))) { // Uncertain (A)
         return true;
     } else {
         return false;
@@ -128,7 +128,7 @@ bool Filter::isFree(Curve const& curve1, PointID start1, PointID end1,
     auto mid_dist_sqr = CGAL::squared_distance(curve1[mid1], curve2[mid2]);
 
     auto comp_dist = distance - max1 - max2;
-    return comp_dist >= 0 && mid_dist_sqr <= CGAL::square(comp_dist); // Uncertain
+    return certainly(comp_dist >= 0) && certainly(mid_dist_sqr <= CGAL::square(comp_dist)); // Uncertain (A)
 }
 
 void Filter::increase(size_t& step) { step = std::ceil(1.5 * step); }
@@ -152,24 +152,31 @@ bool Filter::bichromaticFarthestDistance()
 
     d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.min_y},
                                Point{extreme2.max_x, extreme2.max_y});
-    if (certainly(d > distance_sqr)) { // Uncertain
+    if (possibly(d > distance_sqr)) { // Uncertain (A)
         return false;
     }
+    assert(certainly(d <= distance_sqr));
+
     d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.max_y},
                                Point{extreme2.max_x, extreme2.min_y});
-    if (certainly(d > distance_sqr)) {
+    if (possibly(d > distance_sqr)) {
         return false;
     }
+    assert(certainly(d <= distance_sqr));
+
     d = CGAL::squared_distance(Point{extreme1.max_x, extreme1.min_y},
                                Point{extreme2.min_x, extreme2.max_y});
-    if (certainly(d > distance_sqr)) {
+    if (possibly(d > distance_sqr)) {
         return false;
     }
+    assert(certainly(d <= distance_sqr));
+
     d = CGAL::squared_distance(Point{extreme1.max_x, extreme1.max_y},
                                Point{extreme2.min_x, extreme2.min_y});
-    if (certainly(d > distance_sqr)) {
+    if (possibly(d > distance_sqr)) {
         return false;
     }
+    assert(certainly(d <= distance_sqr));
 
     cert.setAnswer(true);
     cert.addPoint({CPoint(0, 0.), CPoint(0, 0.)});
@@ -192,11 +199,18 @@ bool Filter::greedy()
     PointID pos1 = 0;
     PointID pos2 = 0;
 
+    if (possibly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) ||  // Uncertain (A)
+        possibly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
+        return false;
+    }
+
+    // Note that we only exit this loop if we reached the endpoints, which were
+    // already checked to be close.
     while (pos1 + pos2 < curve1.size() + curve2.size() - 2) {
         d_sqr =
           (CGAL::max)(d_sqr, CGAL::squared_distance(curve1[pos1], curve2[pos2]));
 
-        if (certainly(d_sqr > distance_sqr)) { // Uncertain
+        if (possibly(d_sqr > distance_sqr)) { // Uncertain (A)
             return false;
         }
 
@@ -212,9 +226,9 @@ bool Filter::greedy()
             distance_t dist12 =
                 CGAL::squared_distance(curve1[pos1 + 1], curve2[pos2 + 1]);
 
-            if (dist1 < dist2 && dist1 < dist12) { // Uncertain
+            if (possibly(dist1 < dist2) && possibly(dist1 < dist12)) { // Uncertain (A)
                 ++pos1;
-            } else if (dist2 < dist12) { // Uncertain
+            } else if (possibly(dist2 < dist12)) { // Uncertain (A)
                 ++pos2;
             } else {
                 ++pos1;
@@ -237,8 +251,8 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
     pos2 = 0;
     cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
 
-    if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) ||  // Uncertain
-        certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
+    if (possibly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) ||  // Uncertain (A)
+        possibly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return false;
     }
 
@@ -282,11 +296,11 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
             auto dist12 =
                 CGAL::squared_distance(curve1[pos1 + 1], curve2[pos2 + 1]);
 
-            if (dist1 <= distance_sqr && dist1 < dist2 && dist1 < dist12) { // Uncertain
+            if (certainly(dist1 <= distance_sqr) && possibly(dist1 < dist2) && possibly(dist1 < dist12)) { // Uncertain (A)
                 ++pos1;
-            } else if (dist2 <= distance_sqr && dist2 < dist12) {
+            } else if (certainly(dist2 <= distance_sqr) && possibly(dist2 < dist12)) {
                 ++pos2;
-            } else if (dist12 <= distance_sqr) {
+            } else if (certainly(dist12 <= distance_sqr)) {
                 ++pos1;
                 ++pos2;
             } else {
@@ -311,7 +325,7 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
                     CGAL::squared_distance(curve1[new_pos1], curve2[pos2]);
                 auto dist_after_step2 =
                     CGAL::squared_distance(curve1[pos1], curve2[new_pos2]);
-                if (dist_after_step1 <= dist_after_step2) {
+                if (possibly(dist_after_step1 <= dist_after_step2)) {
                     pos1 = new_pos1;
                 } else {
                     pos2 = new_pos2;
@@ -351,8 +365,8 @@ bool Filter::adaptiveSimultaneousGreedy()
     PointID pos2 = 0;
     cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
 
-    if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain
-        certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
+    if (possibly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain (A)
+        possibly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return false;
     }
 
@@ -395,11 +409,11 @@ bool Filter::adaptiveSimultaneousGreedy()
             auto dist12 =
                 CGAL::squared_distance(curve1[pos1 + 1], curve2[pos2 + 1]);
 
-            if (dist1 <= distance_sqr && dist1 < dist2 && dist1 < dist12) { // Uncertain
+            if (certainly(dist1 <= distance_sqr) && possibly(dist1 < dist2) && possibly(dist1 < dist12)) { // Uncertain (A)
                 ++pos1;
-            } else if (dist2 <= distance_sqr && dist2 < dist12) {
+            } else if (certainly(dist2 <= distance_sqr) && possibly(dist2 < dist12)) {
                 ++pos2;
-            } else if (dist12 <= distance_sqr) {
+            } else if (certainly(dist12 <= distance_sqr)) {
                 ++pos1;
                 ++pos2;
             } else {
@@ -449,7 +463,7 @@ bool Filter::negative(PointID position1, PointID position2)
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
 
-    if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain
+    if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain (A)
         certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return true;
     }

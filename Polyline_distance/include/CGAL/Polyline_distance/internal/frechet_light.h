@@ -1104,8 +1104,8 @@ bool FrechetLight::lessThanWithFilters(distance_t const& distance, Curve const& 
     assert(curve1.size());
     assert(curve2.size());
 
-    if (CGAL::squared_distance(curve1[0], curve2[0]) > dist_sqr ||          // Uncertain
-        CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr) {
+    if (certainly(CGAL::squared_distance(curve1[0], curve2[0]) > dist_sqr) ||          // Uncertain (A)
+        certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr)) {
         return false;
     }
     if (curve1.size() == 1 && curve2.size() == 1) {
