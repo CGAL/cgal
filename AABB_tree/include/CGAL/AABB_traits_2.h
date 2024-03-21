@@ -21,11 +21,12 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
+#include <CGAL/AABB_tree/internal/AABB_traits_base.h>
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/Remove_optional.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
-#include <CGAL/AABB_traits_3.h>  // for Remove_optional
 #include <CGAL/Search_traits_2.h>
 #include <optional>
 
@@ -172,7 +173,7 @@ public:
         std::declval<typename Primitive::Datum>())) Intersection_type;
 
     typedef std::pair<
-      typename internal::AABB_tree::Remove_optional<Intersection_type>::type,
+      typename internal::Remove_optional<Intersection_type>::type,
       typename Primitive::Id > Type;
   };
 

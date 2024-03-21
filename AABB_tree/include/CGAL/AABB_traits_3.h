@@ -21,9 +21,11 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
+#include <CGAL/AABB_tree/internal/AABB_traits_base.h>
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/Remove_optional.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 #include <CGAL/Search_traits_3.h>
 
@@ -34,30 +36,6 @@
 namespace CGAL {
 
 namespace internal{  namespace AABB_tree {
-
-template <class T>
-struct Remove_optional  { typedef T type; };
-
-template <class T>
-struct Remove_optional< ::std::optional<T> >  { typedef T type; };
-
-//helper controlling whether extra data should be stored in the AABB_tree traits class
-template <class Primitive, bool has_shared_data=Has_nested_type_Shared_data<Primitive>::value>
-struct AABB_traits_base;
-
-template <class Primitive>
-struct AABB_traits_base<Primitive,false>{};
-
-template <class Primitive>
-struct AABB_traits_base<Primitive,true>{
-  typename  Primitive::Shared_data m_primitive_data;
-
-  template <typename ... T>
-  void set_shared_data(T&& ... t){
-    m_primitive_data=Primitive::construct_shared_data(std::forward<T>(t)...);
-  }
-  const typename Primitive::Shared_data& shared_data() const {return m_primitive_data;}
-};
 
 // AABB_traits_intersection_base brings in the Intersection_distance predicate,
 // if GeomTraits is a model RayIntersectionGeomTraits.
@@ -195,7 +173,7 @@ public:
         std::declval<typename Primitive::Datum>())) Intersection_type;
 
     typedef std::pair<
-      typename internal::AABB_tree::Remove_optional<Intersection_type>::type,
+      typename internal::Remove_optional<Intersection_type>::type,
       typename Primitive::Id > Type;
   };
 
