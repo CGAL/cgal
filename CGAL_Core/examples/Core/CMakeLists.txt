@@ -9,4 +9,5 @@ if(NOT CGAL_Core_FOUND)
   return()
 endif()
 
+create_single_source_cgal_program("zero-one.cpp")
 create_single_source_cgal_program("delaunay.cpp")
