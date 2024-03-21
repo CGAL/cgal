@@ -47,7 +47,6 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
   typedef typename MeshDomain::Index Index;
   typedef typename std::pair<Point_3, Index> PI;
   typedef std::vector<PI> Initial_points_vector;
-  typedef typename Initial_points_vector::iterator Ipv_iterator;
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef CGAL::Mesh_3::Triangulation_helpers<typename C3T3::Triangulation> Th;
 
