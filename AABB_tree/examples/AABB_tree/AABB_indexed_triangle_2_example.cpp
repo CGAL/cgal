@@ -6,12 +6,10 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_2.h>
 #include <CGAL/AABB_indexed_triangle_primitive_2.h>
-#include <CGAL/Projection_traits_xy_3.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
-typedef K::Point_2 Point;
-typedef K::Vector_2 Vector;
+typedef K::Point_2 Point_2;
 typedef K::Ray_2 Ray;
 
 template <class GeomTraits>
