@@ -23,6 +23,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_segment_primitive.h>
 
 #include <optional>
 #include <boost/container/small_vector.hpp>
@@ -60,13 +61,21 @@ class Tetrahedral_remeshing_smoother
   using AABB_triangle_traits = CGAL::AABB_traits<Gt, Triangle_primitive>;
   using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
 
+  using Segment_vec = std::vector<typename Gt::Segment_3>;
+  using Segment_iter = typename Segment_vec::iterator;
+  using Segment_primitive = CGAL::AABB_segment_primitive<Gt, Segment_iter>;
+  using AABB_segment_traits = CGAL::AABB_traits<Gt, Segment_primitive>;
+  using AABB_segment_tree = CGAL::AABB_tree<AABB_segment_traits>;
+
 private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
   std::vector<FMLS> subdomain_FMLS;
   std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
 
   Triangle_vec m_aabb_triangles;
-  AABB_triangle_tree m_aabb_tree;
+  AABB_triangle_tree m_triangles_aabb_tree;
+  Segment_vec m_aabb_segments;
+  AABB_segment_tree m_segments_aabb_tree;
 
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
@@ -110,7 +119,7 @@ public:
                       c3t3);
 
     // Build AABB tree
-    build_aabb_tree(c3t3);
+    build_aabb_trees(c3t3);
   }
 
   void start_flip_smooth_steps(const C3t3& c3t3)
@@ -195,15 +204,23 @@ private:
     }
   }
 
-  void build_aabb_tree(const C3t3& c3t3)
+  void build_aabb_trees(const C3t3& c3t3)
   {
     for (const Facet& f : c3t3.facets_in_complex())
     {
       const Triangle_3 t = c3t3.triangulation().triangle(f);
       m_aabb_triangles.push_back(t);
     }
-    m_aabb_tree.rebuild(m_aabb_triangles.begin(), m_aabb_triangles.end());
-    m_aabb_tree.accelerate_distance_queries();
+    m_triangles_aabb_tree.rebuild(m_aabb_triangles.begin(), m_aabb_triangles.end());
+    m_triangles_aabb_tree.accelerate_distance_queries();
+
+    for (const Edge& e : c3t3.edges_in_complex())
+    {
+      const Segment_3 s = c3t3.triangulation().segment(e);
+      m_aabb_segments.push_back(s);
+    }
+    m_segments_aabb_tree.rebuild(m_aabb_segments.begin(), m_aabb_segments.end());
+    m_segments_aabb_tree.accelerate_distance_queries();
   }
 
   template<typename IncCellsVector>
@@ -690,6 +707,11 @@ private:
 
       const Point_3 smoothed_position = current_pos + move;
 
+#ifdef CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
+      const Point_3 new_pos = m_segments_aabb_tree.closest_point(smoothed_position);
+
+#else //CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
+
       Vector_3 sum_projections = CGAL::NULL_VECTOR;
       Point_3 tmp_pos = current_pos;
 
@@ -706,6 +728,7 @@ private:
 #endif
 
       const Point_3 new_pos = current_pos + sum_projections;
+#endif //CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       os_surf << "2 " << current_pos << " " << new_pos << std::endl;
@@ -772,7 +795,6 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
   std::ofstream os_smooth("dump_smoothed_positions_surf.polylines.txt");
 
-
   // iterate over map of <vertex, id>
   for (auto [v, vid] : m_vertex_id)
   {
@@ -793,8 +815,8 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       os_smooth << "2 " << point(v->point()) << " " << smoothed_position << std::endl;
 
 #ifdef CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
-      Point_3 new_pos;
-      if (m_aabb_tree.squared_distance(smoothed_position) < 1e-6)
+      Point_3 new_pos;// = project_on_aabb_tree(smoothed_position, v, si);
+      if (m_triangles_aabb_tree.squared_distance(smoothed_position) < 1e-6)
       {
         new_pos = smoothed_position;
       }
@@ -803,9 +825,9 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
         const auto n = vertices_normals.at(v).at(si);
         const auto ray = tr.geom_traits().construct_ray_3_object()(current_pos, n);
 
-        auto proj = m_aabb_tree.first_intersection(ray);
+        auto proj = m_triangles_aabb_tree.first_intersection(ray);
         if(proj == std::nullopt)
-          proj = m_aabb_tree.first_intersection(
+          proj = m_triangles_aabb_tree.first_intersection(
             tr.geom_traits().construct_opposite_ray_3_object()(ray));
 
         CGAL_assertion(proj != std::nullopt);
