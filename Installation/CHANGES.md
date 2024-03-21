@@ -35,7 +35,6 @@ Release date: October 2023
 - **Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
 
 - Passed the base class of `Env_plane_traits_3` as a template parameter with a default value (being the 2D arrangement linear traits). Similarly, passed the base class of `Env_triangle_traits_3` as a template parameter with a default value (being the 2D arrangement segment traits).
->>>>>>> cgal/master
 
 ### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps) and [Generalized Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgGeneralizedMaps)
 
