@@ -356,12 +356,12 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple,
         // heuristic tests avoiding sqrts
         auto comp_dist1 = distance - maxdist;
         auto comp_dist2 = distance + maxdist;
-        if ((comp_dist1 > 0 && mid_dist_sqr <= CGAL::square(comp_dist1))) { // Uncertain
+        if ((certainly(comp_dist1 > 0) && certainly(mid_dist_sqr <= CGAL::square(comp_dist1)))) { // Uncertain
             qsimple.setFreeInterval(min, max);  // full
             qsimple.validate();
 
             return true;
-        } else if (mid_dist_sqr > CGAL::square(comp_dist2)) { // Uncertain
+        } else if (certainly(mid_dist_sqr > CGAL::square(comp_dist2))) { // Uncertain
             qsimple.setFreeInterval(max, min);  // empty
             qsimple.validate();
 
@@ -1061,10 +1061,10 @@ bool FrechetLight::lessThan(distance_t const& distance, Curve const& curve1,
     if (curve1.empty() || curve2.empty()) {
         return false;
     }
-    if (CGAL::squared_distance(curve1.front(), curve2.front()) > dist_sqr) { // Uncertain
+    if (certainly(CGAL::squared_distance(curve1.front(), curve2.front()) > dist_sqr)) { // Uncertain
         return false;
     }
-    if (CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr) { // Uncertain
+    if (certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr)) { // Uncertain
         return false;
     }
 
@@ -1285,13 +1285,13 @@ Certificate& FrechetLight::computeCertificate()
 
     // TODO test handling of special cases!
     // special cases:
-    if (CGAL::squared_distance(curve1.front(), curve2.front()) > dist_sqr) { // Uncertain
+    if (certainly(CGAL::squared_distance(curve1.front(), curve2.front()) > dist_sqr)) { // Uncertain
         cert.setAnswer(false);
         cert.addPoint({CPoint(0, 0), CPoint(0, 0)});
         cert.validate();
         return cert;
     }
-    if (CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr) { // Uncertain
+    if (certainly(CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr)) { // Uncertain
         cert.setAnswer(false);
         cert.addPoint(
             {CPoint(curve1.size() - 1, 0), CPoint(curve2.size() - 1, 0)});
