@@ -115,6 +115,14 @@ template <> class Algebraic_structure_traits< CORE::Expr >
         };  */
     };
 
+    class Is_zero
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& x ) const {
+          return x.isZero();
+        }
+    };
+
 };
 
 template <> class Real_embeddable_traits< CORE::Expr >
