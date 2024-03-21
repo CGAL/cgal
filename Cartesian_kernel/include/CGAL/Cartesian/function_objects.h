@@ -3278,8 +3278,6 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_2    Point_2;
     typedef typename K::Line_2     Line_2;
-    typedef typename K::Segment_2  Segment_2;
-    typedef typename K::Triangle_2 Triangle_2;
   public:
     typedef Point_2                result_type;
 
@@ -3291,14 +3289,6 @@ namespace CartesianKernelFunctors {
       line_project_pointC2(l.a(), l.b(), l.c(), p.x(), p.y(), x, y);
       return construct_point_2(x, y);
     }
-
-    Point_2
-    operator()( const Segment_2& s, const Point_2& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_2<K>()(s, p, K()); }
-
-    Point_2
-    operator()( const Triangle_2& t, const Point_2& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_2<K>()(t, p, K()); }
   };
 
 
