@@ -28,7 +28,7 @@ Value type of the `Squared_distance` functor.
 typedef unspecified_type FT;
 
 /*!
-Type of a 3D point.
+Type of a point.
 */
 typedef unspecified_type Point;
 

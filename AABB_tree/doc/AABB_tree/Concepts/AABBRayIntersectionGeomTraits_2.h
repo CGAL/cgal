@@ -22,12 +22,12 @@ define the Intersection_distance functor.
 class AABBRayIntersectionGeomTraits_2 {
 public:
   /*!
-    Type of a 3D ray.
+    Type of a 2D ray.
   */
   typedef unspecified_type Ray_2;
 
   /*!
-    Type of a 3D vector.
+    Type of a 2D vector.
   */
   typedef unspecified_type Vector_2;
 
@@ -42,12 +42,12 @@ public:
   Construct_source_2 construct_source_2_object();
 
   /*!
-    A model of `CartesianConstIterator3`.
+    A model of `CartesianConstIterator2`.
    */
   typedef unspecified_type Cartesian_const_iterator_2;
 
   /*!
-    A model of `ConstructCartesianConstIterator3`.
+    A model of `ConstructCartesianConstIterator2`.
    */
   typedef unspecified_type  Construct_cartesian_const_iterator_2;
 

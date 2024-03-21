@@ -204,7 +204,7 @@ std::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primiti
 AABB_tree<AABBTraits>::first_intersection(const Ray& query,
                                           const SkipFunctor& skip) const {
   static_assert(std::is_same<Ray, typename AABBTraits::Ray>::value,
-                            "Ray and Ray_3 must be the same type");
+                            "Ray and AABBTraits::Ray must be the same type");
 
   switch(size()) // copy-paste from AABB_tree::traversal
   {

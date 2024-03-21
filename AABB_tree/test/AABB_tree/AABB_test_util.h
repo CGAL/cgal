@@ -322,7 +322,7 @@ class Naive_implementations
   typedef typename Traits::Object_and_primitive_id Object_and_primitive_id;
   typedef typename Pr::Id Primitive_id;
   typedef typename Traits::FT FT;
-  typedef typename Traits::Point_3 Point;
+  typedef typename Traits::Point Point;
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef std::optional<Object_and_primitive_id> Intersection_result;

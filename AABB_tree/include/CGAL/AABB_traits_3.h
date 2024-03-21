@@ -69,11 +69,8 @@ struct AABB_traits_intersection_base<GeomTraits,false>{};
 
 template <typename GeomTraits>
 struct AABB_traits_intersection_base<GeomTraits,true>{
-  typedef typename GeomTraits::Ray_3 Ray_3;
   typedef typename GeomTraits::Ray_3 Ray;
-  typedef typename GeomTraits::Point_3 Point_3;
   typedef typename GeomTraits::Point_3 Point;
-  typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::FT    FT;
   typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
@@ -88,7 +85,7 @@ struct AABB_traits_intersection_base<GeomTraits,true>{
   typedef typename CGAL::Bbox_3      Bounding_box;
 
   struct Intersection_distance {
-    std::optional<FT> operator()(const Ray_3& ray, const Bounding_box& bbox) const {
+    std::optional<FT> operator()(const Ray& ray, const Bounding_box& bbox) const {
       FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
       FT t_far = DBL_MAX;
 
@@ -112,13 +109,6 @@ struct AABB_traits_intersection_base<GeomTraits,true>{
 
           t_near = (std::max)(t_near, (std::min)(t1, t2));
           t_far = (std::min)(t_far, (std::max)(t1, t2));
-
-          // if(t1 > t2)
-          //   std::swap(t1, t2);
-          // if(t1 > t_near)
-          //   t_near = t1;
-          // if(t2 < t_far)
-          //   t_far = t2;
 
           if(t_near > t_far || t_far < FT(0.))
             return std::nullopt;
@@ -213,11 +203,8 @@ public:
   /// \name Types
   /// @{
 
-  /// Point query type.
-  typedef typename GeomTraits::Point_3 Point_3;
-
-  /// Poin type
-  typedef Point_3 Point; // because the AABB_tree is dimension agnostic
+  /// Point type
+  typedef typename GeomTraits::Point_3 Point; // because the AABB_tree is dimension agnostic
 
   /// additional types for the search tree, required by the RangeSearchTraits concept
   /// \bug This is not documented for now in the AABBTraits concept.
@@ -384,7 +371,7 @@ public:
 
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {
-      typedef typename AT::Point_3 Point;
+      typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
     const AABB_traits_3<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
@@ -408,7 +395,7 @@ public:
   // do_intersect to something like does_contain (this is what we compute,
   // this is not the same do_intersect as the spherical kernel)
   class Compare_distance {
-      typedef typename AT::Point_3 Point;
+      typedef typename AT::Point Point;
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:

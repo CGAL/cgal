@@ -46,11 +46,8 @@ struct AABB_traits_intersection_base_2<GeomTraits,false>{};
 
 template <typename GeomTraits>
 struct AABB_traits_intersection_base_2<GeomTraits,true>{
-  typedef typename GeomTraits::Ray_2 Ray_2;
   typedef typename GeomTraits::Ray_2 Ray;
-  typedef typename GeomTraits::Point_2 Point_2;
   typedef typename GeomTraits::Point_2 Point;
-  typedef typename GeomTraits::Vector_2 Vector_2;
   typedef typename GeomTraits::Vector_2 Vector;
   typedef typename GeomTraits::FT    FT;
   typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator_2;
@@ -65,7 +62,7 @@ struct AABB_traits_intersection_base_2<GeomTraits,true>{
   typedef typename CGAL::Bbox_2      Bounding_box;
 
   struct Intersection_distance {
-    std::optional<FT> operator()(const Ray_2& ray, const Bounding_box& bbox) const {
+    std::optional<FT> operator()(const Ray& ray, const Bounding_box& bbox) const {
       FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
       FT t_far = DBL_MAX;
 
@@ -73,8 +70,8 @@ struct AABB_traits_intersection_base_2<GeomTraits,true>{
         = GeomTraits().construct_cartesian_const_iterator_2_object();
       const Construct_source_2 construct_source_2 = GeomTraits().construct_source_2_object();
       const Construct_vector_2 construct_vector_2 = GeomTraits().construct_vector_2_object();
-      const Point_2 source = construct_source_2(ray);
-      const Vector_2 direction = construct_vector_2(ray);
+      const Point source = construct_source_2(ray);
+      const Vector direction = construct_vector_2(ray);
       Cartesian_const_iterator_2 source_iter = construct_cartesian_const_iterator_2(source);
       Cartesian_const_iterator_2 direction_iter = construct_cartesian_const_iterator_2(direction);
 
@@ -89,13 +86,6 @@ struct AABB_traits_intersection_base_2<GeomTraits,true>{
 
           t_near = (std::max)(t_near, (std::min)(t1, t2));
           t_far = (std::min)(t_far, (std::max)(t1, t2));
-
-          // if(t1 > t2)
-          //   std::swap(t1, t2);
-          // if(t1 > t_near)
-          //   t_near = t1;
-          // if(t2 < t_far)
-          //   t_far = t2;
 
           if(t_near > t_far || t_far < FT(0.))
             return std::nullopt;
@@ -190,13 +180,10 @@ public:
   /// \name Types
   /// @{
 
-  /// Point query type.
-  typedef typename GeomTraits::Point_2 Point_2;
-
   /// <summary>
   /// point type
   /// </summary>
-  typedef Point_2 Point;
+  typedef typename GeomTraits::Point_2 Point;
 
   /// additional types for the search tree, required by the RangeSearchTraits concept
   /// \bug This is not documented for now in the AABBTraits concept.
@@ -360,7 +347,7 @@ public:
 
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {
-      typedef typename AT::Point_2 Point;
+      typedef typename AT::Point Point;
       typedef typename AT::Primitive Primitive;
     const AABB_traits_2<GeomTraits,AABBPrimitive, BboxMap>& m_traits;
   public:
@@ -384,7 +371,7 @@ public:
   // do_intersect to something like does_contain (this is what we compute,
   // this is not the same do_intersect as the spherical kernel)
   class Compare_distance {
-      typedef typename AT::Point_2 Point;
+      typedef typename AT::Point Point;
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
