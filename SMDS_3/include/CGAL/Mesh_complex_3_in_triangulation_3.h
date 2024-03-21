@@ -1426,15 +1426,20 @@ public:
   void clear_cells_and_facets_from_c3t3()
   {
     //clear cells
-    for (Cell_handle cit : this->triangulation().all_cell_handles())
+    for (typename Tr::All_cells_iterator cit = this->triangulation().all_cells_begin();
+         cit != this->triangulation().all_cells_end();
+         ++cit)
     {
       set_subdomain_index(cit, Subdomain_index());
     }
     this->number_of_cells_ = 0;
 
     //clear facets
-    for (const Facet& facet : this->triangulation().all_facets())
+    for (typename Tr::All_facets_iterator fit = this->triangulation().all_facets_begin();
+         fit != this->triangulation().all_facets_end();
+         ++fit)
     {
+      const auto& facet = *fit;
       set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
       if (this->triangulation().dimension() > 2) {
         const Facet& mirror = tr_.mirror_facet(facet);
