@@ -37,16 +37,16 @@ namespace CGAL {
 
 namespace internal{  namespace AABB_tree {
 
-// AABB_traits_intersection_base brings in the Intersection_distance predicate,
+// AABB_traits_intersection_base_3 brings in the Intersection_distance predicate,
 // if GeomTraits is a model RayIntersectionGeomTraits.
 template <typename GeomTraits, bool ray_intersection_geom_traits=Is_ray_intersection_geomtraits<GeomTraits>::value>
-struct AABB_traits_intersection_base;
+struct AABB_traits_intersection_base_3;
 
 template <typename GeomTraits>
-struct AABB_traits_intersection_base<GeomTraits,false>{};
+struct AABB_traits_intersection_base_3<GeomTraits,false>{};
 
 template <typename GeomTraits>
-struct AABB_traits_intersection_base<GeomTraits,true>{
+struct AABB_traits_intersection_base_3<GeomTraits,true>{
   typedef typename GeomTraits::Ray_3 Ray;
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::Vector_3 Vector;
@@ -145,7 +145,7 @@ template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default
 class AABB_traits_3
 #ifndef DOXYGEN_RUNNING
 : public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
-  public internal::AABB_tree::AABB_traits_intersection_base<GeomTraits>,
+  public internal::AABB_tree::AABB_traits_intersection_base_3<GeomTraits>,
   public Search_traits_3<GeomTraits>
 #endif
 {
@@ -183,6 +183,7 @@ public:
 
   /// Point type
   typedef typename GeomTraits::Point_3 Point; // because the AABB_tree is dimension agnostic
+  typedef typename GeomTraits::Point_3 Point_3;
 
   /// additional types for the search tree, required by the RangeSearchTraits concept
   /// \bug This is not documented for now in the AABBTraits concept.

@@ -185,6 +185,7 @@ public:
   /// point type
   /// </summary>
   typedef typename GeomTraits::Point_2 Point;
+  typedef typename GeomTraits::Point_2 Point_2;
 
   /// additional types for the search tree, required by the RangeSearchTraits concept
   /// \bug This is not documented for now in the AABBTraits concept.
