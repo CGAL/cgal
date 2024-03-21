@@ -32,12 +32,11 @@ struct Projection_xy_point_map {
 
 typedef std::vector<std::array<uint8_t, 3> >::iterator IndexIterator;
 typedef std::vector<Point_3> PointRange;
-typedef CGAL::AABB_indexed_triangle_primitive_2<K, IndexIterator, PointRange, Projection_xy_point_map<K>> Primitive;
+typedef CGAL::AABB_indexed_triangle_primitive_2<K, IndexIterator, PointRange, CGAL::Tag_false, Projection_xy_point_map<K>> Primitive;
 typedef CGAL::AABB_traits_2<K, Primitive> AABB_triangle_traits;
 typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
 typedef std::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
-
 
 int main()
 {
@@ -61,20 +60,20 @@ int main()
 
   // point sampling
   Point_and_primitive_id id;
-  id = tree.closest_point_and_primitive(Point(0.5, 0.4));
+  id = tree.closest_point_and_primitive(Point_2(0.5, 0.4));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(0.5, 0.6));
+  id = tree.closest_point_and_primitive(Point_2(0.5, 0.6));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(1.5, 0.5));
+  id = tree.closest_point_and_primitive(Point_2(1.5, 0.5));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(1.5, 0.6));
+  id = tree.closest_point_and_primitive(Point_2(1.5, 0.6));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(1.0, 0.0));
+  id = tree.closest_point_and_primitive(Point_2(1.0, 0.0));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
-  id = tree.closest_point_and_primitive(Point(3.0, 0.5));
+  id = tree.closest_point_and_primitive(Point_2(3.0, 0.5));
   std::cout << std::distance(triangles.begin(), id.second) << ". triangle" << std::endl;
 
-  Ray ray(Point(5.5, 0.5), Point(1.5, 0.5));
+  Ray ray(Point_2(5.5, 0.5), Point_2(1.5, 0.5));
   Ray_intersection intersection = tree.first_intersection(ray);
 
   if (!intersection) {
@@ -84,6 +83,9 @@ int main()
   else {
     std::cout << std::distance(triangles.begin(), intersection->second) << ". triangle" << std::endl;
   }
+
+  std::list<Ray_intersection> intersections;
+  tree.all_intersections(ray, std::back_inserter(intersections));
 
   return EXIT_SUCCESS;
 }
