@@ -76,6 +76,7 @@ private:
   AABB_triangle_tree m_triangles_aabb_tree;
   Segment_vec m_aabb_segments;
   AABB_segment_tree m_segments_aabb_tree;
+  FT m_aabb_epsilon;
 
   const SizingFunction& m_sizing;
   const CellSelector& m_cell_selector;
@@ -162,7 +163,7 @@ private:
   {
     // when flip-smooth steps start,
     // m_free_vertices should already be initialized
-    // ny the last smoothing step.
+    // by the last smoothing step.
     // Then, it does not need to be recomputed
     // because no vertices are inserted nor removed anymore
     if (m_flip_smooth_steps)
@@ -206,6 +207,7 @@ private:
 
   void build_aabb_trees(const C3t3& c3t3)
   {
+    // build AABB tree of facets in complex
     for (const Facet& f : c3t3.facets_in_complex())
     {
       const Triangle_3 t = c3t3.triangulation().triangle(f);
@@ -214,6 +216,7 @@ private:
     m_triangles_aabb_tree.rebuild(m_aabb_triangles.begin(), m_aabb_triangles.end());
     m_triangles_aabb_tree.accelerate_distance_queries();
 
+    // build AABB tree of edges in complex
     for (const Edge& e : c3t3.edges_in_complex())
     {
       const Segment_3 s = c3t3.triangulation().segment(e);
@@ -221,6 +224,12 @@ private:
     }
     m_segments_aabb_tree.rebuild(m_aabb_segments.begin(), m_aabb_segments.end());
     m_segments_aabb_tree.accelerate_distance_queries();
+
+    // compute epsilon for AABB tree of facets
+    const CGAL::Bbox_3& bb = m_triangles_aabb_tree.bbox();
+    m_aabb_epsilon = 1e-3 * (std::min)(bb.xmax() - bb.xmin(),
+                            (std::min)(bb.ymax() - bb.ymin(),
+                                       bb.zmax() - bb.zmin()));
   }
 
   template<typename IncCellsVector>
@@ -793,8 +802,6 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
     }
   }
 
-  std::ofstream os_smooth("dump_smoothed_positions_surf.polylines.txt");
-
   // iterate over map of <vertex, id>
   for (auto [v, vid] : m_vertex_id)
   {
@@ -803,22 +810,26 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
     const std::size_t nb_neighbors = neighbors[vid];
     const Point_3 current_pos = point(v->point());
-    const Surface_patch_index si = vertices_surface_indices.at(v)[0];
+
+    const auto& incident_surface_patches = vertices_surface_indices.at(v);
+    if (incident_surface_patches.size() > 1)
+      continue;
+    const Surface_patch_index si = incident_surface_patches[0];
 
     CGAL_assertion(si != Surface_patch_index());
-    CGAL_assertion(si == surface_patch_index(v, c3t3));
+    CGAL_assertion_code(auto siv = surface_patch_index(v, c3t3));
+    CGAL_assertion(si == siv);
 
     if (nb_neighbors > 1)
     {
       const Vector_3 move = smoothed_positions[vid] / masses[vid];
       const Point_3 smoothed_position = point(v->point()) + move;
-      os_smooth << "2 " << point(v->point()) << " " << smoothed_position << std::endl;
 
 #ifdef CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
-      Point_3 new_pos;// = project_on_aabb_tree(smoothed_position, v, si);
-      if (m_triangles_aabb_tree.squared_distance(smoothed_position) < 1e-6)
+      Point_3 new_pos;
+      if (m_triangles_aabb_tree.squared_distance(smoothed_position) < m_aabb_epsilon)
       {
-        new_pos = smoothed_position;
+        new_pos = m_triangles_aabb_tree.closest_point(smoothed_position);
       }
       else
       {
@@ -867,20 +878,23 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
     }
     else if (nb_neighbors > 0)
     {
-      std::optional<Point_3> mls_projection = project(si, current_pos);
-      if (mls_projection != std::nullopt)
-      {
-        const Point_3 new_pos = *mls_projection;
-        if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
-          nb_done_2d++;
-        }
+#ifdef CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
+      const Point_3 new_pos = m_segments_aabb_tree.closest_point(current_pos);
+#else
+      std::optional<Point_3> mls_proj = project(si, current_pos);
+      if (mls_proj == std::nullopt)
+        continue;
+
+      const Point_3 new_pos = *proj;
+#endif
+      if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
+        nb_done_2d++;
+      }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         os_surf0 << "2 " << current_pos << " " << new_pos << std::endl;
 #endif
-      }
     }
   }
-  os_smooth.close();
 
   return nb_done_2d;
 }
