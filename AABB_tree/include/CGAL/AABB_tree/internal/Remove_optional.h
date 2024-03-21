@@ -14,9 +14,9 @@
 #ifndef CGAL_REMOVE_OPTIONAL_H_
 #define CGAL_REMOVE_OPTIONAL_H_
 
-#include <optional>
 #include <CGAL/license/AABB_tree.h>
 
+#include <optional>
 
 namespace CGAL {
 namespace internal {

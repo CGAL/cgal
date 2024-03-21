@@ -11,10 +11,12 @@
 // Author(s) : Stéphane Tayeb, Pierre Alliez, Camille Wormser
 //
 
-#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
-
 #ifndef CGAL_AABB_TRAITS_BASE_H
 #define CGAL_AABB_TRAITS_BASE_H
+
+#include <CGAL/license/AABB_tree.h>
+
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 
 namespace CGAL {
 namespace internal {
