@@ -62,10 +62,9 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
   // Insert points and set their index and dimension
-  const Vertex_handle vhint = c3t3.triangulation().finite_vertices_begin();
   for (const PI& pi : initial_points)
   {
-    if(Th().inside_protecting_balls(c3t3.triangulation(), vhint, pi.first))
+    if(Th().inside_protecting_balls(c3t3.triangulation(), Vertex_handle(), pi.first))
       continue;
 
     Vertex_handle v = c3t3.triangulation().insert(cwp(pi.first));
