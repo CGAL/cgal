@@ -41,9 +41,9 @@ namespace CGAL {
 
   /**
    * Static data structure for efficient
-   * intersection and distance computations in 3D. It builds a
+   * intersection and distance computations in 2D and 3D. It builds a
    * hierarchy of axis-aligned bounding boxes (an AABB tree) from a set
-   * of 3D geometric objects, and can receive intersection and distance
+   * of geometric objects, and can receive intersection and distance
    * queries, provided that the corresponding predicates are
    * implemented in the traits class AABBTraits.
    * An instance of the class `AABBTraits` is internally stored.
@@ -74,8 +74,7 @@ namespace CGAL {
     /// Number type returned by the distance queries.
     typedef typename AABBTraits::FT FT;
 
-
-    /// Type of 3D point.
+    /// Type of point.
     typedef typename AABBTraits::Point Point;
 
     /// Type of input primitive.
@@ -86,7 +85,7 @@ namespace CGAL {
     typedef typename Primitives::size_type size_type;
     /// Type of bounding box.
     typedef typename AABBTraits::Bounding_box Bounding_box;
-    /// 3D Point and Primitive Id type
+    /// Point and Primitive Id type
     typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
     /// \deprecated
     typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;

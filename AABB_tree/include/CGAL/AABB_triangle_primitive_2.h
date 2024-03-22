@@ -51,7 +51,7 @@ namespace internal {
 
 /*!
  * \ingroup PkgAABBTreeRef
- * Primitive type that uses as identifier an iterator with a 3D triangle as `value_type`.
+ * Primitive type that uses as identifier an iterator with a 2D triangle as `value_type`.
  * The iterator from which the primitive is built should not be invalided
  * while the AABB tree holding the primitive is in use.
  *

@@ -44,7 +44,7 @@ Bounding box type.
 typedef unspecified_type Bounding_box;
 
 /*!
-3D Point and Primitive Id type
+Point and Primitive Id type
 */
 typedef std::pair<Point, Primitive::Id> Point_and_primitive_id;
 

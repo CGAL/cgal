@@ -34,7 +34,7 @@ public:
 /// \name Types
 /// @{
 /*!
-3D point type.
+Point type.
 */
 typedef unspecified_type Point;
 
@@ -78,7 +78,7 @@ returns the corresponding identifier. This identifier is only used as a referenc
 Id id();
 
 /*!
-returns a 3D point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
+returns a point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
 */
 Point_reference reference_point(const Shared_data& data);
 

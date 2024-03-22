@@ -128,7 +128,7 @@ template< typename AABBTraits>
 class AABB_tree;
 
 
-/// This traits class handles any type of 3D geometric
+/// This traits class handles any type of 2D geometric
 /// primitives provided that the proper intersection tests and
 /// constructions are implemented. It handles points, rays, lines and
 /// segments as query types for intersection detection and
@@ -165,8 +165,8 @@ class AABB_traits_2
 #endif
 {
   typedef typename CGAL::Object Object;
-public:
   typedef GeomTraits Geom_traits;
+public:
 
   typedef AABB_traits_2<GeomTraits, AABBPrimitive, BboxMap> AT;
   // AABBTraits concept types
@@ -200,7 +200,6 @@ public:
   /// point type
   /// </summary>
   typedef typename GeomTraits::Point_2 Point;
-  typedef typename GeomTraits::Point_2 Point_2;
 
   /// additional types for the search tree, required by the RangeSearchTraits concept
   /// \bug This is not documented for now in the AABBTraits concept.
