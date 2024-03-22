@@ -28,7 +28,6 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/extract_mean_curvature_flow_skeleton.h>
 
 #include <vector>
 #include <array>
@@ -134,42 +133,6 @@ private:
     }
 
     std::ofstream ofs("medial_axis.xyz");
-    for (auto p : points)
-      ofs << p.p << std::endl;
-    ofs.close();
-
-    return points;
-  }
-
-  std::vector<Point_with_info> skeleton_points(const Tr& tr) const
-  {
-    using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
-    using SM = CGAL::Surface_mesh<typename Tr::Geom_traits::Point_3>;
-    using Skeletonization = CGAL::Mean_curvature_flow_skeletonization<SM>;
-    using Skeleton = typename Skeletonization::Skeleton;
-    using Skeleton_vertex = typename Skeleton::vertex_descriptor;
-
-    C3t3 c3t3;
-    c3t3.triangulation() = tr;
-    c3t3.rescan_after_load_of_triangulation();
-
-    SM sm;
-    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, sm);
-    Skeleton skeleton;
-    CGAL::extract_mean_curvature_flow_skeleton(sm, skeleton);
-
-    std::vector<Point_with_info> points;
-    for (Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
-    {
-      for (auto vd : skeleton[v].vertices)
-      {
-        points.push_back(Point_with_info{skeleton[v].point});
-//        output << "2 " << skeleton[v].point << " "
-//               << get(CGAL::vertex_point, tmesh, vd) << "\n";
-      }
-    }
-
-    std::ofstream ofs("skeleton.xyz");
     for (auto p : points)
       ofs << p.p << std::endl;
     ofs.close();
