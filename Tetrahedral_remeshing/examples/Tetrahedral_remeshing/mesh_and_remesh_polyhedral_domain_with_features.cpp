@@ -1,3 +1,5 @@
+#define CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -44,7 +46,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/anchor.off");
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
   const int nb_iter = (argc > 2) ? atoi(argv[2]) : 5;
 
   std::ifstream input(fname);
@@ -73,6 +75,7 @@ int main(int argc, char* argv[])
   Mesh_criteria criteria(edge_size = size,
     facet_angle = 25,
     facet_size = size,
+    facet_distance = 0.1 * size,
     cell_radius_edge_ratio = 2,
     cell_size = size);
 
@@ -87,7 +90,8 @@ int main(int argc, char* argv[])
 
   // Remeshing
   CGAL::tetrahedral_isotropic_remeshing(tr, size,
-    CGAL::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter)
+    .edge_is_constrained_map(constraints_pmap));
 
   std::ofstream out("out_remeshed.mesh");
   CGAL::IO::write_MEDIT(out, tr);
