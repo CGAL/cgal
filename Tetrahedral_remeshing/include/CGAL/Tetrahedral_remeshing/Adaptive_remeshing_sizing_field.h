@@ -26,6 +26,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 
 #include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/Medial_axis_kd_tree.h>
@@ -38,6 +39,7 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
+
 /**
  * @class Adaptive_remeshing_sizing_field
  * @tparam Tr a triangulation
