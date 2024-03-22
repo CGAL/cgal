@@ -125,7 +125,7 @@ provided: a uniform and a curvature-adaptive sizing field. With `CGAL::Polygon_m
 all triangle edges are targeted to have equal lengths. With `CGAL::Polygon_mesh_processing::Adaptive_sizing_field`, triangle edge lengths depend on the local curvature --
 shorter edges appear in regions with a higher curvature and vice versa. The outline of the adaptive sizing
 field algorithm is available in \cgalCite{dunyach2013curvRemesh}. The distinction between uniform and adaptive
-sizing fields is depicted in figure \cgalFigureRef{uniform_and_adaptive}.
+sizing fields is depicted in \cgalFigureRef{uniform_and_adaptive}.
 
 As the number of iterations increases, the mesh tends to be smoother and closer to the target edge length.
 
@@ -602,7 +602,7 @@ reports all pairs of intersecting triangles.
 \subsubsection SIExample Self Intersections Example
 
 The following example illustrates the detection of self intersection in the `pig.off` mesh.
-The detected self-intersection is illustrated on Figure \cgalFigureRef{SelfIntersections}.
+The detected self-intersection is illustrated on \cgalFigureRef{SelfIntersections}.
 
 \cgalExample{Polygon_mesh_processing/self_intersections_example.cpp}
 

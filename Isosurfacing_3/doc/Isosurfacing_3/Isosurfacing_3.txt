@@ -57,7 +57,7 @@ A vertex is created for each grid edge with a sign change, i.e., where the edge 
 More specifically, the vertex position is computed via linear interpolation of
 the scalar field values evaluated at the cell corners forming the edge.
 These vertices are connected to form triangles within the cell, depending on the configuration
-of signs at the cell corners. Figure \cgalFigureRef{IsosurfacingMCCases} illustrates the configurations in 2D.
+of signs at the cell corners. \cgalFigureRef{IsosurfacingMCCases} illustrates the configurations in 2D.
 In 3D, there is no less than 33 cases (not shown) \cgalCite{cgal:c-mcctci-95}.
 
 \cgalFigureAnchor{IsosurfacingMCCases}
@@ -84,7 +84,7 @@ MC often generates more triangles, and more skinny triangles with small or large
 depicting the mesh edges in black in addition to the shaded facets.
 
 MC does not preserve the sharp features present in the isovalue of the input scalar field
-(see Figure \cgalFigureRef{IsosurfacingMCDC}).
+(see \cgalFigureRef{IsosurfacingMCDC}).
 
 \subsection SubSecTMC Topologically Correct Marching Cubes (TMC)
 

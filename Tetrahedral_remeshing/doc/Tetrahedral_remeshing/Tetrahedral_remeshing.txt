@@ -37,7 +37,7 @@ preserve the input topology of the geometric complex.
 
 The tetrahedral remeshing algorithm improves the quality of dihedral angles,
 while targeting the user-defined uniform sizing field and preserving the
-topology of the feature complex, as highlighted by Figure \cgalFigureRef{Remesh_liver}.
+topology of the feature complex, as highlighted by \cgalFigureRef{Remesh_liver}.
 
 Experimental evidence shows that a higher number of remeshing iterations
 leads to a mesh with a improved fidelity to the sizing criterion,

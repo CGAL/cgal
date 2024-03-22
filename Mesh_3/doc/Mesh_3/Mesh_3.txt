@@ -1364,7 +1364,7 @@ We provide below speed-up charts generated using the parallel version of the mes
 The machine used is a PC running Windows 7 64-bits with two 6-core Intel Xeon CPU X5660 clocked at 2.80 GHz
 with 32GB of RAM. The program has been compiled with Microsoft Visual C++ 2012 in Release mode.
 
-Figure \cgalFigureRef{figure_refinement_speedup} shows mesh refinement speed-up, and figure \cgalFigureRef{figure_lloyd_speedup}
+\cgalFigureRef{figure_refinement_speedup} shows mesh refinement speed-up, and \cgalFigureRef{figure_lloyd_speedup}
 shows Lloyd optimization speed-up. ODT optimization exhibits similar speed-up.
 
 \cgalFigureBegin{figure_refinement_speedup,refinement_speedup.png}

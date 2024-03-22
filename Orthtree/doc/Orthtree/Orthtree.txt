@@ -169,7 +169,7 @@ custom traversal that only traverses the first branch of the octree:
 
 \subsection Comparison of Traversals
 
-Figure \cgalFigureRef{Orthtree_traversal_fig} shows in which order
+\cgalFigureRef{Orthtree_traversal_fig} shows in which order
 nodes are visited depending on the traversal method used.
 
 \cgalFigureBegin{Orthtree_traversal_fig, quadtree_traversal.png}
