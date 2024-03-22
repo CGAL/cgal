@@ -47,14 +47,17 @@ struct AABB_traits_intersection_base_2<GeomTraits,false>{};
 
 template <typename GeomTraits>
 struct AABB_traits_intersection_base_2<GeomTraits,true>{
-  typedef typename GeomTraits::Ray_2 Ray;
-  typedef typename GeomTraits::Point_2 Point;
-  typedef typename GeomTraits::Vector_2 Vector;
+private:
   typedef typename GeomTraits::FT    FT;
-  typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator_2;
-  typedef typename GeomTraits::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator_2;
-  typedef typename GeomTraits::Construct_source_2 Construct_source_2;
-  typedef typename GeomTraits::Construct_vector_2 Construct_vector_2;
+  typedef typename GeomTraits::Point_2 Point;
+
+public:
+  typedef typename GeomTraits::Ray_2 Ray;
+  typedef typename GeomTraits::Vector_2 Vector;
+  typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator;
+  typedef typename GeomTraits::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator;
+  typedef typename GeomTraits::Construct_source_2 Construct_source;
+  typedef typename GeomTraits::Construct_vector_2 Construct_vector;
 
   // Defining Bounding_box and other types from the full AABB_traits_2
   // here is might seem strange, but otherwise we would need to use
@@ -62,19 +65,31 @@ struct AABB_traits_intersection_base_2<GeomTraits,true>{
   // code more.
   typedef typename CGAL::Bbox_2      Bounding_box;
 
+  static Construct_cartesian_const_iterator construct_cartesian_const_iterator_object() {
+    return GeomTraits().construct_cartesian_const_iterator_2_object();
+  }
+
+  static Construct_source construct_source_object() {
+    return GeomTraits().construct_source_2_object();
+  }
+
+  static Construct_vector construct_vector_object() {
+    return GeomTraits().construct_vector_2_object();
+  }
+
   struct Intersection_distance {
     std::optional<FT> operator()(const Ray& ray, const Bounding_box& bbox) const {
       FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
       FT t_far = DBL_MAX;
 
-      const Construct_cartesian_const_iterator_2 construct_cartesian_const_iterator_2
+      const Construct_cartesian_const_iterator construct_cartesian_const_iterator_2
         = GeomTraits().construct_cartesian_const_iterator_2_object();
-      const Construct_source_2 construct_source_2 = GeomTraits().construct_source_2_object();
-      const Construct_vector_2 construct_vector_2 = GeomTraits().construct_vector_2_object();
+      const Construct_source construct_source_2 = GeomTraits().construct_source_2_object();
+      const Construct_vector construct_vector_2 = GeomTraits().construct_vector_2_object();
       const Point source = construct_source_2(ray);
       const Vector direction = construct_vector_2(ray);
-      Cartesian_const_iterator_2 source_iter = construct_cartesian_const_iterator_2(source);
-      Cartesian_const_iterator_2 direction_iter = construct_cartesian_const_iterator_2(direction);
+      Cartesian_const_iterator source_iter = construct_cartesian_const_iterator_2(source);
+      Cartesian_const_iterator direction_iter = construct_cartesian_const_iterator_2(direction);
 
       for(int i = 0; i < 2; ++i, ++source_iter, ++direction_iter) {
         if(*direction_iter == 0) {

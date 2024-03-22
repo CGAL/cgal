@@ -17,11 +17,49 @@ distance of an intersection along a ray.
 */
 class AABBRayIntersectionTraits {
 public:
-
   /*!
     Type of a ray.
   */
   typedef unspecified_type Ray;
+
+  /*!
+    Type of a vector.
+  */
+  typedef unspecified_type Vector;
+
+  /*!
+    A functor object to construct the source point of a ray. Provides the operator:
+    `Point operator()(const Ray&);`
+   */
+  typedef unspecified_type Construct_source;
+
+  /*!
+   */
+  Construct_source construct_source_object();
+
+  /*!
+    A model of `CartesianConstIterator2` or `CartesianConstIterator3`, must compatible with `Vector`.
+   */
+  typedef unspecified_type Cartesian_const_iterator;
+
+  /*!
+    A model of `ConstructCartesianConstIterator2` or `ConstructCartesianConstIterator3`, must compatible with `Vector`.
+   */
+  typedef unspecified_type  Construct_cartesian_const_iterator;
+
+  /*!
+   */
+  Construct_source construct_cartesian_const_iterator_object();
+
+  /*!
+    A functor object to construct a vector giving the direction of a ray. Provides the operator:
+    `Vector operator()(const Ray&);`
+   */
+  typedef unspecified_type Construct_vector;
+
+  /*!
+   */
+  Construct_source construct_vector_object();
 
 
   /*!

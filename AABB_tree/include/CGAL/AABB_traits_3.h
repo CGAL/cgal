@@ -47,14 +47,9 @@ struct AABB_traits_intersection_base_3<GeomTraits,false>{};
 
 template <typename GeomTraits>
 struct AABB_traits_intersection_base_3<GeomTraits,true>{
-  typedef typename GeomTraits::Ray_3 Ray;
+private:
   typedef typename GeomTraits::Point_3 Point;
-  typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::FT    FT;
-  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
-  typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_3;
-  typedef typename GeomTraits::Construct_source_3 Construct_source_3;
-  typedef typename GeomTraits::Construct_vector_3 Construct_vector_3;
 
   // Defining Bounding_box and other types from the full AABB_traits_3
   // here is might seem strange, but otherwise we would need to use
@@ -62,19 +57,39 @@ struct AABB_traits_intersection_base_3<GeomTraits,true>{
   // code more.
   typedef typename CGAL::Bbox_3      Bounding_box;
 
+public:
+  typedef typename GeomTraits::Ray_3 Ray;
+  typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator;
+  typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator;
+  typedef typename GeomTraits::Construct_source_3 Construct_source;
+  typedef typename GeomTraits::Construct_vector_3 Construct_vector;
+
+  Construct_cartesian_const_iterator construct_cartesian_const_iterator_object() {
+    return GeomTraits().construct_cartesian_const_iterator_3_object();
+  }
+
+  Construct_source construct_source_object() {
+    return GeomTraits().construct_source_3_object();
+  }
+
+  Construct_vector construct_vector_object() {
+    return GeomTraits().construct_vector_3_object();
+  }
+
   struct Intersection_distance {
     std::optional<FT> operator()(const Ray& ray, const Bounding_box& bbox) const {
       FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
       FT t_far = DBL_MAX;
 
-      const Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3
+      const Construct_cartesian_const_iterator construct_cartesian_const_iterator
         = GeomTraits().construct_cartesian_const_iterator_3_object();
-      const Construct_source_3 construct_source_3 = GeomTraits().construct_source_3_object();
-      const Construct_vector_3 construct_vector_3 = GeomTraits().construct_vector_3_object();
-      const Point_3 source = construct_source_3(ray);
-      const Vector_3 direction = construct_vector_3(ray);
-      Cartesian_const_iterator_3 source_iter = construct_cartesian_const_iterator_3(source);
-      Cartesian_const_iterator_3 direction_iter = construct_cartesian_const_iterator_3(direction);
+      const Construct_source construct_source = GeomTraits().construct_source_3_object();
+      const Construct_vector construct_vector = GeomTraits().construct_vector_3_object();
+      const Point source = construct_source(ray);
+      const Vector direction = construct_vector(ray);
+      Cartesian_const_iterator source_iter = construct_cartesian_const_iterator(source);
+      Cartesian_const_iterator direction_iter = construct_cartesian_const_iterator(direction);
 
       for(int i = 0; i < 3; ++i, ++source_iter, ++direction_iter) {
         if(*direction_iter == 0) {

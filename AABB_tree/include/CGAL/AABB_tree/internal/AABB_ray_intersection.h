@@ -42,6 +42,7 @@ class AABB_ray_intersection {
 
   typedef typename AABBTree::template Intersection_and_primitive_id<Ray>::Type Ray_intersection_and_primitive_id;
   typedef typename Ray_intersection_and_primitive_id::first_type Ray_intersection;
+
 public:
   AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 
@@ -51,8 +52,7 @@ public:
     // nb_primitives through a variable in each Node on the stack. In
     // BVH_node::traversal this is done through the function parameter
     // nb_primitives in the recursion.
-        typedef
-          boost::heap::priority_queue< Node_ptr_with_ft, boost::heap::compare< std::greater<Node_ptr_with_ft> > >
+    typedef boost::heap::priority_queue< Node_ptr_with_ft, boost::heap::compare< std::greater<Node_ptr_with_ft> > >
           Heap_type;
 
     typename AABB_traits::Intersection
@@ -170,7 +170,7 @@ private:
     as_ray_param_visitor(const Ray* ray)
      : ray(ray), max_i(0)
     {
-      Vector v = ray->to_vector();
+      Vector v = AABB_traits().construct_vector_object()(*ray);
       for (int i=1; i<dimension; ++i)
         if( CGAL::abs(v[i]) > CGAL::abs(v[max_i]) )
           max_i = i;
@@ -187,8 +187,8 @@ private:
     }
 
     FT operator()(const Point& point) {
-      Vector x(ray->source(), point);
-      Vector v = ray->to_vector();
+      Vector x = Vector(AABB_traits().construct_source_object()(*ray), point);
+      Vector v = AABB_traits().construct_vector_object()(*ray);
 
       return x[max_i] / v[max_i];
     }
