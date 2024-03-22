@@ -28,8 +28,8 @@ namespace CGAL {
  *
  * The class `General_polygon_with_holes_2` models the concept
  * `GeneralPolygonWithHoles_2`. It represents a general polygon with holes.
- * It is parameterized with a type `Polygon` used to define the exposed
- * type `Polygon_2`. This type represents the outer boundary of the general
+ * It is parameterized with a type `Polygon_` used to define the exposed
+ * type `%Polygon_2`. This type represents the outer boundary of the general
  * polygon and each hole.
  *
  * \tparam Polygon_ must have input and output operators.
