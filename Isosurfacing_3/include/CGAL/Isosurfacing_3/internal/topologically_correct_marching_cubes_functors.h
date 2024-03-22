@@ -172,7 +172,7 @@ public:
     // construct triangles
     for(int t=0; t<16; t+=3)
     {
-      const int t_index = i_case * 16 + t;
+      const std::size_t t_index = i_case * 16 + t;
 
       // if(e_tris_list[t_index] == 0x7f)
       if(Cube_table::triangle_cases[t_index] == -1)
@@ -297,7 +297,7 @@ private:
                const FT i0,
                const std::array<Point_3, 8>& corners,
                const std::array<FT, 8>& values,
-               const int i_case)
+               const std::size_t i_case)
   {
     typename Geom_traits::Compute_x_3 x_coord = m_domain.geom_traits().compute_x_3_object();
     typename Geom_traits::Compute_y_3 y_coord = m_domain.geom_traits().compute_y_3_object();

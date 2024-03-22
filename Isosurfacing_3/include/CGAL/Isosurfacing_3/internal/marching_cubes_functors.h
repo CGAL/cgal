@@ -179,14 +179,14 @@ void MC_construct_vertices(const typename Domain::cell_descriptor& cell,
 // connects the vertices of one cell to form triangles
 template <typename Vertices,
           typename TriangleList>
-void MC_construct_triangles(const int i_case,
+void MC_construct_triangles(const std::size_t i_case,
                             const Vertices& vertices,
                             TriangleList& triangles)
 {
   // construct triangles
   for(int t=0; t<16; t+=3)
   {
-    const int t_index = i_case * 16 + t;
+    const std::size_t t_index = i_case * 16 + t;
 
     // if(e_tris_list[t_index] == 0x7f)
     if(Cube_table::triangle_cases[t_index] == -1)
