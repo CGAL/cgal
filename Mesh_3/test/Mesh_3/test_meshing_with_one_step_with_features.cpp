@@ -33,7 +33,7 @@ typedef CGAL::Mesh_3::Mesher_3<C3t3,
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-int main(int argc, char*argv[])
+int main()
 {
   const std::string fname = CGAL::data_file_path("meshes/halfcube.off");
   // Create input polyhedron
