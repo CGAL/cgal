@@ -383,6 +383,7 @@ private:
       if (s1 != s2
           || get(fcmap, f)
           || get(fcmap, mf)
+          || (input_is_c3t3() && m_c3t3.is_in_complex(f))
           || (!input_is_c3t3() && f.first->is_facet_on_surface(f.second)))
       {
         Surface_patch_index patch = f.first->surface_patch_index(f.second);
@@ -410,7 +411,7 @@ private:
     for (const Edge& e : tr().finite_edges())
     {
       if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair(e))
-          || m_c3t3.is_in_complex(e)
+          || (input_is_c3t3() && m_c3t3.is_in_complex(e))
           || nb_incident_subdomains(e, m_c3t3) > 2
           || nb_incident_surface_patches(e, m_c3t3) > 1
           || nb_incident_complex_facets(e, m_c3t3) > 2)//non-manifold edges
@@ -445,6 +446,7 @@ private:
       if ( incident_edges.size() == 1 //tip or endpoint
         || incident_edges.size() > 2  //corner
         || get(vcmap, vit) // constrained vertex
+        || (input_is_c3t3() && m_c3t3.is_in_complex(vit))
         || (incident_edges.size() == 2
             && edges_form_a_sharp_angle(incident_edges, 60, m_c3t3)))
       {
