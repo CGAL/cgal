@@ -35,6 +35,8 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <CGAL/Union_find.h>
+#include <CGAL/intersection_3.h>
+#include <CGAL/iterator.h>
 
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
@@ -55,6 +57,7 @@
 #include <boost/container/small_vector.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 
+#include <algorithm>
 #include <optional>
 #include <unordered_map>
 #include <ranges>
@@ -65,54 +68,408 @@
 #  error "Compiler needs <format>"
 #endif
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/intersection_3.h>
 
 namespace CGAL {
 
-template <typename Kernel>
-bool
-does_first_triangle_intersect_second_triangle_interior(Triangle_3<Kernel> t1, Triangle_3<Kernel> t2)
+template <class K>
+typename K::Boolean
+does_first_triangle_intersect_second_triangle_interior(const typename K::Triangle_3& t1,
+                                                       const typename K::Triangle_3& t2,
+                                                       const K& k)
 {
-  if(!do_intersect(t1, t2)) return false;
+  typedef typename K::Point_3 Point_3;
 
-  // Here we know the two triangles intersect.
-  // -> Question: is that intersection strictly included in the interior of t2?
-  // Let's answer that question by computing the exact intersection...
-  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
-  const auto to_exact = CGAL::Cartesian_converter<Kernel, EK>();
-  const auto t1_exact = to_exact(t1);
-  const auto t2_exact = to_exact(t2);
-  const auto intersection_opt = CGAL::intersection(t1_exact, t2_exact);
-  CGAL_assume(intersection_opt.has_value());
-  const auto& intersection = intersection_opt.value();
+  CGAL_kernel_precondition(!k.is_degenerate_3_object() (t1) );
+  CGAL_kernel_precondition(!k.is_degenerate_3_object() (t2) );
 
-  const auto* point   = std::get_if<EK::Point_3>  (&intersection);
-  const auto* segment = std::get_if<EK::Segment_3>(&intersection);
+  typename K::Construct_vertex_3 vertex_on = k.construct_vertex_3_object();
+  typename K::Orientation_3 orientation = k.orientation_3_object();
 
-  if(!point && !segment) {
-    // then the intersection is a polygon with at least 3 vertices,
-    // cannot be strictly included in the boundary of t2
-    return true;
+  const Point_3& p = vertex_on(t1,0);
+  const Point_3& q = vertex_on(t1,1);
+  const Point_3& r = vertex_on(t1,2);
+  const Point_3& a = vertex_on(t2,0);
+  const Point_3& b = vertex_on(t2,1);
+  const Point_3& c = vertex_on(t2,2);
+
+  std::array<const Point_3*,3> t1_vertices_in_the_line;
+  int nb_of_t1_vertices_in_the_line = 0;
+  auto push_to_t1_vertices_in_the_line = [&t1_vertices_in_the_line, &nb_of_t1_vertices_in_the_line](const Point_3* p) {
+    t1_vertices_in_the_line.at(nb_of_t1_vertices_in_the_line++) = p;
+  };
+
+  std::array<const Point_3*,3> t2_vertices_in_the_line;
+  int nb_of_t2_vertices_in_the_line = 0;
+  auto push_to_t2_vertices_in_the_line = [&t2_vertices_in_the_line, &nb_of_t2_vertices_in_the_line](const Point_3* p) {
+    t2_vertices_in_the_line.at(nb_of_t2_vertices_in_the_line++) = p;
+  };
+
+  const Point_3* s_min1;
+  const Point_3* t_min1;
+  const Point_3* s_max1;
+  const Point_3* t_max1;
+
+  // Compute distance signs  of p, q and r to the plane of triangle(a,b,c)
+  const Orientation dp = make_certain(orientation(a,b,c,p));
+  const Orientation dq = make_certain(orientation(a,b,c,q));
+  const Orientation dr = make_certain(orientation(a,b,c,r));
+
+  if(dp == COPLANAR) push_to_t1_vertices_in_the_line(&p);
+  if(dq == COPLANAR) push_to_t1_vertices_in_the_line(&q);
+  if(dr == COPLANAR) push_to_t1_vertices_in_the_line(&r);
+
+  auto comp = k.compare_xyz_3_object();
+  auto sort_ptrs = [&comp](const Point_3* p1, const Point_3* p2) { return comp(*p1, *p2) == SMALLER; };
+  auto intersection_is_a_vertex_or_a_common_edge = [&]() {
+    std::sort(t1_vertices_in_the_line.data(), t1_vertices_in_the_line.data() + nb_of_t1_vertices_in_the_line,
+              sort_ptrs);
+    std::sort(t2_vertices_in_the_line.data(), t2_vertices_in_the_line.data() + nb_of_t2_vertices_in_the_line,
+              sort_ptrs);
+    std::size_t nb_of_common_vertices = 0;
+    std::set_intersection(
+        t1_vertices_in_the_line.data(), t1_vertices_in_the_line.data() + nb_of_t1_vertices_in_the_line,
+        t2_vertices_in_the_line.data(), t2_vertices_in_the_line.data() + nb_of_t2_vertices_in_the_line,
+        CGAL::Counting_output_iterator(&nb_of_common_vertices), sort_ptrs);
+    return nb_of_common_vertices == 1 || nb_of_common_vertices == 2;
+  };
+
+  switch(dp)
+  {
+    case POSITIVE:
+      if(dq == POSITIVE)
+      {
+        if(dr == POSITIVE)
+          // pqr lies in the open positive halfspace induced by
+          // the plane of triangle(a,b,c)
+          return false;
+        // r is isolated on the negative side of the plane
+        s_min1 = &q; t_min1 = &r; s_max1 = &r; t_max1 = &p;
+      }
+      else
+      {
+        if(dr == POSITIVE)
+        {
+          // q is isolated on the negative side of the plane
+          s_min1 =  &p; t_min1 =  &q; s_max1 =  &q; t_max1 =  &r;
+        }
+        else
+        {
+          // p is isolated on the positive side of the plane
+          s_min1 =  &p; t_min1 =  &q; s_max1 =  &r; t_max1 =  &p;
+        }
+      }
+      break;
+
+    case NEGATIVE:
+      if(dq == NEGATIVE)
+      {
+        if(dr == NEGATIVE)
+          // pqr lies in the open negative halfspace induced by
+          // the plane of triangle(a,b,c)
+          return false;
+        // r is isolated on the positive side of the plane
+        s_min1 =  &r; t_min1 =  &p; s_max1 =  &q; t_max1 =  &r;
+
+      }
+      else
+      {
+        if(dr == NEGATIVE)
+        {
+          // q is isolated on the positive side of the plane
+          s_min1 =  &q; t_min1 =  &r; s_max1 =  &p; t_max1 =  &q;
+        } else {
+          // p is isolated on the negative side of the plane
+          s_min1 =  &r; t_min1 =  &p; s_max1 =  &p; t_max1 =  &q;
+        }
+      }
+      break;
+
+    case COPLANAR:
+      switch(dq)
+      {
+        case POSITIVE:
+          if(dr == POSITIVE )
+          {
+            // p is isolated on the negative side of the plane
+            s_min1 =  &r; t_min1 =  &p; s_max1 =  &p; t_max1 =  &q;
+          }
+          else
+          {
+            // q is isolated on the positive side of the plane
+            s_min1 =  &q; t_min1 =  &r; s_max1 =  &p; t_max1 =  &q;
+          }
+          break;
+
+        case NEGATIVE:
+          if(dr == NEGATIVE )
+          {
+            // p is isolated on the positive side of the plane
+            s_min1 =  &p; t_min1 =  &q; s_max1 =  &r; t_max1 =  &p;
+          }
+          else
+          {
+            // q is isolated on the negative side of the plane
+            s_min1 =  &p; t_min1 =  &q; s_max1 =  &q; t_max1 =  &r;
+          }
+          break;
+
+        case COPLANAR:
+          switch(dr)
+          {
+            case POSITIVE:
+              // r is isolated on the positive side of the plane
+              s_min1 =  &r; t_min1 =  &p; s_max1 =  &q; t_max1 =  &r;
+              break;
+
+            case NEGATIVE:
+              // r is isolated on the negative side of the plane
+              s_min1 =  &q; t_min1 =  &r; s_max1 =  &r; t_max1 =  &p;
+              break;
+
+            case COPLANAR: {
+              push_to_t2_vertices_in_the_line(&a);
+              push_to_t2_vertices_in_the_line(&b);
+              push_to_t2_vertices_in_the_line(&c);
+              if(intersection_is_a_vertex_or_a_common_edge()) return false;
+              return CGAL::Intersections::internal::do_intersect_coplanar(t1,t2,k);
+            }
+            default: // should not happen.
+              CGAL_kernel_assertion(false);
+              return false;
+          }
+          break;
+
+        default: // should not happen.
+          CGAL_kernel_assertion(false);
+          return false;
+      }
+      break;
+
+    default: // should not happen.
+      CGAL_kernel_assertion(false);
+      return false;
   }
 
-  const auto s01 = EK::Segment_3(t1_exact.vertex(0), t1_exact.vertex(1));
-  const auto s12 = EK::Segment_3(t1_exact.vertex(1), t1_exact.vertex(2));
-  const auto s20 = EK::Segment_3(t1_exact.vertex(2), t1_exact.vertex(0));
+  const Point_3* s_min2;
+  const Point_3* t_min2;
+  const Point_3* s_max2;
+  const Point_3* t_max2;
 
-  if(point) {
-    if(s01.has_on(*point)) return false;
-    if(s12.has_on(*point)) return false;
-    if(s20.has_on(*point)) return false;
-  } else if(segment) {
-    if(s01.has_on(segment->source()) && s01.has_on(segment->target())) return false;
-    if(s12.has_on(segment->source()) && s12.has_on(segment->target())) return false;
-    if(s20.has_on(segment->source()) && s20.has_on(segment->target())) return false;
+  // Compute distance signs  of a, b and c to the plane of triangle(p,q,r)
+  const Orientation da = make_certain(orientation(p,q,r,a));
+  const Orientation db = make_certain(orientation(p,q,r,b));
+  const Orientation dc = make_certain(orientation(p,q,r,c));
+
+  if(da == COPLANAR) push_to_t2_vertices_in_the_line(&a);
+  if(db == COPLANAR) push_to_t2_vertices_in_the_line(&b);
+  if(dc == COPLANAR) push_to_t2_vertices_in_the_line(&c);
+
+  if(intersection_is_a_vertex_or_a_common_edge()) return false;
+
+  switch(da)
+  {
+    case POSITIVE:
+      if(db == POSITIVE)
+      {
+        if(dc == POSITIVE)
+          // abc lies in the open positive halfspace induced by
+          // the plane of triangle(p,q,r)
+          return false;
+        // c is isolated on the negative side of the plane
+        s_min2 =  &b; t_min2 =  &c; s_max2 =  &c; t_max2 =  &a;
+      }
+      else
+      {
+        if(dc == POSITIVE)
+        {
+          // b is isolated on the negative side of the plane
+          s_min2 =  &a; t_min2 =  &b; s_max2 =  &b; t_max2 =  &c;
+        }
+        else
+        {
+          // a is isolated on the positive side of the plane
+          s_min2 =  &a; t_min2 =  &b; s_max2 =  &c; t_max2 =  &a;
+        }
+      }
+      break;
+
+    case NEGATIVE:
+      if(db == NEGATIVE)
+      {
+        if(dc == NEGATIVE)
+          // abc lies in the open negative halfspace induced by
+          // the plane of triangle(p,q,r)
+          return false;
+        // c is isolated on the positive side of the plane
+        s_min2 =  &c; t_min2 =  &a; s_max2 =  &b; t_max2 =  &c;
+
+      }
+      else
+      {
+        if(dc == NEGATIVE)
+        {
+          // b is isolated on the positive side of the plane
+          s_min2 =  &b; t_min2 =  &c; s_max2 =  &a; t_max2 =  &b;
+        } else {
+          // a is isolated on the negative side of the plane
+          s_min2 =  &c; t_min2 =  &a; s_max2 =  &a; t_max2 =  &b;
+        }
+      }
+      break;
+
+    case COPLANAR:
+      switch(db)
+      {
+        case POSITIVE:
+          if(dc == POSITIVE)
+          {
+            // a is isolated on the negative side of the plane
+            s_min2 =  &c; t_min2 =  &a; s_max2 =  &a; t_max2 =  &b;
+          }
+          else
+          {
+            // b is isolated on the positive side of the plane
+            s_min2 =  &b; t_min2 =  &c; s_max2 =  &a; t_max2 =  &b;
+          }
+          break;
+
+        case NEGATIVE:
+          if(dc == NEGATIVE)
+          {
+            // a is isolated on the positive side of the plane
+            s_min2 =  &a; t_min2 =  &b; s_max2 =  &c; t_max2 =  &a;
+          }
+          else
+          {
+            // b is isolated on the negative side of the plane
+            s_min2 =  &a; t_min2 =  &b; s_max2 =  &b; t_max2 =  &c;
+          }
+          break;
+
+        case COPLANAR:
+          switch(dc)
+          {
+            case POSITIVE:
+              // c is isolated on the positive side of the plane
+              s_min2 =  &c; t_min2 =  &a; s_max2 =  &b; t_max2 =  &c;
+              break;
+
+            case NEGATIVE:
+              // c is isolated on the negative side of the plane
+              s_min2 =  &b; t_min2 =  &c; s_max2 =  &c; t_max2 =  &a;
+              break;
+
+            case COPLANAR:
+              // Supposed unreachable code
+              // since the triangles are assumed to be non-flat
+
+              return CGAL::Intersections::internal::do_intersect_coplanar(t1,t2,k);
+            default: // should not happen.
+              CGAL_kernel_assertion(false);
+              return false;
+          }
+          break;
+
+        default: // should not happen.
+          CGAL_kernel_assertion(false);
+          return false;
+      }
+      break;
+
+    default: // should not happen.
+      CGAL_kernel_assertion(false);
+      return false;
   }
 
-  return true;
+  return orientation(*s_min1, *t_min1, *s_min2, *t_min2) == NEGATIVE &&
+         orientation(*s_max1, *t_max1, *t_max2, *s_max2) == NEGATIVE;
 }
+
+// template <typename Kernel>
+// bool
+// does_first_triangle_intersect_second_triangle_interior_V1(Triangle_3<Kernel> t1, Triangle_3<Kernel> t2)
+// {
+//   if(!do_intersect(t1, t2)) return false;
+
+//   // Here we know the two triangles intersect.
+//   // -> Question: is that intersection strictly included in the interior of t2?
+//   // Let's answer that question by computing the exact intersection...
+//   using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+//   const auto to_exact = CGAL::Cartesian_converter<Kernel, EK>();
+//   const auto t1_exact = to_exact(t1);
+//   const auto t2_exact = to_exact(t2);
+//   const auto intersection_opt = CGAL::intersection(t1_exact, t2_exact);
+//   CGAL_assume(intersection_opt.has_value());
+//   const auto& intersection = intersection_opt.value();
+
+//   const auto* point   = std::get_if<EK::Point_3>  (&intersection);
+//   const auto* segment = std::get_if<EK::Segment_3>(&intersection);
+
+//   if(!point && !segment) {
+//     // then the intersection is a polygon with at least 3 vertices,
+//     // cannot be strictly included in the boundary of t2
+//     return true;
+//   }
+
+//   const auto s01 = EK::Segment_3(t1_exact.vertex(0), t1_exact.vertex(1));
+//   const auto s12 = EK::Segment_3(t1_exact.vertex(1), t1_exact.vertex(2));
+//   const auto s20 = EK::Segment_3(t1_exact.vertex(2), t1_exact.vertex(0));
+
+//   if(point) {
+//     if(s01.has_on(*point)) return false;
+//     if(s12.has_on(*point)) return false;
+//     if(s20.has_on(*point)) return false;
+//   } else if(segment) {
+//     if(s01.has_on(segment->source()) && s01.has_on(segment->target())) return false;
+//     if(s12.has_on(segment->source()) && s12.has_on(segment->target())) return false;
+//     if(s20.has_on(segment->source()) && s20.has_on(segment->target())) return false;
+//   }
+
+//   return true;
+// }
+
+// template <typename Kernel>
+// bool
+// does_first_triangle_intersect_second_triangle_interior_WRAPPER(Triangle_3<Kernel> t1, Triangle_3<Kernel> t2, Kernel k)
+// {
+//   bool result_v1 = does_first_triangle_intersect_second_triangle_interior_V1(t1, t2);
+//   bool result_v2 = does_first_triangle_intersect_second_triangle_interior(t1, t2, k);
+
+//   CGAL_warning_msg(result_v1 == result_v2, std::invoke([&]() {
+//     static auto counter = 0;
+//     std::stringstream ss;
+//     ss.precision(std::cerr.precision());
+//     ss << "does_first_triangle_intersect_second_triangle_interior_V1(t1, t2) = " << result_v1 << std::endl;
+//     ss << "does_first_triangle_intersect_second_triangle_interior(t1, t2, k) = " << result_v2 << std::endl;
+//     ss << "t1 = " << t1 << std::endl;
+//     ss << "t2 = " << t2 << std::endl;
+//     if(counter < 10) {
+//       std::ofstream out(std::format("dump-bug_triangles_{}.off", counter++));
+//       // Write the OFF header. There are 6 vertices and 2 faces.
+//       out << "OFF\n6 2 0\n";
+
+//       // Write the vertices of t1.
+//       for(int i = 0; i < 3; ++i) {
+//         out << t1.vertex(i).x() << " " << t1.vertex(i).y() << " " << t1.vertex(i).z() << "\n";
+//       }
+
+//       // Write the vertices of t2.
+//       for(int i = 0; i < 3; ++i) {
+//         out << t2.vertex(i).x() << " " << t2.vertex(i).y() << " " << t2.vertex(i).z() << "\n";
+//       }
+
+//       // Write the faces. Each face is a triangle made up of 3 vertices.
+//       // The vertices are 0-indexed and the order in which they were written to the file matters.
+//       out << "3 0 1 2\n"; // The first face is made up of the first, second, and third vertices.
+//       out << "3 3 4 5\n"; // The second face is made up of the fourth, fifth, and sixth vertices.
+
+//       out.close();
+//     }
+//     return ss.str();
+//   }).c_str());
+
+//   return result_v2;
+// }
 
 template <typename Kernel>
 bool does_tetrahedron_intersect_triangle_interior(typename Kernel::Tetrahedron_3 tet,
@@ -125,7 +482,7 @@ bool does_tetrahedron_intersect_triangle_interior(typename Kernel::Tetrahedron_3
   for (int i = 0; i < 4; ++i)
   {
     if(does_first_triangle_intersect_second_triangle_interior(
-           tr, k.construct_triangle_3_object()(tet[i], tet[(i + 1) % 4], tet[(i + 2) % 4])))
+           tr, k.construct_triangle_3_object()(tet[i], tet[(i + 1) % 4], tet[(i + 2) % 4]), k))
       return true;
   }
 
