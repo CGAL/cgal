@@ -107,7 +107,8 @@ inline std::size_t bitLength(const BigInt& a){
  *  This makes sense for integer a.
  */
 inline long floorLg(const BigInt& a) {
-  return (sign(a) == 0) ? (-1) : (bitLength(a)-1);
+  assert(std::size_t((std::numeric_limits<long>::max)()) > bitLength(a));
+  return (sign(a) == 0) ? (-1) : static_cast<long>(bitLength(a)-1);
 }
 
 
@@ -157,7 +158,8 @@ inline BigInt gcd(const BigInt& a, const BigInt& b){
 inline long ceilLg(const BigInt& a) {
   if (sign(a) == 0)
     return -1;
-  unsigned long len = bitLength(a);
+  assert(std::size_t((std::numeric_limits<long>::max)()) > bitLength(a));
+  long len = static_cast<long>(bitLength(a));
 
   return (lsb(abs(a)) == len - 1) ? (len - 1) : len;
 }
