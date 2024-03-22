@@ -32,7 +32,7 @@ public:
   Hyperbolic_point_2(const Complex& z) { _z = z; }
 
   Complex get_z() const { return _z; }
-  void set_z(const Complex& z) { _z = z; } 
+  void set_z(const Complex& z) { _z = z; }
 };
 
 template<class ComplexType>
