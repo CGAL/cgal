@@ -885,7 +885,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       if (mls_proj == std::nullopt)
         continue;
 
-      const Point_3 new_pos = *proj;
+      const Point_3 new_pos = *mls_proj;
 #endif
       if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
         nb_done_2d++;
