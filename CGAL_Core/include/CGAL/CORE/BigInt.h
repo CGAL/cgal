@@ -159,9 +159,9 @@ inline long ceilLg(const BigInt& a) {
   if (sign(a) == 0)
     return -1;
   assert(std::size_t((std::numeric_limits<long>::max)()) > bitLength(a));
-  long len = static_cast<long>(bitLength(a));
+  std::size_t len = static_cast<long>(bitLength(a));
 
-  return (lsb(abs(a)) == len - 1) ? (len - 1) : len;
+  return (lsb(abs(a)) == len - 1) ? (static_cast<long>(len) - 1) : static_cast<long>(len);
 }
 
 inline long ceilLg(long a) { // need this for Polynomial<long>
