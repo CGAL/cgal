@@ -50,7 +50,7 @@ public:
   using edge_descriptor = typename PT::edge_descriptor;
   using cell_descriptor = typename PT::cell_descriptor;
 
-  using Vertices_incident_to_edge = typename PT::Vertices_incident_to_edge;
+  using Edge_vertices = typename PT::Edge_vertices;
   using Cells_incident_to_edge = typename PT::Cells_incident_to_edge;
   using Cell_vertices = typename PT::Cell_vertices;
   using Cell_edges = typename PT::Cell_edges;
@@ -114,7 +114,7 @@ public:
   }
 
   // returns a container with the two vertices incident to the edge `e`
-  decltype(auto) /*Vertices_incident_to_edge*/ incident_vertices(const edge_descriptor& e) const
+  decltype(auto) /*Edge_vertices*/ incident_vertices(const edge_descriptor& e) const
   {
     return PT::incident_vertices(e, m_partition);
   }

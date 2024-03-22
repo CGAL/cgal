@@ -37,7 +37,7 @@ public:
    * A container for the two vertices of an edge.
    * Must be a model of `RandomAccessContainer` whose `value_type` must be `vertex_descriptor`.
    */
-  typedef unspecified_type Vertices_incident_to_edge;
+  typedef unspecified_type Edge_vertices;
 
   /*!
    * A container for the cells incident to an edge.
@@ -65,7 +65,7 @@ public:
   /*!
    * \returns the two vertices incident to the edge `e`.
    */
-  static Vertices_incident_to_edge incident_vertices(const edge_descriptor& e, const IsosurfacingPartition_3& partition);
+  static Edge_vertices incident_vertices(const edge_descriptor& e, const IsosurfacingPartition_3& partition);
 
   /*!
    * \returns all the cells incident to the edge `e`, in a geometrically ordered manner around the edge.
@@ -90,7 +90,7 @@ public:
    * \tparam Functor must implement `void operator()(const vertex_descriptor& vertex)`
    *
    * \param f the functor called on every vertex
-   * \param partition the partition whose vertices are being iterated
+   * \param partition the partition whose vertices are being iterated over
   */
   template <typename ConcurrencyTag, typename Functor>
   static void for_each_vertex(Functor& f, const IsosurfacingPartition_3& partition);
@@ -103,7 +103,7 @@ public:
    * \tparam Functor must implement `void operator()(const edge_descriptor& edge)`.
    *
    * \param f the functor called on every edge
-   * \param partition the partition whose edges are being iterated
+   * \param partition the partition whose edges are being iterated over
    */
   template <typename ConcurrencyTag, typename Functor>
   static void for_each_edge(Functor& f, const IsosurfacingPartition_3& partition);
@@ -116,7 +116,7 @@ public:
    * \tparam Functor must implement `void operator()(const cell_descriptor& cell)`.
    *
    * \param f the functor called on every cell
-   * \param partition the partition whose cells are being iterated
+   * \param partition the partition whose cells are being iterated over
    */
   template <typename ConcurrencyTag, typename Functor>
   static void for_each_cell(Functor& f, const IsosurfacingPartition_3& partition);

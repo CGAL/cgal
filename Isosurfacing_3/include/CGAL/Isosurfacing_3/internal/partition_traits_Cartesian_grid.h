@@ -60,7 +60,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   static constexpr std::size_t VERTICES_PER_CELL = 8;
   static constexpr std::size_t EDGES_PER_CELL = 12;
 
-  using Vertices_incident_to_edge = std::array<vertex_descriptor, 2>;
+  using Edge_vertices = std::array<vertex_descriptor, 2>;
   using Cells_incident_to_edge = std::array<cell_descriptor, 4>;
   using Cell_vertices = std::array<vertex_descriptor, VERTICES_PER_CELL>;
   using Cell_edges = std::array<edge_descriptor, EDGES_PER_CELL>;
@@ -72,10 +72,10 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
   }
 
   // returns a container with the two vertices incident to edge e
-  static Vertices_incident_to_edge incident_vertices(const edge_descriptor& e,
-                                                     const Grid&)
+  static Edge_vertices incident_vertices(const edge_descriptor& e,
+                                         const Grid&)
   {
-    Vertices_incident_to_edge ev;
+    Edge_vertices ev;
     ev[0] = { e[0], e[1], e[2] };  // start vertex
     ev[1] = { e[0], e[1], e[2] };  // end vertex
     ev[1][e[3]] += 1;              // one position further in the direction of the edge

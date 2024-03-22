@@ -52,7 +52,7 @@ public:
   static constexpr std::size_t VERTICES_PER_CELL = 8;
   static constexpr std::size_t EDGES_PER_CELL = 12;
 
-  using Vertices_incident_to_edge = std::array<vertex_descriptor, 2>;
+  using Edge_vertices = std::array<vertex_descriptor, 2>;
   using Cells_incident_to_edge = std::array<cell_descriptor, 4>;  // @todo: not always 4
   using Cell_vertices = std::array<vertex_descriptor, 8>;
   using Cell_edges = std::array<edge_descriptor, 12>;
@@ -64,8 +64,8 @@ public:
     return o.point(v);
   }
 
-  static Vertices_incident_to_edge incident_vertices(const edge_descriptor& e,
-                                                     const Octree& o)
+  static Edge_vertices incident_vertices(const edge_descriptor& e,
+                                         const Octree& o)
   {
     return o.edge_vertices(e);
   }

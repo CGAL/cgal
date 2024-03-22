@@ -76,7 +76,7 @@ struct MC_Domain
   typedef std::size_t vertex_descriptor;
   typedef std::size_t edge_descriptor;
   typedef std::size_t cell_descriptor;
-  typedef std::vector<std::size_t> Vertices_incident_to_edge;
+  typedef std::vector<std::size_t> Edge_vertices;
   typedef std::vector<std::size_t> Cells_incident_to_edge;
   typedef std::vector<std::size_t> Cell_vertices;
   typedef std::vector<std::size_t> Cell_edges;
@@ -88,7 +88,7 @@ struct MC_Domain
   FT value(const Point_3& /*p*/) const { return 0; }
   FT value(const vertex_descriptor& /*v*/) const { return 0; }
 
-  Vertices_incident_to_edge incident_vertices(const edge_descriptor& /*e*/) const { return {}; }
+  Edge_vertices incident_vertices(const edge_descriptor& /*e*/) const { return {}; }
   Cells_incident_to_edge incident_cells(const edge_descriptor& /*e*/) const { return {}; }
   Cell_vertices cell_vertices(const cell_descriptor& /*c*/) const { return {}; }
   Cell_edges cell_edges(const cell_descriptor& /*c*/) const { return {}; }

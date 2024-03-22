@@ -36,7 +36,6 @@ namespace Isosurfacing {
  * \sa `CGAL::Isosurfacing::Linear_interpolation_edge_intersection`
  * \sa `CGAL::Isosurfacing::Marching_cubes_domain_3`
  * \sa `CGAL::Isosurfacing::Dual_contouring_domain_3`
- * \sa `CGAL::Isosurfacing::Value_field_3`
  */
 struct Dichotomy_edge_intersection
 {
@@ -53,7 +52,7 @@ struct Dichotomy_edge_intersection
    * \param val_0 the value at the first vertex of the edge
    * \param val_1 the value at the second vertex of the edge
    * \param domain the isosurfacing domain
-   * \param isovalue the isovalue defining the isosurfacing with which we seek an intersection
+   * \param isovalue the isovalue defining the isosurface with which we seek an intersection
    * \param p the intersection point, if it exists
    *
    * \return `true` if the intersection point exists, `false` otherwise
@@ -140,7 +139,7 @@ struct Linear_interpolation_edge_intersection
    * \param val_0 the value at the first vertex of the edge
    * \param val_1 the value at the second vertex of the edge
    * \param domain the isosurfacing domain
-   * \param isovalue the isovalue defining the isosurfacing with which we seek an intersection
+   * \param isovalue the isovalue defining the isosurface with which we seek an intersection
    * \param p the intersection point, if it exists
    *
    * \return `true` if the intersection point exists, `false` otherwise
@@ -187,11 +186,14 @@ struct Linear_interpolation_edge_intersection
  */
 struct Ray_marching_edge_intersection
 {
-  template <typename Domain>
-  bool operator()(const typename Domain::edge_descriptor& /* e */,
-                  const Domain& /* domain */,
-                  const typename Domain::Geom_traits::FT /* isovalue */,
-                  typename Domain::Geom_traits::Point_3& /* p */) const
+  template <typename Domain> // == Isosurfacing_domain_3 or similar
+  bool operator()(const typename Domain::Geom_traits::Point_3& p_0,
+                  const typename Domain::Geom_traits::Point_3& p_1,
+                  const typename Domain::Geom_traits::FT val_0,
+                  const typename Domain::Geom_traits::FT val_1,
+                  const Domain& domain,
+                  const typename Domain::Geom_traits::FT isovalue,
+                  typename Domain::Geom_traits::Point_3& p) const
   {
     // @todo this is for the case where we know domain.value is an SDF
     // then we can do better than a dichotomy

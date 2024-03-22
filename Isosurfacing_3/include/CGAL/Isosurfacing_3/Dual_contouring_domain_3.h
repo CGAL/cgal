@@ -28,10 +28,10 @@ namespace Isosurfacing {
  *
  * \brief A domain that can be used as input in the %Dual Contouring algorithm.
  *
- * \details This class is essentially wrapper around the different bricks provided by its
+ * \details This class is essentially a wrapper around the different bricks provided by its
  * template parameters: `Partition` provides the spacial partitioning, `ValueField` and `GradientField`
  * the values and gradients that define the isosurface. The optional template parameter
- * `EdgeIntersectionOracle` gives control over the method used to computate edge-isosurface intersection points.
+ * `EdgeIntersectionOracle` gives control over the method used to compute edge-isosurface intersection points.
  *
  * \tparam Partition must be a model of `IsosurfacingPartition_3`
  * \tparam ValueField must be a model of `IsosurfacingValueField_3`

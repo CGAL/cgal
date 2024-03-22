@@ -48,7 +48,7 @@ public:
   /*!
    * \brief interpolates the values at a given point using trilinear interpolation.
    *
-   * \param p the point at which to interpolate the values
+   * \param p the point at which values are interpolated
    * \param g the grid
    * \param values the continuous field of scalar values, defined over the geometric span of `g`
    */

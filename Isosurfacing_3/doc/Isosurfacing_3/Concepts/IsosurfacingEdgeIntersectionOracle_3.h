@@ -26,7 +26,7 @@ public:
    * \param val_0 the value at the first vertex of the edge
    * \param val_1 the value at the second vertex of the edge
    * \param domain the isosurfacing domain
-   * \param isovalue the isovalue defining the isosurfacing with which we seek an intersection
+   * \param isovalue the isovalue defining the isosurface with which we seek an intersection
    * \param p the intersection point, if it exists
    *
    * \return `true` if the intersection point exists, `false` otherwise

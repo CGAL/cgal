@@ -27,13 +27,13 @@ namespace IO {
 /**
  * \ingroup IS_IO_functions_grp
  *
- * \brief creates a grid from a `CGAL::Image_3`.
+ * \brief extracts geometry and values from a `CGAL::Image_3`.
  *
  * The dimensions and geometric span are read from the image. The values stored
  * in the image must be of type `Geom_traits::FT` or implicitly convertible to it.
  *
- * \tparam Grid must be `CGAL::Cartesian_grid_3<GeomTraits>` whose `GeomTraits` is a model of `IsosurfacingTraits_3`
- * \tparam Values must be `CGAL::Interpolated_discrete_values_3<Grid>`
+ * \tparam Grid must be `CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>` whose `GeomTraits` is a model of `IsosurfacingTraits_3`
+ * \tparam Values must be `CGAL::Isosurfacing::Interpolated_discrete_values_3<Grid>`
  *
  * \param image the image providing the data
  * \param grid the grid

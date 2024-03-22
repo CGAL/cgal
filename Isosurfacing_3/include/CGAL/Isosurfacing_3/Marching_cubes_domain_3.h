@@ -31,7 +31,7 @@ namespace Isosurfacing {
  * \details This class is essentially wrapper around the different bricks provided by its
  * template parameters: `Partition` provides the spacial partitioning, `ValueField`
  * the values that define the isosurface. The optional template parameter
- * `EdgeIntersectionOracle` gives control over the method used to computate edge-isosurface intersection points.
+ * `EdgeIntersectionOracle` gives control over the method used to compute edge-isosurface intersection points.
  *
  * \tparam Partition must be a model of `IsosurfacingPartition_3`
  * \tparam ValueField must be a model of `IsosurfacingValueField_3`

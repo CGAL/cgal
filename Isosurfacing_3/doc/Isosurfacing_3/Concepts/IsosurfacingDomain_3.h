@@ -62,7 +62,7 @@ public:
   A container for the two vertices of an edge.
   Must be a model of the concept `RandomAccessContainer` of size `2` whose value type is `vertex_descriptor`.
   */
-  typedef unspecified_type Vertices_incident_to_edge;
+  typedef unspecified_type Edge_vertices;
 
   /*!
   A container for the cells incident to an edge.
@@ -86,7 +86,6 @@ public:
   /// @}
 
   /// \name Operations
-  /// The following member functions must exist.
   /// @{
 
   /*!
@@ -112,7 +111,7 @@ public:
   /*!
   returns the two vertices incident to the edge `e`.
   */
-  Vertices_incident_to_edge incident_vertices(const edge_descriptor& e) const;
+  Edge_vertices incident_vertices(const edge_descriptor& e) const;
 
   /*!
   returns all the cells incident to the edge `e`, in a geometrically ordered manner around the edge.
@@ -172,7 +171,7 @@ public:
   \param p_1 the geometric position of the second vertex of the edge
   \param val_0 the value at the first vertex of the edge
   \param val_1 the value at the second vertex of the edge
-  \param isovalue the isovalue defining the isosurfacing with which we seek an intersection
+  \param isovalue the isovalue defining the isosurface with which we seek an intersection
   \param p the intersection point, if it exists
 
   \returns `true` if the intersection point exists, `false` otherwise
