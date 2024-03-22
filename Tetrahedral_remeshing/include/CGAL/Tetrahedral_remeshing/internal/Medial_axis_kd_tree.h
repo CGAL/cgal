@@ -25,10 +25,6 @@
 
 #include <CGAL/Delaunay_triangulation_3.h>
 
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
-#include <CGAL/Surface_mesh.h>
-
 #include <vector>
 #include <array>
 
