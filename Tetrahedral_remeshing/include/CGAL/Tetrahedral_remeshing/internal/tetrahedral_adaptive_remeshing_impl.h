@@ -316,7 +316,7 @@ public:
 
   void finalize()
   {
-    if (m_c3t3_pbackup != NULL)
+    if (input_is_c3t3())
       m_c3t3_pbackup->swap(m_c3t3);
     else
       m_tr_pbackup->swap(m_c3t3.triangulation());
@@ -383,7 +383,7 @@ private:
       if (s1 != s2
           || get(fcmap, f)
           || get(fcmap, mf)
-          || (m_c3t3_pbackup == NULL && f.first->is_facet_on_surface(f.second)))
+          || (!input_is_c3t3() && f.first->is_facet_on_surface(f.second)))
       {
         Surface_patch_index patch = f.first->surface_patch_index(f.second);
         if(patch == Surface_patch_index())
@@ -485,9 +485,6 @@ private:
 private:
   bool dimension_is_modifiable(const Vertex_handle& v, const int new_dim) const
   {
-    if (!input_is_c3t3())
-      return true;
-
     const int vdim = v->in_dimension();
     // feature edges and tip/endpoints vertices are kept
     switch (vdim)
