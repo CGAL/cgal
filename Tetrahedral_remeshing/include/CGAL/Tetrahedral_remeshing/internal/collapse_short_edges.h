@@ -1220,21 +1220,8 @@ bool can_be_collapsed(const typename C3T3::Edge& e,
   {
     if (c3t3.is_in_complex(e))
       return false;
-    else if (is_boundary(c3t3, e, cell_selector))
-      return false;
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-    if (!is_internal(e, c3t3, cell_selector))
-    {
-      std::cerr << "e is not inside!?" << std::endl;
-      typename C3T3::Vertex_handle v1 = e.first->vertex(e.second);
-      typename C3T3::Vertex_handle v2 = e.first->vertex(e.third);
-      std::cerr << v1->point() << " " << v2->point() << std::endl;
-    }
-#endif
-
-    CGAL_assertion(is_internal(e, c3t3, cell_selector));
-    return true;
+    else
+      return is_internal(e, c3t3, cell_selector);
   }
   else
   {
