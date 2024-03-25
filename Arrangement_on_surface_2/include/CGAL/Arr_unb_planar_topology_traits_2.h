@@ -23,6 +23,7 @@
  */
 
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_topology_traits/Arr_planar_topology_traits_base_2.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_insertion_helper.h>

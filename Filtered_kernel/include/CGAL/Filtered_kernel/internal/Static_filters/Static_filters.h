@@ -70,6 +70,7 @@
 #include <CGAL/Filtered_kernel/internal/Static_filters/Side_of_oriented_sphere_3.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Compare_squared_radius_3.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Compare_weighted_squared_radius_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Power_side_of_oriented_power_circle_2.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
 #include <CGAL/Filtered_kernel/internal/Static_filters/Compare_distance_3.h>
 
@@ -124,6 +125,7 @@ public:
   typedef Static_filters_predicates::Coplanar_3<K_base,Self>                Coplanar_3;
 
   typedef Static_filters_predicates::Compare_weighted_squared_radius_3<K_base>     Compare_weighted_squared_radius_3;
+  typedef Static_filters_predicates::Power_side_of_oriented_power_circle_2<K_base>                          Power_side_of_oriented_power_circle_2;
   typedef Static_filters_predicates::Power_side_of_oriented_power_sphere_3<K_base>                          Power_side_of_oriented_power_sphere_3;
 
   typedef Static_filters_predicates::Compare_distance_3<K_base>             Compare_distance_3;
@@ -188,6 +190,10 @@ public:
   Coplanar_3
   coplanar_3_object() const
   { return Coplanar_3(); }
+
+  Power_side_of_oriented_power_circle_2
+  power_side_of_oriented_power_circle_2_object() const
+  { return Power_side_of_oriented_power_circle_2();}
 
   Power_side_of_oriented_power_sphere_3
   power_side_of_oriented_power_sphere_3_object() const

@@ -54,8 +54,10 @@
 #include <CGAL/IO/read_vtk_image_data.h>
 
 #include <vtkNew.h>
+#include <vtkSmartPointer.h>
 #include <vtkStringArray.h>
 #include <vtkImageData.h>
+#include <vtkXMLImageDataReader.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkBMPReader.h>
 #include <vtkNIFTIImageReader.h>
@@ -66,6 +68,7 @@
 #endif
 
 #include <CGAL/Three/Three.h>
+#include <CGAL/use.h>
 
 #include <boost/type_traits.hpp>
 #include <optional>
@@ -76,6 +79,25 @@
 #include <fstream>
 #include <iostream>
 #include <locale>
+
+template <class vtkReader>
+bool
+load_vtk_file(QFileInfo fileinfo, Image* image)
+{
+#ifdef CGAL_USE_VTK
+    vtkNew<vtkReader> reader;
+    reader->SetFileName(fileinfo.filePath().toUtf8());
+    reader->Update();
+    auto vtk_image = reader->GetOutput();
+    vtk_image->Print(std::cerr);
+    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    return true;
+#else
+    CGAL_USE(fileinfo);
+    CGAL_USE(image);
+    return false;
+#endif
+}
 
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
@@ -294,7 +316,7 @@ public:
       // Look for action just after "Load..." action
       QAction* actionAfterLoad = nullptr;
       for(QList<QAction*>::iterator it_action = menuFileActions.begin(),
-          end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
+          end = menuFileActions.end() ; it_action != end ; ++ it_action ) //for( QAction* action : menuFileActions)
       {
         if(NULL != *it_action && (*it_action)->text().contains("Load..."))
         {
@@ -575,7 +597,7 @@ public Q_SLOTS:
 
   void connectNewViewer(QObject* o)
   {
-    Q_FOREACH(Controls c, group_map.values())
+    for(Controls c : group_map.values())
     {
       o->installEventFilter(c.x_item);
       o->installEventFilter(c.y_item);
@@ -667,7 +689,7 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
-    QRegExpValidator* validator = new QRegExpValidator(QRegExp("\\d*"), this);
+    QRegularExpressionValidator* validator = new QRegularExpressionValidator(QRegularExpression("\\d*"), this);
     bool show_sliders = true;
     if(x_control == nullptr)
     {
@@ -808,7 +830,7 @@ private:
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));
     z_item->setColor(QColor("blue"));
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     {
       viewer->installEventFilter(x_item);
       viewer->installEventFilter(y_item);
@@ -908,7 +930,7 @@ private Q_SLOTS:
     CGAL::Three::Scene_group_item* group_item = qobject_cast<CGAL::Three::Scene_group_item*>(sender());
     if(group_item)
     {
-      Q_FOREACH(CGAL::Three::Scene_item* key, group_map.keys())
+      for(CGAL::Three::Scene_item* key : group_map.keys())
       {
         if(group_map[key].group == group_item)
         {
@@ -947,7 +969,7 @@ private Q_SLOTS:
       group_map.remove(img_item);
 
       QList<int> deletion;
-      Q_FOREACH(Scene_interface::Item_id id, group->getChildren())
+      for(Scene_interface::Item_id id : group->getChildren())
       {
         Scene_item* child = group->getChild(id);
         group->unlockChild(child);
@@ -1089,6 +1111,7 @@ QString Io_image_plugin::nameFilters() const
   return QString("Inrimage files (*.inr *.inr.gz) ;; "
                  "Analyze files (*.hdr *.img *.img.gz) ;; "
                  "Stanford Exploration Project files (*.H *.HH) ;; "
+                 "VTK image files (*.vti) ;; "
                  "NRRD image files (*.nrrd) ;; "
                  "NIFTI image files (*.nii *.nii.gz)");
 }
@@ -1121,6 +1144,7 @@ void convert(Image* image)
   image->image()->wordKind = WK_FLOAT;
 }
 
+
 QList<Scene_item*>
 Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
 {
@@ -1128,39 +1152,39 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   QApplication::restoreOverrideCursor();
   Image* image = new Image;
 
-  // read a nrrd file
-  if(fileinfo.suffix() == "nrrd")
+  QString warningMessage;
+  // read a vti file
+  if(fileinfo.suffix() == "vti")
   {
 #ifdef CGAL_USE_VTK
-    vtkNew<vtkNrrdReader> reader;
-    reader->SetFileName(fileinfo.filePath().toUtf8());
-    reader->Update();
-    auto vtk_image = reader->GetOutput();
-    vtk_image->Print(std::cerr);
-    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    ok = load_vtk_file<vtkXMLImageDataReader>(fileinfo, image);
 #else
-    CGAL::Three::Three::warning("VTK is required to read NRRD files");
-    delete image;
-    return QList<Scene_item*>();
+    ok = false;
+    warningMessage = "VTK is required to read VTI files";
+#endif
+  }
+
+  // read a nrrd file
+  else if(fileinfo.suffix() == "nrrd")
+  {
+#ifdef CGAL_USE_VTK
+    ok = load_vtk_file<vtkNrrdReader>(fileinfo, image);
+#else
+    ok = false;
+    warningMessage = "VTK is required to read NRRD files";
 #endif
   }
 
   // read a NIFTI file
-  if(fileinfo.suffix() == "nii"
+  else if(fileinfo.suffix() == "nii"
     || (   fileinfo.suffix() == "gz"
         && fileinfo.fileName().endsWith(QString(".nii.gz"), Qt::CaseInsensitive)))
   {
 #ifdef CGAL_USE_VTK
-    vtkNew<vtkNIFTIImageReader> reader;
-    reader->SetFileName(fileinfo.filePath().toUtf8());
-    reader->Update();
-    auto vtk_image = reader->GetOutput();
-    vtk_image->Print(std::cerr);
-    *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
+    ok = load_vtk_file<vtkNIFTIImageReader>(fileinfo, image);
 #else
-    CGAL::Three::Three::warning("VTK is required to read NIfTI files");
-    delete image;
-    return QList<Scene_item*>();
+    ok = false;
+    warningMessage = "VTK is required to read NifTI files";
 #endif
   }
 
@@ -1267,9 +1291,14 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     if(!success)
     {
       ok = false;
-      delete image;
-      return QList<Scene_item*>();
     }
+  }
+
+  if (!ok) {
+    if (warningMessage.length() > 0)
+        CGAL::Three::Three::warning(warningMessage);
+    delete image;
+    return QList<Scene_item*>();
   }
 
   // Get display precision
@@ -1327,7 +1356,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
     //Create planes
     image_item = new Scene_image_item(image,0, true);
-    image_item->setName(fileinfo.baseName());
+    image_item->setName(fileinfo.completeBaseName());
     msgBox.setText("Planes created : 0/3");
     msgBox.setStandardButtons(QMessageBox::NoButton);
     msgBox.show();
@@ -1338,7 +1367,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
     image_item = new Scene_image_item(image,voxel_scale, false);
   }
-  image_item->setName(fileinfo.baseName());
+  image_item->setName(fileinfo.completeBaseName());
 
   if(add_to_scene)
     CGAL::Three::Three::scene()->addItem(image_item);
@@ -1427,7 +1456,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
       {
         // Create planes
         image_item = new Scene_image_item(image,125, true);
-        image_item->setName(fileinfo.baseName());
+        image_item->setName(fileinfo.completeBaseName());
         msgBox.setText("Planes created : 0/3");
         msgBox.setStandardButtons(QMessageBox::NoButton);
         msgBox.show();
@@ -1441,7 +1470,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
         int voxel_scale = ui.precisionList->currentIndex() + 1;
 
         image_item = new Scene_image_item(image,voxel_scale, false);
-        image_item->setName(fileinfo.baseName());
+        image_item->setName(fileinfo.completeBaseName());
         scene->addItem(image_item);
       }
     }

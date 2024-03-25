@@ -12,4 +12,5 @@ Jet_fitting_3
 Solver_interface
 Shape_detection
 Advancing_front_surface_reconstruction
+Point_set_3
 BGL

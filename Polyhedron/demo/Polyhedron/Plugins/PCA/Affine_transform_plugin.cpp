@@ -126,7 +126,7 @@ public:
 
     QList<QLineEdit*> lineEdits;
     lineEdits << ui.lineEditA << ui.lineEditX << ui.lineEditY << ui.lineEditZ;
-    Q_FOREACH(QLineEdit* widget, lineEdits)
+    for(QLineEdit* widget : lineEdits)
     {
       QSizePolicy sp_retain = widget->sizePolicy();
       sp_retain.setRetainSizeWhenHidden(true);
@@ -428,7 +428,7 @@ normalize()
   QVector3D v_bil = QVector3D(aff_transformed_item->bbox().xmin(),
                               aff_transformed_item->bbox().ymin(),
                               aff_transformed_item->bbox().zmin());
-  QMatrix4x4 frameMat = QMatrix();
+  QMatrix4x4 frameMat = QMatrix4x4();
   QVector3D center(aff_transformed_item->center().x,
                    aff_transformed_item->center().y,
                    aff_transformed_item->center().z);
@@ -614,12 +614,20 @@ endPointSet(const QMatrix4x4& transform_matrix)
   Point_set* new_ps = new_item->point_set();
   CGAL::qglviewer::Vec c = aff_transformed_item->center();
 
+  QMatrix3x3 normal_matrix = transform_matrix.normalMatrix();
+
   for(Point_set::Index idx : *new_ps)
   {
-    QVector3D vec = transform_matrix * QVector3D(new_ps->point(idx).x() - c.x,
-                                                 new_ps->point(idx).y() - c.y,
-                                                 new_ps->point(idx).z() - c.z);
+    QVector3D vec = transform_matrix.map(QVector3D(new_ps->point(idx).x() - c.x,
+                                                   new_ps->point(idx).y() - c.y,
+                                                   new_ps->point(idx).z() - c.z));
     new_ps->point(idx) = Kernel::Point_3(vec.x(), vec.y(), vec.z());
+    if (new_ps->has_normal_map()) {
+      QVector3D n(new_ps->normal(idx).x(), new_ps->normal(idx).y(), new_ps->normal(idx).z());
+      new_ps->normal(idx) = Kernel::Vector_3(normal_matrix(0, 0) * n[0] + normal_matrix(0, 1) * n[1] + normal_matrix(0, 2) * n[2],
+                                             normal_matrix(1, 0) * n[0] + normal_matrix(1, 1) * n[1] + normal_matrix(1, 2) * n[2],
+                                             normal_matrix(2, 0) * n[0] + normal_matrix(2, 1) * n[1] + normal_matrix(2, 2) * n[2]);
+    }
   }
 
   new_item->setName(aff_transformed_item->name());
@@ -643,9 +651,9 @@ endPolygonSoup(const QMatrix4x4& transform_matrix)
 
   for(Point_3& p : new_points)
   {
-    QVector3D vec = transform_matrix * QVector3D(p.x() - c.x,
-                                                 p.y() - c.y,
-                                                 p.z() - c.z);
+    QVector3D vec = transform_matrix.map(QVector3D(p.x() - c.x,
+                                                   p.y() - c.y,
+                                                   p.z() - c.z));
     p = Kernel::Point_3(vec.x(), vec.y(), vec.z());
   }
 
@@ -670,9 +678,9 @@ endPolygonMesh(const QMatrix4x4& transform_matrix)
   const CGAL::qglviewer::Vec& c = aff_transformed_item->center();
   auto transformation = [&c, &transform_matrix](const Kernel::Point_3& p) -> Kernel::Point_3
   {
-    QVector3D vec = transform_matrix * QVector3D(p.x() - c.x,
-                                                 p.y() - c.y,
-                                                 p.z() - c.z);
+    QVector3D vec = transform_matrix.map(QVector3D(p.x() - c.x,
+                                                   p.y() - c.y,
+                                                   p.z() - c.z));
     return { vec.x(), vec.y(), vec.z() };
   };
 

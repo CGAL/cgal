@@ -52,8 +52,8 @@ template <typename Geom_traits,
 class Jet_smoother
 {
 public:
-  typedef typename Geom_traits::FT FT; ///< defines the point type.
-  typedef typename Geom_traits::Point_3 Point; ///< defines the point typ.e
+  typedef typename Geom_traits::FT FT; ///< defines the field number type.
+  typedef typename Geom_traits::Point_3 Point; ///< defines the point type.
 private:
 
   unsigned int m_k;
@@ -65,9 +65,9 @@ public:
   /**
    * Constructs a jet smoother.
    *
-   * \param k number of neighbors used.
+   * \param k number of neighbors used
    * \param degree_fitting fitting degree
-   * \param degree_monge monge degree
+   * \param degree_monge Monge degree
    */
   Jet_smoother (unsigned int k = 12,
                 unsigned int degree_fitting = 2,

@@ -35,7 +35,7 @@ function(add_Snap_rounding_tests name)
   endforeach()
 endfunction(add_Snap_rounding_tests)
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   cgal_add_compilation_test(test_snap_rounding_2)
   add_snap_rounding_tests(test_snap_rounding_2)
 endif()

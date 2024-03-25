@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ron Wein    <wein@post.tau.ac.il>
-//                 Efi Fogel   <efif@post.tau.ac.il>
+// Author(s): Ron Wein    <wein@post.tau.ac.il>
+//            Efi Fogel   <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_EXTENDED_DCEL_H
 #define CGAL_ARR_EXTENDED_DCEL_H
@@ -26,142 +26,115 @@
 
 namespace CGAL {
 
-/*!
- * \class
+/*! \class
  * An extended DCEL vertex with auxiliary data field.
  */
-template <class VertexBase_, typename VertexData_>
-class Arr_extended_vertex : public VertexBase_
-{
-  typedef Arr_extended_vertex<VertexBase_, VertexData_>  Self;
-  typedef VertexBase_                                    Base;
+template <typename VertexBase, typename VertexData>
+class Arr_extended_vertex : public VertexBase {
+  using Vertex_base = VertexBase;
+  using Vertex_data = VertexData;
+
+  using Self = Arr_extended_vertex<Vertex_base, Vertex_data>;
 
 public:
-  typedef VertexData_                                     Data;
+  typedef Vertex_data                                    Data;
 
 private:
-
-  Data       m_data;       // The auxiliary data field.
+  Data m_data;       // The auxiliary data field.
 
 public:
-
   /*! Get the auxiliary data (const version). */
-  const Data& data () const
-  {
-    return (m_data);
-  }
+  const Data& data() const { return m_data; }
 
   /*! Get the auxiliary data (non-const version). */
-  Data& data ()
-  {
-    return (m_data);
-  }
+  Data& data() { return m_data; }
 
   /*! Set the auxiliary data. */
-  void set_data (const Data& data)
-  {
-    m_data = data;
-  }
+  void set_data(const Data& data) { m_data = data; }
 
   /*! Assign from another vertex. */
-  virtual void assign (const Base& v)
-  {
-    Base::assign (v);
-
-    const Self&  ex_v = static_cast<const Self&>(v);
+  virtual void assign(const Vertex_base& v) {
+    Vertex_base::assign(v);
+    const Self& ex_v = static_cast<const Self&>(v);
     m_data = ex_v.m_data;
   }
+
+  template <typename Point_>
+  struct rebind {
+    using Point_2 = Point_;
+    using other = typename Vertex_base::template rebind<Point_2>;
+  };
 };
 
-/*!
- * \class
+/*! \class
  * An extended DCEL halfedge with auxiliary data field.
  */
-template <class HalfedgeBase_, typename HalfedgeData_>
-class Arr_extended_halfedge : public HalfedgeBase_
-{
-  typedef Arr_extended_halfedge<HalfedgeBase_, HalfedgeData_>  Self;
-  typedef HalfedgeBase_                                        Base;
+template <typename HalfedgeBase, typename HalfedgeData>
+class Arr_extended_halfedge : public HalfedgeBase {
+  using Halfedge_base = HalfedgeBase;
+  using Halfedge_data = HalfedgeData;
+
+  using Self = Arr_extended_halfedge<Halfedge_base, Halfedge_data>;
 
 public:
-  typedef HalfedgeData_                                        Data;
+  typedef Halfedge_data                                       Data;
 
 private:
-
-  Data       m_data;       // The auxiliary data field.
+  Data m_data;       // The auxiliary data field.
 
 public:
-
   /*! Get the auxiliary data (const version). */
-  const Data& data () const
-  {
-    return (m_data);
-  }
+  const Data& data() const { return m_data; }
 
   /*! Get the auxiliary data (non-const version). */
-  Data& data ()
-  {
-    return (m_data);
-  }
+  Data& data() { return m_data; }
 
   /*! Set the auxiliary data. */
-  void set_data (const Data& data)
-  {
-    m_data = data;
-  }
+  void set_data(const Data& data) { m_data = data; }
 
-  /*! Assign from another vertex. */
-  virtual void assign (const Base& he)
-  {
-    Base::assign (he);
-
-    const Self&  ex_he = static_cast<const Self&>(he);
+  /*! Assign from another halfedge. */
+  virtual void assign(const Halfedge_base& he) {
+    Halfedge_base::assign(he);
+    const Self& ex_he = static_cast<const Self&>(he);
     m_data = ex_he.m_data;
   }
+
+  template <typename XMonotoneCurve>
+  struct rebind {
+    using X_monotonote_curve_2 = XMonotoneCurve;
+    using other = typename Halfedge_base::template rebind<X_monotonote_curve_2>;
+  };
 };
 
-/*!
- * \class
+/*! \class
  * An extended DCEL face with auxiliary data field.
  */
-template <class FaceBase_, typename FaceData_>
-class Arr_extended_face : public FaceBase_
-{
-  typedef Arr_extended_face<FaceBase_, FaceData_>  Self;
-  typedef FaceBase_                                Base;
+template <typename FaceBase, typename FaceData>
+class Arr_extended_face : public FaceBase {
+  using Face_base = FaceBase;
+  using Face_data = FaceData;
+
+  using Self = Arr_extended_face<Face_base, Face_data>;
 
 public:
-  typedef FaceData_                                Data;
+  typedef Face_data                               Data;
 
 private:
-
-  Data       m_data;       // The auxiliary data field.
+  Data m_data;       // The auxiliary data field.
 
 public:
-
   /*! Get the auxiliary data (const version). */
-  const Data& data () const
-  {
-    return (m_data);
-  }
+  const Data& data() const { return m_data; }
 
   /*! Get the auxiliary data (non-const version). */
-  Data& data ()
-  {
-    return (m_data);
-  }
+  Data& data() { return m_data; }
 
   /*! Set the auxiliary data. */
-  void set_data (const Data& data)
-  {
-    m_data = data;
-  }
+  void set_data(const Data& data) { m_data = data; }
 
-  /*! Assign from another vertex. */
-  virtual void assign (const Base& f)
-  {
-    Base::assign (f);
-
+  /*! Assign from another face. */
+  virtual void assign(const Face_base& f) {
+    Face_base::assign(f);
     const Self&  ex_f = static_cast<const Self&>(f);
     m_data = ex_f.m_data;
   }
@@ -173,49 +146,41 @@ public:
  * defines the Point_2 and X_monotone_curve_2 types.
  * The FaceData parameter specifies the object type stored with each face.
  */
-template <class Traits_, typename FaceData_,
-          class VertexBase_ = Arr_vertex_base<typename Traits_::Point_2>,
-          class HalfedgeBase_ =
-                        Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
-          class FaceBase_ = Arr_face_base>
+template <typename Traits_, typename FaceData,
+          typename VertexBase = Arr_vertex_base<typename Traits_::Point_2>,
+          typename HalfedgeBase =
+            Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
+          typename FaceBase = Arr_face_base>
 class Arr_face_extended_dcel :
-  public Arr_dcel_base<VertexBase_,
-                       HalfedgeBase_,
-                       Arr_extended_face<FaceBase_, FaceData_> >
-{
+  public Arr_dcel_base<VertexBase, HalfedgeBase,
+                       Arr_extended_face<FaceBase, FaceData>> {
 public:
-
-  typedef FaceData_                    Face_data;
+  using Face_base = FaceBase;
+  using Face_data = FaceData;
 
   /*! \struct
    * An auxiliary structure for rebinding the DCEL with a new traits class.
    */
-  template<typename T>
-  class rebind
-  {
-    typedef typename VertexBase_::template rebind
-                        <typename T::Point_2>              Rebind_vertex;
-    typedef typename Rebind_vertex::other                  Vertex_base;
-    typedef typename HalfedgeBase_::template rebind
-                        <typename T::X_monotone_curve_2>   Rebind_halfedge;
-    typedef typename Rebind_halfedge::other                Halfedge_base;
+  template <typename T>
+  class rebind {
+  private:
+    using Pnt = typename T::Point_2;
+    using Xcv = typename T::X_monotone_curve_2;
+    using Rebind_vertex = typename VertexBase::template rebind<Pnt>;
+    using Vertex_other = typename Rebind_vertex::other;
+    using Rebind_halfedge = typename HalfedgeBase::template rebind<Xcv>;
+    using Halfedge_other = typename Rebind_halfedge::other;
 
   public:
-
-    typedef Arr_face_extended_dcel<T,
-                                   Face_data,
-                                   Vertex_base,
-                                   Halfedge_base,
-                                   FaceBase_>              other;
+    using other = Arr_face_extended_dcel<T, Face_data, Vertex_other,
+                                         Halfedge_other, Face_base>;
   };
 
   /*! Default constructor. */
-  Arr_face_extended_dcel ()
-  {}
+  Arr_face_extended_dcel() {}
 
   /*! Destructor. */
-  virtual ~Arr_face_extended_dcel ()
-  {}
+  virtual ~Arr_face_extended_dcel() {}
 };
 
 /*! \class
@@ -225,54 +190,48 @@ public:
  * The VertexData, HalfedgeData and FaceData parameter specify the object types
  * stored with each vertex, halfedge and face, respectively.
  */
-template <class Traits_,
-          typename VertexData_, typename HalfedgeData_, typename FaceData_,
-          class VertexBase_ = Arr_vertex_base<typename Traits_::Point_2>,
-          class HalfedgeBase_ =
-                        Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
-          class FaceBase_ = Arr_face_base>
+template <typename Traits_,
+          typename VertexData, typename HalfedgeData, typename FaceData,
+          typename VertexBase = Arr_vertex_base<typename Traits_::Point_2>,
+          typename HalfedgeBase =
+            Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
+          typename FaceBase = Arr_face_base>
 class Arr_extended_dcel :
-  public Arr_dcel_base<Arr_extended_vertex<VertexBase_, VertexData_>,
-                       Arr_extended_halfedge<HalfedgeBase_, HalfedgeData_>,
-                       Arr_extended_face<FaceBase_, FaceData_> >
-{
+  public Arr_dcel_base<Arr_extended_vertex<VertexBase, VertexData>,
+                       Arr_extended_halfedge<HalfedgeBase, HalfedgeData>,
+                       Arr_extended_face<FaceBase, FaceData>> {
 public:
-
-  typedef VertexData_                  Vertex_data;
-  typedef HalfedgeData_                Halfedge_data;
-  typedef FaceData_                    Face_data;
+  using Vertex_data = VertexData;
+  using Halfedge_data = HalfedgeData;
+  using Face_data = FaceData;
+  using Vertex_base = VertexBase;
+  using Halfedge_base = HalfedgeBase;
+  using Face_base = FaceBase;
 
   /*! \struct
    * An auxiliary structure for rebinding the DCEL with a new traits class.
    */
-  template<typename T>
-  class rebind
-  {
-    typedef typename VertexBase_::template rebind
-                        <typename T::Point_2>              Rebind_vertex;
-    typedef typename Rebind_vertex::other                  Vertex_base;
-    typedef typename HalfedgeBase_::template rebind
-                        <typename T::X_monotone_curve_2>   Rebind_halfedge;
-    typedef typename Rebind_halfedge::other                Halfedge_base;
+  template <typename T>
+  struct rebind {
+  private:
+    using Pnt = typename T::Point_2;
+    using Xcv = typename T::X_monotone_curve_2;
+    using Rebind_vertex = typename VertexBase::template rebind<Pnt>;
+    using Vertex_other = typename Rebind_vertex::other;
+    using Rebind_halfedge = typename HalfedgeBase::template rebind<Xcv>;
+    using Halfedge_other = typename Rebind_halfedge::other;
 
   public:
-
-    typedef Arr_extended_dcel<T,
-                              Vertex_data,
-                              Halfedge_data,
-                              Face_data,
-                              Vertex_base,
-                              Halfedge_base,
-                              FaceBase_>                   other;
+    using other = Arr_extended_dcel<T,
+                                    Vertex_data, Halfedge_data, Face_data,
+                                    Vertex_other, Halfedge_other, Face_base>;
   };
 
   /*! Default constructor. */
-  Arr_extended_dcel ()
-  {}
+  Arr_extended_dcel() {}
 
   /*! Destructor. */
-  virtual ~Arr_extended_dcel ()
-  {}
+  virtual ~Arr_extended_dcel() {}
 };
 
 } //namespace CGAL

@@ -1,5 +1,6 @@
 Algebraic_foundations
 BGL
+Cartesian_kernel
 Circulator
 Distance_2
 Distance_3
@@ -14,6 +15,7 @@ Kernel_d
 Modular_arithmetic
 Number_types
 Orthtree
+Point_set_2
 Principal_component_analysis_LGPL
 Profiling_tools
 Property_map

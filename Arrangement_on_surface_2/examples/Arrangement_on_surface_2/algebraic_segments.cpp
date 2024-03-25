@@ -21,15 +21,15 @@ int main ()
 #include "integer_type.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_algebraic_segment_traits_2<Integer> Traits;
-typedef CGAL::Arrangement_2<Traits>                   Arrangement;
-typedef Traits::Curve_2                               Curve;
-typedef Traits::Polynomial_2                          Polynomial;
-typedef Traits::Algebraic_real_1                      Algebraic_real;
-typedef Traits::X_monotone_curve_2                    X_monotone_curve;
-typedef Traits::Point_2                               Point;
+using Traits = CGAL::Arr_algebraic_segment_traits_2<Integer>;
+using Arrangement = CGAL::Arrangement_2<Traits>;
+using Curve = Traits::Curve_2;
+using Polynomial = Traits::Polynomial_2;
+using Algebraic_real = Traits::Algebraic_real_1;
+using X_monotone_curve = Traits::X_monotone_curve_2;
+using Point = Traits::Point_2;
 
-typedef std::variant<Point, X_monotone_curve>       Make_x_monotone_result;
+using Make_x_monotone_result = std::variant<Point, X_monotone_curve>;
 
 int main() {
   Traits traits;

@@ -5,7 +5,7 @@
 #include <CGAL/Three/Three.h>
 #include <QInputDialog>
 #include <QMessageBox>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QMenu>
 using namespace CGAL::Three;
 typedef Triangle_container Tc;
@@ -307,13 +307,14 @@ void Scene_plane_item::setPlaneOrientation()
 {
   bool does_match = true;
   //check that the result is of the form %1*x + %2*y + %3*z + %4 = 0, modulo the whitespaces.
-  QRegExp rx(
+  QRegularExpression rx(
         "(\\-?\\s*\\d*\\.?\\d*(?:e\\-?\\d*)?)\\s*\\*\\s*x\\s*\\+?\\s*(\\-?\\s*\\d*\\.?\\d*(?:e\\-?\\d*)?)\\s*\\*\\s*y\\s*\\+?\\s*(\\-?\\s*\\d*\\.?\\d*(?:e\\-?\\d*)?)\\s*\\*\\s*z\\s*\\+?\\s*(\\-?\\s*\\d*\\.?\\d*(?:e\\-?\\d*)?)\\s*=\\s*0"
         );
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   QVector3D qoffset(offset.x, offset.y, offset.z);
   const CGAL::qglviewer::Vec& pos = frame->position();
   const CGAL::qglviewer::Vec& n = frame->inverseTransformOf(CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
+  QRegularExpressionMatch match;
   do{
     bool ok;
 
@@ -327,13 +328,15 @@ void Scene_plane_item::setPlaneOrientation()
                                        &ok);
     if(!ok)
       return;
-    does_match = rx.exactMatch(eq);
+
+    match = rx.match(eq);
+    does_match = match.hasMatch() && match.capturedLength(0) == eq.size();
     if(!does_match)
     {
       QMessageBox::warning(CGAL::Three::Three::mainWindow(),"Error","The input must be of the form a*x+b*y+c*z+d=0");
     }
   }while(!does_match);
-  double a(rx.cap(1).toDouble()), b(rx.cap(2).toDouble()), c(rx.cap(3).toDouble()), d(rx.cap(4).toDouble());
+  double a(match.captured(1).toDouble()), b(match.captured(2).toDouble()), c(match.captured(3).toDouble()), d(match.captured(4).toDouble());
 
   Kernel_epic::Point_3 sure_point(0,0,0);
   if(c != 0)
