@@ -62,9 +62,9 @@ public:
     m_gradients.resize(nv);
   }
 
-  // computes and stores gradients at the vertices of the grid
-  // \tparam ValueField must be a model of `IsosurfacingValueField_3`
-  // \param values a field of values whose gradient are being computed
+  /// computes (using finite difference) and stores gradients at the vertices of the grid.
+  /// \tparam ValueField must be a model of `IsosurfacingValueField_3`
+  /// \param values a field of values whose gradient are being computed
   template <typename ValueField>
   void compute_discrete_gradients(const ValueField& values)
   {

@@ -89,6 +89,11 @@ void run_dual_contouring(const Grid& grid,
     }
   }
 
+  // If the gradient was not known analytically, we could use:
+  // - Finite_difference_gradient_3 to use finite difference to compute it from values;
+  // - the function below to use finite difference _and_ store the values at the grid vertices
+  //     gradients.compute_discrete_gradients(values);
+
   Domain domain { grid, values, gradients };
 
   Point_range points;
