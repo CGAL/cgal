@@ -88,6 +88,37 @@ struct IsotropicClusterData {
   }
 };
 
+template <typename GT>
+typename GT::Vector_3 compute_qem_point_displacement(std::vector<typename GT::FT> qem, typename GT::Vector_3 point)
+{
+  Eigen::Matrix<typename GT::FT, 4, 4> A;
+  A << qem[0], qem[1], qem[2], qem[3],
+       qem[1], qem[4], qem[5], qem[6],
+       qem[2], qem[5], qem[7], qem[8],
+       qem[3], qem[6], qem[8], qem[9];
+
+  Eigen::EigenSolver<Eigen::Matrix<typename GT::FT, 4, 4>> es(A);
+  Eigen::Matrix<typename GT::FT, 4, 1> eigenvalues = es.eigenvalues().real();
+  Eigen::Matrix<typename GT::FT, 4, 4> eigenvectors = es.eigenvectors().real();
+
+  // find the smallest eigenvalue
+  int min_eigenvalue_index = 0;
+  typename GT::FT min_eigenvalue = eigenvalues(0);
+  for (int i = 1; i < 4; i++)
+  {
+    if (eigenvalues(i) < min_eigenvalue)
+    {
+      min_eigenvalue = eigenvalues(i);
+      min_eigenvalue_index = i;
+    }
+  }
+
+  // find the corresponding eigenvector
+  Eigen::Matrix<typename GT::FT, 4, 1> eigenvector = eigenvectors.col(min_eigenvalue_index);
+
+  return typename GT::Vector_3(eigenvector(0), eigenvector(1), eigenvector(2));
+}
+
 // Not Fully used yet
 template <typename GT>
 struct QEMClusterData {
@@ -255,37 +286,6 @@ void compute_triangle_QEM(typename GT::Vector_3 points[3], std::vector<typename 
   qem[9] += n[3] * n[3];
 }
 
-template <typename GT>
-typename GT::Vector_3 compute_qem_point_displacement(std::vector<typename GT::FT> qem, typename GT::Vector_3 point)
-{
-  Eigen::Matrix<typename GT::FT, 4, 4> A;
-  A << qem[0], qem[1], qem[2], qem[3],
-       qem[1], qem[4], qem[5], qem[6],
-       qem[2], qem[5], qem[7], qem[8],
-       qem[3], qem[6], qem[8], qem[9];
-
-  Eigen::EigenSolver<Eigen::Matrix<typename GT::FT, 4, 4>> es(A);
-  Eigen::Matrix<typename GT::FT, 4, 1> eigenvalues = es.eigenvalues().real();
-  Eigen::Matrix<typename GT::FT, 4, 4> eigenvectors = es.eigenvectors().real();
-
-  // find the smallest eigenvalue
-  int min_eigenvalue_index = 0;
-  typename GT::FT min_eigenvalue = eigenvalues(0);
-  for (int i = 1; i < 4; i++)
-  {
-    if (eigenvalues(i) < min_eigenvalue)
-    {
-      min_eigenvalue = eigenvalues(i);
-      min_eigenvalue_index = i;
-    }
-  }
-
-  // find the corresponding eigenvector
-  Eigen::Matrix<typename GT::FT, 4, 1> eigenvector = eigenvectors.col(min_eigenvalue_index);
-
-  return typename GT::Vector_3(eigenvector(0), eigenvector(1), eigenvector(2));
-}
-
 template <typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 std::pair<
@@ -327,7 +327,7 @@ std::pair<
   // if adaptive clustering
   if (gradation_factor > 0 &&
     is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
-    interpolated_corrected_principal_curvatures_and_directions(pmesh, vpcd_map);
+    interpolated_corrected_curvatures(pmesh, parameters::vertex_principal_curvatures_and_directions_map(vpcd_map));
 
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
@@ -804,7 +804,7 @@ std::pair<
   // if adaptive clustering
   if (gradation_factor > 0 &&
     is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
-    interpolated_corrected_principal_curvatures_and_directions(pmesh, vpcd_map);
+    interpolated_corrected_curvatures(pmesh, parameters::vertex_principal_curvatures_and_directions_map(vpcd_map));
 
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
