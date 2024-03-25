@@ -16,8 +16,8 @@
 #include <CGAL/license/Isosurfacing_3.h>
 
 #include <CGAL/Isosurfacing_3/internal/partition_traits.h>
-
 #include <CGAL/Isosurfacing_3/interpolation_schemes_3.h>
+#include <CGAL/Isosurfacing_3/Finite_difference_gradient_3.h>
 
 #include <vector>
 
@@ -63,12 +63,18 @@ public:
   }
 
   // computes and stores gradients at the vertices of the grid
-  // \tparam must be ValueField a model of `IsosurfacingValueField_3`
+  // \tparam ValueField must be a model of `IsosurfacingValueField_3`
   // \param values a field of values whose gradient are being computed
   template <typename ValueField>
   void compute_discrete_gradients(const ValueField& values)
   {
-    // @todo
+    const FT step = CGAL::approximate_sqrt(m_grid.spacing().squared_length()) * 0.01; // finite difference step
+    Finite_difference_gradient_3<Geom_traits> g(values, step);
+
+   for(std::size_t i=0; i<m_grid.xdim(); ++i)
+      for(std::size_t j=0; j<m_grid.ydim(); ++j)
+        for(std::size_t k=0; k<m_grid.zdim(); ++k)
+          m_gradients[m_grid.linear_index(i, j, k)] = g(m_grid.point(i,j,k));
   }
 
 public:
