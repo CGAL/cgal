@@ -1,5 +1,3 @@
-#define CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
