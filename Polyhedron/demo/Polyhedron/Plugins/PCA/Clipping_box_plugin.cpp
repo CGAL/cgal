@@ -15,6 +15,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/boost/graph/generators.h>
 #include "Selection_visualizer.h"
 #include "Scene_plane_item.h"
 

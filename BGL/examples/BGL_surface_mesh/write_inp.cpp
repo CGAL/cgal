@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/boost/graph/io.h>
 

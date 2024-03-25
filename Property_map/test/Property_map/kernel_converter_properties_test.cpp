@@ -5,6 +5,7 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/property_map.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <cassert>
 

@@ -1,7 +1,7 @@
 #include <CGAL/Polygon_mesh_processing/transform.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Aff_transformation_3.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

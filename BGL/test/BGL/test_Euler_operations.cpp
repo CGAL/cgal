@@ -2,6 +2,7 @@
 #include "test_Prefix.h"
 #include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/IO/OFF.h>
 #include <CGAL/Polygon_mesh_processing/border.h>

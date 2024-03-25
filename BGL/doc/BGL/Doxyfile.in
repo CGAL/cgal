@@ -34,6 +34,7 @@ ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\">
 EXTRACT_ALL=NO
 HIDE_UNDOC_MEMBERS         =  YES
 HIDE_UNDOC_CLASSES         =  YES
+WARN_IF_INCOMPLETE_DOC     =  NO
 
 # macros to be used inside the code
 ALIASES += "cgalAssociatedTypesBegin=<dl class=\"params\"><dt>Associated Types</dt><dd> <table class=\"params\">"

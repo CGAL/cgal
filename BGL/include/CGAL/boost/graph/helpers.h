@@ -1081,8 +1081,5 @@ int halfedge_index_in_face(typename boost::graph_traits<Graph>::halfedge_descrip
 
 } // namespace CGAL
 
-// Here at the bottom because helpers.h must include generators (for backward compatibility reasons),
-// and Euler_operations.h needs helpers.h
-#include <CGAL/boost/graph/generators.h>
 
 #endif // CGAL_BOOST_GRAPH_HELPERS_H
