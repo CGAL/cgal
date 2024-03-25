@@ -77,6 +77,7 @@ struct All_cells_selected
 
 template<typename Triangulation
          , typename SizingFunction
+         , typename VertexIsConstrainedMap
          , typename EdgeIsConstrainedMap
          , typename FacetIsConstrainedMap
          , typename CellSelector
@@ -116,6 +117,7 @@ public:
   Adaptive_remesher(Triangulation& tr
                     , const SizingFunction& sizing
                     , const bool protect_boundaries
+                    , VertexIsConstrainedMap vcmap
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
                     , bool smooth_constrained_edges
@@ -132,7 +134,7 @@ public:
   {
     m_c3t3.triangulation().swap(tr);
 
-    init_c3t3(ecmap, fcmap);
+    init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3, m_cell_selector, smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -145,6 +147,7 @@ public:
   Adaptive_remesher(C3t3& c3t3
                     , const SizingFunction& sizing
                     , const bool protect_boundaries
+                    , VertexIsConstrainedMap vcmap
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
                     , bool smooth_constrained_edges
@@ -161,7 +164,7 @@ public:
   {
     m_c3t3.swap(c3t3);
 
-    init_c3t3(ecmap, fcmap);
+    init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3, m_cell_selector, smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -324,7 +327,8 @@ public:
   }
 
 private:
-  void init_c3t3(const EdgeIsConstrainedMap& ecmap,
+  void init_c3t3(const VertexIsConstrainedMap& vcmap,
+                 const EdgeIsConstrainedMap& ecmap,
                  const FacetIsConstrainedMap& fcmap)
   {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -444,6 +448,7 @@ private:
       incident_complex_edges(vit, m_c3t3, std::back_inserter(incident_edges));
       if ( incident_edges.size() == 1 //tip or endpoint
         || incident_edges.size() > 2  //corner
+        || get(vcmap, vit) // constrained vertex
         || (incident_edges.size() == 2
             && edges_form_a_sharp_angle(incident_edges, 60, m_c3t3)))
       {

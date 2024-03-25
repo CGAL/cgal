@@ -21,6 +21,11 @@ Release date: October 2023
 
 -   The CGAL\_Core library is no longer based on GMP but boost multiprecision now, and can be used with either gmp backend or boost backend.
 
+### [Polygon Repair](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonRepair) (new package)
+
+-   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
+    using the odd-even heuristic.
+
 #### 2D Arrangements
 
 - **Breaking change**: The type of the result of point location queries changed to
@@ -47,6 +52,12 @@ Release date: October 2023
 
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
+
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
+- **Breaking change**:
+  - Node splitting behavior and per-node data are now customizable via the Traits class.
+  - Nodes are now stored as a property map, with properties of each node accessed by index.
+  - Nearest neighbors functions only work for Orthtrees which provide the necessary functionality.
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonMeshProcessing)
 
