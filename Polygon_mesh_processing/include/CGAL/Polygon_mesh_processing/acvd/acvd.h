@@ -598,9 +598,9 @@ std::pair<
     {
       if (cluster_components[c].size() <= 1) continue; // only one component, no need to do anything
       nb_disconnected++;
-      int max_component_size = 0;
-      int max_component_index = -1;
-      for (int component_i = 0; component_i < cluster_components[c].size(); component_i++)
+      std::size_t max_component_size = 0;
+      std::size_t max_component_index = -1;
+      for (std::size_t component_i = 0; component_i < cluster_components[c].size(); component_i++)
       {
         if (cluster_components[c][component_i].size() > max_component_size)
         {
@@ -609,7 +609,7 @@ std::pair<
         }
       }
       // set cluster to -1 for all components except the largest one
-      for (int component_i = 0; component_i < cluster_components[c].size(); component_i++)
+      for (std::size_t component_i = 0; component_i < cluster_components[c].size(); component_i++)
       {
         if (component_i != max_component_index)
         {
