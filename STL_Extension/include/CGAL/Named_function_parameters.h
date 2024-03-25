@@ -613,6 +613,16 @@ bool authorized_options(const Named_function_parameters& np)
 
 } // end of parameters namespace
 
+#ifdef CGAL_NDEBUG
+#define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...)
+#else
+#define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...) \
+{ \
+using namespace ::CGAL::internal_np; \
+static_assert(::CGAL::parameters::authorized_options<__VA_ARGS__>(np)); \
+}
+#endif
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 namespace Polygon_mesh_processing {
 

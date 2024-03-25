@@ -109,6 +109,9 @@ void test_authorized_options()
   static_assert(!CGAL::parameters::authorized_options<CGAL::internal_np::vertex_point_t,
                                                       CGAL::internal_np::edge_index_t,
                                                       CGAL::internal_np::face_index_t>(np_ko));
+
+  CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np_ok1, vertex_point_t, edge_index_t, face_index_t);
+  CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np_ok2, vertex_point_t, edge_index_t, face_index_t);
 }
 
 int main()
