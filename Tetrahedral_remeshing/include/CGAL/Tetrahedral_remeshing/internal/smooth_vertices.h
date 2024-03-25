@@ -103,6 +103,7 @@ public:
 
   void init(const C3t3& c3t3)
   {
+#ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
     //collect a map of vertices surface indices
     std::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
     collect_vertices_surface_indices(c3t3, vertices_surface_indices);
@@ -118,9 +119,10 @@ public:
                       vertices_normals,
                       vertices_surface_indices,
                       c3t3);
-
+#else
     // Build AABB tree
     build_aabb_trees(c3t3);
+#endif
   }
 
   void start_flip_smooth_steps(const C3t3& c3t3)
@@ -716,10 +718,7 @@ private:
 
       const Point_3 smoothed_position = current_pos + move;
 
-#ifdef CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
-      const Point_3 new_pos = m_segments_aabb_tree.closest_point(smoothed_position);
-
-#else //CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
+#ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
 
       Vector_3 sum_projections = CGAL::NULL_VECTOR;
       Point_3 tmp_pos = current_pos;
@@ -734,10 +733,15 @@ private:
         sum_projections += Vector_3(tmp_pos, normal_projection);
         tmp_pos = normal_projection;
       }
-#endif
+#endif //CGAL_TET_REMESHING_EDGE_SMOOTHING_DISABLE_PROJECTION
 
       const Point_3 new_pos = current_pos + sum_projections;
-#endif //CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
+
+#else // AABB_tree projection
+
+      const Point_3 new_pos = m_segments_aabb_tree.closest_point(smoothed_position);
+
+#endif //CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       os_surf << "2 " << current_pos << " " << new_pos << std::endl;
@@ -825,7 +829,17 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const Vector_3 move = smoothed_positions[vid] / masses[vid];
       const Point_3 smoothed_position = point(v->point()) + move;
 
-#ifdef CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
+#ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
+      Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
+                                                           current_pos,
+                                                           vertices_normals.at(v).at(si));
+      std::optional<Point_3> mls_projection = project(si, normal_projection);
+
+      const Point_3 new_pos = (mls_projection != std::nullopt)
+                            ? *mls_projection
+                            : smoothed_position;
+
+#else // AABB_tree projection
       Point_3 new_pos;
       if (m_triangles_aabb_tree.squared_distance(smoothed_position) < m_aabb_epsilon)
       {
@@ -858,16 +872,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
         else
           new_pos = smoothed_position;
       }
-#else
-      Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
-                                                           current_pos,
-                                                           vertices_normals.at(v).at(si));
-      std::optional<Point_3> mls_projection = project(si, normal_projection);
-
-      const Point_3 new_pos = (mls_projection != std::nullopt)
-                            ? *mls_projection
-                            : smoothed_position;
-#endif
+#endif //CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
 
       if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
         nb_done_2d++;
@@ -878,15 +883,16 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
     }
     else if (nb_neighbors > 0)
     {
-#ifdef CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
-      const Point_3 new_pos = m_segments_aabb_tree.closest_point(current_pos);
-#else
+#ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
       std::optional<Point_3> mls_proj = project(si, current_pos);
       if (mls_proj == std::nullopt)
         continue;
 
       const Point_3 new_pos = *mls_proj;
-#endif
+#else // AABB_tree projection
+      const Point_3 new_pos = m_segments_aabb_tree.closest_point(current_pos);
+#endif // CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
+
       if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
         nb_done_2d++;
       }
