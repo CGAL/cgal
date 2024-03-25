@@ -37,30 +37,30 @@ public:
 
   ~Scene_spheres_item();
 
-  bool isFinite() const Q_DECL_OVERRIDE{ return true; }
-  bool isEmpty() const Q_DECL_OVERRIDE{ return false; }
-  Scene_item* clone() const Q_DECL_OVERRIDE{return nullptr;}
-  QString toolTip() const Q_DECL_OVERRIDE;
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
+  bool isFinite() const override{ return true; }
+  bool isEmpty() const override{ return false; }
+  Scene_item* clone() const override{return nullptr;}
+  QString toolTip() const override;
+  bool supportsRenderingMode(RenderingMode m) const override{
     return (m == Gouraud || m == Wireframe);
   }
-  void compute_bbox() const Q_DECL_OVERRIDE;
+  void compute_bbox() const override;
   void add_sphere(const Sphere &sphere, std::size_t index = 0, CGAL::IO::Color = CGAL::IO::Color(120,120,120));
   void clear_spheres();
   void setPrecision(int prec);
   void gl_initialization(CGAL::Three::Viewer_interface* viewer);
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-  void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-  void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+  void draw(CGAL::Three::Viewer_interface* viewer) const override;
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const override;
+  void invalidateOpenGLBuffers() override;
   void setPlane(Kernel::Plane_3 p_plane);
   void setToolTip(QString s);
-  void setColor(QColor c) Q_DECL_OVERRIDE;
+  void setColor(QColor c) override;
   bool save(const std::string &file_name) const;
 
 
-  void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
-  void computeElements() const Q_DECL_OVERRIDE;
-  bool eventFilter(QObject *watched, QEvent *event)Q_DECL_OVERRIDE;
+  void initializeBuffers(Viewer_interface *) const override;
+  void computeElements() const override;
+  bool eventFilter(QObject *watched, QEvent *event)override;
 Q_SIGNALS:
   void on_color_changed();
   void picked(std::size_t id) const;

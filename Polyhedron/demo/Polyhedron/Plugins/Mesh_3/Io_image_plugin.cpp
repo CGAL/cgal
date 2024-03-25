@@ -68,6 +68,7 @@
 #endif
 
 #include <CGAL/Three/Three.h>
+#include <CGAL/use.h>
 
 #include <boost/type_traits.hpp>
 #include <optional>
@@ -92,6 +93,8 @@ load_vtk_file(QFileInfo fileinfo, Image* image)
     *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
     return true;
 #else
+    CGAL_USE(fileinfo);
+    CGAL_USE(image);
     return false;
 #endif
 }
@@ -313,7 +316,7 @@ public:
       // Look for action just after "Load..." action
       QAction* actionAfterLoad = nullptr;
       for(QList<QAction*>::iterator it_action = menuFileActions.begin(),
-          end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
+          end = menuFileActions.end() ; it_action != end ; ++ it_action ) //for( QAction* action : menuFileActions)
       {
         if(NULL != *it_action && (*it_action)->text().contains("Load..."))
         {
@@ -594,7 +597,7 @@ public Q_SLOTS:
 
   void connectNewViewer(QObject* o)
   {
-    Q_FOREACH(Controls c, group_map.values())
+    for(Controls c : group_map.values())
     {
       o->installEventFilter(c.x_item);
       o->installEventFilter(c.y_item);
@@ -686,7 +689,7 @@ private:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
-    QRegExpValidator* validator = new QRegExpValidator(QRegExp("\\d*"), this);
+    QRegularExpressionValidator* validator = new QRegularExpressionValidator(QRegularExpression("\\d*"), this);
     bool show_sliders = true;
     if(x_control == nullptr)
     {
@@ -827,7 +830,7 @@ private:
     x_item->setColor(QColor("red"));
     y_item->setColor(QColor("green"));
     z_item->setColor(QColor("blue"));
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     {
       viewer->installEventFilter(x_item);
       viewer->installEventFilter(y_item);
@@ -927,7 +930,7 @@ private Q_SLOTS:
     CGAL::Three::Scene_group_item* group_item = qobject_cast<CGAL::Three::Scene_group_item*>(sender());
     if(group_item)
     {
-      Q_FOREACH(CGAL::Three::Scene_item* key, group_map.keys())
+      for(CGAL::Three::Scene_item* key : group_map.keys())
       {
         if(group_map[key].group == group_item)
         {
@@ -966,7 +969,7 @@ private Q_SLOTS:
       group_map.remove(img_item);
 
       QList<int> deletion;
-      Q_FOREACH(Scene_interface::Item_id id, group->getChildren())
+      for(Scene_interface::Item_id id : group->getChildren())
       {
         Scene_item* child = group->getChild(id);
         group->unlockChild(child);
@@ -1353,7 +1356,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
     //Create planes
     image_item = new Scene_image_item(image,0, true);
-    image_item->setName(fileinfo.baseName());
+    image_item->setName(fileinfo.completeBaseName());
     msgBox.setText("Planes created : 0/3");
     msgBox.setStandardButtons(QMessageBox::NoButton);
     msgBox.show();
@@ -1364,7 +1367,7 @@ Io_image_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
     image_item = new Scene_image_item(image,voxel_scale, false);
   }
-  image_item->setName(fileinfo.baseName());
+  image_item->setName(fileinfo.completeBaseName());
 
   if(add_to_scene)
     CGAL::Three::Three::scene()->addItem(image_item);
@@ -1453,7 +1456,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
       {
         // Create planes
         image_item = new Scene_image_item(image,125, true);
-        image_item->setName(fileinfo.baseName());
+        image_item->setName(fileinfo.completeBaseName());
         msgBox.setText("Planes created : 0/3");
         msgBox.setStandardButtons(QMessageBox::NoButton);
         msgBox.show();
@@ -1467,7 +1470,7 @@ bool Io_image_plugin::loadDirectory(const QString& dirname,
         int voxel_scale = ui.precisionList->currentIndex() + 1;
 
         image_item = new Scene_image_item(image,voxel_scale, false);
-        image_item->setName(fileinfo.baseName());
+        image_item->setName(fileinfo.completeBaseName());
         scene->addItem(image_item);
       }
     }

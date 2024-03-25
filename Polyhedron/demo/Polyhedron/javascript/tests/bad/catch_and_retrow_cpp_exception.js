@@ -9,9 +9,7 @@ f = function() {
 try {
     f()
 } catch(e) {
-    print("Caught exception in catch_and_retrow_cpp_exception.js:\n  " + e)
-    print("Backtrace:")
-    print_backtrace(e.backtrace)
+    print_exception_and_bt(e)
     print("Rethrow the exception...")
     throw e
 }

@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -22,7 +22,10 @@
  */
 
 #ifndef CGAL_CKVA_CURVE_RENDERER_INTERNALS_H
-#define CGAL_CKVA_CURVE_RENDERER_INTERNALS_H 1
+#define CGAL_CKVA_CURVE_RENDERER_INTERNALS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <vector>
 #include <stack>
@@ -87,8 +90,6 @@ struct Pixel_2_
 
     Integer sub_x, sub_y; // subpixel coordinates relative to pixel's boundary
                           // (always 0 for pixels)
-
-    Pixel_2_& operator =(const Pixel_2_& pix) = default;
 
     bool operator ==(const Pixel_2_& pix) const {
         return (

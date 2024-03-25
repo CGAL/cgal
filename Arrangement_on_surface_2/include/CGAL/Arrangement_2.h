@@ -25,6 +25,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
+#include <CGAL/Arr_default_dcel.h>
 
 namespace CGAL {
 
@@ -115,12 +116,9 @@ public:
   typedef typename Base::Inner_ccb_const_iterator  Hole_const_iterator;
 
 private:
-
-  friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
 
 public:
-
   /// \name Constructors.
   //@{
 
@@ -215,34 +213,6 @@ public:
   }
 
   //@}
-
-protected:
-
-  /// \name Managing and notifying the arrangement observers.
-  //@{
-  typedef Arr_observer<Self>                      Observer;
-
-  /*!
-   * Register a new observer (so it starts receiving notifications).
-   * \param p_obs A pointer to the observer object.
-   */
-  void _register_observer (Observer *p_obs)
-  {
-    Base::_register_observer ((typename Base::Observer*)p_obs);
-    return;
-  }
-
-  /*!
-   * Unregister a new observer (so it stops receiving notifications).
-   * \param p_obs A pointer to the observer object.
-   * \return Whether the observer was successfully unregistered.
-   */
-  bool _unregister_observer (Observer *p_obs)
-  {
-    return (Base::_unregister_observer ((typename Base::Observer*)p_obs));
-  }
-  //@}
-
 };
 
 } //namespace CGAL

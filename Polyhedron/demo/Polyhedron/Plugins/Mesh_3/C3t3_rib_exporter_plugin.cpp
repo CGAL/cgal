@@ -387,7 +387,7 @@ save(const Scene_c3t3_item& c3t3_item, const QFileInfo& fileInfo)
   rib_file.precision(8);
 
   // Header
-  QString basename = fileInfo.baseName();
+  QString basename = fileInfo.completeBaseName();
   write_header(qPrintable(basename), rib_file);
 
   // Lights

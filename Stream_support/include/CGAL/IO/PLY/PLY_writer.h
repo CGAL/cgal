@@ -266,7 +266,7 @@ public:
   virtual void print(std::ostream& stream, const Index& index)
   {
     if(get_mode(stream) == CGAL::IO::ASCII)
-      stream << get(m_pmap, index);
+      stream << no_char_character(get(m_pmap, index));
     else
     {
       Type t = Type(get(m_pmap, index));

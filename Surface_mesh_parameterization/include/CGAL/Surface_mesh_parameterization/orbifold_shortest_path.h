@@ -18,7 +18,7 @@
 
 #include <CGAL/assertions.h>
 
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 #include <unordered_map>
