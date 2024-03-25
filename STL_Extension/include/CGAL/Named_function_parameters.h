@@ -549,7 +549,79 @@ struct is_default_parameter
   typedef CGAL::Boolean_tag<value> type;
 };
 
+
+// code used to make sure all options passed are used by a function
+namespace authorized_parameters_impl
+{
+
+template <class ... Tag>
+struct Tag_wrapper{};
+
+template <class Tag>
+constexpr
+bool is_tag_present(Tag_wrapper<Tag>, Tag)
+{
+  return true;
+}
+
+template <class TagAllowed, class Tag>
+constexpr
+bool is_tag_present(Tag_wrapper<TagAllowed>, Tag)
+{
+  return false;
+}
+
+template <class TagAllowed, class ... TagsAllowed, class Tag, class = std::enable_if_t<sizeof...(TagsAllowed) >= 1>>
+constexpr
+bool is_tag_present(Tag_wrapper<TagAllowed, TagsAllowed...>, Tag)
+{
+  if (std::is_same_v<TagAllowed, Tag>)
+    return true;
+  else
+    return is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
+}
+
+template <class ... TagsAllowed, class T, class Tag>
+constexpr
+bool authorized_options_rec(const Named_function_parameters<T, Tag>&)
+{
+  return is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
+}
+
+template <class ... TagsAllowed, class T, class Tag, class Base>
+constexpr
+bool authorized_options_rec(const Named_function_parameters<T, Tag, Base>& np)
+{
+  if (is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag()))
+    return authorized_options_rec<TagsAllowed...>(static_cast<const Base&>(np));
+  return false;
+}
+
+}// impl namespace
+
+template <class ... TagsAllowed, class Named_function_parameters>
+constexpr
+bool authorized_options(const Named_function_parameters& np)
+{
+#ifndef CGAL_DISABLE_NAMED_FUNCTION_PARAMETERS_CHECKS
+  return authorized_parameters_impl::authorized_options_rec
+    <internal_np::all_default_t, TagsAllowed...>(np);
+#else
+  return true;
+#endif
+}
+
 } // end of parameters namespace
+
+#ifdef CGAL_NDEBUG
+#define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...)
+#else
+#define CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, ...) \
+{ \
+using namespace ::CGAL::internal_np; \
+static_assert(::CGAL::parameters::authorized_options<__VA_ARGS__>(np)); \
+}
+#endif
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 namespace Polygon_mesh_processing {
