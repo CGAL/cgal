@@ -37,7 +37,7 @@ public:
   bool applicable(QAction*) const
   {
     bool at_least_one_non_empty = false;
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       Scene_item* item = scene->item(index);
       if(!item->isFinite())
@@ -144,7 +144,7 @@ void
 Create_obb_mesh_plugin::
 gather_mesh_points(std::vector<Point_3>& points)
 {
-  Q_FOREACH(int index, scene->selectionIndices())
+  for(int index : scene->selectionIndices())
   {
     Scene_item* item = scene->item(index);
 
@@ -247,7 +247,7 @@ obb()
             << std::endl;
 
   QString name;
-  Q_FOREACH(int index, scene->selectionIndices())
+  for(int index : scene->selectionIndices())
   {
     Scene_item* item = scene->item(index);
     if(!item->isEmpty())

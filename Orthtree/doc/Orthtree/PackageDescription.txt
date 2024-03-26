@@ -1,19 +1,19 @@
-/// \defgroup PkgOrthtreeRef Quadtree\, Octree and Orthtree Reference
-
-/// \defgroup PkgOrthtreeClasses Classes
-/// \ingroup PkgOrthtreeRef
-
-/// \defgroup PkgOrthtreeTraits Traits
-/// \ingroup PkgOrthtreeClasses
-
-/// \defgroup PkgOrthtreeSplitPredicates Split Predicates
-/// \ingroup PkgOrthtreeClasses
-
-/// \defgroup PkgOrthtreeTraversal Traversal
-/// \ingroup PkgOrthtreeClasses
+/// \defgroup PkgOrthtreeRef Quadtrees, Octrees and Orthtrees Reference
+Quadtree, Octree and Orthtree Reference
 
 /// \defgroup PkgOrthtreeConcepts Concepts
 /// \ingroup PkgOrthtreeRef
+
+/// \defgroup PkgOrthtreeTraits Traits
+/// \ingroup PkgOrthtreeRef
+
+/// \defgroup PkgOrthtreeSplitPredicates Split Predicates
+/// \ingroup PkgOrthtreeRef
+
+/// \defgroup PkgOrthtreeTraversal Traversal
+/// \ingroup PkgOrthtreeRef
+
+
 
 /*!
 \addtogroup PkgOrthtreeRef
@@ -39,22 +39,25 @@
 
 \cgalCRPSection{Concepts}
 - `OrthtreeTraits`
+- `OrthtreeTraitsWithData`
 - `OrthtreeTraversal`
+- `CollectionPartitioningOrthtreeTraits`
 
 \cgalCRPSection{Classes}
 - `CGAL::Quadtree<GeomTraits, PointRange, PointMap>`
 - `CGAL::Octree<GeomTraits, PointRange, PointMap>`
-- `CGAL::Orthtree<Traits, PointRange, PointMap>`
+- `CGAL::Orthtree<GeomTraits, PointRange, PointMap>`
 
 \cgalCRPSection{Traits}
-- `CGAL::Orthtree_traits_2<GeomTraits>`
-- `CGAL::Orthtree_traits_point_3<GeomTraits>`
-- `CGAL::Orthtree_traits_d<GeomTraits, Dimension>`
+- `CGAL::Orthtree_traits<GeomTraits, dimension>`
+- `CGAL::Orthtree_traits_point<GeomTraits, PointRange, PointMap, dimension>`
+- `CGAL::Orthtree_traits_base<GeomTraits>`
+- `CGAL::Orthtree_traits_face_graph<TriangleMesh, VertexPointMap>`
 
 \cgalCRPSection{Split Predicates}
-- `CGAL::Orthtrees::Maximum_number_of_inliers`
+- `CGAL::Orthtrees::Maximum_contained_elements`
 - `CGAL::Orthtrees::Maximum_depth`
-- `CGAL::Orthtrees::Maximum_depth_and_maximum_number_of_inliers`
+- `CGAL::Orthtrees::Maximum_depth_and_maximum_contained_elements`
 
 \cgalCRPSection{%Traversal}
 - `CGAL::Orthtrees::Preorder_traversal`

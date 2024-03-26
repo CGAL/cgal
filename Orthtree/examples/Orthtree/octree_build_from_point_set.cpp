@@ -29,10 +29,10 @@ int main(int argc, char **argv) {
   std::cout << "loaded " << points.number_of_points() << " points\n" << std::endl;
 
   // Create an octree from the points
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
 
   // Build the octree with a small bucket size, using a more verbose method
-  octree.refine(CGAL::Orthtrees::Maximum_number_of_inliers(10));
+  octree.refine(CGAL::Orthtrees::Maximum_contained_elements(10));
 
   // Print out the tree
   std::cout << octree << std::endl;

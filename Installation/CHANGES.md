@@ -10,9 +10,21 @@ Release date: October 2023
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
+- The demos as well as the `draw()` functions using the `Basic_viewer` are based on Qt6
 - **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
 - **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
+- **Breaking change**: The file CMake file `UseCGAL.cmake` has been removed from CGAL. Usages of the CMake variables `${CGAL_USE_FILE}` and `${CGAL_LIBRARIES}` must be replaced by a link to the imported target `CGAL::CGAL`, for example: `target_link_library(the_target PRIVATE CGAL::CGAL)`.
+- The minimal supported version of Boost is now 1.72.0
+
+### Installation
+
+-   The CGAL\_Core library is no longer based on GMP but boost multiprecision now, and can be used with either gmp backend or boost backend.
+
+### [Polygon Repair](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonRepair) (new package)
+
+-   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
+    using the odd-even heuristic.
 
 #### 2D Arrangements
 
@@ -20,8 +32,14 @@ Release date: October 2023
     `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
     has been removed.
 
+- Eliminated the error-prone c-type casting that was used to define observers. In general, backward compatibility was maintained; however, the former class template `Arr_observer` was replaced by an alias template. (The former class Arr_observer was renamed to Aos_observer).
+
+- Introduced `Arr_dcel`, which essentially replaces the former `Arr_default_dcel`. Backward compatibility was maintained by the introduction of the alias template `Arr_default_dcel`. `Arr_dcel`, as opposed to the former `Arr_default_dcel` is templated (in addition to the geometry traits) by Vertex, Halfedge, and Face template parameters, and they have default type values. All this enables the layered extension of DCEL records.
+
 #### Envelopes of Surfaces in 3D
-- ** Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
+- **Breaking change**: Construct_projected_boundary_2 in `EnvelopeTraits_3` is now using `std::variant` instead of `Object`
+
+- Passed the base class of `Env_plane_traits_3` as a template parameter with a default value (being the 2D arrangement linear traits). Similarly, passed the base class of `Env_triangle_traits_3` as a template parameter with a default value (being the 2D arrangement segment traits).
 
 ### [Combinatorial Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgCombinatorialMaps) and [Generalized Maps](https://doc.cgal.org/6.0/Manual/packages.html#PkgGeneralizedMaps)
 
@@ -34,6 +52,24 @@ Release date: October 2023
 
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
+
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
+- **Breaking change**:
+  - Node splitting behavior and per-node data are now customizable via the Traits class.
+  - Nodes are now stored as a property map, with properties of each node accessed by index.
+  - Nearest neighbors functions only work for Orthtrees which provide the necessary functionality.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` which can be used to compute
+    the mean and Gaussian curvatures, as well as the principal curvature and directions.
+-   Added the option to use a variable sizing field for `CGAL::Polygon_mesh_processing::isotropic_remeshing()`,
+    and a sizing function based on a measure of local curvature for adaptive remeshing.
+-   Added the function `CGAL::Polygon_mesh_processing::refine_mesh_at_isolevel()` that refines a polygon mesh along an isocurve.
+-   Added the function
+    `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` that refines a soup of triangles so that no pair of triangles intersects
+     in their interiors. Also added, the function `autorefine()` operating directly on a triangle mesh and updating it
+     using the aforementioned function on a triangle soup.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
@@ -51,6 +87,20 @@ Release date: October 2023
 -   **Breaking change**: The template parameters of
     `CGAL::Simplicial_mesh_cell_base_3`
     have been modified to enable passing a geometric traits and a custom cell base class.
+
+### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
+- **Breaking change**: LSCM_parameterizer_3 needs Eigen
+
+### [3D Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulation3)
+-   Added three functions `vertices()` to the class `Triangulation_3`.
+    Each of them returns an array containing the vertices of the given triangulation simplex.
+
+### [dD Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulations)
+-   **Breaking change**: `CGAL::TDS_full_cell_mirror_storage_policy` is now unsupported in dimension larger than 127.
+-   **Breaking change**: Inserting multiple unweighted points in the same
+    position now keeps the first one, instead of switching to the latest. This
+    only affects custom point types where not all points in the same position
+    are equivalent.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------

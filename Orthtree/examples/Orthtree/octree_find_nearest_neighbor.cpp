@@ -3,7 +3,6 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Octree.h>
-#include <CGAL/Orthtree/Nearest_neighbors.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
@@ -32,7 +31,7 @@ int main(int argc, char** argv) {
   std::cout << "loaded " << points.number_of_points() << " points" << std::endl;
 
   // Create an octree from the points
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
 
   // Build the octree
   octree.refine(10, 20);
@@ -45,14 +44,36 @@ int main(int argc, char** argv) {
     {-0.46026,  -0.25353,  0.32051},
     {-0.460261, -0.253533, 0.320513}
   };
-  for (const Point& p: points_to_find)
-    CGAL::Orthtrees::nearest_neighbors(
-      octree,
-      p, 1, // k=1 to find the single closest point
-      boost::make_function_output_iterator([&](const Point_set::Index& nearest) {
-        std::cout << "the nearest point to (" << p << ") is (" << points.point(nearest) << ")" << std::endl;
-      })
-    );
+
+  for (const Point& p : points_to_find)
+    octree.nearest_k_neighbors
+    (p, 1, // k=1 to find the single closest point
+      boost::make_function_output_iterator
+      ([&](const Point_set::Index& nearest)
+        {
+          std::cout << "the nearest point to (" << p <<
+            ") is (" << points.point(nearest) << ")" << std::endl;
+        }));
+
+  typename Octree::Sphere s(points_to_find[0], 0.0375);
+  std::cout << std::endl << "Closest points within the sphere around " << s.center() << " with squared radius of " << s.squared_radius() << ":" << std::endl;
+  octree.neighbors_within_radius
+  (s,
+    boost::make_function_output_iterator
+    ([&](const Point_set::Index& nearest)
+      {
+        std::cout << points.point(nearest) << "    dist: " << (Point(0, 0, 0) - points.point(nearest)).squared_length() << std::endl;
+      }));
+
+  std::size_t k = 3;
+  std::cout << std::endl << "The up to " << k << " closest points to(" << s.center() << ") within a squared radius of " << s.squared_radius() << " are:" << std::endl;
+  octree.nearest_k_neighbors_within_radius
+  (s, k,
+    boost::make_function_output_iterator
+    ([&](const Point_set::Index& nearest)
+      {
+        std::cout << "(" << points.point(nearest) << "    dist: " << (Point(0, 0, 0) - points.point(nearest)).squared_length() << std::endl;
+      }));
 
   return EXIT_SUCCESS;
 }

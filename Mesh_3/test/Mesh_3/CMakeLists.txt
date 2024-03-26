@@ -39,6 +39,7 @@ endif()
 
 create_single_source_cgal_program( "test_meshing_implicit_function.cpp" )
 create_single_source_cgal_program( "test_meshing_polyhedral_complex.cpp" )
+create_single_source_cgal_program( "test_meshing_polyhedral_complex_with_manifold_and_min_size.cpp")
 create_single_source_cgal_program( "test_meshing_polyhedron.cpp" )
 create_single_source_cgal_program( "test_meshing_polylines_only.cpp" )
 create_single_source_cgal_program( "test_meshing_polyhedron_with_features.cpp" )
@@ -50,6 +51,7 @@ create_single_source_cgal_program( "test_meshing_without_features_determinism.cp
 create_single_source_cgal_program( "test_mesh_3_issue_1554.cpp" )
 create_single_source_cgal_program( "test_mesh_polyhedral_domain_with_features_deprecated.cpp" )
 create_single_source_cgal_program( "test_meshing_with_one_step.cpp" )
+create_single_source_cgal_program( "test_meshing_with_one_step_with_features.cpp" )
 create_single_source_cgal_program( "test_mesh_cell_base_3.cpp")
 create_single_source_cgal_program( "test_min_edge_length.cpp")
 
@@ -79,8 +81,10 @@ foreach(target
     test_mesh_polyhedral_domain_with_features_deprecated
     test_mesh_cell_base_3
     test_meshing_with_one_step
+    test_meshing_with_one_step_with_features
     test_min_edge_length
     test_min_size_criteria
+    test_meshing_polyhedral_complex_with_manifold_and_min_size
     )
   if(TARGET ${target})
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
@@ -112,7 +116,7 @@ if(TARGET CGAL::TBB_support)
     endif()
   endforeach()
 
-  if(BUILD_TESTING)
+  if(CGAL_ENABLE_TESTING)
     set_property(TEST
       "execution   of  test_meshing_verbose"
       "execution   of  test_meshing_polyhedron_with_features"
@@ -141,7 +145,7 @@ if(TARGET ITT::ITT)
   target_compile_definitions(test_meshing_verbose PRIVATE CGAL_MESH_3_USE_INTEL_ITT)
 endif()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  test_meshing_polyhedron_with_features"
     "execution   of  test_meshing_verbose"

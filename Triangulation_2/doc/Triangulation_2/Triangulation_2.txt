@@ -509,8 +509,8 @@ A 2D triangulation can be visualized by calling the \link PkgDrawTriangulation2 
 
 \cgalExample{Triangulation_2/draw_triangulation_2.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_triangulation_2,draw_triangulation_2.png}
 Result of the run of the draw_triangulation_2 program. A window shows the 2D triangulation and allows to navigate through the scene.

@@ -16,15 +16,15 @@ struct Overlay_label {
   { return c + std::to_string(i); }
 };
 
-typedef CGAL::Arr_face_extended_dcel<Traits, char>         Dcel_dlue;
-typedef CGAL::Arrangement_2<Traits, Dcel_dlue>             Arrangement_blue;
-typedef CGAL::Arr_face_extended_dcel<Traits, unsigned int> Dcel_red;
-typedef CGAL::Arrangement_2<Traits, Dcel_red>              Arrangement_red;
-typedef CGAL::Arr_face_extended_dcel<Traits, std::string>  Dcel_res;
-typedef CGAL::Arrangement_2<Traits, Dcel_res>              Arrangement_res;
-typedef CGAL::Arr_face_overlay_traits<Arrangement_blue, Arrangement_red,
-                                      Arrangement_res, Overlay_label>
-                                                           Overlay_traits;
+using Dcel_dlue = CGAL::Arr_face_extended_dcel<Traits, char>;
+using Arrangement_blue = CGAL::Arrangement_2<Traits, Dcel_dlue>;
+using Dcel_red = CGAL::Arr_face_extended_dcel<Traits, unsigned int>;
+using Arrangement_red = CGAL::Arrangement_2<Traits, Dcel_red>;
+using Dcel_res = CGAL::Arr_face_extended_dcel<Traits, std::string>;
+using Arrangement_res = CGAL::Arrangement_2<Traits, Dcel_res>;
+using Overlay_traits =
+  CGAL::Arr_face_overlay_traits<Arrangement_blue, Arrangement_red,
+                                Arrangement_res, Overlay_label>;
 
 int main() {
   // Construct the first arrangement, induced by two lines y = x and y = -x.

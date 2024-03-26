@@ -1,9 +1,9 @@
 #include <CGAL/Octree.h>
+#include <CGAL/Point_set_3.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_set_3.h>
-#include <CGAL/point_generators_3.h>
 
 template <typename Kernel>
 void test()
@@ -18,7 +18,7 @@ void test()
   for (std::size_t i = 0; i < 100; ++i)
     points.insert(*(generator++));
 
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine();
   octree.grade();
 }

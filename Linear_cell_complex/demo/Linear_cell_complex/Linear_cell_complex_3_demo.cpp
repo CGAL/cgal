@@ -31,7 +31,7 @@ int main(int argc, char** argv)
   application.setOrganizationName("CNRS and LIRIS' Establishments");
   application.setApplicationName("3D Linear Cell Complex");
 
-  // Import resources from libCGALQt5
+  // Import resources from libCGALQt6
   // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
   CGAL_Qt_init_resources();// that function is in a DLL
   Q_INIT_RESOURCE(Linear_cell_complex_3);

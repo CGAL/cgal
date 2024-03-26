@@ -14,7 +14,6 @@ using Octree = CGAL::Orthtree<OTraits>;
 
 void dump_as_polylines(const Octree& ot)
 {
-  // SL: I cheated for this part and looked at the implementation
     std::ofstream out("octree.polylines.txt");
     for (Octree::Node_index node : ot.traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(ot)))
     {
@@ -61,7 +60,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  Octree tree({mesh, mesh.points()});
+  Octree tree(mesh, mesh.points());
   OTraits::Split_predicate_node_min_extent sp(0.01);
   tree.refine(sp);
 

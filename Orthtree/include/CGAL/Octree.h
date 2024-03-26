@@ -20,31 +20,22 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgOrthtreeClasses
+  \ingroup PkgOrthtreeRef
 
-  \brief Alias that specializes the `Orthtree` class to a 3D octree.
+  \brief Alias that specializes the `Orthtree` class to a 3D octree storing 3D points.
 
-  These two types are exactly equivalent:
-  - `Octree<GeomTraits, PointRange, PointMap>`
-  - `Orthtree<Orthtree_traits_3<GeomTraits>, PointRange, PointMap>`.
-
-  \warning This is a not a real class but an alias, please refer to
-  the documentation of `Orthtree`.
-
-  \tparam GeomTraits must be a model of `Kernel`
-  \tparam PointRange_ must be a model of range whose value type is the key type of `PointMap`
-  \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
+  \tparam GeomTraits a model of `Kernel`
+  \tparam PointRange a model of `Range` whose value type is the key type of `PointMap`
+  \tparam PointMap a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_3`
+  \tparam cubic_nodes Boolean to enforce cubic nodes
  */
 template <
   typename GeomTraits,
   typename PointRange,
-  typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>
+  typename PointMap = Identity_property_map<typename std::iterator_traits<typename PointRange::iterator>::value_type>,
+  bool cubic_nodes = false
 >
-#ifdef DOXYGEN_RUNNING
-  class Octree;
-#else
-using Octree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<3>>>;
-#endif
+using Octree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, cubic_nodes, 3>>;
 
 } // namespace CGAL
 

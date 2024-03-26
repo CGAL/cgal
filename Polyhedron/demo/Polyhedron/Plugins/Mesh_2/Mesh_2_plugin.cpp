@@ -169,7 +169,7 @@ public:
 
   bool applicable(QAction*) const
   {
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       //if one polyhedron is found in the selection, it's fine
       if (qobject_cast<Scene_polylines_item*>(scene->item(index)))
@@ -229,8 +229,8 @@ private:
   {
     // extract seeds
     std::vector<Kernel::Point_3> seeds;
-    Q_FOREACH(Scene_points_with_normal_item* points_item, points_items)
-      Q_FOREACH(Point_set_3<Kernel>::Index it, *points_item->point_set())
+    for(Scene_points_with_normal_item* points_item : points_items)
+      for(Point_set_3<Kernel>::Index it : *points_item->point_set())
         seeds.push_back(points_item->point_set()->point(it));
 
     // Create dialog box
@@ -275,8 +275,8 @@ private:
     double constant_coordinate =
       polylines_items.back()->polylines.back().back()[constant_coordinate_index];
     try{
-      Q_FOREACH(Scene_polylines_item* polylines_item, polylines_items)
-        Q_FOREACH(const std::vector<Kernel::Point_3>& points,
+      for(Scene_polylines_item* polylines_item : polylines_items)
+        for(const std::vector<Kernel::Point_3>& points :
                     polylines_item->polylines)
           cdt.insert_constraint(points.begin(),points.end());
     }catch(std::runtime_error&)
@@ -357,10 +357,10 @@ private:
   {
     int res=-1;
     Kernel::Point_3 ref = polylines_items.front()->polylines.front().front();
-    Q_FOREACH(Scene_polylines_item* polylines_item, polylines_items)
-      Q_FOREACH(const std::vector<Kernel::Point_3>& points,
+    for(Scene_polylines_item* polylines_item : polylines_items)
+      for(const std::vector<Kernel::Point_3>& points :
                   polylines_item->polylines)
-        Q_FOREACH(const Kernel::Point_3& pt, points)
+        for(const Kernel::Point_3& pt : points)
         {
           int nbe=0, candidate=-1;
           for (int i=0; i<3; ++i)
@@ -377,8 +377,8 @@ private:
           }
         }
     if (res==-1) return res;
-    Q_FOREACH(Scene_points_with_normal_item* points_item, points_items)
-      Q_FOREACH(Point_set_3<Kernel>::Index pt, *points_item->point_set())
+    for(Scene_points_with_normal_item* points_item : points_items)
+      for(Point_set_3<Kernel>::Index pt : *points_item->point_set())
       if (points_item->point_set()->point(pt)[res]!=ref[res])
           return -1;
     return res;
@@ -394,7 +394,7 @@ public Q_SLOTS:
     std::vector<Scene_points_with_normal_item*> points_items;
     double inf = std::numeric_limits<double>::infinity();
     CGAL::Three::Scene_interface::Bbox bbox(inf,inf,inf,-inf,-inf,-inf);
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       Scene_polylines_item* polylines_item =
         qobject_cast<Scene_polylines_item*>(scene->item(index));

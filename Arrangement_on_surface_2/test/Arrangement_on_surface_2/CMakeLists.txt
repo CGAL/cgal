@@ -8,7 +8,4 @@ enable_testing()
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include (${CGAL_USE_FILE})
-# Since CMake-2.8.12: New CMake script, that defines the targets and
-# the CTest test cases.
 include(${CMAKE_CURRENT_SOURCE_DIR}/cgal_test.cmake)

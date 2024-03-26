@@ -6,3 +6,6 @@ EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
+
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/orthtree.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/orthtree_mesh.png

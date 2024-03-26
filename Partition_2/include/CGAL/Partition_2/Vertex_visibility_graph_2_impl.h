@@ -10,6 +10,11 @@
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
+#ifndef CGAL_PARTITION_2_VERTEX_VISIBILITY_GRAPH_2_IMPL_H
+#define CGAL_PARTITION_2_VERTEX_VISIBILITY_GRAPH_2_IMPL_H
+
+#include <CGAL/license/Partition_2.h>
+
 namespace CGAL {
 
 
@@ -699,3 +704,5 @@ void Vertex_visibility_graph_2<Traits>::handle(Tree_iterator p,
 }
 
 }
+
+#endif // CGAL_PARTITION_2_VERTEX_VISIBILITY_GRAPH_2_IMPL_H

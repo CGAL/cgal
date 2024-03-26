@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2021 GeometryFactory (France).
+// Copyright (c) 2015-2023 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Jane Tournois
+// Author(s)     : Jane Tournois, Ivan Paden
 
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TANGENTIAL_RELAXATION_H
@@ -17,6 +17,7 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
 #include <CGAL/property_map.h>
 
 #include <CGAL/Named_function_parameters.h>
@@ -115,14 +116,23 @@ struct Allow_all_moves{
 *     \cgalParamDefault{If not provided, all moves are allowed.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{sizing_function}
+*     \cgalParamDescription{An object containing sizing field for individual vertices.
+*                           Used to derive smoothing weights.}
+*     \cgalParamType{A model of `PMPSizingField`.}
+*     \cgalParamDefault{If not provided, smoothing weights are the same for all vertices.}
+*   \cgalParamNEnd
+*
 * \cgalNamedParamsEnd
 *
 * \todo check if it should really be a triangle mesh or if a polygon mesh is fine
 */
-template <typename VertexRange, class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
+template <typename VertexRange,
+          class TriangleMesh,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 void tangential_relaxation(const VertexRange& vertices,
                            TriangleMesh& tm,
-                           const NamedParameters& np = parameters::default_values())
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -130,18 +140,19 @@ void tangential_relaxation(const VertexRange& vertices,
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
+  using parameters::is_default_parameter;
 
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type GT;
   GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
+  typedef typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::type VPMap;
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_property_map(vertex_point, tm));
 
   typedef Static_boolean_property_map<edge_descriptor, false> Default_ECM;
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
-      NamedParameters,
+      CGAL_NP_CLASS,
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint)
     > ::type ECM;
   ECM ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
@@ -149,11 +160,19 @@ void tangential_relaxation(const VertexRange& vertices,
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::vertex_is_constrained_t,
-      NamedParameters,
+      CGAL_NP_CLASS,
       Static_boolean_property_map<vertex_descriptor, false> // default (no constraint)
     > ::type VCM;
   VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                              Static_boolean_property_map<vertex_descriptor, false>());
+
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::sizing_function_t,
+      CGAL_NP_CLASS,
+      Uniform_sizing_field<TriangleMesh, VPMap>
+    > ::type SizingFunction;
+  SizingFunction sizing = choose_parameter(get_parameter(np, internal_np::sizing_function),
+                                           Uniform_sizing_field<TriangleMesh, VPMap>(-1, vpm));
 
   const bool relax_constraints = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
@@ -201,7 +220,7 @@ void tangential_relaxation(const VertexRange& vertices,
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::allow_move_functor_t,
-      NamedParameters,
+      CGAL_NP_CLASS,
       internal::Allow_all_moves// default
     > ::type Shall_move;
   Shall_move shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
@@ -244,15 +263,41 @@ void tangential_relaxation(const VertexRange& vertices,
       {
         const Vector_3& vn = vnormals.at(v);
         Vector_3 move = CGAL::NULL_VECTOR;
-        unsigned int star_size = 0;
-        for(halfedge_descriptor h :interior_hedges)
+        if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<TriangleMesh, VPMap>>)
         {
-          move = move + Vector_3(get(vpm, v), get(vpm, source(h, tm)));
-          ++star_size;
+          unsigned int star_size = 0;
+          for(halfedge_descriptor h :interior_hedges)
+          {
+            move = move + Vector_3(get(vpm, v), get(vpm, source(h, tm)));
+            ++star_size;
+          }
+          CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
+          move = (1. / static_cast<double>(star_size)) * move;
         }
-        CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
-        move = (1. / static_cast<double>(star_size)) * move;
+        else
+        {
+          auto gt_centroid = gt.construct_centroid_3_object();
+          auto gt_area = gt.compute_area_3_object();
+          double weight = 0;
+          for(halfedge_descriptor h :interior_hedges)
+          {
+            // calculate weight
+            // need v, v1 and v2
+            const vertex_descriptor v1 = target(next(h, tm), tm);
+            const vertex_descriptor v2 = source(h, tm);
 
+            const double tri_area = gt_area(get(vpm, v), get(vpm, v1), get(vpm, v2));
+            const double face_weight = tri_area
+                                       / (1. / 3. * (sizing.at(v, tm)
+                                                   + sizing.at(v1, tm)
+                                                   + sizing.at(v2, tm)));
+            weight += face_weight;
+
+            const Point_3 centroid = gt_centroid(get(vpm, v), get(vpm, v1), get(vpm, v2));
+            move = move + Vector_3(get(vpm, v), centroid) * face_weight;
+          }
+          move = move / weight; //todo ip: what if weight ends up being close to 0?
+        }
         barycenters.emplace_back(v, vn, get(vpm, v) + move);
       }
       else
@@ -281,8 +326,6 @@ void tangential_relaxation(const VertexRange& vertices,
             bary = squared_distance(p1, bary)<squared_distance(p2,bary)? p1:p2;
             barycenters.emplace_back(v, vn, bary);
           }
-
-
         }
       }
     }
@@ -312,8 +355,8 @@ void tangential_relaxation(const VertexRange& vertices,
       //check that no inversion happened
       double frac = 1.;
       while (frac > 0.03 //5 attempts maximum
-          && (   !check_normals(vp.first)
-              || !shall_move(vp.first, initial_pos, get(vpm, vp.first)))) //if a face has been inverted
+             && (   !check_normals(vp.first)
+                    || !shall_move(vp.first, initial_pos, get(vpm, vp.first)))) //if a face has been inverted
       {
         frac = 0.5 * frac;
         put(vpm, vp.first, initial_pos + frac * move);//shorten the move by 2
@@ -335,7 +378,8 @@ void tangential_relaxation(const VertexRange& vertices,
 */
 template <class TriangleMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-void tangential_relaxation(TriangleMesh& tm, const CGAL_NP_CLASS& np = parameters::default_values())
+void tangential_relaxation(TriangleMesh& tm,
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
   tangential_relaxation(vertices(tm), tm, np);
 }

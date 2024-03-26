@@ -26,11 +26,13 @@
 #include <CGAL/Tetrahedral_remeshing/internal/collapse_short_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/flip_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/smooth_vertices.h>
+#include <CGAL/Tetrahedral_remeshing/internal/peel_slivers.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
 #include <optional>
+#include <boost/container/small_vector.hpp>
 
 namespace CGAL
 {
@@ -55,26 +57,12 @@ public:
   void after_flip(CellHandle /* c */) {}
 };
 
-template<typename Tr>
-struct All_cells_selected
-{
-  using key_type = typename Tr::Cell_handle;
-  using value_type = bool;
-  using reference = bool;
-  using category = boost::read_write_property_map_tag;
 
-  friend value_type get(const All_cells_selected&, const key_type& c)
-  {
-    using SI = typename Tr::Cell::Subdomain_index;
-    return c->subdomain_index() != SI();
-  }
-  friend void put(All_cells_selected&, const key_type&, const value_type)
-  {} //nothing to do : subdomain indices are updated in remeshing};
-};
 
 
 template<typename Triangulation
          , typename SizingFunction
+         , typename VertexIsConstrainedMap
          , typename EdgeIsConstrainedMap
          , typename FacetIsConstrainedMap
          , typename CellSelector
@@ -91,6 +79,7 @@ class Adaptive_remesher
 
   typedef typename C3t3::Cell_handle         Cell_handle;
   typedef typename C3t3::Vertex_handle       Vertex_handle;
+  typedef typename C3t3::Edge                Edge;
   typedef typename C3t3::Subdomain_index     Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Curve_index         Curve_index;
@@ -113,6 +102,7 @@ public:
   Adaptive_remesher(Triangulation& tr
                     , const SizingFunction& sizing
                     , const bool protect_boundaries
+                    , VertexIsConstrainedMap vcmap
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
                     , bool smooth_constrained_edges
@@ -129,7 +119,7 @@ public:
   {
     m_c3t3.triangulation().swap(tr);
 
-    init_c3t3(ecmap, fcmap);
+    init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3, m_cell_selector, smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -142,6 +132,7 @@ public:
   Adaptive_remesher(C3t3& c3t3
                     , const SizingFunction& sizing
                     , const bool protect_boundaries
+                    , VertexIsConstrainedMap vcmap
                     , EdgeIsConstrainedMap ecmap
                     , FacetIsConstrainedMap fcmap
                     , bool smooth_constrained_edges
@@ -158,7 +149,7 @@ public:
   {
     m_c3t3.swap(c3t3);
 
-    init_c3t3(ecmap, fcmap);
+    init_c3t3(vcmap, ecmap, fcmap);
     m_vertex_smoother.init(m_c3t3, m_cell_selector, smooth_constrained_edges);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -190,6 +181,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "1-c3t3_vertices_after_split");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "Min dihedral angle = " << mdh << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "1-split");
@@ -212,6 +205,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "2-c3t3_vertices_after_collapse");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "Min dihedral angle = " << mdh << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "2-collapse");
@@ -229,6 +224,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "3-c3t3_vertices_after_flip");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "Min dihedral angle = " << mdh << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "3-flip");
@@ -245,6 +242,8 @@ public:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "4-c3t3_vertices_after_smooth");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "Min dihedral angle = " << mdh << std::endl;
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "4-smooth");
@@ -261,8 +260,7 @@ public:
     FT sqmax = emax * emax;
     FT sqmin = emin * emin;
 
-    typedef typename Tr::Edge Edge;
-    for (Edge e : tr().finite_edges())
+    for (const Edge& e : tr().finite_edges())
     {
       // skip protected edges
       if (m_protect_boundaries)
@@ -291,67 +289,8 @@ public:
     std::cout.flush();
 #endif
 
-    std::size_t nb_slivers_peel = 0;
-    std::vector<std::pair<Cell_handle, std::array<bool, 4> > > peelable_cells;
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    double mindh = 180.;
-#endif
-    for (Cell_handle cit : tr().finite_cell_handles())
-    {
-      std::array<bool, 4> facets_on_surface;
-      if (m_c3t3.is_in_complex(cit))
-      {
-        const double dh = min_dihedral_angle(tr(), cit);
-        if(dh < sliver_angle && is_peelable(m_c3t3, cit, facets_on_surface))
-          peelable_cells.push_back(std::make_pair(cit, facets_on_surface));
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-        mindh = (std::min)(dh, mindh);
-#endif
-      }
-    }
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cout << "Min dihedral angle : " << mindh << std::endl;
-    std::cout << "Peelable cells : " << peelable_cells.size() << std::endl;
-#endif
-
-    for (auto c_i : peelable_cells)
-    {
-      Cell_handle c = c_i.first;
-      const std::array<bool, 4>& f_on_surface = c_i.second;
-
-      std::optional<Surface_patch_index> patch;
-      for (int i = 0; i < 4; ++i)
-      {
-        if (f_on_surface[i])
-        {
-          Surface_patch_index spi = m_c3t3.surface_patch_index(c, i);
-          if (patch != std::nullopt && patch != spi)
-          {
-            patch = std::nullopt;
-            break;
-          }
-          else
-          {
-            patch = spi;
-          }
-        }
-      }
-      if(patch == std::nullopt)
-        continue;
-
-      for (int i = 0; i < 4; ++i)
-      {
-        if(f_on_surface[i])
-          m_c3t3.remove_from_complex(c, i);
-        else
-          m_c3t3.add_to_complex(c, i, patch.value());
-      }
-
-      m_c3t3.remove_from_complex(c);
-      ++nb_slivers_peel;
-    }
+    const std::size_t nb_peeled
+      = CGAL::Tetrahedral_remeshing::peel_slivers(m_c3t3, sliver_angle, m_cell_selector);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL_assertion(tr().tds().is_valid(true));
@@ -360,21 +299,8 @@ public:
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "99-postprocess");
 #endif
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    mindh = 180.;
-    for (Cell_handle cit : tr().finite_cell_handles())
-    {
-      if (m_c3t3.is_in_complex(cit))
-      {
-        const double dh = min_dihedral_angle(tr(), cit);
-        mindh = (std::min)(dh, mindh);
-      }
-    }
-    std::cout << "Peeling done (removed " << nb_slivers_peel << " slivers, "
-      << "min dihedral angle = " << mindh << ")." << std::endl;
 
-#endif
-    return nb_slivers_peel;
+    return nb_peeled;
   }
 
   void finalize()
@@ -386,7 +312,8 @@ public:
   }
 
 private:
-  void init_c3t3(const EdgeIsConstrainedMap& ecmap,
+  void init_c3t3(const VertexIsConstrainedMap& vcmap,
+                 const EdgeIsConstrainedMap& ecmap,
                  const FacetIsConstrainedMap& fcmap)
   {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -399,31 +326,38 @@ private:
     //update number_of_cells and number_of_facets in c3t3
     m_c3t3.rescan_after_load_of_triangulation();
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
+      m_c3t3.triangulation(), "00-c3t3_vertices_before_init_");
+#endif
+
+    const Subdomain_index default_subdomain = default_subdomain_index();
+
     //tag cells
     for (Cell_handle cit : tr().finite_cell_handles())
     {
       if (get(m_cell_selector, cit))
       {
         const Subdomain_index index = cit->subdomain_index();
-        if(!input_is_c3t3())
+        if (m_c3t3.is_in_complex(cit))
           m_c3t3.remove_from_complex(cit);
-        if(Subdomain_index() != index)
-          m_c3t3.add_to_complex(cit, index);
+
+        const Subdomain_index new_index = (Subdomain_index() != index)
+          ? index
+          : default_subdomain;
+        m_c3t3.add_to_complex(cit, new_index);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbc;
 #endif
       }
-      if (!input_is_c3t3())
-      {
-        for (int i = 0; i < 4; ++i)
-        {
-          if (cit->vertex(i)->in_dimension() == -1)
-            cit->vertex(i)->set_dimension(3);
-        }
-      }
+
+      for (Vertex_handle vi : CGAL::Tetrahedral_remeshing::vertices(cit, tr()))
+        set_dimension(vi, 3);
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      else if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
+      //else
+        if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
         ++nbc;
 #endif
     }
@@ -442,16 +376,15 @@ private:
       {
         Surface_patch_index patch = f.first->surface_patch_index(f.second);
         if(patch == Surface_patch_index())
-          set_surface_patch_index_to_default(s1, s2, patch);
+          make_surface_patch_index(s1, s2, patch);
+
+        if(m_c3t3.is_in_complex(f))
+          m_c3t3.remove_from_complex(f);
         m_c3t3.add_to_complex(f, patch);
 
-        const int i = f.second;
-        for (int j = 0; j < 3; ++j)
-        {
-          Vertex_handle vij = f.first->vertex(Tr::vertex_triple_index(i, j));
-          if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
-            vij->set_dimension(2);
-        }
+        for (Vertex_handle vij : CGAL::Tetrahedral_remeshing::vertices(f, tr()))
+          set_dimension(vij, 2);
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbf;
 #endif
@@ -462,32 +395,26 @@ private:
 #endif
 
     //tag edges
-    typedef typename Tr::Edge Edge;
+    const Curve_index default_curve_id = default_curve_index();
     for (const Edge& e : tr().finite_edges())
     {
-      if (m_c3t3.is_in_complex(e))
-      {
-        CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.second)) <= 1);
-        CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.third)) <= 1);
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        ++nbe;
-#endif
-        continue;
-      }
-
-      if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e))
+      if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair(e))
+          || m_c3t3.is_in_complex(e)
           || nb_incident_subdomains(e, m_c3t3) > 2
-          || nb_incident_surface_patches(e, m_c3t3) > 1)
+          || nb_incident_surface_patches(e, m_c3t3) > 1
+          || nb_incident_complex_facets(e, m_c3t3) > 2)//non-manifold edges
       {
-        m_c3t3.add_to_complex(e, 1);
+        const bool in_complex = m_c3t3.is_in_complex(e);
+        typename C3t3::Curve_index curve_id = in_complex
+          ? m_c3t3.curve_index(e)
+          : default_curve_id;
 
-        Vertex_handle v = e.first->vertex(e.second);
-        if (v->in_dimension() == -1 || v->in_dimension() > 1)
-          v->set_dimension(1);
+        if (in_complex)
+          m_c3t3.remove_from_complex(e);
+        m_c3t3.add_to_complex(e, curve_id);
 
-        v = e.first->vertex(e.third);
-        if (v->in_dimension() == -1 || v->in_dimension() > 1)
-          v->set_dimension(1);
+        for (Vertex_handle v : CGAL::Tetrahedral_remeshing::vertices(e, tr()))
+          set_dimension(v, 1);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ++nbe;
@@ -502,15 +429,18 @@ private:
     Corner_index corner_id = 0;
     for (Vertex_handle vit : tr().finite_vertex_handles())
     {
-      if ( vit->in_dimension() == 0
-           || nb_incident_complex_edges(vit, m_c3t3) > 2)
+      boost::container::small_vector<Edge, 3> incident_edges;
+      incident_complex_edges(vit, m_c3t3, std::back_inserter(incident_edges));
+      if ( incident_edges.size() == 1 //tip or endpoint
+        || incident_edges.size() > 2  //corner
+        || get(vcmap, vit) // constrained vertex
+        || (incident_edges.size() == 2
+            && edges_form_a_sharp_angle(incident_edges, 60, m_c3t3)))
       {
-        if(!m_c3t3.is_in_complex(vit))
+        if (!m_c3t3.is_in_complex(vit))
           m_c3t3.add_to_complex(vit, ++corner_id);
 
-        if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
-          vit->set_dimension(0);
-
+        set_dimension(vit, 0);
         vit->set_index(corner_id);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -519,6 +449,7 @@ private:
       }
     }
 
+    // set all indices depending on underlying dimension
     for (Vertex_handle v : tr().finite_vertex_handles())
       set_index(v, m_c3t3);
 
@@ -528,14 +459,45 @@ private:
     std::cout << "\t facets   = " << nbf << std::endl;
     std::cout << "\t edges    = " << nbe << std::endl;
     std::cout << "\t vertices = " << nbv << std::endl;
+    const double mdh = CGAL::Tetrahedral_remeshing::min_dihedral_angle(m_c3t3);
+    std::cout << "\t Min dihedral angle = " << mdh << std::endl;
 
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "0-c3t3_vertices_after_init_");
     CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+    CGAL::Tetrahedral_remeshing::debug::count_far_points(m_c3t3);
 #endif
   }
 
 private:
+  bool dimension_is_modifiable(const Vertex_handle& v, const int new_dim) const
+  {
+    if (!input_is_c3t3())
+      return true;
+
+    const int vdim = v->in_dimension();
+    // feature edges and tip/endpoints vertices are kept
+    switch (vdim)
+    {
+    case -1: return false;//far points are not modified
+    case 3 : return true;
+    case 2 : return true;//surface vertices may not be part of a triangulation surface
+                        // in this case, we want to be able to set it
+    case 1 : return new_dim == 0; //features can be modified to corners
+    case 0 : return false;// corners remain corners
+    default:
+      return true;
+    }
+    CGAL_unreachable();
+    return true;
+  }
+
+  void set_dimension(Vertex_handle v, const int new_dim)
+  {
+    if (dimension_is_modifiable(v, new_dim))
+      v->set_dimension(new_dim);
+  }
+
   bool check_vertex_dimensions()
   {
     for (Vertex_handle vit : tr().finite_vertex_handles())
@@ -557,21 +519,53 @@ private:
   }
 
   template<typename PatchIndex>
-  void set_surface_patch_index_to_default(const Subdomain_index&,
-                                          const Subdomain_index&,
-                                          PatchIndex& patch)
+  void make_surface_patch_index(const Subdomain_index& s1,
+                                const Subdomain_index& s2,
+                                PatchIndex& patch)
   {
-    if(m_c3t3.number_of_facets() == 0)
-      patch = 1;
-    else
-      patch = m_c3t3.surface_patch_index(*m_c3t3.facets_in_complex_begin());
+    patch = (s1 < s2) ? (s1 * 1000 + s2) : (s2 * 1000 + s1);
   }
 
-  void set_surface_patch_index_to_default(const Subdomain_index& s1,
-                                          const Subdomain_index& s2,
-                                          std::pair<Subdomain_index, Subdomain_index>& patch)
+  void make_surface_patch_index(const Subdomain_index& s1,
+                                const Subdomain_index& s2,
+                                std::pair<Subdomain_index, Subdomain_index>& patch)
   {
     patch = (s1 < s2) ? std::make_pair(s1, s2) : std::make_pair(s2, s1);
+  }
+
+  Subdomain_index max_subdomain_index() const
+  {
+    Subdomain_index max_index
+      = (std::numeric_limits<Subdomain_index>::min)();
+    for (Cell_handle cit : tr().finite_cell_handles())
+    {
+      const Subdomain_index cid = cit->subdomain_index();
+      if (cid > max_index && cid != Subdomain_index())
+        max_index = cid;
+    }
+    return max_index;
+  }
+
+  Subdomain_index default_subdomain_index() const
+  {
+    return max_subdomain_index() + 1;
+  }
+
+  Curve_index max_curve_index() const
+  {
+    Curve_index max_index = (std::numeric_limits<Curve_index>::min)();
+    for (const Edge& e : m_c3t3.edges_in_complex())
+    {
+      const Curve_index cid = m_c3t3.curve_index(e);
+      if (cid > max_index)
+        max_index = cid;
+    }
+    return max_index + 1;
+  }
+
+  Curve_index default_curve_index() const
+  {
+    return max_curve_index() + 1;
   }
 
 public:
@@ -612,6 +606,9 @@ public:
       ossi << "statistics_" << it_nb << ".txt";
       Tetrahedral_remeshing::internal::compute_statistics(
         tr(), m_cell_selector, ossi.str().c_str());
+      std::ostringstream oss_it;
+      oss_it << "iteration_" << it_nb;
+      Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, oss_it.str().c_str());
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);

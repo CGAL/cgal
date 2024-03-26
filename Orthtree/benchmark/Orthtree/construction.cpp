@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
     auto octreeTime = bench<milliseconds>(
             [&] {
               // Build the tree
-              Octree octree({octreePoints, octreePoints.point_map()});
+              Octree octree(octreePoints, octreePoints.point_map());
               octree.refine();
             }
     );

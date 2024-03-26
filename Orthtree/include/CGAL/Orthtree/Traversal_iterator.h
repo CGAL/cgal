@@ -25,7 +25,7 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgOrthtreeClasses
+ * \ingroup PkgOrthtreeTraversal
  *
  * \brief Wraps a traversal definition to produce an iterator which traverses the tree when incremented.
  *
@@ -101,10 +101,9 @@ private:
 
 private:
 
-  Traversal_function m_next;
-
-  std::optional<std::size_t> m_index;
   const Tree* m_tree = nullptr;
+  std::optional<std::size_t> m_index;
+  Traversal_function m_next;
 
 };
 

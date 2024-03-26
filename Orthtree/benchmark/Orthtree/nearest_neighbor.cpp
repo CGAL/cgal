@@ -8,7 +8,6 @@
 #include <CGAL/Octree.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Orthtree/Nearest_neighbors.h>
 
 #include <iostream>
 #include <chrono>
@@ -96,14 +95,14 @@ int main(int argc, char **argv) {
 //    );
 
       // Build the octree from points (this had to be done second because it rearranges the point set)
-      Octree octree({points, points.point_map()});
+      Octree octree(points, points.point_map());
       octree.refine();
 
       // Time how long it takes to find neighbors using the octree
       auto octreeTime = bench<microseconds>(
               [&] {
                 std::vector<Point_set::Index> nearest_neighbors;
-                CGAL::Orthtrees::nearest_neighbors(octree, search_point, k, std::back_inserter(nearest_neighbors));
+                octree.nearest_k_neighbors(search_point, k, std::back_inserter(nearest_neighbors));
               }
       );
 
