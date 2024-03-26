@@ -26,10 +26,12 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
-#ifndef __PROMOTE_H__
-#define __PROMOTE_H__
+#ifndef _CORE_PROMOTE_H__
+#define _CORE_PROMOTE_H__
 
 #include <CGAL/CORE/Impl.h>
+#include <CGAL/CORE/BigInt.h>
+#include <CGAL/CORE/BigRat.h>
 
 namespace CORE {
 
@@ -67,10 +69,10 @@ class Promotion<T, T> {
     typedef T ResultT;
 };
 
-#define MAX_TYPE(T1, T2)                \
+#define CORE_MAX_TYPE(T1, T2)                   \
   typename Promotion<T1, T2>::ResultT
 
-#define DEFINE_MAX_TYPE(T1, T2, Tr)        \
+#define CORE_DEFINE_MAX_TYPE(T1, T2, Tr)        \
   template<> class Promotion<T1, T2> {        \
     public:                                \
       typedef Tr ResultT;                \
@@ -83,15 +85,15 @@ class Promotion<T, T> {
 /*
  * For example:
  *
- * DEFINE_MAX_TYPE(BigInt, BigRat, BigRat)           // define the promotion
+ * CORE_DEFINE_MAX_TYPE(BigInt, BigRat, BigRat)           // define the promotion
  *
  * template<typename T1, typename T2>                 // define function f with type templates
- *   MAX_TYPE(T1, T2) f(T1& , T2& );
+ *   CORE_MAX_TYPE(T1, T2) f(T1& , T2& );
  *
  * or
  *
  * template<typename T1, typename T2>                 // define function f with type templates
- *   const MAX_TYPE(T1, T2)& f(T1& , T2& );
+ *   const CORE_MAX_TYPE(T1, T2)& f(T1& , T2& );
  *
  * BigInt  a  =  1;
  * BigRat  b  = "1/3";
@@ -119,30 +121,30 @@ class Promotion<T, T> {
  *
  */
 
-class BigInt;
+//class BigInt;
 class BigFloat;
-class BigRat;
+//class BigRat;
 class Expr;
 
-DEFINE_MAX_TYPE(long, BigInt, BigInt)
-DEFINE_MAX_TYPE(long, BigFloat, BigFloat)
-DEFINE_MAX_TYPE(long, BigRat, BigRat)
-DEFINE_MAX_TYPE(long, Expr, Expr)
+CORE_DEFINE_MAX_TYPE(long, BigInt, BigInt)
+CORE_DEFINE_MAX_TYPE(long, BigFloat, BigFloat)
+CORE_DEFINE_MAX_TYPE(long, BigRat, BigRat)
+CORE_DEFINE_MAX_TYPE(long, Expr, Expr)
 
-DEFINE_MAX_TYPE(int, BigInt, BigInt)
-DEFINE_MAX_TYPE(int, BigFloat, BigFloat)
-DEFINE_MAX_TYPE(int, BigRat, BigRat)
-DEFINE_MAX_TYPE(int, Expr, Expr)
+CORE_DEFINE_MAX_TYPE(int, BigInt, BigInt)
+CORE_DEFINE_MAX_TYPE(int, BigFloat, BigFloat)
+CORE_DEFINE_MAX_TYPE(int, BigRat, BigRat)
+CORE_DEFINE_MAX_TYPE(int, Expr, Expr)
 
-DEFINE_MAX_TYPE(BigInt, BigFloat, BigFloat)
-DEFINE_MAX_TYPE(BigInt, BigRat, BigRat)
-DEFINE_MAX_TYPE(BigInt, Expr, Expr)
+CORE_DEFINE_MAX_TYPE(BigInt, BigFloat, BigFloat)
+CORE_DEFINE_MAX_TYPE(BigInt, BigRat, BigRat)
+CORE_DEFINE_MAX_TYPE(BigInt, Expr, Expr)
 
-DEFINE_MAX_TYPE(BigFloat, BigRat, BigRat)
-DEFINE_MAX_TYPE(BigFloat, Expr, Expr)
+CORE_DEFINE_MAX_TYPE(BigFloat, BigRat, BigRat)
+CORE_DEFINE_MAX_TYPE(BigFloat, Expr, Expr)
 
-DEFINE_MAX_TYPE(BigRat, Expr, Expr)
+CORE_DEFINE_MAX_TYPE(BigRat, Expr, Expr)
 
 } //namespace CORE
 
-#endif //__PROMOTE_H__
+#endif //_CORE_PROMOTE_H__
