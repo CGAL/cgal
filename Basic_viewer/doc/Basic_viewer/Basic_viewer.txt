@@ -44,26 +44,27 @@ Example of drawing of a 3D LCC.
 
 Users can interact with the viewer using some specific keys or mouse interactions. You can press 'h' key to visualize an help showing all the different shortcuts and mouse interactions. The main functionalities of the viewer are:
 
-<LI> Versatile Rendering:
+<ul>
+<li> Versatile Rendering:
 
 The viewer supports the rendering of various geometric elements, such as points, edges, faces, rays, and lines.
-Different rendering modes, including mono and colored representations, are available for these elements.
+Different rendering modes, including mono and colored representations, are available for these elements.</li>
 
-<LI> Camera Control:
+<li> Camera Control:
 
 The viewer allows users to switch between 2D and 3D viewing modes, adjusting the camera accordingly.
-Camera settings, such as orthographic or perspective projection, can be configured based on the dimensionality of the scene.
+Camera settings, such as orthographic or perspective projection, can be configured based on the dimensionality of the scene.</li>
 
-<LI> User Interaction:
+<li> User Interaction:
 
 Users can interact with the viewer through keyboard inputs, enabling them to control rendering options, toggle the display of elements, and adjust visual parameters.
-Key presses are mapped to specific actions, such as toggling the clipping plane, changing rendering modes, adjusting the size of elements, and modifying ambient light color.
+Key presses are mapped to specific actions, such as toggling the clipping plane, changing rendering modes, adjusting the size of elements, and modifying ambient light color.</li>
 
-<LI> Clipping Plane:
+<li> Clipping Plane:
 
 The viewer includes support for a clipping plane, allowing users to selectively render parts of the scene.
-The clipping plane can be toggled on and off, and its rendering style can be modified (solid, wireframe, etc.).
-
+The clipping plane can be toggled on and off, and its rendering style can be modified (solid, wireframe, etc.).</li>
+</ul>
 
 \subsection GraphicSceneContinue Tune the drawing thanks to `CGAL::Graphics_scene_options`
 
