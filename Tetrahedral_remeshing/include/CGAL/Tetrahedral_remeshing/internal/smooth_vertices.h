@@ -847,29 +847,75 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       }
       else
       {
-        const auto n = vertices_normals.at(v).at(si);
-        const auto ray = tr.geom_traits().construct_ray_3_object()(current_pos, n);
+        using Ray = typename Tr::Geom_traits::Ray_3;
+        using Projection = std::optional<
+          typename AABB_triangle_tree::Intersection_and_primitive_id<Ray>::Type>;
 
-        auto proj = m_triangles_aabb_tree.first_intersection(ray);
-        if(proj == std::nullopt)
-          proj = m_triangles_aabb_tree.first_intersection(
-            tr.geom_traits().construct_opposite_ray_3_object()(ray));
-
-        CGAL_assertion(proj != std::nullopt);
-        if(proj != std::nullopt)
-        {
-          const auto intersection = proj.value().first;
-          if (const Point_3* p = std::get_if<Point_3>(&intersection))
-            new_pos = *p;
-          else
+        auto get_intersection_point =
+          [](const Projection& proj) -> std::optional<Point_3>
           {
+            const auto intersection = proj.value().first;
+            if (const Point_3* p = std::get_if<Point_3>(&intersection))
+              return *p;
+            else
+              return std::nullopt;
+          };
+
+        // this lambda is called only when we are sure that proj is a Segment
+        auto get_intersection_midpoint =
+          [](const Projection& proj) -> std::optional<Point_3>
+          {
+            const auto intersection = proj.value().first;
             using Segment = typename Tr::Geom_traits::Segment_3;
-            const Segment* s = std::get_if<Segment>(&intersection);
-            new_pos = CGAL::midpoint(s->source(), s->target());
-            std::cerr << "Warning: AABB tree projection on segment" << std::endl;
-          }
+            if (const Segment* s = std::get_if<Segment>(&intersection))
+              return CGAL::midpoint(s->source(), s->target());
+            else
+            {
+              CGAL_assertion(false);
+              return std::nullopt;
+            }
+          };
+
+        const auto n = vertices_normals.at(v).at(si);
+        const Ray ray = tr.geom_traits().construct_ray_3_object()(current_pos, n);
+
+        const Projection proj = m_triangles_aabb_tree.first_intersection(ray);
+        const Projection proj_opp = m_triangles_aabb_tree.first_intersection(
+          tr.geom_traits().construct_opposite_ray_3_object()(ray));
+
+        CGAL_assertion(proj != std::nullopt || proj_opp != std::nullopt);
+        if(proj != std::nullopt && proj_opp == std::nullopt)
+        {
+          const auto p = get_intersection_point(proj);
+          if (p != std::nullopt)
+            new_pos = p.value();
+          else
+            new_pos = get_intersection_midpoint(proj).value();
         }
-        else
+        else if(proj == std::nullopt && proj_opp != std::nullopt)
+        {
+          const auto p = get_intersection_point(proj_opp);
+          if (p != std::nullopt)
+            new_pos = p.value();
+          else
+            new_pos = get_intersection_midpoint(proj_opp).value();
+        }
+        else if(proj != std::nullopt && proj_opp != std::nullopt)
+        {
+          const auto op1 = get_intersection_point(proj);
+          const auto op2 = get_intersection_point(proj_opp);
+
+          const FT sqd1 = (op1 == std::nullopt) ? 0.
+            : CGAL::squared_distance(smoothed_position, op1.value());
+          const FT sqd2 = (op2 == std::nullopt) ? 0.
+            : CGAL::squared_distance(smoothed_position, op2.value());
+
+          if (sqd1 < sqd2)
+            new_pos = op1.value();
+          else
+            new_pos = op2.value();
+        }
+        else //no valid projection
           new_pos = smoothed_position;
       }
 #endif //CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
