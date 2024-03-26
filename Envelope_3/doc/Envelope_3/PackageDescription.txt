@@ -39,10 +39,9 @@ diagram cell is unique.
 \cgalCRPSection{Classes}
 - `CGAL::Envelope_diagram_2<EnvTraits>`
 
-- `CGAL::Env_triangle_traits_3<Kernel>`
+- `CGAL::Env_triangle_traits_3<Kernel, ArrLinearTraits>`
 - `CGAL::Env_sphere_traits_3<ConicTraits>`
-- `CGAL::Env_plane_traits_3<Kernel>`
+- `CGAL::Env_plane_traits_3<Kernel, ArrLinearTraits>`
 - `CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>`
 
 */
-

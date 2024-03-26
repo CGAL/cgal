@@ -336,7 +336,7 @@ struct Curve_renderer_traits<CGAL::Interval_nt<true>, CORE::BigRat > :
 
 //! Specialization for \c CORE::BigFloat
 template <>
-struct Curve_renderer_traits<CORE::BigFloat, class CORE::BigRat>
+struct Curve_renderer_traits<CORE::BigFloat, CORE::BigRat>
          : public Curve_renderer_traits_base<CORE::BigFloat, CORE::BigInt,
                 CORE::BigRat> {
 
@@ -347,7 +347,7 @@ struct Curve_renderer_traits<CORE::BigFloat, class CORE::BigRat>
         typedef Integer result_type;
 
         Integer operator()(const Rational& x) const {
-            return x.BigIntValue();
+            return numerator(x)/denominator(x);
         }
     };
 
@@ -400,7 +400,7 @@ struct Curve_renderer_traits<CORE::BigRat, CORE::BigRat> :
         typedef Integer result_type;
 
         Integer operator()(const Rational& x) const {
-            return x.BigIntValue();
+            return numerator(x)/denominator(x);
         }
     };
 
@@ -409,9 +409,7 @@ struct Curve_renderer_traits<CORE::BigRat, CORE::BigRat> :
         typedef std::size_t result_type;
 
         inline result_type operator()(const Float& key) const {
-            const CORE::BigRatRep& rep = key.getRep();
-            std::size_t ret = reinterpret_cast<std::size_t>(&rep);
-            return ret;
+            return std::hash<Float>()(key);
         }
     };
 };

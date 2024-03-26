@@ -276,6 +276,11 @@ private:
                                 const Curve_index& curve_index,
                                 const CGAL::Orientation orientation) const;
 
+  FT curve_segment_length(const Vertex_handle v1,
+                          const Vertex_handle v2,
+                          const Curve_index& curve,
+                          const CGAL::Orientation orientation) const;
+
   /// Take an iterator on Vertex_handle as input and check if the sampling
   /// of those vertices is ok. If not, fix it.
   void check_and_repopulate_edges();
@@ -1082,13 +1087,7 @@ insert_balls(const Vertex_handle& vp,
              const CGAL::Orientation orientation,
              ErasedVeOutIt out)
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   // Get size of p & q
-  const Weighted_point& vp_wp = c3t3_.triangulation().point(vp);
-  const Weighted_point& vq_wp = c3t3_.triangulation().point(vq);
-
   const FT sp = get_radius(vp);
   const FT sq = get_radius(vq);
 
@@ -1098,7 +1097,7 @@ insert_balls(const Vertex_handle& vp,
   const FT pq_length = (vp == vq) ?
     domain_.curve_length(curve_index)
     :
-    domain_.curve_segment_length(cp(vp_wp), cp(vq_wp), curve_index, orientation);
+    curve_segment_length(vp, vq, curve_index, orientation);
 
   // Insert balls
   return
@@ -1202,9 +1201,8 @@ insert_balls(const Vertex_handle& vp,
                 << n << "\n  between points ("
                 << vp_wp << ") and (" << vq_wp
                 << ") (arc length: "
-                << domain_.curve_segment_length(cp(vp_wp),
-                                                cp(vq_wp),
-                                                curve_index, d_sign)
+                << curve_segment_length(vp_wp, vq_wp,
+                                        curve_index, d_sign)
                 << ")\n";
 #endif
       const Bare_point new_point =
@@ -1691,6 +1689,8 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   // neighbor.
 
   const Curve_index& curve_index = adjacent_vertices.front().second;
+  if (use_minimal_size() && adjacent_vertices.back().second != curve_index)
+    return out;
   CGAL_assertion(adjacent_vertices.back().second== curve_index);
 
   // Walk along edge to find the edge piece which is not correctly sampled
@@ -1743,6 +1743,37 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   return out;
 }
 
+template <typename C3T3, typename MD, typename Sf>
+typename Protect_edges_sizing_field<C3T3, MD, Sf>::FT
+Protect_edges_sizing_field<C3T3, MD, Sf>::
+curve_segment_length(const Vertex_handle v1,
+                     const Vertex_handle v2,
+                     const Curve_index& curve_index,
+                     const CGAL::Orientation orientation) const
+{
+  auto cp = c3t3_.triangulation().geom_traits().construct_point_3_object();
+
+  bool v1_valid_curve_index = true;
+  bool v2_valid_curve_index = true;
+  if(use_minimal_size())
+  {
+    if (get_dimension(v1) == 1)
+      v1_valid_curve_index = (domain_.curve_index(v1->index()) == curve_index);
+    if (get_dimension(v2) == 1)
+      v2_valid_curve_index = (domain_.curve_index(v2->index()) == curve_index);
+  }
+
+  const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
+  const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
+
+  FT arc_length = (v1_valid_curve_index && v2_valid_curve_index)
+    ? domain_.curve_segment_length(cp(v1_wp),
+                                   cp(v2_wp),
+                                   curve_index,
+                                   orientation)
+    : compute_distance(v1, v2); //curve polyline may not be consistent
+  return arc_length;
+}
 
 template <typename C3T3, typename MD, typename Sf>
 bool
@@ -1759,37 +1790,14 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
   typename GT::Compute_weight_3 cw =
     c3t3_.triangulation().geom_traits().compute_weight_3_object();
 
+  FT arc_length = curve_segment_length(v1,
+                                       v2,
+                                       curve_index,
+                                       orientation);
+
   // Get sizes
   FT size_v1 = get_radius(v1);
   FT size_v2 = get_radius(v2);
-
-  bool v1_valid_curve_index = true;
-  bool v2_valid_curve_index = true;
-
-  if(use_minimal_size())
-  {
-    v1_valid_curve_index = (get_dimension(v1) != 1
-                         || curve_index == domain_.curve_index(v1->index()));
-    v2_valid_curve_index = (get_dimension(v2) != 1
-                         || curve_index == domain_.curve_index(v2->index()));
-  }
-  else
-  {
-    CGAL_assertion(get_dimension(v1) != 1 ||
-                   curve_index == domain_.curve_index(v1->index()));
-    CGAL_assertion(get_dimension(v2) != 1 ||
-                   curve_index == domain_.curve_index(v2->index()));
-  }
-
-  const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
-  const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
-
-  FT arc_length = (v1_valid_curve_index && v2_valid_curve_index)
-                ? domain_.curve_segment_length(cp(v1_wp),
-                                               cp(v2_wp),
-                                               curve_index,
-                                               orientation)
-                : compute_distance(v1, v2); //curve polyline may not be consistent
 
   // Sufficient condition so that the curve portion between v1 and v2 is
   // inside the union of the two balls.
@@ -1808,6 +1816,9 @@ is_sampling_dense_enough(const Vertex_handle& v1, const Vertex_handle& v2,
 #endif // CGAL_MESH_3_PROTECTION_DEBUG & 1
       return false;
     }
+
+    const Weighted_point& v1_wp = c3t3_.triangulation().point(v1);
+    const Weighted_point& v2_wp = c3t3_.triangulation().point(v2);
 
     const bool cov = domain_.is_curve_segment_covered(curve_index,
                                                       orientation,
@@ -1897,6 +1908,9 @@ walk_along_edge(const Vertex_handle& start, const Vertex_handle& next,
 
     // Get next vertex along edge
     Vertex_handle next = next_vertex_along_curve(current,previous,curve_index);
+    if (next == Vertex_handle())
+      break;
+
     previous = current;
     current = next;
   }
@@ -1925,8 +1939,10 @@ next_vertex_along_curve(const Vertex_handle& start,
                     adjacent_vertices.end(),
                     [curve_index](const auto& p){ return p.second != curve_index; }),
      adjacent_vertices.end());
-  CGAL_assertion(adjacent_vertices.size() == 2);
+  if (use_minimal_size() && adjacent_vertices.size() < 2)
+    return Vertex_handle();
 
+  CGAL_assertion(adjacent_vertices.size() == 2);
   if ( adjacent_vertices.front().first == previous )
   {
     return adjacent_vertices.back().first;
@@ -2087,20 +2103,12 @@ is_sizing_field_correct(const Vertex_handle& v1,
                         const Curve_index& curve_index,
                         const CGAL::Orientation orientation) const
 {
-  typename C3T3::Triangulation::Geom_traits::Construct_point_3 cp =
-    c3t3_.triangulation().geom_traits().construct_point_3_object();
-
   FT s1 = get_radius(v1);
   FT s2 = get_radius(v2);
   FT s3 = get_radius(v3);
-  const Weighted_point& wp1 = c3t3_.triangulation().point(v1);
-  const Weighted_point& wp2 = c3t3_.triangulation().point(v2);
-  const Weighted_point& wp3 = c3t3_.triangulation().point(v3);
 
-  FT D = domain_.curve_segment_length(cp(wp1), cp(wp3),
-                                      curve_index, orientation);
-  FT d = domain_.curve_segment_length(cp(wp1), cp(wp2),
-                                      curve_index, orientation);
+  FT D = curve_segment_length(v1, v3, curve_index, orientation);
+  FT d = curve_segment_length(v1, v2, curve_index, orientation);
 
   return ( s2 >= (s1 + d/D*(s3-s1)) );
 }

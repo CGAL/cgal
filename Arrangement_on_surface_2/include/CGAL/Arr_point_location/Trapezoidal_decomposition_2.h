@@ -177,6 +177,7 @@ public:
 
   //typedef of arrangement on surface
   typedef typename Traits::Arrangement_on_surface_2 Arrangement_on_surface_2;
+  using Base_aos = typename Arrangement_on_surface_2::Base_aos;
 
   //type of traits adaptor
   typedef typename Traits::Arrangement_on_surface_2::Traits_adaptor_2
@@ -1804,7 +1805,7 @@ public:
     return m_number_of_curves;
   }
 
-  void init_arrangement_and_traits(const Arrangement_on_surface_2* arr,
+  void init_arrangement_and_traits(const Base_aos* arr,
                                    bool allocate_traits = true)
   {
     m_arr = arr;
@@ -2125,7 +2126,7 @@ protected:
   unsigned long m_number_of_curves;
   const Traits* traits;
   //Before_split_data m_before_split;
-  const Arrangement_on_surface_2* m_arr;
+  const Base_aos* m_arr;
   const Traits_adaptor_2* m_trts_adaptor;
 
   Halfedge_const_handle m_empty_he_handle;

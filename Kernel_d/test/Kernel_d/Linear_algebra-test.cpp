@@ -10,22 +10,8 @@
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Exact_rational.h>
 
-#if defined( CGAL_USE_LEDA) || defined ( CGAL_USE_GMP )
-
 typedef CGAL::Exact_integer RT;
 typedef CGAL::Exact_rational FT;
-
-#else
-
-// The following are too slow :
-// #include <CGAL/MP_Float.h>
-// #include <CGAL/Quotient.h>
-// typedef CGAL::MP_Float     RT;
-// typedef CGAL::Quotient<RT> FT;
-typedef double RT;
-typedef double FT;
-
-#endif
 
 int main(int argc, char* argv[])
 {
@@ -72,8 +58,6 @@ int main(int argc, char* argv[])
       Vector v21(v13),v22(v13);
       v21 *= 13;
       CGAL_TEST(v21 == NT(13)*v22){}
-      v21 /= 13;
-      CGAL_TEST(v21 == v22){}
       if (IOTEST) CGAL_IO_TEST(v1,v2,CGAL::IO::ASCII);
     }
 

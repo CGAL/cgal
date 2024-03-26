@@ -180,6 +180,10 @@ private:
     if(previous != first && !skip[0])
       cdt->insert_constraint(previous, first);
 
+    // ignore degenerate polygons
+    if (cdt->dimension() != 2)
+      return true;
+
     // sets mark is_external
     for(Face_handle f2 : cdt->all_face_handles())
       f2->info().is_external = false;

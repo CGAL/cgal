@@ -7,7 +7,7 @@
 #include <cstdlib>
 
 #include <CGAL/CORE_Expr.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/CORE_BigRat.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 
@@ -119,7 +119,7 @@ void test_MSB_bug()
 int main() {
     precision_bug();
     test_istream();
-    test_MSB_bug<CGAL::Gmpq>();
+    test_MSB_bug<CORE::BigRat>();
     test_MSB_bug<CORE::Expr>();
 
     typedef CORE::Expr NT;

@@ -31,6 +31,7 @@
 \cgalPackageSection{PartPolygons,Polygons}
 
 \package_listing{Polygon}
+\package_listing{Polygon_repair}
 \package_listing{Boolean_set_operations_2}
 \package_listing{Nef_2}
 \package_listing{Nef_S2}

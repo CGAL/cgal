@@ -1102,7 +1102,7 @@ void MainWindow::open(QString filename)
   if ( dfs_it==default_plugin_selection.end() )
   {
     // collect all io_plugins and offer them to load if the file extension match one name filter
-    // also collect all available plugin in case of a no extension match
+    // also collect all available plugins in case of a no extension match
     for(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin : io_plugins) {
       if ( file_matches_filter(io_plugin->loadNameFilters(), filename.toLower()) )
       {

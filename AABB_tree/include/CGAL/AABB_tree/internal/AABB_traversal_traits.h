@@ -73,7 +73,7 @@ public:
   Result;
 public:
   First_intersection_traits(const AABBTraits& traits)
-    : m_result(), m_traits(traits)
+    : m_result(std::nullopt), m_traits(traits)
   {}
 
   bool go_further() const {
@@ -202,7 +202,7 @@ class First_primitive_traits
 public:
   First_primitive_traits(const AABBTraits& traits)
     : m_is_found(false)
-    , m_result()
+    , m_result(std::nullopt)
     , m_traits(traits) {}
 
   bool go_further() const { return !m_is_found; }

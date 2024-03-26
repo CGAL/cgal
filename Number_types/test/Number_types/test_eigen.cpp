@@ -24,6 +24,8 @@
 #ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Dense>
 
+
+
 // Just check that it all compiles.
 template <class NT, int s>
 void check_(){
@@ -33,7 +35,7 @@ void check_(){
   Eigen::Matrix<NT,s,1> v(3);
   v << 1, 2, 3;
   NT t=v.dot(v);
-  v+=d*m*(t*v);
+  v+=d*Eigen::Matrix<NT,s,1>(m*(t*v));
   std::ptrdiff_t si=v.size();
   CGAL_USE(si);
 }

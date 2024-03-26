@@ -117,16 +117,15 @@ function(cgal_add_compilation_test exe_name)
     add_test(NAME "check build system"
       COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
     set_property(TEST "check build system"
-      APPEND PROPERTY LABELS "CGAL_build_system")
+      APPEND PROPERTY LABELS "CGAL_build_system" "Installation")
     set_property(TEST "check build system"
        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
   endif()
   if(TARGET CGAL_Qt6_moc_and_resources) # if CGAL_Qt6 was searched, and is header-only
     get_property(linked_libraries TARGET "${exe_name}" PROPERTY LINK_LIBRARIES)
     #  message(STATUS "${exe_name} depends on ${linked_libraries}")
-    string(FIND "${linked_libraries}" "CGAL::CGAL_Qt6" link_with_CGAL_Qt6)
-    if(link_with_CGAL_Qt6 STRGREATER "-1" AND
-        NOT TARGET "compilation_of__CGAL_Qt6_moc_and_resources")
+    if( ("CGAL_Qt6" IN_LIST linked_libraries OR "CGAL::CGAL_Qt6" IN_LIST linked_libraries OR "CGAL::CGAL_Basic_viewer" IN_LIST linked_libraries)
+        AND NOT TARGET "compilation_of__CGAL_Qt6_moc_and_resources")
       # This custom target is useless. It is used only as a flag to
       # detect that the test has already been created.
       add_custom_target("compilation_of__CGAL_Qt6_moc_and_resources")
@@ -134,7 +133,7 @@ function(cgal_add_compilation_test exe_name)
       add_test(NAME "compilation of  CGAL_Qt6_moc_and_resources"
         COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "CGAL_Qt6_moc_and_resources" --config "$<CONFIG>")
       set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
-        APPEND PROPERTY LABELS "CGAL_build_system")
+        APPEND PROPERTY LABELS "CGAL_build_system" "Installation")
       set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
         PROPERTY FIXTURES_SETUP "CGAL_Qt6_moc_and_resources_Fixture")
       set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"

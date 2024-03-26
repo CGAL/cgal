@@ -7,10 +7,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
-//                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
-//                 Ron Wein               <wein@post.tau.ac.il>
-//                 Efi Fogel              <fogel@post.tau.ac.il>
+// Author(s) : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
+//             Baruch Zukerman        <baruchzu@post.tau.ac.il>
+//             Ron Wein               <wein@post.tau.ac.il>
+//             Efi Fogel              <efifogel@gmail.com>
 
 #ifndef CGAL_ENV_SPHERE_TRAITS_3_H
 #define CGAL_ENV_SPHERE_TRAITS_3_H
@@ -32,96 +32,115 @@ namespace CGAL {
 template <typename ConicTraits_2>
 class Env_sphere_traits_3 : public ConicTraits_2 {
 public:
-  typedef ConicTraits_2                                 Traits_2;
-  typedef Env_sphere_traits_3<Traits_2>                 Self;
+  using Traits_2 = ConicTraits_2;
 
-  typedef typename Traits_2::Point_2                    Point_2;
-  typedef typename Traits_2::Curve_2                    Curve_2;
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
-  typedef typename Traits_2::Multiplicity               Multiplicity;
+  using Point_2 = typename Traits_2::Point_2;
+  using Curve_2 = typename Traits_2::Curve_2;
+  using X_monotone_curve_2 = typename Traits_2::X_monotone_curve_2;
+  using Multiplicity = typename Traits_2::Multiplicity;
 
-  typedef typename Traits_2::Rat_kernel                 Rat_kernel;
-  typedef typename Traits_2::Alg_kernel                 Alg_kernel;
-  typedef typename Traits_2::Nt_traits                  Nt_traits;
+  using Rat_kernel = typename Traits_2::Rat_kernel;
+  using Alg_kernel = typename Traits_2::Alg_kernel;
+  using Nt_traits = typename Traits_2::Nt_traits;
 
-  typedef typename Rat_kernel::FT                       Rational;
-  typedef typename Rat_kernel::Point_2                  Rat_point_2;
-  typedef typename Rat_kernel::Segment_2                Rat_segment_2;
-  typedef typename Rat_kernel::Line_2                   Rat_line_2;
-  typedef typename Rat_kernel::Circle_2                 Rat_circle_2;
-  typedef typename Rat_kernel::Point_3                  Rat_point_3;
+  using Rational = typename Rat_kernel::FT;
+  using Rat_point_2 = typename Rat_kernel::Point_2;
+  using Rat_segment_2 = typename Rat_kernel::Segment_2;
+  using Rat_line_2 = typename Rat_kernel::Line_2;
+  using Rat_circle_2 = typename Rat_kernel::Circle_2;
+  using Rat_point_3 = typename Rat_kernel::Point_3;
 
-  typedef typename Alg_kernel::FT                       Algebraic;
-  typedef typename Alg_kernel::Point_2                  Alg_point_2;
-  typedef typename Alg_kernel::Circle_2                 Alg_circle_2;
+  using Algebraic = typename Alg_kernel::FT;
+  using Alg_point_2 = typename Alg_kernel::Point_2;
+  using Alg_circle_2 = typename Alg_kernel::Circle_2;
 
-  typedef typename Rat_kernel::Sphere_3                 Surface_3;
+  using Surface_3 = typename Rat_kernel::Sphere_3;
 
   // here we refer to the lower part of the sphere only
-  typedef Surface_3                                     Xy_monotone_surface_3;
+  using Xy_monotone_surface_3 = Surface_3;
 
 protected:
-  typedef std::pair<X_monotone_curve_2, Multiplicity>   Intersection_curve;
+  using Intersection_curve = std::pair<X_monotone_curve_2, Multiplicity>;
 
 public:
+  /*! Subdivide a given surface into \f$xy\f$-monotone parts.
+   */
   class Make_xy_monotone_3 {
   protected:
-    const Self& parent;
+    using Traits_3 = Env_sphere_traits_3<Traits_2>;
+
+    //! The traits (in case it has state).
+    const Traits_3& m_traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Make_xy_monotone_3(const Traits_3& traits) : m_traits(traits) {}
+
+    friend class Env_sphere_traits_3<Traits_2>;
 
   public:
-    Make_xy_monotone_3(const Self * p) : parent(*p) {}
-
     // create xy-monotone surfaces from a general surface
     // return a past-the-end iterator
-    template <class OutputIterator>
-    OutputIterator operator()(const Surface_3& s,
-                              bool is_lower,
-                              OutputIterator o) const
-    {
+    template <typename OutputIterator>
+    OutputIterator operator()(const Surface_3& s, bool is_lower,
+                              OutputIterator o) const {
       // our half sphere is of same type as our full sphere since we always
       // need only the lower/upper part of each sphere
-      parent.m_is_lower = is_lower;
+      m_traits.m_is_lower = is_lower;
       *o++ = s;
       return o;
     }
   };
 
-  /*! Get a Make_xy_monotone_3 functor object. */
-  Make_xy_monotone_3
-  make_xy_monotone_3_object() const { return Make_xy_monotone_3(this); }
+  /*! Obtain a Make_xy_monotone_3 functor object. */
+  Make_xy_monotone_3 make_xy_monotone_3_object() const
+  { return Make_xy_monotone_3(*this); }
 
+  /*! Compute all planar \f$x\f$-monotone curves and possibly isolated planar
+   * points that form the projection of the boundary of the given
+   * \f$xy\f$-monotone surface s onto the \f$xy\f$-plane.
+   */
   class Construct_projected_boundary_2 {
   protected:
-    const Self& parent;
+    using Traits_3 = Env_sphere_traits_3<Traits_2>;
+
+    //! The traits (in case it has state).
+    const Traits_3& m_traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Construct_projected_boundary_2(const Traits_3& traits) : m_traits(traits) {}
+
+    friend class Env_sphere_traits_3<Traits_2>;
 
   public:
-    Construct_projected_boundary_2(const Self* p) : parent(*p) {}
-
     // insert into the OutputIterator all the (2d) curves of the boundary of
     // the vertical projection of the surface on the xy-plane
     // the OutputIterator value type is X_monotone_curve_2
-    template <class OutputIterator>
+    template <typename OutputIterator>
     OutputIterator
     operator()(const Xy_monotone_surface_3& s, OutputIterator o) const {
-      const auto gt_2 = parent.geometry_traits_2();
+      const Traits_2& gt2 = m_traits;
 
       // the projected boundary in a circle, with a projected center,
       // and same radius
-      Rat_point_2 proj_center = parent.project(s.center());
+      Rat_point_2 proj_center = m_traits.project(s.center());
       Rat_circle_2 circ(proj_center, s.squared_radius());
-      Curve_2 curve = gt_2->construct_curve_2_object()(circ);
-      typedef std::variant<X_monotone_curve_2, Point_2> Variant;
+      Curve_2 curve = gt2.construct_curve_2_object()(circ);
+      using Variant = std::variant<X_monotone_curve_2, Point_2>;
       Variant objs[2];
 
       CGAL_assertion_code(Variant* p = )
-      parent.make_x_monotone_2_object()(curve, objs);
+      m_traits.make_x_monotone_2_object()(curve, objs);
       CGAL_assertion(p == objs + 2);
 
-      const X_monotone_curve_2* cv1 = std::get_if<X_monotone_curve_2>(&(objs[0]));
-      const X_monotone_curve_2* cv2 = std::get_if<X_monotone_curve_2>(&(objs[1]));
+      const auto* cv1 = std::get_if<X_monotone_curve_2>(&(objs[0]));
+      const auto* cv2 = std::get_if<X_monotone_curve_2>(&(objs[1]));
 
-      CGAL_assertion(cv1!=nullptr);
-      CGAL_assertion(cv2!=nullptr);
+      CGAL_assertion(cv1 != nullptr);
+      CGAL_assertion(cv2 != nullptr);
 
       if (cv1->is_lower()) {
         CGAL_assertion(cv2->is_upper());
@@ -138,39 +157,52 @@ public:
     }
   };
 
-  /*! Get a Construct_projected_boundary_2 functor object. */
+  /*! Obtain a Construct_projected_boundary_2 functor object. */
   Construct_projected_boundary_2
   construct_projected_boundary_2_object() const
-  { return Construct_projected_boundary_2(this); }
+  { return Construct_projected_boundary_2(*this); }
 
+  /*! compute the projection of the intersections of the \f$xy\f$-monotone
+   * surfaces onto the \f$xy\f$-plane,
+   */
   class Construct_projected_intersections_2 {
   protected:
-    const Self& parent;
+    using Traits_3 = Env_sphere_traits_3<Traits_2>;
+
+    //! The traits (in case it has state).
+    const Traits_3& m_traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Construct_projected_intersections_2(const Traits_3& traits) :
+      m_traits(traits)
+    {}
+
+    friend class Env_sphere_traits_3<Traits_2>;
 
   public:
-    Construct_projected_intersections_2(const Self * p) : parent(*p) {}
-
     // insert into OutputIterator all the (2d) projections on the xy plane of
     // the intersection objects between the 2 surfaces
     // the data type of OutputIterator is Object
     template <typename OutputIterator>
-    OutputIterator
-    operator()(const Xy_monotone_surface_3& s1, const Xy_monotone_surface_3& s2,
-               OutputIterator o) const {
-      const auto gt_2 = parent.geometry_traits_2();
-      auto ctr_cv = gt_2->construct_curve_2_object();
-      auto nt_traits = gt_2->nt_traits();
+    OutputIterator operator()(const Xy_monotone_surface_3& s1,
+                              const Xy_monotone_surface_3& s2,
+                              OutputIterator o) const {
+      const Traits_2& gt2 = m_traits;
+      auto ctr_cv = gt2.construct_curve_2_object();
+      auto nt_traits = gt2.nt_traits();
 
-      Rat_point_3 p1 = s1.center();
-      Rat_point_3 p2 = s2.center();
-      const Rational a1 = p1.x();
-      const Rational b1 = p1.y();
-      const Rational c1 = p1.z();
-      const Rational a2 = p2.x();
-      const Rational b2 = p2.y();
-      const Rational c2 = p2.z();
-      const Rational sqr_r1 = s1.squared_radius();
-      const Rational sqr_r2 = s2.squared_radius();
+      const Rat_point_3& p1 = s1.center();
+      const Rat_point_3& p2 = s2.center();
+      const Rational& a1 = p1.x();
+      const Rational& b1 = p1.y();
+      const Rational& c1 = p1.z();
+      const Rational& a2 = p2.x();
+      const Rational& b2 = p2.y();
+      const Rational& c2 = p2.z();
+      const Rational& sqr_r1 = s1.squared_radius();
+      const Rational& sqr_r2 = s2.squared_radius();
 
       // // the spheres intersect iff d(p1, p2) <= (r1+r2)
       // // squaring this twice, we get the condition
@@ -225,7 +257,7 @@ public:
           Rational B = -8*b1*sqr_a_diff;
           Rational C = 4*sqr_a_diff*(sqr_a1+sqr_b1-sqr_r1) + m*m - 4*m*a1*a_diff;
 
-          Algebraic  ys[2];
+          Algebraic ys[2];
 
           Algebraic* ys_end = nt_traits->solve_quadratic_equation(A, B, C, ys);
           std::ptrdiff_t n_ys = ys_end - ys;
@@ -233,7 +265,7 @@ public:
           if (n_ys == 0) return o; // no intersection
 
           // the x coordinate of the solution points
-          Algebraic xs = m / (2*a_diff);
+          Algebraic xs = m / (Rational(2)*a_diff);
 
           if (n_ys == 1) {
             // intersection is a point
@@ -254,7 +286,7 @@ public:
           // 2(a1-a2)x - m = 0
           Curve_2 res = ctr_cv(0, 0, 0, 2*a_diff, 0, -m, COLLINEAR, end1, end2);
 
-          parent.add_curve_to_output(res, o);
+          m_traits.add_curve_to_output(res, o);
           //*o++ = Intersection_curve(res, TRANSVERSAL);
         }
         else {
@@ -308,7 +340,7 @@ public:
           }
           if (n_xs == 1) {
             // intersection is a point
-            Point_2 inter_point(xs[0], (-2*a_diff*xs[0] + m)/(2*b_diff) );
+            Point_2 inter_point(xs[0], (-Rational(2)*a_diff*xs[0] + m)/(Rational(2)*b_diff) );
             *o++ = inter_point;
             return o;
           }
@@ -318,8 +350,8 @@ public:
           // so we construct a COLLINEAR conic (with equation as in (1))
           // with 2 endpoints
           Algebraic ys[2];
-          ys[0] = (-2*a_diff*xs[0] + m)/(2*b_diff);
-          ys[1] = (-2*a_diff*xs[1] + m)/(2*b_diff);
+          ys[0] = (-Rational(2)*a_diff*xs[0] + m)/(Rational(2)*b_diff);
+          ys[1] = (-Rational(2)*a_diff*xs[1] + m)/(Rational(2)*b_diff);
 
           Alg_point_2 end1(xs[0], ys[0]);
           Alg_point_2 end2(xs[1], ys[1]);
@@ -328,7 +360,7 @@ public:
           // 2(a1-a2)x + 2(b1-b2)y - m = 0
           Curve_2 res =
             ctr_cv(0,0,0, 2*a_diff, 2*b_diff, -m, COLLINEAR, end1, end2);
-          parent.add_curve_to_output(res, o);
+          m_traits.add_curve_to_output(res, o);
           //*o++ = Intersection_curve(res, TRANSVERSAL);
         }
       }
@@ -401,14 +433,14 @@ public:
         // if the full spheres do not intersect, the equation we get has no
         // real solution, so we should check it:
         bool ellipse_is_point = false;
-        if (! parent.is_valid_conic_equation(R, S, T, U, V, W, ellipse_is_point))
+        if (! m_traits.is_valid_conic_equation(R, S, T, U, V, W, ellipse_is_point))
           return o;
 
         // we need only a part of the ellipse (as stated in (**)) so we
         // construct the cutting line, which is:
         //    equation (*) <= min(c1,c2)    -- for lower envelope
         //    equation (*) >= max(c1,c2)    -- for upper envelope
-        Rational z_plane = (parent.m_is_lower) ?
+        Rational z_plane = (m_traits.m_is_lower) ?
           ((c1 < c2) ? c1 : c2) : ((c1 > c2) ? c1 : c2);
 
 
@@ -423,9 +455,9 @@ public:
 
         // for upper envelope, we should multiply the line equation by -1
         int envelope_coef = 1;
-        if (! parent.m_is_lower) envelope_coef = -1;
+        if (! m_traits.m_is_lower) envelope_coef = -1;
 
-        Sign sign_c_diff = CGAL_NTS sign(c_diff);
+        Rational sign_c_diff = Rational(sign(c_diff));
         Rational la = envelope_coef*2*a_diff*sign_c_diff;
         Rational lb = envelope_coef*2*b_diff*sign_c_diff;
         Rational lc = envelope_coef*sign_c_diff*(2*c_diff*z_plane - m);
@@ -454,13 +486,12 @@ public:
         // intersection - in which case lc >= 0
         // or there is no intersection at all between the 2 half spheres -
         // in which case lc < 0
-        if (CGAL_NTS compare(a_diff, zero) == EQUAL &&
-            CGAL_NTS compare(b_diff, zero) == EQUAL)
-        {
+        if ((CGAL_NTS compare(a_diff, zero) == EQUAL) &&
+            (CGAL_NTS compare(b_diff, zero) == EQUAL)) {
           Sign sign_lc = CGAL_NTS sign(lc);
           if (sign_lc != NEGATIVE) {
             Curve_2 res = ctr_cv(R, S, T, U, V, W);
-            parent.add_curve_to_output(res, o);
+            m_traits.add_curve_to_output(res, o);
             //*o++ = Intersection_curve(res, TRANSVERSAL);
           }
           return o;
@@ -510,7 +541,7 @@ public:
             Curve_2 inter_cv = ctr_cv(R, S, T, U, V, W);
 
             CGAL_precondition_code(x_mid_n_y_points = )
-              gt_2->points_at_x(inter_cv, x_mid_point, x_mid_y_points);
+              gt2.points_at_x(inter_cv, x_mid_point, x_mid_y_points);
 
             CGAL_precondition(x_mid_n_y_points > 0);
 
@@ -566,7 +597,7 @@ public:
             Curve_2 inter_cv = ctr_cv(R, S, T, U, V, W);
 
             CGAL_precondition_code(int y_mid_n_x_points =)
-            gt_2->points_at_y(inter_cv, y_mid_point, y_mid_x_points);
+            gt2.points_at_y(inter_cv, y_mid_point, y_mid_x_points);
             CGAL_precondition(y_mid_n_x_points > 0);
 
             Algebraic x1 = y_mid_x_points[0].x(), x2 = y_mid_x_points[1].x();
@@ -600,7 +631,7 @@ public:
           Alg_point_2 vtan_ps[2];
 
           CGAL_assertion_code(std::size_t n_vtan_ps =)
-            gt_2->vertical_tangency_points(inter_cv, vtan_ps);
+            gt2.vertical_tangency_points(inter_cv, vtan_ps);
 
           CGAL_assertion(n_vtan_ps == 2);
 
@@ -609,7 +640,7 @@ public:
           Sign lval_sign = CGAL_NTS sign(lval);
           if (lval_sign == POSITIVE) {
             // the full ellipse is in the positive side
-            parent.add_curve_to_output(inter_cv, o);
+            m_traits.add_curve_to_output(inter_cv, o);
             //*o++ = Intersection_curve(inter_cv, TRANSVERSAL);
             return o;
           }
@@ -630,7 +661,7 @@ public:
           lval_sign = CGAL_NTS sign(lval);
           CGAL_assertion(lval_sign != ZERO);
 
-          if (lval_sign == POSITIVE) parent.add_curve_to_output(inter_cv, o);
+          if (lval_sign == POSITIVE) m_traits.add_curve_to_output(inter_cv, o);
             //*o++ = Intersection_curve(inter_cv, TRANSVERSAL);
           else *o++ = Point_2(source);
 
@@ -644,14 +675,14 @@ public:
         // If the mid-point forms a left-turn with the source and the target
         // points, the orientation is positive (going counterclockwise).
         // Otherwise, it is negative (going clockwise).
-        auto alg_kernel = gt_2->alg_kernel();
+        auto alg_kernel = gt2.alg_kernel();
         auto orient_f = alg_kernel->orientation_2_object();
         Orientation orient = (orient_f(source, pmid, target) == LEFT_TURN) ?
           CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE;
 
         Curve_2 res = ctr_cv(R, S, T, U, V, W, orient, source, target);
         CGAL_assertion(res.is_valid());
-        parent.add_curve_to_output(res, o);
+        m_traits.add_curve_to_output(res, o);
         //*o++ = Intersection_curve(res, TRANSVERSAL);
       }
 
@@ -659,18 +690,30 @@ public:
     }
   };
 
-  /*! Get a Construct_projected_intersections_2 functor object. */
+  /*! Obtain a Construct_projected_intersections_2 functor object. */
   Construct_projected_intersections_2
   construct_projected_intersections_2_object() const
-  { return Construct_projected_intersections_2(this); }
+  { return Construct_projected_intersections_2(*this); }
 
+  /*! Determine the relative \f$z\f$-order of two given \f$xy\f$-monotone
+   * surfaces at the \f$xy\f$-coordinates of a given point or \f$x\f$-monotone
+   * curve.
+   */
   class Compare_z_at_xy_3 {
   protected:
-    const Self& parent;
+    using Traits_3 = Env_sphere_traits_3<Traits_2>;
+
+    //! The traits (in case it has state).
+    const Traits_3& m_traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Compare_z_at_xy_3(const Traits_3& traits) : m_traits(traits) {}
+
+    friend class Env_sphere_traits_3<Traits_2>;
 
   public:
-    Compare_z_at_xy_3(const Self* p) : parent(*p) {}
-
     // check which of the surfaces is closer to the envelope at the xy
     // coordinates of point (i.e. lower if computing the lower envelope, or
     // upper if computing the upper envelope)
@@ -697,9 +740,8 @@ public:
                                  const Xy_monotone_surface_3& s1,
                                  const Xy_monotone_surface_3& s2) const {
       // we compute a middle point on cv and use the previous function
-      Point_2 mid = parent.construct_middle_point(cv);
-      Comparison_result res = parent.compare_z_at_xy_3_object()(mid, s1, s2);
-      return res;
+      Point_2 mid = m_traits.construct_middle_point(cv);
+      return m_traits.compare_z_at_xy_3_object()(mid, s1, s2);
     }
 
   protected:
@@ -710,12 +752,12 @@ public:
                                   const Xy_monotone_surface_3& s1,
                                   const Xy_monotone_surface_3& s2) const {
       // find the z coordinates of surface 1 over p
-      Algebraic z1 = parent.compute_envelope_z_in_point(p, s1);
+      Algebraic z1 = m_traits.compute_envelope_z_in_point(p, s1);
       // find the z coordinates of surface 2 over p
-      Algebraic z2 = parent.compute_envelope_z_in_point(p, s2);
+      Algebraic z2 = m_traits.compute_envelope_z_in_point(p, s2);
 
       Sign res = CGAL_NTS sign(z1 - z2);
-      if (parent.m_is_lower) return res;
+      if (m_traits.m_is_lower) return res;
       else return -res;
     }
 
@@ -735,19 +777,19 @@ public:
     Comparison_result
     compare_in_point_second_method(const Point_2& p,
                                    const Xy_monotone_surface_3& s1,
-                                   const Xy_monotone_surface_3& s2) const
-    {
-      Rat_point_3 p1 = s1.center();
-      Rat_point_3 p2 = s2.center();
-      const Rational a1 = p1.x();
-      const Rational b1 = p1.y();
-      const Rational c1 = p1.z();
-      const Rational a2 = p2.x();
-      const Rational b2 = p2.y();
-      const Rational c2 = p2.z();
-      const Rational sqr_r1 = s1.squared_radius();
-      const Rational sqr_r2 = s2.squared_radius();
-      const Algebraic x1 = p.x(), y1 = p.y();
+                                   const Xy_monotone_surface_3& s2) const {
+      const Rat_point_3& p1 = s1.center();
+      const Rat_point_3& p2 = s2.center();
+      const Rational& a1 = p1.x();
+      const Rational& b1 = p1.y();
+      const Rational& c1 = p1.z();
+      const Rational& a2 = p2.x();
+      const Rational& b2 = p2.y();
+      const Rational& c2 = p2.z();
+      const Rational& sqr_r1 = s1.squared_radius();
+      const Rational& sqr_r2 = s2.squared_radius();
+      const Algebraic& x1 = p.x();
+      const Algebraic& y1 = p.y();
 
       Rational c_diff = c1 - c2;
       Algebraic x_diff1 = x1 - a1, y_diff1 = y1 - b1;
@@ -773,17 +815,32 @@ public:
     }
   };
 
-  /*! Get a Compare_z_at_xy_3 functor object. */
+  /*! Obtain a Compare_z_at_xy_3 functor object. */
   Compare_z_at_xy_3
-  compare_z_at_xy_3_object() const { return Compare_z_at_xy_3(this); }
+  compare_z_at_xy_3_object() const { return Compare_z_at_xy_3(*this); }
 
+  /*! Determine the relative \f$z\f$-order of the two given \f$xy\f$-monotone
+   * surfaces immediately above their projected intersection curve (a planar
+   * point \f$p\f$ is above an \f$x\f$-monotone curve \f$c\f$ if it is in the
+   * \f$x\f$-range of \f$c\f$, and lies to its left when the curve is traversed
+   * from its \f$xy\f$-lexicographically smaller endpoint to its larger
+   * endpoint).
+   */
   class Compare_z_at_xy_above_3 {
   protected:
-    const Self& parent;
+    using Traits_3 = Env_sphere_traits_3<Traits_2>;
+
+    //! The traits (in case it has state).
+    const Traits_3& m_traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Compare_z_at_xy_above_3(const Traits_3& traits) : m_traits(traits) {}
+
+    friend class Env_sphere_traits_3<Traits_2>;
 
   public:
-    Compare_z_at_xy_above_3(const Self* p) : parent(*p) {}
-
     // check which of the surfaces is closer to the envelope on the points above
     // the curve cv (i.e. lower if computing the lower envelope, or upper if
     // computing the upper envelope)
@@ -795,35 +852,46 @@ public:
     operator()(const X_monotone_curve_2& cv,
                const Xy_monotone_surface_3& s1,
                const Xy_monotone_surface_3& s2) const
-    { return parent.compare_on_side(cv, s1, s2, false); }
+    { return m_traits.compare_on_side(cv, s1, s2, false); }
   };
 
-  /*! Get a Compare_z_at_xy_above_3 functor object. */
+  /*! Obtain a Compare_z_at_xy_above_3 functor object. */
   Compare_z_at_xy_above_3
   compare_z_at_xy_above_3_object() const
-  { return Compare_z_at_xy_above_3(this); }
+  { return Compare_z_at_xy_above_3(*this); }
 
+  /*! Determine the relative \f$z\f$-order of the two given \f$xy\f$-monotone
+   * surfaces immediately below their projected intersection curve (a planar
+   * point \f$p\f$ is below an \f$x\f$-monotone curve \f$c\f$ if it is in the
+   * \f$x\f$-range of \f$c\f$, and lies to its left when the curve is traversed
+   * from its \f$xy\f$-lexicographically smaller endpoint to its larger
+   * endpoint).
+   */
   class Compare_z_at_xy_below_3 {
   protected:
-    const Self& parent;
+    using Traits_3 = Env_sphere_traits_3<Traits_2>;
+
+    //! The traits (in case it has state).
+    const Traits_3& m_traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Compare_z_at_xy_below_3(const Traits_3& traits) : m_traits(traits) {}
+
+    friend class Env_sphere_traits_3<Traits_2>;
 
   public:
-    Compare_z_at_xy_below_3(const Self* p) : parent(*p) {}
-
-    Comparison_result
-    operator()(const X_monotone_curve_2& cv,
-               const Xy_monotone_surface_3& s1,
-               const Xy_monotone_surface_3& s2) const
-    {
-      Comparison_result res = parent.compare_on_side(cv, s1, s2, true);
-      return res;
-    }
+    Comparison_result operator()(const X_monotone_curve_2& cv,
+                                 const Xy_monotone_surface_3& s1,
+                                 const Xy_monotone_surface_3& s2) const
+    { return m_traits.compare_on_side(cv, s1, s2, true); }
   };
 
-  /*! Get a Compare_z_at_xy_below_3 functor object. */
+  /*! Obtain a Compare_z_at_xy_below_3 functor object. */
   Compare_z_at_xy_below_3
   compare_z_at_xy_below_3_object() const
-  { return Compare_z_at_xy_below_3(this); }
+  { return Compare_z_at_xy_below_3(*this); }
 
   /***************************************************************************/
 
@@ -832,31 +900,39 @@ public:
   // checks if point is in the xy-range of surf
   class Is_defined_over {
   protected:
-    const Self& parent;
+    using Traits_3 = Env_sphere_traits_3<Traits_2>;
+
+    //! The traits (in case it has state).
+    const Traits_3& m_traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Is_defined_over(const Traits_3& traits) : m_traits(traits) {}
+
+    friend class Env_sphere_traits_3<Traits_2>;
 
   public:
-    Is_defined_over(const Self* p) : parent(*p) {}
-
     // checks if point is in the xy-range of surf
     bool operator()(const Point_2& p, const Xy_monotone_surface_3& s) const {
       // project the surface on the plane
-      Rat_point_2 proj_center = parent.project(s.center());
+      Rat_point_2 proj_center = m_traits.project(s.center());
       Rat_circle_2 boundary(proj_center, s.squared_radius());
 
-      const auto gt_2 = parent.geometry_traits_2();
-      auto nt_traits = gt_2->nt_traits();
+      const Traits_2& gt2 = m_traits;
+      auto nt_traits = gt2.nt_traits();
       Alg_point_2 aproj_center(proj_center.x(), proj_center.y());
       Alg_circle_2 aboundary(aproj_center, nt_traits->convert(s.squared_radius()));
 
       // check if the projected point is inside the projected boundary
-      auto alg_kernel = gt_2->alg_kernel();
+      auto alg_kernel = gt2.alg_kernel();
       return (! alg_kernel->has_on_unbounded_side_2_object()(aboundary, p));
     }
   };
 
-  /*! Get a Is_defined_over functor object. */
+  /*! Obtain a Is_defined_over functor object. */
   Is_defined_over is_defined_over_object() const
-  { return Is_defined_over(this); }
+  { return Is_defined_over(*this); }
 
   /***************************************************************************/
 
@@ -867,8 +943,7 @@ public:
   Comparison_result compare_on_side(const X_monotone_curve_2& cv,
                                     const Xy_monotone_surface_3& s1,
                                     const Xy_monotone_surface_3& s2,
-                                    bool compare_on_right) const
-  {
+                                    bool compare_on_right) const {
     // cv(x,y) : r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
     // let p be the leftmost endpoint of cv, p=(x0, y0)
     // the tangence of cv at p is a line. on the infinitesimal region
@@ -881,7 +956,8 @@ public:
     // since we assume that such point represents better what is going
     // on all internal curve points
     Point_2 cv_point = construct_middle_point(cv);
-    Algebraic x0 = cv_point.x(), y0 = cv_point.y();
+    const Algebraic& x0 = cv_point.x();
+    const Algebraic& y0 = cv_point.y();
 
     // d(cv)/dx : 2r*x + 2s*y*dy/dx + t*y + t*x*dy/dx +u + v*dy/dx = 0
     // in point p=(x0,y0) we get
@@ -895,12 +971,16 @@ public:
     //    n != 0:    y - y0 = y'(x-x0) ==> -y'x + y + (y'x0 - y0) = 0
     // and in general we have:
     //    -m*x + n*y + (m*x0 -n*y0) = 0 (with integer coordinates)
-    const Rational r = cv.r(), s = cv.s(), t = cv.t(),
-               u = cv.u(), v = cv.v(), w = cv.w();
-    Algebraic m = -1 * (2*r*x0 + t*y0 + u);
-    Algebraic n = 2*s*y0 + t*x0 + v;
+    const Rational& r = cv.r();
+    const Rational& s = cv.s();
+    const Rational& t = cv.t();
+    const Rational& u = cv.u();
+    const Rational& v = cv.v();
+    // const Rational& w = cv.w();      // unused
+    Algebraic m = -1 * (Rational(2)*r*x0 + t*y0 + u);
+    Algebraic n = Rational(2)*s*y0 + t*x0 + v;
     // line coefficients: A3, B3, C3
-    Algebraic A3 = -1*m, B3 = n, C3 = m*x0 - n*y0;
+    Algebraic A3 = -m, B3 = n, C3 = m*x0 - n*y0;
 
     // the tangences of the spheres (in point (x0,y0,z0)):
     Algebraic z0 = compute_envelope_z_in_point(cv_point, s1);
@@ -931,14 +1011,14 @@ public:
     //        Di = -(x0-ai)x0 - (y0-bi)y0 - (z0-ci)z0
     //
     // and we solve the problem as for triangles
-    Rat_point_3 p1 = s1.center();
-    Rat_point_3 p2 = s2.center();
-    const Rational a1 = p1.x();
-    const Rational b1 = p1.y();
-    const Rational c1 = p1.z();
-    const Rational a2 = p2.x();
-    const Rational b2 = p2.y();
-    const Rational c2 = p2.z();
+    const Rat_point_3& p1 = s1.center();
+    const Rat_point_3& p2 = s2.center();
+    const Rational& a1 = p1.x();
+    const Rational& b1 = p1.y();
+    const Rational& c1 = p1.z();
+    const Rational& a2 = p2.x();
+    const Rational& b2 = p2.y();
+    const Rational& c2 = p2.z();
     Algebraic A1 = x0 - a1, B1 = y0 - b1, C1 = z0 - c1;
     Algebraic A2 = x0 - a2, B2 = y0 - b2, C2 = z0 - c2;
     if (C1 != 0 && C2 != 0) {
@@ -971,6 +1051,7 @@ public:
     return EQUAL;
   }
 
+  //
   Rat_point_2 project(const Rat_point_3& p) const
   { return Rat_point_2(p.x(), p.y()); }
 
@@ -979,15 +1060,15 @@ public:
   // precondition: s is defined at p
   Algebraic compute_envelope_z_in_point(const Point_2& p,
                                         const Xy_monotone_surface_3& s) const {
-    Algebraic res;
-
     // the point coordinates
     const Algebraic x1 = p.x(), y1 = p.y();
 
     // the surface equations
-    Rat_point_3 center = s.center();
-    const Rational a = center.x(), b = center.y(), c = center.z();
-    const Rational sqr_r = s.squared_radius();
+    const Rat_point_3& center = s.center();
+    const Rational& a = center.x();
+    const Rational& b = center.y();
+    const Rational& c = center.z();
+    const Rational& sqr_r = s.squared_radius();
 
     // we substitute x1 and y1 in the equation of s
     // (x-a)^2 + (y-b)^2 + (z-c)^2 = r^2
@@ -996,14 +1077,15 @@ public:
     Algebraic x_diff = x1 - a, y_diff = y1 - b;
     // the coefficients are:
     Algebraic A = 1;
-    Algebraic B = -2*c;
-    Algebraic C = x_diff*x_diff + y_diff*y_diff + c*c - sqr_r;
+    Algebraic B = -Rational(2)*c;
+    Algebraic C = x_diff*x_diff + y_diff*y_diff + Algebraic(c*c - sqr_r);
 
-    Algebraic  zs[2];
+    Algebraic zs[2];
     Algebraic* zs_end;
     std::ptrdiff_t n_zs;
 
-    auto nt_traits = m_geometry_traits_2->nt_traits();
+    const Traits_2& gt2 = *this;
+    auto nt_traits = gt2.nt_traits();
     zs_end = nt_traits->solve_quadratic_equation(A, B, C, zs);
     n_zs = zs_end - zs;
 
@@ -1013,6 +1095,7 @@ public:
     if (n_zs == 1) return zs[0];
     CGAL_assertion(n_zs == 2);
 
+    Algebraic res;
     Comparison_result comp = CGAL_NTS compare(zs[0], zs[1]);
     if (m_is_lower) res = ((comp == SMALLER) ? zs[0] : zs[1]);
     else res = ((comp == LARGER) ? zs[0] : zs[1]);
@@ -1021,8 +1104,10 @@ public:
 
   // construct the point in the middle of cv
   Point_2 construct_middle_point(const X_monotone_curve_2& cv) const {
+    const Traits_2& gt2 = *this;
+
     // get the x-value of the middle point
-    auto alg_kernel = m_geometry_traits_2->alg_kernel();
+    auto alg_kernel = gt2.alg_kernel();
     Alg_point_2 mid_x =
       alg_kernel->construct_midpoint_2_object()(cv.source(), cv.target());
 
@@ -1030,13 +1115,14 @@ public:
     // maybe we want it there?
     // if (cv.is_segment()) return mid_x;
     if (cv.is_vertical()) return Point_2(mid_x);
-    return Point_2(m_geometry_traits_2->point_at_x(cv, mid_x));
+    return Point_2(gt2.point_at_x(cv, mid_x));
   }
 
 
   // for the test
   Point_2 construct_middle_point(const Point_2& p1, const Point_2& p2) const {
-    auto alg_kernel = m_geometry_traits_2->alg_kernel();
+    const Traits_2& gt2 = *this;
+    auto alg_kernel = gt2.alg_kernel();
     return Point_2(alg_kernel->construct_midpoint_2_object()(p1, p2));
   }
 
@@ -1044,7 +1130,7 @@ public:
   // r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
   // has real solutions
   // is_point is set to true if the equation represents just one point
-  template <class NT>
+  template <typename NT>
   bool is_valid_conic_equation(const NT& r, const NT& s, const NT& t,
                                const NT& u, const NT& v, const NT& w,
                                bool& is_point) const {
@@ -1103,30 +1189,31 @@ public:
 
   // for the test:
   Point_2 vertical_ray_shoot_2(const Point_2& pt, const X_monotone_curve_2& cv)
-    const
-  {
+    const {
+    const Traits_2& gt2 = *this;
     if (cv.is_vertical()) {
-      auto alg_kernel = m_geometry_traits_2->alg_kernel();
-      if (! alg_kernel->less_y_2_object()(cv.left(), pt))
-        return cv.left();
-      else {
-        CGAL_assertion(alg_kernel->less_y_2_object()(cv.right(), pt));
-        return cv.right();
-      }
+      auto alg_kernel = gt2.alg_kernel();
+      if (! alg_kernel->less_y_2_object()(cv.left(), pt)) return cv.left();
+
+      CGAL_assertion(alg_kernel->less_y_2_object()(cv.right(), pt));
+      return cv.right();
     }
-    else return m_geometry_traits_2->point_at_x(cv, pt);
+
+    return gt2.point_at_x(cv, pt);
   }
 
+  //
   template <typename OutputIterator>
   OutputIterator add_curve_to_output(const Curve_2& c, OutputIterator oi) const {
     std::variant<X_monotone_curve_2, Point_2> objs[2];
 
-    std::variant<X_monotone_curve_2, Point_2>* p_obj = this->make_x_monotone_2_object()(c, objs);
-    for(std::variant<X_monotone_curve_2, Point_2>* o = objs; o != p_obj; ++o) {
-      if(const X_monotone_curve_2* cv = std::get_if<X_monotone_curve_2>(o))
+    std::variant<X_monotone_curve_2, Point_2>* p_obj =
+      this->make_x_monotone_2_object()(c, objs);
+    for (std::variant<X_monotone_curve_2, Point_2>* o = objs; o != p_obj; ++o) {
+      if (const auto* cv = std::get_if<X_monotone_curve_2>(o))
         *oi++ = Intersection_curve(*cv, 1);
       else {
-        const Point_2* pt = std::get_if<Point_2>(o);
+        const auto* pt = std::get_if<Point_2>(o);
         CGAL_assertion(pt!=nullptr);
         *oi++ = *pt;
       }
@@ -1134,55 +1221,39 @@ public:
     return oi;
   }
 
-  typedef std::shared_ptr<Traits_2>             Shared_geometry_traits_2;
-
   /*! Default constructor. */
-  Env_sphere_traits_3() :
-    m_is_lower(true),
-    m_geometry_traits_2(new Traits_2)
-  {}
-
-  /*! Constructor from a conic 2D geometry traits. */
-  Env_sphere_traits_3(Shared_geometry_traits_2 geometry_traits_2) :
-    m_is_lower(true),
-    m_geometry_traits_2(geometry_traits_2)
-  {}
-
-  /*! Obtain the undelying conic 2D geometry traits.
-   */
-  const Shared_geometry_traits_2 geometry_traits_2() const
-  { return m_geometry_traits_2; }
+  Env_sphere_traits_3() : m_is_lower(true) {}
 
 protected:
   mutable bool m_is_lower;
-
-private:
-  //! The conic geometry-traits.
-  const Shared_geometry_traits_2 m_geometry_traits_2;
 };
 
-/*!
- * Compare two spheres: first compare their center points in an
- * xyz-lexicographic order, then by their radii.
+/*! Compare two spheres: first compare their center points in an
+ * xyz-lexicographic order, then by their squared radii.
+ *
+ * \todo This should be deprecated and instead the traits should provide this
+ * functionality.
  */
 template <typename Kernel>
 bool operator<(const CGAL::Sphere_3<Kernel>& a, const CGAL::Sphere_3<Kernel>& b)
 {
   Kernel k;
   Comparison_result res = k.compare_xyz_3_object()(a.center(), b.center());
-  if (res == EQUAL) res = CGAL::compare (a.squared_radius(), b.squared_radius());
+  if (res == EQUAL) res = CGAL::compare(a.squared_radius(), b.squared_radius());
   return (res == SMALLER);
 }
 
-/*!
- * Compare two spheres for equality.
+/*! Compare two spheres for equality.
+ *
+ * \todo This should be deprecated and instead the traits should provide this
+ * functionality.
  */
 template <typename Kernel>
-bool operator== (const typename Kernel::Sphere_3& a,
-                 const typename Kernel::Sphere_3& b) {
+bool operator==(const typename Kernel::Sphere_3& a,
+                const typename Kernel::Sphere_3& b) {
   Kernel k;
-  if (! k.equal_3_object() (a.center(), b.center())) return (false);
-  return (CGAL::compare (a.squared_radius(), b.squared_radius()) == EQUAL);
+  if (! k.equal_3_object()(a.center(), b.center())) return (false);
+  return (CGAL::compare(a.squared_radius(), b.squared_radius()) == EQUAL);
 }
 
 } //namespace CGAL
