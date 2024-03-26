@@ -130,7 +130,7 @@ public:
   template <typename Index>
   FT operator()(const Bare_point& p, const int& dim, const Index& i) const
   {
-    const int nb_neighbors = 6;
+    const int nb_neighbors = (dim == 3) ? 20 : 6;
 
     // Find nearest vertex and local size before remeshing
     Point_property_map pp_map;
