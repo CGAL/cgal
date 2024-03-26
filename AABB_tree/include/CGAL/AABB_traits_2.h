@@ -47,27 +47,23 @@ struct AABB_traits_intersection_base_2<GeomTraits,false>{};
 
 template <typename GeomTraits>
 struct AABB_traits_intersection_base_2<GeomTraits,true>{
+  template<typename AABBTree, typename SkipFunctor>
+  friend class AABB_ray_intersection;
 private:
   typedef typename GeomTraits::FT    FT;
   typedef typename GeomTraits::Point_2 Point;
-
-public:
-  typedef typename GeomTraits::Ray_2 Ray;
-  typedef typename GeomTraits::Vector_2 Vector;
   typedef typename GeomTraits::Cartesian_const_iterator_2 Cartesian_const_iterator;
   typedef typename GeomTraits::Construct_cartesian_const_iterator_2 Construct_cartesian_const_iterator;
-  typedef typename GeomTraits::Construct_source_2 Construct_source;
-  typedef typename GeomTraits::Construct_vector_2 Construct_vector;
-
-  // Defining Bounding_box and other types from the full AABB_traits_2
-  // here is might seem strange, but otherwise we would need to use
-  // CRTP to get access to the derived class, which would bloat the
-  // code more.
-  typedef typename CGAL::Bbox_2      Bounding_box;
 
   static Construct_cartesian_const_iterator construct_cartesian_const_iterator_object() {
     return GeomTraits().construct_cartesian_const_iterator_2_object();
   }
+
+public:
+  typedef typename GeomTraits::Ray_2 Ray;
+  typedef typename GeomTraits::Vector_2 Vector;
+  typedef typename GeomTraits::Construct_source_2 Construct_source;
+  typedef typename GeomTraits::Construct_vector_2 Construct_vector;
 
   static Construct_source construct_source_object() {
     return GeomTraits().construct_source_2_object();
@@ -76,6 +72,12 @@ public:
   static Construct_vector construct_vector_object() {
     return GeomTraits().construct_vector_2_object();
   }
+
+  // Defining Bounding_box and other types from the full AABB_traits_2
+  // here is might seem strange, but otherwise we would need to use
+  // CRTP to get access to the derived class, which would bloat the
+  // code more.
+  typedef typename CGAL::Bbox_2      Bounding_box;
 
   struct Intersection_distance {
     std::optional<FT> operator()(const Ray& ray, const Bounding_box& bbox) const {

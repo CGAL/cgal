@@ -35,7 +35,9 @@
 
 namespace CGAL {
 
-namespace internal{  namespace AABB_tree {
+namespace internal {
+
+namespace AABB_tree {
 
 // AABB_traits_intersection_base_3 brings in the Intersection_distance predicate,
 // if GeomTraits is a model RayIntersectionGeomTraits.
@@ -46,7 +48,10 @@ template <typename GeomTraits>
 struct AABB_traits_intersection_base_3<GeomTraits,false>{};
 
 template <typename GeomTraits>
-struct AABB_traits_intersection_base_3<GeomTraits,true>{
+struct AABB_traits_intersection_base_3<GeomTraits, true> {
+  template<class, class>
+  friend class AABB_ray_intersection;
+
 private:
   typedef typename GeomTraits::Point_3 Point;
   typedef typename GeomTraits::FT    FT;
@@ -57,17 +62,18 @@ private:
   // code more.
   typedef typename CGAL::Bbox_3      Bounding_box;
 
-public:
-  typedef typename GeomTraits::Ray_3 Ray;
-  typedef typename GeomTraits::Vector_3 Vector;
   typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator;
   typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator;
-  typedef typename GeomTraits::Construct_source_3 Construct_source;
-  typedef typename GeomTraits::Construct_vector_3 Construct_vector;
 
   Construct_cartesian_const_iterator construct_cartesian_const_iterator_object() {
     return GeomTraits().construct_cartesian_const_iterator_3_object();
   }
+
+public:
+  typedef typename GeomTraits::Ray_3 Ray;
+  typedef typename GeomTraits::Vector_3 Vector;
+  typedef typename GeomTraits::Construct_source_3 Construct_source;
+  typedef typename GeomTraits::Construct_vector_3 Construct_vector;
 
   Construct_source construct_source_object() {
     return GeomTraits().construct_source_3_object();
@@ -198,7 +204,7 @@ public:
 
   /// Point type
   typedef typename GeomTraits::Point_3 Point; // because the AABB_tree is dimension agnostic
-  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Point_3 Point_3; // kept for backward compatibility
 
   /// additional types for the search tree, required by the RangeSearchTraits concept
   /// \bug This is not documented for now in the AABBTraits concept.

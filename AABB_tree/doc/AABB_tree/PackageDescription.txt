@@ -33,6 +33,7 @@
 - `AABBRayIntersectionTraits`
 
 \cgalCRPSection{Classes}
+- `CGAL::AABB_traits<GeomTraits,Primitive>` (deprecated, use `CGAL::AABB_traits_3<GeomTraits,Primitive>`)
 - `CGAL::AABB_traits_2<GeomTraits,Primitive>`
 - `CGAL::AABB_traits_3<GeomTraits,Primitive>`
 - `CGAL::AABB_tree<AT>`
@@ -42,7 +43,9 @@
 - `CGAL::AABB_indexed_triangle_primitive_2<GeomTraits, IndexIterator, PointRange, CacheDatum>`
 - `CGAL::AABB_segment_primitive_2<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_polyline_segment_primitive_2<GeomTraits, Iterator, PointRange, CacheDatum>`
+- `CGAL::AABB_triangle_primitive<GeomTraits, Iterator, CacheDatum>` (deprecated, use `CGAL::AABB_triangle_primitive_3<GeomTraits, Iterator, CacheDatum>`)
 - `CGAL::AABB_triangle_primitive_3<GeomTraits, Iterator, CacheDatum>`
+- `CGAL::AABB_segment_primitive<GeomTraits, Iterator, CacheDatum>` (deprecated, use `CGAL::AABB_segment_primitive_3<GeomTraits, Iterator, CacheDatum>`)
 - `CGAL::AABB_segment_primitive_3<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,ExternalPropertyMaps,CacheDatum>`
 - `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,Vpm,OneHalfedgeGraphPerTree,CacheDatum>`
