@@ -57,17 +57,17 @@ namespace CGAL {
  * algebraic number of degree \f$d\f$ if there exist a polynomial \f$ p\f$ with
  * <I>integer</I> coefficient of degree \f$d\f$ such that \f$p(\alpha) = 0\f$).
  * We therefore require separate representations of the curve
- * coefficients and the point coordinates. The `NtTraits` should be instantiated
- * with a class that defines nested `Integer`, `Rational`, and `Algebraic` number
+ * coefficients and the point coordinates. The `NtTraits` should be substituted
+ * by a class that defines nested `Integer`, `Rational`, and `Algebraic` number
  * types and supports various operations on them, yielding certified computation
  * results (for example, it can convert rational numbers to algebraic numbers
  * and can compute roots of polynomials with integer coefficients).  The other
  * template parameters, `RatKernel` and `AlgKernel` should be geometric kernels
  * instantiated with the `NtTraits::Rational` and `NtTraits::Algebraic` number
- * types, respectively.  It is recommended instantiating the
- * `CORE_algebraic_number_traits` class as the `NtTraits` parameter, with
- * `Cartesian<NtTraits::Rational>` and `Cartesian<NtTraits::Algebraic>`
- * instantiating the two kernel types, respectively.  The number types in this
+ * types, respectively.  It is recommended substituting the
+ * `CORE_algebraic_number_traits` class for the `NtTraits` parameter, and
+ * the `Cartesian<NtTraits::Rational>` and `Cartesian<NtTraits::Algebraic>`
+ * instances for two kernel types, respectively.  The number types in this
  * case are provided by the \core library, with its ability to exactly represent
  * simple algebraic numbers.
  *

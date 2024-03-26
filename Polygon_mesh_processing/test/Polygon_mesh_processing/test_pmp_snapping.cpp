@@ -1,17 +1,17 @@
 // #define CGAL_PMP_SNAP_DEBUG_PP
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
-#include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
-
 #include <CGAL/property_map.h>
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>

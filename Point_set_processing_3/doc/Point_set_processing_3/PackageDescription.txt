@@ -10,9 +10,6 @@ simplification, etc.).
 \defgroup PkgPointSetProcessing3IO I/O Functions
 \ingroup PkgPointSetProcessing3Ref
 
-\defgroup PkgPointSetProcessing3IODeprecated I/O Functions (Deprecated)
-\ingroup PkgPointSetProcessing3IO
-
 \defgroup PkgPointSetProcessing3IOOff I/O (OFF Formats)
 \ingroup PkgPointSetProcessing3Ref
 

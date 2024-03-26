@@ -1,7 +1,6 @@
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include "point_inside_helpers.h"
 

@@ -12,20 +12,18 @@
 #include <iostream>
 #include <chrono>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef Point_set::Point_map Point_map;
-
-typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
-
-typedef CGAL::Search_traits_3<Kernel> Kd_tree_traits;
-typedef CGAL::Orthogonal_k_neighbor_search<Kd_tree_traits> Kd_tree_search;
-typedef Kd_tree_search::Tree Kdtree;
-
 using std::chrono::high_resolution_clock;
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
+
+using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Point = Kernel::Point_3;
+using Point_set = CGAL::Point_set_3<Point>;
+using Point_map = Point_set::Point_map;
+using Octree = CGAL::Octree<Kernel, Point_set, Point_map>;
+using Kd_tree_traits = CGAL::Search_traits_3<Kernel>;
+using Kd_tree_search = CGAL::Orthogonal_k_neighbor_search<Kd_tree_traits>;
+using Kdtree = Kd_tree_search::Tree;
 
 int main(int argc, char **argv) {
 
@@ -103,8 +101,8 @@ int main(int argc, char **argv) {
       // Time how long it takes to find neighbors using the octree
       auto octreeTime = bench<microseconds>(
               [&] {
-                std::vector<Point> nearest_neighbors;
-                octree.nearest_neighbors(search_point, k, std::back_inserter(nearest_neighbors));
+                std::vector<Point_set::Index> nearest_neighbors;
+                octree.nearest_k_neighbors(search_point, k, std::back_inserter(nearest_neighbors));
               }
       );
 

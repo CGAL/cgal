@@ -1,8 +1,10 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/Adaptive_sizing_field.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
 #include <limits>

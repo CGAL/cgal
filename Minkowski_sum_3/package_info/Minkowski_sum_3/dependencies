@@ -2,6 +2,7 @@ Algebraic_foundations
 Arithmetic_kernel
 BGL
 Box_intersection_d
+CGAL_Core
 Cartesian_kernel
 Circulator
 Convex_decomposition_3

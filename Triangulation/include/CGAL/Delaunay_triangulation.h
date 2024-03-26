@@ -673,7 +673,6 @@ Delaunay_triangulation<DCTraits, TDS>
         case Base::ON_VERTEX:
         {
             Vertex_handle v = s->vertex(f.index(0));
-            v->set_point(p);
             return v;
             break;
         }
@@ -762,7 +761,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
 Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position.
-\pre The point `p` must be in conflict with the full cell `c`.
+\pre The point `p` must be in conflict with the full cell `s`.
 */
 template< typename DCTraits, typename TDS >
 typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle

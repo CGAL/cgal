@@ -16,6 +16,7 @@ create_single_source_cgal_program("test_octree_traverse.cpp")
 create_single_source_cgal_program("test_octree_intersecting.cpp")
 create_single_source_cgal_program("test_octree_copy_move_constructors.cpp")
 create_single_source_cgal_program("test_octree_kernels.cpp")
+create_single_source_cgal_program("test_octree_custom_properties.cpp")
 
 create_single_source_cgal_program("test_node_index.cpp")
 create_single_source_cgal_program("test_node_adjacent.cpp")

@@ -16,11 +16,15 @@
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
+#include <CGAL/Tetrahedral_remeshing/Complex_cells_selector.h>
 
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
+template<typename C3T3>
+std::size_t peel_slivers(C3T3& c3t3,
+                         const typename C3T3::Triangulation::Geom_traits::FT& sliver_angle);
 
 template<typename C3T3, typename CellSelector>
 std::size_t peel_slivers(C3T3& c3t3,
@@ -41,7 +45,8 @@ std::size_t peel_slivers(C3T3& c3t3,
 #endif
   for (Cell_handle cit : c3t3.cells_in_complex())
   {
-    if(!get(cell_selector, cit))
+    const bool selected = get(cell_selector, cit);
+    if(!selected)
       continue;
 
     std::array<bool, 4> facets_on_surface;
@@ -110,6 +115,16 @@ std::size_t peel_slivers(C3T3& c3t3,
 
   return nb_slivers_peel;
 }
+
+template<typename C3T3>
+std::size_t peel_slivers(C3T3 & c3t3,
+  const typename C3T3::Triangulation::Geom_traits::FT & sliver_angle)
+{
+  using Tr = typename C3T3::Triangulation;
+  return peel_slivers(c3t3, sliver_angle,
+    CGAL::Tetrahedral_remeshing::Complex_cells_selector<Tr>());
+}
+
 
 } // end namespace Tetrahedral_remeshing
 } // end namespace CGAL

@@ -4,6 +4,7 @@ Arrangement_on_surface_2
 BGL
 Basic_viewer
 Boolean_set_operations_2
+CGAL_Core
 Cartesian_kernel
 Circular_kernel_2
 Circulator

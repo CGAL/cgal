@@ -27,31 +27,10 @@
 
 #include <vector>
 
-#if CGAL_USE_CORE
-namespace CORE { class BigInt; }
-#endif
-
 namespace CGAL {
 
 namespace internal {
 
-#if CGAL_USE_CORE
-// bugfix for CORE by Michael Kerber
-// why is there a specialized function for CORE?
-inline CORE::BigInt shift_integer_by(CORE::BigInt x, long shift){
-  if( shift > 0 ){
-    while(shift>63) {
-      x = (x >> 63);
-      shift-=63;
-    }
-    x = (x >> shift);
-  }else{
-    // add 0 bits
-    x = (x << -shift);
-  }
-  return x;
-}
-#endif
 
 template <class Shiftable>
 Shiftable shift_integer_by(Shiftable x, long shift){

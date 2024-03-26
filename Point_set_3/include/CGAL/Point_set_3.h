@@ -1188,6 +1188,7 @@ public:
     \return Returns a pair containing: the specified property map and a
     Boolean set to `true` or an empty property map and a Boolean set
     to `false` (if the property was not found).
+
     \cgalAdvancedEnd
   */
   template <class T>
@@ -1213,6 +1214,7 @@ public:
 
     \note The normal property must have been added to the point set
     before calling this method (see `add_normal_map()`).
+
     \cgalAdvancedEnd
   */
   Vector_push_map normal_push_map ()

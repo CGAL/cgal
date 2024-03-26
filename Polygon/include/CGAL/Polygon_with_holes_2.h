@@ -30,8 +30,8 @@ namespace CGAL {
 The class `Polygon_with_holes_2` models the concept `GeneralPolygonWithHoles_2`.
 It represents a linear polygon with holes. It is parameterized with two
 types (`Kernel` and `Container`) that are used to instantiate
-the type `Polygon_2<Kernel,Container>`. The latter is used to
-represents the outer boundary and the boundary of the holes (if any exist).
+the type `Polygon_2<Kernel,Container>`. This poygon type is used to
+represent the outer boundary and the boundary of the holes (if any exist).
 
 \cgalModels{GeneralPolygonWithHoles_2}
 

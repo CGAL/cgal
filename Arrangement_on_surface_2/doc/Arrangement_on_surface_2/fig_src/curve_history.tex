@@ -2,56 +2,62 @@
 \input{header}
 \pagestyle{empty}
 \begin{document}
-\psscalebox{1.8}{\arrset{1}%
-  \pspicture[](-1,-1)(8,7)
-  \arraxes(0,0)(-1,-1)(8,7)
-  \arrMainVertex(0,0){1}
-  \arrMainVertex(0,3){2}
-  \arrEmptyVertex(1,3){3}
-  \arrMainVertex(2,3){4}
-  \arrMainVertex(2,6){5}
-  \arrMainVertex(3,1){6}
-  \arrEmptyVertex(3,3){7}
-  \arrMainVertex(3,4){8}
-  \arrMainVertex(3,5){9}
-  \arrMainVertex(4,3){10}
-  \arrEmptyVertex(4,4){11}
-  \arrMainVertex(5,3){12}
-  \arrMainVertex(6,4){13}
-  \arrMainVertex(7,1){14}
-  \arrCrossVertex(4,6){x1}\uput[-45]{0}(4,6){$q_1$}
-  \arrCrossVertex(6,2){x2}\uput[45]{0}(6,2){$q_2$}
-  \arrCrossVertex(2,4){x3}\uput[45]{0}(2,4){$q_3$}
-  %
-  \ncline[linewidth=1pt,linecolor=blue]{1}{3}
-  \ncline[linewidth=1pt,linecolor=blue]{3}{5}
-  \ncline[linewidth=1pt,linecolor=blue]{5}{9}
-  \ncline[linewidth=1pt,linecolor=blue]{9}{11}
-  \ncline[linewidth=1pt,linecolor=blue]{11}{12}
-  \ncline[linewidth=1pt,linecolor=blue]{12}{14}
-  %
-  \ncline[linewidth=1pt,linecolor=blue]{6}{7}
-  \ncline[linewidth=1pt,linecolor=blue]{7}{8}\Bput[1pt]{\textcolor{blue}{$s_2$}}
-  \ncline[linewidth=1pt,linecolor=blue]{8}{9}
-  %
-  \ncline[linewidth=1pt,linecolor=blue]{8}{11}
-  \ncline[linewidth=1pt,linecolor=blue]{11}{13}
-  %
-  \ncline[linewidth=1pt,linecolor=blue]{4}{7}
-  \ncline[linewidth=1pt,linecolor=blue]{7}{10}
-  \ncline[linewidth=1pt,linecolor=blue]{10}{12}
-  %
-  \ncline[linestyle=dashed,dash=2pt 2pt,linewidth=1pt,linecolor=red]{2}{3}
-  \ncline[linestyle=dashed,dash=2pt 2pt,linewidth=1pt,linecolor=red]{3}{4}
-  \ncline[linestyle=dashed,dash=2pt 2pt,linewidth=1pt,linecolor=red]{4}{7}
-  \ncline[linestyle=dashed,dash=2pt 2pt,linewidth=1pt,linecolor=red]{7}{10}
-  %
-  \pnode(2,2){a}\uput{2pt}[-90]{0}(2,2){\textcolor{red}{$s_1$}}
-  \nccurve[linewidth=0.25pt,angleA=-90,angleB=90]{2}{a}
-  \nccurve[linewidth=0.25pt,angleA=-90,angleB=90]{10}{a}
-  \pnode(3.5,2){b}\uput{2pt}[-90]{0}(3.5,2){\textcolor{blue}{$s_3$}}
-  \nccurve[linewidth=0.25pt,angleA=-90,angleB=90]{4}{b}
-  \nccurve[linewidth=0.25pt,angleA=-90,angleB=90]{12}{b}
-  \endpspicture
-}
+  \begin{tikzpicture}[scale=1]
+    \myAxes{-1}{-1}{8}{7}
+    \coordinate (a) at (0,0);
+    \coordinate (b) at (0,3);
+    \coordinate (d) at (2,3);
+    \coordinate (j) at (4,3);
+    \coordinate (l) at (5,3);
+    %
+    \arrMainVertexZ(a){1}
+    \arrMainVertexZ(b){2}
+    \arrIntersectionVertexZ(1,3){3}
+    \arrMainVertexZ(d){4}
+    \arrMainVertexZ(2,6){5}
+    \arrMainVertexZ(3,1){6}
+    \arrIntersectionVertexZ(3,3){7}
+    \arrMainVertexZ(3,4){8}
+    \arrMainVertexZ(3,5){9}
+    \arrMainVertexZ(j){10}
+    \arrIntersectionVertexZ(4,4){11}
+    \arrMainVertexZ(l){12}
+    \arrMainVertexZ(6,4){13}
+    \arrMainVertexZ(7,1){14}
+    %
+    \draw[edge](1)--(3);
+    \draw[edge](3)--(5);
+    \draw[edge](5)--(9);
+    \draw[edge](9)--(11);
+    \draw[edge](11)--(12);
+    \draw[edge](12)--(14);
+    %
+    \draw[edge](6)--node[sloped,below,pos=0.4] {\textcolor{blue}{$s_2$}} (7);
+    \draw[edge](7)--(8);
+    \draw[edge](8)--(9);
+    %
+    \draw[edge](8)--(11);
+    \draw[edge](11)--(13);
+    %
+    \draw[edge](4)--(7);
+    \draw[edge](7)--(10);
+    \draw[edge](10)--(12);
+    %
+    \draw[edge=red,dashed](2)--(3);
+    \draw[edge=red,dashed](3)--(4);
+    \draw[edge=red,dashed](4)--(7);
+    \draw[edge=red,dashed](7)--(10);
+    %
+    \arrQueryLabeledVertexZ[-45](4,6){x1}{$q_1$}
+    \arrQueryLabeledVertexZ[45](6,2){x2}{$q_2$}
+    \arrQueryLabeledVertexZ[45](2,4){x3}{$q_3$}
+    %
+    \draw [decoration={calligraphic brace,
+        raise=2pt,
+        amplitude=10pt,aspect=0.5},decorate,line width=0.2pt] (j)--(b)
+    node[midway,below=10pt,red]{$s_1$};
+    \draw [decoration={calligraphic brace,raise=2pt,
+        amplitude=10pt,aspect=0.5},decorate,line width=0.2pt] (d)--(l)
+    node[midway,above=10pt,blue]{$s_3$};
+  \end{tikzpicture}
 \end{document}

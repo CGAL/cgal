@@ -41,6 +41,7 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   typedef typename C3t3::Triangulation       Tr;
   typedef typename C3t3::Subdomain_index     Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
+  typedef typename C3t3::Curve_index         Curve_index;
   typedef typename Tr::Geom_traits::Point_3 Point;
   typedef typename Tr::Facet                Facet;
   typedef typename Tr::Vertex_handle        Vertex_handle;
@@ -69,6 +70,11 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
       CGAL_assertion(false);//e should be in complex
   }
   CGAL_assertion(dimension > 0);
+
+  // remove complex edge before splitting
+  const Curve_index curve_index = (dimension == 1) ? c3t3.curve_index(e) : Curve_index();
+  if (dimension == 1)
+    c3t3.remove_from_complex(e);
 
   struct Cell_info {
     Subdomain_index subdomain_index_;
@@ -194,6 +200,13 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     // will have its patch tagged from the other side, if needed
   }
 
+  // re-insert complex sub-edges
+  if (dimension == 1)
+  {
+    c3t3.add_to_complex(new_v, v1, curve_index);
+    c3t3.add_to_complex(new_v, v2, curve_index);
+  }
+
   set_index(new_v, c3t3);
 
   return new_v;
@@ -273,7 +286,7 @@ void split_long_edges(C3T3& c3t3,
       = tr.geom_traits().compute_squared_length_3_object();
     FT sqlen = sql(tr.segment(e));
     if (sqlen > sq_high)
-      long_edges.insert(long_edge(make_vertex_pair<T3>(e), sqlen));
+      long_edges.insert(long_edge(make_vertex_pair(e), sqlen));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG

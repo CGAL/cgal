@@ -14,7 +14,10 @@
 
 #include <CGAL/license/Orthtree.h>
 
+#include <optional>
+
 #include <boost/function.hpp>
+#include <boost/optional.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 
 /// \cond SKIP_IN_MANUAL
@@ -22,18 +25,21 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgOrthtreeClasses
+ * \ingroup PkgOrthtreeTraversal
  *
- * \brief
+ * \brief Wraps a traversal definition to produce an iterator which traverses the tree when incremented.
  *
  * \todo
  *
- * \tparam Value
+ * \tparam Tree The orthtree type to iterate over
  */
-template<class Value>
-class Traversal_iterator :
-        public boost::iterator_facade<Traversal_iterator<Value>, Value, boost::forward_traversal_tag> {
-
+template <class Tree>
+class Index_traversal_iterator : public boost::iterator_facade<
+  Index_traversal_iterator<Tree>,
+  const typename Tree::Node_index,
+  boost::forward_traversal_tag,
+  const typename Tree::Node_index
+> {
 public:
 
   /// \name Types
@@ -44,7 +50,9 @@ public:
    *
    * \todo
    */
-  typedef std::function<Value(Value)> Traversal_function;
+  using Traversal_function = std::function<std::optional<std::size_t>(const Tree&, std::size_t)>;
+
+  using Node_index = typename Tree::Node_index;
 
   /// @}
 
@@ -54,44 +62,51 @@ public:
   /// @{
 
   /*!
-   * \brief
+   * \brief Default constructor, creates an end sentinel
    *
    * \todo
    */
-  Traversal_iterator() : m_value(), m_next() {}
+  Index_traversal_iterator() : m_next() {}
 
   /*!
    * \brief
    *
    * \todo
    *
+   * \param tree
    * \param first
    * \param next
    */
-  Traversal_iterator(Value first, const Traversal_function &next) : m_value(first), m_next(next) {}
+  Index_traversal_iterator(const Tree& tree, Node_index first, const Traversal_function& next) :
+    m_tree(&tree), m_index(first), m_next(next) {}
 
   /// @}
 
 private:
+
   friend class boost::iterator_core_access;
 
-  bool equal(Traversal_iterator<Value> const &other) const {
-    return m_value == other.m_value;
+  bool equal(Index_traversal_iterator<Tree> const& other) const {
+    return m_index == other.m_index;
   }
 
   void increment() {
-    m_value = m_next(m_value);
+    // invoking increment on the sentinel is undefined behavior
+    m_index = m_next(*m_tree, *m_index);
   }
 
-  Value &dereference() const {
-    return const_cast<Value&>(m_value);
+  Node_index dereference() const {
+    return *m_index;
   }
 
 private:
 
-  Value m_value;
+  const Tree* m_tree = nullptr;
+  std::optional<std::size_t> m_index;
   Traversal_function m_next;
+
 };
+
 }
 
 /// \endcond

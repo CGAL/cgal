@@ -347,7 +347,7 @@ public:
       }
       tree_.build();
     }
-    bounding_tree_ = 0;
+    set_surface_only();
   }
 
   /// @}

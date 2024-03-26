@@ -7,10 +7,10 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
-//                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
-//                 Ophir Setter           <ophirset@post.tau.ac.il>
-//                 Efi Fogel              <efif@post.tau.ac.il>
+// Author(s) : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
+//             Baruch Zukerman        <baruchzu@post.tau.ac.il>
+//             Ophir Setter           <ophirset@post.tau.ac.il>
+//             Efi Fogel              <efif@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_DIAGRAM_ON_SURFACE_2_H
 #define CGAL_ENVELOPE_DIAGRAM_ON_SURFACE_2_H
@@ -21,9 +21,7 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
-
 #include <CGAL/Arrangement_2/arrangement_type_traits.h>
-
 #include <CGAL/Envelope_3/Envelope_pm_dcel.h>
 
 namespace CGAL {
@@ -32,113 +30,92 @@ namespace CGAL {
  * Representation of an envelope diagram (a minimization diagram or a
  * maximization diagram).
  */
-template <class GeomTraits_, class TopTraits_ =
-          typename Default_planar_topology<
-                               GeomTraits_,
-                               Envelope_3::Envelope_pm_dcel<
-                                 GeomTraits_,
-                                 typename GeomTraits_::Xy_monotone_surface_3
-                               > >::Traits
-          >
+template <typename GeomTraits_, typename TopTraits_ =
+          typename Default_planar_topology
+            <GeomTraits_,
+             Envelope_3::Envelope_pm_dcel
+               <GeomTraits_,
+                typename GeomTraits_::Xy_monotone_surface_3>>::Traits>
 class Envelope_diagram_on_surface_2 :
-public Arrangement_on_surface_2<GeomTraits_, TopTraits_>
-{
+    public Arrangement_on_surface_2<GeomTraits_, TopTraits_> {
 public:
-  typedef GeomTraits_                                   Traits_3;
-  typedef TopTraits_                                    TopTraits;
-  typedef typename Traits_3::Xy_monotone_surface_3      Xy_monotone_surface_3;
+  using Traits_3 = GeomTraits_;
+  using TopTraits = TopTraits_;
+  using Xy_monotone_surface_3 = typename Traits_3::Xy_monotone_surface_3;
 
 protected:
-  typedef Envelope_3::Envelope_pm_dcel<Traits_3,
-                           Xy_monotone_surface_3>       Env_dcel;
-  typedef Envelope_diagram_on_surface_2<Traits_3, TopTraits>       Self;
+  using Self = Envelope_diagram_on_surface_2<Traits_3, TopTraits>;
+
   friend class Arr_accessor<Self>;
 
 public:
-  typedef Arrangement_on_surface_2<Traits_3,
-    TopTraits>                                          Base;
-  // This is yacky, but we have not choice because of observer stuff.
-  typedef Base                                          Arrangement;
+  using Base = Arrangement_on_surface_2<Traits_3, TopTraits>;
 
-  typedef typename Env_dcel::Dcel_data_const_iterator   Surface_const_iterator;
+  // The following is not needed anymore, but kept for backward compatibility
+  using Arrangement = Base;
+
+  using Face = typename Base::Face;
+  using Surface_iterator = typename Face::Data_iterator;
+  using Surface_const_iterator = typename Face::Data_const_iterator;
 
   /*! Default constructor. */
-  Envelope_diagram_on_surface_2() :
-    Base()
-  {}
+  Envelope_diagram_on_surface_2() : Base() {}
 
   /*! Constructor with a traits-class instance. */
-  Envelope_diagram_on_surface_2 (Traits_3* tr) :
-    Base (tr)
-  {}
-
+  Envelope_diagram_on_surface_2(const Traits_3* tr) : Base(tr) {}
 };
-
 
 /*! \class
  * Representation of an envelope diagram (a minimization diagram or a
  * maximization diagram).
  */
-
-template <class GeomTraits_,
-          class Dcel_ = Envelope_3::Envelope_pm_dcel<
-            GeomTraits_, typename GeomTraits_::Xy_monotone_surface_3
-            >
-          >
+template <typename GeomTraits,
+          typename Dcel_ = Envelope_3::Envelope_pm_dcel
+            <GeomTraits, typename GeomTraits::Xy_monotone_surface_3>>
 class Envelope_diagram_2 :
-  public Envelope_diagram_on_surface_2< GeomTraits_,
-     typename Default_planar_topology<GeomTraits_,
-                                      Dcel_>::Traits
-    >
+  public Envelope_diagram_on_surface_2<GeomTraits,
+                                       typename Default_planar_topology
+                                         <GeomTraits, Dcel_>::Traits>
 {
 public:
-  typedef GeomTraits_                                   Traits_3;
-  typedef typename Traits_3::Xy_monotone_surface_3      Xy_monotone_surface_3;
+  using Traits_3 = GeomTraits;
+  using Xy_monotone_surface_3 = typename Traits_3::Xy_monotone_surface_3;
 
 protected:
-  typedef Dcel_                                         Env_dcel;
-  typedef Envelope_diagram_2<Traits_3, Env_dcel>        Self;
+  using Env_dcel = Dcel_;
+  using Self = Envelope_diagram_2<Traits_3, Env_dcel>;
+
   friend class Arr_accessor<Self>;
 
 public:
-  typedef typename Default_planar_topology< Traits_3,
-                                   Env_dcel >::Traits   Topology_traits;
-  typedef Envelope_diagram_on_surface_2<Traits_3, Topology_traits>
-                                                        Base;
-  typedef typename Env_dcel::Dcel_data_const_iterator   Surface_const_iterator;
+  using Topology_traits =
+    typename Default_planar_topology< Traits_3, Env_dcel>::Traits;
+  using Base = Envelope_diagram_on_surface_2<Traits_3, Topology_traits>;
+  using Surface_iterator = typename Base::Surface_iterator;
+  using Surface_const_iterator = typename Base::Surface_const_iterator;
 
-  // This is yacky, but we have not choice because of observer stuff.
-  typedef typename Base::Base                           Arrangement;
-
+  // The following is not needed anymore, but kept for backward compatibility
+  using Arrangement = typename Base::Base;
 
   /*! Default constructor. */
-  Envelope_diagram_2() :
-    Base()
-  {}
+  Envelope_diagram_2() : Base() {}
 
   /*! Constructor with a traits-class instance. */
-  Envelope_diagram_2 (Traits_3* tr) :
-    Base (tr)
-  {}
-
+  Envelope_diagram_2(const Traits_3* tr) : Base(tr) {}
 };
-
 
 //--------------------------------  Envelope_on_surface_3
 // specialization
-template <class GeomTraits_, class TopTraits_>
-class is_arrangement_2<
-  Envelope_diagram_on_surface_2<GeomTraits_, TopTraits_>
-> : public std::true_type
+template <typename GeomTraits_, typename TopTraits_>
+class is_arrangement_2<Envelope_diagram_on_surface_2<GeomTraits_, TopTraits_>> :
+    public std::true_type
 {};
 
 // specialization
-template <class GeomTraits_, class DCEL_>
-class is_arrangement_2<
-  Envelope_diagram_2<GeomTraits_, DCEL_>
-> : public std::true_type
+template <typename GeomTraits_, typename Dcel_>
+class is_arrangement_2<Envelope_diagram_2<GeomTraits_, Dcel_>> :
+    public std::true_type
 {};
-
 
 // /*! \class
 //  * Representation of an envelope diagram (a minimization diagram or a
@@ -184,7 +161,6 @@ class is_arrangement_2<
 //   {}
 
 // };
-
 
 } //namespace CGAL
 

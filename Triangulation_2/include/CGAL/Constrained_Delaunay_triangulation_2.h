@@ -342,6 +342,25 @@ public:
       return number_of_vertices() - n;
     }
 
+  // function usable only if no constraint has been inserted
+  void restore_Delaunay(Vertex_handle v)
+  {
+    if(this->dimension() <= 1) return;
+
+    Face_handle f=v->face();
+    Face_handle next;
+    int i;
+    Face_handle start(f);
+    do {
+      i = f->index(v);
+      next = f->neighbor(ccw(i));  // turn ccw around v
+      propagating_flip(f,i);
+      f = next;
+    } while(next != start);
+    return;
+  }
+
+
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
   //top stands for tuple-or-pair

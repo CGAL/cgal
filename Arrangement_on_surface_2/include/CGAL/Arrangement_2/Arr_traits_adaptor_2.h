@@ -577,7 +577,7 @@ public:
           return (m_self->compare_y_at_x_right_2_object()(xcv1, xcv2, left1));
       }
 
-      // We now that the curves do not share a common endpoint, and we can
+      // We know that the curves do not share a common endpoint, and we can
       // compare their relative y-position (which does not change to the left
       // of the given point p).
       return (m_self->compare_y_position_2_object()(xcv1, xcv2));

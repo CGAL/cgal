@@ -403,6 +403,13 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
   cells_mesher_.set_stop_pointer(stop_ptr);
   facets_mesher_.set_stop_pointer(stop_ptr);
 #endif
+
+  // First surface mesh could modify c3t3 without notifying cells_mesher
+  // So we have to ensure that no old cell will be left in c3t3
+  // Second, the c3t3 object could have been corrupted since the last call
+  // to `refine_mesh`, for example by inserting new vertices in the
+  // triangulation.
+  r_c3t3_.clear_cells_and_facets_from_c3t3();
 }
 
 
@@ -422,13 +429,6 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   auto scan_cells_task_handle = __itt_string_handle_create("Mesher_3 scan triangulation for bad cells");
   auto refine_volume_mesh_task_handle = __itt_string_handle_create("Mesher_3 refine volume mesh");
 #endif // CGAL_MESH_3_USE_INTEL_ITT
-
-  // First surface mesh could modify c3t3 without notifying cells_mesher
-  // So we have to ensure that no old cell will be left in c3t3
-  // Second, the c3t3 object could have been corrupted since the last call
-  // to `refine_mesh`, for example by inserting new vertices in the
-  // triangulation.
-  r_c3t3_.clear_cells_and_facets_from_c3t3();
 
   const Triangulation& r_tr = r_c3t3_.triangulation();
   CGAL_USE(r_tr);

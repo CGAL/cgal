@@ -1430,8 +1430,8 @@ protected:
     {
       // Actually compare the slopes.
       const bool swap_res = (sign_denom1 != sign_denom2);
-      const CoordNT A = (cv.y0() - y0())*p.x() + (y0()*cv.x0() - cv.y0()*x0());
-      const CoordNT B = (cv.x0() - x0())*p.y();
+      const CoordNT A = NT(cv.y0() - y0())*p.x() + (y0()*cv.x0() - cv.y0()*x0());
+      const CoordNT B = NT(cv.x0() - x0())*p.y();
 
       slope_res = CGAL::compare (A, B);
 

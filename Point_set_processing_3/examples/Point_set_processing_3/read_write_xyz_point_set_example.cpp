@@ -22,7 +22,7 @@ int main(int argc, char*argv[])
   const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/oni.pwn");
 
   // Reads a .xyz point set file in points[].
-  // Note: read_points() requires an output iterator
+  // Note: read_XYZ() requires an output iterator
   // over points and as well as property maps to access each
   // point position and normal.
   std::vector<Pwn> points;

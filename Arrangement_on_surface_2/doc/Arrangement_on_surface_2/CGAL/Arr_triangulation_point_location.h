@@ -1,7 +1,6 @@
 namespace CGAL {
 
-/*!
- * \ingroup PkgArrangementOnSurface2PointLocation
+/*! \ingroup PkgArrangementOnSurface2PointLocation
  *
  * \anchor arr_reftri_pl
  *
@@ -23,7 +22,6 @@ namespace CGAL {
  */
 
 template <typename Arrangement_>
-class Arr_triangulation_point_location : public Arr_observer<Arrangement_>
-{}
+class Arr_triangulation_point_location : public Arrangement_::Observer {}
 
 }

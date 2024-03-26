@@ -1,14 +1,14 @@
 #define CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>

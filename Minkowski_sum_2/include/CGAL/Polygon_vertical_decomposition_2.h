@@ -77,12 +77,15 @@ private:
 
   // An arrangement observer, used to receive notifications of face splits and
   // face mergers.
-  class My_observer : public CGAL::Arr_observer<Arrangement_2> {
+  class My_observer : public Arrangement_2::Observer {
   public:
-    My_observer(Arrangement_2& arr) : Arr_observer<Arrangement_2>(arr) {}
+    using Base_aos = typename Arrangement_2::Base_aos;
+    using Face_handle = typename Base_aos::Face_handle;
+
+    My_observer(Base_aos& arr) : Arrangement_2::Observer(arr) {}
 
     virtual void after_split_face(Face_handle f, Face_handle new_f,
-                                  bool /* is_hole */)
+                                  bool /* is_hole */) override
     { if (f->contained()) new_f->set_contained(true); }
   };
 

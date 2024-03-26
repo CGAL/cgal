@@ -1,6 +1,10 @@
 Algebraic_foundations
+Cartesian_kernel
+Circulator
 Distance_2
 Distance_3
+Filtered_kernel
+Hash_map
 Installation
 Intersections_2
 Intersections_3
@@ -9,7 +13,11 @@ Kernel_23
 Modular_arithmetic
 Number_types
 Orthtree
+Point_set_2
 Profiling_tools
 Property_map
 STL_Extension
+Spatial_sorting
 Stream_support
+TDS_2
+Triangulation_2

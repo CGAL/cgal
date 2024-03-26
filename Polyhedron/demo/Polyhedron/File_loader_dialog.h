@@ -19,6 +19,7 @@ class File_loader_dialog : public QDialog, private Ui::FileLoaderDialog
     {
       File_loader_dialog dialog;
       dialog.buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+      dialog.buttonBox->button(QDialogButtonBox::Ok)->setFocus();
       dialog.pluginBox->addItems(item_list);
       dialog.label->setText(tr("Available loaders for %1 :").arg(filename));
       QFileInfo fileinfo(filename);

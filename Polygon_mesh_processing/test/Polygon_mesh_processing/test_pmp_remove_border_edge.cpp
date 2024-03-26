@@ -1,7 +1,9 @@
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
+
+#include <CGAL/Simple_cartesian.h>
 
 #include <fstream>
 #include <cassert>

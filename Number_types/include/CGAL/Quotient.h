@@ -421,7 +421,6 @@ operator>>(std::istream& in, Quotient<NT>& r)
   NT num,den=1;
   in >> num;
   if(!in) return in;
-  std::istream::sentry s(in); // skip whitespace
   if(in.peek()!='/'){
           if(!in.good()){
                   in.clear(std::ios_base::eofbit);

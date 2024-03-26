@@ -1,11 +1,12 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/tags.h>
+
 #include <CGAL/Timer.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <cstdlib>
 #include <iostream>

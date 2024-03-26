@@ -348,7 +348,7 @@ public:
        || (is_polygon_mesh && is_polyline)
        || (is_c3t3 && is_polyline) )
     {
-      group = new Scene_group_item(fileinfo.baseName());
+      group = new Scene_group_item(fileinfo.completeBaseName());
     }
 
     if(is_polygon_mesh)
@@ -372,12 +372,12 @@ public:
       if(poly_item) {
         if(group)
         {
-          poly_item->setName(QString("%1_faces").arg(fileinfo.baseName()));
+          poly_item->setName(QString("%1_faces").arg(fileinfo.completeBaseName()));
           CGAL::Three::Three::scene()->addItem(poly_item);
           CGAL::Three::Three::scene()->changeGroup(poly_item, group);
         }
         else{
-          poly_item->setName(fileinfo.baseName());
+          poly_item->setName(fileinfo.completeBaseName());
           ok = true;
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(poly_item);
@@ -484,12 +484,12 @@ public:
       c3t3_item->resetCutPlane();
       if(group)
       {
-        c3t3_item->setName(QString("%1_tetrahedra").arg(fileinfo.baseName()));
+        c3t3_item->setName(QString("%1_tetrahedra").arg(fileinfo.completeBaseName()));
         CGAL::Three::Three::scene()->addItem(c3t3_item);
         CGAL::Three::Three::scene()->changeGroup(c3t3_item, group);
       }
       else{
-        c3t3_item->setName(fileinfo.baseName());
+        c3t3_item->setName(fileinfo.completeBaseName());
         ok = true;
         if(add_to_scene)
           CGAL::Three::Three::scene()->addItem(c3t3_item);
@@ -506,12 +506,12 @@ public:
           polyline_item->polylines.push_back(segment);
       if(group)
       {
-        polyline_item->setName(QString("%1_lines").arg(fileinfo.baseName()));
+        polyline_item->setName(QString("%1_lines").arg(fileinfo.completeBaseName()));
         CGAL::Three::Three::scene()->addItem(polyline_item);
         CGAL::Three::Three::scene()->changeGroup(polyline_item, group);
       }
       else{
-        polyline_item->setName(fileinfo.baseName());
+        polyline_item->setName(fileinfo.completeBaseName());
         ok = true;
         if(add_to_scene)
           CGAL::Three::Three::scene()->addItem(polyline_item);
@@ -537,7 +537,7 @@ public:
       double* p = data->GetPoint(i);
       point_item->point_set()->insert(Point_3(p[0], p[1], p[2]));
     }
-    point_item->setName(fileinfo.baseName());
+    point_item->setName(fileinfo.completeBaseName());
     ok = true;
     if(add_to_scene)
       CGAL::Three::Three::scene()->addItem(point_item);

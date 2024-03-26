@@ -91,8 +91,6 @@ struct Pixel_2_
     Integer sub_x, sub_y; // subpixel coordinates relative to pixel's boundary
                           // (always 0 for pixels)
 
-    Pixel_2_& operator =(const Pixel_2_& pix) = default;
-
     bool operator ==(const Pixel_2_& pix) const {
         return (
           x == pix.x && y == pix.y && level == pix.level &&
@@ -697,7 +695,7 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
             while(der_it != der_begin) {
                 --der_it;
 
-                e1 = xsum_abs * e1 + CGAL_ABS(x1 * z1);
+                e1 = xsum_abs * e1 + CGAL_ABS(NT(x1 * z1));
                 z1 = x0*z1 + x1*y1;
                 y1 = y1*x0 + x1*y0;
                 y0 = x0*y0 + extract(*cache_it)*(*der_it);
@@ -728,7 +726,7 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
         NT y0 = extract(*cache_it), y1(0), z1(0), e1(0);
         while(cache_it != begin) {
             --cache_it;
-            e1 = xsum_abs * e1 + CGAL_ABS(x1*z1);
+            e1 = xsum_abs * e1 + CGAL_ABS(NT(x1*z1));
             z1 = x0*z1 + x1*y1;
             y1 = y1*x0 + x1*y0;
             y0 = x0*y0 + extract(*cache_it);

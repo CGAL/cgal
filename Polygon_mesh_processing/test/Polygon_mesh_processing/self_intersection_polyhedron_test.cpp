@@ -1,15 +1,15 @@
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/self_intersections.h>
-
-#include <CGAL/Timer.h>
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;

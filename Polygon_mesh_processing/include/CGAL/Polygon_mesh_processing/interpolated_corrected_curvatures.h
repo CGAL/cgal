@@ -76,20 +76,6 @@ struct Principal_curvatures_and_directions {
 
 namespace internal {
 
-template<typename PolygonMesh, typename GT>
-typename GT::FT average_edge_length(const PolygonMesh& pmesh) {
-  const std::size_t n = edges(pmesh).size();
-  if (n == 0)
-    return 0;
-
-  typename GT::FT avg_edge_length = 0;
-  for (auto e : edges(pmesh))
-    avg_edge_length += edge_length(e, pmesh);
-
-  avg_edge_length /= static_cast<typename GT::FT>(n);
-  return avg_edge_length;
-}
-
 template<typename GT>
 struct Vertex_measures {
   typename GT::FT area_measure = 0;
@@ -650,7 +636,7 @@ void interpolated_corrected_curvatures_one_vertex(
   typename GT::FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
 
   // calculate avg_edge_length as it is used in case radius is 0, and in the principal curvature computation later
-  typename GT::FT avg_edge_length = average_edge_length<PolygonMesh, GT>(pmesh);
+  typename GT::FT avg_edge_length = average_edge_length<PolygonMesh>(pmesh);
 
   // if the radius is 0, we use a small epsilon to expand the ball (scaled with the average edge length)
   if (is_zero(radius))
@@ -799,7 +785,7 @@ private:
 
     // if no radius is given, we pass -1 which will make the expansion be only on the incident faces instead of a ball
     const FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
-    avg_edge_length = average_edge_length<PolygonMesh, GT>(pmesh);
+    avg_edge_length = average_edge_length<PolygonMesh>(pmesh);
     set_ball_radius(radius);
 
     // check which curvature maps are provided by the user (determines which curvatures are computed)

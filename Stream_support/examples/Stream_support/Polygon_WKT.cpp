@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/IO/WKT.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #include <iostream>
 #include <fstream>
@@ -11,7 +12,7 @@ int main(int argc, char* argv[])
 {
   typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
   typedef std::deque<Polygon> MultiPolygon;
-
+  typedef CGAL::Multipolygon_with_holes_2<Kernel> Multipolygon_with_holes_2;
   {
     std::ifstream is((argc>1)?argv[1]:"data/polygons.wkt");
     std::list<Polygon> polys;
@@ -32,6 +33,15 @@ int main(int argc, char* argv[])
     CGAL::IO::read_multi_polygon_WKT(is, mp);
     for(Polygon p : mp)
       std::cout<<p<<std::endl;
+  }
+
+  {
+    std::ifstream  is((argc>2)?argv[2]:"data/multipolygon.wkt");
+    Multipolygon_with_holes_2 mp;
+    CGAL::IO::read_multi_polygon_WKT(is, mp);
+    std::cout << mp << std::endl;
+    CGAL::IO::write_multi_polygon_WKT(std::cout, mp);
+    std::cout << std::endl;
   }
   return 0;
 }

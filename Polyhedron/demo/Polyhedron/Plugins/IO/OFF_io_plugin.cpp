@@ -215,7 +215,7 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
     return nullptr;
   }
   Scene_surface_mesh_item* item = new Scene_surface_mesh_item();
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   if(item->load_obj(in))
     return item;
   //if not polygonmesh load in soup

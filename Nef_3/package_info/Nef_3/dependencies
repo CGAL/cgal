@@ -3,6 +3,7 @@ Arithmetic_kernel
 BGL
 Basic_viewer
 Box_intersection_d
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2

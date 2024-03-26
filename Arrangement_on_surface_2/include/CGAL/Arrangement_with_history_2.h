@@ -9,6 +9,7 @@
 //
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARRANGEMENT_WITH_HISTORY_2_H
 #define CGAL_ARRANGEMENT_WITH_HISTORY_2_H
@@ -23,6 +24,7 @@
 
 #include <CGAL/Arrangement_on_surface_with_history_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
+#include <CGAL/Arr_default_dcel.h>
 
 namespace CGAL {
 
@@ -119,7 +121,6 @@ public:
 private:
   typedef Arrangement_with_history_2<Geometry_traits_2, Dcel>   Self;
 
-  friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
 
 public:
@@ -233,35 +234,8 @@ public:
 
     return (Face_const_handle (p_oc->face()));
   }
+
   //@}
-
-protected:
-
-  /// \name Managing and notifying the arrangement observers.
-  //@{
-  typedef Arr_observer<Self>                      Observer;
-
-  /*!
-   * Register a new observer (so it starts receiving notifications).
-   * \param p_obs A pointer to the observer object.
-   */
-  void _register_observer (Observer *p_obs)
-  {
-    Base::_register_observer ((typename Base::Observer*)p_obs);
-    return;
-  }
-
-  /*!
-   * Unregister a new observer (so it stops receiving notifications).
-   * \param p_obs A pointer to the observer object.
-   * \return Whether the observer was successfully unregistered.
-   */
-  bool _unregister_observer (Observer *p_obs)
-  {
-    return (Base::_unregister_observer ((typename Base::Observer*)p_obs));
-  }
-  //@}
-
 };
 
 } //namespace CGAL

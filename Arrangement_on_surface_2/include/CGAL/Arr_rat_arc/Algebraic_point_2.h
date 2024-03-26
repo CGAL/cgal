@@ -225,10 +225,11 @@ public:
         if (CGAL::compare(
                 CGAL::width(y_bfi),
                 CGAL::lower(CGAL::abs(y_bfi)) * eps)
-            == SMALLER)
+            == SMALLER){
           return std::make_pair(
               Bound(CGAL::lower(y_bfi)),
               Bound(CGAL::upper(y_bfi)));
+        }
       }
       else precision*=2;
     }
@@ -287,10 +288,11 @@ private:
       if (CGAL::zero_in(y_denom_bfi) == false)
       {
         BFI y_bfi(y_numer_bfi/y_denom_bfi);
-        if (CGAL::width(y_bfi) < eps )
+        if (CGAL::width(y_bfi) < eps ){
           return std::make_pair(
               Bound(CGAL::lower(y_bfi)),
               Bound(CGAL::upper(y_bfi)));
+        }
 
       }
       else precision*=2;

@@ -101,6 +101,7 @@ _test_fct_vector_3(const R& )
 
  std::cout << '.';
 
+ assert( v1.squared_length() == CGAL::squared_length(v1) );
  assert( v1.squared_length() == FT(49) );
  assert( v1 * v2 == FT(66) );
  assert( v1 * v0 == FT(0) );

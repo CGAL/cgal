@@ -1,9 +1,3 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#ifdef USE_POLYHEDRON
-#include <CGAL/Polyhedron_3.h>
-#else
-#include <CGAL/Surface_mesh.h>
-#endif
 #include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 #include <CGAL/Polygon_mesh_processing/region_growing.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
@@ -11,6 +5,14 @@
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/subdivision_method_3.h>
+
+#ifdef USE_POLYHEDRON
+#include <CGAL/Polyhedron_3.h>
+#else
+#include <CGAL/Surface_mesh.h>
+#endif
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
