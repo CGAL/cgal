@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1...3.23)
-project(CGAL_Lab)
+project(Lab_Demo)
 include(FeatureSummary)
 
 
