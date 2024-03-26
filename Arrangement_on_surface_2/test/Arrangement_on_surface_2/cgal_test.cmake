@@ -877,7 +877,7 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_polycurve_conic_traits)
 #  echo polycurve test starting
-  if(CGAL_DISABLE_GMP)
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_polycurve_conic_traits requires CORE and will not be executed")
     return()
   endif()
@@ -948,7 +948,7 @@ endfunction()
 # polycurve bezier traits
 #---------------------------------------------------------------------#
 function(test_polycurve_bezier_traits)
-  if(CGAL_DISABLE_GMP)
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_polycurve_bezier_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1057,7 +1057,7 @@ endfunction()
 # conic traits
 #---------------------------------------------------------------------#
 function(test_conic_traits)
-  if(CGAL_DISABLE_GMP)
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_conic_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1188,7 +1188,7 @@ endfunction()
 # bezier traits
 #---------------------------------------------------------------------#
 function(test_bezier_traits)
-  if(CGAL_DISABLE_GMP)
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_bezier_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1235,7 +1235,7 @@ endfunction()
 # rational arc traits
 #---------------------------------------------------------------------#
 function(test_rational_arc_traits)
-  if(CGAL_DISABLE_GMP)
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_rational_arc_traits requires CORE and will not be executed")
     return()
   endif()
@@ -1302,7 +1302,7 @@ endfunction()
 #---------------------------------------------------------------------#
 function(test_algebraic_traits_core)
   #TODO: Adapt
-  if(CGAL_DISABLE_GMP)
+  if(NOT CGAL_Core_FOUND)
     MESSAGE(STATUS "test_algebraic_traits_core requires CORE and will not be executed")
     return()
   endif()

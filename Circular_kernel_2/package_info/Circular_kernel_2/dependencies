@@ -1,6 +1,7 @@
 Algebraic_foundations
 Algebraic_kernel_for_circles
 Arithmetic_kernel
+CGAL_Core
 Cartesian_kernel
 Circular_kernel_2
 Distance_2

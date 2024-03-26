@@ -106,7 +106,6 @@ int main()
 
   // CORE
 #ifdef CGAL_USE_CORE
-  static_assert(CGAL::Output_rep<CORE::BigRat>::is_specialized == true);
   //bug in io for CORE.
   test_it<CORE::BigInt>("CORE::BigInt");
   test_it<CORE::BigRat>("CORE::BigRat");

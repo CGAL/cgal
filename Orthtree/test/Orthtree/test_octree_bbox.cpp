@@ -1,17 +1,14 @@
-
-#include <iostream>
 #include <CGAL/Octree.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
-
+#include <CGAL/Simple_cartesian.h>
+#include <iostream>
 #include <cassert>
 
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::FT FT;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>
-Octree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using FT = Kernel::FT;
+using Point_set = CGAL::Point_set_3<Point>;
+using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
 
 void test_1_node() {
 
@@ -23,8 +20,10 @@ void test_1_node() {
   Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
+  Octree::Bbox expected_bbox{-1, -1, -1, -1, -1, -1};
+
   // Compare the top (only) node
-  assert(octree.bbox(octree.root()) == CGAL::Bbox_3(-1, -1, -1, -1, -1, -1));
+  assert(octree.bbox(octree.root()) == Octree::Bbox(-1, -1, -1, -1, -1, -1));
 }
 
 void test_9_nodes() {
@@ -35,21 +34,21 @@ void test_9_nodes() {
   points.insert({1, 1, 1});
 
   // Create the octree
-  Octree octree(points, points.point_map(), 1.1);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Compare the top node
-  assert(octree.bbox(octree.root()) == CGAL::Bbox_3(-1.1, -1.1, -1.1, 1.1, 1.1, 1.1));
+  assert(octree.bbox(octree.root()) == Octree::Bbox(-1, -1, -1, 1, 1, 1));
 
   // Compare the child nodes
-  assert(octree.bbox(octree.root()[0]) == CGAL::Bbox_3(-1.1, -1.1, -1.1, 0, 0, 0));
-  assert(octree.bbox(octree.root()[1]) == CGAL::Bbox_3(0, -1.1, -1.1, 1.1, 0, 0));
-  assert(octree.bbox(octree.root()[2]) == CGAL::Bbox_3(-1.1, 0, -1.1, 0, 1.1, 0));
-  assert(octree.bbox(octree.root()[3]) == CGAL::Bbox_3(0, 0, -1.1, 1.1, 1.1, 0));
-  assert(octree.bbox(octree.root()[4]) == CGAL::Bbox_3(-1.1, -1.1, 0, 0, 0, 1.1));
-  assert(octree.bbox(octree.root()[5]) == CGAL::Bbox_3(0, -1.1, 0, 1.1, 0, 1.1));
-  assert(octree.bbox(octree.root()[6]) == CGAL::Bbox_3(-1.1, 0, 0, 0, 1.1, 1.1));
-  assert(octree.bbox(octree.root()[7]) == CGAL::Bbox_3(0, 0, 0, 1.1, 1.1, 1.1));
+  assert(octree.bbox(octree.node(0)) == Octree::Bbox(-1, -1, -1, 0, 0, 0));
+  assert(octree.bbox(octree.node(1)) == Octree::Bbox(0, -1, -1, 1, 0, 0));
+  assert(octree.bbox(octree.node(2)) == Octree::Bbox(-1, 0, -1, 0, 1, 0));
+  assert(octree.bbox(octree.node(3)) == Octree::Bbox(0, 0, -1, 1, 1, 0));
+  assert(octree.bbox(octree.node(4)) == Octree::Bbox(-1, -1, 0, 0, 0, 1));
+  assert(octree.bbox(octree.node(5)) == Octree::Bbox(0, -1, 0, 1, 0, 1));
+  assert(octree.bbox(octree.node(6)) == Octree::Bbox(-1, 0, 0, 0, 1, 1));
+  assert(octree.bbox(octree.node(7)) == Octree::Bbox(0, 0, 0, 1, 1, 1));
 }
 
 void test_25_nodes() {
@@ -62,41 +61,70 @@ void test_25_nodes() {
   points.insert({1, 0.5, 1});
 
   // Create the octree
-  Octree octree(points, points.point_map(), 1.5);
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Compare the top node
-  assert(octree.bbox(octree.root()) == CGAL::Bbox_3(-1.5, -1.5, -1.5, 1.5, 1.5, 1.5));
+  assert(octree.bbox(octree.root()) == Octree::Bbox(-1, -1, -1, 1, 1, 1));
 
   // Compare the child nodes
-  assert(octree.bbox(octree.root()[0]) == CGAL::Bbox_3(-1.5, -1.5, -1.5, 0, 0, 0));
-  assert(octree.bbox(octree.root()[1]) == CGAL::Bbox_3(0, -1.5, -1.5, 1.5, 0, 0));
-  assert(octree.bbox(octree.root()[2]) == CGAL::Bbox_3(-1.5, 0, -1.5, 0, 1.5, 0));
-  assert(octree.bbox(octree.root()[3]) == CGAL::Bbox_3(0, 0, -1.5, 1.5, 1.5, 0));
-  assert(octree.bbox(octree.root()[4]) == CGAL::Bbox_3(-1.5, -1.5, 0, 0, 0, 1.5));
-  assert(octree.bbox(octree.root()[5]) == CGAL::Bbox_3(0, -1.5, 0, 1.5, 0, 1.5));
-  assert(octree.bbox(octree.root()[6]) == CGAL::Bbox_3(-1.5, 0, 0, 0, 1.5, 1.5));
-  assert(octree.bbox(octree.root()[7]) == CGAL::Bbox_3(0, 0, 0, 1.5, 1.5, 1.5));
+  assert(octree.bbox(octree.node(0)) == Octree::Bbox(-1, -1, -1, 0, 0, 0));
+  assert(octree.bbox(octree.node(1)) == Octree::Bbox(0, -1, -1, 1, 0, 0));
+  assert(octree.bbox(octree.node(2)) == Octree::Bbox(-1, 0, -1, 0, 1, 0));
+  assert(octree.bbox(octree.node(3)) == Octree::Bbox(0, 0, -1, 1, 1, 0));
+  assert(octree.bbox(octree.node(4)) == Octree::Bbox(-1, -1, 0, 0, 0, 1));
+  assert(octree.bbox(octree.node(5)) == Octree::Bbox(0, -1, 0, 1, 0, 1));
+  assert(octree.bbox(octree.node(6)) == Octree::Bbox(-1, 0, 0, 0, 1, 1));
+  assert(octree.bbox(octree.node(7)) == Octree::Bbox(0, 0, 0, 1, 1, 1));
 
   // Compare children of the first child
-  assert(octree.bbox(octree.root()[0][0]) == CGAL::Bbox_3(-1.5, -1.5, -1.5, -0.75, -0.75, -0.75));
-  assert(octree.bbox(octree.root()[0][1]) == CGAL::Bbox_3(-0.75, -1.5, -1.5, 0, -0.75, -0.75));
-  assert(octree.bbox(octree.root()[0][2]) == CGAL::Bbox_3(-1.5, -0.75, -1.5, -0.75, 0, -0.75));
-  assert(octree.bbox(octree.root()[0][3]) == CGAL::Bbox_3(-0.75, -0.75, -1.5, 0, 0, -0.75));
-  assert(octree.bbox(octree.root()[0][4]) == CGAL::Bbox_3(-1.5, -1.5, -0.75, -0.75, -0.75, 0));
-  assert(octree.bbox(octree.root()[0][5]) == CGAL::Bbox_3(-0.75, -1.5, -0.75, 0, -0.75, 0));
-  assert(octree.bbox(octree.root()[0][6]) == CGAL::Bbox_3(-1.5, -0.75, -0.75, -0.75, 0, 0));
-  assert(octree.bbox(octree.root()[0][7]) == CGAL::Bbox_3(-0.75, -0.75, -0.75, 0, 0, 0));
+  assert(octree.bbox(octree.node(0, 0)) ==
+         Octree::Bbox(-1, -1, -1, -0.5, -0.5, -0.5));
+  assert(octree.bbox(octree.node(0, 1)) ==
+         Octree::Bbox(-0.5, -1, -1, 0, -0.5, -0.5));
+  assert(octree.bbox(octree.node(0, 2)) ==
+         Octree::Bbox(-1, -0.5, -1, -0.5, 0, -0.5));
+  assert(octree.bbox(octree.node(0, 3)) ==
+         Octree::Bbox(-0.5, -0.5, -1, 0, 0, -0.5));
+  assert(octree.bbox(octree.node(0, 4)) ==
+         Octree::Bbox(-1, -1, -0.5, -0.5, -0.5, 0));
+  assert(octree.bbox(octree.node(0, 5)) ==
+         Octree::Bbox(-0.5, -1, -0.5, 0, -0.5, 0));
+  assert(octree.bbox(octree.node(0, 6)) ==
+         Octree::Bbox(-1, -0.5, -0.5, -0.5, 0, 0));
+  assert(octree.bbox(octree.node(0, 7)) ==
+         Octree::Bbox(-0.5, -0.5, -0.5, 0, 0, 0));
 
   // Compare children of the last child
-  assert(octree.bbox(octree.root()[7][0]) == CGAL::Bbox_3(0, 0, 0, 0.75, 0.75, 0.75));
-  assert(octree.bbox(octree.root()[7][1]) == CGAL::Bbox_3(0.75, 0, 0, 1.5, 0.75, 0.75));
-  assert(octree.bbox(octree.root()[7][2]) == CGAL::Bbox_3(0, 0.75, 0, 0.75, 1.5, 0.75));
-  assert(octree.bbox(octree.root()[7][3]) == CGAL::Bbox_3(0.75, 0.75, 0, 1.5, 1.5, 0.75));
-  assert(octree.bbox(octree.root()[7][4]) == CGAL::Bbox_3(0, 0, 0.75, 0.75, 0.75, 1.5));
-  assert(octree.bbox(octree.root()[7][5]) == CGAL::Bbox_3(0.75, 0, 0.75, 1.5, 0.75, 1.5));
-  assert(octree.bbox(octree.root()[7][6]) == CGAL::Bbox_3(0, 0.75, 0.75, 0.75, 1.5, 1.5));
-  assert(octree.bbox(octree.root()[7][7]) == CGAL::Bbox_3(0.75, 0.75, 0.75, 1.5, 1.5, 1.5));
+  assert(octree.bbox(octree.node(7, 0)) ==
+         Octree::Bbox(0, 0, 0, 0.5, 0.5, 0.5));
+  assert(octree.bbox(octree.node(7, 1)) ==
+         Octree::Bbox(0.5, 0, 0, 1, 0.5, 0.5));
+  assert(octree.bbox(octree.node(7, 2)) ==
+         Octree::Bbox(0, 0.5, 0, 0.5, 1, 0.5));
+  assert(octree.bbox(octree.node(7, 3)) ==
+         Octree::Bbox(0.5, 0.5, 0, 1, 1, 0.5));
+  assert(octree.bbox(octree.node(7, 4)) ==
+         Octree::Bbox(0, 0, 0.5, 0.5, 0.5, 1));
+  assert(octree.bbox(octree.node(7, 5)) ==
+         Octree::Bbox(0.5, 0, 0.5, 1, 0.5, 1));
+  assert(octree.bbox(octree.node(7, 6)) ==
+         Octree::Bbox(0, 0.5, 0.5, 0.5, 1, 1));
+  assert(octree.bbox(octree.node(7, 7)) ==
+         Octree::Bbox(0.5, 0.5, 0.5, 1, 1, 1));
+
+  // All child nodes should share a vertex
+  auto center_of_last_child = octree.bbox(octree.node(7, 7)).vertex(0);
+  assert(octree.bbox(octree.node(7, 0)).vertex(7) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 1)).vertex(4) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 2)).vertex(6) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 3)).vertex(5) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 4)).vertex(2) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 5)).vertex(3) == center_of_last_child);
+  assert(octree.bbox(octree.node(7, 6)).vertex(1) == center_of_last_child);
+
+  // Nodes of different sizes should also share vertices
+  assert(octree.bbox(octree.node(7, 0)).vertex(0) == octree.bbox(octree.node(0, 7)).vertex(7));
 }
 
 int main(void) {

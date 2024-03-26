@@ -76,7 +76,9 @@ compute_roots_of_2(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
     }
   }
   else {
-    *oit++ = -c/b; return oit;
+    Root_of_1 cb = -c / b;
+    *oit++ = Root_of_2(cb);
+    return oit;
   }
 }
 

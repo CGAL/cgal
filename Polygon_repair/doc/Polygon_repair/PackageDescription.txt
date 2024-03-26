@@ -1,0 +1,38 @@
+// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
+
+/// \defgroup PkgPolygonRepairRef 2D Polygon Repair Reference
+
+/// \defgroup PkgPolygonRepairFunctions Functions
+/// \ingroup PkgPolygonRepairRef
+
+/*!
+\addtogroup PkgPolygonRepairRef
+
+\cgalPkgDescriptionBegin{2D Polygon Repair,PkgPolygonRepair}
+\cgalPkgPicture{Polygon_repair-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Ken Arroyo Ohori}
+\cgalPkgDesc{This package provides algorithms to repair 2D polygons, polygons with holes,
+and multipolygons with holes, by selecting faces of the arrangement of the input based on a selection rule.
+Currently, only the even-odd rule is provided. }
+\cgalPkgManuals{Chapter_2D_Polygon_repair,PkgPolygonRepairRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.0}
+\cgalPkgDependsOn{\ref PkgPolygon2, \ref PkgTriangulation2}
+\cgalPkgBib{cgal:a-pr}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Functions}
+- `CGAL::Polygon_repair::repair()`
+
+\cgalCRPSection{Simplification Rules}
+- `CGAL::Polygon_repair::Even_odd_rule`
+*/

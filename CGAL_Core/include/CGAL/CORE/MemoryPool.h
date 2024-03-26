@@ -57,7 +57,7 @@ public:
         t = t->next;
       }
     //);
-    //CGAL_warning_msg(count ==  nObjects * blocks.size(),
+    //CGAL_CORE_warning_msg(count ==  nObjects * blocks.size(),
     //                 "Cannot delete memory as there are cyclic references");
 
     if(count ==  nObjects * blocks.size()){

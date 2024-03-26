@@ -277,12 +277,12 @@ const long halfLongMin = LONG_MIN /2;
 struct _real_add {
   template <class T>
   static Real eval(const T& a, const T& b) {
-    return a+b;
+    return T(a+b);
   }
   // specialized for two long values
   static Real eval(long a, long b) {
     if ((a > halfLongMax && b > halfLongMax) || (a < halfLongMin && b < halfLongMin))
-      return BigInt(a)+BigInt(b);
+      return BigInt(BigInt(a)+ BigInt(b));
     else
       return a+b;
   }
@@ -291,12 +291,12 @@ struct _real_add {
 struct _real_sub {
   template <class T>
   static Real eval(const T& a, const T& b) {
-    return a-b;
+    return T(a-b);
   }
   // specialized for two long values
   static Real eval(long a, long b) {
     if ((a > halfLongMax && b < halfLongMin) || (a < halfLongMin && b > halfLongMax))
-      return BigInt(a)-BigInt(b);
+      return BigInt(BigInt(a)-BigInt(b));
     else
       return a-b;
   }
@@ -305,12 +305,12 @@ struct _real_sub {
 struct _real_mul {
   template <class T>
   static Real eval(const T& a, const T& b) {
-    return a*b;
+    return T(a*b);
   }
   // specialized for two long values
   static Real eval(long a, long b) {
     if (flrLg(a) + flrLg(b) >= static_cast<int>(LONG_BIT-2))
-      return BigInt(a)*BigInt(b);
+      return BigInt(BigInt(a)*BigInt(b));
     else
       return a*b;
   }
@@ -357,7 +357,7 @@ struct real_div {
         bf_a.approx(a.BigRatValue(), bf_b.MSB() - bf_b.flrLgErr() + 1, CORE_posInfty);
         return bf_a.div(bf_b, r);
       } else // both are BigRat
-        return a.BigRatValue()/b.BigRatValue();
+        return BigRat(a.BigRatValue() / b.BigRatValue());
     } else if (a.ID() == REAL_BIGFLOAT || b.ID() == REAL_BIGFLOAT
                || a.ID() == REAL_DOUBLE || b.ID() == REAL_DOUBLE) {
       return a.BigFloatValue().div(b.BigFloatValue(), r);
@@ -478,11 +478,11 @@ inline Real sqrt(const Real& x) {
 // unary minus operator
 template <class T>
 inline Real Realbase_for<T>::operator-() const {
-  return -ker;
+  return T(- T(ker));
 }
 template <>
 inline Real RealLong::operator-() const {
-  return ker < -LONG_MAX ? -BigInt(ker) : -ker;
+  return ker < -LONG_MAX ? BigInt(- BigInt(ker)) : -ker;
 }
 
 inline void init_CORE() {

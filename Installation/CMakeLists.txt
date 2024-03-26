@@ -115,6 +115,9 @@ option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
   endif()
 endif(CGAL_BRANCH_BUILD)
 
+#allow to force disabling boost multiprecision support
+option(CGAL_DO_NOT_USE_BOOST_MP "Disable the support of boost multiprecision library" FALSE)
+
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)

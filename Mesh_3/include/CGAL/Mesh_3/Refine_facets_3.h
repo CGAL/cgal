@@ -287,7 +287,6 @@ public:
     return Container_::no_longer_element_to_refine_impl();
   }
 
-  // Gets the point to insert from the element to refine
   /// Gets the point to insert from the element to refine
   Bare_point refinement_point_impl(const Facet& facet) const
   {

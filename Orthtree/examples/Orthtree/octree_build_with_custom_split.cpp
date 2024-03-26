@@ -7,25 +7,26 @@
 #include <CGAL/Point_set_3/IO.h>
 
 // Type Declarations
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::FT FT;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef Point_set::Point_map Point_map;
-
-typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using FT = Kernel::FT;
+using Point_set = CGAL::Point_set_3<Point>;
+using Point_map = Point_set::Point_map;
+using Octree = CGAL::Octree<Kernel, Point_set, Point_map>;
 
 // Split Predicate
-// The predicate is a functor which returns a boolean value, whether a node needs to be split or not
+// The predicate is a functor which returns a Boolean value, whether a node needs to be split or not
 struct Split_by_ratio {
 
   std::size_t ratio;
 
-  Split_by_ratio(std::size_t ratio) : ratio(ratio) {}
+  explicit Split_by_ratio(std::size_t ratio) : ratio(ratio) {}
 
-  template<class Node>
-  bool operator()(const Node &n) const {
-    return n.size() > (ratio * n.depth());
+  template<typename Node_index, typename Tree>
+  bool operator()(Node_index i, const Tree &tree) const {
+    std::size_t num_points = tree.data(i).size();
+    std::size_t depth = tree.depth(i);
+    return num_points > (ratio * depth);
   }
 };
 

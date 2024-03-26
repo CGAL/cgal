@@ -307,7 +307,6 @@ void io() {
         std::ostringstream os;
         CGAL::IO::set_pretty_mode(os);
         os << CGAL::IO::oformat(POLY(NT(3)));
-        //std::cout <<os.str()<<std::endl;
         assert( os.str() == "3" );
     }{
         std::ostringstream os;
@@ -404,12 +403,12 @@ void unigcdres(CGAL::Field_tag) {
     h /= h.unit_part();
     POLY d;
 
-    d = gcd(f, g);
+    d = CGAL::gcd(f, g);
     assert( d == POLY(NT(1)) );
     assert( prs_resultant(f, g) == NT(230664271L)/NT(759375L) ); // Maple
 
     POLY fh(f*h), gh(g*h);
-    d = gcd(fh, gh);
+    d = CGAL::gcd(fh, gh);
     assert( d == h );
     assert( prs_resultant(fh, gh) == NT(0) );
 
@@ -430,12 +429,12 @@ void unigcdres(CGAL::Integral_domain_tag) {
     POLY d;
     NT c(42);
 
-    d = gcd((-c)*f, c*g);
+    d = CGAL::gcd((-c)*f, c*g);
     assert( d == POLY(c) );
     assert( prs_resultant(f, g) == NT(230664271L) ); // as computed by Maple
 
     POLY fh(f*h), gh(g*h);
-    d = gcd((-c)*fh, c*gh);
+    d = CGAL::gcd((-c)*fh, c*gh);
     assert( d == c*h );
     assert( prs_resultant(fh, gh) == NT(0) );
 
@@ -477,14 +476,14 @@ void bigcdres(CGAL::Field_tag) {
     h /= h.unit_part();
     POLY2 d;
 
-    d = gcd(f, g);
+    d = CGAL::gcd(f, g);
     assert( d == POLY2(1) );
     POLY1 r(NT(1444), NT(-1726), NT(3295), NT(-2501), NT(560));
     r /= NT(225);
     assert( prs_resultant(f, g) == r ); // says Maple
 
     POLY2 fh(f*h), gh(g*h);
-    d = gcd(fh, gh);
+    d = CGAL::gcd(fh, gh);
     assert( d == h );
     assert( prs_resultant(fh, gh) == POLY1(0) );
 }
@@ -503,13 +502,13 @@ void bigcdres(CGAL::Integral_domain_tag) {
                     POLY1(NT(9), NT(7)), POLY1(NT(7)));
     POLY2 c(42), d;
 
-    d = gcd(-c*f, c*g);
+    d = CGAL::gcd(-c*f, c*g);
     assert( d == c );
     POLY1 r(NT(1444), NT(-1726), NT(3295), NT(-2501), NT(560));
     assert( prs_resultant(f, g) == r ); // says Maple
 
     POLY2 fh(f*h), gh(g*h);
-    d = gcd(-c*fh, c*gh);
+    d = CGAL::gcd(-c*fh, c*gh);
     assert( d == c*h );
     assert( prs_resultant(fh, gh) == POLY1(0) );
 }

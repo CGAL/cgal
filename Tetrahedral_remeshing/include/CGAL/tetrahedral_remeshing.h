@@ -19,6 +19,8 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/Complex_cells_selector.h>
+
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 

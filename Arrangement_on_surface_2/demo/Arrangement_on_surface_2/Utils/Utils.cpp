@@ -202,7 +202,7 @@ operator()(const Point_2& p, const X_monotone_curve_2& curve) const {
   auto points = painterOstream.getPointsList(curve);
 
   QPoint p_viewport =
-    view->mapFromScene(QPointF{p.x().doubleValue(), p.y().doubleValue()});
+    view->mapFromScene(QPointF{CGAL::to_double(p.x()), CGAL::to_double(p.y())});
 
   double min_dist = (std::numeric_limits<double>::max)();
   for (auto& vec : points) {

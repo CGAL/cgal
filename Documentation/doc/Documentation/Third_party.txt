@@ -56,7 +56,7 @@ or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`h
 The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
-<b>Version 1.66 or later</b>
+<b>Version 1.72 or later</b>
 
 The \boost libraries are a set of portable C++ source libraries.
 Most of \boost libraries are header-only, but a few of them need to be compiled or
@@ -72,7 +72,7 @@ from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`htt
 
 As there is no canonical directory for where to find \boost on Windows,
 we recommend that you define the environment variable
-`BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_69_0`.
+`BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_70_0`.
 
 \subsection thirdpartyMPFR GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
 <b>GMP Version 4.2 or later, MPFR Version 2.2.1 or later</b>
