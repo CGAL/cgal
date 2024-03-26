@@ -43,7 +43,8 @@ namespace Tetrahedral_remeshing
 
 /**
  * @class Adaptive_remeshing_sizing_field
- * @tparam Tr a triangulation
+ * @tparam Tr underlying triangulation type
+ * A sizing field, model of `RemeshingSizingField_3`
  */
 template <typename Tr>
 class Adaptive_remeshing_sizing_field
@@ -88,14 +89,12 @@ private:
   using Splitter = typename Neighbor_search::Splitter;
 
 protected:
-  template<typename VCMap, typename ECMap, typename FCMap, typename CellSelector>
+  template<typename ECMap, typename FCMap, typename CellSelector>
   Adaptive_remeshing_sizing_field(const Tr& tr,
-                                  const VCMap& vcmap,
                                   const ECMap& ecmap,
                                   const FCMap& fcmap,
                                   const CellSelector& cell_selector)
-    : m_gt(tr.geom_traits())
-    , m_kd_tree(points_with_info(tr, vcmap, ecmap, fcmap, cell_selector),
+    : m_kd_tree(points_with_info(tr, ecmap, fcmap, cell_selector),
                 Splitter(),
                 Kd_traits(Point_property_map()))
   {
@@ -104,9 +103,8 @@ protected:
 
 private:
 
-  template<typename VCMap, typename ECMap, typename FCMap, typename CellSelector>
+  template<typename ECMap, typename FCMap, typename CellSelector>
   std::vector<Point_with_info> points_with_info(const Tr& tr,
-                                                const VCMap& vcmap,
                                                 const ECMap& ecmap,
                                                 const FCMap& fcmap,
                                                 const CellSelector& cell_selector) const
@@ -117,7 +115,7 @@ private:
     {
       points.push_back(
         Point_with_info{ cp(tr.point(v)),
-                         average_edge_length_around(v, tr, vcmap, ecmap, fcmap, cell_selector),
+                         average_edge_length_around(v, tr, ecmap, fcmap, cell_selector),
                          v->in_dimension() });
     }
     return points;
@@ -164,15 +162,45 @@ private:
     const Bare_point& p,
     const std::array<Point_with_info, 4>& vertices) const;
 
-  template<typename VCMap, typename ECMap, typename FCMap, typename CellSelector>
+  template<typename ECMap, typename FCMap, typename CellSelector>
   FT average_edge_length_around(const Vertex_handle v, const Tr& tr,
-    const VCMap& vcmap, const ECMap& ecmap, const FCMap& fcmap, const CellSelector& cell_selector) const;
+    const ECMap& ecmap, const FCMap& fcmap, const CellSelector& cell_selector) const;
 
 private:
   Kd_tree m_kd_tree;
-  const GT& m_gt;
 
 public:
+ /*!
+  * @brief Adaptive sizing field
+  *
+  * This static method is a <em>named constructor</em>. It constructs a
+  * sizing field...
+  *
+  * @returns an `Adaptive_remeshing_sizing_field<Tr>`
+  *
+  * tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  * \param tr the input triangulation
+  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
+  *           among the ones listed below :
+  *
+  *\cgalNamedParamsBegin
+  *  \cgalParamNBegin{ ecmap }
+  *    \cgalParamDescription{ }
+  *    \cgalParamDefault{ }
+  *    \cgalParamType{ }
+  *  \cgalParamNEnd
+  *  \cgalParamNBegin{ fcmap }
+  *    \cgalParamDescription{ }
+  *    \cgalParamDefault{ }
+  *    \cgalParamType{ }
+  *  \cgalParamNEnd
+  *  \cgalParamNBegin{ cell_selector }
+  *    \cgalParamDescription{ }
+  *    \cgalParamDefault{ }
+  *    \cgalParamType{ }
+  *  \cgalParamNEnd
+  *\cgalNamedParamsEnd
+  */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   static Adaptive_remeshing_sizing_field
   create_adaptive_sizing_field(const Tr& tr,
@@ -185,8 +213,6 @@ public:
     using Facet = typename Tr::Facet;
     using Cell_handle = typename Tr::Cell_handle;
 
-    auto vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                  CGAL::Constant_property_map<Vertex_handle, bool>(false));
     auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                   CGAL::Constant_property_map<Edge, bool>(false));
     auto fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
@@ -194,9 +220,9 @@ public:
     auto cell_selector = choose_parameter(get_parameter(np, internal_np::cell_selector),
       CGAL::Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
-    return Adaptive_remeshing_sizing_field(tr, vcmap, ecmap, fcmap, cell_selector);
+    return Adaptive_remeshing_sizing_field(tr, ecmap, fcmap, cell_selector);
   }
-};
+};//end of class Adaptive_remeshing_sizing_field
 
 template <typename Tr>
 typename Adaptive_remeshing_sizing_field<Tr>::FT
@@ -231,11 +257,11 @@ interpolate_on_four_vertices(
 }
 
 template <typename Tr>
-template <typename VCMap, typename ECMap, typename FCMap, typename CellSelector>
+template <typename ECMap, typename FCMap, typename CellSelector>
 typename Adaptive_remeshing_sizing_field<Tr>::FT
 Adaptive_remeshing_sizing_field<Tr>::
 average_edge_length_around(const Vertex_handle v, const Tr& tr,
-                           const VCMap& vcmap, const ECMap& ecmap, const FCMap& fcmap,
+                           const ECMap& ecmap, const FCMap& fcmap,
                            const CellSelector& cell_selector) const
 {
   using Edge = typename Tr::Edge;
@@ -294,7 +320,7 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
   if (edges.empty())
     return 0;
 
-  auto cp = m_gt.construct_point_3_object();
+  auto cp = tr.geom_traits().construct_point_3_object();
   FT sum = 0.;
   for (const Edge& e : edges)
   {
