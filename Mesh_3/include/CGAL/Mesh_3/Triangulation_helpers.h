@@ -381,11 +381,16 @@ inside_protecting_balls(const Tr& tr,
                         const Vertex_handle v,
                         const Bare_point& p) const
 {
+  if(tr.number_of_vertices() == 0)
+    return false;
+
   typename GT::Compare_weighted_squared_radius_3 cwsr =
     tr.geom_traits().compare_weighted_squared_radius_3_object();
 
-  Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
+  Cell_handle hint = (v == Vertex_handle()) ? Cell_handle() : v->cell();
+  Vertex_handle nv = tr.nearest_power_vertex(p, hint);
   const Point& nvwp = tr.point(nv);
+
   if(cwsr(nvwp, FT(0)) == CGAL::SMALLER)
   {
     typename Tr::Geom_traits::Construct_point_3 cp = tr.geom_traits().construct_point_3_object();
