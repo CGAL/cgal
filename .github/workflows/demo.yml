@@ -1,4 +1,4 @@
-name: Test Polyhedron Demo
+name: Compile CGAL Lab
 
 on: [push, pull_request,workflow_dispatch]
 
