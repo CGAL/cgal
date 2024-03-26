@@ -910,10 +910,12 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
           const FT sqd2 = (op2 == std::nullopt) ? 0.
             : CGAL::squared_distance(smoothed_position, op2.value());
 
-          if (sqd1 < sqd2)
+          if (sqd1 != 0. && sqd1 < sqd2)
             new_pos = op1.value();
-          else
+          else if (sqd2 != 0)
             new_pos = op2.value();
+          else
+            new_pos = smoothed_position;
         }
         else //no valid projection
           new_pos = smoothed_position;
