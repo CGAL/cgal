@@ -523,6 +523,13 @@ auto make_vertex_pair(const Edge& e)
   return make_vertex_pair(e.first->vertex(e.second), e.first->vertex(e.third));
 }
 
+template<typename Edge>
+auto make_inv_vertex_pair(const Edge& e)
+{
+  const auto [v1, v2] = make_vertex_pair(e);
+  return std::make_pair(v2, v1);
+}
+
 template<typename Vh>
 CGAL::Triple<Vh, Vh, Vh> make_vertex_triple(const Vh vh0, const Vh vh1, const Vh vh2)
 {
