@@ -1116,13 +1116,13 @@ bool is_internal(const typename C3t3::Edge& edge,
 }
 
 // is `e` part of the selection of cells that should be remeshed?
-template<typename C3T3, typename CellSelector>
-bool is_selected(const typename C3T3::Triangulation::Edge& e,
-                 const C3T3& c3t3,
+template<typename Tr, typename CellSelector>
+bool is_selected(const typename Tr::Edge& e,
+                 const Tr& tr,
                  CellSelector cell_selector)
 {
-  typedef typename C3T3::Triangulation::Cell_circulator Cell_circulator;
-  Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typedef typename Tr::Cell_circulator Cell_circulator;
+  Cell_circulator circ = tr.incident_cells(e);
   Cell_circulator done = circ;
   do
   {

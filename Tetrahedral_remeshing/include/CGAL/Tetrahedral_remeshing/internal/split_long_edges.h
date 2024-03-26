@@ -254,7 +254,7 @@ auto can_be_split(const typename C3T3::Edge& e,
   }
   else
   {
-    return Splittable{is_selected(e, c3t3, cell_selector), boundary};
+    return Splittable{is_selected(e, c3t3.triangulation(), cell_selector), boundary};
   }
 }
 
