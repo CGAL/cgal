@@ -61,7 +61,8 @@ int main(int argc, char* argv[])
   // Mesh criteria
   Mesh_criteria criteria(facet_angle = 25,
                          facet_distance = 0.2,
-                         cell_radius_edge_ratio = 3);
+                         cell_size = 10.,
+                         cell_radius_edge_ratio = 3.);
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb().no_exude());
@@ -83,12 +84,12 @@ int main(int argc, char* argv[])
   std::cout << "Remeshing...";
   std::cout.flush();
 
-  CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<T3>
-    adaptive_field(tr);
+  using Adaptive_SF = CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<T3>;
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
-    adaptive_field,
-    CGAL::parameters::number_of_iterations(5));
+    Adaptive_SF::create_adaptive_sizing_field(tr),
+    CGAL::parameters::number_of_iterations(5)
+    .nb_flip_smooth_iterations(10));
 
   std::cout << "\rRemeshing done." << std::endl;
 
