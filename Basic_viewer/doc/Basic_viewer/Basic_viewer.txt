@@ -10,11 +10,15 @@ namespace CGAL {
 
 \section Introduction
 
-The basic viewer package appears to serve as a foundation for a 3D graphics viewer in the context of the CGAL (Computational Geometry Algorithms Library) and Qt (a C++ GUI toolkit). The goal of this package is to provide a flexible and interactive environment for visualizing geometric data and interacting with 3D scenes. The functionality of the package is to renders various geometric elements such as(points, segments, rays, lines, faces, edges, etc.) and supports user interaction through keyboard inputs.
+The basic viewer package appears to serve as a foundation to provide a small interactive visualization tools of all CGAL data structures, such as Arrangement_on_surface_2, Boolean_set_operations_2, Linear_cell_complex, Nef_3, Periodic_2_triangulation_2, Point_set_3, Polygon, Polyhedron, Straight_skeleton_2, Surface_mesh, Triangulation_2, Triangulation_3, Voronoi_diagram_2, and more. The functionality of the package is to renders various geometric elements such as points, segments, rays, lines, faces, etc.
 
-The goal of Basic_viewer is allowing to view all CGAL data structures, such as (Arrangement_on_surface_2, Boolean_set_operations_2, Linear_cell_complex, Nef_3, Periodic_2_triangulation_2, Point_set_3, Polygon, Polyhedron, Straight_skeleton_2, Surface_mesh, Triangulation_2, Triangulation_3, Voronoi_diagram_2, and more).
+The most basic usage of the basic viewer is the use of the global `CGAL::draw` function. There is one draw function for each package CGAL. Such a call opens a new interactive window showing the given model and allowing to navigate in the scene, show or hide some specific cells, show the interior of the model if any...
 
-There are mainly: two global functions for each CGAL package `CGAL::draw` and `CGAL::add_to_graphics_scene`; four classes  `CGAL::Graphics_scene`, `CGAL::Graphics_scene_option`, `CGAL::Qt::Basic_viewer` and `CGAL::Qt::QApplication_and_basic_viewer`.
+The drawing can be tuned using a `CGAL::Graphics_scene_option` allowing to change the color of some cells or hide some cells.
+
+More complex usage can be achieved by using the `CGAL::Graphics_scene` class. Several representation of different CGAL data structures can be added in a same `CGAL::Graphics_scene` allowing to visualize different models in a same window. Like for the draw function, the drawing parameters can be tune thanks to the `CGAL::Graphics_scene_option`.
+
+Two classes are based on Qt. (1) `CGAL::Qt::Basic_viewer` is a Qt widget that inherits from `QGLViewer` (libQGLViewer is an open source C++ library based on Qt that eases the creation of OpenGL 3D viewers). (2) `CGAL::Qt::QApplication_and_basic_viewer` which regroups a `Qt::QApplication` and a `CGAL::Basic_viewer`.
 
 \section SoftwareDesignClassDiagam Software Design
 
@@ -28,54 +32,56 @@ TODO links the classes with the different sections where they will be explained
 
 \section Basic Usage: global `CGAL::draw` functions
 
-A first simple solution provide to draw the different data structures of CGAL is the use of global draw functions.
-The draw function is a template function that facilitates drawing an almost mentioned data structures such as (Arrangement_on_surface_2, Boolean_set_operations_2, Linear_cell_complex, Nef_3, Periodic_2_triangulation_2, Point_set_3, Polygon, Polyhedron, Straight_skeleton_2, Surface_mesh, Triangulation_2, Triangulation_3, Voronoi_diagram_2, and more)
+A first simple solution provide to draw the different data structures of CGAL is the use of global `CGAL::draw` functions. This function is templated by the type of the data structure to draw. The following example shows a basic use of this function.
 
-```
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/draw_linear_cell_complex.h>
+\cgalExample{Basic_viewer/draw_lcc.cpp}
 
-using LCC=CGAL::Linear_cell_complex_for_combinatorial_map<3>;
-using Point=LCC::Point;
+This example creates a 3D linear cell complex, fill it by creating an hexahedron, and draw it using the basic viewer. The result of the viewing is shown in the following figure.
 
-LCC lcc;
-lcc.make_hexahedron(Point(0,0,0), Point(5,0,0),
-                    Point(5,5,0), Point(0,5,0),
-                    Point(0,5,4), Point(0,0,4),
-                    Point(5,0,4), Point(5,5,4));
-CGAL::draw(lcc);
-```
-
-
-\cgalFigureBegin{linear_cell_complex_for_combinatorial_map_ex1,lcc_cmap_with_faces.png}
-example of drawing LCC for CMap with faces
+\cgalFigureBegin{basic_viewer_ex1,lcc_draw.png}
+Example of drawing of a 3D LCC.
 \cgalFigureEnd
 
-More advanced example
+Users can interact with the viewer using some specific keys or mouse interactions. You can press 'h' key to visualize an help showing all the different shortcuts and mouse interactions. The main functionalities of the viewer are:
 
-\cgalExample{Surface_mesh/draw_surface_mesh.cpp}
+<LI> Versatile Rendering:
+
+The viewer supports the rendering of various geometric elements, such as points, edges, faces, rays, and lines.
+Different rendering modes, including mono and colored representations, are available for these elements.
+
+<LI> Camera Control:
+
+The viewer allows users to switch between 2D and 3D viewing modes, adjusting the camera accordingly.
+Camera settings, such as orthographic or perspective projection, can be configured based on the dimensionality of the scene.
+
+<LI> User Interaction:
+
+Users can interact with the viewer through keyboard inputs, enabling them to control rendering options, toggle the display of elements, and adjust visual parameters.
+Key presses are mapped to specific actions, such as toggling the clipping plane, changing rendering modes, adjusting the size of elements, and modifying ambient light color.
+
+<LI> Clipping Plane:
+
+The viewer includes support for a clipping plane, allowing users to selectively render parts of the scene.
+The clipping plane can be toggled on and off, and its rendering style can be modified (solid, wireframe, etc.).
+
 
 \subsection GraphicSceneContinue Tune the drawing thanks to `CGAL::Graphics_scene_options`
 
 There is one specialization of each draw function that takes a graphics scene options as parameter, allowing to tune the drawing.
 
-The Graphics_scene_options class is responsible for providing a set of options and customization parameters for rendering geometric structures in a graphics scene. Its main purpose is to allow users to control the visual appearance of various elements such as vertices, edges, faces, and volumes in a graphical representation of a combinatorial data structure (DS). The classes are template classes, allowing them to work with different combinatorial data structures (DS) in 2D and 3D.
-\subsubsection GraphicSceneOptionsCont Here are some key responsibilities of the Graphics_scene_options class:
-<OL>
+The Graphics_scene_options class is responsible for providing a set of options and customization parameters for rendering geometric structures in a graphics scene. Its main purpose is to allow users to control the visual appearance of various cells such as vertices, edges, faces, and volumes in a graphical representation of a given data structure.
 
-<LI> Drawing Control: It determines whether to draw vertices, edges, faces, and volumes in the graphics scene through the use of drawing functors (draw_vertex, draw_edge, draw_face, draw_volume).
+The following example shows how to use a graphics scene options to tune the drawing of a surface mesh. In this example, we define our own class `My_graphics_scene_options` that inherits from `CGAL::Graphics_scene_options` to get all the default parameters. In this class, we only override the two methods `colored_vertex` and `vertex_color` to draw all vertices in color, and chose randomly green or blue colors for one out of two vertices.
 
-<LI> Coloring Control: It allows users to customize the coloring of vertices, edges, faces, and volumes. Users can specify whether coloring is enabled (colored_vertex, colored_edge, colored_face, colored_volume) and, if so, provide functions (vertex_color, edge_color, face_color, volume_color) to determine the color for each element.
+\cgalFigureBegin{basic_viewer_ex2,draw_surface_mesh_vcolor.png}
+Example of tuned drawing of a 3D surface mesh where some vertex colors are changed.
+\cgalFigureEnd
 
-<LI> Wireframe Control: For faces and volumes, it provides options to draw a wireframe representation (face_wireframe, volume_wireframe), allowing users to choose whether to display a wireframe overlay.
 
-<LI> Visibility Control: Users can enable or disable the visibility of vertices, edges, faces, and volumes independently using functions like disable_vertices, enable_vertices, are_vertices_enabled, and similar functions for other components.
 
-<LI> Template Flexibility: The class is templated to support different types of combinatorial data structures (DS) in 2D and 3D. This template flexibility allows users to use the class with various geometric structures.
+ICICICI
 
-<LI> Default Settings: It provides reasonable default settings for the various options, ensuring that users can get started with a sensible configuration without needing to customize every parameter.
 
-</OL>
 
 \cgalExample{Basic_viewer/draw_surface_mesh_height.cpp}
 
