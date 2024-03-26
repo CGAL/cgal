@@ -32,7 +32,7 @@ namespace CGAL {
 namespace Shape_detection {
 
 // Forward declaration needed for automatic traits detection without
-// including the deprecated header itself…
+// including the deprecated header itself
 template <typename Gt, typename IR, typename IPM, typename INM>
 struct Shape_detection_traits;
 
@@ -56,8 +56,9 @@ class RANSAC_octree {
   typedef std::vector<std::size_t> Input_range;
   typedef Random_index_access_property_map<Input_iterator, Point_map> Indexed_point_map;
 
-  typedef CGAL::Octree<typename Traits_base<Traits>::type,
-                       Input_range, Indexed_point_map> Octree;
+  typedef Orthtree_traits_point<typename Traits_base<Traits>::type, Input_range, Indexed_point_map, false, 3> OTraits;
+
+  typedef CGAL::Orthtree<OTraits> Octree;
 
   Traits m_traits;
   Input_range m_input_range;
@@ -70,7 +71,8 @@ class RANSAC_octree {
 
 public:
 
-  typedef typename Octree::Node Node;
+  typedef typename Octree::Node_index Node;
+  typedef typename OTraits::Node_data Node_data;
 
   RANSAC_octree(const Traits &traits,
                 Input_iterator begin,
@@ -81,18 +83,26 @@ public:
           m_input_range(boost::counting_iterator<std::size_t>(0),
                         boost::counting_iterator<std::size_t>(end - begin)),
           m_index_map(begin, point_map),
-          m_octree(m_input_range, m_index_map, 1.0),
+          m_octree(OTraits(m_input_range, m_index_map)),
           m_bBox (bbox_3(make_transform_iterator_from_property_map(begin, point_map),
                          make_transform_iterator_from_property_map(end, point_map))),
           m_offset(offset) {}
 
   std::size_t index (Node node, std::size_t i) const
   {
-    return m_offset + *(node.begin() + i);
+    return m_offset + *(m_octree.data(node).begin() + i);
+  }
+
+  std::size_t depth(const Node& node) const {
+    return m_octree.depth(node);
+  }
+
+  bool is_leaf(const Node& node) const {
+    return m_octree.is_leaf(node);
   }
 
   std::size_t size() const {
-    return m_octree.root().size();
+    return m_input_range.size();
   }
 
   std::size_t maxLevel() const {
@@ -127,17 +137,27 @@ public:
     return m_width;
   }
 
+  Node child(const Node& node, std::size_t i) const {
+    return m_octree.child(node, i);
+  }
+
+  Node parent(const Node& node) const {
+    return m_octree.parent(node);
+  }
+
   Node locate(const typename Traits::Point_3 &p) const {
     return m_octree.locate(p);
   }
 
   Node root() const { return m_octree.root(); }
 
+  Node_data points(const Node& n) const { return m_octree.data(n); }
+
   typename Traits::Point_3 barycenter(const Node &node) const {
     return m_octree.barycenter(node);
   }
 
-  Bbox_3 boundingBox() const {
+  typename Traits::GeomTraits::Iso_cuboid_3 boundingBox() const {
       return m_octree.bbox(m_octree.root());
   }
 };
