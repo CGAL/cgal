@@ -253,12 +253,12 @@ public:
   /*!
     Retrieves the point property map.
   */
-  const Point_map &point_map() const { return m_point_pmap; }
+  const Point_map &point_map() const { return *m_point_pmap; }
 
   /*!
     Retrieves the normal property map.
   */
-  const Normal_map &normal() const { return m_normal_pmap; }
+  const Normal_map &normal() const { return *m_normal_pmap; }
 
   Input_iterator input_iterator_first() const {
     return m_input_iterator_first;
@@ -361,13 +361,13 @@ public:
         m_direct_octrees[s] = new Direct_octree(
                 m_traits, last + 1,
                 last + subsetSize + 1,
-                m_point_pmap,
+                *m_point_pmap,
                 remainingPoints - subsetSize);
       } else
         m_direct_octrees[0] = new Direct_octree(
                 m_traits, m_input_iterator_first,
                 m_input_iterator_first + (subsetSize),
-                m_point_pmap,
+                *m_point_pmap,
                 0);
 
       m_available_octree_sizes[s] = subsetSize;
@@ -378,7 +378,7 @@ public:
 
     m_global_octree = new Indexed_octree(
             m_traits, m_input_iterator_first, m_input_iterator_beyond,
-            m_point_pmap
+            *m_point_pmap
     );
     m_global_octree->refine(m_options.cluster_epsilon);
 
@@ -496,7 +496,7 @@ public:
     }
 
     // Use bounding box diagonal as reference for default values
-    Bbox_3 bbox = m_global_octree->boundingBox();
+    auto bbox = m_global_octree->boundingBox();
     FT bbox_diagonal = (FT) CGAL::sqrt(
             (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
             + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())
@@ -574,14 +574,14 @@ public:
                     static_cast<unsigned int>(m_num_available_points));
                 while (m_shape_index[first_sample] != -1);
 
-                done = drawSamplesFromCellContainingPoint
-                  (m_global_octree,
-                   get(m_point_pmap,
-                       *(m_input_iterator_first + first_sample)),
-                   select_random_octree_level(),
-                   indices,
-                   m_shape_index,
-                   m_required_samples);
+                done = drawSamplesFromCellContainingPoint(
+                  m_global_octree,
+                  get(*m_point_pmap, *(m_input_iterator_first + first_sample)),
+                  select_random_octree_level(),
+                  indices,
+                  m_shape_index,
+                  m_required_samples
+                );
 
                 if (callback && !callback(num_invalid / double(m_num_total_points))) {
                   clear(num_invalid, candidates);
@@ -605,8 +605,8 @@ public:
                 p->compute(indices,
                            m_input_iterator_first,
                            m_traits,
-                           m_point_pmap,
-                           m_normal_pmap,
+                           *m_point_pmap,
+                           *m_normal_pmap,
                            m_options.epsilon,
                            m_options.normal_threshold);
 
@@ -1086,7 +1086,7 @@ private:
       Cell cell = stack.top();
       stack.pop();
 
-      FT width = octree->width() / (1 << (cell.depth()));
+      FT width = octree->width() / (1 << (octree->depth(cell)));
 
       FT diag = CGAL::sqrt(FT(3) * width * width) + epsilon;
 
@@ -1097,10 +1097,10 @@ private:
 
       // differ between full or partial overlap?
       // if full overlap further traversal of this branch is not necessary
-      if (cell.is_leaf()) {
+      if (octree->is_leaf(cell)) {
         std::vector<std::size_t> indices;
-        indices.reserve(cell.size());
-        for (std::size_t i = 0; i < cell.size(); i++) {
+        indices.reserve(octree->points(cell).size());
+        for (std::size_t i = 0; i < octree->points(cell).size(); i++) {
           if (shapeIndex[octree->index(cell, i)] == -1) {
             indices.push_back(octree->index(cell, i));
           }
@@ -1111,10 +1111,10 @@ private:
                                  indices);
       } else {
 
-        if (!cell.is_leaf()) {
+        if (!octree->is_leaf(cell)) {
           for (std::size_t i = 0; i < 8; i++) {
-            if (!cell[i].empty())
-              stack.push(cell[i]);
+            if (octree->points(octree->child(cell, i)).size() != 0)
+              stack.push(octree->child(cell, i));
           }
         }
       }
@@ -1129,30 +1129,11 @@ private:
   const typename Octree::Node node_containing_point(const Octree *octree, const Point &p, std::size_t level) {
 
     // Find the node containing the point
-    typename Octree::Node cur = octree->root();
-    while (!cur.is_null() && cur.depth() < level) {
+    typename Octree::Node n = octree->locate(p);
+    while (octree->depth(n) > level)
+      n = octree->parent(n);
 
-      // If cur is a leaf node, its child is null
-      if (cur.is_leaf())
-        return typename Octree::Node();
-
-      // If that child is empty, return null
-      if (cur.empty())
-        return typename Octree::Node();
-
-      // Determine the coordinate of the child
-      Point center = octree->barycenter(cur);
-      std::bitset<3> coordinate;
-      coordinate[0] = center.x() <= p.x();
-      coordinate[1] = center.y() <= p.y();
-      coordinate[2] = center.z() <= p.z();
-
-      // Otherwise, return the correct child of cur
-      cur = cur[coordinate.to_ulong()];
-
-    }
-
-    return cur;
+    return n;
   }
 
   template<class Octree>
@@ -1167,13 +1148,9 @@ private:
 
     const Cell cur = node_containing_point(octree, p, level);
 
-    // Stop if the node we need doesn't exist
-    if (cur.is_null())
-      return false;
-
     // Count point indices that map to -1 in the shape index
     std::size_t enough = 0;
-    for (auto j : cur) {
+    for (const auto j : octree->points(cur)) {
       if (shapeIndex[j] == -1)
         enough++;
       if (enough >= requiredSamples)
@@ -1186,7 +1163,7 @@ private:
 
     do {
       std::size_t p = CGAL::get_default_random().
-              uniform_int<std::size_t>(0, cur.size() - 1);
+              uniform_int<std::size_t>(0, octree->points(cur).size() - 1);
       std::size_t j = octree->index(cur, p);
 
       if (shapeIndex[j] == -1)
@@ -1225,8 +1202,8 @@ private:
   // iterators of input data
   bool m_valid_iterators;
   Input_iterator m_input_iterator_first, m_input_iterator_beyond;
-  Point_map m_point_pmap;
-  Normal_map m_normal_pmap;
+  std::optional<Point_map> m_point_pmap;
+  std::optional<Normal_map> m_normal_pmap;
 };
 
 

@@ -1110,9 +1110,9 @@ protected:
     //
     Nt_traits nt_traits;
     const int or_fact = (m_orient == CLOCKWISE) ? -1 : 1;
-    const Algebraic r = nt_traits.convert(or_fact * m_r);
-    const Algebraic s = nt_traits.convert(or_fact * m_s);
-    const Algebraic t = nt_traits.convert(or_fact * m_t);
+    const Algebraic r = nt_traits.convert(Integer(or_fact * m_r));
+    const Algebraic s = nt_traits.convert(Integer(or_fact * m_s));
+    const Algebraic t = nt_traits.convert(Integer(or_fact * m_t));
     const Algebraic cos_2phi = (r - s) / nt_traits.sqrt((r-s)*(r-s) + t*t);
     const Algebraic zero = 0;
     const Algebraic one = 1;
@@ -1158,8 +1158,8 @@ protected:
     //        4*r*s - t^2                4*r*s - t^2
     //
     // The denominator (4*r*s - t^2) must be negative for hyperbolas.
-    const Algebraic u = nt_traits.convert(or_fact * m_u);
-    const Algebraic v = nt_traits.convert(or_fact * m_v);
+    const Algebraic u = nt_traits.convert(Integer(or_fact * m_u));
+    const Algebraic v = nt_traits.convert(Integer(or_fact * m_v));
     const Algebraic det = 4*r*s - t*t;
     Algebraic x0, y0;
 

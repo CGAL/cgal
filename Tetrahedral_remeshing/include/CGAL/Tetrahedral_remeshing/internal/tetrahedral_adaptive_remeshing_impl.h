@@ -57,22 +57,7 @@ public:
   void after_flip(CellHandle /* c */) {}
 };
 
-template<typename Tr>
-struct All_cells_selected
-{
-  using key_type = typename Tr::Cell_handle;
-  using value_type = bool;
-  using reference = bool;
-  using category = boost::read_write_property_map_tag;
 
-  friend value_type get(const All_cells_selected&, const key_type& c)
-  {
-    using SI = typename Tr::Cell::Subdomain_index;
-    return c->subdomain_index() != SI();
-  }
-  friend void put(All_cells_selected&, const key_type&, const value_type)
-  {} //nothing to do : subdomain indices are updated in remeshing};
-};
 
 
 template<typename Triangulation

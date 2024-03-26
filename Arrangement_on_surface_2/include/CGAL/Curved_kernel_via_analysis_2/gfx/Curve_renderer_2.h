@@ -865,7 +865,7 @@ void draw(const Arc_2& arc,
             get_pixel_coords(l, y_clip, pix_beg);
             get_pixel_coords(ptmp->left, it->second ? engine.y_max_r :
                 engine.y_min_r, pix_end);
-            if(CGAL_ABS(ptmp->left - l) <= engine.pixel_w_r*2) {
+            if(CGAL_ABS(Rational(ptmp->left - l)) <= engine.pixel_w_r*2) {
 
                 Coordinate_2 xy(Coordinate_1(pt), *support, arc.arcno());
                 Rational _;
