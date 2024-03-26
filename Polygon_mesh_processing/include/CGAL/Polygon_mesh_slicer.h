@@ -48,7 +48,7 @@ namespace CGAL {
 ///         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
 /// \tparam AABBTree must be an instantiation of `CGAL::AABB_tree` able to handle
 ///         the edges of `TriangleMesh`, having its `edge_descriptor` as primitive id.
-///         The default is `CGAL::AABB_tree<CGAL::AABB_traits<
+///         The default is `CGAL::AABB_tree<CGAL::AABB_traits_3<
 ///                  Traits, CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh> > >`
 /// \tparam UseParallelPlaneOptimization if `true`, the code will use specific
 ///         predicates and constructions in case the functor is called with a plane

@@ -15,7 +15,7 @@ and the primitives stored in the AABB tree.
 \cgalHasModelsBare{All models of the concept `Kernel`}
 \cgalHasModelsEnd
 
-\sa `CGAL::AABB_traits<AABBGeomTraits_2,AABBPrimitive>`
+\sa `CGAL::AABB_traits_2<AABBGeomTraits_2,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 

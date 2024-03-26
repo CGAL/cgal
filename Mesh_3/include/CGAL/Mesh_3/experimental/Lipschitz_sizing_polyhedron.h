@@ -18,7 +18,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/Mesh_3/experimental/Lipschitz_sizing_parameters.h>
 

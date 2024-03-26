@@ -227,7 +227,7 @@ template <typename TriangleMesh,
 class Projection_traits
 {
   typedef typename AABBTraits::FT                                          FT;
-  typedef typename AABBTraits::Point_3                                     Point;
+  typedef typename AABBTraits::Point                                       Point;
   typedef typename AABBTraits::Primitive                                   Primitive;
   typedef typename AABBTraits::Bounding_box                                Bounding_box;
   typedef typename AABBTraits::Primitive::Id                               Primitive_id;

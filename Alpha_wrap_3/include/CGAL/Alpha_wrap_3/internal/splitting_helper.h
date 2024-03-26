@@ -83,7 +83,7 @@ struct Splitter_traversal_traits
     : public CGAL::internal::AABB_tree::Projection_traits<AABBTraits>
   {
     using Base = CGAL::internal::AABB_tree::Projection_traits<AABBTraits>;
-    using Point = typename AABBTraits::Point_3;
+    using Point = typename AABBTraits::Point;
     using Primitive = typename AABBTraits::Primitive;
 
     std::unordered_set<std::size_t> visited_data;

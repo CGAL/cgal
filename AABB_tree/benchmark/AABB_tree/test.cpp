@@ -6,8 +6,8 @@
 
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_transformation.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
@@ -18,7 +18,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3>             Surface_mesh;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;
-typedef CGAL::AABB_do_intersect_transform_traits<K, Primitive> Traits;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
+//typedef CGAL::AABB_do_intersect_transform_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -33,7 +34,7 @@ void naive_test(int k, const char* fname,
   CGAL::Aff_transformation_3<K> init1(CGAL::SCALING, 6.0);
   PMP::transform(init1, tm);
   CGAL::Bbox_3 box = PMP::bbox(tm);
-  typedef CGAL::AABB_tree<CGAL::AABB_traits<K, Primitive> > Tree;
+  typedef CGAL::AABB_tree<Traits > Tree;
   Tree tmTree(tm.faces_begin(), tm.faces_end(), tm);
   Tree tmTree2(tm2.faces_begin(), tm2.faces_end(), tm2);
   CGAL::Aff_transformation_3<K> init2(CGAL::TRANSLATION, - K::Vector_3(

@@ -246,7 +246,7 @@ void test(const std::string filename,
     typedef CGAL::Polyhedron_3<K> Polyhedron;
     typedef Primitive_generator<Primitive,K,Polyhedron> Pr_generator;
     typedef typename Pr_generator::Primitive Pr;
-    typedef CGAL::AABB_traits<K, Pr> Traits;
+    typedef CGAL::AABB_traits_3<K, Pr> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
     Polyhedron polyhedron;
@@ -316,7 +316,7 @@ class Naive_implementations
 {
   typedef Primitive_generator<Primitive,K,Polyhedron> Pr_generator;
   typedef typename Pr_generator::Primitive Pr;
-  typedef CGAL::AABB_traits<K, Pr> Traits;
+  typedef CGAL::AABB_traits_3<K, Pr> Traits;
   typedef typename Pr_generator::iterator Polyhedron_primitive_iterator;
   typedef unsigned int size_type;
   typedef typename Traits::Object_and_primitive_id Object_and_primitive_id;

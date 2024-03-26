@@ -71,7 +71,9 @@ public:
  *           it is constructed on the fly to reduce the memory footprint.
  *           The default is `CGAL::Tag_false` (datum is not stored).
  *
+ * \sa `AABB_segment_primitive_2<Iterator,CacheDatum>`
  * \sa `AABB_segment_primitive_3<Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive_2<Iterator,CacheDatum>`
  * \sa `AABB_triangle_primitive_3<Iterator,CacheDatum>`
  * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
  * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`

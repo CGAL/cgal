@@ -13,7 +13,7 @@ define the Intersection_distance functor.
 \cgalHasModelsBare{All models of the concept `Kernel`}
 \cgalHasModelsEnd
 
-\sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
+\sa `CGAL::AABB_traits_3<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 

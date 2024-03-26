@@ -94,6 +94,9 @@ namespace internal {
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
  * \sa `AABB_segment_primitive_2<Iterator,CacheDatum>`
+ * \sa `AABB_segment_primitive_3<Iterator,CacheDatum>`
+ * \sa `AABB_segment_triangle_2<Iterator,CacheDatum>`
+ * \sa `AABB_segment_triangle_3<Iterator,CacheDatum>`
  * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
  * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
  */

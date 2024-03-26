@@ -32,7 +32,7 @@ class AABB_traits_SDF :
 public:
   typedef AABB_traits_3<GeomTraits, AABB_primitive> Base_traits;
   typedef typename Base_traits::Bounding_box Bounding_box;
-  typedef typename Base_traits::Point_3 Point_3;
+  typedef typename Base_traits::Point Point_3;
 
   class Do_intersect
     : public Base_traits::Do_intersect

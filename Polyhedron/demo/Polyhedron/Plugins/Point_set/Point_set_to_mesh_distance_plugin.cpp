@@ -80,7 +80,7 @@ double compute_distances(const Mesh& m,
   tree.build();
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type VPMap;
   VPMap vpmap = get(boost::vertex_point, m);
-  typename Traits::Point_3 hint = get(vpmap, *vertices(m).begin());
+  typename Traits::Point hint = get(vpmap, *vertices(m).begin());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   double hdist = 0;
@@ -97,7 +97,7 @@ double compute_distances(const Mesh& m,
 #else
   std::atomic<double> distance;
   distance.store(0);
-  Distance_computation<Tree, typename Traits::Point_3> f(tree, hint, point_set, &distance, out);
+  Distance_computation<Tree, typename Traits::Point> f(tree, hint, point_set, &distance, out);
   tbb::parallel_for(tbb::blocked_range<Point_set::const_iterator>(point_set.begin(), point_set.end()), f);
   return distance;
 #endif
