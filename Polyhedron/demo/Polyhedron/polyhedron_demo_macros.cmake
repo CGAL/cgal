@@ -35,28 +35,11 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
     if(TARGET demo_framework)
       target_link_libraries( ${plugin_name} PUBLIC demo_framework)
       add_dependencies(${plugin_name} demo_framework)
-      if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
-        if(NOT TARGET "compilation_of__demo_framework")
-              # This custom target is useless. It is used only as a flag to
-              # detect that the test has already been created.
-              add_custom_target("compilation_of__demo_framework")
-              add_dependencies( "compilation_of__demo_framework" demo_framework )
-              add_test(NAME "compilation of  demo_framework"
-                COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "demo_framework" --config "$<CONFIG>")
-
-              set_property(TEST "compilation of  demo_framework"
-                APPEND PROPERTY LABELS "CGAL_build_system" "Installation" "${PROJECT_NAME}")
-              set_property(TEST "compilation of  demo_framework"
-                APPEND PROPERTY FIXTURES_SETUP "demo_framework_SetupFixture")
-              set_property(TEST "compilation of  demo_framework"
-                APPEND PROPERTY DEPENDS "check build system" "compilation of  CGAL_Qt6_moc_and_resources")
-        endif()
-      endif()
     else()
       target_link_libraries( ${plugin_name} PUBLIC Polyhedron_demo_framework)
       add_dependencies(${plugin_name} Polyhedron_demo_framework)
     endif()
-    if(TARGET "compilation_of__demo_framework")
+    if(TARGET "compilation_of__demo_framework" AND TEST "compilation of  ${plugin_name}")
       set_property(TEST "compilation of  ${plugin_name}" APPEND PROPERTY FIXTURES_REQUIRED demo_framework_SetupFixture)
     endif()
     # Link with CGAL
@@ -98,4 +81,5 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
       string(TIMESTAMP VERSION "%Y-%m-%d %H:%M")
       file(APPEND ${filename} "\"ConfigDate\" : \"${VERSION}\" }")
     endif()
+    CGAL_install_hooks()
   endmacro(polyhedron_demo_plugin)

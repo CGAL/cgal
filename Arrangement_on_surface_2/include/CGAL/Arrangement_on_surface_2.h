@@ -39,11 +39,11 @@
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/In_place_list.h>
-#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Aos_observer.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
 #include <CGAL/Arr_point_location_result.h>

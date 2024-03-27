@@ -25,6 +25,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2/Arr_default_planar_topology.h>
+#include <CGAL/Arr_default_dcel.h>
 
 namespace CGAL {
 

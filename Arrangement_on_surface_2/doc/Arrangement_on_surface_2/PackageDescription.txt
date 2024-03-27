@@ -205,6 +205,7 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arrangement_2::Halfedge`
 - `CGAL::Arrangement_2::Face`
 - `CGAL::Arr_dcel_base<V,H,F>`
+- `CGAL::Arr_dcel<Traits,V,H,F>`
 - `CGAL::Arr_default_dcel<Traits>`
 - `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`
 - `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>`
