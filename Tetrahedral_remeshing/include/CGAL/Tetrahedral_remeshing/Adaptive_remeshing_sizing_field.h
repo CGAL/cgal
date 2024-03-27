@@ -194,7 +194,7 @@ public:
   *    \cgalParamDefault{ }
   *    \cgalParamType{ }
   *  \cgalParamNEnd
-  *  \cgalParamNBegin{ cell_selector }
+  *  \cgalParamNBegin{ cell_is_selected_map }
   *    \cgalParamDescription{ }
   *    \cgalParamDefault{ }
   *    \cgalParamType{ }
