@@ -51,12 +51,12 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 template <typename GT>
-void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector_3& p2, const typename GT::Vector_3& p3, Eigen::Matrix<double, 4, 4>& quadric)
+void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector_3& p2, const typename GT::Vector_3& p3, Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
 {
   typename GT::Vector_3 crossX1X2 = CGAL::cross_product(p1, p2);
   typename GT::Vector_3 crossX2X3 = CGAL::cross_product(p2, p3);
   typename GT::Vector_3 crossX3X1 = CGAL::cross_product(p3, p1);
-  double determinantABC = CGAL::determinant(p1, p2, p3);
+  typename GT::FT determinantABC = CGAL::determinant(p1, p2, p3);
 
   typename GT::FT n[4] = {
     crossX1X2.x() + crossX2X3.x() + crossX3X1.x(),
@@ -71,29 +71,23 @@ void compute_qem_face(const typename GT::Vector_3& p1, const typename GT::Vector
 }
 
 template <typename GT>
-void compute_qem_vertex(std::vector<std::vector<typename GT::Vector_3>> cluster_tris, Eigen::Matrix<double, 4, 4>& quadric, typename GT::Vector_3& centroid)
+void compute_qem_vertex(std::vector<std::vector<typename GT::Vector_3>> cluster_tris, Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
 {
   quadric.setZero();
-  centroid = typename GT::Vector_3(0, 0, 0);
-  for (int i = 0; i < cluster_tris.size(); i++)
-  {
-    centroid = centroid + (cluster_tris[i][0] + cluster_tris[i][1] + cluster_tris[i][2]);
-  }
-  centroid = centroid / 3;
 
   for (int i = 0; i < cluster_tris.size(); i++)
   {
-    Eigen::Matrix<double, 4, 4> q;
+    Eigen::Matrix<typename GT::FT, 4, 4> q;
     compute_qem_face<GT>(cluster_tris[i][0], cluster_tris[i][1], cluster_tris[i][2], q);
     quadric = quadric + q;
   }
 }
 
 template <typename GT>
-typename GT::Vector_3 compute_displacement(const Eigen::Matrix<double, 4, 4>& quadric, const typename GT::Vector_3& p, int& RankDeficiency)
+typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 4, 4> quadric, const typename GT::Vector_3& p, int& RankDeficiency)
 {
-  typedef Eigen::Matrix<double, 4, 4> Matrix4d;
-  typedef Eigen::Matrix<double, 3, 3> Matrix3d;
+  typedef Eigen::Matrix<typename GT::FT, 4, 4> Matrix4d;
+  typedef Eigen::Matrix<typename GT::FT, 3, 3> Matrix3d;
 
 
   int MaxNumberOfUsedSingularValues = 3;
@@ -115,22 +109,22 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<double, 4, 4>& qu
   w = typename GT::Vector_3(w_temp(0), w_temp(1), w_temp(2));
 
   // compute all eigen values absolute values
-  double AbsolutesEigenValues[3];
-  double maxW = -1.0;
+  typename GT::FT AbsolutesEigenValues[3];
+  typename GT::FT maxW = -1.0;
   for (int j = 0; j < 3; j++)
   {
-    double AbsoluteEigenValue = fabs(w[j]);
+    typename GT::FT AbsoluteEigenValue = fabs(w[j]);
     AbsolutesEigenValues[j] = AbsoluteEigenValue;
     if (AbsoluteEigenValue > maxW)
       maxW = AbsoluteEigenValue;
   }
-  double invmaxW = 1.0 / maxW;
+  typename GT::FT invmaxW = 1.0 / maxW;
 
   Matrix3d tempMatrix, tempMatrix2;
 
   for (int i = 0; i < 3; i++)
   {
-    double LocalMaxW = -1;
+    typename GT::FT LocalMaxW = -1;
     int IndexMax = -1;
 
     // find the remaining eigenvalue with highest absolute value
@@ -147,7 +141,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<double, 4, 4>& qu
       && (MaxNumberOfUsedSingularValues > 0))
     {
       // If this is true,	then w[i] != 0,	so this	division is	ok.
-      double Inv = 1.0 / w[IndexMax];
+      typename GT::FT Inv = 1.0 / w[IndexMax];
       tempMatrix(IndexMax, 0) = U(0, IndexMax) * Inv;
       tempMatrix(IndexMax, 1) = U(1, IndexMax) * Inv;
       tempMatrix(IndexMax, 2) = U(2, IndexMax) * Inv;
@@ -166,16 +160,16 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<double, 4, 4>& qu
   }
 
   tempMatrix2 = VT * tempMatrix;
-  Eigen::Matrix<double, 3, 1> p_temp, b;
+  Eigen::Matrix<typename GT::FT, 3, 1> p_temp, b;
   b << -quadric(0, 3), -quadric(1, 3), -quadric(2, 3);
   p_temp << p.x(), p.y(), p.z();
-  Eigen::Matrix<double, 3, 1> displacement_temp = tempMatrix2 * (b - A * p_temp);
+  Eigen::Matrix<typename GT::FT, 3, 1> displacement_temp = tempMatrix2 * (b - A * p_temp);
   typename GT::Vector_3 displacement = { displacement_temp(0), displacement_temp(1), displacement_temp(2) };
   return displacement;
 }
 
 template <typename GT>
-void compute_representative_point(const Eigen::Matrix<double, 4, 4>& quadric, typename GT::Vector_3& p, int& RankDeficiency)
+void compute_representative_point(const Eigen::Matrix<typename GT::FT, 4, 4>& quadric, typename GT::Vector_3& p, int& RankDeficiency)
 {
   // average point
   typename GT::Vector_3 displacement = compute_displacement<GT>(quadric, p, RankDeficiency);
@@ -345,7 +339,7 @@ std::pair<
   // So do the following till the condition is met
   while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
   {
-    double curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
+    typename GT::FT curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
     int subdivide_steps = (std::max)((int)ceil(log(curr_factor) / log(4)), 0);
 
     if (subdivide_steps > 0)
@@ -666,7 +660,7 @@ std::pair<
   PolygonMesh simplified_mesh;
 
   // create a point for each cluster
-  std::vector<Eigen::Matrix<double, 4, 4>> cluster_quadrics(clusters.size());
+  std::vector<Eigen::Matrix<typename GT::FT, 4, 4>> cluster_quadrics(clusters.size());
 
   // initialize quadrics
   for (int i = 0; i < nb_clusters; i++)
@@ -689,7 +683,7 @@ std::pair<
 
     if (c_1 != -1 && c_2 != -1 && c_3 != -1)
     {
-      Eigen::Matrix<double, 4, 4> q;
+      Eigen::Matrix<typename GT::FT, 4, 4> q;
       compute_qem_face<GT>(vec_1, vec_2, vec_3, q);
       cluster_quadrics[c_1] += q;
       cluster_quadrics[c_2] += q;
@@ -705,7 +699,7 @@ std::pair<
       typename GT::Vector_3 cluster_representative = clusters[i].compute_centroid();
 
       int RankDeficiency = 0;
-      compute_representative_point<GT>(cluster_quadrics[i], cluster_representative, RankDeficiency);
+      //compute_representative_point<GT>(cluster_quadrics[i], cluster_representative, RankDeficiency);
 
 
       typename GT::Point_3 cluster_representative_p(cluster_representative.x(), cluster_representative.y(), cluster_representative.z());
