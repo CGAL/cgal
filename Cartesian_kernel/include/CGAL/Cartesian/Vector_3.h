@@ -64,9 +64,6 @@ public:
   explicit VectorC3(const Line_3 &l)
   { *this = R().construct_vector_3_object()(l); }
 
-  VectorC3(const FT_ &x, const FT_ &y, const FT_ &z)
-    : base(Rep{x, y, z}) {}
-
   template <class T1, class T2, class T3>
   VectorC3(T1 &&x, T2 &&y, T3 &&z)
     : base(fwd_make_array<FT_>(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z))) {}
