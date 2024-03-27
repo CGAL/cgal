@@ -119,14 +119,10 @@ void run(const char* filename,
 
 int main(int argc, char* argv[])
 {
-  if(argc == 1)
-  {
-    std::cerr << "Usage: " << argv[0] << " <vtk image> <isovalue = 0>" << std::endl;
-    return EXIT_FAILURE;
-  }
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/torus_gray_image.vti");
 
-  const char* filename = argv[1];
-  const FT isovalue = (argc > 2) ? std::stod(argv[2]) : 0;
+  const char* filename = fname.c_str();
+  const FT isovalue = (argc > 2) ? std::stod(argv[2]) : 3;
 
   const std::string ext = CGAL::IO::internal::get_file_extension(filename);
   if(ext == "mhd" || ext == "mha")
