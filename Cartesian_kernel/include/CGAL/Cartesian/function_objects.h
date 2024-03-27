@@ -3085,7 +3085,7 @@ namespace CartesianKernelFunctors {
     { return Rep(x, y); }
 
     template <class T1, class T2>
-    Rep
+    std::enable_if_t<!std::is_same_v<T1, Return_base_tag>, Rep>
     operator()(T1&& x, T2&& y) const
     { return Rep(std::forward<T1>(x), std::forward<T2>(y)); }
 
@@ -3579,7 +3579,7 @@ namespace CartesianKernelFunctors {
     template<class T1, class T2>
     Rep // Vector_2
     operator()(Return_base_tag, T1&& x, T2&& y) const
-    { return Rep(/* std::forward<T1>(x), std::forward<T2>(y) */); }
+    { return Rep(std::forward<T1>(x), std::forward<T2>(y)); }
 
     Rep // Vector_2
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& w) const
