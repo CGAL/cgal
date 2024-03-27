@@ -169,7 +169,7 @@ namespace Tetrahedral_remeshing
     std::size_t i = 0;
     for (const Point& p : pc)
     {
-      vpc[i] = tr.insert(pc[i]);
+      vpc[i] = tr.insert(p);
       vpc[i]->set_dimension(0);
       ++i;
     }
@@ -197,9 +197,9 @@ namespace Tetrahedral_remeshing
       c->set_subdomain_index(1);
 
     // set surface patches
-    for (auto f : tr.finite_facets())
+    for (typename Tr::Facet f : tr.finite_facets())
     {
-      auto& mf = tr.mirror_facet(f);
+      typename Tr::Facet mf = tr.mirror_facet(f);
       if(tr.is_infinite(f.first) || tr.is_infinite(mf.first))
       {
         f.first->set_surface_patch_index(f.second, 2);

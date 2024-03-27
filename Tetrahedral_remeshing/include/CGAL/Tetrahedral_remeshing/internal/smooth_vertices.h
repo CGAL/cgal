@@ -24,6 +24,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/AABB_segment_primitive.h>
+#include <CGAL/use.h>
 
 #include <optional>
 #include <boost/container/small_vector.hpp>
@@ -717,6 +718,7 @@ private:
 
       const Point_3 smoothed_position = current_pos + move;
 
+      CGAL_USE(vertices_normals);
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
 
       Vector_3 sum_projections = CGAL::NULL_VECTOR;
@@ -740,6 +742,7 @@ private:
 #else // AABB_tree projection
 
       const Point_3 new_pos = m_segments_aabb_tree.closest_point(smoothed_position);
+
 
 #endif //CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
 
