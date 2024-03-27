@@ -74,53 +74,46 @@ The Graphics_scene_options class is responsible for providing a set of options a
 
 The following example shows how to use a graphics scene options to tune the drawing of a surface mesh. In this example, we define our own class `My_graphics_scene_options` that inherits from `CGAL::Graphics_scene_options` to get all the default parameters. In this class, we only override the two methods `colored_vertex` and `vertex_color` to draw all vertices in color, and chose randomly green or blue colors for one out of two vertices.
 
+\cgalExample{Basic_viewer/draw_surface_mesh_vcolor.cpp}
+
+The result of this example can be shown in \cgalFigureRef{basic_viewer_ex2}.
+
 \cgalFigureBegin{basic_viewer_ex2,draw_surface_mesh_vcolor.png}
 Example of tuned drawing of a 3D surface mesh where some vertex colors are changed.
 \cgalFigureEnd
 
 
-
-ICICICI
-
-
+The drawing options can depend on the cells. We illustrate this possibility of the following example which compute a color for each face depending on its height.
 
 \cgalExample{Basic_viewer/draw_surface_mesh_height.cpp}
 
-\subsection Some key goals and features of the Qt viewer include:
+The result of this example can be shown in \cgalFigureRef{basic_viewer_ex3} where we can see that all faces in a same height share the same color.
 
-TODO explain the main key options
+\cgalFigureBegin{basic_viewer_ex3,draw_surface_height.png}
+Example of mesh drawing with a color for each face computed thanks to its height.
+\cgalFigureEnd
 
-<OL>
-<LI> Versatile Rendering:
 
-The viewer supports the rendering of various geometric elements, such as points, edges, faces, rays, and lines.
-Different rendering modes, including mono and colored representations, are available for these elements.
 
-<LI> Camera Control:
 
-The viewer allows users to switch between 2D and 3D viewing modes, adjusting the camera accordingly.
-Camera settings, such as orthographic or perspective projection, can be configured based on the dimensionality of the scene.
 
-<LI> User Interaction:
 
-Users can interact with the viewer through keyboard inputs, enabling them to control rendering options, toggle the display of elements, and adjust visual parameters.
-Key presses are mapped to specific actions, such as toggling the clipping plane, changing rendering modes, adjusting the size of elements, and modifying ambient light color.
 
-<LI> Clipping Plane:
 
-The viewer includes support for a clipping plane, allowing users to selectively render parts of the scene.
-The clipping plane can be toggled on and off, and its rendering style can be modified (solid, wireframe, etc.).
 
-<LI> Shader Support:
 
-Shaders are compiled to enhance the rendering capabilities of the viewer, potentially providing advanced shading and visual effects.
 
-<LI> Flexibility and Configurability:
 
-The viewer is designed to be flexible, allowing users to configure various rendering parameters and interact with the scene based on their needs.
-The code includes functions for setting up the initial state of the viewer, initializing OpenGL settings, and handling key events.
 
-</OL>
+
+
+
+
+
+
+
+ICICICI
+
 
 \section  Graphic_Scene
 
