@@ -17,6 +17,7 @@
 #include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/IO/io.h>
 #include <CGAL/Named_function_parameters.h>
 
 #include <string>
@@ -43,7 +44,7 @@ bool write_OBJ(std::ostream& out,
   typename GeomTraits::Compute_z_3 z_coord = grid.geom_traits().compute_z_3_object();
   typename GeomTraits::Construct_vertex_3 vertex = grid.geom_traits().construct_vertex_3_object();
 
-  set_ascii_mode(out); // obj is ASCII only
+  ::CGAL::IO::set_ascii_mode(out); // obj is ASCII only
 
   set_stream_precision_from_NP(out, np);
 
