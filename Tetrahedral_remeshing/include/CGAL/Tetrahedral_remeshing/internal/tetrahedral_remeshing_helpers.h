@@ -1296,6 +1296,36 @@ auto max_size_at_centroids(const CellRange& cells,
   return size;
 }
 
+template<typename Sizing, typename C3t3, typename Cell_selector>
+auto average_sizing_in_incident_cells(const typename C3t3::Edge& e,
+                                      const Sizing& sizing,
+                                      const C3t3& c3t3,
+                                      const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+
+  typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typename Tr::Cell_circulator done = circ;
+
+  FT size_at_uv = 0.;
+  unsigned int count = 0;
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv += size_at_cc;
+      ++count;
+    }
+  } while (++circ != done);
+
+  size_at_uv = size_at_uv / static_cast<FT>(count);
+
+  CGAL_assertion(size_at_uv > 0);
+  return size_at_uv;
+}
+
 template<typename Vertex_handle,
          typename Sizing,
          typename C3t3,
@@ -1374,36 +1404,6 @@ auto max_sizing_in_incident_cells(const typename C3t3::Edge& e,
       size_at_uv = (std::max)(size_at_uv, size_at_cc);
     }
   } while (++circ != done);
-
-  CGAL_assertion(size_at_uv > 0);
-  return size_at_uv;
-}
-
-template<typename Sizing, typename C3t3, typename Cell_selector>
-auto average_sizing_in_incident_cells(const typename C3t3::Edge& e,
-                                      const Sizing& sizing,
-                                      const C3t3& c3t3,
-                                      const Cell_selector& cell_selector)
-{
-  using Tr = typename C3t3::Triangulation;
-  using FT = typename Tr::Geom_traits::FT;
-
-  typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
-  typename Tr::Cell_circulator done = circ;
-
-  FT size_at_uv = 0.;
-  unsigned int count = 0;
-  do
-  {
-    if (get(cell_selector, circ))
-    {
-      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
-      size_at_uv += size_at_cc;
-      ++count;
-    }
-  } while (++circ != done);
-
-  size_at_uv = size_at_uv / static_cast<FT>(count);
 
   CGAL_assertion(size_at_uv > 0);
   return size_at_uv;
