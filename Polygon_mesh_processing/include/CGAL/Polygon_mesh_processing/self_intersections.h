@@ -43,6 +43,7 @@
 #endif
 
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/range/irange.hpp>
 
 #include <exception>
 #include <sstream>
@@ -53,6 +54,127 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
+
+template <class TM>
+struct Triangle_mesh_and_triangle_soup_wrapper
+{
+  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor; // private
+
+  static void get_face_vertices(face_descriptor fd, std::array<vertex_descriptor,3>& vh, const TM& tm)
+  {
+    CGAL_assertion(boost::graph_traits<TM>::null_face() != fd);
+    halfedge_descriptor h = halfedge(fd, tm);
+    vh[0]=source(h, tm);
+    vh[1]=target(h, tm);
+    vh[2]=target(next(h, tm), tm);
+  }
+
+  static bool faces_have_a_shared_edge(face_descriptor f, face_descriptor g, std::array<vertex_descriptor, 4>& vh, const TM& tm)
+  {
+    CGAL_assertion(boost::graph_traits<TM>::null_face() != f);
+    CGAL_assertion(boost::graph_traits<TM>::null_face() != g);
+    halfedge_descriptor h=halfedge(f, tm);
+    for(unsigned int i=0; i<3; ++i)
+    {
+      halfedge_descriptor opp_h = opposite(h, tm);
+      if(face(opp_h, tm) == g)
+      {
+        vh[0]=source(h, tm);
+        vh[1]=target(h, tm);
+        vh[2]=target(next(h, tm), tm);
+        vh[3]=target(next(opp_h, tm), tm);
+        return true;
+      }
+      h = next(h, tm);
+    }
+    return false;
+  }
+
+  static bool is_pure_triangle(const TM& tm)
+  {
+    return is_triangle_mesh(tm);
+  }
+};
+
+template <class PointRange, class TriangleRange>
+struct Triangle_mesh_and_triangle_soup_wrapper<
+    std::pair<const PointRange&,
+              const TriangleRange&>>
+{
+  typedef std::size_t face_descriptor;
+  typedef std::size_t vertex_descriptor;
+
+  typedef std::pair<const PointRange&, const TriangleRange& > Soup;
+
+  static void get_face_vertices(face_descriptor fd, std::array<vertex_descriptor,3>& vh, const Soup& soup)
+  {
+    const auto& face = soup.second[fd];
+    vh[0]=face[0];
+    vh[1]=face[1];
+    vh[2]=face[2];
+  }
+
+  static bool faces_have_a_shared_edge(face_descriptor fd, face_descriptor gd, std::array<vertex_descriptor, 4>& vh, const Soup& soup)
+  {
+    const auto& f = soup.second[fd];
+    const auto& g = soup.second[gd];
+
+    for(unsigned int i=0; i<2; ++i) // no need to check f[2] if neither f[0] nor f[1] are shared
+    {
+      for(unsigned int j=0; j<3; ++j)
+      {
+        if (f[i]==g[j])
+        {
+          vh[0]=f[i];
+          vh[1]=f[i+1];
+          vh[2]=f[(i+2)%3];
+
+          if (vh[1]==g[(j+1)%3])
+          {
+            vh[3]=g[(j+2)%3];
+            return true;
+          }
+          if (vh[1]==g[(j+2)%3])
+          {
+            vh[3]=g[(j+1)%3];
+            return true;
+          }
+
+          if (i==0)
+          {
+            vh[1]=f[i];
+            vh[2]=f[(i+1)%3];
+            vh[0]=f[(i+2)%3];
+            if (vh[0]==g[(j+1)%3])
+            {
+              vh[3]=g[(j+2)%3];
+              return true;
+            }
+            if (vh[0]==g[(j+2)%3])
+            {
+              vh[3]=g[(j+1)%3];
+              return true;
+            }
+          }
+
+          return false;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  static bool is_pure_triangle(const Soup& soup)
+  {
+    for (const typename std::iterator_traits<typename TriangleRange::const_iterator>::value_type& t : soup.second)
+      if (t.size()!=3)
+        return false;
+    return true;
+  }
+};
 
 template<typename Output_iterator>
 struct Throw_at_count_reached_functor {
@@ -82,59 +204,49 @@ struct Throw_at_count_reached_functor {
 
 // Checks for 'real' intersections, i.e. not simply a shared vertex or edge
 template <class GT, class TM, class VPM>
-bool do_faces_intersect(typename boost::graph_traits<TM>::halfedge_descriptor h,
-                        typename boost::graph_traits<TM>::halfedge_descriptor g,
+bool do_faces_intersect(typename Triangle_mesh_and_triangle_soup_wrapper<TM>::face_descriptor fh,
+                        typename Triangle_mesh_and_triangle_soup_wrapper<TM>::face_descriptor fg,
                         const TM& tmesh,
                         const VPM vpmap,
                         const typename GT::Construct_segment_3& construct_segment,
                         const typename GT::Construct_triangle_3& construct_triangle,
                         const typename GT::Do_intersect_3& do_intersect)
 {
-  typedef typename boost::graph_traits<TM>::vertex_descriptor                 vertex_descriptor;
-  typedef typename boost::graph_traits<TM>::halfedge_descriptor               halfedge_descriptor;
+  typedef Triangle_mesh_and_triangle_soup_wrapper<TM>       Wrapper;
+  typedef typename Wrapper::vertex_descriptor     vertex_descriptor;
 
-  typedef typename GT::Segment_3                                              Segment;
-  typedef typename GT::Triangle_3                                             Triangle;
+  typedef typename GT::Segment_3                            Segment;
+  typedef typename GT::Triangle_3                          Triangle;
 
-  CGAL_assertion(!is_border(h, tmesh));
-  CGAL_assertion(!is_border(g, tmesh));
 
-  vertex_descriptor hv[3], gv[3];
-  hv[0] = target(h, tmesh);
-  hv[1] = target(next(h, tmesh), tmesh);
-  hv[2] = source(h, tmesh);
-
-  gv[0] = target(g, tmesh);
-  gv[1] = target(next(g, tmesh), tmesh);
-  gv[2] = source(g, tmesh);
+  std::array<vertex_descriptor, 3> hv, gv;
+  Wrapper::get_face_vertices(fh, hv, tmesh);
+  Wrapper::get_face_vertices(fg, gv, tmesh);
 
   // check for shared edge
-  for(unsigned int i=0; i<3; ++i)
+  std::array<vertex_descriptor, 4> verts;
+  if (Wrapper::faces_have_a_shared_edge(fh, fg, verts, tmesh))
   {
-    halfedge_descriptor opp_h = opposite(h, tmesh);
-    if(face(opp_h, tmesh) == face(g, tmesh))
-    {
-      // there is an intersection if the four points are coplanar and the triangles overlap
-      if(CGAL::coplanar(get(vpmap, hv[i]),
-                        get(vpmap, hv[(i+1)%3]),
-                        get(vpmap, hv[(i+2)%3]),
-                        get(vpmap, target(next(opp_h, tmesh), tmesh))) &&
-         CGAL::coplanar_orientation(get(vpmap, hv[(i+2)%3]),
-                                    get(vpmap, hv[i]),
-                                    get(vpmap, hv[(i+1)%3]),
-                                    get(vpmap, target(next(opp_h, tmesh), tmesh)))
-           == CGAL::POSITIVE)
-      {
-        return true;
-      }
-      else
-      {
-        // there is a shared edge but no intersection
-        return false;
-      }
-    }
+    if (verts[2]==verts[3]) return false; // only for a soup of triangles
 
-    h = next(h, tmesh);
+    // there is an intersection if the four points are coplanar and the triangles overlap
+    if(CGAL::coplanar(get(vpmap, verts[0]),
+                      get(vpmap, verts[1]),
+                      get(vpmap, verts[2]),
+                      get(vpmap, verts[3])) &&
+       CGAL::coplanar_orientation(get(vpmap, verts[0]),
+                                  get(vpmap, verts[1]),
+                                  get(vpmap, verts[2]),
+                                  get(vpmap, verts[3]))
+         == CGAL::POSITIVE)
+    {
+      return true;
+    }
+    else
+    {
+      // there is a shared edge but no intersection
+      return false;
+    }
   }
 
   // check for shared vertex --> maybe intersection, maybe not
@@ -188,8 +300,6 @@ template <class Box, class TM, class VPM, class GT,
           class OutputIterator>
 struct Strict_intersect_faces // "strict" as in "not sharing a subface"
 {
-  typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
-
   mutable OutputIterator m_iterator;
   const TM& m_tmesh;
   const VPM m_vpmap;
@@ -209,10 +319,7 @@ struct Strict_intersect_faces // "strict" as in "not sharing a subface"
 
   void operator()(const Box* b, const Box* c) const
   {
-    const halfedge_descriptor h = halfedge(b->info(), m_tmesh);
-    const halfedge_descriptor g = halfedge(c->info(), m_tmesh);
-
-    if(do_faces_intersect<GT>(h, g, m_tmesh, m_vpmap, m_construct_segment, m_construct_triangle, m_do_intersect))
+    if(do_faces_intersect<GT>(b->info(), c->info(), m_tmesh, m_vpmap, m_construct_segment, m_construct_triangle, m_do_intersect))
       *m_iterator++ = std::make_pair(b->info(), c->info());
   }
 };
@@ -229,15 +336,17 @@ self_intersections_impl(const FaceRange& face_range,
                         const bool throw_on_SI,
                         const NamedParameters& np)
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
+  typedef TriangleMesh                                                                   TM;
+  typedef Triangle_mesh_and_triangle_soup_wrapper<TM>                                    Wrapper;
+
+  CGAL_precondition(Wrapper::is_pure_triangle(tmesh));
 
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
   using CGAL::parameters::is_default_parameter;
 
-  typedef TriangleMesh                                                                   TM;
-  typedef typename boost::graph_traits<TM>::halfedge_descriptor                          halfedge_descriptor;
-  typedef typename boost::graph_traits<TM>::face_descriptor                              face_descriptor;
+  typedef typename Wrapper::face_descriptor                                              face_descriptor;
+  typedef typename Wrapper::vertex_descriptor                                            vertex_descriptor;
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS                                  Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor, Box_policy> Box;
@@ -245,9 +354,9 @@ self_intersections_impl(const FaceRange& face_range,
   typedef typename GetGeomTraits<TM, NamedParameters>::type                              GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  typedef typename GetVertexPointMap<TM, NamedParameters>::const_type                    VPM;
-  VPM vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                               get_const_property_map(boost::vertex_point, tmesh));
+  typedef GetVertexPointMap<TM, NamedParameters>                                  VPM_helper;
+  typedef typename VPM_helper::const_type                                                VPM;
+  VPM vpmap = VPM_helper::get_const_map(np, tmesh);
 
   const bool do_limit = !(is_default_parameter<NamedParameters, internal_np::maximum_number_t>::value);
   const unsigned int maximum_number = choose_parameter(get_parameter(np, internal_np::maximum_number), 0);
@@ -268,11 +377,13 @@ self_intersections_impl(const FaceRange& face_range,
   // This loop is very cheap, so there is hardly anything to gain from parallelizing it
   for(face_descriptor f : face_range)
   {
-    halfedge_descriptor h = halfedge(f, tmesh);
+    std::array<vertex_descriptor, 3> vh;
+    Wrapper::get_face_vertices(f, vh, tmesh);
+
     typename boost::property_traits<VPM>::reference
-      p = get(vpmap, target(h,tmesh)),
-      q = get(vpmap, target(next(h, tmesh), tmesh)),
-      r = get(vpmap, target(prev(h, tmesh), tmesh));
+      p = get(vpmap, vh[0]),
+      q = get(vpmap, vh[1]),
+      r = get(vpmap, vh[2]);
 
     // tiny fixme: if f is degenerate, we might still have a real intersection between f
     // and another face f', but right now we are not creating a box for f and thus not returning those
@@ -312,7 +423,7 @@ self_intersections_impl(const FaceRange& face_range,
   Throwing_filter throwing_filter(tmesh, vpmap, gt, Throwing_output_iterator());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
@@ -342,7 +453,7 @@ self_intersections_impl(const FaceRange& face_range,
         std::atomic<unsigned int> atomic_counter(counter);
         Throw_functor throwing_count_functor(atomic_counter, maximum_number, std::back_inserter(face_pairs));
         Throwing_after_count_output_iterator count_filter(throwing_count_functor);
-        Filtered_intersecting_faces_filter limited_callback(tmesh, vpmap, gt, count_filter);
+         Filtered_intersecting_faces_filter limited_callback(tmesh, vpmap, gt, count_filter);
         CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), limited_callback, cutoff);
       }
       catch(const CGAL::internal::Throw_at_output_exception&)
@@ -408,9 +519,9 @@ self_intersections_impl(const FaceRange& face_range,
  *
  * collects intersections between a subset of faces of a triangulated surface mesh.
  * Two faces are said to intersect if the corresponding triangles intersect
- * and the intersection is not an edge nor a vertex incident to both faces.
+ * and the intersection is neither an edge nor a vertex incident to both faces.
  *
- * This function depends on the package \ref PkgBoxIntersectionD
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
@@ -419,7 +530,8 @@ self_intersections_impl(const FaceRange& face_range,
  * @tparam FaceRange a model of `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`.
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
- *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
+ *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`.
+ *    It does not need to be thread-safe.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param face_range the range of faces to check for self-intersection.
@@ -475,9 +587,9 @@ self_intersections(const FaceRange& face_range,
  *
  * collects intersections between all the faces of a triangulated surface mesh.
  * Two faces are said to intersect if the corresponding triangles intersect
- * and the intersection is not an edge nor a vertex incident to both faces.
+ * and the intersection is neither an edge nor a vertex incident to both faces.
  *
- * This function depends on the package \ref PkgBoxIntersectionD
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
@@ -485,14 +597,15 @@ self_intersections(const FaceRange& face_range,
  *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
- *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
+ *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`.
+ *    It does not need to be thread-safe.
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tmesh the triangulated surface mesh to be checked
  * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect.
-              In case `tmesh` contains some degenerate faces, for each degenerate face `f` a pair `(f,f)`
-              will be put in `out` before any other self intersection between non-degenerate faces.
-              These are the only pairs where degenerate faces will be reported.
+ *            In case `tmesh` contains some degenerate faces, for each degenerate face `f` a pair `(f,f)`
+ *            will be put in `out` before any other self intersection between non-degenerate faces. <br>
+ *            Note that these are the only pairs where degenerate faces will be reported.
  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -541,7 +654,7 @@ self_intersections(const TriangleMesh& tmesh,
  *
  * \brief tests if a set of faces of a triangulated surface mesh self-intersects.
  *
- * This function depends on the package \ref PkgBoxIntersectionD
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
@@ -584,8 +697,6 @@ bool does_self_intersect(const FaceRange& face_range,
                          const TriangleMesh& tmesh,
                          const NamedParameters& np = parameters::default_values())
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
-
   try
   {
     CGAL::Emptyset_iterator unused_out;
@@ -614,7 +725,7 @@ bool does_self_intersect(const FaceRange& face_range,
  *
  * \brief tests if a triangulated surface mesh self-intersects.
  *
- * This function depends on the package \ref PkgBoxIntersectionD
+ * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
@@ -654,6 +765,219 @@ bool does_self_intersect(const TriangleMesh& tmesh,
                          const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return does_self_intersect<ConcurrencyTag>(faces(tmesh), tmesh, np);
+}
+
+
+#ifndef DOXYGEN_RUNNING
+template <class PointRange, class VPM>
+struct Property_map_for_soup
+{
+  typedef std::size_t key_type;
+  typedef typename boost::property_traits<VPM>::value_type value_type;
+  //typedef typename boost::property_traits<VPM>::category category;
+  typedef boost::readable_property_map_tag category;
+  typedef typename boost::property_traits<VPM>::reference reference;
+
+  const PointRange& points;
+  VPM vpm;
+
+  Property_map_for_soup(const PointRange& points, VPM vpm)
+    : points(points)
+    , vpm(vpm)
+  {}
+
+  inline friend
+  reference get(const Property_map_for_soup<PointRange, VPM>& map, key_type k)
+  {
+    return get(map.vpm, map.points[k]);
+  }
+};
+#endif
+
+/**
+ * \ingroup PMP_intersection_grp
+ *
+ * collects intersections between all the triangles in a triangle soup.
+ *
+ * Two triangles of the soup are said to intersect if the corresponding geometric triangles intersect
+ * and the intersection is neither an edge nor a vertex of both triangles
+ * (with the same point ids, ignoring the orientation for an edge).
+ *
+ * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * @tparam PointRange a model of the concept `RandomAccessContainer`
+ *         whose value type is the point type
+ * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose
+ *         value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
+ * @tparam TriangleIdPairOutputIterator a model of `OutputIterator` holding objects of type
+ *   `std::pair<std::size_t,std::size_t>`
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param points points of the soup of triangles
+ * @param triangles each element in the range describes a triangle using the indices of the points in `points`
+ * @param out output iterator to be filled with all pairs of ids of triangles intersecting (the id of a triangle is its position in `triangles`).
+ *            In case the triangle soup contains some degenerate triangles, for each degenerate triangle `t` with id `i` a pair `(i,i)`
+ *            will be put in `out` before any other self intersection between non-degenerate triangles.<br>
+ *            Note that these are the only pairs where degenerate triangles will be reported.
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{maximum_number}
+ *     \cgalParamDescription{the maximum number of self intersections that will be detected and returned by the function.}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{No limit.}
+ *     \cgalParamExtra{In parallel mode, the number of returned self-intersections is at least `maximum_number`
+ *     (and not exactly that number) as no strong synchronization is put on threads for performance reasons.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type from a \cgal `Kernel`.}
+ *     \cgalParamDefault{`CGAL::Identity_property_map`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the point type of the point map.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @return `out`
+ *
+ * @sa `does_triangle_soup_self_intersect()`
+ * @sa `self_intersections()`
+ * @sa `does_self_intersect()`
+ */
+template <class ConcurrencyTag = Sequential_tag,
+          class PointRange,
+          class TriangleRange,
+          class TriangleIdPairOutputIterator,
+          class CGAL_NP_TEMPLATE_PARAMETERS>
+TriangleIdPairOutputIterator
+triangle_soup_self_intersections(const PointRange& points,
+                                 const TriangleRange& triangles,
+                                 TriangleIdPairOutputIterator out,
+                                 const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::is_default_parameter;
+
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::const_type Point_map_base;
+  Point_map_base pm_base = choose_parameter<Point_map_base>(get_parameter(np, internal_np::point_map));
+  typedef Property_map_for_soup<PointRange, Point_map_base> Point_map;
+  typedef typename GetPolygonSoupGeomTraits<PointRange, CGAL_NP_CLASS>::type GT;
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
+  const bool do_limit = !(is_default_parameter<CGAL_NP_CLASS, internal_np::maximum_number_t>::value);
+  if (do_limit)
+  {
+    return self_intersections<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
+                                              std::make_pair(std::cref(points), std::cref(triangles)),
+                                              out,
+                                              parameters::vertex_point_map(Point_map(points,pm_base)).
+                                              geom_traits(gt).
+                                              maximum_number(choose_parameter(get_parameter(np, internal_np::maximum_number), 0)));
+  }
+
+  return self_intersections<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
+                                            std::make_pair(std::cref(points), std::cref(triangles)),
+                                            out,
+                                            parameters::vertex_point_map(Point_map(points,pm_base)).
+                                            geom_traits(gt));
+}
+
+/**
+ * \ingroup PMP_intersection_grp
+ *
+ * \brief tests if a triangle soup self-intersects.
+ *
+ * A triangle soup self-intersects if at least two triangles of the soup intersect.
+ * Two triangles of the soup are said to intersect if the corresponding geometric triangles intersect
+ * and the intersection is neither an edge nor a vertex of both triangles
+ * (with the same point ids, ignoring the orientation for an edge).
+ *
+ * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * @tparam PointRange a model of the concept `RandomAccessContainer`
+ *         whose value type is the point type
+ * @tparam TriangleRange a model of the concept `RandomAccessContainer` whose
+ *         value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param points points of the soup of triangles
+ * @param triangles each element in the range describes a triangle using the indices of the points in `points`
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type from a \cgal `Kernel`.}
+ *     \cgalParamDefault{`CGAL::Identity_property_map`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPSelfIntersectionTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the point type of the point map.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @return `true` if the triangle soup self-intersects, and `false` otherwise.
+ *
+ * @sa `triangle_soup_self_intersections()`
+ * @sa `self_intersections()`
+ * @sa `does_self_intersect()`
+ */
+template <class ConcurrencyTag = Sequential_tag,
+          class PointRange,
+          class TriangleRange,
+          class CGAL_NP_TEMPLATE_PARAMETERS>
+bool does_triangle_soup_self_intersect(const PointRange& points,
+                                       const TriangleRange& triangles,
+                                       const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  try
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    CGAL::Emptyset_iterator unused_out;
+    typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::const_type Point_map_base;
+    Point_map_base pm_base = choose_parameter<Point_map_base>(get_parameter(np, internal_np::point_map));
+    typedef Property_map_for_soup<PointRange, Point_map_base> Point_map;
+    typedef typename GetPolygonSoupGeomTraits<PointRange, CGAL_NP_CLASS>::type GT;
+    GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
+    internal::self_intersections_impl<ConcurrencyTag>(boost::irange<std::size_t>(0, triangles.size()),
+                                                      std::make_pair(std::cref(points), std::cref(triangles)),
+                                                      unused_out, true /*throw*/,
+                                                      parameters::vertex_point_map(Point_map(points,pm_base))
+                                                                 .geom_traits(gt));
+  }
+  catch (const CGAL::internal::Throw_at_output_exception&)
+  {
+    return true;
+  }
+  #if defined(CGAL_LINKED_WITH_TBB) && TBB_USE_CAPTURED_EXCEPTION
+  catch (const tbb::captured_exception& e)
+  {
+    const char* ti1 = e.name();
+    const char* ti2 = typeid(const CGAL::internal::Throw_at_output_exception&).name();
+    const std::string tn1(ti1);
+    const std::string tn2(ti2);
+    if (tn1 == tn2) return true;
+    else throw;
+  }
+  #endif
+  return false;
 }
 
 }// namespace Polygon_mesh_processing

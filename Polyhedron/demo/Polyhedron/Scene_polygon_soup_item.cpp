@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/version.h>
 
@@ -136,80 +137,71 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
       return;
 
-    typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
+    typedef std::pair<EPICK::Point_3, std::size_t> PointAndId;
 
     std::size_t it = 0;
     std::size_t it_end =pit->size();
-    std::vector<FT::PointAndId> pointIds;
+    std::vector<PointAndId> pointIds;
     do {
-      FT::PointAndId pointId;
+      PointAndId pointId;
 
-      pointId.point = soup->points[pit->at(it)]+offset;
-      pointId.id = pit->at(it);
+      pointId.first = soup->points[pit->at(it)]+offset;
+      pointId.second = pit->at(it);
       pointIds.push_back(pointId);
     } while( ++it != it_end );
-    //detect degenerated faces
-    std::vector<FT::PointAndId> pid_stack = pointIds;
-    for(std::size_t i = 0; i< pointIds.size(); ++i)
-    {
-     FT::PointAndId pid = pid_stack.back();
-     pid_stack.pop_back();
-     for(FT::PointAndId poai : pid_stack)
-     {
-      if (pid.point== poai.point)
-      {
-        return;
-      }
-     }
-    }
-    FT triangulation(pointIds,normal);
+
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
-    for(FT::CDT::Finite_faces_iterator
-        ffit = triangulation.cdt->finite_faces_begin(),
-        end = triangulation.cdt->finite_faces_end();
-        ffit != end; ++ffit)
-    {
-        if(ffit->info().is_external)
-            continue;
+    auto f = [&](auto& ffit, auto& v2v) {
+      if (ffit.info().is_external)
+        return;
 
-        positions_poly.push_back(ffit->vertex(0)->point().x());
-        positions_poly.push_back(ffit->vertex(0)->point().y());
-        positions_poly.push_back(ffit->vertex(0)->point().z());
+      positions_poly.push_back(ffit.vertex(0)->point().x());
+      positions_poly.push_back(ffit.vertex(0)->point().y());
+      positions_poly.push_back(ffit.vertex(0)->point().z());
 
+      positions_poly.push_back(ffit.vertex(1)->point().x());
+      positions_poly.push_back(ffit.vertex(1)->point().y());
+      positions_poly.push_back(ffit.vertex(1)->point().z());
 
-        positions_poly.push_back(ffit->vertex(1)->point().x());
-        positions_poly.push_back(ffit->vertex(1)->point().y());
-        positions_poly.push_back(ffit->vertex(1)->point().z());
+      positions_poly.push_back(ffit.vertex(2)->point().x());
+      positions_poly.push_back(ffit.vertex(2)->point().y());
+      positions_poly.push_back(ffit.vertex(2)->point().z());
 
-        positions_poly.push_back(ffit->vertex(2)->point().x());
-        positions_poly.push_back(ffit->vertex(2)->point().y());
-        positions_poly.push_back(ffit->vertex(2)->point().z());
-
-        CGAL::IO::Color color;
-        if(!soup->fcolors.empty())
-          color = soup->fcolors[polygon_id];
-        for(int i=0; i<3; i++)
+      CGAL::IO::Color color;
+      if (!soup->fcolors.empty())
+        color = soup->fcolors[polygon_id];
+      for (int i = 0; i < 3; i++)
+      {
+        normals.push_back(normal.x());
+        normals.push_back(normal.y());
+        normals.push_back(normal.z());
+        if (!soup->fcolors.empty())
         {
-          normals.push_back(normal.x());
-          normals.push_back(normal.y());
-          normals.push_back(normal.z());
-          if(!soup->fcolors.empty())
-          {
-            f_colors.push_back(static_cast<float>(color.red())/255);
-            f_colors.push_back(static_cast<float>(color.green())/255);
-            f_colors.push_back(static_cast<float>(color.blue())/255);
-          }
-          if(!soup->vcolors.empty())
-          {
-            CGAL::IO::Color vcolor = soup->vcolors[triangulation.v2v[ffit->vertex(i)]];
-            v_colors.push_back(static_cast<float>(vcolor.red())/255);
-            v_colors.push_back(static_cast<float>(vcolor.green())/255);
-            v_colors.push_back(static_cast<float>(vcolor.blue())/255);
-          }
+          f_colors.push_back(static_cast<float>(color.red()) / 255);
+          f_colors.push_back(static_cast<float>(color.green()) / 255);
+          f_colors.push_back(static_cast<float>(color.blue()) / 255);
         }
+        if (!soup->vcolors.empty())
+        {
+          CGAL::IO::Color vcolor = soup->vcolors[v2v[ffit.vertex(i)]];
+          v_colors.push_back(static_cast<float>(vcolor.red()) / 255);
+          v_colors.push_back(static_cast<float>(vcolor.green()) / 255);
+          v_colors.push_back(static_cast<float>(vcolor.blue()) / 255);
+        }
+      }
+      };
+
+    try {
+      FacetTriangulator<SMesh, EPICK, std::size_t> triangulation(pointIds, normal);
+      triangulation.per_face(f);
+    }
+    catch (...) {
+      FacetTriangulator<SMesh, EPICK, std::size_t, CGAL::Exact_intersections_tag> triangulation(pointIds, normal);
+      triangulation.per_face(f);
     }
 }
+
 void
 Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
 
@@ -417,6 +409,32 @@ void Scene_polygon_soup_item::inside_out()
     d->soup->inverse_orientation(i);
   }
   invalidateOpenGLBuffers();
+}
+
+void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
+{
+  QApplication::setOverrideCursor(Qt::BusyCursor);
+  CGAL::Polygon_mesh_processing::repair_polygon_soup(
+        d->soup->points,
+        d->soup->polygons,
+        CGAL::parameters::erase_all_duplicates(erase_dup)
+                         .require_same_orientation(req_same_orientation));
+  QApplication::restoreOverrideCursor();
+  invalidateOpenGLBuffers();
+}
+
+bool Scene_polygon_soup_item::triangulate()
+{
+  QApplication::setOverrideCursor(Qt::BusyCursor);
+
+  bool success = true;
+
+  CGAL::Polygon_mesh_processing::triangulate_polygons(d->soup->points, d->soup->polygons);
+
+  QApplication::restoreOverrideCursor();
+  invalidateOpenGLBuffers();
+
+  return success;
 }
 
 bool
@@ -892,20 +910,6 @@ void Scene_polygon_soup_item::computeElements() const
 
   setBuffersFilled(true);
   QApplication::restoreOverrideCursor();
-}
-
-void Scene_polygon_soup_item::repair(bool erase_dup, bool req_same_orientation)
-{
-  QApplication::setOverrideCursor(Qt::BusyCursor);
-  CGAL::Polygon_mesh_processing::repair_polygon_soup(
-        d->soup->points,
-        d->soup->polygons,
-        CGAL::parameters::
-        erase_all_duplicates(erase_dup)
-        .require_same_orientation(req_same_orientation));
-  QApplication::restoreOverrideCursor();
-
- // CGAL::Three::Three::information(
 }
 
 CGAL::Three::Scene_item::Header_data Scene_polygon_soup_item::header() const

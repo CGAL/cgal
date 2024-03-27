@@ -3,9 +3,11 @@ namespace ArrDirectionalTraits {
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
-\cgalHasModel `ArrangementDirectionalXMonotoneTraits_2::Intersect_2`
+\cgalHasModelsBegin
+\cgalHasModels{ArrangementDirectionalXMonotoneTraits_2::Intersect_2}
+\cgalHasModelsEnd
 
 */
 
@@ -18,7 +20,7 @@ public:
 
 /*! computes the intersections of `xc1` and `xc2` and inserts them <I>in an
  * ascending lexicographic \f$ xy\f$-order</I> into a range beginning at
- * `oi`. The type `OutputIterator` dereferences a `boost::variant` of either the
+ * `oi`. The type `OutputIterator` dereferences a `std::variant` of either the
  * type `pair<ArrDirectionalTraits::Point_2,
  * ArrDirectionalTraits::Multiplicity>` or the type
  * `ArrDirectionalTraits::X_monotone_curve_2`. An object of the former type

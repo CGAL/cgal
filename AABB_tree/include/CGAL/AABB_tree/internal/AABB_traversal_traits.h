@@ -17,7 +17,7 @@
 
 
 #include <CGAL/AABB_tree/internal/AABB_node.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -69,11 +69,11 @@ class First_intersection_traits
 
 public:
   typedef
-  boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
+  std::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
   Result;
 public:
   First_intersection_traits(const AABBTraits& traits)
-    : m_result(), m_traits(traits)
+    : m_result(std::nullopt), m_traits(traits)
   {}
 
   bool go_further() const {
@@ -124,7 +124,7 @@ public:
 
   void intersection(const Query& query, const Primitive& primitive)
   {
-    boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
+    std::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
     intersection = m_traits.intersection_object()(query, primitive);
 
     if(intersection)
@@ -202,7 +202,7 @@ class First_primitive_traits
 public:
   First_primitive_traits(const AABBTraits& traits)
     : m_is_found(false)
-    , m_result()
+    , m_result(std::nullopt)
     , m_traits(traits) {}
 
   bool go_further() const { return !m_is_found; }
@@ -211,7 +211,7 @@ public:
   {
     if( m_traits.do_intersect_object()(query, primitive) )
     {
-      m_result = boost::optional<typename Primitive::Id>(primitive.id());
+      m_result = std::optional<typename Primitive::Id>(primitive.id());
       m_is_found = true;
     }
   }
@@ -221,12 +221,12 @@ public:
     return m_traits.do_intersect_object()(query, node.bbox());
   }
 
-  boost::optional<typename Primitive::Id> result() const { return m_result; }
+  std::optional<typename Primitive::Id> result() const { return m_result; }
   bool is_intersection_found() const { return m_is_found; }
 
 private:
   bool m_is_found;
-  boost::optional<typename Primitive::Id> m_result;
+  std::optional<typename Primitive::Id> m_result;
   const AABBTraits& m_traits;
 };
 

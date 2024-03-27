@@ -12,9 +12,9 @@ Seidel \cgalCite{s-sfira-91} (see also [\cgalCite{bkos-cgaa-00} Chapter 6).
 It subdivides each arrangement face to pseudo-trapezoidal cells, each
 of constant complexity, and constructs and maintains a linear-size search
 structure on top of these cells, such that each query can be answered
-in \f$ O(\log n)\f$ time, where \f$ n\f$ is the complexity of the arrangement.
+in \cgalBigO{\log n} time, where \f$ n\f$ is the complexity of the arrangement.
 
-Constructing the search structures takes \f$ O(n \log n)\f$ expected time
+Constructing the search structures takes \cgalBigO{n \log n} expected time
 and may require a small number of rebuilds \cgalCite{hkh-iiplgtds-12}. Therefore
 attaching a trapezoidal point-location object to an existing arrangement
 may incur some overhead in running times. In addition, the point-location
@@ -26,13 +26,11 @@ is relatively large.
 
 This strategy supports arbitrary subdivisions, including unbounded ones.
 
-\cgalModels `ArrangementPointLocation_2`
-\cgalModels `ArrangementVerticalRayShoot_2`
+\cgalModels{ArrangementPointLocation_2,ArrangementVerticalRayShoot_2}
 
 \sa `ArrangementPointLocation_2`
 \sa `ArrangementVerticalRayShoot_2`
 \sa `CGAL::Arr_point_location_result<Arrangement>`
-\sa `CGAL_ARR_POINT_LOCATION_VERSION`
 
 */
 template< typename Arrangement >

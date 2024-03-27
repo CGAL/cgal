@@ -66,7 +66,7 @@ class Do_intersect_bbox_segment_aux_is_greater<FT, bounded_0, true>
   double dmax;
 
 public:
-  CGAL_static_assertion((std::is_same<FT, double>::value));
+  static_assert(std::is_same<FT, double>::value);
 
   Do_intersect_bbox_segment_aux_is_greater() : error(0.), tmax(0.), dmax(0.) {}
 

@@ -42,11 +42,9 @@
 #include <boost/mpl/clear.hpp>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/end.hpp>
-#include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/has_key.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/insert.hpp>
 #include <boost/mpl/insert_fwd.hpp>
 #include <boost/mpl/iterator_range.hpp>
@@ -63,7 +61,7 @@
 #include <boost/mpl/set/set0.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/none.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 //#include <boost/parameter.hpp>
 //#include <boost/parameter/binding.hpp>
 //#include <boost/parameter/config.hpp>
@@ -137,13 +135,9 @@
 #include <boost/type_traits.hpp>
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/is_reference.hpp>
-#include <boost/type_traits/remove_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
 #include <boost/utility.hpp>
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/version.hpp>
 
 // CGAL
@@ -201,7 +195,7 @@
 #include <CGAL/Kernel/interface_macros.h>
 #include <CGAL/Kernel/Type_equality_wrapper.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/Labeled_image_mesh_domain_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Lazy.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Lazy_kernel.h>

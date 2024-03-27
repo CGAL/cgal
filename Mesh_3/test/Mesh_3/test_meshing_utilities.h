@@ -333,13 +333,13 @@ struct Tester
           else {
             std::cerr << "\nc1 circumcenter: " << tr.dual(c1);
             std::cerr << "\nc1 is in domain: "
-                      << domain.is_in_domain_object()(tr.dual(c1));
+                      << CGAL::IO::oformat(domain.is_in_domain_object()(tr.dual(c1)));
           }
           if(tr.is_infinite(c2)) std::cerr << "\nc2 is infinite";
           else {
             std::cerr << "\nc2 circumcenter: "<< tr.dual(c2);
             std::cerr << "\nc2 is in domain: "
-                      << domain.is_in_domain_object()(tr.dual(c2));
+                      <<  CGAL::IO::oformat(domain.is_in_domain_object()(tr.dual(c2)));
           }
           std::cerr << std::endl;
           assert(false);
@@ -381,7 +381,7 @@ struct Tester
         continue;
 
       max_sqd = (std::max)(max_sqd,
-        aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f))));
+        CGAL::to_double(aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f)))));
     }
     double hdist = std::sqrt(max_sqd);
     std::cout << "\tHausdorff distance to polyhedron is " << hdist << std::endl;
@@ -399,7 +399,7 @@ struct Tester
     // Parallel
     typedef typename C3t3::Concurrency_tag Concurrency_tag;
 
-    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
+    if (std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
       assert(hdist <= reference_value*4.);
     else
 #endif //CGAL_LINKED_WITH_TBB

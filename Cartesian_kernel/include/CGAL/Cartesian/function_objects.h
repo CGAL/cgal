@@ -3085,7 +3085,8 @@ namespace CartesianKernelFunctors {
     { return Rep(x, y); }
 
     template <class T1, class T2>
-    std::enable_if_t<!std::is_same_v<T1, Return_base_tag>, Rep>
+    std::enable_if_t<!std::is_same_v<T1, Return_base_tag> &&
+                     !std::is_same_v<T1, Line_2>, Rep>
     operator()(T1&& x, T2&& y) const
     { return Rep(std::forward<T1>(x), std::forward<T2>(y)); }
 

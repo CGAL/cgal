@@ -428,10 +428,10 @@ public:
 
     const FT S_av = compute_average_area_around(v);
 
-    const FT initial_x = vp.x();
-    const FT initial_y = vp.y();
-    const FT initial_z = vp.z();
-    FT x = initial_x, y = initial_y, z = initial_z;
+    const double initial_x = CGAL::to_double(vp.x());
+    const double initial_y = CGAL::to_double(vp.y());
+    const double initial_z = CGAL::to_double(vp.z());
+    double x = initial_x, y = initial_y, z = initial_z;
 
     ceres::Problem problem;
 
@@ -468,7 +468,7 @@ public:
 //    std::cout << "y : " << initial_y << " -> " << y << "\n";
 //    std::cout << "z : " << initial_z << " -> " << z << "\n";
 
-    return Vector(x - initial_x, y - initial_y, z - initial_z);
+    return Vector(FT(x - initial_x), FT(y - initial_y), FT(z - initial_z));
 #else
     CGAL_USE(v);
     return CGAL::NULL_VECTOR;

@@ -5,13 +5,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_SWEEP_CURVES_ADAPTER_2_H
-#define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_SWEEP_CURVES_ADAPTER_2_H 1
+#define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_SWEEP_CURVES_ADAPTER_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adapter_2.h
  * \brief defines class \c Sweep_curves_adapter_2
@@ -22,7 +25,7 @@
 
 #include <CGAL/config.h>
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 #include <CGAL/iterator.h>
 #include <CGAL/Handle_with_policy.h>
@@ -726,7 +729,7 @@ public:
         typedef typename SweepCurvesAdapter_2::Native_arc_2     Native_arc_2;
         typedef typename SweepCurvesAdapter_2::Native_point_2   Native_point_2;
         typedef typename SweepCurvesAdapter_2::Generic_point_2  Generic_point_2;
-        typedef boost::variant<Native_arc_2, Native_point_2>
+        typedef std::variant<Native_arc_2, Native_point_2>
           Make_x_monotone_result;
 
         std::vector<Make_x_monotone_result> objs;
@@ -734,11 +737,11 @@ public:
         make_x_monotone(cv, std::back_inserter(objs));
         // sort out normal and degenerate arcs
         for (auto& obj : objs) {
-          if (auto* arc = boost::get<Native_arc_2>(&obj)) {
+          if (auto* arc = std::get<Native_arc_2>(&obj)) {
             *oi++ = Generic_arc_2(*arc);
             continue;
           }
-          auto* pt = boost::get<Native_point_2>(&obj);
+          auto* pt = std::get<Native_point_2>(&obj);
           CGAL_assertion(pt);
           *oi++ = Generic_arc_2(Generic_point_2(*pt));
         }

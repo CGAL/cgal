@@ -29,8 +29,7 @@ radius_ratio(const typename K::Point_3& p0,
              K k = K())
 {
   typedef typename K::FT FT;
-  typename K::Compute_squared_distance_3 sq_distance =
-    k.compute_squared_distance_3_object();
+
   typename K::Compute_squared_radius_3 comp_sq_circumradius =
     k.compute_squared_radius_3_object();
   typename K::Compute_volume_3 volume =

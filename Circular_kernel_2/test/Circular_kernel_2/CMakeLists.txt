@@ -22,9 +22,9 @@ create_single_source_cgal_program("test_Line_arc.cpp")
 create_single_source_cgal_program("test_Circular_kernel_basic.cpp")
 create_single_source_cgal_program("test_Exact_circular_kernel_basic.cpp")
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
-    execution___of__test_Circular_kernel_basic
-    execution___of__test_Exact_circular_kernel_basic
+    "execution   of  test_Circular_kernel_basic"
+    "execution   of  test_Exact_circular_kernel_basic"
     PROPERTIES RESOURCE_LOCK Circular_kernel_basic)
 endif()

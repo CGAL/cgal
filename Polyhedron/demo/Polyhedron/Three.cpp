@@ -83,7 +83,7 @@ Three::Three()
 
 template<class SceneType>
 SceneType* Three::getSelectedItem(){
- Q_FOREACH(int item_id , scene()->selectionIndices())
+  for(int item_id  : scene()->selectionIndices())
  {
    SceneType* scene_item = qobject_cast<SceneType*>(scene()->item(item_id));
    if(scene_item)
@@ -99,7 +99,7 @@ void Three::addDockWidget(QDockWidget* dock_widget)
 
   QList<QDockWidget*> dockWidgets = mainWindow()->findChildren<QDockWidget*>();
   int counter = 0;
-  Q_FOREACH(QDockWidget* dock, dockWidgets) {
+  for(QDockWidget* dock : dockWidgets) {
     if( mainWindow()->dockWidgetArea(dock) != ::Qt::LeftDockWidgetArea ||
         dock == dock_widget )
     { continue; }
@@ -132,7 +132,7 @@ void Three::autoConnectActions(Polyhedron_demo_plugin_interface *plugin)
     methods << metaObject->method(i);
   }
 
-  Q_FOREACH(QAction* action, plugin->actions())
+  for(QAction* action : plugin->actions())
   {
     bool success = false;
     const QMetaObject* action_metaObject = action->metaObject();
@@ -273,4 +273,3 @@ bool& Three::isLocked()
 {
   return s_is_locked;
 }
-

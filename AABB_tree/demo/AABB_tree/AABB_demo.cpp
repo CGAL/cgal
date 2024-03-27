@@ -30,7 +30,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("INRIA");
   app.setApplicationName("AABB tree demo");
 
-  // Import resources from libCGALQt (Qt5).
+  // Import resources from libCGALQt (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
@@ -49,12 +49,3 @@ int main(int argc, char **argv)
 
   return app.exec();
 }
-
-#  include "Scene.cpp"
-#  include "Scene_moc.cpp"
-#  include "benchmarks.cpp"
-#  include "Viewer.cpp"
-#  include "Viewer_moc.cpp"
-#  include "MainWindow.cpp"
-#  include "MainWindow_moc.cpp"
-

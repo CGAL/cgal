@@ -116,7 +116,7 @@ build_platforms_list()
 
 # ----------------------------------------------------------------------------------------
 # Sets up the variables indicating the directories to use.
-# Crates all platform directories under the current release binary folder.
+# Creates all platform directories under the current release binary folder.
 # ----------------------------------------------------------------------------------------
 setup_dirs()
 {
@@ -179,6 +179,13 @@ setup_dirs()
 
   for PLATFORM in ${PLATFORMS}; do
 
+    # MSVC2015 does not support C++17
+    if [ "${CGAL_RELEASE_ID}" \> "CGAL-6.0" ]; then
+      if [ "${PLATFORM}" = "MSVC2015-Release-64bits" ]; then
+        continue
+      fi
+    fi
+
     CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
 
     if [ ! -d "${CGAL_BINARY_DIR}" ]; then
@@ -203,7 +210,45 @@ put_on_web()
   "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
 }
 
+put_demos_on_web()
+{
+  log "${ACTUAL_LOGFILE}" "Uploading demos ${1} to $UPLOAD_DEMOS_DESTINATION/$2"
 
+  "$SCP" "${1}" "$UPLOAD_DEMOS_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
+}
+
+
+collect_demos_binaries()
+{
+  PLATFORM=${1}
+
+  cd "${CGAL_TEST_DIR}"
+
+  echo "COLLECT_DEMOS_BINARIES=$COLLECT_DEMOS_BINARIES"
+  if [ -n "$COLLECT_DEMOS_BINARIES" ]; then
+    echo 'COLLECTING DEMOS BINARIES'
+
+
+    DEMOS_TEST_DIR="${CGAL_DIR}/cmake/platforms/${PLATFORM}/test"
+    cp "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${DEMOS_TEST_DIR}"
+
+    cd ${DEMOS_TEST_DIR}
+
+    for demo_dir in *_Demo; do
+      echo "pushd ${demo_dir}"
+      pushd "${demo_dir}"
+      bash ${DEMOS_TEST_DIR}/cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" "${CONFIG_TYPE}"
+      mv "${demo_dir}_with_dlls" ${DEMOS_TEST_DIR}
+      popd
+    done
+
+    ${TAR} cf "demos_${CGAL_TESTER}_${PLATFORM}.tar" *_Demo_with_dlls/*;
+    ${COMPRESSOR} -9f "demos_${CGAL_TESTER}_${PLATFORM}.tar"
+    mv "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" ${CGAL_TEST_DIR}
+  else
+    echo "Don't collect demos binaries for platform $PLATFORM";
+  fi
+}
 
 publish_results()
 {
@@ -241,7 +286,7 @@ publish_results()
     log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "PUTTING RESULTS ON THE WEB"
     put_on_web "test_results-${HOST}_${PLATFORM}.tar.gz" "${FILENAME}"
     if [ -e "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" ]; then
-      put_on_web "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" "demos-${FILENAME}"
+      put_demos_on_web "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" "demos-${FILENAME}"
     fi
     log_done "${ACTUAL_LOGFILE}"
   fi
@@ -267,16 +312,16 @@ run_test_on_platform()
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
   CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DWITH_tests=ON"
   if [ -n "${SCRIPTS_DIR}" ]; then
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
   else
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DCGAL_ENABLE_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then
@@ -304,6 +349,7 @@ run_test_on_platform()
   else
     ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}|tee tmp.txt
   fi
+
   #####################
   ##   GET RESULTS   ##
   #####################
@@ -368,8 +414,17 @@ run_test_on_host()
   fi
 
   for PLATFORM in ${PLATFORMS}; do
+
+    if [ "${CGAL_RELEASE_ID}" \> "CGAL-6.0" ]; then
+      if [ "${PLATFORM}" = "MSVC2015-Release-64bits" ]; then
+        continue
+      fi
+    fi
+
     run_test_on_platform "${PLATFORM}"
+    collect_demos_binaries "${PLATFORM}"
     publish_results "${PLATFORM}"
+
     if [ -z "${KEEP_TESTS}" ]; then
       rm -rf $CGAL_DIR/cmake/platforms/${PLATFORM}
     fi

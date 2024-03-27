@@ -28,7 +28,7 @@
 #include <CGAL/Mesh_facet_criteria_3.h>
 #include <CGAL/Mesh_cell_criteria_3.h>
 #include <cfloat> // for the macro DBL_MAX
-#include <boost/type_traits/is_base_of.hpp>
+
 namespace CGAL {
 
 
@@ -70,20 +70,16 @@ public:
   // is not a problem
   template <typename CGAL_NP_TEMPLATE_PARAMETERS>
   Mesh_criteria_3_impl(const CGAL_NP_CLASS& np)
-    :edge_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_size_param),
-                                                 parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::edge_sizing_field_param),
-                                                                              parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(DBL_MAX))))),
+    :edge_criteria_(parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::edge_size_param), FT(DBL_MAX)),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_min_size_param), FT(0))),
     facet_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_angle_param), FT(0)),
-                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_size_param),
-                                                 parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_sizing_field_param),
-                                                                              parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(0)))),
+                    parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_size_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_distance_param), FT(0)),
-                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE)),
-    cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param),
-                                                parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_param), FT(0))),
-                   parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_size_param),
-                                                parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::cell_sizing_field_param),
-                                                                             parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::sizing_field_param), FT(0)))))
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_min_size_param), FT(0))),
+    cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param), FT(0)),
+                   parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::cell_size_param), FT(0)),
+                   parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_min_size_param), FT(0)))
   { }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -98,19 +94,19 @@ public:
 
   template <typename Facet_criterion>
   void add_facet_criterion(Facet_criterion* criterion) {
-    CGAL_static_assertion((boost::is_base_of<
+    static_assert(std::is_base_of<
                            typename Facet_criteria::Abstract_criterion,
                            Facet_criterion
-                           >::value));
+                           >::value);
     facet_criteria_.add(criterion);
   }
 
   template <typename Cell_criterion>
   void add_cell_criterion(Cell_criterion* criterion) {
-    CGAL_static_assertion((boost::is_base_of<
+    static_assert(std::is_base_of<
                            typename Cell_criteria::Abstract_criterion,
                            Cell_criterion
-                           >::value));
+                           >::value);
     cell_criteria_.add(criterion);
   }
 
@@ -143,7 +139,7 @@ where `C3T3` is the model of `MeshComplex_3InTriangulation_3`
 used in the mesh generation process,
 and `C3T3::Triangulation` its nested triangulation type.
 
-\cgalModels `MeshCriteria_3` and `MeshCriteriaWithFeatures_3`
+\cgalModels{MeshCriteria_3,MeshCriteriaWithFeatures_3}
 
 \cgalHeading{Example}
 
@@ -253,6 +249,18 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                           upper bound for the lengths of curve edges. This parameter has to be set to a positive
  *                           value when 1-dimensional features protection is used.}
  *   \cgalParamNEnd
+ *   \cgalParamNBegin{edge_min_size}
+ *     \cgalParamDescription{a desired uniform lower-bound for the lengths of curve edges.
+ *                           Only feature edges with a length larger than this bound will be refined.
+ *                           If a feature edge is too small with respect to this criterion,
+ *                           it will not be refined whether the other criteria are met or not.}
+ *     \cgalParamExtra{If this criterion is applied during the meshing process,
+ *                     the feature protection algorithm correctness is not guaranteed anymore,
+ *                     and the output mesh may contain incorrect polyline features,
+ *                     or have missing polyline features.}
+ *     \cgalParamExtra{Note this lower-bound may not be respected everywhere in the output mesh,
+ *                     to keep the feature graph valid.}
+ *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_angle}
  *     \cgalParamDescription{a lower bound for the angles (in degrees) of the
  *                            surface mesh facets.}
@@ -260,6 +268,12 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *   \cgalParamNBegin{facet_size}
  *     \cgalParamDescription{a scalar field (resp. a constant) describing
  *                           a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{facet_min_size}
+ *     \cgalParamDescription{a constant describing a uniform lower-bound for the radii of the surface Delaunay balls.
+ *                           Only facets with a radius larger than this bound will be refined.
+ *                           If a facet is too small with respect to this criterion,
+ *                           it will not be refined whether the other criteria are met or not.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_distance}
  *     \cgalParamDescription{a scalar field (resp. a constant) describing a space varying (resp. a uniform)
@@ -278,6 +292,13 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *   \cgalParamNBegin{cell_size}
  *     \cgalParamDescription{ a scalar field (resp. a constant) describing
  *                            a space varying (resp. a uniform) upper-bound for the circumradii of the mesh tetrahedra.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{cell_min_size}
+ *     \cgalParamDescription{ a constant describing a uniform lower-bound for the radii of the circumradii
+ *                            of the mesh tetrahedra.
+ *                            Only tetrahedra with a circumradius larger than this bound will be refined.
+ *                            If a cell is too small with respect to this criterion,
+ *                            it will not be refined whether the other criteria are met or not.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */

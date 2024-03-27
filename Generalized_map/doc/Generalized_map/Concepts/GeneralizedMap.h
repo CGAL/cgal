@@ -4,9 +4,11 @@
 
 The concept `GeneralizedMap` defines a <I>d</I>-dimensional generalized map.
 
-\cgalRefines `GenericMap`
+\cgalRefines{GenericMap}
 
-\cgalHasModel \link CGAL::Generalized_map `CGAL::Generalized_map<d,Items,Alloc>`\endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{\link CGAL::Generalized_map `CGAL::Generalized_map<d,Items,Alloc>`\endlink}
+\cgalHasModelsEnd
 
 For a generalized map, the function \link GenericMap::next `next`\endlink is equal to \f$ \alpha_1\circ\alpha_0\f$, \link GenericMap::previous `previous`\endlink is equal to \f$ \alpha_0\circ\alpha_1\f$  and the function \link GenericMap::opposite `opposite<i>`\endlink is equal to \f$ \alpha_i\circ\alpha_0\f$.
 */

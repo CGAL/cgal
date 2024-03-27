@@ -5,13 +5,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_ARC_2_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_ARC_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Arc_2.h
  *\brief defines class \c Arc_2 that represents an arc on a curve that
@@ -23,7 +26,7 @@
 
 #include <iostream>
 #include <type_traits>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/none.hpp>
 
 #include <CGAL/Bbox_2.h>
@@ -155,13 +158,13 @@ public:
     mutable bool _m_left_to_right;
 
     //! stores the index of an interval this arc belongs to
-    mutable boost::optional<int> _m_interval_id;
+    mutable std::optional<int> _m_interval_id;
 
     //! stores boundary value in x-range of non-vertical interval
-    mutable boost::optional< Bound > _m_boundary_in_interval;
+    mutable std::optional< Bound > _m_boundary_in_interval;
 
     //! stores a bbox for an arc
-    mutable boost::optional< CGAL::Bbox_2 > _m_bbox;
+    mutable std::optional< CGAL::Bbox_2 > _m_bbox;
 
     //!@}
 };
@@ -2240,8 +2243,8 @@ protected:
         rep._m_is_vertical = this->ptr()->_m_is_vertical;
         rep._m_left_to_right = this->ptr()->_m_left_to_right;
 
-        rep._m_interval_id = boost::none;
-        rep._m_boundary_in_interval = boost::none;
+        rep._m_interval_id = std::nullopt;
+        rep._m_boundary_in_interval = std::nullopt;
 
         return std::make_pair(Kernel_arc_2(rep), cmp);
     }
@@ -2372,8 +2375,8 @@ protected:
             this->ptr()->_m_arcno_max = arcno();
 
         // invalidate curve-specific data
-        this->ptr()->_m_interval_id = boost::none;
-        this->ptr()->_m_boundary_in_interval = boost::none;
+        this->ptr()->_m_interval_id = std::nullopt;
+        this->ptr()->_m_boundary_in_interval = std::nullopt;
     }
     //!@}
 

@@ -9,9 +9,11 @@ policy concept of geometric computations is used in
 
 \image html DSCornerMask.svg
 
-\cgalRefines `SubdivisionMask_3`
+\cgalRefines{SubdivisionMask_3}
 
-\cgalHasModel `CGAL::DooSabin_mask_3<PolygonMesh, VertexPointMap>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::DooSabin_mask_3<PolygonMesh, VertexPointMap>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Subdivision_method_3`
 

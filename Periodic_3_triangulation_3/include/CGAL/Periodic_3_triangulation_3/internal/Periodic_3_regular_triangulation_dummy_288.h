@@ -10,6 +10,8 @@
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
 #ifdef CGAL_INCLUDE_FROM_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 
 std::vector<Weighted_point> dummy_points()
@@ -37,7 +39,7 @@ std::vector<Weighted_point> dummy_points()
 
         FT z = (FT(k) * domain_z / FT(8)) + domain().zmin();
 
-        dummy_points.push_back(Weighted_point(Bare_point(x, y, z), 0));
+        dummy_points.emplace_back(Bare_point(x, y, z), 0);
       }
     }
   }

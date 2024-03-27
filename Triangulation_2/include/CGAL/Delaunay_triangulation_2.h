@@ -301,7 +301,7 @@ public:
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
          std::enable_if_t<
-           boost::is_convertible<
+           std::is_convertible<
              typename std::iterator_traits<InputIterator>::value_type,
              Point
            >::value
@@ -358,10 +358,8 @@ private:
       it = indices.begin(), end = indices.end();
       it != end; ++it) {
       v_hint = insert(points[*it], hint);
-      if(v_hint!=Vertex_handle()) {
-        v_hint->info()=infos[*it];
-        hint=v_hint->face();
-      }
+      v_hint->info()=infos[*it];
+      hint=v_hint->face();
     }
 
     return this->number_of_vertices() - n;
@@ -374,7 +372,7 @@ public:
   insert(InputIterator first,
          InputIterator last,
          std::enable_if_t<
-           boost::is_convertible<
+           std::is_convertible<
              typename std::iterator_traits<InputIterator>::value_type,
              std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
            >::value >* = nullptr)
@@ -387,10 +385,8 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
          std::enable_if_t<
-           boost::mpl::and_<
-             boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-             boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-           >::value
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
          >* = nullptr)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);

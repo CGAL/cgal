@@ -202,7 +202,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 {
   typedef typename Traits::Point_3                                   Point;
 
-  CGAL_static_assertion((std::is_same<typename boost::range_value<PointRange>::type, Point>::value));
+  static_assert(std::is_same<typename boost::range_value<PointRange>::type, Point>::value);
 
   if(use_ch) // construct the convex hull to reduce the number of points
   {
@@ -341,7 +341,7 @@ void oriented_bounding_box(const PointRange& points,
                                                        NamedParameters,
                                                        Default_traits>::type            Geom_traits;
 
-  CGAL_static_assertion_msg(!(std::is_same<Geom_traits, CGAL::Default>::value),
+  static_assert(!(std::is_same<Geom_traits, CGAL::Default>::value),
                             "You must provide a traits class or have Eigen enabled!");
 
   Geom_traits traits = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
@@ -361,7 +361,7 @@ void oriented_bounding_box(const PointRange& points,
   // @todo handle those cases (or call min_rectangle_2 with a projection)
   if(points.size() <= 3)
   {
-    std::cerr << "The oriented bounding box cannot (yet) be computed for a mesh with fewer than 4 vertices!\n";
+    std::cerr << "The oriented bounding box cannot be computed with fewer than 4 vertices!\n";
     return;
   }
 

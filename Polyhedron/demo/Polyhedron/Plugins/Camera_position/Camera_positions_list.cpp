@@ -64,7 +64,7 @@ void Camera_positions_list::on_downButton_pressed()
 
 void Camera_positions_list::on_minusButton_pressed()
 {
-  Q_FOREACH(QModelIndex index,
+  for(QModelIndex index :
             m_listView->selectionModel()->selectedIndexes()) {
     m_model->removeRows(index.row(), 1);
   }

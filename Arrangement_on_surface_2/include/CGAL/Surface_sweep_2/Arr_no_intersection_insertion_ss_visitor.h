@@ -23,7 +23,7 @@
  * This class can be further split into two, where one derives from the other,
  * such that the derived class handles the case of inserting non-intersecting
  * curves into a non-empty arrangement, and the base class handles the case of
- * inserting non-intersecting curves into a empty arrangement.
+ * inserting non-intersecting curves into an empty arrangement.
  */
 
 #include <CGAL/Surface_sweep_2/Arr_construction_ss_visitor.h>

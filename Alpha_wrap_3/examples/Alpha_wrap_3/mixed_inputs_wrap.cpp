@@ -16,17 +16,15 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = K::Point_3;
 using Segment_3 = K::Segment_3;
 
-using Face = std::array<std::size_t, 3>;
 using Segments = std::vector<Segment_3>;
 using Points = std::vector<Point_3>;
+using Face = std::array<std::size_t, 3>;
 using Faces = std::vector<Face>;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;
 
 int main(int argc, char** argv)
 {
-  std::cout.precision(17);
-
   // Read the inputs
   const std::string ts_filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/armadillo.off"); // triangle soup
   const std::string ss_filename = (argc > 2) ? argv[2] : CGAL::data_file_path("images/420.polylines.txt"); // segment soup
@@ -105,10 +103,10 @@ int main(int argc, char** argv)
   oracle.add_segment_soup(segments, CGAL::parameters::default_values());
   oracle.add_point_set(ps_points, CGAL::parameters::default_values());
 
-  CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
+  CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle> aw3(oracle);
 
-  Mesh output_mesh;
-  aw3(alpha, offset, output_mesh);
+  Mesh wrap;
+  aw3(alpha, offset, wrap);
 
   t.stop();
   std::cout << "Took " << t.time() << std::endl;
@@ -122,10 +120,11 @@ int main(int argc, char** argv)
   std::string ps_name = std::string(ps_filename);
   ps_name = ps_name.substr(ps_name.find_last_of("/") + 1, ps_name.length() - 1);
   ps_name = ps_name.substr(0, ps_name.find_last_of("."));
-  std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_" + std::to_string(static_cast<int>(relative_alpha))
-                            + "_" + std::to_string(static_cast<int>(relative_offset)) + ".off";
+  std::string output_name = ts_name + "_" + ss_name + "_"  + ps_name + "_"
+                                  + std::to_string(static_cast<int>(relative_alpha)) + "_"
+                                  + std::to_string(static_cast<int>(relative_offset)) + ".off";
   std::cout << "Writing to " << output_name << std::endl;
-  CGAL::IO::write_polygon_mesh(output_name, output_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh(output_name, wrap, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

@@ -20,7 +20,6 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
 #include <fstream>
@@ -43,14 +42,13 @@ class property_map_selector
 {
 public:
   typedef typename graph_has_property<PolygonMesh, PropertyTag>::type Has_internal_pmap;
-  typedef typename boost::mpl::if_c<Has_internal_pmap::value,
-                                    typename boost::property_map<PolygonMesh, PropertyTag>::type,
-                                    typename boost::cgal_no_property::type
-                                    >::type type;
-  typedef typename boost::mpl::if_c<Has_internal_pmap::value,
-                                    typename boost::property_map<PolygonMesh, PropertyTag>::const_type,
-                                    typename boost::cgal_no_property::const_type
-                                    >::type const_type;
+  typedef std::conditional_t<Has_internal_pmap::value,
+                             typename boost::property_map<PolygonMesh, PropertyTag>::type,
+                             typename boost::cgal_no_property::type> type;
+  typedef std::conditional_t<Has_internal_pmap::value,
+                             typename boost::property_map<PolygonMesh, PropertyTag>::const_type,
+                             typename boost::cgal_no_property::const_type
+                             > const_type;
 
   type get_pmap(const PropertyTag& p, PolygonMesh& pmesh)
   {
@@ -110,22 +108,75 @@ public:
   typedef typename boost::property_traits<PMap>::value_type type;
 };
 
+
+template <typename PolygonMesh,
+          typename VPM_from_NP>
+struct GetVertexPointMap_impl
+{
+  typedef VPM_from_NP type;
+  typedef VPM_from_NP const_type;
+
+  template<class NamedParameters>
+  static const_type
+  get_const_map(const NamedParameters& np, const PolygonMesh&)
+  {
+    return parameters::get_parameter(np, internal_np::vertex_point);
+  }
+
+  template<class NamedParameters>
+  static type
+  get_map(const NamedParameters& np, PolygonMesh&)
+  {
+    return parameters::get_parameter(np, internal_np::vertex_point);
+  }
+};
+
+template <typename PolygonMesh>
+struct GetVertexPointMap_impl<PolygonMesh, internal_np::Param_not_found>
+{
+  typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::const_type const_type;
+  typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::type type;
+
+  template<class NamedParameters>
+  static const_type
+  get_const_map(const NamedParameters& /* np */, const PolygonMesh& pm)
+  {
+    return get_const_property_map(boost::vertex_point, pm);
+  }
+
+  template<class NamedParameters>
+  static type
+  get_map(const NamedParameters& /* np */, PolygonMesh& pm)
+  {
+    return get_property_map(boost::vertex_point, pm);
+  }
+};
+
 template <typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 class GetVertexPointMap
 {
-  typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::const_type
-  DefaultVPMap_const;
-  typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::type
-  DefaultVPMap;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_point_t,
+                                                       NamedParameters,
+                                                       internal_np::Param_not_found>::type VPM_from_NP;
+
+  typedef GetVertexPointMap_impl<PolygonMesh, VPM_from_NP> Impl;
 
 public:
-  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_point_t,
-                                                       NamedParameters,
-                                                       DefaultVPMap>::type type;
-  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_point_t,
-                                                       NamedParameters,
-                                                       DefaultVPMap_const>::type const_type;
+  typedef typename Impl::type type;
+  typedef typename Impl::const_type const_type;
+
+  static const_type
+  get_const_map(const NamedParameters& np, const PolygonMesh& pm)
+  {
+    return Impl::get_const_map(np, pm);
+  }
+
+  static type
+  get_map(const NamedParameters& np, PolygonMesh& pm)
+  {
+    return Impl::get_map(np, pm);
+  }
 };
 
 template<typename PolygonMesh, typename NamedParameters>
@@ -138,10 +189,15 @@ public:
   typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 };
 
-template <typename PolygonMesh,
-          typename NamedParametersGT = parameters::Default_named_parameters,
-          typename NamedParametersVPM = NamedParametersGT>
-class GetGeomTraits
+
+template<typename PolygonMesh, class GT, class NamedParametersVPM>
+struct GetGeomTraits_impl
+{
+  typedef GT type;
+};
+
+template<typename PolygonMesh, class NamedParametersVPM>
+struct GetGeomTraits_impl<PolygonMesh, internal_np::Param_not_found, NamedParametersVPM>
 {
   typedef typename CGAL::graph_has_property<PolygonMesh, boost::vertex_point_t>::type Has_internal_pmap;
 
@@ -151,15 +207,23 @@ class GetGeomTraits
 
   struct Fake_GT {}; // to be used if there is no internal vertex_point_map in PolygonMesh
 
-  typedef typename boost::mpl::if_c<Has_internal_pmap::value ||
-                                    !std::is_same<internal_np::Param_not_found, NP_vpm>::value,
-                                    typename GetK<PolygonMesh, NamedParametersVPM>::Kernel,
-                                    Fake_GT>::type DefaultKernel;
+  typedef std::conditional_t<Has_internal_pmap::value ||
+                             !std::is_same<internal_np::Param_not_found, NP_vpm>::value,
+                             typename GetK<PolygonMesh, NamedParametersVPM>::Kernel,
+                             Fake_GT> type;
+};
 
-public:
+template <typename PolygonMesh,
+          typename NamedParametersGT = parameters::Default_named_parameters,
+          typename NamedParametersVPM = NamedParametersGT>
+struct GetGeomTraits
+{
   typedef typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
                                                        NamedParametersGT,
-                                                       DefaultKernel>::type type;
+                                                       internal_np::Param_not_found>::type GT_from_NP;
+  typedef typename GetGeomTraits_impl<PolygonMesh,
+                                          GT_from_NP,
+                                          NamedParametersVPM>::type type;
 };
 
 // Define the following structs:
@@ -277,6 +341,21 @@ public:
   typedef typename CGAL::Identity_property_map<Dummy_point> type;
   typedef typename CGAL::Identity_property_map<const Dummy_point> const_type;
 };
+
+template <typename PointRange, typename NamedParameters>
+struct GetPolygonSoupGeomTraits
+{
+  typedef typename internal_np::Lookup_named_param_def <
+                     internal_np::geom_traits_t,
+                     NamedParameters,
+                     typename CGAL::Kernel_traits<
+                       typename boost::property_traits<
+                         typename GetPointMap<PointRange, NamedParameters>::type
+                       >::value_type
+                     >::type
+                   > ::type                                                         type;
+};
+
 
 template <class PointRange, class NamedParameters, class PointMap = Default, class NormalMap = Default>
 struct Point_set_processing_3_np_helper

@@ -6,9 +6,7 @@
 This `AdaptableFunctor` provides several operators
 to construct objects of type `PolynomialTraits_d::Polynomial_d`.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

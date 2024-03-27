@@ -91,11 +91,11 @@ int main(int argc, char** argv)
       Periodic_function(cone_function, canonical_cube), canonical_cube);
 
   // Mesh criteria
-  Periodic_mesh_criteria criteria(params::edge_size(0.02 * domain_size).
-                                          facet_angle(0.05 * domain_size).
-                                          facet_size(0.02 * domain_size).
-                                          cell_radius_edge_ratio(2).
-                                          cell_size(0.5));
+  Periodic_mesh_criteria criteria(params::edge_size(0.02 * domain_size)
+                                         .facet_angle(30)
+                                         .facet_size(0.02 * domain_size)
+                                         .cell_radius_edge_ratio(2)
+                                         .cell_size(0.5 * domain_size));
 
   // Create the features that we want to preserve
   Polylines polylines;

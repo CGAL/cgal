@@ -67,6 +67,18 @@ namespace CGAL {
                                         delete supporting_plane_;
                                 supporting_plane_ = new Plane;
                                 CGAL::linear_least_squares_fitting_3(pts.begin(), pts.end(), *supporting_plane_, CGAL::Dimension_tag<0>());
+
+                                // Check orientation
+                                int vote_for_opposite = 0;
+                                for (std::size_t i = 0; i < size(); i++)
+                                  if (supporting_plane_->orthogonal_vector() * point_set_->normal_map()[at(i)] < 0)
+                                    vote_for_opposite++;
+                                  else
+                                    vote_for_opposite--;
+
+                                if (vote_for_opposite > 0)
+                                  *supporting_plane_ = supporting_plane_->opposite();
+
                                 return supporting_plane_;
                         }
 
@@ -136,29 +148,23 @@ namespace CGAL {
                                 Base_class::resize(points.size());
                                 Base_class::add_normal_map();
 
+                                std::map<int, std::size_t> plane_index_remap;
+
                                 // Gets to know the number of plane from the plane indices
-                                int max_plane_index = 0;
-                                for (typename PointRange::const_iterator it = points.begin(); it != points.end(); ++it) {
-                                        int plane_index = get(plane_index_map, *it);
-                                        if (plane_index > max_plane_index)
-                                                max_plane_index = plane_index;
-                                }
-                                std::size_t num_plane = max_plane_index + 1; // the first one has index 0
-
-                                for (std::size_t i = 0; i < num_plane; ++i)
-                                        planar_segments_.push_back(new Planar_segment(this));
-
                                 std::size_t idx = 0;
                                 for (typename PointRange::const_iterator it = points.begin(); it != points.end(); ++it) {
                                         Base_class::m_points[idx] = get(point_map, *it);
                                         Base_class::m_normals[idx] = get(normal_map, *it);
                                         int plane_index = get(plane_index_map, *it);
                                         if (plane_index != -1) {
-                                                Planar_segment* ps = planar_segments_[plane_index];
-                                                ps->push_back(idx);
+                                          auto it_and_bool = plane_index_remap.emplace(plane_index, planar_segments_.size());
+                                          if (it_and_bool.second) {
+                                            planar_segments_.push_back(new Planar_segment(this));
+                                            planar_segments_.back()->push_back(idx);
+                                          }
+                                          else planar_segments_[it_and_bool.first->second]->push_back(idx);
                                         }
-
-                                        ++idx;
+                                        idx++;
                                 }
                         }
 

@@ -56,11 +56,11 @@ public :
     setTriangleContainer(0, new Tc(Vi::PROGRAM_WITH_LIGHT, false));
   }
   // Indicates if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE {
+  bool supportsRenderingMode(RenderingMode m) const override {
     return (m == Gouraud);
   }
   //Displays the item
-  void draw(Viewer_interface* viewer) const Q_DECL_OVERRIDE
+  void draw(Viewer_interface* viewer) const override
   {
     if(!isInit(viewer))
       initGL(viewer);
@@ -89,9 +89,9 @@ public :
     tc->setColor(this->color());
     tc->draw(viewer, true);
   }
-  void invalidateOpenGLBuffers() Q_DECL_OVERRIDE
+  void invalidateOpenGLBuffers() override
   {
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer =
           static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -101,13 +101,13 @@ public :
     }
     getTriangleContainer(0)->reset_vbos(ALL);
   }
-  void compute_bbox() const Q_DECL_OVERRIDE {}
-  Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
-  QString toolTip() const Q_DECL_OVERRIDE {return QString();}
+  void compute_bbox() const override {}
+  Scene_item* clone() const override {return 0;}
+  QString toolTip() const override {return QString();}
   Vec center()const { return center_; }
-  Scene_item::ManipulatedFrame* manipulatedFrame() Q_DECL_OVERRIDE { return frame; }
-  bool manipulatable() const Q_DECL_OVERRIDE { return true; }
-  bool eventFilter(QObject *, QEvent *event) Q_DECL_OVERRIDE
+  Scene_item::ManipulatedFrame* manipulatedFrame() override { return frame; }
+  bool manipulatable() const override { return true; }
+  bool eventFilter(QObject *, QEvent *event) override
   {
     if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
     {
@@ -130,7 +130,7 @@ public :
   double length()const { return length_; }
 private:
   //make an arrow showing the length and direction of the transformation for the extrusion.
-  void initializeBuffers(Viewer_interface *viewer)const Q_DECL_OVERRIDE
+  void initializeBuffers(Viewer_interface *viewer)const override
   {
     std::vector<float> vertices;
     std::vector<float> normals;
@@ -319,7 +319,7 @@ class ExtrudePlugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "extrude_plugin.json")
 public:
 
-  bool applicable(QAction* action) const Q_DECL_OVERRIDE
+  bool applicable(QAction* action) const override
   {
     if(action == actionCreateItem)
     {
@@ -332,12 +332,12 @@ public:
     return false;
   }
 
-  QList<QAction*> actions() const Q_DECL_OVERRIDE
+  QList<QAction*> actions() const override
   {
     return _actions;
   }
 
-  void init(QMainWindow* mainWindow, Scene_interface* sc, Messages_interface* mi) Q_DECL_OVERRIDE
+  void init(QMainWindow* mainWindow, Scene_interface* sc, Messages_interface* mi) override
   {
     this->messageInterface = mi;
     this->scene = sc;
@@ -404,8 +404,8 @@ private Q_SLOTS:
     // compute centroid
     Point c = CGAL::centroid(triangles.begin(),triangles.end());
 
-    oliver_queen = new Scene_arrow_item(Vec(c.x(),c.y(),c.z()), fg_item->diagonalBbox() / 50.0f,
-                                        fg_item->diagonalBbox()/3.0f);
+    oliver_queen = new Scene_arrow_item(Vec(c.x(),c.y(),c.z()), fg_item->bboxDiagonal() / 50.0f,
+                                        fg_item->bboxDiagonal()/3.0f);
     Vec dir(plane.orthogonal_vector().x(),
             plane.orthogonal_vector().y(),
             plane.orthogonal_vector().z());
@@ -419,7 +419,7 @@ private Q_SLOTS:
     oliver_queen->manipulatedFrame()->setConstraint(&constraint);
     oliver_queen->setColor(QColor(Qt::green));
     oliver_queen->setName("Extrude item");
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
       viewer->installEventFilter(oliver_queen);
     mw->installEventFilter(oliver_queen);
     scene->addItem(oliver_queen);
@@ -447,7 +447,7 @@ private Q_SLOTS:
       transform_matrix.data()[i] = (float)matrix[i];
     rotate_matrix = transform_matrix;
     rotate_matrix.setColumn(3, QVector4D(0,0,0,1));
-    QVector3D dir = rotate_matrix * QVector3D(0,1,0);
+    QVector3D dir = rotate_matrix.map(QVector3D(0,1,0));
     dir.normalize();
     dir = length * dir;
 

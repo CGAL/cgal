@@ -10,12 +10,12 @@
 
 #include "arr_print.h"
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel         Kernel;
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>         Geom_traits;
-typedef Geom_traits::Point_2                                      Point;
-typedef Geom_traits::Curve_2                                      Curve;
-typedef CGAL::Arr_spherical_topology_traits_2<Geom_traits>        Topol_traits;
-typedef CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits> Arrangement;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Geom_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+using Point = Geom_traits::Point_2;
+using Curve = Geom_traits::Curve_2;
+using Topol_traits = CGAL::Arr_spherical_topology_traits_2<Geom_traits>;
+using Arrangement = CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>;
 
 int main() {
   // Construct the arrangement from 12 geodesic arcs.
@@ -46,7 +46,6 @@ int main() {
 
   CGAL::insert(arr, arcs.begin(), arcs.end());
   print_arrangement_size(arr);          // print the arrangement size
-  // print_arrangement(arr);
 
   return 0;
 }

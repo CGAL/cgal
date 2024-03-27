@@ -13,13 +13,15 @@ has to be a model of the concept
 providing functionalities to deal with
 constraints.
 
-\cgalRefines `TriangulationFaceBase_2`
+\cgalRefines{TriangulationFaceBase_2}
 
 \cgalHeading{Types}
 
 Defines the same types as the `TriangulationFaceBase_2` concept
 
-\cgalHasModel `CGAL::Constrained_triangulation_face_base_2<Traits>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Constrained_triangulation_face_base_2<Traits>}
+\cgalHasModelsEnd
 
 \sa `TriangulationFaceBase_2`
 \sa `CGAL::Constrained_triangulation_2<Traits,Tds>`

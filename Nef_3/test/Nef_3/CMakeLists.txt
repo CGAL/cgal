@@ -17,17 +17,17 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
-    execution___of__Nef_3_problematic_construction
-    execution___of__test_nef_3_io_Cartesian
-    execution___of__test_nef_3_io_Cartesian_Lazy
-    execution___of__test_nef_3_io_EPEC
-    execution___of__test_nef_3_io_EPIC
-    execution___of__test_nef_3_io_Homogeneous
-    execution___of__test_nef_3_io_Homogenoeus_Lazy
-    execution___of__test_with_extended_homogeneous
-    execution___of__test_with_homogeneous
-    execution___of__test_with_lazy
+    "execution   of  Nef_3_problematic_construction"
+    "execution   of  test_nef_3_io_Cartesian"
+    "execution   of  test_nef_3_io_Cartesian_Lazy"
+    "execution   of  test_nef_3_io_EPEC"
+    "execution   of  test_nef_3_io_EPIC"
+    "execution   of  test_nef_3_io_Homogeneous"
+    "execution   of  test_nef_3_io_Homogenoeus_Lazy"
+    "execution   of  test_with_extended_homogeneous"
+    "execution   of  test_with_homogeneous"
+    "execution   of  test_with_lazy"
     PROPERTIES RESOURCE_LOCK Nef_3_Tests_IO)
 endif()

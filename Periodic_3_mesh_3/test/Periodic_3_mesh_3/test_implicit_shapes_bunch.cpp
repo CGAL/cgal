@@ -202,7 +202,7 @@ int main()
   Iso_cuboid canonical_cube(0, 0, 0, domain_size, domain_size, domain_size);
 
   // Array of the functions
-  const int functions_count = 11;
+  const unsigned int functions_count = 11;
 
   std::array<Periodic_function, functions_count> implicit_functions =
   {{
@@ -219,7 +219,7 @@ int main()
     Periodic_function(split_p, canonical_cube)
   }};
 
-  for(int i=0; i<functions_count; ++i)
+  for(unsigned int i=0; i<functions_count; ++i)
   {
     // Periodic mesh domain
     Periodic_mesh_domain domain =
@@ -230,7 +230,7 @@ int main()
     Periodic_mesh_criteria criteria(facet_angle = 30,
                                     facet_size = 0.05,
                                     facet_distance = 0.025,
-                                    cell_radius_edge = 2,
+                                    cell_radius_edge_ratio = 2,
                                     cell_size = 0.05);
 
     // Mesh generation

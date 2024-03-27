@@ -4,11 +4,10 @@
 #include  <CGAL/Three/Scene_item_rendering_helper.h>
 #include "SMesh_type.h"
 
-#include <boost/array.hpp>
-
 #include <iostream>
 
 struct Scene_polygon_soup_item_priv;
+
 struct Polygon_soup
 {
     typedef EPICK::Point_3 Point_3;
@@ -18,7 +17,7 @@ struct Polygon_soup
     //vector containing a pair of indices of points in Points and a set of indices of Polygons
     //containing the edge.
     typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
-    typedef boost::array<std::size_t, 2> Edge;
+    typedef std::array<std::size_t, 2> Edge;
     typedef std::vector<Polygon_3> Polygons;
     typedef std::vector<CGAL::IO::Color> Colors;
     typedef std::set<Edge> Edges;
@@ -113,7 +112,7 @@ public:
     Scene_polygon_soup_item();
     ~Scene_polygon_soup_item();
 
-    Scene_polygon_soup_item* clone() const Q_DECL_OVERRIDE;
+    Scene_polygon_soup_item* clone() const override;
 
     template <class Point, typename Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
@@ -130,19 +129,19 @@ public:
     bool save(std::ostream& out) const;
     std::vector<CGAL::IO::Color> getVColors() const;
     std::vector<CGAL::IO::Color> getFColors() const;
-    QString toolTip() const Q_DECL_OVERRIDE;
+    QString toolTip() const override;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{ return ( m!=PointsPlusNormals && m!=ShadedPoints); }
+    virtual bool supportsRenderingMode(RenderingMode m) const override{ return ( m!=PointsPlusNormals && m!=ShadedPoints); }
     // OpenGL drawing in a display list
-    virtual void draw() const Q_DECL_OVERRIDE{}
-    virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
-    virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
-    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
-    void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
-    bool isFinite() const Q_DECL_OVERRIDE{ return true; }
-    bool isEmpty() const Q_DECL_OVERRIDE;
-    void compute_bbox() const Q_DECL_OVERRIDE;
+    virtual void draw() const override{}
+    virtual void draw(CGAL::Three::Viewer_interface*) const override;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const override;
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const override;
+    void invalidateOpenGLBuffers() override;
+    bool isFinite() const override{ return true; }
+    bool isEmpty() const override;
+    void compute_bbox() const override;
 
     void new_vertex(const double&, const double&, const double&);
     void new_triangle(const std::size_t, const std::size_t, const std::size_t);
@@ -152,8 +151,8 @@ public:
     const Points& points() const;
     const Polygons& polygons() const;
     const Edges& non_manifold_edges() const;
-    void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
-    void computeElements() const Q_DECL_OVERRIDE;
+    void initializeBuffers(CGAL::Three::Viewer_interface *) const override;
+    void computeElements() const override;
 
     //statistics
     enum STATS
@@ -178,19 +177,20 @@ public:
       MEAN_ANGLE
     };
 
-    bool has_stats()const Q_DECL_OVERRIDE{return true;}
-    QString computeStats(int type)Q_DECL_OVERRIDE;
-    CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
+    bool has_stats()const override{return true;}
+    QString computeStats(int type)override;
+    CGAL::Three::Scene_item::Header_data header() const override;
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient(std::vector<std::size_t>& non_manifold_vertices);
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
     void repair(bool erase_dup, bool req_same_orientation);
+    bool triangulate();
 
     void setDisplayNonManifoldEdges(const bool);
     bool displayNonManifoldEdges() const;
-    void itemAboutToBeDestroyed(Scene_item *item) Q_DECL_OVERRIDE;
+    void itemAboutToBeDestroyed(Scene_item *item) override;
 
 protected:
     friend struct Scene_polygon_soup_item_priv;

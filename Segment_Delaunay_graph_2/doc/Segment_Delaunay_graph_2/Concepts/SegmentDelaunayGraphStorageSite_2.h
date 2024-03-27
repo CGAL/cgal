@@ -9,11 +9,11 @@ storage sites are sites that are used to store the information of a
 site in a more compact form (that uses less storage). This is achieved
 by storing handles to points instead of points.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `CopyConstructible`
-\cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Segment_Delaunay_graph_storage_site_2<Gt>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Segment_Delaunay_graph_storage_site_2<Gt>}
+\cgalHasModelsEnd
 
 \sa `SegmentDelaunayGraphTraits_2`
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>`

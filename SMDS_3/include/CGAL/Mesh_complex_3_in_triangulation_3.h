@@ -37,7 +37,6 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -151,7 +150,7 @@ namespace CGAL {
   vertex and cell base class are models of the concepts
   `SimplicialMeshVertexBase_3` and `SimplicialMeshCellBase_3`, respectively.
 
-  \tparam  CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
+  \tparam CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
   of the discretized geometric domain.
   It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
   `LessThanComparable`.
@@ -170,7 +169,7 @@ namespace CGAL {
   if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
   is only a model of the concept `MeshDomain_3`).
 
-  \cgalModels `MeshComplexWithFeatures_3InTriangulation_3`
+  \cgalModels{MeshComplexWithFeatures_3InTriangulation_3}
 
   \sa \link make_mesh_3() `CGAL::make_mesh_3()`\endlink
   \sa \link refine_mesh_3() `CGAL::refine_mesh_3()`\endlink
@@ -1423,28 +1422,32 @@ public:
     }
   }
 
-  void clear_cells_and_facets_from_c3t3() {
-    for (typename Tr::Finite_cells_iterator
-      cit = this->triangulation().finite_cells_begin(),
-      end = this->triangulation().finite_cells_end();
-      cit != end; ++cit)
+  void clear_cells_and_facets_from_c3t3()
+  {
+    //clear cells
+    for (typename Tr::All_cells_iterator cit = this->triangulation().all_cells_begin();
+         cit != this->triangulation().all_cells_end();
+         ++cit)
     {
       set_subdomain_index(cit, Subdomain_index());
     }
     this->number_of_cells_ = 0;
-    for (typename Tr::Finite_facets_iterator
-      fit = this->triangulation().finite_facets_begin(),
-      end = this->triangulation().finite_facets_end();
-      fit != end; ++fit)
+
+    //clear facets
+    for (typename Tr::All_facets_iterator fit = this->triangulation().all_facets_begin();
+         fit != this->triangulation().all_facets_end();
+         ++fit)
     {
-      Facet facet = *fit;
+      const auto& facet = *fit;
       set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
       if (this->triangulation().dimension() > 2) {
-        Facet mirror = tr_.mirror_facet(facet);
+        const Facet& mirror = tr_.mirror_facet(facet);
         set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
       }
     }
     this->number_of_facets_ = 0;
+
+    //clear manifold info
     clear_manifold_info();
   }
 

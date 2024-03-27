@@ -18,7 +18,6 @@
 #include <boost/type_traits.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/empty.hpp>
 #include <boost/mpl/front.hpp>
@@ -65,23 +64,23 @@ namespace CGAL {
           : Has_type_different_from<Get_functor<Kernel, Tg, O>, Null_functor> {};
 
         template<class K, class List, bool=boost::mpl::empty<List>::type::value>
-        struct Provides_functors : boost::mpl::and_ <
-                                   Provides_functor<K, typename boost::mpl::front<List>::type>,
-                                   Provides_functors<K, typename boost::mpl::pop_front<List>::type> > {};
+        struct Provides_functors : std::bool_constant<
+                                   Provides_functor<K, typename boost::mpl::front<List>::type>::value &&
+                                   Provides_functors<K, typename boost::mpl::pop_front<List>::type>::value > {};
         template<class K, class List>
-        struct Provides_functors<K, List, true> : boost::true_type {};
+        struct Provides_functors<K, List, true> : std::true_type {};
 
         template<class K, class List, bool=boost::mpl::empty<List>::type::value>
-        struct Provides_types : boost::mpl::and_ <
-                                   Provides_type<K, typename boost::mpl::front<List>::type>,
-                                   Provides_types<K, typename boost::mpl::pop_front<List>::type> > {};
+        struct Provides_types : std::bool_constant<
+                                   Provides_type<K, typename boost::mpl::front<List>::type>::value &&
+                                   Provides_types<K, typename boost::mpl::pop_front<List>::type>::value > {};
         template<class K, class List>
-        struct Provides_types<K, List, true> : boost::true_type {};
+        struct Provides_types<K, List, true> : std::true_type {};
 
         namespace internal { BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_Type,template Type<Null_tag>,false) }
         template<class Kernel, class Tg,
           bool = internal::has_Type<Kernel>::value /* false */>
-        struct Provides_type_i : boost::false_type {};
+        struct Provides_type_i : std::false_type {};
         template<class Kernel, class Tg>
         struct Provides_type_i <Kernel, Tg, true>
           : Has_type_different_from<typename Kernel::template Type<Tg>, Null_type> {};
@@ -93,7 +92,7 @@ namespace CGAL {
 
         template<class Kernel, class Tg, class O=void,
           bool = internal::has_Functor<Kernel>::value /* false */>
-        struct Provides_functor_i : boost::false_type {};
+        struct Provides_functor_i : std::false_type {};
         template<class Kernel, class Tg, class O>
         struct Provides_functor_i <Kernel, Tg, O, true>
           : Has_type_different_from<typename Kernel::template Functor<Tg, O>, Null_functor> {};
@@ -233,7 +232,7 @@ namespace CGAL {
 #undef CGAL_DECL_ITER_OBJ
 
         template<class A,class T,class B,class C>struct Get_functor_category<A,Construct_ttag<T>,B,C> :
-          boost::mpl::if_c<iterator_tag_traits<T>::is_iterator,
+          std::conditional<iterator_tag_traits<T>::is_iterator,
                            Construct_iterator_tag,
                            Construct_tag> {};
 
@@ -332,19 +331,19 @@ namespace CGAL {
         struct Stores_squared_norm_tag {};
 
         template<class> struct Preserved_by_non_linear_extra_coordinate
-          : boost::false_type {};
+          : std::false_type {};
         template<> struct Preserved_by_non_linear_extra_coordinate
-          <Has_extra_dimension_tag> : boost::true_type {};
+          <Has_extra_dimension_tag> : std::true_type {};
         template<> struct Preserved_by_non_linear_extra_coordinate
-          <Has_determinant_of_vectors_tag> : boost::true_type {};
+          <Has_determinant_of_vectors_tag> : std::true_type {};
         template<> struct Preserved_by_non_linear_extra_coordinate
-          <Has_determinant_of_points_tag> : boost::true_type {};
+          <Has_determinant_of_points_tag> : std::true_type {};
         template<> struct Preserved_by_non_linear_extra_coordinate
-          <Has_determinant_of_iterator_to_vectors_tag> : boost::true_type {};
+          <Has_determinant_of_iterator_to_vectors_tag> : std::true_type {};
         template<> struct Preserved_by_non_linear_extra_coordinate
-          <Has_determinant_of_iterator_to_points_tag> : boost::true_type {};
+          <Has_determinant_of_iterator_to_points_tag> : std::true_type {};
         template<> struct Preserved_by_non_linear_extra_coordinate
-          <Has_determinant_of_vectors_omit_last_tag> : boost::true_type {};
+          <Has_determinant_of_vectors_omit_last_tag> : std::true_type {};
 
         // Kernel properties
         struct Point_stores_squared_distance_to_origin_tag {};

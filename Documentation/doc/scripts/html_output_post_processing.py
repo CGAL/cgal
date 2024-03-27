@@ -55,7 +55,7 @@ def write_out_html(d, fn):
     f = codecs.open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
-    f.write('<html xmlns=\"https://www.w3.org/1999/xhtml\">')
+    f.write('<html xmlns=\"http://www.w3.org/1999/xhtml\">')
     if d.html() is not None:
       f.write(d.html(method='html'))
     f.write('\n')
@@ -70,7 +70,7 @@ def clean_doc():
     duplicate_files=list(package_glob('./*/jquery.js'))
     duplicate_files.extend(package_glob('./*/dynsections.js'))
     duplicate_files.extend(package_glob('./*/resize.js'))
-    duplicate_files.extend(package_glob('./*/stylesheet.css'))
+    duplicate_files.extend(package_glob('./*/cgal_stylesheet.css'))
     # kill _all_, including the one in CGAL tabs.css files
     duplicate_files.extend(glob.glob('./*/tabs.css'))
     # left-over by doxygen?
@@ -79,8 +79,6 @@ def clean_doc():
     duplicate_files.extend(package_glob('./*/citelist.doc'))
     duplicate_files.extend(package_glob('./*/doxygen.bst'))
     duplicate_files.extend(package_glob('./*/geom.bib'))
-    duplicate_files.extend(package_glob('./*/ftv2cl.png'))
-    duplicate_files.extend(package_glob('./*/ftv2ns.png'))
 
     for fn in duplicate_files:
         os.remove(fn)
@@ -132,17 +130,6 @@ def is_concept_file(filename):
   d = pq(file_content.read(),parser="html")
   ident = d('#CGALConcept')
   return ident.size() == 1
-
-def rearrange_img(i, dir_name):
-    img = pq(this)
-    if img.attr("src") == "ftv2cl.png":
-        parser=pq(this).parent()
-        for link_class in ['a.el', 'a.elRef']:
-            links=parser(link_class)
-            if links.size()>0 and is_concept_file(path.join(dir_name, pq(links[0]).attr("href"))):
-                img.attr("src","ftv2cpt.png")
-    srcpath=img.attr("src")
-    img.attr("src", "../Manual/" + srcpath.split('/')[-1])
 
 def rearrange_icon(i, dir_name):
     icon = pq(this)
@@ -197,7 +184,7 @@ def automagically_number_figures():
   for el in d('a.elRef'):
     text = pq(el).attr('href')
     if text.find("index.html")!=-1:
-      re_pkg_index=re.compile("\.\./([A-Z_a-z0-9]+)/index\.html")
+      re_pkg_index=re.compile(r'\.\./([A-Z_a-z0-9]+)/index\.html')
       res=re_pkg_index.match(text)
       if res:
         all_packages.append(res.group(1))
@@ -255,19 +242,18 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     resources_absdir=args.resources
     os.chdir(args.output)
 
+    #workaround CGAL link on the main page
+    re_replace_in_file("<a class=\"elRef\" href=\"../.+/namespaceCGAL.+html\">CGAL</a>", "CGAL", "./Manual/index.html")
+
     #workaround issue with operator<< in pyquery
     all_pages=glob.glob('*/*.html')
     for f in all_pages:
-      re_replace_in_file("operator<<\(\)", "operator&lt;&lt;()", f)
+      re_replace_in_file(r'operator<<\(\)', "operator&lt;&lt;()", f)
 
     # number figure
     automagically_number_figures()
 
     #replace icons with CGAL colored ones
-    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("Manual", "ftv2cl.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("Manual", "ftv2ns.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("Manual", "ftv2cpt.png"))
-
     annotated_files=package_glob('./*/annotated.html')
     for fn in annotated_files:
       re_replace_in_file("<span class=\"icon\">N</span>", "<span class=\"icon-namespace\">N</span>", fn)
@@ -275,8 +261,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       dir_name=path.dirname(fn)
       file_content = codecs.open(fn, 'r', encoding='utf-8')
       d = pq(file_content.read(), parser="html")
-      tr_tags = d('table.directory tr img')
-      tr_tags.each(lambda i: rearrange_img(i, dir_name))
       span_tags = d('table.directory tr span')
       span_tags.each(lambda i: rearrange_icon(i, dir_name))
       file_content.close()
@@ -335,7 +319,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     filesjs_files=package_glob('./*/files.js')
     for fn in filesjs_files:
-      re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
+      re_replace_in_file(r'^.*\[ "Concepts",.*$', '', fn)
 
     #Rewrite the path of some images
     re_replace_in_file("'src','ftv2",
@@ -345,7 +329,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # external is placed by doxygen to mark a class from a tagfile, this
     # is more confusing then helpful in our case
     if path.isfile(os.path.join('Manual','annotated.html')):
-      re_replace_in_file('\[external\]', '', os.path.join('Manual','annotated.html'))
+      re_replace_in_file(r'\[external\]', '', os.path.join('Manual','annotated.html'))
     else:
       stderr.write("Error: ./Manual/annotated.html does not exists\n")
     # fix class/concept mismatch in generated pages

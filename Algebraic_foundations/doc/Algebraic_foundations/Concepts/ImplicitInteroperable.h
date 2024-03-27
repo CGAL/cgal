@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsInteroperabilityConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 Two types `A` and `B` are a model of the concept
@@ -16,7 +16,7 @@ In this case
 \link CGAL::Coercion_traits::Are_implicit_interoperable  `CGAL::Coercion_traits<A,B>::Are_implicit_interoperable`\endlink
 is `CGAL::Tag_true`.
 
-\cgalRefines `ExplicitInteroperable`
+\cgalRefines{ExplicitInteroperable}
 
 \sa `CGAL::Coercion_traits<A,B>`
 \sa `ExplicitInteroperable`
@@ -29,4 +29,3 @@ class ImplicitInteroperable {
 public:
 
 }; /* end ImplicitInteroperable */
-

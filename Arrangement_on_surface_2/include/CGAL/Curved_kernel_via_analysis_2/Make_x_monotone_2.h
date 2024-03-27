@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -16,6 +16,9 @@
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_MAKE_X_MONOTONE_2_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_MAKE_X_MONOTONE_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h
  * \brief defines \c Make_x_monotone_2 functor
@@ -54,11 +57,11 @@ struct Make_x_monotone_2 :
     public CGAL::cpp98::binary_function<
         typename CurvedKernelViaAnalysis_2::Curve_2,
         CGAL::cpp98::iterator<std::output_iterator_tag,
-                              boost::variant<
+                              std::variant<
                                 typename CurvedKernelViaAnalysis_2::Point_2,
                                 typename CurvedKernelViaAnalysis_2::Arc_2> >,
         CGAL::cpp98::iterator<std::output_iterator_tag,
-                              boost::variant<
+                              std::variant<
                                 typename CurvedKernelViaAnalysis_2::Point_2,
                                 typename CurvedKernelViaAnalysis_2::Arc_2> > >
 {
@@ -132,7 +135,7 @@ struct Make_x_monotone_2 :
   template <typename OutputIterator>
   OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi)
   {
-    typedef boost::variant<Point_2, Arc_2>      Make_x_monotone_result;
+    typedef std::variant<Point_2, Arc_2>      Make_x_monotone_result;
 
     Construct_arc_2 construct_arc_2 =
       _m_curved_kernel->construct_arc_2_object();
@@ -290,7 +293,7 @@ private:
                                 Coordinate_1 x, std::vector<Point_2> pts,
                                 OutputIterator oi) const
   {
-    typedef boost::variant<Point_2, Arc_2>      Make_x_monotone_result;
+    typedef std::variant<Point_2, Arc_2>      Make_x_monotone_result;
 
     Construct_arc_2 construct_arc_2 =
       _m_curved_kernel->construct_arc_2_object();

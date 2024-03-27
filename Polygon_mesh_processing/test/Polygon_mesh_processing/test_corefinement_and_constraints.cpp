@@ -1,6 +1,6 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
@@ -164,11 +164,10 @@ void test_bool_op_no_copy(
   assert( count_constrained_edges(tm1, ecm1)==307 );
   assert( count_constrained_edges(tm2, ecm2)==307 );
 
-  typedef boost::optional<Triangle_mesh*> OTM;
-  Triangle_mesh *ptr = nullptr;
+  typedef std::optional<Triangle_mesh*> OTM;
   const std::array<OTM,4> output =
-    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), boost::make_optional(false,ptr), boost::make_optional(false,ptr))
-            : CGAL::make_array(OTM(&tm1), OTM(&tm2), boost::make_optional(false,ptr), boost::make_optional(false,ptr));
+    reverse ? CGAL::make_array(OTM(&tm2), OTM(&tm1), std::optional<Triangle_mesh*>(), std::optional<Triangle_mesh*>())
+            : CGAL::make_array(OTM(&tm1), OTM(&tm2), std::optional<Triangle_mesh*>(), std::optional<Triangle_mesh*>());
   PMP::corefine_and_compute_boolean_operations(tm1,
                                                tm2,
                                                output,

@@ -1,12 +1,15 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
+
 #include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <sstream>
 #include <iostream>
 #include <unordered_map>
 
-#include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 namespace CGAL {
 template <class PolygonMesh,
