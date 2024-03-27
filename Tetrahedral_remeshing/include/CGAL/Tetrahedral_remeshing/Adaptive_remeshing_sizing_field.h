@@ -126,7 +126,7 @@ public:
   * Returns size at point `p`
   */
   template <typename Index>
-  FT operator()(const Bare_point& p, const int& dim, const Index& i) const
+  FT operator()(const Bare_point& p, const int& dim, const Index& /* i */) const
   {
     const int nb_neighbors = (dim == 3) ? 20 : 6;
 

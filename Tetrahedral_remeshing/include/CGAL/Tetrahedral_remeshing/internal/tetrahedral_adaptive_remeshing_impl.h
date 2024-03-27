@@ -511,7 +511,7 @@ private:
   {
     for (typename Tr::Facet f : tr().finite_facets())
     {
-      typename Tr::Facet mf = tr().mirror_facet(f);
+      CGAL_assertion_code(typename Tr::Facet mf = tr().mirror_facet(f));
       CGAL_assertion(m_c3t3.is_in_complex(f) == m_c3t3.is_in_complex(mf));
     }
   }
