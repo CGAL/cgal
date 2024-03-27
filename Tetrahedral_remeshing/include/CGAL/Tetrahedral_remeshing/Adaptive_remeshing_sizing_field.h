@@ -211,7 +211,6 @@ public:
 
     using Edge = typename Tr::Edge;
     using Facet = typename Tr::Facet;
-    using Cell_handle = typename Tr::Cell_handle;
 
     auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                   CGAL::Constant_property_map<Edge, bool>(false));
