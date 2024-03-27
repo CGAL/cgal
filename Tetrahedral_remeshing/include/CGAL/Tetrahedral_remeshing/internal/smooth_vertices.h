@@ -849,7 +849,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       {
         using Ray = typename Tr::Geom_traits::Ray_3;
         using Projection = std::optional<
-          typename AABB_triangle_tree::Intersection_and_primitive_id<Ray>::Type>;
+          typename AABB_triangle_tree::template Intersection_and_primitive_id<Ray>::Type>;
 
         auto get_intersection_point =
           [](const Projection& proj) -> std::optional<Point_3>
