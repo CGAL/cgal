@@ -6,12 +6,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Engin Deniz Diktas <denizdiktas@gmail.com>
-
+#include <CGAL/config.h>
 #include <QApplication>
 #include <QLabel>
 #include <QSurfaceFormat>
 #include <fstream>
-
+#include <string>
 #ifndef QT_NO_OPENGL
 #include "Main_widget.h"
 #endif
@@ -23,8 +23,8 @@ int main(int argc, char* argv[]) {
     qDebug() << "Usage: earth [<arragement-file.json>]";
     return(-1);
   }
-  const char* file_name = (argc > 1) ? argv[1] :
-    "data/geometry_on_sphere/ne_110m_admin_0_countries.json";
+  std::string file_name = (argc > 1) ? argv[1] :
+    CGAL::data_file_path("geometry_on_sphere/ne_110m_admin_0_countries.json");
 
   if (!std::ifstream(file_name).good()) {
     std::cerr << "Error: failed to find file " << file_name << "\n";
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
   app.setApplicationVersion("0.1");
   try {
 #ifndef QT_NO_OPENGL
-    Main_widget widget(file_name);
+    Main_widget widget(file_name.c_str());
     widget.show();
 #else
     QLabel note("OpenGL Support required");
