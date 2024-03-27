@@ -34,7 +34,7 @@ public:
 
 /*!
 Functor that describes the criteria for
-mesh edges. This type must be a model
+mesh feature edges. This type must be a model
 of the concept `MeshEdgeCriteria_3`.
 */
 typedef unspecified_type Edge_criteria;
