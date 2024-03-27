@@ -705,7 +705,6 @@ private:
         continue;
 
       const Point_3 current_pos = point(v->point());
-      const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(v);
 
       const std::size_t nb_neighbors = neighbors[vid];
       if(nb_neighbors == 0)
@@ -724,6 +723,7 @@ private:
       Point_3 tmp_pos = current_pos;
 
 #ifndef CGAL_TET_REMESHING_EDGE_SMOOTHING_DISABLE_PROJECTION
+      const std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(v);
       for (const Surface_patch_index& si : v_surface_indices)
       {
         Point_3 normal_projection = project_on_tangent_plane(smoothed_position,
