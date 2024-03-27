@@ -204,6 +204,7 @@ public:
 
   /// Point type
   typedef typename GeomTraits::Point_3 Point; // because the AABB_tree is dimension agnostic
+  /// Deprecated point type
   typedef typename GeomTraits::Point_3 Point_3; // kept for backward compatibility
 
   /// additional types for the search tree, required by the RangeSearchTraits concept
