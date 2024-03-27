@@ -119,7 +119,7 @@ void run(const char* filename,
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/torus_gray_image.vti");
+  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("images/torus_gray_image.vti");
 
   const char* filename = fname.c_str();
   const FT isovalue = (argc > 2) ? std::stod(argv[2]) : 3;
