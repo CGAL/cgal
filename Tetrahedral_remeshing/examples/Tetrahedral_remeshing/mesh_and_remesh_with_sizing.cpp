@@ -12,7 +12,7 @@
 
 
 #ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 #else
 typedef CGAL::Sequential_tag Concurrency_tag;
 #endif

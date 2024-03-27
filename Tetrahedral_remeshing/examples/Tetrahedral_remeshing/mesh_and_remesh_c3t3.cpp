@@ -17,7 +17,7 @@ using Polyhedron = CGAL::Mesh_polyhedron_3<K>::type;
 using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<K>;
 
 #ifdef CGAL_CONCURRENT_MESH_3
-using Concurrency_tag = CGAL::Parallel_tag;
+using Concurrency_tag = CGAL::Parallel_if_available_tag;
 #else
 using Concurrency_tag = CGAL::Sequential_tag;
 #endif
